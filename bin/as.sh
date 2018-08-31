@@ -99,12 +99,20 @@ reset_for_env()
         done
     fi
 
+    # maybe 1.8.0_162 , 11-ea
+    local JAVA_VERSION_STR=$(${JAVA_HOME}/bin/java -version 2>&1|awk -F '"' '$2>"1.5"{print $2}')
     # check the jvm version, we need 1.6+
-    local JAVA_VERSION=$(${JAVA_HOME}/bin/java -version 2>&1|awk -F '"' '$2>"1.5"{print $2}')
-    [[ ! -x ${JAVA_HOME} || -z ${JAVA_VERSION} ]] && exit_on_err 1 "illegal ENV, please set \$JAVA_HOME to JDK6+"
+    [[ ! -x ${JAVA_HOME} || -z ${JAVA_VERSION_STR} ]] && exit_on_err 1 "illegal ENV, please set \$JAVA_HOME to JDK6+"
+
+    local JAVA_VERSION
+    if [[ $JAVA_VERSION_STR = "1."* ]]; then
+        JAVA_VERSION=$(echo $veJAVA_VERSION_STRr | sed -e 's/1\.\([0-9]*\)\(.*\)/\1/; 1q')
+    else
+        JAVA_VERSION=$(echo $JAVA_VERSION_STR | sed -e 's/\([0-9]*\)\(.*\)/\1/; 1q')
+    fi
 
     # when java version greater than 9, there is no tools.jar
-    if [[ ! "$JAVA_VERSION" =~ ^9 ]];then
+    if [[ "$JAVA_VERSION" -lt 9 ]];then
       # check tools.jar exists
       if [ ! -f ${JAVA_HOME}/lib/tools.jar ]; then
           exit_on_err 1 "${JAVA_HOME}/lib/tools.jar does not exist, arthas could not be launched!"
