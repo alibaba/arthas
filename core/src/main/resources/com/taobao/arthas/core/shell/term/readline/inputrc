@@ -1,0 +1,23 @@
+# In accordance with the Emacs/GNU Bash readline keyboard shortcuts
+# http://www.catonmat.net/download/readline-emacs-editing-mode-cheat-sheet.pdf
+# https://www.gnu.org/software/bash/manual/html_node/Commands-For-Killing.html
+
+"\C-a": beginning-of-line
+"\C-e": end-of-line
+"\C-f": forward-word
+"\C-b": backward-word
+"\e[D": backward-char
+"\e[C": forward-char
+"\e[B": next-history
+"\e[A": previous-history
+"\C-h": backward-delete-char
+"\C-?": backward-delete-char
+"\C-u": undo
+"\C-d": delete-char
+"\C-k": kill-line
+"\C-i": complete
+"\C-j": accept-line
+"\C-m": accept-line
+"\C-w": backward-delete-word
+"\C-x\e[3~": backward-kill-line
+"\e\C-?": backward-kill-word
