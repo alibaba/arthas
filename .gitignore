@@ -1,0 +1,13 @@
+.DS_Store
+/core/core.iml
+/agent/agent.iml
+/target
+**/.settings
+**/.classpath
+**/.project
+/.idea
+**/*.iml
+/nb-configuration.xml
+**/target
+core/src/main/resources/com/taobao/arthas/core/res/version
+**/*.orig
