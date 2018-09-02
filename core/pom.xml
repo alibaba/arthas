@@ -11,6 +11,14 @@
     <artifactId>arthas-core</artifactId>
     <name>arthas-core</name>
 
+    <repositories>
+        <repository>
+            <id>in-project</id>
+            <name>In Project Repo</name>
+            <url>file://${project.basedir}/../lib</url>
+        </repository>
+    </repositories>
+
     <build>
         <finalName>arthas-core</finalName>
         <plugins>
@@ -78,7 +86,7 @@
         </dependency>
         <dependency>
             <groupId>com.taobao.text</groupId>
-            <artifactId>text.ui</artifactId>
+            <artifactId>text-ui</artifactId>
         </dependency>
         <dependency>
             <groupId>com.fifesoft</groupId>
@@ -119,6 +127,7 @@
         <dependency>
             <groupId>org.benf</groupId>
             <artifactId>cfr</artifactId>
+            <version>0.132</version>
         </dependency>
     </dependencies>
 

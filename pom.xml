@@ -37,12 +37,12 @@
             <dependency>
                 <groupId>com.alibaba.middleware</groupId>
                 <artifactId>termd-core</artifactId>
-                <version>1.1.4</version>
+                <version>1.1.5</version>
             </dependency>
             <dependency>
                 <groupId>com.alibaba.middleware</groupId>
                 <artifactId>cli</artifactId>
-                <version>1.0.0</version>
+                <version>1.0.1</version>
             </dependency>
             <dependency>
                 <groupId>org.slf4j</groupId>
@@ -62,7 +62,7 @@
             <dependency>
                 <groupId>com.taobao.middleware</groupId>
                 <artifactId>logger.api</artifactId>
-                <version>0.2.4</version>
+                <version>0.2.6</version>
             </dependency>
             <dependency>
                 <groupId>com.alibaba</groupId>
@@ -71,8 +71,8 @@
             </dependency>
             <dependency>
                 <groupId>com.taobao.text</groupId>
-                <artifactId>text.ui</artifactId>
-                <version>0.0.1</version>
+                <artifactId>text-ui</artifactId>
+                <version>0.0.2</version>
             </dependency>
             <dependency>
                 <groupId>com.fifesoft</groupId>
@@ -89,11 +89,6 @@
                 <artifactId>junit</artifactId>
                 <version>4.11</version>
                 <scope>test</scope>
-            </dependency>
-            <dependency>
-                <groupId>org.benf</groupId>
-                <artifactId>cfr</artifactId>
-                <version>0.122</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
