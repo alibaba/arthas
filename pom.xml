@@ -16,6 +16,7 @@
         <module>agent</module>
         <module>client</module>
         <module>testcase</module>
+        <module>site</module>
     </modules>
 
     <properties>
