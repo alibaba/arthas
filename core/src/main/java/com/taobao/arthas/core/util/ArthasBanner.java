@@ -33,7 +33,7 @@ public class ArthasBanner {
             THANKS = IOUtils.toString(ShellServerOptions.class.getResourceAsStream(CREDIT_LOCATION));
             InputStream versionInputStream = ShellServerOptions.class.getResourceAsStream(VERSION_LOCATION);
             if (versionInputStream != null) {
-                VERSION = IOUtils.toString(versionInputStream);
+                VERSION = IOUtils.toString(versionInputStream).trim();
             } else {
                 String implementationVersion = ArthasBanner.class.getPackage().getImplementationVersion();
                 if (implementationVersion != null) {
