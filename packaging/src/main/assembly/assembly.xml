@@ -44,14 +44,4 @@
       <outputDirectory>/</outputDirectory>
     </file>
   </files>
-
-  <fileSets>
-    <fileSet>
-      <directory>../site/target/site/sphinx/</directory>
-      <outputDirectory>/doc</outputDirectory>
-      <includes>
-        <include>**/*</include>
-      </includes>
-    </fileSet>
-  </fileSets>
 </assembly>
