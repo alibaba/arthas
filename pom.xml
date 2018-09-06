@@ -17,6 +17,7 @@
         <module>client</module>
         <module>testcase</module>
         <module>site</module>
+        <module>packaging</module>
     </modules>
 
     <properties>
