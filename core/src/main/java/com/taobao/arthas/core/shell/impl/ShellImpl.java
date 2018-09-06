@@ -117,7 +117,7 @@ public class ShellImpl implements Shell {
         term.closeHandler(new CloseHandler(this));
 
         if (welcome != null && welcome.length() > 0) {
-            term.write(welcome);
+            term.write(welcome + "\n");
             term.write("pid: " + session.get(Session.PID) + "\n");
             term.write("timestamp: " + System.currentTimeMillis() + "\n\n");
         }
