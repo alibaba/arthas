@@ -8,6 +8,7 @@ import com.taobao.text.ui.TableElement;
 import com.taobao.text.util.RenderUtil;
 
 import java.io.IOException;
+import java.io.InputStream;
 
 import static com.taobao.text.ui.Element.label;
 
@@ -30,7 +31,15 @@ public class ArthasBanner {
         try {
             String logoText = IOUtils.toString(ShellServerOptions.class.getResourceAsStream(LOGO_LOCATION));
             THANKS = IOUtils.toString(ShellServerOptions.class.getResourceAsStream(CREDIT_LOCATION));
-            VERSION = IOUtils.toString(ShellServerOptions.class.getResourceAsStream(VERSION_LOCATION));
+            InputStream versionInputStream = ShellServerOptions.class.getResourceAsStream(VERSION_LOCATION);
+            if (versionInputStream != null) {
+                VERSION = IOUtils.toString(versionInputStream);
+            } else {
+                String implementationVersion = ArthasBanner.class.getPackage().getImplementationVersion();
+                if (implementationVersion != null) {
+                    VERSION = implementationVersion;
+                }
+            }
 
             StringBuilder sb = new StringBuilder();
             String[] LOGOS = new String[6];
@@ -53,8 +62,8 @@ public class ArthasBanner {
                     label(LOGOS[4]).style(Decoration.bold.fg(Color.green)),
                     label(LOGOS[5]).style(Decoration.bold.fg(Color.blue)));
             LOGO = RenderUtil.render(logoTable);
-        } catch (IOException ioe) {
-            ioe.printStackTrace();
+        } catch (Throwable e) {
+            e.printStackTrace();
         }
     }
 
