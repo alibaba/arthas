@@ -35,7 +35,7 @@ public class AgentBootstrap {
     static {
         try {
             File log = new File(System.getProperty("user.home") + File.separator + "logs" + File.separator
-                    + "arthas" + File.separator + "arthas.log");
+                    + ".arthas" + File.separator + "arthas.log");
             if (!log.exists()) {
                 log.getParentFile().mkdir();
                 log.createNewFile();
