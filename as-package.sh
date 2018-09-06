@@ -24,7 +24,6 @@ exit_on_err()
     exit ${1}
 }
 
-
 packaging_bin_path="$(ls ${DIR}/packaging/target/arthas-*-bin.zip)"
 
 maven package the arthas
@@ -33,9 +32,10 @@ mvn clean package -Dmaven.test.skip=true -f $DIR/pom.xml \
 
 rm -r $DIR/core/src/main/resources/com/taobao/arthas/core/res/version
 
-
 # install to local
 mkdir -p ${NEWEST_ARTHAS_LIB_HOME}
 unzip ${packaging_bin_path} -d ${NEWEST_ARTHAS_LIB_HOME}/
 
-
+# print ~/.arthas directory size
+arthas_dir_size="$(du -hs ${HOME}/.arthas | cut -f1)"
+echo "${HOME}/.arthas size: ${arthas_dir_size}"
