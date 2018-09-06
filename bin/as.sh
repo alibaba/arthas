@@ -21,8 +21,8 @@ ARTHAS_VERSION=
 ARTHAS_SCRIPT_VERSION=3.0.2
 
 # arthas remote url
-ARTHAS_REMOTE_VERSION_URL="https://alibaba.github.io/arthas/latest_version"
-ARTHAS_REMOTE_DOWNLOAD_URL="http://arthas.io/mdtool"
+ARTHAS_REMOTE_VERSION_URL="http://search.maven.org/solrsearch/select?q=g:%22com.taobao.arthas%22+AND+a:%22arthas-packaging%22"
+ARTHAS_REMOTE_DOWNLOAD_URL="http://search.maven.org/classic/remotecontent?filepath=com/taobao/arthas/arthas-packaging"
 
 # update timeout(sec)
 SO_TIMEOUT=5
@@ -135,7 +135,7 @@ get_local_version()
 # get latest version from remote
 get_remote_version()
 {
-    curl -sLk --connect-timeout ${SO_TIMEOUT} "${ARTHAS_REMOTE_VERSION_URL}"
+    curl -sLk --connect-timeout ${SO_TIMEOUT} "${ARTHAS_REMOTE_VERSION_URL}" | sed 's/{.*latestVersion":"*\([0-9a-zA-Z\\.\\-]*\)"*,*.*}/\1/'
 }
 
 # make version format to comparable format like 000.000.(0){15}
@@ -155,7 +155,8 @@ update_if_necessary()
 
         local temp_target_lib_dir="$TMP_DIR/temp_${update_version}_$$"
         local temp_target_lib_zip="${temp_target_lib_dir}/arthas-${update_version}-bin.zip"
-        local target_lib_dir="${ARTHAS_LIB_DIR}/${update_version}"
+        local target_lib_dir="${ARTHAS_LIB_DIR}/${update_version}/arthas"
+        mkdir -p ${target_lib_dir}
 
         # clean
         rm -rf ${temp_target_lib_dir}
@@ -169,7 +170,7 @@ update_if_necessary()
             -#Lk \
             --connect-timeout ${SO_TIMEOUT} \
             -o ${temp_target_lib_zip} \
-            "${ARTHAS_REMOTE_DOWNLOAD_URL}/${update_version}/arthas-${update_version}-bin.zip" \
+            "${ARTHAS_REMOTE_DOWNLOAD_URL}/${update_version}/arthas-packaging-${update_version}-bin.zip"  \
         || return 1
 
         # unzip arthas lib
