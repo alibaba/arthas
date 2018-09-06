@@ -2,7 +2,7 @@
 
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
-CUR_VERSION="3.0"
+CUR_VERSION="3.0.3"
 
 # arthas's target dir
 ARTHAS_TARGET_DIR=$DIR/target/arthas

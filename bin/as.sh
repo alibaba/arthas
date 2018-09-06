@@ -21,7 +21,7 @@ ARTHAS_VERSION=
 ARTHAS_SCRIPT_VERSION=3.0.2
 
 # arthas remote url
-ARTHAS_REMOTE_VERSION_URL="http://arthas.io/api/arthas/newestVersion.do"
+ARTHAS_REMOTE_VERSION_URL="https://alibaba.github.io/arthas/latest_version"
 ARTHAS_REMOTE_DOWNLOAD_URL="http://arthas.io/mdtool"
 
 # update timeout(sec)
@@ -442,7 +442,6 @@ active_console()
 main()
 {
     echo "Arthas script version: $ARTHAS_SCRIPT_VERSION"
-    echo "Try out Arthas online: /arthas/web-console"
 
     check_permission
     reset_for_env
