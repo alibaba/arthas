@@ -35,6 +35,7 @@ extensions = [
     'sphinx.ext.autodoc',
     'sphinx.ext.napoleon',
     'sphinx.ext.mathjax',
+    'sphinx_markdown_tables',
 ]
 
 # Add any paths that contain templates here, relative to this directory.
@@ -293,7 +294,7 @@ texinfo_documents = [
 def setup(app):
     app.add_config_value('recommonmark_config', {
         'url_resolver': lambda url: github_doc_root + url,
-        'auto_toc_tree_section': 'Contents',
+        # 'auto_toc_tree_section': 'Contents',
         'enable_eval_rst': True,
         'enable_auto_doc_ref': True,
     }, True)
