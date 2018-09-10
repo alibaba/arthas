@@ -71,7 +71,7 @@ interface ScriptListener {
 
 ### 参数 `Advice` 说明
 
-`Advice` 参数最主要是封装了通知节点的所有信息。参考[表达式核心变量](https://github.com/alibaba/arthas/wiki/cmds/advice-class)中关于该节点的描述。
+`Advice` 参数最主要是封装了通知节点的所有信息。参考[表达式核心变量](advice-class.md)中关于该节点的描述。
 
 ### 参数 `Output` 说明
 

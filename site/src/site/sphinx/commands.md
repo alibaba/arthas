@@ -1,22 +1,37 @@
-Arthas 用户命令文档
+命令列表
 =============
 
-* [仪表板/dashboard](cmds/dashboard.md)
-* [线程堆栈/thread](cmds/thread.md)
-* [JVM信息/jvm](cmds/jvm.md)
-* [查看类信息/sc](cmds/sc.md)
-* [查看方法信息/sm](cmds/sm.md)
-* [dump字节码/dump](cmds/dump.md)
-* [反编译类/jad](cmds/jad.md)
-* [查看类加载信息/classloader](cmds/classloader.md)
-* [重新加载类/redefine](cmds/redefine)
-* [方法执行监控/monitor](cmds/monitor.md)
-* [方法AOP观测/watch](cmds/watch.md)
-* [方法内部路径耗时/trace](cmds/trace.md)
-* [查看方法调用栈/stack](cmds/stack.md)
-* [方法执行记录与回放/tt](cmds/tt.md)
+* [dashboard](dashboard.md)
+* [thread](thread.md)
+* [jvm](jvm.md)
+* [sysprop](sysprop.md)
+* [getstatic](getstatic.md)
 
 
-* [JVM属性/sysprop](cmds/sysprop)
-* [查看类的静态属性/getstatic](cmds/getstatic)
-* [全局开关/options](options)
+
+* [sc](sc.md)
+* [sm](sm.md)
+* [dump](dump.md)
+
+* [jad](jad.md)
+* [classloader](classloader.md)
+* [redefine](redefine.md)
+
+* [monitor](monitor.md)
+* [watch](watch.md)
+* [trace](trace.md)
+* [stack](stack.md)
+* [tt](tt.md)
+
+* [options](options.md)
+
+### Arthas 基础命令
+
+* help——查看命令帮助信息
+* cls——清空当前屏幕区域
+* session——查看当前会话的信息
+* [reset](reset.md)——重置增强类，将被 Arthas 增强过的类全部还原，Arthas 服务端关闭时会重置所有增强过的类
+* version——输出当前目标 Java 进程所加载的 Arthas 版本号
+* quit——退出当前 Arthas 客户端，其他 Arthas 客户端不受影响
+* shutdown——关闭 Arthas 服务端，所有 Arthas 客户端全部退出
+* [keymap](keymap.md)——Arthas快捷键列表及自定义快捷键

@@ -69,5 +69,4 @@ Arthas 支持通过 telnet 来访问服务端，如果当你手头的机器没�
 ### Windows 环境支持
 
 * 目前 Arthas 提供了 `as.bat` 脚本，用于 Windows 环境下的诊断场景；此脚本暂时只接受一个参数 pid，即只能诊断本机上的 Java 进程；
-* 要使用 Windows 下的诊断脚本，需要手动下载整个 Arthas Zip 包，解压开后即可使用；下载地址：TODO （点击下载推荐的 Arthas 版本）
 * 另外，`as.bat` 脚本在体验方面还有一些问题，如果需要更好的体验，可以在本地使用 `as.bat pid` 启动 Arthas Server 后，然后在另外的 Linux/Mac 上使用 as.bat pid@ip:port 来远程诊断；

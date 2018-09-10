@@ -58,7 +58,4 @@ uptime                            16020s                            busy        
 
 ### 截图展示
 
-![alt text](https://github.com/alibaba/arthas/wiki/files/dashboard.png "dashboard")
-
-
-<script src="https://asciinema.org/a/14.js" id="asciicast-14" async></script>
+![alt text](files/dashboard.png "dashboard")

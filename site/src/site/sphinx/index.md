@@ -19,8 +19,14 @@ Contents
 --------
 
 * [安装](install-detail.md)
+* [快速入门](quick-start.md)
+* [进阶使用](advanced-use.md)
 * [命令列表](commands.md)
+* [用户案例](https://github.com/alibaba/arthas/labels/user-case)
 * [Release Notes](release-notes.md)
 * [Questions and answers](https://github.com/alibaba/arthas/labels/question-answered)
 * [Fork me at GitHub](https://github.com/alibaba/arthas)
 * [参与贡献](https://github.com/alibaba/arthas/CONTRIBUTING.md)
+
+
+

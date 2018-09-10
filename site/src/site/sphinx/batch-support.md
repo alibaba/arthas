@@ -13,7 +13,7 @@
 > * 目前需要每个命令占一行
 > * dashboard务必开启批处理模式(`-b`)，指定执行次数(`-n`)，否则会导致批处理脚本无法终止
 > * watch/tt/trace/monitor/stack等命令务必指定执行次数(`-n`)，否则会导致批处理脚本无法终止
-> * 可以使用异步后台任务，如 `watch c.t.X test returnObj > &`，让命令一直在后台运行，通过日志获取结果，[获取更多异步任务的信息](async)
+> * 可以使用异步后台任务，如 `watch c.t.X test returnObj > &`，让命令一直在后台运行，通过日志获取结果，[获取更多异步任务的信息](async.md)
 
 ```
 ➜  arthas git:(develop) cat /var/tmp/test.as

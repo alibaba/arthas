@@ -296,6 +296,7 @@ def setup(app):
         'url_resolver': lambda url: github_doc_root + url,
         # 'auto_toc_tree_section': 'Contents',
         'enable_eval_rst': True,
-        'enable_auto_doc_ref': True,
+        # 'enable_auto_doc_ref': True,
+        'enable_auto_toc_tree': True,
     }, True)
     app.add_transform(AutoStructify)
