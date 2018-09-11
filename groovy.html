@@ -1,0 +1,424 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="zh-CN" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="zh-CN" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>groovy &mdash; Arthas 3.0.1-RC-SNAPSHOT 文档</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="_static/overrides.css" type="text/css" />
+    <link rel="index" title="索引" href="genindex.html" />
+    <link rel="search" title="搜索" href="search.html" />
+<script src="_static/center_page.js"></script>
+ 
+
+
+  
+  <script src="_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="index.html" class="icon icon-home"> Arthas
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                3.0.1-RC-SNAPSHOT
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="install-detail.html">安装</a></li>
+<li class="toctree-l1"><a class="reference internal" href="quick-start.html">快速入门</a></li>
+<li class="toctree-l1"><a class="reference internal" href="advanced-use.html">进阶使用</a></li>
+<li class="toctree-l1"><a class="reference internal" href="commands.html">命令列表</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas/labels/user-case">用户案例</a></li>
+<li class="toctree-l1"><a class="reference internal" href="release-notes.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas/labels/question-answered">Questions and answers</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas">Fork me at GitHub</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas/CONTRIBUTING.md">参与贡献</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">Arthas</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+      <li>groovy</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            
+              <a href="https://github.com/alibaba/arthas/blob/master/site/src/site/sphinx/groovy.md" class="fa fa-github"> Edit on GitHub</a>
+            
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="groovy">
+<span id="groovy"></span><h1>groovy<a class="headerlink" href="#groovy" title="永久链接至标题">¶</a></h1>
+<blockquote>
+<div>Arthas 支持 groovy 脚本增强，允许像 BTrace 一样编写脚本来解决问题，可以在 groovy 脚本中进行if/for/switch/while 等控制语句，不受限制，但相比 BTrace 而言拥有更多的限制范围。</div></blockquote>
+<div class="section" id="">
+<span id="id1"></span><h2>限制内容<a class="headerlink" href="#" title="永久链接至标题">¶</a></h2>
+<ol class="simple">
+<li>禁止改变原有逻辑，与 watch 等命令一样，重点保证的是监听和观察。</li>
+<li>只允许在方法的 before/success/exception/finish 四个环节进行监听。</li>
+</ol>
+</div>
+<div class="section" id="">
+<span id="id2"></span><h2>参数说明<a class="headerlink" href="#" title="永久链接至标题">¶</a></h2>
+<table border="1" class="docutils">
+<thead>
+<tr>
+<th align="right">参数名称</th>
+<th align="left">参数说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="right"><em>class-pattern</em></td>
+<td align="left">类名表达式匹配</td>
+</tr>
+<tr>
+<td align="right"><em>method-pattern</em></td>
+<td align="left">方法名表达式匹配</td>
+</tr>
+<tr>
+<td align="right"><em>script-filepath</em></td>
+<td align="left">groovy 脚本的绝对路径</td>
+</tr>
+<tr>
+<td align="right">[S]</td>
+<td align="left">匹配所有的子类</td>
+</tr>
+<tr>
+<td align="right">[E]</td>
+<td align="left">开启正则表达式匹配，默认为通配符匹配</td>
+</tr>
+</tbody>
+</table><ul class="simple">
+<li>需要说明的是，第三个输入参数是脚本的绝对路径，比如 <code class="docutils literal notranslate"><span class="pre">/tmp/test.js</span></code>，不建议输入相对路径，比如 <code class="docutils literal notranslate"><span class="pre">./test.js</span></code></li>
+</ul>
+</div>
+<div class="section" id="">
+<span id="id3"></span><h2>五个关键函数声明<a class="headerlink" href="#" title="永久链接至标题">¶</a></h2>
+<div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="cm">/**</span>
+<span class="cm"> * 增强脚本监听器</span>
+<span class="cm"> */</span>
+<span class="kd">interface</span> <span class="nc">ScriptListener</span> <span class="o">{</span>
+
+    <span class="cm">/**</span>
+<span class="cm">     * 脚本创建</span>
+<span class="cm">     *</span>
+<span class="cm">     * @param output 输出器</span>
+<span class="cm">     */</span>
+    <span class="kt">void</span> <span class="nf">create</span><span class="o">(</span><span class="n">Output</span> <span class="n">output</span><span class="o">);</span>
+
+    <span class="cm">/**</span>
+<span class="cm">     * 脚本销毁</span>
+<span class="cm">     *</span>
+<span class="cm">     * @param output 输出器</span>
+<span class="cm">     */</span>
+    <span class="kt">void</span> <span class="nf">destroy</span><span class="o">(</span><span class="n">Output</span> <span class="n">output</span><span class="o">);</span>
+
+    <span class="cm">/**</span>
+<span class="cm">     * 方法执行前</span>
+<span class="cm">     *</span>
+<span class="cm">     * @param output 输出器</span>
+<span class="cm">     * @param advice 通知点</span>
+<span class="cm">     */</span>
+    <span class="kt">void</span> <span class="nf">before</span><span class="o">(</span><span class="n">Output</span> <span class="n">output</span><span class="o">,</span> <span class="n">Advice</span> <span class="n">advice</span><span class="o">);</span>
+
+    <span class="cm">/**</span>
+<span class="cm">     * 方法正常返回</span>
+<span class="cm">     *</span>
+<span class="cm">     * @param output 输出器</span>
+<span class="cm">     * @param advice 通知点</span>
+<span class="cm">     */</span>
+    <span class="kt">void</span> <span class="nf">afterReturning</span><span class="o">(</span><span class="n">Output</span> <span class="n">output</span><span class="o">,</span> <span class="n">Advice</span> <span class="n">advice</span><span class="o">);</span>
+
+    <span class="cm">/**</span>
+<span class="cm">     * 方法异常返回</span>
+<span class="cm">     *</span>
+<span class="cm">     * @param output 输出器</span>
+<span class="cm">     * @param advice 通知点</span>
+<span class="cm">     */</span>
+    <span class="kt">void</span> <span class="nf">afterThrowing</span><span class="o">(</span><span class="n">Output</span> <span class="n">output</span><span class="o">,</span> <span class="n">Advice</span> <span class="n">advice</span><span class="o">);</span>
+
+<span class="o">}</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="advice">
+<span id="advice"></span><h2>参数 <code class="docutils literal notranslate"><span class="pre">Advice</span></code> 说明<a class="headerlink" href="#advice" title="永久链接至标题">¶</a></h2>
+<p><code class="docutils literal notranslate"><span class="pre">Advice</span></code> 参数最主要是封装了通知节点的所有信息。参考<a class="reference internal" href="advice-class.html"><span class="doc">表达式核心变量</span></a>中关于该节点的描述。</p>
+</div>
+<div class="section" id="output">
+<span id="output"></span><h2>参数 <code class="docutils literal notranslate"><span class="pre">Output</span></code> 说明<a class="headerlink" href="#output" title="永久链接至标题">¶</a></h2>
+<p><code class="docutils literal notranslate"><span class="pre">Output</span></code> 参数只拥有三个方法，主要的工作还是输出对应的文本信息</p>
+<div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="cm">/**</span>
+<span class="cm"> * 输出器</span>
+<span class="cm"> */</span>
+<span class="kd">interface</span> <span class="nc">Output</span> <span class="o">{</span>
+
+    <span class="cm">/**</span>
+<span class="cm">     * 输出字符串(不换行)</span>
+<span class="cm">     *</span>
+<span class="cm">     * @param string 待输出字符串</span>
+<span class="cm">     * @return this</span>
+<span class="cm">     */</span>
+    <span class="n">Output</span> <span class="nf">print</span><span class="o">(</span><span class="n">String</span> <span class="n">string</span><span class="o">);</span>
+
+    <span class="cm">/**</span>
+<span class="cm">     * 输出字符串(换行)</span>
+<span class="cm">     *</span>
+<span class="cm">     * @param string 待输出字符串</span>
+<span class="cm">     * @return this</span>
+<span class="cm">     */</span>
+    <span class="n">Output</span> <span class="nf">println</span><span class="o">(</span><span class="n">String</span> <span class="n">string</span><span class="o">);</span>
+
+    <span class="cm">/**</span>
+<span class="cm">     * 结束当前脚本</span>
+<span class="cm">     *</span>
+<span class="cm">     * @return this</span>
+<span class="cm">     */</span>
+    <span class="n">Output</span> <span class="nf">finish</span><span class="o">();</span>
+
+<span class="o">}</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="groovy">
+<span id="id4"></span><h2>一个输出日志的 groovy 脚本示例<a class="headerlink" href="#groovy" title="永久链接至标题">¶</a></h2>
+<div class="highlight-groovy notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">com.taobao.arthas.core.command.ScriptSupportCommand</span>
+<span class="kn">import</span> <span class="nn">com.taobao.arthas.core.util.Advice</span>
+
+<span class="kn">import</span> <span class="nn">static</span> <span class="n">java</span><span class="o">.</span><span class="na">lang</span><span class="o">.</span><span class="na">String</span><span class="o">.</span><span class="na">format</span>
+
+<span class="cm">/**</span>
+<span class="cm"> * 输出方法日志</span>
+<span class="cm"> */</span>
+<span class="kd">public</span> <span class="kd">class</span> <span class="nc">Logger</span> <span class="kd">implements</span> <span class="n">ScriptSupportCommand</span><span class="o">.</span><span class="na">ScriptListener</span> <span class="o">{</span>
+
+    <span class="nd">@Override</span>
+    <span class="kt">void</span> <span class="nf">create</span><span class="o">(</span><span class="n">ScriptSupportCommand</span><span class="o">.</span><span class="na">Output</span> <span class="n">output</span><span class="o">)</span> <span class="o">{</span>
+        <span class="n">output</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="s2">&quot;script create.&quot;</span><span class="o">);</span>
+    <span class="o">}</span>
+
+    <span class="nd">@Override</span>
+    <span class="kt">void</span> <span class="nf">destroy</span><span class="o">(</span><span class="n">ScriptSupportCommand</span><span class="o">.</span><span class="na">Output</span> <span class="n">output</span><span class="o">)</span> <span class="o">{</span>
+        <span class="n">output</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="s2">&quot;script destroy.&quot;</span><span class="o">);</span>
+    <span class="o">}</span>
+
+    <span class="nd">@Override</span>
+    <span class="kt">void</span> <span class="nf">before</span><span class="o">(</span><span class="n">ScriptSupportCommand</span><span class="o">.</span><span class="na">Output</span> <span class="n">output</span><span class="o">,</span> <span class="n">Advice</span> <span class="n">advice</span><span class="o">)</span> <span class="o">{</span>
+        <span class="n">output</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="n">format</span><span class="o">(</span><span class="s2">&quot;before:class=%s;method=%s;paramslen=%d;%s;&quot;</span><span class="o">,</span>
+                <span class="n">advice</span><span class="o">.</span><span class="na">getClazz</span><span class="o">().</span><span class="na">getSimpleName</span><span class="o">(),</span>
+                <span class="n">advice</span><span class="o">.</span><span class="na">getMethod</span><span class="o">().</span><span class="na">getName</span><span class="o">(),</span>
+                <span class="n">advice</span><span class="o">.</span><span class="na">getParams</span><span class="o">().</span><span class="na">length</span><span class="o">,</span> <span class="n">advice</span><span class="o">.</span><span class="na">getParams</span><span class="o">()))</span>
+    <span class="o">}</span>
+
+    <span class="nd">@Override</span>
+    <span class="kt">void</span> <span class="nf">afterReturning</span><span class="o">(</span><span class="n">ScriptSupportCommand</span><span class="o">.</span><span class="na">Output</span> <span class="n">output</span><span class="o">,</span> <span class="n">Advice</span> <span class="n">advice</span><span class="o">)</span> <span class="o">{</span>
+        <span class="n">output</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="n">format</span><span class="o">(</span><span class="s2">&quot;returning:class=%s;method=%s;&quot;</span><span class="o">,</span>
+                <span class="n">advice</span><span class="o">.</span><span class="na">getClazz</span><span class="o">().</span><span class="na">getSimpleName</span><span class="o">(),</span>
+                <span class="n">advice</span><span class="o">.</span><span class="na">getMethod</span><span class="o">().</span><span class="na">getName</span><span class="o">()))</span>
+    <span class="o">}</span>
+
+    <span class="nd">@Override</span>
+    <span class="kt">void</span> <span class="nf">afterThrowing</span><span class="o">(</span><span class="n">ScriptSupportCommand</span><span class="o">.</span><span class="na">Output</span> <span class="n">output</span><span class="o">,</span> <span class="n">Advice</span> <span class="n">advice</span><span class="o">)</span> <span class="o">{</span>
+        <span class="n">output</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="n">format</span><span class="o">(</span><span class="s2">&quot;throwing:class=%s;method=%s;&quot;</span><span class="o">,</span>
+                <span class="n">advice</span><span class="o">.</span><span class="na">getClazz</span><span class="o">().</span><span class="na">getSimpleName</span><span class="o">(),</span>
+                <span class="n">advice</span><span class="o">.</span><span class="na">getMethod</span><span class="o">().</span><span class="na">getName</span><span class="o">()))</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+</pre></div>
+</div>
+<p>使用示例：</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ groovy com.alibaba.sample.petstore.dal.dao.ProductDao getProductById /Users/zhuyong/middleware/arthas/scripts/Logger.groovy -S
+script create.
+Press Ctrl+C to abort.
+Affect(class-cnt:1 , method-cnt:1) cost in 102 ms.
+before:class=IbatisProductDao;method=getProductById;paramslen=1;[Ljava.lang.Object;@45df64fc;
+returning:class=IbatisProductDao;method=getProductById;
+before:class=IbatisProductDao;method=getProductById;paramslen=1;[Ljava.lang.Object;@5b0e2d00;
+returning:class=IbatisProductDao;method=getProductById;
+</pre></div>
+</div>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2018, Alibaba Middleware Group, and contributors.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'./',
+            VERSION:'3.0.1-RC-SNAPSHOT',
+            LANGUAGE:'zh_CN',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="_static/jquery.js"></script>
+      <script type="text/javascript" src="_static/underscore.js"></script>
+      <script type="text/javascript" src="_static/doctools.js"></script>
+      <script type="text/javascript" src="_static/translations.js"></script>
+      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  <script type="text/javascript" src="_static/js/theme.js"></script>
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+<div class="github-fork-ribbon-wrapper right">
+  <div class="github-fork-ribbon">
+    <a href="https://github.com/alibaba/arthas">Fork me at GitHub</a>
+  </div>
+</div>
+
+<script type="text/javascript" src="_static/add_badges.js"></script>
+ 
+
+
+</body>
+</html>

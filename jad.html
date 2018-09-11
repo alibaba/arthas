@@ -1,0 +1,438 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="zh-CN" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="zh-CN" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>jad &mdash; Arthas 3.0.1-RC-SNAPSHOT 文档</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="_static/overrides.css" type="text/css" />
+    <link rel="index" title="索引" href="genindex.html" />
+    <link rel="search" title="搜索" href="search.html" />
+    <link rel="next" title="classloader" href="classloader.html" />
+    <link rel="prev" title="dump" href="dump.html" />
+<script src="_static/center_page.js"></script>
+ 
+
+
+  
+  <script src="_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="index.html" class="icon icon-home"> Arthas
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                3.0.1-RC-SNAPSHOT
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="install-detail.html">安装</a></li>
+<li class="toctree-l1"><a class="reference internal" href="quick-start.html">快速入门</a></li>
+<li class="toctree-l1"><a class="reference internal" href="advanced-use.html">进阶使用</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="commands.html">命令列表</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="dashboard.html">dashboard</a></li>
+<li class="toctree-l2"><a class="reference internal" href="thread.html">thread</a></li>
+<li class="toctree-l2"><a class="reference internal" href="jvm.html">jvm</a></li>
+<li class="toctree-l2"><a class="reference internal" href="sysprop.html">sysprop</a></li>
+<li class="toctree-l2"><a class="reference internal" href="getstatic.html">getstatic</a></li>
+<li class="toctree-l2"><a class="reference internal" href="sc.html">sc</a></li>
+<li class="toctree-l2"><a class="reference internal" href="sm.html">sm</a></li>
+<li class="toctree-l2"><a class="reference internal" href="dump.html">dump</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">jad</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#">参数说明</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#">使用参考</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="classloader.html">classloader</a></li>
+<li class="toctree-l2"><a class="reference internal" href="redefine.html">redefine</a></li>
+<li class="toctree-l2"><a class="reference internal" href="monitor.html">monitor</a></li>
+<li class="toctree-l2"><a class="reference internal" href="watch.html">watch</a></li>
+<li class="toctree-l2"><a class="reference internal" href="trace.html">trace</a></li>
+<li class="toctree-l2"><a class="reference internal" href="stack.html">stack</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tt.html">tt</a></li>
+<li class="toctree-l2"><a class="reference internal" href="options.html">options</a></li>
+<li class="toctree-l2"><a class="reference internal" href="commands.html#arthas">Arthas 基础命令</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas/labels/user-case">用户案例</a></li>
+<li class="toctree-l1"><a class="reference internal" href="release-notes.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas/labels/question-answered">Questions and answers</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas">Fork me at GitHub</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas/CONTRIBUTING.md">参与贡献</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">Arthas</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="commands.html">命令列表</a> &raquo;</li>
+        
+      <li>jad</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            
+              <a href="https://github.com/alibaba/arthas/blob/master/site/src/site/sphinx/jad.md" class="fa fa-github"> Edit on GitHub</a>
+            
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="jad">
+<span id="jad"></span><h1>jad<a class="headerlink" href="#jad" title="永久链接至标题">¶</a></h1>
+<blockquote>
+<div>反编译指定已加载类的源码</div></blockquote>
+<p><code class="docutils literal notranslate"><span class="pre">jad</span></code> 命令将 JVM 中实际运行的 class 的 byte code 反编译成 java 代码，便于你理解业务逻辑；</p>
+<ul class="simple">
+<li>在 Arthas Console 上，反编译出来的源码是带语法高亮的，阅读更方便</li>
+<li>当然，反编译出来的 java 代码可能会存在语法错误，但不影响你进行阅读理解</li>
+</ul>
+<div class="section" id="">
+<span id="id1"></span><h2>参数说明<a class="headerlink" href="#" title="永久链接至标题">¶</a></h2>
+<table border="1" class="docutils">
+<thead>
+<tr>
+<th align="right">参数名称</th>
+<th align="left">参数说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="right"><em>class-pattern</em></td>
+<td align="left">类名表达式匹配</td>
+</tr>
+<tr>
+<td align="right"><code>[c:]</code></td>
+<td align="left">类所属 ClassLoader 的 hashcode</td>
+</tr>
+<tr>
+<td align="right">[E]</td>
+<td align="left">开启正则表达式匹配，默认为通配符匹配</td>
+</tr>
+</tbody>
+</table></div>
+<div class="section" id="">
+<span id="id2"></span><h2>使用参考<a class="headerlink" href="#" title="永久链接至标题">¶</a></h2>
+<blockquote>
+<div>当有多个 <code class="docutils literal notranslate"><span class="pre">ClassLoader</span></code> 都加载了这个类时，<code class="docutils literal notranslate"><span class="pre">jad</span></code> 命令会输出对应 <code class="docutils literal notranslate"><span class="pre">ClassLoader</span></code> 实例的 <code class="docutils literal notranslate"><span class="pre">hashcode</span></code>，然后你只需要重新执行 <code class="docutils literal notranslate"><span class="pre">jad</span></code> 命令，并使用参数 <code class="docutils literal notranslate"><span class="pre">-c</span> <span class="pre">&lt;hashcode&gt;</span></code> 就可以反编译指定 ClassLoader 加载的那个类了；</div></blockquote>
+<div class="highlight-java notranslate"><div class="highlight"><pre><span></span>$ jad org.apache.log4j.Logger
+
+ Found more than one class for: org.apache.log4j.Logger, Please use jad -c hashcode org.apache.log4j.Logger
+ HASHCODE  CLASSLOADER
+ 69dcaba4  +-monitor&#39;s ModuleClassLoader
+ 6e51ad67  +-java.net.URLClassLoader@6e51ad67
+             +-sun.misc.Launcher$AppClassLoader@6951a712
+               +-sun.misc.Launcher$ExtClassLoader@6fafc4c2
+ 2bdd9114  +-pandora-qos-service&#39;s ModuleClassLoader
+ 4c0df5f8  +-pandora-framework&#39;s ModuleClassLoader
+
+Affect(row-cnt:0) cost in 38 ms.
+$ jad org.apache.log4j.Logger -c 69dcaba4
+
+ClassLoader:
++-monitor&#39;s ModuleClassLoader
+
+Location:
+/Users/zhuyong/Downloads/taobao-hsf.sar/plugins/monitor/lib/log4j-1.2.14.jar
+
+package org.apache.log4j;
+
+import org.apache.log4j.spi.*;
+
+public class Logger extends Category
+{
+    private static final String FQCN;
+
+    protected Logger(String name)
+    {
+        super(name);
+    }
+
+    public static Logger getLogger(String name)
+    {
+        return LogManager.getLogger(name);
+    }
+
+    public static Logger getLogger(Class clazz)
+    {
+        return LogManager.getLogger(clazz.getName());
+    }
+
+    public static Logger getRootLogger()
+    {
+        return LogManager.getRootLogger();
+    }
+
+    public static Logger getLogger(String name, LoggerFactory factory)
+    {
+        return LogManager.getLogger(name, factory);
+    }
+
+    public void trace(Object message)
+    {
+        if (repository.isDisabled(5000))
+        {
+            return;
+        }
+        if (Level.TRACE.isGreaterOrEqual(getEffectiveLevel()))
+        {
+            forcedLog(Logger.FQCN, Level.TRACE, message, null);
+        }
+    }
+
+    public void trace(Object message, Throwable t)
+    {
+        if (repository.isDisabled(5000))
+        {
+            return;
+        }
+        if (Level.TRACE.isGreaterOrEqual(getEffectiveLevel()))
+        {
+            forcedLog(Logger.FQCN, Level.TRACE, message, t);
+        }
+    }
+
+    public boolean isTraceEnabled()
+    {
+        if (repository.isDisabled(5000))
+        {
+            return false;
+        }
+        return Level.TRACE.isGreaterOrEqual(getEffectiveLevel());
+    }
+
+    static
+    {
+        Logger.FQCN = Logger.class.getName();
+    }
+
+}
+
+Affect(row-cnt:1) cost in 190 ms.
+</pre></div>
+</div>
+<p>反编译指定的方法：</p>
+<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>$ jad com.taobao.container.web.arthas.rest.MetricsController directMetrics
+
+ClassLoader:
++-com.taobao.pandora.boot.loader.ReLaunchURLClassLoader@1817d444
+  +-sun.misc.Launcher<span class="nv">$AppClassLoader</span>@14dad5dc
+    +-sun.misc.Launcher<span class="nv">$ExtClassLoader</span>@a38d7a3
+
+Location:
+/Users/zhuyong/middleware/tomcat-web/tomcat-web-web/target/classes/
+
+private Map&lt;String, Object&gt; directMetrics<span class="o">(</span>String ip, String<span class="o">[]</span> metrics<span class="o">)</span> <span class="o">{</span>
+    JSONObject obj<span class="p">;</span>
+    HashMap&lt;String, Object&gt; <span class="nv">result</span> <span class="o">=</span> new HashMap&lt;String, Object&gt;<span class="o">()</span><span class="p">;</span>
+    result.put<span class="o">(</span><span class="s2">&quot;success&quot;</span>, <span class="nb">false</span><span class="o">)</span><span class="p">;</span>
+    String <span class="nv">metricUrl</span> <span class="o">=</span> <span class="s2">&quot;http://&quot;</span> + ip + <span class="s2">&quot;:8006/metrics/specific&quot;</span><span class="p">;</span>
+    String <span class="nv">postBody</span> <span class="o">=</span> Arrays.stream<span class="o">(</span>metrics<span class="o">)</span>.map<span class="o">(</span>metric -&gt; <span class="s2">&quot;metric=&quot;</span> + metric<span class="o">)</span>.collect<span class="o">(</span>Collectors.joining<span class="o">(</span><span class="s2">&quot;&amp;&quot;</span><span class="o">))</span><span class="p">;</span>
+    HttpClientUtils.Response <span class="nv">resp</span> <span class="o">=</span> HttpClientUtils.sendPostRequest<span class="o">((</span>String<span class="o">)</span>metricUrl, <span class="o">(</span>String<span class="o">)</span>postBody<span class="o">)</span><span class="p">;</span>
+    <span class="k">if</span> <span class="o">(</span>resp.isSuccess<span class="o">()</span> <span class="o">&amp;&amp;</span> <span class="o">(</span><span class="nv">obj</span> <span class="o">=</span> JSON.parseObject<span class="o">(</span>resp.getContent<span class="o">()))</span>.containsKey<span class="o">(</span><span class="s2">&quot;success&quot;</span><span class="o">)</span> <span class="o">&amp;&amp;</span> obj.getBoolean<span class="o">(</span><span class="s2">&quot;success&quot;</span><span class="o">)</span>.booleanValue<span class="o">()</span> <span class="o">&amp;&amp;</span> obj.containsKey<span class="o">(</span><span class="s2">&quot;data&quot;</span><span class="o">))</span> <span class="o">{</span>
+        JSONArray <span class="nv">dataArray</span> <span class="o">=</span> obj.getJSONArray<span class="o">(</span><span class="s2">&quot;data&quot;</span><span class="o">)</span><span class="p">;</span>
+        HashMap&lt;String, Object&gt; <span class="nv">metricMap</span> <span class="o">=</span> new HashMap&lt;String, Object&gt;<span class="o">()</span><span class="p">;</span>
+        <span class="k">for</span> <span class="o">(</span>Object aDataArray : dataArray<span class="o">)</span> <span class="o">{</span>
+            JSONObject <span class="nv">o</span> <span class="o">=</span> <span class="o">(</span>JSONObject<span class="o">)</span>aDataArray<span class="p">;</span>
+            metricMap.put<span class="o">(</span>o.getString<span class="o">(</span><span class="s2">&quot;metric&quot;</span><span class="o">)</span>, o.get<span class="o">(</span><span class="s2">&quot;value&quot;</span><span class="o">))</span><span class="p">;</span>
+        <span class="o">}</span>
+        result.put<span class="o">(</span><span class="s2">&quot;data&quot;</span>, metricMap<span class="o">)</span><span class="p">;</span>
+        result.put<span class="o">(</span><span class="s2">&quot;success&quot;</span>, <span class="nb">true</span><span class="o">)</span><span class="p">;</span>
+        <span class="k">return</span> result<span class="p">;</span>
+    <span class="o">}</span>
+    <span class="k">return</span> result<span class="p">;</span>
+<span class="o">}</span>
+
+Affect<span class="o">(</span>row-cnt:1<span class="o">)</span> cost in <span class="m">1508</span> ms.
+</pre></div>
+</div>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="classloader.html" class="btn btn-neutral float-right" title="classloader" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="dump.html" class="btn btn-neutral" title="dump" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2018, Alibaba Middleware Group, and contributors.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'./',
+            VERSION:'3.0.1-RC-SNAPSHOT',
+            LANGUAGE:'zh_CN',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="_static/jquery.js"></script>
+      <script type="text/javascript" src="_static/underscore.js"></script>
+      <script type="text/javascript" src="_static/doctools.js"></script>
+      <script type="text/javascript" src="_static/translations.js"></script>
+      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  <script type="text/javascript" src="_static/js/theme.js"></script>
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+<div class="github-fork-ribbon-wrapper right">
+  <div class="github-fork-ribbon">
+    <a href="https://github.com/alibaba/arthas">Fork me at GitHub</a>
+  </div>
+</div>
+
+<script type="text/javascript" src="_static/add_badges.js"></script>
+ 
+
+
+</body>
+</html>

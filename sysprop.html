@@ -1,0 +1,394 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="zh-CN" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="zh-CN" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>sysprop &mdash; Arthas 3.0.1-RC-SNAPSHOT 文档</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="_static/overrides.css" type="text/css" />
+    <link rel="index" title="索引" href="genindex.html" />
+    <link rel="search" title="搜索" href="search.html" />
+    <link rel="next" title="getstatic" href="getstatic.html" />
+    <link rel="prev" title="jvm" href="jvm.html" />
+<script src="_static/center_page.js"></script>
+ 
+
+
+  
+  <script src="_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="index.html" class="icon icon-home"> Arthas
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                3.0.1-RC-SNAPSHOT
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="install-detail.html">安装</a></li>
+<li class="toctree-l1"><a class="reference internal" href="quick-start.html">快速入门</a></li>
+<li class="toctree-l1"><a class="reference internal" href="advanced-use.html">进阶使用</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="commands.html">命令列表</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="dashboard.html">dashboard</a></li>
+<li class="toctree-l2"><a class="reference internal" href="thread.html">thread</a></li>
+<li class="toctree-l2"><a class="reference internal" href="jvm.html">jvm</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">sysprop</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#">使用参考</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#">查看所有属性</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#">查看单个属性</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#">修改单个属性</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="getstatic.html">getstatic</a></li>
+<li class="toctree-l2"><a class="reference internal" href="sc.html">sc</a></li>
+<li class="toctree-l2"><a class="reference internal" href="sm.html">sm</a></li>
+<li class="toctree-l2"><a class="reference internal" href="dump.html">dump</a></li>
+<li class="toctree-l2"><a class="reference internal" href="jad.html">jad</a></li>
+<li class="toctree-l2"><a class="reference internal" href="classloader.html">classloader</a></li>
+<li class="toctree-l2"><a class="reference internal" href="redefine.html">redefine</a></li>
+<li class="toctree-l2"><a class="reference internal" href="monitor.html">monitor</a></li>
+<li class="toctree-l2"><a class="reference internal" href="watch.html">watch</a></li>
+<li class="toctree-l2"><a class="reference internal" href="trace.html">trace</a></li>
+<li class="toctree-l2"><a class="reference internal" href="stack.html">stack</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tt.html">tt</a></li>
+<li class="toctree-l2"><a class="reference internal" href="options.html">options</a></li>
+<li class="toctree-l2"><a class="reference internal" href="commands.html#arthas">Arthas 基础命令</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas/labels/user-case">用户案例</a></li>
+<li class="toctree-l1"><a class="reference internal" href="release-notes.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas/labels/question-answered">Questions and answers</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas">Fork me at GitHub</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas/CONTRIBUTING.md">参与贡献</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">Arthas</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="commands.html">命令列表</a> &raquo;</li>
+        
+      <li>sysprop</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            
+              <a href="https://github.com/alibaba/arthas/blob/master/site/src/site/sphinx/sysprop.md" class="fa fa-github"> Edit on GitHub</a>
+            
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="sysprop">
+<span id="sysprop"></span><h1>sysprop<a class="headerlink" href="#sysprop" title="永久链接至标题">¶</a></h1>
+<blockquote>
+<div>查看当前JVM的系统属性(<code class="docutils literal notranslate"><span class="pre">System</span> <span class="pre">Property</span></code>)</div></blockquote>
+<div class="section" id="">
+<span id="id1"></span><h2>使用参考<a class="headerlink" href="#" title="永久链接至标题">¶</a></h2>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span> <span class="n">USAGE</span><span class="p">:</span>
+   <span class="n">sysprop</span> <span class="p">[</span><span class="o">-</span><span class="n">h</span><span class="p">]</span> <span class="p">[</span><span class="nb">property</span><span class="o">-</span><span class="n">name</span><span class="p">]</span> <span class="p">[</span><span class="nb">property</span><span class="o">-</span><span class="n">value</span><span class="p">]</span>
+
+ <span class="n">SUMMARY</span><span class="p">:</span>
+   <span class="n">Display</span><span class="p">,</span> <span class="ow">and</span> <span class="n">change</span> <span class="nb">all</span> <span class="n">the</span> <span class="n">system</span> <span class="n">properties</span><span class="o">.</span>
+
+ <span class="n">EXAMPLES</span><span class="p">:</span>
+ <span class="n">sysprop</span>
+ <span class="n">sysprop</span> <span class="n">file</span><span class="o">.</span><span class="n">encoding</span>
+ <span class="n">sysprop</span> <span class="n">production</span><span class="o">.</span><span class="n">mode</span> <span class="n">true</span>
+
+ <span class="n">WIKI</span><span class="p">:</span>
+   <span class="n">https</span><span class="p">:</span><span class="o">//</span><span class="n">github</span><span class="o">.</span><span class="n">com</span><span class="o">/</span><span class="n">alibaba</span><span class="o">/</span><span class="n">arthas</span><span class="o">/</span><span class="n">wiki</span><span class="o">/</span><span class="n">sysprop</span>
+
+ <span class="n">OPTIONS</span><span class="p">:</span>
+ <span class="o">-</span><span class="n">h</span><span class="p">,</span> <span class="o">--</span><span class="n">help</span>                                  <span class="n">this</span> <span class="n">help</span>
+ <span class="o">&lt;</span><span class="nb">property</span><span class="o">-</span><span class="n">name</span><span class="o">&gt;</span>                             <span class="nb">property</span> <span class="n">name</span>
+ <span class="o">&lt;</span><span class="nb">property</span><span class="o">-</span><span class="n">value</span><span class="o">&gt;</span>                            <span class="nb">property</span> <span class="n">value</span>
+</pre></div>
+</div>
+<div class="section" id="">
+<span id="id2"></span><h3>查看所有属性<a class="headerlink" href="#" title="永久链接至标题">¶</a></h3>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ sysprop
+ KEY                                                  VALUE
+-------------------------------------------------------------------------------------------------------------------------------------
+ java.runtime.name                                    Java(TM) SE Runtime Environment
+ sun.boot.library.path                                /Library/Java/JavaVirtualMachines/jdk1.8.0_51.jdk/Contents/Home/jre/lib
+ java.vm.version                                      25.51-b03
+ user.country.format                                  CN
+ gopherProxySet                                       false
+ java.vm.vendor                                       Oracle Corporation
+ java.vendor.url                                      http://java.oracle.com/
+ path.separator                                       :
+ java.vm.name                                         Java HotSpot(TM) 64-Bit Server VM
+ file.encoding.pkg                                    sun.io
+ user.country                                         US
+ sun.java.launcher                                    SUN_STANDARD
+ sun.os.patch.level                                   unknown
+ java.vm.specification.name                           Java Virtual Machine Specification
+ user.dir                                             /private/var/tmp
+ java.runtime.version                                 1.8.0_51-b16
+ java.awt.graphicsenv                                 sun.awt.CGraphicsEnvironment
+ java.endorsed.dirs                                   /Library/Java/JavaVirtualMachines/jdk1.8.0_51.jdk/Contents/Home/jre/lib/endors
+                                                      ed
+ os.arch                                              x86_64
+ java.io.tmpdir                                       /var/folders/2c/tbxwzs4s4sbcvh7frbcc7n000000gn/T/
+ line.separator
+
+ java.vm.specification.vendor                         Oracle Corporation
+ os.name                                              Mac OS X
+ sun.jnu.encoding                                     UTF-8
+ java.library.path                                    /Users/wangtao/Library/Java/Extensions:/Library/Java/Extensions:/Network/Libra
+                                                      ry/Java/Extensions:/System/Library/Java/Extensions:/usr/lib/java:.
+ sun.nio.ch.bugLevel
+ java.specification.name                              Java Platform API Specification
+ java.class.version                                   52.0
+ sun.management.compiler                              HotSpot 64-Bit Tiered Compilers
+ os.version                                           10.12.6
+ user.home                                            /Users/wangtao
+ user.timezone                                        Asia/Shanghai
+ java.awt.printerjob                                  sun.lwawt.macosx.CPrinterJob
+ file.encoding                                        UTF-8
+ java.specification.version                           1.8
+ user.name                                            wangtao
+ java.class.path                                      .
+ java.vm.specification.version                        1.8
+ sun.arch.data.model                                  64
+ java.home                                            /Library/Java/JavaVirtualMachines/jdk1.8.0_51.jdk/Contents/Home/jre
+ sun.java.command                                     Test
+ java.specification.vendor                            Oracle Corporation
+ user.language                                        en
+ awt.toolkit                                          sun.lwawt.macosx.LWCToolkit
+ java.vm.info                                         mixed mode
+ java.version                                         1.8.0_51
+ java.ext.dirs                                        /Users/wangtao/Library/Java/Extensions:/Library/Java/JavaVirtualMachines/jdk1.
+                                                      8.0_51.jdk/Contents/Home/jre/lib/ext:/Library/Java/Extensions:/Network/Library
+                                                      /Java/Extensions:/System/Library/Java/Extensions:/usr/lib/java
+ sun.boot.class.path                                  /Library/Java/JavaVirtualMachines/jdk1.8.0_51.jdk/Contents/Home/jre/lib/resour
+                                                      ces.jar:/Library/Java/JavaVirtualMachines/jdk1.8.0_51.jdk/Contents/Home/jre/li
+                                                      b/rt.jar:/Library/Java/JavaVirtualMachines/jdk1.8.0_51.jdk/Contents/Home/jre/l
+                                                      ib/sunrsasign.jar:/Library/Java/JavaVirtualMachines/jdk1.8.0_51.jdk/Contents/H
+                                                      ome/jre/lib/jsse.jar:/Library/Java/JavaVirtualMachines/jdk1.8.0_51.jdk/Content
+                                                      s/Home/jre/lib/jce.jar:/Library/Java/JavaVirtualMachines/jdk1.8.0_51.jdk/Conte
+                                                      nts/Home/jre/lib/charsets.jar:/Library/Java/JavaVirtualMachines/jdk1.8.0_51.jd
+                                                      k/Contents/Home/jre/lib/jfr.jar:/Library/Java/JavaVirtualMachines/jdk1.8.0_51.
+                                                      jdk/Contents/Home/jre/classes
+ java.vendor                                          Oracle Corporation
+ file.separator                                       /
+ java.vendor.url.bug                                  http://bugreport.sun.com/bugreport/
+ sun.cpu.endian                                       little
+ sun.io.unicode.encoding                              UnicodeBig
+ sun.cpu.isalist
+</pre></div>
+</div>
+</div>
+<div class="section" id="">
+<span id="id3"></span><h3>查看单个属性<a class="headerlink" href="#" title="永久链接至标题">¶</a></h3>
+<blockquote>
+<div>支持通过<code class="docutils literal notranslate"><span class="pre">TAB</span></code>键自动补全</div></blockquote>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ sysprop java.version
+java.version=1.8.0_51
+</pre></div>
+</div>
+</div>
+<div class="section" id="">
+<span id="id4"></span><h3>修改单个属性<a class="headerlink" href="#" title="永久链接至标题">¶</a></h3>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ sysprop user.country
+user.country=US
+$ sysprop user.country CN
+Successfully changed the system property.
+user.country=CN
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="getstatic.html" class="btn btn-neutral float-right" title="getstatic" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="jvm.html" class="btn btn-neutral" title="jvm" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2018, Alibaba Middleware Group, and contributors.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'./',
+            VERSION:'3.0.1-RC-SNAPSHOT',
+            LANGUAGE:'zh_CN',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="_static/jquery.js"></script>
+      <script type="text/javascript" src="_static/underscore.js"></script>
+      <script type="text/javascript" src="_static/doctools.js"></script>
+      <script type="text/javascript" src="_static/translations.js"></script>
+      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  <script type="text/javascript" src="_static/js/theme.js"></script>
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+<div class="github-fork-ribbon-wrapper right">
+  <div class="github-fork-ribbon">
+    <a href="https://github.com/alibaba/arthas">Fork me at GitHub</a>
+  </div>
+</div>
+
+<script type="text/javascript" src="_static/add_badges.js"></script>
+ 
+
+
+</body>
+</html>

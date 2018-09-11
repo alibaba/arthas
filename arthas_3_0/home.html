@@ -1,0 +1,412 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="zh-CN" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="zh-CN" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Arthas 3.0使用说明 &mdash; Arthas 3.0.1-RC-SNAPSHOT 文档</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/overrides.css" type="text/css" />
+    <link rel="index" title="索引" href="../genindex.html" />
+    <link rel="search" title="搜索" href="../search.html" />
+<script src="../_static/center_page.js"></script>
+ 
+
+
+  
+  <script src="../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../index.html" class="icon icon-home"> Arthas
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                3.0.1-RC-SNAPSHOT
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../install-detail.html">安装</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../quick-start.html">快速入门</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../advanced-use.html">进阶使用</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../commands.html">命令列表</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas/labels/user-case">用户案例</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../release-notes.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas/labels/question-answered">Questions and answers</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas">Fork me at GitHub</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas/CONTRIBUTING.md">参与贡献</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">Arthas</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html">Docs</a> &raquo;</li>
+        
+      <li>Arthas 3.0使用说明</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            
+              <a href="https://github.com/alibaba/arthas/blob/master/site/src/site/sphinx/arthas_3_0/home.md" class="fa fa-github"> Edit on GitHub</a>
+            
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="arthas-3-0">
+<span id="arthas-3-0"></span><h1>Arthas 3.0使用说明<a class="headerlink" href="#arthas-3-0" title="永久链接至标题">¶</a></h1>
+<div class="section" id="">
+<span id="id1"></span><h2>命令行诊断<a class="headerlink" href="#" title="永久链接至标题">¶</a></h2>
+<ol>
+<li><p class="first">安装Arthas 3.0启动脚本</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>
+</pre></div>
+</div>
+</li>
+</ol>
+<p>curl -sLk http://TODO/arthas/install.sh | sh</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>
+2. 可以直接运行`./as.sh`，启动脚本会自动更新到最新版本
+</pre></div>
+</div>
+<p>➜  tmp ./as.sh
+Found existing java process, please choose one and hit RETURN.</p>
+<ul class="simple">
+<li>[1]: 53090 org.apache.catalina.startup.Bootstrap
+[2]: 50020
+[3]: 69893 org.jetbrains.idea.maven.server.RemoteMavenServer
+[4]: 93320 org.jetbrains.jps.cmdline.Launcher
+updating version 3.0.20170224142641 …
+######################################################################## 100.0%
+Archive:  /var/tmp/temp_3.0.20170224142641_35932/arthas-3.0.20170224142641-bin.zip
+creating: /var/tmp/temp_3.0.20170224142641_35932/arthas/
+inflating: /var/tmp/temp_3.0.20170224142641_35932/arthas/arthas-agent.jar
+inflating: /var/tmp/temp_3.0.20170224142641_35932/arthas/arthas-client.jar
+inflating: /var/tmp/temp_3.0.20170224142641_35932/arthas/arthas-core.jar
+inflating: /var/tmp/temp_3.0.20170224142641_35932/arthas/arthas-spy.jar
+inflating: /var/tmp/temp_3.0.20170224142641_35932/arthas/as.bat
+inflating: /var/tmp/temp_3.0.20170224142641_35932/arthas/as.sh
+inflating: /var/tmp/temp_3.0.20170224142641_35932/arthas/install-local.sh
+update completed.
+Calculating attach excecution time…
+Attaching to 53090…
+real    0m0.336s
+user    0m0.498s
+sys     0m0.075s
+Attach success.
+Connecting to arthas server… current timestamp is 1488178414
+Trying 127.0.0.1…
+Connected to localhost.
+Escape character is ‘^]’.
+,—.  ,——. ,——–.,–.  ,–.  ,—.   ,—.
+/  O  \ |  .–. ‘’–.  .–’|  ‘–’  | /  O  \ ‘   .-‘
+|  .-.  ||  ‘–’.’   |  |   |  .–.  ||  .-.  |<code class="docutils literal notranslate"><span class="pre">.</span></code>-.
+|  | |  ||  |\  \    |  |   |  |  |  ||  | |  |.-‘    |
+<code class="docutils literal notranslate"><span class="pre">--'</span></code>–’<code class="docutils literal notranslate"><span class="pre">--'</span> <span class="pre">'--'</span></code>–’   <code class="docutils literal notranslate"><span class="pre">--'</span></code>–’<code class="docutils literal notranslate"><span class="pre">--'</span></code>–’`—–’
+wiki: https://github.com/alibaba/arthas/wiki/
+version: 3.0.20170227131708
+pid: 53090
+timestamp: 1488178414548</li>
+</ul>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>
+### telnet远程诊断
+
+只要在上一步中启动了Arthas Server， 那么你可以直接在本地（针对日常环境的机器），或者是跳板机（针对预发和线上机器）上，通过telnet命令直接远程连上去诊断，使用上的体验完全一致。
+</pre></div>
+</div>
+<p>➜  telnet 11.164.45.24 3658
+Trying 11.164.45.24…
+Connected to 11.164.45.24.
+Escape character is ‘^]’.
+,—.  ,——. ,——–.,–.  ,–.  ,—.   ,—.
+/  O  \ |  .–. ‘’–.  .–’|  ‘–’  | /  O  \ ‘   .-‘
+|  .-.  ||  ‘–’.’   |  |   |  .–.  ||  .-.  |<code class="docutils literal notranslate"><span class="pre">.</span></code>-.
+|  | |  ||  |\  \    |  |   |  |  |  ||  | |  |.-‘    |
+<code class="docutils literal notranslate"><span class="pre">--'</span></code>–’<code class="docutils literal notranslate"><span class="pre">--'</span> <span class="pre">'--'</span></code>–’   <code class="docutils literal notranslate"><span class="pre">--'</span></code>–’<code class="docutils literal notranslate"><span class="pre">--'</span></code>–’`—–’</p>
+<p>wiki: https://github.com/alibaba/arthas/wiki/home
+version: 3.0.20170315140000
+pid: 1463
+timestamp: 1490938898194</p>
+<p>$</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>
+## 新特性介绍
+
+请参考[Arthas 3.0新特性](https://github.com/alibaba/arthas/wiki/arthas_3_0/new_feature)
+
+## FAQ
+
+首先请确保你的目标机器上，Arthas 2.0的server正常的shutdown了。否则，Arthas 3.0连上去之后不会正常启动。
+
+### 关于web console中文本的复制粘贴
+
+目前不同浏览器对复制粘贴的支持程度各不相同，mac下的Chrome是支持的最好的，目前的支持情况如下，我们正在想办法提供更好的复制粘贴体验
+
+&lt;table border=&quot;1&quot; class=&quot;docutils&quot;&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;操作系统&lt;/th&gt;
+&lt;th&gt;浏览器&lt;/th&gt;
+&lt;th&gt;复制&lt;/th&gt;
+&lt;th&gt;粘贴&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;macOS&lt;/td&gt;
+&lt;td&gt;Chrome&lt;/td&gt;
+&lt;td&gt;COMMAND-C，鼠标右键-复制&lt;/td&gt;
+&lt;td&gt;COMMAND-V，鼠标右键-粘贴&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;macOS&lt;/td&gt;
+&lt;td&gt;Safari&lt;/td&gt;
+&lt;td&gt;鼠标右键-复制&lt;/td&gt;
+&lt;td&gt;鼠标右键-粘贴&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;macOS&lt;/td&gt;
+&lt;td&gt;Firefox&lt;/td&gt;
+&lt;td&gt;&lt;/td&gt;
+&lt;td&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;Windows&lt;/td&gt;
+&lt;td&gt;Chrome&lt;/td&gt;
+&lt;td&gt;Ctrl + C&lt;/td&gt;
+&lt;td&gt;Ctrl + Shift + V&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;Windows&lt;/td&gt;
+&lt;td&gt;Firefox&lt;/td&gt;
+&lt;td&gt;&lt;/td&gt;
+&lt;td&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+
+### 关于字体大小
+
+如果觉得字体太小，可以通过浏览器内置的字体调整功能进行，web console支持自适应调整。
+
+&lt;table border=&quot;1&quot; class=&quot;docutils&quot;&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;操作系统&lt;/th&gt;
+&lt;th&gt;浏览器&lt;/th&gt;
+&lt;th&gt;增大字体&lt;/th&gt;
+&lt;th&gt;减小字体&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;macOS&lt;/td&gt;
+&lt;td&gt;Chrome&lt;/td&gt;
+&lt;td&gt;COMMAND加=&lt;/td&gt;
+&lt;td&gt;COMMAND加-&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;macOS&lt;/td&gt;
+&lt;td&gt;Safari&lt;/td&gt;
+&lt;td&gt;COMMAND加=&lt;/td&gt;
+&lt;td&gt;COMMAND加-&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;macOS&lt;/td&gt;
+&lt;td&gt;Firefox&lt;/td&gt;
+&lt;td&gt;&lt;/td&gt;
+&lt;td&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;Windows&lt;/td&gt;
+&lt;td&gt;Chrome&lt;/td&gt;
+&lt;td&gt;&lt;/td&gt;
+&lt;td&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;Windows&lt;/td&gt;
+&lt;td&gt;Firefox&lt;/td&gt;
+&lt;td&gt;&lt;/td&gt;
+&lt;td&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+</pre></div>
+</div>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2018, Alibaba Middleware Group, and contributors.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../',
+            VERSION:'3.0.1-RC-SNAPSHOT',
+            LANGUAGE:'zh_CN',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="../_static/jquery.js"></script>
+      <script type="text/javascript" src="../_static/underscore.js"></script>
+      <script type="text/javascript" src="../_static/doctools.js"></script>
+      <script type="text/javascript" src="../_static/translations.js"></script>
+      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  <script type="text/javascript" src="../_static/js/theme.js"></script>
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+<div class="github-fork-ribbon-wrapper right">
+  <div class="github-fork-ribbon">
+    <a href="https://github.com/alibaba/arthas">Fork me at GitHub</a>
+  </div>
+</div>
+
+<script type="text/javascript" src="../_static/add_badges.js"></script>
+ 
+
+
+</body>
+</html>

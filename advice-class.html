@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Arthas 用户文档 &mdash; Arthas 3.0.1-RC-SNAPSHOT 文档</title>
+  <title>表达式核心变量 &mdash; Arthas 3.0.1-RC-SNAPSHOT 文档</title>
   
 
   
@@ -29,7 +29,6 @@
     <link rel="stylesheet" href="_static/overrides.css" type="text/css" />
     <link rel="index" title="索引" href="genindex.html" />
     <link rel="search" title="搜索" href="search.html" />
-    <link rel="next" title="Arthas Install" href="install-detail.html" />
 <script src="_static/center_page.js"></script>
  
 
@@ -51,7 +50,7 @@
           
 
           
-            <a href="#" class="icon icon-home"> Arthas
+            <a href="index.html" class="icon icon-home"> Arthas
           
 
           
@@ -109,7 +108,7 @@
       <nav class="wy-nav-top" aria-label="top navigation">
         
           <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
-          <a href="#">Arthas</a>
+          <a href="index.html">Arthas</a>
         
       </nav>
 
@@ -138,16 +137,16 @@
 
   <ul class="wy-breadcrumbs">
     
-      <li><a href="#">Docs</a> &raquo;</li>
+      <li><a href="index.html">Docs</a> &raquo;</li>
         
-      <li>Arthas 用户文档</li>
+      <li>表达式核心变量</li>
     
     
       <li class="wy-breadcrumbs-aside">
         
             
             
-              <a href="https://github.com/alibaba/arthas/blob/master/site/src/site/sphinx/index.md" class="fa fa-github"> Edit on GitHub</a>
+              <a href="https://github.com/alibaba/arthas/blob/master/site/src/site/sphinx/advice-class.md" class="fa fa-github"> Edit on GitHub</a>
             
           
         
@@ -161,37 +160,47 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
             
-  <div class="section" id="arthas">
-<span id="arthas"></span><h1>Arthas 用户文档<a class="headerlink" href="#arthas" title="永久链接至标题">¶</a></h1>
-<div class="section" id="arthas">
-<span id="id1"></span><h2>Arthas（阿尔萨斯） 能为你做什么？<a class="headerlink" href="#arthas" title="永久链接至标题">¶</a></h2>
-<p>当你遇到以下类似问题而束手无策时，你看到了这篇文档，看到了 <code class="docutils literal notranslate"><span class="pre">Arthas</span></code>，那么恭喜你，你朝正确的方向又迈了一大步。</p>
-<ol class="simple">
-<li>这个类从哪个 jar 包加载的？为什么会报各种类相关的 Exception？</li>
-<li>我改的代码为什么没有执行到？难道是我没 commit？分支搞错了？</li>
-<li>遇到问题无法在预发 debug 一下，难道只能通过加日志再重新预发布吗？</li>
-<li>线上遇到某个用户的数据处理有问题，但线上同样无法 debug，线下无法重现！</li>
-<li>是否有一个全局视角来查看系统的运行状况？</li>
-<li>有什么办法可以监控到容器和中间件（AliTomcat、HSF、Notify 等）的实时运行状态？</li>
-</ol>
-<p><code class="docutils literal notranslate"><span class="pre">Arthas</span></code> 是全新的在线诊断工具，采用命令行交互模式，支持web端在线诊断，同时提供丰富的 <code class="docutils literal notranslate"><span class="pre">Tab</span></code> 自动补全功能，进一步方便进行问题的定位和诊断。</p>
+  <div class="section" id="">
+<span id="id1"></span><h1>表达式核心变量<a class="headerlink" href="#" title="永久链接至标题">¶</a></h1>
+<p>无论是匹配表达式也好、观察表达式也罢，他们核心判断变量都是围绕着一个 Arthas 中的通用通知对象 <code class="docutils literal notranslate"><span class="pre">Advice</span></code> 进行。</p>
+<p>它的简略代码结构如下</p>
+<div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="kd">public</span> <span class="kd">class</span> <span class="nc">Advice</span> <span class="o">{</span>
+
+    <span class="kd">private</span> <span class="kd">final</span> <span class="n">ClassLoader</span> <span class="n">loader</span><span class="o">;</span>
+    <span class="kd">private</span> <span class="kd">final</span> <span class="n">Class</span><span class="o">&lt;?&gt;</span> <span class="n">clazz</span><span class="o">;</span>
+    <span class="kd">private</span> <span class="kd">final</span> <span class="n">ArthasMethod</span> <span class="n">method</span><span class="o">;</span>
+    <span class="kd">private</span> <span class="kd">final</span> <span class="n">Object</span> <span class="n">target</span><span class="o">;</span>
+    <span class="kd">private</span> <span class="kd">final</span> <span class="n">Object</span><span class="o">[]</span> <span class="n">params</span><span class="o">;</span>
+    <span class="kd">private</span> <span class="kd">final</span> <span class="n">Object</span> <span class="n">returnObj</span><span class="o">;</span>
+    <span class="kd">private</span> <span class="kd">final</span> <span class="n">Throwable</span> <span class="n">throwExp</span><span class="o">;</span>
+    <span class="kd">private</span> <span class="kd">final</span> <span class="kt">boolean</span> <span class="n">isBefore</span><span class="o">;</span>
+    <span class="kd">private</span> <span class="kd">final</span> <span class="kt">boolean</span> <span class="n">isThrow</span><span class="o">;</span>
+    <span class="kd">private</span> <span class="kd">final</span> <span class="kt">boolean</span> <span class="n">isReturn</span><span class="o">;</span>
+    
+    <span class="c1">// getter/setter  </span>
+<span class="o">}</span>  
+</pre></div>
 </div>
-<div class="section" id="contents">
-<span id="contents"></span><h2>Contents<a class="headerlink" href="#contents" title="永久链接至标题">¶</a></h2>
-<div class="toctree-wrapper compound">
-<ul>
-<li class="toctree-l1"><a class="reference internal" href="install-detail.html">安装</a></li>
-<li class="toctree-l1"><a class="reference internal" href="quick-start.html">快速入门</a></li>
-<li class="toctree-l1"><a class="reference internal" href="advanced-use.html">进阶使用</a></li>
-<li class="toctree-l1"><a class="reference internal" href="commands.html">命令列表</a></li>
-<li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas/labels/user-case">用户案例</a></li>
-<li class="toctree-l1"><a class="reference internal" href="release-notes.html">Release Notes</a></li>
-<li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas/labels/question-answered">Questions and answers</a></li>
-<li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas">Fork me at GitHub</a></li>
-<li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas/CONTRIBUTING.md">参与贡献</a></li>
-</ul>
-</div>
-</div>
+<p>这里列一个表格来说明不同变量的含义</p>
+<p>|变量名|变量解释|
+|—|—|
+|loader|本次调用类所在的 ClassLoader|
+|clazz|本次调用类的 Class 引用|
+|method|本次调用方法反射引用|
+|target|本次调用类的实例|
+|params|本次调用参数列表，这是一个数组，如果方法是无参方法则为空数组|
+|returnObj|本次调用返回的对象。当且仅当 <code class="docutils literal notranslate"><span class="pre">isReturn==true</span></code> 成立时候有效，表明方法调用是以正常返回的方式结束。如果当前方法无返回值 <code class="docutils literal notranslate"><span class="pre">void</span></code>，则值为 null|
+|throwExp|本次调用抛出的异常。当且仅当 <code class="docutils literal notranslate"><span class="pre">isThrow==true</span></code> 成立时有效，表明方法调用是以抛出异常的方式结束。|
+|isBefore|辅助判断标记，当前的通知节点有可能是在方法一开始就通知，此时 <code class="docutils literal notranslate"><span class="pre">isBefore==true</span></code> 成立，同时 <code class="docutils literal notranslate"><span class="pre">isThrow==false</span></code> 和 <code class="docutils literal notranslate"><span class="pre">isReturn==false</span></code>，因为在方法刚开始时，还无法确定方法调用将会如何结束。|
+|isThrow|辅助判断标记，当前的方法调用以抛异常的形式结束。|
+|isReturn|辅助判断标记，当前的方法调用以正常返回的形式结束。|</p>
+<p>所有变量都可以在表达式中直接使用，如果在表达式中编写了不符合 OGNL 脚本语法或者引入了不在表格中的变量，则退出命令的执行；用户可以根据当前的异常信息修正<code class="docutils literal notranslate"><span class="pre">条件表达式</span></code>或<code class="docutils literal notranslate"><span class="pre">观察表达式</span></code></p>
+<blockquote>
+<div>OGNL表达式官网：https://commons.apache.org/proper/commons-ognl/language-guide.html</div></blockquote>
+<blockquote>
+<div>一些特殊的用法：</div></blockquote>
+<p>TODO</p>
+<p>middleware-container/arthas/issues/263</p>
 </div>
 
 
@@ -199,13 +208,6 @@
            
           </div>
           <footer>
-  
-    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
-      
-        <a href="install-detail.html" class="btn btn-neutral float-right" title="Arthas Install" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
-      
-      
-    </div>
   
 
   <hr/>

@@ -1,0 +1,508 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="zh-CN" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="zh-CN" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>tt &mdash; Arthas 3.0.1-RC-SNAPSHOT 文档</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="_static/overrides.css" type="text/css" />
+    <link rel="index" title="索引" href="genindex.html" />
+    <link rel="search" title="搜索" href="search.html" />
+    <link rel="next" title="options" href="options.html" />
+    <link rel="prev" title="stack" href="stack.html" />
+<script src="_static/center_page.js"></script>
+ 
+
+
+  
+  <script src="_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="index.html" class="icon icon-home"> Arthas
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                3.0.1-RC-SNAPSHOT
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="install-detail.html">安装</a></li>
+<li class="toctree-l1"><a class="reference internal" href="quick-start.html">快速入门</a></li>
+<li class="toctree-l1"><a class="reference internal" href="advanced-use.html">进阶使用</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="commands.html">命令列表</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="dashboard.html">dashboard</a></li>
+<li class="toctree-l2"><a class="reference internal" href="thread.html">thread</a></li>
+<li class="toctree-l2"><a class="reference internal" href="jvm.html">jvm</a></li>
+<li class="toctree-l2"><a class="reference internal" href="sysprop.html">sysprop</a></li>
+<li class="toctree-l2"><a class="reference internal" href="getstatic.html">getstatic</a></li>
+<li class="toctree-l2"><a class="reference internal" href="sc.html">sc</a></li>
+<li class="toctree-l2"><a class="reference internal" href="sm.html">sm</a></li>
+<li class="toctree-l2"><a class="reference internal" href="dump.html">dump</a></li>
+<li class="toctree-l2"><a class="reference internal" href="jad.html">jad</a></li>
+<li class="toctree-l2"><a class="reference internal" href="classloader.html">classloader</a></li>
+<li class="toctree-l2"><a class="reference internal" href="redefine.html">redefine</a></li>
+<li class="toctree-l2"><a class="reference internal" href="monitor.html">monitor</a></li>
+<li class="toctree-l2"><a class="reference internal" href="watch.html">watch</a></li>
+<li class="toctree-l2"><a class="reference internal" href="trace.html">trace</a></li>
+<li class="toctree-l2"><a class="reference internal" href="stack.html">stack</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">tt</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#">记录方法的调用</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#">检索调用记录</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#">查看调用信息</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#">重做一次调用</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="options.html">options</a></li>
+<li class="toctree-l2"><a class="reference internal" href="commands.html#arthas">Arthas 基础命令</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas/labels/user-case">用户案例</a></li>
+<li class="toctree-l1"><a class="reference internal" href="release-notes.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas/labels/question-answered">Questions and answers</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas">Fork me at GitHub</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas/CONTRIBUTING.md">参与贡献</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">Arthas</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="commands.html">命令列表</a> &raquo;</li>
+        
+      <li>tt</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            
+              <a href="https://github.com/alibaba/arthas/blob/master/site/src/site/sphinx/tt.md" class="fa fa-github"> Edit on GitHub</a>
+            
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="tt">
+<span id="tt"></span><h1>tt<a class="headerlink" href="#tt" title="永久链接至标题">¶</a></h1>
+<blockquote>
+<div>方法执行数据的时空隧道，记录下指定方法每次调用的入参和返回信息，并能对这些不同的时间下调用进行观测</div></blockquote>
+<p><code class="docutils literal notranslate"><span class="pre">watch</span></code> 虽然很方便和灵活，但需要提前想清楚观察表达式的拼写，这对排查问题而言要求太高，因为很多时候我们并不清楚问题出自于何方，只能靠蛛丝马迹进行猜测。</p>
+<p>这个时候如果能记录下当时方法调用的所有入参和返回值、抛出的异常会对整个问题的思考与判断非常有帮助。</p>
+<p>于是乎，TimeTunnel 命令就诞生了。</p>
+<div class="section" id="">
+<span id="id1"></span><h2>记录方法的调用<a class="headerlink" href="#" title="永久链接至标题">¶</a></h2>
+<ul>
+<li><p class="first">基本用法</p>
+<p>对于一个最基本的使用来说，就是记录下当前方法的每次调用环境现场。</p>
+<div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="n">$</span> <span class="n">tt</span> <span class="o">-</span><span class="n">t</span> <span class="o">-</span><span class="n">n</span> <span class="mi">3</span> <span class="o">*</span><span class="n">Test</span> <span class="n">print</span>
+<span class="n">Press</span> <span class="n">Ctrl</span><span class="o">+</span><span class="n">D</span> <span class="n">or</span> <span class="n">Ctrl</span><span class="o">+</span><span class="n">X</span> <span class="n">to</span> <span class="n">abort</span><span class="o">.</span>
+<span class="nf">Affect</span><span class="o">(</span><span class="n">class</span><span class="o">-</span><span class="n">cnt</span><span class="o">:</span><span class="mi">1</span> <span class="o">,</span> <span class="n">method</span><span class="o">-</span><span class="n">cnt</span><span class="o">:</span><span class="mi">1</span><span class="o">)</span> <span class="n">cost</span> <span class="n">in</span> <span class="mi">115</span> <span class="n">ms</span><span class="o">.</span>
+<span class="o">+----------+----------------------+------------+----------+----------+-----------------+--------------------------------+--------------------------------+</span>
+<span class="o">|</span>    <span class="n">INDEX</span> <span class="o">|</span>            <span class="n">TIMESTAMP</span> <span class="o">|</span>   <span class="n">COST</span><span class="o">(</span><span class="n">ms</span><span class="o">)</span> <span class="o">|</span>   <span class="n">IS</span><span class="o">-</span><span class="n">RET</span> <span class="o">|</span>   <span class="n">IS</span><span class="o">-</span><span class="n">EXP</span> <span class="o">|</span>          <span class="n">OBJECT</span> <span class="o">|</span>                          <span class="n">CLASS</span> <span class="o">|</span>                         <span class="n">METHOD</span> <span class="o">|</span>
+<span class="o">+----------+----------------------+------------+----------+----------+-----------------+--------------------------------+--------------------------------+</span>
+<span class="o">|</span>     <span class="mi">1007</span> <span class="o">|</span>  <span class="mi">2015</span><span class="o">-</span><span class="mo">07</span><span class="o">-</span><span class="mi">26</span> <span class="mi">12</span><span class="o">:</span><span class="mi">23</span><span class="o">:</span><span class="mi">21</span> <span class="o">|</span>        <span class="mi">138</span> <span class="o">|</span>     <span class="kc">true</span> <span class="o">|</span>    <span class="kc">false</span> <span class="o">|</span>      <span class="mh">0x42cc13a0</span> <span class="o">|</span>                <span class="n">GaOgnlUtilsTest</span> <span class="o">|</span>                          <span class="n">print</span> <span class="o">|</span>
+<span class="o">+----------+----------------------+------------+----------+----------+-----------------+--------------------------------+--------------------------------+</span>
+<span class="o">|</span>     <span class="mi">1008</span> <span class="o">|</span>  <span class="mi">2015</span><span class="o">-</span><span class="mo">07</span><span class="o">-</span><span class="mi">26</span> <span class="mi">12</span><span class="o">:</span><span class="mi">23</span><span class="o">:</span><span class="mi">22</span> <span class="o">|</span>        <span class="mi">143</span> <span class="o">|</span>     <span class="kc">true</span> <span class="o">|</span>    <span class="kc">false</span> <span class="o">|</span>      <span class="mh">0x42cc13a0</span> <span class="o">|</span>                <span class="n">GaOgnlUtilsTest</span> <span class="o">|</span>                          <span class="n">print</span> <span class="o">|</span>
+<span class="o">+----------+----------------------+------------+----------+----------+-----------------+--------------------------------+--------------------------------+</span>
+<span class="o">|</span>     <span class="mi">1009</span> <span class="o">|</span>  <span class="mi">2015</span><span class="o">-</span><span class="mo">07</span><span class="o">-</span><span class="mi">26</span> <span class="mi">12</span><span class="o">:</span><span class="mi">23</span><span class="o">:</span><span class="mi">23</span> <span class="o">|</span>        <span class="mi">130</span> <span class="o">|</span>     <span class="kc">true</span> <span class="o">|</span>    <span class="kc">false</span> <span class="o">|</span>      <span class="mh">0x42cc13a0</span> <span class="o">|</span>                <span class="n">GaOgnlUtilsTest</span> <span class="o">|</span>                          <span class="n">print</span> <span class="o">|</span>
+<span class="o">+----------+----------------------+------------+----------+----------+-----------------+--------------------------------+--------------------------------+</span>
+<span class="n">$</span> 
+</pre></div>
+</div>
+</li>
+<li><p class="first">命令参数解析</p>
+<ul>
+<li><p class="first"><code class="docutils literal notranslate"><span class="pre">-t</span></code></p>
+<p>tt 命令有很多个主参数，<code class="docutils literal notranslate"><span class="pre">-t</span></code> 就是其中之一。这个参数的表明希望记录下类 <code class="docutils literal notranslate"><span class="pre">*Test</span></code> 的 <code class="docutils literal notranslate"><span class="pre">print</span></code> 方法的每次执行情况。</p>
+</li>
+<li><p class="first"><code class="docutils literal notranslate"><span class="pre">-n</span> <span class="pre">3</span></code></p>
+<p>当你执行一个调用量不高的方法时可能你还能有足够的时间用 <code class="docutils literal notranslate"><span class="pre">CTRL+C</span></code> 中断 tt 命令记录的过程，但如果遇到调用量非常大的方法，瞬间就能将你的 JVM 内存撑爆。</p>
+<p>此时你可以通过 <code class="docutils literal notranslate"><span class="pre">-n</span></code> 参数指定你需要记录的次数，当达到记录次数时 Arthas 会主动中断tt命令的记录过程，避免人工操作无法停止的情况。</p>
+</li>
+</ul>
+</li>
+<li><p class="first">表格字段说明</p>
+</li>
+</ul>
+<table border="1" class="docutils">
+<thead>
+<tr>
+<th>表格字段</th>
+<th>字段解释</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>INDEX</td>
+<td>时间片段记录编号，每一个编号代表着一次调用，后续tt还有很多命令都是基于此编号指定记录操作，非常重要。</td>
+</tr>
+<tr>
+<td>TIMESTAMP</td>
+<td>方法执行的本机时间，记录了这个时间片段所发生的本机时间</td>
+</tr>
+<tr>
+<td>COST(ms)</td>
+<td>方法执行的耗时</td>
+</tr>
+<tr>
+<td>IS-RET</td>
+<td>方法是否以正常返回的形式结束</td>
+</tr>
+<tr>
+<td>IS-EXP</td>
+<td>方法是否以抛异常的形式结束</td>
+</tr>
+<tr>
+<td>OBJECT</td>
+<td>执行对象的<code>hashCode()</code>，注意，曾经有人误认为是对象在JVM中的无力内存地址，但很遗憾他不是。但他能帮助你简单的标记当前执行方法的类实体</td>
+</tr>
+<tr>
+<td>CLASS</td>
+<td>执行的类名</td>
+</tr>
+<tr>
+<td>METHOD</td>
+<td>执行的方法名</td>
+</tr>
+</tbody>
+</table><ul>
+<li><p class="first">条件表达式</p>
+<p>不知道大家是否有在使用过程中遇到以下困惑</p>
+<ul class="simple">
+<li>Arthas 似乎很难区分出重载的方法</li>
+<li>我只需要观察特定参数，但是 tt 却全部都给我记录了下来</li>
+</ul>
+<p>条件表达式也是用 <code class="docutils literal notranslate"><span class="pre">OGNL</span></code> 来编写，核心的判断对象依然是 <code class="docutils literal notranslate"><span class="pre">Advice</span></code> 对象。除了 <code class="docutils literal notranslate"><span class="pre">tt</span></code> 命令之外，<code class="docutils literal notranslate"><span class="pre">watch</span></code>、<code class="docutils literal notranslate"><span class="pre">trace</span></code>、<code class="docutils literal notranslate"><span class="pre">stack</span></code> 命令也都支持条件表达式。</p>
+</li>
+<li><p class="first">解决方法重载</p>
+<p><code class="docutils literal notranslate"><span class="pre">tt</span> <span class="pre">-t</span> <span class="pre">*Test</span> <span class="pre">print</span> <span class="pre">params[0].length==1</span></code></p>
+<p>通过制定参数个数的形式解决不同的方法签名，如果参数个数一样，你还可以这样写</p>
+<p><code class="docutils literal notranslate"><span class="pre">tt</span> <span class="pre">-t</span> <span class="pre">*Test</span> <span class="pre">print</span> <span class="pre">'params[1]</span> <span class="pre">instanceof</span> <span class="pre">Integer'</span></code></p>
+</li>
+<li><p class="first">解决指定参数</p>
+<p><code class="docutils literal notranslate"><span class="pre">tt</span> <span class="pre">-t</span> <span class="pre">*Test</span> <span class="pre">print</span> <span class="pre">params[0].mobile==&quot;13989838402&quot;</span></code></p>
+</li>
+<li><p class="first">构成条件表达式的 <code class="docutils literal notranslate"><span class="pre">Advice</span></code> 对象</p>
+<p>前边看到了很多条件表达式中，都适用了 <code class="docutils literal notranslate"><span class="pre">params[0]</span></code>，有关这个变量的介绍，请参考<a class="reference internal" href="advice-class.html"><span class="doc">表达式核心变量</span></a></p>
+</li>
+</ul>
+</div>
+<div class="section" id="">
+<span id="id2"></span><h2>检索调用记录<a class="headerlink" href="#" title="永久链接至标题">¶</a></h2>
+<p>当你用 <code class="docutils literal notranslate"><span class="pre">tt</span></code> 记录了一大片的时间片段之后，你希望能从中筛选出自己需要的时间片段，这个时候你就需要对现有记录进行检索。</p>
+<p>假设我们有这些记录</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ tt -l
++----------+----------------------+------------+----------+----------+-----------------+--------------------------------+--------------------------------+
+|    INDEX |            TIMESTAMP |   COST(ms) |   IS-RET |   IS-EXP |          OBJECT |                          CLASS |                         METHOD |
++----------+----------------------+------------+----------+----------+-----------------+--------------------------------+--------------------------------+
+|     1000 |  2015-07-26 01:16:27 |        130 |     true |    false |      0x42cc13a0 |                GaOgnlUtilsTest |                          print |
++----------+----------------------+------------+----------+----------+-----------------+--------------------------------+--------------------------------+
+|     1001 |  2015-07-26 01:16:27 |          0 |    false |     true |      0x42cc13a0 |                GaOgnlUtilsTest |                   printAddress |
++----------+----------------------+------------+----------+----------+-----------------+--------------------------------+--------------------------------+
+|     1002 |  2015-07-26 01:16:28 |        119 |     true |    false |      0x42cc13a0 |                GaOgnlUtilsTest |                          print |
++----------+----------------------+------------+----------+----------+-----------------+--------------------------------+--------------------------------+
+|     1003 |  2015-07-26 01:16:28 |          0 |    false |     true |      0x42cc13a0 |                GaOgnlUtilsTest |                   printAddress |
++----------+----------------------+------------+----------+----------+-----------------+--------------------------------+--------------------------------+
+|     1004 |  2015-07-26 12:21:56 |        130 |     true |    false |      0x42cc13a0 |                GaOgnlUtilsTest |                          print |
++----------+----------------------+------------+----------+----------+-----------------+--------------------------------+--------------------------------+
+|     1005 |  2015-07-26 12:21:57 |        138 |     true |    false |      0x42cc13a0 |                GaOgnlUtilsTest |                          print |
++----------+----------------------+------------+----------+----------+-----------------+--------------------------------+--------------------------------+
+|     1006 |  2015-07-26 12:21:58 |        130 |     true |    false |      0x42cc13a0 |                GaOgnlUtilsTest |                          print |
++----------+----------------------+------------+----------+----------+-----------------+--------------------------------+--------------------------------+
+Affect(row-cnt:7) cost in 2 ms.
+$ 
+</pre></div>
+</div>
+<p>我需要筛选出 <code class="docutils literal notranslate"><span class="pre">printAddress</span></code> 方法的调用信息</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ tt -s method.name==&quot;printAddress&quot;
++----------+----------------------+------------+----------+----------+-----------------+--------------------------------+--------------------------------+
+|    INDEX |            TIMESTAMP |   COST(ms) |   IS-RET |   IS-EXP |          OBJECT |                          CLASS |                         METHOD |
++----------+----------------------+------------+----------+----------+-----------------+--------------------------------+--------------------------------+
+|     1001 |  2015-07-26 01:16:27 |          0 |    false |     true |      0x42cc13a0 |                GaOgnlUtilsTest |                   printAddress |
++----------+----------------------+------------+----------+----------+-----------------+--------------------------------+--------------------------------+
+|     1003 |  2015-07-26 01:16:28 |          0 |    false |     true |      0x42cc13a0 |                GaOgnlUtilsTest |                   printAddress |
++----------+----------------------+------------+----------+----------+-----------------+--------------------------------+--------------------------------+
+Affect(row-cnt:2) cost in 55 ms.
+$ 
+</pre></div>
+</div>
+<p>你需要一个 <code class="docutils literal notranslate"><span class="pre">-s</span></code> 参数。<span style="color:red;">同样的，搜索表达式的核心对象依旧是 <code class="docutils literal notranslate"><span class="pre">Advice</span></code> 对象。</span></p>
+</div>
+<div class="section" id="">
+<span id="id3"></span><h2>查看调用信息<a class="headerlink" href="#" title="永久链接至标题">¶</a></h2>
+<p>对于具体一个时间片的信息而言，你可以通过 <code class="docutils literal notranslate"><span class="pre">-i</span></code> 参数后边跟着对应的 <code class="docutils literal notranslate"><span class="pre">INDEX</span></code> 编号查看到他的详细信息。</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ 
+$ tt -i 1003
++-----------------+------------------------------------------------------------------------------------------------------+
+|           INDEX | 1003                                                                                                 |
++-----------------+------------------------------------------------------------------------------------------------------+
+|      GMT-CREATE | 2015-07-26 01:16:28                                                                                  |
++-----------------+------------------------------------------------------------------------------------------------------+
+|        COST(ms) | 0                                                                                                    |
++-----------------+------------------------------------------------------------------------------------------------------+
+|          OBJECT | 0x42cc13a0                                                                                           |
++-----------------+------------------------------------------------------------------------------------------------------+
+|           CLASS | GaOgnlUtilsTest                                                                                      |
++-----------------+------------------------------------------------------------------------------------------------------+
+|          METHOD | printAddress                                                                                         |
++-----------------+------------------------------------------------------------------------------------------------------+
+|       IS-RETURN | false                                                                                                |
++-----------------+------------------------------------------------------------------------------------------------------+
+|    IS-EXCEPTION | true                                                                                                 |
++-----------------+------------------------------------------------------------------------------------------------------+
+|   PARAMETERS[0] | Address@53448f87                                                                                     |
++-----------------+------------------------------------------------------------------------------------------------------+
+| THROW-EXCEPTION | java.lang.RuntimeException: test                                                                     |
+|                 |     at GaOgnlUtilsTest.printAddress(Unknown Source)                                                  |
+|                 |     at GaOgnlUtilsTest.&lt;init&gt;(Unknown Source)                                                        |
+|                 |     at GaOgnlUtilsTest.main(Unknown Source)                                                          |
++-----------------+------------------------------------------------------------------------------------------------------+
+Affect(row-cnt:1) cost in 1 ms.
+$ 
+</pre></div>
+</div>
+</div>
+<div class="section" id="">
+<span id="id4"></span><h2>重做一次调用<a class="headerlink" href="#" title="永久链接至标题">¶</a></h2>
+<p>当你稍稍做了一些调整之后，你可能需要前端系统重新触发一次你的调用，此时得求爷爷告奶奶的需要前端配合联调的同学再次发起一次调用。而有些场景下，这个调用不是这么好触发的。</p>
+<p><code class="docutils literal notranslate"><span class="pre">tt</span></code> 命令由于保存了当时调用的所有现场信息，所以我们可以自己主动对一个 <code class="docutils literal notranslate"><span class="pre">INDEX</span></code> 编号的时间片自主发起一次调用，从而解放你的沟通成本。此时你需要 <code class="docutils literal notranslate"><span class="pre">-p</span></code> 参数。</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ tt -i 1003 -p
++-----------------+---------------------------------------------------------------------------------------------------------+
+|        RE-INDEX | 1003                                                                                                    |
++-----------------+---------------------------------------------------------------------------------------------------------+
+|      GMT-REPLAY | 2015-07-26 17:29:51                                                                                     |
++-----------------+---------------------------------------------------------------------------------------------------------+
+|          OBJECT | 0x42cc13a0                                                                                              |
++-----------------+---------------------------------------------------------------------------------------------------------+
+|           CLASS | GaOgnlUtilsTest                                                                                         |
++-----------------+---------------------------------------------------------------------------------------------------------+
+|          METHOD | printAddress                                                                                            |
++-----------------+---------------------------------------------------------------------------------------------------------+
+|   PARAMETERS[0] | Address@53448f87                                                                                        |
++-----------------+---------------------------------------------------------------------------------------------------------+
+|       IS-RETURN | false                                                                                                   |
++-----------------+---------------------------------------------------------------------------------------------------------+
+|    IS-EXCEPTION | true                                                                                                    |
++-----------------+---------------------------------------------------------------------------------------------------------+
+| THROW-EXCEPTION | java.lang.RuntimeException: test                                                                        |
+|                 |     at GaOgnlUtilsTest.printAddress(GaOgnlUtilsTest.java:78)                                            |
+|                 |     at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)                                      |
+|                 |     at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)                    |
+|                 |     at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)            |
+|                 |     at java.lang.reflect.Method.invoke(Method.java:483)                                                 |
+|                 |     at com.github.ompc.Arthas.util.GaMethod.invoke(GaMethod.java:81)                                     |
+|                 |     at com.github.ompc.Arthas.command.TimeTunnelCommand$6.action(TimeTunnelCommand.java:592)             |
+|                 |     at com.github.ompc.Arthas.server.DefaultCommandHandler.execute(DefaultCommandHandler.java:175)       |
+|                 |     at com.github.ompc.Arthas.server.DefaultCommandHandler.executeCommand(DefaultCommandHandler.java:83) |
+|                 |     at com.github.ompc.Arthas.server.GaServer$4.run(GaServer.java:329)                                   |
+|                 |     at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1142)                  |
+|                 |     at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:617)                  |
+|                 |     at java.lang.Thread.run(Thread.java:745)                                                            |
++-----------------+---------------------------------------------------------------------------------------------------------+
+replay time fragment[1003] success.
+Affect(row-cnt:1) cost in 3 ms.
+$ 
+</pre></div>
+</div>
+<p>你会发现结果虽然一样，但调用的路径发生了变化，有原来的程序发起变成了 Arthas 自己的内部线程发起的调用了。</p>
+<ul>
+<li><p class="first">需要强调的点</p>
+<ol>
+<li><p class="first"><strong>ThreadLocal 信息丢失</strong></p>
+<p>很多框架偷偷的将一些环境变量信息塞到了发起调用线程的 ThreadLocal 中，由于调用线程发生了变化，这些 ThreadLocal 线程信息无法通过 Arthas 保存，所以这些信息将会丢失。</p>
+<p>一些常见的 CASE 比如：鹰眼的 TraceId 等。</p>
+</li>
+<li><p class="first"><strong>引用的对象</strong></p>
+<p>需要强调的是，<code class="docutils literal notranslate"><span class="pre">tt</span></code> 命令是将当前环境的对象引用保存起来，但仅仅也只能保存一个引用而已。如果方法内部对入参进行了变更，或者返回的对象经过了后续的处理，那么在 <code class="docutils literal notranslate"><span class="pre">tt</span></code> 查看的时候将无法看到当时最准确的值。这也是为什么 <code class="docutils literal notranslate"><span class="pre">watch</span></code> 命令存在的意义。</p>
+</li>
+</ol>
+</li>
+</ul>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="options.html" class="btn btn-neutral float-right" title="options" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="stack.html" class="btn btn-neutral" title="stack" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2018, Alibaba Middleware Group, and contributors.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'./',
+            VERSION:'3.0.1-RC-SNAPSHOT',
+            LANGUAGE:'zh_CN',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="_static/jquery.js"></script>
+      <script type="text/javascript" src="_static/underscore.js"></script>
+      <script type="text/javascript" src="_static/doctools.js"></script>
+      <script type="text/javascript" src="_static/translations.js"></script>
+      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  <script type="text/javascript" src="_static/js/theme.js"></script>
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+<div class="github-fork-ribbon-wrapper right">
+  <div class="github-fork-ribbon">
+    <a href="https://github.com/alibaba/arthas">Fork me at GitHub</a>
+  </div>
+</div>
+
+<script type="text/javascript" src="_static/add_badges.js"></script>
+ 
+
+
+</body>
+</html>

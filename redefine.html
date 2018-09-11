@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Arthas 用户文档 &mdash; Arthas 3.0.1-RC-SNAPSHOT 文档</title>
+  <title>redefine &mdash; Arthas 3.0.1-RC-SNAPSHOT 文档</title>
   
 
   
@@ -29,7 +29,8 @@
     <link rel="stylesheet" href="_static/overrides.css" type="text/css" />
     <link rel="index" title="索引" href="genindex.html" />
     <link rel="search" title="搜索" href="search.html" />
-    <link rel="next" title="Arthas Install" href="install-detail.html" />
+    <link rel="next" title="monitor" href="monitor.html" />
+    <link rel="prev" title="classloader" href="classloader.html" />
 <script src="_static/center_page.js"></script>
  
 
@@ -51,7 +52,7 @@
           
 
           
-            <a href="#" class="icon icon-home"> Arthas
+            <a href="index.html" class="icon icon-home"> Arthas
           
 
           
@@ -85,11 +86,35 @@
               
             
             
-              <ul>
+              <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="install-detail.html">安装</a></li>
 <li class="toctree-l1"><a class="reference internal" href="quick-start.html">快速入门</a></li>
 <li class="toctree-l1"><a class="reference internal" href="advanced-use.html">进阶使用</a></li>
-<li class="toctree-l1"><a class="reference internal" href="commands.html">命令列表</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="commands.html">命令列表</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="dashboard.html">dashboard</a></li>
+<li class="toctree-l2"><a class="reference internal" href="thread.html">thread</a></li>
+<li class="toctree-l2"><a class="reference internal" href="jvm.html">jvm</a></li>
+<li class="toctree-l2"><a class="reference internal" href="sysprop.html">sysprop</a></li>
+<li class="toctree-l2"><a class="reference internal" href="getstatic.html">getstatic</a></li>
+<li class="toctree-l2"><a class="reference internal" href="sc.html">sc</a></li>
+<li class="toctree-l2"><a class="reference internal" href="sm.html">sm</a></li>
+<li class="toctree-l2"><a class="reference internal" href="dump.html">dump</a></li>
+<li class="toctree-l2"><a class="reference internal" href="jad.html">jad</a></li>
+<li class="toctree-l2"><a class="reference internal" href="classloader.html">classloader</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">redefine</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#">参数说明</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#">使用参考</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="monitor.html">monitor</a></li>
+<li class="toctree-l2"><a class="reference internal" href="watch.html">watch</a></li>
+<li class="toctree-l2"><a class="reference internal" href="trace.html">trace</a></li>
+<li class="toctree-l2"><a class="reference internal" href="stack.html">stack</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tt.html">tt</a></li>
+<li class="toctree-l2"><a class="reference internal" href="options.html">options</a></li>
+<li class="toctree-l2"><a class="reference internal" href="commands.html#arthas">Arthas 基础命令</a></li>
+</ul>
+</li>
 <li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas/labels/user-case">用户案例</a></li>
 <li class="toctree-l1"><a class="reference internal" href="release-notes.html">Release Notes</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas/labels/question-answered">Questions and answers</a></li>
@@ -109,7 +134,7 @@
       <nav class="wy-nav-top" aria-label="top navigation">
         
           <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
-          <a href="#">Arthas</a>
+          <a href="index.html">Arthas</a>
         
       </nav>
 
@@ -138,16 +163,18 @@
 
   <ul class="wy-breadcrumbs">
     
-      <li><a href="#">Docs</a> &raquo;</li>
+      <li><a href="index.html">Docs</a> &raquo;</li>
         
-      <li>Arthas 用户文档</li>
+          <li><a href="commands.html">命令列表</a> &raquo;</li>
+        
+      <li>redefine</li>
     
     
       <li class="wy-breadcrumbs-aside">
         
             
             
-              <a href="https://github.com/alibaba/arthas/blob/master/site/src/site/sphinx/index.md" class="fa fa-github"> Edit on GitHub</a>
+              <a href="https://github.com/alibaba/arthas/blob/master/site/src/site/sphinx/redefine.md" class="fa fa-github"> Edit on GitHub</a>
             
           
         
@@ -161,35 +188,38 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
             
-  <div class="section" id="arthas">
-<span id="arthas"></span><h1>Arthas 用户文档<a class="headerlink" href="#arthas" title="永久链接至标题">¶</a></h1>
-<div class="section" id="arthas">
-<span id="id1"></span><h2>Arthas（阿尔萨斯） 能为你做什么？<a class="headerlink" href="#arthas" title="永久链接至标题">¶</a></h2>
-<p>当你遇到以下类似问题而束手无策时，你看到了这篇文档，看到了 <code class="docutils literal notranslate"><span class="pre">Arthas</span></code>，那么恭喜你，你朝正确的方向又迈了一大步。</p>
-<ol class="simple">
-<li>这个类从哪个 jar 包加载的？为什么会报各种类相关的 Exception？</li>
-<li>我改的代码为什么没有执行到？难道是我没 commit？分支搞错了？</li>
-<li>遇到问题无法在预发 debug 一下，难道只能通过加日志再重新预发布吗？</li>
-<li>线上遇到某个用户的数据处理有问题，但线上同样无法 debug，线下无法重现！</li>
-<li>是否有一个全局视角来查看系统的运行状况？</li>
-<li>有什么办法可以监控到容器和中间件（AliTomcat、HSF、Notify 等）的实时运行状态？</li>
-</ol>
-<p><code class="docutils literal notranslate"><span class="pre">Arthas</span></code> 是全新的在线诊断工具，采用命令行交互模式，支持web端在线诊断，同时提供丰富的 <code class="docutils literal notranslate"><span class="pre">Tab</span></code> 自动补全功能，进一步方便进行问题的定位和诊断。</p>
-</div>
-<div class="section" id="contents">
-<span id="contents"></span><h2>Contents<a class="headerlink" href="#contents" title="永久链接至标题">¶</a></h2>
-<div class="toctree-wrapper compound">
-<ul>
-<li class="toctree-l1"><a class="reference internal" href="install-detail.html">安装</a></li>
-<li class="toctree-l1"><a class="reference internal" href="quick-start.html">快速入门</a></li>
-<li class="toctree-l1"><a class="reference internal" href="advanced-use.html">进阶使用</a></li>
-<li class="toctree-l1"><a class="reference internal" href="commands.html">命令列表</a></li>
-<li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas/labels/user-case">用户案例</a></li>
-<li class="toctree-l1"><a class="reference internal" href="release-notes.html">Release Notes</a></li>
-<li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas/labels/question-answered">Questions and answers</a></li>
-<li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas">Fork me at GitHub</a></li>
-<li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas/CONTRIBUTING.md">参与贡献</a></li>
-</ul>
+  <div class="section" id="redefine">
+<span id="redefine"></span><h1>redefine<a class="headerlink" href="#redefine" title="永久链接至标题">¶</a></h1>
+<blockquote>
+<div>加载外部的<code class="docutils literal notranslate"><span class="pre">.class</span></code>文件，redefine jvm已加载的类。</div></blockquote>
+<p>参考：<a class="reference external" href="https://docs.oracle.com/javase/8/docs/api/java/lang/instrument/Instrumentation.html#redefineClasses-java.lang.instrument.ClassDefinition...-">Instrumentation#redefineClasses</a></p>
+<blockquote>
+<div>注意， redefine后的原来的类不能恢复，redefine有可能失败（比如增加了新的field），参考jdk本身的文档。</div></blockquote>
+<div class="section" id="">
+<span id="id1"></span><h2>参数说明<a class="headerlink" href="#" title="永久链接至标题">¶</a></h2>
+<table border="1" class="docutils">
+<thead>
+<tr>
+<th align="right">参数名称</th>
+<th align="left">参数说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="right">[c:]</td>
+<td align="left">ClassLoader的hashcode</td>
+</tr>
+<tr>
+<td align="right">[p:]</td>
+<td align="left">外部的<code>.class</code>文件的完整路径，支持多个</td>
+</tr>
+</tbody>
+</table></div>
+<div class="section" id="">
+<span id="id2"></span><h2>使用参考<a class="headerlink" href="#" title="永久链接至标题">¶</a></h2>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>   redefine -p /tmp/Test.class
+   redefine -c 327a647b -p /tmp/Test.class /tmp/Test\$Inner.class
+</pre></div>
 </div>
 </div>
 </div>
@@ -202,8 +232,10 @@
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="install-detail.html" class="btn btn-neutral float-right" title="Arthas Install" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+        <a href="monitor.html" class="btn btn-neutral float-right" title="monitor" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
       
+      
+        <a href="classloader.html" class="btn btn-neutral" title="classloader" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
       
     </div>
   

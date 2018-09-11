@@ -1,0 +1,450 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="zh-CN" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="zh-CN" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>AutoStructify Component &mdash; Arthas 3.0.1-RC-SNAPSHOT 文档</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="_static/overrides.css" type="text/css" />
+    <link rel="index" title="索引" href="genindex.html" />
+    <link rel="search" title="搜索" href="search.html" />
+<script src="_static/center_page.js"></script>
+ 
+
+
+  
+  <script src="_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="index.html" class="icon icon-home"> Arthas
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                3.0.1-RC-SNAPSHOT
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="install-detail.html">安装</a></li>
+<li class="toctree-l1"><a class="reference internal" href="quick-start.html">快速入门</a></li>
+<li class="toctree-l1"><a class="reference internal" href="advanced-use.html">进阶使用</a></li>
+<li class="toctree-l1"><a class="reference internal" href="commands.html">命令列表</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas/labels/user-case">用户案例</a></li>
+<li class="toctree-l1"><a class="reference internal" href="release-notes.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas/labels/question-answered">Questions and answers</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas">Fork me at GitHub</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas/CONTRIBUTING.md">参与贡献</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">Arthas</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+      <li>AutoStructify Component</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            
+              <a href="https://github.com/alibaba/arthas/blob/master/site/src/site/sphinx/auto_structify.md" class="fa fa-github"> Edit on GitHub</a>
+            
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="autostructify-component">
+<span id="autostructify-component"></span><h1>AutoStructify Component<a class="headerlink" href="#autostructify-component" title="永久链接至标题">¶</a></h1>
+<p>AutoStructify is a component in recommonmark that takes a parsed docutil AST by <code class="docutils literal notranslate"><span class="pre">CommonMarkParser</span></code>,
+and transform it to another AST that introduces some of more. This enables additional features
+of recommonmark syntax, to introduce more structure into the final generated document.</p>
+<div class="section" id="configuring-autostructify">
+<span id="configuring-autostructify"></span><h2>Configuring AutoStructify<a class="headerlink" href="#configuring-autostructify" title="永久链接至标题">¶</a></h2>
+<p>The behavior of AutoStructify can be configured via a dict in document setting.
+In sphinx, you can configure it by <code class="docutils literal notranslate"><span class="pre">conf.py</span></code>. The following snippet
+is what is actually used to generate this document, see full code at <a class="reference external" href="https://github.com/alibaba/arthas/tree/master/site/src/site/sphinx/conf.py">conf.py</a>.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">github_doc_root</span> <span class="o">=</span> <span class="s1">&#39;https://github.com/rtfd/recommonmark/tree/master/doc/&#39;</span>
+<span class="k">def</span> <span class="nf">setup</span><span class="p">(</span><span class="n">app</span><span class="p">):</span>
+    <span class="n">app</span><span class="o">.</span><span class="n">add_config_value</span><span class="p">(</span><span class="s1">&#39;recommonmark_config&#39;</span><span class="p">,</span> <span class="p">{</span>
+            <span class="s1">&#39;url_resolver&#39;</span><span class="p">:</span> <span class="k">lambda</span> <span class="n">url</span><span class="p">:</span> <span class="n">github_doc_root</span> <span class="o">+</span> <span class="n">url</span><span class="p">,</span>
+            <span class="s1">&#39;auto_toc_tree_section&#39;</span><span class="p">:</span> <span class="s1">&#39;Contents&#39;</span><span class="p">,</span>
+            <span class="p">},</span> <span class="bp">True</span><span class="p">)</span>
+    <span class="n">app</span><span class="o">.</span><span class="n">add_transform</span><span class="p">(</span><span class="n">AutoStructify</span><span class="p">)</span>
+
+</pre></div>
+</div>
+<p>All the features are by default enabled</p>
+<p><strong><em>List of options</em></strong></p>
+<ul class="simple">
+<li><strong>enable_auto_toc_tree</strong>: whether enable <a class="reference external" href="#auto-toc-tree">Auto Toc Tree</a> feature.</li>
+<li><strong>auto_toc_tree_section</strong>: when enabled,  <a class="reference external" href="#auto-toc-tree">Auto Toc Tree</a> will only be enabled on section that matches the title.</li>
+<li><strong>enable_auto_doc_ref</strong>: whether enable <a class="reference external" href="#auto-doc-ref">Auto Doc Ref</a> feature.  <strong>Deprecated</strong></li>
+<li><strong>enable_math</strong>: whether enable <a class="reference external" href="#math-formula">Math Formula</a></li>
+<li><strong>enable_inline_math</strong>: whether enable <a class="reference external" href="#inline-math">Inline Math</a></li>
+<li><strong>enable_eval_rst</strong>: whether <a class="reference external" href="#embed-restructuredtext">Embed reStructuredText</a> is enabled.</li>
+<li><strong>url_resolver</strong>: a function that maps a existing relative position in the document to a http link</li>
+</ul>
+</div>
+<div class="section" id="auto-toc-tree">
+<span id="auto-toc-tree"></span><h2>Auto Toc Tree<a class="headerlink" href="#auto-toc-tree" title="永久链接至标题">¶</a></h2>
+<p>One of important command in tools like sphinx is <code class="docutils literal notranslate"><span class="pre">toctree</span></code>. This is a command to generate table of contents and
+tell sphinx about the structure of the documents. In markdown, usually we manually list of contents by a bullet list
+of url reference to the other documents.</p>
+<p>AutoStructify will transforms bullet list of document URLs</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">*</span> <span class="p">[</span><span class="n">Title1</span><span class="p">](</span><span class="n">doc1</span><span class="o">.</span><span class="n">md</span><span class="p">)</span>
+<span class="o">*</span> <span class="p">[</span><span class="n">Title2</span><span class="p">](</span><span class="n">doc2</span><span class="o">.</span><span class="n">md</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>will be translated to the AST of following reStructuredText code</p>
+<div class="highlight-rst notranslate"><div class="highlight"><pre><span></span><span class="p">..</span> <span class="ow">toctree</span><span class="p">::</span>
+   <span class="nc">:maxdepth:</span> <span class="nf">1</span>
+
+   doc1
+   doc2
+</pre></div>
+</div>
+<p>You can also find the usage of this feature in <code class="docutils literal notranslate"><span class="pre">index.md</span></code> of this document.</p>
+</div>
+<div class="section" id="auto-doc-ref">
+<span id="auto-doc-ref"></span><h2>Auto Doc Ref<a class="headerlink" href="#auto-doc-ref" title="永久链接至标题">¶</a></h2>
+<div class="admonition note">
+<p class="first admonition-title">注解</p>
+<p class="last"><strong>This option is deprecated.</strong>
+This option has been superseded by the default linking behavior, which
+will first try to resolve as an internal reference, and then as an
+external reference.</p>
+</div>
+<p>It is common to refer to another document page in one document. We usually use reference to do that.
+AutoStructify will translate these reference block into a structured document reference. For example</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">[</span><span class="n">API</span> <span class="n">Reference</span><span class="p">](</span><span class="n">api_ref</span><span class="o">.</span><span class="n">md</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>will be translated to the AST of following reStructuredText code</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>:doc:`API Reference &lt;/api_ref&gt;`
+</pre></div>
+</div>
+<p>And it will be rendered as <a class="reference external" href="https://github.com/alibaba/arthas/tree/master/site/src/site/sphinx/api_ref">API Reference</a></p>
+</div>
+<div class="section" id="url-resolver">
+<span id="url-resolver"></span><h2>URL Resolver<a class="headerlink" href="#url-resolver" title="永久链接至标题">¶</a></h2>
+<p>Sometimes in a markdown, we want to refer to the code in the same repo.
+This can usually be done by a reference by reference path. However, since the generated document is hosted elsewhere,
+the relative path may not work in generated document site. URL resolver is introduced to solve this problem.</p>
+<p>Basically, you can define a function that maps an relative path of document to the http path that you wish to link to.
+For example, the setting  mentioned in the beginning of this document used a resolver that maps the files to github.
+So <code class="docutils literal notranslate"><span class="pre">[parser</span> <span class="pre">code](../recommonmark/parser.py)</span></code> will be translated into <a class="reference external" href="https://github.com/alibaba/arthas/tree/master/site/src/site/sphinx/../recommonmark/parser.py">parser code</a></p>
+<p>Note that the reference to the internal document will not be passed to url resolver, and will be linked to the internal document pages correctly, see <a class="reference external" href="#auto-doc-ref">Auto Doc Ref</a>.</p>
+</div>
+<div class="section" id="codeblock-extensions">
+<span id="codeblock-extensions"></span><h2>Codeblock Extensions<a class="headerlink" href="#codeblock-extensions" title="永久链接至标题">¶</a></h2>
+<p>In markdown, you can write codeblocks fenced by (at least) three backticks
+(<code class="docutils literal notranslate"><span class="pre">```</span></code>).  The following is an example of codeblock.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>``` language
+some code block
+```
+</pre></div>
+</div>
+<p>Codeblock extensions are mechanism that specialize certain codeblocks to different render behaviors.
+The extension will be trigger by the language argument to the codeblck</p>
+<div class="section" id="syntax-highlight">
+<span id="syntax-highlight"></span><h3>Syntax Highlight<a class="headerlink" href="#syntax-highlight" title="永久链接至标题">¶</a></h3>
+<p>You can highlight syntax of codeblocks by specifying the language you need. For example,</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>```python
+def function():
+    return True
+```
+</pre></div>
+</div>
+<p>will be rendered as</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">function</span><span class="p">():</span>
+    <span class="k">return</span> <span class="bp">True</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="math-formula">
+<span id="math-formula"></span><h3>Math Formula<a class="headerlink" href="#math-formula" title="永久链接至标题">¶</a></h3>
+<p>You can normally write latex math formula with <code class="docutils literal notranslate"><span class="pre">math</span></code> codeblock. See also <a class="reference external" href="#inline-math">Inline Math</a>.</p>
+<p>Example</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>```math
+E = m c^2
+```
+</pre></div>
+</div>
+<p>will be rendered as</p>
+<div class="math notranslate nohighlight">
+\[E = m c^2
+\]</div>
+</div>
+<div class="section" id="embed-restructuredtext">
+<span id="embed-restructuredtext"></span><h3>Embed reStructuredText<a class="headerlink" href="#embed-restructuredtext" title="永久链接至标题">¶</a></h3>
+<p>Recommonmark also allows embedding reStructuredText syntax in the codeblocks.
+There are two styles for embedding reStructuredText. The first is enabled by <code class="docutils literal notranslate"><span class="pre">eval_rst</span></code> codeblock. The content of codeblock will be parsed as reStructuredText and insert into the document. This can be used to quickly introduce some of reStructuredText command that not yet available in markdown. For example,</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>```eval_rst
+.. autoclass:: recommonmark.transform.AutoStructify
+    :show-inheritance:
+```
+</pre></div>
+</div>
+<p>will be rendered as</p>
+<dl class="class">
+<dt id="recommonmark.transform.AutoStructify">
+<em class="property">class </em><code class="descclassname">recommonmark.transform.</code><code class="descname">AutoStructify</code><span class="sig-paren">(</span><em>document</em>, <em>startnode=None</em><span class="sig-paren">)</span><a class="headerlink" href="#recommonmark.transform.AutoStructify" title="永久链接至目标">¶</a></dt>
+<dd><p>基类：<code class="xref py py-class docutils literal notranslate"><span class="pre">docutils.transforms.Transform</span></code></p>
+<p>Automatically try to transform blocks to sphinx directives.</p>
+<p>This class is designed to handle AST generated by CommonMarkParser.</p>
+</dd></dl>
+
+<p>This example used to use sphinx autodoc to insert document of AutoStructify class definition into the document.</p>
+<p>The second style is a shorthand of the above style. It allows you to leave off the eval_rst .. portion and directly render directives. For example,</p>
+<div class="highlight-rst notranslate"><div class="highlight"><pre><span></span><span class="gh">``` important:: Its a note! in markdown!</span>
+<span class="gh">```</span>
+</pre></div>
+</div>
+<p>will be rendered as</p>
+<div class="highlight-important:: Its a note! in markdown! notranslate"><div class="highlight"><pre><span></span>
+</pre></div>
+</div>
+<div class="section" id="an-advanced-example">
+<span id="an-advanced-example"></span><h4>An Advanced Example<a class="headerlink" href="#an-advanced-example" title="永久链接至标题">¶</a></h4>
+<div class="highlight-rst notranslate"><div class="highlight"><pre><span></span><span class="s">``` sidebar:: Line numbers and highlights</span>
+
+<span class="s">     emphasis-lines:</span>
+<span class="s">       highlights the lines.</span>
+<span class="s">     linenos:</span>
+<span class="s">       shows the line numbers as well.</span>
+<span class="s">     caption:</span>
+<span class="s">       shown at the top of the code block.</span>
+<span class="s">     name:</span>
+<span class="s">       may be referenced with `:ref:` later.</span>
+<span class="s">```</span>
+
+<span class="s">``` code-block:: markdown</span>
+     :linenos:
+     <span class="nc">:emphasize-lines:</span> <span class="nf">3,5</span>
+     <span class="nc">:caption:</span> <span class="nf">An example code-block with everything turned on.</span>
+     <span class="nc">:name:</span> <span class="nf">Full code-block example</span>
+
+     # Comment line
+     import System
+     System.run_emphasis_line
+     # Long lines in code blocks create a auto horizontal scrollbar
+     System.exit!
+<span class="s">```</span>
+</pre></div>
+</div>
+<p>will be rendered as</p>
+<div class="highlight-sidebar:: Line numbers and highlights notranslate"><div class="highlight"><pre><span></span>
+    emphasis-lines:
+      highlights the lines.
+    linenos:
+      shows the line numbers as well.
+    caption:
+      shown at the top of the code block.
+    name:
+      may be referenced with `:ref:` later.
+</pre></div>
+</div>
+<div class="highlight-code-block:: markdown notranslate"><div class="highlight"><pre><span></span>    :linenos:
+    :emphasize-lines: 3,5
+    :caption: An example code-block with everything turned on.
+    :name: Full code-block example
+
+    # Comment line
+    import System
+    System.run_emphasis_line
+    # Long lines in code blocks create a auto horizontal scrollbar
+    System.exit!
+</pre></div>
+</div>
+<p>The <code class="docutils literal notranslate"><span class="pre">&lt;div</span> <span class="pre">style=&quot;clear:</span> <span class="pre">right;&quot;&gt;&lt;/div&gt;</span></code> line clears the sidebar for the next title.</p>
+<div style="clear: right;"></div></div>
+</div>
+</div>
+<div class="section" id="inline-math">
+<span id="inline-math"></span><h2>Inline Math<a class="headerlink" href="#inline-math" title="永久链接至标题">¶</a></h2>
+<p>Besides the <a class="reference external" href="#math-formula">Math Formula</a>, you can also write latex math in inline codeblock text. You can do so by inserting <span class="math notranslate nohighlight">\(\)</span>
+in the beginning and end of inline codeblock.</p>
+<p>Example</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>This formula `$ y=\sum_{i=1}^n g(x_i) $`
+</pre></div>
+</div>
+<p>will be rendered as:</p>
+<p>This formula <span class="math notranslate nohighlight">\( y=\sum_{i=1}^n g(x_i) \)</span></p>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2018, Alibaba Middleware Group, and contributors.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'./',
+            VERSION:'3.0.1-RC-SNAPSHOT',
+            LANGUAGE:'zh_CN',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="_static/jquery.js"></script>
+      <script type="text/javascript" src="_static/underscore.js"></script>
+      <script type="text/javascript" src="_static/doctools.js"></script>
+      <script type="text/javascript" src="_static/translations.js"></script>
+      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  <script type="text/javascript" src="_static/js/theme.js"></script>
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+<div class="github-fork-ribbon-wrapper right">
+  <div class="github-fork-ribbon">
+    <a href="https://github.com/alibaba/arthas">Fork me at GitHub</a>
+  </div>
+</div>
+
+<script type="text/javascript" src="_static/add_badges.js"></script>
+ 
+
+
+</body>
+</html>

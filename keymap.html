@@ -1,0 +1,401 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="zh-CN" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="zh-CN" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Arthas 3.0命令行快捷键 &mdash; Arthas 3.0.1-RC-SNAPSHOT 文档</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="_static/overrides.css" type="text/css" />
+    <link rel="index" title="索引" href="genindex.html" />
+    <link rel="search" title="搜索" href="search.html" />
+<script src="_static/center_page.js"></script>
+ 
+
+
+  
+  <script src="_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="index.html" class="icon icon-home"> Arthas
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                3.0.1-RC-SNAPSHOT
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="install-detail.html">安装</a></li>
+<li class="toctree-l1"><a class="reference internal" href="quick-start.html">快速入门</a></li>
+<li class="toctree-l1"><a class="reference internal" href="advanced-use.html">进阶使用</a></li>
+<li class="toctree-l1"><a class="reference internal" href="commands.html">命令列表</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas/labels/user-case">用户案例</a></li>
+<li class="toctree-l1"><a class="reference internal" href="release-notes.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas/labels/question-answered">Questions and answers</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas">Fork me at GitHub</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas/CONTRIBUTING.md">参与贡献</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">Arthas</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+      <li>Arthas 3.0命令行快捷键</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            
+              <a href="https://github.com/alibaba/arthas/blob/master/site/src/site/sphinx/keymap.md" class="fa fa-github"> Edit on GitHub</a>
+            
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="arthas-3-0">
+<span id="arthas-3-0"></span><h1>Arthas 3.0命令行快捷键<a class="headerlink" href="#arthas-3-0" title="永久链接至标题">¶</a></h1>
+<p>keymap命令输出当前的快捷键映射表：</p>
+<p>默认的快捷键如下：</p>
+<table border="1" class="docutils">
+<thead>
+<tr>
+<th>快捷键</th>
+<th>快捷键说明</th>
+<th>命令名称</th>
+<th>命令说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>"\C-a"</code></td>
+<td>ctrl + a</td>
+<td>beginning-of-line</td>
+<td>跳到行首</td>
+</tr>
+<tr>
+<td><code>"\C-e"</code></td>
+<td>ctrl + e</td>
+<td>end-of-line</td>
+<td>跳到行尾</td>
+</tr>
+<tr>
+<td><code>"\C-f"</code></td>
+<td>ctrl + f</td>
+<td>forward-word</td>
+<td>向前移动一个单词</td>
+</tr>
+<tr>
+<td><code>"\C-b"</code></td>
+<td>ctrl + b</td>
+<td>backward-word</td>
+<td>向后移动一个单词</td>
+</tr>
+<tr>
+<td><code>"\e[D"</code></td>
+<td>键盘左方向键</td>
+<td>backward-char</td>
+<td>光标向前移动一个字符</td>
+</tr>
+<tr>
+<td><code>"\e[C"</code></td>
+<td>键盘右方向键</td>
+<td>forward-char</td>
+<td>光标向后移动一个字符</td>
+</tr>
+<tr>
+<td><code>"\e[B"</code></td>
+<td>键盘下方向键</td>
+<td>next-history</td>
+<td>上翻显示上一个命令</td>
+</tr>
+<tr>
+<td><code>"\e[A"</code></td>
+<td>键盘上方向键</td>
+<td>previous-history</td>
+<td>下翻显示下一个命令</td>
+</tr>
+<tr>
+<td><code>"\C-h"</code></td>
+<td>ctrl + h</td>
+<td>backward-delete-char</td>
+<td>向后删除一个字符</td>
+</tr>
+<tr>
+<td><code>"\C-?"</code></td>
+<td>ctrl + shift + /</td>
+<td>backward-delete-char</td>
+<td>向后删除一个字符</td>
+</tr>
+<tr>
+<td><code>"\C-u"</code></td>
+<td>ctrl + u</td>
+<td>undo</td>
+<td>撤销上一个命令，相当于清空当前行</td>
+</tr>
+<tr>
+<td><code>"\C-d"</code></td>
+<td>ctrl + d</td>
+<td>delete-char</td>
+<td>删除当前光标所在字符</td>
+</tr>
+<tr>
+<td><code>"\C-k"</code></td>
+<td>ctrl + k</td>
+<td>kill-line</td>
+<td>删除当前光标到行尾的所有字符</td>
+</tr>
+<tr>
+<td><code>"\C-i"</code></td>
+<td>ctrl + i</td>
+<td>complete</td>
+<td>自动补全，相当于敲<code>TAB</code></td>
+</tr>
+<tr>
+<td><code>"\C-j"</code></td>
+<td>ctrl + j</td>
+<td>accept-line</td>
+<td>结束当前行，相当于敲回车</td>
+</tr>
+<tr>
+<td><code>"\C-m"</code></td>
+<td>ctrl + m</td>
+<td>accept-line</td>
+<td>结束当前行，相当于敲回车</td>
+</tr>
+<tr>
+<td><code>"\C-w"</code></td>
+<td></td>
+<td>backward-delete-word</td>
+<td></td>
+</tr>
+<tr>
+<td><code>"\C-x\e[3~"</code></td>
+<td></td>
+<td>backward-kill-line</td>
+<td></td>
+</tr>
+<tr>
+<td><code>"\e\C-?"</code></td>
+<td></td>
+<td>backward-kill-word</td>
+<td></td>
+</tr>
+</tbody>
+</table><ul class="simple">
+<li>任何时候 <code class="docutils literal notranslate"><span class="pre">tab</span></code> 键，会根据当前的输入给出提示</li>
+<li>命令后敲 <code class="docutils literal notranslate"><span class="pre">-</span></code> 或 <code class="docutils literal notranslate"><span class="pre">--</span></code> ，然后按 <code class="docutils literal notranslate"><span class="pre">tab</span></code> 键，可以展示出此命令具体的选项</li>
+</ul>
+<div class="section" id="">
+<span id="id1"></span><h2>自定义快捷键<a class="headerlink" href="#" title="永久链接至标题">¶</a></h2>
+<p>在当前用户目录下新建<code class="docutils literal notranslate"><span class="pre">$USER_HOME/.arthas/conf/inputrc</span></code>文件，加入自定义配置。</p>
+<p>假设我是vim的重度用户，我要把<code class="docutils literal notranslate"><span class="pre">ctrl+h</span></code>设置为光标向前一个字符，则设置如下，首先拷贝默认配置</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="s2">&quot;\C-a&quot;</span><span class="p">:</span> <span class="n">beginning</span><span class="o">-</span><span class="n">of</span><span class="o">-</span><span class="n">line</span>
+<span class="s2">&quot;\C-e&quot;</span><span class="p">:</span> <span class="n">end</span><span class="o">-</span><span class="n">of</span><span class="o">-</span><span class="n">line</span>
+<span class="s2">&quot;\C-f&quot;</span><span class="p">:</span> <span class="n">forward</span><span class="o">-</span><span class="n">word</span>
+<span class="s2">&quot;\C-b&quot;</span><span class="p">:</span> <span class="n">backward</span><span class="o">-</span><span class="n">word</span>
+<span class="s2">&quot;\e[D&quot;</span><span class="p">:</span> <span class="n">backward</span><span class="o">-</span><span class="n">char</span>
+<span class="s2">&quot;\e[C&quot;</span><span class="p">:</span> <span class="n">forward</span><span class="o">-</span><span class="n">char</span>
+<span class="s2">&quot;\e[B&quot;</span><span class="p">:</span> <span class="nb">next</span><span class="o">-</span><span class="n">history</span>
+<span class="s2">&quot;\e[A&quot;</span><span class="p">:</span> <span class="n">previous</span><span class="o">-</span><span class="n">history</span>
+<span class="s2">&quot;\C-h&quot;</span><span class="p">:</span> <span class="n">backward</span><span class="o">-</span><span class="n">delete</span><span class="o">-</span><span class="n">char</span>
+<span class="s2">&quot;\C-?&quot;</span><span class="p">:</span> <span class="n">backward</span><span class="o">-</span><span class="n">delete</span><span class="o">-</span><span class="n">char</span>
+<span class="s2">&quot;\C-u&quot;</span><span class="p">:</span> <span class="n">undo</span>
+<span class="s2">&quot;\C-d&quot;</span><span class="p">:</span> <span class="n">delete</span><span class="o">-</span><span class="n">char</span>
+<span class="s2">&quot;\C-k&quot;</span><span class="p">:</span> <span class="n">kill</span><span class="o">-</span><span class="n">line</span>
+<span class="s2">&quot;\C-i&quot;</span><span class="p">:</span> <span class="n">complete</span>
+<span class="s2">&quot;\C-j&quot;</span><span class="p">:</span> <span class="n">accept</span><span class="o">-</span><span class="n">line</span>
+<span class="s2">&quot;\C-m&quot;</span><span class="p">:</span> <span class="n">accept</span><span class="o">-</span><span class="n">line</span>
+<span class="s2">&quot;\C-w&quot;</span><span class="p">:</span> <span class="n">backward</span><span class="o">-</span><span class="n">delete</span><span class="o">-</span><span class="n">word</span>
+<span class="s2">&quot;\C-x\e[3~&quot;</span><span class="p">:</span> <span class="n">backward</span><span class="o">-</span><span class="n">kill</span><span class="o">-</span><span class="n">line</span>
+<span class="s2">&quot;\e\C-?&quot;</span><span class="p">:</span> <span class="n">backward</span><span class="o">-</span><span class="n">kill</span><span class="o">-</span><span class="n">word</span>
+</pre></div>
+</div>
+<p>然后把<code class="docutils literal notranslate"><span class="pre">&quot;\C-h&quot;:</span> <span class="pre">backward-delete-char</span></code>换成<code class="docutils literal notranslate"><span class="pre">&quot;\C-h&quot;:</span> <span class="pre">backward-char</span></code>，然后重新连接即可。</p>
+</div>
+<div class="section" id="">
+<span id="id2"></span><h2>后台异步命令相关快捷键<a class="headerlink" href="#" title="永久链接至标题">¶</a></h2>
+<ul class="simple">
+<li>ctrl + c: 终止当前命令</li>
+<li>ctrl + z: 挂起当前命令，后续可以 bg/fg 重新支持此命令，或 kill 掉</li>
+<li>ctrl + a: 回到行首</li>
+<li>ctrl + e: 回到行尾</li>
+</ul>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2018, Alibaba Middleware Group, and contributors.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'./',
+            VERSION:'3.0.1-RC-SNAPSHOT',
+            LANGUAGE:'zh_CN',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="_static/jquery.js"></script>
+      <script type="text/javascript" src="_static/underscore.js"></script>
+      <script type="text/javascript" src="_static/doctools.js"></script>
+      <script type="text/javascript" src="_static/translations.js"></script>
+      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  <script type="text/javascript" src="_static/js/theme.js"></script>
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+<div class="github-fork-ribbon-wrapper right">
+  <div class="github-fork-ribbon">
+    <a href="https://github.com/alibaba/arthas">Fork me at GitHub</a>
+  </div>
+</div>
+
+<script type="text/javascript" src="_static/add_badges.js"></script>
+ 
+
+
+</body>
+</html>

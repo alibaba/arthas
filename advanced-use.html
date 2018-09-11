@@ -1,0 +1,344 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="zh-CN" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="zh-CN" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>进阶使用 &mdash; Arthas 3.0.1-RC-SNAPSHOT 文档</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="_static/overrides.css" type="text/css" />
+    <link rel="index" title="索引" href="genindex.html" />
+    <link rel="search" title="搜索" href="search.html" />
+    <link rel="next" title="Arthas异步调用" href="async.html" />
+    <link rel="prev" title="快速入门" href="quick-start.html" />
+<script src="_static/center_page.js"></script>
+ 
+
+
+  
+  <script src="_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="index.html" class="icon icon-home"> Arthas
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                3.0.1-RC-SNAPSHOT
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="install-detail.html">安装</a></li>
+<li class="toctree-l1"><a class="reference internal" href="quick-start.html">快速入门</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">进阶使用</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#">基础命令</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#jvm">jvm相关</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#class-classloader">class/classloader相关</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#monitor-watch-trace">monitor/watch/trace相关</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#options">options</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#">管道</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#">后台异步任务</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#">其他特性</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="async.html">异步命令支持</a></li>
+<li class="toctree-l3"><a class="reference internal" href="save-log.html">执行结果存日志</a></li>
+<li class="toctree-l3"><a class="reference internal" href="batch-support.html">批处理的支持</a></li>
+<li class="toctree-l3"><a class="reference external" href="https://github.com/alibaba/arthas/tree/master/site/src/site/sphinx/TODO/articles/92448">ognl表达式的用法说明</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="commands.html">命令列表</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas/labels/user-case">用户案例</a></li>
+<li class="toctree-l1"><a class="reference internal" href="release-notes.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas/labels/question-answered">Questions and answers</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas">Fork me at GitHub</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas/CONTRIBUTING.md">参与贡献</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">Arthas</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+      <li>进阶使用</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            
+              <a href="https://github.com/alibaba/arthas/blob/master/site/src/site/sphinx/advanced-use.md" class="fa fa-github"> Edit on GitHub</a>
+            
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="">
+<span id="id1"></span><h1>进阶使用<a class="headerlink" href="#" title="永久链接至标题">¶</a></h1>
+<div class="section" id="">
+<span id="id2"></span><h2>基础命令<a class="headerlink" href="#" title="永久链接至标题">¶</a></h2>
+<ul class="simple">
+<li>help——查看命令帮助信息</li>
+<li>cls——清空当前屏幕区域</li>
+<li>session——查看当前会话的信息</li>
+<li><a class="reference internal" href="reset.html"><span class="doc">reset</span></a>——重置增强类，将被 Arthas 增强过的类全部还原，Arthas 服务端关闭时会重置所有增强过的类</li>
+<li>version——输出当前目标 Java 进程所加载的 Arthas 版本号</li>
+<li>quit——退出当前 Arthas 客户端，其他 Arthas 客户端不受影响</li>
+<li>shutdown——关闭 Arthas 服务端，所有 Arthas 客户端全部退出</li>
+<li><a class="reference internal" href="keymap.html"><span class="doc">keymap</span></a>——Arthas快捷键列表及自定义快捷键</li>
+</ul>
+</div>
+<div class="section" id="jvm">
+<span id="jvm"></span><h2>jvm相关<a class="headerlink" href="#jvm" title="永久链接至标题">¶</a></h2>
+<ul class="simple">
+<li><a class="reference internal" href="dashboard.html"><span class="doc">dashboard</span></a>——当前系统的实时数据面板</li>
+<li><a class="reference internal" href="thread.html"><span class="doc">thread</span></a>——查看当前 JVM 的线程堆栈信息</li>
+<li><a class="reference internal" href="jvm.html"><span class="doc">jvm</span></a>——查看当前 JVM 的信息</li>
+<li><a class="reference internal" href="sysprop.html"><span class="doc">sysprop</span></a>——查看和修改JVM的系统属性</li>
+<li><strong>New!</strong> <a class="reference internal" href="getstatic.html"><span class="doc">getstatic</span></a>——查看类的静态属性</li>
+</ul>
+</div>
+<div class="section" id="class-classloader">
+<span id="class-classloader"></span><h2>class/classloader相关<a class="headerlink" href="#class-classloader" title="永久链接至标题">¶</a></h2>
+<ul class="simple">
+<li><a class="reference internal" href="sc.html"><span class="doc">sc</span></a>——查看JVM已加载的类信息</li>
+<li><a class="reference internal" href="sm.html"><span class="doc">sm</span></a>——查看已加载类的方法信息</li>
+<li><a class="reference internal" href="dump.html"><span class="doc">dump</span></a>——dump 已加载类的 byte code 到特定目录</li>
+<li><a class="reference internal" href="redefine.html"><span class="doc">redefine</span></a>——加载外部的<code class="docutils literal notranslate"><span class="pre">.class</span></code>文件，redefine到JVM里</li>
+<li><a class="reference internal" href="jad.html"><span class="doc">jad</span></a>——反编译指定已加载类的源码</li>
+<li><a class="reference internal" href="classloader.html"><span class="doc">classloader</span></a>——查看classloader的继承树，urls，类加载信息，使用classloader去getResource</li>
+</ul>
+</div>
+<div class="section" id="monitor-watch-trace">
+<span id="monitor-watch-trace"></span><h2>monitor/watch/trace相关<a class="headerlink" href="#monitor-watch-trace" title="永久链接至标题">¶</a></h2>
+<blockquote>
+<div>请注意，这些命令，都通过字节码增强技术来实现的，会在指定类的方法中插入一些切面来实现数据统计和观测，因此在线上、预发使用时，请尽量明确需要观测的类、方法以及条件，诊断结束要执行 <code class="docutils literal notranslate"><span class="pre">shutdown</span></code> 或将增强过的类执行 <code class="docutils literal notranslate"><span class="pre">reset</span></code> 命令。</div></blockquote>
+<ul class="simple">
+<li><a class="reference internal" href="monitor.html"><span class="doc">monitor</span></a>——方法执行监控</li>
+<li><a class="reference internal" href="watch.html"><span class="doc">watch</span></a>——方法执行数据观测</li>
+<li><a class="reference internal" href="trace.html"><span class="doc">trace</span></a>——方法内部调用路径，并输出方法路径上的每个节点上耗时</li>
+<li><a class="reference internal" href="stack.html"><span class="doc">stack</span></a>——输出当前方法被调用的调用路径</li>
+<li><a class="reference internal" href="tt.html"><span class="doc">tt</span></a>——方法执行数据的时空隧道，记录下指定方法每次调用的入参和返回信息，并能对这些不同的时间下调用进行观测</li>
+</ul>
+</div>
+<div class="section" id="options">
+<span id="options"></span><h2>options<a class="headerlink" href="#options" title="永久链接至标题">¶</a></h2>
+<ul class="simple">
+<li><a class="reference internal" href="options.html"><span class="doc">options</span></a>——查看或设置Arthas全局开关</li>
+</ul>
+</div>
+<div class="section" id="">
+<span id="id3"></span><h2>管道<a class="headerlink" href="#" title="永久链接至标题">¶</a></h2>
+<p>Arthas支持使用管道对上述命令的结果进行进一步的处理，如<code class="docutils literal notranslate"><span class="pre">sm</span> <span class="pre">org.apache.log4j.Logger</span> <span class="pre">|</span> <span class="pre">grep</span> <span class="pre">&lt;init&gt;</span></code></p>
+<ul class="simple">
+<li>grep——搜索满足条件的结果</li>
+<li>plaintext——将命令的结果去除颜色</li>
+<li>wc——按行统计输出结果</li>
+</ul>
+</div>
+<div class="section" id="">
+<span id="id4"></span><h2>后台异步任务<a class="headerlink" href="#" title="永久链接至标题">¶</a></h2>
+<p>当线上出现偶发的问题，比如需要watch某个条件，而这个条件一天可能才会出现一次时，异步后台任务就派上用场了，详情请参考<a class="reference internal" href="async.html"><span class="doc">这里</span></a></p>
+<ul class="simple">
+<li>使用 &gt; 将结果重写向到日志文件，使用 &amp; 指定命令是后台运行，session断开不影响任务执行（生命周期默认为1天）</li>
+<li>jobs——列出所有job</li>
+<li>kill——强制终止任务</li>
+<li>fg——将暂停的任务拉到前台执行</li>
+<li>bg——将暂停的任务放到后台执行</li>
+</ul>
+</div>
+<div class="section" id="">
+<span id="id5"></span><h2>其他特性<a class="headerlink" href="#" title="永久链接至标题">¶</a></h2>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="async.html">异步命令支持</a></li>
+<li class="toctree-l1"><a class="reference internal" href="save-log.html">执行结果存日志</a></li>
+<li class="toctree-l1"><a class="reference internal" href="batch-support.html">批处理的支持</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas/tree/master/site/src/site/sphinx/TODO/articles/92448">ognl表达式的用法说明</a></li>
+</ul>
+</div>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="async.html" class="btn btn-neutral float-right" title="Arthas异步调用" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="quick-start.html" class="btn btn-neutral" title="快速入门" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2018, Alibaba Middleware Group, and contributors.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'./',
+            VERSION:'3.0.1-RC-SNAPSHOT',
+            LANGUAGE:'zh_CN',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="_static/jquery.js"></script>
+      <script type="text/javascript" src="_static/underscore.js"></script>
+      <script type="text/javascript" src="_static/doctools.js"></script>
+      <script type="text/javascript" src="_static/translations.js"></script>
+      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  <script type="text/javascript" src="_static/js/theme.js"></script>
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+<div class="github-fork-ribbon-wrapper right">
+  <div class="github-fork-ribbon">
+    <a href="https://github.com/alibaba/arthas">Fork me at GitHub</a>
+  </div>
+</div>
+
+<script type="text/javascript" src="_static/add_badges.js"></script>
+ 
+
+
+</body>
+</html>

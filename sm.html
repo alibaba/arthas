@@ -1,0 +1,372 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="zh-CN" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="zh-CN" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>sm &mdash; Arthas 3.0.1-RC-SNAPSHOT 文档</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="_static/overrides.css" type="text/css" />
+    <link rel="index" title="索引" href="genindex.html" />
+    <link rel="search" title="搜索" href="search.html" />
+    <link rel="next" title="dump" href="dump.html" />
+    <link rel="prev" title="sc" href="sc.html" />
+<script src="_static/center_page.js"></script>
+ 
+
+
+  
+  <script src="_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="index.html" class="icon icon-home"> Arthas
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                3.0.1-RC-SNAPSHOT
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="install-detail.html">安装</a></li>
+<li class="toctree-l1"><a class="reference internal" href="quick-start.html">快速入门</a></li>
+<li class="toctree-l1"><a class="reference internal" href="advanced-use.html">进阶使用</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="commands.html">命令列表</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="dashboard.html">dashboard</a></li>
+<li class="toctree-l2"><a class="reference internal" href="thread.html">thread</a></li>
+<li class="toctree-l2"><a class="reference internal" href="jvm.html">jvm</a></li>
+<li class="toctree-l2"><a class="reference internal" href="sysprop.html">sysprop</a></li>
+<li class="toctree-l2"><a class="reference internal" href="getstatic.html">getstatic</a></li>
+<li class="toctree-l2"><a class="reference internal" href="sc.html">sc</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">sm</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#">参数说明</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#">使用参考</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="dump.html">dump</a></li>
+<li class="toctree-l2"><a class="reference internal" href="jad.html">jad</a></li>
+<li class="toctree-l2"><a class="reference internal" href="classloader.html">classloader</a></li>
+<li class="toctree-l2"><a class="reference internal" href="redefine.html">redefine</a></li>
+<li class="toctree-l2"><a class="reference internal" href="monitor.html">monitor</a></li>
+<li class="toctree-l2"><a class="reference internal" href="watch.html">watch</a></li>
+<li class="toctree-l2"><a class="reference internal" href="trace.html">trace</a></li>
+<li class="toctree-l2"><a class="reference internal" href="stack.html">stack</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tt.html">tt</a></li>
+<li class="toctree-l2"><a class="reference internal" href="options.html">options</a></li>
+<li class="toctree-l2"><a class="reference internal" href="commands.html#arthas">Arthas 基础命令</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas/labels/user-case">用户案例</a></li>
+<li class="toctree-l1"><a class="reference internal" href="release-notes.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas/labels/question-answered">Questions and answers</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas">Fork me at GitHub</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas/CONTRIBUTING.md">参与贡献</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">Arthas</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="commands.html">命令列表</a> &raquo;</li>
+        
+      <li>sm</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            
+              <a href="https://github.com/alibaba/arthas/blob/master/site/src/site/sphinx/sm.md" class="fa fa-github"> Edit on GitHub</a>
+            
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="sm">
+<span id="sm"></span><h1>sm<a class="headerlink" href="#sm" title="永久链接至标题">¶</a></h1>
+<blockquote>
+<div>查看已加载类的方法信息</div></blockquote>
+<p>“Search-Method” 的简写，这个命令能搜索出所有已经加载了 Class 信息的方法信息。</p>
+<p><code class="docutils literal notranslate"><span class="pre">sm</span></code> 命令只能看到由当前类所声明 (declaring) 的方法，父类则无法看到。</p>
+<div class="section" id="">
+<span id="id1"></span><h2>参数说明<a class="headerlink" href="#" title="永久链接至标题">¶</a></h2>
+<table border="1" class="docutils">
+<thead>
+<tr>
+<th align="right">参数名称</th>
+<th align="left">参数说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="right"><em>class-pattern</em></td>
+<td align="left">类名表达式匹配</td>
+</tr>
+<tr>
+<td align="right"><em>method-pattern</em></td>
+<td align="left">方法名表达式匹配</td>
+</tr>
+<tr>
+<td align="right">[d]</td>
+<td align="left">展示每个方法的详细信息</td>
+</tr>
+<tr>
+<td align="right">[E]</td>
+<td align="left">开启正则表达式匹配，默认为通配符匹配</td>
+</tr>
+</tbody>
+</table></div>
+<div class="section" id="">
+<span id="id2"></span><h2>使用参考<a class="headerlink" href="#" title="永久链接至标题">¶</a></h2>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ sm org.apache.catalina.connector.Connector
+org.apache.catalina.connector.Connector-&gt;&lt;init&gt;
+org.apache.catalina.connector.Connector-&gt;setProperty
+org.apache.catalina.connector.Connector-&gt;getProperty
+org.apache.catalina.connector.Connector-&gt;toString
+org.apache.catalina.connector.Connector-&gt;resume
+org.apache.catalina.connector.Connector-&gt;getScheme
+org.apache.catalina.connector.Connector-&gt;getProtocol
+org.apache.catalina.connector.Connector-&gt;getPort
+org.apache.catalina.connector.Connector-&gt;setService
+org.apache.catalina.connector.Connector-&gt;setPort
+org.apache.catalina.connector.Connector-&gt;getService
+org.apache.catalina.connector.Connector-&gt;getAttribute
+org.apache.catalina.connector.Connector-&gt;setAttribute
+org.apache.catalina.connector.Connector-&gt;getLocalPort
+org.apache.catalina.connector.Connector-&gt;pause
+org.apache.catalina.connector.Connector-&gt;setProtocol
+org.apache.catalina.connector.Connector-&gt;initInternal
+org.apache.catalina.connector.Connector-&gt;setSecure
+org.apache.catalina.connector.Connector-&gt;getSecure
+org.apache.catalina.connector.Connector-&gt;startInternal
+org.apache.catalina.connector.Connector-&gt;stopInternal
+org.apache.catalina.connector.Connector-&gt;setScheme
+org.apache.catalina.connector.Connector-&gt;createRequest
+org.apache.catalina.connector.Connector-&gt;getDomainInternal
+org.apache.catalina.connector.Connector-&gt;getProtocolHandler
+org.apache.catalina.connector.Connector-&gt;setURIEncoding
+org.apache.catalina.connector.Connector-&gt;findSslHostConfigs
+org.apache.catalina.connector.Connector-&gt;destroyInternal
+org.apache.catalina.connector.Connector-&gt;getObjectNameKeyProperties
+org.apache.catalina.connector.Connector-&gt;getAllowTrace
+org.apache.catalina.connector.Connector-&gt;setAllowTrace
+org.apache.catalina.connector.Connector-&gt;getAsyncTimeout
+org.apache.catalina.connector.Connector-&gt;setAsyncTimeout
+org.apache.catalina.connector.Connector-&gt;getEnableLookups
+org.apache.catalina.connector.Connector-&gt;setEnableLookups
+org.apache.catalina.connector.Connector-&gt;getMaxCookieCount
+...
+</pre></div>
+</div>
+<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>$ sm org.apache.catalina.connector.Connector -d
+ declaring-class   org.apache.catalina.connector.Connector
+ constructor-name  &lt;init&gt;
+ modifier          public
+ annotation
+ parameters
+ exceptions
+
+ declaring-class   org.apache.catalina.connector.Connector
+ constructor-name  &lt;init&gt;
+ modifier          public
+ annotation
+ parameters        java.lang.String
+ exceptions
+
+ declaring-class  org.apache.catalina.connector.Connector
+ method-name      setProperty
+ modifier         public
+ annotation
+ parameters       java.lang.String
+                  java.lang.String
+ <span class="k">return</span>           boolean
+ exceptions
+ ......
+</pre></div>
+</div>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="dump.html" class="btn btn-neutral float-right" title="dump" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="sc.html" class="btn btn-neutral" title="sc" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2018, Alibaba Middleware Group, and contributors.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'./',
+            VERSION:'3.0.1-RC-SNAPSHOT',
+            LANGUAGE:'zh_CN',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="_static/jquery.js"></script>
+      <script type="text/javascript" src="_static/underscore.js"></script>
+      <script type="text/javascript" src="_static/doctools.js"></script>
+      <script type="text/javascript" src="_static/translations.js"></script>
+      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  <script type="text/javascript" src="_static/js/theme.js"></script>
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+<div class="github-fork-ribbon-wrapper right">
+  <div class="github-fork-ribbon">
+    <a href="https://github.com/alibaba/arthas">Fork me at GitHub</a>
+  </div>
+</div>
+
+<script type="text/javascript" src="_static/add_badges.js"></script>
+ 
+
+
+</body>
+</html>
