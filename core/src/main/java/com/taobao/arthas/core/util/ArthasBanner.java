@@ -19,7 +19,7 @@ public class ArthasBanner {
     private static final String LOGO_LOCATION = "/com/taobao/arthas/core/res/logo.txt";
     private static final String CREDIT_LOCATION = "/com/taobao/arthas/core/res/thanks.txt";
     private static final String VERSION_LOCATION = "/com/taobao/arthas/core/res/version";
-    private static final String WIKI = "middleware-container/arthas/wikis/home";
+    private static final String WIKI = "https://alibaba.github.io/arthas";
 
     private static String LOGO = "Welcome to Arthas";
     private static String VERSION = "unknown";
