@@ -212,7 +212,7 @@ To solve this, choose one of the following command:
 </div>
 <p>其中<code class="docutils literal notranslate"><span class="pre">&quot;params</span> <span class="pre">+</span> <span class="pre">'</span> <span class="pre">'</span> <span class="pre">+</span> <span class="pre">returnObj&quot;</span></code>以及<code class="docutils literal notranslate"><span class="pre">params.size()==2</span></code>背后其实都使用了groovy来进行表达式求值，如果反复大量的运行这些表达式，groovy会创建大量的classloader，打满perm区从而触发FGC。</p>
 <p>为了避免这个问题，Arthas 3.0中使用了ognl这个更加轻量的表达式求值库来代替groovy，彻底解决了groovy引起的FGC风险。但由于这个替换，导致原来使用groovy脚本编写的自定义脚本失效。这个问题留待后续解决。</p>
-<p>在3.0中，watch命令的表达式部分的书写有了一些改变，详见<a class="reference external" href="https://github.com/alibaba/arthas/wiki/watch">这里</a></p>
+<p>在3.0中，watch命令的表达式部分的书写有了一些改变，详见<a class="reference external" href="https://alibaba.github.io/arthas/watch">这里</a></p>
 </div>
 <div class="section" id="rt">
 <span id="rt"></span><h2>提升rt统计精度<a class="headerlink" href="#rt" title="永久链接至标题">¶</a></h2>
@@ -399,6 +399,16 @@ ID                 NAME                                                     GROU
 </div>
 
 <script type="text/javascript" src="../_static/add_badges.js"></script>
+
+<script>
+  var _hmt = _hmt || [];
+  (function() {
+    var hm = document.createElement("script");
+    hm.src = "https://hm.baidu.com/hm.js?d5c5e25b100f0eb51a4c35c8a86ea9b4";
+    var s = document.getElementsByTagName("script")[0]; 
+    s.parentNode.insertBefore(hm, s);
+  })();
+</script>  
  
 
 

@@ -162,21 +162,18 @@
             
   <div class="section" id="arthas">
 <span id="arthas"></span><h1>手动安装Arthas<a class="headerlink" href="#arthas" title="永久链接至标题">¶</a></h1>
-<ol class="simple">
-<li>从<a class="reference external" href="https://github.com/alibaba/arthas/tree/master/site/src/site/sphinx/TODO">这里</a>下载指定的版本, 以<code class="docutils literal notranslate"><span class="pre">3.0.20171103142340</span></code>这个版本为例。</li>
-</ol>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">wget</span> <span class="n">TODO</span> <span class="n">arthas</span><span class="o">-</span><span class="mf">3.0</span><span class="o">.</span><span class="mi">20171103142340</span><span class="o">-</span><span class="nb">bin</span><span class="o">.</span><span class="n">zip</span>
+<ol>
+<li><p class="first">从<a class="reference external" href="http://search.maven.org/classic/#search%7Cga%7C1%7Cg%3A%22com.taobao.arthas%22%20AND%20a%3A%22arthas-packaging%22">这里</a>下载最新版本, 以<code class="docutils literal notranslate"><span class="pre">3.0.0-RC</span></code>这个版本为例。</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>wget https://search.maven.org/remotecontent?filepath=com/taobao/arthas/arthas-packaging/3.0.0-RC/arthas-packaging-3.0.0-RC-bin.zip -o arthas-packaging-bin.zip
 </pre></div>
 </div>
-<ol class="simple">
-<li>解压缩arthas的压缩包</li>
-</ol>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">unzip</span> <span class="n">arthas</span><span class="o">-</span><span class="mf">3.0</span><span class="o">.</span><span class="mi">20171103142340</span><span class="o">-</span><span class="nb">bin</span><span class="o">.</span><span class="n">zip</span>
+</li>
+<li><p class="first">解压缩arthas的压缩包</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">unzip</span> <span class="n">arthas</span><span class="o">-</span><span class="n">packaging</span><span class="o">-</span><span class="nb">bin</span><span class="o">.</span><span class="n">zip</span>
 </pre></div>
 </div>
-<ol class="simple">
-<li>安装Arthas: 安装之前最好把所有老版本的Arthas全都删掉</li>
-</ol>
+</li>
+<li><p class="first">安装Arthas: 安装之前最好把所有老版本的Arthas全都删掉</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">sudo</span> <span class="n">su</span> <span class="n">admin</span>
 <span class="n">rm</span> <span class="o">-</span><span class="n">rf</span> <span class="o">/</span><span class="n">home</span><span class="o">/</span><span class="n">admin</span><span class="o">/.</span><span class="n">arthas</span><span class="o">/</span><span class="n">lib</span><span class="o">/*</span>
 <span class="n">cd</span> <span class="n">arthas</span>
@@ -184,13 +181,15 @@
 </pre></div>
 </div>
 <blockquote>
-<div>注意，这里根据你需要诊断的Java进程的所属用户进行切换，例如集团规范是admin用户，而阿里云的可能是tomcat用户。否则会安装到个人目录下，这样的安装是无效的。</div></blockquote>
-<ol class="simple">
-<li>启动Arthas: 启动之前，请确保老版本的Arthas已经shutdown.</li>
-</ol>
+<div><p>注意，这里根据你需要诊断的Java进程的所属用户进行切换</p>
+</div></blockquote>
+</li>
+<li><p class="first">启动Arthas: 启动之前，请确保老版本的Arthas已经shutdown.</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">./</span><span class="k">as</span><span class="o">.</span><span class="n">sh</span>
 </pre></div>
 </div>
+</li>
+</ol>
 </div>
 
 
@@ -256,6 +255,16 @@
 </div>
 
 <script type="text/javascript" src="_static/add_badges.js"></script>
+
+<script>
+  var _hmt = _hmt || [];
+  (function() {
+    var hm = document.createElement("script");
+    hm.src = "https://hm.baidu.com/hm.js?d5c5e25b100f0eb51a4c35c8a86ea9b4";
+    var s = document.getElementsByTagName("script")[0]; 
+    s.parentNode.insertBefore(hm, s);
+  })();
+</script>  
  
 
 
