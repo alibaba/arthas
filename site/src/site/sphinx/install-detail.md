@@ -21,7 +21,7 @@ curl -L https://alibaba.github.io/arthas/install.sh | sh
 
 Windows用户如果在cmd里不能正常显示颜色，可以使用[conemu](https://sourceforge.net/projects/conemu)。
 
-## 独立的帮助文档
+## 离线帮助文档
 
 下载地址：[arthas-packaging-3.0.0-RC-doc.zip](https://search.maven.org/remotecontent?filepath=com/taobao/arthas/arthas-packaging/3.0.0-RC/arthas-packaging-3.0.0-RC-doc.zip)
 
