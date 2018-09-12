@@ -9,27 +9,33 @@
     <artifactId>arthas-site</artifactId>
     <name>arthas-site</name>
 
-    <build>
-        <plugins>
-            <plugin>
-                <groupId>kr.motd.maven</groupId>
-                <artifactId>sphinx-maven-plugin</artifactId>
-                <version>2.2.3</version>
-                <configuration>
-                    <asReport>true</asReport>
-                    <name>Project documentation</name>
-                    <description>Documentation about Arthas</description>
-                </configuration>
-                <executions>
-                    <execution>
-                        <phase>package</phase>
-                        <goals>
-                            <goal>generate</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
-        </plugins>
-    </build>
+    <profiles>
+        <profile>
+            <id>full</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>kr.motd.maven</groupId>
+                        <artifactId>sphinx-maven-plugin</artifactId>
+                        <version>2.2.3</version>
+                        <configuration>
+                            <asReport>true</asReport>
+                            <name>Project documentation</name>
+                            <description>Documentation about Arthas</description>
+                        </configuration>
+                        <executions>
+                            <execution>
+                                <phase>package</phase>
+                                <goals>
+                                    <goal>generate</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+
+    </profiles>
 
 </project>
