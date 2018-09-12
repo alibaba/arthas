@@ -18,7 +18,7 @@ sysprop
  sysprop production.mode true
 
  WIKI:
-   https://github.com/alibaba/arthas/wiki/sysprop
+   https://alibaba.github.io/arthas/sysprop
 
  OPTIONS:
  -h, --help                                  this help

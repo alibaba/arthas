@@ -27,7 +27,7 @@ watch com.alibaba.sample.petstore.web.store.module.screen.ItemList add "params +
 
 为了避免这个问题，Arthas 3.0中使用了ognl这个更加轻量的表达式求值库来代替groovy，彻底解决了groovy引起的FGC风险。但由于这个替换，导致原来使用groovy脚本编写的自定义脚本失效。这个问题留待后续解决。
 
-在3.0中，watch命令的表达式部分的书写有了一些改变，详见[这里](https://github.com/alibaba/arthas/wiki/watch)
+在3.0中，watch命令的表达式部分的书写有了一些改变，详见[这里](https://alibaba.github.io/arthas/watch)
 
 #### 提升rt统计精度
 
@@ -47,7 +47,7 @@ $ tt -l
 
 #### watch/stack/trace命令支持按耗时过滤
 
-我们在trace的时候，经常会出现某个方法间隙性的rt飙高，但是我们只想知道rt高的时候，是哪里慢了，对于正常rt的方法我们并不关心，Arthas 3.0支持了按`#cost`(方法执行耗时,单位为`ms`)进行过滤，只输出符合条件的trace路径，目前，这三个命令的相关文档已经做了更新，增加了该用法的示例，请在[这里](https://github.com/alibaba/arthas/wiki/home#%E6%9F%A5%E7%9C%8B%E6%96%B9%E6%B3%95%E6%89%A7%E8%A1%8C%E5%8F%82%E6%95%B0%E5%BC%82%E5%B8%B8%E8%BF%94%E5%9B%9E%E5%80%BC%E8%B0%83%E7%94%A8%E8%B7%AF%E5%BE%84%E7%AD%89)查看。  
+我们在trace的时候，经常会出现某个方法间隙性的rt飙高，但是我们只想知道rt高的时候，是哪里慢了，对于正常rt的方法我们并不关心，Arthas 3.0支持了按`#cost`(方法执行耗时,单位为`ms`)进行过滤，只输出符合条件的trace路径，目前，这三个命令的相关文档已经做了更新，增加了该用法的示例。  
 
 #### sysprop命令操作SystemProperty
 

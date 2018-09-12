@@ -72,4 +72,4 @@ Arthas支持使用管道对上述命令的结果进行进一步的处理，如`s
 * [异步命令支持](async.md)
 * [执行结果存日志](save-log.md)
 * [批处理的支持](batch-support.md)
-* [ognl表达式的用法说明](TODO/articles/92448)
+* [ognl表达式的用法说明](https://github.com/alibaba/arthas/issues/11)
