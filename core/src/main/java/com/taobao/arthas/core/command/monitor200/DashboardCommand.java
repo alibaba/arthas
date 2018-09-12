@@ -45,7 +45,7 @@ import java.util.TimerTask;
         "  dashboard\n" +
         "  dashboard -n 10\n" +
         "  dashboard -i 2000\n" +
-        Constants.WIKI + Constants.WIKI_HOME + "cmds/dashboard")
+        Constants.WIKI + Constants.WIKI_HOME + "dashboard")
 public class DashboardCommand extends AnnotatedCommand {
 
     private static final Logger logger = LogUtil.getArthasLogger();

@@ -46,7 +46,7 @@ import static java.lang.String.format;
         "  tt -i 1000 -w params[0]\n" +
         "  tt -i 1000 -d\n" +
         "  tt -i 1000\n" +
-        Constants.WIKI + Constants.WIKI_HOME + "cmds/tt")
+        Constants.WIKI + Constants.WIKI_HOME + "tt")
 public class TimeTunnelCommand extends EnhancerCommand {
     // 时间隧道(时间碎片的集合)
     private static final Map<Integer, TimeFragment> timeFragmentMap = new LinkedHashMap<Integer, TimeFragment>();

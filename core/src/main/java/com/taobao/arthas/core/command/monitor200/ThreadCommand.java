@@ -35,7 +35,7 @@ import java.util.Map;
         "  thread -n 5\n" +
         "  thread -b\n" +
         "  thread -i 2000\n" +
-        Constants.WIKI + Constants.WIKI_HOME + "cmds/thread")
+        Constants.WIKI + Constants.WIKI_HOME + "thread")
 public class ThreadCommand extends AnnotatedCommand {
 
     private static ThreadMXBean threadMXBean = ManagementFactory.getThreadMXBean();

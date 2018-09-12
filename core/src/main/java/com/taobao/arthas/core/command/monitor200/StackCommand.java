@@ -27,7 +27,7 @@ import com.taobao.middleware.cli.annotations.Summary;
         "  stack *StringUtils isBlank\n" +
         "  stack *StringUtils isBlank params[0].length==1\n" +
         "  stack *StringUtils isBlank '#cost>100'\n" +
-        Constants.WIKI + Constants.WIKI_HOME + "cmds/stack")
+        Constants.WIKI + Constants.WIKI_HOME + "stack")
 public class StackCommand extends EnhancerCommand {
     private String classPattern;
     private String methodPattern;

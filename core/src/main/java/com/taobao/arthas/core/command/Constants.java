@@ -23,7 +23,7 @@ public interface Constants {
 
     String WIKI = "\nWIKI:\n";
 
-    String WIKI_HOME = "  middleware-container/arthas/wikis/";
+    String WIKI_HOME = "  https://alibaba.github.io/arthas/";
 
     String EXPRESS_EXAMPLES =   "Examples:\n" +
                                 "  params[0]\n" +

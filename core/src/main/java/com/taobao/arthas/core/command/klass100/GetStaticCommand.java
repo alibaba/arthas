@@ -41,7 +41,7 @@ import static com.taobao.text.ui.Element.label;
 @Name("getstatic")
 @Summary("Show the static field of a class")
 @Description(Constants.EXAMPLE + "  getstatic -c 39eb305e org.apache.log4j.LogManager DEFAULT_CONFIGURATION_FILE\n"
-             + Constants.WIKI + Constants.WIKI_HOME + "cmds/getstatic")
+             + Constants.WIKI + Constants.WIKI_HOME + "getstatic")
 public class GetStaticCommand extends AnnotatedCommand {
 
     private static final Logger logger = LogUtil.getArthasLogger();

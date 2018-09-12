@@ -42,7 +42,7 @@ import static java.lang.String.format;
         "  sm -d org.apache.commons.lang.StringUtils\n" +
         "  sm -d org/apache/commons/lang/StringUtils\n" +
         "  sm *String????s *\n" +
-        Constants.WIKI + Constants.WIKI_HOME + "cmds/sm")
+        Constants.WIKI + Constants.WIKI_HOME + "sm")
 public class SearchMethodCommand extends AnnotatedCommand {
 
     private String classPattern;

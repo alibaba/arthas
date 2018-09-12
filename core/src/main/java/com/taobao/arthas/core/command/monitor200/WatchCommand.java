@@ -21,7 +21,7 @@ import com.taobao.middleware.cli.annotations.Summary;
         "  watch *StringUtils isBlank params[0]\n" +
         "  watch *StringUtils isBlank params[0] params[0].length==1\n" +
         "  watch *StringUtils isBlank '#cost>100'\n" +
-        Constants.WIKI + Constants.WIKI_HOME + "cmds/watch")
+        Constants.WIKI + Constants.WIKI_HOME + "watch")
 public class WatchCommand extends EnhancerCommand {
 
     private String classPattern;
