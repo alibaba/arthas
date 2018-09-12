@@ -28,7 +28,7 @@ Contents
 * [Release Notes](release-notes.md)
 * [Questions and answers](https://github.com/alibaba/arthas/labels/question-answered)
 * [Fork me at GitHub](https://github.com/alibaba/arthas)
-* [参与贡献](https://github.com/alibaba/arthas/CONTRIBUTING.md)
+* [参与贡献](https://github.com/alibaba/arthas/blob/master/CONTRIBUTING.md)
 
 
 

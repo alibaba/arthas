@@ -20,5 +20,5 @@
 * [快速入门](https://alibaba.github.io/arthas/quick-start.html)
 * [进阶使用](https://alibaba.github.io/arthas/advanced-use.html)
 * [Questions and answers](https://github.com/alibaba/arthas/labels/question-answered)
-* [参与贡献](https://github.com/alibaba/arthas/CONTRIBUTING.md)
+* [参与贡献](https://github.com/alibaba/arthas/blob/master/CONTRIBUTING.md)
 
