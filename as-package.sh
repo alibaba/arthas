@@ -26,7 +26,7 @@ exit_on_err()
 
 packaging_bin_path="$(ls ${DIR}/packaging/target/arthas-*-bin.zip)"
 
-maven package the arthas
+# maven package the arthas
 mvn clean package -Dmaven.test.skip=true -f $DIR/pom.xml \
 || exit_on_err 1 "package arthas failed."
 
