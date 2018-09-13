@@ -24,3 +24,9 @@
 * [Questions and answers](https://github.com/alibaba/arthas/labels/question-answered)
 * [参与贡献](https://github.com/alibaba/arthas/blob/master/CONTRIBUTING.md)
 
+
+## 截图展示
+
+### dashboard
+
+![dashboard](site/src/site/sphinx/_static/dashboard.png)
