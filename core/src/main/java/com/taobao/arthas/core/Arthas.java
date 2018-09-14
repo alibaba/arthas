@@ -43,7 +43,7 @@ public class Arthas {
         if (commandLine.getOptionValue("target-ip") == null) {
             throw new IllegalStateException("as.sh is too old to support web console, " +
                     "please run the following command to upgrade to latest version:" +
-                    "\ncurl -sLk http://arthas.io/arthas/install.sh | sh");
+                    "\ncurl -sLk https://alibaba.github.io/arthas/install.sh | sh");
         }
         configure.setIp((String) commandLine.getOptionValue("target-ip"));
         configure.setTelnetPort((Integer) commandLine.getOptionValue("telnet-port"));

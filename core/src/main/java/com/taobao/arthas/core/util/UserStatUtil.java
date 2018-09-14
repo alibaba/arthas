@@ -66,8 +66,9 @@ public class UserStatUtil {
 
     static class RemoteJob implements Runnable {
 
-        // private StringBuilder link      = new StringBuilder("http://arthas.io/api/");
-        private StringBuilder link = new StringBuilder("http://arthas.io/api/");
+//        private StringBuilder link = new StringBuilder("http://arthas.io/api/");
+        // disable stat
+        private StringBuilder link = null;
 
         private String resource;
 
@@ -89,6 +90,9 @@ public class UserStatUtil {
 
         @Override
         public void run() {
+            if (link == null) {
+                return;
+            }
             try {
                 link.append(resource);
                 if (queryData.length() != 0) {
