@@ -1,5 +1,7 @@
 package com.taobao.arthas.core;
 
+import com.sun.tools.attach.VirtualMachine;
+import com.sun.tools.attach.VirtualMachineDescriptor;
 import com.taobao.arthas.core.config.Configure;
 import com.taobao.middleware.cli.CLI;
 import com.taobao.middleware.cli.CLIs;
@@ -7,9 +9,7 @@ import com.taobao.middleware.cli.CommandLine;
 import com.taobao.middleware.cli.Option;
 import com.taobao.middleware.cli.TypedOption;
 
-import java.lang.reflect.Method;
 import java.util.Arrays;
-import java.util.List;
 
 /**
  * Arthas启动器
@@ -52,30 +52,26 @@ public class Arthas {
     }
 
     private void attachAgent(Configure configure) throws Exception {
-        ClassLoader loader = Thread.currentThread().getContextClassLoader();
-        Class<?> vmdClass = loader.loadClass("com.sun.tools.attach.VirtualMachineDescriptor");
-        Class<?> vmClass = loader.loadClass("com.sun.tools.attach.VirtualMachine");
-
-        Object attachVmdObj = null;
-        for (Object obj : (List<?>) vmClass.getMethod("list", (Class<?>[]) null).invoke(null, (Object[]) null)) {
-            Object pid = vmdClass.getMethod("id", (Class<?>[]) null).invoke(obj, (Object[]) null);
+        VirtualMachineDescriptor virtualMachineDescriptor = null;
+        for (VirtualMachineDescriptor descriptor : VirtualMachine.list()) {
+            String pid = descriptor.id();
             if (pid.equals(Integer.toString(configure.getJavaPid()))) {
-                attachVmdObj = obj;
+                virtualMachineDescriptor = descriptor;
             }
         }
 
-        Object vmObj = null;
+        VirtualMachine virtualMachine = null;
         try {
-            if (null == attachVmdObj) { // 使用 attach(String pid) 这种方式
-                vmObj = vmClass.getMethod("attach", String.class).invoke(null, "" + configure.getJavaPid());
+            if (null == virtualMachineDescriptor) { // 使用 attach(String pid) 这种方式
+                virtualMachine = VirtualMachine.attach("" + configure.getJavaPid());
             } else {
-                vmObj = vmClass.getMethod("attach", vmdClass).invoke(null, attachVmdObj);
+                virtualMachine = VirtualMachine.attach(virtualMachineDescriptor);
             }
-            Method loadAgent = vmClass.getMethod("loadAgent", String.class, String.class);
-            loadAgent.invoke(vmObj, configure.getArthasAgent(), configure.getArthasCore() + ";" + configure.toString());
+            virtualMachine.loadAgent(configure.getArthasAgent(),
+                            configure.getArthasCore() + ";" + configure.toString());
         } finally {
-            if (null != vmObj) {
-                vmClass.getMethod("detach", (Class<?>[]) null).invoke(vmObj, (Object[]) null);
+            if (null != virtualMachine) {
+                virtualMachine.detach();
             }
         }
     }
