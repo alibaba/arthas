@@ -84,7 +84,7 @@ public class GlobalOptions {
             name = "save-result",
             summary = "Option to print command's result to log file",
             description = "This option enables to save each command's result to log file, " +
-                    "which path is ${user.home}/logs/arthas/result.log."
+                    "which path is ${user.home}/logs/arthas-cache/result.log."
     )
     public static volatile boolean isSaveResult = false;
 
