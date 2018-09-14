@@ -10,38 +10,32 @@
   <files>
     <file>
       <source>../spy/target/arthas-spy.jar</source>
-      <outputDirectory>/</outputDirectory>
       <destName>arthas-spy.jar</destName>
     </file>
     <file>
       <source>../core/target/arthas-core-jar-with-dependencies.jar</source>
-      <outputDirectory>/</outputDirectory>
       <destName>arthas-core.jar</destName>
     </file>
     <file>
       <source>../agent/target/arthas-agent-jar-with-dependencies.jar</source>
-      <outputDirectory>/</outputDirectory>
       <destName>arthas-agent.jar</destName>
     </file>
     <file>
       <source>../client/target/arthas-client-jar-with-dependencies.jar</source>
-      <outputDirectory>/</outputDirectory>
       <destName>arthas-client.jar</destName>
     </file>
 
     <file>
       <source>../bin/install-local.sh</source>
-      <outputDirectory>/</outputDirectory>
       <fileMode>0755</fileMode>
+      <filtered>true</filtered>
     </file>
     <file>
       <source>../bin/as.sh </source>
-      <outputDirectory>/</outputDirectory>
       <fileMode>0755</fileMode>
     </file>
     <file>
       <source>../bin/as.bat</source>
-      <outputDirectory>/</outputDirectory>
     </file>
   </files>
 </assembly>
