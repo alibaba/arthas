@@ -3,6 +3,7 @@ package com.taobao.arthas.core;
 import com.sun.tools.attach.VirtualMachine;
 import com.sun.tools.attach.VirtualMachineDescriptor;
 import com.taobao.arthas.core.config.Configure;
+import com.taobao.arthas.core.util.AnsiLog;
 import com.taobao.middleware.cli.CLI;
 import com.taobao.middleware.cli.CLIs;
 import com.taobao.middleware.cli.CommandLine;
@@ -10,6 +11,7 @@ import com.taobao.middleware.cli.Option;
 import com.taobao.middleware.cli.TypedOption;
 
 import java.util.Arrays;
+import java.util.Properties;
 
 /**
  * Arthas启动器
@@ -59,7 +61,6 @@ public class Arthas {
                 virtualMachineDescriptor = descriptor;
             }
         }
-
         VirtualMachine virtualMachine = null;
         try {
             if (null == virtualMachineDescriptor) { // 使用 attach(String pid) 这种方式
@@ -67,6 +68,19 @@ public class Arthas {
             } else {
                 virtualMachine = VirtualMachine.attach(virtualMachineDescriptor);
             }
+
+            Properties targetSystemProperties = virtualMachine.getSystemProperties();
+            String targetJavaVersion = targetSystemProperties.getProperty("java.specification.version");
+            String currentJavaVersion = System.getProperty("java.specification.version");
+            if (targetJavaVersion != null && currentJavaVersion != null) {
+                if (!targetJavaVersion.equals(currentJavaVersion)) {
+                    AnsiLog.warn("Current VM java version: {} do not match target VM java version: {}, attach may fail.",
+                                    currentJavaVersion, targetJavaVersion);
+                    AnsiLog.warn("Target VM JAVA_HOME is {}, try to set the same JAVA_HOME.",
+                                    targetSystemProperties.getProperty("java.home"));
+                }
+            }
+
             virtualMachine.loadAgent(configure.getArthasAgent(),
                             configure.getArthasCore() + ";" + configure.toString());
         } finally {
@@ -81,7 +95,7 @@ public class Arthas {
         try {
             new Arthas(args);
         } catch (Throwable t) {
-            System.err.println("Start arthas failed, exception stack trace: ");
+            AnsiLog.error("Start arthas failed, exception stack trace: ");
             t.printStackTrace();
             System.exit(-1);
         }
