@@ -7,7 +7,6 @@ import com.taobao.text.Decoration;
 import com.taobao.text.ui.TableElement;
 import com.taobao.text.util.RenderUtil;
 
-import java.io.IOException;
 import java.io.InputStream;
 
 import static com.taobao.text.ui.Element.label;
