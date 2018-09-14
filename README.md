@@ -27,6 +27,15 @@
 
 ## 截图展示
 
-### dashboard
+### Dashboard
+
+* https://alibaba.github.io/arthas/dashboard
 
 ![dashboard](site/src/site/sphinx/_static/dashboard.png)
+
+
+### Web Console
+
+* https://alibaba.github.io/arthas/web-console
+
+![web console](site/src/site/sphinx/_static/web-console-local.png)
