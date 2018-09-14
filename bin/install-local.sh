@@ -1,8 +1,7 @@
 #!/bin/bash
 
 # define newset arthas's version
-# need ../arthas-packages.sh replace the version number
-ARTHAS_VERSION=0.0
+ARTHAS_VERSION=${project.version}
 
 # define newset arthas lib home
 ARTHAS_LIB_HOME=${HOME}/.arthas/lib/${ARTHAS_VERSION}/arthas
