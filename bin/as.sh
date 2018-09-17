@@ -1,9 +1,17 @@
-#!/bin/sh
+#!/usr/bin/env bash
+
+# WIKI: https://alibaba.github.io/arthas
+# This script only supports bash, do not support posix sh.
+# If you have the problem like Syntax error: "(" unexpected (expecting "fi"),
+# Try to run "bash -version" to check the version.
+# Try to visit WIKI to find a solution.
 
 # program : Arthas
 #  author : Core Engine @ Taobao.com
-#    date : 2017-3-27
-# version : 3.0.3
+#    date : 2018-09-17
+
+# current arthas script version
+ARTHAS_SCRIPT_VERSION=3.0.4
 
 # define arthas's home
 ARTHAS_HOME=${HOME}/.arthas
@@ -16,9 +24,6 @@ TMP_DIR=/tmp
 
 # last update arthas version
 ARTHAS_VERSION=
-
-# current arthas script version
-ARTHAS_SCRIPT_VERSION=3.0.2
 
 # arthas remote url
 ARTHAS_REMOTE_VERSION_URL="http://search.maven.org/solrsearch/select?q=g:%22com.taobao.arthas%22+AND+a:%22arthas-packaging%22"
@@ -219,7 +224,7 @@ $(${JAVA_HOME}/bin/jps -l | grep -v sun.tools.jps.Jps)
 # parse the argument
 parse_arguments()
 {
-    if [ "$1" = "-h" ]; then
+    if ([ "$1" = "-h" ] || [ "$1" = "--help" ] || [ "$1" = "-help" ]) ; then
         usage
         exit 0
     fi
