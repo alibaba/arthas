@@ -28,7 +28,7 @@ Arthas is born to solve these issues. You can trouble-shoot your production issu
 * command line interactive mode, with auto completed feature enabled.
 * telnet and websocket support, which enables both local and remote diagnostics with command line and browsers.
 
-
+### Documentation
 
 * [User manual](https://alibaba.github.io/arthas/)
 * [Installation](https://alibaba.github.io/arthas/install-detail.html)
@@ -38,16 +38,16 @@ Arthas is born to solve these issues. You can trouble-shoot your production issu
 * [How to contribute](https://github.com/alibaba/arthas/blob/master/CONTRIBUTING.md)
 
 
-## Screenshot
+### Feature Showcase
 
-### Dashboard
+#### Dashboard
 
 * https://alibaba.github.io/arthas/dashboard
 
 ![dashboard](site/src/site/sphinx/_static/dashboard.png)
 
 
-### Web Console
+#### Web Console
 
 * https://alibaba.github.io/arthas/web-console
 
