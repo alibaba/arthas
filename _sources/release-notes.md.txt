@@ -2,6 +2,11 @@
 Release Notes
 ===
 
+v3.0.4
+---
+
+* https://github.com/alibaba/arthas/milestone/1?closed=1
+
 
 v2017-11-03
 ----
