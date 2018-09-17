@@ -240,8 +240,8 @@ public class ObjectViewTest {
                 "    c1=@NestedClass[\n" +
                 "        code=@Integer[1],\n" +
                 "        c1=...\n" +
-                "... Object size exceeds size limit: 100, try to specify -M size_limit in your command, check the help command for more.";
-        Assert.assertEquals(expected, objectView.draw());
+                "... Object size exceeds size limit: 100";
+        Assert.assertTrue(objectView.draw().startsWith(expected));
     }
 
     private String replaceHashCode(String input) {
