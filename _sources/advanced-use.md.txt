@@ -66,6 +66,11 @@ Arthas支持使用管道对上述命令的结果进行进一步的处理，如`s
 * fg——将暂停的任务拉到前台执行
 * bg——将暂停的任务放到后台执行
 
+## Web Console
+
+通过websocket连接Arthas。
+
+* [Web Console](web-console.md)
 
 ## 其他特性
 
@@ -73,3 +78,5 @@ Arthas支持使用管道对上述命令的结果进行进一步的处理，如`s
 * [执行结果存日志](save-log.md)
 * [批处理的支持](batch-support.md)
 * [ognl表达式的用法说明](https://github.com/alibaba/arthas/issues/11)
+
+

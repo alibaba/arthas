@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Arthas Install &mdash; Arthas 3.0.1-RC-SNAPSHOT 文档</title>
+  <title>Arthas Install &mdash; Arthas 3.0.5-SNAPSHOT 文档</title>
   
 
   
@@ -64,7 +64,7 @@
             
             
               <div class="version">
-                3.0.1-RC-SNAPSHOT
+                3.0.5-SNAPSHOT
               </div>
             
           
@@ -180,12 +180,19 @@
 </pre></div>
 </div>
 <p>上述命令将会下载的启动脚本文件 <code class="docutils literal notranslate"><span class="pre">as.sh</span></code> 到当前目录，你可以放在任何地方或将其加入到 $PATH 中。</p>
+<p>直接在shell下面执行<code class="docutils literal notranslate"><span class="pre">./as.sh</span></code>，就会进入交互界面。</p>
+<p>也可以执行<code class="docutils literal notranslate"><span class="pre">./as.sh</span> <span class="pre">-h</span></code>来获取更多参数信息。</p>
 </div>
 <div class="section" id="windows">
 <span id="windows"></span><h2>Windows<a class="headerlink" href="#windows" title="永久链接至标题">¶</a></h2>
-<p>下载最新的 zip 包，解压后运行 bin 目录下的 <code class="docutils literal notranslate"><span class="pre">as.bat</span></code>。</p>
-<p>下载地址：<a class="reference external" href="https://search.maven.org/remotecontent?filepath=com/taobao/arthas/arthas-packaging/3.0.0-RC/arthas-packaging-3.0.0-RC-bin.zip">arthas-packaging-3.0.0-RC-bin.zip</a></p>
-<p>Windows用户如果在cmd里不能正常显示颜色，可以使用<a class="reference external" href="https://sourceforge.net/projects/conemu">conemu</a>。</p>
+<p>最新版本：<a class="reference external" href="http://search.maven.org/classic/#search%7Cga%7C1%7Cg%3A%22com.taobao.arthas%22%20AND%20a%3A%22arthas-packaging%22"><img alt="Arthas" src="https://img.shields.io/maven-central/v/com.taobao.arthas/arthas-packaging.svg?style=flat-square" /></a></p>
+<p>在<code class="docutils literal notranslate"><span class="pre">Download</span></code>栏下载最新的 <code class="docutils literal notranslate"><span class="pre">bin.zip</span></code> 包，解压后在bin目录有 <code class="docutils literal notranslate"><span class="pre">as.bat</span></code>。此脚本暂时只接受一个参数 pid，即只能诊断本机上的 Java 进程。（欢迎精通bat脚本的开发者改进）</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">as</span><span class="o">.</span><span class="n">bat</span> <span class="n">pid</span>
+</pre></div>
+</div>
+<p>如果需要更好的体验，可以在本地使用 <code class="docutils literal notranslate"><span class="pre">as.bat</span> <span class="pre">pid</span></code> 启动 Arthas Server 后，然后在另外的 Linux/Mac 上使用 as.bat pid&#64;ip:port 来远程诊断。</p>
+<blockquote>
+<div>Windows用户如果在cmd里不能正常显示颜色，可以使用<a class="reference external" href="https://sourceforge.net/projects/conemu">conemu</a>。</div></blockquote>
 </div>
 <div class="section" id="">
 <span id="id1"></span><h2>手动安装<a class="headerlink" href="#" title="永久链接至标题">¶</a></h2>
@@ -193,7 +200,8 @@
 </div>
 <div class="section" id="">
 <span id="id2"></span><h2>离线帮助文档<a class="headerlink" href="#" title="永久链接至标题">¶</a></h2>
-<p>下载地址：<a class="reference external" href="https://search.maven.org/remotecontent?filepath=com/taobao/arthas/arthas-packaging/3.0.0-RC/arthas-packaging-3.0.0-RC-doc.zip">arthas-packaging-3.0.0-RC-doc.zip</a></p>
+<p>最新版本：<a class="reference external" href="http://search.maven.org/classic/#search%7Cga%7C1%7Cg%3A%22com.taobao.arthas%22%20AND%20a%3A%22arthas-packaging%22"><img alt="Arthas" src="https://img.shields.io/maven-central/v/com.taobao.arthas/arthas-packaging.svg?style=flat-square" /></a></p>
+<p>在<code class="docutils literal notranslate"><span class="pre">Download</span></code>栏下载最新的 <code class="docutils literal notranslate"><span class="pre">doc.zip</span></code> 包，</p>
 </div>
 <div class="section" id="">
 <span id="id3"></span><h2>卸载<a class="headerlink" href="#" title="永久链接至标题">¶</a></h2>
@@ -252,7 +260,7 @@
     <script type="text/javascript">
         var DOCUMENTATION_OPTIONS = {
             URL_ROOT:'./',
-            VERSION:'3.0.1-RC-SNAPSHOT',
+            VERSION:'3.0.5-SNAPSHOT',
             LANGUAGE:'zh_CN',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',

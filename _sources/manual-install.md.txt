@@ -1,10 +1,12 @@
 手动安装Arthas
 ===
 
-1. 从[这里](http://search.maven.org/classic/#search%7Cga%7C1%7Cg%3A%22com.taobao.arthas%22%20AND%20a%3A%22arthas-packaging%22)下载最新版本, 以`3.0.0-RC`这个版本为例。
-    ```
-    wget https://search.maven.org/remotecontent?filepath=com/taobao/arthas/arthas-packaging/3.0.0-RC/arthas-packaging-3.0.0-RC-bin.zip -o arthas-packaging-bin.zip
-    ```
+1. 下载最新版本
+
+    最新版本：[![Arthas](https://img.shields.io/maven-central/v/com.taobao.arthas/arthas-packaging.svg?style=flat-square "Arthas")](http://search.maven.org/classic/#search%7Cga%7C1%7Cg%3A%22com.taobao.arthas%22%20AND%20a%3A%22arthas-packaging%22)
+
+    在`Download`栏下载最新的 `bin.zip` 包。
+
 
 2. 解压缩arthas的压缩包
     ```

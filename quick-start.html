@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>快速入门 &mdash; Arthas 3.0.1-RC-SNAPSHOT 文档</title>
+  <title>快速入门 &mdash; Arthas 3.0.5-SNAPSHOT 文档</title>
   
 
   
@@ -64,7 +64,7 @@
             
             
               <div class="version">
-                3.0.1-RC-SNAPSHOT
+                3.0.5-SNAPSHOT
               </div>
             
           
@@ -99,6 +99,7 @@
 </li>
 <li class="toctree-l2"><a class="reference internal" href="#dashboard">3. 查看dashboard</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#watch">4. watch</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#arthas">退出arthas</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="advanced-use.html">进阶使用</a></li>
@@ -306,6 +307,11 @@ ts=2018-09-10 17:53:15;result=@Integer[625]
 </div>
 <p>更多的功能可以查看<a class="reference internal" href="advanced-use.html"><span class="doc">进阶使用</span></a>。</p>
 </div>
+<div class="section" id="arthas">
+<span id="id2"></span><h2>退出arthas<a class="headerlink" href="#arthas" title="永久链接至标题">¶</a></h2>
+<p>如果只是退出当前的连接，可以用<code class="docutils literal notranslate"><span class="pre">quit</span></code>或者<code class="docutils literal notranslate"><span class="pre">exit</span></code>命令。Attach到目标进程上的arthas还会继续运行，端口会保持开放，下次连接时可以直接连接上。</p>
+<p>如果想完全退出arthas，可以执行<code class="docutils literal notranslate"><span class="pre">shutdown</span></code>命令。</p>
+</div>
 </div>
 
 
@@ -350,7 +356,7 @@ ts=2018-09-10 17:53:15;result=@Integer[625]
     <script type="text/javascript">
         var DOCUMENTATION_OPTIONS = {
             URL_ROOT:'./',
-            VERSION:'3.0.1-RC-SNAPSHOT',
+            VERSION:'3.0.5-SNAPSHOT',
             LANGUAGE:'zh_CN',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',

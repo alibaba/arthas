@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>手动安装Arthas &mdash; Arthas 3.0.5-SNAPSHOT 文档</title>
+  <title>Web Console &mdash; Arthas 3.0.5-SNAPSHOT 文档</title>
   
 
   
@@ -31,6 +31,8 @@
     <link rel="stylesheet" href="_static/overrides.css" type="text/css" />
     <link rel="index" title="索引" href="genindex.html" />
     <link rel="search" title="搜索" href="search.html" />
+    <link rel="next" title="Arthas异步调用" href="async.html" />
+    <link rel="prev" title="进阶使用" href="advanced-use.html" />
 <script src="_static/center_page.js"></script>
  
 
@@ -86,10 +88,24 @@
               
             
             
-              <ul>
+              <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="install-detail.html">安装</a></li>
 <li class="toctree-l1"><a class="reference internal" href="quick-start.html">快速入门</a></li>
-<li class="toctree-l1"><a class="reference internal" href="advanced-use.html">进阶使用</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="advanced-use.html">进阶使用</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="advanced-use.html#">基础命令</a></li>
+<li class="toctree-l2"><a class="reference internal" href="advanced-use.html#jvm">jvm相关</a></li>
+<li class="toctree-l2"><a class="reference internal" href="advanced-use.html#class-classloader">class/classloader相关</a></li>
+<li class="toctree-l2"><a class="reference internal" href="advanced-use.html#monitor-watch-trace">monitor/watch/trace相关</a></li>
+<li class="toctree-l2"><a class="reference internal" href="advanced-use.html#options">options</a></li>
+<li class="toctree-l2"><a class="reference internal" href="advanced-use.html#">管道</a></li>
+<li class="toctree-l2"><a class="reference internal" href="advanced-use.html#">后台异步任务</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="advanced-use.html#web-console">Web Console</a><ul class="current">
+<li class="toctree-l3 current"><a class="current reference internal" href="#">Web Console</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="advanced-use.html#">其他特性</a></li>
+</ul>
+</li>
 <li class="toctree-l1"><a class="reference internal" href="commands.html">命令列表</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas/labels/user-case">用户案例</a></li>
 <li class="toctree-l1"><a class="reference internal" href="release-notes.html">Release Notes</a></li>
@@ -141,14 +157,16 @@
     
       <li><a href="index.html">Docs</a> &raquo;</li>
         
-      <li>手动安装Arthas</li>
+          <li><a href="advanced-use.html">进阶使用</a> &raquo;</li>
+        
+      <li>Web Console</li>
     
     
       <li class="wy-breadcrumbs-aside">
         
             
             
-              <a href="https://github.com/alibaba/arthas/blob/master/site/src/site/sphinx/manual-install.md" class="fa fa-github"> Edit on GitHub</a>
+              <a href="https://github.com/alibaba/arthas/blob/master/site/src/site/sphinx/web-console.md" class="fa fa-github"> Edit on GitHub</a>
             
           
         
@@ -162,35 +180,12 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
             
-  <div class="section" id="arthas">
-<span id="arthas"></span><h1>手动安装Arthas<a class="headerlink" href="#arthas" title="永久链接至标题">¶</a></h1>
-<ol>
-<li><p class="first">下载最新版本</p>
-<p>最新版本：<a class="reference external" href="http://search.maven.org/classic/#search%7Cga%7C1%7Cg%3A%22com.taobao.arthas%22%20AND%20a%3A%22arthas-packaging%22"><img alt="Arthas" src="https://img.shields.io/maven-central/v/com.taobao.arthas/arthas-packaging.svg?style=flat-square" /></a></p>
-<p>在<code class="docutils literal notranslate"><span class="pre">Download</span></code>栏下载最新的 <code class="docutils literal notranslate"><span class="pre">bin.zip</span></code> 包。</p>
-</li>
-<li><p class="first">解压缩arthas的压缩包</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">unzip</span> <span class="n">arthas</span><span class="o">-</span><span class="n">packaging</span><span class="o">-</span><span class="nb">bin</span><span class="o">.</span><span class="n">zip</span>
-</pre></div>
-</div>
-</li>
-<li><p class="first">安装Arthas: 安装之前最好把所有老版本的Arthas全都删掉</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">sudo</span> <span class="n">su</span> <span class="n">admin</span>
-<span class="n">rm</span> <span class="o">-</span><span class="n">rf</span> <span class="o">/</span><span class="n">home</span><span class="o">/</span><span class="n">admin</span><span class="o">/.</span><span class="n">arthas</span><span class="o">/</span><span class="n">lib</span><span class="o">/*</span>
-<span class="n">cd</span> <span class="n">arthas</span>
-<span class="o">./</span><span class="n">install</span><span class="o">-</span><span class="n">local</span><span class="o">.</span><span class="n">sh</span>
-</pre></div>
-</div>
-<blockquote>
-<div><p>注意，这里根据你需要诊断的Java进程的所属用户进行切换</p>
-</div></blockquote>
-</li>
-<li><p class="first">启动Arthas: 启动之前，请确保老版本的Arthas已经shutdown.</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">./</span><span class="k">as</span><span class="o">.</span><span class="n">sh</span>
-</pre></div>
-</div>
-</li>
-</ol>
+  <div class="section" id="web-console">
+<span id="web-console"></span><h1>Web Console<a class="headerlink" href="#web-console" title="永久链接至标题">¶</a></h1>
+<p>Arthas目前支持Web Console，用户在attach成功之后，可以直接访问：<a class="reference external" href="http://localhost:8563/">http://localhost:8563/</a>。</p>
+<p>可以填入IP，远程连接其它机器上的arthas。</p>
+<p><img alt="web console" src="_images/web-console-local.png" /></p>
+<p>后续更多Web Console功能支持，请到issue下留言：<a class="reference external" href="https://github.com/alibaba/arthas/issues/15">https://github.com/alibaba/arthas/issues/15</a></p>
 </div>
 
 
@@ -198,6 +193,15 @@
            
           </div>
           <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="async.html" class="btn btn-neutral float-right" title="Arthas异步调用" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="advanced-use.html" class="btn btn-neutral" title="进阶使用" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
   
 
   <hr/>
