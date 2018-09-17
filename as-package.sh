@@ -2,7 +2,12 @@
 
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
-CUR_VERSION="3.0.3"
+get_local_maven_project_version()
+{
+    $DIR/mvnw org.apache.maven.plugins:maven-help-plugin:2.1.1:evaluate -Dexpression=project.version | grep -e '^[^\[]' | cut -b 1-5
+}
+
+CUR_VERSION=$(get_local_maven_project_version)
 
 # arthas's version
 DATE=$(date '+%Y%m%d%H%M%S')
@@ -24,10 +29,11 @@ exit_on_err()
     exit ${1}
 }
 
+
 packaging_bin_path="$(ls ${DIR}/packaging/target/arthas-*-bin.zip)"
 
 # maven package the arthas
-mvn clean package -Dmaven.test.skip=true -f $DIR/pom.xml \
+$DIR/mvnw clean package -Dmaven.test.skip=true -f $DIR/pom.xml \
 || exit_on_err 1 "package arthas failed."
 
 rm -r $DIR/core/src/main/resources/com/taobao/arthas/core/res/version
