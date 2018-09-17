@@ -83,7 +83,7 @@ timestamp: 1536656867894
 
 ### Windows
 
-打开Dos命令行窗口，在解压的arthas目录下执行`as.bat`。
+打开Dos命令行窗口，在解压的arthas目录下执行`as.bat pid`。
 
 
 ## 3. 查看dashboard
