@@ -13,3 +13,4 @@ core/src/main/resources/com/taobao/arthas/core/res/version
 **/*.orig
 
 site/src/site/sphinx/_build
+site/src/site/sphinx/en/_build
