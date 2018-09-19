@@ -13,6 +13,7 @@
 
 ## 开发者相关
 
+编绎要求jdk7以上。因为使用到了jdk7才有的`java.lang.management.BufferPoolMXBea`，运行时要求是jdk6。
 
 ### 安装到本地
 
