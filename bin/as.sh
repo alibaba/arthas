@@ -413,34 +413,18 @@ active_console()
     local arthas_version=$1
     local arthas_lib_dir=${ARTHAS_LIB_DIR}/${arthas_version}/arthas
 
-    if [[ "${arthas_version}" > "3.0" ]]; then
-        if [ "${BATCH_MODE}" = "true" ]; then
-            ${JAVA_HOME}/bin/java ${ARTHAS_OPTS} ${JVM_OPTS} \
-                 -jar ${arthas_lib_dir}/arthas-client.jar \
-                 ${TARGET_IP} \
-                 -p ${TELNET_PORT} \
-                 -f ${BATCH_SCRIPT}
-        elif type telnet 2>&1 >> /dev/null; then
-            # use telnet
-            telnet ${TARGET_IP} ${TELNET_PORT}
-        else
-            echo "'telnet' is required." 1>&2
-            return 1
-        fi
+    if [ "${BATCH_MODE}" = "true" ]; then
+        ${JAVA_HOME}/bin/java ${ARTHAS_OPTS} ${JVM_OPTS} \
+             -jar ${arthas_lib_dir}/arthas-client.jar \
+             ${TARGET_IP} \
+             -p ${TELNET_PORT} \
+             -f ${BATCH_SCRIPT}
+    elif type telnet 2>&1 >> /dev/null; then
+        # use telnet
+        telnet ${TARGET_IP} ${TELNET_PORT}
     else
-        # for compatibility
-        # use default console
-        ARGS="${TARGET_IP} ${TELNET_PORT}"
-        if [ ${BATCH_MODE} = true ]; then
-            ARGS="$ARGS -b"
-        fi
-        if [ ! -z ${BATCH_SCRIPT} ]; then
-            ARGS="$ARGS -f $BATCH_SCRIPT"
-        fi
-        eval ${JAVA_HOME}/bin/java ${ARTHAS_OPTS} \
-            -cp ${arthas_lib_dir}/arthas-core.jar \
-            com.taobao.arthas.core.ArthasConsole \
-            ${ARGS}
+        echo "'telnet' is required." 1>&2
+        return 1
     fi
 }
 
