@@ -22,8 +22,8 @@ stack
 
 请参考[表达式核心变量](advice-class.md)中关于该节点的描述。
 
-* 特殊用法请参考：TODO middleware-container/arthas/issues/263
-* OGNL表达式官网：https://commons.apache.org/proper/commons-ognl/language-guide.html
+* 特殊用法请参考：[https://github.com/alibaba/arthas/issues/71](https://github.com/alibaba/arthas/issues/71)
+* OGNL表达式官网：[https://commons.apache.org/proper/commons-ognl/language-guide.html](https://commons.apache.org/proper/commons-ognl/language-guide.html)
 
 ### 使用例子
 
