@@ -72,6 +72,7 @@ public class ShellServerImpl extends ShellServer {
         this.bootstrap = bootstrap;
         this.pid = options.getPid();
 
+        // 系统级指令
         // Register builtin commands so they are listed in help
         resolvers.add(new BuiltinCommandResolver());
     }

@@ -54,6 +54,7 @@ public class Arthas {
     }
 
     private void attachAgent(Configure configure) throws Exception {
+        // 获取pid访问到的虚拟机
         VirtualMachineDescriptor virtualMachineDescriptor = null;
         for (VirtualMachineDescriptor descriptor : VirtualMachine.list()) {
             String pid = descriptor.id();
@@ -81,8 +82,17 @@ public class Arthas {
                 }
             }
 
+            // 目标虚拟机加载 代理jar 以及 描述信息
+            // sun.tools.attach.HotSpotVirtualMachine.loadAgent
+            //  操作系统底层相关加载AgentLibrary sun.tools.attach.LinuxVirtualMachine.execute
             virtualMachine.loadAgent(configure.getArthasAgent(),
                             configure.getArthasCore() + ";" + configure.toString());
+            // 因此需要跳转到arthas-agent.jar 去了 参数: ${arthas_lib_dir}/arthas-agent.jar=${arthas_lib_dir}/arthas-core.jar;com.taobao.arthas.core.config.Configure.toString()
+            // agent#pom.xml
+            // <Premain-Class>com.taobao.arthas.agent.AgentBootstrap</Premain-Class>
+            //      com.taobao.arthas.agent.AgentBootstrap.premain
+            // <Agent-Class>com.taobao.arthas.agent.AgentBootstrap</Agent-Class>
+            //     com.taobao.arthas.agent.AgentBootstrap.agentmain
         } finally {
             if (null != virtualMachine) {
                 virtualMachine.detach();
@@ -91,6 +101,23 @@ public class Arthas {
     }
 
 
+    /**
+     * arthas#version > 3.0
+     * -jar ${arthas_lib_dir}/arthas-core.jar \
+     *                     -pid ${TARGET_PID} \
+     *                     -target-ip ${TARGET_IP} \
+     *                     -telnet-port ${TELNET_PORT} \
+     *                     -http-port ${HTTP_PORT} \
+     *                     -core "${arthas_lib_dir}/arthas-core.jar" \
+     *                     -agent "${arthas_lib_dir}/arthas-agent.jar"
+     * arthas#version <= 3.0
+     * -jar ${arthas_lib_dir}/arthas-core.jar \
+     *                     -pid ${TARGET_PID} \
+     *                     -target ${TARGET_IP}":"${TELNET_PORT} \
+     *                     -core "${arthas_lib_dir}/arthas-core.jar" \
+     *                     -agent "${arthas_lib_dir}/arthas-agent.jar"
+     * @param args
+     */
     public static void main(String[] args) {
         try {
             new Arthas(args);

@@ -9,7 +9,7 @@ import java.util.jar.JarFile;
 
 /**
  * 代理启动类
- *
+ * 此时, 我已经来到目标虚拟机内部. 我是被Arthas指示的
  * @author vlinux on 15/5/19.
  */
 public class AgentBootstrap {
@@ -65,7 +65,7 @@ public class AgentBootstrap {
     }
 
     private static ClassLoader getClassLoader(Instrumentation inst, File spyJarFile, File agentJarFile) throws Throwable {
-        // 将Spy添加到BootstrapClassLoader
+        // 将Spy添加到BootstrapClassLoader com.taobao.arthas.core.advisor.Enhancer.spy
         inst.appendToBootstrapClassLoaderSearch(new JarFile(spyJarFile));
 
         // 构造自定义的类加载器，尽量减少Arthas对现有工程的侵蚀
@@ -92,6 +92,12 @@ public class AgentBootstrap {
         Spy.initForAgentLauncher(classLoader, onBefore, onReturn, onThrows, beforeInvoke, afterInvoke, throwInvoke, reset);
     }
 
+    /**
+     *
+     * @param args
+     *  ${arthas_lib_dir}/arthas-agent.jar=${arthas_lib_dir}/arthas-core.jar;com.taobao.arthas.core.config.Configure.toString()
+     * @param inst
+     */
     private static synchronized void main(final String args, final Instrumentation inst) {
         try {
             ps.println("Arthas server agent start...");
@@ -145,6 +151,14 @@ public class AgentBootstrap {
         }
     }
 
+    /**
+     * 初始化arthas服务 com.taobao.arthas.core.server.ArthasBootstrap
+     *
+     * @param inst
+     * @param agentLoader
+     * @param args
+     * @throws Throwable
+     */
     private static void bind(Instrumentation inst, ClassLoader agentLoader, String args) throws Throwable {
         Class<?> classOfConfigure = agentLoader.loadClass(ARTHAS_CONFIGURE);
         Object configure = classOfConfigure.getMethod(TO_CONFIGURE, String.class).invoke(null, args);

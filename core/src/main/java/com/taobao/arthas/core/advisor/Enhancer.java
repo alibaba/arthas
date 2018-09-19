@@ -128,8 +128,10 @@ public class Enhancer implements ClassFileTransformer {
             /*
              * 注意，为了自动计算帧的大小，有时必须计算两个类共同的父类。
              * 缺省情况下，ClassWriter将会在getCommonSuperClass方法中计算这些，通过在加载这两个类进入虚拟机时，使用反射API来计算。
-             * 但是，如果你将要生成的几个类相互之间引用，这将会带来问题，因为引用的类可能还不存在。
+             * 但是，如果你将要***生成***的几个类相互之间引用，这将会带来问题，因为引用的类可能还***不存在***。
              * 在这种情况下，你可以重写getCommonSuperClass方法来解决这个问题。
+             *
+             * [加载ClassWriter的ClassLoader可能不是加载需要转换的类的ClassLoader. 生成的类的ClassLoader是ArthasClassLoader, 不存在的类默认会通过加载本类的ClassLoader进行加载]
              *
              * 通过重写 getCommonSuperClass() 方法，更正获取ClassLoader的方式，改成使用指定ClassLoader的方式进行。
              * 规避了原有代码采用Object.class.getClassLoader()的方式

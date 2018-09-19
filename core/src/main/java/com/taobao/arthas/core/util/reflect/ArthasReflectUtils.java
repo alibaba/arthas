@@ -95,6 +95,7 @@ public class ArthasReflectUtils {
                                             packageName.length() + 1,
                                             name.length() - 6);
                                     try {
+                                        // TODO 为什么这里不用 classLoader.load() Class.forName会触发static方法
                                         // 添加到classes
                                         classes.add(Class
                                                 .forName(packageName + '.'

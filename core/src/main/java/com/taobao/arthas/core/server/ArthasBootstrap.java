@@ -80,7 +80,9 @@ public class ArthasBootstrap {
 
         try {
             ShellServerOptions options = new ShellServerOptions().setInstrumentation(instrumentation).setPid(pid);
+
             shellServer = new ShellServerImpl(options, this);
+            // 初始化应用级内置命令 - help jad classload thread等等
             BuiltinCommandPack builtinCommands = new BuiltinCommandPack();
             List<CommandResolver> resolvers = new ArrayList<CommandResolver>();
             resolvers.add(builtinCommands);
