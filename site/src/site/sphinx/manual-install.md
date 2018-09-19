@@ -7,6 +7,10 @@
 
     在`Download`栏下载最新的 `bin.zip` 包。
 
+    如果下载速度比较慢，可以尝试用
+
+    * [阿里云的镜像仓库](http://maven.aliyun.com/mvn/search)
+    * [mvnrepository](http://mvnrepository.com/artifact/com.taobao.arthas/arthas-packaging)
 
 2. 解压缩arthas的压缩包
     ```

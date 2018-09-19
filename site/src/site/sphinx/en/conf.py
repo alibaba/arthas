@@ -52,7 +52,7 @@ project = u'Arthas'
 copyright = u'2018, Alibaba Middleware Group, and contributors'
 author = u'Alibaba Middleware Group, and contributors'
 
-github_doc_root = 'https://github.com/alibaba/arthas/tree/master/site/src/site/sphinx/'
+github_doc_root = 'https://github.com/alibaba/arthas/tree/master/site/src/site/sphinx/en'
 
 # The version info for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the
@@ -63,7 +63,7 @@ github_doc_root = 'https://github.com/alibaba/arthas/tree/master/site/src/site/s
 # The full version, including alpha/beta/rc tagss
 # release = 
 # read version from pom.xml
-rootDir = os.path.dirname(os.path.abspath(__file__)) + '/../../..'
+rootDir = os.path.dirname(os.path.abspath(__file__)) + '/../../../..'
 pomXml = ET.parse(rootDir + '/pom.xml')
 
 for projectChildrenElem in list(pomXml.getroot()):
@@ -78,7 +78,7 @@ release = version
 #
 # This is also used if you do content translation via gettext catalogs.
 # Usually you set "language" from the command line for these cases.
-language = u'zh_CN'
+# language = u'zh_CN'
 
 # There are two options for replacing |today|: either, you set today to some
 # non-false value, then it is used:
@@ -88,7 +88,7 @@ language = u'zh_CN'
 
 # List of patterns, relative to source directory, that match files and
 # directories to ignore when looking for source files.
-exclude_patterns = [u'_build', 'Thumbs.db', '.DS_Store', u'en']
+exclude_patterns = [u'_build', 'Thumbs.db', '.DS_Store']
 
 # The reST default role (used for this markup: `text`) to use for all
 # documents.

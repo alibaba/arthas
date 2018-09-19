@@ -18,14 +18,28 @@
                         <groupId>kr.motd.maven</groupId>
                         <artifactId>sphinx-maven-plugin</artifactId>
                         <version>2.2.3</version>
-                        <configuration>
-                            <asReport>true</asReport>
-                            <name>Project documentation</name>
-                            <description>Documentation about Arthas</description>
-                        </configuration>
                         <executions>
                             <execution>
+                                <id>zh doc</id>
                                 <phase>package</phase>
+                                <configuration>
+                                    <asReport>true</asReport>
+                                    <name>Arthas documentation</name>
+                                    <description>Documentation about Arthas</description>
+                                </configuration>
+                                <goals>
+                                    <goal>generate</goal>
+                                </goals>
+                            </execution>
+                            <execution>
+                                <id>en doc</id>
+                                <phase>package</phase>
+                                <configuration>
+                                    <asReport>true</asReport>
+                                    <sourceDirectory>${basedir}/src/site/sphinx/en</sourceDirectory>
+                                    <name>Arthas English documentation</name>
+                                    <description>Documentation about Arthas</description>
+                                </configuration>
                                 <goals>
                                     <goal>generate</goal>
                                 </goals>
@@ -35,7 +49,6 @@
                 </plugins>
             </build>
         </profile>
-
     </profiles>
 
 </project>
