@@ -154,7 +154,7 @@ ts=2018-09-10 17:53:15;result=@Integer[625]
 
 [more advanced functions](advanced-use.md)
 
-## Exit Arthas
+## 5. Exit Arthas
 
-- `quit` or `exit` will just disconnect the current console connection while Arthas still attached to the target process
-- `shutdown` will terminate the Arthas process completely
+- `quit` or `exit` will just disconnect the current console connection while Arthas still running in the target process
+- `shutdown` will terminate the Arthas completely

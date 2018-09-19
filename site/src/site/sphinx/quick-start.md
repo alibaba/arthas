@@ -141,7 +141,7 @@ ts=2018-09-10 17:53:15;result=@Integer[625]
 
 更多的功能可以查看[进阶使用](advanced-use.md)。
 
-## 退出arthas
+## 5. 退出arthas
 
 如果只是退出当前的连接，可以用`quit`或者`exit`命令。Attach到目标进程上的arthas还会继续运行，端口会保持开放，下次连接时可以直接连接上。
 
