@@ -1,29 +1,35 @@
+package com.taobao.arthas.core.util;
+
 import com.taobao.arthas.core.Arthas;
 import sun.management.VMManagement;
 
 import java.lang.management.ManagementFactory;
 import java.lang.management.RuntimeMXBean;
 import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.Random;
 
 /**
  * 本机调试
+ *
  * @author BlueT
  * 2018/9/17 23:34
  */
 public class LocalDebugTest {
 
+    private static final Random RANDOM=new Random();
+
     /**
      * 首先执行./mvnw clean package -DskipTests打包，生成的zip在 packaging/target/ 下面，然后解压。
-     * 以debug方式执行此方法，
+     * 以debug方式执行此方法，如果出现NPE，将tools.jar添加到classpath中。
+     * 然后运行as.sh
      *
      * @param args
      * @throws InterruptedException
      */
     public static void main(String[] args) throws InterruptedException {
         final int pid = getCurrentJVMPid();
-        System.out.println("pid:"+pid);
+        System.out.println("pid:" + pid);
         String path = LocalDebugTest.class.getResource("/").getPath();
         final String npath = path.substring(1, path.indexOf("core")) + "packaging/target/";
         Thread thread = new Thread(new Runnable() {
@@ -50,7 +56,11 @@ public class LocalDebugTest {
         thread.start();
         thread.join();
         System.out.println("代码植入成功");
-        Thread.sleep(10000000);
+        while (true) {
+            // ignore return
+            int i = forLoop();
+            Thread.sleep(2000);
+        }
     }
 
     private static int getCurrentJVMPid() {
@@ -63,17 +73,15 @@ public class LocalDebugTest {
             Method pid_method = mgmt.getClass().getDeclaredMethod("getProcessId");
             pid_method.setAccessible(true);
             return (int) (Integer) pid_method.invoke(mgmt);
-        } catch (NoSuchFieldException e) {
-            e.printStackTrace();
-        } catch (NoSuchMethodException e) {
-            e.printStackTrace();
-        } catch (IllegalAccessException e) {
-            e.printStackTrace();
-        } catch (InvocationTargetException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
 
         throw new RuntimeException("Wow!");
 
     }
+
+   private static int forLoop(){
+       return RANDOM.nextInt();
+   }
 }

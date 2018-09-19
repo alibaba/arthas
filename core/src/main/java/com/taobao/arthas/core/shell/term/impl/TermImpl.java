@@ -76,6 +76,7 @@ public class TermImpl implements Term {
         readline.readline(conn, prompt, new RequestHandler(this, lineHandler));
     }
 
+    @Override
     public void readline(String prompt, Handler<String> lineHandler, Handler<Completion> completionHandler) {
         if (conn.getStdinHandler() != echoHandler) {
             throw new IllegalStateException();
@@ -97,6 +98,7 @@ public class TermImpl implements Term {
         return this;
     }
 
+    @Override
     public long lastAccessedTime() {
         return conn.lastAccessedTime();
     }

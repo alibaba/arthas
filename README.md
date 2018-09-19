@@ -41,3 +41,7 @@ English version goes [here](README_EN.md).
 * https://alibaba.github.io/arthas/web-console
 
 ![web console](site/src/site/sphinx/_static/web-console-local.png)
+
+### 发现的问题
+
+1. 添加自定义的快捷键解析时，需要使用spi加载解析的function，但是目前的core打包方式，termd-core中的配置文件会覆盖自己的配置。
