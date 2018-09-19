@@ -116,6 +116,11 @@ public class Arthas {
      *                     -target ${TARGET_IP}":"${TELNET_PORT} \
      *                     -core "${arthas_lib_dir}/arthas-core.jar" \
      *                     -agent "${arthas_lib_dir}/arthas-agent.jar"
+     *
+     * -Xbootclasspath 不要有空格
+     * vmoptioin: -Dfile.encoding=UTF-8 -Xbootclasspath/a:D:\tools.jar
+     * 指定pid core agent路径
+     * program arg: -pid 380 -target-ip 127.0.0.1 -telnet-port 3658 -http-port 8563 -core C:\workspace\arthas\core\target\arthas-core.jar -agent C:\workspace\arthas\agent\target\arthas-agent.jar
      * @param args
      */
     public static void main(String[] args) {
