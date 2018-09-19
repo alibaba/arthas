@@ -23,11 +23,10 @@ public class Advice {
 }  
 ```
 
- 
 这里列一个表格来说明不同变量的含义
-  
+
 |变量名|变量解释|
-|---|---|
+|---:|:---|
 |loader|本次调用类所在的 ClassLoader|
 |clazz|本次调用类的 Class 引用|
 |method|本次调用方法反射引用|
@@ -41,13 +40,8 @@ public class Advice {
 
 所有变量都可以在表达式中直接使用，如果在表达式中编写了不符合 OGNL 脚本语法或者引入了不在表格中的变量，则退出命令的执行；用户可以根据当前的异常信息修正`条件表达式`或`观察表达式`
 
-> OGNL表达式官网：https://commons.apache.org/proper/commons-ognl/language-guide.html
-
-> 一些特殊的用法：
-
-TODO
-
-middleware-container/arthas/issues/263
+* 特殊用法请参考：[https://github.com/alibaba/arthas/issues/71](https://github.com/alibaba/arthas/issues/71)
+* OGNL表达式官网：[https://commons.apache.org/proper/commons-ognl/language-guide.html](https://commons.apache.org/proper/commons-ognl/language-guide.html)
 
 
 
