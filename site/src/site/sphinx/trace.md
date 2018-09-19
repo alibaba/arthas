@@ -23,8 +23,8 @@ trace
 
 请参考[表达式核心变量](advice-class.md)中关于该节点的描述。
 
-* 特殊用法请参考：TODO middleware-container/arthas/issues/263
-* OGNL表达式官网：https://commons.apache.org/proper/commons-ognl/language-guide.html
+* 特殊用法请参考：[https://github.com/alibaba/arthas/issues/71](https://github.com/alibaba/arthas/issues/71)
+* OGNL表达式官网：[https://commons.apache.org/proper/commons-ognl/language-guide.html](https://commons.apache.org/proper/commons-ognl/language-guide.html)
 
 很多时候我们只想看到某个方法的rt大于某个时间之后的trace结果，现在Arthas可以按照方法执行的耗时来进行过滤了，例如`trace *StringUtils isBlank '$cost>100'`表示当执行时间超过100ms的时候，才会输出trace的结果。
 
