@@ -204,6 +204,7 @@ Usage:
     [-f]            : specify the path to batch script file.
     [--attach-only] : only attach the arthas agent to target jvm.
     [--use-version] : use the specified arthas version to attach.
+    [--versions]    : list all arthas versions.
 
 Example:
     ./as.sh <PID>
@@ -213,7 +214,8 @@ Example:
     ./as.sh -b <PID>
     ./as.sh -b -f /path/to/script
     ./as.sh --attach-only <PID>
-    ./as.sh --use-version 2.0.20161221142407 <PID>
+    ./as.sh --use-version 3.0.5.20180919185025 <PID>
+    ./as.sh --versions
 
 Here is the list of possible java process(es) to attatch:
 
@@ -221,11 +223,23 @@ $(${JAVA_HOME}/bin/jps -l | grep -v sun.tools.jps.Jps)
 "
 }
 
+# list arthas versions
+list_versions()
+{
+    echo "Arthas versions under ${ARTHAS_LIB_DIR}:"
+    ls -1 ${ARTHAS_LIB_DIR}
+}
+
 # parse the argument
 parse_arguments()
 {
     if ([ "$1" = "-h" ] || [ "$1" = "--help" ] || [ "$1" = "-help" ]) ; then
         usage
+        exit 0
+    fi
+
+    if ([ "$1" = "--versions" ]) ; then
+        list_versions
         exit 0
     fi
 

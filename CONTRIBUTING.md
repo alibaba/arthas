@@ -9,7 +9,9 @@
 
 ## 改进用户文档
 
-用户文档在`site/src/site/sphinx`目录下，如果希望改进arthas用户文档，可以提交PR。
+用户文档在`site/src/site/sphinx`目录下，如果希望改进arthas用户文档，欢迎提交PR。
+
+英文文档在`site/src/site/sphinx/en`目录下，欢迎提交翻译PR。
 
 ## 开发者相关
 
@@ -22,6 +24,20 @@
 `as.sh`在启动时，会对`~/.arthas/lib`下面的目录排序，取最新的版本。`as-package.sh`在打包时，会取`pom.xml`里的版本号，再拼接上当前时间，比如： `3.0.5.20180917161808`，这样子排序时取的就是最新的版本。
 
 也可以直接 `./mvnw clean package -DskipTests`打包，生成的zip在 `packaging/target/` 下面。但是注意`as.sh`启动加载的是`~/.arthas/lib`下面的版本。
+
+### 启动指定版本的arthas
+
+本地开发时，可能会产生多个版本，可以用 `--use-version` 参数来指定版本，比如
+
+```bash
+./as.sh --use-version 3.0.5.20180919185025
+```
+
+可以用`--versions`参数来列出所有版本：
+
+```bash
+./as.sh --versions
+```
 
 ### Debug
 
