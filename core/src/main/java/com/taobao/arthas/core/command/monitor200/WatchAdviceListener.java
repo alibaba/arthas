@@ -1,9 +1,9 @@
 package com.taobao.arthas.core.command.monitor200;
 
-import com.taobao.arthas.core.advisor.ReflectAdviceListenerAdapter;
-import com.taobao.arthas.core.shell.command.CommandProcess;
 import com.taobao.arthas.core.advisor.Advice;
 import com.taobao.arthas.core.advisor.ArthasMethod;
+import com.taobao.arthas.core.advisor.ReflectAdviceListenerAdapter;
+import com.taobao.arthas.core.shell.command.CommandProcess;
 import com.taobao.arthas.core.util.DateUtils;
 import com.taobao.arthas.core.util.LogUtil;
 import com.taobao.arthas.core.util.StringUtils;
@@ -11,9 +11,6 @@ import com.taobao.arthas.core.util.ThreadLocalWatch;
 import com.taobao.arthas.core.view.Ansi;
 import com.taobao.arthas.core.view.ObjectView;
 import com.taobao.middleware.logger.Logger;
-
-import java.text.SimpleDateFormat;
-import java.util.Date;
 
 /**
  * @author beiwei30 on 29/11/2016.
