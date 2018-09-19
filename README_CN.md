@@ -1,44 +1,38 @@
+
+
 ## Arthas
 
 ![arthas](site/src/site/sphinx/arthas.png)
 
-`Arthas` is an Java Diagnostic tool open sourced by Alibaba.
+English version goes [here](README.md).
 
-Arthas can help developer trouble-shooting production issues for Java applications without modifying your code or restating your server.
+`Arthas` 是Alibaba开源的Java诊断工具，深受开发者喜爱。
 
-### Background
+当你遇到以下类似问题而束手无策时，`Arthas`可以帮助你解决：
 
-In production system, sometimes the networks is unreachable from local development environment. If you encounter some issues in production system, it is impossible to use IDE to debug the application remotely. More importantly, debugging in production is unacceptable, because it will suspend all the threads, which leads to business unavailability. 
+0. 这个类从哪个 jar 包加载的？为什么会报各种类相关的 Exception？
+0. 我改的代码为什么没有执行到？难道是我没 commit？分支搞错了？
+0. 遇到问题无法在线上 debug，难道只能通过加日志再重新发布吗？
+0. 线上遇到某个用户的数据处理有问题，但线上同样无法 debug，线下无法重现！
+0. 是否有一个全局视角来查看系统的运行状况？
+0. 有什么办法可以监控到JVM的实时运行状态？
 
-Some may think of reproducing the same issue on the test/staging environment, however, some tricky issue either can hardly be reproduced on a different environment, or even disappeared once restarted. 
+`Arthas`采用命令行交互模式，同时提供丰富的 `Tab` 自动补全功能，进一步方便进行问题的定位和诊断。
 
-Thinking of adding some logs to your code? You have to go through test, staging, and then on to production. Time is money! That is a lot inefficient! Besides, the issue may not be reproducible once restart your JVM, as described above.
 
-Arthas is born to solve these issues. You can trouble-shoot your production issue on-the-fly. No JVM restart, no additional code changes. Arthas works as an observer, which will never suspend your existing threads.
 
-### Key features
 
-* check whether a class is loaded? And whether is class loaded from? (Useful for trouble-shooting jar file conflicts)
-* decompile a class to ensure the code is running as expected.
-* view classloader statistics, e.g. how may classloaders are there? how many class is loaded per classloader? What is the classloader hierarchy? Is there possible classloader leaks?
-* view the method invocation details, e.g. method parameter, return object, thrown exception, and etc.
-* check the stack trace of specified method invocation. This is useful when you would like to know who is calling your method?
-* trace the method invocation to find slow sub-invocations.
-* monitoring your system metrics, thread states and cpu usage, gc statistics, and etc.
-* command line interactive mode, with auto completed feature enabled.
-* telnet and websocket support, which enables both local and remote diagnostics with command line and browsers.
-
-### Quick start
+### 快速开始
 
 #### Linux/Unix/Mac
 
-Install Arthas:
+安装Arthas:
 
 ```
 curl -L https://alibaba.github.io/arthas/install.sh | sh
 ```
 
-Start Arthas:
+启动Arthas:
 
 ```
 ./as.sh
@@ -46,25 +40,25 @@ Start Arthas:
 
 #### Windows
 
-1. Click [here](http://search.maven.org/classic/#search%7Cga%7C1%7Cg%3A%22com.taobao.arthas%22%20AND%20a%3A%22arthas-packaging%22) to Download the latest binary releases.
-2. Unzip the file.
-3. Go to the bin directory
-4. run the following command `as.bat $PID`
+1. 点击 [这里](http://search.maven.org/classic/#search%7Cga%7C1%7Cg%3A%22com.taobao.arthas%22%20AND%20a%3A%22arthas-packaging%22) 下载最新的Arthas zip包
+2. 解压缩zip包.
+3. 进入bin目录
+4. 执行以下命令 `as.bat $PID`
 
 
-### Documentation
+### 文档
 
-English version is on the way, if you would like to contribute, please leave a message [here](https://github.com/alibaba/arthas/issues/51)
+社区正在进行英文版本的翻译工作，如果您有兴趣请在 [这里](https://github.com/alibaba/arthas/issues/51)留言。
 
-* [User manual](https://alibaba.github.io/arthas/)
-* [Installation](https://alibaba.github.io/arthas/install-detail.html)
-* [Quick start](https://alibaba.github.io/arthas/quick-start.html)
-* [Advanced usage](https://alibaba.github.io/arthas/advanced-use.html)
+* [用户文档](https://alibaba.github.io/arthas/)
+* [安装](https://alibaba.github.io/arthas/install-detail.html)
+* [快速入门](https://alibaba.github.io/arthas/quick-start.html)
+* [进阶使用](https://alibaba.github.io/arthas/advanced-use.html)
 * [Questions and answers](https://github.com/alibaba/arthas/labels/question-answered)
-* [How to contribute](https://github.com/alibaba/arthas/blob/master/CONTRIBUTING.md)
+* [参与贡献](https://github.com/alibaba/arthas/blob/master/CONTRIBUTING.md)
 
 
-### Feature Showcase
+### 案例展示
 
 #### Dashboard
 
@@ -74,7 +68,7 @@ English version is on the way, if you would like to contribute, please leave a m
 
 #### Thread
 
-See who is eating your cpu (ranked by top cpu usage) and what is going on there in one glance:
+一目了然的了解系统的状态，哪些线程比较占cpu？他们到底在做什么？
 
 ```
 $ thread -n 3
@@ -105,7 +99,7 @@ $ thread -n 3
 
 #### jad
 
-Decompile your class with one shot:
+对类进行反编译:
 
 ```java
 $ jad javax.servlet.Servlet
@@ -144,7 +138,7 @@ public interface Servlet {
 
 #### sc
 
-Search any loaded class with detailed infomation.
+查找JVM中已经加载的类
 
 ```
 $ sc -d org.springframework.web.context.support.XmlWebApplicationContext
@@ -180,7 +174,7 @@ $ sc -d org.springframework.web.context.support.XmlWebApplicationContext
 
 #### stack
 
-View the call stack of `test.arthas.TestStack#doGet`:
+查看方法 `test.arthas.TestStack#doGet` 的调用堆栈：
 
 ```
 $ stack test.arthas.TestStack doGet
@@ -215,13 +209,13 @@ ts=2018-09-18 10:11:45;thread_name=http-bio-8080-exec-10;id=d9;is_daemon=true;pr
 
 #### Trace
 
-See who is slowing down your method invocation with trace command:
+观察方法执行的时候那个子调用比较慢:
 
 ![trace](site/src/site/sphinx/_static/trace.png)
 
 #### Watch
 
-Watch the first parameter and thrown exception of `test.arthas.TestWatch#doGet` only if it throws exception.
+观察方法 `test.arthas.TestWatch#doGet` 执行的入参，仅当方法抛出异常时才输出。
 
 ```
 $ watch test.arthas.TestWatch doGet {params[0], throwExp} -e
@@ -234,6 +228,8 @@ ts=2018-09-18 10:26:28;result=@ArrayList[
 ```
 
 #### Classloader
+
+了解当前系统中有多少类加载器，以及每个加载器加载的类数量，帮助您判断是否有类加载器泄露。
 
 ```
 $ classloader
@@ -255,3 +251,4 @@ $ classloader
 * https://alibaba.github.io/arthas/web-console
 
 ![web console](site/src/site/sphinx/_static/web-console-local.png)
+
