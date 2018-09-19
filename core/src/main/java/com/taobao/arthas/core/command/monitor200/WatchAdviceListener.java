@@ -8,6 +8,7 @@ import com.taobao.arthas.core.util.DateUtils;
 import com.taobao.arthas.core.util.LogUtil;
 import com.taobao.arthas.core.util.StringUtils;
 import com.taobao.arthas.core.util.ThreadLocalWatch;
+import com.taobao.arthas.core.view.Ansi;
 import com.taobao.arthas.core.view.ObjectView;
 import com.taobao.middleware.logger.Logger;
 
@@ -81,11 +82,14 @@ class WatchAdviceListener extends ReflectAdviceListenerAdapter {
             // 本次调用的耗时
             double cost = threadLocalWatch.costInMillis();
             if (isConditionMet(command.getConditionExpress(), advice, cost)) {
+                Ansi highlighted = Ansi.ansi().fg(Ansi.Color.RED);
+                String costStr = highlighted.a(cost).reset().toString();
+
                 // TODO: concurrency issues for process.write
                 Object value = getExpressionResult(command.getExpress(), advice, cost);
                 String result = StringUtils.objectToString(
                         isNeedExpand() ? new ObjectView(value, command.getExpand(), command.getSizeLimit()).draw() : value);
-                process.write("ts=" + DateUtils.getCurrentDate() + ";result=" + result + "\n");
+                process.write("ts=" + DateUtils.getCurrentDate()+" ["+ costStr +"]" + ";result=" + result + "\n");
                 process.times().incrementAndGet();
                 if (isLimitExceeded(command.getNumberOfLimit(), process.times().get())) {
                     abortProcess(process, command.getNumberOfLimit());
