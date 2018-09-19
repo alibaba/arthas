@@ -55,6 +55,7 @@ public class JadCommand extends AnnotatedCommand {
     private String methodName;
     private String code = null;
     private boolean isRegEx = false;
+    private boolean showLineNumbers = false;
 
     @Argument(argName = "class-pattern", index = 0)
     @Description("Class name pattern, use either '.' or '/' as separator")
@@ -78,8 +79,15 @@ public class JadCommand extends AnnotatedCommand {
     @Option(shortName = "E", longName = "regex", flag = true)
     @Description("Enable regular expression to match (wildcard matching by default)")
     public void setRegEx(boolean regEx) {
-        isRegEx = regEx;
+        this.isRegEx = regEx;
     }
+
+    @Option(shortName = "l",longName = "show-LN",flag = true)
+    @Description("Show line numbers")
+    public void setShowLineNumbers(boolean showLineNumbers){
+        this.showLineNumbers = showLineNumbers;
+    }
+
 
     @Override
     public void process(CommandProcess process) {
@@ -116,6 +124,9 @@ public class JadCommand extends AnnotatedCommand {
             source = decompileWithCFR(classFile.getAbsolutePath(), c, methodName);
             if (source != null) {
                 source = pattern.matcher(source).replaceAll("");
+                if (showLineNumbers) {
+                    source = addLineNumbers(source);
+                }
             } else {
                 source = "unknown";
             }
@@ -184,21 +195,13 @@ public class JadCommand extends AnnotatedCommand {
         return null;
     }
 
-    public static void main(String[] args) {
-        String[] names = {
-                "com.taobao.container.web.arthas.mvc.AppInfoController",
-                "com.taobao.container.web.arthas.mvc.AppInfoController$1$$Lambda$19/381016128",
-                "com.taobao.container.web.arthas.mvc.AppInfoController$$Lambda$16/17741163",
-                "com.taobao.container.web.arthas.mvc.AppInfoController$1",
-                "com.taobao.container.web.arthas.mvc.AppInfoController$123",
-                "com.taobao.container.web.arthas.mvc.AppInfoController$A",
-                "com.taobao.container.web.arthas.mvc.AppInfoController$ABC"
-        };
-
-        String pattern = "com.taobao.container.web.arthas.mvc.AppInfoController" + "(?!.*\\$\\$Lambda\\$).*";
-        for(String name : names) {
-            System.out.println(name + "    " + Pattern.matches(pattern, name));
+    private String addLineNumbers(String source) {
+        StringBuilder returnSource = new StringBuilder();
+        String[] split = source.split("\n");
+        for (int i = 0; i < split.length; i++) {
+            returnSource.append(i + 1).append("\t").append(split[i]).append("\n");
         }
-
+        return returnSource.toString();
     }
+
 }
