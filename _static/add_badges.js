@@ -13,6 +13,10 @@
     li.className = 'toctree-l1';
     var div = document.createElement('div');
     div.className = 'project-badges';
+    addBadge(div, 'https://img.shields.io/github/stars/alibaba/arthas.svg?style=flat-square',
+      'https://github.com/alibaba/arthas');
+    addBadge(div, 'https://img.shields.io/github/license/alibaba/arthas.svg?style=flat-square',
+      'https://github.com/alibaba/arthas');
     addBadge(div, 'https://img.shields.io/maven-central/v/com.taobao.arthas/arthas-packaging.svg?style=flat-square',
       'https://search.maven.org/#search%7Cgav%7C1%7Cg%3A%22com.taobao.arthas%22%20AND%20a%3A%22arthas-packaging%22');
     li.appendChild(div);
