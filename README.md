@@ -236,6 +236,27 @@ ts=2018-09-18 10:26:28;result=@ArrayList[
 ]
 ```
 
+#### Monitor
+
+Monitor a specific method invoction statistics, including total number of invocations, avarage response time, success rate, every 5 seconds:
+
+```
+$ monitor -c 5 org.apache.dubbo.demo.provider.DemoServiceImpl sayHello
+Press Ctrl+C to abort.
+Affect(class-cnt:1 , method-cnt:1) cost in 109 ms.
+ timestamp            class                                           method    total  success  fail  avg-rt(ms)  fail-rate
+----------------------------------------------------------------------------------------------------------------------------
+ 2018-09-20 09:45:32  org.apache.dubbo.demo.provider.DemoServiceImpl  sayHello  5      5        0     0.67        0.00%
+
+ timestamp            class                                           method    total  success  fail  avg-rt(ms)  fail-rate
+----------------------------------------------------------------------------------------------------------------------------
+ 2018-09-20 09:45:37  org.apache.dubbo.demo.provider.DemoServiceImpl  sayHello  5      5        0     1.00        0.00%
+
+ timestamp            class                                           method    total  success  fail  avg-rt(ms)  fail-rate
+----------------------------------------------------------------------------------------------------------------------------
+ 2018-09-20 09:45:42  org.apache.dubbo.demo.provider.DemoServiceImpl  sayHello  5      5        0     0.43        0.00%
+```
+
 #### Classloader
 
 ```
