@@ -40,21 +40,23 @@ If in Windows, the color is not working as expect. You can try [conemu](https://
 
 If you cannot boot Arthas, try to pass in all the critical options manually as the following steps:
 
-### 1. locate the java for JVM:
-- Linux/Unix/Mac: `ps aux | grep java`
-- Windows: open the Process Monitor to search java
+1. locate the java for JVM:
 
-### 2. Concatenate the command
-Let's suppose we are using `/opt/jdk1.8/bin/java`, then the command should be:
+    - Linux/Unix/Mac: `ps aux | grep java`
+    - Windows: open the Process Monitor to search java
 
-```bash
- /opt/jdk1.8/bin/java -Xbootclasspath/a:/opt/jdk1.8/lib/tools.jar \
-     -jar /tmp/arthas-packaging/arthas-core.jar \
-     -pid 15146 \
-     -target-ip 127.0.0.1 -telnet-port 3658 -http-port 8563 \
-     -core /tmp/arthas-packaging/arthas-core.jar \
-     -agent /tmp/arthas-packaging/arthas/arthas-agent.jar
-```
+2. Concatenate the command
+    
+    Let's suppose we are using `/opt/jdk1.8/bin/java`, then the command should be:
+
+    ```bash
+    /opt/jdk1.8/bin/java -Xbootclasspath/a:/opt/jdk1.8/lib/tools.jar \
+        -jar /tmp/arthas-packaging/arthas-core.jar \
+        -pid 15146 \
+        -target-ip 127.0.0.1 -telnet-port 3658 -http-port 8563 \
+        -core /tmp/arthas-packaging/arthas-core.jar \
+        -agent /tmp/arthas-packaging/arthas/arthas-agent.jar
+    ```
 
     * `-Xbootclasspath` add tools.jar
     * `-jar /tmp/arthas-packaging/arthas-core.jar` specify main entry
@@ -64,17 +66,17 @@ Let's suppose we are using `/opt/jdk1.8/bin/java`, then the command should be:
     * `-core /tmp/arthas-packaging/arthas-core.jar -agent /tmp/arthas-packaging/arthas/arthas-agent.jar` specify core/agent jar package
 
 
-But if you are using JDK 1.9 or above，then you do not need to add `tools.jar` in option `-Xbootclasspath`.
+    But if you are using JDK 1.9 or above，then you do not need to add `tools.jar` in option `-Xbootclasspath`.
 
-F.Y.I the booting log will be printed to `~/logs/arthas/arthas.log`.
+    F.Y.I the booting log will be printed to `~/logs/arthas/arthas.log`.
 
-### 3. Connect via telnet
+3. Connect via telnet
 
-When attached successfully, you can connect it with 
+    When attached successfully, you can connect it with 
 
-```bash
-telnet localhost 3658
-```
+    ```bash
+    telnet localhost 3658
+    ```
 
 ## Offline Help Documentation
 
