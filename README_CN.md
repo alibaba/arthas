@@ -227,6 +227,28 @@ ts=2018-09-18 10:26:28;result=@ArrayList[
 ]
 ```
 
+#### Monitor
+
+监控某个特殊方法的调用统计数据，包括总调用次数，平均rt，成功率等信息，每隔5秒输出一次。
+
+
+```
+$ monitor -c 5 org.apache.dubbo.demo.provider.DemoServiceImpl sayHello
+Press Ctrl+C to abort.
+Affect(class-cnt:1 , method-cnt:1) cost in 109 ms.
+ timestamp            class                                           method    total  success  fail  avg-rt(ms)  fail-rate
+----------------------------------------------------------------------------------------------------------------------------
+ 2018-09-20 09:45:32  org.apache.dubbo.demo.provider.DemoServiceImpl  sayHello  5      5        0     0.67        0.00%
+
+ timestamp            class                                           method    total  success  fail  avg-rt(ms)  fail-rate
+----------------------------------------------------------------------------------------------------------------------------
+ 2018-09-20 09:45:37  org.apache.dubbo.demo.provider.DemoServiceImpl  sayHello  5      5        0     1.00        0.00%
+
+ timestamp            class                                           method    total  success  fail  avg-rt(ms)  fail-rate
+----------------------------------------------------------------------------------------------------------------------------
+ 2018-09-20 09:45:42  org.apache.dubbo.demo.provider.DemoServiceImpl  sayHello  5      5        0     0.43        0.00%
+```
+
 #### Classloader
 
 了解当前系统中有多少类加载器，以及每个加载器加载的类数量，帮助您判断是否有类加载器泄露。
