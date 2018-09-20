@@ -206,9 +206,17 @@ public class JvmCommand extends AnnotatedCommand {
     private Element drawThreadTable(TableElement table) {
         table.row("COUNT", "" + threadMXBean.getThreadCount())
                 .row("DAEMON-COUNT", "" + threadMXBean.getDaemonThreadCount())
-                .row("LIVE-COUNT", "" + threadMXBean.getPeakThreadCount())
-                .row("STARTED-COUNT", "" + threadMXBean.getTotalStartedThreadCount());
+                .row("PEAK-COUNT", "" + threadMXBean.getPeakThreadCount())
+                .row("STARTED-COUNT", "" + threadMXBean.getTotalStartedThreadCount())
+                .row("DEADLOCK-COUNT","" + getDeadlockedThreadsCount(threadMXBean));
         return table;
     }
-
+    private int getDeadlockedThreadsCount(ThreadMXBean threads) {
+        final long[] ids = threads.findDeadlockedThreads();
+        if (ids == null) {
+            return 0;
+        } else {
+            return ids.length;
+        }
+    }
 }
