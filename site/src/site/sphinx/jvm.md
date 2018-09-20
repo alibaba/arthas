@@ -84,8 +84,10 @@ $ jvm
 
  THREAD               COUNT          16
                       DAEMON-COUNT   10
-                      LIVE-COUNT     18
+                      PEAK-COUNT     18
                       STARTED-COUNT  19
+                      DEADLOCK-COUNT  0
+                      
 Affect cost in 2 ms.
 ```
 
