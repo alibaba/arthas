@@ -20,6 +20,8 @@ public abstract class StringUtils {
     private static final String TOP_PATH = "..";
     private static final String CURRENT_PATH = ".";
     private static final char EXTENSION_SEPARATOR = '.';
+    public static final int UNIT = 1024;
+    public static final String STRING_UNITS = "KMGTPE";
 
 
     /**
@@ -871,5 +873,17 @@ public abstract class StringUtils {
     public static String classLoaderHash(Class<?> clazz) {
         if (clazz == null || clazz.getClassLoader() == null) return "null";
         return Integer.toHexString(clazz.getClassLoader().hashCode());
+    }
+
+    /**
+     * format byte size to human readable format
+     * @param bytes byets
+     * @return  human readable format
+     */
+    public static String humanReadableByteCount(long bytes) {
+        if (bytes < UNIT) return bytes + " B";
+        int exp = (int) (Math.log(bytes) / Math.log(UNIT));
+        String pre =  STRING_UNITS.charAt(exp-1) +  "i";
+        return String.format("%.2f %sB", bytes / Math.pow(UNIT, exp), pre);
     }
 }
