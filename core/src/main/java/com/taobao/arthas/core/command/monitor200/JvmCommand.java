@@ -3,6 +3,7 @@ package com.taobao.arthas.core.command.monitor200;
 import com.taobao.arthas.core.command.Constants;
 import com.taobao.arthas.core.shell.command.AnnotatedCommand;
 import com.taobao.arthas.core.shell.command.CommandProcess;
+import com.taobao.arthas.core.util.StringUtils;
 import com.taobao.arthas.core.util.affect.RowAffect;
 import com.taobao.middleware.cli.annotations.Description;
 import com.taobao.middleware.cli.annotations.Name;
@@ -12,15 +13,7 @@ import com.taobao.text.ui.Element;
 import com.taobao.text.ui.TableElement;
 import com.taobao.text.util.RenderUtil;
 
-import java.lang.management.ClassLoadingMXBean;
-import java.lang.management.CompilationMXBean;
-import java.lang.management.GarbageCollectorMXBean;
-import java.lang.management.ManagementFactory;
-import java.lang.management.MemoryMXBean;
-import java.lang.management.MemoryManagerMXBean;
-import java.lang.management.OperatingSystemMXBean;
-import java.lang.management.RuntimeMXBean;
-import java.lang.management.ThreadMXBean;
+import java.lang.management.*;
 import java.text.SimpleDateFormat;
 import java.util.Collection;
 import java.util.Date;
@@ -180,24 +173,27 @@ public class JvmCommand extends AnnotatedCommand {
     }
 
     private Element drawMemoryTable(TableElement table) {
+        MemoryUsage heapMemoryUsage = memoryMXBean.getHeapMemoryUsage();
         table.row("HEAP-MEMORY-USAGE\n[committed/init/max/used]",
-                memoryMXBean.getHeapMemoryUsage().getCommitted()
-                        + "/" + memoryMXBean.getHeapMemoryUsage().getInit()
-                        + "/" + memoryMXBean.getHeapMemoryUsage().getMax()
-                        + "/" + memoryMXBean.getHeapMemoryUsage().getUsed()
+                formatMemoryByte(heapMemoryUsage.getCommitted())
+                        + "/" + formatMemoryByte(heapMemoryUsage.getInit())
+                        + "/" + formatMemoryByte(heapMemoryUsage.getMax())
+                        + "/" + formatMemoryByte(heapMemoryUsage.getUsed())
         );
-
+        MemoryUsage nonHeapMemoryUsage = memoryMXBean.getNonHeapMemoryUsage();
         table.row("NO-HEAP-MEMORY-USAGE\n[committed/init/max/used]",
-                memoryMXBean.getNonHeapMemoryUsage().getCommitted()
-                        + "/" + memoryMXBean.getNonHeapMemoryUsage().getInit()
-                        + "/" + memoryMXBean.getNonHeapMemoryUsage().getMax()
-                        + "/" + memoryMXBean.getNonHeapMemoryUsage().getUsed()
+                formatMemoryByte(nonHeapMemoryUsage.getCommitted())
+                        + "/" + formatMemoryByte(nonHeapMemoryUsage.getInit())
+                        + "/" + formatMemoryByte(nonHeapMemoryUsage.getMax())
+                        + "/" + formatMemoryByte(nonHeapMemoryUsage.getUsed())
         );
 
         table.row("PENDING-FINALIZE-COUNT", "" + memoryMXBean.getObjectPendingFinalizationCount());
         return table;
     }
-
+    private String formatMemoryByte(long bytes){
+        return String.format("%s(%s)",bytes, StringUtils.humanReadableByteCount(bytes));
+    }
 
     private Element drawOperatingSystemMXBeanTable(TableElement table) {
         table.row("OS", operatingSystemMXBean.getName()).row("ARCH", operatingSystemMXBean.getArch())
