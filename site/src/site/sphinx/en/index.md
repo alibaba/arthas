@@ -1,36 +1,47 @@
 Arthas Documentation
 ===
 
-## Arthas（阿尔萨斯） 能为你做什么？
-
 ![arthas](arthas.png)
 
-`Arthas` 是Alibaba开源的Java诊断工具，深受开发者喜爱。
+`Arthas` is an Java Diagnostic tool open sourced by Alibaba.
 
-当你遇到以下类似问题而束手无策时，`Arthas`可以帮助你解决：
+Arthas can help developer trouble-shooting production issues for Java applications without modifying your code or restating your server.
 
-0. 这个类从哪个 jar 包加载的？为什么会报各种类相关的 Exception？
-0. 我改的代码为什么没有执行到？难道是我没 commit？分支搞错了？
-0. 遇到问题无法在线上 debug，难道只能通过加日志再重新发布吗？
-0. 线上遇到某个用户的数据处理有问题，但线上同样无法 debug，线下无法重现！
-0. 是否有一个全局视角来查看系统的运行状况？
-0. 有什么办法可以监控到JVM的实时运行状态？
+### Background
 
-`Arthas`采用命令行交互模式，同时提供丰富的 `Tab` 自动补全功能，进一步方便进行问题的定位和诊断。
+In production system, sometimes the networks is unreachable from local development environment. If you encounter some issues in production system, it is impossible to use IDE to debug the application remotely. More importantly, debugging in production is unacceptable, because it will suspend all the threads, which leads to business unavailability. 
+
+Some may think of reproducing the same issue on the test/staging environment, however, some tricky issue either can hardly be reproduced on a different environment, or even disappeared once restarted. 
+
+Thinking of adding some logs to your code? You have to go through test, staging, and then on to production. Time is money! That is a lot inefficient! Besides, the issue may not be reproducible once restart your JVM, as described above.
+
+Arthas is born to solve these issues. You can trouble-shoot your production issue on-the-fly. No JVM restart, no additional code changes. Arthas works as an observer, which will never suspend your existing threads.
+
+### Key features
+
+* Check whether a class is loaded? And whether is class loaded from? (Useful for trouble-shooting jar file conflicts)
+* Decompile a class to ensure the code is running as expected.
+* View classloader statistics, e.g. how may classloaders are there? how many class is loaded per classloader? What is the classloader hierarchy? Is there possible classloader leaks?
+* View the method invocation details, e.g. method parameter, return object, thrown exception, and etc.
+* Check the stack trace of specified method invocation. This is useful when you would like to know who is calling your method?
+* Trace the method invocation to find slow sub-invocations.
+* Monitor method invcation statistics, e.g. qps, rt, success rate and etc.
+* Monitoring your system metrics, thread states and cpu usage, gc statistics, and etc.
+* Support command line interactive mode, with auto completed feature enabled.
+* Support telnet and websocket, which enables both local and remote diagnostics with command line and browsers.
 
 
 Contents
 --------
 
-* [安装](install-detail.md)
-* [快速入门](quick-start.md)
-* [进阶使用](advanced-use.md)
-* [命令列表](commands.md)
-* [用户案例](https://github.com/alibaba/arthas/issues?q=label%3Auser-case)
+English version is on the way, if you would like to contribute, please leave a message [here](https://github.com/alibaba/arthas/issues/51)
+
+* [Installation](install-detail.md)
+* [Quick start](quick-start.md)
+* [Advanced usage](advanced-use.md)
+* [Commands](commands.md)
+* [User cases](https://github.com/alibaba/arthas/issues?q=label%3Auser-case)
 * [Release Notes](release-notes.md)
 * [Questions and answers](https://github.com/alibaba/arthas/issues?q=label%3Aquestion-answered)
 * [Fork me at GitHub](https://github.com/alibaba/arthas)
-* [参与贡献](https://github.com/alibaba/arthas/blob/master/CONTRIBUTING.md)
-
-
-
+* [CONTRIBUTING](https://github.com/alibaba/arthas/blob/master/CONTRIBUTING.md)
