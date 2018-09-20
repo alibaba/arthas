@@ -53,7 +53,7 @@ uptime                            16020s                            busy        
 * STATE: 线程的状态
 * CPU%: 线程消耗的cpu占比，采样100ms，将所有线程在这100ms内的cpu使用量求和，再算出每个线程的cpu使用占比。
 * TIME: 线程运行总时间，数据格式为`分：秒`
-* INTERRUPTE: 线程当前的中断位状态
+* INTERRUPTED: 线程当前的中断位状态
 * DAEMON: 是否是daemon线程
 
 ### 截图展示
