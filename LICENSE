@@ -672,3 +672,8 @@ may consider it more useful to permit linking proprietary applications with
 the library.  If this is what you want to do, use the GNU Lesser General
 Public License instead of this License.  But first, please read
 <http://www.gnu.org/philosophy/why-not-lgpl.html>.
+
+
+This product contains a modified version of greys-anatomy, which is 
+available under a GNU General Public License 3 (GPLv3) license. For details, 
+see https://github.com/oldmanpushcart/greys-anatomy.
