@@ -66,7 +66,6 @@ set ERROR_CODE=%ERRORLEVEL%
 goto endNT
 
 :attachSuccess
-REM %JAVACMD% -Dfile.encoding=UTF-8 -Djava.awt.headless=true -cp "%CORE_JAR%" com.taobao.arthas.core.ArthasConsole 127.0.0.1 3658
 telnet 127.0.0.1 3658
 
 REM set local scope for the variables with windows NT shell
