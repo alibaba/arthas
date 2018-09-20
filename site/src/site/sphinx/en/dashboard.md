@@ -1,11 +1,11 @@
 dashboard
-===
+=========
 
-> 当前系统的实时数据面板，按 ctrl+c 退出。
+This is the realtime dashboard for the system; press `Ctrl+C` to exit.
 
-当运行在Ali-tomcat时，会显示当前tomcat的实时信息，如HTTP请求的qps, rt, 错误数, 线程池信息等等。
+When running in *Ali-tomcat*, the dashboard will present the realtime statistics of the tomcat including [QPS](https://en.wikipedia.org/wiki/Queries_per_second), RT, error counts, thread profile and the like.
 
-### 使用参考
+### A Demo
 
 ```
 $ dashboard
@@ -44,18 +44,18 @@ processors                        4                                 threadpool  
 uptime                            16020s                            busy                              0
 ```
 
-### 数据说明
+### Specification
 
-* ID: Java级别的线程ID，注意这个ID不能跟jstack中的nativeID一一对应
-* NAME: 线程名
-* GROUP: 线程组名
-* PRIORITY: 线程优先级, 1~10之间的数字，越大表示优先级越高
-* STATE: 线程的状态
-* CPU%: 线程消耗的cpu占比，采样100ms，将所有线程在这100ms内的cpu使用量求和，再算出每个线程的cpu使用占比。
-* TIME: 线程运行总时间，数据格式为`分：秒`
-* INTERRUPTED: 线程当前的中断位状态
-* DAEMON: 是否是daemon线程
+* ID: thread ID in JVM (this is different from the nativeID in thread dump)
+* NAME: thread name
+* GROUP: group the thread is in
+* STATE: the current state of the thread
+* PRIORITY: within 1 ~ 10 (the higher the number, the higher the priority)
+* CPU%: CPU usage ratio within 100ms
+* TIME: total running time in minute:second format
+* INTERRUPTED: the thread interrupted state
+* DAEMON: is daemon thread or not
 
-### 截图展示
+### Screenshots
 
-![alt text](_static/dashboard.png "dashboard")
+![alt text](../_static/dashboard.png "dashboard")
