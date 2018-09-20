@@ -58,4 +58,4 @@ uptime                            16020s                            busy        
 
 ### Screenshots
 
-![alt text](_static/dashboard.png "dashboard")
+![alt text](../_static/dashboard.png "dashboard")
