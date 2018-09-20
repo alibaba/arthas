@@ -1,0 +1,250 @@
+@import url('https://cdnjs.cloudflare.com/ajax/libs/github-fork-ribbon-css/0.1.1/gh-fork-ribbon.min.css');
+@import url('https://fonts.loli.net/css?family=Source+Sans+Pro:400,400i,700,700i');
+@import url('https://fonts.loli.net/css?family=Inconsolata:400,700');
+
+html, body, .wy-grid-for-nav {
+  font-family: 'Source Sans Pro', 'Helvetica', 'Arial', sans-serif;
+  font-weight: normal;
+  font-size: 15px;
+  line-height: 1.42857143;
+  background: #f0f0f0;
+  margin: 0;
+  word-break: break-word;
+}
+
+.wy-nav-side {
+  font-size: 17px;
+}
+
+.wy-nav-top {
+  line-height: 30px;
+}
+
+.wy-nav-content-wrap {
+  background: #f0f0f0;
+}
+
+.wy-nav-content {
+  background: white;
+  max-width: 800px;
+  margin: 0;
+}
+
+.wy-nav-content p {
+  font-size: inherit;
+}
+
+.wy-side-nav-search > a, .wy-side-nav-search .wy-dropdown > a {
+  font-weight: inherit;
+}
+
+.wy-nav-top > a {
+  font-size: 125%;
+}
+
+.wy-side-nav-search > a {
+  margin: 0;
+  display: block;
+}
+
+.wy-side-nav-search > a img.logo {
+  max-width: 11.5em;
+  height: auto;
+  margin: 0 auto;
+  padding: 0;
+}
+
+.wy-menu.wy-menu-vertical .slack-invitation,
+.wy-menu.wy-menu-vertical .project-badges {
+  padding: 0.4em 1.45em 0 1.45em;
+  display: block;
+  position: relative;
+  line-height: 1em;
+}
+
+.wy-menu.wy-menu-vertical .project-badges a {
+  display: inline;
+  padding: 0;
+}
+
+.wy-menu.wy-menu-vertical .project-badges a:hover {
+  background: inherit;
+}
+
+.wy-menu.wy-menu-vertical .project-badges img {
+  display: inline;
+  padding: 0;
+  height: 1.45em;
+}
+
+/* Hide the Github fork ribbon on mobile view. */
+@media screen and (max-width: 768px) {
+  .github-fork-ribbon-wrapper {
+    display: none;
+  }
+}
+
+/* Move the right-side breadcrumb a little bit left so that it does not overlap with the Github fork ribbom. */
+@media screen and (min-width: 769px) {
+  .wy-breadcrumbs-aside {
+    padding-right: 64px;
+  }
+}
+
+.wy-breadcrumbs-aside {
+  margin-top: 0.225em;
+}
+
+/* Make sure the invitation dialog appears on top of the menu whose z-index is 200. */
+.__slackin {
+  z-index: 1000;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-weight: inherit;
+}
+
+/* Code blocks and literals */
+pre, code, kbd, var, samp, tt,
+.rst-content div[class*='highlight'] pre,
+.rst-content pre.literal-block,
+.rst-content code.literal,
+.rst-content tt.literal,
+.wy-menu-vertical li code,
+.wy-menu-vertical li tt {
+  font-family: 'Inconsolata', 'Consolas', 'Menlo', 'Monaco', 'Lucida Console', 'Liberation Mono',
+               'DejaVu Sans Mono', monospace;
+  font-weight: inherit;
+  word-break: break-all;
+}
+
+/* Code blocks */
+pre,
+.rst-content div[class*='highlight'] pre,
+.rst-content pre.literal-block {
+  padding: 8px 12px 12px 12px;
+  font-size: 90%;
+  overflow-x: auto;
+  overflow-y: hidden;
+  color: inherit;
+
+  /* Not sure why, but horizontal scrollbar does not go away without this on Chrome Linux */
+  width: 99.9%;
+}
+
+/* Code block wrappers */
+.rst-content div[class*='highlight'] {
+  overflow: inherit;
+}
+
+/* Literals */
+code, kbd, var, samp, tt,
+tt.literal, .rst-content tt.literal,
+code.literal, .rst-content code.literal {
+  padding-left: 0;
+  padding-right: 0;
+  background: rgba(0,0,0,0.05);
+  border-radius: 3px;
+  font-size: inherit;
+  color: inherit;
+  border: none;
+  white-space: pre-wrap;
+}
+
+/* Literals in vertical menu */
+.wy-menu-vertical li tt,
+.wy-menu-vertical li code {
+  padding-left: 0;
+  padding-right: 0;
+  font-size: inherit;
+  color: inherit;
+  border: none;
+  white-space: pre-wrap;
+}
+
+/* Add small padding around a literal. */
+code::before, code::after,
+kbd::before, kbd::after,
+var::before, var::after,
+samp::before, samp::after {
+  letter-spacing: -0.3em;
+  content: "\00a0";
+}
+
+/* Do not add small padding around a literal in vertical menu. */
+.wy-menu-vertical li tt::before,
+.wy-menu-vertical li tt::after,
+.wy-menu-vertical li code::before,
+.wy-menu-vertical li code::after {
+  content: "";
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: 'Source Sans Pro', 'Helvetica', 'Arial', sans-serif;
+}
+
+/* Use justify-align with hyphenation */
+p, .rst-content li {
+  text-align: justify;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  hyphens: auto;
+}
+
+/* Insert space for the nested list which comes after a paragraph. */
+.rst-content li > p + ul,
+.rst-content li > p + ol {
+  padding-bottom: 1em;
+}
+
+/* Do not insert bottom margin if it's the last child. */
+.rst-content li:last-child > .admonition:last-child {
+  margin-bottom: 0;
+}
+
+/* Do not use monospace font for download links */
+.rst-content tt.download {
+  font-family: inherit;
+}
+
+/* Adjust table width */
+.rst-content table.docutils, .rst-content table.field-list {
+  width: 100%;
+}
+
+/* Adjust table padding */
+.rst-content table.docutils thead th, .rst-content table.docutils td,
+.rst-content table.field-list thead th, .rst-content table.field-list td {
+  padding: 6px 10px;
+}
+
+/* Adjust table header borders */
+.wy-table thead th, .rst-content table.docutils thead th, .rst-content table.field-list thead th {
+  border-left: solid 1px #e1e4e5;
+  border-right: solid 1px #e1e4e5;
+  border-bottom-width: 1px;
+}
+
+/* Allow wrapping table content */
+.wy-table-responsive table td {
+  white-space: inherit;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  hyphens: auto;
+  text-align: justify;
+}
+
+/* Do not add left-margin for line-blocks */
+.rst-content .line-block {
+  margin-left: 0px;
+}
+
+/* Adjust the height of the top navbar */
+.wy-nav-top {
+  line-height: 43px;
+}
+
+/* Center the PlantUML diagrams */
+.plantuml {
+  text-align: center;
+}

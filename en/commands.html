@@ -1,0 +1,310 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Commands List &mdash; Arthas 3.0.5-SNAPSHOT documentation</title>
+  
+
+  
+  
+    <link rel="shortcut icon" href="_static/favicon.ico"/>
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="_static/overrides.css" type="text/css" />
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="dashboard" href="dashboard.html" />
+    <link rel="prev" title="Advanced Usage" href="advanced-use.html" />
+<script src="_static/center_page.js"></script>
+ 
+
+
+  
+  <script src="_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="index.html" class="icon icon-home"> Arthas
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                3.0.5-SNAPSHOT
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="install-detail.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="quick-start.html">Quick start</a></li>
+<li class="toctree-l1"><a class="reference internal" href="advanced-use.html">Advanced usage</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Commands</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="dashboard.html">dashboard</a></li>
+<li class="toctree-l2"><a class="reference external" href="https://github.com/alibaba/arthas/tree/master/site/src/site/sphinx/en/thread.md">thread</a></li>
+<li class="toctree-l2"><a class="reference external" href="https://github.com/alibaba/arthas/tree/master/site/src/site/sphinx/en/jvm.md">jvm</a></li>
+<li class="toctree-l2"><a class="reference external" href="https://github.com/alibaba/arthas/tree/master/site/src/site/sphinx/en/sysprop.md">sysprop</a></li>
+<li class="toctree-l2"><a class="reference external" href="https://github.com/alibaba/arthas/tree/master/site/src/site/sphinx/en/getstatic.md">getstatic</a></li>
+<li class="toctree-l2"><a class="reference external" href="https://github.com/alibaba/arthas/tree/master/site/src/site/sphinx/en/sc.md">sc</a></li>
+<li class="toctree-l2"><a class="reference external" href="https://github.com/alibaba/arthas/tree/master/site/src/site/sphinx/en/sm.md">sm</a></li>
+<li class="toctree-l2"><a class="reference external" href="https://github.com/alibaba/arthas/tree/master/site/src/site/sphinx/en/dump.md">dump</a></li>
+<li class="toctree-l2"><a class="reference external" href="https://github.com/alibaba/arthas/tree/master/site/src/site/sphinx/en/jad.md">jad</a></li>
+<li class="toctree-l2"><a class="reference external" href="https://github.com/alibaba/arthas/tree/master/site/src/site/sphinx/en/classloader.md">classloader</a></li>
+<li class="toctree-l2"><a class="reference external" href="https://github.com/alibaba/arthas/tree/master/site/src/site/sphinx/en/redefine.md">redefine</a></li>
+<li class="toctree-l2"><a class="reference external" href="https://github.com/alibaba/arthas/tree/master/site/src/site/sphinx/en/monitor.md">monitor</a></li>
+<li class="toctree-l2"><a class="reference external" href="https://github.com/alibaba/arthas/tree/master/site/src/site/sphinx/en/watch.md">watch</a></li>
+<li class="toctree-l2"><a class="reference external" href="https://github.com/alibaba/arthas/tree/master/site/src/site/sphinx/en/trace.md">trace</a></li>
+<li class="toctree-l2"><a class="reference external" href="https://github.com/alibaba/arthas/tree/master/site/src/site/sphinx/en/stack.md">stack</a></li>
+<li class="toctree-l2"><a class="reference external" href="https://github.com/alibaba/arthas/tree/master/site/src/site/sphinx/en/tt.md">tt</a></li>
+<li class="toctree-l2"><a class="reference external" href="https://github.com/alibaba/arthas/tree/master/site/src/site/sphinx/en/options.md">options</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#arthas-basic-commands">Arthas Basic Commands</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas/issues?q=label%3Auser-case">User cases</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas/tree/master/site/src/site/sphinx/en/release-notes.md">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas/issues?q=label%3Aquestion-answered">Questions and answers</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas">Fork me at GitHub</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas/blob/master/CONTRIBUTING.md">CONTRIBUTING</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">Arthas</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+      <li>Commands List</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            
+              <a href="https://github.com/alibaba/arthas/blob/master/site/src/site/sphinx/commands.md" class="fa fa-github"> Edit on GitHub</a>
+            
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="commands-list">
+<span id="commands-list"></span><h1>Commands List<a class="headerlink" href="#commands-list" title="Permalink to this headline">¶</a></h1>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="dashboard.html">dashboard</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas/tree/master/site/src/site/sphinx/en/thread.md">thread</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas/tree/master/site/src/site/sphinx/en/jvm.md">jvm</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas/tree/master/site/src/site/sphinx/en/sysprop.md">sysprop</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas/tree/master/site/src/site/sphinx/en/getstatic.md">getstatic</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas/tree/master/site/src/site/sphinx/en/sc.md">sc</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas/tree/master/site/src/site/sphinx/en/sm.md">sm</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas/tree/master/site/src/site/sphinx/en/dump.md">dump</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas/tree/master/site/src/site/sphinx/en/jad.md">jad</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas/tree/master/site/src/site/sphinx/en/classloader.md">classloader</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas/tree/master/site/src/site/sphinx/en/redefine.md">redefine</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas/tree/master/site/src/site/sphinx/en/monitor.md">monitor</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas/tree/master/site/src/site/sphinx/en/watch.md">watch</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas/tree/master/site/src/site/sphinx/en/trace.md">trace</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas/tree/master/site/src/site/sphinx/en/stack.md">stack</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas/tree/master/site/src/site/sphinx/en/tt.md">tt</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas/tree/master/site/src/site/sphinx/en/options.md">options</a></li>
+</ul>
+</div>
+<div class="section" id="arthas-basic-commands">
+<span id="arthas-basic-commands"></span><h2>Arthas Basic Commands<a class="headerlink" href="#arthas-basic-commands" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li>help - check the assistant info for the command</li>
+<li>cls - clear out the current screen area</li>
+<li>session - check the current session profile</li>
+<li><a class="reference external" href="https://github.com/alibaba/arthas/tree/master/site/src/site/sphinx/en/reset.md">reset</a> - clear the injected code from the classes (B.T.W when Arthas server closed, all the injected will also be cleared)</li>
+<li>version - the version of the working Arthas</li>
+<li>quit - exit the current Arthas client without affecting other clients</li>
+<li>shutdown - terminate the Arthas server and all clients</li>
+<li><a class="reference external" href="https://github.com/alibaba/arthas/tree/master/site/src/site/sphinx/en/keymap.md">keymap</a> - shortcuts for Arthas and also you can define your own</li>
+</ul>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="dashboard.html" class="btn btn-neutral float-right" title="dashboard" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="advanced-use.html" class="btn btn-neutral" title="Advanced Usage" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2018, Alibaba Middleware Group, and contributors.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'./',
+            VERSION:'3.0.5-SNAPSHOT',
+            LANGUAGE:'None',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="_static/jquery.js"></script>
+      <script type="text/javascript" src="_static/underscore.js"></script>
+      <script type="text/javascript" src="_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  <script type="text/javascript" src="_static/js/theme.js"></script>
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+<div class="github-fork-ribbon-wrapper right">
+  <div class="github-fork-ribbon">
+    <a href="https://github.com/alibaba/arthas">Fork me at GitHub</a>
+  </div>
+</div>
+
+<script type="text/javascript" src="_static/add_badges.js"></script>
+
+<script>
+  var _hmt = _hmt || [];
+  (function() {
+    var hm = document.createElement("script");
+    hm.src = "https://hm.baidu.com/hm.js?d5c5e25b100f0eb51a4c35c8a86ea9b4";
+    var s = document.getElementsByTagName("script")[0]; 
+    s.parentNode.insertBefore(hm, s);
+  })();
+</script>  
+ 
+
+
+</body>
+</html>

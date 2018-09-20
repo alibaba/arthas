@@ -1,0 +1,339 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>dashboard &mdash; Arthas 3.0.5-SNAPSHOT documentation</title>
+  
+
+  
+  
+    <link rel="shortcut icon" href="_static/favicon.ico"/>
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="_static/overrides.css" type="text/css" />
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="prev" title="Commands List" href="commands.html" />
+<script src="_static/center_page.js"></script>
+ 
+
+
+  
+  <script src="_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="index.html" class="icon icon-home"> Arthas
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                3.0.5-SNAPSHOT
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="install-detail.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="quick-start.html">Quick start</a></li>
+<li class="toctree-l1"><a class="reference internal" href="advanced-use.html">Advanced usage</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="commands.html">Commands</a><ul class="current">
+<li class="toctree-l2 current"><a class="current reference internal" href="#">dashboard</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#a-demo">A Demo</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#specification">Specification</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#screenshots">Screenshots</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference external" href="https://github.com/alibaba/arthas/tree/master/site/src/site/sphinx/en/thread.md">thread</a></li>
+<li class="toctree-l2"><a class="reference external" href="https://github.com/alibaba/arthas/tree/master/site/src/site/sphinx/en/jvm.md">jvm</a></li>
+<li class="toctree-l2"><a class="reference external" href="https://github.com/alibaba/arthas/tree/master/site/src/site/sphinx/en/sysprop.md">sysprop</a></li>
+<li class="toctree-l2"><a class="reference external" href="https://github.com/alibaba/arthas/tree/master/site/src/site/sphinx/en/getstatic.md">getstatic</a></li>
+<li class="toctree-l2"><a class="reference external" href="https://github.com/alibaba/arthas/tree/master/site/src/site/sphinx/en/sc.md">sc</a></li>
+<li class="toctree-l2"><a class="reference external" href="https://github.com/alibaba/arthas/tree/master/site/src/site/sphinx/en/sm.md">sm</a></li>
+<li class="toctree-l2"><a class="reference external" href="https://github.com/alibaba/arthas/tree/master/site/src/site/sphinx/en/dump.md">dump</a></li>
+<li class="toctree-l2"><a class="reference external" href="https://github.com/alibaba/arthas/tree/master/site/src/site/sphinx/en/jad.md">jad</a></li>
+<li class="toctree-l2"><a class="reference external" href="https://github.com/alibaba/arthas/tree/master/site/src/site/sphinx/en/classloader.md">classloader</a></li>
+<li class="toctree-l2"><a class="reference external" href="https://github.com/alibaba/arthas/tree/master/site/src/site/sphinx/en/redefine.md">redefine</a></li>
+<li class="toctree-l2"><a class="reference external" href="https://github.com/alibaba/arthas/tree/master/site/src/site/sphinx/en/monitor.md">monitor</a></li>
+<li class="toctree-l2"><a class="reference external" href="https://github.com/alibaba/arthas/tree/master/site/src/site/sphinx/en/watch.md">watch</a></li>
+<li class="toctree-l2"><a class="reference external" href="https://github.com/alibaba/arthas/tree/master/site/src/site/sphinx/en/trace.md">trace</a></li>
+<li class="toctree-l2"><a class="reference external" href="https://github.com/alibaba/arthas/tree/master/site/src/site/sphinx/en/stack.md">stack</a></li>
+<li class="toctree-l2"><a class="reference external" href="https://github.com/alibaba/arthas/tree/master/site/src/site/sphinx/en/tt.md">tt</a></li>
+<li class="toctree-l2"><a class="reference external" href="https://github.com/alibaba/arthas/tree/master/site/src/site/sphinx/en/options.md">options</a></li>
+<li class="toctree-l2"><a class="reference internal" href="commands.html#arthas-basic-commands">Arthas Basic Commands</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas/issues?q=label%3Auser-case">User cases</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas/tree/master/site/src/site/sphinx/en/release-notes.md">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas/issues?q=label%3Aquestion-answered">Questions and answers</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas">Fork me at GitHub</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas/blob/master/CONTRIBUTING.md">CONTRIBUTING</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">Arthas</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="commands.html">Commands List</a> &raquo;</li>
+        
+      <li>dashboard</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            
+              <a href="https://github.com/alibaba/arthas/blob/master/site/src/site/sphinx/dashboard.md" class="fa fa-github"> Edit on GitHub</a>
+            
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="dashboard">
+<span id="dashboard"></span><h1>dashboard<a class="headerlink" href="#dashboard" title="Permalink to this headline">¶</a></h1>
+<p>This is the realtime dashboard for the system; press <code class="docutils literal notranslate"><span class="pre">Ctrl+C</span></code> to exit.</p>
+<p>When running in <em>Ali-tomcat</em>, the dashboard will present the realtime statistics of the tomcat including <a class="reference external" href="https://en.wikipedia.org/wiki/Queries_per_second">QPS</a>, RT, error counts, thread profile and the like.</p>
+<div class="section" id="a-demo">
+<span id="a-demo"></span><h2>A Demo<a class="headerlink" href="#a-demo" title="Permalink to this headline">¶</a></h2>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ dashboard
+ID         NAME                              GROUP                  PRIORITY   STATE       %CPU       TIME       INTERRUPTED DAEMON
+889        RMI TCP Connection(15)-30.10.166. RMI Runtime            9          RUNNABLE    48         0:5        false       true
+1077       Timer-for-arthas-dashboard-0      system                 9          RUNNABLE    24         0:0        false       true
+1074       as-selector-daemon                system                 9          RUNNABLE    12         0:0        false       true
+284        JMX server connection timeout 284 RMI Runtime            9          TIMED_WAITI 8          0:3        false       true
+16         Timer-1                           main                   5          TIMED_WAITI 5          0:9        false       true
+47         Pandora pandora-qos-reporter Pool main                   5          TIMED_WAITI 0          0:0        false       true
+48         JmonitorClient-CheckThread Pool [ main                   5          TIMED_WAITI 0          0:0        false       true
+49         JmonitorClient-HeartBeat Pool [Th main                   5          TIMED_WAITI 0          0:0        false       true
+50         JmonitorClient-ReaderThread Pool  main                   5          TIMED_WAITI 0          0:0        false       true
+957        RMI TCP Connection(16)-30.10.166. RMI Runtime            9          RUNNABLE    0          0:2        false       true
+51         JmonitorClient-WriterThread Pool  main                   5          TIMED_WAITI 0          0:0        false       true
+52         ContainerBackgroundProcessor[Stan main                   5          TIMED_WAITI 0          0:0        false       true
+53         http-bio-8080-Acceptor-0          main                   5          RUNNABLE    0          0:2        false       true
+54         http-bio-8080-AsyncTimeout        main                   5          TIMED_WAITI 0          0:0        false       true
+11         GC Daemon                         system                 2          TIMED_WAITI 0          0:0        false       true
+Memory                       used      total     max      usage     GC
+heap                         59M       223M      1820M    3.26%     gc.ps_scavenge.count              118
+ps_eden_space                14M       114M      668M     2.11%     gc.ps_scavenge.time(ms)           1890
+ps_survivor_space            6M        6M        6M       96.08%    gc.ps_marksweep.count             5
+ps_old_gen                   39M       103M      1365M    2.86%     gc.ps_marksweep.time(ms)          1140
+nonheap                      234M      240M      0M       97.46%
+code_cache                   46M       47M       240M     19.49%
+metaspace                    167M      172M      0M       97.36%
+Runtime                                                             Tomcat
+os.name                           Mac OS X                          connector                         http-bio-8080
+os.version                        10.10.5                           QPS                               0.00
+java.version                      1.8.0_60                          RT(ms)                            1.13
+java.home                                                           error/s                           0.00
+                                                                    received/s                        0B
+systemload.average                3.44                              sent/s                            0B
+processors                        4                                 threadpool                        http-bio-8080
+uptime                            16020s                            busy                              0
+</pre></div>
+</div>
+</div>
+<div class="section" id="specification">
+<span id="specification"></span><h2>Specification<a class="headerlink" href="#specification" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li>ID: thread ID in JVM (this is different from the nativeID in thread dump)</li>
+<li>NAME: thread name</li>
+<li>GROUP: group the thread is in</li>
+<li>STATE: the current state of the thread</li>
+<li>PRIORITY: within 1 ~ 10 (the higher the number, the higher the priority)</li>
+<li>CPU%: CPU usage ratio within 100ms</li>
+<li>TIME: total running time in minute:second format</li>
+<li>INTERRUPTED: the thread interrupted state</li>
+<li>DAEMON: is daemon thread or not</li>
+</ul>
+</div>
+<div class="section" id="screenshots">
+<span id="screenshots"></span><h2>Screenshots<a class="headerlink" href="#screenshots" title="Permalink to this headline">¶</a></h2>
+<p><img alt="alt text" src="_images/dashboard.png" /></p>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+      
+        <a href="commands.html" class="btn btn-neutral" title="Commands List" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2018, Alibaba Middleware Group, and contributors.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'./',
+            VERSION:'3.0.5-SNAPSHOT',
+            LANGUAGE:'None',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="_static/jquery.js"></script>
+      <script type="text/javascript" src="_static/underscore.js"></script>
+      <script type="text/javascript" src="_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  <script type="text/javascript" src="_static/js/theme.js"></script>
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+<div class="github-fork-ribbon-wrapper right">
+  <div class="github-fork-ribbon">
+    <a href="https://github.com/alibaba/arthas">Fork me at GitHub</a>
+  </div>
+</div>
+
+<script type="text/javascript" src="_static/add_badges.js"></script>
+
+<script>
+  var _hmt = _hmt || [];
+  (function() {
+    var hm = document.createElement("script");
+    hm.src = "https://hm.baidu.com/hm.js?d5c5e25b100f0eb51a4c35c8a86ea9b4";
+    var s = document.getElementsByTagName("script")[0]; 
+    s.parentNode.insertBefore(hm, s);
+  })();
+</script>  
+ 
+
+
+</body>
+</html>

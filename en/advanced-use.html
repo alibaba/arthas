@@ -1,0 +1,365 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Advanced Usage &mdash; Arthas 3.0.5-SNAPSHOT documentation</title>
+  
+
+  
+  
+    <link rel="shortcut icon" href="_static/favicon.ico"/>
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="_static/overrides.css" type="text/css" />
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Commands List" href="commands.html" />
+    <link rel="prev" title="Quick Start" href="quick-start.html" />
+<script src="_static/center_page.js"></script>
+ 
+
+
+  
+  <script src="_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="index.html" class="icon icon-home"> Arthas
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                3.0.5-SNAPSHOT
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="install-detail.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="quick-start.html">Quick start</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Advanced usage</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#basic">Basic</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#jvm-related">JVM-related</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#class-classloader-related">class/classloader - related</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#monitor-watch-trace-related">monitor/watch/trace - related</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#options">options</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#pipe">pipe</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#async-in-background">async in background</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#web-console">Web Console</a><ul>
+<li class="toctree-l3"><a class="reference external" href="https://github.com/alibaba/arthas/tree/master/site/src/site/sphinx/en/web-console.md">Web Console</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#others">Others</a><ul>
+<li class="toctree-l3"><a class="reference external" href="https://github.com/alibaba/arthas/tree/master/site/src/site/sphinx/en/save-log.md">log the output</a></li>
+<li class="toctree-l3"><a class="reference external" href="https://github.com/alibaba/arthas/tree/master/site/src/site/sphinx/en/batch-support.md">batch</a></li>
+<li class="toctree-l3"><a class="reference external" href="https://github.com/alibaba/arthas/issues/11">how to use ognl</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="commands.html">Commands</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas/issues?q=label%3Auser-case">User cases</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas/tree/master/site/src/site/sphinx/en/release-notes.md">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas/issues?q=label%3Aquestion-answered">Questions and answers</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas">Fork me at GitHub</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas/blob/master/CONTRIBUTING.md">CONTRIBUTING</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">Arthas</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+      <li>Advanced Usage</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            
+              <a href="https://github.com/alibaba/arthas/blob/master/site/src/site/sphinx/advanced-use.md" class="fa fa-github"> Edit on GitHub</a>
+            
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="advanced-usage">
+<span id="advanced-usage"></span><h1>Advanced Usage<a class="headerlink" href="#advanced-usage" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="basic">
+<span id="basic"></span><h2>Basic<a class="headerlink" href="#basic" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li>help</li>
+<li>cls - clear out the current screen</li>
+<li>session - check details of the current session</li>
+<li><a class="reference external" href="https://github.com/alibaba/arthas/tree/master/site/src/site/sphinx/en/reset.md">reset</a> - reset all empowered classes</li>
+<li>version - print the version of the Arthas attaching to the current target process</li>
+<li>quit/exit - exit the current Arthas client without affecting other clients</li>
+<li>shutdown - terminate the Arthas server and all clients</li>
+</ul>
+</div>
+<div class="section" id="jvm-related">
+<span id="jvm-related"></span><h2>JVM-related<a class="headerlink" href="#jvm-related" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li><a class="reference internal" href="dashboard.html"><span class="doc">dashboard</span></a> - real-time dashboard for the current system</li>
+<li><a class="reference external" href="https://github.com/alibaba/arthas/tree/master/site/src/site/sphinx/en/thread.md">thread</a> - thread profile</li>
+<li><a class="reference external" href="https://github.com/alibaba/arthas/tree/master/site/src/site/sphinx/en/jvm.md">jvm</a> - JVM profile</li>
+<li><a class="reference external" href="https://github.com/alibaba/arthas/tree/master/site/src/site/sphinx/en/sysprop.md">sysprop</a> - check or modify JVM system properties</li>
+<li><strong>New!</strong> <a class="reference external" href="https://github.com/alibaba/arthas/tree/master/site/src/site/sphinx/en/getstatic.md">getstatic</a> - check the static properties of some class</li>
+</ul>
+</div>
+<div class="section" id="class-classloader-related">
+<span id="class-classloader-related"></span><h2>class/classloader - related<a class="headerlink" href="#class-classloader-related" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li><a class="reference external" href="https://github.com/alibaba/arthas/tree/master/site/src/site/sphinx/en/sc.md">sc</a> - methods’ profile of the classes loaded by JVM</li>
+<li><a class="reference external" href="https://github.com/alibaba/arthas/tree/master/site/src/site/sphinx/en/sm.md">sm</a> - methods’ profile of the loaded classes</li>
+<li><a class="reference external" href="https://github.com/alibaba/arthas/tree/master/site/src/site/sphinx/en/dump.md">dump</a> - dump out the byte code of the loaded class to specified location</li>
+<li><a class="reference external" href="https://github.com/alibaba/arthas/tree/master/site/src/site/sphinx/en/redefine.md">redefine</a> - load external <code class="docutils literal notranslate"><span class="pre">*.class</span></code> files and re-define the JVM</li>
+<li><a class="reference external" href="https://github.com/alibaba/arthas/tree/master/site/src/site/sphinx/en/jad.md">jad</a> - de-compile the specified loaded classes</li>
+<li><a class="reference external" href="https://github.com/alibaba/arthas/tree/master/site/src/site/sphinx/en/classloader.md">classloader</a> - check the inheritance structure, urls, class loading info of class cloader; using classloader to getResource</li>
+</ul>
+</div>
+<div class="section" id="monitor-watch-trace-related">
+<span id="monitor-watch-trace-related"></span><h2>monitor/watch/trace - related<a class="headerlink" href="#monitor-watch-trace-related" title="Permalink to this headline">¶</a></h2>
+<blockquote>
+<div><strong>Attention</strong>: commands here are taking advantage of <code class="docutils literal notranslate"><span class="pre">byte</span> <span class="pre">code</span> <span class="pre">injection</span></code>, which means we are using <a class="reference external" href="https://en.wikipedia.org/wiki/Aspect-oriented_programming">AOP</a> to monitor and analyze the classes. So when using it for online troubleshooting, you’d better <em>explicitly specifically</em> specify the classes and also remember to remove the injected code by <code class="docutils literal notranslate"><span class="pre">shutdown</span></code> or <code class="docutils literal notranslate"><span class="pre">reset</span></code> (for specific classes).</div></blockquote>
+<ul class="simple">
+<li><a class="reference external" href="https://github.com/alibaba/arthas/tree/master/site/src/site/sphinx/en/monitor.md">monitor</a></li>
+<li><a class="reference external" href="https://github.com/alibaba/arthas/tree/master/site/src/site/sphinx/en/watch.md">watch</a></li>
+<li><a class="reference external" href="https://github.com/alibaba/arthas/tree/master/site/src/site/sphinx/en/trace.md">trace</a> - track the call stack trace and collect the time cost for each method call</li>
+<li><a class="reference external" href="https://github.com/alibaba/arthas/tree/master/site/src/site/sphinx/en/stack.md">stack</a> - print the call stack trace of the current method</li>
+<li><a class="reference external" href="https://github.com/alibaba/arthas/tree/master/site/src/site/sphinx/en/tt.md">tt</a> - record the arguments and returned value for the methods, history included</li>
+</ul>
+</div>
+<div class="section" id="options">
+<span id="options"></span><h2>options<a class="headerlink" href="#options" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li><a class="reference external" href="https://github.com/alibaba/arthas/tree/master/site/src/site/sphinx/en/options.md">options</a> - check or set Arthas global options</li>
+</ul>
+</div>
+<div class="section" id="pipe">
+<span id="pipe"></span><h2>pipe<a class="headerlink" href="#pipe" title="Permalink to this headline">¶</a></h2>
+<p><code class="docutils literal notranslate"><span class="pre">pipe</span></code> is supported in Arthas, e.g. <code class="docutils literal notranslate"><span class="pre">sm</span> <span class="pre">org.apache.log4j.Logger</span> <span class="pre">|</span> <span class="pre">grep</span> <span class="pre">&lt;init&gt;</span></code></p>
+<ul class="simple">
+<li>grep</li>
+<li>plaintext - remove the color</li>
+<li>wc</li>
+</ul>
+</div>
+<div class="section" id="async-in-background">
+<span id="async-in-background"></span><h2>async in background<a class="headerlink" href="#async-in-background" title="Permalink to this headline">¶</a></h2>
+<p><a class="reference external" href="https://github.com/alibaba/arthas/tree/master/site/src/site/sphinx/en/async.md">async</a> will be a great help, when the <code class="docutils literal notranslate"><span class="pre">incident</span></code> seldom occurs and you are <code class="docutils literal notranslate"><span class="pre">[watch](watch.md)</span></code>ing it.</p>
+<ul class="simple">
+<li>jobs - list all jobs</li>
+<li>kill - forcibly terminate the job</li>
+<li>fg - bring the paused job back to the front</li>
+<li>bg - put the paused job to the background</li>
+<li>tips - a) use <code class="docutils literal notranslate"><span class="pre">&gt;</span></code> to redirect the output; b) use <code class="docutils literal notranslate"><span class="pre">&amp;</span></code> to put the job to the background; c) disconnecting the session will not influence the job (the default life is 1 day)</li>
+</ul>
+</div>
+<div class="section" id="web-console">
+<span id="web-console"></span><h2>Web Console<a class="headerlink" href="#web-console" title="Permalink to this headline">¶</a></h2>
+<p>Using websocket to connect Arthas</p>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas/tree/master/site/src/site/sphinx/en/web-console.md">Web Console</a></li>
+</ul>
+</div>
+</div>
+<div class="section" id="others">
+<span id="others"></span><h2>Others<a class="headerlink" href="#others" title="Permalink to this headline">¶</a></h2>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas/tree/master/site/src/site/sphinx/en/save-log.md">log the output</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas/tree/master/site/src/site/sphinx/en/batch-support.md">batch</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas/issues/11">how to use ognl</a></li>
+</ul>
+</div>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="commands.html" class="btn btn-neutral float-right" title="Commands List" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="quick-start.html" class="btn btn-neutral" title="Quick Start" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2018, Alibaba Middleware Group, and contributors.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'./',
+            VERSION:'3.0.5-SNAPSHOT',
+            LANGUAGE:'None',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="_static/jquery.js"></script>
+      <script type="text/javascript" src="_static/underscore.js"></script>
+      <script type="text/javascript" src="_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  <script type="text/javascript" src="_static/js/theme.js"></script>
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+<div class="github-fork-ribbon-wrapper right">
+  <div class="github-fork-ribbon">
+    <a href="https://github.com/alibaba/arthas">Fork me at GitHub</a>
+  </div>
+</div>
+
+<script type="text/javascript" src="_static/add_badges.js"></script>
+
+<script>
+  var _hmt = _hmt || [];
+  (function() {
+    var hm = document.createElement("script");
+    hm.src = "https://hm.baidu.com/hm.js?d5c5e25b100f0eb51a4c35c8a86ea9b4";
+    var s = document.getElementsByTagName("script")[0]; 
+    s.parentNode.insertBefore(hm, s);
+  })();
+</script>  
+ 
+
+
+</body>
+</html>
