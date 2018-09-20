@@ -257,6 +257,27 @@ Affect(class-cnt:1 , method-cnt:1) cost in 109 ms.
  2018-09-20 09:45:42  org.apache.dubbo.demo.provider.DemoServiceImpl  sayHello  5      5        0     0.43        0.00%
 ```
 
+#### Time Tunnel(tt)
+
+Recording method invocation data, so that you can check the method invacation parameters, returned value and thrown exception later. It works as if you could come back and replay the past method invacation via time tunnel.
+
+```
+$ tt -t org.apache.dubbo.demo.provider.DemoServiceImpl sayHello
+Press Ctrl+C to abort.
+Affect(class-cnt:1 , method-cnt:1) cost in 75 ms.
+ INDEX   TIMESTAMP            COST(ms)  IS-RET  IS-EXP   OBJECT         CLASS                          METHOD
+-------------------------------------------------------------------------------------------------------------------------------------
+ 1000    2018-09-20 09:54:10  1.971195  true    false    0x55965cca     DemoServiceImpl                sayHello
+ 1001    2018-09-20 09:54:11  0.215685  true    false    0x55965cca     DemoServiceImpl                sayHello
+ 1002    2018-09-20 09:54:12  0.236303  true    false    0x55965cca     DemoServiceImpl                sayHello
+ 1003    2018-09-20 09:54:13  0.159598  true    false    0x55965cca     DemoServiceImpl                sayHello
+ 1004    2018-09-20 09:54:14  0.201982  true    false    0x55965cca     DemoServiceImpl                sayHello
+ 1005    2018-09-20 09:54:15  0.214205  true    false    0x55965cca     DemoServiceImpl                sayHello
+ 1006    2018-09-20 09:54:16  0.241863  true    false    0x55965cca     DemoServiceImpl                sayHello
+ 1007    2018-09-20 09:54:17  0.305747  true    false    0x55965cca     DemoServiceImpl                sayHello
+ 1008    2018-09-20 09:54:18  0.18468   true    false    0x55965cca     DemoServiceImpl                sayHello
+```
+
 #### Classloader
 
 ```
