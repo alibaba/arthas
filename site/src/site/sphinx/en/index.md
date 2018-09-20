@@ -1,6 +1,8 @@
 Arthas Documentation
 ===
 
+**[中文文档/Chinese Docs](https://alibaba.github.io/arthas/)**
+
 ![arthas](arthas.png)
 
 `Arthas` is an Java Diagnostic tool open sourced by Alibaba.
