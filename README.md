@@ -59,11 +59,11 @@ Start Arthas:
 
 English version is on the way, if you would like to contribute, please leave a message [here](https://github.com/alibaba/arthas/issues/51)
 
-* [User manual](https://alibaba.github.io/arthas/)
-* [Installation](https://alibaba.github.io/arthas/install-detail.html)
-* [Quick start](https://alibaba.github.io/arthas/quick-start.html)
-* [Advanced usage](https://alibaba.github.io/arthas/advanced-use.html)
-* [Questions and answers](https://github.com/alibaba/arthas/labels/question-answered)
+* [User manual](https://alibaba.github.io/arthas/en)
+* [Installation](https://alibaba.github.io/arthas/en/install-detail.html)
+* [Quick start](https://alibaba.github.io/arthas/en/quick-start.html)
+* [Advanced usage](https://alibaba.github.io/arthas/en/advanced-use.html)
+* [Questions and answers](https://github.com/alibaba/arthas/issues?utf8=%E2%9C%93&q=label%3Aquestion-answered+)
 * [How to contribute](https://github.com/alibaba/arthas/blob/master/CONTRIBUTING.md)
 
 
