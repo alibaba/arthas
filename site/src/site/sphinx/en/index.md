@@ -26,9 +26,9 @@ Contents
 * [快速入门](quick-start.md)
 * [进阶使用](advanced-use.md)
 * [命令列表](commands.md)
-* [用户案例](https://github.com/alibaba/arthas/labels/user-case)
+* [用户案例](https://github.com/alibaba/arthas/issues?q=label%3Auser-case)
 * [Release Notes](release-notes.md)
-* [Questions and answers](https://github.com/alibaba/arthas/labels/question-answered)
+* [Questions and answers](https://github.com/alibaba/arthas/issues?q=label%3Aquestion-answered)
 * [Fork me at GitHub](https://github.com/alibaba/arthas)
 * [参与贡献](https://github.com/alibaba/arthas/blob/master/CONTRIBUTING.md)
 
