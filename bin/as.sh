@@ -365,38 +365,18 @@ attach_jvm()
 
     echo "Attaching to ${TARGET_PID} using version ${1}..."
 
-    if [ ${TARGET_IP} = ${DEFAULT_TARGET_IP} ]; then
-        if [[ "${arthas_version}" > "3.0" ]]; then
-            ${JAVA_HOME}/bin/java \
-                ${ARTHAS_OPTS} ${BOOT_CLASSPATH} ${JVM_OPTS} \
-                -jar ${arthas_lib_dir}/arthas-core.jar \
-                    -pid ${TARGET_PID} \
-                    -target-ip ${TARGET_IP} \
-                    -telnet-port ${TELNET_PORT} \
-                    -http-port ${HTTP_PORT} \
-                    -core "${arthas_lib_dir}/arthas-core.jar" \
-                    -agent "${arthas_lib_dir}/arthas-agent.jar"
-        else
-            # for compatibility
-            ${JAVA_HOME}/bin/java \
-                ${ARTHAS_OPTS} ${BOOT_CLASSPATH} ${JVM_OPTS} \
-                -jar ${arthas_lib_dir}/arthas-core.jar \
-                    -pid ${TARGET_PID} \
-                    -target ${TARGET_IP}":"${TELNET_PORT} \
-                    -core "${arthas_lib_dir}/arthas-core.jar" \
-                    -agent "${arthas_lib_dir}/arthas-agent.jar"
+    echo ${ARTHAS_OPTS}
 
-            # verify_pid
-            echo "help" > /tmp/command
-            PID=`${JAVA_HOME}/bin/java -cp ${arthas_lib_dir}/arthas-core.jar ${ARTHAS_OPTS}\
-                com.taobao.arthas.core.ArthasConsole ${TARGET_IP} ${TELNET_PORT} -b -f /tmp/command \
-                | grep PID | awk '{print $2}'`
-            rm /tmp/command
-            if [ ! -z ${PID} ] && [ "${PID}" != "${TARGET_PID}" ]; then
-                echo "WARNING: Arthas server is running on ${PID} instead of ${TARGET_PID}, exiting."
-                exit 1
-            fi
-        fi
+    if [ ${TARGET_IP} = ${DEFAULT_TARGET_IP} ]; then
+        ${JAVA_HOME}/bin/java \
+            ${ARTHAS_OPTS} ${BOOT_CLASSPATH} ${JVM_OPTS} \
+            -jar ${arthas_lib_dir}/arthas-core.jar \
+                -pid ${TARGET_PID} \
+                -target-ip ${TARGET_IP} \
+                -telnet-port ${TELNET_PORT} \
+                -http-port ${HTTP_PORT} \
+                -core "${arthas_lib_dir}/arthas-core.jar" \
+                -agent "${arthas_lib_dir}/arthas-agent.jar"
     fi
 }
 
