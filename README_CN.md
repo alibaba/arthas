@@ -54,7 +54,7 @@ curl -L https://alibaba.github.io/arthas/install.sh | sh
 * [安装](https://alibaba.github.io/arthas/install-detail.html)
 * [快速入门](https://alibaba.github.io/arthas/quick-start.html)
 * [进阶使用](https://alibaba.github.io/arthas/advanced-use.html)
-* [Questions and answers](https://github.com/alibaba/arthas/labels/question-answered)
+* [Q&A](https://github.com/alibaba/arthas/issues?utf8=%E2%9C%93&q=label%3Aquestion-answered+)
 * [参与贡献](https://github.com/alibaba/arthas/blob/master/CONTRIBUTING.md)
 
 
