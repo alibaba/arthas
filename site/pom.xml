@@ -23,7 +23,8 @@
                                 <id>zh doc</id>
                                 <phase>package</phase>
                                 <configuration>
-                                    <asReport>true</asReport>
+                                    <sourceDirectory>${basedir}/src/site/sphinx</sourceDirectory>
+                                    <outputDirectory>${project.build.directory}/site/sphinx</outputDirectory>
                                     <name>Arthas documentation</name>
                                     <description>Documentation about Arthas</description>
                                 </configuration>
@@ -35,8 +36,8 @@
                                 <id>en doc</id>
                                 <phase>package</phase>
                                 <configuration>
-                                    <asReport>true</asReport>
                                     <sourceDirectory>${basedir}/src/site/sphinx/en</sourceDirectory>
+                                    <outputDirectory>${project.build.directory}/site/sphinx/en</outputDirectory>
                                     <name>Arthas English documentation</name>
                                     <description>Documentation about Arthas</description>
                                 </configuration>
