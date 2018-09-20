@@ -93,12 +93,7 @@
 <li class="toctree-l2"><a class="reference internal" href="#linux-unix-mac">Linux/Unix/Mac</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#windows">Windows</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#manual-installation">Manual Installation</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#advanced-manual-boot">Advanced Manual Boot</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#locate-the-java-for-jvm">1. locate the java for JVM:</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#concatenate-the-command">2. Concatenate the command</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#connect-via-telnet">3. Connect via telnet</a></li>
-</ul>
-</li>
+<li class="toctree-l2"><a class="reference internal" href="#advanced-manual-boot">Advanced Manual Boot</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#offline-help-documentation">Offline Help Documentation</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#uninstall">Uninstall</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#linux-unix-mac">Linux/Unix/Mac</a></li>
@@ -211,42 +206,41 @@
 <div class="section" id="advanced-manual-boot">
 <span id="advanced-manual-boot"></span><h2>Advanced Manual Boot<a class="headerlink" href="#advanced-manual-boot" title="Permalink to this headline">¶</a></h2>
 <p>If you cannot boot Arthas, try to pass in all the critical options manually as the following steps:</p>
-<div class="section" id="locate-the-java-for-jvm">
-<span id="locate-the-java-for-jvm"></span><h3>1. locate the java for JVM:<a class="headerlink" href="#locate-the-java-for-jvm" title="Permalink to this headline">¶</a></h3>
+<ol>
+<li><p class="first">locate the java for JVM:</p>
 <ul class="simple">
 <li>Linux/Unix/Mac: <code class="docutils literal notranslate"><span class="pre">ps</span> <span class="pre">aux</span> <span class="pre">|</span> <span class="pre">grep</span> <span class="pre">java</span></code></li>
 <li>Windows: open the Process Monitor to search java</li>
 </ul>
-</div>
-<div class="section" id="concatenate-the-command">
-<span id="concatenate-the-command"></span><h3>2. Concatenate the command<a class="headerlink" href="#concatenate-the-command" title="Permalink to this headline">¶</a></h3>
+</li>
+<li><p class="first">Concatenate the command</p>
 <p>Let’s suppose we are using <code class="docutils literal notranslate"><span class="pre">/opt/jdk1.8/bin/java</span></code>, then the command should be:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span> /opt/jdk1.8/bin/java -Xbootclasspath/a:/opt/jdk1.8/lib/tools.jar <span class="se">\</span>
-     -jar /tmp/arthas-packaging/arthas-core.jar <span class="se">\</span>
-     -pid <span class="m">15146</span> <span class="se">\</span>
-     -target-ip <span class="m">127</span>.0.0.1 -telnet-port <span class="m">3658</span> -http-port <span class="m">8563</span> <span class="se">\</span>
-     -core /tmp/arthas-packaging/arthas-core.jar <span class="se">\</span>
-     -agent /tmp/arthas-packaging/arthas/arthas-agent.jar
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>/opt/jdk1.8/bin/java -Xbootclasspath/a:/opt/jdk1.8/lib/tools.jar <span class="se">\</span>
+    -jar /tmp/arthas-packaging/arthas-core.jar <span class="se">\</span>
+    -pid <span class="m">15146</span> <span class="se">\</span>
+    -target-ip <span class="m">127</span>.0.0.1 -telnet-port <span class="m">3658</span> -http-port <span class="m">8563</span> <span class="se">\</span>
+    -core /tmp/arthas-packaging/arthas-core.jar <span class="se">\</span>
+    -agent /tmp/arthas-packaging/arthas/arthas-agent.jar
 </pre></div>
 </div>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>* `-Xbootclasspath` add tools.jar
-* `-jar /tmp/arthas-packaging/arthas-core.jar` specify main entry
-* `-pid 15146` specify the target java process pid
-* `-target-ip 127.0.0.1` specify the IP
-* `-telnet-port 3658 -http-port 8563` specify telnet and http ports
-* `-core /tmp/arthas-packaging/arthas-core.jar -agent /tmp/arthas-packaging/arthas/arthas-agent.jar` specify core/agent jar package
-</pre></div>
-</div>
+<ul class="simple">
+<li><code class="docutils literal notranslate"><span class="pre">-Xbootclasspath</span></code> add tools.jar</li>
+<li><code class="docutils literal notranslate"><span class="pre">-jar</span> <span class="pre">/tmp/arthas-packaging/arthas-core.jar</span></code> specify main entry</li>
+<li><code class="docutils literal notranslate"><span class="pre">-pid</span> <span class="pre">15146</span></code> specify the target java process pid</li>
+<li><code class="docutils literal notranslate"><span class="pre">-target-ip</span> <span class="pre">127.0.0.1</span></code> specify the IP</li>
+<li><code class="docutils literal notranslate"><span class="pre">-telnet-port</span> <span class="pre">3658</span> <span class="pre">-http-port</span> <span class="pre">8563</span></code> specify telnet and http ports</li>
+<li><code class="docutils literal notranslate"><span class="pre">-core</span> <span class="pre">/tmp/arthas-packaging/arthas-core.jar</span> <span class="pre">-agent</span> <span class="pre">/tmp/arthas-packaging/arthas/arthas-agent.jar</span></code> specify core/agent jar package</li>
+</ul>
 <p>But if you are using JDK 1.9 or above，then you do not need to add <code class="docutils literal notranslate"><span class="pre">tools.jar</span></code> in option <code class="docutils literal notranslate"><span class="pre">-Xbootclasspath</span></code>.</p>
 <p>F.Y.I the booting log will be printed to <code class="docutils literal notranslate"><span class="pre">~/logs/arthas/arthas.log</span></code>.</p>
-</div>
-<div class="section" id="connect-via-telnet">
-<span id="connect-via-telnet"></span><h3>3. Connect via telnet<a class="headerlink" href="#connect-via-telnet" title="Permalink to this headline">¶</a></h3>
+</li>
+<li><p class="first">Connect via telnet</p>
 <p>When attached successfully, you can connect it with</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>telnet localhost <span class="m">3658</span>
 </pre></div>
 </div>
-</div>
+</li>
+</ol>
 </div>
 <div class="section" id="offline-help-documentation">
 <span id="offline-help-documentation"></span><h2>Offline Help Documentation<a class="headerlink" href="#offline-help-documentation" title="Permalink to this headline">¶</a></h2>
