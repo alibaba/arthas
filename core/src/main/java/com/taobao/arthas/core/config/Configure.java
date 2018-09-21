@@ -27,7 +27,7 @@ public class Configure {
     }
 
     public void setIp(String ip) {
-        this.ip = normalizeIp(ip);
+        this.ip = ip;
     }
 
     public int getTelnetPort() {
@@ -122,14 +122,6 @@ public class Configure {
             }
         }
         return configure;
-    }
-
-    private String normalizeIp(String ip){
-        if ("127.0.0.1".equals(ip)) {
-            // bind to all network interfaces, allowing remote connections
-            return "0.0.0.0";
-        }
-        return ip;
     }
 
 }
