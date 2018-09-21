@@ -84,8 +84,9 @@ $ jvm
 
  THREAD               COUNT          16
                       DAEMON-COUNT   10
-                      LIVE-COUNT     18
+                      PEAK-COUNT     18
                       STARTED-COUNT  19
+                      DEADLOCK-COUNT  0
 Affect cost in 2 ms.
 ```
 
@@ -93,5 +94,6 @@ Affect cost in 2 ms.
 
 * COUNT: the count of active threads 
 * DAEMON-COUNT: the count of active daemon threads
-* LIVE-COUNT: the maximum count of the live threads since JVM starts
+* PEAK-COUNT: the maximum count of the live threads since JVM starts
 * STARTED-COUNT: the total count of the created threads since JVM starts
+* DEADLOCK-COUNT: the count of deadlock threads 
