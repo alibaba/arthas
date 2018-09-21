@@ -5,9 +5,9 @@ options
 
 | Name                | Default Value   | Description                                       |
 | ------------------ | ----- | ---------------------------------------- |
-| unsafe             | false | Enable support for system-level class enhancement, turn on this switch may crash JVM, please choose carefully!   |
+| unsafe             | false | Enable support for system-level class enhancement; JVM might crash, if you turn on this switch (please use with great caution!)   |
 | dump               | false | Enable support for dumping enhanced class to external file，if turned on，class file will be dumped to`/${application dir}/arthas-class-dump/`，please see console for specific location |
-| batch-re-transform | true  | Enable support for batch re-transform matched classes              |
+| batch-re-transform | true  | re-transform matched classes in batch            |
 | json-format        | false | Enable output in JSON format                             |
 | disable-sub-class  | false | Disabling child class matching，by default child class will be matched during matching target class，if you wish exact matching，you can turn this off |
 | debug-for-asm      | false | Print ASM related debug message                             |
