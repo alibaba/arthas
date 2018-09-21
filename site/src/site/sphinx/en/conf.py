@@ -52,7 +52,7 @@ project = u'Arthas'
 copyright = u'2018, Alibaba Middleware Group, and contributors'
 author = u'Alibaba Middleware Group, and contributors'
 
-github_doc_root = 'https://github.com/alibaba/arthas/tree/master/site/src/site/sphinx/en'
+github_doc_root = 'https://github.com/alibaba/arthas/tree/master/site/src/site/sphinx/en/'
 
 # The version info for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the

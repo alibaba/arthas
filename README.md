@@ -59,11 +59,11 @@ Start Arthas:
 
 English version is on the way, if you would like to contribute, please leave a message [here](https://github.com/alibaba/arthas/issues/51)
 
-* [User manual](https://alibaba.github.io/arthas/)
-* [Installation](https://alibaba.github.io/arthas/install-detail.html)
-* [Quick start](https://alibaba.github.io/arthas/quick-start.html)
-* [Advanced usage](https://alibaba.github.io/arthas/advanced-use.html)
-* [Questions and answers](https://github.com/alibaba/arthas/labels/question-answered)
+* [User manual](https://alibaba.github.io/arthas/en)
+* [Installation](https://alibaba.github.io/arthas/en/install-detail.html)
+* [Quick start](https://alibaba.github.io/arthas/en/quick-start.html)
+* [Advanced usage](https://alibaba.github.io/arthas/en/advanced-use.html)
+* [Questions and answers](https://github.com/alibaba/arthas/issues?utf8=%E2%9C%93&q=label%3Aquestion-answered+)
 * [How to contribute](https://github.com/alibaba/arthas/blob/master/CONTRIBUTING.md)
 
 
@@ -300,3 +300,11 @@ $ classloader
 * https://alibaba.github.io/arthas/web-console
 
 ![web console](site/src/site/sphinx/_static/web-console-local.png)
+
+
+### Credit
+
+* [greys-anatomy](https://github.com/oldmanpushcart/greys-anatomy): The Arthas code base has derived from Greys, we thank for the excellent work done by Greys.
+* [termd](https://github.com/termd/termd): Arthas's termnial implementation is based on termd, an open source library for writing terminal applications in Java.
+* [crash](https://github.com/crashub/crash): Arthas's text based user interface rendering is based on codes extracted from [here](https://github.com/crashub/crash/tree/1.3.2/shell)
+* [cli](https://github.com/eclipse-vertx/vert.x/tree/master/src/main/java/io/vertx/core/cli): Arthas's command line interface implementation is based on cli, open sourced by vert.x
