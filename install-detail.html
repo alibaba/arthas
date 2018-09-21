@@ -189,10 +189,10 @@
 <span id="windows"></span><h2>Windows<a class="headerlink" href="#windows" title="永久链接至标题">¶</a></h2>
 <p>最新版本：<a class="reference external" href="http://search.maven.org/classic/#search%7Cga%7C1%7Cg%3A%22com.taobao.arthas%22%20AND%20a%3A%22arthas-packaging%22"><img alt="Arthas" src="https://img.shields.io/maven-central/v/com.taobao.arthas/arthas-packaging.svg?style=flat-square" /></a></p>
 <p>在<code class="docutils literal notranslate"><span class="pre">Download</span></code>栏下载最新的 <code class="docutils literal notranslate"><span class="pre">bin.zip</span></code> 包，解压后在bin目录有 <code class="docutils literal notranslate"><span class="pre">as.bat</span></code>。此脚本暂时只接受一个参数 pid，即只能诊断本机上的 Java 进程。（欢迎精通bat脚本的开发者改进）</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">as</span><span class="o">.</span><span class="n">bat</span> <span class="n">pid</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">as</span><span class="o">.</span><span class="n">bat</span> <span class="o">&lt;</span><span class="n">pid</span><span class="o">&gt;</span>
 </pre></div>
 </div>
-<p>如果需要更好的体验，可以在本地使用 <code class="docutils literal notranslate"><span class="pre">as.bat</span> <span class="pre">pid</span></code> 启动 Arthas Server 后，然后在另外的 Linux/Mac 上使用 <code class="docutils literal notranslate"><span class="pre">as.sh</span> <span class="pre">pid&#64;ip:port</span></code> 来远程诊断。</p>
+<p>如果需要更好的体验，可以在本地使用 <code class="docutils literal notranslate"><span class="pre">as.bat</span> <span class="pre">&lt;pid&gt;</span></code> 启动 Arthas Server 后，然后在另外的 Linux/Mac 上使用 <code class="docutils literal notranslate"><span class="pre">as.sh</span> <span class="pre">pid&#64;ip:port</span></code> 来远程诊断。</p>
 <blockquote>
 <div>Windows用户如果在cmd里不能正常显示颜色，可以使用<a class="reference external" href="https://sourceforge.net/projects/conemu">conemu</a>。</div></blockquote>
 </div>

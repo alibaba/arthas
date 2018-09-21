@@ -197,7 +197,9 @@
 <blockquote>
 <div>方法执行监控</div></blockquote>
 <p>对匹配 <code class="docutils literal notranslate"><span class="pre">class-pattern</span></code>／<code class="docutils literal notranslate"><span class="pre">method-pattern</span></code>的类、方法的调用进行监控。</p>
-<p><code class="docutils literal notranslate"><span class="pre">monitor</span></code> 命令是一个非实时返回命令，实时返回命令是输入之后立即返回，而非实时返回的命令，则是不断的等待目标 Java 进程返回信息，直到用户输入 <code class="docutils literal notranslate"><span class="pre">Ctrl+C</span></code> 为止。服务端是以任务的形式在后台跑任务，植入的代码随着任务的中止而被不会被执行，所以任务关闭后，不会对原有性能产生太大影响，而且原则上，任何 Arthas 的命令也不会引起任何原有业务逻辑的改变。</p>
+<p><code class="docutils literal notranslate"><span class="pre">monitor</span></code> 命令是一个非实时返回命令.</p>
+<p>实时返回命令是输入之后立即返回，而非实时返回的命令，则是不断的等待目标 Java 进程返回信息，直到用户输入 <code class="docutils literal notranslate"><span class="pre">Ctrl+C</span></code> 为止。</p>
+<p>服务端是以任务的形式在后台跑任务，植入的代码随着任务的中止而不会被执行，所以任务关闭后，不会对原有性能产生太大影响，而且原则上，任何Arthas命令不会引起原有业务逻辑的改变。</p>
 <div class="section" id="">
 <span id="id1"></span><h2>监控的维度说明<a class="headerlink" href="#" title="永久链接至标题">¶</a></h2>
 <table border="1" class="docutils">
@@ -244,7 +246,7 @@
 </table></div>
 <div class="section" id="">
 <span id="id2"></span><h2>参数说明<a class="headerlink" href="#" title="永久链接至标题">¶</a></h2>
-<p>方法拥有一个命名参数 <code class="docutils literal notranslate"><span class="pre">[c:]</span></code>，意思是统计周期（cycle of output），拥有一个整形的参数值</p>
+<p>方法拥有一个命名参数 <code class="docutils literal notranslate"><span class="pre">[c:]</span></code>，意思是统计周期（cycle of output），拥有一个整型的参数值</p>
 <table border="1" class="docutils">
 <thead>
 <tr>
