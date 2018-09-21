@@ -25,10 +25,10 @@ curl -L https://alibaba.github.io/arthas/install.sh | sh
 在`Download`栏下载最新的 `bin.zip` 包，解压后在bin目录有 `as.bat`。此脚本暂时只接受一个参数 pid，即只能诊断本机上的 Java 进程。（欢迎精通bat脚本的开发者改进）
 
 ```
-as.bat pid
+as.bat <pid>
 ```
 
-如果需要更好的体验，可以在本地使用 `as.bat pid` 启动 Arthas Server 后，然后在另外的 Linux/Mac 上使用 `as.sh pid@ip:port` 来远程诊断。
+如果需要更好的体验，可以在本地使用 `as.bat <pid>` 启动 Arthas Server 后，然后在另外的 Linux/Mac 上使用 `as.sh pid@ip:port` 来远程诊断。
 
 
 > Windows用户如果在cmd里不能正常显示颜色，可以使用[conemu](https://sourceforge.net/projects/conemu)。
