@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>sc &mdash; Arthas 3.0.5-SNAPSHOT documentation</title>
+  <title>options &mdash; Arthas 3.0.5-SNAPSHOT documentation</title>
   
 
   
@@ -31,8 +31,7 @@
     <link rel="stylesheet" href="_static/overrides.css" type="text/css" />
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="sm" href="sm.html" />
-    <link rel="prev" title="getstatic" href="getstatic.html" />
+    <link rel="prev" title="monitor" href="monitor.html" />
 <script src="_static/center_page.js"></script>
  
 
@@ -98,14 +97,7 @@
 <li class="toctree-l2"><a class="reference internal" href="jvm.html">jvm</a></li>
 <li class="toctree-l2"><a class="reference internal" href="sysprop.html">sysprop</a></li>
 <li class="toctree-l2"><a class="reference internal" href="getstatic.html">getstatic</a></li>
-<li class="toctree-l2 current"><a class="current reference internal" href="#">sc</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#options">Options</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="#specification">Specification</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#usage">Usage</a></li>
-</ul>
-</li>
-</ul>
-</li>
+<li class="toctree-l2"><a class="reference internal" href="sc.html">sc</a></li>
 <li class="toctree-l2"><a class="reference internal" href="sm.html">sm</a></li>
 <li class="toctree-l2"><a class="reference internal" href="dump.html">dump</a></li>
 <li class="toctree-l2"><a class="reference internal" href="jad.html">jad</a></li>
@@ -116,7 +108,10 @@
 <li class="toctree-l2"><a class="reference external" href="https://github.com/alibaba/arthas/tree/master/site/src/site/sphinx/en/trace.md">trace</a></li>
 <li class="toctree-l2"><a class="reference external" href="https://github.com/alibaba/arthas/tree/master/site/src/site/sphinx/en/stack.md">stack</a></li>
 <li class="toctree-l2"><a class="reference external" href="https://github.com/alibaba/arthas/tree/master/site/src/site/sphinx/en/tt.md">tt</a></li>
-<li class="toctree-l2"><a class="reference internal" href="options.html">options</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">options</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#usage">Usage</a></li>
+</ul>
+</li>
 <li class="toctree-l2"><a class="reference internal" href="commands.html#arthas-basic-commands">Arthas Basic Commands</a></li>
 </ul>
 </li>
@@ -172,14 +167,14 @@
         
           <li><a href="commands.html">Commands List</a> &raquo;</li>
         
-      <li>sc</li>
+      <li>options</li>
     
     
       <li class="wy-breadcrumbs-aside">
         
             
             
-              <a href="https://github.com/alibaba/arthas/blob/master/site/src/site/sphinx/sc.md" class="fa fa-github"> Edit on GitHub</a>
+              <a href="https://github.com/alibaba/arthas/blob/master/site/src/site/sphinx/options.md" class="fa fa-github"> Edit on GitHub</a>
             
           
         
@@ -193,95 +188,68 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
             
-  <div class="section" id="sc">
-<span id="sc"></span><h1>sc<a class="headerlink" href="#sc" title="Permalink to this headline">¶</a></h1>
-<p>Check the profiles of the loaded classes.</p>
-<p>Abbreviated from “Search-Class”; with the help of this command, you can search out all the loaded classes in JVM. Supported options are: <code class="docutils literal notranslate"><span class="pre">[d]</span></code>、<code class="docutils literal notranslate"><span class="pre">[E]</span></code>、<code class="docutils literal notranslate"><span class="pre">[f]</span></code> and <code class="docutils literal notranslate"><span class="pre">[x:]</span></code>.</p>
-<div class="section" id="options">
-<span id="options"></span><h2>Options<a class="headerlink" href="#options" title="Permalink to this headline">¶</a></h2>
-<div class="section" id="specification">
-<span id="specification"></span><h3>Specification<a class="headerlink" href="#specification" title="Permalink to this headline">¶</a></h3>
+  <div class="section" id="options">
+<span id="options"></span><h1>options<a class="headerlink" href="#options" title="Permalink to this headline">¶</a></h1>
+<blockquote>
+<div>Global options</div></blockquote>
 <table border="1" class="docutils">
 <thead>
 <tr>
-<th align="right">Name</th>
-<th align="left">Specification</th>
+<th>Name</th>
+<th>Default Value</th>
+<th>Description</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td align="right"><em>class-pattern</em></td>
-<td align="left">pattern for the class name</td>
+<td>unsafe</td>
+<td>false</td>
+<td>Enable support for system-level class enhancement; JVM might crash, if you turn on this switch (please use with great caution!)</td>
 </tr>
 <tr>
-<td align="right"><em>method-pattern</em></td>
-<td align="left">pattern for the method name</td>
+<td>dump</td>
+<td>false</td>
+<td>Enable support for dumping enhanced class to external file，if turned on，class file will be dumped to<code>/${application dir}/arthas-class-dump/</code>，please see console for specific location</td>
 </tr>
 <tr>
-<td align="right">[d]</td>
-<td align="left">print the details of the current class including the source file, class declaration, the class loaders and the like.<br/>F.Y.I if a class is loaded by several class loaders, then the class will be printed several times</td>
+<td>batch-re-transform</td>
+<td>true</td>
+<td>re-transform matched classes in batch</td>
 </tr>
 <tr>
-<td align="right">[E]</td>
-<td align="left">turn on regx matching while the default is wildcards matching</td>
+<td>json-format</td>
+<td>false</td>
+<td>Enable output in JSON format</td>
 </tr>
 <tr>
-<td align="right">[f]</td>
-<td align="left">print the fields info of the current class, which should be used along with <code>-d</code></td>
+<td>disable-sub-class</td>
+<td>false</td>
+<td>Disabling child class matching，by default child class will be matched during matching target class，if you wish exact matching，you can turn this off</td>
 </tr>
 <tr>
-<td align="right">[x:]</td>
-<td align="left">the depth to print the static fields, whose default is <code>0</code> - directly invoke the <code>toString()</code></td>
+<td>debug-for-asm</td>
+<td>false</td>
+<td>Print ASM related debug message</td>
+</tr>
+<tr>
+<td>save-result</td>
+<td>false</td>
+<td>Enable saving logs for task results，when turn to true, all command results will be saved to <code>/home/admin/logs/arthas/arthas.log</code></td>
+</tr>
+<tr>
+<td>job-timeout</td>
+<td>1d</td>
+<td>Default time-out time for back-stage tasks，if exceed this time，task will be stopped；i.e. 1d, 2h, 3m, 25s，representing day、hour、minute、second</td>
 </tr>
 </tbody>
-</table><p>Tip:</p>
-<ol class="simple">
-<li><em>class-patten</em> supports full qualified class name (e.g. com.taobao.test.AAA and com/taobao/test/AAA)</li>
-<li><code class="docutils literal notranslate"><span class="pre">sc</span></code> turned on the <code class="docutils literal notranslate"><span class="pre">sub-class</span></code> matching in default mode, if you do want to hide the <code class="docutils literal notranslate"><span class="pre">sub-class</span></code> please just turn it off via <code class="docutils literal notranslate"><span class="pre">options</span> <span class="pre">disable-sub-class</span> <span class="pre">true</span></code>.</li>
-</ol>
-</div>
-<div class="section" id="usage">
-<span id="usage"></span><h3>Usage<a class="headerlink" href="#usage" title="Permalink to this headline">¶</a></h3>
-<p>Check the static fields of a class using <code class="docutils literal notranslate"><span class="pre">sc</span> <span class="pre">-df</span> <span class="pre">class-name</span></code></p>
-<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>$ sc -df org.apache.commons.lang.StringUtils
-
- class-info        org.apache.commons.lang.StringUtils
- code-source       /Users/zhuyong/middleware/citrus-sample/petstore/web/target/petstore/WEB-INF/lib/commons-lang-2.4.jar
- name              org.apache.commons.lang.StringUtils
- isInterface       <span class="nb">false</span>
- isAnnotation      <span class="nb">false</span>
- isEnum            <span class="nb">false</span>
- isAnonymousClass  <span class="nb">false</span>
- isArray           <span class="nb">false</span>
- isLocalClass      <span class="nb">false</span>
- isMemberClass     <span class="nb">false</span>
- isPrimitive       <span class="nb">false</span>
- isSynthetic       <span class="nb">false</span>
- simple-name       StringUtils
- modifier          public
- annotation
- interfaces
- super-class       +-java.lang.Object
- class-loader      +-com.taobao.tomcat.container.context.loader.AliWebappClassLoader
-                     +-org.apache.catalina.loader.StandardClassLoader@1d44eef3
-                       +-sun.misc.Launcher<span class="nv">$AppClassLoader</span>@57a462c9
-                         +-sun.misc.Launcher<span class="nv">$ExtClassLoader</span>@6951a712
- fields             modifier  final,public,static
-                    <span class="nb">type</span>      java.lang.String
-                    name      EMPTY
-                    value
-
-                    modifier  final,public,static
-                    <span class="nb">type</span>      int
-                    name      INDEX_NOT_FOUND
-                    value     -1
-
-                    modifier  final,private,static
-                    <span class="nb">type</span>      int
-                    name      PAD_LIMIT
-                    value     <span class="m">8192</span>
+</table><div class="section" id="usage">
+<span id="usage"></span><h2>Usage<a class="headerlink" href="#usage" title="Permalink to this headline">¶</a></h2>
+<p>For example，if you wish to save logs for command results, you can use following command:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ options save-result true                                                                                         
+ NAME         BEFORE-VALUE  AFTER-VALUE                                                                            
+----------------------------------------                                                                           
+ save-result  false         true
 </pre></div>
-</div>
 </div>
 </div>
 </div>
@@ -294,10 +262,8 @@
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="sm.html" class="btn btn-neutral float-right" title="sm" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
       
-      
-        <a href="getstatic.html" class="btn btn-neutral" title="getstatic" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+        <a href="monitor.html" class="btn btn-neutral" title="monitor" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
       
     </div>
   

@@ -80,7 +80,9 @@ If you cannot boot Arthas, try to pass in all the critical options manually as t
 
 ## Offline Help Documentation
 
-Latest Version:[![Arthas](https://img.shields.io/maven-central/v/com.taobao.arthas/arthas-packaging.svg?style=flat-square "Arthas")](http://search.maven.org/classic/#search%7Cga%7C1%7Cg%3A%22com.taoba)
+Latest Version:[![Arthas](https://img.shields.io/maven-central/v/com.taobao.arthas/arthas-packaging.svg?style=flat-square "Arthas")](http://search.maven.org/classic/#search%7Cga%7C1%7Cg%3A%22com.taobao.arthas%22%20AND%20a%3A%22arthas-packaging%22)
+
+Download the latest `doc.zip`.
 
 ## Uninstall
 
