@@ -1,26 +1,23 @@
 classloader
-===
+===========
 
-> 查看classloader的继承树，urls，类加载信息
+Check the inheritance tree, urls and classes loading profiles of the class loaders.
 
-`classloader` 命令将 JVM 中所有的classloader的信息统计出来，并可以展示继承树，urls等。
+It can be a great help for `ResourceNotFoundException` when you can use command `classloader`to specify a class loader to `getResources` and print all the urls of the valid resources.
 
-可以让指定的classloader去getResources，打印出所有查找到的resources的url。对于`ResourceNotFoundException`比较有用。
+### Options
 
-
-### 参数说明
-
-|参数名称|参数说明|
+|Name|Specification|
 |---:|:---|
-|[l]|按类加载实例进行统计|
-|[t]|打印所有ClassLoader的继承树|
-|[a]|列出所有ClassLoader加载的类，请谨慎使用|
-|`[c:]`|ClassLoader的hashcode|
-|`[c: r:]`|用ClassLoader去查找resource|
+|[l]|count based on the class loader instance|
+|[t]|print all the inheritance structure of the class loaders|
+|[a]|list all the classes loaded by all the class loaders (use it with great caution since the output can be huge)|
+|`[c:]`|get the hashcode of the class loader|
+|`[c: r:]`|using class loader to search resource|
 
-### 使用参考
+### Usage
 
-* 按类加载类型查看统计信息
+* categorised by class loader
 
 ```s
 $ classloader
@@ -39,7 +36,7 @@ $ classloader
 Affect(row-cnt:11) cost in 66 ms.
 ```
 
-* 按类加载实例查看统计信息
+* Categorized by class loader instance
 
 ```sh
 $ classloader -l
@@ -89,7 +86,7 @@ $ classloader -l
  sun.reflect.misc.MethodUtil@1201f221                            1            1201f221  sun.misc.Launcher$AppClassLoader@14dad5dc
 ```
 
-* 查看ClassLoader的继承树
+* Check inheritance tree of the class loaders
 
 ```shell
 $ classloader -t
@@ -103,7 +100,7 @@ $ classloader -t
 |   | +-sun.reflect.DelegatingClassLoader@73f44f24
 ```
 
-* 查看URLClassLoader实际的urls
+* Check the real urls of `URLClassLoader`
 
 ```shell
 $ classloader -c 5ffe9775
@@ -116,7 +113,7 @@ file:/Users/hello/soft/taobao-tomcat-7.0.64/deploy/taobao-hsf.sar/lib/pandora.th
 file:/Users/hello/soft/taobao-tomcat-7.0.64/deploy/taobao-hsf.sar/lib/picocontainer-2.14.3.jar
 ```
 
-* 使用ClassLoader去查找resource
+* Using class loader to search for resource
 
 ```shell
 $ classloader -c 226b143b -r META-INF/MANIFEST.MF
@@ -124,7 +121,7 @@ $ classloader -c 226b143b -r META-INF/MANIFEST.MF
  jar:file:/Users/hello/.m2/repository/javax/annotation/jsr250-api/1.0/jsr250-api-1.0.jar!/META-INF/MANIFEST.MF
 ```
 
-也可以尝试查找类的class文件：
+* Using class loader to look for `*.class` file
 
 ```shell
 $ classloader -c 1b6d3586 -r java/lang/String.class
