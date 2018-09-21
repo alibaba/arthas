@@ -297,11 +297,15 @@ parse_arguments()
     # check pid
     if [ -z ${TARGET_PID} ] && [ ${BATCH_MODE} = false ]; then
         # interactive mode
+        # backup IFS: https://github.com/alibaba/arthas/issues/128
+        local IFS_backup=$IFS
         IFS=$'\n'
         CANDIDATES=($(${JAVA_HOME}/bin/jps -l | grep -v sun.tools.jps.Jps | awk '{print $0}'))
 
         if [ ${#CANDIDATES[@]} -eq 0 ]; then
             echo "Error: no available java process to attach."
+            # recover IFS
+            IFS=$IFS_backup
             return 1
         fi
 
@@ -337,7 +341,8 @@ parse_arguments()
         fi
 
         TARGET_PID=`echo ${CANDIDATES[$(($choice-1))]} | cut -d ' ' -f 1`
-
+        # recover IFS
+        IFS=$IFS_backup
     elif [ -z ${TARGET_PID} ]; then
         # batch mode is enabled, no interactive process selection.
         echo "Illegal arguments, the <PID> is required." 1>&2
@@ -364,8 +369,6 @@ attach_jvm()
     local arthas_lib_dir=${ARTHAS_LIB_DIR}/${arthas_version}/arthas
 
     echo "Attaching to ${TARGET_PID} using version ${1}..."
-
-    echo ${ARTHAS_OPTS}
 
     if [ ${TARGET_IP} = ${DEFAULT_TARGET_IP} ]; then
         ${JAVA_HOME}/bin/java \
