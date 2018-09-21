@@ -1,0 +1,415 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>trace &mdash; Arthas 3.0.5-SNAPSHOT documentation</title>
+  
+
+  
+  
+    <link rel="shortcut icon" href="_static/favicon.ico"/>
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="_static/overrides.css" type="text/css" />
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="stack" href="stack.html" />
+    <link rel="prev" title="watch" href="watch.html" />
+<script src="_static/center_page.js"></script>
+ 
+
+
+  
+  <script src="_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="index.html" class="icon icon-home"> Arthas
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                3.0.5-SNAPSHOT
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="install-detail.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="quick-start.html">Quick start</a></li>
+<li class="toctree-l1"><a class="reference internal" href="advanced-use.html">Advanced usage</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="commands.html">Commands</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="dashboard.html">dashboard</a></li>
+<li class="toctree-l2"><a class="reference internal" href="thread.html">thread</a></li>
+<li class="toctree-l2"><a class="reference internal" href="jvm.html">jvm</a></li>
+<li class="toctree-l2"><a class="reference internal" href="sysprop.html">sysprop</a></li>
+<li class="toctree-l2"><a class="reference internal" href="getstatic.html">getstatic</a></li>
+<li class="toctree-l2"><a class="reference internal" href="sc.html">sc</a></li>
+<li class="toctree-l2"><a class="reference internal" href="sm.html">sm</a></li>
+<li class="toctree-l2"><a class="reference internal" href="dump.html">dump</a></li>
+<li class="toctree-l2"><a class="reference internal" href="jad.html">jad</a></li>
+<li class="toctree-l2"><a class="reference internal" href="classloader.html">classloader</a></li>
+<li class="toctree-l2"><a class="reference internal" href="redefine.html">redefine</a></li>
+<li class="toctree-l2"><a class="reference internal" href="monitor.html">monitor</a></li>
+<li class="toctree-l2"><a class="reference internal" href="watch.html">watch</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">trace</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#parameters">Parameters</a><ul>
+<li class="toctree-l4"><a class="reference external" href="https://github.com/alibaba/arthas/tree/master/site/src/site/sphinx/en/advice-class.md">Critical fields in expression</a></li>
+<li class="toctree-l4"><a class="reference external" href="https://github.com/alibaba/arthas/issues/71">Special usage</a></li>
+<li class="toctree-l4"><a class="reference external" href="https://commons.apache.org/proper/commons-ognl/language-guide.html">OGNL official guide</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#usage">Usage</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="stack.html">stack</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tt.html">tt</a></li>
+<li class="toctree-l2"><a class="reference internal" href="options.html">options</a></li>
+<li class="toctree-l2"><a class="reference internal" href="commands.html#arthas-basic-commands">Arthas Basic Commands</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas/issues?q=label%3Auser-case">User cases</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas/tree/master/site/src/site/sphinx/en/release-notes.md">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas/issues?q=label%3Aquestion-answered">Questions and answers</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas">Fork me at GitHub</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas/blob/master/CONTRIBUTING.md">CONTRIBUTING</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">Arthas</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="commands.html">Commands List</a> &raquo;</li>
+        
+      <li>trace</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            
+              <a href="https://github.com/alibaba/arthas/blob/master/site/src/site/sphinx/trace.md" class="fa fa-github"> Edit on GitHub</a>
+            
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="trace">
+<span id="trace"></span><h1>trace<a class="headerlink" href="#trace" title="Permalink to this headline">¶</a></h1>
+<p>Track the <code class="docutils literal notranslate"><span class="pre">class-pattern</span></code> &amp; <code class="docutils literal notranslate"><span class="pre">method-pattern</span></code> matched method calling trace and print the time cost in each call.</p>
+<div class="section" id="parameters">
+<span id="parameters"></span><h2>Parameters<a class="headerlink" href="#parameters" title="Permalink to this headline">¶</a></h2>
+<table border="1" class="docutils">
+<thead>
+<tr>
+<th align="right">Name</th>
+<th align="left">Specification</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="right"><em>class-pattern</em></td>
+<td align="left">pattern for the class name</td>
+</tr>
+<tr>
+<td align="right"><em>method-pattern</em></td>
+<td align="left">pattern for the method name</td>
+</tr>
+<tr>
+<td align="right"><em>condition-express</em></td>
+<td align="left">condition expression</td>
+</tr>
+<tr>
+<td align="right">[E]</td>
+<td align="left">turn on regx matching while the default is wildcards matching</td>
+</tr>
+<tr>
+<td align="right"><code>[n:]</code></td>
+<td align="left">calling times</td>
+</tr>
+<tr>
+<td align="right"><code>#cost</code></td>
+<td align="left">time cost</td>
+</tr>
+</tbody>
+</table><p>F.Y.I</p>
+<ol class="simple">
+<li>any valid OGNL expression as <code class="docutils literal notranslate"><span class="pre">&quot;{params,returnObj}&quot;</span></code> supported;</li>
+<li>filter by time cost as <code class="docutils literal notranslate"><span class="pre">trace</span> <span class="pre">*StringUtils</span> <span class="pre">isBlank</span> <span class="pre">'$cost&gt;100'</span></code>; calling stack with only time cost higher than <code class="docutils literal notranslate"><span class="pre">100ms</span></code> will be printed.</li>
+</ol>
+<p>Attention:</p>
+<ol class="simple">
+<li><code class="docutils literal notranslate"><span class="pre">$cost</span></code> can be used in <code class="docutils literal notranslate"><span class="pre">watch/stack/trace</span></code>;</li>
+<li>using <code class="docutils literal notranslate"><span class="pre">#cost</span></code> in Arthas 3.0 instead of <code class="docutils literal notranslate"><span class="pre">$cost</span></code>.</li>
+<li><code class="docutils literal notranslate"><span class="pre">trace</span></code> can help to locate the performance lurking issue but only <code class="docutils literal notranslate"><span class="pre">level-one</span></code> method invoking considered.</li>
+</ol>
+<p>Advanced:</p>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas/tree/master/site/src/site/sphinx/en/advice-class.md">Critical fields in expression</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas/issues/71">Special usage</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://commons.apache.org/proper/commons-ognl/language-guide.html">OGNL official guide</a></li>
+</ul>
+</div>
+</div>
+<div class="section" id="usage">
+<span id="usage"></span><h2>Usage<a class="headerlink" href="#usage" title="Permalink to this headline">¶</a></h2>
+<p>A demo:</p>
+<div class="highlight-java notranslate"><div class="highlight"><pre><span></span>    <span class="kd">public</span> <span class="kd">static</span> <span class="kt">void</span> <span class="nf">main</span><span class="o">(</span><span class="n">String</span><span class="o">[]</span> <span class="n">args</span><span class="o">)</span> <span class="o">{</span>
+        <span class="n">List</span><span class="o">&lt;</span><span class="n">String</span><span class="o">&gt;</span> <span class="n">list</span> <span class="o">=</span> <span class="k">new</span> <span class="n">ArrayList</span><span class="o">&lt;</span><span class="n">String</span><span class="o">&gt;();</span>
+        <span class="n">list</span><span class="o">.</span><span class="na">add</span><span class="o">(</span><span class="s">&quot;a&quot;</span><span class="o">);</span>
+        <span class="n">list</span><span class="o">.</span><span class="na">add</span><span class="o">(</span><span class="s">&quot;b&quot;</span><span class="o">);</span>
+
+        <span class="n">List</span><span class="o">&lt;</span><span class="n">String</span><span class="o">&gt;</span> <span class="n">list2</span> <span class="o">=</span> <span class="k">new</span> <span class="n">ArrayList</span><span class="o">&lt;</span><span class="n">String</span><span class="o">&gt;();</span>
+        <span class="n">list2</span><span class="o">.</span><span class="na">add</span><span class="o">(</span><span class="s">&quot;c&quot;</span><span class="o">);</span>
+        <span class="n">list2</span><span class="o">.</span><span class="na">add</span><span class="o">(</span><span class="s">&quot;d&quot;</span><span class="o">);</span>
+
+        <span class="kt">int</span> <span class="n">len</span> <span class="o">=</span> <span class="n">add</span><span class="o">(</span><span class="n">list</span><span class="o">,</span> <span class="n">list2</span><span class="o">);</span>
+    <span class="o">}</span>
+
+    <span class="kd">private</span> <span class="kd">static</span> <span class="kt">int</span> <span class="nf">add</span><span class="o">(</span><span class="n">List</span><span class="o">&lt;</span><span class="n">String</span><span class="o">&gt;</span> <span class="n">list</span><span class="o">,</span> <span class="n">List</span><span class="o">&lt;</span><span class="n">String</span><span class="o">&gt;</span> <span class="n">list2</span><span class="o">)</span> <span class="o">{</span>
+        <span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">10</span><span class="o">;</span>
+        <span class="k">while</span> <span class="o">(</span><span class="n">i</span> <span class="o">&gt;=</span> <span class="mi">0</span><span class="o">)</span> <span class="o">{</span>
+            <span class="k">try</span> <span class="o">{</span>
+                <span class="n">hehe</span><span class="o">(</span><span class="n">i</span><span class="o">);</span>
+            <span class="o">}</span> <span class="k">catch</span> <span class="o">(</span><span class="n">Throwable</span> <span class="n">t</span><span class="o">)</span> <span class="o">{</span>
+                <span class="n">t</span><span class="o">.</span><span class="na">printStackTrace</span><span class="o">();</span>
+            <span class="o">}</span>
+            <span class="n">i</span><span class="o">--;</span>
+        <span class="o">}</span>
+
+        <span class="n">list</span><span class="o">.</span><span class="na">addAll</span><span class="o">(</span><span class="n">list2</span><span class="o">);</span>
+        <span class="k">return</span> <span class="n">list</span><span class="o">.</span><span class="na">size</span><span class="o">();</span>
+    <span class="o">}</span>
+
+    <span class="kd">private</span> <span class="kd">static</span> <span class="kt">void</span> <span class="nf">hehe</span><span class="o">(</span><span class="kt">int</span> <span class="n">i</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">if</span> <span class="o">(</span><span class="n">i</span> <span class="o">==</span> <span class="mi">0</span><span class="o">)</span> <span class="o">{</span>
+            <span class="k">throw</span> <span class="k">new</span> <span class="n">RuntimeException</span><span class="o">(</span><span class="s">&quot;ZERO&quot;</span><span class="o">);</span>
+        <span class="o">}</span>
+    <span class="o">}</span>
+</pre></div>
+</div>
+<p>Tracing down method <code class="docutils literal notranslate"><span class="pre">add</span></code>:</p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>$ trace com.alibaba.sample.petstore.web.store.module.screen.ItemList add params.length<span class="o">==</span><span class="m">2</span>
+Press Ctrl+C to abort.
+Affect<span class="o">(</span>class-cnt:1 , method-cnt:1<span class="o">)</span> cost in <span class="m">144</span> ms.
+<span class="sb">`</span>---Tracing...
+    <span class="sb">`</span>---<span class="o">[</span>2ms<span class="o">]</span>com.alibaba.sample.petstore.web.store.module.screen.ItemList:add<span class="o">()</span>
+        +---<span class="o">[</span><span class="m">0</span>,0,0ms,11<span class="o">]</span>com.alibaba.sample.petstore.web.store.module.screen.ItemList:hehe<span class="o">()</span> <span class="o">[</span>throws Exception<span class="o">]</span>
+        +---<span class="o">[</span>1ms<span class="o">]</span>java.lang.Throwable:printStackTrace<span class="o">()</span>
+        +---<span class="o">[</span>0ms<span class="o">]</span>java.util.List:addAll<span class="o">()</span>
+        <span class="sb">`</span>---<span class="o">[</span>0ms<span class="o">]</span>java.util.List:size<span class="o">()</span>
+</pre></div>
+</div>
+<p>Filtering by time cost:</p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>$ trace com.alibaba.sample.petstore.web.store.module.screen.ItemList execute <span class="c1">#cost&gt;4</span>
+Press Ctrl+C to abort.
+Affect<span class="o">(</span>class-cnt:1 , method-cnt:1<span class="o">)</span> cost in <span class="m">159</span> ms.
+trace com.alibaba.sample.petstore.web.store.module.screen.ItemList execute <span class="c1">#cost&gt;4</span>
+<span class="sb">`</span>---thread_name<span class="o">=</span>http-nio-8080-exec-5<span class="p">;</span><span class="nv">id</span><span class="o">=</span>2c<span class="p">;</span><span class="nv">is_daemon</span><span class="o">=</span>true<span class="p">;</span><span class="nv">priority</span><span class="o">=</span><span class="m">5</span><span class="p">;</span><span class="nv">TCCL</span><span class="o">=</span>com.taobao.pandora.boot.embedded.tomcat.TomcatEmbeddedWebappClassLoader
+    <span class="sb">`</span>---<span class="o">[</span><span class="m">8</span>.866586ms<span class="o">]</span> com.alibaba.sample.petstore.web.store.module.screen.ItemList:execute<span class="o">()</span>
+        +---<span class="o">[</span><span class="m">2</span>.847106ms<span class="o">]</span> com.alibaba.sample.petstore.biz.StoreManager:getAllProductItems<span class="o">()</span>
+        +---<span class="o">[</span><span class="m">0</span>.765544ms<span class="o">]</span> com.alibaba.sample.petstore.dal.dao.ProductDao:getProductById<span class="o">()</span>
+        +---<span class="o">[</span><span class="m">0</span>.021204ms<span class="o">]</span> com.alibaba.sample.petstore.dal.dataobject.Product:getCategoryId<span class="o">()</span>
+        +---<span class="o">[</span><span class="m">1</span>.341532ms<span class="o">]</span> com.alibaba.sample.petstore.dal.dao.CategoryDao:getCategoryById<span class="o">()</span>
+        <span class="sb">`</span>---<span class="o">[</span><span class="nv">min</span><span class="o">=</span><span class="m">0</span>.005428ms,max<span class="o">=</span><span class="m">0</span>.094064ms,total<span class="o">=</span><span class="m">0</span>.105228ms,count<span class="o">=</span><span class="m">3</span><span class="o">]</span> com.alibaba.citrus.turbine.Context:put<span class="o">()</span>
+</pre></div>
+</div>
+<p>Only the calling trace of the time cost higher than <code class="docutils literal notranslate"><span class="pre">4ms</span></code>presented now.</p>
+<p>F.Y.I</p>
+<ol class="simple">
+<li>just like JProfile and the like commercial software, you can <code class="docutils literal notranslate"><span class="pre">trace</span></code> down the specified method calling in Arthas;</li>
+<li>there will be some overhead using <code class="docutils literal notranslate"><span class="pre">trace</span></code> but not much;</li>
+<li>the time cost is an instructive clue for troubleshooting, which means it’s not that accurate ignoring the cost it itself causes; the deeper or more the call is, the accuracy is becoming worse;</li>
+<li><code class="docutils literal notranslate"><span class="pre">[0,0,0ms,11]xxx:yyy()</span> <span class="pre">[throws</span> <span class="pre">Exception]</span></code>，the same method calling aggregated into one line here while <code class="docutils literal notranslate"><span class="pre">throws</span> <span class="pre">Exception</span></code> indicates there is an exception.</li>
+</ol>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="stack.html" class="btn btn-neutral float-right" title="stack" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="watch.html" class="btn btn-neutral" title="watch" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2018, Alibaba Middleware Group, and contributors.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'./',
+            VERSION:'3.0.5-SNAPSHOT',
+            LANGUAGE:'None',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="_static/jquery.js"></script>
+      <script type="text/javascript" src="_static/underscore.js"></script>
+      <script type="text/javascript" src="_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  <script type="text/javascript" src="_static/js/theme.js"></script>
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+<div class="github-fork-ribbon-wrapper right">
+  <div class="github-fork-ribbon">
+    <a href="https://github.com/alibaba/arthas">Fork me at GitHub</a>
+  </div>
+</div>
+
+<script type="text/javascript" src="_static/add_badges.js"></script>
+
+<script>
+  var _hmt = _hmt || [];
+  (function() {
+    var hm = document.createElement("script");
+    hm.src = "https://hm.baidu.com/hm.js?d5c5e25b100f0eb51a4c35c8a86ea9b4";
+    var s = document.getElementsByTagName("script")[0]; 
+    s.parentNode.insertBefore(hm, s);
+  })();
+</script>  
+ 
+
+
+</body>
+</html>

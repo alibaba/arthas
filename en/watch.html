@@ -1,0 +1,628 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>watch &mdash; Arthas 3.0.5-SNAPSHOT documentation</title>
+  
+
+  
+  
+    <link rel="shortcut icon" href="_static/favicon.ico"/>
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="_static/overrides.css" type="text/css" />
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="trace" href="trace.html" />
+    <link rel="prev" title="monitor" href="monitor.html" />
+<script src="_static/center_page.js"></script>
+ 
+
+
+  
+  <script src="_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="index.html" class="icon icon-home"> Arthas
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                3.0.5-SNAPSHOT
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="install-detail.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="quick-start.html">Quick start</a></li>
+<li class="toctree-l1"><a class="reference internal" href="advanced-use.html">Advanced usage</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="commands.html">Commands</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="dashboard.html">dashboard</a></li>
+<li class="toctree-l2"><a class="reference internal" href="thread.html">thread</a></li>
+<li class="toctree-l2"><a class="reference internal" href="jvm.html">jvm</a></li>
+<li class="toctree-l2"><a class="reference internal" href="sysprop.html">sysprop</a></li>
+<li class="toctree-l2"><a class="reference internal" href="getstatic.html">getstatic</a></li>
+<li class="toctree-l2"><a class="reference internal" href="sc.html">sc</a></li>
+<li class="toctree-l2"><a class="reference internal" href="sm.html">sm</a></li>
+<li class="toctree-l2"><a class="reference internal" href="dump.html">dump</a></li>
+<li class="toctree-l2"><a class="reference internal" href="jad.html">jad</a></li>
+<li class="toctree-l2"><a class="reference internal" href="classloader.html">classloader</a></li>
+<li class="toctree-l2"><a class="reference internal" href="redefine.html">redefine</a></li>
+<li class="toctree-l2"><a class="reference internal" href="monitor.html">monitor</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">watch</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#parameters-options">Parameters &amp; Options</a><ul>
+<li class="toctree-l4"><a class="reference external" href="https://github.com/alibaba/arthas/tree/master/site/src/site/sphinx/en/advice-class.md">Critical fields in expression</a></li>
+<li class="toctree-l4"><a class="reference external" href="https://github.com/alibaba/arthas/issues/71">Special usage</a></li>
+<li class="toctree-l4"><a class="reference external" href="https://commons.apache.org/proper/commons-ognl/language-guide.html">OGNL official guide</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#usage">Usage</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#check-the-out-parametersand-return-value">Check the <code class="docutils literal notranslate"><span class="pre">out-parameters</span></code>and <code class="docutils literal notranslate"><span class="pre">return</span> <span class="pre">value</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#check-in-parameters">Check <code class="docutils literal notranslate"><span class="pre">in-parameters</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#check-before-and-after-at-the-same-time">Check <em>before</em> and <em>after</em> at the same time</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#using-x-to-check-more-details">Using <code class="docutils literal notranslate"><span class="pre">-x</span></code> to check more details</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#using-condition-expressions-to-locate-specific-call">Using condition expressions to locate specific call</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#check-exceptions">Check <code class="docutils literal notranslate"><span class="pre">exceptions</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#filter-based-on-time-cost">Filter based on time cost</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#check-the-global-properties-of-the-target-object">Check the global properties of the target object</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="trace.html">trace</a></li>
+<li class="toctree-l2"><a class="reference internal" href="stack.html">stack</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tt.html">tt</a></li>
+<li class="toctree-l2"><a class="reference internal" href="options.html">options</a></li>
+<li class="toctree-l2"><a class="reference internal" href="commands.html#arthas-basic-commands">Arthas Basic Commands</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas/issues?q=label%3Auser-case">User cases</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas/tree/master/site/src/site/sphinx/en/release-notes.md">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas/issues?q=label%3Aquestion-answered">Questions and answers</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas">Fork me at GitHub</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas/blob/master/CONTRIBUTING.md">CONTRIBUTING</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">Arthas</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="commands.html">Commands List</a> &raquo;</li>
+        
+      <li>watch</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            
+              <a href="https://github.com/alibaba/arthas/blob/master/site/src/site/sphinx/watch.md" class="fa fa-github"> Edit on GitHub</a>
+            
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="watch">
+<span id="watch"></span><h1>watch<a class="headerlink" href="#watch" title="Permalink to this headline">¶</a></h1>
+<p>Monitor the methods in data aspect including <code class="docutils literal notranslate"><span class="pre">return</span> <span class="pre">value</span></code>, <code class="docutils literal notranslate"><span class="pre">exceptions</span></code> and <code class="docutils literal notranslate"><span class="pre">parameters</span></code>.</p>
+<p>With the help of <a class="reference external" href="https://en.wikipedia.org/wiki/OGNL">OGNL</a>, you can easily check the details of the variables.</p>
+<div class="section" id="parameters-options">
+<span id="parameters-options"></span><h2>Parameters &amp; Options<a class="headerlink" href="#parameters-options" title="Permalink to this headline">¶</a></h2>
+<p>There are four different usage scenarios for <code class="docutils literal notranslate"><span class="pre">watch</span></code> command, which makes it the most complicated command in Arthas.</p>
+<table border="1" class="docutils">
+<thead>
+<tr>
+<th align="right">Name</th>
+<th align="left">Specification</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="right"><em>class-pattern</em></td>
+<td align="left">pattern for the class name</td>
+</tr>
+<tr>
+<td align="right"><em>method-pattern</em></td>
+<td align="left">pattern for the method name</td>
+</tr>
+<tr>
+<td align="right"><em>express</em></td>
+<td align="left">expression to monitor</td>
+</tr>
+<tr>
+<td align="right"><em>condition-express</em></td>
+<td align="left">condition expression</td>
+</tr>
+<tr>
+<td align="right">[b]</td>
+<td align="left">before invoking</td>
+</tr>
+<tr>
+<td align="right">[e]</td>
+<td align="left">encountering exceptions</td>
+</tr>
+<tr>
+<td align="right">[s]</td>
+<td align="left">returned normally</td>
+</tr>
+<tr>
+<td align="right">[f]</td>
+<td align="left">returned normally and abnormally</td>
+</tr>
+<tr>
+<td align="right">[E]</td>
+<td align="left">turn on regx matching while the default is wildcards matching</td>
+</tr>
+<tr>
+<td align="right">[x:]</td>
+<td align="left">the depth to print the specified property with default value: 1</td>
+</tr>
+</tbody>
+</table><p>F.Y.I</p>
+<ol class="simple">
+<li>any valid OGNL expression as <code class="docutils literal notranslate"><span class="pre">&quot;{params,returnObj}&quot;</span></code> supported</li>
+<li>there are four <em>watching</em> points: <code class="docutils literal notranslate"><span class="pre">-b</span></code>, <code class="docutils literal notranslate"><span class="pre">-e</span></code>, <code class="docutils literal notranslate"><span class="pre">-s</span></code> and <code class="docutils literal notranslate"><span class="pre">-f</span></code> (the first three are off in default while <code class="docutils literal notranslate"><span class="pre">-f</span></code> on);</li>
+<li>at the <em>watching</em> point, Arthas will use the <code class="docutils literal notranslate"><span class="pre">expression</span></code> to calculate the values and print them out;</li>
+<li><code class="docutils literal notranslate"><span class="pre">in-parameters</span></code> and <code class="docutils literal notranslate"><span class="pre">out-parameters</span></code> are different since they can be modified; <code class="docutils literal notranslate"><span class="pre">params</span></code> stands for <code class="docutils literal notranslate"><span class="pre">in-parameters</span></code> in <code class="docutils literal notranslate"><span class="pre">-b</span></code>while <code class="docutils literal notranslate"><span class="pre">out-parameters</span></code> in other <em>watching</em> points;</li>
+<li>there is no <code class="docutils literal notranslate"><span class="pre">return</span> <span class="pre">value</span></code> and <code class="docutils literal notranslate"><span class="pre">exceptions</span></code> when using <code class="docutils literal notranslate"><span class="pre">-b</span></code>.</li>
+</ol>
+<p>Advanced:</p>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas/tree/master/site/src/site/sphinx/en/advice-class.md">Critical fields in expression</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas/issues/71">Special usage</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://commons.apache.org/proper/commons-ognl/language-guide.html">OGNL official guide</a></li>
+</ul>
+</div>
+</div>
+<div class="section" id="usage">
+<span id="usage"></span><h2>Usage<a class="headerlink" href="#usage" title="Permalink to this headline">¶</a></h2>
+<p>A demo:</p>
+<div class="highlight-java notranslate"><div class="highlight"><pre><span></span>    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">execute</span><span class="o">()</span> <span class="o">{</span>
+        <span class="n">List</span><span class="o">&lt;</span><span class="n">String</span><span class="o">&gt;</span> <span class="n">list</span> <span class="o">=</span> <span class="k">new</span> <span class="n">ArrayList</span><span class="o">&lt;</span><span class="n">String</span><span class="o">&gt;();</span>
+        <span class="n">list</span><span class="o">.</span><span class="na">add</span><span class="o">(</span><span class="s">&quot;a&quot;</span><span class="o">);</span>
+        <span class="n">list</span><span class="o">.</span><span class="na">add</span><span class="o">(</span><span class="s">&quot;b&quot;</span><span class="o">);</span>
+
+        <span class="n">List</span><span class="o">&lt;</span><span class="n">String</span><span class="o">&gt;</span> <span class="n">list2</span> <span class="o">=</span> <span class="k">new</span> <span class="n">ArrayList</span><span class="o">&lt;</span><span class="n">String</span><span class="o">&gt;();</span>
+        <span class="n">list2</span><span class="o">.</span><span class="na">add</span><span class="o">(</span><span class="s">&quot;c&quot;</span><span class="o">);</span>
+        <span class="n">list2</span><span class="o">.</span><span class="na">add</span><span class="o">(</span><span class="s">&quot;d&quot;</span><span class="o">);</span>
+
+        <span class="kt">int</span> <span class="n">len</span> <span class="o">=</span> <span class="n">add</span><span class="o">(</span><span class="n">list</span><span class="o">,</span> <span class="n">list2</span><span class="o">);</span>
+    <span class="o">}</span>
+
+    <span class="kd">private</span> <span class="kd">static</span> <span class="kt">int</span> <span class="nf">add</span><span class="o">(</span><span class="n">List</span><span class="o">&lt;</span><span class="n">String</span><span class="o">&gt;</span> <span class="n">list</span><span class="o">,</span> <span class="n">List</span><span class="o">&lt;</span><span class="n">String</span><span class="o">&gt;</span> <span class="n">list2</span><span class="o">)</span> <span class="o">{</span>
+        <span class="n">list</span><span class="o">.</span><span class="na">addAll</span><span class="o">(</span><span class="n">list2</span><span class="o">);</span>
+        <span class="k">return</span> <span class="n">list</span><span class="o">.</span><span class="na">size</span><span class="o">();</span>
+    <span class="o">}</span>
+</pre></div>
+</div>
+<div class="section" id="check-the-out-parametersand-return-value">
+<span id="check-the-out-parametersand-return-value"></span><h3>Check the <code class="docutils literal notranslate"><span class="pre">out-parameters</span></code>and <code class="docutils literal notranslate"><span class="pre">return</span> <span class="pre">value</span></code><a class="headerlink" href="#check-the-out-parametersand-return-value" title="Permalink to this headline">¶</a></h3>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>$ watch com.alibaba.sample.petstore.web.store.module.screen.ItemList add <span class="s2">&quot;{params,returnObj}&quot;</span> -x <span class="m">2</span>
+Press Ctrl+C to abort.
+Affect<span class="o">(</span>class-cnt:1 , method-cnt:1<span class="o">)</span> cost in <span class="m">44</span> ms.
+@ArrayList<span class="o">[</span>
+    @Object<span class="o">[][</span>
+        @ArrayList<span class="o">[</span><span class="nv">isEmpty</span><span class="o">=</span>false<span class="p">;</span><span class="nv">size</span><span class="o">=</span><span class="m">4</span><span class="o">]</span>,
+        @ArrayList<span class="o">[</span><span class="nv">isEmpty</span><span class="o">=</span>false<span class="p">;</span><span class="nv">size</span><span class="o">=</span><span class="m">2</span><span class="o">]</span>,
+    <span class="o">]</span>,
+
+    @Integer<span class="o">[</span><span class="m">4</span><span class="o">]</span>,
+<span class="o">]</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="check-in-parameters">
+<span id="check-in-parameters"></span><h3>Check <code class="docutils literal notranslate"><span class="pre">in-parameters</span></code><a class="headerlink" href="#check-in-parameters" title="Permalink to this headline">¶</a></h3>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>$ watch com.alibaba.sample.petstore.web.store.module.screen.ItemList add <span class="s2">&quot;{params,returnObj}&quot;</span> -x <span class="m">2</span> -b
+Press Ctrl+C to abort.
+Affect<span class="o">(</span>class-cnt:1 , method-cnt:1<span class="o">)</span> cost in <span class="m">48</span> ms.  
+@ArrayList<span class="o">[</span>
+    @Object<span class="o">[][</span>
+        @ArrayList<span class="o">[</span><span class="nv">isEmpty</span><span class="o">=</span>false<span class="p">;</span><span class="nv">size</span><span class="o">=</span><span class="m">2</span><span class="o">]</span>,
+        @ArrayList<span class="o">[</span><span class="nv">isEmpty</span><span class="o">=</span>false<span class="p">;</span><span class="nv">size</span><span class="o">=</span><span class="m">2</span><span class="o">]</span>,
+    <span class="o">]</span>,
+
+    null,
+<span class="o">]</span>
+</pre></div>
+</div>
+<p>Compared to the previous <em>check</em>:</p>
+<ol class="simple">
+<li>size of <code class="docutils literal notranslate"><span class="pre">params[0]</span></code> is <code class="docutils literal notranslate"><span class="pre">2</span></code> instead of <code class="docutils literal notranslate"><span class="pre">4</span></code>;</li>
+<li><code class="docutils literal notranslate"><span class="pre">return</span> <span class="pre">value</span></code> is <code class="docutils literal notranslate"><span class="pre">null</span></code> since it’s <code class="docutils literal notranslate"><span class="pre">-b</span></code>.</li>
+</ol>
+</div>
+<div class="section" id="check-before-and-after-at-the-same-time">
+<span id="check-before-and-after-at-the-same-time"></span><h3>Check <em>before</em> and <em>after</em> at the same time<a class="headerlink" href="#check-before-and-after-at-the-same-time" title="Permalink to this headline">¶</a></h3>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>$ watch com.alibaba.sample.petstore.web.store.module.screen.ItemList add <span class="s2">&quot;{params,returnObj}&quot;</span> -x <span class="m">2</span> -b -s 
+Press Ctrl+C to abort.
+Affect<span class="o">(</span>class-cnt:1 , method-cnt:1<span class="o">)</span> cost in <span class="m">59</span> ms.  
+@ArrayList<span class="o">[</span>
+    @Object<span class="o">[][</span>
+        @ArrayList<span class="o">[</span><span class="nv">isEmpty</span><span class="o">=</span>false<span class="p">;</span><span class="nv">size</span><span class="o">=</span><span class="m">2</span><span class="o">]</span>,
+        @ArrayList<span class="o">[</span><span class="nv">isEmpty</span><span class="o">=</span>false<span class="p">;</span><span class="nv">size</span><span class="o">=</span><span class="m">2</span><span class="o">]</span>,
+    <span class="o">]</span>,
+
+    null,
+<span class="o">]</span>
+@ArrayList<span class="o">[</span>
+    @Object<span class="o">[][</span>
+        @ArrayList<span class="o">[</span><span class="nv">isEmpty</span><span class="o">=</span>false<span class="p">;</span><span class="nv">size</span><span class="o">=</span><span class="m">4</span><span class="o">]</span>,
+        @ArrayList<span class="o">[</span><span class="nv">isEmpty</span><span class="o">=</span>false<span class="p">;</span><span class="nv">size</span><span class="o">=</span><span class="m">2</span><span class="o">]</span>,
+    <span class="o">]</span>,
+
+    @Integer<span class="o">[</span><span class="m">4</span><span class="o">]</span>,
+<span class="o">]</span>
+</pre></div>
+</div>
+<p>F.Y.I</p>
+<ol class="simple">
+<li>the first block of output is the <em>before watching</em> point;</li>
+<li>the order of the output determined by the <em>watching</em> order itself (nothing to do with the order of the options <code class="docutils literal notranslate"><span class="pre">-b</span> <span class="pre">-s</span></code>).</li>
+</ol>
+</div>
+<div class="section" id="using-x-to-check-more-details">
+<span id="using-x-to-check-more-details"></span><h3>Using <code class="docutils literal notranslate"><span class="pre">-x</span></code> to check more details<a class="headerlink" href="#using-x-to-check-more-details" title="Permalink to this headline">¶</a></h3>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>$ watch com.alibaba.sample.petstore.web.store.module.screen.ItemList add <span class="s2">&quot;{params,returnObj}&quot;</span> -x <span class="m">3</span> 
+Press Ctrl+C to abort.
+Affect<span class="o">(</span>class-cnt:1 , method-cnt:1<span class="o">)</span> cost in <span class="m">59</span> ms.  
+@ArrayList<span class="o">[</span>
+    @Object<span class="o">[][</span>
+        @ArrayList<span class="o">[</span>
+            @String<span class="o">[</span>a<span class="o">]</span>,
+
+            @String<span class="o">[</span>b<span class="o">]</span>,
+
+            @String<span class="o">[</span>c<span class="o">]</span>,
+
+            @String<span class="o">[</span>d<span class="o">]</span>,
+        <span class="o">]</span>,
+        @ArrayList<span class="o">[</span>
+            @String<span class="o">[</span>c<span class="o">]</span>,
+
+            @String<span class="o">[</span>d<span class="o">]</span>,
+        <span class="o">]</span>,
+    <span class="o">]</span>,
+
+    @Integer<span class="o">[</span><span class="m">4</span><span class="o">]</span>,
+<span class="o">]</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="using-condition-expressions-to-locate-specific-call">
+<span id="using-condition-expressions-to-locate-specific-call"></span><h3>Using condition expressions to locate specific call<a class="headerlink" href="#using-condition-expressions-to-locate-specific-call" title="Permalink to this headline">¶</a></h3>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>$ watch com.alibaba.sample.petstore.biz.impl.UserManagerImpl testAdd <span class="s2">&quot;{params, returnObj}&quot;</span> <span class="s2">&quot;params[0].equals(&#39;aaa&#39;)&quot;</span> -x <span class="m">2</span> 
+Press Ctrl+C to abort.
+Affect<span class="o">(</span>class-cnt:1 , method-cnt:1<span class="o">)</span> cost in <span class="m">29</span> ms.  
+@ArrayList<span class="o">[</span>
+    @Object<span class="o">[][</span>
+        @String<span class="o">[</span>aaa<span class="o">]</span>,
+        @String<span class="o">[</span>bbb<span class="o">]</span>,
+    <span class="o">]</span>,
+
+    @Integer<span class="o">[</span><span class="m">6</span><span class="o">]</span>,
+<span class="o">]</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="check-exceptions">
+<span id="check-exceptions"></span><h3>Check <code class="docutils literal notranslate"><span class="pre">exceptions</span></code><a class="headerlink" href="#check-exceptions" title="Permalink to this headline">¶</a></h3>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>$ watch com.alibaba.sample.petstore.biz.impl.UserManagerImpl testAdd <span class="s2">&quot;{params, throwExp}&quot;</span>  -e -x <span class="m">2</span> 
+Press Ctrl+C to abort.
+Affect<span class="o">(</span>class-cnt:1 , method-cnt:1<span class="o">)</span> cost in <span class="m">29</span> ms.  
+@ArrayList<span class="o">[</span>
+    @Object<span class="o">[][</span>
+        @String<span class="o">[</span>aaa<span class="o">]</span>,
+        @String<span class="o">[</span>bbb<span class="o">]</span>,
+    <span class="o">]</span>,
+
+    java.lang.NullPointerException
+        at com.alibaba.sample.petstore.biz.impl.UserManagerImpl.testAdd<span class="o">(</span>UserManagerImpl.java:75<span class="o">)</span>
+        at com.alibaba.sample.petstore.biz.impl.UserManagerImpl.register<span class="o">(</span>UserManagerImpl.java:60<span class="o">)</span>
+        at com.alibaba.sample.petstore.web.user.module.action.RegisterAction.doRegister<span class="o">(</span>RegisterAction.java:45<span class="o">)</span>
+        at com.alibaba.sample.petstore.web.user.module.action.RegisterAction<span class="nv">$$</span>FastClassByCGLIB<span class="nv">$$</span>ad5428f1.invoke<span class="o">(</span>&lt;generated&gt;<span class="o">)</span>
+        at net.sf.cglib.reflect.FastMethod.invoke<span class="o">(</span>FastMethod.java:53<span class="o">)</span>
+        at com.alibaba.citrus.service.moduleloader.impl.adapter.MethodInvoker.invoke<span class="o">(</span>MethodInvoker.java:70<span class="o">)</span>
+        at com.alibaba.citrus.service.moduleloader.impl.adapter.AbstractModuleEventAdapter.executeAndReturn<span class="o">(</span>AbstractModuleEventAdapter.java:100<span class="o">)</span>
+        at com.alibaba.citrus.service.moduleloader.impl.adapter.AbstractModuleEventAdapter.execute<span class="o">(</span>AbstractModuleEventAdapter.java:58<span class="o">)</span>
+        at com.alibaba.citrus.turbine.pipeline.valve.PerformActionValve.invoke<span class="o">(</span>PerformActionValve.java:63<span class="o">)</span>
+        at com.alibaba.citrus.service.pipeline.impl.PipelineImpl<span class="nv">$PipelineContextImpl</span>.invokeNext<span class="o">(</span>PipelineImpl.java:157<span class="o">)</span>
+        at com.alibaba.citrus.service.pipeline.impl.PipelineImpl<span class="nv">$PipelineContextImpl</span>.invoke<span class="o">(</span>PipelineImpl.java:210<span class="o">)</span>
+        at com.alibaba.citrus.service.pipeline.impl.valve.ChooseValve.invoke<span class="o">(</span>ChooseValve.java:98<span class="o">)</span>
+        at com.alibaba.citrus.service.pipeline.impl.PipelineImpl<span class="nv">$PipelineContextImpl</span>.invokeNext<span class="o">(</span>PipelineImpl.java:157<span class="o">)</span>
+        at com.alibaba.citrus.service.pipeline.impl.PipelineImpl<span class="nv">$PipelineContextImpl</span>.invoke<span class="o">(</span>PipelineImpl.java:210<span class="o">)</span>
+        at com.alibaba.citrus.service.pipeline.impl.valve.LoopValve.invokeBody<span class="o">(</span>LoopValve.java:105<span class="o">)</span>
+        at com.alibaba.citrus.service.pipeline.impl.valve.LoopValve.invoke<span class="o">(</span>LoopValve.java:83<span class="o">)</span>
+        at com.alibaba.citrus.service.pipeline.impl.PipelineImpl<span class="nv">$PipelineContextImpl</span>.invokeNext<span class="o">(</span>PipelineImpl.java:157<span class="o">)</span>
+        at com.alibaba.citrus.turbine.pipeline.valve.PageAuthorizationValve.invoke<span class="o">(</span>PageAuthorizationValve.java:105<span class="o">)</span>
+        at com.alibaba.citrus.service.pipeline.impl.PipelineImpl<span class="nv">$PipelineContextImpl</span>.invokeNext<span class="o">(</span>PipelineImpl.java:157<span class="o">)</span>
+        at com.alibaba.citrus.turbine.pipeline.valve.CheckCsrfTokenValve.invoke<span class="o">(</span>CheckCsrfTokenValve.java:123<span class="o">)</span>
+        at com.alibaba.citrus.service.pipeline.impl.PipelineImpl<span class="nv">$PipelineContextImpl</span>.invokeNext<span class="o">(</span>PipelineImpl.java:157<span class="o">)</span>
+        at com.alibaba.citrus.turbine.pipeline.valve.AnalyzeURLValve.invoke<span class="o">(</span>AnalyzeURLValve.java:126<span class="o">)</span>
+        at com.alibaba.citrus.service.pipeline.impl.PipelineImpl<span class="nv">$PipelineContextImpl</span>.invokeNext<span class="o">(</span>PipelineImpl.java:157<span class="o">)</span>
+        at com.alibaba.citrus.turbine.pipeline.valve.SetLoggingContextValve.invoke<span class="o">(</span>SetLoggingContextValve.java:66<span class="o">)</span>
+        at com.alibaba.citrus.service.pipeline.impl.PipelineImpl<span class="nv">$PipelineContextImpl</span>.invokeNext<span class="o">(</span>PipelineImpl.java:157<span class="o">)</span>
+        at com.alibaba.citrus.turbine.pipeline.valve.PrepareForTurbineValve.invoke<span class="o">(</span>PrepareForTurbineValve.java:52<span class="o">)</span>
+        at com.alibaba.citrus.service.pipeline.impl.PipelineImpl<span class="nv">$PipelineContextImpl</span>.invokeNext<span class="o">(</span>PipelineImpl.java:157<span class="o">)</span>
+        at com.alibaba.citrus.service.pipeline.impl.PipelineImpl<span class="nv">$PipelineContextImpl</span>.invoke<span class="o">(</span>PipelineImpl.java:210<span class="o">)</span>
+        at com.alibaba.citrus.webx.impl.WebxControllerImpl.service<span class="o">(</span>WebxControllerImpl.java:43<span class="o">)</span>
+        at com.alibaba.citrus.webx.impl.WebxRootControllerImpl.handleRequest<span class="o">(</span>WebxRootControllerImpl.java:53<span class="o">)</span>
+        at com.alibaba.citrus.webx.support.AbstractWebxRootController.service<span class="o">(</span>AbstractWebxRootController.java:165<span class="o">)</span>
+        at com.alibaba.citrus.webx.servlet.WebxFrameworkFilter.doFilter<span class="o">(</span>WebxFrameworkFilter.java:152<span class="o">)</span>
+        at com.alibaba.citrus.webx.servlet.FilterBean.doFilter<span class="o">(</span>FilterBean.java:148<span class="o">)</span>
+        at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter<span class="o">(</span>ApplicationFilterChain.java:241<span class="o">)</span>
+        at org.apache.catalina.core.ApplicationFilterChain.doFilter<span class="o">(</span>ApplicationFilterChain.java:208<span class="o">)</span>
+        at com.alibaba.citrus.webx.servlet.SetLoggingContextFilter.doFilter<span class="o">(</span>SetLoggingContextFilter.java:61<span class="o">)</span>
+        at com.alibaba.citrus.webx.servlet.FilterBean.doFilter<span class="o">(</span>FilterBean.java:148<span class="o">)</span>
+        at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter<span class="o">(</span>ApplicationFilterChain.java:241<span class="o">)</span>
+        at org.apache.catalina.core.ApplicationFilterChain.doFilter<span class="o">(</span>ApplicationFilterChain.java:208<span class="o">)</span>
+        at org.apache.catalina.core.StandardWrapperValve.invoke<span class="o">(</span>StandardWrapperValve.java:220<span class="o">)</span>
+        at org.apache.catalina.core.StandardContextValve.invoke<span class="o">(</span>StandardContextValve.java:122<span class="o">)</span>
+        at com.taobao.tomcat.valves.ContextLoadFilterValve.invoke<span class="o">(</span>ContextLoadFilterValve.java:152<span class="o">)</span>
+        at org.apache.catalina.core.StandardHostValve.invoke<span class="o">(</span>StandardHostValve.java:170<span class="o">)</span>
+        at org.apache.catalina.valves.ErrorReportValve.invoke<span class="o">(</span>ErrorReportValve.java:103<span class="o">)</span>
+        at org.apache.catalina.core.StandardEngineValve.invoke<span class="o">(</span>StandardEngineValve.java:116<span class="o">)</span>
+        at org.apache.catalina.connector.CoyoteAdapter.service<span class="o">(</span>CoyoteAdapter.java:429<span class="o">)</span>
+        at org.apache.coyote.http11.AbstractHttp11Processor.process<span class="o">(</span>AbstractHttp11Processor.java:1085<span class="o">)</span>
+        at org.apache.coyote.AbstractProtocol<span class="nv">$AbstractConnectionHandler</span>.process<span class="o">(</span>AbstractProtocol.java:625<span class="o">)</span>
+        at org.apache.tomcat.util.net.NioEndpoint<span class="nv">$SocketProcessor</span>.doRun<span class="o">(</span>NioEndpoint.java:1760<span class="o">)</span>
+        at org.apache.tomcat.util.net.NioEndpoint<span class="nv">$SocketProcessor</span>.run<span class="o">(</span>NioEndpoint.java:1719<span class="o">)</span>
+        at java.util.concurrent.ThreadPoolExecutor.runWorker<span class="o">(</span>ThreadPoolExecutor.java:1142<span class="o">)</span>
+        at java.util.concurrent.ThreadPoolExecutor<span class="nv">$Worker</span>.run<span class="o">(</span>ThreadPoolExecutor.java:617<span class="o">)</span>
+        at org.apache.tomcat.util.threads.TaskThread<span class="nv">$WrappingRunnable</span>.run<span class="o">(</span>TaskThread.java:61<span class="o">)</span>
+        at java.lang.Thread.run<span class="o">(</span>Thread.java:745<span class="o">)</span>,
+<span class="o">]</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="filter-based-on-time-cost">
+<span id="filter-based-on-time-cost"></span><h3>Filter based on time cost<a class="headerlink" href="#filter-based-on-time-cost" title="Permalink to this headline">¶</a></h3>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>$ watch com.alibaba.sample.petstore.web.store.module.screen.ItemList add <span class="s2">&quot;{params,returnObj}&quot;</span> <span class="c1">#cost&gt;200 -x 3 </span>
+Press Ctrl+C to abort.
+Affect<span class="o">(</span>class-cnt:1 , method-cnt:1<span class="o">)</span> cost in <span class="m">59</span> ms.  
+@ArrayList<span class="o">[</span>
+    @Object<span class="o">[][</span>
+        @ArrayList<span class="o">[</span>
+            @String<span class="o">[</span>a<span class="o">]</span>,
+
+            @String<span class="o">[</span>b<span class="o">]</span>,
+
+            @String<span class="o">[</span>c<span class="o">]</span>,
+
+            @String<span class="o">[</span>d<span class="o">]</span>,
+        <span class="o">]</span>,
+        @ArrayList<span class="o">[</span>
+            @String<span class="o">[</span>c<span class="o">]</span>,
+
+            @String<span class="o">[</span>d<span class="o">]</span>,
+        <span class="o">]</span>,
+    <span class="o">]</span>,
+
+    @Integer<span class="o">[</span><span class="m">4</span><span class="o">]</span>,
+<span class="o">]</span>
+</pre></div>
+</div>
+<p>F.Y.I
+<code class="docutils literal notranslate"><span class="pre">#cost&gt;200</span></code> (<code class="docutils literal notranslate"><span class="pre">ms</span></code>) filter out all invokings that take less than <code class="docutils literal notranslate"><span class="pre">200ms</span></code>.</p>
+</div>
+<div class="section" id="check-the-global-properties-of-the-target-object">
+<span id="check-the-global-properties-of-the-target-object"></span><h3>Check the global properties of the target object<a class="headerlink" href="#check-the-global-properties-of-the-target-object" title="Permalink to this headline">¶</a></h3>
+<p><code class="docutils literal notranslate"><span class="pre">target</span></code> stands for the current object.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ watch com.taobao.container.web.arthas.rest.MyAppsController myFavoriteApps &#39;target&#39;
+Press Ctrl+C to abort.
+Affect(class-cnt:1 , method-cnt:1) cost in 128 ms.
+ts=2017-10-31 18:45:55;result=@MyAppsController[
+    myFavAppsMapper=@$Proxy131[org.apache.ibatis.binding.MapperProxy@563e97f3],
+    getAppNameAndIdByEmpId=@$Proxy135[HardCodedTarget(type=GetAppNameAndIdByEmpId, url=http://hello.com)],
+    enableWebConsoleAppsMapper=@$Proxy132[org.apache.ibatis.binding.MapperProxy@7d51e4a8],
+]
+</pre></div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">target.field_name</span></code> stands for a global property of the current object.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ watch com.taobao.container.web.arthas.rest.MyAppsController myFavoriteApps &#39;target.myFavAppsMapper&#39;
+Press Ctrl+C to abort.
+Affect(class-cnt:1 , method-cnt:1) cost in 126 ms.
+ts=2017-10-31 18:46:17;result=@$Proxy131[
+    m1=@Method[public boolean java.lang.Object.equals(java.lang.Object)],
+    m2=@Method[public java.lang.String java.lang.Object.toString()],
+    m5=@Method[public abstract java.util.List com.taobao.container.dal.arthas.mapper.MyFavAppsMapper.listFavApps(java.util.Map)],
+    m3=@Method[public abstract int com.taobao.container.dal.arthas.mapper.MyFavAppsMapper.delete(java.lang.String,java.lang.String,java.lang.String)],
+    m4=@Method[public abstract long com.taobao.container.dal.arthas.mapper.MyFavAppsMapper.insert(com.taobao.container.dal.arthas.domain.MyFavAppsDO)],
+    m0=@Method[public native int java.lang.Object.hashCode()],
+]
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="trace.html" class="btn btn-neutral float-right" title="trace" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="monitor.html" class="btn btn-neutral" title="monitor" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2018, Alibaba Middleware Group, and contributors.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'./',
+            VERSION:'3.0.5-SNAPSHOT',
+            LANGUAGE:'None',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="_static/jquery.js"></script>
+      <script type="text/javascript" src="_static/underscore.js"></script>
+      <script type="text/javascript" src="_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  <script type="text/javascript" src="_static/js/theme.js"></script>
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+<div class="github-fork-ribbon-wrapper right">
+  <div class="github-fork-ribbon">
+    <a href="https://github.com/alibaba/arthas">Fork me at GitHub</a>
+  </div>
+</div>
+
+<script type="text/javascript" src="_static/add_badges.js"></script>
+
+<script>
+  var _hmt = _hmt || [];
+  (function() {
+    var hm = document.createElement("script");
+    hm.src = "https://hm.baidu.com/hm.js?d5c5e25b100f0eb51a4c35c8a86ea9b4";
+    var s = document.getElementsByTagName("script")[0]; 
+    s.parentNode.insertBefore(hm, s);
+  })();
+</script>  
+ 
+
+
+</body>
+</html>
