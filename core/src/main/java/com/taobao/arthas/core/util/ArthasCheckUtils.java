@@ -1,17 +1,17 @@
 package com.taobao.arthas.core.util;
 
 /**
- * 检查工具类
+ * Utils for checks
  * Created by vlinux on 15/5/19.
  */
 public class ArthasCheckUtils {
 
     /**
-     * 比对某个元素是否在集合中<br/>
+     * check whether a component is in an Array<br/>
      *
-     * @param e   元素
-     * @param s   元素集合
-     * @param <E> 元素类型
+     * @param e   component
+     * @param s   array
+     * @param <E> component type
      * @return <br/>
      * (1,1,2,3)        == true
      * (1,2,3,4)        == false
@@ -33,11 +33,11 @@ public class ArthasCheckUtils {
     }
 
     /**
-     * 比对两个对象是否相等<br/>
+     * check whether two components are equal<br/>
      *
-     * @param src    源对象
-     * @param target 目标对象
-     * @param <E>    对象类型
+     * @param src    source component
+     * @param target target component
+     * @param <E>    component type
      * @return <br/>
      * (null, null)    == true
      * (1L,2L)         == false
