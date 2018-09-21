@@ -1,0 +1,463 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>thread &mdash; Arthas 3.0.5-SNAPSHOT documentation</title>
+  
+
+  
+  
+    <link rel="shortcut icon" href="_static/favicon.ico"/>
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="_static/overrides.css" type="text/css" />
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="jvm" href="jvm.html" />
+    <link rel="prev" title="dashboard" href="dashboard.html" />
+<script src="_static/center_page.js"></script>
+ 
+
+
+  
+  <script src="_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="index.html" class="icon icon-home"> Arthas
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                3.0.5-SNAPSHOT
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="install-detail.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="quick-start.html">Quick start</a></li>
+<li class="toctree-l1"><a class="reference internal" href="advanced-use.html">Advanced usage</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="commands.html">Commands</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="dashboard.html">dashboard</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">thread</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#parameters">Parameters</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#usage">Usage</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#list-the-top-n-busiest-with-detailed-stack-trace">List the top n busiest with detailed stack trace</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#list-all-info-when-no-options-provided">List all info when no options provided</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#thread-thread-id-present-the-specified-thread-profile">thread &lt;thread_id&gt; present the specified thread profile</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#thread-b-locate-the-blocking-threads">thread -b locate the blocking threads</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#thread-i-specify-the-collecting-interval">thread -i specify the collecting interval</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="jvm.html">jvm</a></li>
+<li class="toctree-l2"><a class="reference internal" href="sysprop.html">sysprop</a></li>
+<li class="toctree-l2"><a class="reference internal" href="getstatic.html">getstatic</a></li>
+<li class="toctree-l2"><a class="reference internal" href="sc.html">sc</a></li>
+<li class="toctree-l2"><a class="reference internal" href="sm.html">sm</a></li>
+<li class="toctree-l2"><a class="reference internal" href="dump.html">dump</a></li>
+<li class="toctree-l2"><a class="reference internal" href="jad.html">jad</a></li>
+<li class="toctree-l2"><a class="reference internal" href="classloader.html">classloader</a></li>
+<li class="toctree-l2"><a class="reference external" href="https://github.com/alibaba/arthas/tree/master/site/src/site/sphinx/en/redefine.md">redefine</a></li>
+<li class="toctree-l2"><a class="reference external" href="https://github.com/alibaba/arthas/tree/master/site/src/site/sphinx/en/monitor.md">monitor</a></li>
+<li class="toctree-l2"><a class="reference external" href="https://github.com/alibaba/arthas/tree/master/site/src/site/sphinx/en/watch.md">watch</a></li>
+<li class="toctree-l2"><a class="reference external" href="https://github.com/alibaba/arthas/tree/master/site/src/site/sphinx/en/trace.md">trace</a></li>
+<li class="toctree-l2"><a class="reference external" href="https://github.com/alibaba/arthas/tree/master/site/src/site/sphinx/en/stack.md">stack</a></li>
+<li class="toctree-l2"><a class="reference external" href="https://github.com/alibaba/arthas/tree/master/site/src/site/sphinx/en/tt.md">tt</a></li>
+<li class="toctree-l2"><a class="reference external" href="https://github.com/alibaba/arthas/tree/master/site/src/site/sphinx/en/options.md">options</a></li>
+<li class="toctree-l2"><a class="reference internal" href="commands.html#arthas-basic-commands">Arthas Basic Commands</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas/issues?q=label%3Auser-case">User cases</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas/tree/master/site/src/site/sphinx/en/release-notes.md">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas/issues?q=label%3Aquestion-answered">Questions and answers</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas">Fork me at GitHub</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas/blob/master/CONTRIBUTING.md">CONTRIBUTING</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">Arthas</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="commands.html">Commands List</a> &raquo;</li>
+        
+      <li>thread</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            
+              <a href="https://github.com/alibaba/arthas/blob/master/site/src/site/sphinx/thread.md" class="fa fa-github"> Edit on GitHub</a>
+            
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="thread">
+<span id="thread"></span><h1>thread<a class="headerlink" href="#thread" title="Permalink to this headline">¶</a></h1>
+<p>Check the basic profile and stack trace of the threads.</p>
+<div class="section" id="parameters">
+<span id="parameters"></span><h2>Parameters<a class="headerlink" href="#parameters" title="Permalink to this headline">¶</a></h2>
+<table border="1" class="docutils">
+<thead>
+<tr>
+<th align="right">Name</th>
+<th align="left">Specification</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="right"><em>id</em></td>
+<td align="left">thread id in JVM</td>
+</tr>
+<tr>
+<td align="right">[n:]</td>
+<td align="left">the top n busiest with stack traces</td>
+</tr>
+<tr>
+<td align="right">[b]</td>
+<td align="left">locate the threads blocking others</td>
+</tr>
+<tr>
+<td align="right">[i <code>&lt;value&gt;</code>]</td>
+<td align="left">specify the interval to collect data to compute CPU ratios (ms)</td>
+</tr>
+</tbody>
+</table><p>How to get the CPU ratios?</p>
+<blockquote>
+<div>Within an <em>specified</em> interval, the time cost by the thread compared to the total CPU time.
+Take a sample (using <code class="docutils literal notranslate"><span class="pre">java.lang.management.ThreadMXBean#getThreadCpuTime</span></code>) to get the CPU time cost for all the threads and after a <em>specified</em> interval (default <em>100 ms</em>, which can be specified by <code class="docutils literal notranslate"><span class="pre">-i</span></code>), take another sample and we have the CPU time cost and the ratios naturally.</div></blockquote>
+<blockquote>
+<div>Attention: this kind of operation will take time, to decrease the extra cost, you’d better expand the interval to like <code class="docutils literal notranslate"><span class="pre">5000</span> <span class="pre">ms</span></code> for less performance overhead.</div></blockquote>
+<p>F.Y.I</p>
+<p>If you’d like to check the CPU ratios from the very start of the Java process, <a class="reference external" href="https://github.com/oldratlee/useful-scripts/blob/master/docs/java.md#-show-busy-java-threads">show-busy-java-threads</a> can be a help.</p>
+</div>
+<div class="section" id="usage">
+<span id="usage"></span><h2>Usage<a class="headerlink" href="#usage" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="list-the-top-n-busiest-with-detailed-stack-trace">
+<span id="list-the-top-n-busiest-with-detailed-stack-trace"></span><h3>List the top n busiest with detailed stack trace<a class="headerlink" href="#list-the-top-n-busiest-with-detailed-stack-trace" title="Permalink to this headline">¶</a></h3>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>$ thread -n <span class="m">3</span>
+<span class="s2">&quot;as-command-execute-daemon&quot;</span> <span class="nv">Id</span><span class="o">=</span><span class="m">29</span> <span class="nv">cpuUsage</span><span class="o">=</span><span class="m">75</span>% RUNNABLE
+    at sun.management.ThreadImpl.dumpThreads0<span class="o">(</span>Native Method<span class="o">)</span>
+    at sun.management.ThreadImpl.getThreadInfo<span class="o">(</span>ThreadImpl.java:440<span class="o">)</span>
+    at com.taobao.arthas.core.command.monitor200.ThreadCommand<span class="nv">$1</span>.action<span class="o">(</span>ThreadCommand.java:58<span class="o">)</span>
+    at com.taobao.arthas.core.command.handler.AbstractCommandHandler.execute<span class="o">(</span>AbstractCommandHandler.java:238<span class="o">)</span>
+    at com.taobao.arthas.core.command.handler.DefaultCommandHandler.handleCommand<span class="o">(</span>DefaultCommandHandler.java:67<span class="o">)</span>
+    at com.taobao.arthas.core.server.ArthasServer<span class="nv">$4</span>.run<span class="o">(</span>ArthasServer.java:276<span class="o">)</span>
+    at java.util.concurrent.ThreadPoolExecutor.runWorker<span class="o">(</span>ThreadPoolExecutor.java:1145<span class="o">)</span>
+    at java.util.concurrent.ThreadPoolExecutor<span class="nv">$Worker</span>.run<span class="o">(</span>ThreadPoolExecutor.java:615<span class="o">)</span>
+    at java.lang.Thread.run<span class="o">(</span>Thread.java:745<span class="o">)</span>
+
+    Number of locked <span class="nv">synchronizers</span> <span class="o">=</span> <span class="m">1</span>
+    - java.util.concurrent.ThreadPoolExecutor<span class="nv">$Worker</span>@6cd0b6f8
+
+<span class="s2">&quot;as-session-expire-daemon&quot;</span> <span class="nv">Id</span><span class="o">=</span><span class="m">25</span> <span class="nv">cpuUsage</span><span class="o">=</span><span class="m">24</span>% TIMED_WAITING
+    at java.lang.Thread.sleep<span class="o">(</span>Native Method<span class="o">)</span>
+    at com.taobao.arthas.core.server.DefaultSessionManager<span class="nv">$2</span>.run<span class="o">(</span>DefaultSessionManager.java:85<span class="o">)</span>
+
+<span class="s2">&quot;Reference Handler&quot;</span> <span class="nv">Id</span><span class="o">=</span><span class="m">2</span> <span class="nv">cpuUsage</span><span class="o">=</span><span class="m">0</span>% WAITING on java.lang.ref.Reference<span class="nv">$Lock</span>@69ba0f27
+    at java.lang.Object.wait<span class="o">(</span>Native Method<span class="o">)</span>
+    -  waiting on java.lang.ref.Reference<span class="nv">$Lock</span>@69ba0f27
+    at java.lang.Object.wait<span class="o">(</span>Object.java:503<span class="o">)</span>
+    at java.lang.ref.Reference<span class="nv">$ReferenceHandler</span>.run<span class="o">(</span>Reference.java:133<span class="o">)</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="list-all-info-when-no-options-provided">
+<span id="list-all-info-when-no-options-provided"></span><h3>List all info when no options provided<a class="headerlink" href="#list-all-info-when-no-options-provided" title="Permalink to this headline">¶</a></h3>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>$ thread
+Threads Total: <span class="m">16</span>, NEW: <span class="m">0</span>, RUNNABLE: <span class="m">7</span>, BLOCKED: <span class="m">0</span>, WAITING: <span class="m">5</span>, TIMED_WAITING: <span class="m">4</span>, TERMINATED: <span class="m">0</span>
+ID         NAME                             GROUP                 PRIORITY   STATE      %CPU       TIME       INTERRUPTE DAEMON
+<span class="m">30</span>         as-command-execute-daemon        system                <span class="m">9</span>          RUNNABLE   <span class="m">72</span>         <span class="m">0</span>:0        <span class="nb">false</span>      <span class="nb">true</span>
+<span class="m">23</span>         as-session-expire-daemon         system                <span class="m">9</span>          TIMED_WAIT <span class="m">27</span>         <span class="m">0</span>:0        <span class="nb">false</span>      <span class="nb">true</span>
+<span class="m">22</span>         Attach Listener                  system                <span class="m">9</span>          RUNNABLE   <span class="m">0</span>          <span class="m">0</span>:0        <span class="nb">false</span>      <span class="nb">true</span>
+<span class="m">11</span>         pool-2-thread-1                  main                  <span class="m">5</span>          TIMED_WAIT <span class="m">0</span>          <span class="m">0</span>:0        <span class="nb">false</span>      <span class="nb">false</span>
+<span class="m">12</span>         Thread-2                         main                  <span class="m">5</span>          RUNNABLE   <span class="m">0</span>          <span class="m">0</span>:0        <span class="nb">false</span>      <span class="nb">true</span>
+<span class="m">13</span>         pool-3-thread-1                  main                  <span class="m">5</span>          TIMED_WAIT <span class="m">0</span>          <span class="m">0</span>:0        <span class="nb">false</span>      <span class="nb">false</span>
+<span class="m">25</span>         as-selector-daemon               system                <span class="m">9</span>          RUNNABLE   <span class="m">0</span>          <span class="m">0</span>:0        <span class="nb">false</span>      <span class="nb">true</span>
+<span class="m">14</span>         Thread-3                         main                  <span class="m">5</span>          TIMED_WAIT <span class="m">0</span>          <span class="m">0</span>:0        <span class="nb">false</span>      <span class="nb">false</span>
+<span class="m">26</span>         pool-5-thread-1                  system                <span class="m">5</span>          WAITING    <span class="m">0</span>          <span class="m">0</span>:0        <span class="nb">false</span>      <span class="nb">false</span>
+<span class="m">15</span>         Thread-4                         main                  <span class="m">5</span>          RUNNABLE   <span class="m">0</span>          <span class="m">0</span>:0        <span class="nb">false</span>      <span class="nb">false</span>
+<span class="m">1</span>          main                             main                  <span class="m">5</span>          WAITING    <span class="m">0</span>          <span class="m">0</span>:2        <span class="nb">false</span>      <span class="nb">false</span>
+<span class="m">2</span>          Reference Handler                system                <span class="m">10</span>         WAITING    <span class="m">0</span>          <span class="m">0</span>:0        <span class="nb">false</span>      <span class="nb">true</span>
+<span class="m">3</span>          Finalizer                        system                <span class="m">8</span>          WAITING    <span class="m">0</span>          <span class="m">0</span>:0        <span class="nb">false</span>      <span class="nb">true</span>
+<span class="m">4</span>          Signal Dispatcher                system                <span class="m">9</span>          RUNNABLE   <span class="m">0</span>          <span class="m">0</span>:0        <span class="nb">false</span>      <span class="nb">true</span>
+<span class="m">20</span>         NonBlockingInputStreamThread     main                  <span class="m">5</span>          WAITING    <span class="m">0</span>          <span class="m">0</span>:0        <span class="nb">false</span>      <span class="nb">true</span>
+<span class="m">21</span>         Thread-8                         main                  <span class="m">5</span>          RUNNABLE   <span class="m">0</span>          <span class="m">0</span>:0        <span class="nb">false</span>      <span class="nb">true</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="thread-thread-id-present-the-specified-thread-profile">
+<span id="thread-thread-id-present-the-specified-thread-profile"></span><h3>thread &lt;thread_id&gt; present the specified thread profile<a class="headerlink" href="#thread-thread-id-present-the-specified-thread-profile" title="Permalink to this headline">¶</a></h3>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>$ thread <span class="m">1</span>
+<span class="s2">&quot;main&quot;</span> <span class="nv">Id</span><span class="o">=</span><span class="m">1</span> WAITING on java.util.concurrent.CountDownLatch<span class="nv">$Sync</span>@29fafb28
+    at sun.misc.Unsafe.park<span class="o">(</span>Native Method<span class="o">)</span>
+    -  waiting on java.util.concurrent.CountDownLatch<span class="nv">$Sync</span>@29fafb28
+    at java.util.concurrent.locks.LockSupport.park<span class="o">(</span>LockSupport.java:175<span class="o">)</span>
+    at java.util.concurrent.locks.AbstractQueuedSynchronizer.parkAndCheckInterrupt<span class="o">(</span>AbstractQueuedSynchronizer.java:836<span class="o">)</span>
+    at java.util.concurrent.locks.AbstractQueuedSynchronizer.doAcquireSharedInterruptibly<span class="o">(</span>AbstractQueuedSynchronizer.java:997<span class="o">)</span>
+    at java.util.concurrent.locks.AbstractQueuedSynchronizer.acquireSharedInterruptibly<span class="o">(</span>AbstractQueuedSynchronizer.java:1304<span class="o">)</span>
+    at java.util.concurrent.CountDownLatch.await<span class="o">(</span>CountDownLatch.java:231<span class="o">)</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="thread-b-locate-the-blocking-threads">
+<span id="thread-b-locate-the-blocking-threads"></span><h3>thread -b locate the blocking threads<a class="headerlink" href="#thread-b-locate-the-blocking-threads" title="Permalink to this headline">¶</a></h3>
+<p>Using <code class="docutils literal notranslate"><span class="pre">-b</span></code>, we can effectively locate the threads holding locks blocking other threads resulting in a frozen system.</p>
+<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>$ thread -b
+<span class="s2">&quot;http-bio-8080-exec-4&quot;</span> <span class="nv">Id</span><span class="o">=</span><span class="m">27</span> TIMED_WAITING
+    at java.lang.Thread.sleep<span class="o">(</span>Native Method<span class="o">)</span>
+    at test.arthas.TestThreadBlocking.doGet<span class="o">(</span>TestThreadBlocking.java:22<span class="o">)</span>
+    -  locked java.lang.Object@725be470 &lt;---- but blocks <span class="m">4</span> other threads!
+    at javax.servlet.http.HttpServlet.service<span class="o">(</span>HttpServlet.java:624<span class="o">)</span>
+    at javax.servlet.http.HttpServlet.service<span class="o">(</span>HttpServlet.java:731<span class="o">)</span>
+    at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter<span class="o">(</span>ApplicationFilterChain.java:303<span class="o">)</span>
+    at org.apache.catalina.core.ApplicationFilterChain.doFilter<span class="o">(</span>ApplicationFilterChain.java:208<span class="o">)</span>
+    at org.apache.tomcat.websocket.server.WsFilter.doFilter<span class="o">(</span>WsFilter.java:52<span class="o">)</span>
+    at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter<span class="o">(</span>ApplicationFilterChain.java:241<span class="o">)</span>
+    at org.apache.catalina.core.ApplicationFilterChain.doFilter<span class="o">(</span>ApplicationFilterChain.java:208<span class="o">)</span>
+    at test.filter.TestDurexFilter.doFilter<span class="o">(</span>TestDurexFilter.java:46<span class="o">)</span>
+    at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter<span class="o">(</span>ApplicationFilterChain.java:241<span class="o">)</span>
+    at org.apache.catalina.core.ApplicationFilterChain.doFilter<span class="o">(</span>ApplicationFilterChain.java:208<span class="o">)</span>
+    at org.apache.catalina.core.StandardWrapperValve.invoke<span class="o">(</span>StandardWrapperValve.java:220<span class="o">)</span>
+    at org.apache.catalina.core.StandardContextValve.invoke<span class="o">(</span>StandardContextValve.java:122<span class="o">)</span>
+    at org.apache.catalina.authenticator.AuthenticatorBase.invoke<span class="o">(</span>AuthenticatorBase.java:505<span class="o">)</span>
+    at com.taobao.tomcat.valves.ContextLoadFilterValve<span class="nv">$FilterChainAdapter</span>.doFilter<span class="o">(</span>ContextLoadFilterValve.java:191<span class="o">)</span>
+    at com.taobao.eagleeye.EagleEyeFilter.doFilter<span class="o">(</span>EagleEyeFilter.java:81<span class="o">)</span>
+    at com.taobao.tomcat.valves.ContextLoadFilterValve.invoke<span class="o">(</span>ContextLoadFilterValve.java:150<span class="o">)</span>
+    at org.apache.catalina.core.StandardHostValve.invoke<span class="o">(</span>StandardHostValve.java:170<span class="o">)</span>
+    at org.apache.catalina.valves.ErrorReportValve.invoke<span class="o">(</span>ErrorReportValve.java:103<span class="o">)</span>
+    at org.apache.catalina.core.StandardEngineValve.invoke<span class="o">(</span>StandardEngineValve.java:116<span class="o">)</span>
+    at org.apache.catalina.connector.CoyoteAdapter.service<span class="o">(</span>CoyoteAdapter.java:429<span class="o">)</span>
+    at org.apache.coyote.http11.AbstractHttp11Processor.process<span class="o">(</span>AbstractHttp11Processor.java:1085<span class="o">)</span>
+    at org.apache.coyote.AbstractProtocol<span class="nv">$AbstractConnectionHandler</span>.process<span class="o">(</span>AbstractProtocol.java:625<span class="o">)</span>
+    at org.apache.tomcat.util.net.JIoEndpoint<span class="nv">$SocketProcessor</span>.run<span class="o">(</span>JIoEndpoint.java:318<span class="o">)</span>
+    -  locked org.apache.tomcat.util.net.SocketWrapper@7127ee12
+    at java.util.concurrent.ThreadPoolExecutor.runWorker<span class="o">(</span>ThreadPoolExecutor.java:1142<span class="o">)</span>
+    at java.util.concurrent.ThreadPoolExecutor<span class="nv">$Worker</span>.run<span class="o">(</span>ThreadPoolExecutor.java:617<span class="o">)</span>
+    at org.apache.tomcat.util.threads.TaskThread<span class="nv">$WrappingRunnable</span>.run<span class="o">(</span>TaskThread.java:61<span class="o">)</span>
+    at java.lang.Thread.run<span class="o">(</span>Thread.java:745<span class="o">)</span>
+
+    Number of locked <span class="nv">synchronizers</span> <span class="o">=</span> <span class="m">1</span>
+    - java.util.concurrent.ThreadPoolExecutor<span class="nv">$Worker</span>@31a6493e
+</pre></div>
+</div>
+<blockquote>
+<div>Attention: only <code class="docutils literal notranslate"><span class="pre">synchronized</span></code> blocked threads can be located for now, <code class="docutils literal notranslate"><span class="pre">JUL</span></code> not supported yet.</div></blockquote>
+</div>
+<div class="section" id="thread-i-specify-the-collecting-interval">
+<span id="thread-i-specify-the-collecting-interval"></span><h3>thread -i specify the collecting interval<a class="headerlink" href="#thread-i-specify-the-collecting-interval" title="Permalink to this headline">¶</a></h3>
+<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>$ thread -n <span class="m">3</span> -i <span class="m">1000</span>
+<span class="s2">&quot;as-command-execute-daemon&quot;</span> <span class="nv">Id</span><span class="o">=</span><span class="m">4759</span> <span class="nv">cpuUsage</span><span class="o">=</span><span class="m">23</span>% RUNNABLE
+    at sun.management.ThreadImpl.dumpThreads0<span class="o">(</span>Native Method<span class="o">)</span>
+    at sun.management.ThreadImpl.getThreadInfo<span class="o">(</span>ThreadImpl.java:440<span class="o">)</span>
+    at com.taobao.arthas.core.command.monitor200.ThreadCommand.processTopBusyThreads<span class="o">(</span>ThreadCommand.java:133<span class="o">)</span>
+    at com.taobao.arthas.core.command.monitor200.ThreadCommand.process<span class="o">(</span>ThreadCommand.java:79<span class="o">)</span>
+    at com.taobao.arthas.core.shell.command.impl.AnnotatedCommandImpl.process<span class="o">(</span>AnnotatedCommandImpl.java:96<span class="o">)</span>
+    at com.taobao.arthas.core.shell.command.impl.AnnotatedCommandImpl.access<span class="nv">$100</span><span class="o">(</span>AnnotatedCommandImpl.java:27<span class="o">)</span>
+    at com.taobao.arthas.core.shell.command.impl.AnnotatedCommandImpl<span class="nv">$ProcessHandler</span>.handle<span class="o">(</span>AnnotatedCommandImpl.java:125<span class="o">)</span>
+    at com.taobao.arthas.core.shell.command.impl.AnnotatedCommandImpl<span class="nv">$ProcessHandler</span>.handle<span class="o">(</span>AnnotatedCommandImpl.java:122<span class="o">)</span>
+    at com.taobao.arthas.core.shell.system.impl.ProcessImpl<span class="nv">$CommandProcessTask</span>.run<span class="o">(</span>ProcessImpl.java:332<span class="o">)</span>
+    at java.util.concurrent.ThreadPoolExecutor.runWorker<span class="o">(</span>ThreadPoolExecutor.java:1142<span class="o">)</span>
+    at java.util.concurrent.ThreadPoolExecutor<span class="nv">$Worker</span>.run<span class="o">(</span>ThreadPoolExecutor.java:617<span class="o">)</span>
+    at java.lang.Thread.run<span class="o">(</span>Thread.java:756<span class="o">)</span>
+
+    Number of locked <span class="nv">synchronizers</span> <span class="o">=</span> <span class="m">1</span>
+    - java.util.concurrent.ThreadPoolExecutor<span class="nv">$Worker</span>@546aeec1
+...
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="jvm.html" class="btn btn-neutral float-right" title="jvm" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="dashboard.html" class="btn btn-neutral" title="dashboard" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2018, Alibaba Middleware Group, and contributors.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'./',
+            VERSION:'3.0.5-SNAPSHOT',
+            LANGUAGE:'None',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="_static/jquery.js"></script>
+      <script type="text/javascript" src="_static/underscore.js"></script>
+      <script type="text/javascript" src="_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  <script type="text/javascript" src="_static/js/theme.js"></script>
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+<div class="github-fork-ribbon-wrapper right">
+  <div class="github-fork-ribbon">
+    <a href="https://github.com/alibaba/arthas">Fork me at GitHub</a>
+  </div>
+</div>
+
+<script type="text/javascript" src="_static/add_badges.js"></script>
+
+<script>
+  var _hmt = _hmt || [];
+  (function() {
+    var hm = document.createElement("script");
+    hm.src = "https://hm.baidu.com/hm.js?d5c5e25b100f0eb51a4c35c8a86ea9b4";
+    var s = document.getElementsByTagName("script")[0]; 
+    s.parentNode.insertBefore(hm, s);
+  })();
+</script>  
+ 
+
+
+</body>
+</html>

@@ -1,0 +1,427 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>classloader &mdash; Arthas 3.0.5-SNAPSHOT documentation</title>
+  
+
+  
+  
+    <link rel="shortcut icon" href="_static/favicon.ico"/>
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="_static/overrides.css" type="text/css" />
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="prev" title="jad" href="jad.html" />
+<script src="_static/center_page.js"></script>
+ 
+
+
+  
+  <script src="_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="index.html" class="icon icon-home"> Arthas
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                3.0.5-SNAPSHOT
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="install-detail.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="quick-start.html">Quick start</a></li>
+<li class="toctree-l1"><a class="reference internal" href="advanced-use.html">Advanced usage</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="commands.html">Commands</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="dashboard.html">dashboard</a></li>
+<li class="toctree-l2"><a class="reference internal" href="thread.html">thread</a></li>
+<li class="toctree-l2"><a class="reference internal" href="jvm.html">jvm</a></li>
+<li class="toctree-l2"><a class="reference internal" href="sysprop.html">sysprop</a></li>
+<li class="toctree-l2"><a class="reference internal" href="getstatic.html">getstatic</a></li>
+<li class="toctree-l2"><a class="reference internal" href="sc.html">sc</a></li>
+<li class="toctree-l2"><a class="reference internal" href="sm.html">sm</a></li>
+<li class="toctree-l2"><a class="reference internal" href="dump.html">dump</a></li>
+<li class="toctree-l2"><a class="reference internal" href="jad.html">jad</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">classloader</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#options">Options</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#usage">Usage</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference external" href="https://github.com/alibaba/arthas/tree/master/site/src/site/sphinx/en/redefine.md">redefine</a></li>
+<li class="toctree-l2"><a class="reference external" href="https://github.com/alibaba/arthas/tree/master/site/src/site/sphinx/en/monitor.md">monitor</a></li>
+<li class="toctree-l2"><a class="reference external" href="https://github.com/alibaba/arthas/tree/master/site/src/site/sphinx/en/watch.md">watch</a></li>
+<li class="toctree-l2"><a class="reference external" href="https://github.com/alibaba/arthas/tree/master/site/src/site/sphinx/en/trace.md">trace</a></li>
+<li class="toctree-l2"><a class="reference external" href="https://github.com/alibaba/arthas/tree/master/site/src/site/sphinx/en/stack.md">stack</a></li>
+<li class="toctree-l2"><a class="reference external" href="https://github.com/alibaba/arthas/tree/master/site/src/site/sphinx/en/tt.md">tt</a></li>
+<li class="toctree-l2"><a class="reference external" href="https://github.com/alibaba/arthas/tree/master/site/src/site/sphinx/en/options.md">options</a></li>
+<li class="toctree-l2"><a class="reference internal" href="commands.html#arthas-basic-commands">Arthas Basic Commands</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas/issues?q=label%3Auser-case">User cases</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas/tree/master/site/src/site/sphinx/en/release-notes.md">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas/issues?q=label%3Aquestion-answered">Questions and answers</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas">Fork me at GitHub</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas/blob/master/CONTRIBUTING.md">CONTRIBUTING</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">Arthas</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="commands.html">Commands List</a> &raquo;</li>
+        
+      <li>classloader</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            
+              <a href="https://github.com/alibaba/arthas/blob/master/site/src/site/sphinx/classloader.md" class="fa fa-github"> Edit on GitHub</a>
+            
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="classloader">
+<span id="classloader"></span><h1>classloader<a class="headerlink" href="#classloader" title="Permalink to this headline">¶</a></h1>
+<p>Check the inheritance tree, urls and classes loading profiles of the class loaders.</p>
+<p>It can be a great help for <code class="docutils literal notranslate"><span class="pre">ResourceNotFoundException</span></code> when you can use command <code class="docutils literal notranslate"><span class="pre">classloader</span></code>to specify a class loader to <code class="docutils literal notranslate"><span class="pre">getResources</span></code> and print all the urls of the valid resources.</p>
+<div class="section" id="options">
+<span id="options"></span><h2>Options<a class="headerlink" href="#options" title="Permalink to this headline">¶</a></h2>
+<table border="1" class="docutils">
+<thead>
+<tr>
+<th align="right">Name</th>
+<th align="left">Specification</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="right">[l]</td>
+<td align="left">count based on the class loader instance</td>
+</tr>
+<tr>
+<td align="right">[t]</td>
+<td align="left">print all the inheritance structure of the class loaders</td>
+</tr>
+<tr>
+<td align="right">[a]</td>
+<td align="left">list all the classes loaded by all the class loaders (use it with great caution since the output can be huge)</td>
+</tr>
+<tr>
+<td align="right"><code>[c:]</code></td>
+<td align="left">get the hashcode of the class loader</td>
+</tr>
+<tr>
+<td align="right"><code>[c: r:]</code></td>
+<td align="left">using class loader to search resource</td>
+</tr>
+</tbody>
+</table></div>
+<div class="section" id="usage">
+<span id="usage"></span><h2>Usage<a class="headerlink" href="#usage" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li>categorised by class loader</li>
+</ul>
+<div class="highlight-s notranslate"><div class="highlight"><pre><span></span><span class="o">$</span> classloader
+ name                                                   numberOfInstances  loadedCountTotal
+ com.taobao.pandora.service.loader.ModuleClassLoader    <span class="m">29</span>                 <span class="m">11659</span>
+ com.taobao.pandora.boot.loader.ReLaunchURLClassLoader  <span class="m">1</span>                  <span class="m">5308</span>
+ BootstrapClassLoader                                   <span class="m">1</span>                  <span class="m">3711</span>
+ com.taobao.arthas.agent.ArthasClassloader              <span class="m">2</span>                  <span class="m">2825</span>
+ sun.reflect.DelegatingClassLoader                      <span class="m">332</span>                <span class="m">332</span>
+ java.net.URLClassLoader                                <span class="m">1</span>                  <span class="m">285</span>
+ sun.misc.Launcher<span class="o">$</span>AppClassLoader                       <span class="m">1</span>                  <span class="m">77</span>
+ sun.misc.Launcher<span class="o">$</span>ExtClassLoader                       <span class="m">1</span>                  <span class="m">46</span>
+ com.alibaba.fastjson.util.ASMClassLoader               <span class="m">2</span>                  <span class="m">3</span>
+ org.jvnet.hk2.internal.DelegatingClassLoader           <span class="m">2</span>                  <span class="m">2</span>
+ sun.reflect.misc.MethodUtil                            <span class="m">1</span>                  <span class="m">1</span>
+Affect<span class="p">(</span><span class="kp">row</span><span class="o">-</span>cnt<span class="o">:</span><span class="m">11</span><span class="p">)</span> cost <span class="kr">in</span> <span class="m">66</span> ms.
+</pre></div>
+</div>
+<ul class="simple">
+<li>Categorized by class loader instance</li>
+</ul>
+<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>$ classloader -l
+ name                                                            loadedCount  hash      parent
+ BootstrapClassLoader                                            3711         null      null
+ com.alibaba.fastjson.util.ASMClassLoader@3bbaa1b8               2            3bbaa1b8  monitor&#39;s ModuleClassLoader
+ com.alibaba.fastjson.util.ASMClassLoader@5e255d0b               1            5e255d0b  eagleeye-core&#39;s ModuleClassLoader
+ com.taobao.arthas.agent.ArthasClassloader@4fa2d7e6              1795         4fa2d7e6  sun.misc.Launcher$ExtClassLoader@a38d7a3
+ com.taobao.arthas.agent.ArthasClassloader@522400c2              1033         522400c2  sun.misc.Launcher$ExtClassLoader@a38d7a3
+ com.taobao.pandora.boot.loader.ReLaunchURLClassLoader@1817d444  5308         1817d444  sun.misc.Launcher$AppClassLoader@14dad5dc
+ tbsession&#39;s ModuleClassLoader                                   285          609cd4d8  null
+ pandora-qos-service&#39;s ModuleClassLoader                         267          2f8dad04  null
+ pandora-framework&#39;s ModuleClassLoader                           78           4009e306  null
+ filesync-client&#39;s ModuleClassLoader                             4            4b8ee4de  null
+ rocketmq-client&#39;s ModuleClassLoader                             431          247bddad  null
+ eagleeye-core&#39;s ModuleClassLoader                               451          1ba9117e  null
+ alimonitor-jmonitor&#39;s ModuleClassLoader                         134          22fcf7ab  null
+ metaq-client&#39;s ModuleClassLoader                                35           41a2befb  null
+ hsf-mock&#39;s ModuleClassLoader                                    3            2002fc1d  null
+ monitor&#39;s ModuleClassLoader                                     1427         131ef10   null
+ spas-sdk-service&#39;s ModuleClassLoader                            7            10d307f1  null
+ vipserver-client&#39;s ModuleClassLoader                            137          7a419da4  null
+ metrics&#39;s ModuleClassLoader                                     146          696da30b  null
+ mtop-uncenter&#39;s ModuleClassLoader                               922          79d8407f  null
+ spas-sdk-client&#39;s ModuleClassLoader                             235          4944252c  null
+ live-profiler-pandora&#39;s ModuleClassLoader                       1            6913c1fb  null
+ notify-tr-client&#39;s ModuleClassLoader                            472          fba92d3   null
+ ons-sdk&#39;s ModuleClassLoader                                     70           23348b5d  null
+ tair-plugin&#39;s ModuleClassLoader                                 1053         7c9d8e2   null
+ tddl-client&#39;s ModuleClassLoader                                 2354         4988d8b8  null
+ config-client&#39;s ModuleClassLoader                               93           429bffaa  null
+ diamond-client&#39;s ModuleClassLoader                              360          3d5c822d  null
+ pandolet&#39;s ModuleClassLoader                                    99           41e1e210  null
+ hsf&#39;s ModuleClassLoader                                         1796         3232a28a  null
+ acl.plugin&#39;s ModuleClassLoader                                  379          67080771  null
+ buc.sso.client.plugin&#39;s ModuleClassLoader                       195          13b6aecc  null
+ unitrouter&#39;s ModuleClassLoader                                  64           7e5afaa6  null
+ switch&#39;s ModuleClassLoader                                      104          24313fcc  null
+ hsf-notify-client&#39;s ModuleClassLoader                           57           4d0f2471  null
+ java.net.URLClassLoader@7ec7ffd3                                285          7ec7ffd3  sun.misc.Launcher$ExtClassLoader@a38d7a3
+ javax.management.remote.rmi.NoCallStackClassLoader@53f65459     1            53f65459  null
+ javax.management.remote.rmi.NoCallStackClassLoader@2833cc44     1            2833cc44  null
+ org.jvnet.hk2.internal.DelegatingClassLoader@72cda8ee           1            72cda8ee  monitor&#39;s ModuleClassLoader
+ org.jvnet.hk2.internal.DelegatingClassLoader@1f57f96d           1            1f57f96d  monitor&#39;s ModuleClassLoader
+ sun.misc.Launcher$AppClassLoader@14dad5dc                       77           14dad5dc  sun.misc.Launcher$ExtClassLoader@a38d7a3
+ sun.misc.Launcher$ExtClassLoader@a38d7a3                        46           a38d7a3   null
+ sun.reflect.misc.MethodUtil@1201f221                            1            1201f221  sun.misc.Launcher$AppClassLoader@14dad5dc
+</pre></div>
+</div>
+<ul class="simple">
+<li>Check inheritance tree of the class loaders</li>
+</ul>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>$ classloader -t
++-BootstrapClassLoader
++-unitrouter<span class="s1">&#39;s ModuleClassLoader</span>
+<span class="s1">+-diamond-client&#39;</span>s ModuleClassLoader
++-sun.misc.Launcher<span class="nv">$ExtClassLoader</span>@548a102f
+<span class="p">|</span> +-sun.misc.Launcher<span class="nv">$AppClassLoader</span>@14dad5dc
+<span class="p">|</span>   +-com.taobao.arthas.agent.AgentLauncher<span class="nv">$1</span>@334e6bb8
+<span class="p">|</span>   <span class="p">|</span> +-sun.reflect.DelegatingClassLoader@328b3a05
+<span class="p">|</span>   <span class="p">|</span> +-sun.reflect.DelegatingClassLoader@73f44f24
+</pre></div>
+</div>
+<ul class="simple">
+<li>Check the real urls of <code class="docutils literal notranslate"><span class="pre">URLClassLoader</span></code></li>
+</ul>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>$ classloader -c 5ffe9775
+file:/Users/hello/soft/taobao-tomcat-7.0.64/deploy/taobao-hsf.sar/lib/commons-lang-2.6.jar
+file:/Users/hello/soft/taobao-tomcat-7.0.64/deploy/taobao-hsf.sar/lib/log4j-1.2.16.jar
+file:/Users/hello/soft/taobao-tomcat-7.0.64/deploy/taobao-hsf.sar/lib/logger.api-0.1.4.jar
+file:/Users/hello/soft/taobao-tomcat-7.0.64/deploy/taobao-hsf.sar/lib/pandora.api-2.0.7-SNAPSHOT.jar
+file:/Users/hello/soft/taobao-tomcat-7.0.64/deploy/taobao-hsf.sar/lib/pandora.container-2.0.7-SNAPSHOT.jar
+file:/Users/hello/soft/taobao-tomcat-7.0.64/deploy/taobao-hsf.sar/lib/pandora.thirdcontainer-2.0.7-SNAPSHOT.jar
+file:/Users/hello/soft/taobao-tomcat-7.0.64/deploy/taobao-hsf.sar/lib/picocontainer-2.14.3.jar
+</pre></div>
+</div>
+<ul class="simple">
+<li>Using class loader to search for resource</li>
+</ul>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>$ classloader -c 226b143b -r META-INF/MANIFEST.MF
+ jar:file:/Users/hello/.m2/repository/javax/enterprise/cdi-api/1.0/cdi-api-1.0.jar!/META-INF/MANIFEST.MF
+ jar:file:/Users/hello/.m2/repository/javax/annotation/jsr250-api/1.0/jsr250-api-1.0.jar!/META-INF/MANIFEST.MF
+</pre></div>
+</div>
+<ul class="simple">
+<li>Using class loader to look for <code class="docutils literal notranslate"><span class="pre">*.class</span></code> file</li>
+</ul>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>$ classloader -c 1b6d3586 -r java/lang/String.class
+ jar:file:/Library/Java/JavaVirtualMachines/jdk1.8.0_60.jdk/Contents/Home/jre/lib/rt.jar!/java/lang/String.class
+</pre></div>
+</div>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+      
+        <a href="jad.html" class="btn btn-neutral" title="jad" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2018, Alibaba Middleware Group, and contributors.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'./',
+            VERSION:'3.0.5-SNAPSHOT',
+            LANGUAGE:'None',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="_static/jquery.js"></script>
+      <script type="text/javascript" src="_static/underscore.js"></script>
+      <script type="text/javascript" src="_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  <script type="text/javascript" src="_static/js/theme.js"></script>
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+<div class="github-fork-ribbon-wrapper right">
+  <div class="github-fork-ribbon">
+    <a href="https://github.com/alibaba/arthas">Fork me at GitHub</a>
+  </div>
+</div>
+
+<script type="text/javascript" src="_static/add_badges.js"></script>
+
+<script>
+  var _hmt = _hmt || [];
+  (function() {
+    var hm = document.createElement("script");
+    hm.src = "https://hm.baidu.com/hm.js?d5c5e25b100f0eb51a4c35c8a86ea9b4";
+    var s = document.getElementsByTagName("script")[0]; 
+    s.parentNode.insertBefore(hm, s);
+  })();
+</script>  
+ 
+
+
+</body>
+</html>

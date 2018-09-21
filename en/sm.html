@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Commands List &mdash; Arthas 3.0.5-SNAPSHOT documentation</title>
+  <title>sm &mdash; Arthas 3.0.5-SNAPSHOT documentation</title>
   
 
   
@@ -31,8 +31,8 @@
     <link rel="stylesheet" href="_static/overrides.css" type="text/css" />
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="dashboard" href="dashboard.html" />
-    <link rel="prev" title="Advanced Usage" href="advanced-use.html" />
+    <link rel="next" title="dump" href="dump.html" />
+    <link rel="prev" title="sc" href="sc.html" />
 <script src="_static/center_page.js"></script>
  
 
@@ -92,14 +92,18 @@
 <li class="toctree-l1"><a class="reference internal" href="install-detail.html">Installation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="quick-start.html">Quick start</a></li>
 <li class="toctree-l1"><a class="reference internal" href="advanced-use.html">Advanced usage</a></li>
-<li class="toctree-l1 current"><a class="current reference internal" href="#">Commands</a><ul>
+<li class="toctree-l1 current"><a class="reference internal" href="commands.html">Commands</a><ul class="current">
 <li class="toctree-l2"><a class="reference internal" href="dashboard.html">dashboard</a></li>
 <li class="toctree-l2"><a class="reference internal" href="thread.html">thread</a></li>
 <li class="toctree-l2"><a class="reference internal" href="jvm.html">jvm</a></li>
 <li class="toctree-l2"><a class="reference internal" href="sysprop.html">sysprop</a></li>
 <li class="toctree-l2"><a class="reference internal" href="getstatic.html">getstatic</a></li>
 <li class="toctree-l2"><a class="reference internal" href="sc.html">sc</a></li>
-<li class="toctree-l2"><a class="reference internal" href="sm.html">sm</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">sm</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#options">Options</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#usage">Usage</a></li>
+</ul>
+</li>
 <li class="toctree-l2"><a class="reference internal" href="dump.html">dump</a></li>
 <li class="toctree-l2"><a class="reference internal" href="jad.html">jad</a></li>
 <li class="toctree-l2"><a class="reference internal" href="classloader.html">classloader</a></li>
@@ -110,7 +114,7 @@
 <li class="toctree-l2"><a class="reference external" href="https://github.com/alibaba/arthas/tree/master/site/src/site/sphinx/en/stack.md">stack</a></li>
 <li class="toctree-l2"><a class="reference external" href="https://github.com/alibaba/arthas/tree/master/site/src/site/sphinx/en/tt.md">tt</a></li>
 <li class="toctree-l2"><a class="reference external" href="https://github.com/alibaba/arthas/tree/master/site/src/site/sphinx/en/options.md">options</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#arthas-basic-commands">Arthas Basic Commands</a></li>
+<li class="toctree-l2"><a class="reference internal" href="commands.html#arthas-basic-commands">Arthas Basic Commands</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas/issues?q=label%3Auser-case">User cases</a></li>
@@ -163,14 +167,16 @@
     
       <li><a href="index.html">Docs</a> &raquo;</li>
         
-      <li>Commands List</li>
+          <li><a href="commands.html">Commands List</a> &raquo;</li>
+        
+      <li>sm</li>
     
     
       <li class="wy-breadcrumbs-aside">
         
             
             
-              <a href="https://github.com/alibaba/arthas/blob/master/site/src/site/sphinx/commands.md" class="fa fa-github"> Edit on GitHub</a>
+              <a href="https://github.com/alibaba/arthas/blob/master/site/src/site/sphinx/sm.md" class="fa fa-github"> Edit on GitHub</a>
             
           
         
@@ -184,41 +190,108 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
             
-  <div class="section" id="commands-list">
-<span id="commands-list"></span><h1>Commands List<a class="headerlink" href="#commands-list" title="Permalink to this headline">¶</a></h1>
-<div class="toctree-wrapper compound">
-<ul>
-<li class="toctree-l1"><a class="reference internal" href="dashboard.html">dashboard</a></li>
-<li class="toctree-l1"><a class="reference internal" href="thread.html">thread</a></li>
-<li class="toctree-l1"><a class="reference internal" href="jvm.html">jvm</a></li>
-<li class="toctree-l1"><a class="reference internal" href="sysprop.html">sysprop</a></li>
-<li class="toctree-l1"><a class="reference internal" href="getstatic.html">getstatic</a></li>
-<li class="toctree-l1"><a class="reference internal" href="sc.html">sc</a></li>
-<li class="toctree-l1"><a class="reference internal" href="sm.html">sm</a></li>
-<li class="toctree-l1"><a class="reference internal" href="dump.html">dump</a></li>
-<li class="toctree-l1"><a class="reference internal" href="jad.html">jad</a></li>
-<li class="toctree-l1"><a class="reference internal" href="classloader.html">classloader</a></li>
-<li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas/tree/master/site/src/site/sphinx/en/redefine.md">redefine</a></li>
-<li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas/tree/master/site/src/site/sphinx/en/monitor.md">monitor</a></li>
-<li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas/tree/master/site/src/site/sphinx/en/watch.md">watch</a></li>
-<li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas/tree/master/site/src/site/sphinx/en/trace.md">trace</a></li>
-<li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas/tree/master/site/src/site/sphinx/en/stack.md">stack</a></li>
-<li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas/tree/master/site/src/site/sphinx/en/tt.md">tt</a></li>
-<li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas/tree/master/site/src/site/sphinx/en/options.md">options</a></li>
-</ul>
+  <div class="section" id="sm">
+<span id="sm"></span><h1>sm<a class="headerlink" href="#sm" title="Permalink to this headline">¶</a></h1>
+<p>Check the method profile of the loaded classes;</p>
+<p>Abbreviated from “Search-Method”, with which you can search out all methods profiles of the loaded classes.</p>
+<p>F.Y.I
+<code class="docutils literal notranslate"><span class="pre">sm</span></code> only shows the methods declared in the current class; methods declared in ancestors will not be presented.</p>
+<div class="section" id="options">
+<span id="options"></span><h2>Options<a class="headerlink" href="#options" title="Permalink to this headline">¶</a></h2>
+<table border="1" class="docutils">
+<thead>
+<tr>
+<th align="right">Name</th>
+<th align="left">Specification</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="right"><em>class-pattern</em></td>
+<td align="left">pattern for class name</td>
+</tr>
+<tr>
+<td align="right"><em>method-pattern</em></td>
+<td align="left">pattern for method name</td>
+</tr>
+<tr>
+<td align="right">[d]</td>
+<td align="left">print the details of the method</td>
+</tr>
+<tr>
+<td align="right">[E]</td>
+<td align="left">turn the regex matching on while the default mode is wildcards matching</td>
+</tr>
+</tbody>
+</table></div>
+<div class="section" id="usage">
+<span id="usage"></span><h2>Usage<a class="headerlink" href="#usage" title="Permalink to this headline">¶</a></h2>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ sm org.apache.catalina.connector.Connector
+org.apache.catalina.connector.Connector-&gt;&lt;init&gt;
+org.apache.catalina.connector.Connector-&gt;setProperty
+org.apache.catalina.connector.Connector-&gt;getProperty
+org.apache.catalina.connector.Connector-&gt;toString
+org.apache.catalina.connector.Connector-&gt;resume
+org.apache.catalina.connector.Connector-&gt;getScheme
+org.apache.catalina.connector.Connector-&gt;getProtocol
+org.apache.catalina.connector.Connector-&gt;getPort
+org.apache.catalina.connector.Connector-&gt;setService
+org.apache.catalina.connector.Connector-&gt;setPort
+org.apache.catalina.connector.Connector-&gt;getService
+org.apache.catalina.connector.Connector-&gt;getAttribute
+org.apache.catalina.connector.Connector-&gt;setAttribute
+org.apache.catalina.connector.Connector-&gt;getLocalPort
+org.apache.catalina.connector.Connector-&gt;pause
+org.apache.catalina.connector.Connector-&gt;setProtocol
+org.apache.catalina.connector.Connector-&gt;initInternal
+org.apache.catalina.connector.Connector-&gt;setSecure
+org.apache.catalina.connector.Connector-&gt;getSecure
+org.apache.catalina.connector.Connector-&gt;startInternal
+org.apache.catalina.connector.Connector-&gt;stopInternal
+org.apache.catalina.connector.Connector-&gt;setScheme
+org.apache.catalina.connector.Connector-&gt;createRequest
+org.apache.catalina.connector.Connector-&gt;getDomainInternal
+org.apache.catalina.connector.Connector-&gt;getProtocolHandler
+org.apache.catalina.connector.Connector-&gt;setURIEncoding
+org.apache.catalina.connector.Connector-&gt;findSslHostConfigs
+org.apache.catalina.connector.Connector-&gt;destroyInternal
+org.apache.catalina.connector.Connector-&gt;getObjectNameKeyProperties
+org.apache.catalina.connector.Connector-&gt;getAllowTrace
+org.apache.catalina.connector.Connector-&gt;setAllowTrace
+org.apache.catalina.connector.Connector-&gt;getAsyncTimeout
+org.apache.catalina.connector.Connector-&gt;setAsyncTimeout
+org.apache.catalina.connector.Connector-&gt;getEnableLookups
+org.apache.catalina.connector.Connector-&gt;setEnableLookups
+org.apache.catalina.connector.Connector-&gt;getMaxCookieCount
+...
+</pre></div>
 </div>
-<div class="section" id="arthas-basic-commands">
-<span id="arthas-basic-commands"></span><h2>Arthas Basic Commands<a class="headerlink" href="#arthas-basic-commands" title="Permalink to this headline">¶</a></h2>
-<ul class="simple">
-<li>help - check the assistant info for the command</li>
-<li>cls - clear out the current screen area</li>
-<li>session - check the current session profile</li>
-<li><a class="reference external" href="https://github.com/alibaba/arthas/tree/master/site/src/site/sphinx/en/reset.md">reset</a> - clear the injected code from the classes (B.T.W when Arthas server closed, all the injected will also be cleared)</li>
-<li>version - the version of the working Arthas</li>
-<li>quit - exit the current Arthas client without affecting other clients</li>
-<li>shutdown - terminate the Arthas server and all clients</li>
-<li><a class="reference external" href="https://github.com/alibaba/arthas/tree/master/site/src/site/sphinx/en/keymap.md">keymap</a> - shortcuts for Arthas and also you can define your own</li>
-</ul>
+<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>$ sm org.apache.catalina.connector.Connector -d
+ declaring-class   org.apache.catalina.connector.Connector
+ constructor-name  &lt;init&gt;
+ modifier          public
+ annotation
+ parameters
+ exceptions
+
+ declaring-class   org.apache.catalina.connector.Connector
+ constructor-name  &lt;init&gt;
+ modifier          public
+ annotation
+ parameters        java.lang.String
+ exceptions
+
+ declaring-class  org.apache.catalina.connector.Connector
+ method-name      setProperty
+ modifier         public
+ annotation
+ parameters       java.lang.String
+                  java.lang.String
+ <span class="k">return</span>           boolean
+ exceptions
+ ......
+</pre></div>
+</div>
 </div>
 </div>
 
@@ -230,10 +303,10 @@
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="dashboard.html" class="btn btn-neutral float-right" title="dashboard" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+        <a href="dump.html" class="btn btn-neutral float-right" title="dump" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
-        <a href="advanced-use.html" class="btn btn-neutral" title="Advanced Usage" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+        <a href="sc.html" class="btn btn-neutral" title="sc" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
       
     </div>
   
