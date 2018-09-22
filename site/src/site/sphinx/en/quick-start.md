@@ -89,8 +89,8 @@ public class Demo {
     version: 3.0.1-RC-SNAPSHOT
     pid: 13560
     timestamp: 1536656867894
-    '`'`'`'`'`'`'`'`'`
-      '
+    
+    $ 
     ```
 
 ### Windows
