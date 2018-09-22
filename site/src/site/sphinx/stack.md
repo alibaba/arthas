@@ -17,7 +17,7 @@ stack
 
 这里重点要说明的是观察表达式，观察表达式的构成主要由 ognl 表达式组成，所以你可以这样写`"{params,returnObj}"`，只要是一个合法的 ognl 表达式，都能被正常支持。
 
-观察的维度也比较多，主要体现在参数 `advice` 的数据结构上。`Advice` 参数最主要是封装了通知节点的所有信息。
+观察的维度也比较多，主要体现在参数 [`advice`][https://alibaba.github.io/arthas/advice-class.html] 的数据结构上。`Advice` 参数最主要是封装了通知节点的所有信息。
 
 
 请参考[表达式核心变量](advice-class.md)中关于该节点的描述。
