@@ -1,38 +1,38 @@
 watch
 =====
 
-Monitor the methods in data aspect including `return value`, `exceptions` and `parameters`.
+Monitor methods in data aspect including `return values`, `exceptions` and `parameters`.
 
-With the help of [OGNL](https://en.wikipedia.org/wiki/OGNL), you can easily check the details of the variables.
+With the help of [OGNL](https://en.wikipedia.org/wiki/OGNL), you can easily check the details of variables.
 
 ### Parameters & Options
 
-There are four different usage scenarios for `watch` command, which makes it the most complicated command in Arthas. 
+There are four different scenarios for `watch` command, which makes it a rather complicated command in Arthas. 
 
 |Name|Specification|
 |---:|:---|
 |*class-pattern*|pattern for the class name|
 |*method-pattern*|pattern for the method name|
 |*express*|expression to monitor|
-|*condition-express*|condition expression|
-|[b]|before invoking|
+|*condition-express*|condition expression to filter|
+|[b]|before method being invoked|
 |[e]|encountering exceptions|
 |[s]|returned normally|
 |[f]|returned normally and abnormally|
-|[E]|turn on regx matching while the default is wildcards matching|
+|[E]|turn on regex matching while the default is wildcards matching|
 |[x:]|the depth to print the specified property with default value: 1|
 
 F.Y.I
 1. any valid OGNL expression as `"{params,returnObj}"` supported
 2. there are four *watching* points: `-b`, `-e`, `-s` and `-f` (the first three are off in default while `-f` on);
-3. at the *watching* point, Arthas will use the `expression` to calculate the values and print them out;
-4. `in-parameters` and `out-parameters` are different since they can be modified; `params` stands for `in-parameters` in `-b`while `out-parameters` in other *watching* points;
-5. there is no `return value` and `exceptions` when using `-b`.
+3. at the *watching* point, Arthas will use the *expression* to evaluate the variables and print them out;
+4. `in-parameters` and `out-parameters` are different since they can be modified within the invoked methods; `params` stands for `in-parameters` in `-b`while `out-parameters` in other *watching* points;
+5. there is no `return values` and `exceptions` when using `-b`.
 
 
 Advanced:
-* [Critical fields in expression](advice-class.md)
-* [Special usage](https://github.com/alibaba/arthas/issues/71)
+* [Critical fields in *expression*](advice-class.md)
+* [Special usages](https://github.com/alibaba/arthas/issues/71)
 * [OGNL official guide](https://commons.apache.org/proper/commons-ognl/language-guide.html)
 
 ### Usage
@@ -57,7 +57,7 @@ A demo:
 		return list.size();
 	}
 ```
-#### Check the `out-parameters`and `return value`
+#### Check the `out-parameters` and `return value`
 
 ```shell
 $ watch com.alibaba.sample.petstore.web.store.module.screen.ItemList add "{params,returnObj}" -x 2
