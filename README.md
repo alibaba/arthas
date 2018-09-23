@@ -6,21 +6,21 @@
 
 Arthas can help developer trouble-shooting production issues for Java applications without modifying your code or restating your server.
 
-[中文说明](README_CN.md)
+[中文说明](README_CN.md) (For Chinese Documentation)
 
 ### Background
 
 In production system, sometimes the networks is unreachable from local development environment. If you encounter some issues in production system, it is impossible to use IDE to debug the application remotely. More importantly, debugging in production is unacceptable, because it will suspend all the threads, which leads to business unavailability. 
 
-Some may think of reproducing the same issue on the test/staging environment, however, some tricky issue either can hardly be reproduced on a different environment, or even disappeared once restarted. 
+Some may think of reproducing the same issue on the test/staging environment, however, some tricky issues either can hardly be reproduced on a different environment, or even disappear once restarted. 
 
-Thinking of adding some logs to your code? You have to go through test, staging, and then on to production. Time is money! That is a lot inefficient! Besides, the issue may not be reproducible once restart your JVM, as described above.
+Thinking of adding some logs to your code? You have to go through test, staging, and then on to production. Time is money! That is a lot inefficient! Besides, the issue may not be reproducible once you restart your JVM, as described above.
 
-Arthas is born to solve these issues. You can trouble-shoot your production issue on-the-fly. No JVM restart, no additional code changes. Arthas works as an observer, which will never suspend your existing threads.
+Arthas is born to solve these issues. You can trouble-shoot your production issue on-the-fly. No need for JVM restart, no additional code changes. Arthas works as an observer, which will never suspend your existing threads.
 
 ### Key features
 
-* Check whether a class is loaded? And whether is class loaded from? (Useful for trouble-shooting jar file conflicts)
+* Check whether a class is loaded? And where the class is loaded from? (Useful for trouble-shooting jar file conflicts)
 * Decompile a class to ensure the code is running as expected.
 * View classloader statistics, e.g. how may classloaders are there? how many class is loaded per classloader? What is the classloader hierarchy? Is there possible classloader leaks?
 * View the method invocation details, e.g. method parameter, return object, thrown exception, and etc.
