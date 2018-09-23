@@ -5,55 +5,52 @@ import java.net.NetworkInterface;
 import java.util.Enumeration;
 
 /**
- * @author weipeng2k 2015年1月30日 下午3:06:47
+ * @author weipeng2k 2015-01-30 15:06:47
  */
 public class IPUtils {
 
+    private static final String WINDOWS = "windows";
+    private static final String OS_NAME = "os.name";
+
     /**
-     * 判断当前操作是否Windows.
-     * 
-     * @return true---是Windows操作系统
+     * check: whether current operating system is windows
+     *
+     * @return true---is windows
      */
     public static boolean isWindowsOS() {
-        boolean isWindowsOS = false;
-        String osName = System.getProperty("os.name");
-        if (osName.toLowerCase().indexOf("windows") > -1) {
-            isWindowsOS = true;
-        }
-        return isWindowsOS;
+        String osName = System.getProperty(OS_NAME);
+        return osName.toLowerCase().contains(WINDOWS);
     }
 
     /**
-     * 获取本机IP地址，并自动区分Windows还是Linux操作系统
-     * 
+     * get IP address, automatically distinguish the operating system.（windows or linux）
+     *
      * @return String
      */
     public static String getLocalIP() {
-        String sIP = null;
         InetAddress ip = null;
         try {
             if (isWindowsOS()) {
                 ip = InetAddress.getLocalHost();
             } else {
-                // 如果是回环地址则扫描所有的NetWorkInterface
+                //scan all NetWorkInterfaces if it's loopback address
                 if (!InetAddress.getLocalHost().isLoopbackAddress()) {
                     ip = InetAddress.getLocalHost();
                 } else {
                     boolean bFindIP = false;
-                    Enumeration<NetworkInterface> netInterfaces = (Enumeration<NetworkInterface>) NetworkInterface.getNetworkInterfaces();
+                    Enumeration<NetworkInterface> netInterfaces = NetworkInterface.getNetworkInterfaces();
                     while (netInterfaces.hasMoreElements()) {
                         if (bFindIP) {
                             break;
                         }
-                        NetworkInterface ni = (NetworkInterface) netInterfaces.nextElement();
+                        NetworkInterface ni = netInterfaces.nextElement();
                         // ----------特定情况，可以考虑用ni.getName判断
-                        // 遍历所有ip
+                        // iterator all IPs
                         Enumeration<InetAddress> ips = ni.getInetAddresses();
                         while (ips.hasMoreElements()) {
-                            ip = (InetAddress) ips.nextElement();
-                            // 127.开头的都是lookback地址
-                            if (ip.isSiteLocalAddress() && !ip.isLoopbackAddress()
-                                && ip.getHostAddress().indexOf(":") == -1) {
+                            ip = ips.nextElement();
+                            // IP starts with 127. is loopback address
+                            if (ip.isSiteLocalAddress() && !ip.isLoopbackAddress() && !ip.getHostAddress().contains(":")) {
                                 bFindIP = true;
                                 break;
                             }
@@ -65,13 +62,7 @@ public class IPUtils {
         } catch (Exception e) {
         }
 
-        if (ip != null) {
-            sIP = ip.getHostAddress();
-        }
-        return sIP;
+        return ip == null ? null : ip.getHostAddress();
     }
 
-    public static void main(String[] args) {
-        System.out.println(getLocalIP());
-    }
 }
