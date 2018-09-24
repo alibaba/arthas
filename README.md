@@ -2,19 +2,19 @@
 
 ![arthas](site/src/site/sphinx/arthas.png)
 
-`Arthas` is an Java Diagnostic tool open sourced by Alibaba.
+`Arthas` is a Java Diagnostic tool open sourced by Alibaba.
 
-Arthas can help developer trouble-shooting production issues for Java applications without modifying your code or restating your server.
+Arthas can help developer trouble-shoot production issues for Java applications without modifying your code or restarting your server.
 
 [中文说明](README_CN.md) (For Chinese Documentation)
 
 ### Background
 
-In production system, sometimes the networks is unreachable from local development environment. If you encounter some issues in production system, it is impossible to use IDE to debug the application remotely. More importantly, debugging in production is unacceptable, because it will suspend all the threads, which leads to business unavailability. 
+In production system, sometimes the network is unreachable from local development environment. If you encounter some issues in production system, it is impossible to use IDE to debug the application remotely. More importantly, debugging in production is unacceptable, because it will suspend all the threads, which leads to business unavailability. 
 
-Some may think of reproducing the same issue on the test/staging environment, however, some tricky issues either can hardly be reproduced on a different environment, or even disappear once restarted. 
+Some may think of reproducing the same issue on the test/staging environment. However, some tricky issues either can hardly be reproduced on a different environment, or even disappear once restarted. 
 
-Thinking of adding some logs to your code? You have to go through test, staging, and then on to production. Time is money! That is a lot inefficient! Besides, the issue may not be reproducible once you restart your JVM, as described above.
+Thinking of adding some logs to your code? You have to go through test, staging, and then on to production. Time is money! That is very inefficient! Besides, the issue may not be reproducible once you restart your JVM, as described above.
 
 Arthas is born to solve these issues. You can trouble-shoot your production issue on-the-fly. No need for JVM restart, no additional code changes. Arthas works as an observer, which will never suspend your existing threads.
 
@@ -22,13 +22,13 @@ Arthas is born to solve these issues. You can trouble-shoot your production issu
 
 * Check whether a class is loaded? And where the class is loaded from? (Useful for trouble-shooting jar file conflicts)
 * Decompile a class to ensure the code is running as expected.
-* View classloader statistics, e.g. how may classloaders are there? how many class is loaded per classloader? What is the classloader hierarchy? Is there possible classloader leaks?
+* View classloader statistics, e.g. how may classloaders are there? How many classes are loaded per classloader? What is the classloader hierarchy? Are there possible classloader leaks?
 * View the method invocation details, e.g. method parameter, return object, thrown exception, and etc.
-* Check the stack trace of specified method invocation. This is useful when you would like to know who is calling your method?
+* Check the stack trace of specified method invocation. This is useful when you would like to know who is calling your method.
 * Trace the method invocation to find slow sub-invocations.
-* Monitor method invcation statistics, e.g. qps, rt, success rate and etc.
-* Monitoring your system metrics, thread states and cpu usage, gc statistics, and etc.
-* Support command line interactive mode, with auto completed feature enabled.
+* Monitor method invcation statistics, e.g. qps, rt, success rate, etc.
+* Monitoring your system metrics, thread states and cpu usage, gc statistics, etc.
+* Support command line interactive mode, with auto complete feature enabled.
 * Support telnet and websocket, which enables both local and remote diagnostics with command line and browsers.
 
 ### Quick start
@@ -49,10 +49,10 @@ Start Arthas:
 
 #### Windows
 
-1. Click [here](http://search.maven.org/classic/#search%7Cga%7C1%7Cg%3A%22com.taobao.arthas%22%20AND%20a%3A%22arthas-packaging%22) to Download the latest binary releases.
+1. Click [here](http://search.maven.org/classic/#search%7Cga%7C1%7Cg%3A%22com.taobao.arthas%22%20AND%20a%3A%22arthas-packaging%22) to download the latest binary releases.
 2. Unzip the file.
 3. Go to the bin directory
-4. run the following command `as.bat $PID`
+4. Run the following command `as.bat $PID`
 
 
 ### Documentation
@@ -77,7 +77,7 @@ English version is on the way, if you would like to contribute, please leave a m
 
 #### Thread
 
-See who is eating your cpu (ranked by top cpu usage) and what is going on there in one glance:
+See what is eating your cpu (ranked by top cpu usage) and what is going on there in one glance:
 
 ```
 $ thread -n 3
@@ -218,7 +218,7 @@ ts=2018-09-18 10:11:45;thread_name=http-bio-8080-exec-10;id=d9;is_daemon=true;pr
 
 #### Trace
 
-See who is slowing down your method invocation with trace command:
+See what is slowing down your method invocation with trace command:
 
 ![trace](site/src/site/sphinx/_static/trace.png)
 
@@ -259,7 +259,7 @@ Affect(class-cnt:1 , method-cnt:1) cost in 109 ms.
 
 #### Time Tunnel(tt)
 
-Recording method invocation data, so that you can check the method invacation parameters, returned value and thrown exception later. It works as if you could come back and replay the past method invacation via time tunnel.
+Record method invocation data, so that you can check the method invacation parameters, returned value and thrown exception later. It works as if you could come back and replay the past method invocation via time tunnel.
 
 ```
 $ tt -t org.apache.dubbo.demo.provider.DemoServiceImpl sayHello
@@ -305,6 +305,6 @@ $ classloader
 ### Credit
 
 * [greys-anatomy](https://github.com/oldmanpushcart/greys-anatomy): The Arthas code base has derived from Greys, we thank for the excellent work done by Greys.
-* [termd](https://github.com/termd/termd): Arthas's termnial implementation is based on termd, an open source library for writing terminal applications in Java.
+* [termd](https://github.com/termd/termd): Arthas's terminal implementation is based on termd, an open source library for writing terminal applications in Java.
 * [crash](https://github.com/crashub/crash): Arthas's text based user interface rendering is based on codes extracted from [here](https://github.com/crashub/crash/tree/1.3.2/shell)
 * [cli](https://github.com/eclipse-vertx/vert.x/tree/master/src/main/java/io/vertx/core/cli): Arthas's command line interface implementation is based on cli, open sourced by vert.x
