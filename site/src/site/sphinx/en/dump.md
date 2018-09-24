@@ -8,13 +8,13 @@ Dump the bytecode the loaded classes to a specified directory.
 |Name|Specification|
 |---:|:---|
 |*class-pattern*|pattern for the class name|
-|`[c:]`|hashcode of the class loader that loaded the class|
-|[E]|turn on regx matching while the default is wildcards matching|
+|[c:]|hashcode of the [class loader](classloader.md) that loaded the class|
+|[E]|turn on regex matching while the default is wildcard matching|
 
 ### Usage
 
-```shell
-$ dump -E org\.apache\.commons\.lang\.StringUtils
+```bash
+$ dump org.apache.commons.lang.StringUtils
  HASHCODE  CLASSLOADER                                                        LOCATION
  29505d69  +-tddl-client's ModuleClassLoader                                  /Users/zhuyong/middleware/taobao-tomcat/output/build/bin/classdump/com.taobao.pandora
                                                                               .service.loader.ModuleClassLoader-29505d69/org.apache.commons.lang.StringUtils.class
