@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>options &mdash; Arthas 3.0.5-SNAPSHOT documentation</title>
+  <title>Critical Fields in Expressions &mdash; Arthas 3.0.5-SNAPSHOT documentation</title>
   
 
   
@@ -31,8 +31,8 @@
     <link rel="stylesheet" href="_static/overrides.css" type="text/css" />
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="Release Notes" href="release-notes.html" />
-    <link rel="prev" title="tt" href="tt.html" />
+    <link rel="next" title="trace" href="trace.html" />
+    <link rel="prev" title="watch" href="watch.html" />
 <script src="_static/center_page.js"></script>
  
 
@@ -107,15 +107,15 @@
 <li class="toctree-l3"><a class="reference internal" href="classloader.html">classloader</a></li>
 <li class="toctree-l3"><a class="reference internal" href="redefine.html">redefine</a></li>
 <li class="toctree-l3"><a class="reference internal" href="monitor.html">monitor</a></li>
-<li class="toctree-l3"><a class="reference internal" href="watch.html">watch</a></li>
+<li class="toctree-l3 current"><a class="reference internal" href="watch.html">watch</a><ul class="current">
+<li class="toctree-l4 current"><a class="reference internal" href="watch.html#parameters-options">Parameters &amp; Options</a></li>
+<li class="toctree-l4"><a class="reference internal" href="watch.html#usage">Usage</a></li>
+</ul>
+</li>
 <li class="toctree-l3"><a class="reference internal" href="trace.html">trace</a></li>
 <li class="toctree-l3"><a class="reference internal" href="stack.html">stack</a></li>
 <li class="toctree-l3"><a class="reference internal" href="tt.html">tt</a></li>
-<li class="toctree-l3 current"><a class="current reference internal" href="#">options</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="#global-options">Global options</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#usage">Usage</a></li>
-</ul>
-</li>
+<li class="toctree-l3"><a class="reference internal" href="options.html">options</a></li>
 </ul>
 </li>
 </ul>
@@ -172,14 +172,16 @@
         
           <li><a href="commands.html">All Commands</a> &raquo;</li>
         
-      <li>options</li>
+          <li><a href="watch.html">watch</a> &raquo;</li>
+        
+      <li>Critical Fields in Expressions</li>
     
     
       <li class="wy-breadcrumbs-aside">
         
             
             
-              <a href="https://github.com/alibaba/arthas/blob/master/site/src/site/sphinx/options.md" class="fa fa-github"> Edit on GitHub</a>
+              <a href="https://github.com/alibaba/arthas/blob/master/site/src/site/sphinx/advice-class.md" class="fa fa-github"> Edit on GitHub</a>
             
           
         
@@ -193,71 +195,82 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
             
-  <div class="section" id="options">
-<span id="options"></span><h1>options<a class="headerlink" href="#options" title="Permalink to this headline">¶</a></h1>
-<div class="section" id="global-options">
-<span id="global-options"></span><h2>Global options<a class="headerlink" href="#global-options" title="Permalink to this headline">¶</a></h2>
+  <div class="section" id="critical-fields-in-expressions">
+<span id="critical-fields-in-expressions"></span><h1>Critical Fields in Expressions<a class="headerlink" href="#critical-fields-in-expressions" title="Permalink to this headline">¶</a></h1>
+<p>There is a very fundamental class <code class="docutils literal notranslate"><span class="pre">Advice</span></code> for the expressions used in filtering, tracing or monitoring and other aspects in commands.</p>
+<div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="kd">public</span> <span class="kd">class</span> <span class="nc">Advice</span> <span class="o">{</span>
+
+    <span class="kd">private</span> <span class="kd">final</span> <span class="n">ClassLoader</span> <span class="n">loader</span><span class="o">;</span>
+    <span class="kd">private</span> <span class="kd">final</span> <span class="n">Class</span><span class="o">&lt;?&gt;</span> <span class="n">clazz</span><span class="o">;</span>
+    <span class="kd">private</span> <span class="kd">final</span> <span class="n">ArthasMethod</span> <span class="n">method</span><span class="o">;</span>
+    <span class="kd">private</span> <span class="kd">final</span> <span class="n">Object</span> <span class="n">target</span><span class="o">;</span>
+    <span class="kd">private</span> <span class="kd">final</span> <span class="n">Object</span><span class="o">[]</span> <span class="n">params</span><span class="o">;</span>
+    <span class="kd">private</span> <span class="kd">final</span> <span class="n">Object</span> <span class="n">returnObj</span><span class="o">;</span>
+    <span class="kd">private</span> <span class="kd">final</span> <span class="n">Throwable</span> <span class="n">throwExp</span><span class="o">;</span>
+    <span class="kd">private</span> <span class="kd">final</span> <span class="kt">boolean</span> <span class="n">isBefore</span><span class="o">;</span>
+    <span class="kd">private</span> <span class="kd">final</span> <span class="kt">boolean</span> <span class="n">isThrow</span><span class="o">;</span>
+    <span class="kd">private</span> <span class="kd">final</span> <span class="kt">boolean</span> <span class="n">isReturn</span><span class="o">;</span>
+    <span class="o">...</span>
+    <span class="c1">// getter/setter  </span>
+<span class="o">}</span>  
+</pre></div>
+</div>
 <table border="1" class="docutils">
 <thead>
 <tr>
-<th>Name</th>
-<th>Default Value</th>
-<th>Description</th>
+<th align="right">Name</th>
+<th align="left">Specification</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td>unsafe</td>
-<td>false</td>
-<td>Enable system-level class enhancement; JVM might crash, if you turn it on (use with great caution :exclamation:)</td>
+<td align="right">loader</td>
+<td align="left">class loader of the class</td>
 </tr>
 <tr>
-<td>dump</td>
-<td>false</td>
-<td>Enable support for dumping enhanced class to external files; if turned on, class file will be dumped to<code>/${application dir}/arthas-class-dump/</code>，please check console output for specific location</td>
+<td align="right">clazz</td>
+<td align="left">the reference of the class</td>
 </tr>
 <tr>
-<td>batch-re-transform</td>
-<td>true</td>
-<td>re-transform matched classes in batch</td>
+<td align="right">method</td>
+<td align="left">the reflective reference of the method</td>
 </tr>
 <tr>
-<td>json-format</td>
-<td>false</td>
-<td>Enable output in JSON format</td>
+<td align="right">target</td>
+<td align="left">the instance of the class</td>
 </tr>
 <tr>
-<td>disable-sub-class</td>
-<td>false</td>
-<td>Disabling child class matching: by default child class will be matched while matching target class; if you wish exact matching, you should turn it off</td>
+<td align="right">params</td>
+<td align="left">the parameters of the method, which is an array (when there is no argument in the method, it will be an empty array)</td>
 </tr>
 <tr>
-<td>debug-for-asm</td>
-<td>false</td>
-<td>Print ASM-related debug message</td>
+<td align="right">returnObj</td>
+<td align="left">the return value of the method - only when <code>isReturn==true</code>, it's a valid result but if the return value is <code>void</code> then it will be a <code>null</code></td>
 </tr>
 <tr>
-<td>save-result</td>
-<td>false</td>
-<td>Enable saving logs for task results: when true, all command results will be saved to <code>/home/admin/logs/arthas/arthas.log</code></td>
+<td align="right">throwExp</td>
+<td align="left">the exceptions thrown by the method invoking - only when <code>isThrow==true</code>, it's a valid thrown exception</td>
 </tr>
 <tr>
-<td>job-timeout</td>
-<td>1d</td>
-<td>Default timeout for background jobs: jobs will be stopped once timed out (i.e. 1d, 2h, 3m, 25s)</td>
+<td align="right">isBefore</td>
+<td align="left">assistant checking flag used in <a href="watch.md"><code>before-watching</code> point</a>  and at this very moment: <code>isBefore==true</code>, <code>isThrow==false</code> and <code>isReturn==false</code> since it's before we invoke the method</td>
+</tr>
+<tr>
+<td align="right">isThrow</td>
+<td align="left">assistant checking flag: whether the current method invoking ends with exceptions</td>
+</tr>
+<tr>
+<td align="right">isReturn</td>
+<td align="left">assistant checking flag: whether the method invoking exits normally without exceptions</td>
 </tr>
 </tbody>
-</table></div>
-<div class="section" id="usage">
-<span id="usage"></span><h2>Usage<a class="headerlink" href="#usage" title="Permalink to this headline">¶</a></h2>
-<p>Saving logs for command outputs, you can:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ options save-result true                                                                                         
- NAME         BEFORE-VALUE  AFTER-VALUE                                                                            
-----------------------------------------                                                                           
- save-result  false         true
-</pre></div>
-</div>
-</div>
+</table><p>F.Y.I</p>
+<ol class="simple">
+<li>all the <em>fields</em> mentioned in the table above can be used directly in the <code class="docutils literal notranslate"><span class="pre">expressions</span></code>;</li>
+<li>if the expressions are <a class="reference external" href="https://en.wikipedia.org/wiki/OGNL">invalid OGNL</a>, the command will be cancelled automatically with hints to correct the expressions;</li>
+<li><a class="reference external" href="https://github.com/alibaba/arthas/issues/71">typical use cases</a>;</li>
+<li><a class="reference external" href="https://commons.apache.org/proper/commons-ognl/language-guide.html">OGNL official usage guide</a>.</li>
+</ol>
 </div>
 
 
@@ -268,10 +281,10 @@
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="release-notes.html" class="btn btn-neutral float-right" title="Release Notes" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+        <a href="trace.html" class="btn btn-neutral float-right" title="trace" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
-        <a href="tt.html" class="btn btn-neutral" title="tt" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+        <a href="watch.html" class="btn btn-neutral" title="watch" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
       
     </div>
   

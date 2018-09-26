@@ -31,7 +31,7 @@
     <link rel="stylesheet" href="_static/overrides.css" type="text/css" />
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="trace" href="trace.html" />
+    <link rel="next" title="Critical Fields in Expressions" href="advice-class.html" />
     <link rel="prev" title="monitor" href="monitor.html" />
 <script src="_static/center_page.js"></script>
  
@@ -93,47 +93,35 @@
 <li class="toctree-l1"><a class="reference internal" href="quick-start.html">Quick start</a></li>
 <li class="toctree-l1"><a class="reference internal" href="advanced-use.html">Advanced usage</a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="commands.html">Commands</a><ul class="current">
-<li class="toctree-l2"><a class="reference internal" href="dashboard.html">dashboard</a></li>
-<li class="toctree-l2"><a class="reference internal" href="thread.html">thread</a></li>
-<li class="toctree-l2"><a class="reference internal" href="jvm.html">jvm</a></li>
-<li class="toctree-l2"><a class="reference internal" href="sysprop.html">sysprop</a></li>
-<li class="toctree-l2"><a class="reference internal" href="getstatic.html">getstatic</a></li>
-<li class="toctree-l2"><a class="reference internal" href="sc.html">sc</a></li>
-<li class="toctree-l2"><a class="reference internal" href="sm.html">sm</a></li>
-<li class="toctree-l2"><a class="reference internal" href="dump.html">dump</a></li>
-<li class="toctree-l2"><a class="reference internal" href="jad.html">jad</a></li>
-<li class="toctree-l2"><a class="reference internal" href="classloader.html">classloader</a></li>
-<li class="toctree-l2"><a class="reference internal" href="redefine.html">redefine</a></li>
-<li class="toctree-l2"><a class="reference internal" href="monitor.html">monitor</a></li>
-<li class="toctree-l2 current"><a class="current reference internal" href="#">watch</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#parameters-options">Parameters &amp; Options</a><ul>
-<li class="toctree-l4"><a class="reference external" href="https://github.com/alibaba/arthas/tree/master/site/src/site/sphinx/en/advice-class.md">Critical fields in expression</a></li>
-<li class="toctree-l4"><a class="reference external" href="https://github.com/alibaba/arthas/issues/71">Special usage</a></li>
-<li class="toctree-l4"><a class="reference external" href="https://commons.apache.org/proper/commons-ognl/language-guide.html">OGNL official guide</a></li>
+<li class="toctree-l2"><a class="reference internal" href="commands.html#basic">Basic</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="commands.html#advanced">Advanced</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="dashboard.html">dashboard</a></li>
+<li class="toctree-l3"><a class="reference internal" href="thread.html">thread</a></li>
+<li class="toctree-l3"><a class="reference internal" href="jvm.html">jvm</a></li>
+<li class="toctree-l3"><a class="reference internal" href="sysprop.html">sysprop</a></li>
+<li class="toctree-l3"><a class="reference internal" href="getstatic.html">getstatic</a></li>
+<li class="toctree-l3"><a class="reference internal" href="sc.html">sc</a></li>
+<li class="toctree-l3"><a class="reference internal" href="sm.html">sm</a></li>
+<li class="toctree-l3"><a class="reference internal" href="dump.html">dump</a></li>
+<li class="toctree-l3"><a class="reference internal" href="jad.html">jad</a></li>
+<li class="toctree-l3"><a class="reference internal" href="classloader.html">classloader</a></li>
+<li class="toctree-l3"><a class="reference internal" href="redefine.html">redefine</a></li>
+<li class="toctree-l3"><a class="reference internal" href="monitor.html">monitor</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">watch</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#parameters-options">Parameters &amp; Options</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#usage">Usage</a></li>
 </ul>
 </li>
-<li class="toctree-l3"><a class="reference internal" href="#usage">Usage</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="#check-the-out-parametersand-return-value">Check the <code class="docutils literal notranslate"><span class="pre">out-parameters</span></code>and <code class="docutils literal notranslate"><span class="pre">return</span> <span class="pre">value</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="#check-in-parameters">Check <code class="docutils literal notranslate"><span class="pre">in-parameters</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="#check-before-and-after-at-the-same-time">Check <em>before</em> and <em>after</em> at the same time</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#using-x-to-check-more-details">Using <code class="docutils literal notranslate"><span class="pre">-x</span></code> to check more details</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#using-condition-expressions-to-locate-specific-call">Using condition expressions to locate specific call</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#check-exceptions">Check <code class="docutils literal notranslate"><span class="pre">exceptions</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="#filter-based-on-time-cost">Filter based on time cost</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#check-the-global-properties-of-the-target-object">Check the global properties of the target object</a></li>
+<li class="toctree-l3"><a class="reference internal" href="trace.html">trace</a></li>
+<li class="toctree-l3"><a class="reference internal" href="stack.html">stack</a></li>
+<li class="toctree-l3"><a class="reference internal" href="tt.html">tt</a></li>
+<li class="toctree-l3"><a class="reference internal" href="options.html">options</a></li>
 </ul>
 </li>
-</ul>
-</li>
-<li class="toctree-l2"><a class="reference internal" href="trace.html">trace</a></li>
-<li class="toctree-l2"><a class="reference internal" href="stack.html">stack</a></li>
-<li class="toctree-l2"><a class="reference internal" href="tt.html">tt</a></li>
-<li class="toctree-l2"><a class="reference internal" href="options.html">options</a></li>
-<li class="toctree-l2"><a class="reference internal" href="commands.html#arthas-basic-commands">Arthas Basic Commands</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas/issues?q=label%3Auser-case">User cases</a></li>
-<li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas/tree/master/site/src/site/sphinx/en/release-notes.md">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="release-notes.html">Release Notes</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas/issues?q=label%3Aquestion-answered">Questions and answers</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas">Fork me at GitHub</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas/blob/master/CONTRIBUTING.md">CONTRIBUTING</a></li>
@@ -182,7 +170,7 @@
     
       <li><a href="index.html">Docs</a> &raquo;</li>
         
-          <li><a href="commands.html">Commands List</a> &raquo;</li>
+          <li><a href="commands.html">All Commands</a> &raquo;</li>
         
       <li>watch</li>
     
@@ -207,11 +195,11 @@
             
   <div class="section" id="watch">
 <span id="watch"></span><h1>watch<a class="headerlink" href="#watch" title="Permalink to this headline">¶</a></h1>
-<p>Monitor the methods in data aspect including <code class="docutils literal notranslate"><span class="pre">return</span> <span class="pre">value</span></code>, <code class="docutils literal notranslate"><span class="pre">exceptions</span></code> and <code class="docutils literal notranslate"><span class="pre">parameters</span></code>.</p>
-<p>With the help of <a class="reference external" href="https://en.wikipedia.org/wiki/OGNL">OGNL</a>, you can easily check the details of the variables.</p>
+<p>Monitor methods in data aspect including <code class="docutils literal notranslate"><span class="pre">return</span> <span class="pre">values</span></code>, <code class="docutils literal notranslate"><span class="pre">exceptions</span></code> and <code class="docutils literal notranslate"><span class="pre">parameters</span></code>.</p>
+<p>With the help of <a class="reference external" href="https://en.wikipedia.org/wiki/OGNL">OGNL</a>, you can easily check the details of variables when methods being invoked.</p>
 <div class="section" id="parameters-options">
 <span id="parameters-options"></span><h2>Parameters &amp; Options<a class="headerlink" href="#parameters-options" title="Permalink to this headline">¶</a></h2>
-<p>There are four different usage scenarios for <code class="docutils literal notranslate"><span class="pre">watch</span></code> command, which makes it the most complicated command in Arthas.</p>
+<p>There are four different scenarios for <code class="docutils literal notranslate"><span class="pre">watch</span></code> command, which makes it rather complicated.</p>
 <table border="1" class="docutils">
 <thead>
 <tr>
@@ -229,32 +217,32 @@
 <td align="left">pattern for the method name</td>
 </tr>
 <tr>
-<td align="right"><em>express</em></td>
+<td align="right"><em>expression</em></td>
 <td align="left">expression to monitor</td>
 </tr>
 <tr>
-<td align="right"><em>condition-express</em></td>
-<td align="left">condition expression</td>
+<td align="right"><em>condition-expression</em></td>
+<td align="left">condition expression to filter</td>
 </tr>
 <tr>
 <td align="right">[b]</td>
-<td align="left">before invoking</td>
+<td align="left">before method being invoked</td>
 </tr>
 <tr>
 <td align="right">[e]</td>
-<td align="left">encountering exceptions</td>
+<td align="left">when method encountering exceptions</td>
 </tr>
 <tr>
 <td align="right">[s]</td>
-<td align="left">returned normally</td>
+<td align="left">when method exits normally</td>
 </tr>
 <tr>
 <td align="right">[f]</td>
-<td align="left">returned normally and abnormally</td>
+<td align="left">when method exits (either succeed or fail with exceptions)</td>
 </tr>
 <tr>
 <td align="right">[E]</td>
-<td align="left">turn on regx matching while the default is wildcards matching</td>
+<td align="left">turn on regex matching while the default is wildcard matching</td>
 </tr>
 <tr>
 <td align="right">[x:]</td>
@@ -265,15 +253,15 @@
 <ol class="simple">
 <li>any valid OGNL expression as <code class="docutils literal notranslate"><span class="pre">&quot;{params,returnObj}&quot;</span></code> supported</li>
 <li>there are four <em>watching</em> points: <code class="docutils literal notranslate"><span class="pre">-b</span></code>, <code class="docutils literal notranslate"><span class="pre">-e</span></code>, <code class="docutils literal notranslate"><span class="pre">-s</span></code> and <code class="docutils literal notranslate"><span class="pre">-f</span></code> (the first three are off in default while <code class="docutils literal notranslate"><span class="pre">-f</span></code> on);</li>
-<li>at the <em>watching</em> point, Arthas will use the <code class="docutils literal notranslate"><span class="pre">expression</span></code> to calculate the values and print them out;</li>
-<li><code class="docutils literal notranslate"><span class="pre">in-parameters</span></code> and <code class="docutils literal notranslate"><span class="pre">out-parameters</span></code> are different since they can be modified; <code class="docutils literal notranslate"><span class="pre">params</span></code> stands for <code class="docutils literal notranslate"><span class="pre">in-parameters</span></code> in <code class="docutils literal notranslate"><span class="pre">-b</span></code>while <code class="docutils literal notranslate"><span class="pre">out-parameters</span></code> in other <em>watching</em> points;</li>
-<li>there is no <code class="docutils literal notranslate"><span class="pre">return</span> <span class="pre">value</span></code> and <code class="docutils literal notranslate"><span class="pre">exceptions</span></code> when using <code class="docutils literal notranslate"><span class="pre">-b</span></code>.</li>
+<li>at the <em>watching</em> point, Arthas will use the <em>expression</em> to evaluate the variables and print them out;</li>
+<li><code class="docutils literal notranslate"><span class="pre">in</span> <span class="pre">parameters</span></code> and <code class="docutils literal notranslate"><span class="pre">out</span> <span class="pre">parameters</span></code> are different since they can be modified within the invoked methods; <code class="docutils literal notranslate"><span class="pre">params</span></code> stands for <code class="docutils literal notranslate"><span class="pre">in</span> <span class="pre">parameters</span></code> in <code class="docutils literal notranslate"><span class="pre">-b</span></code>while <code class="docutils literal notranslate"><span class="pre">out</span> <span class="pre">parameters</span></code> in other <em>watching</em> points;</li>
+<li>there are no <code class="docutils literal notranslate"><span class="pre">return</span> <span class="pre">values</span></code> and <code class="docutils literal notranslate"><span class="pre">exceptions</span></code> when using <code class="docutils literal notranslate"><span class="pre">-b</span></code>.</li>
 </ol>
 <p>Advanced:</p>
 <div class="toctree-wrapper compound">
 <ul>
-<li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas/tree/master/site/src/site/sphinx/en/advice-class.md">Critical fields in expression</a></li>
-<li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas/issues/71">Special usage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="advice-class.html">Critical fields in</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas/issues/71">Special usages</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://commons.apache.org/proper/commons-ognl/language-guide.html">OGNL official guide</a></li>
 </ul>
 </div>
@@ -299,8 +287,8 @@
     <span class="o">}</span>
 </pre></div>
 </div>
-<div class="section" id="check-the-out-parametersand-return-value">
-<span id="check-the-out-parametersand-return-value"></span><h3>Check the <code class="docutils literal notranslate"><span class="pre">out-parameters</span></code>and <code class="docutils literal notranslate"><span class="pre">return</span> <span class="pre">value</span></code><a class="headerlink" href="#check-the-out-parametersand-return-value" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="check-the-out-parameters-and-return-value">
+<span id="check-the-out-parameters-and-return-value"></span><h3>Check the <code class="docutils literal notranslate"><span class="pre">out</span> <span class="pre">parameters</span></code> and <code class="docutils literal notranslate"><span class="pre">return</span> <span class="pre">value</span></code><a class="headerlink" href="#check-the-out-parameters-and-return-value" title="Permalink to this headline">¶</a></h3>
 <div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>$ watch com.alibaba.sample.petstore.web.store.module.screen.ItemList add <span class="s2">&quot;{params,returnObj}&quot;</span> -x <span class="m">2</span>
 Press Ctrl+C to abort.
 Affect<span class="o">(</span>class-cnt:1 , method-cnt:1<span class="o">)</span> cost in <span class="m">44</span> ms.
@@ -316,7 +304,7 @@ Affect<span class="o">(</span>class-cnt:1 , method-cnt:1<span class="o">)</span>
 </div>
 </div>
 <div class="section" id="check-in-parameters">
-<span id="check-in-parameters"></span><h3>Check <code class="docutils literal notranslate"><span class="pre">in-parameters</span></code><a class="headerlink" href="#check-in-parameters" title="Permalink to this headline">¶</a></h3>
+<span id="check-in-parameters"></span><h3>Check <code class="docutils literal notranslate"><span class="pre">in</span> <span class="pre">parameters</span></code><a class="headerlink" href="#check-in-parameters" title="Permalink to this headline">¶</a></h3>
 <div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>$ watch com.alibaba.sample.petstore.web.store.module.screen.ItemList add <span class="s2">&quot;{params,returnObj}&quot;</span> -x <span class="m">2</span> -b
 Press Ctrl+C to abort.
 Affect<span class="o">(</span>class-cnt:1 , method-cnt:1<span class="o">)</span> cost in <span class="m">48</span> ms.  
@@ -330,7 +318,7 @@ Affect<span class="o">(</span>class-cnt:1 , method-cnt:1<span class="o">)</span>
 <span class="o">]</span>
 </pre></div>
 </div>
-<p>Compared to the previous <em>check</em>:</p>
+<p>Compared to the previous <em>check</em>, there are two differences:</p>
 <ol class="simple">
 <li>size of <code class="docutils literal notranslate"><span class="pre">params[0]</span></code> is <code class="docutils literal notranslate"><span class="pre">2</span></code> instead of <code class="docutils literal notranslate"><span class="pre">4</span></code>;</li>
 <li><code class="docutils literal notranslate"><span class="pre">return</span> <span class="pre">value</span></code> is <code class="docutils literal notranslate"><span class="pre">null</span></code> since it’s <code class="docutils literal notranslate"><span class="pre">-b</span></code>.</li>
@@ -365,8 +353,8 @@ Affect<span class="o">(</span>class-cnt:1 , method-cnt:1<span class="o">)</span>
 <li>the order of the output determined by the <em>watching</em> order itself (nothing to do with the order of the options <code class="docutils literal notranslate"><span class="pre">-b</span> <span class="pre">-s</span></code>).</li>
 </ol>
 </div>
-<div class="section" id="using-x-to-check-more-details">
-<span id="using-x-to-check-more-details"></span><h3>Using <code class="docutils literal notranslate"><span class="pre">-x</span></code> to check more details<a class="headerlink" href="#using-x-to-check-more-details" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="use-x-to-check-more-details">
+<span id="use-x-to-check-more-details"></span><h3>Use <code class="docutils literal notranslate"><span class="pre">-x</span></code> to check more details<a class="headerlink" href="#use-x-to-check-more-details" title="Permalink to this headline">¶</a></h3>
 <div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>$ watch com.alibaba.sample.petstore.web.store.module.screen.ItemList add <span class="s2">&quot;{params,returnObj}&quot;</span> -x <span class="m">3</span> 
 Press Ctrl+C to abort.
 Affect<span class="o">(</span>class-cnt:1 , method-cnt:1<span class="o">)</span> cost in <span class="m">59</span> ms.  
@@ -393,8 +381,8 @@ Affect<span class="o">(</span>class-cnt:1 , method-cnt:1<span class="o">)</span>
 </pre></div>
 </div>
 </div>
-<div class="section" id="using-condition-expressions-to-locate-specific-call">
-<span id="using-condition-expressions-to-locate-specific-call"></span><h3>Using condition expressions to locate specific call<a class="headerlink" href="#using-condition-expressions-to-locate-specific-call" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="use-condition-expressions-to-locate-specific-call">
+<span id="use-condition-expressions-to-locate-specific-call"></span><h3>Use condition expressions to locate specific call<a class="headerlink" href="#use-condition-expressions-to-locate-specific-call" title="Permalink to this headline">¶</a></h3>
 <div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>$ watch com.alibaba.sample.petstore.biz.impl.UserManagerImpl testAdd <span class="s2">&quot;{params, returnObj}&quot;</span> <span class="s2">&quot;params[0].equals(&#39;aaa&#39;)&quot;</span> -x <span class="m">2</span> 
 Press Ctrl+C to abort.
 Affect<span class="o">(</span>class-cnt:1 , method-cnt:1<span class="o">)</span> cost in <span class="m">29</span> ms.  
@@ -548,7 +536,7 @@ ts=2017-10-31 18:46:17;result=@$Proxy131[
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="trace.html" class="btn btn-neutral float-right" title="trace" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+        <a href="advice-class.html" class="btn btn-neutral float-right" title="Critical Fields in Expressions" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
         <a href="monitor.html" class="btn btn-neutral" title="monitor" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>

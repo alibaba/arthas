@@ -1,6 +1,5 @@
 
 
-
 <!DOCTYPE html>
 <!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
 <!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
@@ -9,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Index &mdash; Arthas 3.0.5-SNAPSHOT documentation</title>
+  <title>Manual Installation &mdash; Arthas 3.0.5-SNAPSHOT documentation</title>
   
 
   
@@ -30,7 +29,7 @@
   <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
   <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <link rel="stylesheet" href="_static/overrides.css" type="text/css" />
-    <link rel="index" title="Index" href="#" />
+    <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
 <script src="_static/center_page.js"></script>
  
@@ -142,14 +141,14 @@
     
       <li><a href="index.html">Docs</a> &raquo;</li>
         
-      <li>Index</li>
+      <li>Manual Installation</li>
     
     
       <li class="wy-breadcrumbs-aside">
         
             
             
-              <a href="https://github.com/alibaba/arthas/blob/master/site/src/site/sphinx/genindex" class="fa fa-github"> Edit on GitHub</a>
+              <a href="https://github.com/alibaba/arthas/blob/master/site/src/site/sphinx/manual-install.md" class="fa fa-github"> Edit on GitHub</a>
             
           
         
@@ -163,11 +162,35 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
             
-
-<h1 id="index">Index</h1>
-
-<div class="genindex-jumpbox">
- 
+  <div class="section" id="manual-installation">
+<span id="manual-installation"></span><h1>Manual Installation<a class="headerlink" href="#manual-installation" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="download">
+<span id="download"></span><h2>Download<a class="headerlink" href="#download" title="Permalink to this headline">¶</a></h2>
+<p>Latest <code class="docutils literal notranslate"><span class="pre">bin.zip</span></code>: <a class="reference external" href="http://search.maven.org/classic/#search%7Cga%7C1%7Cg%3A%22com.taobao.arthas%22%20AND%20a%3A%22arthas-packaging%22"><img alt="Arthas" src="https://img.shields.io/maven-central/v/com.taobao.arthas/arthas-packaging.svg?style=flat-square" /></a></p>
+<p>If the downloading is rather clumsy, try to download from the <a class="reference external" href="https://maven.aliyun.com/">repository in AliYun</a>; the downloading URL template is (remember to fill up the version <code class="docutils literal notranslate"><span class="pre">3.x.x</span></code> template to your needs)</p>
+<p><code class="docutils literal notranslate"><span class="pre">https://maven.aliyun.com/repository/public/com/taobao/arthas/arthas-packaging/3.x.x/arthas-packaging-3.x.x-bin.zip</span></code></p>
+</div>
+<div class="section" id="unzip">
+<span id="unzip"></span><h2>Unzip<a class="headerlink" href="#unzip" title="Permalink to this headline">¶</a></h2>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>unzip arthas-packaging-bin.zip
+</pre></div>
+</div>
+</div>
+<div class="section" id="install">
+<span id="install"></span><h2>Install<a class="headerlink" href="#install" title="Permalink to this headline">¶</a></h2>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>sudo su admin
+rm -rf /home/admin/.arthas/lib/* <span class="c1"># remove all the leftover of the old outdated Arthas</span>
+<span class="nb">cd</span> arthas
+./install-local.sh <span class="c1"># switch the user based on the owner of the target Java process.</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="start">
+<span id="start"></span><h2>Start<a class="headerlink" href="#start" title="Permalink to this headline">¶</a></h2>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./as.sh <span class="c1"># make sure the old Arthas has been shut down (using command shutdown);</span>
+</pre></div>
+</div>
+</div>
 </div>
 
 

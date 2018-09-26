@@ -56,8 +56,7 @@ public class Demo {
     sudo -u admin -EH ./as.sh
     ```
 
-2. For more details of the booting script, please refer to [starting arthas](start-arthas.md).
-
+2. For more details of the booting script, please refer to [Start Arthas](start-arthas.md).
 3. If you cannot *attach* the target process, please check the logs under `~/logs/arthas` for troubleshooting.
 
 4. Selecting the target process as:
@@ -90,8 +89,8 @@ public class Demo {
     version: 3.0.1-RC-SNAPSHOT
     pid: 13560
     timestamp: 1536656867894
-    '`'`'`'`'`'`'`'`'`
-      '
+    
+    $ 
     ```
 
 ### Windows
@@ -152,7 +151,7 @@ ts=2018-09-10 17:53:14;result=@Integer[624]
 ts=2018-09-10 17:53:15;result=@Integer[625]
 ```
 
-[more advanced functions](advanced-use.md)
+[more advanced usages](advanced-use.md)
 
 ## 5. Exit Arthas
 

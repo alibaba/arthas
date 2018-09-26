@@ -93,32 +93,35 @@
 <li class="toctree-l1"><a class="reference internal" href="quick-start.html">Quick start</a></li>
 <li class="toctree-l1"><a class="reference internal" href="advanced-use.html">Advanced usage</a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="commands.html">Commands</a><ul class="current">
-<li class="toctree-l2"><a class="reference internal" href="dashboard.html">dashboard</a></li>
-<li class="toctree-l2"><a class="reference internal" href="thread.html">thread</a></li>
-<li class="toctree-l2"><a class="reference internal" href="jvm.html">jvm</a></li>
-<li class="toctree-l2"><a class="reference internal" href="sysprop.html">sysprop</a></li>
-<li class="toctree-l2"><a class="reference internal" href="getstatic.html">getstatic</a></li>
-<li class="toctree-l2"><a class="reference internal" href="sc.html">sc</a></li>
-<li class="toctree-l2"><a class="reference internal" href="sm.html">sm</a></li>
-<li class="toctree-l2"><a class="reference internal" href="dump.html">dump</a></li>
-<li class="toctree-l2"><a class="reference internal" href="jad.html">jad</a></li>
-<li class="toctree-l2 current"><a class="current reference internal" href="#">classloader</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#options">Options</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#usage">Usage</a></li>
+<li class="toctree-l2"><a class="reference internal" href="commands.html#basic">Basic</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="commands.html#advanced">Advanced</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="dashboard.html">dashboard</a></li>
+<li class="toctree-l3"><a class="reference internal" href="thread.html">thread</a></li>
+<li class="toctree-l3"><a class="reference internal" href="jvm.html">jvm</a></li>
+<li class="toctree-l3"><a class="reference internal" href="sysprop.html">sysprop</a></li>
+<li class="toctree-l3"><a class="reference internal" href="getstatic.html">getstatic</a></li>
+<li class="toctree-l3"><a class="reference internal" href="sc.html">sc</a></li>
+<li class="toctree-l3"><a class="reference internal" href="sm.html">sm</a></li>
+<li class="toctree-l3"><a class="reference internal" href="dump.html">dump</a></li>
+<li class="toctree-l3"><a class="reference internal" href="jad.html">jad</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">classloader</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#options">Options</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#usage">Usage</a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="redefine.html">redefine</a></li>
-<li class="toctree-l2"><a class="reference internal" href="monitor.html">monitor</a></li>
-<li class="toctree-l2"><a class="reference internal" href="watch.html">watch</a></li>
-<li class="toctree-l2"><a class="reference internal" href="trace.html">trace</a></li>
-<li class="toctree-l2"><a class="reference internal" href="stack.html">stack</a></li>
-<li class="toctree-l2"><a class="reference internal" href="tt.html">tt</a></li>
-<li class="toctree-l2"><a class="reference internal" href="options.html">options</a></li>
-<li class="toctree-l2"><a class="reference internal" href="commands.html#arthas-basic-commands">Arthas Basic Commands</a></li>
+<li class="toctree-l3"><a class="reference internal" href="redefine.html">redefine</a></li>
+<li class="toctree-l3"><a class="reference internal" href="monitor.html">monitor</a></li>
+<li class="toctree-l3"><a class="reference internal" href="watch.html">watch</a></li>
+<li class="toctree-l3"><a class="reference internal" href="trace.html">trace</a></li>
+<li class="toctree-l3"><a class="reference internal" href="stack.html">stack</a></li>
+<li class="toctree-l3"><a class="reference internal" href="tt.html">tt</a></li>
+<li class="toctree-l3"><a class="reference internal" href="options.html">options</a></li>
+</ul>
+</li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas/issues?q=label%3Auser-case">User cases</a></li>
-<li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas/tree/master/site/src/site/sphinx/en/release-notes.md">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="release-notes.html">Release Notes</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas/issues?q=label%3Aquestion-answered">Questions and answers</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas">Fork me at GitHub</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas/blob/master/CONTRIBUTING.md">CONTRIBUTING</a></li>
@@ -167,7 +170,7 @@
     
       <li><a href="index.html">Docs</a> &raquo;</li>
         
-          <li><a href="commands.html">Commands List</a> &raquo;</li>
+          <li><a href="commands.html">All Commands</a> &raquo;</li>
         
       <li>classloader</li>
     
@@ -206,22 +209,22 @@
 <tbody>
 <tr>
 <td align="right">[l]</td>
-<td align="left">count based on the class loader instance</td>
+<td align="left">list all class loader instances based on thread count</td>
 </tr>
 <tr>
 <td align="right">[t]</td>
-<td align="left">print all the inheritance structure of the class loaders</td>
+<td align="left">print the inheritance structure of the class loaders</td>
 </tr>
 <tr>
 <td align="right">[a]</td>
 <td align="left">list all the classes loaded by all the class loaders (use it with great caution since the output can be huge)</td>
 </tr>
 <tr>
-<td align="right"><code>[c:]</code></td>
+<td align="right">[c:]</td>
 <td align="left">get the hashcode of the class loader</td>
 </tr>
 <tr>
-<td align="right"><code>[c: r:]</code></td>
+<td align="right">[c: r:]</td>
 <td align="left">using class loader to search resource</td>
 </tr>
 </tbody>
@@ -229,9 +232,9 @@
 <div class="section" id="usage">
 <span id="usage"></span><h2>Usage<a class="headerlink" href="#usage" title="Permalink to this headline">¶</a></h2>
 <ul class="simple">
-<li>categorised by class loader</li>
+<li>Categorised by class loader</li>
 </ul>
-<div class="highlight-s notranslate"><div class="highlight"><pre><span></span><span class="o">$</span> classloader
+<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>$ classloader
  name                                                   numberOfInstances  loadedCountTotal
  com.taobao.pandora.service.loader.ModuleClassLoader    <span class="m">29</span>                 <span class="m">11659</span>
  com.taobao.pandora.boot.loader.ReLaunchURLClassLoader  <span class="m">1</span>                  <span class="m">5308</span>
@@ -239,12 +242,12 @@
  com.taobao.arthas.agent.ArthasClassloader              <span class="m">2</span>                  <span class="m">2825</span>
  sun.reflect.DelegatingClassLoader                      <span class="m">332</span>                <span class="m">332</span>
  java.net.URLClassLoader                                <span class="m">1</span>                  <span class="m">285</span>
- sun.misc.Launcher<span class="o">$</span>AppClassLoader                       <span class="m">1</span>                  <span class="m">77</span>
- sun.misc.Launcher<span class="o">$</span>ExtClassLoader                       <span class="m">1</span>                  <span class="m">46</span>
+ sun.misc.Launcher<span class="nv">$AppClassLoader</span>                       <span class="m">1</span>                  <span class="m">77</span>
+ sun.misc.Launcher<span class="nv">$ExtClassLoader</span>                       <span class="m">1</span>                  <span class="m">46</span>
  com.alibaba.fastjson.util.ASMClassLoader               <span class="m">2</span>                  <span class="m">3</span>
  org.jvnet.hk2.internal.DelegatingClassLoader           <span class="m">2</span>                  <span class="m">2</span>
  sun.reflect.misc.MethodUtil                            <span class="m">1</span>                  <span class="m">1</span>
-Affect<span class="p">(</span><span class="kp">row</span><span class="o">-</span>cnt<span class="o">:</span><span class="m">11</span><span class="p">)</span> cost <span class="kr">in</span> <span class="m">66</span> ms.
+Affect<span class="o">(</span>row-cnt:11<span class="o">)</span> cost in <span class="m">66</span> ms.
 </pre></div>
 </div>
 <ul class="simple">
@@ -312,7 +315,7 @@ Affect<span class="p">(</span><span class="kp">row</span><span class="o">-</span
 </pre></div>
 </div>
 <ul class="simple">
-<li>Check the real urls of <code class="docutils literal notranslate"><span class="pre">URLClassLoader</span></code></li>
+<li>Check URL of the class loader</li>
 </ul>
 <div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>$ classloader -c 5ffe9775
 file:/Users/hello/soft/taobao-tomcat-7.0.64/deploy/taobao-hsf.sar/lib/commons-lang-2.6.jar

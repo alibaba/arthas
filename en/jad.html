@@ -93,32 +93,35 @@
 <li class="toctree-l1"><a class="reference internal" href="quick-start.html">Quick start</a></li>
 <li class="toctree-l1"><a class="reference internal" href="advanced-use.html">Advanced usage</a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="commands.html">Commands</a><ul class="current">
-<li class="toctree-l2"><a class="reference internal" href="dashboard.html">dashboard</a></li>
-<li class="toctree-l2"><a class="reference internal" href="thread.html">thread</a></li>
-<li class="toctree-l2"><a class="reference internal" href="jvm.html">jvm</a></li>
-<li class="toctree-l2"><a class="reference internal" href="sysprop.html">sysprop</a></li>
-<li class="toctree-l2"><a class="reference internal" href="getstatic.html">getstatic</a></li>
-<li class="toctree-l2"><a class="reference internal" href="sc.html">sc</a></li>
-<li class="toctree-l2"><a class="reference internal" href="sm.html">sm</a></li>
-<li class="toctree-l2"><a class="reference internal" href="dump.html">dump</a></li>
-<li class="toctree-l2 current"><a class="current reference internal" href="#">jad</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#options">Options</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#usage">Usage</a></li>
+<li class="toctree-l2"><a class="reference internal" href="commands.html#basic">Basic</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="commands.html#advanced">Advanced</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="dashboard.html">dashboard</a></li>
+<li class="toctree-l3"><a class="reference internal" href="thread.html">thread</a></li>
+<li class="toctree-l3"><a class="reference internal" href="jvm.html">jvm</a></li>
+<li class="toctree-l3"><a class="reference internal" href="sysprop.html">sysprop</a></li>
+<li class="toctree-l3"><a class="reference internal" href="getstatic.html">getstatic</a></li>
+<li class="toctree-l3"><a class="reference internal" href="sc.html">sc</a></li>
+<li class="toctree-l3"><a class="reference internal" href="sm.html">sm</a></li>
+<li class="toctree-l3"><a class="reference internal" href="dump.html">dump</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">jad</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#options">Options</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#usage">Usage</a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="classloader.html">classloader</a></li>
-<li class="toctree-l2"><a class="reference internal" href="redefine.html">redefine</a></li>
-<li class="toctree-l2"><a class="reference internal" href="monitor.html">monitor</a></li>
-<li class="toctree-l2"><a class="reference internal" href="watch.html">watch</a></li>
-<li class="toctree-l2"><a class="reference internal" href="trace.html">trace</a></li>
-<li class="toctree-l2"><a class="reference internal" href="stack.html">stack</a></li>
-<li class="toctree-l2"><a class="reference internal" href="tt.html">tt</a></li>
-<li class="toctree-l2"><a class="reference internal" href="options.html">options</a></li>
-<li class="toctree-l2"><a class="reference internal" href="commands.html#arthas-basic-commands">Arthas Basic Commands</a></li>
+<li class="toctree-l3"><a class="reference internal" href="classloader.html">classloader</a></li>
+<li class="toctree-l3"><a class="reference internal" href="redefine.html">redefine</a></li>
+<li class="toctree-l3"><a class="reference internal" href="monitor.html">monitor</a></li>
+<li class="toctree-l3"><a class="reference internal" href="watch.html">watch</a></li>
+<li class="toctree-l3"><a class="reference internal" href="trace.html">trace</a></li>
+<li class="toctree-l3"><a class="reference internal" href="stack.html">stack</a></li>
+<li class="toctree-l3"><a class="reference internal" href="tt.html">tt</a></li>
+<li class="toctree-l3"><a class="reference internal" href="options.html">options</a></li>
+</ul>
+</li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas/issues?q=label%3Auser-case">User cases</a></li>
-<li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas/tree/master/site/src/site/sphinx/en/release-notes.md">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="release-notes.html">Release Notes</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas/issues?q=label%3Aquestion-answered">Questions and answers</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas">Fork me at GitHub</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas/blob/master/CONTRIBUTING.md">CONTRIBUTING</a></li>
@@ -167,7 +170,7 @@
     
       <li><a href="index.html">Docs</a> &raquo;</li>
         
-          <li><a href="commands.html">Commands List</a> &raquo;</li>
+          <li><a href="commands.html">All Commands</a> &raquo;</li>
         
       <li>jad</li>
     
@@ -196,8 +199,8 @@
 <p><code class="docutils literal notranslate"><span class="pre">jad</span></code> helps to <em>de-compile</em> the byte code in JVM to the source code to assist you to better understand the logic behind.</p>
 <p>F.Y.I</p>
 <ul class="simple">
-<li>the de-compiled code will be grammatically highlighted for readability in Arthas Console;</li>
-<li>you have to understand there might be some trivial grammar errors but it won’t affect the logic understanding.</li>
+<li>the de-compiled code will be grammatically highlighted for readability in Arthas console;</li>
+<li>there might be some trivial grammar errors but it won’t affect the logic understanding.</li>
 </ul>
 <div class="section" id="options">
 <span id="options"></span><h2>Options<a class="headerlink" href="#options" title="Permalink to this headline">¶</a></h2>
@@ -214,12 +217,12 @@
 <td align="left">pattern for the class name</td>
 </tr>
 <tr>
-<td align="right"><code>[c:]</code></td>
+<td align="right">[c:]</td>
 <td align="left">hashcode of the class loader that loaded the class</td>
 </tr>
 <tr>
 <td align="right">[E]</td>
-<td align="left">turn on regx matching while the default is wildcards matching</td>
+<td align="left">turn on regex matching while the default is wildcard matching</td>
 </tr>
 </tbody>
 </table></div>
@@ -228,7 +231,7 @@
 <p>When several class loaders loaded the same class:</p>
 <ol class="simple">
 <li><code class="docutils literal notranslate"><span class="pre">jad</span></code> to get the hashcode of the class loader;</li>
-<li><code class="docutils literal notranslate"><span class="pre">jad</span> <span class="pre">-c</span> <span class="pre">&lt;hashcode&gt;</span></code> to get the de-compiled class loaded by the class loader.</li>
+<li><code class="docutils literal notranslate"><span class="pre">jad</span> <span class="pre">-c</span> <span class="pre">&lt;hashcode&gt;</span></code> to get the de-compiled class loaded by the specified class loader.</li>
 </ol>
 <div class="highlight-java notranslate"><div class="highlight"><pre><span></span>$ jad org.apache.log4j.Logger
 
@@ -361,6 +364,8 @@ private Map&lt;String, Object&gt; directMetrics<span class="o">(</span>String ip
 Affect<span class="o">(</span>row-cnt:1<span class="o">)</span> cost in <span class="m">1508</span> ms.
 </pre></div>
 </div>
+<p>F.Y.I</p>
+<p>Inner class is not yet supported, you can just check the <em>outer</em> class to further check the inner class.</p>
 </div>
 </div>
 

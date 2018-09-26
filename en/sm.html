@@ -93,32 +93,35 @@
 <li class="toctree-l1"><a class="reference internal" href="quick-start.html">Quick start</a></li>
 <li class="toctree-l1"><a class="reference internal" href="advanced-use.html">Advanced usage</a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="commands.html">Commands</a><ul class="current">
-<li class="toctree-l2"><a class="reference internal" href="dashboard.html">dashboard</a></li>
-<li class="toctree-l2"><a class="reference internal" href="thread.html">thread</a></li>
-<li class="toctree-l2"><a class="reference internal" href="jvm.html">jvm</a></li>
-<li class="toctree-l2"><a class="reference internal" href="sysprop.html">sysprop</a></li>
-<li class="toctree-l2"><a class="reference internal" href="getstatic.html">getstatic</a></li>
-<li class="toctree-l2"><a class="reference internal" href="sc.html">sc</a></li>
-<li class="toctree-l2 current"><a class="current reference internal" href="#">sm</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#options">Options</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#usage">Usage</a></li>
+<li class="toctree-l2"><a class="reference internal" href="commands.html#basic">Basic</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="commands.html#advanced">Advanced</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="dashboard.html">dashboard</a></li>
+<li class="toctree-l3"><a class="reference internal" href="thread.html">thread</a></li>
+<li class="toctree-l3"><a class="reference internal" href="jvm.html">jvm</a></li>
+<li class="toctree-l3"><a class="reference internal" href="sysprop.html">sysprop</a></li>
+<li class="toctree-l3"><a class="reference internal" href="getstatic.html">getstatic</a></li>
+<li class="toctree-l3"><a class="reference internal" href="sc.html">sc</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">sm</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#options">Options</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#usage">Usage</a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="dump.html">dump</a></li>
-<li class="toctree-l2"><a class="reference internal" href="jad.html">jad</a></li>
-<li class="toctree-l2"><a class="reference internal" href="classloader.html">classloader</a></li>
-<li class="toctree-l2"><a class="reference internal" href="redefine.html">redefine</a></li>
-<li class="toctree-l2"><a class="reference internal" href="monitor.html">monitor</a></li>
-<li class="toctree-l2"><a class="reference internal" href="watch.html">watch</a></li>
-<li class="toctree-l2"><a class="reference internal" href="trace.html">trace</a></li>
-<li class="toctree-l2"><a class="reference internal" href="stack.html">stack</a></li>
-<li class="toctree-l2"><a class="reference internal" href="tt.html">tt</a></li>
-<li class="toctree-l2"><a class="reference internal" href="options.html">options</a></li>
-<li class="toctree-l2"><a class="reference internal" href="commands.html#arthas-basic-commands">Arthas Basic Commands</a></li>
+<li class="toctree-l3"><a class="reference internal" href="dump.html">dump</a></li>
+<li class="toctree-l3"><a class="reference internal" href="jad.html">jad</a></li>
+<li class="toctree-l3"><a class="reference internal" href="classloader.html">classloader</a></li>
+<li class="toctree-l3"><a class="reference internal" href="redefine.html">redefine</a></li>
+<li class="toctree-l3"><a class="reference internal" href="monitor.html">monitor</a></li>
+<li class="toctree-l3"><a class="reference internal" href="watch.html">watch</a></li>
+<li class="toctree-l3"><a class="reference internal" href="trace.html">trace</a></li>
+<li class="toctree-l3"><a class="reference internal" href="stack.html">stack</a></li>
+<li class="toctree-l3"><a class="reference internal" href="tt.html">tt</a></li>
+<li class="toctree-l3"><a class="reference internal" href="options.html">options</a></li>
+</ul>
+</li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas/issues?q=label%3Auser-case">User cases</a></li>
-<li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas/tree/master/site/src/site/sphinx/en/release-notes.md">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="release-notes.html">Release Notes</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas/issues?q=label%3Aquestion-answered">Questions and answers</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas">Fork me at GitHub</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas/blob/master/CONTRIBUTING.md">CONTRIBUTING</a></li>
@@ -167,7 +170,7 @@
     
       <li><a href="index.html">Docs</a> &raquo;</li>
         
-          <li><a href="commands.html">Commands List</a> &raquo;</li>
+          <li><a href="commands.html">All Commands</a> &raquo;</li>
         
       <li>sm</li>
     
@@ -193,7 +196,7 @@
   <div class="section" id="sm">
 <span id="sm"></span><h1>sm<a class="headerlink" href="#sm" title="Permalink to this headline">¶</a></h1>
 <p>Check the method profile of the loaded classes;</p>
-<p>Abbreviated from “Search-Method”, with which you can search out all methods profiles of the loaded classes.</p>
+<p>Abbreviated from <em>Search-Method</em>, with which you can check all methods profiles of the loaded classes.</p>
 <p>F.Y.I
 <code class="docutils literal notranslate"><span class="pre">sm</span></code> only shows the methods declared in the current class; methods declared in ancestors will not be presented.</p>
 <div class="section" id="options">
@@ -220,7 +223,7 @@
 </tr>
 <tr>
 <td align="right">[E]</td>
-<td align="left">turn the regex matching on while the default mode is wildcards matching</td>
+<td align="left">turn on regex matching while the default mode is wildcard matching</td>
 </tr>
 </tbody>
 </table></div>

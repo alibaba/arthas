@@ -1,0 +1,400 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Release Notes &mdash; Arthas 3.0.5-SNAPSHOT documentation</title>
+  
+
+  
+  
+    <link rel="shortcut icon" href="_static/favicon.ico"/>
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="_static/overrides.css" type="text/css" />
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="prev" title="options" href="options.html" />
+<script src="_static/center_page.js"></script>
+ 
+
+
+  
+  <script src="_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="index.html" class="icon icon-home"> Arthas
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                3.0.5-SNAPSHOT
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="install-detail.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="quick-start.html">Quick start</a></li>
+<li class="toctree-l1"><a class="reference internal" href="advanced-use.html">Advanced usage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="commands.html">Commands</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas/issues?q=label%3Auser-case">User cases</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Release Notes</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#tada-tada-v3-0-4-exclamation">:tada: :tada: v3.0.4  :exclamation:</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#v2017-11-03">v2017-11-03</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#v2017-09-22">v2017-09-22</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#v2017-09-11">v2017-09-11</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#v2017-05-11">v2017-05-11</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#v2017-05-12">v2017-05-12</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#v2016-12-09">v2016-12-09</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#v2016-06-07">v2016-06-07</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#v2016-04-08">v2016-04-08</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#v2016-03-07">v2016-03-07</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#v2016-01-18">v2016-01-18</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#v2016-01-08">v2016-01-08</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#v2015-12-29">v2015-12-29</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas/issues?q=label%3Aquestion-answered">Questions and answers</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas">Fork me at GitHub</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas/blob/master/CONTRIBUTING.md">CONTRIBUTING</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">Arthas</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+      <li>Release Notes</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            
+              <a href="https://github.com/alibaba/arthas/blob/master/site/src/site/sphinx/release-notes.md" class="fa fa-github"> Edit on GitHub</a>
+            
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="release-notes">
+<span id="release-notes"></span><h1>Release Notes<a class="headerlink" href="#release-notes" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="tada-tada-v3-0-4-exclamation">
+<span id="tada-tada-v3-0-4-exclamation"></span><h2>:tada: :tada: <a class="reference external" href="https://github.com/alibaba/arthas/milestone/1?closed=1">v3.0.4</a>  :exclamation:<a class="headerlink" href="#tada-tada-v3-0-4-exclamation" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="v2017-11-03">
+<span id="v2017-11-03"></span><h2>v2017-11-03<a class="headerlink" href="#v2017-11-03" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li>[improvement] add <a class="reference external" href="getstatic.md"><code class="docutils literal notranslate"><span class="pre">getstatic</span></code></a></li>
+<li>[bug] fix Arthas class loader logs loading issues</li>
+<li>[improvement] introduce <a class="reference external" href="https://en.wikipedia.org/wiki/OGNL">OGNL</a> to customize <code class="docutils literal notranslate"><span class="pre">classloader</span></code> to invoke static methods</li>
+<li>[improvement] optimise <code class="docutils literal notranslate"><span class="pre">termd</span></code> uppercase output performance</li>
+<li>[improvement] <code class="docutils literal notranslate"><span class="pre">classloader</span></code> compile in class loader category by default</li>
+<li>[bug] fix <code class="docutils literal notranslate"><span class="pre">wc</span></code> counting issue</li>
+<li>[improvement] disable certain JDK classes e.g. <code class="docutils literal notranslate"><span class="pre">Classloader</span></code>, <code class="docutils literal notranslate"><span class="pre">Method</span></code>, <code class="docutils literal notranslate"><span class="pre">Integer</span></code> and the lik</li>
+<li>[improvement] quit directly when encountering incorrect <a class="reference external" href="https://en.wikipedia.org/wiki/OGNL">OGNL</a> expression</li>
+<li>[bug] fix <code class="docutils literal notranslate"><span class="pre">pipe</span></code> issues</li>
+<li>[improvement] optimize command re-direct features using asynchronous log</li>
+<li>[improvement] <a class="reference external" href="trace.md"><code class="docutils literal notranslate"><span class="pre">trace</span></code></a> can filter JDK method calls</li>
+</ul>
+</div>
+<div class="section" id="v2017-09-22">
+<span id="v2017-09-22"></span><h2>v2017-09-22<a class="headerlink" href="#v2017-09-22" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li>[improvement] improve the error message when starting agent and server fails</li>
+<li>[bug] fix some asynchronous issues</li>
+</ul>
+</div>
+<div class="section" id="v2017-09-11">
+<span id="v2017-09-11"></span><h2>v2017-09-11<a class="headerlink" href="#v2017-09-11" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li>[improvement] <a class="reference external" href="async.md"><code class="docutils literal notranslate"><span class="pre">async</span></code></a> supported</li>
+<li>[improvement] optimize <a class="reference external" href="jad.md"><code class="docutils literal notranslate"><span class="pre">jad</span></code></a> support JDK 8 and inner class</li>
+<li>[bug] fix Chinese encoding issues</li>
+</ul>
+</div>
+<div class="section" id="v2017-05-11">
+<span id="v2017-05-11"></span><h2>v2017-05-11<a class="headerlink" href="#v2017-05-11" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li>[improvement] <a class="reference external" href="tt.md"><code class="docutils literal notranslate"><span class="pre">tt</span></code></a> investigating/recording level one to avoid too much performance overhea</li>
+<li>[bug] fix Chinese characters can not be presented issue</li>
+</ul>
+</div>
+<div class="section" id="v2017-05-12">
+<span id="v2017-05-12"></span><h2>v2017-05-12<a class="headerlink" href="#v2017-05-12" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li>Arthas 3.0 release :confetti_ball:</li>
+</ul>
+</div>
+<div class="section" id="v2016-12-09">
+<span id="v2016-12-09"></span><h2>v2016-12-09<a class="headerlink" href="#v2016-12-09" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li>[feature] <a class="reference external" href="https://github.com/alibaba/arthas/blob/master/bin/as.sh"><code class="docutils literal notranslate"><span class="pre">as.sh</span></code></a> support <code class="docutils literal notranslate"><span class="pre">-h</span></code> to print help info</li>
+<li>[bug] [#121] fix leftover temp files causing Arthas cannot start issue</li>
+<li>[bug] [#123] fix <code class="docutils literal notranslate"><span class="pre">attach/shutdown</span></code> repeatedly causing Arthas classloader leakage issue</li>
+<li>[improvement] make the help info more readable</li>
+<li>[bug] [#126] fix the documents links issues</li>
+<li>[bug] [#122] fix the <a class="reference external" href="classloader.md"><code class="docutils literal notranslate"><span class="pre">classloader</span></code></a> filtering out <code class="docutils literal notranslate"><span class="pre">sun.reflect.DelegatingClassLoader</span></code> issue</li>
+<li>[bug] [#129] fix <a class="reference external" href="classloader.md"><code class="docutils literal notranslate"><span class="pre">classloader</span></code></a> presenting structure issues</li>
+<li>[improvement]  [#125] make the Arthas log output more readable</li>
+<li>[improvement]  [#96] <a class="reference external" href="sc.md"><code class="docutils literal notranslate"><span class="pre">sc</span></code></a> and more commands are supporting format as <code class="docutils literal notranslate"><span class="pre">com/taobao/xxx/TestClass</span></code></li>
+<li>[bug] [#124] fix the negative values of <a class="reference external" href="trace.md"><code class="docutils literal notranslate"><span class="pre">trace</span></code></a></li>
+<li>[improvement]  [#128] the output of <a class="reference external" href="tt.md"><code class="docutils literal notranslate"><span class="pre">tt</span></code></a> will auto-expand now</li>
+<li>[bug] [#130] providing more meaningful error messages when port conflicts</li>
+<li>[bug] [#98] fix Arthas starting issue: when updating/downloading failed, Arthas will fail to start</li>
+<li>[bug] [#139] fix agent attaching fails under some scenarios issues</li>
+<li>[improvement]  [#156] delay <code class="docutils literal notranslate"><span class="pre">jd-core-java</span></code> initialization to avoid Arthas starting failure</li>
+<li>[bug] avoid thread names duplicate issue</li>
+<li>[improvement]  [#150] filtering by total time cost in <a class="reference external" href="trace.md"><code class="docutils literal notranslate"><span class="pre">trace</span></code></a></li>
+<li>[bug] fix <a class="reference external" href="sc.md"><code class="docutils literal notranslate"><span class="pre">sc</span></code></a> <code class="docutils literal notranslate"><span class="pre">NPE</span></code> issue when searching <code class="docutils literal notranslate"><span class="pre">SystemClassloader</span></code></li>
+<li>[bug] [#180] fix attach fails issues: attaching succeed at the first time, delete the Arthas installer, re-compile and package =&gt; attaching fails</li>
+</ul>
+</div>
+<div class="section" id="v2016-06-07">
+<span id="v2016-06-07"></span><h2>v2016-06-07<a class="headerlink" href="#v2016-06-07" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li>[bug] fix NPE when loading <code class="docutils literal notranslate"><span class="pre">spy</span></code> as resource</li>
+<li>[improvement] locating the blocking thread</li>
+<li>[improvement] print out thread in name order</li>
+<li>[improvement] specify the refreshing interval when checking topN busiest threads</li>
+</ul>
+</div>
+<div class="section" id="v2016-04-08">
+<span id="v2016-04-08"></span><h2>v2016-04-08<a class="headerlink" href="#v2016-04-08" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li>[feature]  specify refreshing interval and execution times in <a class="reference external" href="dashboard.md"><code class="docutils literal notranslate"><span class="pre">dashboard</span></code></a></li>
+<li>[feature]  log the command execution result</li>
+<li>[feature]  speed up the booting and attaching while the first attaching is even quicker by 100% than before</li>
+<li>[feature]  batch supported; script supported</li>
+<li>[feature]  interactive mode used in Arthas</li>
+<li>[feature]  inheritance relation included in class searching; global option <code class="docutils literal notranslate"><span class="pre">disable-sub-class</span></code> can be used to turn it off</li>
+<li>[feature]  colorful and plain text modes both supported</li>
+<li>[improvement]  merge <code class="docutils literal notranslate"><span class="pre">exit</span></code> and <code class="docutils literal notranslate"><span class="pre">quit</span></code> commands</li>
+<li>[improvement]  help info enclosed with wiki links</li>
+<li>[improvement]  optimize <a class="reference external" href="watch.md"><code class="docutils literal notranslate"><span class="pre">watch</span></code></a> using flow for better UX</li>
+<li>[improvement]  add examples to <a class="reference external" href="thread.md"><code class="docutils literal notranslate"><span class="pre">thread</span></code></a></li>
+<li>[improvement]  auto-completion ignores character case</li>
+<li>[improvement]  make the UI more beautiful/friendly</li>
+<li>[bug] fix <a class="reference external" href="trace.md"><code class="docutils literal notranslate"><span class="pre">trace</span></code></a> printing too much encountering loop issues</li>
+<li>[bug] fix <a class="reference external" href="trace.md"><code class="docutils literal notranslate"><span class="pre">trace</span></code></a> node twisting issues when method throwing exceptions</li>
+<li>[bug] fix injected/enhanced <code class="docutils literal notranslate"><span class="pre">BootstrapClassLoader</span></code> cannot locate <code class="docutils literal notranslate"><span class="pre">spy</span></code> issues</li>
+</ul>
+</div>
+<div class="section" id="v2016-03-07">
+<span id="v2016-03-07"></span><h2>v2016-03-07<a class="headerlink" href="#v2016-03-07" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li>[feature] checking the topN thread and related stack traces</li>
+<li>[bug] fix Arthas starting failure in OpenJdk issues (requiring to reinstall <a class="reference external" href="https://github.com/alibaba/arthas/blob/master/bin/as.sh">as.sh</a>)</li>
+<li>[improvement] optimize UX</li>
+</ul>
+</div>
+<div class="section" id="v2016-01-18">
+<span id="v2016-01-18"></span><h2>v2016-01-18<a class="headerlink" href="#v2016-01-18" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li>[improvement]  optimise <a class="reference external" href="jad.md"><code class="docutils literal notranslate"><span class="pre">jad</span></code></a>; dump memory byte array in real time; using <code class="docutils literal notranslate"><span class="pre">jd-core-java</span></code> to de-compile; line number presented;</li>
+<li>[bug] fix checking/re-producing issues when <a class="reference external" href="tt.md"><code class="docutils literal notranslate"><span class="pre">tt</span></code></a> is watching thread-context related methods invoking</li>
+</ul>
+</div>
+<div class="section" id="v2016-01-08">
+<span id="v2016-01-08"></span><h2>v2016-01-08<a class="headerlink" href="#v2016-01-08" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li>[bug] jad NPE</li>
+<li>[bug] watch/monitor NPE</li>
+<li>[bug] wrong escaping issues</li>
+<li>[bug] wrong statistics</li>
+<li>[bug] <a class="reference external" href="sc.md"><code class="docutils literal notranslate"><span class="pre">sc</span></code></a> checking internal structure issues</li>
+</ul>
+</div>
+<div class="section" id="v2015-12-29">
+<span id="v2015-12-29"></span><h2>v2015-12-29<a class="headerlink" href="#v2015-12-29" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li>Arthas 2.0 Beta :boom:！</li>
+</ul>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+      
+        <a href="options.html" class="btn btn-neutral" title="options" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2018, Alibaba Middleware Group, and contributors.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'./',
+            VERSION:'3.0.5-SNAPSHOT',
+            LANGUAGE:'None',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="_static/jquery.js"></script>
+      <script type="text/javascript" src="_static/underscore.js"></script>
+      <script type="text/javascript" src="_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  <script type="text/javascript" src="_static/js/theme.js"></script>
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+<div class="github-fork-ribbon-wrapper right">
+  <div class="github-fork-ribbon">
+    <a href="https://github.com/alibaba/arthas">Fork me at GitHub</a>
+  </div>
+</div>
+
+<script type="text/javascript" src="_static/add_badges.js"></script>
+
+<script>
+  var _hmt = _hmt || [];
+  (function() {
+    var hm = document.createElement("script");
+    hm.src = "https://hm.baidu.com/hm.js?d5c5e25b100f0eb51a4c35c8a86ea9b4";
+    var s = document.getElementsByTagName("script")[0]; 
+    s.parentNode.insertBefore(hm, s);
+  })();
+</script>  
+ 
+
+
+</body>
+</html>

@@ -93,32 +93,35 @@
 <li class="toctree-l1"><a class="reference internal" href="quick-start.html">Quick start</a></li>
 <li class="toctree-l1"><a class="reference internal" href="advanced-use.html">Advanced usage</a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="commands.html">Commands</a><ul class="current">
-<li class="toctree-l2"><a class="reference internal" href="dashboard.html">dashboard</a></li>
-<li class="toctree-l2"><a class="reference internal" href="thread.html">thread</a></li>
-<li class="toctree-l2"><a class="reference internal" href="jvm.html">jvm</a></li>
-<li class="toctree-l2"><a class="reference internal" href="sysprop.html">sysprop</a></li>
-<li class="toctree-l2"><a class="reference internal" href="getstatic.html">getstatic</a></li>
-<li class="toctree-l2"><a class="reference internal" href="sc.html">sc</a></li>
-<li class="toctree-l2"><a class="reference internal" href="sm.html">sm</a></li>
-<li class="toctree-l2"><a class="reference internal" href="dump.html">dump</a></li>
-<li class="toctree-l2"><a class="reference internal" href="jad.html">jad</a></li>
-<li class="toctree-l2"><a class="reference internal" href="classloader.html">classloader</a></li>
-<li class="toctree-l2 current"><a class="current reference internal" href="#">redefine</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#options">Options</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#usage">Usage</a></li>
+<li class="toctree-l2"><a class="reference internal" href="commands.html#basic">Basic</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="commands.html#advanced">Advanced</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="dashboard.html">dashboard</a></li>
+<li class="toctree-l3"><a class="reference internal" href="thread.html">thread</a></li>
+<li class="toctree-l3"><a class="reference internal" href="jvm.html">jvm</a></li>
+<li class="toctree-l3"><a class="reference internal" href="sysprop.html">sysprop</a></li>
+<li class="toctree-l3"><a class="reference internal" href="getstatic.html">getstatic</a></li>
+<li class="toctree-l3"><a class="reference internal" href="sc.html">sc</a></li>
+<li class="toctree-l3"><a class="reference internal" href="sm.html">sm</a></li>
+<li class="toctree-l3"><a class="reference internal" href="dump.html">dump</a></li>
+<li class="toctree-l3"><a class="reference internal" href="jad.html">jad</a></li>
+<li class="toctree-l3"><a class="reference internal" href="classloader.html">classloader</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">redefine</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#options">Options</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#usage">Usage</a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="monitor.html">monitor</a></li>
-<li class="toctree-l2"><a class="reference internal" href="watch.html">watch</a></li>
-<li class="toctree-l2"><a class="reference internal" href="trace.html">trace</a></li>
-<li class="toctree-l2"><a class="reference internal" href="stack.html">stack</a></li>
-<li class="toctree-l2"><a class="reference internal" href="tt.html">tt</a></li>
-<li class="toctree-l2"><a class="reference internal" href="options.html">options</a></li>
-<li class="toctree-l2"><a class="reference internal" href="commands.html#arthas-basic-commands">Arthas Basic Commands</a></li>
+<li class="toctree-l3"><a class="reference internal" href="monitor.html">monitor</a></li>
+<li class="toctree-l3"><a class="reference internal" href="watch.html">watch</a></li>
+<li class="toctree-l3"><a class="reference internal" href="trace.html">trace</a></li>
+<li class="toctree-l3"><a class="reference internal" href="stack.html">stack</a></li>
+<li class="toctree-l3"><a class="reference internal" href="tt.html">tt</a></li>
+<li class="toctree-l3"><a class="reference internal" href="options.html">options</a></li>
+</ul>
+</li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas/issues?q=label%3Auser-case">User cases</a></li>
-<li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas/tree/master/site/src/site/sphinx/en/release-notes.md">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="release-notes.html">Release Notes</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas/issues?q=label%3Aquestion-answered">Questions and answers</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas">Fork me at GitHub</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas/blob/master/CONTRIBUTING.md">CONTRIBUTING</a></li>
@@ -167,7 +170,7 @@
     
       <li><a href="index.html">Docs</a> &raquo;</li>
         
-          <li><a href="commands.html">Commands List</a> &raquo;</li>
+          <li><a href="commands.html">All Commands</a> &raquo;</li>
         
       <li>redefine</li>
     
@@ -192,12 +195,12 @@
             
   <div class="section" id="redefine">
 <span id="redefine"></span><h1>redefine<a class="headerlink" href="#redefine" title="Permalink to this headline">¶</a></h1>
-<p>Load the external <code class="docutils literal notranslate"><span class="pre">*.class</span></code> files and <em>re-define</em> the JVM-loaded classes.</p>
+<p>Load the external <code class="docutils literal notranslate"><span class="pre">*.class</span></code> files to <strong>re-define</strong> the JVM-loaded classes.</p>
 <p>Reference: <a class="reference external" href="https://docs.oracle.com/javase/8/docs/api/java/lang/instrument/Instrumentation.html#redefineClasses-java.lang.instrument.ClassDefinition...-">Instrumentation#redefineClasses</a></p>
 <p>F.Y.I</p>
 <ol class="simple">
 <li>Re-defined classes cannot be restores any more;</li>
-<li>Re-definition can fail (like adding a new field); for more information, please refer to JDK documentation</li>
+<li>Re-definition can fail (like adding a new field/method); for more information, please refer to JDK documentation</li>
 </ol>
 <div class="section" id="options">
 <span id="options"></span><h2>Options<a class="headerlink" href="#options" title="Permalink to this headline">¶</a></h2>
@@ -221,8 +224,8 @@
 </table></div>
 <div class="section" id="usage">
 <span id="usage"></span><h2>Usage<a class="headerlink" href="#usage" title="Permalink to this headline">¶</a></h2>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>   redefine -p /tmp/Test.class
-   redefine -c 327a647b -p /tmp/Test.class /tmp/Test\$Inner.class
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>redefine -p /tmp/Test.class
+redefine -c 327a647b -p /tmp/Test.class /tmp/Test$Inner.class
 </pre></div>
 </div>
 </div>

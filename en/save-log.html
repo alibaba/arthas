@@ -1,6 +1,5 @@
 
 
-
 <!DOCTYPE html>
 <!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
 <!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
@@ -9,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Index &mdash; Arthas 3.0.5-SNAPSHOT documentation</title>
+  <title>Log command outputs &mdash; Arthas 3.0.5-SNAPSHOT documentation</title>
   
 
   
@@ -30,7 +29,7 @@
   <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
   <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <link rel="stylesheet" href="_static/overrides.css" type="text/css" />
-    <link rel="index" title="Index" href="#" />
+    <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
 <script src="_static/center_page.js"></script>
  
@@ -142,14 +141,14 @@
     
       <li><a href="index.html">Docs</a> &raquo;</li>
         
-      <li>Index</li>
+      <li>Log command outputs</li>
     
     
       <li class="wy-breadcrumbs-aside">
         
             
             
-              <a href="https://github.com/alibaba/arthas/blob/master/site/src/site/sphinx/genindex" class="fa fa-github"> Edit on GitHub</a>
+              <a href="https://github.com/alibaba/arthas/blob/master/site/src/site/sphinx/save-log.md" class="fa fa-github"> Edit on GitHub</a>
             
           
         
@@ -163,11 +162,38 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
             
-
-<h1 id="index">Index</h1>
-
-<div class="genindex-jumpbox">
- 
+  <div class="section" id="log-command-outputs">
+<span id="log-command-outputs"></span><h1>Log command outputs<a class="headerlink" href="#log-command-outputs" title="Permalink to this headline">¶</a></h1>
+<p>Log command outputs for later analysis, turned off by default.</p>
+<p>To turn it on, using <a class="reference internal" href="options.html"><span class="doc">options</span></a> as:</p>
+<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>$ options save-result <span class="nb">true</span>
+ NAME         BEFORE-VALUE  AFTER-VALUE
+----------------------------------------
+ save-result  <span class="nb">false</span>         <span class="nb">true</span>
+Affect<span class="o">(</span>row-cnt:1<span class="o">)</span> cost in <span class="m">3</span> ms.
+</pre></div>
+</div>
+<p>F.Y.I</p>
+<ol class="simple">
+<li>logging file lies in: <code class="docutils literal notranslate"><span class="pre">{user.home}/logs/arthas-cache/result.log</span></code>;</li>
+<li>remember to clean up the file to save disk space.</li>
+</ol>
+<div class="section" id="asynchronous-log">
+<span id="asynchronous-log"></span><h2>Asynchronous log<a class="headerlink" href="#asynchronous-log" title="Permalink to this headline">¶</a></h2>
+<p>:notes: :notes:
+With the latest Arthas, you can log the outputs asynchronously in the background:</p>
+<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>$ trace Test t &gt;&gt;  <span class="p">&amp;</span>
+job id  : <span class="m">2</span>
+cache location  : /Users/zhuyong/logs/arthas-cache/28198/2
+</pre></div>
+</div>
+<p>F.Y.I</p>
+<ol class="simple">
+<li><code class="docutils literal notranslate"><span class="pre">quit/exit</span></code> or <code class="docutils literal notranslate"><span class="pre">Ctrl+C</span></code> will not affect the asynchronous jobs :sparkles:;</li>
+<li>default timeout for the background job is 1 day (you can set it via <a class="reference internal" href="options.html"><span class="doc">options</span></a>);</li>
+<li>outputs will be save to the <code class="docutils literal notranslate"><span class="pre">cache</span> <span class="pre">location</span></code> now (no matter what <code class="docutils literal notranslate"><span class="pre">save-result</span></code> is - not <code class="docutils literal notranslate"><span class="pre">~/logs/arthas-cache/result.log</span></code> any more).</li>
+</ol>
+</div>
 </div>
 
 
