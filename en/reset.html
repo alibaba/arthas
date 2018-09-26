@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>getstatic &mdash; Arthas 3.0.5-SNAPSHOT documentation</title>
+  <title>reset &mdash; Arthas 3.0.5-SNAPSHOT documentation</title>
   
 
   
@@ -31,8 +31,6 @@
     <link rel="stylesheet" href="_static/overrides.css" type="text/css" />
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="sc" href="sc.html" />
-    <link rel="prev" title="sysprop" href="sysprop.html" />
 <script src="_static/center_page.js"></script>
  
 
@@ -88,34 +86,11 @@
               
             
             
-              <ul class="current">
+              <ul>
 <li class="toctree-l1"><a class="reference internal" href="install-detail.html">Installation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="quick-start.html">Quick start</a></li>
 <li class="toctree-l1"><a class="reference internal" href="advanced-use.html">Advanced usage</a></li>
-<li class="toctree-l1 current"><a class="reference internal" href="commands.html">Commands</a><ul class="current">
-<li class="toctree-l2"><a class="reference internal" href="commands.html#basic">Basic</a></li>
-<li class="toctree-l2 current"><a class="reference internal" href="commands.html#advanced">Advanced</a><ul class="current">
-<li class="toctree-l3"><a class="reference internal" href="dashboard.html">dashboard</a></li>
-<li class="toctree-l3"><a class="reference internal" href="thread.html">thread</a></li>
-<li class="toctree-l3"><a class="reference internal" href="jvm.html">jvm</a></li>
-<li class="toctree-l3"><a class="reference internal" href="sysprop.html">sysprop</a></li>
-<li class="toctree-l3 current"><a class="current reference internal" href="#">getstatic</a></li>
-<li class="toctree-l3"><a class="reference internal" href="sc.html">sc</a></li>
-<li class="toctree-l3"><a class="reference internal" href="sm.html">sm</a></li>
-<li class="toctree-l3"><a class="reference internal" href="dump.html">dump</a></li>
-<li class="toctree-l3"><a class="reference internal" href="jad.html">jad</a></li>
-<li class="toctree-l3"><a class="reference internal" href="classloader.html">classloader</a></li>
-<li class="toctree-l3"><a class="reference internal" href="redefine.html">redefine</a></li>
-<li class="toctree-l3"><a class="reference internal" href="monitor.html">monitor</a></li>
-<li class="toctree-l3"><a class="reference internal" href="watch.html">watch</a></li>
-<li class="toctree-l3"><a class="reference internal" href="trace.html">trace</a></li>
-<li class="toctree-l3"><a class="reference internal" href="stack.html">stack</a></li>
-<li class="toctree-l3"><a class="reference internal" href="tt.html">tt</a></li>
-<li class="toctree-l3"><a class="reference internal" href="options.html">options</a></li>
-</ul>
-</li>
-</ul>
-</li>
+<li class="toctree-l1"><a class="reference internal" href="commands.html">Commands</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas/issues?q=label%3Auser-case">User cases</a></li>
 <li class="toctree-l1"><a class="reference internal" href="release-notes.html">Release Notes</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas/issues?q=label%3Aquestion-answered">Questions and answers</a></li>
@@ -166,16 +141,14 @@
     
       <li><a href="index.html">Docs</a> &raquo;</li>
         
-          <li><a href="commands.html">All Commands</a> &raquo;</li>
-        
-      <li>getstatic</li>
+      <li>reset</li>
     
     
       <li class="wy-breadcrumbs-aside">
         
             
             
-              <a href="https://github.com/alibaba/arthas/blob/master/site/src/site/sphinx/en/getstatic.md" class="fa fa-github"> Edit on GitHub</a>
+              <a href="https://github.com/alibaba/arthas/blob/master/site/src/site/sphinx/en/reset.md" class="fa fa-github"> Edit on GitHub</a>
             
           
         
@@ -189,24 +162,59 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
             
-  <div class="section" id="getstatic">
-<span id="getstatic"></span><h1>getstatic<a class="headerlink" href="#getstatic" title="Permalink to this headline">¶</a></h1>
-<p>Check the static fields of classes conveniently as <code class="docutils literal notranslate"><span class="pre">getstatic</span> <span class="pre">class_name</span> <span class="pre">field_name</span></code></p>
-<p>Tip: if the <em>field</em> is a composite object, you can even use <a class="reference external" href="https://en.wikipedia.org/wiki/OGNL"><code class="docutils literal notranslate"><span class="pre">OGNL</span></code></a> to traverse, filter and access the internal properties of it.</p>
-<p>E.g. suppose <code class="docutils literal notranslate"><span class="pre">n</span></code> is a <code class="docutils literal notranslate"><span class="pre">Map</span></code> and the key is a <code class="docutils literal notranslate"><span class="pre">Enum</span></code> then if you want to get the key with a specific <code class="docutils literal notranslate"><span class="pre">Enum</span></code> value - <code class="docutils literal notranslate"><span class="pre">STOP</span></code> or <code class="docutils literal notranslate"><span class="pre">a</span></code>, you can achieve it as:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ getstatic com.alibaba.arthas.Test n &#39;entrySet().iterator.{? #this.key.name()==&quot;STOP&quot;}&#39;
-field: n
-@ArrayList[
-    @Node[STOP=bbb],
-]
-Affect(row-cnt:1) cost in 68 ms.
+  <div class="section" id="reset">
+<span id="reset"></span><h1>reset<a class="headerlink" href="#reset" title="Permalink to this headline">¶</a></h1>
+<blockquote>
+<div>Reset all classes that have been enhanced by Arthas, and all enhanced classes will be reset when Arthas server <code class="docutils literal notranslate"><span class="pre">shutdown</span></code>.</div></blockquote>
+<div class="section" id="usage">
+<span id="usage"></span><h2>Usage<a class="headerlink" href="#usage" title="Permalink to this headline">¶</a></h2>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ reset -h
+ USAGE:
+   reset [-h] [-E] [class-pattern]
 
-$ getstatic com.alibaba.arthas.Test m &#39;entrySet().iterator.{? #this.key==&quot;a&quot;}&#39;
-field: m
-@ArrayList[
-    @Node[a=aaa],
-]
+ SUMMARY:
+   Reset all the enhanced classes
+
+ EXAMPLES:
+   reset
+   reset *List
+   reset -E .*List
+
+ OPTIONS:
+ -h, --help                                                         this help
+ -E, --regex                                                        Enable regular expression to match (wildcard matching by default)
+ &lt;class-pattern&gt;                                                    Path and classname of Pattern Matching
 </pre></div>
+</div>
+</div>
+<div class="section" id="reset-specified-class">
+<span id="reset-specified-class"></span><h2>Reset specified class<a class="headerlink" href="#reset-specified-class" title="Permalink to this headline">¶</a></h2>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ trace Test test
+Press Ctrl+C to abort.
+Affect(class-cnt:1 , method-cnt:1) cost in 57 ms.
+`---ts=2017-10-26 17:10:33;thread_name=main;id=1;is_daemon=false;priority=5;TCCL=sun.misc.Launcher$AppClassLoader@14dad5dc
+    `---[0.590102ms] Test:test()
+
+`---ts=2017-10-26 17:10:34;thread_name=main;id=1;is_daemon=false;priority=5;TCCL=sun.misc.Launcher$AppClassLoader@14dad5dc
+    `---[0.068692ms] Test:test()
+
+$ reset Test
+Affect(class-cnt:1 , method-cnt:0) cost in 11 ms.
+</pre></div>
+</div>
+</div>
+<div class="section" id="reset-all-classes">
+<span id="reset-all-classes"></span><h2>Reset all classes<a class="headerlink" href="#reset-all-classes" title="Permalink to this headline">¶</a></h2>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ trace Test test
+Press Ctrl+C to abort.
+Affect(class-cnt:1 , method-cnt:1) cost in 15 ms.
+`---ts=2017-10-26 17:12:06;thread_name=main;id=1;is_daemon=false;priority=5;TCCL=sun.misc.Launcher$AppClassLoader@14dad5dc
+    `---[0.128518ms] Test:test()
+
+$ reset
+Affect(class-cnt:1 , method-cnt:0) cost in 9 ms.
+</pre></div>
+</div>
 </div>
 </div>
 
@@ -215,15 +223,6 @@ field: m
            
           </div>
           <footer>
-  
-    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
-      
-        <a href="sc.html" class="btn btn-neutral float-right" title="sc" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
-      
-      
-        <a href="sysprop.html" class="btn btn-neutral" title="sysprop" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
-      
-    </div>
   
 
   <hr/>

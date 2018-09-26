@@ -3,13 +3,13 @@ Advanced Usage
 
 ## Basic
 
-- help - show help info
-- cls - clear out the current screen
-- session - check details of the current session
-- [reset](reset.md) - reset all injected/enhanced classes
-- version - print the version of the Arthas attaching to the current target process
-- quit/exit - exit the current Arthas client without affecting other clients
-- shutdown - terminate the Arthas server and all clients
+* help - show help info
+* cls - clear out the current screen
+* session - check details of the current session
+* [reset](reset.md) - reset all injected/enhanced classes
+* version - print the version of the Arthas attaching to the current target process
+* quit/exit - exit the current Arthas client without affecting other clients
+* shutdown - terminate the Arthas server and all clients
 
 ## JVM
 
