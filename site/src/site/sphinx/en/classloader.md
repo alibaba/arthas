@@ -9,17 +9,17 @@ It can be a great help for `ResourceNotFoundException` when you can use command 
 
 |Name|Specification|
 |---:|:---|
-|[l]|count based on the class loader instance|
-|[t]|print all the inheritance structure of the class loaders|
+|[l]|list all class loader instances based on thread count|
+|[t]|print the inheritance structure of the class loaders|
 |[a]|list all the classes loaded by all the class loaders (use it with great caution since the output can be huge)|
-|`[c:]`|get the hashcode of the class loader|
-|`[c: r:]`|using class loader to search resource|
+|[c:]|get the hashcode of the class loader|
+|[c: r:]|using class loader to search resource|
 
 ### Usage
 
-* categorised by class loader
+* Categorised by class loader
 
-```s
+```sh
 $ classloader
  name                                                   numberOfInstances  loadedCountTotal
  com.taobao.pandora.service.loader.ModuleClassLoader    29                 11659
@@ -100,7 +100,7 @@ $ classloader -t
 |   | +-sun.reflect.DelegatingClassLoader@73f44f24
 ```
 
-* Check the real urls of `URLClassLoader`
+* Check URL of the class loader
 
 ```shell
 $ classloader -c 5ffe9775

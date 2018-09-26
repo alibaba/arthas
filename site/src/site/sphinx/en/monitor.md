@@ -1,14 +1,14 @@
 monitor
 =======
 
-Monitor the `class-pattern` & `method-pattern` matched methods invoking traces.
+Monitor methods calling stack traces.
 
 F.Y.I
 
-1. `monitor` is a persistent command, it never returns until `Ctrl+C` to manually stop it. 
-2. the server runs the tasks in the background;
-3. injected code will become invalid automatically once the tasks being terminated;
-4. in theory, Arthas commands will not change any original behaviors.
+1. `monitor` is a persistent command, it never returns until you press `Ctrl+C` to manually stop it;
+2. the server runs the jobs in the background;
+3. injected monitoring code will become invalid automatically once the monitoring jobs being terminated;
+4. in theory, Arthas will not change any original behaviors but if it does, please do not hesitate to start an [issue](https://github.com/alibaba/arthas/issues).
 
 ### Properties monitored
 
@@ -29,8 +29,8 @@ F.Y.I
 |---:|:---|
 |*class-pattern*|pattern for the class name|
 |*method-pattern*|pattern for the method name|
-|[E]|turn on regx matching while the default is wildcards matching|
-|`[c:]`|cycle of output with default value: `120 s`|
+|[E]|turn on regex matching while the default is wildcard matching|
+|[c:]|cycle of output with default value: `60 s`|
 
 ### Usage
 

@@ -1,14 +1,14 @@
 redefine
 ========
 
-Load the external `*.class` files and *re-define* the JVM-loaded classes.
+Load the external `*.class` files to **re-define** the JVM-loaded classes.
 
 Reference: [Instrumentation#redefineClasses](https://docs.oracle.com/javase/8/docs/api/java/lang/instrument/Instrumentation.html#redefineClasses-java.lang.instrument.ClassDefinition...-)
 
 F.Y.I
 
 1. Re-defined classes cannot be restores any more;
-2. Re-definition can fail (like adding a new field); for more information, please refer to JDK documentation
+2. Re-definition can fail (like adding a new field/method); for more information, please refer to JDK documentation
 
 ### Options
 
@@ -21,6 +21,6 @@ F.Y.I
 ### Usage
 
 ```
-   redefine -p /tmp/Test.class
-   redefine -c 327a647b -p /tmp/Test.class /tmp/Test\$Inner.class
+redefine -p /tmp/Test.class
+redefine -c 327a647b -p /tmp/Test.class /tmp/Test$Inner.class
 ```
