@@ -99,6 +99,7 @@
 <li class="toctree-l2 current"><a class="current reference internal" href="#">jvm</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#">使用参考</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#thread">THREAD相关</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#">文件描述符相关</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="sysprop.html">sysprop</a></li>
@@ -277,6 +278,11 @@
                       PEAK-COUNT     18
                       STARTED-COUNT  19
                       DEADLOCK-COUNT  0
+
+ FILE-DESCRIPTOR
+ 
+                      MAX-FILE-DESCRIPTOR-COUNT  10240
+                      OPEN-FILE-DESCRIPTOR-COUNT 648
                       
 Affect cost in 2 ms.
 </pre></div>
@@ -287,8 +293,16 @@ Affect cost in 2 ms.
 <ul class="simple">
 <li>COUNT: JVM当前活跃的线程数</li>
 <li>DAEMON-COUNT: JVM当前活跃的守护线程数</li>
-<li>LIVE-COUNT: 从JVM启动开始曾经活着的最大线程数</li>
-<li>STARTED-COUNT: 从jvm启动开始总共启动过的线程次数</li>
+<li>PEAK-COUNT: 从JVM启动开始曾经活着的最大线程数</li>
+<li>STARTED-COUNT: 从JVM启动开始总共启动过的线程次数</li>
+<li>DEADLOCK-COUNT: JVM当前死锁的线程数</li>
+</ul>
+</div>
+<div class="section" id="">
+<span id="id2"></span><h2>文件描述符相关<a class="headerlink" href="#" title="永久链接至标题">¶</a></h2>
+<ul class="simple">
+<li>MAX-FILE-DESCRIPTOR-COUNT：JVM进程最大可以打开的文件描述符数</li>
+<li>OPEN-FILE-DESCRIPTOR-COUNT：JVM当前打开的文件描述符数</li>
 </ul>
 </div>
 </div>
