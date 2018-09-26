@@ -1,7 +1,7 @@
-Arthas 3.0命令行快捷键
+Arthas 命令行快捷键
 ===
 
-keymap命令输出当前的快捷键映射表：
+`keymap`命令输出当前的快捷键映射表：
 
 默认的快捷键如下：
 
@@ -17,8 +17,8 @@ keymap命令输出当前的快捷键映射表：
 | `"\C-b"`      | ctrl + b         | backward-word        | 向后移动一个单词         |
 | `"\e[D"`      | 键盘左方向键           | backward-char        | 光标向前移动一个字符       |
 | `"\e[C"`      | 键盘右方向键           | forward-char         | 光标向后移动一个字符       |
-| `"\e[B"`      | 键盘下方向键           | next-history         | 上翻显示上一个命令        |
-| `"\e[A"`      | 键盘上方向键           | previous-history     | 下翻显示下一个命令        |
+| `"\e[B"`      | 键盘下方向键           | next-history         | 下翻显示下一个命令        |
+| `"\e[A"`      | 键盘上方向键           | previous-history     | 上翻显示上一个命令        |
 | `"\C-h"`      | ctrl + h         | backward-delete-char | 向后删除一个字符         |
 | `"\C-?"`      | ctrl + shift + / | backward-delete-char | 向后删除一个字符         |
 | `"\C-u"`      | ctrl + u         | undo                 | 撤销上一个命令，相当于清空当前行 |
