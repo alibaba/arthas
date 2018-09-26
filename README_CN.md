@@ -40,7 +40,7 @@ curl -L https://alibaba.github.io/arthas/install.sh | sh
 
 #### Windows
 
-1. 点击 [这里](http://search.maven.org/classic/#search%7Cga%7C1%7Cg%3A%22com.taobao.arthas%22%20AND%20a%3A%22arthas-packaging%22) 下载最新的Arthas zip包
+1. 点击 [![Arthas](https://img.shields.io/maven-central/v/com.taobao.arthas/arthas-packaging.svg "Arthas")](http://search.maven.org/classic/#search%7Cga%7C1%7Cg%3A%22com.taobao.arthas%22%20AND%20a%3A%22arthas-packaging%22) 下载最新的Arthas `bin.zip`包
 2. 解压缩zip包.
 3. 进入bin目录
 4. 执行以下命令 `as.bat $PID`
