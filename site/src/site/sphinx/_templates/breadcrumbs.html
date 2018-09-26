@@ -4,4 +4,7 @@
 {% set github_repo = 'arthas' %}
 {% set theme_vcs_pageview_mode = 'blob' %}
 {% set github_version = 'master' %}
-{% set conf_py_path = '/site/src/site/sphinx/' %}
+{% set conf_py_path = "/site/src/site/sphinx/" %}
+{% if language == 'en' %}
+    {% set conf_py_path = "/site/src/site/sphinx/en/" %}
+{% endif %}
