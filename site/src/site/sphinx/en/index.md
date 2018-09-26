@@ -36,7 +36,7 @@ Arthas is born to solve these issues. You can trouble-shoot your production issu
 Contents
 --------
 
-English version is on the way, if you would like to contribute, please leave a message [here](https://github.com/alibaba/arthas/issues/51)
+English version has just been finished. If you would like to make it better, please check [here](https://github.com/alibaba/arthas/issues/51) and submit your PM.
 
 * [Installation](install-detail.md)
 * [Quick start](quick-start.md)

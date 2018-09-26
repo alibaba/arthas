@@ -1,7 +1,7 @@
 trace
 =====
 
-Track the `class-pattern` & `method-pattern` matched method calling trace and print the time cost in each call.
+Track methods calling stack trace and print the time cost in each call.
 
 ### Parameters
 
@@ -11,18 +11,17 @@ Track the `class-pattern` & `method-pattern` matched method calling trace and pr
 |*method-pattern*|pattern for the method name|
 |*condition-express*|condition expression|
 |[E]|turn on regx matching while the default is wildcards matching|
-|`[n:]`|calling times|
-|`#cost`|time cost|
+|[n:]|calling times|
+|#cost|time cost|
 
 F.Y.I
 1. any valid OGNL expression as `"{params,returnObj}"` supported;
-2. filter by time cost as `trace *StringUtils isBlank '$cost>100'`; calling stack with only time cost higher than `100ms` will be printed.
+2. filter by time cost as `trace *StringUtils isBlank '#cost>100'`; calling stack with only time cost higher than `100ms` will be printed.
 
 Attention:
-1. `$cost` can be used in `watch/stack/trace`;
+1. `#cost` can be used in `watch/stack/trace`;
 2. using `#cost` in Arthas 3.0 instead of `$cost`.
 3. `trace` can help to locate the performance lurking issue but only `level-one` method invoking considered.
-
 
 Advanced:
 * [Critical fields in expression](advice-class.md)
@@ -101,8 +100,8 @@ trace com.alibaba.sample.petstore.web.store.module.screen.ItemList execute #cost
 Only the calling trace of the time cost higher than `4ms`presented now.
 
 F.Y.I
-1. just like JProfile and the like commercial software, you can `trace` down the specified method calling in Arthas;
+1. like JProfile and other similar commercial software, you can `trace` down the specified method calling stack with time cost in Arthas;
 2. there will be some overhead using `trace` but not much;
-3. the time cost is an instructive clue for troubleshooting, which means it's not that accurate ignoring the cost it itself causes; the deeper or more the call is, the accuracy is becoming worse;
+3. the time cost is an instructive clue for troubleshooting, which means it's not that accurate ignoring the cost it itself causes; the deeper or more the call is, the worse accuracy the time cost will be;
 4. `[0,0,0ms,11]xxx:yyy() [throws Exception]`，the same method calling aggregated into one line here while `throws Exception` indicates there is an exception.
 

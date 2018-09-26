@@ -3,7 +3,7 @@ sc
 
 Check the profiles of the loaded classes.
 
-Abbreviated from “Search-Class”; with the help of this command, you can search out all the loaded classes in JVM. Supported options are: `[d]`、`[E]`、`[f]` and `[x:]`.
+Abbreviated from *Search-Class*; with the help of this command, you can search out all the loaded classes in JVM. Supported options are: `[d]`、`[E]`、`[f]` and `[x:]`.
 
 Options
 -------
@@ -16,12 +16,12 @@ Options
 |*method-pattern*|pattern for the method name|
 |[d]|print the details of the current class including the source file, class declaration, the class loaders and the like.<br/>F.Y.I if a class is loaded by several class loaders, then the class will be printed several times|
 |[E]|turn on regx matching while the default is wildcards matching|
-|[f]|print the fields info of the current class, which should be used along with `-d`|
+|[f]|print the fields info of the current class, which ***must*** be used with `-d`|
 |[x:]|the depth to print the static fields, whose default is `0` - directly invoke the `toString()`|
 
 Tip: 
 1. *class-patten* supports full qualified class name (e.g. com.taobao.test.AAA and com/taobao/test/AAA) 
-2. `sc` turned on the `sub-class` matching in default mode, if you do want to hide the `sub-class` please just turn it off via `options disable-sub-class true`.
+2. `sc` turned on the `sub-class` matching in default mode; if you do want to hide `sub-class`, you can just turn it off with [options](options.md) as `options disable-sub-class true`.
 
 ### Usage
 

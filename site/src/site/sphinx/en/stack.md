@@ -11,16 +11,16 @@ Most of the time, we know the method being invoked but not always we know **HOW 
 |---:|:---|
 |*class-pattern*|pattern for the class name|
 |*method-pattern*|pattern for the method name|
-|*condition-express*|condition expression|
-|[E]|turn on regx matching while the default is wildcards matching|
-|`[n:]`|calling times|
+|*condition-expression*|condition expression|
+|[E]|turn on regex matching while the default is wildcard matching|
+|[n:]|calling times|
 
 F.Y.I
 1. any valid OGNL expression as `"{params,returnObj}"` supported;
-2. filter by time cost as `trace *StringUtils isBlank '$cost>100'`; calling stack with only time cost higher than `100ms` will be printed.
+2. filter by time cost as `trace *StringUtils isBlank '#cost>100'`; calling stack with only time cost higher than `100ms` will be printed.
 
 Attention:
-1. `$cost` can be used in `watch/stack/trace`;
+1. `#cost` can be used in `watch/stack/trace`;
 2. using `#cost` in Arthas 3.0 instead of `$cost`.
 
 
@@ -32,7 +32,7 @@ Advanced:
 
 ### Usage
 
-The quoting rules: if there are quotes within the expression, use another type of quotes to quote the whole expression. 
+The quoting rules: if there are quotes within the expression, use another type of quotes to quote the whole expression (single `''` or double `""` quotes). 
 
 ```
 $ stack com.alibaba.sample.petstore.dal.dao.ProductDao getProductById 'params[0]=="K9-BD-01"'
@@ -68,7 +68,7 @@ thread_name="http-bio-8080-exec-2" thread_id=0x48;is_daemon=true;priority=5;
         at com.alibaba.citrus.service.pipeline.impl.PipelineImpl$PipelineContextImpl.invoke(PipelineImpl.java:210)
         at com.alibaba.citrus.service.pipeline.impl.valve.ChooseValve.invoke(ChooseValve.java:98)
         at com.alibaba.citrus.service.pipeline.impl.PipelineImpl$PipelineContextImpl.invokeNext(PipelineImpl.java:157)
-......
+...
 ```
 
 Filtering by time cost:
@@ -110,5 +110,5 @@ thread_name=http-nio-8080-exec-10;id=31;is_daemon=true;priority=5;TCCL=com.taoba
         at com.alibaba.citrus.webx.impl.WebxControllerImpl.service(WebxControllerImpl.java:43)
         at com.alibaba.citrus.webx.impl.WebxRootControllerImpl.handleRequest(WebxRootControllerImpl.java:53)
         at com.alibaba.citrus.webx.support.AbstractWebxRootController.service(AbstractWebxRootController.java:165)
-.........   
+...
 ```
