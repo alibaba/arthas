@@ -236,8 +236,8 @@
 <div class="section" id="fgbg">
 <span id="fgbg"></span><h2>4. fg、bg命令，将命令转到前台、后台继续执行<a class="headerlink" href="#fgbg" title="永久链接至标题">¶</a></h2>
 <ul class="simple">
-<li>任务在后台执行或者暂停状态（‘ctrl + z’暂停任务）时，执行fg &lt;job-id&gt;将可以把对应的任务转到前台继续执行。在前台执行时，无法在console中执行其他命令</li>
-<li>当任务处于暂停状态时（‘ctrl + z’暂停任务），执行bg &lt;job-id&gt;将可以把对应的任务在后台继续执行</li>
+<li>任务在后台执行或者暂停状态（<code class="docutils literal notranslate"><span class="pre">ctrl</span> <span class="pre">+</span> <span class="pre">z</span></code>暂停任务）时，执行<code class="docutils literal notranslate"><span class="pre">fg</span> <span class="pre">&lt;job-id&gt;</span></code>将可以把对应的任务转到前台继续执行。在前台执行时，无法在console中执行其他命令</li>
+<li>当任务处于暂停状态时（<code class="docutils literal notranslate"><span class="pre">ctrl</span> <span class="pre">+</span> <span class="pre">z</span></code>暂停任务），执行<code class="docutils literal notranslate"><span class="pre">bg</span> <span class="pre">&lt;job-id&gt;</span></code>将可以把对应的任务在后台继续执行</li>
 <li>非当前session创建的job，只能由当前session fg到前台执行</li>
 </ul>
 </div>
@@ -248,7 +248,7 @@
 </pre></div>
 </div>
 <p>这时trace命令会在后台执行，并且把结果输出到~/logs/arthas-cache/test.out。可继续执行其他命令。并可查看文件中的命令执行结果。</p>
-<p>当远程调用时，可能无法确定机器文件路径，arthas同时支持了自动重定向到缓存路径。使用方法如下：</p>
+<p>当连接到远程的arthas server时，可能无法查看远程机器的文件，arthas同时支持了自动重定向到本地缓存路径。使用方法如下：</p>
 <div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>$ trace Test t &gt;&gt;  <span class="p">&amp;</span>
 job id  : <span class="m">2</span>
 cache location  : /Users/gehui/logs/arthas-cache/28198/2

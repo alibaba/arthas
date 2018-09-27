@@ -1,0 +1,317 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Arthas Async Jobs &mdash; Arthas 3.0.5-SNAPSHOT documentation</title>
+  
+
+  
+  
+    <link rel="shortcut icon" href="_static/favicon.ico"/>
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="_static/overrides.css" type="text/css" />
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+<script src="_static/center_page.js"></script>
+ 
+
+
+  
+  <script src="_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="index.html" class="icon icon-home"> Arthas
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                3.0.5-SNAPSHOT
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="install-detail.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="quick-start.html">Quick start</a></li>
+<li class="toctree-l1"><a class="reference internal" href="advanced-use.html">Advanced usage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="commands.html">Commands</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas/issues?q=label%3Auser-case">User cases</a></li>
+<li class="toctree-l1"><a class="reference internal" href="release-notes.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas/issues?q=label%3Aquestion-answered">Questions and answers</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas">Fork me at GitHub</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas/blob/master/CONTRIBUTING.md">CONTRIBUTING</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">Arthas</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+      <li>Arthas Async Jobs</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            
+              <a href="https://github.com/alibaba/arthas/blob/master/site/src/site/sphinx/en/async.md" class="fa fa-github"> Edit on GitHub</a>
+            
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="arthas-async-jobs">
+<span id="arthas-async-jobs"></span><h1>Arthas Async Jobs<a class="headerlink" href="#arthas-async-jobs" title="Permalink to this headline">¶</a></h1>
+<p>Asynchronous jobs in arthas, using commands related to linux jobs.<a class="reference external" href="http://man7.org/linux/man-pages/man1/jobs.1p.html">linux man jobs</a>。</p>
+<div class="section" id="use-to-run-the-command-in-the-background">
+<span id="use-to-run-the-command-in-the-background"></span><h2>1. Use &amp; to run the command in the background<a class="headerlink" href="#use-to-run-the-command-in-the-background" title="Permalink to this headline">¶</a></h2>
+<p>For example, execute the trace command in the background:</p>
+<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>trace Test t <span class="p">&amp;</span>  
+</pre></div>
+</div>
+</div>
+<div class="section" id="list-background-jobs">
+<span id="list-background-jobs"></span><h2>2. List background jobs<a class="headerlink" href="#list-background-jobs" title="Permalink to this headline">¶</a></h2>
+<p>If you want to list all background jobs, you can execute the <code class="docutils literal notranslate"><span class="pre">jobs</span></code> command and the results are as follows:</p>
+<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>$ <span class="nb">jobs</span>
+<span class="o">[</span><span class="m">10</span><span class="o">]</span>*
+       Stopped           watch com.taobao.container.Test <span class="nb">test</span> <span class="s2">&quot;params[0].{? #this.name == null }&quot;</span> -x <span class="m">2</span>
+       execution count : <span class="m">19</span>
+       start <span class="nb">time</span>      : Fri Sep <span class="m">22</span> <span class="m">09</span>:59:55 CST <span class="m">2017</span>
+       timeout date    : Sat Sep <span class="m">23</span> <span class="m">09</span>:59:55 CST <span class="m">2017</span>
+       session         : 3648e874-5e69-473f-9eed-7f89660b079b <span class="o">(</span>current<span class="o">)</span>
+</pre></div>
+</div>
+<p>You can see that there is currently a background job executing.</p>
+<ul class="simple">
+<li>job id is 10, <code class="docutils literal notranslate"><span class="pre">*</span></code> indicates that this job is created by the current session.</li>
+<li>status is <code class="docutils literal notranslate"><span class="pre">Stopped</span></code></li>
+<li>execution count is the number of executions, which have been executed 19 times since the start.</li>
+<li>timeout date: After this time, the job will automatically timeout and exit.</li>
+</ul>
+</div>
+<div class="section" id="suspend-and-cannel-job">
+<span id="suspend-and-cannel-job"></span><h2>3. Suspend and Cannel job<a class="headerlink" href="#suspend-and-cannel-job" title="Permalink to this headline">¶</a></h2>
+<p>When the job is executing in the foreground, such as directly calling the command <code class="docutils literal notranslate"><span class="pre">trace</span> <span class="pre">Test</span> <span class="pre">t</span></code> or calling the background job command <code class="docutils literal notranslate"><span class="pre">trace</span> <span class="pre">Test</span> <span class="pre">t</span> <span class="pre">&amp;</span></code>, the job is transferred to the foreground through the <code class="docutils literal notranslate"><span class="pre">fg</span></code> command. At this point, the console cannot continue to execute the command, but can receive and process the following keyboard events:</p>
+<ul class="simple">
+<li>‘ctrl + z’: Suspend the job, the job status will change to <code class="docutils literal notranslate"><span class="pre">Stopped</span></code>, and the job can be restarted by <code class="docutils literal notranslate"><span class="pre">bg</span> <span class="pre">&lt;job-id&gt;</span></code> or <code class="docutils literal notranslate"><span class="pre">fg</span> <span class="pre">&lt;job-id&gt;</span></code></li>
+<li>‘ctrl + c’: Stop the job</li>
+<li>‘ctrl + d’: According to linux semantics should be the exit terminal, currently arthas ignore this input.</li>
+</ul>
+</div>
+<div class="section" id="fg-bg-bring-a-background-job-to-the-foreground-restart-a-stopped-background-job">
+<span id="fg-bg-bring-a-background-job-to-the-foreground-restart-a-stopped-background-job"></span><h2>4. fg/bg, Bring a background job to the foreground/Restart a stopped background job<a class="headerlink" href="#fg-bg-bring-a-background-job-to-the-foreground-restart-a-stopped-background-job" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li>When the job is executed in the background or suspended (<code class="docutils literal notranslate"><span class="pre">ctrl</span> <span class="pre">+</span> <span class="pre">z</span></code> to suspend job), executing <code class="docutils literal notranslate"><span class="pre">fg</span> <span class="pre">&lt;job-id&gt;</span></code> will transfer the corresponding job to the foreground to continue execution.</li>
+<li>When the job is suspended (<code class="docutils literal notranslate"><span class="pre">ctrl</span> <span class="pre">+</span> <span class="pre">z</span></code> to suspend job), executing <code class="docutils literal notranslate"><span class="pre">bg</span> <span class="pre">&lt;job-id&gt;</span></code> will continue the corresponding job in the background.</li>
+<li>A job created by a non-current session can only be executed by the current session fg to the foreground.</li>
+</ul>
+</div>
+<div class="section" id="redirect-the-job-output">
+<span id="redirect-the-job-output"></span><h2>5. Redirect the job output<a class="headerlink" href="#redirect-the-job-output" title="Permalink to this headline">¶</a></h2>
+<p>The job output can be redirect to the specified file by <code class="docutils literal notranslate"><span class="pre">&gt;</span></code> or <code class="docutils literal notranslate"><span class="pre">&gt;&gt;</span></code>, and can be used together with <code class="docutils literal notranslate"><span class="pre">&amp;</span></code> to implement the asynchronous job of the arthas command. such as:</p>
+<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>$ trace Test t &gt;&gt; test.out <span class="p">&amp;</span>
+</pre></div>
+</div>
+<p>The trace command will be executed in the background and the output will be redirect to <code class="docutils literal notranslate"><span class="pre">~/logs/arthas-cache/test.out</span></code>. You can continue to execute other commands in the console.</p>
+<p>When connecting to a remote arthas server, you may not be able to view the files of the remote machine. Arthas also supports automatic redirection to the local cache file. Examples are as follows:</p>
+<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>$ trace Test t &gt;&gt;  <span class="p">&amp;</span>
+job id  : <span class="m">2</span>
+cache location  : /Users/gehui/logs/arthas-cache/28198/2
+</pre></div>
+</div>
+<p>You can see that does not specify the redirect file after <code class="docutils literal notranslate"><span class="pre">&gt;&gt;</span></code>, arthas will automatically redirect the job output to the <code class="docutils literal notranslate"><span class="pre">~/logs/arthas-cache</span></code>.</p>
+<p>In the above example, pid is <code class="docutils literal notranslate"><span class="pre">28198</span></code> and job id is <code class="docutils literal notranslate"><span class="pre">2</span></code>.</p>
+</div>
+<div class="section" id="stop-job">
+<span id="stop-job"></span><h2>6. Stop job<a class="headerlink" href="#stop-job" title="Permalink to this headline">¶</a></h2>
+<p>If you want to stop background job, just <code class="docutils literal notranslate"><span class="pre">kill</span> <span class="pre">&lt;job-id&gt;</span></code>.</p>
+</div>
+<div class="section" id="others">
+<span id="others"></span><h2>7. Others<a class="headerlink" href="#others" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li>Support up to 8 commands at the same time redirect the output to the log file.</li>
+<li>Do not open too many background asynchronous commands at the same time to avoid affecting the performance of the target JVM.</li>
+</ul>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2018, Alibaba Middleware Group, and contributors.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'./',
+            VERSION:'3.0.5-SNAPSHOT',
+            LANGUAGE:'en',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="_static/jquery.js"></script>
+      <script type="text/javascript" src="_static/underscore.js"></script>
+      <script type="text/javascript" src="_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  <script type="text/javascript" src="_static/js/theme.js"></script>
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+<div class="github-fork-ribbon-wrapper right">
+  <div class="github-fork-ribbon">
+    <a href="https://github.com/alibaba/arthas">Fork me at GitHub</a>
+  </div>
+</div>
+
+<script type="text/javascript" src="_static/add_badges.js"></script>
+
+<script>
+  var _hmt = _hmt || [];
+  (function() {
+    var hm = document.createElement("script");
+    hm.src = "https://hm.baidu.com/hm.js?d5c5e25b100f0eb51a4c35c8a86ea9b4";
+    var s = document.getElementsByTagName("script")[0]; 
+    s.parentNode.insertBefore(hm, s);
+  })();
+</script>  
+ 
+
+
+</body>
+</html>
