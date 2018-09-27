@@ -1,19 +1,8 @@
 All Commands 
 =============
 
-### Basic
-
-* help - check the assistant info for the command
-* cls - clear out the current screen area
-* session - check the current session profile
-* [reset](reset.md) - clear the injected code from the classes (B.T.W when Arthas server closed, all the injected will also be cleared)
-* version - the version of the working Arthas
-* quit - exit the current Arthas client without affecting other clients
-* shutdown - terminate the Arthas server and all clients
-* [keymap](keymap.md) - shortcuts for Arthas and also you can define your own
 
 
-### Advanced
 * [dashboard](dashboard.md)
 * [thread](thread.md)
 * [jvm](jvm.md)
@@ -37,4 +26,18 @@ All Commands
 * [tt](tt.md)
 
 * [options](options.md)
+
+
+### Basic Commands
+
+* help - check the assistant info for the command
+* cls - clear out the current screen area
+* session - check the current session profile
+* [reset](reset.md) - clear the injected code from the classes (B.T.W when Arthas server closed, all the injected will also be cleared)
+* version - the version of the working Arthas
+* quit - exit the current Arthas client without affecting other clients
+* shutdown - terminate the Arthas server and all clients
+* [keymap](keymap.md) - shortcuts for Arthas and also you can define your own
+
+
 
