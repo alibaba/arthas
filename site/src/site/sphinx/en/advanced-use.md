@@ -3,71 +3,74 @@ Advanced Usage
 
 ## Basic
 
-* help - show help info
-* cls - clear out the current screen
-* session - check details of the current session
-* [reset](reset.md) - reset all injected/enhanced classes
-* version - print the version of the Arthas attaching to the current target process
-* quit/exit - exit the current Arthas client without affecting other clients
-* shutdown - terminate the Arthas server and all clients
+* help - display Arthas help
+* cls - clear the screen
+* session - display current session information
+* [reset](reset.md) - reset all the enhanced classes. All enhanced classes will also be reset when Arthas server is closed by `shutdown`
+* version - print the version for the Arthas attached to the current Java process
+* quit/exit - exit the current Arthas session, without effecting other sessions
+* shutdown - terminate the Arthas server, all Arthas sessions will be destroyed
+* [keymap](keymap.md) - keymap for Arthas keyboard shortcut
 
 ## JVM
 
-* [dashboard](dashboard.md) - real-time dashboard for the current system
-* [thread](thread.md) - thread profile
-* [jvm](jvm.md) - JVM profile
-* [sysprop](sysprop.md) - check or modify JVM system properties
-* **New!** [getstatic](getstatic.md) :clap: - check the static properties of classes
+* [dashboard](dashboard.md) - dashboard for the system's real-time data
+* [thread](thread.md) - show java thread information
+* [jvm](jvm.md) - show JVM information
+* [sysprop](sysprop.md) - show/modify system properties
+* **New!** [getstatic](getstatic.md) :clap: - examine class's static properties
 
 ## class/classloader
 
-
-* [sc](sc.md) - check profiles of the classes loaded by JVM 
-* [sm](sm.md) - check methods' profile
-* [dump](dump.md) - dump out the byte code of the loaded classes to specified location
-* [redefine](redefine.md) - load external `*.class` files and re-define the JVM-loaded classes
+* [sc](sc.md) - check the info for the classes loaded by JVM 
+* [sm](sm.md) - check methods info for the loaded classes
+* [dump](dump.md) - dump the loaded classes in byte code to the specified location
+* [redefine](redefine.md) - load external `*.class` files and re-define it into JVM
 * [jad](jad.md) - de-compile the specified loaded classes
-* [classloader](classloader.md) - check the inheritance structure, urls, class loading info of class cloader; using classloader to get the url of the resource e.g. `java/lang/String.class`
+* [classloader](classloader.md) - check the inheritance structure, urls, class loading info for the specified class; using classloader to get the url of the resource e.g. `java/lang/String.class`
 
 ## monitor/watch/trace - related
 
-> **Attention**: commands here are taking advantage of `byte code injection`, which means we are using [AOP](https://en.wikipedia.org/wiki/Aspect-oriented_programming) to monitor and analyze the classes. So when using it for online troubleshooting, you'd better *explicitly specifically* specify the classes and also remember to remove the injected code by `shutdown` or `reset`. 
+> **Attention**: commands here are taking advantage of byte-code-injection, which means we are injecting some [aspects](https://en.wikipedia.org/wiki/Aspect-oriented_programming) into the current classes for monitoring and statistics purpose. Therefore when use it for online troubleshooting in your production environment, you'd better **explicitly specify** classes/methods/criteria, and remember to remove the injected code by `shutdown` or `reset`. 
 
-* [monitor](monitor.md) - monitor the `class-pattern` & `method-pattern` matched methods' invoking traces
-* [watch](watch.md) - watch/monitor methods in data aspect including `return values`, `exceptions` and `parameters`
-* [trace](trace.md) - track the method calling trace along with the time cost for each call
-* [stack](stack.md) - print the call stack trace of the current method in a persistent way
-* [tt](tt.md) - record the arguments and returned value for the methods, history included
+* [monitor](monitor.md) - monitor method execution statistics
+* [watch](watch.md) - display the input/output parameter, return object, and thrown exception of specified method invocation
+* [trace](trace.md) - trace the execution time of specified method invocation
+* [stack](stack.md) - display the stack trace for the specified class and method
+* [tt](tt.md) - time tunnel, record the arguments and returned value for the methods and replay
 
 ## options
 
-* [options](options.md) - check or set Arthas global options
+* [options](options.md) - check/set Arthas global options
 
 
 ## pipe
 
-`pipe` is supported in Arthas, e.g. `sm org.apache.log4j.Logger | grep <init>`
+Arthas provides `pipe` to process the result returned from commands further, e.g. `sm org.apache.log4j.Logger | grep <init>`. Commands supported in `pipe`:
 
-Commands supported in `pipe`:
-
-* grep - filtering
+* grep - filter the result with the given keyword
 * plaintext - remove the color
-* wc - line counting
+* wc - count lines
 
 ## async in background
 
-[async](async.md) will be a great help, when the `incident` seldom occurs and you are [`watch`](watch.md)ing it. 
+[async](async.md) can be handy when a problem is hardly to reproduce in the production enviornment, e.g. one `watch` condition may happen only once in one single day.
 
-
+* job control - use `>` to redirect result into the log file, use `&` to put the job to the background. Job keeps running even if the session is disconnected (the session lifecycle is 1 day by default)
 * jobs - list all jobs
 * kill - forcibly terminate the job
-* fg - bring the paused job back to the front
-* bg - put the paused job to the background
-* tips - a) use `>` to redirect the output; b) use `&` to put the job to the background; c) disconnecting the session will not influence the job (the default life is 1 day)
+* fg - bring the suspend job to the foreground
+* bg - put the job to run in the background
 
-## Others
+## Web Console
 
-* [Web Console](web-console.md) - using websocket to connect Arthas
+Arthas supports living inside a browser. The communication between arthas and browser is via websocket.
+
+* [Web Console](web-console.md)
+
+## Other features
+
+* [Async support](async.md)
 * [log the output](save-log.md)
 * [batch](batch-support.md)
 * [how to use ognl](https://github.com/alibaba/arthas/issues/11)
