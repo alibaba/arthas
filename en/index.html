@@ -167,28 +167,28 @@
 <span id="arthas-documentation"></span><h1>Arthas Documentation<a class="headerlink" href="#arthas-documentation" title="Permalink to this headline">¶</a></h1>
 <p><strong><a class="reference external" href="https://alibaba.github.io/arthas/">中文文档/Chinese Docs</a></strong></p>
 <p><img alt="arthas" src="_images/arthas.png" /></p>
-<p><code class="docutils literal notranslate"><span class="pre">Arthas</span></code> is an Java Diagnostic tool open sourced by Alibaba.</p>
-<p>Arthas can help developer trouble-shooting production issues for Java applications without modifying your code or restating your server.</p>
+<p><code class="docutils literal notranslate"><span class="pre">Arthas</span></code> is a Java Diagnostic tool open sourced by Alibaba.</p>
+<p>Arthas help developers in trouble-shooting production issues for Java applications without modifying code or restarting servers.</p>
 <div class="section" id="background">
 <span id="background"></span><h2>Background<a class="headerlink" href="#background" title="Permalink to this headline">¶</a></h2>
-<p>In production system, sometimes the networks is unreachable from local development environment. If you encounter some issues in production system, it is impossible to use IDE to debug the application remotely. More importantly, debugging in production is unacceptable, because it will suspend all the threads, which leads to business unavailability.</p>
-<p>Some may think of reproducing the same issue on the test/staging environment, however, some tricky issue either can hardly be reproduced on a different environment, or even disappeared once restarted.</p>
-<p>Thinking of adding some logs to your code? You have to go through test, staging, and then on to production. Time is money! That is a lot inefficient! Besides, the issue may not be reproducible once restart your JVM, as described above.</p>
-<p>Arthas is born to solve these issues. You can trouble-shoot your production issue on-the-fly. No JVM restart, no additional code changes. Arthas works as an observer, which will never suspend your existing threads.</p>
+<p>Often times, the production system network is inaccessible from local development environment. If issues are encountered in production systems, it is impossible to use IDE to debug the application remotely. More importantly, debugging in production environment is unacceptable, as it will suspend all the threads, which leads to blocking of business services.</p>
+<p>Developers could always try to reproduce the same issue on the test/staging environment. However, this is tricky as some issues cannot be be reproduced easily on a different environment, or even disappear once restarted.</p>
+<p>And if you’re thinking of adding some logs to your code to help trouble-shoot the issue, you will have to go through the following lifecycle; test, staging, and then to production. Time is money! This approach is inefficient! Besides, the issue may not be reproducible once the JVM is restarted, as described above.</p>
+<p>Arthas was built to solve these issues. A developer can trouble-shoot your production issues on-the-fly. No JVM restart, no additional code changes. Arthas works as an observer, which will never suspend your existing threads.</p>
 </div>
 <div class="section" id="key-features">
 <span id="key-features"></span><h2>Key features<a class="headerlink" href="#key-features" title="Permalink to this headline">¶</a></h2>
 <ul class="simple">
-<li>Check whether a class is loaded? And whether is class loaded from? (Useful for trouble-shooting jar file conflicts)</li>
+<li>Check whether a class is loaded? Or where the class is loaded from? (Useful for trouble-shooting jar file conflicts)</li>
 <li>Decompile a class to ensure the code is running as expected.</li>
-<li>View classloader statistics, e.g. how may classloaders are there? how many class is loaded per classloader? What is the classloader hierarchy? Is there possible classloader leaks?</li>
+<li>View classloader statistics, e.g. the number of classloaders, the number of classes loaded per classloader, the classloader hierarchy, possible classloader leaks, etc.</li>
 <li>View the method invocation details, e.g. method parameter, return object, thrown exception, and etc.</li>
-<li>Check the stack trace of specified method invocation. This is useful when you would like to know who is calling your method?</li>
+<li>Check the stack trace of specified method invocation. This is useful when a developers wants to know the caller of the said method.</li>
 <li>Trace the method invocation to find slow sub-invocations.</li>
-<li>Monitor method invcation statistics, e.g. qps, rt, success rate and etc.</li>
-<li>Monitoring your system metrics, thread states and cpu usage, gc statistics, and etc.</li>
-<li>Support command line interactive mode, with auto completed feature enabled.</li>
-<li>Support telnet and websocket, which enables both local and remote diagnostics with command line and browsers.</li>
+<li>Monitor method invocation statistics, e.g. qps, rt, success rate and etc.</li>
+<li>Monitor system metrics, thread states and cpu usage, gc statistics, and etc.</li>
+<li>Supports command line interactive mode, with auto-complete feature enabled.</li>
+<li>Supports telnet and websocket, which enables both local and remote diagnostics with command line and browsers.</li>
 </ul>
 </div>
 <div class="section" id="contents">

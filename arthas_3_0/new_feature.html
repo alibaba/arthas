@@ -175,7 +175,7 @@
 <div class="section" id="">
 <span id="id2"></span><h2>管道支持<a class="headerlink" href="#" title="永久链接至标题">¶</a></h2>
 <p>Arthas 3.0开始支持管道, 率先提供了<code class="docutils literal notranslate"><span class="pre">grep</span></code>,<code class="docutils literal notranslate"><span class="pre">wc</span></code>,<code class="docutils literal notranslate"><span class="pre">plaintext</span></code>的支持。</p>
-<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span> java.vendor.url                                      http://java.oracle.com/
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span> java.vendor.url                                      http://java.oracle.com/
  java.vm.vendor                                       Oracle Corporation
  java.runtime.name                                    Java<span class="o">(</span>TM<span class="o">)</span> SE Runtime Environment
  sun.java.command                                     org.apache.catalina.startup.Bootstrap start
@@ -210,7 +210,7 @@ To solve this, choose one of the following command:
 <div class="section" id="groovy">
 <span id="groovy"></span><h2>去groovy依赖<a class="headerlink" href="#groovy" title="永久链接至标题">¶</a></h2>
 <p>groovy表达式在arthas2.0中大量使用，例如watch表达式</p>
-<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>watch com.alibaba.sample.petstore.web.store.module.screen.ItemList add <span class="s2">&quot;params + &#39; &#39; + returnObj&quot;</span> params.size<span class="o">()==</span><span class="m">2</span>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>watch com.alibaba.sample.petstore.web.store.module.screen.ItemList add <span class="s2">&quot;params + &#39; &#39; + returnObj&quot;</span> params.size<span class="o">()==</span><span class="m">2</span>
 </pre></div>
 </div>
 <p>其中<code class="docutils literal notranslate"><span class="pre">&quot;params</span> <span class="pre">+</span> <span class="pre">'</span> <span class="pre">'</span> <span class="pre">+</span> <span class="pre">returnObj&quot;</span></code>以及<code class="docutils literal notranslate"><span class="pre">params.size()==2</span></code>背后其实都使用了groovy来进行表达式求值，如果反复大量的运行这些表达式，groovy会创建大量的classloader，打满perm区从而触发FGC。</p>

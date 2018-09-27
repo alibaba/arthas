@@ -61,7 +61,7 @@ org.apache.catalina.connector.Connector->getMaxCookieCount
 
 ```
 
-```sh
+```bash
 $ sm org.apache.catalina.connector.Connector -d
  declaring-class   org.apache.catalina.connector.Connector
  constructor-name  <init>

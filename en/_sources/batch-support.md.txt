@@ -28,12 +28,12 @@ Attention:
 
 Using `-b` to turn on script mode, and `-f` to run it and you can also *redirect* the output as:
 
-```sh
+```bash
 ./as.sh -b -f /var/tmp/test.as 56328 > test.out
 ```
 
 #### Step-3: Check the outputs
 
-```sh
+```bash
 cat test.out
 ```

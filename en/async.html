@@ -168,14 +168,14 @@
 <div class="section" id="use-to-run-the-command-in-the-background">
 <span id="use-to-run-the-command-in-the-background"></span><h2>1. Use &amp; to run the command in the background<a class="headerlink" href="#use-to-run-the-command-in-the-background" title="Permalink to this headline">¶</a></h2>
 <p>For example, execute the trace command in the background:</p>
-<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>trace Test t <span class="p">&amp;</span>  
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>trace Test t <span class="p">&amp;</span>  
 </pre></div>
 </div>
 </div>
 <div class="section" id="list-background-jobs">
 <span id="list-background-jobs"></span><h2>2. List background jobs<a class="headerlink" href="#list-background-jobs" title="Permalink to this headline">¶</a></h2>
 <p>If you want to list all background jobs, you can execute the <code class="docutils literal notranslate"><span class="pre">jobs</span></code> command and the results are as follows:</p>
-<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>$ <span class="nb">jobs</span>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$ <span class="nb">jobs</span>
 <span class="o">[</span><span class="m">10</span><span class="o">]</span>*
        Stopped           watch com.taobao.container.Test <span class="nb">test</span> <span class="s2">&quot;params[0].{? #this.name == null }&quot;</span> -x <span class="m">2</span>
        execution count : <span class="m">19</span>
@@ -212,12 +212,12 @@
 <div class="section" id="redirect-the-job-output">
 <span id="redirect-the-job-output"></span><h2>5. Redirect the job output<a class="headerlink" href="#redirect-the-job-output" title="Permalink to this headline">¶</a></h2>
 <p>The job output can be redirect to the specified file by <code class="docutils literal notranslate"><span class="pre">&gt;</span></code> or <code class="docutils literal notranslate"><span class="pre">&gt;&gt;</span></code>, and can be used together with <code class="docutils literal notranslate"><span class="pre">&amp;</span></code> to implement the asynchronous job of the arthas command. such as:</p>
-<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>$ trace Test t &gt;&gt; test.out <span class="p">&amp;</span>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$ trace Test t &gt;&gt; test.out <span class="p">&amp;</span>
 </pre></div>
 </div>
 <p>The trace command will be executed in the background and the output will be redirect to <code class="docutils literal notranslate"><span class="pre">~/logs/arthas-cache/test.out</span></code>. You can continue to execute other commands in the console.</p>
 <p>When connecting to a remote arthas server, you may not be able to view the files of the remote machine. Arthas also supports automatic redirection to the local cache file. Examples are as follows:</p>
-<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>$ trace Test t &gt;&gt;  <span class="p">&amp;</span>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$ trace Test t &gt;&gt;  <span class="p">&amp;</span>
 job id  : <span class="m">2</span>
 cache location  : /Users/gehui/logs/arthas-cache/28198/2
 </pre></div>

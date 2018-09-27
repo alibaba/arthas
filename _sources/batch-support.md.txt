@@ -28,12 +28,12 @@ sc -d org.apache.commons.lang.StringUtils
 
 通过`-b`开启批处理模式， `-f`执行脚本文件， 批处理脚本默认会输出到标准输出中，可以将结果重定向到文件中。
 
-```sh
+```bash
 ./as.sh -b -f /var/tmp/test.as 56328 > test.out
 ```
 
 #### 第三步： 查看运行结果
 
-```sh
+```bash
 cat test.out
 ```

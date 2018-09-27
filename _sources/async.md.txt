@@ -6,14 +6,14 @@ arthas中的异步调用，使用了仿linux系统任务相关的命令。[linux
 ## 1. 使用&在后台执行任务
 比如希望执行后台执行trace命令，那么调用下面命令
 
-```sh
+```bash
 trace Test t &  
 ```
 这时命令在后台执行，可以在console中继续执行其他命令。
 
 ## 2. 通过jobs查看任务
 如果希望查看当前有哪些arthas任务在执行，可以执行jobs命令，执行结果如下
-```sh
+```bash
 $ jobs
 [10]*
        Stopped           watch com.taobao.container.Test test "params[0].{? #this.name == null }" -x 2
@@ -43,13 +43,13 @@ $ jobs
 ## 5. 任务输出重定向
 可通过`>`或者`>>`将任务输出结果输出到指定的文件中，可以和`&`一起使用，实现arthas命令的异步调用。比如：
 
-```sh
+```bash
 $ trace Test t >> test.out &
 ```
 这时trace命令会在后台执行，并且把结果输出到~/logs/arthas-cache/test.out。可继续执行其他命令。并可查看文件中的命令执行结果。
 
 当连接到远程的arthas server时，可能无法查看远程机器的文件，arthas同时支持了自动重定向到本地缓存路径。使用方法如下：
-```sh
+```bash
 $ trace Test t >>  &
 job id  : 2
 cache location  : /Users/gehui/logs/arthas-cache/28198/2

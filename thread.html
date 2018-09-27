@@ -311,7 +311,7 @@ ID         NAME                             GROUP                 PRIORITY   STA
 <div class="section" id="thread-b">
 <span id="thread-b"></span><h3>thread -b, 找出当前阻塞其他线程的线程<a class="headerlink" href="#thread-b" title="永久链接至标题">¶</a></h3>
 <p>有时候我们发现应用卡住了， 通常是由于某个线程拿住了某个锁， 并且其他线程都在等待这把锁造成的。 为了排查这类问题， arthas提供了<code class="docutils literal notranslate"><span class="pre">thread</span> <span class="pre">-b</span></code>， 一键找出那个罪魁祸首。</p>
-<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>$ thread -b
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$ thread -b
 <span class="s2">&quot;http-bio-8080-exec-4&quot;</span> <span class="nv">Id</span><span class="o">=</span><span class="m">27</span> TIMED_WAITING
     at java.lang.Thread.sleep<span class="o">(</span>Native Method<span class="o">)</span>
     at test.arthas.TestThreadBlocking.doGet<span class="o">(</span>TestThreadBlocking.java:22<span class="o">)</span>
@@ -354,7 +354,7 @@ ID         NAME                             GROUP                 PRIORITY   STA
 </div>
 <div class="section" id="thread-i">
 <span id="thread-i"></span><h3>thread -i, 指定采样时间间隔<a class="headerlink" href="#thread-i" title="永久链接至标题">¶</a></h3>
-<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>$ thread -n <span class="m">3</span> -i <span class="m">1000</span>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$ thread -n <span class="m">3</span> -i <span class="m">1000</span>
 <span class="s2">&quot;as-command-execute-daemon&quot;</span> <span class="nv">Id</span><span class="o">=</span><span class="m">4759</span> <span class="nv">cpuUsage</span><span class="o">=</span><span class="m">23</span>% RUNNABLE
     at sun.management.ThreadImpl.dumpThreads0<span class="o">(</span>Native Method<span class="o">)</span>
     at sun.management.ThreadImpl.getThreadInfo<span class="o">(</span>ThreadImpl.java:440<span class="o">)</span>

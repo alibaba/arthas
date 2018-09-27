@@ -99,7 +99,7 @@ $ thread 1
 
 有时候我们发现应用卡住了， 通常是由于某个线程拿住了某个锁， 并且其他线程都在等待这把锁造成的。 为了排查这类问题， arthas提供了`thread -b`， 一键找出那个罪魁祸首。
 
-```sh
+```bash
 $ thread -b
 "http-bio-8080-exec-4" Id=27 TIMED_WAITING
     at java.lang.Thread.sleep(Native Method)
@@ -143,7 +143,7 @@ $ thread -b
 
 #### thread -i, 指定采样时间间隔
 
-```sh
+```bash
 $ thread -n 3 -i 1000
 "as-command-execute-daemon" Id=4759 cpuUsage=23% RUNNABLE
     at sun.management.ThreadImpl.dumpThreads0(Native Method)

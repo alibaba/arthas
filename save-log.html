@@ -194,7 +194,7 @@
 <ul class="simple">
 <li>默认情况下，该功能是关闭的，如果需要开启，请执行以下命令：</li>
 </ul>
-<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>$ options save-result <span class="nb">true</span>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$ options save-result <span class="nb">true</span>
  NAME         BEFORE-VALUE  AFTER-VALUE
 ----------------------------------------
  save-result  <span class="nb">false</span>         <span class="nb">true</span>
@@ -208,7 +208,7 @@ Affect<span class="o">(</span>row-cnt:1<span class="o">)</span> cost in <span cl
 <p>结果会异步保存在：<code class="docutils literal notranslate"><span class="pre">{user.home}/logs/arthas-cache/result.log</span></code>，请定期进行清理，以免占据磁盘空间</p>
 <div class="section" id="arthas">
 <span id="arthas"></span><h2>使用新版本Arthas的异步后台任务将结果存日志文件<a class="headerlink" href="#arthas" title="永久链接至标题">¶</a></h2>
-<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>$ trace Test t &gt;&gt;  <span class="p">&amp;</span>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$ trace Test t &gt;&gt;  <span class="p">&amp;</span>
 job id  : <span class="m">2</span>
 cache location  : /Users/zhuyong/logs/arthas-cache/28198/2
 </pre></div>
