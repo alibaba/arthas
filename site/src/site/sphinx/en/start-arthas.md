@@ -7,7 +7,7 @@ Start Arthas
 ./as.sh
 ```
 
-```sh
+```bash
 ➜  bin git:(develop) ✗ ./as.sh
 Found existing java process, please choose one and hit RETURN.
   [1]: 3088 org.jetbrains.idea.maven.server.RemoteMavenServer

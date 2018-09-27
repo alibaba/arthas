@@ -100,7 +100,7 @@ $ thread 1
 
 Using `-b`, we can effectively locate the threads holding locks blocking other threads resulting in a frozen system. 
 
-```sh
+```bash
 $ thread -b
 "http-bio-8080-exec-4" Id=27 TIMED_WAITING
     at java.lang.Thread.sleep(Native Method)
@@ -144,7 +144,7 @@ $ thread -b
 
 #### thread -i specify the collecting interval
 
-```sh
+```bash
 $ thread -n 3 -i 1000
 "as-command-execute-daemon" Id=4759 cpuUsage=23% RUNNABLE
     at sun.management.ThreadImpl.dumpThreads0(Native Method)

@@ -122,7 +122,7 @@ Affect(row-cnt:1) cost in 190 ms.
 
 De-compile the specified method:
 
-```sh
+```bash
 $ jad com.taobao.container.web.arthas.rest.MetricsController directMetrics
 
 ClassLoader:

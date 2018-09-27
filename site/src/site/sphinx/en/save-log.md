@@ -5,7 +5,7 @@ Log command outputs for later analysis, turned off by default.
 
 To turn it on, using [options](options.md) as:
 
-```sh
+```bash
 $ options save-result true
  NAME         BEFORE-VALUE  AFTER-VALUE
 ----------------------------------------
@@ -23,7 +23,7 @@ F.Y.I
  :notes: :notes: 
 With the latest Arthas, you can log the outputs asynchronously in the background:
 
-```sh
+```bash
 $ trace Test t >>  &
 job id  : 2
 cache location  : /Users/zhuyong/logs/arthas-cache/28198/2

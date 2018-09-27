@@ -19,7 +19,7 @@ It can be a great help for `ResourceNotFoundException` when you can use command 
 
 * Categorised by class loader
 
-```sh
+```bash
 $ classloader
  name                                                   numberOfInstances  loadedCountTotal
  com.taobao.pandora.service.loader.ModuleClassLoader    29                 11659
@@ -38,7 +38,7 @@ Affect(row-cnt:11) cost in 66 ms.
 
 * Categorized by class loader instance
 
-```sh
+```bash
 $ classloader -l
  name                                                            loadedCount  hash      parent
  BootstrapClassLoader                                            3711         null      null

@@ -8,7 +8,7 @@ Asynchronous jobs in arthas, using commands related to linux jobs.[linux man job
 
 For example, execute the trace command in the background:
 
-```sh
+```bash
 trace Test t &  
 ```
 
@@ -17,7 +17,7 @@ trace Test t &
 If you want to list all background jobs, you can execute the `jobs` command and the results are as follows:
 
 
-```sh
+```bash
 $ jobs
 [10]*
        Stopped           watch com.taobao.container.Test test "params[0].{? #this.name == null }" -x 2
@@ -54,7 +54,7 @@ When the job is executing in the foreground, such as directly calling the comman
 
 The job output can be redirect to the specified file by `>` or `>>`, and can be used together with `&` to implement the asynchronous job of the arthas command. such as:
 
-```sh
+```bash
 $ trace Test t >> test.out &
 ```
 
@@ -63,7 +63,7 @@ The trace command will be executed in the background and the output will be redi
 
 When connecting to a remote arthas server, you may not be able to view the files of the remote machine. Arthas also supports automatic redirection to the local cache file. Examples are as follows:
 
-```sh
+```bash
 $ trace Test t >>  &
 job id  : 2
 cache location  : /Users/gehui/logs/arthas-cache/28198/2
