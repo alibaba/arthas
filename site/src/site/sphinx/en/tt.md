@@ -112,7 +112,7 @@ Advanced:
 
 ### Check context of the call
 
-Using `tt -i <index>` to check a specific record.
+Using `tt -i <index>` to check a specific calling details.
 
 ```
 $ 
