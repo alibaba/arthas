@@ -1,7 +1,7 @@
 stack
 =====
 
-Print out the full call stack trace containing the current method.
+Print out the full call stack trace *till* the current method.
 
 Most of the time, we know the method being invoked but not always we know **HOW being invoked**; `stack` can be a great help to locate the *source* for you. 
 
