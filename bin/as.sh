@@ -48,6 +48,9 @@ BATCH_MODE=false
 # if true, the script will only attach the agent to target jvm.
 ATTACH_ONLY=false
 
+# if true, show jps -v
+PROC_VERBOSE=false
+
 # define batch script location
 BATCH_SCRIPT=
 
@@ -150,6 +153,12 @@ to_comparable_version()
     echo ${1}|awk -F "." '{printf("%d.%d.%d\n",$1,$2,$3)}'
 }
 
+jps_without_self()
+{
+    [ $PROC_VERBOSE = true ] && jps_opt="-v" || jps_opt="-l"
+    ${JAVA_HOME}/bin/jps $jps_opt | grep -v sun.tools.jps.Jps
+}
+
 # update arthas if necessary
 update_if_necessary()
 {
@@ -219,7 +228,7 @@ Example:
 
 Here is the list of possible java process(es) to attatch:
 
-$(${JAVA_HOME}/bin/jps -l | grep -v sun.tools.jps.Jps)
+$(jps_without_self)
 "
 }
 
@@ -289,6 +298,11 @@ parse_arguments()
       shift
     fi
 
+    if [ "$1" = "-v" ] ; then
+        PROC_VERBOSE=true
+        shift
+    fi
+
     TARGET_PID=$(echo ${1}|awk -F "@"   '{print $1}');
     TARGET_IP=$(echo ${1}|awk -F "@|:" '{print $2}');
     TELNET_PORT=$(echo ${1}|awk -F ":"   '{print $2}');
@@ -300,7 +314,7 @@ parse_arguments()
         # backup IFS: https://github.com/alibaba/arthas/issues/128
         local IFS_backup=$IFS
         IFS=$'\n'
-        CANDIDATES=($(${JAVA_HOME}/bin/jps -l | grep -v sun.tools.jps.Jps | awk '{print $0}'))
+        CANDIDATES=($(jps_without_self | awk '{print $0}'))
 
         if [ ${#CANDIDATES[@]} -eq 0 ]; then
             echo "Error: no available java process to attach."
