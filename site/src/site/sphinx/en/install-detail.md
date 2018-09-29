@@ -17,20 +17,17 @@ By the way, you can also add the absolute path of the script `as.sh` to `$PATH` 
 
 Latest Version: [![Arthas](https://img.shields.io/maven-central/v/com.taobao.arthas/arthas-packaging.svg?style=flat-square "Arthas")](http://search.maven.org/classic/#search%7Cga%7C1%7Cg%3A%22com.taobao.arthas%22%20AND%20a%3A%22arthas-packaging%22)
 
-Download the latest `bin.zip`, unzip the package and you can find the `as.bat`. For now this script will only take one argument `pid` which means you can only diagnose the local Java process. (Welcome any bat script expert to make it better :heart:)
+Download the latest `bin.zip`, unzip the package and you can find the `as.bat`. For now this script will only take one argument `pid` which means you can only diagnose the local Java process (welcome **experts at bat script** to make it better).
 
 ```bash
 as.bat <pid>
 ```
 
-A small tip: 
+Tips:
 
-If you are asking for better UX, you can start the Arthas Server locally by `as.bat <pid>` and then use `./as.sh <pid>@<ip>:<por>`in another Linux/Unix/Mac machine. 
+- if you are asking for better UX, you can start the Arthas server locally by `as.bat <pid>` and then use `./as.sh <pid>@<ip>:<por>`in another Linux/Unix/Mac machine. 
 
-
-Another tip:
-
-If in Windows, the color is not working as expect. You can try [conemu](https://sourceforge.net/projects/conemu) to get it to work. 
+- if in Windows, the color is not working as expect. You can try [conemu](https://sourceforge.net/projects/conemu) to get it to work. 
 
 ## Manual Installation
 
@@ -40,7 +37,7 @@ If in Windows, the color is not working as expect. You can try [conemu](https://
 
 If you cannot boot Arthas, try to pass in all the critical options manually as the following steps:
 
-1. locate the java for JVM:
+1. locate the target java process:
 
     - Linux/Unix/Mac: `ps aux | grep java`
     - Windows: open the Process Monitor to search java
@@ -89,7 +86,7 @@ Download the latest `doc.zip`.
 ### Linux/Unix/Mac
 
 ```bash
-rm -rf ~/.arthas/ ~/.arthas_history
+rm -rf ~/.arthas/ ~/.arthas_history ~/logs
 ```
 
 ### Windows
