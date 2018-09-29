@@ -36,7 +36,7 @@ Monitor methods calling stack traces.
 ### Usage
 
 ```bash
-tor demo.Demo$Counter value -c 5 -n 5
+$ monitor demo.Demo$Counter value -c 5 -n 5
 Press Ctrl+C to abort.
 Affect(class-cnt:1 , method-cnt:1) cost in 59 ms.
  timestamp            class              method  total  success  fail  avg-rt(ms)  fail-rate                                                
