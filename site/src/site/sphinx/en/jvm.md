@@ -107,4 +107,4 @@ Affect cost in 2 ms.
 ### fileDescriptor-related
 
 * MAX-FILE-DESCRIPTOR-COUNT：the count of max file descriptor JVM process can open
-* OPEN-FILE-DESCRIPTOR-COUNT：the current count of file descriptor JVM process open
+* OPEN-FILE-DESCRIPTOR-COUNT：the current count of file descriptor JVM process has opened
