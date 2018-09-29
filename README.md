@@ -71,7 +71,7 @@ English version is on the way, if you would like to contribute, please leave a m
 
 #### Dashboard
 
-* https://alibaba.github.io/arthas/dashboard
+* https://alibaba.github.io/arthas/en/dashboard
 
 ![dashboard](site/src/site/sphinx/_static/dashboard.png)
 
@@ -297,7 +297,7 @@ $ classloader
 
 #### Web Console
 
-* https://alibaba.github.io/arthas/web-console
+* https://alibaba.github.io/arthas/en/web-console
 
 ![web console](site/src/site/sphinx/_static/web-console-local.png)
 
