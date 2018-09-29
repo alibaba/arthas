@@ -31,7 +31,7 @@
     <link rel="stylesheet" href="_static/overrides.css" type="text/css" />
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="All Commands" href="commands.html" />
+    <link rel="next" title="Web Console" href="web-console.html" />
     <link rel="prev" title="Quick Start" href="quick-start.html" />
 <script src="_static/center_page.js"></script>
  
@@ -99,7 +99,17 @@
 <li class="toctree-l2"><a class="reference internal" href="#options">options</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#pipe">pipe</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#async-in-background">async in background</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#others">Others</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#web-console">Web Console</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="web-console.html">Web Console</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#other-features">Other features</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="async.html">Async support</a></li>
+<li class="toctree-l3"><a class="reference internal" href="save-log.html">log the output</a></li>
+<li class="toctree-l3"><a class="reference internal" href="batch-support.html">batch</a></li>
+<li class="toctree-l3"><a class="reference external" href="https://github.com/alibaba/arthas/issues/11">how to use ognl</a></li>
+</ul>
+</li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="commands.html">Commands</a></li>
@@ -179,83 +189,94 @@
 <div class="section" id="basic">
 <span id="basic"></span><h2>Basic<a class="headerlink" href="#basic" title="Permalink to this headline">¶</a></h2>
 <ul class="simple">
-<li>help - show help info</li>
-<li>cls - clear out the current screen</li>
-<li>session - check details of the current session</li>
-<li><a class="reference internal" href="reset.html"><span class="doc">reset</span></a> - reset all injected/enhanced classes</li>
-<li>version - print the version of the Arthas attaching to the current target process</li>
-<li>quit/exit - exit the current Arthas client without affecting other clients</li>
-<li>shutdown - terminate the Arthas server and all clients</li>
+<li>help - display Arthas help</li>
+<li>cls - clear the screen</li>
+<li>session - display current session information</li>
+<li><a class="reference internal" href="reset.html"><span class="doc">reset</span></a> - reset all the enhanced classes. All enhanced classes will also be reset when Arthas server is closed by <code class="docutils literal notranslate"><span class="pre">shutdown</span></code></li>
+<li>version - print the version for the Arthas attached to the current Java process</li>
+<li>quit/exit - exit the current Arthas session, without effecting other sessions</li>
+<li>shutdown - terminate the Arthas server, all Arthas sessions will be destroyed</li>
+<li><a class="reference internal" href="keymap.html"><span class="doc">keymap</span></a> - keymap for Arthas keyboard shortcut</li>
 </ul>
 </div>
 <div class="section" id="jvm">
 <span id="jvm"></span><h2>JVM<a class="headerlink" href="#jvm" title="Permalink to this headline">¶</a></h2>
 <ul class="simple">
-<li><a class="reference internal" href="dashboard.html"><span class="doc">dashboard</span></a> - real-time dashboard for the current system</li>
-<li><a class="reference internal" href="thread.html"><span class="doc">thread</span></a> - thread profile</li>
-<li><a class="reference internal" href="jvm.html"><span class="doc">jvm</span></a> - JVM profile</li>
-<li><a class="reference internal" href="sysprop.html"><span class="doc">sysprop</span></a> - check or modify JVM system properties</li>
-<li><strong>New!</strong> <a class="reference internal" href="getstatic.html"><span class="doc">getstatic</span></a> :clap: - check the static properties of classes</li>
+<li><a class="reference internal" href="dashboard.html"><span class="doc">dashboard</span></a> - dashboard for the system’s real-time data</li>
+<li><a class="reference internal" href="thread.html"><span class="doc">thread</span></a> - show java thread information</li>
+<li><a class="reference internal" href="jvm.html"><span class="doc">jvm</span></a> - show JVM information</li>
+<li><a class="reference internal" href="sysprop.html"><span class="doc">sysprop</span></a> - show/modify system properties</li>
+<li><strong>New!</strong> <a class="reference internal" href="getstatic.html"><span class="doc">getstatic</span></a> :clap: - examine class’s static properties</li>
 </ul>
 </div>
 <div class="section" id="class-classloader">
 <span id="class-classloader"></span><h2>class/classloader<a class="headerlink" href="#class-classloader" title="Permalink to this headline">¶</a></h2>
 <ul class="simple">
-<li><a class="reference internal" href="sc.html"><span class="doc">sc</span></a> - check profiles of the classes loaded by JVM</li>
-<li><a class="reference internal" href="sm.html"><span class="doc">sm</span></a> - check methods’ profile</li>
-<li><a class="reference internal" href="dump.html"><span class="doc">dump</span></a> - dump out the byte code of the loaded classes to specified location</li>
-<li><a class="reference internal" href="redefine.html"><span class="doc">redefine</span></a> - load external <code class="docutils literal notranslate"><span class="pre">*.class</span></code> files and re-define the JVM-loaded classes</li>
+<li><a class="reference internal" href="sc.html"><span class="doc">sc</span></a> - check the info for the classes loaded by JVM</li>
+<li><a class="reference internal" href="sm.html"><span class="doc">sm</span></a> - check methods info for the loaded classes</li>
+<li><a class="reference internal" href="dump.html"><span class="doc">dump</span></a> - dump the loaded classes in byte code to the specified location</li>
+<li><a class="reference internal" href="redefine.html"><span class="doc">redefine</span></a> - load external <code class="docutils literal notranslate"><span class="pre">*.class</span></code> files and re-define it into JVM</li>
 <li><a class="reference internal" href="jad.html"><span class="doc">jad</span></a> - de-compile the specified loaded classes</li>
-<li><a class="reference internal" href="classloader.html"><span class="doc">classloader</span></a> - check the inheritance structure, urls, class loading info of class cloader; using classloader to get the url of the resource e.g. <code class="docutils literal notranslate"><span class="pre">java/lang/String.class</span></code></li>
+<li><a class="reference internal" href="classloader.html"><span class="doc">classloader</span></a> - check the inheritance structure, urls, class loading info for the specified class; using classloader to get the url of the resource e.g. <code class="docutils literal notranslate"><span class="pre">java/lang/String.class</span></code></li>
 </ul>
 </div>
 <div class="section" id="monitor-watch-trace-related">
 <span id="monitor-watch-trace-related"></span><h2>monitor/watch/trace - related<a class="headerlink" href="#monitor-watch-trace-related" title="Permalink to this headline">¶</a></h2>
 <blockquote>
-<div><strong>Attention</strong>: commands here are taking advantage of <code class="docutils literal notranslate"><span class="pre">byte</span> <span class="pre">code</span> <span class="pre">injection</span></code>, which means we are using <a class="reference external" href="https://en.wikipedia.org/wiki/Aspect-oriented_programming">AOP</a> to monitor and analyze the classes. So when using it for online troubleshooting, you’d better <em>explicitly specifically</em> specify the classes and also remember to remove the injected code by <code class="docutils literal notranslate"><span class="pre">shutdown</span></code> or <code class="docutils literal notranslate"><span class="pre">reset</span></code>.</div></blockquote>
+<div><strong>Attention</strong>: commands here are taking advantage of byte-code-injection, which means we are injecting some <a class="reference external" href="https://en.wikipedia.org/wiki/Aspect-oriented_programming">aspects</a> into the current classes for monitoring and statistics purpose. Therefore when use it for online troubleshooting in your production environment, you’d better <strong>explicitly specify</strong> classes/methods/criteria, and remember to remove the injected code by <code class="docutils literal notranslate"><span class="pre">shutdown</span></code> or <code class="docutils literal notranslate"><span class="pre">reset</span></code>.</div></blockquote>
 <ul class="simple">
-<li><a class="reference internal" href="monitor.html"><span class="doc">monitor</span></a> - monitor the <code class="docutils literal notranslate"><span class="pre">class-pattern</span></code> &amp; <code class="docutils literal notranslate"><span class="pre">method-pattern</span></code> matched methods’ invoking traces</li>
-<li><a class="reference internal" href="watch.html"><span class="doc">watch</span></a> - watch/monitor methods in data aspect including <code class="docutils literal notranslate"><span class="pre">return</span> <span class="pre">values</span></code>, <code class="docutils literal notranslate"><span class="pre">exceptions</span></code> and <code class="docutils literal notranslate"><span class="pre">parameters</span></code></li>
-<li><a class="reference internal" href="trace.html"><span class="doc">trace</span></a> - track the method calling trace along with the time cost for each call</li>
-<li><a class="reference internal" href="stack.html"><span class="doc">stack</span></a> - print the call stack trace of the current method in a persistent way</li>
-<li><a class="reference internal" href="tt.html"><span class="doc">tt</span></a> - record the arguments and returned value for the methods, history included</li>
+<li><a class="reference internal" href="monitor.html"><span class="doc">monitor</span></a> - monitor method execution statistics</li>
+<li><a class="reference internal" href="watch.html"><span class="doc">watch</span></a> - display the input/output parameter, return object, and thrown exception of specified method invocation</li>
+<li><a class="reference internal" href="trace.html"><span class="doc">trace</span></a> - trace the execution time of specified method invocation</li>
+<li><a class="reference internal" href="stack.html"><span class="doc">stack</span></a> - display the stack trace for the specified class and method</li>
+<li><a class="reference internal" href="tt.html"><span class="doc">tt</span></a> - time tunnel, record the arguments and returned value for the methods and replay</li>
 </ul>
 </div>
 <div class="section" id="options">
 <span id="options"></span><h2>options<a class="headerlink" href="#options" title="Permalink to this headline">¶</a></h2>
 <ul class="simple">
-<li><a class="reference internal" href="options.html"><span class="doc">options</span></a> - check or set Arthas global options</li>
+<li><a class="reference internal" href="options.html"><span class="doc">options</span></a> - check/set Arthas global options</li>
 </ul>
 </div>
 <div class="section" id="pipe">
 <span id="pipe"></span><h2>pipe<a class="headerlink" href="#pipe" title="Permalink to this headline">¶</a></h2>
-<p><code class="docutils literal notranslate"><span class="pre">pipe</span></code> is supported in Arthas, e.g. <code class="docutils literal notranslate"><span class="pre">sm</span> <span class="pre">org.apache.log4j.Logger</span> <span class="pre">|</span> <span class="pre">grep</span> <span class="pre">&lt;init&gt;</span></code></p>
-<p>Commands supported in <code class="docutils literal notranslate"><span class="pre">pipe</span></code>:</p>
+<p>Arthas provides <code class="docutils literal notranslate"><span class="pre">pipe</span></code> to process the result returned from commands further, e.g. <code class="docutils literal notranslate"><span class="pre">sm</span> <span class="pre">org.apache.log4j.Logger</span> <span class="pre">|</span> <span class="pre">grep</span> <span class="pre">&lt;init&gt;</span></code>. Commands supported in <code class="docutils literal notranslate"><span class="pre">pipe</span></code>:</p>
 <ul class="simple">
-<li>grep - filtering</li>
+<li>grep - filter the result with the given keyword</li>
 <li>plaintext - remove the color</li>
-<li>wc - line counting</li>
+<li>wc - count lines</li>
 </ul>
 </div>
 <div class="section" id="async-in-background">
 <span id="async-in-background"></span><h2>async in background<a class="headerlink" href="#async-in-background" title="Permalink to this headline">¶</a></h2>
-<p><a class="reference internal" href="async.html"><span class="doc">async</span></a> will be a great help, when the <code class="docutils literal notranslate"><span class="pre">incident</span></code> seldom occurs and you are <a class="reference external" href="watch.md"><code class="docutils literal notranslate"><span class="pre">watch</span></code></a>ing it.</p>
+<p><a class="reference internal" href="async.html"><span class="doc">async</span></a> can be handy when a problem is hardly to reproduce in the production enviornment, e.g. one <code class="docutils literal notranslate"><span class="pre">watch</span></code> condition may happen only once in one single day.</p>
 <ul class="simple">
+<li>job control - use <code class="docutils literal notranslate"><span class="pre">&gt;</span></code> to redirect result into the log file, use <code class="docutils literal notranslate"><span class="pre">&amp;</span></code> to put the job to the background. Job keeps running even if the session is disconnected (the session lifecycle is 1 day by default)</li>
 <li>jobs - list all jobs</li>
 <li>kill - forcibly terminate the job</li>
-<li>fg - bring the paused job back to the front</li>
-<li>bg - put the paused job to the background</li>
-<li>tips - a) use <code class="docutils literal notranslate"><span class="pre">&gt;</span></code> to redirect the output; b) use <code class="docutils literal notranslate"><span class="pre">&amp;</span></code> to put the job to the background; c) disconnecting the session will not influence the job (the default life is 1 day)</li>
+<li>fg - bring the suspend job to the foreground</li>
+<li>bg - put the job to run in the background</li>
 </ul>
 </div>
-<div class="section" id="others">
-<span id="others"></span><h2>Others<a class="headerlink" href="#others" title="Permalink to this headline">¶</a></h2>
-<ul class="simple">
-<li><a class="reference internal" href="web-console.html"><span class="doc">Web Console</span></a> - using websocket to connect Arthas</li>
-<li><a class="reference internal" href="save-log.html"><span class="doc">log the output</span></a></li>
-<li><a class="reference internal" href="batch-support.html"><span class="doc">batch</span></a></li>
-<li><a class="reference external" href="https://github.com/alibaba/arthas/issues/11">how to use ognl</a></li>
+<div class="section" id="web-console">
+<span id="web-console"></span><h2>Web Console<a class="headerlink" href="#web-console" title="Permalink to this headline">¶</a></h2>
+<p>Arthas supports living inside a browser. The communication between arthas and browser is via websocket.</p>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="web-console.html">Web Console</a></li>
 </ul>
+</div>
+</div>
+<div class="section" id="other-features">
+<span id="other-features"></span><h2>Other features<a class="headerlink" href="#other-features" title="Permalink to this headline">¶</a></h2>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="async.html">Async support</a></li>
+<li class="toctree-l1"><a class="reference internal" href="save-log.html">log the output</a></li>
+<li class="toctree-l1"><a class="reference internal" href="batch-support.html">batch</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas/issues/11">how to use ognl</a></li>
+</ul>
+</div>
 </div>
 </div>
 
@@ -267,7 +288,7 @@
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="commands.html" class="btn btn-neutral float-right" title="All Commands" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+        <a href="web-console.html" class="btn btn-neutral float-right" title="Web Console" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
         <a href="quick-start.html" class="btn btn-neutral" title="Quick Start" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>

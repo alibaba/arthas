@@ -31,6 +31,8 @@
     <link rel="stylesheet" href="_static/overrides.css" type="text/css" />
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Arthas Async Jobs" href="async.html" />
+    <link rel="prev" title="Advanced Usage" href="advanced-use.html" />
 <script src="_static/center_page.js"></script>
  
 
@@ -86,10 +88,24 @@
               
             
             
-              <ul>
+              <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="install-detail.html">Installation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="quick-start.html">Quick start</a></li>
-<li class="toctree-l1"><a class="reference internal" href="advanced-use.html">Advanced usage</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="advanced-use.html">Advanced usage</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="advanced-use.html#basic">Basic</a></li>
+<li class="toctree-l2"><a class="reference internal" href="advanced-use.html#jvm">JVM</a></li>
+<li class="toctree-l2"><a class="reference internal" href="advanced-use.html#class-classloader">class/classloader</a></li>
+<li class="toctree-l2"><a class="reference internal" href="advanced-use.html#monitor-watch-trace-related">monitor/watch/trace - related</a></li>
+<li class="toctree-l2"><a class="reference internal" href="advanced-use.html#options">options</a></li>
+<li class="toctree-l2"><a class="reference internal" href="advanced-use.html#pipe">pipe</a></li>
+<li class="toctree-l2"><a class="reference internal" href="advanced-use.html#async-in-background">async in background</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="advanced-use.html#web-console">Web Console</a><ul class="current">
+<li class="toctree-l3 current"><a class="current reference internal" href="#">Web Console</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="advanced-use.html#other-features">Other features</a></li>
+</ul>
+</li>
 <li class="toctree-l1"><a class="reference internal" href="commands.html">Commands</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas/issues?q=label%3Auser-case">User cases</a></li>
 <li class="toctree-l1"><a class="reference internal" href="release-notes.html">Release Notes</a></li>
@@ -141,6 +157,8 @@
     
       <li><a href="index.html">Docs</a> &raquo;</li>
         
+          <li><a href="advanced-use.html">Advanced Usage</a> &raquo;</li>
+        
       <li>Web Console</li>
     
     
@@ -164,7 +182,7 @@
             
   <div class="section" id="web-console">
 <span id="web-console"></span><h1>Web Console<a class="headerlink" href="#web-console" title="Permalink to this headline">¶</a></h1>
-<p>Arthas supports the Web Console. After attach success, the user can access: [http://localhost:8563/] (http://localhost:8563/).</p>
+<p>Arthas supports the Web Console. After attach success, the user can access: <a class="reference external" href="http://localhost:8563/">http://localhost:8563/</a>.</p>
 <p>The user can fill in the IP and connect the remote arthas on other machines.</p>
 <p><img alt="web console" src="_images/web-console-local.png" /></p>
 <p>If you have suggestions for the Web Console, please leave a message here: <a class="reference external" href="https://github.com/alibaba/arthas/issues/15">https://github.com/alibaba/arthas/issues/15</a></p>
@@ -175,6 +193,15 @@
            
           </div>
           <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="async.html" class="btn btn-neutral float-right" title="Arthas Async Jobs" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="advanced-use.html" class="btn btn-neutral" title="Advanced Usage" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
   
 
   <hr/>
