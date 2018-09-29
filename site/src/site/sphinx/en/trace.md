@@ -20,6 +20,7 @@ Track methods calling stack trace and print the time cost in each call.
 3. `#cost` can be used in `watch/stack/trace`;
 4. using `#cost` in Arthas 3.0 instead of `$cost`.
 5. `trace` can help to locate the lurking performance issue but only `level-one` method invoking considered.
+6. quoting rules: if there are quotes within the expression, use another type of quotes to quote the whole expression (single `''` or double `""` quotes). 
 
 **Advanced:**
 * [Critical fields in expression](advice-class.md)

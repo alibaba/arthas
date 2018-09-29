@@ -19,6 +19,7 @@ With the help of [OGNL](https://en.wikipedia.org/wiki/OGNL), you can easily chec
 |[f]|when method exits (either succeed or fail with exceptions)|
 |[E]|turn on regex matching while the default is wildcard matching|
 |[x:]|the depth to print the specified property with default value: 1|
+|#cost|time cost|
 
 **You should know:**
 1. any valid OGNL expression as `"{params,returnObj}"` supported;
@@ -26,6 +27,7 @@ With the help of [OGNL](https://en.wikipedia.org/wiki/OGNL), you can easily chec
 3. at the *watching* point, Arthas will use the *expression* to evaluate the variables and print them out;
 4. `in parameters` and `out parameters` can be different since they can be modified within the invoked methods; `params` stands for `in parameters` in `-b`while `out parameters` in other *watching* points;
 5. there are no `return values` and `exceptions` when using `-b`.
+6. quoting rules: if there are quotes within the expression, use another type of quotes to quote the whole expression (single `''` or double `""` quotes). 
 
 **Advanced:**
 * [Critical fields in expression](advice-class.md)
