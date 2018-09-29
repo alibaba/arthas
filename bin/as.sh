@@ -76,7 +76,7 @@ default()
 check_permission()
 {
     [ ! -w ${HOME} ] \
-        && exit_on_err 1 "permission denied, ${HOME} is not writeable."
+        && exit_on_err 1 "permission denied, ${HOME} is not writable."
 }
 
 
@@ -179,7 +179,8 @@ update_if_necessary()
         || return 1
 
         # unzip arthas lib
-        unzip ${temp_target_lib_zip} -d ${temp_target_lib_dir} || (rm -rf ${temp_target_lib_dir} && return 1)
+        unzip ${temp_target_lib_zip} -d ${temp_target_lib_dir} || (rm -rf ${temp_target_lib_dir} \
+        ${ARTHAS_LIB_DIR}/${update_version} && return 1)
 
         # rename
         mv ${temp_target_lib_dir} ${target_lib_dir} || return 1
