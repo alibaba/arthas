@@ -3,7 +3,7 @@ monitor
 
 Monitor methods calling stack traces.
 
-F.Y.I
+**You should know:**
 
 1. `monitor` is a persistent command, it never returns until you press `Ctrl+C` to manually stop it;
 2. the server runs the jobs in the background;
@@ -14,39 +14,50 @@ F.Y.I
 
 |Property|Specification|
 |---:|:---|
-|timestamp|timestamp|
+|timestamp|date and time of the monitored moment|
 |class|Java class|
-|method|constructor and regular methods|
+|method|constructor or regular methods|
 |total|calling times|
 |success|success count|
 |fail|failure count|
-|rt|average RT|
+|rt|average Return Time|
 |fail-rate|failure ratio|
 
-### Parameters
+### Options
 
 |Name|Specification|
 |---:|:---|
 |*class-pattern*|pattern for the class name|
 |*method-pattern*|pattern for the method name|
 |[E]|turn on regex matching while the default is wildcard matching|
-|[c:]|cycle of output with default value: `60 s`|
+|[c:]|monitoring interval (s), 60 seconds by default|
+|[n:]|threshold of execution times|
 
 ### Usage
 
-```shell
-$ monitor -c 5 com.alibaba.sample.petstore.web.store.module.screen.ItemList execute
+```bash
+tor demo.Demo$Counter value -c 5 -n 5
 Press Ctrl+C to abort.
-Affect(class-cnt:1 , method-cnt:1) cost in 36 ms.
- timestamp            class                                                         method   total  success  fail  rt    fail-rate
------------------------------------------------------------------------------------------------------------------------------------
- 2015-12-17 10:56:40  com.alibaba.sample.petstore.web.store.module.screen.ItemList  execute  10     10       0     2.00  0.00%
+Affect(class-cnt:1 , method-cnt:1) cost in 59 ms.
+ timestamp            class              method  total  success  fail  avg-rt(ms)  fail-rate                                                
+---------------------------------------------------------------------------------------------                                               
+ 2018-09-29 19:03:56  demo.Demo$Counter  value   5      5        0     0.23        0.00%                                                    
 
- timestamp            class                                                         method   total  success  fail  rt    fail-rate
------------------------------------------------------------------------------------------------------------------------------------
- 2015-12-17 10:56:45  com.alibaba.sample.petstore.web.store.module.screen.ItemList  execute  11     11       0     2.18  0.00%
+ timestamp            class              method  total  success  fail  avg-rt(ms)  fail-rate                                                
+---------------------------------------------------------------------------------------------                                               
+ 2018-09-29 19:04:01  demo.Demo$Counter  value   5      5        0     0.06        0.00%                                                    
 
- timestamp            class                                                         method   total  success  fail  rt    fail-rate
------------------------------------------------------------------------------------------------------------------------------------
- 2015-12-17 10:56:50  com.alibaba.sample.petstore.web.store.module.screen.ItemList  execute  0      0        0     0.00  0.00%
+ timestamp            class              method  total  success  fail  avg-rt(ms)  fail-rate                                                
+---------------------------------------------------------------------------------------------                                               
+ 2018-09-29 19:04:06  demo.Demo$Counter  value   5      5        0     0.06        0.00%                                                    
+
+ timestamp            class              method  total  success  fail  avg-rt(ms)  fail-rate                                                
+---------------------------------------------------------------------------------------------                                               
+ 2018-09-29 19:04:11  demo.Demo$Counter  value   5      5        0     0.18        0.00%                                                    
+
+ timestamp            class              method  total  success  fail  avg-rt(ms)  fail-rate                                                
+---------------------------------------------------------------------------------------------                                               
+ 2018-09-29 19:04:16  demo.Demo$Counter  value   5      5        0     0.06        0.00%                                                    
+
+Command execution times exceed limit: 5, so command will exit. You can set it with -n option.
 ```
