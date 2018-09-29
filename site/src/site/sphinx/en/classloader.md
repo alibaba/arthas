@@ -1,129 +1,72 @@
 classloader
 ===========
 
-Check the inheritance tree, urls and classes loading profiles of the class loaders.
+Check the inheritance hierarchy, URLs and classes loading profiles of class loaders.
 
-It can be a great help for `ResourceNotFoundException` when you can use command `classloader`to specify a class loader to `getResources` and print all the urls of the valid resources.
+It can be a great help for `ResourceNotFoundException` when you can use command `classloader`to specify a class loader to get resources and print all the URLs of the valid resources.
 
 ### Options
 
 |Name|Specification|
 |---:|:---|
 |[l]|list all class loader instances based on thread count|
-|[t]|print the inheritance structure of the class loaders|
+|[t]|print the inheritance tree structure of class loaders|
 |[a]|list all the classes loaded by all the class loaders (use it with great caution since the output can be huge)|
 |[c:]|get the hashcode of the class loader|
-|[c: r:]|using class loader to search resource|
+|[r:]|using class loader to search resource (must be used with `-c`)|
 
 ### Usage
 
 * Categorised by class loader
 
 ```bash
-$ classloader
- name                                                   numberOfInstances  loadedCountTotal
- com.taobao.pandora.service.loader.ModuleClassLoader    29                 11659
- com.taobao.pandora.boot.loader.ReLaunchURLClassLoader  1                  5308
- BootstrapClassLoader                                   1                  3711
- com.taobao.arthas.agent.ArthasClassloader              2                  2825
- sun.reflect.DelegatingClassLoader                      332                332
- java.net.URLClassLoader                                1                  285
- sun.misc.Launcher$AppClassLoader                       1                  77
- sun.misc.Launcher$ExtClassLoader                       1                  46
- com.alibaba.fastjson.util.ASMClassLoader               2                  3
- org.jvnet.hk2.internal.DelegatingClassLoader           2                  2
- sun.reflect.misc.MethodUtil                            1                  1
-Affect(row-cnt:11) cost in 66 ms.
+$ classloader 
+ name                                       numberOfInstances  loadedCountTotal                                                                                         
+ com.taobao.arthas.agent.ArthasClassloader  2                  3090                                              
+ BootstrapClassLoader                       1                  1766                                            
+ sun.misc.Launcher$AppClassLoader           1                  6                                              
+ sun.reflect.DelegatingClassLoader          5                  5                                             
+ sun.misc.Launcher$ExtClassLoader           1                  0                                            
+Affect(row-cnt:5) cost in 11 ms.
 ```
 
 * Categorized by class loader instance
 
 ```bash
 $ classloader -l
- name                                                            loadedCount  hash      parent
- BootstrapClassLoader                                            3711         null      null
- com.alibaba.fastjson.util.ASMClassLoader@3bbaa1b8               2            3bbaa1b8  monitor's ModuleClassLoader
- com.alibaba.fastjson.util.ASMClassLoader@5e255d0b               1            5e255d0b  eagleeye-core's ModuleClassLoader
- com.taobao.arthas.agent.ArthasClassloader@4fa2d7e6              1795         4fa2d7e6  sun.misc.Launcher$ExtClassLoader@a38d7a3
- com.taobao.arthas.agent.ArthasClassloader@522400c2              1033         522400c2  sun.misc.Launcher$ExtClassLoader@a38d7a3
- com.taobao.pandora.boot.loader.ReLaunchURLClassLoader@1817d444  5308         1817d444  sun.misc.Launcher$AppClassLoader@14dad5dc
- tbsession's ModuleClassLoader                                   285          609cd4d8  null
- pandora-qos-service's ModuleClassLoader                         267          2f8dad04  null
- pandora-framework's ModuleClassLoader                           78           4009e306  null
- filesync-client's ModuleClassLoader                             4            4b8ee4de  null
- rocketmq-client's ModuleClassLoader                             431          247bddad  null
- eagleeye-core's ModuleClassLoader                               451          1ba9117e  null
- alimonitor-jmonitor's ModuleClassLoader                         134          22fcf7ab  null
- metaq-client's ModuleClassLoader                                35           41a2befb  null
- hsf-mock's ModuleClassLoader                                    3            2002fc1d  null
- monitor's ModuleClassLoader                                     1427         131ef10   null
- spas-sdk-service's ModuleClassLoader                            7            10d307f1  null
- vipserver-client's ModuleClassLoader                            137          7a419da4  null
- metrics's ModuleClassLoader                                     146          696da30b  null
- mtop-uncenter's ModuleClassLoader                               922          79d8407f  null
- spas-sdk-client's ModuleClassLoader                             235          4944252c  null
- live-profiler-pandora's ModuleClassLoader                       1            6913c1fb  null
- notify-tr-client's ModuleClassLoader                            472          fba92d3   null
- ons-sdk's ModuleClassLoader                                     70           23348b5d  null
- tair-plugin's ModuleClassLoader                                 1053         7c9d8e2   null
- tddl-client's ModuleClassLoader                                 2354         4988d8b8  null
- config-client's ModuleClassLoader                               93           429bffaa  null
- diamond-client's ModuleClassLoader                              360          3d5c822d  null
- pandolet's ModuleClassLoader                                    99           41e1e210  null
- hsf's ModuleClassLoader                                         1796         3232a28a  null
- acl.plugin's ModuleClassLoader                                  379          67080771  null
- buc.sso.client.plugin's ModuleClassLoader                       195          13b6aecc  null
- unitrouter's ModuleClassLoader                                  64           7e5afaa6  null
- switch's ModuleClassLoader                                      104          24313fcc  null
- hsf-notify-client's ModuleClassLoader                           57           4d0f2471  null
- java.net.URLClassLoader@7ec7ffd3                                285          7ec7ffd3  sun.misc.Launcher$ExtClassLoader@a38d7a3
- javax.management.remote.rmi.NoCallStackClassLoader@53f65459     1            53f65459  null
- javax.management.remote.rmi.NoCallStackClassLoader@2833cc44     1            2833cc44  null
- org.jvnet.hk2.internal.DelegatingClassLoader@72cda8ee           1            72cda8ee  monitor's ModuleClassLoader
- org.jvnet.hk2.internal.DelegatingClassLoader@1f57f96d           1            1f57f96d  monitor's ModuleClassLoader
- sun.misc.Launcher$AppClassLoader@14dad5dc                       77           14dad5dc  sun.misc.Launcher$ExtClassLoader@a38d7a3
- sun.misc.Launcher$ExtClassLoader@a38d7a3                        46           a38d7a3   null
- sun.reflect.misc.MethodUtil@1201f221                            1            1201f221  sun.misc.Launcher$AppClassLoader@14dad5dc
+ name                                                loadedCount  hash      parent                                               
+ BootstrapClassLoader                                1766         null      null                                                 
+ com.taobao.arthas.agent.ArthasClassloader@6d408cc2  1252         6d408cc2  sun.misc.Launcher$ExtClassLoader@758c1b43            
+ com.taobao.arthas.agent.ArthasClassloader@25ae7a23  1840         25ae7a23  sun.misc.Launcher$ExtClassLoader@758c1b43            
+ sun.misc.Launcher$AppClassLoader@659e0bfd           6            659e0bfd  sun.misc.Launcher$ExtClassLoader@758c1b43            
+ sun.misc.Launcher$ExtClassLoader@758c1b43           0            758c1b43  null                                                 
+Affect(row-cnt:5) cost in 8 ms.
 ```
 
-* Check inheritance tree of the class loaders
+* Check inheritance tree structure of class loaders
 
 ```shell
 $ classloader -t
-+-BootstrapClassLoader
-+-unitrouter's ModuleClassLoader
-+-diamond-client's ModuleClassLoader
-+-sun.misc.Launcher$ExtClassLoader@548a102f
-| +-sun.misc.Launcher$AppClassLoader@14dad5dc
-|   +-com.taobao.arthas.agent.AgentLauncher$1@334e6bb8
-|   | +-sun.reflect.DelegatingClassLoader@328b3a05
-|   | +-sun.reflect.DelegatingClassLoader@73f44f24
++-BootstrapClassLoader                                                                                                           
++-sun.misc.Launcher$ExtClassLoader@758c1b43                                                                                      
+  +-com.taobao.arthas.agent.ArthasClassloader@6d408cc2                                                                           
+  +-com.taobao.arthas.agent.ArthasClassloader@25ae7a23                                                                           
+  +-sun.misc.Launcher$AppClassLoader@659e0bfd                                                                                    
+Affect(row-cnt:5) cost in 7 ms.
 ```
 
 * Check URL of the class loader
 
 ```shell
-$ classloader -c 5ffe9775
-file:/Users/hello/soft/taobao-tomcat-7.0.64/deploy/taobao-hsf.sar/lib/commons-lang-2.6.jar
-file:/Users/hello/soft/taobao-tomcat-7.0.64/deploy/taobao-hsf.sar/lib/log4j-1.2.16.jar
-file:/Users/hello/soft/taobao-tomcat-7.0.64/deploy/taobao-hsf.sar/lib/logger.api-0.1.4.jar
-file:/Users/hello/soft/taobao-tomcat-7.0.64/deploy/taobao-hsf.sar/lib/pandora.api-2.0.7-SNAPSHOT.jar
-file:/Users/hello/soft/taobao-tomcat-7.0.64/deploy/taobao-hsf.sar/lib/pandora.container-2.0.7-SNAPSHOT.jar
-file:/Users/hello/soft/taobao-tomcat-7.0.64/deploy/taobao-hsf.sar/lib/pandora.thirdcontainer-2.0.7-SNAPSHOT.jar
-file:/Users/hello/soft/taobao-tomcat-7.0.64/deploy/taobao-hsf.sar/lib/picocontainer-2.14.3.jar
+$ classloader -c 659e0bfd
+file:/Users/hello/test/                                                                                                        
+file:/Users/hello/.arthas/lib/3.0.5.20180922094548/arthas/arthas-agent.jar                                                     
+                                                                                                                                 
+Affect(row-cnt:8) cost in 6 ms.
 ```
+* Using class loader to look for resources
 
-* Using class loader to search for resource
-
-```shell
-$ classloader -c 226b143b -r META-INF/MANIFEST.MF
- jar:file:/Users/hello/.m2/repository/javax/enterprise/cdi-api/1.0/cdi-api-1.0.jar!/META-INF/MANIFEST.MF
- jar:file:/Users/hello/.m2/repository/javax/annotation/jsr250-api/1.0/jsr250-api-1.0.jar!/META-INF/MANIFEST.MF
-```
-
-* Using class loader to look for `*.class` file
-
-```shell
-$ classloader -c 1b6d3586 -r java/lang/String.class
- jar:file:/Library/Java/JavaVirtualMachines/jdk1.8.0_60.jdk/Contents/Home/jre/lib/rt.jar!/java/lang/String.class
+```bash
+$ classloader -c 659e0bfd -r demo/Demo.class
+ file:/Users/hello/test/demo/Demo.class  
 ```
