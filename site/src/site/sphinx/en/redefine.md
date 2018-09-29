@@ -55,7 +55,7 @@ If you want to use specific loader:
 # locate which loader
 $ sc -d demo.Demo
  class-info        demo.Demo                                                                                                                
- code-source       /Users/lhearen/test/                                                                                                     
+ code-source       /Users/hello/test/                                                                                                     
  name              demo.Demo                                                                                                                
  isInterface       false                                                                                                                    
  isAnnotation      false                                                                                                                    
