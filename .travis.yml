@@ -1,0 +1,38 @@
+language: generic
+sudo: false
+
+jdk:
+  - openjdk7
+  - openjdk8
+  - openjdk9
+  - openjdk10
+  - openjdk11
+  - oraclejdk7
+  - oraclejdk8
+  - oraclejdk9
+  - oraclejdk10
+  - oraclejdk11
+
+cache:
+  directories:
+    - "$HOME/.m2/repository"
+    - "$HOME/.m2/wrapper"
+script:
+  - ./mvnw clean cobertura:cobertura package -P full -Dsphinx.binUrl=https://github.com/hengyunabc/sphinx-binary/releases/download/v0.4.0.1/sphinx.linux-x86_64
+
+after_success:
+  - bash <(curl -s https://codecov.io/bash)
+
+notifications:
+  email: false
+
+deploy:
+  provider: releases
+  api_key:
+    - secure: "V+omzrcAJ/awN3EsDkiELejjInz/rpgPLdyb4uZrcQnqhagbHYE+nY2KcjPEtRBVNkqlh6dxIIsUFvKrs5kxe5EVvI6rLQeZLFMqWUeNfWuhbuQWCV9ZPyQiqXCqNicj+LLHArzQRLx5w5YBvxdzMuXSWo1ZE4wy+c3koprulUSjr6XhNPKyyasq4EXKMXuLCjcvBVPHhXviG59Jbshb2lRHbkxMqYeLhWi/gUOBRbNC1CmcGGAMviFX7HpBOx5fMaVKPR7rzcULw3lXnLhdSwhXJ6ybnsN/osfN8zAx6XZIwvwvVQ12yM8S9eVthnjblFh+WKwOT1AS6hHFXkMTjh1FE5CtUVu+sFbGIngJ4C4O78VzWCKvH/IrIi4p2IkF+fcu8USnm7YZGuyoAwe3O5PqmWBuQV0iCEx0IGo/nPwVzj1+jnz38Go/DP1aVDJZMenysBNxi4l45d3J3CgMPvF00DDQKvxYrkBjdnByANrOisZPjIeUOc7GsWoDLCK9jZtXMID2NM+ehQnDbOJ3BS2Bjg7ojPc0Rw2yJjbzwNqaMiOPXp2ym/5DpaB/l5k2gSi2NCRUFCXhFNRCq9ChFXv+pYJwk0e17sleGvo6tnFDVCR6lFcXrYo/vGC43bL1dT4rY8E6VSRlE0jfoXdFFp4jw3v3a+DqVLGVC9UcTpw="
+  file_glob: true
+  file: "packaging/target/*.zip"
+  skip_cleanup: true
+  on:
+    tags: true
+
