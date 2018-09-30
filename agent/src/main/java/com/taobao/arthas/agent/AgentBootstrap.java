@@ -146,6 +146,13 @@ public class AgentBootstrap {
     }
 
     private static void bind(Instrumentation inst, ClassLoader agentLoader, String args) throws Throwable {
+        /**
+         * <pre>
+         * Configure configure = Configure.toConfigure(args);
+         * int javaPid = configure.getJavaPid();
+         * ArthasBootstrap bootstrap = ArthasBootstrap.getInstance(javaPid, inst);
+         * </pre>
+         */
         Class<?> classOfConfigure = agentLoader.loadClass(ARTHAS_CONFIGURE);
         Object configure = classOfConfigure.getMethod(TO_CONFIGURE, String.class).invoke(null, args);
         int javaPid = (Integer) classOfConfigure.getMethod(GET_JAVA_PID).invoke(configure);
