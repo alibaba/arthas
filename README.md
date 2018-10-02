@@ -238,7 +238,7 @@ ts=2018-09-18 10:26:28;result=@ArrayList[
 
 #### Monitor
 
-Monitor a specific method invocation statistics, including total number of invocations, avarage response time, success rate, every 5 seconds:
+Monitor a specific method invoction statistics, including total number of invocations, avarage response time, success rate, every 5 seconds:
 
 ```
 $ monitor -c 5 org.apache.dubbo.demo.provider.DemoServiceImpl sayHello
