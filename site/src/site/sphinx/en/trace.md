@@ -97,7 +97,7 @@ trace com.alibaba.sample.petstore.web.store.module.screen.ItemList execute #cost
         `---[min=0.005428ms,max=0.094064ms,total=0.105228ms,count=3] com.alibaba.citrus.turbine.Context:put()
 ```
 
-Only the calling trace of the time cost higher than `4ms`presented now.
+Only the calling trace of the time cost higher than `4ms` presented now.
 
 F.Y.I
 1. like JProfile and other similar commercial software, you can `trace` down the specified method calling stack with time cost in Arthas;
