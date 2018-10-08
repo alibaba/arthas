@@ -1,5 +1,7 @@
-Commands List
+All Commands 
 =============
+
+
 
 * [dashboard](dashboard.md)
 * [thread](thread.md)
@@ -25,7 +27,8 @@ Commands List
 
 * [options](options.md)
 
-### Arthas Basic Commands
+
+### Basic Commands
 
 * help - check the assistant info for the command
 * cls - clear out the current screen area
@@ -35,3 +38,6 @@ Commands List
 * quit - exit the current Arthas client without affecting other clients
 * shutdown - terminate the Arthas server and all clients
 * [keymap](keymap.md) - shortcuts for Arthas and also you can define your own
+
+
+

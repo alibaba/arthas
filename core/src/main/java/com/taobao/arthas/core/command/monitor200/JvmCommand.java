@@ -14,6 +14,7 @@ import com.taobao.text.ui.TableElement;
 import com.taobao.text.util.RenderUtil;
 
 import java.lang.management.*;
+import java.lang.reflect.Method;
 import java.text.SimpleDateFormat;
 import java.util.Collection;
 import java.util.Date;
@@ -74,12 +75,27 @@ public class JvmCommand extends AnnotatedCommand {
         table.row("", "");
         table.row(true, label("THREAD").style(Decoration.bold.bold()));
         drawThreadTable(table);
-
+        table.row("", "");
+        table.row(true, label("FILE-DESCRIPTOR").style(Decoration.bold.bold()));
+        drawFileDescriptorTable(table);
         process.write(RenderUtil.render(table, process.width()));
         process.write(affect.toString()).write("\n");
         process.end();
     }
 
+    private void drawFileDescriptorTable(TableElement table) {
+        table.row("MAX-FILE-DESCRIPTOR-COUNT", "" + invokeFileDescriptor(operatingSystemMXBean, "getMaxFileDescriptorCount"))
+                .row("OPEN-FILE-DESCRIPTOR-COUNT", "" + invokeFileDescriptor(operatingSystemMXBean, "getOpenFileDescriptorCount"));
+    }
+    private long invokeFileDescriptor(OperatingSystemMXBean os, String name) {
+        try {
+            final Method method = os.getClass().getDeclaredMethod(name);
+            method.setAccessible(true);
+            return (Long) method.invoke(os);
+        } catch (Exception e) {
+            return -1;
+        }
+    }
     private String toCol(Collection<String> strings) {
         final StringBuilder colSB = new StringBuilder();
         if (strings.isEmpty()) {

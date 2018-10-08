@@ -1,9 +1,9 @@
-reset命令
+reset
 ===
 
-> 重置增强类，将被 Arthas 增强过的类全部还原，Arthas 服务端`shutdown`时会重置所有增强过的类
+> Reset all classes that have been enhanced by Arthas, and all enhanced classes will be reset when Arthas server `shutdown`.
 
-### 使用参考
+### Usage
 
 ```
 $ reset -h
@@ -24,7 +24,7 @@ $ reset -h
  <class-pattern>                                                    Path and classname of Pattern Matching
 ```
 
-### 还原指定类
+### Reset specified class
 
 ```
 $ trace Test test
@@ -40,7 +40,7 @@ $ reset Test
 Affect(class-cnt:1 , method-cnt:0) cost in 11 ms.
 ```
 
-### 还原所有类
+### Reset all classes
 
 ```
 $ trace Test test

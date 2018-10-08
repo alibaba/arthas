@@ -41,7 +41,7 @@ Affect(row-cnt:11) cost in 66 ms.
 
 * 按类加载实例查看统计信息
 
-```sh
+```bash
 $ classloader -l
  name                                                            loadedCount  hash      parent
  BootstrapClassLoader                                            3711         null      null

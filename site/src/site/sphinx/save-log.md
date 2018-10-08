@@ -5,7 +5,7 @@
 
 * 默认情况下，该功能是关闭的，如果需要开启，请执行以下命令：
 
-```sh
+```bash
 $ options save-result true
  NAME         BEFORE-VALUE  AFTER-VALUE
 ----------------------------------------
@@ -21,7 +21,7 @@ Affect(row-cnt:1) cost in 3 ms.
 
 ### 使用新版本Arthas的异步后台任务将结果存日志文件
 
-```sh
+```bash
 $ trace Test t >>  &
 job id  : 2
 cache location  : /Users/zhuyong/logs/arthas-cache/28198/2

@@ -4,7 +4,8 @@ DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
 get_local_maven_project_version()
 {
-    $DIR/mvnw org.apache.maven.plugins:maven-help-plugin:2.1.1:evaluate -Dexpression=project.version | grep -e '^[^\[]' | cut -b 1-5
+    $DIR/mvnw org.apache.maven.plugins:maven-help-plugin:2.1.1:evaluate \
+     -Dexpression=project.version -f $DIR/pom.xml | grep -e '^[^\[]' | cut -b 1-5
 }
 
 CUR_VERSION=$(get_local_maven_project_version)
@@ -40,7 +41,7 @@ rm -r $DIR/core/src/main/resources/com/taobao/arthas/core/res/version
 
 # install to local
 mkdir -p ${NEWEST_ARTHAS_LIB_HOME}
-unzip ${packaging_bin_path} -d ${NEWEST_ARTHAS_LIB_HOME}/
+unzip ${packaging_bin_path} -d "${NEWEST_ARTHAS_LIB_HOME}/"
 
 # print ~/.arthas directory size
 arthas_dir_size="$(du -hs ${HOME}/.arthas | cut -f1)"
