@@ -119,7 +119,7 @@ Affect(row-cnt:1) cost in 190 ms.
 
 反编译指定的方法：
 
-```sh
+```bash
 $ jad com.taobao.container.web.arthas.rest.MetricsController directMetrics
 
 ClassLoader:

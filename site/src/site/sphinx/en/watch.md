@@ -1,38 +1,38 @@
 watch
 =====
 
-Monitor the methods in data aspect including `return value`, `exceptions` and `parameters`.
+Monitor methods in data aspect including `return values`, `exceptions` and `parameters`.
 
-With the help of [OGNL](https://en.wikipedia.org/wiki/OGNL), you can easily check the details of the variables.
+With the help of [OGNL](https://en.wikipedia.org/wiki/OGNL), you can easily check the details of variables when methods being invoked.
 
 ### Parameters & Options
 
-There are four different usage scenarios for `watch` command, which makes it the most complicated command in Arthas. 
+There are four different scenarios for `watch` command, which makes it rather complicated. 
 
 |Name|Specification|
 |---:|:---|
 |*class-pattern*|pattern for the class name|
 |*method-pattern*|pattern for the method name|
-|*express*|expression to monitor|
-|*condition-express*|condition expression|
-|[b]|before invoking|
-|[e]|encountering exceptions|
-|[s]|returned normally|
-|[f]|returned normally and abnormally|
-|[E]|turn on regx matching while the default is wildcards matching|
+|*expression*|expression to monitor|
+|*condition-expression*|condition expression to filter|
+|[b]|before method being invoked|
+|[e]|when method encountering exceptions|
+|[s]|when method exits normally|
+|[f]|when method exits (either succeed or fail with exceptions)|
+|[E]|turn on regex matching while the default is wildcard matching|
 |[x:]|the depth to print the specified property with default value: 1|
 
 F.Y.I
 1. any valid OGNL expression as `"{params,returnObj}"` supported
 2. there are four *watching* points: `-b`, `-e`, `-s` and `-f` (the first three are off in default while `-f` on);
-3. at the *watching* point, Arthas will use the `expression` to calculate the values and print them out;
-4. `in-parameters` and `out-parameters` are different since they can be modified; `params` stands for `in-parameters` in `-b`while `out-parameters` in other *watching* points;
-5. there is no `return value` and `exceptions` when using `-b`.
+3. at the *watching* point, Arthas will use the *expression* to evaluate the variables and print them out;
+4. `in parameters` and `out parameters` are different since they can be modified within the invoked methods; `params` stands for `in parameters` in `-b`while `out parameters` in other *watching* points;
+5. there are no `return values` and `exceptions` when using `-b`.
 
 
 Advanced:
-* [Critical fields in expression](advice-class.md)
-* [Special usage](https://github.com/alibaba/arthas/issues/71)
+* [Critical fields in *expression*](advice-class.md)
+* [Special usages](https://github.com/alibaba/arthas/issues/71)
 * [OGNL official guide](https://commons.apache.org/proper/commons-ognl/language-guide.html)
 
 ### Usage
@@ -57,7 +57,7 @@ A demo:
 		return list.size();
 	}
 ```
-#### Check the `out-parameters`and `return value`
+#### Check the `out parameters` and `return value`
 
 ```shell
 $ watch com.alibaba.sample.petstore.web.store.module.screen.ItemList add "{params,returnObj}" -x 2
@@ -73,7 +73,7 @@ Affect(class-cnt:1 , method-cnt:1) cost in 44 ms.
 ]
 ```
 
-#### Check `in-parameters`
+#### Check `in parameters`
 
 ```shell
 $ watch com.alibaba.sample.petstore.web.store.module.screen.ItemList add "{params,returnObj}" -x 2 -b
@@ -89,7 +89,7 @@ Affect(class-cnt:1 , method-cnt:1) cost in 48 ms.
 ]
 ```
 
-Compared to the previous *check*:
+Compared to the previous *check*, there are two differences:
 1. size of `params[0]` is `2` instead of `4`;
 2. `return value` is `null` since it's `-b`.
 
@@ -122,7 +122,7 @@ F.Y.I
 1. the first block of output is the *before watching* point;
 2. the order of the output determined by the *watching* order itself (nothing to do with the order of the options `-b -s`).
 
-#### Using `-x` to check more details
+#### Use `-x` to check more details
 
 ```shell
 $ watch com.alibaba.sample.petstore.web.store.module.screen.ItemList add "{params,returnObj}" -x 3 
@@ -150,7 +150,7 @@ Affect(class-cnt:1 , method-cnt:1) cost in 59 ms.
 ]
 ```
 
-#### Using condition expressions to locate specific call
+#### Use condition expressions to locate specific call
 
 ```shell
 $ watch com.alibaba.sample.petstore.biz.impl.UserManagerImpl testAdd "{params, returnObj}" "params[0].equals('aaa')" -x 2 

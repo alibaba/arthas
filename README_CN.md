@@ -4,6 +4,13 @@
 
 ![arthas](site/src/site/sphinx/arthas.png)
 
+[![Build Status](https://travis-ci.org/alibaba/arthas.svg?branch=master)](https://travis-ci.org/alibaba/arthas)
+[![codecov](https://codecov.io/gh/alibaba/arthas/branch/master/graph/badge.svg)](https://codecov.io/gh/alibaba/arthas)
+![maven](https://img.shields.io/maven-central/v/com.taobao.arthas/arthas-packaging.svg)
+![license](https://img.shields.io/github/license/alibaba/arthas.svg)
+[![Average time to resolve an issue](http://isitmaintained.com/badge/resolution/alibaba/arthas.svg)](http://isitmaintained.com/project/alibaba/arthas "Average time to resolve an issue")
+[![Percentage of issues still open](http://isitmaintained.com/badge/open/alibaba/arthas.svg)](http://isitmaintained.com/project/alibaba/arthas "Percentage of issues still open")
+
 English version goes [here](README.md).
 
 `Arthas` 是Alibaba开源的Java诊断工具，深受开发者喜爱。
@@ -40,7 +47,7 @@ curl -L https://alibaba.github.io/arthas/install.sh | sh
 
 #### Windows
 
-1. 点击 [这里](http://search.maven.org/classic/#search%7Cga%7C1%7Cg%3A%22com.taobao.arthas%22%20AND%20a%3A%22arthas-packaging%22) 下载最新的Arthas zip包
+1. 点击 [![Arthas](https://img.shields.io/maven-central/v/com.taobao.arthas/arthas-packaging.svg "Arthas")](http://search.maven.org/classic/#search%7Cga%7C1%7Cg%3A%22com.taobao.arthas%22%20AND%20a%3A%22arthas-packaging%22) 下载最新的Arthas `bin.zip`包
 2. 解压缩zip包.
 3. 进入bin目录
 4. 执行以下命令 `as.bat $PID`
@@ -303,3 +310,7 @@ $ classloader
 * [termd](https://github.com/termd/termd): Arthas的命令行实现基于termd开发，是一款优秀的命令行程序开发框架，感谢termd提供了优秀的框架。
 * [crash](https://github.com/crashub/crash): Arthas的文本渲染功能基于crash中的文本渲染功能开发，可以从[这里](https://github.com/crashub/crash/tree/1.3.2/shell)看到源码，感谢crash在这方面所做的优秀工作。
 * [cli](https://github.com/eclipse-vertx/vert.x/tree/master/src/main/java/io/vertx/core/cli): Arthas的命令行界面基于vert.x提供的cli库进行开发，感谢vert.x在这方面做的优秀工作。
+
+### 仓库镜像
+
+* [码云Arthas](https://gitee.com/arthas/arthas)

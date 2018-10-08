@@ -1,12 +1,18 @@
 package com.taobao.arthas.core.util.matcher;
 
 /**
- * 通配符表达式匹配
+ * wildcard matcher
  * @author ralf0131 2017-01-06 13:17.
  */
 public class WildcardMatcher implements Matcher<String> {
 
     private final String pattern;
+
+    private static final Character ASTERISK = '*';
+    private static final Character QUESTION_MARK = '?';
+    private static final Character ESCAPE = '\\';
+
+
 
     public WildcardMatcher(String pattern) {
         this.pattern = pattern;
@@ -21,51 +27,61 @@ public class WildcardMatcher implements Matcher<String> {
     /**
      * Internal matching recursive function.
      */
-    private boolean match(String string, String pattern, int stringStartNdx, int patternStartNdx) {
+    private boolean match(String target, String pattern, int stringStartNdx, int patternStartNdx) {
+        //#135
+        if(target==null || pattern==null){
+            return false;
+        }
         int pNdx = patternStartNdx;
         int sNdx = stringStartNdx;
         int pLen = pattern.length();
         if (pLen == 1) {
-            if (pattern.charAt(0) == '*') {     // speed-up
+            // speed-up
+            if (pattern.charAt(0) == ASTERISK) {
                 return true;
             }
         }
-        int sLen = string.length();
+        int sLen = target.length();
         boolean nextIsNotWildcard = false;
 
         while (true) {
 
             // check if end of string and/or pattern occurred
-            if ((sNdx >= sLen)) {   // end of string still may have pending '*' callback pattern
-                while ((pNdx < pLen) && (pattern.charAt(pNdx) == '*')) {
+            if ((sNdx >= sLen)) {
+                // end of string still may have pending '*' callback pattern
+                while ((pNdx < pLen) && (pattern.charAt(pNdx) == ASTERISK)) {
                     pNdx++;
                 }
                 return pNdx >= pLen;
             }
-            if (pNdx >= pLen) {         // end of pattern, but not end of the string
+            // end of pattern, but not end of the string
+            if (pNdx >= pLen) {
                 return false;
             }
-            char p = pattern.charAt(pNdx);    // pattern char
+            // pattern char
+            char p = pattern.charAt(pNdx);
 
             // perform logic
             if (!nextIsNotWildcard) {
 
-                if (p == '\\') {
+                if (p == ESCAPE) {
                     pNdx++;
                     nextIsNotWildcard = true;
                     continue;
                 }
-                if (p == '?') {
+                if (p == QUESTION_MARK) {
                     sNdx++;
                     pNdx++;
                     continue;
                 }
-                if (p == '*') {
-                    char pnext = 0;           // next pattern char
+                if (p == ASTERISK) {
+                    // next pattern char
+                    char pnext = 0;
                     if (pNdx + 1 < pLen) {
                         pnext = pattern.charAt(pNdx + 1);
                     }
-                    if (pnext == '*') {         // double '*' have the same effect as one '*'
+                    // double '*' have the same effect as one '*'
+                    if (pnext == ASTERISK) {
                         pNdx++;
                         continue;
                     }
@@ -74,8 +90,8 @@ public class WildcardMatcher implements Matcher<String> {
 
                     // find recursively if there is any substring from the end of the
                     // line that matches the rest of the pattern !!!
-                    for (i = string.length(); i >= sNdx; i--) {
-                        if (match(string, pattern, i, pNdx)) {
+                    for (i = target.length(); i >= sNdx; i--) {
+                        if (match(target, pattern, i, pNdx)) {
                             return true;
                         }
                     }
@@ -86,7 +102,7 @@ public class WildcardMatcher implements Matcher<String> {
             }
 
             // check if pattern char and string char are equals
-            if (p != string.charAt(sNdx)) {
+            if (p != target.charAt(sNdx)) {
                 return false;
             }
 

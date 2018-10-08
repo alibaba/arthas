@@ -19,7 +19,7 @@ Arthas 3.0开始支持管道, 率先提供了`grep`,`wc`,`plaintext`的支持。
 
 groovy表达式在arthas2.0中大量使用，例如watch表达式
 
-```sh
+```bash
 watch com.alibaba.sample.petstore.web.store.module.screen.ItemList add "params + ' ' + returnObj" params.size()==2
 ```
 

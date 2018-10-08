@@ -5,38 +5,38 @@ Arthas Documentation
 
 ![arthas](arthas.png)
 
-`Arthas` is an Java Diagnostic tool open sourced by Alibaba.
+`Arthas` is a Java Diagnostic tool open sourced by Alibaba.
 
-Arthas can help developer trouble-shooting production issues for Java applications without modifying your code or restating your server.
+Arthas help developers in trouble-shooting production issues for Java applications without modifying code or restarting servers.
 
 ### Background
 
-In production system, sometimes the networks is unreachable from local development environment. If you encounter some issues in production system, it is impossible to use IDE to debug the application remotely. More importantly, debugging in production is unacceptable, because it will suspend all the threads, which leads to business unavailability. 
+Often times, the production system network is inaccessible from local development environment. If issues are encountered in production systems, it is impossible to use IDE to debug the application remotely. More importantly, debugging in production environment is unacceptable, as it will suspend all the threads, which leads to blocking of business services. 
 
-Some may think of reproducing the same issue on the test/staging environment, however, some tricky issue either can hardly be reproduced on a different environment, or even disappeared once restarted. 
+Developers could always try to reproduce the same issue on the test/staging environment. However, this is tricky as some issues cannot be be reproduced easily on a different environment, or even disappear once restarted. 
 
-Thinking of adding some logs to your code? You have to go through test, staging, and then on to production. Time is money! That is a lot inefficient! Besides, the issue may not be reproducible once restart your JVM, as described above.
+And if you're thinking of adding some logs to your code to help trouble-shoot the issue, you will have to go through the following lifecycle; test, staging, and then to production. Time is money! This approach is inefficient! Besides, the issue may not be reproducible once the JVM is restarted, as described above.
 
-Arthas is born to solve these issues. You can trouble-shoot your production issue on-the-fly. No JVM restart, no additional code changes. Arthas works as an observer, which will never suspend your existing threads.
+Arthas was built to solve these issues. A developer can trouble-shoot your production issues on-the-fly. No JVM restart, no additional code changes. Arthas works as an observer, which will never suspend your existing threads.
 
 ### Key features
 
-* Check whether a class is loaded? And whether is class loaded from? (Useful for trouble-shooting jar file conflicts)
+* Check whether a class is loaded? Or where the class is loaded from? (Useful for trouble-shooting jar file conflicts)
 * Decompile a class to ensure the code is running as expected.
-* View classloader statistics, e.g. how may classloaders are there? how many class is loaded per classloader? What is the classloader hierarchy? Is there possible classloader leaks?
+* View classloader statistics, e.g. the number of classloaders, the number of classes loaded per classloader, the classloader hierarchy, possible classloader leaks, etc.
 * View the method invocation details, e.g. method parameter, return object, thrown exception, and etc.
-* Check the stack trace of specified method invocation. This is useful when you would like to know who is calling your method?
+* Check the stack trace of specified method invocation. This is useful when a developers wants to know the caller of the said method.
 * Trace the method invocation to find slow sub-invocations.
-* Monitor method invcation statistics, e.g. qps, rt, success rate and etc.
-* Monitoring your system metrics, thread states and cpu usage, gc statistics, and etc.
-* Support command line interactive mode, with auto completed feature enabled.
-* Support telnet and websocket, which enables both local and remote diagnostics with command line and browsers.
+* Monitor method invocation statistics, e.g. qps, rt, success rate and etc.
+* Monitor system metrics, thread states and cpu usage, gc statistics, and etc.
+* Supports command line interactive mode, with auto-complete feature enabled.
+* Supports telnet and websocket, which enables both local and remote diagnostics with command line and browsers.
 
 
 Contents
 --------
 
-English version is on the way, if you would like to contribute, please leave a message [here](https://github.com/alibaba/arthas/issues/51)
+English version has just been finished. If you would like to make it better, please check [here](https://github.com/alibaba/arthas/issues/51) and submit your PM.
 
 * [Installation](install-detail.md)
 * [Quick start](quick-start.md)

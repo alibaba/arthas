@@ -3,7 +3,7 @@ sm
 
 Check the method profile of the loaded classes;
 
-Abbreviated from “Search-Method”, with which you can search out all methods profiles of the loaded classes.
+Abbreviated from *Search-Method*, with which you can check all methods profiles of the loaded classes.
 
 F.Y.I
 `sm` only shows the methods declared in the current class; methods declared in ancestors will not be presented.
@@ -15,7 +15,7 @@ F.Y.I
 |*class-pattern*|pattern for class name|
 |*method-pattern*|pattern for method name|
 |[d]|print the details of the method|
-|[E]|turn the regex matching on while the default mode is wildcards matching|
+|[E]|turn on regex matching while the default mode is wildcard matching|
 
 ### Usage
 
@@ -61,7 +61,7 @@ org.apache.catalina.connector.Connector->getMaxCookieCount
 
 ```
 
-```sh
+```bash
 $ sm org.apache.catalina.connector.Connector -d
  declaring-class   org.apache.catalina.connector.Connector
  constructor-name  <init>

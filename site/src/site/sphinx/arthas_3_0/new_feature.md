@@ -16,7 +16,7 @@ Arthas 3.0最重要的特性，通过Arthas在线诊断平台，无需再登陆�
 
 Arthas 3.0开始支持管道, 率先提供了`grep`,`wc`,`plaintext`的支持。
 
-```sh
+```bash
  java.vendor.url                                      http://java.oracle.com/
  java.vm.vendor                                       Oracle Corporation
  java.runtime.name                                    Java(TM) SE Runtime Environment
@@ -55,7 +55,7 @@ To solve this, choose one of the following command:
 
 groovy表达式在arthas2.0中大量使用，例如watch表达式
 
-```sh
+```bash
 watch com.alibaba.sample.petstore.web.store.module.screen.ItemList add "params + ' ' + returnObj" params.size()==2
 ```
 

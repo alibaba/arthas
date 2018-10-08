@@ -6,22 +6,22 @@ De-compile specified loaded classes.
 `jad` helps to *de-compile* the byte code in JVM to the source code to assist you to better understand the logic behind.
 
 F.Y.I
-* the de-compiled code will be grammatically highlighted for readability in Arthas Console;
-* you have to understand there might be some trivial grammar errors but it won't affect the logic understanding.
+* the de-compiled code will be grammatically highlighted for readability in Arthas console;
+* there might be some trivial grammar errors but it won't affect the logic understanding.
 
 ### Options
 
 |Name|Specification|
 |---:|:---|
 |*class-pattern*|pattern for the class name|
-|`[c:]`|hashcode of the class loader that loaded the class|
-|[E]|turn on regx matching while the default is wildcards matching|
+|[c:]|hashcode of the class loader that loaded the class|
+|[E]|turn on regex matching while the default is wildcard matching|
 
 ### Usage
 
 When several class loaders loaded the same class:
 1. `jad` to get the hashcode of the class loader;
-2. `jad -c <hashcode>` to get the de-compiled class loaded by the class loader.
+2. `jad -c <hashcode>` to get the de-compiled class loaded by the specified class loader.
 
 ```java
 $ jad org.apache.log4j.Logger
@@ -122,7 +122,7 @@ Affect(row-cnt:1) cost in 190 ms.
 
 De-compile the specified method:
 
-```sh
+```bash
 $ jad com.taobao.container.web.arthas.rest.MetricsController directMetrics
 
 ClassLoader:
@@ -156,3 +156,7 @@ private Map<String, Object> directMetrics(String ip, String[] metrics) {
 
 Affect(row-cnt:1) cost in 1508 ms.
 ```
+
+F.Y.I
+
+Inner class is not yet supported, you can just check the *outer* class to further check the inner class. 

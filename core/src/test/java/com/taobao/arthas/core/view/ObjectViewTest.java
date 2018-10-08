@@ -8,6 +8,7 @@ import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.TimeZone;
 
 /**
  * @author ralf0131 2018-07-10 10:55.
@@ -190,13 +191,14 @@ public class ObjectViewTest {
 
     @Test
     public void testDate() {
-        Date d = new Date(1531204354961L);
+        Date d = new Date(1531204354961L - TimeZone.getDefault().getRawOffset()
+                        + TimeZone.getTimeZone("GMT+8").getRawOffset());
         ObjectView objectView = new ObjectView(d, 3);
         String expected = "@Date[2018-07-10 14:32:34,961]";
         Assert.assertEquals(expected, objectView.draw());
     }
 
-  @Test
+    @Test
     public void testNestedClass() {
         ObjectView objectView = new ObjectView(new NestedClass(100), 3);
 
