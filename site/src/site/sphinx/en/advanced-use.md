@@ -54,7 +54,7 @@ Arthas provides `pipe` to process the result returned from commands further, e.g
 
 ## async in background
 
-[async](async.md) can be handy when a problem is hardly to reproduce in the production enviornment, e.g. one `watch` condition may happen only once in one single day.
+[async](async.md) can be handy when a problem is hardly to reproduce in the production environment, e.g. one `watch` condition may happen only once in one single day.
 
 * job control - use `>` to redirect result into the log file, use `&` to put the job to the background. Job keeps running even if the session is disconnected (the session lifecycle is 1 day by default)
 * jobs - list all jobs

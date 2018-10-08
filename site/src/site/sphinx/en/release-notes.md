@@ -38,7 +38,7 @@ v2017-09-11
 v2017-05-11
 ----
 
-* [improvement] [`tt`](tt.md) investigating/recording level one to avoid too much performance overhea
+* [improvement] [`tt`](tt.md) investigating/recording level one to avoid too much performance overhead
 * [bug] fix Chinese characters can not be presented issue
 
 v2017-05-12
