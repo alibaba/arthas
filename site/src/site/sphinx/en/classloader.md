@@ -3,7 +3,7 @@ classloader
 
 Check the inheritance tree, urls and classes loading profiles of the class loaders.
 
-It can be a great help for `ResourceNotFoundException` when you can use command `classloader`to specify a class loader to `getResources` and print all the urls of the valid resources.
+It can be a great help for `ResourceNotFoundException` when you can use command `classloader` to specify a class loader to `getResources` and print all the urls of the valid resources.
 
 ### Options
 

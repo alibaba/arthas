@@ -34,7 +34,7 @@ You can see that there is currently a background job executing.
 * execution count is the number of executions, which have been executed 19 times since the start.
 * timeout date: After this time, the job will automatically timeout and exit.
 
-## 3. Suspend and Cannel job
+## 3. Suspend and Cancel job
 
 When the job is executing in the foreground, such as directly calling the command `trace Test t` or calling the background job command `trace Test t &`, the job is transferred to the foreground through the `fg` command. At this point, the console cannot continue to execute the command, but can receive and process the following keyboard events:
 
