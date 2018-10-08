@@ -154,7 +154,7 @@ public interface Servlet {
 
 #### sc
 
-Search any loaded class with detailed infomation.
+Search any loaded class with detailed information.
 
 ```
 $ sc -d org.springframework.web.context.support.XmlWebApplicationContext
@@ -245,7 +245,7 @@ ts=2018-09-18 10:26:28;result=@ArrayList[
 
 #### Monitor
 
-Monitor a specific method invoction statistics, including total number of invocations, avarage response time, success rate, every 5 seconds:
+Monitor a specific method invocation statistics, including total number of invocations, average response time, success rate, every 5 seconds:
 
 ```
 $ monitor -c 5 org.apache.dubbo.demo.provider.DemoServiceImpl sayHello
@@ -266,7 +266,7 @@ Affect(class-cnt:1 , method-cnt:1) cost in 109 ms.
 
 #### Time Tunnel(tt)
 
-Record method invocation data, so that you can check the method invacation parameters, returned value and thrown exception later. It works as if you could come back and replay the past method invocation via time tunnel.
+Record method invocation data, so that you can check the method invocation parameters, returned value and thrown exception later. It works as if you could come back and replay the past method invocation via time tunnel.
 
 ```
 $ tt -t org.apache.dubbo.demo.provider.DemoServiceImpl sayHello
