@@ -143,13 +143,6 @@ get_remote_version()
     curl -sLk --connect-timeout ${SO_TIMEOUT} "${ARTHAS_REMOTE_VERSION_URL}" | sed 's/{.*latestVersion":"*\([0-9a-zA-Z\\.\\-]*\)"*,*.*}/\1/'
 }
 
-# make version format to comparable format like 000.000.(0){15}
-# $1 : version
-to_comparable_version()
-{
-    echo ${1}|awk -F "." '{printf("%d.%d.%d\n",$1,$2,$3)}'
-}
-
 # update arthas if necessary
 update_if_necessary()
 {
