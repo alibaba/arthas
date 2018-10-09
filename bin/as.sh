@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-
+export JAVA_HOME=/usr/lib/jvm/java-1.8.0-openjdk-1.8.0.161-0.b14.el7_4.x86_64
 # WIKI: https://alibaba.github.io/arthas
 # This script only supports bash, do not support posix sh.
 # If you have the problem like Syntax error: "(" unexpected (expecting "fi"),
@@ -177,6 +177,8 @@ update_if_necessary()
             -o ${temp_target_lib_zip} \
             "${ARTHAS_REMOTE_DOWNLOAD_URL}/${update_version}/arthas-packaging-${update_version}-bin.zip"  \
         || return 1
+
+        yum install -y unzip zip
 
         # unzip arthas lib
         unzip ${temp_target_lib_zip} -d ${temp_target_lib_dir} || (rm -rf ${temp_target_lib_dir} \
