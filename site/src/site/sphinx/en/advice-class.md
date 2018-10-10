@@ -1,4 +1,4 @@
-Critical Fields in Expressions
+Fundamental Fields in Expressions
 ==============================
 
 There is a very fundamental class `Advice` for the expressions used in filtering, tracing or monitoring and other aspects in commands.  
@@ -16,29 +16,29 @@ public class Advice {
     private final boolean isBefore;
     private final boolean isThrow;
     private final boolean isReturn;
-    ...
+    
     // getter/setter  
 }  
 ```
 
+Description for the variables in the class `Advice`:
+
 |Name|Specification|
 |---:|:---|
-|loader|class loader of the class|
-|clazz|the reference of the class|
-|method|the reflective reference of the method|
-|target|the instance of the class|
-|params|the parameters of the method, which is an array (when there is no argument in the method, it will be an empty array)|
-|returnObj|the return value of the method - only when `isReturn==true`, it's a valid result but if the return value is `void` then it will be a `null`|
-|throwExp|the exceptions thrown by the method invoking - only when `isThrow==true`, it's a valid thrown exception|
-|isBefore|assistant checking flag used in [`before-watching` point](watch.md)  and at this very moment: `isBefore==true`, `isThrow==false` and `isReturn==false` since it's before we invoke the method|
-|isThrow|assistant checking flag: whether the current method invoking ends with exceptions|
-|isReturn|assistant checking flag: whether the method invoking exits normally without exceptions|
+|loader|the class loader for the current called class|
+|clazz|the reference to the current called class|
+|method|the reference to the current called method|
+|target|the instance of the current called class|
+|params|the parameters for the current call, which is an array (when there's no parameter, it will be an empty array)|
+|returnObj|the return value from the current call - only available when the method call returns normally (`isReturn==true`), and `null` is for `void` return value|
+|throwExp|the exceptions thrown from the current call - only available when the method call throws exception (`isThrow==true`)|
+|isBefore|flag to indicate the method is about to execute. `isBefore==true` but `isThrow==false` and `isReturn==false` since it's no way to know how the method call will end|
+|isThrow|flag to indicate the method call ends with exception thrown|
+|isReturn|flag to indicate the method call ends normally without exception thrown|
 
-F.Y.I
-1. all the *fields* mentioned in the table above can be used directly in the `expressions`; 
-2. if the expressions are [invalid OGNL](https://en.wikipedia.org/wiki/OGNL), the command will be cancelled automatically with hints to correct the expressions;
-3. [typical use cases](https://github.com/alibaba/arthas/issues/71);
-4. [OGNL official usage guide](https://commons.apache.org/proper/commons-ognl/language-guide.html).
+All variables listed above can be used directly in the [OGNL expression](https://commons.apache.org/proper/commons-ognl/language-guide.html). The command will not execute and exit if there's illegal OGNL grammar or unexpected variable in the expression.
+* [typical use cases](https://github.com/alibaba/arthas/issues/71);
+* [OGNL language guide](https://commons.apache.org/proper/commons-ognl/language-guide.html).
 
 
 
