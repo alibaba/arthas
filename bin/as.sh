@@ -53,6 +53,37 @@ BATCH_SCRIPT=
 
 ARTHAS_OPTS="-Djava.awt.headless=true"
 
+OS_TYPE=
+case "$(uname -s)" in
+    Linux*)     OS_TYPE=Linux;;
+    Darwin*)    OS_TYPE=Mac;;
+    CYGWIN*)    OS_TYPE=Cygwin;;
+    MINGW*)     OS_TYPE=MinGw;;
+    *)          OS_TYPE="UNKNOWN"
+esac
+
+# check curl/grep/awk/telent/unzip command
+if ! [ -x "$(command -v curl)" ]; then
+  echo 'Error: curl is not installed.' >&2
+  exit 1
+fi
+if ! [ -x "$(command -v grep)" ]; then
+  echo 'Error: grep is not installed.' >&2
+  exit 1
+fi
+if ! [ -x "$(command -v awk)" ]; then
+  echo 'Error: awk is not installed.' >&2
+  exit 1
+fi
+if ! [ -x "$(command -v telnet)" ]; then
+  echo 'Error: telnet is not installed.' >&2
+  exit 1
+fi
+if ! [ -x "$(command -v unzip)" ]; then
+  echo 'Error: unzip is not installed.' >&2
+  exit 1
+fi
+
 # exit shell with err_code
 # $1 : err_code
 # $2 : err_msg
@@ -109,7 +140,7 @@ reset_for_env()
 
     local IFS=$'\n'
     # remove \r for Cygwin
-    local lines=$(${JAVA_HOME}/bin/java -version 2>&1 | tr '\r' '\n')
+    local lines=$("${JAVA_HOME}"/bin/java -version 2>&1 | tr '\r' '\n')
     for line in $lines; do
       if [[ (-z $JAVA_VERSION) && ($line = *"version \""*) ]]
       then
@@ -220,9 +251,10 @@ Example:
     ./as.sh --versions
 
 Here is the list of possible java process(es) to attatch:
-
-$(${JAVA_HOME}/bin/jps -l | grep -v sun.tools.jps.Jps)
 "
+
+"${JAVA_HOME}"/bin/jps -l | grep -v sun.tools.jps.Jps
+
 }
 
 # list arthas versions
@@ -302,7 +334,7 @@ parse_arguments()
         # backup IFS: https://github.com/alibaba/arthas/issues/128
         local IFS_backup=$IFS
         IFS=$'\n'
-        CANDIDATES=($(${JAVA_HOME}/bin/jps -l | grep -v sun.tools.jps.Jps | awk '{print $0}'))
+        CANDIDATES=($("${JAVA_HOME}"/bin/jps -l | grep -v sun.tools.jps.Jps | awk '{print $0}'))
 
         if [ ${#CANDIDATES[@]} -eq 0 ]; then
             echo "Error: no available java process to attach."
@@ -370,12 +402,17 @@ attach_jvm()
     local arthas_version=$1
     local arthas_lib_dir=${ARTHAS_LIB_DIR}/${arthas_version}/arthas
 
+    # http://www.inonit.com/cygwin/faq/
+    if [ "${OS_TYPE}" = "Cygwin" ]; then
+        arthas_lib_dir=`cygpath -wp $arthas_lib_dir`
+    fi
+
     echo "Attaching to ${TARGET_PID} using version ${1}..."
 
     if [ ${TARGET_IP} = ${DEFAULT_TARGET_IP} ]; then
         "${JAVA_HOME}"/bin/java \
             ${ARTHAS_OPTS} "${BOOT_CLASSPATH}" ${JVM_OPTS} \
-            -jar ${arthas_lib_dir}/arthas-core.jar \
+            -jar "${arthas_lib_dir}/arthas-core.jar" \
                 -pid ${TARGET_PID} \
                 -target-ip ${TARGET_IP} \
                 -telnet-port ${TELNET_PORT} \
@@ -386,6 +423,11 @@ attach_jvm()
 }
 
 sanity_check() {
+    # only Linux/Mac support ps to find process, Cygwin/MinGw may fail.
+    if ([ "${OS_TYPE}" != "Linux" ] && [ "${OS_TYPE}" != "Mac" ]); then
+        return
+    fi
+
     # 0 check whether the pid exist
     local pid=$(ps -p ${TARGET_PID} -o pid=)
     if [ -z ${pid} ]; then
@@ -412,6 +454,11 @@ active_console()
     local arthas_version=$1
     local arthas_lib_dir=${ARTHAS_LIB_DIR}/${arthas_version}/arthas
 
+    # http://www.inonit.com/cygwin/faq/
+    if [ "${OS_TYPE}" = "Cygwin" ]; then
+        arthas_lib_dir=`cygpath -wp $arthas_lib_dir`
+    fi
+
     if [ "${BATCH_MODE}" = "true" ]; then
         "${JAVA_HOME}/bin/java" ${ARTHAS_OPTS} ${JVM_OPTS} \
              -jar "${arthas_lib_dir}/arthas-client.jar" \
@@ -420,6 +467,14 @@ active_console()
              -f ${BATCH_SCRIPT}
     elif type telnet 2>&1 >> /dev/null; then
         # use telnet
+        if [[ $(command -v telnet) == *"system32"* ]] ; then
+            # Windows/system32/telnet.exe can not run in Cygwin/MinGw
+            echo "It seems that current bash is under Windows. $(command -v telnet) can not run under bash."
+            echo "Please start cmd.exe from Windows start menu, and then run telnet ${TARGET_IP} ${TELNET_PORT} to connect to target process."
+            echo "Or visit http://localhost:8563/ to connect to target process."
+            return 1
+        fi
+        echo "telnet connecting to arthas server... current timestamp is `date +%s`"
         telnet ${TARGET_IP} ${TELNET_PORT}
     else
         echo "'telnet' is required." 1>&2
@@ -468,7 +523,6 @@ main()
     echo "Attach success."
 
     if [ ${ATTACH_ONLY} = false ]; then
-      echo "Connecting to arthas server... current timestamp is `date +%s`"
       active_console ${arthas_local_version}
     fi
 }
