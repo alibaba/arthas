@@ -467,7 +467,7 @@ main()
     echo "Attach success."
 
     if [ ${ATTACH_ONLY} = false ]; then
-      echo "Connecting to arthas server... current timestamp is `date +%s`"
+      echo "Connecting to arthas server... current time is `date '+%Y-%m-%d %H:%M:%S'`"
       active_console ${arthas_local_version}
     fi
 }
