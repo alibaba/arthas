@@ -64,12 +64,12 @@ public class RedefineCommand extends AnnotatedCommand {
         for (String path : paths) {
             File file = new File(path);
             if (!file.exists()) {
-                process.write("path is not exists, path:" + path + "\n");
+                process.write("file does not exist, path:" + path + "\n");
                 process.end();
                 return;
             }
             if (!file.isFile()) {
-                process.write("path is not a normal file, path:" + path + "\n");
+                process.write("not a normal file, path:" + path + "\n");
                 process.end();
                 return;
             }
