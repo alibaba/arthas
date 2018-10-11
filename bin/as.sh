@@ -53,6 +53,37 @@ BATCH_SCRIPT=
 
 ARTHAS_OPTS="-Djava.awt.headless=true"
 
+OS_TYPE=
+case "$(uname -s)" in
+    Linux*)     OS_TYPE=Linux;;
+    Darwin*)    OS_TYPE=Mac;;
+    CYGWIN*)    OS_TYPE=Cygwin;;
+    MINGW*)     OS_TYPE=MinGw;;
+    *)          OS_TYPE="UNKNOWN"
+esac
+
+# check curl/grep/awk/telent/unzip command
+if ! [ -x "$(command -v curl)" ]; then
+  echo 'Error: curl is not installed.' >&2
+  exit 1
+fi
+if ! [ -x "$(command -v grep)" ]; then
+  echo 'Error: grep is not installed.' >&2
+  exit 1
+fi
+if ! [ -x "$(command -v awk)" ]; then
+  echo 'Error: awk is not installed.' >&2
+  exit 1
+fi
+if ! [ -x "$(command -v telnet)" ]; then
+  echo 'Error: telnet is not installed.' >&2
+  exit 1
+fi
+if ! [ -x "$(command -v unzip)" ]; then
+  echo 'Error: unzip is not installed.' >&2
+  exit 1
+fi
+
 # exit shell with err_code
 # $1 : err_code
 # $2 : err_msg
@@ -75,7 +106,7 @@ default()
 # check arthas permission
 check_permission()
 {
-    [ ! -w ${HOME} ] \
+    [ ! -w "${HOME}" ] \
         && exit_on_err 1 "permission denied, ${HOME} is not writable."
 }
 
@@ -86,18 +117,18 @@ reset_for_env()
 {
 
     # init ARTHAS' lib
-    mkdir -p ${ARTHAS_LIB_DIR} \
+    mkdir -p "${ARTHAS_LIB_DIR}" \
         || exit_on_err 1 "create ${ARTHAS_LIB_DIR} fail."
 
     # if env define the JAVA_HOME, use it first
     # if is alibaba opts, use alibaba ops's default JAVA_HOME
-    [ -z ${JAVA_HOME} ] && JAVA_HOME=/opt/taobao/java
+    [ -z "${JAVA_HOME}" ] && JAVA_HOME=/opt/taobao/java
 
     # iterater throught candidates to find a proper JAVA_HOME at least contains tools.jar which is required by arthas.
-    if [ ! -d ${JAVA_HOME} ]; then
+    if [ ! -d "${JAVA_HOME}" ]; then
         JAVA_HOME_CANDIDATES=($(ps aux | grep java | grep -v 'grep java' | awk '{print $11}' | sed -n 's/\/bin\/java$//p'))
         for JAVA_HOME_TEMP in ${JAVA_HOME_CANDIDATES[@]}; do
-            if [ -f ${JAVA_HOME_TEMP}/lib/tools.jar ]; then
+            if [ -f "${JAVA_HOME_TEMP}/lib/tools.jar" ]; then
                 JAVA_HOME=${JAVA_HOME_TEMP}
                 break
             fi
@@ -105,21 +136,29 @@ reset_for_env()
     fi
 
     # maybe 1.8.0_162 , 11-ea
-    local JAVA_VERSION_STR=$(${JAVA_HOME}/bin/java -version 2>&1|awk -F '"' '$2>"1.5"{print $2}')
-    # check the jvm version, we need 1.6+
-    [[ ! -x ${JAVA_HOME} || -z ${JAVA_VERSION_STR} ]] && exit_on_err 1 "illegal ENV, please set \$JAVA_HOME to JDK6+"
-
     local JAVA_VERSION
-    if [[ $JAVA_VERSION_STR = "1."* ]]; then
-        JAVA_VERSION=$(echo $veJAVA_VERSION_STRr | sed -e 's/1\.\([0-9]*\)\(.*\)/\1/; 1q')
-    else
-        JAVA_VERSION=$(echo $JAVA_VERSION_STR | sed -e 's/\([0-9]*\)\(.*\)/\1/; 1q')
-    fi
+
+    local IFS=$'\n'
+    # remove \r for Cygwin
+    local lines=$("${JAVA_HOME}"/bin/java -version 2>&1 | tr '\r' '\n')
+    for line in $lines; do
+      if [[ (-z $JAVA_VERSION) && ($line = *"version \""*) ]]
+      then
+        local ver=$(echo $line | sed -e 's/.*version "\(.*\)"\(.*\)/\1/; 1q')
+        # on macOS, sed doesn't support '?'
+        if [[ $ver = "1."* ]]
+        then
+          JAVA_VERSION=$(echo $ver | sed -e 's/1\.\([0-9]*\)\(.*\)/\1/; 1q')
+        else
+          JAVA_VERSION=$(echo $ver | sed -e 's/\([0-9]*\)\(.*\)/\1/; 1q')
+        fi
+      fi
+    done
 
     # when java version greater than 9, there is no tools.jar
     if [[ "$JAVA_VERSION" -lt 9 ]];then
       # check tools.jar exists
-      if [ ! -f ${JAVA_HOME}/lib/tools.jar ]; then
+      if [ ! -f "${JAVA_HOME}/lib/tools.jar" ]; then
           exit_on_err 1 "${JAVA_HOME}/lib/tools.jar does not exist, arthas could not be launched!"
       else
           BOOT_CLASSPATH=-Xbootclasspath/a:${JAVA_HOME}/lib/tools.jar
@@ -134,7 +173,7 @@ reset_for_env()
 # get latest version from local
 get_local_version()
 {
-    ls ${ARTHAS_LIB_DIR} | sort | tail -1
+    ls "${ARTHAS_LIB_DIR}" | sort | tail -1
 }
 
 # get latest version from remote
@@ -143,29 +182,22 @@ get_remote_version()
     curl -sLk --connect-timeout ${SO_TIMEOUT} "${ARTHAS_REMOTE_VERSION_URL}" | sed 's/{.*latestVersion":"*\([0-9a-zA-Z\\.\\-]*\)"*,*.*}/\1/'
 }
 
-# make version format to comparable format like 000.000.(0){15}
-# $1 : version
-to_comparable_version()
-{
-    echo ${1}|awk -F "." '{printf("%d.%d.%d\n",$1,$2,$3)}'
-}
-
 # update arthas if necessary
 update_if_necessary()
 {
     local update_version=$1
 
-    if [ ! -d ${ARTHAS_LIB_DIR}/${update_version} ]; then
+    if [ ! -d "${ARTHAS_LIB_DIR}/${update_version}" ]; then
         echo "updating version ${update_version} ..."
 
         local temp_target_lib_dir="$TMP_DIR/temp_${update_version}_$$"
         local temp_target_lib_zip="${temp_target_lib_dir}/arthas-${update_version}-bin.zip"
         local target_lib_dir="${ARTHAS_LIB_DIR}/${update_version}/arthas"
-        mkdir -p ${target_lib_dir}
+        mkdir -p "${target_lib_dir}"
 
         # clean
-        rm -rf ${temp_target_lib_dir}
-        rm -rf ${target_lib_dir}
+        rm -rf "${temp_target_lib_dir}"
+        rm -rf "${target_lib_dir}"
 
         mkdir -p "${temp_target_lib_dir}" \
             || exit_on_err 1 "create ${temp_target_lib_dir} fail."
@@ -174,16 +206,16 @@ update_if_necessary()
         curl \
             -#Lk \
             --connect-timeout ${SO_TIMEOUT} \
-            -o ${temp_target_lib_zip} \
+            -o "${temp_target_lib_zip}" \
             "${ARTHAS_REMOTE_DOWNLOAD_URL}/${update_version}/arthas-packaging-${update_version}-bin.zip"  \
         || return 1
 
         # unzip arthas lib
-        unzip ${temp_target_lib_zip} -d ${temp_target_lib_dir} || (rm -rf ${temp_target_lib_dir} \
-        ${ARTHAS_LIB_DIR}/${update_version} && return 1)
+        unzip "${temp_target_lib_zip}" -d "${temp_target_lib_dir}" || (rm -rf "${temp_target_lib_dir}" \
+        "${ARTHAS_LIB_DIR}/${update_version}" && return 1)
 
         # rename
-        mv ${temp_target_lib_dir} ${target_lib_dir} || return 1
+        mv "${temp_target_lib_dir}" "${target_lib_dir}" || return 1
 
         # print success
         echo "update completed."
@@ -219,16 +251,17 @@ Example:
     ./as.sh --versions
 
 Here is the list of possible java process(es) to attatch:
-
-$(${JAVA_HOME}/bin/jps -l | grep -v sun.tools.jps.Jps)
 "
+
+"${JAVA_HOME}"/bin/jps -l | grep -v sun.tools.jps.Jps
+
 }
 
 # list arthas versions
 list_versions()
 {
     echo "Arthas versions under ${ARTHAS_LIB_DIR}:"
-    ls -1 ${ARTHAS_LIB_DIR}
+    ls -1 "${ARTHAS_LIB_DIR}"
 }
 
 # parse the argument
@@ -301,7 +334,7 @@ parse_arguments()
         # backup IFS: https://github.com/alibaba/arthas/issues/128
         local IFS_backup=$IFS
         IFS=$'\n'
-        CANDIDATES=($(${JAVA_HOME}/bin/jps -l | grep -v sun.tools.jps.Jps | awk '{print $0}'))
+        CANDIDATES=($("${JAVA_HOME}"/bin/jps -l | grep -v sun.tools.jps.Jps | awk '{print $0}'))
 
         if [ ${#CANDIDATES[@]} -eq 0 ]; then
             echo "Error: no available java process to attach."
@@ -369,12 +402,17 @@ attach_jvm()
     local arthas_version=$1
     local arthas_lib_dir=${ARTHAS_LIB_DIR}/${arthas_version}/arthas
 
+    # http://www.inonit.com/cygwin/faq/
+    if [ "${OS_TYPE}" = "Cygwin" ]; then
+        arthas_lib_dir=`cygpath -wp $arthas_lib_dir`
+    fi
+
     echo "Attaching to ${TARGET_PID} using version ${1}..."
 
     if [ ${TARGET_IP} = ${DEFAULT_TARGET_IP} ]; then
-        ${JAVA_HOME}/bin/java \
-            ${ARTHAS_OPTS} ${BOOT_CLASSPATH} ${JVM_OPTS} \
-            -jar ${arthas_lib_dir}/arthas-core.jar \
+        "${JAVA_HOME}"/bin/java \
+            ${ARTHAS_OPTS} "${BOOT_CLASSPATH}" ${JVM_OPTS} \
+            -jar "${arthas_lib_dir}/arthas-core.jar" \
                 -pid ${TARGET_PID} \
                 -target-ip ${TARGET_IP} \
                 -telnet-port ${TELNET_PORT} \
@@ -385,6 +423,11 @@ attach_jvm()
 }
 
 sanity_check() {
+    # only Linux/Mac support ps to find process, Cygwin/MinGw may fail.
+    if ([ "${OS_TYPE}" != "Linux" ] && [ "${OS_TYPE}" != "Mac" ]); then
+        return
+    fi
+
     # 0 check whether the pid exist
     local pid=$(ps -p ${TARGET_PID} -o pid=)
     if [ -z ${pid} ]; then
@@ -411,14 +454,27 @@ active_console()
     local arthas_version=$1
     local arthas_lib_dir=${ARTHAS_LIB_DIR}/${arthas_version}/arthas
 
+    # http://www.inonit.com/cygwin/faq/
+    if [ "${OS_TYPE}" = "Cygwin" ]; then
+        arthas_lib_dir=`cygpath -wp $arthas_lib_dir`
+    fi
+
     if [ "${BATCH_MODE}" = "true" ]; then
-        ${JAVA_HOME}/bin/java ${ARTHAS_OPTS} ${JVM_OPTS} \
-             -jar ${arthas_lib_dir}/arthas-client.jar \
+        "${JAVA_HOME}/bin/java" ${ARTHAS_OPTS} ${JVM_OPTS} \
+             -jar "${arthas_lib_dir}/arthas-client.jar" \
              ${TARGET_IP} \
              -p ${TELNET_PORT} \
              -f ${BATCH_SCRIPT}
     elif type telnet 2>&1 >> /dev/null; then
         # use telnet
+        if [[ $(command -v telnet) == *"system32"* ]] ; then
+            # Windows/system32/telnet.exe can not run in Cygwin/MinGw
+            echo "It seems that current bash is under Windows. $(command -v telnet) can not run under bash."
+            echo "Please start cmd.exe from Windows start menu, and then run telnet ${TARGET_IP} ${TELNET_PORT} to connect to target process."
+            echo "Or visit http://localhost:8563/ to connect to target process."
+            return 1
+        fi
+        echo "telnet connecting to arthas server... current timestamp is `date +%s`"
         telnet ${TARGET_IP} ${TELNET_PORT}
     else
         echo "'telnet' is required." 1>&2
@@ -439,26 +495,26 @@ main()
 
     local remote_version=$(get_remote_version)
 
-    if [ -z ${ARTHAS_VERSION} ]; then
-        update_if_necessary ${remote_version} || echo "update fail, ignore this update." 1>&2
+    if [ -z "${ARTHAS_VERSION}" ]; then
+        update_if_necessary "${remote_version}" || echo "update fail, ignore this update." 1>&2
     else
-        update_if_necessary ${ARTHAS_VERSION} || echo "update fail, ignore this update." 1>&2
+        update_if_necessary "${ARTHAS_VERSION}" || echo "update fail, ignore this update." 1>&2
     fi
 
     local arthas_local_version=$(get_local_version)
 
-    if [ ! -z ${ARTHAS_VERSION} ]; then
+    if [ ! -z "${ARTHAS_VERSION}" ]; then
         arthas_local_version=${ARTHAS_VERSION}
     fi
 
-    if [ ! -d ${ARTHAS_LIB_DIR}/${arthas_local_version} ]; then
+    if [ ! -d "${ARTHAS_LIB_DIR}/${arthas_local_version}" ]; then
         exit_on_err 1 "arthas not found, please check your network."
     fi
 
     sanity_check
 
     echo "Calculating attach execution time..."
-    time (attach_jvm ${arthas_local_version} || exit 1)
+    time (attach_jvm "${arthas_local_version}" || exit 1)
 
     if [ $? -ne 0 ]; then
         exit_on_err 1 "attach to target jvm (${TARGET_PID}) failed, check ${HOME}/logs/arthas/arthas.log or stderr of target jvm for any exceptions."
@@ -467,7 +523,6 @@ main()
     echo "Attach success."
 
     if [ ${ATTACH_ONLY} = false ]; then
-      echo "Connecting to arthas server... current time is `date '+%Y-%m-%d %H:%M:%S'`"
       active_console ${arthas_local_version}
     fi
 }
