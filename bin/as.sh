@@ -105,16 +105,24 @@ reset_for_env()
     fi
 
     # maybe 1.8.0_162 , 11-ea
-    local JAVA_VERSION_STR=$(${JAVA_HOME}/bin/java -version 2>&1|awk -F '"' '$2>"1.5"{print $2}')
-    # check the jvm version, we need 1.6+
-    [[ ! -x "${JAVA_HOME}" || -z "${JAVA_VERSION_STR}" ]] && exit_on_err 1 "illegal ENV, please set \$JAVA_HOME to JDK6+"
-
     local JAVA_VERSION
-    if [[ $JAVA_VERSION_STR = "1."* ]]; then
-        JAVA_VERSION=$(echo $veJAVA_VERSION_STRr | sed -e 's/1\.\([0-9]*\)\(.*\)/\1/; 1q')
-    else
-        JAVA_VERSION=$(echo $JAVA_VERSION_STR | sed -e 's/\([0-9]*\)\(.*\)/\1/; 1q')
-    fi
+
+    local IFS=$'\n'
+    # remove \r for Cygwin
+    local lines=$(${JAVA_HOME}/bin/java -version 2>&1 | tr '\r' '\n')
+    for line in $lines; do
+      if [[ (-z $JAVA_VERSION) && ($line = *"version \""*) ]]
+      then
+        local ver=$(echo $line | sed -e 's/.*version "\(.*\)"\(.*\)/\1/; 1q')
+        # on macOS, sed doesn't support '?'
+        if [[ $ver = "1."* ]]
+        then
+          JAVA_VERSION=$(echo $ver | sed -e 's/1\.\([0-9]*\)\(.*\)/\1/; 1q')
+        else
+          JAVA_VERSION=$(echo $ver | sed -e 's/\([0-9]*\)\(.*\)/\1/; 1q')
+        fi
+      fi
+    done
 
     # when java version greater than 9, there is no tools.jar
     if [[ "$JAVA_VERSION" -lt 9 ]];then
@@ -365,8 +373,8 @@ attach_jvm()
     echo "Attaching to ${TARGET_PID} using version ${1}..."
 
     if [ ${TARGET_IP} = ${DEFAULT_TARGET_IP} ]; then
-        ${JAVA_HOME}/bin/java \
-            ${ARTHAS_OPTS} ${BOOT_CLASSPATH} ${JVM_OPTS} \
+        "${JAVA_HOME}"/bin/java \
+            ${ARTHAS_OPTS} "${BOOT_CLASSPATH}" ${JVM_OPTS} \
             -jar ${arthas_lib_dir}/arthas-core.jar \
                 -pid ${TARGET_PID} \
                 -target-ip ${TARGET_IP} \
@@ -405,8 +413,8 @@ active_console()
     local arthas_lib_dir=${ARTHAS_LIB_DIR}/${arthas_version}/arthas
 
     if [ "${BATCH_MODE}" = "true" ]; then
-        ${JAVA_HOME}/bin/java ${ARTHAS_OPTS} ${JVM_OPTS} \
-             -jar ${arthas_lib_dir}/arthas-client.jar \
+        "${JAVA_HOME}/bin/java" ${ARTHAS_OPTS} ${JVM_OPTS} \
+             -jar "${arthas_lib_dir}/arthas-client.jar" \
              ${TARGET_IP} \
              -p ${TELNET_PORT} \
              -f ${BATCH_SCRIPT}
