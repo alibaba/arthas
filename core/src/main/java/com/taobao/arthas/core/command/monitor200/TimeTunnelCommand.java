@@ -1,13 +1,17 @@
 package com.taobao.arthas.core.command.monitor200;
 
+import java.util.LinkedHashMap;
+import java.util.Map;
+import java.util.concurrent.atomic.AtomicInteger;
+
+import com.taobao.arthas.core.advisor.Advice;
 import com.taobao.arthas.core.advisor.AdviceListener;
+import com.taobao.arthas.core.advisor.ArthasMethod;
 import com.taobao.arthas.core.command.Constants;
 import com.taobao.arthas.core.command.express.ExpressException;
 import com.taobao.arthas.core.command.express.ExpressFactory;
 import com.taobao.arthas.core.shell.cli.Completion;
 import com.taobao.arthas.core.shell.command.CommandProcess;
-import com.taobao.arthas.core.advisor.Advice;
-import com.taobao.arthas.core.advisor.ArthasMethod;
 import com.taobao.arthas.core.shell.handlers.command.CommandInterruptHandler;
 import com.taobao.arthas.core.util.LogUtil;
 import com.taobao.arthas.core.util.SearchUtils;
@@ -15,17 +19,9 @@ import com.taobao.arthas.core.util.StringUtils;
 import com.taobao.arthas.core.util.affect.RowAffect;
 import com.taobao.arthas.core.util.matcher.Matcher;
 import com.taobao.arthas.core.view.ObjectView;
-import com.taobao.middleware.cli.annotations.Argument;
-import com.taobao.middleware.cli.annotations.Description;
-import com.taobao.middleware.cli.annotations.Name;
-import com.taobao.middleware.cli.annotations.Option;
-import com.taobao.middleware.cli.annotations.Summary;
+import com.taobao.middleware.cli.annotations.*;
 import com.taobao.text.ui.TableElement;
 import com.taobao.text.util.RenderUtil;
-
-import java.util.LinkedHashMap;
-import java.util.Map;
-import java.util.concurrent.atomic.AtomicInteger;
 
 import static java.lang.Integer.toHexString;
 import static java.lang.String.format;
@@ -204,6 +200,7 @@ public class TimeTunnelCommand extends EnhancerCommand {
      * 检查参数是否合法
      */
     private void checkArguments() {
+        LogUtil.getArthasLogger().info("isDelete: " + isDelete + ", isDeleteAll: " + isDeleteAll);
         // 检查d/p参数是否有i参数配套
         if ((isDelete || isPlay) && null == index) {
             throw new IllegalArgumentException("Time fragment index is expected, please type -i to specify");
