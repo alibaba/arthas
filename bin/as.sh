@@ -429,7 +429,7 @@ sanity_check() {
     fi
 
     # 0 check whether the pid exist
-    local pid=$(ps -p ${TARGET_PID} -o pid=)
+    local pid=$(ps -o pid= | grep -E "^\s*${TARGET_PID}$")
     if [ -z ${pid} ]; then
         exit_on_err 1 "The target pid (${TARGET_PID}) does not exist!"
     fi
@@ -437,7 +437,7 @@ sanity_check() {
     # 1 check the current user matches the process owner
     local current_user=$(id -u -n)
     # the last '=' after 'user' eliminates the column header
-    local target_user=$(ps -p "${TARGET_PID}" -o user=)
+    local target_user=$(ps -o pid,user= | grep -E "^\s*${TARGET_PID}$" | xargs | cut -f 2 -d " ")
     if [ "$current_user" != "$target_user" ]; then
         echo "The current user ($current_user) does not match with the owner of process ${TARGET_PID} ($target_user)."
         echo "To solve this, choose one of the following command:"
