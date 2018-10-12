@@ -14,7 +14,9 @@ Welcome PR to further improve English [documentation](https://github.com/alibaba
 
 ## Developer
 
-Compilation requires JDK 7 and above since we are `java.lang.management.BufferPoolMXBean` while runtime requires JDK 6.
+* Arthas runtime supports JDK6+
+* To build Arthas requires JDK7+, because of the source code import JDK7 classes, such as `java.lang.management.BufferPoolMXBean`.
+
 
 ### Local Installation
 
@@ -42,26 +44,7 @@ Tip: you can use `--versions` to list all available versions.
 
 ### Debug
 
-There are two stages when booting Arthas:
-
-#### Stage 1
-
-Execute `com.taobao.arthas.core.Arthas`, locate a proper JVM and attach to it. 
-
-If you intend to debug this part, you can: 
-
-```bash
-./as.sh debug  pid
-```
-
-The JPDA port is `8888`, you can connect to it from remote to debug; if you want to make it suspend after start, you can:
-
-```bash
-JPDA_SUSPEND=y ./as.sh debug  pid
-```
-
-#### Stage 2
-After attaching, Arthas agent runs inside the target process. If you want to debug agent, you have to make sure the target process is started in debug mode too. If so, then you can directly import the Arthas source code, and debug it. 
+* [Debug Arthas In IDEA](https://github.com/alibaba/arthas/issues/222)
 
 ### Packaging All
 
@@ -94,7 +77,8 @@ After attaching, Arthas agent runs inside the target process. If you want to deb
 
 ## 开发者相关
 
-编绎要求jdk7以上。因为使用到了jdk7才有的`java.lang.management.BufferPoolMXBean`，运行时要求是jdk6。
+* Arthas运行支持JDK6+
+* 编绎Arthas要求JDK7+，因为使用到了jdk7里的`java.lang.management.BufferPoolMXBean`。
 
 ### 安装到本地
 
@@ -120,20 +104,7 @@ After attaching, Arthas agent runs inside the target process. If you want to deb
 
 ### Debug
 
-Arthas启动过程分为两部分：
-
-1. 执行`com.taobao.arthas.core.Arthas`，查找到合适的jvm，然后attach上面。如果想debug这部分代码，可以直接
-
-    ```
-    ./as.sh debug  pid
-    ```
-    JPDA端口是`8888`，然后可以远程连接来debug。
-    如果启动时等待，则
-    ```
-    JPDA_SUSPEND=y ./as.sh debug  pid
-    ```
-
-1. attach成功之后，arthas agent运行目标进程里。想要调试agent的代码，则需要目标进程本身是以debug方式启动的。可以直接引入arthas的source，打断点
+* [Debug Arthas In IDEA](https://github.com/alibaba/arthas/issues/222)
 
 ### 全量打包
 
