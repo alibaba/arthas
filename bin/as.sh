@@ -427,9 +427,21 @@ sanity_check() {
     if ([ "${OS_TYPE}" != "Linux" ] && [ "${OS_TYPE}" != "Mac" ]); then
         return
     fi
-
+ 
     # 0 check whether the pid exist
-    local pid=$(ps -p ${TARGET_PID} -o pid=)
+    local pid=$(ps -p ${TARGET_PID} -o pid= 2>&1 )
+
+    # get ps command exit code
+    local exitCode="$(ps -p ${TARGET_PID} -o pid= > /dev/null 2>&1; echo $?)"
+
+    # If ps exist code not 0, the TARGET_PID process maybe not exist or ps do not support -p options.
+    if [ "${exitCode}" != "0" ]; then
+        # if ps do not support -p or -o , ${pid} will be error message, just return
+        if [ -n "${pid}" ]; then
+            return
+        fi
+    fi
+
     if [ -z ${pid} ]; then
         exit_on_err 1 "The target pid (${TARGET_PID}) does not exist!"
     fi
