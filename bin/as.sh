@@ -301,7 +301,7 @@ parse_arguments()
         JPDA_ADDRESS="8888"
       fi
       if [ -z "$JPDA_SUSPEND" ]; then
-        JPDA_SUSPEND="n"
+        JPDA_SUSPEND="y"
       fi
       if [ -z "$JPDA_OPTS" ]; then
         JPDA_OPTS="-agentlib:jdwp=transport=$JPDA_TRANSPORT,address=$JPDA_ADDRESS,server=y,suspend=$JPDA_SUSPEND"
