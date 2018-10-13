@@ -138,7 +138,7 @@ $ thread -b
     - java.util.concurrent.ThreadPoolExecutor$Worker@31a6493e
 ```
 
-> 注意， 目前只支持找出synchronized关键字阻塞住的线程， 如果是JUL的锁， 目前还不支持。
+> 注意， 目前只支持找出synchronized关键字阻塞住的线程， 如果是`java.util.concurrent.Lock`， 目前还不支持。
 
 
 #### thread -i, 指定采样时间间隔
