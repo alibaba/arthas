@@ -28,6 +28,7 @@ import com.taobao.text.ui.TableElement;
 import com.taobao.text.util.RenderUtil;
 
 import java.lang.instrument.Instrumentation;
+import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.Set;
@@ -118,7 +119,8 @@ public class GetStaticCommand extends AnnotatedCommand {
         boolean found = false;
 
         for (Field field : clazz.getDeclaredFields()) {
-            if (!Modifier.isStatic(field.getModifiers()) || !fieldNameMatcher.matching(field.getName())) {
+            if (!isSingleton(clazz) && (!Modifier.isStatic(field.getModifiers())
+                    || !fieldNameMatcher.matching(field.getName()))) {
                 continue;
             }
             if (!field.isAccessible()) {
@@ -153,6 +155,16 @@ public class GetStaticCommand extends AnnotatedCommand {
         if (!found) {
             process.write("getstatic: no matched static field was found\n");
         }
+    }
+
+    private boolean isSingleton(Class<?> clazz) {
+        Constructor[] allConstructors = clazz.getDeclaredConstructors();
+        for (Constructor constructor : allConstructors) {
+            if (!Modifier.isPrivate(constructor.getModifiers())) {
+                return false;
+            }
+        }
+        return true;
     }
 
     private void processMatches(CommandProcess process, Set<Class<?>> matchedClasses) {
