@@ -139,7 +139,7 @@ $ thread -b
     - java.util.concurrent.ThreadPoolExecutor$Worker@31a6493e
 ```
 
-> Attention: only `synchronized` blocked threads can be located for now, `JUL` not supported yet.
+Attention: only `synchronized` blocked threads can be located for now, while `java.util.concurrent.Lock` not supported yet.
 
 
 #### thread -i specify the collecting interval
