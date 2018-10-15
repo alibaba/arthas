@@ -1,18 +1,15 @@
 package com.taobao.arthas.core.command.monitor200;
 
-import com.taobao.arthas.core.advisor.ReflectAdviceListenerAdapter;
-import com.taobao.arthas.core.shell.command.CommandProcess;
 import com.taobao.arthas.core.advisor.Advice;
 import com.taobao.arthas.core.advisor.ArthasMethod;
+import com.taobao.arthas.core.advisor.ReflectAdviceListenerAdapter;
+import com.taobao.arthas.core.shell.command.CommandProcess;
 import com.taobao.arthas.core.util.DateUtils;
 import com.taobao.arthas.core.util.LogUtil;
 import com.taobao.arthas.core.util.StringUtils;
 import com.taobao.arthas.core.util.ThreadLocalWatch;
 import com.taobao.arthas.core.view.ObjectView;
 import com.taobao.middleware.logger.Logger;
-
-import java.text.SimpleDateFormat;
-import java.util.Date;
 
 /**
  * @author beiwei30 on 29/11/2016.
@@ -85,7 +82,7 @@ class WatchAdviceListener extends ReflectAdviceListenerAdapter {
                 Object value = getExpressionResult(command.getExpress(), advice, cost);
                 String result = StringUtils.objectToString(
                         isNeedExpand() ? new ObjectView(value, command.getExpand(), command.getSizeLimit()).draw() : value);
-                process.write("ts=" + DateUtils.getCurrentDate() + ";result=" + result + "\n");
+                process.write("ts=" + DateUtils.getCurrentDate() + "; [cost=" + cost + "ms] result=" + result + "\n");
                 process.times().incrementAndGet();
                 if (isLimitExceeded(command.getNumberOfLimit(), process.times().get())) {
                     abortProcess(process, command.getNumberOfLimit());
