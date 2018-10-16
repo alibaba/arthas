@@ -1,5 +1,15 @@
 package com.taobao.arthas.core.command.klass100;
 
+import static com.taobao.text.ui.Element.label;
+
+import java.lang.instrument.Instrumentation;
+import java.security.CodeSource;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Set;
+
 import com.taobao.arthas.core.command.Constants;
 import com.taobao.arthas.core.shell.command.AnnotatedCommand;
 import com.taobao.arthas.core.shell.command.CommandProcess;
@@ -16,12 +26,6 @@ import com.taobao.text.Decoration;
 import com.taobao.text.ui.Element;
 import com.taobao.text.ui.TableElement;
 import com.taobao.text.util.RenderUtil;
-
-import java.lang.instrument.Instrumentation;
-import java.security.CodeSource;
-import java.util.Set;
-
-import static com.taobao.text.ui.Element.label;
 
 /**
  * 展示类信息
@@ -42,6 +46,14 @@ public class SearchClassCommand extends AnnotatedCommand {
     private boolean isField = false;
     private boolean isRegEx = false;
     private Integer expand;
+
+    public static String getCodeSource(final CodeSource cs) {
+        if (null == cs || null == cs.getLocation() || null == cs.getLocation().getFile()) {
+            return com.taobao.arthas.core.util.Constants.EMPTY_STRING;
+        }
+
+        return cs.getLocation().getFile();
+    }
 
     @Argument(argName = "class-pattern", index = 0)
     @Description("Class name pattern, use either '.' or '/' as separator")
@@ -78,7 +90,13 @@ public class SearchClassCommand extends AnnotatedCommand {
         // TODO: null check
         RowAffect affect = new RowAffect();
         Instrumentation inst = process.session().getInstrumentation();
-        Set<Class<?>> matchedClasses = SearchUtils.searchClass(inst, classPattern, isRegEx);
+        List<Class<?>> matchedClasses = new ArrayList(SearchUtils.searchClass(inst, classPattern, isRegEx));
+        Collections.sort(matchedClasses, new Comparator() {
+            @Override
+            public int compare(Object o1, Object o2) {
+                return StringUtils.classname((Class) o1).compareTo(StringUtils.classname((Class) o2));
+            }
+        });
 
         for (Class<?> clazz : matchedClasses) {
             processClass(process, clazz);
@@ -125,14 +143,6 @@ public class SearchClassCommand extends AnnotatedCommand {
             table.row(label("fields"), TypeRenderUtils.drawField(clazz, expand));
         }
         return table;
-    }
-
-    public static String getCodeSource(final CodeSource cs) {
-        if (null == cs || null == cs.getLocation() || null == cs.getLocation().getFile()) {
-            return com.taobao.arthas.core.util.Constants.EMPTY_STRING;
-        }
-
-        return cs.getLocation().getFile();
     }
 
 }
