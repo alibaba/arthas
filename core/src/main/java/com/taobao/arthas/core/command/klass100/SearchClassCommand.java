@@ -8,7 +8,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
-import java.util.Set;
 
 import com.taobao.arthas.core.command.Constants;
 import com.taobao.arthas.core.shell.command.AnnotatedCommand;
@@ -90,11 +89,11 @@ public class SearchClassCommand extends AnnotatedCommand {
         // TODO: null check
         RowAffect affect = new RowAffect();
         Instrumentation inst = process.session().getInstrumentation();
-        List<Class<?>> matchedClasses = new ArrayList(SearchUtils.searchClass(inst, classPattern, isRegEx));
-        Collections.sort(matchedClasses, new Comparator() {
+        List<Class<?>> matchedClasses = new ArrayList<Class<?>>(SearchUtils.searchClass(inst, classPattern, isRegEx));
+        Collections.sort(matchedClasses, new Comparator<Class<?>>() {
             @Override
-            public int compare(Object o1, Object o2) {
-                return StringUtils.classname((Class) o1).compareTo(StringUtils.classname((Class) o2));
+            public int compare(Class<?> c1, Class<?> c2) {
+                return StringUtils.classname(c1).compareTo(StringUtils.classname(c2));
             }
         });
 
