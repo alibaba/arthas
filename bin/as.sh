@@ -409,9 +409,10 @@ attach_jvm()
 
     echo "Attaching to ${TARGET_PID} using version ${1}..."
 
+    local opts="${ARTHAS_OPTS} ${BOOT_CLASSPATH} ${JVM_OPTS}"
     if [ ${TARGET_IP} = ${DEFAULT_TARGET_IP} ]; then
         "${JAVA_HOME}"/bin/java \
-            ${ARTHAS_OPTS} "${BOOT_CLASSPATH}" ${JVM_OPTS} \
+            ${opts}  \
             -jar "${arthas_lib_dir}/arthas-core.jar" \
                 -pid ${TARGET_PID} \
                 -target-ip ${TARGET_IP} \
