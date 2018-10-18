@@ -332,7 +332,7 @@ public class TimeTunnelCommand extends EnhancerCommand {
             }
 
             Advice advice = tf.getAdvice();
-            Object value = ExpressFactory.newExpress(advice).get(watchExpress);
+            Object value = ExpressFactory.threadLocalExpress(advice).get(watchExpress);
             if (isNeedExpand()) {
                 process.write(new ObjectView(value, expand, sizeLimit).draw()).write("\n");
             } else {
@@ -361,7 +361,7 @@ public class TimeTunnelCommand extends EnhancerCommand {
                 Advice advice = tf.getAdvice();
 
                 // 搜索出匹配的时间片段
-                if ((ExpressFactory.newExpress(advice)).is(searchExpress)) {
+                if ((ExpressFactory.threadLocalExpress(advice)).is(searchExpress)) {
                     matchingTimeSegmentMap.put(index, tf);
                 }
             }
