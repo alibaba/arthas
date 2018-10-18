@@ -49,7 +49,7 @@ public class GetStaticCommand extends AnnotatedCommand {
     private String classPattern;
     private String fieldPattern;
     private String express;
-    private String code = null;
+    private String hashCode = null;
     private boolean isRegEx = false;
     private int expand = 1;
 
@@ -71,10 +71,10 @@ public class GetStaticCommand extends AnnotatedCommand {
         this.express = express;
     }
 
-    @Option(shortName = "c", longName = "code")
+    @Option(shortName = "c", longName = "classloader")
     @Description("The hash code of the special class's classLoader")
-    public void setCode(String code) {
-        this.code = code;
+    public void setCode(String hashCode) {
+        this.hashCode = hashCode;
     }
 
     @Option(shortName = "E", longName = "regex", flag = true)
@@ -93,7 +93,7 @@ public class GetStaticCommand extends AnnotatedCommand {
     public void process(CommandProcess process) {
         RowAffect affect = new RowAffect();
         Instrumentation inst = process.session().getInstrumentation();
-        Set<Class<?>> matchedClasses = SearchUtils.searchClassOnly(inst, classPattern, isRegEx, code);
+        Set<Class<?>> matchedClasses = SearchUtils.searchClassOnly(inst, classPattern, isRegEx, hashCode);
 
         try {
             if (matchedClasses == null || matchedClasses.isEmpty()) {
