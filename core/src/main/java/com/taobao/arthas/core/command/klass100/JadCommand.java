@@ -4,6 +4,7 @@ import com.taobao.arthas.core.advisor.Enhancer;
 import com.taobao.arthas.core.command.Constants;
 import com.taobao.arthas.core.shell.command.AnnotatedCommand;
 import com.taobao.arthas.core.shell.command.CommandProcess;
+import com.taobao.arthas.core.util.ClassUtils;
 import com.taobao.arthas.core.util.FileUtils;
 import com.taobao.arthas.core.util.LogUtil;
 import com.taobao.arthas.core.util.SearchUtils;
@@ -125,7 +126,7 @@ public class JadCommand extends AnnotatedCommand {
             process.write(RenderUtil.render(new LabelElement("ClassLoader: ").style(Decoration.bold.fg(Color.red)), process.width()));
             process.write(RenderUtil.render(TypeRenderUtils.drawClassLoader(c), process.width()) + "\n");
             process.write(RenderUtil.render(new LabelElement("Location: ").style(Decoration.bold.fg(Color.red)), process.width()));
-            process.write(RenderUtil.render(new LabelElement(SearchClassCommand.getCodeSource(
+            process.write(RenderUtil.render(new LabelElement(ClassUtils.getCodeSource(
                     c.getProtectionDomain().getCodeSource())).style(Decoration.bold.fg(Color.blue)), process.width()) + "\n");
             process.write(LangRenderUtil.render(source) + "\n");
             process.write(com.taobao.arthas.core.util.Constants.EMPTY_STRING);
