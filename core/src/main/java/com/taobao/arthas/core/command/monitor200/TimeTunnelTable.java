@@ -162,7 +162,7 @@ public class TimeTunnelTable {
                                  String watchExpress, boolean isNeedExpand, int expandLevel, int sizeLimit)
             throws ExpressException {
         for (Map.Entry<Integer, TimeFragment> entry : matchingTimeSegmentMap.entrySet()) {
-            Object value = ExpressFactory.newExpress(entry.getValue().getAdvice()).get(watchExpress);
+            Object value = ExpressFactory.threadLocalExpress(entry.getValue().getAdvice()).get(watchExpress);
             table.row("" + entry.getKey(), "" +
                     (isNeedExpand ? new ObjectView(value, expandLevel, sizeLimit).draw() : StringUtils.objectToString(value)));
         }

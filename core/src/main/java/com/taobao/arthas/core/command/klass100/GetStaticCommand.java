@@ -128,7 +128,7 @@ public class GetStaticCommand extends AnnotatedCommand {
                 Object value = field.get(null);
 
                 if (!StringUtils.isEmpty(express)) {
-                    value = ExpressFactory.newExpress(value).get(express);
+                    value = ExpressFactory.threadLocalExpress(value).get(express);
                 }
 
                 String result = StringUtils.objectToString(expand >= 0 ? new ObjectView(value, expand).draw() : value);
