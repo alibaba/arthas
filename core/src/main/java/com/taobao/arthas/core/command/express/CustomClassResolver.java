@@ -2,28 +2,27 @@ package com.taobao.arthas.core.command.express;
 
 import ognl.ClassResolver;
 
-import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * @author diecui1202 on 2017/9/29.
+ * @see ognl.DefaultClassResolver
  */
 public class CustomClassResolver implements ClassResolver {
 
     public static final CustomClassResolver customClassResolver = new CustomClassResolver();
 
-    private static final ThreadLocal<ClassLoader> classLoader = new ThreadLocal<ClassLoader>();
-
-    private Map classes = new HashMap(101);
+    private Map<String, Class<?>> classes = new ConcurrentHashMap<String, Class<?>>(101);
 
     private CustomClassResolver() {
 
     }
 
-    public Class classForName(String className, Map context) throws ClassNotFoundException {
-        Class result = null;
+    public Class<?> classForName(String className, Map context) throws ClassNotFoundException {
+        Class<?> result = null;
 
-        if ((result = (Class) classes.get(className)) == null) {
+        if ((result = classes.get(className)) == null) {
             try {
                 ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
                 if (classLoader != null) {
