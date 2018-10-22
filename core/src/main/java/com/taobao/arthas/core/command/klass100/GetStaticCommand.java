@@ -73,7 +73,7 @@ public class GetStaticCommand extends AnnotatedCommand {
 
     @Option(shortName = "c", longName = "classloader")
     @Description("The hash code of the special class's classLoader")
-    public void setCode(String hashCode) {
+    public void setHashCode(String hashCode) {
         this.hashCode = hashCode;
     }
 

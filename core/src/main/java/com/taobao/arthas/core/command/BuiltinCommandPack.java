@@ -15,6 +15,7 @@ import com.taobao.arthas.core.command.klass100.ClassLoaderCommand;
 import com.taobao.arthas.core.command.klass100.DumpClassCommand;
 import com.taobao.arthas.core.command.klass100.GetStaticCommand;
 import com.taobao.arthas.core.command.klass100.JadCommand;
+import com.taobao.arthas.core.command.klass100.OgnlCommand;
 import com.taobao.arthas.core.command.klass100.RedefineCommand;
 import com.taobao.arthas.core.command.klass100.SearchClassCommand;
 import com.taobao.arthas.core.command.klass100.SearchMethodCommand;
@@ -66,6 +67,7 @@ public class BuiltinCommandPack implements CommandResolver {
         commands.add(Command.create(TimeTunnelCommand.class));
         commands.add(Command.create(JvmCommand.class));
         // commands.add(Command.create(GroovyScriptCommand.class));
+        commands.add(Command.create(OgnlCommand.class));
         commands.add(Command.create(DashboardCommand.class));
         commands.add(Command.create(DumpClassCommand.class));
         commands.add(Command.create(JulyCommand.class));

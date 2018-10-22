@@ -23,4 +23,7 @@ public class ExpressFactory {
         return expressRef.get().reset().bind(object);
     }
 
+    public static Express unpooledExpress(ClassLoader classloader) {
+        return new OgnlExpress(new ClassLoaderClassResolver(classloader));
+    }
 }
