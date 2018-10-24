@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Critical Fields in Expressions &mdash; Arthas 3.0.5-SNAPSHOT documentation</title>
+  <title>Fundamental Fields in Expressions &mdash; Arthas 3.0.5-SNAPSHOT documentation</title>
   
 
   
@@ -176,7 +176,7 @@
         
           <li><a href="watch.html">watch</a> &raquo;</li>
         
-      <li>Critical Fields in Expressions</li>
+      <li>Fundamental Fields in Expressions</li>
     
     
       <li class="wy-breadcrumbs-aside">
@@ -197,8 +197,8 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
             
-  <div class="section" id="critical-fields-in-expressions">
-<span id="critical-fields-in-expressions"></span><h1>Critical Fields in Expressions<a class="headerlink" href="#critical-fields-in-expressions" title="Permalink to this headline">¶</a></h1>
+  <div class="section" id="fundamental-fields-in-expressions">
+<span id="fundamental-fields-in-expressions"></span><h1>Fundamental Fields in Expressions<a class="headerlink" href="#fundamental-fields-in-expressions" title="Permalink to this headline">¶</a></h1>
 <p>There is a very fundamental class <code class="docutils literal notranslate"><span class="pre">Advice</span></code> for the expressions used in filtering, tracing or monitoring and other aspects in commands.</p>
 <div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="kd">public</span> <span class="kd">class</span> <span class="nc">Advice</span> <span class="o">{</span>
 
@@ -212,11 +212,12 @@
     <span class="kd">private</span> <span class="kd">final</span> <span class="kt">boolean</span> <span class="n">isBefore</span><span class="o">;</span>
     <span class="kd">private</span> <span class="kd">final</span> <span class="kt">boolean</span> <span class="n">isThrow</span><span class="o">;</span>
     <span class="kd">private</span> <span class="kd">final</span> <span class="kt">boolean</span> <span class="n">isReturn</span><span class="o">;</span>
-    <span class="o">...</span>
+    
     <span class="c1">// getter/setter  </span>
 <span class="o">}</span>  
 </pre></div>
 </div>
+<p>Description for the variables in the class <code class="docutils literal notranslate"><span class="pre">Advice</span></code>:</p>
 <table border="1" class="docutils">
 <thead>
 <tr>
@@ -227,52 +228,50 @@
 <tbody>
 <tr>
 <td align="right">loader</td>
-<td align="left">class loader of the class</td>
+<td align="left">the class loader for the current called class</td>
 </tr>
 <tr>
 <td align="right">clazz</td>
-<td align="left">the reference of the class</td>
+<td align="left">the reference to the current called class</td>
 </tr>
 <tr>
 <td align="right">method</td>
-<td align="left">the reflective reference of the method</td>
+<td align="left">the reference to the current called method</td>
 </tr>
 <tr>
 <td align="right">target</td>
-<td align="left">the instance of the class</td>
+<td align="left">the instance of the current called class</td>
 </tr>
 <tr>
 <td align="right">params</td>
-<td align="left">the parameters of the method, which is an array (when there is no argument in the method, it will be an empty array)</td>
+<td align="left">the parameters for the current call, which is an array (when there's no parameter, it will be an empty array)</td>
 </tr>
 <tr>
 <td align="right">returnObj</td>
-<td align="left">the return value of the method - only when <code>isReturn==true</code>, it's a valid result but if the return value is <code>void</code> then it will be a <code>null</code></td>
+<td align="left">the return value from the current call - only available when the method call returns normally (<code>isReturn==true</code>), and <code>null</code> is for <code>void</code> return value</td>
 </tr>
 <tr>
 <td align="right">throwExp</td>
-<td align="left">the exceptions thrown by the method invoking - only when <code>isThrow==true</code>, it's a valid thrown exception</td>
+<td align="left">the exceptions thrown from the current call - only available when the method call throws exception (<code>isThrow==true</code>)</td>
 </tr>
 <tr>
 <td align="right">isBefore</td>
-<td align="left">assistant checking flag used in <a href="watch.md"><code>before-watching</code> point</a>  and at this very moment: <code>isBefore==true</code>, <code>isThrow==false</code> and <code>isReturn==false</code> since it's before we invoke the method</td>
+<td align="left">flag to indicate the method is about to execute. <code>isBefore==true</code> but <code>isThrow==false</code> and <code>isReturn==false</code> since it's no way to know how the method call will end</td>
 </tr>
 <tr>
 <td align="right">isThrow</td>
-<td align="left">assistant checking flag: whether the current method invoking ends with exceptions</td>
+<td align="left">flag to indicate the method call ends with exception thrown</td>
 </tr>
 <tr>
 <td align="right">isReturn</td>
-<td align="left">assistant checking flag: whether the method invoking exits normally without exceptions</td>
+<td align="left">flag to indicate the method call ends normally without exception thrown</td>
 </tr>
 </tbody>
-</table><p>F.Y.I</p>
-<ol class="simple">
-<li>all the <em>fields</em> mentioned in the table above can be used directly in the <code class="docutils literal notranslate"><span class="pre">expressions</span></code>;</li>
-<li>if the expressions are <a class="reference external" href="https://en.wikipedia.org/wiki/OGNL">invalid OGNL</a>, the command will be cancelled automatically with hints to correct the expressions;</li>
+</table><p>All variables listed above can be used directly in the <a class="reference external" href="https://commons.apache.org/proper/commons-ognl/language-guide.html">OGNL expression</a>. The command will not execute and exit if there’s illegal OGNL grammar or unexpected variable in the expression.</p>
+<ul class="simple">
 <li><a class="reference external" href="https://github.com/alibaba/arthas/issues/71">typical use cases</a>;</li>
-<li><a class="reference external" href="https://commons.apache.org/proper/commons-ognl/language-guide.html">OGNL official usage guide</a>.</li>
-</ol>
+<li><a class="reference external" href="https://commons.apache.org/proper/commons-ognl/language-guide.html">OGNL language guide</a>.</li>
+</ul>
 </div>
 
 

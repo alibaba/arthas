@@ -95,7 +95,7 @@ public class Demo {
 
 ### Windows
 
-Open the *DOS* console, under the unzipped arthas folder execture `as.bat <pid>`
+Open the *DOS* console, under the unzipped arthas folder execute `as.bat <pid>`
 
 
 ## 3. Check the Dashboard

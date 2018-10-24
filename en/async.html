@@ -104,9 +104,9 @@
 <li class="toctree-l3 current"><a class="current reference internal" href="#">Async support</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="#use-to-run-the-command-in-the-background">1. Use &amp; to run the command in the background</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#list-background-jobs">2. List background jobs</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#suspend-and-cannel-job">3. Suspend and Cannel job</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#fg-bg-bring-a-background-job-to-the-foreground-restart-a-stopped-background-job">4. fg/bg, Bring a background job to the foreground/Restart a stopped background job</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#redirect-the-job-output">5. Redirect the job output</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#suspend-and-cancel-job">3. Suspend and cancel job</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#fg-bg-switch-the-job-from-the-foreground-to-the-background-and-vise-verse">4. fg/bg, switch the job from the foreground to the background, and vise verse</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#redirect-the-output">5. Redirect the output</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#stop-job">6. Stop job</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#others">7. Others</a></li>
 </ul>
@@ -194,13 +194,14 @@
             
   <div class="section" id="arthas-async-jobs">
 <span id="arthas-async-jobs"></span><h1>Arthas Async Jobs<a class="headerlink" href="#arthas-async-jobs" title="Permalink to this headline">¶</a></h1>
-<p>Asynchronous jobs in arthas, using commands related to linux jobs.<a class="reference external" href="http://man7.org/linux/man-pages/man1/jobs.1p.html">linux man jobs</a>。</p>
+<p>Asynchronous jobs in arthas. The idea is borrowed from <a class="reference external" href="http://man7.org/linux/man-pages/man1/jobs.1p.html">linux jobs</a>.</p>
 <div class="section" id="use-to-run-the-command-in-the-background">
 <span id="use-to-run-the-command-in-the-background"></span><h2>1. Use &amp; to run the command in the background<a class="headerlink" href="#use-to-run-the-command-in-the-background" title="Permalink to this headline">¶</a></h2>
 <p>For example, execute the trace command in the background:</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>trace Test t <span class="p">&amp;</span>  
 </pre></div>
 </div>
+<p>By doing this, the current command is put to the background to run,  you can continue to execute other commands in the console.</p>
 </div>
 <div class="section" id="list-background-jobs">
 <span id="list-background-jobs"></span><h2>2. List background jobs<a class="headerlink" href="#list-background-jobs" title="Permalink to this headline">¶</a></h2>
@@ -214,46 +215,45 @@
        session         : 3648e874-5e69-473f-9eed-7f89660b079b <span class="o">(</span>current<span class="o">)</span>
 </pre></div>
 </div>
-<p>You can see that there is currently a background job executing.</p>
+<p>You can see that there is currently a background job executing:</p>
 <ul class="simple">
 <li>job id is 10, <code class="docutils literal notranslate"><span class="pre">*</span></code> indicates that this job is created by the current session.</li>
 <li>status is <code class="docutils literal notranslate"><span class="pre">Stopped</span></code></li>
 <li>execution count is the number of executions, which have been executed 19 times since the start.</li>
-<li>timeout date: After this time, the job will automatically timeout and exit.</li>
+<li>timeout date: timeout timestamp, when the time exceeds this timestamp, the job will be automatically timeout and exit.</li>
 </ul>
 </div>
-<div class="section" id="suspend-and-cannel-job">
-<span id="suspend-and-cannel-job"></span><h2>3. Suspend and Cannel job<a class="headerlink" href="#suspend-and-cannel-job" title="Permalink to this headline">¶</a></h2>
-<p>When the job is executing in the foreground, such as directly calling the command <code class="docutils literal notranslate"><span class="pre">trace</span> <span class="pre">Test</span> <span class="pre">t</span></code> or calling the background job command <code class="docutils literal notranslate"><span class="pre">trace</span> <span class="pre">Test</span> <span class="pre">t</span> <span class="pre">&amp;</span></code>, the job is transferred to the foreground through the <code class="docutils literal notranslate"><span class="pre">fg</span></code> command. At this point, the console cannot continue to execute the command, but can receive and process the following keyboard events:</p>
+<div class="section" id="suspend-and-cancel-job">
+<span id="suspend-and-cancel-job"></span><h2>3. Suspend and cancel job<a class="headerlink" href="#suspend-and-cancel-job" title="Permalink to this headline">¶</a></h2>
+<p>When the job is executing in the foreground, for example, directly executing the command <code class="docutils literal notranslate"><span class="pre">trace</span> <span class="pre">Test</span> <span class="pre">t</span></code>, or executing the background job command <code class="docutils literal notranslate"><span class="pre">trace</span> <span class="pre">Test</span> <span class="pre">t</span> <span class="pre">&amp;</span></code>, then putting the job back to the forground via <code class="docutils literal notranslate"><span class="pre">fg</span></code> command, the console cannot continue to execute other command, but can receive and process the following keyboard events:</p>
 <ul class="simple">
 <li>‘ctrl + z’: Suspend the job, the job status will change to <code class="docutils literal notranslate"><span class="pre">Stopped</span></code>, and the job can be restarted by <code class="docutils literal notranslate"><span class="pre">bg</span> <span class="pre">&lt;job-id&gt;</span></code> or <code class="docutils literal notranslate"><span class="pre">fg</span> <span class="pre">&lt;job-id&gt;</span></code></li>
 <li>‘ctrl + c’: Stop the job</li>
-<li>‘ctrl + d’: According to linux semantics should be the exit terminal, currently arthas ignore this input.</li>
+<li>‘ctrl + d’: According to linux semantics this should lead to exit the terminal, right now Arthas has not implemented this yet, therefore simply ignore this keystroke.</li>
 </ul>
 </div>
-<div class="section" id="fg-bg-bring-a-background-job-to-the-foreground-restart-a-stopped-background-job">
-<span id="fg-bg-bring-a-background-job-to-the-foreground-restart-a-stopped-background-job"></span><h2>4. fg/bg, Bring a background job to the foreground/Restart a stopped background job<a class="headerlink" href="#fg-bg-bring-a-background-job-to-the-foreground-restart-a-stopped-background-job" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="fg-bg-switch-the-job-from-the-foreground-to-the-background-and-vise-verse">
+<span id="fg-bg-switch-the-job-from-the-foreground-to-the-background-and-vise-verse"></span><h2>4. fg/bg, switch the job from the foreground to the background, and vise verse<a class="headerlink" href="#fg-bg-switch-the-job-from-the-foreground-to-the-background-and-vise-verse" title="Permalink to this headline">¶</a></h2>
 <ul class="simple">
-<li>When the job is executed in the background or suspended (<code class="docutils literal notranslate"><span class="pre">ctrl</span> <span class="pre">+</span> <span class="pre">z</span></code> to suspend job), executing <code class="docutils literal notranslate"><span class="pre">fg</span> <span class="pre">&lt;job-id&gt;</span></code> will transfer the corresponding job to the foreground to continue execution.</li>
-<li>When the job is suspended (<code class="docutils literal notranslate"><span class="pre">ctrl</span> <span class="pre">+</span> <span class="pre">z</span></code> to suspend job), executing <code class="docutils literal notranslate"><span class="pre">bg</span> <span class="pre">&lt;job-id&gt;</span></code> will continue the corresponding job in the background.</li>
-<li>A job created by a non-current session can only be executed by the current session fg to the foreground.</li>
+<li>When a job is executed in the background or in suspended status (use <code class="docutils literal notranslate"><span class="pre">ctrl</span> <span class="pre">+</span> <span class="pre">z</span></code> to suspend job), <code class="docutils literal notranslate"><span class="pre">fg</span> <span class="pre">&lt;job-id&gt;</span></code> can transfer the job to the foreground to continue to run.</li>
+<li>When a job is in suspended status (use <code class="docutils literal notranslate"><span class="pre">ctrl</span> <span class="pre">+</span> <span class="pre">z</span></code> to suspend job), <code class="docutils literal notranslate"><span class="pre">bg</span> <span class="pre">&lt;job-id&gt;</span></code> can put the job to the background to continue to run.</li>
+<li>A job created by other session can only be put to the foreground to run by using <code class="docutils literal notranslate"><span class="pre">fg</span></code> in the current session.</li>
 </ul>
 </div>
-<div class="section" id="redirect-the-job-output">
-<span id="redirect-the-job-output"></span><h2>5. Redirect the job output<a class="headerlink" href="#redirect-the-job-output" title="Permalink to this headline">¶</a></h2>
-<p>The job output can be redirect to the specified file by <code class="docutils literal notranslate"><span class="pre">&gt;</span></code> or <code class="docutils literal notranslate"><span class="pre">&gt;&gt;</span></code>, and can be used together with <code class="docutils literal notranslate"><span class="pre">&amp;</span></code> to implement the asynchronous job of the arthas command. such as:</p>
+<div class="section" id="redirect-the-output">
+<span id="redirect-the-output"></span><h2>5. Redirect the output<a class="headerlink" href="#redirect-the-output" title="Permalink to this headline">¶</a></h2>
+<p>The job output can be redirect to the specified file by <code class="docutils literal notranslate"><span class="pre">&gt;</span></code> or <code class="docutils literal notranslate"><span class="pre">&gt;&gt;</span></code>, and can be used together with <code class="docutils literal notranslate"><span class="pre">&amp;</span></code>. By doing this, you can achieve running commands asynchronously, for example:</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$ trace Test t &gt;&gt; test.out <span class="p">&amp;</span>
 </pre></div>
 </div>
-<p>The trace command will be executed in the background and the output will be redirect to <code class="docutils literal notranslate"><span class="pre">~/logs/arthas-cache/test.out</span></code>. You can continue to execute other commands in the console.</p>
-<p>When connecting to a remote arthas server, you may not be able to view the files of the remote machine. Arthas also supports automatic redirection to the local cache file. Examples are as follows:</p>
+<p>The trace command will be running in the background and the output will be redirect to <code class="docutils literal notranslate"><span class="pre">~/logs/arthas-cache/test.out</span></code>. You can continue to execute other commands in the console, at the same time, you can also examine the execution result from the output file.</p>
+<p>When connect to a remote Arthas server, you may not be able to view the output file on the remote machine. In this case, Arthas also supports automatically redirecting the output to the local cache file. Examples are as follows:</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$ trace Test t &gt;&gt;  <span class="p">&amp;</span>
 job id  : <span class="m">2</span>
 cache location  : /Users/gehui/logs/arthas-cache/28198/2
 </pre></div>
 </div>
-<p>You can see that does not specify the redirect file after <code class="docutils literal notranslate"><span class="pre">&gt;&gt;</span></code>, arthas will automatically redirect the job output to the <code class="docutils literal notranslate"><span class="pre">~/logs/arthas-cache</span></code>.</p>
-<p>In the above example, pid is <code class="docutils literal notranslate"><span class="pre">28198</span></code> and job id is <code class="docutils literal notranslate"><span class="pre">2</span></code>.</p>
+<p>If output path is not given, Arthas will automatically redirect the output to the local cache. Job id and cache location will be shown on the console. Cache location is a directory where the output files are put. For one given job, the path of its output file contains PID and job id in order to avoid potential conflict with other jobs. In the above example, pid is <code class="docutils literal notranslate"><span class="pre">28198</span></code> and job id is <code class="docutils literal notranslate"><span class="pre">2</span></code>.</p>
 </div>
 <div class="section" id="stop-job">
 <span id="stop-job"></span><h2>6. Stop job<a class="headerlink" href="#stop-job" title="Permalink to this headline">¶</a></h2>
@@ -262,8 +262,8 @@ cache location  : /Users/gehui/logs/arthas-cache/28198/2
 <div class="section" id="others">
 <span id="others"></span><h2>7. Others<a class="headerlink" href="#others" title="Permalink to this headline">¶</a></h2>
 <ul class="simple">
-<li>Support up to 8 commands at the same time redirect the output to the log file.</li>
-<li>Do not open too many background asynchronous commands at the same time to avoid affecting the performance of the target JVM.</li>
+<li>Support up to 8 commands at the same time to redirect the output to the log files.</li>
+<li>Do not open too many background jobs at the same time to avoid negative performance effect to the target JVM.</li>
 </ul>
 </div>
 </div>
