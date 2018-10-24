@@ -167,7 +167,7 @@
 <span id="arthas"></span><h1>手动安装Arthas<a class="headerlink" href="#arthas" title="永久链接至标题">¶</a></h1>
 <ol>
 <li><p class="first">下载最新版本</p>
-<p>最新版本：<a class="reference external" href="http://search.maven.org/classic/#search%7Cga%7C1%7Cg%3A%22com.taobao.arthas%22%20AND%20a%3A%22arthas-packaging%22"><img alt="Arthas" src="https://img.shields.io/maven-central/v/com.taobao.arthas/arthas-packaging.svg?style=flat-square" /></a></p>
+<p><strong>最新版本</strong>：<a class="reference external" href="http://search.maven.org/classic/#search%7Cga%7C1%7Cg%3A%22com.taobao.arthas%22%20AND%20a%3A%22arthas-packaging%22"><img alt="Arthas" src="https://img.shields.io/maven-central/v/com.taobao.arthas/arthas-packaging.svg?style=flat-square" /></a></p>
 <p>在<code class="docutils literal notranslate"><span class="pre">Download</span></code>栏下载最新的 <code class="docutils literal notranslate"><span class="pre">bin.zip</span></code> 包。</p>
 <p>如果下载速度比较慢，可以尝试用<a class="reference external" href="https://maven.aliyun.com/">阿里云的镜像仓库</a>，比如要下载<code class="docutils literal notranslate"><span class="pre">3.x.x</span></code>版本（替换<code class="docutils literal notranslate"><span class="pre">3.x.x</span></code>为最新版本），下载的url是：</p>
 <p>https://maven.aliyun.com/repository/public/com/taobao/arthas/arthas-packaging/3.x.x/arthas-packaging-3.x.x-bin.zip</p>
@@ -177,7 +177,8 @@
 </pre></div>
 </div>
 </li>
-<li><p class="first">安装Arthas: 安装之前最好把所有老版本的Arthas全都删掉</p>
+<li><p class="first">安装Arthas</p>
+<p>安装之前最好把所有老版本的Arthas全都删掉</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">sudo</span> <span class="n">su</span> <span class="n">admin</span>
 <span class="n">rm</span> <span class="o">-</span><span class="n">rf</span> <span class="o">/</span><span class="n">home</span><span class="o">/</span><span class="n">admin</span><span class="o">/.</span><span class="n">arthas</span><span class="o">/</span><span class="n">lib</span><span class="o">/*</span>
 <span class="n">cd</span> <span class="n">arthas</span>
@@ -188,7 +189,8 @@
 <div><p>注意，这里根据你需要诊断的Java进程的所属用户进行切换</p>
 </div></blockquote>
 </li>
-<li><p class="first">启动Arthas: 启动之前，请确保老版本的Arthas已经shutdown.</p>
+<li><p class="first">启动Arthas</p>
+<p>启动之前，请确保老版本的Arthas已经<code class="docutils literal notranslate"><span class="pre">shutdown</span></code>.</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">./</span><span class="k">as</span><span class="o">.</span><span class="n">sh</span>
 </pre></div>
 </div>
