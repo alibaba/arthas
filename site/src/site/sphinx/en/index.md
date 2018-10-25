@@ -43,7 +43,7 @@ English version has just been finished. If you would like to make it better, ple
 * [Advanced usage](advanced-use.md)
 * [Commands](commands.md)
 * [User cases](https://github.com/alibaba/arthas/issues?q=label%3Auser-case)
-* [Release Notes](release-notes.md)
 * [Questions and answers](https://github.com/alibaba/arthas/issues?q=label%3Aquestion-answered)
 * [Fork me at GitHub](https://github.com/alibaba/arthas)
 * [CONTRIBUTING](https://github.com/alibaba/arthas/blob/master/CONTRIBUTING.md)
+* [Release Notes](release-notes.md)

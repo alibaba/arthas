@@ -70,8 +70,11 @@ English version is on the way, if you would like to contribute, please leave a m
 * [Installation](https://alibaba.github.io/arthas/en/install-detail.html)
 * [Quick start](https://alibaba.github.io/arthas/en/quick-start.html)
 * [Advanced usage](https://alibaba.github.io/arthas/en/advanced-use.html)
+* [Commands](https://alibaba.github.io/arthas/en/commands.html)
+* [User cases](https://github.com/alibaba/arthas/issues?q=label%3Auser-case)
 * [Questions and answers](https://github.com/alibaba/arthas/issues?utf8=%E2%9C%93&q=label%3Aquestion-answered+)
 * [How to contribute](https://github.com/alibaba/arthas/blob/master/CONTRIBUTING.md)
+* [Release Notes](https://alibaba.github.io/arthas/en/release-notes.html)
 
 
 ### Feature Showcase
