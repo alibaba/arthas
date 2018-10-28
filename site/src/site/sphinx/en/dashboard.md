@@ -1,11 +1,11 @@
 dashboard
 =========
 
-This is the realtime dashboard for the system; press `Ctrl+C` to exit.
+> This is the real time statistics dashboard for the current system, press `Ctrl+C` to exit.
 
-When running in *Ali-tomcat*, the dashboard will present the realtime statistics of the tomcat including [QPS](https://en.wikipedia.org/wiki/Queries_per_second), RT, error counts, thread profile and the like.
+When running in Apache Tomcat Alibaba edition, the dashboard will also present the real time statistics of the tomcat,  including [QPS](https://en.wikipedia.org/wiki/Queries_per_second), RT, error counts, and thread pool, etc.
 
-### A Demo
+### Usage
 
 ```
 $ dashboard
@@ -44,18 +44,18 @@ processors                        4                                 threadpool  
 uptime                            16020s                            busy                              0
 ```
 
-### Specification
+### Notes on column headers
 
-* ID: thread ID in JVM (this is different from the nativeID in thread dump)
+* ID: JVM thread ID, pls. note this ID is different from the nativeID in jstack
 * NAME: thread name
-* GROUP: group the thread is in
-* STATE: the current state of the thread
-* PRIORITY: within 1 ~ 10 (the higher the number, the higher the priority)
-* CPU%: CPU usage ratio within 100ms
-* TIME: total running time in minute:second format
-* INTERRUPTED: the thread interrupted state
-* DAEMON: is daemon thread or not
+* GROUP: thread group name
+* PRIORITY: thread priority, ranged from 1 to 10. The greater number, the higher priority
+* STATE: thread state
+* CPU%: the ratio of CPU usage for the thread, sampled every 100ms
+* TIME: total running time in `minute:second` format
+* INTERRUPTED: the thread interruption state
+* DAEMON: daemon thread or not
 
-### Screenshots
+### Screenshot
 
 ![alt text](../_static/dashboard.png "dashboard")
