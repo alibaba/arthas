@@ -1,15 +1,15 @@
 dump
 ===
 
-Dump the bytecode the loaded classes to a specified directory.
+> Dump the bytecode for the particular classes to the specified directory.
 
 ### Options
 
 |Name|Specification|
 |---:|:---|
-|*class-pattern*|pattern for the class name|
-|[c:]|hashcode of the [class loader](classloader.md) that loaded the class|
-|[E]|turn on regex matching while the default is wildcard matching|
+|*class-pattern*|class name pattern|
+|`[c:]`|hashcode of the [class loader](classloader.md) that loaded the target class|
+|`[E]`|turn on regex match, the default behavior is wild card match|
 
 ### Usage
 
