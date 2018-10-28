@@ -1,106 +1,106 @@
 groovy
 ===
 
-> Arthas 支持 groovy 脚本增强，允许像 BTrace 一样编写脚本来解决问题，可以在 groovy 脚本中进行if/for/switch/while 等控制语句，不受限制，但相比 BTrace 而言拥有更多的限制范围。
+> Arthas support groovy scripting to allow user to use script like BTrace. It is possible to use if/for/switch/while in groovy scripting, but has more limitations compared to BTrace.
 
-### 限制内容
+### Limitations
 
-1. 禁止改变原有逻辑，与 watch 等命令一样，重点保证的是监听和观察。
-1. 只允许在方法的 before/success/exception/finish 四个环节进行监听。
+1. Prohibit from alternating the original logic. Like `watch` command, The major purpose of scripting is monitoring and observing.
+1. Only allow to monitor at the stages of before/success/exception/finish on one method.
 
-### 参数说明
+### Parameters
 
-|参数名称|参数说明|
+|Parameter|Explanation|
 |---:|:---|
-|*class-pattern*|类名表达式匹配|
-|*method-pattern*|方法名表达式匹配|
-|*script-filepath*|groovy 脚本的绝对路径|
-|[S]|匹配所有的子类|
-|[E]|开启正则表达式匹配，默认为通配符匹配|
+|*class-pattern*|class name pattern|
+|*method-pattern*|method name pattern|
+|*script-filepath*|the absolute path of the groovy script|
+|[S]|match all sub classes|
+|[E]|enable regex match, the default is wildcard match|
 
-需要说明的是，第三个输入参数是脚本的绝对路径，比如 `/tmp/test.groovy`，不建议输入相对路径，比如 `./test.groovy`
+Note: the third parameter `script-filepath` must be the absolute path of the groovy script, for example `/tmp/test.groovy`. It is not recommended to use relative path, e.g. `./test.groovy`.
  
-### 五个关键函数声明
+### Explanation on the important callbacks
 
 ```java
 /**
- * 增强脚本监听器
+ * Listeners for script to enhance the class
  */
 interface ScriptListener {
 
     /**
-     * 脚本创建
+     * When the script is created
      *
-     * @param output 输出器
+     * @param output Output
      */
     void create(Output output);
 
     /**
-     * 脚本销毁
+     * When the script is destroyed
      *
-     * @param output 输出器
+     * @param output Output
      */
     void destroy(Output output);
 
     /**
-     * 方法执行前
+     * Before the method executes
      *
-     * @param output 输出器
-     * @param advice 通知点
+     * @param output Output
+     * @param advice Advice
      */
     void before(Output output, Advice advice);
 
     /**
-     * 方法正常返回
+     * After the method returns
      *
-     * @param output 输出器
-     * @param advice 通知点
+     * @param output Output
+     * @param advice Advice
      */
     void afterReturning(Output output, Advice advice);
 
     /**
-     * 方法异常返回
+     * After the method throws exceptions
      *
-     * @param output 输出器
-     * @param advice 通知点
+     * @param output Output
+     * @param advice Advice
      */
     void afterThrowing(Output output, Advice advice);
 
 }
 ```
 
-### 参数 `Advice` 说明
+### `Advice` parameter
 
-`Advice` 参数最主要是封装了通知节点的所有信息。参考[表达式核心变量](advice-class.md)中关于该节点的描述。
+`Advice` contains all information necessary for notification. Refer to [expression core parameters](advice-class.md) for more details.
 
-### 参数 `Output` 说明
+### `Output` parameter
 
-`Output` 参数只拥有三个方法，主要的工作还是输出对应的文本信息
+There are three methods in `Output`, used for outputting the corresponding text.
 
 ```java
 /**
- * 输出器
+ * Output
  */
 interface Output {
 
     /**
-     * 输出字符串(不换行)
+     * Output text without line break
      *
-     * @param string 待输出字符串
+     * @param string Text to output
      * @return this
      */
     Output print(String string);
 
     /**
-     * 输出字符串(换行)
+     * Output text with line break
      *
-     * @param string 待输出字符串
+     * @param string Text to output
      * @return this
      */
     Output println(String string);
 
     /**
-     * 结束当前脚本
+     * Finish outputting from the script
      *
      * @return this
      */
@@ -109,7 +109,7 @@ interface Output {
 }
 ```
 
-### 一个输出日志的 groovy 脚本示例
+### A groovy sample script to output logs
 
 ```groovy
 import com.taobao.arthas.core.command.ScriptSupportCommand
@@ -118,7 +118,7 @@ import com.taobao.arthas.core.util.Advice
 import static java.lang.String.format
 
 /**
- * 输出方法日志
+ * Output method logs
  */
 public class Logger implements ScriptSupportCommand.ScriptListener {
 
@@ -156,9 +156,9 @@ public class Logger implements ScriptSupportCommand.ScriptListener {
 }
 ```
 
-使用示例：
+Run the script like this:
 
-```
+```bash
 $ groovy com.alibaba.sample.petstore.dal.dao.ProductDao getProductById /Users/zhuyong/middleware/arthas/scripts/Logger.groovy -S
 script create.
 Press Ctrl+C to abort.
