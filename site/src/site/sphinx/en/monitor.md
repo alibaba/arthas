@@ -1,22 +1,23 @@
 monitor
 =======
 
-Monitor methods calling stack traces.
+> Monitor method invocation.
 
-F.Y.I
+Monitor invocation for the method matched with `class-pattern` and `method-pattern`.
 
-1. `monitor` is a persistent command, it never returns until you press `Ctrl+C` to manually stop it;
-2. the server runs the jobs in the background;
-3. injected monitoring code will become invalid automatically once the monitoring jobs being terminated;
-4. in theory, Arthas will not change any original behaviors but if it does, please do not hesitate to start an [issue](https://github.com/alibaba/arthas/issues).
+`monitor` is not a command returning immediately.
 
-### Properties monitored
+A command returning immediately is a command immediately returns with the result after the command is input, while a non-immediate returning command will keep outputting the information from the target JVM process until user presses `Ctrl+C`.
 
-|Property|Specification|
+On Arthas's server side, the command is running as a background job, but the weaved code will not take further effect once the job is terminated, therefore, it will not impact the performance after the job quits. Furthermore, Arthas is designed to have no side effect to the business logic.
+
+### Items to monitor
+
+|Item|Specification|
 |---:|:---|
 |timestamp|timestamp|
 |class|Java class|
-|method|constructor and regular methods|
+|method|method (constructor and regular methods)|
 |total|calling times|
 |success|success count|
 |fail|failure count|
@@ -25,12 +26,14 @@ F.Y.I
 
 ### Parameters
 
+Parameter `[c:]` stands for cycles of statistics. Its value is an integer value in seconds.
+
 |Name|Specification|
 |---:|:---|
 |*class-pattern*|pattern for the class name|
 |*method-pattern*|pattern for the method name|
-|[E]|turn on regex matching while the default is wildcard matching|
-|[c:]|cycle of output with default value: `60 s`|
+|`[E]`|turn on regex matching while the default is wildcard matching|
+|`[c:]`|cycle of statistics, the default value: `120`s|
 
 ### Usage
 
