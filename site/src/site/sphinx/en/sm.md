@@ -1,12 +1,10 @@
 sm
 ==
 
-Check the method profile of the loaded classes;
+> Search method from the loaded classes.
 
-Abbreviated from *Search-Method*, with which you can check all methods profiles of the loaded classes.
+`sm` stands for search method. This command can search and show method information from all loaded classes. `sm` can only view the methods declared on the target class, that is, methods from its parent classes are invisible.
 
-F.Y.I
-`sm` only shows the methods declared in the current class; methods declared in ancestors will not be presented.
 
 ### Options
 
@@ -14,12 +12,14 @@ F.Y.I
 |---:|:---|
 |*class-pattern*|pattern for class name|
 |*method-pattern*|pattern for method name|
-|[d]|print the details of the method|
-|[E]|turn on regex matching while the default mode is wildcard matching|
+|`[d]`|print the details of the method|
+|`[E]`|turn on regex matching while the default mode is wildcard matching|
 
 ### Usage
 
-```
+Show methods from `org.apache.catalina.connector.Connector`:
+
+```bash
 $ sm org.apache.catalina.connector.Connector
 org.apache.catalina.connector.Connector-><init>
 org.apache.catalina.connector.Connector->setProperty
@@ -60,6 +60,8 @@ org.apache.catalina.connector.Connector->getMaxCookieCount
 ...
 
 ```
+
+Show methods' details from `org.apache.catalina.connector.Connector`:
 
 ```bash
 $ sm org.apache.catalina.connector.Connector -d
