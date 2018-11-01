@@ -1,31 +1,27 @@
 sc
 ==
 
-Check the profiles of the loaded classes.
+> Search classes loaded by JVM.
 
-Abbreviated from *Search-Class*; with the help of this command, you can search out all the loaded classes in JVM. Supported options are: `[d]`、`[E]`、`[f]` and `[x:]`.
+`sc` stands for search class. This command can search all possible classes loaded by JVM and show their information. The supported options are: `[d]`、`[E]`、`[f]` and `[x:]`.
 
-Options
--------
-
-### Specification
+### Supported Options
 
 |Name|Specification|
 |---:|:---|
 |*class-pattern*|pattern for the class name|
 |*method-pattern*|pattern for the method name|
-|[d]|print the details of the current class including the source file, class declaration, the class loaders and the like.<br/>F.Y.I if a class is loaded by several class loaders, then the class will be printed several times|
-|[E]|turn on regx matching while the default is wildcards matching|
-|[f]|print the fields info of the current class, which ***must*** be used with `-d`|
-|[x:]|the depth to print the static fields, whose default is `0` - directly invoke the `toString()`|
+|`[d]`|print the details of the current class, including its code source, class specification, its class loader and so on.<br/>If a class is loaded by more than one class loader, then the class details will be printed several times|
+|`[E]`|turn on regex match, the default behavior is wildcards match|
+|`[f]`|print the fields info of the current class, MUST be used with `-d` together|
+|`[x:]`|specify the depth of recursive traverse the static fields, the default value is '0' - equivalent to use `toString` to output|
 
-Tip: 
-1. *class-patten* supports full qualified class name (e.g. com.taobao.test.AAA and com/taobao/test/AAA) 
-2. `sc` turned on the `sub-class` matching in default mode; if you do want to hide `sub-class`, you can just turn it off with [options](options.md) as `options disable-sub-class true`.
+> *class-patten* supports full qualified class name, e.g. com.taobao.test.AAA and com/taobao/test/AAA. It also supports the format of 'com/taobao/test/AAA', so that it is convenient to directly copy class name from the exception stack trace without replacing '/' to '.'. <br/><br/>
+> `sc` turns on matching sub-class match by default, that is, `sc` will also search the sub classes of the target class too. If exact-match is desired, pls. use `options disable-sub-class true`.
 
 ### Usage
 
-Check the static fields of a class using `sc -df class-name`
+For example, use `sc -df class-name` to view class's static fields:
 
 ```shell
 $ sc -df org.apache.commons.lang.StringUtils
