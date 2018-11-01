@@ -1,7 +1,7 @@
 Quick Start
 ===========
 
-## 1. Start A Demo
+## 1. Start Demo Application
 
 Save the following code to a `Demo.java` and run the commands in shell as 
 
@@ -39,68 +39,67 @@ public class Demo {
 }
 ```
 
+Save the contents above into `Demo.java`, then compile it under the command line:
+
+```bash
+javac Demo.java
+java Demo
+```
+
+You can also save and start the code in IDE.
+
 ## 2. Start Arthas
 
 ### Linux/Unix/Mac
+
+Execute the following command in the command line:
 
 ```bash
 ./as.sh
 ```
 
+> The user to run this script *MUST* have the same privilege as the owner of the target process, as a simple example you can try the following command if the target process is managed by user `admin`: `sudo su admin && ./as.sh` or `sudo -u admin -EH ./as.sh`. For more details on the bootstrap script, please refer to [Start Arthas](start-arthas.md). If you cannot be able to attach to the target process, please check the logs under `~/logs/arthas` for troubleshooting.
 
-1. the user to run the *command* should have the same privilege as the owner of the target process, as a simple example you can try the following command if the target process is managed by user `admin`:
+Select the target Java process to attach:
 
-    ```bash
-    sudo su admin && ./as.sh
-    # Or
-    sudo -u admin -EH ./as.sh
-    ```
+```bash
+$ ./as.sh
+Arthas script version: 3.0.2
+Found existing java process, please choose one and hit RETURN.
+* [1]: 95428 
+  [2]: 22647 org.jetbrains.jps.cmdline.Launcher
+  [3]: 21736
+  [4]: 13560 Demo
+```
 
-2. For more details of the booting script, please refer to [Start Arthas](start-arthas.md).
-3. If you cannot *attach* the target process, please check the logs under `~/logs/arthas` for troubleshooting.
+The 'Demo' process is the fourth as shown above, press '4' then 'Enter'. Arthas will attach to the target process, and start to output:
 
-4. Selecting the target process as:
-
-    ```
-    $ ./as.sh
-    Arthas script version: 3.0.2
-    Found existing java process, please choose one and hit RETURN.
-    * [1]: 95428 
-      [2]: 22647 org.jetbrains.jps.cmdline.Launcher
-      [3]: 21736
-      [4]: 13560 Demo
-    ```
-
-    We select `4` to check our Demo process and we then have
-
-    ```
-    Connecting to arthas server... current timestamp is 1536656867
-    Trying 127.0.0.1...
-    Connected to 127.0.0.1.
-    Escape character is '^]'.
-      ,---.  ,------. ,--------.,--.  ,--.  ,---.   ,---.
-      /  O  \ |  .--. ''--.  .--'|  '--'  | /  O  \ '   .-'
-    |  .-.  ||  '--'.'   |  |   |  .--.  ||  .-.  |`.  `-.
-    |  | |  ||  |\  \    |  |   |  |  |  ||  | |  |.-'    |
-    `--' `--'`--' '--'   `--'   `--'  `--'`--' `--'`-----'
+```bash
+Connecting to arthas server... current timestamp is 1536656867
+Trying 127.0.0.1...
+Connected to 127.0.0.1.
+Escape character is '^]'.
+  ,---.  ,------. ,--------.,--.  ,--.  ,---.   ,---.
+ /  O  \ |  .--. ''--.  .--'|  '--'  | /  O  \ '   .-'
+|  .-.  ||  '--'.'   |  |   |  .--.  ||  .-.  |`.  `-.
+|  | |  ||  |\  \    |  |   |  |  |  ||  | |  |.-'    |
+`--' `--'`--' '--'   `--'   `--'  `--'`--' `--'`-----'
 
 
-    wiki: https://alibaba.github.io/arthas
-    version: 3.0.1-RC-SNAPSHOT
-    pid: 13560
-    timestamp: 1536656867894
-    
-    $ 
-    ```
+wiki: https://alibaba.github.io/arthas
+version: 3.0.1-RC-SNAPSHOT
+pid: 13560
+timestamp: 1536656867894
+```
 
 ### Windows
 
-Open the *DOS* console, under the unzipped arthas folder execute `as.bat <pid>`
+Open 'Command' window, execute `as.bat <pid>` from where the Arthas package file is unzipped.
 
 
 ## 3. Check the Dashboard
 
-Type in [dashboard](dashboard.md) and hit the *ENTER*, you will see it as (`Ctrl+C` to stop)
+Type '[dashboard](dashboard.md)' and hit 'ENTER', a brief report on the current process will be shown as below, pls. `Ctrl+C` to stop:
 
 ```
 $ dashboard
@@ -138,7 +137,7 @@ java.home              /Library/Java/JavaVir
 
 ## 4. watch
 
-Input [watch](watch.md) to check the returned value of `Counter.value()`:
+Use '[watch](watch.md)' to check the returned value of `Counter.value()`:
 
 ```
 $ watch Demo$Counter value returnObj
@@ -151,9 +150,10 @@ ts=2018-09-10 17:53:14;result=@Integer[624]
 ts=2018-09-10 17:53:15;result=@Integer[625]
 ```
 
-[more advanced usages](advanced-use.md)
+Pls. refer to [advanced usages](advanced-use.md) for more information.
 
 ## 5. Exit Arthas
 
-- `quit` or `exit` will just disconnect the current console connection while Arthas still running in the target process
-- `shutdown` will terminate the Arthas completely
+Use `quit` or `exit` to disconnect from the current process. The Arthas instance attached to the target process continues to live inside the process, and its port is standby for further connection.
+
+Use `shutdown` to have Arthas completely quit from the target process.
