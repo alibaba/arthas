@@ -1,213 +1,333 @@
 package com.taobao.arthas.client;
 
-import com.taobao.middleware.cli.Argument;
-import com.taobao.middleware.cli.CLI;
-import com.taobao.middleware.cli.CLIs;
-import com.taobao.middleware.cli.CommandLine;
-import com.taobao.middleware.cli.Option;
-import com.taobao.middleware.cli.TypedOption;
-import org.apache.commons.net.telnet.TelnetClient;
-import org.apache.commons.net.telnet.WindowSizeOptionHandler;
-
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.PrintStream;
+import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import org.apache.commons.net.telnet.InvalidTelnetOptionException;
+import org.apache.commons.net.telnet.TelnetClient;
+import org.apache.commons.net.telnet.TelnetOptionHandler;
+import org.apache.commons.net.telnet.WindowSizeOptionHandler;
+
+import com.taobao.middleware.cli.CLI;
+import com.taobao.middleware.cli.CLIException;
+import com.taobao.middleware.cli.CommandLine;
+import com.taobao.middleware.cli.UsageMessageFormatter;
+import com.taobao.middleware.cli.annotations.Argument;
+import com.taobao.middleware.cli.annotations.CLIConfigurator;
+import com.taobao.middleware.cli.annotations.Description;
+import com.taobao.middleware.cli.annotations.Name;
+import com.taobao.middleware.cli.annotations.Option;
+import com.taobao.middleware.cli.annotations.Summary;
+
+import jline.Terminal;
+import jline.TerminalSupport;
+import jline.UnixTerminal;
+import jline.console.ConsoleReader;
+import jline.console.KeyMap;
+
 /**
  * @author ralf0131 2016-12-29 11:55.
+ * @author hengyunabc 2018-11-01
  */
-public class TelnetConsole{
+@Name("arthas-client")
+@Summary("Arthas Telnet Client")
+public class TelnetConsole {
+	private static final String PROMPT = "$";
+	private static final int DEFAULT_CONNECTION_TIMEOUT = 5000; // 5000 ms
+	private static final int DEFAULT_BUFFER_SIZE = 1024;
 
-    private static final String PROMPT = "$";
-    private static final String DEFAULT_TELNET_PORT = "3658";
-    private static final int DEFAULT_CONNECTION_TIMEOUT = 5000; // 5000 ms
-    private static final String DEFAULT_WINDOW_WIDTH = "120";
-    private static final String DEFAULT_WINDOW_HEIGHT = "40";
-    private static final int DEFAULT_BUFFER_SIZE = 1024;
+	private static final byte CTRL_C = 0x03;
 
-    private TelnetClient telnet;
-    private String address;
-    private int port;
-    private InputStream in;
-    private PrintStream out;
+	private boolean help = false;
 
-    public TelnetConsole(String address, int port, int width, int height) {
-        this.telnet = new TelnetClient();
-        this.address = address;
-        this.port = port;
-        try {
-            telnet.addOptionHandler(new WindowSizeOptionHandler(width, height, true, false, true, false));
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        telnet.setConnectTimeout(DEFAULT_CONNECTION_TIMEOUT);
-    }
+	private String targetIp = "127.0.0.1";
+	private int port = 3658;
 
-    public void connect() {
-        try {
-            // Connect to the specified server
-            telnet.connect(address, port);
-            // Get input and output stream references
-            in = telnet.getInputStream();
-            out = new PrintStream(telnet.getOutputStream());
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
+	private String command;
+	private String batchFile;
 
-    public String readUntil(String prompt) {
-        try {
-            StringBuilder sBuffer = new StringBuilder();
-            byte[] b = new byte[DEFAULT_BUFFER_SIZE];
-            while(true) {
-                int size = in.read(b);
-                if(-1 != size) {
-                    sBuffer.append(new String(b,0,size));
-                    String data = sBuffer.toString();
-                    if(data.trim().endsWith(prompt)) {
-                        break;
-                    }
-                }
-            }
-            return sBuffer.toString();
-        } catch (Exception e) {
-            e.printStackTrace();
-            return null;
-        }
-    }
+	private Integer width = null;
+	private Integer height = null;
 
-    public String readUntilPrompt() {
-        return readUntil(PROMPT);
-    }
+	@Argument(argName = "targetIp", index = 0, required = false)
+	@Description("target-ip")
+	public void setTargetIp(String targetIp) {
+		this.targetIp = targetIp;
+	}
 
-    public void write(String value) {
-        try {
-            out.println(value);
-            out.flush();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
+	@Option(longName = "help", flag = true)
+	@Description("Print usage")
+	public void setHelp(boolean help) {
+		this.help = help;
+	}
 
-    public void sendCommand(String command) {
-        try {
-            write(command);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
+	@Option(shortName = "p", longName = "port")
+	@Description("The remote server port")
+	public void setPort(int port) {
+		this.port = port;
+	}
 
-    public void disconnect() {
-        try {
-            telnet.disconnect();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
+	@Option(shortName = "c", longName = "command")
+	@Description("The command to execute, multiple commands separated by ;")
+	public void setCommand(String command) {
+		this.command = command;
+	}
 
-    /**
-     * 批处理模式
-     */
-    public void batchModeRun(File batchFile) {
-        if (batchFile == null || !batchFile.exists()) {
-            return;
-        }
-        batchModeRun(readLines(batchFile));
-    }
+	@Option(shortName = "f", longName = "batchFile")
+	@Description("The batch file to execute")
+	public void setBatchFile(String batchFile) {
+		this.batchFile = batchFile;
+	}
 
-    private void batchModeRun(List<String> commands) {
-        for (String command: commands) {
-            // send command to server
-            sendCommand(command + " | plaintext");
-            // read result from server and output
-            String response = readUntilPrompt();
-            System.out.print(response);
-        }
-    }
+	@Option(shortName = "w", longName = "width")
+	@Description("The terminal width")
+	public void setWidth(int width) {
+		this.width = width;
+	}
 
-    private List<String> readLines(File batchFile) {
-        List<String> list = new ArrayList<String>();
-        BufferedReader br = null;
-        try {
-            br =  new BufferedReader(new FileReader(batchFile));
-            String line = br.readLine();
-            while (line != null) {
-                list.add(line);
-                line = br.readLine();
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        } finally {
-            if (br != null) {
-                try {
-                    br.close();
-                } catch (IOException e) {
-                    // ignore
-                }
-            }
-        }
-        return list;
-    }
+	@Option(shortName = "h", longName = "height")
+	@Description("The terminal height")
+	public void setheight(int height) {
+		this.height = height;
+	}
 
-    public static void main(String[] args) {
-        try {
-            if (args.length < 1) {
-                System.err.println("Usage: TelnetConsole <target-ip> [-p PORT] [-c COMMAND] [-f BATCH_FILE] [-w WIDTH] [-h HEIGHT]");
-                System.exit(1);
-            }
+	public TelnetConsole() {
+	}
 
-            CommandLine commandLine = parseArguments(args);
+	private static String readUntil(InputStream in, String prompt) {
+		try {
+			StringBuilder sBuffer = new StringBuilder();
+			byte[] b = new byte[DEFAULT_BUFFER_SIZE];
+			while (true) {
+				int size = in.read(b);
+				if (-1 != size) {
+					sBuffer.append(new String(b, 0, size));
+					String data = sBuffer.toString();
+					if (data.trim().endsWith(prompt)) {
+						break;
+					}
+				}
+			}
+			return sBuffer.toString();
+		} catch (Exception e) {
+			e.printStackTrace();
+			return null;
+		}
+	}
 
-            TelnetConsole console = new TelnetConsole(
-                    (String)commandLine.getArgumentValue("target-ip"),
-                    (Integer)commandLine.getOptionValue("p"),
-                    (Integer)commandLine.getOptionValue("w"),
-                    (Integer)commandLine.getOptionValue("h"));
+	private static List<String> readLines(File batchFile) {
+		List<String> list = new ArrayList<String>();
+		BufferedReader br = null;
+		try {
+			br = new BufferedReader(new FileReader(batchFile));
+			String line = br.readLine();
+			while (line != null) {
+				list.add(line);
+				line = br.readLine();
+			}
+		} catch (IOException e) {
+			e.printStackTrace();
+		} finally {
+			if (br != null) {
+				try {
+					br.close();
+				} catch (IOException e) {
+					// ignore
+				}
+			}
+		}
+		return list;
+	}
 
-            console.connect();
-            String logo = console.readUntilPrompt();
-            System.out.print(logo);
+	public static void main(String[] args) throws IOException {
+		TelnetConsole telnetConsole = new TelnetConsole();
 
-            String cmd = commandLine.getOptionValue("c");
-            if (cmd != null) {
-                List<String> cmds = new ArrayList<String>();
-                for (String c: cmd.split(";")) {
-                    cmds.add(c.trim());
-                }
-                console.batchModeRun(cmds);
-            }
+		CLI cli = CLIConfigurator.define(TelnetConsole.class);
+		CommandLine commandLine = cli.parse(Arrays.asList(args));
 
-            String filePath = commandLine.getOptionValue("f");
-            if (filePath != null) {
-                File batchFile = new File(filePath);
-                console.batchModeRun(batchFile);
-            }
+		try {
+			CLIConfigurator.inject(commandLine, telnetConsole);
+		} catch (CLIException e) {
+			e.printStackTrace();
+			System.out.println(usage(cli));
+			System.exit(1);
+		}
 
-            console.disconnect();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
+		if (telnetConsole.isHelp()) {
+			System.out.println(usage(cli));
+			System.exit(0);
+		}
 
-    private static CommandLine parseArguments(String[] args) {
-        Argument addr = new Argument().setArgName("target-ip").setIndex(0).setRequired(true);
-        Option port = new TypedOption<Integer>().setType(Integer.class).setShortName("p")
-                .setDefaultValue(DEFAULT_TELNET_PORT);
-        Option command = new TypedOption<String>().setType(String.class).setShortName("c");
-        Option batchFileOption = new TypedOption<String>().setType(String.class).setShortName("f");
-        Option width = new TypedOption<Integer>().setType(Integer.class).setShortName("w")
-                .setDefaultValue(DEFAULT_WINDOW_WIDTH);
-        Option height = new TypedOption<Integer>().setType(Integer.class).setShortName("h")
-                .setDefaultValue(DEFAULT_WINDOW_HEIGHT);
-        CLI cli = CLIs.create("TelnetConsole").addArgument(addr).addOption(port)
-                .addOption(command).addOption(batchFileOption).addOption(width).addOption(height);
-        return cli.parse(Arrays.asList(args));
-    }
+		// Try to read cmds
+		List<String> cmds = new ArrayList<String>();
+		if (telnetConsole.getCommand() != null) {
+			for (String c : telnetConsole.getCommand().split(";")) {
+				cmds.add(c.trim());
+			}
+		} else if (telnetConsole.getBatchFile() != null) {
+			File file = new File(telnetConsole.getBatchFile());
+			if (!file.exists()) {
+				throw new IllegalArgumentException("batch file do not exist: " + telnetConsole.getBatchFile());
+			} else {
+				cmds.addAll(readLines(file));
+			}
+		}
+
+		final ConsoleReader consoleReader = new ConsoleReader(System.in, System.out);
+		consoleReader.setHandleUserInterrupt(true);
+		Terminal terminal = consoleReader.getTerminal();
+
+		if (terminal instanceof TerminalSupport) {
+			((TerminalSupport) terminal).disableInterruptCharacter();
+		}
+
+		// support catch ctrl+c event
+		terminal.disableInterruptCharacter();
+		if (terminal instanceof UnixTerminal) {
+			((UnixTerminal) terminal).disableLitteralNextCharacter();
+		}
+
+		int width = TerminalSupport.DEFAULT_WIDTH;
+		int height = TerminalSupport.DEFAULT_HEIGHT;
+
+		// 如果cmds 非空，则说明是batch mode
+		// 如果是 batch mode，如果没有设置 window size，则用默认的。
+		if (!cmds.isEmpty()) {
+			if (telnetConsole.getWidth() != null) {
+				width = telnetConsole.getWidth();
+			}
+			if (telnetConsole.getheight() != null) {
+				height = telnetConsole.getheight();
+			}
+		} else {
+			if (telnetConsole.getWidth() != null) {
+				width = telnetConsole.getWidth();
+			} else {
+				width = terminal.getWidth();
+				// hack for windows dos
+				if (OSUtils.isWindowsOS()) {
+					width--;
+				}
+			}
+			if (telnetConsole.getheight() != null) {
+				height = telnetConsole.getheight();
+			} else {
+				height = terminal.getHeight();
+			}
+		}
+
+		final TelnetClient telnet = new TelnetClient();
+		telnet.setConnectTimeout(DEFAULT_CONNECTION_TIMEOUT);
+
+		// send init terminal size
+		TelnetOptionHandler sizeOpt = new WindowSizeOptionHandler(width, height, true, true, false, false);
+		try {
+			telnet.addOptionHandler(sizeOpt);
+		} catch (InvalidTelnetOptionException e) {
+			// ignore
+		}
+
+		// ctrl + c event callback
+		consoleReader.getKeys().bind(new Character((char) CTRL_C).toString(), new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				try {
+					consoleReader.getCursorBuffer().clear(); // clear current line
+					telnet.getOutputStream().write(CTRL_C);
+					telnet.getOutputStream().flush();
+				} catch (Exception e1) {
+					e1.printStackTrace();
+				}
+			}
+
+		});
+
+		// ctrl + d event call back
+		consoleReader.getKeys().bind(new Character(KeyMap.CTRL_D).toString(), new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				System.exit(0);
+			}
+		});
+
+		try {
+			telnet.connect(telnetConsole.getTargetIp(), telnetConsole.getPort());
+		} catch (IOException e) {
+			System.out.println(
+					"Connect to telnet server error: " + telnetConsole.getTargetIp() + " " + telnetConsole.getPort());
+			e.printStackTrace();
+			System.exit(1);
+		}
+
+		if (cmds.isEmpty()) {
+			IOUtil.readWrite(telnet.getInputStream(), telnet.getOutputStream(), consoleReader.getInput(),
+					consoleReader.getOutput());
+		} else {
+			batchModeRun(telnet, cmds);
+			telnet.disconnect();
+		}
+	}
+
+	private static void batchModeRun(TelnetClient telnet, List<String> commands) throws IOException {
+		InputStream inputStream = telnet.getInputStream();
+		OutputStream outputStream = telnet.getOutputStream();
+
+		for (String command : commands) {
+			if (command.trim().isEmpty()) {
+				continue;
+			}
+			// send command to server
+			outputStream.write((command + " | plaintext\n").getBytes());
+			outputStream.flush();
+			// read result from server and output
+			String response = readUntil(inputStream, PROMPT);
+			System.out.print(response);
+		}
+	}
+
+	private static String usage(CLI cli) {
+		StringBuilder usageStringBuilder = new StringBuilder();
+		UsageMessageFormatter usageMessageFormatter = new UsageMessageFormatter();
+		usageMessageFormatter.setOptionComparator(null);
+		cli.usage(usageStringBuilder, usageMessageFormatter);
+		return usageStringBuilder.toString();
+	}
+
+	public String getTargetIp() {
+		return targetIp;
+	}
+
+	public int getPort() {
+		return port;
+	}
+
+	public String getCommand() {
+		return command;
+	}
+
+	public String getBatchFile() {
+		return batchFile;
+	}
+
+	public Integer getWidth() {
+		return width;
+	}
+
+	public Integer getheight() {
+		return height;
+	}
+
+	public boolean isHelp() {
+		return help;
+	}
 
 }
