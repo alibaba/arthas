@@ -1,9 +1,9 @@
 stack
 =====
 
-Print out the full call stack trace *till* the current method.
+> Print out the full call stack of the current method.
 
-Most of the time, we know the method being invoked but not always we know **HOW being invoked**; `stack` can be a great help to locate the *source* for you. 
+Most often we know one method gets called, but we have no idea on which code path gets executed or when the method gets called since there are so many code paths to the target method. The command `stack` comes to rescue in this difficult situation.
 
 ### Parameters
 
@@ -12,29 +12,24 @@ Most of the time, we know the method being invoked but not always we know **HOW 
 |*class-pattern*|pattern for the class name|
 |*method-pattern*|pattern for the method name|
 |*condition-expression*|condition expression|
-|[E]|turn on regex matching while the default is wildcard matching|
-|[n:]|calling times|
+|`[E]`|turn on regex match, the default behavior is wildcard match|
+|`[n:]`|execution times|
 
-F.Y.I
-1. any valid OGNL expression as `"{params,returnObj}"` supported;
-2. filter by time cost as `trace *StringUtils isBlank '#cost>100'`; calling stack with only time cost higher than `100ms` will be printed.
+There's one thing worthy noting here is observation expression. The observation expression supports OGNL grammar, for example, you can come up a expression like this `"{params,returnObj}"`. All OGNL expressions are supported as long as they are legal to the grammar.
 
-Attention:
-1. `#cost` can be used in `watch/stack/trace`;
-2. using `#cost` in Arthas 3.0 instead of `$cost`.
+Thanks for `advice`'s data structure, it is possible to observe from varieties of different angles. Inside `advice` parameter, all necessary information for notification can be found.
 
-
-Advanced:
-* [Critical fields in expression](advice-class.md)
-* [Special usage](https://github.com/alibaba/arthas/issues/71)
-* [OGNL official guide](https://commons.apache.org/proper/commons-ognl/language-guide.html)
-
+Pls. refer to [core parameters in expression](advice-class.md) for more details.
+* Pls. also refer to [https://github.com/alibaba/arthas/issues/71](https://github.com/alibaba/arthas/issues/71) for more advanced usage
+* OGNL official site: [https://commons.apache.org/proper/commons-ognl/language-guide.html](https://commons.apache.org/proper/commons-ognl/language-guide.html)
 
 ### Usage
 
-The quoting rules: if there are quotes within the expression, use another type of quotes to quote the whole expression (single `''` or double `""` quotes). 
+> Notes: if there's quotes character (say, `'`) in the expression, then the whole expression must be wrapped by quotes but with the other type (in this case, `"`) too. On contrary, it's no need to quote the expression itself if there's no quotes character found in it, but it is strongly recommended.
 
-```
+Print out calling stack when the first method parameter is "K9-BD-01" for 'getProductById()' method:
+
+```bash
 $ stack com.alibaba.sample.petstore.dal.dao.ProductDao getProductById 'params[0]=="K9-BD-01"'
 Press Ctrl+C to abort.
 Affect(class-cnt:1 , method-cnt:1) cost in 51 ms.
@@ -71,9 +66,9 @@ thread_name="http-bio-8080-exec-2" thread_id=0x48;is_daemon=true;priority=5;
 ...
 ```
 
-Filtering by time cost:
+Print out the calling stack when method 'execute()' takes more than 30ms to finish:
 
-```
+```bash
 $ stack com.alibaba.sample.petstore.web.store.module.screen.ItemList execute #cost>30
 Press Ctrl+C to abort.
 Affect(class-cnt:1 , method-cnt:1) cost in 123 ms.
