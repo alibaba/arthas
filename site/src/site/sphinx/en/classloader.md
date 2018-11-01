@@ -1,23 +1,23 @@
 classloader
 ===========
 
-Check the inheritance tree, urls and classes loading profiles of the class loaders.
+View hierarchy, urls and classes-loading info for the class-loaders.
 
-It can be a great help for `ResourceNotFoundException` when you can use command `classloader` to specify a class loader to `getResources` and print all the urls of the valid resources.
+`classloader` can search and print out the URLs for a specified resource from one particular classloader. It is quite handy when analyze `ResourceNotFoundException`.
 
 ### Options
 
 |Name|Specification|
 |---:|:---|
-|[l]|list all class loader instances based on thread count|
-|[t]|print the inheritance structure of the class loaders|
+|[l]|list all class loader instances|
+|[t]|print classloader's hierarchy|
 |[a]|list all the classes loaded by all the class loaders (use it with great caution since the output can be huge)|
-|[c:]|get the hashcode of the class loader|
+|[c:]|print classloader's hashcode|
 |[c: r:]|using class loader to search resource|
 
 ### Usage
 
-* Categorised by class loader
+* View statistics categorized by class type
 
 ```bash
 $ classloader
@@ -36,7 +36,7 @@ $ classloader
 Affect(row-cnt:11) cost in 66 ms.
 ```
 
-* Categorized by class loader instance
+* View statistics categorized by loaded classes number
 
 ```bash
 $ classloader -l
@@ -86,7 +86,7 @@ $ classloader -l
  sun.reflect.misc.MethodUtil@1201f221                            1            1201f221  sun.misc.Launcher$AppClassLoader@14dad5dc
 ```
 
-* Check inheritance tree of the class loaders
+* View class-loaders hierarchy
 
 ```shell
 $ classloader -t
@@ -100,7 +100,7 @@ $ classloader -t
 |   | +-sun.reflect.DelegatingClassLoader@73f44f24
 ```
 
-* Check URL of the class loader
+* Show the URLs from which to load classes and resources for one particular URLClassLoader
 
 ```shell
 $ classloader -c 5ffe9775
@@ -113,7 +113,7 @@ file:/Users/hello/soft/taobao-tomcat-7.0.64/deploy/taobao-hsf.sar/lib/pandora.th
 file:/Users/hello/soft/taobao-tomcat-7.0.64/deploy/taobao-hsf.sar/lib/picocontainer-2.14.3.jar
 ```
 
-* Using class loader to search for resource
+* Use one class loader to search one particular resource
 
 ```shell
 $ classloader -c 226b143b -r META-INF/MANIFEST.MF
@@ -121,7 +121,7 @@ $ classloader -c 226b143b -r META-INF/MANIFEST.MF
  jar:file:/Users/hello/.m2/repository/javax/annotation/jsr250-api/1.0/jsr250-api-1.0.jar!/META-INF/MANIFEST.MF
 ```
 
-* Using class loader to look for `*.class` file
+* Use one class loader to search one particular class
 
 ```shell
 $ classloader -c 1b6d3586 -r java/lang/String.class
