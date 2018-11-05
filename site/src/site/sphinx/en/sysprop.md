@@ -1,7 +1,7 @@
 sysprop
 =======
 
-Check the JVM system properties.
+> Examine the system properties from the target JVM
 
 ### Usage
 
@@ -102,16 +102,16 @@ $ sysprop
  sun.cpu.isalist
 ```
 
-#### Check a single property
+#### Check One Single Property
 
-Tip: `tab` auto-completion supported
+> Use `tab` for auto-completion
 
-```
+```bash
 $ sysprop java.version
 java.version=1.8.0_51
 ```
 
-#### Modify a single property
+#### Modify Single Property
 
 ```
 $ sysprop user.country
