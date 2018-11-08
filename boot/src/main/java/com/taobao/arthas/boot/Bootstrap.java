@@ -43,6 +43,8 @@ public class Bootstrap {
     private static final int DEFAULT_HTTP_PORT = 8563;
     private static final String DEFAULT_TARGET_IP = "127.0.0.1";
 
+    private boolean help = false;
+
     private int pid = -1;
     private String targetIp = DEFAULT_TARGET_IP;
     private int telnetPort = DEFAULT_TELNET_PORT;
@@ -81,6 +83,12 @@ public class Bootstrap {
     @Description("target pid")
     public void setPid(int pid) {
         this.pid = pid;
+    }
+
+    @Option(shortName = "h", longName = "help", flag = true)
+    @Description("Print usage")
+    public void setHelp(boolean help) {
+        this.help = help;
     }
 
     @Option(longName = "target-ip")
@@ -125,7 +133,7 @@ public class Bootstrap {
         this.useHttps = useHttps;
     }
 
-    @Option(longName = "attach-only")
+    @Option(longName = "attach-only", flag = true)
     @Description("attach target process only, do not connect")
     public void setAttachOnly(boolean attachOnly) {
         this.attachOnly = attachOnly;
@@ -165,6 +173,11 @@ public class Bootstrap {
             e.printStackTrace();
             System.out.println(usage(cli));
             System.exit(1);
+        }
+
+        if (bootStrap.isHelp()) {
+            System.out.println(usage(cli));
+            System.exit(0);
         }
 
         // check telnet/http port
@@ -280,6 +293,10 @@ public class Bootstrap {
 
         logger.info("Attach process {} success.", pid);
 
+        if (bootStrap.isAttachOnly()) {
+            System.exit(0);
+        }
+
         // start java telnet client
         // find arthas-client.jar
         URLClassLoader classLoader = new URLClassLoader(
@@ -384,5 +401,9 @@ public class Bootstrap {
 
     public int getPid() {
         return pid;
+    }
+
+    public boolean isHelp() {
+        return help;
     }
 }
