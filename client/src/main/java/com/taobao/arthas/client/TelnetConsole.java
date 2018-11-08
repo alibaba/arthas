@@ -294,6 +294,7 @@ public class TelnetConsole {
 			// read result from server and output
 			String response = readUntil(inputStream, PROMPT);
 			System.out.print(response);
+			System.out.flush();
 		}
 	}
 
