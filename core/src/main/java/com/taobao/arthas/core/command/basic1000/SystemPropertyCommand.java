@@ -19,7 +19,6 @@ import java.util.Properties;
 import static com.taobao.text.ui.Element.label;
 
 /**
- * A command to display all the keymap for the specified connection.
  * @author ralf0131 2017-01-09 14:03.
  */
 @Name("sysprop")
