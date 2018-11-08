@@ -6,9 +6,6 @@ import java.util.List;
 
 import javax.net.ServerSocketFactory;
 
-import oshi.PlatformEnum;
-import oshi.SystemInfo;
-import oshi.util.ExecutingCommand;
 
 /**
  *
@@ -19,8 +16,7 @@ public class SocketUtils {
 
     public static int findTcpListenProcess(int port) {
         try {
-            PlatformEnum platformEnum = SystemInfo.getCurrentPlatformEnum();
-            if (PlatformEnum.WINDOWS.equals(platformEnum)) {
+            if (OSUtils.isWindows()) {
                 String[] command = { "netstat", "-ano", "-p", "TCP" };
                 List<String> lines = ExecutingCommand.runNative(command);
                 for (String line : lines) {
@@ -36,7 +32,7 @@ public class SocketUtils {
                 }
             }
 
-            if (PlatformEnum.MACOSX.equals(platformEnum) || PlatformEnum.LINUX.equals(platformEnum)) {
+            if (OSUtils.isLinux() || OSUtils.isMac()) {
                 String pid = ExecutingCommand.getFirstAnswer("lsof -t -s TCP:LISTEN -i TCP:" + port);
                 if (!pid.trim().isEmpty()) {
                     return Integer.parseInt(pid);

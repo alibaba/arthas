@@ -16,10 +16,6 @@
             <groupId>com.alibaba.middleware</groupId>
             <artifactId>cli</artifactId>
         </dependency>
-        <dependency>
-            <groupId>com.github.oshi</groupId>
-            <artifactId>oshi-core</artifactId>
-        </dependency>
 
         <dependency>
             <groupId>ch.qos.logback</groupId>
