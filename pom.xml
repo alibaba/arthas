@@ -59,6 +59,7 @@
         <module>core</module>
         <module>agent</module>
         <module>client</module>
+        <module>boot</module>
         <module>testcase</module>
         <module>site</module>
         <module>packaging</module>
@@ -163,6 +164,18 @@
                 <groupId>io.netty</groupId>
                 <artifactId>netty-codec-http</artifactId>
                 <version>4.1.29.Final</version>
+            </dependency>
+
+            <dependency>
+                <groupId>jline</groupId>
+                <artifactId>jline</artifactId>
+                <version>2.14.6</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.github.oshi</groupId>
+                <artifactId>oshi-core</artifactId>
+                <version>3.9.1</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
