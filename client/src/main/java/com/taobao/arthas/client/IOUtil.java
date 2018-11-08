@@ -1,4 +1,5 @@
 package com.taobao.arthas.client;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -16,57 +17,57 @@ import java.io.Writer;
 
 public final class IOUtil {
 
-	public static final void readWrite(final InputStream remoteInput, final OutputStream remoteOutput,
-			final InputStream localInput, final Writer localOutput) {
-		Thread reader, writer;
+    public static final void readWrite(final InputStream remoteInput, final OutputStream remoteOutput,
+                    final InputStream localInput, final Writer localOutput) {
+        Thread reader, writer;
 
-		reader = new Thread() {
-			@Override
-			public void run() {
-				int ch;
+        reader = new Thread() {
+            @Override
+            public void run() {
+                int ch;
 
-				try {
-					while (!interrupted() && (ch = localInput.read()) != -1) {
-						remoteOutput.write(ch);
-						remoteOutput.flush();
-					}
-				} catch (IOException e) {
-					// e.printStackTrace();
-				}
-			}
-		};
+                try {
+                    while (!interrupted() && (ch = localInput.read()) != -1) {
+                        remoteOutput.write(ch);
+                        remoteOutput.flush();
+                    }
+                } catch (IOException e) {
+                    // e.printStackTrace();
+                }
+            }
+        };
 
-		writer = new Thread() {
-			@Override
-			public void run() {
-				try {
-					while (true) {
-						int singleByte = remoteInput.read();
-						if (singleByte < 0) {
-							break;
-						}
-						localOutput.write(singleByte);
-						localOutput.flush();
-					}
-				} catch (IOException e) {
-					e.printStackTrace();
-					System.exit(1);
-				}
-			}
-		};
+        writer = new Thread() {
+            @Override
+            public void run() {
+                try {
+                    while (true) {
+                        int singleByte = remoteInput.read();
+                        if (singleByte < 0) {
+                            break;
+                        }
+                        localOutput.write(singleByte);
+                        localOutput.flush();
+                    }
+                } catch (IOException e) {
+                    e.printStackTrace();
+                    System.exit(1);
+                }
+            }
+        };
 
-		writer.setPriority(Thread.currentThread().getPriority() + 1);
+        writer.setPriority(Thread.currentThread().getPriority() + 1);
 
-		writer.start();
-		reader.setDaemon(true);
-		reader.start();
+        writer.start();
+        reader.setDaemon(true);
+        reader.start();
 
-		try {
-			writer.join();
-			reader.interrupt();
-		} catch (InterruptedException e) {
-			// Ignored
-		}
-	}
+        try {
+            writer.join();
+            reader.interrupt();
+        } catch (InterruptedException e) {
+            // Ignored
+        }
+    }
 
 }
