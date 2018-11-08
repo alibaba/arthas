@@ -90,35 +90,28 @@ public class ProcessUtils {
     private static Map<Integer, String> listProcessByJps(boolean v) {
         Map<Integer, String> result = new LinkedHashMap<Integer, String>();
 
-        File jps = findJps();
-        if (jps == null) {
-            return result;
+        String jps = "jps";
+        File jpsFile = findJps();
+        if (jpsFile != null) {
+            jps = jpsFile.getAbsolutePath();
         }
 
         String[] command = null;
         if (v) {
-            command = new String[] { jps.getAbsolutePath(), "-v" };
+            command = new String[] { jps, "-v" };
         } else {
-            command = new String[] { jps.getAbsolutePath() };
+            command = new String[] { jps };
         }
 
-        ProcessBuilder pb = new ProcessBuilder(command);
-        try {
-            Process proc = pb.start();
-            BufferedReader stdInput = new BufferedReader(new InputStreamReader(proc.getInputStream()));
+        List<String> lines = ExecutingCommand.runNative(command);
 
-            // read the output from the command
-            String line = null;
-            int currentPid = Integer.parseInt(ProcessUtils.getPid());
-            while ((line = stdInput.readLine()) != null) {
-                int pid = new Scanner(line).nextInt();
-                if (pid == currentPid) {
-                    continue;
-                }
-                result.put(pid, line);
+        int currentPid = Integer.parseInt(ProcessUtils.getPid());
+        for (String line : lines) {
+            int pid = new Scanner(line).nextInt();
+            if (pid == currentPid) {
+                continue;
             }
-        } catch (Throwable e) {
-            // ignore
+            result.put(pid, line);
         }
 
         return result;
