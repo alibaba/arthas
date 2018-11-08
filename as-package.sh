@@ -8,6 +8,8 @@ get_local_maven_project_version()
      -Dexpression=project.version -f $DIR/pom.xml -B | grep -e '^[^\[]' | cut -b 1-5
 }
 
+"$DIR/mvnw" -version
+
 CUR_VERSION=$(get_local_maven_project_version)
 
 # arthas's version
