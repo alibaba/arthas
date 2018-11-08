@@ -60,7 +60,7 @@ public class TelnetConsole {
 	private Integer width = null;
 	private Integer height = null;
 
-	@Argument(argName = "targetIp", index = 0, required = false)
+	@Argument(argName = "target-ip", index = 0, required = false)
 	@Description("Target ip")
 	public void setTargetIp(String targetIp) {
 		this.targetIp = targetIp;
@@ -84,7 +84,7 @@ public class TelnetConsole {
 		this.command = command;
 	}
 
-	@Option(shortName = "f", longName = "batchFile")
+	@Option(shortName = "f", longName = "batch-file")
 	@Description("The batch file to execute")
 	public void setBatchFile(String batchFile) {
 		this.batchFile = batchFile;
