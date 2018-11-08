@@ -151,6 +151,14 @@ public class TelnetConsole {
 	}
 
 	public static void main(String[] args) throws IOException {
+		// support mingw/cygw jline color
+		if (System.getProperty("os.name").startsWith("Windows")) {
+			if ((System.getenv("MSYSTEM") != null && System.getenv("MSYSTEM").startsWith("MINGW"))
+					|| "/bin/shell".equals(System.getenv("SHELL"))) {
+				System.setProperty("jline.terminal", System.getProperty("jline.terminal", "jline.UnixTerminal"));
+			}
+		}
+
 		TelnetConsole telnetConsole = new TelnetConsole();
 
 		CLI cli = CLIConfigurator.define(TelnetConsole.class);
