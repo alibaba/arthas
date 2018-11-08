@@ -29,21 +29,20 @@ public class IOUtils {
         }
     }
 
-
     public static IOException close(InputStream input) {
-        return close(input);
+        return close((Closeable) input);
     }
 
     public static IOException close(OutputStream output) {
-        return close(output);
+        return close((Closeable) output);
     }
 
     public static IOException close(final Reader input) {
-        return close(input);
+        return close((Closeable) input);
     }
 
     public static IOException close(final Writer output) {
-        return close(output);
+        return close((Closeable) output);
     }
 
     public static IOException close(final Closeable closeable) {
