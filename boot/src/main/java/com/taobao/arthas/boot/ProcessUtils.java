@@ -5,6 +5,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.lang.management.ManagementFactory;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
@@ -15,10 +16,6 @@ import java.util.Scanner;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import oshi.SystemInfo;
-import oshi.software.os.OSProcess;
-import oshi.software.os.OperatingSystem;
-
 /**
  *
  * @author hengyunabc 2018-11-06
@@ -26,23 +23,41 @@ import oshi.software.os.OperatingSystem;
  */
 public class ProcessUtils {
     private static final Logger logger = LoggerFactory.getLogger(ProcessUtils.class);
+
+    private static String PID = "-1";
+
+    static {
+        // https://stackoverflow.com/a/7690178
+        String jvmName = ManagementFactory.getRuntimeMXBean().getName();
+        int index = jvmName.indexOf('@');
+
+        if (index > 0) {
+            try {
+                PID = Long.toString(Long.parseLong(jvmName.substring(0, index)));
+            } catch (Throwable e) {
+                // ignore
+            }
+        }
+    }
+
+    public static String getPid() {
+        return PID;
+    }
+
     public static int select(boolean v) {
         Map<Integer, String> processMap = listProcessByJps(v);
-        if(processMap.isEmpty()) {
-            processMap = listProcessByOshi();
-        }
 
-        if(processMap.isEmpty()) {
-            System.out.println("Can not find java process.");
+        if (processMap.isEmpty()) {
+            logger.info("Can not find java process.");
             return -1;
         }
 
-        //print list
+        // print list
         int count = 1;
-        for(String process : processMap.values()) {
-            if(count == 1) {
+        for (String process : processMap.values()) {
+            if (count == 1) {
                 System.out.println("* [" + count + "]: " + process);
-            }else {
+            } else {
                 System.out.println("  [" + count + "]: " + process);
             }
             count++;
@@ -50,20 +65,20 @@ public class ProcessUtils {
 
         // read choice
         String line = new Scanner(System.in).nextLine();
-        if(line.trim().isEmpty()) {
+        if (line.trim().isEmpty()) {
             // get the first process id
             return processMap.keySet().iterator().next();
         }
 
         int choice = new Scanner(line).nextInt();
 
-        if(choice <= 0 || choice > processMap.size()) {
+        if (choice <= 0 || choice > processMap.size()) {
             return -1;
         }
 
         Iterator<Integer> idIter = processMap.keySet().iterator();
-        for(int i = 1; i <= choice; ++i) {
-            if(i == choice) {
+        for (int i = 1; i <= choice; ++i) {
+            if (i == choice) {
                 return idIter.next();
             }
             idIter.next();
@@ -72,28 +87,11 @@ public class ProcessUtils {
         return -1;
     }
 
-    private static Map<Integer, String> listProcessByOshi() {
-        SystemInfo info = new SystemInfo();
-        OperatingSystem operatingSystem = info.getOperatingSystem();
-        Map<Integer, String> result = new LinkedHashMap<Integer, String>();
-        OSProcess[] processes = operatingSystem.getProcesses(-1, null);
-        for (OSProcess p : processes) {
-            System.err.println(p);
-            System.err.println(p.getPath());
-            String path = p.getPath();
-            String name = new File(path).getName();
-            if (name.equals("java") || name.equals("java.exe")) {
-                result.put(p.getProcessID(), p.getProcessID() + " " + path);
-            }
-        }
-        return result;
-    }
-
     private static Map<Integer, String> listProcessByJps(boolean v) {
         Map<Integer, String> result = new LinkedHashMap<Integer, String>();
 
         File jps = findJps();
-        if(jps == null) {
+        if (jps == null) {
             return result;
         }
 
@@ -111,8 +109,12 @@ public class ProcessUtils {
 
             // read the output from the command
             String line = null;
+            int currentPid = Integer.parseInt(ProcessUtils.getPid());
             while ((line = stdInput.readLine()) != null) {
                 int pid = new Scanner(line).nextInt();
+                if (pid == currentPid) {
+                    continue;
+                }
                 result.put(pid, line);
             }
         } catch (Throwable e) {
@@ -125,51 +127,46 @@ public class ProcessUtils {
 
     public static void startArthasCore(int targetPid, List<String> attachArgs) {
         // find java/java.exe, then try to find tools.jar
-        SystemInfo info = new SystemInfo();
-        OperatingSystem operatingSystem = info.getOperatingSystem();
-        OSProcess processe = operatingSystem.getProcess(targetPid);
-        if(processe == null) {
-            throw new IllegalArgumentException("process do not exist! pid: " + targetPid);
+        String javaHome = System.getProperty("java.home");
+
+        float javaVersion = Float.parseFloat(System.getProperty("java.specification.version"));
+
+        // find java/java.exe
+        File javaPath = findJava();
+        if (javaPath == null) {
+            throw new IllegalArgumentException(
+                            "Can not find java/java.exe executable file under java home: " + javaHome);
         }
 
-        String path = processe.getPath();
-
-        // some app like eclipse process path is not java/java.exe
-        if(!path.endsWith("java") && path.endsWith("java.exe")) {
-            OSProcess myselfProcess = operatingSystem.getProcess(operatingSystem.getProcessId());
-            path = myselfProcess.getPath();
-            logger.warn("The target process is not an normal java process. try to start by using current java.");
-        }
-
-        File javaBinDir = new File(path).getParentFile();
-
-        // current/jre/bin/java
-        // current/bin/java
-        // current/lib/tools.jar
-        // after jdk9, there is no tools.jar
-        File toolsJar = new File(javaBinDir , "../lib/tools.jar");
-        if(!toolsJar.exists()) {
+        File toolsJar = new File(javaHome, "../lib/tools.jar");
+        if (!toolsJar.exists()) {
             // maybe jre
-            toolsJar = new File(javaBinDir , "../../lib/tools.jar");
+            toolsJar = new File(javaHome, "../../lib/tools.jar");
+        }
+
+        if (javaVersion < 9.0f) {
+            if (!toolsJar.exists()) {
+                throw new IllegalArgumentException("Can not find tools.jar under java home: " + javaHome);
+            }
         }
 
         List<String> command = new ArrayList<String>();
-        command.add(path);
+        command.add(javaPath.getAbsolutePath());
 
-        if(toolsJar.exists()) {
+        if (toolsJar.exists()) {
             command.add("-Xbootclasspath/a:" + toolsJar.getAbsolutePath());
         }
 
         command.addAll(attachArgs);
-//        "${JAVA_HOME}"/bin/java \
-//        ${opts}  \
-//        -jar "${arthas_lib_dir}/arthas-core.jar" \
-//            -pid ${TARGET_PID} \
-//            -target-ip ${TARGET_IP} \
-//            -telnet-port ${TELNET_PORT} \
-//            -http-port ${HTTP_PORT} \
-//            -core "${arthas_lib_dir}/arthas-core.jar" \
-//            -agent "${arthas_lib_dir}/arthas-agent.jar"
+        // "${JAVA_HOME}"/bin/java \
+        // ${opts} \
+        // -jar "${arthas_lib_dir}/arthas-core.jar" \
+        // -pid ${TARGET_PID} \
+        // -target-ip ${TARGET_IP} \
+        // -telnet-port ${TELNET_PORT} \
+        // -http-port ${HTTP_PORT} \
+        // -core "${arthas_lib_dir}/arthas-core.jar" \
+        // -agent "${arthas_lib_dir}/arthas-agent.jar"
 
         ProcessBuilder pb = new ProcessBuilder(command);
         try {
@@ -205,7 +202,7 @@ public class ProcessUtils {
             redirectStderr.join();
 
             int exitValue = proc.exitValue();
-            if(exitValue != 0) {
+            if (exitValue != 0) {
                 logger.error("attach fail, targetPid: " + targetPid);
                 System.exit(1);
             }
@@ -213,6 +210,21 @@ public class ProcessUtils {
             // ignore
         }
 
+    }
+
+    private static File findJava() {
+        String javaHome = System.getProperty("java.home");
+        String[] paths = { "bin/java", "bin/java.exe", "../bin/java", "../bin/java.exe" };
+
+        for (String path : paths) {
+            File jpsFile = new File(javaHome, path);
+            if (jpsFile.exists()) {
+                return jpsFile;
+            }
+        }
+
+        logger.debug("can not find java under current java home: " + javaHome);
+        return null;
     }
 
     private static File findJps() {
@@ -226,6 +238,7 @@ public class ProcessUtils {
             }
         }
 
+        logger.debug("can not find jps under current java home: " + javaHome);
         return null;
     }
 
