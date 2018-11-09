@@ -2,8 +2,8 @@ package com.taobao.arthas.core;
 
 import com.sun.tools.attach.VirtualMachine;
 import com.sun.tools.attach.VirtualMachineDescriptor;
+import com.taobao.arthas.common.AnsiLog;
 import com.taobao.arthas.core.config.Configure;
-import com.taobao.arthas.core.util.AnsiLog;
 import com.taobao.middleware.cli.CLI;
 import com.taobao.middleware.cli.CLIs;
 import com.taobao.middleware.cli.CommandLine;

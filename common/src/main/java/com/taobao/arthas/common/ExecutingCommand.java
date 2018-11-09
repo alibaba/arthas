@@ -1,4 +1,4 @@
-package com.taobao.arthas.boot;
+package com.taobao.arthas.common;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -9,6 +9,8 @@ import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.taobao.arthas.boot.IOUtils;
 
 /**
  * A class for executing on the command line and returning the result of
