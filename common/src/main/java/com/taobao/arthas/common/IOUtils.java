@@ -1,4 +1,4 @@
-package com.taobao.arthas.boot;
+package com.taobao.arthas.common;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;

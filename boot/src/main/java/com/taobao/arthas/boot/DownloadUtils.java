@@ -18,6 +18,8 @@ import org.w3c.dom.Document;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
+import com.taobao.arthas.common.IOUtils;
+
 /**
  *
  * @author hengyunabc 2018-11-06

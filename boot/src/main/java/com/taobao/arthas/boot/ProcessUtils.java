@@ -17,6 +17,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.taobao.arthas.common.ExecutingCommand;
+import com.taobao.arthas.common.IOUtils;
 
 /**
  *

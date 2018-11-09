@@ -7,11 +7,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import com.taobao.arthas.boot.IOUtils;
-
 /**
  * A class for executing on the command line and returning the result of
  * execution.
@@ -19,8 +14,6 @@ import com.taobao.arthas.boot.IOUtils;
  * @author alessandro[at]perucchi[dot]org
  */
 public class ExecutingCommand {
-
-    private static final Logger LOG = LoggerFactory.getLogger(ExecutingCommand.class);
 
     private ExecutingCommand() {
     }
@@ -52,10 +45,12 @@ public class ExecutingCommand {
         try {
             p = Runtime.getRuntime().exec(cmdToRunWithArgs);
         } catch (SecurityException e) {
-            LOG.trace("Couldn't run command {}: {}", Arrays.toString(cmdToRunWithArgs), e);
+            AnsiLog.trace("Couldn't run command {}:", Arrays.toString(cmdToRunWithArgs));
+            AnsiLog.trace(e);
             return new ArrayList<String>(0);
         } catch (IOException e) {
-            LOG.trace("Couldn't run command {}: {}", Arrays.toString(cmdToRunWithArgs), e);
+            AnsiLog.trace("Couldn't run command {}:", Arrays.toString(cmdToRunWithArgs));
+            AnsiLog.trace(e);
             return new ArrayList<String>(0);
         }
 
@@ -68,10 +63,12 @@ public class ExecutingCommand {
             }
             p.waitFor();
         } catch (IOException e) {
-            LOG.trace("Problem reading output from {}: {}", Arrays.toString(cmdToRunWithArgs), e);
+            AnsiLog.trace("Problem reading output from {}:", Arrays.toString(cmdToRunWithArgs));
+            AnsiLog.trace(e);
             return new ArrayList<String>(0);
         } catch (InterruptedException ie) {
-            LOG.trace("Interrupted while reading output from {}: {}", Arrays.toString(cmdToRunWithArgs), ie);
+            AnsiLog.trace("Problem reading output from {}:", Arrays.toString(cmdToRunWithArgs));
+            AnsiLog.trace(ie);
             Thread.currentThread().interrupt();
         } finally {
             IOUtils.close(reader);
