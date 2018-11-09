@@ -17,6 +17,7 @@ import org.apache.commons.net.telnet.TelnetClient;
 import org.apache.commons.net.telnet.TelnetOptionHandler;
 import org.apache.commons.net.telnet.WindowSizeOptionHandler;
 
+import com.taobao.arthas.common.OSUtils;
 import com.taobao.middleware.cli.CLI;
 import com.taobao.middleware.cli.CommandLine;
 import com.taobao.middleware.cli.UsageMessageFormatter;
@@ -152,11 +153,8 @@ public class TelnetConsole {
 
     public static void main(String[] args) throws IOException {
         // support mingw/cygw jline color
-        if (System.getProperty("os.name").startsWith("Windows")) {
-            if ((System.getenv("MSYSTEM") != null && System.getenv("MSYSTEM").startsWith("MINGW"))
-                            || "/bin/shell".equals(System.getenv("SHELL"))) {
-                System.setProperty("jline.terminal", System.getProperty("jline.terminal", "jline.UnixTerminal"));
-            }
+        if (OSUtils.isCygwinOrMinGW()) {
+            System.setProperty("jline.terminal", System.getProperty("jline.terminal", "jline.UnixTerminal"));
         }
 
         TelnetConsole telnetConsole = new TelnetConsole();
@@ -220,7 +218,7 @@ public class TelnetConsole {
                 } else {
                     width = terminal.getWidth();
                     // hack for windows dos
-                    if (OSUtils.isWindowsOS()) {
+                    if (OSUtils.isWindows()) {
                         width--;
                     }
                 }
