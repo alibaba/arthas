@@ -16,6 +16,8 @@ import java.util.Scanner;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.taobao.arthas.common.ExecutingCommand;
+
 /**
  *
  * @author hengyunabc 2018-11-06

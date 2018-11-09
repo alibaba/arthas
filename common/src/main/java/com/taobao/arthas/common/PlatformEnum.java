@@ -1,4 +1,4 @@
-package com.taobao.arthas.boot;
+package com.taobao.arthas.common;
 
 /**
  * Enum of supported operating systems.

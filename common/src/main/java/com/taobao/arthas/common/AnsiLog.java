@@ -1,4 +1,4 @@
-package com.taobao.arthas.core.util;
+package com.taobao.arthas.common;
 import java.util.regex.Matcher;
 
 /**

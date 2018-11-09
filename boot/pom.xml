@@ -13,6 +13,11 @@
 
     <dependencies>
         <dependency>
+            <groupId>com.taobao.arthas</groupId>
+            <artifactId>arthas-common</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
             <groupId>com.alibaba.middleware</groupId>
             <artifactId>cli</artifactId>
         </dependency>

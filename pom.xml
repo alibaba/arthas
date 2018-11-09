@@ -56,6 +56,7 @@
 
     <modules>
         <module>spy</module>
+        <module>common</module>
         <module>core</module>
         <module>agent</module>
         <module>client</module>
