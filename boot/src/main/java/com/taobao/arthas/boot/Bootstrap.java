@@ -11,6 +11,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.logging.Level;
 
 import javax.xml.parsers.ParserConfigurationException;
 
@@ -154,6 +155,8 @@ public class Bootstrap {
         return verbose;
     }
 
+    @Option(shortName = "v", longName = "verbose")
+    @Description("Verbose, print debug info.")
     public void setVerbose(boolean verbose) {
         this.verbose = verbose;
     }
@@ -174,6 +177,9 @@ public class Bootstrap {
             System.exit(1);
         }
 
+        if (bootStrap.isVerbose()) {
+            AnsiLog.level(Level.ALL);
+        }
         if (bootStrap.isHelp()) {
             System.out.println(usage(cli));
             System.exit(0);
