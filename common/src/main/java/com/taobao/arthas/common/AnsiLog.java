@@ -23,7 +23,7 @@ public abstract class AnsiLog {
 
     static boolean enableColor;
 
-    public static java.util.logging.Level LEVEL = java.util.logging.Level.INFO;
+    public static java.util.logging.Level LEVEL = java.util.logging.Level.CONFIG;
 
     private static final String RESET = "\033[0m";
 
