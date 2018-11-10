@@ -40,7 +40,7 @@ public class OSUtils {
     public static boolean isCygwinOrMinGW() {
         if (isWindows()) {
             if ((System.getenv("MSYSTEM") != null && System.getenv("MSYSTEM").startsWith("MINGW"))
-                            || "/bin/shell".equals(System.getenv("SHELL"))) {
+                            || "/bin/bash".equals(System.getenv("SHELL"))) {
                 return true;
             }
         }

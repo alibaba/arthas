@@ -55,10 +55,14 @@ public abstract class AnsiLog {
     static {
         if (System.console() != null) {
             enableColor = true;
-            // under windows, only support cygwin and mingw
-            if (OSUtils.isWindows() && !OSUtils.isCygwinOrMinGW()) {
+            // windows dos, do not support color
+            if (OSUtils.isWindows()) {
                 enableColor = false;
             }
+        }
+        // cygwin and mingw support color
+        if (OSUtils.isCygwinOrMinGW()) {
+            enableColor = true;
         }
     }
 
