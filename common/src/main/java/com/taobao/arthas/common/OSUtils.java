@@ -12,13 +12,13 @@ public class OSUtils {
 
     static PlatformEnum platform;
     static {
-        if (OPERATING_SYSTEM_NAME.startsWith("Linux")) {
+        if (OPERATING_SYSTEM_NAME.startsWith("linux")) {
             platform = PlatformEnum.LINUX;
-        } else if (OPERATING_SYSTEM_NAME.startsWith("Mac") || OPERATING_SYSTEM_NAME.startsWith("Darwin")) {
+        } else if (OPERATING_SYSTEM_NAME.startsWith("mac") || OPERATING_SYSTEM_NAME.startsWith("darwin")) {
             platform = PlatformEnum.MACOSX;
-        } else if (OPERATING_SYSTEM_NAME.startsWith("Mac") || OPERATING_SYSTEM_NAME.startsWith("Darwin")) {
+        } else if (OPERATING_SYSTEM_NAME.startsWith("mac") || OPERATING_SYSTEM_NAME.startsWith("darwin")) {
             platform = PlatformEnum.MACOSX;
-        } else if (OPERATING_SYSTEM_NAME.startsWith("Windows")) {
+        } else if (OPERATING_SYSTEM_NAME.startsWith("windows")) {
             platform = PlatformEnum.WINDOWS;
         } else {
             platform = PlatformEnum.UNKNOWN;
