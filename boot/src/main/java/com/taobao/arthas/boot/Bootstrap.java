@@ -72,7 +72,7 @@ public class Bootstrap {
      */
     private String repoMirror = "center";
 
-    private boolean useHttps = false;
+    private boolean useHttps = true;
 
     private boolean attachOnly = false;
 
@@ -128,7 +128,7 @@ public class Bootstrap {
     }
 
     @Option(longName = "use-https")
-    @Description("Use https to download")
+    @Description("Use https to download, default true")
     public void setUseHttps(boolean useHttps) {
         this.useHttps = useHttps;
     }
