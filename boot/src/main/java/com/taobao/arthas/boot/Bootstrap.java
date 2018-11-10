@@ -14,10 +14,9 @@ import java.util.List;
 
 import javax.xml.parsers.ParserConfigurationException;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.xml.sax.SAXException;
 
+import com.taobao.arthas.common.AnsiLog;
 import com.taobao.arthas.common.SocketUtils;
 import com.taobao.middleware.cli.CLI;
 import com.taobao.middleware.cli.CommandLine;
@@ -39,7 +38,6 @@ import com.taobao.middleware.cli.annotations.Summary;
                 + "  java -jar arthas-boot.jar --target-ip 0.0.0.0 --telnet-port 9999' \n"
                 + "  java -jar arthas-boot.jar -f batch.as 127.0.0.1\n")
 public class Bootstrap {
-    private static final Logger logger = LoggerFactory.getLogger(Bootstrap.class);
     private static final int DEFAULT_TELNET_PORT = 3658;
     private static final int DEFAULT_HTTP_PORT = 8563;
     private static final String DEFAULT_TARGET_IP = "127.0.0.1";
@@ -187,13 +185,13 @@ public class Bootstrap {
         if (bootStrap.getTelnetPort() > 0) {
             telnetPortPid = SocketUtils.findTcpListenProcess(bootStrap.getTelnetPort());
             if (telnetPortPid > 0) {
-                logger.info("Process {} already using port {}", telnetPortPid, bootStrap.getTelnetPort());
+                AnsiLog.info("Process {} already using port {}", telnetPortPid, bootStrap.getTelnetPort());
             }
         }
         if (bootStrap.getHttpPort() > 0) {
             httpPortPid = SocketUtils.findTcpListenProcess(bootStrap.getHttpPort());
             if (httpPortPid > 0) {
-                logger.info("Process {} already using port {}", httpPortPid, bootStrap.getHttpPort());
+                AnsiLog.info("Process {} already using port {}", httpPortPid, bootStrap.getHttpPort());
             }
         }
 
@@ -208,12 +206,12 @@ public class Bootstrap {
         }
 
         if (telnetPortPid > 0 && pid != telnetPortPid) {
-            logger.warn("Target process {} is not the process using port {}, you will connect to an unexpected process.",
+            AnsiLog.warn("Target process {} is not the process using port {}, you will connect to an unexpected process.",
                             pid, bootStrap.getTelnetPort());
         }
 
         if (httpPortPid > 0 && pid != httpPortPid) {
-            logger.warn("Target process {} is not the process using port {}, you will connect to an unexpected process.",
+            AnsiLog.warn("Target process {} is not the process using port {}, you will connect to an unexpected process.",
                             pid, bootStrap.getHttpPort());
         }
 
@@ -269,7 +267,7 @@ public class Bootstrap {
 
         verifyArthasHome(arthasHomeDir.getAbsolutePath());
 
-        logger.info("arthas home: " + arthasHomeDir);
+        AnsiLog.info("arthas home: " + arthasHomeDir);
 
         // start arthas-core.jar
         List<String> attachArgs = new ArrayList<String>();
@@ -288,11 +286,11 @@ public class Bootstrap {
         attachArgs.add("-agent");
         attachArgs.add(new File(arthasHomeDir, "arthas-agent.jar").getAbsolutePath());
 
-        logger.info("Try to attach process " + pid);
-        logger.debug("Start arthas-core.jar args: " + attachArgs);
+        AnsiLog.info("Try to attach process " + pid);
+        AnsiLog.debug("Start arthas-core.jar args: " + attachArgs);
         ProcessUtils.startArthasCore(pid, attachArgs);
 
-        logger.info("Attach process {} success.", pid);
+        AnsiLog.info("Attach process {} success.", pid);
 
         if (bootStrap.isAttachOnly()) {
             System.exit(0);
@@ -319,7 +317,7 @@ public class Bootstrap {
         telnetArgs.add(bootStrap.getTargetIp());
         telnetArgs.add("" + bootStrap.getTelnetPort());
 
-        logger.debug("Start arthas-client.jar args: " + telnetArgs);
+        AnsiLog.debug("Start arthas-client.jar args: " + telnetArgs);
         mainMethod.invoke(null, new Object[] { telnetArgs.toArray(new String[0]) });
     }
 

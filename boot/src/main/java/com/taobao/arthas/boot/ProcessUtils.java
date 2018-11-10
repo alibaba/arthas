@@ -1,10 +1,8 @@
 package com.taobao.arthas.boot;
 
-import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.lang.management.ManagementFactory;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -13,9 +11,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
+import com.taobao.arthas.common.AnsiLog;
 import com.taobao.arthas.common.ExecutingCommand;
 import com.taobao.arthas.common.IOUtils;
 
@@ -25,8 +21,6 @@ import com.taobao.arthas.common.IOUtils;
  *
  */
 public class ProcessUtils {
-    private static final Logger logger = LoggerFactory.getLogger(ProcessUtils.class);
-
     private static String PID = "-1";
 
     static {
@@ -51,7 +45,7 @@ public class ProcessUtils {
         Map<Integer, String> processMap = listProcessByJps(v);
 
         if (processMap.isEmpty()) {
-            logger.info("Can not find java process.");
+            AnsiLog.info("Can not find java process. Try to pass pid in command line.");
             return -1;
         }
 
@@ -118,7 +112,6 @@ public class ProcessUtils {
         }
 
         return result;
-
     }
 
     public static void startArthasCore(int targetPid, List<String> attachArgs) {
@@ -199,7 +192,7 @@ public class ProcessUtils {
 
             int exitValue = proc.exitValue();
             if (exitValue != 0) {
-                logger.error("attach fail, targetPid: " + targetPid);
+                AnsiLog.error("attach fail, targetPid: " + targetPid);
                 System.exit(1);
             }
         } catch (Throwable e) {
@@ -219,7 +212,7 @@ public class ProcessUtils {
             }
         }
 
-        logger.debug("can not find java under current java home: " + javaHome);
+        AnsiLog.debug("can not find java under current java home: " + javaHome);
         return null;
     }
 
@@ -234,7 +227,7 @@ public class ProcessUtils {
             }
         }
 
-        logger.debug("can not find jps under current java home: " + javaHome);
+        AnsiLog.debug("can not find jps under current java home: " + javaHome);
         return null;
     }
 

@@ -12,12 +12,11 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
+import com.taobao.arthas.common.AnsiLog;
 import com.taobao.arthas.common.IOUtils;
 
 /**
@@ -26,9 +25,6 @@ import com.taobao.arthas.common.IOUtils;
  *
  */
 public class DownloadUtils {
-
-    private static final Logger logger = LoggerFactory.getLogger(DownloadUtils.class);
-
     private static final String MAVEN_METADATA_URL = "${REPO}/com/taobao/arthas/arthas-packaging/maven-metadata.xml";
     private static final String REMOTE_DOWNLOAD_URL = "${REPO}/com/taobao/arthas/arthas-packaging/${VERSION}/arthas-packaging-${VERSION}-bin.zip";
 
@@ -83,7 +79,7 @@ public class DownloadUtils {
         File tempFile = File.createTempFile("arthas", "arthas");
 
         String remoteDownloadUrl = REMOTE_DOWNLOAD_URL.replace("${REPO}", repoUrl).replace("${VERSION}", arthasVersion);
-        logger.info("Start download arthas from remote server: " + remoteDownloadUrl);
+        AnsiLog.info("Start download arthas from remote server: " + remoteDownloadUrl);
         saveUrl(tempFile.getAbsolutePath(), remoteDownloadUrl);
 
         IOUtils.unzip(tempFile.getAbsolutePath(), unzipDir.getAbsolutePath());
