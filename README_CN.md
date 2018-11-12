@@ -11,6 +11,8 @@
 [![Average time to resolve an issue](http://isitmaintained.com/badge/resolution/alibaba/arthas.svg)](http://isitmaintained.com/project/alibaba/arthas "Average time to resolve an issue")
 [![Percentage of issues still open](http://isitmaintained.com/badge/open/alibaba/arthas.svg)](http://isitmaintained.com/project/alibaba/arthas "Percentage of issues still open")
 
+**Arthas正在参加“2018年度最受欢迎中国开源软件评选” ，请支持Arthas：[投票地址](https://www.oschina.net/project/top_cn_2018)**
+
 English version goes [here](README.md).
 
 `Arthas` 是Alibaba开源的Java诊断工具，深受开发者喜爱。
