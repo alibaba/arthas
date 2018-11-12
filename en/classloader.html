@@ -114,14 +114,14 @@
 <li class="toctree-l2"><a class="reference internal" href="stack.html">stack</a></li>
 <li class="toctree-l2"><a class="reference internal" href="tt.html">tt</a></li>
 <li class="toctree-l2"><a class="reference internal" href="options.html">options</a></li>
-<li class="toctree-l2"><a class="reference internal" href="commands.html#basic-commands">Basic Commands</a></li>
+<li class="toctree-l2"><a class="reference internal" href="commands.html#basic-arthas-commands">Basic Arthas Commands</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas/issues?q=label%3Auser-case">User cases</a></li>
-<li class="toctree-l1"><a class="reference internal" href="release-notes.html">Release Notes</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas/issues?q=label%3Aquestion-answered">Questions and answers</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas">Fork me at GitHub</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas/blob/master/CONTRIBUTING.md">CONTRIBUTING</a></li>
+<li class="toctree-l1"><a class="reference internal" href="release-notes.html">Release Notes</a></li>
 </ul>
 
             
@@ -192,8 +192,8 @@
             
   <div class="section" id="classloader">
 <span id="classloader"></span><h1>classloader<a class="headerlink" href="#classloader" title="Permalink to this headline">¶</a></h1>
-<p>Check the inheritance tree, urls and classes loading profiles of the class loaders.</p>
-<p>It can be a great help for <code class="docutils literal notranslate"><span class="pre">ResourceNotFoundException</span></code> when you can use command <code class="docutils literal notranslate"><span class="pre">classloader</span></code> to specify a class loader to <code class="docutils literal notranslate"><span class="pre">getResources</span></code> and print all the urls of the valid resources.</p>
+<p>View hierarchy, urls and classes-loading info for the class-loaders.</p>
+<p><code class="docutils literal notranslate"><span class="pre">classloader</span></code> can search and print out the URLs for a specified resource from one particular classloader. It is quite handy when analyze <code class="docutils literal notranslate"><span class="pre">ResourceNotFoundException</span></code>.</p>
 <div class="section" id="options">
 <span id="options"></span><h2>Options<a class="headerlink" href="#options" title="Permalink to this headline">¶</a></h2>
 <table border="1" class="docutils">
@@ -206,11 +206,11 @@
 <tbody>
 <tr>
 <td align="right">[l]</td>
-<td align="left">list all class loader instances based on thread count</td>
+<td align="left">list all class loader instances</td>
 </tr>
 <tr>
 <td align="right">[t]</td>
-<td align="left">print the inheritance structure of the class loaders</td>
+<td align="left">print classloader's hierarchy</td>
 </tr>
 <tr>
 <td align="right">[a]</td>
@@ -218,7 +218,7 @@
 </tr>
 <tr>
 <td align="right">[c:]</td>
-<td align="left">get the hashcode of the class loader</td>
+<td align="left">print classloader's hashcode</td>
 </tr>
 <tr>
 <td align="right">[c: r:]</td>
@@ -229,7 +229,7 @@
 <div class="section" id="usage">
 <span id="usage"></span><h2>Usage<a class="headerlink" href="#usage" title="Permalink to this headline">¶</a></h2>
 <ul class="simple">
-<li>Categorised by class loader</li>
+<li>View statistics categorized by class type</li>
 </ul>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$ classloader
  name                                                   numberOfInstances  loadedCountTotal
@@ -248,7 +248,7 @@ Affect<span class="o">(</span>row-cnt:11<span class="o">)</span> cost in <span c
 </pre></div>
 </div>
 <ul class="simple">
-<li>Categorized by class loader instance</li>
+<li>View statistics categorized by loaded classes number</li>
 </ul>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$ classloader -l
  name                                                            loadedCount  hash      parent
@@ -298,7 +298,7 @@ Affect<span class="o">(</span>row-cnt:11<span class="o">)</span> cost in <span c
 </pre></div>
 </div>
 <ul class="simple">
-<li>Check inheritance tree of the class loaders</li>
+<li>View class-loaders hierarchy</li>
 </ul>
 <div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>$ classloader -t
 +-BootstrapClassLoader
@@ -312,7 +312,7 @@ Affect<span class="o">(</span>row-cnt:11<span class="o">)</span> cost in <span c
 </pre></div>
 </div>
 <ul class="simple">
-<li>Check URL of the class loader</li>
+<li>Show the URLs from which to load classes and resources for one particular URLClassLoader</li>
 </ul>
 <div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>$ classloader -c 5ffe9775
 file:/Users/hello/soft/taobao-tomcat-7.0.64/deploy/taobao-hsf.sar/lib/commons-lang-2.6.jar
@@ -325,7 +325,7 @@ file:/Users/hello/soft/taobao-tomcat-7.0.64/deploy/taobao-hsf.sar/lib/picocontai
 </pre></div>
 </div>
 <ul class="simple">
-<li>Using class loader to search for resource</li>
+<li>Use one class loader to search one particular resource</li>
 </ul>
 <div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>$ classloader -c 226b143b -r META-INF/MANIFEST.MF
  jar:file:/Users/hello/.m2/repository/javax/enterprise/cdi-api/1.0/cdi-api-1.0.jar!/META-INF/MANIFEST.MF
@@ -333,7 +333,7 @@ file:/Users/hello/soft/taobao-tomcat-7.0.64/deploy/taobao-hsf.sar/lib/picocontai
 </pre></div>
 </div>
 <ul class="simple">
-<li>Using class loader to look for <code class="docutils literal notranslate"><span class="pre">*.class</span></code> file</li>
+<li>Use one class loader to search one particular class</li>
 </ul>
 <div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>$ classloader -c 1b6d3586 -r java/lang/String.class
  jar:file:/Library/Java/JavaVirtualMachines/jdk1.8.0_60.jdk/Contents/Home/jre/lib/rt.jar!/java/lang/String.class

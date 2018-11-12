@@ -99,8 +99,8 @@
 <li class="toctree-l2 current"><a class="current reference internal" href="#">sysprop</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#usage">Usage</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="#check-all-properties">Check all properties</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#check-a-single-property">Check a single property</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#modify-a-single-property">Modify a single property</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#check-one-single-property">Check One Single Property</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#modify-single-property">Modify Single Property</a></li>
 </ul>
 </li>
 </ul>
@@ -118,14 +118,14 @@
 <li class="toctree-l2"><a class="reference internal" href="stack.html">stack</a></li>
 <li class="toctree-l2"><a class="reference internal" href="tt.html">tt</a></li>
 <li class="toctree-l2"><a class="reference internal" href="options.html">options</a></li>
-<li class="toctree-l2"><a class="reference internal" href="commands.html#basic-commands">Basic Commands</a></li>
+<li class="toctree-l2"><a class="reference internal" href="commands.html#basic-arthas-commands">Basic Arthas Commands</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas/issues?q=label%3Auser-case">User cases</a></li>
-<li class="toctree-l1"><a class="reference internal" href="release-notes.html">Release Notes</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas/issues?q=label%3Aquestion-answered">Questions and answers</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas">Fork me at GitHub</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas/blob/master/CONTRIBUTING.md">CONTRIBUTING</a></li>
+<li class="toctree-l1"><a class="reference internal" href="release-notes.html">Release Notes</a></li>
 </ul>
 
             
@@ -196,7 +196,8 @@
             
   <div class="section" id="sysprop">
 <span id="sysprop"></span><h1>sysprop<a class="headerlink" href="#sysprop" title="Permalink to this headline">¶</a></h1>
-<p>Check the JVM system properties.</p>
+<blockquote>
+<div>Examine the system properties from the target JVM</div></blockquote>
 <div class="section" id="usage">
 <span id="usage"></span><h2>Usage<a class="headerlink" href="#usage" title="Permalink to this headline">¶</a></h2>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span> <span class="n">USAGE</span><span class="p">:</span>
@@ -294,16 +295,17 @@
 </pre></div>
 </div>
 </div>
-<div class="section" id="check-a-single-property">
-<span id="check-a-single-property"></span><h3>Check a single property<a class="headerlink" href="#check-a-single-property" title="Permalink to this headline">¶</a></h3>
-<p>Tip: <code class="docutils literal notranslate"><span class="pre">tab</span></code> auto-completion supported</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ sysprop java.version
-java.version=1.8.0_51
+<div class="section" id="check-one-single-property">
+<span id="check-one-single-property"></span><h3>Check One Single Property<a class="headerlink" href="#check-one-single-property" title="Permalink to this headline">¶</a></h3>
+<blockquote>
+<div>Use <code class="docutils literal notranslate"><span class="pre">tab</span></code> for auto-completion</div></blockquote>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$ sysprop java.version
+java.version<span class="o">=</span><span class="m">1</span>.8.0_51
 </pre></div>
 </div>
 </div>
-<div class="section" id="modify-a-single-property">
-<span id="modify-a-single-property"></span><h3>Modify a single property<a class="headerlink" href="#modify-a-single-property" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="modify-single-property">
+<span id="modify-single-property"></span><h3>Modify Single Property<a class="headerlink" href="#modify-single-property" title="Permalink to this headline">¶</a></h3>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ sysprop user.country
 user.country=US
 $ sysprop user.country CN

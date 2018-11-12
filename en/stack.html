@@ -108,25 +108,20 @@
 <li class="toctree-l2"><a class="reference internal" href="watch.html">watch</a></li>
 <li class="toctree-l2"><a class="reference internal" href="trace.html">trace</a></li>
 <li class="toctree-l2 current"><a class="current reference internal" href="#">stack</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#parameters">Parameters</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="advice-class.html">Critical fields in expression</a></li>
-<li class="toctree-l4"><a class="reference external" href="https://github.com/alibaba/arthas/issues/71">Special usage</a></li>
-<li class="toctree-l4"><a class="reference external" href="https://commons.apache.org/proper/commons-ognl/language-guide.html">OGNL official guide</a></li>
-</ul>
-</li>
+<li class="toctree-l3"><a class="reference internal" href="#parameters">Parameters</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#usage">Usage</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="tt.html">tt</a></li>
 <li class="toctree-l2"><a class="reference internal" href="options.html">options</a></li>
-<li class="toctree-l2"><a class="reference internal" href="commands.html#basic-commands">Basic Commands</a></li>
+<li class="toctree-l2"><a class="reference internal" href="commands.html#basic-arthas-commands">Basic Arthas Commands</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas/issues?q=label%3Auser-case">User cases</a></li>
-<li class="toctree-l1"><a class="reference internal" href="release-notes.html">Release Notes</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas/issues?q=label%3Aquestion-answered">Questions and answers</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas">Fork me at GitHub</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas/blob/master/CONTRIBUTING.md">CONTRIBUTING</a></li>
+<li class="toctree-l1"><a class="reference internal" href="release-notes.html">Release Notes</a></li>
 </ul>
 
             
@@ -197,8 +192,9 @@
             
   <div class="section" id="stack">
 <span id="stack"></span><h1>stack<a class="headerlink" href="#stack" title="Permalink to this headline">¶</a></h1>
-<p>Print out the full call stack trace <em>till</em> the current method.</p>
-<p>Most of the time, we know the method being invoked but not always we know <strong>HOW being invoked</strong>; <code class="docutils literal notranslate"><span class="pre">stack</span></code> can be a great help to locate the <em>source</em> for you.</p>
+<blockquote>
+<div>Print out the full call stack of the current method.</div></blockquote>
+<p>Most often we know one method gets called, but we have no idea on which code path gets executed or when the method gets called since there are so many code paths to the target method. The command <code class="docutils literal notranslate"><span class="pre">stack</span></code> comes to rescue in this difficult situation.</p>
 <div class="section" id="parameters">
 <span id="parameters"></span><h2>Parameters<a class="headerlink" href="#parameters" title="Permalink to this headline">¶</a></h2>
 <table border="1" class="docutils">
@@ -222,109 +218,100 @@
 <td align="left">condition expression</td>
 </tr>
 <tr>
-<td align="right">[E]</td>
-<td align="left">turn on regex matching while the default is wildcard matching</td>
+<td align="right"><code>[E]</code></td>
+<td align="left">turn on regex match, the default behavior is wildcard match</td>
 </tr>
 <tr>
-<td align="right">[n:]</td>
-<td align="left">calling times</td>
+<td align="right"><code>[n:]</code></td>
+<td align="left">execution times</td>
 </tr>
 </tbody>
-</table><p>F.Y.I</p>
-<ol class="simple">
-<li>any valid OGNL expression as <code class="docutils literal notranslate"><span class="pre">&quot;{params,returnObj}&quot;</span></code> supported;</li>
-<li>filter by time cost as <code class="docutils literal notranslate"><span class="pre">trace</span> <span class="pre">*StringUtils</span> <span class="pre">isBlank</span> <span class="pre">'#cost&gt;100'</span></code>; calling stack with only time cost higher than <code class="docutils literal notranslate"><span class="pre">100ms</span></code> will be printed.</li>
-</ol>
-<p>Attention:</p>
-<ol class="simple">
-<li><code class="docutils literal notranslate"><span class="pre">#cost</span></code> can be used in <code class="docutils literal notranslate"><span class="pre">watch/stack/trace</span></code>;</li>
-<li>using <code class="docutils literal notranslate"><span class="pre">#cost</span></code> in Arthas 3.0 instead of <code class="docutils literal notranslate"><span class="pre">$cost</span></code>.</li>
-</ol>
-<p>Advanced:</p>
-<div class="toctree-wrapper compound">
-<ul>
-<li class="toctree-l1"><a class="reference internal" href="advice-class.html">Critical fields in expression</a></li>
-<li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas/issues/71">Special usage</a></li>
-<li class="toctree-l1"><a class="reference external" href="https://commons.apache.org/proper/commons-ognl/language-guide.html">OGNL official guide</a></li>
+</table><p>There’s one thing worthy noting here is observation expression. The observation expression supports OGNL grammar, for example, you can come up a expression like this <code class="docutils literal notranslate"><span class="pre">&quot;{params,returnObj}&quot;</span></code>. All OGNL expressions are supported as long as they are legal to the grammar.</p>
+<p>Thanks for <code class="docutils literal notranslate"><span class="pre">advice</span></code>’s data structure, it is possible to observe from varieties of different angles. Inside <code class="docutils literal notranslate"><span class="pre">advice</span></code> parameter, all necessary information for notification can be found.</p>
+<p>Pls. refer to <a class="reference internal" href="advice-class.html"><span class="doc">core parameters in expression</span></a> for more details.</p>
+<ul class="simple">
+<li>Pls. also refer to <a class="reference external" href="https://github.com/alibaba/arthas/issues/71">https://github.com/alibaba/arthas/issues/71</a> for more advanced usage</li>
+<li>OGNL official site: <a class="reference external" href="https://commons.apache.org/proper/commons-ognl/language-guide.html">https://commons.apache.org/proper/commons-ognl/language-guide.html</a></li>
 </ul>
-</div>
 </div>
 <div class="section" id="usage">
 <span id="usage"></span><h2>Usage<a class="headerlink" href="#usage" title="Permalink to this headline">¶</a></h2>
-<p>The quoting rules: if there are quotes within the expression, use another type of quotes to quote the whole expression (single <code class="docutils literal notranslate"><span class="pre">''</span></code> or double <code class="docutils literal notranslate"><span class="pre">&quot;&quot;</span></code> quotes).</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ stack com.alibaba.sample.petstore.dal.dao.ProductDao getProductById &#39;params[0]==&quot;K9-BD-01&quot;&#39;
+<blockquote>
+<div>Notes: if there’s quotes character (say, <code class="docutils literal notranslate"><span class="pre">'</span></code>) in the expression, then the whole expression must be wrapped by quotes but with the other type (in this case, <code class="docutils literal notranslate"><span class="pre">&quot;</span></code>) too. On contrary, it’s no need to quote the expression itself if there’s no quotes character found in it, but it is strongly recommended.</div></blockquote>
+<p>Print out calling stack when the first method parameter is “K9-BD-01” for ‘getProductById()’ method:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$ stack com.alibaba.sample.petstore.dal.dao.ProductDao getProductById <span class="s1">&#39;params[0]==&quot;K9-BD-01&quot;&#39;</span>
 Press Ctrl+C to abort.
-Affect(class-cnt:1 , method-cnt:1) cost in 51 ms.
-thread_name=&quot;http-bio-8080-exec-4&quot; thread_id=0x4a;is_daemon=true;priority=5;
-    @com.alibaba.sample.petstore.dal.dao.ibatis.IbatisProductDao.getProductById()
-        at com.alibaba.sample.petstore.web.store.module.screen.ItemList.execute(ItemList.java:50)
-        at com.alibaba.sample.petstore.web.store.module.screen.ItemList$$FastClassByCGLIB$$40b2f45f.invoke(&lt;generated&gt;:-1)
-        at net.sf.cglib.reflect.FastMethod.invoke(FastMethod.java:53)
-        at com.alibaba.citrus.service.moduleloader.impl.adapter.MethodInvoker.invoke(MethodInvoker.java:70)
-        at com.alibaba.citrus.service.moduleloader.impl.adapter.DataBindingAdapter.executeAndReturn(DataBindingAdapter.java:41)
-        at com.alibaba.citrus.turbine.pipeline.valve.PerformScreenValve.performScreenModule(PerformScreenValve.java:111)
-        at com.alibaba.citrus.turbine.pipeline.valve.PerformScreenValve.invoke(PerformScreenValve.java:74)
-        at com.alibaba.citrus.service.pipeline.impl.PipelineImpl$PipelineContextImpl.invokeNext(PipelineImpl.java:157)
-        at com.alibaba.citrus.turbine.pipeline.valve.PerformActionValve.invoke(PerformActionValve.java:73)
-        at com.alibaba.citrus.service.pipeline.impl.PipelineImpl$PipelineContextImpl.invokeNext(PipelineImpl.java:157)
-        at com.alibaba.citrus.service.pipeline.impl.PipelineImpl$PipelineContextImpl.invoke(PipelineImpl.java:210)
+Affect<span class="o">(</span>class-cnt:1 , method-cnt:1<span class="o">)</span> cost in <span class="m">51</span> ms.
+<span class="nv">thread_name</span><span class="o">=</span><span class="s2">&quot;http-bio-8080-exec-4&quot;</span> <span class="nv">thread_id</span><span class="o">=</span>0x4a<span class="p">;</span><span class="nv">is_daemon</span><span class="o">=</span>true<span class="p">;</span><span class="nv">priority</span><span class="o">=</span><span class="m">5</span><span class="p">;</span>
+    @com.alibaba.sample.petstore.dal.dao.ibatis.IbatisProductDao.getProductById<span class="o">()</span>
+        at com.alibaba.sample.petstore.web.store.module.screen.ItemList.execute<span class="o">(</span>ItemList.java:50<span class="o">)</span>
+        at com.alibaba.sample.petstore.web.store.module.screen.ItemList<span class="nv">$$</span>FastClassByCGLIB<span class="nv">$$</span>40b2f45f.invoke<span class="o">(</span>&lt;generated&gt;:-1<span class="o">)</span>
+        at net.sf.cglib.reflect.FastMethod.invoke<span class="o">(</span>FastMethod.java:53<span class="o">)</span>
+        at com.alibaba.citrus.service.moduleloader.impl.adapter.MethodInvoker.invoke<span class="o">(</span>MethodInvoker.java:70<span class="o">)</span>
+        at com.alibaba.citrus.service.moduleloader.impl.adapter.DataBindingAdapter.executeAndReturn<span class="o">(</span>DataBindingAdapter.java:41<span class="o">)</span>
+        at com.alibaba.citrus.turbine.pipeline.valve.PerformScreenValve.performScreenModule<span class="o">(</span>PerformScreenValve.java:111<span class="o">)</span>
+        at com.alibaba.citrus.turbine.pipeline.valve.PerformScreenValve.invoke<span class="o">(</span>PerformScreenValve.java:74<span class="o">)</span>
+        at com.alibaba.citrus.service.pipeline.impl.PipelineImpl<span class="nv">$PipelineContextImpl</span>.invokeNext<span class="o">(</span>PipelineImpl.java:157<span class="o">)</span>
+        at com.alibaba.citrus.turbine.pipeline.valve.PerformActionValve.invoke<span class="o">(</span>PerformActionValve.java:73<span class="o">)</span>
+        at com.alibaba.citrus.service.pipeline.impl.PipelineImpl<span class="nv">$PipelineContextImpl</span>.invokeNext<span class="o">(</span>PipelineImpl.java:157<span class="o">)</span>
+        at com.alibaba.citrus.service.pipeline.impl.PipelineImpl<span class="nv">$PipelineContextImpl</span>.invoke<span class="o">(</span>PipelineImpl.java:210<span class="o">)</span>
 ......
 
-thread_name=&quot;http-bio-8080-exec-2&quot; thread_id=0x48;is_daemon=true;priority=5;
-    @com.alibaba.sample.petstore.dal.dao.ibatis.IbatisProductDao.getProductById()
-        at com.alibaba.sample.petstore.web.store.module.screen.ItemList.execute(ItemList.java:50)
-        at com.alibaba.sample.petstore.web.store.module.screen.ItemList$$FastClassByCGLIB$$40b2f45f.invoke(&lt;generated&gt;:-1)
-        at net.sf.cglib.reflect.FastMethod.invoke(FastMethod.java:53)
-        at com.alibaba.citrus.service.moduleloader.impl.adapter.MethodInvoker.invoke(MethodInvoker.java:70)
-        at com.alibaba.citrus.service.moduleloader.impl.adapter.DataBindingAdapter.executeAndReturn(DataBindingAdapter.java:41)
-        at com.alibaba.citrus.turbine.pipeline.valve.PerformScreenValve.performScreenModule(PerformScreenValve.java:111)
-        at com.alibaba.citrus.turbine.pipeline.valve.PerformScreenValve.invoke(PerformScreenValve.java:74)
-        at com.alibaba.citrus.service.pipeline.impl.PipelineImpl$PipelineContextImpl.invokeNext(PipelineImpl.java:157)
-        at com.alibaba.citrus.turbine.pipeline.valve.PerformActionValve.invoke(PerformActionValve.java:73)
-        at com.alibaba.citrus.service.pipeline.impl.PipelineImpl$PipelineContextImpl.invokeNext(PipelineImpl.java:157)
-        at com.alibaba.citrus.service.pipeline.impl.PipelineImpl$PipelineContextImpl.invoke(PipelineImpl.java:210)
-        at com.alibaba.citrus.service.pipeline.impl.valve.ChooseValve.invoke(ChooseValve.java:98)
-        at com.alibaba.citrus.service.pipeline.impl.PipelineImpl$PipelineContextImpl.invokeNext(PipelineImpl.java:157)
+<span class="nv">thread_name</span><span class="o">=</span><span class="s2">&quot;http-bio-8080-exec-2&quot;</span> <span class="nv">thread_id</span><span class="o">=</span>0x48<span class="p">;</span><span class="nv">is_daemon</span><span class="o">=</span>true<span class="p">;</span><span class="nv">priority</span><span class="o">=</span><span class="m">5</span><span class="p">;</span>
+    @com.alibaba.sample.petstore.dal.dao.ibatis.IbatisProductDao.getProductById<span class="o">()</span>
+        at com.alibaba.sample.petstore.web.store.module.screen.ItemList.execute<span class="o">(</span>ItemList.java:50<span class="o">)</span>
+        at com.alibaba.sample.petstore.web.store.module.screen.ItemList<span class="nv">$$</span>FastClassByCGLIB<span class="nv">$$</span>40b2f45f.invoke<span class="o">(</span>&lt;generated&gt;:-1<span class="o">)</span>
+        at net.sf.cglib.reflect.FastMethod.invoke<span class="o">(</span>FastMethod.java:53<span class="o">)</span>
+        at com.alibaba.citrus.service.moduleloader.impl.adapter.MethodInvoker.invoke<span class="o">(</span>MethodInvoker.java:70<span class="o">)</span>
+        at com.alibaba.citrus.service.moduleloader.impl.adapter.DataBindingAdapter.executeAndReturn<span class="o">(</span>DataBindingAdapter.java:41<span class="o">)</span>
+        at com.alibaba.citrus.turbine.pipeline.valve.PerformScreenValve.performScreenModule<span class="o">(</span>PerformScreenValve.java:111<span class="o">)</span>
+        at com.alibaba.citrus.turbine.pipeline.valve.PerformScreenValve.invoke<span class="o">(</span>PerformScreenValve.java:74<span class="o">)</span>
+        at com.alibaba.citrus.service.pipeline.impl.PipelineImpl<span class="nv">$PipelineContextImpl</span>.invokeNext<span class="o">(</span>PipelineImpl.java:157<span class="o">)</span>
+        at com.alibaba.citrus.turbine.pipeline.valve.PerformActionValve.invoke<span class="o">(</span>PerformActionValve.java:73<span class="o">)</span>
+        at com.alibaba.citrus.service.pipeline.impl.PipelineImpl<span class="nv">$PipelineContextImpl</span>.invokeNext<span class="o">(</span>PipelineImpl.java:157<span class="o">)</span>
+        at com.alibaba.citrus.service.pipeline.impl.PipelineImpl<span class="nv">$PipelineContextImpl</span>.invoke<span class="o">(</span>PipelineImpl.java:210<span class="o">)</span>
+        at com.alibaba.citrus.service.pipeline.impl.valve.ChooseValve.invoke<span class="o">(</span>ChooseValve.java:98<span class="o">)</span>
+        at com.alibaba.citrus.service.pipeline.impl.PipelineImpl<span class="nv">$PipelineContextImpl</span>.invokeNext<span class="o">(</span>PipelineImpl.java:157<span class="o">)</span>
 ...
 </pre></div>
 </div>
-<p>Filtering by time cost:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ stack com.alibaba.sample.petstore.web.store.module.screen.ItemList execute #cost&gt;30
+<p>Print out the calling stack when method ‘execute()’ takes more than 30ms to finish:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$ stack com.alibaba.sample.petstore.web.store.module.screen.ItemList execute <span class="c1">#cost&gt;30</span>
 Press Ctrl+C to abort.
-Affect(class-cnt:1 , method-cnt:1) cost in 123 ms.
-stack com.alibaba.sample.petstore.web.store.module.screen.ItemList execute #cost&gt;30
-thread_name=http-nio-8080-exec-10;id=31;is_daemon=true;priority=5;TCCL=com.taobao.pandora.boot.embedded.tomcat.TomcatEmbeddedWebappClassLoader
-    @com.alibaba.sample.petstore.web.store.module.screen.ItemList.execute()
-        at com.alibaba.sample.petstore.web.store.module.screen.ItemList$$FastClassByCGLIB$$40b2f45f.invoke(&lt;generated&gt;:-1)
-        at net.sf.cglib.reflect.FastMethod.invoke(FastMethod.java:53)
-        at com.alibaba.citrus.service.moduleloader.impl.adapter.MethodInvoker.invoke(MethodInvoker.java:70)
-        at com.alibaba.citrus.service.moduleloader.impl.adapter.DataBindingAdapter.executeAndReturn(DataBindingAdapter.java:41)
-        at com.alibaba.citrus.turbine.pipeline.valve.PerformScreenValve.performScreenModule(PerformScreenValve.java:111)
-        at com.alibaba.citrus.turbine.pipeline.valve.PerformScreenValve.invoke(PerformScreenValve.java:74)
-        at com.alibaba.citrus.service.pipeline.impl.PipelineImpl$PipelineContextImpl.invokeNext(PipelineImpl.java:157)
-        at com.alibaba.citrus.turbine.pipeline.valve.PerformActionValve.invoke(PerformActionValve.java:73)
-        at com.alibaba.citrus.service.pipeline.impl.PipelineImpl$PipelineContextImpl.invokeNext(PipelineImpl.java:157)
-        at com.alibaba.citrus.service.pipeline.impl.PipelineImpl$PipelineContextImpl.invoke(PipelineImpl.java:210)
-        at com.alibaba.citrus.service.pipeline.impl.valve.ChooseValve.invoke(ChooseValve.java:98)
-        at com.alibaba.citrus.service.pipeline.impl.PipelineImpl$PipelineContextImpl.invokeNext(PipelineImpl.java:157)
-        at com.alibaba.citrus.service.pipeline.impl.PipelineImpl$PipelineContextImpl.invoke(PipelineImpl.java:210)
-        at com.alibaba.citrus.service.pipeline.impl.valve.LoopValve.invokeBody(LoopValve.java:105)
-        at com.alibaba.citrus.service.pipeline.impl.valve.LoopValve.invoke(LoopValve.java:83)
-        at com.alibaba.citrus.service.pipeline.impl.PipelineImpl$PipelineContextImpl.invokeNext(PipelineImpl.java:157)
-        at com.alibaba.citrus.turbine.pipeline.valve.PageAuthorizationValve.invoke(PageAuthorizationValve.java:105)
-        at com.alibaba.citrus.service.pipeline.impl.PipelineImpl$PipelineContextImpl.invokeNext(PipelineImpl.java:157)
-        at com.alibaba.citrus.turbine.pipeline.valve.CheckCsrfTokenValve.invoke(CheckCsrfTokenValve.java:123)
-        at com.alibaba.citrus.service.pipeline.impl.PipelineImpl$PipelineContextImpl.invokeNext(PipelineImpl.java:157)
-        at com.alibaba.citrus.turbine.pipeline.valve.AnalyzeURLValve.invoke(AnalyzeURLValve.java:126)
-        at com.alibaba.citrus.service.pipeline.impl.PipelineImpl$PipelineContextImpl.invokeNext(PipelineImpl.java:157)
-        at com.alibaba.citrus.turbine.pipeline.valve.SetLoggingContextValve.invoke(SetLoggingContextValve.java:66)
-        at com.alibaba.citrus.service.pipeline.impl.PipelineImpl$PipelineContextImpl.invokeNext(PipelineImpl.java:157)
-        at com.alibaba.citrus.turbine.pipeline.valve.PrepareForTurbineValve.invoke(PrepareForTurbineValve.java:52)
-        at com.alibaba.citrus.service.pipeline.impl.PipelineImpl$PipelineContextImpl.invokeNext(PipelineImpl.java:157)
-        at com.alibaba.citrus.service.pipeline.impl.PipelineImpl$PipelineContextImpl.invoke(PipelineImpl.java:210)
-        at com.alibaba.citrus.webx.impl.WebxControllerImpl.service(WebxControllerImpl.java:43)
-        at com.alibaba.citrus.webx.impl.WebxRootControllerImpl.handleRequest(WebxRootControllerImpl.java:53)
-        at com.alibaba.citrus.webx.support.AbstractWebxRootController.service(AbstractWebxRootController.java:165)
+Affect<span class="o">(</span>class-cnt:1 , method-cnt:1<span class="o">)</span> cost in <span class="m">123</span> ms.
+stack com.alibaba.sample.petstore.web.store.module.screen.ItemList execute <span class="c1">#cost&gt;30</span>
+<span class="nv">thread_name</span><span class="o">=</span>http-nio-8080-exec-10<span class="p">;</span><span class="nv">id</span><span class="o">=</span><span class="m">31</span><span class="p">;</span><span class="nv">is_daemon</span><span class="o">=</span>true<span class="p">;</span><span class="nv">priority</span><span class="o">=</span><span class="m">5</span><span class="p">;</span><span class="nv">TCCL</span><span class="o">=</span>com.taobao.pandora.boot.embedded.tomcat.TomcatEmbeddedWebappClassLoader
+    @com.alibaba.sample.petstore.web.store.module.screen.ItemList.execute<span class="o">()</span>
+        at com.alibaba.sample.petstore.web.store.module.screen.ItemList<span class="nv">$$</span>FastClassByCGLIB<span class="nv">$$</span>40b2f45f.invoke<span class="o">(</span>&lt;generated&gt;:-1<span class="o">)</span>
+        at net.sf.cglib.reflect.FastMethod.invoke<span class="o">(</span>FastMethod.java:53<span class="o">)</span>
+        at com.alibaba.citrus.service.moduleloader.impl.adapter.MethodInvoker.invoke<span class="o">(</span>MethodInvoker.java:70<span class="o">)</span>
+        at com.alibaba.citrus.service.moduleloader.impl.adapter.DataBindingAdapter.executeAndReturn<span class="o">(</span>DataBindingAdapter.java:41<span class="o">)</span>
+        at com.alibaba.citrus.turbine.pipeline.valve.PerformScreenValve.performScreenModule<span class="o">(</span>PerformScreenValve.java:111<span class="o">)</span>
+        at com.alibaba.citrus.turbine.pipeline.valve.PerformScreenValve.invoke<span class="o">(</span>PerformScreenValve.java:74<span class="o">)</span>
+        at com.alibaba.citrus.service.pipeline.impl.PipelineImpl<span class="nv">$PipelineContextImpl</span>.invokeNext<span class="o">(</span>PipelineImpl.java:157<span class="o">)</span>
+        at com.alibaba.citrus.turbine.pipeline.valve.PerformActionValve.invoke<span class="o">(</span>PerformActionValve.java:73<span class="o">)</span>
+        at com.alibaba.citrus.service.pipeline.impl.PipelineImpl<span class="nv">$PipelineContextImpl</span>.invokeNext<span class="o">(</span>PipelineImpl.java:157<span class="o">)</span>
+        at com.alibaba.citrus.service.pipeline.impl.PipelineImpl<span class="nv">$PipelineContextImpl</span>.invoke<span class="o">(</span>PipelineImpl.java:210<span class="o">)</span>
+        at com.alibaba.citrus.service.pipeline.impl.valve.ChooseValve.invoke<span class="o">(</span>ChooseValve.java:98<span class="o">)</span>
+        at com.alibaba.citrus.service.pipeline.impl.PipelineImpl<span class="nv">$PipelineContextImpl</span>.invokeNext<span class="o">(</span>PipelineImpl.java:157<span class="o">)</span>
+        at com.alibaba.citrus.service.pipeline.impl.PipelineImpl<span class="nv">$PipelineContextImpl</span>.invoke<span class="o">(</span>PipelineImpl.java:210<span class="o">)</span>
+        at com.alibaba.citrus.service.pipeline.impl.valve.LoopValve.invokeBody<span class="o">(</span>LoopValve.java:105<span class="o">)</span>
+        at com.alibaba.citrus.service.pipeline.impl.valve.LoopValve.invoke<span class="o">(</span>LoopValve.java:83<span class="o">)</span>
+        at com.alibaba.citrus.service.pipeline.impl.PipelineImpl<span class="nv">$PipelineContextImpl</span>.invokeNext<span class="o">(</span>PipelineImpl.java:157<span class="o">)</span>
+        at com.alibaba.citrus.turbine.pipeline.valve.PageAuthorizationValve.invoke<span class="o">(</span>PageAuthorizationValve.java:105<span class="o">)</span>
+        at com.alibaba.citrus.service.pipeline.impl.PipelineImpl<span class="nv">$PipelineContextImpl</span>.invokeNext<span class="o">(</span>PipelineImpl.java:157<span class="o">)</span>
+        at com.alibaba.citrus.turbine.pipeline.valve.CheckCsrfTokenValve.invoke<span class="o">(</span>CheckCsrfTokenValve.java:123<span class="o">)</span>
+        at com.alibaba.citrus.service.pipeline.impl.PipelineImpl<span class="nv">$PipelineContextImpl</span>.invokeNext<span class="o">(</span>PipelineImpl.java:157<span class="o">)</span>
+        at com.alibaba.citrus.turbine.pipeline.valve.AnalyzeURLValve.invoke<span class="o">(</span>AnalyzeURLValve.java:126<span class="o">)</span>
+        at com.alibaba.citrus.service.pipeline.impl.PipelineImpl<span class="nv">$PipelineContextImpl</span>.invokeNext<span class="o">(</span>PipelineImpl.java:157<span class="o">)</span>
+        at com.alibaba.citrus.turbine.pipeline.valve.SetLoggingContextValve.invoke<span class="o">(</span>SetLoggingContextValve.java:66<span class="o">)</span>
+        at com.alibaba.citrus.service.pipeline.impl.PipelineImpl<span class="nv">$PipelineContextImpl</span>.invokeNext<span class="o">(</span>PipelineImpl.java:157<span class="o">)</span>
+        at com.alibaba.citrus.turbine.pipeline.valve.PrepareForTurbineValve.invoke<span class="o">(</span>PrepareForTurbineValve.java:52<span class="o">)</span>
+        at com.alibaba.citrus.service.pipeline.impl.PipelineImpl<span class="nv">$PipelineContextImpl</span>.invokeNext<span class="o">(</span>PipelineImpl.java:157<span class="o">)</span>
+        at com.alibaba.citrus.service.pipeline.impl.PipelineImpl<span class="nv">$PipelineContextImpl</span>.invoke<span class="o">(</span>PipelineImpl.java:210<span class="o">)</span>
+        at com.alibaba.citrus.webx.impl.WebxControllerImpl.service<span class="o">(</span>WebxControllerImpl.java:43<span class="o">)</span>
+        at com.alibaba.citrus.webx.impl.WebxRootControllerImpl.handleRequest<span class="o">(</span>WebxRootControllerImpl.java:53<span class="o">)</span>
+        at com.alibaba.citrus.webx.support.AbstractWebxRootController.service<span class="o">(</span>AbstractWebxRootController.java:165<span class="o">)</span>
 ...
 </pre></div>
 </div>

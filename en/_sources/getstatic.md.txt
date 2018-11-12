@@ -1,13 +1,13 @@
 getstatic
 =========
 
-Check the static fields of classes conveniently as `getstatic class_name field_name`
+Check the static fields of classes conveniently, the usage is `getstatic class_name field_name`.
 
-Tip: if the *field* is a composite object, you can even use [`OGNL`](https://en.wikipedia.org/wiki/OGNL) to traverse, filter and access the internal properties of it.
+Tip: if the static field is a complex class, you can even use [`OGNL`](https://en.wikipedia.org/wiki/OGNL) to traverse, filter and access the inner properties of this class.
 
-E.g. suppose `n` is a `Map` and the key is a `Enum` then if you want to get the key with a specific `Enum` value - `STOP` or `a`, you can achieve it as:
+E.g. suppose `n` is a `Map` and its key is a `Enum`, then you can achieve this if you want to pick the key with a specific `Enum` value:
 
-```
+```bash
 $ getstatic com.alibaba.arthas.Test n 'entrySet().iterator.{? #this.key.name()=="STOP"}'
 field: n
 @ArrayList[

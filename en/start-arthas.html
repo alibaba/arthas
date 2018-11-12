@@ -92,10 +92,10 @@
 <li class="toctree-l1"><a class="reference internal" href="advanced-use.html">Advanced usage</a></li>
 <li class="toctree-l1"><a class="reference internal" href="commands.html">Commands</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas/issues?q=label%3Auser-case">User cases</a></li>
-<li class="toctree-l1"><a class="reference internal" href="release-notes.html">Release Notes</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas/issues?q=label%3Aquestion-answered">Questions and answers</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas">Fork me at GitHub</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas/blob/master/CONTRIBUTING.md">CONTRIBUTING</a></li>
+<li class="toctree-l1"><a class="reference internal" href="release-notes.html">Release Notes</a></li>
 </ul>
 
             
@@ -193,15 +193,15 @@ $
 <div class="section" id="parameter-description">
 <span id="parameter-description"></span><h3>Parameter Description<a class="headerlink" href="#parameter-description" title="Permalink to this headline">¶</a></h3>
 <ul class="simple">
-<li>PID: Target Java process ID(Make sure that the user executing the command has sufficient permissions to operate the target Java process.)</li>
-<li>IP: The address that Arthas Server listens on, the default value is <code class="docutils literal notranslate"><span class="pre">127.0.0.1</span></code>. Arthas allows multiple users to access simultaneously without interfering with each other.</li>
-<li>PORT: Arthas Server port，the default value is 3658</li>
+<li><em>PID</em>: Target Java process ID (Make sure that the user executing the command has sufficient permissions to operate the target Java process.)</li>
+<li><em>IP</em>: The address that Arthas Server listens on, the default value is <code class="docutils literal notranslate"><span class="pre">127.0.0.1</span></code>. Arthas allows multiple users to access simultaneously without interfering with each other.</li>
+<li><em>PORT</em>: Arthas Server port，the default value is 3658</li>
 </ul>
 </div>
 <div class="section" id="sample">
 <span id="sample"></span><h3>Sample<a class="headerlink" href="#sample" title="Permalink to this headline">¶</a></h3>
 <ul>
-<li><p class="first">If you do not specify IP and PORT, the default is 127.0.0.1 and 3658</p>
+<li><p class="first">If IP and PORT are not specified, then the default values are 127.0.0.1 and 3658</p>
 <blockquote>
 <div><p>./as.sh 12345</p>
 </div></blockquote>
@@ -214,21 +214,21 @@ $
 </div>
 <div class="section" id="remote-diagnosis">
 <span id="remote-diagnosis"></span><h3>Remote Diagnosis<a class="headerlink" href="#remote-diagnosis" title="Permalink to this headline">¶</a></h3>
-<p>After starting Arthas Server, users can use <code class="docutils literal notranslate"><span class="pre">telnet</span></code> connect to the remote Arthas Server, for example：</p>
+<p>After starting Arthas Server on the target Java process, users can use <code class="docutils literal notranslate"><span class="pre">telnet</span></code> connect to the remote Arthas Server, for example：</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>telnet <span class="m">192</span>.168.1.119 <span class="m">3658</span>
 </pre></div>
 </div>
 </div>
 <div class="section" id="sudo-support">
 <span id="sudo-support"></span><h3>sudo Support<a class="headerlink" href="#sudo-support" title="Permalink to this headline">¶</a></h3>
-<p>If you need to switch users, such as <code class="docutils literal notranslate"><span class="pre">admin</span></code>, you need to add the -H parameter.</p>
+<p>Usually online environment will only grant users privilege as low as possible, instead, all advanced operations are through sudo-list. Since <code class="docutils literal notranslate"><span class="pre">as.sh</span></code> script takes into account the current effective user, it is possible to run the script in the other rule, by specifying <code class="docutils literal notranslate"><span class="pre">-H</span></code> option like this:</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>sudo -u admin -H ./as.sh <span class="m">12345</span>
 </pre></div>
 </div>
 </div>
 <div class="section" id="windows-support">
 <span id="windows-support"></span><h3>Windows Support<a class="headerlink" href="#windows-support" title="Permalink to this headline">¶</a></h3>
-<p><code class="docutils literal notranslate"><span class="pre">as.bat</span></code> script only supports one parameter: pid</p>
+<p>Right now <code class="docutils literal notranslate"><span class="pre">as.bat</span></code> script supports one parameter only, which is: pid</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>as.bat &lt;pid&gt;
 </pre></div>
 </div>

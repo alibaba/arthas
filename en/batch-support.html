@@ -114,10 +114,10 @@
 </li>
 <li class="toctree-l1"><a class="reference internal" href="commands.html">Commands</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas/issues?q=label%3Auser-case">User cases</a></li>
-<li class="toctree-l1"><a class="reference internal" href="release-notes.html">Release Notes</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas/issues?q=label%3Aquestion-answered">Questions and answers</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas">Fork me at GitHub</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas/blob/master/CONTRIBUTING.md">CONTRIBUTING</a></li>
+<li class="toctree-l1"><a class="reference internal" href="release-notes.html">Release Notes</a></li>
 </ul>
 
             
@@ -188,37 +188,37 @@
             
   <div class="section" id="batch-processing">
 <span id="batch-processing"></span><h1>Batch Processing<a class="headerlink" href="#batch-processing" title="Permalink to this headline">¶</a></h1>
-<p>With the help of <code class="docutils literal notranslate"><span class="pre">Batch</span> <span class="pre">Processing</span></code>, you can run several commands in one line and get the results.</p>
+<p>With the help of Batch Processing, you can run multiple commands in batch and get the final result at the end.</p>
 <div class="section" id="usage">
 <span id="usage"></span><h2>Usage<a class="headerlink" href="#usage" title="Permalink to this headline">¶</a></h2>
 <div class="section" id="step-1-create-the-script">
-<span id="step-1-create-the-script"></span><h3>Step-1: Create the script<a class="headerlink" href="#step-1-create-the-script" title="Permalink to this headline">¶</a></h3>
-<p>Creating a <code class="docutils literal notranslate"><span class="pre">test.as</span></code> script suffixed with <code class="docutils literal notranslate"><span class="pre">as</span></code> here for consistency (actually any suffix is acceptable).</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>➜  arthas git:(develop) cat /var/tmp/test.as
-help
-dashboard -b -n 1
+<span id="step-1-create-the-script"></span><h3>Step 1: Create the script<a class="headerlink" href="#step-1-create-the-script" title="Permalink to this headline">¶</a></h3>
+<p>Create a <code class="docutils literal notranslate"><span class="pre">test.as</span></code> script suffixed with <code class="docutils literal notranslate"><span class="pre">as</span></code>. Here <code class="docutils literal notranslate"><span class="pre">as</span></code> is suggested for the suffix of the filename, but in fact any suffix is acceptable.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>➜  arthas git:<span class="o">(</span>develop<span class="o">)</span> cat /var/tmp/test.as
+<span class="nb">help</span>
+dashboard -b -n <span class="m">1</span>
 session
 thread
 sc -d org.apache.commons.lang.StringUtils
 </pre></div>
 </div>
-<p>Attention:</p>
+<p>Note:</p>
 <ul class="simple">
-<li>each command takes each independent line;</li>
-<li><code class="docutils literal notranslate"><span class="pre">dashboard</span></code> command should include <code class="docutils literal notranslate"><span class="pre">-b</span></code> to turn on batch mode and <code class="docutils literal notranslate"><span class="pre">-n</span></code> to ensure the script ends;</li>
-<li>commands as <code class="docutils literal notranslate"><span class="pre">watch/tt/trace/monitor/stack</span></code> should include <code class="docutils literal notranslate"><span class="pre">-n</span></code> option to ensure the script ends;</li>
-<li><a class="reference internal" href="async.html"><span class="doc">asynchronous</span></a> can also be used as <code class="docutils literal notranslate"><span class="pre">watch</span> <span class="pre">c.t.X</span> <span class="pre">test</span> <span class="pre">returnObj</span> <span class="pre">&gt;</span> <span class="pre">&amp;</span></code>;</li>
+<li>Each command takes one line.</li>
+<li>Batch mode (via <code class="docutils literal notranslate"><span class="pre">-b</span></code>) and execution times (via <code class="docutils literal notranslate"><span class="pre">-n</span></code>) must be explicitly specified for <code class="docutils literal notranslate"><span class="pre">dashboard</span></code>, otherwise batch script cannot terminate.</li>
+<li>Commands such as <code class="docutils literal notranslate"><span class="pre">watch</span></code>/<code class="docutils literal notranslate"><span class="pre">tt</span></code>/<code class="docutils literal notranslate"><span class="pre">trace</span></code>/<code class="docutils literal notranslate"><span class="pre">monitor</span></code>/<code class="docutils literal notranslate"><span class="pre">stack</span></code> should include <code class="docutils literal notranslate"><span class="pre">-n</span></code> option to ensure the script can be able to quit.</li>
+<li>Also consider to use <code class="docutils literal notranslate"><span class="pre">async</span></code> (for example: <code class="docutils literal notranslate"><span class="pre">watch</span> <span class="pre">c.t.X</span> <span class="pre">test</span> <span class="pre">returnObj</span> <span class="pre">&gt;</span> <span class="pre">&amp;</span></code>) to put commands run at background and get the output from the log file, see more from <a class="reference internal" href="async.html"><span class="doc">asynchronous job</span></a></li>
 </ul>
 </div>
 <div class="section" id="step-2-run-the-script">
-<span id="step-2-run-the-script"></span><h3>Step-2: Run the script<a class="headerlink" href="#step-2-run-the-script" title="Permalink to this headline">¶</a></h3>
-<p>Using <code class="docutils literal notranslate"><span class="pre">-b</span></code> to turn on script mode, and <code class="docutils literal notranslate"><span class="pre">-f</span></code> to run it and you can also <em>redirect</em> the output as:</p>
+<span id="step-2-run-the-script"></span><h3>Step 2: Run the script<a class="headerlink" href="#step-2-run-the-script" title="Permalink to this headline">¶</a></h3>
+<p>Use <code class="docutils literal notranslate"><span class="pre">-b</span></code> to turn on batch mode, and use <code class="docutils literal notranslate"><span class="pre">-f</span></code> to specify the script file. By default the result will be output to the standard output, but you can redirect the output to the file like this:</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./as.sh -b -f /var/tmp/test.as <span class="m">56328</span> &gt; test.out
 </pre></div>
 </div>
 </div>
 <div class="section" id="step-3-check-the-outputs">
-<span id="step-3-check-the-outputs"></span><h3>Step-3: Check the outputs<a class="headerlink" href="#step-3-check-the-outputs" title="Permalink to this headline">¶</a></h3>
+<span id="step-3-check-the-outputs"></span><h3>Step 3: Check the outputs<a class="headerlink" href="#step-3-check-the-outputs" title="Permalink to this headline">¶</a></h3>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>cat test.out
 </pre></div>
 </div>

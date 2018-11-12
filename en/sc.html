@@ -99,11 +99,8 @@
 <li class="toctree-l2"><a class="reference internal" href="sysprop.html">sysprop</a></li>
 <li class="toctree-l2"><a class="reference internal" href="getstatic.html">getstatic</a></li>
 <li class="toctree-l2 current"><a class="current reference internal" href="#">sc</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#options">Options</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="#specification">Specification</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#usage">Usage</a></li>
-</ul>
-</li>
+<li class="toctree-l3"><a class="reference internal" href="#supported-options">Supported Options</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#usage">Usage</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="sm.html">sm</a></li>
@@ -117,14 +114,14 @@
 <li class="toctree-l2"><a class="reference internal" href="stack.html">stack</a></li>
 <li class="toctree-l2"><a class="reference internal" href="tt.html">tt</a></li>
 <li class="toctree-l2"><a class="reference internal" href="options.html">options</a></li>
-<li class="toctree-l2"><a class="reference internal" href="commands.html#basic-commands">Basic Commands</a></li>
+<li class="toctree-l2"><a class="reference internal" href="commands.html#basic-arthas-commands">Basic Arthas Commands</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas/issues?q=label%3Auser-case">User cases</a></li>
-<li class="toctree-l1"><a class="reference internal" href="release-notes.html">Release Notes</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas/issues?q=label%3Aquestion-answered">Questions and answers</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas">Fork me at GitHub</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas/blob/master/CONTRIBUTING.md">CONTRIBUTING</a></li>
+<li class="toctree-l1"><a class="reference internal" href="release-notes.html">Release Notes</a></li>
 </ul>
 
             
@@ -195,12 +192,11 @@
             
   <div class="section" id="sc">
 <span id="sc"></span><h1>sc<a class="headerlink" href="#sc" title="Permalink to this headline">¶</a></h1>
-<p>Check the profiles of the loaded classes.</p>
-<p>Abbreviated from <em>Search-Class</em>; with the help of this command, you can search out all the loaded classes in JVM. Supported options are: <code class="docutils literal notranslate"><span class="pre">[d]</span></code>、<code class="docutils literal notranslate"><span class="pre">[E]</span></code>、<code class="docutils literal notranslate"><span class="pre">[f]</span></code> and <code class="docutils literal notranslate"><span class="pre">[x:]</span></code>.</p>
-<div class="section" id="options">
-<span id="options"></span><h2>Options<a class="headerlink" href="#options" title="Permalink to this headline">¶</a></h2>
-<div class="section" id="specification">
-<span id="specification"></span><h3>Specification<a class="headerlink" href="#specification" title="Permalink to this headline">¶</a></h3>
+<blockquote>
+<div>Search classes loaded by JVM.</div></blockquote>
+<p><code class="docutils literal notranslate"><span class="pre">sc</span></code> stands for search class. This command can search all possible classes loaded by JVM and show their information. The supported options are: <code class="docutils literal notranslate"><span class="pre">[d]</span></code>、<code class="docutils literal notranslate"><span class="pre">[E]</span></code>、<code class="docutils literal notranslate"><span class="pre">[f]</span></code> and <code class="docutils literal notranslate"><span class="pre">[x:]</span></code>.</p>
+<div class="section" id="supported-options">
+<span id="supported-options"></span><h2>Supported Options<a class="headerlink" href="#supported-options" title="Permalink to this headline">¶</a></h2>
 <table border="1" class="docutils">
 <thead>
 <tr>
@@ -218,31 +214,29 @@
 <td align="left">pattern for the method name</td>
 </tr>
 <tr>
-<td align="right">[d]</td>
-<td align="left">print the details of the current class including the source file, class declaration, the class loaders and the like.<br/>F.Y.I if a class is loaded by several class loaders, then the class will be printed several times</td>
+<td align="right"><code>[d]</code></td>
+<td align="left">print the details of the current class, including its code source, class specification, its class loader and so on.<br/>If a class is loaded by more than one class loader, then the class details will be printed several times</td>
 </tr>
 <tr>
-<td align="right">[E]</td>
-<td align="left">turn on regx matching while the default is wildcards matching</td>
+<td align="right"><code>[E]</code></td>
+<td align="left">turn on regex match, the default behavior is wildcards match</td>
 </tr>
 <tr>
-<td align="right">[f]</td>
-<td align="left">print the fields info of the current class, which <strong><em>must</em></strong> be used with <code>-d</code></td>
+<td align="right"><code>[f]</code></td>
+<td align="left">print the fields info of the current class, MUST be used with <code>-d</code> together</td>
 </tr>
 <tr>
-<td align="right">[x:]</td>
-<td align="left">the depth to print the static fields, whose default is <code>0</code> - directly invoke the <code>toString()</code></td>
+<td align="right"><code>[x:]</code></td>
+<td align="left">specify the depth of recursive traverse the static fields, the default value is '0' - equivalent to use <code>toString</code> to output</td>
 </tr>
 </tbody>
-</table><p>Tip:</p>
-<ol class="simple">
-<li><em>class-patten</em> supports full qualified class name (e.g. com.taobao.test.AAA and com/taobao/test/AAA)</li>
-<li><code class="docutils literal notranslate"><span class="pre">sc</span></code> turned on the <code class="docutils literal notranslate"><span class="pre">sub-class</span></code> matching in default mode; if you do want to hide <code class="docutils literal notranslate"><span class="pre">sub-class</span></code>, you can just turn it off with <a class="reference internal" href="options.html"><span class="doc">options</span></a> as <code class="docutils literal notranslate"><span class="pre">options</span> <span class="pre">disable-sub-class</span> <span class="pre">true</span></code>.</li>
-</ol>
+</table><blockquote>
+<div><em>class-patten</em> supports full qualified class name, e.g. com.taobao.test.AAA and com/taobao/test/AAA. It also supports the format of ‘com/taobao/test/AAA’, so that it is convenient to directly copy class name from the exception stack trace without replacing ‘/’ to ‘.’. <br/><br/>
+<code class="docutils literal notranslate"><span class="pre">sc</span></code> turns on matching sub-class match by default, that is, <code class="docutils literal notranslate"><span class="pre">sc</span></code> will also search the sub classes of the target class too. If exact-match is desired, pls. use <code class="docutils literal notranslate"><span class="pre">options</span> <span class="pre">disable-sub-class</span> <span class="pre">true</span></code>.</div></blockquote>
 </div>
 <div class="section" id="usage">
-<span id="usage"></span><h3>Usage<a class="headerlink" href="#usage" title="Permalink to this headline">¶</a></h3>
-<p>Check the static fields of a class using <code class="docutils literal notranslate"><span class="pre">sc</span> <span class="pre">-df</span> <span class="pre">class-name</span></code></p>
+<span id="usage"></span><h2>Usage<a class="headerlink" href="#usage" title="Permalink to this headline">¶</a></h2>
+<p>For example, use <code class="docutils literal notranslate"><span class="pre">sc</span> <span class="pre">-df</span> <span class="pre">class-name</span></code> to view class’s static fields:</p>
 <div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>$ sc -df org.apache.commons.lang.StringUtils
 
  class-info        org.apache.commons.lang.StringUtils
@@ -281,7 +275,6 @@
                     name      PAD_LIMIT
                     value     <span class="m">8192</span>
 </pre></div>
-</div>
 </div>
 </div>
 </div>

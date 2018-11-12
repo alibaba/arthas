@@ -97,11 +97,11 @@
 <li class="toctree-l2 current"><a class="current reference internal" href="#">thread</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#parameters">Parameters</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#usage">Usage</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="#list-the-top-n-busiest-with-detailed-stack-trace">List the top n busiest with detailed stack trace</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#list-all-info-when-no-options-provided">List all info when no options provided</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#thread-thread-id-present-the-specified-thread-profile">thread &lt;thread_id&gt; present the specified thread profile</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#thread-b-locate-the-blocking-threads">thread -b locate the blocking threads</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#thread-i-specify-the-collecting-interval">thread -i specify the collecting interval</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#list-the-top-n-busiest-threads-with-detailed-stack-trace">List the top n busiest threads with detailed stack trace</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#list-all-threads-info-when-no-options-provided">List all threads’ info when no options provided</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#thread-id-show-the-running-stack-for-the-target-thread">thread id, show the running stack for the target thread</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#thread-b-locate-the-thread-bocking-the-others">thread -b, locate the thread bocking the others</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#thread-i-specify-the-sampling-interval">thread -i, specify the sampling interval</a></li>
 </ul>
 </li>
 </ul>
@@ -121,14 +121,14 @@
 <li class="toctree-l2"><a class="reference internal" href="stack.html">stack</a></li>
 <li class="toctree-l2"><a class="reference internal" href="tt.html">tt</a></li>
 <li class="toctree-l2"><a class="reference internal" href="options.html">options</a></li>
-<li class="toctree-l2"><a class="reference internal" href="commands.html#basic-commands">Basic Commands</a></li>
+<li class="toctree-l2"><a class="reference internal" href="commands.html#basic-arthas-commands">Basic Arthas Commands</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas/issues?q=label%3Auser-case">User cases</a></li>
-<li class="toctree-l1"><a class="reference internal" href="release-notes.html">Release Notes</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas/issues?q=label%3Aquestion-answered">Questions and answers</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas">Fork me at GitHub</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas/blob/master/CONTRIBUTING.md">CONTRIBUTING</a></li>
+<li class="toctree-l1"><a class="reference internal" href="release-notes.html">Release Notes</a></li>
 </ul>
 
             
@@ -199,7 +199,8 @@
             
   <div class="section" id="thread">
 <span id="thread"></span><h1>thread<a class="headerlink" href="#thread" title="Permalink to this headline">¶</a></h1>
-<p>Check the basic profile and stack trace of the threads.</p>
+<blockquote>
+<div>Check the basic info and stack trace of the target thread.</div></blockquote>
 <div class="section" id="parameters">
 <span id="parameters"></span><h2>Parameters<a class="headerlink" href="#parameters" title="Permalink to this headline">¶</a></h2>
 <table border="1" class="docutils">
@@ -215,31 +216,28 @@
 <td align="left">thread id in JVM</td>
 </tr>
 <tr>
-<td align="right">[n:]</td>
-<td align="left">the top n busiest with stack traces</td>
+<td align="right"><code>[n:]</code></td>
+<td align="left">the top n busiest threads with stack traces printed</td>
 </tr>
 <tr>
-<td align="right">[b]</td>
-<td align="left">locate the threads blocking others</td>
+<td align="right"><code>[b]</code></td>
+<td align="left">locate the thread blocking the others</td>
 </tr>
 <tr>
 <td align="right">[i <code>&lt;value&gt;</code>]</td>
 <td align="left">specify the interval to collect data to compute CPU ratios (ms)</td>
 </tr>
 </tbody>
-</table><p>How to get the CPU ratios?</p>
-<blockquote>
-<div>Within an <em>specified</em> interval, the time cost by the thread compared to the total CPU time.
-Take a sample (using <code class="docutils literal notranslate"><span class="pre">java.lang.management.ThreadMXBean#getThreadCpuTime</span></code>) to get the CPU time cost for all the threads and after a <em>specified</em> interval (default <em>100 ms</em>, which can be specified by <code class="docutils literal notranslate"><span class="pre">-i</span></code>), take another sample and we have the CPU time cost and the ratios naturally.</div></blockquote>
-<blockquote>
-<div>Attention: this kind of operation will take time, to decrease the extra cost, you’d better expand the interval to like <code class="docutils literal notranslate"><span class="pre">5000</span> <span class="pre">ms</span></code> for less performance overhead.</div></blockquote>
-<p>F.Y.I</p>
-<p>If you’d like to check the CPU ratios from the very start of the Java process, <a class="reference external" href="https://github.com/oldratlee/useful-scripts/blob/master/docs/java.md#-show-busy-java-threads">show-busy-java-threads</a> can be a help.</p>
+</table><blockquote>
+<div>How the CPU ratios are calculated? <br/><br/>
+CPU ratio for a given thread is the CPU time it takes divided by the total CPU time within a specified interval period. It is calculated in the following way: sample CPU times for all the thread by calling <code class="docutils literal notranslate"><span class="pre">java.lang.management.ThreadMXBean#getThreadCpuTime</span></code> first, then sleep for a period (the default value is 100ms, which can be specified by <code class="docutils literal notranslate"><span class="pre">-i</span></code>), then sample CPU times again. By this, we can get the time cost for this period for each thread, then come up with the ratio. <br/><br/>
+Note: this operation consumes CPU time too (<code class="docutils literal notranslate"><span class="pre">getThreadCpuTime</span></code> is time-consuming), therefore it is possible to observe Arthas’s thread appears in the list. To avoid this, try to increase sample interval, for example: 5000 ms.<br/><br/>
+If you’d like to check the CPU ratios from the very beginning of the Java process, <a class="reference external" href="https://github.com/oldratlee/useful-scripts/blob/master/docs/java.md#-show-busy-java-threads">show-busy-java-threads</a> can come to help.</div></blockquote>
 </div>
 <div class="section" id="usage">
 <span id="usage"></span><h2>Usage<a class="headerlink" href="#usage" title="Permalink to this headline">¶</a></h2>
-<div class="section" id="list-the-top-n-busiest-with-detailed-stack-trace">
-<span id="list-the-top-n-busiest-with-detailed-stack-trace"></span><h3>List the top n busiest with detailed stack trace<a class="headerlink" href="#list-the-top-n-busiest-with-detailed-stack-trace" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="list-the-top-n-busiest-threads-with-detailed-stack-trace">
+<span id="list-the-top-n-busiest-threads-with-detailed-stack-trace"></span><h3>List the top n busiest threads with detailed stack trace<a class="headerlink" href="#list-the-top-n-busiest-threads-with-detailed-stack-trace" title="Permalink to this headline">¶</a></h3>
 <div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>$ thread -n <span class="m">3</span>
 <span class="s2">&quot;as-command-execute-daemon&quot;</span> <span class="nv">Id</span><span class="o">=</span><span class="m">29</span> <span class="nv">cpuUsage</span><span class="o">=</span><span class="m">75</span>% RUNNABLE
     at sun.management.ThreadImpl.dumpThreads0<span class="o">(</span>Native Method<span class="o">)</span>
@@ -267,8 +265,8 @@ Take a sample (using <code class="docutils literal notranslate"><span class="pre
 </pre></div>
 </div>
 </div>
-<div class="section" id="list-all-info-when-no-options-provided">
-<span id="list-all-info-when-no-options-provided"></span><h3>List all info when no options provided<a class="headerlink" href="#list-all-info-when-no-options-provided" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="list-all-threads-info-when-no-options-provided">
+<span id="list-all-threads-info-when-no-options-provided"></span><h3>List all threads’ info when no options provided<a class="headerlink" href="#list-all-threads-info-when-no-options-provided" title="Permalink to this headline">¶</a></h3>
 <div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>$ thread
 Threads Total: <span class="m">16</span>, NEW: <span class="m">0</span>, RUNNABLE: <span class="m">7</span>, BLOCKED: <span class="m">0</span>, WAITING: <span class="m">5</span>, TIMED_WAITING: <span class="m">4</span>, TERMINATED: <span class="m">0</span>
 ID         NAME                             GROUP                 PRIORITY   STATE      %CPU       TIME       INTERRUPTE DAEMON
@@ -291,8 +289,8 @@ ID         NAME                             GROUP                 PRIORITY   STA
 </pre></div>
 </div>
 </div>
-<div class="section" id="thread-thread-id-present-the-specified-thread-profile">
-<span id="thread-thread-id-present-the-specified-thread-profile"></span><h3>thread &lt;thread_id&gt; present the specified thread profile<a class="headerlink" href="#thread-thread-id-present-the-specified-thread-profile" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="thread-id-show-the-running-stack-for-the-target-thread">
+<span id="thread-id-show-the-running-stack-for-the-target-thread"></span><h3>thread id, show the running stack for the target thread<a class="headerlink" href="#thread-id-show-the-running-stack-for-the-target-thread" title="Permalink to this headline">¶</a></h3>
 <div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>$ thread <span class="m">1</span>
 <span class="s2">&quot;main&quot;</span> <span class="nv">Id</span><span class="o">=</span><span class="m">1</span> WAITING on java.util.concurrent.CountDownLatch<span class="nv">$Sync</span>@29fafb28
     at sun.misc.Unsafe.park<span class="o">(</span>Native Method<span class="o">)</span>
@@ -305,9 +303,9 @@ ID         NAME                             GROUP                 PRIORITY   STA
 </pre></div>
 </div>
 </div>
-<div class="section" id="thread-b-locate-the-blocking-threads">
-<span id="thread-b-locate-the-blocking-threads"></span><h3>thread -b locate the blocking threads<a class="headerlink" href="#thread-b-locate-the-blocking-threads" title="Permalink to this headline">¶</a></h3>
-<p>Using <code class="docutils literal notranslate"><span class="pre">-b</span></code>, we can effectively locate the threads holding locks blocking other threads resulting in a frozen system.</p>
+<div class="section" id="thread-b-locate-the-thread-bocking-the-others">
+<span id="thread-b-locate-the-thread-bocking-the-others"></span><h3>thread -b, locate the thread bocking the others<a class="headerlink" href="#thread-b-locate-the-thread-bocking-the-others" title="Permalink to this headline">¶</a></h3>
+<p>In some occasions, we experience the whole application is stuck because there’s one particular thread hold one lock that other threads are relying on. To diagnose such an issue, Arthas provides <code class="docutils literal notranslate"><span class="pre">thread</span> <span class="pre">-b</span></code> to find the problematic thread in one single command.</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$ thread -b
 <span class="s2">&quot;http-bio-8080-exec-4&quot;</span> <span class="nv">Id</span><span class="o">=</span><span class="m">27</span> TIMED_WAITING
     at java.lang.Thread.sleep<span class="o">(</span>Native Method<span class="o">)</span>
@@ -346,10 +344,11 @@ ID         NAME                             GROUP                 PRIORITY   STA
     - java.util.concurrent.ThreadPoolExecutor<span class="nv">$Worker</span>@31a6493e
 </pre></div>
 </div>
-<p>Attention: only <code class="docutils literal notranslate"><span class="pre">synchronized</span></code> blocked threads can be located for now, while <code class="docutils literal notranslate"><span class="pre">java.util.concurrent.Lock</span></code> not supported yet.</p>
+<blockquote>
+<div>Note: By now Arthas only supports to locate the thread blocked by <code class="docutils literal notranslate"><span class="pre">synchronzied</span></code>, while <code class="docutils literal notranslate"><span class="pre">java.util.concurrent.Lock</span></code> is not supported yet.</div></blockquote>
 </div>
-<div class="section" id="thread-i-specify-the-collecting-interval">
-<span id="thread-i-specify-the-collecting-interval"></span><h3>thread -i specify the collecting interval<a class="headerlink" href="#thread-i-specify-the-collecting-interval" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="thread-i-specify-the-sampling-interval">
+<span id="thread-i-specify-the-sampling-interval"></span><h3>thread -i, specify the sampling interval<a class="headerlink" href="#thread-i-specify-the-sampling-interval" title="Permalink to this headline">¶</a></h3>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$ thread -n <span class="m">3</span> -i <span class="m">1000</span>
 <span class="s2">&quot;as-command-execute-daemon&quot;</span> <span class="nv">Id</span><span class="o">=</span><span class="m">4759</span> <span class="nv">cpuUsage</span><span class="o">=</span><span class="m">23</span>% RUNNABLE
     at sun.management.ThreadImpl.dumpThreads0<span class="o">(</span>Native Method<span class="o">)</span>

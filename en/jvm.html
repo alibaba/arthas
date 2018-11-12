@@ -97,8 +97,8 @@
 <li class="toctree-l2"><a class="reference internal" href="thread.html">thread</a></li>
 <li class="toctree-l2 current"><a class="current reference internal" href="#">jvm</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#usage">Usage</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#thread-related">thread-related</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#filedescriptor-related">fileDescriptor-related</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#thread-related">Thread related</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#file-descriptor-related">File descriptor related</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="sysprop.html">sysprop</a></li>
@@ -115,14 +115,14 @@
 <li class="toctree-l2"><a class="reference internal" href="stack.html">stack</a></li>
 <li class="toctree-l2"><a class="reference internal" href="tt.html">tt</a></li>
 <li class="toctree-l2"><a class="reference internal" href="options.html">options</a></li>
-<li class="toctree-l2"><a class="reference internal" href="commands.html#basic-commands">Basic Commands</a></li>
+<li class="toctree-l2"><a class="reference internal" href="commands.html#basic-arthas-commands">Basic Arthas Commands</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas/issues?q=label%3Auser-case">User cases</a></li>
-<li class="toctree-l1"><a class="reference internal" href="release-notes.html">Release Notes</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas/issues?q=label%3Aquestion-answered">Questions and answers</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas">Fork me at GitHub</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas/blob/master/CONTRIBUTING.md">CONTRIBUTING</a></li>
+<li class="toctree-l1"><a class="reference internal" href="release-notes.html">Release Notes</a></li>
 </ul>
 
             
@@ -193,7 +193,8 @@
             
   <div class="section" id="jvm">
 <span id="jvm"></span><h1>jvm<a class="headerlink" href="#jvm" title="Permalink to this headline">¶</a></h1>
-<p>Check the JVM profile</p>
+<blockquote>
+<div>Check the current JVM’s info</div></blockquote>
 <div class="section" id="usage">
 <span id="usage"></span><h2>Usage<a class="headerlink" href="#usage" title="Permalink to this headline">¶</a></h2>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ jvm
@@ -286,17 +287,17 @@ Affect cost in 2 ms.
 </div>
 </div>
 <div class="section" id="thread-related">
-<span id="thread-related"></span><h2>thread-related<a class="headerlink" href="#thread-related" title="Permalink to this headline">¶</a></h2>
+<span id="thread-related"></span><h2>Thread related<a class="headerlink" href="#thread-related" title="Permalink to this headline">¶</a></h2>
 <ul class="simple">
 <li>COUNT: the count of active threads</li>
 <li>DAEMON-COUNT: the count of active daemon threads</li>
 <li>PEAK-COUNT: the maximum count of the live threads since JVM starts</li>
 <li>STARTED-COUNT: the total count of the created threads since JVM starts</li>
-<li>DEADLOCK-COUNT: the count of deadlock threads</li>
+<li>DEADLOCK-COUNT: the count of deadlocked threads</li>
 </ul>
 </div>
-<div class="section" id="filedescriptor-related">
-<span id="filedescriptor-related"></span><h2>fileDescriptor-related<a class="headerlink" href="#filedescriptor-related" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="file-descriptor-related">
+<span id="file-descriptor-related"></span><h2>File descriptor related<a class="headerlink" href="#file-descriptor-related" title="Permalink to this headline">¶</a></h2>
 <ul class="simple">
 <li>MAX-FILE-DESCRIPTOR-COUNT：the count of max file descriptor JVM process can open</li>
 <li>OPEN-FILE-DESCRIPTOR-COUNT：the current count of file descriptor JVM process open</li>

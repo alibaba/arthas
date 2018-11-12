@@ -1,0 +1,433 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>groovy &mdash; Arthas 3.0.5-SNAPSHOT documentation</title>
+  
+
+  
+  
+    <link rel="shortcut icon" href="_static/favicon.ico"/>
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="_static/overrides.css" type="text/css" />
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+<script src="_static/center_page.js"></script>
+ 
+
+
+  
+  <script src="_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="index.html" class="icon icon-home"> Arthas
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                3.0.5-SNAPSHOT
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="install-detail.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="quick-start.html">Quick start</a></li>
+<li class="toctree-l1"><a class="reference internal" href="advanced-use.html">Advanced usage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="commands.html">Commands</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas/issues?q=label%3Auser-case">User cases</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas/issues?q=label%3Aquestion-answered">Questions and answers</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas">Fork me at GitHub</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas/blob/master/CONTRIBUTING.md">CONTRIBUTING</a></li>
+<li class="toctree-l1"><a class="reference internal" href="release-notes.html">Release Notes</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">Arthas</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+      <li>groovy</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            
+              <a href="https://github.com/alibaba/arthas/blob/master/site/src/site/sphinx/en/groovy.md" class="fa fa-github"> Edit on GitHub</a>
+            
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="groovy">
+<span id="groovy"></span><h1>groovy<a class="headerlink" href="#groovy" title="Permalink to this headline">¶</a></h1>
+<blockquote>
+<div>Arthas support groovy scripting to allow user to use script like BTrace. It is possible to use if/for/switch/while in groovy scripting, but has more limitations compared to BTrace.</div></blockquote>
+<div class="section" id="limitations">
+<span id="limitations"></span><h2>Limitations<a class="headerlink" href="#limitations" title="Permalink to this headline">¶</a></h2>
+<ol class="simple">
+<li>Prohibit from alternating the original logic. Like <code class="docutils literal notranslate"><span class="pre">watch</span></code> command, The major purpose of scripting is monitoring and observing.</li>
+<li>Only allow to monitor at the stages of before/success/exception/finish on one method.</li>
+</ol>
+</div>
+<div class="section" id="parameters">
+<span id="parameters"></span><h2>Parameters<a class="headerlink" href="#parameters" title="Permalink to this headline">¶</a></h2>
+<table border="1" class="docutils">
+<thead>
+<tr>
+<th align="right">Parameter</th>
+<th align="left">Explanation</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="right"><em>class-pattern</em></td>
+<td align="left">class name pattern</td>
+</tr>
+<tr>
+<td align="right"><em>method-pattern</em></td>
+<td align="left">method name pattern</td>
+</tr>
+<tr>
+<td align="right"><em>script-filepath</em></td>
+<td align="left">the absolute path of the groovy script</td>
+</tr>
+<tr>
+<td align="right">[S]</td>
+<td align="left">match all sub classes</td>
+</tr>
+<tr>
+<td align="right">[E]</td>
+<td align="left">enable regex match, the default is wildcard match</td>
+</tr>
+</tbody>
+</table><p>Note: the third parameter <code class="docutils literal notranslate"><span class="pre">script-filepath</span></code> must be the absolute path of the groovy script, for example <code class="docutils literal notranslate"><span class="pre">/tmp/test.groovy</span></code>. It is not recommended to use relative path, e.g. <code class="docutils literal notranslate"><span class="pre">./test.groovy</span></code>.</p>
+</div>
+<div class="section" id="explanation-on-the-important-callbacks">
+<span id="explanation-on-the-important-callbacks"></span><h2>Explanation on the important callbacks<a class="headerlink" href="#explanation-on-the-important-callbacks" title="Permalink to this headline">¶</a></h2>
+<div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="cm">/**</span>
+<span class="cm"> * Listeners for script to enhance the class</span>
+<span class="cm"> */</span>
+<span class="kd">interface</span> <span class="nc">ScriptListener</span> <span class="o">{</span>
+
+    <span class="cm">/**</span>
+<span class="cm">     * When the script is created</span>
+<span class="cm">     *</span>
+<span class="cm">     * @param output Output</span>
+<span class="cm">     */</span>
+    <span class="kt">void</span> <span class="nf">create</span><span class="o">(</span><span class="n">Output</span> <span class="n">output</span><span class="o">);</span>
+
+    <span class="cm">/**</span>
+<span class="cm">     * When the script is destroyed</span>
+<span class="cm">     *</span>
+<span class="cm">     * @param output Output</span>
+<span class="cm">     */</span>
+    <span class="kt">void</span> <span class="nf">destroy</span><span class="o">(</span><span class="n">Output</span> <span class="n">output</span><span class="o">);</span>
+
+    <span class="cm">/**</span>
+<span class="cm">     * Before the method executes</span>
+<span class="cm">     *</span>
+<span class="cm">     * @param output Output</span>
+<span class="cm">     * @param advice Advice</span>
+<span class="cm">     */</span>
+    <span class="kt">void</span> <span class="nf">before</span><span class="o">(</span><span class="n">Output</span> <span class="n">output</span><span class="o">,</span> <span class="n">Advice</span> <span class="n">advice</span><span class="o">);</span>
+
+    <span class="cm">/**</span>
+<span class="cm">     * After the method returns</span>
+<span class="cm">     *</span>
+<span class="cm">     * @param output Output</span>
+<span class="cm">     * @param advice Advice</span>
+<span class="cm">     */</span>
+    <span class="kt">void</span> <span class="nf">afterReturning</span><span class="o">(</span><span class="n">Output</span> <span class="n">output</span><span class="o">,</span> <span class="n">Advice</span> <span class="n">advice</span><span class="o">);</span>
+
+    <span class="cm">/**</span>
+<span class="cm">     * After the method throws exceptions</span>
+<span class="cm">     *</span>
+<span class="cm">     * @param output Output</span>
+<span class="cm">     * @param advice Advice</span>
+<span class="cm">     */</span>
+    <span class="kt">void</span> <span class="nf">afterThrowing</span><span class="o">(</span><span class="n">Output</span> <span class="n">output</span><span class="o">,</span> <span class="n">Advice</span> <span class="n">advice</span><span class="o">);</span>
+
+<span class="o">}</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="advice-parameter">
+<span id="advice-parameter"></span><h2><code class="docutils literal notranslate"><span class="pre">Advice</span></code> parameter<a class="headerlink" href="#advice-parameter" title="Permalink to this headline">¶</a></h2>
+<p><code class="docutils literal notranslate"><span class="pre">Advice</span></code> contains all information necessary for notification. Refer to <a class="reference internal" href="advice-class.html"><span class="doc">expression core parameters</span></a> for more details.</p>
+</div>
+<div class="section" id="output-parameter">
+<span id="output-parameter"></span><h2><code class="docutils literal notranslate"><span class="pre">Output</span></code> parameter<a class="headerlink" href="#output-parameter" title="Permalink to this headline">¶</a></h2>
+<p>There are three methods in <code class="docutils literal notranslate"><span class="pre">Output</span></code>, used for outputting the corresponding text.</p>
+<div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="cm">/**</span>
+<span class="cm"> * Output</span>
+<span class="cm"> */</span>
+<span class="kd">interface</span> <span class="nc">Output</span> <span class="o">{</span>
+
+    <span class="cm">/**</span>
+<span class="cm">     * Output text without line break</span>
+<span class="cm">     *</span>
+<span class="cm">     * @param string Text to output</span>
+<span class="cm">     * @return this</span>
+<span class="cm">     */</span>
+    <span class="n">Output</span> <span class="nf">print</span><span class="o">(</span><span class="n">String</span> <span class="n">string</span><span class="o">);</span>
+
+    <span class="cm">/**</span>
+<span class="cm">     * Output text with line break</span>
+<span class="cm">     *</span>
+<span class="cm">     * @param string Text to output</span>
+<span class="cm">     * @return this</span>
+<span class="cm">     */</span>
+    <span class="n">Output</span> <span class="nf">println</span><span class="o">(</span><span class="n">String</span> <span class="n">string</span><span class="o">);</span>
+
+    <span class="cm">/**</span>
+<span class="cm">     * Finish outputting from the script</span>
+<span class="cm">     *</span>
+<span class="cm">     * @return this</span>
+<span class="cm">     */</span>
+    <span class="n">Output</span> <span class="nf">finish</span><span class="o">();</span>
+
+<span class="o">}</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="a-groovy-sample-script-to-output-logs">
+<span id="a-groovy-sample-script-to-output-logs"></span><h2>A groovy sample script to output logs<a class="headerlink" href="#a-groovy-sample-script-to-output-logs" title="Permalink to this headline">¶</a></h2>
+<div class="highlight-groovy notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">com.taobao.arthas.core.command.ScriptSupportCommand</span>
+<span class="kn">import</span> <span class="nn">com.taobao.arthas.core.util.Advice</span>
+
+<span class="kn">import</span> <span class="nn">static</span> <span class="n">java</span><span class="o">.</span><span class="na">lang</span><span class="o">.</span><span class="na">String</span><span class="o">.</span><span class="na">format</span>
+
+<span class="cm">/**</span>
+<span class="cm"> * Output method logs</span>
+<span class="cm"> */</span>
+<span class="kd">public</span> <span class="kd">class</span> <span class="nc">Logger</span> <span class="kd">implements</span> <span class="n">ScriptSupportCommand</span><span class="o">.</span><span class="na">ScriptListener</span> <span class="o">{</span>
+
+    <span class="nd">@Override</span>
+    <span class="kt">void</span> <span class="nf">create</span><span class="o">(</span><span class="n">ScriptSupportCommand</span><span class="o">.</span><span class="na">Output</span> <span class="n">output</span><span class="o">)</span> <span class="o">{</span>
+        <span class="n">output</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="s2">&quot;script create.&quot;</span><span class="o">);</span>
+    <span class="o">}</span>
+
+    <span class="nd">@Override</span>
+    <span class="kt">void</span> <span class="nf">destroy</span><span class="o">(</span><span class="n">ScriptSupportCommand</span><span class="o">.</span><span class="na">Output</span> <span class="n">output</span><span class="o">)</span> <span class="o">{</span>
+        <span class="n">output</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="s2">&quot;script destroy.&quot;</span><span class="o">);</span>
+    <span class="o">}</span>
+
+    <span class="nd">@Override</span>
+    <span class="kt">void</span> <span class="nf">before</span><span class="o">(</span><span class="n">ScriptSupportCommand</span><span class="o">.</span><span class="na">Output</span> <span class="n">output</span><span class="o">,</span> <span class="n">Advice</span> <span class="n">advice</span><span class="o">)</span> <span class="o">{</span>
+        <span class="n">output</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="n">format</span><span class="o">(</span><span class="s2">&quot;before:class=%s;method=%s;paramslen=%d;%s;&quot;</span><span class="o">,</span>
+                <span class="n">advice</span><span class="o">.</span><span class="na">getClazz</span><span class="o">().</span><span class="na">getSimpleName</span><span class="o">(),</span>
+                <span class="n">advice</span><span class="o">.</span><span class="na">getMethod</span><span class="o">().</span><span class="na">getName</span><span class="o">(),</span>
+                <span class="n">advice</span><span class="o">.</span><span class="na">getParams</span><span class="o">().</span><span class="na">length</span><span class="o">,</span> <span class="n">advice</span><span class="o">.</span><span class="na">getParams</span><span class="o">()))</span>
+    <span class="o">}</span>
+
+    <span class="nd">@Override</span>
+    <span class="kt">void</span> <span class="nf">afterReturning</span><span class="o">(</span><span class="n">ScriptSupportCommand</span><span class="o">.</span><span class="na">Output</span> <span class="n">output</span><span class="o">,</span> <span class="n">Advice</span> <span class="n">advice</span><span class="o">)</span> <span class="o">{</span>
+        <span class="n">output</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="n">format</span><span class="o">(</span><span class="s2">&quot;returning:class=%s;method=%s;&quot;</span><span class="o">,</span>
+                <span class="n">advice</span><span class="o">.</span><span class="na">getClazz</span><span class="o">().</span><span class="na">getSimpleName</span><span class="o">(),</span>
+                <span class="n">advice</span><span class="o">.</span><span class="na">getMethod</span><span class="o">().</span><span class="na">getName</span><span class="o">()))</span>
+    <span class="o">}</span>
+
+    <span class="nd">@Override</span>
+    <span class="kt">void</span> <span class="nf">afterThrowing</span><span class="o">(</span><span class="n">ScriptSupportCommand</span><span class="o">.</span><span class="na">Output</span> <span class="n">output</span><span class="o">,</span> <span class="n">Advice</span> <span class="n">advice</span><span class="o">)</span> <span class="o">{</span>
+        <span class="n">output</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="n">format</span><span class="o">(</span><span class="s2">&quot;throwing:class=%s;method=%s;&quot;</span><span class="o">,</span>
+                <span class="n">advice</span><span class="o">.</span><span class="na">getClazz</span><span class="o">().</span><span class="na">getSimpleName</span><span class="o">(),</span>
+                <span class="n">advice</span><span class="o">.</span><span class="na">getMethod</span><span class="o">().</span><span class="na">getName</span><span class="o">()))</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+</pre></div>
+</div>
+<p>Run the script like this:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$ groovy com.alibaba.sample.petstore.dal.dao.ProductDao getProductById /Users/zhuyong/middleware/arthas/scripts/Logger.groovy -S
+script create.
+Press Ctrl+C to abort.
+Affect<span class="o">(</span>class-cnt:1 , method-cnt:1<span class="o">)</span> cost in <span class="m">102</span> ms.
+before:class<span class="o">=</span>IbatisProductDao<span class="p">;</span><span class="nv">method</span><span class="o">=</span>getProductById<span class="p">;</span><span class="nv">paramslen</span><span class="o">=</span><span class="m">1</span><span class="p">;</span><span class="o">[</span>Ljava.lang.Object<span class="p">;</span>@45df64fc<span class="p">;</span>
+returning:class<span class="o">=</span>IbatisProductDao<span class="p">;</span><span class="nv">method</span><span class="o">=</span>getProductById<span class="p">;</span>
+before:class<span class="o">=</span>IbatisProductDao<span class="p">;</span><span class="nv">method</span><span class="o">=</span>getProductById<span class="p">;</span><span class="nv">paramslen</span><span class="o">=</span><span class="m">1</span><span class="p">;</span><span class="o">[</span>Ljava.lang.Object<span class="p">;</span>@5b0e2d00<span class="p">;</span>
+returning:class<span class="o">=</span>IbatisProductDao<span class="p">;</span><span class="nv">method</span><span class="o">=</span>getProductById<span class="p">;</span>
+</pre></div>
+</div>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2018, Alibaba Middleware Group, and contributors.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'./',
+            VERSION:'3.0.5-SNAPSHOT',
+            LANGUAGE:'en',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="_static/jquery.js"></script>
+      <script type="text/javascript" src="_static/underscore.js"></script>
+      <script type="text/javascript" src="_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  <script type="text/javascript" src="_static/js/theme.js"></script>
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+<div class="github-fork-ribbon-wrapper right">
+  <div class="github-fork-ribbon">
+    <a href="https://github.com/alibaba/arthas">Fork me at GitHub</a>
+  </div>
+</div>
+
+<script type="text/javascript" src="_static/add_badges.js"></script>
+
+<script>
+  var _hmt = _hmt || [];
+  (function() {
+    var hm = document.createElement("script");
+    hm.src = "https://hm.baidu.com/hm.js?d5c5e25b100f0eb51a4c35c8a86ea9b4";
+    var s = document.getElementsByTagName("script")[0]; 
+    s.parentNode.insertBefore(hm, s);
+  })();
+</script>  
+ 
+
+
+</body>
+</html>

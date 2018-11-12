@@ -114,14 +114,14 @@
 <li class="toctree-l2"><a class="reference internal" href="stack.html">stack</a></li>
 <li class="toctree-l2"><a class="reference internal" href="tt.html">tt</a></li>
 <li class="toctree-l2"><a class="reference internal" href="options.html">options</a></li>
-<li class="toctree-l2"><a class="reference internal" href="commands.html#basic-commands">Basic Commands</a></li>
+<li class="toctree-l2"><a class="reference internal" href="commands.html#basic-arthas-commands">Basic Arthas Commands</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas/issues?q=label%3Auser-case">User cases</a></li>
-<li class="toctree-l1"><a class="reference internal" href="release-notes.html">Release Notes</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas/issues?q=label%3Aquestion-answered">Questions and answers</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas">Fork me at GitHub</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas/blob/master/CONTRIBUTING.md">CONTRIBUTING</a></li>
+<li class="toctree-l1"><a class="reference internal" href="release-notes.html">Release Notes</a></li>
 </ul>
 
             
@@ -192,12 +192,12 @@
             
   <div class="section" id="jad">
 <span id="jad"></span><h1>jad<a class="headerlink" href="#jad" title="Permalink to this headline">¶</a></h1>
-<p>De-compile specified loaded classes.</p>
-<p><code class="docutils literal notranslate"><span class="pre">jad</span></code> helps to <em>de-compile</em> the byte code in JVM to the source code to assist you to better understand the logic behind.</p>
-<p>F.Y.I</p>
+<blockquote>
+<div>De-compile the specified classes.</div></blockquote>
+<p><code class="docutils literal notranslate"><span class="pre">jad</span></code> helps to de-compile the byte code running in JVM to the source code to assist you to understand the logic behind better.</p>
 <ul class="simple">
-<li>the de-compiled code will be grammatically highlighted for readability in Arthas console;</li>
-<li>there might be some trivial grammar errors but it won’t affect the logic understanding.</li>
+<li>The de-compiled code is syntax highlighted for better readability in Arthas console.</li>
+<li>It is possible that there’s grammar error in the de-compiled code, but it should not affect your interpretation.</li>
 </ul>
 <div class="section" id="options">
 <span id="options"></span><h2>Options<a class="headerlink" href="#options" title="Permalink to this headline">¶</a></h2>
@@ -214,22 +214,19 @@
 <td align="left">pattern for the class name</td>
 </tr>
 <tr>
-<td align="right">[c:]</td>
-<td align="left">hashcode of the class loader that loaded the class</td>
+<td align="right"><code>[c:]</code></td>
+<td align="left">hashcode of the class loader that loads the class</td>
 </tr>
 <tr>
-<td align="right">[E]</td>
-<td align="left">turn on regex matching while the default is wildcard matching</td>
+<td align="right"><code>[E]</code></td>
+<td align="left">turn on regex match while the default is wildcard match</td>
 </tr>
 </tbody>
 </table></div>
 <div class="section" id="usage">
 <span id="usage"></span><h2>Usage<a class="headerlink" href="#usage" title="Permalink to this headline">¶</a></h2>
-<p>When several class loaders loaded the same class:</p>
-<ol class="simple">
-<li><code class="docutils literal notranslate"><span class="pre">jad</span></code> to get the hashcode of the class loader;</li>
-<li><code class="docutils literal notranslate"><span class="pre">jad</span> <span class="pre">-c</span> <span class="pre">&lt;hashcode&gt;</span></code> to get the de-compiled class loaded by the specified class loader.</li>
-</ol>
+<blockquote>
+<div>If the target class is loaded by multiple classloaders, <code class="docutils literal notranslate"><span class="pre">jad</span></code> outputs the <code class="docutils literal notranslate"><span class="pre">hashcode</span></code> of the corresponding classloaders, then you can re-run <code class="docutils literal notranslate"><span class="pre">jad</span></code> and specify <code class="docutils literal notranslate"><span class="pre">-c</span> <span class="pre">&lt;hashcode&gt;</span></code> to de-compile the target class from the specified classloader.</div></blockquote>
 <div class="highlight-java notranslate"><div class="highlight"><pre><span></span>$ jad org.apache.log4j.Logger
 
  Found more than one class for: org.apache.log4j.Logger, Please use jad -c hashcode org.apache.log4j.Logger
@@ -361,8 +358,6 @@ private Map&lt;String, Object&gt; directMetrics<span class="o">(</span>String ip
 Affect<span class="o">(</span>row-cnt:1<span class="o">)</span> cost in <span class="m">1508</span> ms.
 </pre></div>
 </div>
-<p>F.Y.I</p>
-<p>Inner class is not yet supported, you can just check the <em>outer</em> class to further check the inner class.</p>
 </div>
 </div>
 

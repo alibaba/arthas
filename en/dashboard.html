@@ -94,9 +94,9 @@
 <li class="toctree-l1"><a class="reference internal" href="advanced-use.html">Advanced usage</a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="commands.html">Commands</a><ul class="current">
 <li class="toctree-l2 current"><a class="current reference internal" href="#">dashboard</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#a-demo">A Demo</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#specification">Specification</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#screenshots">Screenshots</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#usage">Usage</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#notes-on-column-headers">Notes on column headers</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#screenshot">Screenshot</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="thread.html">thread</a></li>
@@ -115,14 +115,14 @@
 <li class="toctree-l2"><a class="reference internal" href="stack.html">stack</a></li>
 <li class="toctree-l2"><a class="reference internal" href="tt.html">tt</a></li>
 <li class="toctree-l2"><a class="reference internal" href="options.html">options</a></li>
-<li class="toctree-l2"><a class="reference internal" href="commands.html#basic-commands">Basic Commands</a></li>
+<li class="toctree-l2"><a class="reference internal" href="commands.html#basic-arthas-commands">Basic Arthas Commands</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas/issues?q=label%3Auser-case">User cases</a></li>
-<li class="toctree-l1"><a class="reference internal" href="release-notes.html">Release Notes</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas/issues?q=label%3Aquestion-answered">Questions and answers</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas">Fork me at GitHub</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas/blob/master/CONTRIBUTING.md">CONTRIBUTING</a></li>
+<li class="toctree-l1"><a class="reference internal" href="release-notes.html">Release Notes</a></li>
 </ul>
 
             
@@ -193,10 +193,11 @@
             
   <div class="section" id="dashboard">
 <span id="dashboard"></span><h1>dashboard<a class="headerlink" href="#dashboard" title="Permalink to this headline">¶</a></h1>
-<p>This is the realtime dashboard for the system; press <code class="docutils literal notranslate"><span class="pre">Ctrl+C</span></code> to exit.</p>
-<p>When running in <em>Ali-tomcat</em>, the dashboard will present the realtime statistics of the tomcat including <a class="reference external" href="https://en.wikipedia.org/wiki/Queries_per_second">QPS</a>, RT, error counts, thread profile and the like.</p>
-<div class="section" id="a-demo">
-<span id="a-demo"></span><h2>A Demo<a class="headerlink" href="#a-demo" title="Permalink to this headline">¶</a></h2>
+<blockquote>
+<div>This is the real time statistics dashboard for the current system, press <code class="docutils literal notranslate"><span class="pre">Ctrl+C</span></code> to exit.</div></blockquote>
+<p>When running in Apache Tomcat Alibaba edition, the dashboard will also present the real time statistics of the tomcat,  including <a class="reference external" href="https://en.wikipedia.org/wiki/Queries_per_second">QPS</a>, RT, error counts, and thread pool, etc.</p>
+<div class="section" id="usage">
+<span id="usage"></span><h2>Usage<a class="headerlink" href="#usage" title="Permalink to this headline">¶</a></h2>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ dashboard
 ID         NAME                              GROUP                  PRIORITY   STATE       %CPU       TIME       INTERRUPTED DAEMON
 889        RMI TCP Connection(15)-30.10.166. RMI Runtime            9          RUNNABLE    48         0:5        false       true
@@ -234,22 +235,22 @@ uptime                            16020s                            busy        
 </pre></div>
 </div>
 </div>
-<div class="section" id="specification">
-<span id="specification"></span><h2>Specification<a class="headerlink" href="#specification" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="notes-on-column-headers">
+<span id="notes-on-column-headers"></span><h2>Notes on column headers<a class="headerlink" href="#notes-on-column-headers" title="Permalink to this headline">¶</a></h2>
 <ul class="simple">
-<li>ID: thread ID in JVM (this is different from the nativeID in thread dump)</li>
+<li>ID: JVM thread ID, pls. note this ID is different from the nativeID in jstack</li>
 <li>NAME: thread name</li>
-<li>GROUP: group the thread is in</li>
-<li>STATE: the current state of the thread</li>
-<li>PRIORITY: within 1 ~ 10 (the higher the number, the higher the priority)</li>
-<li>CPU%: CPU usage ratio within 100ms</li>
-<li>TIME: total running time in minute:second format</li>
-<li>INTERRUPTED: the thread interrupted state</li>
-<li>DAEMON: is daemon thread or not</li>
+<li>GROUP: thread group name</li>
+<li>PRIORITY: thread priority, ranged from 1 to 10. The greater number, the higher priority</li>
+<li>STATE: thread state</li>
+<li>CPU%: the ratio of CPU usage for the thread, sampled every 100ms</li>
+<li>TIME: total running time in <code class="docutils literal notranslate"><span class="pre">minute:second</span></code> format</li>
+<li>INTERRUPTED: the thread interruption state</li>
+<li>DAEMON: daemon thread or not</li>
 </ul>
 </div>
-<div class="section" id="screenshots">
-<span id="screenshots"></span><h2>Screenshots<a class="headerlink" href="#screenshots" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="screenshot">
+<span id="screenshot"></span><h2>Screenshot<a class="headerlink" href="#screenshot" title="Permalink to this headline">¶</a></h2>
 <p><img alt="alt text" src="_images/dashboard.png" /></p>
 </div>
 </div>

@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Arthas Install &mdash; Arthas 3.0.5-SNAPSHOT documentation</title>
+  <title>Install Arthas &mdash; Arthas 3.0.5-SNAPSHOT documentation</title>
   
 
   
@@ -93,23 +93,18 @@
 <li class="toctree-l2"><a class="reference internal" href="#linux-unix-mac">Linux/Unix/Mac</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#windows">Windows</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#manual-installation">Manual Installation</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#advanced-manual-boot">Advanced Manual Boot</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#offline-help-documentation">Offline Help Documentation</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#uninstall">Uninstall</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#linux-unix-mac">Linux/Unix/Mac</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#windows">Windows</a></li>
-</ul>
-</li>
+<li class="toctree-l2"><a class="reference internal" href="#uninstall">Uninstall</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="quick-start.html">Quick start</a></li>
 <li class="toctree-l1"><a class="reference internal" href="advanced-use.html">Advanced usage</a></li>
 <li class="toctree-l1"><a class="reference internal" href="commands.html">Commands</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas/issues?q=label%3Auser-case">User cases</a></li>
-<li class="toctree-l1"><a class="reference internal" href="release-notes.html">Release Notes</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas/issues?q=label%3Aquestion-answered">Questions and answers</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas">Fork me at GitHub</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas/blob/master/CONTRIBUTING.md">CONTRIBUTING</a></li>
+<li class="toctree-l1"><a class="reference internal" href="release-notes.html">Release Notes</a></li>
 </ul>
 
             
@@ -155,7 +150,7 @@
     
       <li><a href="index.html">Docs</a> &raquo;</li>
         
-      <li>Arthas Install</li>
+      <li>Install Arthas</li>
     
     
       <li class="wy-breadcrumbs-aside">
@@ -176,44 +171,40 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
             
-  <div class="section" id="arthas-install">
-<span id="arthas-install"></span><h1>Arthas Install<a class="headerlink" href="#arthas-install" title="Permalink to this headline">¶</a></h1>
+  <div class="section" id="install-arthas">
+<span id="install-arthas"></span><h1>Install Arthas<a class="headerlink" href="#install-arthas" title="Permalink to this headline">¶</a></h1>
 <div class="section" id="linux-unix-mac">
 <span id="linux-unix-mac"></span><h2>Linux/Unix/Mac<a class="headerlink" href="#linux-unix-mac" title="Permalink to this headline">¶</a></h2>
-<p>You can install Arthas in one single line as:</p>
+<p>You can install Arthas with one single line command on Linux, Unix, and Mac. Pls. copy the following command and paste it into the command line, then press <em>Enter</em> to run:</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>curl -L https://alibaba.github.io/arthas/install.sh <span class="p">|</span> sh
 </pre></div>
 </div>
-<p>The command line above will download the booting script <code class="docutils literal notranslate"><span class="pre">as.sh</span></code> to the current directory and you can then start Arthas by <code class="docutils literal notranslate"><span class="pre">./as.sh</span></code>, for more help info you can use <code class="docutils literal notranslate"><span class="pre">./as.sh</span> <span class="pre">-h</span></code> to check the details.</p>
-<p>By the way, you can also add the absolute path of the script <code class="docutils literal notranslate"><span class="pre">as.sh</span></code> to <code class="docutils literal notranslate"><span class="pre">$PATH</span></code> to make it available globally.</p>
+<p>The command above will download the bootstrap script <code class="docutils literal notranslate"><span class="pre">as.sh</span></code> to the current directory. You can move it the any other place you want, or put its location in <code class="docutils literal notranslate"><span class="pre">$PATH</span></code>.</p>
+<p>You can enter its interactive interface by executing <code class="docutils literal notranslate"><span class="pre">as.sh</span></code>, or execute <code class="docutils literal notranslate"><span class="pre">as.sh</span> <span class="pre">-h</span></code> for more help information.</p>
 </div>
 <div class="section" id="windows">
 <span id="windows"></span><h2>Windows<a class="headerlink" href="#windows" title="Permalink to this headline">¶</a></h2>
 <p>Latest Version: <a class="reference external" href="http://search.maven.org/classic/#search%7Cga%7C1%7Cg%3A%22com.taobao.arthas%22%20AND%20a%3A%22arthas-packaging%22"><img alt="Arthas" src="https://img.shields.io/maven-central/v/com.taobao.arthas/arthas-packaging.svg?style=flat-square" /></a></p>
-<p>Download the latest <code class="docutils literal notranslate"><span class="pre">bin.zip</span></code>, unzip the package and you can find the <code class="docutils literal notranslate"><span class="pre">as.bat</span></code>. For now this script will only take one argument <code class="docutils literal notranslate"><span class="pre">pid</span></code> which means you can only diagnose the local Java process. (Welcome any bat script expert to make it better :heart:)</p>
+<p>Download the latest <code class="docutils literal notranslate"><span class="pre">bin.zip</span></code>, unzip the package, and find <code class="docutils literal notranslate"><span class="pre">as.bat</span></code> from ‘bin’ directory. For now this script will only take one argument <code class="docutils literal notranslate"><span class="pre">pid</span></code>, which means you can only diagnose the local Java process. (Welcome any bat script expert to make it better :heart:)</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>as.bat &lt;pid&gt;
 </pre></div>
 </div>
-<p>A small tip:</p>
-<p>If you are asking for better UX, you can start the Arthas Server locally by <code class="docutils literal notranslate"><span class="pre">as.bat</span> <span class="pre">&lt;pid&gt;</span></code> and then use <code class="docutils literal notranslate"><span class="pre">./as.sh</span> <span class="pre">&lt;pid&gt;&#64;&lt;ip&gt;:&lt;por&gt;</span></code>in another Linux/Unix/Mac machine.</p>
-<p>Another tip:</p>
-<p>If in Windows, the color is not working as expect. You can try <a class="reference external" href="https://sourceforge.net/projects/conemu">conemu</a> to get it to work.</p>
+<p>To have a better experience, you can start the Arthas Server locally by executing <code class="docutils literal notranslate"><span class="pre">as.bat</span> <span class="pre">&lt;pid&gt;</span></code>, then run <code class="docutils literal notranslate"><span class="pre">./as.sh</span> <span class="pre">&lt;pid&gt;&#64;&lt;ip&gt;:&lt;por&gt;</span></code> in another Linux/Unix/Mac machine.</p>
+<blockquote>
+<div>If the color is not working as expect on windows, you can use <a class="reference external" href="https://sourceforge.net/projects/conemu">conemu</a> to get it to work.</div></blockquote>
 </div>
 <div class="section" id="manual-installation">
 <span id="manual-installation"></span><h2>Manual Installation<a class="headerlink" href="#manual-installation" title="Permalink to this headline">¶</a></h2>
 <p><a class="reference internal" href="manual-install.html"><span class="doc">Manual Installation</span></a></p>
-</div>
-<div class="section" id="advanced-manual-boot">
-<span id="advanced-manual-boot"></span><h2>Advanced Manual Boot<a class="headerlink" href="#advanced-manual-boot" title="Permalink to this headline">¶</a></h2>
-<p>If you cannot boot Arthas, try to pass in all the critical options manually as the following steps:</p>
+<p>If you fail to boot Arthas with the provided batch file, you could try to assemble the bootstrap command in the following way.</p>
 <ol>
-<li><p class="first">locate the java for JVM:</p>
+<li><p class="first">Locate java in the target JVM:</p>
 <ul class="simple">
 <li>Linux/Unix/Mac: <code class="docutils literal notranslate"><span class="pre">ps</span> <span class="pre">aux</span> <span class="pre">|</span> <span class="pre">grep</span> <span class="pre">java</span></code></li>
 <li>Windows: open the Process Monitor to search java</li>
 </ul>
 </li>
-<li><p class="first">Concatenate the command</p>
+<li><p class="first">Assemble bootstrap command:</p>
 <p>Let’s suppose we are using <code class="docutils literal notranslate"><span class="pre">/opt/jdk1.8/bin/java</span></code>, then the command should be:</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>/opt/jdk1.8/bin/java -Xbootclasspath/a:/opt/jdk1.8/lib/tools.jar <span class="se">\</span>
     -jar /tmp/arthas-packaging/arthas-core.jar <span class="se">\</span>
@@ -223,19 +214,19 @@
     -agent /tmp/arthas-packaging/arthas/arthas-agent.jar
 </pre></div>
 </div>
+<p>Note:</p>
 <ul class="simple">
-<li><code class="docutils literal notranslate"><span class="pre">-Xbootclasspath</span></code> add tools.jar</li>
-<li><code class="docutils literal notranslate"><span class="pre">-jar</span> <span class="pre">/tmp/arthas-packaging/arthas-core.jar</span></code> specify main entry</li>
-<li><code class="docutils literal notranslate"><span class="pre">-pid</span> <span class="pre">15146</span></code> specify the target java process pid</li>
-<li><code class="docutils literal notranslate"><span class="pre">-target-ip</span> <span class="pre">127.0.0.1</span></code> specify the IP</li>
-<li><code class="docutils literal notranslate"><span class="pre">-telnet-port</span> <span class="pre">3658</span> <span class="pre">-http-port</span> <span class="pre">8563</span></code> specify telnet and http ports</li>
-<li><code class="docutils literal notranslate"><span class="pre">-core</span> <span class="pre">/tmp/arthas-packaging/arthas-core.jar</span> <span class="pre">-agent</span> <span class="pre">/tmp/arthas-packaging/arthas/arthas-agent.jar</span></code> specify core/agent jar package</li>
+<li><code class="docutils literal notranslate"><span class="pre">-Xbootclasspath</span></code> adds tools.jar</li>
+<li><code class="docutils literal notranslate"><span class="pre">-jar</span> <span class="pre">/tmp/arthas-packaging/arthas-core.jar</span></code> specifies main entry</li>
+<li><code class="docutils literal notranslate"><span class="pre">-pid</span> <span class="pre">15146</span></code> specifies the target java process PID</li>
+<li><code class="docutils literal notranslate"><span class="pre">-target-ip</span> <span class="pre">127.0.0.1</span></code> specifies the IP</li>
+<li><code class="docutils literal notranslate"><span class="pre">-telnet-port</span> <span class="pre">3658</span> <span class="pre">-http-port</span> <span class="pre">8563</span></code> specifies telnet and HTTP ports for remote access</li>
+<li><code class="docutils literal notranslate"><span class="pre">-core</span> <span class="pre">/tmp/arthas-packaging/arthas-core.jar</span> <span class="pre">-agent</span> <span class="pre">/tmp/arthas-packaging/arthas/arthas-agent.jar</span></code> specifies core/agent jar package</li>
 </ul>
-<p>But if you are using JDK 1.9 or above，then you do not need to add <code class="docutils literal notranslate"><span class="pre">tools.jar</span></code> in option <code class="docutils literal notranslate"><span class="pre">-Xbootclasspath</span></code>.</p>
-<p>F.Y.I the booting log will be printed to <code class="docutils literal notranslate"><span class="pre">~/logs/arthas/arthas.log</span></code>.</p>
+<p>If you are running on JDK 1.9 or above，then it’s unncessary to add <code class="docutils literal notranslate"><span class="pre">tools.jar</span></code> in option <code class="docutils literal notranslate"><span class="pre">-Xbootclasspath</span></code>.</p>
+<p>You can find the logs from <code class="docutils literal notranslate"><span class="pre">~/logs/arthas/arthas.log</span></code>.</p>
 </li>
-<li><p class="first">Connect via telnet</p>
-<p>When attached successfully, you can connect it with</p>
+<li><p class="first">Use telnet to connect once attaching to the target JVM (in step 2) succeeds</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>telnet localhost <span class="m">3658</span>
 </pre></div>
 </div>
@@ -249,16 +240,15 @@
 </div>
 <div class="section" id="uninstall">
 <span id="uninstall"></span><h2>Uninstall<a class="headerlink" href="#uninstall" title="Permalink to this headline">¶</a></h2>
-<div class="section" id="linux-unix-mac">
-<span id="id1"></span><h3>Linux/Unix/Mac<a class="headerlink" href="#linux-unix-mac" title="Permalink to this headline">¶</a></h3>
+<ul>
+<li><p class="first">On Linux/Unix/Mac, delete the files with the following command:</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>rm -rf ~/.arthas/ ~/.arthas_history
 </pre></div>
 </div>
-</div>
-<div class="section" id="windows">
-<span id="id2"></span><h3>Windows<a class="headerlink" href="#windows" title="Permalink to this headline">¶</a></h3>
-<p>Directly delete the <code class="docutils literal notranslate"><span class="pre">zip</span></code> and unzipped files.</p>
-</div>
+</li>
+<li><p class="first">On Windows, simply delete the zip file and unzipped files.</p>
+</li>
+</ul>
 </div>
 </div>
 

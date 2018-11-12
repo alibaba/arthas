@@ -105,7 +105,7 @@
 <li class="toctree-l2"><a class="reference internal" href="classloader.html">classloader</a></li>
 <li class="toctree-l2"><a class="reference internal" href="redefine.html">redefine</a></li>
 <li class="toctree-l2 current"><a class="current reference internal" href="#">monitor</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#properties-monitored">Properties monitored</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#items-to-monitor">Items to monitor</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#parameters">Parameters</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#usage">Usage</a></li>
 </ul>
@@ -115,14 +115,14 @@
 <li class="toctree-l2"><a class="reference internal" href="stack.html">stack</a></li>
 <li class="toctree-l2"><a class="reference internal" href="tt.html">tt</a></li>
 <li class="toctree-l2"><a class="reference internal" href="options.html">options</a></li>
-<li class="toctree-l2"><a class="reference internal" href="commands.html#basic-commands">Basic Commands</a></li>
+<li class="toctree-l2"><a class="reference internal" href="commands.html#basic-arthas-commands">Basic Arthas Commands</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas/issues?q=label%3Auser-case">User cases</a></li>
-<li class="toctree-l1"><a class="reference internal" href="release-notes.html">Release Notes</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas/issues?q=label%3Aquestion-answered">Questions and answers</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas">Fork me at GitHub</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas/blob/master/CONTRIBUTING.md">CONTRIBUTING</a></li>
+<li class="toctree-l1"><a class="reference internal" href="release-notes.html">Release Notes</a></li>
 </ul>
 
             
@@ -193,20 +193,18 @@
             
   <div class="section" id="monitor">
 <span id="monitor"></span><h1>monitor<a class="headerlink" href="#monitor" title="Permalink to this headline">¶</a></h1>
-<p>Monitor methods calling stack traces.</p>
-<p>F.Y.I</p>
-<ol class="simple">
-<li><code class="docutils literal notranslate"><span class="pre">monitor</span></code> is a persistent command, it never returns until you press <code class="docutils literal notranslate"><span class="pre">Ctrl+C</span></code> to manually stop it;</li>
-<li>the server runs the jobs in the background;</li>
-<li>injected monitoring code will become invalid automatically once the monitoring jobs being terminated;</li>
-<li>in theory, Arthas will not change any original behaviors but if it does, please do not hesitate to start an <a class="reference external" href="https://github.com/alibaba/arthas/issues">issue</a>.</li>
-</ol>
-<div class="section" id="properties-monitored">
-<span id="properties-monitored"></span><h2>Properties monitored<a class="headerlink" href="#properties-monitored" title="Permalink to this headline">¶</a></h2>
+<blockquote>
+<div>Monitor method invocation.</div></blockquote>
+<p>Monitor invocation for the method matched with <code class="docutils literal notranslate"><span class="pre">class-pattern</span></code> and <code class="docutils literal notranslate"><span class="pre">method-pattern</span></code>.</p>
+<p><code class="docutils literal notranslate"><span class="pre">monitor</span></code> is not a command returning immediately.</p>
+<p>A command returning immediately is a command immediately returns with the result after the command is input, while a non-immediate returning command will keep outputting the information from the target JVM process until user presses <code class="docutils literal notranslate"><span class="pre">Ctrl+C</span></code>.</p>
+<p>On Arthas’s server side, the command is running as a background job, but the weaved code will not take further effect once the job is terminated, therefore, it will not impact the performance after the job quits. Furthermore, Arthas is designed to have no side effect to the business logic.</p>
+<div class="section" id="items-to-monitor">
+<span id="items-to-monitor"></span><h2>Items to monitor<a class="headerlink" href="#items-to-monitor" title="Permalink to this headline">¶</a></h2>
 <table border="1" class="docutils">
 <thead>
 <tr>
-<th align="right">Property</th>
+<th align="right">Item</th>
 <th align="left">Specification</th>
 </tr>
 </thead>
@@ -221,7 +219,7 @@
 </tr>
 <tr>
 <td align="right">method</td>
-<td align="left">constructor and regular methods</td>
+<td align="left">method (constructor and regular methods)</td>
 </tr>
 <tr>
 <td align="right">total</td>
@@ -247,6 +245,7 @@
 </table></div>
 <div class="section" id="parameters">
 <span id="parameters"></span><h2>Parameters<a class="headerlink" href="#parameters" title="Permalink to this headline">¶</a></h2>
+<p>Parameter <code class="docutils literal notranslate"><span class="pre">[c:]</span></code> stands for cycles of statistics. Its value is an integer value in seconds.</p>
 <table border="1" class="docutils">
 <thead>
 <tr>
@@ -264,12 +263,12 @@
 <td align="left">pattern for the method name</td>
 </tr>
 <tr>
-<td align="right">[E]</td>
+<td align="right"><code>[E]</code></td>
 <td align="left">turn on regex matching while the default is wildcard matching</td>
 </tr>
 <tr>
-<td align="right">[c:]</td>
-<td align="left">cycle of output with default value: <code>60 s</code></td>
+<td align="right"><code>[c:]</code></td>
+<td align="left">cycle of statistics, the default value: <code>120</code>s</td>
 </tr>
 </tbody>
 </table></div>

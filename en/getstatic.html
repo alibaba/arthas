@@ -110,14 +110,14 @@
 <li class="toctree-l2"><a class="reference internal" href="stack.html">stack</a></li>
 <li class="toctree-l2"><a class="reference internal" href="tt.html">tt</a></li>
 <li class="toctree-l2"><a class="reference internal" href="options.html">options</a></li>
-<li class="toctree-l2"><a class="reference internal" href="commands.html#basic-commands">Basic Commands</a></li>
+<li class="toctree-l2"><a class="reference internal" href="commands.html#basic-arthas-commands">Basic Arthas Commands</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas/issues?q=label%3Auser-case">User cases</a></li>
-<li class="toctree-l1"><a class="reference internal" href="release-notes.html">Release Notes</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas/issues?q=label%3Aquestion-answered">Questions and answers</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas">Fork me at GitHub</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas/blob/master/CONTRIBUTING.md">CONTRIBUTING</a></li>
+<li class="toctree-l1"><a class="reference internal" href="release-notes.html">Release Notes</a></li>
 </ul>
 
             
@@ -188,21 +188,21 @@
             
   <div class="section" id="getstatic">
 <span id="getstatic"></span><h1>getstatic<a class="headerlink" href="#getstatic" title="Permalink to this headline">¶</a></h1>
-<p>Check the static fields of classes conveniently as <code class="docutils literal notranslate"><span class="pre">getstatic</span> <span class="pre">class_name</span> <span class="pre">field_name</span></code></p>
-<p>Tip: if the <em>field</em> is a composite object, you can even use <a class="reference external" href="https://en.wikipedia.org/wiki/OGNL"><code class="docutils literal notranslate"><span class="pre">OGNL</span></code></a> to traverse, filter and access the internal properties of it.</p>
-<p>E.g. suppose <code class="docutils literal notranslate"><span class="pre">n</span></code> is a <code class="docutils literal notranslate"><span class="pre">Map</span></code> and the key is a <code class="docutils literal notranslate"><span class="pre">Enum</span></code> then if you want to get the key with a specific <code class="docutils literal notranslate"><span class="pre">Enum</span></code> value - <code class="docutils literal notranslate"><span class="pre">STOP</span></code> or <code class="docutils literal notranslate"><span class="pre">a</span></code>, you can achieve it as:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ getstatic com.alibaba.arthas.Test n &#39;entrySet().iterator.{? #this.key.name()==&quot;STOP&quot;}&#39;
+<p>Check the static fields of classes conveniently, the usage is <code class="docutils literal notranslate"><span class="pre">getstatic</span> <span class="pre">class_name</span> <span class="pre">field_name</span></code>.</p>
+<p>Tip: if the static field is a complex class, you can even use <a class="reference external" href="https://en.wikipedia.org/wiki/OGNL"><code class="docutils literal notranslate"><span class="pre">OGNL</span></code></a> to traverse, filter and access the inner properties of this class.</p>
+<p>E.g. suppose <code class="docutils literal notranslate"><span class="pre">n</span></code> is a <code class="docutils literal notranslate"><span class="pre">Map</span></code> and its key is a <code class="docutils literal notranslate"><span class="pre">Enum</span></code>, then you can achieve this if you want to pick the key with a specific <code class="docutils literal notranslate"><span class="pre">Enum</span></code> value:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$ getstatic com.alibaba.arthas.Test n <span class="s1">&#39;entrySet().iterator.{? #this.key.name()==&quot;STOP&quot;}&#39;</span>
 field: n
-@ArrayList[
-    @Node[STOP=bbb],
-]
-Affect(row-cnt:1) cost in 68 ms.
+@ArrayList<span class="o">[</span>
+    @Node<span class="o">[</span><span class="nv">STOP</span><span class="o">=</span>bbb<span class="o">]</span>,
+<span class="o">]</span>
+Affect<span class="o">(</span>row-cnt:1<span class="o">)</span> cost in <span class="m">68</span> ms.
 
-$ getstatic com.alibaba.arthas.Test m &#39;entrySet().iterator.{? #this.key==&quot;a&quot;}&#39;
+$ getstatic com.alibaba.arthas.Test m <span class="s1">&#39;entrySet().iterator.{? #this.key==&quot;a&quot;}&#39;</span>
 field: m
-@ArrayList[
-    @Node[a=aaa],
-]
+@ArrayList<span class="o">[</span>
+    @Node<span class="o">[</span><span class="nv">a</span><span class="o">=</span>aaa<span class="o">]</span>,
+<span class="o">]</span>
 </pre></div>
 </div>
 </div>

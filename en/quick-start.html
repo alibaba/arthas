@@ -32,7 +32,7 @@
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="Advanced Usage" href="advanced-use.html" />
-    <link rel="prev" title="Arthas Install" href="install-detail.html" />
+    <link rel="prev" title="Install Arthas" href="install-detail.html" />
 <script src="_static/center_page.js"></script>
  
 
@@ -91,7 +91,7 @@
               <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="install-detail.html">Installation</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Quick start</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="#start-a-demo">1. Start A Demo</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#start-demo-application">1. Start Demo Application</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#start-arthas">2. Start Arthas</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#linux-unix-mac">Linux/Unix/Mac</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#windows">Windows</a></li>
@@ -105,10 +105,10 @@
 <li class="toctree-l1"><a class="reference internal" href="advanced-use.html">Advanced usage</a></li>
 <li class="toctree-l1"><a class="reference internal" href="commands.html">Commands</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas/issues?q=label%3Auser-case">User cases</a></li>
-<li class="toctree-l1"><a class="reference internal" href="release-notes.html">Release Notes</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas/issues?q=label%3Aquestion-answered">Questions and answers</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas">Fork me at GitHub</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas/blob/master/CONTRIBUTING.md">CONTRIBUTING</a></li>
+<li class="toctree-l1"><a class="reference internal" href="release-notes.html">Release Notes</a></li>
 </ul>
 
             
@@ -177,8 +177,8 @@
             
   <div class="section" id="quick-start">
 <span id="quick-start"></span><h1>Quick Start<a class="headerlink" href="#quick-start" title="Permalink to this headline">¶</a></h1>
-<div class="section" id="start-a-demo">
-<span id="start-a-demo"></span><h2>1. Start A Demo<a class="headerlink" href="#start-a-demo" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="start-demo-application">
+<span id="start-demo-application"></span><h2>1. Start Demo Application<a class="headerlink" href="#start-demo-application" title="Permalink to this headline">¶</a></h2>
 <p>Save the following code to a <code class="docutils literal notranslate"><span class="pre">Demo.java</span></code> and run the commands in shell as</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>javac Demo.java <span class="o">&amp;&amp;</span> java Demo
 </pre></div>
@@ -212,66 +212,59 @@
 <span class="o">}</span>
 </pre></div>
 </div>
+<p>Save the contents above into <code class="docutils literal notranslate"><span class="pre">Demo.java</span></code>, then compile it under the command line:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>javac Demo.java
+java Demo
+</pre></div>
+</div>
+<p>You can also save and start the code in IDE.</p>
 </div>
 <div class="section" id="start-arthas">
 <span id="start-arthas"></span><h2>2. Start Arthas<a class="headerlink" href="#start-arthas" title="Permalink to this headline">¶</a></h2>
 <div class="section" id="linux-unix-mac">
 <span id="linux-unix-mac"></span><h3>Linux/Unix/Mac<a class="headerlink" href="#linux-unix-mac" title="Permalink to this headline">¶</a></h3>
+<p>Execute the following command in the command line:</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./as.sh
 </pre></div>
 </div>
-<ol>
-<li><p class="first">the user to run the <em>command</em> should have the same privilege as the owner of the target process, as a simple example you can try the following command if the target process is managed by user <code class="docutils literal notranslate"><span class="pre">admin</span></code>:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>sudo su admin <span class="o">&amp;&amp;</span> ./as.sh
-<span class="c1"># Or</span>
-sudo -u admin -EH ./as.sh
-</pre></div>
-</div>
-</li>
-<li><p class="first">For more details of the booting script, please refer to <a class="reference internal" href="start-arthas.html"><span class="doc">Start Arthas</span></a>.</p>
-</li>
-<li><p class="first">If you cannot <em>attach</em> the target process, please check the logs under <code class="docutils literal notranslate"><span class="pre">~/logs/arthas</span></code> for troubleshooting.</p>
-</li>
-<li><p class="first">Selecting the target process as:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ ./as.sh
-Arthas script version: 3.0.2
+<blockquote>
+<div>The user to run this script <em>MUST</em> have the same privilege as the owner of the target process, as a simple example you can try the following command if the target process is managed by user <code class="docutils literal notranslate"><span class="pre">admin</span></code>: <code class="docutils literal notranslate"><span class="pre">sudo</span> <span class="pre">su</span> <span class="pre">admin</span> <span class="pre">&amp;&amp;</span> <span class="pre">./as.sh</span></code> or <code class="docutils literal notranslate"><span class="pre">sudo</span> <span class="pre">-u</span> <span class="pre">admin</span> <span class="pre">-EH</span> <span class="pre">./as.sh</span></code>. For more details on the bootstrap script, please refer to <a class="reference internal" href="start-arthas.html"><span class="doc">Start Arthas</span></a>. If you cannot be able to attach to the target process, please check the logs under <code class="docutils literal notranslate"><span class="pre">~/logs/arthas</span></code> for troubleshooting.</div></blockquote>
+<p>Select the target Java process to attach:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$ ./as.sh
+Arthas script version: <span class="m">3</span>.0.2
 Found existing java process, please choose one and hit RETURN.
-* [1]: 95428 
-  [2]: 22647 org.jetbrains.jps.cmdline.Launcher
-  [3]: 21736
-  [4]: 13560 Demo
+* <span class="o">[</span><span class="m">1</span><span class="o">]</span>: <span class="m">95428</span> 
+  <span class="o">[</span><span class="m">2</span><span class="o">]</span>: <span class="m">22647</span> org.jetbrains.jps.cmdline.Launcher
+  <span class="o">[</span><span class="m">3</span><span class="o">]</span>: <span class="m">21736</span>
+  <span class="o">[</span><span class="m">4</span><span class="o">]</span>: <span class="m">13560</span> Demo
 </pre></div>
 </div>
-<p>We select <code class="docutils literal notranslate"><span class="pre">4</span></code> to check our Demo process and we then have</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>Connecting to arthas server... current timestamp is 1536656867
-Trying 127.0.0.1...
-Connected to 127.0.0.1.
-Escape character is &#39;^]&#39;.
+<p>The ‘Demo’ process is the fourth as shown above, press ‘4’ then ‘Enter’. Arthas will attach to the target process, and start to output:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>Connecting to arthas server... current timestamp is <span class="m">1536656867</span>
+Trying <span class="m">127</span>.0.0.1...
+Connected to <span class="m">127</span>.0.0.1.
+Escape character is <span class="s1">&#39;^]&#39;</span>.
   ,---.  ,------. ,--------.,--.  ,--.  ,---.   ,---.
-  /  O  \ |  .--. &#39;&#39;--.  .--&#39;|  &#39;--&#39;  | /  O  \ &#39;   .-&#39;
-|  .-.  ||  &#39;--&#39;.&#39;   |  |   |  .--.  ||  .-.  |`.  `-.
-|  | |  ||  |\  \    |  |   |  |  |  ||  | |  |.-&#39;    |
-`--&#39; `--&#39;`--&#39; &#39;--&#39;   `--&#39;   `--&#39;  `--&#39;`--&#39; `--&#39;`-----&#39;
+ /  O  <span class="se">\ </span><span class="p">|</span>  .--. <span class="s1">&#39;&#39;</span>--.  .--<span class="s1">&#39;|  &#39;</span>--<span class="s1">&#39;  | /  O  \ &#39;</span>   .-<span class="s1">&#39;</span>
+<span class="s1">|  .-.  ||  &#39;</span>--<span class="s1">&#39;.&#39;</span>   <span class="p">|</span>  <span class="p">|</span>   <span class="p">|</span>  .--.  <span class="o">||</span>  .-.  <span class="p">|</span><span class="sb">`</span>.  <span class="sb">`</span>-.
+<span class="p">|</span>  <span class="p">|</span> <span class="p">|</span>  <span class="o">||</span>  <span class="p">|</span><span class="se">\ </span> <span class="se">\ </span>   <span class="p">|</span>  <span class="p">|</span>   <span class="p">|</span>  <span class="p">|</span>  <span class="p">|</span>  <span class="o">||</span>  <span class="p">|</span> <span class="p">|</span>  <span class="p">|</span>.-<span class="s1">&#39;    |</span>
+<span class="s1">`--&#39;</span> <span class="sb">`</span>--<span class="s1">&#39;`--&#39;</span> <span class="s1">&#39;--&#39;</span>   <span class="sb">`</span>--<span class="s1">&#39;   `--&#39;</span>  <span class="sb">`</span>--<span class="s1">&#39;`--&#39;</span> <span class="sb">`</span>--<span class="s1">&#39;`-----&#39;</span>
 
 wiki: https://alibaba.github.io/arthas
-version: 3.0.1-RC-SNAPSHOT
-pid: 13560
-timestamp: 1536656867894
-
-$ 
+version: <span class="m">3</span>.0.1-RC-SNAPSHOT
+pid: <span class="m">13560</span>
+timestamp: <span class="m">1536656867894</span>
 </pre></div>
 </div>
-</li>
-</ol>
 </div>
 <div class="section" id="windows">
 <span id="windows"></span><h3>Windows<a class="headerlink" href="#windows" title="Permalink to this headline">¶</a></h3>
-<p>Open the <em>DOS</em> console, under the unzipped arthas folder execute <code class="docutils literal notranslate"><span class="pre">as.bat</span> <span class="pre">&lt;pid&gt;</span></code></p>
+<p>Open ‘Command’ window, execute <code class="docutils literal notranslate"><span class="pre">as.bat</span> <span class="pre">&lt;pid&gt;</span></code> from where the Arthas package file is unzipped.</p>
 </div>
 </div>
 <div class="section" id="check-the-dashboard">
 <span id="check-the-dashboard"></span><h2>3. Check the Dashboard<a class="headerlink" href="#check-the-dashboard" title="Permalink to this headline">¶</a></h2>
-<p>Type in <a class="reference internal" href="dashboard.html"><span class="doc">dashboard</span></a> and hit the <em>ENTER</em>, you will see it as (<code class="docutils literal notranslate"><span class="pre">Ctrl+C</span></code> to stop)</p>
+<p>Type ‘<a class="reference internal" href="dashboard.html"><span class="doc">dashboard</span></a>’ and hit ‘ENTER’, a brief report on the current process will be shown as below, pls. <code class="docutils literal notranslate"><span class="pre">Ctrl+C</span></code> to stop:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ dashboard
 ID     NAME                   GROUP          PRIORI STATE  %CPU    TIME   INTERRU DAEMON
 17     pool-2-thread-1        system         5      WAITIN 67      0:0    false   false
@@ -308,7 +301,7 @@ java.home              /Library/Java/JavaVir
 </div>
 <div class="section" id="watch">
 <span id="watch"></span><h2>4. watch<a class="headerlink" href="#watch" title="Permalink to this headline">¶</a></h2>
-<p>Input <a class="reference internal" href="watch.html"><span class="doc">watch</span></a> to check the returned value of <code class="docutils literal notranslate"><span class="pre">Counter.value()</span></code>:</p>
+<p>Use ‘<a class="reference internal" href="watch.html"><span class="doc">watch</span></a>’ to check the returned value of <code class="docutils literal notranslate"><span class="pre">Counter.value()</span></code>:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ watch Demo$Counter value returnObj
 Press Ctrl+C to abort.
 Affect(class-cnt:1 , method-cnt:1) cost in 29 ms.
@@ -319,14 +312,12 @@ ts=2018-09-10 17:53:14;result=@Integer[624]
 ts=2018-09-10 17:53:15;result=@Integer[625]
 </pre></div>
 </div>
-<p><a class="reference internal" href="advanced-use.html"><span class="doc">more advanced usages</span></a></p>
+<p>Pls. refer to <a class="reference internal" href="advanced-use.html"><span class="doc">advanced usages</span></a> for more information.</p>
 </div>
 <div class="section" id="exit-arthas">
 <span id="exit-arthas"></span><h2>5. Exit Arthas<a class="headerlink" href="#exit-arthas" title="Permalink to this headline">¶</a></h2>
-<ul class="simple">
-<li><code class="docutils literal notranslate"><span class="pre">quit</span></code> or <code class="docutils literal notranslate"><span class="pre">exit</span></code> will just disconnect the current console connection while Arthas still running in the target process</li>
-<li><code class="docutils literal notranslate"><span class="pre">shutdown</span></code> will terminate the Arthas completely</li>
-</ul>
+<p>Use <code class="docutils literal notranslate"><span class="pre">quit</span></code> or <code class="docutils literal notranslate"><span class="pre">exit</span></code> to disconnect from the current process. The Arthas instance attached to the target process continues to live inside the process, and its port is standby for further connection.</p>
+<p>Use <code class="docutils literal notranslate"><span class="pre">shutdown</span></code> to have Arthas completely quit from the target process.</p>
 </div>
 </div>
 
@@ -341,7 +332,7 @@ ts=2018-09-10 17:53:15;result=@Integer[625]
         <a href="advanced-use.html" class="btn btn-neutral float-right" title="Advanced Usage" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
-        <a href="install-detail.html" class="btn btn-neutral" title="Arthas Install" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+        <a href="install-detail.html" class="btn btn-neutral" title="Install Arthas" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
       
     </div>
   

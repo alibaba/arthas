@@ -110,18 +110,17 @@
 <li class="toctree-l2"><a class="reference internal" href="stack.html">stack</a></li>
 <li class="toctree-l2"><a class="reference internal" href="tt.html">tt</a></li>
 <li class="toctree-l2 current"><a class="current reference internal" href="#">options</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#global-options">Global options</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#usage">Usage</a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="commands.html#basic-commands">Basic Commands</a></li>
+<li class="toctree-l2"><a class="reference internal" href="commands.html#basic-arthas-commands">Basic Arthas Commands</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas/issues?q=label%3Auser-case">User cases</a></li>
-<li class="toctree-l1"><a class="reference internal" href="release-notes.html">Release Notes</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas/issues?q=label%3Aquestion-answered">Questions and answers</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas">Fork me at GitHub</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas/blob/master/CONTRIBUTING.md">CONTRIBUTING</a></li>
+<li class="toctree-l1"><a class="reference internal" href="release-notes.html">Release Notes</a></li>
 </ul>
 
             
@@ -192,8 +191,8 @@
             
   <div class="section" id="options">
 <span id="options"></span><h1>options<a class="headerlink" href="#options" title="Permalink to this headline">¶</a></h1>
-<div class="section" id="global-options">
-<span id="global-options"></span><h2>Global options<a class="headerlink" href="#global-options" title="Permalink to this headline">¶</a></h2>
+<blockquote>
+<div>Global options</div></blockquote>
 <table border="1" class="docutils">
 <thead>
 <tr>
@@ -206,48 +205,47 @@
 <tr>
 <td>unsafe</td>
 <td>false</td>
-<td>Enable system-level class enhancement; JVM might crash, if you turn it on (use with great caution :exclamation:)</td>
+<td>whether to enhance to system-level class. Use it with caution since JVM may hang</td>
 </tr>
 <tr>
 <td>dump</td>
 <td>false</td>
-<td>Enable support for dumping enhanced class to external files; if turned on, class file will be dumped to<code>/${application dir}/arthas-class-dump/</code>，please check console output for specific location</td>
+<td>whether to dump enhanced class to the external files. If it's on, enhanced class will be dumped into <code>/${application dir}/arthas-class-dump/</code>, the specific output path will be output in the console</td>
 </tr>
 <tr>
 <td>batch-re-transform</td>
 <td>true</td>
-<td>re-transform matched classes in batch</td>
+<td>whether to re-transform matched classes in batch</td>
 </tr>
 <tr>
 <td>json-format</td>
 <td>false</td>
-<td>Enable output in JSON format</td>
+<td>whether to output in JSON format</td>
 </tr>
 <tr>
 <td>disable-sub-class</td>
 <td>false</td>
-<td>Disabling child class matching: by default child class will be matched while matching target class; if you wish exact matching, you should turn it off</td>
+<td>whether to enable matching child classes. The default value is <code>true</code>. If exact match is desire, turn off this flag</td>
 </tr>
 <tr>
 <td>debug-for-asm</td>
 <td>false</td>
-<td>Print ASM-related debug message</td>
+<td>whether to enable ASM debugging log</td>
 </tr>
 <tr>
 <td>save-result</td>
 <td>false</td>
-<td>Enable saving logs for task results: when true, all command results will be saved to <code>/home/admin/logs/arthas/arthas.log</code></td>
+<td>whether to save execution result. All execution results will be saved to <code>/home/admin/logs/arthas/arthas.log</code> when it's turned on</td>
 </tr>
 <tr>
 <td>job-timeout</td>
 <td>1d</td>
-<td>Default timeout for background jobs: jobs will be stopped once timed out (i.e. 1d, 2h, 3m, 25s)</td>
+<td>default timeout for background jobs. Background job will be terminated once it's timed out (i.e. 1d, 2h, 3m, 25s)</td>
 </tr>
 </tbody>
-</table></div>
-<div class="section" id="usage">
+</table><div class="section" id="usage">
 <span id="usage"></span><h2>Usage<a class="headerlink" href="#usage" title="Permalink to this headline">¶</a></h2>
-<p>Saving logs for command outputs, you can:</p>
+<p>For example, to enable saving command execution result, input the command below:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ options save-result true                                                                                         
  NAME         BEFORE-VALUE  AFTER-VALUE                                                                            
 ----------------------------------------                                                                           

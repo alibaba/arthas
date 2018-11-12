@@ -1,10 +1,9 @@
 Arthas Console Keymap
 ===
 
-`keymap` command print current keymap.
+Use `keymap` command to print the current keymap:
 
 The default keymap is:
-
 
 | Shortcut      | Shortcut Description   | Command Name   | Command Description  |
 | ------------- | ---------------- | -------------------- | ---------------- |
@@ -28,16 +27,14 @@ The default keymap is:
 | `"\C-x\e[3~"` |                  | backward-kill-line   |                  |
 | `"\e\C-?"`    |                  | backward-kill-word   |                  |
 
-
-* You can enter `Tab` to get automatic prompts at any time.
-* After typing the command, type `-` or `--`, then press `tab` to display the specific options of this command.
-
+* Press `tab` to enable auto-completion prompt at any time.
+* Enter command and `-` or `--`, then press `tab` to display the concrete options for the current command.
 
 #### Custom shortcuts
 
-Create a new `$USER_HOME/.arthas/conf/inputrc` file in the current user home directory and add a custom configuration.
+Specify customization in `$USER_HOME/.arthas/conf/inputrc` file in the current user home directory.
 
-Suppose I am a heavy user of vim. I want to set `ctrl+h` to the cursor forward character. Set it as follows, first copy the default configuration.
+Vim user may want to map `ctrl+h` to moving the cursor forward one character. To achieve this, copy the default configuration first,
 
 ```
 "\C-a": beginning-of-line
@@ -61,14 +58,14 @@ Suppose I am a heavy user of vim. I want to set `ctrl+h` to the cursor forward c
 "\e\C-?": backward-kill-word
 ```
 
-Then replace `"\C-h": backward-delete-char` with `"\C-h": backward-char`, then reconnect.
+then replace `"\C-h": backward-delete-char` with `"\C-h": backward-char`, then reconnect to Arthas console to take effect.
 
-#### Shortcuts about async
+#### Shortcuts for jobs
 
-* ctrl + c: Terminate current command
-* ctrl + z: Suspend the current command, you can restore this command with bg/fg, or kill it.
-* ctrl + a: Go to the beginning the line 
-* ctrl + e: Go to the end of the line
+* `ctrl + c`: Terminate current command
+* `ctrl + z`: Suspend the current command, you can restore this command with `bg`/`fg`, or `kill` it.
+* `ctrl + a`: Go to the beginning the line 
+* `ctrl + e`: Go to the end of the line
 
 
 

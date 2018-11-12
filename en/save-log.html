@@ -103,7 +103,7 @@
 <li class="toctree-l2 current"><a class="reference internal" href="advanced-use.html#other-features">Other features</a><ul class="current">
 <li class="toctree-l3"><a class="reference internal" href="async.html">Async support</a></li>
 <li class="toctree-l3 current"><a class="current reference internal" href="#">log the output</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="#asynchronous-log">Asynchronous log</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#use-asynchronous-job-to-log">Use asynchronous job to log</a></li>
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="batch-support.html">batch</a></li>
@@ -114,10 +114,10 @@
 </li>
 <li class="toctree-l1"><a class="reference internal" href="commands.html">Commands</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas/issues?q=label%3Auser-case">User cases</a></li>
-<li class="toctree-l1"><a class="reference internal" href="release-notes.html">Release Notes</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas/issues?q=label%3Aquestion-answered">Questions and answers</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas">Fork me at GitHub</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas/blob/master/CONTRIBUTING.md">CONTRIBUTING</a></li>
+<li class="toctree-l1"><a class="reference internal" href="release-notes.html">Release Notes</a></li>
 </ul>
 
             
@@ -188,35 +188,35 @@
             
   <div class="section" id="log-command-outputs">
 <span id="log-command-outputs"></span><h1>Log command outputs<a class="headerlink" href="#log-command-outputs" title="Permalink to this headline">¶</a></h1>
-<p>Log command outputs for later analysis, turned off by default.</p>
-<p>To turn it on, using <a class="reference internal" href="options.html"><span class="doc">options</span></a> as:</p>
+<blockquote>
+<div>Log command outputs for later analysis</div></blockquote>
+<ul>
+<li><p class="first">By default, this behavior is turned off. To enable it, execute the command below:</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$ options save-result <span class="nb">true</span>
  NAME         BEFORE-VALUE  AFTER-VALUE
 ----------------------------------------
- save-result  <span class="nb">false</span>         <span class="nb">true</span>
+save-result  <span class="nb">false</span>         <span class="nb">true</span>
 Affect<span class="o">(</span>row-cnt:1<span class="o">)</span> cost in <span class="m">3</span> ms.
 </pre></div>
 </div>
-<p>F.Y.I</p>
-<ol class="simple">
-<li>logging file lies in: <code class="docutils literal notranslate"><span class="pre">{user.home}/logs/arthas-cache/result.log</span></code>;</li>
-<li>remember to clean up the file to save disk space.</li>
-</ol>
-<div class="section" id="asynchronous-log">
-<span id="asynchronous-log"></span><h2>Asynchronous log<a class="headerlink" href="#asynchronous-log" title="Permalink to this headline">¶</a></h2>
-<p>:notes: :notes:
-With the latest Arthas, you can log the outputs asynchronously in the background:</p>
+<p>If the message above is output on the console, then this behavior is enabled successfully.</p>
+</li>
+<li><p class="first">Log file path</p>
+<p>The command execution result will be save in <code class="docutils literal notranslate"><span class="pre">{user.home}/logs/arthas-cache/result.log</span></code>. Pls. clean it up regularly to save disk space.</p>
+</li>
+</ul>
+<div class="section" id="use-asynchronous-job-to-log">
+<span id="use-asynchronous-job-to-log"></span><h2>Use asynchronous job to log<a class="headerlink" href="#use-asynchronous-job-to-log" title="Permalink to this headline">¶</a></h2>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$ trace Test t &gt;&gt;  <span class="p">&amp;</span>
 job id  : <span class="m">2</span>
 cache location  : /Users/zhuyong/logs/arthas-cache/28198/2
 </pre></div>
 </div>
-<p>F.Y.I</p>
-<ol class="simple">
-<li><code class="docutils literal notranslate"><span class="pre">quit/exit</span></code> or <code class="docutils literal notranslate"><span class="pre">Ctrl+C</span></code> will not affect the asynchronous jobs :sparkles:;</li>
-<li>default timeout for the background job is 1 day (you can set it via <a class="reference internal" href="options.html"><span class="doc">options</span></a>);</li>
-<li>outputs will be save to the <code class="docutils literal notranslate"><span class="pre">cache</span> <span class="pre">location</span></code> now (no matter what <code class="docutils literal notranslate"><span class="pre">save-result</span></code> is - not <code class="docutils literal notranslate"><span class="pre">~/logs/arthas-cache/result.log</span></code> any more).</li>
-</ol>
+<p>By doing this, the command will run at background asynchronously, and output the execution result into <code class="docutils literal notranslate"><span class="pre">~/logs/arthas-cache/{PID}/{JobId}</span></code>:</p>
+<ul class="simple">
+<li>The background job will continue to run even if the current session is disconnected. The default job timeout value is 1 day, use global ‘<a class="reference internal" href="options.html"><span class="doc">options</span></a>’ command to alternate it.</li>
+<li>The execution result will be output into the file asynchronously. Pls. note the behavior of this command is not controlled by <code class="docutils literal notranslate"><span class="pre">save-result</span></code> option from global <a class="reference internal" href="options.html"><span class="doc">options</span></a>. No matter <code class="docutils literal notranslate"><span class="pre">save-result</span></code> is set to <code class="docutils literal notranslate"><span class="pre">true</span></code> or not, this command will write into <code class="docutils literal notranslate"><span class="pre">~/logs/arthas-cache/{PID}/{JobId}</span></code> anyway, instead of into <code class="docutils literal notranslate"><span class="pre">~/logs/arthas-cache/result.log</span></code>.</li>
+</ul>
 </div>
 </div>
 

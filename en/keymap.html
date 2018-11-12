@@ -92,10 +92,10 @@
 <li class="toctree-l1"><a class="reference internal" href="advanced-use.html">Advanced usage</a></li>
 <li class="toctree-l1"><a class="reference internal" href="commands.html">Commands</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas/issues?q=label%3Auser-case">User cases</a></li>
-<li class="toctree-l1"><a class="reference internal" href="release-notes.html">Release Notes</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas/issues?q=label%3Aquestion-answered">Questions and answers</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas">Fork me at GitHub</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas/blob/master/CONTRIBUTING.md">CONTRIBUTING</a></li>
+<li class="toctree-l1"><a class="reference internal" href="release-notes.html">Release Notes</a></li>
 </ul>
 
             
@@ -164,7 +164,7 @@
             
   <div class="section" id="arthas-console-keymap">
 <span id="arthas-console-keymap"></span><h1>Arthas Console Keymap<a class="headerlink" href="#arthas-console-keymap" title="Permalink to this headline">¶</a></h1>
-<p><code class="docutils literal notranslate"><span class="pre">keymap</span></code> command print current keymap.</p>
+<p>Use <code class="docutils literal notranslate"><span class="pre">keymap</span></code> command to print the current keymap:</p>
 <p>The default keymap is:</p>
 <table border="1" class="docutils">
 <thead>
@@ -292,13 +292,13 @@
 </tr>
 </tbody>
 </table><ul class="simple">
-<li>You can enter <code class="docutils literal notranslate"><span class="pre">Tab</span></code> to get automatic prompts at any time.</li>
-<li>After typing the command, type <code class="docutils literal notranslate"><span class="pre">-</span></code> or <code class="docutils literal notranslate"><span class="pre">--</span></code>, then press <code class="docutils literal notranslate"><span class="pre">tab</span></code> to display the specific options of this command.</li>
+<li>Press <code class="docutils literal notranslate"><span class="pre">tab</span></code> to enable auto-completion prompt at any time.</li>
+<li>Enter command and <code class="docutils literal notranslate"><span class="pre">-</span></code> or <code class="docutils literal notranslate"><span class="pre">--</span></code>, then press <code class="docutils literal notranslate"><span class="pre">tab</span></code> to display the concrete options for the current command.</li>
 </ul>
 <div class="section" id="custom-shortcuts">
 <span id="custom-shortcuts"></span><h2>Custom shortcuts<a class="headerlink" href="#custom-shortcuts" title="Permalink to this headline">¶</a></h2>
-<p>Create a new <code class="docutils literal notranslate"><span class="pre">$USER_HOME/.arthas/conf/inputrc</span></code> file in the current user home directory and add a custom configuration.</p>
-<p>Suppose I am a heavy user of vim. I want to set <code class="docutils literal notranslate"><span class="pre">ctrl+h</span></code> to the cursor forward character. Set it as follows, first copy the default configuration.</p>
+<p>Specify customization in <code class="docutils literal notranslate"><span class="pre">$USER_HOME/.arthas/conf/inputrc</span></code> file in the current user home directory.</p>
+<p>Vim user may want to map <code class="docutils literal notranslate"><span class="pre">ctrl+h</span></code> to moving the cursor forward one character. To achieve this, copy the default configuration first,</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="s2">&quot;\C-a&quot;</span><span class="p">:</span> <span class="n">beginning</span><span class="o">-</span><span class="n">of</span><span class="o">-</span><span class="n">line</span>
 <span class="s2">&quot;\C-e&quot;</span><span class="p">:</span> <span class="n">end</span><span class="o">-</span><span class="n">of</span><span class="o">-</span><span class="n">line</span>
 <span class="s2">&quot;\C-f&quot;</span><span class="p">:</span> <span class="n">forward</span><span class="o">-</span><span class="n">word</span>
@@ -320,15 +320,15 @@
 <span class="s2">&quot;\e\C-?&quot;</span><span class="p">:</span> <span class="n">backward</span><span class="o">-</span><span class="n">kill</span><span class="o">-</span><span class="n">word</span>
 </pre></div>
 </div>
-<p>Then replace <code class="docutils literal notranslate"><span class="pre">&quot;\C-h&quot;:</span> <span class="pre">backward-delete-char</span></code> with <code class="docutils literal notranslate"><span class="pre">&quot;\C-h&quot;:</span> <span class="pre">backward-char</span></code>, then reconnect.</p>
+<p>then replace <code class="docutils literal notranslate"><span class="pre">&quot;\C-h&quot;:</span> <span class="pre">backward-delete-char</span></code> with <code class="docutils literal notranslate"><span class="pre">&quot;\C-h&quot;:</span> <span class="pre">backward-char</span></code>, then reconnect to Arthas console to take effect.</p>
 </div>
-<div class="section" id="shortcuts-about-async">
-<span id="shortcuts-about-async"></span><h2>Shortcuts about async<a class="headerlink" href="#shortcuts-about-async" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="shortcuts-for-jobs">
+<span id="shortcuts-for-jobs"></span><h2>Shortcuts for jobs<a class="headerlink" href="#shortcuts-for-jobs" title="Permalink to this headline">¶</a></h2>
 <ul class="simple">
-<li>ctrl + c: Terminate current command</li>
-<li>ctrl + z: Suspend the current command, you can restore this command with bg/fg, or kill it.</li>
-<li>ctrl + a: Go to the beginning the line</li>
-<li>ctrl + e: Go to the end of the line</li>
+<li><code class="docutils literal notranslate"><span class="pre">ctrl</span> <span class="pre">+</span> <span class="pre">c</span></code>: Terminate current command</li>
+<li><code class="docutils literal notranslate"><span class="pre">ctrl</span> <span class="pre">+</span> <span class="pre">z</span></code>: Suspend the current command, you can restore this command with <code class="docutils literal notranslate"><span class="pre">bg</span></code>/<code class="docutils literal notranslate"><span class="pre">fg</span></code>, or <code class="docutils literal notranslate"><span class="pre">kill</span></code> it.</li>
+<li><code class="docutils literal notranslate"><span class="pre">ctrl</span> <span class="pre">+</span> <span class="pre">a</span></code>: Go to the beginning the line</li>
+<li><code class="docutils literal notranslate"><span class="pre">ctrl</span> <span class="pre">+</span> <span class="pre">e</span></code>: Go to the end of the line</li>
 </ul>
 </div>
 </div>

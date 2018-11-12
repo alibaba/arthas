@@ -107,26 +107,22 @@
 <li class="toctree-l2"><a class="reference internal" href="monitor.html">monitor</a></li>
 <li class="toctree-l2"><a class="reference internal" href="watch.html">watch</a></li>
 <li class="toctree-l2 current"><a class="current reference internal" href="#">trace</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#parameters">Parameters</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="advice-class.html">Critical fields in expression</a></li>
-<li class="toctree-l4"><a class="reference external" href="https://github.com/alibaba/arthas/issues/71">Special usage</a></li>
-<li class="toctree-l4"><a class="reference external" href="https://commons.apache.org/proper/commons-ognl/language-guide.html">OGNL official guide</a></li>
-</ul>
-</li>
+<li class="toctree-l3"><a class="reference internal" href="#parameters">Parameters</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#notice">Notice</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#usage">Usage</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="stack.html">stack</a></li>
 <li class="toctree-l2"><a class="reference internal" href="tt.html">tt</a></li>
 <li class="toctree-l2"><a class="reference internal" href="options.html">options</a></li>
-<li class="toctree-l2"><a class="reference internal" href="commands.html#basic-commands">Basic Commands</a></li>
+<li class="toctree-l2"><a class="reference internal" href="commands.html#basic-arthas-commands">Basic Arthas Commands</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas/issues?q=label%3Auser-case">User cases</a></li>
-<li class="toctree-l1"><a class="reference internal" href="release-notes.html">Release Notes</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas/issues?q=label%3Aquestion-answered">Questions and answers</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas">Fork me at GitHub</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas/blob/master/CONTRIBUTING.md">CONTRIBUTING</a></li>
+<li class="toctree-l1"><a class="reference internal" href="release-notes.html">Release Notes</a></li>
 </ul>
 
             
@@ -197,7 +193,9 @@
             
   <div class="section" id="trace">
 <span id="trace"></span><h1>trace<a class="headerlink" href="#trace" title="Permalink to this headline">¶</a></h1>
-<p>Track methods calling stack trace and print the time cost in each call.</p>
+<blockquote>
+<div>Trace method calling path, and output the time cost for each node in the path.</div></blockquote>
+<p><code class="docutils literal notranslate"><span class="pre">trace</span></code> can track the calling path specified by <code class="docutils literal notranslate"><span class="pre">class-pattern</span></code> / <code class="docutils literal notranslate"><span class="pre">method-pattern</span></code>, and calculate the time cost on the whole path.</p>
 <div class="section" id="parameters">
 <span id="parameters"></span><h2>Parameters<a class="headerlink" href="#parameters" title="Permalink to this headline">¶</a></h2>
 <table border="1" class="docutils">
@@ -221,41 +219,41 @@
 <td align="left">condition expression</td>
 </tr>
 <tr>
-<td align="right">[E]</td>
-<td align="left">turn on regx matching while the default is wildcards matching</td>
+<td align="right"><code>[E]</code></td>
+<td align="left">enable regex match, the default behavior is wildcards match</td>
 </tr>
 <tr>
-<td align="right">[n:]</td>
-<td align="left">calling times</td>
+<td align="right"><code>[n:]</code></td>
+<td align="left">execution times</td>
 </tr>
 <tr>
 <td align="right">#cost</td>
 <td align="left">time cost</td>
 </tr>
 </tbody>
-</table><p>F.Y.I</p>
-<ol class="simple">
-<li>any valid OGNL expression as <code class="docutils literal notranslate"><span class="pre">&quot;{params,returnObj}&quot;</span></code> supported;</li>
-<li>filter by time cost as <code class="docutils literal notranslate"><span class="pre">trace</span> <span class="pre">*StringUtils</span> <span class="pre">isBlank</span> <span class="pre">'#cost&gt;100'</span></code>; calling stack with only time cost higher than <code class="docutils literal notranslate"><span class="pre">100ms</span></code> will be printed.</li>
-</ol>
-<p>Attention:</p>
-<ol class="simple">
-<li><code class="docutils literal notranslate"><span class="pre">#cost</span></code> can be used in <code class="docutils literal notranslate"><span class="pre">watch/stack/trace</span></code>;</li>
-<li>using <code class="docutils literal notranslate"><span class="pre">#cost</span></code> in Arthas 3.0 instead of <code class="docutils literal notranslate"><span class="pre">$cost</span></code>.</li>
-<li><code class="docutils literal notranslate"><span class="pre">trace</span></code> can help to locate the performance lurking issue but only <code class="docutils literal notranslate"><span class="pre">level-one</span></code> method invoking considered.</li>
-</ol>
-<p>Advanced:</p>
-<div class="toctree-wrapper compound">
-<ul>
-<li class="toctree-l1"><a class="reference internal" href="advice-class.html">Critical fields in expression</a></li>
-<li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas/issues/71">Special usage</a></li>
-<li class="toctree-l1"><a class="reference external" href="https://commons.apache.org/proper/commons-ognl/language-guide.html">OGNL official guide</a></li>
+</table><p>There’s one thing worthy noting here is observation expression. The observation expression supports OGNL grammar, for example, you can come up a expression like this <code class="docutils literal notranslate"><span class="pre">&quot;{params,returnObj}&quot;</span></code>. All OGNL expressions are supported as long as they are legal to the grammar.</p>
+<p>Thanks for <code class="docutils literal notranslate"><span class="pre">advice</span></code>’s data structure, it is possible to observe from varieties of different angles. Inside <code class="docutils literal notranslate"><span class="pre">advice</span></code> parameter, all necessary information for notification can be found.</p>
+<p>Pls. refer to <a class="reference internal" href="advice-class.html"><span class="doc">core parameters in expression</span></a> for more details.</p>
+<ul class="simple">
+<li>Pls. also refer to <a class="reference external" href="https://github.com/alibaba/arthas/issues/71">https://github.com/alibaba/arthas/issues/71</a> for more advanced usage</li>
+<li>OGNL official site: <a class="reference external" href="https://commons.apache.org/proper/commons-ognl/language-guide.html">https://commons.apache.org/proper/commons-ognl/language-guide.html</a></li>
 </ul>
+<p>Many times what we are interested is the exact trace result when the method call takes time over one particular period. It is possible to achieve this in Arthas, for example: <code class="docutils literal notranslate"><span class="pre">trace</span> <span class="pre">*StringUtils</span> <span class="pre">isBlank</span> <span class="pre">'$cost&gt;100'</span></code> means trace result will only be output when the executing time exceeds 100ms.</p>
+<blockquote>
+<div><p>Notes:</p>
+<ol class="simple">
+<li><code class="docutils literal notranslate"><span class="pre">watch</span></code>/<code class="docutils literal notranslate"><span class="pre">stack</span></code>/<code class="docutils literal notranslate"><span class="pre">trace</span></code>, these three commands all support <code class="docutils literal notranslate"><span class="pre">$cost</span></code>.</li>
+<li>On version <code class="docutils literal notranslate"><span class="pre">3.0</span></code>, pls. use <code class="docutils literal notranslate"><span class="pre">#cost</span></code> instead of <code class="docutils literal notranslate"><span class="pre">$cost</span></code>.</li>
+</ol>
+</div></blockquote>
 </div>
+<div class="section" id="notice">
+<span id="notice"></span><h2>Notice<a class="headerlink" href="#notice" title="Permalink to this headline">¶</a></h2>
+<p><code class="docutils literal notranslate"><span class="pre">trace</span></code> is handy to help discovering and locating the performance flaws in your system, but pls. note Arthas can only trace the first level method call each time.</p>
 </div>
 <div class="section" id="usage">
 <span id="usage"></span><h2>Usage<a class="headerlink" href="#usage" title="Permalink to this headline">¶</a></h2>
-<p>A demo:</p>
+<p>Sample code:</p>
 <div class="highlight-java notranslate"><div class="highlight"><pre><span></span>    <span class="kd">public</span> <span class="kd">static</span> <span class="kt">void</span> <span class="nf">main</span><span class="o">(</span><span class="n">String</span><span class="o">[]</span> <span class="n">args</span><span class="o">)</span> <span class="o">{</span>
         <span class="n">List</span><span class="o">&lt;</span><span class="n">String</span><span class="o">&gt;</span> <span class="n">list</span> <span class="o">=</span> <span class="k">new</span> <span class="n">ArrayList</span><span class="o">&lt;</span><span class="n">String</span><span class="o">&gt;();</span>
         <span class="n">list</span><span class="o">.</span><span class="na">add</span><span class="o">(</span><span class="s">&quot;a&quot;</span><span class="o">);</span>
@@ -290,7 +288,7 @@
     <span class="o">}</span>
 </pre></div>
 </div>
-<p>Tracing down method <code class="docutils literal notranslate"><span class="pre">add</span></code>:</p>
+<p>Trace down method <code class="docutils literal notranslate"><span class="pre">add</span></code>:</p>
 <div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>$ trace com.alibaba.sample.petstore.web.store.module.screen.ItemList add params.length<span class="o">==</span><span class="m">2</span>
 Press Ctrl+C to abort.
 Affect<span class="o">(</span>class-cnt:1 , method-cnt:1<span class="o">)</span> cost in <span class="m">144</span> ms.
@@ -302,7 +300,7 @@ Affect<span class="o">(</span>class-cnt:1 , method-cnt:1<span class="o">)</span>
         <span class="sb">`</span>---<span class="o">[</span>0ms<span class="o">]</span>java.util.List:size<span class="o">()</span>
 </pre></div>
 </div>
-<p>Filtering by time cost:</p>
+<p>Filter by time cost:</p>
 <div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>$ trace com.alibaba.sample.petstore.web.store.module.screen.ItemList execute <span class="c1">#cost&gt;4</span>
 Press Ctrl+C to abort.
 Affect<span class="o">(</span>class-cnt:1 , method-cnt:1<span class="o">)</span> cost in <span class="m">159</span> ms.
@@ -316,14 +314,14 @@ trace com.alibaba.sample.petstore.web.store.module.screen.ItemList execute <span
         <span class="sb">`</span>---<span class="o">[</span><span class="nv">min</span><span class="o">=</span><span class="m">0</span>.005428ms,max<span class="o">=</span><span class="m">0</span>.094064ms,total<span class="o">=</span><span class="m">0</span>.105228ms,count<span class="o">=</span><span class="m">3</span><span class="o">]</span> com.alibaba.citrus.turbine.Context:put<span class="o">()</span>
 </pre></div>
 </div>
-<p>Only the calling trace of the time cost higher than <code class="docutils literal notranslate"><span class="pre">4ms</span></code> presented now.</p>
-<p>F.Y.I</p>
-<ol class="simple">
-<li>like JProfile and other similar commercial software, you can <code class="docutils literal notranslate"><span class="pre">trace</span></code> down the specified method calling stack with time cost in Arthas;</li>
-<li>there will be some overhead using <code class="docutils literal notranslate"><span class="pre">trace</span></code> but not much;</li>
-<li>the time cost is an instructive clue for troubleshooting, which means it’s not that accurate ignoring the cost it itself causes; the deeper or more the call is, the worse accuracy the time cost will be;</li>
-<li><code class="docutils literal notranslate"><span class="pre">[0,0,0ms,11]xxx:yyy()</span> <span class="pre">[throws</span> <span class="pre">Exception]</span></code>，the same method calling aggregated into one line here while <code class="docutils literal notranslate"><span class="pre">throws</span> <span class="pre">Exception</span></code> indicates there is an exception.</li>
-</ol>
+<blockquote>
+<div>Only the call path which’s time cost is higher than <code class="docutils literal notranslate"><span class="pre">4ms</span></code> will be shown. This feature is handy to focus on what’s needed to focus when troubleshoot.</div></blockquote>
+<ul class="simple">
+<li>Here Arthas provides the similar functionality JProfile and other commercial software provide. Compared to these professional softwares, Arthas doesn’t deduce the time cost <code class="docutils literal notranslate"><span class="pre">trace</span></code> itself takes, therefore it is not as accurate as these softwares offer. More classes and methods on the calling path, more inaccurate <code class="docutils literal notranslate"><span class="pre">trace</span></code> output is, but it is still helpful for diagnostics where the bottleneck is.</li>
+<li>“[2.847106ms] com.alibaba.sample.petstore.biz.StoreManager:getAllProductItems()” means “getAllProductItem()” method from “com.alibaba.sample.petstore.biz.StoreManager” takes <code class="docutils literal notranslate"><span class="pre">2.847106</span></code> ms.</li>
+<li>“[min=0.005428ms,max=0.094064ms,total=0.105228ms,count=3] com.alibaba.citrus.turbine.Context:put()” means aggregating all same method calls into one single line. The minimum time cost is <code class="docutils literal notranslate"><span class="pre">0.005428</span></code> ms, the maximum time cost is <code class="docutils literal notranslate"><span class="pre">0.094064</span></code> ms, and the total time cost for all method calls (<code class="docutils literal notranslate"><span class="pre">3</span></code> times in total) to “com.alibaba.citrus.turbine.Context:put()” is <code class="docutils literal notranslate"><span class="pre">0.105228ms</span></code>. If “throws Exception” appears in this line, it means some exceptions have been thrown from this method calls.</li>
+<li>The total time cost may not equal to the sum of the time costs each sub method call takes, this is because Arthas instrumented code takes time too.</li>
+</ul>
 </div>
 </div>
 
