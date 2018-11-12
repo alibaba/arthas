@@ -4,6 +4,7 @@ import com.sun.tools.attach.VirtualMachine;
 import com.sun.tools.attach.VirtualMachineDescriptor;
 import com.taobao.arthas.common.AnsiLog;
 import com.taobao.arthas.core.config.Configure;
+import com.taobao.arthas.core.shell.ShellServerOptions;
 import com.taobao.middleware.cli.CLI;
 import com.taobao.middleware.cli.CLIs;
 import com.taobao.middleware.cli.CommandLine;
@@ -34,14 +35,17 @@ public class Arthas {
                 .setShortName("telnet-port").setDefaultValue(DEFAULT_TELNET_PORT);
         Option httpPort = new TypedOption<Integer>().setType(Integer.class)
                 .setShortName("http-port").setDefaultValue(DEFAULT_HTTP_PORT);
+        Option sessionTimeout = new TypedOption<Integer>().setType(Integer.class)
+                        .setShortName("session-timeout").setDefaultValue("" + ShellServerOptions.DEFAULT_SESSION_TIMEOUT);
         CLI cli = CLIs.create("arthas").addOption(pid).addOption(core).addOption(agent).addOption(target)
-                .addOption(telnetPort).addOption(httpPort);
+                .addOption(telnetPort).addOption(httpPort).addOption(sessionTimeout);
         CommandLine commandLine = cli.parse(Arrays.asList(args));
 
         Configure configure = new Configure();
         configure.setJavaPid((Integer) commandLine.getOptionValue("pid"));
         configure.setArthasAgent((String) commandLine.getOptionValue("agent"));
         configure.setArthasCore((String) commandLine.getOptionValue("core"));
+        configure.setSessionTimeout((Integer)commandLine.getOptionValue("session-timeout"));
         if (commandLine.getOptionValue("target-ip") == null) {
             throw new IllegalStateException("as.sh is too old to support web console, " +
                     "please run the following command to upgrade to latest version:" +

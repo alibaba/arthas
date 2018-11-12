@@ -79,7 +79,10 @@ public class ArthasBootstrap {
         }
 
         try {
-            ShellServerOptions options = new ShellServerOptions().setInstrumentation(instrumentation).setPid(pid);
+            ShellServerOptions options = new ShellServerOptions()
+                            .setInstrumentation(instrumentation)
+                            .setPid(pid)
+                            .setSessionTimeout(configure.getSessionTimeout() * 1000);
             shellServer = new ShellServerImpl(options, this);
             BuiltinCommandPack builtinCommands = new BuiltinCommandPack();
             List<CommandResolver> resolvers = new ArrayList<CommandResolver>();
