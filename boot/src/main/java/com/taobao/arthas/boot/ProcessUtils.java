@@ -104,10 +104,18 @@ public class ProcessUtils {
 
         int currentPid = Integer.parseInt(ProcessUtils.getPid());
         for (String line : lines) {
-            int pid = new Scanner(line).nextInt();
+            String[] strings = line.trim().split("\\s+");
+            if (strings.length < 1) {
+                continue;
+            }
+            int pid = Integer.parseInt(strings[0]);
             if (pid == currentPid) {
                 continue;
             }
+            if (strings.length >= 2 && strings[1].equals("Jps")) { // skip jps
+                continue;
+            }
+
             result.put(pid, line);
         }
 
