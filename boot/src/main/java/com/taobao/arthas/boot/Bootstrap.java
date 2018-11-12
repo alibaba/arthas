@@ -49,6 +49,10 @@ public class Bootstrap {
     private String targetIp = DEFAULT_TARGET_IP;
     private int telnetPort = DEFAULT_TELNET_PORT;
     private int httpPort = DEFAULT_HTTP_PORT;
+    /**
+     * @see com.taobao.arthas.core.shell.ShellServerOptions#DEFAULT_SESSION_TIMEOUT
+     */
+    private Long sessionTimeout;
 
     private boolean verbose = false;
 
@@ -107,6 +111,12 @@ public class Bootstrap {
     @Description("The target jvm listen http port, default 8563")
     public void setHttpPort(int httpPort) {
         this.httpPort = httpPort;
+    }
+
+    @Option(longName = "session-timeout")
+    @Description("The session timeout seconds, default 3000")
+    public void setSessionTimeout(Long sessionTimeout) {
+        this.sessionTimeout = sessionTimeout;
     }
 
     @Option(longName = "arthas-home")
@@ -291,6 +301,10 @@ public class Bootstrap {
         attachArgs.add(new File(arthasHomeDir, "arthas-core.jar").getAbsolutePath());
         attachArgs.add("-agent");
         attachArgs.add(new File(arthasHomeDir, "arthas-agent.jar").getAbsolutePath());
+        if (bootStrap.getSessionTimeout() != null) {
+            attachArgs.add("-session-timeout");
+            attachArgs.add("" + bootStrap.getSessionTimeout());
+        }
 
         AnsiLog.info("Try to attach process " + pid);
         AnsiLog.debug("Start arthas-core.jar args: " + attachArgs);
@@ -410,5 +424,9 @@ public class Bootstrap {
 
     public boolean isHelp() {
         return help;
+    }
+
+    public Long getSessionTimeout() {
+        return sessionTimeout;
     }
 }
