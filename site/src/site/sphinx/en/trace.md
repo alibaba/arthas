@@ -1,7 +1,9 @@
 trace
 =====
 
-Track methods calling stack trace and print the time cost in each call.
+> Trace method calling path, and output the time cost for each node in the path.
+
+`trace` can track the calling path specified by `class-pattern` / `method-pattern`, and calculate the time cost on the whole path.
 
 ### Parameters
 
@@ -10,27 +12,31 @@ Track methods calling stack trace and print the time cost in each call.
 |*class-pattern*|pattern for the class name|
 |*method-pattern*|pattern for the method name|
 |*condition-express*|condition expression|
-|[E]|turn on regx matching while the default is wildcards matching|
-|[n:]|calling times|
+|`[E]`|enable regex match, the default behavior is wildcards match|
+|`[n:]`|execution times|
 |#cost|time cost|
 
-F.Y.I
-1. any valid OGNL expression as `"{params,returnObj}"` supported;
-2. filter by time cost as `trace *StringUtils isBlank '#cost>100'`; calling stack with only time cost higher than `100ms` will be printed.
+There's one thing worthy noting here is observation expression. The observation expression supports OGNL grammar, for example, you can come up a expression like this `"{params,returnObj}"`. All OGNL expressions are supported as long as they are legal to the grammar.
 
-Attention:
-1. `#cost` can be used in `watch/stack/trace`;
-2. using `#cost` in Arthas 3.0 instead of `$cost`.
-3. `trace` can help to locate the performance lurking issue but only `level-one` method invoking considered.
+Thanks for `advice`'s data structure, it is possible to observe from varieties of different angles. Inside `advice` parameter, all necessary information for notification can be found.
 
-Advanced:
-* [Critical fields in expression](advice-class.md)
-* [Special usage](https://github.com/alibaba/arthas/issues/71)
-* [OGNL official guide](https://commons.apache.org/proper/commons-ognl/language-guide.html)
+Pls. refer to [core parameters in expression](advice-class.md) for more details.
+* Pls. also refer to [https://github.com/alibaba/arthas/issues/71](https://github.com/alibaba/arthas/issues/71) for more advanced usage
+* OGNL official site: [https://commons.apache.org/proper/commons-ognl/language-guide.html](https://commons.apache.org/proper/commons-ognl/language-guide.html)
+
+Many times what we are interested is the exact trace result when the method call takes time over one particular period. It is possible to achieve this in Arthas, for example: `trace *StringUtils isBlank '$cost>100'` means trace result will only be output when the executing time exceeds 100ms.
+
+> Notes:
+> 1. `watch`/`stack`/`trace`, these three commands all support `$cost`.
+> 2. On version `3.0`, pls. use `#cost` instead of `$cost`.
+
+### Notice
+
+`trace` is handy to help discovering and locating the performance flaws in your system, but pls. note Arthas can only trace the first level method call each time.
 
 ### Usage
 
-A demo:
+Sample code:
 
 ```java
     public static void main(String[] args) {
@@ -67,7 +73,7 @@ A demo:
     }
 ```
 
-Tracing down method `add`:
+Trace down method `add`:
 
 ```shell
 $ trace com.alibaba.sample.petstore.web.store.module.screen.ItemList add params.length==2
@@ -81,7 +87,7 @@ Affect(class-cnt:1 , method-cnt:1) cost in 144 ms.
         `---[0ms]java.util.List:size()
 ```
 
-Filtering by time cost:
+Filter by time cost:
 
 ```shell
 $ trace com.alibaba.sample.petstore.web.store.module.screen.ItemList execute #cost>4
@@ -97,11 +103,10 @@ trace com.alibaba.sample.petstore.web.store.module.screen.ItemList execute #cost
         `---[min=0.005428ms,max=0.094064ms,total=0.105228ms,count=3] com.alibaba.citrus.turbine.Context:put()
 ```
 
-Only the calling trace of the time cost higher than `4ms` presented now.
+> Only the call path which's time cost is higher than `4ms` will be shown. This feature is handy to focus on what's needed to focus when troubleshoot.
 
-F.Y.I
-1. like JProfile and other similar commercial software, you can `trace` down the specified method calling stack with time cost in Arthas;
-2. there will be some overhead using `trace` but not much;
-3. the time cost is an instructive clue for troubleshooting, which means it's not that accurate ignoring the cost it itself causes; the deeper or more the call is, the worse accuracy the time cost will be;
-4. `[0,0,0ms,11]xxx:yyy() [throws Exception]`，the same method calling aggregated into one line here while `throws Exception` indicates there is an exception.
+* Here Arthas provides the similar functionality JProfile and other commercial software provide. Compared to these professional softwares, Arthas doesn't deduce the time cost `trace` itself takes, therefore it is not as accurate as these softwares offer. More classes and methods on the calling path, more inaccurate `trace` output is, but it is still helpful for diagnostics where the bottleneck is.
+* "[2.847106ms] com.alibaba.sample.petstore.biz.StoreManager:getAllProductItems()" means "getAllProductItem()" method from "com.alibaba.sample.petstore.biz.StoreManager" takes `2.847106` ms.
+* "[min=0.005428ms,max=0.094064ms,total=0.105228ms,count=3] com.alibaba.citrus.turbine.Context:put()" means aggregating all same method calls into one single line. The minimum time cost is `0.005428` ms, the maximum time cost is `0.094064` ms, and the total time cost for all method calls (`3` times in total) to "com.alibaba.citrus.turbine.Context:put()" is `0.105228ms`. If "throws Exception" appears in this line, it means some exceptions have been thrown from this method calls.
+* The total time cost may not equal to the sum of the time costs each sub method call takes, this is because Arthas instrumented code takes time too.
 

@@ -1,31 +1,25 @@
 thread
 ======
 
-Check the basic profile and stack trace of the threads.
+> Check the basic info and stack trace of the target thread.
 
 ### Parameters
 
 |Name|Specification|
 |---:|:---|
 |*id*|thread id in JVM|
-|[n:]|the top n busiest with stack traces|
-|[b]|locate the threads blocking others|
+|`[n:]`|the top n busiest threads with stack traces printed|
+|`[b]`|locate the thread blocking the others|
 |[i `<value>`]|specify the interval to collect data to compute CPU ratios (ms)|
 
-How to get the CPU ratios?
-
-> Within an *specified* interval, the time cost by the thread compared to the total CPU time. 
-> Take a sample (using `java.lang.management.ThreadMXBean#getThreadCpuTime`) to get the CPU time cost for all the threads and after a *specified* interval (default *100 ms*, which can be specified by `-i`), take another sample and we have the CPU time cost and the ratios naturally. 
-
-> Attention: this kind of operation will take time, to decrease the extra cost, you'd better expand the interval to like `5000 ms` for less performance overhead. 
-
-F.Y.I
-
-If you'd like to check the CPU ratios from the very start of the Java process, [show-busy-java-threads](https://github.com/oldratlee/useful-scripts/blob/master/docs/java.md#-show-busy-java-threads) can be a help. 
+> How the CPU ratios are calculated? <br/><br/>
+> CPU ratio for a given thread is the CPU time it takes divided by the total CPU time within a specified interval period. It is calculated in the following way: sample CPU times for all the thread by calling `java.lang.management.ThreadMXBean#getThreadCpuTime` first, then sleep for a period (the default value is 100ms, which can be specified by `-i`), then sample CPU times again. By this, we can get the time cost for this period for each thread, then come up with the ratio. <br/><br/>
+> Note: this operation consumes CPU time too (`getThreadCpuTime` is time-consuming), therefore it is possible to observe Arthas's thread appears in the list. To avoid this, try to increase sample interval, for example: 5000 ms.<br/><br/>
+> If you'd like to check the CPU ratios from the very beginning of the Java process, [show-busy-java-threads](https://github.com/oldratlee/useful-scripts/blob/master/docs/java.md#-show-busy-java-threads) can come to help. 
 
 ### Usage
 
-#### List the top n busiest with detailed stack trace
+#### List the top n busiest threads with detailed stack trace
 
 ```shell
 $ thread -n 3
@@ -58,7 +52,7 @@ $ thread -n 3
     at java.lang.ref.Reference$ReferenceHandler.run(Reference.java:133)
 ```
 
-#### List all info when no options provided
+#### List all threads' info when no options provided
 
 ```shell
 $ thread
@@ -82,7 +76,7 @@ ID         NAME                             GROUP                 PRIORITY   STA
 21         Thread-8                         main                  5          RUNNABLE   0          0:0        false      true
 ```
 
-#### thread <thread_id> present the specified thread profile
+#### thread id, show the running stack for the target thread
 
 ```shell
 $ thread 1
@@ -96,9 +90,9 @@ $ thread 1
     at java.util.concurrent.CountDownLatch.await(CountDownLatch.java:231)
 ```
 
-#### thread -b locate the blocking threads
+#### thread -b, locate the thread bocking the others
 
-Using `-b`, we can effectively locate the threads holding locks blocking other threads resulting in a frozen system. 
+In some occasions, we experience the whole application is stuck because there's one particular thread hold one lock that other threads are relying on. To diagnose such an issue, Arthas provides `thread -b` to find the problematic thread in one single command.
 
 ```bash
 $ thread -b
@@ -139,10 +133,10 @@ $ thread -b
     - java.util.concurrent.ThreadPoolExecutor$Worker@31a6493e
 ```
 
-Attention: only `synchronized` blocked threads can be located for now, while `java.util.concurrent.Lock` not supported yet.
+> Note: By now Arthas only supports to locate the thread blocked by `synchronzied`, while `java.util.concurrent.Lock` is not supported yet.
 
 
-#### thread -i specify the collecting interval
+#### thread -i, specify the sampling interval
 
 ```bash
 $ thread -n 3 -i 1000

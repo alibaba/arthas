@@ -1,5 +1,6 @@
 package com.taobao.arthas.core.config;
 
+import com.taobao.arthas.core.shell.ShellServerOptions;
 import com.taobao.arthas.core.util.reflect.ArthasReflectUtils;
 
 import java.lang.reflect.Field;
@@ -12,6 +13,7 @@ import static java.lang.reflect.Modifier.isStatic;
  * 配置类
  *
  * @author vlinux
+ * @author hengyunabc 2018-11-12
  */
 public class Configure {
 
@@ -21,6 +23,12 @@ public class Configure {
     private int javaPid;
     private String arthasCore;
     private String arthasAgent;
+
+    /**
+     * session timeout seconds
+     * @see com.taobao.arthas.core.shell.ShellServerOptions#DEFAULT_SESSION_TIMEOUT
+     */
+    private long sessionTimeout = ShellServerOptions.DEFAULT_SESSION_TIMEOUT/1000;
 
     public String getIp() {
         return ip;
@@ -68,6 +76,14 @@ public class Configure {
 
     public void setArthasCore(String arthasCore) {
         this.arthasCore = arthasCore;
+    }
+
+    public long getSessionTimeout() {
+        return sessionTimeout;
+    }
+
+    public void setSessionTimeout(long sessionTimeout) {
+        this.sessionTimeout = sessionTimeout;
     }
 
     // 对象的编码解码器

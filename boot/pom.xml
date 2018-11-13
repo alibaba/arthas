@@ -1,17 +1,31 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<?xml version="1.0"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
     <parent>
-        <artifactId>arthas-all</artifactId>
         <groupId>com.taobao.arthas</groupId>
+        <artifactId>arthas-all</artifactId>
         <version>3.0.5-SNAPSHOT</version>
     </parent>
-    <modelVersion>4.0.0</modelVersion>
+    <artifactId>arthas-boot</artifactId>
+    <name>arthas-boot</name>
 
-    <artifactId>arthas-client</artifactId>
-    <name>arthas-client</name>
+    <dependencies>
+        <dependency>
+            <groupId>com.taobao.arthas</groupId>
+            <artifactId>arthas-common</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.alibaba.middleware</groupId>
+            <artifactId>cli</artifactId>
+        </dependency>
+
+    </dependencies>
 
     <build>
-        <finalName>arthas-client</finalName>
+        <finalName>arthas-boot</finalName>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -38,7 +52,7 @@
                             </descriptorRefs>
                             <archive>
                                 <manifest>
-                                    <mainClass>com.taobao.arthas.client.TelnetConsole</mainClass>
+                                    <mainClass>com.taobao.arthas.boot.Bootstrap</mainClass>
                                 </manifest>
                                 <manifestEntries>
                                     <Created-By>core engine team, middleware group, alibaba inc.</Created-By>
@@ -50,21 +64,5 @@
             </plugin>
         </plugins>
     </build>
-
-    <dependencies>
-        <dependency>
-            <groupId>com.taobao.arthas</groupId>
-            <artifactId>arthas-common</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>com.alibaba.middleware</groupId>
-            <artifactId>cli</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>jline</groupId>
-            <artifactId>jline</artifactId>
-        </dependency>
-    </dependencies>
 
 </project>
