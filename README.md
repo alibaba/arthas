@@ -21,7 +21,7 @@ Often times, the production system network is inaccessible from local developmen
 
 Developers could always try to reproduce the same issue on the test/staging environment. However, this is tricky as some issues cannot be be reproduced easily on a different environment, or even disappear once restarted. 
 
-And if you're thinking of adding some logs to your code to help trouble-shoot the issue, you will have to go through the following lifecycle; test, staging, and then to production. Time is money! This approach is inefficient! Besides, the issue may not be reproducible once the JVM is restarted, as described above.
+And if you're thinking of adding some logs to your code to help trouble-shoot the issue, you will have to go through the following life-cycle; test, staging, and then to production. Time is money! This approach is inefficient! Besides, the issue may not be reproducible once the JVM is restarted, as described above.
 
 Arthas was built to solve these issues. A developer can trouble-shoot your production issues on-the-fly. No JVM restart, no additional code changes. Arthas works as an observer, which will never suspend your existing threads.
 
