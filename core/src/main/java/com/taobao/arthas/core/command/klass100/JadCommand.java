@@ -93,8 +93,12 @@ public class JadCommand extends AnnotatedCommand {
                 processNoMatch(process);
             } else if (matchedClasses.size() > 1) {
                 processMatches(process, matchedClasses);
-            } else {
-                Set<Class<?>> withInnerClasses = SearchUtils.searchClassOnly(inst,  classPattern + "(?!.*\\$\\$Lambda\\$).*", true, code);
+            } else { // matchedClasses size is 1
+                // find inner classes. TODO slow
+                Set<Class<?>> withInnerClasses = SearchUtils.searchClassOnly(inst,  matchedClasses.iterator().next().getName() + "(?!.*\\$\\$Lambda\\$).*", true, code);
+                if(withInnerClasses.isEmpty()) {
+                    withInnerClasses = matchedClasses;
+                }
                 processExactMatch(process, affect, inst, matchedClasses, withInnerClasses);
             }
         } finally {
@@ -105,11 +109,12 @@ public class JadCommand extends AnnotatedCommand {
 
     private void processExactMatch(CommandProcess process, RowAffect affect, Instrumentation inst, Set<Class<?>> matchedClasses, Set<Class<?>> withInnerClasses) {
         Class<?> c = matchedClasses.iterator().next();
-        matchedClasses = withInnerClasses;
+        Set<Class<?>> allClasses = new HashSet<Class<?>>(withInnerClasses);
+        allClasses.add(c);
 
         try {
-            ClassDumpTransformer transformer = new ClassDumpTransformer(matchedClasses);
-            Enhancer.enhance(inst, transformer, matchedClasses);
+            ClassDumpTransformer transformer = new ClassDumpTransformer(allClasses);
+            Enhancer.enhance(inst, transformer, allClasses);
             Map<Class<?>, File> classFiles = transformer.getDumpResult();
             File classFile = classFiles.get(c);
 
