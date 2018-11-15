@@ -6,7 +6,6 @@ import com.taobao.arthas.core.shell.command.AnnotatedCommand;
 import com.taobao.arthas.core.shell.command.CommandProcess;
 import com.taobao.arthas.core.util.ClassUtils;
 import com.taobao.arthas.core.util.Decompiler;
-import com.taobao.arthas.core.util.FileUtils;
 import com.taobao.arthas.core.util.LogUtil;
 import com.taobao.arthas.core.util.SearchUtils;
 import com.taobao.arthas.core.util.TypeRenderUtils;
@@ -24,13 +23,9 @@ import com.taobao.text.ui.Element;
 import com.taobao.text.ui.LabelElement;
 import com.taobao.text.ui.TableElement;
 import com.taobao.text.util.RenderUtil;
-import org.benf.cfr.reader.Main;
-import org.objectweb.asm.Type;
 
 import java.io.File;
-import java.io.IOException;
 import java.lang.instrument.Instrumentation;
-import java.nio.charset.Charset;
 import java.util.*;
 import java.util.regex.Pattern;
 
@@ -38,6 +33,7 @@ import static com.taobao.text.ui.Element.label;
 
 /**
  * @author diecui1202 on 15/11/24.
+ * @author hengyunabc 2018-11-16
  */
 @Name("jad")
 @Summary("Decompile class")
@@ -49,9 +45,6 @@ import static com.taobao.text.ui.Element.label;
 public class JadCommand extends AnnotatedCommand {
     private static final Logger logger = LogUtil.getArthasLogger();
     private static Pattern pattern = Pattern.compile("(?m)^/\\*\\s*\\*/\\s*$" + System.getProperty("line.separator"));
-    private static final String OUTPUTOPTION = "--outputdir";
-    private static final String COMMENTS = "--comments";
-    private static final String DecompilePath = new File(LogUtil.LOGGER_FILE).getParent() + File.separator + "decompile";
 
     private String classPattern;
     private String methodName;
@@ -95,8 +88,8 @@ public class JadCommand extends AnnotatedCommand {
             } else if (matchedClasses.size() > 1) {
                 processMatches(process, matchedClasses);
             } else { // matchedClasses size is 1
-                // find inner classes. TODO slow
-                Set<Class<?>> withInnerClasses = SearchUtils.searchClassOnly(inst,  matchedClasses.iterator().next().getName() + "(?!.*\\$\\$Lambda\\$).*", true, code);
+                // find inner classes.
+                Set<Class<?>> withInnerClasses = SearchUtils.searchClassOnly(inst,  matchedClasses.iterator().next().getName() + "$*", false, code);
                 if(withInnerClasses.isEmpty()) {
                     withInnerClasses = matchedClasses;
                 }
@@ -119,8 +112,7 @@ public class JadCommand extends AnnotatedCommand {
             Map<Class<?>, File> classFiles = transformer.getDumpResult();
             File classFile = classFiles.get(c);
 
-            String source;
-            source = Decompiler.decompile(classFile.getAbsolutePath(), methodName);
+            String source = Decompiler.decompile(classFile.getAbsolutePath(), methodName);
             if (source != null) {
                 source = pattern.matcher(source).replaceAll("");
             } else {
@@ -164,21 +156,4 @@ public class JadCommand extends AnnotatedCommand {
         process.write("No class found for: " + classPattern + "\n");
     }
 
-    public static void main(String[] args) {
-        String[] names = {
-                "com.taobao.container.web.arthas.mvc.AppInfoController",
-                "com.taobao.container.web.arthas.mvc.AppInfoController$1$$Lambda$19/381016128",
-                "com.taobao.container.web.arthas.mvc.AppInfoController$$Lambda$16/17741163",
-                "com.taobao.container.web.arthas.mvc.AppInfoController$1",
-                "com.taobao.container.web.arthas.mvc.AppInfoController$123",
-                "com.taobao.container.web.arthas.mvc.AppInfoController$A",
-                "com.taobao.container.web.arthas.mvc.AppInfoController$ABC"
-        };
-
-        String pattern = "com.taobao.container.web.arthas.mvc.AppInfoController" + "(?!.*\\$\\$Lambda\\$).*";
-        for(String name : names) {
-            System.out.println(name + "    " + Pattern.matches(pattern, name));
-        }
-
-    }
 }
