@@ -5,6 +5,7 @@ import com.taobao.arthas.core.command.Constants;
 import com.taobao.arthas.core.shell.command.AnnotatedCommand;
 import com.taobao.arthas.core.shell.command.CommandProcess;
 import com.taobao.arthas.core.util.ClassUtils;
+import com.taobao.arthas.core.util.Decompiler;
 import com.taobao.arthas.core.util.FileUtils;
 import com.taobao.arthas.core.util.LogUtil;
 import com.taobao.arthas.core.util.SearchUtils;
@@ -119,7 +120,7 @@ public class JadCommand extends AnnotatedCommand {
             File classFile = classFiles.get(c);
 
             String source;
-            source = decompileWithCFR(classFile.getAbsolutePath(), c, methodName);
+            source = Decompiler.decompile(classFile.getAbsolutePath(), methodName);
             if (source != null) {
                 source = pattern.matcher(source).replaceAll("");
             } else {
@@ -161,33 +162,6 @@ public class JadCommand extends AnnotatedCommand {
 
     private void processNoMatch(CommandProcess process) {
         process.write("No class found for: " + classPattern + "\n");
-    }
-
-    private String decompileWithCFR(String classPath, Class<?> clazz, String methodName) {
-        List<String> options = new ArrayList<String>();
-        options.add(classPath);
-//        options.add(clazz.getName());
-        if (methodName != null) {
-            options.add(methodName);
-        }
-        options.add(OUTPUTOPTION);
-        options.add(DecompilePath);
-        options.add(COMMENTS);
-        options.add("false");
-        String args[] = new String[options.size()];
-        options.toArray(args);
-        Main.main(args);
-        String outputFilePath = DecompilePath + File.separator + Type.getInternalName(clazz) + ".java";
-        File outputFile = new File(outputFilePath);
-        if (outputFile.exists()) {
-            try {
-                return FileUtils.readFileToString(outputFile, Charset.defaultCharset());
-            } catch (IOException e) {
-                logger.error(null, "error read decompile result in: " + outputFilePath, e);
-            }
-        }
-
-        return null;
     }
 
     public static void main(String[] args) {
