@@ -4,7 +4,6 @@ import com.sun.tools.attach.VirtualMachine;
 import com.sun.tools.attach.VirtualMachineDescriptor;
 import com.taobao.arthas.common.AnsiLog;
 import com.taobao.arthas.core.config.Configure;
-import com.taobao.arthas.core.shell.ShellServerOptions;
 import com.taobao.middleware.cli.CLI;
 import com.taobao.middleware.cli.CLIs;
 import com.taobao.middleware.cli.CommandLine;
@@ -36,7 +35,7 @@ public class Arthas {
         Option httpPort = new TypedOption<Integer>().setType(Integer.class)
                 .setShortName("http-port").setDefaultValue(DEFAULT_HTTP_PORT);
         Option sessionTimeout = new TypedOption<Integer>().setType(Integer.class)
-                        .setShortName("session-timeout").setDefaultValue("" + ShellServerOptions.DEFAULT_SESSION_TIMEOUT);
+                        .setShortName("session-timeout").setDefaultValue("" + Configure.DEFAULT_SESSION_TIMEOUT_SECONDS);
         CLI cli = CLIs.create("arthas").addOption(pid).addOption(core).addOption(agent).addOption(target)
                 .addOption(telnetPort).addOption(httpPort).addOption(sessionTimeout);
         CommandLine commandLine = cli.parse(Arrays.asList(args));

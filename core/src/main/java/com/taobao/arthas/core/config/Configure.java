@@ -16,7 +16,7 @@ import static java.lang.reflect.Modifier.isStatic;
  * @author hengyunabc 2018-11-12
  */
 public class Configure {
-
+    public static final long DEFAULT_SESSION_TIMEOUT_SECONDS = ShellServerOptions.DEFAULT_SESSION_TIMEOUT/1000;
     private String ip;
     private int telnetPort;
     private int httpPort;
@@ -26,9 +26,8 @@ public class Configure {
 
     /**
      * session timeout seconds
-     * @see com.taobao.arthas.core.shell.ShellServerOptions#DEFAULT_SESSION_TIMEOUT
      */
-    private long sessionTimeout = ShellServerOptions.DEFAULT_SESSION_TIMEOUT/1000;
+    private long sessionTimeout = DEFAULT_SESSION_TIMEOUT_SECONDS;
 
     public String getIp() {
         return ip;
