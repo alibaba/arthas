@@ -37,6 +37,7 @@ Arthas was built to solve these issues. A developer can trouble-shoot your produ
 * Monitor system metrics, thread states and cpu usage, gc statistics, and etc.
 * Supports command line interactive mode, with auto-complete feature enabled.
 * Supports telnet and websocket, which enables both local and remote diagnostics with command line and browsers.
+* Supports JDK 6+
 
 ### Quick start
 
