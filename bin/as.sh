@@ -186,6 +186,12 @@ reset_for_env()
     # if is alibaba opts, use alibaba ops's default JAVA_HOME
     [ -z "${JAVA_HOME}" ] && [ -d /opt/taobao/java ] && JAVA_HOME=/opt/taobao/java
 
+    if [ -z "${JAVA_HOME}" ]; then
+        # try to find JAVA_HOME from java command
+        local JAVA_COMMAND_PATH=$( rreadlink $(type -p java) )
+        JAVA_HOME=$(echo "$JAVA_COMMAND_PATH" | sed -n 's/\/bin\/java$//p')
+    fi
+
     # iterater throught candidates to find a proper JAVA_HOME at least contains tools.jar which is required by arthas.
     if [ ! -d "${JAVA_HOME}" ]; then
         JAVA_HOME_CANDIDATES=($(ps aux | grep java | grep -v 'grep java' | awk '{print $11}' | sed -n 's/\/bin\/java$//p'))
