@@ -68,7 +68,7 @@ If you fail to boot Arthas with the provided batch file, you could try to assemb
 3. Use telnet to connect once attaching to the target JVM (in step 2) succeeds
 
     ```bash
-    telnet localhost 3658
+    telnet 127.0.0.1 3658
     ```
 
 ## Offline Help Documentation

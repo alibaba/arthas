@@ -70,7 +70,7 @@ as.bat <pid>
 3. attach成功之后，使用telnet连接
 
     ```bash
-    telnet localhost 3658
+    telnet 127.0.0.1 3658
     ```
 
 
