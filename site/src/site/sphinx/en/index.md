@@ -34,8 +34,6 @@ Arthas is built to solve these issues. A developer can troubleshoot production i
 Contents
 --------
 
-English version has just been finished. If you would like to make it better, please check [here](https://github.com/alibaba/arthas/issues/51) and submit your pull request.
-
 * [Installation](install-detail.md)
 * [Quick start](quick-start.md)
 * [Advanced usage](advanced-use.md)

@@ -65,8 +65,6 @@ Start Arthas:
 
 ### Documentation
 
-English version is on the way, if you would like to contribute, please leave a message [here](https://github.com/alibaba/arthas/issues/51)
-
 * [User manual](https://alibaba.github.io/arthas/en)
 * [Installation](https://alibaba.github.io/arthas/en/install-detail.html)
 * [Quick start](https://alibaba.github.io/arthas/en/quick-start.html)

@@ -55,8 +55,6 @@ curl -L https://alibaba.github.io/arthas/install.sh | sh
 
 ### 文档
 
-社区正在进行英文版本的翻译工作，如果您有兴趣请在 [这里](https://github.com/alibaba/arthas/issues/51)留言。
-
 * [用户文档](https://alibaba.github.io/arthas/)
 * [安装](https://alibaba.github.io/arthas/install-detail.html)
 * [快速入门](https://alibaba.github.io/arthas/quick-start.html)
