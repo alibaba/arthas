@@ -8,8 +8,12 @@
 "\C-b": backward-word
 "\e[D": backward-char
 "\e[C": forward-char
-"\e[B": next-history
-"\e[A": previous-history
+
+# "\e[B": next-history
+# "\e[A": previous-history
+"\e[A": history-search-backward
+"\e[B": history-search-forward
+
 "\C-h": backward-delete-char
 "\C-?": backward-delete-char
 "\C-u": undo
