@@ -222,13 +222,21 @@ public class Bootstrap {
         }
 
         if (telnetPortPid > 0 && pid != telnetPortPid) {
-            AnsiLog.warn("Target process {} is not the process using port {}, you will connect to an unexpected process.",
+            AnsiLog.error("Target process {} is not the process using port {}, you will connect to an unexpected process.",
                             pid, bootStrap.getTelnetPort());
+            AnsiLog.error("If you still want to attach target process {}, Try to set a different telnet port by using --telnet-port argument.",
+                            pid);
+            AnsiLog.error("Or try to shutdown the process {} using the telnet port first.", telnetPortPid);
+            System.exit(1);
         }
 
         if (httpPortPid > 0 && pid != httpPortPid) {
-            AnsiLog.warn("Target process {} is not the process using port {}, you will connect to an unexpected process.",
+            AnsiLog.error("Target process {} is not the process using port {}, you will connect to an unexpected process.",
                             pid, bootStrap.getHttpPort());
+            AnsiLog.error("If you still want to attach target process {}, Try to set a different http port by using --http-port argument.",
+                            pid);
+            AnsiLog.error("Or try to shutdown the process {} using the http port first.", httpPortPid);
+            System.exit(1);
         }
 
         // find arthas home
@@ -285,32 +293,36 @@ public class Bootstrap {
 
         AnsiLog.info("arthas home: " + arthasHomeDir);
 
-        // start arthas-core.jar
-        List<String> attachArgs = new ArrayList<String>();
-        attachArgs.add("-jar");
-        attachArgs.add(new File(arthasHomeDir, "arthas-core.jar").getAbsolutePath());
-        attachArgs.add("-pid");
-        attachArgs.add("" + pid);
-        attachArgs.add("-target-ip");
-        attachArgs.add(bootStrap.getTargetIp());
-        attachArgs.add("-telnet-port");
-        attachArgs.add("" + bootStrap.getTelnetPort());
-        attachArgs.add("-http-port");
-        attachArgs.add("" + bootStrap.getHttpPort());
-        attachArgs.add("-core");
-        attachArgs.add(new File(arthasHomeDir, "arthas-core.jar").getAbsolutePath());
-        attachArgs.add("-agent");
-        attachArgs.add(new File(arthasHomeDir, "arthas-agent.jar").getAbsolutePath());
-        if (bootStrap.getSessionTimeout() != null) {
-            attachArgs.add("-session-timeout");
-            attachArgs.add("" + bootStrap.getSessionTimeout());
+        if (telnetPortPid > 0 && pid == telnetPortPid) {
+            AnsiLog.info("The target process already listen port {}, skip attach.", bootStrap.getTelnetPort());
+        } else {
+            // start arthas-core.jar
+            List<String> attachArgs = new ArrayList<String>();
+            attachArgs.add("-jar");
+            attachArgs.add(new File(arthasHomeDir, "arthas-core.jar").getAbsolutePath());
+            attachArgs.add("-pid");
+            attachArgs.add("" + pid);
+            attachArgs.add("-target-ip");
+            attachArgs.add(bootStrap.getTargetIp());
+            attachArgs.add("-telnet-port");
+            attachArgs.add("" + bootStrap.getTelnetPort());
+            attachArgs.add("-http-port");
+            attachArgs.add("" + bootStrap.getHttpPort());
+            attachArgs.add("-core");
+            attachArgs.add(new File(arthasHomeDir, "arthas-core.jar").getAbsolutePath());
+            attachArgs.add("-agent");
+            attachArgs.add(new File(arthasHomeDir, "arthas-agent.jar").getAbsolutePath());
+            if (bootStrap.getSessionTimeout() != null) {
+                attachArgs.add("-session-timeout");
+                attachArgs.add("" + bootStrap.getSessionTimeout());
+            }
+
+            AnsiLog.info("Try to attach process " + pid);
+            AnsiLog.debug("Start arthas-core.jar args: " + attachArgs);
+            ProcessUtils.startArthasCore(pid, attachArgs);
+
+            AnsiLog.info("Attach process {} success.", pid);
         }
-
-        AnsiLog.info("Try to attach process " + pid);
-        AnsiLog.debug("Start arthas-core.jar args: " + attachArgs);
-        ProcessUtils.startArthasCore(pid, attachArgs);
-
-        AnsiLog.info("Attach process {} success.", pid);
 
         if (bootStrap.isAttachOnly()) {
             System.exit(0);
@@ -337,6 +349,7 @@ public class Bootstrap {
         telnetArgs.add(bootStrap.getTargetIp());
         telnetArgs.add("" + bootStrap.getTelnetPort());
 
+        AnsiLog.info("arthas-client connect {} {}", bootStrap.getTargetIp(), bootStrap.getTelnetPort());
         AnsiLog.debug("Start arthas-client.jar args: " + telnetArgs);
         mainMethod.invoke(null, new Object[] { telnetArgs.toArray(new String[0]) });
     }
