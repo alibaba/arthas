@@ -25,7 +25,7 @@ import com.taobao.text.util.RenderUtil;
  */
 @Name("sysenv")
 @Summary("Display the system env.")
-@Description(Constants.EXAMPLE + "sysenv\n" + "sysenv USER\n" + Constants.WIKI + Constants.WIKI_HOME + "sysenv")
+@Description(Constants.EXAMPLE + "  sysenv\n" + "  sysenv USER\n" + Constants.WIKI + Constants.WIKI_HOME + "sysenv")
 public class SystemEnvCommand extends AnnotatedCommand {
 
     private String envName;
