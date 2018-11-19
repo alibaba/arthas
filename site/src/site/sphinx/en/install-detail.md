@@ -82,7 +82,7 @@ Download the latest `doc.zip`.
 * On Linux/Unix/Mac, delete the files with the following command:
 
     ```bash
-    rm -rf ~/.arthas/ ~/.arthas_history
+    rm -rf ~/.arthas/
     ```
 
 * On Windows, simply delete the zip file and unzipped files. 

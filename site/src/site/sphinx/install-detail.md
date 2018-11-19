@@ -87,7 +87,7 @@ as.bat <pid>
 
     删除下面文件：
     ```bash
-    rm -rf ~/.arthas/ ~/.arthas_history
+    rm -rf ~/.arthas/
     ```
 
 * Windows平台直接删除zip包和解压的文件
