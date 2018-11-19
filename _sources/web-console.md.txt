@@ -1,7 +1,7 @@
 Web Console
 ===
 
-Arthas目前支持Web Console，用户在attach成功之后，可以直接访问：[http://localhost:8563/](http://localhost:8563/)。
+Arthas目前支持Web Console，用户在attach成功之后，可以直接访问：[http://127.0.0.1:8563/](http://127.0.0.1:8563/)。
 
 可以填入IP，远程连接其它机器上的arthas。
 

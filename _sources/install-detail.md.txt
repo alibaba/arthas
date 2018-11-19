@@ -19,10 +19,10 @@ curl -L https://alibaba.github.io/arthas/install.sh | sh
 
 ## Windows
 
-最新版本：[![Arthas](https://img.shields.io/maven-central/v/com.taobao.arthas/arthas-packaging.svg?style=flat-square "Arthas")](http://search.maven.org/classic/#search%7Cga%7C1%7Cg%3A%22com.taobao.arthas%22%20AND%20a%3A%22arthas-packaging%22)
+最新版本，点击下载：[![Arthas](https://img.shields.io/maven-central/v/com.taobao.arthas/arthas-packaging.svg?style=flat-square "Arthas")](http://repository.sonatype.org/service/local/artifact/maven/redirect?r=central-proxy&g=com.taobao.arthas&a=arthas-packaging&e=zip&c=bin&v=LATEST)
 
 
-在`Download`栏下载最新的 `bin.zip` 包，解压后在bin目录有 `as.bat`。此脚本暂时只接受一个参数 pid，即只能诊断本机上的 Java 进程。（欢迎精通bat脚本的开发者改进）
+下载解压后在bin目录有 `as.bat`。此脚本暂时只接受一个参数 pid，即只能诊断本机上的 Java 进程。（欢迎精通bat脚本的开发者改进）
 
 ```
 as.bat <pid>
@@ -70,15 +70,13 @@ as.bat <pid>
 3. attach成功之后，使用telnet连接
 
     ```bash
-    telnet localhost 3658
+    telnet 127.0.0.1 3658
     ```
 
 
 ## 离线帮助文档
 
-最新版本：[![Arthas](https://img.shields.io/maven-central/v/com.taobao.arthas/arthas-packaging.svg?style=flat-square "Arthas")](http://search.maven.org/classic/#search%7Cga%7C1%7Cg%3A%22com.taobao.arthas%22%20AND%20a%3A%22arthas-packaging%22)
-
-在`Download`栏下载最新的 `doc.zip` 包，
+最新版本，点击下载：[![Arthas](https://img.shields.io/maven-central/v/com.taobao.arthas/arthas-packaging.svg?style=flat-square "Arthas")](http://repository.sonatype.org/service/local/artifact/maven/redirect?r=central-proxy&g=com.taobao.arthas&a=arthas-packaging&e=zip&c=doc&v=LATEST)
 
 
 ## 卸载
@@ -87,7 +85,7 @@ as.bat <pid>
 
     删除下面文件：
     ```bash
-    rm -rf ~/.arthas/ ~/.arthas_history
+    rm -rf ~/.arthas/
     ```
 
 * Windows平台直接删除zip包和解压的文件
