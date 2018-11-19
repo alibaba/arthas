@@ -57,7 +57,7 @@ Start Arthas:
 
 #### Windows
 
-1. Click [![Arthas](https://img.shields.io/maven-central/v/com.taobao.arthas/arthas-packaging.svg "Arthas")](http://search.maven.org/classic/#search%7Cga%7C1%7Cg%3A%22com.taobao.arthas%22%20AND%20a%3A%22arthas-packaging%22) to download the latest binary releases of `bin.zip`.
+1. Click [![Arthas](https://img.shields.io/maven-central/v/com.taobao.arthas/arthas-packaging.svg "Arthas")](http://repository.sonatype.org/service/local/artifact/maven/redirect?r=central-proxy&g=com.taobao.arthas&a=arthas-packaging&e=zip&c=bin&v=LATEST) to download the latest binary releases of `bin.zip`.
 2. Unzip the file.
 3. Go to the bin directory
 4. Run the following command `as.bat $PID`

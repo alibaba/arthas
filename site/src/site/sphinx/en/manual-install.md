@@ -3,7 +3,7 @@ Manually Install Arthas
 
 1. Download the latest version
 
-    **Latest version**: [![Arthas](https://img.shields.io/maven-central/v/com.taobao.arthas/arthas-packaging.svg?style=flat-square "Arthas")](http://search.maven.org/classic/#search%7Cga%7C1%7Cg%3A%22com.taobao.arthas%22%20AND%20a%3A%22arthas-packaging%22)
+    **Latest version, Click To Download**: [![Arthas](https://img.shields.io/maven-central/v/com.taobao.arthas/arthas-packaging.svg?style=flat-square "Arthas")](http://repository.sonatype.org/service/local/artifact/maven/redirect?r=central-proxy&g=com.taobao.arthas&a=arthas-packaging&e=zip&c=bin&v=LATEST)
 
     If the download speed is slow, try to use [Ali cloud mirror repository](https://maven.aliyun.com/), for example, to download version `3.x.x` (you can replace `3.x.x` in the example URL if you want to download other version), the download URL is: https://maven.aliyun.com/repository/public/com/taobao/arthas/arthas-packaging/3.x.x/arthas-packaging-3.x.x-bin.zip
 
