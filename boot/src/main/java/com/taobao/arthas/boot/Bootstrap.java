@@ -50,7 +50,7 @@ public class Bootstrap {
     private int telnetPort = DEFAULT_TELNET_PORT;
     private int httpPort = DEFAULT_HTTP_PORT;
     /**
-     * @see com.taobao.arthas.core.shell.ShellServerOptions#DEFAULT_SESSION_TIMEOUT
+     * @see com.taobao.arthas.core.config.Configure#DEFAULT_SESSION_TIMEOUT_SECONDS
      */
     private Long sessionTimeout;
 
