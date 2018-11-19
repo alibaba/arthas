@@ -36,7 +36,7 @@ import com.taobao.middleware.cli.annotations.Summary;
 @Name("arthas-boot")
 @Summary("Bootstrap Arthas")
 @Description("EXAMPLES:\n" + "  java -jar arthas-boot.jar <pid>\n"
-                + "  java -jar arthas-boot.jar --target-ip 0.0.0.0 --telnet-port 9999' \n"
+                + "  java -jar arthas-boot.jar --target-ip 0.0.0.0 --telnet-port 9999 \n"
                 + "  java -jar arthas-boot.jar -f batch.as 127.0.0.1\n")
 public class Bootstrap {
     private static final int DEFAULT_TELNET_PORT = 3658;
@@ -132,7 +132,7 @@ public class Bootstrap {
     }
 
     @Option(longName = "repo-mirror")
-    @Description("Use special maven repository mirror")
+    @Description("Use special maven repository mirror, value is center/aliyun or http repo url.")
     public void setRepoMirror(String repoMirror) {
         this.repoMirror = repoMirror;
     }
