@@ -186,6 +186,11 @@ reset_for_env()
     # if is alibaba opts, use alibaba ops's default JAVA_HOME
     [ -z "${JAVA_HOME}" ] && [ -d /opt/taobao/java ] && JAVA_HOME=/opt/taobao/java
 
+    if [[ (-z "${JAVA_HOME}") && ( -e "/usr/libexec/java_home") ]]; then
+        # for mac
+        JAVA_HOME=`/usr/libexec/java_home`
+    fi
+
     if [ -z "${JAVA_HOME}" ]; then
         # try to find JAVA_HOME from java command
         local JAVA_COMMAND_PATH=$( rreadlink $(type -p java) )
