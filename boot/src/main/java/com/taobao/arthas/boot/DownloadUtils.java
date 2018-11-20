@@ -5,8 +5,12 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.net.URLConnection;
+import java.text.DecimalFormat;
+import java.util.List;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -28,6 +32,8 @@ public class DownloadUtils {
     private static final String MAVEN_METADATA_URL = "${REPO}/com/taobao/arthas/arthas-packaging/maven-metadata.xml";
     private static final String REMOTE_DOWNLOAD_URL = "${REPO}/com/taobao/arthas/arthas-packaging/${VERSION}/arthas-packaging-${VERSION}-bin.zip";
 
+    private static final int CONNECTION_TIMEOUT = 3000;
+
     /**
      * Read release version from maven-metadata.xml
      *
@@ -37,10 +43,15 @@ public class DownloadUtils {
      * @throws SAXException
      * @throws IOException
      */
-    public static String readMavenReleaseVersion(String mavenMetaDataUrl)
-                    throws ParserConfigurationException, SAXException, IOException {
-        InputStream inputStream = new URL(mavenMetaDataUrl).openStream();
+    public static String readMavenReleaseVersion(String mavenMetaDataUrl) {
+        InputStream inputStream = null;
         try {
+            URLConnection connection = new URL(mavenMetaDataUrl).openConnection();
+            if (connection instanceof HttpURLConnection) {
+                ((HttpURLConnection) connection).setConnectTimeout(CONNECTION_TIMEOUT);
+            }
+            inputStream = connection.getInputStream();
+
             DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
             DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
             Document document = dBuilder.parse(inputStream);
@@ -48,13 +59,21 @@ public class DownloadUtils {
             NodeList nodeList = document.getDocumentElement().getElementsByTagName("release");
 
             return nodeList.item(0).getTextContent();
+        } catch (Throwable t) {
+            AnsiLog.debug("Can not read release version from: " + mavenMetaDataUrl);
+            AnsiLog.debug(t);
         } finally {
             IOUtils.close(inputStream);
         }
+        return null;
     }
 
-    public static void downArthasPackaging(String repoMirror, boolean https, String savePath)
-                    throws ParserConfigurationException, SAXException, IOException {
+    public static String getLastestVersion(String repoMirror, boolean https) {
+        String repoUrl = getRepoUrl(repoMirror, https);
+        return readMavenReleaseVersion(MAVEN_METADATA_URL.replace("${REPO}", repoUrl));
+    }
+
+    public static String getRepoUrl(String repoMirror, boolean https) {
         repoMirror = repoMirror.trim();
         String repoUrl = "";
         if (repoMirror.equals("center")) {
@@ -71,8 +90,12 @@ public class DownloadUtils {
         if (https && repoUrl.startsWith("http")) {
             repoUrl = "https" + repoUrl.substring("http".length(), repoUrl.length());
         }
+        return repoUrl;
+    }
 
-        String arthasVersion = readMavenReleaseVersion(MAVEN_METADATA_URL.replace("${REPO}", repoUrl));
+    public static void downArthasPackaging(String repoMirror, boolean https, String arthasVersion, String savePath)
+                    throws ParserConfigurationException, SAXException, IOException {
+        String repoUrl = getRepoUrl(repoMirror, https);
 
         File unzipDir = new File(savePath, arthasVersion + File.separator + "arthas");
 
@@ -80,28 +103,78 @@ public class DownloadUtils {
 
         String remoteDownloadUrl = REMOTE_DOWNLOAD_URL.replace("${REPO}", repoUrl).replace("${VERSION}", arthasVersion);
         AnsiLog.info("Start download arthas from remote server: " + remoteDownloadUrl);
-        saveUrl(tempFile.getAbsolutePath(), remoteDownloadUrl);
+        saveUrl(tempFile.getAbsolutePath(), remoteDownloadUrl, true);
 
         IOUtils.unzip(tempFile.getAbsolutePath(), unzipDir.getAbsolutePath());
     }
 
-    public static void saveUrl(final String filename, final String urlString)
+    public static void saveUrl(final String filename, final String urlString, boolean printProgress)
                     throws MalformedURLException, IOException {
         BufferedInputStream in = null;
         FileOutputStream fout = null;
         try {
-            in = new BufferedInputStream(new URL(urlString).openStream());
+            URLConnection connection = new URL(urlString).openConnection();
+            if (connection instanceof HttpURLConnection) {
+                ((HttpURLConnection) connection).setConnectTimeout(CONNECTION_TIMEOUT);
+            }
+            in = new BufferedInputStream(connection.getInputStream());
+            List<String> values = connection.getHeaderFields().get("Content-Length");
+            int fileSize = 0;
+            if (values != null && !values.isEmpty()) {
+                String contentLength = (String) values.get(0);
+                if (contentLength != null) {
+                    // parse the length into an integer...
+                    fileSize = Integer.parseInt(contentLength);
+                }
+            }
+
             fout = new FileOutputStream(filename);
 
-            final byte data[] = new byte[1024];
+            final byte data[] = new byte[1024 * 1024];
+            int totalCount = 0;
             int count;
-            while ((count = in.read(data, 0, 1024)) != -1) {
+            long lastPrintTime = System.currentTimeMillis();
+            while ((count = in.read(data, 0, 1024 * 1024)) != -1) {
+                totalCount += count;
+                long now = System.currentTimeMillis();
+                if (now - lastPrintTime > 3000) {
+                    AnsiLog.info("File size: {}, Downloaded size: {}", formatFileSize(fileSize),
+                                    formatFileSize(totalCount));
+                    lastPrintTime = now;
+                }
+
                 fout.write(data, 0, count);
             }
         } finally {
             IOUtils.close(in);
             IOUtils.close(fout);
         }
+    }
+
+    private static String formatFileSize(long size) {
+        String hrSize = null;
+
+        double b = size;
+        double k = size / 1024.0;
+        double m = ((size / 1024.0) / 1024.0);
+        double g = (((size / 1024.0) / 1024.0) / 1024.0);
+        double t = ((((size / 1024.0) / 1024.0) / 1024.0) / 1024.0);
+
+        DecimalFormat dec = new DecimalFormat("0.00");
+
+        if (t > 1) {
+            hrSize = dec.format(t).concat(" TB");
+        } else if (g > 1) {
+            hrSize = dec.format(g).concat(" GB");
+        } else if (m > 1) {
+            hrSize = dec.format(m).concat(" MB");
+        } else if (k > 1) {
+            hrSize = dec.format(k).concat(" KB");
+        } else {
+            hrSize = dec.format(b).concat(" Bytes");
+        }
+
+        return hrSize;
     }
 
 }
