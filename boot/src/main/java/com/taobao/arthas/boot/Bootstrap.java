@@ -24,6 +24,7 @@ import com.taobao.middleware.cli.CommandLine;
 import com.taobao.middleware.cli.UsageMessageFormatter;
 import com.taobao.middleware.cli.annotations.Argument;
 import com.taobao.middleware.cli.annotations.CLIConfigurator;
+import com.taobao.middleware.cli.annotations.DefaultValue;
 import com.taobao.middleware.cli.annotations.Description;
 import com.taobao.middleware.cli.annotations.Name;
 import com.taobao.middleware.cli.annotations.Option;
@@ -137,7 +138,7 @@ public class Bootstrap {
         this.repoMirror = repoMirror;
     }
 
-    @Option(longName = "use-https")
+    @Option(longName = "use-https", flag = true)
     @Description("Use https to download, default true")
     public void setUseHttps(boolean useHttps) {
         this.useHttps = useHttps;
@@ -165,7 +166,7 @@ public class Bootstrap {
         return verbose;
     }
 
-    @Option(shortName = "v", longName = "verbose")
+    @Option(shortName = "v", longName = "verbose", flag = true)
     @Description("Verbose, print debug info.")
     public void setVerbose(boolean verbose) {
         this.verbose = verbose;
@@ -274,19 +275,52 @@ public class Bootstrap {
                             System.getProperty("user.home") + File.separator + ".arthas" + File.separator + "lib");
             arthasLibDir.mkdirs();
 
+            /**
+             * <pre>
+             * 1. get local latest version
+             * 2. get remote latest version
+             * 3. compare two version
+             * </pre>
+             */
             List<String> versionList = listNames(arthasLibDir);
-
-            if (versionList.isEmpty()) {
-                // try to download arthas from remote server.
-                DownloadUtils.downArthasPackaging(bootStrap.getRepoMirror(), bootStrap.isUseHttps(),
-                                arthasLibDir.getAbsolutePath());
-                versionList = listNames(arthasLibDir);
-            }
-
             Collections.sort(versionList);
 
+            String localLastestVersion = null;
+            if (!versionList.isEmpty()) {
+                localLastestVersion = versionList.get(versionList.size() - 1);
+            }
+
+            String remoteLastestVersion = DownloadUtils.getLastestVersion(bootStrap.getRepoMirror(),
+                            bootStrap.isUseHttps());
+
+            boolean needDownload = false;
+            if (localLastestVersion == null) {
+                if (remoteLastestVersion == null) {
+                    // exit
+                    AnsiLog.error("Can not find Arthas under local: {} and remote: {}", arthasLibDir,
+                                    bootStrap.getRepoMirror());
+                    System.exit(1);
+                } else {
+                    needDownload = true;
+                }
+            } else {
+                if (remoteLastestVersion != null) {
+                    if (localLastestVersion.compareTo(remoteLastestVersion) < 0) {
+                        AnsiLog.info("local lastest version: {}, remote lastest version: {}, try to download from remote.",
+                                        localLastestVersion, remoteLastestVersion);
+                        needDownload = true;
+                    }
+                }
+            }
+            if (needDownload) {
+                // try to download arthas from remote server.
+                DownloadUtils.downArthasPackaging(bootStrap.getRepoMirror(), bootStrap.isUseHttps(),
+                                remoteLastestVersion, arthasLibDir.getAbsolutePath());
+                localLastestVersion = remoteLastestVersion;
+            }
+
             // get the latest version
-            arthasHomeDir = new File(arthasLibDir, versionList.get(versionList.size() - 1) + File.separator + "arthas");
+            arthasHomeDir = new File(arthasLibDir, localLastestVersion + File.separator + "arthas");
         }
 
         verifyArthasHome(arthasHomeDir.getAbsolutePath());
