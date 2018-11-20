@@ -37,7 +37,7 @@ import com.taobao.middleware.cli.annotations.Summary;
 @Summary("Bootstrap Arthas")
 @Description("EXAMPLES:\n" + "  java -jar arthas-boot.jar <pid>\n"
                 + "  java -jar arthas-boot.jar --target-ip 0.0.0.0 --telnet-port 9999 \n"
-                + "  java -jar arthas-boot.jar -f batch.as 127.0.0.1\n")
+                + "  java -jar arthas-boot.jar -f batch.as <pid>\n")
 public class Bootstrap {
     private static final int DEFAULT_TELNET_PORT = 3658;
     private static final int DEFAULT_HTTP_PORT = 8563;
