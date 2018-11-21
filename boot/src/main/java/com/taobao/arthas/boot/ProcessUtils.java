@@ -14,6 +14,7 @@ import java.util.Scanner;
 import com.taobao.arthas.common.AnsiLog;
 import com.taobao.arthas.common.ExecutingCommand;
 import com.taobao.arthas.common.IOUtils;
+import com.taobao.arthas.common.JavaVersionUtils;
 
 /**
  *
@@ -126,8 +127,6 @@ public class ProcessUtils {
         // find java/java.exe, then try to find tools.jar
         String javaHome = System.getProperty("java.home");
 
-        float javaVersion = Float.parseFloat(System.getProperty("java.specification.version"));
-
         // find java/java.exe
         File javaPath = findJava();
         if (javaPath == null) {
@@ -141,7 +140,7 @@ public class ProcessUtils {
             toolsJar = new File(javaHome, "../../lib/tools.jar");
         }
 
-        if (javaVersion < 9.0f) {
+        if (JavaVersionUtils.isLessThanJava9()) {
             if (!toolsJar.exists()) {
                 throw new IllegalArgumentException("Can not find tools.jar under java home: " + javaHome);
             }
