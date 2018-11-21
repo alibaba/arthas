@@ -46,10 +46,7 @@ public class DownloadUtils {
     public static String readMavenReleaseVersion(String mavenMetaDataUrl) {
         InputStream inputStream = null;
         try {
-            URLConnection connection = new URL(mavenMetaDataUrl).openConnection();
-            if (connection instanceof HttpURLConnection) {
-                ((HttpURLConnection) connection).setConnectTimeout(CONNECTION_TIMEOUT);
-            }
+            URLConnection connection = openURLConnection(mavenMetaDataUrl);
             inputStream = connection.getInputStream();
 
             DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
@@ -104,7 +101,7 @@ public class DownloadUtils {
         String remoteDownloadUrl = REMOTE_DOWNLOAD_URL.replace("${REPO}", repoUrl).replace("${VERSION}", arthasVersion);
         AnsiLog.info("Start download arthas from remote server: " + remoteDownloadUrl);
         saveUrl(tempFile.getAbsolutePath(), remoteDownloadUrl, true);
-
+        AnsiLog.info("Download arthas success.");
         IOUtils.unzip(tempFile.getAbsolutePath(), unzipDir.getAbsolutePath());
     }
 
@@ -113,10 +110,7 @@ public class DownloadUtils {
         BufferedInputStream in = null;
         FileOutputStream fout = null;
         try {
-            URLConnection connection = new URL(urlString).openConnection();
-            if (connection instanceof HttpURLConnection) {
-                ((HttpURLConnection) connection).setConnectTimeout(CONNECTION_TIMEOUT);
-            }
+            URLConnection connection = openURLConnection(urlString);
             in = new BufferedInputStream(connection.getInputStream());
             List<String> values = connection.getHeaderFields().get("Content-Length");
             int fileSize = 0;
@@ -149,6 +143,32 @@ public class DownloadUtils {
             IOUtils.close(in);
             IOUtils.close(fout);
         }
+    }
+
+    /**
+     * support redirect
+     *
+     * @param url
+     * @return
+     * @throws MalformedURLException
+     * @throws IOException
+     */
+    private static URLConnection openURLConnection(String url) throws MalformedURLException, IOException {
+        URLConnection connection = new URL(url).openConnection();
+        if (connection instanceof HttpURLConnection) {
+            ((HttpURLConnection) connection).setConnectTimeout(CONNECTION_TIMEOUT);
+            // normally, 3xx is redirect
+            int status = ((HttpURLConnection) connection).getResponseCode();
+            if (status != HttpURLConnection.HTTP_OK) {
+                if (status == HttpURLConnection.HTTP_MOVED_TEMP || status == HttpURLConnection.HTTP_MOVED_PERM
+                                || status == HttpURLConnection.HTTP_SEE_OTHER) {
+                    String newUrl = ((HttpURLConnection) connection).getHeaderField("Location");
+                    AnsiLog.debug("Try to open url: {}, redirect to: {}", url, newUrl);
+                    return openURLConnection(newUrl);
+                }
+            }
+        }
+        return connection;
     }
 
     private static String formatFileSize(long size) {
