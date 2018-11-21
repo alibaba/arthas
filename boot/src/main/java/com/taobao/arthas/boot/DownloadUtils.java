@@ -56,8 +56,12 @@ public class DownloadUtils {
             NodeList nodeList = document.getDocumentElement().getElementsByTagName("release");
 
             return nodeList.item(0).getTextContent();
+        } catch (javax.net.ssl.SSLException e) {
+            AnsiLog.error("TLS connect error, please try to use --use-http argument.");
+            AnsiLog.error("URL: " + mavenMetaDataUrl);
+            AnsiLog.error(e);
         } catch (Throwable t) {
-            AnsiLog.debug("Can not read release version from: " + mavenMetaDataUrl);
+            AnsiLog.error("Can not read release version from: " + mavenMetaDataUrl);
             AnsiLog.debug(t);
         } finally {
             IOUtils.close(inputStream);
@@ -65,18 +69,18 @@ public class DownloadUtils {
         return null;
     }
 
-    public static String getLastestVersion(String repoMirror, boolean https) {
-        String repoUrl = getRepoUrl(repoMirror, https);
+    public static String getLastestVersion(String repoMirror, boolean http) {
+        String repoUrl = getRepoUrl(repoMirror, http);
         return readMavenReleaseVersion(MAVEN_METADATA_URL.replace("${REPO}", repoUrl));
     }
 
-    public static String getRepoUrl(String repoMirror, boolean https) {
+    public static String getRepoUrl(String repoMirror, boolean http) {
         repoMirror = repoMirror.trim();
         String repoUrl = "";
         if (repoMirror.equals("center")) {
-            repoUrl = "http://repo1.maven.org/maven2";
+            repoUrl = "https://repo1.maven.org/maven2";
         } else if (repoMirror.equals("aliyun")) {
-            repoUrl = "http://maven.aliyun.com/repository/public";
+            repoUrl = "https://maven.aliyun.com/repository/public";
         } else {
             repoUrl = repoMirror;
         }
@@ -84,15 +88,15 @@ public class DownloadUtils {
             repoUrl = repoUrl.substring(0, repoUrl.length() - 1);
         }
 
-        if (https && repoUrl.startsWith("http")) {
-            repoUrl = "https" + repoUrl.substring("http".length(), repoUrl.length());
+        if (http && repoUrl.startsWith("https")) {
+            repoUrl = "http" + repoUrl.substring("https".length(), repoUrl.length());
         }
         return repoUrl;
     }
 
-    public static void downArthasPackaging(String repoMirror, boolean https, String arthasVersion, String savePath)
+    public static void downArthasPackaging(String repoMirror, boolean http, String arthasVersion, String savePath)
                     throws ParserConfigurationException, SAXException, IOException {
-        String repoUrl = getRepoUrl(repoMirror, https);
+        String repoUrl = getRepoUrl(repoMirror, http);
 
         File unzipDir = new File(savePath, arthasVersion + File.separator + "arthas");
 
@@ -132,13 +136,17 @@ public class DownloadUtils {
                 totalCount += count;
                 long now = System.currentTimeMillis();
                 if (now - lastPrintTime > 3000) {
-                    AnsiLog.info("File size: {}, Downloaded size: {}", formatFileSize(fileSize),
+                    AnsiLog.info("File size: {}, Downloaded size: {}, Downloading ...", formatFileSize(fileSize),
                                     formatFileSize(totalCount));
                     lastPrintTime = now;
                 }
 
                 fout.write(data, 0, count);
             }
+        } catch (javax.net.ssl.SSLException e) {
+            AnsiLog.error("TLS connect error, please try to use --use-http argument.");
+            AnsiLog.error("URL: " + urlString);
+            AnsiLog.error(e);
         } finally {
             IOUtils.close(in);
             IOUtils.close(fout);

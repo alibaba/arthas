@@ -18,13 +18,13 @@ import javax.xml.parsers.ParserConfigurationException;
 import org.xml.sax.SAXException;
 
 import com.taobao.arthas.common.AnsiLog;
+import com.taobao.arthas.common.JavaVersionUtils;
 import com.taobao.arthas.common.SocketUtils;
 import com.taobao.middleware.cli.CLI;
 import com.taobao.middleware.cli.CommandLine;
 import com.taobao.middleware.cli.UsageMessageFormatter;
 import com.taobao.middleware.cli.annotations.Argument;
 import com.taobao.middleware.cli.annotations.CLIConfigurator;
-import com.taobao.middleware.cli.annotations.DefaultValue;
 import com.taobao.middleware.cli.annotations.Description;
 import com.taobao.middleware.cli.annotations.Name;
 import com.taobao.middleware.cli.annotations.Option;
@@ -77,7 +77,10 @@ public class Bootstrap {
      */
     private String repoMirror = "center";
 
-    private boolean useHttps = true;
+    /**
+     * enforce use http to download arthas. default use https
+     */
+    private boolean useHttp = false;
 
     private boolean attachOnly = false;
 
@@ -138,10 +141,10 @@ public class Bootstrap {
         this.repoMirror = repoMirror;
     }
 
-    @Option(longName = "use-https", flag = true)
-    @Description("Use https to download, default true")
-    public void setUseHttps(boolean useHttps) {
-        this.useHttps = useHttps;
+    @Option(longName = "use-http", flag = true)
+    @Description("Enforce use http to download, default use https")
+    public void setuseHttp(boolean useHttp) {
+        this.useHttp = useHttp;
     }
 
     @Option(longName = "attach-only", flag = true)
@@ -194,6 +197,11 @@ public class Bootstrap {
         if (bootStrap.isHelp()) {
             System.out.println(usage(cli));
             System.exit(0);
+        }
+
+        if (JavaVersionUtils.isJava6()) {
+            bootStrap.setuseHttp(true);
+            AnsiLog.debug("Java version is 1.6, only support http, set useHttp to true.");
         }
 
         // check telnet/http port
@@ -291,7 +299,7 @@ public class Bootstrap {
             }
 
             String remoteLastestVersion = DownloadUtils.getLastestVersion(bootStrap.getRepoMirror(),
-                            bootStrap.isUseHttps());
+                            bootStrap.isuseHttp());
 
             boolean needDownload = false;
             if (localLastestVersion == null) {
@@ -314,7 +322,7 @@ public class Bootstrap {
             }
             if (needDownload) {
                 // try to download arthas from remote server.
-                DownloadUtils.downArthasPackaging(bootStrap.getRepoMirror(), bootStrap.isUseHttps(),
+                DownloadUtils.downArthasPackaging(bootStrap.getRepoMirror(), bootStrap.isuseHttp(),
                                 remoteLastestVersion, arthasLibDir.getAbsolutePath());
                 localLastestVersion = remoteLastestVersion;
             }
@@ -437,8 +445,8 @@ public class Bootstrap {
         return repoMirror;
     }
 
-    public boolean isUseHttps() {
-        return useHttps;
+    public boolean isuseHttp() {
+        return useHttp;
     }
 
     public String getTargetIp() {
