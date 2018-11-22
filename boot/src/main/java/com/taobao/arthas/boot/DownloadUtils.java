@@ -134,13 +134,14 @@ public class DownloadUtils {
             long lastPrintTime = System.currentTimeMillis();
             while ((count = in.read(data, 0, 1024 * 1024)) != -1) {
                 totalCount += count;
-                long now = System.currentTimeMillis();
-                if (now - lastPrintTime > 3000) {
-                    AnsiLog.info("File size: {}, Downloaded size: {}, Downloading ...", formatFileSize(fileSize),
-                                    formatFileSize(totalCount));
-                    lastPrintTime = now;
+                if (printProgress) {
+                    long now = System.currentTimeMillis();
+                    if (now - lastPrintTime > 1000) {
+                        AnsiLog.info("File size: {}, downloaded size: {}, downloading ...", formatFileSize(fileSize),
+                                        formatFileSize(totalCount));
+                        lastPrintTime = now;
+                    }
                 }
-
                 fout.write(data, 0, count);
             }
         } catch (javax.net.ssl.SSLException e) {

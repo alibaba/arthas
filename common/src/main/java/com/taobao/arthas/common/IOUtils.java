@@ -72,7 +72,7 @@ public class IOUtils {
         File file = new File(zipFile);
         ZipFile zip = null;
         try {
-            int BUFFER = 2048;
+            int BUFFER = 1024 * 8;
 
             zip = new ZipFile(file);
             String newPath = extractFolder;
