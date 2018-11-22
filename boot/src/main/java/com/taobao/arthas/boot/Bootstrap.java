@@ -37,8 +37,15 @@ import com.taobao.middleware.cli.annotations.Summary;
 @Name("arthas-boot")
 @Summary("Bootstrap Arthas")
 @Description("EXAMPLES:\n" + "  java -jar arthas-boot.jar <pid>\n"
-                + "  java -jar arthas-boot.jar --target-ip 0.0.0.0 --telnet-port 9999 \n"
-                + "  java -jar arthas-boot.jar -f batch.as <pid>\n")
+                + "  java -jar arthas-boot.jar --target-ip 0.0.0.0\n"
+                + "  java -jar arthas-boot.jar --telnet-port 9999 --http-port -1\n"
+                + "  java -jar arthas-boot.jar -c 'sysprop; thread' <pid>\n"
+                + "  java -jar arthas-boot.jar -f batch.as <pid>\n"
+                + "  java -jar arthas-boot.jar --use-version 3.0.5\n"
+                + "  java -jar arthas-boot.jar --session-timeout 3600\n"
+                + "  java -jar arthas-boot.jar --attach-only\n"
+                + "  java -jar arthas-boot.jar --repo-mirror aliyun --use-http\n"
+                + "WIKI:\n" + "  https://alibaba.github.io/arthas\n")
 public class Bootstrap {
     private static final int DEFAULT_TELNET_PORT = 3658;
     private static final int DEFAULT_HTTP_PORT = 8563;
@@ -120,7 +127,7 @@ public class Bootstrap {
     }
 
     @Option(longName = "session-timeout")
-    @Description("The session timeout seconds, default 3000")
+    @Description("The session timeout seconds, default 300")
     public void setSessionTimeout(Long sessionTimeout) {
         this.sessionTimeout = sessionTimeout;
     }
