@@ -95,23 +95,23 @@ esac
 
 # check curl/grep/awk/telent/unzip command
 if ! [ -x "$(command -v curl)" ]; then
-  echo 'Error: curl is not installed. Try to start java -jar arthas-boot.jar' >&2
+  echo 'Error: curl is not installed. Try to use java -jar arthas-boot.jar' >&2
   exit 1
 fi
 if ! [ -x "$(command -v grep)" ]; then
-  echo 'Error: grep is not installed. Try to start java -jar arthas-boot.jar' >&2
+  echo 'Error: grep is not installed. Try to use java -jar arthas-boot.jar' >&2
   exit 1
 fi
 if ! [ -x "$(command -v awk)" ]; then
-  echo 'Error: awk is not installed. Try to start java -jar arthas-boot.jar' >&2
+  echo 'Error: awk is not installed. Try to use java -jar arthas-boot.jar' >&2
   exit 1
 fi
 if ! [ -x "$(command -v telnet)" ]; then
-  echo 'Error: telnet is not installed. Try to start java -jar arthas-boot.jar' >&2
+  echo 'Error: telnet is not installed. Try to use java -jar arthas-boot.jar' >&2
   exit 1
 fi
 if ! [ -x "$(command -v unzip)" ]; then
-  echo 'Error: unzip is not installed. Try to start java -jar arthas-boot.jar' >&2
+  echo 'Error: unzip is not installed. Try to use java -jar arthas-boot.jar' >&2
   exit 1
 fi
 
@@ -243,7 +243,7 @@ reset_for_env()
         exit_on_err 1 "Can not find JAVA_HOME, please set \$JAVA_HOME bash env first."
     fi
 
-    echo "JAVA_HOME: ${JAVA_HOME}"
+    echo "[INFO] JAVA_HOME: ${JAVA_HOME}"
 
     # maybe 1.8.0_162 , 11-ea
     local JAVA_VERSION
@@ -419,6 +419,15 @@ list_versions()
     ls -1 "${ARTHAS_LIB_DIR}"
 }
 
+# find the process tcp listen at the port
+# $1 : port number
+find_listen_port_process()
+{
+    if [ -x "$(command -v lsof)" ]; then
+        echo $(lsof -t -s TCP:LISTEN -i TCP:$1)
+    fi
+}
+
 parse_arguments()
 {
     POSITIONAL=()
@@ -530,6 +539,23 @@ parse_arguments()
         [[ "$httpPort" ]] && HTTP_PORT=$httpPort
     fi
 
+    # check telnet port/http port
+    local telnetPortPid
+    local httpPortPid
+    if [[ $TELNET_PORT > 0 ]]; then
+        telnetPortPid=$(find_listen_port_process $TELNET_PORT)
+        if [ $telnetPortPid ]; then
+            echo "[INFO] Process $telnetPortPid already using port $TELNET_PORT"
+        fi
+    fi
+    if [[ $HTTP_PORT > 0 ]]; then
+        httpPortPid=$(find_listen_port_process $HTTP_PORT)
+        if [ $telnetPortPid ]; then
+            echo "[INFO] Process $httpPortPid already using port $HTTP_PORT"
+        fi
+    fi
+
+
     # check pid
     if [ -z ${TARGET_PID} ] && [ ${BATCH_MODE} = false ]; then
         # interactive mode
@@ -573,6 +599,20 @@ parse_arguments()
         fi
 
         TARGET_PID=`echo ${CANDIDATES[$(($choice-1))]} | cut -d ' ' -f 1`
+
+        # check the process already using telnet port if equals to target pid
+        if [[ ($telnetPortPid) && ($TARGET_PID != $telnetPortPid) ]]; then
+            echo "[ERROR] Target process $TARGET_PID is not the process using port $TELNET_PORT, you will connect to an unexpected process."
+            echo "[ERROR] If you still want to attach target process $TARGET_PID, Try to set a different telnet port by using --telnet-port argument."
+            echo "[ERROR] Or try to shutdown the process $telnetPortPid using the telnet port first."
+            exit 1
+        fi
+        if [[ ($httpPortPid) && ($TARGET_PID != $httpPortPid) ]]; then
+            echo "Target process $TARGET_PID is not the process using port $HTTP_PORT, you will connect to an unexpected process."
+            echo "If you still want to attach target process $TARGET_PID, Try to set a different telnet port by using --telnet-port argument."
+            echo "Or try to shutdown the process $httpPortPid using the telnet port first."
+            exit 1
+        fi
     elif [ -z ${TARGET_PID} ]; then
         # batch mode is enabled, no interactive process selection.
         echo "Illegal arguments, the <PID> is required." 1>&2
