@@ -37,16 +37,15 @@ import com.taobao.middleware.cli.annotations.Summary;
  */
 @Name("arthas-boot")
 @Summary("Bootstrap Arthas")
-@Description("EXAMPLES:\n" + "  java -jar arthas-boot.jar <pid>\n"
-                + "  java -jar arthas-boot.jar --target-ip 0.0.0.0\n"
+@Description("EXAMPLES:\n" + "  java -jar arthas-boot.jar <pid>\n" + "  java -jar arthas-boot.jar --target-ip 0.0.0.0\n"
                 + "  java -jar arthas-boot.jar --telnet-port 9999 --http-port -1\n"
                 + "  java -jar arthas-boot.jar -c 'sysprop; thread' <pid>\n"
                 + "  java -jar arthas-boot.jar -f batch.as <pid>\n"
                 + "  java -jar arthas-boot.jar --use-version 3.0.5\n"
-                + "  java -jar arthas-boot.jar --session-timeout 3600\n"
-                + "  java -jar arthas-boot.jar --attach-only\n"
-                + "  java -jar arthas-boot.jar --repo-mirror aliyun --use-http\n"
-                + "WIKI:\n" + "  https://alibaba.github.io/arthas\n")
+                + "  java -jar arthas-boot.jar --versions\n"
+                + "  java -jar arthas-boot.jar --session-timeout 3600\n" + "  java -jar arthas-boot.jar --attach-only\n"
+                + "  java -jar arthas-boot.jar --repo-mirror aliyun --use-http\n" + "WIKI:\n"
+                + "  https://alibaba.github.io/arthas\n")
 public class Bootstrap {
     private static final int DEFAULT_TELNET_PORT = 3658;
     private static final int DEFAULT_HTTP_PORT = 8563;
@@ -81,6 +80,11 @@ public class Bootstrap {
      * under ~/.arthas/lib
      */
     private String useVersion;
+
+    /**
+     * list local and remote versions
+     */
+    private boolean versions;
 
     /**
      * download from maven center repository by default
@@ -151,6 +155,12 @@ public class Bootstrap {
         this.repoMirror = repoMirror;
     }
 
+    @Option(longName = "versions", flag = true)
+    @Description("List local and remote arthas versions")
+    public void setVersions(boolean versions) {
+        this.versions = versions;
+    }
+
     @Option(longName = "use-http", flag = true)
     @Description("Enforce use http to download, default use https")
     public void setuseHttp(boolean useHttp) {
@@ -175,10 +185,6 @@ public class Bootstrap {
         this.batchFile = batchFile;
     }
 
-    public boolean isVerbose() {
-        return verbose;
-    }
-
     @Option(shortName = "v", longName = "verbose", flag = true)
     @Description("Verbose, print debug info.")
     public void setVerbose(boolean verbose) {
@@ -188,6 +194,8 @@ public class Bootstrap {
     public static void main(String[] args) throws ParserConfigurationException, SAXException, IOException,
                     ClassNotFoundException, NoSuchMethodException, SecurityException, IllegalAccessException,
                     IllegalArgumentException, InvocationTargetException {
+        String mavenMetaData = null;
+
         Bootstrap bootStrap = new Bootstrap();
 
         CLI cli = CLIConfigurator.define(Bootstrap.class);
@@ -206,6 +214,14 @@ public class Bootstrap {
         }
         if (bootStrap.isHelp()) {
             System.out.println(usage(cli));
+            System.exit(0);
+        }
+
+        if (bootStrap.isVersions()) {
+            if (mavenMetaData == null) {
+                mavenMetaData = DownloadUtils.readMavenMetaData(bootStrap.getRepoMirror(), bootStrap.isuseHttp());
+            }
+            System.out.println(UsageRender.render(listVersions(mavenMetaData)));
             System.exit(0);
         }
 
@@ -311,8 +327,11 @@ public class Bootstrap {
                 localLastestVersion = versionList.get(versionList.size() - 1);
             }
 
-            String remoteLastestVersion = DownloadUtils.getLastestVersion(bootStrap.getRepoMirror(),
-                            bootStrap.isuseHttp());
+            if (mavenMetaData == null) {
+                mavenMetaData = DownloadUtils.readMavenMetaData(bootStrap.getRepoMirror(), bootStrap.isuseHttp());
+            }
+
+            String remoteLastestVersion = DownloadUtils.readMavenReleaseVersion(mavenMetaData);
 
             boolean needDownload = false;
             if (localLastestVersion == null) {
@@ -409,6 +428,26 @@ public class Bootstrap {
         mainMethod.invoke(null, new Object[] { telnetArgs.toArray(new String[0]) });
     }
 
+    private static String listVersions(String mavenMetaData) {
+        StringBuilder result = new StringBuilder(1024);
+        List<String> versionList = listNames(ARTHAS_LIB_DIR);
+        Collections.sort(versionList);
+
+        result.append("Local versions:\n");
+        for (String version : versionList) {
+            result.append(" " + version).append('\n');
+        }
+        result.append("Remote versions:\n");
+        if (mavenMetaData != null) {
+            List<String> remoteVersions = DownloadUtils.readAllMavenVersion(mavenMetaData);
+            Collections.reverse(remoteVersions);
+            for (String version : remoteVersions) {
+                result.append(" " + version).append('\n');
+            }
+        }
+        return result.toString();
+    }
+
     private static List<String> listNames(File dir) {
         List<String> names = new ArrayList<String>();
         for (File file : dir.listFiles()) {
@@ -496,5 +535,13 @@ public class Bootstrap {
 
     public Long getSessionTimeout() {
         return sessionTimeout;
+    }
+
+    public boolean isVerbose() {
+        return verbose;
+    }
+
+    public boolean isVersions() {
+        return versions;
     }
 }

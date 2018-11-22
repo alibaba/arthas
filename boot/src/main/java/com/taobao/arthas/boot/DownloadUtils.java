@@ -1,6 +1,7 @@
 package com.taobao.arthas.boot;
 
 import java.io.BufferedInputStream;
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -10,6 +11,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.text.DecimalFormat;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.xml.parsers.DocumentBuilder;
@@ -37,18 +39,12 @@ public class DownloadUtils {
     /**
      * Read release version from maven-metadata.xml
      *
-     * @param mavenMetaDataUrl
+     * @param mavenMetaData
      * @return
-     * @throws ParserConfigurationException
-     * @throws SAXException
-     * @throws IOException
      */
-    public static String readMavenReleaseVersion(String mavenMetaDataUrl) {
-        InputStream inputStream = null;
+    public static String readMavenReleaseVersion(String mavenMetaData) {
         try {
-            URLConnection connection = openURLConnection(mavenMetaDataUrl);
-            inputStream = connection.getInputStream();
-
+            ByteArrayInputStream inputStream = new ByteArrayInputStream(mavenMetaData.getBytes("UTF-8"));
             DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
             DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
             Document document = dBuilder.parse(inputStream);
@@ -56,22 +52,57 @@ public class DownloadUtils {
             NodeList nodeList = document.getDocumentElement().getElementsByTagName("release");
 
             return nodeList.item(0).getTextContent();
+        } catch (Exception e) {
+            // ignore
+        }
+        return null;
+    }
+
+    /**
+     * Read all versions from maven-metadata.xml
+     *
+     * @param mavenMetaData
+     * @return
+     */
+    public static List<String> readAllMavenVersion(String mavenMetaData) {
+        List<String> result = new ArrayList<String>();
+        try {
+            ByteArrayInputStream inputStream = new ByteArrayInputStream(mavenMetaData.getBytes("UTF-8"));
+            DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
+            DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
+            Document document = dBuilder.parse(inputStream);
+
+            NodeList nodeList = document.getDocumentElement().getElementsByTagName("version");
+            int length = nodeList.getLength();
+            for (int i = 0; i < length; ++i) {
+                result.add(nodeList.item(i).getTextContent());
+            }
+        } catch (Exception e) {
+            // ignore
+        }
+        return result;
+    }
+
+    public static String readMavenMetaData(String repoMirror, boolean http) {
+        String repoUrl = getRepoUrl(repoMirror, http);
+        String metaDataUrl = MAVEN_METADATA_URL.replace("${REPO}", repoUrl);
+        AnsiLog.debug("Download maven-metadata.xml from: {}", repoUrl);
+        InputStream inputStream = null;
+        try {
+            URLConnection connection = openURLConnection(metaDataUrl);
+            inputStream = connection.getInputStream();
+            return IOUtils.toString(inputStream);
         } catch (javax.net.ssl.SSLException e) {
             AnsiLog.error("TLS connect error, please try to use --use-http argument.");
-            AnsiLog.error("URL: " + mavenMetaDataUrl);
+            AnsiLog.error("URL: " + metaDataUrl);
             AnsiLog.error(e);
         } catch (Throwable t) {
-            AnsiLog.error("Can not read release version from: " + mavenMetaDataUrl);
+            AnsiLog.error("Can not read maven-metadata.xml from: " + metaDataUrl);
             AnsiLog.debug(t);
         } finally {
             IOUtils.close(inputStream);
         }
         return null;
-    }
-
-    public static String getLastestVersion(String repoMirror, boolean http) {
-        String repoUrl = getRepoUrl(repoMirror, http);
-        return readMavenReleaseVersion(MAVEN_METADATA_URL.replace("${REPO}", repoUrl));
     }
 
     public static String getRepoUrl(String repoMirror, boolean http) {
