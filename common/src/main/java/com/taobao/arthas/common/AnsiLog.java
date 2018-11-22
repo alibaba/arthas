@@ -66,6 +66,10 @@ public abstract class AnsiLog {
         }
     }
 
+    public static boolean enableColor() {
+        return enableColor;
+    }
+
     /**
      * set logger Level
      *
