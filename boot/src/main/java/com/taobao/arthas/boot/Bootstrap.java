@@ -43,6 +43,8 @@ public class Bootstrap {
     private static final int DEFAULT_TELNET_PORT = 3658;
     private static final int DEFAULT_HTTP_PORT = 8563;
     private static final String DEFAULT_TARGET_IP = "127.0.0.1";
+    private static final File ARTHAS_LIB_DIR = new File(
+                    System.getProperty("user.home") + File.separator + ".arthas" + File.separator + "lib");
 
     private boolean help = false;
 
@@ -258,6 +260,11 @@ public class Bootstrap {
             // try to find from ~/.arthas/lib
             File specialVersionDir = new File(System.getProperty("user.home"), ".arthas" + File.separator + "lib"
                             + File.separator + bootStrap.getUseVersion() + File.separator + "arthas");
+            if (!specialVersionDir.exists()) {
+                // try to download arthas from remote server.
+                DownloadUtils.downArthasPackaging(bootStrap.getRepoMirror(), bootStrap.isuseHttp(),
+                                bootStrap.getUseVersion(), ARTHAS_LIB_DIR.getAbsolutePath());
+            }
             verifyArthasHome(specialVersionDir.getAbsolutePath());
             arthasHomeDir = specialVersionDir;
         }
@@ -279,9 +286,7 @@ public class Bootstrap {
 
         // try to download from remote server
         if (arthasHomeDir == null) {
-            File arthasLibDir = new File(
-                            System.getProperty("user.home") + File.separator + ".arthas" + File.separator + "lib");
-            arthasLibDir.mkdirs();
+            ARTHAS_LIB_DIR.mkdirs();
 
             /**
              * <pre>
@@ -290,7 +295,7 @@ public class Bootstrap {
              * 3. compare two version
              * </pre>
              */
-            List<String> versionList = listNames(arthasLibDir);
+            List<String> versionList = listNames(ARTHAS_LIB_DIR);
             Collections.sort(versionList);
 
             String localLastestVersion = null;
@@ -305,7 +310,7 @@ public class Bootstrap {
             if (localLastestVersion == null) {
                 if (remoteLastestVersion == null) {
                     // exit
-                    AnsiLog.error("Can not find Arthas under local: {} and remote: {}", arthasLibDir,
+                    AnsiLog.error("Can not find Arthas under local: {} and remote: {}", ARTHAS_LIB_DIR,
                                     bootStrap.getRepoMirror());
                     System.exit(1);
                 } else {
@@ -323,12 +328,12 @@ public class Bootstrap {
             if (needDownload) {
                 // try to download arthas from remote server.
                 DownloadUtils.downArthasPackaging(bootStrap.getRepoMirror(), bootStrap.isuseHttp(),
-                                remoteLastestVersion, arthasLibDir.getAbsolutePath());
+                                remoteLastestVersion, ARTHAS_LIB_DIR.getAbsolutePath());
                 localLastestVersion = remoteLastestVersion;
             }
 
             // get the latest version
-            arthasHomeDir = new File(arthasLibDir, localLastestVersion + File.separator + "arthas");
+            arthasHomeDir = new File(ARTHAS_LIB_DIR, localLastestVersion + File.separator + "arthas");
         }
 
         verifyArthasHome(arthasHomeDir.getAbsolutePath());
