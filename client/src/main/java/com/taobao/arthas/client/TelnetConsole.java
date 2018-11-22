@@ -18,6 +18,7 @@ import org.apache.commons.net.telnet.TelnetOptionHandler;
 import org.apache.commons.net.telnet.WindowSizeOptionHandler;
 
 import com.taobao.arthas.common.OSUtils;
+import com.taobao.arthas.common.UsageRender;
 import com.taobao.middleware.cli.CLI;
 import com.taobao.middleware.cli.CommandLine;
 import com.taobao.middleware.cli.UsageMessageFormatter;
@@ -309,7 +310,7 @@ public class TelnetConsole {
         UsageMessageFormatter usageMessageFormatter = new UsageMessageFormatter();
         usageMessageFormatter.setOptionComparator(null);
         cli.usage(usageStringBuilder, usageMessageFormatter);
-        return usageStringBuilder.toString();
+        return UsageRender.render(usageStringBuilder.toString());
     }
 
     public String getTargetIp() {
