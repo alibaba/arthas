@@ -631,10 +631,13 @@ attach_jvm()
 
     echo "Attaching to ${TARGET_PID} using version ${1}..."
 
-    local opts="${ARTHAS_OPTS} ${BOOT_CLASSPATH} ${JVM_OPTS}"
+    local java_command=("${JAVA_HOME}"/bin/java)
+    if [ "${BOOT_CLASSPATH}" ]; then
+        java_command+=("${BOOT_CLASSPATH}")
+    fi
 
-    "${JAVA_HOME}"/bin/java \
-        ${opts}  \
+    "${java_command[@]}" \
+        ${ARTHAS_OPTS} ${JVM_OPTS} \
         -jar "${arthas_lib_dir}/arthas-core.jar" \
             -pid ${TARGET_PID} \
             -target-ip ${TARGET_IP} \
