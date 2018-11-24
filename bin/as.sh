@@ -53,6 +53,9 @@ ATTACH_ONLY=false
 # pass debug arguments to the attach java process
 DEBUG_ATTACH=false
 
+# Verbose, print debug info.
+VERBOSE=false
+
 # command to execute
 COMMAND=
 # batch file to execute
@@ -364,6 +367,15 @@ update_if_necessary()
     fi
 }
 
+call_jps()
+{
+    if [ "${VERBOSE}" = true ] ; then
+        "${JAVA_HOME}"/bin/jps -l -v
+    else
+        "${JAVA_HOME}"/bin/jps -l
+    fi
+}
+
 # the usage
 usage()
 {
@@ -372,7 +384,7 @@ Usage:
     $0 [-h] [--target-ip <value>] [--telnet-port <value>]
        [--http-port <value>] [--session-timeout <value>] [--arthas-home <value>]
        [--use-version <value>] [--repo-mirror <value>] [--versions] [--use-http]
-       [--attach-only] [-c <value>] [-f <value>] [pid]
+       [--attach-only] [-c <value>] [-f <value>] [-v] [pid]
 
 Options and Arguments:
  -h,--help                      Print usage
@@ -386,11 +398,13 @@ Options and Arguments:
                                 center/aliyun or http repo url.
     --versions                  List local and remote arthas versions
     --use-http                  Enforce use http to download, default use https
-    --attach-only               attach target process only, do not connect
+    --attach-only               Attach target process only, do not connect
+    --debug-attach              Debug attach agent
  -c,--command <value>           Command to execute, multiple commands separated
                                 by ;
  -f,--batch-file <value>        The batch file to execute
- <pid>                          target pid
+ -v,--verbose                   Verbose, print debug info.
+ <pid>                          Target pid
 
 EXAMPLES:
   ./as.sh <pid>
@@ -408,7 +422,7 @@ WIKI:
 Here is the list of possible java process(es) to attatch:
 "
 
-"${JAVA_HOME}"/bin/jps -l | grep -v sun.tools.jps.Jps
+$(call_jps) | grep -v sun.tools.jps.Jps
 
 }
 
@@ -516,6 +530,10 @@ parse_arguments()
         ARTHAS_OPTS="$JPDA_OPTS $ARTHAS_OPTS"
         shift # past argument
         ;;
+        -v|--verbose)
+        VERBOSE=true
+        shift # past argument
+        ;;
         --default)
         DEFAULT=YES
         shift # past argument
@@ -560,7 +578,7 @@ parse_arguments()
     if [ -z ${TARGET_PID} ] && [ ${BATCH_MODE} = false ]; then
         # interactive mode
         local IFS=$'\n'
-        CANDIDATES=($("${JAVA_HOME}"/bin/jps -l | grep -v sun.tools.jps.Jps | awk '{print $0}'))
+        CANDIDATES=($(call_jps | grep -v sun.tools.jps.Jps | awk '{print $0}'))
 
         if [ ${#CANDIDATES[@]} -eq 0 ]; then
             echo "Error: no available java process to attach."

@@ -102,7 +102,7 @@ public class Bootstrap {
     private String batchFile;
 
     @Argument(argName = "pid", index = 0, required = false)
-    @Description("target pid")
+    @Description("Target pid")
     public void setPid(int pid) {
         this.pid = pid;
     }
@@ -168,7 +168,7 @@ public class Bootstrap {
     }
 
     @Option(longName = "attach-only", flag = true)
-    @Description("attach target process only, do not connect")
+    @Description("Attach target process only, do not connect")
     public void setAttachOnly(boolean attachOnly) {
         this.attachOnly = attachOnly;
     }
