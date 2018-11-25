@@ -15,6 +15,7 @@ import com.taobao.middleware.cli.annotations.Option;
 import com.taobao.middleware.cli.annotations.Summary;
 
 import io.termd.core.readline.Readline;
+import io.termd.core.util.Helper;
 
 /**
  *
@@ -62,9 +63,7 @@ public class HistoryCommand extends AnnotatedCommand {
                 for (int i = 0; i < n; ++i) {
                     int[] line = history.get(n - i - 1);
                     sb.append(String.format("%5s  ", size - (n - i - 1)));
-                    for (int codePoint : line) {
-                        sb.append(Character.toChars(codePoint));
-                    }
+                    Helper.appendCodePoints(line, sb);
                     sb.append('\n');
                 }
 
