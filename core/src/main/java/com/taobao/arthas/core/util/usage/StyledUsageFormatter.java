@@ -7,6 +7,7 @@ import com.taobao.middleware.cli.UsageMessageFormatter;
 import com.taobao.text.Color;
 import com.taobao.text.Decoration;
 import com.taobao.text.Style;
+import com.taobao.text.ui.RowElement;
 import com.taobao.text.ui.TableElement;
 import com.taobao.text.util.RenderUtil;
 
@@ -63,16 +64,31 @@ public class StyledUsageFormatter extends UsageMessageFormatter {
         if (!cli.getOptions().isEmpty() || !cli.getArguments().isEmpty()) {
             table.add(row().add(""));
             table.row(label("OPTIONS:").style(getHighlightedStyle()));
-            for (Option option: cli.getOptions()) {
-                if (option.acceptValue()) {
-                    table.add(row().add(label("-" + option.getShortName() + ", --" + option.getLongName() + " <value>")
-                            .style(getHighlightedStyle()))
-                            .add(option.getDescription()));
+            for (Option option : cli.getOptions()) {
+                StringBuilder optionSb = new StringBuilder(32);
+
+                // short name
+                if (isNullOrEmpty(option.getShortName())) {
+                    optionSb.append("   ");
                 } else {
-                    table.add(row().add(label("-" + option.getShortName() + ", --" + option.getLongName())
-                            .style(getHighlightedStyle()))
-                            .add(option.getDescription()));
+                    optionSb.append('-').append(option.getShortName());
+                    if (isNullOrEmpty(option.getLongName())) {
+                        optionSb.append(' ');
+                    } else {
+                        optionSb.append(',');
+                    }
                 }
+                // long name
+                if (!isNullOrEmpty(option.getLongName())) {
+                    optionSb.append(" --").append(option.getLongName());
+                }
+
+                if (option.acceptValue()) {
+                    optionSb.append(" <value>");
+                }
+
+                table.add(row().add(label(optionSb.toString()).style(getHighlightedStyle()))
+                                .add(option.getDescription()));
             }
 
             for (Argument argument: cli.getArguments()) {
