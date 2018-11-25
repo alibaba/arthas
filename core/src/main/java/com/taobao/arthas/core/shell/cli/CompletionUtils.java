@@ -99,7 +99,12 @@ public class CompletionUtils {
         } else {
             String commonPrefix = CompletionUtils.findLongestCommonPrefix(candidates);
             if (commonPrefix.length() > 0) {
-                completion.complete(commonPrefix, false);
+                if (commonPrefix.length() == prefix.length()) {
+                    completion.complete(candidates);
+                } else {
+                    completion.complete(commonPrefix.substring(prefix.length(), commonPrefix.length()), false);
+                }
+
             } else {
                 completion.complete(candidates);
             }
