@@ -42,7 +42,7 @@ import static java.lang.String.format;
         "  tt -t *StringUtils isEmpty\n" +
         "  tt -t *StringUtils isEmpty params[0].length==1\n" +
         "  tt -l\n" +
-        "  tt -D\n" +
+        "  tt --delete-all\n" +
         "  tt -i 1000 -w params[0]\n" +
         "  tt -i 1000 -d\n" +
         "  tt -i 1000\n" +
@@ -106,7 +106,7 @@ public class TimeTunnelCommand extends EnhancerCommand {
         isList = list;
     }
 
-    @Option(shortName = "D", longName = "delete-all", flag = true)
+    @Option(longName = "delete-all", flag = true)
     @Description("Delete all the time fragments")
     public void setDeleteAll(boolean deleteAll) {
         isDeleteAll = deleteAll;
