@@ -142,7 +142,7 @@ public class ArthasBootstrap {
             // ignore
         }
         logger.info("as-server destroy completed.");
-        // see middleware-container/arthas/issues/123
+        // see https://github.com/alibaba/arthas/issues/319
         LogUtil.closeResultLogger();
     }
 
