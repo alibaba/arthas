@@ -3,50 +3,16 @@ Quick Start
 
 ## 1. Start Demo Application
 
-Save the following code to a `Demo.java` and run the commands in shell as 
-
 ```bash
-javac Demo.java && java Demo
+java -jar arthas-demo.jar
 ```
 
-```java
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicInteger;
-public class Demo {
-    static class Counter {
-        private static AtomicInteger count = new AtomicInteger(0);
-        public static void increment() {
-            count.incrementAndGet();
-        
-        }
-        public static int value() {
-            return count.get();
-        
-        }
-    
-    }
+`arthas-demo` is a simple program that generates a random number every second, then find all prime factors of the number.
 
-    public static void main(String[] args) throws InterruptedException {
-        while (true) {
-            Counter.increment();
-            System.out.println("counter: " + Counter.value());
-            TimeUnit.SECONDS.sleep(1);
-        
-        }
-    
-    }
 
-}
-```
+If there is no `arthas-demo.jar` locally, you can download it from here:[Click](http://repository.sonatype.org/service/local/artifact/maven/redirect?r=central-proxy&g=com.taobao.arthas&a=arthas-boot&v=LATEST)
 
-Save the contents above into `Demo.java`, then compile it under the command line:
-
-```bash
-javac Demo.java
-java Demo
-```
-
-You can also save and start the code in IDE.
+You can also compile code by youself:[View](https://github.com/alibaba/arthas/blob/master/demo/src/main/java/demo)
 
 ## 2. Start Arthas
 
@@ -55,30 +21,25 @@ You can also save and start the code in IDE.
 Execute the following command in the command line:
 
 ```bash
-./as.sh
+java -jar arthas-boot.jar
 ```
 
-> The user to run this script *MUST* have the same privilege as the owner of the target process, as a simple example you can try the following command if the target process is managed by user `admin`: `sudo su admin && ./as.sh` or `sudo -u admin -EH ./as.sh`. For more details on the bootstrap script, please refer to [Start Arthas](start-arthas.md). If you cannot be able to attach to the target process, please check the logs under `~/logs/arthas` for troubleshooting.
+> The user to run this command *MUST* have the same privilege as the owner of the target process, as a simple example you can try the following command if the target process is managed by user `admin`: `sudo su admin && java -jar arthas-boot.jar` or `sudo -u admin -EH java -jar arthas-boot.jar`.If you cannot be able to attach to the target process, please check the logs under `~/logs/arthas` for troubleshooting.
 
 Select the target Java process to attach:
 
 ```bash
-$ ./as.sh
-Arthas script version: 3.0.2
-Found existing java process, please choose one and hit RETURN.
-* [1]: 95428 
-  [2]: 22647 org.jetbrains.jps.cmdline.Launcher
-  [3]: 21736
-  [4]: 13560 Demo
+$ $ java -jar arthas-boot.jar
+* [1]: 35542
+  [2]: 71560 arthas-demo.jar
 ```
 
-The 'Demo' process is the fourth as shown above, press '4' then 'Enter'. Arthas will attach to the target process, and start to output:
+The 'Demo' process is the fourth as shown above, press '2' then 'Enter'. Arthas will attach to the target process, and start to output:
 
 ```bash
-Connecting to arthas server... current timestamp is 1536656867
-Trying 127.0.0.1...
-Connected to 127.0.0.1.
-Escape character is '^]'.
+[INFO] Try to attach process 71560
+[INFO] Attach process 71560 success.
+[INFO] arthas-client connect 127.0.0.1 3658
   ,---.  ,------. ,--------.,--.  ,--.  ,---.   ,---.
  /  O  \ |  .--. ''--.  .--'|  '--'  | /  O  \ '   .-'
 |  .-.  ||  '--'.'   |  |   |  .--.  ||  .-.  |`.  `-.
@@ -87,15 +48,12 @@ Escape character is '^]'.
 
 
 wiki: https://alibaba.github.io/arthas
-version: 3.0.1-RC-SNAPSHOT
-pid: 13560
-timestamp: 1536656867894
+version: 3.0.5.20181127201536
+pid: 71560
+time: 2018-11-28 19:16:24
+
+$
 ```
-
-### Windows
-
-Open 'Command' window, execute `as.bat <pid>` from where the Arthas package file is unzipped.
-
 
 ## 3. Check the Dashboard
 
@@ -135,24 +93,136 @@ java.home              /Library/Java/JavaVir
                        e/jre
 ```
 
-## 4. watch
-
-Use '[watch](watch.md)' to check the returned value of `Counter.value()`:
+## 4. Get the Main Class of the process with the sysenv command
 
 ```
-$ watch Demo$Counter value returnObj
+$ sysenv | grep MAIN
+ JAVA_MAIN_CLASS_71560              demo.MathGame
+```
+
+## 5. Decompile Main Class with jad command
+
+```java
+$ jad demo.MathGame
+
+ClassLoader:
++-sun.misc.Launcher$AppClassLoader@3d4eac69
+  +-sun.misc.Launcher$ExtClassLoader@66350f69
+
+Location:
+/tmp/arthas-demo.jar
+
+/*
+ * Decompiled with CFR 0_132.
+ */
+package demo;
+
+import java.io.PrintStream;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Random;
+import java.util.concurrent.TimeUnit;
+
+public class MathGame {
+    private static Random random = new Random();
+    private int illegalArgumentCount = 0;
+
+    public static void main(String[] args) throws InterruptedException {
+        MathGame game = new MathGame();
+        do {
+            game.run();
+            TimeUnit.SECONDS.sleep(1L);
+        } while (true);
+    }
+
+    public void run() throws InterruptedException {
+        try {
+            int number = random.nextInt();
+            List<Integer> primeFactors = this.primeFactors(number);
+            MathGame.print(number, primeFactors);
+        }
+        catch (Exception e) {
+            System.out.println(String.format("illegalArgumentCount:%3d, ", this.illegalArgumentCount) + e.getMessage());
+        }
+    }
+
+    public static void print(int number, List<Integer> primeFactors) {
+        StringBuffer sb = new StringBuffer("" + number + "=");
+        Iterator<Integer> iterator = primeFactors.iterator();
+        while (iterator.hasNext()) {
+            int factor = iterator.next();
+            sb.append(factor).append('*');
+        }
+        if (sb.charAt(sb.length() - 1) == '*') {
+            sb.deleteCharAt(sb.length() - 1);
+        }
+        System.out.println(sb);
+    }
+
+    public List<Integer> primeFactors(int number) {
+        if (number < 2) {
+            ++this.illegalArgumentCount;
+            throw new IllegalArgumentException("number is: " + number + ", need >= 2");
+        }
+        ArrayList<Integer> result = new ArrayList<Integer>();
+        int i = 2;
+        while (i <= number) {
+            if (number % i == 0) {
+                result.add(i);
+                number /= i;
+                i = 2;
+                continue;
+            }
+            ++i;
+        }
+        return result;
+    }
+}
+
+Affect(row-cnt:1) cost in 970 ms.
+```
+
+## 6. watch
+
+Use '[watch](watch.md)' to view the return object of `demo.MathGame#primeFactors`:
+
+```
+$ watch demo.MathGame primeFactors returnObj
 Press Ctrl+C to abort.
-Affect(class-cnt:1 , method-cnt:1) cost in 29 ms.
-ts=2018-09-10 17:53:11;result=@Integer[621]
-ts=2018-09-10 17:53:12;result=@Integer[622]
-ts=2018-09-10 17:53:13;result=@Integer[623]
-ts=2018-09-10 17:53:14;result=@Integer[624]
-ts=2018-09-10 17:53:15;result=@Integer[625]
+Affect(class-cnt:1 , method-cnt:1) cost in 107 ms.
+ts=2018-11-28 19:22:30; [cost=1.715367ms] result=null
+ts=2018-11-28 19:22:31; [cost=0.185203ms] result=null
+ts=2018-11-28 19:22:32; [cost=19.012416ms] result=@ArrayList[
+    @Integer[5],
+    @Integer[47],
+    @Integer[2675531],
+]
+ts=2018-11-28 19:22:33; [cost=0.311395ms] result=@ArrayList[
+    @Integer[2],
+    @Integer[5],
+    @Integer[317],
+    @Integer[503],
+    @Integer[887],
+]
+ts=2018-11-28 19:22:34; [cost=10.136007ms] result=@ArrayList[
+    @Integer[2],
+    @Integer[2],
+    @Integer[3],
+    @Integer[3],
+    @Integer[31],
+    @Integer[717593],
+]
+ts=2018-11-28 19:22:35; [cost=29.969732ms] result=@ArrayList[
+    @Integer[5],
+    @Integer[29],
+    @Integer[7651739],
+]
 ```
 
 Pls. refer to [advanced usages](advanced-use.md) for more information.
 
-## 5. Exit Arthas
+## 7. Exit Arthas
 
 Use `quit` or `exit` to disconnect from the current process. The Arthas instance attached to the target process continues to live inside the process, and its port is standby for further connection.
 
