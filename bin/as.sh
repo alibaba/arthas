@@ -8,10 +8,10 @@
 
 # program : Arthas
 #  author : Core Engine @ Taobao.com
-#    date : 2018-09-17
+#    date : 2018-11-28
 
 # current arthas script version
-ARTHAS_SCRIPT_VERSION=3.0.4
+ARTHAS_SCRIPT_VERSION=3.0.5
 
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
@@ -76,7 +76,7 @@ ARTHAS_VERSION=
 # https://repo1.maven.org/maven2/com/taobao/arthas/arthas-packaging/maven-metadata.xml
 MAVEN_METADATA_URL="PLACEHOLDER_REPO/com/taobao/arthas/arthas-packaging/maven-metadata.xml"
 # arthas remote url
-# https://repo1.maven.org/maven2/com/taobao/arthas/arthas-packaging/3.0.4/arthas-packaging-3.0.4-bin.zip
+# https://repo1.maven.org/maven2/com/taobao/arthas/arthas-packaging/3.x.x/arthas-packaging-3.x.x-bin.zip
 REMOTE_DOWNLOAD_URL="PLACEHOLDER_REPO/com/taobao/arthas/arthas-packaging/PLACEHOLDER_VERSION/arthas-packaging-PLACEHOLDER_VERSION-bin.zip"
 
 # update timeout(sec)
