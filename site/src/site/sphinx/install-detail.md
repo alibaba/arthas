@@ -2,6 +2,23 @@ Arthas Install
 =============
 
 
+## 全平台通用（推荐）
+
+最新版本，点击下载：[![Arthas](https://img.shields.io/maven-central/v/com.taobao.arthas/arthas-packaging.svg?style=flat-square "Arthas")](http://repository.sonatype.org/service/local/artifact/maven/redirect?r=central-proxy&g=com.taobao.arthas&a=arthas-packaging&e=zip&c=bin&v=LATEST)
+
+解压后，在文件夹里有`arthas-boot.jar`，直接用`java -jar`的方式启动：
+
+```bash
+java -jar arthas-boot.jar
+```
+
+打印帮助信息：
+
+```bash
+java -jar arthas-boot.jar -h
+```
+
+
 ## Linux/Unix/Mac
 
 Arthas 支持在 Linux/Unix/Mac 等平台上一键安装，请复制以下内容，并粘贴到命令行中，敲 `回车` 执行即可：
@@ -27,11 +44,6 @@ curl -L https://alibaba.github.io/arthas/install.sh | sh
 ```
 as.bat <pid>
 ```
-
-如果需要更好的体验，可以在本地使用 `as.bat <pid>` 启动 Arthas Server 后，然后在另外的 Linux/Mac 上使用 `as.sh pid@ip:port` 来远程诊断。
-
-
-> Windows用户如果在cmd里不能正常显示颜色，可以使用[conemu](https://sourceforge.net/projects/conemu)。
 
 ## 手动安装
 
