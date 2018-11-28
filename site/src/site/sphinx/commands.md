@@ -7,7 +7,7 @@
 * [sysprop](sysprop.md)
 * [getstatic](getstatic.md)
 
-
+* [ognl](ognl.md)
 
 * [sc](sc.md)
 * [sm](sm.md)

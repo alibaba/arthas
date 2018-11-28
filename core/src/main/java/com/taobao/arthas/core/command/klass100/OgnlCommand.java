@@ -27,7 +27,7 @@ import com.taobao.middleware.logger.Logger;
 @Summary("Execute ognl expression.")
 @Description(Constants.EXAMPLE
                 + "  ognl '@java.lang.System@out.println(\"hello\")' \n"
-                + "  ognl -x 2 '@Singleton@getInstance() \n"
+                + "  ognl -x 2 '@Singleton@getInstance()' \n"
                 + "  ognl '@Demo@staticFiled' \n"
                 + "  ognl '#value1=@System@getProperty(\"java.home\"), #value2=@System@getProperty(\"java.runtime.name\"), {#value1, #value2}'\n"
                 + "  ognl -c 5d113a51 '@com.taobao.arthas.core.GlobalOptions@isDump' \n"
