@@ -4,7 +4,7 @@
     <parent>
         <groupId>com.taobao.arthas</groupId>
         <artifactId>arthas-all</artifactId>
-        <version>3.0.5</version>
+        <version>3.0.6-SNAPSHOT</version>
     </parent>
     <artifactId>arthas-testcase</artifactId>
     <name>arthas-testcase</name>
