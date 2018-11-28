@@ -5,6 +5,7 @@ All Commands
 * [thread](thread.md)
 * [jvm](jvm.md)
 * [sysprop](sysprop.md)
+* [sysenv](sysenv.md)
 * [getstatic](getstatic.md)
 
 * [ognl](ognl.md)
