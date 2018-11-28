@@ -61,6 +61,7 @@
         <module>agent</module>
         <module>client</module>
         <module>boot</module>
+        <module>demo</module>
         <module>testcase</module>
         <module>site</module>
         <module>packaging</module>
