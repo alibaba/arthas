@@ -36,5 +36,6 @@ Contents
 * [Fork me at GitHub](https://github.com/alibaba/arthas)
 * [参与贡献](https://github.com/alibaba/arthas/blob/master/CONTRIBUTING.md)
 * [Release Notes](release-notes.md)
+* [QQ群/钉钉群](contact-us.md)
 
 
