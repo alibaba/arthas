@@ -13,7 +13,7 @@
 
 Arthas help developers in trouble-shooting production issues for Java applications without modifying code or restarting servers.
 
-[中文说明](README_CN.md) (For Chinese Documentation)
+[中文说明/Chinese Documentation](README_CN.md)
 
 ### Background
 
@@ -41,26 +41,32 @@ Arthas was built to solve these issues. A developer can trouble-shoot your produ
 
 ### Quick start
 
-#### Linux/Unix/Mac
+#### Use `arthas-boot`(Recommend)
 
-Install Arthas:
+Download`arthas-boot.jar`，Start with `java` command:
 
+```bash
+wget https://alibaba.github.io/arthas/arthas-boot.jar
+java -jar arthas-boot.jar
 ```
+
+Print usage:
+
+```bash
+java -jar arthas-boot.jar -h
+```
+
+#### Use `as.sh`
+
+You can install Arthas with one single line command on Linux, Unix, and Mac. Pls. copy the following command and paste it into the command line, then press *Enter* to run:
+
+```bash
 curl -L https://alibaba.github.io/arthas/install.sh | sh
 ```
 
-Start Arthas:
+The command above will download the bootstrap script `as.sh` to the current directory. You can move it the any other place you want, or put its location in `$PATH`.
 
-```
-./as.sh
-```
-
-#### Windows
-
-1. Click [![Arthas](https://img.shields.io/maven-central/v/com.taobao.arthas/arthas-packaging.svg "Arthas")](http://repository.sonatype.org/service/local/artifact/maven/redirect?r=central-proxy&g=com.taobao.arthas&a=arthas-packaging&e=zip&c=bin&v=LATEST) to download the latest binary releases of `bin.zip`.
-2. Unzip the file.
-3. Go to the bin directory
-4. Run the following command `as.bat $PID`
+You can enter its interactive interface by executing `as.sh`, or execute `as.sh -h` for more help information.
 
 
 ### Documentation

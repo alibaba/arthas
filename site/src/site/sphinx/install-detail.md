@@ -3,7 +3,7 @@ Arthas Install
 
 ## 快速安装
 
-### 使用`arthas-boot`
+### 使用`arthas-boot`（推荐）
 
 下载`arthas-boot.jar`，然后用`java -jar`的方式启动：
 
