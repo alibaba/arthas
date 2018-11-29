@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Install Arthas &mdash; Arthas 3.0.5-SNAPSHOT documentation</title>
+  <title>Install Arthas &mdash; Arthas 3.0.6-SNAPSHOT documentation</title>
   
 
   
@@ -64,7 +64,7 @@
             
             
               <div class="version">
-                3.0.5-SNAPSHOT
+                3.0.6-SNAPSHOT
               </div>
             
           
@@ -90,6 +90,7 @@
             
               <ul class="current">
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Installation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#all-platform-recommended">All Platform (recommended)</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#linux-unix-mac">Linux/Unix/Mac</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#windows">Windows</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#manual-installation">Manual Installation</a></li>
@@ -173,6 +174,18 @@
             
   <div class="section" id="install-arthas">
 <span id="install-arthas"></span><h1>Install Arthas<a class="headerlink" href="#install-arthas" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="all-platform-recommended">
+<span id="all-platform-recommended"></span><h2>All Platform (recommended)<a class="headerlink" href="#all-platform-recommended" title="Permalink to this headline">¶</a></h2>
+<p>Latest Version, Click To Download: <a class="reference external" href="http://repository.sonatype.org/service/local/artifact/maven/redirect?r=central-proxy&amp;g=com.taobao.arthas&amp;a=arthas-packaging&amp;e=zip&amp;c=bin&amp;v=LATEST"><img alt="Arthas" src="https://img.shields.io/maven-central/v/com.taobao.arthas/arthas-packaging.svg?style=flat-square" /></a></p>
+<p>Download and unzip, find <code class="docutils literal notranslate"><span class="pre">arthas-boot.jar</span></code> in the directory. Start with <code class="docutils literal notranslate"><span class="pre">java</span></code> command:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>java -jar arthas-boot.jar
+</pre></div>
+</div>
+<p>Print help information:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>java -jar arthas-boot.jar -h
+</pre></div>
+</div>
+</div>
 <div class="section" id="linux-unix-mac">
 <span id="linux-unix-mac"></span><h2>Linux/Unix/Mac<a class="headerlink" href="#linux-unix-mac" title="Permalink to this headline">¶</a></h2>
 <p>You can install Arthas with one single line command on Linux, Unix, and Mac. Pls. copy the following command and paste it into the command line, then press <em>Enter</em> to run:</p>
@@ -189,9 +202,6 @@
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>as.bat &lt;pid&gt;
 </pre></div>
 </div>
-<p>To have a better experience, you can start the Arthas Server locally by executing <code class="docutils literal notranslate"><span class="pre">as.bat</span> <span class="pre">&lt;pid&gt;</span></code>, then run <code class="docutils literal notranslate"><span class="pre">./as.sh</span> <span class="pre">&lt;pid&gt;&#64;&lt;ip&gt;:&lt;por&gt;</span></code> in another Linux/Unix/Mac machine.</p>
-<blockquote>
-<div>If the color is not working as expect on windows, you can use <a class="reference external" href="https://sourceforge.net/projects/conemu">conemu</a> to get it to work.</div></blockquote>
 </div>
 <div class="section" id="manual-installation">
 <span id="manual-installation"></span><h2>Manual Installation<a class="headerlink" href="#manual-installation" title="Permalink to this headline">¶</a></h2>
@@ -293,7 +303,7 @@
     <script type="text/javascript">
         var DOCUMENTATION_OPTIONS = {
             URL_ROOT:'./',
-            VERSION:'3.0.5-SNAPSHOT',
+            VERSION:'3.0.6-SNAPSHOT',
             LANGUAGE:'en',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',

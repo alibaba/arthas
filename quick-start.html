@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>快速入门 &mdash; Arthas 3.0.5-SNAPSHOT 文档</title>
+  <title>快速入门 &mdash; Arthas 3.0.6-SNAPSHOT 文档</title>
   
 
   
@@ -64,7 +64,7 @@
             
             
               <div class="version">
-                3.0.5-SNAPSHOT
+                3.0.6-SNAPSHOT
               </div>
             
           
@@ -93,13 +93,11 @@
 <li class="toctree-l1"><a class="reference internal" href="install-detail.html">安装</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">快速入门</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#demo">1. 启动Demo</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#arthas">2. 启动arthas</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#linux-unix-mac">Linux/Unix/Mac</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#windows">Windows</a></li>
-</ul>
-</li>
+<li class="toctree-l2"><a class="reference internal" href="#arthas">2. 启动arthas</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#dashboard">3. 查看dashboard</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#watch">4. watch</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#sysenvmain-class">4. 通过sysenv命令来获取到进程的Main Class</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#jadmain-class">5. 通过jad来反编绎Main Class</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#watch">6. watch</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#arthas">5. 退出arthas</a></li>
 </ul>
 </li>
@@ -180,64 +178,33 @@
 <span id="id1"></span><h1>快速入门<a class="headerlink" href="#" title="永久链接至标题">¶</a></h1>
 <div class="section" id="demo">
 <span id="demo"></span><h2>1. 启动Demo<a class="headerlink" href="#demo" title="永久链接至标题">¶</a></h2>
-<div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">java.util.concurrent.TimeUnit</span><span class="o">;</span>
-<span class="kn">import</span> <span class="nn">java.util.concurrent.atomic.AtomicInteger</span><span class="o">;</span>
-<span class="kd">public</span> <span class="kd">class</span> <span class="nc">Demo</span> <span class="o">{</span>
-    <span class="kd">static</span> <span class="kd">class</span> <span class="nc">Counter</span> <span class="o">{</span>
-        <span class="kd">private</span> <span class="kd">static</span> <span class="n">AtomicInteger</span> <span class="n">count</span> <span class="o">=</span> <span class="k">new</span> <span class="n">AtomicInteger</span><span class="o">(</span><span class="mi">0</span><span class="o">);</span>
-        <span class="kd">public</span> <span class="kd">static</span> <span class="kt">void</span> <span class="nf">increment</span><span class="o">()</span> <span class="o">{</span>
-            <span class="n">count</span><span class="o">.</span><span class="na">incrementAndGet</span><span class="o">();</span>
-        <span class="o">}</span>
-        <span class="kd">public</span> <span class="kd">static</span> <span class="kt">int</span> <span class="nf">value</span><span class="o">()</span> <span class="o">{</span>
-            <span class="k">return</span> <span class="n">count</span><span class="o">.</span><span class="na">get</span><span class="o">();</span>
-        <span class="o">}</span>
-    <span class="o">}</span>
-
-    <span class="kd">public</span> <span class="kd">static</span> <span class="kt">void</span> <span class="nf">main</span><span class="o">(</span><span class="n">String</span><span class="o">[]</span> <span class="n">args</span><span class="o">)</span> <span class="kd">throws</span> <span class="n">InterruptedException</span> <span class="o">{</span>
-        <span class="k">while</span> <span class="o">(</span><span class="kc">true</span><span class="o">)</span> <span class="o">{</span>
-            <span class="n">Counter</span><span class="o">.</span><span class="na">increment</span><span class="o">();</span>
-            <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="s">&quot;counter: &quot;</span> <span class="o">+</span> <span class="n">Counter</span><span class="o">.</span><span class="na">value</span><span class="o">());</span>
-            <span class="n">TimeUnit</span><span class="o">.</span><span class="na">SECONDS</span><span class="o">.</span><span class="na">sleep</span><span class="o">(</span><span class="mi">1</span><span class="o">);</span>
-        <span class="o">}</span>
-    <span class="o">}</span>
-<span class="o">}</span>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>java -jar arthas-demo.jar
 </pre></div>
 </div>
-<p>把上面的内容保存到<code class="docutils literal notranslate"><span class="pre">Demo.java</span></code>里，然后在命令行下编绎启动：</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>javac Demo.java
-java Demo
-</pre></div>
-</div>
-<p>也可以把代码保存到IDE里，然后启动。</p>
+<p><code class="docutils literal notranslate"><span class="pre">arthas-demo</span></code>是一个简单的程序，每隔一秒生成一个随机数，再执行质因式分解，并打印出分解结果。</p>
+<p>如果本地没有<code class="docutils literal notranslate"><span class="pre">arthas-demo.jar</span></code>, 可以从这里下载： <a class="reference external" href="http://repository.sonatype.org/service/local/artifact/maven/redirect?r=central-proxy&amp;g=com.taobao.arthas&amp;a=arthas-boot&amp;v=LATEST">点击</a></p>
+<p>也可以自己从代码里编绎运行：<a class="reference external" href="https://github.com/alibaba/arthas/blob/master/demo/src/main/java/demo">查看</a></p>
 </div>
 <div class="section" id="arthas">
 <span id="arthas"></span><h2>2. 启动arthas<a class="headerlink" href="#arthas" title="永久链接至标题">¶</a></h2>
-<div class="section" id="linux-unix-mac">
-<span id="linux-unix-mac"></span><h3>Linux/Unix/Mac<a class="headerlink" href="#linux-unix-mac" title="永久链接至标题">¶</a></h3>
 <p>在命令行下面执行：</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./as.sh
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>java -jar arthas-boot.jar
 </pre></div>
 </div>
 <blockquote>
-<div>执行该脚本的用户需要和目标进程具有相同的权限。比如以<code class="docutils literal notranslate"><span class="pre">admin</span></code>用户来执行：
-<code class="docutils literal notranslate"><span class="pre">sudo</span> <span class="pre">su</span> <span class="pre">admin</span> <span class="pre">&amp;&amp;</span> <span class="pre">./as.sh</span></code> 或 <code class="docutils literal notranslate"><span class="pre">sudo</span> <span class="pre">-u</span> <span class="pre">admin</span> <span class="pre">-EH</span> <span class="pre">./as.sh</span></code>。
-详细的启动脚本说明，请参考<a class="reference internal" href="start-arthas.html"><span class="doc">这里</span></a>。
+<div>执行该程序的用户需要和目标进程具有相同的权限。比如以<code class="docutils literal notranslate"><span class="pre">admin</span></code>用户来执行：
+<code class="docutils literal notranslate"><span class="pre">sudo</span> <span class="pre">su</span> <span class="pre">admin</span> <span class="pre">&amp;&amp;</span> <span class="pre">java</span> <span class="pre">-jar</span> <span class="pre">arthas-boot.jar</span></code> 或 <code class="docutils literal notranslate"><span class="pre">sudo</span> <span class="pre">-u</span> <span class="pre">admin</span> <span class="pre">-EH</span> <span class="pre">java</span> <span class="pre">-jar</span> <span class="pre">arthas-boot.jar</span></code>。
 如果attatch不上目标进程，可以查看<code class="docutils literal notranslate"><span class="pre">~/logs/arthas/</span></code> 目录下的日志。</div></blockquote>
 <p>选择应用java进程：</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ ./as.sh
-Arthas script version: 3.0.2
-Found existing java process, please choose one and hit RETURN.
-* [1]: 95428 
-  [2]: 22647 org.jetbrains.jps.cmdline.Launcher
-  [3]: 21736
-  [4]: 13560 Demo
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ $ java -jar arthas-boot.jar
+* [1]: 35542
+  [2]: 71560 arthas-demo.jar
 </pre></div>
 </div>
-<p>Demo进程是第4个，则输入4，再输入回车/enter。Arthas会attach到目标进程上，并输出日志：</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>Connecting to arthas server... current timestamp is 1536656867
-Trying 127.0.0.1...
-Connected to 127.0.0.1.
-Escape character is &#39;^]&#39;.
+<p>Demo进程是第2个，则输入2，再输入回车/enter。Arthas会attach到目标进程上，并输出日志：</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>[INFO] Try to attach process 71560
+[INFO] Attach process 71560 success.
+[INFO] arthas-client connect 127.0.0.1 3658
   ,---.  ,------. ,--------.,--.  ,--.  ,---.   ,---.
  /  O  \ |  .--. &#39;&#39;--.  .--&#39;|  &#39;--&#39;  | /  O  \ &#39;   .-&#39;
 |  .-.  ||  &#39;--&#39;.&#39;   |  |   |  .--.  ||  .-.  |`.  `-.
@@ -245,15 +212,12 @@ Escape character is &#39;^]&#39;.
 `--&#39; `--&#39;`--&#39; &#39;--&#39;   `--&#39;   `--&#39;  `--&#39;`--&#39; `--&#39;`-----&#39;
 
 wiki: https://alibaba.github.io/arthas
-version: 3.0.1-RC-SNAPSHOT
-pid: 13560
-timestamp: 1536656867894
+version: 3.0.5.20181127201536
+pid: 71560
+time: 2018-11-28 19:16:24
+
+$
 </pre></div>
-</div>
-</div>
-<div class="section" id="windows">
-<span id="windows"></span><h3>Windows<a class="headerlink" href="#windows" title="永久链接至标题">¶</a></h3>
-<p>打开Dos命令行窗口，在解压的arthas目录下执行<code class="docutils literal notranslate"><span class="pre">as.bat</span> <span class="pre">pid</span></code>。</p>
 </div>
 </div>
 <div class="section" id="dashboard">
@@ -293,17 +257,129 @@ java.home              /Library/Java/JavaVir
 </pre></div>
 </div>
 </div>
+<div class="section" id="sysenvmain-class">
+<span id="sysenvmain-class"></span><h2>4. 通过sysenv命令来获取到进程的Main Class<a class="headerlink" href="#sysenvmain-class" title="永久链接至标题">¶</a></h2>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ sysenv | grep MAIN
+ JAVA_MAIN_CLASS_71560              demo.MathGame
+</pre></div>
+</div>
+</div>
+<div class="section" id="jadmain-class">
+<span id="jadmain-class"></span><h2>5. 通过jad来反编绎Main Class<a class="headerlink" href="#jadmain-class" title="永久链接至标题">¶</a></h2>
+<div class="highlight-java notranslate"><div class="highlight"><pre><span></span>$ jad demo.MathGame
+
+ClassLoader:
++-sun.misc.Launcher$AppClassLoader@3d4eac69
+  +-sun.misc.Launcher$ExtClassLoader@66350f69
+
+Location:
+/tmp/arthas-demo.jar
+
+/*
+ * Decompiled with CFR 0_132.
+ */
+package demo;
+
+import java.io.PrintStream;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Random;
+import java.util.concurrent.TimeUnit;
+
+public class MathGame {
+    private static Random random = new Random();
+    private int illegalArgumentCount = 0;
+
+    public static void main(String[] args) throws InterruptedException {
+        MathGame game = new MathGame();
+        do {
+            game.run();
+            TimeUnit.SECONDS.sleep(1L);
+        } while (true);
+    }
+
+    public void run() throws InterruptedException {
+        try {
+            int number = random.nextInt();
+            List&lt;Integer&gt; primeFactors = this.primeFactors(number);
+            MathGame.print(number, primeFactors);
+        }
+        catch (Exception e) {
+            System.out.println(String.format(&quot;illegalArgumentCount:%3d, &quot;, this.illegalArgumentCount) + e.getMessage());
+        }
+    }
+
+    public static void print(int number, List&lt;Integer&gt; primeFactors) {
+        StringBuffer sb = new StringBuffer(&quot;&quot; + number + &quot;=&quot;);
+        Iterator&lt;Integer&gt; iterator = primeFactors.iterator();
+        while (iterator.hasNext()) {
+            int factor = iterator.next();
+            sb.append(factor).append(&#39;*&#39;);
+        }
+        if (sb.charAt(sb.length() - 1) == &#39;*&#39;) {
+            sb.deleteCharAt(sb.length() - 1);
+        }
+        System.out.println(sb);
+    }
+
+    public List&lt;Integer&gt; primeFactors(int number) {
+        if (number &lt; 2) {
+            ++this.illegalArgumentCount;
+            throw new IllegalArgumentException(&quot;number is: &quot; + number + &quot;, need &gt;= 2&quot;);
+        }
+        ArrayList&lt;Integer&gt; result = new ArrayList&lt;Integer&gt;();
+        int i = 2;
+        while (i &lt;= number) {
+            if (number % i == 0) {
+                result.add(i);
+                number /= i;
+                i = 2;
+                continue;
+            }
+            ++i;
+        }
+        return result;
+    }
+}
+
+Affect(row-cnt:1) cost in 970 ms.
+</pre></div>
+</div>
+</div>
 <div class="section" id="watch">
-<span id="watch"></span><h2>4. watch<a class="headerlink" href="#watch" title="永久链接至标题">¶</a></h2>
-<p>通过<a class="reference internal" href="watch.html"><span class="doc">watch</span></a>命令来查看<code class="docutils literal notranslate"><span class="pre">Counter.value()</span></code>函数的返回值：</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ watch Demo$Counter value returnObj
+<span id="watch"></span><h2>6. watch<a class="headerlink" href="#watch" title="永久链接至标题">¶</a></h2>
+<p>通过<a class="reference internal" href="watch.html"><span class="doc">watch</span></a>命令来查看<code class="docutils literal notranslate"><span class="pre">demo.MathGame#primeFactors</span></code>函数的返回值：</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ watch demo.MathGame primeFactors returnObj
 Press Ctrl+C to abort.
-Affect(class-cnt:1 , method-cnt:1) cost in 29 ms.
-ts=2018-09-10 17:53:11;result=@Integer[621]
-ts=2018-09-10 17:53:12;result=@Integer[622]
-ts=2018-09-10 17:53:13;result=@Integer[623]
-ts=2018-09-10 17:53:14;result=@Integer[624]
-ts=2018-09-10 17:53:15;result=@Integer[625]
+Affect(class-cnt:1 , method-cnt:1) cost in 107 ms.
+ts=2018-11-28 19:22:30; [cost=1.715367ms] result=null
+ts=2018-11-28 19:22:31; [cost=0.185203ms] result=null
+ts=2018-11-28 19:22:32; [cost=19.012416ms] result=@ArrayList[
+    @Integer[5],
+    @Integer[47],
+    @Integer[2675531],
+]
+ts=2018-11-28 19:22:33; [cost=0.311395ms] result=@ArrayList[
+    @Integer[2],
+    @Integer[5],
+    @Integer[317],
+    @Integer[503],
+    @Integer[887],
+]
+ts=2018-11-28 19:22:34; [cost=10.136007ms] result=@ArrayList[
+    @Integer[2],
+    @Integer[2],
+    @Integer[3],
+    @Integer[3],
+    @Integer[31],
+    @Integer[717593],
+]
+ts=2018-11-28 19:22:35; [cost=29.969732ms] result=@ArrayList[
+    @Integer[5],
+    @Integer[29],
+    @Integer[7651739],
+]
 </pre></div>
 </div>
 <p>更多的功能可以查看<a class="reference internal" href="advanced-use.html"><span class="doc">进阶使用</span></a>。</p>
@@ -357,7 +433,7 @@ ts=2018-09-10 17:53:15;result=@Integer[625]
     <script type="text/javascript">
         var DOCUMENTATION_OPTIONS = {
             URL_ROOT:'./',
-            VERSION:'3.0.5-SNAPSHOT',
+            VERSION:'3.0.6-SNAPSHOT',
             LANGUAGE:'zh_CN',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',

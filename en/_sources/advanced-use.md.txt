@@ -8,6 +8,7 @@ Advanced Usage
 * session - display current session information
 * [reset](reset.md) - reset all the enhanced classes. All enhanced classes will also be reset when Arthas server is closed by `shutdown`
 * version - print the version for the Arthas attached to the current Java process
+* history - view command history
 * quit/exit - exit the current Arthas session, without effecting other sessions
 * shutdown - terminate the Arthas server, all Arthas sessions will be destroyed
 * [keymap](keymap.md) - keymap for Arthas keyboard shortcut
@@ -17,7 +18,8 @@ Advanced Usage
 * [dashboard](dashboard.md) - dashboard for the system's real-time data
 * [thread](thread.md) - show java thread information
 * [jvm](jvm.md) - show JVM information
-* [sysprop](sysprop.md) - show/modify system properties
+* [sysprop](sysprop.md) - view/modify system properties
+* [sysenv](syspenv.md) — view system environment variables
 * **New!** [getstatic](getstatic.md) :clap: - examine class's static properties
 
 ## class/classloader

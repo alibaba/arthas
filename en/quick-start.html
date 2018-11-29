@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Quick Start &mdash; Arthas 3.0.5-SNAPSHOT documentation</title>
+  <title>Quick Start &mdash; Arthas 3.0.6-SNAPSHOT documentation</title>
   
 
   
@@ -64,7 +64,7 @@
             
             
               <div class="version">
-                3.0.5-SNAPSHOT
+                3.0.6-SNAPSHOT
               </div>
             
           
@@ -94,12 +94,13 @@
 <li class="toctree-l2"><a class="reference internal" href="#start-demo-application">1. Start Demo Application</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#start-arthas">2. Start Arthas</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#linux-unix-mac">Linux/Unix/Mac</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#windows">Windows</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="#check-the-dashboard">3. Check the Dashboard</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#watch">4. watch</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#exit-arthas">5. Exit Arthas</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#get-the-main-class-of-the-process-with-the-sysenv-command">4. Get the Main Class of the process with the sysenv command</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#decompile-main-class-with-jad-command">5. Decompile Main Class with jad command</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#watch">6. watch</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#exit-arthas">7. Exit Arthas</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="advanced-use.html">Advanced usage</a></li>
@@ -179,71 +180,33 @@
 <span id="quick-start"></span><h1>Quick Start<a class="headerlink" href="#quick-start" title="Permalink to this headline">¶</a></h1>
 <div class="section" id="start-demo-application">
 <span id="start-demo-application"></span><h2>1. Start Demo Application<a class="headerlink" href="#start-demo-application" title="Permalink to this headline">¶</a></h2>
-<p>Save the following code to a <code class="docutils literal notranslate"><span class="pre">Demo.java</span></code> and run the commands in shell as</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>javac Demo.java <span class="o">&amp;&amp;</span> java Demo
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>java -jar arthas-demo.jar
 </pre></div>
 </div>
-<div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">java.util.concurrent.TimeUnit</span><span class="o">;</span>
-<span class="kn">import</span> <span class="nn">java.util.concurrent.atomic.AtomicInteger</span><span class="o">;</span>
-<span class="kd">public</span> <span class="kd">class</span> <span class="nc">Demo</span> <span class="o">{</span>
-    <span class="kd">static</span> <span class="kd">class</span> <span class="nc">Counter</span> <span class="o">{</span>
-        <span class="kd">private</span> <span class="kd">static</span> <span class="n">AtomicInteger</span> <span class="n">count</span> <span class="o">=</span> <span class="k">new</span> <span class="n">AtomicInteger</span><span class="o">(</span><span class="mi">0</span><span class="o">);</span>
-        <span class="kd">public</span> <span class="kd">static</span> <span class="kt">void</span> <span class="nf">increment</span><span class="o">()</span> <span class="o">{</span>
-            <span class="n">count</span><span class="o">.</span><span class="na">incrementAndGet</span><span class="o">();</span>
-        
-        <span class="o">}</span>
-        <span class="kd">public</span> <span class="kd">static</span> <span class="kt">int</span> <span class="nf">value</span><span class="o">()</span> <span class="o">{</span>
-            <span class="k">return</span> <span class="n">count</span><span class="o">.</span><span class="na">get</span><span class="o">();</span>
-        
-        <span class="o">}</span>
-    
-    <span class="o">}</span>
-
-    <span class="kd">public</span> <span class="kd">static</span> <span class="kt">void</span> <span class="nf">main</span><span class="o">(</span><span class="n">String</span><span class="o">[]</span> <span class="n">args</span><span class="o">)</span> <span class="kd">throws</span> <span class="n">InterruptedException</span> <span class="o">{</span>
-        <span class="k">while</span> <span class="o">(</span><span class="kc">true</span><span class="o">)</span> <span class="o">{</span>
-            <span class="n">Counter</span><span class="o">.</span><span class="na">increment</span><span class="o">();</span>
-            <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="s">&quot;counter: &quot;</span> <span class="o">+</span> <span class="n">Counter</span><span class="o">.</span><span class="na">value</span><span class="o">());</span>
-            <span class="n">TimeUnit</span><span class="o">.</span><span class="na">SECONDS</span><span class="o">.</span><span class="na">sleep</span><span class="o">(</span><span class="mi">1</span><span class="o">);</span>
-        
-        <span class="o">}</span>
-    
-    <span class="o">}</span>
-
-<span class="o">}</span>
-</pre></div>
-</div>
-<p>Save the contents above into <code class="docutils literal notranslate"><span class="pre">Demo.java</span></code>, then compile it under the command line:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>javac Demo.java
-java Demo
-</pre></div>
-</div>
-<p>You can also save and start the code in IDE.</p>
+<p><code class="docutils literal notranslate"><span class="pre">arthas-demo</span></code> is a simple program that generates a random number every second, then find all prime factors of the number.</p>
+<p>If there is no <code class="docutils literal notranslate"><span class="pre">arthas-demo.jar</span></code> locally, you can download it from here:<a class="reference external" href="http://repository.sonatype.org/service/local/artifact/maven/redirect?r=central-proxy&amp;g=com.taobao.arthas&amp;a=arthas-boot&amp;v=LATEST">Click</a></p>
+<p>You can also compile code by youself:<a class="reference external" href="https://github.com/alibaba/arthas/blob/master/demo/src/main/java/demo">View</a></p>
 </div>
 <div class="section" id="start-arthas">
 <span id="start-arthas"></span><h2>2. Start Arthas<a class="headerlink" href="#start-arthas" title="Permalink to this headline">¶</a></h2>
 <div class="section" id="linux-unix-mac">
 <span id="linux-unix-mac"></span><h3>Linux/Unix/Mac<a class="headerlink" href="#linux-unix-mac" title="Permalink to this headline">¶</a></h3>
 <p>Execute the following command in the command line:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./as.sh
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>java -jar arthas-boot.jar
 </pre></div>
 </div>
 <blockquote>
-<div>The user to run this script <em>MUST</em> have the same privilege as the owner of the target process, as a simple example you can try the following command if the target process is managed by user <code class="docutils literal notranslate"><span class="pre">admin</span></code>: <code class="docutils literal notranslate"><span class="pre">sudo</span> <span class="pre">su</span> <span class="pre">admin</span> <span class="pre">&amp;&amp;</span> <span class="pre">./as.sh</span></code> or <code class="docutils literal notranslate"><span class="pre">sudo</span> <span class="pre">-u</span> <span class="pre">admin</span> <span class="pre">-EH</span> <span class="pre">./as.sh</span></code>. For more details on the bootstrap script, please refer to <a class="reference internal" href="start-arthas.html"><span class="doc">Start Arthas</span></a>. If you cannot be able to attach to the target process, please check the logs under <code class="docutils literal notranslate"><span class="pre">~/logs/arthas</span></code> for troubleshooting.</div></blockquote>
+<div>The user to run this command <em>MUST</em> have the same privilege as the owner of the target process, as a simple example you can try the following command if the target process is managed by user <code class="docutils literal notranslate"><span class="pre">admin</span></code>: <code class="docutils literal notranslate"><span class="pre">sudo</span> <span class="pre">su</span> <span class="pre">admin</span> <span class="pre">&amp;&amp;</span> <span class="pre">java</span> <span class="pre">-jar</span> <span class="pre">arthas-boot.jar</span></code> or <code class="docutils literal notranslate"><span class="pre">sudo</span> <span class="pre">-u</span> <span class="pre">admin</span> <span class="pre">-EH</span> <span class="pre">java</span> <span class="pre">-jar</span> <span class="pre">arthas-boot.jar</span></code>.If you cannot be able to attach to the target process, please check the logs under <code class="docutils literal notranslate"><span class="pre">~/logs/arthas</span></code> for troubleshooting.</div></blockquote>
 <p>Select the target Java process to attach:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$ ./as.sh
-Arthas script version: <span class="m">3</span>.0.2
-Found existing java process, please choose one and hit RETURN.
-* <span class="o">[</span><span class="m">1</span><span class="o">]</span>: <span class="m">95428</span> 
-  <span class="o">[</span><span class="m">2</span><span class="o">]</span>: <span class="m">22647</span> org.jetbrains.jps.cmdline.Launcher
-  <span class="o">[</span><span class="m">3</span><span class="o">]</span>: <span class="m">21736</span>
-  <span class="o">[</span><span class="m">4</span><span class="o">]</span>: <span class="m">13560</span> Demo
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$ $ java -jar arthas-boot.jar
+* <span class="o">[</span><span class="m">1</span><span class="o">]</span>: <span class="m">35542</span>
+  <span class="o">[</span><span class="m">2</span><span class="o">]</span>: <span class="m">71560</span> arthas-demo.jar
 </pre></div>
 </div>
-<p>The ‘Demo’ process is the fourth as shown above, press ‘4’ then ‘Enter’. Arthas will attach to the target process, and start to output:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>Connecting to arthas server... current timestamp is <span class="m">1536656867</span>
-Trying <span class="m">127</span>.0.0.1...
-Connected to <span class="m">127</span>.0.0.1.
-Escape character is <span class="s1">&#39;^]&#39;</span>.
+<p>The ‘Demo’ process is the fourth as shown above, press ‘2’ then ‘Enter’. Arthas will attach to the target process, and start to output:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="o">[</span>INFO<span class="o">]</span> Try to attach process <span class="m">71560</span>
+<span class="o">[</span>INFO<span class="o">]</span> Attach process <span class="m">71560</span> success.
+<span class="o">[</span>INFO<span class="o">]</span> arthas-client connect <span class="m">127</span>.0.0.1 <span class="m">3658</span>
   ,---.  ,------. ,--------.,--.  ,--.  ,---.   ,---.
  /  O  <span class="se">\ </span><span class="p">|</span>  .--. <span class="s1">&#39;&#39;</span>--.  .--<span class="s1">&#39;|  &#39;</span>--<span class="s1">&#39;  | /  O  \ &#39;</span>   .-<span class="s1">&#39;</span>
 <span class="s1">|  .-.  ||  &#39;</span>--<span class="s1">&#39;.&#39;</span>   <span class="p">|</span>  <span class="p">|</span>   <span class="p">|</span>  .--.  <span class="o">||</span>  .-.  <span class="p">|</span><span class="sb">`</span>.  <span class="sb">`</span>-.
@@ -251,15 +214,13 @@ Escape character is <span class="s1">&#39;^]&#39;</span>.
 <span class="s1">`--&#39;</span> <span class="sb">`</span>--<span class="s1">&#39;`--&#39;</span> <span class="s1">&#39;--&#39;</span>   <span class="sb">`</span>--<span class="s1">&#39;   `--&#39;</span>  <span class="sb">`</span>--<span class="s1">&#39;`--&#39;</span> <span class="sb">`</span>--<span class="s1">&#39;`-----&#39;</span>
 
 wiki: https://alibaba.github.io/arthas
-version: <span class="m">3</span>.0.1-RC-SNAPSHOT
-pid: <span class="m">13560</span>
-timestamp: <span class="m">1536656867894</span>
+version: <span class="m">3</span>.0.5.20181127201536
+pid: <span class="m">71560</span>
+time: <span class="m">2018</span>-11-28 <span class="m">19</span>:16:24
+
+$
 </pre></div>
 </div>
-</div>
-<div class="section" id="windows">
-<span id="windows"></span><h3>Windows<a class="headerlink" href="#windows" title="Permalink to this headline">¶</a></h3>
-<p>Open ‘Command’ window, execute <code class="docutils literal notranslate"><span class="pre">as.bat</span> <span class="pre">&lt;pid&gt;</span></code> from where the Arthas package file is unzipped.</p>
 </div>
 </div>
 <div class="section" id="check-the-dashboard">
@@ -299,23 +260,135 @@ java.home              /Library/Java/JavaVir
 </pre></div>
 </div>
 </div>
+<div class="section" id="get-the-main-class-of-the-process-with-the-sysenv-command">
+<span id="get-the-main-class-of-the-process-with-the-sysenv-command"></span><h2>4. Get the Main Class of the process with the sysenv command<a class="headerlink" href="#get-the-main-class-of-the-process-with-the-sysenv-command" title="Permalink to this headline">¶</a></h2>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ sysenv | grep MAIN
+ JAVA_MAIN_CLASS_71560              demo.MathGame
+</pre></div>
+</div>
+</div>
+<div class="section" id="decompile-main-class-with-jad-command">
+<span id="decompile-main-class-with-jad-command"></span><h2>5. Decompile Main Class with jad command<a class="headerlink" href="#decompile-main-class-with-jad-command" title="Permalink to this headline">¶</a></h2>
+<div class="highlight-java notranslate"><div class="highlight"><pre><span></span>$ jad demo.MathGame
+
+ClassLoader:
++-sun.misc.Launcher$AppClassLoader@3d4eac69
+  +-sun.misc.Launcher$ExtClassLoader@66350f69
+
+Location:
+/tmp/arthas-demo.jar
+
+/*
+ * Decompiled with CFR 0_132.
+ */
+package demo;
+
+import java.io.PrintStream;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Random;
+import java.util.concurrent.TimeUnit;
+
+public class MathGame {
+    private static Random random = new Random();
+    private int illegalArgumentCount = 0;
+
+    public static void main(String[] args) throws InterruptedException {
+        MathGame game = new MathGame();
+        do {
+            game.run();
+            TimeUnit.SECONDS.sleep(1L);
+        } while (true);
+    }
+
+    public void run() throws InterruptedException {
+        try {
+            int number = random.nextInt();
+            List&lt;Integer&gt; primeFactors = this.primeFactors(number);
+            MathGame.print(number, primeFactors);
+        }
+        catch (Exception e) {
+            System.out.println(String.format(&quot;illegalArgumentCount:%3d, &quot;, this.illegalArgumentCount) + e.getMessage());
+        }
+    }
+
+    public static void print(int number, List&lt;Integer&gt; primeFactors) {
+        StringBuffer sb = new StringBuffer(&quot;&quot; + number + &quot;=&quot;);
+        Iterator&lt;Integer&gt; iterator = primeFactors.iterator();
+        while (iterator.hasNext()) {
+            int factor = iterator.next();
+            sb.append(factor).append(&#39;*&#39;);
+        }
+        if (sb.charAt(sb.length() - 1) == &#39;*&#39;) {
+            sb.deleteCharAt(sb.length() - 1);
+        }
+        System.out.println(sb);
+    }
+
+    public List&lt;Integer&gt; primeFactors(int number) {
+        if (number &lt; 2) {
+            ++this.illegalArgumentCount;
+            throw new IllegalArgumentException(&quot;number is: &quot; + number + &quot;, need &gt;= 2&quot;);
+        }
+        ArrayList&lt;Integer&gt; result = new ArrayList&lt;Integer&gt;();
+        int i = 2;
+        while (i &lt;= number) {
+            if (number % i == 0) {
+                result.add(i);
+                number /= i;
+                i = 2;
+                continue;
+            }
+            ++i;
+        }
+        return result;
+    }
+}
+
+Affect(row-cnt:1) cost in 970 ms.
+</pre></div>
+</div>
+</div>
 <div class="section" id="watch">
-<span id="watch"></span><h2>4. watch<a class="headerlink" href="#watch" title="Permalink to this headline">¶</a></h2>
-<p>Use ‘<a class="reference internal" href="watch.html"><span class="doc">watch</span></a>’ to check the returned value of <code class="docutils literal notranslate"><span class="pre">Counter.value()</span></code>:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ watch Demo$Counter value returnObj
+<span id="watch"></span><h2>6. watch<a class="headerlink" href="#watch" title="Permalink to this headline">¶</a></h2>
+<p>Use ‘<a class="reference internal" href="watch.html"><span class="doc">watch</span></a>’ to view the return object of <code class="docutils literal notranslate"><span class="pre">demo.MathGame#primeFactors</span></code>:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ watch demo.MathGame primeFactors returnObj
 Press Ctrl+C to abort.
-Affect(class-cnt:1 , method-cnt:1) cost in 29 ms.
-ts=2018-09-10 17:53:11;result=@Integer[621]
-ts=2018-09-10 17:53:12;result=@Integer[622]
-ts=2018-09-10 17:53:13;result=@Integer[623]
-ts=2018-09-10 17:53:14;result=@Integer[624]
-ts=2018-09-10 17:53:15;result=@Integer[625]
+Affect(class-cnt:1 , method-cnt:1) cost in 107 ms.
+ts=2018-11-28 19:22:30; [cost=1.715367ms] result=null
+ts=2018-11-28 19:22:31; [cost=0.185203ms] result=null
+ts=2018-11-28 19:22:32; [cost=19.012416ms] result=@ArrayList[
+    @Integer[5],
+    @Integer[47],
+    @Integer[2675531],
+]
+ts=2018-11-28 19:22:33; [cost=0.311395ms] result=@ArrayList[
+    @Integer[2],
+    @Integer[5],
+    @Integer[317],
+    @Integer[503],
+    @Integer[887],
+]
+ts=2018-11-28 19:22:34; [cost=10.136007ms] result=@ArrayList[
+    @Integer[2],
+    @Integer[2],
+    @Integer[3],
+    @Integer[3],
+    @Integer[31],
+    @Integer[717593],
+]
+ts=2018-11-28 19:22:35; [cost=29.969732ms] result=@ArrayList[
+    @Integer[5],
+    @Integer[29],
+    @Integer[7651739],
+]
 </pre></div>
 </div>
 <p>Pls. refer to <a class="reference internal" href="advanced-use.html"><span class="doc">advanced usages</span></a> for more information.</p>
 </div>
 <div class="section" id="exit-arthas">
-<span id="exit-arthas"></span><h2>5. Exit Arthas<a class="headerlink" href="#exit-arthas" title="Permalink to this headline">¶</a></h2>
+<span id="exit-arthas"></span><h2>7. Exit Arthas<a class="headerlink" href="#exit-arthas" title="Permalink to this headline">¶</a></h2>
 <p>Use <code class="docutils literal notranslate"><span class="pre">quit</span></code> or <code class="docutils literal notranslate"><span class="pre">exit</span></code> to disconnect from the current process. The Arthas instance attached to the target process continues to live inside the process, and its port is standby for further connection.</p>
 <p>Use <code class="docutils literal notranslate"><span class="pre">shutdown</span></code> to have Arthas completely quit from the target process.</p>
 </div>
@@ -363,7 +436,7 @@ ts=2018-09-10 17:53:15;result=@Integer[625]
     <script type="text/javascript">
         var DOCUMENTATION_OPTIONS = {
             URL_ROOT:'./',
-            VERSION:'3.0.5-SNAPSHOT',
+            VERSION:'3.0.6-SNAPSHOT',
             LANGUAGE:'en',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',

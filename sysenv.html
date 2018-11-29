@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>options &mdash; Arthas 3.0.6-SNAPSHOT 文档</title>
+  <title>sysenv &mdash; Arthas 3.0.6-SNAPSHOT 文档</title>
   
 
   
@@ -31,8 +31,8 @@
     <link rel="stylesheet" href="_static/overrides.css" type="text/css" />
     <link rel="index" title="索引" href="genindex.html" />
     <link rel="search" title="搜索" href="search.html" />
-    <link rel="next" title="Release Notes" href="release-notes.html" />
-    <link rel="prev" title="tt" href="tt.html" />
+    <link rel="next" title="getstatic" href="getstatic.html" />
+    <link rel="prev" title="sysprop" href="sysprop.html" />
 <script src="_static/center_page.js"></script>
  
 
@@ -98,7 +98,14 @@
 <li class="toctree-l2"><a class="reference internal" href="thread.html">thread</a></li>
 <li class="toctree-l2"><a class="reference internal" href="jvm.html">jvm</a></li>
 <li class="toctree-l2"><a class="reference internal" href="sysprop.html">sysprop</a></li>
-<li class="toctree-l2"><a class="reference internal" href="sysenv.html">sysenv</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">sysenv</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#">使用参考</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#">查看所有环境变量</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#">查看单个环境变量</a></li>
+</ul>
+</li>
+</ul>
+</li>
 <li class="toctree-l2"><a class="reference internal" href="getstatic.html">getstatic</a></li>
 <li class="toctree-l2"><a class="reference internal" href="ognl.html">ognl</a></li>
 <li class="toctree-l2"><a class="reference internal" href="sc.html">sc</a></li>
@@ -112,10 +119,7 @@
 <li class="toctree-l2"><a class="reference internal" href="trace.html">trace</a></li>
 <li class="toctree-l2"><a class="reference internal" href="stack.html">stack</a></li>
 <li class="toctree-l2"><a class="reference internal" href="tt.html">tt</a></li>
-<li class="toctree-l2 current"><a class="current reference internal" href="#">options</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#">使用说明</a></li>
-</ul>
-</li>
+<li class="toctree-l2"><a class="reference internal" href="options.html">options</a></li>
 <li class="toctree-l2"><a class="reference internal" href="commands.html#arthas">Arthas 基础命令</a></li>
 </ul>
 </li>
@@ -171,14 +175,14 @@
         
           <li><a href="commands.html">命令列表</a> &raquo;</li>
         
-      <li>options</li>
+      <li>sysenv</li>
     
     
       <li class="wy-breadcrumbs-aside">
         
             
             
-              <a href="https://github.com/alibaba/arthas/blob/master/site/src/site/sphinx/options.md" class="fa fa-github"> Edit on GitHub</a>
+              <a href="https://github.com/alibaba/arthas/blob/master/site/src/site/sphinx/sysenv.md" class="fa fa-github"> Edit on GitHub</a>
             
           
         
@@ -192,68 +196,76 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
             
-  <div class="section" id="options">
-<span id="options"></span><h1>options<a class="headerlink" href="#options" title="永久链接至标题">¶</a></h1>
+  <div class="section" id="sysenv">
+<span id="sysenv"></span><h1>sysenv<a class="headerlink" href="#sysenv" title="永久链接至标题">¶</a></h1>
 <blockquote>
-<div>全局开关</div></blockquote>
-<table border="1" class="docutils">
-<thead>
-<tr>
-<th>名称</th>
-<th>默认值</th>
-<th>描述</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>unsafe</td>
-<td>false</td>
-<td>是否支持对系统级别的类进行增强，打开该开关可能导致把JVM搞挂，请慎重选择！</td>
-</tr>
-<tr>
-<td>dump</td>
-<td>false</td>
-<td>是否支持被增强了的类dump到外部文件中，如果打开开关，class文件会被dump到<code>/${application dir}/arthas-class-dump/</code>目录下，具体位置详见控制台输出</td>
-</tr>
-<tr>
-<td>batch-re-transform</td>
-<td>true</td>
-<td>是否支持批量对匹配到的类执行retransform操作</td>
-</tr>
-<tr>
-<td>json-format</td>
-<td>false</td>
-<td>是否支持json化的输出</td>
-</tr>
-<tr>
-<td>disable-sub-class</td>
-<td>false</td>
-<td>是否禁用子类匹配，默认在匹配目标类的时候会默认匹配到其子类，如果想精确匹配，可以关闭此开关</td>
-</tr>
-<tr>
-<td>debug-for-asm</td>
-<td>false</td>
-<td>打印ASM相关的调试信息</td>
-</tr>
-<tr>
-<td>save-result</td>
-<td>false</td>
-<td>是否打开执行结果存日志功能，打开之后所有命令的运行结果都将保存到<code>/home/admin/logs/arthas/arthas.log</code>中</td>
-</tr>
-<tr>
-<td>job-timeout</td>
-<td>1d</td>
-<td>异步后台任务的默认超时时间，超过这个时间，任务自动停止；比如设置 1d, 2h, 3m, 25s，分别代表天、小时、分、秒</td>
-</tr>
-</tbody>
-</table><div class="section" id="">
-<span id="id1"></span><h2>使用说明<a class="headerlink" href="#" title="永久链接至标题">¶</a></h2>
-<p>例如，想打开执行结果存日志功能，输入如下命令即可：</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ options save-result true                                                                                         
- NAME         BEFORE-VALUE  AFTER-VALUE                                                                            
-----------------------------------------                                                                           
- save-result  false         true
+<div>查看当前JVM的环境属性(<code class="docutils literal notranslate"><span class="pre">System</span> <span class="pre">Environment</span> <span class="pre">Variables</span></code>)</div></blockquote>
+<div class="section" id="">
+<span id="id1"></span><h2>使用参考<a class="headerlink" href="#" title="永久链接至标题">¶</a></h2>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span> <span class="n">USAGE</span><span class="p">:</span>
+   <span class="n">sysenv</span> <span class="p">[</span><span class="o">-</span><span class="n">h</span><span class="p">]</span> <span class="p">[</span><span class="n">env</span><span class="o">-</span><span class="n">name</span><span class="p">]</span>
+
+ <span class="n">SUMMARY</span><span class="p">:</span>
+   <span class="n">Display</span> <span class="n">the</span> <span class="n">system</span> <span class="n">env</span><span class="o">.</span>
+
+ <span class="n">EXAMPLES</span><span class="p">:</span>
+   <span class="n">sysenv</span>
+   <span class="n">sysenv</span> <span class="n">USER</span>
+
+ <span class="n">WIKI</span><span class="p">:</span>
+   <span class="n">https</span><span class="p">:</span><span class="o">//</span><span class="n">alibaba</span><span class="o">.</span><span class="n">github</span><span class="o">.</span><span class="n">io</span><span class="o">/</span><span class="n">arthas</span><span class="o">/</span><span class="n">sysenv</span>
+
+ <span class="n">OPTIONS</span><span class="p">:</span>
+ <span class="o">-</span><span class="n">h</span><span class="p">,</span> <span class="o">--</span><span class="n">help</span>                                                 <span class="n">this</span> <span class="n">help</span>
+ <span class="o">&lt;</span><span class="n">env</span><span class="o">-</span><span class="n">name</span><span class="o">&gt;</span>                                                 <span class="n">env</span> <span class="n">name</span>
 </pre></div>
+</div>
+<div class="section" id="">
+<span id="id2"></span><h3>查看所有环境变量<a class="headerlink" href="#" title="永久链接至标题">¶</a></h3>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ sysenv
+ KEY                      VALUE
+----------------------------------------------------------------------------------------------------------------------------
+ PATH                     /Users/admin/.sdkman/candidates/visualvm/current/bin:/Users/admin/.sdkman/candidates/ja
+                          va/current/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:/Applications/Wireshark.app/Contents/
+                          MacOS
+ SDKMAN_VERSION           5.7.3+337
+ JAVA_HOME                /Users/admin/.sdkman/candidates/java/current
+ JAVA_MAIN_CLASS_65244    demo.MathGame
+ TERM                     xterm-256color
+ LANG                     zh_CN.UTF-8
+ AUTOJUMP_SOURCED         1
+ COLORTERM                truecolor
+ LOGNAME                  admin
+ XPC_SERVICE_NAME         0
+ PWD                      /Users/admin/code/ali/arthas/demo
+ TERM_PROGRAM_VERSION     3.2.5
+ _                        /Users/admin/.sdkman/candidates/java/current/bin/java
+ SHELL                    /bin/bash
+ TERM_PROGRAM             iTerm.app
+ SDKMAN_PLATFORM          Darwin
+ USER                     admin
+ ITERM_PROFILE            Default
+ TMPDIR                   /var/folders/0r/k561bkk917gg972stqclbz9h0000gn/T/
+ XPC_FLAGS                0x0
+ TERM_SESSION_ID          w0t4p0:60BC264D-9649-42AC-A7E4-AF85B69F93F8
+ __CF_USER_TEXT_ENCODING  0x1F5:0x19:0x34
+ Apple_PubSub_Socket_Ren  /private/tmp/com.apple.launchd.DwmmjSQsll/Render
+ der
+ COLORFGBG                7;0
+ HOME                     /Users/admin
+ SHLVL                    1
+ AUTOJUMP_ERROR_PATH      /Users/admin/Library/autojump/errors.log
+</pre></div>
+</div>
+</div>
+<div class="section" id="">
+<span id="id3"></span><h3>查看单个环境变量<a class="headerlink" href="#" title="永久链接至标题">¶</a></h3>
+<blockquote>
+<div>支持通过<code class="docutils literal notranslate"><span class="pre">TAB</span></code>键自动补全</div></blockquote>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ sysenv USER
+USER=admin
+</pre></div>
+</div>
 </div>
 </div>
 </div>
@@ -266,10 +278,10 @@
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="release-notes.html" class="btn btn-neutral float-right" title="Release Notes" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+        <a href="getstatic.html" class="btn btn-neutral float-right" title="getstatic" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
-        <a href="tt.html" class="btn btn-neutral" title="tt" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+        <a href="sysprop.html" class="btn btn-neutral" title="sysprop" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
       
     </div>
   

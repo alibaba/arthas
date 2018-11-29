@@ -1,6 +1,23 @@
 Install Arthas
 ==============
 
+## All Platform (recommended)
+
+Latest Version, Click To Download: [![Arthas](https://img.shields.io/maven-central/v/com.taobao.arthas/arthas-packaging.svg?style=flat-square "Arthas")](http://repository.sonatype.org/service/local/artifact/maven/redirect?r=central-proxy&g=com.taobao.arthas&a=arthas-packaging&e=zip&c=bin&v=LATEST)
+
+Download and unzip, find `arthas-boot.jar` in the directory. Start with `java` command:
+
+```bash
+java -jar arthas-boot.jar
+```
+
+Print help information:
+
+```bash
+java -jar arthas-boot.jar -h
+```
+
+
 ## Linux/Unix/Mac
 
 You can install Arthas with one single line command on Linux, Unix, and Mac. Pls. copy the following command and paste it into the command line, then press *Enter* to run:
@@ -22,10 +39,6 @@ Download and unzip, then find `as.bat` from 'bin' directory. For now this script
 ```bash
 as.bat <pid>
 ```
-
-To have a better experience, you can start the Arthas Server locally by executing `as.bat <pid>`, then run `./as.sh <pid>@<ip>:<por>` in another Linux/Unix/Mac machine. 
-
-> If the color is not working as expect on windows, you can use [conemu](https://sourceforge.net/projects/conemu) to get it to work. 
 
 ## Manual Installation
 

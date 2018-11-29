@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Advanced Usage &mdash; Arthas 3.0.5-SNAPSHOT documentation</title>
+  <title>Advanced Usage &mdash; Arthas 3.0.6-SNAPSHOT documentation</title>
   
 
   
@@ -64,7 +64,7 @@
             
             
               <div class="version">
-                3.0.5-SNAPSHOT
+                3.0.6-SNAPSHOT
               </div>
             
           
@@ -194,6 +194,7 @@
 <li>session - display current session information</li>
 <li><a class="reference internal" href="reset.html"><span class="doc">reset</span></a> - reset all the enhanced classes. All enhanced classes will also be reset when Arthas server is closed by <code class="docutils literal notranslate"><span class="pre">shutdown</span></code></li>
 <li>version - print the version for the Arthas attached to the current Java process</li>
+<li>history - view command history</li>
 <li>quit/exit - exit the current Arthas session, without effecting other sessions</li>
 <li>shutdown - terminate the Arthas server, all Arthas sessions will be destroyed</li>
 <li><a class="reference internal" href="keymap.html"><span class="doc">keymap</span></a> - keymap for Arthas keyboard shortcut</li>
@@ -205,7 +206,8 @@
 <li><a class="reference internal" href="dashboard.html"><span class="doc">dashboard</span></a> - dashboard for the system’s real-time data</li>
 <li><a class="reference internal" href="thread.html"><span class="doc">thread</span></a> - show java thread information</li>
 <li><a class="reference internal" href="jvm.html"><span class="doc">jvm</span></a> - show JVM information</li>
-<li><a class="reference internal" href="sysprop.html"><span class="doc">sysprop</span></a> - show/modify system properties</li>
+<li><a class="reference internal" href="sysprop.html"><span class="doc">sysprop</span></a> - view/modify system properties</li>
+<li><a class="reference external" href="https://github.com/alibaba/arthas/tree/master/site/src/site/sphinx/en/syspenv.md">sysenv</a> — view system environment variables</li>
 <li><strong>New!</strong> <a class="reference internal" href="getstatic.html"><span class="doc">getstatic</span></a> :clap: - examine class’s static properties</li>
 </ul>
 </div>
@@ -322,7 +324,7 @@
     <script type="text/javascript">
         var DOCUMENTATION_OPTIONS = {
             URL_ROOT:'./',
-            VERSION:'3.0.5-SNAPSHOT',
+            VERSION:'3.0.6-SNAPSHOT',
             LANGUAGE:'en',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',

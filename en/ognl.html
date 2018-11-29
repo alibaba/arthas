@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>getstatic &mdash; Arthas 3.0.6-SNAPSHOT documentation</title>
+  <title>ognl &mdash; Arthas 3.0.6-SNAPSHOT documentation</title>
   
 
   
@@ -31,8 +31,8 @@
     <link rel="stylesheet" href="_static/overrides.css" type="text/css" />
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="ognl" href="ognl.html" />
-    <link rel="prev" title="sysenv" href="sysenv.html" />
+    <link rel="next" title="sc" href="sc.html" />
+    <link rel="prev" title="getstatic" href="getstatic.html" />
 <script src="_static/center_page.js"></script>
  
 
@@ -98,8 +98,16 @@
 <li class="toctree-l2"><a class="reference internal" href="jvm.html">jvm</a></li>
 <li class="toctree-l2"><a class="reference internal" href="sysprop.html">sysprop</a></li>
 <li class="toctree-l2"><a class="reference internal" href="sysenv.html">sysenv</a></li>
-<li class="toctree-l2 current"><a class="current reference internal" href="#">getstatic</a></li>
-<li class="toctree-l2"><a class="reference internal" href="ognl.html">ognl</a></li>
+<li class="toctree-l2"><a class="reference internal" href="getstatic.html">getstatic</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">ognl</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#parameters">Parameters</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#usage">Usage</a><ul>
+<li class="toctree-l4"><a class="reference external" href="https://github.com/alibaba/arthas/issues/71">Special usages</a></li>
+<li class="toctree-l4"><a class="reference external" href="https://commons.apache.org/proper/commons-ognl/language-guide.html">OGNL official guide</a></li>
+</ul>
+</li>
+</ul>
+</li>
 <li class="toctree-l2"><a class="reference internal" href="sc.html">sc</a></li>
 <li class="toctree-l2"><a class="reference internal" href="sm.html">sm</a></li>
 <li class="toctree-l2"><a class="reference internal" href="dump.html">dump</a></li>
@@ -167,14 +175,14 @@
         
           <li><a href="commands.html">All Commands</a> &raquo;</li>
         
-      <li>getstatic</li>
+      <li>ognl</li>
     
     
       <li class="wy-breadcrumbs-aside">
         
             
             
-              <a href="https://github.com/alibaba/arthas/blob/master/site/src/site/sphinx/en/getstatic.md" class="fa fa-github"> Edit on GitHub</a>
+              <a href="https://github.com/alibaba/arthas/blob/master/site/src/site/sphinx/en/ognl.md" class="fa fa-github"> Edit on GitHub</a>
             
           
         
@@ -188,24 +196,77 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
             
-  <div class="section" id="getstatic">
-<span id="getstatic"></span><h1>getstatic<a class="headerlink" href="#getstatic" title="Permalink to this headline">¶</a></h1>
-<p>Check the static fields of classes conveniently, the usage is <code class="docutils literal notranslate"><span class="pre">getstatic</span> <span class="pre">class_name</span> <span class="pre">field_name</span></code>.</p>
-<p>Tip: if the static field is a complex class, you can even use <a class="reference external" href="https://en.wikipedia.org/wiki/OGNL"><code class="docutils literal notranslate"><span class="pre">OGNL</span></code></a> to traverse, filter and access the inner properties of this class.</p>
-<p>E.g. suppose <code class="docutils literal notranslate"><span class="pre">n</span></code> is a <code class="docutils literal notranslate"><span class="pre">Map</span></code> and its key is a <code class="docutils literal notranslate"><span class="pre">Enum</span></code>, then you can achieve this if you want to pick the key with a specific <code class="docutils literal notranslate"><span class="pre">Enum</span></code> value:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$ getstatic com.alibaba.arthas.Test n <span class="s1">&#39;entrySet().iterator.{? #this.key.name()==&quot;STOP&quot;}&#39;</span>
-field: n
-@ArrayList<span class="o">[</span>
-    @Node<span class="o">[</span><span class="nv">STOP</span><span class="o">=</span>bbb<span class="o">]</span>,
-<span class="o">]</span>
-Affect<span class="o">(</span>row-cnt:1<span class="o">)</span> cost in <span class="m">68</span> ms.
-
-$ getstatic com.alibaba.arthas.Test m <span class="s1">&#39;entrySet().iterator.{? #this.key==&quot;a&quot;}&#39;</span>
-field: m
-@ArrayList<span class="o">[</span>
-    @Node<span class="o">[</span><span class="nv">a</span><span class="o">=</span>aaa<span class="o">]</span>,
+  <div class="section" id="ognl">
+<span id="ognl"></span><h1>ognl<a class="headerlink" href="#ognl" title="Permalink to this headline">¶</a></h1>
+<blockquote>
+<div>Execute ognl expression.</div></blockquote>
+<p>Since 3.0.5.</p>
+<div class="section" id="parameters">
+<span id="parameters"></span><h2>Parameters<a class="headerlink" href="#parameters" title="Permalink to this headline">¶</a></h2>
+<table border="1" class="docutils">
+<thead>
+<tr>
+<th align="right">Name</th>
+<th align="left">Specification</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="right"><em>express</em></td>
+<td align="left">expression to be executed</td>
+</tr>
+<tr>
+<td align="right"><code>[c:]</code></td>
+<td align="left">The hashcode of the ClassLoader that executes the expression, default ClassLoader is SystemClassLoader.</td>
+</tr>
+<tr>
+<td align="right">[x]</td>
+<td align="left">Expand level of object (1 by default).</td>
+</tr>
+</tbody>
+</table></div>
+<div class="section" id="usage">
+<span id="usage"></span><h2>Usage<a class="headerlink" href="#usage" title="Permalink to this headline">¶</a></h2>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas/issues/71">Special usages</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://commons.apache.org/proper/commons-ognl/language-guide.html">OGNL official guide</a></li>
+</ul>
+</div>
+<p>Call static method:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$ ognl <span class="s1">&#39;@java.lang.System@out.println(&quot;hello&quot;)&#39;</span>
+null
+</pre></div>
+</div>
+<p>Get static field:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$ ognl <span class="s1">&#39;@demo.MathGame@random&#39;</span>
+@Random<span class="o">[</span>
+    <span class="nv">serialVersionUID</span><span class="o">=</span>@Long<span class="o">[</span><span class="m">3905348978240129619</span><span class="o">]</span>,
+    <span class="nv">seed</span><span class="o">=</span>@AtomicLong<span class="o">[</span><span class="m">125451474443703</span><span class="o">]</span>,
+    <span class="nv">multiplier</span><span class="o">=</span>@Long<span class="o">[</span><span class="m">25214903917</span><span class="o">]</span>,
+    <span class="nv">addend</span><span class="o">=</span>@Long<span class="o">[</span><span class="m">11</span><span class="o">]</span>,
+    <span class="nv">mask</span><span class="o">=</span>@Long<span class="o">[</span><span class="m">281474976710655</span><span class="o">]</span>,
+    <span class="nv">DOUBLE_UNIT</span><span class="o">=</span>@Double<span class="o">[</span><span class="m">1</span>.1102230246251565E-16<span class="o">]</span>,
+    <span class="nv">BadBound</span><span class="o">=</span>@String<span class="o">[</span>bound must be positive<span class="o">]</span>,
+    <span class="nv">BadRange</span><span class="o">=</span>@String<span class="o">[</span>bound must be greater than origin<span class="o">]</span>,
+    <span class="nv">BadSize</span><span class="o">=</span>@String<span class="o">[</span>size must be non-negative<span class="o">]</span>,
+    <span class="nv">seedUniquifier</span><span class="o">=</span>@AtomicLong<span class="o">[</span>-3282039941672302964<span class="o">]</span>,
+    <span class="nv">nextNextGaussian</span><span class="o">=</span>@Double<span class="o">[</span><span class="m">0</span>.0<span class="o">]</span>,
+    <span class="nv">haveNextNextGaussian</span><span class="o">=</span>@Boolean<span class="o">[</span>false<span class="o">]</span>,
+    <span class="nv">serialPersistentFields</span><span class="o">=</span>@ObjectStreamField<span class="o">[][</span><span class="nv">isEmpty</span><span class="o">=</span>false<span class="p">;</span><span class="nv">size</span><span class="o">=</span><span class="m">3</span><span class="o">]</span>,
+    <span class="nv">unsafe</span><span class="o">=</span>@Unsafe<span class="o">[</span>sun.misc.Unsafe@28ea5898<span class="o">]</span>,
+    <span class="nv">seedOffset</span><span class="o">=</span>@Long<span class="o">[</span><span class="m">24</span><span class="o">]</span>,
 <span class="o">]</span>
 </pre></div>
+</div>
+<p>Execute a multi-line expression, and return a list:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$ ognl <span class="s1">&#39;#value1=@System@getProperty(&quot;java.home&quot;), #value2=@System@getProperty(&quot;java.runtime.name&quot;), {#value1, #value2}&#39;</span>
+@ArrayList<span class="o">[</span>
+    @String<span class="o">[</span>/opt/java/8.0.181-zulu/jre<span class="o">]</span>,
+    @String<span class="o">[</span>OpenJDK Runtime Environment<span class="o">]</span>,
+<span class="o">]</span>
+</pre></div>
+</div>
 </div>
 </div>
 
@@ -217,10 +278,10 @@ field: m
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="ognl.html" class="btn btn-neutral float-right" title="ognl" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+        <a href="sc.html" class="btn btn-neutral float-right" title="sc" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
-        <a href="sysenv.html" class="btn btn-neutral" title="sysenv" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+        <a href="getstatic.html" class="btn btn-neutral" title="getstatic" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
       
     </div>
   

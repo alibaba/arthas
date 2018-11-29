@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>options &mdash; Arthas 3.0.6-SNAPSHOT 文档</title>
+  <title>ognl &mdash; Arthas 3.0.6-SNAPSHOT 文档</title>
   
 
   
@@ -31,8 +31,8 @@
     <link rel="stylesheet" href="_static/overrides.css" type="text/css" />
     <link rel="index" title="索引" href="genindex.html" />
     <link rel="search" title="搜索" href="search.html" />
-    <link rel="next" title="Release Notes" href="release-notes.html" />
-    <link rel="prev" title="tt" href="tt.html" />
+    <link rel="next" title="sc" href="sc.html" />
+    <link rel="prev" title="getstatic" href="getstatic.html" />
 <script src="_static/center_page.js"></script>
  
 
@@ -100,7 +100,11 @@
 <li class="toctree-l2"><a class="reference internal" href="sysprop.html">sysprop</a></li>
 <li class="toctree-l2"><a class="reference internal" href="sysenv.html">sysenv</a></li>
 <li class="toctree-l2"><a class="reference internal" href="getstatic.html">getstatic</a></li>
-<li class="toctree-l2"><a class="reference internal" href="ognl.html">ognl</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">ognl</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#">参数说明</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#">使用参考</a></li>
+</ul>
+</li>
 <li class="toctree-l2"><a class="reference internal" href="sc.html">sc</a></li>
 <li class="toctree-l2"><a class="reference internal" href="sm.html">sm</a></li>
 <li class="toctree-l2"><a class="reference internal" href="dump.html">dump</a></li>
@@ -112,10 +116,7 @@
 <li class="toctree-l2"><a class="reference internal" href="trace.html">trace</a></li>
 <li class="toctree-l2"><a class="reference internal" href="stack.html">stack</a></li>
 <li class="toctree-l2"><a class="reference internal" href="tt.html">tt</a></li>
-<li class="toctree-l2 current"><a class="current reference internal" href="#">options</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#">使用说明</a></li>
-</ul>
-</li>
+<li class="toctree-l2"><a class="reference internal" href="options.html">options</a></li>
 <li class="toctree-l2"><a class="reference internal" href="commands.html#arthas">Arthas 基础命令</a></li>
 </ul>
 </li>
@@ -171,14 +172,14 @@
         
           <li><a href="commands.html">命令列表</a> &raquo;</li>
         
-      <li>options</li>
+      <li>ognl</li>
     
     
       <li class="wy-breadcrumbs-aside">
         
             
             
-              <a href="https://github.com/alibaba/arthas/blob/master/site/src/site/sphinx/options.md" class="fa fa-github"> Edit on GitHub</a>
+              <a href="https://github.com/alibaba/arthas/blob/master/site/src/site/sphinx/ognl.md" class="fa fa-github"> Edit on GitHub</a>
             
           
         
@@ -192,67 +193,73 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
             
-  <div class="section" id="options">
-<span id="options"></span><h1>options<a class="headerlink" href="#options" title="永久链接至标题">¶</a></h1>
+  <div class="section" id="ognl">
+<span id="ognl"></span><h1>ognl<a class="headerlink" href="#ognl" title="永久链接至标题">¶</a></h1>
 <blockquote>
-<div>全局开关</div></blockquote>
+<div>执行ognl表达式</div></blockquote>
+<p>从3.0.5版本增加</p>
+<div class="section" id="">
+<span id="id1"></span><h2>参数说明<a class="headerlink" href="#" title="永久链接至标题">¶</a></h2>
 <table border="1" class="docutils">
 <thead>
 <tr>
-<th>名称</th>
-<th>默认值</th>
-<th>描述</th>
+<th align="right">参数名称</th>
+<th align="left">参数说明</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td>unsafe</td>
-<td>false</td>
-<td>是否支持对系统级别的类进行增强，打开该开关可能导致把JVM搞挂，请慎重选择！</td>
+<td align="right"><em>express</em></td>
+<td align="left">执行的表达式</td>
 </tr>
 <tr>
-<td>dump</td>
-<td>false</td>
-<td>是否支持被增强了的类dump到外部文件中，如果打开开关，class文件会被dump到<code>/${application dir}/arthas-class-dump/</code>目录下，具体位置详见控制台输出</td>
+<td align="right"><code>[c:]</code></td>
+<td align="left">执行表达式的 ClassLoader 的 hashcode，默认值是SystemClassLoader</td>
 </tr>
 <tr>
-<td>batch-re-transform</td>
-<td>true</td>
-<td>是否支持批量对匹配到的类执行retransform操作</td>
-</tr>
-<tr>
-<td>json-format</td>
-<td>false</td>
-<td>是否支持json化的输出</td>
-</tr>
-<tr>
-<td>disable-sub-class</td>
-<td>false</td>
-<td>是否禁用子类匹配，默认在匹配目标类的时候会默认匹配到其子类，如果想精确匹配，可以关闭此开关</td>
-</tr>
-<tr>
-<td>debug-for-asm</td>
-<td>false</td>
-<td>打印ASM相关的调试信息</td>
-</tr>
-<tr>
-<td>save-result</td>
-<td>false</td>
-<td>是否打开执行结果存日志功能，打开之后所有命令的运行结果都将保存到<code>/home/admin/logs/arthas/arthas.log</code>中</td>
-</tr>
-<tr>
-<td>job-timeout</td>
-<td>1d</td>
-<td>异步后台任务的默认超时时间，超过这个时间，任务自动停止；比如设置 1d, 2h, 3m, 25s，分别代表天、小时、分、秒</td>
+<td align="right">[x]</td>
+<td align="left">结果对象的展开层次，默认值1</td>
 </tr>
 </tbody>
-</table><div class="section" id="">
-<span id="id1"></span><h2>使用说明<a class="headerlink" href="#" title="永久链接至标题">¶</a></h2>
-<p>例如，想打开执行结果存日志功能，输入如下命令即可：</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ options save-result true                                                                                         
- NAME         BEFORE-VALUE  AFTER-VALUE                                                                            
-----------------------------------------                                                                           
- save-result  false         true
+</table></div>
+<div class="section" id="">
+<span id="id2"></span><h2>使用参考<a class="headerlink" href="#" title="永久链接至标题">¶</a></h2>
+<ul class="simple">
+<li>OGNL特殊用法请参考：<a class="reference external" href="https://github.com/alibaba/arthas/issues/71">https://github.com/alibaba/arthas/issues/71</a></li>
+<li>OGNL表达式官方指南：<a class="reference external" href="https://commons.apache.org/proper/commons-ognl/language-guide.html">https://commons.apache.org/proper/commons-ognl/language-guide.html</a></li>
+</ul>
+<p>调用静态函数：</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$ ognl <span class="s1">&#39;@java.lang.System@out.println(&quot;hello&quot;)&#39;</span>
+null
+</pre></div>
+</div>
+<p>获取静态类的静态字段：</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$ ognl <span class="s1">&#39;@demo.MathGame@random&#39;</span>
+@Random<span class="o">[</span>
+    <span class="nv">serialVersionUID</span><span class="o">=</span>@Long<span class="o">[</span><span class="m">3905348978240129619</span><span class="o">]</span>,
+    <span class="nv">seed</span><span class="o">=</span>@AtomicLong<span class="o">[</span><span class="m">125451474443703</span><span class="o">]</span>,
+    <span class="nv">multiplier</span><span class="o">=</span>@Long<span class="o">[</span><span class="m">25214903917</span><span class="o">]</span>,
+    <span class="nv">addend</span><span class="o">=</span>@Long<span class="o">[</span><span class="m">11</span><span class="o">]</span>,
+    <span class="nv">mask</span><span class="o">=</span>@Long<span class="o">[</span><span class="m">281474976710655</span><span class="o">]</span>,
+    <span class="nv">DOUBLE_UNIT</span><span class="o">=</span>@Double<span class="o">[</span><span class="m">1</span>.1102230246251565E-16<span class="o">]</span>,
+    <span class="nv">BadBound</span><span class="o">=</span>@String<span class="o">[</span>bound must be positive<span class="o">]</span>,
+    <span class="nv">BadRange</span><span class="o">=</span>@String<span class="o">[</span>bound must be greater than origin<span class="o">]</span>,
+    <span class="nv">BadSize</span><span class="o">=</span>@String<span class="o">[</span>size must be non-negative<span class="o">]</span>,
+    <span class="nv">seedUniquifier</span><span class="o">=</span>@AtomicLong<span class="o">[</span>-3282039941672302964<span class="o">]</span>,
+    <span class="nv">nextNextGaussian</span><span class="o">=</span>@Double<span class="o">[</span><span class="m">0</span>.0<span class="o">]</span>,
+    <span class="nv">haveNextNextGaussian</span><span class="o">=</span>@Boolean<span class="o">[</span>false<span class="o">]</span>,
+    <span class="nv">serialPersistentFields</span><span class="o">=</span>@ObjectStreamField<span class="o">[][</span><span class="nv">isEmpty</span><span class="o">=</span>false<span class="p">;</span><span class="nv">size</span><span class="o">=</span><span class="m">3</span><span class="o">]</span>,
+    <span class="nv">unsafe</span><span class="o">=</span>@Unsafe<span class="o">[</span>sun.misc.Unsafe@28ea5898<span class="o">]</span>,
+    <span class="nv">seedOffset</span><span class="o">=</span>@Long<span class="o">[</span><span class="m">24</span><span class="o">]</span>,
+<span class="o">]</span>
+</pre></div>
+</div>
+<p>执行多行表达式，赋值给临时变量，返回一个List：</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$ ognl <span class="s1">&#39;#value1=@System@getProperty(&quot;java.home&quot;), #value2=@System@getProperty(&quot;java.runtime.name&quot;), {#value1, #value2}&#39;</span>
+@ArrayList<span class="o">[</span>
+    @String<span class="o">[</span>/opt/java/8.0.181-zulu/jre<span class="o">]</span>,
+    @String<span class="o">[</span>OpenJDK Runtime Environment<span class="o">]</span>,
+<span class="o">]</span>
 </pre></div>
 </div>
 </div>
@@ -266,10 +273,10 @@
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="release-notes.html" class="btn btn-neutral float-right" title="Release Notes" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+        <a href="sc.html" class="btn btn-neutral float-right" title="sc" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
-        <a href="tt.html" class="btn btn-neutral" title="tt" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+        <a href="getstatic.html" class="btn btn-neutral" title="getstatic" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
       
     </div>
   
