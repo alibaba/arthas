@@ -4,15 +4,13 @@
 ## 1. 启动Demo
 
 ```bash
+wget https://alibaba.github.io/arthas/arthas-demo.jar
 java -jar arthas-demo.jar
 ```
 
 `arthas-demo`是一个简单的程序，每隔一秒生成一个随机数，再执行质因式分解，并打印出分解结果。
 
-
-如果本地没有`arthas-demo.jar`, 可以从这里下载： [点击](http://repository.sonatype.org/service/local/artifact/maven/redirect?r=central-proxy&g=com.taobao.arthas&a=arthas-boot&v=LATEST)
-
-也可以自己从代码里编绎运行：[查看](https://github.com/alibaba/arthas/blob/master/demo/src/main/java/demo)
+`arthas-demo`源代码：[查看](https://github.com/alibaba/arthas/blob/master/demo/src/main/java/demo/MathGame.java)
 
 
 ## 2. 启动arthas
@@ -20,12 +18,14 @@ java -jar arthas-demo.jar
 在命令行下面执行：
 
 ```bash
+wget https://alibaba.github.io/arthas/arthas-boot.jar
 java -jar arthas-boot.jar
 ```
 
-> 执行该程序的用户需要和目标进程具有相同的权限。比如以`admin`用户来执行：
-> `sudo su admin && java -jar arthas-boot.jar` 或 `sudo -u admin -EH java -jar arthas-boot.jar`。
-> 如果attatch不上目标进程，可以查看`~/logs/arthas/` 目录下的日志。
+* 执行该程序的用户需要和目标进程具有相同的权限。比如以`admin`用户来执行：`sudo su admin && java -jar arthas-boot.jar` 或 `sudo -u admin -EH java -jar arthas-boot.jar`。
+* 如果attatch不上目标进程，可以查看`~/logs/arthas/` 目录下的日志。
+* 如果下载速度比较慢，可以使用aliyun的镜像：`java -jar arthas-boot.jar --repo-mirror aliyun --use-http`
+* `java -jar arthas-boot.jar -h` 打印更多参数信息。
 
 
 选择应用java进程：

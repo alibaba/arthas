@@ -179,23 +179,26 @@
 <span id="id1"></span><h1>快速入门<a class="headerlink" href="#" title="永久链接至标题">¶</a></h1>
 <div class="section" id="demo">
 <span id="demo"></span><h2>1. 启动Demo<a class="headerlink" href="#demo" title="永久链接至标题">¶</a></h2>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>java -jar arthas-demo.jar
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>wget https://alibaba.github.io/arthas/arthas-demo.jar
+java -jar arthas-demo.jar
 </pre></div>
 </div>
 <p><code class="docutils literal notranslate"><span class="pre">arthas-demo</span></code>是一个简单的程序，每隔一秒生成一个随机数，再执行质因式分解，并打印出分解结果。</p>
-<p>如果本地没有<code class="docutils literal notranslate"><span class="pre">arthas-demo.jar</span></code>, 可以从这里下载： <a class="reference external" href="http://repository.sonatype.org/service/local/artifact/maven/redirect?r=central-proxy&amp;g=com.taobao.arthas&amp;a=arthas-boot&amp;v=LATEST">点击</a></p>
-<p>也可以自己从代码里编绎运行：<a class="reference external" href="https://github.com/alibaba/arthas/blob/master/demo/src/main/java/demo">查看</a></p>
+<p><code class="docutils literal notranslate"><span class="pre">arthas-demo</span></code>源代码：<a class="reference external" href="https://github.com/alibaba/arthas/blob/master/demo/src/main/java/demo/MathGame.java">查看</a></p>
 </div>
 <div class="section" id="arthas">
 <span id="arthas"></span><h2>2. 启动arthas<a class="headerlink" href="#arthas" title="永久链接至标题">¶</a></h2>
 <p>在命令行下面执行：</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>java -jar arthas-boot.jar
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>wget https://alibaba.github.io/arthas/arthas-boot.jar
+java -jar arthas-boot.jar
 </pre></div>
 </div>
-<blockquote>
-<div>执行该程序的用户需要和目标进程具有相同的权限。比如以<code class="docutils literal notranslate"><span class="pre">admin</span></code>用户来执行：
-<code class="docutils literal notranslate"><span class="pre">sudo</span> <span class="pre">su</span> <span class="pre">admin</span> <span class="pre">&amp;&amp;</span> <span class="pre">java</span> <span class="pre">-jar</span> <span class="pre">arthas-boot.jar</span></code> 或 <code class="docutils literal notranslate"><span class="pre">sudo</span> <span class="pre">-u</span> <span class="pre">admin</span> <span class="pre">-EH</span> <span class="pre">java</span> <span class="pre">-jar</span> <span class="pre">arthas-boot.jar</span></code>。
-如果attatch不上目标进程，可以查看<code class="docutils literal notranslate"><span class="pre">~/logs/arthas/</span></code> 目录下的日志。</div></blockquote>
+<ul class="simple">
+<li>执行该程序的用户需要和目标进程具有相同的权限。比如以<code class="docutils literal notranslate"><span class="pre">admin</span></code>用户来执行：<code class="docutils literal notranslate"><span class="pre">sudo</span> <span class="pre">su</span> <span class="pre">admin</span> <span class="pre">&amp;&amp;</span> <span class="pre">java</span> <span class="pre">-jar</span> <span class="pre">arthas-boot.jar</span></code> 或 <code class="docutils literal notranslate"><span class="pre">sudo</span> <span class="pre">-u</span> <span class="pre">admin</span> <span class="pre">-EH</span> <span class="pre">java</span> <span class="pre">-jar</span> <span class="pre">arthas-boot.jar</span></code>。</li>
+<li>如果attatch不上目标进程，可以查看<code class="docutils literal notranslate"><span class="pre">~/logs/arthas/</span></code> 目录下的日志。</li>
+<li>如果下载速度比较慢，可以使用aliyun的镜像：<code class="docutils literal notranslate"><span class="pre">java</span> <span class="pre">-jar</span> <span class="pre">arthas-boot.jar</span> <span class="pre">--repo-mirror</span> <span class="pre">aliyun</span> <span class="pre">--use-http</span></code></li>
+<li><code class="docutils literal notranslate"><span class="pre">java</span> <span class="pre">-jar</span> <span class="pre">arthas-boot.jar</span> <span class="pre">-h</span></code> 打印更多参数信息。</li>
+</ul>
 <p>选择应用java进程：</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ $ java -jar arthas-boot.jar
 * [1]: 35542

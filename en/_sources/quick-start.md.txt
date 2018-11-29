@@ -4,15 +4,13 @@ Quick Start
 ## 1. Start Demo Application
 
 ```bash
+wget https://alibaba.github.io/arthas/arthas-demo.jar
 java -jar arthas-demo.jar
 ```
 
 `arthas-demo` is a simple program that generates a random number every second, then find all prime factors of the number.
 
-
-If there is no `arthas-demo.jar` locally, you can download it from here:[Click](http://repository.sonatype.org/service/local/artifact/maven/redirect?r=central-proxy&g=com.taobao.arthas&a=arthas-boot&v=LATEST)
-
-You can also compile code by youself:[View](https://github.com/alibaba/arthas/blob/master/demo/src/main/java/demo)
+The source code of `arthas-demo`: [View](https://github.com/alibaba/arthas/blob/master/demo/src/main/java/demo/MathGame.java)
 
 ## 2. Start Arthas
 
@@ -21,10 +19,13 @@ You can also compile code by youself:[View](https://github.com/alibaba/arthas/bl
 Execute the following command in the command line:
 
 ```bash
+wget https://alibaba.github.io/arthas/arthas-boot.jar
 java -jar arthas-boot.jar
 ```
 
-> The user to run this command *MUST* have the same privilege as the owner of the target process, as a simple example you can try the following command if the target process is managed by user `admin`: `sudo su admin && java -jar arthas-boot.jar` or `sudo -u admin -EH java -jar arthas-boot.jar`.If you cannot be able to attach to the target process, please check the logs under `~/logs/arthas` for troubleshooting.
+* The user to run this command *MUST* have the same privilege as the owner of the target process, as a simple example you can try the following command if the target process is managed by user `admin`: `sudo su admin && java -jar arthas-boot.jar` or `sudo -u admin -EH java -jar arthas-boot.jar`
+* .If you cannot be able to attach to the target process, please check the logs under `~/logs/arthas` for troubleshooting.
+* `java -jar arthas-boot.jar -h` print usage.
 
 Select the target Java process to attach:
 

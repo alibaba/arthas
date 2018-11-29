@@ -180,23 +180,27 @@
 <span id="quick-start"></span><h1>Quick Start<a class="headerlink" href="#quick-start" title="Permalink to this headline">¶</a></h1>
 <div class="section" id="start-demo-application">
 <span id="start-demo-application"></span><h2>1. Start Demo Application<a class="headerlink" href="#start-demo-application" title="Permalink to this headline">¶</a></h2>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>java -jar arthas-demo.jar
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>wget https://alibaba.github.io/arthas/arthas-demo.jar
+java -jar arthas-demo.jar
 </pre></div>
 </div>
 <p><code class="docutils literal notranslate"><span class="pre">arthas-demo</span></code> is a simple program that generates a random number every second, then find all prime factors of the number.</p>
-<p>If there is no <code class="docutils literal notranslate"><span class="pre">arthas-demo.jar</span></code> locally, you can download it from here:<a class="reference external" href="http://repository.sonatype.org/service/local/artifact/maven/redirect?r=central-proxy&amp;g=com.taobao.arthas&amp;a=arthas-boot&amp;v=LATEST">Click</a></p>
-<p>You can also compile code by youself:<a class="reference external" href="https://github.com/alibaba/arthas/blob/master/demo/src/main/java/demo">View</a></p>
+<p>The source code of <code class="docutils literal notranslate"><span class="pre">arthas-demo</span></code>: <a class="reference external" href="https://github.com/alibaba/arthas/blob/master/demo/src/main/java/demo/MathGame.java">View</a></p>
 </div>
 <div class="section" id="start-arthas">
 <span id="start-arthas"></span><h2>2. Start Arthas<a class="headerlink" href="#start-arthas" title="Permalink to this headline">¶</a></h2>
 <div class="section" id="linux-unix-mac">
 <span id="linux-unix-mac"></span><h3>Linux/Unix/Mac<a class="headerlink" href="#linux-unix-mac" title="Permalink to this headline">¶</a></h3>
 <p>Execute the following command in the command line:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>java -jar arthas-boot.jar
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>wget https://alibaba.github.io/arthas/arthas-boot.jar
+java -jar arthas-boot.jar
 </pre></div>
 </div>
-<blockquote>
-<div>The user to run this command <em>MUST</em> have the same privilege as the owner of the target process, as a simple example you can try the following command if the target process is managed by user <code class="docutils literal notranslate"><span class="pre">admin</span></code>: <code class="docutils literal notranslate"><span class="pre">sudo</span> <span class="pre">su</span> <span class="pre">admin</span> <span class="pre">&amp;&amp;</span> <span class="pre">java</span> <span class="pre">-jar</span> <span class="pre">arthas-boot.jar</span></code> or <code class="docutils literal notranslate"><span class="pre">sudo</span> <span class="pre">-u</span> <span class="pre">admin</span> <span class="pre">-EH</span> <span class="pre">java</span> <span class="pre">-jar</span> <span class="pre">arthas-boot.jar</span></code>.If you cannot be able to attach to the target process, please check the logs under <code class="docutils literal notranslate"><span class="pre">~/logs/arthas</span></code> for troubleshooting.</div></blockquote>
+<ul class="simple">
+<li>The user to run this command <em>MUST</em> have the same privilege as the owner of the target process, as a simple example you can try the following command if the target process is managed by user <code class="docutils literal notranslate"><span class="pre">admin</span></code>: <code class="docutils literal notranslate"><span class="pre">sudo</span> <span class="pre">su</span> <span class="pre">admin</span> <span class="pre">&amp;&amp;</span> <span class="pre">java</span> <span class="pre">-jar</span> <span class="pre">arthas-boot.jar</span></code> or <code class="docutils literal notranslate"><span class="pre">sudo</span> <span class="pre">-u</span> <span class="pre">admin</span> <span class="pre">-EH</span> <span class="pre">java</span> <span class="pre">-jar</span> <span class="pre">arthas-boot.jar</span></code></li>
+<li>.If you cannot be able to attach to the target process, please check the logs under <code class="docutils literal notranslate"><span class="pre">~/logs/arthas</span></code> for troubleshooting.</li>
+<li><code class="docutils literal notranslate"><span class="pre">java</span> <span class="pre">-jar</span> <span class="pre">arthas-boot.jar</span> <span class="pre">-h</span></code> print usage.</li>
+</ul>
 <p>Select the target Java process to attach:</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$ $ java -jar arthas-boot.jar
 * <span class="o">[</span><span class="m">1</span><span class="o">]</span>: <span class="m">35542</span>

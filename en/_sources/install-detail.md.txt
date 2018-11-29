@@ -1,24 +1,26 @@
 Install Arthas
 ==============
 
-## All Platform (recommended)
+## Quick installation
 
-Latest Version, Click To Download: [![Arthas](https://img.shields.io/maven-central/v/com.taobao.arthas/arthas-packaging.svg?style=flat-square "Arthas")](http://repository.sonatype.org/service/local/artifact/maven/redirect?r=central-proxy&g=com.taobao.arthas&a=arthas-packaging&e=zip&c=bin&v=LATEST)
 
-Download and unzip, find `arthas-boot.jar` in the directory. Start with `java` command:
+### Use `arthas-boot`
+
+Download`arthas-boot.jar`，Start with `java` command:
 
 ```bash
+wget https://alibaba.github.io/arthas/arthas-boot.jar
 java -jar arthas-boot.jar
 ```
 
-Print help information:
+Print usage:
 
 ```bash
 java -jar arthas-boot.jar -h
 ```
 
 
-## Linux/Unix/Mac
+### Use `as.sh`
 
 You can install Arthas with one single line command on Linux, Unix, and Mac. Pls. copy the following command and paste it into the command line, then press *Enter* to run:
 
@@ -30,59 +32,27 @@ The command above will download the bootstrap script `as.sh` to the current dire
 
 You can enter its interactive interface by executing `as.sh`, or execute `as.sh -h` for more help information.
 
-## Windows
+
+## Full installation
 
 Latest Version, Click To Download: [![Arthas](https://img.shields.io/maven-central/v/com.taobao.arthas/arthas-packaging.svg?style=flat-square "Arthas")](http://repository.sonatype.org/service/local/artifact/maven/redirect?r=central-proxy&g=com.taobao.arthas&a=arthas-packaging&e=zip&c=bin&v=LATEST)
 
-Download and unzip, then find `as.bat` from 'bin' directory. For now this script will only take one argument `pid`, which means you can only diagnose the local Java process. (Welcome any bat script expert to make it better :heart:)
+Download and unzip, find `arthas-boot.jar` in the directory. Start with `java` command:
 
 ```bash
-as.bat <pid>
+java -jar arthas-boot.jar
+```
+
+Print usage:
+
+```bash
+java -jar arthas-boot.jar -h
 ```
 
 ## Manual Installation
 
 [Manual Installation](manual-install.md)
 
-If you fail to boot Arthas with the provided batch file, you could try to assemble the bootstrap command in the following way.
-
-
-1. Locate java in the target JVM:
-
-    - Linux/Unix/Mac: `ps aux | grep java`
-    - Windows: open the Process Monitor to search java
-
-2. Assemble bootstrap command:
-    
-    Let's suppose we are using `/opt/jdk1.8/bin/java`, then the command should be:
-
-    ```bash
-    /opt/jdk1.8/bin/java -Xbootclasspath/a:/opt/jdk1.8/lib/tools.jar \
-        -jar /tmp/arthas-packaging/arthas-core.jar \
-        -pid 15146 \
-        -target-ip 127.0.0.1 -telnet-port 3658 -http-port 8563 \
-        -core /tmp/arthas-packaging/arthas-core.jar \
-        -agent /tmp/arthas-packaging/arthas/arthas-agent.jar
-    ```
-
-    Note:
-    
-    * `-Xbootclasspath` adds tools.jar
-    * `-jar /tmp/arthas-packaging/arthas-core.jar` specifies main entry
-    * `-pid 15146` specifies the target java process PID
-    * `-target-ip 127.0.0.1` specifies the IP
-    * `-telnet-port 3658 -http-port 8563` specifies telnet and HTTP ports for remote access
-    * `-core /tmp/arthas-packaging/arthas-core.jar -agent /tmp/arthas-packaging/arthas/arthas-agent.jar` specifies core/agent jar package
-
-    If you are running on JDK 1.9 or above，then it's unncessary to add `tools.jar` in option `-Xbootclasspath`.
-    
-    You can find the logs from `~/logs/arthas/arthas.log`.
-
-3. Use telnet to connect once attaching to the target JVM (in step 2) succeeds
-
-    ```bash
-    telnet 127.0.0.1 3658
-    ```
 
 ## Offline Help Documentation
 
@@ -97,4 +67,4 @@ Latest Version, Click To Download:[![Arthas](https://img.shields.io/maven-centra
     rm -rf ~/.arthas/
     ```
 
-* On Windows, simply delete the zip file and unzipped files. 
+* On Windows, delete `.arthas` directory under user home.

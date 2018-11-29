@@ -166,6 +166,8 @@
             
   <div class="section" id="arthas">
 <span id="arthas"></span><h1>手动安装Arthas<a class="headerlink" href="#arthas" title="永久链接至标题">¶</a></h1>
+<div class="section" id="arthas">
+<span id="id1"></span><h2>手动安装Arthas<a class="headerlink" href="#arthas" title="永久链接至标题">¶</a></h2>
 <ol>
 <li><p class="first">下载最新版本</p>
 <p><strong>最新版本，点击下载</strong>：<a class="reference external" href="http://repository.sonatype.org/service/local/artifact/maven/redirect?r=central-proxy&amp;g=com.taobao.arthas&amp;a=arthas-packaging&amp;e=zip&amp;c=bin&amp;v=LATEST"><img alt="Arthas" src="https://img.shields.io/maven-central/v/com.taobao.arthas/arthas-packaging.svg?style=flat-square" /></a></p>
@@ -196,6 +198,63 @@
 </div>
 </li>
 </ol>
+</div>
+<div class="section" id="as-sh-as-bat">
+<span id="as-sh-as-bat"></span><h2>以脚本的方式启动as.sh/as.bat<a class="headerlink" href="#as-sh-as-bat" title="永久链接至标题">¶</a></h2>
+<div class="section" id="linux-unix-mac">
+<span id="linux-unix-mac"></span><h3>Linux/Unix/Mac<a class="headerlink" href="#linux-unix-mac" title="永久链接至标题">¶</a></h3>
+<p>Arthas 支持在 Linux/Unix/Mac 等平台上一键安装，请复制以下内容，并粘贴到命令行中，敲 <code class="docutils literal notranslate"><span class="pre">回车</span></code> 执行即可：</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>curl -L https://alibaba.github.io/arthas/install.sh <span class="p">|</span> sh
+</pre></div>
+</div>
+<p>上述命令会下载启动脚本文件 <code class="docutils literal notranslate"><span class="pre">as.sh</span></code> 到当前目录，你可以放在任何地方或将其加入到 <code class="docutils literal notranslate"><span class="pre">$PATH</span></code> 中。</p>
+<p>直接在shell下面执行<code class="docutils literal notranslate"><span class="pre">./as.sh</span></code>，就会进入交互界面。</p>
+<p>也可以执行<code class="docutils literal notranslate"><span class="pre">./as.sh</span> <span class="pre">-h</span></code>来获取更多参数信息。</p>
+</div>
+<div class="section" id="windows">
+<span id="windows"></span><h3>Windows<a class="headerlink" href="#windows" title="永久链接至标题">¶</a></h3>
+<p>最新版本，点击下载：<a class="reference external" href="http://repository.sonatype.org/service/local/artifact/maven/redirect?r=central-proxy&amp;g=com.taobao.arthas&amp;a=arthas-packaging&amp;e=zip&amp;c=bin&amp;v=LATEST"><img alt="Arthas" src="https://img.shields.io/maven-central/v/com.taobao.arthas/arthas-packaging.svg?style=flat-square" /></a></p>
+<p>下载解压后在bin目录有 <code class="docutils literal notranslate"><span class="pre">as.bat</span></code>。此脚本暂时只接受一个参数 pid，即只能诊断本机上的 Java 进程。（欢迎精通bat脚本的开发者改进）</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">as</span><span class="o">.</span><span class="n">bat</span> <span class="o">&lt;</span><span class="n">pid</span><span class="o">&gt;</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="">
+<span id="id2"></span><h2>手动拼接命令行启动<a class="headerlink" href="#" title="永久链接至标题">¶</a></h2>
+<p>如果启动遇到问题，可以尝试手动拼接出命令行参数来启动。</p>
+<ol>
+<li><p class="first">查找目录jvm的java文件路径。</p>
+<p>在linux/mac上执行<code class="docutils literal notranslate"><span class="pre">ps</span> <span class="pre">aux</span> <span class="pre">|</span> <span class="pre">grep</span> <span class="pre">java</span></code>，在windows上可以通过进程管理器来查看。假设是<code class="docutils literal notranslate"><span class="pre">/opt/jdk1.8/bin/java</span></code>。</p>
+</li>
+<li><p class="first">拼接出命令行</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>/opt/jdk1.8/bin/java -Xbootclasspath/a:/opt/jdk1.8/lib/tools.jar <span class="se">\</span>
+ -jar /tmp/arthas-packaging/arthas-core.jar <span class="se">\</span>
+ -pid <span class="m">15146</span> <span class="se">\</span>
+ -target-ip <span class="m">127</span>.0.0.1 -telnet-port <span class="m">3658</span> -http-port <span class="m">8563</span> <span class="se">\</span>
+ -core /tmp/arthas-packaging/arthas-core.jar <span class="se">\</span>
+ -agent /tmp/arthas-packaging/arthas/arthas-agent.jar
+</pre></div>
+</div>
+<p>命令行分几部分组成：</p>
+<ul class="simple">
+<li><code class="docutils literal notranslate"><span class="pre">-Xbootclasspath</span></code> 增加tools.jar</li>
+<li><code class="docutils literal notranslate"><span class="pre">-jar</span> <span class="pre">/tmp/arthas-packaging/arthas-core.jar</span></code> 指定main函数入口</li>
+<li><code class="docutils literal notranslate"><span class="pre">-pid</span> <span class="pre">15146</span></code> 指定目标java进程ID</li>
+<li><code class="docutils literal notranslate"><span class="pre">-target-ip</span> <span class="pre">127.0.0.1</span></code> 指定IP</li>
+<li><code class="docutils literal notranslate"><span class="pre">-telnet-port</span> <span class="pre">3658</span> <span class="pre">-http-port</span> <span class="pre">8563</span></code> 指定telnet和http端口</li>
+<li><code class="docutils literal notranslate"><span class="pre">-core</span> <span class="pre">/tmp/arthas-packaging/arthas-core.jar</span> <span class="pre">-agent</span> <span class="pre">/tmp/arthas-packaging/arthas/arthas-agent.jar</span></code> 指定core/agent jar包</li>
+</ul>
+<p>如果是<code class="docutils literal notranslate"><span class="pre">jdk</span> <span class="pre">&gt;</span> <span class="pre">9</span></code>，即9/10/11以上的版本，不需要指定<code class="docutils literal notranslate"><span class="pre">tools.jar</span></code>，直接去掉<code class="docutils literal notranslate"><span class="pre">-Xbootclasspath</span></code> 的配置即可。</p>
+<p>启动目志输出在<code class="docutils literal notranslate"><span class="pre">~/logs/arthas/arthas.log</span></code>里。</p>
+</li>
+<li><p class="first">attach成功之后，使用telnet连接</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>telnet <span class="m">127</span>.0.0.1 <span class="m">3658</span>
+</pre></div>
+</div>
+</li>
+</ol>
+</div>
 </div>
 
 
