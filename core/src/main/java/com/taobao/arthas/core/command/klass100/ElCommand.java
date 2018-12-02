@@ -50,7 +50,7 @@ public class ElCommand extends AnnotatedCommand {
     	this(prefix,null);
     }
 	public ElCommand() {
-		this(null,System.getProperty("arthas_el_default",ExpressFactory.DEFAULT_EL));
+		this(null,System.getProperty("arthas_el_default",ExpressFactory.getDefaultEL()));
 	}
 
 	private String express;
