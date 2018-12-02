@@ -200,6 +200,13 @@ public class Bootstrap {
         this.attachOnly = attachOnly;
     }
 
+    private String classpath;
+    @Option(shortName = "cp", longName = "classpath")
+    @Description("optional classpath")
+    public void setCp(String cp) {
+        this.classpath = cp;
+    }
+    
     @Option(shortName = "c", longName = "command")
     @Description("Command to execute, multiple commands separated by ;")
     public void setCommand(String command) {
@@ -450,7 +457,11 @@ public class Bootstrap {
             attachArgs.add("-http-port");
             attachArgs.add("" + bootstrap.getHttpPort());
             attachArgs.add("-core");
-            attachArgs.add(new File(arthasHomeDir, "arthas-core.jar").getAbsolutePath());
+            String c = new File(arthasHomeDir, "arthas-core.jar").getAbsolutePath();
+            if( bootstrap.classpath != null && bootstrap.classpath.length() >0 ) {
+              c += System.getProperty("path.separator", ":")+bootstrap.classpath;
+            } 
+            attachArgs.add(c);
             attachArgs.add("-agent");
             attachArgs.add(new File(arthasHomeDir, "arthas-agent.jar").getAbsolutePath());
             if (bootstrap.getSessionTimeout() != null) {

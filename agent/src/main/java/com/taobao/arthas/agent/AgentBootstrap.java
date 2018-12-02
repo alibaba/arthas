@@ -6,6 +6,8 @@ import java.lang.instrument.Instrumentation;
 import java.lang.reflect.Method;
 import java.net.URL;
 import java.net.URLDecoder;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.jar.JarFile;
 
 /**
@@ -78,7 +80,7 @@ public class AgentBootstrap {
         arthasClassLoader = null;
     }
 
-    private static ClassLoader getClassLoader(Instrumentation inst, File spyJarFile, File agentJarFile) throws Throwable {
+    private static ClassLoader getClassLoader(Instrumentation inst, File spyJarFile, List<File> agentJarFile) throws Throwable {
         // 将Spy添加到BootstrapClassLoader
         inst.appendToBootstrapClassLoaderSearch(new JarFile(spyJarFile));
 
@@ -86,9 +88,13 @@ public class AgentBootstrap {
         return loadOrDefineClassLoader(agentJarFile);
     }
 
-    private static ClassLoader loadOrDefineClassLoader(File agentJar) throws Throwable {
+    private static ClassLoader loadOrDefineClassLoader(List<File> agentJars) throws Throwable {
         if (arthasClassLoader == null) {
-            arthasClassLoader = new ArthasClassloader(new URL[]{agentJar.toURI().toURL()});
+        	URL[] urls = new URL[agentJars.size()];
+        	for(int i=0;i< agentJars.size();i++) {
+        		urls[i] =agentJars.get(i).toURI().toURL();
+        	}
+            arthasClassLoader = new ArthasClassloader(urls);
         }
         return arthasClassLoader;
     }
@@ -111,26 +117,41 @@ public class AgentBootstrap {
             ps.println("Arthas server agent start...");
             // 传递的args参数分两个部分:agentJar路径和agentArgs, 分别是Agent的JAR包路径和期望传递到服务端的参数
             args = decodeArg(args);
-            int index = args.indexOf(';');
-            String agentJar = args.substring(0, index);
-            final String agentArgs = args.substring(index);
-
-            File agentJarFile = new File(agentJar);
-            if (!agentJarFile.exists()) {
-                ps.println("Agent jar file does not exist: " + agentJarFile);
+            ps.println("args:"+args);
+            final String separator = System.getProperty("path.separator", ":");
+            int index = args.indexOf(";;");
+            String agentJar = index == -1 ? args : args.substring(0, index);
+            final String agentArgs = index != -1 && index < args.length() ? args.substring(index, args.length()) : "";
+            String[] jars = agentJar.split(separator);
+            List<File> jarFiles = new ArrayList<File> ();
+            File home = null;
+            for(String jar: jars) {
+                File agentJarFile = new File(jar);
+                if( home != null && !agentJarFile.exists() ) {
+                    agentJarFile = new File(home,jar);
+                }
+                if (agentJarFile.exists()) {
+                    jarFiles.add(agentJarFile);
+                    if( home == null ) {
+                        home = jarFiles.get(0).getParentFile();
+                    }
+                }
+            }
+            if( jarFiles.isEmpty())   {
+                ps.println("Agent jars file does not exist: " + agentJar);
                 return;
             }
 
-            File spyJarFile = new File(agentJarFile.getParentFile(), ARTHAS_SPY_JAR);
+            File spyJarFile = new File(home, ARTHAS_SPY_JAR);
             if (!spyJarFile.exists()) {
                 ps.println("Spy jar file does not exist: " + spyJarFile);
                 return;
             }
-
+            ps.println("jarFiles:"+jarFiles);
             /**
              * Use a dedicated thread to run the binding logic to prevent possible memory leak. #195
              */
-            final ClassLoader agentLoader = getClassLoader(inst, spyJarFile, agentJarFile);
+            final ClassLoader agentLoader = getClassLoader(inst, spyJarFile, jarFiles);
             initSpy(agentLoader);
 
             Thread bindingThread = new Thread() {
