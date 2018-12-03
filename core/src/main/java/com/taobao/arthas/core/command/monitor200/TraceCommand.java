@@ -28,11 +28,11 @@ import java.util.List;
 @Name("trace")
 @Summary("Trace the execution time of specified method invocation.")
 @Description(value = Constants.EXPRESS_DESCRIPTION + Constants.EXAMPLE +
-        "  trace -E org\\\\.apache\\\\.commons\\\\.lang\\\\.StringUtils isBlank\n" +
         "  trace org.apache.commons.lang.StringUtils isBlank\n" +
         "  trace *StringUtils isBlank\n" +
         "  trace *StringUtils isBlank params[0].length==1\n" +
         "  trace *StringUtils isBlank '#cost>100'\n" +
+        "  trace -E org\\\\.apache\\\\.commons\\\\.lang\\\\.StringUtils isBlank\n" +
         Constants.WIKI + Constants.WIKI_HOME + "trace")
 public class TraceCommand extends EnhancerCommand {
 
