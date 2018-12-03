@@ -3,7 +3,7 @@ watch
 
 Monitor methods in data aspect including `return values`, `exceptions` and `parameters`.
 
-With the help of [OGNL](https://en.wikipedia.org/wiki/OGNL), you can easily check the details of variables when methods being invoked.
+With the help of [OGNL](https://commons.apache.org/proper/commons-ognl/index.html), you can easily check the details of variables when methods being invoked.
 
 ### Parameters & Options
 
