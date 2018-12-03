@@ -2,6 +2,7 @@ package com.taobao.arthas.core.server;
 
 import com.taobao.arthas.core.config.Configure;
 import com.taobao.arthas.core.command.BuiltinCommandPack;
+import com.taobao.arthas.core.command.express.ExpressFactory;
 import com.taobao.arthas.core.shell.ShellServer;
 import com.taobao.arthas.core.shell.ShellServerOptions;
 import com.taobao.arthas.core.shell.command.CommandResolver;
@@ -136,6 +137,7 @@ public class ArthasBootstrap {
         UserStatUtil.destroy();
         // clear the reference in Spy class.
         cleanUpSpyReference();
+        ExpressFactory.reset();
         try {
             Runtime.getRuntime().removeShutdownHook(shutdown);
         } catch (Throwable t) {
