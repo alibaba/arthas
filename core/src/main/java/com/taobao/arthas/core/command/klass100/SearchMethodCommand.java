@@ -37,11 +37,11 @@ import static java.lang.String.format;
 @Name("sm")
 @Summary("Search the method of classes loaded by JVM")
 @Description(Constants.EXAMPLE +
-        "  sm -Ed org\\\\.apache\\\\.commons\\\\.lang\\.StringUtils .*\n" +
-        "  sm org.apache.commons.????.StringUtils *\n" +
+        "  sm java.lang.String\n" +
         "  sm -d org.apache.commons.lang.StringUtils\n" +
         "  sm -d org/apache/commons/lang/StringUtils\n" +
-        "  sm *String????s *\n" +
+        "  sm *StringUtils *\n" +
+        "  sm -Ed org\\\\.apache\\\\.commons\\\\.lang\\.StringUtils .*\n" +
         Constants.WIKI + Constants.WIKI_HOME + "sm")
 public class SearchMethodCommand extends AnnotatedCommand {
 
