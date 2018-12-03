@@ -37,6 +37,8 @@ Advanced:
 
 ### Usage
 
+#### Start Demo
+
 Start `arthas-demo` in [Quick Start](quick-start.md).
 
 #### Check the `out parameters` and `return value`
@@ -223,7 +225,7 @@ ts=2018-12-03 19:41:52; [cost=0.477882ms] result=@MathGame[
 
 * `target.field_name`: the field of the current object.
 
-```
+```bash
 $ watch demo.MathGame primeFactors 'target.illegalArgumentCount'
 Press Ctrl+C to abort.
 Affect(class-cnt:1 , method-cnt:1) cost in 67 ms.
