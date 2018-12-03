@@ -29,10 +29,11 @@ import com.taobao.text.util.RenderUtil;
 @Name("sc")
 @Summary("Search all the classes loaded by JVM")
 @Description(Constants.EXAMPLE +
-        "  sc -E org\\\\.apache\\\\.commons\\\\.lang\\\\.StringUtils\n" +
         "  sc -d org.apache.commons.lang.StringUtils\n" +
         "  sc -d org/apache/commons/lang/StringUtils\n" +
         "  sc -d *StringUtils\n" +
+        "  sc -d -f org.apache.commons.lang.StringUtils\n" +
+        "  sc -E org\\\\.apache\\\\.commons\\\\.lang\\\\.StringUtils\n" +
         Constants.WIKI + Constants.WIKI_HOME + "sc")
 public class SearchClassCommand extends AnnotatedCommand {
     private String classPattern;

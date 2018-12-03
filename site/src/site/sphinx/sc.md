@@ -25,44 +25,76 @@ sc
 
 ### 使用参考
 
-例如， 查看类的静态变量信息， 可以用`sc -df class-name`
+* 模糊搜索
 
-```shell
-$ sc -df org.apache.commons.lang.StringUtils
+  ```bash
+  $ sc demo.*
+  demo.MathGame
+  Affect(row-cnt:1) cost in 55 ms.
+  ```
 
- class-info        org.apache.commons.lang.StringUtils
- code-source       /Users/zhuyong/middleware/citrus-sample/petstore/web/target/petstore/WEB-INF/lib/commons-lang-2.4.jar
- name              org.apache.commons.lang.StringUtils
- isInterface       false
- isAnnotation      false
- isEnum            false
- isAnonymousClass  false
- isArray           false
- isLocalClass      false
- isMemberClass     false
- isPrimitive       false
- isSynthetic       false
- simple-name       StringUtils
- modifier          public
- annotation
- interfaces
- super-class       +-java.lang.Object
- class-loader      +-com.taobao.tomcat.container.context.loader.AliWebappClassLoader
-                     +-org.apache.catalina.loader.StandardClassLoader@1d44eef3
-                       +-sun.misc.Launcher$AppClassLoader@57a462c9
-                         +-sun.misc.Launcher$ExtClassLoader@6951a712
- fields             modifier  final,public,static
-                    type      java.lang.String
-                    name      EMPTY
-                    value
+* 打印类的详细信息
 
-                    modifier  final,public,static
-                    type      int
-                    name      INDEX_NOT_FOUND
-                    value     -1
+  ```bash
+  $ sc -d demo.MathGame
+  class-info        demo.MathGame
+  code-source       /private/tmp/arthas-demo.jar
+  name              demo.MathGame
+  isInterface       false
+  isAnnotation      false
+  isEnum            false
+  isAnonymousClass  false
+  isArray           false
+  isLocalClass      false
+  isMemberClass     false
+  isPrimitive       false
+  isSynthetic       false
+  simple-name       MathGame
+  modifier          public
+  annotation
+  interfaces
+  super-class       +-java.lang.Object
+  class-loader      +-sun.misc.Launcher$AppClassLoader@3d4eac69
+                      +-sun.misc.Launcher$ExtClassLoader@66350f69
+  classLoaderHash   3d4eac69
 
-                    modifier  final,private,static
-                    type      int
-                    name      PAD_LIMIT
-                    value     8192
-```
+  Affect(row-cnt:1) cost in 875 ms.
+  ```
+
+* 打印出类的Field信息
+
+  ```bash
+  $ sc -d -f demo.MathGame
+  class-info        demo.MathGame
+  code-source       /private/tmp/arthas-demo.jar
+  name              demo.MathGame
+  isInterface       false
+  isAnnotation      false
+  isEnum            false
+  isAnonymousClass  false
+  isArray           false
+  isLocalClass      false
+  isMemberClass     false
+  isPrimitive       false
+  isSynthetic       false
+  simple-name       MathGame
+  modifier          public
+  annotation
+  interfaces
+  super-class       +-java.lang.Object
+  class-loader      +-sun.misc.Launcher$AppClassLoader@3d4eac69
+                      +-sun.misc.Launcher$ExtClassLoader@66350f69
+  classLoaderHash   3d4eac69
+  fields            modifierprivate,static
+                    type    java.util.Random
+                    name    random
+                    value   java.util.Random@522b4
+                            08a
+
+                    modifierprivate
+                    type    int
+                    name    illegalArgumentCount
+
+
+  Affect(row-cnt:1) cost in 19 ms.
+  ```
