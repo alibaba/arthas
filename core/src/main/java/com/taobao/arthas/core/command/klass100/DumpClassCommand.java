@@ -36,10 +36,10 @@ import static com.taobao.text.ui.Element.label;
 @Name("dump")
 @Summary("Dump class byte array from JVM")
 @Description(Constants.EXAMPLE +
-        "  dump -E org\\\\.apache\\\\.commons\\\\.lang\\\\.StringUtils\n" +
-        "  dump org.apache.commons.lang.StringUtils\n" +
+        "  dump java.lang.String\n" +
         "  dump org/apache/commons/lang/StringUtils\n" +
         "  dump *StringUtils\n" +
+        "  dump -E org\\\\.apache\\\\.commons\\\\.lang\\\\.StringUtils\n" +
         Constants.WIKI + Constants.WIKI_HOME + "dump")
 public class DumpClassCommand extends AnnotatedCommand {
     private static final Logger logger = LogUtil.getArthasLogger();
