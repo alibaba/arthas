@@ -38,6 +38,8 @@ watch 的参数比较多，主要是因为它能在 4 个不同的场景观察�
 
 ### 使用参考
 
+#### 启动 Demo
+
 启动[快速入门](quick-start.md)里的`arthas-demo`。
 
 #### 观察方法出参和返回值
@@ -223,7 +225,7 @@ ts=2018-12-03 19:41:52; [cost=0.477882ms] result=@MathGame[
 
 然后使用`target.field_name`访问当前对象的某个属性
 
-```
+```bash
 $ watch demo.MathGame primeFactors 'target.illegalArgumentCount'
 Press Ctrl+C to abort.
 Affect(class-cnt:1 , method-cnt:1) cost in 67 ms.
