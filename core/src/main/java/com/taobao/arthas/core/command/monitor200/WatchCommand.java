@@ -14,13 +14,13 @@ import com.taobao.middleware.cli.annotations.Summary;
 @Name("watch")
 @Summary("Display the input/output parameter, return object, and thrown exception of specified method invocation")
 @Description(Constants.EXPRESS_DESCRIPTION + "\nExamples:\n" +
-        "  watch -Eb org\\.apache\\.commons\\.lang\\.StringUtils isBlank params[0]\n" +
         "  watch -b org.apache.commons.lang.StringUtils isBlank params[0]\n" +
         "  watch -f org.apache.commons.lang.StringUtils isBlank returnObj\n" +
         "  watch -bf *StringUtils isBlank params[0]\n" +
         "  watch *StringUtils isBlank params[0]\n" +
         "  watch *StringUtils isBlank params[0] params[0].length==1\n" +
         "  watch *StringUtils isBlank '#cost>100'\n" +
+        "  watch -E -b org\\.apache\\.commons\\.lang\\.StringUtils isBlank params[0]\n" +
         Constants.WIKI + Constants.WIKI_HOME + "watch")
 public class WatchCommand extends EnhancerCommand {
 
