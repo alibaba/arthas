@@ -3,8 +3,6 @@ Arthas 用户文档
 
 **[English Docs](https://alibaba.github.io/arthas/en/)**
 
-**Arthas正在参加“2018年度最受欢迎中国开源软件评选” ，请支持Arthas：[投票地址](https://www.oschina.net/project/top_cn_2018)**
-
 ## Arthas（阿尔萨斯） 能为你做什么？
 
 ![arthas](arthas.png)
