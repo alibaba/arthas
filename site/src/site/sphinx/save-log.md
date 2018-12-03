@@ -24,7 +24,7 @@ Affect(row-cnt:1) cost in 3 ms.
 ```bash
 $ trace Test t >>  &
 job id  : 2
-cache location  : /Users/zhuyong/logs/arthas-cache/28198/2
+cache location  : /Users/admin/logs/arthas-cache/28198/2
 ```
 
 此时命令会在后台异步执行，并将结果异步保存在文件（~/logs/arthas-cache/${PID}/${JobId}）中；
