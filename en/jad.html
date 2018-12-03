@@ -105,7 +105,12 @@
 <li class="toctree-l2"><a class="reference internal" href="dump.html">dump</a></li>
 <li class="toctree-l2 current"><a class="current reference internal" href="#">jad</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#options">Options</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#usage">Usage</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#usage">Usage</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#decompile-java-lang-string">Decompile <code class="docutils literal notranslate"><span class="pre">java.lang.String</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#decompile-the-specified-method">Decompile the specified method</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#decompile-with-specified-classloader">Decompile with specified classLoader</a></li>
+</ul>
+</li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="classloader.html">classloader</a></li>
@@ -195,11 +200,11 @@
   <div class="section" id="jad">
 <span id="jad"></span><h1>jad<a class="headerlink" href="#jad" title="Permalink to this headline">¶</a></h1>
 <blockquote>
-<div>De-compile the specified classes.</div></blockquote>
-<p><code class="docutils literal notranslate"><span class="pre">jad</span></code> helps to de-compile the byte code running in JVM to the source code to assist you to understand the logic behind better.</p>
+<div>Decompile the specified classes.</div></blockquote>
+<p><code class="docutils literal notranslate"><span class="pre">jad</span></code> helps to decompile the byte code running in JVM to the source code to assist you to understand the logic behind better.</p>
 <ul class="simple">
-<li>The de-compiled code is syntax highlighted for better readability in Arthas console.</li>
-<li>It is possible that there’s grammar error in the de-compiled code, but it should not affect your interpretation.</li>
+<li>The decompiled code is syntax highlighted for better readability in Arthas console.</li>
+<li>It is possible that there’s grammar error in the decompiled code, but it should not affect your interpretation.</li>
 </ul>
 <div class="section" id="options">
 <span id="options"></span><h2>Options<a class="headerlink" href="#options" title="Permalink to this headline">¶</a></h2>
@@ -227,18 +232,76 @@
 </table></div>
 <div class="section" id="usage">
 <span id="usage"></span><h2>Usage<a class="headerlink" href="#usage" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="decompile-java-lang-string">
+<span id="decompile-java-lang-string"></span><h3>Decompile <code class="docutils literal notranslate"><span class="pre">java.lang.String</span></code><a class="headerlink" href="#decompile-java-lang-string" title="Permalink to this headline">¶</a></h3>
+<div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="n">$</span> <span class="n">jad</span> <span class="n">java</span><span class="o">.</span><span class="na">lang</span><span class="o">.</span><span class="na">String</span>
+
+<span class="nl">ClassLoader:</span>
+
+<span class="nl">Location:</span>
+
+<span class="cm">/*</span>
+<span class="cm">* Decompiled with CFR 0_132.</span>
+<span class="cm">*/</span>
+<span class="kn">package</span> <span class="nn">java.lang</span><span class="o">;</span>
+
+<span class="kn">import</span> <span class="nn">java.io.ObjectStreamField</span><span class="o">;</span>
+<span class="o">...</span>
+<span class="kd">public</span> <span class="kd">final</span> <span class="kd">class</span> <span class="nc">String</span>
+<span class="kd">implements</span> <span class="n">Serializable</span><span class="o">,</span>
+<span class="n">Comparable</span><span class="o">&lt;</span><span class="n">String</span><span class="o">&gt;,</span>
+<span class="n">CharSequence</span> <span class="o">{</span>
+    <span class="kd">private</span> <span class="kd">final</span> <span class="kt">char</span><span class="o">[]</span> <span class="n">value</span><span class="o">;</span>
+    <span class="kd">private</span> <span class="kt">int</span> <span class="n">hash</span><span class="o">;</span>
+    <span class="kd">private</span> <span class="kd">static</span> <span class="kd">final</span> <span class="kt">long</span> <span class="n">serialVersionUID</span> <span class="o">=</span> <span class="o">-</span><span class="mi">6849794470754667710L</span><span class="o">;</span>
+    <span class="kd">private</span> <span class="kd">static</span> <span class="kd">final</span> <span class="n">ObjectStreamField</span><span class="o">[]</span> <span class="n">serialPersistentFields</span> <span class="o">=</span> <span class="k">new</span> <span class="n">ObjectStreamField</span><span class="o">[</span><span class="mi">0</span><span class="o">];</span>
+    <span class="kd">public</span> <span class="kd">static</span> <span class="kd">final</span> <span class="n">Comparator</span><span class="o">&lt;</span><span class="n">String</span><span class="o">&gt;</span> <span class="n">CASE_INSENSITIVE_ORDER</span> <span class="o">=</span> <span class="k">new</span> <span class="n">CaseInsensitiveComparator</span><span class="o">();</span>
+
+    <span class="kd">public</span> <span class="nf">String</span><span class="o">(</span><span class="kt">byte</span><span class="o">[]</span> <span class="n">arrby</span><span class="o">,</span> <span class="kt">int</span> <span class="n">n</span><span class="o">,</span> <span class="kt">int</span> <span class="n">n2</span><span class="o">)</span> <span class="o">{</span>
+        <span class="n">String</span><span class="o">.</span><span class="na">checkBounds</span><span class="o">(</span><span class="n">arrby</span><span class="o">,</span> <span class="n">n</span><span class="o">,</span> <span class="n">n2</span><span class="o">);</span>
+        <span class="k">this</span><span class="o">.</span><span class="na">value</span> <span class="o">=</span> <span class="n">StringCoding</span><span class="o">.</span><span class="na">decode</span><span class="o">(</span><span class="n">arrby</span><span class="o">,</span> <span class="n">n</span><span class="o">,</span> <span class="n">n2</span><span class="o">);</span>
+    <span class="o">}</span>
+<span class="o">...</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="decompile-the-specified-method">
+<span id="decompile-the-specified-method"></span><h3>Decompile the specified method<a class="headerlink" href="#decompile-the-specified-method" title="Permalink to this headline">¶</a></h3>
+<div class="highlight-java notranslate"><div class="highlight"><pre><span></span>$ jad demo.MathGame main
+
+ClassLoader:
++-sun.misc.Launcher$AppClassLoader@3d4eac69
++-sun.misc.Launcher$ExtClassLoader@66350f69
+
+Location:
+/private/tmp/arthas-demo.jar
+
+public static void main(String[] args) throws InterruptedException {
+    MathGame game = new MathGame();
+    do {
+        game.run();
+        TimeUnit.SECONDS.sleep(1L);
+    } while (true);
+}
+
+Affect(row-cnt:1) cost in 228 ms.
+</pre></div>
+</div>
+</div>
+<div class="section" id="decompile-with-specified-classloader">
+<span id="decompile-with-specified-classloader"></span><h3>Decompile with specified classLoader<a class="headerlink" href="#decompile-with-specified-classloader" title="Permalink to this headline">¶</a></h3>
 <blockquote>
-<div>If the target class is loaded by multiple classloaders, <code class="docutils literal notranslate"><span class="pre">jad</span></code> outputs the <code class="docutils literal notranslate"><span class="pre">hashcode</span></code> of the corresponding classloaders, then you can re-run <code class="docutils literal notranslate"><span class="pre">jad</span></code> and specify <code class="docutils literal notranslate"><span class="pre">-c</span> <span class="pre">&lt;hashcode&gt;</span></code> to de-compile the target class from the specified classloader.</div></blockquote>
+<div>If the target class is loaded by multiple classloaders, <code class="docutils literal notranslate"><span class="pre">jad</span></code> outputs the <code class="docutils literal notranslate"><span class="pre">hashcode</span></code> of the corresponding classloaders, then you can re-run <code class="docutils literal notranslate"><span class="pre">jad</span></code> and specify <code class="docutils literal notranslate"><span class="pre">-c</span> <span class="pre">&lt;hashcode&gt;</span></code> to decompile the target class from the specified classloader.</div></blockquote>
 <div class="highlight-java notranslate"><div class="highlight"><pre><span></span>$ jad org.apache.log4j.Logger
 
- Found more than one class for: org.apache.log4j.Logger, Please use jad -c hashcode org.apache.log4j.Logger
- HASHCODE  CLASSLOADER
- 69dcaba4  +-monitor&#39;s ModuleClassLoader
- 6e51ad67  +-java.net.URLClassLoader@6e51ad67
-             +-sun.misc.Launcher$AppClassLoader@6951a712
-               +-sun.misc.Launcher$ExtClassLoader@6fafc4c2
- 2bdd9114  +-pandora-qos-service&#39;s ModuleClassLoader
- 4c0df5f8  +-pandora-framework&#39;s ModuleClassLoader
+Found more than one class for: org.apache.log4j.Logger, Please use jad -c hashcode org.apache.log4j.Logger
+HASHCODE  CLASSLOADER
+69dcaba4  +-monitor&#39;s ModuleClassLoader
+6e51ad67  +-java.net.URLClassLoader@6e51ad67
+            +-sun.misc.Launcher$AppClassLoader@6951a712
+            +-sun.misc.Launcher$ExtClassLoader@6fafc4c2
+2bdd9114  +-pandora-qos-service&#39;s ModuleClassLoader
+4c0df5f8  +-pandora-framework&#39;s ModuleClassLoader
 
 Affect(row-cnt:0) cost in 38 ms.
 $ jad org.apache.log4j.Logger -c 69dcaba4
@@ -247,7 +310,7 @@ ClassLoader:
 +-monitor&#39;s ModuleClassLoader
 
 Location:
-/Users/zhuyong/Downloads/taobao-hsf.sar/plugins/monitor/lib/log4j-1.2.14.jar
+/Users/admin/app/log4j-1.2.14.jar
 
 package org.apache.log4j;
 
@@ -262,103 +325,11 @@ public class Logger extends Category
         super(name);
     }
 
-    public static Logger getLogger(String name)
-    {
-        return LogManager.getLogger(name);
-    }
-
-    public static Logger getLogger(Class clazz)
-    {
-        return LogManager.getLogger(clazz.getName());
-    }
-
-    public static Logger getRootLogger()
-    {
-        return LogManager.getRootLogger();
-    }
-
-    public static Logger getLogger(String name, LoggerFactory factory)
-    {
-        return LogManager.getLogger(name, factory);
-    }
-
-    public void trace(Object message)
-    {
-        if (repository.isDisabled(5000))
-        {
-            return;
-        }
-        if (Level.TRACE.isGreaterOrEqual(getEffectiveLevel()))
-        {
-            forcedLog(Logger.FQCN, Level.TRACE, message, null);
-        }
-    }
-
-    public void trace(Object message, Throwable t)
-    {
-        if (repository.isDisabled(5000))
-        {
-            return;
-        }
-        if (Level.TRACE.isGreaterOrEqual(getEffectiveLevel()))
-        {
-            forcedLog(Logger.FQCN, Level.TRACE, message, t);
-        }
-    }
-
-    public boolean isTraceEnabled()
-    {
-        if (repository.isDisabled(5000))
-        {
-            return false;
-        }
-        return Level.TRACE.isGreaterOrEqual(getEffectiveLevel());
-    }
-
-    static
-    {
-        Logger.FQCN = Logger.class.getName();
-    }
-
-}
+...
 
 Affect(row-cnt:1) cost in 190 ms.
 </pre></div>
 </div>
-<p>De-compile the specified method:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$ jad com.taobao.container.web.arthas.rest.MetricsController directMetrics
-
-ClassLoader:
-+-com.taobao.pandora.boot.loader.ReLaunchURLClassLoader@1817d444
-  +-sun.misc.Launcher<span class="nv">$AppClassLoader</span>@14dad5dc
-    +-sun.misc.Launcher<span class="nv">$ExtClassLoader</span>@a38d7a3
-
-Location:
-/Users/zhuyong/middleware/tomcat-web/tomcat-web-web/target/classes/
-
-private Map&lt;String, Object&gt; directMetrics<span class="o">(</span>String ip, String<span class="o">[]</span> metrics<span class="o">)</span> <span class="o">{</span>
-    JSONObject obj<span class="p">;</span>
-    HashMap&lt;String, Object&gt; <span class="nv">result</span> <span class="o">=</span> new HashMap&lt;String, Object&gt;<span class="o">()</span><span class="p">;</span>
-    result.put<span class="o">(</span><span class="s2">&quot;success&quot;</span>, <span class="nb">false</span><span class="o">)</span><span class="p">;</span>
-    String <span class="nv">metricUrl</span> <span class="o">=</span> <span class="s2">&quot;http://&quot;</span> + ip + <span class="s2">&quot;:8006/metrics/specific&quot;</span><span class="p">;</span>
-    String <span class="nv">postBody</span> <span class="o">=</span> Arrays.stream<span class="o">(</span>metrics<span class="o">)</span>.map<span class="o">(</span>metric -&gt; <span class="s2">&quot;metric=&quot;</span> + metric<span class="o">)</span>.collect<span class="o">(</span>Collectors.joining<span class="o">(</span><span class="s2">&quot;&amp;&quot;</span><span class="o">))</span><span class="p">;</span>
-    HttpClientUtils.Response <span class="nv">resp</span> <span class="o">=</span> HttpClientUtils.sendPostRequest<span class="o">((</span>String<span class="o">)</span>metricUrl, <span class="o">(</span>String<span class="o">)</span>postBody<span class="o">)</span><span class="p">;</span>
-    <span class="k">if</span> <span class="o">(</span>resp.isSuccess<span class="o">()</span> <span class="o">&amp;&amp;</span> <span class="o">(</span><span class="nv">obj</span> <span class="o">=</span> JSON.parseObject<span class="o">(</span>resp.getContent<span class="o">()))</span>.containsKey<span class="o">(</span><span class="s2">&quot;success&quot;</span><span class="o">)</span> <span class="o">&amp;&amp;</span> obj.getBoolean<span class="o">(</span><span class="s2">&quot;success&quot;</span><span class="o">)</span>.booleanValue<span class="o">()</span> <span class="o">&amp;&amp;</span> obj.containsKey<span class="o">(</span><span class="s2">&quot;data&quot;</span><span class="o">))</span> <span class="o">{</span>
-        JSONArray <span class="nv">dataArray</span> <span class="o">=</span> obj.getJSONArray<span class="o">(</span><span class="s2">&quot;data&quot;</span><span class="o">)</span><span class="p">;</span>
-        HashMap&lt;String, Object&gt; <span class="nv">metricMap</span> <span class="o">=</span> new HashMap&lt;String, Object&gt;<span class="o">()</span><span class="p">;</span>
-        <span class="k">for</span> <span class="o">(</span>Object aDataArray : dataArray<span class="o">)</span> <span class="o">{</span>
-            JSONObject <span class="nv">o</span> <span class="o">=</span> <span class="o">(</span>JSONObject<span class="o">)</span>aDataArray<span class="p">;</span>
-            metricMap.put<span class="o">(</span>o.getString<span class="o">(</span><span class="s2">&quot;metric&quot;</span><span class="o">)</span>, o.get<span class="o">(</span><span class="s2">&quot;value&quot;</span><span class="o">))</span><span class="p">;</span>
-        <span class="o">}</span>
-        result.put<span class="o">(</span><span class="s2">&quot;data&quot;</span>, metricMap<span class="o">)</span><span class="p">;</span>
-        result.put<span class="o">(</span><span class="s2">&quot;success&quot;</span>, <span class="nb">true</span><span class="o">)</span><span class="p">;</span>
-        <span class="k">return</span> result<span class="p">;</span>
-    <span class="o">}</span>
-    <span class="k">return</span> result<span class="p">;</span>
-<span class="o">}</span>
-
-Affect<span class="o">(</span>row-cnt:1<span class="o">)</span> cost in <span class="m">1508</span> ms.
-</pre></div>
 </div>
 </div>
 </div>

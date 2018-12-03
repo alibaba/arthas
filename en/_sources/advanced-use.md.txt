@@ -28,7 +28,7 @@ Advanced Usage
 * [sm](sm.md) - check methods info for the loaded classes
 * [dump](dump.md) - dump the loaded classes in byte code to the specified location
 * [redefine](redefine.md) - load external `*.class` files and re-define it into JVM
-* [jad](jad.md) - de-compile the specified loaded classes
+* [jad](jad.md) - decompile the specified loaded classes
 * [classloader](classloader.md) - check the inheritance structure, urls, class loading info for the specified class; using classloader to get the url of the resource e.g. `java/lang/String.class`
 
 ## monitor/watch/trace - related

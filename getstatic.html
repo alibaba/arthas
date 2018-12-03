@@ -192,8 +192,36 @@
             
   <div class="section" id="getstatic">
 <span id="getstatic"></span><h1>getstatic<a class="headerlink" href="#getstatic" title="永久链接至标题">¶</a></h1>
+<ul class="simple">
+<li>推荐直接使用<a class="reference internal" href="ognl.html"><span class="doc">ognl</span></a>命令，更加灵活。</li>
+</ul>
 <p>通过getstatic命令可以方便的查看类的静态属性。使用方法为<code class="docutils literal notranslate"><span class="pre">getstatic</span> <span class="pre">class_name</span> <span class="pre">field_name</span></code></p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$ getstatic demo.MathGame random
+field: random
+@Random<span class="o">[</span>
+    <span class="nv">serialVersionUID</span><span class="o">=</span>@Long<span class="o">[</span><span class="m">3905348978240129619</span><span class="o">]</span>,
+    <span class="nv">seed</span><span class="o">=</span>@AtomicLong<span class="o">[</span><span class="m">120955813885284</span><span class="o">]</span>,
+    <span class="nv">multiplier</span><span class="o">=</span>@Long<span class="o">[</span><span class="m">25214903917</span><span class="o">]</span>,
+    <span class="nv">addend</span><span class="o">=</span>@Long<span class="o">[</span><span class="m">11</span><span class="o">]</span>,
+    <span class="nv">mask</span><span class="o">=</span>@Long<span class="o">[</span><span class="m">281474976710655</span><span class="o">]</span>,
+    <span class="nv">DOUBLE_UNIT</span><span class="o">=</span>@Double<span class="o">[</span><span class="m">1</span>.1102230246251565E-16<span class="o">]</span>,
+    <span class="nv">BadBound</span><span class="o">=</span>@String<span class="o">[</span>bound must be positive<span class="o">]</span>,
+    <span class="nv">BadRange</span><span class="o">=</span>@String<span class="o">[</span>bound must be greater than origin<span class="o">]</span>,
+    <span class="nv">BadSize</span><span class="o">=</span>@String<span class="o">[</span>size must be non-negative<span class="o">]</span>,
+    <span class="nv">seedUniquifier</span><span class="o">=</span>@AtomicLong<span class="o">[</span>-3282039941672302964<span class="o">]</span>,
+    <span class="nv">nextNextGaussian</span><span class="o">=</span>@Double<span class="o">[</span><span class="m">0</span>.0<span class="o">]</span>,
+    <span class="nv">haveNextNextGaussian</span><span class="o">=</span>@Boolean<span class="o">[</span>false<span class="o">]</span>,
+    <span class="nv">serialPersistentFields</span><span class="o">=</span>@ObjectStreamField<span class="o">[][</span><span class="nv">isEmpty</span><span class="o">=</span>false<span class="p">;</span><span class="nv">size</span><span class="o">=</span><span class="m">3</span><span class="o">]</span>,
+    <span class="nv">unsafe</span><span class="o">=</span>@Unsafe<span class="o">[</span>sun.misc.Unsafe@2eaa1027<span class="o">]</span>,
+    <span class="nv">seedOffset</span><span class="o">=</span>@Long<span class="o">[</span><span class="m">24</span><span class="o">]</span>,
+<span class="o">]</span>
+</pre></div>
+</div>
 <p>如果该静态属性是一个复杂对象，还可以支持在该属性上通过ognl表示进行遍历，过滤，访问对象的内部属性等操作。</p>
+<ul class="simple">
+<li>OGNL特殊用法请参考：<a class="reference external" href="https://github.com/alibaba/arthas/issues/71">https://github.com/alibaba/arthas/issues/71</a></li>
+<li>OGNL表达式官方指南：<a class="reference external" href="https://commons.apache.org/proper/commons-ognl/language-guide.html">https://commons.apache.org/proper/commons-ognl/language-guide.html</a></li>
+</ul>
 <p>例如，假设n是一个Map，Map的Key是一个Enum，我们想过滤出Map中Key为某个Enum的值，可以写如下命令</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ getstatic com.alibaba.arthas.Test n &#39;entrySet().iterator.{? #this.key.name()==&quot;STOP&quot;}&#39;
 field: n

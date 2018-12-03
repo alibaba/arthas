@@ -98,7 +98,11 @@
 <li class="toctree-l2"><a class="reference internal" href="jvm.html">jvm</a></li>
 <li class="toctree-l2"><a class="reference internal" href="sysprop.html">sysprop</a></li>
 <li class="toctree-l2"><a class="reference internal" href="sysenv.html">sysenv</a></li>
-<li class="toctree-l2 current"><a class="current reference internal" href="#">getstatic</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">getstatic</a><ul>
+<li class="toctree-l3"><a class="reference external" href="https://commons.apache.org/proper/commons-ognl/language-guide.html">OGNL official guide</a></li>
+<li class="toctree-l3"><a class="reference external" href="https://github.com/alibaba/arthas/issues/71">Special usages</a></li>
+</ul>
+</li>
 <li class="toctree-l2"><a class="reference internal" href="ognl.html">ognl</a></li>
 <li class="toctree-l2"><a class="reference internal" href="sc.html">sc</a></li>
 <li class="toctree-l2"><a class="reference internal" href="sm.html">sm</a></li>
@@ -190,8 +194,38 @@
             
   <div class="section" id="getstatic">
 <span id="getstatic"></span><h1>getstatic<a class="headerlink" href="#getstatic" title="Permalink to this headline">¶</a></h1>
+<ul class="simple">
+<li>It is recommended to use the [OGNL] (ognl.md) command, which will be more flexibility.</li>
+</ul>
 <p>Check the static fields of classes conveniently, the usage is <code class="docutils literal notranslate"><span class="pre">getstatic</span> <span class="pre">class_name</span> <span class="pre">field_name</span></code>.</p>
-<p>Tip: if the static field is a complex class, you can even use <a class="reference external" href="https://en.wikipedia.org/wiki/OGNL"><code class="docutils literal notranslate"><span class="pre">OGNL</span></code></a> to traverse, filter and access the inner properties of this class.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$ getstatic demo.MathGame random
+field: random
+@Random<span class="o">[</span>
+    <span class="nv">serialVersionUID</span><span class="o">=</span>@Long<span class="o">[</span><span class="m">3905348978240129619</span><span class="o">]</span>,
+    <span class="nv">seed</span><span class="o">=</span>@AtomicLong<span class="o">[</span><span class="m">120955813885284</span><span class="o">]</span>,
+    <span class="nv">multiplier</span><span class="o">=</span>@Long<span class="o">[</span><span class="m">25214903917</span><span class="o">]</span>,
+    <span class="nv">addend</span><span class="o">=</span>@Long<span class="o">[</span><span class="m">11</span><span class="o">]</span>,
+    <span class="nv">mask</span><span class="o">=</span>@Long<span class="o">[</span><span class="m">281474976710655</span><span class="o">]</span>,
+    <span class="nv">DOUBLE_UNIT</span><span class="o">=</span>@Double<span class="o">[</span><span class="m">1</span>.1102230246251565E-16<span class="o">]</span>,
+    <span class="nv">BadBound</span><span class="o">=</span>@String<span class="o">[</span>bound must be positive<span class="o">]</span>,
+    <span class="nv">BadRange</span><span class="o">=</span>@String<span class="o">[</span>bound must be greater than origin<span class="o">]</span>,
+    <span class="nv">BadSize</span><span class="o">=</span>@String<span class="o">[</span>size must be non-negative<span class="o">]</span>,
+    <span class="nv">seedUniquifier</span><span class="o">=</span>@AtomicLong<span class="o">[</span>-3282039941672302964<span class="o">]</span>,
+    <span class="nv">nextNextGaussian</span><span class="o">=</span>@Double<span class="o">[</span><span class="m">0</span>.0<span class="o">]</span>,
+    <span class="nv">haveNextNextGaussian</span><span class="o">=</span>@Boolean<span class="o">[</span>false<span class="o">]</span>,
+    <span class="nv">serialPersistentFields</span><span class="o">=</span>@ObjectStreamField<span class="o">[][</span><span class="nv">isEmpty</span><span class="o">=</span>false<span class="p">;</span><span class="nv">size</span><span class="o">=</span><span class="m">3</span><span class="o">]</span>,
+    <span class="nv">unsafe</span><span class="o">=</span>@Unsafe<span class="o">[</span>sun.misc.Unsafe@2eaa1027<span class="o">]</span>,
+    <span class="nv">seedOffset</span><span class="o">=</span>@Long<span class="o">[</span><span class="m">24</span><span class="o">]</span>,
+<span class="o">]</span>
+</pre></div>
+</div>
+<p>Tip: if the static field is a complex class, you can even use <a class="reference external" href="https://commons.apache.org/proper/commons-ognl/language-guide.html"><code class="docutils literal notranslate"><span class="pre">OGNL</span></code></a> to traverse, filter and access the inner properties of this class.</p>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference external" href="https://commons.apache.org/proper/commons-ognl/language-guide.html">OGNL official guide</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas/issues/71">Special usages</a></li>
+</ul>
+</div>
 <p>E.g. suppose <code class="docutils literal notranslate"><span class="pre">n</span></code> is a <code class="docutils literal notranslate"><span class="pre">Map</span></code> and its key is a <code class="docutils literal notranslate"><span class="pre">Enum</span></code>, then you can achieve this if you want to pick the key with a specific <code class="docutils literal notranslate"><span class="pre">Enum</span></code> value:</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$ getstatic com.alibaba.arthas.Test n <span class="s1">&#39;entrySet().iterator.{? #this.key.name()==&quot;STOP&quot;}&#39;</span>
 field: n

@@ -222,29 +222,17 @@
 </table></div>
 <div class="section" id="usage">
 <span id="usage"></span><h2>Usage<a class="headerlink" href="#usage" title="Permalink to this headline">¶</a></h2>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$ dump org.apache.commons.lang.StringUtils
- HASHCODE  CLASSLOADER                                                        LOCATION
- 29505d69  +-tddl-client<span class="s1">&#39;s ModuleClassLoader                                  /Users/zhuyong/middleware/taobao-tomcat/output/build/bin/classdump/com.taobao.pandora</span>
-<span class="s1">                                                                              .service.loader.ModuleClassLoader-29505d69/org.apache.commons.lang.StringUtils.class</span>
-<span class="s1"> 6e51ad67  +-java.net.URLClassLoader@6e51ad67                                 /Users/zhuyong/middleware/taobao-tomcat/output/build/bin/classdump/java.net.URLClassL</span>
-<span class="s1">             +-sun.misc.Launcher$AppClassLoader@6951a712                      oader-6e51ad67/org.apache.commons.lang.StringUtils.class</span>
-<span class="s1">               +-sun.misc.Launcher$ExtClassLoader@6fafc4c2</span>
-<span class="s1"> 2bdd9114  +-pandora-qos-service&#39;</span>s ModuleClassLoader                          /Users/zhuyong/middleware/taobao-tomcat/output/build/bin/classdump/com.taobao.pandora
-                                                                              .service.loader.ModuleClassLoader-2bdd9114/org.apache.commons.lang.StringUtils.class
- 544dc9ba  +-com.taobao.tomcat.container.context.loader.AliWebappClassLoader  /Users/zhuyong/middleware/taobao-tomcat/output/build/bin/classdump/com.taobao.tomcat.
-             +-org.apache.catalina.loader.StandardClassLoader@2302e984        container.context.loader.AliWebappClassLoader-544dc9ba/org.apache.commons.lang.String
-               +-sun.misc.Launcher<span class="nv">$AppClassLoader</span>@6951a712                    Utils.class
-                 +-sun.misc.Launcher<span class="nv">$ExtClassLoader</span>@6fafc4c2
- 22880c2b  +-java.net.URLClassLoader@22880c2b                                 /Users/zhuyong/middleware/taobao-tomcat/output/build/bin/classdump/java.net.URLClassL
-             +-sun.misc.Launcher<span class="nv">$AppClassLoader</span>@6951a712                      oader-22880c2b/org.apache.commons.lang.StringUtils.class
-               +-sun.misc.Launcher<span class="nv">$ExtClassLoader</span>@6fafc4c2
-Affect<span class="o">(</span>row-cnt:5<span class="o">)</span> cost in <span class="m">156</span> ms.
-$ dump -E org<span class="se">\.</span>apache<span class="se">\.</span>commons<span class="se">\.</span>lang<span class="se">\.</span>StringUtils -c 22880c2b
- HASHCODE  CLASSLOADER                                      LOCATION
- 22880c2b  +-java.net.URLClassLoader@22880c2b               /Users/zhuyong/middleware/taobao-tomcat/output/build/bin/classdump/java.net.URLClassLoader-22880c2b/org
-             +-sun.misc.Launcher<span class="nv">$AppClassLoader</span>@6951a712    .apache.commons.lang.StringUtils.class
-               +-sun.misc.Launcher<span class="nv">$ExtClassLoader</span>@6fafc4c2
-Affect<span class="o">(</span>row-cnt:1<span class="o">)</span> cost in <span class="m">67</span> ms.
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$ dump java.lang.String
+ HASHCODE  CLASSLOADER  LOCATION
+ null                   /Users/admin/logs/arthas/classdump/java/lang/String.class
+Affect<span class="o">(</span>row-cnt:1<span class="o">)</span> cost in <span class="m">119</span> ms.
+</pre></div>
+</div>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$ dump demo.*
+ HASHCODE  CLASSLOADER                                    LOCATION
+ 3d4eac69  +-sun.misc.Launcher<span class="nv">$AppClassLoader</span>@3d4eac69    /Users/admin/logs/arthas/classdump/sun.misc.Launcher<span class="nv">$AppClassLoader</span>-3d4eac69/demo/MathGame.class
+             +-sun.misc.Launcher<span class="nv">$ExtClassLoader</span>@66350f69
+Affect<span class="o">(</span>row-cnt:1<span class="o">)</span> cost in <span class="m">39</span> ms.
 </pre></div>
 </div>
 </div>

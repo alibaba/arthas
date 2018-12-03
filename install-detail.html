@@ -92,7 +92,7 @@
 <li class="toctree-l1"><a class="reference external" href="https://alibaba.github.io/arthas/en/">English Docs</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">安装</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#">快速安装</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#arthas-boot">使用<code class="docutils literal notranslate"><span class="pre">arthas-boot</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#arthas-boot">使用<code class="docutils literal notranslate"><span class="pre">arthas-boot</span></code>（推荐）</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#as-sh">使用<code class="docutils literal notranslate"><span class="pre">as.sh</span></code></a></li>
 </ul>
 </li>
@@ -182,24 +182,26 @@
 <div class="section" id="">
 <span id="id1"></span><h2>快速安装<a class="headerlink" href="#" title="永久链接至标题">¶</a></h2>
 <div class="section" id="arthas-boot">
-<span id="arthas-boot"></span><h3>使用<code class="docutils literal notranslate"><span class="pre">arthas-boot</span></code><a class="headerlink" href="#arthas-boot" title="永久链接至标题">¶</a></h3>
+<span id="arthas-boot"></span><h3>使用<code class="docutils literal notranslate"><span class="pre">arthas-boot</span></code>（推荐）<a class="headerlink" href="#arthas-boot" title="永久链接至标题">¶</a></h3>
 <p>下载<code class="docutils literal notranslate"><span class="pre">arthas-boot.jar</span></code>，然后用<code class="docutils literal notranslate"><span class="pre">java</span> <span class="pre">-jar</span></code>的方式启动：</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>wget https://alibaba.github.io/arthas/arthas-boot.jar
-java -jar arthas-boot.jar
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$ wget https://alibaba.github.io/arthas/arthas-boot.jar
+$ java -jar arthas-boot.jar
 </pre></div>
 </div>
 <p>打印帮助信息：</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>java -jar arthas-boot.jar -h
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$ java -jar arthas-boot.jar -h
 </pre></div>
 </div>
-<ul class="simple">
-<li>如果下载速度比较慢，可以使用aliyun的镜像：<code class="docutils literal notranslate"><span class="pre">java</span> <span class="pre">-jar</span> <span class="pre">arthas-boot.jar</span> <span class="pre">--repo-mirror</span> <span class="pre">aliyun</span> <span class="pre">--use-http</span></code></li>
+<ul>
+<li><p class="first">如果下载速度比较慢，可以使用aliyun的镜像：</p>
+<p><code class="docutils literal notranslate"><span class="pre">java</span> <span class="pre">-jar</span> <span class="pre">arthas-boot.jar</span> <span class="pre">--repo-mirror</span> <span class="pre">aliyun</span> <span class="pre">--use-http</span></code></p>
+</li>
 </ul>
 </div>
 <div class="section" id="as-sh">
 <span id="as-sh"></span><h3>使用<code class="docutils literal notranslate"><span class="pre">as.sh</span></code><a class="headerlink" href="#as-sh" title="永久链接至标题">¶</a></h3>
 <p>Arthas 支持在 Linux/Unix/Mac 等平台上一键安装，请复制以下内容，并粘贴到命令行中，敲 <code class="docutils literal notranslate"><span class="pre">回车</span></code> 执行即可：</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>curl -L https://alibaba.github.io/arthas/install.sh <span class="p">|</span> sh
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$ curl -L https://alibaba.github.io/arthas/install.sh <span class="p">|</span> sh
 </pre></div>
 </div>
 <p>上述命令会下载启动脚本文件 <code class="docutils literal notranslate"><span class="pre">as.sh</span></code> 到当前目录，你可以放在任何地方或将其加入到 <code class="docutils literal notranslate"><span class="pre">$PATH</span></code> 中。</p>
@@ -211,11 +213,11 @@ java -jar arthas-boot.jar
 <span id="id2"></span><h2>全量安装<a class="headerlink" href="#" title="永久链接至标题">¶</a></h2>
 <p>最新版本，点击下载：<a class="reference external" href="http://repository.sonatype.org/service/local/artifact/maven/redirect?r=central-proxy&amp;g=com.taobao.arthas&amp;a=arthas-packaging&amp;e=zip&amp;c=bin&amp;v=LATEST"><img alt="Arthas" src="https://img.shields.io/maven-central/v/com.taobao.arthas/arthas-packaging.svg?style=flat-square" /></a></p>
 <p>解压后，在文件夹里有<code class="docutils literal notranslate"><span class="pre">arthas-boot.jar</span></code>，直接用<code class="docutils literal notranslate"><span class="pre">java</span> <span class="pre">-jar</span></code>的方式启动：</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>java -jar arthas-boot.jar
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$ java -jar arthas-boot.jar
 </pre></div>
 </div>
 <p>打印帮助信息：</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>java -jar arthas-boot.jar -h
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$ java -jar arthas-boot.jar -h
 </pre></div>
 </div>
 </div>
@@ -232,7 +234,7 @@ java -jar arthas-boot.jar
 <ul>
 <li><p class="first">在 Linux/Unix/Mac 平台</p>
 <p>删除下面文件：</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>rm -rf ~/.arthas/
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$ rm -rf ~/.arthas/
 </pre></div>
 </div>
 </li>

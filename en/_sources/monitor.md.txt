@@ -37,19 +37,31 @@ Parameter `[c:]` stands for cycles of statistics. Its value is an integer value 
 
 ### Usage
 
-```shell
-$ monitor -c 5 com.alibaba.sample.petstore.web.store.module.screen.ItemList execute
+```bash
+$ monitor -c 5 demo.MathGame primeFactors
 Press Ctrl+C to abort.
-Affect(class-cnt:1 , method-cnt:1) cost in 36 ms.
- timestamp            class                                                         method   total  success  fail  rt    fail-rate
------------------------------------------------------------------------------------------------------------------------------------
- 2015-12-17 10:56:40  com.alibaba.sample.petstore.web.store.module.screen.ItemList  execute  10     10       0     2.00  0.00%
+Affect(class-cnt:1 , method-cnt:1) cost in 94 ms.
+ timestamp            class          method        total  success  fail  avg-rt(ms)  fail-rate
+-----------------------------------------------------------------------------------------------
+ 2018-12-03 19:06:38  demo.MathGame  primeFactors  5      1        4     1.15        80.00%
 
- timestamp            class                                                         method   total  success  fail  rt    fail-rate
------------------------------------------------------------------------------------------------------------------------------------
- 2015-12-17 10:56:45  com.alibaba.sample.petstore.web.store.module.screen.ItemList  execute  11     11       0     2.18  0.00%
+ timestamp            class          method        total  success  fail  avg-rt(ms)  fail-rate
+-----------------------------------------------------------------------------------------------
+ 2018-12-03 19:06:43  demo.MathGame  primeFactors  5      3        2     42.29       40.00%
 
- timestamp            class                                                         method   total  success  fail  rt    fail-rate
------------------------------------------------------------------------------------------------------------------------------------
- 2015-12-17 10:56:50  com.alibaba.sample.petstore.web.store.module.screen.ItemList  execute  0      0        0     0.00  0.00%
+ timestamp            class          method        total  success  fail  avg-rt(ms)  fail-rate
+-----------------------------------------------------------------------------------------------
+ 2018-12-03 19:06:48  demo.MathGame  primeFactors  5      3        2     67.92       40.00%
+
+ timestamp            class          method        total  success  fail  avg-rt(ms)  fail-rate
+-----------------------------------------------------------------------------------------------
+ 2018-12-03 19:06:53  demo.MathGame  primeFactors  5      2        3     0.25        60.00%
+
+ timestamp            class          method        total  success  fail  avg-rt(ms)  fail-rate
+-----------------------------------------------------------------------------------------------
+ 2018-12-03 19:06:58  demo.MathGame  primeFactors  1      1        0     0.45        0.00%
+
+ timestamp            class          method        total  success  fail  avg-rt(ms)  fail-rate
+-----------------------------------------------------------------------------------------------
+ 2018-12-03 19:07:03  demo.MathGame  primeFactors  2      2        0     3182.72     0.00%
 ```

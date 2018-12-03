@@ -227,72 +227,66 @@
 </table></div>
 <div class="section" id="usage">
 <span id="usage"></span><h2>Usage<a class="headerlink" href="#usage" title="Permalink to this headline">¶</a></h2>
-<p>Show methods from <code class="docutils literal notranslate"><span class="pre">org.apache.catalina.connector.Connector</span></code>:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$ sm org.apache.catalina.connector.Connector
-org.apache.catalina.connector.Connector-&gt;&lt;init&gt;
-org.apache.catalina.connector.Connector-&gt;setProperty
-org.apache.catalina.connector.Connector-&gt;getProperty
-org.apache.catalina.connector.Connector-&gt;toString
-org.apache.catalina.connector.Connector-&gt;resume
-org.apache.catalina.connector.Connector-&gt;getScheme
-org.apache.catalina.connector.Connector-&gt;getProtocol
-org.apache.catalina.connector.Connector-&gt;getPort
-org.apache.catalina.connector.Connector-&gt;setService
-org.apache.catalina.connector.Connector-&gt;setPort
-org.apache.catalina.connector.Connector-&gt;getService
-org.apache.catalina.connector.Connector-&gt;getAttribute
-org.apache.catalina.connector.Connector-&gt;setAttribute
-org.apache.catalina.connector.Connector-&gt;getLocalPort
-org.apache.catalina.connector.Connector-&gt;pause
-org.apache.catalina.connector.Connector-&gt;setProtocol
-org.apache.catalina.connector.Connector-&gt;initInternal
-org.apache.catalina.connector.Connector-&gt;setSecure
-org.apache.catalina.connector.Connector-&gt;getSecure
-org.apache.catalina.connector.Connector-&gt;startInternal
-org.apache.catalina.connector.Connector-&gt;stopInternal
-org.apache.catalina.connector.Connector-&gt;setScheme
-org.apache.catalina.connector.Connector-&gt;createRequest
-org.apache.catalina.connector.Connector-&gt;getDomainInternal
-org.apache.catalina.connector.Connector-&gt;getProtocolHandler
-org.apache.catalina.connector.Connector-&gt;setURIEncoding
-org.apache.catalina.connector.Connector-&gt;findSslHostConfigs
-org.apache.catalina.connector.Connector-&gt;destroyInternal
-org.apache.catalina.connector.Connector-&gt;getObjectNameKeyProperties
-org.apache.catalina.connector.Connector-&gt;getAllowTrace
-org.apache.catalina.connector.Connector-&gt;setAllowTrace
-org.apache.catalina.connector.Connector-&gt;getAsyncTimeout
-org.apache.catalina.connector.Connector-&gt;setAsyncTimeout
-org.apache.catalina.connector.Connector-&gt;getEnableLookups
-org.apache.catalina.connector.Connector-&gt;setEnableLookups
-org.apache.catalina.connector.Connector-&gt;getMaxCookieCount
-...
+<p>View methods of <code class="docutils literal notranslate"><span class="pre">java.lang.String</span></code>:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$ sm java.lang.String
+java.lang.String-&gt;&lt;init&gt;
+java.lang.String-&gt;equals
+java.lang.String-&gt;toString
+java.lang.String-&gt;hashCode
+java.lang.String-&gt;compareTo
+java.lang.String-&gt;indexOf
+java.lang.String-&gt;valueOf
+java.lang.String-&gt;checkBounds
+java.lang.String-&gt;length
+java.lang.String-&gt;isEmpty
+java.lang.String-&gt;charAt
+java.lang.String-&gt;codePointAt
+java.lang.String-&gt;codePointBefore
+java.lang.String-&gt;codePointCount
+java.lang.String-&gt;offsetByCodePoints
+java.lang.String-&gt;getChars
+java.lang.String-&gt;getBytes
+java.lang.String-&gt;contentEquals
+java.lang.String-&gt;nonSyncContentEquals
+java.lang.String-&gt;equalsIgnoreCase
+java.lang.String-&gt;compareToIgnoreCase
+java.lang.String-&gt;regionMatches
+java.lang.String-&gt;startsWith
+java.lang.String-&gt;endsWith
+java.lang.String-&gt;indexOfSupplementary
+java.lang.String-&gt;lastIndexOf
+java.lang.String-&gt;lastIndexOfSupplementary
+java.lang.String-&gt;substring
+java.lang.String-&gt;subSequence
+java.lang.String-&gt;concat
+java.lang.String-&gt;replace
+java.lang.String-&gt;matches
+java.lang.String-&gt;contains
+java.lang.String-&gt;replaceFirst
+java.lang.String-&gt;replaceAll
+java.lang.String-&gt;split
+java.lang.String-&gt;join
+java.lang.String-&gt;toLowerCase
+java.lang.String-&gt;toUpperCase
+java.lang.String-&gt;trim
+java.lang.String-&gt;toCharArray
+java.lang.String-&gt;format
+java.lang.String-&gt;copyValueOf
+java.lang.String-&gt;intern
+Affect<span class="o">(</span>row-cnt:44<span class="o">)</span> cost in <span class="m">1342</span> ms.
 </pre></div>
 </div>
-<p>Show methods’ details from <code class="docutils literal notranslate"><span class="pre">org.apache.catalina.connector.Connector</span></code>:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$ sm org.apache.catalina.connector.Connector -d
- declaring-class   org.apache.catalina.connector.Connector
- constructor-name  &lt;init&gt;
- modifier          public
- annotation
- parameters
- exceptions
-
- declaring-class   org.apache.catalina.connector.Connector
- constructor-name  &lt;init&gt;
- modifier          public
- annotation
- parameters        java.lang.String
- exceptions
-
- declaring-class  org.apache.catalina.connector.Connector
- method-name      setProperty
+<p>View method <code class="docutils literal notranslate"><span class="pre">java.lang.String#toString</span></code> details:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$ sm -d java.lang.String toString
+ declaring-class  java.lang.String
+ method-name      toString
  modifier         public
  annotation
- parameters       java.lang.String
-                  java.lang.String
- <span class="k">return</span>           boolean
+ parameters
+ <span class="k">return</span>           java.lang.String
  exceptions
- ......
+
+Affect<span class="o">(</span>row-cnt:1<span class="o">)</span> cost in <span class="m">3</span> ms.
 </pre></div>
 </div>
 </div>

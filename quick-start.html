@@ -95,7 +95,7 @@
 <li class="toctree-l2"><a class="reference internal" href="#demo">1. 启动Demo</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#arthas">2. 启动arthas</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#dashboard">3. 查看dashboard</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#sysenvmain-class">4. 通过sysenv命令来获取到进程的Main Class</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#threadmain-class">4. 通过thread命令来获取到进程的Main Class</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#jadmain-class">5. 通过jad来反编绎Main Class</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#watch">6. watch</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#arthas">5. 退出arthas</a></li>
@@ -189,8 +189,8 @@ java -jar arthas-demo.jar
 <div class="section" id="arthas">
 <span id="arthas"></span><h2>2. 启动arthas<a class="headerlink" href="#arthas" title="永久链接至标题">¶</a></h2>
 <p>在命令行下面执行：</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>wget https://alibaba.github.io/arthas/arthas-boot.jar
-java -jar arthas-boot.jar
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$ wget https://alibaba.github.io/arthas/arthas-boot.jar
+$ java -jar arthas-boot.jar
 </pre></div>
 </div>
 <ul class="simple">
@@ -261,10 +261,10 @@ java.home              /Library/Java/JavaVir
 </pre></div>
 </div>
 </div>
-<div class="section" id="sysenvmain-class">
-<span id="sysenvmain-class"></span><h2>4. 通过sysenv命令来获取到进程的Main Class<a class="headerlink" href="#sysenvmain-class" title="永久链接至标题">¶</a></h2>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ sysenv | grep MAIN
- JAVA_MAIN_CLASS_71560              demo.MathGame
+<div class="section" id="threadmain-class">
+<span id="threadmain-class"></span><h2>4. 通过thread命令来获取到进程的Main Class<a class="headerlink" href="#threadmain-class" title="永久链接至标题">¶</a></h2>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ thread -n -1 | grep &#39;main(&#39;
+    at demo.MathGame.main(MathGame.java:17)
 </pre></div>
 </div>
 </div>

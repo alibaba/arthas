@@ -121,8 +121,8 @@
 <li class="toctree-l4"><a class="reference internal" href="#use-x-to-check-more-details">Use <code class="docutils literal notranslate"><span class="pre">-x</span></code> to check more details</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#use-condition-expressions-to-locate-specific-call">Use condition expressions to locate specific call</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#check-exceptions">Check <code class="docutils literal notranslate"><span class="pre">exceptions</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="#filter-based-on-time-cost">Filter based on time cost</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#check-the-global-properties-of-the-target-object">Check the global properties of the target object</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#filter-by-time-cost">Filter by time cost</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#check-the-field-of-the-target-object">Check the field of the target object</a></li>
 </ul>
 </li>
 </ul>
@@ -210,7 +210,7 @@
   <div class="section" id="watch">
 <span id="watch"></span><h1>watch<a class="headerlink" href="#watch" title="Permalink to this headline">¶</a></h1>
 <p>Monitor methods in data aspect including <code class="docutils literal notranslate"><span class="pre">return</span> <span class="pre">values</span></code>, <code class="docutils literal notranslate"><span class="pre">exceptions</span></code> and <code class="docutils literal notranslate"><span class="pre">parameters</span></code>.</p>
-<p>With the help of <a class="reference external" href="https://en.wikipedia.org/wiki/OGNL">OGNL</a>, you can easily check the details of variables when methods being invoked.</p>
+<p>With the help of <a class="reference external" href="https://commons.apache.org/proper/commons-ognl/index.html">OGNL</a>, you can easily check the details of variables when methods being invoked.</p>
 <div class="section" id="parameters-options">
 <span id="parameters-options"></span><h2>Parameters &amp; Options<a class="headerlink" href="#parameters-options" title="Permalink to this headline">¶</a></h2>
 <p>There are four different scenarios for <code class="docutils literal notranslate"><span class="pre">watch</span></code> command, which makes it rather complicated.</p>
@@ -282,260 +282,197 @@
 </div>
 <div class="section" id="usage">
 <span id="usage"></span><h2>Usage<a class="headerlink" href="#usage" title="Permalink to this headline">¶</a></h2>
-<p>A demo:</p>
-<div class="highlight-java notranslate"><div class="highlight"><pre><span></span>    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">execute</span><span class="o">()</span> <span class="o">{</span>
-        <span class="n">List</span><span class="o">&lt;</span><span class="n">String</span><span class="o">&gt;</span> <span class="n">list</span> <span class="o">=</span> <span class="k">new</span> <span class="n">ArrayList</span><span class="o">&lt;</span><span class="n">String</span><span class="o">&gt;();</span>
-        <span class="n">list</span><span class="o">.</span><span class="na">add</span><span class="o">(</span><span class="s">&quot;a&quot;</span><span class="o">);</span>
-        <span class="n">list</span><span class="o">.</span><span class="na">add</span><span class="o">(</span><span class="s">&quot;b&quot;</span><span class="o">);</span>
-
-        <span class="n">List</span><span class="o">&lt;</span><span class="n">String</span><span class="o">&gt;</span> <span class="n">list2</span> <span class="o">=</span> <span class="k">new</span> <span class="n">ArrayList</span><span class="o">&lt;</span><span class="n">String</span><span class="o">&gt;();</span>
-        <span class="n">list2</span><span class="o">.</span><span class="na">add</span><span class="o">(</span><span class="s">&quot;c&quot;</span><span class="o">);</span>
-        <span class="n">list2</span><span class="o">.</span><span class="na">add</span><span class="o">(</span><span class="s">&quot;d&quot;</span><span class="o">);</span>
-
-        <span class="kt">int</span> <span class="n">len</span> <span class="o">=</span> <span class="n">add</span><span class="o">(</span><span class="n">list</span><span class="o">,</span> <span class="n">list2</span><span class="o">);</span>
-    <span class="o">}</span>
-
-    <span class="kd">private</span> <span class="kd">static</span> <span class="kt">int</span> <span class="nf">add</span><span class="o">(</span><span class="n">List</span><span class="o">&lt;</span><span class="n">String</span><span class="o">&gt;</span> <span class="n">list</span><span class="o">,</span> <span class="n">List</span><span class="o">&lt;</span><span class="n">String</span><span class="o">&gt;</span> <span class="n">list2</span><span class="o">)</span> <span class="o">{</span>
-        <span class="n">list</span><span class="o">.</span><span class="na">addAll</span><span class="o">(</span><span class="n">list2</span><span class="o">);</span>
-        <span class="k">return</span> <span class="n">list</span><span class="o">.</span><span class="na">size</span><span class="o">();</span>
-    <span class="o">}</span>
-</pre></div>
-</div>
+<p>Start <code class="docutils literal notranslate"><span class="pre">arthas-demo</span></code> in <a class="reference internal" href="quick-start.html"><span class="doc">Quick Start</span></a>.</p>
 <div class="section" id="check-the-out-parameters-and-return-value">
 <span id="check-the-out-parameters-and-return-value"></span><h3>Check the <code class="docutils literal notranslate"><span class="pre">out</span> <span class="pre">parameters</span></code> and <code class="docutils literal notranslate"><span class="pre">return</span> <span class="pre">value</span></code><a class="headerlink" href="#check-the-out-parameters-and-return-value" title="Permalink to this headline">¶</a></h3>
-<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>$ watch com.alibaba.sample.petstore.web.store.module.screen.ItemList add <span class="s2">&quot;{params,returnObj}&quot;</span> -x <span class="m">2</span>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$ watch demo.MathGame primeFactors <span class="s2">&quot;{params,returnObj}&quot;</span> -x <span class="m">2</span>
 Press Ctrl+C to abort.
 Affect<span class="o">(</span>class-cnt:1 , method-cnt:1<span class="o">)</span> cost in <span class="m">44</span> ms.
-@ArrayList<span class="o">[</span>
+<span class="nv">ts</span><span class="o">=</span><span class="m">2018</span>-12-03 <span class="m">19</span>:16:51<span class="p">;</span> <span class="o">[</span><span class="nv">cost</span><span class="o">=</span><span class="m">1</span>.280502ms<span class="o">]</span> <span class="nv">result</span><span class="o">=</span>@ArrayList<span class="o">[</span>
     @Object<span class="o">[][</span>
-        @ArrayList<span class="o">[</span><span class="nv">isEmpty</span><span class="o">=</span>false<span class="p">;</span><span class="nv">size</span><span class="o">=</span><span class="m">4</span><span class="o">]</span>,
-        @ArrayList<span class="o">[</span><span class="nv">isEmpty</span><span class="o">=</span>false<span class="p">;</span><span class="nv">size</span><span class="o">=</span><span class="m">2</span><span class="o">]</span>,
+        @Integer<span class="o">[</span><span class="m">535629513</span><span class="o">]</span>,
     <span class="o">]</span>,
-
-    @Integer<span class="o">[</span><span class="m">4</span><span class="o">]</span>,
+    @ArrayList<span class="o">[</span>
+        @Integer<span class="o">[</span><span class="m">3</span><span class="o">]</span>,
+        @Integer<span class="o">[</span><span class="m">19</span><span class="o">]</span>,
+        @Integer<span class="o">[</span><span class="m">191</span><span class="o">]</span>,
+        @Integer<span class="o">[</span><span class="m">49199</span><span class="o">]</span>,
+    <span class="o">]</span>,
 <span class="o">]</span>
 </pre></div>
 </div>
 </div>
 <div class="section" id="check-in-parameters">
 <span id="check-in-parameters"></span><h3>Check <code class="docutils literal notranslate"><span class="pre">in</span> <span class="pre">parameters</span></code><a class="headerlink" href="#check-in-parameters" title="Permalink to this headline">¶</a></h3>
-<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>$ watch com.alibaba.sample.petstore.web.store.module.screen.ItemList add <span class="s2">&quot;{params,returnObj}&quot;</span> -x <span class="m">2</span> -b
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$ watch demo.MathGame primeFactors <span class="s2">&quot;{params,returnObj}&quot;</span> -x <span class="m">2</span> -b
 Press Ctrl+C to abort.
-Affect<span class="o">(</span>class-cnt:1 , method-cnt:1<span class="o">)</span> cost in <span class="m">48</span> ms.  
-@ArrayList<span class="o">[</span>
+Affect<span class="o">(</span>class-cnt:1 , method-cnt:1<span class="o">)</span> cost in <span class="m">50</span> ms.
+<span class="nv">ts</span><span class="o">=</span><span class="m">2018</span>-12-03 <span class="m">19</span>:23:23<span class="p">;</span> <span class="o">[</span><span class="nv">cost</span><span class="o">=</span><span class="m">0</span>.0353ms<span class="o">]</span> <span class="nv">result</span><span class="o">=</span>@ArrayList<span class="o">[</span>
     @Object<span class="o">[][</span>
-        @ArrayList<span class="o">[</span><span class="nv">isEmpty</span><span class="o">=</span>false<span class="p">;</span><span class="nv">size</span><span class="o">=</span><span class="m">2</span><span class="o">]</span>,
-        @ArrayList<span class="o">[</span><span class="nv">isEmpty</span><span class="o">=</span>false<span class="p">;</span><span class="nv">size</span><span class="o">=</span><span class="m">2</span><span class="o">]</span>,
+        @Integer<span class="o">[</span>-1077465243<span class="o">]</span>,
     <span class="o">]</span>,
-
     null,
 <span class="o">]</span>
 </pre></div>
 </div>
-<p>Compared to the previous <em>check</em>, there are two differences:</p>
-<ol class="simple">
-<li>size of <code class="docutils literal notranslate"><span class="pre">params[0]</span></code> is <code class="docutils literal notranslate"><span class="pre">2</span></code> instead of <code class="docutils literal notranslate"><span class="pre">4</span></code>;</li>
+<p>Compared to the previous <em>check</em>:</p>
+<ul class="simple">
 <li><code class="docutils literal notranslate"><span class="pre">return</span> <span class="pre">value</span></code> is <code class="docutils literal notranslate"><span class="pre">null</span></code> since it’s <code class="docutils literal notranslate"><span class="pre">-b</span></code>.</li>
-</ol>
+</ul>
 </div>
 <div class="section" id="check-before-and-after-at-the-same-time">
 <span id="check-before-and-after-at-the-same-time"></span><h3>Check <em>before</em> and <em>after</em> at the same time<a class="headerlink" href="#check-before-and-after-at-the-same-time" title="Permalink to this headline">¶</a></h3>
-<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>$ watch com.alibaba.sample.petstore.web.store.module.screen.ItemList add <span class="s2">&quot;{params,returnObj}&quot;</span> -x <span class="m">2</span> -b -s 
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$ watch demo.MathGame primeFactors <span class="s2">&quot;{params,target,returnObj}&quot;</span> -x <span class="m">2</span> -b -s -n <span class="m">2</span>
 Press Ctrl+C to abort.
-Affect<span class="o">(</span>class-cnt:1 , method-cnt:1<span class="o">)</span> cost in <span class="m">59</span> ms.  
-@ArrayList<span class="o">[</span>
+Affect<span class="o">(</span>class-cnt:1 , method-cnt:1<span class="o">)</span> cost in <span class="m">46</span> ms.
+<span class="nv">ts</span><span class="o">=</span><span class="m">2018</span>-12-03 <span class="m">19</span>:29:54<span class="p">;</span> <span class="o">[</span><span class="nv">cost</span><span class="o">=</span><span class="m">0</span>.01696ms<span class="o">]</span> <span class="nv">result</span><span class="o">=</span>@ArrayList<span class="o">[</span>
     @Object<span class="o">[][</span>
-        @ArrayList<span class="o">[</span><span class="nv">isEmpty</span><span class="o">=</span>false<span class="p">;</span><span class="nv">size</span><span class="o">=</span><span class="m">2</span><span class="o">]</span>,
-        @ArrayList<span class="o">[</span><span class="nv">isEmpty</span><span class="o">=</span>false<span class="p">;</span><span class="nv">size</span><span class="o">=</span><span class="m">2</span><span class="o">]</span>,
+        @Integer<span class="o">[</span><span class="m">1544665400</span><span class="o">]</span>,
     <span class="o">]</span>,
-
+    @MathGame<span class="o">[</span>
+        <span class="nv">random</span><span class="o">=</span>@Random<span class="o">[</span>java.util.Random@522b408a<span class="o">]</span>,
+        <span class="nv">illegalArgumentCount</span><span class="o">=</span>@Integer<span class="o">[</span><span class="m">13038</span><span class="o">]</span>,
+    <span class="o">]</span>,
     null,
 <span class="o">]</span>
-@ArrayList<span class="o">[</span>
+<span class="nv">ts</span><span class="o">=</span><span class="m">2018</span>-12-03 <span class="m">19</span>:29:54<span class="p">;</span> <span class="o">[</span><span class="nv">cost</span><span class="o">=</span><span class="m">4</span>.277392ms<span class="o">]</span> <span class="nv">result</span><span class="o">=</span>@ArrayList<span class="o">[</span>
     @Object<span class="o">[][</span>
-        @ArrayList<span class="o">[</span><span class="nv">isEmpty</span><span class="o">=</span>false<span class="p">;</span><span class="nv">size</span><span class="o">=</span><span class="m">4</span><span class="o">]</span>,
-        @ArrayList<span class="o">[</span><span class="nv">isEmpty</span><span class="o">=</span>false<span class="p">;</span><span class="nv">size</span><span class="o">=</span><span class="m">2</span><span class="o">]</span>,
+        @Integer<span class="o">[</span><span class="m">1544665400</span><span class="o">]</span>,
     <span class="o">]</span>,
-
-    @Integer<span class="o">[</span><span class="m">4</span><span class="o">]</span>,
+    @MathGame<span class="o">[</span>
+        <span class="nv">random</span><span class="o">=</span>@Random<span class="o">[</span>java.util.Random@522b408a<span class="o">]</span>,
+        <span class="nv">illegalArgumentCount</span><span class="o">=</span>@Integer<span class="o">[</span><span class="m">13038</span><span class="o">]</span>,
+    <span class="o">]</span>,
+    @ArrayList<span class="o">[</span>
+        @Integer<span class="o">[</span><span class="m">2</span><span class="o">]</span>,
+        @Integer<span class="o">[</span><span class="m">2</span><span class="o">]</span>,
+        @Integer<span class="o">[</span><span class="m">2</span><span class="o">]</span>,
+        @Integer<span class="o">[</span><span class="m">5</span><span class="o">]</span>,
+        @Integer<span class="o">[</span><span class="m">5</span><span class="o">]</span>,
+        @Integer<span class="o">[</span><span class="m">73</span><span class="o">]</span>,
+        @Integer<span class="o">[</span><span class="m">241</span><span class="o">]</span>,
+        @Integer<span class="o">[</span><span class="m">439</span><span class="o">]</span>,
+    <span class="o">]</span>,
 <span class="o">]</span>
 </pre></div>
 </div>
 <p>F.Y.I</p>
-<ol class="simple">
+<ul class="simple">
+<li><code class="docutils literal notranslate"><span class="pre">-n</span> <span class="pre">2</span></code>: threshold of execution times is 2.</li>
 <li>the first block of output is the <em>before watching</em> point;</li>
-<li>the order of the output determined by the <em>watching</em> order itself (nothing to do with the order of the options <code class="docutils literal notranslate"><span class="pre">-b</span> <span class="pre">-s</span></code>).</li>
-</ol>
+<li>*the order of the output determined by the <em>watching</em> order itself (nothing to do with the order of the options <code class="docutils literal notranslate"><span class="pre">-b</span> <span class="pre">-s</span></code>).</li>
+</ul>
 </div>
 <div class="section" id="use-x-to-check-more-details">
 <span id="use-x-to-check-more-details"></span><h3>Use <code class="docutils literal notranslate"><span class="pre">-x</span></code> to check more details<a class="headerlink" href="#use-x-to-check-more-details" title="Permalink to this headline">¶</a></h3>
-<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>$ watch com.alibaba.sample.petstore.web.store.module.screen.ItemList add <span class="s2">&quot;{params,returnObj}&quot;</span> -x <span class="m">3</span> 
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$ watch demo.MathGame primeFactors <span class="s2">&quot;{params,target}&quot;</span> -x <span class="m">3</span>
 Press Ctrl+C to abort.
-Affect<span class="o">(</span>class-cnt:1 , method-cnt:1<span class="o">)</span> cost in <span class="m">59</span> ms.  
-@ArrayList<span class="o">[</span>
+Affect<span class="o">(</span>class-cnt:1 , method-cnt:1<span class="o">)</span> cost in <span class="m">58</span> ms.
+<span class="nv">ts</span><span class="o">=</span><span class="m">2018</span>-12-03 <span class="m">19</span>:34:19<span class="p">;</span> <span class="o">[</span><span class="nv">cost</span><span class="o">=</span><span class="m">0</span>.587833ms<span class="o">]</span> <span class="nv">result</span><span class="o">=</span>@ArrayList<span class="o">[</span>
     @Object<span class="o">[][</span>
-        @ArrayList<span class="o">[</span>
-            @String<span class="o">[</span>a<span class="o">]</span>,
-
-            @String<span class="o">[</span>b<span class="o">]</span>,
-
-            @String<span class="o">[</span>c<span class="o">]</span>,
-
-            @String<span class="o">[</span>d<span class="o">]</span>,
-        <span class="o">]</span>,
-        @ArrayList<span class="o">[</span>
-            @String<span class="o">[</span>c<span class="o">]</span>,
-
-            @String<span class="o">[</span>d<span class="o">]</span>,
-        <span class="o">]</span>,
+        @Integer<span class="o">[</span><span class="m">47816758</span><span class="o">]</span>,
     <span class="o">]</span>,
-
-    @Integer<span class="o">[</span><span class="m">4</span><span class="o">]</span>,
+    @MathGame<span class="o">[</span>
+        <span class="nv">random</span><span class="o">=</span>@Random<span class="o">[</span>
+            <span class="nv">serialVersionUID</span><span class="o">=</span>@Long<span class="o">[</span><span class="m">3905348978240129619</span><span class="o">]</span>,
+            <span class="nv">seed</span><span class="o">=</span>@AtomicLong<span class="o">[</span><span class="m">3133719055989</span><span class="o">]</span>,
+            <span class="nv">multiplier</span><span class="o">=</span>@Long<span class="o">[</span><span class="m">25214903917</span><span class="o">]</span>,
+            <span class="nv">addend</span><span class="o">=</span>@Long<span class="o">[</span><span class="m">11</span><span class="o">]</span>,
+            <span class="nv">mask</span><span class="o">=</span>@Long<span class="o">[</span><span class="m">281474976710655</span><span class="o">]</span>,
+            <span class="nv">DOUBLE_UNIT</span><span class="o">=</span>@Double<span class="o">[</span><span class="m">1</span>.1102230246251565E-16<span class="o">]</span>,
+            <span class="nv">BadBound</span><span class="o">=</span>@String<span class="o">[</span>bound must be positive<span class="o">]</span>,
+            <span class="nv">BadRange</span><span class="o">=</span>@String<span class="o">[</span>bound must be greater than origin<span class="o">]</span>,
+            <span class="nv">BadSize</span><span class="o">=</span>@String<span class="o">[</span>size must be non-negative<span class="o">]</span>,
+            <span class="nv">seedUniquifier</span><span class="o">=</span>@AtomicLong<span class="o">[</span>-3282039941672302964<span class="o">]</span>,
+            <span class="nv">nextNextGaussian</span><span class="o">=</span>@Double<span class="o">[</span><span class="m">0</span>.0<span class="o">]</span>,
+            <span class="nv">haveNextNextGaussian</span><span class="o">=</span>@Boolean<span class="o">[</span>false<span class="o">]</span>,
+            <span class="nv">serialPersistentFields</span><span class="o">=</span>@ObjectStreamField<span class="o">[][</span><span class="nv">isEmpty</span><span class="o">=</span>false<span class="p">;</span><span class="nv">size</span><span class="o">=</span><span class="m">3</span><span class="o">]</span>,
+            <span class="nv">unsafe</span><span class="o">=</span>@Unsafe<span class="o">[</span>sun.misc.Unsafe@2eaa1027<span class="o">]</span>,
+            <span class="nv">seedOffset</span><span class="o">=</span>@Long<span class="o">[</span><span class="m">24</span><span class="o">]</span>,
+        <span class="o">]</span>,
+        <span class="nv">illegalArgumentCount</span><span class="o">=</span>@Integer<span class="o">[</span><span class="m">13159</span><span class="o">]</span>,
+    <span class="o">]</span>,
 <span class="o">]</span>
 </pre></div>
 </div>
+<ul class="simple">
+<li><code class="docutils literal notranslate"><span class="pre">-x</span></code>: Expand level of object (1 by default)</li>
+</ul>
 </div>
 <div class="section" id="use-condition-expressions-to-locate-specific-call">
 <span id="use-condition-expressions-to-locate-specific-call"></span><h3>Use condition expressions to locate specific call<a class="headerlink" href="#use-condition-expressions-to-locate-specific-call" title="Permalink to this headline">¶</a></h3>
-<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>$ watch com.alibaba.sample.petstore.biz.impl.UserManagerImpl testAdd <span class="s2">&quot;{params, returnObj}&quot;</span> <span class="s2">&quot;params[0].equals(&#39;aaa&#39;)&quot;</span> -x <span class="m">2</span> 
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$ watch demo.MathGame primeFactors <span class="s2">&quot;{params[0],target}&quot;</span> <span class="s2">&quot;params[0]&lt;0&quot;</span>
 Press Ctrl+C to abort.
-Affect<span class="o">(</span>class-cnt:1 , method-cnt:1<span class="o">)</span> cost in <span class="m">29</span> ms.  
-@ArrayList<span class="o">[</span>
-    @Object<span class="o">[][</span>
-        @String<span class="o">[</span>aaa<span class="o">]</span>,
-        @String<span class="o">[</span>bbb<span class="o">]</span>,
-    <span class="o">]</span>,
-
-    @Integer<span class="o">[</span><span class="m">6</span><span class="o">]</span>,
+Affect<span class="o">(</span>class-cnt:1 , method-cnt:1<span class="o">)</span> cost in <span class="m">68</span> ms.
+<span class="nv">ts</span><span class="o">=</span><span class="m">2018</span>-12-03 <span class="m">19</span>:36:04<span class="p">;</span> <span class="o">[</span><span class="nv">cost</span><span class="o">=</span><span class="m">0</span>.530255ms<span class="o">]</span> <span class="nv">result</span><span class="o">=</span>@ArrayList<span class="o">[</span>
+    @Integer<span class="o">[</span>-18178089<span class="o">]</span>,
+    @MathGame<span class="o">[</span>demo.MathGame@41cf53f9<span class="o">]</span>,
 <span class="o">]</span>
 </pre></div>
 </div>
 </div>
 <div class="section" id="check-exceptions">
 <span id="check-exceptions"></span><h3>Check <code class="docutils literal notranslate"><span class="pre">exceptions</span></code><a class="headerlink" href="#check-exceptions" title="Permalink to this headline">¶</a></h3>
-<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>$ watch com.alibaba.sample.petstore.biz.impl.UserManagerImpl testAdd <span class="s2">&quot;{params, throwExp}&quot;</span>  -e -x <span class="m">2</span> 
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$ watch demo.MathGame primeFactors <span class="s2">&quot;{params[0],throwExp}&quot;</span> -e -x <span class="m">2</span>
 Press Ctrl+C to abort.
-Affect<span class="o">(</span>class-cnt:1 , method-cnt:1<span class="o">)</span> cost in <span class="m">29</span> ms.  
-@ArrayList<span class="o">[</span>
-    @Object<span class="o">[][</span>
-        @String<span class="o">[</span>aaa<span class="o">]</span>,
-        @String<span class="o">[</span>bbb<span class="o">]</span>,
-    <span class="o">]</span>,
-
-    java.lang.NullPointerException
-        at com.alibaba.sample.petstore.biz.impl.UserManagerImpl.testAdd<span class="o">(</span>UserManagerImpl.java:75<span class="o">)</span>
-        at com.alibaba.sample.petstore.biz.impl.UserManagerImpl.register<span class="o">(</span>UserManagerImpl.java:60<span class="o">)</span>
-        at com.alibaba.sample.petstore.web.user.module.action.RegisterAction.doRegister<span class="o">(</span>RegisterAction.java:45<span class="o">)</span>
-        at com.alibaba.sample.petstore.web.user.module.action.RegisterAction<span class="nv">$$</span>FastClassByCGLIB<span class="nv">$$</span>ad5428f1.invoke<span class="o">(</span>&lt;generated&gt;<span class="o">)</span>
-        at net.sf.cglib.reflect.FastMethod.invoke<span class="o">(</span>FastMethod.java:53<span class="o">)</span>
-        at com.alibaba.citrus.service.moduleloader.impl.adapter.MethodInvoker.invoke<span class="o">(</span>MethodInvoker.java:70<span class="o">)</span>
-        at com.alibaba.citrus.service.moduleloader.impl.adapter.AbstractModuleEventAdapter.executeAndReturn<span class="o">(</span>AbstractModuleEventAdapter.java:100<span class="o">)</span>
-        at com.alibaba.citrus.service.moduleloader.impl.adapter.AbstractModuleEventAdapter.execute<span class="o">(</span>AbstractModuleEventAdapter.java:58<span class="o">)</span>
-        at com.alibaba.citrus.turbine.pipeline.valve.PerformActionValve.invoke<span class="o">(</span>PerformActionValve.java:63<span class="o">)</span>
-        at com.alibaba.citrus.service.pipeline.impl.PipelineImpl<span class="nv">$PipelineContextImpl</span>.invokeNext<span class="o">(</span>PipelineImpl.java:157<span class="o">)</span>
-        at com.alibaba.citrus.service.pipeline.impl.PipelineImpl<span class="nv">$PipelineContextImpl</span>.invoke<span class="o">(</span>PipelineImpl.java:210<span class="o">)</span>
-        at com.alibaba.citrus.service.pipeline.impl.valve.ChooseValve.invoke<span class="o">(</span>ChooseValve.java:98<span class="o">)</span>
-        at com.alibaba.citrus.service.pipeline.impl.PipelineImpl<span class="nv">$PipelineContextImpl</span>.invokeNext<span class="o">(</span>PipelineImpl.java:157<span class="o">)</span>
-        at com.alibaba.citrus.service.pipeline.impl.PipelineImpl<span class="nv">$PipelineContextImpl</span>.invoke<span class="o">(</span>PipelineImpl.java:210<span class="o">)</span>
-        at com.alibaba.citrus.service.pipeline.impl.valve.LoopValve.invokeBody<span class="o">(</span>LoopValve.java:105<span class="o">)</span>
-        at com.alibaba.citrus.service.pipeline.impl.valve.LoopValve.invoke<span class="o">(</span>LoopValve.java:83<span class="o">)</span>
-        at com.alibaba.citrus.service.pipeline.impl.PipelineImpl<span class="nv">$PipelineContextImpl</span>.invokeNext<span class="o">(</span>PipelineImpl.java:157<span class="o">)</span>
-        at com.alibaba.citrus.turbine.pipeline.valve.PageAuthorizationValve.invoke<span class="o">(</span>PageAuthorizationValve.java:105<span class="o">)</span>
-        at com.alibaba.citrus.service.pipeline.impl.PipelineImpl<span class="nv">$PipelineContextImpl</span>.invokeNext<span class="o">(</span>PipelineImpl.java:157<span class="o">)</span>
-        at com.alibaba.citrus.turbine.pipeline.valve.CheckCsrfTokenValve.invoke<span class="o">(</span>CheckCsrfTokenValve.java:123<span class="o">)</span>
-        at com.alibaba.citrus.service.pipeline.impl.PipelineImpl<span class="nv">$PipelineContextImpl</span>.invokeNext<span class="o">(</span>PipelineImpl.java:157<span class="o">)</span>
-        at com.alibaba.citrus.turbine.pipeline.valve.AnalyzeURLValve.invoke<span class="o">(</span>AnalyzeURLValve.java:126<span class="o">)</span>
-        at com.alibaba.citrus.service.pipeline.impl.PipelineImpl<span class="nv">$PipelineContextImpl</span>.invokeNext<span class="o">(</span>PipelineImpl.java:157<span class="o">)</span>
-        at com.alibaba.citrus.turbine.pipeline.valve.SetLoggingContextValve.invoke<span class="o">(</span>SetLoggingContextValve.java:66<span class="o">)</span>
-        at com.alibaba.citrus.service.pipeline.impl.PipelineImpl<span class="nv">$PipelineContextImpl</span>.invokeNext<span class="o">(</span>PipelineImpl.java:157<span class="o">)</span>
-        at com.alibaba.citrus.turbine.pipeline.valve.PrepareForTurbineValve.invoke<span class="o">(</span>PrepareForTurbineValve.java:52<span class="o">)</span>
-        at com.alibaba.citrus.service.pipeline.impl.PipelineImpl<span class="nv">$PipelineContextImpl</span>.invokeNext<span class="o">(</span>PipelineImpl.java:157<span class="o">)</span>
-        at com.alibaba.citrus.service.pipeline.impl.PipelineImpl<span class="nv">$PipelineContextImpl</span>.invoke<span class="o">(</span>PipelineImpl.java:210<span class="o">)</span>
-        at com.alibaba.citrus.webx.impl.WebxControllerImpl.service<span class="o">(</span>WebxControllerImpl.java:43<span class="o">)</span>
-        at com.alibaba.citrus.webx.impl.WebxRootControllerImpl.handleRequest<span class="o">(</span>WebxRootControllerImpl.java:53<span class="o">)</span>
-        at com.alibaba.citrus.webx.support.AbstractWebxRootController.service<span class="o">(</span>AbstractWebxRootController.java:165<span class="o">)</span>
-        at com.alibaba.citrus.webx.servlet.WebxFrameworkFilter.doFilter<span class="o">(</span>WebxFrameworkFilter.java:152<span class="o">)</span>
-        at com.alibaba.citrus.webx.servlet.FilterBean.doFilter<span class="o">(</span>FilterBean.java:148<span class="o">)</span>
-        at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter<span class="o">(</span>ApplicationFilterChain.java:241<span class="o">)</span>
-        at org.apache.catalina.core.ApplicationFilterChain.doFilter<span class="o">(</span>ApplicationFilterChain.java:208<span class="o">)</span>
-        at com.alibaba.citrus.webx.servlet.SetLoggingContextFilter.doFilter<span class="o">(</span>SetLoggingContextFilter.java:61<span class="o">)</span>
-        at com.alibaba.citrus.webx.servlet.FilterBean.doFilter<span class="o">(</span>FilterBean.java:148<span class="o">)</span>
-        at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter<span class="o">(</span>ApplicationFilterChain.java:241<span class="o">)</span>
-        at org.apache.catalina.core.ApplicationFilterChain.doFilter<span class="o">(</span>ApplicationFilterChain.java:208<span class="o">)</span>
-        at org.apache.catalina.core.StandardWrapperValve.invoke<span class="o">(</span>StandardWrapperValve.java:220<span class="o">)</span>
-        at org.apache.catalina.core.StandardContextValve.invoke<span class="o">(</span>StandardContextValve.java:122<span class="o">)</span>
-        at com.taobao.tomcat.valves.ContextLoadFilterValve.invoke<span class="o">(</span>ContextLoadFilterValve.java:152<span class="o">)</span>
-        at org.apache.catalina.core.StandardHostValve.invoke<span class="o">(</span>StandardHostValve.java:170<span class="o">)</span>
-        at org.apache.catalina.valves.ErrorReportValve.invoke<span class="o">(</span>ErrorReportValve.java:103<span class="o">)</span>
-        at org.apache.catalina.core.StandardEngineValve.invoke<span class="o">(</span>StandardEngineValve.java:116<span class="o">)</span>
-        at org.apache.catalina.connector.CoyoteAdapter.service<span class="o">(</span>CoyoteAdapter.java:429<span class="o">)</span>
-        at org.apache.coyote.http11.AbstractHttp11Processor.process<span class="o">(</span>AbstractHttp11Processor.java:1085<span class="o">)</span>
-        at org.apache.coyote.AbstractProtocol<span class="nv">$AbstractConnectionHandler</span>.process<span class="o">(</span>AbstractProtocol.java:625<span class="o">)</span>
-        at org.apache.tomcat.util.net.NioEndpoint<span class="nv">$SocketProcessor</span>.doRun<span class="o">(</span>NioEndpoint.java:1760<span class="o">)</span>
-        at org.apache.tomcat.util.net.NioEndpoint<span class="nv">$SocketProcessor</span>.run<span class="o">(</span>NioEndpoint.java:1719<span class="o">)</span>
-        at java.util.concurrent.ThreadPoolExecutor.runWorker<span class="o">(</span>ThreadPoolExecutor.java:1142<span class="o">)</span>
-        at java.util.concurrent.ThreadPoolExecutor<span class="nv">$Worker</span>.run<span class="o">(</span>ThreadPoolExecutor.java:617<span class="o">)</span>
-        at org.apache.tomcat.util.threads.TaskThread<span class="nv">$WrappingRunnable</span>.run<span class="o">(</span>TaskThread.java:61<span class="o">)</span>
-        at java.lang.Thread.run<span class="o">(</span>Thread.java:745<span class="o">)</span>,
+Affect<span class="o">(</span>class-cnt:1 , method-cnt:1<span class="o">)</span> cost in <span class="m">62</span> ms.
+<span class="nv">ts</span><span class="o">=</span><span class="m">2018</span>-12-03 <span class="m">19</span>:38:00<span class="p">;</span> <span class="o">[</span><span class="nv">cost</span><span class="o">=</span><span class="m">1</span>.414993ms<span class="o">]</span> <span class="nv">result</span><span class="o">=</span>@ArrayList<span class="o">[</span>
+    @Integer<span class="o">[</span>-1120397038<span class="o">]</span>,
+    java.lang.IllegalArgumentException: number is: -1120397038, need &gt;<span class="o">=</span> <span class="m">2</span>
+    at demo.MathGame.primeFactors<span class="o">(</span>MathGame.java:46<span class="o">)</span>
+    at demo.MathGame.run<span class="o">(</span>MathGame.java:24<span class="o">)</span>
+    at demo.MathGame.main<span class="o">(</span>MathGame.java:16<span class="o">)</span>
+,
 <span class="o">]</span>
 </pre></div>
 </div>
+<ul class="simple">
+<li><code class="docutils literal notranslate"><span class="pre">-e</span></code>: Trigger when an exception is thrown</li>
+<li><code class="docutils literal notranslate"><span class="pre">throwExp</span></code>: the exception object</li>
+</ul>
 </div>
-<div class="section" id="filter-based-on-time-cost">
-<span id="filter-based-on-time-cost"></span><h3>Filter based on time cost<a class="headerlink" href="#filter-based-on-time-cost" title="Permalink to this headline">¶</a></h3>
-<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>$ watch com.alibaba.sample.petstore.web.store.module.screen.ItemList add <span class="s2">&quot;{params,returnObj}&quot;</span> <span class="c1">#cost&gt;200 -x 3 </span>
+<div class="section" id="filter-by-time-cost">
+<span id="filter-by-time-cost"></span><h3>Filter by time cost<a class="headerlink" href="#filter-by-time-cost" title="Permalink to this headline">¶</a></h3>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$ watch demo.MathGame primeFactors <span class="s1">&#39;{params, returnObj}&#39;</span> <span class="s1">&#39;#cost&gt;200&#39;</span> -x <span class="m">2</span>
 Press Ctrl+C to abort.
-Affect<span class="o">(</span>class-cnt:1 , method-cnt:1<span class="o">)</span> cost in <span class="m">59</span> ms.  
-@ArrayList<span class="o">[</span>
+Affect<span class="o">(</span>class-cnt:1 , method-cnt:1<span class="o">)</span> cost in <span class="m">66</span> ms.
+<span class="nv">ts</span><span class="o">=</span><span class="m">2018</span>-12-03 <span class="m">19</span>:40:28<span class="p">;</span> <span class="o">[</span><span class="nv">cost</span><span class="o">=</span><span class="m">2112</span>.168897ms<span class="o">]</span> <span class="nv">result</span><span class="o">=</span>@ArrayList<span class="o">[</span>
     @Object<span class="o">[][</span>
-        @ArrayList<span class="o">[</span>
-            @String<span class="o">[</span>a<span class="o">]</span>,
-
-            @String<span class="o">[</span>b<span class="o">]</span>,
-
-            @String<span class="o">[</span>c<span class="o">]</span>,
-
-            @String<span class="o">[</span>d<span class="o">]</span>,
-        <span class="o">]</span>,
-        @ArrayList<span class="o">[</span>
-            @String<span class="o">[</span>c<span class="o">]</span>,
-
-            @String<span class="o">[</span>d<span class="o">]</span>,
-        <span class="o">]</span>,
+        @Integer<span class="o">[</span><span class="m">2141897465</span><span class="o">]</span>,
     <span class="o">]</span>,
-
-    @Integer<span class="o">[</span><span class="m">4</span><span class="o">]</span>,
+    @ArrayList<span class="o">[</span>
+        @Integer<span class="o">[</span><span class="m">5</span><span class="o">]</span>,
+        @Integer<span class="o">[</span><span class="m">428379493</span><span class="o">]</span>,
+    <span class="o">]</span>,
 <span class="o">]</span>
 </pre></div>
 </div>
-<p>F.Y.I
-<code class="docutils literal notranslate"><span class="pre">#cost&gt;200</span></code> (<code class="docutils literal notranslate"><span class="pre">ms</span></code>) filter out all invokings that take less than <code class="docutils literal notranslate"><span class="pre">200ms</span></code>.</p>
+<ul class="simple">
+<li><code class="docutils literal notranslate"><span class="pre">#cost&gt;200</span></code> (<code class="docutils literal notranslate"><span class="pre">ms</span></code>) filter out all invokings that take less than <code class="docutils literal notranslate"><span class="pre">200ms</span></code>.</li>
+</ul>
 </div>
-<div class="section" id="check-the-global-properties-of-the-target-object">
-<span id="check-the-global-properties-of-the-target-object"></span><h3>Check the global properties of the target object<a class="headerlink" href="#check-the-global-properties-of-the-target-object" title="Permalink to this headline">¶</a></h3>
-<p><code class="docutils literal notranslate"><span class="pre">target</span></code> stands for the current object.</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ watch com.taobao.container.web.arthas.rest.MyAppsController myFavoriteApps &#39;target&#39;
+<div class="section" id="check-the-field-of-the-target-object">
+<span id="check-the-field-of-the-target-object"></span><h3>Check the field of the target object<a class="headerlink" href="#check-the-field-of-the-target-object" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li><code class="docutils literal notranslate"><span class="pre">target</span></code> is the <code class="docutils literal notranslate"><span class="pre">this</span></code> object in java.</li>
+</ul>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$ watch demo.MathGame primeFactors <span class="s1">&#39;target&#39;</span>
 Press Ctrl+C to abort.
-Affect(class-cnt:1 , method-cnt:1) cost in 128 ms.
-ts=2017-10-31 18:45:55;result=@MyAppsController[
-    myFavAppsMapper=@$Proxy131[org.apache.ibatis.binding.MapperProxy@563e97f3],
-    getAppNameAndIdByEmpId=@$Proxy135[HardCodedTarget(type=GetAppNameAndIdByEmpId, url=http://hello.com)],
-    enableWebConsoleAppsMapper=@$Proxy132[org.apache.ibatis.binding.MapperProxy@7d51e4a8],
-]
+Affect<span class="o">(</span>class-cnt:1 , method-cnt:1<span class="o">)</span> cost in <span class="m">52</span> ms.
+<span class="nv">ts</span><span class="o">=</span><span class="m">2018</span>-12-03 <span class="m">19</span>:41:52<span class="p">;</span> <span class="o">[</span><span class="nv">cost</span><span class="o">=</span><span class="m">0</span>.477882ms<span class="o">]</span> <span class="nv">result</span><span class="o">=</span>@MathGame<span class="o">[</span>
+    <span class="nv">random</span><span class="o">=</span>@Random<span class="o">[</span>java.util.Random@522b408a<span class="o">]</span>,
+    <span class="nv">illegalArgumentCount</span><span class="o">=</span>@Integer<span class="o">[</span><span class="m">13355</span><span class="o">]</span>,
+<span class="o">]</span>
 </pre></div>
 </div>
-<p><code class="docutils literal notranslate"><span class="pre">target.field_name</span></code> stands for a global property of the current object.</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ watch com.taobao.container.web.arthas.rest.MyAppsController myFavoriteApps &#39;target.myFavAppsMapper&#39;
+<ul class="simple">
+<li><code class="docutils literal notranslate"><span class="pre">target.field_name</span></code>: the field of the current object.</li>
+</ul>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ watch demo.MathGame primeFactors &#39;target.illegalArgumentCount&#39;
 Press Ctrl+C to abort.
-Affect(class-cnt:1 , method-cnt:1) cost in 126 ms.
-ts=2017-10-31 18:46:17;result=@$Proxy131[
-    m1=@Method[public boolean java.lang.Object.equals(java.lang.Object)],
-    m2=@Method[public java.lang.String java.lang.Object.toString()],
-    m5=@Method[public abstract java.util.List com.taobao.container.dal.arthas.mapper.MyFavAppsMapper.listFavApps(java.util.Map)],
-    m3=@Method[public abstract int com.taobao.container.dal.arthas.mapper.MyFavAppsMapper.delete(java.lang.String,java.lang.String,java.lang.String)],
-    m4=@Method[public abstract long com.taobao.container.dal.arthas.mapper.MyFavAppsMapper.insert(com.taobao.container.dal.arthas.domain.MyFavAppsDO)],
-    m0=@Method[public native int java.lang.Object.hashCode()],
-]
+Affect(class-cnt:1 , method-cnt:1) cost in 67 ms.
+ts=2018-12-03 20:04:34; [cost=131.303498ms] result=@Integer[8]
+ts=2018-12-03 20:04:35; [cost=0.961441ms] result=@Integer[8]
 </pre></div>
 </div>
 </div>
