@@ -95,11 +95,11 @@ java.home              /Library/Java/JavaVir
                        e/jre
 ```
 
-## 4. 通过sysenv命令来获取到进程的Main Class
+## 4. 通过thread命令来获取到进程的Main Class
 
 ```
-$ sysenv | grep MAIN
- JAVA_MAIN_CLASS_71560              demo.MathGame
+$ thread -n -1 | grep 'main('
+    at demo.MathGame.main(MathGame.java:17)
 ```
 
 ## 5. 通过jad来反编绎Main Class
