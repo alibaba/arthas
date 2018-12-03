@@ -227,7 +227,7 @@ ts=2018-09-18 10:11:45;thread_name=http-bio-8080-exec-10;id=d9;is_daemon=true;pr
 
 #### Trace
 
-观察方法执行的时候那个子调用比较慢:
+观察方法执行的时候哪个子调用比较慢:
 
 ![trace](site/src/site/sphinx/_static/trace.png)
 
