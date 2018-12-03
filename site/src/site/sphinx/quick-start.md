@@ -18,8 +18,8 @@ java -jar arthas-demo.jar
 在命令行下面执行：
 
 ```bash
-wget https://alibaba.github.io/arthas/arthas-boot.jar
-java -jar arthas-boot.jar
+$ wget https://alibaba.github.io/arthas/arthas-boot.jar
+$ java -jar arthas-boot.jar
 ```
 
 * 执行该程序的用户需要和目标进程具有相同的权限。比如以`admin`用户来执行：`sudo su admin && java -jar arthas-boot.jar` 或 `sudo -u admin -EH java -jar arthas-boot.jar`。

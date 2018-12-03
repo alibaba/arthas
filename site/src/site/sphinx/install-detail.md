@@ -8,24 +8,26 @@ Arthas Install
 下载`arthas-boot.jar`，然后用`java -jar`的方式启动：
 
 ```bash
-wget https://alibaba.github.io/arthas/arthas-boot.jar
-java -jar arthas-boot.jar
+$ wget https://alibaba.github.io/arthas/arthas-boot.jar
+$ java -jar arthas-boot.jar
 ```
 
 打印帮助信息：
 
 ```bash
-java -jar arthas-boot.jar -h
+$ java -jar arthas-boot.jar -h
 ```
 
-* 如果下载速度比较慢，可以使用aliyun的镜像：`java -jar arthas-boot.jar --repo-mirror aliyun --use-http`
+* 如果下载速度比较慢，可以使用aliyun的镜像：
+
+    `java -jar arthas-boot.jar --repo-mirror aliyun --use-http`
 
 ### 使用`as.sh`
 
 Arthas 支持在 Linux/Unix/Mac 等平台上一键安装，请复制以下内容，并粘贴到命令行中，敲 `回车` 执行即可：
 
 ```bash
-curl -L https://alibaba.github.io/arthas/install.sh | sh
+$ curl -L https://alibaba.github.io/arthas/install.sh | sh
 ```
 
 上述命令会下载启动脚本文件 `as.sh` 到当前目录，你可以放在任何地方或将其加入到 `$PATH` 中。
@@ -41,13 +43,13 @@ curl -L https://alibaba.github.io/arthas/install.sh | sh
 解压后，在文件夹里有`arthas-boot.jar`，直接用`java -jar`的方式启动：
 
 ```bash
-java -jar arthas-boot.jar
+$ java -jar arthas-boot.jar
 ```
 
 打印帮助信息：
 
 ```bash
-java -jar arthas-boot.jar -h
+$ java -jar arthas-boot.jar -h
 ```
 
 
@@ -66,7 +68,7 @@ java -jar arthas-boot.jar -h
 
     删除下面文件：
     ```bash
-    rm -rf ~/.arthas/
+    $ rm -rf ~/.arthas/
     ```
 
 * Windows平台直接删除user home下面的`.arthas`目录
