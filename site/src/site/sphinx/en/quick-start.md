@@ -94,11 +94,11 @@ java.home              /Library/Java/JavaVir
                        e/jre
 ```
 
-## 4. Get the Main Class of the process with the sysenv command
+## 4. Get the Main Class of the process with the thread command
 
 ```
-$ sysenv | grep MAIN
- JAVA_MAIN_CLASS_71560              demo.MathGame
+$ thread -n -1 | grep 'main('
+    at demo.MathGame.main(MathGame.java:17)
 ```
 
 ## 5. Decompile Main Class with jad command
