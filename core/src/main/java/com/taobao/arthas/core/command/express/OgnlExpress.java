@@ -5,6 +5,7 @@ import com.taobao.middleware.logger.Logger;
 
 import ognl.ClassResolver;
 import ognl.DefaultMemberAccess;
+import ognl.MemberAccess;
 import ognl.Ognl;
 import ognl.OgnlContext;
 
@@ -13,7 +14,7 @@ import ognl.OgnlContext;
  * @author hengyunabc 2018-10-18
  */
 public class OgnlExpress implements Express {
-
+    private static final MemberAccess MEMBER_ACCESS = new DefaultMemberAccess(true);
     Logger logger = LogUtil.getArthasLogger();
 
     private Object bindObject;
@@ -27,7 +28,7 @@ public class OgnlExpress implements Express {
         context = new OgnlContext();
         context.setClassResolver(classResolver);
         // allow private field access
-        context.setMemberAccess(new DefaultMemberAccess(true));
+        context.setMemberAccess(MEMBER_ACCESS);
     }
 
     @Override
@@ -62,6 +63,8 @@ public class OgnlExpress implements Express {
     public Express reset() {
         context.clear();
         context.setClassResolver(CustomClassResolver.customClassResolver);
+        // allow private field access
+        context.setMemberAccess(MEMBER_ACCESS);
         return this;
     }
 }
