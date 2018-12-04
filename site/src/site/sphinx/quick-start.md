@@ -4,8 +4,8 @@
 ## 1. 启动Demo
 
 ```bash
-wget https://alibaba.github.io/arthas/arthas-demo.jar
-java -jar arthas-demo.jar
+$ wget https://alibaba.github.io/arthas/arthas-demo.jar
+$ java -jar arthas-demo.jar
 ```
 
 `arthas-demo`是一个简单的程序，每隔一秒生成一个随机数，再执行质因式分解，并打印出分解结果。
