@@ -112,18 +112,14 @@
 <li class="toctree-l2"><a class="reference internal" href="stack.html">stack</a></li>
 <li class="toctree-l2 current"><a class="current reference internal" href="#">tt</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#usage">Usage</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="#f-y-i">F.Y.I</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#property">Property</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#condition-expression">Condition expression</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#start-demo">Start Demo</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#record-method-calls">Record method calls</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#list-all-records">List all records</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#searching-for-records">Searching for records</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#check-context-of-the-call">Check context of the call</a></li>
 </ul>
 </li>
-<li class="toctree-l3"><a class="reference internal" href="#searching-for-records">Searching for records</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="#all-the-recorded">All the recorded</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#a-specified-method">A specified method</a></li>
-</ul>
-</li>
-<li class="toctree-l3"><a class="reference internal" href="#check-context-of-the-call">Check context of the call</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#re-produce">Re-produce</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#replay-record">Replay record</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="options.html">options</a></li>
@@ -211,35 +207,34 @@
 <p>With the help of <code class="docutils literal notranslate"><span class="pre">tt</span></code> (<em>TimeTunnel</em>), you can check the contexts of the methods at different times in execution history.</p>
 <div class="section" id="usage">
 <span id="usage"></span><h2>Usage<a class="headerlink" href="#usage" title="Permalink to this headline">¶</a></h2>
-<p>Let’s record the whole calling contexts:</p>
-<div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="n">$</span> <span class="n">tt</span> <span class="o">-</span><span class="n">t</span> <span class="o">-</span><span class="n">n</span> <span class="mi">3</span> <span class="o">*</span><span class="n">Test</span> <span class="n">print</span>
-<span class="n">Press</span> <span class="n">Ctrl</span><span class="o">+</span><span class="n">D</span> <span class="n">or</span> <span class="n">Ctrl</span><span class="o">+</span><span class="n">X</span> <span class="n">to</span> <span class="n">abort</span><span class="o">.</span>
-<span class="nf">Affect</span><span class="o">(</span><span class="n">class</span><span class="o">-</span><span class="n">cnt</span><span class="o">:</span><span class="mi">1</span> <span class="o">,</span> <span class="n">method</span><span class="o">-</span><span class="n">cnt</span><span class="o">:</span><span class="mi">1</span><span class="o">)</span> <span class="n">cost</span> <span class="n">in</span> <span class="mi">115</span> <span class="n">ms</span><span class="o">.</span>
-<span class="o">+----------+----------------------+------------+----------+----------+-----------------+--------------------------------+--------------------------------+</span>
-<span class="o">|</span>    <span class="n">INDEX</span> <span class="o">|</span>            <span class="n">TIMESTAMP</span> <span class="o">|</span>   <span class="n">COST</span><span class="o">(</span><span class="n">ms</span><span class="o">)</span> <span class="o">|</span>   <span class="n">IS</span><span class="o">-</span><span class="n">RET</span> <span class="o">|</span>   <span class="n">IS</span><span class="o">-</span><span class="n">EXP</span> <span class="o">|</span>          <span class="n">OBJECT</span> <span class="o">|</span>                          <span class="n">CLASS</span> <span class="o">|</span>                         <span class="n">METHOD</span> <span class="o">|</span>
-<span class="o">+----------+----------------------+------------+----------+----------+-----------------+--------------------------------+--------------------------------+</span>
-<span class="o">|</span>     <span class="mi">1007</span> <span class="o">|</span>  <span class="mi">2015</span><span class="o">-</span><span class="mo">07</span><span class="o">-</span><span class="mi">26</span> <span class="mi">12</span><span class="o">:</span><span class="mi">23</span><span class="o">:</span><span class="mi">21</span> <span class="o">|</span>        <span class="mi">138</span> <span class="o">|</span>     <span class="kc">true</span> <span class="o">|</span>    <span class="kc">false</span> <span class="o">|</span>      <span class="mh">0x42cc13a0</span> <span class="o">|</span>                <span class="n">GaOgnlUtilsTest</span> <span class="o">|</span>                          <span class="n">print</span> <span class="o">|</span>
-<span class="o">+----------+----------------------+------------+----------+----------+-----------------+--------------------------------+--------------------------------+</span>
-<span class="o">|</span>     <span class="mi">1008</span> <span class="o">|</span>  <span class="mi">2015</span><span class="o">-</span><span class="mo">07</span><span class="o">-</span><span class="mi">26</span> <span class="mi">12</span><span class="o">:</span><span class="mi">23</span><span class="o">:</span><span class="mi">22</span> <span class="o">|</span>        <span class="mi">143</span> <span class="o">|</span>     <span class="kc">true</span> <span class="o">|</span>    <span class="kc">false</span> <span class="o">|</span>      <span class="mh">0x42cc13a0</span> <span class="o">|</span>                <span class="n">GaOgnlUtilsTest</span> <span class="o">|</span>                          <span class="n">print</span> <span class="o">|</span>
-<span class="o">+----------+----------------------+------------+----------+----------+-----------------+--------------------------------+--------------------------------+</span>
-<span class="o">|</span>     <span class="mi">1009</span> <span class="o">|</span>  <span class="mi">2015</span><span class="o">-</span><span class="mo">07</span><span class="o">-</span><span class="mi">26</span> <span class="mi">12</span><span class="o">:</span><span class="mi">23</span><span class="o">:</span><span class="mi">23</span> <span class="o">|</span>        <span class="mi">130</span> <span class="o">|</span>     <span class="kc">true</span> <span class="o">|</span>    <span class="kc">false</span> <span class="o">|</span>      <span class="mh">0x42cc13a0</span> <span class="o">|</span>                <span class="n">GaOgnlUtilsTest</span> <span class="o">|</span>                          <span class="n">print</span> <span class="o">|</span>
-<span class="o">+----------+----------------------+------------+----------+----------+-----------------+--------------------------------+--------------------------------+</span>
-<span class="n">$</span> 
+<div class="section" id="start-demo">
+<span id="start-demo"></span><h3>Start Demo<a class="headerlink" href="#start-demo" title="Permalink to this headline">¶</a></h3>
+<p>Start <code class="docutils literal notranslate"><span class="pre">arthas-demo</span></code> in <a class="reference internal" href="quick-start.html"><span class="doc">Quick Start</span></a>.</p>
+</div>
+<div class="section" id="record-method-calls">
+<span id="record-method-calls"></span><h3>Record method calls<a class="headerlink" href="#record-method-calls" title="Permalink to this headline">¶</a></h3>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$ tt -t demo.MathGame primeFactors
+Press Ctrl+C to abort.
+Affect<span class="o">(</span>class-cnt:1 , method-cnt:1<span class="o">)</span> cost in <span class="m">66</span> ms.
+ INDEX   TIMESTAMP            COST<span class="o">(</span>ms<span class="o">)</span>  IS-RET  IS-EXP   OBJECT         CLASS                          METHOD
+-------------------------------------------------------------------------------------------------------------------------------------
+ <span class="m">1000</span>    <span class="m">2018</span>-12-04 <span class="m">11</span>:15:38  <span class="m">1</span>.096236  <span class="nb">false</span>   <span class="nb">true</span>     0x4b67cf4d     MathGame                       primeFactors
+ <span class="m">1001</span>    <span class="m">2018</span>-12-04 <span class="m">11</span>:15:39  <span class="m">0</span>.191848  <span class="nb">false</span>   <span class="nb">true</span>     0x4b67cf4d     MathGame                       primeFactors
+ <span class="m">1002</span>    <span class="m">2018</span>-12-04 <span class="m">11</span>:15:40  <span class="m">0</span>.069523  <span class="nb">false</span>   <span class="nb">true</span>     0x4b67cf4d     MathGame                       primeFactors
+ <span class="m">1003</span>    <span class="m">2018</span>-12-04 <span class="m">11</span>:15:41  <span class="m">0</span>.186073  <span class="nb">false</span>   <span class="nb">true</span>     0x4b67cf4d     MathGame                       primeFactors
+ <span class="m">1004</span>    <span class="m">2018</span>-12-04 <span class="m">11</span>:15:42  <span class="m">17</span>.76437  <span class="nb">true</span>    <span class="nb">false</span>    0x4b67cf4d     MathGame                       primeFactors
 </pre></div>
 </div>
-<div class="section" id="f-y-i">
-<span id="f-y-i"></span><h3>F.Y.I<a class="headerlink" href="#f-y-i" title="Permalink to this headline">¶</a></h3>
 <ul>
 <li><p class="first"><code class="docutils literal notranslate"><span class="pre">-t</span></code></p>
-<p>record the calling context of the method <code class="docutils literal notranslate"><span class="pre">*Test.print</span></code></p>
+<p>record the calling context of the method <code class="docutils literal notranslate"><span class="pre">demo.MathGame</span> <span class="pre">primeFactors</span></code></p>
 </li>
 <li><p class="first"><code class="docutils literal notranslate"><span class="pre">-n</span> <span class="pre">3</span></code></p>
 <p>limit the number of the records (avoid overflow for too many records; with <code class="docutils literal notranslate"><span class="pre">-n</span></code> option, Arthas can automatically stop recording once the records reach the specified limit)</p>
 </li>
+<li><p class="first">Property</p>
+</li>
 </ul>
-</div>
-<div class="section" id="property">
-<span id="property"></span><h3>Property<a class="headerlink" href="#property" title="Permalink to this headline">¶</a></h3>
 <table border="1" class="docutils">
 <thead>
 <tr>
@@ -281,9 +276,9 @@
 <td>method being invoked</td>
 </tr>
 </tbody>
-</table></div>
-<div class="section" id="condition-expression">
-<span id="condition-expression"></span><h3>Condition expression<a class="headerlink" href="#condition-expression" title="Permalink to this headline">¶</a></h3>
+</table><ul class="simple">
+<li>Condition expression</li>
+</ul>
 <p>Tips:</p>
 <ol class="simple">
 <li><code class="docutils literal notranslate"><span class="pre">tt</span> <span class="pre">-t</span> <span class="pre">*Test</span> <span class="pre">print</span> <span class="pre">params[0].length==1</span></code> with different amounts of parameters;</li>
@@ -299,46 +294,35 @@
 </ul>
 </div>
 </div>
-</div>
-<div class="section" id="searching-for-records">
-<span id="searching-for-records"></span><h2>Searching for records<a class="headerlink" href="#searching-for-records" title="Permalink to this headline">¶</a></h2>
-<div class="section" id="all-the-recorded">
-<span id="all-the-recorded"></span><h3>All the recorded<a class="headerlink" href="#all-the-recorded" title="Permalink to this headline">¶</a></h3>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ tt -l
-+----------+----------------------+------------+----------+----------+-----------------+--------------------------------+--------------------------------+
-|    INDEX |            TIMESTAMP |   COST(ms) |   IS-RET |   IS-EXP |          OBJECT |                          CLASS |                         METHOD |
-+----------+----------------------+------------+----------+----------+-----------------+--------------------------------+--------------------------------+
-|     1000 |  2015-07-26 01:16:27 |        130 |     true |    false |      0x42cc13a0 |                GaOgnlUtilsTest |                          print |
-+----------+----------------------+------------+----------+----------+-----------------+--------------------------------+--------------------------------+
-|     1001 |  2015-07-26 01:16:27 |          0 |    false |     true |      0x42cc13a0 |                GaOgnlUtilsTest |                   printAddress |
-+----------+----------------------+------------+----------+----------+-----------------+--------------------------------+--------------------------------+
-|     1002 |  2015-07-26 01:16:28 |        119 |     true |    false |      0x42cc13a0 |                GaOgnlUtilsTest |                          print |
-+----------+----------------------+------------+----------+----------+-----------------+--------------------------------+--------------------------------+
-|     1003 |  2015-07-26 01:16:28 |          0 |    false |     true |      0x42cc13a0 |                GaOgnlUtilsTest |                   printAddress |
-+----------+----------------------+------------+----------+----------+-----------------+--------------------------------+--------------------------------+
-|     1004 |  2015-07-26 12:21:56 |        130 |     true |    false |      0x42cc13a0 |                GaOgnlUtilsTest |                          print |
-+----------+----------------------+------------+----------+----------+-----------------+--------------------------------+--------------------------------+
-|     1005 |  2015-07-26 12:21:57 |        138 |     true |    false |      0x42cc13a0 |                GaOgnlUtilsTest |                          print |
-+----------+----------------------+------------+----------+----------+-----------------+--------------------------------+--------------------------------+
-|     1006 |  2015-07-26 12:21:58 |        130 |     true |    false |      0x42cc13a0 |                GaOgnlUtilsTest |                          print |
-+----------+----------------------+------------+----------+----------+-----------------+--------------------------------+--------------------------------+
-Affect(row-cnt:7) cost in 2 ms.
-$ 
+<div class="section" id="list-all-records">
+<span id="list-all-records"></span><h3>List all records<a class="headerlink" href="#list-all-records" title="Permalink to this headline">¶</a></h3>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$ tt -l
+ INDEX   TIMESTAMP            COST<span class="o">(</span>ms<span class="o">)</span>  IS-RET  IS-EXP   OBJECT         CLASS                          METHOD
+-------------------------------------------------------------------------------------------------------------------------------------
+ <span class="m">1000</span>    <span class="m">2018</span>-12-04 <span class="m">11</span>:15:38  <span class="m">1</span>.096236  <span class="nb">false</span>   <span class="nb">true</span>     0x4b67cf4d     MathGame                       primeFactors
+ <span class="m">1001</span>    <span class="m">2018</span>-12-04 <span class="m">11</span>:15:39  <span class="m">0</span>.191848  <span class="nb">false</span>   <span class="nb">true</span>     0x4b67cf4d     MathGame                       primeFactors
+ <span class="m">1002</span>    <span class="m">2018</span>-12-04 <span class="m">11</span>:15:40  <span class="m">0</span>.069523  <span class="nb">false</span>   <span class="nb">true</span>     0x4b67cf4d     MathGame                       primeFactors
+ <span class="m">1003</span>    <span class="m">2018</span>-12-04 <span class="m">11</span>:15:41  <span class="m">0</span>.186073  <span class="nb">false</span>   <span class="nb">true</span>     0x4b67cf4d     MathGame                       primeFactors
+ <span class="m">1004</span>    <span class="m">2018</span>-12-04 <span class="m">11</span>:15:42  <span class="m">17</span>.76437  <span class="nb">true</span>    <span class="nb">false</span>    0x4b67cf4d     MathGame                       primeFactors
+                              <span class="m">9</span>
+ <span class="m">1005</span>    <span class="m">2018</span>-12-04 <span class="m">11</span>:15:43  <span class="m">0</span>.4776    <span class="nb">false</span>   <span class="nb">true</span>     0x4b67cf4d     MathGame                       primeFactors
+Affect<span class="o">(</span>row-cnt:6<span class="o">)</span> cost in <span class="m">4</span> ms.
 </pre></div>
 </div>
 </div>
-<div class="section" id="a-specified-method">
-<span id="a-specified-method"></span><h3>A specified method<a class="headerlink" href="#a-specified-method" title="Permalink to this headline">¶</a></h3>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ tt -s method.name==&quot;printAddress&quot;
-+----------+----------------------+------------+----------+----------+-----------------+--------------------------------+--------------------------------+
-|    INDEX |            TIMESTAMP |   COST(ms) |   IS-RET |   IS-EXP |          OBJECT |                          CLASS |                         METHOD |
-+----------+----------------------+------------+----------+----------+-----------------+--------------------------------+--------------------------------+
-|     1001 |  2015-07-26 01:16:27 |          0 |    false |     true |      0x42cc13a0 |                GaOgnlUtilsTest |                   printAddress |
-+----------+----------------------+------------+----------+----------+-----------------+--------------------------------+--------------------------------+
-|     1003 |  2015-07-26 01:16:28 |          0 |    false |     true |      0x42cc13a0 |                GaOgnlUtilsTest |                   printAddress |
-+----------+----------------------+------------+----------+----------+-----------------+--------------------------------+--------------------------------+
-Affect(row-cnt:2) cost in 55 ms.
-$ 
+<div class="section" id="searching-for-records">
+<span id="searching-for-records"></span><h3>Searching for records<a class="headerlink" href="#searching-for-records" title="Permalink to this headline">¶</a></h3>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$ tt -s <span class="s1">&#39;method.name==&quot;primeFactors&quot;&#39;</span>
+ INDEX   TIMESTAMP            COST<span class="o">(</span>ms<span class="o">)</span>  IS-RET  IS-EXP   OBJECT         CLASS                          METHOD
+-------------------------------------------------------------------------------------------------------------------------------------
+ <span class="m">1000</span>    <span class="m">2018</span>-12-04 <span class="m">11</span>:15:38  <span class="m">1</span>.096236  <span class="nb">false</span>   <span class="nb">true</span>     0x4b67cf4d     MathGame                       primeFactors
+ <span class="m">1001</span>    <span class="m">2018</span>-12-04 <span class="m">11</span>:15:39  <span class="m">0</span>.191848  <span class="nb">false</span>   <span class="nb">true</span>     0x4b67cf4d     MathGame                       primeFactors
+ <span class="m">1002</span>    <span class="m">2018</span>-12-04 <span class="m">11</span>:15:40  <span class="m">0</span>.069523  <span class="nb">false</span>   <span class="nb">true</span>     0x4b67cf4d     MathGame                       primeFactors
+ <span class="m">1003</span>    <span class="m">2018</span>-12-04 <span class="m">11</span>:15:41  <span class="m">0</span>.186073  <span class="nb">false</span>   <span class="nb">true</span>     0x4b67cf4d     MathGame                       primeFactors
+ <span class="m">1004</span>    <span class="m">2018</span>-12-04 <span class="m">11</span>:15:42  <span class="m">17</span>.76437  <span class="nb">true</span>    <span class="nb">false</span>    0x4b67cf4d     MathGame                       primeFactors
+                              <span class="m">9</span>
+ <span class="m">1005</span>    <span class="m">2018</span>-12-04 <span class="m">11</span>:15:43  <span class="m">0</span>.4776    <span class="nb">false</span>   <span class="nb">true</span>     0x4b67cf4d     MathGame                       primeFactors
+Affect<span class="o">(</span>row-cnt:6<span class="o">)</span> cost in <span class="m">607</span> ms.
 </pre></div>
 </div>
 <p>Advanced:</p>
@@ -348,87 +332,59 @@ $
 </ul>
 </div>
 </div>
-</div>
 <div class="section" id="check-context-of-the-call">
-<span id="check-context-of-the-call"></span><h2>Check context of the call<a class="headerlink" href="#check-context-of-the-call" title="Permalink to this headline">¶</a></h2>
+<span id="check-context-of-the-call"></span><h3>Check context of the call<a class="headerlink" href="#check-context-of-the-call" title="Permalink to this headline">¶</a></h3>
 <p>Using <code class="docutils literal notranslate"><span class="pre">tt</span> <span class="pre">-i</span> <span class="pre">&lt;index&gt;</span></code> to check a specific calling details.</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ 
-$ tt -i 1003
-+-----------------+------------------------------------------------------------------------------------------------------+
-|           INDEX | 1003                                                                                                 |
-+-----------------+------------------------------------------------------------------------------------------------------+
-|      GMT-CREATE | 2015-07-26 01:16:28                                                                                  |
-+-----------------+------------------------------------------------------------------------------------------------------+
-|        COST(ms) | 0                                                                                                    |
-+-----------------+------------------------------------------------------------------------------------------------------+
-|          OBJECT | 0x42cc13a0                                                                                           |
-+-----------------+------------------------------------------------------------------------------------------------------+
-|           CLASS | GaOgnlUtilsTest                                                                                      |
-+-----------------+------------------------------------------------------------------------------------------------------+
-|          METHOD | printAddress                                                                                         |
-+-----------------+------------------------------------------------------------------------------------------------------+
-|       IS-RETURN | false                                                                                                |
-+-----------------+------------------------------------------------------------------------------------------------------+
-|    IS-EXCEPTION | true                                                                                                 |
-+-----------------+------------------------------------------------------------------------------------------------------+
-|   PARAMETERS[0] | Address@53448f87                                                                                     |
-+-----------------+------------------------------------------------------------------------------------------------------+
-| THROW-EXCEPTION | java.lang.RuntimeException: test                                                                     |
-|                 |     at GaOgnlUtilsTest.printAddress(Unknown Source)                                                  |
-|                 |     at GaOgnlUtilsTest.&lt;init&gt;(Unknown Source)                                                        |
-|                 |     at GaOgnlUtilsTest.main(Unknown Source)                                                          |
-+-----------------+------------------------------------------------------------------------------------------------------+
-Affect(row-cnt:1) cost in 1 ms.
-$ 
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$ tt -i <span class="m">1003</span>
+ INDEX            <span class="m">1003</span>
+ GMT-CREATE       <span class="m">2018</span>-12-04 <span class="m">11</span>:15:41
+ COST<span class="o">(</span>ms<span class="o">)</span>         <span class="m">0</span>.186073
+ OBJECT           0x4b67cf4d
+ CLASS            demo.MathGame
+ METHOD           primeFactors
+ IS-RETURN        <span class="nb">false</span>
+ IS-EXCEPTION     <span class="nb">true</span>
+ PARAMETERS<span class="o">[</span><span class="m">0</span><span class="o">]</span>    @Integer<span class="o">[</span>-564322413<span class="o">]</span>
+ THROW-EXCEPTION  java.lang.IllegalArgumentException: number is: -564322413, need &gt;<span class="o">=</span> <span class="m">2</span>
+                    at demo.MathGame.primeFactors<span class="o">(</span>MathGame.java:46<span class="o">)</span>
+                    at demo.MathGame.run<span class="o">(</span>MathGame.java:24<span class="o">)</span>
+                    at demo.MathGame.main<span class="o">(</span>MathGame.java:16<span class="o">)</span>
+
+Affect<span class="o">(</span>row-cnt:1<span class="o">)</span> cost in <span class="m">11</span> ms.
 </pre></div>
 </div>
 </div>
-<div class="section" id="re-produce">
-<span id="re-produce"></span><h2>Re-produce<a class="headerlink" href="#re-produce" title="Permalink to this headline">¶</a></h2>
-<p>Since Arthas stores the context of the call, you can even <em>replay</em> the method calling afterwards with extra option <code class="docutils literal notranslate"><span class="pre">-p</span></code> to re-produce the issue for advanced troubleshooting.</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ tt -i 1003 -p
-+-----------------+---------------------------------------------------------------------------------------------------------+
-|        RE-INDEX | 1003                                                                                                    |
-+-----------------+---------------------------------------------------------------------------------------------------------+
-|      GMT-REPLAY | 2015-07-26 17:29:51                                                                                     |
-+-----------------+---------------------------------------------------------------------------------------------------------+
-|          OBJECT | 0x42cc13a0                                                                                              |
-+-----------------+---------------------------------------------------------------------------------------------------------+
-|           CLASS | GaOgnlUtilsTest                                                                                         |
-+-----------------+---------------------------------------------------------------------------------------------------------+
-|          METHOD | printAddress                                                                                            |
-+-----------------+---------------------------------------------------------------------------------------------------------+
-|   PARAMETERS[0] | Address@53448f87                                                                                        |
-+-----------------+---------------------------------------------------------------------------------------------------------+
-|       IS-RETURN | false                                                                                                   |
-+-----------------+---------------------------------------------------------------------------------------------------------+
-|    IS-EXCEPTION | true                                                                                                    |
-+-----------------+---------------------------------------------------------------------------------------------------------+
-| THROW-EXCEPTION | java.lang.RuntimeException: test                                                                        |
-|                 |     at GaOgnlUtilsTest.printAddress(GaOgnlUtilsTest.java:78)                                            |
-|                 |     at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)                                      |
-|                 |     at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)                    |
-|                 |     at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)            |
-|                 |     at java.lang.reflect.Method.invoke(Method.java:483)                                                 |
-|                 |     at com.github.ompc.Arthas.util.GaMethod.invoke(GaMethod.java:81)                                     |
-|                 |     at com.github.ompc.Arthas.command.TimeTunnelCommand$6.action(TimeTunnelCommand.java:592)             |
-|                 |     at com.github.ompc.Arthas.server.DefaultCommandHandler.execute(DefaultCommandHandler.java:175)       |
-|                 |     at com.github.ompc.Arthas.server.DefaultCommandHandler.executeCommand(DefaultCommandHandler.java:83) |
-|                 |     at com.github.ompc.Arthas.server.GaServer$4.run(GaServer.java:329)                                   |
-|                 |     at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1142)                  |
-|                 |     at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:617)                  |
-|                 |     at java.lang.Thread.run(Thread.java:745)                                                            |
-+-----------------+---------------------------------------------------------------------------------------------------------+
-replay time fragment[1003] success.
-Affect(row-cnt:1) cost in 3 ms.
-$ 
+</div>
+<div class="section" id="replay-record">
+<span id="replay-record"></span><h2>Replay record<a class="headerlink" href="#replay-record" title="Permalink to this headline">¶</a></h2>
+<p>Since Arthas stores the context of the call, you can even <em>replay</em> the method calling afterwards with extra option <code class="docutils literal notranslate"><span class="pre">-p</span></code> to replay the issue for advanced troubleshooting.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$ tt -i <span class="m">1004</span> -p
+ RE-INDEX       <span class="m">1004</span>
+ GMT-REPLAY     <span class="m">2018</span>-12-04 <span class="m">11</span>:26:00
+ OBJECT         0x4b67cf4d
+ CLASS          demo.MathGame
+ METHOD         primeFactors
+ PARAMETERS<span class="o">[</span><span class="m">0</span><span class="o">]</span>  @Integer<span class="o">[</span><span class="m">946738738</span><span class="o">]</span>
+ IS-RETURN      <span class="nb">true</span>
+ IS-EXCEPTION   <span class="nb">false</span>
+ RETURN-OBJ     @ArrayList<span class="o">[</span>
+                    @Integer<span class="o">[</span><span class="m">2</span><span class="o">]</span>,
+                    @Integer<span class="o">[</span><span class="m">11</span><span class="o">]</span>,
+                    @Integer<span class="o">[</span><span class="m">17</span><span class="o">]</span>,
+                    @Integer<span class="o">[</span><span class="m">2531387</span><span class="o">]</span>,
+                <span class="o">]</span>
+Time fragment<span class="o">[</span><span class="m">1004</span><span class="o">]</span> successfully replayed.
+Affect<span class="o">(</span>row-cnt:1<span class="o">)</span> cost in <span class="m">14</span> ms.
 </pre></div>
 </div>
 <p>F.Y.I</p>
-<ol class="simple">
-<li>the calling stack is little different using Arthas now unlike the original;</li>
-<li><strong>Loss</strong> of the thread local variables will be a undeniable fact since there is no way for Arthas to record the thread local info (<em>If you find one, please share with us in <a class="reference external" href="https://github.com/alibaba/arthas/issues">issues tracker</a></em>).</li>
-<li><strong>Potential</strong> modifications of objects can happen since only a reference will be recorded while later operations might modify objects without Arthas’s watch.</li>
+<ol>
+<li><p class="first"><strong>Loss</strong> of the <code class="docutils literal notranslate"><span class="pre">ThreadLocal</span></code></p>
+<p>Arthas save params into an array, then invoke the method with the params again. The method execute in another thead, so the <code class="docutils literal notranslate"><span class="pre">ThreadLocal</span></code> <strong>lost</strong>.</p>
+</li>
+<li><p class="first">params may be modified</p>
+<p>Arthas save params into an array, they are object references. The Objects may be modified by other code.</p>
+</li>
 </ol>
 </div>
 </div>

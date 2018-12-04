@@ -97,7 +97,7 @@
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="#check-the-dashboard">3. Check the Dashboard</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#get-the-main-class-of-the-process-with-the-thread-command">4. Get the Main Class of the process with the thread command</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#get-the-main-class-of-the-arthas-demo-process-with-the-thread-command">4. Get the Main Class of the <code class="docutils literal notranslate"><span class="pre">arthas-demo</span></code> process with the thread command</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#decompile-main-class-with-jad-command">5. Decompile Main Class with jad command</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#watch">6. watch</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#exit-arthas">7. Exit Arthas</a></li>
@@ -264,10 +264,10 @@ java.home              /Library/Java/JavaVir
 </pre></div>
 </div>
 </div>
-<div class="section" id="get-the-main-class-of-the-process-with-the-thread-command">
-<span id="get-the-main-class-of-the-process-with-the-thread-command"></span><h2>4. Get the Main Class of the process with the thread command<a class="headerlink" href="#get-the-main-class-of-the-process-with-the-thread-command" title="Permalink to this headline">¶</a></h2>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ thread -n -1 | grep &#39;main(&#39;
-    at demo.MathGame.main(MathGame.java:17)
+<div class="section" id="get-the-main-class-of-the-arthas-demo-process-with-the-thread-command">
+<span id="get-the-main-class-of-the-arthas-demo-process-with-the-thread-command"></span><h2>4. Get the Main Class of the <code class="docutils literal notranslate"><span class="pre">arthas-demo</span></code> process with the thread command<a class="headerlink" href="#get-the-main-class-of-the-arthas-demo-process-with-the-thread-command" title="Permalink to this headline">¶</a></h2>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$ thread -n -1 <span class="p">|</span> grep <span class="s1">&#39;main(&#39;</span>
+    at demo.MathGame.main<span class="o">(</span>MathGame.java:17<span class="o">)</span>
 </pre></div>
 </div>
 </div>

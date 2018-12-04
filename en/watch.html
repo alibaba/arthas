@@ -115,6 +115,7 @@
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="#usage">Usage</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#start-demo">Start Demo</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#check-the-out-parameters-and-return-value">Check the <code class="docutils literal notranslate"><span class="pre">out</span> <span class="pre">parameters</span></code> and <code class="docutils literal notranslate"><span class="pre">return</span> <span class="pre">value</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#check-in-parameters">Check <code class="docutils literal notranslate"><span class="pre">in</span> <span class="pre">parameters</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#check-before-and-after-at-the-same-time">Check <em>before</em> and <em>after</em> at the same time</a></li>
@@ -282,7 +283,10 @@
 </div>
 <div class="section" id="usage">
 <span id="usage"></span><h2>Usage<a class="headerlink" href="#usage" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="start-demo">
+<span id="start-demo"></span><h3>Start Demo<a class="headerlink" href="#start-demo" title="Permalink to this headline">¶</a></h3>
 <p>Start <code class="docutils literal notranslate"><span class="pre">arthas-demo</span></code> in <a class="reference internal" href="quick-start.html"><span class="doc">Quick Start</span></a>.</p>
+</div>
 <div class="section" id="check-the-out-parameters-and-return-value">
 <span id="check-the-out-parameters-and-return-value"></span><h3>Check the <code class="docutils literal notranslate"><span class="pre">out</span> <span class="pre">parameters</span></code> and <code class="docutils literal notranslate"><span class="pre">return</span> <span class="pre">value</span></code><a class="headerlink" href="#check-the-out-parameters-and-return-value" title="Permalink to this headline">¶</a></h3>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$ watch demo.MathGame primeFactors <span class="s2">&quot;{params,returnObj}&quot;</span> -x <span class="m">2</span>
@@ -468,11 +472,11 @@ Affect<span class="o">(</span>class-cnt:1 , method-cnt:1<span class="o">)</span>
 <ul class="simple">
 <li><code class="docutils literal notranslate"><span class="pre">target.field_name</span></code>: the field of the current object.</li>
 </ul>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ watch demo.MathGame primeFactors &#39;target.illegalArgumentCount&#39;
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$ watch demo.MathGame primeFactors <span class="s1">&#39;target.illegalArgumentCount&#39;</span>
 Press Ctrl+C to abort.
-Affect(class-cnt:1 , method-cnt:1) cost in 67 ms.
-ts=2018-12-03 20:04:34; [cost=131.303498ms] result=@Integer[8]
-ts=2018-12-03 20:04:35; [cost=0.961441ms] result=@Integer[8]
+Affect<span class="o">(</span>class-cnt:1 , method-cnt:1<span class="o">)</span> cost in <span class="m">67</span> ms.
+<span class="nv">ts</span><span class="o">=</span><span class="m">2018</span>-12-03 <span class="m">20</span>:04:34<span class="p">;</span> <span class="o">[</span><span class="nv">cost</span><span class="o">=</span><span class="m">131</span>.303498ms<span class="o">]</span> <span class="nv">result</span><span class="o">=</span>@Integer<span class="o">[</span><span class="m">8</span><span class="o">]</span>
+<span class="nv">ts</span><span class="o">=</span><span class="m">2018</span>-12-03 <span class="m">20</span>:04:35<span class="p">;</span> <span class="o">[</span><span class="nv">cost</span><span class="o">=</span><span class="m">0</span>.961441ms<span class="o">]</span> <span class="nv">result</span><span class="o">=</span>@Integer<span class="o">[</span><span class="m">8</span><span class="o">]</span>
 </pre></div>
 </div>
 </div>

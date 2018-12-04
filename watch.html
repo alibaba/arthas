@@ -111,6 +111,7 @@
 <li class="toctree-l2 current"><a class="current reference internal" href="#">watch</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#">参数说明</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#">使用参考</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#demo">启动 Demo</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#">观察方法出参和返回值</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#">观察方法入参</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#">同时观察方法调用前和方法返回后</a></li>
@@ -277,7 +278,10 @@
 </div>
 <div class="section" id="">
 <span id="id2"></span><h2>使用参考<a class="headerlink" href="#" title="永久链接至标题">¶</a></h2>
+<div class="section" id="demo">
+<span id="demo"></span><h3>启动 Demo<a class="headerlink" href="#demo" title="永久链接至标题">¶</a></h3>
 <p>启动<a class="reference internal" href="quick-start.html"><span class="doc">快速入门</span></a>里的<code class="docutils literal notranslate"><span class="pre">arthas-demo</span></code>。</p>
+</div>
 <div class="section" id="">
 <span id="id3"></span><h3>观察方法出参和返回值<a class="headerlink" href="#" title="永久链接至标题">¶</a></h3>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$ watch demo.MathGame primeFactors <span class="s2">&quot;{params,returnObj}&quot;</span> -x <span class="m">2</span>
@@ -460,11 +464,11 @@ Affect<span class="o">(</span>class-cnt:1 , method-cnt:1<span class="o">)</span>
 </pre></div>
 </div>
 <p>然后使用<code class="docutils literal notranslate"><span class="pre">target.field_name</span></code>访问当前对象的某个属性</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ watch demo.MathGame primeFactors &#39;target.illegalArgumentCount&#39;
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$ watch demo.MathGame primeFactors <span class="s1">&#39;target.illegalArgumentCount&#39;</span>
 Press Ctrl+C to abort.
-Affect(class-cnt:1 , method-cnt:1) cost in 67 ms.
-ts=2018-12-03 20:04:34; [cost=131.303498ms] result=@Integer[8]
-ts=2018-12-03 20:04:35; [cost=0.961441ms] result=@Integer[8]
+Affect<span class="o">(</span>class-cnt:1 , method-cnt:1<span class="o">)</span> cost in <span class="m">67</span> ms.
+<span class="nv">ts</span><span class="o">=</span><span class="m">2018</span>-12-03 <span class="m">20</span>:04:34<span class="p">;</span> <span class="o">[</span><span class="nv">cost</span><span class="o">=</span><span class="m">131</span>.303498ms<span class="o">]</span> <span class="nv">result</span><span class="o">=</span>@Integer<span class="o">[</span><span class="m">8</span><span class="o">]</span>
+<span class="nv">ts</span><span class="o">=</span><span class="m">2018</span>-12-03 <span class="m">20</span>:04:35<span class="p">;</span> <span class="o">[</span><span class="nv">cost</span><span class="o">=</span><span class="m">0</span>.961441ms<span class="o">]</span> <span class="nv">result</span><span class="o">=</span>@Integer<span class="o">[</span><span class="m">8</span><span class="o">]</span>
 </pre></div>
 </div>
 </div>

@@ -112,10 +112,14 @@
 <li class="toctree-l2"><a class="reference internal" href="trace.html">trace</a></li>
 <li class="toctree-l2"><a class="reference internal" href="stack.html">stack</a></li>
 <li class="toctree-l2 current"><a class="current reference internal" href="#">tt</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#">记录方法的调用</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#">检索调用记录</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#">查看调用信息</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#">重做一次调用</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#">使用参考</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#demo">启动 Demo</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#">记录调用</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#">检索调用记录</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#">查看调用信息</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#">重做一次调用</a></li>
+</ul>
+</li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="options.html">options</a></li>
@@ -204,26 +208,27 @@
 <p>这个时候如果能记录下当时方法调用的所有入参和返回值、抛出的异常会对整个问题的思考与判断非常有帮助。</p>
 <p>于是乎，TimeTunnel 命令就诞生了。</p>
 <div class="section" id="">
-<span id="id1"></span><h2>记录方法的调用<a class="headerlink" href="#" title="永久链接至标题">¶</a></h2>
-<ul>
-<li><p class="first">基本用法</p>
+<span id="id1"></span><h2>使用参考<a class="headerlink" href="#" title="永久链接至标题">¶</a></h2>
+<div class="section" id="demo">
+<span id="demo"></span><h3>启动 Demo<a class="headerlink" href="#demo" title="永久链接至标题">¶</a></h3>
+<p>启动<a class="reference internal" href="quick-start.html"><span class="doc">快速入门</span></a>里的<code class="docutils literal notranslate"><span class="pre">arthas-demo</span></code>。</p>
+</div>
+<div class="section" id="">
+<span id="id2"></span><h3>记录调用<a class="headerlink" href="#" title="永久链接至标题">¶</a></h3>
 <p>对于一个最基本的使用来说，就是记录下当前方法的每次调用环境现场。</p>
-<div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="n">$</span> <span class="n">tt</span> <span class="o">-</span><span class="n">t</span> <span class="o">-</span><span class="n">n</span> <span class="mi">3</span> <span class="o">*</span><span class="n">Test</span> <span class="n">print</span>
-<span class="n">Press</span> <span class="n">Ctrl</span><span class="o">+</span><span class="n">D</span> <span class="n">or</span> <span class="n">Ctrl</span><span class="o">+</span><span class="n">X</span> <span class="n">to</span> <span class="n">abort</span><span class="o">.</span>
-<span class="nf">Affect</span><span class="o">(</span><span class="n">class</span><span class="o">-</span><span class="n">cnt</span><span class="o">:</span><span class="mi">1</span> <span class="o">,</span> <span class="n">method</span><span class="o">-</span><span class="n">cnt</span><span class="o">:</span><span class="mi">1</span><span class="o">)</span> <span class="n">cost</span> <span class="n">in</span> <span class="mi">115</span> <span class="n">ms</span><span class="o">.</span>
-<span class="o">+----------+----------------------+------------+----------+----------+-----------------+--------------------------------+--------------------------------+</span>
-<span class="o">|</span>    <span class="n">INDEX</span> <span class="o">|</span>            <span class="n">TIMESTAMP</span> <span class="o">|</span>   <span class="n">COST</span><span class="o">(</span><span class="n">ms</span><span class="o">)</span> <span class="o">|</span>   <span class="n">IS</span><span class="o">-</span><span class="n">RET</span> <span class="o">|</span>   <span class="n">IS</span><span class="o">-</span><span class="n">EXP</span> <span class="o">|</span>          <span class="n">OBJECT</span> <span class="o">|</span>                          <span class="n">CLASS</span> <span class="o">|</span>                         <span class="n">METHOD</span> <span class="o">|</span>
-<span class="o">+----------+----------------------+------------+----------+----------+-----------------+--------------------------------+--------------------------------+</span>
-<span class="o">|</span>     <span class="mi">1007</span> <span class="o">|</span>  <span class="mi">2015</span><span class="o">-</span><span class="mo">07</span><span class="o">-</span><span class="mi">26</span> <span class="mi">12</span><span class="o">:</span><span class="mi">23</span><span class="o">:</span><span class="mi">21</span> <span class="o">|</span>        <span class="mi">138</span> <span class="o">|</span>     <span class="kc">true</span> <span class="o">|</span>    <span class="kc">false</span> <span class="o">|</span>      <span class="mh">0x42cc13a0</span> <span class="o">|</span>                <span class="n">GaOgnlUtilsTest</span> <span class="o">|</span>                          <span class="n">print</span> <span class="o">|</span>
-<span class="o">+----------+----------------------+------------+----------+----------+-----------------+--------------------------------+--------------------------------+</span>
-<span class="o">|</span>     <span class="mi">1008</span> <span class="o">|</span>  <span class="mi">2015</span><span class="o">-</span><span class="mo">07</span><span class="o">-</span><span class="mi">26</span> <span class="mi">12</span><span class="o">:</span><span class="mi">23</span><span class="o">:</span><span class="mi">22</span> <span class="o">|</span>        <span class="mi">143</span> <span class="o">|</span>     <span class="kc">true</span> <span class="o">|</span>    <span class="kc">false</span> <span class="o">|</span>      <span class="mh">0x42cc13a0</span> <span class="o">|</span>                <span class="n">GaOgnlUtilsTest</span> <span class="o">|</span>                          <span class="n">print</span> <span class="o">|</span>
-<span class="o">+----------+----------------------+------------+----------+----------+-----------------+--------------------------------+--------------------------------+</span>
-<span class="o">|</span>     <span class="mi">1009</span> <span class="o">|</span>  <span class="mi">2015</span><span class="o">-</span><span class="mo">07</span><span class="o">-</span><span class="mi">26</span> <span class="mi">12</span><span class="o">:</span><span class="mi">23</span><span class="o">:</span><span class="mi">23</span> <span class="o">|</span>        <span class="mi">130</span> <span class="o">|</span>     <span class="kc">true</span> <span class="o">|</span>    <span class="kc">false</span> <span class="o">|</span>      <span class="mh">0x42cc13a0</span> <span class="o">|</span>                <span class="n">GaOgnlUtilsTest</span> <span class="o">|</span>                          <span class="n">print</span> <span class="o">|</span>
-<span class="o">+----------+----------------------+------------+----------+----------+-----------------+--------------------------------+--------------------------------+</span>
-<span class="n">$</span> 
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$ tt -t demo.MathGame primeFactors
+Press Ctrl+C to abort.
+Affect<span class="o">(</span>class-cnt:1 , method-cnt:1<span class="o">)</span> cost in <span class="m">66</span> ms.
+ INDEX   TIMESTAMP            COST<span class="o">(</span>ms<span class="o">)</span>  IS-RET  IS-EXP   OBJECT         CLASS                          METHOD
+-------------------------------------------------------------------------------------------------------------------------------------
+ <span class="m">1000</span>    <span class="m">2018</span>-12-04 <span class="m">11</span>:15:38  <span class="m">1</span>.096236  <span class="nb">false</span>   <span class="nb">true</span>     0x4b67cf4d     MathGame                       primeFactors
+ <span class="m">1001</span>    <span class="m">2018</span>-12-04 <span class="m">11</span>:15:39  <span class="m">0</span>.191848  <span class="nb">false</span>   <span class="nb">true</span>     0x4b67cf4d     MathGame                       primeFactors
+ <span class="m">1002</span>    <span class="m">2018</span>-12-04 <span class="m">11</span>:15:40  <span class="m">0</span>.069523  <span class="nb">false</span>   <span class="nb">true</span>     0x4b67cf4d     MathGame                       primeFactors
+ <span class="m">1003</span>    <span class="m">2018</span>-12-04 <span class="m">11</span>:15:41  <span class="m">0</span>.186073  <span class="nb">false</span>   <span class="nb">true</span>     0x4b67cf4d     MathGame                       primeFactors
+ <span class="m">1004</span>    <span class="m">2018</span>-12-04 <span class="m">11</span>:15:42  <span class="m">17</span>.76437  <span class="nb">true</span>    <span class="nb">false</span>    0x4b67cf4d     MathGame                       primeFactors
 </pre></div>
 </div>
-</li>
+<ul>
 <li><p class="first">命令参数解析</p>
 <ul>
 <li><p class="first"><code class="docutils literal notranslate"><span class="pre">-t</span></code></p>
@@ -302,120 +307,81 @@
 </ul>
 </div>
 <div class="section" id="">
-<span id="id2"></span><h2>检索调用记录<a class="headerlink" href="#" title="永久链接至标题">¶</a></h2>
+<span id="id3"></span><h3>检索调用记录<a class="headerlink" href="#" title="永久链接至标题">¶</a></h3>
 <p>当你用 <code class="docutils literal notranslate"><span class="pre">tt</span></code> 记录了一大片的时间片段之后，你希望能从中筛选出自己需要的时间片段，这个时候你就需要对现有记录进行检索。</p>
 <p>假设我们有这些记录</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ tt -l
-+----------+----------------------+------------+----------+----------+-----------------+--------------------------------+--------------------------------+
-|    INDEX |            TIMESTAMP |   COST(ms) |   IS-RET |   IS-EXP |          OBJECT |                          CLASS |                         METHOD |
-+----------+----------------------+------------+----------+----------+-----------------+--------------------------------+--------------------------------+
-|     1000 |  2015-07-26 01:16:27 |        130 |     true |    false |      0x42cc13a0 |                GaOgnlUtilsTest |                          print |
-+----------+----------------------+------------+----------+----------+-----------------+--------------------------------+--------------------------------+
-|     1001 |  2015-07-26 01:16:27 |          0 |    false |     true |      0x42cc13a0 |                GaOgnlUtilsTest |                   printAddress |
-+----------+----------------------+------------+----------+----------+-----------------+--------------------------------+--------------------------------+
-|     1002 |  2015-07-26 01:16:28 |        119 |     true |    false |      0x42cc13a0 |                GaOgnlUtilsTest |                          print |
-+----------+----------------------+------------+----------+----------+-----------------+--------------------------------+--------------------------------+
-|     1003 |  2015-07-26 01:16:28 |          0 |    false |     true |      0x42cc13a0 |                GaOgnlUtilsTest |                   printAddress |
-+----------+----------------------+------------+----------+----------+-----------------+--------------------------------+--------------------------------+
-|     1004 |  2015-07-26 12:21:56 |        130 |     true |    false |      0x42cc13a0 |                GaOgnlUtilsTest |                          print |
-+----------+----------------------+------------+----------+----------+-----------------+--------------------------------+--------------------------------+
-|     1005 |  2015-07-26 12:21:57 |        138 |     true |    false |      0x42cc13a0 |                GaOgnlUtilsTest |                          print |
-+----------+----------------------+------------+----------+----------+-----------------+--------------------------------+--------------------------------+
-|     1006 |  2015-07-26 12:21:58 |        130 |     true |    false |      0x42cc13a0 |                GaOgnlUtilsTest |                          print |
-+----------+----------------------+------------+----------+----------+-----------------+--------------------------------+--------------------------------+
-Affect(row-cnt:7) cost in 2 ms.
-$ 
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$ tt -l
+ INDEX   TIMESTAMP            COST<span class="o">(</span>ms<span class="o">)</span>  IS-RET  IS-EXP   OBJECT         CLASS                          METHOD
+-------------------------------------------------------------------------------------------------------------------------------------
+ <span class="m">1000</span>    <span class="m">2018</span>-12-04 <span class="m">11</span>:15:38  <span class="m">1</span>.096236  <span class="nb">false</span>   <span class="nb">true</span>     0x4b67cf4d     MathGame                       primeFactors
+ <span class="m">1001</span>    <span class="m">2018</span>-12-04 <span class="m">11</span>:15:39  <span class="m">0</span>.191848  <span class="nb">false</span>   <span class="nb">true</span>     0x4b67cf4d     MathGame                       primeFactors
+ <span class="m">1002</span>    <span class="m">2018</span>-12-04 <span class="m">11</span>:15:40  <span class="m">0</span>.069523  <span class="nb">false</span>   <span class="nb">true</span>     0x4b67cf4d     MathGame                       primeFactors
+ <span class="m">1003</span>    <span class="m">2018</span>-12-04 <span class="m">11</span>:15:41  <span class="m">0</span>.186073  <span class="nb">false</span>   <span class="nb">true</span>     0x4b67cf4d     MathGame                       primeFactors
+ <span class="m">1004</span>    <span class="m">2018</span>-12-04 <span class="m">11</span>:15:42  <span class="m">17</span>.76437  <span class="nb">true</span>    <span class="nb">false</span>    0x4b67cf4d     MathGame                       primeFactors
+                              <span class="m">9</span>
+ <span class="m">1005</span>    <span class="m">2018</span>-12-04 <span class="m">11</span>:15:43  <span class="m">0</span>.4776    <span class="nb">false</span>   <span class="nb">true</span>     0x4b67cf4d     MathGame                       primeFactors
+Affect<span class="o">(</span>row-cnt:6<span class="o">)</span> cost in <span class="m">4</span> ms.
 </pre></div>
 </div>
-<p>我需要筛选出 <code class="docutils literal notranslate"><span class="pre">printAddress</span></code> 方法的调用信息</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ tt -s method.name==&quot;printAddress&quot;
-+----------+----------------------+------------+----------+----------+-----------------+--------------------------------+--------------------------------+
-|    INDEX |            TIMESTAMP |   COST(ms) |   IS-RET |   IS-EXP |          OBJECT |                          CLASS |                         METHOD |
-+----------+----------------------+------------+----------+----------+-----------------+--------------------------------+--------------------------------+
-|     1001 |  2015-07-26 01:16:27 |          0 |    false |     true |      0x42cc13a0 |                GaOgnlUtilsTest |                   printAddress |
-+----------+----------------------+------------+----------+----------+-----------------+--------------------------------+--------------------------------+
-|     1003 |  2015-07-26 01:16:28 |          0 |    false |     true |      0x42cc13a0 |                GaOgnlUtilsTest |                   printAddress |
-+----------+----------------------+------------+----------+----------+-----------------+--------------------------------+--------------------------------+
-Affect(row-cnt:2) cost in 55 ms.
-$ 
+<p>我需要筛选出 <code class="docutils literal notranslate"><span class="pre">primeFactors</span></code> 方法的调用信息</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$ tt -s <span class="s1">&#39;method.name==&quot;primeFactors&quot;&#39;</span>
+ INDEX   TIMESTAMP            COST<span class="o">(</span>ms<span class="o">)</span>  IS-RET  IS-EXP   OBJECT         CLASS                          METHOD
+-------------------------------------------------------------------------------------------------------------------------------------
+ <span class="m">1000</span>    <span class="m">2018</span>-12-04 <span class="m">11</span>:15:38  <span class="m">1</span>.096236  <span class="nb">false</span>   <span class="nb">true</span>     0x4b67cf4d     MathGame                       primeFactors
+ <span class="m">1001</span>    <span class="m">2018</span>-12-04 <span class="m">11</span>:15:39  <span class="m">0</span>.191848  <span class="nb">false</span>   <span class="nb">true</span>     0x4b67cf4d     MathGame                       primeFactors
+ <span class="m">1002</span>    <span class="m">2018</span>-12-04 <span class="m">11</span>:15:40  <span class="m">0</span>.069523  <span class="nb">false</span>   <span class="nb">true</span>     0x4b67cf4d     MathGame                       primeFactors
+ <span class="m">1003</span>    <span class="m">2018</span>-12-04 <span class="m">11</span>:15:41  <span class="m">0</span>.186073  <span class="nb">false</span>   <span class="nb">true</span>     0x4b67cf4d     MathGame                       primeFactors
+ <span class="m">1004</span>    <span class="m">2018</span>-12-04 <span class="m">11</span>:15:42  <span class="m">17</span>.76437  <span class="nb">true</span>    <span class="nb">false</span>    0x4b67cf4d     MathGame                       primeFactors
+                              <span class="m">9</span>
+ <span class="m">1005</span>    <span class="m">2018</span>-12-04 <span class="m">11</span>:15:43  <span class="m">0</span>.4776    <span class="nb">false</span>   <span class="nb">true</span>     0x4b67cf4d     MathGame                       primeFactors
+Affect<span class="o">(</span>row-cnt:6<span class="o">)</span> cost in <span class="m">607</span> ms.
 </pre></div>
 </div>
 <p>你需要一个 <code class="docutils literal notranslate"><span class="pre">-s</span></code> 参数。<span style="color:red;">同样的，搜索表达式的核心对象依旧是 <code class="docutils literal notranslate"><span class="pre">Advice</span></code> 对象。</span></p>
 </div>
 <div class="section" id="">
-<span id="id3"></span><h2>查看调用信息<a class="headerlink" href="#" title="永久链接至标题">¶</a></h2>
+<span id="id4"></span><h3>查看调用信息<a class="headerlink" href="#" title="永久链接至标题">¶</a></h3>
 <p>对于具体一个时间片的信息而言，你可以通过 <code class="docutils literal notranslate"><span class="pre">-i</span></code> 参数后边跟着对应的 <code class="docutils literal notranslate"><span class="pre">INDEX</span></code> 编号查看到他的详细信息。</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ 
-$ tt -i 1003
-+-----------------+------------------------------------------------------------------------------------------------------+
-|           INDEX | 1003                                                                                                 |
-+-----------------+------------------------------------------------------------------------------------------------------+
-|      GMT-CREATE | 2015-07-26 01:16:28                                                                                  |
-+-----------------+------------------------------------------------------------------------------------------------------+
-|        COST(ms) | 0                                                                                                    |
-+-----------------+------------------------------------------------------------------------------------------------------+
-|          OBJECT | 0x42cc13a0                                                                                           |
-+-----------------+------------------------------------------------------------------------------------------------------+
-|           CLASS | GaOgnlUtilsTest                                                                                      |
-+-----------------+------------------------------------------------------------------------------------------------------+
-|          METHOD | printAddress                                                                                         |
-+-----------------+------------------------------------------------------------------------------------------------------+
-|       IS-RETURN | false                                                                                                |
-+-----------------+------------------------------------------------------------------------------------------------------+
-|    IS-EXCEPTION | true                                                                                                 |
-+-----------------+------------------------------------------------------------------------------------------------------+
-|   PARAMETERS[0] | Address@53448f87                                                                                     |
-+-----------------+------------------------------------------------------------------------------------------------------+
-| THROW-EXCEPTION | java.lang.RuntimeException: test                                                                     |
-|                 |     at GaOgnlUtilsTest.printAddress(Unknown Source)                                                  |
-|                 |     at GaOgnlUtilsTest.&lt;init&gt;(Unknown Source)                                                        |
-|                 |     at GaOgnlUtilsTest.main(Unknown Source)                                                          |
-+-----------------+------------------------------------------------------------------------------------------------------+
-Affect(row-cnt:1) cost in 1 ms.
-$ 
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$ tt -i <span class="m">1003</span>
+ INDEX            <span class="m">1003</span>
+ GMT-CREATE       <span class="m">2018</span>-12-04 <span class="m">11</span>:15:41
+ COST<span class="o">(</span>ms<span class="o">)</span>         <span class="m">0</span>.186073
+ OBJECT           0x4b67cf4d
+ CLASS            demo.MathGame
+ METHOD           primeFactors
+ IS-RETURN        <span class="nb">false</span>
+ IS-EXCEPTION     <span class="nb">true</span>
+ PARAMETERS<span class="o">[</span><span class="m">0</span><span class="o">]</span>    @Integer<span class="o">[</span>-564322413<span class="o">]</span>
+ THROW-EXCEPTION  java.lang.IllegalArgumentException: number is: -564322413, need &gt;<span class="o">=</span> <span class="m">2</span>
+                      at demo.MathGame.primeFactors<span class="o">(</span>MathGame.java:46<span class="o">)</span>
+                      at demo.MathGame.run<span class="o">(</span>MathGame.java:24<span class="o">)</span>
+                      at demo.MathGame.main<span class="o">(</span>MathGame.java:16<span class="o">)</span>
+
+Affect<span class="o">(</span>row-cnt:1<span class="o">)</span> cost in <span class="m">11</span> ms.
 </pre></div>
 </div>
 </div>
 <div class="section" id="">
-<span id="id4"></span><h2>重做一次调用<a class="headerlink" href="#" title="永久链接至标题">¶</a></h2>
+<span id="id5"></span><h3>重做一次调用<a class="headerlink" href="#" title="永久链接至标题">¶</a></h3>
 <p>当你稍稍做了一些调整之后，你可能需要前端系统重新触发一次你的调用，此时得求爷爷告奶奶的需要前端配合联调的同学再次发起一次调用。而有些场景下，这个调用不是这么好触发的。</p>
 <p><code class="docutils literal notranslate"><span class="pre">tt</span></code> 命令由于保存了当时调用的所有现场信息，所以我们可以自己主动对一个 <code class="docutils literal notranslate"><span class="pre">INDEX</span></code> 编号的时间片自主发起一次调用，从而解放你的沟通成本。此时你需要 <code class="docutils literal notranslate"><span class="pre">-p</span></code> 参数。</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ tt -i 1003 -p
-+-----------------+---------------------------------------------------------------------------------------------------------+
-|        RE-INDEX | 1003                                                                                                    |
-+-----------------+---------------------------------------------------------------------------------------------------------+
-|      GMT-REPLAY | 2015-07-26 17:29:51                                                                                     |
-+-----------------+---------------------------------------------------------------------------------------------------------+
-|          OBJECT | 0x42cc13a0                                                                                              |
-+-----------------+---------------------------------------------------------------------------------------------------------+
-|           CLASS | GaOgnlUtilsTest                                                                                         |
-+-----------------+---------------------------------------------------------------------------------------------------------+
-|          METHOD | printAddress                                                                                            |
-+-----------------+---------------------------------------------------------------------------------------------------------+
-|   PARAMETERS[0] | Address@53448f87                                                                                        |
-+-----------------+---------------------------------------------------------------------------------------------------------+
-|       IS-RETURN | false                                                                                                   |
-+-----------------+---------------------------------------------------------------------------------------------------------+
-|    IS-EXCEPTION | true                                                                                                    |
-+-----------------+---------------------------------------------------------------------------------------------------------+
-| THROW-EXCEPTION | java.lang.RuntimeException: test                                                                        |
-|                 |     at GaOgnlUtilsTest.printAddress(GaOgnlUtilsTest.java:78)                                            |
-|                 |     at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)                                      |
-|                 |     at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)                    |
-|                 |     at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)            |
-|                 |     at java.lang.reflect.Method.invoke(Method.java:483)                                                 |
-|                 |     at com.github.ompc.Arthas.util.GaMethod.invoke(GaMethod.java:81)                                     |
-|                 |     at com.github.ompc.Arthas.command.TimeTunnelCommand$6.action(TimeTunnelCommand.java:592)             |
-|                 |     at com.github.ompc.Arthas.server.DefaultCommandHandler.execute(DefaultCommandHandler.java:175)       |
-|                 |     at com.github.ompc.Arthas.server.DefaultCommandHandler.executeCommand(DefaultCommandHandler.java:83) |
-|                 |     at com.github.ompc.Arthas.server.GaServer$4.run(GaServer.java:329)                                   |
-|                 |     at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1142)                  |
-|                 |     at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:617)                  |
-|                 |     at java.lang.Thread.run(Thread.java:745)                                                            |
-+-----------------+---------------------------------------------------------------------------------------------------------+
-replay time fragment[1003] success.
-Affect(row-cnt:1) cost in 3 ms.
-$ 
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$ tt -i <span class="m">1004</span> -p
+ RE-INDEX       <span class="m">1004</span>
+ GMT-REPLAY     <span class="m">2018</span>-12-04 <span class="m">11</span>:26:00
+ OBJECT         0x4b67cf4d
+ CLASS          demo.MathGame
+ METHOD         primeFactors
+ PARAMETERS<span class="o">[</span><span class="m">0</span><span class="o">]</span>  @Integer<span class="o">[</span><span class="m">946738738</span><span class="o">]</span>
+ IS-RETURN      <span class="nb">true</span>
+ IS-EXCEPTION   <span class="nb">false</span>
+ RETURN-OBJ     @ArrayList<span class="o">[</span>
+                    @Integer<span class="o">[</span><span class="m">2</span><span class="o">]</span>,
+                    @Integer<span class="o">[</span><span class="m">11</span><span class="o">]</span>,
+                    @Integer<span class="o">[</span><span class="m">17</span><span class="o">]</span>,
+                    @Integer<span class="o">[</span><span class="m">2531387</span><span class="o">]</span>,
+                <span class="o">]</span>
+Time fragment<span class="o">[</span><span class="m">1004</span><span class="o">]</span> successfully replayed.
+Affect<span class="o">(</span>row-cnt:1<span class="o">)</span> cost in <span class="m">14</span> ms.
 </pre></div>
 </div>
 <p>你会发现结果虽然一样，但调用的路径发生了变化，有原来的程序发起变成了 Arthas 自己的内部线程发起的调用了。</p>
@@ -432,6 +398,7 @@ $
 </ol>
 </li>
 </ul>
+</div>
 </div>
 </div>
 

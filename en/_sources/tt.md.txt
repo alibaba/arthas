@@ -11,35 +11,37 @@ With the help of `tt` (*TimeTunnel*), you can check the contexts of the methods 
 
 ### Usage
 
-Let's record the whole calling contexts:
+
+#### Start Demo
+
+Start `arthas-demo` in [Quick Start](quick-start.md).
+
+
+#### Record method calls
+
+
+```bash
+$ tt -t demo.MathGame primeFactors
+Press Ctrl+C to abort.
+Affect(class-cnt:1 , method-cnt:1) cost in 66 ms.
+ INDEX   TIMESTAMP            COST(ms)  IS-RET  IS-EXP   OBJECT         CLASS                          METHOD
+-------------------------------------------------------------------------------------------------------------------------------------
+ 1000    2018-12-04 11:15:38  1.096236  false   true     0x4b67cf4d     MathGame                       primeFactors
+ 1001    2018-12-04 11:15:39  0.191848  false   true     0x4b67cf4d     MathGame                       primeFactors
+ 1002    2018-12-04 11:15:40  0.069523  false   true     0x4b67cf4d     MathGame                       primeFactors
+ 1003    2018-12-04 11:15:41  0.186073  false   true     0x4b67cf4d     MathGame                       primeFactors
+ 1004    2018-12-04 11:15:42  17.76437  true    false    0x4b67cf4d     MathGame                       primeFactors
+```
+
+* `-t`
+
+     record the calling context of the method `demo.MathGame primeFactors`
   
-  ```java
-  $ tt -t -n 3 *Test print
-  Press Ctrl+D or Ctrl+X to abort.
-  Affect(class-cnt:1 , method-cnt:1) cost in 115 ms.
-  +----------+----------------------+------------+----------+----------+-----------------+--------------------------------+--------------------------------+
-  |    INDEX |            TIMESTAMP |   COST(ms) |   IS-RET |   IS-EXP |          OBJECT |                          CLASS |                         METHOD |
-  +----------+----------------------+------------+----------+----------+-----------------+--------------------------------+--------------------------------+
-  |     1007 |  2015-07-26 12:23:21 |        138 |     true |    false |      0x42cc13a0 |                GaOgnlUtilsTest |                          print |
-  +----------+----------------------+------------+----------+----------+-----------------+--------------------------------+--------------------------------+
-  |     1008 |  2015-07-26 12:23:22 |        143 |     true |    false |      0x42cc13a0 |                GaOgnlUtilsTest |                          print |
-  +----------+----------------------+------------+----------+----------+-----------------+--------------------------------+--------------------------------+
-  |     1009 |  2015-07-26 12:23:23 |        130 |     true |    false |      0x42cc13a0 |                GaOgnlUtilsTest |                          print |
-  +----------+----------------------+------------+----------+----------+-----------------+--------------------------------+--------------------------------+
-  $ 
-  ```
-
-#### F.Y.I
-
-  - `-t`
-
-     record the calling context of the method `*Test.print`
-  
-  - `-n 3`
+* `-n 3`
 
      limit the number of the records (avoid overflow for too many records; with `-n` option, Arthas can automatically stop recording once the records reach the specified limit)
 
-#### Property
+* Property
 
 |Name|Specification|
 |---|---|
@@ -52,7 +54,7 @@ Let's record the whole calling contexts:
 |CLASS|class name of the object invoking the method|
 |METHOD|method being invoked|
 
-#### Condition expression
+* Condition expression
 
 Tips:
 1. `tt -t *Test print params[0].length==1` with different amounts of parameters;
@@ -64,131 +66,96 @@ Advanced:
 * [Special usage](https://github.com/alibaba/arthas/issues/71)
 * [OGNL official guide](https://commons.apache.org/proper/commons-ognl/language-guide.html)
 
+#### List all records
 
-### Searching for records
-
-#### All the recorded
-
-```
+```bash
 $ tt -l
-+----------+----------------------+------------+----------+----------+-----------------+--------------------------------+--------------------------------+
-|    INDEX |            TIMESTAMP |   COST(ms) |   IS-RET |   IS-EXP |          OBJECT |                          CLASS |                         METHOD |
-+----------+----------------------+------------+----------+----------+-----------------+--------------------------------+--------------------------------+
-|     1000 |  2015-07-26 01:16:27 |        130 |     true |    false |      0x42cc13a0 |                GaOgnlUtilsTest |                          print |
-+----------+----------------------+------------+----------+----------+-----------------+--------------------------------+--------------------------------+
-|     1001 |  2015-07-26 01:16:27 |          0 |    false |     true |      0x42cc13a0 |                GaOgnlUtilsTest |                   printAddress |
-+----------+----------------------+------------+----------+----------+-----------------+--------------------------------+--------------------------------+
-|     1002 |  2015-07-26 01:16:28 |        119 |     true |    false |      0x42cc13a0 |                GaOgnlUtilsTest |                          print |
-+----------+----------------------+------------+----------+----------+-----------------+--------------------------------+--------------------------------+
-|     1003 |  2015-07-26 01:16:28 |          0 |    false |     true |      0x42cc13a0 |                GaOgnlUtilsTest |                   printAddress |
-+----------+----------------------+------------+----------+----------+-----------------+--------------------------------+--------------------------------+
-|     1004 |  2015-07-26 12:21:56 |        130 |     true |    false |      0x42cc13a0 |                GaOgnlUtilsTest |                          print |
-+----------+----------------------+------------+----------+----------+-----------------+--------------------------------+--------------------------------+
-|     1005 |  2015-07-26 12:21:57 |        138 |     true |    false |      0x42cc13a0 |                GaOgnlUtilsTest |                          print |
-+----------+----------------------+------------+----------+----------+-----------------+--------------------------------+--------------------------------+
-|     1006 |  2015-07-26 12:21:58 |        130 |     true |    false |      0x42cc13a0 |                GaOgnlUtilsTest |                          print |
-+----------+----------------------+------------+----------+----------+-----------------+--------------------------------+--------------------------------+
-Affect(row-cnt:7) cost in 2 ms.
-$ 
+ INDEX   TIMESTAMP            COST(ms)  IS-RET  IS-EXP   OBJECT         CLASS                          METHOD
+-------------------------------------------------------------------------------------------------------------------------------------
+ 1000    2018-12-04 11:15:38  1.096236  false   true     0x4b67cf4d     MathGame                       primeFactors
+ 1001    2018-12-04 11:15:39  0.191848  false   true     0x4b67cf4d     MathGame                       primeFactors
+ 1002    2018-12-04 11:15:40  0.069523  false   true     0x4b67cf4d     MathGame                       primeFactors
+ 1003    2018-12-04 11:15:41  0.186073  false   true     0x4b67cf4d     MathGame                       primeFactors
+ 1004    2018-12-04 11:15:42  17.76437  true    false    0x4b67cf4d     MathGame                       primeFactors
+                              9
+ 1005    2018-12-04 11:15:43  0.4776    false   true     0x4b67cf4d     MathGame                       primeFactors
+Affect(row-cnt:6) cost in 4 ms.
 ```
 
-#### A specified method
 
-```
-$ tt -s method.name=="printAddress"
-+----------+----------------------+------------+----------+----------+-----------------+--------------------------------+--------------------------------+
-|    INDEX |            TIMESTAMP |   COST(ms) |   IS-RET |   IS-EXP |          OBJECT |                          CLASS |                         METHOD |
-+----------+----------------------+------------+----------+----------+-----------------+--------------------------------+--------------------------------+
-|     1001 |  2015-07-26 01:16:27 |          0 |    false |     true |      0x42cc13a0 |                GaOgnlUtilsTest |                   printAddress |
-+----------+----------------------+------------+----------+----------+-----------------+--------------------------------+--------------------------------+
-|     1003 |  2015-07-26 01:16:28 |          0 |    false |     true |      0x42cc13a0 |                GaOgnlUtilsTest |                   printAddress |
-+----------+----------------------+------------+----------+----------+-----------------+--------------------------------+--------------------------------+
-Affect(row-cnt:2) cost in 55 ms.
-$ 
+#### Searching for records
+
+```bash
+$ tt -s 'method.name=="primeFactors"'
+ INDEX   TIMESTAMP            COST(ms)  IS-RET  IS-EXP   OBJECT         CLASS                          METHOD
+-------------------------------------------------------------------------------------------------------------------------------------
+ 1000    2018-12-04 11:15:38  1.096236  false   true     0x4b67cf4d     MathGame                       primeFactors
+ 1001    2018-12-04 11:15:39  0.191848  false   true     0x4b67cf4d     MathGame                       primeFactors
+ 1002    2018-12-04 11:15:40  0.069523  false   true     0x4b67cf4d     MathGame                       primeFactors
+ 1003    2018-12-04 11:15:41  0.186073  false   true     0x4b67cf4d     MathGame                       primeFactors
+ 1004    2018-12-04 11:15:42  17.76437  true    false    0x4b67cf4d     MathGame                       primeFactors
+                              9
+ 1005    2018-12-04 11:15:43  0.4776    false   true     0x4b67cf4d     MathGame                       primeFactors
+Affect(row-cnt:6) cost in 607 ms.
 ```
 
 Advanced:
 * [Critical fields in expression](advice-class.md)
 
-### Check context of the call
+#### Check context of the call
 
 Using `tt -i <index>` to check a specific calling details.
 
-```
-$ 
+```bash
 $ tt -i 1003
-+-----------------+------------------------------------------------------------------------------------------------------+
-|           INDEX | 1003                                                                                                 |
-+-----------------+------------------------------------------------------------------------------------------------------+
-|      GMT-CREATE | 2015-07-26 01:16:28                                                                                  |
-+-----------------+------------------------------------------------------------------------------------------------------+
-|        COST(ms) | 0                                                                                                    |
-+-----------------+------------------------------------------------------------------------------------------------------+
-|          OBJECT | 0x42cc13a0                                                                                           |
-+-----------------+------------------------------------------------------------------------------------------------------+
-|           CLASS | GaOgnlUtilsTest                                                                                      |
-+-----------------+------------------------------------------------------------------------------------------------------+
-|          METHOD | printAddress                                                                                         |
-+-----------------+------------------------------------------------------------------------------------------------------+
-|       IS-RETURN | false                                                                                                |
-+-----------------+------------------------------------------------------------------------------------------------------+
-|    IS-EXCEPTION | true                                                                                                 |
-+-----------------+------------------------------------------------------------------------------------------------------+
-|   PARAMETERS[0] | Address@53448f87                                                                                     |
-+-----------------+------------------------------------------------------------------------------------------------------+
-| THROW-EXCEPTION | java.lang.RuntimeException: test                                                                     |
-|                 |     at GaOgnlUtilsTest.printAddress(Unknown Source)                                                  |
-|                 |     at GaOgnlUtilsTest.<init>(Unknown Source)                                                        |
-|                 |     at GaOgnlUtilsTest.main(Unknown Source)                                                          |
-+-----------------+------------------------------------------------------------------------------------------------------+
-Affect(row-cnt:1) cost in 1 ms.
-$ 
+ INDEX            1003
+ GMT-CREATE       2018-12-04 11:15:41
+ COST(ms)         0.186073
+ OBJECT           0x4b67cf4d
+ CLASS            demo.MathGame
+ METHOD           primeFactors
+ IS-RETURN        false
+ IS-EXCEPTION     true
+ PARAMETERS[0]    @Integer[-564322413]
+ THROW-EXCEPTION  java.lang.IllegalArgumentException: number is: -564322413, need >= 2
+                    at demo.MathGame.primeFactors(MathGame.java:46)
+                    at demo.MathGame.run(MathGame.java:24)
+                    at demo.MathGame.main(MathGame.java:16)
+
+Affect(row-cnt:1) cost in 11 ms.
 ```
 
-### Re-produce
+### Replay record
 
-Since Arthas stores the context of the call, you can even *replay* the method calling afterwards with extra option `-p` to re-produce the issue for advanced troubleshooting.
+Since Arthas stores the context of the call, you can even *replay* the method calling afterwards with extra option `-p` to replay the issue for advanced troubleshooting.
 
-```
-$ tt -i 1003 -p
-+-----------------+---------------------------------------------------------------------------------------------------------+
-|        RE-INDEX | 1003                                                                                                    |
-+-----------------+---------------------------------------------------------------------------------------------------------+
-|      GMT-REPLAY | 2015-07-26 17:29:51                                                                                     |
-+-----------------+---------------------------------------------------------------------------------------------------------+
-|          OBJECT | 0x42cc13a0                                                                                              |
-+-----------------+---------------------------------------------------------------------------------------------------------+
-|           CLASS | GaOgnlUtilsTest                                                                                         |
-+-----------------+---------------------------------------------------------------------------------------------------------+
-|          METHOD | printAddress                                                                                            |
-+-----------------+---------------------------------------------------------------------------------------------------------+
-|   PARAMETERS[0] | Address@53448f87                                                                                        |
-+-----------------+---------------------------------------------------------------------------------------------------------+
-|       IS-RETURN | false                                                                                                   |
-+-----------------+---------------------------------------------------------------------------------------------------------+
-|    IS-EXCEPTION | true                                                                                                    |
-+-----------------+---------------------------------------------------------------------------------------------------------+
-| THROW-EXCEPTION | java.lang.RuntimeException: test                                                                        |
-|                 |     at GaOgnlUtilsTest.printAddress(GaOgnlUtilsTest.java:78)                                            |
-|                 |     at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)                                      |
-|                 |     at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)                    |
-|                 |     at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)            |
-|                 |     at java.lang.reflect.Method.invoke(Method.java:483)                                                 |
-|                 |     at com.github.ompc.Arthas.util.GaMethod.invoke(GaMethod.java:81)                                     |
-|                 |     at com.github.ompc.Arthas.command.TimeTunnelCommand$6.action(TimeTunnelCommand.java:592)             |
-|                 |     at com.github.ompc.Arthas.server.DefaultCommandHandler.execute(DefaultCommandHandler.java:175)       |
-|                 |     at com.github.ompc.Arthas.server.DefaultCommandHandler.executeCommand(DefaultCommandHandler.java:83) |
-|                 |     at com.github.ompc.Arthas.server.GaServer$4.run(GaServer.java:329)                                   |
-|                 |     at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1142)                  |
-|                 |     at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:617)                  |
-|                 |     at java.lang.Thread.run(Thread.java:745)                                                            |
-+-----------------+---------------------------------------------------------------------------------------------------------+
-replay time fragment[1003] success.
-Affect(row-cnt:1) cost in 3 ms.
-$ 
+```bash
+$ tt -i 1004 -p
+ RE-INDEX       1004
+ GMT-REPLAY     2018-12-04 11:26:00
+ OBJECT         0x4b67cf4d
+ CLASS          demo.MathGame
+ METHOD         primeFactors
+ PARAMETERS[0]  @Integer[946738738]
+ IS-RETURN      true
+ IS-EXCEPTION   false
+ RETURN-OBJ     @ArrayList[
+                    @Integer[2],
+                    @Integer[11],
+                    @Integer[17],
+                    @Integer[2531387],
+                ]
+Time fragment[1004] successfully replayed.
+Affect(row-cnt:1) cost in 14 ms.
 ```
 
 F.Y.I
-1. the calling stack is little different using Arthas now unlike the original;
-2. **Loss** of the thread local variables will be a undeniable fact since there is no way for Arthas to record the thread local info (*If you find one, please share with us in [issues tracker](https://github.com/alibaba/arthas/issues)*). 
-3. **Potential** modifications of objects can happen since only a reference will be recorded while later operations might modify objects without Arthas's watch.
+
+1. **Loss** of the `ThreadLocal`
+
+    Arthas save params into an array, then invoke the method with the params again. The method execute in another thead, so the `ThreadLocal` **lost**.
+
+1. params may be modified
+
+    Arthas save params into an array, they are object references. The Objects may be modified by other code.
+

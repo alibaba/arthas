@@ -95,7 +95,7 @@
 <li class="toctree-l2"><a class="reference internal" href="#demo">1. 启动Demo</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#arthas">2. 启动arthas</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#dashboard">3. 查看dashboard</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#threadmain-class">4. 通过thread命令来获取到进程的Main Class</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#threadarthas-demomain-class">4. 通过thread命令来获取到<code class="docutils literal notranslate"><span class="pre">arthas-demo</span></code>进程的Main Class</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#jadmain-class">5. 通过jad来反编绎Main Class</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#watch">6. watch</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#arthas">5. 退出arthas</a></li>
@@ -179,8 +179,8 @@
 <span id="id1"></span><h1>快速入门<a class="headerlink" href="#" title="永久链接至标题">¶</a></h1>
 <div class="section" id="demo">
 <span id="demo"></span><h2>1. 启动Demo<a class="headerlink" href="#demo" title="永久链接至标题">¶</a></h2>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>wget https://alibaba.github.io/arthas/arthas-demo.jar
-java -jar arthas-demo.jar
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$ wget https://alibaba.github.io/arthas/arthas-demo.jar
+$ java -jar arthas-demo.jar
 </pre></div>
 </div>
 <p><code class="docutils literal notranslate"><span class="pre">arthas-demo</span></code>是一个简单的程序，每隔一秒生成一个随机数，再执行质因式分解，并打印出分解结果。</p>
@@ -261,10 +261,10 @@ java.home              /Library/Java/JavaVir
 </pre></div>
 </div>
 </div>
-<div class="section" id="threadmain-class">
-<span id="threadmain-class"></span><h2>4. 通过thread命令来获取到进程的Main Class<a class="headerlink" href="#threadmain-class" title="永久链接至标题">¶</a></h2>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ thread -n -1 | grep &#39;main(&#39;
-    at demo.MathGame.main(MathGame.java:17)
+<div class="section" id="threadarthas-demomain-class">
+<span id="threadarthas-demomain-class"></span><h2>4. 通过thread命令来获取到<code class="docutils literal notranslate"><span class="pre">arthas-demo</span></code>进程的Main Class<a class="headerlink" href="#threadarthas-demomain-class" title="永久链接至标题">¶</a></h2>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$ thread -n -1 <span class="p">|</span> grep <span class="s1">&#39;main(&#39;</span>
+    at demo.MathGame.main<span class="o">(</span>MathGame.java:17<span class="o">)</span>
 </pre></div>
 </div>
 </div>

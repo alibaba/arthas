@@ -94,9 +94,9 @@ java.home              /Library/Java/JavaVir
                        e/jre
 ```
 
-## 4. Get the Main Class of the process with the thread command
+## 4. Get the Main Class of the `arthas-demo` process with the thread command
 
-```
+```bash
 $ thread -n -1 | grep 'main('
     at demo.MathGame.main(MathGame.java:17)
 ```

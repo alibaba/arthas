@@ -111,7 +111,13 @@
 <li class="toctree-l2"><a class="reference internal" href="trace.html">trace</a></li>
 <li class="toctree-l2 current"><a class="current reference internal" href="#">stack</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#parameters">Parameters</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#usage">Usage</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#usage">Usage</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#start-demo">Start Demo</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#stack">stack</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#filtering-by-condition-expression">Filtering by condition expression</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#filtering-by-cost">Filtering by cost</a></li>
+</ul>
+</li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="tt.html">tt</a></li>
@@ -238,84 +244,48 @@
 </div>
 <div class="section" id="usage">
 <span id="usage"></span><h2>Usage<a class="headerlink" href="#usage" title="Permalink to this headline">¶</a></h2>
-<blockquote>
-<div>Notes: if there’s quotes character (say, <code class="docutils literal notranslate"><span class="pre">'</span></code>) in the expression, then the whole expression must be wrapped by quotes but with the other type (in this case, <code class="docutils literal notranslate"><span class="pre">&quot;</span></code>) too. On contrary, it’s no need to quote the expression itself if there’s no quotes character found in it, but it is strongly recommended.</div></blockquote>
-<p>Print out calling stack when the first method parameter is “K9-BD-01” for ‘getProductById()’ method:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$ stack com.alibaba.sample.petstore.dal.dao.ProductDao getProductById <span class="s1">&#39;params[0]==&quot;K9-BD-01&quot;&#39;</span>
+<div class="section" id="start-demo">
+<span id="start-demo"></span><h3>Start Demo<a class="headerlink" href="#start-demo" title="Permalink to this headline">¶</a></h3>
+<p>Start <code class="docutils literal notranslate"><span class="pre">arthas-demo</span></code> in <a class="reference internal" href="quick-start.html"><span class="doc">Quick Start</span></a>.</p>
+</div>
+<div class="section" id="stack">
+<span id="id1"></span><h3>stack<a class="headerlink" href="#stack" title="Permalink to this headline">¶</a></h3>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$ stack demo.MathGame primeFactors
 Press Ctrl+C to abort.
-Affect<span class="o">(</span>class-cnt:1 , method-cnt:1<span class="o">)</span> cost in <span class="m">51</span> ms.
-<span class="nv">thread_name</span><span class="o">=</span><span class="s2">&quot;http-bio-8080-exec-4&quot;</span> <span class="nv">thread_id</span><span class="o">=</span>0x4a<span class="p">;</span><span class="nv">is_daemon</span><span class="o">=</span>true<span class="p">;</span><span class="nv">priority</span><span class="o">=</span><span class="m">5</span><span class="p">;</span>
-    @com.alibaba.sample.petstore.dal.dao.ibatis.IbatisProductDao.getProductById<span class="o">()</span>
-        at com.alibaba.sample.petstore.web.store.module.screen.ItemList.execute<span class="o">(</span>ItemList.java:50<span class="o">)</span>
-        at com.alibaba.sample.petstore.web.store.module.screen.ItemList<span class="nv">$$</span>FastClassByCGLIB<span class="nv">$$</span>40b2f45f.invoke<span class="o">(</span>&lt;generated&gt;:-1<span class="o">)</span>
-        at net.sf.cglib.reflect.FastMethod.invoke<span class="o">(</span>FastMethod.java:53<span class="o">)</span>
-        at com.alibaba.citrus.service.moduleloader.impl.adapter.MethodInvoker.invoke<span class="o">(</span>MethodInvoker.java:70<span class="o">)</span>
-        at com.alibaba.citrus.service.moduleloader.impl.adapter.DataBindingAdapter.executeAndReturn<span class="o">(</span>DataBindingAdapter.java:41<span class="o">)</span>
-        at com.alibaba.citrus.turbine.pipeline.valve.PerformScreenValve.performScreenModule<span class="o">(</span>PerformScreenValve.java:111<span class="o">)</span>
-        at com.alibaba.citrus.turbine.pipeline.valve.PerformScreenValve.invoke<span class="o">(</span>PerformScreenValve.java:74<span class="o">)</span>
-        at com.alibaba.citrus.service.pipeline.impl.PipelineImpl<span class="nv">$PipelineContextImpl</span>.invokeNext<span class="o">(</span>PipelineImpl.java:157<span class="o">)</span>
-        at com.alibaba.citrus.turbine.pipeline.valve.PerformActionValve.invoke<span class="o">(</span>PerformActionValve.java:73<span class="o">)</span>
-        at com.alibaba.citrus.service.pipeline.impl.PipelineImpl<span class="nv">$PipelineContextImpl</span>.invokeNext<span class="o">(</span>PipelineImpl.java:157<span class="o">)</span>
-        at com.alibaba.citrus.service.pipeline.impl.PipelineImpl<span class="nv">$PipelineContextImpl</span>.invoke<span class="o">(</span>PipelineImpl.java:210<span class="o">)</span>
-......
-
-<span class="nv">thread_name</span><span class="o">=</span><span class="s2">&quot;http-bio-8080-exec-2&quot;</span> <span class="nv">thread_id</span><span class="o">=</span>0x48<span class="p">;</span><span class="nv">is_daemon</span><span class="o">=</span>true<span class="p">;</span><span class="nv">priority</span><span class="o">=</span><span class="m">5</span><span class="p">;</span>
-    @com.alibaba.sample.petstore.dal.dao.ibatis.IbatisProductDao.getProductById<span class="o">()</span>
-        at com.alibaba.sample.petstore.web.store.module.screen.ItemList.execute<span class="o">(</span>ItemList.java:50<span class="o">)</span>
-        at com.alibaba.sample.petstore.web.store.module.screen.ItemList<span class="nv">$$</span>FastClassByCGLIB<span class="nv">$$</span>40b2f45f.invoke<span class="o">(</span>&lt;generated&gt;:-1<span class="o">)</span>
-        at net.sf.cglib.reflect.FastMethod.invoke<span class="o">(</span>FastMethod.java:53<span class="o">)</span>
-        at com.alibaba.citrus.service.moduleloader.impl.adapter.MethodInvoker.invoke<span class="o">(</span>MethodInvoker.java:70<span class="o">)</span>
-        at com.alibaba.citrus.service.moduleloader.impl.adapter.DataBindingAdapter.executeAndReturn<span class="o">(</span>DataBindingAdapter.java:41<span class="o">)</span>
-        at com.alibaba.citrus.turbine.pipeline.valve.PerformScreenValve.performScreenModule<span class="o">(</span>PerformScreenValve.java:111<span class="o">)</span>
-        at com.alibaba.citrus.turbine.pipeline.valve.PerformScreenValve.invoke<span class="o">(</span>PerformScreenValve.java:74<span class="o">)</span>
-        at com.alibaba.citrus.service.pipeline.impl.PipelineImpl<span class="nv">$PipelineContextImpl</span>.invokeNext<span class="o">(</span>PipelineImpl.java:157<span class="o">)</span>
-        at com.alibaba.citrus.turbine.pipeline.valve.PerformActionValve.invoke<span class="o">(</span>PerformActionValve.java:73<span class="o">)</span>
-        at com.alibaba.citrus.service.pipeline.impl.PipelineImpl<span class="nv">$PipelineContextImpl</span>.invokeNext<span class="o">(</span>PipelineImpl.java:157<span class="o">)</span>
-        at com.alibaba.citrus.service.pipeline.impl.PipelineImpl<span class="nv">$PipelineContextImpl</span>.invoke<span class="o">(</span>PipelineImpl.java:210<span class="o">)</span>
-        at com.alibaba.citrus.service.pipeline.impl.valve.ChooseValve.invoke<span class="o">(</span>ChooseValve.java:98<span class="o">)</span>
-        at com.alibaba.citrus.service.pipeline.impl.PipelineImpl<span class="nv">$PipelineContextImpl</span>.invokeNext<span class="o">(</span>PipelineImpl.java:157<span class="o">)</span>
-...
+Affect<span class="o">(</span>class-cnt:1 , method-cnt:1<span class="o">)</span> cost in <span class="m">36</span> ms.
+<span class="nv">ts</span><span class="o">=</span><span class="m">2018</span>-12-04 <span class="m">01</span>:32:19<span class="p">;</span><span class="nv">thread_name</span><span class="o">=</span>main<span class="p">;</span><span class="nv">id</span><span class="o">=</span><span class="m">1</span><span class="p">;</span><span class="nv">is_daemon</span><span class="o">=</span>false<span class="p">;</span><span class="nv">priority</span><span class="o">=</span><span class="m">5</span><span class="p">;</span><span class="nv">TCCL</span><span class="o">=</span>sun.misc.Launcher<span class="nv">$AppClassLoader</span>@3d4eac69
+    @demo.MathGame.run<span class="o">()</span>
+        at demo.MathGame.main<span class="o">(</span>MathGame.java:16<span class="o">)</span>
 </pre></div>
 </div>
-<p>Print out the calling stack when method ‘execute()’ takes more than 30ms to finish:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$ stack com.alibaba.sample.petstore.web.store.module.screen.ItemList execute <span class="c1">#cost&gt;30</span>
+</div>
+<div class="section" id="filtering-by-condition-expression">
+<span id="filtering-by-condition-expression"></span><h3>Filtering by condition expression<a class="headerlink" href="#filtering-by-condition-expression" title="Permalink to this headline">¶</a></h3>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$ stack demo.MathGame primeFactors <span class="s1">&#39;params[0]&lt;0&#39;</span> -n <span class="m">2</span>
 Press Ctrl+C to abort.
-Affect<span class="o">(</span>class-cnt:1 , method-cnt:1<span class="o">)</span> cost in <span class="m">123</span> ms.
-stack com.alibaba.sample.petstore.web.store.module.screen.ItemList execute <span class="c1">#cost&gt;30</span>
-<span class="nv">thread_name</span><span class="o">=</span>http-nio-8080-exec-10<span class="p">;</span><span class="nv">id</span><span class="o">=</span><span class="m">31</span><span class="p">;</span><span class="nv">is_daemon</span><span class="o">=</span>true<span class="p">;</span><span class="nv">priority</span><span class="o">=</span><span class="m">5</span><span class="p">;</span><span class="nv">TCCL</span><span class="o">=</span>com.taobao.pandora.boot.embedded.tomcat.TomcatEmbeddedWebappClassLoader
-    @com.alibaba.sample.petstore.web.store.module.screen.ItemList.execute<span class="o">()</span>
-        at com.alibaba.sample.petstore.web.store.module.screen.ItemList<span class="nv">$$</span>FastClassByCGLIB<span class="nv">$$</span>40b2f45f.invoke<span class="o">(</span>&lt;generated&gt;:-1<span class="o">)</span>
-        at net.sf.cglib.reflect.FastMethod.invoke<span class="o">(</span>FastMethod.java:53<span class="o">)</span>
-        at com.alibaba.citrus.service.moduleloader.impl.adapter.MethodInvoker.invoke<span class="o">(</span>MethodInvoker.java:70<span class="o">)</span>
-        at com.alibaba.citrus.service.moduleloader.impl.adapter.DataBindingAdapter.executeAndReturn<span class="o">(</span>DataBindingAdapter.java:41<span class="o">)</span>
-        at com.alibaba.citrus.turbine.pipeline.valve.PerformScreenValve.performScreenModule<span class="o">(</span>PerformScreenValve.java:111<span class="o">)</span>
-        at com.alibaba.citrus.turbine.pipeline.valve.PerformScreenValve.invoke<span class="o">(</span>PerformScreenValve.java:74<span class="o">)</span>
-        at com.alibaba.citrus.service.pipeline.impl.PipelineImpl<span class="nv">$PipelineContextImpl</span>.invokeNext<span class="o">(</span>PipelineImpl.java:157<span class="o">)</span>
-        at com.alibaba.citrus.turbine.pipeline.valve.PerformActionValve.invoke<span class="o">(</span>PerformActionValve.java:73<span class="o">)</span>
-        at com.alibaba.citrus.service.pipeline.impl.PipelineImpl<span class="nv">$PipelineContextImpl</span>.invokeNext<span class="o">(</span>PipelineImpl.java:157<span class="o">)</span>
-        at com.alibaba.citrus.service.pipeline.impl.PipelineImpl<span class="nv">$PipelineContextImpl</span>.invoke<span class="o">(</span>PipelineImpl.java:210<span class="o">)</span>
-        at com.alibaba.citrus.service.pipeline.impl.valve.ChooseValve.invoke<span class="o">(</span>ChooseValve.java:98<span class="o">)</span>
-        at com.alibaba.citrus.service.pipeline.impl.PipelineImpl<span class="nv">$PipelineContextImpl</span>.invokeNext<span class="o">(</span>PipelineImpl.java:157<span class="o">)</span>
-        at com.alibaba.citrus.service.pipeline.impl.PipelineImpl<span class="nv">$PipelineContextImpl</span>.invoke<span class="o">(</span>PipelineImpl.java:210<span class="o">)</span>
-        at com.alibaba.citrus.service.pipeline.impl.valve.LoopValve.invokeBody<span class="o">(</span>LoopValve.java:105<span class="o">)</span>
-        at com.alibaba.citrus.service.pipeline.impl.valve.LoopValve.invoke<span class="o">(</span>LoopValve.java:83<span class="o">)</span>
-        at com.alibaba.citrus.service.pipeline.impl.PipelineImpl<span class="nv">$PipelineContextImpl</span>.invokeNext<span class="o">(</span>PipelineImpl.java:157<span class="o">)</span>
-        at com.alibaba.citrus.turbine.pipeline.valve.PageAuthorizationValve.invoke<span class="o">(</span>PageAuthorizationValve.java:105<span class="o">)</span>
-        at com.alibaba.citrus.service.pipeline.impl.PipelineImpl<span class="nv">$PipelineContextImpl</span>.invokeNext<span class="o">(</span>PipelineImpl.java:157<span class="o">)</span>
-        at com.alibaba.citrus.turbine.pipeline.valve.CheckCsrfTokenValve.invoke<span class="o">(</span>CheckCsrfTokenValve.java:123<span class="o">)</span>
-        at com.alibaba.citrus.service.pipeline.impl.PipelineImpl<span class="nv">$PipelineContextImpl</span>.invokeNext<span class="o">(</span>PipelineImpl.java:157<span class="o">)</span>
-        at com.alibaba.citrus.turbine.pipeline.valve.AnalyzeURLValve.invoke<span class="o">(</span>AnalyzeURLValve.java:126<span class="o">)</span>
-        at com.alibaba.citrus.service.pipeline.impl.PipelineImpl<span class="nv">$PipelineContextImpl</span>.invokeNext<span class="o">(</span>PipelineImpl.java:157<span class="o">)</span>
-        at com.alibaba.citrus.turbine.pipeline.valve.SetLoggingContextValve.invoke<span class="o">(</span>SetLoggingContextValve.java:66<span class="o">)</span>
-        at com.alibaba.citrus.service.pipeline.impl.PipelineImpl<span class="nv">$PipelineContextImpl</span>.invokeNext<span class="o">(</span>PipelineImpl.java:157<span class="o">)</span>
-        at com.alibaba.citrus.turbine.pipeline.valve.PrepareForTurbineValve.invoke<span class="o">(</span>PrepareForTurbineValve.java:52<span class="o">)</span>
-        at com.alibaba.citrus.service.pipeline.impl.PipelineImpl<span class="nv">$PipelineContextImpl</span>.invokeNext<span class="o">(</span>PipelineImpl.java:157<span class="o">)</span>
-        at com.alibaba.citrus.service.pipeline.impl.PipelineImpl<span class="nv">$PipelineContextImpl</span>.invoke<span class="o">(</span>PipelineImpl.java:210<span class="o">)</span>
-        at com.alibaba.citrus.webx.impl.WebxControllerImpl.service<span class="o">(</span>WebxControllerImpl.java:43<span class="o">)</span>
-        at com.alibaba.citrus.webx.impl.WebxRootControllerImpl.handleRequest<span class="o">(</span>WebxRootControllerImpl.java:53<span class="o">)</span>
-        at com.alibaba.citrus.webx.support.AbstractWebxRootController.service<span class="o">(</span>AbstractWebxRootController.java:165<span class="o">)</span>
-...
+Affect<span class="o">(</span>class-cnt:1 , method-cnt:1<span class="o">)</span> cost in <span class="m">30</span> ms.
+<span class="nv">ts</span><span class="o">=</span><span class="m">2018</span>-12-04 <span class="m">01</span>:34:27<span class="p">;</span><span class="nv">thread_name</span><span class="o">=</span>main<span class="p">;</span><span class="nv">id</span><span class="o">=</span><span class="m">1</span><span class="p">;</span><span class="nv">is_daemon</span><span class="o">=</span>false<span class="p">;</span><span class="nv">priority</span><span class="o">=</span><span class="m">5</span><span class="p">;</span><span class="nv">TCCL</span><span class="o">=</span>sun.misc.Launcher<span class="nv">$AppClassLoader</span>@3d4eac69
+    @demo.MathGame.run<span class="o">()</span>
+        at demo.MathGame.main<span class="o">(</span>MathGame.java:16<span class="o">)</span>
+
+<span class="nv">ts</span><span class="o">=</span><span class="m">2018</span>-12-04 <span class="m">01</span>:34:30<span class="p">;</span><span class="nv">thread_name</span><span class="o">=</span>main<span class="p">;</span><span class="nv">id</span><span class="o">=</span><span class="m">1</span><span class="p">;</span><span class="nv">is_daemon</span><span class="o">=</span>false<span class="p">;</span><span class="nv">priority</span><span class="o">=</span><span class="m">5</span><span class="p">;</span><span class="nv">TCCL</span><span class="o">=</span>sun.misc.Launcher<span class="nv">$AppClassLoader</span>@3d4eac69
+    @demo.MathGame.run<span class="o">()</span>
+        at demo.MathGame.main<span class="o">(</span>MathGame.java:16<span class="o">)</span>
+
+Command execution <span class="nb">times</span> exceed limit: <span class="m">2</span>, so <span class="nb">command</span> will exit. You can <span class="nb">set</span> it with -n option.
 </pre></div>
+</div>
+</div>
+<div class="section" id="filtering-by-cost">
+<span id="filtering-by-cost"></span><h3>Filtering by cost<a class="headerlink" href="#filtering-by-cost" title="Permalink to this headline">¶</a></h3>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$ stack demo.MathGame primeFactors <span class="s1">&#39;#cost&gt;5&#39;</span>
+Press Ctrl+C to abort.
+Affect<span class="o">(</span>class-cnt:1 , method-cnt:1<span class="o">)</span> cost in <span class="m">35</span> ms.
+<span class="nv">ts</span><span class="o">=</span><span class="m">2018</span>-12-04 <span class="m">01</span>:35:58<span class="p">;</span><span class="nv">thread_name</span><span class="o">=</span>main<span class="p">;</span><span class="nv">id</span><span class="o">=</span><span class="m">1</span><span class="p">;</span><span class="nv">is_daemon</span><span class="o">=</span>false<span class="p">;</span><span class="nv">priority</span><span class="o">=</span><span class="m">5</span><span class="p">;</span><span class="nv">TCCL</span><span class="o">=</span>sun.misc.Launcher<span class="nv">$AppClassLoader</span>@3d4eac69
+    @demo.MathGame.run<span class="o">()</span>
+        at demo.MathGame.main<span class="o">(</span>MathGame.java:16<span class="o">)</span>
+</pre></div>
+</div>
 </div>
 </div>
 </div>
