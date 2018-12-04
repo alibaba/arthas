@@ -34,6 +34,7 @@
     <link rel="next" title="classloader" href="classloader.html" />
     <link rel="prev" title="dump" href="dump.html" />
 <script src="_static/center_page.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.13.1/styles/github.min.css">
  
 
 
@@ -107,7 +108,7 @@
 <li class="toctree-l2 current"><a class="current reference internal" href="#">jad</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#">参数说明</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#">使用参考</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="#java-lang-string">编绎<code class="docutils literal notranslate"><span class="pre">java.lang.String</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#java-lang-string">编绎<tt class="docutils literal">java.lang.String</tt></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#">反编绎指定的函数</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#classloader">反编绎时指定ClassLoader</a></li>
 </ul>
@@ -126,7 +127,7 @@
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas/issues?q=label%3Auser-case">用户案例</a></li>
-<li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas/issues?q=label%3Aquestion-answered">Questions and answers</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas/issues?q=label%3Aquestion-answered">常见问题</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas">Fork me at GitHub</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas/blob/master/CONTRIBUTING.md">参与贡献</a></li>
 <li class="toctree-l1"><a class="reference internal" href="release-notes.html">Release Notes</a></li>
@@ -203,7 +204,7 @@
 <span id="jad"></span><h1>jad<a class="headerlink" href="#jad" title="永久链接至标题">¶</a></h1>
 <blockquote>
 <div>反编译指定已加载类的源码</div></blockquote>
-<p><code class="docutils literal notranslate"><span class="pre">jad</span></code> 命令将 JVM 中实际运行的 class 的 byte code 反编译成 java 代码，便于你理解业务逻辑；</p>
+<p><tt class="docutils literal">jad</tt> 命令将 JVM 中实际运行的 class 的 byte code 反编译成 java 代码，便于你理解业务逻辑；</p>
 <ul class="simple">
 <li>在 Arthas Console 上，反编译出来的源码是带语法高亮的，阅读更方便</li>
 <li>当然，反编译出来的 java 代码可能会存在语法错误，但不影响你进行阅读理解</li>
@@ -235,41 +236,41 @@
 <div class="section" id="">
 <span id="id2"></span><h2>使用参考<a class="headerlink" href="#" title="永久链接至标题">¶</a></h2>
 <div class="section" id="java-lang-string">
-<span id="java-lang-string"></span><h3>编绎<code class="docutils literal notranslate"><span class="pre">java.lang.String</span></code><a class="headerlink" href="#java-lang-string" title="永久链接至标题">¶</a></h3>
-<div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="n">$</span> <span class="n">jad</span> <span class="n">java</span><span class="o">.</span><span class="na">lang</span><span class="o">.</span><span class="na">String</span>
+<span id="java-lang-string"></span><h3>编绎<tt class="docutils literal">java.lang.String</tt><a class="headerlink" href="#java-lang-string" title="永久链接至标题">¶</a></h3>
+<div class="highlight-java notranslate"><div class="highlight hljs"><pre class="java">$ jad java.lang.String
 
-<span class="nl">ClassLoader:</span>
+ClassLoader:
 
-<span class="nl">Location:</span>
+Location:
 
-<span class="cm">/*</span>
-<span class="cm">* Decompiled with CFR 0_132.</span>
-<span class="cm">*/</span>
-<span class="kn">package</span> <span class="nn">java.lang</span><span class="o">;</span>
+/*
+* Decompiled with CFR 0_132.
+*/
+package java.lang;
 
-<span class="kn">import</span> <span class="nn">java.io.ObjectStreamField</span><span class="o">;</span>
-<span class="o">...</span>
-<span class="kd">public</span> <span class="kd">final</span> <span class="kd">class</span> <span class="nc">String</span>
-<span class="kd">implements</span> <span class="n">Serializable</span><span class="o">,</span>
-<span class="n">Comparable</span><span class="o">&lt;</span><span class="n">String</span><span class="o">&gt;,</span>
-<span class="n">CharSequence</span> <span class="o">{</span>
-    <span class="kd">private</span> <span class="kd">final</span> <span class="kt">char</span><span class="o">[]</span> <span class="n">value</span><span class="o">;</span>
-    <span class="kd">private</span> <span class="kt">int</span> <span class="n">hash</span><span class="o">;</span>
-    <span class="kd">private</span> <span class="kd">static</span> <span class="kd">final</span> <span class="kt">long</span> <span class="n">serialVersionUID</span> <span class="o">=</span> <span class="o">-</span><span class="mi">6849794470754667710L</span><span class="o">;</span>
-    <span class="kd">private</span> <span class="kd">static</span> <span class="kd">final</span> <span class="n">ObjectStreamField</span><span class="o">[]</span> <span class="n">serialPersistentFields</span> <span class="o">=</span> <span class="k">new</span> <span class="n">ObjectStreamField</span><span class="o">[</span><span class="mi">0</span><span class="o">];</span>
-    <span class="kd">public</span> <span class="kd">static</span> <span class="kd">final</span> <span class="n">Comparator</span><span class="o">&lt;</span><span class="n">String</span><span class="o">&gt;</span> <span class="n">CASE_INSENSITIVE_ORDER</span> <span class="o">=</span> <span class="k">new</span> <span class="n">CaseInsensitiveComparator</span><span class="o">();</span>
+import java.io.ObjectStreamField;
+...
+public final class String
+implements Serializable,
+Comparable&lt;String&gt;,
+CharSequence {
+    private final char[] value;
+    private int hash;
+    private static final long serialVersionUID = -6849794470754667710L;
+    private static final ObjectStreamField[] serialPersistentFields = new ObjectStreamField[0];
+    public static final Comparator&lt;String&gt; CASE_INSENSITIVE_ORDER = new CaseInsensitiveComparator();
 
-    <span class="kd">public</span> <span class="nf">String</span><span class="o">(</span><span class="kt">byte</span><span class="o">[]</span> <span class="n">arrby</span><span class="o">,</span> <span class="kt">int</span> <span class="n">n</span><span class="o">,</span> <span class="kt">int</span> <span class="n">n2</span><span class="o">)</span> <span class="o">{</span>
-        <span class="n">String</span><span class="o">.</span><span class="na">checkBounds</span><span class="o">(</span><span class="n">arrby</span><span class="o">,</span> <span class="n">n</span><span class="o">,</span> <span class="n">n2</span><span class="o">);</span>
-        <span class="k">this</span><span class="o">.</span><span class="na">value</span> <span class="o">=</span> <span class="n">StringCoding</span><span class="o">.</span><span class="na">decode</span><span class="o">(</span><span class="n">arrby</span><span class="o">,</span> <span class="n">n</span><span class="o">,</span> <span class="n">n2</span><span class="o">);</span>
-    <span class="o">}</span>
-<span class="o">...</span>
+    public String(byte[] arrby, int n, int n2) {
+        String.checkBounds(arrby, n, n2);
+        this.value = StringCoding.decode(arrby, n, n2);
+    }
+...
 </pre></div>
 </div>
 </div>
 <div class="section" id="">
 <span id="id3"></span><h3>反编绎指定的函数<a class="headerlink" href="#" title="永久链接至标题">¶</a></h3>
-<div class="highlight-java notranslate"><div class="highlight"><pre><span></span>$ jad demo.MathGame main
+<div class="highlight-java notranslate"><div class="highlight hljs"><pre class="java">$ jad demo.MathGame main
 
 ClassLoader:
 +-sun.misc.Launcher$AppClassLoader@3d4eac69
@@ -293,23 +294,23 @@ Affect(row-cnt:1) cost in 228 ms.
 <div class="section" id="classloader">
 <span id="classloader"></span><h3>反编绎时指定ClassLoader<a class="headerlink" href="#classloader" title="永久链接至标题">¶</a></h3>
 <blockquote>
-<div>当有多个 <code class="docutils literal notranslate"><span class="pre">ClassLoader</span></code> 都加载了这个类时，<code class="docutils literal notranslate"><span class="pre">jad</span></code> 命令会输出对应 <code class="docutils literal notranslate"><span class="pre">ClassLoader</span></code> 实例的 <code class="docutils literal notranslate"><span class="pre">hashcode</span></code>，然后你只需要重新执行 <code class="docutils literal notranslate"><span class="pre">jad</span></code> 命令，并使用参数 <code class="docutils literal notranslate"><span class="pre">-c</span> <span class="pre">&lt;hashcode&gt;</span></code> 就可以反编译指定 ClassLoader 加载的那个类了；</div></blockquote>
-<div class="highlight-java notranslate"><div class="highlight"><pre><span></span>$ jad org.apache.log4j.Logger
+<div>当有多个 <tt class="docutils literal">ClassLoader</tt> 都加载了这个类时，<tt class="docutils literal">jad</tt> 命令会输出对应 <tt class="docutils literal">ClassLoader</tt> 实例的 <tt class="docutils literal">hashcode</tt>，然后你只需要重新执行 <tt class="docutils literal">jad</tt> 命令，并使用参数 <tt class="docutils literal">-c <hashcode></tt> 就可以反编译指定 ClassLoader 加载的那个类了；</div></blockquote>
+<div class="highlight-java notranslate"><div class="highlight hljs"><pre class="java">$ jad org.apache.log4j.Logger
 
 Found more than one class for: org.apache.log4j.Logger, Please use jad -c hashcode org.apache.log4j.Logger
 HASHCODE  CLASSLOADER
-69dcaba4  +-monitor&#39;s ModuleClassLoader
+69dcaba4  +-monitor&#x27;s ModuleClassLoader
 6e51ad67  +-java.net.URLClassLoader@6e51ad67
             +-sun.misc.Launcher$AppClassLoader@6951a712
             +-sun.misc.Launcher$ExtClassLoader@6fafc4c2
-2bdd9114  +-pandora-qos-service&#39;s ModuleClassLoader
-4c0df5f8  +-pandora-framework&#39;s ModuleClassLoader
+2bdd9114  +-pandora-qos-service&#x27;s ModuleClassLoader
+4c0df5f8  +-pandora-framework&#x27;s ModuleClassLoader
 
 Affect(row-cnt:0) cost in 38 ms.
 $ jad org.apache.log4j.Logger -c 69dcaba4
 
 ClassLoader:
-+-monitor&#39;s ModuleClassLoader
++-monitor&#x27;s ModuleClassLoader
 
 Location:
 /Users/admin/app/log4j-1.2.14.jar
@@ -408,6 +409,15 @@ Affect(row-cnt:1) cost in 190 ms.
 </div>
 
 <script type="text/javascript" src="_static/add_badges.js"></script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.13.1/highlight.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlightjs-line-numbers.js/2.5.0/highlightjs-line-numbers.min.js"></script>
+<script>
+  document.querySelectorAll('div.hljs > pre').forEach(function(block) {
+    hljs.highlightBlock(block);
+    hljs.lineNumbersBlock(block);
+  });
+</script>
 
 <script>
   var _hmt = _hmt || [];

@@ -32,6 +32,7 @@
     <link rel="index" title="索引" href="genindex.html" />
     <link rel="search" title="搜索" href="search.html" />
 <script src="_static/center_page.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.13.1/styles/github.min.css">
  
 
 
@@ -93,7 +94,7 @@
 <li class="toctree-l1"><a class="reference internal" href="advanced-use.html">进阶使用</a></li>
 <li class="toctree-l1"><a class="reference internal" href="commands.html">命令列表</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas/issues?q=label%3Auser-case">用户案例</a></li>
-<li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas/issues?q=label%3Aquestion-answered">Questions and answers</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas/issues?q=label%3Aquestion-answered">常见问题</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas">Fork me at GitHub</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas/blob/master/CONTRIBUTING.md">参与贡献</a></li>
 <li class="toctree-l1"><a class="reference internal" href="release-notes.html">Release Notes</a></li>
@@ -180,22 +181,22 @@
 </div>
 <div class="section" id="">
 <span id="id4"></span><h2>管道支持<a class="headerlink" href="#" title="永久链接至标题">¶</a></h2>
-<p>Arthas 3.0开始支持管道, 率先提供了<code class="docutils literal notranslate"><span class="pre">grep</span></code>,<code class="docutils literal notranslate"><span class="pre">wc</span></code>,<code class="docutils literal notranslate"><span class="pre">plaintext</span></code>的支持。</p>
+<p>Arthas 3.0开始支持管道, 率先提供了<tt class="docutils literal">grep</tt>,<tt class="docutils literal">wc</tt>,<tt class="docutils literal">plaintext</tt>的支持。</p>
 </div>
 </div>
 <div class="section" id="groovy">
 <span id="groovy"></span><h1>去groovy依赖<a class="headerlink" href="#groovy" title="永久链接至标题">¶</a></h1>
 <p>groovy表达式在arthas2.0中大量使用，例如watch表达式</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>watch com.alibaba.sample.petstore.web.store.module.screen.ItemList add <span class="s2">&quot;params + &#39; &#39; + returnObj&quot;</span> params.size<span class="o">()==</span><span class="m">2</span>
+<div class="highlight-bash notranslate"><div class="highlight hljs"><pre class="bash">watch com.alibaba.sample.petstore.web.store.module.screen.ItemList add &quot;params + &#x27; &#x27; + returnObj&quot; params.size()==2
 </pre></div>
 </div>
-<p>其中<code class="docutils literal notranslate"><span class="pre">&quot;params</span> <span class="pre">+</span> <span class="pre">'</span> <span class="pre">'</span> <span class="pre">+</span> <span class="pre">returnObj&quot;</span></code>以及<code class="docutils literal notranslate"><span class="pre">params.size()==2</span></code>背后其实都使用了groovy来进行表达式求值，如果反复大量的运行这些表达式，groovy会创建大量的classloader，打满perm区从而触发FGC。</p>
+<p>其中<tt class="docutils literal">"params + ' ' + returnObj"</tt>以及<tt class="docutils literal">params.size()==2</tt>背后其实都使用了groovy来进行表达式求值，如果反复大量的运行这些表达式，groovy会创建大量的classloader，打满perm区从而触发FGC。</p>
 <p>为了避免这个问题，Arthas 3.0中使用了ognl这个更加轻量的表达式求值库来代替groovy，彻底解决了groovy引起的FGC风险。但由于这个替换，导致原来使用groovy脚本编写的自定义脚本失效。这个问题留待后续解决。</p>
 <p>在3.0中，watch命令的表达式部分的书写有了一些改变，详见<a class="reference external" href="https://alibaba.github.io/arthas/watch">这里</a></p>
 <div class="section" id="rt">
 <span id="rt"></span><h2>提升rt统计精度<a class="headerlink" href="#rt" title="永久链接至标题">¶</a></h2>
-<p>Arthas 2.0中，统计rt都是以<code class="docutils literal notranslate"><span class="pre">ms</span></code>为单位，对于某些比较小的方法调用，耗时在毫秒以下的都会被认为是0ms，造成trace总时间和各方法的时间相加不一致等问题（虽然这里面确实会有误差，主要Arthas自身的开销）。Arthas 3.0中所有rt的单位统一改为使用<code class="docutils literal notranslate"><span class="pre">ns</span></code>来统计，精准捕获你的方法耗时，让0ms这样无意义的统计数据不再出现！</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ tt -l
+<p>Arthas 2.0中，统计rt都是以<tt class="docutils literal">ms</tt>为单位，对于某些比较小的方法调用，耗时在毫秒以下的都会被认为是0ms，造成trace总时间和各方法的时间相加不一致等问题（虽然这里面确实会有误差，主要Arthas自身的开销）。Arthas 3.0中所有rt的单位统一改为使用<tt class="docutils literal">ns</tt>来统计，精准捕获你的方法耗时，让0ms这样无意义的统计数据不再出现！</p>
+<div class="highlight-default notranslate"><pre class="literal-block">$ tt -l
  INDEX     TIMESTAMP               COST(ms)    IS-RET    IS-EXP   OBJECT            CLASS                                METHOD
 ------------------------------------------------------------------------------------------------------------------------------------------------------------
  1000      2017-02-24 10:56:46     808.743525  true      false    0x3bd5e918        TestTraceServlet                     doGet
@@ -203,18 +204,17 @@
  1002      2017-02-24 10:57:04     808.026935  true      false    0x3bd5e918        TestTraceServlet                     doGet
  1003      2017-02-24 10:57:22     805.036963  true      false    0x3bd5e918        TestTraceServlet                     doGet
  1004      2017-02-24 10:57:24     803.581886  true      false    0x3bd5e918        TestTraceServlet                     doGet
- 1005      2017-02-24 10:57:39     814.657657  true      false    0x3bd5e918        TestTraceServlet                     doGet
-</pre></div>
+ 1005      2017-02-24 10:57:39     814.657657  true      false    0x3bd5e918        TestTraceServlet                     doGet</pre>
 </div>
 </div>
 <div class="section" id="watch-stack-trace">
 <span id="watch-stack-trace"></span><h2>watch/stack/trace命令支持按耗时过滤<a class="headerlink" href="#watch-stack-trace" title="永久链接至标题">¶</a></h2>
-<p>我们在trace的时候，经常会出现某个方法间隙性的rt飙高，但是我们只想知道rt高的时候，是哪里慢了，对于正常rt的方法我们并不关心，Arthas 3.0支持了按<code class="docutils literal notranslate"><span class="pre">#cost</span></code>(方法执行耗时,单位为<code class="docutils literal notranslate"><span class="pre">ms</span></code>)进行过滤，只输出符合条件的trace路径，目前，这三个命令的相关文档已经做了更新，增加了该用法的示例。</p>
+<p>我们在trace的时候，经常会出现某个方法间隙性的rt飙高，但是我们只想知道rt高的时候，是哪里慢了，对于正常rt的方法我们并不关心，Arthas 3.0支持了按<tt class="docutils literal">#cost</tt>(方法执行耗时,单位为<tt class="docutils literal">ms</tt>)进行过滤，只输出符合条件的trace路径，目前，这三个命令的相关文档已经做了更新，增加了该用法的示例。</p>
 </div>
 <div class="section" id="syspropsystemproperty">
 <span id="syspropsystemproperty"></span><h2>sysprop命令操作SystemProperty<a class="headerlink" href="#syspropsystemproperty" title="永久链接至标题">¶</a></h2>
 <p>sysprop命令支持查看所有的系统属性，以及针对特定属性进行查看和修改。</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ sysprop
+<div class="highlight-default notranslate"><pre class="literal-block">$ sysprop
 ...
  os.arch                                              x86_64
  java.ext.dirs                                        /Users/wangtao/Library/Java/Extensions:/Library/Java/JavaVirtualMachines/jdk1.
@@ -234,14 +234,13 @@ $ sysprop java.version
 java.version=1.8.0_51
 $ sysprop production.mode true
 Successfully changed the system property.
-production.mode=true
-</pre></div>
+production.mode=true</pre>
 </div>
 </div>
 <div class="section" id="thread">
 <span id="thread"></span><h2>thread命令支持指定采样时间<a class="headerlink" href="#thread" title="永久链接至标题">¶</a></h2>
-<p>thread命令计算线程cpu占用的逻辑，默认是采样100ms内各个线程的cpu使用情况并计算cpu消耗占比。有时候100ms的时间间隔太短，看不出问题所在，Arthas3.0中thread命令支持设置采样间隔(以<code class="docutils literal notranslate"><span class="pre">ms</span></code>为单位)，可以观察任意时间段内的cpu消耗占比情况。</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ thread -i 1000                                                                                                                                                                                                                     
+<p>thread命令计算线程cpu占用的逻辑，默认是采样100ms内各个线程的cpu使用情况并计算cpu消耗占比。有时候100ms的时间间隔太短，看不出问题所在，Arthas3.0中thread命令支持设置采样间隔(以<tt class="docutils literal">ms</tt>为单位)，可以观察任意时间段内的cpu消耗占比情况。</p>
+<div class="highlight-default notranslate"><pre class="literal-block">$ thread -i 1000                                                                                                                                                                                                                     
 Threads Total: 74, NEW: 0, RUNNABLE: 17, BLOCKED: 0, WAITING: 15, TIMED_WAITING: 42, TERMINATED: 0                                                                                                                                   
 ID                 NAME                                                     GROUP                                  PRIORITY           STATE              %CPU               TIME               INTERRUPTED        DAEMON             
 78                 com.taobao.config.client.timer                           main                                   5                  TIMED_WAITING      22                 0:0                false              true               
@@ -257,8 +256,7 @@ ID                 NAME                                                     GROU
 345                nioEventLoopGroup-3-3                                    system                                 10                 RUNNABLE           2                  0:0                false              false              
 358                nioEventLoopGroup-3-4                                    system                                 10                 RUNNABLE           2                  0:0                false              false              
 27                 qos-boss-1-1                                             main                                   5                  RUNNABLE           2                  0:0                false              true               
-22                 EagleEye-AsyncAppender-Thread-BizLog                     main                                   5                  TIMED_WAITING      1                  0:0                false              true               
-</pre></div>
+22                 EagleEye-AsyncAppender-Thread-BizLog                     main                                   5                  TIMED_WAITING      1                  0:0                false              true               </pre>
 </div>
 </div>
 <div class="section" id="trace">
@@ -331,6 +329,15 @@ ID                 NAME                                                     GROU
 </div>
 
 <script type="text/javascript" src="_static/add_badges.js"></script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.13.1/highlight.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlightjs-line-numbers.js/2.5.0/highlightjs-line-numbers.min.js"></script>
+<script>
+  document.querySelectorAll('div.hljs > pre').forEach(function(block) {
+    hljs.highlightBlock(block);
+    hljs.lineNumbersBlock(block);
+  });
+</script>
 
 <script>
   var _hmt = _hmt || [];

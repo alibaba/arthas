@@ -34,6 +34,7 @@
     <link rel="next" title="getstatic" href="getstatic.html" />
     <link rel="prev" title="sysprop" href="sysprop.html" />
 <script src="_static/center_page.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.13.1/styles/github.min.css">
  
 
 
@@ -201,27 +202,26 @@
 <div>View the current JVM environment variables.</div></blockquote>
 <div class="section" id="usage">
 <span id="usage"></span><h2>Usage<a class="headerlink" href="#usage" title="Permalink to this headline">¶</a></h2>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span> <span class="n">USAGE</span><span class="p">:</span>
-   <span class="n">sysenv</span> <span class="p">[</span><span class="o">-</span><span class="n">h</span><span class="p">]</span> <span class="p">[</span><span class="n">env</span><span class="o">-</span><span class="n">name</span><span class="p">]</span>
+<div class="highlight-default notranslate"><pre class="literal-block"> USAGE:
+   sysenv [-h] [env-name]
 
- <span class="n">SUMMARY</span><span class="p">:</span>
-   <span class="n">Display</span> <span class="n">the</span> <span class="n">system</span> <span class="n">env</span><span class="o">.</span>
+ SUMMARY:
+   Display the system env.
 
- <span class="n">EXAMPLES</span><span class="p">:</span>
-   <span class="n">sysenv</span>
-   <span class="n">sysenv</span> <span class="n">USER</span>
+ EXAMPLES:
+   sysenv
+   sysenv USER
 
- <span class="n">WIKI</span><span class="p">:</span>
-   <span class="n">https</span><span class="p">:</span><span class="o">//</span><span class="n">alibaba</span><span class="o">.</span><span class="n">github</span><span class="o">.</span><span class="n">io</span><span class="o">/</span><span class="n">arthas</span><span class="o">/</span><span class="n">sysenv</span>
+ WIKI:
+   https://alibaba.github.io/arthas/sysenv
 
- <span class="n">OPTIONS</span><span class="p">:</span>
- <span class="o">-</span><span class="n">h</span><span class="p">,</span> <span class="o">--</span><span class="n">help</span>                                                 <span class="n">this</span> <span class="n">help</span>
- <span class="o">&lt;</span><span class="n">env</span><span class="o">-</span><span class="n">name</span><span class="o">&gt;</span>                                                 <span class="n">env</span> <span class="n">name</span>
-</pre></div>
+ OPTIONS:
+ -h, --help                                                 this help
+ &lt;env-name&gt;                                                 env name</pre>
 </div>
 <div class="section" id="view-all-environment-variables">
 <span id="view-all-environment-variables"></span><h3>View all environment variables<a class="headerlink" href="#view-all-environment-variables" title="Permalink to this headline">¶</a></h3>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ sysenv
+<div class="highlight-default notranslate"><pre class="literal-block">$ sysenv
  KEY                      VALUE
 ----------------------------------------------------------------------------------------------------------------------------
  PATH                     /Users/admin/.sdkman/candidates/visualvm/current/bin:/Users/admin/.sdkman/candidates/ja
@@ -253,17 +253,15 @@
  COLORFGBG                7;0
  HOME                     /Users/admin
  SHLVL                    1
- AUTOJUMP_ERROR_PATH      /Users/admin/Library/autojump/errors.log
-</pre></div>
+ AUTOJUMP_ERROR_PATH      /Users/admin/Library/autojump/errors.log</pre>
 </div>
 </div>
 <div class="section" id="view-individual-environment-variables">
 <span id="view-individual-environment-variables"></span><h3>View individual environment variables<a class="headerlink" href="#view-individual-environment-variables" title="Permalink to this headline">¶</a></h3>
 <blockquote>
-<div>Use <code class="docutils literal notranslate"><span class="pre">tab</span></code> for auto-completion</div></blockquote>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ sysenv USER
-USER=admin
-</pre></div>
+<div>Use <tt class="docutils literal">tab</tt> for auto-completion</div></blockquote>
+<div class="highlight-default notranslate"><pre class="literal-block">$ sysenv USER
+USER=admin</pre>
 </div>
 </div>
 </div>
@@ -340,6 +338,15 @@ USER=admin
 </div>
 
 <script type="text/javascript" src="_static/add_badges.js"></script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.13.1/highlight.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlightjs-line-numbers.js/2.5.0/highlightjs-line-numbers.min.js"></script>
+<script>
+  document.querySelectorAll('div.hljs > pre').forEach(function(block) {
+    hljs.highlightBlock(block);
+    hljs.lineNumbersBlock(block);
+  });
+</script>
 
 <script>
   var _hmt = _hmt || [];

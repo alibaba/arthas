@@ -32,6 +32,7 @@
     <link rel="index" title="索引" href="../genindex.html" />
     <link rel="search" title="搜索" href="../search.html" />
 <script src="../_static/center_page.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.13.1/styles/github.min.css">
  
 
 
@@ -93,7 +94,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../advanced-use.html">进阶使用</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../commands.html">命令列表</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas/issues?q=label%3Auser-case">用户案例</a></li>
-<li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas/issues?q=label%3Aquestion-answered">Questions and answers</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas/issues?q=label%3Aquestion-answered">常见问题</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas">Fork me at GitHub</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas/blob/master/CONTRIBUTING.md">参与贡献</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../release-notes.html">Release Notes</a></li>
@@ -166,7 +167,7 @@
             
   <div class="section" id="arthas-3-0">
 <span id="arthas-3-0"></span><h1>Arthas 3.0新特性介绍<a class="headerlink" href="#arthas-3-0" title="永久链接至标题">¶</a></h1>
-<p>Arthas 3.0在架构上做了重大改造，通过引入<code class="docutils literal notranslate"><span class="pre">termd</span></code>完整的支持了telnet协议，并基于websocket封装了telnet协议实现了<code class="docutils literal notranslate"><span class="pre">Telnet</span> <span class="pre">over</span> <span class="pre">HTTP</span></code>，使得在线诊断成为了可能，并且保证了本地启动，telnet远程访问，在线诊断三种方式的体验完全一致。都支持自动补全，高亮显示等功能。并且支持<code class="docutils literal notranslate"><span class="pre">多人同时在线诊断</span></code>。</p>
+<p>Arthas 3.0在架构上做了重大改造，通过引入<tt class="docutils literal">termd</tt>完整的支持了telnet协议，并基于websocket封装了telnet协议实现了<tt class="docutils literal">Telnet over HTTP</tt>，使得在线诊断成为了可能，并且保证了本地启动，telnet远程访问，在线诊断三种方式的体验完全一致。都支持自动补全，高亮显示等功能。并且支持<tt class="docutils literal">多人同时在线诊断</tt>。</p>
 <div class="section" id="">
 <span id="id1"></span><h2>在线诊断<a class="headerlink" href="#" title="永久链接至标题">¶</a></h2>
 <p>Arthas 3.0最重要的特性，通过Arthas在线诊断平台，无需再登陆目标机器，一键启动Arthas并开启诊断！</p>
@@ -175,53 +176,52 @@
 </div>
 <div class="section" id="">
 <span id="id2"></span><h2>管道支持<a class="headerlink" href="#" title="永久链接至标题">¶</a></h2>
-<p>Arthas 3.0开始支持管道, 率先提供了<code class="docutils literal notranslate"><span class="pre">grep</span></code>,<code class="docutils literal notranslate"><span class="pre">wc</span></code>,<code class="docutils literal notranslate"><span class="pre">plaintext</span></code>的支持。</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span> java.vendor.url                                      http://java.oracle.com/
+<p>Arthas 3.0开始支持管道, 率先提供了<tt class="docutils literal">grep</tt>,<tt class="docutils literal">wc</tt>,<tt class="docutils literal">plaintext</tt>的支持。</p>
+<div class="highlight-bash notranslate"><div class="highlight hljs"><pre class="bash"> java.vendor.url                                      http://java.oracle.com/
  java.vm.vendor                                       Oracle Corporation
- java.runtime.name                                    Java<span class="o">(</span>TM<span class="o">)</span> SE Runtime Environment
+ java.runtime.name                                    Java(TM) SE Runtime Environment
  sun.java.command                                     org.apache.catalina.startup.Bootstrap start
  java.class.path                                      /Users/wangtao/work/ali-tomcat-home/ant-develop/output/build/bin/bootstrap.jar
  java.vm.specification.name                           Java Virtual Machine Specification
- java.vm.specification.version                        <span class="m">1</span>.8
- java.awt.headless                                    <span class="nb">true</span>
+ java.vm.specification.version                        1.8
+ java.awt.headless                                    true
  java.io.tmpdir                                       /Users/wangtao/work/ali-tomcat-home/ant-develop/output/build/temp
  java.vendor.url.bug                                  http://bugreport.sun.com/bugreport/
  java.awt.graphicsenv                                 sun.awt.CGraphicsEnvironment
  java.ext.dirs                                        /Users/wangtao/Library/Java/Extensions:/Library/Java/JavaVirtualMachines/jdk1.
                                                       /Java/Extensions:/System/Library/Java/Extensions:/usr/lib/java
- java.vm.name                                         Java HotSpot<span class="o">(</span>TM<span class="o">)</span> <span class="m">64</span>-Bit Server VM
- java.specification.version                           <span class="m">1</span>.8
-$ sysprop <span class="p">|</span> grep java <span class="p">|</span> wc -l
-<span class="m">36</span>
+ java.vm.name                                         Java HotSpot(TM) 64-Bit Server VM
+ java.specification.version                           1.8
+$ sysprop | grep java | wc -l
+36
 </pre></div>
 </div>
 </div>
 <div class="section" id="">
 <span id="id3"></span><h2>启动自检<a class="headerlink" href="#" title="永久链接至标题">¶</a></h2>
 <p>针对启动时经常出现的权限问题，在启动脚本中增加了自检逻辑，脚本会自动判断目标进程是否具备attach权限，并给出进一步的提示。</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>[huxing.zhx@v125056161.bja /home/huxing.zhx]
+<div class="highlight-default notranslate"><pre class="literal-block">[huxing.zhx@v125056161.bja /home/huxing.zhx]
 $./as.sh 32260
 The current user (huxing.zhx) does not match with the owner of process 32260 (admin).
 To solve this, choose one of the following command:
   1) sudo su admin &amp;&amp; ./as.sh
-  2) sudo -u admin -EH ./as.sh
-</pre></div>
+  2) sudo -u admin -EH ./as.sh</pre>
 </div>
 </div>
 <div class="section" id="groovy">
 <span id="groovy"></span><h2>去groovy依赖<a class="headerlink" href="#groovy" title="永久链接至标题">¶</a></h2>
 <p>groovy表达式在arthas2.0中大量使用，例如watch表达式</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>watch com.alibaba.sample.petstore.web.store.module.screen.ItemList add <span class="s2">&quot;params + &#39; &#39; + returnObj&quot;</span> params.size<span class="o">()==</span><span class="m">2</span>
+<div class="highlight-bash notranslate"><div class="highlight hljs"><pre class="bash">watch com.alibaba.sample.petstore.web.store.module.screen.ItemList add &quot;params + &#x27; &#x27; + returnObj&quot; params.size()==2
 </pre></div>
 </div>
-<p>其中<code class="docutils literal notranslate"><span class="pre">&quot;params</span> <span class="pre">+</span> <span class="pre">'</span> <span class="pre">'</span> <span class="pre">+</span> <span class="pre">returnObj&quot;</span></code>以及<code class="docutils literal notranslate"><span class="pre">params.size()==2</span></code>背后其实都使用了groovy来进行表达式求值，如果反复大量的运行这些表达式，groovy会创建大量的classloader，打满perm区从而触发FGC。</p>
+<p>其中<tt class="docutils literal">"params + ' ' + returnObj"</tt>以及<tt class="docutils literal">params.size()==2</tt>背后其实都使用了groovy来进行表达式求值，如果反复大量的运行这些表达式，groovy会创建大量的classloader，打满perm区从而触发FGC。</p>
 <p>为了避免这个问题，Arthas 3.0中使用了ognl这个更加轻量的表达式求值库来代替groovy，彻底解决了groovy引起的FGC风险。但由于这个替换，导致原来使用groovy脚本编写的自定义脚本失效。这个问题留待后续解决。</p>
 <p>在3.0中，watch命令的表达式部分的书写有了一些改变，详见<a class="reference external" href="https://alibaba.github.io/arthas/watch">这里</a></p>
 </div>
 <div class="section" id="rt">
 <span id="rt"></span><h2>提升rt统计精度<a class="headerlink" href="#rt" title="永久链接至标题">¶</a></h2>
-<p>Arthas 2.0中，统计rt都是以<code class="docutils literal notranslate"><span class="pre">ms</span></code>为单位，对于某些比较小的方法调用，耗时在毫秒以下的都会被认为是0ms，造成trace总时间和各方法的时间相加不一致等问题（虽然这里面确实会有误差，主要Arthas自身的开销）。Arthas 3.0中所有rt的单位统一改为使用<code class="docutils literal notranslate"><span class="pre">ns</span></code>来统计，精准捕获你的方法耗时，让0ms这样无意义的统计数据不再出现！</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ tt -l
+<p>Arthas 2.0中，统计rt都是以<tt class="docutils literal">ms</tt>为单位，对于某些比较小的方法调用，耗时在毫秒以下的都会被认为是0ms，造成trace总时间和各方法的时间相加不一致等问题（虽然这里面确实会有误差，主要Arthas自身的开销）。Arthas 3.0中所有rt的单位统一改为使用<tt class="docutils literal">ns</tt>来统计，精准捕获你的方法耗时，让0ms这样无意义的统计数据不再出现！</p>
+<div class="highlight-default notranslate"><pre class="literal-block">$ tt -l
  INDEX     TIMESTAMP               COST(ms)    IS-RET    IS-EXP   OBJECT            CLASS                                METHOD
 ------------------------------------------------------------------------------------------------------------------------------------------------------------
  1000      2017-02-24 10:56:46     808.743525  true      false    0x3bd5e918        TestTraceServlet                     doGet
@@ -229,19 +229,17 @@ To solve this, choose one of the following command:
  1002      2017-02-24 10:57:04     808.026935  true      false    0x3bd5e918        TestTraceServlet                     doGet
  1003      2017-02-24 10:57:22     805.036963  true      false    0x3bd5e918        TestTraceServlet                     doGet
  1004      2017-02-24 10:57:24     803.581886  true      false    0x3bd5e918        TestTraceServlet                     doGet
- 1005      2017-02-24 10:57:39     814.657657  true      false    0x3bd5e918        TestTraceServlet                     doGet
-</pre></div>
+ 1005      2017-02-24 10:57:39     814.657657  true      false    0x3bd5e918        TestTraceServlet                     doGet</pre>
 </div>
 </div>
 <div class="section" id="watch-stack-trace">
 <span id="watch-stack-trace"></span><h2>watch/stack/trace命令支持按耗时过滤<a class="headerlink" href="#watch-stack-trace" title="永久链接至标题">¶</a></h2>
-<p>我们在trace的时候，经常会出现某个方法间隙性的rt飙高，但是我们只想知道rt高的时候，是哪里慢了，对于正常rt的方法我们并不关心，Arthas 3.0支持了按<code class="docutils literal notranslate"><span class="pre">#cost</span></code>(方法执行耗时,单位为<code class="docutils literal notranslate"><span class="pre">ms</span></code>)进行过滤，只输出符合条件的trace路径。</p>
+<p>我们在trace的时候，经常会出现某个方法间隙性的rt飙高，但是我们只想知道rt高的时候，是哪里慢了，对于正常rt的方法我们并不关心，Arthas 3.0支持了按<tt class="docutils literal">#cost</tt>(方法执行耗时,单位为<tt class="docutils literal">ms</tt>)进行过滤，只输出符合条件的trace路径。</p>
 <p>具体用法为：</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">trace</span><span class="o">/</span><span class="n">watch</span><span class="o">/</span><span class="n">stack</span> <span class="n">class_name</span> <span class="n">method</span> <span class="n">cost_expression</span>
-</pre></div>
+<div class="highlight-default notranslate"><pre class="literal-block">trace/watch/stack class_name method cost_expression</pre>
 </div>
 <p>例如：</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ trace  test.arthas.TestTraceServlet doGet #cost&gt;800
+<div class="highlight-default notranslate"><pre class="literal-block">$ trace  test.arthas.TestTraceServlet doGet #cost&gt;800
 Press Ctrl+C to abort.
 Affect(class-cnt:1 , method-cnt:1) cost in 137 ms.
 trace  test.arthas.TestTraceServlet doGet #cost&gt;800
@@ -263,10 +261,9 @@ trace  test.arthas.TestTraceServlet doGet #cost&gt;800
         +---[0.013107ms] java.lang.StringBuilder:&lt;init&gt;()
         +---[min=0.004892ms,max=0.06357ms,total=0.100672ms,count=3] java.lang.StringBuilder:append()
         +---[0.018255ms] java.lang.StringBuilder:toString()
-        `---[0.028812ms] java.io.PrintWriter:write()
-</pre></div>
+        `---[0.028812ms] java.io.PrintWriter:write()</pre>
 </div>
-<p>上述命令只有当<code class="docutils literal notranslate"><span class="pre">test.arthas.TestTraceServlet#doGet</span></code>方法执行耗时大于800ms时才会输出。</p>
+<p>上述命令只有当<tt class="docutils literal">test.arthas.TestTraceServlet#doGet</tt>方法执行耗时大于800ms时才会输出。</p>
 </div>
 <div class="section" id="trace">
 <span id="trace"></span><h2>trace命令优化<a class="headerlink" href="#trace" title="永久链接至标题">¶</a></h2>
@@ -282,16 +279,15 @@ trace  test.arthas.TestTraceServlet doGet #cost&gt;800
 </div>
 <div class="section" id="eagleeyetraceid">
 <span id="eagleeyetraceid"></span><h3>显示当前线程的信息及eagleeye的traceId<a class="headerlink" href="#eagleeyetraceid" title="永久链接至标题">¶</a></h3>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>trace  test.arthas.TestTraceServlet doGet
-`---thread_name=http-bio-8080-exec-10;id=da;is_daemon=true;priority=5;TCCL=org.apache.catalina.loader.WebappClassLoader;trace_id=1e09489014879085429791006d969d
-</pre></div>
+<div class="highlight-default notranslate"><pre class="literal-block">trace  test.arthas.TestTraceServlet doGet
+`---thread_name=http-bio-8080-exec-10;id=da;is_daemon=true;priority=5;TCCL=org.apache.catalina.loader.WebappClassLoader;trace_id=1e09489014879085429791006d969d</pre>
 </div>
 </div>
 </div>
 <div class="section" id="syspropsystemproperty">
 <span id="syspropsystemproperty"></span><h2>sysprop命令操作SystemProperty<a class="headerlink" href="#syspropsystemproperty" title="永久链接至标题">¶</a></h2>
 <p>sysprop命令支持查看所有的系统属性，以及针对特定属性进行查看和修改。</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ sysprop
+<div class="highlight-default notranslate"><pre class="literal-block">$ sysprop
 ...
  os.arch                                              x86_64
  java.ext.dirs                                        /Users/wangtao/Library/Java/Extensions:/Library/Java/JavaVirtualMachines/jdk1.
@@ -311,14 +307,13 @@ $ sysprop java.version
 java.version=1.8.0_51
 $ sysprop production.mode true
 Successfully changed the system property.
-production.mode=true
-</pre></div>
+production.mode=true</pre>
 </div>
 </div>
 <div class="section" id="thread">
 <span id="thread"></span><h2>thread命令支持指定采样时间<a class="headerlink" href="#thread" title="永久链接至标题">¶</a></h2>
-<p>thread命令计算线程cpu占用的逻辑，默认是采样100ms内各个线程的cpu使用情况并计算cpu消耗占比。有时候100ms的时间间隔太短，看不出问题所在，Arthas3.0中thread命令支持设置采样间隔(以<code class="docutils literal notranslate"><span class="pre">ms</span></code>为单位)，可以观察任意时间段内的cpu消耗占比情况。</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ thread -i 1000                                                                                                                                                                                                                     
+<p>thread命令计算线程cpu占用的逻辑，默认是采样100ms内各个线程的cpu使用情况并计算cpu消耗占比。有时候100ms的时间间隔太短，看不出问题所在，Arthas3.0中thread命令支持设置采样间隔(以<tt class="docutils literal">ms</tt>为单位)，可以观察任意时间段内的cpu消耗占比情况。</p>
+<div class="highlight-default notranslate"><pre class="literal-block">$ thread -i 1000                                                                                                                                                                                                                     
 Threads Total: 74, NEW: 0, RUNNABLE: 17, BLOCKED: 0, WAITING: 15, TIMED_WAITING: 42, TERMINATED: 0                                                                                                                                   
 ID                 NAME                                                     GROUP                                  PRIORITY           STATE              %CPU               TIME               INTERRUPTED        DAEMON             
 78                 com.taobao.config.client.timer                           main                                   5                  TIMED_WAITING      22                 0:0                false              true               
@@ -334,8 +329,7 @@ ID                 NAME                                                     GROU
 345                nioEventLoopGroup-3-3                                    system                                 10                 RUNNABLE           2                  0:0                false              false              
 358                nioEventLoopGroup-3-4                                    system                                 10                 RUNNABLE           2                  0:0                false              false              
 27                 qos-boss-1-1                                             main                                   5                  RUNNABLE           2                  0:0                false              true               
-22                 EagleEye-AsyncAppender-Thread-BizLog                     main                                   5                  TIMED_WAITING      1                  0:0                false              true               
-</pre></div>
+22                 EagleEye-AsyncAppender-Thread-BizLog                     main                                   5                  TIMED_WAITING      1                  0:0                false              true               </pre>
 </div>
 </div>
 </div>
@@ -403,6 +397,15 @@ ID                 NAME                                                     GROU
 </div>
 
 <script type="text/javascript" src="../_static/add_badges.js"></script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.13.1/highlight.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlightjs-line-numbers.js/2.5.0/highlightjs-line-numbers.min.js"></script>
+<script>
+  document.querySelectorAll('div.hljs > pre').forEach(function(block) {
+    hljs.highlightBlock(block);
+    hljs.lineNumbersBlock(block);
+  });
+</script>
 
 <script>
   var _hmt = _hmt || [];

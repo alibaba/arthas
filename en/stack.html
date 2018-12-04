@@ -34,6 +34,7 @@
     <link rel="next" title="tt" href="tt.html" />
     <link rel="prev" title="trace" href="trace.html" />
 <script src="_static/center_page.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.13.1/styles/github.min.css">
  
 
 
@@ -202,7 +203,7 @@
 <span id="stack"></span><h1>stack<a class="headerlink" href="#stack" title="Permalink to this headline">¶</a></h1>
 <blockquote>
 <div>Print out the full call stack of the current method.</div></blockquote>
-<p>Most often we know one method gets called, but we have no idea on which code path gets executed or when the method gets called since there are so many code paths to the target method. The command <code class="docutils literal notranslate"><span class="pre">stack</span></code> comes to rescue in this difficult situation.</p>
+<p>Most often we know one method gets called, but we have no idea on which code path gets executed or when the method gets called since there are so many code paths to the target method. The command <tt class="docutils literal">stack</tt> comes to rescue in this difficult situation.</p>
 <div class="section" id="parameters">
 <span id="parameters"></span><h2>Parameters<a class="headerlink" href="#parameters" title="Permalink to this headline">¶</a></h2>
 <table border="1" class="docutils">
@@ -234,8 +235,8 @@
 <td align="left">execution times</td>
 </tr>
 </tbody>
-</table><p>There’s one thing worthy noting here is observation expression. The observation expression supports OGNL grammar, for example, you can come up a expression like this <code class="docutils literal notranslate"><span class="pre">&quot;{params,returnObj}&quot;</span></code>. All OGNL expressions are supported as long as they are legal to the grammar.</p>
-<p>Thanks for <code class="docutils literal notranslate"><span class="pre">advice</span></code>’s data structure, it is possible to observe from varieties of different angles. Inside <code class="docutils literal notranslate"><span class="pre">advice</span></code> parameter, all necessary information for notification can be found.</p>
+</table><p>There’s one thing worthy noting here is observation expression. The observation expression supports OGNL grammar, for example, you can come up a expression like this <tt class="docutils literal">"{params,returnObj}"</tt>. All OGNL expressions are supported as long as they are legal to the grammar.</p>
+<p>Thanks for <tt class="docutils literal">advice</tt>’s data structure, it is possible to observe from varieties of different angles. Inside <tt class="docutils literal">advice</tt> parameter, all necessary information for notification can be found.</p>
 <p>Pls. refer to <a class="reference internal" href="advice-class.html"><span class="doc">core parameters in expression</span></a> for more details.</p>
 <ul class="simple">
 <li>Pls. also refer to <a class="reference external" href="https://github.com/alibaba/arthas/issues/71">https://github.com/alibaba/arthas/issues/71</a> for more advanced usage</li>
@@ -246,44 +247,44 @@
 <span id="usage"></span><h2>Usage<a class="headerlink" href="#usage" title="Permalink to this headline">¶</a></h2>
 <div class="section" id="start-demo">
 <span id="start-demo"></span><h3>Start Demo<a class="headerlink" href="#start-demo" title="Permalink to this headline">¶</a></h3>
-<p>Start <code class="docutils literal notranslate"><span class="pre">arthas-demo</span></code> in <a class="reference internal" href="quick-start.html"><span class="doc">Quick Start</span></a>.</p>
+<p>Start <tt class="docutils literal">arthas-demo</tt> in <a class="reference internal" href="quick-start.html"><span class="doc">Quick Start</span></a>.</p>
 </div>
 <div class="section" id="stack">
 <span id="id1"></span><h3>stack<a class="headerlink" href="#stack" title="Permalink to this headline">¶</a></h3>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$ stack demo.MathGame primeFactors
+<div class="highlight-bash notranslate"><div class="highlight hljs"><pre class="bash">$ stack demo.MathGame primeFactors
 Press Ctrl+C to abort.
-Affect<span class="o">(</span>class-cnt:1 , method-cnt:1<span class="o">)</span> cost in <span class="m">36</span> ms.
-<span class="nv">ts</span><span class="o">=</span><span class="m">2018</span>-12-04 <span class="m">01</span>:32:19<span class="p">;</span><span class="nv">thread_name</span><span class="o">=</span>main<span class="p">;</span><span class="nv">id</span><span class="o">=</span><span class="m">1</span><span class="p">;</span><span class="nv">is_daemon</span><span class="o">=</span>false<span class="p">;</span><span class="nv">priority</span><span class="o">=</span><span class="m">5</span><span class="p">;</span><span class="nv">TCCL</span><span class="o">=</span>sun.misc.Launcher<span class="nv">$AppClassLoader</span>@3d4eac69
-    @demo.MathGame.run<span class="o">()</span>
-        at demo.MathGame.main<span class="o">(</span>MathGame.java:16<span class="o">)</span>
+Affect(class-cnt:1 , method-cnt:1) cost in 36 ms.
+ts=2018-12-04 01:32:19;thread_name=main;id=1;is_daemon=false;priority=5;TCCL=sun.misc.Launcher$AppClassLoader@3d4eac69
+    @demo.MathGame.run()
+        at demo.MathGame.main(MathGame.java:16)
 </pre></div>
 </div>
 </div>
 <div class="section" id="filtering-by-condition-expression">
 <span id="filtering-by-condition-expression"></span><h3>Filtering by condition expression<a class="headerlink" href="#filtering-by-condition-expression" title="Permalink to this headline">¶</a></h3>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$ stack demo.MathGame primeFactors <span class="s1">&#39;params[0]&lt;0&#39;</span> -n <span class="m">2</span>
+<div class="highlight-bash notranslate"><div class="highlight hljs"><pre class="bash">$ stack demo.MathGame primeFactors &#x27;params[0]&lt;0&#x27; -n 2
 Press Ctrl+C to abort.
-Affect<span class="o">(</span>class-cnt:1 , method-cnt:1<span class="o">)</span> cost in <span class="m">30</span> ms.
-<span class="nv">ts</span><span class="o">=</span><span class="m">2018</span>-12-04 <span class="m">01</span>:34:27<span class="p">;</span><span class="nv">thread_name</span><span class="o">=</span>main<span class="p">;</span><span class="nv">id</span><span class="o">=</span><span class="m">1</span><span class="p">;</span><span class="nv">is_daemon</span><span class="o">=</span>false<span class="p">;</span><span class="nv">priority</span><span class="o">=</span><span class="m">5</span><span class="p">;</span><span class="nv">TCCL</span><span class="o">=</span>sun.misc.Launcher<span class="nv">$AppClassLoader</span>@3d4eac69
-    @demo.MathGame.run<span class="o">()</span>
-        at demo.MathGame.main<span class="o">(</span>MathGame.java:16<span class="o">)</span>
+Affect(class-cnt:1 , method-cnt:1) cost in 30 ms.
+ts=2018-12-04 01:34:27;thread_name=main;id=1;is_daemon=false;priority=5;TCCL=sun.misc.Launcher$AppClassLoader@3d4eac69
+    @demo.MathGame.run()
+        at demo.MathGame.main(MathGame.java:16)
 
-<span class="nv">ts</span><span class="o">=</span><span class="m">2018</span>-12-04 <span class="m">01</span>:34:30<span class="p">;</span><span class="nv">thread_name</span><span class="o">=</span>main<span class="p">;</span><span class="nv">id</span><span class="o">=</span><span class="m">1</span><span class="p">;</span><span class="nv">is_daemon</span><span class="o">=</span>false<span class="p">;</span><span class="nv">priority</span><span class="o">=</span><span class="m">5</span><span class="p">;</span><span class="nv">TCCL</span><span class="o">=</span>sun.misc.Launcher<span class="nv">$AppClassLoader</span>@3d4eac69
-    @demo.MathGame.run<span class="o">()</span>
-        at demo.MathGame.main<span class="o">(</span>MathGame.java:16<span class="o">)</span>
+ts=2018-12-04 01:34:30;thread_name=main;id=1;is_daemon=false;priority=5;TCCL=sun.misc.Launcher$AppClassLoader@3d4eac69
+    @demo.MathGame.run()
+        at demo.MathGame.main(MathGame.java:16)
 
-Command execution <span class="nb">times</span> exceed limit: <span class="m">2</span>, so <span class="nb">command</span> will exit. You can <span class="nb">set</span> it with -n option.
+Command execution times exceed limit: 2, so command will exit. You can set it with -n option.
 </pre></div>
 </div>
 </div>
 <div class="section" id="filtering-by-cost">
 <span id="filtering-by-cost"></span><h3>Filtering by cost<a class="headerlink" href="#filtering-by-cost" title="Permalink to this headline">¶</a></h3>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$ stack demo.MathGame primeFactors <span class="s1">&#39;#cost&gt;5&#39;</span>
+<div class="highlight-bash notranslate"><div class="highlight hljs"><pre class="bash">$ stack demo.MathGame primeFactors &#x27;#cost&gt;5&#x27;
 Press Ctrl+C to abort.
-Affect<span class="o">(</span>class-cnt:1 , method-cnt:1<span class="o">)</span> cost in <span class="m">35</span> ms.
-<span class="nv">ts</span><span class="o">=</span><span class="m">2018</span>-12-04 <span class="m">01</span>:35:58<span class="p">;</span><span class="nv">thread_name</span><span class="o">=</span>main<span class="p">;</span><span class="nv">id</span><span class="o">=</span><span class="m">1</span><span class="p">;</span><span class="nv">is_daemon</span><span class="o">=</span>false<span class="p">;</span><span class="nv">priority</span><span class="o">=</span><span class="m">5</span><span class="p">;</span><span class="nv">TCCL</span><span class="o">=</span>sun.misc.Launcher<span class="nv">$AppClassLoader</span>@3d4eac69
-    @demo.MathGame.run<span class="o">()</span>
-        at demo.MathGame.main<span class="o">(</span>MathGame.java:16<span class="o">)</span>
+Affect(class-cnt:1 , method-cnt:1) cost in 35 ms.
+ts=2018-12-04 01:35:58;thread_name=main;id=1;is_daemon=false;priority=5;TCCL=sun.misc.Launcher$AppClassLoader@3d4eac69
+    @demo.MathGame.run()
+        at demo.MathGame.main(MathGame.java:16)
 </pre></div>
 </div>
 </div>
@@ -361,6 +362,15 @@ Affect<span class="o">(</span>class-cnt:1 , method-cnt:1<span class="o">)</span>
 </div>
 
 <script type="text/javascript" src="_static/add_badges.js"></script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.13.1/highlight.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlightjs-line-numbers.js/2.5.0/highlightjs-line-numbers.min.js"></script>
+<script>
+  document.querySelectorAll('div.hljs > pre').forEach(function(block) {
+    hljs.highlightBlock(block);
+    hljs.lineNumbersBlock(block);
+  });
+</script>
 
 <script>
   var _hmt = _hmt || [];

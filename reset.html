@@ -32,6 +32,7 @@
     <link rel="index" title="索引" href="genindex.html" />
     <link rel="search" title="搜索" href="search.html" />
 <script src="_static/center_page.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.13.1/styles/github.min.css">
  
 
 
@@ -93,7 +94,7 @@
 <li class="toctree-l1"><a class="reference internal" href="advanced-use.html">进阶使用</a></li>
 <li class="toctree-l1"><a class="reference internal" href="commands.html">命令列表</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas/issues?q=label%3Auser-case">用户案例</a></li>
-<li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas/issues?q=label%3Aquestion-answered">Questions and answers</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas/issues?q=label%3Aquestion-answered">常见问题</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas">Fork me at GitHub</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas/blob/master/CONTRIBUTING.md">参与贡献</a></li>
 <li class="toctree-l1"><a class="reference internal" href="release-notes.html">Release Notes</a></li>
@@ -167,10 +168,10 @@
   <div class="section" id="reset">
 <span id="reset"></span><h1>reset命令<a class="headerlink" href="#reset" title="永久链接至标题">¶</a></h1>
 <blockquote>
-<div>重置增强类，将被 Arthas 增强过的类全部还原，Arthas 服务端<code class="docutils literal notranslate"><span class="pre">shutdown</span></code>时会重置所有增强过的类</div></blockquote>
+<div>重置增强类，将被 Arthas 增强过的类全部还原，Arthas 服务端<tt class="docutils literal">shutdown</tt>时会重置所有增强过的类</div></blockquote>
 <div class="section" id="">
 <span id="id1"></span><h2>使用参考<a class="headerlink" href="#" title="永久链接至标题">¶</a></h2>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ reset -h
+<div class="highlight-default notranslate"><pre class="literal-block">$ reset -h
  USAGE:
    reset [-h] [-E] [class-pattern]
 
@@ -185,13 +186,12 @@
  OPTIONS:
  -h, --help                                                         this help
  -E, --regex                                                        Enable regular expression to match (wildcard matching by default)
- &lt;class-pattern&gt;                                                    Path and classname of Pattern Matching
-</pre></div>
+ &lt;class-pattern&gt;                                                    Path and classname of Pattern Matching</pre>
 </div>
 </div>
 <div class="section" id="">
 <span id="id2"></span><h2>还原指定类<a class="headerlink" href="#" title="永久链接至标题">¶</a></h2>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ trace Test test
+<div class="highlight-default notranslate"><pre class="literal-block">$ trace Test test
 Press Ctrl+C to abort.
 Affect(class-cnt:1 , method-cnt:1) cost in 57 ms.
 `---ts=2017-10-26 17:10:33;thread_name=main;id=1;is_daemon=false;priority=5;TCCL=sun.misc.Launcher$AppClassLoader@14dad5dc
@@ -201,21 +201,19 @@ Affect(class-cnt:1 , method-cnt:1) cost in 57 ms.
     `---[0.068692ms] Test:test()
 
 $ reset Test
-Affect(class-cnt:1 , method-cnt:0) cost in 11 ms.
-</pre></div>
+Affect(class-cnt:1 , method-cnt:0) cost in 11 ms.</pre>
 </div>
 </div>
 <div class="section" id="">
 <span id="id3"></span><h2>还原所有类<a class="headerlink" href="#" title="永久链接至标题">¶</a></h2>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ trace Test test
+<div class="highlight-default notranslate"><pre class="literal-block">$ trace Test test
 Press Ctrl+C to abort.
 Affect(class-cnt:1 , method-cnt:1) cost in 15 ms.
 `---ts=2017-10-26 17:12:06;thread_name=main;id=1;is_daemon=false;priority=5;TCCL=sun.misc.Launcher$AppClassLoader@14dad5dc
     `---[0.128518ms] Test:test()
 
 $ reset
-Affect(class-cnt:1 , method-cnt:0) cost in 9 ms.
-</pre></div>
+Affect(class-cnt:1 , method-cnt:0) cost in 9 ms.</pre>
 </div>
 </div>
 </div>
@@ -283,6 +281,15 @@ Affect(class-cnt:1 , method-cnt:0) cost in 9 ms.
 </div>
 
 <script type="text/javascript" src="_static/add_badges.js"></script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.13.1/highlight.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlightjs-line-numbers.js/2.5.0/highlightjs-line-numbers.min.js"></script>
+<script>
+  document.querySelectorAll('div.hljs > pre').forEach(function(block) {
+    hljs.highlightBlock(block);
+    hljs.lineNumbersBlock(block);
+  });
+</script>
 
 <script>
   var _hmt = _hmt || [];

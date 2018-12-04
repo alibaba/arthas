@@ -34,6 +34,7 @@
     <link rel="next" title="Web Console" href="web-console.html" />
     <link rel="prev" title="Quick Start" href="quick-start.html" />
 <script src="_static/center_page.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.13.1/styles/github.min.css">
  
 
 
@@ -192,7 +193,7 @@
 <li>help - display Arthas help</li>
 <li>cls - clear the screen</li>
 <li>session - display current session information</li>
-<li><a class="reference internal" href="reset.html"><span class="doc">reset</span></a> - reset all the enhanced classes. All enhanced classes will also be reset when Arthas server is closed by <code class="docutils literal notranslate"><span class="pre">shutdown</span></code></li>
+<li><a class="reference internal" href="reset.html"><span class="doc">reset</span></a> - reset all the enhanced classes. All enhanced classes will also be reset when Arthas server is closed by <tt class="docutils literal">shutdown</tt></li>
 <li>version - print the version for the Arthas attached to the current Java process</li>
 <li>history - view command history</li>
 <li>quit/exit - exit the current Arthas session, without effecting other sessions</li>
@@ -217,15 +218,15 @@
 <li><a class="reference internal" href="sc.html"><span class="doc">sc</span></a> - check the info for the classes loaded by JVM</li>
 <li><a class="reference internal" href="sm.html"><span class="doc">sm</span></a> - check methods info for the loaded classes</li>
 <li><a class="reference internal" href="dump.html"><span class="doc">dump</span></a> - dump the loaded classes in byte code to the specified location</li>
-<li><a class="reference internal" href="redefine.html"><span class="doc">redefine</span></a> - load external <code class="docutils literal notranslate"><span class="pre">*.class</span></code> files and re-define it into JVM</li>
+<li><a class="reference internal" href="redefine.html"><span class="doc">redefine</span></a> - load external <tt class="docutils literal">*.class</tt> files and re-define it into JVM</li>
 <li><a class="reference internal" href="jad.html"><span class="doc">jad</span></a> - decompile the specified loaded classes</li>
-<li><a class="reference internal" href="classloader.html"><span class="doc">classloader</span></a> - check the inheritance structure, urls, class loading info for the specified class; using classloader to get the url of the resource e.g. <code class="docutils literal notranslate"><span class="pre">java/lang/String.class</span></code></li>
+<li><a class="reference internal" href="classloader.html"><span class="doc">classloader</span></a> - check the inheritance structure, urls, class loading info for the specified class; using classloader to get the url of the resource e.g. <tt class="docutils literal">java/lang/String.class</tt></li>
 </ul>
 </div>
 <div class="section" id="monitor-watch-trace-related">
 <span id="monitor-watch-trace-related"></span><h2>monitor/watch/trace - related<a class="headerlink" href="#monitor-watch-trace-related" title="Permalink to this headline">¶</a></h2>
 <blockquote>
-<div><strong>Attention</strong>: commands here are taking advantage of byte-code-injection, which means we are injecting some <a class="reference external" href="https://en.wikipedia.org/wiki/Aspect-oriented_programming">aspects</a> into the current classes for monitoring and statistics purpose. Therefore when use it for online troubleshooting in your production environment, you’d better <strong>explicitly specify</strong> classes/methods/criteria, and remember to remove the injected code by <code class="docutils literal notranslate"><span class="pre">shutdown</span></code> or <code class="docutils literal notranslate"><span class="pre">reset</span></code>.</div></blockquote>
+<div><strong>Attention</strong>: commands here are taking advantage of byte-code-injection, which means we are injecting some <a class="reference external" href="https://en.wikipedia.org/wiki/Aspect-oriented_programming">aspects</a> into the current classes for monitoring and statistics purpose. Therefore when use it for online troubleshooting in your production environment, you’d better <strong>explicitly specify</strong> classes/methods/criteria, and remember to remove the injected code by <tt class="docutils literal">shutdown</tt> or <tt class="docutils literal">reset</tt>.</div></blockquote>
 <ul class="simple">
 <li><a class="reference internal" href="monitor.html"><span class="doc">monitor</span></a> - monitor method execution statistics</li>
 <li><a class="reference internal" href="watch.html"><span class="doc">watch</span></a> - display the input/output parameter, return object, and thrown exception of specified method invocation</li>
@@ -242,7 +243,7 @@
 </div>
 <div class="section" id="pipe">
 <span id="pipe"></span><h2>pipe<a class="headerlink" href="#pipe" title="Permalink to this headline">¶</a></h2>
-<p>Arthas provides <code class="docutils literal notranslate"><span class="pre">pipe</span></code> to process the result returned from commands further, e.g. <code class="docutils literal notranslate"><span class="pre">sm</span> <span class="pre">org.apache.log4j.Logger</span> <span class="pre">|</span> <span class="pre">grep</span> <span class="pre">&lt;init&gt;</span></code>. Commands supported in <code class="docutils literal notranslate"><span class="pre">pipe</span></code>:</p>
+<p>Arthas provides <tt class="docutils literal">pipe</tt> to process the result returned from commands further, e.g. <tt class="docutils literal">sm org.apache.log4j.Logger | grep <init></tt>. Commands supported in <tt class="docutils literal">pipe</tt>:</p>
 <ul class="simple">
 <li>grep - filter the result with the given keyword</li>
 <li>plaintext - remove the color</li>
@@ -251,9 +252,9 @@
 </div>
 <div class="section" id="async-in-background">
 <span id="async-in-background"></span><h2>async in background<a class="headerlink" href="#async-in-background" title="Permalink to this headline">¶</a></h2>
-<p><a class="reference internal" href="async.html"><span class="doc">async</span></a> can be handy when a problem is hardly to reproduce in the production environment, e.g. one <code class="docutils literal notranslate"><span class="pre">watch</span></code> condition may happen only once in one single day.</p>
+<p><a class="reference internal" href="async.html"><span class="doc">async</span></a> can be handy when a problem is hardly to reproduce in the production environment, e.g. one <tt class="docutils literal">watch</tt> condition may happen only once in one single day.</p>
 <ul class="simple">
-<li>job control - use <code class="docutils literal notranslate"><span class="pre">&gt;</span></code> to redirect result into the log file, use <code class="docutils literal notranslate"><span class="pre">&amp;</span></code> to put the job to the background. Job keeps running even if the session is disconnected (the session lifecycle is 1 day by default)</li>
+<li>job control - use <tt class="docutils literal">></tt> to redirect result into the log file, use <tt class="docutils literal">&</tt> to put the job to the background. Job keeps running even if the session is disconnected (the session lifecycle is 1 day by default)</li>
 <li>jobs - list all jobs</li>
 <li>kill - forcibly terminate the job</li>
 <li>fg - bring the suspend job to the foreground</li>
@@ -353,6 +354,15 @@
 </div>
 
 <script type="text/javascript" src="_static/add_badges.js"></script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.13.1/highlight.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlightjs-line-numbers.js/2.5.0/highlightjs-line-numbers.min.js"></script>
+<script>
+  document.querySelectorAll('div.hljs > pre').forEach(function(block) {
+    hljs.highlightBlock(block);
+    hljs.lineNumbersBlock(block);
+  });
+</script>
 
 <script>
   var _hmt = _hmt || [];

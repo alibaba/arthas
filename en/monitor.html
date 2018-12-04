@@ -34,6 +34,7 @@
     <link rel="next" title="watch" href="watch.html" />
     <link rel="prev" title="redefine" href="redefine.html" />
 <script src="_static/center_page.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.13.1/styles/github.min.css">
  
 
 
@@ -197,9 +198,9 @@
 <span id="monitor"></span><h1>monitor<a class="headerlink" href="#monitor" title="Permalink to this headline">¶</a></h1>
 <blockquote>
 <div>Monitor method invocation.</div></blockquote>
-<p>Monitor invocation for the method matched with <code class="docutils literal notranslate"><span class="pre">class-pattern</span></code> and <code class="docutils literal notranslate"><span class="pre">method-pattern</span></code>.</p>
-<p><code class="docutils literal notranslate"><span class="pre">monitor</span></code> is not a command returning immediately.</p>
-<p>A command returning immediately is a command immediately returns with the result after the command is input, while a non-immediate returning command will keep outputting the information from the target JVM process until user presses <code class="docutils literal notranslate"><span class="pre">Ctrl+C</span></code>.</p>
+<p>Monitor invocation for the method matched with <tt class="docutils literal">class-pattern</tt> and <tt class="docutils literal">method-pattern</tt>.</p>
+<p><tt class="docutils literal">monitor</tt> is not a command returning immediately.</p>
+<p>A command returning immediately is a command immediately returns with the result after the command is input, while a non-immediate returning command will keep outputting the information from the target JVM process until user presses <tt class="docutils literal">Ctrl+C</tt>.</p>
 <p>On Arthas’s server side, the command is running as a background job, but the weaved code will not take further effect once the job is terminated, therefore, it will not impact the performance after the job quits. Furthermore, Arthas is designed to have no side effect to the business logic.</p>
 <div class="section" id="items-to-monitor">
 <span id="items-to-monitor"></span><h2>Items to monitor<a class="headerlink" href="#items-to-monitor" title="Permalink to this headline">¶</a></h2>
@@ -247,7 +248,7 @@
 </table></div>
 <div class="section" id="parameters">
 <span id="parameters"></span><h2>Parameters<a class="headerlink" href="#parameters" title="Permalink to this headline">¶</a></h2>
-<p>Parameter <code class="docutils literal notranslate"><span class="pre">[c:]</span></code> stands for cycles of statistics. Its value is an integer value in seconds.</p>
+<p>Parameter <tt class="docutils literal">[c:]</tt> stands for cycles of statistics. Its value is an integer value in seconds.</p>
 <table border="1" class="docutils">
 <thead>
 <tr>
@@ -276,32 +277,32 @@
 </table></div>
 <div class="section" id="usage">
 <span id="usage"></span><h2>Usage<a class="headerlink" href="#usage" title="Permalink to this headline">¶</a></h2>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$ monitor -c <span class="m">5</span> demo.MathGame primeFactors
+<div class="highlight-bash notranslate"><div class="highlight hljs"><pre class="bash">$ monitor -c 5 demo.MathGame primeFactors
 Press Ctrl+C to abort.
-Affect<span class="o">(</span>class-cnt:1 , method-cnt:1<span class="o">)</span> cost in <span class="m">94</span> ms.
- timestamp            class          method        total  success  fail  avg-rt<span class="o">(</span>ms<span class="o">)</span>  fail-rate
+Affect(class-cnt:1 , method-cnt:1) cost in 94 ms.
+ timestamp            class          method        total  success  fail  avg-rt(ms)  fail-rate
 -----------------------------------------------------------------------------------------------
- <span class="m">2018</span>-12-03 <span class="m">19</span>:06:38  demo.MathGame  primeFactors  <span class="m">5</span>      <span class="m">1</span>        <span class="m">4</span>     <span class="m">1</span>.15        <span class="m">80</span>.00%
+ 2018-12-03 19:06:38  demo.MathGame  primeFactors  5      1        4     1.15        80.00%
 
- timestamp            class          method        total  success  fail  avg-rt<span class="o">(</span>ms<span class="o">)</span>  fail-rate
+ timestamp            class          method        total  success  fail  avg-rt(ms)  fail-rate
 -----------------------------------------------------------------------------------------------
- <span class="m">2018</span>-12-03 <span class="m">19</span>:06:43  demo.MathGame  primeFactors  <span class="m">5</span>      <span class="m">3</span>        <span class="m">2</span>     <span class="m">42</span>.29       <span class="m">40</span>.00%
+ 2018-12-03 19:06:43  demo.MathGame  primeFactors  5      3        2     42.29       40.00%
 
- timestamp            class          method        total  success  fail  avg-rt<span class="o">(</span>ms<span class="o">)</span>  fail-rate
+ timestamp            class          method        total  success  fail  avg-rt(ms)  fail-rate
 -----------------------------------------------------------------------------------------------
- <span class="m">2018</span>-12-03 <span class="m">19</span>:06:48  demo.MathGame  primeFactors  <span class="m">5</span>      <span class="m">3</span>        <span class="m">2</span>     <span class="m">67</span>.92       <span class="m">40</span>.00%
+ 2018-12-03 19:06:48  demo.MathGame  primeFactors  5      3        2     67.92       40.00%
 
- timestamp            class          method        total  success  fail  avg-rt<span class="o">(</span>ms<span class="o">)</span>  fail-rate
+ timestamp            class          method        total  success  fail  avg-rt(ms)  fail-rate
 -----------------------------------------------------------------------------------------------
- <span class="m">2018</span>-12-03 <span class="m">19</span>:06:53  demo.MathGame  primeFactors  <span class="m">5</span>      <span class="m">2</span>        <span class="m">3</span>     <span class="m">0</span>.25        <span class="m">60</span>.00%
+ 2018-12-03 19:06:53  demo.MathGame  primeFactors  5      2        3     0.25        60.00%
 
- timestamp            class          method        total  success  fail  avg-rt<span class="o">(</span>ms<span class="o">)</span>  fail-rate
+ timestamp            class          method        total  success  fail  avg-rt(ms)  fail-rate
 -----------------------------------------------------------------------------------------------
- <span class="m">2018</span>-12-03 <span class="m">19</span>:06:58  demo.MathGame  primeFactors  <span class="m">1</span>      <span class="m">1</span>        <span class="m">0</span>     <span class="m">0</span>.45        <span class="m">0</span>.00%
+ 2018-12-03 19:06:58  demo.MathGame  primeFactors  1      1        0     0.45        0.00%
 
- timestamp            class          method        total  success  fail  avg-rt<span class="o">(</span>ms<span class="o">)</span>  fail-rate
+ timestamp            class          method        total  success  fail  avg-rt(ms)  fail-rate
 -----------------------------------------------------------------------------------------------
- <span class="m">2018</span>-12-03 <span class="m">19</span>:07:03  demo.MathGame  primeFactors  <span class="m">2</span>      <span class="m">2</span>        <span class="m">0</span>     <span class="m">3182</span>.72     <span class="m">0</span>.00%
+ 2018-12-03 19:07:03  demo.MathGame  primeFactors  2      2        0     3182.72     0.00%
 </pre></div>
 </div>
 </div>
@@ -378,6 +379,15 @@ Affect<span class="o">(</span>class-cnt:1 , method-cnt:1<span class="o">)</span>
 </div>
 
 <script type="text/javascript" src="_static/add_badges.js"></script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.13.1/highlight.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlightjs-line-numbers.js/2.5.0/highlightjs-line-numbers.min.js"></script>
+<script>
+  document.querySelectorAll('div.hljs > pre').forEach(function(block) {
+    hljs.highlightBlock(block);
+    hljs.lineNumbersBlock(block);
+  });
+</script>
 
 <script>
   var _hmt = _hmt || [];

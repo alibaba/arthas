@@ -32,6 +32,7 @@
     <link rel="index" title="索引" href="genindex.html" />
     <link rel="search" title="搜索" href="search.html" />
 <script src="_static/center_page.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.13.1/styles/github.min.css">
  
 
 
@@ -93,7 +94,7 @@
 <li class="toctree-l1"><a class="reference internal" href="advanced-use.html">进阶使用</a></li>
 <li class="toctree-l1"><a class="reference internal" href="commands.html">命令列表</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas/issues?q=label%3Auser-case">用户案例</a></li>
-<li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas/issues?q=label%3Aquestion-answered">Questions and answers</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas/issues?q=label%3Aquestion-answered">常见问题</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas">Fork me at GitHub</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas/blob/master/CONTRIBUTING.md">参与贡献</a></li>
 <li class="toctree-l1"><a class="reference internal" href="release-notes.html">Release Notes</a></li>
@@ -166,7 +167,7 @@
             
   <div class="section" id="arthas">
 <span id="arthas"></span><h1>Arthas 命令行快捷键<a class="headerlink" href="#arthas" title="永久链接至标题">¶</a></h1>
-<p><code class="docutils literal notranslate"><span class="pre">keymap</span></code>命令输出当前的快捷键映射表：</p>
+<p><tt class="docutils literal">keymap</tt>命令输出当前的快捷键映射表：</p>
 <p>默认的快捷键如下：</p>
 <table border="1" class="docutils">
 <thead>
@@ -294,35 +295,34 @@
 </tr>
 </tbody>
 </table><ul class="simple">
-<li>任何时候 <code class="docutils literal notranslate"><span class="pre">tab</span></code> 键，会根据当前的输入给出提示</li>
-<li>命令后敲 <code class="docutils literal notranslate"><span class="pre">-</span></code> 或 <code class="docutils literal notranslate"><span class="pre">--</span></code> ，然后按 <code class="docutils literal notranslate"><span class="pre">tab</span></code> 键，可以展示出此命令具体的选项</li>
+<li>任何时候 <tt class="docutils literal">tab</tt> 键，会根据当前的输入给出提示</li>
+<li>命令后敲 <tt class="docutils literal">-</tt> 或 <tt class="docutils literal">--</tt> ，然后按 <tt class="docutils literal">tab</tt> 键，可以展示出此命令具体的选项</li>
 </ul>
 <div class="section" id="">
 <span id="id1"></span><h2>自定义快捷键<a class="headerlink" href="#" title="永久链接至标题">¶</a></h2>
-<p>在当前用户目录下新建<code class="docutils literal notranslate"><span class="pre">$USER_HOME/.arthas/conf/inputrc</span></code>文件，加入自定义配置。</p>
-<p>假设我是vim的重度用户，我要把<code class="docutils literal notranslate"><span class="pre">ctrl+h</span></code>设置为光标向前一个字符，则设置如下，首先拷贝默认配置</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="s2">&quot;\C-a&quot;</span><span class="p">:</span> <span class="n">beginning</span><span class="o">-</span><span class="n">of</span><span class="o">-</span><span class="n">line</span>
-<span class="s2">&quot;\C-e&quot;</span><span class="p">:</span> <span class="n">end</span><span class="o">-</span><span class="n">of</span><span class="o">-</span><span class="n">line</span>
-<span class="s2">&quot;\C-f&quot;</span><span class="p">:</span> <span class="n">forward</span><span class="o">-</span><span class="n">word</span>
-<span class="s2">&quot;\C-b&quot;</span><span class="p">:</span> <span class="n">backward</span><span class="o">-</span><span class="n">word</span>
-<span class="s2">&quot;\e[D&quot;</span><span class="p">:</span> <span class="n">backward</span><span class="o">-</span><span class="n">char</span>
-<span class="s2">&quot;\e[C&quot;</span><span class="p">:</span> <span class="n">forward</span><span class="o">-</span><span class="n">char</span>
-<span class="s2">&quot;\e[B&quot;</span><span class="p">:</span> <span class="nb">next</span><span class="o">-</span><span class="n">history</span>
-<span class="s2">&quot;\e[A&quot;</span><span class="p">:</span> <span class="n">previous</span><span class="o">-</span><span class="n">history</span>
-<span class="s2">&quot;\C-h&quot;</span><span class="p">:</span> <span class="n">backward</span><span class="o">-</span><span class="n">delete</span><span class="o">-</span><span class="n">char</span>
-<span class="s2">&quot;\C-?&quot;</span><span class="p">:</span> <span class="n">backward</span><span class="o">-</span><span class="n">delete</span><span class="o">-</span><span class="n">char</span>
-<span class="s2">&quot;\C-u&quot;</span><span class="p">:</span> <span class="n">undo</span>
-<span class="s2">&quot;\C-d&quot;</span><span class="p">:</span> <span class="n">delete</span><span class="o">-</span><span class="n">char</span>
-<span class="s2">&quot;\C-k&quot;</span><span class="p">:</span> <span class="n">kill</span><span class="o">-</span><span class="n">line</span>
-<span class="s2">&quot;\C-i&quot;</span><span class="p">:</span> <span class="n">complete</span>
-<span class="s2">&quot;\C-j&quot;</span><span class="p">:</span> <span class="n">accept</span><span class="o">-</span><span class="n">line</span>
-<span class="s2">&quot;\C-m&quot;</span><span class="p">:</span> <span class="n">accept</span><span class="o">-</span><span class="n">line</span>
-<span class="s2">&quot;\C-w&quot;</span><span class="p">:</span> <span class="n">backward</span><span class="o">-</span><span class="n">delete</span><span class="o">-</span><span class="n">word</span>
-<span class="s2">&quot;\C-x\e[3~&quot;</span><span class="p">:</span> <span class="n">backward</span><span class="o">-</span><span class="n">kill</span><span class="o">-</span><span class="n">line</span>
-<span class="s2">&quot;\e\C-?&quot;</span><span class="p">:</span> <span class="n">backward</span><span class="o">-</span><span class="n">kill</span><span class="o">-</span><span class="n">word</span>
-</pre></div>
+<p>在当前用户目录下新建<tt class="docutils literal">$USER_HOME/.arthas/conf/inputrc</tt>文件，加入自定义配置。</p>
+<p>假设我是vim的重度用户，我要把<tt class="docutils literal">ctrl+h</tt>设置为光标向前一个字符，则设置如下，首先拷贝默认配置</p>
+<div class="highlight-default notranslate"><pre class="literal-block">&quot;\C-a&quot;: beginning-of-line
+&quot;\C-e&quot;: end-of-line
+&quot;\C-f&quot;: forward-word
+&quot;\C-b&quot;: backward-word
+&quot;\e[D&quot;: backward-char
+&quot;\e[C&quot;: forward-char
+&quot;\e[B&quot;: next-history
+&quot;\e[A&quot;: previous-history
+&quot;\C-h&quot;: backward-delete-char
+&quot;\C-?&quot;: backward-delete-char
+&quot;\C-u&quot;: undo
+&quot;\C-d&quot;: delete-char
+&quot;\C-k&quot;: kill-line
+&quot;\C-i&quot;: complete
+&quot;\C-j&quot;: accept-line
+&quot;\C-m&quot;: accept-line
+&quot;\C-w&quot;: backward-delete-word
+&quot;\C-x\e[3~&quot;: backward-kill-line
+&quot;\e\C-?&quot;: backward-kill-word</pre>
 </div>
-<p>然后把<code class="docutils literal notranslate"><span class="pre">&quot;\C-h&quot;:</span> <span class="pre">backward-delete-char</span></code>换成<code class="docutils literal notranslate"><span class="pre">&quot;\C-h&quot;:</span> <span class="pre">backward-char</span></code>，然后重新连接即可。</p>
+<p>然后把<tt class="docutils literal">"\C-h": backward-delete-char</tt>换成<tt class="docutils literal">"\C-h": backward-char</tt>，然后重新连接即可。</p>
 </div>
 <div class="section" id="">
 <span id="id2"></span><h2>后台异步命令相关快捷键<a class="headerlink" href="#" title="永久链接至标题">¶</a></h2>
@@ -398,6 +398,15 @@
 </div>
 
 <script type="text/javascript" src="_static/add_badges.js"></script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.13.1/highlight.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlightjs-line-numbers.js/2.5.0/highlightjs-line-numbers.min.js"></script>
+<script>
+  document.querySelectorAll('div.hljs > pre').forEach(function(block) {
+    hljs.highlightBlock(block);
+    hljs.lineNumbersBlock(block);
+  });
+</script>
 
 <script>
   var _hmt = _hmt || [];

@@ -34,6 +34,7 @@
     <link rel="next" title="进阶使用" href="advanced-use.html" />
     <link rel="prev" title="Arthas Install" href="install-detail.html" />
 <script src="_static/center_page.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.13.1/styles/github.min.css">
  
 
 
@@ -95,7 +96,7 @@
 <li class="toctree-l2"><a class="reference internal" href="#demo">1. 启动Demo</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#arthas">2. 启动arthas</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#dashboard">3. 查看dashboard</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#threadarthas-demomain-class">4. 通过thread命令来获取到<code class="docutils literal notranslate"><span class="pre">arthas-demo</span></code>进程的Main Class</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#threadarthas-demomain-class">4. 通过thread命令来获取到<tt class="docutils literal">arthas-demo</tt>进程的Main Class</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#jadmain-class">5. 通过jad来反编绎Main Class</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#watch">6. watch</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#arthas">5. 退出arthas</a></li>
@@ -104,7 +105,7 @@
 <li class="toctree-l1"><a class="reference internal" href="advanced-use.html">进阶使用</a></li>
 <li class="toctree-l1"><a class="reference internal" href="commands.html">命令列表</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas/issues?q=label%3Auser-case">用户案例</a></li>
-<li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas/issues?q=label%3Aquestion-answered">Questions and answers</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas/issues?q=label%3Aquestion-answered">常见问题</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas">Fork me at GitHub</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas/blob/master/CONTRIBUTING.md">参与贡献</a></li>
 <li class="toctree-l1"><a class="reference internal" href="release-notes.html">Release Notes</a></li>
@@ -179,41 +180,41 @@
 <span id="id1"></span><h1>快速入门<a class="headerlink" href="#" title="永久链接至标题">¶</a></h1>
 <div class="section" id="demo">
 <span id="demo"></span><h2>1. 启动Demo<a class="headerlink" href="#demo" title="永久链接至标题">¶</a></h2>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$ wget https://alibaba.github.io/arthas/arthas-demo.jar
+<div class="highlight-bash notranslate"><div class="highlight hljs"><pre class="bash">$ wget https://alibaba.github.io/arthas/arthas-demo.jar
 $ java -jar arthas-demo.jar
 </pre></div>
 </div>
-<p><code class="docutils literal notranslate"><span class="pre">arthas-demo</span></code>是一个简单的程序，每隔一秒生成一个随机数，再执行质因式分解，并打印出分解结果。</p>
-<p><code class="docutils literal notranslate"><span class="pre">arthas-demo</span></code>源代码：<a class="reference external" href="https://github.com/alibaba/arthas/blob/master/demo/src/main/java/demo/MathGame.java">查看</a></p>
+<p><tt class="docutils literal">arthas-demo</tt>是一个简单的程序，每隔一秒生成一个随机数，再执行质因式分解，并打印出分解结果。</p>
+<p><tt class="docutils literal">arthas-demo</tt>源代码：<a class="reference external" href="https://github.com/alibaba/arthas/blob/master/demo/src/main/java/demo/MathGame.java">查看</a></p>
 </div>
 <div class="section" id="arthas">
 <span id="arthas"></span><h2>2. 启动arthas<a class="headerlink" href="#arthas" title="永久链接至标题">¶</a></h2>
 <p>在命令行下面执行：</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$ wget https://alibaba.github.io/arthas/arthas-boot.jar
+<div class="highlight-bash notranslate"><div class="highlight hljs"><pre class="bash">$ wget https://alibaba.github.io/arthas/arthas-boot.jar
 $ java -jar arthas-boot.jar
 </pre></div>
 </div>
 <ul class="simple">
-<li>执行该程序的用户需要和目标进程具有相同的权限。比如以<code class="docutils literal notranslate"><span class="pre">admin</span></code>用户来执行：<code class="docutils literal notranslate"><span class="pre">sudo</span> <span class="pre">su</span> <span class="pre">admin</span> <span class="pre">&amp;&amp;</span> <span class="pre">java</span> <span class="pre">-jar</span> <span class="pre">arthas-boot.jar</span></code> 或 <code class="docutils literal notranslate"><span class="pre">sudo</span> <span class="pre">-u</span> <span class="pre">admin</span> <span class="pre">-EH</span> <span class="pre">java</span> <span class="pre">-jar</span> <span class="pre">arthas-boot.jar</span></code>。</li>
-<li>如果attatch不上目标进程，可以查看<code class="docutils literal notranslate"><span class="pre">~/logs/arthas/</span></code> 目录下的日志。</li>
-<li>如果下载速度比较慢，可以使用aliyun的镜像：<code class="docutils literal notranslate"><span class="pre">java</span> <span class="pre">-jar</span> <span class="pre">arthas-boot.jar</span> <span class="pre">--repo-mirror</span> <span class="pre">aliyun</span> <span class="pre">--use-http</span></code></li>
-<li><code class="docutils literal notranslate"><span class="pre">java</span> <span class="pre">-jar</span> <span class="pre">arthas-boot.jar</span> <span class="pre">-h</span></code> 打印更多参数信息。</li>
+<li>执行该程序的用户需要和目标进程具有相同的权限。比如以<tt class="docutils literal">admin</tt>用户来执行：<tt class="docutils literal">sudo su admin && java -jar arthas-boot.jar</tt> 或 <tt class="docutils literal">sudo -u admin -EH java -jar arthas-boot.jar</tt>。</li>
+<li>如果attatch不上目标进程，可以查看<tt class="docutils literal">~/logs/arthas/</tt> 目录下的日志。</li>
+<li>如果下载速度比较慢，可以使用aliyun的镜像：<tt class="docutils literal">java -jar arthas-boot.jar --repo-mirror aliyun --use-http</tt></li>
+<li><tt class="docutils literal">java -jar arthas-boot.jar -h</tt> 打印更多参数信息。</li>
 </ul>
 <p>选择应用java进程：</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ $ java -jar arthas-boot.jar
+<div class="highlight-bash notranslate"><div class="highlight hljs"><pre class="bash">$ $ java -jar arthas-boot.jar
 * [1]: 35542
   [2]: 71560 arthas-demo.jar
 </pre></div>
 </div>
 <p>Demo进程是第2个，则输入2，再输入回车/enter。Arthas会attach到目标进程上，并输出日志：</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>[INFO] Try to attach process 71560
+<div class="highlight-bash notranslate"><div class="highlight hljs"><pre class="bash">[INFO] Try to attach process 71560
 [INFO] Attach process 71560 success.
 [INFO] arthas-client connect 127.0.0.1 3658
   ,---.  ,------. ,--------.,--.  ,--.  ,---.   ,---.
- /  O  \ |  .--. &#39;&#39;--.  .--&#39;|  &#39;--&#39;  | /  O  \ &#39;   .-&#39;
-|  .-.  ||  &#39;--&#39;.&#39;   |  |   |  .--.  ||  .-.  |`.  `-.
-|  | |  ||  |\  \    |  |   |  |  |  ||  | |  |.-&#39;    |
-`--&#39; `--&#39;`--&#39; &#39;--&#39;   `--&#39;   `--&#39;  `--&#39;`--&#39; `--&#39;`-----&#39;
+ /  O  \ |  .--. &#x27;&#x27;--.  .--&#x27;|  &#x27;--&#x27;  | /  O  \ &#x27;   .-&#x27;
+|  .-.  ||  &#x27;--&#x27;.&#x27;   |  |   |  .--.  ||  .-.  |`.  `-.
+|  | |  ||  |\  \    |  |   |  |  |  ||  | |  |.-&#x27;    |
+`--&#x27; `--&#x27;`--&#x27; &#x27;--&#x27;   `--&#x27;   `--&#x27;  `--&#x27;`--&#x27; `--&#x27;`-----&#x27;
 
 wiki: https://alibaba.github.io/arthas
 version: 3.0.5.20181127201536
@@ -226,8 +227,8 @@ $
 </div>
 <div class="section" id="dashboard">
 <span id="dashboard"></span><h2>3. 查看dashboard<a class="headerlink" href="#dashboard" title="永久链接至标题">¶</a></h2>
-<p>输入<a class="reference internal" href="dashboard.html"><span class="doc">dashboard</span></a>，按enter/回车，会展示当前进程的信息，按<code class="docutils literal notranslate"><span class="pre">ctrl+c</span></code>可以中断执行。</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ dashboard
+<p>输入<a class="reference internal" href="dashboard.html"><span class="doc">dashboard</span></a>，按enter/回车，会展示当前进程的信息，按<tt class="docutils literal">ctrl+c</tt>可以中断执行。</p>
+<div class="highlight-bash notranslate"><div class="highlight hljs"><pre class="bash">$ dashboard
 ID     NAME                   GROUP          PRIORI STATE  %CPU    TIME   INTERRU DAEMON
 17     pool-2-thread-1        system         5      WAITIN 67      0:0    false   false
 27     Timer-for-arthas-dashb system         10     RUNNAB 32      0:0    false   true
@@ -262,15 +263,15 @@ java.home              /Library/Java/JavaVir
 </div>
 </div>
 <div class="section" id="threadarthas-demomain-class">
-<span id="threadarthas-demomain-class"></span><h2>4. 通过thread命令来获取到<code class="docutils literal notranslate"><span class="pre">arthas-demo</span></code>进程的Main Class<a class="headerlink" href="#threadarthas-demomain-class" title="永久链接至标题">¶</a></h2>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$ thread -n -1 <span class="p">|</span> grep <span class="s1">&#39;main(&#39;</span>
-    at demo.MathGame.main<span class="o">(</span>MathGame.java:17<span class="o">)</span>
+<span id="threadarthas-demomain-class"></span><h2>4. 通过thread命令来获取到<tt class="docutils literal">arthas-demo</tt>进程的Main Class<a class="headerlink" href="#threadarthas-demomain-class" title="永久链接至标题">¶</a></h2>
+<div class="highlight-bash notranslate"><div class="highlight hljs"><pre class="bash">$ thread -n -1 | grep &#x27;main(&#x27;
+    at demo.MathGame.main(MathGame.java:17)
 </pre></div>
 </div>
 </div>
 <div class="section" id="jadmain-class">
 <span id="jadmain-class"></span><h2>5. 通过jad来反编绎Main Class<a class="headerlink" href="#jadmain-class" title="永久链接至标题">¶</a></h2>
-<div class="highlight-java notranslate"><div class="highlight"><pre><span></span>$ jad demo.MathGame
+<div class="highlight-java notranslate"><div class="highlight hljs"><pre class="java">$ jad demo.MathGame
 
 ClassLoader:
 +-sun.misc.Launcher$AppClassLoader@3d4eac69
@@ -319,9 +320,9 @@ public class MathGame {
         Iterator&lt;Integer&gt; iterator = primeFactors.iterator();
         while (iterator.hasNext()) {
             int factor = iterator.next();
-            sb.append(factor).append(&#39;*&#39;);
+            sb.append(factor).append(&#x27;*&#x27;);
         }
-        if (sb.charAt(sb.length() - 1) == &#39;*&#39;) {
+        if (sb.charAt(sb.length() - 1) == &#x27;*&#x27;) {
             sb.deleteCharAt(sb.length() - 1);
         }
         System.out.println(sb);
@@ -353,8 +354,8 @@ Affect(row-cnt:1) cost in 970 ms.
 </div>
 <div class="section" id="watch">
 <span id="watch"></span><h2>6. watch<a class="headerlink" href="#watch" title="永久链接至标题">¶</a></h2>
-<p>通过<a class="reference internal" href="watch.html"><span class="doc">watch</span></a>命令来查看<code class="docutils literal notranslate"><span class="pre">demo.MathGame#primeFactors</span></code>函数的返回值：</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ watch demo.MathGame primeFactors returnObj
+<p>通过<a class="reference internal" href="watch.html"><span class="doc">watch</span></a>命令来查看<tt class="docutils literal">demo.MathGame#primeFactors</tt>函数的返回值：</p>
+<div class="highlight-bash notranslate"><div class="highlight hljs"><pre class="bash">$ watch demo.MathGame primeFactors returnObj
 Press Ctrl+C to abort.
 Affect(class-cnt:1 , method-cnt:1) cost in 107 ms.
 ts=2018-11-28 19:22:30; [cost=1.715367ms] result=null
@@ -390,8 +391,8 @@ ts=2018-11-28 19:22:35; [cost=29.969732ms] result=@ArrayList[
 </div>
 <div class="section" id="arthas">
 <span id="id2"></span><h2>5. 退出arthas<a class="headerlink" href="#arthas" title="永久链接至标题">¶</a></h2>
-<p>如果只是退出当前的连接，可以用<code class="docutils literal notranslate"><span class="pre">quit</span></code>或者<code class="docutils literal notranslate"><span class="pre">exit</span></code>命令。Attach到目标进程上的arthas还会继续运行，端口会保持开放，下次连接时可以直接连接上。</p>
-<p>如果想完全退出arthas，可以执行<code class="docutils literal notranslate"><span class="pre">shutdown</span></code>命令。</p>
+<p>如果只是退出当前的连接，可以用<tt class="docutils literal">quit</tt>或者<tt class="docutils literal">exit</tt>命令。Attach到目标进程上的arthas还会继续运行，端口会保持开放，下次连接时可以直接连接上。</p>
+<p>如果想完全退出arthas，可以执行<tt class="docutils literal">shutdown</tt>命令。</p>
 </div>
 </div>
 
@@ -467,6 +468,15 @@ ts=2018-11-28 19:22:35; [cost=29.969732ms] result=@ArrayList[
 </div>
 
 <script type="text/javascript" src="_static/add_badges.js"></script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.13.1/highlight.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlightjs-line-numbers.js/2.5.0/highlightjs-line-numbers.min.js"></script>
+<script>
+  document.querySelectorAll('div.hljs > pre').forEach(function(block) {
+    hljs.highlightBlock(block);
+    hljs.lineNumbersBlock(block);
+  });
+</script>
 
 <script>
   var _hmt = _hmt || [];

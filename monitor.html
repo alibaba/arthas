@@ -34,6 +34,7 @@
     <link rel="next" title="watch" href="watch.html" />
     <link rel="prev" title="redefine" href="redefine.html" />
 <script src="_static/center_page.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.13.1/styles/github.min.css">
  
 
 
@@ -122,7 +123,7 @@
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas/issues?q=label%3Auser-case">用户案例</a></li>
-<li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas/issues?q=label%3Aquestion-answered">Questions and answers</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas/issues?q=label%3Aquestion-answered">常见问题</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas">Fork me at GitHub</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas/blob/master/CONTRIBUTING.md">参与贡献</a></li>
 <li class="toctree-l1"><a class="reference internal" href="release-notes.html">Release Notes</a></li>
@@ -199,9 +200,9 @@
 <span id="monitor"></span><h1>monitor<a class="headerlink" href="#monitor" title="永久链接至标题">¶</a></h1>
 <blockquote>
 <div>方法执行监控</div></blockquote>
-<p>对匹配 <code class="docutils literal notranslate"><span class="pre">class-pattern</span></code>／<code class="docutils literal notranslate"><span class="pre">method-pattern</span></code>的类、方法的调用进行监控。</p>
-<p><code class="docutils literal notranslate"><span class="pre">monitor</span></code> 命令是一个非实时返回命令.</p>
-<p>实时返回命令是输入之后立即返回，而非实时返回的命令，则是不断的等待目标 Java 进程返回信息，直到用户输入 <code class="docutils literal notranslate"><span class="pre">Ctrl+C</span></code> 为止。</p>
+<p>对匹配 <tt class="docutils literal">class-pattern</tt>／<tt class="docutils literal">method-pattern</tt>的类、方法的调用进行监控。</p>
+<p><tt class="docutils literal">monitor</tt> 命令是一个非实时返回命令.</p>
+<p>实时返回命令是输入之后立即返回，而非实时返回的命令，则是不断的等待目标 Java 进程返回信息，直到用户输入 <tt class="docutils literal">Ctrl+C</tt> 为止。</p>
 <p>服务端是以任务的形式在后台跑任务，植入的代码随着任务的中止而不会被执行，所以任务关闭后，不会对原有性能产生太大影响，而且原则上，任何Arthas命令不会引起原有业务逻辑的改变。</p>
 <div class="section" id="">
 <span id="id1"></span><h2>监控的维度说明<a class="headerlink" href="#" title="永久链接至标题">¶</a></h2>
@@ -249,7 +250,7 @@
 </table></div>
 <div class="section" id="">
 <span id="id2"></span><h2>参数说明<a class="headerlink" href="#" title="永久链接至标题">¶</a></h2>
-<p>方法拥有一个命名参数 <code class="docutils literal notranslate"><span class="pre">[c:]</span></code>，意思是统计周期（cycle of output），拥有一个整型的参数值</p>
+<p>方法拥有一个命名参数 <tt class="docutils literal">[c:]</tt>，意思是统计周期（cycle of output），拥有一个整型的参数值</p>
 <table border="1" class="docutils">
 <thead>
 <tr>
@@ -278,32 +279,32 @@
 </table></div>
 <div class="section" id="">
 <span id="id3"></span><h2>使用参考<a class="headerlink" href="#" title="永久链接至标题">¶</a></h2>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$ monitor -c <span class="m">5</span> demo.MathGame primeFactors
+<div class="highlight-bash notranslate"><div class="highlight hljs"><pre class="bash">$ monitor -c 5 demo.MathGame primeFactors
 Press Ctrl+C to abort.
-Affect<span class="o">(</span>class-cnt:1 , method-cnt:1<span class="o">)</span> cost in <span class="m">94</span> ms.
- timestamp            class          method        total  success  fail  avg-rt<span class="o">(</span>ms<span class="o">)</span>  fail-rate
+Affect(class-cnt:1 , method-cnt:1) cost in 94 ms.
+ timestamp            class          method        total  success  fail  avg-rt(ms)  fail-rate
 -----------------------------------------------------------------------------------------------
- <span class="m">2018</span>-12-03 <span class="m">19</span>:06:38  demo.MathGame  primeFactors  <span class="m">5</span>      <span class="m">1</span>        <span class="m">4</span>     <span class="m">1</span>.15        <span class="m">80</span>.00%
+ 2018-12-03 19:06:38  demo.MathGame  primeFactors  5      1        4     1.15        80.00%
 
- timestamp            class          method        total  success  fail  avg-rt<span class="o">(</span>ms<span class="o">)</span>  fail-rate
+ timestamp            class          method        total  success  fail  avg-rt(ms)  fail-rate
 -----------------------------------------------------------------------------------------------
- <span class="m">2018</span>-12-03 <span class="m">19</span>:06:43  demo.MathGame  primeFactors  <span class="m">5</span>      <span class="m">3</span>        <span class="m">2</span>     <span class="m">42</span>.29       <span class="m">40</span>.00%
+ 2018-12-03 19:06:43  demo.MathGame  primeFactors  5      3        2     42.29       40.00%
 
- timestamp            class          method        total  success  fail  avg-rt<span class="o">(</span>ms<span class="o">)</span>  fail-rate
+ timestamp            class          method        total  success  fail  avg-rt(ms)  fail-rate
 -----------------------------------------------------------------------------------------------
- <span class="m">2018</span>-12-03 <span class="m">19</span>:06:48  demo.MathGame  primeFactors  <span class="m">5</span>      <span class="m">3</span>        <span class="m">2</span>     <span class="m">67</span>.92       <span class="m">40</span>.00%
+ 2018-12-03 19:06:48  demo.MathGame  primeFactors  5      3        2     67.92       40.00%
 
- timestamp            class          method        total  success  fail  avg-rt<span class="o">(</span>ms<span class="o">)</span>  fail-rate
+ timestamp            class          method        total  success  fail  avg-rt(ms)  fail-rate
 -----------------------------------------------------------------------------------------------
- <span class="m">2018</span>-12-03 <span class="m">19</span>:06:53  demo.MathGame  primeFactors  <span class="m">5</span>      <span class="m">2</span>        <span class="m">3</span>     <span class="m">0</span>.25        <span class="m">60</span>.00%
+ 2018-12-03 19:06:53  demo.MathGame  primeFactors  5      2        3     0.25        60.00%
 
- timestamp            class          method        total  success  fail  avg-rt<span class="o">(</span>ms<span class="o">)</span>  fail-rate
+ timestamp            class          method        total  success  fail  avg-rt(ms)  fail-rate
 -----------------------------------------------------------------------------------------------
- <span class="m">2018</span>-12-03 <span class="m">19</span>:06:58  demo.MathGame  primeFactors  <span class="m">1</span>      <span class="m">1</span>        <span class="m">0</span>     <span class="m">0</span>.45        <span class="m">0</span>.00%
+ 2018-12-03 19:06:58  demo.MathGame  primeFactors  1      1        0     0.45        0.00%
 
- timestamp            class          method        total  success  fail  avg-rt<span class="o">(</span>ms<span class="o">)</span>  fail-rate
+ timestamp            class          method        total  success  fail  avg-rt(ms)  fail-rate
 -----------------------------------------------------------------------------------------------
- <span class="m">2018</span>-12-03 <span class="m">19</span>:07:03  demo.MathGame  primeFactors  <span class="m">2</span>      <span class="m">2</span>        <span class="m">0</span>     <span class="m">3182</span>.72     <span class="m">0</span>.00%
+ 2018-12-03 19:07:03  demo.MathGame  primeFactors  2      2        0     3182.72     0.00%
 </pre></div>
 </div>
 </div>
@@ -381,6 +382,15 @@ Affect<span class="o">(</span>class-cnt:1 , method-cnt:1<span class="o">)</span>
 </div>
 
 <script type="text/javascript" src="_static/add_badges.js"></script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.13.1/highlight.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlightjs-line-numbers.js/2.5.0/highlightjs-line-numbers.min.js"></script>
+<script>
+  document.querySelectorAll('div.hljs > pre').forEach(function(block) {
+    hljs.highlightBlock(block);
+    hljs.lineNumbersBlock(block);
+  });
+</script>
 
 <script>
   var _hmt = _hmt || [];

@@ -34,6 +34,7 @@
     <link rel="next" title="trace" href="trace.html" />
     <link rel="prev" title="monitor" href="monitor.html" />
 <script src="_static/center_page.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.13.1/styles/github.min.css">
  
 
 
@@ -115,7 +116,7 @@
 <li class="toctree-l4"><a class="reference internal" href="#">观察方法出参和返回值</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#">观察方法入参</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#">同时观察方法调用前和方法返回后</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#x">调整<code class="docutils literal notranslate"><span class="pre">-x</span></code>的值，观察具体的方法参数值</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#x">调整<tt class="docutils literal">-x</tt>的值，观察具体的方法参数值</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#">条件表达式的例子</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#">观察异常信息的例子</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#">按照耗时进行过滤</a></li>
@@ -132,7 +133,7 @@
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas/issues?q=label%3Auser-case">用户案例</a></li>
-<li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas/issues?q=label%3Aquestion-answered">Questions and answers</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas/issues?q=label%3Aquestion-answered">常见问题</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas">Fork me at GitHub</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas/blob/master/CONTRIBUTING.md">参与贡献</a></li>
 <li class="toctree-l1"><a class="reference internal" href="release-notes.html">Release Notes</a></li>
@@ -209,7 +210,7 @@
 <span id="watch"></span><h1>watch<a class="headerlink" href="#watch" title="永久链接至标题">¶</a></h1>
 <blockquote>
 <div>方法执行数据观测</div></blockquote>
-<p>让你能方便的观察到指定方法的调用情况。能观察到的范围为：<code class="docutils literal notranslate"><span class="pre">返回值</span></code>、<code class="docutils literal notranslate"><span class="pre">抛出异常</span></code>、<code class="docutils literal notranslate"><span class="pre">入参</span></code>，通过编写 OGNL 表达式进行对应变量的查看。</p>
+<p>让你能方便的观察到指定方法的调用情况。能观察到的范围为：<tt class="docutils literal">返回值</tt>、<tt class="docutils literal">抛出异常</tt>、<tt class="docutils literal">入参</tt>，通过编写 OGNL 表达式进行对应变量的查看。</p>
 <div class="section" id="">
 <span id="id1"></span><h2>参数说明<a class="headerlink" href="#" title="永久链接至标题">¶</a></h2>
 <p>watch 的参数比较多，主要是因为它能在 4 个不同的场景观察对象</p>
@@ -262,56 +263,56 @@
 <td align="left">指定输出结果的属性遍历深度，默认为 1</td>
 </tr>
 </tbody>
-</table><p>这里重点要说明的是观察表达式，观察表达式的构成主要由 ognl 表达式组成，所以你可以这样写<code class="docutils literal notranslate"><span class="pre">&quot;{params,returnObj}&quot;</span></code>，只要是一个合法的 ognl 表达式，都能被正常支持。</p>
-<p>观察的维度也比较多，主要体现在参数 <code class="docutils literal notranslate"><span class="pre">advice</span></code> 的数据结构上。<code class="docutils literal notranslate"><span class="pre">Advice</span></code> 参数最主要是封装了通知节点的所有信息。请参考<a class="reference internal" href="advice-class.html"><span class="doc">表达式核心变量</span></a>中关于该节点的描述。</p>
+</table><p>这里重点要说明的是观察表达式，观察表达式的构成主要由 ognl 表达式组成，所以你可以这样写<tt class="docutils literal">"{params,returnObj}"</tt>，只要是一个合法的 ognl 表达式，都能被正常支持。</p>
+<p>观察的维度也比较多，主要体现在参数 <tt class="docutils literal">advice</tt> 的数据结构上。<tt class="docutils literal">Advice</tt> 参数最主要是封装了通知节点的所有信息。请参考<a class="reference internal" href="advice-class.html"><span class="doc">表达式核心变量</span></a>中关于该节点的描述。</p>
 <ul class="simple">
 <li>特殊用法请参考：<a class="reference external" href="https://github.com/alibaba/arthas/issues/71">https://github.com/alibaba/arthas/issues/71</a></li>
 <li>OGNL表达式官网：<a class="reference external" href="https://commons.apache.org/proper/commons-ognl/language-guide.html">https://commons.apache.org/proper/commons-ognl/language-guide.html</a></li>
 </ul>
 <p><strong>特别说明</strong>：</p>
 <ul class="simple">
-<li>watch 命令定义了4个观察事件点，即 <code class="docutils literal notranslate"><span class="pre">-b</span></code> 方法调用前，<code class="docutils literal notranslate"><span class="pre">-e</span></code> 方法异常后，<code class="docutils literal notranslate"><span class="pre">-s</span></code> 方法返回后，<code class="docutils literal notranslate"><span class="pre">-f</span></code> 方法结束后</li>
-<li>4个观察事件点 <code class="docutils literal notranslate"><span class="pre">-b</span></code>、<code class="docutils literal notranslate"><span class="pre">-e</span></code>、<code class="docutils literal notranslate"><span class="pre">-s</span></code> 默认关闭，<code class="docutils literal notranslate"><span class="pre">-f</span></code> 默认打开，当指定观察点被打开后，在相应事件点会对观察表达式进行求值并输出</li>
-<li>这里要注意<code class="docutils literal notranslate"><span class="pre">方法入参</span></code>和<code class="docutils literal notranslate"><span class="pre">方法出参</span></code>的区别，有可能在中间被修改导致前后不一致，除了 <code class="docutils literal notranslate"><span class="pre">-b</span></code> 事件点 <code class="docutils literal notranslate"><span class="pre">params</span></code> 代表方法入参外，其余事件都代表方法出参</li>
-<li>当使用 <code class="docutils literal notranslate"><span class="pre">-b</span></code> 时，由于观察事件点是在方法调用前，此时返回值或异常均不存在</li>
+<li>watch 命令定义了4个观察事件点，即 <tt class="docutils literal">-b</tt> 方法调用前，<tt class="docutils literal">-e</tt> 方法异常后，<tt class="docutils literal">-s</tt> 方法返回后，<tt class="docutils literal">-f</tt> 方法结束后</li>
+<li>4个观察事件点 <tt class="docutils literal">-b</tt>、<tt class="docutils literal">-e</tt>、<tt class="docutils literal">-s</tt> 默认关闭，<tt class="docutils literal">-f</tt> 默认打开，当指定观察点被打开后，在相应事件点会对观察表达式进行求值并输出</li>
+<li>这里要注意<tt class="docutils literal">方法入参</tt>和<tt class="docutils literal">方法出参</tt>的区别，有可能在中间被修改导致前后不一致，除了 <tt class="docutils literal">-b</tt> 事件点 <tt class="docutils literal">params</tt> 代表方法入参外，其余事件都代表方法出参</li>
+<li>当使用 <tt class="docutils literal">-b</tt> 时，由于观察事件点是在方法调用前，此时返回值或异常均不存在</li>
 </ul>
 </div>
 <div class="section" id="">
 <span id="id2"></span><h2>使用参考<a class="headerlink" href="#" title="永久链接至标题">¶</a></h2>
 <div class="section" id="demo">
 <span id="demo"></span><h3>启动 Demo<a class="headerlink" href="#demo" title="永久链接至标题">¶</a></h3>
-<p>启动<a class="reference internal" href="quick-start.html"><span class="doc">快速入门</span></a>里的<code class="docutils literal notranslate"><span class="pre">arthas-demo</span></code>。</p>
+<p>启动<a class="reference internal" href="quick-start.html"><span class="doc">快速入门</span></a>里的<tt class="docutils literal">arthas-demo</tt>。</p>
 </div>
 <div class="section" id="">
 <span id="id3"></span><h3>观察方法出参和返回值<a class="headerlink" href="#" title="永久链接至标题">¶</a></h3>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$ watch demo.MathGame primeFactors <span class="s2">&quot;{params,returnObj}&quot;</span> -x <span class="m">2</span>
+<div class="highlight-bash notranslate"><div class="highlight hljs"><pre class="bash">$ watch demo.MathGame primeFactors &quot;{params,returnObj}&quot; -x 2
 Press Ctrl+C to abort.
-Affect<span class="o">(</span>class-cnt:1 , method-cnt:1<span class="o">)</span> cost in <span class="m">44</span> ms.
-<span class="nv">ts</span><span class="o">=</span><span class="m">2018</span>-12-03 <span class="m">19</span>:16:51<span class="p">;</span> <span class="o">[</span><span class="nv">cost</span><span class="o">=</span><span class="m">1</span>.280502ms<span class="o">]</span> <span class="nv">result</span><span class="o">=</span>@ArrayList<span class="o">[</span>
-    @Object<span class="o">[][</span>
-        @Integer<span class="o">[</span><span class="m">535629513</span><span class="o">]</span>,
-    <span class="o">]</span>,
-    @ArrayList<span class="o">[</span>
-        @Integer<span class="o">[</span><span class="m">3</span><span class="o">]</span>,
-        @Integer<span class="o">[</span><span class="m">19</span><span class="o">]</span>,
-        @Integer<span class="o">[</span><span class="m">191</span><span class="o">]</span>,
-        @Integer<span class="o">[</span><span class="m">49199</span><span class="o">]</span>,
-    <span class="o">]</span>,
-<span class="o">]</span>
+Affect(class-cnt:1 , method-cnt:1) cost in 44 ms.
+ts=2018-12-03 19:16:51; [cost=1.280502ms] result=@ArrayList[
+    @Object[][
+        @Integer[535629513],
+    ],
+    @ArrayList[
+        @Integer[3],
+        @Integer[19],
+        @Integer[191],
+        @Integer[49199],
+    ],
+]
 </pre></div>
 </div>
 </div>
 <div class="section" id="">
 <span id="id4"></span><h3>观察方法入参<a class="headerlink" href="#" title="永久链接至标题">¶</a></h3>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$ watch demo.MathGame primeFactors <span class="s2">&quot;{params,returnObj}&quot;</span> -x <span class="m">2</span> -b
+<div class="highlight-bash notranslate"><div class="highlight hljs"><pre class="bash">$ watch demo.MathGame primeFactors &quot;{params,returnObj}&quot; -x 2 -b
 Press Ctrl+C to abort.
-Affect<span class="o">(</span>class-cnt:1 , method-cnt:1<span class="o">)</span> cost in <span class="m">50</span> ms.
-<span class="nv">ts</span><span class="o">=</span><span class="m">2018</span>-12-03 <span class="m">19</span>:23:23<span class="p">;</span> <span class="o">[</span><span class="nv">cost</span><span class="o">=</span><span class="m">0</span>.0353ms<span class="o">]</span> <span class="nv">result</span><span class="o">=</span>@ArrayList<span class="o">[</span>
-    @Object<span class="o">[][</span>
-        @Integer<span class="o">[</span>-1077465243<span class="o">]</span>,
-    <span class="o">]</span>,
+Affect(class-cnt:1 , method-cnt:1) cost in 50 ms.
+ts=2018-12-03 19:23:23; [cost=0.0353ms] result=@ArrayList[
+    @Object[][
+        @Integer[-1077465243],
+    ],
     null,
-<span class="o">]</span>
+]
 </pre></div>
 </div>
 <ul class="simple">
@@ -320,91 +321,91 @@ Affect<span class="o">(</span>class-cnt:1 , method-cnt:1<span class="o">)</span>
 </div>
 <div class="section" id="">
 <span id="id5"></span><h3>同时观察方法调用前和方法返回后<a class="headerlink" href="#" title="永久链接至标题">¶</a></h3>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$ watch demo.MathGame primeFactors <span class="s2">&quot;{params,target,returnObj}&quot;</span> -x <span class="m">2</span> -b -s -n <span class="m">2</span>
+<div class="highlight-bash notranslate"><div class="highlight hljs"><pre class="bash">$ watch demo.MathGame primeFactors &quot;{params,target,returnObj}&quot; -x 2 -b -s -n 2
 Press Ctrl+C to abort.
-Affect<span class="o">(</span>class-cnt:1 , method-cnt:1<span class="o">)</span> cost in <span class="m">46</span> ms.
-<span class="nv">ts</span><span class="o">=</span><span class="m">2018</span>-12-03 <span class="m">19</span>:29:54<span class="p">;</span> <span class="o">[</span><span class="nv">cost</span><span class="o">=</span><span class="m">0</span>.01696ms<span class="o">]</span> <span class="nv">result</span><span class="o">=</span>@ArrayList<span class="o">[</span>
-    @Object<span class="o">[][</span>
-        @Integer<span class="o">[</span><span class="m">1544665400</span><span class="o">]</span>,
-    <span class="o">]</span>,
-    @MathGame<span class="o">[</span>
-        <span class="nv">random</span><span class="o">=</span>@Random<span class="o">[</span>java.util.Random@522b408a<span class="o">]</span>,
-        <span class="nv">illegalArgumentCount</span><span class="o">=</span>@Integer<span class="o">[</span><span class="m">13038</span><span class="o">]</span>,
-    <span class="o">]</span>,
+Affect(class-cnt:1 , method-cnt:1) cost in 46 ms.
+ts=2018-12-03 19:29:54; [cost=0.01696ms] result=@ArrayList[
+    @Object[][
+        @Integer[1544665400],
+    ],
+    @MathGame[
+        random=@Random[java.util.Random@522b408a],
+        illegalArgumentCount=@Integer[13038],
+    ],
     null,
-<span class="o">]</span>
-<span class="nv">ts</span><span class="o">=</span><span class="m">2018</span>-12-03 <span class="m">19</span>:29:54<span class="p">;</span> <span class="o">[</span><span class="nv">cost</span><span class="o">=</span><span class="m">4</span>.277392ms<span class="o">]</span> <span class="nv">result</span><span class="o">=</span>@ArrayList<span class="o">[</span>
-    @Object<span class="o">[][</span>
-        @Integer<span class="o">[</span><span class="m">1544665400</span><span class="o">]</span>,
-    <span class="o">]</span>,
-    @MathGame<span class="o">[</span>
-        <span class="nv">random</span><span class="o">=</span>@Random<span class="o">[</span>java.util.Random@522b408a<span class="o">]</span>,
-        <span class="nv">illegalArgumentCount</span><span class="o">=</span>@Integer<span class="o">[</span><span class="m">13038</span><span class="o">]</span>,
-    <span class="o">]</span>,
-    @ArrayList<span class="o">[</span>
-        @Integer<span class="o">[</span><span class="m">2</span><span class="o">]</span>,
-        @Integer<span class="o">[</span><span class="m">2</span><span class="o">]</span>,
-        @Integer<span class="o">[</span><span class="m">2</span><span class="o">]</span>,
-        @Integer<span class="o">[</span><span class="m">5</span><span class="o">]</span>,
-        @Integer<span class="o">[</span><span class="m">5</span><span class="o">]</span>,
-        @Integer<span class="o">[</span><span class="m">73</span><span class="o">]</span>,
-        @Integer<span class="o">[</span><span class="m">241</span><span class="o">]</span>,
-        @Integer<span class="o">[</span><span class="m">439</span><span class="o">]</span>,
-    <span class="o">]</span>,
-<span class="o">]</span>
+]
+ts=2018-12-03 19:29:54; [cost=4.277392ms] result=@ArrayList[
+    @Object[][
+        @Integer[1544665400],
+    ],
+    @MathGame[
+        random=@Random[java.util.Random@522b408a],
+        illegalArgumentCount=@Integer[13038],
+    ],
+    @ArrayList[
+        @Integer[2],
+        @Integer[2],
+        @Integer[2],
+        @Integer[5],
+        @Integer[5],
+        @Integer[73],
+        @Integer[241],
+        @Integer[439],
+    ],
+]
 </pre></div>
 </div>
 <ul class="simple">
-<li>参数里<code class="docutils literal notranslate"><span class="pre">-n</span> <span class="pre">2</span></code>，表示只执行两次</li>
+<li>参数里<tt class="docutils literal">-n 2</tt>，表示只执行两次</li>
 <li>这里输出结果中，第一次输出的是方法调用前的观察表达式的结果，第二次输出的是方法返回后的表达式的结果</li>
-<li>结果的顺序和命令中 <code class="docutils literal notranslate"><span class="pre">-s</span> <span class="pre">-b</span></code> 的顺序没有关系，只与事件本身的先后顺序有关</li>
+<li>结果的顺序和命令中 <tt class="docutils literal">-s -b</tt> 的顺序没有关系，只与事件本身的先后顺序有关</li>
 </ul>
 </div>
 <div class="section" id="x">
-<span id="x"></span><h3>调整<code class="docutils literal notranslate"><span class="pre">-x</span></code>的值，观察具体的方法参数值<a class="headerlink" href="#x" title="永久链接至标题">¶</a></h3>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$ watch demo.MathGame primeFactors <span class="s2">&quot;{params,target}&quot;</span> -x <span class="m">3</span>
+<span id="x"></span><h3>调整<tt class="docutils literal">-x</tt>的值，观察具体的方法参数值<a class="headerlink" href="#x" title="永久链接至标题">¶</a></h3>
+<div class="highlight-bash notranslate"><div class="highlight hljs"><pre class="bash">$ watch demo.MathGame primeFactors &quot;{params,target}&quot; -x 3
 Press Ctrl+C to abort.
-Affect<span class="o">(</span>class-cnt:1 , method-cnt:1<span class="o">)</span> cost in <span class="m">58</span> ms.
-<span class="nv">ts</span><span class="o">=</span><span class="m">2018</span>-12-03 <span class="m">19</span>:34:19<span class="p">;</span> <span class="o">[</span><span class="nv">cost</span><span class="o">=</span><span class="m">0</span>.587833ms<span class="o">]</span> <span class="nv">result</span><span class="o">=</span>@ArrayList<span class="o">[</span>
-    @Object<span class="o">[][</span>
-        @Integer<span class="o">[</span><span class="m">47816758</span><span class="o">]</span>,
-    <span class="o">]</span>,
-    @MathGame<span class="o">[</span>
-        <span class="nv">random</span><span class="o">=</span>@Random<span class="o">[</span>
-            <span class="nv">serialVersionUID</span><span class="o">=</span>@Long<span class="o">[</span><span class="m">3905348978240129619</span><span class="o">]</span>,
-            <span class="nv">seed</span><span class="o">=</span>@AtomicLong<span class="o">[</span><span class="m">3133719055989</span><span class="o">]</span>,
-            <span class="nv">multiplier</span><span class="o">=</span>@Long<span class="o">[</span><span class="m">25214903917</span><span class="o">]</span>,
-            <span class="nv">addend</span><span class="o">=</span>@Long<span class="o">[</span><span class="m">11</span><span class="o">]</span>,
-            <span class="nv">mask</span><span class="o">=</span>@Long<span class="o">[</span><span class="m">281474976710655</span><span class="o">]</span>,
-            <span class="nv">DOUBLE_UNIT</span><span class="o">=</span>@Double<span class="o">[</span><span class="m">1</span>.1102230246251565E-16<span class="o">]</span>,
-            <span class="nv">BadBound</span><span class="o">=</span>@String<span class="o">[</span>bound must be positive<span class="o">]</span>,
-            <span class="nv">BadRange</span><span class="o">=</span>@String<span class="o">[</span>bound must be greater than origin<span class="o">]</span>,
-            <span class="nv">BadSize</span><span class="o">=</span>@String<span class="o">[</span>size must be non-negative<span class="o">]</span>,
-            <span class="nv">seedUniquifier</span><span class="o">=</span>@AtomicLong<span class="o">[</span>-3282039941672302964<span class="o">]</span>,
-            <span class="nv">nextNextGaussian</span><span class="o">=</span>@Double<span class="o">[</span><span class="m">0</span>.0<span class="o">]</span>,
-            <span class="nv">haveNextNextGaussian</span><span class="o">=</span>@Boolean<span class="o">[</span>false<span class="o">]</span>,
-            <span class="nv">serialPersistentFields</span><span class="o">=</span>@ObjectStreamField<span class="o">[][</span><span class="nv">isEmpty</span><span class="o">=</span>false<span class="p">;</span><span class="nv">size</span><span class="o">=</span><span class="m">3</span><span class="o">]</span>,
-            <span class="nv">unsafe</span><span class="o">=</span>@Unsafe<span class="o">[</span>sun.misc.Unsafe@2eaa1027<span class="o">]</span>,
-            <span class="nv">seedOffset</span><span class="o">=</span>@Long<span class="o">[</span><span class="m">24</span><span class="o">]</span>,
-        <span class="o">]</span>,
-        <span class="nv">illegalArgumentCount</span><span class="o">=</span>@Integer<span class="o">[</span><span class="m">13159</span><span class="o">]</span>,
-    <span class="o">]</span>,
-<span class="o">]</span>
+Affect(class-cnt:1 , method-cnt:1) cost in 58 ms.
+ts=2018-12-03 19:34:19; [cost=0.587833ms] result=@ArrayList[
+    @Object[][
+        @Integer[47816758],
+    ],
+    @MathGame[
+        random=@Random[
+            serialVersionUID=@Long[3905348978240129619],
+            seed=@AtomicLong[3133719055989],
+            multiplier=@Long[25214903917],
+            addend=@Long[11],
+            mask=@Long[281474976710655],
+            DOUBLE_UNIT=@Double[1.1102230246251565E-16],
+            BadBound=@String[bound must be positive],
+            BadRange=@String[bound must be greater than origin],
+            BadSize=@String[size must be non-negative],
+            seedUniquifier=@AtomicLong[-3282039941672302964],
+            nextNextGaussian=@Double[0.0],
+            haveNextNextGaussian=@Boolean[false],
+            serialPersistentFields=@ObjectStreamField[][isEmpty=false;size=3],
+            unsafe=@Unsafe[sun.misc.Unsafe@2eaa1027],
+            seedOffset=@Long[24],
+        ],
+        illegalArgumentCount=@Integer[13159],
+    ],
+]
 </pre></div>
 </div>
 <ul class="simple">
-<li><code class="docutils literal notranslate"><span class="pre">-x</span></code>表示遍历深度，可以调整来打印具体的参数和结果内容，默认值是1。</li>
+<li><tt class="docutils literal">-x</tt>表示遍历深度，可以调整来打印具体的参数和结果内容，默认值是1。</li>
 </ul>
 </div>
 <div class="section" id="">
 <span id="id6"></span><h3>条件表达式的例子<a class="headerlink" href="#" title="永久链接至标题">¶</a></h3>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$ watch demo.MathGame primeFactors <span class="s2">&quot;{params[0],target}&quot;</span> <span class="s2">&quot;params[0]&lt;0&quot;</span>
+<div class="highlight-bash notranslate"><div class="highlight hljs"><pre class="bash">$ watch demo.MathGame primeFactors &quot;{params[0],target}&quot; &quot;params[0]&lt;0&quot;
 Press Ctrl+C to abort.
-Affect<span class="o">(</span>class-cnt:1 , method-cnt:1<span class="o">)</span> cost in <span class="m">68</span> ms.
-<span class="nv">ts</span><span class="o">=</span><span class="m">2018</span>-12-03 <span class="m">19</span>:36:04<span class="p">;</span> <span class="o">[</span><span class="nv">cost</span><span class="o">=</span><span class="m">0</span>.530255ms<span class="o">]</span> <span class="nv">result</span><span class="o">=</span>@ArrayList<span class="o">[</span>
-    @Integer<span class="o">[</span>-18178089<span class="o">]</span>,
-    @MathGame<span class="o">[</span>demo.MathGame@41cf53f9<span class="o">]</span>,
-<span class="o">]</span>
+Affect(class-cnt:1 , method-cnt:1) cost in 68 ms.
+ts=2018-12-03 19:36:04; [cost=0.530255ms] result=@ArrayList[
+    @Integer[-18178089],
+    @MathGame[demo.MathGame@41cf53f9],
+]
 </pre></div>
 </div>
 <ul class="simple">
@@ -413,62 +414,62 @@ Affect<span class="o">(</span>class-cnt:1 , method-cnt:1<span class="o">)</span>
 </div>
 <div class="section" id="">
 <span id="id7"></span><h3>观察异常信息的例子<a class="headerlink" href="#" title="永久链接至标题">¶</a></h3>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$ watch demo.MathGame primeFactors <span class="s2">&quot;{params[0],throwExp}&quot;</span> -e -x <span class="m">2</span>
+<div class="highlight-bash notranslate"><div class="highlight hljs"><pre class="bash">$ watch demo.MathGame primeFactors &quot;{params[0],throwExp}&quot; -e -x 2
 Press Ctrl+C to abort.
-Affect<span class="o">(</span>class-cnt:1 , method-cnt:1<span class="o">)</span> cost in <span class="m">62</span> ms.
-<span class="nv">ts</span><span class="o">=</span><span class="m">2018</span>-12-03 <span class="m">19</span>:38:00<span class="p">;</span> <span class="o">[</span><span class="nv">cost</span><span class="o">=</span><span class="m">1</span>.414993ms<span class="o">]</span> <span class="nv">result</span><span class="o">=</span>@ArrayList<span class="o">[</span>
-    @Integer<span class="o">[</span>-1120397038<span class="o">]</span>,
-    java.lang.IllegalArgumentException: number is: -1120397038, need &gt;<span class="o">=</span> <span class="m">2</span>
-    at demo.MathGame.primeFactors<span class="o">(</span>MathGame.java:46<span class="o">)</span>
-    at demo.MathGame.run<span class="o">(</span>MathGame.java:24<span class="o">)</span>
-    at demo.MathGame.main<span class="o">(</span>MathGame.java:16<span class="o">)</span>
+Affect(class-cnt:1 , method-cnt:1) cost in 62 ms.
+ts=2018-12-03 19:38:00; [cost=1.414993ms] result=@ArrayList[
+    @Integer[-1120397038],
+    java.lang.IllegalArgumentException: number is: -1120397038, need &gt;= 2
+    at demo.MathGame.primeFactors(MathGame.java:46)
+    at demo.MathGame.run(MathGame.java:24)
+    at demo.MathGame.main(MathGame.java:16)
 ,
-<span class="o">]</span>
+]
 </pre></div>
 </div>
 <ul class="simple">
-<li><code class="docutils literal notranslate"><span class="pre">-e</span></code>表示抛出异常时才触发</li>
-<li>express中，表示异常信息的变量是<code class="docutils literal notranslate"><span class="pre">throwExp</span></code></li>
+<li><tt class="docutils literal">-e</tt>表示抛出异常时才触发</li>
+<li>express中，表示异常信息的变量是<tt class="docutils literal">throwExp</tt></li>
 </ul>
 </div>
 <div class="section" id="">
 <span id="id8"></span><h3>按照耗时进行过滤<a class="headerlink" href="#" title="永久链接至标题">¶</a></h3>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$ watch demo.MathGame primeFactors <span class="s1">&#39;{params, returnObj}&#39;</span> <span class="s1">&#39;#cost&gt;200&#39;</span> -x <span class="m">2</span>
+<div class="highlight-bash notranslate"><div class="highlight hljs"><pre class="bash">$ watch demo.MathGame primeFactors &#x27;{params, returnObj}&#x27; &#x27;#cost&gt;200&#x27; -x 2
 Press Ctrl+C to abort.
-Affect<span class="o">(</span>class-cnt:1 , method-cnt:1<span class="o">)</span> cost in <span class="m">66</span> ms.
-<span class="nv">ts</span><span class="o">=</span><span class="m">2018</span>-12-03 <span class="m">19</span>:40:28<span class="p">;</span> <span class="o">[</span><span class="nv">cost</span><span class="o">=</span><span class="m">2112</span>.168897ms<span class="o">]</span> <span class="nv">result</span><span class="o">=</span>@ArrayList<span class="o">[</span>
-    @Object<span class="o">[][</span>
-        @Integer<span class="o">[</span><span class="m">2141897465</span><span class="o">]</span>,
-    <span class="o">]</span>,
-    @ArrayList<span class="o">[</span>
-        @Integer<span class="o">[</span><span class="m">5</span><span class="o">]</span>,
-        @Integer<span class="o">[</span><span class="m">428379493</span><span class="o">]</span>,
-    <span class="o">]</span>,
-<span class="o">]</span>
+Affect(class-cnt:1 , method-cnt:1) cost in 66 ms.
+ts=2018-12-03 19:40:28; [cost=2112.168897ms] result=@ArrayList[
+    @Object[][
+        @Integer[2141897465],
+    ],
+    @ArrayList[
+        @Integer[5],
+        @Integer[428379493],
+    ],
+]
 </pre></div>
 </div>
 <ul class="simple">
-<li><code class="docutils literal notranslate"><span class="pre">#cost&gt;200</span></code>(单位是<code class="docutils literal notranslate"><span class="pre">ms</span></code>)表示只有当耗时大于200ms时才会输出，过滤掉执行时间小于200ms的调用</li>
+<li><tt class="docutils literal">#cost>200</tt>(单位是<tt class="docutils literal">ms</tt>)表示只有当耗时大于200ms时才会输出，过滤掉执行时间小于200ms的调用</li>
 </ul>
 </div>
 <div class="section" id="">
 <span id="id9"></span><h3>观察当前对象中的属性<a class="headerlink" href="#" title="永久链接至标题">¶</a></h3>
-<p>如果想查看方法运行前后，当前对象中的属性，可以使用<code class="docutils literal notranslate"><span class="pre">target</span></code>关键字，代表当前对象</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$ watch demo.MathGame primeFactors <span class="s1">&#39;target&#39;</span>
+<p>如果想查看方法运行前后，当前对象中的属性，可以使用<tt class="docutils literal">target</tt>关键字，代表当前对象</p>
+<div class="highlight-bash notranslate"><div class="highlight hljs"><pre class="bash">$ watch demo.MathGame primeFactors &#x27;target&#x27;
 Press Ctrl+C to abort.
-Affect<span class="o">(</span>class-cnt:1 , method-cnt:1<span class="o">)</span> cost in <span class="m">52</span> ms.
-<span class="nv">ts</span><span class="o">=</span><span class="m">2018</span>-12-03 <span class="m">19</span>:41:52<span class="p">;</span> <span class="o">[</span><span class="nv">cost</span><span class="o">=</span><span class="m">0</span>.477882ms<span class="o">]</span> <span class="nv">result</span><span class="o">=</span>@MathGame<span class="o">[</span>
-    <span class="nv">random</span><span class="o">=</span>@Random<span class="o">[</span>java.util.Random@522b408a<span class="o">]</span>,
-    <span class="nv">illegalArgumentCount</span><span class="o">=</span>@Integer<span class="o">[</span><span class="m">13355</span><span class="o">]</span>,
-<span class="o">]</span>
+Affect(class-cnt:1 , method-cnt:1) cost in 52 ms.
+ts=2018-12-03 19:41:52; [cost=0.477882ms] result=@MathGame[
+    random=@Random[java.util.Random@522b408a],
+    illegalArgumentCount=@Integer[13355],
+]
 </pre></div>
 </div>
-<p>然后使用<code class="docutils literal notranslate"><span class="pre">target.field_name</span></code>访问当前对象的某个属性</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$ watch demo.MathGame primeFactors <span class="s1">&#39;target.illegalArgumentCount&#39;</span>
+<p>然后使用<tt class="docutils literal">target.field_name</tt>访问当前对象的某个属性</p>
+<div class="highlight-bash notranslate"><div class="highlight hljs"><pre class="bash">$ watch demo.MathGame primeFactors &#x27;target.illegalArgumentCount&#x27;
 Press Ctrl+C to abort.
-Affect<span class="o">(</span>class-cnt:1 , method-cnt:1<span class="o">)</span> cost in <span class="m">67</span> ms.
-<span class="nv">ts</span><span class="o">=</span><span class="m">2018</span>-12-03 <span class="m">20</span>:04:34<span class="p">;</span> <span class="o">[</span><span class="nv">cost</span><span class="o">=</span><span class="m">131</span>.303498ms<span class="o">]</span> <span class="nv">result</span><span class="o">=</span>@Integer<span class="o">[</span><span class="m">8</span><span class="o">]</span>
-<span class="nv">ts</span><span class="o">=</span><span class="m">2018</span>-12-03 <span class="m">20</span>:04:35<span class="p">;</span> <span class="o">[</span><span class="nv">cost</span><span class="o">=</span><span class="m">0</span>.961441ms<span class="o">]</span> <span class="nv">result</span><span class="o">=</span>@Integer<span class="o">[</span><span class="m">8</span><span class="o">]</span>
+Affect(class-cnt:1 , method-cnt:1) cost in 67 ms.
+ts=2018-12-03 20:04:34; [cost=131.303498ms] result=@Integer[8]
+ts=2018-12-03 20:04:35; [cost=0.961441ms] result=@Integer[8]
 </pre></div>
 </div>
 </div>
@@ -547,6 +548,15 @@ Affect<span class="o">(</span>class-cnt:1 , method-cnt:1<span class="o">)</span>
 </div>
 
 <script type="text/javascript" src="_static/add_badges.js"></script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.13.1/highlight.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlightjs-line-numbers.js/2.5.0/highlightjs-line-numbers.min.js"></script>
+<script>
+  document.querySelectorAll('div.hljs > pre').forEach(function(block) {
+    hljs.highlightBlock(block);
+    hljs.lineNumbersBlock(block);
+  });
+</script>
 
 <script>
   var _hmt = _hmt || [];

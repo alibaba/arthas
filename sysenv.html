@@ -34,6 +34,7 @@
     <link rel="next" title="getstatic" href="getstatic.html" />
     <link rel="prev" title="sysprop" href="sysprop.html" />
 <script src="_static/center_page.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.13.1/styles/github.min.css">
  
 
 
@@ -124,7 +125,7 @@
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas/issues?q=label%3Auser-case">用户案例</a></li>
-<li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas/issues?q=label%3Aquestion-answered">Questions and answers</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas/issues?q=label%3Aquestion-answered">常见问题</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas">Fork me at GitHub</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas/blob/master/CONTRIBUTING.md">参与贡献</a></li>
 <li class="toctree-l1"><a class="reference internal" href="release-notes.html">Release Notes</a></li>
@@ -200,30 +201,29 @@
   <div class="section" id="sysenv">
 <span id="sysenv"></span><h1>sysenv<a class="headerlink" href="#sysenv" title="永久链接至标题">¶</a></h1>
 <blockquote>
-<div>查看当前JVM的环境属性(<code class="docutils literal notranslate"><span class="pre">System</span> <span class="pre">Environment</span> <span class="pre">Variables</span></code>)</div></blockquote>
+<div>查看当前JVM的环境属性(<tt class="docutils literal">System Environment Variables</tt>)</div></blockquote>
 <div class="section" id="">
 <span id="id1"></span><h2>使用参考<a class="headerlink" href="#" title="永久链接至标题">¶</a></h2>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span> <span class="n">USAGE</span><span class="p">:</span>
-   <span class="n">sysenv</span> <span class="p">[</span><span class="o">-</span><span class="n">h</span><span class="p">]</span> <span class="p">[</span><span class="n">env</span><span class="o">-</span><span class="n">name</span><span class="p">]</span>
+<div class="highlight-default notranslate"><pre class="literal-block"> USAGE:
+   sysenv [-h] [env-name]
 
- <span class="n">SUMMARY</span><span class="p">:</span>
-   <span class="n">Display</span> <span class="n">the</span> <span class="n">system</span> <span class="n">env</span><span class="o">.</span>
+ SUMMARY:
+   Display the system env.
 
- <span class="n">EXAMPLES</span><span class="p">:</span>
-   <span class="n">sysenv</span>
-   <span class="n">sysenv</span> <span class="n">USER</span>
+ EXAMPLES:
+   sysenv
+   sysenv USER
 
- <span class="n">WIKI</span><span class="p">:</span>
-   <span class="n">https</span><span class="p">:</span><span class="o">//</span><span class="n">alibaba</span><span class="o">.</span><span class="n">github</span><span class="o">.</span><span class="n">io</span><span class="o">/</span><span class="n">arthas</span><span class="o">/</span><span class="n">sysenv</span>
+ WIKI:
+   https://alibaba.github.io/arthas/sysenv
 
- <span class="n">OPTIONS</span><span class="p">:</span>
- <span class="o">-</span><span class="n">h</span><span class="p">,</span> <span class="o">--</span><span class="n">help</span>                                                 <span class="n">this</span> <span class="n">help</span>
- <span class="o">&lt;</span><span class="n">env</span><span class="o">-</span><span class="n">name</span><span class="o">&gt;</span>                                                 <span class="n">env</span> <span class="n">name</span>
-</pre></div>
+ OPTIONS:
+ -h, --help                                                 this help
+ &lt;env-name&gt;                                                 env name</pre>
 </div>
 <div class="section" id="">
 <span id="id2"></span><h3>查看所有环境变量<a class="headerlink" href="#" title="永久链接至标题">¶</a></h3>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ sysenv
+<div class="highlight-default notranslate"><pre class="literal-block">$ sysenv
  KEY                      VALUE
 ----------------------------------------------------------------------------------------------------------------------------
  PATH                     /Users/admin/.sdkman/candidates/visualvm/current/bin:/Users/admin/.sdkman/candidates/ja
@@ -255,17 +255,15 @@
  COLORFGBG                7;0
  HOME                     /Users/admin
  SHLVL                    1
- AUTOJUMP_ERROR_PATH      /Users/admin/Library/autojump/errors.log
-</pre></div>
+ AUTOJUMP_ERROR_PATH      /Users/admin/Library/autojump/errors.log</pre>
 </div>
 </div>
 <div class="section" id="">
 <span id="id3"></span><h3>查看单个环境变量<a class="headerlink" href="#" title="永久链接至标题">¶</a></h3>
 <blockquote>
-<div>支持通过<code class="docutils literal notranslate"><span class="pre">TAB</span></code>键自动补全</div></blockquote>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ sysenv USER
-USER=admin
-</pre></div>
+<div>支持通过<tt class="docutils literal">TAB</tt>键自动补全</div></blockquote>
+<div class="highlight-default notranslate"><pre class="literal-block">$ sysenv USER
+USER=admin</pre>
 </div>
 </div>
 </div>
@@ -343,6 +341,15 @@ USER=admin
 </div>
 
 <script type="text/javascript" src="_static/add_badges.js"></script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.13.1/highlight.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlightjs-line-numbers.js/2.5.0/highlightjs-line-numbers.min.js"></script>
+<script>
+  document.querySelectorAll('div.hljs > pre').forEach(function(block) {
+    hljs.highlightBlock(block);
+    hljs.lineNumbersBlock(block);
+  });
+</script>
 
 <script>
   var _hmt = _hmt || [];

@@ -34,6 +34,7 @@
     <link rel="next" title="联系我们" href="contact-us.html" />
     <link rel="prev" title="options" href="options.html" />
 <script src="_static/center_page.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.13.1/styles/github.min.css">
  
 
 
@@ -95,7 +96,7 @@
 <li class="toctree-l1"><a class="reference internal" href="advanced-use.html">进阶使用</a></li>
 <li class="toctree-l1"><a class="reference internal" href="commands.html">命令列表</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas/issues?q=label%3Auser-case">用户案例</a></li>
-<li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas/issues?q=label%3Aquestion-answered">Questions and answers</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas/issues?q=label%3Aquestion-answered">常见问题</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas">Fork me at GitHub</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas/blob/master/CONTRIBUTING.md">参与贡献</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Release Notes</a><ul>
@@ -258,12 +259,12 @@
 <li>[#123] 修复反复attach/shutdown造成classloader泄露的问题</li>
 <li>优化命令中的帮助提示信息</li>
 <li>[#126] 修复tm命令文档链接错乱的问题</li>
-<li>[#122] classloader命令中过滤掉<code class="docutils literal notranslate"><span class="pre">sun.reflect.DelegatingClassLoader</span></code></li>
+<li>[#122] classloader命令中过滤掉<tt class="docutils literal">sun.reflect.DelegatingClassLoader</tt></li>
 <li>[#129] 修复classloader层次展示的问题</li>
 <li>[#125] arthas输出的log不主动换行，对于日志解析更加友好</li>
 <li>[#96] sc等命令支持com/taobao/xxx/TestClass这样的格式，以后复制粘贴不需要在把’/’替换成’.’啦</li>
 <li>[#124] 修复某些情况下trace的时间为负值的问题</li>
-<li>[#128] tt命令的结果默认自动展开，不需要再增加<code class="docutils literal notranslate"><span class="pre">-x</span> <span class="pre">2</span></code>来看到参数，异常的详细信息了。</li>
+<li>[#128] tt命令的结果默认自动展开，不需要再增加<tt class="docutils literal">-x 2</tt>来看到参数，异常的详细信息了。</li>
 <li>[#130] 修复当端口冲突时，没有很好地打印错误，而是进入了一个出错的交互界面的问题</li>
 <li>[#98] 修复Arthas启动时，如果下载更新失败，导致启动失败的问题</li>
 <li>[#139] 修复某些特殊情况下agent attach失败的问题</li>
@@ -324,7 +325,7 @@
 <div class="section" id="v2016-01-18">
 <span id="v2016-01-18"></span><h2>v2016-01-18<a class="headerlink" href="#v2016-01-18" title="永久链接至标题">¶</a></h2>
 <ul class="simple">
-<li>优化 jad，实时 dump 内存 byte array，并使用 jd-core-java 反编译，支持<code class="docutils literal notranslate"><span class="pre">行号显示</span></code></li>
+<li>优化 jad，实时 dump 内存 byte array，并使用 jd-core-java 反编译，支持<tt class="docutils literal">行号显示</tt></li>
 <li>修复 tt 命令在监控与线程上下文相关的方法调用时，显示/重做等场景下的 bug</li>
 </ul>
 </div>
@@ -421,6 +422,15 @@
 </div>
 
 <script type="text/javascript" src="_static/add_badges.js"></script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.13.1/highlight.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlightjs-line-numbers.js/2.5.0/highlightjs-line-numbers.min.js"></script>
+<script>
+  document.querySelectorAll('div.hljs > pre').forEach(function(block) {
+    hljs.highlightBlock(block);
+    hljs.lineNumbersBlock(block);
+  });
+</script>
 
 <script>
   var _hmt = _hmt || [];

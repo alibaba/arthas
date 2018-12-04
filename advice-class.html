@@ -32,6 +32,7 @@
     <link rel="index" title="索引" href="genindex.html" />
     <link rel="search" title="搜索" href="search.html" />
 <script src="_static/center_page.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.13.1/styles/github.min.css">
  
 
 
@@ -93,7 +94,7 @@
 <li class="toctree-l1"><a class="reference internal" href="advanced-use.html">进阶使用</a></li>
 <li class="toctree-l1"><a class="reference internal" href="commands.html">命令列表</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas/issues?q=label%3Auser-case">用户案例</a></li>
-<li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas/issues?q=label%3Aquestion-answered">Questions and answers</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas/issues?q=label%3Aquestion-answered">常见问题</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas">Fork me at GitHub</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas/blob/master/CONTRIBUTING.md">参与贡献</a></li>
 <li class="toctree-l1"><a class="reference internal" href="release-notes.html">Release Notes</a></li>
@@ -166,23 +167,23 @@
             
   <div class="section" id="">
 <span id="id1"></span><h1>表达式核心变量<a class="headerlink" href="#" title="永久链接至标题">¶</a></h1>
-<p>无论是匹配表达式也好、观察表达式也罢，他们核心判断变量都是围绕着一个 Arthas 中的通用通知对象 <code class="docutils literal notranslate"><span class="pre">Advice</span></code> 进行。</p>
+<p>无论是匹配表达式也好、观察表达式也罢，他们核心判断变量都是围绕着一个 Arthas 中的通用通知对象 <tt class="docutils literal">Advice</tt> 进行。</p>
 <p>它的简略代码结构如下</p>
-<div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="kd">public</span> <span class="kd">class</span> <span class="nc">Advice</span> <span class="o">{</span>
+<div class="highlight-java notranslate"><div class="highlight hljs"><pre class="java">public class Advice {
 
-    <span class="kd">private</span> <span class="kd">final</span> <span class="n">ClassLoader</span> <span class="n">loader</span><span class="o">;</span>
-    <span class="kd">private</span> <span class="kd">final</span> <span class="n">Class</span><span class="o">&lt;?&gt;</span> <span class="n">clazz</span><span class="o">;</span>
-    <span class="kd">private</span> <span class="kd">final</span> <span class="n">ArthasMethod</span> <span class="n">method</span><span class="o">;</span>
-    <span class="kd">private</span> <span class="kd">final</span> <span class="n">Object</span> <span class="n">target</span><span class="o">;</span>
-    <span class="kd">private</span> <span class="kd">final</span> <span class="n">Object</span><span class="o">[]</span> <span class="n">params</span><span class="o">;</span>
-    <span class="kd">private</span> <span class="kd">final</span> <span class="n">Object</span> <span class="n">returnObj</span><span class="o">;</span>
-    <span class="kd">private</span> <span class="kd">final</span> <span class="n">Throwable</span> <span class="n">throwExp</span><span class="o">;</span>
-    <span class="kd">private</span> <span class="kd">final</span> <span class="kt">boolean</span> <span class="n">isBefore</span><span class="o">;</span>
-    <span class="kd">private</span> <span class="kd">final</span> <span class="kt">boolean</span> <span class="n">isThrow</span><span class="o">;</span>
-    <span class="kd">private</span> <span class="kd">final</span> <span class="kt">boolean</span> <span class="n">isReturn</span><span class="o">;</span>
+    private final ClassLoader loader;
+    private final Class&lt;?&gt; clazz;
+    private final ArthasMethod method;
+    private final Object target;
+    private final Object[] params;
+    private final Object returnObj;
+    private final Throwable throwExp;
+    private final boolean isBefore;
+    private final boolean isThrow;
+    private final boolean isReturn;
     
-    <span class="c1">// getter/setter  </span>
-<span class="o">}</span>  
+    // getter/setter  
+}  
 </pre></div>
 </div>
 <p>这里列一个表格来说明不同变量的含义</p>
@@ -235,7 +236,7 @@
 <td align="left">辅助判断标记，当前的方法调用以正常返回的形式结束。</td>
 </tr>
 </tbody>
-</table><p>所有变量都可以在表达式中直接使用，如果在表达式中编写了不符合 OGNL 脚本语法或者引入了不在表格中的变量，则退出命令的执行；用户可以根据当前的异常信息修正<code class="docutils literal notranslate"><span class="pre">条件表达式</span></code>或<code class="docutils literal notranslate"><span class="pre">观察表达式</span></code></p>
+</table><p>所有变量都可以在表达式中直接使用，如果在表达式中编写了不符合 OGNL 脚本语法或者引入了不在表格中的变量，则退出命令的执行；用户可以根据当前的异常信息修正<tt class="docutils literal">条件表达式</tt>或<tt class="docutils literal">观察表达式</tt></p>
 <ul class="simple">
 <li>特殊用法请参考：<a class="reference external" href="https://github.com/alibaba/arthas/issues/71">https://github.com/alibaba/arthas/issues/71</a></li>
 <li>OGNL表达式官网：<a class="reference external" href="https://commons.apache.org/proper/commons-ognl/language-guide.html">https://commons.apache.org/proper/commons-ognl/language-guide.html</a></li>
@@ -305,6 +306,15 @@
 </div>
 
 <script type="text/javascript" src="_static/add_badges.js"></script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.13.1/highlight.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlightjs-line-numbers.js/2.5.0/highlightjs-line-numbers.min.js"></script>
+<script>
+  document.querySelectorAll('div.hljs > pre').forEach(function(block) {
+    hljs.highlightBlock(block);
+    hljs.lineNumbersBlock(block);
+  });
+</script>
 
 <script>
   var _hmt = _hmt || [];

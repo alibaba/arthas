@@ -34,6 +34,7 @@
     <link rel="next" title="命令列表" href="commands.html" />
     <link rel="prev" title="执行结果存日志" href="save-log.html" />
 <script src="_static/center_page.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.13.1/styles/github.min.css">
  
 
 
@@ -115,7 +116,7 @@
 </li>
 <li class="toctree-l1"><a class="reference internal" href="commands.html">命令列表</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas/issues?q=label%3Auser-case">用户案例</a></li>
-<li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas/issues?q=label%3Aquestion-answered">Questions and answers</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas/issues?q=label%3Aquestion-answered">常见问题</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas">Fork me at GitHub</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas/blob/master/CONTRIBUTING.md">参与贡献</a></li>
 <li class="toctree-l1"><a class="reference internal" href="release-notes.html">Release Notes</a></li>
@@ -196,35 +197,34 @@
 <span id="id2"></span><h2>使用方法<a class="headerlink" href="#" title="永久链接至标题">¶</a></h2>
 <div class="section" id="">
 <span id="id3"></span><h3>第一步： 创建你的批处理脚本<a class="headerlink" href="#" title="永久链接至标题">¶</a></h3>
-<p>这里我们新建了一个<code class="docutils literal notranslate"><span class="pre">test.as</span></code>脚本，为了规范，我们采用了.as后缀名，但事实上任意的本文文件都ok。</p>
+<p>这里我们新建了一个<tt class="docutils literal">test.as</tt>脚本，为了规范，我们采用了.as后缀名，但事实上任意的本文文件都ok。</p>
 <blockquote>
 <div><p>注意事项</p>
 <ul class="simple">
 <li>目前需要每个命令占一行</li>
-<li>dashboard务必开启批处理模式(<code class="docutils literal notranslate"><span class="pre">-b</span></code>)，指定执行次数(<code class="docutils literal notranslate"><span class="pre">-n</span></code>)，否则会导致批处理脚本无法终止</li>
-<li>watch/tt/trace/monitor/stack等命令务必指定执行次数(<code class="docutils literal notranslate"><span class="pre">-n</span></code>)，否则会导致批处理脚本无法终止</li>
-<li>可以使用异步后台任务，如 <code class="docutils literal notranslate"><span class="pre">watch</span> <span class="pre">c.t.X</span> <span class="pre">test</span> <span class="pre">returnObj</span> <span class="pre">&gt;</span> <span class="pre">&amp;</span></code>，让命令一直在后台运行，通过日志获取结果，<a class="reference internal" href="async.html"><span class="doc">获取更多异步任务的信息</span></a></li>
+<li>dashboard务必开启批处理模式(<tt class="docutils literal">-b</tt>)，指定执行次数(<tt class="docutils literal">-n</tt>)，否则会导致批处理脚本无法终止</li>
+<li>watch/tt/trace/monitor/stack等命令务必指定执行次数(<tt class="docutils literal">-n</tt>)，否则会导致批处理脚本无法终止</li>
+<li>可以使用异步后台任务，如 <tt class="docutils literal">watch c.t.X test returnObj > &</tt>，让命令一直在后台运行，通过日志获取结果，<a class="reference internal" href="async.html"><span class="doc">获取更多异步任务的信息</span></a></li>
 </ul>
 </div></blockquote>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>➜  arthas git:(develop) cat /var/tmp/test.as
+<div class="highlight-default notranslate"><pre class="literal-block">➜  arthas git:(develop) cat /var/tmp/test.as
 help
 dashboard -b -n 1
 session
 thread
-sc -d org.apache.commons.lang.StringUtils
-</pre></div>
+sc -d org.apache.commons.lang.StringUtils</pre>
 </div>
 </div>
 <div class="section" id="">
 <span id="id4"></span><h3>第二步： 运行你的批处理脚本<a class="headerlink" href="#" title="永久链接至标题">¶</a></h3>
-<p>通过<code class="docutils literal notranslate"><span class="pre">-b</span></code>开启批处理模式， <code class="docutils literal notranslate"><span class="pre">-f</span></code>执行脚本文件， 批处理脚本默认会输出到标准输出中，可以将结果重定向到文件中。</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./as.sh -b -f /var/tmp/test.as <span class="m">56328</span> &gt; test.out
+<p>通过<tt class="docutils literal">-b</tt>开启批处理模式， <tt class="docutils literal">-f</tt>执行脚本文件， 批处理脚本默认会输出到标准输出中，可以将结果重定向到文件中。</p>
+<div class="highlight-bash notranslate"><div class="highlight hljs"><pre class="bash">./as.sh -b -f /var/tmp/test.as 56328 &gt; test.out
 </pre></div>
 </div>
 </div>
 <div class="section" id="">
 <span id="id5"></span><h3>第三步： 查看运行结果<a class="headerlink" href="#" title="永久链接至标题">¶</a></h3>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>cat test.out
+<div class="highlight-bash notranslate"><div class="highlight hljs"><pre class="bash">cat test.out
 </pre></div>
 </div>
 </div>
@@ -303,6 +303,15 @@ sc -d org.apache.commons.lang.StringUtils
 </div>
 
 <script type="text/javascript" src="_static/add_badges.js"></script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.13.1/highlight.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlightjs-line-numbers.js/2.5.0/highlightjs-line-numbers.min.js"></script>
+<script>
+  document.querySelectorAll('div.hljs > pre').forEach(function(block) {
+    hljs.highlightBlock(block);
+    hljs.lineNumbersBlock(block);
+  });
+</script>
 
 <script>
   var _hmt = _hmt || [];

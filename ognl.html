@@ -34,6 +34,7 @@
     <link rel="next" title="sc" href="sc.html" />
     <link rel="prev" title="getstatic" href="getstatic.html" />
 <script src="_static/center_page.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.13.1/styles/github.min.css">
  
 
 
@@ -121,7 +122,7 @@
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas/issues?q=label%3Auser-case">用户案例</a></li>
-<li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas/issues?q=label%3Aquestion-answered">Questions and answers</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas/issues?q=label%3Aquestion-answered">常见问题</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas">Fork me at GitHub</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas/blob/master/CONTRIBUTING.md">参与贡献</a></li>
 <li class="toctree-l1"><a class="reference internal" href="release-notes.html">Release Notes</a></li>
@@ -230,37 +231,37 @@
 <li>OGNL表达式官方指南：<a class="reference external" href="https://commons.apache.org/proper/commons-ognl/language-guide.html">https://commons.apache.org/proper/commons-ognl/language-guide.html</a></li>
 </ul>
 <p>调用静态函数：</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$ ognl <span class="s1">&#39;@java.lang.System@out.println(&quot;hello&quot;)&#39;</span>
+<div class="highlight-bash notranslate"><div class="highlight hljs"><pre class="bash">$ ognl &#x27;@java.lang.System@out.println(&quot;hello&quot;)&#x27;
 null
 </pre></div>
 </div>
 <p>获取静态类的静态字段：</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$ ognl <span class="s1">&#39;@demo.MathGame@random&#39;</span>
-@Random<span class="o">[</span>
-    <span class="nv">serialVersionUID</span><span class="o">=</span>@Long<span class="o">[</span><span class="m">3905348978240129619</span><span class="o">]</span>,
-    <span class="nv">seed</span><span class="o">=</span>@AtomicLong<span class="o">[</span><span class="m">125451474443703</span><span class="o">]</span>,
-    <span class="nv">multiplier</span><span class="o">=</span>@Long<span class="o">[</span><span class="m">25214903917</span><span class="o">]</span>,
-    <span class="nv">addend</span><span class="o">=</span>@Long<span class="o">[</span><span class="m">11</span><span class="o">]</span>,
-    <span class="nv">mask</span><span class="o">=</span>@Long<span class="o">[</span><span class="m">281474976710655</span><span class="o">]</span>,
-    <span class="nv">DOUBLE_UNIT</span><span class="o">=</span>@Double<span class="o">[</span><span class="m">1</span>.1102230246251565E-16<span class="o">]</span>,
-    <span class="nv">BadBound</span><span class="o">=</span>@String<span class="o">[</span>bound must be positive<span class="o">]</span>,
-    <span class="nv">BadRange</span><span class="o">=</span>@String<span class="o">[</span>bound must be greater than origin<span class="o">]</span>,
-    <span class="nv">BadSize</span><span class="o">=</span>@String<span class="o">[</span>size must be non-negative<span class="o">]</span>,
-    <span class="nv">seedUniquifier</span><span class="o">=</span>@AtomicLong<span class="o">[</span>-3282039941672302964<span class="o">]</span>,
-    <span class="nv">nextNextGaussian</span><span class="o">=</span>@Double<span class="o">[</span><span class="m">0</span>.0<span class="o">]</span>,
-    <span class="nv">haveNextNextGaussian</span><span class="o">=</span>@Boolean<span class="o">[</span>false<span class="o">]</span>,
-    <span class="nv">serialPersistentFields</span><span class="o">=</span>@ObjectStreamField<span class="o">[][</span><span class="nv">isEmpty</span><span class="o">=</span>false<span class="p">;</span><span class="nv">size</span><span class="o">=</span><span class="m">3</span><span class="o">]</span>,
-    <span class="nv">unsafe</span><span class="o">=</span>@Unsafe<span class="o">[</span>sun.misc.Unsafe@28ea5898<span class="o">]</span>,
-    <span class="nv">seedOffset</span><span class="o">=</span>@Long<span class="o">[</span><span class="m">24</span><span class="o">]</span>,
-<span class="o">]</span>
+<div class="highlight-bash notranslate"><div class="highlight hljs"><pre class="bash">$ ognl &#x27;@demo.MathGame@random&#x27;
+@Random[
+    serialVersionUID=@Long[3905348978240129619],
+    seed=@AtomicLong[125451474443703],
+    multiplier=@Long[25214903917],
+    addend=@Long[11],
+    mask=@Long[281474976710655],
+    DOUBLE_UNIT=@Double[1.1102230246251565E-16],
+    BadBound=@String[bound must be positive],
+    BadRange=@String[bound must be greater than origin],
+    BadSize=@String[size must be non-negative],
+    seedUniquifier=@AtomicLong[-3282039941672302964],
+    nextNextGaussian=@Double[0.0],
+    haveNextNextGaussian=@Boolean[false],
+    serialPersistentFields=@ObjectStreamField[][isEmpty=false;size=3],
+    unsafe=@Unsafe[sun.misc.Unsafe@28ea5898],
+    seedOffset=@Long[24],
+]
 </pre></div>
 </div>
 <p>执行多行表达式，赋值给临时变量，返回一个List：</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$ ognl <span class="s1">&#39;#value1=@System@getProperty(&quot;java.home&quot;), #value2=@System@getProperty(&quot;java.runtime.name&quot;), {#value1, #value2}&#39;</span>
-@ArrayList<span class="o">[</span>
-    @String<span class="o">[</span>/opt/java/8.0.181-zulu/jre<span class="o">]</span>,
-    @String<span class="o">[</span>OpenJDK Runtime Environment<span class="o">]</span>,
-<span class="o">]</span>
+<div class="highlight-bash notranslate"><div class="highlight hljs"><pre class="bash">$ ognl &#x27;#value1=@System@getProperty(&quot;java.home&quot;), #value2=@System@getProperty(&quot;java.runtime.name&quot;), {#value1, #value2}&#x27;
+@ArrayList[
+    @String[/opt/java/8.0.181-zulu/jre],
+    @String[OpenJDK Runtime Environment],
+]
 </pre></div>
 </div>
 </div>
@@ -338,6 +339,15 @@ null
 </div>
 
 <script type="text/javascript" src="_static/add_badges.js"></script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.13.1/highlight.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlightjs-line-numbers.js/2.5.0/highlightjs-line-numbers.min.js"></script>
+<script>
+  document.querySelectorAll('div.hljs > pre').forEach(function(block) {
+    hljs.highlightBlock(block);
+    hljs.lineNumbersBlock(block);
+  });
+</script>
 
 <script>
   var _hmt = _hmt || [];

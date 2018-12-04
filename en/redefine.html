@@ -34,6 +34,7 @@
     <link rel="next" title="monitor" href="monitor.html" />
     <link rel="prev" title="classloader" href="classloader.html" />
 <script src="_static/center_page.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.13.1/styles/github.min.css">
  
 
 
@@ -195,7 +196,7 @@
   <div class="section" id="redefine">
 <span id="redefine"></span><h1>redefine<a class="headerlink" href="#redefine" title="Permalink to this headline">¶</a></h1>
 <blockquote>
-<div>Load the external <code class="docutils literal notranslate"><span class="pre">*.class</span></code> files to re-define the loaded peer class in JVM.</div></blockquote>
+<div>Load the external <tt class="docutils literal">*.class</tt> files to re-define the loaded peer class in JVM.</div></blockquote>
 <p>Reference: <a class="reference external" href="https://docs.oracle.com/javase/8/docs/api/java/lang/instrument/Instrumentation.html#redefineClasses-java.lang.instrument.ClassDefinition...-">Instrumentation#redefineClasses</a></p>
 <blockquote>
 <div>Notes: Re-defined classes cannot be restored. There are chances that redefining may fail due to some reasons, for example: there’s new field introduced in the new version of the class, pls. refer to JDK’s documentation for the limitations.</div></blockquote>
@@ -221,9 +222,8 @@
 </table></div>
 <div class="section" id="usage">
 <span id="usage"></span><h2>Usage<a class="headerlink" href="#usage" title="Permalink to this headline">¶</a></h2>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>redefine -p /tmp/Test.class
-redefine -c 327a647b -p /tmp/Test.class /tmp/Test$Inner.class
-</pre></div>
+<div class="highlight-default notranslate"><pre class="literal-block">redefine -p /tmp/Test.class
+redefine -c 327a647b -p /tmp/Test.class /tmp/Test$Inner.class</pre>
 </div>
 </div>
 </div>
@@ -299,6 +299,15 @@ redefine -c 327a647b -p /tmp/Test.class /tmp/Test$Inner.class
 </div>
 
 <script type="text/javascript" src="_static/add_badges.js"></script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.13.1/highlight.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlightjs-line-numbers.js/2.5.0/highlightjs-line-numbers.min.js"></script>
+<script>
+  document.querySelectorAll('div.hljs > pre').forEach(function(block) {
+    hljs.highlightBlock(block);
+    hljs.lineNumbersBlock(block);
+  });
+</script>
 
 <script>
   var _hmt = _hmt || [];

@@ -34,6 +34,7 @@
     <link rel="next" title="redefine" href="redefine.html" />
     <link rel="prev" title="jad" href="jad.html" />
 <script src="_static/center_page.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.13.1/styles/github.min.css">
  
 
 
@@ -203,7 +204,7 @@
   <div class="section" id="classloader">
 <span id="classloader"></span><h1>classloader<a class="headerlink" href="#classloader" title="Permalink to this headline">¶</a></h1>
 <p>View hierarchy, urls and classes-loading info for the class-loaders.</p>
-<p><code class="docutils literal notranslate"><span class="pre">classloader</span></code> can search and print out the URLs for a specified resource from one particular classloader. It is quite handy when analyze <code class="docutils literal notranslate"><span class="pre">ResourceNotFoundException</span></code>.</p>
+<p><tt class="docutils literal">classloader</tt> can search and print out the URLs for a specified resource from one particular classloader. It is quite handy when analyze <tt class="docutils literal">ResourceNotFoundException</tt>.</p>
 <div class="section" id="options">
 <span id="options"></span><h2>Options<a class="headerlink" href="#options" title="Permalink to this headline">¶</a></h2>
 <table border="1" class="docutils">
@@ -244,87 +245,87 @@
 <span id="usage"></span><h2>Usage<a class="headerlink" href="#usage" title="Permalink to this headline">¶</a></h2>
 <div class="section" id="view-statistics-categorized-by-class-type">
 <span id="view-statistics-categorized-by-class-type"></span><h3>View statistics categorized by class type<a class="headerlink" href="#view-statistics-categorized-by-class-type" title="Permalink to this headline">¶</a></h3>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$ classloader
+<div class="highlight-bash notranslate"><div class="highlight hljs"><pre class="bash">$ classloader
  name                                       numberOfInstances  loadedCountTotal
- com.taobao.arthas.agent.ArthasClassloader  <span class="m">1</span>                  <span class="m">2115</span>
- BootstrapClassLoader                       <span class="m">1</span>                  <span class="m">1861</span>
- sun.reflect.DelegatingClassLoader          <span class="m">5</span>                  <span class="m">5</span>
- sun.misc.Launcher<span class="nv">$AppClassLoader</span>           <span class="m">1</span>                  <span class="m">4</span>
- sun.misc.Launcher<span class="nv">$ExtClassLoader</span>           <span class="m">1</span>                  <span class="m">1</span>
-Affect<span class="o">(</span>row-cnt:5<span class="o">)</span> cost in <span class="m">3</span> ms.
+ com.taobao.arthas.agent.ArthasClassloader  1                  2115
+ BootstrapClassLoader                       1                  1861
+ sun.reflect.DelegatingClassLoader          5                  5
+ sun.misc.Launcher$AppClassLoader           1                  4
+ sun.misc.Launcher$ExtClassLoader           1                  1
+Affect(row-cnt:5) cost in 3 ms.
 </pre></div>
 </div>
 </div>
 <div class="section" id="view-statistics-categorized-by-loaded-classes-number">
 <span id="view-statistics-categorized-by-loaded-classes-number"></span><h3>View statistics categorized by loaded classes number<a class="headerlink" href="#view-statistics-categorized-by-loaded-classes-number" title="Permalink to this headline">¶</a></h3>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$ classloader -l
- name                                                loadedCount  <span class="nb">hash</span>      parent
- BootstrapClassLoader                                <span class="m">1861</span>         null      null
- com.taobao.arthas.agent.ArthasClassloader@68b31f0a  <span class="m">2115</span>         68b31f0a  sun.misc.Launcher<span class="nv">$ExtClassLoader</span>@66350f69
- sun.misc.Launcher<span class="nv">$AppClassLoader</span>@3d4eac69           <span class="m">4</span>            3d4eac69  sun.misc.Launcher<span class="nv">$ExtClassLoader</span>@66350f69
- sun.misc.Launcher<span class="nv">$ExtClassLoader</span>@66350f69           <span class="m">1</span>            66350f69  null
-Affect<span class="o">(</span>row-cnt:4<span class="o">)</span> cost in <span class="m">2</span> ms.
+<div class="highlight-bash notranslate"><div class="highlight hljs"><pre class="bash">$ classloader -l
+ name                                                loadedCount  hash      parent
+ BootstrapClassLoader                                1861         null      null
+ com.taobao.arthas.agent.ArthasClassloader@68b31f0a  2115         68b31f0a  sun.misc.Launcher$ExtClassLoader@66350f69
+ sun.misc.Launcher$AppClassLoader@3d4eac69           4            3d4eac69  sun.misc.Launcher$ExtClassLoader@66350f69
+ sun.misc.Launcher$ExtClassLoader@66350f69           1            66350f69  null
+Affect(row-cnt:4) cost in 2 ms.
 </pre></div>
 </div>
 </div>
 <div class="section" id="view-class-loaders-hierarchy">
 <span id="view-class-loaders-hierarchy"></span><h3>View class-loaders hierarchy<a class="headerlink" href="#view-class-loaders-hierarchy" title="Permalink to this headline">¶</a></h3>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$ classloader -t
+<div class="highlight-bash notranslate"><div class="highlight hljs"><pre class="bash">$ classloader -t
 +-BootstrapClassLoader
-+-sun.misc.Launcher<span class="nv">$ExtClassLoader</span>@66350f69
++-sun.misc.Launcher$ExtClassLoader@66350f69
   +-com.taobao.arthas.agent.ArthasClassloader@68b31f0a
-  +-sun.misc.Launcher<span class="nv">$AppClassLoader</span>@3d4eac69
-Affect<span class="o">(</span>row-cnt:4<span class="o">)</span> cost in <span class="m">3</span> ms.
+  +-sun.misc.Launcher$AppClassLoader@3d4eac69
+Affect(row-cnt:4) cost in 3 ms.
 </pre></div>
 </div>
 </div>
 <div class="section" id="show-the-urls-of-the-urlclassloader">
 <span id="show-the-urls-of-the-urlclassloader"></span><h3>Show the URLs of the URLClassLoader<a class="headerlink" href="#show-the-urls-of-the-urlclassloader" title="Permalink to this headline">¶</a></h3>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$ classloader -c 3d4eac69
+<div class="highlight-bash notranslate"><div class="highlight hljs"><pre class="bash">$ classloader -c 3d4eac69
 file:/private/tmp/arthas-demo.jar
 file:/Users/hengyunabc/.arthas/lib/3.0.5/arthas/arthas-agent.jar
 
-Affect<span class="o">(</span>row-cnt:9<span class="o">)</span> cost in <span class="m">3</span> ms.
+Affect(row-cnt:9) cost in 3 ms.
 </pre></div>
 </div>
 </div>
 <div class="section" id="use-the-classloader-to-load-resource">
 <span id="use-the-classloader-to-load-resource"></span><h3>Use the classloader to load resource<a class="headerlink" href="#use-the-classloader-to-load-resource" title="Permalink to this headline">¶</a></h3>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$ classloader -c 3d4eac69  -r META-INF/MANIFEST.MF
+<div class="highlight-bash notranslate"><div class="highlight hljs"><pre class="bash">$ classloader -c 3d4eac69  -r META-INF/MANIFEST.MF
  jar:file:/System/Library/Java/Extensions/MRJToolkit.jar!/META-INF/MANIFEST.MF
  jar:file:/private/tmp/arthas-demo.jar!/META-INF/MANIFEST.MF
  jar:file:/Users/hengyunabc/.arthas/lib/3.0.5/arthas/arthas-agent.jar!/META-INF/MANIFEST.MF
 </pre></div>
 </div>
-<p>Use the classloader to load <code class="docutils literal notranslate"><span class="pre">.class</span></code> resource</p>
-<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>$ classloader -c 1b6d3586 -r java/lang/String.class
+<p>Use the classloader to load <tt class="docutils literal">.class</tt> resource</p>
+<div class="highlight-shell notranslate"><div class="highlight hljs"><pre class="shell">$ classloader -c 1b6d3586 -r java/lang/String.class
  jar:file:/Library/Java/JavaVirtualMachines/jdk1.8.0_60.jdk/Contents/Home/jre/lib/rt.jar!/java/lang/String.class
 </pre></div>
 </div>
 </div>
 <div class="section" id="use-the-classloader-to-load-class">
 <span id="use-the-classloader-to-load-class"></span><h3>Use the classloader to load class<a class="headerlink" href="#use-the-classloader-to-load-class" title="Permalink to this headline">¶</a></h3>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$ classloader -c 3d4eac69 --load demo.MathGame
+<div class="highlight-bash notranslate"><div class="highlight hljs"><pre class="bash">$ classloader -c 3d4eac69 --load demo.MathGame
 load class success.
  class-info        demo.MathGame
  code-source       /private/tmp/arthas-demo.jar
  name              demo.MathGame
- isInterface       <span class="nb">false</span>
- isAnnotation      <span class="nb">false</span>
- isEnum            <span class="nb">false</span>
- isAnonymousClass  <span class="nb">false</span>
- isArray           <span class="nb">false</span>
- isLocalClass      <span class="nb">false</span>
- isMemberClass     <span class="nb">false</span>
- isPrimitive       <span class="nb">false</span>
- isSynthetic       <span class="nb">false</span>
+ isInterface       false
+ isAnnotation      false
+ isEnum            false
+ isAnonymousClass  false
+ isArray           false
+ isLocalClass      false
+ isMemberClass     false
+ isPrimitive       false
+ isSynthetic       false
  simple-name       MathGame
  modifier          public
  annotation
  interfaces
  super-class       +-java.lang.Object
- class-loader      +-sun.misc.Launcher<span class="nv">$AppClassLoader</span>@3d4eac69
-                     +-sun.misc.Launcher<span class="nv">$ExtClassLoader</span>@66350f69
+ class-loader      +-sun.misc.Launcher$AppClassLoader@3d4eac69
+                     +-sun.misc.Launcher$ExtClassLoader@66350f69
  classLoaderHash   3d4eac69
 </pre></div>
 </div>
@@ -403,6 +404,15 @@ load class success.
 </div>
 
 <script type="text/javascript" src="_static/add_badges.js"></script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.13.1/highlight.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlightjs-line-numbers.js/2.5.0/highlightjs-line-numbers.min.js"></script>
+<script>
+  document.querySelectorAll('div.hljs > pre').forEach(function(block) {
+    hljs.highlightBlock(block);
+    hljs.lineNumbersBlock(block);
+  });
+</script>
 
 <script>
   var _hmt = _hmt || [];

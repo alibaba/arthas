@@ -54,8 +54,8 @@ html, body, .wy-grid-for-nav {
   padding: 0;
 }
 
-.wy-menu.wy-menu-vertical .slack-invitation,
-.wy-menu.wy-menu-vertical .project-badges {
+.wy-menu .slack-invitation,
+.wy-menu .project-badges {
   padding: 0.4em 1.45em 0 1.45em;
   display: block;
   position: relative;
@@ -84,7 +84,7 @@ html, body, .wy-grid-for-nav {
   }
 }
 
-/* Move the right-side breadcrumb a little bit left so that it does not overlap with the Github fork ribbom. */
+/* Move the right-side breadcrumb a little bit left so that it does not overlap with the Github fork ribbon. */
 @media screen and (min-width: 769px) {
   .wy-breadcrumbs-aside {
     padding-right: 64px;
@@ -123,7 +123,7 @@ pre,
 .rst-content div[class*='highlight'] pre,
 .rst-content pre.literal-block {
   padding: 8px 12px 12px 12px;
-  font-size: 90%;
+  font-size: inherit;
   overflow-x: auto;
   overflow-y: hidden;
   color: inherit;
@@ -151,11 +151,13 @@ code.literal, .rst-content code.literal {
   white-space: pre-wrap;
 }
 
-/* Literals in vertical menu */
-.wy-menu-vertical li tt,
-.wy-menu-vertical li code {
+/* Literals in menu */
+.wy-menu tt,
+.wy-menu code {
   padding-left: 0;
   padding-right: 0;
+  background: inherit;
+  border-radius: 0;
   font-size: inherit;
   color: inherit;
   border: none;
@@ -166,26 +168,34 @@ code.literal, .rst-content code.literal {
 code::before, code::after,
 kbd::before, kbd::after,
 var::before, var::after,
-samp::before, samp::after {
+samp::before, samp::after,
+tt::before, tt::after {
   letter-spacing: -0.3em;
   content: "\00a0";
 }
 
-/* Do not add small padding around a literal in vertical menu. */
-.wy-menu-vertical li tt::before,
-.wy-menu-vertical li tt::after,
-.wy-menu-vertical li code::before,
-.wy-menu-vertical li code::after {
+/* Do not add small padding around a literal in menu. */
+.wy-menu tt::before,
+.wy-menu tt::after,
+.wy-menu code::before,
+.wy-menu code::after {
   content: "";
+}
+
+/* Do not add color to the literals in a hyperlink. */
+a .highlight * {
+  color: inherit !important;
 }
 
 h1, h2, h3, h4, h5, h6 {
   font-family: 'Source Sans Pro', 'Helvetica', 'Arial', sans-serif;
 }
 
-/* Use justify-align with hyphenation */
+/* Use justify-align and hyphenation. */
 p, .rst-content li {
   text-align: justify;
+}
+p, .rst-content li, .wy-menu li {
   word-wrap: break-word;
   overflow-wrap: break-word;
   hyphens: auto;
@@ -248,3 +258,64 @@ p, .rst-content li {
 .plantuml {
   text-align: center;
 }
+
+/* Plural suffix inside code should not be monospaced. */
+code .plural-suffix {
+  font-family: 'Source Sans Pro', 'Helvetica', 'Arial', sans-serif;
+}
+
+/* highlightjs style begins */
+div.hljs {
+  background: inherit;
+  padding: 0;
+}
+pre.hljs {
+  background: rgba(0, 0, 0, 0.01); /* 1% darker background */
+}
+td.hljs-ln-numbers, td.hljs-ln-code {
+  line-height: 1.067em;
+}
+td.hljs-ln-numbers {
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+
+  text-align: right;
+  color: #ccc;
+  border-right: 1px solid #CCC;
+  vertical-align: top;
+  padding-right: 8px !important;
+}
+td.hljs-ln-code {
+  padding-left: 8px !important;
+}
+/* highlightjs style ends */
+
+/* branding begins. */
+.wy-nav-top, .wy-side-nav-search {
+  background-color: #3a3a3a;
+}
+
+.wy-side-nav-search input[type="text"] {
+  border-color: #3a3a3a;
+}
+
+.wy-nav-side {
+  background-color: #f8f8f8;
+}
+
+.wy-menu a {
+  color: #666666;
+}
+
+.wy-menu a:active, .wy-menu a:hover {
+  background-color: #d6d6d6;
+}
+
+.wy-menu li.current a {
+  border-right-width: 0px;
+}
+/* branding ends. */

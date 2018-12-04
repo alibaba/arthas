@@ -34,6 +34,7 @@
     <link rel="next" title="Web Console" href="web-console.html" />
     <link rel="prev" title="快速入门" href="quick-start.html" />
 <script src="_static/center_page.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.13.1/styles/github.min.css">
  
 
 
@@ -115,7 +116,7 @@
 </li>
 <li class="toctree-l1"><a class="reference internal" href="commands.html">命令列表</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas/issues?q=label%3Auser-case">用户案例</a></li>
-<li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas/issues?q=label%3Aquestion-answered">Questions and answers</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas/issues?q=label%3Aquestion-answered">常见问题</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas">Fork me at GitHub</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas/blob/master/CONTRIBUTING.md">参与贡献</a></li>
 <li class="toctree-l1"><a class="reference internal" href="release-notes.html">Release Notes</a></li>
@@ -219,7 +220,7 @@
 <li><a class="reference internal" href="sc.html"><span class="doc">sc</span></a>——查看JVM已加载的类信息</li>
 <li><a class="reference internal" href="sm.html"><span class="doc">sm</span></a>——查看已加载类的方法信息</li>
 <li><a class="reference internal" href="dump.html"><span class="doc">dump</span></a>——dump 已加载类的 byte code 到特定目录</li>
-<li><a class="reference internal" href="redefine.html"><span class="doc">redefine</span></a>——加载外部的<code class="docutils literal notranslate"><span class="pre">.class</span></code>文件，redefine到JVM里</li>
+<li><a class="reference internal" href="redefine.html"><span class="doc">redefine</span></a>——加载外部的<tt class="docutils literal">.class</tt>文件，redefine到JVM里</li>
 <li><a class="reference internal" href="jad.html"><span class="doc">jad</span></a>——反编译指定已加载类的源码</li>
 <li><a class="reference internal" href="classloader.html"><span class="doc">classloader</span></a>——查看classloader的继承树，urls，类加载信息，使用classloader去getResource</li>
 </ul>
@@ -227,7 +228,7 @@
 <div class="section" id="monitor-watch-trace">
 <span id="monitor-watch-trace"></span><h2>monitor/watch/trace相关<a class="headerlink" href="#monitor-watch-trace" title="永久链接至标题">¶</a></h2>
 <blockquote>
-<div>请注意，这些命令，都通过字节码增强技术来实现的，会在指定类的方法中插入一些切面来实现数据统计和观测，因此在线上、预发使用时，请尽量明确需要观测的类、方法以及条件，诊断结束要执行 <code class="docutils literal notranslate"><span class="pre">shutdown</span></code> 或将增强过的类执行 <code class="docutils literal notranslate"><span class="pre">reset</span></code> 命令。</div></blockquote>
+<div>请注意，这些命令，都通过字节码增强技术来实现的，会在指定类的方法中插入一些切面来实现数据统计和观测，因此在线上、预发使用时，请尽量明确需要观测的类、方法以及条件，诊断结束要执行 <tt class="docutils literal">shutdown</tt> 或将增强过的类执行 <tt class="docutils literal">reset</tt> 命令。</div></blockquote>
 <ul class="simple">
 <li><a class="reference internal" href="monitor.html"><span class="doc">monitor</span></a>——方法执行监控</li>
 <li><a class="reference internal" href="watch.html"><span class="doc">watch</span></a>——方法执行数据观测</li>
@@ -244,7 +245,7 @@
 </div>
 <div class="section" id="">
 <span id="id3"></span><h2>管道<a class="headerlink" href="#" title="永久链接至标题">¶</a></h2>
-<p>Arthas支持使用管道对上述命令的结果进行进一步的处理，如<code class="docutils literal notranslate"><span class="pre">sm</span> <span class="pre">org.apache.log4j.Logger</span> <span class="pre">|</span> <span class="pre">grep</span> <span class="pre">&lt;init&gt;</span></code></p>
+<p>Arthas支持使用管道对上述命令的结果进行进一步的处理，如<tt class="docutils literal">sm org.apache.log4j.Logger | grep <init></tt></p>
 <ul class="simple">
 <li>grep——搜索满足条件的结果</li>
 <li>plaintext——将命令的结果去除颜色</li>
@@ -356,6 +357,15 @@
 </div>
 
 <script type="text/javascript" src="_static/add_badges.js"></script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.13.1/highlight.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlightjs-line-numbers.js/2.5.0/highlightjs-line-numbers.min.js"></script>
+<script>
+  document.querySelectorAll('div.hljs > pre').forEach(function(block) {
+    hljs.highlightBlock(block);
+    hljs.lineNumbersBlock(block);
+  });
+</script>
 
 <script>
   var _hmt = _hmt || [];

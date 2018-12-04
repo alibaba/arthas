@@ -33,6 +33,7 @@
     <link rel="search" title="搜索" href="search.html" />
     <link rel="next" title="Arthas Install" href="install-detail.html" />
 <script src="_static/center_page.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.13.1/styles/github.min.css">
  
 
 
@@ -94,7 +95,7 @@
 <li class="toctree-l1"><a class="reference internal" href="advanced-use.html">进阶使用</a></li>
 <li class="toctree-l1"><a class="reference internal" href="commands.html">命令列表</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas/issues?q=label%3Auser-case">用户案例</a></li>
-<li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas/issues?q=label%3Aquestion-answered">Questions and answers</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas/issues?q=label%3Aquestion-answered">常见问题</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas">Fork me at GitHub</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas/blob/master/CONTRIBUTING.md">参与贡献</a></li>
 <li class="toctree-l1"><a class="reference internal" href="release-notes.html">Release Notes</a></li>
@@ -171,8 +172,8 @@
 <div class="section" id="arthas">
 <span id="id1"></span><h2>Arthas（阿尔萨斯） 能为你做什么？<a class="headerlink" href="#arthas" title="永久链接至标题">¶</a></h2>
 <p><img alt="arthas" src="_images/arthas.png" /></p>
-<p><code class="docutils literal notranslate"><span class="pre">Arthas</span></code> 是Alibaba开源的Java诊断工具，深受开发者喜爱。</p>
-<p>当你遇到以下类似问题而束手无策时，<code class="docutils literal notranslate"><span class="pre">Arthas</span></code>可以帮助你解决：</p>
+<p><tt class="docutils literal">Arthas</tt> 是Alibaba开源的Java诊断工具，深受开发者喜爱。</p>
+<p>当你遇到以下类似问题而束手无策时，<tt class="docutils literal">Arthas</tt>可以帮助你解决：</p>
 <ol class="simple">
 <li>这个类从哪个 jar 包加载的？为什么会报各种类相关的 Exception？</li>
 <li>我改的代码为什么没有执行到？难道是我没 commit？分支搞错了？</li>
@@ -181,7 +182,7 @@
 <li>是否有一个全局视角来查看系统的运行状况？</li>
 <li>有什么办法可以监控到JVM的实时运行状态？</li>
 </ol>
-<p><code class="docutils literal notranslate"><span class="pre">Arthas</span></code>支持JDK 6+，采用命令行交互模式，同时提供丰富的 <code class="docutils literal notranslate"><span class="pre">Tab</span></code> 自动补全功能，进一步方便进行问题的定位和诊断。</p>
+<p><tt class="docutils literal">Arthas</tt>支持JDK 6+，采用命令行交互模式，同时提供丰富的 <tt class="docutils literal">Tab</tt> 自动补全功能，进一步方便进行问题的定位和诊断。</p>
 </div>
 <div class="section" id="contents">
 <span id="contents"></span><h2>Contents<a class="headerlink" href="#contents" title="永久链接至标题">¶</a></h2>
@@ -193,7 +194,7 @@
 <li class="toctree-l1"><a class="reference internal" href="advanced-use.html">进阶使用</a></li>
 <li class="toctree-l1"><a class="reference internal" href="commands.html">命令列表</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas/issues?q=label%3Auser-case">用户案例</a></li>
-<li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas/issues?q=label%3Aquestion-answered">Questions and answers</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas/issues?q=label%3Aquestion-answered">常见问题</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas">Fork me at GitHub</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas/blob/master/CONTRIBUTING.md">参与贡献</a></li>
 <li class="toctree-l1"><a class="reference internal" href="release-notes.html">Release Notes</a></li>
@@ -273,6 +274,15 @@
 </div>
 
 <script type="text/javascript" src="_static/add_badges.js"></script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.13.1/highlight.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlightjs-line-numbers.js/2.5.0/highlightjs-line-numbers.min.js"></script>
+<script>
+  document.querySelectorAll('div.hljs > pre').forEach(function(block) {
+    hljs.highlightBlock(block);
+    hljs.lineNumbersBlock(block);
+  });
+</script>
 
 <script>
   var _hmt = _hmt || [];

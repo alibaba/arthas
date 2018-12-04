@@ -34,6 +34,7 @@
     <link rel="next" title="stack" href="stack.html" />
     <link rel="prev" title="watch" href="watch.html" />
 <script src="_static/center_page.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.13.1/styles/github.min.css">
  
 
 
@@ -128,7 +129,7 @@
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas/issues?q=label%3Auser-case">用户案例</a></li>
-<li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas/issues?q=label%3Aquestion-answered">Questions and answers</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas/issues?q=label%3Aquestion-answered">常见问题</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas">Fork me at GitHub</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas/blob/master/CONTRIBUTING.md">参与贡献</a></li>
 <li class="toctree-l1"><a class="reference internal" href="release-notes.html">Release Notes</a></li>
@@ -205,7 +206,7 @@
 <span id="trace"></span><h1>trace<a class="headerlink" href="#trace" title="永久链接至标题">¶</a></h1>
 <blockquote>
 <div>方法内部调用路径，并输出方法路径上的每个节点上耗时</div></blockquote>
-<p><code class="docutils literal notranslate"><span class="pre">trace</span></code> 命令能主动搜索 <code class="docutils literal notranslate"><span class="pre">class-pattern</span></code>／<code class="docutils literal notranslate"><span class="pre">method-pattern</span></code> 对应的方法调用路径，渲染和统计整个调用链路上的所有性能开销和追踪调用链路。</p>
+<p><tt class="docutils literal">trace</tt> 命令能主动搜索 <tt class="docutils literal">class-pattern</tt>／<tt class="docutils literal">method-pattern</tt> 对应的方法调用路径，渲染和统计整个调用链路上的所有性能开销和追踪调用链路。</p>
 <div class="section" id="">
 <span id="id1"></span><h2>参数说明<a class="headerlink" href="#" title="永久链接至标题">¶</a></h2>
 <table border="1" class="docutils">
@@ -241,73 +242,73 @@
 <td align="left">方法执行耗时</td>
 </tr>
 </tbody>
-</table><p>这里重点要说明的是观察表达式，观察表达式的构成主要由 ognl 表达式组成，所以你可以这样写<code class="docutils literal notranslate"><span class="pre">&quot;{params,returnObj}&quot;</span></code>，只要是一个合法的 ognl 表达式，都能被正常支持。</p>
-<p>观察的维度也比较多，主要体现在参数 <code class="docutils literal notranslate"><span class="pre">advice</span></code> 的数据结构上。<code class="docutils literal notranslate"><span class="pre">Advice</span></code> 参数最主要是封装了通知节点的所有信息。</p>
+</table><p>这里重点要说明的是观察表达式，观察表达式的构成主要由 ognl 表达式组成，所以你可以这样写<tt class="docutils literal">"{params,returnObj}"</tt>，只要是一个合法的 ognl 表达式，都能被正常支持。</p>
+<p>观察的维度也比较多，主要体现在参数 <tt class="docutils literal">advice</tt> 的数据结构上。<tt class="docutils literal">Advice</tt> 参数最主要是封装了通知节点的所有信息。</p>
 <p>请参考<a class="reference internal" href="advice-class.html"><span class="doc">表达式核心变量</span></a>中关于该节点的描述。</p>
 <ul class="simple">
 <li>特殊用法请参考：<a class="reference external" href="https://github.com/alibaba/arthas/issues/71">https://github.com/alibaba/arthas/issues/71</a></li>
 <li>OGNL表达式官网：<a class="reference external" href="https://commons.apache.org/proper/commons-ognl/language-guide.html">https://commons.apache.org/proper/commons-ognl/language-guide.html</a></li>
 </ul>
-<p>很多时候我们只想看到某个方法的rt大于某个时间之后的trace结果，现在Arthas可以按照方法执行的耗时来进行过滤了，例如<code class="docutils literal notranslate"><span class="pre">trace</span> <span class="pre">*StringUtils</span> <span class="pre">isBlank</span> <span class="pre">'#cost&gt;100'</span></code>表示当执行时间超过100ms的时候，才会输出trace的结果。</p>
+<p>很多时候我们只想看到某个方法的rt大于某个时间之后的trace结果，现在Arthas可以按照方法执行的耗时来进行过滤了，例如<tt class="docutils literal">trace *StringUtils isBlank '#cost>100'</tt>表示当执行时间超过100ms的时候，才会输出trace的结果。</p>
 <blockquote>
-<div>watch/stack/trace这个三个命令都支持<code class="docutils literal notranslate"><span class="pre">#cost</span></code></div></blockquote>
+<div>watch/stack/trace这个三个命令都支持<tt class="docutils literal">#cost</tt></div></blockquote>
 </div>
 <div class="section" id="">
 <span id="id2"></span><h2>注意事项<a class="headerlink" href="#" title="永久链接至标题">¶</a></h2>
-<p><code class="docutils literal notranslate"><span class="pre">trace</span></code> 能方便的帮助你定位和发现因 RT 高而导致的性能问题缺陷，但其每次只能跟踪一级方法的调用链路。</p>
+<p><tt class="docutils literal">trace</tt> 能方便的帮助你定位和发现因 RT 高而导致的性能问题缺陷，但其每次只能跟踪一级方法的调用链路。</p>
 </div>
 <div class="section" id="">
 <span id="id3"></span><h2>使用参考<a class="headerlink" href="#" title="永久链接至标题">¶</a></h2>
 <div class="section" id="demo">
 <span id="demo"></span><h3>启动 Demo<a class="headerlink" href="#demo" title="永久链接至标题">¶</a></h3>
-<p>启动<a class="reference internal" href="quick-start.html"><span class="doc">快速入门</span></a>里的<code class="docutils literal notranslate"><span class="pre">arthas-demo</span></code>。</p>
+<p>启动<a class="reference internal" href="quick-start.html"><span class="doc">快速入门</span></a>里的<tt class="docutils literal">arthas-demo</tt>。</p>
 </div>
 <div class="section" id="trace">
 <span id="id4"></span><h3>trace函数<a class="headerlink" href="#trace" title="永久链接至标题">¶</a></h3>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$ trace demo.MathGame run
+<div class="highlight-bash notranslate"><div class="highlight hljs"><pre class="bash">$ trace demo.MathGame run
 Press Ctrl+C to abort.
-Affect<span class="o">(</span>class-cnt:1 , method-cnt:1<span class="o">)</span> cost in <span class="m">42</span> ms.
-<span class="sb">`</span>---ts<span class="o">=</span><span class="m">2018</span>-12-04 <span class="m">00</span>:44:17<span class="p">;</span><span class="nv">thread_name</span><span class="o">=</span>main<span class="p">;</span><span class="nv">id</span><span class="o">=</span><span class="m">1</span><span class="p">;</span><span class="nv">is_daemon</span><span class="o">=</span>false<span class="p">;</span><span class="nv">priority</span><span class="o">=</span><span class="m">5</span><span class="p">;</span><span class="nv">TCCL</span><span class="o">=</span>sun.misc.Launcher<span class="nv">$AppClassLoader</span>@3d4eac69
-    <span class="sb">`</span>---<span class="o">[</span><span class="m">10</span>.611029ms<span class="o">]</span> demo.MathGame:run<span class="o">()</span>
-        +---<span class="o">[</span><span class="m">0</span>.05638ms<span class="o">]</span> java.util.Random:nextInt<span class="o">()</span>
-        +---<span class="o">[</span><span class="m">10</span>.036885ms<span class="o">]</span> demo.MathGame:primeFactors<span class="o">()</span>
-        <span class="sb">`</span>---<span class="o">[</span><span class="m">0</span>.170316ms<span class="o">]</span> demo.MathGame:print<span class="o">()</span>
+Affect(class-cnt:1 , method-cnt:1) cost in 42 ms.
+`---ts=2018-12-04 00:44:17;thread_name=main;id=1;is_daemon=false;priority=5;TCCL=sun.misc.Launcher$AppClassLoader@3d4eac69
+    `---[10.611029ms] demo.MathGame:run()
+        +---[0.05638ms] java.util.Random:nextInt()
+        +---[10.036885ms] demo.MathGame:primeFactors()
+        `---[0.170316ms] demo.MathGame:print()
 </pre></div>
 </div>
 </div>
 <div class="section" id="jdk">
 <span id="jdk"></span><h3>过滤掉jdk的函数<a class="headerlink" href="#jdk" title="永久链接至标题">¶</a></h3>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$ trace -j  demo.MathGame run
+<div class="highlight-bash notranslate"><div class="highlight hljs"><pre class="bash">$ trace -j  demo.MathGame run
 Press Ctrl+C to abort.
-Affect<span class="o">(</span>class-cnt:1 , method-cnt:1<span class="o">)</span> cost in <span class="m">31</span> ms.
-<span class="sb">`</span>---ts<span class="o">=</span><span class="m">2018</span>-12-04 <span class="m">01</span>:09:14<span class="p">;</span><span class="nv">thread_name</span><span class="o">=</span>main<span class="p">;</span><span class="nv">id</span><span class="o">=</span><span class="m">1</span><span class="p">;</span><span class="nv">is_daemon</span><span class="o">=</span>false<span class="p">;</span><span class="nv">priority</span><span class="o">=</span><span class="m">5</span><span class="p">;</span><span class="nv">TCCL</span><span class="o">=</span>sun.misc.Launcher<span class="nv">$AppClassLoader</span>@3d4eac69
-    <span class="sb">`</span>---<span class="o">[</span><span class="m">5</span>.190646ms<span class="o">]</span> demo.MathGame:run<span class="o">()</span>
-        +---<span class="o">[</span><span class="m">4</span>.465779ms<span class="o">]</span> demo.MathGame:primeFactors<span class="o">()</span>
-        <span class="sb">`</span>---<span class="o">[</span><span class="m">0</span>.375324ms<span class="o">]</span> demo.MathGame:print<span class="o">()</span>
+Affect(class-cnt:1 , method-cnt:1) cost in 31 ms.
+`---ts=2018-12-04 01:09:14;thread_name=main;id=1;is_daemon=false;priority=5;TCCL=sun.misc.Launcher$AppClassLoader@3d4eac69
+    `---[5.190646ms] demo.MathGame:run()
+        +---[4.465779ms] demo.MathGame:primeFactors()
+        `---[0.375324ms] demo.MathGame:print()
 </pre></div>
 </div>
 <ul class="simple">
-<li><code class="docutils literal notranslate"><span class="pre">-j</span></code>: jdkMethodSkip, skip jdk method trace</li>
+<li><tt class="docutils literal">-j</tt>: jdkMethodSkip, skip jdk method trace</li>
 </ul>
 </div>
 <div class="section" id="">
 <span id="id5"></span><h3>据调用耗时过滤<a class="headerlink" href="#" title="永久链接至标题">¶</a></h3>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$ trace demo.MathGame run <span class="s1">&#39;#cost &gt; 10&#39;</span>
+<div class="highlight-bash notranslate"><div class="highlight hljs"><pre class="bash">$ trace demo.MathGame run &#x27;#cost &gt; 10&#x27;
 Press Ctrl+C to abort.
-Affect<span class="o">(</span>class-cnt:1 , method-cnt:1<span class="o">)</span> cost in <span class="m">41</span> ms.
-<span class="sb">`</span>---ts<span class="o">=</span><span class="m">2018</span>-12-04 <span class="m">01</span>:12:02<span class="p">;</span><span class="nv">thread_name</span><span class="o">=</span>main<span class="p">;</span><span class="nv">id</span><span class="o">=</span><span class="m">1</span><span class="p">;</span><span class="nv">is_daemon</span><span class="o">=</span>false<span class="p">;</span><span class="nv">priority</span><span class="o">=</span><span class="m">5</span><span class="p">;</span><span class="nv">TCCL</span><span class="o">=</span>sun.misc.Launcher<span class="nv">$AppClassLoader</span>@3d4eac69
-    <span class="sb">`</span>---<span class="o">[</span><span class="m">12</span>.033735ms<span class="o">]</span> demo.MathGame:run<span class="o">()</span>
-        +---<span class="o">[</span><span class="m">0</span>.006783ms<span class="o">]</span> java.util.Random:nextInt<span class="o">()</span>
-        +---<span class="o">[</span><span class="m">11</span>.852594ms<span class="o">]</span> demo.MathGame:primeFactors<span class="o">()</span>
-        <span class="sb">`</span>---<span class="o">[</span><span class="m">0</span>.05447ms<span class="o">]</span> demo.MathGame:print<span class="o">()</span>
+Affect(class-cnt:1 , method-cnt:1) cost in 41 ms.
+`---ts=2018-12-04 01:12:02;thread_name=main;id=1;is_daemon=false;priority=5;TCCL=sun.misc.Launcher$AppClassLoader@3d4eac69
+    `---[12.033735ms] demo.MathGame:run()
+        +---[0.006783ms] java.util.Random:nextInt()
+        +---[11.852594ms] demo.MathGame:primeFactors()
+        `---[0.05447ms] demo.MathGame:print()
 </pre></div>
 </div>
 <blockquote>
 <div>只会展示耗时大于4ms的调用路径，有助于在排查问题的时候，只关注异常情况</div></blockquote>
 <ul class="simple">
-<li>是不是很眼熟，没错，在 JProfiler 等收费软件中你曾经见识类似的功能，这里你将可以通过命令就能打印出指定调用路径。 友情提醒下，<code class="docutils literal notranslate"><span class="pre">trace</span></code> 在执行的过程中本身是会有一定的性能开销，在统计的报告中并未像 JProfiler 一样预先减去其自身的统计开销。所以这统计出来有些许的不准，渲染路径上调用的类、方法越多，性能偏差越大。但还是能让你看清一些事情的。</li>
-<li>[12.033735ms] 的含义，<code class="docutils literal notranslate"><span class="pre">12.033735</span></code> 的含义是：当前节点在当前步骤的耗时，单位为毫秒</li>
-<li>[0,0,0ms,11]xxx:yyy() [throws Exception]，对该方法中相同的方法调用进行了合并，<code class="docutils literal notranslate"><span class="pre">0,0,0ms,11</span></code> 表示方法调用耗时，<code class="docutils literal notranslate"><span class="pre">min,max,total,count</span></code>；<code class="docutils literal notranslate"><span class="pre">throws</span> <span class="pre">Exception</span></code> 表明该方法调用中存在异常返回</li>
+<li>是不是很眼熟，没错，在 JProfiler 等收费软件中你曾经见识类似的功能，这里你将可以通过命令就能打印出指定调用路径。 友情提醒下，<tt class="docutils literal">trace</tt> 在执行的过程中本身是会有一定的性能开销，在统计的报告中并未像 JProfiler 一样预先减去其自身的统计开销。所以这统计出来有些许的不准，渲染路径上调用的类、方法越多，性能偏差越大。但还是能让你看清一些事情的。</li>
+<li>[12.033735ms] 的含义，<tt class="docutils literal">12.033735</tt> 的含义是：当前节点在当前步骤的耗时，单位为毫秒</li>
+<li>[0,0,0ms,11]xxx:yyy() [throws Exception]，对该方法中相同的方法调用进行了合并，<tt class="docutils literal">0,0,0ms,11</tt> 表示方法调用耗时，<tt class="docutils literal">min,max,total,count</tt>；<tt class="docutils literal">throws Exception</tt> 表明该方法调用中存在异常返回</li>
 <li>这里存在一个统计不准确的问题，就是所有方法耗时加起来可能会小于该监测方法的总耗时，这个是由于 Arthas 本身的逻辑会有一定的耗时</li>
 </ul>
 </div>
@@ -386,6 +387,15 @@ Affect<span class="o">(</span>class-cnt:1 , method-cnt:1<span class="o">)</span>
 </div>
 
 <script type="text/javascript" src="_static/add_badges.js"></script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.13.1/highlight.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlightjs-line-numbers.js/2.5.0/highlightjs-line-numbers.min.js"></script>
+<script>
+  document.querySelectorAll('div.hljs > pre').forEach(function(block) {
+    hljs.highlightBlock(block);
+    hljs.lineNumbersBlock(block);
+  });
+</script>
 
 <script>
   var _hmt = _hmt || [];

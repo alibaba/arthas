@@ -34,6 +34,7 @@
     <link rel="next" title="ognl" href="ognl.html" />
     <link rel="prev" title="sysenv" href="sysenv.html" />
 <script src="_static/center_page.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.13.1/styles/github.min.css">
  
 
 
@@ -197,48 +198,48 @@
 <ul class="simple">
 <li>It is recommended to use the [OGNL] (ognl.md) command, which will be more flexibility.</li>
 </ul>
-<p>Check the static fields of classes conveniently, the usage is <code class="docutils literal notranslate"><span class="pre">getstatic</span> <span class="pre">class_name</span> <span class="pre">field_name</span></code>.</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$ getstatic demo.MathGame random
+<p>Check the static fields of classes conveniently, the usage is <tt class="docutils literal">getstatic class_name field_name</tt>.</p>
+<div class="highlight-bash notranslate"><div class="highlight hljs"><pre class="bash">$ getstatic demo.MathGame random
 field: random
-@Random<span class="o">[</span>
-    <span class="nv">serialVersionUID</span><span class="o">=</span>@Long<span class="o">[</span><span class="m">3905348978240129619</span><span class="o">]</span>,
-    <span class="nv">seed</span><span class="o">=</span>@AtomicLong<span class="o">[</span><span class="m">120955813885284</span><span class="o">]</span>,
-    <span class="nv">multiplier</span><span class="o">=</span>@Long<span class="o">[</span><span class="m">25214903917</span><span class="o">]</span>,
-    <span class="nv">addend</span><span class="o">=</span>@Long<span class="o">[</span><span class="m">11</span><span class="o">]</span>,
-    <span class="nv">mask</span><span class="o">=</span>@Long<span class="o">[</span><span class="m">281474976710655</span><span class="o">]</span>,
-    <span class="nv">DOUBLE_UNIT</span><span class="o">=</span>@Double<span class="o">[</span><span class="m">1</span>.1102230246251565E-16<span class="o">]</span>,
-    <span class="nv">BadBound</span><span class="o">=</span>@String<span class="o">[</span>bound must be positive<span class="o">]</span>,
-    <span class="nv">BadRange</span><span class="o">=</span>@String<span class="o">[</span>bound must be greater than origin<span class="o">]</span>,
-    <span class="nv">BadSize</span><span class="o">=</span>@String<span class="o">[</span>size must be non-negative<span class="o">]</span>,
-    <span class="nv">seedUniquifier</span><span class="o">=</span>@AtomicLong<span class="o">[</span>-3282039941672302964<span class="o">]</span>,
-    <span class="nv">nextNextGaussian</span><span class="o">=</span>@Double<span class="o">[</span><span class="m">0</span>.0<span class="o">]</span>,
-    <span class="nv">haveNextNextGaussian</span><span class="o">=</span>@Boolean<span class="o">[</span>false<span class="o">]</span>,
-    <span class="nv">serialPersistentFields</span><span class="o">=</span>@ObjectStreamField<span class="o">[][</span><span class="nv">isEmpty</span><span class="o">=</span>false<span class="p">;</span><span class="nv">size</span><span class="o">=</span><span class="m">3</span><span class="o">]</span>,
-    <span class="nv">unsafe</span><span class="o">=</span>@Unsafe<span class="o">[</span>sun.misc.Unsafe@2eaa1027<span class="o">]</span>,
-    <span class="nv">seedOffset</span><span class="o">=</span>@Long<span class="o">[</span><span class="m">24</span><span class="o">]</span>,
-<span class="o">]</span>
+@Random[
+    serialVersionUID=@Long[3905348978240129619],
+    seed=@AtomicLong[120955813885284],
+    multiplier=@Long[25214903917],
+    addend=@Long[11],
+    mask=@Long[281474976710655],
+    DOUBLE_UNIT=@Double[1.1102230246251565E-16],
+    BadBound=@String[bound must be positive],
+    BadRange=@String[bound must be greater than origin],
+    BadSize=@String[size must be non-negative],
+    seedUniquifier=@AtomicLong[-3282039941672302964],
+    nextNextGaussian=@Double[0.0],
+    haveNextNextGaussian=@Boolean[false],
+    serialPersistentFields=@ObjectStreamField[][isEmpty=false;size=3],
+    unsafe=@Unsafe[sun.misc.Unsafe@2eaa1027],
+    seedOffset=@Long[24],
+]
 </pre></div>
 </div>
-<p>Tip: if the static field is a complex class, you can even use <a class="reference external" href="https://commons.apache.org/proper/commons-ognl/language-guide.html"><code class="docutils literal notranslate"><span class="pre">OGNL</span></code></a> to traverse, filter and access the inner properties of this class.</p>
+<p>Tip: if the static field is a complex class, you can even use <a class="reference external" href="https://commons.apache.org/proper/commons-ognl/language-guide.html"><tt class="docutils literal">OGNL</tt></a> to traverse, filter and access the inner properties of this class.</p>
 <div class="toctree-wrapper compound">
 <ul>
 <li class="toctree-l1"><a class="reference external" href="https://commons.apache.org/proper/commons-ognl/language-guide.html">OGNL official guide</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas/issues/71">Special usages</a></li>
 </ul>
 </div>
-<p>E.g. suppose <code class="docutils literal notranslate"><span class="pre">n</span></code> is a <code class="docutils literal notranslate"><span class="pre">Map</span></code> and its key is a <code class="docutils literal notranslate"><span class="pre">Enum</span></code>, then you can achieve this if you want to pick the key with a specific <code class="docutils literal notranslate"><span class="pre">Enum</span></code> value:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$ getstatic com.alibaba.arthas.Test n <span class="s1">&#39;entrySet().iterator.{? #this.key.name()==&quot;STOP&quot;}&#39;</span>
+<p>E.g. suppose <tt class="docutils literal">n</tt> is a <tt class="docutils literal">Map</tt> and its key is a <tt class="docutils literal">Enum</tt>, then you can achieve this if you want to pick the key with a specific <tt class="docutils literal">Enum</tt> value:</p>
+<div class="highlight-bash notranslate"><div class="highlight hljs"><pre class="bash">$ getstatic com.alibaba.arthas.Test n &#x27;entrySet().iterator.{? #this.key.name()==&quot;STOP&quot;}&#x27;
 field: n
-@ArrayList<span class="o">[</span>
-    @Node<span class="o">[</span><span class="nv">STOP</span><span class="o">=</span>bbb<span class="o">]</span>,
-<span class="o">]</span>
-Affect<span class="o">(</span>row-cnt:1<span class="o">)</span> cost in <span class="m">68</span> ms.
+@ArrayList[
+    @Node[STOP=bbb],
+]
+Affect(row-cnt:1) cost in 68 ms.
 
-$ getstatic com.alibaba.arthas.Test m <span class="s1">&#39;entrySet().iterator.{? #this.key==&quot;a&quot;}&#39;</span>
+$ getstatic com.alibaba.arthas.Test m &#x27;entrySet().iterator.{? #this.key==&quot;a&quot;}&#x27;
 field: m
-@ArrayList<span class="o">[</span>
-    @Node<span class="o">[</span><span class="nv">a</span><span class="o">=</span>aaa<span class="o">]</span>,
-<span class="o">]</span>
+@ArrayList[
+    @Node[a=aaa],
+]
 </pre></div>
 </div>
 </div>
@@ -314,6 +315,15 @@ field: m
 </div>
 
 <script type="text/javascript" src="_static/add_badges.js"></script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.13.1/highlight.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlightjs-line-numbers.js/2.5.0/highlightjs-line-numbers.min.js"></script>
+<script>
+  document.querySelectorAll('div.hljs > pre').forEach(function(block) {
+    hljs.highlightBlock(block);
+    hljs.lineNumbersBlock(block);
+  });
+</script>
 
 <script>
   var _hmt = _hmt || [];

@@ -34,6 +34,7 @@
     <link rel="next" title="tt" href="tt.html" />
     <link rel="prev" title="trace" href="trace.html" />
 <script src="_static/center_page.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.13.1/styles/github.min.css">
  
 
 
@@ -127,7 +128,7 @@
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas/issues?q=label%3Auser-case">用户案例</a></li>
-<li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas/issues?q=label%3Aquestion-answered">Questions and answers</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas/issues?q=label%3Aquestion-answered">常见问题</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas">Fork me at GitHub</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas/blob/master/CONTRIBUTING.md">参与贡献</a></li>
 <li class="toctree-l1"><a class="reference internal" href="release-notes.html">Release Notes</a></li>
@@ -236,8 +237,8 @@
 <td align="left">执行次数限制</td>
 </tr>
 </tbody>
-</table><p>这里重点要说明的是观察表达式，观察表达式的构成主要由 ognl 表达式组成，所以你可以这样写<code class="docutils literal notranslate"><span class="pre">&quot;{params,returnObj}&quot;</span></code>，只要是一个合法的 ognl 表达式，都能被正常支持。</p>
-<p>观察的维度也比较多，主要体现在参数 <code class="docutils literal notranslate"><span class="pre">advice</span></code> 的数据结构上。<code class="docutils literal notranslate"><span class="pre">Advice</span></code> 参数最主要是封装了通知节点的所有信息。</p>
+</table><p>这里重点要说明的是观察表达式，观察表达式的构成主要由 ognl 表达式组成，所以你可以这样写<tt class="docutils literal">"{params,returnObj}"</tt>，只要是一个合法的 ognl 表达式，都能被正常支持。</p>
+<p>观察的维度也比较多，主要体现在参数 <tt class="docutils literal">advice</tt> 的数据结构上。<tt class="docutils literal">Advice</tt> 参数最主要是封装了通知节点的所有信息。</p>
 <p>请参考<a class="reference internal" href="advice-class.html"><span class="doc">表达式核心变量</span></a>中关于该节点的描述。</p>
 <ul class="simple">
 <li>特殊用法请参考：<a class="reference external" href="https://github.com/alibaba/arthas/issues/71">https://github.com/alibaba/arthas/issues/71</a></li>
@@ -248,44 +249,44 @@
 <span id="id2"></span><h2>使用例子<a class="headerlink" href="#" title="永久链接至标题">¶</a></h2>
 <div class="section" id="demo">
 <span id="demo"></span><h3>启动 Demo<a class="headerlink" href="#demo" title="永久链接至标题">¶</a></h3>
-<p>启动<a class="reference internal" href="quick-start.html"><span class="doc">快速入门</span></a>里的<code class="docutils literal notranslate"><span class="pre">arthas-demo</span></code>。</p>
+<p>启动<a class="reference internal" href="quick-start.html"><span class="doc">快速入门</span></a>里的<tt class="docutils literal">arthas-demo</tt>。</p>
 </div>
 <div class="section" id="stack">
 <span id="id3"></span><h3>stack<a class="headerlink" href="#stack" title="永久链接至标题">¶</a></h3>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$ stack demo.MathGame primeFactors
+<div class="highlight-bash notranslate"><div class="highlight hljs"><pre class="bash">$ stack demo.MathGame primeFactors
 Press Ctrl+C to abort.
-Affect<span class="o">(</span>class-cnt:1 , method-cnt:1<span class="o">)</span> cost in <span class="m">36</span> ms.
-<span class="nv">ts</span><span class="o">=</span><span class="m">2018</span>-12-04 <span class="m">01</span>:32:19<span class="p">;</span><span class="nv">thread_name</span><span class="o">=</span>main<span class="p">;</span><span class="nv">id</span><span class="o">=</span><span class="m">1</span><span class="p">;</span><span class="nv">is_daemon</span><span class="o">=</span>false<span class="p">;</span><span class="nv">priority</span><span class="o">=</span><span class="m">5</span><span class="p">;</span><span class="nv">TCCL</span><span class="o">=</span>sun.misc.Launcher<span class="nv">$AppClassLoader</span>@3d4eac69
-    @demo.MathGame.run<span class="o">()</span>
-        at demo.MathGame.main<span class="o">(</span>MathGame.java:16<span class="o">)</span>
+Affect(class-cnt:1 , method-cnt:1) cost in 36 ms.
+ts=2018-12-04 01:32:19;thread_name=main;id=1;is_daemon=false;priority=5;TCCL=sun.misc.Launcher$AppClassLoader@3d4eac69
+    @demo.MathGame.run()
+        at demo.MathGame.main(MathGame.java:16)
 </pre></div>
 </div>
 </div>
 <div class="section" id="">
 <span id="id4"></span><h3>据条件表达式来过滤<a class="headerlink" href="#" title="永久链接至标题">¶</a></h3>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$ stack demo.MathGame primeFactors <span class="s1">&#39;params[0]&lt;0&#39;</span> -n <span class="m">2</span>
+<div class="highlight-bash notranslate"><div class="highlight hljs"><pre class="bash">$ stack demo.MathGame primeFactors &#x27;params[0]&lt;0&#x27; -n 2
 Press Ctrl+C to abort.
-Affect<span class="o">(</span>class-cnt:1 , method-cnt:1<span class="o">)</span> cost in <span class="m">30</span> ms.
-<span class="nv">ts</span><span class="o">=</span><span class="m">2018</span>-12-04 <span class="m">01</span>:34:27<span class="p">;</span><span class="nv">thread_name</span><span class="o">=</span>main<span class="p">;</span><span class="nv">id</span><span class="o">=</span><span class="m">1</span><span class="p">;</span><span class="nv">is_daemon</span><span class="o">=</span>false<span class="p">;</span><span class="nv">priority</span><span class="o">=</span><span class="m">5</span><span class="p">;</span><span class="nv">TCCL</span><span class="o">=</span>sun.misc.Launcher<span class="nv">$AppClassLoader</span>@3d4eac69
-    @demo.MathGame.run<span class="o">()</span>
-        at demo.MathGame.main<span class="o">(</span>MathGame.java:16<span class="o">)</span>
+Affect(class-cnt:1 , method-cnt:1) cost in 30 ms.
+ts=2018-12-04 01:34:27;thread_name=main;id=1;is_daemon=false;priority=5;TCCL=sun.misc.Launcher$AppClassLoader@3d4eac69
+    @demo.MathGame.run()
+        at demo.MathGame.main(MathGame.java:16)
 
-<span class="nv">ts</span><span class="o">=</span><span class="m">2018</span>-12-04 <span class="m">01</span>:34:30<span class="p">;</span><span class="nv">thread_name</span><span class="o">=</span>main<span class="p">;</span><span class="nv">id</span><span class="o">=</span><span class="m">1</span><span class="p">;</span><span class="nv">is_daemon</span><span class="o">=</span>false<span class="p">;</span><span class="nv">priority</span><span class="o">=</span><span class="m">5</span><span class="p">;</span><span class="nv">TCCL</span><span class="o">=</span>sun.misc.Launcher<span class="nv">$AppClassLoader</span>@3d4eac69
-    @demo.MathGame.run<span class="o">()</span>
-        at demo.MathGame.main<span class="o">(</span>MathGame.java:16<span class="o">)</span>
+ts=2018-12-04 01:34:30;thread_name=main;id=1;is_daemon=false;priority=5;TCCL=sun.misc.Launcher$AppClassLoader@3d4eac69
+    @demo.MathGame.run()
+        at demo.MathGame.main(MathGame.java:16)
 
-Command execution <span class="nb">times</span> exceed limit: <span class="m">2</span>, so <span class="nb">command</span> will exit. You can <span class="nb">set</span> it with -n option.
+Command execution times exceed limit: 2, so command will exit. You can set it with -n option.
 </pre></div>
 </div>
 </div>
 <div class="section" id="">
 <span id="id5"></span><h3>据执行时间来过滤<a class="headerlink" href="#" title="永久链接至标题">¶</a></h3>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$ stack demo.MathGame primeFactors <span class="s1">&#39;#cost&gt;5&#39;</span>
+<div class="highlight-bash notranslate"><div class="highlight hljs"><pre class="bash">$ stack demo.MathGame primeFactors &#x27;#cost&gt;5&#x27;
 Press Ctrl+C to abort.
-Affect<span class="o">(</span>class-cnt:1 , method-cnt:1<span class="o">)</span> cost in <span class="m">35</span> ms.
-<span class="nv">ts</span><span class="o">=</span><span class="m">2018</span>-12-04 <span class="m">01</span>:35:58<span class="p">;</span><span class="nv">thread_name</span><span class="o">=</span>main<span class="p">;</span><span class="nv">id</span><span class="o">=</span><span class="m">1</span><span class="p">;</span><span class="nv">is_daemon</span><span class="o">=</span>false<span class="p">;</span><span class="nv">priority</span><span class="o">=</span><span class="m">5</span><span class="p">;</span><span class="nv">TCCL</span><span class="o">=</span>sun.misc.Launcher<span class="nv">$AppClassLoader</span>@3d4eac69
-    @demo.MathGame.run<span class="o">()</span>
-        at demo.MathGame.main<span class="o">(</span>MathGame.java:16<span class="o">)</span>
+Affect(class-cnt:1 , method-cnt:1) cost in 35 ms.
+ts=2018-12-04 01:35:58;thread_name=main;id=1;is_daemon=false;priority=5;TCCL=sun.misc.Launcher$AppClassLoader@3d4eac69
+    @demo.MathGame.run()
+        at demo.MathGame.main(MathGame.java:16)
 </pre></div>
 </div>
 </div>
@@ -364,6 +365,15 @@ Affect<span class="o">(</span>class-cnt:1 , method-cnt:1<span class="o">)</span>
 </div>
 
 <script type="text/javascript" src="_static/add_badges.js"></script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.13.1/highlight.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlightjs-line-numbers.js/2.5.0/highlightjs-line-numbers.min.js"></script>
+<script>
+  document.querySelectorAll('div.hljs > pre').forEach(function(block) {
+    hljs.highlightBlock(block);
+    hljs.lineNumbersBlock(block);
+  });
+</script>
 
 <script>
   var _hmt = _hmt || [];

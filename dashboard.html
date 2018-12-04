@@ -34,6 +34,7 @@
     <link rel="next" title="thread" href="thread.html" />
     <link rel="prev" title="命令列表" href="commands.html" />
 <script src="_static/center_page.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.13.1/styles/github.min.css">
  
 
 
@@ -122,7 +123,7 @@
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas/issues?q=label%3Auser-case">用户案例</a></li>
-<li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas/issues?q=label%3Aquestion-answered">Questions and answers</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas/issues?q=label%3Aquestion-answered">常见问题</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas">Fork me at GitHub</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas/blob/master/CONTRIBUTING.md">参与贡献</a></li>
 <li class="toctree-l1"><a class="reference internal" href="release-notes.html">Release Notes</a></li>
@@ -202,7 +203,7 @@
 <p>当运行在Ali-tomcat时，会显示当前tomcat的实时信息，如HTTP请求的qps, rt, 错误数, 线程池信息等等。</p>
 <div class="section" id="">
 <span id="id1"></span><h2>使用参考<a class="headerlink" href="#" title="永久链接至标题">¶</a></h2>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ dashboard
+<div class="highlight-default notranslate"><pre class="literal-block">$ dashboard
 ID         NAME                              GROUP                  PRIORITY   STATE       %CPU       TIME       INTERRUPTED DAEMON
 889        RMI TCP Connection(15)-30.10.166. RMI Runtime            9          RUNNABLE    48         0:5        false       true
 1077       Timer-for-arthas-dashboard-0      system                 9          RUNNABLE    24         0:0        false       true
@@ -235,8 +236,7 @@ java.home                                                           error/s     
                                                                     received/s                        0B
 systemload.average                3.44                              sent/s                            0B
 processors                        4                                 threadpool                        http-bio-8080
-uptime                            16020s                            busy                              0
-</pre></div>
+uptime                            16020s                            busy                              0</pre>
 </div>
 </div>
 <div class="section" id="">
@@ -248,7 +248,7 @@ uptime                            16020s                            busy        
 <li>PRIORITY: 线程优先级, 1~10之间的数字，越大表示优先级越高</li>
 <li>STATE: 线程的状态</li>
 <li>CPU%: 线程消耗的cpu占比，采样100ms，将所有线程在这100ms内的cpu使用量求和，再算出每个线程的cpu使用占比。</li>
-<li>TIME: 线程运行总时间，数据格式为<code class="docutils literal notranslate"><span class="pre">分：秒</span></code></li>
+<li>TIME: 线程运行总时间，数据格式为<tt class="docutils literal">分：秒</tt></li>
 <li>INTERRUPTED: 线程当前的中断位状态</li>
 <li>DAEMON: 是否是daemon线程</li>
 </ul>
@@ -331,6 +331,15 @@ uptime                            16020s                            busy        
 </div>
 
 <script type="text/javascript" src="_static/add_badges.js"></script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.13.1/highlight.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlightjs-line-numbers.js/2.5.0/highlightjs-line-numbers.min.js"></script>
+<script>
+  document.querySelectorAll('div.hljs > pre').forEach(function(block) {
+    hljs.highlightBlock(block);
+    hljs.lineNumbersBlock(block);
+  });
+</script>
 
 <script>
   var _hmt = _hmt || [];

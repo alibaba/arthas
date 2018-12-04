@@ -34,6 +34,7 @@
     <link rel="next" title="Advanced Usage" href="advanced-use.html" />
     <link rel="prev" title="Install Arthas" href="install-detail.html" />
 <script src="_static/center_page.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.13.1/styles/github.min.css">
  
 
 
@@ -97,7 +98,7 @@
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="#check-the-dashboard">3. Check the Dashboard</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#get-the-main-class-of-the-arthas-demo-process-with-the-thread-command">4. Get the Main Class of the <code class="docutils literal notranslate"><span class="pre">arthas-demo</span></code> process with the thread command</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#get-the-main-class-of-the-arthas-demo-process-with-the-thread-command">4. Get the Main Class of the <tt class="docutils literal">arthas-demo</tt> process with the thread command</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#decompile-main-class-with-jad-command">5. Decompile Main Class with jad command</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#watch">6. watch</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#exit-arthas">7. Exit Arthas</a></li>
@@ -180,47 +181,47 @@
 <span id="quick-start"></span><h1>Quick Start<a class="headerlink" href="#quick-start" title="Permalink to this headline">¶</a></h1>
 <div class="section" id="start-demo-application">
 <span id="start-demo-application"></span><h2>1. Start Demo Application<a class="headerlink" href="#start-demo-application" title="Permalink to this headline">¶</a></h2>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$ wget https://alibaba.github.io/arthas/arthas-demo.jar
+<div class="highlight-bash notranslate"><div class="highlight hljs"><pre class="bash">$ wget https://alibaba.github.io/arthas/arthas-demo.jar
 $ java -jar arthas-demo.jar
 </pre></div>
 </div>
-<p><code class="docutils literal notranslate"><span class="pre">arthas-demo</span></code> is a simple program that generates a random number every second, then find all prime factors of the number.</p>
-<p>The source code of <code class="docutils literal notranslate"><span class="pre">arthas-demo</span></code>: <a class="reference external" href="https://github.com/alibaba/arthas/blob/master/demo/src/main/java/demo/MathGame.java">View</a></p>
+<p><tt class="docutils literal">arthas-demo</tt> is a simple program that generates a random number every second, then find all prime factors of the number.</p>
+<p>The source code of <tt class="docutils literal">arthas-demo</tt>: <a class="reference external" href="https://github.com/alibaba/arthas/blob/master/demo/src/main/java/demo/MathGame.java">View</a></p>
 </div>
 <div class="section" id="start-arthas">
 <span id="start-arthas"></span><h2>2. Start Arthas<a class="headerlink" href="#start-arthas" title="Permalink to this headline">¶</a></h2>
 <div class="section" id="linux-unix-mac">
 <span id="linux-unix-mac"></span><h3>Linux/Unix/Mac<a class="headerlink" href="#linux-unix-mac" title="Permalink to this headline">¶</a></h3>
 <p>Execute the following command in the command line:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$ wget https://alibaba.github.io/arthas/arthas-boot.jar
+<div class="highlight-bash notranslate"><div class="highlight hljs"><pre class="bash">$ wget https://alibaba.github.io/arthas/arthas-boot.jar
 $ java -jar arthas-boot.jar
 </pre></div>
 </div>
 <ul class="simple">
-<li>The user to run this command <em>MUST</em> have the same privilege as the owner of the target process, as a simple example you can try the following command if the target process is managed by user <code class="docutils literal notranslate"><span class="pre">admin</span></code>: <code class="docutils literal notranslate"><span class="pre">sudo</span> <span class="pre">su</span> <span class="pre">admin</span> <span class="pre">&amp;&amp;</span> <span class="pre">java</span> <span class="pre">-jar</span> <span class="pre">arthas-boot.jar</span></code> or <code class="docutils literal notranslate"><span class="pre">sudo</span> <span class="pre">-u</span> <span class="pre">admin</span> <span class="pre">-EH</span> <span class="pre">java</span> <span class="pre">-jar</span> <span class="pre">arthas-boot.jar</span></code></li>
-<li>.If you cannot be able to attach to the target process, please check the logs under <code class="docutils literal notranslate"><span class="pre">~/logs/arthas</span></code> for troubleshooting.</li>
-<li><code class="docutils literal notranslate"><span class="pre">java</span> <span class="pre">-jar</span> <span class="pre">arthas-boot.jar</span> <span class="pre">-h</span></code> print usage.</li>
+<li>The user to run this command <em>MUST</em> have the same privilege as the owner of the target process, as a simple example you can try the following command if the target process is managed by user <tt class="docutils literal">admin</tt>: <tt class="docutils literal">sudo su admin && java -jar arthas-boot.jar</tt> or <tt class="docutils literal">sudo -u admin -EH java -jar arthas-boot.jar</tt></li>
+<li>If you cannot be able to attach to the target process, please check the logs under <tt class="docutils literal">~/logs/arthas</tt> for troubleshooting.</li>
+<li><tt class="docutils literal">java -jar arthas-boot.jar -h</tt> print usage.</li>
 </ul>
 <p>Select the target Java process to attach:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$ $ java -jar arthas-boot.jar
-* <span class="o">[</span><span class="m">1</span><span class="o">]</span>: <span class="m">35542</span>
-  <span class="o">[</span><span class="m">2</span><span class="o">]</span>: <span class="m">71560</span> arthas-demo.jar
+<div class="highlight-bash notranslate"><div class="highlight hljs"><pre class="bash">$ $ java -jar arthas-boot.jar
+* [1]: 35542
+  [2]: 71560 arthas-demo.jar
 </pre></div>
 </div>
 <p>The ‘Demo’ process is the fourth as shown above, press ‘2’ then ‘Enter’. Arthas will attach to the target process, and start to output:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="o">[</span>INFO<span class="o">]</span> Try to attach process <span class="m">71560</span>
-<span class="o">[</span>INFO<span class="o">]</span> Attach process <span class="m">71560</span> success.
-<span class="o">[</span>INFO<span class="o">]</span> arthas-client connect <span class="m">127</span>.0.0.1 <span class="m">3658</span>
+<div class="highlight-bash notranslate"><div class="highlight hljs"><pre class="bash">[INFO] Try to attach process 71560
+[INFO] Attach process 71560 success.
+[INFO] arthas-client connect 127.0.0.1 3658
   ,---.  ,------. ,--------.,--.  ,--.  ,---.   ,---.
- /  O  <span class="se">\ </span><span class="p">|</span>  .--. <span class="s1">&#39;&#39;</span>--.  .--<span class="s1">&#39;|  &#39;</span>--<span class="s1">&#39;  | /  O  \ &#39;</span>   .-<span class="s1">&#39;</span>
-<span class="s1">|  .-.  ||  &#39;</span>--<span class="s1">&#39;.&#39;</span>   <span class="p">|</span>  <span class="p">|</span>   <span class="p">|</span>  .--.  <span class="o">||</span>  .-.  <span class="p">|</span><span class="sb">`</span>.  <span class="sb">`</span>-.
-<span class="p">|</span>  <span class="p">|</span> <span class="p">|</span>  <span class="o">||</span>  <span class="p">|</span><span class="se">\ </span> <span class="se">\ </span>   <span class="p">|</span>  <span class="p">|</span>   <span class="p">|</span>  <span class="p">|</span>  <span class="p">|</span>  <span class="o">||</span>  <span class="p">|</span> <span class="p">|</span>  <span class="p">|</span>.-<span class="s1">&#39;    |</span>
-<span class="s1">`--&#39;</span> <span class="sb">`</span>--<span class="s1">&#39;`--&#39;</span> <span class="s1">&#39;--&#39;</span>   <span class="sb">`</span>--<span class="s1">&#39;   `--&#39;</span>  <span class="sb">`</span>--<span class="s1">&#39;`--&#39;</span> <span class="sb">`</span>--<span class="s1">&#39;`-----&#39;</span>
+ /  O  \ |  .--. &#x27;&#x27;--.  .--&#x27;|  &#x27;--&#x27;  | /  O  \ &#x27;   .-&#x27;
+|  .-.  ||  &#x27;--&#x27;.&#x27;   |  |   |  .--.  ||  .-.  |`.  `-.
+|  | |  ||  |\  \    |  |   |  |  |  ||  | |  |.-&#x27;    |
+`--&#x27; `--&#x27;`--&#x27; &#x27;--&#x27;   `--&#x27;   `--&#x27;  `--&#x27;`--&#x27; `--&#x27;`-----&#x27;
 
 wiki: https://alibaba.github.io/arthas
-version: <span class="m">3</span>.0.5.20181127201536
-pid: <span class="m">71560</span>
-time: <span class="m">2018</span>-11-28 <span class="m">19</span>:16:24
+version: 3.0.5.20181127201536
+pid: 71560
+time: 2018-11-28 19:16:24
 
 $
 </pre></div>
@@ -229,8 +230,8 @@ $
 </div>
 <div class="section" id="check-the-dashboard">
 <span id="check-the-dashboard"></span><h2>3. Check the Dashboard<a class="headerlink" href="#check-the-dashboard" title="Permalink to this headline">¶</a></h2>
-<p>Type ‘<a class="reference internal" href="dashboard.html"><span class="doc">dashboard</span></a>’ and hit ‘ENTER’, a brief report on the current process will be shown as below, pls. <code class="docutils literal notranslate"><span class="pre">Ctrl+C</span></code> to stop:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ dashboard
+<p>Type ‘<a class="reference internal" href="dashboard.html"><span class="doc">dashboard</span></a>’ and hit ‘ENTER’, a brief report on the current process will be shown as below, pls. <tt class="docutils literal">Ctrl+C</tt> to stop:</p>
+<div class="highlight-bash notranslate"><div class="highlight hljs"><pre class="bash">$ dashboard
 ID     NAME                   GROUP          PRIORI STATE  %CPU    TIME   INTERRU DAEMON
 17     pool-2-thread-1        system         5      WAITIN 67      0:0    false   false
 27     Timer-for-arthas-dashb system         10     RUNNAB 32      0:0    false   true
@@ -265,15 +266,15 @@ java.home              /Library/Java/JavaVir
 </div>
 </div>
 <div class="section" id="get-the-main-class-of-the-arthas-demo-process-with-the-thread-command">
-<span id="get-the-main-class-of-the-arthas-demo-process-with-the-thread-command"></span><h2>4. Get the Main Class of the <code class="docutils literal notranslate"><span class="pre">arthas-demo</span></code> process with the thread command<a class="headerlink" href="#get-the-main-class-of-the-arthas-demo-process-with-the-thread-command" title="Permalink to this headline">¶</a></h2>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$ thread -n -1 <span class="p">|</span> grep <span class="s1">&#39;main(&#39;</span>
-    at demo.MathGame.main<span class="o">(</span>MathGame.java:17<span class="o">)</span>
+<span id="get-the-main-class-of-the-arthas-demo-process-with-the-thread-command"></span><h2>4. Get the Main Class of the <tt class="docutils literal">arthas-demo</tt> process with the thread command<a class="headerlink" href="#get-the-main-class-of-the-arthas-demo-process-with-the-thread-command" title="Permalink to this headline">¶</a></h2>
+<div class="highlight-bash notranslate"><div class="highlight hljs"><pre class="bash">$ thread -n -1 | grep &#x27;main(&#x27;
+    at demo.MathGame.main(MathGame.java:17)
 </pre></div>
 </div>
 </div>
 <div class="section" id="decompile-main-class-with-jad-command">
 <span id="decompile-main-class-with-jad-command"></span><h2>5. Decompile Main Class with jad command<a class="headerlink" href="#decompile-main-class-with-jad-command" title="Permalink to this headline">¶</a></h2>
-<div class="highlight-java notranslate"><div class="highlight"><pre><span></span>$ jad demo.MathGame
+<div class="highlight-java notranslate"><div class="highlight hljs"><pre class="java">$ jad demo.MathGame
 
 ClassLoader:
 +-sun.misc.Launcher$AppClassLoader@3d4eac69
@@ -322,9 +323,9 @@ public class MathGame {
         Iterator&lt;Integer&gt; iterator = primeFactors.iterator();
         while (iterator.hasNext()) {
             int factor = iterator.next();
-            sb.append(factor).append(&#39;*&#39;);
+            sb.append(factor).append(&#x27;*&#x27;);
         }
-        if (sb.charAt(sb.length() - 1) == &#39;*&#39;) {
+        if (sb.charAt(sb.length() - 1) == &#x27;*&#x27;) {
             sb.deleteCharAt(sb.length() - 1);
         }
         System.out.println(sb);
@@ -356,8 +357,8 @@ Affect(row-cnt:1) cost in 970 ms.
 </div>
 <div class="section" id="watch">
 <span id="watch"></span><h2>6. watch<a class="headerlink" href="#watch" title="Permalink to this headline">¶</a></h2>
-<p>Use ‘<a class="reference internal" href="watch.html"><span class="doc">watch</span></a>’ to view the return object of <code class="docutils literal notranslate"><span class="pre">demo.MathGame#primeFactors</span></code>:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ watch demo.MathGame primeFactors returnObj
+<p>Use ‘<a class="reference internal" href="watch.html"><span class="doc">watch</span></a>’ to view the return object of <tt class="docutils literal">demo.MathGame#primeFactors</tt>:</p>
+<div class="highlight-bash notranslate"><div class="highlight hljs"><pre class="bash">$ watch demo.MathGame primeFactors returnObj
 Press Ctrl+C to abort.
 Affect(class-cnt:1 , method-cnt:1) cost in 107 ms.
 ts=2018-11-28 19:22:30; [cost=1.715367ms] result=null
@@ -393,8 +394,8 @@ ts=2018-11-28 19:22:35; [cost=29.969732ms] result=@ArrayList[
 </div>
 <div class="section" id="exit-arthas">
 <span id="exit-arthas"></span><h2>7. Exit Arthas<a class="headerlink" href="#exit-arthas" title="Permalink to this headline">¶</a></h2>
-<p>Use <code class="docutils literal notranslate"><span class="pre">quit</span></code> or <code class="docutils literal notranslate"><span class="pre">exit</span></code> to disconnect from the current process. The Arthas instance attached to the target process continues to live inside the process, and its port is standby for further connection.</p>
-<p>Use <code class="docutils literal notranslate"><span class="pre">shutdown</span></code> to have Arthas completely quit from the target process.</p>
+<p>Use <tt class="docutils literal">quit</tt> or <tt class="docutils literal">exit</tt> to disconnect from the current process. The Arthas instance attached to the target process continues to live inside the process, and its port is standby for further connection.</p>
+<p>Use <tt class="docutils literal">shutdown</tt> to have Arthas completely quit from the target process.</p>
 </div>
 </div>
 
@@ -469,6 +470,15 @@ ts=2018-11-28 19:22:35; [cost=29.969732ms] result=@ArrayList[
 </div>
 
 <script type="text/javascript" src="_static/add_badges.js"></script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.13.1/highlight.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlightjs-line-numbers.js/2.5.0/highlightjs-line-numbers.min.js"></script>
+<script>
+  document.querySelectorAll('div.hljs > pre').forEach(function(block) {
+    hljs.highlightBlock(block);
+    hljs.lineNumbersBlock(block);
+  });
+</script>
 
 <script>
   var _hmt = _hmt || [];

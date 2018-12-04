@@ -34,6 +34,7 @@
     <link rel="next" title="Fundamental Fields in Expressions" href="advice-class.html" />
     <link rel="prev" title="monitor" href="monitor.html" />
 <script src="_static/center_page.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.13.1/styles/github.min.css">
  
 
 
@@ -116,12 +117,12 @@
 </li>
 <li class="toctree-l3"><a class="reference internal" href="#usage">Usage</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="#start-demo">Start Demo</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#check-the-out-parameters-and-return-value">Check the <code class="docutils literal notranslate"><span class="pre">out</span> <span class="pre">parameters</span></code> and <code class="docutils literal notranslate"><span class="pre">return</span> <span class="pre">value</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="#check-in-parameters">Check <code class="docutils literal notranslate"><span class="pre">in</span> <span class="pre">parameters</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#check-the-out-parameters-and-return-value">Check the <tt class="docutils literal">out parameters</tt> and <tt class="docutils literal">return value</tt></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#check-in-parameters">Check <tt class="docutils literal">in parameters</tt></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#check-before-and-after-at-the-same-time">Check <em>before</em> and <em>after</em> at the same time</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#use-x-to-check-more-details">Use <code class="docutils literal notranslate"><span class="pre">-x</span></code> to check more details</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#use-x-to-check-more-details">Use <tt class="docutils literal">-x</tt> to check more details</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#use-condition-expressions-to-locate-specific-call">Use condition expressions to locate specific call</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#check-exceptions">Check <code class="docutils literal notranslate"><span class="pre">exceptions</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#check-exceptions">Check <tt class="docutils literal">exceptions</tt></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#filter-by-time-cost">Filter by time cost</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#check-the-field-of-the-target-object">Check the field of the target object</a></li>
 </ul>
@@ -210,11 +211,11 @@
             
   <div class="section" id="watch">
 <span id="watch"></span><h1>watch<a class="headerlink" href="#watch" title="Permalink to this headline">¶</a></h1>
-<p>Monitor methods in data aspect including <code class="docutils literal notranslate"><span class="pre">return</span> <span class="pre">values</span></code>, <code class="docutils literal notranslate"><span class="pre">exceptions</span></code> and <code class="docutils literal notranslate"><span class="pre">parameters</span></code>.</p>
+<p>Monitor methods in data aspect including <tt class="docutils literal">return values</tt>, <tt class="docutils literal">exceptions</tt> and <tt class="docutils literal">parameters</tt>.</p>
 <p>With the help of <a class="reference external" href="https://commons.apache.org/proper/commons-ognl/index.html">OGNL</a>, you can easily check the details of variables when methods being invoked.</p>
 <div class="section" id="parameters-options">
 <span id="parameters-options"></span><h2>Parameters &amp; Options<a class="headerlink" href="#parameters-options" title="Permalink to this headline">¶</a></h2>
-<p>There are four different scenarios for <code class="docutils literal notranslate"><span class="pre">watch</span></code> command, which makes it rather complicated.</p>
+<p>There are four different scenarios for <tt class="docutils literal">watch</tt> command, which makes it rather complicated.</p>
 <table border="1" class="docutils">
 <thead>
 <tr>
@@ -266,11 +267,11 @@
 </tbody>
 </table><p>F.Y.I</p>
 <ol class="simple">
-<li>any valid OGNL expression as <code class="docutils literal notranslate"><span class="pre">&quot;{params,returnObj}&quot;</span></code> supported</li>
-<li>there are four <em>watching</em> points: <code class="docutils literal notranslate"><span class="pre">-b</span></code>, <code class="docutils literal notranslate"><span class="pre">-e</span></code>, <code class="docutils literal notranslate"><span class="pre">-s</span></code> and <code class="docutils literal notranslate"><span class="pre">-f</span></code> (the first three are off in default while <code class="docutils literal notranslate"><span class="pre">-f</span></code> on);</li>
+<li>any valid OGNL expression as <tt class="docutils literal">"{params,returnObj}"</tt> supported</li>
+<li>there are four <em>watching</em> points: <tt class="docutils literal">-b</tt>, <tt class="docutils literal">-e</tt>, <tt class="docutils literal">-s</tt> and <tt class="docutils literal">-f</tt> (the first three are off in default while <tt class="docutils literal">-f</tt> on);</li>
 <li>at the <em>watching</em> point, Arthas will use the <em>expression</em> to evaluate the variables and print them out;</li>
-<li><code class="docutils literal notranslate"><span class="pre">in</span> <span class="pre">parameters</span></code> and <code class="docutils literal notranslate"><span class="pre">out</span> <span class="pre">parameters</span></code> are different since they can be modified within the invoked methods; <code class="docutils literal notranslate"><span class="pre">params</span></code> stands for <code class="docutils literal notranslate"><span class="pre">in</span> <span class="pre">parameters</span></code> in <code class="docutils literal notranslate"><span class="pre">-b</span></code>while <code class="docutils literal notranslate"><span class="pre">out</span> <span class="pre">parameters</span></code> in other <em>watching</em> points;</li>
-<li>there are no <code class="docutils literal notranslate"><span class="pre">return</span> <span class="pre">values</span></code> and <code class="docutils literal notranslate"><span class="pre">exceptions</span></code> when using <code class="docutils literal notranslate"><span class="pre">-b</span></code>.</li>
+<li><tt class="docutils literal">in parameters</tt> and <tt class="docutils literal">out parameters</tt> are different since they can be modified within the invoked methods; <tt class="docutils literal">params</tt> stands for <tt class="docutils literal">in parameters</tt> in <tt class="docutils literal">-b</tt>while <tt class="docutils literal">out parameters</tt> in other <em>watching</em> points;</li>
+<li>there are no <tt class="docutils literal">return values</tt> and <tt class="docutils literal">exceptions</tt> when using <tt class="docutils literal">-b</tt>.</li>
 </ol>
 <p>Advanced:</p>
 <div class="toctree-wrapper compound">
@@ -285,198 +286,198 @@
 <span id="usage"></span><h2>Usage<a class="headerlink" href="#usage" title="Permalink to this headline">¶</a></h2>
 <div class="section" id="start-demo">
 <span id="start-demo"></span><h3>Start Demo<a class="headerlink" href="#start-demo" title="Permalink to this headline">¶</a></h3>
-<p>Start <code class="docutils literal notranslate"><span class="pre">arthas-demo</span></code> in <a class="reference internal" href="quick-start.html"><span class="doc">Quick Start</span></a>.</p>
+<p>Start <tt class="docutils literal">arthas-demo</tt> in <a class="reference internal" href="quick-start.html"><span class="doc">Quick Start</span></a>.</p>
 </div>
 <div class="section" id="check-the-out-parameters-and-return-value">
-<span id="check-the-out-parameters-and-return-value"></span><h3>Check the <code class="docutils literal notranslate"><span class="pre">out</span> <span class="pre">parameters</span></code> and <code class="docutils literal notranslate"><span class="pre">return</span> <span class="pre">value</span></code><a class="headerlink" href="#check-the-out-parameters-and-return-value" title="Permalink to this headline">¶</a></h3>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$ watch demo.MathGame primeFactors <span class="s2">&quot;{params,returnObj}&quot;</span> -x <span class="m">2</span>
+<span id="check-the-out-parameters-and-return-value"></span><h3>Check the <tt class="docutils literal">out parameters</tt> and <tt class="docutils literal">return value</tt><a class="headerlink" href="#check-the-out-parameters-and-return-value" title="Permalink to this headline">¶</a></h3>
+<div class="highlight-bash notranslate"><div class="highlight hljs"><pre class="bash">$ watch demo.MathGame primeFactors &quot;{params,returnObj}&quot; -x 2
 Press Ctrl+C to abort.
-Affect<span class="o">(</span>class-cnt:1 , method-cnt:1<span class="o">)</span> cost in <span class="m">44</span> ms.
-<span class="nv">ts</span><span class="o">=</span><span class="m">2018</span>-12-03 <span class="m">19</span>:16:51<span class="p">;</span> <span class="o">[</span><span class="nv">cost</span><span class="o">=</span><span class="m">1</span>.280502ms<span class="o">]</span> <span class="nv">result</span><span class="o">=</span>@ArrayList<span class="o">[</span>
-    @Object<span class="o">[][</span>
-        @Integer<span class="o">[</span><span class="m">535629513</span><span class="o">]</span>,
-    <span class="o">]</span>,
-    @ArrayList<span class="o">[</span>
-        @Integer<span class="o">[</span><span class="m">3</span><span class="o">]</span>,
-        @Integer<span class="o">[</span><span class="m">19</span><span class="o">]</span>,
-        @Integer<span class="o">[</span><span class="m">191</span><span class="o">]</span>,
-        @Integer<span class="o">[</span><span class="m">49199</span><span class="o">]</span>,
-    <span class="o">]</span>,
-<span class="o">]</span>
+Affect(class-cnt:1 , method-cnt:1) cost in 44 ms.
+ts=2018-12-03 19:16:51; [cost=1.280502ms] result=@ArrayList[
+    @Object[][
+        @Integer[535629513],
+    ],
+    @ArrayList[
+        @Integer[3],
+        @Integer[19],
+        @Integer[191],
+        @Integer[49199],
+    ],
+]
 </pre></div>
 </div>
 </div>
 <div class="section" id="check-in-parameters">
-<span id="check-in-parameters"></span><h3>Check <code class="docutils literal notranslate"><span class="pre">in</span> <span class="pre">parameters</span></code><a class="headerlink" href="#check-in-parameters" title="Permalink to this headline">¶</a></h3>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$ watch demo.MathGame primeFactors <span class="s2">&quot;{params,returnObj}&quot;</span> -x <span class="m">2</span> -b
+<span id="check-in-parameters"></span><h3>Check <tt class="docutils literal">in parameters</tt><a class="headerlink" href="#check-in-parameters" title="Permalink to this headline">¶</a></h3>
+<div class="highlight-bash notranslate"><div class="highlight hljs"><pre class="bash">$ watch demo.MathGame primeFactors &quot;{params,returnObj}&quot; -x 2 -b
 Press Ctrl+C to abort.
-Affect<span class="o">(</span>class-cnt:1 , method-cnt:1<span class="o">)</span> cost in <span class="m">50</span> ms.
-<span class="nv">ts</span><span class="o">=</span><span class="m">2018</span>-12-03 <span class="m">19</span>:23:23<span class="p">;</span> <span class="o">[</span><span class="nv">cost</span><span class="o">=</span><span class="m">0</span>.0353ms<span class="o">]</span> <span class="nv">result</span><span class="o">=</span>@ArrayList<span class="o">[</span>
-    @Object<span class="o">[][</span>
-        @Integer<span class="o">[</span>-1077465243<span class="o">]</span>,
-    <span class="o">]</span>,
+Affect(class-cnt:1 , method-cnt:1) cost in 50 ms.
+ts=2018-12-03 19:23:23; [cost=0.0353ms] result=@ArrayList[
+    @Object[][
+        @Integer[-1077465243],
+    ],
     null,
-<span class="o">]</span>
+]
 </pre></div>
 </div>
 <p>Compared to the previous <em>check</em>:</p>
 <ul class="simple">
-<li><code class="docutils literal notranslate"><span class="pre">return</span> <span class="pre">value</span></code> is <code class="docutils literal notranslate"><span class="pre">null</span></code> since it’s <code class="docutils literal notranslate"><span class="pre">-b</span></code>.</li>
+<li><tt class="docutils literal">return value</tt> is <tt class="docutils literal">null</tt> since it’s <tt class="docutils literal">-b</tt>.</li>
 </ul>
 </div>
 <div class="section" id="check-before-and-after-at-the-same-time">
 <span id="check-before-and-after-at-the-same-time"></span><h3>Check <em>before</em> and <em>after</em> at the same time<a class="headerlink" href="#check-before-and-after-at-the-same-time" title="Permalink to this headline">¶</a></h3>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$ watch demo.MathGame primeFactors <span class="s2">&quot;{params,target,returnObj}&quot;</span> -x <span class="m">2</span> -b -s -n <span class="m">2</span>
+<div class="highlight-bash notranslate"><div class="highlight hljs"><pre class="bash">$ watch demo.MathGame primeFactors &quot;{params,target,returnObj}&quot; -x 2 -b -s -n 2
 Press Ctrl+C to abort.
-Affect<span class="o">(</span>class-cnt:1 , method-cnt:1<span class="o">)</span> cost in <span class="m">46</span> ms.
-<span class="nv">ts</span><span class="o">=</span><span class="m">2018</span>-12-03 <span class="m">19</span>:29:54<span class="p">;</span> <span class="o">[</span><span class="nv">cost</span><span class="o">=</span><span class="m">0</span>.01696ms<span class="o">]</span> <span class="nv">result</span><span class="o">=</span>@ArrayList<span class="o">[</span>
-    @Object<span class="o">[][</span>
-        @Integer<span class="o">[</span><span class="m">1544665400</span><span class="o">]</span>,
-    <span class="o">]</span>,
-    @MathGame<span class="o">[</span>
-        <span class="nv">random</span><span class="o">=</span>@Random<span class="o">[</span>java.util.Random@522b408a<span class="o">]</span>,
-        <span class="nv">illegalArgumentCount</span><span class="o">=</span>@Integer<span class="o">[</span><span class="m">13038</span><span class="o">]</span>,
-    <span class="o">]</span>,
+Affect(class-cnt:1 , method-cnt:1) cost in 46 ms.
+ts=2018-12-03 19:29:54; [cost=0.01696ms] result=@ArrayList[
+    @Object[][
+        @Integer[1544665400],
+    ],
+    @MathGame[
+        random=@Random[java.util.Random@522b408a],
+        illegalArgumentCount=@Integer[13038],
+    ],
     null,
-<span class="o">]</span>
-<span class="nv">ts</span><span class="o">=</span><span class="m">2018</span>-12-03 <span class="m">19</span>:29:54<span class="p">;</span> <span class="o">[</span><span class="nv">cost</span><span class="o">=</span><span class="m">4</span>.277392ms<span class="o">]</span> <span class="nv">result</span><span class="o">=</span>@ArrayList<span class="o">[</span>
-    @Object<span class="o">[][</span>
-        @Integer<span class="o">[</span><span class="m">1544665400</span><span class="o">]</span>,
-    <span class="o">]</span>,
-    @MathGame<span class="o">[</span>
-        <span class="nv">random</span><span class="o">=</span>@Random<span class="o">[</span>java.util.Random@522b408a<span class="o">]</span>,
-        <span class="nv">illegalArgumentCount</span><span class="o">=</span>@Integer<span class="o">[</span><span class="m">13038</span><span class="o">]</span>,
-    <span class="o">]</span>,
-    @ArrayList<span class="o">[</span>
-        @Integer<span class="o">[</span><span class="m">2</span><span class="o">]</span>,
-        @Integer<span class="o">[</span><span class="m">2</span><span class="o">]</span>,
-        @Integer<span class="o">[</span><span class="m">2</span><span class="o">]</span>,
-        @Integer<span class="o">[</span><span class="m">5</span><span class="o">]</span>,
-        @Integer<span class="o">[</span><span class="m">5</span><span class="o">]</span>,
-        @Integer<span class="o">[</span><span class="m">73</span><span class="o">]</span>,
-        @Integer<span class="o">[</span><span class="m">241</span><span class="o">]</span>,
-        @Integer<span class="o">[</span><span class="m">439</span><span class="o">]</span>,
-    <span class="o">]</span>,
-<span class="o">]</span>
+]
+ts=2018-12-03 19:29:54; [cost=4.277392ms] result=@ArrayList[
+    @Object[][
+        @Integer[1544665400],
+    ],
+    @MathGame[
+        random=@Random[java.util.Random@522b408a],
+        illegalArgumentCount=@Integer[13038],
+    ],
+    @ArrayList[
+        @Integer[2],
+        @Integer[2],
+        @Integer[2],
+        @Integer[5],
+        @Integer[5],
+        @Integer[73],
+        @Integer[241],
+        @Integer[439],
+    ],
+]
 </pre></div>
 </div>
 <p>F.Y.I</p>
 <ul class="simple">
-<li><code class="docutils literal notranslate"><span class="pre">-n</span> <span class="pre">2</span></code>: threshold of execution times is 2.</li>
+<li><tt class="docutils literal">-n 2</tt>: threshold of execution times is 2.</li>
 <li>the first block of output is the <em>before watching</em> point;</li>
-<li>*the order of the output determined by the <em>watching</em> order itself (nothing to do with the order of the options <code class="docutils literal notranslate"><span class="pre">-b</span> <span class="pre">-s</span></code>).</li>
+<li>*the order of the output determined by the <em>watching</em> order itself (nothing to do with the order of the options <tt class="docutils literal">-b -s</tt>).</li>
 </ul>
 </div>
 <div class="section" id="use-x-to-check-more-details">
-<span id="use-x-to-check-more-details"></span><h3>Use <code class="docutils literal notranslate"><span class="pre">-x</span></code> to check more details<a class="headerlink" href="#use-x-to-check-more-details" title="Permalink to this headline">¶</a></h3>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$ watch demo.MathGame primeFactors <span class="s2">&quot;{params,target}&quot;</span> -x <span class="m">3</span>
+<span id="use-x-to-check-more-details"></span><h3>Use <tt class="docutils literal">-x</tt> to check more details<a class="headerlink" href="#use-x-to-check-more-details" title="Permalink to this headline">¶</a></h3>
+<div class="highlight-bash notranslate"><div class="highlight hljs"><pre class="bash">$ watch demo.MathGame primeFactors &quot;{params,target}&quot; -x 3
 Press Ctrl+C to abort.
-Affect<span class="o">(</span>class-cnt:1 , method-cnt:1<span class="o">)</span> cost in <span class="m">58</span> ms.
-<span class="nv">ts</span><span class="o">=</span><span class="m">2018</span>-12-03 <span class="m">19</span>:34:19<span class="p">;</span> <span class="o">[</span><span class="nv">cost</span><span class="o">=</span><span class="m">0</span>.587833ms<span class="o">]</span> <span class="nv">result</span><span class="o">=</span>@ArrayList<span class="o">[</span>
-    @Object<span class="o">[][</span>
-        @Integer<span class="o">[</span><span class="m">47816758</span><span class="o">]</span>,
-    <span class="o">]</span>,
-    @MathGame<span class="o">[</span>
-        <span class="nv">random</span><span class="o">=</span>@Random<span class="o">[</span>
-            <span class="nv">serialVersionUID</span><span class="o">=</span>@Long<span class="o">[</span><span class="m">3905348978240129619</span><span class="o">]</span>,
-            <span class="nv">seed</span><span class="o">=</span>@AtomicLong<span class="o">[</span><span class="m">3133719055989</span><span class="o">]</span>,
-            <span class="nv">multiplier</span><span class="o">=</span>@Long<span class="o">[</span><span class="m">25214903917</span><span class="o">]</span>,
-            <span class="nv">addend</span><span class="o">=</span>@Long<span class="o">[</span><span class="m">11</span><span class="o">]</span>,
-            <span class="nv">mask</span><span class="o">=</span>@Long<span class="o">[</span><span class="m">281474976710655</span><span class="o">]</span>,
-            <span class="nv">DOUBLE_UNIT</span><span class="o">=</span>@Double<span class="o">[</span><span class="m">1</span>.1102230246251565E-16<span class="o">]</span>,
-            <span class="nv">BadBound</span><span class="o">=</span>@String<span class="o">[</span>bound must be positive<span class="o">]</span>,
-            <span class="nv">BadRange</span><span class="o">=</span>@String<span class="o">[</span>bound must be greater than origin<span class="o">]</span>,
-            <span class="nv">BadSize</span><span class="o">=</span>@String<span class="o">[</span>size must be non-negative<span class="o">]</span>,
-            <span class="nv">seedUniquifier</span><span class="o">=</span>@AtomicLong<span class="o">[</span>-3282039941672302964<span class="o">]</span>,
-            <span class="nv">nextNextGaussian</span><span class="o">=</span>@Double<span class="o">[</span><span class="m">0</span>.0<span class="o">]</span>,
-            <span class="nv">haveNextNextGaussian</span><span class="o">=</span>@Boolean<span class="o">[</span>false<span class="o">]</span>,
-            <span class="nv">serialPersistentFields</span><span class="o">=</span>@ObjectStreamField<span class="o">[][</span><span class="nv">isEmpty</span><span class="o">=</span>false<span class="p">;</span><span class="nv">size</span><span class="o">=</span><span class="m">3</span><span class="o">]</span>,
-            <span class="nv">unsafe</span><span class="o">=</span>@Unsafe<span class="o">[</span>sun.misc.Unsafe@2eaa1027<span class="o">]</span>,
-            <span class="nv">seedOffset</span><span class="o">=</span>@Long<span class="o">[</span><span class="m">24</span><span class="o">]</span>,
-        <span class="o">]</span>,
-        <span class="nv">illegalArgumentCount</span><span class="o">=</span>@Integer<span class="o">[</span><span class="m">13159</span><span class="o">]</span>,
-    <span class="o">]</span>,
-<span class="o">]</span>
+Affect(class-cnt:1 , method-cnt:1) cost in 58 ms.
+ts=2018-12-03 19:34:19; [cost=0.587833ms] result=@ArrayList[
+    @Object[][
+        @Integer[47816758],
+    ],
+    @MathGame[
+        random=@Random[
+            serialVersionUID=@Long[3905348978240129619],
+            seed=@AtomicLong[3133719055989],
+            multiplier=@Long[25214903917],
+            addend=@Long[11],
+            mask=@Long[281474976710655],
+            DOUBLE_UNIT=@Double[1.1102230246251565E-16],
+            BadBound=@String[bound must be positive],
+            BadRange=@String[bound must be greater than origin],
+            BadSize=@String[size must be non-negative],
+            seedUniquifier=@AtomicLong[-3282039941672302964],
+            nextNextGaussian=@Double[0.0],
+            haveNextNextGaussian=@Boolean[false],
+            serialPersistentFields=@ObjectStreamField[][isEmpty=false;size=3],
+            unsafe=@Unsafe[sun.misc.Unsafe@2eaa1027],
+            seedOffset=@Long[24],
+        ],
+        illegalArgumentCount=@Integer[13159],
+    ],
+]
 </pre></div>
 </div>
 <ul class="simple">
-<li><code class="docutils literal notranslate"><span class="pre">-x</span></code>: Expand level of object (1 by default)</li>
+<li><tt class="docutils literal">-x</tt>: Expand level of object (1 by default)</li>
 </ul>
 </div>
 <div class="section" id="use-condition-expressions-to-locate-specific-call">
 <span id="use-condition-expressions-to-locate-specific-call"></span><h3>Use condition expressions to locate specific call<a class="headerlink" href="#use-condition-expressions-to-locate-specific-call" title="Permalink to this headline">¶</a></h3>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$ watch demo.MathGame primeFactors <span class="s2">&quot;{params[0],target}&quot;</span> <span class="s2">&quot;params[0]&lt;0&quot;</span>
+<div class="highlight-bash notranslate"><div class="highlight hljs"><pre class="bash">$ watch demo.MathGame primeFactors &quot;{params[0],target}&quot; &quot;params[0]&lt;0&quot;
 Press Ctrl+C to abort.
-Affect<span class="o">(</span>class-cnt:1 , method-cnt:1<span class="o">)</span> cost in <span class="m">68</span> ms.
-<span class="nv">ts</span><span class="o">=</span><span class="m">2018</span>-12-03 <span class="m">19</span>:36:04<span class="p">;</span> <span class="o">[</span><span class="nv">cost</span><span class="o">=</span><span class="m">0</span>.530255ms<span class="o">]</span> <span class="nv">result</span><span class="o">=</span>@ArrayList<span class="o">[</span>
-    @Integer<span class="o">[</span>-18178089<span class="o">]</span>,
-    @MathGame<span class="o">[</span>demo.MathGame@41cf53f9<span class="o">]</span>,
-<span class="o">]</span>
+Affect(class-cnt:1 , method-cnt:1) cost in 68 ms.
+ts=2018-12-03 19:36:04; [cost=0.530255ms] result=@ArrayList[
+    @Integer[-18178089],
+    @MathGame[demo.MathGame@41cf53f9],
+]
 </pre></div>
 </div>
 </div>
 <div class="section" id="check-exceptions">
-<span id="check-exceptions"></span><h3>Check <code class="docutils literal notranslate"><span class="pre">exceptions</span></code><a class="headerlink" href="#check-exceptions" title="Permalink to this headline">¶</a></h3>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$ watch demo.MathGame primeFactors <span class="s2">&quot;{params[0],throwExp}&quot;</span> -e -x <span class="m">2</span>
+<span id="check-exceptions"></span><h3>Check <tt class="docutils literal">exceptions</tt><a class="headerlink" href="#check-exceptions" title="Permalink to this headline">¶</a></h3>
+<div class="highlight-bash notranslate"><div class="highlight hljs"><pre class="bash">$ watch demo.MathGame primeFactors &quot;{params[0],throwExp}&quot; -e -x 2
 Press Ctrl+C to abort.
-Affect<span class="o">(</span>class-cnt:1 , method-cnt:1<span class="o">)</span> cost in <span class="m">62</span> ms.
-<span class="nv">ts</span><span class="o">=</span><span class="m">2018</span>-12-03 <span class="m">19</span>:38:00<span class="p">;</span> <span class="o">[</span><span class="nv">cost</span><span class="o">=</span><span class="m">1</span>.414993ms<span class="o">]</span> <span class="nv">result</span><span class="o">=</span>@ArrayList<span class="o">[</span>
-    @Integer<span class="o">[</span>-1120397038<span class="o">]</span>,
-    java.lang.IllegalArgumentException: number is: -1120397038, need &gt;<span class="o">=</span> <span class="m">2</span>
-    at demo.MathGame.primeFactors<span class="o">(</span>MathGame.java:46<span class="o">)</span>
-    at demo.MathGame.run<span class="o">(</span>MathGame.java:24<span class="o">)</span>
-    at demo.MathGame.main<span class="o">(</span>MathGame.java:16<span class="o">)</span>
+Affect(class-cnt:1 , method-cnt:1) cost in 62 ms.
+ts=2018-12-03 19:38:00; [cost=1.414993ms] result=@ArrayList[
+    @Integer[-1120397038],
+    java.lang.IllegalArgumentException: number is: -1120397038, need &gt;= 2
+    at demo.MathGame.primeFactors(MathGame.java:46)
+    at demo.MathGame.run(MathGame.java:24)
+    at demo.MathGame.main(MathGame.java:16)
 ,
-<span class="o">]</span>
+]
 </pre></div>
 </div>
 <ul class="simple">
-<li><code class="docutils literal notranslate"><span class="pre">-e</span></code>: Trigger when an exception is thrown</li>
-<li><code class="docutils literal notranslate"><span class="pre">throwExp</span></code>: the exception object</li>
+<li><tt class="docutils literal">-e</tt>: Trigger when an exception is thrown</li>
+<li><tt class="docutils literal">throwExp</tt>: the exception object</li>
 </ul>
 </div>
 <div class="section" id="filter-by-time-cost">
 <span id="filter-by-time-cost"></span><h3>Filter by time cost<a class="headerlink" href="#filter-by-time-cost" title="Permalink to this headline">¶</a></h3>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$ watch demo.MathGame primeFactors <span class="s1">&#39;{params, returnObj}&#39;</span> <span class="s1">&#39;#cost&gt;200&#39;</span> -x <span class="m">2</span>
+<div class="highlight-bash notranslate"><div class="highlight hljs"><pre class="bash">$ watch demo.MathGame primeFactors &#x27;{params, returnObj}&#x27; &#x27;#cost&gt;200&#x27; -x 2
 Press Ctrl+C to abort.
-Affect<span class="o">(</span>class-cnt:1 , method-cnt:1<span class="o">)</span> cost in <span class="m">66</span> ms.
-<span class="nv">ts</span><span class="o">=</span><span class="m">2018</span>-12-03 <span class="m">19</span>:40:28<span class="p">;</span> <span class="o">[</span><span class="nv">cost</span><span class="o">=</span><span class="m">2112</span>.168897ms<span class="o">]</span> <span class="nv">result</span><span class="o">=</span>@ArrayList<span class="o">[</span>
-    @Object<span class="o">[][</span>
-        @Integer<span class="o">[</span><span class="m">2141897465</span><span class="o">]</span>,
-    <span class="o">]</span>,
-    @ArrayList<span class="o">[</span>
-        @Integer<span class="o">[</span><span class="m">5</span><span class="o">]</span>,
-        @Integer<span class="o">[</span><span class="m">428379493</span><span class="o">]</span>,
-    <span class="o">]</span>,
-<span class="o">]</span>
+Affect(class-cnt:1 , method-cnt:1) cost in 66 ms.
+ts=2018-12-03 19:40:28; [cost=2112.168897ms] result=@ArrayList[
+    @Object[][
+        @Integer[2141897465],
+    ],
+    @ArrayList[
+        @Integer[5],
+        @Integer[428379493],
+    ],
+]
 </pre></div>
 </div>
 <ul class="simple">
-<li><code class="docutils literal notranslate"><span class="pre">#cost&gt;200</span></code> (<code class="docutils literal notranslate"><span class="pre">ms</span></code>) filter out all invokings that take less than <code class="docutils literal notranslate"><span class="pre">200ms</span></code>.</li>
+<li><tt class="docutils literal">#cost>200</tt> (<tt class="docutils literal">ms</tt>) filter out all invokings that take less than <tt class="docutils literal">200ms</tt>.</li>
 </ul>
 </div>
 <div class="section" id="check-the-field-of-the-target-object">
 <span id="check-the-field-of-the-target-object"></span><h3>Check the field of the target object<a class="headerlink" href="#check-the-field-of-the-target-object" title="Permalink to this headline">¶</a></h3>
 <ul class="simple">
-<li><code class="docutils literal notranslate"><span class="pre">target</span></code> is the <code class="docutils literal notranslate"><span class="pre">this</span></code> object in java.</li>
+<li><tt class="docutils literal">target</tt> is the <tt class="docutils literal">this</tt> object in java.</li>
 </ul>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$ watch demo.MathGame primeFactors <span class="s1">&#39;target&#39;</span>
+<div class="highlight-bash notranslate"><div class="highlight hljs"><pre class="bash">$ watch demo.MathGame primeFactors &#x27;target&#x27;
 Press Ctrl+C to abort.
-Affect<span class="o">(</span>class-cnt:1 , method-cnt:1<span class="o">)</span> cost in <span class="m">52</span> ms.
-<span class="nv">ts</span><span class="o">=</span><span class="m">2018</span>-12-03 <span class="m">19</span>:41:52<span class="p">;</span> <span class="o">[</span><span class="nv">cost</span><span class="o">=</span><span class="m">0</span>.477882ms<span class="o">]</span> <span class="nv">result</span><span class="o">=</span>@MathGame<span class="o">[</span>
-    <span class="nv">random</span><span class="o">=</span>@Random<span class="o">[</span>java.util.Random@522b408a<span class="o">]</span>,
-    <span class="nv">illegalArgumentCount</span><span class="o">=</span>@Integer<span class="o">[</span><span class="m">13355</span><span class="o">]</span>,
-<span class="o">]</span>
+Affect(class-cnt:1 , method-cnt:1) cost in 52 ms.
+ts=2018-12-03 19:41:52; [cost=0.477882ms] result=@MathGame[
+    random=@Random[java.util.Random@522b408a],
+    illegalArgumentCount=@Integer[13355],
+]
 </pre></div>
 </div>
 <ul class="simple">
-<li><code class="docutils literal notranslate"><span class="pre">target.field_name</span></code>: the field of the current object.</li>
+<li><tt class="docutils literal">target.field_name</tt>: the field of the current object.</li>
 </ul>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$ watch demo.MathGame primeFactors <span class="s1">&#39;target.illegalArgumentCount&#39;</span>
+<div class="highlight-bash notranslate"><div class="highlight hljs"><pre class="bash">$ watch demo.MathGame primeFactors &#x27;target.illegalArgumentCount&#x27;
 Press Ctrl+C to abort.
-Affect<span class="o">(</span>class-cnt:1 , method-cnt:1<span class="o">)</span> cost in <span class="m">67</span> ms.
-<span class="nv">ts</span><span class="o">=</span><span class="m">2018</span>-12-03 <span class="m">20</span>:04:34<span class="p">;</span> <span class="o">[</span><span class="nv">cost</span><span class="o">=</span><span class="m">131</span>.303498ms<span class="o">]</span> <span class="nv">result</span><span class="o">=</span>@Integer<span class="o">[</span><span class="m">8</span><span class="o">]</span>
-<span class="nv">ts</span><span class="o">=</span><span class="m">2018</span>-12-03 <span class="m">20</span>:04:35<span class="p">;</span> <span class="o">[</span><span class="nv">cost</span><span class="o">=</span><span class="m">0</span>.961441ms<span class="o">]</span> <span class="nv">result</span><span class="o">=</span>@Integer<span class="o">[</span><span class="m">8</span><span class="o">]</span>
+Affect(class-cnt:1 , method-cnt:1) cost in 67 ms.
+ts=2018-12-03 20:04:34; [cost=131.303498ms] result=@Integer[8]
+ts=2018-12-03 20:04:35; [cost=0.961441ms] result=@Integer[8]
 </pre></div>
 </div>
 </div>
@@ -554,6 +555,15 @@ Affect<span class="o">(</span>class-cnt:1 , method-cnt:1<span class="o">)</span>
 </div>
 
 <script type="text/javascript" src="_static/add_badges.js"></script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.13.1/highlight.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlightjs-line-numbers.js/2.5.0/highlightjs-line-numbers.min.js"></script>
+<script>
+  document.querySelectorAll('div.hljs > pre').forEach(function(block) {
+    hljs.highlightBlock(block);
+    hljs.lineNumbersBlock(block);
+  });
+</script>
 
 <script>
   var _hmt = _hmt || [];

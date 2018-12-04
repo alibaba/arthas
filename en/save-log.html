@@ -34,6 +34,7 @@
     <link rel="next" title="Batch Processing" href="batch-support.html" />
     <link rel="prev" title="Arthas Async Jobs" href="async.html" />
 <script src="_static/center_page.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.13.1/styles/github.min.css">
  
 
 
@@ -192,30 +193,30 @@
 <div>Log command outputs for later analysis</div></blockquote>
 <ul>
 <li><p class="first">By default, this behavior is turned off. To enable it, execute the command below:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$ options save-result <span class="nb">true</span>
+<div class="highlight-bash notranslate"><div class="highlight hljs"><pre class="bash">$ options save-result true
  NAME         BEFORE-VALUE  AFTER-VALUE
 ----------------------------------------
-save-result  <span class="nb">false</span>         <span class="nb">true</span>
-Affect<span class="o">(</span>row-cnt:1<span class="o">)</span> cost in <span class="m">3</span> ms.
+save-result  false         true
+Affect(row-cnt:1) cost in 3 ms.
 </pre></div>
 </div>
 <p>If the message above is output on the console, then this behavior is enabled successfully.</p>
 </li>
 <li><p class="first">Log file path</p>
-<p>The command execution result will be save in <code class="docutils literal notranslate"><span class="pre">{user.home}/logs/arthas-cache/result.log</span></code>. Pls. clean it up regularly to save disk space.</p>
+<p>The command execution result will be save in <tt class="docutils literal">{user.home}/logs/arthas-cache/result.log</tt>. Pls. clean it up regularly to save disk space.</p>
 </li>
 </ul>
 <div class="section" id="use-asynchronous-job-to-log">
 <span id="use-asynchronous-job-to-log"></span><h2>Use asynchronous job to log<a class="headerlink" href="#use-asynchronous-job-to-log" title="Permalink to this headline">¶</a></h2>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$ trace Test t &gt;&gt;  <span class="p">&amp;</span>
-job id  : <span class="m">2</span>
+<div class="highlight-bash notranslate"><div class="highlight hljs"><pre class="bash">$ trace Test t &gt;&gt;  &amp;
+job id  : 2
 cache location  : /Users/zhuyong/logs/arthas-cache/28198/2
 </pre></div>
 </div>
-<p>By doing this, the command will run at background asynchronously, and output the execution result into <code class="docutils literal notranslate"><span class="pre">~/logs/arthas-cache/{PID}/{JobId}</span></code>:</p>
+<p>By doing this, the command will run at background asynchronously, and output the execution result into <tt class="docutils literal">~/logs/arthas-cache/{PID}/{JobId}</tt>:</p>
 <ul class="simple">
 <li>The background job will continue to run even if the current session is disconnected. The default job timeout value is 1 day, use global ‘<a class="reference internal" href="options.html"><span class="doc">options</span></a>’ command to alternate it.</li>
-<li>The execution result will be output into the file asynchronously. Pls. note the behavior of this command is not controlled by <code class="docutils literal notranslate"><span class="pre">save-result</span></code> option from global <a class="reference internal" href="options.html"><span class="doc">options</span></a>. No matter <code class="docutils literal notranslate"><span class="pre">save-result</span></code> is set to <code class="docutils literal notranslate"><span class="pre">true</span></code> or not, this command will write into <code class="docutils literal notranslate"><span class="pre">~/logs/arthas-cache/{PID}/{JobId}</span></code> anyway, instead of into <code class="docutils literal notranslate"><span class="pre">~/logs/arthas-cache/result.log</span></code>.</li>
+<li>The execution result will be output into the file asynchronously. Pls. note the behavior of this command is not controlled by <tt class="docutils literal">save-result</tt> option from global <a class="reference internal" href="options.html"><span class="doc">options</span></a>. No matter <tt class="docutils literal">save-result</tt> is set to <tt class="docutils literal">true</tt> or not, this command will write into <tt class="docutils literal">~/logs/arthas-cache/{PID}/{JobId}</tt> anyway, instead of into <tt class="docutils literal">~/logs/arthas-cache/result.log</tt>.</li>
 </ul>
 </div>
 </div>
@@ -291,6 +292,15 @@ cache location  : /Users/zhuyong/logs/arthas-cache/28198/2
 </div>
 
 <script type="text/javascript" src="_static/add_badges.js"></script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.13.1/highlight.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlightjs-line-numbers.js/2.5.0/highlightjs-line-numbers.min.js"></script>
+<script>
+  document.querySelectorAll('div.hljs > pre').forEach(function(block) {
+    hljs.highlightBlock(block);
+    hljs.lineNumbersBlock(block);
+  });
+</script>
 
 <script>
   var _hmt = _hmt || [];

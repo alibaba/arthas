@@ -34,6 +34,7 @@
     <link rel="next" title="Quick Start" href="quick-start.html" />
     <link rel="prev" title="Arthas Documentation" href="index.html" />
 <script src="_static/center_page.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.13.1/styles/github.min.css">
  
 
 
@@ -91,8 +92,8 @@
               <ul class="current">
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Installation</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#quick-installation">Quick installation</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#use-arthas-boot-recommend">Use <code class="docutils literal notranslate"><span class="pre">arthas-boot</span></code>(Recommend)</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#use-as-sh">Use <code class="docutils literal notranslate"><span class="pre">as.sh</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#use-arthas-boot-recommend">Use <tt class="docutils literal">arthas-boot</tt>(Recommend)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#use-as-sh">Use <tt class="docutils literal">as.sh</tt></a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="#full-installation">Full installation</a></li>
@@ -180,36 +181,36 @@
 <div class="section" id="quick-installation">
 <span id="quick-installation"></span><h2>Quick installation<a class="headerlink" href="#quick-installation" title="Permalink to this headline">¶</a></h2>
 <div class="section" id="use-arthas-boot-recommend">
-<span id="use-arthas-boot-recommend"></span><h3>Use <code class="docutils literal notranslate"><span class="pre">arthas-boot</span></code>(Recommend)<a class="headerlink" href="#use-arthas-boot-recommend" title="Permalink to this headline">¶</a></h3>
-<p>Download<code class="docutils literal notranslate"><span class="pre">arthas-boot.jar</span></code>，Start with <code class="docutils literal notranslate"><span class="pre">java</span></code> command:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$ wget https://alibaba.github.io/arthas/arthas-boot.jar
+<span id="use-arthas-boot-recommend"></span><h3>Use <tt class="docutils literal">arthas-boot</tt>(Recommend)<a class="headerlink" href="#use-arthas-boot-recommend" title="Permalink to this headline">¶</a></h3>
+<p>Download<tt class="docutils literal">arthas-boot.jar</tt>，Start with <tt class="docutils literal">java</tt> command:</p>
+<div class="highlight-bash notranslate"><div class="highlight hljs"><pre class="bash">$ wget https://alibaba.github.io/arthas/arthas-boot.jar
 $ java -jar arthas-boot.jar
 </pre></div>
 </div>
 <p>Print usage:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$ java -jar arthas-boot.jar -h
+<div class="highlight-bash notranslate"><div class="highlight hljs"><pre class="bash">$ java -jar arthas-boot.jar -h
 </pre></div>
 </div>
 </div>
 <div class="section" id="use-as-sh">
-<span id="use-as-sh"></span><h3>Use <code class="docutils literal notranslate"><span class="pre">as.sh</span></code><a class="headerlink" href="#use-as-sh" title="Permalink to this headline">¶</a></h3>
+<span id="use-as-sh"></span><h3>Use <tt class="docutils literal">as.sh</tt><a class="headerlink" href="#use-as-sh" title="Permalink to this headline">¶</a></h3>
 <p>You can install Arthas with one single line command on Linux, Unix, and Mac. Pls. copy the following command and paste it into the command line, then press <em>Enter</em> to run:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$ curl -L https://alibaba.github.io/arthas/install.sh <span class="p">|</span> sh
+<div class="highlight-bash notranslate"><div class="highlight hljs"><pre class="bash">$ curl -L https://alibaba.github.io/arthas/install.sh | sh
 </pre></div>
 </div>
-<p>The command above will download the bootstrap script <code class="docutils literal notranslate"><span class="pre">as.sh</span></code> to the current directory. You can move it the any other place you want, or put its location in <code class="docutils literal notranslate"><span class="pre">$PATH</span></code>.</p>
-<p>You can enter its interactive interface by executing <code class="docutils literal notranslate"><span class="pre">as.sh</span></code>, or execute <code class="docutils literal notranslate"><span class="pre">as.sh</span> <span class="pre">-h</span></code> for more help information.</p>
+<p>The command above will download the bootstrap script <tt class="docutils literal">as.sh</tt> to the current directory. You can move it the any other place you want, or put its location in <tt class="docutils literal">$PATH</tt>.</p>
+<p>You can enter its interactive interface by executing <tt class="docutils literal">as.sh</tt>, or execute <tt class="docutils literal">as.sh -h</tt> for more help information.</p>
 </div>
 </div>
 <div class="section" id="full-installation">
 <span id="full-installation"></span><h2>Full installation<a class="headerlink" href="#full-installation" title="Permalink to this headline">¶</a></h2>
 <p>Latest Version, Click To Download: <a class="reference external" href="http://repository.sonatype.org/service/local/artifact/maven/redirect?r=central-proxy&amp;g=com.taobao.arthas&amp;a=arthas-packaging&amp;e=zip&amp;c=bin&amp;v=LATEST"><img alt="Arthas" src="https://img.shields.io/maven-central/v/com.taobao.arthas/arthas-packaging.svg?style=flat-square" /></a></p>
-<p>Download and unzip, find <code class="docutils literal notranslate"><span class="pre">arthas-boot.jar</span></code> in the directory. Start with <code class="docutils literal notranslate"><span class="pre">java</span></code> command:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$ java -jar arthas-boot.jar
+<p>Download and unzip, find <tt class="docutils literal">arthas-boot.jar</tt> in the directory. Start with <tt class="docutils literal">java</tt> command:</p>
+<div class="highlight-bash notranslate"><div class="highlight hljs"><pre class="bash">$ java -jar arthas-boot.jar
 </pre></div>
 </div>
 <p>Print usage:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$ java -jar arthas-boot.jar -h
+<div class="highlight-bash notranslate"><div class="highlight hljs"><pre class="bash">$ java -jar arthas-boot.jar -h
 </pre></div>
 </div>
 </div>
@@ -225,11 +226,11 @@ $ java -jar arthas-boot.jar
 <span id="uninstall"></span><h2>Uninstall<a class="headerlink" href="#uninstall" title="Permalink to this headline">¶</a></h2>
 <ul>
 <li><p class="first">On Linux/Unix/Mac, delete the files with the following command:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$ rm -rf ~/.arthas/
+<div class="highlight-bash notranslate"><div class="highlight hljs"><pre class="bash">$ rm -rf ~/.arthas/
 </pre></div>
 </div>
 </li>
-<li><p class="first">On Windows, delete <code class="docutils literal notranslate"><span class="pre">.arthas</span></code> directory under user home.</p>
+<li><p class="first">On Windows, delete <tt class="docutils literal">.arthas</tt> directory under user home.</p>
 </li>
 </ul>
 </div>
@@ -306,6 +307,15 @@ $ java -jar arthas-boot.jar
 </div>
 
 <script type="text/javascript" src="_static/add_badges.js"></script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.13.1/highlight.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlightjs-line-numbers.js/2.5.0/highlightjs-line-numbers.min.js"></script>
+<script>
+  document.querySelectorAll('div.hljs > pre').forEach(function(block) {
+    hljs.highlightBlock(block);
+    hljs.lineNumbersBlock(block);
+  });
+</script>
 
 <script>
   var _hmt = _hmt || [];

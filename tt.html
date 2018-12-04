@@ -34,6 +34,7 @@
     <link rel="next" title="options" href="options.html" />
     <link rel="prev" title="stack" href="stack.html" />
 <script src="_static/center_page.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.13.1/styles/github.min.css">
  
 
 
@@ -127,7 +128,7 @@
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas/issues?q=label%3Auser-case">用户案例</a></li>
-<li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas/issues?q=label%3Aquestion-answered">Questions and answers</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas/issues?q=label%3Aquestion-answered">常见问题</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas">Fork me at GitHub</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas/blob/master/CONTRIBUTING.md">参与贡献</a></li>
 <li class="toctree-l1"><a class="reference internal" href="release-notes.html">Release Notes</a></li>
@@ -204,39 +205,39 @@
 <span id="tt"></span><h1>tt<a class="headerlink" href="#tt" title="永久链接至标题">¶</a></h1>
 <blockquote>
 <div>方法执行数据的时空隧道，记录下指定方法每次调用的入参和返回信息，并能对这些不同的时间下调用进行观测</div></blockquote>
-<p><code class="docutils literal notranslate"><span class="pre">watch</span></code> 虽然很方便和灵活，但需要提前想清楚观察表达式的拼写，这对排查问题而言要求太高，因为很多时候我们并不清楚问题出自于何方，只能靠蛛丝马迹进行猜测。</p>
+<p><tt class="docutils literal">watch</tt> 虽然很方便和灵活，但需要提前想清楚观察表达式的拼写，这对排查问题而言要求太高，因为很多时候我们并不清楚问题出自于何方，只能靠蛛丝马迹进行猜测。</p>
 <p>这个时候如果能记录下当时方法调用的所有入参和返回值、抛出的异常会对整个问题的思考与判断非常有帮助。</p>
 <p>于是乎，TimeTunnel 命令就诞生了。</p>
 <div class="section" id="">
 <span id="id1"></span><h2>使用参考<a class="headerlink" href="#" title="永久链接至标题">¶</a></h2>
 <div class="section" id="demo">
 <span id="demo"></span><h3>启动 Demo<a class="headerlink" href="#demo" title="永久链接至标题">¶</a></h3>
-<p>启动<a class="reference internal" href="quick-start.html"><span class="doc">快速入门</span></a>里的<code class="docutils literal notranslate"><span class="pre">arthas-demo</span></code>。</p>
+<p>启动<a class="reference internal" href="quick-start.html"><span class="doc">快速入门</span></a>里的<tt class="docutils literal">arthas-demo</tt>。</p>
 </div>
 <div class="section" id="">
 <span id="id2"></span><h3>记录调用<a class="headerlink" href="#" title="永久链接至标题">¶</a></h3>
 <p>对于一个最基本的使用来说，就是记录下当前方法的每次调用环境现场。</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$ tt -t demo.MathGame primeFactors
+<div class="highlight-bash notranslate"><div class="highlight hljs"><pre class="bash">$ tt -t demo.MathGame primeFactors
 Press Ctrl+C to abort.
-Affect<span class="o">(</span>class-cnt:1 , method-cnt:1<span class="o">)</span> cost in <span class="m">66</span> ms.
- INDEX   TIMESTAMP            COST<span class="o">(</span>ms<span class="o">)</span>  IS-RET  IS-EXP   OBJECT         CLASS                          METHOD
+Affect(class-cnt:1 , method-cnt:1) cost in 66 ms.
+ INDEX   TIMESTAMP            COST(ms)  IS-RET  IS-EXP   OBJECT         CLASS                          METHOD
 -------------------------------------------------------------------------------------------------------------------------------------
- <span class="m">1000</span>    <span class="m">2018</span>-12-04 <span class="m">11</span>:15:38  <span class="m">1</span>.096236  <span class="nb">false</span>   <span class="nb">true</span>     0x4b67cf4d     MathGame                       primeFactors
- <span class="m">1001</span>    <span class="m">2018</span>-12-04 <span class="m">11</span>:15:39  <span class="m">0</span>.191848  <span class="nb">false</span>   <span class="nb">true</span>     0x4b67cf4d     MathGame                       primeFactors
- <span class="m">1002</span>    <span class="m">2018</span>-12-04 <span class="m">11</span>:15:40  <span class="m">0</span>.069523  <span class="nb">false</span>   <span class="nb">true</span>     0x4b67cf4d     MathGame                       primeFactors
- <span class="m">1003</span>    <span class="m">2018</span>-12-04 <span class="m">11</span>:15:41  <span class="m">0</span>.186073  <span class="nb">false</span>   <span class="nb">true</span>     0x4b67cf4d     MathGame                       primeFactors
- <span class="m">1004</span>    <span class="m">2018</span>-12-04 <span class="m">11</span>:15:42  <span class="m">17</span>.76437  <span class="nb">true</span>    <span class="nb">false</span>    0x4b67cf4d     MathGame                       primeFactors
+ 1000    2018-12-04 11:15:38  1.096236  false   true     0x4b67cf4d     MathGame                       primeFactors
+ 1001    2018-12-04 11:15:39  0.191848  false   true     0x4b67cf4d     MathGame                       primeFactors
+ 1002    2018-12-04 11:15:40  0.069523  false   true     0x4b67cf4d     MathGame                       primeFactors
+ 1003    2018-12-04 11:15:41  0.186073  false   true     0x4b67cf4d     MathGame                       primeFactors
+ 1004    2018-12-04 11:15:42  17.76437  true    false    0x4b67cf4d     MathGame                       primeFactors
 </pre></div>
 </div>
 <ul>
 <li><p class="first">命令参数解析</p>
 <ul>
-<li><p class="first"><code class="docutils literal notranslate"><span class="pre">-t</span></code></p>
-<p>tt 命令有很多个主参数，<code class="docutils literal notranslate"><span class="pre">-t</span></code> 就是其中之一。这个参数的表明希望记录下类 <code class="docutils literal notranslate"><span class="pre">*Test</span></code> 的 <code class="docutils literal notranslate"><span class="pre">print</span></code> 方法的每次执行情况。</p>
+<li><p class="first"><tt class="docutils literal">-t</tt></p>
+<p>tt 命令有很多个主参数，<tt class="docutils literal">-t</tt> 就是其中之一。这个参数的表明希望记录下类 <tt class="docutils literal">*Test</tt> 的 <tt class="docutils literal">print</tt> 方法的每次执行情况。</p>
 </li>
-<li><p class="first"><code class="docutils literal notranslate"><span class="pre">-n</span> <span class="pre">3</span></code></p>
-<p>当你执行一个调用量不高的方法时可能你还能有足够的时间用 <code class="docutils literal notranslate"><span class="pre">CTRL+C</span></code> 中断 tt 命令记录的过程，但如果遇到调用量非常大的方法，瞬间就能将你的 JVM 内存撑爆。</p>
-<p>此时你可以通过 <code class="docutils literal notranslate"><span class="pre">-n</span></code> 参数指定你需要记录的次数，当达到记录次数时 Arthas 会主动中断tt命令的记录过程，避免人工操作无法停止的情况。</p>
+<li><p class="first"><tt class="docutils literal">-n 3</tt></p>
+<p>当你执行一个调用量不高的方法时可能你还能有足够的时间用 <tt class="docutils literal">CTRL+C</tt> 中断 tt 命令记录的过程，但如果遇到调用量非常大的方法，瞬间就能将你的 JVM 内存撑爆。</p>
+<p>此时你可以通过 <tt class="docutils literal">-n</tt> 参数指定你需要记录的次数，当达到记录次数时 Arthas 会主动中断tt命令的记录过程，避免人工操作无法停止的情况。</p>
 </li>
 </ul>
 </li>
@@ -291,97 +292,97 @@ Affect<span class="o">(</span>class-cnt:1 , method-cnt:1<span class="o">)</span>
 <li>Arthas 似乎很难区分出重载的方法</li>
 <li>我只需要观察特定参数，但是 tt 却全部都给我记录了下来</li>
 </ul>
-<p>条件表达式也是用 <code class="docutils literal notranslate"><span class="pre">OGNL</span></code> 来编写，核心的判断对象依然是 <code class="docutils literal notranslate"><span class="pre">Advice</span></code> 对象。除了 <code class="docutils literal notranslate"><span class="pre">tt</span></code> 命令之外，<code class="docutils literal notranslate"><span class="pre">watch</span></code>、<code class="docutils literal notranslate"><span class="pre">trace</span></code>、<code class="docutils literal notranslate"><span class="pre">stack</span></code> 命令也都支持条件表达式。</p>
+<p>条件表达式也是用 <tt class="docutils literal">OGNL</tt> 来编写，核心的判断对象依然是 <tt class="docutils literal">Advice</tt> 对象。除了 <tt class="docutils literal">tt</tt> 命令之外，<tt class="docutils literal">watch</tt>、<tt class="docutils literal">trace</tt>、<tt class="docutils literal">stack</tt> 命令也都支持条件表达式。</p>
 </li>
 <li><p class="first">解决方法重载</p>
-<p><code class="docutils literal notranslate"><span class="pre">tt</span> <span class="pre">-t</span> <span class="pre">*Test</span> <span class="pre">print</span> <span class="pre">params[0].length==1</span></code></p>
+<p><tt class="docutils literal">tt -t *Test print params[0].length==1</tt></p>
 <p>通过制定参数个数的形式解决不同的方法签名，如果参数个数一样，你还可以这样写</p>
-<p><code class="docutils literal notranslate"><span class="pre">tt</span> <span class="pre">-t</span> <span class="pre">*Test</span> <span class="pre">print</span> <span class="pre">'params[1]</span> <span class="pre">instanceof</span> <span class="pre">Integer'</span></code></p>
+<p><tt class="docutils literal">tt -t *Test print 'params[1] instanceof Integer'</tt></p>
 </li>
 <li><p class="first">解决指定参数</p>
-<p><code class="docutils literal notranslate"><span class="pre">tt</span> <span class="pre">-t</span> <span class="pre">*Test</span> <span class="pre">print</span> <span class="pre">params[0].mobile==&quot;13989838402&quot;</span></code></p>
+<p><tt class="docutils literal">tt -t *Test print params[0].mobile=="13989838402"</tt></p>
 </li>
-<li><p class="first">构成条件表达式的 <code class="docutils literal notranslate"><span class="pre">Advice</span></code> 对象</p>
-<p>前边看到了很多条件表达式中，都适用了 <code class="docutils literal notranslate"><span class="pre">params[0]</span></code>，有关这个变量的介绍，请参考<a class="reference internal" href="advice-class.html"><span class="doc">表达式核心变量</span></a></p>
+<li><p class="first">构成条件表达式的 <tt class="docutils literal">Advice</tt> 对象</p>
+<p>前边看到了很多条件表达式中，都适用了 <tt class="docutils literal">params[0]</tt>，有关这个变量的介绍，请参考<a class="reference internal" href="advice-class.html"><span class="doc">表达式核心变量</span></a></p>
 </li>
 </ul>
 </div>
 <div class="section" id="">
 <span id="id3"></span><h3>检索调用记录<a class="headerlink" href="#" title="永久链接至标题">¶</a></h3>
-<p>当你用 <code class="docutils literal notranslate"><span class="pre">tt</span></code> 记录了一大片的时间片段之后，你希望能从中筛选出自己需要的时间片段，这个时候你就需要对现有记录进行检索。</p>
+<p>当你用 <tt class="docutils literal">tt</tt> 记录了一大片的时间片段之后，你希望能从中筛选出自己需要的时间片段，这个时候你就需要对现有记录进行检索。</p>
 <p>假设我们有这些记录</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$ tt -l
- INDEX   TIMESTAMP            COST<span class="o">(</span>ms<span class="o">)</span>  IS-RET  IS-EXP   OBJECT         CLASS                          METHOD
+<div class="highlight-bash notranslate"><div class="highlight hljs"><pre class="bash">$ tt -l
+ INDEX   TIMESTAMP            COST(ms)  IS-RET  IS-EXP   OBJECT         CLASS                          METHOD
 -------------------------------------------------------------------------------------------------------------------------------------
- <span class="m">1000</span>    <span class="m">2018</span>-12-04 <span class="m">11</span>:15:38  <span class="m">1</span>.096236  <span class="nb">false</span>   <span class="nb">true</span>     0x4b67cf4d     MathGame                       primeFactors
- <span class="m">1001</span>    <span class="m">2018</span>-12-04 <span class="m">11</span>:15:39  <span class="m">0</span>.191848  <span class="nb">false</span>   <span class="nb">true</span>     0x4b67cf4d     MathGame                       primeFactors
- <span class="m">1002</span>    <span class="m">2018</span>-12-04 <span class="m">11</span>:15:40  <span class="m">0</span>.069523  <span class="nb">false</span>   <span class="nb">true</span>     0x4b67cf4d     MathGame                       primeFactors
- <span class="m">1003</span>    <span class="m">2018</span>-12-04 <span class="m">11</span>:15:41  <span class="m">0</span>.186073  <span class="nb">false</span>   <span class="nb">true</span>     0x4b67cf4d     MathGame                       primeFactors
- <span class="m">1004</span>    <span class="m">2018</span>-12-04 <span class="m">11</span>:15:42  <span class="m">17</span>.76437  <span class="nb">true</span>    <span class="nb">false</span>    0x4b67cf4d     MathGame                       primeFactors
-                              <span class="m">9</span>
- <span class="m">1005</span>    <span class="m">2018</span>-12-04 <span class="m">11</span>:15:43  <span class="m">0</span>.4776    <span class="nb">false</span>   <span class="nb">true</span>     0x4b67cf4d     MathGame                       primeFactors
-Affect<span class="o">(</span>row-cnt:6<span class="o">)</span> cost in <span class="m">4</span> ms.
+ 1000    2018-12-04 11:15:38  1.096236  false   true     0x4b67cf4d     MathGame                       primeFactors
+ 1001    2018-12-04 11:15:39  0.191848  false   true     0x4b67cf4d     MathGame                       primeFactors
+ 1002    2018-12-04 11:15:40  0.069523  false   true     0x4b67cf4d     MathGame                       primeFactors
+ 1003    2018-12-04 11:15:41  0.186073  false   true     0x4b67cf4d     MathGame                       primeFactors
+ 1004    2018-12-04 11:15:42  17.76437  true    false    0x4b67cf4d     MathGame                       primeFactors
+                              9
+ 1005    2018-12-04 11:15:43  0.4776    false   true     0x4b67cf4d     MathGame                       primeFactors
+Affect(row-cnt:6) cost in 4 ms.
 </pre></div>
 </div>
-<p>我需要筛选出 <code class="docutils literal notranslate"><span class="pre">primeFactors</span></code> 方法的调用信息</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$ tt -s <span class="s1">&#39;method.name==&quot;primeFactors&quot;&#39;</span>
- INDEX   TIMESTAMP            COST<span class="o">(</span>ms<span class="o">)</span>  IS-RET  IS-EXP   OBJECT         CLASS                          METHOD
+<p>我需要筛选出 <tt class="docutils literal">primeFactors</tt> 方法的调用信息</p>
+<div class="highlight-bash notranslate"><div class="highlight hljs"><pre class="bash">$ tt -s &#x27;method.name==&quot;primeFactors&quot;&#x27;
+ INDEX   TIMESTAMP            COST(ms)  IS-RET  IS-EXP   OBJECT         CLASS                          METHOD
 -------------------------------------------------------------------------------------------------------------------------------------
- <span class="m">1000</span>    <span class="m">2018</span>-12-04 <span class="m">11</span>:15:38  <span class="m">1</span>.096236  <span class="nb">false</span>   <span class="nb">true</span>     0x4b67cf4d     MathGame                       primeFactors
- <span class="m">1001</span>    <span class="m">2018</span>-12-04 <span class="m">11</span>:15:39  <span class="m">0</span>.191848  <span class="nb">false</span>   <span class="nb">true</span>     0x4b67cf4d     MathGame                       primeFactors
- <span class="m">1002</span>    <span class="m">2018</span>-12-04 <span class="m">11</span>:15:40  <span class="m">0</span>.069523  <span class="nb">false</span>   <span class="nb">true</span>     0x4b67cf4d     MathGame                       primeFactors
- <span class="m">1003</span>    <span class="m">2018</span>-12-04 <span class="m">11</span>:15:41  <span class="m">0</span>.186073  <span class="nb">false</span>   <span class="nb">true</span>     0x4b67cf4d     MathGame                       primeFactors
- <span class="m">1004</span>    <span class="m">2018</span>-12-04 <span class="m">11</span>:15:42  <span class="m">17</span>.76437  <span class="nb">true</span>    <span class="nb">false</span>    0x4b67cf4d     MathGame                       primeFactors
-                              <span class="m">9</span>
- <span class="m">1005</span>    <span class="m">2018</span>-12-04 <span class="m">11</span>:15:43  <span class="m">0</span>.4776    <span class="nb">false</span>   <span class="nb">true</span>     0x4b67cf4d     MathGame                       primeFactors
-Affect<span class="o">(</span>row-cnt:6<span class="o">)</span> cost in <span class="m">607</span> ms.
+ 1000    2018-12-04 11:15:38  1.096236  false   true     0x4b67cf4d     MathGame                       primeFactors
+ 1001    2018-12-04 11:15:39  0.191848  false   true     0x4b67cf4d     MathGame                       primeFactors
+ 1002    2018-12-04 11:15:40  0.069523  false   true     0x4b67cf4d     MathGame                       primeFactors
+ 1003    2018-12-04 11:15:41  0.186073  false   true     0x4b67cf4d     MathGame                       primeFactors
+ 1004    2018-12-04 11:15:42  17.76437  true    false    0x4b67cf4d     MathGame                       primeFactors
+                              9
+ 1005    2018-12-04 11:15:43  0.4776    false   true     0x4b67cf4d     MathGame                       primeFactors
+Affect(row-cnt:6) cost in 607 ms.
 </pre></div>
 </div>
-<p>你需要一个 <code class="docutils literal notranslate"><span class="pre">-s</span></code> 参数。<span style="color:red;">同样的，搜索表达式的核心对象依旧是 <code class="docutils literal notranslate"><span class="pre">Advice</span></code> 对象。</span></p>
+<p>你需要一个 <tt class="docutils literal">-s</tt> 参数。<span style="color:red;">同样的，搜索表达式的核心对象依旧是 <tt class="docutils literal">Advice</tt> 对象。</span></p>
 </div>
 <div class="section" id="">
 <span id="id4"></span><h3>查看调用信息<a class="headerlink" href="#" title="永久链接至标题">¶</a></h3>
-<p>对于具体一个时间片的信息而言，你可以通过 <code class="docutils literal notranslate"><span class="pre">-i</span></code> 参数后边跟着对应的 <code class="docutils literal notranslate"><span class="pre">INDEX</span></code> 编号查看到他的详细信息。</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$ tt -i <span class="m">1003</span>
- INDEX            <span class="m">1003</span>
- GMT-CREATE       <span class="m">2018</span>-12-04 <span class="m">11</span>:15:41
- COST<span class="o">(</span>ms<span class="o">)</span>         <span class="m">0</span>.186073
+<p>对于具体一个时间片的信息而言，你可以通过 <tt class="docutils literal">-i</tt> 参数后边跟着对应的 <tt class="docutils literal">INDEX</tt> 编号查看到他的详细信息。</p>
+<div class="highlight-bash notranslate"><div class="highlight hljs"><pre class="bash">$ tt -i 1003
+ INDEX            1003
+ GMT-CREATE       2018-12-04 11:15:41
+ COST(ms)         0.186073
  OBJECT           0x4b67cf4d
  CLASS            demo.MathGame
  METHOD           primeFactors
- IS-RETURN        <span class="nb">false</span>
- IS-EXCEPTION     <span class="nb">true</span>
- PARAMETERS<span class="o">[</span><span class="m">0</span><span class="o">]</span>    @Integer<span class="o">[</span>-564322413<span class="o">]</span>
- THROW-EXCEPTION  java.lang.IllegalArgumentException: number is: -564322413, need &gt;<span class="o">=</span> <span class="m">2</span>
-                      at demo.MathGame.primeFactors<span class="o">(</span>MathGame.java:46<span class="o">)</span>
-                      at demo.MathGame.run<span class="o">(</span>MathGame.java:24<span class="o">)</span>
-                      at demo.MathGame.main<span class="o">(</span>MathGame.java:16<span class="o">)</span>
+ IS-RETURN        false
+ IS-EXCEPTION     true
+ PARAMETERS[0]    @Integer[-564322413]
+ THROW-EXCEPTION  java.lang.IllegalArgumentException: number is: -564322413, need &gt;= 2
+                      at demo.MathGame.primeFactors(MathGame.java:46)
+                      at demo.MathGame.run(MathGame.java:24)
+                      at demo.MathGame.main(MathGame.java:16)
 
-Affect<span class="o">(</span>row-cnt:1<span class="o">)</span> cost in <span class="m">11</span> ms.
+Affect(row-cnt:1) cost in 11 ms.
 </pre></div>
 </div>
 </div>
 <div class="section" id="">
 <span id="id5"></span><h3>重做一次调用<a class="headerlink" href="#" title="永久链接至标题">¶</a></h3>
 <p>当你稍稍做了一些调整之后，你可能需要前端系统重新触发一次你的调用，此时得求爷爷告奶奶的需要前端配合联调的同学再次发起一次调用。而有些场景下，这个调用不是这么好触发的。</p>
-<p><code class="docutils literal notranslate"><span class="pre">tt</span></code> 命令由于保存了当时调用的所有现场信息，所以我们可以自己主动对一个 <code class="docutils literal notranslate"><span class="pre">INDEX</span></code> 编号的时间片自主发起一次调用，从而解放你的沟通成本。此时你需要 <code class="docutils literal notranslate"><span class="pre">-p</span></code> 参数。</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$ tt -i <span class="m">1004</span> -p
- RE-INDEX       <span class="m">1004</span>
- GMT-REPLAY     <span class="m">2018</span>-12-04 <span class="m">11</span>:26:00
+<p><tt class="docutils literal">tt</tt> 命令由于保存了当时调用的所有现场信息，所以我们可以自己主动对一个 <tt class="docutils literal">INDEX</tt> 编号的时间片自主发起一次调用，从而解放你的沟通成本。此时你需要 <tt class="docutils literal">-p</tt> 参数。</p>
+<div class="highlight-bash notranslate"><div class="highlight hljs"><pre class="bash">$ tt -i 1004 -p
+ RE-INDEX       1004
+ GMT-REPLAY     2018-12-04 11:26:00
  OBJECT         0x4b67cf4d
  CLASS          demo.MathGame
  METHOD         primeFactors
- PARAMETERS<span class="o">[</span><span class="m">0</span><span class="o">]</span>  @Integer<span class="o">[</span><span class="m">946738738</span><span class="o">]</span>
- IS-RETURN      <span class="nb">true</span>
- IS-EXCEPTION   <span class="nb">false</span>
- RETURN-OBJ     @ArrayList<span class="o">[</span>
-                    @Integer<span class="o">[</span><span class="m">2</span><span class="o">]</span>,
-                    @Integer<span class="o">[</span><span class="m">11</span><span class="o">]</span>,
-                    @Integer<span class="o">[</span><span class="m">17</span><span class="o">]</span>,
-                    @Integer<span class="o">[</span><span class="m">2531387</span><span class="o">]</span>,
-                <span class="o">]</span>
-Time fragment<span class="o">[</span><span class="m">1004</span><span class="o">]</span> successfully replayed.
-Affect<span class="o">(</span>row-cnt:1<span class="o">)</span> cost in <span class="m">14</span> ms.
+ PARAMETERS[0]  @Integer[946738738]
+ IS-RETURN      true
+ IS-EXCEPTION   false
+ RETURN-OBJ     @ArrayList[
+                    @Integer[2],
+                    @Integer[11],
+                    @Integer[17],
+                    @Integer[2531387],
+                ]
+Time fragment[1004] successfully replayed.
+Affect(row-cnt:1) cost in 14 ms.
 </pre></div>
 </div>
 <p>你会发现结果虽然一样，但调用的路径发生了变化，有原来的程序发起变成了 Arthas 自己的内部线程发起的调用了。</p>
@@ -393,7 +394,7 @@ Affect<span class="o">(</span>row-cnt:1<span class="o">)</span> cost in <span cl
 <p>一些常见的 CASE 比如：鹰眼的 TraceId 等。</p>
 </li>
 <li><p class="first"><strong>引用的对象</strong></p>
-<p>需要强调的是，<code class="docutils literal notranslate"><span class="pre">tt</span></code> 命令是将当前环境的对象引用保存起来，但仅仅也只能保存一个引用而已。如果方法内部对入参进行了变更，或者返回的对象经过了后续的处理，那么在 <code class="docutils literal notranslate"><span class="pre">tt</span></code> 查看的时候将无法看到当时最准确的值。这也是为什么 <code class="docutils literal notranslate"><span class="pre">watch</span></code> 命令存在的意义。</p>
+<p>需要强调的是，<tt class="docutils literal">tt</tt> 命令是将当前环境的对象引用保存起来，但仅仅也只能保存一个引用而已。如果方法内部对入参进行了变更，或者返回的对象经过了后续的处理，那么在 <tt class="docutils literal">tt</tt> 查看的时候将无法看到当时最准确的值。这也是为什么 <tt class="docutils literal">watch</tt> 命令存在的意义。</p>
 </li>
 </ol>
 </li>
@@ -474,6 +475,15 @@ Affect<span class="o">(</span>row-cnt:1<span class="o">)</span> cost in <span cl
 </div>
 
 <script type="text/javascript" src="_static/add_badges.js"></script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.13.1/highlight.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlightjs-line-numbers.js/2.5.0/highlightjs-line-numbers.min.js"></script>
+<script>
+  document.querySelectorAll('div.hljs > pre').forEach(function(block) {
+    hljs.highlightBlock(block);
+    hljs.lineNumbersBlock(block);
+  });
+</script>
 
 <script>
   var _hmt = _hmt || [];

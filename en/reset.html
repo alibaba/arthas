@@ -32,6 +32,7 @@
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
 <script src="_static/center_page.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.13.1/styles/github.min.css">
  
 
 
@@ -165,10 +166,10 @@
   <div class="section" id="reset">
 <span id="reset"></span><h1>reset<a class="headerlink" href="#reset" title="Permalink to this headline">¶</a></h1>
 <blockquote>
-<div>Reset all classes that have been enhanced by Arthas. These enhanced classes will also be reset when Arthas server is <code class="docutils literal notranslate"><span class="pre">shutdown</span></code>.</div></blockquote>
+<div>Reset all classes that have been enhanced by Arthas. These enhanced classes will also be reset when Arthas server is <tt class="docutils literal">shutdown</tt>.</div></blockquote>
 <div class="section" id="usage">
 <span id="usage"></span><h2>Usage<a class="headerlink" href="#usage" title="Permalink to this headline">¶</a></h2>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ reset -h
+<div class="highlight-default notranslate"><pre class="literal-block">$ reset -h
  USAGE:
    reset [-h] [-E] [class-pattern]
 
@@ -183,13 +184,12 @@
  OPTIONS:
  -h, --help                                                         this help
  -E, --regex                                                        Enable regular expression to match (wildcard matching by default)
- &lt;class-pattern&gt;                                                    Path and classname of Pattern Matching
-</pre></div>
+ &lt;class-pattern&gt;                                                    Path and classname of Pattern Matching</pre>
 </div>
 </div>
 <div class="section" id="reset-specified-class">
 <span id="reset-specified-class"></span><h2>Reset specified class<a class="headerlink" href="#reset-specified-class" title="Permalink to this headline">¶</a></h2>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ trace Test test
+<div class="highlight-default notranslate"><pre class="literal-block">$ trace Test test
 Press Ctrl+C to abort.
 Affect(class-cnt:1 , method-cnt:1) cost in 57 ms.
 `---ts=2017-10-26 17:10:33;thread_name=main;id=1;is_daemon=false;priority=5;TCCL=sun.misc.Launcher$AppClassLoader@14dad5dc
@@ -199,21 +199,19 @@ Affect(class-cnt:1 , method-cnt:1) cost in 57 ms.
     `---[0.068692ms] Test:test()
 
 $ reset Test
-Affect(class-cnt:1 , method-cnt:0) cost in 11 ms.
-</pre></div>
+Affect(class-cnt:1 , method-cnt:0) cost in 11 ms.</pre>
 </div>
 </div>
 <div class="section" id="reset-all-classes">
 <span id="reset-all-classes"></span><h2>Reset all classes<a class="headerlink" href="#reset-all-classes" title="Permalink to this headline">¶</a></h2>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ trace Test test
+<div class="highlight-default notranslate"><pre class="literal-block">$ trace Test test
 Press Ctrl+C to abort.
 Affect(class-cnt:1 , method-cnt:1) cost in 15 ms.
 `---ts=2017-10-26 17:12:06;thread_name=main;id=1;is_daemon=false;priority=5;TCCL=sun.misc.Launcher$AppClassLoader@14dad5dc
     `---[0.128518ms] Test:test()
 
 $ reset
-Affect(class-cnt:1 , method-cnt:0) cost in 9 ms.
-</pre></div>
+Affect(class-cnt:1 , method-cnt:0) cost in 9 ms.</pre>
 </div>
 </div>
 </div>
@@ -280,6 +278,15 @@ Affect(class-cnt:1 , method-cnt:0) cost in 9 ms.
 </div>
 
 <script type="text/javascript" src="_static/add_badges.js"></script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.13.1/highlight.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlightjs-line-numbers.js/2.5.0/highlightjs-line-numbers.min.js"></script>
+<script>
+  document.querySelectorAll('div.hljs > pre').forEach(function(block) {
+    hljs.highlightBlock(block);
+    hljs.lineNumbersBlock(block);
+  });
+</script>
 
 <script>
   var _hmt = _hmt || [];

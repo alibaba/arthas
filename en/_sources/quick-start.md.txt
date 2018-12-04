@@ -24,7 +24,7 @@ $ java -jar arthas-boot.jar
 ```
 
 * The user to run this command *MUST* have the same privilege as the owner of the target process, as a simple example you can try the following command if the target process is managed by user `admin`: `sudo su admin && java -jar arthas-boot.jar` or `sudo -u admin -EH java -jar arthas-boot.jar`
-* .If you cannot be able to attach to the target process, please check the logs under `~/logs/arthas` for troubleshooting.
+* If you cannot be able to attach to the target process, please check the logs under `~/logs/arthas` for troubleshooting.
 * `java -jar arthas-boot.jar -h` print usage.
 
 Select the target Java process to attach:
@@ -60,7 +60,7 @@ $
 
 Type '[dashboard](dashboard.md)' and hit 'ENTER', a brief report on the current process will be shown as below, pls. `Ctrl+C` to stop:
 
-```
+```bash
 $ dashboard
 ID     NAME                   GROUP          PRIORI STATE  %CPU    TIME   INTERRU DAEMON
 17     pool-2-thread-1        system         5      WAITIN 67      0:0    false   false
@@ -188,7 +188,7 @@ Affect(row-cnt:1) cost in 970 ms.
 
 Use '[watch](watch.md)' to view the return object of `demo.MathGame#primeFactors`:
 
-```
+```bash
 $ watch demo.MathGame primeFactors returnObj
 Press Ctrl+C to abort.
 Affect(class-cnt:1 , method-cnt:1) cost in 107 ms.

@@ -32,6 +32,7 @@
     <link rel="index" title="索引" href="genindex.html" />
     <link rel="search" title="搜索" href="search.html" />
 <script src="_static/center_page.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.13.1/styles/github.min.css">
  
 
 
@@ -93,7 +94,7 @@
 <li class="toctree-l1"><a class="reference internal" href="advanced-use.html">进阶使用</a></li>
 <li class="toctree-l1"><a class="reference internal" href="commands.html">命令列表</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas/issues?q=label%3Auser-case">用户案例</a></li>
-<li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas/issues?q=label%3Aquestion-answered">Questions and answers</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas/issues?q=label%3Aquestion-answered">常见问题</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas">Fork me at GitHub</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas/blob/master/CONTRIBUTING.md">参与贡献</a></li>
 <li class="toctree-l1"><a class="reference internal" href="release-notes.html">Release Notes</a></li>
@@ -206,152 +207,151 @@
 <td align="left">开启正则表达式匹配，默认为通配符匹配</td>
 </tr>
 </tbody>
-</table><p>需要说明的是，第三个输入参数是脚本的绝对路径，比如 <code class="docutils literal notranslate"><span class="pre">/tmp/test.groovy</span></code>，不建议输入相对路径，比如 <code class="docutils literal notranslate"><span class="pre">./test.groovy</span></code></p>
+</table><p>需要说明的是，第三个输入参数是脚本的绝对路径，比如 <tt class="docutils literal">/tmp/test.groovy</tt>，不建议输入相对路径，比如 <tt class="docutils literal">./test.groovy</tt></p>
 </div>
 <div class="section" id="">
 <span id="id3"></span><h2>五个关键函数声明<a class="headerlink" href="#" title="永久链接至标题">¶</a></h2>
-<div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="cm">/**</span>
-<span class="cm"> * 增强脚本监听器</span>
-<span class="cm"> */</span>
-<span class="kd">interface</span> <span class="nc">ScriptListener</span> <span class="o">{</span>
+<div class="highlight-java notranslate"><div class="highlight hljs"><pre class="java">/**
+ * 增强脚本监听器
+ */
+interface ScriptListener {
 
-    <span class="cm">/**</span>
-<span class="cm">     * 脚本创建</span>
-<span class="cm">     *</span>
-<span class="cm">     * @param output 输出器</span>
-<span class="cm">     */</span>
-    <span class="kt">void</span> <span class="nf">create</span><span class="o">(</span><span class="n">Output</span> <span class="n">output</span><span class="o">);</span>
+    /**
+     * 脚本创建
+     *
+     * @param output 输出器
+     */
+    void create(Output output);
 
-    <span class="cm">/**</span>
-<span class="cm">     * 脚本销毁</span>
-<span class="cm">     *</span>
-<span class="cm">     * @param output 输出器</span>
-<span class="cm">     */</span>
-    <span class="kt">void</span> <span class="nf">destroy</span><span class="o">(</span><span class="n">Output</span> <span class="n">output</span><span class="o">);</span>
+    /**
+     * 脚本销毁
+     *
+     * @param output 输出器
+     */
+    void destroy(Output output);
 
-    <span class="cm">/**</span>
-<span class="cm">     * 方法执行前</span>
-<span class="cm">     *</span>
-<span class="cm">     * @param output 输出器</span>
-<span class="cm">     * @param advice 通知点</span>
-<span class="cm">     */</span>
-    <span class="kt">void</span> <span class="nf">before</span><span class="o">(</span><span class="n">Output</span> <span class="n">output</span><span class="o">,</span> <span class="n">Advice</span> <span class="n">advice</span><span class="o">);</span>
+    /**
+     * 方法执行前
+     *
+     * @param output 输出器
+     * @param advice 通知点
+     */
+    void before(Output output, Advice advice);
 
-    <span class="cm">/**</span>
-<span class="cm">     * 方法正常返回</span>
-<span class="cm">     *</span>
-<span class="cm">     * @param output 输出器</span>
-<span class="cm">     * @param advice 通知点</span>
-<span class="cm">     */</span>
-    <span class="kt">void</span> <span class="nf">afterReturning</span><span class="o">(</span><span class="n">Output</span> <span class="n">output</span><span class="o">,</span> <span class="n">Advice</span> <span class="n">advice</span><span class="o">);</span>
+    /**
+     * 方法正常返回
+     *
+     * @param output 输出器
+     * @param advice 通知点
+     */
+    void afterReturning(Output output, Advice advice);
 
-    <span class="cm">/**</span>
-<span class="cm">     * 方法异常返回</span>
-<span class="cm">     *</span>
-<span class="cm">     * @param output 输出器</span>
-<span class="cm">     * @param advice 通知点</span>
-<span class="cm">     */</span>
-    <span class="kt">void</span> <span class="nf">afterThrowing</span><span class="o">(</span><span class="n">Output</span> <span class="n">output</span><span class="o">,</span> <span class="n">Advice</span> <span class="n">advice</span><span class="o">);</span>
+    /**
+     * 方法异常返回
+     *
+     * @param output 输出器
+     * @param advice 通知点
+     */
+    void afterThrowing(Output output, Advice advice);
 
-<span class="o">}</span>
+}
 </pre></div>
 </div>
 </div>
 <div class="section" id="advice">
-<span id="advice"></span><h2>参数 <code class="docutils literal notranslate"><span class="pre">Advice</span></code> 说明<a class="headerlink" href="#advice" title="永久链接至标题">¶</a></h2>
-<p><code class="docutils literal notranslate"><span class="pre">Advice</span></code> 参数最主要是封装了通知节点的所有信息。参考<a class="reference internal" href="advice-class.html"><span class="doc">表达式核心变量</span></a>中关于该节点的描述。</p>
+<span id="advice"></span><h2>参数 <tt class="docutils literal">Advice</tt> 说明<a class="headerlink" href="#advice" title="永久链接至标题">¶</a></h2>
+<p><tt class="docutils literal">Advice</tt> 参数最主要是封装了通知节点的所有信息。参考<a class="reference internal" href="advice-class.html"><span class="doc">表达式核心变量</span></a>中关于该节点的描述。</p>
 </div>
 <div class="section" id="output">
-<span id="output"></span><h2>参数 <code class="docutils literal notranslate"><span class="pre">Output</span></code> 说明<a class="headerlink" href="#output" title="永久链接至标题">¶</a></h2>
-<p><code class="docutils literal notranslate"><span class="pre">Output</span></code> 参数只拥有三个方法，主要的工作还是输出对应的文本信息</p>
-<div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="cm">/**</span>
-<span class="cm"> * 输出器</span>
-<span class="cm"> */</span>
-<span class="kd">interface</span> <span class="nc">Output</span> <span class="o">{</span>
+<span id="output"></span><h2>参数 <tt class="docutils literal">Output</tt> 说明<a class="headerlink" href="#output" title="永久链接至标题">¶</a></h2>
+<p><tt class="docutils literal">Output</tt> 参数只拥有三个方法，主要的工作还是输出对应的文本信息</p>
+<div class="highlight-java notranslate"><div class="highlight hljs"><pre class="java">/**
+ * 输出器
+ */
+interface Output {
 
-    <span class="cm">/**</span>
-<span class="cm">     * 输出字符串(不换行)</span>
-<span class="cm">     *</span>
-<span class="cm">     * @param string 待输出字符串</span>
-<span class="cm">     * @return this</span>
-<span class="cm">     */</span>
-    <span class="n">Output</span> <span class="nf">print</span><span class="o">(</span><span class="n">String</span> <span class="n">string</span><span class="o">);</span>
+    /**
+     * 输出字符串(不换行)
+     *
+     * @param string 待输出字符串
+     * @return this
+     */
+    Output print(String string);
 
-    <span class="cm">/**</span>
-<span class="cm">     * 输出字符串(换行)</span>
-<span class="cm">     *</span>
-<span class="cm">     * @param string 待输出字符串</span>
-<span class="cm">     * @return this</span>
-<span class="cm">     */</span>
-    <span class="n">Output</span> <span class="nf">println</span><span class="o">(</span><span class="n">String</span> <span class="n">string</span><span class="o">);</span>
+    /**
+     * 输出字符串(换行)
+     *
+     * @param string 待输出字符串
+     * @return this
+     */
+    Output println(String string);
 
-    <span class="cm">/**</span>
-<span class="cm">     * 结束当前脚本</span>
-<span class="cm">     *</span>
-<span class="cm">     * @return this</span>
-<span class="cm">     */</span>
-    <span class="n">Output</span> <span class="nf">finish</span><span class="o">();</span>
+    /**
+     * 结束当前脚本
+     *
+     * @return this
+     */
+    Output finish();
 
-<span class="o">}</span>
+}
 </pre></div>
 </div>
 </div>
 <div class="section" id="groovy">
 <span id="id4"></span><h2>一个输出日志的 groovy 脚本示例<a class="headerlink" href="#groovy" title="永久链接至标题">¶</a></h2>
-<div class="highlight-groovy notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">com.taobao.arthas.core.command.ScriptSupportCommand</span>
-<span class="kn">import</span> <span class="nn">com.taobao.arthas.core.util.Advice</span>
+<div class="highlight-groovy notranslate"><div class="highlight hljs"><pre class="groovy">import com.taobao.arthas.core.command.ScriptSupportCommand
+import com.taobao.arthas.core.util.Advice
 
-<span class="kn">import</span> <span class="nn">static</span> <span class="n">java</span><span class="o">.</span><span class="na">lang</span><span class="o">.</span><span class="na">String</span><span class="o">.</span><span class="na">format</span>
+import static java.lang.String.format
 
-<span class="cm">/**</span>
-<span class="cm"> * 输出方法日志</span>
-<span class="cm"> */</span>
-<span class="kd">public</span> <span class="kd">class</span> <span class="nc">Logger</span> <span class="kd">implements</span> <span class="n">ScriptSupportCommand</span><span class="o">.</span><span class="na">ScriptListener</span> <span class="o">{</span>
+/**
+ * 输出方法日志
+ */
+public class Logger implements ScriptSupportCommand.ScriptListener {
 
-    <span class="nd">@Override</span>
-    <span class="kt">void</span> <span class="nf">create</span><span class="o">(</span><span class="n">ScriptSupportCommand</span><span class="o">.</span><span class="na">Output</span> <span class="n">output</span><span class="o">)</span> <span class="o">{</span>
-        <span class="n">output</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="s2">&quot;script create.&quot;</span><span class="o">);</span>
-    <span class="o">}</span>
+    @Override
+    void create(ScriptSupportCommand.Output output) {
+        output.println(&quot;script create.&quot;);
+    }
 
-    <span class="nd">@Override</span>
-    <span class="kt">void</span> <span class="nf">destroy</span><span class="o">(</span><span class="n">ScriptSupportCommand</span><span class="o">.</span><span class="na">Output</span> <span class="n">output</span><span class="o">)</span> <span class="o">{</span>
-        <span class="n">output</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="s2">&quot;script destroy.&quot;</span><span class="o">);</span>
-    <span class="o">}</span>
+    @Override
+    void destroy(ScriptSupportCommand.Output output) {
+        output.println(&quot;script destroy.&quot;);
+    }
 
-    <span class="nd">@Override</span>
-    <span class="kt">void</span> <span class="nf">before</span><span class="o">(</span><span class="n">ScriptSupportCommand</span><span class="o">.</span><span class="na">Output</span> <span class="n">output</span><span class="o">,</span> <span class="n">Advice</span> <span class="n">advice</span><span class="o">)</span> <span class="o">{</span>
-        <span class="n">output</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="n">format</span><span class="o">(</span><span class="s2">&quot;before:class=%s;method=%s;paramslen=%d;%s;&quot;</span><span class="o">,</span>
-                <span class="n">advice</span><span class="o">.</span><span class="na">getClazz</span><span class="o">().</span><span class="na">getSimpleName</span><span class="o">(),</span>
-                <span class="n">advice</span><span class="o">.</span><span class="na">getMethod</span><span class="o">().</span><span class="na">getName</span><span class="o">(),</span>
-                <span class="n">advice</span><span class="o">.</span><span class="na">getParams</span><span class="o">().</span><span class="na">length</span><span class="o">,</span> <span class="n">advice</span><span class="o">.</span><span class="na">getParams</span><span class="o">()))</span>
-    <span class="o">}</span>
+    @Override
+    void before(ScriptSupportCommand.Output output, Advice advice) {
+        output.println(format(&quot;before:class=%s;method=%s;paramslen=%d;%s;&quot;,
+                advice.getClazz().getSimpleName(),
+                advice.getMethod().getName(),
+                advice.getParams().length, advice.getParams()))
+    }
 
-    <span class="nd">@Override</span>
-    <span class="kt">void</span> <span class="nf">afterReturning</span><span class="o">(</span><span class="n">ScriptSupportCommand</span><span class="o">.</span><span class="na">Output</span> <span class="n">output</span><span class="o">,</span> <span class="n">Advice</span> <span class="n">advice</span><span class="o">)</span> <span class="o">{</span>
-        <span class="n">output</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="n">format</span><span class="o">(</span><span class="s2">&quot;returning:class=%s;method=%s;&quot;</span><span class="o">,</span>
-                <span class="n">advice</span><span class="o">.</span><span class="na">getClazz</span><span class="o">().</span><span class="na">getSimpleName</span><span class="o">(),</span>
-                <span class="n">advice</span><span class="o">.</span><span class="na">getMethod</span><span class="o">().</span><span class="na">getName</span><span class="o">()))</span>
-    <span class="o">}</span>
+    @Override
+    void afterReturning(ScriptSupportCommand.Output output, Advice advice) {
+        output.println(format(&quot;returning:class=%s;method=%s;&quot;,
+                advice.getClazz().getSimpleName(),
+                advice.getMethod().getName()))
+    }
 
-    <span class="nd">@Override</span>
-    <span class="kt">void</span> <span class="nf">afterThrowing</span><span class="o">(</span><span class="n">ScriptSupportCommand</span><span class="o">.</span><span class="na">Output</span> <span class="n">output</span><span class="o">,</span> <span class="n">Advice</span> <span class="n">advice</span><span class="o">)</span> <span class="o">{</span>
-        <span class="n">output</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="n">format</span><span class="o">(</span><span class="s2">&quot;throwing:class=%s;method=%s;&quot;</span><span class="o">,</span>
-                <span class="n">advice</span><span class="o">.</span><span class="na">getClazz</span><span class="o">().</span><span class="na">getSimpleName</span><span class="o">(),</span>
-                <span class="n">advice</span><span class="o">.</span><span class="na">getMethod</span><span class="o">().</span><span class="na">getName</span><span class="o">()))</span>
-    <span class="o">}</span>
-<span class="o">}</span>
+    @Override
+    void afterThrowing(ScriptSupportCommand.Output output, Advice advice) {
+        output.println(format(&quot;throwing:class=%s;method=%s;&quot;,
+                advice.getClazz().getSimpleName(),
+                advice.getMethod().getName()))
+    }
+}
 </pre></div>
 </div>
 <p>使用示例：</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ groovy com.alibaba.sample.petstore.dal.dao.ProductDao getProductById /Users/zhuyong/middleware/arthas/scripts/Logger.groovy -S
+<div class="highlight-default notranslate"><pre class="literal-block">$ groovy com.alibaba.sample.petstore.dal.dao.ProductDao getProductById /Users/zhuyong/middleware/arthas/scripts/Logger.groovy -S
 script create.
 Press Ctrl+C to abort.
 Affect(class-cnt:1 , method-cnt:1) cost in 102 ms.
 before:class=IbatisProductDao;method=getProductById;paramslen=1;[Ljava.lang.Object;@45df64fc;
 returning:class=IbatisProductDao;method=getProductById;
 before:class=IbatisProductDao;method=getProductById;paramslen=1;[Ljava.lang.Object;@5b0e2d00;
-returning:class=IbatisProductDao;method=getProductById;
-</pre></div>
+returning:class=IbatisProductDao;method=getProductById;</pre>
 </div>
 </div>
 </div>
@@ -419,6 +419,15 @@ returning:class=IbatisProductDao;method=getProductById;
 </div>
 
 <script type="text/javascript" src="_static/add_badges.js"></script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.13.1/highlight.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlightjs-line-numbers.js/2.5.0/highlightjs-line-numbers.min.js"></script>
+<script>
+  document.querySelectorAll('div.hljs > pre').forEach(function(block) {
+    hljs.highlightBlock(block);
+    hljs.lineNumbersBlock(block);
+  });
+</script>
 
 <script>
   var _hmt = _hmt || [];

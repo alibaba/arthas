@@ -32,6 +32,7 @@
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
 <script src="_static/center_page.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.13.1/styles/github.min.css">
  
 
 
@@ -164,7 +165,7 @@
             
   <div class="section" id="arthas-console-keymap">
 <span id="arthas-console-keymap"></span><h1>Arthas Console Keymap<a class="headerlink" href="#arthas-console-keymap" title="Permalink to this headline">¶</a></h1>
-<p>Use <code class="docutils literal notranslate"><span class="pre">keymap</span></code> command to print the current keymap:</p>
+<p>Use <tt class="docutils literal">keymap</tt> command to print the current keymap:</p>
 <p>The default keymap is:</p>
 <table border="1" class="docutils">
 <thead>
@@ -292,43 +293,42 @@
 </tr>
 </tbody>
 </table><ul class="simple">
-<li>Press <code class="docutils literal notranslate"><span class="pre">tab</span></code> to enable auto-completion prompt at any time.</li>
-<li>Enter command and <code class="docutils literal notranslate"><span class="pre">-</span></code> or <code class="docutils literal notranslate"><span class="pre">--</span></code>, then press <code class="docutils literal notranslate"><span class="pre">tab</span></code> to display the concrete options for the current command.</li>
+<li>Press <tt class="docutils literal">tab</tt> to enable auto-completion prompt at any time.</li>
+<li>Enter command and <tt class="docutils literal">-</tt> or <tt class="docutils literal">--</tt>, then press <tt class="docutils literal">tab</tt> to display the concrete options for the current command.</li>
 </ul>
 <div class="section" id="custom-shortcuts">
 <span id="custom-shortcuts"></span><h2>Custom shortcuts<a class="headerlink" href="#custom-shortcuts" title="Permalink to this headline">¶</a></h2>
-<p>Specify customization in <code class="docutils literal notranslate"><span class="pre">$USER_HOME/.arthas/conf/inputrc</span></code> file in the current user home directory.</p>
-<p>Vim user may want to map <code class="docutils literal notranslate"><span class="pre">ctrl+h</span></code> to moving the cursor forward one character. To achieve this, copy the default configuration first,</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="s2">&quot;\C-a&quot;</span><span class="p">:</span> <span class="n">beginning</span><span class="o">-</span><span class="n">of</span><span class="o">-</span><span class="n">line</span>
-<span class="s2">&quot;\C-e&quot;</span><span class="p">:</span> <span class="n">end</span><span class="o">-</span><span class="n">of</span><span class="o">-</span><span class="n">line</span>
-<span class="s2">&quot;\C-f&quot;</span><span class="p">:</span> <span class="n">forward</span><span class="o">-</span><span class="n">word</span>
-<span class="s2">&quot;\C-b&quot;</span><span class="p">:</span> <span class="n">backward</span><span class="o">-</span><span class="n">word</span>
-<span class="s2">&quot;\e[D&quot;</span><span class="p">:</span> <span class="n">backward</span><span class="o">-</span><span class="n">char</span>
-<span class="s2">&quot;\e[C&quot;</span><span class="p">:</span> <span class="n">forward</span><span class="o">-</span><span class="n">char</span>
-<span class="s2">&quot;\e[B&quot;</span><span class="p">:</span> <span class="nb">next</span><span class="o">-</span><span class="n">history</span>
-<span class="s2">&quot;\e[A&quot;</span><span class="p">:</span> <span class="n">previous</span><span class="o">-</span><span class="n">history</span>
-<span class="s2">&quot;\C-h&quot;</span><span class="p">:</span> <span class="n">backward</span><span class="o">-</span><span class="n">delete</span><span class="o">-</span><span class="n">char</span>
-<span class="s2">&quot;\C-?&quot;</span><span class="p">:</span> <span class="n">backward</span><span class="o">-</span><span class="n">delete</span><span class="o">-</span><span class="n">char</span>
-<span class="s2">&quot;\C-u&quot;</span><span class="p">:</span> <span class="n">undo</span>
-<span class="s2">&quot;\C-d&quot;</span><span class="p">:</span> <span class="n">delete</span><span class="o">-</span><span class="n">char</span>
-<span class="s2">&quot;\C-k&quot;</span><span class="p">:</span> <span class="n">kill</span><span class="o">-</span><span class="n">line</span>
-<span class="s2">&quot;\C-i&quot;</span><span class="p">:</span> <span class="n">complete</span>
-<span class="s2">&quot;\C-j&quot;</span><span class="p">:</span> <span class="n">accept</span><span class="o">-</span><span class="n">line</span>
-<span class="s2">&quot;\C-m&quot;</span><span class="p">:</span> <span class="n">accept</span><span class="o">-</span><span class="n">line</span>
-<span class="s2">&quot;\C-w&quot;</span><span class="p">:</span> <span class="n">backward</span><span class="o">-</span><span class="n">delete</span><span class="o">-</span><span class="n">word</span>
-<span class="s2">&quot;\C-x\e[3~&quot;</span><span class="p">:</span> <span class="n">backward</span><span class="o">-</span><span class="n">kill</span><span class="o">-</span><span class="n">line</span>
-<span class="s2">&quot;\e\C-?&quot;</span><span class="p">:</span> <span class="n">backward</span><span class="o">-</span><span class="n">kill</span><span class="o">-</span><span class="n">word</span>
-</pre></div>
+<p>Specify customization in <tt class="docutils literal">$USER_HOME/.arthas/conf/inputrc</tt> file in the current user home directory.</p>
+<p>Vim user may want to map <tt class="docutils literal">ctrl+h</tt> to moving the cursor forward one character. To achieve this, copy the default configuration first,</p>
+<div class="highlight-default notranslate"><pre class="literal-block">&quot;\C-a&quot;: beginning-of-line
+&quot;\C-e&quot;: end-of-line
+&quot;\C-f&quot;: forward-word
+&quot;\C-b&quot;: backward-word
+&quot;\e[D&quot;: backward-char
+&quot;\e[C&quot;: forward-char
+&quot;\e[B&quot;: next-history
+&quot;\e[A&quot;: previous-history
+&quot;\C-h&quot;: backward-delete-char
+&quot;\C-?&quot;: backward-delete-char
+&quot;\C-u&quot;: undo
+&quot;\C-d&quot;: delete-char
+&quot;\C-k&quot;: kill-line
+&quot;\C-i&quot;: complete
+&quot;\C-j&quot;: accept-line
+&quot;\C-m&quot;: accept-line
+&quot;\C-w&quot;: backward-delete-word
+&quot;\C-x\e[3~&quot;: backward-kill-line
+&quot;\e\C-?&quot;: backward-kill-word</pre>
 </div>
-<p>then replace <code class="docutils literal notranslate"><span class="pre">&quot;\C-h&quot;:</span> <span class="pre">backward-delete-char</span></code> with <code class="docutils literal notranslate"><span class="pre">&quot;\C-h&quot;:</span> <span class="pre">backward-char</span></code>, then reconnect to Arthas console to take effect.</p>
+<p>then replace <tt class="docutils literal">"\C-h": backward-delete-char</tt> with <tt class="docutils literal">"\C-h": backward-char</tt>, then reconnect to Arthas console to take effect.</p>
 </div>
 <div class="section" id="shortcuts-for-jobs">
 <span id="shortcuts-for-jobs"></span><h2>Shortcuts for jobs<a class="headerlink" href="#shortcuts-for-jobs" title="Permalink to this headline">¶</a></h2>
 <ul class="simple">
-<li><code class="docutils literal notranslate"><span class="pre">ctrl</span> <span class="pre">+</span> <span class="pre">c</span></code>: Terminate current command</li>
-<li><code class="docutils literal notranslate"><span class="pre">ctrl</span> <span class="pre">+</span> <span class="pre">z</span></code>: Suspend the current command, you can restore this command with <code class="docutils literal notranslate"><span class="pre">bg</span></code>/<code class="docutils literal notranslate"><span class="pre">fg</span></code>, or <code class="docutils literal notranslate"><span class="pre">kill</span></code> it.</li>
-<li><code class="docutils literal notranslate"><span class="pre">ctrl</span> <span class="pre">+</span> <span class="pre">a</span></code>: Go to the beginning the line</li>
-<li><code class="docutils literal notranslate"><span class="pre">ctrl</span> <span class="pre">+</span> <span class="pre">e</span></code>: Go to the end of the line</li>
+<li><tt class="docutils literal">ctrl + c</tt>: Terminate current command</li>
+<li><tt class="docutils literal">ctrl + z</tt>: Suspend the current command, you can restore this command with <tt class="docutils literal">bg</tt>/<tt class="docutils literal">fg</tt>, or <tt class="docutils literal">kill</tt> it.</li>
+<li><tt class="docutils literal">ctrl + a</tt>: Go to the beginning the line</li>
+<li><tt class="docutils literal">ctrl + e</tt>: Go to the end of the line</li>
 </ul>
 </div>
 </div>
@@ -395,6 +395,15 @@
 </div>
 
 <script type="text/javascript" src="_static/add_badges.js"></script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.13.1/highlight.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlightjs-line-numbers.js/2.5.0/highlightjs-line-numbers.min.js"></script>
+<script>
+  document.querySelectorAll('div.hljs > pre').forEach(function(block) {
+    hljs.highlightBlock(block);
+    hljs.lineNumbersBlock(block);
+  });
+</script>
 
 <script>
   var _hmt = _hmt || [];

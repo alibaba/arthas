@@ -34,6 +34,7 @@
     <link rel="next" title="trace" href="trace.html" />
     <link rel="prev" title="watch" href="watch.html" />
 <script src="_static/center_page.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.13.1/styles/github.min.css">
  
 
 
@@ -201,25 +202,25 @@
             
   <div class="section" id="fundamental-fields-in-expressions">
 <span id="fundamental-fields-in-expressions"></span><h1>Fundamental Fields in Expressions<a class="headerlink" href="#fundamental-fields-in-expressions" title="Permalink to this headline">¶</a></h1>
-<p>There is a very fundamental class <code class="docutils literal notranslate"><span class="pre">Advice</span></code> for the expressions used in filtering, tracing or monitoring and other aspects in commands.</p>
-<div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="kd">public</span> <span class="kd">class</span> <span class="nc">Advice</span> <span class="o">{</span>
+<p>There is a very fundamental class <tt class="docutils literal">Advice</tt> for the expressions used in filtering, tracing or monitoring and other aspects in commands.</p>
+<div class="highlight-java notranslate"><div class="highlight hljs"><pre class="java">public class Advice {
 
-    <span class="kd">private</span> <span class="kd">final</span> <span class="n">ClassLoader</span> <span class="n">loader</span><span class="o">;</span>
-    <span class="kd">private</span> <span class="kd">final</span> <span class="n">Class</span><span class="o">&lt;?&gt;</span> <span class="n">clazz</span><span class="o">;</span>
-    <span class="kd">private</span> <span class="kd">final</span> <span class="n">ArthasMethod</span> <span class="n">method</span><span class="o">;</span>
-    <span class="kd">private</span> <span class="kd">final</span> <span class="n">Object</span> <span class="n">target</span><span class="o">;</span>
-    <span class="kd">private</span> <span class="kd">final</span> <span class="n">Object</span><span class="o">[]</span> <span class="n">params</span><span class="o">;</span>
-    <span class="kd">private</span> <span class="kd">final</span> <span class="n">Object</span> <span class="n">returnObj</span><span class="o">;</span>
-    <span class="kd">private</span> <span class="kd">final</span> <span class="n">Throwable</span> <span class="n">throwExp</span><span class="o">;</span>
-    <span class="kd">private</span> <span class="kd">final</span> <span class="kt">boolean</span> <span class="n">isBefore</span><span class="o">;</span>
-    <span class="kd">private</span> <span class="kd">final</span> <span class="kt">boolean</span> <span class="n">isThrow</span><span class="o">;</span>
-    <span class="kd">private</span> <span class="kd">final</span> <span class="kt">boolean</span> <span class="n">isReturn</span><span class="o">;</span>
+    private final ClassLoader loader;
+    private final Class&lt;?&gt; clazz;
+    private final ArthasMethod method;
+    private final Object target;
+    private final Object[] params;
+    private final Object returnObj;
+    private final Throwable throwExp;
+    private final boolean isBefore;
+    private final boolean isThrow;
+    private final boolean isReturn;
     
-    <span class="c1">// getter/setter  </span>
-<span class="o">}</span>  
+    // getter/setter  
+}  
 </pre></div>
 </div>
-<p>Description for the variables in the class <code class="docutils literal notranslate"><span class="pre">Advice</span></code>:</p>
+<p>Description for the variables in the class <tt class="docutils literal">Advice</tt>:</p>
 <table border="1" class="docutils">
 <thead>
 <tr>
@@ -347,6 +348,15 @@
 </div>
 
 <script type="text/javascript" src="_static/add_badges.js"></script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.13.1/highlight.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlightjs-line-numbers.js/2.5.0/highlightjs-line-numbers.min.js"></script>
+<script>
+  document.querySelectorAll('div.hljs > pre').forEach(function(block) {
+    hljs.highlightBlock(block);
+    hljs.lineNumbersBlock(block);
+  });
+</script>
 
 <script>
   var _hmt = _hmt || [];

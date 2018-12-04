@@ -34,6 +34,7 @@
     <link rel="next" title="Release Notes" href="release-notes.html" />
     <link rel="prev" title="tt" href="tt.html" />
 <script src="_static/center_page.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.13.1/styles/github.min.css">
  
 
 
@@ -248,11 +249,10 @@
 </table><div class="section" id="usage">
 <span id="usage"></span><h2>Usage<a class="headerlink" href="#usage" title="Permalink to this headline">¶</a></h2>
 <p>For example, to enable saving command execution result, input the command below:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ options save-result true                                                                                         
+<div class="highlight-default notranslate"><pre class="literal-block">$ options save-result true                                                                                         
  NAME         BEFORE-VALUE  AFTER-VALUE                                                                            
 ----------------------------------------                                                                           
- save-result  false         true
-</pre></div>
+ save-result  false         true</pre>
 </div>
 </div>
 </div>
@@ -328,6 +328,15 @@
 </div>
 
 <script type="text/javascript" src="_static/add_badges.js"></script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.13.1/highlight.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlightjs-line-numbers.js/2.5.0/highlightjs-line-numbers.min.js"></script>
+<script>
+  document.querySelectorAll('div.hljs > pre').forEach(function(block) {
+    hljs.highlightBlock(block);
+    hljs.lineNumbersBlock(block);
+  });
+</script>
 
 <script>
   var _hmt = _hmt || [];

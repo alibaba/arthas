@@ -34,6 +34,7 @@
     <link rel="next" title="sysenv" href="sysenv.html" />
     <link rel="prev" title="jvm" href="jvm.html" />
 <script src="_static/center_page.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.13.1/styles/github.min.css">
  
 
 
@@ -202,29 +203,28 @@
 <div>Examine the system properties from the target JVM</div></blockquote>
 <div class="section" id="usage">
 <span id="usage"></span><h2>Usage<a class="headerlink" href="#usage" title="Permalink to this headline">¶</a></h2>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span> <span class="n">USAGE</span><span class="p">:</span>
-   <span class="n">sysprop</span> <span class="p">[</span><span class="o">-</span><span class="n">h</span><span class="p">]</span> <span class="p">[</span><span class="nb">property</span><span class="o">-</span><span class="n">name</span><span class="p">]</span> <span class="p">[</span><span class="nb">property</span><span class="o">-</span><span class="n">value</span><span class="p">]</span>
+<div class="highlight-default notranslate"><pre class="literal-block"> USAGE:
+   sysprop [-h] [property-name] [property-value]
 
- <span class="n">SUMMARY</span><span class="p">:</span>
-   <span class="n">Display</span><span class="p">,</span> <span class="ow">and</span> <span class="n">change</span> <span class="nb">all</span> <span class="n">the</span> <span class="n">system</span> <span class="n">properties</span><span class="o">.</span>
+ SUMMARY:
+   Display, and change all the system properties.
 
- <span class="n">EXAMPLES</span><span class="p">:</span>
- <span class="n">sysprop</span>
- <span class="n">sysprop</span> <span class="n">file</span><span class="o">.</span><span class="n">encoding</span>
- <span class="n">sysprop</span> <span class="n">production</span><span class="o">.</span><span class="n">mode</span> <span class="n">true</span>
+ EXAMPLES:
+ sysprop
+ sysprop file.encoding
+ sysprop production.mode true
 
- <span class="n">WIKI</span><span class="p">:</span>
-   <span class="n">https</span><span class="p">:</span><span class="o">//</span><span class="n">alibaba</span><span class="o">.</span><span class="n">github</span><span class="o">.</span><span class="n">io</span><span class="o">/</span><span class="n">arthas</span><span class="o">/</span><span class="n">sysprop</span>
+ WIKI:
+   https://alibaba.github.io/arthas/sysprop
 
- <span class="n">OPTIONS</span><span class="p">:</span>
- <span class="o">-</span><span class="n">h</span><span class="p">,</span> <span class="o">--</span><span class="n">help</span>                                  <span class="n">this</span> <span class="n">help</span>
- <span class="o">&lt;</span><span class="nb">property</span><span class="o">-</span><span class="n">name</span><span class="o">&gt;</span>                             <span class="nb">property</span> <span class="n">name</span>
- <span class="o">&lt;</span><span class="nb">property</span><span class="o">-</span><span class="n">value</span><span class="o">&gt;</span>                            <span class="nb">property</span> <span class="n">value</span>
-</pre></div>
+ OPTIONS:
+ -h, --help                                  this help
+ &lt;property-name&gt;                             property name
+ &lt;property-value&gt;                            property value</pre>
 </div>
 <div class="section" id="check-all-properties">
 <span id="check-all-properties"></span><h3>Check all properties<a class="headerlink" href="#check-all-properties" title="Permalink to this headline">¶</a></h3>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ sysprop
+<div class="highlight-default notranslate"><pre class="literal-block">$ sysprop
  KEY                                                  VALUE
 -------------------------------------------------------------------------------------------------------------------------------------
  java.runtime.name                                    Java(TM) SE Runtime Environment
@@ -293,27 +293,25 @@
  java.vendor.url.bug                                  http://bugreport.sun.com/bugreport/
  sun.cpu.endian                                       little
  sun.io.unicode.encoding                              UnicodeBig
- sun.cpu.isalist
-</pre></div>
+ sun.cpu.isalist</pre>
 </div>
 </div>
 <div class="section" id="check-one-single-property">
 <span id="check-one-single-property"></span><h3>Check One Single Property<a class="headerlink" href="#check-one-single-property" title="Permalink to this headline">¶</a></h3>
 <blockquote>
-<div>Use <code class="docutils literal notranslate"><span class="pre">tab</span></code> for auto-completion</div></blockquote>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$ sysprop java.version
-java.version<span class="o">=</span><span class="m">1</span>.8.0_51
+<div>Use <tt class="docutils literal">tab</tt> for auto-completion</div></blockquote>
+<div class="highlight-bash notranslate"><div class="highlight hljs"><pre class="bash">$ sysprop java.version
+java.version=1.8.0_51
 </pre></div>
 </div>
 </div>
 <div class="section" id="modify-single-property">
 <span id="modify-single-property"></span><h3>Modify Single Property<a class="headerlink" href="#modify-single-property" title="Permalink to this headline">¶</a></h3>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ sysprop user.country
+<div class="highlight-default notranslate"><pre class="literal-block">$ sysprop user.country
 user.country=US
 $ sysprop user.country CN
 Successfully changed the system property.
-user.country=CN
-</pre></div>
+user.country=CN</pre>
 </div>
 </div>
 </div>
@@ -390,6 +388,15 @@ user.country=CN
 </div>
 
 <script type="text/javascript" src="_static/add_badges.js"></script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.13.1/highlight.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlightjs-line-numbers.js/2.5.0/highlightjs-line-numbers.min.js"></script>
+<script>
+  document.querySelectorAll('div.hljs > pre').forEach(function(block) {
+    hljs.highlightBlock(block);
+    hljs.lineNumbersBlock(block);
+  });
+</script>
 
 <script>
   var _hmt = _hmt || [];

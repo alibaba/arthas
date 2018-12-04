@@ -34,6 +34,7 @@
     <link rel="next" title="sysprop" href="sysprop.html" />
     <link rel="prev" title="thread" href="thread.html" />
 <script src="_static/center_page.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.13.1/styles/github.min.css">
  
 
 
@@ -199,7 +200,7 @@
 <div>Check the current JVM’s info</div></blockquote>
 <div class="section" id="usage">
 <span id="usage"></span><h2>Usage<a class="headerlink" href="#usage" title="Permalink to this headline">¶</a></h2>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ jvm
+<div class="highlight-default notranslate"><pre class="literal-block">$ jvm
  CATEGORY            INFO
 ------------------------------------------------------------------------------------------------------------------------------------
 
@@ -284,8 +285,7 @@
  
                       MAX-FILE-DESCRIPTOR-COUNT  10240
                       OPEN-FILE-DESCRIPTOR-COUNT 648
-Affect cost in 2 ms.
-</pre></div>
+Affect cost in 2 ms.</pre>
 </div>
 </div>
 <div class="section" id="thread-related">
@@ -378,6 +378,15 @@ Affect cost in 2 ms.
 </div>
 
 <script type="text/javascript" src="_static/add_badges.js"></script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.13.1/highlight.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlightjs-line-numbers.js/2.5.0/highlightjs-line-numbers.min.js"></script>
+<script>
+  document.querySelectorAll('div.hljs > pre').forEach(function(block) {
+    hljs.highlightBlock(block);
+    hljs.lineNumbersBlock(block);
+  });
+</script>
 
 <script>
   var _hmt = _hmt || [];

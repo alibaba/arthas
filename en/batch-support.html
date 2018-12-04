@@ -34,6 +34,7 @@
     <link rel="next" title="All Commands" href="commands.html" />
     <link rel="prev" title="Log command outputs" href="save-log.html" />
 <script src="_static/center_page.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.13.1/styles/github.min.css">
  
 
 
@@ -193,10 +194,10 @@
 <span id="usage"></span><h2>Usage<a class="headerlink" href="#usage" title="Permalink to this headline">¶</a></h2>
 <div class="section" id="step-1-create-the-script">
 <span id="step-1-create-the-script"></span><h3>Step 1: Create the script<a class="headerlink" href="#step-1-create-the-script" title="Permalink to this headline">¶</a></h3>
-<p>Create a <code class="docutils literal notranslate"><span class="pre">test.as</span></code> script suffixed with <code class="docutils literal notranslate"><span class="pre">as</span></code>. Here <code class="docutils literal notranslate"><span class="pre">as</span></code> is suggested for the suffix of the filename, but in fact any suffix is acceptable.</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>➜  arthas git:<span class="o">(</span>develop<span class="o">)</span> cat /var/tmp/test.as
-<span class="nb">help</span>
-dashboard -b -n <span class="m">1</span>
+<p>Create a <tt class="docutils literal">test.as</tt> script suffixed with <tt class="docutils literal">as</tt>. Here <tt class="docutils literal">as</tt> is suggested for the suffix of the filename, but in fact any suffix is acceptable.</p>
+<div class="highlight-bash notranslate"><div class="highlight hljs"><pre class="bash">➜  arthas git:(develop) cat /var/tmp/test.as
+help
+dashboard -b -n 1
 session
 thread
 sc -d org.apache.commons.lang.StringUtils
@@ -205,21 +206,21 @@ sc -d org.apache.commons.lang.StringUtils
 <p>Note:</p>
 <ul class="simple">
 <li>Each command takes one line.</li>
-<li>Batch mode (via <code class="docutils literal notranslate"><span class="pre">-b</span></code>) and execution times (via <code class="docutils literal notranslate"><span class="pre">-n</span></code>) must be explicitly specified for <code class="docutils literal notranslate"><span class="pre">dashboard</span></code>, otherwise batch script cannot terminate.</li>
-<li>Commands such as <code class="docutils literal notranslate"><span class="pre">watch</span></code>/<code class="docutils literal notranslate"><span class="pre">tt</span></code>/<code class="docutils literal notranslate"><span class="pre">trace</span></code>/<code class="docutils literal notranslate"><span class="pre">monitor</span></code>/<code class="docutils literal notranslate"><span class="pre">stack</span></code> should include <code class="docutils literal notranslate"><span class="pre">-n</span></code> option to ensure the script can be able to quit.</li>
-<li>Also consider to use <code class="docutils literal notranslate"><span class="pre">async</span></code> (for example: <code class="docutils literal notranslate"><span class="pre">watch</span> <span class="pre">c.t.X</span> <span class="pre">test</span> <span class="pre">returnObj</span> <span class="pre">&gt;</span> <span class="pre">&amp;</span></code>) to put commands run at background and get the output from the log file, see more from <a class="reference internal" href="async.html"><span class="doc">asynchronous job</span></a></li>
+<li>Batch mode (via <tt class="docutils literal">-b</tt>) and execution times (via <tt class="docutils literal">-n</tt>) must be explicitly specified for <tt class="docutils literal">dashboard</tt>, otherwise batch script cannot terminate.</li>
+<li>Commands such as <tt class="docutils literal">watch</tt>/<tt class="docutils literal">tt</tt>/<tt class="docutils literal">trace</tt>/<tt class="docutils literal">monitor</tt>/<tt class="docutils literal">stack</tt> should include <tt class="docutils literal">-n</tt> option to ensure the script can be able to quit.</li>
+<li>Also consider to use <tt class="docutils literal">async</tt> (for example: <tt class="docutils literal">watch c.t.X test returnObj > &</tt>) to put commands run at background and get the output from the log file, see more from <a class="reference internal" href="async.html"><span class="doc">asynchronous job</span></a></li>
 </ul>
 </div>
 <div class="section" id="step-2-run-the-script">
 <span id="step-2-run-the-script"></span><h3>Step 2: Run the script<a class="headerlink" href="#step-2-run-the-script" title="Permalink to this headline">¶</a></h3>
-<p>Use <code class="docutils literal notranslate"><span class="pre">-b</span></code> to turn on batch mode, and use <code class="docutils literal notranslate"><span class="pre">-f</span></code> to specify the script file. By default the result will be output to the standard output, but you can redirect the output to the file like this:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./as.sh -b -f /var/tmp/test.as <span class="m">56328</span> &gt; test.out
+<p>Use <tt class="docutils literal">-b</tt> to turn on batch mode, and use <tt class="docutils literal">-f</tt> to specify the script file. By default the result will be output to the standard output, but you can redirect the output to the file like this:</p>
+<div class="highlight-bash notranslate"><div class="highlight hljs"><pre class="bash">./as.sh -b -f /var/tmp/test.as 56328 &gt; test.out
 </pre></div>
 </div>
 </div>
 <div class="section" id="step-3-check-the-outputs">
 <span id="step-3-check-the-outputs"></span><h3>Step 3: Check the outputs<a class="headerlink" href="#step-3-check-the-outputs" title="Permalink to this headline">¶</a></h3>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>cat test.out
+<div class="highlight-bash notranslate"><div class="highlight hljs"><pre class="bash">cat test.out
 </pre></div>
 </div>
 </div>
@@ -297,6 +298,15 @@ sc -d org.apache.commons.lang.StringUtils
 </div>
 
 <script type="text/javascript" src="_static/add_badges.js"></script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.13.1/highlight.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlightjs-line-numbers.js/2.5.0/highlightjs-line-numbers.min.js"></script>
+<script>
+  document.querySelectorAll('div.hljs > pre').forEach(function(block) {
+    hljs.highlightBlock(block);
+    hljs.lineNumbersBlock(block);
+  });
+</script>
 
 <script>
   var _hmt = _hmt || [];

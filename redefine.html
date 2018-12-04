@@ -34,6 +34,7 @@
     <link rel="next" title="monitor" href="monitor.html" />
     <link rel="prev" title="classloader" href="classloader.html" />
 <script src="_static/center_page.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.13.1/styles/github.min.css">
  
 
 
@@ -121,7 +122,7 @@
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas/issues?q=label%3Auser-case">用户案例</a></li>
-<li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas/issues?q=label%3Aquestion-answered">Questions and answers</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas/issues?q=label%3Aquestion-answered">常见问题</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas">Fork me at GitHub</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas/blob/master/CONTRIBUTING.md">参与贡献</a></li>
 <li class="toctree-l1"><a class="reference internal" href="release-notes.html">Release Notes</a></li>
@@ -197,7 +198,7 @@
   <div class="section" id="redefine">
 <span id="redefine"></span><h1>redefine<a class="headerlink" href="#redefine" title="永久链接至标题">¶</a></h1>
 <blockquote>
-<div>加载外部的<code class="docutils literal notranslate"><span class="pre">.class</span></code>文件，redefine jvm已加载的类。</div></blockquote>
+<div>加载外部的<tt class="docutils literal">.class</tt>文件，redefine jvm已加载的类。</div></blockquote>
 <p>参考：<a class="reference external" href="https://docs.oracle.com/javase/8/docs/api/java/lang/instrument/Instrumentation.html#redefineClasses-java.lang.instrument.ClassDefinition...-">Instrumentation#redefineClasses</a></p>
 <blockquote>
 <div>注意， redefine后的原来的类不能恢复，redefine有可能失败（比如增加了新的field），参考jdk本身的文档。</div></blockquote>
@@ -223,9 +224,8 @@
 </table></div>
 <div class="section" id="">
 <span id="id2"></span><h2>使用参考<a class="headerlink" href="#" title="永久链接至标题">¶</a></h2>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>   redefine -p /tmp/Test.class
-   redefine -c 327a647b -p /tmp/Test.class /tmp/Test\$Inner.class
-</pre></div>
+<div class="highlight-default notranslate"><pre class="literal-block">   redefine -p /tmp/Test.class
+   redefine -c 327a647b -p /tmp/Test.class /tmp/Test\$Inner.class</pre>
 </div>
 </div>
 </div>
@@ -302,6 +302,15 @@
 </div>
 
 <script type="text/javascript" src="_static/add_badges.js"></script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.13.1/highlight.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlightjs-line-numbers.js/2.5.0/highlightjs-line-numbers.min.js"></script>
+<script>
+  document.querySelectorAll('div.hljs > pre').forEach(function(block) {
+    hljs.highlightBlock(block);
+    hljs.lineNumbersBlock(block);
+  });
+</script>
 
 <script>
   var _hmt = _hmt || [];

@@ -34,6 +34,7 @@
     <link rel="next" title="sm" href="sm.html" />
     <link rel="prev" title="ognl" href="ognl.html" />
 <script src="_static/center_page.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.13.1/styles/github.min.css">
  
 
 
@@ -196,7 +197,7 @@
 <span id="sc"></span><h1>sc<a class="headerlink" href="#sc" title="Permalink to this headline">¶</a></h1>
 <blockquote>
 <div>Search classes loaded by JVM.</div></blockquote>
-<p><code class="docutils literal notranslate"><span class="pre">sc</span></code> stands for search class. This command can search all possible classes loaded by JVM and show their information. The supported options are: <code class="docutils literal notranslate"><span class="pre">[d]</span></code>、<code class="docutils literal notranslate"><span class="pre">[E]</span></code>、<code class="docutils literal notranslate"><span class="pre">[f]</span></code> and <code class="docutils literal notranslate"><span class="pre">[x:]</span></code>.</p>
+<p><tt class="docutils literal">sc</tt> stands for search class. This command can search all possible classes loaded by JVM and show their information. The supported options are: <tt class="docutils literal">[d]</tt>、<tt class="docutils literal">[E]</tt>、<tt class="docutils literal">[f]</tt> and <tt class="docutils literal">[x:]</tt>.</p>
 <div class="section" id="supported-options">
 <span id="supported-options"></span><h2>Supported Options<a class="headerlink" href="#supported-options" title="Permalink to this headline">¶</a></h2>
 <table border="1" class="docutils">
@@ -234,78 +235,78 @@
 </tbody>
 </table><blockquote>
 <div><em>class-patten</em> supports full qualified class name, e.g. com.taobao.test.AAA and com/taobao/test/AAA. It also supports the format of ‘com/taobao/test/AAA’, so that it is convenient to directly copy class name from the exception stack trace without replacing ‘/’ to ‘.’. <br/><br/>
-<code class="docutils literal notranslate"><span class="pre">sc</span></code> turns on matching sub-class match by default, that is, <code class="docutils literal notranslate"><span class="pre">sc</span></code> will also search the sub classes of the target class too. If exact-match is desired, pls. use <code class="docutils literal notranslate"><span class="pre">options</span> <span class="pre">disable-sub-class</span> <span class="pre">true</span></code>.</div></blockquote>
+<tt class="docutils literal">sc</tt> turns on matching sub-class match by default, that is, <tt class="docutils literal">sc</tt> will also search the sub classes of the target class too. If exact-match is desired, pls. use <tt class="docutils literal">options disable-sub-class true</tt>.</div></blockquote>
 </div>
 <div class="section" id="usage">
 <span id="usage"></span><h2>Usage<a class="headerlink" href="#usage" title="Permalink to this headline">¶</a></h2>
 <ul>
 <li><p class="first">Wildcards match search</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$ sc demo.*
+<div class="highlight-bash notranslate"><div class="highlight hljs"><pre class="bash">$ sc demo.*
 demo.MathGame
-Affect<span class="o">(</span>row-cnt:1<span class="o">)</span> cost in <span class="m">55</span> ms.
+Affect(row-cnt:1) cost in 55 ms.
 </pre></div>
 </div>
 </li>
 <li><p class="first">View class details</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$ sc -d demo.MathGame
+<div class="highlight-bash notranslate"><div class="highlight hljs"><pre class="bash">$ sc -d demo.MathGame
 class-info        demo.MathGame
 code-source       /private/tmp/arthas-demo.jar
 name              demo.MathGame
-isInterface       <span class="nb">false</span>
-isAnnotation      <span class="nb">false</span>
-isEnum            <span class="nb">false</span>
-isAnonymousClass  <span class="nb">false</span>
-isArray           <span class="nb">false</span>
-isLocalClass      <span class="nb">false</span>
-isMemberClass     <span class="nb">false</span>
-isPrimitive       <span class="nb">false</span>
-isSynthetic       <span class="nb">false</span>
+isInterface       false
+isAnnotation      false
+isEnum            false
+isAnonymousClass  false
+isArray           false
+isLocalClass      false
+isMemberClass     false
+isPrimitive       false
+isSynthetic       false
 simple-name       MathGame
 modifier          public
 annotation
 interfaces
 super-class       +-java.lang.Object
-class-loader      +-sun.misc.Launcher<span class="nv">$AppClassLoader</span>@3d4eac69
-                    +-sun.misc.Launcher<span class="nv">$ExtClassLoader</span>@66350f69
+class-loader      +-sun.misc.Launcher$AppClassLoader@3d4eac69
+                    +-sun.misc.Launcher$ExtClassLoader@66350f69
 classLoaderHash   3d4eac69
 
-Affect<span class="o">(</span>row-cnt:1<span class="o">)</span> cost in <span class="m">875</span> ms.
+Affect(row-cnt:1) cost in 875 ms.
 </pre></div>
 </div>
 </li>
 <li><p class="first">View class fileds</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$ sc -d -f demo.MathGame
+<div class="highlight-bash notranslate"><div class="highlight hljs"><pre class="bash">$ sc -d -f demo.MathGame
 class-info        demo.MathGame
 code-source       /private/tmp/arthas-demo.jar
 name              demo.MathGame
-isInterface       <span class="nb">false</span>
-isAnnotation      <span class="nb">false</span>
-isEnum            <span class="nb">false</span>
-isAnonymousClass  <span class="nb">false</span>
-isArray           <span class="nb">false</span>
-isLocalClass      <span class="nb">false</span>
-isMemberClass     <span class="nb">false</span>
-isPrimitive       <span class="nb">false</span>
-isSynthetic       <span class="nb">false</span>
+isInterface       false
+isAnnotation      false
+isEnum            false
+isAnonymousClass  false
+isArray           false
+isLocalClass      false
+isMemberClass     false
+isPrimitive       false
+isSynthetic       false
 simple-name       MathGame
 modifier          public
 annotation
 interfaces
 super-class       +-java.lang.Object
-class-loader      +-sun.misc.Launcher<span class="nv">$AppClassLoader</span>@3d4eac69
-                    +-sun.misc.Launcher<span class="nv">$ExtClassLoader</span>@66350f69
+class-loader      +-sun.misc.Launcher$AppClassLoader@3d4eac69
+                    +-sun.misc.Launcher$ExtClassLoader@66350f69
 classLoaderHash   3d4eac69
 fields            modifierprivate,static
-                  <span class="nb">type</span>    java.util.Random
+                  type    java.util.Random
                   name    random
                   value   java.util.Random@522b4
                           08a
 
                   modifierprivate
-                  <span class="nb">type</span>    int
+                  type    int
                   name    illegalArgumentCount
 
-Affect<span class="o">(</span>row-cnt:1<span class="o">)</span> cost in <span class="m">19</span> ms.
+Affect(row-cnt:1) cost in 19 ms.
 </pre></div>
 </div>
 </li>
@@ -384,6 +385,15 @@ Affect<span class="o">(</span>row-cnt:1<span class="o">)</span> cost in <span cl
 </div>
 
 <script type="text/javascript" src="_static/add_badges.js"></script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.13.1/highlight.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlightjs-line-numbers.js/2.5.0/highlightjs-line-numbers.min.js"></script>
+<script>
+  document.querySelectorAll('div.hljs > pre').forEach(function(block) {
+    hljs.highlightBlock(block);
+    hljs.lineNumbersBlock(block);
+  });
+</script>
 
 <script>
   var _hmt = _hmt || [];

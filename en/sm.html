@@ -34,6 +34,7 @@
     <link rel="next" title="dump" href="dump.html" />
     <link rel="prev" title="sc" href="sc.html" />
 <script src="_static/center_page.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.13.1/styles/github.min.css">
  
 
 
@@ -196,7 +197,7 @@
 <span id="sm"></span><h1>sm<a class="headerlink" href="#sm" title="Permalink to this headline">¶</a></h1>
 <blockquote>
 <div>Search method from the loaded classes.</div></blockquote>
-<p><code class="docutils literal notranslate"><span class="pre">sm</span></code> stands for search method. This command can search and show method information from all loaded classes. <code class="docutils literal notranslate"><span class="pre">sm</span></code> can only view the methods declared on the target class, that is, methods from its parent classes are invisible.</p>
+<p><tt class="docutils literal">sm</tt> stands for search method. This command can search and show method information from all loaded classes. <tt class="docutils literal">sm</tt> can only view the methods declared on the target class, that is, methods from its parent classes are invisible.</p>
 <div class="section" id="options">
 <span id="options"></span><h2>Options<a class="headerlink" href="#options" title="Permalink to this headline">¶</a></h2>
 <table border="1" class="docutils">
@@ -227,8 +228,8 @@
 </table></div>
 <div class="section" id="usage">
 <span id="usage"></span><h2>Usage<a class="headerlink" href="#usage" title="Permalink to this headline">¶</a></h2>
-<p>View methods of <code class="docutils literal notranslate"><span class="pre">java.lang.String</span></code>:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$ sm java.lang.String
+<p>View methods of <tt class="docutils literal">java.lang.String</tt>:</p>
+<div class="highlight-bash notranslate"><div class="highlight hljs"><pre class="bash">$ sm java.lang.String
 java.lang.String-&gt;&lt;init&gt;
 java.lang.String-&gt;equals
 java.lang.String-&gt;toString
@@ -273,20 +274,20 @@ java.lang.String-&gt;toCharArray
 java.lang.String-&gt;format
 java.lang.String-&gt;copyValueOf
 java.lang.String-&gt;intern
-Affect<span class="o">(</span>row-cnt:44<span class="o">)</span> cost in <span class="m">1342</span> ms.
+Affect(row-cnt:44) cost in 1342 ms.
 </pre></div>
 </div>
-<p>View method <code class="docutils literal notranslate"><span class="pre">java.lang.String#toString</span></code> details:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$ sm -d java.lang.String toString
+<p>View method <tt class="docutils literal">java.lang.String#toString</tt> details:</p>
+<div class="highlight-bash notranslate"><div class="highlight hljs"><pre class="bash">$ sm -d java.lang.String toString
  declaring-class  java.lang.String
  method-name      toString
  modifier         public
  annotation
  parameters
- <span class="k">return</span>           java.lang.String
+ return           java.lang.String
  exceptions
 
-Affect<span class="o">(</span>row-cnt:1<span class="o">)</span> cost in <span class="m">3</span> ms.
+Affect(row-cnt:1) cost in 3 ms.
 </pre></div>
 </div>
 </div>
@@ -363,6 +364,15 @@ Affect<span class="o">(</span>row-cnt:1<span class="o">)</span> cost in <span cl
 </div>
 
 <script type="text/javascript" src="_static/add_badges.js"></script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.13.1/highlight.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlightjs-line-numbers.js/2.5.0/highlightjs-line-numbers.min.js"></script>
+<script>
+  document.querySelectorAll('div.hljs > pre').forEach(function(block) {
+    hljs.highlightBlock(block);
+    hljs.lineNumbersBlock(block);
+  });
+</script>
 
 <script>
   var _hmt = _hmt || [];

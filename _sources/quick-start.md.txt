@@ -30,7 +30,7 @@ $ java -jar arthas-boot.jar
 
 选择应用java进程：
 
-```
+```bash
 $ $ java -jar arthas-boot.jar
 * [1]: 35542
   [2]: 71560 arthas-demo.jar
@@ -38,7 +38,7 @@ $ $ java -jar arthas-boot.jar
 
 Demo进程是第2个，则输入2，再输入回车/enter。Arthas会attach到目标进程上，并输出日志：
 
-```
+```bash
 [INFO] Try to attach process 71560
 [INFO] Attach process 71560 success.
 [INFO] arthas-client connect 127.0.0.1 3658
@@ -61,7 +61,7 @@ $
 
 输入[dashboard](dashboard.md)，按enter/回车，会展示当前进程的信息，按`ctrl+c`可以中断执行。
 
-```
+```bash
 $ dashboard
 ID     NAME                   GROUP          PRIORI STATE  %CPU    TIME   INTERRU DAEMON
 17     pool-2-thread-1        system         5      WAITIN 67      0:0    false   false
@@ -189,7 +189,7 @@ Affect(row-cnt:1) cost in 970 ms.
 
 通过[watch](watch.md)命令来查看`demo.MathGame#primeFactors`函数的返回值：
 
-```
+```bash
 $ watch demo.MathGame primeFactors returnObj
 Press Ctrl+C to abort.
 Affect(class-cnt:1 , method-cnt:1) cost in 107 ms.
