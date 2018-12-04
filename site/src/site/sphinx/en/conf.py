@@ -31,11 +31,14 @@ source_suffix = ['.rst', '.md']
 # Add any Sphinx extension module names here, as strings. They can be
 # extensions coming with Sphinx (named 'sphinx.ext.*') or your custom
 # ones.
+sys.path.append(os.path.abspath('_extensions'))
 extensions = [
     'sphinx.ext.autodoc',
     'sphinx.ext.napoleon',
     'sphinx.ext.mathjax',
     'sphinx_markdown_tables',
+    'sphinxcontrib.inlinesyntaxhighlight',
+    'highlightjs',
 ]
 
 # Add any paths that contain templates here, relative to this directory.
@@ -289,6 +292,9 @@ texinfo_documents = [
 
 # If true, do not generate a @detailmenu in the "Top" node's menu.
 #texinfo_no_detailmenu = False
+
+# sphinxcontrib-inlinesyntaxhighlight options
+inline_highlight_literals = False
 
 # app setup hook
 def setup(app):
