@@ -95,9 +95,9 @@ java.home              /Library/Java/JavaVir
                        e/jre
 ```
 
-## 4. 通过thread命令来获取到进程的Main Class
+## 4. 通过thread命令来获取到`arthas-demo`进程的Main Class
 
-```
+```bash
 $ thread -n -1 | grep 'main('
     at demo.MathGame.main(MathGame.java:17)
 ```
