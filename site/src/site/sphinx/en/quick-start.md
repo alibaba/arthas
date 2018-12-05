@@ -35,7 +35,7 @@ $ $ java -jar arthas-boot.jar
   [2]: 71560 arthas-demo.jar
 ```
 
-The 'Demo' process is the fourth as shown above, press '2' then 'Enter'. Arthas will attach to the target process, and start to output:
+The 'Demo' process is the second as shown above, press '2' then 'Enter'. Arthas will attach to the target process, and start to output:
 
 ```bash
 [INFO] Try to attach process 71560
