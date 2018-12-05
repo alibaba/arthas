@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Advanced Usage &mdash; Arthas 3.0.6-SNAPSHOT documentation</title>
+  <title>Advanced Usage &mdash; Arthas 3.0.5 documentation</title>
   
 
   
@@ -65,7 +65,7 @@
             
             
               <div class="version">
-                3.0.6-SNAPSHOT
+                3.0.5
               </div>
             
           
@@ -209,7 +209,8 @@
 <li><a class="reference internal" href="jvm.html"><span class="doc">jvm</span></a> - show JVM information</li>
 <li><a class="reference internal" href="sysprop.html"><span class="doc">sysprop</span></a> - view/modify system properties</li>
 <li><a class="reference external" href="https://github.com/alibaba/arthas/tree/master/site/src/site/sphinx/en/syspenv.md">sysenv</a> — view system environment variables</li>
-<li><strong>New!</strong> <a class="reference internal" href="getstatic.html"><span class="doc">getstatic</span></a> :clap: - examine class’s static properties</li>
+<li><strong>New!</strong> <a class="reference internal" href="getstatic.html"><span class="doc">getstatic</span></a> - examine class’s static properties</li>
+<li><strong>New!</strong> <a class="reference internal" href="ognl.html"><span class="doc">ognl</span></a> - execute ongl expression</li>
 </ul>
 </div>
 <div class="section" id="class-classloader">
@@ -243,10 +244,10 @@
 </div>
 <div class="section" id="pipe">
 <span id="pipe"></span><h2>pipe<a class="headerlink" href="#pipe" title="Permalink to this headline">¶</a></h2>
-<p>Arthas provides <tt class="docutils literal">pipe</tt> to process the result returned from commands further, e.g. <tt class="docutils literal">sm org.apache.log4j.Logger | grep <init></tt>. Commands supported in <tt class="docutils literal">pipe</tt>:</p>
+<p>Arthas provides <tt class="docutils literal">pipe</tt> to process the result returned from commands further, e.g. <tt class="docutils literal">sm java.lang.String * | grep 'index'</tt>. Commands supported in <tt class="docutils literal">pipe</tt>:</p>
 <ul class="simple">
 <li>grep - filter the result with the given keyword</li>
-<li>plaintext - remove the color</li>
+<li>plaintext - remove the ANSI color</li>
 <li>wc - count lines</li>
 </ul>
 </div>
@@ -325,7 +326,7 @@
     <script type="text/javascript">
         var DOCUMENTATION_OPTIONS = {
             URL_ROOT:'./',
-            VERSION:'3.0.6-SNAPSHOT',
+            VERSION:'3.0.5',
             LANGUAGE:'en',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',

@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>进阶使用 &mdash; Arthas 3.0.6-SNAPSHOT 文档</title>
+  <title>进阶使用 &mdash; Arthas 3.0.5 文档</title>
   
 
   
@@ -65,7 +65,7 @@
             
             
               <div class="version">
-                3.0.6-SNAPSHOT
+                3.0.5
               </div>
             
           
@@ -211,7 +211,8 @@
 <li><a class="reference internal" href="jvm.html"><span class="doc">jvm</span></a>——查看当前 JVM 的信息</li>
 <li><a class="reference internal" href="sysprop.html"><span class="doc">sysprop</span></a>——查看和修改JVM的系统属性</li>
 <li><a class="reference external" href="https://github.com/alibaba/arthas/tree/master/site/src/site/sphinx/syspenv.md">sysenv</a>——查看JVM的环境变量</li>
-<li><strong>New!</strong> <a class="reference internal" href="getstatic.html"><span class="doc">getstatic</span></a>——查看类的静态属性</li>
+<li><a class="reference internal" href="getstatic.html"><span class="doc">getstatic</span></a>——查看类的静态属性</li>
+<li><strong>New!</strong> <a class="reference internal" href="ognl.html"><span class="doc">ognl</span></a>——执行ognl表达式</li>
 </ul>
 </div>
 <div class="section" id="class-classloader">
@@ -245,10 +246,10 @@
 </div>
 <div class="section" id="">
 <span id="id3"></span><h2>管道<a class="headerlink" href="#" title="永久链接至标题">¶</a></h2>
-<p>Arthas支持使用管道对上述命令的结果进行进一步的处理，如<tt class="docutils literal">sm org.apache.log4j.Logger | grep <init></tt></p>
+<p>Arthas支持使用管道对上述命令的结果进行进一步的处理，如<tt class="docutils literal">sm java.lang.String * | grep 'index'</tt></p>
 <ul class="simple">
 <li>grep——搜索满足条件的结果</li>
-<li>plaintext——将命令的结果去除颜色</li>
+<li>plaintext——将命令的结果去除ANSI颜色</li>
 <li>wc——按行统计输出结果</li>
 </ul>
 </div>
@@ -327,7 +328,7 @@
     <script type="text/javascript">
         var DOCUMENTATION_OPTIONS = {
             URL_ROOT:'./',
-            VERSION:'3.0.6-SNAPSHOT',
+            VERSION:'3.0.5',
             LANGUAGE:'zh_CN',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
