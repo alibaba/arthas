@@ -20,7 +20,8 @@ Advanced Usage
 * [jvm](jvm.md) - show JVM information
 * [sysprop](sysprop.md) - view/modify system properties
 * [sysenv](syspenv.md) — view system environment variables
-* **New!** [getstatic](getstatic.md) :clap: - examine class's static properties
+* **New!** [getstatic](getstatic.md) - examine class's static properties
+* **New!** [ognl](ognl.md) - execute ongl expression
 
 ## class/classloader
 
@@ -48,10 +49,10 @@ Advanced Usage
 
 ## pipe
 
-Arthas provides `pipe` to process the result returned from commands further, e.g. `sm org.apache.log4j.Logger | grep <init>`. Commands supported in `pipe`:
+Arthas provides `pipe` to process the result returned from commands further, e.g. `sm java.lang.String * | grep 'index'`. Commands supported in `pipe`:
 
 * grep - filter the result with the given keyword
-* plaintext - remove the color
+* plaintext - remove the ANSI color
 * wc - count lines
 
 ## async in background
