@@ -22,7 +22,8 @@
 * [jvm](jvm.md)——查看当前 JVM 的信息
 * [sysprop](sysprop.md)——查看和修改JVM的系统属性
 * [sysenv](syspenv.md)——查看JVM的环境变量
-* **New!** [getstatic](getstatic.md)——查看类的静态属性
+* [getstatic](getstatic.md)——查看类的静态属性
+* **New!** [ognl](ognl.md)——执行ognl表达式
 
 ## class/classloader相关
 
@@ -52,10 +53,10 @@
 
 ## 管道
 
-Arthas支持使用管道对上述命令的结果进行进一步的处理，如`sm org.apache.log4j.Logger | grep <init>`
+Arthas支持使用管道对上述命令的结果进行进一步的处理，如`sm java.lang.String * | grep 'index'`
 
 * grep——搜索满足条件的结果
-* plaintext——将命令的结果去除颜色
+* plaintext——将命令的结果去除ANSI颜色
 * wc——按行统计输出结果
 
 ## 后台异步任务
