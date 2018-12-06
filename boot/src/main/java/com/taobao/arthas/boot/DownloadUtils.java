@@ -86,7 +86,7 @@ public class DownloadUtils {
     public static String readMavenMetaData(String repoMirror, boolean http) {
         String repoUrl = getRepoUrl(repoMirror, http);
         String metaDataUrl = MAVEN_METADATA_URL.replace("${REPO}", repoUrl);
-        AnsiLog.debug("Download maven-metadata.xml from: {}", repoUrl);
+        AnsiLog.debug("Download maven-metadata.xml from: {}", metaDataUrl);
         InputStream inputStream = null;
         try {
             URLConnection connection = openURLConnection(metaDataUrl);
@@ -133,6 +133,8 @@ public class DownloadUtils {
 
         File tempFile = File.createTempFile("arthas", "arthas");
 
+        AnsiLog.debug("Arthas download temp file: " + tempFile.getAbsolutePath());
+
         String remoteDownloadUrl = REMOTE_DOWNLOAD_URL.replace("${REPO}", repoUrl).replace("${VERSION}", arthasVersion);
         AnsiLog.info("Start download arthas from remote server: " + remoteDownloadUrl);
         saveUrl(tempFile.getAbsolutePath(), remoteDownloadUrl, true);
@@ -176,7 +178,7 @@ public class DownloadUtils {
                 fout.write(data, 0, count);
             }
         } catch (javax.net.ssl.SSLException e) {
-            AnsiLog.error("TLS connect error, please try to use --use-http argument.");
+            AnsiLog.error("TLS connect error, please try to add --use-http argument.");
             AnsiLog.error("URL: " + urlString);
             AnsiLog.error(e);
         } finally {
