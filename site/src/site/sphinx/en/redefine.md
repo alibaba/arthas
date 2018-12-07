@@ -17,7 +17,38 @@ Reference: [Instrumentation#redefineClasses](https://docs.oracle.com/javase/8/do
 
 ### Usage
 
-```
+```bash
 redefine -p /tmp/Test.class
 redefine -c 327a647b -p /tmp/Test.class /tmp/Test$Inner.class
+```
+
+### Restrictions of the redefine command
+
+* New field/method is not allowed
+* The function that is running, no exit can not take effect, such as the new `System.out.println` added below, only the `run()` function will take effect.
+
+    ```java
+    public class MathGame {
+        public static void main(String[] args) throws InterruptedException {
+            MathGame game = new MathGame();
+            while (true) {
+                game.run();
+                TimeUnit.SECONDS.sleep(1);
+                // This doesn't work because the code keeps running in while
+                System.out.println("in loop");
+            }
+        }
+
+        public void run() throws InterruptedException {
+            // This works because the run() function ends completely every time
+            System.out.println("call run()");
+            try {
+                int number = random.nextInt();
+                List<Integer> primeFactors = primeFactors(number);
+                print(number, primeFactors);
+
+            } catch (Exception e) {
+                System.out.println(String.format("illegalArgumentCount:%3d, ", illegalArgumentCount) + e.getMessage());
+            }
+        }
 ```
