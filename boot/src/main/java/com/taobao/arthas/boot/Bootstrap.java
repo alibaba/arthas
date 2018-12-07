@@ -12,6 +12,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.logging.Level;
+import java.util.InputMismatchException;
 
 import javax.xml.parsers.ParserConfigurationException;
 
@@ -250,7 +251,12 @@ public class Bootstrap {
         int pid = bootStrap.getPid();
         // select pid
         if (pid < 0) {
-            pid = ProcessUtils.select(bootStrap.isVerbose());
+            try {
+                pid = ProcessUtils.select(bootStrap.isVerbose());
+            } catch (InputMismatchException e) {
+                System.out.println("Please input an integer to select pid.");
+                System.exit(1);
+            }
             if (pid < 0) {
                 System.out.println("Please select an avaliable pid.");
                 System.exit(1);

@@ -12,6 +12,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
+import java.util.InputMismatchException;
 
 import com.taobao.arthas.common.AnsiLog;
 import com.taobao.arthas.common.ExecutingCommand;
@@ -45,7 +46,8 @@ public class ProcessUtils {
         return PID;
     }
 
-    public static int select(boolean v) {
+    @SuppressWarnings("resource")
+    public static int select(boolean v) throws InputMismatchException {
         Map<Integer, String> processMap = listProcessByJps(v);
 
         if (processMap.isEmpty()) {
