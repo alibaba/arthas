@@ -228,7 +228,7 @@ public class Bootstrap {
         if (JavaVersionUtils.isJava6() || JavaVersionUtils.isJava7()) {
             bootStrap.setuseHttp(true);
             AnsiLog.debug("Java version is {}, only support http, set useHttp to true.",
-                            System.getProperty("java.specification.version"));
+                            JavaVersionUtils.javaVersionStr());
         }
 
         // check telnet/http port
