@@ -213,20 +213,36 @@ public class ProcessUtils {
     }
 
     private static File findJava() {
+        String javaHomeEnv = System.getenv("JAVA_HOME");
         String javaHome = System.getProperty("java.home");
         String[] paths = { "bin/java", "bin/java.exe", "../bin/java", "../bin/java.exe" };
 
         List<File> javaList = new ArrayList<File>();
-        for (String path : paths) {
-            File javaFile = new File(javaHome, path);
-            if (javaFile.exists()) {
-                AnsiLog.debug("Found java: " + javaFile.getAbsolutePath());
-                javaList.add(javaFile);
+        if (null != javaHomeEnv) {
+            AnsiLog.debug("Try to find java under env JAVA_HOME:" + javaHomeEnv);
+            for (String path : paths) {
+                File javaFile = new File(javaHomeEnv, path);
+                if (javaFile.exists()) {
+                    AnsiLog.debug("Found java: " + javaFile.getAbsolutePath());
+                    javaList.add(javaFile);
+                }
             }
         }
 
         if (javaList.isEmpty()) {
-            AnsiLog.debug("Can not find java under current java home: " + javaHome);
+            AnsiLog.debug("Can not find java under env JAVA_HOME :" + javaHomeEnv);
+            AnsiLog.debug("Try to find java under java.home:" + javaHome);
+            for (String path : paths) {
+                File javaFile = new File(javaHome, path);
+                if (javaFile.exists()) {
+                    AnsiLog.debug("Found java: " + javaFile.getAbsolutePath());
+                    javaList.add(javaFile);
+                }
+            }
+        }
+
+        if (javaList.isEmpty()) {
+            AnsiLog.debug("Can not find java under java.home: " + javaHome);
             return null;
         }
 
@@ -248,22 +264,13 @@ public class ProcessUtils {
     }
 
     private static File findJps() {
+        String javaHomeEnv = System.getenv("JAVA_HOME");
         String javaHome = System.getProperty("java.home");
         String[] paths = { "bin/jps", "bin/jps.exe", "../bin/jps", "../bin/jps.exe" };
 
         List<File> jpsList = new ArrayList<File>();
-        for (String path : paths) {
-            File jpsFile = new File(javaHome, path);
-            if (jpsFile.exists()) {
-                AnsiLog.debug("Found jps: " + jpsFile.getAbsolutePath());
-                jpsList.add(jpsFile);
-            }
-        }
-
-        if (jpsList.isEmpty()) {
-            AnsiLog.debug("Can not find jps under :" + javaHome);
-            String javaHomeEnv = System.getenv("JAVA_HOME");
-            AnsiLog.debug("Try to find jps under env JAVA_HOME :" + javaHomeEnv);
+        if (null != javaHomeEnv) {
+            AnsiLog.debug("Try to find jps under env JAVA_HOME:" + javaHomeEnv);
             for (String path : paths) {
                 File jpsFile = new File(javaHomeEnv, path);
                 if (jpsFile.exists()) {
@@ -274,7 +281,19 @@ public class ProcessUtils {
         }
 
         if (jpsList.isEmpty()) {
-            AnsiLog.debug("Can not find jps under current java home: " + javaHome);
+            AnsiLog.debug("Can not find jps under env JAVA_HOME:" + javaHomeEnv);
+            AnsiLog.debug("Try to find jps under java.home:" + javaHome);
+            for (String path : paths) {
+                File jpsFile = new File(javaHome, path);
+                if (jpsFile.exists()) {
+                    AnsiLog.debug("Found jps: " + jpsFile.getAbsolutePath());
+                    jpsList.add(jpsFile);
+                }
+            }
+        }
+
+        if (jpsList.isEmpty()) {
+            AnsiLog.debug("Can not find jps under java.home: " + javaHome);
             return null;
         }
 
