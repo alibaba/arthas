@@ -109,6 +109,7 @@
 <li class="toctree-l2 current"><a class="current reference internal" href="#">redefine</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#options">Options</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#usage">Usage</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#restrictions-of-the-redefine-command">Restrictions of the redefine command</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="monitor.html">monitor</a></li>
@@ -224,6 +225,42 @@
 <span id="usage"></span><h2>Usage<a class="headerlink" href="#usage" title="Permalink to this headline">¶</a></h2>
 <div class="highlight-default notranslate"><pre class="literal-block">redefine -p /tmp/Test.class
 redefine -c 327a647b -p /tmp/Test.class /tmp/Test$Inner.class</pre>
+</div>
+</div>
+<div class="section" id="restrictions-of-the-redefine-command">
+<span id="restrictions-of-the-redefine-command"></span><h2>Restrictions of the redefine command<a class="headerlink" href="#restrictions-of-the-redefine-command" title="Permalink to this headline">¶</a></h2>
+<ul>
+<li><p class="first">New field/method is not allowed</p>
+</li>
+<li><p class="first">The function that is running, no exit can not take effect, such as the new <tt class="docutils literal">System.out.println</tt> added below, only the <tt class="docutils literal">run()</tt> function will take effect.</p>
+<div class="highlight-java notranslate"><div class="highlight hljs"><pre class="java">public class MathGame {
+    public static void main(String[] args) throws InterruptedException {
+        MathGame game = new MathGame();
+        while (true) {
+            game.run();
+            TimeUnit.SECONDS.sleep(1);
+            // This doesn&#x27;t work because the code keeps running in while
+            System.out.println(&quot;in loop&quot;);
+        }
+    }
+
+    public void run() throws InterruptedException {
+        // This works because the run() function ends completely every time
+        System.out.println(&quot;call run()&quot;);
+        try {
+            int number = random.nextInt();
+            List&lt;Integer&gt; primeFactors = primeFactors(number);
+            print(number, primeFactors);
+
+        } catch (Exception e) {
+            System.out.println(String.format(&quot;illegalArgumentCount:%3d, &quot;, illegalArgumentCount) + e.getMessage());
+        }
+    }
+</pre></div>
+</div>
+</li>
+</ul>
+<div class="highlight-default notranslate"><pre class="literal-block"></pre>
 </div>
 </div>
 </div>

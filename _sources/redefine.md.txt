@@ -22,3 +22,34 @@ redefine
    redefine -p /tmp/Test.class
    redefine -c 327a647b -p /tmp/Test.class /tmp/Test\$Inner.class
 ```
+
+### redefine的限制
+
+* 不允许新增加field/method
+* 正在跑的函数，没有退出不能生效，比如下面新增加的`System.out.println`，只有`run()`函数里的会生效
+
+    ```java
+    public class MathGame {
+        public static void main(String[] args) throws InterruptedException {
+            MathGame game = new MathGame();
+            while (true) {
+                game.run();
+                TimeUnit.SECONDS.sleep(1);
+                // 这个不生效，因为代码一直跑在 while里
+                System.out.println("in loop");
+            }
+        }
+
+        public void run() throws InterruptedException {
+            // 这个生效，因为run()函数每次都可以完整结束
+            System.out.println("call run()");
+            try {
+                int number = random.nextInt();
+                List<Integer> primeFactors = primeFactors(number);
+                print(number, primeFactors);
+
+            } catch (Exception e) {
+                System.out.println(String.format("illegalArgumentCount:%3d, ", illegalArgumentCount) + e.getMessage());
+            }
+        }
+```

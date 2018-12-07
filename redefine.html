@@ -110,6 +110,7 @@
 <li class="toctree-l2 current"><a class="current reference internal" href="#">redefine</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#">参数说明</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#">使用参考</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#redefine">redefine的限制</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="monitor.html">monitor</a></li>
@@ -226,6 +227,42 @@
 <span id="id2"></span><h2>使用参考<a class="headerlink" href="#" title="永久链接至标题">¶</a></h2>
 <div class="highlight-default notranslate"><pre class="literal-block">   redefine -p /tmp/Test.class
    redefine -c 327a647b -p /tmp/Test.class /tmp/Test\$Inner.class</pre>
+</div>
+</div>
+<div class="section" id="redefine">
+<span id="id3"></span><h2>redefine的限制<a class="headerlink" href="#redefine" title="永久链接至标题">¶</a></h2>
+<ul>
+<li><p class="first">不允许新增加field/method</p>
+</li>
+<li><p class="first">正在跑的函数，没有退出不能生效，比如下面新增加的<tt class="docutils literal">System.out.println</tt>，只有<tt class="docutils literal">run()</tt>函数里的会生效</p>
+<div class="highlight-java notranslate"><div class="highlight hljs"><pre class="java">public class MathGame {
+    public static void main(String[] args) throws InterruptedException {
+        MathGame game = new MathGame();
+        while (true) {
+            game.run();
+            TimeUnit.SECONDS.sleep(1);
+            // 这个不生效，因为代码一直跑在 while里
+            System.out.println(&quot;in loop&quot;);
+        }
+    }
+
+    public void run() throws InterruptedException {
+        // 这个生效，因为run()函数每次都可以完整结束
+        System.out.println(&quot;call run()&quot;);
+        try {
+            int number = random.nextInt();
+            List&lt;Integer&gt; primeFactors = primeFactors(number);
+            print(number, primeFactors);
+
+        } catch (Exception e) {
+            System.out.println(String.format(&quot;illegalArgumentCount:%3d, &quot;, illegalArgumentCount) + e.getMessage());
+        }
+    }
+</pre></div>
+</div>
+</li>
+</ul>
+<div class="highlight-default notranslate"><pre class="literal-block"></pre>
 </div>
 </div>
 </div>
