@@ -6,11 +6,12 @@ package com.taobao.arthas.common;
  *
  */
 public class JavaVersionUtils {
-    public static void main(String[] args) {
-        System.err.println(JavaVersionUtils.isJava8());
-    }
+    private static final String javaVersionStr = System.getProperty("java.specification.version");
+    private static final float javaVersion = Float.parseFloat(javaVersionStr);
 
-    private static final float javaVersion = Float.parseFloat(System.getProperty("java.specification.version"));
+    public static String javaVersionStr() {
+        return javaVersionStr;
+    }
 
     public static float javaVersion() {
         return javaVersion;
