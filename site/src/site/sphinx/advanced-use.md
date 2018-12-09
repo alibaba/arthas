@@ -21,7 +21,7 @@
 * [thread](thread.md)——查看当前 JVM 的线程堆栈信息
 * [jvm](jvm.md)——查看当前 JVM 的信息
 * [sysprop](sysprop.md)——查看和修改JVM的系统属性
-* [sysenv](syspenv.md)——查看JVM的环境变量
+* [sysenv](sysenv.md)——查看JVM的环境变量
 * [getstatic](getstatic.md)——查看类的静态属性
 * **New!** [ognl](ognl.md)——执行ognl表达式
 
