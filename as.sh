@@ -8,10 +8,10 @@
 
 # program : Arthas
 #  author : Core Engine @ Taobao.com
-#    date : 2018-11-28
+#    date : 2018-12-13
 
 # current arthas script version
-ARTHAS_SCRIPT_VERSION=3.0.5
+ARTHAS_SCRIPT_VERSION=3.0.5.1
 
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
@@ -720,14 +720,14 @@ active_console()
         "${JAVA_HOME}/bin/java" ${ARTHAS_OPTS} ${JVM_OPTS} \
              -jar "${arthas_lib_dir}/arthas-client.jar" \
              ${TARGET_IP} \
-             -p ${TELNET_PORT} \
+             ${TELNET_PORT} \
              -c ${COMMAND}
         fi
         if [ "${BATCH_FILE}" ] ; then
         "${JAVA_HOME}/bin/java" ${ARTHAS_OPTS} ${JVM_OPTS} \
              -jar "${arthas_lib_dir}/arthas-client.jar" \
              ${TARGET_IP} \
-             -p ${TELNET_PORT} \
+             ${TELNET_PORT} \
              -f ${BATCH_FILE}
         fi
     elif type telnet 2>&1 >> /dev/null; then
