@@ -720,14 +720,14 @@ active_console()
         "${JAVA_HOME}/bin/java" ${ARTHAS_OPTS} ${JVM_OPTS} \
              -jar "${arthas_lib_dir}/arthas-client.jar" \
              ${TARGET_IP} \
-             -p ${TELNET_PORT} \
+             ${TELNET_PORT} \
              -c ${COMMAND}
         fi
         if [ "${BATCH_FILE}" ] ; then
         "${JAVA_HOME}/bin/java" ${ARTHAS_OPTS} ${JVM_OPTS} \
              -jar "${arthas_lib_dir}/arthas-client.jar" \
              ${TARGET_IP} \
-             -p ${TELNET_PORT} \
+             ${TELNET_PORT} \
              -f ${BATCH_FILE}
         fi
     elif type telnet 2>&1 >> /dev/null; then
