@@ -18,7 +18,7 @@ redefine
 
 ### 使用参考
 
-```
+```bash
    redefine -p /tmp/Test.class
    redefine -c 327a647b -p /tmp/Test.class /tmp/Test\$Inner.class
 ```

@@ -17,7 +17,7 @@ Reference: [Instrumentation#redefineClasses](https://docs.oracle.com/javase/8/do
 
 ### Usage
 
-```
+```bash
 redefine -p /tmp/Test.class
 redefine -c 327a647b -p /tmp/Test.class /tmp/Test$Inner.class
 ```
