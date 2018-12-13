@@ -104,9 +104,9 @@ public class ProcessUtils {
 
         String[] command = null;
         if (v) {
-            command = new String[] { jps, "-v" };
+            command = new String[] { jps, "-v", "-l" };
         } else {
-            command = new String[] { jps };
+            command = new String[] { jps, "-l" };
         }
 
         List<String> lines = ExecutingCommand.runNative(command);
@@ -121,7 +121,7 @@ public class ProcessUtils {
             if (pid == currentPid) {
                 continue;
             }
-            if (strings.length >= 2 && strings[1].equals("Jps")) { // skip jps
+            if (strings.length >= 2 && strings[1].equals("sun.tools.jps.Jps")) { // skip jps
                 continue;
             }
 
