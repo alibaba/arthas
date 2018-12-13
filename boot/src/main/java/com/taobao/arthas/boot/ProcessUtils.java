@@ -51,10 +51,11 @@ public class ProcessUtils {
         Map<Integer, String> processMap = listProcessByJps(v);
 
         if (processMap.isEmpty()) {
-            AnsiLog.info("Can not find java process. Try to pass pid in command line.");
+            AnsiLog.info("Can not find java process. Try to pass <pid> in command line.");
             return -1;
         }
 
+        AnsiLog.info("Found existing java process, please choose one and hit RETURN.");
         // print list
         int count = 1;
         for (String process : processMap.values()) {
