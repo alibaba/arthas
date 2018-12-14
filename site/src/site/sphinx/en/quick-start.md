@@ -4,8 +4,8 @@ Quick Start
 ## 1. Start Demo Application
 
 ```bash
-$ wget https://alibaba.github.io/arthas/arthas-demo.jar
-$ java -jar arthas-demo.jar
+wget https://alibaba.github.io/arthas/arthas-demo.jar
+java -jar arthas-demo.jar
 ```
 
 `arthas-demo` is a simple program that generates a random number every second, then find all prime factors of the number.
@@ -19,8 +19,8 @@ The source code of `arthas-demo`: [View](https://github.com/alibaba/arthas/blob/
 Execute the following command in the command line:
 
 ```bash
-$ wget https://alibaba.github.io/arthas/arthas-boot.jar
-$ java -jar arthas-boot.jar
+wget https://alibaba.github.io/arthas/arthas-boot.jar
+java -jar arthas-boot.jar
 ```
 
 * The user to run this command *MUST* have the same privilege as the owner of the target process, as a simple example you can try the following command if the target process is managed by user `admin`: `sudo su admin && java -jar arthas-boot.jar` or `sudo -u admin -EH java -jar arthas-boot.jar`
