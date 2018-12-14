@@ -183,19 +183,19 @@
 <div class="section" id="use-arthas-boot-recommend">
 <span id="use-arthas-boot-recommend"></span><h3>Use <tt class="docutils literal">arthas-boot</tt>(Recommend)<a class="headerlink" href="#use-arthas-boot-recommend" title="Permalink to this headline">¶</a></h3>
 <p>Download<tt class="docutils literal">arthas-boot.jar</tt>，Start with <tt class="docutils literal">java</tt> command:</p>
-<div class="highlight-bash notranslate"><div class="highlight hljs"><pre class="bash">$ wget https://alibaba.github.io/arthas/arthas-boot.jar
-$ java -jar arthas-boot.jar
+<div class="highlight-bash notranslate"><div class="highlight hljs"><pre class="bash">wget https://alibaba.github.io/arthas/arthas-boot.jar
+java -jar arthas-boot.jar
 </pre></div>
 </div>
 <p>Print usage:</p>
-<div class="highlight-bash notranslate"><div class="highlight hljs"><pre class="bash">$ java -jar arthas-boot.jar -h
+<div class="highlight-bash notranslate"><div class="highlight hljs"><pre class="bash">java -jar arthas-boot.jar -h
 </pre></div>
 </div>
 </div>
 <div class="section" id="use-as-sh">
 <span id="use-as-sh"></span><h3>Use <tt class="docutils literal">as.sh</tt><a class="headerlink" href="#use-as-sh" title="Permalink to this headline">¶</a></h3>
 <p>You can install Arthas with one single line command on Linux, Unix, and Mac. Pls. copy the following command and paste it into the command line, then press <em>Enter</em> to run:</p>
-<div class="highlight-bash notranslate"><div class="highlight hljs"><pre class="bash">$ curl -L https://alibaba.github.io/arthas/install.sh | sh
+<div class="highlight-bash notranslate"><div class="highlight hljs"><pre class="bash">curl -L https://alibaba.github.io/arthas/install.sh | sh
 </pre></div>
 </div>
 <p>The command above will download the bootstrap script <tt class="docutils literal">as.sh</tt> to the current directory. You can move it the any other place you want, or put its location in <tt class="docutils literal">$PATH</tt>.</p>
@@ -206,11 +206,11 @@ $ java -jar arthas-boot.jar
 <span id="full-installation"></span><h2>Full installation<a class="headerlink" href="#full-installation" title="Permalink to this headline">¶</a></h2>
 <p>Latest Version, Click To Download: <a class="reference external" href="http://repository.sonatype.org/service/local/artifact/maven/redirect?r=central-proxy&amp;g=com.taobao.arthas&amp;a=arthas-packaging&amp;e=zip&amp;c=bin&amp;v=LATEST"><img alt="Arthas" src="https://img.shields.io/maven-central/v/com.taobao.arthas/arthas-packaging.svg?style=flat-square" /></a></p>
 <p>Download and unzip, find <tt class="docutils literal">arthas-boot.jar</tt> in the directory. Start with <tt class="docutils literal">java</tt> command:</p>
-<div class="highlight-bash notranslate"><div class="highlight hljs"><pre class="bash">$ java -jar arthas-boot.jar
+<div class="highlight-bash notranslate"><div class="highlight hljs"><pre class="bash">java -jar arthas-boot.jar
 </pre></div>
 </div>
 <p>Print usage:</p>
-<div class="highlight-bash notranslate"><div class="highlight hljs"><pre class="bash">$ java -jar arthas-boot.jar -h
+<div class="highlight-bash notranslate"><div class="highlight hljs"><pre class="bash">java -jar arthas-boot.jar -h
 </pre></div>
 </div>
 </div>
@@ -226,11 +226,12 @@ $ java -jar arthas-boot.jar
 <span id="uninstall"></span><h2>Uninstall<a class="headerlink" href="#uninstall" title="Permalink to this headline">¶</a></h2>
 <ul>
 <li><p class="first">On Linux/Unix/Mac, delete the files with the following command:</p>
-<div class="highlight-bash notranslate"><div class="highlight hljs"><pre class="bash">$ rm -rf ~/.arthas/
+<div class="highlight-bash notranslate"><div class="highlight hljs"><pre class="bash">rm -rf ~/.arthas/
+rm -rf ~/logs/arthas/
 </pre></div>
 </div>
 </li>
-<li><p class="first">On Windows, delete <tt class="docutils literal">.arthas</tt> directory under user home.</p>
+<li><p class="first">On Windows, delete <tt class="docutils literal">.arthas</tt> and <tt class="docutils literal">logs/arthas</tt> directory under user home.</p>
 </li>
 </ul>
 </div>

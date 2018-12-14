@@ -185,20 +185,22 @@
 <div class="section" id="arthas-boot">
 <span id="arthas-boot"></span><h3>使用<tt class="docutils literal">arthas-boot</tt>（推荐）<a class="headerlink" href="#arthas-boot" title="永久链接至标题">¶</a></h3>
 <p>下载<tt class="docutils literal">arthas-boot.jar</tt>，然后用<tt class="docutils literal">java -jar</tt>的方式启动：</p>
-<div class="highlight-bash notranslate"><div class="highlight hljs"><pre class="bash">$ wget https://alibaba.github.io/arthas/arthas-boot.jar
-$ java -jar arthas-boot.jar
+<div class="highlight-bash notranslate"><div class="highlight hljs"><pre class="bash">wget https://alibaba.github.io/arthas/arthas-boot.jar
+java -jar arthas-boot.jar
 </pre></div>
 </div>
 <p>打印帮助信息：</p>
-<div class="highlight-bash notranslate"><div class="highlight hljs"><pre class="bash">$ java -jar arthas-boot.jar -h
+<div class="highlight-bash notranslate"><div class="highlight hljs"><pre class="bash">java -jar arthas-boot.jar -h
 </pre></div>
 </div>
 <ul>
 <li><p class="first">如果下载速度比较慢，可以使用aliyun的镜像：</p>
-<p><tt class="docutils literal">java -jar arthas-boot.jar --repo-mirror aliyun --use-http</tt></p>
+<div class="highlight-bash notranslate"><div class="highlight hljs"><pre class="bash">java -jar arthas-boot.jar --repo-mirror aliyun --use-http
+</pre></div>
+</div>
 </li>
 <li><p class="first">如果从github下载有问题，可以使用gitee镜像</p>
-<div class="highlight-bash notranslate"><div class="highlight hljs"><pre class="bash">$ wget https://arthas.gitee.io/arthas-boot.jar
+<div class="highlight-bash notranslate"><div class="highlight hljs"><pre class="bash">wget https://arthas.gitee.io/arthas-boot.jar
 </pre></div>
 </div>
 </li>
@@ -207,7 +209,7 @@ $ java -jar arthas-boot.jar
 <div class="section" id="as-sh">
 <span id="as-sh"></span><h3>使用<tt class="docutils literal">as.sh</tt><a class="headerlink" href="#as-sh" title="永久链接至标题">¶</a></h3>
 <p>Arthas 支持在 Linux/Unix/Mac 等平台上一键安装，请复制以下内容，并粘贴到命令行中，敲 <tt class="docutils literal">回车</tt> 执行即可：</p>
-<div class="highlight-bash notranslate"><div class="highlight hljs"><pre class="bash">$ curl -L https://alibaba.github.io/arthas/install.sh | sh
+<div class="highlight-bash notranslate"><div class="highlight hljs"><pre class="bash">curl -L https://alibaba.github.io/arthas/install.sh | sh
 </pre></div>
 </div>
 <p>上述命令会下载启动脚本文件 <tt class="docutils literal">as.sh</tt> 到当前目录，你可以放在任何地方或将其加入到 <tt class="docutils literal">$PATH</tt> 中。</p>
@@ -215,7 +217,7 @@ $ java -jar arthas-boot.jar
 <p>也可以执行<tt class="docutils literal">./as.sh -h</tt>来获取更多参数信息。</p>
 <ul>
 <li><p class="first">如果从github下载有问题，可以使用gitee镜像</p>
-<div class="highlight-bash notranslate"><div class="highlight hljs"><pre class="bash">$ curl -L https://arthas.gitee.io/install.sh | sh
+<div class="highlight-bash notranslate"><div class="highlight hljs"><pre class="bash">curl -L https://arthas.gitee.io/install.sh | sh
 </pre></div>
 </div>
 </li>
@@ -226,11 +228,11 @@ $ java -jar arthas-boot.jar
 <span id="id2"></span><h2>全量安装<a class="headerlink" href="#" title="永久链接至标题">¶</a></h2>
 <p>最新版本，点击下载：<a class="reference external" href="http://repository.sonatype.org/service/local/artifact/maven/redirect?r=central-proxy&amp;g=com.taobao.arthas&amp;a=arthas-packaging&amp;e=zip&amp;c=bin&amp;v=LATEST"><img alt="Arthas" src="https://img.shields.io/maven-central/v/com.taobao.arthas/arthas-packaging.svg?style=flat-square" /></a></p>
 <p>解压后，在文件夹里有<tt class="docutils literal">arthas-boot.jar</tt>，直接用<tt class="docutils literal">java -jar</tt>的方式启动：</p>
-<div class="highlight-bash notranslate"><div class="highlight hljs"><pre class="bash">$ java -jar arthas-boot.jar
+<div class="highlight-bash notranslate"><div class="highlight hljs"><pre class="bash">java -jar arthas-boot.jar
 </pre></div>
 </div>
 <p>打印帮助信息：</p>
-<div class="highlight-bash notranslate"><div class="highlight hljs"><pre class="bash">$ java -jar arthas-boot.jar -h
+<div class="highlight-bash notranslate"><div class="highlight hljs"><pre class="bash">java -jar arthas-boot.jar -h
 </pre></div>
 </div>
 </div>
@@ -247,11 +249,12 @@ $ java -jar arthas-boot.jar
 <ul>
 <li><p class="first">在 Linux/Unix/Mac 平台</p>
 <p>删除下面文件：</p>
-<div class="highlight-bash notranslate"><div class="highlight hljs"><pre class="bash">$ rm -rf ~/.arthas/
+<div class="highlight-bash notranslate"><div class="highlight hljs"><pre class="bash">rm -rf ~/.arthas/
+rm -rf ~/logs/arthas
 </pre></div>
 </div>
 </li>
-<li><p class="first">Windows平台直接删除user home下面的<tt class="docutils literal">.arthas</tt>目录</p>
+<li><p class="first">Windows平台直接删除user home下面的<tt class="docutils literal">.arthas</tt>和<tt class="docutils literal">logs/arthas</tt>目录</p>
 </li>
 </ul>
 </div>
