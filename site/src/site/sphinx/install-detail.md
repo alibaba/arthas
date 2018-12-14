@@ -22,6 +22,13 @@ $ java -jar arthas-boot.jar -h
 
     `java -jar arthas-boot.jar --repo-mirror aliyun --use-http`
 
+* 如果从github下载有问题，可以使用gitee镜像
+
+    ```bash
+    $ wget https://arthas.gitee.io/arthas-boot.jar
+    ```
+
+
 ### 使用`as.sh`
 
 Arthas 支持在 Linux/Unix/Mac 等平台上一键安装，请复制以下内容，并粘贴到命令行中，敲 `回车` 执行即可：
@@ -35,6 +42,12 @@ $ curl -L https://alibaba.github.io/arthas/install.sh | sh
 直接在shell下面执行`./as.sh`，就会进入交互界面。
 
 也可以执行`./as.sh -h`来获取更多参数信息。
+
+* 如果从github下载有问题，可以使用gitee镜像
+
+    ```bash
+    $ curl -L https://arthas.gitee.io/install.sh | sh
+    ```
 
 ## 全量安装
 
