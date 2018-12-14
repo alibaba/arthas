@@ -74,6 +74,8 @@ curl -L https://alibaba.github.io/arthas/install.sh | sh
 * [Release Notes](https://alibaba.github.io/arthas/release-notes.html)
 * [QQ群/钉钉群](https://alibaba.github.io/arthas/contact-us.html)
 
+Gitee文档镜像： https://arthas.gitee.io/
+
 ### 案例展示
 
 #### Dashboard
