@@ -197,6 +197,11 @@ $ java -jar arthas-boot.jar
 <li><p class="first">如果下载速度比较慢，可以使用aliyun的镜像：</p>
 <p><tt class="docutils literal">java -jar arthas-boot.jar --repo-mirror aliyun --use-http</tt></p>
 </li>
+<li><p class="first">如果从github下载有问题，可以使用gitee镜像</p>
+<div class="highlight-bash notranslate"><div class="highlight hljs"><pre class="bash">$ wget https://arthas.gitee.io/arthas-boot.jar
+</pre></div>
+</div>
+</li>
 </ul>
 </div>
 <div class="section" id="as-sh">
@@ -208,6 +213,13 @@ $ java -jar arthas-boot.jar
 <p>上述命令会下载启动脚本文件 <tt class="docutils literal">as.sh</tt> 到当前目录，你可以放在任何地方或将其加入到 <tt class="docutils literal">$PATH</tt> 中。</p>
 <p>直接在shell下面执行<tt class="docutils literal">./as.sh</tt>，就会进入交互界面。</p>
 <p>也可以执行<tt class="docutils literal">./as.sh -h</tt>来获取更多参数信息。</p>
+<ul>
+<li><p class="first">如果从github下载有问题，可以使用gitee镜像</p>
+<div class="highlight-bash notranslate"><div class="highlight hljs"><pre class="bash">$ curl -L https://arthas.gitee.io/install.sh | sh
+</pre></div>
+</div>
+</li>
+</ul>
 </div>
 </div>
 <div class="section" id="">
