@@ -323,6 +323,7 @@ $ classloader
 ![Aliyun](static/aliyun.png)
 ![Taobao](static/taobao.png)
 ![Tmall](static/tmall.png)
+![微医](static/weiyi.png)
 
 
 ### Credit

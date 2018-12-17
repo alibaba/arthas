@@ -326,6 +326,7 @@ Welcome to register the company name in this issue: https://github.com/alibaba/a
 ![Aliyun](static/aliyun.png)
 ![Taobao](static/taobao.png)
 ![Tmall](static/tmall.png)
+![微医](static/weiyi.png)
 
 ### Credit
 
