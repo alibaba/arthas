@@ -317,6 +317,16 @@ $ classloader
 ![web console](site/src/site/sphinx/_static/web-console-local.png)
 
 
+### Known Users
+
+Welcome to register the company name in this issue: https://github.com/alibaba/arthas/issues/111 (in order of registration)
+
+![Alibaba](static/alibaba.png)
+![Alipay](static/alipay.png)
+![Aliyun](static/aliyun.png)
+![Taobao](static/taobao.png)
+![Tmall](static/tmall.png)
+
 ### Credit
 
 * [greys-anatomy](https://github.com/oldmanpushcart/greys-anatomy): The Arthas code base has derived from Greys, we thank for the excellent work done by Greys.
