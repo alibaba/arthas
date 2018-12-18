@@ -324,7 +324,7 @@ $ classloader
 ![Taobao](static/taobao.png)
 ![Tmall](static/tmall.png)
 ![微医](static/weiyi.png)
-
+![卓越教育](static/zhuoyuejiaoyu.png)
 
 ### Credit
 
