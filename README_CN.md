@@ -316,7 +316,7 @@ $ classloader
 
 ### Known Users
 
-欢迎到Issue下面登记：https://github.com/alibaba/arthas/issues/111 （按登记顺序排列）
+如果您在使用Arthas，请让我们知道，您的使用对我们非常重要：https://github.com/alibaba/arthas/issues/111 （按登记顺序排列）
 
 ![Alibaba](static/alibaba.png)
 ![Alipay](static/alipay.png)
