@@ -31,6 +31,9 @@ Arthas is built to solve these issues. A developer can troubleshoot production i
 * Supports telnet and WebSocket, which enables both local and remote diagnostics with command line and browsers.
 * Supports JDK 6+
 
+
+**If you are using Arthas, please let us know that your use is very important to us: [https://github.com/alibaba/arthas/issues/111] (https://github.com/alibaba/arthas /issues/111)**
+
 Contents
 --------
 
