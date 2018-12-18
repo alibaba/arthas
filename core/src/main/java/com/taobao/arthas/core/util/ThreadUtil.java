@@ -5,7 +5,6 @@ import com.taobao.arthas.core.view.Ansi;
 import java.lang.management.*;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
-import java.text.SimpleDateFormat;
 import java.util.*;
 
 /**

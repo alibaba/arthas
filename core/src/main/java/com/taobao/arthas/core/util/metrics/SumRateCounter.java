@@ -1,8 +1,5 @@
 package com.taobao.arthas.core.util.metrics;
 
-import java.util.concurrent.atomic.AtomicLong;
-import java.util.concurrent.atomic.AtomicLongArray;
-
 /**
  * <pre>
  * 统计传入的数据是总数的速率。
