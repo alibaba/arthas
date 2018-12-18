@@ -38,7 +38,7 @@ You can see that there is currently a background job executing:
 
 ## 3. Suspend and cancel job
 
-When the job is executing in the foreground, for example, directly executing the command `trace Test t`, or executing the background job command `trace Test t &`, then putting the job back to the forground via `fg` command, the console cannot continue to execute other command, but can receive and process the following keyboard events:
+When the job is executing in the foreground, for example, directly executing the command `trace Test t`, or executing the background job command `trace Test t &`, then putting the job back to the foreground via `fg` command, the console cannot continue to execute other command, but can receive and process the following keyboard events:
 
 * ‘ctrl + z’: Suspend the job, the job status will change to `Stopped`, and the job can be restarted by `bg <job-id>` or `fg <job-id>`
 * ‘ctrl + c’: Stop the job
