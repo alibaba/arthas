@@ -153,7 +153,7 @@ F.Y.I
 
 1. **Loss** of the `ThreadLocal`
 
-    Arthas save params into an array, then invoke the method with the params again. The method execute in another thead, so the `ThreadLocal` **lost**.
+    Arthas save params into an array, then invoke the method with the params again. The method execute in another thread, so the `ThreadLocal` **lost**.
 
 1. params may be modified
 
