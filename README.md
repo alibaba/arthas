@@ -328,6 +328,7 @@ Welcome to register the company name in this issue: https://github.com/alibaba/a
 ![Tmall](static/tmall.png)
 ![微医](static/weiyi.png)
 ![卓越教育](static/zhuoyuejiaoyu.png)
+![狐狸金服](static/hulijingfu.png)
 
 ### Credit
 
