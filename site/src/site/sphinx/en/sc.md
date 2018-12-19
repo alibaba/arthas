@@ -57,7 +57,7 @@ sc
   Affect(row-cnt:1) cost in 875 ms.
   ```
 
-* View class fileds
+* View class fields
 
   ```bash
   $ sc -d -f demo.MathGame

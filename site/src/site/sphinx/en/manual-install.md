@@ -91,7 +91,7 @@ If you fail to boot Arthas with the provided batch file, you could try to assemb
     * `-telnet-port 3658 -http-port 8563` specifies telnet and HTTP ports for remote access
     * `-core /tmp/arthas-packaging/arthas-core.jar -agent /tmp/arthas-packaging/arthas/arthas-agent.jar` specifies core/agent jar package
 
-    If you are running on JDK 1.9 or above，then it's unncessary to add `tools.jar` in option `-Xbootclasspath`.
+    If you are running on JDK 1.9 or above，then it's unnecessary to add `tools.jar` in option `-Xbootclasspath`.
     
     You can find the logs from `~/logs/arthas/arthas.log`.
 
