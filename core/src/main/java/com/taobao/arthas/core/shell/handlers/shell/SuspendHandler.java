@@ -3,12 +3,8 @@ package com.taobao.arthas.core.shell.handlers.shell;
 import com.taobao.arthas.core.shell.impl.ShellImpl;
 import com.taobao.arthas.core.shell.system.ExecStatus;
 import com.taobao.arthas.core.shell.system.Job;
-import com.taobao.arthas.core.shell.system.JobController;
 import com.taobao.arthas.core.shell.term.SignalHandler;
 import com.taobao.arthas.core.shell.term.Term;
-import io.termd.core.util.Helper;
-
-import java.util.Set;
 
 /**
  * @author beiwei30 on 23/11/2016.
