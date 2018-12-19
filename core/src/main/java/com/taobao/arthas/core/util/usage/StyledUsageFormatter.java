@@ -7,7 +7,6 @@ import com.taobao.middleware.cli.UsageMessageFormatter;
 import com.taobao.text.Color;
 import com.taobao.text.Decoration;
 import com.taobao.text.Style;
-import com.taobao.text.ui.RowElement;
 import com.taobao.text.ui.TableElement;
 import com.taobao.text.util.RenderUtil;
 
