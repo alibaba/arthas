@@ -104,6 +104,7 @@
 </li>
 <li class="toctree-l1"><a class="reference internal" href="advanced-use.html">进阶使用</a></li>
 <li class="toctree-l1"><a class="reference internal" href="commands.html">命令列表</a></li>
+<li class="toctree-l1"><a class="reference internal" href="docker.html">Docker</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas/issues?q=label%3Auser-case">用户案例</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas/issues?q=label%3Aquestion-answered">常见问题</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas">Fork me at GitHub</a></li>
@@ -196,7 +197,7 @@ java -jar arthas-boot.jar
 </div>
 <ul class="simple">
 <li>执行该程序的用户需要和目标进程具有相同的权限。比如以<tt class="docutils literal">admin</tt>用户来执行：<tt class="docutils literal">sudo su admin && java -jar arthas-boot.jar</tt> 或 <tt class="docutils literal">sudo -u admin -EH java -jar arthas-boot.jar</tt>。</li>
-<li>如果attatch不上目标进程，可以查看<tt class="docutils literal">~/logs/arthas/</tt> 目录下的日志。</li>
+<li>如果attach不上目标进程，可以查看<tt class="docutils literal">~/logs/arthas/</tt> 目录下的日志。</li>
 <li>如果下载速度比较慢，可以使用aliyun的镜像：<tt class="docutils literal">java -jar arthas-boot.jar --repo-mirror aliyun --use-http</tt></li>
 <li><tt class="docutils literal">java -jar arthas-boot.jar -h</tt> 打印更多参数信息。</li>
 </ul>

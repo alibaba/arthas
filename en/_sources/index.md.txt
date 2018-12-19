@@ -1,7 +1,7 @@
 Arthas Documentation
 ===
 
-**[中文文档](https://alibaba.github.io/arthas/)**
+**[中文文档/Chinese Documentation](https://alibaba.github.io/arthas/)**
 
 ![arthas](arthas.png)
 
@@ -31,6 +31,9 @@ Arthas is built to solve these issues. A developer can troubleshoot production i
 * Supports telnet and WebSocket, which enables both local and remote diagnostics with command line and browsers.
 * Supports JDK 6+
 
+
+**If you are using Arthas, please let us know. Your use is very important to us: [View](https://github.com/alibaba/arthas/issues/111)**
+
 Contents
 --------
 
@@ -38,6 +41,7 @@ Contents
 * [Quick start](quick-start.md)
 * [Advanced usage](advanced-use.md)
 * [Commands](commands.md)
+* [Docker](docker.md)
 * [User cases](https://github.com/alibaba/arthas/issues?q=label%3Auser-case)
 * [Questions and answers](https://github.com/alibaba/arthas/issues?q=label%3Aquestion-answered)
 * [Fork me at GitHub](https://github.com/alibaba/arthas)

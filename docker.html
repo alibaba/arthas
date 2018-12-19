@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>批处理功能 &mdash; Arthas 3.0.5 文档</title>
+  <title>Docker &mdash; Arthas 3.0.5 文档</title>
   
 
   
@@ -31,8 +31,8 @@
     <link rel="stylesheet" href="_static/overrides.css" type="text/css" />
     <link rel="index" title="索引" href="genindex.html" />
     <link rel="search" title="搜索" href="search.html" />
-    <link rel="next" title="命令列表" href="commands.html" />
-    <link rel="prev" title="执行结果存日志" href="save-log.html" />
+    <link rel="next" title="Release Notes" href="release-notes.html" />
+    <link rel="prev" title="options" href="options.html" />
 <script src="_static/center_page.js"></script>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.13.1/styles/github.min.css">
  
@@ -93,29 +93,15 @@
 <li class="toctree-l1"><a class="reference external" href="https://alibaba.github.io/arthas/en/">English Docs</a></li>
 <li class="toctree-l1"><a class="reference internal" href="install-detail.html">安装</a></li>
 <li class="toctree-l1"><a class="reference internal" href="quick-start.html">快速入门</a></li>
-<li class="toctree-l1 current"><a class="reference internal" href="advanced-use.html">进阶使用</a><ul class="current">
-<li class="toctree-l2"><a class="reference internal" href="advanced-use.html#">基础命令</a></li>
-<li class="toctree-l2"><a class="reference internal" href="advanced-use.html#jvm">jvm相关</a></li>
-<li class="toctree-l2"><a class="reference internal" href="advanced-use.html#class-classloader">class/classloader相关</a></li>
-<li class="toctree-l2"><a class="reference internal" href="advanced-use.html#monitor-watch-trace">monitor/watch/trace相关</a></li>
-<li class="toctree-l2"><a class="reference internal" href="advanced-use.html#options">options</a></li>
-<li class="toctree-l2"><a class="reference internal" href="advanced-use.html#">管道</a></li>
-<li class="toctree-l2"><a class="reference internal" href="advanced-use.html#">后台异步任务</a></li>
-<li class="toctree-l2"><a class="reference internal" href="advanced-use.html#web-console">Web Console</a></li>
-<li class="toctree-l2 current"><a class="reference internal" href="advanced-use.html#">其他特性</a><ul class="current">
-<li class="toctree-l3"><a class="reference internal" href="async.html">异步命令支持</a></li>
-<li class="toctree-l3"><a class="reference internal" href="save-log.html">执行结果存日志</a></li>
-<li class="toctree-l3 current"><a class="current reference internal" href="#">批处理的支持</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="#">使用方法</a></li>
-</ul>
-</li>
-<li class="toctree-l3"><a class="reference external" href="https://github.com/alibaba/arthas/issues/11">ognl表达式的用法说明</a></li>
-</ul>
-</li>
-</ul>
-</li>
+<li class="toctree-l1"><a class="reference internal" href="advanced-use.html">进阶使用</a></li>
 <li class="toctree-l1"><a class="reference internal" href="commands.html">命令列表</a></li>
-<li class="toctree-l1"><a class="reference internal" href="docker.html">Docker</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Docker</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#docker">通过Docker快速入门</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#dockerjava">诊断Docker里的Java进程</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#k8sjava">诊断k8s里容器里的Java进程</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#arthas">把Arthas安装到基础镜像里</a></li>
+</ul>
+</li>
 <li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas/issues?q=label%3Auser-case">用户案例</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas/issues?q=label%3Aquestion-answered">常见问题</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas">Fork me at GitHub</a></li>
@@ -167,16 +153,14 @@
     
       <li><a href="index.html">Docs</a> &raquo;</li>
         
-          <li><a href="advanced-use.html">进阶使用</a> &raquo;</li>
-        
-      <li>批处理功能</li>
+      <li>Docker</li>
     
     
       <li class="wy-breadcrumbs-aside">
         
             
             
-              <a href="https://github.com/alibaba/arthas/blob/master/site/src/site/sphinx/batch-support.md" class="fa fa-github"> Edit on GitHub</a>
+              <a href="https://github.com/alibaba/arthas/blob/master/site/src/site/sphinx/docker.md" class="fa fa-github"> Edit on GitHub</a>
             
           
         
@@ -190,45 +174,65 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
             
-  <div class="section" id="">
-<span id="id1"></span><h1>批处理功能<a class="headerlink" href="#" title="永久链接至标题">¶</a></h1>
-<blockquote>
-<div>通过批处理功能，arthas支持一次性批量运行多个命令，并取得命令执行的结果。</div></blockquote>
-<div class="section" id="">
-<span id="id2"></span><h2>使用方法<a class="headerlink" href="#" title="永久链接至标题">¶</a></h2>
-<div class="section" id="">
-<span id="id3"></span><h3>第一步： 创建你的批处理脚本<a class="headerlink" href="#" title="永久链接至标题">¶</a></h3>
-<p>这里我们新建了一个<tt class="docutils literal">test.as</tt>脚本，为了规范，我们采用了.as后缀名，但事实上任意的本文文件都ok。</p>
-<blockquote>
-<div><p>注意事项</p>
-<ul class="simple">
-<li>目前需要每个命令占一行</li>
-<li>dashboard务必开启批处理模式(<tt class="docutils literal">-b</tt>)，指定执行次数(<tt class="docutils literal">-n</tt>)，否则会导致批处理脚本无法终止</li>
-<li>watch/tt/trace/monitor/stack等命令务必指定执行次数(<tt class="docutils literal">-n</tt>)，否则会导致批处理脚本无法终止</li>
-<li>可以使用异步后台任务，如 <tt class="docutils literal">watch c.t.X test returnObj > &</tt>，让命令一直在后台运行，通过日志获取结果，<a class="reference internal" href="async.html"><span class="doc">获取更多异步任务的信息</span></a></li>
-</ul>
-</div></blockquote>
-<div class="highlight-default notranslate"><pre class="literal-block">➜  arthas git:(develop) cat /var/tmp/test.as
-help
-dashboard -b -n 1
-session
-thread
-sc -d org.apache.commons.lang.StringUtils</pre>
+  <div class="section" id="docker">
+<span id="docker"></span><h1>Docker<a class="headerlink" href="#docker" title="永久链接至标题">¶</a></h1>
+<div class="section" id="docker">
+<span id="id1"></span><h2>通过Docker快速入门<a class="headerlink" href="#docker" title="永久链接至标题">¶</a></h2>
+<ol>
+<li><p class="first">删除本地已有的<tt class="docutils literal">arthas-demo</tt> docker container（非必要）</p>
+<div class="highlight-sh notranslate"><div class="highlight hljs"><pre class="sh">$ docker stop arthas-demo || true &amp;&amp; docker rm arthas-demo || true
+</pre></div>
 </div>
+</li>
+<li><p class="first">启动<tt class="docutils literal">arthas-demo</tt></p>
+<div class="highlight-sh notranslate"><div class="highlight hljs"><pre class="sh">$ docker run --name arthas-demo -it hengyunabc/arthas:latest /bin/sh -c &quot;java -jar /opt/arthas/arthas-demo.jar&quot;
+</pre></div>
 </div>
-<div class="section" id="">
-<span id="id4"></span><h3>第二步： 运行你的批处理脚本<a class="headerlink" href="#" title="永久链接至标题">¶</a></h3>
-<p>通过<tt class="docutils literal">-b</tt>开启批处理模式， <tt class="docutils literal">-f</tt>执行脚本文件， 批处理脚本默认会输出到标准输出中，可以将结果重定向到文件中。</p>
-<div class="highlight-bash notranslate"><div class="highlight hljs"><pre class="bash">./as.sh -b -f /var/tmp/test.as 56328 &gt; test.out
+</li>
+<li><p class="first">启动<tt class="docutils literal">arthas-boot</tt>来进行诊断</p>
+<div class="highlight-sh notranslate"><div class="highlight hljs"><pre class="sh">$ docker exec -it arthas-demo /bin/sh -c &quot;java -jar /opt/arthas/arthas-boot.jar&quot;
+* [1]: 9 jar
+
+[INFO] arthas home: /opt/arthas
+[INFO] Try to attach process 9
+[INFO] Attach process 9 success.
+[INFO] arthas-client connect 127.0.0.1 3658
+,---.  ,------. ,--------.,--.  ,--.  ,---.   ,---.
+/  O  \ |  .--. &#x27;&#x27;--.  .--&#x27;|  &#x27;--&#x27;  | /  O  \ &#x27;   .-&#x27;
+|  .-.  ||  &#x27;--&#x27;.&#x27;   |  |   |  .--.  ||  .-.  |`.  `-.
+|  | |  ||  |\  \    |  |   |  |  |  ||  | |  |.-&#x27;    |
+`--&#x27; `--&#x27;`--&#x27; &#x27;--&#x27;   `--&#x27;   `--&#x27;  `--&#x27;`--&#x27; `--&#x27;`-----&#x27;
+
+wiki: https://alibaba.github.io/arthas
+version: 3.0.5
+pid: 9
+time: 2018-12-18 11:30:36
+</pre></div>
+</div>
+</li>
+</ol>
+</div>
+<div class="section" id="dockerjava">
+<span id="dockerjava"></span><h2>诊断Docker里的Java进程<a class="headerlink" href="#dockerjava" title="永久链接至标题">¶</a></h2>
+<div class="highlight-sh notranslate"><div class="highlight hljs"><pre class="sh">docker exec -it  ${containerId} /bin/bash -c &quot;wget https://alibaba.github.io/arthas/arthas-boot.jar &amp;&amp; java -jar arthas-boot.jar&quot;
 </pre></div>
 </div>
 </div>
-<div class="section" id="">
-<span id="id5"></span><h3>第三步： 查看运行结果<a class="headerlink" href="#" title="永久链接至标题">¶</a></h3>
-<div class="highlight-bash notranslate"><div class="highlight hljs"><pre class="bash">cat test.out
+<div class="section" id="k8sjava">
+<span id="k8sjava"></span><h2>诊断k8s里容器里的Java进程<a class="headerlink" href="#k8sjava" title="永久链接至标题">¶</a></h2>
+<div class="highlight-sh notranslate"><div class="highlight hljs"><pre class="sh">kubectl exec -it ${pod} --container ${containerId} -- /bin/bash -c &quot;wget https://alibaba.github.io/arthas/arthas-boot.jar &amp;&amp; java -jar arthas-boot.jar&quot;
 </pre></div>
 </div>
 </div>
+<div class="section" id="arthas">
+<span id="arthas"></span><h2>把Arthas安装到基础镜像里<a class="headerlink" href="#arthas" title="永久链接至标题">¶</a></h2>
+<p>可以很简单把Arthas安装到你的Docker镜像里。</p>
+<div class="highlight-default notranslate"><pre class="literal-block">FROM openjdk:8-jdk-alpine
+
+# copy arthas
+COPY --from=hengyunabc/arthas:latest /opt/arthas /opt/arthas</pre>
+</div>
+<p><a class="reference external" href="https://cloud.docker.com/repository/docker/hengyunabc/arthas">https://cloud.docker.com/repository/docker/hengyunabc/arthas</a></p>
 </div>
 </div>
 
@@ -240,10 +244,10 @@ sc -d org.apache.commons.lang.StringUtils</pre>
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="commands.html" class="btn btn-neutral float-right" title="命令列表" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+        <a href="release-notes.html" class="btn btn-neutral float-right" title="Release Notes" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
-        <a href="save-log.html" class="btn btn-neutral" title="执行结果存日志" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+        <a href="options.html" class="btn btn-neutral" title="options" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
       
     </div>
   

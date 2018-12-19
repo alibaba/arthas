@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Arthas Documentation &mdash; Arthas 3.0.5 documentation</title>
+  <title>Docker &mdash; Arthas 3.0.5 documentation</title>
   
 
   
@@ -31,7 +31,8 @@
     <link rel="stylesheet" href="_static/overrides.css" type="text/css" />
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="Install Arthas" href="install-detail.html" />
+    <link rel="next" title="Release Notes" href="release-notes.html" />
+    <link rel="prev" title="options" href="options.html" />
 <script src="_static/center_page.js"></script>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.13.1/styles/github.min.css">
  
@@ -54,7 +55,7 @@
           
 
           
-            <a href="#" class="icon icon-home"> Arthas
+            <a href="index.html" class="icon icon-home"> Arthas
           
 
           
@@ -88,12 +89,18 @@
               
             
             
-              <ul>
+              <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="install-detail.html">Installation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="quick-start.html">Quick start</a></li>
 <li class="toctree-l1"><a class="reference internal" href="advanced-use.html">Advanced usage</a></li>
 <li class="toctree-l1"><a class="reference internal" href="commands.html">Commands</a></li>
-<li class="toctree-l1"><a class="reference internal" href="docker.html">Docker</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Docker</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#quick-start-with-docker">Quick start with Docker</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#diagnose-the-java-process-in-docker">Diagnose the Java process in Docker</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#diagnose-the-java-process-in-the-container-in-k8s">Diagnose the Java process in the container in k8s</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#install-arthas-into-the-base-docker-image">Install Arthas into the base Docker image</a></li>
+</ul>
+</li>
 <li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas/issues?q=label%3Auser-case">User cases</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas/issues?q=label%3Aquestion-answered">Questions and answers</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas">Fork me at GitHub</a></li>
@@ -113,7 +120,7 @@
       <nav class="wy-nav-top" aria-label="top navigation">
         
           <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
-          <a href="#">Arthas</a>
+          <a href="index.html">Arthas</a>
         
       </nav>
 
@@ -142,16 +149,16 @@
 
   <ul class="wy-breadcrumbs">
     
-      <li><a href="#">Docs</a> &raquo;</li>
+      <li><a href="index.html">Docs</a> &raquo;</li>
         
-      <li>Arthas Documentation</li>
+      <li>Docker</li>
     
     
       <li class="wy-breadcrumbs-aside">
         
             
             
-              <a href="https://github.com/alibaba/arthas/blob/master/site/src/site/sphinx/en/index.md" class="fa fa-github"> Edit on GitHub</a>
+              <a href="https://github.com/alibaba/arthas/blob/master/site/src/site/sphinx/en/docker.md" class="fa fa-github"> Edit on GitHub</a>
             
           
         
@@ -165,51 +172,65 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
             
-  <div class="section" id="arthas-documentation">
-<span id="arthas-documentation"></span><h1>Arthas Documentation<a class="headerlink" href="#arthas-documentation" title="Permalink to this headline">¶</a></h1>
-<p><strong><a class="reference external" href="https://alibaba.github.io/arthas/">中文文档/Chinese Documentation</a></strong></p>
-<p><img alt="arthas" src="_images/arthas.png" /></p>
-<p>Arthas is a Java diagnostic tool open-sourced by Alibaba middleware team. It is widely adopted and popular among the developers inside Alibaba. Arthas helps developers in trouble-shooting issues in production environment for Java based applications without modifying code or restarting servers.</p>
-<div class="section" id="background">
-<span id="background"></span><h2>Background<a class="headerlink" href="#background" title="Permalink to this headline">¶</a></h2>
-<p>Oftentimes the production system network is inaccessible from local development environment. If issues are encountered in production systems, it is impossible to use IDE to debug the application remotely. What’s even worse, debugging in production environment is unacceptable, as it will suspend all the threads, leading to services downtime.</p>
-<p>Developers could always try to reproduce the same issue on the test/staging environment. However, this is tricky as some issues cannot be reproduced easily in a different environment, or even disappear once restarted.</p>
-<p>And if you’re thinking of adding some logs to your code to help trouble-shoot the issue, you will have to go through the following lifecycle: test, staging, and then to production. Time is money! This approach is inefficient! Worse still, the issue may not be fixed since it might be irreproducible once the JVM is restarted, as described above.</p>
-<p>Arthas is built to solve these issues. A developer can troubleshoot production issues on the fly. No JVM restart, no additional code changes. Arthas works as an observer, that is, it will never suspend your running threads.</p>
+  <div class="section" id="docker">
+<span id="docker"></span><h1>Docker<a class="headerlink" href="#docker" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="quick-start-with-docker">
+<span id="quick-start-with-docker"></span><h2>Quick start with Docker<a class="headerlink" href="#quick-start-with-docker" title="Permalink to this headline">¶</a></h2>
+<ol>
+<li><p class="first">Delete the existing <tt class="docutils literal">arthas-demo</tt> docker container (not necessary)</p>
+<div class="highlight-sh notranslate"><div class="highlight hljs"><pre class="sh">$ docker stop arthas-demo || true &amp;&amp; docker rm arthas-demo || true
+</pre></div>
 </div>
-<div class="section" id="key-features">
-<span id="key-features"></span><h2>Key features<a class="headerlink" href="#key-features" title="Permalink to this headline">¶</a></h2>
-<ul class="simple">
-<li>Check whether a class is loaded? Or where the class is loaded from? (Useful for trouble-shooting jar file conflicts)</li>
-<li>Decompile a class to ensure the code is running as expected.</li>
-<li>Check classloader statistics, e.g. the number of classloaders, the number of classes loaded per classloader, the classloader hierarchy, possible classloader leaks, etc.</li>
-<li>Check the method invocation details, e.g. method parameter, returned values, exceptions and etc.</li>
-<li>Check the stack trace of specified method invocation. This is useful when a developer wants to know the caller of the method.</li>
-<li>Trace the method invocation to find slow sub-invocations.</li>
-<li>Monitor method invocation statistics, e.g. QPS (Query Per Second), RT (Return Time), success rate and etc.</li>
-<li>Monitor system metrics, thread states and CPU usage, GC statistics and etc.</li>
-<li>Supports command line interactive mode, with auto-complete feature enabled.</li>
-<li>Supports telnet and WebSocket, which enables both local and remote diagnostics with command line and browsers.</li>
-<li>Supports JDK 6+</li>
-</ul>
-<p><strong>If you are using Arthas, please let us know. Your use is very important to us: <a class="reference external" href="https://github.com/alibaba/arthas/issues/111">View</a></strong></p>
+</li>
+<li><p class="first">Start <tt class="docutils literal">arthas-demo</tt></p>
+<div class="highlight-sh notranslate"><div class="highlight hljs"><pre class="sh">$ docker run --name arthas-demo -it hengyunabc/arthas:latest /bin/sh -c &quot;java -jar /opt/arthas/arthas-demo.jar&quot;
+</pre></div>
 </div>
-<div class="section" id="contents">
-<span id="contents"></span><h2>Contents<a class="headerlink" href="#contents" title="Permalink to this headline">¶</a></h2>
-<div class="toctree-wrapper compound">
-<ul>
-<li class="toctree-l1"><a class="reference internal" href="install-detail.html">Installation</a></li>
-<li class="toctree-l1"><a class="reference internal" href="quick-start.html">Quick start</a></li>
-<li class="toctree-l1"><a class="reference internal" href="advanced-use.html">Advanced usage</a></li>
-<li class="toctree-l1"><a class="reference internal" href="commands.html">Commands</a></li>
-<li class="toctree-l1"><a class="reference internal" href="docker.html">Docker</a></li>
-<li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas/issues?q=label%3Auser-case">User cases</a></li>
-<li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas/issues?q=label%3Aquestion-answered">Questions and answers</a></li>
-<li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas">Fork me at GitHub</a></li>
-<li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas/blob/master/CONTRIBUTING.md">CONTRIBUTING</a></li>
-<li class="toctree-l1"><a class="reference internal" href="release-notes.html">Release Notes</a></li>
-</ul>
+</li>
+<li><p class="first">Start <tt class="docutils literal">arthas-boot</tt> for diagnosis</p>
+<div class="highlight-sh notranslate"><div class="highlight hljs"><pre class="sh">$ docker exec -it arthas-demo /bin/sh -c &quot;java -jar /opt/arthas/arthas-boot.jar&quot;
+* [1]: 9 jar
+
+[INFO] arthas home: /opt/arthas
+[INFO] Try to attach process 9
+[INFO] Attach process 9 success.
+[INFO] arthas-client connect 127.0.0.1 3658
+,---.  ,------. ,--------.,--.  ,--.  ,---.   ,---.
+/  O  \ |  .--. &#x27;&#x27;--.  .--&#x27;|  &#x27;--&#x27;  | /  O  \ &#x27;   .-&#x27;
+|  .-.  ||  &#x27;--&#x27;.&#x27;   |  |   |  .--.  ||  .-.  |`.  `-.
+|  | |  ||  |\  \    |  |   |  |  |  ||  | |  |.-&#x27;    |
+`--&#x27; `--&#x27;`--&#x27; &#x27;--&#x27;   `--&#x27;   `--&#x27;  `--&#x27;`--&#x27; `--&#x27;`-----&#x27;
+
+wiki: https://alibaba.github.io/arthas
+version: 3.0.5
+pid: 9
+time: 2018-12-18 11:30:36
+</pre></div>
 </div>
+</li>
+</ol>
+</div>
+<div class="section" id="diagnose-the-java-process-in-docker">
+<span id="diagnose-the-java-process-in-docker"></span><h2>Diagnose the Java process in Docker<a class="headerlink" href="#diagnose-the-java-process-in-docker" title="Permalink to this headline">¶</a></h2>
+<div class="highlight-sh notranslate"><div class="highlight hljs"><pre class="sh">docker exec -it  ${containerId} /bin/bash -c &quot;wget https://alibaba.github.io/arthas/arthas-boot.jar &amp;&amp; java -jar arthas-boot.jar&quot;
+</pre></div>
+</div>
+</div>
+<div class="section" id="diagnose-the-java-process-in-the-container-in-k8s">
+<span id="diagnose-the-java-process-in-the-container-in-k8s"></span><h2>Diagnose the Java process in the container in k8s<a class="headerlink" href="#diagnose-the-java-process-in-the-container-in-k8s" title="Permalink to this headline">¶</a></h2>
+<div class="highlight-sh notranslate"><div class="highlight hljs"><pre class="sh">kubectl exec -it ${pod} --container ${containerId} -- /bin/bash -c &quot;wget https://alibaba.github.io/arthas/arthas-boot.jar &amp;&amp; java -jar arthas-boot.jar&quot;
+</pre></div>
+</div>
+</div>
+<div class="section" id="install-arthas-into-the-base-docker-image">
+<span id="install-arthas-into-the-base-docker-image"></span><h2>Install Arthas into the base Docker image<a class="headerlink" href="#install-arthas-into-the-base-docker-image" title="Permalink to this headline">¶</a></h2>
+<p>It’s easy to install Arthas into your Docker image.</p>
+<div class="highlight-default notranslate"><pre class="literal-block">FROM openjdk:8-jdk-alpine
+
+# copy arthas
+COPY --from=hengyunabc/arthas:latest /opt/arthas /opt/arthas</pre>
+</div>
+<p><a class="reference external" href="https://cloud.docker.com/repository/docker/hengyunabc/arthas">https://cloud.docker.com/repository/docker/hengyunabc/arthas</a></p>
 </div>
 </div>
 
@@ -221,8 +242,10 @@
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="install-detail.html" class="btn btn-neutral float-right" title="Install Arthas" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+        <a href="release-notes.html" class="btn btn-neutral float-right" title="Release Notes" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
       
+      
+        <a href="options.html" class="btn btn-neutral" title="options" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
       
     </div>
   
