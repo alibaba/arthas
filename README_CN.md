@@ -68,6 +68,7 @@ curl -L https://alibaba.github.io/arthas/install.sh | sh
 * [快速入门](https://alibaba.github.io/arthas/quick-start.html)
 * [进阶使用](https://alibaba.github.io/arthas/advanced-use.html)
 * [命令列表](https://alibaba.github.io/arthas/commands.html)
+* [Docker](https://alibaba.github.io/arthas/docker.html)
 * [用户案例](https://github.com/alibaba/arthas/issues?q=label%3Auser-case)
 * [常见问题](https://github.com/alibaba/arthas/issues?utf8=%E2%9C%93&q=label%3Aquestion-answered+)
 * [参与贡献](https://github.com/alibaba/arthas/blob/master/CONTRIBUTING.md)

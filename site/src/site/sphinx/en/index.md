@@ -41,6 +41,7 @@ Contents
 * [Quick start](quick-start.md)
 * [Advanced usage](advanced-use.md)
 * [Commands](commands.md)
+* [Docker](docker.md)
 * [User cases](https://github.com/alibaba/arthas/issues?q=label%3Auser-case)
 * [Questions and answers](https://github.com/alibaba/arthas/issues?q=label%3Aquestion-answered)
 * [Fork me at GitHub](https://github.com/alibaba/arthas)
