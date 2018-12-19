@@ -1,7 +1,7 @@
 Arthas Documentation
 ===
 
-**[中文文档](https://alibaba.github.io/arthas/)**
+**[中文文档/Chinese Documentation](https://alibaba.github.io/arthas/)**
 
 ![arthas](arthas.png)
 
@@ -32,7 +32,7 @@ Arthas is built to solve these issues. A developer can troubleshoot production i
 * Supports JDK 6+
 
 
-**If you are using Arthas, please let us know that your use is very important to us: [https://github.com/alibaba/arthas/issues/111] (https://github.com/alibaba/arthas /issues/111)**
+**If you are using Arthas, please let us know. Your use is very important to us: [View](https://github.com/alibaba/arthas/issues/111)**
 
 Contents
 --------
