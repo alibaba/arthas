@@ -325,7 +325,11 @@ public class Bootstrap {
 
         // try to download from remote server
         if (arthasHomeDir == null) {
-            ARTHAS_LIB_DIR.mkdirs();
+            boolean checkFile =  ARTHAS_LIB_DIR.exists() || ARTHAS_LIB_DIR.mkdirs();
+            if(!checkFile){
+                AnsiLog.error("cannot create directory {}: Permission denied", ARTHAS_LIB_DIR.getAbsolutePath());
+                System.exit(1);
+            }
 
             /**
              * <pre>
