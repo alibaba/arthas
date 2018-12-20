@@ -61,4 +61,4 @@ FROM openjdk:8-jdk-alpine
 COPY --from=hengyunabc/arthas:latest /opt/arthas /opt/arthas
 ```
 
-[https://cloud.docker.com/repository/docker/hengyunabc/arthas](https://cloud.docker.com/repository/docker/hengyunabc/arthas)
+[https://hub.docker.com/r/hengyunabc/arthas](https://hub.docker.com/r/hengyunabc/arthas)
