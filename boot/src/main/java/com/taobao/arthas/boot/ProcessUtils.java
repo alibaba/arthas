@@ -150,7 +150,10 @@ public class ProcessUtils {
         String javaHome = System.getProperty("java.home");
 
         if (JavaVersionUtils.isLessThanJava9()) {
-            File toolsJar = new File(javaHome, "../lib/tools.jar");
+            File toolsJar = new File(javaHome, "lib/tools.jar");
+            if (!toolsJar.exists()) {
+                toolsJar = new File(javaHome, "../lib/tools.jar");
+            }
             if (!toolsJar.exists()) {
                 // maybe jre
                 toolsJar = new File(javaHome, "../../lib/tools.jar");
@@ -311,7 +314,10 @@ public class ProcessUtils {
         }
 
         String javaHome = findJavaHome();
-        File toolsJar = new File(javaHome, "../lib/tools.jar");
+        File toolsJar = new File(javaHome, "lib/tools.jar");
+        if (!toolsJar.exists()) {
+            toolsJar = new File(javaHome, "../lib/tools.jar");
+        }
         if (!toolsJar.exists()) {
             // maybe jre
             toolsJar = new File(javaHome, "../../lib/tools.jar");
