@@ -327,7 +327,7 @@ public class Bootstrap {
         if (arthasHomeDir == null) {
             boolean checkFile =  ARTHAS_LIB_DIR.exists() || ARTHAS_LIB_DIR.mkdirs();
             if(!checkFile){
-                AnsiLog.error("cannot create directory {}: Permission denied", ARTHAS_LIB_DIR.getAbsolutePath());
+                AnsiLog.error("cannot create directory {}: maybe permission denied", ARTHAS_LIB_DIR.getAbsolutePath());
                 System.exit(1);
             }
 
