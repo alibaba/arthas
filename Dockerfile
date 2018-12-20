@@ -1,7 +1,5 @@
 FROM openjdk:8-jdk-alpine
 
-MAINTAINER arthas anjia0532
-
 ARG ARTHAS_VERSION="3.0.5"
 ARG MIRROR=false
 
