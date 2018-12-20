@@ -266,7 +266,7 @@ public class Bootstrap {
                 System.exit(1);
             }
             if (pid < 0) {
-                System.out.println("Please select an avaliable pid.");
+                System.out.println("Please select an available pid.");
                 System.exit(1);
             }
         }
