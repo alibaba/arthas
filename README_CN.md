@@ -331,6 +331,7 @@ $ classloader
 ![证大文化](static/zhengdawenhua.png)
 ![Acmedcare+](static/acmedcare.png)
 ![好慷](static/homeking365_log.png)
+![来电科技](static/laidian.png)
 
 ### Credit
 
