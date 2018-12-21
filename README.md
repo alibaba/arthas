@@ -331,6 +331,7 @@ Welcome to register the company name in this issue: https://github.com/alibaba/a
 ![卓越教育](static/zhuoyuejiaoyu.png)
 ![狐狸金服](static/hulijingfu.png)
 ![三体云](static/santiyun.png)
+![证大文化](static/zhengdawenhua.png)
 
 ### Credit
 
