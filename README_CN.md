@@ -330,6 +330,7 @@ $ classloader
 ![三体云](static/santiyun.png)
 ![证大文化](static/zhengdawenhua.png)
 ![Acmedcare+](static/acmedcare.png)
+![来电科技](static/laidian.png)
 
 ### Credit
 
