@@ -335,6 +335,7 @@ Welcome to register the company name in this issue: https://github.com/alibaba/a
 ![Acmedcare+](static/acmedcare.png)
 ![好慷](static/homeking365_log.png)
 ![来电科技](static/laidian.png)
+![四格互联](static/sigehulian.png)
 
 ### Credit
 
