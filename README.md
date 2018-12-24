@@ -76,6 +76,7 @@ You can enter its interactive interface by executing `as.sh`, or execute `as.sh 
 * [Quick start](https://alibaba.github.io/arthas/en/quick-start.html)
 * [Advanced usage](https://alibaba.github.io/arthas/en/advanced-use.html)
 * [Commands](https://alibaba.github.io/arthas/en/commands.html)
+* [Docker](https://alibaba.github.io/arthas/en/docker.html)
 * [User cases](https://github.com/alibaba/arthas/issues?q=label%3Auser-case)
 * [Questions and answers](https://github.com/alibaba/arthas/issues?utf8=%E2%9C%93&q=label%3Aquestion-answered+)
 * [How to contribute](https://github.com/alibaba/arthas/blob/master/CONTRIBUTING.md)
@@ -316,6 +317,25 @@ $ classloader
 
 ![web console](site/src/site/sphinx/_static/web-console-local.png)
 
+
+### Known Users
+
+Welcome to register the company name in this issue: https://github.com/alibaba/arthas/issues/111 (in order of registration)
+
+![Alibaba](static/alibaba.png)
+![Alipay](static/alipay.png)
+![Aliyun](static/aliyun.png)
+![Taobao](static/taobao.png)
+![Tmall](static/tmall.png)
+![微医](static/weiyi.png)
+![卓越教育](static/zhuoyuejiaoyu.png)
+![狐狸金服](static/hulijingfu.png)
+![三体云](static/santiyun.png)
+![证大文化](static/zhengdawenhua.png)
+![Acmedcare+](static/acmedcare.png)
+![好慷](static/homeking365_log.png)
+![来电科技](static/laidian.png)
+![四格互联](static/sigehulian.png)
 
 ### Credit
 

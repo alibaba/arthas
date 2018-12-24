@@ -246,6 +246,23 @@ reset_for_env()
         exit_on_err 1 "Can not find JAVA_HOME, please set \$JAVA_HOME bash env first."
     fi
 
+    # when java version less than 9, we can use tools.jar to confirm java home.
+    # when java version greater than 9, there is no tools.jar.
+    if [[ "$JAVA_VERSION" -lt 9 ]];then
+      # possible java homes
+      javaHomes=("${JAVA_HOME%%/}" "${JAVA_HOME%%/}/.." "${JAVA_HOME%%/}/../..")
+      for javaHome in ${javaHomes[@]}
+      do
+          toolsJar="$javaHome/lib/tools.jar"
+          if [ -f $toolsJar ]; then
+              JAVA_HOME=$( rreadlink $javaHome )
+              BOOT_CLASSPATH=-Xbootclasspath/a:$( rreadlink $toolsJar )
+              break
+          fi
+      done
+      [ -z "${BOOT_CLASSPATH}" ] && exit_on_err 1 "tools.jar was not found, so arthas could not be launched!"
+    fi
+
     echo "[INFO] JAVA_HOME: ${JAVA_HOME}"
 
     # maybe 1.8.0_162 , 11-ea
@@ -267,16 +284,6 @@ reset_for_env()
         fi
       fi
     done
-
-    # when java version greater than 9, there is no tools.jar
-    if [[ "$JAVA_VERSION" -lt 9 ]];then
-      # check tools.jar exists
-      if [ ! -f "${JAVA_HOME}/lib/tools.jar" ]; then
-          exit_on_err 1 "${JAVA_HOME}/lib/tools.jar does not exist, arthas could not be launched!"
-      else
-          BOOT_CLASSPATH=-Xbootclasspath/a:${JAVA_HOME}/lib/tools.jar
-      fi
-    fi
 
     # reset CHARSET for alibaba opts, we use GBK
     [[ -x /opt/taobao/java ]] && JVM_OPTS="-Dinput.encoding=GBK ${JVM_OPTS} "
@@ -422,7 +429,7 @@ WIKI:
 Here is the list of possible java process(es) to attatch:
 "
 
-$(call_jps) | grep -v sun.tools.jps.Jps
+call_jps | grep -v sun.tools.jps.Jps
 
 }
 
@@ -720,14 +727,14 @@ active_console()
         "${JAVA_HOME}/bin/java" ${ARTHAS_OPTS} ${JVM_OPTS} \
              -jar "${arthas_lib_dir}/arthas-client.jar" \
              ${TARGET_IP} \
-             -p ${TELNET_PORT} \
+             ${TELNET_PORT} \
              -c ${COMMAND}
         fi
         if [ "${BATCH_FILE}" ] ; then
         "${JAVA_HOME}/bin/java" ${ARTHAS_OPTS} ${JVM_OPTS} \
              -jar "${arthas_lib_dir}/arthas-client.jar" \
              ${TARGET_IP} \
-             -p ${TELNET_PORT} \
+             ${TELNET_PORT} \
              -f ${BATCH_FILE}
         fi
     elif type telnet 2>&1 >> /dev/null; then

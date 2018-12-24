@@ -10,9 +10,6 @@ import com.taobao.arthas.core.util.ThreadLocalWatch;
 import com.taobao.arthas.core.util.ThreadUtil;
 import com.taobao.middleware.logger.Logger;
 
-import java.text.SimpleDateFormat;
-import java.util.Date;
-
 /**
  * @author beiwei30 on 29/11/2016.
  */

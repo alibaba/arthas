@@ -2,6 +2,7 @@ package com.taobao.arthas.client;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.Writer;
 
@@ -41,12 +42,13 @@ public final class IOUtil {
             @Override
             public void run() {
                 try {
+                    InputStreamReader reader = new InputStreamReader(remoteInput);
                     while (true) {
-                        int singleByte = remoteInput.read();
-                        if (singleByte < 0) {
+                        int singleChar = reader.read();
+                        if (singleChar == -1) {
                             break;
                         }
-                        localOutput.write(singleByte);
+                        localOutput.write(singleChar);
                         localOutput.flush();
                     }
                 } catch (IOException e) {

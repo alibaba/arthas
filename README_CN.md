@@ -68,11 +68,14 @@ curl -L https://alibaba.github.io/arthas/install.sh | sh
 * [快速入门](https://alibaba.github.io/arthas/quick-start.html)
 * [进阶使用](https://alibaba.github.io/arthas/advanced-use.html)
 * [命令列表](https://alibaba.github.io/arthas/commands.html)
+* [Docker](https://alibaba.github.io/arthas/docker.html)
 * [用户案例](https://github.com/alibaba/arthas/issues?q=label%3Auser-case)
 * [常见问题](https://github.com/alibaba/arthas/issues?utf8=%E2%9C%93&q=label%3Aquestion-answered+)
 * [参与贡献](https://github.com/alibaba/arthas/blob/master/CONTRIBUTING.md)
 * [Release Notes](https://alibaba.github.io/arthas/release-notes.html)
 * [QQ群/钉钉群](https://alibaba.github.io/arthas/contact-us.html)
+
+Gitee文档镜像： https://arthas.gitee.io/
 
 ### 案例展示
 
@@ -311,9 +314,27 @@ $ classloader
 
 ![web console](site/src/site/sphinx/_static/web-console-local.png)
 
+
+### Known Users
+
+如果您在使用Arthas，请让我们知道，您的使用对我们非常重要：https://github.com/alibaba/arthas/issues/111 （按登记顺序排列）
+
+![Alibaba](static/alibaba.png)
+![Alipay](static/alipay.png)
+![Aliyun](static/aliyun.png)
+![Taobao](static/taobao.png)
+![Tmall](static/tmall.png)
+![微医](static/weiyi.png)
+![卓越教育](static/zhuoyuejiaoyu.png)
+![狐狸金服](static/hulijingfu.png)
+![三体云](static/santiyun.png)
+![证大文化](static/zhengdawenhua.png)
+![Acmedcare+](static/acmedcare.png)
+![好慷](static/homeking365_log.png)
+![来电科技](static/laidian.png)
+![四格互联](static/sigehulian.png)
+
 ### Credit
-
-
 
 * [greys-anatomy](https://github.com/oldmanpushcart/greys-anatomy): Arthas代码基于Greys二次开发而来，非常感谢Greys之前所有的工作，以及Greys原作者对Arthas提出的意见和建议！
 * [termd](https://github.com/termd/termd): Arthas的命令行实现基于termd开发，是一款优秀的命令行程序开发框架，感谢termd提供了优秀的框架。

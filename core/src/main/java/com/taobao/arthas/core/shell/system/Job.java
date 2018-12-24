@@ -2,8 +2,6 @@ package com.taobao.arthas.core.shell.system;
 
 import java.util.Date;
 
-import com.taobao.arthas.core.shell.future.Future;
-import com.taobao.arthas.core.shell.handlers.Handler;
 import com.taobao.arthas.core.shell.session.Session;
 import com.taobao.arthas.core.shell.term.Tty;
 
