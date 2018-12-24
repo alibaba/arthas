@@ -11,12 +11,12 @@ public class MathGame {
     public int illegalArgumentCount = 0;
 
     public static void main(String[] args) throws InterruptedException {
+        System.out.println("start!!");
         MathGame game = new MathGame();
         while (true) {
             game.run();
             TimeUnit.SECONDS.sleep(1);
         }
-        System.out.println("end!!");
     }
 
     public void run() throws InterruptedException {
