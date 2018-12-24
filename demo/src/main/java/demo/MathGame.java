@@ -16,6 +16,7 @@ public class MathGame {
             game.run();
             TimeUnit.SECONDS.sleep(1);
         }
+        System.out.println("end!!");
     }
 
     public void run() throws InterruptedException {
