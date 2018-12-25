@@ -43,7 +43,7 @@ public class Test {
             list.get(random).setName(null);
             test(list);
             list.get(random).setName(name);
-            Thread.sleep(1000l);
+            Thread.sleep(1000L);
         }
     }
 
