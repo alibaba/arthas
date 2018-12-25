@@ -32,15 +32,23 @@ public class AdviceWeaver extends ClassVisitor implements Opcodes {
 
 
 
-    // 线程帧栈堆栈大小
+    /**
+        线程帧栈堆栈大小
+    */
     private final static int FRAME_STACK_SIZE = 7;
-    // 通知监听器集合
+    /**
+       通知监听器集合
+       */
     private final static Map<Integer/*ADVICE_ID*/, AdviceListener> advices
             = new ConcurrentHashMap<Integer, AdviceListener>();
-    // 线程帧封装
+    /**
+        线程帧封装
+        */
     private static final ThreadLocal<GaStack<GaStack<Object>>> threadBoundContext
             = new ThreadLocal<GaStack<GaStack<Object>>>();
-    // 防止自己递归调用
+    /**
+        防止自己递归调用
+        */
     private static final ThreadLocal<Boolean> isSelfCallRef = new ThreadLocal<Boolean>() {
 
         @Override
