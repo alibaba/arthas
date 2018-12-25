@@ -8,7 +8,7 @@
     </parent>
     <artifactId>arthas-testcase</artifactId>
     <name>arthas-testcase</name>
-
+    <!--单元测试依赖包-->
     <dependencies>
         <dependency>
             <groupId>junit</groupId>
