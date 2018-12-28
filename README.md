@@ -338,6 +338,7 @@ Welcome to register the company name in this issue: https://github.com/alibaba/a
 ![四格互联](static/sigehulian.png)
 ![ICBC](static/icbc.png)
 ![陆鹰](static/luying.png)
+![玩友时代](static/wangyoushidai.png)
 
 ### Credit
 
