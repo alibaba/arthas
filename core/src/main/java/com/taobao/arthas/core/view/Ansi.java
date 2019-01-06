@@ -391,7 +391,7 @@ public class Ansi {
     }
 
     public Ansi bgCyan() {
-        return this.fg(Color.CYAN);
+        return this.bg(Color.CYAN);
     }
 
     public Ansi bgDefault() {
