@@ -14,3 +14,5 @@ core/src/main/resources/com/taobao/arthas/core/res/version
 
 site/src/site/sphinx/_build
 site/src/site/sphinx/en/_build
+
+**/__pycache__

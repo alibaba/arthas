@@ -79,16 +79,27 @@ public class ArthasBootstrap {
         }
 
         try {
-            ShellServerOptions options = new ShellServerOptions().setInstrumentation(instrumentation).setPid(pid);
+            ShellServerOptions options = new ShellServerOptions()
+                            .setInstrumentation(instrumentation)
+                            .setPid(pid)
+                            .setSessionTimeout(configure.getSessionTimeout() * 1000);
             shellServer = new ShellServerImpl(options, this);
             BuiltinCommandPack builtinCommands = new BuiltinCommandPack();
             List<CommandResolver> resolvers = new ArrayList<CommandResolver>();
             resolvers.add(builtinCommands);
             // TODO: discover user provided command resolver
-            shellServer.registerTermServer(new TelnetTermServer(
-                    configure.getIp(), configure.getTelnetPort(), options.getConnectionTimeout()));
-            shellServer.registerTermServer(new HttpTermServer(
-                    configure.getIp(), configure.getHttpPort(), options.getConnectionTimeout()));
+            if (configure.getTelnetPort() > 0) {
+                shellServer.registerTermServer(new TelnetTermServer(configure.getIp(), configure.getTelnetPort(),
+                                options.getConnectionTimeout()));
+            } else {
+                logger.info("telnet port is {}, skip bind telnet server.", configure.getTelnetPort());
+            }
+            if (configure.getHttpPort() > 0) {
+                shellServer.registerTermServer(new HttpTermServer(configure.getIp(), configure.getHttpPort(),
+                                options.getConnectionTimeout()));
+            } else {
+                logger.info("http port is {}, skip bind http server.", configure.getHttpPort());
+            }
 
             for (CommandResolver resolver : resolvers) {
                 shellServer.registerCommandResolver(resolver);
@@ -131,7 +142,7 @@ public class ArthasBootstrap {
             // ignore
         }
         logger.info("as-server destroy completed.");
-        // see middleware-container/arthas/issues/123
+        // see https://github.com/alibaba/arthas/issues/319
         LogUtil.closeResultLogger();
     }
 

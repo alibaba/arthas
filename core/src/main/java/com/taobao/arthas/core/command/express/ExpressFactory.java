@@ -1,8 +1,9 @@
 package com.taobao.arthas.core.command.express;
 
 /**
- * 表达式工厂类
+ * ExpressFactory
  * @author ralf0131 2017-01-04 14:40.
+ * @author hengyunabc 2018-10-08
  */
 public class ExpressFactory {
 
@@ -14,13 +15,15 @@ public class ExpressFactory {
     };
 
     /**
-     * 构造表达式执行类
-     *
-     * @param object 执行对象
-     * @return 返回表达式实现
+     * get ThreadLocal Express Object
+     * @param object
+     * @return
      */
-    public static Express newExpress(Object object) {
+    public static Express threadLocalExpress(Object object) {
         return expressRef.get().reset().bind(object);
     }
 
+    public static Express unpooledExpress(ClassLoader classloader) {
+        return new OgnlExpress(new ClassLoaderClassResolver(classloader));
+    }
 }

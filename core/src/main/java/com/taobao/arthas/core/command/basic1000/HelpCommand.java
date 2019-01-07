@@ -1,9 +1,12 @@
 package com.taobao.arthas.core.command.basic1000;
 
+import com.taobao.arthas.core.shell.cli.Completion;
+import com.taobao.arthas.core.shell.cli.CompletionUtils;
 import com.taobao.arthas.core.shell.command.AnnotatedCommand;
 import com.taobao.arthas.core.shell.command.Command;
 import com.taobao.arthas.core.shell.command.CommandProcess;
 import com.taobao.arthas.core.shell.command.CommandResolver;
+import com.taobao.arthas.core.shell.session.Session;
 import com.taobao.arthas.core.util.usage.StyledUsageFormatter;
 import com.taobao.middleware.cli.CLI;
 import com.taobao.middleware.cli.annotations.Argument;
@@ -42,12 +45,7 @@ public class HelpCommand extends AnnotatedCommand {
 
     @Override
     public void process(CommandProcess process) {
-        List<CommandResolver> commandResolvers = process.session().getCommandResolvers();
-        List<Command> commands = new ArrayList<Command>();
-        for (CommandResolver commandResolver : commandResolvers) {
-            commands.addAll(commandResolver.commands());
-        }
-
+        List<Command> commands = allCommands(process.session());
         Command targetCmd = findCommand(commands);
         String message;
         if (targetCmd == null) {
@@ -57,6 +55,21 @@ public class HelpCommand extends AnnotatedCommand {
         }
         process.write(message);
         process.end();
+    }
+
+    @Override
+    public void complete(Completion completion) {
+        List<Command> commands = allCommands(completion.session());
+
+        List<String> names = new ArrayList<String>(commands.size());
+        for (Command command : commands) {
+            CLI cli = command.cli();
+            if (cli == null || cli.isHidden()) {
+                continue;
+            }
+            names.add(command.name());
+        }
+        CompletionUtils.complete(completion, names);
     }
 
     private static String commandHelp(Command command, int width) {
@@ -75,6 +88,15 @@ public class HelpCommand extends AnnotatedCommand {
             table.add(row().add(label(cli.getName()).style(Style.style(Color.green))).add(label(cli.getSummary())));
         }
         return table;
+    }
+
+    private List<Command> allCommands(Session session) {
+        List<CommandResolver> commandResolvers = session.getCommandResolvers();
+        List<Command> commands = new ArrayList<Command>();
+        for (CommandResolver commandResolver : commandResolvers) {
+            commands.addAll(commandResolver.commands());
+        }
+        return commands;
     }
 
     private Command findCommand(List<Command> commands) {

@@ -49,9 +49,11 @@ class CompletionAdaptor implements Completion {
                 CliToken lastToken = tokens.get(tokens.size() - 1);
                 if (!commonPrefix.equals(lastToken.value())) {
                     // only complete if the common prefix is longer than the last token
-                    String strToComplete = commonPrefix.substring(lastToken.value().length());
-                    completion.complete(io.termd.core.util.Helper.toCodePoints(strToComplete), false);
-                    return;
+                    if (commonPrefix.length() > lastToken.value().length()) {
+                        String strToComplete = commonPrefix.substring(lastToken.value().length());
+                        completion.complete(io.termd.core.util.Helper.toCodePoints(strToComplete), false);
+                        return;
+                    }
                 }
             }
         }

@@ -3,7 +3,7 @@ watch
 
 Monitor methods in data aspect including `return values`, `exceptions` and `parameters`.
 
-With the help of [OGNL](https://en.wikipedia.org/wiki/OGNL), you can easily check the details of variables when methods being invoked.
+With the help of [OGNL](https://commons.apache.org/proper/commons-ognl/index.html), you can easily check the details of variables when methods being invoked.
 
 ### Parameters & Options
 
@@ -37,264 +37,198 @@ Advanced:
 
 ### Usage
 
-A demo:
+#### Start Demo
 
-```java
-	public void execute() {
-		List<String> list = new ArrayList<String>();
-		list.add("a");
-		list.add("b");
+Start `arthas-demo` in [Quick Start](quick-start.md).
 
-		List<String> list2 = new ArrayList<String>();
-		list2.add("c");
-		list2.add("d");
-
-		int len = add(list, list2);
-	}
-
-	private static int add(List<String> list, List<String> list2) {
-		list.addAll(list2);
-		return list.size();
-	}
-```
 #### Check the `out parameters` and `return value`
 
-```shell
-$ watch com.alibaba.sample.petstore.web.store.module.screen.ItemList add "{params,returnObj}" -x 2
+```bash
+$ watch demo.MathGame primeFactors "{params,returnObj}" -x 2
 Press Ctrl+C to abort.
 Affect(class-cnt:1 , method-cnt:1) cost in 44 ms.
-@ArrayList[
+ts=2018-12-03 19:16:51; [cost=1.280502ms] result=@ArrayList[
     @Object[][
-        @ArrayList[isEmpty=false;size=4],
-        @ArrayList[isEmpty=false;size=2],
+        @Integer[535629513],
     ],
-
-    @Integer[4],
+    @ArrayList[
+        @Integer[3],
+        @Integer[19],
+        @Integer[191],
+        @Integer[49199],
+    ],
 ]
 ```
 
 #### Check `in parameters`
 
-```shell
-$ watch com.alibaba.sample.petstore.web.store.module.screen.ItemList add "{params,returnObj}" -x 2 -b
+```bash
+$ watch demo.MathGame primeFactors "{params,returnObj}" -x 2 -b
 Press Ctrl+C to abort.
-Affect(class-cnt:1 , method-cnt:1) cost in 48 ms.  
-@ArrayList[
+Affect(class-cnt:1 , method-cnt:1) cost in 50 ms.
+ts=2018-12-03 19:23:23; [cost=0.0353ms] result=@ArrayList[
     @Object[][
-        @ArrayList[isEmpty=false;size=2],
-        @ArrayList[isEmpty=false;size=2],
+        @Integer[-1077465243],
     ],
-
     null,
 ]
 ```
 
-Compared to the previous *check*, there are two differences:
-1. size of `params[0]` is `2` instead of `4`;
-2. `return value` is `null` since it's `-b`.
+Compared to the previous *check*: 
+
+* `return value` is `null` since it's `-b`.
 
 
 #### Check *before* and *after* at the same time
 
-```shell
-$ watch com.alibaba.sample.petstore.web.store.module.screen.ItemList add "{params,returnObj}" -x 2 -b -s 
-Press Ctrl+C to abort.
-Affect(class-cnt:1 , method-cnt:1) cost in 59 ms.  
-@ArrayList[
-    @Object[][
-        @ArrayList[isEmpty=false;size=2],
-        @ArrayList[isEmpty=false;size=2],
-    ],
 
+```bash
+$ watch demo.MathGame primeFactors "{params,target,returnObj}" -x 2 -b -s -n 2
+Press Ctrl+C to abort.
+Affect(class-cnt:1 , method-cnt:1) cost in 46 ms.
+ts=2018-12-03 19:29:54; [cost=0.01696ms] result=@ArrayList[
+    @Object[][
+        @Integer[1544665400],
+    ],
+    @MathGame[
+        random=@Random[java.util.Random@522b408a],
+        illegalArgumentCount=@Integer[13038],
+    ],
     null,
 ]
-@ArrayList[
+ts=2018-12-03 19:29:54; [cost=4.277392ms] result=@ArrayList[
     @Object[][
-        @ArrayList[isEmpty=false;size=4],
-        @ArrayList[isEmpty=false;size=2],
+        @Integer[1544665400],
     ],
-
-    @Integer[4],
+    @MathGame[
+        random=@Random[java.util.Random@522b408a],
+        illegalArgumentCount=@Integer[13038],
+    ],
+    @ArrayList[
+        @Integer[2],
+        @Integer[2],
+        @Integer[2],
+        @Integer[5],
+        @Integer[5],
+        @Integer[73],
+        @Integer[241],
+        @Integer[439],
+    ],
 ]
 ```
 
 F.Y.I
-1. the first block of output is the *before watching* point;
-2. the order of the output determined by the *watching* order itself (nothing to do with the order of the options `-b -s`).
+
+* `-n 2`: threshold of execution times is 2.
+* the first block of output is the *before watching* point;
+* *the order of the output determined by the *watching* order itself (nothing to do with the order of the options `-b -s`).
 
 #### Use `-x` to check more details
 
-```shell
-$ watch com.alibaba.sample.petstore.web.store.module.screen.ItemList add "{params,returnObj}" -x 3 
+```bash
+$ watch demo.MathGame primeFactors "{params,target}" -x 3
 Press Ctrl+C to abort.
-Affect(class-cnt:1 , method-cnt:1) cost in 59 ms.  
-@ArrayList[
+Affect(class-cnt:1 , method-cnt:1) cost in 58 ms.
+ts=2018-12-03 19:34:19; [cost=0.587833ms] result=@ArrayList[
     @Object[][
-        @ArrayList[
-            @String[a],
-
-            @String[b],
-
-            @String[c],
-
-            @String[d],
-        ],
-        @ArrayList[
-            @String[c],
-
-            @String[d],
-        ],
+        @Integer[47816758],
     ],
-
-    @Integer[4],
+    @MathGame[
+        random=@Random[
+            serialVersionUID=@Long[3905348978240129619],
+            seed=@AtomicLong[3133719055989],
+            multiplier=@Long[25214903917],
+            addend=@Long[11],
+            mask=@Long[281474976710655],
+            DOUBLE_UNIT=@Double[1.1102230246251565E-16],
+            BadBound=@String[bound must be positive],
+            BadRange=@String[bound must be greater than origin],
+            BadSize=@String[size must be non-negative],
+            seedUniquifier=@AtomicLong[-3282039941672302964],
+            nextNextGaussian=@Double[0.0],
+            haveNextNextGaussian=@Boolean[false],
+            serialPersistentFields=@ObjectStreamField[][isEmpty=false;size=3],
+            unsafe=@Unsafe[sun.misc.Unsafe@2eaa1027],
+            seedOffset=@Long[24],
+        ],
+        illegalArgumentCount=@Integer[13159],
+    ],
 ]
 ```
 
+* `-x`: Expand level of object (1 by default)
+
 #### Use condition expressions to locate specific call
 
-```shell
-$ watch com.alibaba.sample.petstore.biz.impl.UserManagerImpl testAdd "{params, returnObj}" "params[0].equals('aaa')" -x 2 
+```bash
+$ watch demo.MathGame primeFactors "{params[0],target}" "params[0]<0"
 Press Ctrl+C to abort.
-Affect(class-cnt:1 , method-cnt:1) cost in 29 ms.  
-@ArrayList[
-    @Object[][
-        @String[aaa],
-        @String[bbb],
-    ],
-
-    @Integer[6],
+Affect(class-cnt:1 , method-cnt:1) cost in 68 ms.
+ts=2018-12-03 19:36:04; [cost=0.530255ms] result=@ArrayList[
+    @Integer[-18178089],
+    @MathGame[demo.MathGame@41cf53f9],
 ]
 ```
 
 #### Check `exceptions`
 
-```shell
-$ watch com.alibaba.sample.petstore.biz.impl.UserManagerImpl testAdd "{params, throwExp}"  -e -x 2 
+```bash
+$ watch demo.MathGame primeFactors "{params[0],throwExp}" -e -x 2
 Press Ctrl+C to abort.
-Affect(class-cnt:1 , method-cnt:1) cost in 29 ms.  
-@ArrayList[
+Affect(class-cnt:1 , method-cnt:1) cost in 62 ms.
+ts=2018-12-03 19:38:00; [cost=1.414993ms] result=@ArrayList[
+    @Integer[-1120397038],
+    java.lang.IllegalArgumentException: number is: -1120397038, need >= 2
+	at demo.MathGame.primeFactors(MathGame.java:46)
+	at demo.MathGame.run(MathGame.java:24)
+	at demo.MathGame.main(MathGame.java:16)
+,
+]
+```
+
+* `-e`: Trigger when an exception is thrown
+* `throwExp`: the exception object
+
+#### Filter by time cost
+
+```bash
+$ watch demo.MathGame primeFactors '{params, returnObj}' '#cost>200' -x 2
+Press Ctrl+C to abort.
+Affect(class-cnt:1 , method-cnt:1) cost in 66 ms.
+ts=2018-12-03 19:40:28; [cost=2112.168897ms] result=@ArrayList[
     @Object[][
-        @String[aaa],
-        @String[bbb],
+        @Integer[2141897465],
     ],
-
-    java.lang.NullPointerException
-    	at com.alibaba.sample.petstore.biz.impl.UserManagerImpl.testAdd(UserManagerImpl.java:75)
-    	at com.alibaba.sample.petstore.biz.impl.UserManagerImpl.register(UserManagerImpl.java:60)
-    	at com.alibaba.sample.petstore.web.user.module.action.RegisterAction.doRegister(RegisterAction.java:45)
-    	at com.alibaba.sample.petstore.web.user.module.action.RegisterAction$$FastClassByCGLIB$$ad5428f1.invoke(<generated>)
-    	at net.sf.cglib.reflect.FastMethod.invoke(FastMethod.java:53)
-    	at com.alibaba.citrus.service.moduleloader.impl.adapter.MethodInvoker.invoke(MethodInvoker.java:70)
-    	at com.alibaba.citrus.service.moduleloader.impl.adapter.AbstractModuleEventAdapter.executeAndReturn(AbstractModuleEventAdapter.java:100)
-    	at com.alibaba.citrus.service.moduleloader.impl.adapter.AbstractModuleEventAdapter.execute(AbstractModuleEventAdapter.java:58)
-    	at com.alibaba.citrus.turbine.pipeline.valve.PerformActionValve.invoke(PerformActionValve.java:63)
-    	at com.alibaba.citrus.service.pipeline.impl.PipelineImpl$PipelineContextImpl.invokeNext(PipelineImpl.java:157)
-    	at com.alibaba.citrus.service.pipeline.impl.PipelineImpl$PipelineContextImpl.invoke(PipelineImpl.java:210)
-    	at com.alibaba.citrus.service.pipeline.impl.valve.ChooseValve.invoke(ChooseValve.java:98)
-    	at com.alibaba.citrus.service.pipeline.impl.PipelineImpl$PipelineContextImpl.invokeNext(PipelineImpl.java:157)
-    	at com.alibaba.citrus.service.pipeline.impl.PipelineImpl$PipelineContextImpl.invoke(PipelineImpl.java:210)
-    	at com.alibaba.citrus.service.pipeline.impl.valve.LoopValve.invokeBody(LoopValve.java:105)
-    	at com.alibaba.citrus.service.pipeline.impl.valve.LoopValve.invoke(LoopValve.java:83)
-    	at com.alibaba.citrus.service.pipeline.impl.PipelineImpl$PipelineContextImpl.invokeNext(PipelineImpl.java:157)
-    	at com.alibaba.citrus.turbine.pipeline.valve.PageAuthorizationValve.invoke(PageAuthorizationValve.java:105)
-    	at com.alibaba.citrus.service.pipeline.impl.PipelineImpl$PipelineContextImpl.invokeNext(PipelineImpl.java:157)
-    	at com.alibaba.citrus.turbine.pipeline.valve.CheckCsrfTokenValve.invoke(CheckCsrfTokenValve.java:123)
-    	at com.alibaba.citrus.service.pipeline.impl.PipelineImpl$PipelineContextImpl.invokeNext(PipelineImpl.java:157)
-    	at com.alibaba.citrus.turbine.pipeline.valve.AnalyzeURLValve.invoke(AnalyzeURLValve.java:126)
-    	at com.alibaba.citrus.service.pipeline.impl.PipelineImpl$PipelineContextImpl.invokeNext(PipelineImpl.java:157)
-    	at com.alibaba.citrus.turbine.pipeline.valve.SetLoggingContextValve.invoke(SetLoggingContextValve.java:66)
-    	at com.alibaba.citrus.service.pipeline.impl.PipelineImpl$PipelineContextImpl.invokeNext(PipelineImpl.java:157)
-    	at com.alibaba.citrus.turbine.pipeline.valve.PrepareForTurbineValve.invoke(PrepareForTurbineValve.java:52)
-    	at com.alibaba.citrus.service.pipeline.impl.PipelineImpl$PipelineContextImpl.invokeNext(PipelineImpl.java:157)
-    	at com.alibaba.citrus.service.pipeline.impl.PipelineImpl$PipelineContextImpl.invoke(PipelineImpl.java:210)
-    	at com.alibaba.citrus.webx.impl.WebxControllerImpl.service(WebxControllerImpl.java:43)
-    	at com.alibaba.citrus.webx.impl.WebxRootControllerImpl.handleRequest(WebxRootControllerImpl.java:53)
-    	at com.alibaba.citrus.webx.support.AbstractWebxRootController.service(AbstractWebxRootController.java:165)
-    	at com.alibaba.citrus.webx.servlet.WebxFrameworkFilter.doFilter(WebxFrameworkFilter.java:152)
-    	at com.alibaba.citrus.webx.servlet.FilterBean.doFilter(FilterBean.java:148)
-    	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:241)
-    	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:208)
-    	at com.alibaba.citrus.webx.servlet.SetLoggingContextFilter.doFilter(SetLoggingContextFilter.java:61)
-    	at com.alibaba.citrus.webx.servlet.FilterBean.doFilter(FilterBean.java:148)
-    	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:241)
-    	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:208)
-    	at org.apache.catalina.core.StandardWrapperValve.invoke(StandardWrapperValve.java:220)
-    	at org.apache.catalina.core.StandardContextValve.invoke(StandardContextValve.java:122)
-    	at com.taobao.tomcat.valves.ContextLoadFilterValve.invoke(ContextLoadFilterValve.java:152)
-    	at org.apache.catalina.core.StandardHostValve.invoke(StandardHostValve.java:170)
-    	at org.apache.catalina.valves.ErrorReportValve.invoke(ErrorReportValve.java:103)
-    	at org.apache.catalina.core.StandardEngineValve.invoke(StandardEngineValve.java:116)
-    	at org.apache.catalina.connector.CoyoteAdapter.service(CoyoteAdapter.java:429)
-    	at org.apache.coyote.http11.AbstractHttp11Processor.process(AbstractHttp11Processor.java:1085)
-    	at org.apache.coyote.AbstractProtocol$AbstractConnectionHandler.process(AbstractProtocol.java:625)
-    	at org.apache.tomcat.util.net.NioEndpoint$SocketProcessor.doRun(NioEndpoint.java:1760)
-    	at org.apache.tomcat.util.net.NioEndpoint$SocketProcessor.run(NioEndpoint.java:1719)
-    	at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1142)
-    	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:617)
-    	at org.apache.tomcat.util.threads.TaskThread$WrappingRunnable.run(TaskThread.java:61)
-    	at java.lang.Thread.run(Thread.java:745),
-]
-```
-
-#### Filter based on time cost
-
-```shell
-$ watch com.alibaba.sample.petstore.web.store.module.screen.ItemList add "{params,returnObj}" #cost>200 -x 3 
-Press Ctrl+C to abort.
-Affect(class-cnt:1 , method-cnt:1) cost in 59 ms.  
-@ArrayList[
-    @Object[][
-        @ArrayList[
-            @String[a],
-
-            @String[b],
-
-            @String[c],
-
-            @String[d],
-        ],
-        @ArrayList[
-            @String[c],
-
-            @String[d],
-        ],
+    @ArrayList[
+        @Integer[5],
+        @Integer[428379493],
     ],
-
-    @Integer[4],
 ]
 ```
 
-F.Y.I
-`#cost>200` (`ms`) filter out all invokings that take less than `200ms`.
+* `#cost>200` (`ms`) filter out all invokings that take less than `200ms`.
 
 
-#### Check the global properties of the target object
+#### Check the field of the target object
 
-`target` stands for the current object.
+* `target` is the `this` object in java.
 
-```
-$ watch com.taobao.container.web.arthas.rest.MyAppsController myFavoriteApps 'target'
+```bash
+$ watch demo.MathGame primeFactors 'target'
 Press Ctrl+C to abort.
-Affect(class-cnt:1 , method-cnt:1) cost in 128 ms.
-ts=2017-10-31 18:45:55;result=@MyAppsController[
-    myFavAppsMapper=@$Proxy131[org.apache.ibatis.binding.MapperProxy@563e97f3],
-    getAppNameAndIdByEmpId=@$Proxy135[HardCodedTarget(type=GetAppNameAndIdByEmpId, url=http://hello.com)],
-    enableWebConsoleAppsMapper=@$Proxy132[org.apache.ibatis.binding.MapperProxy@7d51e4a8],
+Affect(class-cnt:1 , method-cnt:1) cost in 52 ms.
+ts=2018-12-03 19:41:52; [cost=0.477882ms] result=@MathGame[
+    random=@Random[java.util.Random@522b408a],
+    illegalArgumentCount=@Integer[13355],
 ]
 ```
 
-`target.field_name` stands for a global property of the current object.
+* `target.field_name`: the field of the current object.
 
-```
-$ watch com.taobao.container.web.arthas.rest.MyAppsController myFavoriteApps 'target.myFavAppsMapper'
+```bash
+$ watch demo.MathGame primeFactors 'target.illegalArgumentCount'
 Press Ctrl+C to abort.
-Affect(class-cnt:1 , method-cnt:1) cost in 126 ms.
-ts=2017-10-31 18:46:17;result=@$Proxy131[
-    m1=@Method[public boolean java.lang.Object.equals(java.lang.Object)],
-    m2=@Method[public java.lang.String java.lang.Object.toString()],
-    m5=@Method[public abstract java.util.List com.taobao.container.dal.arthas.mapper.MyFavAppsMapper.listFavApps(java.util.Map)],
-    m3=@Method[public abstract int com.taobao.container.dal.arthas.mapper.MyFavAppsMapper.delete(java.lang.String,java.lang.String,java.lang.String)],
-    m4=@Method[public abstract long com.taobao.container.dal.arthas.mapper.MyFavAppsMapper.insert(com.taobao.container.dal.arthas.domain.MyFavAppsDO)],
-    m0=@Method[public native int java.lang.Object.hashCode()],
-]
+Affect(class-cnt:1 , method-cnt:1) cost in 67 ms.
+ts=2018-12-03 20:04:34; [cost=131.303498ms] result=@Integer[8]
+ts=2018-12-03 20:04:35; [cost=0.961441ms] result=@Integer[8]
 ``` 

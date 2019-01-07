@@ -3,7 +3,10 @@ package com.taobao.arthas.core.command.klass100;
 import com.taobao.arthas.core.command.Constants;
 import com.taobao.arthas.core.shell.command.AnnotatedCommand;
 import com.taobao.arthas.core.shell.command.CommandProcess;
+import com.taobao.arthas.core.util.ClassUtils;
+import com.taobao.arthas.core.util.StringUtils;
 import com.taobao.arthas.core.util.affect.RowAffect;
+import com.taobao.arthas.core.view.ObjectView;
 import com.taobao.middleware.cli.annotations.Description;
 import com.taobao.middleware.cli.annotations.Name;
 import com.taobao.middleware.cli.annotations.Option;
@@ -38,10 +41,12 @@ import java.util.TreeSet;
 @Description(Constants.EXAMPLE +
         "  classloader\n" +
         "  classloader -t\n" +
+        "  classloader -l\n" +
         "  classloader -c 327a647b\n" +
         "  classloader -c 327a647b -r META-INF/MANIFEST.MF\n" +
         "  classloader -a\n" +
         "  classloader -a -c 327a647b\n" +
+        "  classloader -c 659e0bfd --load demo.MathGame\n" +
         Constants.WIKI + Constants.WIKI_HOME + "classloader")
 public class ClassLoaderCommand extends AnnotatedCommand {
     private boolean isTree = false;
@@ -50,6 +55,8 @@ public class ClassLoaderCommand extends AnnotatedCommand {
     private String resource;
     private boolean includeReflectionClassLoader = true;
     private boolean listClassLoader = false;
+
+    private String loadClass = null;
 
     @Option(shortName = "t", longName = "tree", flag = true)
     @Description("Display ClassLoader tree")
@@ -87,6 +94,12 @@ public class ClassLoaderCommand extends AnnotatedCommand {
         this.listClassLoader = listClassLoader;
     }
 
+    @Option(longName = "load")
+    @Description("Use ClassLoader to load class, won't work without -c specified")
+    public void setLoadClass(String className) {
+        this.loadClass = className;
+    }
+
     @Override
     public void process(CommandProcess process) {
         Instrumentation inst = process.session().getInstrumentation();
@@ -94,6 +107,8 @@ public class ClassLoaderCommand extends AnnotatedCommand {
             processAllClasses(process, inst);
         } else if (hashCode != null && resource != null) {
             processResources(process, inst);
+        } else if (hashCode != null && this.loadClass != null) {
+            processLoadClass(process, inst);
         } else if (hashCode != null) {
             processClassloader(process, inst);
         } else if (listClassLoader || isTree){
@@ -169,8 +184,7 @@ public class ClassLoaderCommand extends AnnotatedCommand {
     private void processResources(CommandProcess process, Instrumentation inst) {
         RowAffect affect = new RowAffect();
         int rowCount = 0;
-        Set<ClassLoader> allClassLoader = includeReflectionClassLoader ? getAllClassLoader(inst) :
-                getAllClassLoader(inst, new SunReflectionClassLoaderFilter());
+        Set<ClassLoader> allClassLoader = getAllClassLoader(inst);
         for (ClassLoader cl : allClassLoader) {
             if (Integer.toHexString(cl.hashCode()).equals(hashCode)) {
                 TableElement table = new TableElement().leftCellPadding(1).rightCellPadding(1);
@@ -188,7 +202,28 @@ public class ClassLoaderCommand extends AnnotatedCommand {
             }
         }
         process.write(com.taobao.arthas.core.util.Constants.EMPTY_STRING);
-        process.write(affect.rCnt(rowCount) + "\n");
+        affect.rCnt(rowCount);
+        process.write(affect + "\n");
+        process.end();
+    }
+
+    // Use ClassLoader to loadClass
+    private void processLoadClass(CommandProcess process, Instrumentation inst) {
+        Set<ClassLoader> allClassLoader = getAllClassLoader(inst);
+        for (ClassLoader cl : allClassLoader) {
+            if (Integer.toHexString(cl.hashCode()).equals(hashCode)) {
+                try {
+                    Class<?> clazz = cl.loadClass(this.loadClass);
+                    process.write("load class success.\n");
+                    process.write(RenderUtil.render(ClassUtils.renderClassInfo(clazz), process.width()) + "\n");
+
+                } catch (Throwable e) {
+                    e.printStackTrace();
+                    process.write("load class error.\n" + StringUtils.objectToString(new ObjectView(e, 1).draw()));
+                }
+            }
+        }
+        process.write("\n");
         process.end();
     }
 

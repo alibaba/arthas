@@ -2,10 +2,16 @@ Release Notes
 =============
 
 
+v3.0.5
+---
+
+* [https://github.com/alibaba/arthas/releases/tag/arthas-all-3.0.5](https://github.com/alibaba/arthas/releases/tag/arthas-all-3.0.5)
+
 v3.0.4
 ---
 
-* https://github.com/alibaba/arthas/milestone/1?closed=1
+* [https://github.com/alibaba/arthas/releases/tag/arthas-all-3.0.4](https://github.com/alibaba/arthas/releases/tag/arthas-all-3.0.4)
+
 
 v2017-11-03
 ----
@@ -109,7 +115,7 @@ v2016-03-07
 v2016-01-18
 ----
 
-* [improvement]  optimise [`jad`](jad.md); dump memory byte array in real time; using `jd-core-java` to de-compile; line number presented;
+* [improvement]  optimise [`jad`](jad.md); dump memory byte array in real time; using `jd-core-java` to decompile; line number presented;
 * [bug] fix checking/re-producing issues when [`tt`](tt.md) is watching thread-context related methods invoking
 
 v2016-01-08

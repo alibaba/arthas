@@ -1,22 +1,23 @@
 monitor
 =======
 
-Monitor methods calling stack traces.
+> Monitor method invocation.
 
-F.Y.I
+Monitor invocation for the method matched with `class-pattern` and `method-pattern`.
 
-1. `monitor` is a persistent command, it never returns until you press `Ctrl+C` to manually stop it;
-2. the server runs the jobs in the background;
-3. injected monitoring code will become invalid automatically once the monitoring jobs being terminated;
-4. in theory, Arthas will not change any original behaviors but if it does, please do not hesitate to start an [issue](https://github.com/alibaba/arthas/issues).
+`monitor` is not a command returning immediately.
 
-### Properties monitored
+A command returning immediately is a command immediately returns with the result after the command is input, while a non-immediate returning command will keep outputting the information from the target JVM process until user presses `Ctrl+C`.
 
-|Property|Specification|
+On Arthas's server side, the command is running as a background job, but the weaved code will not take further effect once the job is terminated, therefore, it will not impact the performance after the job quits. Furthermore, Arthas is designed to have no side effect to the business logic.
+
+### Items to monitor
+
+|Item|Specification|
 |---:|:---|
 |timestamp|timestamp|
 |class|Java class|
-|method|constructor and regular methods|
+|method|method (constructor and regular methods)|
 |total|calling times|
 |success|success count|
 |fail|failure count|
@@ -25,28 +26,42 @@ F.Y.I
 
 ### Parameters
 
+Parameter `[c:]` stands for cycles of statistics. Its value is an integer value in seconds.
+
 |Name|Specification|
 |---:|:---|
 |*class-pattern*|pattern for the class name|
 |*method-pattern*|pattern for the method name|
-|[E]|turn on regex matching while the default is wildcard matching|
-|[c:]|cycle of output with default value: `60 s`|
+|`[E]`|turn on regex matching while the default is wildcard matching|
+|`[c:]`|cycle of statistics, the default value: `120`s|
 
 ### Usage
 
-```shell
-$ monitor -c 5 com.alibaba.sample.petstore.web.store.module.screen.ItemList execute
+```bash
+$ monitor -c 5 demo.MathGame primeFactors
 Press Ctrl+C to abort.
-Affect(class-cnt:1 , method-cnt:1) cost in 36 ms.
- timestamp            class                                                         method   total  success  fail  rt    fail-rate
------------------------------------------------------------------------------------------------------------------------------------
- 2015-12-17 10:56:40  com.alibaba.sample.petstore.web.store.module.screen.ItemList  execute  10     10       0     2.00  0.00%
+Affect(class-cnt:1 , method-cnt:1) cost in 94 ms.
+ timestamp            class          method        total  success  fail  avg-rt(ms)  fail-rate
+-----------------------------------------------------------------------------------------------
+ 2018-12-03 19:06:38  demo.MathGame  primeFactors  5      1        4     1.15        80.00%
 
- timestamp            class                                                         method   total  success  fail  rt    fail-rate
------------------------------------------------------------------------------------------------------------------------------------
- 2015-12-17 10:56:45  com.alibaba.sample.petstore.web.store.module.screen.ItemList  execute  11     11       0     2.18  0.00%
+ timestamp            class          method        total  success  fail  avg-rt(ms)  fail-rate
+-----------------------------------------------------------------------------------------------
+ 2018-12-03 19:06:43  demo.MathGame  primeFactors  5      3        2     42.29       40.00%
 
- timestamp            class                                                         method   total  success  fail  rt    fail-rate
------------------------------------------------------------------------------------------------------------------------------------
- 2015-12-17 10:56:50  com.alibaba.sample.petstore.web.store.module.screen.ItemList  execute  0      0        0     0.00  0.00%
+ timestamp            class          method        total  success  fail  avg-rt(ms)  fail-rate
+-----------------------------------------------------------------------------------------------
+ 2018-12-03 19:06:48  demo.MathGame  primeFactors  5      3        2     67.92       40.00%
+
+ timestamp            class          method        total  success  fail  avg-rt(ms)  fail-rate
+-----------------------------------------------------------------------------------------------
+ 2018-12-03 19:06:53  demo.MathGame  primeFactors  5      2        3     0.25        60.00%
+
+ timestamp            class          method        total  success  fail  avg-rt(ms)  fail-rate
+-----------------------------------------------------------------------------------------------
+ 2018-12-03 19:06:58  demo.MathGame  primeFactors  1      1        0     0.45        0.00%
+
+ timestamp            class          method        total  success  fail  avg-rt(ms)  fail-rate
+-----------------------------------------------------------------------------------------------
+ 2018-12-03 19:07:03  demo.MathGame  primeFactors  2      2        0     3182.72     0.00%
 ```

@@ -4,7 +4,8 @@ import com.taobao.arthas.core.advisor.Enhancer;
 import com.taobao.arthas.core.command.Constants;
 import com.taobao.arthas.core.shell.command.AnnotatedCommand;
 import com.taobao.arthas.core.shell.command.CommandProcess;
-import com.taobao.arthas.core.util.FileUtils;
+import com.taobao.arthas.core.util.ClassUtils;
+import com.taobao.arthas.core.util.Decompiler;
 import com.taobao.arthas.core.util.LogUtil;
 import com.taobao.arthas.core.util.SearchUtils;
 import com.taobao.arthas.core.util.TypeRenderUtils;
@@ -22,13 +23,9 @@ import com.taobao.text.ui.Element;
 import com.taobao.text.ui.LabelElement;
 import com.taobao.text.ui.TableElement;
 import com.taobao.text.util.RenderUtil;
-import org.benf.cfr.reader.Main;
-import org.objectweb.asm.Type;
 
 import java.io.File;
-import java.io.IOException;
 import java.lang.instrument.Instrumentation;
-import java.nio.charset.Charset;
 import java.util.*;
 import java.util.regex.Pattern;
 
@@ -36,20 +33,19 @@ import static com.taobao.text.ui.Element.label;
 
 /**
  * @author diecui1202 on 15/11/24.
+ * @author hengyunabc 2018-11-16
  */
 @Name("jad")
 @Summary("Decompile class")
 @Description(Constants.EXAMPLE +
-        "  jad -c 39eb305e org.apache.log4j.Logger\n" +
+        "  jad java.lang.String\n" +
+        "  jad java.lang.String toString\n" +
         "  jad -c 39eb305e org/apache/log4j/Logger\n" +
         "  jad -c 39eb305e -E org\\\\.apache\\\\.*\\\\.StringUtils\n" +
         Constants.WIKI + Constants.WIKI_HOME + "jad")
 public class JadCommand extends AnnotatedCommand {
     private static final Logger logger = LogUtil.getArthasLogger();
     private static Pattern pattern = Pattern.compile("(?m)^/\\*\\s*\\*/\\s*$" + System.getProperty("line.separator"));
-    private static final String OUTPUTOPTION = "--outputdir";
-    private static final String COMMENTS = "--comments";
-    private static final String DecompilePath = new File(LogUtil.LOGGER_FILE).getParent() + File.separator + "decompile";
 
     private String classPattern;
     private String methodName;
@@ -92,8 +88,12 @@ public class JadCommand extends AnnotatedCommand {
                 processNoMatch(process);
             } else if (matchedClasses.size() > 1) {
                 processMatches(process, matchedClasses);
-            } else {
-                Set<Class<?>> withInnerClasses = SearchUtils.searchClassOnly(inst,  classPattern + "(?!.*\\$\\$Lambda\\$).*", true, code);
+            } else { // matchedClasses size is 1
+                // find inner classes.
+                Set<Class<?>> withInnerClasses = SearchUtils.searchClassOnly(inst,  matchedClasses.iterator().next().getName() + "$*", false, code);
+                if(withInnerClasses.isEmpty()) {
+                    withInnerClasses = matchedClasses;
+                }
                 processExactMatch(process, affect, inst, matchedClasses, withInnerClasses);
             }
         } finally {
@@ -104,16 +104,16 @@ public class JadCommand extends AnnotatedCommand {
 
     private void processExactMatch(CommandProcess process, RowAffect affect, Instrumentation inst, Set<Class<?>> matchedClasses, Set<Class<?>> withInnerClasses) {
         Class<?> c = matchedClasses.iterator().next();
-        matchedClasses = withInnerClasses;
+        Set<Class<?>> allClasses = new HashSet<Class<?>>(withInnerClasses);
+        allClasses.add(c);
 
         try {
-            ClassDumpTransformer transformer = new ClassDumpTransformer(matchedClasses);
-            Enhancer.enhance(inst, transformer, matchedClasses);
+            ClassDumpTransformer transformer = new ClassDumpTransformer(allClasses);
+            Enhancer.enhance(inst, transformer, allClasses);
             Map<Class<?>, File> classFiles = transformer.getDumpResult();
             File classFile = classFiles.get(c);
 
-            String source;
-            source = decompileWithCFR(classFile.getAbsolutePath(), c, methodName);
+            String source = Decompiler.decompile(classFile.getAbsolutePath(), methodName);
             if (source != null) {
                 source = pattern.matcher(source).replaceAll("");
             } else {
@@ -125,7 +125,7 @@ public class JadCommand extends AnnotatedCommand {
             process.write(RenderUtil.render(new LabelElement("ClassLoader: ").style(Decoration.bold.fg(Color.red)), process.width()));
             process.write(RenderUtil.render(TypeRenderUtils.drawClassLoader(c), process.width()) + "\n");
             process.write(RenderUtil.render(new LabelElement("Location: ").style(Decoration.bold.fg(Color.red)), process.width()));
-            process.write(RenderUtil.render(new LabelElement(SearchClassCommand.getCodeSource(
+            process.write(RenderUtil.render(new LabelElement(ClassUtils.getCodeSource(
                     c.getProtectionDomain().getCodeSource())).style(Decoration.bold.fg(Color.blue)), process.width()) + "\n");
             process.write(LangRenderUtil.render(source) + "\n");
             process.write(com.taobao.arthas.core.util.Constants.EMPTY_STRING);
@@ -157,48 +157,4 @@ public class JadCommand extends AnnotatedCommand {
         process.write("No class found for: " + classPattern + "\n");
     }
 
-    private String decompileWithCFR(String classPath, Class<?> clazz, String methodName) {
-        List<String> options = new ArrayList<String>();
-        options.add(classPath);
-//        options.add(clazz.getName());
-        if (methodName != null) {
-            options.add(methodName);
-        }
-        options.add(OUTPUTOPTION);
-        options.add(DecompilePath);
-        options.add(COMMENTS);
-        options.add("false");
-        String args[] = new String[options.size()];
-        options.toArray(args);
-        Main.main(args);
-        String outputFilePath = DecompilePath + File.separator + Type.getInternalName(clazz) + ".java";
-        File outputFile = new File(outputFilePath);
-        if (outputFile.exists()) {
-            try {
-                return FileUtils.readFileToString(outputFile, Charset.defaultCharset());
-            } catch (IOException e) {
-                logger.error(null, "error read decompile result in: " + outputFilePath, e);
-            }
-        }
-
-        return null;
-    }
-
-    public static void main(String[] args) {
-        String[] names = {
-                "com.taobao.container.web.arthas.mvc.AppInfoController",
-                "com.taobao.container.web.arthas.mvc.AppInfoController$1$$Lambda$19/381016128",
-                "com.taobao.container.web.arthas.mvc.AppInfoController$$Lambda$16/17741163",
-                "com.taobao.container.web.arthas.mvc.AppInfoController$1",
-                "com.taobao.container.web.arthas.mvc.AppInfoController$123",
-                "com.taobao.container.web.arthas.mvc.AppInfoController$A",
-                "com.taobao.container.web.arthas.mvc.AppInfoController$ABC"
-        };
-
-        String pattern = "com.taobao.container.web.arthas.mvc.AppInfoController" + "(?!.*\\$\\$Lambda\\$).*";
-        for(String name : names) {
-            System.out.println(name + "    " + Pattern.matches(pattern, name));
-        }
-
-    }
 }

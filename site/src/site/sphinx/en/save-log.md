@@ -1,27 +1,25 @@
 Log command outputs
 ===================
 
-Log command outputs for later analysis, turned off by default.
+> Log command outputs for later analysis
 
-To turn it on, using [options](options.md) as:
+* By default, this behavior is turned off. To enable it, execute the command below:
 
-```bash
-$ options save-result true
- NAME         BEFORE-VALUE  AFTER-VALUE
-----------------------------------------
- save-result  false         true
-Affect(row-cnt:1) cost in 3 ms.
-```
+    ```bash
+    $ options save-result true
+     NAME         BEFORE-VALUE  AFTER-VALUE
+    ----------------------------------------
+    save-result  false         true
+    Affect(row-cnt:1) cost in 3 ms.
+    ```
 
-F.Y.I 
+    If the message above is output on the console, then this behavior is enabled successfully.
+    
+* Log file path
 
-1. logging file lies in: `{user.home}/logs/arthas-cache/result.log`;
-2. remember to clean up the file to save disk space.
+    The command execution result will be save in `{user.home}/logs/arthas-cache/result.log`. Pls. clean it up regularly to save disk space.
 
-### Asynchronous log
-
- :notes: :notes: 
-With the latest Arthas, you can log the outputs asynchronously in the background:
+### Use asynchronous job to log
 
 ```bash
 $ trace Test t >>  &
@@ -29,9 +27,8 @@ job id  : 2
 cache location  : /Users/zhuyong/logs/arthas-cache/28198/2
 ```
 
-F.Y.I
+By doing this, the command will run at background asynchronously, and output the execution result into `~/logs/arthas-cache/{PID}/{JobId}`:
 
-1. `quit/exit` or `Ctrl+C` will not affect the asynchronous jobs :sparkles:; 
-2. default timeout for the background job is 1 day (you can set it via [options](options.md));
-3. outputs will be save to the `cache location` now (no matter what `save-result` is - not `~/logs/arthas-cache/result.log` any more).
+* The background job will continue to run even if the current session is disconnected. The default job timeout value is 1 day, use global '[options](options.md)' command to alternate it.
+* The execution result will be output into the file asynchronously. Pls. note the behavior of this command is not controlled by `save-result` option from global [options](options.md). No matter `save-result` is set to `true` or not, this command will write into `~/logs/arthas-cache/{PID}/{JobId}` anyway, instead of into `~/logs/arthas-cache/result.log`.
 

@@ -40,7 +40,8 @@ import static com.taobao.text.ui.Element.label;
 
 @Name("getstatic")
 @Summary("Show the static field of a class")
-@Description(Constants.EXAMPLE + "  getstatic -c 39eb305e org.apache.log4j.LogManager DEFAULT_CONFIGURATION_FILE\n"
+@Description(Constants.EXAMPLE + "  getstatic getstatic demo.MathGame random\n"
+                + "  getstatic -c 39eb305e org.apache.log4j.LogManager DEFAULT_CONFIGURATION_FILE\n"
              + Constants.WIKI + Constants.WIKI_HOME + "getstatic")
 public class GetStaticCommand extends AnnotatedCommand {
 
@@ -49,7 +50,7 @@ public class GetStaticCommand extends AnnotatedCommand {
     private String classPattern;
     private String fieldPattern;
     private String express;
-    private String code = null;
+    private String hashCode = null;
     private boolean isRegEx = false;
     private int expand = 1;
 
@@ -71,10 +72,10 @@ public class GetStaticCommand extends AnnotatedCommand {
         this.express = express;
     }
 
-    @Option(shortName = "c", longName = "code")
+    @Option(shortName = "c", longName = "classloader")
     @Description("The hash code of the special class's classLoader")
-    public void setCode(String code) {
-        this.code = code;
+    public void setHashCode(String hashCode) {
+        this.hashCode = hashCode;
     }
 
     @Option(shortName = "E", longName = "regex", flag = true)
@@ -93,7 +94,7 @@ public class GetStaticCommand extends AnnotatedCommand {
     public void process(CommandProcess process) {
         RowAffect affect = new RowAffect();
         Instrumentation inst = process.session().getInstrumentation();
-        Set<Class<?>> matchedClasses = SearchUtils.searchClassOnly(inst, classPattern, isRegEx, code);
+        Set<Class<?>> matchedClasses = SearchUtils.searchClassOnly(inst, classPattern, isRegEx, hashCode);
 
         try {
             if (matchedClasses == null || matchedClasses.isEmpty()) {
@@ -128,7 +129,7 @@ public class GetStaticCommand extends AnnotatedCommand {
                 Object value = field.get(null);
 
                 if (!StringUtils.isEmpty(express)) {
-                    value = ExpressFactory.newExpress(value).get(express);
+                    value = ExpressFactory.threadLocalExpress(value).get(express);
                 }
 
                 String result = StringUtils.objectToString(expand >= 0 ? new ObjectView(value, expand).draw() : value);

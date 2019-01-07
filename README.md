@@ -13,7 +13,7 @@
 
 Arthas help developers in trouble-shooting production issues for Java applications without modifying code or restarting servers.
 
-[中文说明](README_CN.md) (For Chinese Documentation)
+[中文说明/Chinese Documentation](README_CN.md)
 
 ### Background
 
@@ -37,41 +37,50 @@ Arthas was built to solve these issues. A developer can trouble-shoot your produ
 * Monitor system metrics, thread states and cpu usage, gc statistics, and etc.
 * Supports command line interactive mode, with auto-complete feature enabled.
 * Supports telnet and websocket, which enables both local and remote diagnostics with command line and browsers.
+* Supports JDK 6+
 
 ### Quick start
 
-#### Linux/Unix/Mac
+#### Use `arthas-boot`(Recommend)
 
-Install Arthas:
+Download`arthas-boot.jar`，Start with `java` command:
 
+```bash
+wget https://alibaba.github.io/arthas/arthas-boot.jar
+java -jar arthas-boot.jar
 ```
+
+Print usage:
+
+```bash
+java -jar arthas-boot.jar -h
+```
+
+#### Use `as.sh`
+
+You can install Arthas with one single line command on Linux, Unix, and Mac. Pls. copy the following command and paste it into the command line, then press *Enter* to run:
+
+```bash
 curl -L https://alibaba.github.io/arthas/install.sh | sh
 ```
 
-Start Arthas:
+The command above will download the bootstrap script `as.sh` to the current directory. You can move it the any other place you want, or put its location in `$PATH`.
 
-```
-./as.sh
-```
-
-#### Windows
-
-1. Click [![Arthas](https://img.shields.io/maven-central/v/com.taobao.arthas/arthas-packaging.svg "Arthas")](http://search.maven.org/classic/#search%7Cga%7C1%7Cg%3A%22com.taobao.arthas%22%20AND%20a%3A%22arthas-packaging%22) to download the latest binary releases of `bin.zip`.
-2. Unzip the file.
-3. Go to the bin directory
-4. Run the following command `as.bat $PID`
+You can enter its interactive interface by executing `as.sh`, or execute `as.sh -h` for more help information.
 
 
 ### Documentation
-
-English version is on the way, if you would like to contribute, please leave a message [here](https://github.com/alibaba/arthas/issues/51)
 
 * [User manual](https://alibaba.github.io/arthas/en)
 * [Installation](https://alibaba.github.io/arthas/en/install-detail.html)
 * [Quick start](https://alibaba.github.io/arthas/en/quick-start.html)
 * [Advanced usage](https://alibaba.github.io/arthas/en/advanced-use.html)
+* [Commands](https://alibaba.github.io/arthas/en/commands.html)
+* [Docker](https://alibaba.github.io/arthas/en/docker.html)
+* [User cases](https://github.com/alibaba/arthas/issues?q=label%3Auser-case)
 * [Questions and answers](https://github.com/alibaba/arthas/issues?utf8=%E2%9C%93&q=label%3Aquestion-answered+)
 * [How to contribute](https://github.com/alibaba/arthas/blob/master/CONTRIBUTING.md)
+* [Release Notes](https://alibaba.github.io/arthas/en/release-notes.html)
 
 
 ### Feature Showcase
@@ -308,6 +317,29 @@ $ classloader
 
 ![web console](site/src/site/sphinx/_static/web-console-local.png)
 
+
+### Known Users
+
+Welcome to register the company name in this issue: https://github.com/alibaba/arthas/issues/111 (in order of registration)
+
+![Alibaba](static/alibaba.png)
+![Alipay](static/alipay.png)
+![Aliyun](static/aliyun.png)
+![Taobao](static/taobao.png)
+![Tmall](static/tmall.png)
+![微医](static/weiyi.png)
+![卓越教育](static/zhuoyuejiaoyu.png)
+![狐狸金服](static/hulijingfu.png)
+![三体云](static/santiyun.png)
+![证大文化](static/zhengdawenhua.png)
+![Acmedcare+](static/acmedcare.png)
+![好慷](static/homeking365_log.png)
+![来电科技](static/laidian.png)
+![四格互联](static/sigehulian.png)
+![ICBC](static/icbc.png)
+![陆鹰](static/luying.png)
+![玩友时代](static/wangyoushidai.png)
+![她社区](static/tashequ.png)
 
 ### Credit
 

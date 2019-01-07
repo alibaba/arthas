@@ -3,7 +3,7 @@
     <parent>
         <artifactId>arthas-all</artifactId>
         <groupId>com.taobao.arthas</groupId>
-        <version>3.0.5-SNAPSHOT</version>
+        <version>3.0.6-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
@@ -42,6 +42,10 @@
                                 </manifest>
                                 <manifestEntries>
                                     <Created-By>core engine team, middleware group, alibaba inc.</Created-By>
+                                    <Specification-Title>${project.name}</Specification-Title>
+                                    <Specification-Version>${project.version}</Specification-Version>
+                                    <Implementation-Title>${project.name}</Implementation-Title>
+                                    <Implementation-Version>${project.version}</Implementation-Version>
                                 </manifestEntries>
                             </archive>
                         </configuration>
@@ -53,8 +57,17 @@
 
     <dependencies>
         <dependency>
+            <groupId>com.taobao.arthas</groupId>
+            <artifactId>arthas-common</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
             <groupId>com.alibaba.middleware</groupId>
             <artifactId>cli</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>jline</groupId>
+            <artifactId>jline</artifactId>
         </dependency>
     </dependencies>
 

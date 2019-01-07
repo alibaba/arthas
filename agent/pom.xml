@@ -4,7 +4,7 @@
     <parent>
         <groupId>com.taobao.arthas</groupId>
         <artifactId>arthas-all</artifactId>
-        <version>3.0.5-SNAPSHOT</version>
+        <version>3.0.6-SNAPSHOT</version>
     </parent>
     <artifactId>arthas-agent</artifactId>
     <name>arthas-agent</name>
@@ -55,6 +55,10 @@
                                     <Agent-Class>com.taobao.arthas.agent.AgentBootstrap</Agent-Class>
                                     <Can-Redefine-Classes>true</Can-Redefine-Classes>
                                     <Can-Retransform-Classes>true</Can-Retransform-Classes>
+                                    <Specification-Title>${project.name}</Specification-Title>
+                                    <Specification-Version>${project.version}</Specification-Version>
+                                    <Implementation-Title>${project.name}</Implementation-Title>
+                                    <Implementation-Version>${project.version}</Implementation-Version>
                                 </manifestEntries>
                             </archive>
                         </configuration>

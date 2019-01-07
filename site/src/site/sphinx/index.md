@@ -18,8 +18,9 @@ Arthas 用户文档
 0. 是否有一个全局视角来查看系统的运行状况？
 0. 有什么办法可以监控到JVM的实时运行状态？
 
-`Arthas`采用命令行交互模式，同时提供丰富的 `Tab` 自动补全功能，进一步方便进行问题的定位和诊断。
+`Arthas`支持JDK 6+，采用命令行交互模式，同时提供丰富的 `Tab` 自动补全功能，进一步方便进行问题的定位和诊断。
 
+**如果您在使用Arthas，请让我们知道，您的使用对我们非常重要：[查看](https://github.com/alibaba/arthas/issues/111)**
 
 Contents
 --------
@@ -29,11 +30,12 @@ Contents
 * [快速入门](quick-start.md)
 * [进阶使用](advanced-use.md)
 * [命令列表](commands.md)
+* [Docker](docker.md)
 * [用户案例](https://github.com/alibaba/arthas/issues?q=label%3Auser-case)
-* [Release Notes](release-notes.md)
-* [Questions and answers](https://github.com/alibaba/arthas/issues?q=label%3Aquestion-answered)
+* [常见问题](https://github.com/alibaba/arthas/issues?q=label%3Aquestion-answered)
 * [Fork me at GitHub](https://github.com/alibaba/arthas)
 * [参与贡献](https://github.com/alibaba/arthas/blob/master/CONTRIBUTING.md)
-
+* [Release Notes](release-notes.md)
+* [QQ群/钉钉群](contact-us.md)
 
 

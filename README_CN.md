@@ -24,46 +24,58 @@ English version goes [here](README.md).
 0. 是否有一个全局视角来查看系统的运行状况？
 0. 有什么办法可以监控到JVM的实时运行状态？
 
-`Arthas`采用命令行交互模式，同时提供丰富的 `Tab` 自动补全功能，进一步方便进行问题的定位和诊断。
-
-
+`Arthas`支持JDK 6+，采用命令行交互模式，同时提供丰富的 `Tab` 自动补全功能，进一步方便进行问题的定位和诊断。
 
 
 ### 快速开始
 
-#### Linux/Unix/Mac
+#### 使用`arthas-boot`（推荐）
 
-安装Arthas:
+下载`arthas-boot.jar`，然后用`java -jar`的方式启动：
 
+```bash
+wget https://alibaba.github.io/arthas/arthas-boot.jar
+java -jar arthas-boot.jar
 ```
+
+打印帮助信息：
+
+```bash
+java -jar arthas-boot.jar -h
+```
+
+* 如果下载速度比较慢，可以使用aliyun的镜像：`java -jar arthas-boot.jar --repo-mirror aliyun --use-http`
+
+#### 使用`as.sh`
+
+Arthas 支持在 Linux/Unix/Mac 等平台上一键安装，请复制以下内容，并粘贴到命令行中，敲 `回车` 执行即可：
+
+```bash
 curl -L https://alibaba.github.io/arthas/install.sh | sh
 ```
 
-启动Arthas:
+上述命令会下载启动脚本文件 `as.sh` 到当前目录，你可以放在任何地方或将其加入到 `$PATH` 中。
 
-```
-./as.sh
-```
+直接在shell下面执行`./as.sh`，就会进入交互界面。
 
-#### Windows
-
-1. 点击 [![Arthas](https://img.shields.io/maven-central/v/com.taobao.arthas/arthas-packaging.svg "Arthas")](http://search.maven.org/classic/#search%7Cga%7C1%7Cg%3A%22com.taobao.arthas%22%20AND%20a%3A%22arthas-packaging%22) 下载最新的Arthas `bin.zip`包
-2. 解压缩zip包.
-3. 进入bin目录
-4. 执行以下命令 `as.bat $PID`
+也可以执行`./as.sh -h`来获取更多参数信息。
 
 
 ### 文档
-
-社区正在进行英文版本的翻译工作，如果您有兴趣请在 [这里](https://github.com/alibaba/arthas/issues/51)留言。
 
 * [用户文档](https://alibaba.github.io/arthas/)
 * [安装](https://alibaba.github.io/arthas/install-detail.html)
 * [快速入门](https://alibaba.github.io/arthas/quick-start.html)
 * [进阶使用](https://alibaba.github.io/arthas/advanced-use.html)
-* [Q&A](https://github.com/alibaba/arthas/issues?utf8=%E2%9C%93&q=label%3Aquestion-answered+)
+* [命令列表](https://alibaba.github.io/arthas/commands.html)
+* [Docker](https://alibaba.github.io/arthas/docker.html)
+* [用户案例](https://github.com/alibaba/arthas/issues?q=label%3Auser-case)
+* [常见问题](https://github.com/alibaba/arthas/issues?utf8=%E2%9C%93&q=label%3Aquestion-answered+)
 * [参与贡献](https://github.com/alibaba/arthas/blob/master/CONTRIBUTING.md)
+* [Release Notes](https://alibaba.github.io/arthas/release-notes.html)
+* [QQ群/钉钉群](https://alibaba.github.io/arthas/contact-us.html)
 
+Gitee文档镜像： https://arthas.gitee.io/
 
 ### 案例展示
 
@@ -216,7 +228,7 @@ ts=2018-09-18 10:11:45;thread_name=http-bio-8080-exec-10;id=d9;is_daemon=true;pr
 
 #### Trace
 
-观察方法执行的时候那个子调用比较慢:
+观察方法执行的时候哪个子调用比较慢:
 
 ![trace](site/src/site/sphinx/_static/trace.png)
 
@@ -302,9 +314,31 @@ $ classloader
 
 ![web console](site/src/site/sphinx/_static/web-console-local.png)
 
+
+### Known Users
+
+如果您在使用Arthas，请让我们知道，您的使用对我们非常重要：https://github.com/alibaba/arthas/issues/111 （按登记顺序排列）
+
+![Alibaba](static/alibaba.png)
+![Alipay](static/alipay.png)
+![Aliyun](static/aliyun.png)
+![Taobao](static/taobao.png)
+![Tmall](static/tmall.png)
+![微医](static/weiyi.png)
+![卓越教育](static/zhuoyuejiaoyu.png)
+![狐狸金服](static/hulijingfu.png)
+![三体云](static/santiyun.png)
+![证大文化](static/zhengdawenhua.png)
+![Acmedcare+](static/acmedcare.png)
+![好慷](static/homeking365_log.png)
+![来电科技](static/laidian.png)
+![四格互联](static/sigehulian.png)
+![ICBC](static/icbc.png)
+![陆鹰](static/luying.png)
+![玩友时代](static/wangyoushidai.png)
+![她社区](static/tashequ.png)
+
 ### Credit
-
-
 
 * [greys-anatomy](https://github.com/oldmanpushcart/greys-anatomy): Arthas代码基于Greys二次开发而来，非常感谢Greys之前所有的工作，以及Greys原作者对Arthas提出的意见和建议！
 * [termd](https://github.com/termd/termd): Arthas的命令行实现基于termd开发，是一款优秀的命令行程序开发框架，感谢termd提供了优秀的框架。

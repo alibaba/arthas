@@ -1,9 +1,9 @@
 stack
 =====
 
-Print out the full call stack trace *till* the current method.
+> Print out the full call stack of the current method.
 
-Most of the time, we know the method being invoked but not always we know **HOW being invoked**; `stack` can be a great help to locate the *source* for you. 
+Most often we know one method gets called, but we have no idea on which code path gets executed or when the method gets called since there are so many code paths to the target method. The command `stack` comes to rescue in this difficult situation.
 
 ### Parameters
 
@@ -12,103 +12,62 @@ Most of the time, we know the method being invoked but not always we know **HOW 
 |*class-pattern*|pattern for the class name|
 |*method-pattern*|pattern for the method name|
 |*condition-expression*|condition expression|
-|[E]|turn on regex matching while the default is wildcard matching|
-|[n:]|calling times|
+|`[E]`|turn on regex match, the default behavior is wildcard match|
+|`[n:]`|execution times|
 
-F.Y.I
-1. any valid OGNL expression as `"{params,returnObj}"` supported;
-2. filter by time cost as `trace *StringUtils isBlank '#cost>100'`; calling stack with only time cost higher than `100ms` will be printed.
+There's one thing worthy noting here is observation expression. The observation expression supports OGNL grammar, for example, you can come up a expression like this `"{params,returnObj}"`. All OGNL expressions are supported as long as they are legal to the grammar.
 
-Attention:
-1. `#cost` can be used in `watch/stack/trace`;
-2. using `#cost` in Arthas 3.0 instead of `$cost`.
+Thanks for `advice`'s data structure, it is possible to observe from varieties of different angles. Inside `advice` parameter, all necessary information for notification can be found.
 
-
-Advanced:
-* [Critical fields in expression](advice-class.md)
-* [Special usage](https://github.com/alibaba/arthas/issues/71)
-* [OGNL official guide](https://commons.apache.org/proper/commons-ognl/language-guide.html)
-
+Pls. refer to [core parameters in expression](advice-class.md) for more details.
+* Pls. also refer to [https://github.com/alibaba/arthas/issues/71](https://github.com/alibaba/arthas/issues/71) for more advanced usage
+* OGNL official site: [https://commons.apache.org/proper/commons-ognl/language-guide.html](https://commons.apache.org/proper/commons-ognl/language-guide.html)
 
 ### Usage
 
-The quoting rules: if there are quotes within the expression, use another type of quotes to quote the whole expression (single `''` or double `""` quotes). 
+#### Start Demo
 
-```
-$ stack com.alibaba.sample.petstore.dal.dao.ProductDao getProductById 'params[0]=="K9-BD-01"'
+Start `arthas-demo` in [Quick Start](quick-start.md).
+
+
+#### stack
+
+```bash
+$ stack demo.MathGame primeFactors
 Press Ctrl+C to abort.
-Affect(class-cnt:1 , method-cnt:1) cost in 51 ms.
-thread_name="http-bio-8080-exec-4" thread_id=0x4a;is_daemon=true;priority=5;
-    @com.alibaba.sample.petstore.dal.dao.ibatis.IbatisProductDao.getProductById()
-        at com.alibaba.sample.petstore.web.store.module.screen.ItemList.execute(ItemList.java:50)
-        at com.alibaba.sample.petstore.web.store.module.screen.ItemList$$FastClassByCGLIB$$40b2f45f.invoke(<generated>:-1)
-        at net.sf.cglib.reflect.FastMethod.invoke(FastMethod.java:53)
-        at com.alibaba.citrus.service.moduleloader.impl.adapter.MethodInvoker.invoke(MethodInvoker.java:70)
-        at com.alibaba.citrus.service.moduleloader.impl.adapter.DataBindingAdapter.executeAndReturn(DataBindingAdapter.java:41)
-        at com.alibaba.citrus.turbine.pipeline.valve.PerformScreenValve.performScreenModule(PerformScreenValve.java:111)
-        at com.alibaba.citrus.turbine.pipeline.valve.PerformScreenValve.invoke(PerformScreenValve.java:74)
-        at com.alibaba.citrus.service.pipeline.impl.PipelineImpl$PipelineContextImpl.invokeNext(PipelineImpl.java:157)
-        at com.alibaba.citrus.turbine.pipeline.valve.PerformActionValve.invoke(PerformActionValve.java:73)
-        at com.alibaba.citrus.service.pipeline.impl.PipelineImpl$PipelineContextImpl.invokeNext(PipelineImpl.java:157)
-        at com.alibaba.citrus.service.pipeline.impl.PipelineImpl$PipelineContextImpl.invoke(PipelineImpl.java:210)
-......
-
-thread_name="http-bio-8080-exec-2" thread_id=0x48;is_daemon=true;priority=5;
-    @com.alibaba.sample.petstore.dal.dao.ibatis.IbatisProductDao.getProductById()
-        at com.alibaba.sample.petstore.web.store.module.screen.ItemList.execute(ItemList.java:50)
-        at com.alibaba.sample.petstore.web.store.module.screen.ItemList$$FastClassByCGLIB$$40b2f45f.invoke(<generated>:-1)
-        at net.sf.cglib.reflect.FastMethod.invoke(FastMethod.java:53)
-        at com.alibaba.citrus.service.moduleloader.impl.adapter.MethodInvoker.invoke(MethodInvoker.java:70)
-        at com.alibaba.citrus.service.moduleloader.impl.adapter.DataBindingAdapter.executeAndReturn(DataBindingAdapter.java:41)
-        at com.alibaba.citrus.turbine.pipeline.valve.PerformScreenValve.performScreenModule(PerformScreenValve.java:111)
-        at com.alibaba.citrus.turbine.pipeline.valve.PerformScreenValve.invoke(PerformScreenValve.java:74)
-        at com.alibaba.citrus.service.pipeline.impl.PipelineImpl$PipelineContextImpl.invokeNext(PipelineImpl.java:157)
-        at com.alibaba.citrus.turbine.pipeline.valve.PerformActionValve.invoke(PerformActionValve.java:73)
-        at com.alibaba.citrus.service.pipeline.impl.PipelineImpl$PipelineContextImpl.invokeNext(PipelineImpl.java:157)
-        at com.alibaba.citrus.service.pipeline.impl.PipelineImpl$PipelineContextImpl.invoke(PipelineImpl.java:210)
-        at com.alibaba.citrus.service.pipeline.impl.valve.ChooseValve.invoke(ChooseValve.java:98)
-        at com.alibaba.citrus.service.pipeline.impl.PipelineImpl$PipelineContextImpl.invokeNext(PipelineImpl.java:157)
-...
+Affect(class-cnt:1 , method-cnt:1) cost in 36 ms.
+ts=2018-12-04 01:32:19;thread_name=main;id=1;is_daemon=false;priority=5;TCCL=sun.misc.Launcher$AppClassLoader@3d4eac69
+    @demo.MathGame.run()
+        at demo.MathGame.main(MathGame.java:16)
 ```
 
-Filtering by time cost:
+#### Filtering by condition expression
 
-```
-$ stack com.alibaba.sample.petstore.web.store.module.screen.ItemList execute #cost>30
+```bash
+$ stack demo.MathGame primeFactors 'params[0]<0' -n 2
 Press Ctrl+C to abort.
-Affect(class-cnt:1 , method-cnt:1) cost in 123 ms.
-stack com.alibaba.sample.petstore.web.store.module.screen.ItemList execute #cost>30
-thread_name=http-nio-8080-exec-10;id=31;is_daemon=true;priority=5;TCCL=com.taobao.pandora.boot.embedded.tomcat.TomcatEmbeddedWebappClassLoader
-    @com.alibaba.sample.petstore.web.store.module.screen.ItemList.execute()
-        at com.alibaba.sample.petstore.web.store.module.screen.ItemList$$FastClassByCGLIB$$40b2f45f.invoke(<generated>:-1)
-        at net.sf.cglib.reflect.FastMethod.invoke(FastMethod.java:53)
-        at com.alibaba.citrus.service.moduleloader.impl.adapter.MethodInvoker.invoke(MethodInvoker.java:70)
-        at com.alibaba.citrus.service.moduleloader.impl.adapter.DataBindingAdapter.executeAndReturn(DataBindingAdapter.java:41)
-        at com.alibaba.citrus.turbine.pipeline.valve.PerformScreenValve.performScreenModule(PerformScreenValve.java:111)
-        at com.alibaba.citrus.turbine.pipeline.valve.PerformScreenValve.invoke(PerformScreenValve.java:74)
-        at com.alibaba.citrus.service.pipeline.impl.PipelineImpl$PipelineContextImpl.invokeNext(PipelineImpl.java:157)
-        at com.alibaba.citrus.turbine.pipeline.valve.PerformActionValve.invoke(PerformActionValve.java:73)
-        at com.alibaba.citrus.service.pipeline.impl.PipelineImpl$PipelineContextImpl.invokeNext(PipelineImpl.java:157)
-        at com.alibaba.citrus.service.pipeline.impl.PipelineImpl$PipelineContextImpl.invoke(PipelineImpl.java:210)
-        at com.alibaba.citrus.service.pipeline.impl.valve.ChooseValve.invoke(ChooseValve.java:98)
-        at com.alibaba.citrus.service.pipeline.impl.PipelineImpl$PipelineContextImpl.invokeNext(PipelineImpl.java:157)
-        at com.alibaba.citrus.service.pipeline.impl.PipelineImpl$PipelineContextImpl.invoke(PipelineImpl.java:210)
-        at com.alibaba.citrus.service.pipeline.impl.valve.LoopValve.invokeBody(LoopValve.java:105)
-        at com.alibaba.citrus.service.pipeline.impl.valve.LoopValve.invoke(LoopValve.java:83)
-        at com.alibaba.citrus.service.pipeline.impl.PipelineImpl$PipelineContextImpl.invokeNext(PipelineImpl.java:157)
-        at com.alibaba.citrus.turbine.pipeline.valve.PageAuthorizationValve.invoke(PageAuthorizationValve.java:105)
-        at com.alibaba.citrus.service.pipeline.impl.PipelineImpl$PipelineContextImpl.invokeNext(PipelineImpl.java:157)
-        at com.alibaba.citrus.turbine.pipeline.valve.CheckCsrfTokenValve.invoke(CheckCsrfTokenValve.java:123)
-        at com.alibaba.citrus.service.pipeline.impl.PipelineImpl$PipelineContextImpl.invokeNext(PipelineImpl.java:157)
-        at com.alibaba.citrus.turbine.pipeline.valve.AnalyzeURLValve.invoke(AnalyzeURLValve.java:126)
-        at com.alibaba.citrus.service.pipeline.impl.PipelineImpl$PipelineContextImpl.invokeNext(PipelineImpl.java:157)
-        at com.alibaba.citrus.turbine.pipeline.valve.SetLoggingContextValve.invoke(SetLoggingContextValve.java:66)
-        at com.alibaba.citrus.service.pipeline.impl.PipelineImpl$PipelineContextImpl.invokeNext(PipelineImpl.java:157)
-        at com.alibaba.citrus.turbine.pipeline.valve.PrepareForTurbineValve.invoke(PrepareForTurbineValve.java:52)
-        at com.alibaba.citrus.service.pipeline.impl.PipelineImpl$PipelineContextImpl.invokeNext(PipelineImpl.java:157)
-        at com.alibaba.citrus.service.pipeline.impl.PipelineImpl$PipelineContextImpl.invoke(PipelineImpl.java:210)
-        at com.alibaba.citrus.webx.impl.WebxControllerImpl.service(WebxControllerImpl.java:43)
-        at com.alibaba.citrus.webx.impl.WebxRootControllerImpl.handleRequest(WebxRootControllerImpl.java:53)
-        at com.alibaba.citrus.webx.support.AbstractWebxRootController.service(AbstractWebxRootController.java:165)
-...
+Affect(class-cnt:1 , method-cnt:1) cost in 30 ms.
+ts=2018-12-04 01:34:27;thread_name=main;id=1;is_daemon=false;priority=5;TCCL=sun.misc.Launcher$AppClassLoader@3d4eac69
+    @demo.MathGame.run()
+        at demo.MathGame.main(MathGame.java:16)
+
+ts=2018-12-04 01:34:30;thread_name=main;id=1;is_daemon=false;priority=5;TCCL=sun.misc.Launcher$AppClassLoader@3d4eac69
+    @demo.MathGame.run()
+        at demo.MathGame.main(MathGame.java:16)
+
+Command execution times exceed limit: 2, so command will exit. You can set it with -n option.
 ```
+
+
+#### Filtering by cost
+
+```bash
+$ stack demo.MathGame primeFactors '#cost>5'
+Press Ctrl+C to abort.
+Affect(class-cnt:1 , method-cnt:1) cost in 35 ms.
+ts=2018-12-04 01:35:58;thread_name=main;id=1;is_daemon=false;priority=5;TCCL=sun.misc.Launcher$AppClassLoader@3d4eac69
+    @demo.MathGame.run()
+        at demo.MathGame.main(MathGame.java:16)
+```
+
+
