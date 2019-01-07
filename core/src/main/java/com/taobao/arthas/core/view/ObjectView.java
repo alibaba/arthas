@@ -578,7 +578,13 @@ public class ObjectView implements View {
                     appendStringBuilder(buf, format("@%s[%s]", className, obj));
                 } else {
                     appendStringBuilder(buf, format("@%s[", className));
-                    final Field[] fields = obj.getClass().getDeclaredFields();
+                    List<Field> fields = new ArrayList<Field>();
+                    Class objClass = obj.getClass();
+                    //当父类为null的时候说明到达了最上层的父类(Object类).
+                    while (objClass != null) {
+                        fields.addAll(Arrays.asList(objClass.getDeclaredFields()));
+                        objClass = objClass.getSuperclass();
+                    }
                     if (null != fields) {
                         for (Field field : fields) {
 

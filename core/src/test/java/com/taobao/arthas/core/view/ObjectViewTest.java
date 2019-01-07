@@ -246,10 +246,46 @@ public class ObjectViewTest {
         Assert.assertEquals(expected, objectView.draw());
     }
 
+    /**
+     * 显示基类属性值
+     */
+    @Test
+    public void testObjectViewBaseFieldValue() {
+        SonBean sonBean = new SonBean();
+        sonBean.setI(10);
+        sonBean.setJ("test");
+
+        ObjectView objectView = new ObjectView(sonBean, 3, 100);
+        Assert.assertTrue(objectView.draw().contains("i=@Integer[10]"));
+    }
+
     private String replaceHashCode(String input) {
         return input.replaceAll("@[0-9a-f]+", "@ffffffff");
     }
 
+    private class BaseBean {
+        private int i;
+
+        public int getI() {
+            return i;
+        }
+
+        public void setI(int i) {
+            this.i = i;
+        }
+    }
+
+    private class SonBean extends BaseBean {
+        private String j;
+
+        public String getJ() {
+            return j;
+        }
+
+        public void setJ(String j) {
+            this.j = j;
+        }
+    }
 
     private static class NestedClass {
 
