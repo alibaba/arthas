@@ -79,10 +79,18 @@ class WatchAdviceListener extends ReflectAdviceListenerAdapter {
             double cost = threadLocalWatch.costInMillis();
             if (isConditionMet(command.getConditionExpress(), advice, cost)) {
                 // TODO: concurrency issues for process.write
-                Object value = getExpressionResult(command.getExpress(), advice, cost);
-                String result = StringUtils.objectToString(
-                        isNeedExpand() ? new ObjectView(value, command.getExpand(), command.getSizeLimit()).draw() : value);
-                process.write("ts=" + DateUtils.getCurrentDate() + "; [cost=" + cost + "ms] result=" + result + "\n");
+                StringBuilder builder = new StringBuilder();
+                String[] expressArray = command.getExpress().split(",");
+                for (String express : expressArray) {
+                    Object value = getExpressionResult(express, advice, cost);
+                    String result = StringUtils.objectToString(
+                            isNeedExpand() ? new ObjectView(value, command.getExpand(), command.getSizeLimit()).draw() : value);
+
+                    builder.append(";" + express + "=" + result);
+                }
+                builder.append("\n");
+
+                process.write("ts=" + DateUtils.getCurrentDate() + "; [cost=" + cost + "ms] " + builder.toString());
                 process.times().incrementAndGet();
                 if (isLimitExceeded(command.getNumberOfLimit(), process.times().get())) {
                     abortProcess(process, command.getNumberOfLimit());

@@ -16,6 +16,7 @@ import com.taobao.middleware.cli.annotations.Summary;
 @Description(Constants.EXPRESS_DESCRIPTION + "\nExamples:\n" +
         "  watch -b org.apache.commons.lang.StringUtils isBlank params[0]\n" +
         "  watch -f org.apache.commons.lang.StringUtils isBlank returnObj\n" +
+        "  watch -f *StringUtils isBlank params[0],returnObj,throwExp,isReturn\n" +
         "  watch -bf *StringUtils isBlank params[0]\n" +
         "  watch *StringUtils isBlank params[0]\n" +
         "  watch *StringUtils isBlank params[0] params[0].length==1\n" +
