@@ -97,8 +97,10 @@ java.home              /Library/Java/JavaVir
 
 ## 4. 通过thread命令来获取到`arthas-demo`进程的Main Class
 
+`thread 1`会打印线程ID 1的栈，通常是main函数的线程。
+
 ```bash
-$ thread -n -1 | grep 'main('
+$ thread 1 | grep 'main('
     at demo.MathGame.main(MathGame.java:17)
 ```
 
