@@ -96,8 +96,10 @@ java.home              /Library/Java/JavaVir
 
 ## 4. Get the Main Class of the `arthas-demo` process with the thread command
 
+`thread 1` will print the stack of the thread with ID 1, which usually the main function thread.
+
 ```bash
-$ thread -n -1 | grep 'main('
+$ thread 1 | grep 'main('
     at demo.MathGame.main(MathGame.java:17)
 ```
 
