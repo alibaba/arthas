@@ -246,25 +246,6 @@ reset_for_env()
         exit_on_err 1 "Can not find JAVA_HOME, please set \$JAVA_HOME bash env first."
     fi
 
-    # when java version less than 9, we can use tools.jar to confirm java home.
-    # when java version greater than 9, there is no tools.jar.
-    if [[ "$JAVA_VERSION" -lt 9 ]];then
-      # possible java homes
-      javaHomes=("${JAVA_HOME%%/}" "${JAVA_HOME%%/}/.." "${JAVA_HOME%%/}/../..")
-      for javaHome in ${javaHomes[@]}
-      do
-          toolsJar="$javaHome/lib/tools.jar"
-          if [ -f $toolsJar ]; then
-              JAVA_HOME=$( rreadlink $javaHome )
-              BOOT_CLASSPATH=-Xbootclasspath/a:$( rreadlink $toolsJar )
-              break
-          fi
-      done
-      [ -z "${BOOT_CLASSPATH}" ] && exit_on_err 1 "tools.jar was not found, so arthas could not be launched!"
-    fi
-
-    echo "[INFO] JAVA_HOME: ${JAVA_HOME}"
-
     # maybe 1.8.0_162 , 11-ea
     local JAVA_VERSION
 
@@ -284,6 +265,25 @@ reset_for_env()
         fi
       fi
     done
+
+    # when java version less than 9, we can use tools.jar to confirm java home.
+    # when java version greater than 9, there is no tools.jar.
+    if [[ "$JAVA_VERSION" -lt 9 ]];then
+      # possible java homes
+      javaHomes=("${JAVA_HOME%%/}" "${JAVA_HOME%%/}/.." "${JAVA_HOME%%/}/../..")
+      for javaHome in ${javaHomes[@]}
+      do
+          toolsJar="$javaHome/lib/tools.jar"
+          if [ -f $toolsJar ]; then
+              JAVA_HOME=$( rreadlink $javaHome )
+              BOOT_CLASSPATH=-Xbootclasspath/a:$( rreadlink $toolsJar )
+              break
+          fi
+      done
+      [ -z "${BOOT_CLASSPATH}" ] && exit_on_err 1 "tools.jar was not found, so arthas could not be launched!"
+    fi
+
+    echo "[INFO] JAVA_HOME: ${JAVA_HOME}"
 
     # reset CHARSET for alibaba opts, we use GBK
     [[ -x /opt/taobao/java ]] && JVM_OPTS="-Dinput.encoding=GBK ${JVM_OPTS} "
