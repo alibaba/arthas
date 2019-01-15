@@ -15,7 +15,7 @@ java -jar arthas-demo.jar
 
 ## 2. 启动arthas
 
-在命令行下面执行：
+在命令行下面执行（使用和目标进程一致的用户启动，否则可能attach失败）：
 
 ```bash
 wget https://alibaba.github.io/arthas/arthas-boot.jar
