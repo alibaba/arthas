@@ -190,7 +190,7 @@ java -jar arthas-demo.jar
 </div>
 <div class="section" id="arthas">
 <span id="arthas"></span><h2>2. 启动arthas<a class="headerlink" href="#arthas" title="永久链接至标题">¶</a></h2>
-<p>在命令行下面执行：</p>
+<p>在命令行下面执行（使用和目标进程一致的用户启动，否则可能attach失败）：</p>
 <div class="highlight-bash notranslate"><div class="highlight hljs"><pre class="bash">wget https://alibaba.github.io/arthas/arthas-boot.jar
 java -jar arthas-boot.jar
 </pre></div>
@@ -265,7 +265,8 @@ java.home              /Library/Java/JavaVir
 </div>
 <div class="section" id="threadarthas-demomain-class">
 <span id="threadarthas-demomain-class"></span><h2>4. 通过thread命令来获取到<tt class="docutils literal">arthas-demo</tt>进程的Main Class<a class="headerlink" href="#threadarthas-demomain-class" title="永久链接至标题">¶</a></h2>
-<div class="highlight-bash notranslate"><div class="highlight hljs"><pre class="bash">$ thread -n -1 | grep &#x27;main(&#x27;
+<p><tt class="docutils literal">thread 1</tt>会打印线程ID 1的栈，通常是main函数的线程。</p>
+<div class="highlight-bash notranslate"><div class="highlight hljs"><pre class="bash">$ thread 1 | grep &#x27;main(&#x27;
     at demo.MathGame.main(MathGame.java:17)
 </pre></div>
 </div>

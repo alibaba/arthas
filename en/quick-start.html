@@ -268,7 +268,8 @@ java.home              /Library/Java/JavaVir
 </div>
 <div class="section" id="get-the-main-class-of-the-arthas-demo-process-with-the-thread-command">
 <span id="get-the-main-class-of-the-arthas-demo-process-with-the-thread-command"></span><h2>4. Get the Main Class of the <tt class="docutils literal">arthas-demo</tt> process with the thread command<a class="headerlink" href="#get-the-main-class-of-the-arthas-demo-process-with-the-thread-command" title="Permalink to this headline">¶</a></h2>
-<div class="highlight-bash notranslate"><div class="highlight hljs"><pre class="bash">$ thread -n -1 | grep &#x27;main(&#x27;
+<p><tt class="docutils literal">thread 1</tt> will print the stack of the thread with ID 1, which usually the main function thread.</p>
+<div class="highlight-bash notranslate"><div class="highlight hljs"><pre class="bash">$ thread 1 | grep &#x27;main(&#x27;
     at demo.MathGame.main(MathGame.java:17)
 </pre></div>
 </div>
