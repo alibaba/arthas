@@ -8,6 +8,7 @@ Advanced Usage
 * session - display current session information
 * [reset](reset.md) - reset all the enhanced classes. All enhanced classes will also be reset when Arthas server is closed by `shutdown`
 * version - print the version for the Arthas attached to the current Java process
+* history - view command history
 * quit/exit - exit the current Arthas session, without effecting other sessions
 * shutdown - terminate the Arthas server, all Arthas sessions will be destroyed
 * [keymap](keymap.md) - keymap for Arthas keyboard shortcut
@@ -17,8 +18,10 @@ Advanced Usage
 * [dashboard](dashboard.md) - dashboard for the system's real-time data
 * [thread](thread.md) - show java thread information
 * [jvm](jvm.md) - show JVM information
-* [sysprop](sysprop.md) - show/modify system properties
-* **New!** [getstatic](getstatic.md) :clap: - examine class's static properties
+* [sysprop](sysprop.md) - view/modify system properties
+* [sysenv](sysenv.md) — view system environment variables
+* **New!** [getstatic](getstatic.md) - examine class's static properties
+* **New!** [ognl](ognl.md) - execute ongl expression
 
 ## class/classloader
 
@@ -26,7 +29,7 @@ Advanced Usage
 * [sm](sm.md) - check methods info for the loaded classes
 * [dump](dump.md) - dump the loaded classes in byte code to the specified location
 * [redefine](redefine.md) - load external `*.class` files and re-define it into JVM
-* [jad](jad.md) - de-compile the specified loaded classes
+* [jad](jad.md) - decompile the specified loaded classes
 * [classloader](classloader.md) - check the inheritance structure, urls, class loading info for the specified class; using classloader to get the url of the resource e.g. `java/lang/String.class`
 
 ## monitor/watch/trace - related
@@ -46,10 +49,10 @@ Advanced Usage
 
 ## pipe
 
-Arthas provides `pipe` to process the result returned from commands further, e.g. `sm org.apache.log4j.Logger | grep <init>`. Commands supported in `pipe`:
+Arthas provides `pipe` to process the result returned from commands further, e.g. `sm java.lang.String * | grep 'index'`. Commands supported in `pipe`:
 
 * grep - filter the result with the given keyword
-* plaintext - remove the color
+* plaintext - remove the ANSI color
 * wc - count lines
 
 ## async in background

@@ -42,10 +42,10 @@ import static java.lang.String.format;
         "  tt -t *StringUtils isEmpty\n" +
         "  tt -t *StringUtils isEmpty params[0].length==1\n" +
         "  tt -l\n" +
-        "  tt -D\n" +
-        "  tt -i 1000 -w params[0]\n" +
-        "  tt -i 1000 -d\n" +
         "  tt -i 1000\n" +
+        "  tt -i 1000 -w params[0]\n" +
+        "  tt -i 1000 -p\n" +
+        "  tt --delete-all\n" +
         Constants.WIKI + Constants.WIKI_HOME + "tt")
 public class TimeTunnelCommand extends EnhancerCommand {
     // 时间隧道(时间碎片的集合)
@@ -106,7 +106,7 @@ public class TimeTunnelCommand extends EnhancerCommand {
         isList = list;
     }
 
-    @Option(shortName = "D", longName = "delete-all", flag = true)
+    @Option(longName = "delete-all", flag = true)
     @Description("Delete all the time fragments")
     public void setDeleteAll(boolean deleteAll) {
         isDeleteAll = deleteAll;

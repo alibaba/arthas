@@ -5,7 +5,10 @@ All Commands
 * [thread](thread.md)
 * [jvm](jvm.md)
 * [sysprop](sysprop.md)
+* [sysenv](sysenv.md)
 * [getstatic](getstatic.md)
+
+* [ognl](ognl.md)
 
 * [sc](sc.md)
 * [sm](sm.md)
@@ -31,6 +34,7 @@ All Commands
 * session - examine the current session
 * [reset](reset.md) - reset enhanced classes. All enhanced classes will be reset to their original states. When Arthas server closes, all these enhanced classes will be reset too
 * version - print out Arthas's version
+* history - view command history
 * quit - exit the current Arthas client without affecting other clients
 * shutdown - terminate the Arthas server, all the Arthas clients connecting to this server will be disconnected
 * [keymap](keymap.md) - list all Arthas keyboard shortcuts and shortcut customizations.

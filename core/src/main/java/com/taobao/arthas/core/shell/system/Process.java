@@ -1,6 +1,5 @@
 package com.taobao.arthas.core.shell.system;
 
-import java.io.File;
 import java.util.Date;
 
 import com.taobao.arthas.core.shell.handlers.Handler;

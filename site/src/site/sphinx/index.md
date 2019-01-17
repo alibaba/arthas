@@ -3,8 +3,6 @@ Arthas 用户文档
 
 **[English Docs](https://alibaba.github.io/arthas/en/)**
 
-**Arthas正在参加“2018年度最受欢迎中国开源软件评选” ，请支持Arthas：[投票地址](https://www.oschina.net/project/top_cn_2018)**
-
 ## Arthas（阿尔萨斯） 能为你做什么？
 
 ![arthas](arthas.png)
@@ -22,6 +20,7 @@ Arthas 用户文档
 
 `Arthas`支持JDK 6+，采用命令行交互模式，同时提供丰富的 `Tab` 自动补全功能，进一步方便进行问题的定位和诊断。
 
+**如果您在使用Arthas，请让我们知道，您的使用对我们非常重要：[查看](https://github.com/alibaba/arthas/issues/111)**
 
 Contents
 --------
@@ -31,10 +30,12 @@ Contents
 * [快速入门](quick-start.md)
 * [进阶使用](advanced-use.md)
 * [命令列表](commands.md)
+* [Docker](docker.md)
 * [用户案例](https://github.com/alibaba/arthas/issues?q=label%3Auser-case)
-* [Questions and answers](https://github.com/alibaba/arthas/issues?q=label%3Aquestion-answered)
+* [常见问题](https://github.com/alibaba/arthas/issues?q=label%3Aquestion-answered)
 * [Fork me at GitHub](https://github.com/alibaba/arthas)
 * [参与贡献](https://github.com/alibaba/arthas/blob/master/CONTRIBUTING.md)
 * [Release Notes](release-notes.md)
+* [QQ群/钉钉群](contact-us.md)
 
 

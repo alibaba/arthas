@@ -47,7 +47,7 @@
 
     <groupId>com.taobao.arthas</groupId>
     <artifactId>arthas-all</artifactId>
-    <version>3.0.5-SNAPSHOT</version>
+    <version>3.0.6-SNAPSHOT</version>
     <packaging>pom</packaging>
 
     <name>arthas-all</name>
@@ -61,6 +61,7 @@
         <module>agent</module>
         <module>client</module>
         <module>boot</module>
+        <module>demo</module>
         <module>testcase</module>
         <module>site</module>
         <module>packaging</module>
@@ -77,12 +78,12 @@
             <dependency>
                 <groupId>org.ow2.asm</groupId>
                 <artifactId>asm</artifactId>
-                <version>6.0</version>
+                <version>7.0</version>
             </dependency>
             <dependency>
                 <groupId>org.ow2.asm</groupId>
                 <artifactId>asm-commons</artifactId>
-                <version>6.0</version>
+                <version>7.0</version>
             </dependency>
             <dependency>
                 <groupId>com.alibaba.middleware</groupId>
@@ -92,7 +93,7 @@
             <dependency>
                 <groupId>com.alibaba.middleware</groupId>
                 <artifactId>cli</artifactId>
-                <version>1.0.1</version>
+                <version>1.0.2</version>
             </dependency>
             <dependency>
                 <groupId>org.slf4j</groupId>

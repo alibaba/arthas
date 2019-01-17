@@ -77,7 +77,7 @@ public class LogUtil {
             } else {
                 // arthas strongly depends on logback.
                 // So do nothing here
-                // middleware-container/arthas/issues/123
+                // https://github.com/alibaba/arthas/issues/319
             }
         }
     }

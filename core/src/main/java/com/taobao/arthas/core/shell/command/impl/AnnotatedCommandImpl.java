@@ -23,7 +23,7 @@ public class AnnotatedCommandImpl extends Command {
 
     public AnnotatedCommandImpl(Class<? extends AnnotatedCommand> clazz) {
         this.clazz = clazz;
-        cli = CLIConfigurator.define(clazz);
+        cli = CLIConfigurator.define(clazz, true);
         cli.addOption(new Option().setArgName("help").setFlag(true).setShortName("h").setLongName("help")
                 .setDescription("this help").setHelp(true));
     }

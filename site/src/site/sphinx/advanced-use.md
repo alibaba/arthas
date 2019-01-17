@@ -9,6 +9,7 @@
 * session——查看当前会话的信息
 * [reset](reset.md)——重置增强类，将被 Arthas 增强过的类全部还原，Arthas 服务端关闭时会重置所有增强过的类
 * version——输出当前目标 Java 进程所加载的 Arthas 版本号
+* history——打印命令历史
 * quit——退出当前 Arthas 客户端，其他 Arthas 客户端不受影响
 * shutdown——关闭 Arthas 服务端，所有 Arthas 客户端全部退出
 * [keymap](keymap.md)——Arthas快捷键列表及自定义快捷键
@@ -20,7 +21,9 @@
 * [thread](thread.md)——查看当前 JVM 的线程堆栈信息
 * [jvm](jvm.md)——查看当前 JVM 的信息
 * [sysprop](sysprop.md)——查看和修改JVM的系统属性
-* **New!** [getstatic](getstatic.md)——查看类的静态属性
+* [sysenv](sysenv.md)——查看JVM的环境变量
+* [getstatic](getstatic.md)——查看类的静态属性
+* **New!** [ognl](ognl.md)——执行ognl表达式
 
 ## class/classloader相关
 
@@ -50,10 +53,10 @@
 
 ## 管道
 
-Arthas支持使用管道对上述命令的结果进行进一步的处理，如`sm org.apache.log4j.Logger | grep <init>`
+Arthas支持使用管道对上述命令的结果进行进一步的处理，如`sm java.lang.String * | grep 'index'`
 
 * grep——搜索满足条件的结果
-* plaintext——将命令的结果去除颜色
+* plaintext——将命令的结果去除ANSI颜色
 * wc——按行统计输出结果
 
 ## 后台异步任务

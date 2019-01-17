@@ -46,7 +46,7 @@ import java.util.TreeSet;
         "  classloader -c 327a647b -r META-INF/MANIFEST.MF\n" +
         "  classloader -a\n" +
         "  classloader -a -c 327a647b\n" +
-        "  classloader -c 659e0bfd --load com.test.Demo\n" +
+        "  classloader -c 659e0bfd --load demo.MathGame\n" +
         Constants.WIKI + Constants.WIKI_HOME + "classloader")
 public class ClassLoaderCommand extends AnnotatedCommand {
     private boolean isTree = false;
@@ -202,7 +202,8 @@ public class ClassLoaderCommand extends AnnotatedCommand {
             }
         }
         process.write(com.taobao.arthas.core.util.Constants.EMPTY_STRING);
-        process.write(affect.rCnt(rowCount) + "\n");
+        affect.rCnt(rowCount);
+        process.write(affect + "\n");
         process.end();
     }
 

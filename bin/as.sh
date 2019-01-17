@@ -8,10 +8,10 @@
 
 # program : Arthas
 #  author : Core Engine @ Taobao.com
-#    date : 2018-09-17
+#    date : 2018-11-28
 
 # current arthas script version
-ARTHAS_SCRIPT_VERSION=3.0.4
+ARTHAS_SCRIPT_VERSION=3.0.5
 
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
@@ -53,6 +53,9 @@ ATTACH_ONLY=false
 # pass debug arguments to the attach java process
 DEBUG_ATTACH=false
 
+# Verbose, print debug info.
+VERBOSE=false
+
 # command to execute
 COMMAND=
 # batch file to execute
@@ -73,7 +76,7 @@ ARTHAS_VERSION=
 # https://repo1.maven.org/maven2/com/taobao/arthas/arthas-packaging/maven-metadata.xml
 MAVEN_METADATA_URL="PLACEHOLDER_REPO/com/taobao/arthas/arthas-packaging/maven-metadata.xml"
 # arthas remote url
-# https://repo1.maven.org/maven2/com/taobao/arthas/arthas-packaging/3.0.4/arthas-packaging-3.0.4-bin.zip
+# https://repo1.maven.org/maven2/com/taobao/arthas/arthas-packaging/3.x.x/arthas-packaging-3.x.x-bin.zip
 REMOTE_DOWNLOAD_URL="PLACEHOLDER_REPO/com/taobao/arthas/arthas-packaging/PLACEHOLDER_VERSION/arthas-packaging-PLACEHOLDER_VERSION-bin.zip"
 
 # update timeout(sec)
@@ -243,8 +246,6 @@ reset_for_env()
         exit_on_err 1 "Can not find JAVA_HOME, please set \$JAVA_HOME bash env first."
     fi
 
-    echo "[INFO] JAVA_HOME: ${JAVA_HOME}"
-
     # maybe 1.8.0_162 , 11-ea
     local JAVA_VERSION
 
@@ -265,15 +266,24 @@ reset_for_env()
       fi
     done
 
-    # when java version greater than 9, there is no tools.jar
+    # when java version less than 9, we can use tools.jar to confirm java home.
+    # when java version greater than 9, there is no tools.jar.
     if [[ "$JAVA_VERSION" -lt 9 ]];then
-      # check tools.jar exists
-      if [ ! -f "${JAVA_HOME}/lib/tools.jar" ]; then
-          exit_on_err 1 "${JAVA_HOME}/lib/tools.jar does not exist, arthas could not be launched!"
-      else
-          BOOT_CLASSPATH=-Xbootclasspath/a:${JAVA_HOME}/lib/tools.jar
-      fi
+      # possible java homes
+      javaHomes=("${JAVA_HOME%%/}" "${JAVA_HOME%%/}/.." "${JAVA_HOME%%/}/../..")
+      for javaHome in ${javaHomes[@]}
+      do
+          toolsJar="$javaHome/lib/tools.jar"
+          if [ -f $toolsJar ]; then
+              JAVA_HOME=$( rreadlink $javaHome )
+              BOOT_CLASSPATH=-Xbootclasspath/a:$( rreadlink $toolsJar )
+              break
+          fi
+      done
+      [ -z "${BOOT_CLASSPATH}" ] && exit_on_err 1 "tools.jar was not found, so arthas could not be launched!"
     fi
+
+    echo "[INFO] JAVA_HOME: ${JAVA_HOME}"
 
     # reset CHARSET for alibaba opts, we use GBK
     [[ -x /opt/taobao/java ]] && JVM_OPTS="-Dinput.encoding=GBK ${JVM_OPTS} "
@@ -364,6 +374,15 @@ update_if_necessary()
     fi
 }
 
+call_jps()
+{
+    if [ "${VERBOSE}" = true ] ; then
+        "${JAVA_HOME}"/bin/jps -l -v
+    else
+        "${JAVA_HOME}"/bin/jps -l
+    fi
+}
+
 # the usage
 usage()
 {
@@ -372,7 +391,7 @@ Usage:
     $0 [-h] [--target-ip <value>] [--telnet-port <value>]
        [--http-port <value>] [--session-timeout <value>] [--arthas-home <value>]
        [--use-version <value>] [--repo-mirror <value>] [--versions] [--use-http]
-       [--attach-only] [-c <value>] [-f <value>] [pid]
+       [--attach-only] [-c <value>] [-f <value>] [-v] [pid]
 
 Options and Arguments:
  -h,--help                      Print usage
@@ -386,11 +405,13 @@ Options and Arguments:
                                 center/aliyun or http repo url.
     --versions                  List local and remote arthas versions
     --use-http                  Enforce use http to download, default use https
-    --attach-only               attach target process only, do not connect
+    --attach-only               Attach target process only, do not connect
+    --debug-attach              Debug attach agent
  -c,--command <value>           Command to execute, multiple commands separated
                                 by ;
  -f,--batch-file <value>        The batch file to execute
- <pid>                          target pid
+ -v,--verbose                   Verbose, print debug info.
+ <pid>                          Target pid
 
 EXAMPLES:
   ./as.sh <pid>
@@ -408,7 +429,7 @@ WIKI:
 Here is the list of possible java process(es) to attatch:
 "
 
-"${JAVA_HOME}"/bin/jps -l | grep -v sun.tools.jps.Jps
+call_jps | grep -v sun.tools.jps.Jps
 
 }
 
@@ -516,6 +537,10 @@ parse_arguments()
         ARTHAS_OPTS="$JPDA_OPTS $ARTHAS_OPTS"
         shift # past argument
         ;;
+        -v|--verbose)
+        VERBOSE=true
+        shift # past argument
+        ;;
         --default)
         DEFAULT=YES
         shift # past argument
@@ -560,7 +585,7 @@ parse_arguments()
     if [ -z ${TARGET_PID} ] && [ ${BATCH_MODE} = false ]; then
         # interactive mode
         local IFS=$'\n'
-        CANDIDATES=($("${JAVA_HOME}"/bin/jps -l | grep -v sun.tools.jps.Jps | awk '{print $0}'))
+        CANDIDATES=($(call_jps | grep -v sun.tools.jps.Jps | awk '{print $0}'))
 
         if [ ${#CANDIDATES[@]} -eq 0 ]; then
             echo "Error: no available java process to attach."
@@ -631,10 +656,13 @@ attach_jvm()
 
     echo "Attaching to ${TARGET_PID} using version ${1}..."
 
-    local opts="${ARTHAS_OPTS} ${BOOT_CLASSPATH} ${JVM_OPTS}"
+    local java_command=("${JAVA_HOME}"/bin/java)
+    if [ "${BOOT_CLASSPATH}" ]; then
+        java_command+=("${BOOT_CLASSPATH}")
+    fi
 
-    "${JAVA_HOME}"/bin/java \
-        ${opts}  \
+    "${java_command[@]}" \
+        ${ARTHAS_OPTS} ${JVM_OPTS} \
         -jar "${arthas_lib_dir}/arthas-core.jar" \
             -pid ${TARGET_PID} \
             -target-ip ${TARGET_IP} \
@@ -699,14 +727,14 @@ active_console()
         "${JAVA_HOME}/bin/java" ${ARTHAS_OPTS} ${JVM_OPTS} \
              -jar "${arthas_lib_dir}/arthas-client.jar" \
              ${TARGET_IP} \
-             -p ${TELNET_PORT} \
+             ${TELNET_PORT} \
              -c ${COMMAND}
         fi
         if [ "${BATCH_FILE}" ] ; then
         "${JAVA_HOME}/bin/java" ${ARTHAS_OPTS} ${JVM_OPTS} \
              -jar "${arthas_lib_dir}/arthas-client.jar" \
              ${TARGET_IP} \
-             -p ${TELNET_PORT} \
+             ${TELNET_PORT} \
              -f ${BATCH_FILE}
         fi
     elif type telnet 2>&1 >> /dev/null; then
