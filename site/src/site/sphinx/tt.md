@@ -80,7 +80,7 @@ Affect(class-cnt:1 , method-cnt:1) cost in 66 ms.
 
 - 构成条件表达式的 `Advice` 对象
 
-    前边看到了很多条件表达式中，都适用了 `params[0]`，有关这个变量的介绍，请参考[表达式核心变量](advice-class.md)
+    前边看到了很多条件表达式中，都使用了 `params[0]`，有关这个变量的介绍，请参考[表达式核心变量](advice-class.md)
 
 #### 检索调用记录
 
