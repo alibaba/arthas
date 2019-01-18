@@ -42,7 +42,7 @@ SESSION_TIMEOUT=300
 USE_VERSION=
 
 # maven repo to download arthas
-REPO_MIRROR="center"
+REPO_MIRROR=
 
 # use http to download arthas
 USE_HTTP=false
@@ -580,6 +580,13 @@ parse_arguments()
         fi
     fi
 
+    if [ -z ${REPO_MIRROR} ]; then
+        REPO_MIRROR="center"
+        # if timezone is +0800, set REPO_MIRROR to aliyun
+        if [[ -x "$(command -v date)" ]] && [[  $(date +%z) == "+0800" ]]; then
+            REPO_MIRROR="aliyun"
+        fi
+    fi
 
     # check pid
     if [ -z ${TARGET_PID} ] && [ ${BATCH_MODE} = false ]; then

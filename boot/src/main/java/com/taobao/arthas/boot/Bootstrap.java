@@ -11,6 +11,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.TimeZone;
+import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.InputMismatchException;
 
@@ -88,9 +90,9 @@ public class Bootstrap {
     private boolean versions;
 
     /**
-     * download from maven center repository by default
+     * download from maven repository. if timezone is +0800, default value is 'aliyun', else is 'center'.
      */
-    private String repoMirror = "center";
+    private String repoMirror;
 
     /**
      * enforce use http to download arthas. default use https
@@ -225,6 +227,15 @@ public class Bootstrap {
             System.out.println(usage(cli));
             System.exit(0);
         }
+
+        if (bootstrap.getRepoMirror() == null || bootstrap.getRepoMirror().trim().isEmpty()) {
+            bootstrap.setRepoMirror("center");
+            // if timezone is +0800, default repo mirror is aliyun
+            if (TimeUnit.MILLISECONDS.toHours(TimeZone.getDefault().getOffset(System.currentTimeMillis())) == 8) {
+                bootstrap.setRepoMirror("aliyun");
+            }
+        }
+        AnsiLog.debug("Repo mirror:" + bootstrap.getRepoMirror());
 
         if (bootstrap.isVersions()) {
             if (mavenMetaData == null) {
