@@ -480,7 +480,14 @@ public class Bootstrap {
 
     private static List<String> listNames(File dir) {
         List<String> names = new ArrayList<String>();
-        for (File file : dir.listFiles()) {
+        if (!dir.exists()) {
+            return names;
+        }
+        File[] files = dir.listFiles();
+        if (files == null) {
+            return names;
+        }
+        for (File file : files) {
             String name = file.getName();
             if (name.startsWith(".") || file.isFile()) {
                 continue;
