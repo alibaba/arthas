@@ -80,8 +80,8 @@ public class Arthas {
                 if (!targetJavaVersion.equals(currentJavaVersion)) {
                     AnsiLog.warn("Current VM java version: {} do not match target VM java version: {}, attach may fail.",
                                     currentJavaVersion, targetJavaVersion);
-                    AnsiLog.warn("Target VM JAVA_HOME is {}, try to set the same JAVA_HOME.",
-                                    targetSystemProperties.getProperty("java.home"));
+                    AnsiLog.warn("Target VM JAVA_HOME is {}, arthas-boot JAVA_HOME is {}, try to set the same JAVA_HOME.",
+                                    targetSystemProperties.getProperty("java.home"), System.getProperty("java.home"));
                 }
             }
 
