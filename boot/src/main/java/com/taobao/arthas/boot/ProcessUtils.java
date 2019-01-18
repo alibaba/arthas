@@ -121,7 +121,7 @@ public class ProcessUtils {
             if (pid == currentPid) {
                 continue;
             }
-            if (strings.length >= 2 && strings[1].equals("sun.tools.jps.Jps")) { // skip jps
+            if (strings.length >= 2 && isJspProcess(strings[1])) { // skip jps
                 continue;
             }
 
@@ -380,4 +380,7 @@ public class ProcessUtils {
         return jpsList.get(0);
     }
 
+    private static boolean isJspProcess(String mainClassName) {
+        return "sun.tools.jps.Jps".equals(mainClassName) || "jdk.jcmd/sun.tools.jps.Jps".equals(mainClassName);
+    }
 }
