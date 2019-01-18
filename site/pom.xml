@@ -5,6 +5,7 @@
         <groupId>com.taobao.arthas</groupId>
         <artifactId>arthas-all</artifactId>
         <version>3.0.6-SNAPSHOT</version>
+        <relativePath>../pom.xml</relativePath>
     </parent>
     <artifactId>arthas-site</artifactId>
     <name>arthas-site</name>
