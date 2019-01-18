@@ -93,79 +93,72 @@ public class Enhancer implements ClassFileTransformer {
 	}
 
     @Override
-    public byte[] transform(
-            final ClassLoader inClassLoader,
-            String className,
-            Class<?> classBeingRedefined,
-            ProtectionDomain protectionDomain,
-            byte[] classfileBuffer) throws IllegalClassFormatException {
-
-
-        // 这里要再次过滤一次，为啥？因为在transform的过程中，有可能还会再诞生新的类
-        // 所以需要将之前需要转换的类集合传递下来，再次进行判断
-        if (!matchingClasses.contains(classBeingRedefined)) {
-            return null;
-        }
-
-        final ClassReader cr;
-
-        // 首先先检查是否在缓存中存在Class字节码
-        // 因为要支持多人协作,存在多人同时增强的情况
-        final byte[] byteOfClassInCache = classBytesCache.get(classBeingRedefined);
-        if (null != byteOfClassInCache) {
-            cr = new ClassReader(byteOfClassInCache);
-        }
-
-        // 如果没有命中缓存,则从原始字节码开始增强
-        else {
-            cr = new ClassReader(classfileBuffer);
-        }
-
-        // 字节码增强
-        final ClassWriter cw = new ClassWriter(cr, COMPUTE_FRAMES | COMPUTE_MAXS) {
-
-
-            /*
-             * 注意，为了自动计算帧的大小，有时必须计算两个类共同的父类。
-             * 缺省情况下，ClassWriter将会在getCommonSuperClass方法中计算这些，通过在加载这两个类进入虚拟机时，使用反射API来计算。
-             * 但是，如果你将要生成的几个类相互之间引用，这将会带来问题，因为引用的类可能还不存在。
-             * 在这种情况下，你可以重写getCommonSuperClass方法来解决这个问题。
-             *
-             * 通过重写 getCommonSuperClass() 方法，更正获取ClassLoader的方式，改成使用指定ClassLoader的方式进行。
-             * 规避了原有代码采用Object.class.getClassLoader()的方式
-             */
-            @Override
-            protected String getCommonSuperClass(String type1, String type2) {
-                Class<?> c, d;
-                final ClassLoader classLoader = inClassLoader;
-                try {
-                    c = Class.forName(type1.replace('/', '.'), false, classLoader);
-                    d = Class.forName(type2.replace('/', '.'), false, classLoader);
-                } catch (Exception e) {
-                    throw new RuntimeException(e);
-                }
-                if (c.isAssignableFrom(d)) {
-                    return type1;
-                }
-                if (d.isAssignableFrom(c)) {
-                    return type2;
-                }
-                if (c.isInterface() || d.isInterface()) {
-                    return "java/lang/Object";
-                } else {
-                    do {
-                        c = c.getSuperclass();
-                    } while (!c.isAssignableFrom(d));
-                    return c.getName().replace('.', '/');
-                }
+    public byte[] transform(final ClassLoader inClassLoader, String className, Class<?> classBeingRedefined,
+                    ProtectionDomain protectionDomain, byte[] classfileBuffer) throws IllegalClassFormatException {
+        try {
+            // 这里要再次过滤一次，为啥？因为在transform的过程中，有可能还会再诞生新的类
+            // 所以需要将之前需要转换的类集合传递下来，再次进行判断
+            if (!matchingClasses.contains(classBeingRedefined)) {
+                return null;
             }
 
-        };
+            final ClassReader cr;
 
-        try {
+            // 首先先检查是否在缓存中存在Class字节码
+            // 因为要支持多人协作,存在多人同时增强的情况
+            final byte[] byteOfClassInCache = classBytesCache.get(classBeingRedefined);
+            if (null != byteOfClassInCache) {
+                cr = new ClassReader(byteOfClassInCache);
+            }
+
+            // 如果没有命中缓存,则从原始字节码开始增强
+            else {
+                cr = new ClassReader(classfileBuffer);
+            }
+
+            // 字节码增强
+            final ClassWriter cw = new ClassWriter(cr, COMPUTE_FRAMES | COMPUTE_MAXS) {
+
+                /*
+                 * 注意，为了自动计算帧的大小，有时必须计算两个类共同的父类。
+                 * 缺省情况下，ClassWriter将会在getCommonSuperClass方法中计算这些，通过在加载这两个类进入虚拟机时，使用反射API来计算。
+                 * 但是，如果你将要生成的几个类相互之间引用，这将会带来问题，因为引用的类可能还不存在。
+                 * 在这种情况下，你可以重写getCommonSuperClass方法来解决这个问题。
+                 *
+                 * 通过重写 getCommonSuperClass() 方法，更正获取ClassLoader的方式，改成使用指定ClassLoader的方式进行。
+                 * 规避了原有代码采用Object.class.getClassLoader()的方式
+                 */
+                @Override
+                protected String getCommonSuperClass(String type1, String type2) {
+                    Class<?> c, d;
+                    final ClassLoader classLoader = inClassLoader;
+                    try {
+                        c = Class.forName(type1.replace('/', '.'), false, classLoader);
+                        d = Class.forName(type2.replace('/', '.'), false, classLoader);
+                    } catch (Exception e) {
+                        throw new RuntimeException(e);
+                    }
+                    if (c.isAssignableFrom(d)) {
+                        return type1;
+                    }
+                    if (d.isAssignableFrom(c)) {
+                        return type2;
+                    }
+                    if (c.isInterface() || d.isInterface()) {
+                        return "java/lang/Object";
+                    } else {
+                        do {
+                            c = c.getSuperclass();
+                        } while (!c.isAssignableFrom(d));
+                        return c.getName().replace('.', '/');
+                    }
+                }
+
+            };
 
             // 生成增强字节码
-            cr.accept(new AdviceWeaver(adviceId, isTracing, skipJDKTrace, cr.getClassName(), methodNameMatcher, affect, cw), EXPAND_FRAMES);
+            cr.accept(new AdviceWeaver(adviceId, isTracing, skipJDKTrace, cr.getClassName(), methodNameMatcher, affect,
+                            cw), EXPAND_FRAMES);
             final byte[] enhanceClassByteArray = cw.toByteArray();
 
             // 生成成功,推入缓存
