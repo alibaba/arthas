@@ -30,6 +30,7 @@ Arthas is built to solve these issues. A developer can troubleshoot production i
 * Supports command line interactive mode, with auto-complete feature enabled.
 * Supports telnet and WebSocket, which enables both local and remote diagnostics with command line and browsers.
 * Supports JDK 6+
+* Supports Linux/Mac/Windows
 
 
 **If you are using Arthas, please let us know. Your use is very important to us: [View](https://github.com/alibaba/arthas/issues/111)**
