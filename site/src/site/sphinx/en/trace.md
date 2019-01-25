@@ -86,3 +86,13 @@ Affect(class-cnt:1 , method-cnt:1) cost in 41 ms.
 * "[min=0.005428ms,max=0.094064ms,total=0.105228ms,count=3] demo:call()" means aggregating all same method calls into one single line. The minimum time cost is `0.005428` ms, the maximum time cost is `0.094064` ms, and the total time cost for all method calls (`3` times in total) to "demo:call()" is `0.105228ms`. If "throws Exception" appears in this line, it means some exceptions have been thrown from this method calls.
 * The total time cost may not equal to the sum of the time costs each sub method call takes, this is because Arthas instrumented code takes time too.
 
+
+#### trace multiple classes or multiple methods
+
+The trace command will only trace the subcalls in the method to the trace, and will not trace down multiple layers. Because traces are expensive, multi-layer traces can lead to a lot of classes and methods that ultimately have to be traced.
+
+You can use the regular expression to match multiple classes and methods on the path to achieve a multi-layer trace effect to some extent.
+
+```bash
+Trace -E com.test.ClassA|org.test.ClassB method1|method2|method3
+```
