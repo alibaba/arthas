@@ -118,6 +118,7 @@
 <li class="toctree-l4"><a class="reference internal" href="#trace">trace函数</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#jdk">过滤掉jdk的函数</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#">据调用耗时过滤</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#trace">trace多个类或者多个函数</a></li>
 </ul>
 </li>
 </ul>
@@ -312,6 +313,14 @@ Affect(class-cnt:1 , method-cnt:1) cost in 41 ms.
 <li>[0,0,0ms,11]xxx:yyy() [throws Exception]，对该方法中相同的方法调用进行了合并，<tt class="docutils literal">0,0,0ms,11</tt> 表示方法调用耗时，<tt class="docutils literal">min,max,total,count</tt>；<tt class="docutils literal">throws Exception</tt> 表明该方法调用中存在异常返回</li>
 <li>这里存在一个统计不准确的问题，就是所有方法耗时加起来可能会小于该监测方法的总耗时，这个是由于 Arthas 本身的逻辑会有一定的耗时</li>
 </ul>
+</div>
+<div class="section" id="trace">
+<span id="id6"></span><h3>trace多个类或者多个函数<a class="headerlink" href="#trace" title="永久链接至标题">¶</a></h3>
+<p>trace命令只会trace匹配到的函数里的子调用，并不会向下trace多层。因为trace是代价比较贵的，多层trace可能会导致最终要trace的类和函数非常多。</p>
+<p>可以用正则表匹配路径上的多个类和函数，一定程度上达到多层trace的效果。</p>
+<div class="highlight-bash notranslate"><div class="highlight hljs"><pre class="bash">trace -E com.test.ClassA|org.test.ClassB method1|method2|method3
+</pre></div>
+</div>
 </div>
 </div>
 </div>
