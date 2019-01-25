@@ -349,6 +349,7 @@ Welcome to register the company name in this issue: https://github.com/alibaba/a
 ![掌门1对1](static/zhangmen.png)
 ![offcn](static/offcn.png)
 ![sia](static/sia.png)
+![振安资产](static/zhenganzichang.png)
 
 ### Credit
 
