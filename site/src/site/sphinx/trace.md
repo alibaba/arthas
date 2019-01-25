@@ -87,3 +87,13 @@ Affect(class-cnt:1 , method-cnt:1) cost in 41 ms.
 - [12.033735ms] 的含义，`12.033735` 的含义是：当前节点在当前步骤的耗时，单位为毫秒
 - [0,0,0ms,11]xxx:yyy() [throws Exception]，对该方法中相同的方法调用进行了合并，`0,0,0ms,11` 表示方法调用耗时，`min,max,total,count`；`throws Exception` 表明该方法调用中存在异常返回
 - 这里存在一个统计不准确的问题，就是所有方法耗时加起来可能会小于该监测方法的总耗时，这个是由于 Arthas 本身的逻辑会有一定的耗时
+
+#### trace多个类或者多个函数
+
+trace命令只会trace匹配到的函数里的子调用，并不会向下trace多层。因为trace是代价比较贵的，多层trace可能会导致最终要trace的类和函数非常多。
+
+可以用正则表匹配路径上的多个类和函数，一定程度上达到多层trace的效果。
+
+```bash
+trace -E com.test.ClassA|org.test.ClassB method1|method2|method3
+```

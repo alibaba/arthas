@@ -33,6 +33,7 @@ import java.util.List;
         "  trace *StringUtils isBlank params[0].length==1\n" +
         "  trace *StringUtils isBlank '#cost>100'\n" +
         "  trace -E org\\\\.apache\\\\.commons\\\\.lang\\\\.StringUtils isBlank\n" +
+        "  trace -E com.test.ClassA|org.test.ClassB method1|method2|method3\n" +
         Constants.WIKI + Constants.WIKI_HOME + "trace")
 public class TraceCommand extends EnhancerCommand {
 
