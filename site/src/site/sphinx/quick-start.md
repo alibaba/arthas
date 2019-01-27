@@ -36,7 +36,7 @@ $ $ java -jar arthas-boot.jar
   [2]: 71560 arthas-demo.jar
 ```
 
-Demo进程是第2个，则输入2，再输入回车/enter。Arthas会attach到目标进程上，并输出日志：
+Demo进程是第2个，则输入2，再输入`回车/enter`。Arthas会attach到目标进程上，并输出日志：
 
 ```bash
 [INFO] Try to attach process 71560
@@ -59,7 +59,7 @@ $
 
 ## 3. 查看dashboard
 
-输入[dashboard](dashboard.md)，按enter/回车，会展示当前进程的信息，按`ctrl+c`可以中断执行。
+输入[dashboard](dashboard.md)，按`回车/enter`，会展示当前进程的信息，按`ctrl+c`可以中断执行。
 
 ```bash
 $ dashboard
