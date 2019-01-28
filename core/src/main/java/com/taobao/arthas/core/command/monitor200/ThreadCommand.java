@@ -129,7 +129,7 @@ public class ThreadCommand extends AnnotatedCommand {
 
     private void processTopBusyThreads(CommandProcess process) {
         Map<Long, Long> topNThreads = ThreadUtil.getTopNThreads(sampleInterval, topNBusy);
-        Long[] tids = topNThreads.keySet().toArray(new Long[topNThreads.keySet().size()]);
+        Long[] tids = topNThreads.keySet().toArray(new Long[0]);
         ThreadInfo[] threadInfos = threadMXBean.getThreadInfo(ArrayUtils.toPrimitive(tids), true, true);
         if (threadInfos == null) {
             process.write("thread do not exist! id: " + id + "\n");
