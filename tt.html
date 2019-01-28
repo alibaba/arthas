@@ -296,7 +296,7 @@ Affect(class-cnt:1 , method-cnt:1) cost in 66 ms.
 <p>条件表达式也是用 <tt class="docutils literal">OGNL</tt> 来编写，核心的判断对象依然是 <tt class="docutils literal">Advice</tt> 对象。除了 <tt class="docutils literal">tt</tt> 命令之外，<tt class="docutils literal">watch</tt>、<tt class="docutils literal">trace</tt>、<tt class="docutils literal">stack</tt> 命令也都支持条件表达式。</p>
 </li>
 <li><p class="first">解决方法重载</p>
-<p><tt class="docutils literal">tt -t *Test print params[0].length==1</tt></p>
+<p><tt class="docutils literal">tt -t *Test print params.length==1</tt></p>
 <p>通过制定参数个数的形式解决不同的方法签名，如果参数个数一样，你还可以这样写</p>
 <p><tt class="docutils literal">tt -t *Test print 'params[1] instanceof Integer'</tt></p>
 </li>
