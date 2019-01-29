@@ -57,7 +57,7 @@ Affect(class-cnt:1 , method-cnt:1) cost in 66 ms.
 * Condition expression
 
 Tips:
-1. `tt -t *Test print params[0].length==1` with different amounts of parameters;
+1. `tt -t *Test print params.length==1` with different amounts of parameters;
 2. `tt -t *Test print 'params[1] instanceof Integer'` with different types of parameters;
 3. `tt -t *Test print params[0].mobile=="13989838402"` with specified parameter.
   
