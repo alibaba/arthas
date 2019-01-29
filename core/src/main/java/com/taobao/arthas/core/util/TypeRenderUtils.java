@@ -160,6 +160,6 @@ public class TypeRenderUtils {
                 types.add(annotation.annotationType());
             }
         }
-        return StringUtils.concat(",", types.toArray(new Class<?>[types.size()]));
+        return StringUtils.concat(",", types.toArray(new Class<?>[0]));
     }
 }

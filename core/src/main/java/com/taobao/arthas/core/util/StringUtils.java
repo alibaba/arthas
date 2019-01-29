@@ -538,7 +538,7 @@ public abstract class StringUtils {
 
 
     public static String[] toStringArray(Collection<String> collection) {
-        return collection == null?null:(String[])collection.toArray(new String[collection.size()]);
+        return collection == null?null:(String[])collection.toArray(new String[0]);
     }
 
     public static String[] split(String toSplit, String delimiter) {
