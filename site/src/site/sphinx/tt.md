@@ -68,7 +68,7 @@ Affect(class-cnt:1 , method-cnt:1) cost in 66 ms.
   
 - 解决方法重载
 
-     `tt -t *Test print params[0].length==1`
+     `tt -t *Test print params.length==1`
      
      通过制定参数个数的形式解决不同的方法签名，如果参数个数一样，你还可以这样写
      
