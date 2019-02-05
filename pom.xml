@@ -60,6 +60,7 @@
         <module>core</module>
         <module>agent</module>
         <module>client</module>
+        <module>memorycompiler</module>
         <module>boot</module>
         <module>demo</module>
         <module>testcase</module>
