@@ -4,6 +4,7 @@ import com.taobao.arthas.core.command.basic1000.ClsCommand;
 import com.taobao.arthas.core.command.basic1000.HelpCommand;
 import com.taobao.arthas.core.command.basic1000.HistoryCommand;
 import com.taobao.arthas.core.command.basic1000.KeymapCommand;
+import com.taobao.arthas.core.command.basic1000.PwdCommand;
 import com.taobao.arthas.core.command.basic1000.ResetCommand;
 import com.taobao.arthas.core.command.basic1000.SessionCommand;
 import com.taobao.arthas.core.command.basic1000.ShutdownCommand;
@@ -85,5 +86,6 @@ public class BuiltinCommandPack implements CommandResolver {
         commands.add(Command.create(SystemPropertyCommand.class));
         commands.add(Command.create(SystemEnvCommand.class));
         commands.add(Command.create(HistoryCommand.class));
+        commands.add(Command.create(PwdCommand.class));
     }
 }
