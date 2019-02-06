@@ -20,6 +20,7 @@ import com.taobao.arthas.core.util.TokenUtils;
 import io.termd.core.function.Function;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
@@ -149,7 +150,7 @@ public class JobControllerImpl implements JobController {
         return runInBackground;
     }
 
-    private Process createCommandProcess(Command command, ListIterator<CliToken> tokens, int jobId, Term term) {
+    private Process createCommandProcess(Command command, ListIterator<CliToken> tokens, int jobId, Term term) throws IOException {
         List<CliToken> remaining = new ArrayList<CliToken>();
         List<CliToken> pipelineTokens = new ArrayList<CliToken>();
         boolean isPipeline = false;
@@ -176,7 +177,7 @@ public class JobControllerImpl implements JobController {
                             throw new IllegalStateException("The amount of async command that saving result to file can't > 8");
                         }
                     }
-                    redirectHandler = new RedirectHandler(name);
+                    redirectHandler = new RedirectHandler(name, ">>".equals(tokenValue));
                     break;
                 }
             }
