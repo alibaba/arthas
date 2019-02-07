@@ -1,6 +1,9 @@
 package com.taobao.arthas.core.command.klass100;
 
 import com.taobao.arthas.core.command.Constants;
+import com.taobao.arthas.core.shell.cli.CliToken;
+import com.taobao.arthas.core.shell.cli.Completion;
+import com.taobao.arthas.core.shell.cli.CompletionUtils;
 import com.taobao.arthas.core.shell.command.AnnotatedCommand;
 import com.taobao.arthas.core.shell.command.CommandProcess;
 import com.taobao.arthas.core.util.matcher.Matcher;
@@ -23,6 +26,7 @@ import java.lang.instrument.Instrumentation;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import static com.taobao.text.Decoration.bold;
@@ -84,7 +88,7 @@ public class SearchMethodCommand extends AnnotatedCommand {
 
         for (Class<?> clazz : matchedClasses) {
             Set<String> methodNames = new HashSet<String>();
-            for (Constructor constructor : clazz.getDeclaredConstructors()) {
+            for (Constructor<?> constructor : clazz.getDeclaredConstructors()) {
                 if (!methodNameMatcher.matching("<init>")) {
                     continue;
                 }
@@ -146,7 +150,7 @@ public class SearchMethodCommand extends AnnotatedCommand {
         return table;
     }
 
-    private Element renderConstructor(Constructor constructor) {
+    private Element renderConstructor(Constructor<?> constructor) {
         TableElement table = new TableElement().leftCellPadding(1).rightCellPadding(1);
 
         table.row(label("declaring-class").style(bold.bold()), label(constructor.getDeclaringClass().getName()))
@@ -156,5 +160,24 @@ public class SearchMethodCommand extends AnnotatedCommand {
              .row(label("parameters").style(bold.bold()), label(TypeRenderUtils.drawParameters(constructor)))
              .row(label("exceptions").style(bold.bold()), label(TypeRenderUtils.drawExceptions(constructor)));
         return table;
+    }
+
+    @Override
+    public void complete(Completion completion) {
+        int argumentIndex = CompletionUtils.detectArgumentIndex(completion);
+
+        if(argumentIndex == 1) {
+            if(!CompletionUtils.completeClassName(completion)) {
+                super.complete(completion);
+            }
+            return;
+        }else if(argumentIndex == 2) {
+            if(!CompletionUtils.completeMethodName(completion)) {
+                super.complete(completion);
+            }
+            return;
+        }
+
+        super.complete(completion);
     }
 }
