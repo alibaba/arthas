@@ -9,6 +9,8 @@ import java.util.Map.Entry;
 
 import com.taobao.arthas.compiler.DynamicCompiler;
 import com.taobao.arthas.core.command.Constants;
+import com.taobao.arthas.core.shell.cli.Completion;
+import com.taobao.arthas.core.shell.cli.CompletionUtils;
 import com.taobao.arthas.core.shell.command.AnnotatedCommand;
 import com.taobao.arthas.core.shell.command.CommandProcess;
 import com.taobao.arthas.core.util.ClassLoaderUtils;
@@ -126,6 +128,13 @@ public class MemoryCompilerCommand extends AnnotatedCommand {
         } finally {
             process.write(affect + "\n");
             process.end(exitCode);
+        }
+    }
+
+    @Override
+    public void complete(Completion completion) {
+        if (!CompletionUtils.completeFilePath(completion)) {
+            super.complete(completion);
         }
     }
 }

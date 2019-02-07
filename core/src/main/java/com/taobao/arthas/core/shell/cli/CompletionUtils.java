@@ -2,12 +2,14 @@ package com.taobao.arthas.core.shell.cli;
 
 import com.taobao.arthas.core.shell.session.Session;
 import com.taobao.arthas.core.shell.term.Tty;
+import com.taobao.arthas.core.util.StringUtils;
 import com.taobao.arthas.core.util.usage.StyledUsageFormatter;
 import com.taobao.middleware.cli.CLI;
 import com.taobao.middleware.cli.Option;
 import com.taobao.middleware.cli.annotations.CLIConfigurator;
 import io.termd.core.util.Helper;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -63,6 +65,83 @@ public class CompletionUtils {
             completion.complete(candidates);
             return false;
         }
+    }
+
+    /**
+     * 返回true表示已经完成completion，返回否则表示没有，调用者需要另外完成补全
+     * @param completion
+     * @return
+     */
+    public static boolean completeFilePath(Completion completion) {
+        List<CliToken> tokens = completion.lineTokens();
+        String token = tokens.get(tokens.size() - 1).value();
+
+        if (token.startsWith("-") || StringUtils.isBlank(token)) {
+            return false;
+        }
+
+        File dir = null;
+        String partName = "";
+        if (StringUtils.isBlank(token)) {
+            dir = new File("").getAbsoluteFile();
+            token = "";
+        } else if (token.endsWith("/")) {
+            dir = new File(token);
+        } else {
+            File parent = new File(token).getAbsoluteFile().getParentFile();
+            if (parent != null && parent.exists()) {
+                dir = parent;
+                partName = new File(token).getName();
+            }
+        }
+
+        File tokenFile = new File(token);
+
+        String tokenFileName = null;
+        if (token.endsWith("/")) {
+            tokenFileName = "";
+        } else {
+            tokenFileName = tokenFile.getName();
+        }
+
+        if (dir == null) {
+            return false;
+        }
+
+        File[] listFiles = dir.listFiles();
+
+        ArrayList<String> names = new ArrayList<String>();
+        for (File child : listFiles) {
+            if (child.getName().startsWith(partName)) {
+                if (child.isDirectory()) {
+                    names.add(child.getName() + "/");
+                } else {
+                    names.add(child.getName());
+                }
+            }
+        }
+
+        if (names.size() == 1 && names.get(0).endsWith("/")) {
+            String name = names.get(0);
+            // 这个函数补全后不会有空格，并且只能传入要补全的内容
+            completion.complete(name.substring(tokenFileName.length(), name.length()), false);
+            return true;
+        }
+
+        String prefix = null;
+        if (token.endsWith("/")) {
+            prefix = token;
+        } else {
+            prefix = token.substring(0, token.length() - new File(token).getName().length());
+        }
+
+        ArrayList<String> namesWithPrefix = new ArrayList<String>();
+        for (String name : names) {
+            namesWithPrefix.add(prefix + name);
+        }
+        // 这个函数需要保留前缀
+        CompletionUtils.complete(completion, namesWithPrefix);
+        return true;
     }
 
     public static void completeShortOption(Completion completion, CliToken lastToken, List<Option> options) {
