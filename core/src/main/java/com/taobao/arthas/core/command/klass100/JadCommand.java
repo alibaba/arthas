@@ -40,6 +40,7 @@ import static com.taobao.text.ui.Element.label;
 @Description(Constants.EXAMPLE +
         "  jad java.lang.String\n" +
         "  jad java.lang.String toString\n" +
+        "  jad --source-only java.lang.String\n" +
         "  jad -c 39eb305e org/apache/log4j/Logger\n" +
         "  jad -c 39eb305e -E org\\\\.apache\\\\.*\\\\.StringUtils\n" +
         Constants.WIKI + Constants.WIKI_HOME + "jad")
@@ -51,6 +52,11 @@ public class JadCommand extends AnnotatedCommand {
     private String methodName;
     private String code = null;
     private boolean isRegEx = false;
+
+    /**
+     * jad output source code only
+     */
+    private boolean sourceOnly = false;
 
     @Argument(argName = "class-pattern", index = 0)
     @Description("Class name pattern, use either '.' or '/' as separator")
@@ -77,6 +83,12 @@ public class JadCommand extends AnnotatedCommand {
         isRegEx = regEx;
     }
 
+    @Option(longName = "source-only", flag = true)
+    @Description("Output source code only")
+    public void setSourceOnly(boolean sourceOnly) {
+        this.sourceOnly = sourceOnly;
+    }
+
     @Override
     public void process(CommandProcess process) {
         RowAffect affect = new RowAffect();
@@ -97,7 +109,9 @@ public class JadCommand extends AnnotatedCommand {
                 processExactMatch(process, affect, inst, matchedClasses, withInnerClasses);
             }
         } finally {
-            process.write(affect + "\n");
+            if (!this.sourceOnly) {
+                process.write(affect + "\n");
+            }
             process.end();
         }
     }
@@ -118,6 +132,11 @@ public class JadCommand extends AnnotatedCommand {
                 source = pattern.matcher(source).replaceAll("");
             } else {
                 source = "unknown";
+            }
+
+            if (this.sourceOnly) {
+                process.write(LangRenderUtil.render(source) + "\n");
+                return;
             }
 
 
