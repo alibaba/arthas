@@ -37,6 +37,7 @@ import static com.taobao.text.ui.Element.label;
 @Summary("Dump class byte array from JVM")
 @Description(Constants.EXAMPLE +
         "  dump java.lang.String\n" +
+        "  dump -d /tmp/output java.lang.String\n" +
         "  dump org/apache/commons/lang/StringUtils\n" +
         "  dump *StringUtils\n" +
         "  dump -E org\\\\.apache\\\\.commons\\\\.lang\\\\.StringUtils\n" +
@@ -47,6 +48,8 @@ public class DumpClassCommand extends AnnotatedCommand {
     private String classPattern;
     private String code = null;
     private boolean isRegEx = false;
+
+    private String directory;
 
     @Argument(index = 0, argName = "class-pattern")
     @Description("Class name pattern, use either '.' or '/' as separator")
@@ -66,13 +69,27 @@ public class DumpClassCommand extends AnnotatedCommand {
         isRegEx = regEx;
     }
 
+    @Option(shortName = "d", longName = "directory")
+    @Description("Sets the destination directory for class files")
+    public void setDirectory(String directory) {
+        this.directory = directory;
+    }
+
     @Override
     public void process(CommandProcess process) {
         RowAffect effect = new RowAffect();
-        Instrumentation inst = process.session().getInstrumentation();
 
-        Set<Class<?>> matchedClasses = SearchUtils.searchClass(inst, classPattern, isRegEx, code);
         try {
+            if (directory != null) {
+                File dir = new File(directory);
+                if (dir.isFile()) {
+                    process.write(directory + " :is not a directory, please check it\n");
+                    return;
+                }
+            }
+            Instrumentation inst = process.session().getInstrumentation();
+            Set<Class<?>> matchedClasses = SearchUtils.searchClass(inst, classPattern, isRegEx, code);
+
             if (matchedClasses == null || matchedClasses.isEmpty()) {
                 processNoMatch(process);
             } else if (matchedClasses.size() > 5) {
@@ -134,7 +151,12 @@ public class DumpClassCommand extends AnnotatedCommand {
     }
 
     private Map<Class<?>, File> dump(Instrumentation inst, Set<Class<?>> classes) throws UnmodifiableClassException {
-        ClassDumpTransformer transformer = new ClassDumpTransformer(classes);
+        ClassDumpTransformer transformer = null;
+        if (directory != null) {
+            transformer = new ClassDumpTransformer(classes, new File(directory));
+        } else {
+            transformer = new ClassDumpTransformer(classes);
+        }
         Enhancer.enhance(inst, transformer, classes);
         return transformer.getDumpResult();
     }
