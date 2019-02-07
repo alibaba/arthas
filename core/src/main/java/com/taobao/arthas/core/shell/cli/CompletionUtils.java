@@ -156,9 +156,13 @@ public class CompletionUtils {
 
     public static boolean completeClassName(Completion completion) {
         List<CliToken> tokens = completion.lineTokens();
-        String token = tokens.get(tokens.size() - 1).value();
+        String lastToken = tokens.get(tokens.size() - 1).value();
 
-        if (token.startsWith("-") || StringUtils.isBlank(token)) {
+        if (StringUtils.isBlank(lastToken)) {
+            lastToken = "";
+        }
+
+        if (lastToken.startsWith("-")) {
             return false;
         }
 
@@ -169,8 +173,11 @@ public class CompletionUtils {
         Set<String> result = new HashSet<String>();
         for(Class<?> clazz : allLoadedClasses) {
             String name = clazz.getName();
-            if(name.startsWith(token)) {
-                int index = name.indexOf('.', token.length());
+            if (name.startsWith("[")) {
+                continue;
+            }
+            if(name.startsWith(lastToken)) {
+                int index = name.indexOf('.', lastToken.length());
 
                 if(index > 0) {
                     result.add(name.substring(0, index + 1));
@@ -182,7 +189,7 @@ public class CompletionUtils {
         }
 
         if(result.size() == 1 && result.iterator().next().endsWith(".")) {
-            completion.complete(result.iterator().next().substring(token.length()), false);
+            completion.complete(result.iterator().next().substring(lastToken.length()), false);
         }else {
             CompletionUtils.complete(completion, result);
         }
