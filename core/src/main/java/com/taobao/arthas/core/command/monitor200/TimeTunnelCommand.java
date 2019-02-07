@@ -4,7 +4,6 @@ import com.taobao.arthas.core.advisor.AdviceListener;
 import com.taobao.arthas.core.command.Constants;
 import com.taobao.arthas.core.command.express.ExpressException;
 import com.taobao.arthas.core.command.express.ExpressFactory;
-import com.taobao.arthas.core.shell.cli.Completion;
 import com.taobao.arthas.core.shell.command.CommandProcess;
 import com.taobao.arthas.core.advisor.Advice;
 import com.taobao.arthas.core.advisor.ArthasMethod;
@@ -283,12 +282,6 @@ public class TimeTunnelCommand extends EnhancerCommand {
     @Override
     protected AdviceListener getAdviceListener(CommandProcess process) {
         return new TimeTunnelAdviceListener(this, process);
-    }
-
-    @Override
-    protected boolean completeExpress(Completion completion) {
-        completion.complete(EMPTY);
-        return true;
     }
 
     // 展示指定记录
