@@ -3,17 +3,14 @@ package com.taobao.arthas.core.command.basic1000;
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.Charset;
-import java.util.ArrayList;
 import java.util.List;
 
-import com.taobao.arthas.core.shell.cli.CliToken;
 import com.taobao.arthas.core.shell.cli.Completion;
 import com.taobao.arthas.core.shell.cli.CompletionUtils;
 import com.taobao.arthas.core.shell.command.AnnotatedCommand;
 import com.taobao.arthas.core.shell.command.CommandProcess;
 import com.taobao.arthas.core.util.FileUtils;
 import com.taobao.arthas.core.util.LogUtil;
-import com.taobao.arthas.core.util.StringUtils;
 import com.taobao.middleware.cli.annotations.Argument;
 import com.taobao.middleware.cli.annotations.Description;
 import com.taobao.middleware.cli.annotations.Name;

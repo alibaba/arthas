@@ -10,11 +10,14 @@ import com.taobao.middleware.cli.annotations.CLIConfigurator;
 import io.termd.core.util.Helper;
 
 import java.io.File;
+import java.lang.instrument.Instrumentation;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
 
 /**
  * @author beiwei30 on 09/11/2016.
@@ -141,6 +144,41 @@ public class CompletionUtils {
         }
         // 这个函数需要保留前缀
         CompletionUtils.complete(completion, namesWithPrefix);
+        return true;
+    }
+
+    public static boolean completeClassName(Completion completion) {
+        List<CliToken> tokens = completion.lineTokens();
+        String token = tokens.get(tokens.size() - 1).value();
+
+        if (token.startsWith("-") || StringUtils.isBlank(token)) {
+            return false;
+        }
+
+        Instrumentation instrumentation = completion.session().getInstrumentation();
+
+        Class<?>[] allLoadedClasses = instrumentation.getAllLoadedClasses();
+
+        Set<String> result = new HashSet<String>();
+        for(Class<?> clazz : allLoadedClasses) {
+            String name = clazz.getName();
+            if(name.startsWith(token)) {
+                int index = name.indexOf('.', token.length());
+
+                if(index > 0) {
+                    result.add(name.substring(0, index + 1));
+                }else {
+                    result.add(name);
+                }
+
+            }
+        }
+
+        if(result.size() == 1 && result.iterator().next().endsWith(".")) {
+            completion.complete(result.iterator().next().substring(token.length()), false);
+        }else {
+            CompletionUtils.complete(completion, result);
+        }
         return true;
     }
 
