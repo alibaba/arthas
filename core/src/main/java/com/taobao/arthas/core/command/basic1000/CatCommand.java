@@ -80,71 +80,9 @@ public class CatCommand extends AnnotatedCommand {
 
     @Override
     public void complete(Completion completion) {
-        List<CliToken> tokens = completion.lineTokens();
-        String token = tokens.get(tokens.size() - 1).value();
-
-        File dir = null;
-        String partName = "";
-        if (StringUtils.isBlank(token)) {
-            dir = new File("").getAbsoluteFile();
-            token = "";
-        } else if (token.endsWith("/")) {
-            dir = new File(token);
-        } else {
-            File parent = new File(token).getAbsoluteFile().getParentFile();
-            if (parent != null && parent.exists()) {
-                dir = parent;
-                partName = new File(token).getName();
-            }
-        }
-
-        File tokenFile = new File(token);
-
-        String tokenFileName = null;
-        if (token.endsWith("/")) {
-            tokenFileName = "";
-        } else {
-            tokenFileName = tokenFile.getName();
-        }
-
-        if (dir == null) {
+        if (!CompletionUtils.completeFilePath(completion)) {
             super.complete(completion);
-            return;
         }
-
-        File[] listFiles = dir.listFiles();
-
-        ArrayList<String> names = new ArrayList<String>();
-        for (File child : listFiles) {
-            if (child.getName().startsWith(partName)) {
-                if (child.isDirectory()) {
-                    names.add(child.getName() + "/");
-                } else {
-                    names.add(child.getName());
-                }
-            }
-        }
-
-        if (names.size() == 1 && names.get(0).endsWith("/")) {
-            String name = names.get(0);
-            // 这个函数补全后不会有空格，并且只能传入要补全的内容
-            completion.complete(name.substring(tokenFileName.length(), name.length()), false);
-            return;
-        }
-
-        String prefix = null;
-        if (token.endsWith("/")) {
-            prefix = token;
-        } else {
-            prefix = token.substring(0, token.length() - new File(token).getName().length());
-        }
-
-        ArrayList<String> namesWithPrefix = new ArrayList<String>();
-        for (String name : names) {
-            namesWithPrefix.add(prefix + name);
-        }
-        // 这个函数需要保留前缀
-        CompletionUtils.complete(completion, namesWithPrefix);
     }
 
 }
