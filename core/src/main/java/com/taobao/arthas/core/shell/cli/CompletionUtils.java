@@ -2,6 +2,7 @@ package com.taobao.arthas.core.shell.cli;
 
 import com.taobao.arthas.core.shell.session.Session;
 import com.taobao.arthas.core.shell.term.Tty;
+import com.taobao.arthas.core.util.SearchUtils;
 import com.taobao.arthas.core.util.StringUtils;
 import com.taobao.arthas.core.util.usage.StyledUsageFormatter;
 import com.taobao.middleware.cli.CLI;
@@ -11,6 +12,7 @@ import io.termd.core.util.Helper;
 
 import java.io.File;
 import java.lang.instrument.Instrumentation;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -54,15 +56,20 @@ public class CompletionUtils {
      */
     public static boolean complete(Completion completion, Collection<String> searchScope) {
         List<CliToken> tokens = completion.lineTokens();
-        CliToken lastToken = tokens.get(tokens.size() - 1);
+        String lastToken = tokens.get(tokens.size() - 1).value();
         List<String> candidates = new ArrayList<String>();
+
+        if (StringUtils.isBlank(lastToken)) {
+            lastToken = "";
+        }
+
         for (String name: searchScope) {
-            if (" ".equals(lastToken.value()) || name.startsWith(lastToken.value())) {
+            if (name.startsWith(lastToken)) {
                 candidates.add(name);
             }
         }
         if (candidates.size() == 1) {
-            completion.complete(candidates.get(0).substring(lastToken.value().length()), true);
+            completion.complete(candidates.get(0).substring(lastToken.length()), true);
             return true;
         } else {
             completion.complete(candidates);
@@ -180,6 +187,81 @@ public class CompletionUtils {
             CompletionUtils.complete(completion, result);
         }
         return true;
+    }
+
+    public static boolean completeMethodName(Completion completion) {
+        List<CliToken> tokens = completion.lineTokens();
+        String lastToken = completion.lineTokens().get(tokens.size() - 1).value();
+
+        // retrieve the class name
+        String className;
+        if (StringUtils.isBlank(lastToken)) {
+            // tokens = { " ", "CLASS_NAME", " "}
+            className = tokens.get(tokens.size() - 2).value();
+        } else {
+            // tokens = { " ", "CLASS_NAME", " ", "PARTIAL_METHOD_NAME"}
+            className = tokens.get(tokens.size() - 3).value();
+        }
+
+        Set<Class<?>> results = SearchUtils.searchClassOnly(completion.session().getInstrumentation(), className, 2);
+        if (results.isEmpty() || results.size() > 1) {
+            // no class found or multiple class found
+            completion.complete(Collections.<String>emptyList());
+            return true;
+        }
+
+        Class<?> clazz = results.iterator().next();
+
+        List<String> res = new ArrayList<String>();
+
+        for (Method method : clazz.getDeclaredMethods()) {
+            if (StringUtils.isBlank(lastToken)) {
+                res.add(method.getName());
+            } else if (method.getName().startsWith(lastToken)) {
+                res.add(method.getName());
+            }
+        }
+
+        if (res.size() == 1) {
+            completion.complete(res.get(0).substring(lastToken.length()), true);
+            return true;
+        } else {
+            CompletionUtils.complete(completion, res);
+            return true;
+        }
+    }
+
+    /**
+     * 推断输入到哪一个 argument
+     * @param completion
+     * @return
+     */
+    public static int detectArgumentIndex(Completion completion) {
+        List<CliToken> tokens = completion.lineTokens();
+        CliToken lastToken = tokens.get(tokens.size() - 1);
+
+        if (lastToken.value().startsWith("-") || lastToken.value().startsWith("--")) {
+            return -1;
+        }
+
+        if (StringUtils.isBlank((lastToken.value())) && tokens.size() == 1) {
+            return 1;
+        }
+
+        int tokenCount = 0;
+
+        for (CliToken token : tokens) {
+            if (StringUtils.isBlank(token.value()) || token.value().startsWith("-") || token.value().startsWith("--")) {
+                // filter irrelevant tokens
+                continue;
+            }
+            tokenCount++;
+        }
+
+        if (StringUtils.isBlank((lastToken.value())) && tokens.size() != 1) {
+            tokenCount++;
+        }
+        return tokenCount;
     }
 
     public static void completeShortOption(Completion completion, CliToken lastToken, List<Option> options) {
