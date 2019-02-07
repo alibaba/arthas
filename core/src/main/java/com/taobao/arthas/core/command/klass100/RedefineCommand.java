@@ -13,6 +13,8 @@ import java.util.Map;
 import org.objectweb.asm.ClassReader;
 
 import com.taobao.arthas.core.command.Constants;
+import com.taobao.arthas.core.shell.cli.Completion;
+import com.taobao.arthas.core.shell.cli.CompletionUtils;
 import com.taobao.arthas.core.shell.command.AnnotatedCommand;
 import com.taobao.arthas.core.shell.command.CommandProcess;
 import com.taobao.middleware.cli.annotations.Argument;
@@ -129,5 +131,12 @@ public class RedefineCommand extends AnnotatedCommand {
 
     private static String readClassName(final byte[] bytes) {
         return new ClassReader(bytes).getClassName().replace("/", ".");
+    }
+
+    @Override
+    public void complete(Completion completion) {
+        if (!CompletionUtils.completeFilePath(completion)) {
+            super.complete(completion);
+        }
     }
 }
