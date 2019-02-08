@@ -35,8 +35,8 @@ TELNET_PORT="3658"
 # http port
 HTTP_PORT="8563"
 
-# telnet session timeout seconds, default 300
-SESSION_TIMEOUT=300
+# telnet session timeout seconds, default 1800
+SESSION_TIMEOUT=1800
 
 # use specify version
 USE_VERSION=
@@ -398,7 +398,7 @@ Options and Arguments:
     --target-ip <value>         The target jvm listen ip, default 127.0.0.1
     --telnet-port <value>       The target jvm listen telnet port, default 3658
     --http-port <value>         The target jvm listen http port, default 8563
-    --session-timeout <value>   The session timeout seconds, default 300
+    --session-timeout <value>   The session timeout seconds, default 1800 (30min)
     --arthas-home <value>       The arthas home
     --use-version <value>       Use special version arthas
     --repo-mirror <value>       Use special maven repository mirror, value is
