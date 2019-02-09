@@ -8,6 +8,7 @@ import com.taobao.arthas.core.shell.command.CommandProcess;
 import com.taobao.arthas.core.advisor.Advice;
 import com.taobao.arthas.core.advisor.ArthasMethod;
 import com.taobao.arthas.core.shell.handlers.command.CommandInterruptHandler;
+import com.taobao.arthas.core.shell.handlers.shell.QExitHandler;
 import com.taobao.arthas.core.util.LogUtil;
 import com.taobao.arthas.core.util.SearchUtils;
 import com.taobao.arthas.core.util.StringUtils;
@@ -241,6 +242,8 @@ public class TimeTunnelCommand extends EnhancerCommand {
 
         // ctrl-C support
         process.interruptHandler(new CommandInterruptHandler(process));
+        // q exit support
+        process.stdinHandler(new QExitHandler(process));
 
         if (isTimeTunnel) {
             enhance(process);
