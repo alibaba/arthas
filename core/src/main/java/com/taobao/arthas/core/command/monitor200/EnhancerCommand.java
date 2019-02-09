@@ -13,6 +13,7 @@ import com.taobao.arthas.core.shell.cli.CompletionUtils;
 import com.taobao.arthas.core.shell.command.AnnotatedCommand;
 import com.taobao.arthas.core.shell.command.CommandProcess;
 import com.taobao.arthas.core.shell.handlers.command.CommandInterruptHandler;
+import com.taobao.arthas.core.shell.handlers.shell.QExitHandler;
 import com.taobao.arthas.core.shell.session.Session;
 import com.taobao.arthas.core.util.Constants;
 import com.taobao.arthas.core.util.LogUtil;
@@ -58,6 +59,8 @@ public abstract class EnhancerCommand extends AnnotatedCommand {
     public void process(final CommandProcess process) {
         // ctrl-C support
         process.interruptHandler(new CommandInterruptHandler(process));
+        // q exit support
+        process.stdinHandler(new QExitHandler(process));
 
         // start to enhance
         enhance(process);
@@ -125,7 +128,7 @@ public abstract class EnhancerCommand extends AnnotatedCommand {
                 // 注册通知监听器
                 process.register(lock, listener);
                 if (process.isForeground()) {
-                    process.echoTips(Constants.ABORT_MSG + "\n");
+                    process.echoTips(Constants.Q_OR_CTRL_C_ABORT_MSG + "\n");
                 }
             }
 
@@ -148,7 +151,7 @@ public abstract class EnhancerCommand extends AnnotatedCommand {
         logger.error(null, message);
         process.write("cannot operate the current command, pls. check arthas.log\n");
         if (process.isForeground()) {
-            process.echoTips(Constants.ABORT_MSG + "\n");
+            process.echoTips(Constants.Q_OR_CTRL_C_ABORT_MSG + "\n");
         }
     }
 

@@ -17,7 +17,7 @@ public interface Constants {
     /**
      * 中断提示
      */
-    String ABORT_MSG = "Press Ctrl+C to abort.";
+    String Q_OR_CTRL_C_ABORT_MSG = "Press Q or Ctrl+C to abort.";
 
     /**
      * 空字符串
