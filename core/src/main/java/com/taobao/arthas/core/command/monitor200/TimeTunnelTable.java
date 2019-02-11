@@ -183,7 +183,7 @@ public class TimeTunnelTable {
         // 执行成功:输出成功状态
         table.row("IS-RETURN", "" + true);
         table.row("IS-EXCEPTION", "" + false);
-        table.row("COST", "" + cost);
+        table.row("COST(ms)", "" + cost);
 
         // 执行成功:输出成功结果
         if (isNeedExpand) {
