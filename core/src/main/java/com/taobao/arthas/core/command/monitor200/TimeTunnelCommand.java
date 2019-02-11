@@ -15,7 +15,11 @@ import com.taobao.arthas.core.util.StringUtils;
 import com.taobao.arthas.core.util.affect.RowAffect;
 import com.taobao.arthas.core.util.matcher.Matcher;
 import com.taobao.arthas.core.view.ObjectView;
-import com.taobao.middleware.cli.annotations.*;
+import com.taobao.middleware.cli.annotations.Description;
+import com.taobao.middleware.cli.annotations.Name;
+import com.taobao.middleware.cli.annotations.Option;
+import com.taobao.middleware.cli.annotations.Summary;
+import com.taobao.middleware.cli.annotations.Argument;
 import com.taobao.text.ui.TableElement;
 import com.taobao.text.util.RenderUtil;
 
@@ -40,7 +44,8 @@ import static java.lang.String.format;
         "  tt -l\n" +
         "  tt -i 1000\n" +
         "  tt -i 1000 -w params[0]\n" +
-        "  tt -i 1000 -p\n" +
+        "  tt -i 1000 -p \n" +
+        "  tt -i 1000 -p --replay-times 3 --replay-interval 3000\n" +
         "  tt --delete-all\n" +
         Constants.WIKI + Constants.WIKI_HOME + "tt")
 public class TimeTunnelCommand extends EnhancerCommand {
@@ -166,13 +171,13 @@ public class TimeTunnelCommand extends EnhancerCommand {
     }
 
 
-    @Option(shortName = "r", longName = "replayTimes")
+    @Option(longName = "replay-times")
     @Description("execution times when play tt")
     public void setReplayTimes(int replayTimes) {
         this.replayTimes = replayTimes;
     }
 
-    @Option(shortName = "v", longName = "replayInterval")
+    @Option(longName = "replay-interval")
     @Description("replay interval  for  play tt with option r greater than 1")
     public void setReplayInterval(int replayInterval) {
         this.replayInterval = replayInterval;
@@ -452,9 +457,7 @@ public class TimeTunnelCommand extends EnhancerCommand {
             String methodName = advice.getMethod().getName();
             String objectAddress = advice.getTarget() == null ? "NULL" : "0x" + toHexString(advice.getTarget().hashCode());
 
-            TableElement table = TimeTunnelTable.createDefaultTable();
-            TimeTunnelTable.drawPlayHeader(className, methodName, objectAddress, index, table);
-            TimeTunnelTable.drawParameters(advice, table, isNeedExpand(), expand);
+
 
             ArthasMethod method = advice.getMethod();
             method.setAccessible(true);
@@ -469,6 +472,9 @@ public class TimeTunnelCommand extends EnhancerCommand {
                     }
                 }
                 long beginTime = System.nanoTime();
+                TableElement table = TimeTunnelTable.createDefaultTable();
+                TimeTunnelTable.drawPlayHeader(className, methodName, objectAddress, index, table);
+                TimeTunnelTable.drawParameters(advice, table, isNeedExpand(), expand);
 
                 try {
                     Object returnObj = method.invoke(advice.getTarget(), advice.getParams());

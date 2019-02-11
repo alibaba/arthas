@@ -127,8 +127,8 @@ Affect(row-cnt:1) cost in 11 ms.
 
 ### Replay record
 
-Since Arthas stores the context of the call, you can even *replay* the method calling afterwards with extra option `-p` to replay the issue for advanced troubleshooting, option `-r` 
-define the replay execution times, option  `-v` define the interval(unit in ms,with default value 1000) of replays   
+Since Arthas stores the context of the call, you can even *replay* the method calling afterwards with extra option `-p` to replay the issue for advanced troubleshooting, option `--replay-times` 
+define the replay execution times, option  `--replay-interval` define the interval(unit in ms,with default value 1000) of replays   
 
 ```bash
 $ tt -i 1004 -p
