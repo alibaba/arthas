@@ -8,10 +8,10 @@
 
 # program : Arthas
 #  author : Core Engine @ Taobao.com
-#    date : 2018-11-28
+#    date : 2019-02-14
 
 # current arthas script version
-ARTHAS_SCRIPT_VERSION=3.0.5
+ARTHAS_SCRIPT_VERSION=3.1.0
 
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
