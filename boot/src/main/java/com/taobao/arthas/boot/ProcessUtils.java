@@ -47,8 +47,17 @@ public class ProcessUtils {
     }
 
     @SuppressWarnings("resource")
-    public static int select(boolean v) throws InputMismatchException {
+    public static int select(boolean v, int telnetPortPid) throws InputMismatchException {
         Map<Integer, String> processMap = listProcessByJps(v);
+        // Put the port that is already listening at the first
+        if (telnetPortPid > 0 && processMap.containsKey(telnetPortPid)) {
+            String telnetPortProcess = processMap.get(telnetPortPid);
+            processMap.remove(telnetPortPid);
+            Map<Integer, String> newProcessMap = new LinkedHashMap<Integer, String>();
+            newProcessMap.put(telnetPortPid, telnetPortProcess);
+            newProcessMap.putAll(processMap);
+            processMap = newProcessMap;
+        }
 
         if (processMap.isEmpty()) {
             AnsiLog.info("Can not find java process. Try to pass <pid> in command line.");

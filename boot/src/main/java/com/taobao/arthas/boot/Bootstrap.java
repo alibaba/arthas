@@ -271,7 +271,7 @@ public class Bootstrap {
         // select pid
         if (pid < 0) {
             try {
-                pid = ProcessUtils.select(bootstrap.isVerbose());
+                pid = ProcessUtils.select(bootstrap.isVerbose(), telnetPortPid);
             } catch (InputMismatchException e) {
                 System.out.println("Please input an integer to select pid.");
                 System.exit(1);
@@ -285,18 +285,18 @@ public class Bootstrap {
         if (telnetPortPid > 0 && pid != telnetPortPid) {
             AnsiLog.error("Target process {} is not the process using port {}, you will connect to an unexpected process.",
                             pid, bootstrap.getTelnetPort());
-            AnsiLog.error("If you still want to attach target process {}, Try to set a different telnet port by using --telnet-port argument.",
-                            pid);
-            AnsiLog.error("Or try to shutdown the process {} using the telnet port first.", telnetPortPid);
+            AnsiLog.error("1. Try to restart arthas-boot, select process {}, shutdown it first.",
+                            telnetPortPid);
+            AnsiLog.error("2. Or try to use different telnet port, for example: java -jar arthas-boot.jar --telnet-port 9998 --http-port -1");
             System.exit(1);
         }
 
         if (httpPortPid > 0 && pid != httpPortPid) {
             AnsiLog.error("Target process {} is not the process using port {}, you will connect to an unexpected process.",
                             pid, bootstrap.getHttpPort());
-            AnsiLog.error("If you still want to attach target process {}, Try to set a different http port by using --http-port argument.",
-                            pid);
-            AnsiLog.error("Or try to shutdown the process {} using the http port first.", httpPortPid);
+            AnsiLog.error("1. Try to restart arthas-boot, select process {}, shutdown it first.",
+                            httpPortPid);
+            AnsiLog.error("2. Or try to use different http port, for example: java -jar arthas-boot.jar --telnet-port 9998 --http-port 9999", httpPortPid);
             System.exit(1);
         }
 
