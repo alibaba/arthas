@@ -53,6 +53,11 @@ ATTACH_ONLY=false
 # pass debug arguments to the attach java process
 DEBUG_ATTACH=false
 
+# arthas-client terminal height
+HEIGHT=
+# arthas-client terminal width
+WIDTH=
+
 # Verbose, print debug info.
 VERBOSE=false
 
@@ -410,6 +415,8 @@ Options and Arguments:
  -c,--command <value>           Command to execute, multiple commands separated
                                 by ;
  -f,--batch-file <value>        The batch file to execute
+    --height <value>            arthas-client terminal height
+    --width <value>             arthas-client terminal width
  -v,--verbose                   Verbose, print debug info.
  <pid>                          Target pid
 
@@ -536,6 +543,16 @@ parse_arguments()
         fi
         ARTHAS_OPTS="$JPDA_OPTS $ARTHAS_OPTS"
         shift # past argument
+        ;;
+        --height)
+        HEIGHT="$2"
+        shift # past argument
+        shift # past value
+        ;;
+        --width)
+        WIDTH="$2"
+        shift # past argument
+        shift # past value
         ;;
         -v|--verbose)
         VERBOSE=true
@@ -730,11 +747,22 @@ active_console()
     fi
 
     if [ "${BATCH_MODE}" = "true" ]; then
+        local tempArgs=()
+        if [ "${HEIGHT}" ]; then
+            tempArgs+=("--height")
+            tempArgs+=("${HEIGHT}")
+        fi
+        if [ "${WIDTH}" ]; then
+            tempArgs+=("--width")
+            tempArgs+=("${WIDTH}")
+        fi
+
         if [ "${COMMAND}" ] ; then
         "${JAVA_HOME}/bin/java" ${ARTHAS_OPTS} ${JVM_OPTS} \
              -jar "${arthas_lib_dir}/arthas-client.jar" \
              ${TARGET_IP} \
              ${TELNET_PORT} \
+             "${tempArgs[@]}" \
              -c ${COMMAND}
         fi
         if [ "${BATCH_FILE}" ] ; then
@@ -742,6 +770,7 @@ active_console()
              -jar "${arthas_lib_dir}/arthas-client.jar" \
              ${TARGET_IP} \
              ${TELNET_PORT} \
+             "${tempArgs[@]}" \
              -f ${BATCH_FILE}
         fi
     elif type telnet 2>&1 >> /dev/null; then
