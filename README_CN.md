@@ -346,6 +346,7 @@ $ classloader
 ![offcn](static/offcn.png)
 ![sia](static/sia.png)
 ![振安资产](static/zhenganzichang.png)
+![菠萝](static/bolo.png)
 
 ### Credit
 
