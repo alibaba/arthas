@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>dashboard &mdash; Arthas 3.1.0 documentation</title>
+  <title>cat &mdash; Arthas 3.1.0 documentation</title>
   
 
   
@@ -31,8 +31,8 @@
     <link rel="stylesheet" href="_static/overrides.css" type="text/css" />
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="thread" href="thread.html" />
-    <link rel="prev" title="All Commands" href="commands.html" />
+    <link rel="next" title="pwd" href="pwd.html" />
+    <link rel="prev" title="tt" href="tt.html" />
 <script src="_static/center_page.js"></script>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.13.1/styles/github.min.css">
  
@@ -95,12 +95,7 @@
 <li class="toctree-l1"><a class="reference internal" href="quick-start.html">Quick start</a></li>
 <li class="toctree-l1"><a class="reference internal" href="advanced-use.html">Advanced usage</a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="commands.html">Commands</a><ul class="current">
-<li class="toctree-l2 current"><a class="current reference internal" href="#">dashboard</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#usage">Usage</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#notes-on-column-headers">Notes on column headers</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#screenshot">Screenshot</a></li>
-</ul>
-</li>
+<li class="toctree-l2"><a class="reference internal" href="dashboard.html">dashboard</a></li>
 <li class="toctree-l2"><a class="reference internal" href="thread.html">thread</a></li>
 <li class="toctree-l2"><a class="reference internal" href="jvm.html">jvm</a></li>
 <li class="toctree-l2"><a class="reference internal" href="sysprop.html">sysprop</a></li>
@@ -119,7 +114,7 @@
 <li class="toctree-l2"><a class="reference internal" href="trace.html">trace</a></li>
 <li class="toctree-l2"><a class="reference internal" href="stack.html">stack</a></li>
 <li class="toctree-l2"><a class="reference internal" href="tt.html">tt</a></li>
-<li class="toctree-l2"><a class="reference internal" href="cat.html">cat</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">cat</a></li>
 <li class="toctree-l2"><a class="reference internal" href="pwd.html">pwd</a></li>
 <li class="toctree-l2"><a class="reference internal" href="options.html">options</a></li>
 <li class="toctree-l2"><a class="reference internal" href="commands.html#basic-arthas-commands">Basic Arthas Commands</a></li>
@@ -178,14 +173,14 @@
         
           <li><a href="commands.html">All Commands</a> &raquo;</li>
         
-      <li>dashboard</li>
+      <li>cat</li>
     
     
       <li class="wy-breadcrumbs-aside">
         
             
             
-              <a href="https://github.com/alibaba/arthas/blob/master/site/src/site/sphinx/en/dashboard.md" class="fa fa-github"> Edit on GitHub</a>
+              <a href="https://github.com/alibaba/arthas/blob/master/site/src/site/sphinx/en/cat.md" class="fa fa-github"> Edit on GitHub</a>
             
           
         
@@ -199,66 +194,12 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
             
-  <div class="section" id="dashboard">
-<span id="dashboard"></span><h1>dashboard<a class="headerlink" href="#dashboard" title="Permalink to this headline">¶</a></h1>
+  <div class="section" id="cat">
+<span id="cat"></span><h1>cat<a class="headerlink" href="#cat" title="Permalink to this headline">¶</a></h1>
 <blockquote>
-<div>This is the real time statistics dashboard for the current system, press <tt class="docutils literal">Ctrl+C</tt> to exit.</div></blockquote>
-<p>When running in Apache Tomcat Alibaba edition, the dashboard will also present the real time statistics of the tomcat,  including <a class="reference external" href="https://en.wikipedia.org/wiki/Queries_per_second">QPS</a>, RT, error counts, and thread pool, etc.</p>
-<div class="section" id="usage">
-<span id="usage"></span><h2>Usage<a class="headerlink" href="#usage" title="Permalink to this headline">¶</a></h2>
-<div class="highlight-default notranslate"><pre class="literal-block">$ dashboard
-ID         NAME                              GROUP                  PRIORITY   STATE       %CPU       TIME       INTERRUPTED DAEMON
-889        RMI TCP Connection(15)-30.10.166. RMI Runtime            9          RUNNABLE    48         0:5        false       true
-1077       Timer-for-arthas-dashboard-0      system                 9          RUNNABLE    24         0:0        false       true
-1074       as-selector-daemon                system                 9          RUNNABLE    12         0:0        false       true
-284        JMX server connection timeout 284 RMI Runtime            9          TIMED_WAITI 8          0:3        false       true
-16         Timer-1                           main                   5          TIMED_WAITI 5          0:9        false       true
-47         Pandora pandora-qos-reporter Pool main                   5          TIMED_WAITI 0          0:0        false       true
-48         JmonitorClient-CheckThread Pool [ main                   5          TIMED_WAITI 0          0:0        false       true
-49         JmonitorClient-HeartBeat Pool [Th main                   5          TIMED_WAITI 0          0:0        false       true
-50         JmonitorClient-ReaderThread Pool  main                   5          TIMED_WAITI 0          0:0        false       true
-957        RMI TCP Connection(16)-30.10.166. RMI Runtime            9          RUNNABLE    0          0:2        false       true
-51         JmonitorClient-WriterThread Pool  main                   5          TIMED_WAITI 0          0:0        false       true
-52         ContainerBackgroundProcessor[Stan main                   5          TIMED_WAITI 0          0:0        false       true
-53         http-bio-8080-Acceptor-0          main                   5          RUNNABLE    0          0:2        false       true
-54         http-bio-8080-AsyncTimeout        main                   5          TIMED_WAITI 0          0:0        false       true
-11         GC Daemon                         system                 2          TIMED_WAITI 0          0:0        false       true
-Memory                       used      total     max      usage     GC
-heap                         59M       223M      1820M    3.26%     gc.ps_scavenge.count              118
-ps_eden_space                14M       114M      668M     2.11%     gc.ps_scavenge.time(ms)           1890
-ps_survivor_space            6M        6M        6M       96.08%    gc.ps_marksweep.count             5
-ps_old_gen                   39M       103M      1365M    2.86%     gc.ps_marksweep.time(ms)          1140
-nonheap                      234M      240M      0M       97.46%
-code_cache                   46M       47M       240M     19.49%
-metaspace                    167M      172M      0M       97.36%
-Runtime                                                             Tomcat
-os.name                           Mac OS X                          connector                         http-bio-8080
-os.version                        10.10.5                           QPS                               0.00
-java.version                      1.8.0_60                          RT(ms)                            1.13
-java.home                                                           error/s                           0.00
-                                                                    received/s                        0B
-systemload.average                3.44                              sent/s                            0B
-processors                        4                                 threadpool                        http-bio-8080
-uptime                            16020s                            busy                              0</pre>
-</div>
-</div>
-<div class="section" id="notes-on-column-headers">
-<span id="notes-on-column-headers"></span><h2>Notes on column headers<a class="headerlink" href="#notes-on-column-headers" title="Permalink to this headline">¶</a></h2>
-<ul class="simple">
-<li>ID: JVM thread ID, pls. note this ID is different from the nativeID in jstack</li>
-<li>NAME: thread name</li>
-<li>GROUP: thread group name</li>
-<li>PRIORITY: thread priority, ranged from 1 to 10. The greater number, the higher priority</li>
-<li>STATE: thread state</li>
-<li>CPU%: the ratio of CPU usage for the thread, sampled every 100ms</li>
-<li>TIME: total running time in <tt class="docutils literal">minute:second</tt> format</li>
-<li>INTERRUPTED: the thread interruption state</li>
-<li>DAEMON: daemon thread or not</li>
-</ul>
-</div>
-<div class="section" id="screenshot">
-<span id="screenshot"></span><h2>Screenshot<a class="headerlink" href="#screenshot" title="Permalink to this headline">¶</a></h2>
-<p><img alt="alt text" src="_images/dashboard.png" /></p>
+<div>Concatenate and print files</div></blockquote>
+<div class="highlight-bash notranslate"><div class="highlight hljs"><pre class="bash">$ cat /tmp/a.txt
+</pre></div>
 </div>
 </div>
 
@@ -270,10 +211,10 @@ uptime                            16020s                            busy        
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="thread.html" class="btn btn-neutral float-right" title="thread" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+        <a href="pwd.html" class="btn btn-neutral float-right" title="pwd" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
-        <a href="commands.html" class="btn btn-neutral" title="All Commands" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+        <a href="tt.html" class="btn btn-neutral" title="tt" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
       
     </div>
   

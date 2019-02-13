@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>tt &mdash; Arthas 3.0.5 documentation</title>
+  <title>tt &mdash; Arthas 3.1.0 documentation</title>
   
 
   
@@ -31,7 +31,7 @@
     <link rel="stylesheet" href="_static/overrides.css" type="text/css" />
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="options" href="options.html" />
+    <link rel="next" title="cat" href="cat.html" />
     <link rel="prev" title="stack" href="stack.html" />
 <script src="_static/center_page.js"></script>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.13.1/styles/github.min.css">
@@ -65,7 +65,7 @@
             
             
               <div class="version">
-                3.0.5
+                3.1.0
               </div>
             
           
@@ -91,6 +91,7 @@
             
               <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="install-detail.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://alibaba.github.io/arthas/arthas-tutorials?language=en">Online tutorials(Recommend)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="quick-start.html">Quick start</a></li>
 <li class="toctree-l1"><a class="reference internal" href="advanced-use.html">Advanced usage</a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="commands.html">Commands</a><ul class="current">
@@ -106,6 +107,7 @@
 <li class="toctree-l2"><a class="reference internal" href="dump.html">dump</a></li>
 <li class="toctree-l2"><a class="reference internal" href="jad.html">jad</a></li>
 <li class="toctree-l2"><a class="reference internal" href="classloader.html">classloader</a></li>
+<li class="toctree-l2"><a class="reference internal" href="mc.html">mc</a></li>
 <li class="toctree-l2"><a class="reference internal" href="redefine.html">redefine</a></li>
 <li class="toctree-l2"><a class="reference internal" href="monitor.html">monitor</a></li>
 <li class="toctree-l2"><a class="reference internal" href="watch.html">watch</a></li>
@@ -123,6 +125,8 @@
 <li class="toctree-l3"><a class="reference internal" href="#replay-record">Replay record</a></li>
 </ul>
 </li>
+<li class="toctree-l2"><a class="reference internal" href="cat.html">cat</a></li>
+<li class="toctree-l2"><a class="reference internal" href="pwd.html">pwd</a></li>
 <li class="toctree-l2"><a class="reference internal" href="options.html">options</a></li>
 <li class="toctree-l2"><a class="reference internal" href="commands.html#basic-arthas-commands">Basic Arthas Commands</a></li>
 </ul>
@@ -283,7 +287,7 @@ Affect(class-cnt:1 , method-cnt:1) cost in 66 ms.
 </ul>
 <p>Tips:</p>
 <ol class="simple">
-<li><tt class="docutils literal">tt -t *Test print params[0].length==1</tt> with different amounts of parameters;</li>
+<li><tt class="docutils literal">tt -t *Test print params.length==1</tt> with different amounts of parameters;</li>
 <li><tt class="docutils literal">tt -t *Test print 'params[1] instanceof Integer'</tt> with different types of parameters;</li>
 <li><tt class="docutils literal">tt -t *Test print params[0].mobile=="13989838402"</tt> with specified parameter.</li>
 </ol>
@@ -359,7 +363,8 @@ Affect(row-cnt:1) cost in 11 ms.
 </div>
 <div class="section" id="replay-record">
 <span id="replay-record"></span><h2>Replay record<a class="headerlink" href="#replay-record" title="Permalink to this headline">¶</a></h2>
-<p>Since Arthas stores the context of the call, you can even <em>replay</em> the method calling afterwards with extra option <tt class="docutils literal">-p</tt> to replay the issue for advanced troubleshooting.</p>
+<p>Since Arthas stores the context of the call, you can even <em>replay</em> the method calling afterwards with extra option <tt class="docutils literal">-p</tt> to replay the issue for advanced troubleshooting, option <tt class="docutils literal">--replay-times</tt>
+define the replay execution times, option  <tt class="docutils literal">--replay-interval</tt> define the interval(unit in ms,with default value 1000) of replays</p>
 <div class="highlight-bash notranslate"><div class="highlight hljs"><pre class="bash">$ tt -i 1004 -p
  RE-INDEX       1004
  GMT-REPLAY     2018-12-04 11:26:00
@@ -399,7 +404,7 @@ Affect(row-cnt:1) cost in 14 ms.
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="options.html" class="btn btn-neutral float-right" title="options" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+        <a href="cat.html" class="btn btn-neutral float-right" title="cat" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
         <a href="stack.html" class="btn btn-neutral" title="stack" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
@@ -433,7 +438,7 @@ Affect(row-cnt:1) cost in 14 ms.
     <script type="text/javascript">
         var DOCUMENTATION_OPTIONS = {
             URL_ROOT:'./',
-            VERSION:'3.0.5',
+            VERSION:'3.1.0',
             LANGUAGE:'en',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
