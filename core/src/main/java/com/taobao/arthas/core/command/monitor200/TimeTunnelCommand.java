@@ -1,12 +1,12 @@
 package com.taobao.arthas.core.command.monitor200;
 
+import com.taobao.arthas.core.advisor.Advice;
 import com.taobao.arthas.core.advisor.AdviceListener;
+import com.taobao.arthas.core.advisor.ArthasMethod;
 import com.taobao.arthas.core.command.Constants;
 import com.taobao.arthas.core.command.express.ExpressException;
 import com.taobao.arthas.core.command.express.ExpressFactory;
 import com.taobao.arthas.core.shell.command.CommandProcess;
-import com.taobao.arthas.core.advisor.Advice;
-import com.taobao.arthas.core.advisor.ArthasMethod;
 import com.taobao.arthas.core.shell.handlers.command.CommandInterruptHandler;
 import com.taobao.arthas.core.shell.handlers.shell.QExitHandler;
 import com.taobao.arthas.core.util.LogUtil;
@@ -15,11 +15,11 @@ import com.taobao.arthas.core.util.StringUtils;
 import com.taobao.arthas.core.util.affect.RowAffect;
 import com.taobao.arthas.core.util.matcher.Matcher;
 import com.taobao.arthas.core.view.ObjectView;
-import com.taobao.middleware.cli.annotations.Argument;
 import com.taobao.middleware.cli.annotations.Description;
 import com.taobao.middleware.cli.annotations.Name;
 import com.taobao.middleware.cli.annotations.Option;
 import com.taobao.middleware.cli.annotations.Summary;
+import com.taobao.middleware.cli.annotations.Argument;
 import com.taobao.text.ui.TableElement;
 import com.taobao.text.util.RenderUtil;
 
@@ -44,7 +44,8 @@ import static java.lang.String.format;
         "  tt -l\n" +
         "  tt -i 1000\n" +
         "  tt -i 1000 -w params[0]\n" +
-        "  tt -i 1000 -p\n" +
+        "  tt -i 1000 -p \n" +
+        "  tt -i 1000 -p --replay-times 3 --replay-interval 3000\n" +
         "  tt --delete-all\n" +
         Constants.WIKI + Constants.WIKI_HOME + "tt")
 public class TimeTunnelCommand extends EnhancerCommand {
@@ -75,6 +76,8 @@ public class TimeTunnelCommand extends EnhancerCommand {
     private boolean isDelete = false;
     private boolean isRegEx = false;
     private int numberOfLimit = 100;
+    private int replayTimes = 1;
+    private long replayInterval = 1000L;
 
     @Argument(index = 0, argName = "class-pattern", required = false)
     @Description("Path and classname of Pattern Matching")
@@ -167,6 +170,20 @@ public class TimeTunnelCommand extends EnhancerCommand {
         this.numberOfLimit = numberOfLimit;
     }
 
+
+    @Option(longName = "replay-times")
+    @Description("execution times when play tt")
+    public void setReplayTimes(int replayTimes) {
+        this.replayTimes = replayTimes;
+    }
+
+    @Option(longName = "replay-interval")
+    @Description("replay interval  for  play tt with option r greater than 1")
+    public void setReplayInterval(int replayInterval) {
+        this.replayInterval = replayInterval;
+    }
+
+
     public boolean isRegEx() {
         return isRegEx;
     }
@@ -187,6 +204,14 @@ public class TimeTunnelCommand extends EnhancerCommand {
         return numberOfLimit;
     }
 
+
+    public int getReplayTimes() {
+        return replayTimes;
+    }
+
+    public long getReplayInterval() {
+        return replayInterval;
+    }
 
     private boolean hasWatchExpress() {
         return !StringUtils.isEmpty(watchExpress);
@@ -428,27 +453,40 @@ public class TimeTunnelCommand extends EnhancerCommand {
             String methodName = advice.getMethod().getName();
             String objectAddress = advice.getTarget() == null ? "NULL" : "0x" + toHexString(advice.getTarget().hashCode());
 
-            TableElement table = TimeTunnelTable.createDefaultTable();
-            TimeTunnelTable.drawPlayHeader(className, methodName, objectAddress, index, table);
-            TimeTunnelTable.drawParameters(advice, table, isNeedExpand(), expand);
+
 
             ArthasMethod method = advice.getMethod();
+            method.setAccessible(true);
             boolean accessible = advice.getMethod().isAccessible();
-            try {
-                method.setAccessible(true);
-                Object returnObj = method.invoke(advice.getTarget(), advice.getParams());
-                TimeTunnelTable.drawPlayResult(table, returnObj, isNeedExpand(), expand, sizeLimit);
-            } catch (Throwable t) {
-                TimeTunnelTable.drawPlayException(table, t, isNeedExpand(), expand);
-            } finally {
-                method.setAccessible(accessible);
-            }
+            for (int i = 0; i < getReplayTimes(); i++) {
+//              wait for the next execution
+                if (i > 0) {
+                    try {
+                        Thread.sleep(getReplayInterval());
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }
+                long beginTime = System.nanoTime();
+                TableElement table = TimeTunnelTable.createDefaultTable();
+                TimeTunnelTable.drawPlayHeader(className, methodName, objectAddress, index, table);
+                TimeTunnelTable.drawParameters(advice, table, isNeedExpand(), expand);
 
-            process.write(RenderUtil.render(table, process.width()))
-                    .write(format("Time fragment[%d] successfully replayed.", index))
-                    .write("\n");
-            affect.rCnt(1);
-            process.write(affect.toString()).write("\n");
+                try {
+                    Object returnObj = method.invoke(advice.getTarget(), advice.getParams());
+                    double cost = (System.nanoTime() - beginTime) / 1000000.0;
+                    TimeTunnelTable.drawPlayResult(table, returnObj, isNeedExpand(), expand, sizeLimit, cost);
+                } catch (Throwable t) {
+                    TimeTunnelTable.drawPlayException(table, t, isNeedExpand(), expand);
+                }
+                process.write(RenderUtil.render(table, process.width()))
+                        .write(format("Time fragment[%d] successfully replayed.", index))
+                        .write("\n");
+                affect.rCnt(1);
+                process.write(affect.toString()).write("\n");
+            }
+            method.setAccessible(accessible);
+
         } finally {
             process.end();
         }
