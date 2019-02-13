@@ -16,6 +16,7 @@
 
 * [jad](jad.md)
 * [classloader](classloader.md)
+* [mc](mc.md)
 * [redefine](redefine.md)
 
 * [monitor](monitor.md)
@@ -24,6 +25,8 @@
 * [stack](stack.md)
 * [tt](tt.md)
 
+* [cat](cat.md)
+* [pwd](pwd.md)
 * [options](options.md)
 
 ### Arthas 基础命令

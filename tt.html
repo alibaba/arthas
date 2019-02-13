@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>tt &mdash; Arthas 3.0.5 文档</title>
+  <title>tt &mdash; Arthas 3.1.0 文档</title>
   
 
   
@@ -31,7 +31,7 @@
     <link rel="stylesheet" href="_static/overrides.css" type="text/css" />
     <link rel="index" title="索引" href="genindex.html" />
     <link rel="search" title="搜索" href="search.html" />
-    <link rel="next" title="options" href="options.html" />
+    <link rel="next" title="cat" href="cat.html" />
     <link rel="prev" title="stack" href="stack.html" />
 <script src="_static/center_page.js"></script>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.13.1/styles/github.min.css">
@@ -65,7 +65,7 @@
             
             
               <div class="version">
-                3.0.5
+                3.1.0
               </div>
             
           
@@ -91,6 +91,7 @@
             
               <ul class="current">
 <li class="toctree-l1"><a class="reference external" href="https://alibaba.github.io/arthas/en/">English Docs</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://alibaba.github.io/arthas/arthas-tutorials?language=cn">在线教程(推荐)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="install-detail.html">安装</a></li>
 <li class="toctree-l1"><a class="reference internal" href="quick-start.html">快速入门</a></li>
 <li class="toctree-l1"><a class="reference internal" href="advanced-use.html">进阶使用</a></li>
@@ -107,6 +108,7 @@
 <li class="toctree-l2"><a class="reference internal" href="dump.html">dump</a></li>
 <li class="toctree-l2"><a class="reference internal" href="jad.html">jad</a></li>
 <li class="toctree-l2"><a class="reference internal" href="classloader.html">classloader</a></li>
+<li class="toctree-l2"><a class="reference internal" href="mc.html">mc</a></li>
 <li class="toctree-l2"><a class="reference internal" href="redefine.html">redefine</a></li>
 <li class="toctree-l2"><a class="reference internal" href="monitor.html">monitor</a></li>
 <li class="toctree-l2"><a class="reference internal" href="watch.html">watch</a></li>
@@ -123,6 +125,8 @@
 </li>
 </ul>
 </li>
+<li class="toctree-l2"><a class="reference internal" href="cat.html">cat</a></li>
+<li class="toctree-l2"><a class="reference internal" href="pwd.html">pwd</a></li>
 <li class="toctree-l2"><a class="reference internal" href="options.html">options</a></li>
 <li class="toctree-l2"><a class="reference internal" href="commands.html#arthas">Arthas 基础命令</a></li>
 </ul>
@@ -296,7 +300,7 @@ Affect(class-cnt:1 , method-cnt:1) cost in 66 ms.
 <p>条件表达式也是用 <tt class="docutils literal">OGNL</tt> 来编写，核心的判断对象依然是 <tt class="docutils literal">Advice</tt> 对象。除了 <tt class="docutils literal">tt</tt> 命令之外，<tt class="docutils literal">watch</tt>、<tt class="docutils literal">trace</tt>、<tt class="docutils literal">stack</tt> 命令也都支持条件表达式。</p>
 </li>
 <li><p class="first">解决方法重载</p>
-<p><tt class="docutils literal">tt -t *Test print params[0].length==1</tt></p>
+<p><tt class="docutils literal">tt -t *Test print params.length==1</tt></p>
 <p>通过制定参数个数的形式解决不同的方法签名，如果参数个数一样，你还可以这样写</p>
 <p><tt class="docutils literal">tt -t *Test print 'params[1] instanceof Integer'</tt></p>
 </li>
@@ -366,7 +370,8 @@ Affect(row-cnt:1) cost in 11 ms.
 <div class="section" id="">
 <span id="id5"></span><h3>重做一次调用<a class="headerlink" href="#" title="永久链接至标题">¶</a></h3>
 <p>当你稍稍做了一些调整之后，你可能需要前端系统重新触发一次你的调用，此时得求爷爷告奶奶的需要前端配合联调的同学再次发起一次调用。而有些场景下，这个调用不是这么好触发的。</p>
-<p><tt class="docutils literal">tt</tt> 命令由于保存了当时调用的所有现场信息，所以我们可以自己主动对一个 <tt class="docutils literal">INDEX</tt> 编号的时间片自主发起一次调用，从而解放你的沟通成本。此时你需要 <tt class="docutils literal">-p</tt> 参数。</p>
+<p><tt class="docutils literal">tt</tt> 命令由于保存了当时调用的所有现场信息，所以我们可以自己主动对一个 <tt class="docutils literal">INDEX</tt> 编号的时间片自主发起一次调用，从而解放你的沟通成本。此时你需要 <tt class="docutils literal">-p</tt> 参数。通过 <tt class="docutils literal">--replay-times</tt> 指定
+调用次数，通过 <tt class="docutils literal">--replay-interval</tt> 指定多次调用间隔(单位ms, 默认1000ms)</p>
 <div class="highlight-bash notranslate"><div class="highlight hljs"><pre class="bash">$ tt -i 1004 -p
  RE-INDEX       1004
  GMT-REPLAY     2018-12-04 11:26:00
@@ -376,6 +381,7 @@ Affect(row-cnt:1) cost in 11 ms.
  PARAMETERS[0]  @Integer[946738738]
  IS-RETURN      true
  IS-EXCEPTION   false
+ COST(ms)         0.186073
  RETURN-OBJ     @ArrayList[
                     @Integer[2],
                     @Integer[11],
@@ -412,7 +418,7 @@ Affect(row-cnt:1) cost in 14 ms.
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="options.html" class="btn btn-neutral float-right" title="options" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+        <a href="cat.html" class="btn btn-neutral float-right" title="cat" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
         <a href="stack.html" class="btn btn-neutral" title="stack" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
@@ -446,7 +452,7 @@ Affect(row-cnt:1) cost in 14 ms.
     <script type="text/javascript">
         var DOCUMENTATION_OPTIONS = {
             URL_ROOT:'./',
-            VERSION:'3.0.5',
+            VERSION:'3.1.0',
             LANGUAGE:'zh_CN',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',

@@ -26,6 +26,7 @@ Contents
 --------
 
 * [English Docs](https://alibaba.github.io/arthas/en/)
+* [在线教程(推荐)](https://alibaba.github.io/arthas/arthas-tutorials?language=cn)
 * [安装](install-detail.md)
 * [快速入门](quick-start.md)
 * [进阶使用](advanced-use.md)

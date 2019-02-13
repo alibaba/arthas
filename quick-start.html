@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>快速入门 &mdash; Arthas 3.0.5 文档</title>
+  <title>快速入门 &mdash; Arthas 3.1.0 文档</title>
   
 
   
@@ -65,7 +65,7 @@
             
             
               <div class="version">
-                3.0.5
+                3.1.0
               </div>
             
           
@@ -91,6 +91,7 @@
             
               <ul class="current">
 <li class="toctree-l1"><a class="reference external" href="https://alibaba.github.io/arthas/en/">English Docs</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://alibaba.github.io/arthas/arthas-tutorials?language=cn">在线教程(推荐)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="install-detail.html">安装</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">快速入门</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#demo">1. 启动Demo</a></li>
@@ -207,7 +208,7 @@ java -jar arthas-boot.jar
   [2]: 71560 arthas-demo.jar
 </pre></div>
 </div>
-<p>Demo进程是第2个，则输入2，再输入回车/enter。Arthas会attach到目标进程上，并输出日志：</p>
+<p>Demo进程是第2个，则输入2，再输入<tt class="docutils literal">回车/enter</tt>。Arthas会attach到目标进程上，并输出日志：</p>
 <div class="highlight-bash notranslate"><div class="highlight hljs"><pre class="bash">[INFO] Try to attach process 71560
 [INFO] Attach process 71560 success.
 [INFO] arthas-client connect 127.0.0.1 3658
@@ -228,7 +229,7 @@ $
 </div>
 <div class="section" id="dashboard">
 <span id="dashboard"></span><h2>3. 查看dashboard<a class="headerlink" href="#dashboard" title="永久链接至标题">¶</a></h2>
-<p>输入<a class="reference internal" href="dashboard.html"><span class="doc">dashboard</span></a>，按enter/回车，会展示当前进程的信息，按<tt class="docutils literal">ctrl+c</tt>可以中断执行。</p>
+<p>输入<a class="reference internal" href="dashboard.html"><span class="doc">dashboard</span></a>，按<tt class="docutils literal">回车/enter</tt>，会展示当前进程的信息，按<tt class="docutils literal">ctrl+c</tt>可以中断执行。</p>
 <div class="highlight-bash notranslate"><div class="highlight hljs"><pre class="bash">$ dashboard
 ID     NAME                   GROUP          PRIORI STATE  %CPU    TIME   INTERRU DAEMON
 17     pool-2-thread-1        system         5      WAITIN 67      0:0    false   false
@@ -440,7 +441,7 @@ ts=2018-11-28 19:22:35; [cost=29.969732ms] result=@ArrayList[
     <script type="text/javascript">
         var DOCUMENTATION_OPTIONS = {
             URL_ROOT:'./',
-            VERSION:'3.0.5',
+            VERSION:'3.1.0',
             LANGUAGE:'zh_CN',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',

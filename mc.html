@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Arthas 命令行快捷键 &mdash; Arthas 3.1.0 文档</title>
+  <title>mc &mdash; Arthas 3.1.0 文档</title>
   
 
   
@@ -31,6 +31,8 @@
     <link rel="stylesheet" href="_static/overrides.css" type="text/css" />
     <link rel="index" title="索引" href="genindex.html" />
     <link rel="search" title="搜索" href="search.html" />
+    <link rel="next" title="redefine" href="redefine.html" />
+    <link rel="prev" title="classloader" href="classloader.html" />
 <script src="_static/center_page.js"></script>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.13.1/styles/github.min.css">
  
@@ -87,13 +89,38 @@
               
             
             
-              <ul>
+              <ul class="current">
 <li class="toctree-l1"><a class="reference external" href="https://alibaba.github.io/arthas/en/">English Docs</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://alibaba.github.io/arthas/arthas-tutorials?language=cn">在线教程(推荐)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="install-detail.html">安装</a></li>
 <li class="toctree-l1"><a class="reference internal" href="quick-start.html">快速入门</a></li>
 <li class="toctree-l1"><a class="reference internal" href="advanced-use.html">进阶使用</a></li>
-<li class="toctree-l1"><a class="reference internal" href="commands.html">命令列表</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="commands.html">命令列表</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="dashboard.html">dashboard</a></li>
+<li class="toctree-l2"><a class="reference internal" href="thread.html">thread</a></li>
+<li class="toctree-l2"><a class="reference internal" href="jvm.html">jvm</a></li>
+<li class="toctree-l2"><a class="reference internal" href="sysprop.html">sysprop</a></li>
+<li class="toctree-l2"><a class="reference internal" href="sysenv.html">sysenv</a></li>
+<li class="toctree-l2"><a class="reference internal" href="getstatic.html">getstatic</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ognl.html">ognl</a></li>
+<li class="toctree-l2"><a class="reference internal" href="sc.html">sc</a></li>
+<li class="toctree-l2"><a class="reference internal" href="sm.html">sm</a></li>
+<li class="toctree-l2"><a class="reference internal" href="dump.html">dump</a></li>
+<li class="toctree-l2"><a class="reference internal" href="jad.html">jad</a></li>
+<li class="toctree-l2"><a class="reference internal" href="classloader.html">classloader</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">mc</a></li>
+<li class="toctree-l2"><a class="reference internal" href="redefine.html">redefine</a></li>
+<li class="toctree-l2"><a class="reference internal" href="monitor.html">monitor</a></li>
+<li class="toctree-l2"><a class="reference internal" href="watch.html">watch</a></li>
+<li class="toctree-l2"><a class="reference internal" href="trace.html">trace</a></li>
+<li class="toctree-l2"><a class="reference internal" href="stack.html">stack</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tt.html">tt</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cat.html">cat</a></li>
+<li class="toctree-l2"><a class="reference internal" href="pwd.html">pwd</a></li>
+<li class="toctree-l2"><a class="reference internal" href="options.html">options</a></li>
+<li class="toctree-l2"><a class="reference internal" href="commands.html#arthas">Arthas 基础命令</a></li>
+</ul>
+</li>
 <li class="toctree-l1"><a class="reference internal" href="docker.html">Docker</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas/issues?q=label%3Auser-case">用户案例</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas/issues?q=label%3Aquestion-answered">常见问题</a></li>
@@ -146,14 +173,16 @@
     
       <li><a href="index.html">Docs</a> &raquo;</li>
         
-      <li>Arthas 命令行快捷键</li>
+          <li><a href="commands.html">命令列表</a> &raquo;</li>
+        
+      <li>mc</li>
     
     
       <li class="wy-breadcrumbs-aside">
         
             
             
-              <a href="https://github.com/alibaba/arthas/blob/master/site/src/site/sphinx/keymap.md" class="fa fa-github"> Edit on GitHub</a>
+              <a href="https://github.com/alibaba/arthas/blob/master/site/src/site/sphinx/mc.md" class="fa fa-github"> Edit on GitHub</a>
             
           
         
@@ -167,174 +196,22 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
             
-  <div class="section" id="arthas">
-<span id="arthas"></span><h1>Arthas 命令行快捷键<a class="headerlink" href="#arthas" title="永久链接至标题">¶</a></h1>
-<p><tt class="docutils literal">keymap</tt>命令输出当前的快捷键映射表：</p>
-<p>默认的快捷键如下：</p>
-<table border="1" class="docutils">
-<thead>
-<tr>
-<th>快捷键</th>
-<th>快捷键说明</th>
-<th>命令名称</th>
-<th>命令说明</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><code>"\C-a"</code></td>
-<td>ctrl + a</td>
-<td>beginning-of-line</td>
-<td>跳到行首</td>
-</tr>
-<tr>
-<td><code>"\C-e"</code></td>
-<td>ctrl + e</td>
-<td>end-of-line</td>
-<td>跳到行尾</td>
-</tr>
-<tr>
-<td><code>"\C-f"</code></td>
-<td>ctrl + f</td>
-<td>forward-word</td>
-<td>向前移动一个单词</td>
-</tr>
-<tr>
-<td><code>"\C-b"</code></td>
-<td>ctrl + b</td>
-<td>backward-word</td>
-<td>向后移动一个单词</td>
-</tr>
-<tr>
-<td><code>"\e[D"</code></td>
-<td>键盘左方向键</td>
-<td>backward-char</td>
-<td>光标向前移动一个字符</td>
-</tr>
-<tr>
-<td><code>"\e[C"</code></td>
-<td>键盘右方向键</td>
-<td>forward-char</td>
-<td>光标向后移动一个字符</td>
-</tr>
-<tr>
-<td><code>"\e[B"</code></td>
-<td>键盘下方向键</td>
-<td>next-history</td>
-<td>下翻显示下一个命令</td>
-</tr>
-<tr>
-<td><code>"\e[A"</code></td>
-<td>键盘上方向键</td>
-<td>previous-history</td>
-<td>上翻显示上一个命令</td>
-</tr>
-<tr>
-<td><code>"\C-h"</code></td>
-<td>ctrl + h</td>
-<td>backward-delete-char</td>
-<td>向后删除一个字符</td>
-</tr>
-<tr>
-<td><code>"\C-?"</code></td>
-<td>ctrl + shift + /</td>
-<td>backward-delete-char</td>
-<td>向后删除一个字符</td>
-</tr>
-<tr>
-<td><code>"\C-u"</code></td>
-<td>ctrl + u</td>
-<td>undo</td>
-<td>撤销上一个命令，相当于清空当前行</td>
-</tr>
-<tr>
-<td><code>"\C-d"</code></td>
-<td>ctrl + d</td>
-<td>delete-char</td>
-<td>删除当前光标所在字符</td>
-</tr>
-<tr>
-<td><code>"\C-k"</code></td>
-<td>ctrl + k</td>
-<td>kill-line</td>
-<td>删除当前光标到行尾的所有字符</td>
-</tr>
-<tr>
-<td><code>"\C-i"</code></td>
-<td>ctrl + i</td>
-<td>complete</td>
-<td>自动补全，相当于敲<code>TAB</code></td>
-</tr>
-<tr>
-<td><code>"\C-j"</code></td>
-<td>ctrl + j</td>
-<td>accept-line</td>
-<td>结束当前行，相当于敲回车</td>
-</tr>
-<tr>
-<td><code>"\C-m"</code></td>
-<td>ctrl + m</td>
-<td>accept-line</td>
-<td>结束当前行，相当于敲回车</td>
-</tr>
-<tr>
-<td><code>"\C-w"</code></td>
-<td></td>
-<td>backward-delete-word</td>
-<td></td>
-</tr>
-<tr>
-<td><code>"\C-x\e[3~"</code></td>
-<td></td>
-<td>backward-kill-line</td>
-<td></td>
-</tr>
-<tr>
-<td><code>"\e\C-?"</code></td>
-<td></td>
-<td>backward-kill-word</td>
-<td></td>
-</tr>
-</tbody>
-</table><ul class="simple">
-<li>任何时候 <tt class="docutils literal">tab</tt> 键，会根据当前的输入给出提示</li>
-<li>命令后敲 <tt class="docutils literal">-</tt> 或 <tt class="docutils literal">--</tt> ，然后按 <tt class="docutils literal">tab</tt> 键，可以展示出此命令具体的选项</li>
-</ul>
-<div class="section" id="">
-<span id="id1"></span><h2>自定义快捷键<a class="headerlink" href="#" title="永久链接至标题">¶</a></h2>
-<p>在当前用户目录下新建<tt class="docutils literal">$USER_HOME/.arthas/conf/inputrc</tt>文件，加入自定义配置。</p>
-<p>假设我是vim的重度用户，我要把<tt class="docutils literal">ctrl+h</tt>设置为光标向前一个字符，则设置如下，首先拷贝默认配置</p>
-<div class="highlight-default notranslate"><pre class="literal-block">&quot;\C-a&quot;: beginning-of-line
-&quot;\C-e&quot;: end-of-line
-&quot;\C-f&quot;: forward-word
-&quot;\C-b&quot;: backward-word
-&quot;\e[D&quot;: backward-char
-&quot;\e[C&quot;: forward-char
-&quot;\e[B&quot;: next-history
-&quot;\e[A&quot;: previous-history
-&quot;\C-h&quot;: backward-delete-char
-&quot;\C-?&quot;: backward-delete-char
-&quot;\C-u&quot;: undo
-&quot;\C-d&quot;: delete-char
-&quot;\C-k&quot;: kill-line
-&quot;\C-i&quot;: complete
-&quot;\C-j&quot;: accept-line
-&quot;\C-m&quot;: accept-line
-&quot;\C-w&quot;: backward-delete-word
-&quot;\C-x\e[3~&quot;: backward-kill-line
-&quot;\e\C-?&quot;: backward-kill-word</pre>
+  <div class="section" id="mc">
+<span id="mc"></span><h1>mc<a class="headerlink" href="#mc" title="永久链接至标题">¶</a></h1>
+<blockquote>
+<div>Memory Compiler/内存编绎器，编绎<tt class="docutils literal">.java</tt>文件生成<tt class="docutils literal">.class</tt>。</div></blockquote>
+<div class="highlight-bash notranslate"><div class="highlight hljs"><pre class="bash">mc /tmp/Test.java
+</pre></div>
 </div>
-<p>然后把<tt class="docutils literal">"\C-h": backward-delete-char</tt>换成<tt class="docutils literal">"\C-h": backward-char</tt>，然后重新连接即可。</p>
+<p>可以通过<tt class="docutils literal">-c</tt>参数指定classloader：</p>
+<div class="highlight-bash notranslate"><div class="highlight hljs"><pre class="bash">mc -c 327a647b /tmp/Test.java
+</pre></div>
 </div>
-<div class="section" id="">
-<span id="id2"></span><h2>后台异步命令相关快捷键<a class="headerlink" href="#" title="永久链接至标题">¶</a></h2>
-<ul class="simple">
-<li>ctrl + c: 终止当前命令</li>
-<li>ctrl + z: 挂起当前命令，后续可以 bg/fg 重新支持此命令，或 kill 掉</li>
-<li>ctrl + a: 回到行首</li>
-<li>ctrl + e: 回到行尾</li>
-</ul>
+<p>可以通过<tt class="docutils literal">-d</tt>命令指定输出目录：</p>
+<div class="highlight-bash notranslate"><div class="highlight hljs"><pre class="bash">mc -d /tmp/output /tmp/ClassA.java /tmp/ClassB.java
+</pre></div>
 </div>
+<p>编绎生成<tt class="docutils literal">.class</tt>文件之后，可以结合<a class="reference external" href="redefine.md"><tt class="docutils literal">redefine</tt></a>命令实现热更新代码。</p>
 </div>
 
 
@@ -342,6 +219,15 @@
            
           </div>
           <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="redefine.html" class="btn btn-neutral float-right" title="redefine" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="classloader.html" class="btn btn-neutral" title="classloader" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
   
 
   <hr/>

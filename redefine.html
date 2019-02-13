@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>redefine &mdash; Arthas 3.0.5 文档</title>
+  <title>redefine &mdash; Arthas 3.1.0 文档</title>
   
 
   
@@ -32,7 +32,7 @@
     <link rel="index" title="索引" href="genindex.html" />
     <link rel="search" title="搜索" href="search.html" />
     <link rel="next" title="monitor" href="monitor.html" />
-    <link rel="prev" title="classloader" href="classloader.html" />
+    <link rel="prev" title="mc" href="mc.html" />
 <script src="_static/center_page.js"></script>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.13.1/styles/github.min.css">
  
@@ -65,7 +65,7 @@
             
             
               <div class="version">
-                3.0.5
+                3.1.0
               </div>
             
           
@@ -91,6 +91,7 @@
             
               <ul class="current">
 <li class="toctree-l1"><a class="reference external" href="https://alibaba.github.io/arthas/en/">English Docs</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://alibaba.github.io/arthas/arthas-tutorials?language=cn">在线教程(推荐)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="install-detail.html">安装</a></li>
 <li class="toctree-l1"><a class="reference internal" href="quick-start.html">快速入门</a></li>
 <li class="toctree-l1"><a class="reference internal" href="advanced-use.html">进阶使用</a></li>
@@ -107,9 +108,11 @@
 <li class="toctree-l2"><a class="reference internal" href="dump.html">dump</a></li>
 <li class="toctree-l2"><a class="reference internal" href="jad.html">jad</a></li>
 <li class="toctree-l2"><a class="reference internal" href="classloader.html">classloader</a></li>
+<li class="toctree-l2"><a class="reference internal" href="mc.html">mc</a></li>
 <li class="toctree-l2 current"><a class="current reference internal" href="#">redefine</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#">参数说明</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#">使用参考</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#jad-mc">结合 jad/mc 命令使用</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#redefine">redefine的限制</a></li>
 </ul>
 </li>
@@ -118,6 +121,8 @@
 <li class="toctree-l2"><a class="reference internal" href="trace.html">trace</a></li>
 <li class="toctree-l2"><a class="reference internal" href="stack.html">stack</a></li>
 <li class="toctree-l2"><a class="reference internal" href="tt.html">tt</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cat.html">cat</a></li>
+<li class="toctree-l2"><a class="reference internal" href="pwd.html">pwd</a></li>
 <li class="toctree-l2"><a class="reference internal" href="options.html">options</a></li>
 <li class="toctree-l2"><a class="reference internal" href="commands.html#arthas">Arthas 基础命令</a></li>
 </ul>
@@ -226,10 +231,25 @@
 </table></div>
 <div class="section" id="">
 <span id="id2"></span><h2>使用参考<a class="headerlink" href="#" title="永久链接至标题">¶</a></h2>
-<div class="highlight-bash notranslate"><div class="highlight hljs"><pre class="bash">   redefine -p /tmp/Test.class
-   redefine -c 327a647b -p /tmp/Test.class /tmp/Test\$Inner.class
+<div class="highlight-bash notranslate"><div class="highlight hljs"><pre class="bash">   redefine /tmp/Test.class
+   redefine -c 327a647b /tmp/Test.class /tmp/Test\$Inner.class
 </pre></div>
 </div>
+</div>
+<div class="section" id="jad-mc">
+<span id="jad-mc"></span><h2>结合 jad/mc 命令使用<a class="headerlink" href="#jad-mc" title="永久链接至标题">¶</a></h2>
+<div class="highlight-bash notranslate"><div class="highlight hljs"><pre class="bash">jad --source-only com.example.demo.arthas.user.UserController &gt; /tmp/UserController.java
+
+mc /tmp/UserController.java -d /tmp
+
+redefine /tmp/com/example/demo/arthas/user/UserController.class
+</pre></div>
+</div>
+<ul class="simple">
+<li>jad命令反编绎，然后可以用其它编绎器，比如vim来修改源码</li>
+<li>mc命令来内存编绎修改过的代码</li>
+<li>用redefine命令加载新的字节码</li>
+</ul>
 </div>
 <div class="section" id="redefine">
 <span id="id3"></span><h2>redefine的限制<a class="headerlink" href="#redefine" title="永久链接至标题">¶</a></h2>
@@ -280,7 +300,7 @@
         <a href="monitor.html" class="btn btn-neutral float-right" title="monitor" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
-        <a href="classloader.html" class="btn btn-neutral" title="classloader" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+        <a href="mc.html" class="btn btn-neutral" title="mc" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
       
     </div>
   
@@ -311,7 +331,7 @@
     <script type="text/javascript">
         var DOCUMENTATION_OPTIONS = {
             URL_ROOT:'./',
-            VERSION:'3.0.5',
+            VERSION:'3.1.0',
             LANGUAGE:'zh_CN',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
