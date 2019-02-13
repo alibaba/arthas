@@ -158,7 +158,6 @@ public class ArthasBootstrap {
         }
         return arthasBootstrap;
     }
-
     /**
      * @return ArthasServer单例
      */
