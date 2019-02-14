@@ -104,7 +104,7 @@ $ thread 1 | grep 'main('
     at demo.MathGame.main(MathGame.java:17)
 ```
 
-## 5. 通过jad来反编绎Main Class
+## 5. 通过jad来反编译Main Class
 
 ```java
 $ jad demo.MathGame
