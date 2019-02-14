@@ -8,10 +8,10 @@
 
 # program : Arthas
 #  author : Core Engine @ Taobao.com
-#    date : 2018-12-20
+#    date : 2019-02-14
 
 # current arthas script version
-ARTHAS_SCRIPT_VERSION=3.0.5.2
+ARTHAS_SCRIPT_VERSION=3.1.0
 
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
@@ -35,14 +35,14 @@ TELNET_PORT="3658"
 # http port
 HTTP_PORT="8563"
 
-# telnet session timeout seconds, default 300
-SESSION_TIMEOUT=300
+# telnet session timeout seconds, default 1800
+SESSION_TIMEOUT=1800
 
 # use specify version
 USE_VERSION=
 
 # maven repo to download arthas
-REPO_MIRROR="center"
+REPO_MIRROR=
 
 # use http to download arthas
 USE_HTTP=false
@@ -52,6 +52,11 @@ ATTACH_ONLY=false
 
 # pass debug arguments to the attach java process
 DEBUG_ATTACH=false
+
+# arthas-client terminal height
+HEIGHT=
+# arthas-client terminal width
+WIDTH=
 
 # Verbose, print debug info.
 VERBOSE=false
@@ -246,25 +251,6 @@ reset_for_env()
         exit_on_err 1 "Can not find JAVA_HOME, please set \$JAVA_HOME bash env first."
     fi
 
-    # when java version less than 9, we can use tools.jar to confirm java home.
-    # when java version greater than 9, there is no tools.jar.
-    if [[ "$JAVA_VERSION" -lt 9 ]];then
-      # possible java homes
-      javaHomes=("${JAVA_HOME%%/}" "${JAVA_HOME%%/}/.." "${JAVA_HOME%%/}/../..")
-      for javaHome in ${javaHomes[@]}
-      do
-          toolsJar="$javaHome/lib/tools.jar"
-          if [ -f $toolsJar ]; then
-              JAVA_HOME=$( rreadlink $javaHome )
-              BOOT_CLASSPATH=-Xbootclasspath/a:$( rreadlink $toolsJar )
-              break
-          fi
-      done
-      [ -z "${BOOT_CLASSPATH}" ] && exit_on_err 1 "tools.jar was not found, so arthas could not be launched!"
-    fi
-
-    echo "[INFO] JAVA_HOME: ${JAVA_HOME}"
-
     # maybe 1.8.0_162 , 11-ea
     local JAVA_VERSION
 
@@ -284,6 +270,25 @@ reset_for_env()
         fi
       fi
     done
+
+    # when java version less than 9, we can use tools.jar to confirm java home.
+    # when java version greater than 9, there is no tools.jar.
+    if [[ "$JAVA_VERSION" -lt 9 ]];then
+      # possible java homes
+      javaHomes=("${JAVA_HOME%%/}" "${JAVA_HOME%%/}/.." "${JAVA_HOME%%/}/../..")
+      for javaHome in ${javaHomes[@]}
+      do
+          toolsJar="$javaHome/lib/tools.jar"
+          if [ -f $toolsJar ]; then
+              JAVA_HOME=$( rreadlink $javaHome )
+              BOOT_CLASSPATH=-Xbootclasspath/a:$( rreadlink $toolsJar )
+              break
+          fi
+      done
+      [ -z "${BOOT_CLASSPATH}" ] && exit_on_err 1 "tools.jar was not found, so arthas could not be launched!"
+    fi
+
+    echo "[INFO] JAVA_HOME: ${JAVA_HOME}"
 
     # reset CHARSET for alibaba opts, we use GBK
     [[ -x /opt/taobao/java ]] && JVM_OPTS="-Dinput.encoding=GBK ${JVM_OPTS} "
@@ -398,7 +403,7 @@ Options and Arguments:
     --target-ip <value>         The target jvm listen ip, default 127.0.0.1
     --telnet-port <value>       The target jvm listen telnet port, default 3658
     --http-port <value>         The target jvm listen http port, default 8563
-    --session-timeout <value>   The session timeout seconds, default 300
+    --session-timeout <value>   The session timeout seconds, default 1800 (30min)
     --arthas-home <value>       The arthas home
     --use-version <value>       Use special version arthas
     --repo-mirror <value>       Use special maven repository mirror, value is
@@ -410,6 +415,8 @@ Options and Arguments:
  -c,--command <value>           Command to execute, multiple commands separated
                                 by ;
  -f,--batch-file <value>        The batch file to execute
+    --height <value>            arthas-client terminal height
+    --width <value>             arthas-client terminal width
  -v,--verbose                   Verbose, print debug info.
  <pid>                          Target pid
 
@@ -537,6 +544,16 @@ parse_arguments()
         ARTHAS_OPTS="$JPDA_OPTS $ARTHAS_OPTS"
         shift # past argument
         ;;
+        --height)
+        HEIGHT="$2"
+        shift # past argument
+        shift # past value
+        ;;
+        --width)
+        WIDTH="$2"
+        shift # past argument
+        shift # past value
+        ;;
         -v|--verbose)
         VERBOSE=true
         shift # past argument
@@ -580,6 +597,13 @@ parse_arguments()
         fi
     fi
 
+    if [ -z ${REPO_MIRROR} ]; then
+        REPO_MIRROR="center"
+        # if timezone is +0800, set REPO_MIRROR to aliyun
+        if [[ -x "$(command -v date)" ]] && [[  $(date +%z) == "+0800" ]]; then
+            REPO_MIRROR="aliyun"
+        fi
+    fi
 
     # check pid
     if [ -z ${TARGET_PID} ] && [ ${BATCH_MODE} = false ]; then
@@ -628,14 +652,14 @@ parse_arguments()
         # check the process already using telnet port if equals to target pid
         if [[ ($telnetPortPid) && ($TARGET_PID != $telnetPortPid) ]]; then
             echo "[ERROR] Target process $TARGET_PID is not the process using port $TELNET_PORT, you will connect to an unexpected process."
-            echo "[ERROR] If you still want to attach target process $TARGET_PID, Try to set a different telnet port by using --telnet-port argument."
-            echo "[ERROR] Or try to shutdown the process $telnetPortPid using the telnet port first."
+            echo "[ERROR] 1. Try to restart as.sh, select process $telnetPortPid, shutdown it first."
+            echo "[ERROR] 2. Try to use different telnet port, for example: as.sh --telnet-port 9998 --http-port -1"
             exit 1
         fi
         if [[ ($httpPortPid) && ($TARGET_PID != $httpPortPid) ]]; then
             echo "Target process $TARGET_PID is not the process using port $HTTP_PORT, you will connect to an unexpected process."
-            echo "If you still want to attach target process $TARGET_PID, Try to set a different telnet port by using --telnet-port argument."
-            echo "Or try to shutdown the process $httpPortPid using the telnet port first."
+            echo "1. Try to restart as.sh, select process $httpPortPid, shutdown it first."
+            echo "2. Try to use different http port, for example: as.sh --telnet-port 9998 --http-port 9999"
             exit 1
         fi
     elif [ -z ${TARGET_PID} ]; then
@@ -723,11 +747,22 @@ active_console()
     fi
 
     if [ "${BATCH_MODE}" = "true" ]; then
+        local tempArgs=()
+        if [ "${HEIGHT}" ]; then
+            tempArgs+=("--height")
+            tempArgs+=("${HEIGHT}")
+        fi
+        if [ "${WIDTH}" ]; then
+            tempArgs+=("--width")
+            tempArgs+=("${WIDTH}")
+        fi
+
         if [ "${COMMAND}" ] ; then
         "${JAVA_HOME}/bin/java" ${ARTHAS_OPTS} ${JVM_OPTS} \
              -jar "${arthas_lib_dir}/arthas-client.jar" \
              ${TARGET_IP} \
              ${TELNET_PORT} \
+             "${tempArgs[@]}" \
              -c ${COMMAND}
         fi
         if [ "${BATCH_FILE}" ] ; then
@@ -735,6 +770,7 @@ active_console()
              -jar "${arthas_lib_dir}/arthas-client.jar" \
              ${TARGET_IP} \
              ${TELNET_PORT} \
+             "${tempArgs[@]}" \
              -f ${BATCH_FILE}
         fi
     elif type telnet 2>&1 >> /dev/null; then
