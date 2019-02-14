@@ -126,5 +126,22 @@ Tip: you can use `--versions` to list all available versions.
 * 修改本地的maven settings.xml
 * mvn release:prepare -Darguments="-DskipTests"
 * mvn release:perform -Darguments="-DskipTests -P full -Dsphinx.binUrl=https://github.com/hengyunabc/sphinx-binary/releases/download/v0.4.0.1/sphinx.osx-x86_64"
+
+    如果在下载 https://github.com/hengyunabc/sphinx-binary/releases/download/v0.4.0.1/sphinx.osx-x86_64 时有问题，可以先下载到本地，然后用 `file:/tmp/sphinx.osx-x86_64` 的方式指定
+
 * 到 https://oss.sonatype.org/ 上，“Staging Repositories”然后close掉自己的，再release
+* 发布完maven仓库之后，需要到阿里云的仓库里检查是否同步，有可能有延时
+* 需要更新 gh-pages 分支下面的 arthas-boot.jar/arthas-demo.jar/as.sh
+* 需要更新docker镜像，push新的tag
+
+    以 3.1.0 版本为例，先修改docker file里的版本：
+    ```
+    docker build . -t hengyunabc/arthas:3.1.0
+    docker tag hengyunabc/arthas:3.1.0  hengyunabc/arthas:latest
+    docker push hengyunabc/arthas:3.1.0
+    docker push hengyunabc/arthas:latest
+
+    docker build .  -f Dockerfile-No-Jdk -t hengyunabc/arthas:3.1.0-no-jdk
+    docker push hengyunabc/arthas:3.1.0-no-jdk
+    ```
 
