@@ -426,7 +426,7 @@ EXAMPLES:
   ./as.sh --telnet-port 9999 --http-port -1
   ./as.sh -c 'sysprop; thread' <pid>
   ./as.sh -f batch.as <pid>
-  ./as.sh --use-version 3.0.5
+  ./as.sh --use-version 3.1.0
   ./as.sh --session-timeout 3600
   ./as.sh --attach-only
   ./as.sh --repo-mirror aliyun --use-http
