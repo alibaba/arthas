@@ -19,4 +19,4 @@ mc -c 327a647b /tmp/Test.java
 mc -d /tmp/output /tmp/ClassA.java /tmp/ClassB.java
 ```
 
-编译生成`.class`文件之后，可以结合[`redefine`](redefine.md)命令实现热更新代码。
+编译生成`.class`文件之后，可以结合[redefine](redefine.md)命令实现热更新代码。
