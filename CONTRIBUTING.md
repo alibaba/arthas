@@ -78,7 +78,7 @@ Tip: you can use `--versions` to list all available versions.
 ## 开发者相关
 
 * Arthas运行支持JDK6+
-* 编绎Arthas要求JDK7+，因为使用到了jdk7里的`java.lang.management.BufferPoolMXBean`。
+* 编译Arthas要求JDK7+，因为使用到了jdk7里的`java.lang.management.BufferPoolMXBean`。
 
 ### 安装到本地
 

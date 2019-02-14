@@ -33,8 +33,8 @@ mc /tmp/UserController.java -d /tmp
 redefine /tmp/com/example/demo/arthas/user/UserController.class
 ```
 
-* jad命令反编绎，然后可以用其它编绎器，比如vim来修改源码
-* mc命令来内存编绎修改过的代码
+* jad命令反编译，然后可以用其它编译器，比如vim来修改源码
+* mc命令来内存编译修改过的代码
 * 用redefine命令加载新的字节码
 
 ### redefine的限制
