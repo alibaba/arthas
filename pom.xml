@@ -47,7 +47,7 @@
 
     <groupId>com.taobao.arthas</groupId>
     <artifactId>arthas-all</artifactId>
-    <version>3.0.6-SNAPSHOT</version>
+    <version>3.1.1-SNAPSHOT</version>
     <packaging>pom</packaging>
 
     <name>arthas-all</name>
@@ -60,6 +60,7 @@
         <module>core</module>
         <module>agent</module>
         <module>client</module>
+        <module>memorycompiler</module>
         <module>boot</module>
         <module>demo</module>
         <module>testcase</module>
@@ -88,7 +89,7 @@
             <dependency>
                 <groupId>com.alibaba.middleware</groupId>
                 <artifactId>termd-core</artifactId>
-                <version>1.1.7.1</version>
+                <version>1.1.7.2</version>
             </dependency>
             <dependency>
                 <groupId>com.alibaba.middleware</groupId>

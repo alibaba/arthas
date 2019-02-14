@@ -19,9 +19,23 @@ redefine
 ### 使用参考
 
 ```bash
-   redefine -p /tmp/Test.class
-   redefine -c 327a647b -p /tmp/Test.class /tmp/Test\$Inner.class
+   redefine /tmp/Test.class
+   redefine -c 327a647b /tmp/Test.class /tmp/Test\$Inner.class
 ```
+
+### 结合 jad/mc 命令使用
+
+```bash
+jad --source-only com.example.demo.arthas.user.UserController > /tmp/UserController.java
+
+mc /tmp/UserController.java -d /tmp
+
+redefine /tmp/com/example/demo/arthas/user/UserController.class
+```
+
+* jad命令反编译，然后可以用其它编译器，比如vim来修改源码
+* mc命令来内存编译修改过的代码
+* 用redefine命令加载新的字节码
 
 ### redefine的限制
 

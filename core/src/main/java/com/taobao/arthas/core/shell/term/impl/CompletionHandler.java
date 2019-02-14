@@ -4,6 +4,9 @@ import com.taobao.arthas.core.shell.cli.CliToken;
 import com.taobao.arthas.core.shell.cli.CliTokens;
 import com.taobao.arthas.core.shell.handlers.Handler;
 import com.taobao.arthas.core.shell.session.Session;
+import com.taobao.arthas.core.util.LogUtil;
+import com.taobao.middleware.logger.Logger;
+
 import io.termd.core.function.Consumer;
 import io.termd.core.readline.Completion;
 
@@ -14,6 +17,7 @@ import java.util.List;
  * @author beiwei30 on 23/11/2016.
  */
 class CompletionHandler implements Consumer<Completion> {
+    private static final Logger logger = LogUtil.getArthasLogger();
     private final Handler<com.taobao.arthas.core.shell.cli.Completion> completionHandler;
     private final Session session;
 
@@ -24,9 +28,14 @@ class CompletionHandler implements Consumer<Completion> {
 
     @Override
     public void accept(final Completion completion) {
-        final String line = io.termd.core.util.Helper.fromCodePoints(completion.line());
-        final List<CliToken> tokens = Collections.unmodifiableList(CliTokens.tokenize(line));
-        com.taobao.arthas.core.shell.cli.Completion comp = new CompletionAdaptor(line, tokens, completion, session);
-        completionHandler.handle(comp);
+        try {
+            final String line = io.termd.core.util.Helper.fromCodePoints(completion.line());
+            final List<CliToken> tokens = Collections.unmodifiableList(CliTokens.tokenize(line));
+            com.taobao.arthas.core.shell.cli.Completion comp = new CompletionAdaptor(line, tokens, completion, session);
+            completionHandler.handle(comp);
+        } catch (Throwable t) {
+            // t.printStackTrace();
+            logger.error(null, "completion error", t);
+        }
     }
 }

@@ -13,8 +13,11 @@ import java.util.Map;
 import org.objectweb.asm.ClassReader;
 
 import com.taobao.arthas.core.command.Constants;
+import com.taobao.arthas.core.shell.cli.Completion;
+import com.taobao.arthas.core.shell.cli.CompletionUtils;
 import com.taobao.arthas.core.shell.command.AnnotatedCommand;
 import com.taobao.arthas.core.shell.command.CommandProcess;
+import com.taobao.middleware.cli.annotations.Argument;
 import com.taobao.middleware.cli.annotations.Description;
 import com.taobao.middleware.cli.annotations.Name;
 import com.taobao.middleware.cli.annotations.Option;
@@ -29,8 +32,8 @@ import com.taobao.middleware.cli.annotations.Summary;
 @Name("redefine")
 @Summary("Redefine classes. @see Instrumentation#redefineClasses(ClassDefinition...)")
 @Description(Constants.EXAMPLE +
-                "  redefine -p /tmp/Test.class\n" +
-                "  redefine -c 327a647b -p /tmp/Test.class /tmp/Test\\$Inner.class \n" +
+                "  redefine /tmp/Test.class\n" +
+                "  redefine -c 327a647b /tmp/Test.class /tmp/Test\\$Inner.class \n" +
                 Constants.WIKI + Constants.WIKI_HOME + "redefine")
 public class RedefineCommand extends AnnotatedCommand {
 
@@ -46,19 +49,14 @@ public class RedefineCommand extends AnnotatedCommand {
         this.hashCode = hashCode;
     }
 
-    @Option(shortName = "p", longName = "path", acceptMultipleValues = true)
+    @Argument(argName = "classfilePaths", index = 0)
     @Description(".class file paths")
-    public void setPathPatterns(List<String> paths) {
+    public void setPaths(List<String> paths) {
         this.paths = paths;
     }
 
     @Override
     public void process(CommandProcess process) {
-        if (paths == null || paths.isEmpty()) {
-            process.write("paths is empty.\n");
-            process.end();
-            return;
-        }
         Instrumentation inst = process.session().getInstrumentation();
 
         for (String path : paths) {
@@ -133,5 +131,12 @@ public class RedefineCommand extends AnnotatedCommand {
 
     private static String readClassName(final byte[] bytes) {
         return new ClassReader(bytes).getClassName().replace("/", ".");
+    }
+
+    @Override
+    public void complete(Completion completion) {
+        if (!CompletionUtils.completeFilePath(completion)) {
+            super.complete(completion);
+        }
     }
 }

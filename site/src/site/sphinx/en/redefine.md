@@ -18,9 +18,24 @@ Reference: [Instrumentation#redefineClasses](https://docs.oracle.com/javase/8/do
 ### Usage
 
 ```bash
-redefine -p /tmp/Test.class
-redefine -c 327a647b -p /tmp/Test.class /tmp/Test$Inner.class
+redefine /tmp/Test.class
+redefine -c 327a647b /tmp/Test.class /tmp/Test$Inner.class
 ```
+
+### Use with the jad/mc command
+
+```bash
+jad --source-only com.example.demo.arthas.user.UserController > /tmp/UserController.java
+
+mc /tmp/UserController.java -d /tmp
+
+redefine /tmp/com/example/demo/arthas/user/UserController.class
+```
+
+* Use `jad` command to decompile bytecode, and then you can use other editors, such as vim to modify the source code.
+* `mc` command to compile the modified code
+* Load new bytecode with `redefine` command
+
 
 ### Restrictions of the redefine command
 

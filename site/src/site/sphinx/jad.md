@@ -18,7 +18,7 @@ jad
 
 ### 使用参考
 
-#### 编绎`java.lang.String`
+#### 编译`java.lang.String`
 
 ```java
 $ jad java.lang.String
@@ -52,7 +52,7 @@ CharSequence {
 ...
 ```
 
-#### 反编绎指定的函数
+#### 反编译指定的函数
 
 ```java
 $ jad demo.MathGame main
@@ -75,7 +75,7 @@ public static void main(String[] args) throws InterruptedException {
 Affect(row-cnt:1) cost in 228 ms.
 ```
 
-#### 反编绎时指定ClassLoader
+#### 反编译时指定ClassLoader
 
 > 当有多个 `ClassLoader` 都加载了这个类时，`jad` 命令会输出对应 `ClassLoader` 实例的 `hashcode`，然后你只需要重新执行 `jad` 命令，并使用参数 `-c <hashcode>` 就可以反编译指定 ClassLoader 加载的那个类了；
 

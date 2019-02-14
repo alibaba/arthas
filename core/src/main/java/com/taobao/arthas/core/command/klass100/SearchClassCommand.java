@@ -8,6 +8,8 @@ import java.util.Comparator;
 import java.util.List;
 
 import com.taobao.arthas.core.command.Constants;
+import com.taobao.arthas.core.shell.cli.Completion;
+import com.taobao.arthas.core.shell.cli.CompletionUtils;
 import com.taobao.arthas.core.shell.command.AnnotatedCommand;
 import com.taobao.arthas.core.shell.command.CommandProcess;
 import com.taobao.arthas.core.util.ClassUtils;
@@ -102,4 +104,10 @@ public class SearchClassCommand extends AnnotatedCommand {
         }
     }
 
+    @Override
+    public void complete(Completion completion) {
+        if (!CompletionUtils.completeClassName(completion)) {
+            super.complete(completion);
+        }
+    }
 }

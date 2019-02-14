@@ -67,6 +67,9 @@ public class Bootstrap {
      */
     private Long sessionTimeout;
 
+    private Integer height = null;
+    private Integer width = null;
+
     private boolean verbose = false;
 
     /**
@@ -135,7 +138,7 @@ public class Bootstrap {
     }
 
     @Option(longName = "session-timeout")
-    @Description("The session timeout seconds, default 300")
+    @Description("The session timeout seconds, default 1800 (30min)")
     public void setSessionTimeout(Long sessionTimeout) {
         this.sessionTimeout = sessionTimeout;
     }
@@ -186,6 +189,18 @@ public class Bootstrap {
     @Description("The batch file to execute")
     public void setBatchFile(String batchFile) {
         this.batchFile = batchFile;
+    }
+
+    @Option(longName = "height")
+    @Description("arthas-client terminal height")
+    public void setHeight(int height) {
+        this.height = height;
+    }
+
+    @Option(longName = "width")
+    @Description("arthas-client terminal width")
+    public void setWidth(int width) {
+        this.width = width;
     }
 
     @Option(shortName = "v", longName = "verbose", flag = true)
@@ -271,7 +286,7 @@ public class Bootstrap {
         // select pid
         if (pid < 0) {
             try {
-                pid = ProcessUtils.select(bootstrap.isVerbose());
+                pid = ProcessUtils.select(bootstrap.isVerbose(), telnetPortPid);
             } catch (InputMismatchException e) {
                 System.out.println("Please input an integer to select pid.");
                 System.exit(1);
@@ -285,18 +300,18 @@ public class Bootstrap {
         if (telnetPortPid > 0 && pid != telnetPortPid) {
             AnsiLog.error("Target process {} is not the process using port {}, you will connect to an unexpected process.",
                             pid, bootstrap.getTelnetPort());
-            AnsiLog.error("If you still want to attach target process {}, Try to set a different telnet port by using --telnet-port argument.",
-                            pid);
-            AnsiLog.error("Or try to shutdown the process {} using the telnet port first.", telnetPortPid);
+            AnsiLog.error("1. Try to restart arthas-boot, select process {}, shutdown it first.",
+                            telnetPortPid);
+            AnsiLog.error("2. Or try to use different telnet port, for example: java -jar arthas-boot.jar --telnet-port 9998 --http-port -1");
             System.exit(1);
         }
 
         if (httpPortPid > 0 && pid != httpPortPid) {
             AnsiLog.error("Target process {} is not the process using port {}, you will connect to an unexpected process.",
                             pid, bootstrap.getHttpPort());
-            AnsiLog.error("If you still want to attach target process {}, Try to set a different http port by using --http-port argument.",
-                            pid);
-            AnsiLog.error("Or try to shutdown the process {} using the http port first.", httpPortPid);
+            AnsiLog.error("1. Try to restart arthas-boot, select process {}, shutdown it first.",
+                            httpPortPid);
+            AnsiLog.error("2. Or try to use different http port, for example: java -jar arthas-boot.jar --telnet-port 9998 --http-port 9999", httpPortPid);
             System.exit(1);
         }
 
@@ -448,6 +463,14 @@ public class Bootstrap {
             telnetArgs.add("-f");
             telnetArgs.add(bootstrap.getBatchFile());
         }
+        if (bootstrap.getHeight() != null) {
+            telnetArgs.add("--height");
+            telnetArgs.add("" + bootstrap.getHeight());
+        }
+        if (bootstrap.getWidth() != null) {
+            telnetArgs.add("--width");
+            telnetArgs.add("" + bootstrap.getWidth());
+        }
 
         // telnet port ,ip
         telnetArgs.add(bootstrap.getTargetIp());
@@ -580,5 +603,13 @@ public class Bootstrap {
 
     public boolean isVersions() {
         return versions;
+    }
+
+    public Integer getHeight() {
+        return height;
+    }
+
+    public Integer getWidth() {
+        return width;
     }
 }

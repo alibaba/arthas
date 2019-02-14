@@ -2,6 +2,8 @@ package com.taobao.arthas.core.command.klass100;
 
 import com.taobao.arthas.core.advisor.Enhancer;
 import com.taobao.arthas.core.command.Constants;
+import com.taobao.arthas.core.shell.cli.Completion;
+import com.taobao.arthas.core.shell.cli.CompletionUtils;
 import com.taobao.arthas.core.shell.command.AnnotatedCommand;
 import com.taobao.arthas.core.shell.command.CommandProcess;
 import com.taobao.arthas.core.util.ClassUtils;
@@ -40,6 +42,7 @@ import static com.taobao.text.ui.Element.label;
 @Description(Constants.EXAMPLE +
         "  jad java.lang.String\n" +
         "  jad java.lang.String toString\n" +
+        "  jad --source-only java.lang.String\n" +
         "  jad -c 39eb305e org/apache/log4j/Logger\n" +
         "  jad -c 39eb305e -E org\\\\.apache\\\\.*\\\\.StringUtils\n" +
         Constants.WIKI + Constants.WIKI_HOME + "jad")
@@ -51,6 +54,11 @@ public class JadCommand extends AnnotatedCommand {
     private String methodName;
     private String code = null;
     private boolean isRegEx = false;
+
+    /**
+     * jad output source code only
+     */
+    private boolean sourceOnly = false;
 
     @Argument(argName = "class-pattern", index = 0)
     @Description("Class name pattern, use either '.' or '/' as separator")
@@ -77,6 +85,12 @@ public class JadCommand extends AnnotatedCommand {
         isRegEx = regEx;
     }
 
+    @Option(longName = "source-only", flag = true)
+    @Description("Output source code only")
+    public void setSourceOnly(boolean sourceOnly) {
+        this.sourceOnly = sourceOnly;
+    }
+
     @Override
     public void process(CommandProcess process) {
         RowAffect affect = new RowAffect();
@@ -97,7 +111,9 @@ public class JadCommand extends AnnotatedCommand {
                 processExactMatch(process, affect, inst, matchedClasses, withInnerClasses);
             }
         } finally {
-            process.write(affect + "\n");
+            if (!this.sourceOnly) {
+                process.write(affect + "\n");
+            }
             process.end();
         }
     }
@@ -118,6 +134,11 @@ public class JadCommand extends AnnotatedCommand {
                 source = pattern.matcher(source).replaceAll("");
             } else {
                 source = "unknown";
+            }
+
+            if (this.sourceOnly) {
+                process.write(LangRenderUtil.render(source) + "\n");
+                return;
             }
 
 
@@ -157,4 +178,10 @@ public class JadCommand extends AnnotatedCommand {
         process.write("No class found for: " + classPattern + "\n");
     }
 
+    @Override
+    public void complete(Completion completion) {
+        if (!CompletionUtils.completeClassName(completion)) {
+            super.complete(completion);
+        }
+    }
 }

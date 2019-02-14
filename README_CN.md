@@ -24,7 +24,7 @@ English version goes [here](README.md).
 0. 是否有一个全局视角来查看系统的运行状况？
 0. 有什么办法可以监控到JVM的实时运行状态？
 
-`Arthas`支持JDK 6+，支持Linux/Mac/Winodws，采用命令行交互模式，同时提供丰富的 `Tab` 自动补全功能，进一步方便进行问题的定位和诊断。
+`Arthas`支持JDK 6+，支持Linux/Mac/Windows，采用命令行交互模式，同时提供丰富的 `Tab` 自动补全功能，进一步方便进行问题的定位和诊断。
 
 
 ### 快速开始
@@ -346,6 +346,7 @@ $ classloader
 ![offcn](static/offcn.png)
 ![sia](static/sia.png)
 ![振安资产](static/zhenganzichang.png)
+![菠萝](static/bolo.png)
 
 ### Credit
 
