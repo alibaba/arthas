@@ -109,9 +109,9 @@
 <li class="toctree-l2 current"><a class="current reference internal" href="#">jad</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#">参数说明</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#">使用参考</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="#java-lang-string">编绎<tt class="docutils literal">java.lang.String</tt></a></li>
-<li class="toctree-l4"><a class="reference internal" href="#">反编绎指定的函数</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#classloader">反编绎时指定ClassLoader</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#java-lang-string">编译<tt class="docutils literal">java.lang.String</tt></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#">反编译指定的函数</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#classloader">反编译时指定ClassLoader</a></li>
 </ul>
 </li>
 </ul>
@@ -241,7 +241,7 @@
 <div class="section" id="">
 <span id="id2"></span><h2>使用参考<a class="headerlink" href="#" title="永久链接至标题">¶</a></h2>
 <div class="section" id="java-lang-string">
-<span id="java-lang-string"></span><h3>编绎<tt class="docutils literal">java.lang.String</tt><a class="headerlink" href="#java-lang-string" title="永久链接至标题">¶</a></h3>
+<span id="java-lang-string"></span><h3>编译<tt class="docutils literal">java.lang.String</tt><a class="headerlink" href="#java-lang-string" title="永久链接至标题">¶</a></h3>
 <div class="highlight-java notranslate"><div class="highlight hljs"><pre class="java">$ jad java.lang.String
 
 ClassLoader:
@@ -274,7 +274,7 @@ CharSequence {
 </div>
 </div>
 <div class="section" id="">
-<span id="id3"></span><h3>反编绎指定的函数<a class="headerlink" href="#" title="永久链接至标题">¶</a></h3>
+<span id="id3"></span><h3>反编译指定的函数<a class="headerlink" href="#" title="永久链接至标题">¶</a></h3>
 <div class="highlight-java notranslate"><div class="highlight hljs"><pre class="java">$ jad demo.MathGame main
 
 ClassLoader:
@@ -297,7 +297,7 @@ Affect(row-cnt:1) cost in 228 ms.
 </div>
 </div>
 <div class="section" id="classloader">
-<span id="classloader"></span><h3>反编绎时指定ClassLoader<a class="headerlink" href="#classloader" title="永久链接至标题">¶</a></h3>
+<span id="classloader"></span><h3>反编译时指定ClassLoader<a class="headerlink" href="#classloader" title="永久链接至标题">¶</a></h3>
 <blockquote>
 <div>当有多个 <tt class="docutils literal">ClassLoader</tt> 都加载了这个类时，<tt class="docutils literal">jad</tt> 命令会输出对应 <tt class="docutils literal">ClassLoader</tt> 实例的 <tt class="docutils literal">hashcode</tt>，然后你只需要重新执行 <tt class="docutils literal">jad</tt> 命令，并使用参数 <tt class="docutils literal">-c <hashcode></tt> 就可以反编译指定 ClassLoader 加载的那个类了；</div></blockquote>
 <div class="highlight-java notranslate"><div class="highlight hljs"><pre class="java">$ jad org.apache.log4j.Logger

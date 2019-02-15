@@ -104,7 +104,7 @@ $ thread 1 | grep 'main('
     at demo.MathGame.main(MathGame.java:17)
 ```
 
-## 5. 通过jad来反编绎Main Class
+## 5. 通过jad来反编译Main Class
 
 ```java
 $ jad demo.MathGame
@@ -226,7 +226,7 @@ ts=2018-11-28 19:22:35; [cost=29.969732ms] result=@ArrayList[
 
 更多的功能可以查看[进阶使用](advanced-use.md)。
 
-## 5. 退出arthas
+## 7. 退出arthas
 
 如果只是退出当前的连接，可以用`quit`或者`exit`命令。Attach到目标进程上的arthas还会继续运行，端口会保持开放，下次连接时可以直接连接上。
 

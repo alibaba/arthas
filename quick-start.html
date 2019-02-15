@@ -98,9 +98,9 @@
 <li class="toctree-l2"><a class="reference internal" href="#arthas">2. 启动arthas</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#dashboard">3. 查看dashboard</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#threadarthas-demomain-class">4. 通过thread命令来获取到<tt class="docutils literal">arthas-demo</tt>进程的Main Class</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#jadmain-class">5. 通过jad来反编绎Main Class</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#jadmain-class">5. 通过jad来反编译Main Class</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#watch">6. watch</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#arthas">5. 退出arthas</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#arthas">7. 退出arthas</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="advanced-use.html">进阶使用</a></li>
@@ -273,7 +273,7 @@ java.home              /Library/Java/JavaVir
 </div>
 </div>
 <div class="section" id="jadmain-class">
-<span id="jadmain-class"></span><h2>5. 通过jad来反编绎Main Class<a class="headerlink" href="#jadmain-class" title="永久链接至标题">¶</a></h2>
+<span id="jadmain-class"></span><h2>5. 通过jad来反编译Main Class<a class="headerlink" href="#jadmain-class" title="永久链接至标题">¶</a></h2>
 <div class="highlight-java notranslate"><div class="highlight hljs"><pre class="java">$ jad demo.MathGame
 
 ClassLoader:
@@ -393,7 +393,7 @@ ts=2018-11-28 19:22:35; [cost=29.969732ms] result=@ArrayList[
 <p>更多的功能可以查看<a class="reference internal" href="advanced-use.html"><span class="doc">进阶使用</span></a>。</p>
 </div>
 <div class="section" id="arthas">
-<span id="id2"></span><h2>5. 退出arthas<a class="headerlink" href="#arthas" title="永久链接至标题">¶</a></h2>
+<span id="id2"></span><h2>7. 退出arthas<a class="headerlink" href="#arthas" title="永久链接至标题">¶</a></h2>
 <p>如果只是退出当前的连接，可以用<tt class="docutils literal">quit</tt>或者<tt class="docutils literal">exit</tt>命令。Attach到目标进程上的arthas还会继续运行，端口会保持开放，下次连接时可以直接连接上。</p>
 <p>如果想完全退出arthas，可以执行<tt class="docutils literal">shutdown</tt>命令。</p>
 </div>
