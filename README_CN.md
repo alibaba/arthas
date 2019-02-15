@@ -348,6 +348,7 @@ $ classloader
 ![振安资产](static/zhenganzichang.png)
 ![菠萝](static/bolo.png)
 ![中通快递](static/zto.png)
+![光点科技](static/guangdian.png)
 
 
 ### Credit
