@@ -20,7 +20,6 @@ import com.taobao.arthas.core.shell.system.impl.InternalCommandManager;
 import com.taobao.arthas.core.shell.system.impl.JobControllerImpl;
 import com.taobao.arthas.core.shell.term.Term;
 import com.taobao.arthas.core.util.Constants;
-import com.taobao.arthas.core.util.DateUtils;
 import com.taobao.arthas.core.util.LogUtil;
 import com.taobao.middleware.logger.Logger;
 
@@ -114,8 +113,6 @@ public class ShellImpl implements Shell {
 
         if (welcome != null && welcome.length() > 0) {
             term.write(welcome + "\n");
-            term.write("pid: " + session.get(Session.PID) + "\n");
-            term.write("time: " + DateUtils.getCurrentDate() + "\n\n");
         }
         return this;
     }
