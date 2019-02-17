@@ -52,6 +52,30 @@ CharSequence {
 ...
 ```
 
+#### 反编绎时只显示源代码
+
+默认情况下，反编译结果里会带有`ClassLoader`信息，通过`--source-only`选项，可以只打印源代码。方便和[mc](mc.md)/[redefine](redefine.md)命令结合使用。
+
+```
+$ jad --source-only demo.MathGame
+/*
+ * Decompiled with CFR 0_132.
+ */
+package demo;
+
+import java.io.PrintStream;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Random;
+import java.util.concurrent.TimeUnit;
+
+public class MathGame {
+    private static Random random = new Random();
+    public int illegalArgumentCount = 0;
+...
+```
+
 #### 反编译指定的函数
 
 ```java
