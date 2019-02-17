@@ -40,6 +40,12 @@ Arthas was built to solve these issues. A developer can trouble-shoot your produ
 * Supports JDK 6+
 * Supports Linux/Mac/Windows
 
+
+### Online Tutorials(Recommend)
+
+* [Arthas Basics](https://alibaba.github.io/arthas/arthas-tutorials?language=en&id=arthas-basics)
+* [Arthas Advanced](https://alibaba.github.io/arthas/arthas-tutorials?language=en&id=arthas-advanced)
+
 ### Quick start
 
 #### Use `arthas-boot`(Recommend)
@@ -72,6 +78,7 @@ You can enter its interactive interface by executing `as.sh`, or execute `as.sh 
 
 ### Documentation
 
+* [Online Tutorials(Recommend)](https://alibaba.github.io/arthas/arthas-tutorials?language=en)
 * [User manual](https://alibaba.github.io/arthas/en)
 * [Installation](https://alibaba.github.io/arthas/en/install-detail.html)
 * [Quick start](https://alibaba.github.io/arthas/en/quick-start.html)
@@ -96,7 +103,7 @@ You can enter its interactive interface by executing `as.sh`, or execute `as.sh 
 
 See what is eating your cpu (ranked by top cpu usage) and what is going on there in one glance:
 
-```
+```bash
 $ thread -n 3
 "as-command-execute-daemon" Id=29 cpuUsage=75% RUNNABLE
     at sun.management.ThreadImpl.dumpThreads0(Native Method)
@@ -162,11 +169,28 @@ public interface Servlet {
 }
 ```
 
+#### mc
+
+Memory compiler, compiles `.java` files into `.class` files in memory.
+
+```bash
+mc /tmp/Test.java
+```
+
+#### redefine
+
+Load the external `*.class` files to re-define the loaded classes in JVM.
+
+```bash
+redefine /tmp/Test.class
+redefine -c 327a647b /tmp/Test.class /tmp/Test\$Inner.class
+```
+
 #### sc
 
 Search any loaded class with detailed information.
 
-```
+```bash
 $ sc -d org.springframework.web.context.support.XmlWebApplicationContext
  class-info        org.springframework.web.context.support.XmlWebApplicationContext
  code-source       /Users/xxx/work/test/WEB-INF/lib/spring-web-3.2.11.RELEASE.jar
@@ -202,7 +226,7 @@ $ sc -d org.springframework.web.context.support.XmlWebApplicationContext
 
 View the call stack of `test.arthas.TestStack#doGet`:
 
-```
+```bash
 $ stack test.arthas.TestStack doGet
 Press Ctrl+C to abort.
 Affect(class-cnt:1 , method-cnt:1) cost in 286 ms.
@@ -243,7 +267,7 @@ See what is slowing down your method invocation with trace command:
 
 Watch the first parameter and thrown exception of `test.arthas.TestWatch#doGet` only if it throws exception.
 
-```
+```bash
 $ watch test.arthas.TestWatch doGet {params[0], throwExp} -e
 Press Ctrl+C to abort.
 Affect(class-cnt:1 , method-cnt:1) cost in 65 ms.
@@ -257,7 +281,7 @@ ts=2018-09-18 10:26:28;result=@ArrayList[
 
 Monitor a specific method invocation statistics, including total number of invocations, average response time, success rate, every 5 seconds:
 
-```
+```bash
 $ monitor -c 5 org.apache.dubbo.demo.provider.DemoServiceImpl sayHello
 Press Ctrl+C to abort.
 Affect(class-cnt:1 , method-cnt:1) cost in 109 ms.
@@ -278,7 +302,7 @@ Affect(class-cnt:1 , method-cnt:1) cost in 109 ms.
 
 Record method invocation data, so that you can check the method invocation parameters, returned value and thrown exception later. It works as if you could come back and replay the past method invocation via time tunnel.
 
-```
+```bash
 $ tt -t org.apache.dubbo.demo.provider.DemoServiceImpl sayHello
 Press Ctrl+C to abort.
 Affect(class-cnt:1 , method-cnt:1) cost in 75 ms.
@@ -297,7 +321,7 @@ Affect(class-cnt:1 , method-cnt:1) cost in 75 ms.
 
 #### Classloader
 
-```
+```bash
 $ classloader
  name                                                  numberOfInstances  loadedCountTotal
  BootstrapClassLoader                                  1                  3346
