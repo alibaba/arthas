@@ -5,6 +5,8 @@ Advanced Usage
 
 * help - display Arthas help
 * cls - clear the screen
+* [cat](cat.md) - Concatenate and print files
+* [pwd](pwd.md) - Return working directory name
 * session - display current session information
 * [reset](reset.md) - reset all the enhanced classes. All enhanced classes will also be reset when Arthas server is closed by `shutdown`
 * version - print the version for the Arthas attached to the current Java process
@@ -27,9 +29,10 @@ Advanced Usage
 
 * [sc](sc.md) - check the info for the classes loaded by JVM 
 * [sm](sm.md) - check methods info for the loaded classes
-* [dump](dump.md) - dump the loaded classes in byte code to the specified location
-* [redefine](redefine.md) - load external `*.class` files and re-define it into JVM
 * [jad](jad.md) - decompile the specified loaded classes
+* [mc](mc.md) - Memory compiler, compiles `.java` files into `.class` files in memory
+* [redefine](redefine.md) - load external `*.class` files and re-define it into JVM
+* [dump](dump.md) - dump the loaded classes in byte code to the specified location
 * [classloader](classloader.md) - check the inheritance structure, urls, class loading info for the specified class; using classloader to get the url of the resource e.g. `java/lang/String.class`
 
 ## monitor/watch/trace - related
