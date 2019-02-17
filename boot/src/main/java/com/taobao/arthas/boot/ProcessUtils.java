@@ -101,7 +101,7 @@ public class ProcessUtils {
 
         List<String> lines = ExecutingCommand.runNative(command);
 
-        int currentPid = Integer.parseInt(PidUtils.getPid());
+        int currentPid = Integer.parseInt(PidUtils.currentPid());
         for (String line : lines) {
             String[] strings = line.trim().split("\\s+");
             if (strings.length < 1) {
