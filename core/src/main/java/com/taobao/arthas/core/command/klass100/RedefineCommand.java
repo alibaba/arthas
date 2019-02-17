@@ -120,6 +120,12 @@ public class RedefineCommand extends AnnotatedCommand {
         }
 
         try {
+            if (definitions.isEmpty()) {
+                process.write("These classes are not found in the JVM and may not be loaded: " + bytesMap.keySet()
+                                + "\n");
+                process.end();
+                return;
+            }
             inst.redefineClasses(definitions.toArray(new ClassDefinition[0]));
             process.write("redefine success, size: " + definitions.size() + "\n");
         } catch (Exception e) {
