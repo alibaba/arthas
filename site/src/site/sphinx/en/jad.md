@@ -52,6 +52,30 @@ CharSequence {
 ...
 ```
 
+#### Print source only
+
+By default, the decompile result will have the `ClassLoader` information. With the `--source-only` option, you can print only the source code. Conveniently used with the [mc](mc.md)/[redefine](redefine.md) commands.
+
+```
+$ jad --source-only demo.MathGame
+/*
+ * Decompiled with CFR 0_132.
+ */
+package demo;
+
+import java.io.PrintStream;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Random;
+import java.util.concurrent.TimeUnit;
+
+public class MathGame {
+    private static Random random = new Random();
+    public int illegalArgumentCount = 0;
+...
+```
+
 #### Decompile the specified method
 
 ```java
