@@ -38,8 +38,8 @@ Arthas is built to solve these issues. A developer can troubleshoot production i
 Contents
 --------
 
-* [Installation](install-detail.md)
 * [Online tutorials(Recommend)](https://alibaba.github.io/arthas/arthas-tutorials?language=en)
+* [Installation](install-detail.md)
 * [Quick start](quick-start.md)
 * [Advanced usage](advanced-use.md)
 * [Commands](commands.md)

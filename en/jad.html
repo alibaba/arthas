@@ -90,8 +90,8 @@
             
             
               <ul class="current">
-<li class="toctree-l1"><a class="reference internal" href="install-detail.html">Installation</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://alibaba.github.io/arthas/arthas-tutorials?language=en">Online tutorials(Recommend)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="install-detail.html">Installation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="quick-start.html">Quick start</a></li>
 <li class="toctree-l1"><a class="reference internal" href="advanced-use.html">Advanced usage</a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="commands.html">Commands</a><ul class="current">
@@ -109,6 +109,7 @@
 <li class="toctree-l3"><a class="reference internal" href="#options">Options</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#usage">Usage</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="#decompile-java-lang-string">Decompile <tt class="docutils literal">java.lang.String</tt></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#print-source-only">Print source only</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#decompile-the-specified-method">Decompile the specified method</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#decompile-with-specified-classloader">Decompile with specified classLoader</a></li>
 </ul>
@@ -271,6 +272,28 @@ CharSequence {
 </pre></div>
 </div>
 </div>
+<div class="section" id="print-source-only">
+<span id="print-source-only"></span><h3>Print source only<a class="headerlink" href="#print-source-only" title="Permalink to this headline">¶</a></h3>
+<p>By default, the decompile result will have the <tt class="docutils literal">ClassLoader</tt> information. With the <tt class="docutils literal">--source-only</tt> option, you can print only the source code. Conveniently used with the <a class="reference internal" href="mc.html"><span class="doc">mc</span></a>/<a class="reference internal" href="redefine.html"><span class="doc">redefine</span></a> commands.</p>
+<div class="highlight-default notranslate"><pre class="literal-block">$ jad --source-only demo.MathGame
+/*
+ * Decompiled with CFR 0_132.
+ */
+package demo;
+
+import java.io.PrintStream;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Random;
+import java.util.concurrent.TimeUnit;
+
+public class MathGame {
+    private static Random random = new Random();
+    public int illegalArgumentCount = 0;
+...</pre>
+</div>
+</div>
 <div class="section" id="decompile-the-specified-method">
 <span id="decompile-the-specified-method"></span><h3>Decompile the specified method<a class="headerlink" href="#decompile-the-specified-method" title="Permalink to this headline">¶</a></h3>
 <div class="highlight-java notranslate"><div class="highlight hljs"><pre class="java">$ jad demo.MathGame main
@@ -406,7 +429,7 @@ Affect(row-cnt:1) cost in 190 ms.
   </script>
 <div class="github-fork-ribbon-wrapper right">
   <div class="github-fork-ribbon">
-    <a href="https://github.com/alibaba/arthas">Fork me at GitHub</a>
+    <a href="https://github.com/alibaba/arthas" target="_blank">Fork me at GitHub</a>
   </div>
 </div>
 

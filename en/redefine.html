@@ -90,8 +90,8 @@
             
             
               <ul class="current">
-<li class="toctree-l1"><a class="reference internal" href="install-detail.html">Installation</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://alibaba.github.io/arthas/arthas-tutorials?language=en">Online tutorials(Recommend)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="install-detail.html">Installation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="quick-start.html">Quick start</a></li>
 <li class="toctree-l1"><a class="reference internal" href="advanced-use.html">Advanced usage</a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="commands.html">Commands</a><ul class="current">
@@ -203,7 +203,7 @@
   <div class="section" id="redefine">
 <span id="redefine"></span><h1>redefine<a class="headerlink" href="#redefine" title="Permalink to this headline">¶</a></h1>
 <blockquote>
-<div>Load the external <tt class="docutils literal">*.class</tt> files to re-define the loaded peer class in JVM.</div></blockquote>
+<div>Load the external <tt class="docutils literal">*.class</tt> files to re-define the loaded classes in JVM.</div></blockquote>
 <p>Reference: <a class="reference external" href="https://docs.oracle.com/javase/8/docs/api/java/lang/instrument/Instrumentation.html#redefineClasses-java.lang.instrument.ClassDefinition...-">Instrumentation#redefineClasses</a></p>
 <blockquote>
 <div>Notes: Re-defined classes cannot be restored. There are chances that redefining may fail due to some reasons, for example: there’s new field introduced in the new version of the class, pls. refer to JDK’s documentation for the limitations.</div></blockquote>
@@ -353,7 +353,7 @@ redefine /tmp/com/example/demo/arthas/user/UserController.class
   </script>
 <div class="github-fork-ribbon-wrapper right">
   <div class="github-fork-ribbon">
-    <a href="https://github.com/alibaba/arthas">Fork me at GitHub</a>
+    <a href="https://github.com/alibaba/arthas" target="_blank">Fork me at GitHub</a>
   </div>
 </div>
 

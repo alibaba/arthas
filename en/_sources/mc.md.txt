@@ -1,7 +1,7 @@
 mc
 ===
 
-> Memory compiler, compiles java files into bytecode and class files in memory.
+> Memory compiler, compiles `.java` files into `.class` files in memory.
 
 ```bash
 mc /tmp/Test.java

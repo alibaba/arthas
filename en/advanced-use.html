@@ -90,8 +90,8 @@
             
             
               <ul class="current">
-<li class="toctree-l1"><a class="reference internal" href="install-detail.html">Installation</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://alibaba.github.io/arthas/arthas-tutorials?language=en">Online tutorials(Recommend)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="install-detail.html">Installation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="quick-start.html">Quick start</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Advanced usage</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#basic">Basic</a></li>
@@ -194,6 +194,8 @@
 <ul class="simple">
 <li>help - display Arthas help</li>
 <li>cls - clear the screen</li>
+<li><a class="reference internal" href="cat.html"><span class="doc">cat</span></a> - Concatenate and print files</li>
+<li><a class="reference internal" href="pwd.html"><span class="doc">pwd</span></a> - Return working directory name</li>
 <li>session - display current session information</li>
 <li><a class="reference internal" href="reset.html"><span class="doc">reset</span></a> - reset all the enhanced classes. All enhanced classes will also be reset when Arthas server is closed by <tt class="docutils literal">shutdown</tt></li>
 <li>version - print the version for the Arthas attached to the current Java process</li>
@@ -220,9 +222,10 @@
 <ul class="simple">
 <li><a class="reference internal" href="sc.html"><span class="doc">sc</span></a> - check the info for the classes loaded by JVM</li>
 <li><a class="reference internal" href="sm.html"><span class="doc">sm</span></a> - check methods info for the loaded classes</li>
-<li><a class="reference internal" href="dump.html"><span class="doc">dump</span></a> - dump the loaded classes in byte code to the specified location</li>
-<li><a class="reference internal" href="redefine.html"><span class="doc">redefine</span></a> - load external <tt class="docutils literal">*.class</tt> files and re-define it into JVM</li>
 <li><a class="reference internal" href="jad.html"><span class="doc">jad</span></a> - decompile the specified loaded classes</li>
+<li><a class="reference internal" href="mc.html"><span class="doc">mc</span></a> - Memory compiler, compiles <tt class="docutils literal">.java</tt> files into <tt class="docutils literal">.class</tt> files in memory</li>
+<li><a class="reference internal" href="redefine.html"><span class="doc">redefine</span></a> - load external <tt class="docutils literal">*.class</tt> files and re-define it into JVM</li>
+<li><a class="reference internal" href="dump.html"><span class="doc">dump</span></a> - dump the loaded classes in byte code to the specified location</li>
 <li><a class="reference internal" href="classloader.html"><span class="doc">classloader</span></a> - check the inheritance structure, urls, class loading info for the specified class; using classloader to get the url of the resource e.g. <tt class="docutils literal">java/lang/String.class</tt></li>
 </ul>
 </div>
@@ -352,7 +355,7 @@
   </script>
 <div class="github-fork-ribbon-wrapper right">
   <div class="github-fork-ribbon">
-    <a href="https://github.com/alibaba/arthas">Fork me at GitHub</a>
+    <a href="https://github.com/alibaba/arthas" target="_blank">Fork me at GitHub</a>
   </div>
 </div>
 
