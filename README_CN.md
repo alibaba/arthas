@@ -371,7 +371,7 @@ $ classloader
 ![菠萝](static/bolo.png)
 ![中通快递](static/zto.png)
 ![光点科技](static/guangdian.png)
-
+![广州工程技术职业学院](static/gzvtc.jpg)
 
 ### Credit
 
