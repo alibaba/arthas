@@ -57,12 +57,14 @@
     <modules>
         <module>spy</module>
         <module>common</module>
+        <module>bytekit</module>
         <module>core</module>
         <module>agent</module>
         <module>client</module>
         <module>memorycompiler</module>
         <module>boot</module>
         <module>demo</module>
+        <module>apm-demo</module>
         <module>testcase</module>
         <module>site</module>
         <module>packaging</module>
@@ -84,6 +86,16 @@
             <dependency>
                 <groupId>org.ow2.asm</groupId>
                 <artifactId>asm-commons</artifactId>
+                <version>7.0</version>
+            </dependency>
+            <dependency>
+                <groupId>org.ow2.asm</groupId>
+                <artifactId>asm-util</artifactId>
+                <version>7.0</version>
+            </dependency>
+            <dependency>
+                <groupId>org.ow2.asm</groupId>
+                <artifactId>asm-analysis</artifactId>
                 <version>7.0</version>
             </dependency>
             <dependency>
