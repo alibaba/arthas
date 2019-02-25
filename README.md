@@ -378,6 +378,7 @@ Welcome to register the company name in this issue: https://github.com/alibaba/a
 ![中通快递](static/zto.png)
 ![光点科技](static/guangdian.png)
 ![广州工程技术职业学院](static/gzvtc.jpg)
+![mstar](static/mstar.png)
 
 ### Credit
 
