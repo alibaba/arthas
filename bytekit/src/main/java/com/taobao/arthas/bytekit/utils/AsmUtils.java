@@ -41,7 +41,7 @@ public class AsmUtils {
 
 	public static ClassNode toClassNode(byte[] classBytes) {
 		ClassReader reader = new ClassReader(classBytes);
-		ClassNode result = new ClassNode(Opcodes.ASM6);
+		ClassNode result = new ClassNode(Opcodes.ASM7);
 		reader.accept(result, ClassReader.SKIP_FRAMES);
 		return result;
 	}
@@ -91,7 +91,7 @@ public class AsmUtils {
 	}
 
 	public static MethodNode newMethodNode(MethodNode source) {
-		return new MethodNode(Opcodes.ASM6, source.access, source.name, source.desc, source.signature,
+		return new MethodNode(Opcodes.ASM7, source.access, source.name, source.desc, source.signature,
 				source.exceptions.toArray(new String[source.exceptions.size()]));
 	}
 
@@ -105,7 +105,7 @@ public class AsmUtils {
 
 	public static MethodNode removeLineNumbers(MethodNode methodNode) {
 		MethodNode result = newMethodNode(methodNode);
-		methodNode.accept(new MethodVisitor(Opcodes.ASM6, result) {
+		methodNode.accept(new MethodVisitor(Opcodes.ASM7, result) {
 			public void visitLineNumber(int line, Label start) {
 			}
 		});
@@ -166,16 +166,16 @@ public class AsmUtils {
 	public static boolean isStatic(MethodNode methodNode) {
 		return (methodNode.access & Opcodes.ACC_STATIC) != 0;
 	}
-	
+
     public static boolean isStatic(MethodInsnNode methodInsnNode) {
         return methodInsnNode.getOpcode() == Opcodes.INVOKESTATIC;
     }
-	
+
 
 	public static boolean isConstructor(MethodNode methodNode) {
 		return methodNode.name != null && methodNode.name.equals("<init>");
 	}
-	
+
 
 	public String[] getParameterNames(MethodNode methodNode) {
 		Type[] argumentTypes = Type.getArgumentTypes(methodNode.desc);
@@ -231,23 +231,23 @@ public class AsmUtils {
 
 		return names;
 	}
-	
+
     public static MethodNode copy(MethodNode source) {
         MethodNode result = newMethodNode(source);
         source.accept(result);
         return result;
     }
-    
+
     public static String methodDeclaration(MethodInsnNode methodInsnNode) {
         StringBuilder sb = new StringBuilder(128);
-        
+
         int opcode = methodInsnNode.getOpcode();
         if(opcode == Opcodes.INVOKESTATIC) {
             sb.append("static ");
         }
         Type methodType = Type.getMethodType(methodInsnNode.desc);
         Type ownerType = Type.getObjectType(methodInsnNode.owner);
-        
+
         //skip constructor return type
         if(methodInsnNode.name.equals("<init>")) {
             sb.append(ownerType.getClassName());
@@ -266,13 +266,13 @@ public class AsmUtils {
         }
         sb.append(')');
         return sb.toString();
-        
+
     }
-    
+
     public static String methodDeclaration(Type owner, MethodNode methodNode) {
         int access = methodNode.access;
         StringBuilder sb = new StringBuilder(128);
-        
+
 //        int ACC_PUBLIC = 0x0001; // class, field, method
 //        int ACC_PRIVATE = 0x0002; // class, field, method
 //        int ACC_PROTECTED = 0x0004; // class, field, method
@@ -296,7 +296,7 @@ public class AsmUtils {
 //        int ACC_ENUM = 0x4000; // class(?) field inner
 //        int ACC_MANDATED = 0x8000; // parameter, module, module *
 //        int ACC_MODULE = 0x8000; // class
-        
+
         if((access & Opcodes.ACC_PUBLIC) != 0) {
             sb.append("public ");
         }
@@ -309,7 +309,7 @@ public class AsmUtils {
         if((access & Opcodes.ACC_STATIC) != 0) {
             sb.append("static ");
         }
-        
+
         if((access & Opcodes.ACC_FINAL) != 0) {
             sb.append("final ");
         }
@@ -322,9 +322,9 @@ public class AsmUtils {
         if((access & Opcodes.ACC_ABSTRACT) != 0) {
             sb.append("abstract ");
         }
-        
+
         Type methodType = Type.getMethodType(methodNode.desc);
-        
+
         //skip constructor return type
         if(methodNode.name.equals("<init>")) {
             sb.append(owner.getClassName());
@@ -332,7 +332,7 @@ public class AsmUtils {
             sb.append(methodType.getReturnType().getClassName()).append(' ');
             sb.append(methodNode.name);
         }
-        
+
         sb.append('(');
         Type[] argumentTypes = methodType.getArgumentTypes();
         for(int i = 0 ; i < argumentTypes.length; ++i) {
@@ -354,12 +354,12 @@ public class AsmUtils {
                     }
                 }
             }
-            
+
         }
-        
+
         return sb.toString();
     }
-    
+
     public static FieldNode findField(List<FieldNode> fields, String name) {
         for(FieldNode field : fields) {
             if(field.name.equals(name)) {
@@ -378,7 +378,7 @@ public class AsmUtils {
 	    }
 	    return result.toString();
 	}
-	
+
 	private static String cleanClassName(String className) {
 	    char[] charArray = className.toCharArray();
 	    int length = charArray.length;
@@ -389,7 +389,7 @@ public class AsmUtils {
             case '<' :
             case '>' :
             case ';' :
-            case '/' :  
+            case '/' :
             case '.' :
                 charArray[i] = '_';
                 break;
@@ -397,7 +397,7 @@ public class AsmUtils {
 	    }
 	    return new String(charArray);
 	}
-	
-	
-	
+
+
+
 }
