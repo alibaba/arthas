@@ -5,6 +5,7 @@ import java.io.*;
 import java.lang.instrument.Instrumentation;
 import java.lang.reflect.Method;
 import java.net.URL;
+import java.security.CodeSource;
 import java.util.jar.JarFile;
 
 /**
@@ -50,7 +51,7 @@ public class AgentBootstrap {
     private static volatile ClassLoader arthasClassLoader;
 
     public static void premain(String args, Instrumentation inst) {
-        main(args, inst);
+        main(true, args, inst);
     }
 
     public static void agentmain(String args, Instrumentation inst) {
@@ -93,18 +94,42 @@ public class AgentBootstrap {
     }
 
     private static synchronized void main(final String args, final Instrumentation inst) {
+        main(false, args, inst);
+    }
+    private static synchronized void main(boolean premain, final String args, final Instrumentation inst) {
         try {
             ps.println("Arthas server agent start...");
-            // 传递的args参数分两个部分:agentJar路径和agentArgs, 分别是Agent的JAR包路径和期望传递到服务端的参数
-            int index = args.indexOf(';');
-            String agentJar = args.substring(0, index);
-            final String agentArgs = args.substring(index, args.length());
 
-            File agentJarFile = new File(agentJar);
-            if (!agentJarFile.exists()) {
-                ps.println("Agent jar file does not exist: " + agentJarFile);
-                return;
+
+            // 传递的args参数分两个部分:agentJar路径和agentArgs, 分别是Agent的JAR包路径和期望传递到服务端的参数
+            String agentJar = null;
+            File agentJarFile = null;
+            String agentArgs = null;
+            if (premain && (args == null || args.trim().isEmpty())) {
+                // 当时premain启动时，并且没有配置参数时，尝试从arthas-agent.jar所在的目录查找 arthas-core.jar
+                CodeSource codeSource = AgentBootstrap.class.getProtectionDomain().getCodeSource();
+                URL agentJarLocation = codeSource.getLocation();
+                agentJarFile = new File(new File(agentJarLocation.getFile()).getParentFile(), "arthas-core.jar");
+
+                /**
+                 * 当用户没有配置参数时，默认的配置字符串 TODO 默认值是否要设置到 com.taobao.arthas.core.config.Configure
+                 */
+                agentArgs = "telnetPort=3658;httpPort=8563;ip=127.0.0.1;sessionTimeout=1800";
+            } else {
+                int index = args.indexOf(';');
+                agentJar = args.substring(0, index);
+                agentArgs = args.substring(index, args.length());
+
+                agentJarFile = new File(agentJar);
+                if (!agentJarFile.exists()) {
+                    ps.println("Agent jar file does not exist: " + agentJarFile);
+                    return;
+                }
             }
+            if(agentArgs == null) {
+                agentArgs = "";
+            }
+            final String finalAgentArgs = agentArgs;
 
             File spyJarFile = new File(agentJarFile.getParentFile(), ARTHAS_SPY_JAR);
             if (!spyJarFile.exists()) {
@@ -122,7 +147,7 @@ public class AgentBootstrap {
                 @Override
                 public void run() {
                     try {
-                        bind(inst, agentLoader, agentArgs);
+                        bind(inst, agentLoader, finalAgentArgs);
                     } catch (Throwable throwable) {
                         throwable.printStackTrace(ps);
                     }
