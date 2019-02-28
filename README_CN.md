@@ -374,6 +374,7 @@ $ classloader
 ![广州工程技术职业学院](static/gzvtc.jpg)
 ![mstar](static/mstar.png)
 ![xwbank](static/xwbank.png)
+![imexue](static/imexue.png)
 
 ### Credit
 
