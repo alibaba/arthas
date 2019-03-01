@@ -36,7 +36,7 @@ public @interface AtExceptionExit {
         @Override
         public InterceptorProcessor parse(Method method, Annotation annotationOnMethod) {
 
-            InterceptorProcessor interceptorProcessor = new InterceptorProcessor();
+            InterceptorProcessor interceptorProcessor = new InterceptorProcessor(method.getDeclaringClass().getClassLoader());
             InterceptorMethodConfig interceptorMethodConfig = new InterceptorMethodConfig();
             interceptorProcessor.setInterceptorMethodConfig(interceptorMethodConfig);
 
@@ -47,9 +47,9 @@ public @interface AtExceptionExit {
 
             AtExceptionExit atExceptionExit = (AtExceptionExit) annotationOnMethod;
             interceptorMethodConfig.setInline(atExceptionExit.inline());
-            
+
             LocationMatcher locationMatcher = new ExceptionExitLocationMatcher(Type.getInternalName(atExceptionExit.onException()));;
-            
+
             interceptorProcessor.setLocationMatcher(locationMatcher);
 
             List<Binding> bindings = BindingParserUtils.parseBindings(method);

@@ -47,7 +47,7 @@ public @interface AtFieldAccess {
         @Override
         public InterceptorProcessor parse(Method method, Annotation annotationOnMethod) {
 
-            InterceptorProcessor interceptorProcessor = new InterceptorProcessor();
+            InterceptorProcessor interceptorProcessor = new InterceptorProcessor(method.getDeclaringClass().getClassLoader());
             InterceptorMethodConfig interceptorMethodConfig = new InterceptorMethodConfig();
             interceptorProcessor.setInterceptorMethodConfig(interceptorMethodConfig);
 
@@ -65,7 +65,7 @@ public @interface AtFieldAccess {
             if(!atFieldAccess.type().equals(Void.class)) {
                 fieldDesc = Type.getType(atFieldAccess.type()).getDescriptor();
             }
-            
+
             LocationMatcher locationMatcher = new FieldAccessLocationMatcher(
                     ownerClass,
                     fieldDesc, atFieldAccess.name(), atFieldAccess.count(),

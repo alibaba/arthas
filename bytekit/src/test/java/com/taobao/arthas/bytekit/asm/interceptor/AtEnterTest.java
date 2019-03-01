@@ -21,7 +21,7 @@ public class AtEnterTest {
     public OutputCapture capture = new OutputCapture();
 
     public static class Sample {
-        
+
         long longField;
         String strField;
         static int intField;
@@ -32,20 +32,20 @@ public class AtEnterTest {
             }
             return str.length();
         }
-        
+
         public long toBeInvoke(int i , long l, String s, long ll) {
             return l + ll;
         }
-        
+
         public void testInvokeArgs() {
             toBeInvoke(1, 123L, "abc", 100L);
         }
-        
+
     }
 
     public static class TestPrintSuppressHandler {
 
-        @ExceptionHandler(inline = false)
+        @ExceptionHandler(inline = true)
         public static void onSuppress(@Binding.Throwable Throwable e, @Binding.Class Object clazz) {
             System.err.println("exception handler: " + clazz);
             e.printStackTrace();
@@ -54,14 +54,14 @@ public class AtEnterTest {
 
     public static class EnterInterceptor {
 
-        @AtEnter(inline = false
+        @AtEnter(inline = true
                 , suppress = RuntimeException.class, suppressHandler = TestPrintSuppressHandler.class
                 )
         public static long onEnter(
                 @Binding.This Object object, @Binding.Class Object clazz,
-               @Binding.Field(name = "longField") long longField, 
-               @Binding.Field(name = "longField") Object longFieldObject, 
-               @Binding.Field(name = "intField") int intField, 
+               @Binding.Field(name = "longField") long longField,
+               @Binding.Field(name = "longField") Object longFieldObject,
+               @Binding.Field(name = "intField") int intField,
                @Binding.Field(name = "strField") String strField,
                @Binding.Field(name = "intField") Object intFielObject
                ) {

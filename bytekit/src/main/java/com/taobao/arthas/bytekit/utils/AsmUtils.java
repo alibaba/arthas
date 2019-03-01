@@ -12,12 +12,15 @@ import java.util.Comparator;
 import java.util.List;
 
 import org.objectweb.asm.ClassReader;
+import org.objectweb.asm.ClassVisitor;
 import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.Label;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.Type;
+import org.objectweb.asm.commons.ClassRemapper;
 import org.objectweb.asm.commons.JSRInlinerAdapter;
+import org.objectweb.asm.commons.Remapper;
 import org.objectweb.asm.tree.AbstractInsnNode;
 import org.objectweb.asm.tree.ClassNode;
 import org.objectweb.asm.tree.FieldNode;
@@ -49,6 +52,42 @@ public class AsmUtils {
 	public static byte[] toBytes(ClassNode classNode) {
 		ClassWriter writer = new ClassWriter(ClassWriter.COMPUTE_FRAMES | ClassWriter.COMPUTE_MAXS);
 		classNode.accept(writer);
+		return writer.toByteArray();
+	}
+
+	public static byte[] renameClass(byte[] classBytes, final String newClassName) {
+		final String internalName = newClassName.replace('.', '/');
+
+		ClassReader reader = new ClassReader(classBytes);
+		ClassWriter writer = new ClassWriter(0);
+
+		class RenameRemapper extends Remapper {
+			private String className;
+
+			@Override
+			public String map(String typeName) {
+				if (typeName.equals(className)) {
+					return internalName;
+				}
+				return super.map(typeName);
+			}
+
+			public void setClassName(String className) {
+				this.className = className;
+			}
+		}
+
+		final RenameRemapper renameRemapper = new RenameRemapper();
+		ClassRemapper adapter = new ClassRemapper(writer, renameRemapper) {
+			@Override
+			public void visit(final int version, final int access, final String name, final String signature,
+					final String superName, final String[] interfaces) {
+				renameRemapper.setClassName(name);
+				super.visit(version, access, name, signature, superName, interfaces);
+			}
+		};
+		reader.accept(adapter, ClassReader.EXPAND_FRAMES);
+		writer.visitEnd();
 		return writer.toByteArray();
 	}
 
@@ -131,6 +170,10 @@ public class AsmUtils {
 		return result;
 	}
 
+	public static MethodNode findMethod(Collection<MethodNode> methodNodes, MethodNode target) {
+		return findMethod(methodNodes, target.name, target.desc);
+	}
+
 	public static MethodNode findMethod(Collection<MethodNode> methodNodes, String name, String desc) {
 		for (MethodNode methodNode : methodNodes) {
 			if (methodNode.name.equals(name) && methodNode.desc.equals(desc)) {
@@ -161,6 +204,20 @@ public class AsmUtils {
 		}
 
 		return null;
+	}
+
+	public static List<MethodInsnNode> findMethodInsnNodeWithPrefix(MethodNode methodNode, String prefix) {
+	    List<MethodInsnNode> result = new ArrayList<MethodInsnNode>();
+	    for (AbstractInsnNode insnNode = methodNode.instructions.getFirst(); insnNode != null; insnNode = insnNode
+	                    .getNext()) {
+	        if (insnNode instanceof MethodInsnNode) {
+	            final MethodInsnNode methodInsnNode = (MethodInsnNode) insnNode;
+	            if(methodInsnNode.name.startsWith(prefix)) {
+	                result.add(methodInsnNode);
+	            }
+	        }
+	    }
+	    return result;
 	}
 
 	public static boolean isStatic(MethodNode methodNode) {
@@ -237,6 +294,20 @@ public class AsmUtils {
         source.accept(result);
         return result;
     }
+
+    public static ClassNode copy(ClassNode source) {
+        ClassNode result = new ClassNode(Opcodes.ASM7);
+        source.accept(new ClassVisitor(Opcodes.ASM7, result) {
+            @Override
+            public MethodVisitor visitMethod(int access, String name, String desc, String signature,
+                            String[] exceptions) {
+                MethodVisitor mv = super.visitMethod(access, name, desc, signature, exceptions);
+                return new JSRInlinerAdapter(mv, access, name, desc, signature, exceptions);
+            }
+        });
+        return result;
+    }
+
 
     public static String methodDeclaration(MethodInsnNode methodInsnNode) {
         StringBuilder sb = new StringBuilder(128);
@@ -367,6 +438,15 @@ public class AsmUtils {
             }
         }
         return null;
+    }
+
+    public static void addField(ClassNode classNode, FieldNode fieldNode) {
+    	// TODO 检查是否有重复？
+    	classNode.fields.add(fieldNode);
+    }
+
+    public static void addMethod(ClassNode classNode, MethodNode methodNode) {
+    	classNode.methods.add(methodNode);
     }
 
 	// TODO 是否真的 unique 了？

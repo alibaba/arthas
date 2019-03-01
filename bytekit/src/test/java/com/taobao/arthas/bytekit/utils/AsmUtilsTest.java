@@ -126,4 +126,19 @@ public class AsmUtilsTest {
 
     }
 
+
+    @Test
+    public void testRenameClass() throws Exception {
+    	ClassNode classNode = AsmUtils.loadClass(AsmUtilsTest.class);
+
+    	byte[] classBytes = AsmUtils.toBytes(classNode);
+
+    	byte[] renameClass = AsmUtils.renameClass(classBytes, "com.test.Test.XXX");
+
+    	VerifyUtils.asmVerify(renameClass);
+    	Object object = VerifyUtils.instanceVerity(renameClass);
+
+    	Assertions.assertThat(object.getClass().getName()).isEqualTo("com.test.Test.XXX");
+    }
+
 }

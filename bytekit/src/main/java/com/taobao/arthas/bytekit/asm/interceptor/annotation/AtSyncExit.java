@@ -29,7 +29,7 @@ public @interface AtSyncExit {
     Class<? extends Throwable> suppress() default None.class;
 
     Class<?> suppressHandler() default Void.class;
-    
+
     int count() default -1;
     boolean whenComplete() default false;
 
@@ -38,7 +38,7 @@ public @interface AtSyncExit {
         @Override
         public InterceptorProcessor parse(Method method, Annotation annotationOnMethod) {
 
-            InterceptorProcessor interceptorProcessor = new InterceptorProcessor();
+            InterceptorProcessor interceptorProcessor = new InterceptorProcessor(method.getDeclaringClass().getClassLoader());
             InterceptorMethodConfig interceptorMethodConfig = new InterceptorMethodConfig();
             interceptorProcessor.setInterceptorMethodConfig(interceptorMethodConfig);
 
@@ -47,10 +47,10 @@ public @interface AtSyncExit {
             interceptorMethodConfig.setMethodDesc(Type.getMethodDescriptor(method));
 
             AtSyncExit atSyncExit = (AtSyncExit) annotationOnMethod;
-            
+
             LocationMatcher locationMatcher = new SyncLocationMatcher(Opcodes.MONITOREXIT, atSyncExit.count(), atSyncExit.whenComplete());
             interceptorProcessor.setLocationMatcher(locationMatcher);
-            
+
             interceptorMethodConfig.setInline(atSyncExit.inline());
 
             List<Binding> bindings = BindingParserUtils.parseBindings(method);

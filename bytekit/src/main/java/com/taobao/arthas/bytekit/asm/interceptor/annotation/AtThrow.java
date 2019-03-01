@@ -28,7 +28,7 @@ public @interface AtThrow {
     Class<? extends Throwable> suppress() default None.class;
 
     Class<?> suppressHandler() default Void.class;
-    
+
     int count() default -1;
 
     class ThrowInterceptorProcessorParser implements InterceptorProcessorParser {
@@ -36,7 +36,7 @@ public @interface AtThrow {
         @Override
         public InterceptorProcessor parse(Method method, Annotation annotationOnMethod) {
 
-            InterceptorProcessor interceptorProcessor = new InterceptorProcessor();
+            InterceptorProcessor interceptorProcessor = new InterceptorProcessor(method.getDeclaringClass().getClassLoader());
             InterceptorMethodConfig interceptorMethodConfig = new InterceptorMethodConfig();
             interceptorProcessor.setInterceptorMethodConfig(interceptorMethodConfig);
 
@@ -47,7 +47,7 @@ public @interface AtThrow {
             AtThrow atThrow = (AtThrow) annotationOnMethod;
             LocationMatcher locationMatcher = new ThrowLocationMatcher(atThrow.count());
             interceptorProcessor.setLocationMatcher(locationMatcher);
-            
+
             interceptorMethodConfig.setInline(atThrow.inline());
 
             List<Binding> bindings = BindingParserUtils.parseBindings(method);

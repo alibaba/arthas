@@ -26,13 +26,13 @@ public @interface AtExit {
     boolean inline() default true;
     Class<? extends Throwable> suppress() default None.class;
     Class<?> suppressHandler() default Void.class;
-    
+
     class ExitInterceptorProcessorParser implements InterceptorProcessorParser {
 
         @Override
         public InterceptorProcessor parse(Method method, Annotation annotationOnMethod) {
 
-            InterceptorProcessor interceptorProcessor = new InterceptorProcessor();
+            InterceptorProcessor interceptorProcessor = new InterceptorProcessor(method.getDeclaringClass().getClassLoader());
             InterceptorMethodConfig interceptorMethodConfig = new InterceptorMethodConfig();
             interceptorProcessor.setInterceptorMethodConfig(interceptorMethodConfig);
 
