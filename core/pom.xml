@@ -72,6 +72,18 @@
         </dependency>
         <dependency>
             <groupId>com.taobao.arthas</groupId>
+            <artifactId>arthas-spy</artifactId>
+            <version>${project.version}</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.taobao.arthas</groupId>
+            <artifactId>arthas-agent</artifactId>
+            <version>${project.version}</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.taobao.arthas</groupId>
             <artifactId>arthas-memorycompiler</artifactId>
             <version>${project.version}</version>
         </dependency>

@@ -77,19 +77,19 @@ public class Enhancer implements ClassFileTransformer {
         // 因为 Spy 是被bootstrap classloader加载的，所以一定可以被找到，如果找不到的话，说明应用方的classloader实现有问题
         Class<?> spyClass = targetClassLoader.loadClass(Constants.SPY_CLASSNAME);
 
-        final ClassLoader arthasClassLoader = Enhancer.class.getClassLoader();
-
-        // 初始化间谍, AgentLauncher会把各种hook设置到ArthasClassLoader当中
-        // 这里我们需要把这些hook取出来设置到目标classloader当中
-        Method initMethod = spyClass.getMethod("init", ClassLoader.class, Method.class,
-                Method.class, Method.class, Method.class, Method.class, Method.class);
-        initMethod.invoke(null, arthasClassLoader,
-                FieldUtils.getField(spyClass, "ON_BEFORE_METHOD").get(null),
-                FieldUtils.getField(spyClass, "ON_RETURN_METHOD").get(null),
-                FieldUtils.getField(spyClass, "ON_THROWS_METHOD").get(null),
-                FieldUtils.getField(spyClass, "BEFORE_INVOKING_METHOD").get(null),
-                FieldUtils.getField(spyClass, "AFTER_INVOKING_METHOD").get(null),
-                FieldUtils.getField(spyClass, "THROW_INVOKING_METHOD").get(null));
+//        final ClassLoader arthasClassLoader = Enhancer.class.getClassLoader();
+//
+//        // 初始化间谍, AgentLauncher会把各种hook设置到ArthasClassLoader当中
+//        // 这里我们需要把这些hook取出来设置到目标classloader当中
+//        Method initMethod = spyClass.getMethod("init", ClassLoader.class, Method.class,
+//                Method.class, Method.class, Method.class, Method.class, Method.class);
+//        initMethod.invoke(null, arthasClassLoader,
+//                FieldUtils.getField(spyClass, "ON_BEFORE_METHOD").get(null),
+//                FieldUtils.getField(spyClass, "ON_RETURN_METHOD").get(null),
+//                FieldUtils.getField(spyClass, "ON_THROWS_METHOD").get(null),
+//                FieldUtils.getField(spyClass, "BEFORE_INVOKING_METHOD").get(null),
+//                FieldUtils.getField(spyClass, "AFTER_INVOKING_METHOD").get(null),
+//                FieldUtils.getField(spyClass, "THROW_INVOKING_METHOD").get(null));
 	}
 
     @Override

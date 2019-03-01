@@ -18,6 +18,16 @@
             <scope>provided</scope>
         </dependency>
         <dependency>
+            <groupId>com.taobao.arthas</groupId>
+            <artifactId>arthas-common</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.taobao.arthas</groupId>
+            <artifactId>arthas-bytekit</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
             <scope>test</scope>
@@ -52,8 +62,8 @@
                             </descriptorRefs>
                             <archive>
                                 <manifestEntries>
-                                    <Premain-Class>com.taobao.arthas.agent.AgentBootstrap</Premain-Class>
-                                    <Agent-Class>com.taobao.arthas.agent.AgentBootstrap</Agent-Class>
+                                    <Premain-Class>com.taobao.arthas.agent.AgentBootstrap2</Premain-Class>
+                                    <Agent-Class>com.taobao.arthas.agent.AgentBootstrap2</Agent-Class>
                                     <Can-Redefine-Classes>true</Can-Redefine-Classes>
                                     <Can-Retransform-Classes>true</Can-Retransform-Classes>
                                     <Specification-Title>${project.name}</Specification-Title>

@@ -10,6 +10,14 @@
     <artifactId>arthas-demo</artifactId>
     <name>arthas-demo</name>
 
+    <dependencies>
+            <dependency>
+            <groupId>com.taobao.arthas</groupId>
+            <artifactId>arthas-agent</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+    </dependencies>
+
     <build>
         <finalName>arthas-demo</finalName>
         <plugins>

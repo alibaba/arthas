@@ -11,6 +11,14 @@
     <name>arthas-common</name>
 
     <!-- This module can not add any dependencies -->
+    <dependencies>
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
+
     <build>
         <finalName>arthas-common</finalName>
         <plugins>
