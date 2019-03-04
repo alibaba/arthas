@@ -375,6 +375,10 @@ $ classloader
 ![mstar](static/mstar.png)
 ![xwbank](static/xwbank.png)
 ![imexue](static/imexue.png)
+![keking](static/keking.png)
+![secoo](static/secoo.jpg)
+![viax](static/viax.png)
+![yanedu](static/yanedu.png)
 
 ### Credit
 
