@@ -113,6 +113,7 @@
 <li class="toctree-l3"><a class="reference internal" href="#">参数说明</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#">使用参考</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#jad-mc">结合 jad/mc 命令使用</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#class">上传 .class 文件到服务器的技巧</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#redefine">redefine的限制</a></li>
 </ul>
 </li>
@@ -250,6 +251,25 @@ redefine /tmp/com/example/demo/arthas/user/UserController.class
 <li>mc命令来内存编译修改过的代码</li>
 <li>用redefine命令加载新的字节码</li>
 </ul>
+</div>
+<div class="section" id="class">
+<span id="class"></span><h2>上传 .class 文件到服务器的技巧<a class="headerlink" href="#class" title="永久链接至标题">¶</a></h2>
+<p>使用<tt class="docutils literal">mc</tt>命令来编译<tt class="docutils literal">jad</tt>的反编译的代码有可能失败。可以在本地修改代码，编译好后再上传到服务器上。有的服务器不允许直接上传文件，可以使用<tt class="docutils literal">base64</tt>命令来绕过。</p>
+<ol>
+<li><p class="first">在本地先转换<tt class="docutils literal">.class</tt>文件为base64，再保存为result.txt</p>
+<div class="highlight-bash notranslate"><div class="highlight hljs"><pre class="bash">base64 &lt; Test.class &gt; result.txt
+</pre></div>
+</div>
+</li>
+<li><p class="first">到服务器上，新建并编辑<tt class="docutils literal">result.txt</tt>，复制本地的内容，粘贴再保存</p>
+</li>
+<li><p class="first">把服务器上的 <tt class="docutils literal">result.txt</tt>还原为<tt class="docutils literal">.class</tt></p>
+<div class="highlight-default notranslate"><pre class="literal-block">base64 -d &lt; result.txt &gt; Test.class</pre>
+</div>
+</li>
+<li><p class="first">用md5命令计算哈希值，校验是否一致</p>
+</li>
+</ol>
 </div>
 <div class="section" id="redefine">
 <span id="id3"></span><h2>redefine的限制<a class="headerlink" href="#redefine" title="永久链接至标题">¶</a></h2>

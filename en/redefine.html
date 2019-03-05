@@ -112,6 +112,7 @@
 <li class="toctree-l3"><a class="reference internal" href="#options">Options</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#usage">Usage</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#use-with-the-jad-mc-command">Use with the jad/mc command</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#tips-for-uploading-class-files-to-the-server">Tips for uploading .class files to the server</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#restrictions-of-the-redefine-command">Restrictions of the redefine command</a></li>
 </ul>
 </li>
@@ -248,6 +249,25 @@ redefine /tmp/com/example/demo/arthas/user/UserController.class
 <li><tt class="docutils literal">mc</tt> command to compile the modified code</li>
 <li>Load new bytecode with <tt class="docutils literal">redefine</tt> command</li>
 </ul>
+</div>
+<div class="section" id="tips-for-uploading-class-files-to-the-server">
+<span id="tips-for-uploading-class-files-to-the-server"></span><h2>Tips for uploading .class files to the server<a class="headerlink" href="#tips-for-uploading-class-files-to-the-server" title="Permalink to this headline">¶</a></h2>
+<p>The <tt class="docutils literal">mc</tt> command may fail. You can modify the code locally, compile it, and upload it to the server. Some servers do not allow direct uploading files, you can use the <tt class="docutils literal">base64</tt> command to bypass.</p>
+<ol>
+<li><p class="first">Convert the <tt class="docutils literal">.class</tt> file to base64 first, then save it as result.txt</p>
+<div class="highlight-bash notranslate"><div class="highlight hljs"><pre class="bash">Base64 &lt; Test.class &gt; result.txt
+</pre></div>
+</div>
+</li>
+<li><p class="first">Login the server, create and edit <tt class="docutils literal">result.txt</tt>, copy the local content, paste and save</p>
+</li>
+<li><p class="first">Restore <tt class="docutils literal">result.txt</tt> on the server to <tt class="docutils literal">.class</tt></p>
+<div class="highlight-default notranslate"><pre class="literal-block">Base64 -d &lt; result.txt &gt; Test.class</pre>
+</div>
+</li>
+<li><p class="first">Use the md5 command to verify that the <tt class="docutils literal">.class</tt> files are consistent.</p>
+</li>
+</ol>
 </div>
 <div class="section" id="restrictions-of-the-redefine-command">
 <span id="restrictions-of-the-redefine-command"></span><h2>Restrictions of the redefine command<a class="headerlink" href="#restrictions-of-the-redefine-command" title="Permalink to this headline">¶</a></h2>
