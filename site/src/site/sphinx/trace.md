@@ -3,7 +3,7 @@ trace
 
 > 方法内部调用路径，并输出方法路径上的每个节点上耗时
 
-`trace` 命令能主动搜索 `class-pattern`／`method-pattern` 对应的方法调用路径，渲染和统计整个调用链路上的所有性能开销和追踪调用链路。
+`trace` 命令可以看做 `watch` 命令的超集。除了具有 `watch` 所有的功能之外，`trace` 命令还能主动搜索 `class-pattern`／`method-pattern` 对应的方法调用路径，渲染和统计整个调用链路上的所有性能开销和追踪调用链路。
 
 ### 参数说明
 
@@ -12,6 +12,12 @@ trace
 |*class-pattern*|类名表达式匹配|
 |*method-pattern*|方法名表达式匹配|
 |*condition-express*|条件表达式|
+|*express*|观察表达式|
+|[b]|在**方法调用之前**观察|
+|[e]|在**方法异常之后**观察|
+|[s]|在**方法返回之后**观察|
+|[f]|在**方法结束之后**(正常返回和异常返回)观察|
+|[x:]|指定输出结果的属性遍历深度，默认为 1|
 |[E]|开启正则表达式匹配，默认为通配符匹配|
 |`[n:]`|命令执行次数|
 |`#cost`|方法执行耗时|
@@ -52,6 +58,38 @@ Affect(class-cnt:1 , method-cnt:1) cost in 42 ms.
         +---[0.05638ms] java.util.Random:nextInt()
         +---[10.036885ms] demo.MathGame:primeFactors()
         `---[0.170316ms] demo.MathGame:print()
+```
+
+```bash
+$ trace demo.MathGame primeFactors '' '{params,returnObj,throwExp}' -x2 -b -f
+Press Q or Ctrl+C to abort.
+Affect(class-cnt:1 , method-cnt:1) cost in 25 ms.
+ts=2019-03-06 15:21:30; [cost=0.022775ms] result=@ArrayList[
+    @Object[][
+        @Integer[194348],
+    ],
+    null,
+    null,
+]
+`---ts=2019-03-06 15:21:30;thread_name=main;id=1;is_daemon=false;priority=5;TCCL=sun.misc.Launcher$AppClassLoader@33909752
+    `---[1.722216ms] demo.MathGame:primeFactors()
+        +---[0.023334ms] java.util.ArrayList:<init>()
+        +---[min=0.002478ms,max=0.012999ms,total=0.024493ms,count=5] java.lang.Integer:valueOf()
+        `---[min=0.002417ms,max=0.018165ms,total=0.033028ms,count=5] java.util.List:add()
+
+ts=2019-03-06 15:21:30; [cost=2.650735ms] result=@ArrayList[
+    @Object[][
+        @Integer[194348],
+    ],
+    @ArrayList[
+        @Integer[2],
+        @Integer[2],
+        @Integer[7],
+        @Integer[11],
+        @Integer[631],
+    ],
+    null,
+]
 ```
 
 #### 过滤掉jdk的函数
