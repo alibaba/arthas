@@ -25,6 +25,7 @@ Arthas 用户文档
 Contents
 --------
 
+* [2019校园招聘](jd-2019.md)
 * [English Docs](https://alibaba.github.io/arthas/en/)
 * [在线教程(推荐)](https://alibaba.github.io/arthas/arthas-tutorials?language=cn)
 * [安装](install-detail.md)
