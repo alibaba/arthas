@@ -379,6 +379,7 @@ $ classloader
 ![secoo](static/secoo.jpg)
 ![viax](static/viax.png)
 ![yanedu](static/yanedu.png)
+![duia](static/duia.png)
 
 ### Credit
 
