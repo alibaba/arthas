@@ -8,6 +8,7 @@ import java.util.Timer;
 /**
  * @author ralf0131 2017-01-09 13:37.
  */
+@SuppressWarnings("PMD.AvoidUseTimerRule")
 public class DashboardInterruptHandler extends CommandInterruptHandler {
 
     private volatile Timer timer;
