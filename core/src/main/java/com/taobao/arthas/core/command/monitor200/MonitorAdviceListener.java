@@ -66,6 +66,7 @@ import static com.taobao.text.ui.Element.label;
  *
  * @author beiwei30 on 28/11/2016.
  */
+@SuppressWarnings("PMD.AvoidUseTimerRule")
 class MonitorAdviceListener extends ReflectAdviceListenerAdapter {
     // 输出定时任务
     private Timer timer;

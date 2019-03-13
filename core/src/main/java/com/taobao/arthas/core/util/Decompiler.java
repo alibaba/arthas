@@ -85,14 +85,16 @@ public class Decompiler {
             path = classFileSource.adjustInputPath(path);
 
             AnalysisType type = (AnalysisType) options.getOption(OptionsImpl.ANALYSE_AS);
-            if (type == null)
+            if (type == null) {
                 type = dcCommonState.detectClsJar(path);
+            }
 
             if (type == AnalysisType.JAR) {
                 // doJar(dcCommonState, path, dumperFactory);
             }
-            if (type == AnalysisType.CLASS)
+            if (type == AnalysisType.CLASS) {
                 result.append(doClass(dcCommonState, path, skipInnerClass, dumperFactory));
+            }
         }
         return result.toString();
     }
@@ -105,8 +107,9 @@ public class Decompiler {
         Dumper d = new ToStringDumper();
         try {
             ClassFile c = dcCommonState.getClassFileMaybePath(path);
-            if ((skipInnerClass) && (c.isInnerClass()))
+            if ((skipInnerClass) && (c.isInnerClass())) {
                 return "";
+            }
             dcCommonState.configureWith(c);
             dumperFactory.getProgressDumper().analysingType(c.getClassType());
             try {
@@ -132,12 +135,14 @@ public class Decompiler {
             // collectingDumper.getTypeUsageInformation(), illegalIdentifierDump);
 
             String methname = (String) options.getOption(OptionsImpl.METHODNAME);
-            if (methname == null)
+            if (methname == null) {
                 c.dump(d);
+            }
             else {
                 try {
-                    for (Method method : c.getMethodByName(methname))
+                    for (Method method : c.getMethodByName(methname)) {
                         method.dump(d, true);
+                    }
                 } catch (NoSuchMethodException e) {
                     throw new IllegalArgumentException("No such method '" + methname + "'.");
                 }
@@ -146,18 +151,21 @@ public class Decompiler {
             result.append(d.toString());
         } catch (ConfusedCFRException e) {
             result.append(e.toString()).append("\n");
-            for (Object x : e.getStackTrace())
+            for (Object x : e.getStackTrace()) {
                 result.append(x).append("\n");
+            }
         } catch (CannotLoadClassException e) {
             result.append("Can't load the class specified:").append("\n");
             result.append(e.toString()).append("\n");
         } catch (RuntimeException e) {
             result.append(e.toString()).append("\n");
-            for (Object x : e.getStackTrace())
+            for (Object x : e.getStackTrace()) {
                 result.append(x).append("\n");
+            }
         } finally {
-            if (d != null)
+            if (d != null) {
                 d.close();
+            }
         }
         return result.toString();
     }
