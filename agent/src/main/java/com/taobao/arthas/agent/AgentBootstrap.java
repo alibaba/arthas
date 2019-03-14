@@ -64,17 +64,17 @@ public class AgentBootstrap {
         arthasClassLoader = null;
     }
 
-    private static ClassLoader getClassLoader(Instrumentation inst, File spyJarFile, File agentJarFile) throws Throwable {
+    private static ClassLoader getClassLoader(Instrumentation inst, File spyJarFile, File coreJarFile) throws Throwable {
         // 将Spy添加到BootstrapClassLoader
         inst.appendToBootstrapClassLoaderSearch(new JarFile(spyJarFile));
 
         // 构造自定义的类加载器，尽量减少Arthas对现有工程的侵蚀
-        return loadOrDefineClassLoader(agentJarFile);
+        return loadOrDefineClassLoader(coreJarFile);
     }
 
-    private static ClassLoader loadOrDefineClassLoader(File agentJar) throws Throwable {
+    private static ClassLoader loadOrDefineClassLoader(File coreJar) throws Throwable {
         if (arthasClassLoader == null) {
-            arthasClassLoader = new ArthasClassloader(new URL[]{agentJar.toURI().toURL()});
+            arthasClassLoader = new ArthasClassloader(new URL[]{coreJar.toURI().toURL()});
         }
         return arthasClassLoader;
     }
@@ -95,18 +95,18 @@ public class AgentBootstrap {
     private static synchronized void main(final String args, final Instrumentation inst) {
         try {
             ps.println("Arthas server agent start...");
-            // 传递的args参数分两个部分:agentJar路径和agentArgs, 分别是Agent的JAR包路径和期望传递到服务端的参数
+            // 传递的args参数分两个部分:coreJar路径和agentArgs, 分别是Core的JAR包路径和期望传递到服务端的参数
             int index = args.indexOf(';');
-            String agentJar = args.substring(0, index);
+            String coreJar = args.substring(0, index);
             final String agentArgs = args.substring(index, args.length());
 
-            File agentJarFile = new File(agentJar);
-            if (!agentJarFile.exists()) {
-                ps.println("Agent jar file does not exist: " + agentJarFile);
+            File coreJarFile = new File(coreJar);
+            if (!coreJarFile.exists()) {
+                ps.println("Core jar file does not exist: " + coreJarFile);
                 return;
             }
 
-            File spyJarFile = new File(agentJarFile.getParentFile(), ARTHAS_SPY_JAR);
+            File spyJarFile = new File(coreJarFile.getParentFile(), ARTHAS_SPY_JAR);
             if (!spyJarFile.exists()) {
                 ps.println("Spy jar file does not exist: " + spyJarFile);
                 return;
@@ -115,7 +115,7 @@ public class AgentBootstrap {
             /**
              * Use a dedicated thread to run the binding logic to prevent possible memory leak. #195
              */
-            final ClassLoader agentLoader = getClassLoader(inst, spyJarFile, agentJarFile);
+            final ClassLoader agentLoader = getClassLoader(inst, spyJarFile, coreJarFile);
             initSpy(agentLoader);
 
             Thread bindingThread = new Thread() {
