@@ -5,6 +5,7 @@ import java.io.*;
 import java.lang.instrument.Instrumentation;
 import java.lang.reflect.Method;
 import java.net.URL;
+import java.net.URLDecoder;
 import java.util.jar.JarFile;
 
 /**
@@ -92,10 +93,11 @@ public class AgentBootstrap {
         Spy.initForAgentLauncher(classLoader, onBefore, onReturn, onThrows, beforeInvoke, afterInvoke, throwInvoke, reset);
     }
 
-    private static synchronized void main(final String args, final Instrumentation inst) {
+    private static synchronized void main(String args, final Instrumentation inst) {
         try {
             ps.println("Arthas server agent start...");
             // 传递的args参数分两个部分:agentJar路径和agentArgs, 分别是Agent的JAR包路径和期望传递到服务端的参数
+            args = decodeArg(args);
             int index = args.indexOf(';');
             String agentJar = args.substring(0, index);
             final String agentArgs = args.substring(index, args.length());
@@ -171,5 +173,13 @@ public class AgentBootstrap {
             }
         }
         ps.println("Arthas server already bind.");
+    }
+
+    private static String decodeArg(String arg) {
+        try {
+            return URLDecoder.decode(arg, "utf-8");
+        } catch (UnsupportedEncodingException e) {
+            return arg;
+        }
     }
 }

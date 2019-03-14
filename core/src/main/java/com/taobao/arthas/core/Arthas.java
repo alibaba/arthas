@@ -11,6 +11,8 @@ import com.taobao.middleware.cli.CommandLine;
 import com.taobao.middleware.cli.Option;
 import com.taobao.middleware.cli.TypedOption;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.util.Arrays;
 import java.util.Properties;
 
@@ -85,8 +87,12 @@ public class Arthas {
                 }
             }
 
-            virtualMachine.loadAgent(configure.getArthasAgent(),
-                            configure.getArthasCore() + ";" + configure.toString());
+            String arthasAgentPath = configure.getArthasAgent();
+            //convert jar path to unicode string
+            configure.setArthasAgent(encodeArg(arthasAgentPath));
+            configure.setArthasCore(encodeArg(configure.getArthasCore()));
+            virtualMachine.loadAgent(arthasAgentPath,
+                    configure.getArthasCore() + ";" + configure.toString());
         } finally {
             if (null != virtualMachine) {
                 virtualMachine.detach();
@@ -94,6 +100,13 @@ public class Arthas {
         }
     }
 
+    private static String encodeArg(String arg) {
+        try {
+            return URLEncoder.encode(arg, "utf-8");
+        } catch (UnsupportedEncodingException e) {
+            return arg;
+        }
+    }
 
     public static void main(String[] args) {
         try {
