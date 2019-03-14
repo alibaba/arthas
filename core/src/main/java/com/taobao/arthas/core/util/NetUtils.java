@@ -191,12 +191,13 @@ public class NetUtils {
         } catch (Exception e) {
             return false;
         } finally {
-            if (s != null)
+            if (s != null) {
                 try {
                     s.close();
                 } catch (Exception e) {
                     // ignore
                 }
+            }
         }
     }
 
