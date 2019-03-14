@@ -6,7 +6,6 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.net.URL;
 import java.net.URLClassLoader;
-import java.net.URLDecoder;
 import java.security.CodeSource;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -339,13 +338,12 @@ public class Bootstrap {
         if (arthasHomeDir == null) {
             CodeSource codeSource = Bootstrap.class.getProtectionDomain().getCodeSource();
             if (codeSource != null) {
-                String bootJarPath = codeSource.getLocation().getFile();
                 try {
-                    //convert unicode path to normal path
-                    bootJarPath = URLDecoder.decode(bootJarPath, "utf-8");
-                    verifyArthasHome(new File(bootJarPath).getParent());
-                    arthasHomeDir = new File(bootJarPath).getParentFile();
-                } catch (Exception e) {
+                    // https://stackoverflow.com/a/17870390
+                    File bootJarPath = new File(codeSource.getLocation().toURI().getSchemeSpecificPart());
+                    verifyArthasHome(bootJarPath.getParent());
+                    arthasHomeDir = bootJarPath.getParentFile();
+                } catch (Throwable e) {
                     // ignore
                 }
 
