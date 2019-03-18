@@ -13,7 +13,6 @@ set ERROR_CODE=0
 
 set BASEDIR=%~dp0
 
-
 if ["%~1"]==[""] (
   echo Example:
   echo   %~nx0 452
@@ -42,8 +41,9 @@ if %errorlevel% neq 0 (
 
 REM parse extend args
 set ignoreTools=0
+set exitProcess=0
 for %%a in (%*) do (
-  if "%%a"=="--service" set IS_SERVICE=true
+  if "%%a"=="--no-interact" set exitProcess=1
   if "%%a"=="--ignore-tools" set ignoreTools=1
 )
 
@@ -74,9 +74,9 @@ goto exit_bat
 :okJava
 set JAVACMD="%JAVA_HOME%"\bin\java
 
-%JAVACMD% -Dfile.encoding=UTF-8 %BOOT_CLASSPATH% -jar "%CORE_JAR%" -pid "%PID%"  -target-ip 127.0.0.1 -telnet-port 3658 -http-port 8563 -core "%CORE_JAR%" -agent "%AGENT_JAR%"
+%JAVACMD% -Duser.home=C:\Users\Administrator -Dfile.encoding=UTF-8 %BOOT_CLASSPATH% -jar "%CORE_JAR%" -pid "%PID%"  -target-ip 127.0.0.1 -telnet-port 3658 -http-port 8563 -core "%CORE_JAR%" -agent "%AGENT_JAR%"
 if %ERRORLEVEL% NEQ 0 goto exit_bat
-if "%IS_SERVICE%" == "true" goto :exit_bat
+if "%exitProcess%" == "true" goto :exit_bat
 goto attachSuccess
 
 
@@ -91,5 +91,5 @@ IF %ERRORLEVEL% NEQ 0 (
 )
 
 :exit_bat
-if "%IS_SERVICE%" == "true" exit %ERROR_CODE%
+if "%exitProcess%" == "true" exit %ERROR_CODE%
 exit /B %ERROR_CODE%

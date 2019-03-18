@@ -2,12 +2,18 @@
 
 set basedir=%~dp0
 set srv_name=arthas
+set srv_interact=false
 set telnet_port=3658
+set JAVA_HOME=C:\Program Files\Java\jdk1.8.0_131
 
 REM parse extend args
-set SRV_ARGS=--service
+set SRV_ARGS=
 for %%a in (%*) do (
   if "%%a"=="--ignore-tools" set SRV_ARGS=%SRV_ARGS% --ignore-tools
+  if "%%a"=="--interact" ( 
+	set SRV_ARGS=%SRV_ARGS% --interact 
+	set srv_interact=true
+  )
 )
 
 REM Setup JAVA_HOME
@@ -88,8 +94,15 @@ if %errorlevel% neq 0 (
     goto :usage
 )
 echo Preparing arthas service and injecting arthas agent to process: %pid% ...
-sc create %srv_name% binPath= "%basedir%\%~nx0 -service %pid%" start= demand
-sc config %srv_name% binPath= "%basedir%\%~nx0 -service %pid%" start= demand
+
+set srv_type=type= own
+set srv_binpath=binPath= "%basedir%\%~nx0 -service %pid% --no-interact"
+if "%srv_interact%" == "true" (
+	set srv_type=type= interact type= own
+	set srv_binpath=binPath= "%basedir%\%~nx0 -service %pid%"
+)
+sc create %srv_name% start= demand %srv_type% %srv_binpath%
+sc config %srv_name% start= demand %srv_type% %srv_binpath%
 sc stop %srv_name%
 sc start %srv_name%
 
