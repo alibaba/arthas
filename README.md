@@ -386,6 +386,7 @@ Welcome to register the company name in this issue: https://github.com/alibaba/a
 ![viax](static/viax.png)
 ![yanedu](static/yanedu.png)
 ![duia](static/duia.png)
+![哈啰出行](static/hellobike.png)
 
 ### Credit
 
