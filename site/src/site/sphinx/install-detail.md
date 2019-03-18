@@ -72,6 +72,11 @@ java -jar arthas-boot.jar -h
 
 [手动安装](manual-install.md)
 
+
+## 通过Cloud Toolkit插件使用Arthas
+
+* [通过Cloud Toolkit插件使用Arthas一键诊断远程服务器](https://github.com/alibaba/arthas/issues/570)
+
 ## 离线帮助文档
 
 最新版本，点击下载：[![Arthas](https://img.shields.io/maven-central/v/com.taobao.arthas/arthas-packaging.svg?style=flat-square "Arthas")](http://repository.sonatype.org/service/local/artifact/maven/redirect?r=central-proxy&g=com.taobao.arthas&a=arthas-packaging&e=zip&c=doc&v=LATEST)
