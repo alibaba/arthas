@@ -220,6 +220,22 @@ public class AsmUtils {
 	    return result;
 	}
 
+    public static List<MethodInsnNode> findMethodInsnNode(MethodNode methodNode, String owner, String name,
+                    String desc) {
+        List<MethodInsnNode> result = new ArrayList<MethodInsnNode>();
+        for (AbstractInsnNode insnNode = methodNode.instructions.getFirst(); insnNode != null; insnNode = insnNode
+                        .getNext()) {
+            if (insnNode instanceof MethodInsnNode) {
+                final MethodInsnNode methodInsnNode = (MethodInsnNode) insnNode;
+                if (methodInsnNode.owner.equals(owner) && methodInsnNode.name.equals(name)
+                                && methodInsnNode.desc.equals(desc)) {
+                    result.add(methodInsnNode);
+                }
+            }
+        }
+        return result;
+    }
+
 	public static boolean isStatic(MethodNode methodNode) {
 		return (methodNode.access & Opcodes.ACC_STATIC) != 0;
 	}

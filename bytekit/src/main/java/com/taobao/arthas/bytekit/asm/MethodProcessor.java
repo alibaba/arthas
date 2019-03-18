@@ -80,7 +80,7 @@ public class MethodProcessor {
     private static final Method LONG_VALUE = Method.getMethod("long longValue()");
 
     private static final Method DOUBLE_VALUE = Method.getMethod("double doubleValue()");
-    
+
     public static final String DEFAULT_INNER_VARIABLE_PREFIX = "_$bytekit$_";
 
     private final LabelNode interceptorVariableStartLabelNode = new LabelNode();
@@ -90,12 +90,12 @@ public class MethodProcessor {
     // TODO 这里应该直接从 InsnList 里来取？因为插入代码之后，这个会改变的。
     // TODO 这个没有被使用到，是不是没用的？？
     private AbstractInsnNode lastInsnNode;
-    
+
     /**
      * 保留中间生成的 variable的名字
      */
     private boolean keepLocalVariableNames;
-    
+
     private String innerVariablePrefix;
 
     private String returnVariableName;
@@ -106,21 +106,21 @@ public class MethodProcessor {
     private LocalVariableNode throwVariableNode = null;
     private LocalVariableNode invokeArgsVariableNode = null;
     private LocalVariableNode monitorVariableNode = null;  // for synchronized
-    
+
     private String invokeReturnVariablePrefix;
     private Map<String, LocalVariableNode> invokeReturnVariableNodeMap = new HashMap<String, LocalVariableNode>();
-    
+
     private TryCatchBlock tryCatchBlock = null;
 
     public MethodProcessor(final ClassNode classNode, final MethodNode methodNode) {
         this(classNode, methodNode, false);
     }
-    
+
     public MethodProcessor(final ClassNode classNode, final MethodNode methodNode, boolean keepLocalVariableNames) {
         this(classNode.name, methodNode, keepLocalVariableNames);
         this.classNode = classNode;
     }
-    
+
     public MethodProcessor(final String owner, final MethodNode methodNode, boolean keepLocalVariableNames) {
         this.owner = owner;
         this.methodNode = methodNode;
@@ -135,20 +135,20 @@ public class MethodProcessor {
         } else {
             this.enterInsnNode = methodNode.instructions.getFirst();
         }
-        
+
         // when the method is empty, both enterInsnNode and lastInsnNode are Opcodes.RETURN ;
         this.lastInsnNode = methodNode.instructions.getLast();
-        
+
         // setup interceptor variables start/end label.
         this.methodNode.instructions.insertBefore(this.enterInsnNode, this.interceptorVariableStartLabelNode);
         this.methodNode.instructions.insert(this.lastInsnNode, this.interceptorVariableEndLabelNode);
-        
+
         initInnerVariablePrefix();
     }
     public MethodProcessor(final String owner, final MethodNode methodNode) {
         this(owner, methodNode, false);
     }
-    
+
     private void initInnerVariablePrefix() {
         String prefix = DEFAULT_INNER_VARIABLE_PREFIX;
         int count = 0;
@@ -157,15 +157,15 @@ public class MethodProcessor {
             count++;
         }
         this.innerVariablePrefix = prefix;
-        
+
         returnVariableName = innerVariablePrefix + "_return";
         throwVariableName = innerVariablePrefix + "_throw";
         invokeArgsVariableName = innerVariablePrefix + "_invokeArgs";
         monitorVariableName = innerVariablePrefix + "_monitor";
-        
+
         invokeReturnVariablePrefix = innerVariablePrefix + "_invokeReturn_";
     }
-    
+
     private boolean existLocalVariableWithPrefix(String prefix) {
         for (LocalVariableNode variableNode : this.methodNode.localVariables) {
             if (variableNode.name.startsWith(prefix)) {
@@ -196,16 +196,16 @@ public class MethodProcessor {
         }
         return invokeArgsVariableNode;
     }
-   
+
     public LocalVariableNode initReturnVariableNode() {
         if (returnVariableNode == null) {
             returnVariableNode = this.addInterceptorLocalVariable(returnVariableName, returnType.getDescriptor());
         }
         return returnVariableNode;
     }
-    
+
     /**
-     * 
+     *
      * @param name
      * @param type
      * @return
@@ -219,7 +219,7 @@ public class MethodProcessor {
         }
         return variableNode;
     }
-    
+
     public TryCatchBlock initTryCatchBlock() {
         return initTryCatchBlock(THROWABLE_TYPE.getInternalName());
     }
@@ -232,7 +232,7 @@ public class MethodProcessor {
             InsnList instructions = new InsnList();
             AsmOpUtils.throwException(instructions);
             this.methodNode.instructions.insert(tryCatchBlock.getEndLabelNode(), instructions);
-            
+
             tryCatchBlock.sort();
         }
         return tryCatchBlock;
@@ -649,12 +649,12 @@ public class MethodProcessor {
      * @param tmpToInlineMethodNode
      */
     public void inline(String owner, MethodNode toInlineMethodNode) {
-        
+
         ListIterator<AbstractInsnNode> originMethodIter = this.methodNode.instructions.iterator();
-        
+
         while(originMethodIter.hasNext()) {
             AbstractInsnNode originMethodInsnNode = originMethodIter.next();
-            
+
             if (originMethodInsnNode instanceof MethodInsnNode) {
                 MethodInsnNode methodInsnNode = (MethodInsnNode) originMethodInsnNode;
                 if (methodInsnNode.owner.equals(owner) && methodInsnNode.name.equals(toInlineMethodNode.name)
@@ -662,16 +662,16 @@ public class MethodProcessor {
                     // 要copy一份，否则inline多次会出问题
                     MethodNode tmpToInlineMethodNode = AsmUtils.copy(toInlineMethodNode);
                     tmpToInlineMethodNode = AsmUtils.removeLineNumbers(tmpToInlineMethodNode);
-                    
+
                     LabelNode end = new LabelNode();
                     this.methodNode.instructions.insert(methodInsnNode, end);
-                    
+
                     InsnList instructions = new InsnList();
-                    
+
                     // 要先记录好当前的 maxLocals ，然后再依次把 栈上的 args保存起来 ，后面调整 VarInsnNode index里，要加上当前的 maxLocals
                     // save args to local vars
                     int currentMaxLocals = this.nextLocals;
-                    
+
                     int off = (tmpToInlineMethodNode.access & Opcodes.ACC_STATIC) != 0 ? 0 : 1;
                     Type[] args = Type.getArgumentTypes(tmpToInlineMethodNode.desc);
                     int argsOff = off;
@@ -682,12 +682,12 @@ public class MethodProcessor {
                     // 记录新的 maxLocals
                     this.nextLocals += argsOff;
                     methodNode.maxLocals = this.nextLocals;
-                    
+
 
                     for(int i = args.length - 1; i >= 0; --i) {
                         argsOff -= args[i].getSize();
 //                        this.visitVarInsn(args[i].getOpcode(Opcodes.ISTORE), argsOff);
-                        
+
                         AsmOpUtils.storeVar(instructions, args[i], currentMaxLocals + argsOff);
                     }
 
@@ -696,15 +696,15 @@ public class MethodProcessor {
 //                        this.visitVarInsn(Opcodes.ASTORE, 0);
                         AsmOpUtils.storeVar(instructions, OBJECT_TYPE, currentMaxLocals);
                     }
-                    
-                    
-                    ListIterator<AbstractInsnNode> inlineIterator = tmpToInlineMethodNode.instructions.iterator(); 
+
+
+                    ListIterator<AbstractInsnNode> inlineIterator = tmpToInlineMethodNode.instructions.iterator();
                     while(inlineIterator.hasNext()) {
                         AbstractInsnNode abstractInsnNode = inlineIterator.next();
                         if(abstractInsnNode instanceof FrameNode) {
                             continue;
                         }
-                        
+
                         if(abstractInsnNode instanceof  VarInsnNode) {
                             VarInsnNode varInsnNode = (VarInsnNode) abstractInsnNode;
                             varInsnNode.var += currentMaxLocals;
@@ -716,12 +716,12 @@ public class MethodProcessor {
                             inlineIterator.remove();
                             instructions.add(new JumpInsnNode(Opcodes.GOTO, end));
                             continue;
-                        } 
+                        }
                         inlineIterator.remove();
                         instructions.add(abstractInsnNode);
                     }
-                    
-                    
+
+
                     // 插入inline之后的代码，再删除掉原来的 MethodInsnNode
                     this.methodNode.instructions.insertBefore(methodInsnNode, instructions);
                     originMethodIter.remove();
@@ -735,7 +735,7 @@ public class MethodProcessor {
         }
 
     }
-    
+
     public void sortTryCatchBlock() {
         if (this.methodNode.tryCatchBlocks == null) {
             return;
@@ -762,5 +762,5 @@ public class MethodProcessor {
             this.methodNode.tryCatchBlocks.get(i).updateIndex(i);
         }
     }
-    
+
 }

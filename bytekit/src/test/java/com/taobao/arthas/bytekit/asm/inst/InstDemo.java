@@ -1,21 +1,18 @@
 package com.taobao.arthas.bytekit.asm.inst;
 
-import java.util.Date;
-
 public class InstDemo {
 
-	public int returnInt(int i) {
-		return 9998;
-	}
+    public int returnInt(int i) {
+        System.out.println(new Object[] { i });
+        return 9998;
+    }
 
-	public static int returnIntStatic(int i) {
-		return 9998;
-	}
+    public static void onEnter(Object[] args) {
+        System.out.println(args);
+    }
 
-	public static void main(String[] args) {
-        Date date = new Date(1551168643);
-
-        System.err.println(date.toLocaleString());
+    public static int returnIntStatic(int i) {
+        return 9998;
     }
 
 }

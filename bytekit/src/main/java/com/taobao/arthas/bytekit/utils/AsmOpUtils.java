@@ -37,11 +37,11 @@ public class AsmOpUtils {
 	private static final Type DOUBLE_TYPE = Type.getObjectType("java/lang/Double");
 
 	public static final Type OBJECT_TYPE = Type.getObjectType("java/lang/Object");
-	
+
 	public static final Type OBJECT_ARRAY_TYPE = Type.getType(Object[].class);
 
 	public static final Type STRING_TYPE = Type.getObjectType("java/lang/String");
-	
+
 	public static final Type STRING_ARRAY_TYPE = Type.getType(String[].class);
 
 	private static final Type NUMBER_TYPE = Type.getObjectType("java/lang/Number");
@@ -49,6 +49,10 @@ public class AsmOpUtils {
 	private static final Method BOOLEAN_VALUE = Method.getMethod("boolean booleanValue()");
 
 	private static final Method CHAR_VALUE = Method.getMethod("char charValue()");
+
+	private static final Method BYTE_VALUE = Method.getMethod("byte byteValue()");
+
+	private static final Method SHORT_VALUE = Method.getMethod("short shortValue()");
 
 	private static final Method INT_VALUE = Method.getMethod("int intValue()");
 
@@ -58,7 +62,7 @@ public class AsmOpUtils {
 
 	private static final Method DOUBLE_VALUE = Method.getMethod("double doubleValue()");
 
-	static Type getBoxedType(final Type type) {
+	public static Type getBoxedType(final Type type) {
 		switch (type.getSort()) {
 		case Type.BYTE:
 			return BYTE_TYPE;
@@ -79,6 +83,28 @@ public class AsmOpUtils {
 		}
 		return type;
 	}
+
+    public static Method getUnBoxMethod(final Type type) {
+        switch (type.getSort()) {
+        case Type.BYTE:
+            return BYTE_VALUE;
+        case Type.BOOLEAN:
+            return BOOLEAN_VALUE;
+        case Type.SHORT:
+            return SHORT_VALUE;
+        case Type.CHAR:
+            return CHAR_VALUE;
+        case Type.INT:
+            return INT_VALUE;
+        case Type.FLOAT:
+            return FLOAT_VALUE;
+        case Type.LONG:
+            return LONG_VALUE;
+        case Type.DOUBLE:
+            return DOUBLE_VALUE;
+        }
+        throw new IllegalArgumentException(type + " is not a primitive type.");
+    }
 
 	public static void newInstance(final InsnList instructions, final Type type) {
 		instructions.add(new TypeInsnNode(Opcodes.NEW, type.getInternalName()));
@@ -103,7 +129,11 @@ public class AsmOpUtils {
 			insnList.add(new LdcInsnNode(value));
 		}
 	}
-	
+
+    public static void pushNUll(InsnList insnList) {
+        insnList.add(new InsnNode(Opcodes.ACONST_NULL));
+    }
+
 	/**
 	 * @see org.objectweb.asm.tree.LdcInsnNode#cst
 	 * @param value
@@ -145,8 +175,8 @@ public class AsmOpUtils {
     public static void dup2X2(final InsnList insnList) {
         insnList.add(new InsnNode(Opcodes.DUP2_X2));
     }
-    
-    
+
+
 	public static void pop(final InsnList insnList) {
 		insnList.add(new InsnNode(Opcodes.POP));
 	}
@@ -157,14 +187,14 @@ public class AsmOpUtils {
     public static void pop2(final InsnList insnList) {
         insnList.add(new InsnNode(Opcodes.POP2));
     }
-    
+
 	public static void swap(final InsnList insnList) {
 		insnList.add(new InsnNode(Opcodes.SWAP));
 	}
-	
+
     /**
      * Generates the instructions to swap the top two stack values.
-     * 
+     *
      * @param prev
      *            type of the top - 1 stack value.
      * @param type
@@ -226,6 +256,12 @@ public class AsmOpUtils {
 				.add(new MethodInsnNode(Opcodes.INVOKESPECIAL, owner, method.getName(), method.getDescriptor(), false));
 	}
 
+	/**
+	 *
+	 * @param instructions
+	 * @param type
+	 * @see org.objectweb.asm.commons.GeneratorAdapter#unbox(Type)
+	 */
 	public static void unbox(final InsnList instructions, Type type) {
 		Type t = NUMBER_TYPE;
 		Method sig = null;
@@ -262,7 +298,7 @@ public class AsmOpUtils {
 					sig.getDescriptor(), false));
 		}
 	}
-	
+
     public static boolean needBox(Type type) {
         switch (type.getSort()) {
         case Type.BYTE:
@@ -304,6 +340,16 @@ public class AsmOpUtils {
 	public static void arrayLoad(final InsnList instructions, final Type type) {
         instructions.add(new InsnNode(type.getOpcode(Opcodes.IALOAD)));
     }
+
+
+	/**
+	 * Generates the instruction to load 'this' on the stack.
+	 * @see org.objectweb.asm.commons.GeneratorAdapter#loadThis()
+	 * @param instructions
+	 */
+	  public static void loadThis(final InsnList instructions) {
+	    instructions.add(new VarInsnNode(Opcodes.ALOAD, 0));
+	  }
 
 	/**
 	 * Generates the instructions to load all the method arguments on the stack,
@@ -354,10 +400,10 @@ public class AsmOpUtils {
     public static void storeVar(final InsnList instructions, Type type, final int index) {
         instructions.add(new VarInsnNode(type.getOpcode(Opcodes.ISTORE), index));
     }
-    
+
     /**
      * Generates a type dependent instruction.
-     * 
+     *
      * @param opcode
      *            the instruction's opcode.
      * @param type
@@ -366,11 +412,11 @@ public class AsmOpUtils {
     private static void typeInsn(final InsnList instructions, final int opcode, final Type type) {
         instructions.add(new TypeInsnNode(opcode, type.getInternalName()));
     }
-    
+
     /**
      * Generates the instruction to check that the top stack value is of the
      * given type.
-     * 
+     *
      * @param type
      *            a class or interface type.
      */
@@ -379,15 +425,15 @@ public class AsmOpUtils {
             typeInsn(instructions, Opcodes.CHECKCAST, type);
         }
     }
-    
+
     public static void throwException(final InsnList instructions) {
         instructions.add(new InsnNode(Opcodes.ATHROW));
     }
-    
+
     public static boolean isReturnCode(final int opcode) {
         return opcode >= Opcodes.IRETURN && opcode <= Opcodes.RETURN;
     }
-    
+
     public static List<LocalVariableNode> validVariables(List<LocalVariableNode> localVariables,
             AbstractInsnNode currentInsnNode) {
         List<LocalVariableNode> results = new ArrayList<LocalVariableNode>();
