@@ -134,14 +134,14 @@ Tip: you can use `--versions` to list all available versions.
 * 需要更新 gh-pages 分支下面的 arthas-boot.jar/arthas-demo.jar/as.sh
 * 需要更新docker镜像，push新的tag
 
-    以 3.1.0 版本为例，先修改docker file里的版本：
+    以 3.1.0 版本为例：
     ```
-    docker build . -t hengyunabc/arthas:3.1.0
+    docker build . --build-arg ARTHAS_VERSION=3.1.0 -t hengyunabc/arthas:3.1.0
     docker tag hengyunabc/arthas:3.1.0  hengyunabc/arthas:latest
     docker push hengyunabc/arthas:3.1.0
     docker push hengyunabc/arthas:latest
 
-    docker build .  -f Dockerfile-No-Jdk -t hengyunabc/arthas:3.1.0-no-jdk
+    docker build .  --build-arg ARTHAS_VERSION=3.1.0 -f Dockerfile-No-Jdk -t hengyunabc/arthas:3.1.0-no-jdk
     docker push hengyunabc/arthas:3.1.0-no-jdk
     ```
 
