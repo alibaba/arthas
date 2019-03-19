@@ -59,7 +59,7 @@ Download and unzip, then find `as.bat` from 'bin' directory. For now this script
 as.bat <pid>
 ```
 
-If you want to diagnose Java process run as windows service, try this commands:
+If you want to diagnose Java process run as windows service, try these commands:
 
 ```bash
 as-service.bat -port <port>
