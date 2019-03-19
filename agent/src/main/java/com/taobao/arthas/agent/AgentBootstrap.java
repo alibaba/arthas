@@ -100,7 +100,7 @@ public class AgentBootstrap {
             args = decodeArg(args);
             int index = args.indexOf(';');
             String agentJar = args.substring(0, index);
-            final String agentArgs = args.substring(index, args.length());
+            final String agentArgs = args.substring(index);
 
             File agentJarFile = new File(agentJar);
             if (!agentJarFile.exists()) {
