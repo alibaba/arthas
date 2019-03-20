@@ -10,6 +10,8 @@ REM ----------------------------------------------------------------------------
 
 
 set ERROR_CODE=0
+set TELNET_PORT=3658
+set HTTP_PORT=8563
 
 set BASEDIR=%~dp0
 
@@ -47,6 +49,29 @@ for %%a in (%*) do (
   if "%%a"=="--ignore-tools" set ignoreTools=1
 )
 
+REM from https://stackoverflow.com/a/35445653 
+:read_params
+if not %1/==/ (
+    if not "%__var%"=="" (
+        if not "%__var:~0,1%"=="-" (
+            endlocal
+            goto read_params
+        )
+        endlocal & set %__var:~1%=%~1
+    ) else (
+        setlocal & set __var=%~1
+    )
+    shift
+    goto read_params
+)
+
+if not "%telnet-port%"=="" set TELNET_PORT=%telnet-port%
+if not "%http-port%"=="" set HTTP_PORT=%http-port%
+
+echo JAVA_HOME: %JAVA_HOME%
+echo telnet port: %TELNET_PORT%
+echo http port: %HTTP_PORT%
+
 REM Setup JAVA_HOME
 if "%JAVA_HOME%" == "" goto noJavaHome
 if not exist "%JAVA_HOME%\bin\java.exe" goto noJavaHome
@@ -74,7 +99,7 @@ goto exit_bat
 :okJava
 set JAVACMD="%JAVA_HOME%"\bin\java
 
-%JAVACMD% -Dfile.encoding=UTF-8 %BOOT_CLASSPATH% -jar "%CORE_JAR%" -pid "%PID%"  -target-ip 127.0.0.1 -telnet-port 3658 -http-port 8563 -core "%CORE_JAR%" -agent "%AGENT_JAR%"
+%JAVACMD% -Dfile.encoding=UTF-8 %BOOT_CLASSPATH% -jar "%CORE_JAR%" -pid "%PID%"  -target-ip 127.0.0.1 -telnet-port %TELNET_PORT% -http-port %HTTP_PORT% -core "%CORE_JAR%" -agent "%AGENT_JAR%"
 if %ERRORLEVEL% NEQ 0 goto exit_bat
 if "%exitProcess%" == "true" goto :exit_bat
 goto attachSuccess
@@ -84,10 +109,10 @@ goto attachSuccess
 WHERE telnet
 IF %ERRORLEVEL% NEQ 0 (
   ECHO telnet wasn't found, please google how to install telnet under windows.
-  ECHO Try to visit http://127.0.0.1:8563 to connecto arthas server.
-  start http://127.0.0.1:8563
+  ECHO Try to visit http://127.0.0.1:%HTTP_PORT% to connecto arthas server.
+  start http://127.0.0.1:%HTTP_PORT%
 ) else (
-  telnet 127.0.0.1 3658
+  telnet 127.0.0.1 %TELNET_PORT%
 )
 
 :exit_bat
