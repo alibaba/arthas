@@ -40,6 +40,11 @@ public interface Constants {
      */
     String COST_VARIABLE = "cost";
 
+    /**
+     * 方法执行 stack
+     */
+    String STACK_VARIABLE = "stack";
+
     String CMD_HISTORY_FILE = System.getProperty("user.home") + File.separator + ".arthas" + File.separator + "history";
 
     /**

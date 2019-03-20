@@ -201,8 +201,20 @@ public abstract class ReflectAdviceListenerAdapter implements AdviceListener {
      * @return true 如果条件表达式满足
      */
     protected boolean isConditionMet(String conditionExpress, Advice advice, double cost) throws ExpressException {
+        return isConditionMet(conditionExpress, advice, cost, null);
+    }
+
+    /**
+     * 判断条件是否满足，满足的情况下需要输出结果
+     * @param conditionExpress 条件表达式
+     * @param advice 当前的advice对象
+     * @param cost 本次执行的耗时
+     * @param stack 本次调用的调用栈
+     * @return true 如果条件表达式满足
+     */
+    protected boolean isConditionMet(String conditionExpress, Advice advice, double cost, String stack) throws ExpressException {
         return StringUtils.isEmpty(conditionExpress) ||
-                ExpressFactory.threadLocalExpress(advice).bind(Constants.COST_VARIABLE, cost).is(conditionExpress);
+                ExpressFactory.threadLocalExpress(advice).bind(Constants.COST_VARIABLE, cost).bind(Constants.STACK_VARIABLE, stack).is(conditionExpress);
     }
 
     protected Object getExpressionResult(String express, Advice advice, double cost) throws ExpressException {

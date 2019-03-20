@@ -17,6 +17,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Map;
 
+import static com.taobao.arthas.core.util.Constants.STACK_VARIABLE;
 import static com.taobao.text.ui.Element.label;
 import static java.lang.Integer.toHexString;
 
@@ -162,7 +163,8 @@ public class TimeTunnelTable {
                                  String watchExpress, boolean isNeedExpand, int expandLevel, int sizeLimit)
             throws ExpressException {
         for (Map.Entry<Integer, TimeFragment> entry : matchingTimeSegmentMap.entrySet()) {
-            Object value = ExpressFactory.threadLocalExpress(entry.getValue().getAdvice()).get(watchExpress);
+            TimeFragment tf = entry.getValue();
+            Object value = ExpressFactory.threadLocalExpress(tf.getAdvice()).bind(STACK_VARIABLE, tf.getStack()).get(watchExpress);
             table.row("" + entry.getKey(), "" +
                     (isNeedExpand ? new ObjectView(value, expandLevel, sizeLimit).draw() : StringUtils.objectToString(value)));
         }

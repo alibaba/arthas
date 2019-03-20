@@ -27,6 +27,7 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import static com.taobao.arthas.core.util.Constants.STACK_VARIABLE;
 import static java.lang.Integer.toHexString;
 import static java.lang.String.format;
 
@@ -353,7 +354,7 @@ public class TimeTunnelCommand extends EnhancerCommand {
             }
 
             Advice advice = tf.getAdvice();
-            Object value = ExpressFactory.threadLocalExpress(advice).get(watchExpress);
+            Object value = ExpressFactory.threadLocalExpress(advice).bind(STACK_VARIABLE, tf.getStack()).get(watchExpress);
             if (isNeedExpand()) {
                 process.write(new ObjectView(value, expand, sizeLimit).draw()).write("\n");
             } else {
@@ -382,7 +383,7 @@ public class TimeTunnelCommand extends EnhancerCommand {
                 Advice advice = tf.getAdvice();
 
                 // 搜索出匹配的时间片段
-                if ((ExpressFactory.threadLocalExpress(advice)).is(searchExpress)) {
+                if ((ExpressFactory.threadLocalExpress(advice).bind(STACK_VARIABLE, tf.getStack())).is(searchExpress)) {
                     matchingTimeSegmentMap.put(index, tf);
                 }
             }

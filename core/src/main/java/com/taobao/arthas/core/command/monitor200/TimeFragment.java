@@ -9,15 +9,17 @@ import java.util.Date;
  */
 class TimeFragment {
 
-    public TimeFragment(Advice advice, Date gmtCreate, double cost) {
+    public TimeFragment(Advice advice, Date gmtCreate, double cost, String stack) {
         this.advice = advice;
         this.gmtCreate = gmtCreate;
         this.cost = cost;
+        this.stack = stack;
     }
 
     private final Advice advice;
     private final Date gmtCreate;
     private final double cost;
+    private final String stack;
 
     public Advice getAdvice() {
         return advice;
@@ -29,5 +31,9 @@ class TimeFragment {
 
     public double getCost() {
         return cost;
+    }
+
+    public String getStack() {
+        return stack;
     }
 }

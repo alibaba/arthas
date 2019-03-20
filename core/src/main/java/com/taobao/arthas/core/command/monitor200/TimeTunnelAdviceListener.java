@@ -7,6 +7,7 @@ import com.taobao.arthas.core.advisor.Advice;
 import com.taobao.arthas.core.advisor.ArthasMethod;
 import com.taobao.arthas.core.util.LogUtil;
 import com.taobao.arthas.core.util.ThreadLocalWatch;
+import com.taobao.arthas.core.util.ThreadUtil;
 import com.taobao.text.ui.TableElement;
 import com.taobao.text.util.RenderUtil;
 
@@ -30,6 +31,8 @@ public class TimeTunnelAdviceListener extends ReflectAdviceListenerAdapter {
     // 方法执行时间戳
     private final ThreadLocalWatch threadLocalWatch = new ThreadLocalWatch();
 
+    private final ThreadLocal<String> stackThreadLocal = new ThreadLocal<String>();
+
     public TimeTunnelAdviceListener(TimeTunnelCommand command, CommandProcess process) {
         this.command = command;
         this.process = process;
@@ -38,6 +41,7 @@ public class TimeTunnelAdviceListener extends ReflectAdviceListenerAdapter {
     @Override
     public void before(ClassLoader loader, Class<?> clazz, ArthasMethod method, Object target, Object[] args)
             throws Throwable {
+        stackThreadLocal.set(ThreadUtil.getThreadStack(Thread.currentThread()));
         threadLocalWatch.start();
     }
 
@@ -55,14 +59,16 @@ public class TimeTunnelAdviceListener extends ReflectAdviceListenerAdapter {
 
     private void afterFinishing(Advice advice) {
         double cost = threadLocalWatch.costInMillis();
-        TimeFragment timeTunnel = new TimeFragment(advice, new Date(), cost);
+        String stack = stackThreadLocal.get();
+        TimeFragment timeTunnel = new TimeFragment(advice, new Date(), cost, stack);
 
         // reset the timestamp
         threadLocalWatch.clear();
+        stackThreadLocal.remove();
 
         boolean match = false;
         try {
-            match = isConditionMet(command.getConditionExpress(), advice, cost);
+            match = isConditionMet(command.getConditionExpress(), advice, cost, stack);
         } catch (ExpressException e) {
             LogUtil.getArthasLogger().warn("tt failed.", e);
             process.write("tt failed, condition is: " + command.getConditionExpress() + ", " + e.getMessage()
