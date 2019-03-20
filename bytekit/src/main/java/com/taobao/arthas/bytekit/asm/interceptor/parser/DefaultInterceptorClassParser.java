@@ -6,12 +6,11 @@ import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.springframework.util.ReflectionUtils;
-import org.springframework.util.ReflectionUtils.MethodCallback;
-
 import com.taobao.arthas.bytekit.asm.interceptor.InterceptorProcessor;
 import com.taobao.arthas.bytekit.asm.interceptor.annotation.InterceptorParserHander;
 import com.taobao.arthas.bytekit.utils.InstanceUtils;
+import com.taobao.arthas.bytekit.utils.ReflectionUtils;
+import com.taobao.arthas.bytekit.utils.ReflectionUtils.MethodCallback;
 
 public class DefaultInterceptorClassParser implements InterceptorClassParser {
 

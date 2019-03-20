@@ -77,12 +77,6 @@
 			<scope>provided</scope>
 		</dependency>
 
-		<dependency>
-			<groupId>org.springframework</groupId>
-			<artifactId>spring-core</artifactId>
-			<version>4.3.9.RELEASE</version>
-		</dependency>
-
 		<!-- Test Artifacts -->
 		<dependency>
 			<groupId>junit</groupId>
