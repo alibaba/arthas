@@ -1,9 +1,9 @@
+@echo off
 
+REM DON'T CHANGE THE FIRST LINE OF THE FILE, WINDOWS SERVICE RUN BAT NEED IT! (@echo off) 
 REM specify JAVA_HOME here
 REM set PRE_JAVA_HOME=C:\Program Files\Java\jdk1.8.0_131
-
-
-@echo off
+REM set JAVA_HOME=C:\Program Files\Java\jdk1.8.0_201
 
 set basedir=%~dp0
 set filename=%~nx0
@@ -50,7 +50,7 @@ if not "%my_java_home%"=="" set JAVA_HOME=%my_java_home:@= %
 
 
 REM Setup JAVA_HOME
-set JAVA_HOME=%JAVA_HOME:"=%
+REM set JAVA_HOME=%JAVA_HOME:"=%
 if "%JAVA_HOME%" == "" goto noJavaHome
 if not exist "%JAVA_HOME%\bin\java.exe" goto noJavaHome
 set JAVACMD="%JAVA_HOME%\bin\java"
