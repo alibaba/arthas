@@ -74,7 +74,7 @@ goto exit_bat
 :okJava
 set JAVACMD="%JAVA_HOME%"\bin\java
 
-%JAVACMD% -Duser.home=C:\Users\Administrator -Dfile.encoding=UTF-8 %BOOT_CLASSPATH% -jar "%CORE_JAR%" -pid "%PID%"  -target-ip 127.0.0.1 -telnet-port 3658 -http-port 8563 -core "%CORE_JAR%" -agent "%AGENT_JAR%"
+%JAVACMD% -Dfile.encoding=UTF-8 %BOOT_CLASSPATH% -jar "%CORE_JAR%" -pid "%PID%"  -target-ip 127.0.0.1 -telnet-port 3658 -http-port 8563 -core "%CORE_JAR%" -agent "%AGENT_JAR%"
 if %ERRORLEVEL% NEQ 0 goto exit_bat
 if "%exitProcess%" == "true" goto :exit_bat
 goto attachSuccess
