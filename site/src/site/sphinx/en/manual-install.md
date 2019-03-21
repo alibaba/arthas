@@ -59,6 +59,19 @@ Download and unzip, then find `as.bat` from 'bin' directory. For now this script
 as.bat <pid>
 ```
 
+If you want to diagnose Java process run as windows service, try these commands:
+
+```bash
+as-service.bat -port <port>
+as-service.bat -pid <pid>
+as-service.bat -pid <pid> --interact
+```
+
+Use this command to remove arthas service: 
+```bash
+as-service.bat -remove
+```
+
 ## Manual command line startup
 
 If you fail to boot Arthas with the provided batch file, you could try to assemble the bootstrap command in the following way.
