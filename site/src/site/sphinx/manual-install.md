@@ -67,6 +67,19 @@ curl -L https://alibaba.github.io/arthas/install.sh | sh
 as.bat <pid>
 ```
 
+使用以下命令诊断windows服务模式运行的Java进程 (--interact 打开服务UI交互模式，方便诊断问题)：
+```
+as-service.bat -port <port>
+as-service.bat -pid <pid>
+as-service.bat -pid <pid> --interact
+```
+
+清理arthas windows服务执行以下命令：
+```
+as-service.bat -remove
+```
+
+
 ## 手动拼接命令行启动
 
 如果启动遇到问题，可以尝试手动拼接出命令行参数来启动。

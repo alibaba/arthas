@@ -6,6 +6,7 @@ import java.lang.instrument.Instrumentation;
 import java.lang.reflect.Method;
 import java.net.URL;
 import java.security.CodeSource;
+import java.net.URLDecoder;
 import java.util.jar.JarFile;
 
 /**
@@ -196,5 +197,13 @@ public class AgentBootstrap {
             }
         }
         ps.println("Arthas server already bind.");
+    }
+
+    private static String decodeArg(String arg) {
+        try {
+            return URLDecoder.decode(arg, "utf-8");
+        } catch (UnsupportedEncodingException e) {
+            return arg;
+        }
     }
 }
