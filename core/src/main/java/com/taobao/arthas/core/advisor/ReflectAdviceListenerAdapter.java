@@ -6,7 +6,7 @@ import com.taobao.arthas.core.shell.command.CommandProcess;
 import com.taobao.arthas.core.util.ArthasCheckUtils;
 import com.taobao.arthas.core.util.Constants;
 import com.taobao.arthas.core.util.StringUtils;
-import org.objectweb.asm.Type;
+import com.alibaba.arthas.deps.org.objectweb.asm.Type;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
@@ -40,7 +40,7 @@ public abstract class ReflectAdviceListenerAdapter implements AdviceListener {
 
     private ArthasMethod toMethod(ClassLoader loader, Class<?> clazz, String methodName, String methodDesc)
             throws ClassNotFoundException, NoSuchMethodException {
-        final org.objectweb.asm.Type asmType = org.objectweb.asm.Type.getMethodType(methodDesc);
+        final Type asmType = Type.getMethodType(methodDesc);
 
         // to arg types
         final Class<?>[] argsClasses = new Class<?>[asmType.getArgumentTypes().length];

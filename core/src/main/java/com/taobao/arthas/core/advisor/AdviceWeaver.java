@@ -8,10 +8,10 @@ import com.taobao.arthas.core.util.collection.GaStack;
 import com.taobao.arthas.core.util.collection.ThreadUnsafeFixGaStack;
 import com.taobao.arthas.core.util.collection.ThreadUnsafeGaStack;
 import com.taobao.middleware.logger.Logger;
-import org.objectweb.asm.*;
-import org.objectweb.asm.commons.AdviceAdapter;
-import org.objectweb.asm.commons.JSRInlinerAdapter;
-import org.objectweb.asm.commons.Method;
+import com.alibaba.arthas.deps.org.objectweb.asm.*;
+import com.alibaba.arthas.deps.org.objectweb.asm.commons.AdviceAdapter;
+import com.alibaba.arthas.deps.org.objectweb.asm.commons.JSRInlinerAdapter;
+import com.alibaba.arthas.deps.org.objectweb.asm.commons.Method;
 
 import java.util.ArrayList;
 import java.util.List;

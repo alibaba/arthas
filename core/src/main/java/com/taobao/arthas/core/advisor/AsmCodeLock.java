@@ -1,7 +1,7 @@
 package com.taobao.arthas.core.advisor;
 
-import org.objectweb.asm.Opcodes;
-import org.objectweb.asm.commons.AdviceAdapter;
+import com.alibaba.arthas.deps.org.objectweb.asm.Opcodes;
+import com.alibaba.arthas.deps.org.objectweb.asm.commons.AdviceAdapter;
 
 /**
  * ASM代码锁<br/>

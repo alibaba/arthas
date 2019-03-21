@@ -1,10 +1,10 @@
 package com.taobao.arthas.bytekit.asm.binding;
 
-import org.objectweb.asm.Type;
-import org.objectweb.asm.tree.AbstractInsnNode;
-import org.objectweb.asm.tree.InsnList;
-import org.objectweb.asm.tree.LocalVariableNode;
-import org.objectweb.asm.tree.MethodInsnNode;
+import com.alibaba.arthas.deps.org.objectweb.asm.Type;
+import com.alibaba.arthas.deps.org.objectweb.asm.tree.AbstractInsnNode;
+import com.alibaba.arthas.deps.org.objectweb.asm.tree.InsnList;
+import com.alibaba.arthas.deps.org.objectweb.asm.tree.LocalVariableNode;
+import com.alibaba.arthas.deps.org.objectweb.asm.tree.MethodInsnNode;
 
 import com.taobao.arthas.bytekit.asm.MethodProcessor;
 import com.taobao.arthas.bytekit.utils.AsmOpUtils;

@@ -1,6 +1,6 @@
 package com.taobao.arthas.core.advisor;
 
-import org.objectweb.asm.commons.AdviceAdapter;
+import com.alibaba.arthas.deps.org.objectweb.asm.commons.AdviceAdapter;
 
 /**
  * 用于Tracing的代码锁

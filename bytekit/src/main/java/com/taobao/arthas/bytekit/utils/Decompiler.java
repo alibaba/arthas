@@ -32,14 +32,14 @@ import org.benf.cfr.reader.util.output.DumperFactoryImpl;
 import org.benf.cfr.reader.util.output.IllegalIdentifierDump;
 import org.benf.cfr.reader.util.output.StreamDumper;
 import org.benf.cfr.reader.util.output.ToStringDumper;
-import org.objectweb.asm.tree.AbstractInsnNode;
-import org.objectweb.asm.tree.ClassNode;
-import org.objectweb.asm.tree.InsnList;
-import org.objectweb.asm.tree.MethodNode;
-import org.objectweb.asm.util.Printer;
-import org.objectweb.asm.util.Textifier;
-import org.objectweb.asm.util.TraceClassVisitor;
-import org.objectweb.asm.util.TraceMethodVisitor;
+import com.alibaba.arthas.deps.org.objectweb.asm.tree.AbstractInsnNode;
+import com.alibaba.arthas.deps.org.objectweb.asm.tree.ClassNode;
+import com.alibaba.arthas.deps.org.objectweb.asm.tree.InsnList;
+import com.alibaba.arthas.deps.org.objectweb.asm.tree.MethodNode;
+import com.alibaba.arthas.deps.org.objectweb.asm.util.Printer;
+import com.alibaba.arthas.deps.org.objectweb.asm.util.Textifier;
+import com.alibaba.arthas.deps.org.objectweb.asm.util.TraceClassVisitor;
+import com.alibaba.arthas.deps.org.objectweb.asm.util.TraceMethodVisitor;
 
 public class Decompiler {
 

@@ -6,8 +6,8 @@ import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 
-import org.objectweb.asm.Type;
-import org.objectweb.asm.tree.InsnList;
+import com.alibaba.arthas.deps.org.objectweb.asm.Type;
+import com.alibaba.arthas.deps.org.objectweb.asm.tree.InsnList;
 
 import com.taobao.arthas.bytekit.asm.binding.annotation.BindingParser;
 import com.taobao.arthas.bytekit.asm.binding.annotation.BindingParserHandler;

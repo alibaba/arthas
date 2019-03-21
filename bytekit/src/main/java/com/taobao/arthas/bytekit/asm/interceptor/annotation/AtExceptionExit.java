@@ -8,7 +8,7 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.reflect.Method;
 import java.util.List;
 
-import org.objectweb.asm.Type;
+import com.alibaba.arthas.deps.org.objectweb.asm.Type;
 
 import com.taobao.arthas.bytekit.asm.binding.Binding;
 import com.taobao.arthas.bytekit.asm.interceptor.InterceptorMethodConfig;

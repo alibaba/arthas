@@ -2,13 +2,13 @@ package com.taobao.arthas.bytekit.asm.interceptor;
 
 import java.util.List;
 
-import org.objectweb.asm.Opcodes;
-import org.objectweb.asm.Type;
-import org.objectweb.asm.tree.InsnList;
-import org.objectweb.asm.tree.JumpInsnNode;
-import org.objectweb.asm.tree.LabelNode;
-import org.objectweb.asm.tree.MethodInsnNode;
-import org.objectweb.asm.tree.MethodNode;
+import com.alibaba.arthas.deps.org.objectweb.asm.Opcodes;
+import com.alibaba.arthas.deps.org.objectweb.asm.Type;
+import com.alibaba.arthas.deps.org.objectweb.asm.tree.InsnList;
+import com.alibaba.arthas.deps.org.objectweb.asm.tree.JumpInsnNode;
+import com.alibaba.arthas.deps.org.objectweb.asm.tree.LabelNode;
+import com.alibaba.arthas.deps.org.objectweb.asm.tree.MethodInsnNode;
+import com.alibaba.arthas.deps.org.objectweb.asm.tree.MethodNode;
 
 import com.taobao.arthas.bytekit.asm.MethodProcessor;
 import com.taobao.arthas.bytekit.asm.TryCatchBlock;

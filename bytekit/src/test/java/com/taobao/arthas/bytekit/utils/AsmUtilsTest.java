@@ -5,13 +5,13 @@ import java.util.List;
 
 import org.assertj.core.api.Assertions;
 import org.junit.Test;
-import org.objectweb.asm.ClassWriter;
-import org.objectweb.asm.MethodVisitor;
-import org.objectweb.asm.Opcodes;
-import org.objectweb.asm.Type;
-import org.objectweb.asm.tree.AbstractInsnNode;
-import org.objectweb.asm.tree.ClassNode;
-import org.objectweb.asm.tree.MethodNode;
+import com.alibaba.arthas.deps.org.objectweb.asm.ClassWriter;
+import com.alibaba.arthas.deps.org.objectweb.asm.MethodVisitor;
+import com.alibaba.arthas.deps.org.objectweb.asm.Opcodes;
+import com.alibaba.arthas.deps.org.objectweb.asm.Type;
+import com.alibaba.arthas.deps.org.objectweb.asm.tree.AbstractInsnNode;
+import com.alibaba.arthas.deps.org.objectweb.asm.tree.ClassNode;
+import com.alibaba.arthas.deps.org.objectweb.asm.tree.MethodNode;
 
 import com.taobao.arthas.bytekit.utils.AsmUtils;
 import com.taobao.arthas.bytekit.utils.VerifyUtils;

@@ -1,9 +1,9 @@
 package com.taobao.arthas.bytekit.asm.binding;
 
-import org.objectweb.asm.Type;
-import org.objectweb.asm.tree.AbstractInsnNode;
-import org.objectweb.asm.tree.InsnList;
-import org.objectweb.asm.tree.LineNumberNode;
+import com.alibaba.arthas.deps.org.objectweb.asm.Type;
+import com.alibaba.arthas.deps.org.objectweb.asm.tree.AbstractInsnNode;
+import com.alibaba.arthas.deps.org.objectweb.asm.tree.InsnList;
+import com.alibaba.arthas.deps.org.objectweb.asm.tree.LineNumberNode;
 
 import com.taobao.arthas.bytekit.asm.location.Location;
 import com.taobao.arthas.bytekit.utils.AsmOpUtils;

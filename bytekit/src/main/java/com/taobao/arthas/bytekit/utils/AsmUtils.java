@@ -11,25 +11,25 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
-import org.objectweb.asm.ClassReader;
-import org.objectweb.asm.ClassVisitor;
-import org.objectweb.asm.ClassWriter;
-import org.objectweb.asm.Label;
-import org.objectweb.asm.MethodVisitor;
-import org.objectweb.asm.Opcodes;
-import org.objectweb.asm.Type;
-import org.objectweb.asm.commons.ClassRemapper;
-import org.objectweb.asm.commons.JSRInlinerAdapter;
-import org.objectweb.asm.commons.Remapper;
-import org.objectweb.asm.tree.AbstractInsnNode;
-import org.objectweb.asm.tree.ClassNode;
-import org.objectweb.asm.tree.FieldNode;
-import org.objectweb.asm.tree.LocalVariableNode;
-import org.objectweb.asm.tree.MethodInsnNode;
-import org.objectweb.asm.tree.MethodNode;
-import org.objectweb.asm.tree.TypeInsnNode;
-import org.objectweb.asm.util.ASMifier;
-import org.objectweb.asm.util.TraceClassVisitor;
+import com.alibaba.arthas.deps.org.objectweb.asm.ClassReader;
+import com.alibaba.arthas.deps.org.objectweb.asm.ClassVisitor;
+import com.alibaba.arthas.deps.org.objectweb.asm.ClassWriter;
+import com.alibaba.arthas.deps.org.objectweb.asm.Label;
+import com.alibaba.arthas.deps.org.objectweb.asm.MethodVisitor;
+import com.alibaba.arthas.deps.org.objectweb.asm.Opcodes;
+import com.alibaba.arthas.deps.org.objectweb.asm.Type;
+import com.alibaba.arthas.deps.org.objectweb.asm.commons.ClassRemapper;
+import com.alibaba.arthas.deps.org.objectweb.asm.commons.JSRInlinerAdapter;
+import com.alibaba.arthas.deps.org.objectweb.asm.commons.Remapper;
+import com.alibaba.arthas.deps.org.objectweb.asm.tree.AbstractInsnNode;
+import com.alibaba.arthas.deps.org.objectweb.asm.tree.ClassNode;
+import com.alibaba.arthas.deps.org.objectweb.asm.tree.FieldNode;
+import com.alibaba.arthas.deps.org.objectweb.asm.tree.LocalVariableNode;
+import com.alibaba.arthas.deps.org.objectweb.asm.tree.MethodInsnNode;
+import com.alibaba.arthas.deps.org.objectweb.asm.tree.MethodNode;
+import com.alibaba.arthas.deps.org.objectweb.asm.tree.TypeInsnNode;
+import com.alibaba.arthas.deps.org.objectweb.asm.util.ASMifier;
+import com.alibaba.arthas.deps.org.objectweb.asm.util.TraceClassVisitor;
 
 public class AsmUtils {
 

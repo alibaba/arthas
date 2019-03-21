@@ -10,7 +10,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.objectweb.asm.ClassReader;
+import com.alibaba.arthas.deps.org.objectweb.asm.ClassReader;
 
 import com.taobao.arthas.core.command.Constants;
 import com.taobao.arthas.core.shell.cli.Completion;

@@ -1,7 +1,7 @@
 package com.taobao.arthas.bytekit.asm;
-import org.objectweb.asm.tree.LabelNode;
-import org.objectweb.asm.tree.MethodNode;
-import org.objectweb.asm.tree.TryCatchBlockNode;
+import com.alibaba.arthas.deps.org.objectweb.asm.tree.LabelNode;
+import com.alibaba.arthas.deps.org.objectweb.asm.tree.MethodNode;
+import com.alibaba.arthas.deps.org.objectweb.asm.tree.TryCatchBlockNode;
 
 import java.util.ArrayList;
 import java.util.Collections;

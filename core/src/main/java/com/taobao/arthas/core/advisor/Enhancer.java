@@ -10,8 +10,8 @@ import com.taobao.arthas.core.util.affect.EnhancerAffect;
 
 import com.taobao.arthas.core.util.reflect.FieldUtils;
 import com.taobao.middleware.logger.Logger;
-import org.objectweb.asm.ClassReader;
-import org.objectweb.asm.ClassWriter;
+import com.alibaba.arthas.deps.org.objectweb.asm.ClassReader;
+import com.alibaba.arthas.deps.org.objectweb.asm.ClassWriter;
 
 import java.io.File;
 import java.io.IOException;

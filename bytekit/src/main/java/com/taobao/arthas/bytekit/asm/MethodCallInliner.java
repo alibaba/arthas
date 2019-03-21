@@ -3,11 +3,11 @@ package com.taobao.arthas.bytekit.asm;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.objectweb.asm.Label;
-import org.objectweb.asm.MethodVisitor;
-import org.objectweb.asm.Opcodes;
-import org.objectweb.asm.commons.GeneratorAdapter;
-import org.objectweb.asm.tree.MethodNode;
+import com.alibaba.arthas.deps.org.objectweb.asm.Label;
+import com.alibaba.arthas.deps.org.objectweb.asm.MethodVisitor;
+import com.alibaba.arthas.deps.org.objectweb.asm.Opcodes;
+import com.alibaba.arthas.deps.org.objectweb.asm.commons.GeneratorAdapter;
+import com.alibaba.arthas.deps.org.objectweb.asm.tree.MethodNode;
 
 /**
  * @author hengyunabc 2018-01-31

@@ -6,12 +6,12 @@ import java.util.List;
 
 import org.apache.commons.io.FileUtils;
 import org.junit.Test;
-import org.objectweb.asm.Type;
-import org.objectweb.asm.tree.AnnotationNode;
-import org.objectweb.asm.tree.ClassNode;
-import org.objectweb.asm.tree.FieldNode;
-import org.objectweb.asm.tree.MethodInsnNode;
-import org.objectweb.asm.tree.MethodNode;
+import com.alibaba.arthas.deps.org.objectweb.asm.Type;
+import com.alibaba.arthas.deps.org.objectweb.asm.tree.AnnotationNode;
+import com.alibaba.arthas.deps.org.objectweb.asm.tree.ClassNode;
+import com.alibaba.arthas.deps.org.objectweb.asm.tree.FieldNode;
+import com.alibaba.arthas.deps.org.objectweb.asm.tree.MethodInsnNode;
+import com.alibaba.arthas.deps.org.objectweb.asm.tree.MethodNode;
 
 import com.taobao.arthas.bytekit.asm.MethodProcessor;
 import com.taobao.arthas.bytekit.utils.AsmOpUtils;

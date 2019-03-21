@@ -3,8 +3,8 @@ package com.taobao.arthas.bytekit.asm.interceptor;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.objectweb.asm.tree.ClassNode;
-import org.objectweb.asm.tree.MethodNode;
+import com.alibaba.arthas.deps.org.objectweb.asm.tree.ClassNode;
+import com.alibaba.arthas.deps.org.objectweb.asm.tree.MethodNode;
 
 import com.taobao.arthas.bytekit.asm.MethodProcessor;
 import com.taobao.arthas.bytekit.asm.interceptor.InterceptorProcessor;

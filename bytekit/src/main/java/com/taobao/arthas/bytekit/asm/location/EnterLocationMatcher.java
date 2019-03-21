@@ -3,7 +3,7 @@ package com.taobao.arthas.bytekit.asm.location;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.objectweb.asm.tree.AbstractInsnNode;
+import com.alibaba.arthas.deps.org.objectweb.asm.tree.AbstractInsnNode;
 
 import com.taobao.arthas.bytekit.asm.MethodProcessor;
 import com.taobao.arthas.bytekit.asm.location.Location.EnterLocation;

@@ -1,7 +1,7 @@
 package com.taobao.arthas.bytekit.asm.inst.impl;
 
-import org.objectweb.asm.Label;
-import org.objectweb.asm.tree.MethodNode;
+import com.alibaba.arthas.deps.org.objectweb.asm.Label;
+import com.alibaba.arthas.deps.org.objectweb.asm.tree.MethodNode;
 
 /**
  *
