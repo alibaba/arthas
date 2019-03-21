@@ -55,6 +55,8 @@
     <url>https://github.com/alibaba/arthas</url>
 
     <modules>
+        <module>repackage-deps/arthas-repackage-asm</module>
+        <module>repackage-deps/arthas-repackage-logger</module>
         <module>spy</module>
         <module>common</module>
         <module>bytekit</module>
@@ -74,6 +76,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.compiler.target>1.6</maven.compiler.target>
         <maven.compiler.source>1.6</maven.compiler.source>
+        <arthas.deps.package>com.alibaba.arthas.deps</arthas.deps.package>
     </properties>
 
     <dependencyManagement>
@@ -202,6 +205,11 @@
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-assembly-plugin</artifactId>
                     <version>3.1.0</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-shade-plugin</artifactId>
+                    <version>3.2.1</version>
                 </plugin>
             </plugins>
         </pluginManagement>

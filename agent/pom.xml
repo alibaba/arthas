@@ -33,18 +33,10 @@
             <artifactId>arthas-bytekit</artifactId>
             <version>${project.version}</version>
         </dependency>
-
         <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-api</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>ch.qos.logback</groupId>
-            <artifactId>logback-core</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>ch.qos.logback</groupId>
-            <artifactId>logback-classic</artifactId>
+            <groupId>com.alibaba.arthas</groupId>
+            <artifactId>arthas-repackage-logger</artifactId>
+            <version>${project.version}</version>
         </dependency>
 
         <dependency>
@@ -79,34 +71,6 @@
                         <configuration>
                             <artifactSet>
                             </artifactSet>
-                            <relocations>
-                                <relocation>
-                                    <pattern>org.slf4j</pattern>
-                                    <shadedPattern>${arthas.deps.package}.org.slf4j</shadedPattern>
-                                </relocation>
-                                <relocation>
-                                    <pattern>ch.qos.logback</pattern>
-                                    <shadedPattern>${arthas.deps.package}.ch.qos.logback</shadedPattern>
-                                </relocation>
-                                <relocation>
-                                    <pattern>logback.configurationFile</pattern>
-                                    <shadedPattern>arthas.logback.configurationFile</shadedPattern>
-                                </relocation>
-
-                                <relocation>
-                                    <pattern>org.objectweb.asm</pattern>
-                                    <shadedPattern>${arthas.deps.package}.org.objectweb.asm</shadedPattern>
-                                </relocation>
-                            </relocations>
-                            <filters>
-                                <filter>
-                                    <artifact>*</artifact>
-                                    <excludes>
-                                        <exclude>META-INF/services/javax.servlet.ServletContainerInitializer</exclude>
-                                    </excludes>
-                                </filter>
-                            </filters>
-
                             <transformers>
                                 <transformer
                                     implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
