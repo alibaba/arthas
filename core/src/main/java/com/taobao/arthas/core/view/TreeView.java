@@ -2,10 +2,7 @@ package com.taobao.arthas.core.view;
 
 import com.taobao.arthas.core.util.StringUtils;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * 树形控件
@@ -42,6 +39,8 @@ public class TreeView implements View {
     public String draw() {
 
         findMaxCostNode(root);
+
+        sortChildrenNodes(root);
 
         final StringBuilder treeSB = new StringBuilder();
 
@@ -112,6 +111,24 @@ public class TreeView implements View {
         }
     }
 
+    /**
+     * 对儿子节点按照cost时间排序
+     * @param node
+     */
+    private void sortChildrenNodes(Node node) {
+        if(!node.isLeaf()){
+            Collections.sort(node.children, new Comparator<Node>() {
+                @Override
+                public int compare(Node o1, Node o2) {
+                    return (int) (o2.getCost() - o1.getCost());
+                }
+            });
+
+            for (Node child : node.children) {
+                sortChildrenNodes(child);
+            }
+        }
+    }
 
     /**
      * 创建一个分支节点
