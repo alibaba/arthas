@@ -13,6 +13,10 @@ import java.util.Map;
  */
 public class TreeView implements View {
 
+    public static final int INVOKE_ON_BEGIN = 1;
+    public static final int INVOKE_AFTER_THROWING = 2;
+    public static final int INVOKE_ON_INVOKE_BEFORE = 3;
+
     private static final String STEP_FIRST_CHAR = "`---";
     private static final String STEP_NORMAL_CHAR = "+---";
     private static final String STEP_HAS_BOARD = "|   ";
@@ -40,6 +44,8 @@ public class TreeView implements View {
 
     @Override
     public String draw() {
+
+        rebuildInvokeTree(root);
 
         findMaxCostNode(root);
 
@@ -70,6 +76,19 @@ public class TreeView implements View {
         });
 
         return treeSB.toString();
+    }
+
+    private Node rebuildInvokeTree(Node root) {
+        Node newRoot = new Node(root.data);
+        return null;
+    }
+
+    private boolean shouldMergeNodes(Node parent, Node node) {
+        //合并重复的结点： merge onBegin to last level onInvokeBefore
+        if(node.invokeType == INVOKE_ON_BEGIN && parent.invokeType == INVOKE_ON_INVOKE_BEFORE){
+
+        }
+        return false;
     }
 
     /**
@@ -119,12 +138,12 @@ public class TreeView implements View {
      * @param data 节点数据
      * @return this
      */
-    public TreeView begin(String data) {
+    public TreeView begin(String data, int invokeType) {
         Node n = current.find(data);
         if (n != null) {
             current = n;
         } else {
-            current = new Node(current, data);
+            current = new Node(current, data, invokeType);
         }
         current.markBegin();
         return this;
@@ -197,11 +216,17 @@ public class TreeView implements View {
         private String mark;
 
         /**
+         * 调用方式
+         */
+        private int invokeType;
+
+        /**
          * 构造树节点(根节点)
          */
         private Node(String data) {
             this.parent = null;
             this.data = data;
+            this.invokeType = INVOKE_ON_BEGIN;
         }
 
         /**
@@ -210,11 +235,26 @@ public class TreeView implements View {
          * @param parent 父节点
          * @param data   节点数据
          */
-        private Node(Node parent, String data) {
+        private Node(Node parent, String data, int invokeType) {
             this.parent = parent;
             this.data = data;
+            this.invokeType = invokeType;
             parent.children.add(this);
             parent.map.put(data, this);
+        }
+
+        Node copy() {
+            Node node = new Node(data);
+            node.invokeType = invokeType;
+            node.beginTimestamp = beginTimestamp;
+            node.endTimestamp = endTimestamp;
+            node.mark = mark;
+            node.marks = marks;
+            node.totalCost = totalCost;
+            node.maxCost = maxCost;
+            node.minCost = minCost;
+            node.times = times;
+            return node;
         }
 
         /**

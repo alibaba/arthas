@@ -3,6 +3,7 @@ package com.taobao.arthas.core.command.monitor200;
 import com.taobao.arthas.core.advisor.InvokeTraceable;
 import com.taobao.arthas.core.shell.command.CommandProcess;
 import com.taobao.arthas.core.util.StringUtils;
+import com.taobao.arthas.core.view.TreeView;
 
 /**
  * @author beiwei30 on 29/11/2016.
@@ -23,7 +24,7 @@ public class TraceAdviceListener extends AbstractTraceAdviceListener implements 
     public void invokeBeforeTracing(String tracingClassName, String tracingMethodName, String tracingMethodDesc)
             throws Throwable {
         threadBoundEntity.get().view.begin(
-                StringUtils.normalizeClassName(tracingClassName) + ":" + tracingMethodName + "()");
+                StringUtils.normalizeClassName(tracingClassName) + ":" + tracingMethodName + "()", TreeView.INVOKE_ON_INVOKE_BEFORE);
     }
 
     @Override

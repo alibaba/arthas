@@ -6,6 +6,7 @@ import com.taobao.arthas.core.advisor.ReflectAdviceListenerAdapter;
 import com.taobao.arthas.core.shell.command.CommandProcess;
 import com.taobao.arthas.core.util.LogUtil;
 import com.taobao.arthas.core.util.ThreadLocalWatch;
+import com.taobao.arthas.core.view.TreeView;
 
 /**
  * @author ralf0131 2017-01-06 16:02.
@@ -40,7 +41,7 @@ public class AbstractTraceAdviceListener extends ReflectAdviceListenerAdapter {
     @Override
     public void before(ClassLoader loader, Class<?> clazz, ArthasMethod method, Object target, Object[] args)
             throws Throwable {
-        threadBoundEntity.get().view.begin(clazz.getName() + ":" + method.getName() + "()");
+        threadBoundEntity.get().view.begin(clazz.getName() + ":" + method.getName() + "()", TreeView.INVOKE_ON_BEGIN);
         threadBoundEntity.get().deep++;
         // 开始计算本次方法调用耗时
         threadLocalWatch.start();
@@ -57,7 +58,7 @@ public class AbstractTraceAdviceListener extends ReflectAdviceListenerAdapter {
     @Override
     public void afterThrowing(ClassLoader loader, Class<?> clazz, ArthasMethod method, Object target, Object[] args,
                               Throwable throwable) throws Throwable {
-        threadBoundEntity.get().view.begin("throw:" + throwable.getClass().getName() + "()").end().end();
+        threadBoundEntity.get().view.begin("throw:" + throwable.getClass().getName() + "()", TreeView.INVOKE_AFTER_THROWING).end().end();
         final Advice advice = Advice.newForAfterThrowing(loader, clazz, method, target, args, throwable);
         finishing(advice);
     }
