@@ -99,4 +99,15 @@ public class GlobalOptions {
     )
     public static volatile String jobTimeout = "1d";
 
+    /**
+     * trace输出top n行方法调用
+     */
+    @Option(level = 2,
+            name = "trace-output-lines",
+            summary = "Option to trace output top n sub method call lines",
+            description = "This option setting trace command output top n lines. " +
+                    "The value -1 means full method call lines will be output. "
+    )
+    public static volatile int traceOutputLines = 8;
+
 }

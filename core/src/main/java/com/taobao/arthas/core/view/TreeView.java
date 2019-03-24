@@ -1,5 +1,6 @@
 package com.taobao.arthas.core.view;
 
+import com.taobao.arthas.core.GlobalOptions;
 import com.taobao.arthas.core.util.StringUtils;
 
 import java.util.*;
@@ -117,12 +118,21 @@ public class TreeView implements View {
      */
     private void sortChildrenNodes(Node node) {
         if(!node.isLeaf()){
+            //sort by totalCost desc
             Collections.sort(node.children, new Comparator<Node>() {
                 @Override
                 public int compare(Node o1, Node o2) {
-                    return (int) (o2.getCost() - o1.getCost());
+                    return (int) (o2.totalCost - o1.totalCost);
                 }
             });
+
+            int outputLines = GlobalOptions.traceOutputLines;
+            if(outputLines > 1){
+                //remove n+1 children nodes ..
+                for (int i = node.children.size() - 1; i >= outputLines; i--) {
+                    node.children.remove(i);
+                }
+            }
 
             for (Node child : node.children) {
                 sortChildrenNodes(child);
