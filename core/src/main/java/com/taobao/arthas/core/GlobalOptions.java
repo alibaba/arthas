@@ -99,4 +99,15 @@ public class GlobalOptions {
     )
     public static volatile String jobTimeout = "1d";
 
+    /**
+     * 是否美化Trace调用树（合并重复调用节点，动态Proxy类显示为接口类）
+     */
+    @Option(level = 2,
+            name = "prettify-trace-stack",
+            summary = "Option to prettify trace command output call stack",
+            description = "This option enables to prettify trace command output call stack, " +
+                    "merge two node of the same invoking, change the dynamic proxy classname to interface name."
+    )
+    public static volatile boolean isPrettifyTraceStack = true;
+
 }

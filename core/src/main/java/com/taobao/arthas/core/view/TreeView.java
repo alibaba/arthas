@@ -1,5 +1,6 @@
 package com.taobao.arthas.core.view;
 
+import com.taobao.arthas.core.GlobalOptions;
 import com.taobao.arthas.core.util.StringUtils;
 
 import java.util.ArrayList;
@@ -45,7 +46,9 @@ public class TreeView implements View {
     @Override
     public String draw() {
 
-        rebuildInvokeTree(root);
+        if (GlobalOptions.isPrettifyTraceStack) {
+            rebuildInvokeTree(root);
+        }
 
         findMaxCostNode(root);
 
@@ -78,15 +81,34 @@ public class TreeView implements View {
         return treeSB.toString();
     }
 
-    private Node rebuildInvokeTree(Node root) {
-        Node newRoot = new Node(root.data);
-        return null;
+    private void rebuildInvokeTree(Node node) {
+        //find same invoke node
+        if(node.parent != null && shouldMergeNodes(node, node.children)){
+            Node childNode = node.children.get(0);
+            //replace dynamic proxy className with parentNode
+            if(childNode.data.startsWith("com.sun.proxy.$Proxy")){
+                childNode.setData(node.data);
+            }
+            node.parent.replaceChild(node, childNode);
+            rebuildInvokeTree(childNode);
+        }else if(!node.isLeaf()){
+            //node.children maybe change on rebuild
+            for (int i = 0; i < node.children.size(); i++) {
+                Node child = node.children.get(i);
+                rebuildInvokeTree(child);
+            }
+        }
     }
 
-    private boolean shouldMergeNodes(Node parent, Node node) {
+    private boolean shouldMergeNodes(Node node, List<Node> childrenNodes) {
+        if(childrenNodes.size() !=1 ){
+            return false;
+        }
         //合并重复的结点： merge onBegin to last level onInvokeBefore
-        if(node.invokeType == INVOKE_ON_BEGIN && parent.invokeType == INVOKE_ON_INVOKE_BEFORE){
-
+        Node childNode = childrenNodes.get(0);
+        if(childNode.invokeType == INVOKE_ON_BEGIN && node.invokeType == INVOKE_ON_INVOKE_BEFORE){
+            //TODO check class
+            return true;
         }
         return false;
     }
@@ -186,12 +208,12 @@ public class TreeView implements View {
         /**
          * 父节点
          */
-        final Node parent;
+        Node parent;
 
         /**
          * 节点数据
          */
-        final String data;
+        String data;
 
         /**
          * 子节点
@@ -243,18 +265,35 @@ public class TreeView implements View {
             parent.map.put(data, this);
         }
 
-        Node copy() {
-            Node node = new Node(data);
-            node.invokeType = invokeType;
-            node.beginTimestamp = beginTimestamp;
-            node.endTimestamp = endTimestamp;
-            node.mark = mark;
-            node.marks = marks;
-            node.totalCost = totalCost;
-            node.maxCost = maxCost;
-            node.minCost = minCost;
-            node.times = times;
-            return node;
+//        Node copy() {
+//            Node node = new Node(data);
+//            node.invokeType = invokeType;
+//            node.beginTimestamp = beginTimestamp;
+//            node.endTimestamp = endTimestamp;
+//            node.mark = mark;
+//            node.marks = marks;
+//            node.totalCost = totalCost;
+//            node.maxCost = maxCost;
+//            node.minCost = minCost;
+//            node.times = times;
+//            return node;
+//        }
+
+        void replaceChild(Node oldChildNode, Node newChildNode) {
+            int i = this.children.indexOf(oldChildNode);
+            if(i != -1){
+                this.map.remove(oldChildNode.data);
+                this.map.put(newChildNode.data, newChildNode);
+                this.children.set(i, newChildNode);
+            }
+        }
+
+        void setData(String newData) {
+            if(this.parent!=null){
+                this.parent.map.remove(this.data);
+                this.parent.map.put(newData, this);
+            }
+            this.data = newData;
         }
 
         /**
@@ -341,6 +380,7 @@ public class TreeView implements View {
         private long totalCost = 0;
         private long times = 0;
         private long marks = 0;
+
     }
 
 
