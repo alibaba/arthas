@@ -5,6 +5,7 @@ import com.taobao.arthas.core.Option;
 import com.taobao.arthas.core.command.Constants;
 import com.taobao.arthas.core.shell.command.AnnotatedCommand;
 import com.taobao.arthas.core.shell.command.CommandProcess;
+import com.taobao.arthas.core.util.OptionsUtils;
 import com.taobao.arthas.core.util.matcher.EqualsMatcher;
 import com.taobao.arthas.core.util.matcher.Matcher;
 import com.taobao.arthas.core.util.StringUtils;
@@ -19,6 +20,7 @@ import com.taobao.text.ui.Element;
 import com.taobao.text.ui.TableElement;
 import com.taobao.text.util.RenderUtil;
 
+import java.io.File;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -117,6 +119,7 @@ public class OptionsCommand extends AnnotatedCommand {
                 return;
             }
 
+            OptionsUtils.saveOptions(new File(com.taobao.arthas.core.util.Constants.OPTIONS_FILE));
         } catch (Throwable t) {
             process.write(format("Cannot cast option value[%s] to type[%s].\n", optionValue, type.getSimpleName()));
             return;

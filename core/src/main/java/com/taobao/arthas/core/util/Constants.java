@@ -52,4 +52,9 @@ public interface Constants {
      */
     String CACHE_ROOT = System.getProperty("user.home") + File.separator + "logs" + File.separator + "arthas-cache";
 
+    /**
+     * the file save value of GlobalOptions
+     */
+    String OPTIONS_FILE = System.getProperty("user.home") + File.separator + ".arthas" + File.separator + "options";
+
 }

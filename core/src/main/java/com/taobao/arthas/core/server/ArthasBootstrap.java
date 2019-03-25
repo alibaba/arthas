@@ -11,9 +11,11 @@ import com.taobao.arthas.core.shell.term.impl.HttpTermServer;
 import com.taobao.arthas.core.shell.term.impl.TelnetTermServer;
 import com.taobao.arthas.core.util.Constants;
 import com.taobao.arthas.core.util.LogUtil;
+import com.taobao.arthas.core.util.OptionsUtils;
 import com.taobao.arthas.core.util.UserStatUtil;
 import com.taobao.middleware.logger.Logger;
 
+import java.io.File;
 import java.io.IOException;
 import java.lang.instrument.Instrumentation;
 import java.lang.reflect.Method;
@@ -111,6 +113,9 @@ public class ArthasBootstrap {
                     configure.getTelnetPort(), configure.getHttpPort(), options.getConnectionTimeout());
             // 异步回报启动次数
             UserStatUtil.arthasStart();
+
+            //load GlobalOptions from file
+            OptionsUtils.loadOptions(new File(com.taobao.arthas.core.util.Constants.OPTIONS_FILE));
 
             logger.info("as-server started in {} ms", System.currentTimeMillis() - start );
         } catch (Throwable e) {
