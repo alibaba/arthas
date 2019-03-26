@@ -62,11 +62,18 @@ public class OptionsUtils {
         try {
             Field[] fields = GlobalOptions.class.getDeclaredFields();
             for (Field field : fields) {
-                field.setAccessible(true);
-                field.set(null, map.get(field.getName()));
-                field.setAccessible(false);
+                try {
+                    field.setAccessible(true);
+                    Object value = map.get(field.getName());
+                    if(value != null) {
+                        field.set(null, value);
+                    }
+                } catch (Exception e) {
+                }finally {
+                    field.setAccessible(false);
+                }
             }
-        } catch (IllegalAccessException e) {
+        } catch (Exception e) {
         }
     }
 
@@ -79,7 +86,7 @@ public class OptionsUtils {
                 map.put(field.getName(), field.get(null));
                 field.setAccessible(false);
             }
-        } catch (IllegalAccessException e) {
+        } catch (Exception e) {
         }
         return map;
     }
