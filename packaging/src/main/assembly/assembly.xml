@@ -13,11 +13,7 @@
       <destName>arthas-spy.jar</destName>
     </file>
     <file>
-      <source>../core/target/arthas-core-jar-with-dependencies.jar</source>
-      <destName>arthas-core.jar</destName>
-    </file>
-    <file>
-      <source>../agent/target/arthas-agent-jar-with-dependencies.jar</source>
+      <source>../agent/target/arthas-agent.jar</source>
       <destName>arthas-agent.jar</destName>
     </file>
     <file>
@@ -44,6 +40,28 @@
     </file>
     <file>
       <source>../bin/as.bat</source>
+    </file>
+
+    <file>
+      <source>../logback-arthas.xml</source>
+    </file>
+
+    <!-- plugins -->
+    <file>
+      <source>../core/target/arthas-core-jar-with-dependencies.jar</source>
+      <destName>plugins/core/lib/arthas-core.jar</destName>
+    </file>
+    <file>
+      <source>../core/target/classes/arthas-plugin.properties</source>
+      <destName>plugins/core/conf/arthas-plugin.properties</destName>
+    </file>
+    <file>
+      <source>../apm-demo/target/arthas-apm-demo-jar-with-dependencies.jar</source>
+      <destName>plugins/apm-demo/lib/apm-demo.jar</destName>
+    </file>
+    <file>
+      <source>../apm-demo/target/classes/arthas-plugin.properties</source>
+      <destName>plugins/apm-demo/conf/arthas-plugin.properties</destName>
     </file>
   </files>
 </assembly>

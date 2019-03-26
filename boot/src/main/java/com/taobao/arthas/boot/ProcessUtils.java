@@ -18,6 +18,7 @@ import com.taobao.arthas.common.ExecutingCommand;
 import com.taobao.arthas.common.IOUtils;
 import com.taobao.arthas.common.JavaVersionUtils;
 import com.taobao.arthas.common.PidUtils;
+import com.taobao.arthas.common.URLUtils;
 
 /**
  *
@@ -182,85 +183,109 @@ public class ProcessUtils {
         return FOUND_JAVA_HOME;
     }
 
-    public static void startArthasCore(int targetPid, List<String> attachArgs) {
+    public static void startAttach(int targetPid, String agentPath, String agentConfig) {
         // find java/java.exe, then try to find tools.jar
         String javaHome = findJavaHome();
 
-        // find java/java.exe
-        File javaPath = findJava();
-        if (javaPath == null) {
-            throw new IllegalArgumentException(
-                            "Can not find java/java.exe executable file under java home: " + javaHome);
-        }
-
-        File toolsJar = findToolsJar();
-
-        if (JavaVersionUtils.isLessThanJava9()) {
-            if (toolsJar == null || !toolsJar.exists()) {
-                throw new IllegalArgumentException("Can not find tools.jar under java home: " + javaHome);
-            }
-        }
-
-        List<String> command = new ArrayList<String>();
-        command.add(javaPath.getAbsolutePath());
-
-        if (toolsJar != null && toolsJar.exists()) {
-            command.add("-Xbootclasspath/a:" + toolsJar.getAbsolutePath());
-        }
-
-        command.addAll(attachArgs);
-        // "${JAVA_HOME}"/bin/java \
-        // ${opts} \
-        // -jar "${arthas_lib_dir}/arthas-core.jar" \
-        // -pid ${TARGET_PID} \
-        // -target-ip ${TARGET_IP} \
-        // -telnet-port ${TELNET_PORT} \
-        // -http-port ${HTTP_PORT} \
-        // -core "${arthas_lib_dir}/arthas-core.jar" \
-        // -agent "${arthas_lib_dir}/arthas-agent.jar"
-
-        ProcessBuilder pb = new ProcessBuilder(command);
+        boolean canLoadVirtualMachine = false;
         try {
-            final Process proc = pb.start();
-            Thread redirectStdout = new Thread(new Runnable() {
-                @Override
-                public void run() {
-                    InputStream inputStream = proc.getInputStream();
-                    try {
-                        IOUtils.copy(inputStream, System.out);
-                    } catch (IOException e) {
-                        IOUtils.close(inputStream);
-                    }
-
-                }
-            });
-
-            Thread redirectStderr = new Thread(new Runnable() {
-                @Override
-                public void run() {
-                    InputStream inputStream = proc.getErrorStream();
-                    try {
-                        IOUtils.copy(inputStream, System.err);
-                    } catch (IOException e) {
-                        IOUtils.close(inputStream);
-                    }
-
-                }
-            });
-            redirectStdout.start();
-            redirectStderr.start();
-            redirectStdout.join();
-            redirectStderr.join();
-
-            int exitValue = proc.exitValue();
-            if (exitValue != 0) {
-                AnsiLog.error("attach fail, targetPid: " + targetPid);
-                System.exit(1);
-            }
+            Class.forName("com.sun.tools.attach.VirtualMachine");
+            canLoadVirtualMachine = true;
         } catch (Throwable e) {
             // ignore
         }
 
+        if (javaHome.equals(System.getProperty("java.home")) && canLoadVirtualMachine) {
+            // start attach in current process
+            try {
+                Class.forName("com.sun.tools.attach.VirtualMachine");
+                Attach.attachAgent("" + targetPid, agentPath, agentConfig);
+            } catch (Throwable e) {
+                e.printStackTrace();
+                AnsiLog.error("attach fail, targetPid: " + targetPid);
+                System.exit(1);
+            }
+        } else { // start attach in new process
+            // find java/java.exe
+            File javaPath = findJava();
+            if (javaPath == null) {
+                throw new IllegalArgumentException(
+                                "Can not find java/java.exe executable file under java home: " + javaHome);
+            }
+
+            File toolsJar = findToolsJar();
+
+            if (JavaVersionUtils.isLessThanJava9()) {
+                if (toolsJar == null || !toolsJar.exists()) {
+                    throw new IllegalArgumentException("Can not find tools.jar under java home: " + javaHome);
+                }
+            }
+
+            List<String> command = new ArrayList<String>();
+            command.add(javaPath.getAbsolutePath());
+
+            if (toolsJar != null && toolsJar.exists()) {
+                command.add("-Xbootclasspath/a:" + toolsJar.getAbsolutePath());
+            }
+
+            command.add("-cp");
+            command.add(URLUtils.classLocation(Attach.class));
+            command.add(Attach.class.getName());
+
+            command.add("--pid");
+            command.add("" + targetPid);
+            command.add("--agent");
+            command.add(agentPath);
+            command.add("--config");
+            command.add(agentConfig);
+
+            /**
+             * <pre>
+             * java -cp arthas-boot.jar com.taobao.arthas.boot.Attach --agent arthas-agent.jar --config 'target-ip=127.0.0.1;http-port=8563;telnet-port=3658;'
+             * </pre>
+             */
+            ProcessBuilder pb = new ProcessBuilder(command);
+            try {
+                final Process proc = pb.start();
+                Thread redirectStdout = new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        InputStream inputStream = proc.getInputStream();
+                        try {
+                            IOUtils.copy(inputStream, System.out);
+                        } catch (IOException e) {
+                            IOUtils.close(inputStream);
+                        }
+
+                    }
+                });
+
+                Thread redirectStderr = new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        InputStream inputStream = proc.getErrorStream();
+                        try {
+                            IOUtils.copy(inputStream, System.err);
+                        } catch (IOException e) {
+                            IOUtils.close(inputStream);
+                        }
+
+                    }
+                });
+                redirectStdout.start();
+                redirectStderr.start();
+                redirectStdout.join();
+                redirectStderr.join();
+
+                int exitValue = proc.exitValue();
+                if (exitValue != 0) {
+                    AnsiLog.error("attach fail, targetPid: " + targetPid);
+                    System.exit(1);
+                }
+            } catch (Throwable e) {
+                // ignore
+            }
+        }
     }
 
     private static File findJava() {

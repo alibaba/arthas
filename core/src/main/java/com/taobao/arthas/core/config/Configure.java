@@ -1,5 +1,6 @@
 package com.taobao.arthas.core.config;
 
+import com.taobao.arthas.common.FeatureCodec;
 import com.taobao.arthas.core.shell.ShellServerOptions;
 import com.taobao.arthas.core.util.reflect.ArthasReflectUtils;
 

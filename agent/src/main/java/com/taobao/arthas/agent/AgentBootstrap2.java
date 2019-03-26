@@ -7,6 +7,8 @@ import java.security.CodeSource;
 import java.util.Map;
 import java.util.Properties;
 
+import com.alibaba.arthas.deps.org.slf4j.Logger;
+import com.alibaba.arthas.deps.org.slf4j.LoggerFactory;
 import com.taobao.arthas.common.FeatureCodec;
 import com.taobao.arthas.plugin.PluginException;
 import com.taobao.arthas.plugin.PluginManager;
@@ -17,10 +19,15 @@ import com.taobao.arthas.plugin.PluginManager;
  *
  */
 public class AgentBootstrap2 {
+    private static final String defaultLoggerConfigurationFileProperty = "arthas.logback.configurationFile";
+    private static final String defaultLoggerConfigurationFile = "logback-arthas.xml";
+
     private static volatile AgentBootstrap2 instance;
     private final static FeatureCodec codec = new FeatureCodec(';', '=');
 
     private PluginManager pluginManager;
+
+    private Logger logger;
 
     public static void premain(String args, Instrumentation inst) {
         main(true, args, inst);
@@ -46,7 +53,19 @@ public class AgentBootstrap2 {
         }
     }
 
+    private void initLogger() {
+        String arthasLoggerConfiguration = System.getProperty(defaultLoggerConfigurationFileProperty);
+        if (arthasLoggerConfiguration == null || arthasLoggerConfiguration.trim().isEmpty()) {
+            System.setProperty(defaultLoggerConfigurationFileProperty, defaultLoggerConfigurationFile);
+        }
+        if (logger == null) {
+            logger = LoggerFactory.getLogger("arthas");
+        }
+
+    }
+
     private void init(boolean premain, final String args, final Instrumentation inst) {
+        initLogger();
 
         Map<String, String> map = codec.toMap(args);
 
@@ -59,9 +78,12 @@ public class AgentBootstrap2 {
             map.put("arthas.home", arthasHome);
         }
 
+        logger.info("arthas home: " + map.get("arthas.home"));
+
         Properties properties = new Properties();
         properties.putAll(map);
 
+        logger.debug("PluginManager properties: {}", properties);
         pluginManager = new PluginManager(inst, properties);
         try {
 
@@ -72,6 +94,7 @@ public class AgentBootstrap2 {
             pluginManager.startPlugins();
 
         } catch (PluginException e) {
+            logger.error("PluginManager error", e);
             e.printStackTrace();
         }
     }

@@ -7,6 +7,9 @@ import java.util.List;
 import java.util.Properties;
 import java.util.concurrent.CopyOnWriteArrayList;
 
+import com.alibaba.arthas.deps.org.slf4j.Logger;
+import com.alibaba.arthas.deps.org.slf4j.LoggerFactory;
+
 /**
  *
  * @author hengyunabc 2019-02-27
@@ -19,6 +22,8 @@ public class PluginManager {
     private Instrumentation instrumentation;
 
     private Properties properties;
+
+    private static final Logger logger = LoggerFactory.getLogger(PluginManager.class);
 
     public PluginManager(Instrumentation instrumentation, Properties properties) {
         this.instrumentation = instrumentation;

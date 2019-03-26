@@ -37,13 +37,16 @@ public class ArthasPlugin implements Plugin{
         this.parentClassLoader = parentClassLoader;
         this.state = PluginState.NONE;
 
-        File propertiesFile = new File(directory, "arthas-plugin.properties");
+        File propertiesFile = new File(directory, "conf/arthas-plugin.properties");
         Properties properties = new Properties();
         properties.putAll(gobalProperties);
-        try {
-            properties.load(new FileInputStream(propertiesFile));
-        } catch (IOException e) {
-            throw new PluginException("load plugin properties error, directory: " + directory.getAbsolutePath(), e);
+
+        if(propertiesFile.exists()) {
+            try {
+                properties.load(new FileInputStream(propertiesFile));
+            } catch (IOException e) {
+                throw new PluginException("load plugin properties error, directory: " + directory.getAbsolutePath(), e);
+            }
         }
 
         pluginConfig= new PluginConfig();
@@ -54,7 +57,8 @@ public class ArthasPlugin implements Plugin{
 
     @Override
     public void init() throws PluginException {
-        File[] listFiles = directory.listFiles();
+        File libDir = new File(directory, "lib");
+        File[] listFiles = libDir.listFiles();
         List<URL> urls = new ArrayList<URL>();
         if(listFiles != null) {
             for(File file : listFiles) {
