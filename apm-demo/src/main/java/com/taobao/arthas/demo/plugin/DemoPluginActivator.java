@@ -1,26 +1,28 @@
 package com.taobao.arthas.demo.plugin;
 
-import java.io.IOException;
 import java.lang.instrument.ClassFileTransformer;
 import java.lang.instrument.IllegalClassFormatException;
 import java.security.ProtectionDomain;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.alibaba.arthas.deps.org.objectweb.asm.tree.ClassNode;
 import com.alibaba.arthas.deps.org.objectweb.asm.tree.MethodNode;
-
 import com.taobao.arthas.bytekit.asm.MethodProcessor;
 import com.taobao.arthas.bytekit.asm.interceptor.InterceptorProcessor;
 import com.taobao.arthas.bytekit.asm.interceptor.parser.DefaultInterceptorClassParser;
 import com.taobao.arthas.bytekit.utils.AsmUtils;
-import com.taobao.arthas.bytekit.utils.Decompiler;
 import com.taobao.arthas.bytekit.utils.MatchUtils;
 import com.taobao.arthas.plugin.Plugin;
 import com.taobao.arthas.plugin.PluginActivator;
 import com.taobao.arthas.plugin.PluginContext;
 
-public class DemoPluginActivator implements PluginActivator{
+public class DemoPluginActivator implements PluginActivator {
+
+    private static final Logger logger = LoggerFactory.getLogger("arthas.apm.demo");
 
     @Override
     public boolean enabled(PluginContext context) {
@@ -29,10 +31,8 @@ public class DemoPluginActivator implements PluginActivator{
 
     @Override
     public void start(PluginContext context) {
-
         Plugin plugin = context.getPlugin();
-
-        System.err.println("hello" + plugin.getName());
+        logger.info("start apm demo, plugin name: {}", plugin.getName());
 
         context.getInstrumentation().addTransformer(new ClassFileTransformer() {
 
@@ -41,13 +41,14 @@ public class DemoPluginActivator implements PluginActivator{
                             ProtectionDomain protectionDomain, byte[] classfileBuffer)
                             throws IllegalClassFormatException {
 
-                if(!className.equals("demo/MathGame")) {
+                if (!className.equals("demo/MathGame")) {
                     return null;
                 }
 
                 DefaultInterceptorClassParser defaultInterceptorClassParser = new DefaultInterceptorClassParser();
 
-                List<InterceptorProcessor> interceptorProcessors = defaultInterceptorClassParser.parse(EnterInterceptor.class);
+                List<InterceptorProcessor> interceptorProcessors = defaultInterceptorClassParser
+                                .parse(EnterInterceptor.class);
 
                 ClassNode classNode = AsmUtils.toClassNode(classfileBuffer);
 
@@ -71,24 +72,17 @@ public class DemoPluginActivator implements PluginActivator{
 
                 byte[] bytes = AsmUtils.toBytes(classNode);
 
-//                try {
-//                    String decompile = Decompiler.decompile(bytes);
-//                    System.err.println(decompile);
-//                } catch (Throwable e) {
-//                    e.printStackTrace();
-//                }
                 return bytes;
             }
 
         });
 
-
     }
 
     @Override
     public void stop(PluginContext context) {
-        // TODO Auto-generated method stub
-
+        Plugin plugin = context.getPlugin();
+        logger.info("start apm demo, plugin name: {}", plugin.getName());
     }
 
 }

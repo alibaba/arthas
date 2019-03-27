@@ -56,7 +56,7 @@
       <destName>plugins/core/conf/arthas-plugin.properties</destName>
     </file>
     <file>
-      <source>../apm-demo/target/arthas-apm-demo-jar-with-dependencies.jar</source>
+      <source>../apm-demo/target/arthas-apm-demo.jar</source>
       <destName>plugins/apm-demo/lib/apm-demo.jar</destName>
     </file>
     <file>
