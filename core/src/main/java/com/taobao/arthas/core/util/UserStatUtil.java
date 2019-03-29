@@ -15,7 +15,6 @@ import java.util.concurrent.Executors;
  * Created by zhuyong on 15/11/12.
  */
 public class UserStatUtil {
-    @SuppressWarnings("PMD.ThreadPoolCreationRule")
     private static final ExecutorService executorService = Executors.newSingleThreadExecutor();
     private static final String ip = IPUtils.getLocalIP();
 

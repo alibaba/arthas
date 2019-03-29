@@ -47,7 +47,6 @@ import java.util.TimerTask;
         "  dashboard -n 10\n" +
         "  dashboard -i 2000\n" +
         Constants.WIKI + Constants.WIKI_HOME + "dashboard")
-@SuppressWarnings("PMD.AvoidUseTimerRule")
 public class DashboardCommand extends AnnotatedCommand {
 
     private static final Logger logger = LogUtil.getArthasLogger();

@@ -146,7 +146,6 @@ public class ShellServerImpl extends ShellServer {
         }
     }
 
-    @SuppressWarnings("PMD.ThreadPoolCreationRule")
     public synchronized void setTimer() {
         if (!closed && reaperInterval > 0) {
             scheduledExecutorService = Executors.newSingleThreadScheduledExecutor();

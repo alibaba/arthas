@@ -22,7 +22,7 @@ import com.taobao.middleware.logger.Logger;
  * @author gehui 2017年7月31日 上午11:55:41
  */
 public class GlobalJobControllerImpl extends JobControllerImpl {
-    @SuppressWarnings("PMD.AvoidUseTimerRule")
+
     private Timer timer = new Timer("job-timeout", true);
     private Map<Integer, TimerTask> jobTimeoutTaskMap = new HashMap<Integer, TimerTask>();
     private static final Logger logger = LogUtil.getArthasLogger();

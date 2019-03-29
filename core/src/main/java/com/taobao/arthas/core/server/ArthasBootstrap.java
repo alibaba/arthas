@@ -40,7 +40,6 @@ public class ArthasBootstrap {
     private ShellServer shellServer;
     private ExecutorService executorService;
 
-    @SuppressWarnings("PMD.ThreadPoolCreationRule")
     private ArthasBootstrap(int pid, Instrumentation instrumentation) {
         this.pid = pid;
         this.instrumentation = instrumentation;
