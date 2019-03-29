@@ -374,6 +374,15 @@ $ classloader
 ![广州工程技术职业学院](static/gzvtc.jpg)
 ![mstar](static/mstar.png)
 ![xwbank](static/xwbank.png)
+![imexue](static/imexue.png)
+![keking](static/keking.png)
+![secoo](static/secoo.jpg)
+![viax](static/viax.png)
+![yanedu](static/yanedu.png)
+![duia](static/duia.png)
+![哈啰出行](static/hellobike.png)
+![hollycrm](static/hollycrm.png)
+![citycloud](static/citycloud.jpg)
 
 ### Credit
 

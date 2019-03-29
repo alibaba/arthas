@@ -11,23 +11,23 @@
 
 `Arthas` is a Java Diagnostic tool open sourced by Alibaba.
 
-Arthas help developers in trouble-shooting production issues for Java applications without modifying code or restarting servers.
+Arthas allows developers to troubleshoot production issues for Java applications without modifying code or restarting servers.
 
 [中文说明/Chinese Documentation](README_CN.md)
 
 ### Background
 
-Often times, the production system network is inaccessible from local development environment. If issues are encountered in production systems, it is impossible to use IDE to debug the application remotely. More importantly, debugging in production environment is unacceptable, as it will suspend all the threads, which leads to blocking of business services. 
+Often times, the production system network is inaccessible from the local development environment. If issues are encountered in production systems, it is impossible to use IDEs to debug the application remotely. More importantly, debugging in production environment is unacceptable, as it will suspend all the threads, resulting in the suspension of business services. 
 
 Developers could always try to reproduce the same issue on the test/staging environment. However, this is tricky as some issues cannot be be reproduced easily on a different environment, or even disappear once restarted. 
 
-And if you're thinking of adding some logs to your code to help trouble-shoot the issue, you will have to go through the following lifecycle; test, staging, and then to production. Time is money! This approach is inefficient! Besides, the issue may not be reproducible once the JVM is restarted, as described above.
+And if you're thinking of adding some logs to your code to help troubleshoot the issue, you will have to go through the following lifecycle; test, staging, and then to production. Time is money! This approach is inefficient! Besides, the issue may not be reproducible once the JVM is restarted, as described above.
 
-Arthas was built to solve these issues. A developer can trouble-shoot your production issues on-the-fly. No JVM restart, no additional code changes. Arthas works as an observer, which will never suspend your existing threads.
+Arthas was built to solve these issues. A developer can troubleshoot your production issues on-the-fly. No JVM restart, no additional code changes. Arthas works as an observer, which will never suspend your existing threads.
 
 ### Key features
 
-* Check whether a class is loaded? Or where the class is loaded from? (Useful for trouble-shooting jar file conflicts)
+* Check whether a class is loaded, or where the class is being loaded. (Useful for troubleshooting jar file conflicts)
 * Decompile a class to ensure the code is running as expected.
 * View classloader statistics, e.g. the number of classloaders, the number of classes loaded per classloader, the classloader hierarchy, possible classloader leaks, etc.
 * View the method invocation details, e.g. method parameter, return object, thrown exception, and etc.
@@ -37,8 +37,8 @@ Arthas was built to solve these issues. A developer can trouble-shoot your produ
 * Monitor system metrics, thread states and cpu usage, gc statistics, and etc.
 * Supports command line interactive mode, with auto-complete feature enabled.
 * Supports telnet and websocket, which enables both local and remote diagnostics with command line and browsers.
-* Supports JDK 6+
-* Supports Linux/Mac/Windows
+* Supports JDK 6+.
+* Supports Linux/Mac/Windows.
 
 
 ### Online Tutorials(Recommend)
@@ -65,7 +65,7 @@ java -jar arthas-boot.jar -h
 
 #### Use `as.sh`
 
-You can install Arthas with one single line command on Linux, Unix, and Mac. Pls. copy the following command and paste it into the command line, then press *Enter* to run:
+You can install Arthas with one single line command on Linux, Unix, and Mac. Copy the following command and paste it into the command line, then press *Enter* to run:
 
 ```bash
 curl -L https://alibaba.github.io/arthas/install.sh | sh
@@ -279,7 +279,7 @@ ts=2018-09-18 10:26:28;result=@ArrayList[
 
 #### Monitor
 
-Monitor a specific method invocation statistics, including total number of invocations, average response time, success rate, every 5 seconds:
+Monitor a specific method invocation statistics, including total number of invocations, average response time, success rate, and every 5 seconds:
 
 ```bash
 $ monitor -c 5 org.apache.dubbo.demo.provider.DemoServiceImpl sayHello
@@ -300,7 +300,7 @@ Affect(class-cnt:1 , method-cnt:1) cost in 109 ms.
 
 #### Time Tunnel(tt)
 
-Record method invocation data, so that you can check the method invocation parameters, returned value and thrown exception later. It works as if you could come back and replay the past method invocation via time tunnel.
+Record method invocation data, so that you can check the method invocation parameters, returned value, and thrown exceptions later. It works as if you could come back and replay the past method invocation via time tunnel.
 
 ```bash
 $ tt -t org.apache.dubbo.demo.provider.DemoServiceImpl sayHello
@@ -380,6 +380,15 @@ Welcome to register the company name in this issue: https://github.com/alibaba/a
 ![广州工程技术职业学院](static/gzvtc.jpg)
 ![mstar](static/mstar.png)
 ![xwbank](static/xwbank.png)
+![imexue](static/imexue.png)
+![keking](static/keking.png)
+![secoo](static/secoo.jpg)
+![viax](static/viax.png)
+![yanedu](static/yanedu.png)
+![duia](static/duia.png)
+![哈啰出行](static/hellobike.png)
+![hollycrm](static/hollycrm.png)
+![citycloud](static/citycloud.jpg)
 
 ### Credit
 
