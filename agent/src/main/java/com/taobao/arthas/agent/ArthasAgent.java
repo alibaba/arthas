@@ -9,9 +9,9 @@ import java.util.Properties;
 
 import com.alibaba.arthas.deps.org.slf4j.Logger;
 import com.alibaba.arthas.deps.org.slf4j.LoggerFactory;
+import com.alibaba.arthas.plugin.PluginException;
+import com.alibaba.arthas.plugin.PluginManager;
 import com.taobao.arthas.common.FeatureCodec;
-import com.taobao.arthas.plugin.PluginException;
-import com.taobao.arthas.plugin.PluginManager;
 
 /**
  *

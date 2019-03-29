@@ -2,12 +2,12 @@ package com.taobao.arthas.core.command.basic1000;
 
 import static com.taobao.text.ui.Element.label;
 
+import com.alibaba.arthas.plugin.Plugin;
+import com.alibaba.arthas.plugin.PluginManager;
 import com.taobao.arthas.agent.ArthasAgent;
 import com.taobao.arthas.core.shell.command.AnnotatedCommand;
 import com.taobao.arthas.core.shell.command.CommandProcess;
 import com.taobao.arthas.core.util.LogUtil;
-import com.taobao.arthas.plugin.Plugin;
-import com.taobao.arthas.plugin.PluginManager;
 import com.taobao.middleware.cli.annotations.Description;
 import com.taobao.middleware.cli.annotations.Name;
 import com.taobao.middleware.cli.annotations.Option;

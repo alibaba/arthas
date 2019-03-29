@@ -5,12 +5,12 @@ import java.io.File;
 import java.lang.reflect.Method;
 import java.util.jar.JarFile;
 
+import com.alibaba.arthas.plugin.PluginActivator;
+import com.alibaba.arthas.plugin.PluginContext;
 import com.taobao.arthas.common.PidUtils;
 import com.taobao.arthas.core.advisor.AdviceWeaver;
 import com.taobao.arthas.core.config.Configure;
 import com.taobao.arthas.core.server.ArthasBootstrap;
-import com.taobao.arthas.plugin.PluginActivator;
-import com.taobao.arthas.plugin.PluginContext;
 
 /**
  *

@@ -1,4 +1,4 @@
-package com.taobao.arthas.plugin;
+package com.alibaba.arthas.plugin;
 
 import java.lang.instrument.Instrumentation;
 

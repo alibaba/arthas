@@ -60,6 +60,7 @@
         <module>spy</module>
         <module>common</module>
         <module>bytekit</module>
+        <module>plugin</module>
         <module>core</module>
         <module>agent</module>
         <module>client</module>

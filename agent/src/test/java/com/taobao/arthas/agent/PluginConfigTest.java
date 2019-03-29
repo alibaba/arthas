@@ -5,8 +5,8 @@ import java.util.Properties;
 import org.junit.Assert;
 import org.junit.Test;
 
+import com.alibaba.arthas.plugin.PluginConfig;
 import com.taobao.arthas.common.properties.PropertiesInjectUtil;
-import com.taobao.arthas.plugin.PluginConfig;
 
 public class PluginConfigTest {
 
