@@ -1,5 +1,7 @@
 package com.taobao.arthas.plugin;
 
+import java.net.URL;
+
 /**
  *
  * @author hengyunabc 2019-02-27
@@ -15,5 +17,7 @@ public interface Plugin {
 
     PluginState state();
 
-    String getName();
+    String name();
+
+    URL location();
 }

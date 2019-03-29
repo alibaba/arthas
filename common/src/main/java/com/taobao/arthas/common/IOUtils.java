@@ -11,6 +11,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.Reader;
 import java.io.Writer;
+import java.net.URLClassLoader;
 import java.util.Enumeration;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
@@ -75,6 +76,17 @@ public class IOUtils {
             }
         } catch (final IOException ioe) {
             return ioe;
+        }
+        return null;
+    }
+
+    public static IOException close(URLClassLoader urlClassLoader) {
+        try {
+            if (urlClassLoader instanceof Closeable) {
+                urlClassLoader.close();
+            }
+        } catch (IOException e) {
+            return e;
         }
         return null;
     }

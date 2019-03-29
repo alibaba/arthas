@@ -1,7 +1,5 @@
 package com.taobao.arthas.plugin;
 
-import com.taobao.arthas.common.properties.Config;
-
 /**
  *
  * @author hengyunabc 2019-02-27

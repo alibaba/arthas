@@ -18,11 +18,11 @@ import com.taobao.arthas.plugin.PluginManager;
  * @author hengyunabc 2019-03-01
  *
  */
-public class AgentBootstrap2 {
+public class ArthasAgent {
     private static final String defaultLoggerConfigurationFileProperty = "arthas.logback.configurationFile";
     private static final String defaultLoggerConfigurationFile = "logback-arthas.xml";
 
-    private static volatile AgentBootstrap2 instance;
+    private static volatile ArthasAgent instance;
     private final static FeatureCodec codec = new FeatureCodec(';', '=');
 
     private PluginManager pluginManager;
@@ -43,14 +43,22 @@ public class AgentBootstrap2 {
 
     private static synchronized void main(boolean premain, final String args, final Instrumentation inst) {
         if (instance == null) {
-            synchronized (AgentBootstrap2.class) {
+            synchronized (ArthasAgent.class) {
                 if (instance == null) {
-                    AgentBootstrap2 temp = new AgentBootstrap2();
+                    ArthasAgent temp = new ArthasAgent();
                     temp.init(premain, args, inst);
                     instance = temp;
                 }
             }
         }
+    }
+
+    public static ArthasAgent getInstance() {
+        return instance;
+    }
+
+    public PluginManager pluginMaanger() {
+        return pluginManager;
     }
 
     private void initLogger() {
@@ -72,7 +80,7 @@ public class AgentBootstrap2 {
         String arthasHome = map.get("arthas.home");
 
         if (arthasHome == null) {
-            CodeSource codeSource = AgentBootstrap2.class.getProtectionDomain().getCodeSource();
+            CodeSource codeSource = ArthasAgent.class.getProtectionDomain().getCodeSource();
             URL agentJarLocation = codeSource.getLocation();
             arthasHome = new File(agentJarLocation.getFile()).getParent();
             map.put("arthas.home", arthasHome);

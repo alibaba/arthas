@@ -30,60 +30,146 @@ public class PluginManager {
         this.properties = properties;
     }
 
-    public void scanPlugins(File dir) throws PluginException {
-        File[] files = dir.listFiles();
-        if(files != null) {
-            for(File file : files) {
-                if(!file.isHidden() && file.isDirectory()) {
-                    ArthasPlugin plugin = new ArthasPlugin(file, instrumentation, parentClassLoader, properties);
-                    plugins.add(plugin);
+    // 可能会执行多次
+    synchronized public void scanPlugins(File dir) throws PluginException {
+        try {
+            File[] files = dir.listFiles();
+            if (files != null) {
+                for (File file : files) {
+                    if (!file.isHidden() && file.isDirectory()) {
+                        ArthasPlugin plugin = new ArthasPlugin(file.toURI().toURL(), instrumentation, parentClassLoader, properties);
+                        if (!containsPlugin(plugin.name())) {
+                            plugins.add(plugin);
+                        }
+                    }
                 }
+            }
+        } catch (Exception e) {
+            throw new PluginException("scan plugins error.", e);
+        }
+
+    }
+
+    synchronized public boolean containsPlugin(String name) {
+        for (Plugin plugin : plugins) {
+            if (plugin.name().equals(name)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public Plugin findPlugin(String name) {
+        for (Plugin plugin : plugins) {
+            if (plugin.name().equals(name)) {
+                return plugin;
+            }
+        }
+        return null;
+    }
+
+    public void startPlugin(String name) throws PluginException {
+        Plugin plugin = findPlugin(name);
+        if (plugin != null && (plugin.state() == PluginState.NONE || plugin.state() == PluginState.STOPED)) {
+            updateState(plugin, PluginState.INITING);
+            logger.info("Init plugin, name: {}", plugin.name());
+            plugin.init();
+            logger.info("Init plugin success, name: {}", plugin.name());
+            updateState(plugin, PluginState.INITED);
+        }
+        if (plugin != null && plugin.state() == PluginState.INITED) {
+            updateState(plugin, PluginState.STARTING);
+            logger.info("Start plugin, name: {}", plugin.name());
+            plugin.start();
+            logger.info("Start plugin success, name: {}", plugin.name());
+            updateState(plugin, PluginState.STARTED);
+        }
+    }
+
+    public void uninstallPlugin(String name) {
+        Plugin plugin = findPlugin(name);
+        if (plugin != null && plugin.state() == PluginState.STOPED) {
+            if (plugin instanceof ArthasPlugin) {
+                ((ArthasPlugin) plugin).uninstall();
             }
         }
     }
 
+    public void stopPlugin(String name) throws PluginException {
+        Plugin plugin = findPlugin(name);
+        if (plugin != null && plugin.state() == PluginState.STARTED) {
+            updateState(plugin, PluginState.STOPPING);
+            logger.info("Stop plugin, name: {}", plugin.name());
+            plugin.stop();
+            logger.info("Stop plugin success, name: {}", plugin.name());
+            updateState(plugin, PluginState.STOPED);
+        }
+    }
 
-    public List<Plugin> allPlugins() {
+    public void enablePlugin(String name) {
+        Plugin plugin = findPlugin(name);
+        if (plugin != null && plugin.state() == PluginState.DISABLED) {
+            updateState(plugin, PluginState.NONE);
+        }
+    }
+
+    private void updateState(Plugin plugin, PluginState state) {
+        if (plugin instanceof ArthasPlugin) {
+            ((ArthasPlugin) plugin).setState(state);
+        }
+    }
+
+    synchronized public List<Plugin> allPlugins() {
         return Collections.unmodifiableList(plugins);
     }
 
-    public void initPlugins() throws PluginException {
-        System.out.println("Init available plugins");
+    synchronized public void initPlugins() throws PluginException {
+        logger.info("Init available plugins");
         for (Plugin plugin : plugins) {
-            System.out.println("Init plugin " + plugin.getName());
-            plugin.init();
-        }
-    }
-
-    public void startPlugins() throws PluginException {
-        System.out.println("Starting available plugins");
-        for (Plugin plugin : plugins) {
-            System.out.println("Start plugin " + plugin.getName());
-            if(plugin.state() == PluginState.NONE) {
-                plugin.start();
+            if (plugin.state() == PluginState.NONE) {
+                updateState(plugin, PluginState.INITING);
+                logger.info("Init plugin, name: {}", plugin.name());
+                plugin.init();
+                logger.info("Init plugin success, name: {}", plugin.name());
+                updateState(plugin, PluginState.INITED);
+            } else {
+                logger.debug("skip init plugin, name: {}, state: {}", plugin.name(), plugin.state());
             }
         }
     }
 
-    public void stopPlugins() throws PluginException {
-        System.out.println("Stopping available plugins");
+    synchronized public void startPlugins() throws PluginException {
+        logger.info("Starting available plugins");
         for (Plugin plugin : plugins) {
-            System.out.println("Stop plugin " + plugin.getName());
-            plugin.stop();
+            if (plugin.state() == PluginState.INITED) {
+                updateState(plugin, PluginState.STARTING);
+                logger.info("Start plugin, name: {}", plugin.name());
+                plugin.start();
+                logger.info("Start plugin success, name: {}", plugin.name());
+                updateState(plugin, PluginState.STARTED);
+            } else {
+                logger.debug("skip start plugin, name: {}, state: {}", plugin.name(), plugin.state());
+            }
+        }
+    }
+
+    synchronized public void stopPlugins() throws PluginException {
+        logger.info("Stopping available plugins");
+        for (Plugin plugin : plugins) {
+            if (plugin.state() == PluginState.STARTED) {
+                updateState(plugin, PluginState.STOPPING);
+                logger.info("Stop plugin, name: {}", plugin.name());
+                plugin.stop();
+                logger.info("Stop plugin success, name: {}", plugin.name());
+                updateState(plugin, PluginState.STOPED);
+            } else {
+                logger.debug("skip stop plugin, name: {}, state: {}", plugin.name(), plugin.state());
+            }
+
         }
     }
 
     public Properties properties() {
         return this.properties;
     }
-
-//    private List<Plugin> scanForAvailablePlugins() {
-//        System.out.println("Scanning for available plugins in the runtime");
-//        List<Plugin> servers = new ArrayList<Plugin>();
-//        ServiceLoader<Plugin> plugins = ServiceLoader.load(Plugin.class);
-//        for (Plugin plugin : plugins) {
-//            servers.add(plugin);
-//        }
-//        return servers;
-//    }
 }

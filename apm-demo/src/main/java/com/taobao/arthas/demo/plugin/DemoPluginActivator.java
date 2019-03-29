@@ -30,9 +30,15 @@ public class DemoPluginActivator implements PluginActivator {
     }
 
     @Override
+    public void init(PluginContext context) throws Exception {
+        // TODO Auto-generated method stub
+
+    }
+
+    @Override
     public void start(PluginContext context) {
         Plugin plugin = context.getPlugin();
-        logger.info("start apm demo, plugin name: {}", plugin.getName());
+        logger.info("start apm demo, plugin name: {}", plugin.name());
 
         context.getInstrumentation().addTransformer(new ClassFileTransformer() {
 
@@ -82,7 +88,7 @@ public class DemoPluginActivator implements PluginActivator {
     @Override
     public void stop(PluginContext context) {
         Plugin plugin = context.getPlugin();
-        logger.info("start apm demo, plugin name: {}", plugin.getName());
+        logger.info("start apm demo, plugin name: {}", plugin.name());
     }
 
 }

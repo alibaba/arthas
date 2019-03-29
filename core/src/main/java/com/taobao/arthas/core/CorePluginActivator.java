@@ -26,9 +26,17 @@ public class CorePluginActivator implements PluginActivator {
     private static final String THROW_INVOKE = "methodOnInvokeThrowTracing";
     private static final String RESET = "resetArthasClassLoader";
 
+    private ArthasBootstrap bootstrap;
+
     @Override
     public boolean enabled(PluginContext context) {
         return true;
+    }
+
+    @Override
+    public void init(PluginContext context) throws Exception {
+        // TODO Auto-generated method stub
+
     }
 
     @Override
@@ -38,10 +46,11 @@ public class CorePluginActivator implements PluginActivator {
 
         File arthasSpyFile = new File(arthasHome, "arthas-spy.jar");
      // 将Spy添加到BootstrapClassLoader
+        // TODO 避免多次 add，应该先加载判断下
         context.getInstrumentation().appendToBootstrapClassLoaderSearch(new JarFile(arthasSpyFile));
         initSpy();
 
-        ArthasBootstrap bootstrap = ArthasBootstrap.getInstance(Integer.parseInt(PidUtils.currentPid()), context.getInstrumentation());
+       bootstrap = ArthasBootstrap.getInstance(Integer.parseInt(PidUtils.currentPid()), context.getInstrumentation());
 
         String args = "telnetPort=3658;httpPort=8563;ip=127.0.0.1;sessionTimeout=1800";
         Configure configure = Configure.toConfigure(args);
@@ -70,7 +79,7 @@ public class CorePluginActivator implements PluginActivator {
 
     @Override
     public void stop(PluginContext context) throws Exception {
-
+        bootstrap.destroy();
     }
 
 }

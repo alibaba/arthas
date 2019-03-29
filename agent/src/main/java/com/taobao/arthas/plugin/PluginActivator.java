@@ -2,8 +2,10 @@ package com.taobao.arthas.plugin;
 
 public interface PluginActivator {
 
-    //让插件本身判断是否要启动
+    // 让插件本身判断是否要启动
     boolean enabled(PluginContext context);
+
+    public void init(PluginContext context) throws Exception;
 
     /**
      * Before calling this method, the {@link PluginState} is
