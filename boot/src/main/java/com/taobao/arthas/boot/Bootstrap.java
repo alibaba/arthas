@@ -76,7 +76,7 @@ public class Bootstrap {
      * <pre>
      * The directory contains arthas-core.jar/arthas-client.jar/arthas-spy.jar.
      * 1. When use-version is not empty, try to find arthas home under ~/.arthas/lib
-     * 2. Try set the directory where arthas-boot.jar is located to arhtas home
+     * 2. Try set the directory where arthas-boot.jar is located to arthas home
      * 3. Try to download from maven repo
      * </pre>
      */
@@ -338,11 +338,12 @@ public class Bootstrap {
         if (arthasHomeDir == null) {
             CodeSource codeSource = Bootstrap.class.getProtectionDomain().getCodeSource();
             if (codeSource != null) {
-                String bootJarPath = codeSource.getLocation().getFile();
                 try {
-                    verifyArthasHome(new File(bootJarPath).getParent());
-                    arthasHomeDir = new File(bootJarPath).getParentFile();
-                } catch (Exception e) {
+                    // https://stackoverflow.com/a/17870390
+                    File bootJarPath = new File(codeSource.getLocation().toURI().getSchemeSpecificPart());
+                    verifyArthasHome(bootJarPath.getParent());
+                    arthasHomeDir = bootJarPath.getParentFile();
+                } catch (Throwable e) {
                     // ignore
                 }
 
@@ -523,7 +524,7 @@ public class Bootstrap {
     private static void verifyArthasHome(String arthasHome) {
         File home = new File(arthasHome);
         if (home.isDirectory()) {
-            String fileList[] = { "arthas-core.jar", "arthas-agent.jar", "arthas-spy.jar" };
+            String[] fileList = { "arthas-core.jar", "arthas-agent.jar", "arthas-spy.jar" };
 
             for (String fileName : fileList) {
                 if (!new File(home, fileName).exists()) {

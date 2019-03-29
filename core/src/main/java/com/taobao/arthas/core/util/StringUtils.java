@@ -871,7 +871,9 @@ public abstract class StringUtils {
     }
 
     public static String classLoaderHash(Class<?> clazz) {
-        if (clazz == null || clazz.getClassLoader() == null) return "null";
+        if (clazz == null || clazz.getClassLoader() == null) {
+            return "null";
+        }
         return Integer.toHexString(clazz.getClassLoader().hashCode());
     }
 
@@ -881,7 +883,9 @@ public abstract class StringUtils {
      * @return  human readable format
      */
     public static String humanReadableByteCount(long bytes) {
-        if (bytes < UNIT) return bytes + " B";
+        if (bytes < UNIT) {
+            return bytes + " B";
+        }
         int exp = (int) (Math.log(bytes) / Math.log(UNIT));
         String pre =  STRING_UNITS.charAt(exp-1) +  "i";
         return String.format("%.2f %sB", bytes / Math.pow(UNIT, exp), pre);
