@@ -86,7 +86,7 @@ public class OptionsCommand extends AnnotatedCommand {
         if (argumentIndex == 1) {
             String laseToken = TokenUtils.getLast(lineTokens).value().trim();
             //prefix match options-name
-            String pattern = "^" + laseToken + ".*";
+            String pattern = "^" + laseToken.trim() + ".*";
             Collection<String> optionNames = findOptionNames(new RegexMatcher(pattern));
             CompletionUtils.complete(completion, optionNames);
         } else {
