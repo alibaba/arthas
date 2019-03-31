@@ -51,6 +51,7 @@ public class Enhancer implements ClassFileTransformer {
     /**
      * @param adviceId          通知编号
      * @param isTracing         可跟踪方法调用
+     * @param skipJDKTrace      是否忽略对JDK内部方法的跟踪
      * @param matchingClasses   匹配中的类
      * @param methodNameMatcher 方法名匹配
      * @param affect            影响统计
@@ -265,6 +266,7 @@ public class Enhancer implements ClassFileTransformer {
      * @param inst              inst
      * @param adviceId          通知ID
      * @param isTracing         可跟踪方法调用
+     * @param skipJDKTrace      是否忽略对JDK内部方法的跟踪
      * @param classNameMatcher  类名匹配
      * @param methodNameMatcher 方法名匹配
      * @return 增强影响范围

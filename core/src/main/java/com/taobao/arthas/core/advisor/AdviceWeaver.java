@@ -346,13 +346,14 @@ public class AdviceWeaver extends ClassVisitor implements Opcodes {
     /**
      * 构建通知编织器
      *
-     * @param adviceId  通知ID
-     * @param isTracing 可跟踪方法调用
-     * @param className 类名称
-     * @param matcher   方法匹配
-     *                  只有匹配上的方法才会被织入通知器
-     * @param affect    影响计数
-     * @param cv        ClassVisitor for ASM
+     * @param adviceId     通知ID
+     * @param isTracing    可跟踪方法调用
+     * @param skipJDKTrace 是否忽略对JDK内部方法的跟踪
+     * @param className    类名称
+     * @param matcher      方法匹配
+     *                     只有匹配上的方法才会被织入通知器
+     * @param affect       影响计数
+     * @param cv           ClassVisitor for ASM
      */
     public AdviceWeaver(int adviceId, boolean isTracing, boolean skipJDKTrace, String className, Matcher matcher, EnhancerAffect affect, ClassVisitor cv) {
         super(Opcodes.ASM7, cv);
