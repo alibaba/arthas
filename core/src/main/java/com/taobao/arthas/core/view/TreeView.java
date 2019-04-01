@@ -28,10 +28,6 @@ public class TreeView implements View {
     // 当前节点
     private Node current;
 
-    // 最耗时的节点
-    private Node maxCost;
-
-
     public TreeView(boolean isPrintCost, String title) {
         this.root = new Node(title).markBegin().markEnd();
         this.current = root;
@@ -41,7 +37,7 @@ public class TreeView implements View {
     @Override
     public String draw() {
 
-        findMaxCostNode(root);
+        markMaxCostNode(root);
 
         final StringBuilder treeSB = new StringBuilder();
 
@@ -53,7 +49,7 @@ public class TreeView implements View {
             public void callback(int deep, boolean isLast, String prefix, Node node) {
                 treeSB.append(prefix).append(isLast ? STEP_FIRST_CHAR : STEP_NORMAL_CHAR);
                 if (isPrintCost && !node.isRoot()) {
-                    if (node == maxCost) {
+                    if (node.isHighLight) {
                         // the node with max cost will be highlighted
                         treeSB.append(highlighted.a(node.toString()).reset().toString());
                     } else {
@@ -94,21 +90,21 @@ public class TreeView implements View {
     }
 
     /**
-     * 查找耗时最大的节点，便于后续高亮展示
+     * 标记耗时最大的节点，便于后续高亮展示
      * @param node
      */
-    private void findMaxCostNode(Node node) {
-        if (!node.isRoot() && !node.parent.isRoot()) {
-            if (maxCost == null) {
-                maxCost = node;
-            } else if (maxCost.totalCost < node.totalCost) {
-                maxCost = node;
+    private void markMaxCostNode(Node node) {
+        Node maxCostNode = null;
+        for (Node n: node.children) {
+            markMaxCostNode(n);
+            if (maxCostNode == null) {
+                maxCostNode = n;
+            } else if (maxCostNode.totalCost < n.totalCost) {
+                maxCostNode = n;
             }
         }
-        if (!node.isLeaf()) {
-            for (Node n: node.children) {
-                findMaxCostNode(n);
-            }
+        if (maxCostNode != null && !maxCostNode.isRoot()) {
+            maxCostNode.isHighLight = true;
         }
     }
 
@@ -173,6 +169,11 @@ public class TreeView implements View {
          * 节点数据
          */
         final String data;
+
+        /**
+         * 是否高亮
+         */
+        boolean isHighLight;
 
         /**
          * 子节点

@@ -31,8 +31,8 @@ public abstract class EnhancerCommand extends AnnotatedCommand {
     public static final String[] EXPRESS_EXAMPLES = { "params", "returnObj", "throwExp", "target", "clazz", "method",
                                                        "{params,returnObj}", "params[0]" };
 
-    protected Matcher classNameMatcher;
-    protected Matcher methodNameMatcher;
+    protected Matcher<String> classNameMatcher;
+    protected Matcher<String> methodNameMatcher;
 
     /**
      * 类名匹配

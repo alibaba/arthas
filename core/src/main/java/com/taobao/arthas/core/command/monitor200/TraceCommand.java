@@ -43,6 +43,7 @@ public class TraceCommand extends EnhancerCommand {
     private int numberOfLimit = 100;
     private List<String> pathPatterns;
     private boolean skipJDKTrace;
+    private int smartTrace = 0;
 
     @Argument(argName = "class-pattern", index = 0)
     @Description("Class name pattern, use either '.' or '/' as separator")
@@ -86,6 +87,12 @@ public class TraceCommand extends EnhancerCommand {
         this.skipJDKTrace = skipJDKTrace;
     }
 
+    @Option(shortName = "s", longName = "smartTrace")
+    @Description("smart trace times")
+    public void setSmartTrace(int smartTrace) {
+        this.smartTrace = smartTrace;
+    }
+
     public String getClassPattern() {
         return classPattern;
     }
@@ -114,8 +121,12 @@ public class TraceCommand extends EnhancerCommand {
         return pathPatterns;
     }
 
+    public int getSmartTrace() {
+        return smartTrace;
+    }
+
     @Override
-    protected Matcher getClassNameMatcher() {
+    protected Matcher<String> getClassNameMatcher() {
         if (classNameMatcher == null) {
             if (pathPatterns == null || pathPatterns.isEmpty()) {
                 classNameMatcher = SearchUtils.classNameMatcher(getClassPattern(), isRegEx());
@@ -127,7 +138,7 @@ public class TraceCommand extends EnhancerCommand {
     }
 
     @Override
-    protected Matcher getMethodNameMatcher() {
+    protected Matcher<String> getMethodNameMatcher() {
         if (methodNameMatcher == null) {
             if (pathPatterns == null || pathPatterns.isEmpty()) {
                 methodNameMatcher = SearchUtils.classNameMatcher(getMethodPattern(), isRegEx());

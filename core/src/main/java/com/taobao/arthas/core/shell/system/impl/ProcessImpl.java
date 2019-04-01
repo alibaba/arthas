@@ -524,6 +524,9 @@ public class ProcessImpl implements Process {
 
         @Override
         public void register(int enhanceLock, AdviceListener listener) {
+            if (processStatus != ExecStatus.RUNNING) {
+                throw new IllegalStateException("Cannot register when " + status().name().toLowerCase());
+            }
             this.enhanceLock = enhanceLock;
             AdviceWeaver.reg(enhanceLock, listener);
         }
