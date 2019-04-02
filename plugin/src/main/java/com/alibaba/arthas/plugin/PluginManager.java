@@ -2,10 +2,11 @@ package com.alibaba.arthas.plugin;
 
 import java.io.File;
 import java.lang.instrument.Instrumentation;
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Properties;
-import java.util.concurrent.CopyOnWriteArrayList;
 
 import com.alibaba.arthas.deps.org.slf4j.Logger;
 import com.alibaba.arthas.deps.org.slf4j.LoggerFactory;
@@ -17,7 +18,7 @@ import com.alibaba.arthas.deps.org.slf4j.LoggerFactory;
  */
 public class PluginManager {
     private ClassLoader parentClassLoader = PluginManager.class.getClassLoader();
-    private List<Plugin> plugins = new CopyOnWriteArrayList<Plugin>();
+    private List<Plugin> plugins = new ArrayList<Plugin>();
 
     private Instrumentation instrumentation;
 
@@ -47,6 +48,8 @@ public class PluginManager {
         } catch (Exception e) {
             throw new PluginException("scan plugins error.", e);
         }
+
+        Collections.sort(plugins, new PluginComparator());
 
     }
 
@@ -91,6 +94,7 @@ public class PluginManager {
         if (plugin != null && plugin.state() == PluginState.STOPED) {
             if (plugin instanceof ArthasPlugin) {
                 ((ArthasPlugin) plugin).uninstall();
+                this.plugins.remove(plugin);
             }
         }
     }
@@ -120,7 +124,19 @@ public class PluginManager {
     }
 
     synchronized public List<Plugin> allPlugins() {
-        return Collections.unmodifiableList(plugins);
+        ArrayList<Plugin> result = new ArrayList<Plugin>(plugins.size());
+        Collections.copy(result, plugins);
+        return result;
+    }
+
+    synchronized public void enablePlugins() {
+        for (Plugin plugin : plugins) {
+            try {
+                plugin.enabled();
+            } catch (PluginException e) {
+                logger.error("enabled plugin {} error.", plugin.name(), e);
+            }
+        }
     }
 
     synchronized public void initPlugins() throws PluginException {
@@ -171,5 +187,14 @@ public class PluginManager {
 
     public Properties properties() {
         return this.properties;
+    }
+
+    public static class PluginComparator implements Comparator<Plugin> {
+
+        @Override
+        public int compare(Plugin p1, Plugin p2) {
+            return p1.order() - p2.order();
+        }
+
     }
 }

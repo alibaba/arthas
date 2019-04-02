@@ -11,7 +11,7 @@ public class PluginConfig {
     private String name;
     private String pluginActivator;
 
-    private int order;
+    private int order = ArthasPlugin.DEFAULT_ORDER;
 
     public String getVersion() {
         return version;

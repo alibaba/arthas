@@ -64,7 +64,7 @@ public class PluginsCommand extends AnnotatedCommand {
                 if (findPlugin != null) {
                     pluginMaanger.startPlugin(startPlugin);
                     process.write("Start plugin " + startPlugin + " success.\n");
-                }else {
+                } else {
                     process.write("Can not find plugin " + startPlugin + "\n");
                 }
             } else if (this.stopPlugin != null) {
@@ -72,25 +72,26 @@ public class PluginsCommand extends AnnotatedCommand {
                 if (findPlugin != null) {
                     pluginMaanger.stopPlugin(stopPlugin);
                     process.write("Stop plugin " + stopPlugin + " success.\n");
-                }else {
+                } else {
                     process.write("Can not find plugin " + stopPlugin + "\n");
                 }
-            } else if(this.uninstallPlugin != null) {
+            } else if (this.uninstallPlugin != null) {
                 Plugin findPlugin = pluginMaanger.findPlugin(uninstallPlugin);
                 if (findPlugin != null) {
                     pluginMaanger.uninstallPlugin(uninstallPlugin);
                     process.write("Uninstall plugin " + uninstallPlugin + " success.\n");
-                }else {
+                } else {
                     process.write("Can not find plugin " + uninstallPlugin + "\n");
                 }
-            }
-            else {
+            } else {
                 TableElement table = new TableElement().leftCellPadding(1).rightCellPadding(1);
-                table.row(true, label("Name").style(Decoration.bold.bold()),
-                                label("State").style(Decoration.bold.bold()));
+                table.row(true, label("Order").style(Decoration.bold.bold()),
+                                label("Name").style(Decoration.bold.bold()),
+                                label("State").style(Decoration.bold.bold()),
+                                label("Location").style(Decoration.bold.bold()));
 
                 for (Plugin plugin : pluginMaanger.allPlugins()) {
-                    table.row(plugin.name(), "" + plugin.state(), plugin.location().toString());
+                    table.row("" + plugin.order(), plugin.name(), "" + plugin.state(), plugin.location().toString());
                 }
                 process.write(RenderUtil.render(table, process.width()));
             }
@@ -100,12 +101,5 @@ public class PluginsCommand extends AnnotatedCommand {
         process.end(exitCode);
 
     }
-
-    // @Override
-    // public void complete(Completion completion) {
-    // if (!CompletionUtils.completeFilePath(completion)) {
-    // super.complete(completion);
-    // }
-    // }
 
 }

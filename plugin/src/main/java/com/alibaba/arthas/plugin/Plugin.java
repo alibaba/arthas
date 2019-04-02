@@ -9,11 +9,15 @@ import java.net.URL;
  */
 public interface Plugin {
 
+    boolean enabled() throws PluginException;
+
     void init() throws PluginException;
 
     void start() throws PluginException;
 
     void stop() throws PluginException;
+
+    int order();
 
     PluginState state();
 

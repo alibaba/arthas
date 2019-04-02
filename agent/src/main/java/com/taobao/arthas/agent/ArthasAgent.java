@@ -97,6 +97,8 @@ public class ArthasAgent {
 
             pluginManager.scanPlugins(new File(arthasHome, "plugins"));
 
+            pluginManager.enablePlugins();
+
             pluginManager.initPlugins();
 
             pluginManager.startPlugins();

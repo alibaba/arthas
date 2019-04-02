@@ -1,14 +1,15 @@
 package com.alibaba.arthas.plugin;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.lang.instrument.Instrumentation;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Properties;
+import java.util.Set;
 
 import com.taobao.arthas.common.IOUtils;
 import com.taobao.arthas.common.properties.PropertiesInjectUtil;
@@ -19,6 +20,8 @@ import com.taobao.arthas.common.properties.PropertiesInjectUtil;
  *
  */
 public class ArthasPlugin implements Plugin {
+
+    public static final int DEFAULT_ORDER = 1000;
 
     private URL location;
 
@@ -35,19 +38,31 @@ public class ArthasPlugin implements Plugin {
 
     public ArthasPlugin(URL location, Instrumentation instrumentation, ClassLoader parentClassLoader,
                     Properties gobalProperties) throws PluginException {
+        this(location, Collections.<URL>emptySet(), instrumentation, parentClassLoader, gobalProperties);
+    }
+
+    public ArthasPlugin(URL location, Set<URL> extraURLs, Instrumentation instrumentation,
+                    ClassLoader parentClassLoader, Properties gobalProperties) throws PluginException {
+
         this.location = location;
         this.parentClassLoader = parentClassLoader;
         this.state = PluginState.NONE;
 
-        File propertiesFile = new File(location.getFile(), "conf/arthas-plugin.properties");
+        List<URL> urls = new ArrayList<URL>();
+        urls.addAll(extraURLs);
+        urls.addAll(scanPluginUrls());
+
+        classLoader = new PlguinClassLoader(urls.toArray(new URL[0]), parentClassLoader);
+
+        URL pluginPropertiesURL = classLoader.getResource("arthas-plugin.properties");
+
         Properties properties = new Properties();
         properties.putAll(gobalProperties);
-
-        if (propertiesFile.exists()) {
+        if (pluginPropertiesURL != null) {
             try {
-                properties.load(new FileInputStream(propertiesFile));
+                properties.load(pluginPropertiesURL.openStream());
             } catch (IOException e) {
-                throw new PluginException("load plugin properties error, directory: " + location.getFile(), e);
+                throw new PluginException("load plugin properties error, url: " + pluginPropertiesURL, e);
             }
         }
 
@@ -58,54 +73,45 @@ public class ArthasPlugin implements Plugin {
     }
 
     @Override
-    public void init() throws PluginException {
-        // TODO 支持 jar
-        File libDir = new File(location.getFile(), "lib");
-        File[] listFiles = libDir.listFiles();
-        List<URL> urls = new ArrayList<URL>();
-        if (listFiles != null) {
-            for (File file : listFiles) {
-                if (file.getName().endsWith(".jar")) {
-                    try {
-                        urls.add(file.toURI().toURL());
-                    } catch (MalformedURLException e) {
-                        throw new PluginException("", e);
-                    }
-                }
-            }
-        }
-
-        classLoader = new PlguinClassLoader(urls.toArray(new URL[0]), parentClassLoader);
-
+    public boolean enabled() throws PluginException {
+        boolean enabled = false;
         try {
             Class<?> activatorClass = classLoader.loadClass(pluginConfig.getPluginActivator());
             pluginActivator = (PluginActivator) activatorClass.newInstance();
-            if (!pluginActivator.enabled(pluginContext)) {
+            enabled = pluginActivator.enabled(pluginContext);
+            if (!enabled) {
                 this.state = PluginState.DISABLED;
             }
+        } catch (Exception e) {
+            throw new PluginException("check enabled plugin error, plugin name: " + pluginConfig.getName(), e);
+        }
+        return enabled;
+    }
+
+    @Override
+    public void init() throws PluginException {
+        try {
+            pluginActivator.init(pluginContext);
         } catch (Exception e) {
             throw new PluginException("init plugin error, plugin name: " + pluginConfig.getName(), e);
         }
     }
 
     @Override
-    public void start() {
+    public void start() throws PluginException {
         try {
             pluginActivator.start(pluginContext);
         } catch (Exception e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+            throw new PluginException("start plugin error, plugin name: " + pluginConfig.getName(), e);
         }
     }
 
     @Override
-    public void stop() {
-        // TODO Auto-generated method stub
+    public void stop() throws PluginException {
         try {
             pluginActivator.stop(pluginContext);
         } catch (Exception e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+            throw new PluginException("stop plugin error, plugin name: " + pluginConfig.getName(), e);
         }
     }
 
@@ -133,5 +139,37 @@ public class ArthasPlugin implements Plugin {
     public URL location() {
         return location;
     }
+
+    @Override
+    public int order() {
+        return pluginConfig.getOrder();
+    }
+
+    private List<URL> scanPluginUrls() throws PluginException {
+        File libDir = new File(location.getFile(), "lib");
+        File[] listFiles = libDir.listFiles();
+        List<URL> urls = new ArrayList<URL>();
+        try {
+            if (listFiles != null) {
+                for (File file : listFiles) {
+                    if (file.getName().endsWith(".jar")) {
+
+                        urls.add(file.toURI().toURL());
+
+                    }
+                }
+            }
+
+            File confDir = new File(location.getFile(), "conf");
+            if (confDir.isDirectory()) {
+                urls.add(confDir.toURI().toURL());
+            }
+        } catch (MalformedURLException e) {
+            throw new PluginException("", e);
+        }
+
+        return urls;
+    }
+
 
 }
