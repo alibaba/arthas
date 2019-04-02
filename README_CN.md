@@ -383,6 +383,7 @@ $ classloader
 ![哈啰出行](static/hellobike.png)
 ![hollycrm](static/hollycrm.png)
 ![citycloud](static/citycloud.jpg)
+![yidianzixun](static/yidianzixun.png)
 
 ### Credit
 
