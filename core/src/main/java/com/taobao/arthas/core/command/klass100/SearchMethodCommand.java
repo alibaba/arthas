@@ -157,13 +157,13 @@ public class SearchMethodCommand extends AnnotatedCommand {
     public void complete(Completion completion) {
         int argumentIndex = CompletionUtils.detectArgumentIndex(completion);
 
-        if(argumentIndex == 1) {
-            if(!CompletionUtils.completeClassName(completion)) {
+        if (argumentIndex == 1) {
+            if (!CompletionUtils.completeClassName(completion)) {
                 super.complete(completion);
             }
             return;
-        }else if(argumentIndex == 2) {
-            if(!CompletionUtils.completeMethodName(completion)) {
+        } else if (argumentIndex == 2) {
+            if (!CompletionUtils.completeMethodName(completion)) {
                 super.complete(completion);
             }
             return;
