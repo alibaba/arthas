@@ -3,11 +3,15 @@ package com.taobao.arthas.core.command.hidden;
 import com.taobao.arthas.core.GlobalOptions;
 import com.taobao.arthas.core.Option;
 import com.taobao.arthas.core.command.Constants;
+import com.taobao.arthas.core.shell.cli.CliToken;
+import com.taobao.arthas.core.shell.cli.Completion;
+import com.taobao.arthas.core.shell.cli.CompletionUtils;
 import com.taobao.arthas.core.shell.command.AnnotatedCommand;
 import com.taobao.arthas.core.shell.command.CommandProcess;
+import com.taobao.arthas.core.util.StringUtils;
+import com.taobao.arthas.core.util.TokenUtils;
 import com.taobao.arthas.core.util.matcher.EqualsMatcher;
 import com.taobao.arthas.core.util.matcher.Matcher;
-import com.taobao.arthas.core.util.StringUtils;
 import com.taobao.arthas.core.util.matcher.RegexMatcher;
 import com.taobao.arthas.core.util.reflect.FieldUtils;
 import com.taobao.middleware.cli.annotations.Argument;
@@ -22,6 +26,7 @@ import com.taobao.text.util.RenderUtil;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
 import static com.taobao.arthas.core.util.ArthasCheckUtils.isIn;
 import static com.taobao.text.ui.Element.label;
@@ -69,18 +74,38 @@ public class OptionsCommand extends AnnotatedCommand {
         }
     }
 
+    /**
+     * complete first argument(options-name), other case use default complete
+     *
+     * @param completion the completion object
+     */
+    @Override
+    public void complete(Completion completion) {
+        int argumentIndex = CompletionUtils.detectArgumentIndex(completion);
+        List<CliToken> lineTokens = completion.lineTokens();
+        if (argumentIndex == 1) {
+            String laseToken = TokenUtils.getLast(lineTokens).value().trim();
+            //prefix match options-name
+            String pattern = "^" + laseToken + ".*";
+            Collection<String> optionNames = findOptionNames(new RegexMatcher(pattern));
+            CompletionUtils.complete(completion, optionNames);
+        } else {
+            super.complete(completion);
+        }
+    }
+
     private void processShow(CommandProcess process) throws IllegalAccessException {
-        Collection<Field> fields = findOptions(new RegexMatcher(".*"));
+        Collection<Field> fields = findOptionFields(new RegexMatcher(".*"));
         process.write(RenderUtil.render(drawShowTable(fields), process.width()));
     }
 
     private void processShowName(CommandProcess process) throws IllegalAccessException {
-        Collection<Field> fields = findOptions(new EqualsMatcher<String>(optionName));
+        Collection<Field> fields = findOptionFields(new EqualsMatcher<String>(optionName));
         process.write(RenderUtil.render(drawShowTable(fields), process.width()));
     }
 
     private void processChangeNameValue(CommandProcess process) throws IllegalAccessException {
-        Collection<Field> fields = findOptions(new EqualsMatcher<String>(optionName));
+        Collection<Field> fields = findOptionFields(new EqualsMatcher<String>(optionName));
 
         // name not exists
         if (fields.isEmpty()) {
@@ -132,7 +157,7 @@ public class OptionsCommand extends AnnotatedCommand {
     }
 
 
-    /*
+    /**
      * 判断当前动作是否需要展示整个options
      */
     private boolean isShow() {
@@ -140,28 +165,40 @@ public class OptionsCommand extends AnnotatedCommand {
     }
 
 
-    /*
+    /**
      * 判断当前动作是否需要展示某个Name的值
      */
     private boolean isShowName() {
         return !StringUtils.isBlank(optionName) && StringUtils.isBlank(optionValue);
     }
 
-    private Collection<Field> findOptions(Matcher optionNameMatcher) {
+    private Collection<Field> findOptionFields(Matcher<String> optionNameMatcher) {
         final Collection<Field> matchFields = new ArrayList<Field>();
         for (final Field optionField : FieldUtils.getAllFields(GlobalOptions.class)) {
-            if (!optionField.isAnnotationPresent(Option.class)) {
-                continue;
+            if (isMatchOptionAnnotation(optionField, optionNameMatcher)) {
+                matchFields.add(optionField);
             }
-
-            final Option optionAnnotation = optionField.getAnnotation(Option.class);
-            if (optionAnnotation != null
-                    && !optionNameMatcher.matching(optionAnnotation.name())) {
-                continue;
-            }
-            matchFields.add(optionField);
         }
         return matchFields;
+    }
+
+    private Collection<String> findOptionNames(Matcher<String> optionNameMatcher) {
+        final Collection<String> matchOptionNames = new ArrayList<String>();
+        for (final Field optionField : FieldUtils.getAllFields(GlobalOptions.class)) {
+            if (isMatchOptionAnnotation(optionField, optionNameMatcher)) {
+                final Option optionAnnotation = optionField.getAnnotation(Option.class);
+                matchOptionNames.add(optionAnnotation.name());
+            }
+        }
+        return matchOptionNames;
+    }
+
+    private boolean isMatchOptionAnnotation(Field optionField, Matcher<String> optionNameMatcher) {
+        if (!optionField.isAnnotationPresent(Option.class)) {
+            return false;
+        }
+        final Option optionAnnotation = optionField.getAnnotation(Option.class);
+        return optionAnnotation != null && optionNameMatcher.matching(optionAnnotation.name());
     }
 
     private Element drawShowTable(Collection<Field> optionFields) throws IllegalAccessException {
