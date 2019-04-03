@@ -164,6 +164,13 @@ public abstract class EnhancerCommand extends AnnotatedCommand {
         }
     }
 
+    /**
+     * Predicted affect of the command matches. Prediction may be differences from real affect.
+     *
+     * @param process         the CommandProcess
+     * @param enhanceClassSet matched class
+     * @return Whether to continue
+     */
     private boolean safeEnhance(CommandProcess process, Set<Class<?>> enhanceClassSet) {
         try {
             if (enhanceClassSet.size() > WEARING_CLASS_SIZE) {
