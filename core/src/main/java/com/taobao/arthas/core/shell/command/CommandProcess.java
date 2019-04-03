@@ -41,6 +41,11 @@ public interface CommandProcess extends Tty {
      */
     boolean isForeground();
 
+    /**
+     *
+     */
+    boolean isRunning();
+
     CommandProcess stdinHandler(Handler<String> handler);
 
     /**
@@ -121,9 +126,9 @@ public interface CommandProcess extends Tty {
 
     /**
      * Register listener
-     * 
+     *
      * @param lock the lock for enhance class
-     * @param listener 
+     * @param listener
      */
     void register(int lock, AdviceListener listener);
 
@@ -134,7 +139,7 @@ public interface CommandProcess extends Tty {
 
     /**
      * Execution times
-     * 
+     *
      * @return execution times
      */
     AtomicInteger times();
@@ -150,8 +155,16 @@ public interface CommandProcess extends Tty {
     void suspend();
 
     /**
+     *
+     * @throws InterruptedException
+     */
+    void waitFor() throws InterruptedException;
+
+    void notice();
+
+    /**
      * echo tips
-     * 
+     *
      * @param tips process tips
      */
     void echoTips(String tips);

@@ -6,6 +6,7 @@ import com.taobao.arthas.core.util.matcher.RegexMatcher;
 import com.taobao.arthas.core.util.matcher.WildcardMatcher;
 
 import java.lang.instrument.Instrumentation;
+import java.lang.reflect.Method;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
@@ -131,6 +132,16 @@ public class SearchUtils {
                 if (clazz.getName().startsWith(c.getName())) {
                     matches.add(clazz);
                 }
+            }
+        }
+        return matches;
+    }
+
+    public static Set<Method> searchClassMethod(Class clazz, Matcher<String> methodNameMatcher) {
+        final Set<Method> matches = new HashSet<Method>();
+        for (Method method : clazz.getDeclaredMethods()) {
+            if (methodNameMatcher.matching(method.getName())) {
+                matches.add(method);
             }
         }
         return matches;

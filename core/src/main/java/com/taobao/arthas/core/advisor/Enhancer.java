@@ -1,6 +1,9 @@
 package com.taobao.arthas.core.advisor;
 
 import com.taobao.arthas.core.GlobalOptions;
+import com.taobao.arthas.core.command.monitor200.EnhancerCommand;
+import com.taobao.arthas.core.shell.command.CommandProcess;
+import com.taobao.arthas.core.shell.handlers.shell.YContinueHandler;
 import com.taobao.arthas.core.util.Constants;
 import com.taobao.arthas.core.util.FileUtils;
 import com.taobao.arthas.core.util.LogUtil;
@@ -25,6 +28,7 @@ import java.util.*;
 
 import static com.taobao.arthas.core.util.ArthasCheckUtils.isEquals;
 import static java.lang.System.arraycopy;
+import static java.lang.System.nanoTime;
 import static org.objectweb.asm.ClassReader.EXPAND_FRAMES;
 import static org.objectweb.asm.ClassWriter.COMPUTE_FRAMES;
 import static org.objectweb.asm.ClassWriter.COMPUTE_MAXS;
@@ -237,7 +241,7 @@ public class Enhancer implements ClassFileTransformer {
      */
     private static boolean isSelf(Class<?> clazz) {
         return null != clazz
-                && isEquals(clazz.getClassLoader(), Enhancer.class.getClassLoader());
+               && isEquals(clazz.getClassLoader(), Enhancer.class.getClassLoader());
     }
 
     /**
@@ -259,34 +263,39 @@ public class Enhancer implements ClassFileTransformer {
                 || clazz.equals(Class.class) || clazz.equals(Integer.class) || clazz.equals(Method.class);
     }
 
-    /**
-     * 对象增强
-     *
-     * @param inst              inst
-     * @param adviceId          通知ID
-     * @param isTracing         可跟踪方法调用
-     * @param classNameMatcher  类名匹配
-     * @param methodNameMatcher 方法名匹配
-     * @return 增强影响范围
-     * @throws UnmodifiableClassException 增强失败
-     */
-    public static synchronized EnhancerAffect enhance(
-            final Instrumentation inst,
-            final int adviceId,
-            final boolean isTracing,
-            final boolean skipJDKTrace,
-            final Matcher classNameMatcher,
-            final Matcher methodNameMatcher) throws UnmodifiableClassException {
-
-        final EnhancerAffect affect = new EnhancerAffect();
-
+    public static Set<Class<?>> findEnhanceClass(Instrumentation inst, Matcher<String> classNameMatcher) {
         // 获取需要增强的类集合
         final Set<Class<?>> enhanceClassSet = GlobalOptions.isDisableSubClass
-                ? SearchUtils.searchClass(inst, classNameMatcher)
-                : SearchUtils.searchSubClass(inst, SearchUtils.searchClass(inst, classNameMatcher));
+                                              ? SearchUtils.searchClass(inst, classNameMatcher)
+                                              : SearchUtils.searchSubClass(inst, SearchUtils.searchClass(inst, classNameMatcher));
 
         // 过滤掉无法被增强的类
         filter(enhanceClassSet);
+        return enhanceClassSet;
+    }
+
+    /**
+     * 对象增强
+     *
+     * @param process           the command process
+     * @param adviceId          the advice id
+     * @param isTracing         is tracing
+     * @param skipJDKTrace      is skip jdk method
+     * @param methodNameMatcher method name matcher
+     * @param enhanceClassSet   will enhance set
+     * @return affect
+     * @throws UnmodifiableClassException exception
+     */
+    public static synchronized EnhancerAffect enhance(
+        final CommandProcess process,
+        final int adviceId,
+        final boolean isTracing,
+        final boolean skipJDKTrace,
+        Matcher<String> methodNameMatcher,
+        Set<Class<?>> enhanceClassSet) throws UnmodifiableClassException {
+
+        final EnhancerAffect affect = new EnhancerAffect();
+        Instrumentation inst = process.session().getInstrumentation();
 
         // 构建增强器
         final Enhancer enhancer = new Enhancer(adviceId, isTracing, skipJDKTrace, enhanceClassSet, methodNameMatcher, affect);

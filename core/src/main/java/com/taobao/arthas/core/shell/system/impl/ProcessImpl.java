@@ -412,6 +412,11 @@ public class ProcessImpl implements Process {
         }
 
         @Override
+        public boolean isRunning() {
+            return processStatus == ExecStatus.RUNNING;
+        }
+
+        @Override
         public int width() {
             return tty.width();
         }
@@ -549,13 +554,24 @@ public class ProcessImpl implements Process {
         }
 
         @Override
+        public synchronized void waitFor() throws InterruptedException {
+            wait();
+        }
+
+        @Override
+        public synchronized void notice() {
+            notifyAll();
+        }
+
+        @Override
         public void end() {
             end(0);
         }
 
         @Override
-        public void end(int statusCode) {
+        public synchronized void end(int statusCode) {
             terminate(statusCode, null);
+            notifyAll();
         }
     }
 

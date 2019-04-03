@@ -1,9 +1,7 @@
 package com.taobao.arthas.core.command.monitor200;
 
-import java.lang.instrument.Instrumentation;
 import java.lang.instrument.UnmodifiableClassException;
-import java.util.Collections;
-import java.util.List;
+import java.util.Set;
 
 import com.taobao.arthas.core.advisor.AdviceListener;
 import com.taobao.arthas.core.advisor.Enhancer;
@@ -14,9 +12,11 @@ import com.taobao.arthas.core.shell.command.AnnotatedCommand;
 import com.taobao.arthas.core.shell.command.CommandProcess;
 import com.taobao.arthas.core.shell.handlers.command.CommandInterruptHandler;
 import com.taobao.arthas.core.shell.handlers.shell.QExitHandler;
+import com.taobao.arthas.core.shell.handlers.shell.YContinueHandler;
 import com.taobao.arthas.core.shell.session.Session;
 import com.taobao.arthas.core.util.Constants;
 import com.taobao.arthas.core.util.LogUtil;
+import com.taobao.arthas.core.util.SearchUtils;
 import com.taobao.arthas.core.util.affect.EnhancerAffect;
 import com.taobao.arthas.core.util.matcher.Matcher;
 import com.taobao.middleware.logger.Logger;
@@ -27,26 +27,27 @@ import com.taobao.middleware.logger.Logger;
 public abstract class EnhancerCommand extends AnnotatedCommand {
 
     private static final Logger logger = LogUtil.getArthasLogger();
-    protected static final List<String> EMPTY = Collections.emptyList();
+    private static final int WEARING_CLASS_SIZE = 10;
+    private static final int WEARING_METHOD_SIZE = 50;
     public static final String[] EXPRESS_EXAMPLES = { "params", "returnObj", "throwExp", "target", "clazz", "method",
                                                        "{params,returnObj}", "params[0]" };
 
-    protected Matcher classNameMatcher;
-    protected Matcher methodNameMatcher;
+    protected Matcher<String> classNameMatcher;
+    protected Matcher<String> methodNameMatcher;
 
     /**
      * 类名匹配
      *
      * @return 获取类名匹配
      */
-    protected abstract Matcher getClassNameMatcher();
+    protected abstract Matcher<String> getClassNameMatcher();
 
     /**
      * 方法名匹配
      *
      * @return 获取方法名匹配
      */
-    protected abstract Matcher getMethodNameMatcher();
+    protected abstract Matcher<String> getMethodNameMatcher();
 
     /**
      * 获取监听器
@@ -97,7 +98,6 @@ public abstract class EnhancerCommand extends AnnotatedCommand {
         }
         int lock = session.getLock();
         try {
-            Instrumentation inst = session.getInstrumentation();
             AdviceListener listener = getAdviceListener(process);
             if (listener == null) {
                 warn(process, "advice listener is null");
@@ -107,10 +107,19 @@ public abstract class EnhancerCommand extends AnnotatedCommand {
             if(listener instanceof AbstractTraceAdviceListener) {
                 skipJDKTrace = ((AbstractTraceAdviceListener) listener).getCommand().isSkipJDKTrace();
             }
-
-            EnhancerAffect effect = Enhancer.enhance(inst, lock, listener instanceof InvokeTraceable,
-                    skipJDKTrace, getClassNameMatcher(), getMethodNameMatcher());
-
+            Set<Class<?>> enhanceClassSet = Enhancer.findEnhanceClass(session.getInstrumentation(), getClassNameMatcher());
+            if (!safeEnhance(process, enhanceClassSet)) {
+                return;
+            }
+            EnhancerAffect effect = Enhancer.enhance(process, lock,
+                                                     listener instanceof InvokeTraceable,
+                                                     skipJDKTrace,
+                                                     getMethodNameMatcher(),
+                                                     enhanceClassSet);
+            if (effect == null) {
+                process.end();
+                return;
+            }
             if (effect.cCnt() == 0 || effect.mCnt() == 0) {
                 // no class effected
                 // might be method code too large
@@ -155,4 +164,39 @@ public abstract class EnhancerCommand extends AnnotatedCommand {
         }
     }
 
+    private boolean safeEnhance(CommandProcess process, Set<Class<?>> enhanceClassSet) {
+        try {
+            if (enhanceClassSet.size() > WEARING_CLASS_SIZE) {
+                process.write("Predicted affect class-cnt:" + enhanceClassSet.size() + ", are you sure to continue?(y/n):");
+                process.stdinHandler(new YContinueHandler(process));
+                try {
+                    process.waitFor();
+                } catch (InterruptedException e) {
+                    return false;
+                }
+            }
+            if (!process.isRunning()) {
+                return false;
+            }
+            int matchMethodCnt = 0;
+            for (Class<?> clazz : enhanceClassSet) {
+                matchMethodCnt += SearchUtils.searchClassMethod(clazz, getMethodNameMatcher()).size();
+            }
+            if (matchMethodCnt > WEARING_METHOD_SIZE) {
+                process.write("Predicted affect method-cnt:" + matchMethodCnt + ", are you sure to continue?(y/n):");
+                process.stdinHandler(new YContinueHandler(process));
+                try {
+                    process.waitFor();
+                } catch (InterruptedException e) {
+                    return false;
+                }
+            }
+        } catch (Throwable t) {
+            logger.warn("safe enhance error", t);
+            process.write("safe enhance error, exception message: " + t.getMessage()
+                          + ", please check $HOME/logs/arthas/arthas.log for more details. \n");
+            return false;
+        }
+        return process.isRunning();
+    }
 }
