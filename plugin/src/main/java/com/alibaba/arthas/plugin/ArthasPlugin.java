@@ -11,6 +11,8 @@ import java.util.List;
 import java.util.Properties;
 import java.util.Set;
 
+import com.alibaba.arthas.deps.org.slf4j.Logger;
+import com.alibaba.arthas.deps.org.slf4j.LoggerFactory;
 import com.taobao.arthas.common.IOUtils;
 import com.taobao.arthas.common.properties.PropertiesInjectUtil;
 
@@ -20,6 +22,7 @@ import com.taobao.arthas.common.properties.PropertiesInjectUtil;
  *
  */
 public class ArthasPlugin implements Plugin {
+    private static final Logger logger = LoggerFactory.getLogger(PluginManager.class);
 
     public static final int DEFAULT_ORDER = 1000;
 
@@ -79,10 +82,15 @@ public class ArthasPlugin implements Plugin {
             Class<?> activatorClass = classLoader.loadClass(pluginConfig.getPluginActivator());
             pluginActivator = (PluginActivator) activatorClass.newInstance();
             enabled = pluginActivator.enabled(pluginContext);
-            if (!enabled) {
+            if (enabled) {
+                this.state = PluginState.ENABLED;
+            } else {
                 this.state = PluginState.DISABLED;
+                logger.info("plugin {} disabled.", this.pluginConfig.getName());
             }
-        } catch (Exception e) {
+
+        } catch (Throwable e) {
+            this.state = PluginState.ERROR;
             throw new PluginException("check enabled plugin error, plugin name: " + pluginConfig.getName(), e);
         }
         return enabled;
@@ -92,7 +100,8 @@ public class ArthasPlugin implements Plugin {
     public void init() throws PluginException {
         try {
             pluginActivator.init(pluginContext);
-        } catch (Exception e) {
+        } catch (Throwable e) {
+            this.state = PluginState.ERROR;
             throw new PluginException("init plugin error, plugin name: " + pluginConfig.getName(), e);
         }
     }
@@ -101,7 +110,8 @@ public class ArthasPlugin implements Plugin {
     public void start() throws PluginException {
         try {
             pluginActivator.start(pluginContext);
-        } catch (Exception e) {
+        } catch (Throwable e) {
+            this.state = PluginState.ERROR;
             throw new PluginException("start plugin error, plugin name: " + pluginConfig.getName(), e);
         }
     }
@@ -110,7 +120,8 @@ public class ArthasPlugin implements Plugin {
     public void stop() throws PluginException {
         try {
             pluginActivator.stop(pluginContext);
-        } catch (Exception e) {
+        } catch (Throwable e) {
+            this.state = PluginState.ERROR;
             throw new PluginException("stop plugin error, plugin name: " + pluginConfig.getName(), e);
         }
     }
@@ -170,6 +181,5 @@ public class ArthasPlugin implements Plugin {
 
         return urls;
     }
-
 
 }

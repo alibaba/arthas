@@ -8,6 +8,6 @@ package com.alibaba.arthas.plugin;
  */
 public enum PluginState {
 
-    NONE, DISABLED, INITING, INITED, STARTING, STARTED, STOPPING, STOPED
+    NONE, ENABLED, DISABLED, INITING, INITED, STARTING, STARTED, STOPPING, STOPED, ERROR
 
 }

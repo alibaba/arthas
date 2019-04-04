@@ -30,6 +30,8 @@ public class PluginsCommand extends AnnotatedCommand {
 
     private String uninstallPlugin;
 
+    private boolean reScanPlugins;
+
     @Option(shortName = "l", longName = "list")
     @Description("List plugins")
     public void setListPlugins(boolean listPlugins) {
@@ -52,6 +54,12 @@ public class PluginsCommand extends AnnotatedCommand {
     @Description("Uninstall plugin")
     public void setUninstallPlugin(String plugin) {
         this.uninstallPlugin = plugin;
+    }
+
+    @Option(longName = "rescan")
+    @Description("Rescan plugin")
+    public void setReScan(boolean reScanPlugins) {
+        this.reScanPlugins = reScanPlugins;
     }
 
     @Override
@@ -83,7 +91,11 @@ public class PluginsCommand extends AnnotatedCommand {
                 } else {
                     process.write("Can not find plugin " + uninstallPlugin + "\n");
                 }
-            } else {
+            }  else if( this.reScanPlugins) {
+                pluginMaanger.scanPlugins();
+                process.write("Rescan plugins success.\n");
+            }
+            else {
                 TableElement table = new TableElement().leftCellPadding(1).rightCellPadding(1);
                 table.row(true, label("Order").style(Decoration.bold.bold()),
                                 label("Name").style(Decoration.bold.bold()),
@@ -96,6 +108,7 @@ public class PluginsCommand extends AnnotatedCommand {
                 process.write(RenderUtil.render(table, process.width()));
             }
         } catch (Throwable e) {
+            process.write("Error: " + e.getMessage() + "\n");
             logger.error(null, null, e);
         }
         process.end(exitCode);

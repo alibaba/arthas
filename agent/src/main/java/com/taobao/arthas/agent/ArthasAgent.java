@@ -9,7 +9,6 @@ import java.util.Properties;
 
 import com.alibaba.arthas.deps.org.slf4j.Logger;
 import com.alibaba.arthas.deps.org.slf4j.LoggerFactory;
-import com.alibaba.arthas.plugin.PluginException;
 import com.alibaba.arthas.plugin.PluginManager;
 import com.taobao.arthas.common.FeatureCodec;
 
@@ -92,10 +91,10 @@ public class ArthasAgent {
         properties.putAll(map);
 
         logger.debug("PluginManager properties: {}", properties);
-        pluginManager = new PluginManager(inst, properties);
         try {
+            pluginManager = new PluginManager(inst, properties, new File(arthasHome, "plugins").toURI().toURL());
 
-            pluginManager.scanPlugins(new File(arthasHome, "plugins"));
+            pluginManager.scanPlugins();
 
             pluginManager.enablePlugins();
 
@@ -103,7 +102,7 @@ public class ArthasAgent {
 
             pluginManager.startPlugins();
 
-        } catch (PluginException e) {
+        } catch (Exception e) {
             logger.error("PluginManager error", e);
             e.printStackTrace();
         }

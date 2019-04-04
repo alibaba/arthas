@@ -2,6 +2,7 @@ package com.alibaba.arthas.plugin;
 
 import java.io.File;
 import java.lang.instrument.Instrumentation;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -17,6 +18,8 @@ import com.alibaba.arthas.deps.org.slf4j.LoggerFactory;
  *
  */
 public class PluginManager {
+    private static final Logger logger = LoggerFactory.getLogger(PluginManager.class);
+
     private ClassLoader parentClassLoader = PluginManager.class.getClassLoader();
     private List<Plugin> plugins = new ArrayList<Plugin>();
 
@@ -24,33 +27,37 @@ public class PluginManager {
 
     private Properties properties;
 
-    private static final Logger logger = LoggerFactory.getLogger(PluginManager.class);
+    private List<URL> scanPluginlLoacations = new ArrayList<URL>();
 
-    public PluginManager(Instrumentation instrumentation, Properties properties) {
+    public PluginManager(Instrumentation instrumentation, Properties properties, URL scanPluginLocation) {
         this.instrumentation = instrumentation;
         this.properties = properties;
+        this.scanPluginlLoacations.add(scanPluginLocation);
     }
 
     // 可能会执行多次
-    synchronized public void scanPlugins(File dir) throws PluginException {
-        try {
-            File[] files = dir.listFiles();
-            if (files != null) {
-                for (File file : files) {
-                    if (!file.isHidden() && file.isDirectory()) {
-                        ArthasPlugin plugin = new ArthasPlugin(file.toURI().toURL(), instrumentation, parentClassLoader, properties);
-                        if (!containsPlugin(plugin.name())) {
-                            plugins.add(plugin);
+    synchronized public void scanPlugins() throws PluginException {
+        for (URL scanLocation : scanPluginlLoacations) {
+            File dir = new File(scanLocation.getFile());
+            try {
+                File[] files = dir.listFiles();
+                if (files != null) {
+                    for (File file : files) {
+                        if (!file.isHidden() && file.isDirectory()) {
+                            ArthasPlugin plugin = new ArthasPlugin(file.toURI().toURL(), instrumentation,
+                                            parentClassLoader, properties);
+                            if (!containsPlugin(plugin.name())) {
+                                plugins.add(plugin);
+                            }
                         }
                     }
                 }
+            } catch (Exception e) {
+                throw new PluginException("scan plugins error.", e);
             }
-        } catch (Exception e) {
-            throw new PluginException("scan plugins error.", e);
         }
 
         Collections.sort(plugins, new PluginComparator());
-
     }
 
     synchronized public boolean containsPlugin(String name) {
@@ -73,19 +80,25 @@ public class PluginManager {
 
     public void startPlugin(String name) throws PluginException {
         Plugin plugin = findPlugin(name);
-        if (plugin != null && (plugin.state() == PluginState.NONE || plugin.state() == PluginState.STOPED)) {
-            updateState(plugin, PluginState.INITING);
-            logger.info("Init plugin, name: {}", plugin.name());
-            plugin.init();
-            logger.info("Init plugin success, name: {}", plugin.name());
-            updateState(plugin, PluginState.INITED);
-        }
-        if (plugin != null && plugin.state() == PluginState.INITED) {
-            updateState(plugin, PluginState.STARTING);
-            logger.info("Start plugin, name: {}", plugin.name());
-            plugin.start();
-            logger.info("Start plugin success, name: {}", plugin.name());
-            updateState(plugin, PluginState.STARTED);
+        if (plugin != null) {
+            if (plugin.state() == PluginState.NONE || plugin.state() == PluginState.STOPED) {
+                plugin.enabled();
+            }
+            if (plugin.state() == PluginState.ENABLED) {
+                updateState(plugin, PluginState.INITING);
+                logger.info("Init plugin, name: {}", plugin.name());
+                plugin.init();
+                logger.info("Init plugin success, name: {}", plugin.name());
+                updateState(plugin, PluginState.INITED);
+            }
+
+            if (plugin.state() == PluginState.INITED) {
+                updateState(plugin, PluginState.STARTING);
+                logger.info("Start plugin, name: {}", plugin.name());
+                plugin.start();
+                logger.info("Start plugin success, name: {}", plugin.name());
+                updateState(plugin, PluginState.STARTED);
+            }
         }
     }
 
@@ -112,8 +125,9 @@ public class PluginManager {
 
     public void enablePlugin(String name) {
         Plugin plugin = findPlugin(name);
-        if (plugin != null && plugin.state() == PluginState.DISABLED) {
-            updateState(plugin, PluginState.NONE);
+        if (plugin != null && (plugin.state() == PluginState.DISABLED || plugin.state() == PluginState.NONE
+                        || plugin.state() == PluginState.STOPED)) {
+            updateState(plugin, PluginState.ENABLED);
         }
     }
 
@@ -125,7 +139,7 @@ public class PluginManager {
 
     synchronized public List<Plugin> allPlugins() {
         ArrayList<Plugin> result = new ArrayList<Plugin>(plugins.size());
-        Collections.copy(result, plugins);
+        result.addAll(plugins);
         return result;
     }
 
@@ -142,7 +156,7 @@ public class PluginManager {
     synchronized public void initPlugins() throws PluginException {
         logger.info("Init available plugins");
         for (Plugin plugin : plugins) {
-            if (plugin.state() == PluginState.NONE) {
+            if (plugin.state() == PluginState.ENABLED) {
                 updateState(plugin, PluginState.INITING);
                 logger.info("Init plugin, name: {}", plugin.name());
                 plugin.init();
