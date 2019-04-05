@@ -2,6 +2,7 @@ package com.taobao.arthas.core.shell.cli;
 
 import com.taobao.arthas.core.shell.session.Session;
 import com.taobao.arthas.core.shell.term.Tty;
+import com.taobao.arthas.core.util.Constants;
 import com.taobao.arthas.core.util.SearchUtils;
 import com.taobao.arthas.core.util.StringUtils;
 import com.taobao.arthas.core.util.usage.StyledUsageFormatter;
@@ -12,7 +13,9 @@ import io.termd.core.util.Helper;
 
 import java.io.File;
 import java.lang.instrument.Instrumentation;
+import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -200,17 +203,11 @@ public class CompletionUtils {
         List<CliToken> tokens = completion.lineTokens();
         String lastToken = completion.lineTokens().get(tokens.size() - 1).value();
 
-        // retrieve the class name
-        String className;
         if (StringUtils.isBlank(lastToken)) {
-            // tokens = { " ", "CLASS_NAME", " "}
-            className = tokens.get(tokens.size() - 2).value();
-        } else {
-            // tokens = { " ", "CLASS_NAME", " ", "PARTIAL_METHOD_NAME"}
-            className = tokens.get(tokens.size() - 3).value();
+            lastToken = "";
         }
 
-        Set<Class<?>> results = SearchUtils.searchClassOnly(completion.session().getInstrumentation(), className, 2);
+        Set<Class<?>> results = searchClass(completion);
         if (results.isEmpty() || results.size() > 1) {
             // no class found or multiple class found
             completion.complete(Collections.<String>emptyList());
@@ -236,6 +233,70 @@ public class CompletionUtils {
             CompletionUtils.complete(completion, res);
             return true;
         }
+    }
+
+    public static boolean completeStaticFieldName(Completion completion) {
+        List<CliToken> tokens = completion.lineTokens();
+        String lastToken = completion.lineTokens().get(tokens.size() - 1).value();
+
+        if (StringUtils.isBlank(lastToken)) {
+            lastToken = "";
+        }
+
+        Set<Class<?>> results = searchClass(completion);
+        if (results.isEmpty() || results.size() > 1) {
+            // no class found or multiple class found
+            completion.complete(Collections.<String>emptyList());
+            return true;
+        }
+
+        Class<?> clazz = results.iterator().next();
+
+        List<String> res = new ArrayList<String>();
+
+        for (Field field : clazz.getDeclaredFields()) {
+            if (Modifier.isStatic(field.getModifiers())) {
+                if (StringUtils.isBlank(lastToken)) {
+                    res.add(field.getName());
+                } else if (field.getName().startsWith(lastToken)){
+                    res.add(field.getName());
+                }
+            }
+        }
+
+        if (res.size() == 1) {
+            completion.complete(res.get(0).substring(lastToken.length()), true);
+            return true;
+        } else {
+            CompletionUtils.complete(completion, res);
+            return true;
+        }
+    }
+
+    /**
+     * 找到已经输入的className匹配的class
+     * @param completion
+     * @return
+     */
+    private static Set<Class<?>> searchClass(Completion completion) {
+        List<CliToken> tokens = completion.lineTokens();
+        String lastToken = completion.lineTokens().get(tokens.size() - 1).value();
+
+        if (StringUtils.isBlank(lastToken)) {
+            lastToken = "";
+        }
+
+        // retrieve the class name
+        String className;
+        if (StringUtils.isBlank(lastToken)) {
+            // tokens = { " ", "CLASS_NAME", " "}
+            className = tokens.get(tokens.size() - 2).value();
+        } else {
+            // tokens = { " ", "CLASS_NAME", " ", "PARTIAL_METHOD_NAME"}
+            className = tokens.get(tokens.size() - 3).value();
+        }
+
+        return SearchUtils.searchClassOnly(completion.session().getInstrumentation(), className, 2);
     }
 
     /**

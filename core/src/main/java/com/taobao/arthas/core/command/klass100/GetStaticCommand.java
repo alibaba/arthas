@@ -3,6 +3,8 @@ package com.taobao.arthas.core.command.klass100;
 import com.taobao.arthas.core.command.Constants;
 import com.taobao.arthas.core.command.express.ExpressException;
 import com.taobao.arthas.core.command.express.ExpressFactory;
+import com.taobao.arthas.core.shell.cli.Completion;
+import com.taobao.arthas.core.shell.cli.CompletionUtils;
 import com.taobao.arthas.core.shell.command.AnnotatedCommand;
 import com.taobao.arthas.core.shell.command.CommandProcess;
 import com.taobao.arthas.core.util.LogUtil;
@@ -30,6 +32,7 @@ import com.taobao.text.util.RenderUtil;
 import java.lang.instrument.Instrumentation;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
+import java.util.HashSet;
 import java.util.Set;
 
 import static com.taobao.text.ui.Element.label;
@@ -110,6 +113,24 @@ public class GetStaticCommand extends AnnotatedCommand {
         }
     }
 
+    @Override
+    public void complete(Completion completion) {
+        int argumentIndex = CompletionUtils.detectArgumentIndex(completion);
+        if (argumentIndex == 1) {
+            if (!CompletionUtils.completeClassName(completion)) {
+                super.complete(completion);
+            }
+            return;
+        } else if (argumentIndex == 2) {
+            if (!CompletionUtils.completeStaticFieldName(completion)) {
+                super.complete(completion);
+            }
+            return;
+        }
+
+        super.complete(completion);
+    }
+
     private void processExactMatch(CommandProcess process, RowAffect affect, Instrumentation inst,
                                    Set<Class<?>> matchedClasses) {
         Matcher<String> fieldNameMatcher = fieldNameMatcher();
@@ -117,7 +138,6 @@ public class GetStaticCommand extends AnnotatedCommand {
         Class<?> clazz = matchedClasses.iterator().next();
 
         boolean found = false;
-
         for (Field field : clazz.getDeclaredFields()) {
             if (!Modifier.isStatic(field.getModifiers()) || !fieldNameMatcher.matching(field.getName())) {
                 continue;
