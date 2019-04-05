@@ -200,6 +200,10 @@ public class CompletionUtils {
         List<CliToken> tokens = completion.lineTokens();
         String lastToken = completion.lineTokens().get(tokens.size() - 1).value();
 
+        if (StringUtils.isBlank(lastToken)) {
+            lastToken = "";
+        }
+
         // retrieve the class name
         String className;
         if (StringUtils.isBlank(lastToken)) {
