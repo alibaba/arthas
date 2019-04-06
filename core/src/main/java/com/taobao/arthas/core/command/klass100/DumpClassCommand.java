@@ -2,6 +2,8 @@ package com.taobao.arthas.core.command.klass100;
 
 import com.taobao.arthas.core.advisor.Enhancer;
 import com.taobao.arthas.core.command.Constants;
+import com.taobao.arthas.core.shell.cli.Completion;
+import com.taobao.arthas.core.shell.cli.CompletionUtils;
 import com.taobao.arthas.core.shell.command.AnnotatedCommand;
 import com.taobao.arthas.core.shell.command.CommandProcess;
 import com.taobao.arthas.core.util.LogUtil;
@@ -103,6 +105,12 @@ public class DumpClassCommand extends AnnotatedCommand {
         }
     }
 
+    @Override
+    public void complete(Completion completion) {
+        if (!CompletionUtils.completeClassName(completion)) {
+            super.complete(completion);
+        }
+    }
 
     private void processMatch(CommandProcess process, RowAffect effect, Instrumentation inst, Set<Class<?>> matchedClasses) {
         try {
