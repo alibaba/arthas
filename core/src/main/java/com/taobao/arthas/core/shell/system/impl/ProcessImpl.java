@@ -557,6 +557,11 @@ public class ProcessImpl implements Process {
         public void end(int statusCode) {
             terminate(statusCode, null);
         }
+
+        @Override
+        public boolean isRunning() {
+            return processStatus == ExecStatus.RUNNING;
+        }
     }
 
     static class ProcessOutput {
