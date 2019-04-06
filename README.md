@@ -390,6 +390,7 @@ Welcome to register the company name in this issue: https://github.com/alibaba/a
 ![hollycrm](static/hollycrm.png)
 ![citycloud](static/citycloud.jpg)
 ![yidianzixun](static/yidianzixun.png)
+![神州租车](static/zuche.png)
 
 ### Credit
 
