@@ -468,8 +468,10 @@ public class TimeTunnelCommand extends EnhancerCommand {
                 }
                 long beginTime = System.nanoTime();
                 TableElement table = TimeTunnelTable.createDefaultTable();
-                // empty line separator
-                process.write("\n");
+                if (i != 0) {
+                    // empty line separator
+                    process.write("\n");
+                }
                 TimeTunnelTable.drawPlayHeader(className, methodName, objectAddress, index, table);
                 TimeTunnelTable.drawParameters(advice, table, isNeedExpand(), expand);
 
