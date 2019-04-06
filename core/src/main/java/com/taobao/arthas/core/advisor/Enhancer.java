@@ -171,7 +171,7 @@ public class Enhancer implements ClassFileTransformer {
             // 成功计数
             affect.cCnt(1);
 
-            // 排遣间谍
+            // 派遣间谍
             try {
                 spy(inClassLoader);
             } catch (Throwable t) {
