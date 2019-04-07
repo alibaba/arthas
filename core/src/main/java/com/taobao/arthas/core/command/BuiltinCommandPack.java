@@ -12,6 +12,7 @@ import com.taobao.arthas.core.command.basic1000.ShutdownCommand;
 import com.taobao.arthas.core.command.basic1000.SystemEnvCommand;
 import com.taobao.arthas.core.command.basic1000.SystemPropertyCommand;
 import com.taobao.arthas.core.command.basic1000.VersionCommand;
+import com.taobao.arthas.core.command.extention.SpringBeanCommand;
 import com.taobao.arthas.core.command.hidden.JulyCommand;
 import com.taobao.arthas.core.command.hidden.OptionsCommand;
 import com.taobao.arthas.core.command.hidden.ThanksCommand;
@@ -89,5 +90,6 @@ public class BuiltinCommandPack implements CommandResolver {
         commands.add(Command.create(HistoryCommand.class));
         commands.add(Command.create(CatCommand.class));
         commands.add(Command.create(PwdCommand.class));
+        commands.add(Command.create(SpringBeanCommand.class));
     }
 }

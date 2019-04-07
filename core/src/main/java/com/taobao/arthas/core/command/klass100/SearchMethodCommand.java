@@ -14,6 +14,7 @@ import com.taobao.arthas.core.shell.cli.Completion;
 import com.taobao.arthas.core.shell.cli.CompletionUtils;
 import com.taobao.arthas.core.shell.command.AnnotatedCommand;
 import com.taobao.arthas.core.shell.command.CommandProcess;
+import com.taobao.arthas.core.util.MethodUtils;
 import com.taobao.arthas.core.util.SearchUtils;
 import com.taobao.arthas.core.util.StringUtils;
 import com.taobao.arthas.core.util.TypeRenderUtils;
@@ -137,7 +138,9 @@ public class SearchMethodCommand extends AnnotatedCommand {
                 .row(label("annotation").style(bold.bold()), label(TypeRenderUtils.drawAnnotation(method)))
                 .row(label("parameters").style(bold.bold()), label(TypeRenderUtils.drawParameters(method)))
                 .row(label("return").style(bold.bold()), label(TypeRenderUtils.drawReturn(method)))
-                .row(label("exceptions").style(bold.bold()), label(TypeRenderUtils.drawExceptions(method)));
+                .row(label("exceptions").style(bold.bold()), label(TypeRenderUtils.drawExceptions(method)))
+                .row(label("description").style(bold.bold()), label(MethodUtils.getDesc(method)))
+                .row(label("methodHashCode").style(bold.bold()), label(MethodUtils.hashCode(method)));
         return table;
     }
 

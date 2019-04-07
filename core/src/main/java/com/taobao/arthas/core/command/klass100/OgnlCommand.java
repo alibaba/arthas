@@ -93,7 +93,7 @@ public class OgnlCommand extends AnnotatedCommand {
         }
     }
 
-    private static ClassLoader findClassLoader(Instrumentation inst, String hashCode) {
+    public static ClassLoader findClassLoader(Instrumentation inst, String hashCode) {
         for (Class<?> clazz : inst.getAllLoadedClasses()) {
             ClassLoader classLoader = clazz.getClassLoader();
             if (classLoader != null && hashCode.equals(Integer.toHexString(classLoader.hashCode()))) {
