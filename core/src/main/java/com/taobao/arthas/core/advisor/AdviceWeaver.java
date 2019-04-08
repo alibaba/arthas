@@ -777,7 +777,7 @@ public class AdviceWeaver extends ClassVisitor implements Opcodes {
 
             /**
              * 加载返回值
-             * @param opcode 操作吗
+             * @param opcode 操作码
              */
             private void loadReturn(int opcode) {
                 switch (opcode) {
