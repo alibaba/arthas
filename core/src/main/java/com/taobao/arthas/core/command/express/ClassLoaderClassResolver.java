@@ -34,6 +34,9 @@ public class ClassLoaderClassResolver implements ClassResolver {
                     classes.put("java.lang." + className, result);
                 }
             }
+            if (result == null) {
+                return null;
+            }
             classes.put(className, result);
         }
         return result;

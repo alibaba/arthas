@@ -95,8 +95,17 @@ public class GlobalOptions {
             name = "job-timeout",
             summary = "Option to job timeout",
             description = "This option setting job timeout,The unit can be d, h, m, s for day, hour, minute, second. "
-                    + "1d is one day in default"
+                    + "1d is one day in default."
     )
     public static volatile String jobTimeout = "1d";
 
+    /**
+     * Spring applicationContext express
+     */
+    @Option(level = 3,
+        name = "spring-application-context",
+        summary = "Spring application context",
+        description = "A ognl express to get spring applicationContext."
+    )
+    public static volatile String springApplicationContextExpress;
 }
