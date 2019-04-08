@@ -7,8 +7,6 @@ import com.taobao.arthas.core.command.Constants;
 import com.taobao.arthas.core.command.express.Express;
 import com.taobao.arthas.core.command.express.ExpressFactory;
 import com.taobao.arthas.core.command.klass100.OgnlCommand;
-import com.taobao.arthas.core.shell.cli.CliToken;
-import com.taobao.arthas.core.shell.cli.CliTokens;
 import com.taobao.arthas.core.shell.command.AnnotatedCommand;
 import com.taobao.arthas.core.shell.command.CommandProcess;
 import com.taobao.arthas.core.util.LogUtil;
@@ -27,8 +25,6 @@ import com.taobao.text.util.RenderUtil;
 
 import java.lang.reflect.Method;
 import java.util.Arrays;
-import java.util.Iterator;
-import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -144,7 +140,6 @@ public class SpringBeanCommand extends AnnotatedCommand {
             } else {
                 classLoader = OgnlCommand.findClassLoader(process.session().getInstrumentation(), classHashCode);
             }
-//            parseOgnl(process);
             Object beanFactory = getBeanFactory();
             if (isShow) {
                 show(beanFactory, process);
