@@ -47,7 +47,7 @@
 
     <groupId>com.taobao.arthas</groupId>
     <artifactId>arthas-all</artifactId>
-    <version>3.0.5-SNAPSHOT</version>
+    <version>3.1.1-SNAPSHOT</version>
     <packaging>pom</packaging>
 
     <name>arthas-all</name>
@@ -56,9 +56,13 @@
 
     <modules>
         <module>spy</module>
+        <module>common</module>
         <module>core</module>
         <module>agent</module>
         <module>client</module>
+        <module>memorycompiler</module>
+        <module>boot</module>
+        <module>demo</module>
         <module>testcase</module>
         <module>site</module>
         <module>packaging</module>
@@ -75,22 +79,22 @@
             <dependency>
                 <groupId>org.ow2.asm</groupId>
                 <artifactId>asm</artifactId>
-                <version>6.0</version>
+                <version>7.0</version>
             </dependency>
             <dependency>
                 <groupId>org.ow2.asm</groupId>
                 <artifactId>asm-commons</artifactId>
-                <version>6.0</version>
+                <version>7.0</version>
             </dependency>
             <dependency>
                 <groupId>com.alibaba.middleware</groupId>
                 <artifactId>termd-core</artifactId>
-                <version>1.1.5</version>
+                <version>1.1.7.2</version>
             </dependency>
             <dependency>
                 <groupId>com.alibaba.middleware</groupId>
                 <artifactId>cli</artifactId>
-                <version>1.0.1</version>
+                <version>1.0.2</version>
             </dependency>
             <dependency>
                 <groupId>org.slf4j</groupId>
@@ -130,19 +134,13 @@
             <dependency>
                 <groupId>ognl</groupId>
                 <artifactId>ognl</artifactId>
-                <version>3.1.12</version>
+                <version>3.1.19</version>
             </dependency>
             <dependency>
                 <groupId>junit</groupId>
                 <artifactId>junit</artifactId>
                 <version>4.11</version>
                 <scope>test</scope>
-            </dependency>
-            <dependency>
-                <groupId>org.powermock</groupId>
-                <artifactId>powermock-module-javaagent</artifactId>
-                <version>1.7.4</version>
-                <scope>provided</scope>
             </dependency>
 
             <dependency>
@@ -170,6 +168,13 @@
                 <artifactId>netty-codec-http</artifactId>
                 <version>4.1.29.Final</version>
             </dependency>
+
+            <dependency>
+                <groupId>jline</groupId>
+                <artifactId>jline</artifactId>
+                <version>2.14.6</version>
+            </dependency>
+
         </dependencies>
     </dependencyManagement>
 
@@ -224,6 +229,19 @@
                         </goals>
                     </execution>
                 </executions>
+            </plugin>
+
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>cobertura-maven-plugin</artifactId>
+                <version>2.7</version>
+                <configuration>
+                    <formats>
+                        <format>html</format>
+                        <format>xml</format>
+                    </formats>
+                    <check />
+                </configuration>
             </plugin>
         </plugins>
     </build>

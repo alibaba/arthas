@@ -1,0 +1,233 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css" integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS"
+        crossorigin="anonymous">
+
+    <script src="https://cdn.jsdelivr.net/npm/vue@2.6.4/dist/vue.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/axios@0.18.0/index.min.js"></script>
+
+    <title>Arthas Tutorials</title>
+
+    <style>
+        /* This is all that's required */
+        .dropdown-item-checked::before {
+        position: absolute;
+        left: .4rem;
+        content: '✓';
+        font-weight: 600;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Optional JavaScript -->
+    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
+        crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.6/umd/popper.min.js" integrity="sha384-wHAiFfRlMFy6i5SRaxvfOCifBUQy1xHdJ/yoi7FRNXMRBu5WHdZYu1hA6ZOblgut"
+        crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/js/bootstrap.min.js" integrity="sha384-B0UglyR+jN6CkvvICOB2joaf5I4l3gm9GU6Hc1og6Ls7i6U/mkkaduKaBhlAXv9k"
+        crossorigin="anonymous"></script>
+
+    <script src="https://katacoda.com/embed.js"></script>
+
+    <div id="app">
+
+        <nav class="navbar navbar-expand navbar-light bg-light flex-column flex-md-row bd-navbar">
+            <a href="https://github.com/alibaba/arthas" target="_blank" title="" class="navbar-brand">
+                <img v-bind:src="logoUrl()" alt="Arthas" title="Welcome to Arthas web console" style="height: 25px;"
+                    class="img-responsive">
+            </a>
+
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
+                aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                <ul class="navbar-nav mr-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" v-bind:href="docUrl()" target="_blank">Documentation
+                            <span class="sr-only">(current)</span></a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="https://github.com/alibaba/arthas" target="_blank">Github</a>
+                    </li>
+
+                    <li class="nav-item dropdown active show">
+                        <!-- <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenu2" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            Dropdown
+                          </button> -->
+                        <a class="nav-item nav-link dropdown-toggle mr-md-2" href="#" id="bd-tutorials" data-toggle="dropdown"
+                            aria-haspopup="true" aria-expanded="true">
+                            {{currentTutorialName()}}
+                        </a>
+                        <div class="dropdown-menu" aria-labelledby="bd-tutorials">
+                            <a v-for="tutorial in tutorials" v-bind:class="{ 'dropdown-item-checked': tutorial.id === tutorialId }"
+                                class="dropdown-item" v-bind:href='currentUrl() + "?language=" + language + "&id=" + tutorial.id'>
+                                {{ tutorial.names[language] }}
+                            </a>
+                        </div>
+
+                    </li>
+                </ul>
+            </div>
+
+            <form class="form-inline my-2 my-lg-0">
+
+                <div class="col">
+                    <div class="input-group ">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text" id="language-addon">Language</span>
+                        </div>
+                        <select class="form-control" v-model="language" class="custom-select" v-on:change="languageChange($event)">
+                            <option v-for="l in languages" v-bind:value="l.value">
+                                {{ l.text }}
+                            </option>
+                        </select>
+                    </div>
+            </form>
+
+        </nav>
+
+
+        <div id="kata-container" class="container-fluid px-0">
+
+            <div id="katacoda-scenario-1" v-bind:data-katacoda-id="currentKatacodaId()" data-katacoda-color="004d7f"
+                v-bind:style="{height: (calculateKataSize().height - 5) + 'px'  }">
+            </div>
+        </div>
+
+    </div>
+</body>
+
+
+<script>
+    /** get params in url **/
+    function getUrlParam(name, url) {
+        if (!url) url = window.location.href;
+        name = name.replace(/[\[\]]/g, '\\$&');
+        var regex = new RegExp('[?&]' + name + '(=([^&#]*)|&|#|$)'),
+            results = regex.exec(url);
+        if (!results) return null;
+        if (!results[2]) return '';
+        return decodeURIComponent(results[2].replace(/\+/g, ' '));
+    }
+
+    var app = new Vue({
+        el: '#app',
+        data: {
+            message: 'Hello Vue!',
+            language: 'en',
+            languages: [
+                { text: 'English', value: 'en' },
+                { text: '中文', value: 'cn' }
+            ],
+            tutorialId: "arthas-basics",
+            tutorials: [
+                {
+                    id: "arthas-basics",
+                    names: {
+                        en: "Arthas Basics",
+                        cn: "Arthas基础教程",
+                    },
+                    ids: {
+                        en: "arthas-basics-en",
+                        cn: "arthas-basics-cn",
+                    }
+                },
+                {
+                    id: "arthas-advanced",
+                    names: {
+                        en: "Arthas Advanced",
+                        cn: "Arthas进阶教程",
+                    },
+                    ids: {
+                        en: "arthas-advanced-en",
+                        cn: "arthas-advanced-cn",
+                    }
+                }
+            ],
+        },
+        methods: {
+            languageChange: function (event) {
+                // alert(event.target.value)
+                window.location = this.currentUrl() + "?language=" + this.language + "&id=" + this.tutorialId;
+            },
+            currentUrl: function () {
+                return window.location.href.split(/[?#]/)[0];
+            },
+            logoUrl: function () {
+                var url = this.currentUrl();
+                return url.substring(0, url.lastIndexOf('/')) + "/_static/logo.png";
+            },
+            docUrl: function () {
+                if (this.language === "en") {
+                    return "https://alibaba.github.io/arthas/en";
+                } else {
+                    return "https://alibaba.github.io/arthas";
+                }
+            },
+            currentTutorialName: function () {
+                for (index in this.tutorials) {
+                    if (this.tutorials[index].id == this.tutorialId) {
+                        return this.tutorials[index].names[this.language];
+                    }
+                }
+
+            },
+            currentKatacodaId: function () {
+                // https://katacoda.com/embed/hengyunabc/arthas-advanced-cn/?embed=true
+                for (index in this.tutorials) {
+                    if (this.tutorials[index].id == this.tutorialId) {
+                        return "hengyunabc/" + this.tutorials[index].ids[this.language];
+                    }
+                }
+            },
+            calculateKataSize: function () {
+                var e = window;
+                var a = 'inner';
+                if (!('innerWidth' in window)) {
+                    a = 'client';
+                    e = document.documentElement || document.body;
+                }
+                var terminalDiv = document.getElementById("kata-container");
+                var terminalDivRect = terminalDiv.getBoundingClientRect();
+                return {
+                    width: terminalDivRect.width,
+                    height: e[a + 'Height'] - terminalDivRect.top
+                };
+            }
+        },
+        beforeMount() {
+            var l = getUrlParam('language');
+            if (l != null) {
+                this.language = l;
+            }
+            var id = getUrlParam('id');
+            if (id != null) {
+                this.tutorialId = id;
+            }
+        }
+    })
+
+</script>
+
+<script>
+    var _hmt = _hmt || [];
+    (function () {
+        var hm = document.createElement("script");
+        hm.src = "https://hm.baidu.com/hm.js?d5c5e25b100f0eb51a4c35c8a86ea9b4";
+        var s = document.getElementsByTagName("script")[0];
+        s.parentNode.insertBefore(hm, s);
+    })();
+</script>
+
+</html>

@@ -136,7 +136,9 @@ public class Ansi {
     };
 
     public static void setDetector(final Callable<Boolean> detector) {
-        if (detector == null) throw new IllegalArgumentException();
+        if (detector == null) {
+            throw new IllegalArgumentException();
+        }
         Ansi.detector = detector;
     }
 
@@ -391,7 +393,7 @@ public class Ansi {
     }
 
     public Ansi bgCyan() {
-        return this.fg(Color.CYAN);
+        return this.bg(Color.CYAN);
     }
 
     public Ansi bgDefault() {
@@ -698,8 +700,9 @@ public class Ansi {
     }
 
     private void flushAttributes() {
-        if (attributeOptions.isEmpty())
+        if (attributeOptions.isEmpty()) {
             return;
+        }
         if (attributeOptions.size() == 1 && attributeOptions.get(0) == 0) {
             builder.append(FIRST_ESC_CHAR);
             builder.append(SECOND_ESC_CHAR);

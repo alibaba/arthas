@@ -15,7 +15,6 @@ import java.util.Map;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
 
 import static com.taobao.arthas.core.util.ArthasCheckUtils.isEquals;
@@ -163,7 +162,7 @@ class MonitorAdviceListener extends ReflectAdviceListenerAdapter {
             if (monitorData.isEmpty()) {
                 return;
             }
-            // 超过次数上限，则不在输出，命令终止
+            // 超过次数上限，则不再输出，命令终止
             if (process.times().getAndIncrement() >= limit) {
                 this.cancel();
                 abortProcess(process, limit);

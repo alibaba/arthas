@@ -22,89 +22,52 @@ stack
 
 请参考[表达式核心变量](advice-class.md)中关于该节点的描述。
 
-* 特殊用法请参考：TODO middleware-container/arthas/issues/263
-* OGNL表达式官网：https://commons.apache.org/proper/commons-ognl/language-guide.html
+* 特殊用法请参考：[https://github.com/alibaba/arthas/issues/71](https://github.com/alibaba/arthas/issues/71)
+* OGNL表达式官网：[https://commons.apache.org/proper/commons-ognl/language-guide.html](https://commons.apache.org/proper/commons-ognl/language-guide.html)
 
 ### 使用例子
 
-> 注意：如果表达式里面包含了引号，那么需要把整个表达式用引号括起来，如果表达式中没有包含引号，那么可以不用引号。当然，一个好的习惯是，不管表达式中有没有引号，都使用引号括起来。
+#### 启动 Demo
 
-```
-$ stack com.alibaba.sample.petstore.dal.dao.ProductDao getProductById 'params[0]=="K9-BD-01"'
+启动[快速入门](quick-start.md)里的`arthas-demo`。
+
+#### stack
+
+```bash
+$ stack demo.MathGame primeFactors
 Press Ctrl+C to abort.
-Affect(class-cnt:1 , method-cnt:1) cost in 51 ms.
-thread_name="http-bio-8080-exec-4" thread_id=0x4a;is_daemon=true;priority=5;
-    @com.alibaba.sample.petstore.dal.dao.ibatis.IbatisProductDao.getProductById()
-        at com.alibaba.sample.petstore.web.store.module.screen.ItemList.execute(ItemList.java:50)
-        at com.alibaba.sample.petstore.web.store.module.screen.ItemList$$FastClassByCGLIB$$40b2f45f.invoke(<generated>:-1)
-        at net.sf.cglib.reflect.FastMethod.invoke(FastMethod.java:53)
-        at com.alibaba.citrus.service.moduleloader.impl.adapter.MethodInvoker.invoke(MethodInvoker.java:70)
-        at com.alibaba.citrus.service.moduleloader.impl.adapter.DataBindingAdapter.executeAndReturn(DataBindingAdapter.java:41)
-        at com.alibaba.citrus.turbine.pipeline.valve.PerformScreenValve.performScreenModule(PerformScreenValve.java:111)
-        at com.alibaba.citrus.turbine.pipeline.valve.PerformScreenValve.invoke(PerformScreenValve.java:74)
-        at com.alibaba.citrus.service.pipeline.impl.PipelineImpl$PipelineContextImpl.invokeNext(PipelineImpl.java:157)
-        at com.alibaba.citrus.turbine.pipeline.valve.PerformActionValve.invoke(PerformActionValve.java:73)
-        at com.alibaba.citrus.service.pipeline.impl.PipelineImpl$PipelineContextImpl.invokeNext(PipelineImpl.java:157)
-        at com.alibaba.citrus.service.pipeline.impl.PipelineImpl$PipelineContextImpl.invoke(PipelineImpl.java:210)
-......
-
-thread_name="http-bio-8080-exec-2" thread_id=0x48;is_daemon=true;priority=5;
-    @com.alibaba.sample.petstore.dal.dao.ibatis.IbatisProductDao.getProductById()
-        at com.alibaba.sample.petstore.web.store.module.screen.ItemList.execute(ItemList.java:50)
-        at com.alibaba.sample.petstore.web.store.module.screen.ItemList$$FastClassByCGLIB$$40b2f45f.invoke(<generated>:-1)
-        at net.sf.cglib.reflect.FastMethod.invoke(FastMethod.java:53)
-        at com.alibaba.citrus.service.moduleloader.impl.adapter.MethodInvoker.invoke(MethodInvoker.java:70)
-        at com.alibaba.citrus.service.moduleloader.impl.adapter.DataBindingAdapter.executeAndReturn(DataBindingAdapter.java:41)
-        at com.alibaba.citrus.turbine.pipeline.valve.PerformScreenValve.performScreenModule(PerformScreenValve.java:111)
-        at com.alibaba.citrus.turbine.pipeline.valve.PerformScreenValve.invoke(PerformScreenValve.java:74)
-        at com.alibaba.citrus.service.pipeline.impl.PipelineImpl$PipelineContextImpl.invokeNext(PipelineImpl.java:157)
-        at com.alibaba.citrus.turbine.pipeline.valve.PerformActionValve.invoke(PerformActionValve.java:73)
-        at com.alibaba.citrus.service.pipeline.impl.PipelineImpl$PipelineContextImpl.invokeNext(PipelineImpl.java:157)
-        at com.alibaba.citrus.service.pipeline.impl.PipelineImpl$PipelineContextImpl.invoke(PipelineImpl.java:210)
-        at com.alibaba.citrus.service.pipeline.impl.valve.ChooseValve.invoke(ChooseValve.java:98)
-        at com.alibaba.citrus.service.pipeline.impl.PipelineImpl$PipelineContextImpl.invokeNext(PipelineImpl.java:157)
-......
+Affect(class-cnt:1 , method-cnt:1) cost in 36 ms.
+ts=2018-12-04 01:32:19;thread_name=main;id=1;is_daemon=false;priority=5;TCCL=sun.misc.Launcher$AppClassLoader@3d4eac69
+    @demo.MathGame.run()
+        at demo.MathGame.main(MathGame.java:16)
 ```
 
-按照耗时查询: 
+#### 据条件表达式来过滤
 
-```
-$ stack com.alibaba.sample.petstore.web.store.module.screen.ItemList execute #cost>30
+```bash
+$ stack demo.MathGame primeFactors 'params[0]<0' -n 2
 Press Ctrl+C to abort.
-Affect(class-cnt:1 , method-cnt:1) cost in 123 ms.
-stack com.alibaba.sample.petstore.web.store.module.screen.ItemList execute #cost>30
-thread_name=http-nio-8080-exec-10;id=31;is_daemon=true;priority=5;TCCL=com.taobao.pandora.boot.embedded.tomcat.TomcatEmbeddedWebappClassLoader
-    @com.alibaba.sample.petstore.web.store.module.screen.ItemList.execute()
-        at com.alibaba.sample.petstore.web.store.module.screen.ItemList$$FastClassByCGLIB$$40b2f45f.invoke(<generated>:-1)
-        at net.sf.cglib.reflect.FastMethod.invoke(FastMethod.java:53)
-        at com.alibaba.citrus.service.moduleloader.impl.adapter.MethodInvoker.invoke(MethodInvoker.java:70)
-        at com.alibaba.citrus.service.moduleloader.impl.adapter.DataBindingAdapter.executeAndReturn(DataBindingAdapter.java:41)
-        at com.alibaba.citrus.turbine.pipeline.valve.PerformScreenValve.performScreenModule(PerformScreenValve.java:111)
-        at com.alibaba.citrus.turbine.pipeline.valve.PerformScreenValve.invoke(PerformScreenValve.java:74)
-        at com.alibaba.citrus.service.pipeline.impl.PipelineImpl$PipelineContextImpl.invokeNext(PipelineImpl.java:157)
-        at com.alibaba.citrus.turbine.pipeline.valve.PerformActionValve.invoke(PerformActionValve.java:73)
-        at com.alibaba.citrus.service.pipeline.impl.PipelineImpl$PipelineContextImpl.invokeNext(PipelineImpl.java:157)
-        at com.alibaba.citrus.service.pipeline.impl.PipelineImpl$PipelineContextImpl.invoke(PipelineImpl.java:210)
-        at com.alibaba.citrus.service.pipeline.impl.valve.ChooseValve.invoke(ChooseValve.java:98)
-        at com.alibaba.citrus.service.pipeline.impl.PipelineImpl$PipelineContextImpl.invokeNext(PipelineImpl.java:157)
-        at com.alibaba.citrus.service.pipeline.impl.PipelineImpl$PipelineContextImpl.invoke(PipelineImpl.java:210)
-        at com.alibaba.citrus.service.pipeline.impl.valve.LoopValve.invokeBody(LoopValve.java:105)
-        at com.alibaba.citrus.service.pipeline.impl.valve.LoopValve.invoke(LoopValve.java:83)
-        at com.alibaba.citrus.service.pipeline.impl.PipelineImpl$PipelineContextImpl.invokeNext(PipelineImpl.java:157)
-        at com.alibaba.citrus.turbine.pipeline.valve.PageAuthorizationValve.invoke(PageAuthorizationValve.java:105)
-        at com.alibaba.citrus.service.pipeline.impl.PipelineImpl$PipelineContextImpl.invokeNext(PipelineImpl.java:157)
-        at com.alibaba.citrus.turbine.pipeline.valve.CheckCsrfTokenValve.invoke(CheckCsrfTokenValve.java:123)
-        at com.alibaba.citrus.service.pipeline.impl.PipelineImpl$PipelineContextImpl.invokeNext(PipelineImpl.java:157)
-        at com.alibaba.citrus.turbine.pipeline.valve.AnalyzeURLValve.invoke(AnalyzeURLValve.java:126)
-        at com.alibaba.citrus.service.pipeline.impl.PipelineImpl$PipelineContextImpl.invokeNext(PipelineImpl.java:157)
-        at com.alibaba.citrus.turbine.pipeline.valve.SetLoggingContextValve.invoke(SetLoggingContextValve.java:66)
-        at com.alibaba.citrus.service.pipeline.impl.PipelineImpl$PipelineContextImpl.invokeNext(PipelineImpl.java:157)
-        at com.alibaba.citrus.turbine.pipeline.valve.PrepareForTurbineValve.invoke(PrepareForTurbineValve.java:52)
-        at com.alibaba.citrus.service.pipeline.impl.PipelineImpl$PipelineContextImpl.invokeNext(PipelineImpl.java:157)
-        at com.alibaba.citrus.service.pipeline.impl.PipelineImpl$PipelineContextImpl.invoke(PipelineImpl.java:210)
-        at com.alibaba.citrus.webx.impl.WebxControllerImpl.service(WebxControllerImpl.java:43)
-        at com.alibaba.citrus.webx.impl.WebxRootControllerImpl.handleRequest(WebxRootControllerImpl.java:53)
-        at com.alibaba.citrus.webx.support.AbstractWebxRootController.service(AbstractWebxRootController.java:165)
-.........   
+Affect(class-cnt:1 , method-cnt:1) cost in 30 ms.
+ts=2018-12-04 01:34:27;thread_name=main;id=1;is_daemon=false;priority=5;TCCL=sun.misc.Launcher$AppClassLoader@3d4eac69
+    @demo.MathGame.run()
+        at demo.MathGame.main(MathGame.java:16)
+
+ts=2018-12-04 01:34:30;thread_name=main;id=1;is_daemon=false;priority=5;TCCL=sun.misc.Launcher$AppClassLoader@3d4eac69
+    @demo.MathGame.run()
+        at demo.MathGame.main(MathGame.java:16)
+
+Command execution times exceed limit: 2, so command will exit. You can set it with -n option.
 ```
->只会打印出耗时超过30ms的堆栈情况
+
+
+#### 据执行时间来过滤
+
+```bash
+$ stack demo.MathGame primeFactors '#cost>5'
+Press Ctrl+C to abort.
+Affect(class-cnt:1 , method-cnt:1) cost in 35 ms.
+ts=2018-12-04 01:35:58;thread_name=main;id=1;is_daemon=false;priority=5;TCCL=sun.misc.Launcher$AppClassLoader@3d4eac69
+    @demo.MathGame.run()
+        at demo.MathGame.main(MathGame.java:16)
+```
+

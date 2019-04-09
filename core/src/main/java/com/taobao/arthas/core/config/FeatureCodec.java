@@ -236,7 +236,7 @@ public class FeatureCodec {
 
         }
 
-        return segmentArrayList.toArray(new String[segmentArrayList.size()]);
+        return segmentArrayList.toArray(new String[0]);
     }
 
 

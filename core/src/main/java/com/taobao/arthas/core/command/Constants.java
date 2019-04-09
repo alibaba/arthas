@@ -2,6 +2,7 @@ package com.taobao.arthas.core.command;
 
 /**
  * @author ralf0131 2016-12-14 17:21.
+ * @author hengyunabc 2018-12-03
  */
 public interface Constants {
 
@@ -12,7 +13,8 @@ public interface Constants {
             "          target : the object\n" +
             "           clazz : the object's class\n" +
             "          method : the constructor or method\n" +
-            "    params[0..n] : the parameters of method\n" +
+            "          params : the parameters array of method\n" +
+            "    params[0..n] : the element of parameters array\n" +
             "       returnObj : the returned object of method\n" +
             "        throwExp : the throw exception of method\n" +
             "        isReturn : the method ended by return\n" +
@@ -26,8 +28,10 @@ public interface Constants {
     String WIKI_HOME = "  https://alibaba.github.io/arthas/";
 
     String EXPRESS_EXAMPLES =   "Examples:\n" +
+                                "  params\n" +
                                 "  params[0]\n" +
                                 "  'params[0]+params[1]'\n" +
+                                "  '{params[0], target, returnObj}'\n" +
                                 "  returnObj\n" +
                                 "  throwExp\n" +
                                 "  target\n" +

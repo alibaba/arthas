@@ -18,7 +18,7 @@ import java.lang.instrument.UnmodifiableClassException;
  * @author vlinux on 14/10/23.
  */
 @Name("shutdown")
-@Summary("Shut down Arthas server and exit the console")
+@Summary("Shutdown Arthas server and exit the console")
 public class ShutdownCommand extends AnnotatedCommand {
     @Override
     public void process(CommandProcess process) {

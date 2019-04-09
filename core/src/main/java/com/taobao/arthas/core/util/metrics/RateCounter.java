@@ -1,17 +1,18 @@
 package com.taobao.arthas.core.util.metrics;
 
-import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.atomic.AtomicLongArray;
+
+import com.taobao.arthas.core.util.ThreadLocalRandom;
 
 /**
  * <pre>
  * 统计平均速率，比如统计5秒内的平均速率。
  * 5秒的数据是：234, 345,124,366,235，
  * 则速率是 (234+345+124+366+235)/5 = 260
- * 
+ *
  * </pre>
- * 
+ *
  * @author hengyunabc 2015年12月18日 下午3:40:19
  *
  */

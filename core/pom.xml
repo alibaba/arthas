@@ -4,7 +4,8 @@
     <parent>
         <groupId>com.taobao.arthas</groupId>
         <artifactId>arthas-all</artifactId>
-        <version>3.0.5-SNAPSHOT</version>
+        <version>3.1.1-SNAPSHOT</version>
+        <relativePath>../pom.xml</relativePath>
     </parent>
     <artifactId>arthas-core</artifactId>
     <name>arthas-core</name>
@@ -64,6 +65,16 @@
     </build>
 
     <dependencies>
+        <dependency>
+            <groupId>com.taobao.arthas</groupId>
+            <artifactId>arthas-common</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.taobao.arthas</groupId>
+            <artifactId>arthas-memorycompiler</artifactId>
+            <version>${project.version}</version>
+        </dependency>
         <dependency>
             <groupId>org.ow2.asm</groupId>
             <artifactId>asm</artifactId>
@@ -126,10 +137,11 @@
             <artifactId>cfr</artifactId>
             <version>0.132</version>
         </dependency>
-        <!-- for com.sun.tools.attach.VirtualMachine api, do not package into fat jar -->
+        <!-- for com.sun.tools.attach.VirtualMachine api -->
         <dependency>
-            <groupId>org.powermock</groupId>
-            <artifactId>powermock-module-javaagent</artifactId>
+            <groupId>com.github.olivergondza</groupId>
+            <artifactId>maven-jdk-tools-wrapper</artifactId>
+            <version>0.1</version>
             <scope>provided</scope>
             <optional>true</optional>
         </dependency>

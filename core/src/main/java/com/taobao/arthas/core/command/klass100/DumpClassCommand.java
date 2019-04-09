@@ -2,6 +2,8 @@ package com.taobao.arthas.core.command.klass100;
 
 import com.taobao.arthas.core.advisor.Enhancer;
 import com.taobao.arthas.core.command.Constants;
+import com.taobao.arthas.core.shell.cli.Completion;
+import com.taobao.arthas.core.shell.cli.CompletionUtils;
 import com.taobao.arthas.core.shell.command.AnnotatedCommand;
 import com.taobao.arthas.core.shell.command.CommandProcess;
 import com.taobao.arthas.core.util.LogUtil;
@@ -36,10 +38,11 @@ import static com.taobao.text.ui.Element.label;
 @Name("dump")
 @Summary("Dump class byte array from JVM")
 @Description(Constants.EXAMPLE +
-        "  dump -E org\\\\.apache\\\\.commons\\\\.lang\\\\.StringUtils\n" +
-        "  dump org.apache.commons.lang.StringUtils\n" +
+        "  dump java.lang.String\n" +
+        "  dump -d /tmp/output java.lang.String\n" +
         "  dump org/apache/commons/lang/StringUtils\n" +
         "  dump *StringUtils\n" +
+        "  dump -E org\\\\.apache\\\\.commons\\\\.lang\\\\.StringUtils\n" +
         Constants.WIKI + Constants.WIKI_HOME + "dump")
 public class DumpClassCommand extends AnnotatedCommand {
     private static final Logger logger = LogUtil.getArthasLogger();
@@ -47,6 +50,8 @@ public class DumpClassCommand extends AnnotatedCommand {
     private String classPattern;
     private String code = null;
     private boolean isRegEx = false;
+
+    private String directory;
 
     @Argument(index = 0, argName = "class-pattern")
     @Description("Class name pattern, use either '.' or '/' as separator")
@@ -66,13 +71,27 @@ public class DumpClassCommand extends AnnotatedCommand {
         isRegEx = regEx;
     }
 
+    @Option(shortName = "d", longName = "directory")
+    @Description("Sets the destination directory for class files")
+    public void setDirectory(String directory) {
+        this.directory = directory;
+    }
+
     @Override
     public void process(CommandProcess process) {
         RowAffect effect = new RowAffect();
-        Instrumentation inst = process.session().getInstrumentation();
 
-        Set<Class<?>> matchedClasses = SearchUtils.searchClass(inst, classPattern, isRegEx, code);
         try {
+            if (directory != null) {
+                File dir = new File(directory);
+                if (dir.isFile()) {
+                    process.write(directory + " :is not a directory, please check it\n");
+                    return;
+                }
+            }
+            Instrumentation inst = process.session().getInstrumentation();
+            Set<Class<?>> matchedClasses = SearchUtils.searchClass(inst, classPattern, isRegEx, code);
+
             if (matchedClasses == null || matchedClasses.isEmpty()) {
                 processNoMatch(process);
             } else if (matchedClasses.size() > 5) {
@@ -86,6 +105,12 @@ public class DumpClassCommand extends AnnotatedCommand {
         }
     }
 
+    @Override
+    public void complete(Completion completion) {
+        if (!CompletionUtils.completeClassName(completion)) {
+            super.complete(completion);
+        }
+    }
 
     private void processMatch(CommandProcess process, RowAffect effect, Instrumentation inst, Set<Class<?>> matchedClasses) {
         try {
@@ -134,7 +159,12 @@ public class DumpClassCommand extends AnnotatedCommand {
     }
 
     private Map<Class<?>, File> dump(Instrumentation inst, Set<Class<?>> classes) throws UnmodifiableClassException {
-        ClassDumpTransformer transformer = new ClassDumpTransformer(classes);
+        ClassDumpTransformer transformer = null;
+        if (directory != null) {
+            transformer = new ClassDumpTransformer(classes, new File(directory));
+        } else {
+            transformer = new ClassDumpTransformer(classes);
+        }
         Enhancer.enhance(inst, transformer, classes);
         return transformer.getDumpResult();
     }

@@ -3,16 +3,26 @@
 {% set extra_css_files = ['_static/overrides.css'] %}
 {% block extrahead %}
 <script src="{{ pathto('_static/center_page.js', 1) }}"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.13.1/styles/github.min.css">
 {{ super() }}
 {% endblock %}
 {% block footer %}
 <div class="github-fork-ribbon-wrapper right">
   <div class="github-fork-ribbon">
-    <a href="https://github.com/alibaba/arthas">Fork me at GitHub</a>
+    <a href="https://github.com/alibaba/arthas" target="_blank">Fork me at GitHub</a>
   </div>
 </div>
 
 <script type="text/javascript" src="{{ pathto('_static/add_badges.js', 1) }}"></script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.13.1/highlight.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlightjs-line-numbers.js/2.5.0/highlightjs-line-numbers.min.js"></script>
+<script>
+  document.querySelectorAll('div.hljs > pre').forEach(function(block) {
+    hljs.highlightBlock(block);
+    hljs.lineNumbersBlock(block);
+  });
+</script>
 
 <script>
   var _hmt = _hmt || [];

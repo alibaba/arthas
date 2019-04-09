@@ -19,12 +19,11 @@ import java.util.Properties;
 import static com.taobao.text.ui.Element.label;
 
 /**
- * A command to display all the keymap for the specified connection.
  * @author ralf0131 2017-01-09 14:03.
  */
 @Name("sysprop")
 @Summary("Display, and change the system properties.")
-@Description(Constants.EXAMPLE + "sysprop\n"+ "sysprop file.encoding\n" + "sysprop production.mode true\n" +
+@Description(Constants.EXAMPLE + "  sysprop\n"+ "  sysprop file.encoding\n" + "  sysprop production.mode true\n" +
         Constants.WIKI + Constants.WIKI_HOME + "sysprop")
 public class SystemPropertyCommand extends AnnotatedCommand {
 

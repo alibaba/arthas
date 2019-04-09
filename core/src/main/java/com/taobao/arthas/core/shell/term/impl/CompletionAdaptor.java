@@ -4,6 +4,7 @@ import com.taobao.arthas.core.shell.cli.CliToken;
 import com.taobao.arthas.core.shell.cli.Completion;
 import com.taobao.arthas.core.shell.cli.CompletionUtils;
 import com.taobao.arthas.core.shell.session.Session;
+import com.taobao.arthas.core.util.StringUtils;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -42,16 +43,21 @@ class CompletionAdaptor implements Completion {
 
     @Override
     public void complete(List<String> candidates) {
+        String lastToken = tokens.isEmpty() ? null : tokens.get(tokens.size() - 1).value();
+        if(StringUtils.isBlank(lastToken)) {
+            lastToken = "";
+        }
         if (candidates.size() > 1) {
             // complete common prefix
             String commonPrefix = CompletionUtils.findLongestCommonPrefix(candidates);
             if (commonPrefix.length() > 0) {
-                CliToken lastToken = tokens.get(tokens.size() - 1);
-                if (!commonPrefix.equals(lastToken.value())) {
+                if (!commonPrefix.equals(lastToken)) {
                     // only complete if the common prefix is longer than the last token
-                    String strToComplete = commonPrefix.substring(lastToken.value().length());
-                    completion.complete(io.termd.core.util.Helper.toCodePoints(strToComplete), false);
-                    return;
+                    if (commonPrefix.length() > lastToken.length()) {
+                        String strToComplete = commonPrefix.substring(lastToken.length());
+                        completion.complete(io.termd.core.util.Helper.toCodePoints(strToComplete), false);
+                        return;
+                    }
                 }
             }
         }

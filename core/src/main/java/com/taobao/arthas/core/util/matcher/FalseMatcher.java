@@ -5,6 +5,11 @@ package com.taobao.arthas.core.util.matcher;
  */
 public class FalseMatcher<T> implements Matcher<T> {
 
+    /**
+     * always return false
+     * @param target
+     * @return true/false
+     */
     @Override
     public boolean matching(T target) {
         return false;

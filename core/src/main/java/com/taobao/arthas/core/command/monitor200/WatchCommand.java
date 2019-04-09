@@ -1,7 +1,11 @@
 package com.taobao.arthas.core.command.monitor200;
 
+import java.util.Arrays;
+
 import com.taobao.arthas.core.advisor.AdviceListener;
 import com.taobao.arthas.core.command.Constants;
+import com.taobao.arthas.core.shell.cli.Completion;
+import com.taobao.arthas.core.shell.cli.CompletionUtils;
 import com.taobao.arthas.core.shell.command.CommandProcess;
 import com.taobao.arthas.core.util.SearchUtils;
 import com.taobao.arthas.core.util.matcher.Matcher;
@@ -14,13 +18,14 @@ import com.taobao.middleware.cli.annotations.Summary;
 @Name("watch")
 @Summary("Display the input/output parameter, return object, and thrown exception of specified method invocation")
 @Description(Constants.EXPRESS_DESCRIPTION + "\nExamples:\n" +
-        "  watch -Eb org\\.apache\\.commons\\.lang\\.StringUtils isBlank params[0]\n" +
-        "  watch -b org.apache.commons.lang.StringUtils isBlank params[0]\n" +
+        "  watch -b org.apache.commons.lang.StringUtils isBlank params\n" +
         "  watch -f org.apache.commons.lang.StringUtils isBlank returnObj\n" +
-        "  watch -bf *StringUtils isBlank params[0]\n" +
+        "  watch org.apache.commons.lang.StringUtils isBlank '{params, target, returnObj}' -x 2\n" +
+        "  watch -bf *StringUtils isBlank params\n" +
         "  watch *StringUtils isBlank params[0]\n" +
         "  watch *StringUtils isBlank params[0] params[0].length==1\n" +
-        "  watch *StringUtils isBlank '#cost>100'\n" +
+        "  watch *StringUtils isBlank params '#cost>100'\n" +
+        "  watch -E -b org\\.apache\\.commons\\.lang\\.StringUtils isBlank params[0]\n" +
         Constants.WIKI + Constants.WIKI_HOME + "watch")
 public class WatchCommand extends EnhancerCommand {
 
@@ -176,5 +181,10 @@ public class WatchCommand extends EnhancerCommand {
     @Override
     protected AdviceListener getAdviceListener(CommandProcess process) {
         return new WatchAdviceListener(this, process);
+    }
+
+    @Override
+    protected void completeArgument3(Completion completion) {
+        CompletionUtils.complete(completion, Arrays.asList(EXPRESS_EXAMPLES));
     }
 }

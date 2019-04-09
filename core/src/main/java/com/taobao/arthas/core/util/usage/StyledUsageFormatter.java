@@ -28,6 +28,9 @@ public class StyledUsageFormatter extends UsageMessageFormatter {
     }
 
     public static String styledUsage(CLI cli, int width) {
+        if(cli == null) {
+            return "";
+        }
         StringBuilder usageBuilder = new StringBuilder();
         UsageMessageFormatter formatter = new StyledUsageFormatter(Color.green);
         formatter.setWidth(width);
@@ -60,16 +63,31 @@ public class StyledUsageFormatter extends UsageMessageFormatter {
         if (!cli.getOptions().isEmpty() || !cli.getArguments().isEmpty()) {
             table.add(row().add(""));
             table.row(label("OPTIONS:").style(getHighlightedStyle()));
-            for (Option option: cli.getOptions()) {
-                if (option.acceptValue()) {
-                    table.add(row().add(label("-" + option.getShortName() + ", --" + option.getLongName() + " <value>")
-                            .style(getHighlightedStyle()))
-                            .add(option.getDescription()));
+            for (Option option : cli.getOptions()) {
+                StringBuilder optionSb = new StringBuilder(32);
+
+                // short name
+                if (isNullOrEmpty(option.getShortName())) {
+                    optionSb.append("   ");
                 } else {
-                    table.add(row().add(label("-" + option.getShortName() + ", --" + option.getLongName())
-                            .style(getHighlightedStyle()))
-                            .add(option.getDescription()));
+                    optionSb.append('-').append(option.getShortName());
+                    if (isNullOrEmpty(option.getLongName())) {
+                        optionSb.append(' ');
+                    } else {
+                        optionSb.append(',');
+                    }
                 }
+                // long name
+                if (!isNullOrEmpty(option.getLongName())) {
+                    optionSb.append(" --").append(option.getLongName());
+                }
+
+                if (option.acceptValue()) {
+                    optionSb.append(" <value>");
+                }
+
+                table.add(row().add(label(optionSb.toString()).style(getHighlightedStyle()))
+                                .add(option.getDescription()));
             }
 
             for (Argument argument: cli.getArguments()) {

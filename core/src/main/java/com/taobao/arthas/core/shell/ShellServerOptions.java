@@ -19,7 +19,7 @@ public class ShellServerOptions {
     /**
      * Default time, in ms, that a shell session lasts for without being accessed before expiring.
      */
-    public static final long DEFAULT_SESSION_TIMEOUT = 5 * 60 * 1000; // 5 minutes
+    public static final long DEFAULT_SESSION_TIMEOUT = 30 * 60 * 1000; // 30 minutes
 
     /**
      * Default time, in ms, that a server waits for a client to connect

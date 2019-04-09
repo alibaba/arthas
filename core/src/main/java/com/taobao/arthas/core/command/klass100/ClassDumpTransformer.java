@@ -24,10 +24,17 @@ class ClassDumpTransformer implements ClassFileTransformer {
     private Map<Class<?>, File> dumpResult;
     private File arthasLogHome;
 
+    private File directory;
+
     public ClassDumpTransformer(Set<Class<?>> classesToEnhance) {
+        this(classesToEnhance, null);
+    }
+
+    public ClassDumpTransformer(Set<Class<?>> classesToEnhance, File directory) {
         this.classesToEnhance = classesToEnhance;
         this.dumpResult = new HashMap<Class<?>, File>();
         this.arthasLogHome = new File(LogUtil.LOGGER_FILE).getParentFile();
+        this.directory = directory;
     }
 
     @Override
@@ -50,7 +57,12 @@ class ClassDumpTransformer implements ClassFileTransformer {
         String classDumpDir = "classdump";
 
         // 创建类所在的包路径
-        File dumpDir = new File(arthasLogHome, classDumpDir);
+        File dumpDir = null;
+        if (directory != null) {
+            dumpDir = directory;
+        } else {
+            dumpDir = new File(arthasLogHome, classDumpDir);
+        }
         if (!dumpDir.mkdirs() && !dumpDir.exists()) {
             logger.warn("create dump directory:{} failed.", dumpDir.getAbsolutePath());
             return;

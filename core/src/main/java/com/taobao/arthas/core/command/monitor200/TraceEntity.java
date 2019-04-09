@@ -4,9 +4,6 @@ import com.taobao.arthas.core.util.DateUtils;
 import com.taobao.arthas.core.util.ThreadUtil;
 import com.taobao.arthas.core.view.TreeView;
 
-import java.text.SimpleDateFormat;
-import java.util.Date;
-
 /**
  * 用于在ThreadLocal中传递的实体
  * @author ralf0131 2017-01-05 14:05.

@@ -24,6 +24,14 @@
       <source>../client/target/arthas-client-jar-with-dependencies.jar</source>
       <destName>arthas-client.jar</destName>
     </file>
+    <file>
+      <source>../boot/target/arthas-boot-jar-with-dependencies.jar</source>
+      <destName>arthas-boot.jar</destName>
+    </file>
+    <file>
+      <source>../demo/target/arthas-demo.jar</source>
+      <destName>arthas-demo.jar</destName>
+    </file>
 
     <file>
       <source>../bin/install-local.sh</source>
@@ -36,6 +44,9 @@
     </file>
     <file>
       <source>../bin/as.bat</source>
+    </file>
+    <file>
+      <source>../bin/as-service.bat</source>
     </file>
   </files>
 </assembly>

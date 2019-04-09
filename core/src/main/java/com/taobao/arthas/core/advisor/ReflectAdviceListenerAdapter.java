@@ -202,11 +202,11 @@ public abstract class ReflectAdviceListenerAdapter implements AdviceListener {
      */
     protected boolean isConditionMet(String conditionExpress, Advice advice, double cost) throws ExpressException {
         return StringUtils.isEmpty(conditionExpress) ||
-                ExpressFactory.newExpress(advice).bind(Constants.COST_VARIABLE, cost).is(conditionExpress);
+                ExpressFactory.threadLocalExpress(advice).bind(Constants.COST_VARIABLE, cost).is(conditionExpress);
     }
 
     protected Object getExpressionResult(String express, Advice advice, double cost) throws ExpressException {
-        return ExpressFactory.newExpress(advice)
+        return ExpressFactory.threadLocalExpress(advice)
                 .bind(Constants.COST_VARIABLE, cost).get(express);
     }
 
@@ -221,7 +221,7 @@ public abstract class ReflectAdviceListenerAdapter implements AdviceListener {
     }
 
     /**
-     * 超过次数上限，则不在输出，命令终止
+     * 超过次数上限，则不再输出，命令终止
      * @param process the process to be aborted
      * @param limit the limit to be printed
      */

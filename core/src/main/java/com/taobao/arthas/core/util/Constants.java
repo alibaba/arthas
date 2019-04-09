@@ -1,7 +1,6 @@
 package com.taobao.arthas.core.util;
 
 import java.io.File;
-import java.lang.management.ManagementFactory;
 
 import com.taobao.arthas.core.view.Ansi;
 
@@ -18,7 +17,7 @@ public interface Constants {
     /**
      * 中断提示
      */
-    String ABORT_MSG = "Press Ctrl+C to abort.";
+    String Q_OR_CTRL_C_ABORT_MSG = "Press Q or Ctrl+C to abort.";
 
     /**
      * 空字符串
@@ -46,7 +45,7 @@ public interface Constants {
     /**
      * 当前进程PID
      */
-    String PID = ManagementFactory.getRuntimeMXBean().getName().split("@")[0];
+    String PID = ApplicationUtils.getPid();
 
     /**
      * 缓存目录

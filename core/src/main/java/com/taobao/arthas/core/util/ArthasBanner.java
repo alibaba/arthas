@@ -1,5 +1,6 @@
 package com.taobao.arthas.core.util;
 
+import com.taobao.arthas.common.PidUtils;
 import com.taobao.arthas.core.shell.ShellServerOptions;
 import com.taobao.middleware.logger.Logger;
 import com.taobao.text.Color;
@@ -19,6 +20,7 @@ public class ArthasBanner {
     private static final String CREDIT_LOCATION = "/com/taobao/arthas/core/res/thanks.txt";
     private static final String VERSION_LOCATION = "/com/taobao/arthas/core/res/version";
     private static final String WIKI = "https://alibaba.github.io/arthas";
+    private static final String TUTORIALS = "https://alibaba.github.io/arthas/arthas-tutorials";
 
     private static String LOGO = "Welcome to Arthas";
     private static String VERSION = "unknown";
@@ -70,6 +72,10 @@ public class ArthasBanner {
         return WIKI;
     }
 
+    public static String tutorials() {
+        return TUTORIALS;
+    }
+
     public static String credit() {
         return THANKS;
     }
@@ -88,6 +94,13 @@ public class ArthasBanner {
 
     public static String welcome() {
         logger.info("arthas version: " + version());
-        return logo() + "\n" + "wiki: " + wiki() + "\n" + "version: " + version();
+        TableElement table = new TableElement().rightCellPadding(1)
+                        .row("wiki", wiki())
+                        .row("tutorials", tutorials())
+                        .row("version", version())
+                        .row("pid", PidUtils.currentPid())
+                        .row("time", DateUtils.getCurrentDate());
+
+        return logo() + "\n" + RenderUtil.render(table);
     }
 }

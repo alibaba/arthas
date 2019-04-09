@@ -2,14 +2,17 @@ package com.taobao.arthas.core;
 
 import com.sun.tools.attach.VirtualMachine;
 import com.sun.tools.attach.VirtualMachineDescriptor;
+import com.taobao.arthas.common.AnsiLog;
+import com.taobao.arthas.common.JavaVersionUtils;
 import com.taobao.arthas.core.config.Configure;
-import com.taobao.arthas.core.util.AnsiLog;
 import com.taobao.middleware.cli.CLI;
 import com.taobao.middleware.cli.CLIs;
 import com.taobao.middleware.cli.CommandLine;
 import com.taobao.middleware.cli.Option;
 import com.taobao.middleware.cli.TypedOption;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.util.Arrays;
 import java.util.Properties;
 
@@ -34,14 +37,17 @@ public class Arthas {
                 .setShortName("telnet-port").setDefaultValue(DEFAULT_TELNET_PORT);
         Option httpPort = new TypedOption<Integer>().setType(Integer.class)
                 .setShortName("http-port").setDefaultValue(DEFAULT_HTTP_PORT);
+        Option sessionTimeout = new TypedOption<Integer>().setType(Integer.class)
+                        .setShortName("session-timeout").setDefaultValue("" + Configure.DEFAULT_SESSION_TIMEOUT_SECONDS);
         CLI cli = CLIs.create("arthas").addOption(pid).addOption(core).addOption(agent).addOption(target)
-                .addOption(telnetPort).addOption(httpPort);
+                .addOption(telnetPort).addOption(httpPort).addOption(sessionTimeout);
         CommandLine commandLine = cli.parse(Arrays.asList(args));
 
         Configure configure = new Configure();
         configure.setJavaPid((Integer) commandLine.getOptionValue("pid"));
         configure.setArthasAgent((String) commandLine.getOptionValue("agent"));
         configure.setArthasCore((String) commandLine.getOptionValue("core"));
+        configure.setSessionTimeout((Integer)commandLine.getOptionValue("session-timeout"));
         if (commandLine.getOptionValue("target-ip") == null) {
             throw new IllegalStateException("as.sh is too old to support web console, " +
                     "please run the following command to upgrade to latest version:" +
@@ -71,28 +77,36 @@ public class Arthas {
             }
 
             Properties targetSystemProperties = virtualMachine.getSystemProperties();
-            String targetJavaVersion = targetSystemProperties.getProperty("java.specification.version");
-            String currentJavaVersion = System.getProperty("java.specification.version");
+            String targetJavaVersion = JavaVersionUtils.javaVersionStr(targetSystemProperties);
+            String currentJavaVersion = JavaVersionUtils.javaVersionStr();
             if (targetJavaVersion != null && currentJavaVersion != null) {
                 if (!targetJavaVersion.equals(currentJavaVersion)) {
                     AnsiLog.warn("Current VM java version: {} do not match target VM java version: {}, attach may fail.",
                                     currentJavaVersion, targetJavaVersion);
-                    AnsiLog.warn("Target VM JAVA_HOME is {}, try to set the same JAVA_HOME.",
-                                    targetSystemProperties.getProperty("java.home"));
+                    AnsiLog.warn("Target VM JAVA_HOME is {}, arthas-boot JAVA_HOME is {}, try to set the same JAVA_HOME.",
+                                    targetSystemProperties.getProperty("java.home"), System.getProperty("java.home"));
                 }
             }
+
 
             // 目标虚拟机加载 代理jar 以及 描述信息
             // sun.tools.attach.HotSpotVirtualMachine.loadAgent
             //  操作系统底层相关加载AgentLibrary sun.tools.attach.LinuxVirtualMachine.execute
-            virtualMachine.loadAgent(configure.getArthasAgent(),
-                            configure.getArthasCore() + ";" + configure.toString());
+            // virtualMachine.loadAgent(configure.getArthasAgent(),
+            //                configure.getArthasCore() + ";" + configure.toString());
             // 因此需要跳转到arthas-agent.jar 去了 参数: ${arthas_lib_dir}/arthas-agent.jar=${arthas_lib_dir}/arthas-core.jar;com.taobao.arthas.core.config.Configure.toString()
             // agent#pom.xml
             // <Premain-Class>com.taobao.arthas.agent.AgentBootstrap</Premain-Class>
             //      com.taobao.arthas.agent.AgentBootstrap.premain
             // <Agent-Class>com.taobao.arthas.agent.AgentBootstrap</Agent-Class>
             //     com.taobao.arthas.agent.AgentBootstrap.agentmain
+
+            String arthasAgentPath = configure.getArthasAgent();
+            //convert jar path to unicode string
+            configure.setArthasAgent(encodeArg(arthasAgentPath));
+            configure.setArthasCore(encodeArg(configure.getArthasCore()));
+            virtualMachine.loadAgent(arthasAgentPath,
+                    configure.getArthasCore() + ";" + configure.toString());
         } finally {
             if (null != virtualMachine) {
                 virtualMachine.detach();
@@ -100,6 +114,13 @@ public class Arthas {
         }
     }
 
+    private static String encodeArg(String arg) {
+        try {
+            return URLEncoder.encode(arg, "utf-8");
+        } catch (UnsupportedEncodingException e) {
+            return arg;
+        }
+    }
 
     /**
      * arthas#version > 3.0

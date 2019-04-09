@@ -4,7 +4,8 @@
     <parent>
         <groupId>com.taobao.arthas</groupId>
         <artifactId>arthas-all</artifactId>
-        <version>3.0.5-SNAPSHOT</version>
+        <version>3.1.1-SNAPSHOT</version>
+        <relativePath>../pom.xml</relativePath>
     </parent>
     <artifactId>arthas-site</artifactId>
     <name>arthas-site</name>
@@ -18,14 +19,29 @@
                         <groupId>kr.motd.maven</groupId>
                         <artifactId>sphinx-maven-plugin</artifactId>
                         <version>2.2.3</version>
-                        <configuration>
-                            <asReport>true</asReport>
-                            <name>Project documentation</name>
-                            <description>Documentation about Arthas</description>
-                        </configuration>
                         <executions>
                             <execution>
+                                <id>zh doc</id>
                                 <phase>package</phase>
+                                <configuration>
+                                    <sourceDirectory>${basedir}/src/site/sphinx</sourceDirectory>
+                                    <outputDirectory>${project.build.directory}/site/sphinx</outputDirectory>
+                                    <name>Arthas documentation</name>
+                                    <description>Documentation about Arthas</description>
+                                </configuration>
+                                <goals>
+                                    <goal>generate</goal>
+                                </goals>
+                            </execution>
+                            <execution>
+                                <id>en doc</id>
+                                <phase>package</phase>
+                                <configuration>
+                                    <sourceDirectory>${basedir}/src/site/sphinx/en</sourceDirectory>
+                                    <outputDirectory>${project.build.directory}/site/sphinx/en</outputDirectory>
+                                    <name>Arthas English documentation</name>
+                                    <description>Documentation about Arthas</description>
+                                </configuration>
                                 <goals>
                                     <goal>generate</goal>
                                 </goals>
@@ -35,7 +51,6 @@
                 </plugins>
             </build>
         </profile>
-
     </profiles>
 
 </project>

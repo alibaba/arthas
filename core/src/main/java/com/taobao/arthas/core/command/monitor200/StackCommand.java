@@ -2,7 +2,6 @@ package com.taobao.arthas.core.command.monitor200;
 
 import com.taobao.arthas.core.advisor.AdviceListener;
 import com.taobao.arthas.core.command.Constants;
-import com.taobao.arthas.core.shell.cli.Completion;
 import com.taobao.arthas.core.shell.command.CommandProcess;
 import com.taobao.arthas.core.util.SearchUtils;
 import com.taobao.arthas.core.util.matcher.Matcher;
@@ -22,11 +21,11 @@ import com.taobao.middleware.cli.annotations.Summary;
 @Name("stack")
 @Summary("Display the stack trace for the specified class and method")
 @Description(Constants.EXPRESS_DESCRIPTION + Constants.EXAMPLE +
-        "  stack -E org\\.apache\\.commons\\.lang\\.StringUtils isBlank\n" +
         "  stack org.apache.commons.lang.StringUtils isBlank\n" +
         "  stack *StringUtils isBlank\n" +
         "  stack *StringUtils isBlank params[0].length==1\n" +
         "  stack *StringUtils isBlank '#cost>100'\n" +
+        "  stack -E org\\.apache\\.commons\\.lang\\.StringUtils isBlank\n" +
         Constants.WIKI + Constants.WIKI_HOME + "stack")
 public class StackCommand extends EnhancerCommand {
     private String classPattern;
@@ -106,9 +105,4 @@ public class StackCommand extends EnhancerCommand {
         return new StackAdviceListener(this, process);
     }
 
-    @Override
-    protected boolean completeExpress(Completion completion) {
-        completion.complete(EMPTY);
-        return true;
-    }
 }

@@ -6,6 +6,7 @@ import com.taobao.arthas.core.command.Constants;
 import com.taobao.arthas.core.shell.command.AnnotatedCommand;
 import com.taobao.arthas.core.shell.command.CommandProcess;
 import com.taobao.arthas.core.shell.handlers.Handler;
+import com.taobao.arthas.core.shell.handlers.shell.QExitHandler;
 import com.taobao.arthas.core.shell.session.Session;
 import com.taobao.arthas.core.util.LogUtil;
 import com.taobao.arthas.core.util.NetUtils;
@@ -63,7 +64,6 @@ public class DashboardCommand extends AnnotatedCommand {
 
     private volatile long count = 0;
     private volatile Timer timer;
-    private Boolean running = false;
 
     @Option(shortName = "n", longName = "number-of-execution")
     @Description("The number of times this command will be executed.")
@@ -113,9 +113,11 @@ public class DashboardCommand extends AnnotatedCommand {
         process.resumeHandler(restartHandler);
         process.endHandler(stopHandler);
 
+        // q exit support
+        process.stdinHandler(new QExitHandler(process));
+
         // start the timer
         timer.scheduleAtFixedRate(new DashboardTimerTask(process), 0, getInterval());
-        running = true;
     }
 
     public synchronized void stop() {
