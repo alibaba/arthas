@@ -39,7 +39,7 @@ curl \
     -o ${TEMP_ARTHAS_FILE} \
 || exit_on_err 1 "download failed!"
 
-# wirte or overwrite local file
+# write or overwrite local file
 rm -rf as.sh
 mv ${TEMP_ARTHAS_FILE} ${TARGET_ARTHAS_FILE}
 chmod +x ${TARGET_ARTHAS_FILE}
