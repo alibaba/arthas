@@ -3,11 +3,7 @@ package com.taobao.arthas.core.command.monitor200;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.taobao.arthas.core.command.Constants;
-import com.taobao.arthas.core.shell.command.AnnotatedCommand;
 import com.taobao.arthas.core.shell.command.CommandProcess;
-import com.taobao.arthas.core.shell.handlers.Handler;
-import com.taobao.arthas.core.shell.handlers.shell.QExitHandler;
-import com.taobao.arthas.core.shell.session.Session;
 import com.taobao.arthas.core.util.LogUtil;
 import com.taobao.arthas.core.util.NetUtils;
 import com.taobao.arthas.core.util.NetUtils.Response;
@@ -34,8 +30,6 @@ import java.lang.management.MemoryType;
 import java.lang.management.MemoryUsage;
 import java.util.List;
 import java.util.Map;
-import java.util.Timer;
-import java.util.TimerTask;
 
 /**
  * @author hengyunabc 2015年11月19日 上午11:57:21
@@ -47,7 +41,7 @@ import java.util.TimerTask;
         "  dashboard -n 10\n" +
         "  dashboard -i 2000\n" +
         Constants.WIKI + Constants.WIKI_HOME + "dashboard")
-public class DashboardCommand extends AnnotatedCommand {
+public class DashboardCommand extends TimerCommand {
 
     private static final Logger logger = LogUtil.getArthasLogger();
 
@@ -62,8 +56,7 @@ public class DashboardCommand extends AnnotatedCommand {
 
     private long interval = 5000;
 
-    private volatile long count = 0;
-    private volatile Timer timer;
+    private static final String TIMER_PREFIX = "Timer-for-arthas-dashboard-";
 
     @Option(shortName = "n", longName = "number-of-execution")
     @Description("The number of times this command will be executed.")
@@ -86,56 +79,10 @@ public class DashboardCommand extends AnnotatedCommand {
 
     @Override
     public void process(final CommandProcess process) {
-
-        Session session = process.session();
-        timer = new Timer("Timer-for-arthas-dashboard-" + session.getSessionId(), true);
-
-        // ctrl-C support
-        process.interruptHandler(new DashboardInterruptHandler(process, timer));
-
-        /*
-         * 通过handle回调，在suspend和end时停止timer，resume时重启timer
-         */
-        Handler<Void> stopHandler = new Handler<Void>() {
-            @Override
-            public void handle(Void event) {
-                stop();
-            }
-        };
-
-        Handler<Void> restartHandler = new Handler<Void>() {
-            @Override
-            public void handle(Void event) {
-                restart(process);
-            }
-        };
-        process.suspendHandler(stopHandler);
-        process.resumeHandler(restartHandler);
-        process.endHandler(stopHandler);
-
-        // q exit support
-        process.stdinHandler(new QExitHandler(process));
-
-        // start the timer
-        timer.scheduleAtFixedRate(new DashboardTimerTask(process), 0, getInterval());
+        schedule( process);
     }
 
-    public synchronized void stop() {
-        if (timer != null) {
-            timer.cancel();
-            timer.purge();
-            timer = null;
-        }
-    }
-
-    public synchronized void restart(CommandProcess process) {
-        if (timer == null) {
-            Session session = process.session();
-            timer = new Timer("Timer-for-arthas-dashboard-" + session.getSessionId(), true);
-            timer.scheduleAtFixedRate(new DashboardTimerTask(process), 0, getInterval());
-        }
-    }
-
+    @Override
     public int getNumOfExecutions() {
         return numOfExecutions;
     }
@@ -144,8 +91,14 @@ public class DashboardCommand extends AnnotatedCommand {
         return batchMode;
     }
 
+    @Override
     public long getInterval() {
         return interval;
+    }
+
+    @Override
+    String getPrefix() {
+        return TIMER_PREFIX;
     }
 
     private static String beautifyName(String name) {
@@ -295,7 +248,7 @@ public class DashboardCommand extends AnnotatedCommand {
         return RenderUtil.render(table, width, height);
     }
 
-    String drawRuntineInfoAndTomcatInfo(int width, int height) {
+    String drawRuntimeInfoAndTomcatInfo(int width, int height) {
         TableElement table = new TableElement(1, 1);
 
         TableElement runtimeInfoTable = new TableElement(1, 1).rightCellPadding(1);
@@ -373,44 +326,24 @@ public class DashboardCommand extends AnnotatedCommand {
         }
     }
 
-    private class DashboardTimerTask extends TimerTask {
-        private CommandProcess process;
+    public void run(CommandProcess process) {
+        int width = process.width();
+        int height = process.height();
 
-        public DashboardTimerTask(CommandProcess process) {
-            this.process = process;
-        }
+        // 上半部分放thread top。下半部分再切分为田字格，其中上面两格放memory, gc的信息。下面两格放tomcat,
+        // runtime的信息
+        int totalHeight = height - 1;
+        int threadTopHeight = totalHeight / 2;
+        int lowerHalf = totalHeight - threadTopHeight;
 
-        @Override
-        public void run() {
-            if (count >= getNumOfExecutions()) {
-                // stop the timer
-                timer.cancel();
-                timer.purge();
-                process.write("Process ends after " + getNumOfExecutions() + " time(s).\n");
-                process.end();
-                return;
-            }
+        int runtimeInfoHeight = lowerHalf / 2;
+        int heapInfoHeight = lowerHalf - runtimeInfoHeight;
 
-            int width = process.width();
-            int height = process.height();
+        String threadInfo = drawThreadInfo(width, threadTopHeight);
+        String memoryAndGc = drawMemoryInfoAndGcInfo(width, runtimeInfoHeight);
+        String runTimeAndTomcat = drawRuntimeInfoAndTomcatInfo(width, heapInfoHeight);
 
-            // 上半部分放thread top。下半部分再切分为田字格，其中上面两格放memory, gc的信息。下面两格放tomcat,
-            // runtime的信息
-            int totalHeight = height - 1;
-            int threadTopHeight = totalHeight / 2;
-            int lowerHalf = totalHeight - threadTopHeight;
-
-            int runtimeInfoHeight = lowerHalf / 2;
-            int heapInfoHeight = lowerHalf - runtimeInfoHeight;
-
-            String threadInfo = drawThreadInfo(width, threadTopHeight);
-            String memoryAndGc = drawMemoryInfoAndGcInfo(width, runtimeInfoHeight);
-            String runTimeAndTomcat = drawRuntineInfoAndTomcatInfo(width, heapInfoHeight);
-
-            process.write(threadInfo + memoryAndGc + runTimeAndTomcat);
-
-            count++;
-            process.times().incrementAndGet();
-        }
+        process.write(threadInfo + memoryAndGc + runTimeAndTomcat);
     }
+
 }

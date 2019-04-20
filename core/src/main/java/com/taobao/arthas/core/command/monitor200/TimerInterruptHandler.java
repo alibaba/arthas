@@ -8,11 +8,11 @@ import java.util.Timer;
 /**
  * @author ralf0131 2017-01-09 13:37.
  */
-public class DashboardInterruptHandler extends CommandInterruptHandler {
+public class TimerInterruptHandler extends CommandInterruptHandler {
 
     private volatile Timer timer;
 
-    public DashboardInterruptHandler(CommandProcess process, Timer timer) {
+    public TimerInterruptHandler(CommandProcess process, Timer timer) {
         super(process);
         this.timer = timer;
     }
