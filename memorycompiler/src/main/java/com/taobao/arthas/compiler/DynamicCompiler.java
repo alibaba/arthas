@@ -1,5 +1,6 @@
 package com.taobao.arthas.compiler;
 
+import java.io.Writer;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -24,12 +25,18 @@ public class DynamicCompiler {
     private final List<Diagnostic<? extends JavaFileObject>> errors = new ArrayList<Diagnostic<? extends JavaFileObject>>();
     private final List<Diagnostic<? extends JavaFileObject>> warnings = new ArrayList<Diagnostic<? extends JavaFileObject>>();
 
+    private Writer writer;
+
     public DynamicCompiler(ClassLoader classLoader) {
+        this(classLoader, null);
+    }
+
+    public DynamicCompiler(ClassLoader classLoader, Writer writer) {
         standardFileManager = javaCompiler.getStandardFileManager(null, null, null);
 
         options.add("-Xlint:unchecked");
         dynamicClassLoader = new DynamicClassLoader(classLoader);
-
+        this.writer = writer;
     }
 
     public void addSource(String className, String source) {
