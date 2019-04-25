@@ -390,6 +390,7 @@ $ classloader
 ![三新文化](static/sanxinbook.png)
 ![雪球财经](static/xueqiu.png)
 ![百安居](static/bthome.png)
+![安心保险](static/95303.png)
 
 ### Credit
 
