@@ -3,6 +3,7 @@ package com.taobao.arthas.core.command.monitor200;
 import com.taobao.arthas.core.advisor.Advice;
 import com.taobao.arthas.core.advisor.ArthasMethod;
 import com.taobao.arthas.core.advisor.ReflectAdviceListenerAdapter;
+import com.taobao.arthas.core.command.express.ExpressException;
 import com.taobao.arthas.core.shell.command.CommandProcess;
 import com.taobao.arthas.core.util.DateUtils;
 import com.taobao.arthas.core.util.LogUtil;
@@ -73,12 +74,14 @@ class WatchAdviceListener extends ReflectAdviceListenerAdapter {
         return null != expand && expand >= 0;
     }
 
-    private void watching(Advice advice) {
+    private synchronized void watching(Advice advice) {
         try {
             // 本次调用的耗时
             double cost = threadLocalWatch.costInMillis();
             if (isConditionMet(command.getConditionExpress(), advice, cost)) {
-                // TODO: concurrency issues for process.write
+                if (isLimitExceeded(command.getNumberOfLimit(), process.times().get())) {
+                    return;
+                }
                 Object value = getExpressionResult(command.getExpress(), advice, cost);
                 String result = StringUtils.objectToString(
                         isNeedExpand() ? new ObjectView(value, command.getExpand(), command.getSizeLimit()).draw() : value);

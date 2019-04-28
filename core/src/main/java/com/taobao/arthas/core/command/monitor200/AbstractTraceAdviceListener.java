@@ -66,7 +66,7 @@ public class AbstractTraceAdviceListener extends ReflectAdviceListenerAdapter {
         return command;
     }
 
-    private void finishing(Advice advice) {
+    private synchronized void finishing(Advice advice) {
         // 本次调用的耗时
         double cost = threadLocalWatch.costInMillis();
         if (--threadBoundEntity.get().deep == 0) {
@@ -74,12 +74,12 @@ public class AbstractTraceAdviceListener extends ReflectAdviceListenerAdapter {
                 if (isConditionMet(command.getConditionExpress(), advice, cost)) {
                     // 满足输出条件
                     if (isLimitExceeded(command.getNumberOfLimit(), process.times().get())) {
-                        // TODO: concurrency issue to abort process
+                        return;
+                    }
+                    process.write(threadBoundEntity.get().view.draw() + "\n");
+                    process.times().incrementAndGet();
+                    if (isLimitExceeded(command.getNumberOfLimit(), process.times().get())) {
                         abortProcess(process, command.getNumberOfLimit());
-                    } else {
-                        process.times().incrementAndGet();
-                        // TODO: concurrency issues for process.write
-                        process.write(threadBoundEntity.get().view.draw() + "\n");
                     }
                 }
             } catch (Throwable e) {

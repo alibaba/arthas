@@ -48,12 +48,14 @@ public class StackAdviceListener extends ReflectAdviceListenerAdapter {
         finishing(advice);
     }
 
-    private void finishing(Advice advice) {
+    private synchronized void finishing(Advice advice) {
         // 本次调用的耗时
         try {
             double cost = threadLocalWatch.costInMillis();
             if (isConditionMet(command.getConditionExpress(), advice, cost)) {
-                // TODO: concurrency issues for process.write
+                if (isLimitExceeded(command.getNumberOfLimit(), process.times().get())) {
+                    return;
+                }
                 process.write("ts=" + DateUtils.getCurrentDate() + ";" + stackThreadLocal.get() + "\n");
                 process.times().incrementAndGet();
                 if (isLimitExceeded(command.getNumberOfLimit(), process.times().get())) {

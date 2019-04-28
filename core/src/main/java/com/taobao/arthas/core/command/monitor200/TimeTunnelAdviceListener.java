@@ -53,7 +53,7 @@ public class TimeTunnelAdviceListener extends ReflectAdviceListenerAdapter {
         afterFinishing(Advice.newForAfterThrowing(loader, clazz, method, target, args, throwable));
     }
 
-    private void afterFinishing(Advice advice) {
+    private synchronized void afterFinishing(Advice advice) {
         double cost = threadLocalWatch.costInMillis();
         TimeFragment timeTunnel = new TimeFragment(advice, new Date(), cost);
 
@@ -74,6 +74,10 @@ public class TimeTunnelAdviceListener extends ReflectAdviceListenerAdapter {
             return;
         }
 
+        if (isLimitExceeded(command.getNumberOfLimit(), process.times().get())) {
+            return;
+        }
+
         int index = command.putTimeTunnel(timeTunnel);
         TableElement table = createTable();
 
@@ -87,7 +91,6 @@ public class TimeTunnelAdviceListener extends ReflectAdviceListenerAdapter {
         // 填充表格内容
         fillTableRow(table, index, timeTunnel);
 
-        // TODO: concurrency issues for process.write
         process.write(RenderUtil.render(table, process.width()));
         process.times().incrementAndGet();
         if (isLimitExceeded(command.getNumberOfLimit(), process.times().get())) {
