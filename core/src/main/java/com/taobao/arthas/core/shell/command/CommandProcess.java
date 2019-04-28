@@ -121,9 +121,9 @@ public interface CommandProcess extends Tty {
 
     /**
      * Register listener
-     * 
+     *
      * @param lock the lock for enhance class
-     * @param listener 
+     * @param listener
      */
     void register(int lock, AdviceListener listener);
 
@@ -134,7 +134,7 @@ public interface CommandProcess extends Tty {
 
     /**
      * Execution times
-     * 
+     *
      * @return execution times
      */
     AtomicInteger times();
@@ -151,7 +151,7 @@ public interface CommandProcess extends Tty {
 
     /**
      * echo tips
-     * 
+     *
      * @param tips process tips
      */
     void echoTips(String tips);
@@ -162,4 +162,9 @@ public interface CommandProcess extends Tty {
      * @return
      */
     String cacheLocation();
+
+    /**
+     * Whether the process is running
+     */
+    boolean isRunning();
 }

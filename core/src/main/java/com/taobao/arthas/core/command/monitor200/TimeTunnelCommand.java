@@ -20,6 +20,7 @@ import com.taobao.middleware.cli.annotations.Name;
 import com.taobao.middleware.cli.annotations.Option;
 import com.taobao.middleware.cli.annotations.Summary;
 import com.taobao.middleware.cli.annotations.Argument;
+import com.taobao.middleware.logger.Logger;
 import com.taobao.text.ui.TableElement;
 import com.taobao.text.util.RenderUtil;
 
@@ -78,6 +79,7 @@ public class TimeTunnelCommand extends EnhancerCommand {
     private int numberOfLimit = 100;
     private int replayTimes = 1;
     private long replayInterval = 1000L;
+    private static final Logger logger = LogUtil.getArthasLogger();
 
     @Argument(index = 0, argName = "class-pattern", required = false)
     @Description("Path and classname of Pattern Matching")
@@ -362,7 +364,7 @@ public class TimeTunnelCommand extends EnhancerCommand {
 
             affect.rCnt(1);
         } catch (ExpressException e) {
-            LogUtil.getArthasLogger().warn("tt failed.", e);
+            logger.warn("tt failed.", e);
             process.write(e.getMessage() + ", visit " + LogUtil.LOGGER_FILE + " for more detail\n");
         } finally {
             process.write(affect.toString()).write("\n");
@@ -436,39 +438,40 @@ public class TimeTunnelCommand extends EnhancerCommand {
         process.end();
     }
 
-    // 重放指定记录
+    /**
+     * 重放指定记录
+     */
     private void processPlay(CommandProcess process) {
-        RowAffect affect = new RowAffect();
+        TimeFragment tf = timeFragmentMap.get(index);
+        if (null == tf) {
+            process.write(format("Time fragment[%d] does not exist.", index) + "\n");
+            process.end();
+            return;
+        }
+        Advice advice = tf.getAdvice();
+        String className = advice.getClazz().getName();
+        String methodName = advice.getMethod().getName();
+        String objectAddress = advice.getTarget() == null ? "NULL" : "0x" + toHexString(advice.getTarget().hashCode());
+        ArthasMethod method = advice.getMethod();
+        boolean accessible = advice.getMethod().isAccessible();
         try {
-            TimeFragment tf = timeFragmentMap.get(index);
-            if (null == tf) {
-                process.write(format("Time fragment[%d] does not exist.", index) + "\n");
-                process.write(affect + "\n");
-                process.end();
-                return;
+            if (!accessible) {
+                method.setAccessible(true);
             }
-
-            Advice advice = tf.getAdvice();
-            String className = advice.getClazz().getName();
-            String methodName = advice.getMethod().getName();
-            String objectAddress = advice.getTarget() == null ? "NULL" : "0x" + toHexString(advice.getTarget().hashCode());
-
-
-
-            ArthasMethod method = advice.getMethod();
-            method.setAccessible(true);
-            boolean accessible = advice.getMethod().isAccessible();
             for (int i = 0; i < getReplayTimes(); i++) {
-//              wait for the next execution
                 if (i > 0) {
-                    try {
-                        Thread.sleep(getReplayInterval());
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
+                    //wait for the next execution
+                    Thread.sleep(getReplayInterval());
+                    if (!process.isRunning()) {
+                        return;
                     }
                 }
                 long beginTime = System.nanoTime();
                 TableElement table = TimeTunnelTable.createDefaultTable();
+                if (i != 0) {
+                    // empty line separator
+                    process.write("\n");
+                }
                 TimeTunnelTable.drawPlayHeader(className, methodName, objectAddress, index, table);
                 TimeTunnelTable.drawParameters(advice, table, isNeedExpand(), expand);
 
@@ -480,14 +483,13 @@ public class TimeTunnelCommand extends EnhancerCommand {
                     TimeTunnelTable.drawPlayException(table, t, isNeedExpand(), expand);
                 }
                 process.write(RenderUtil.render(table, process.width()))
-                        .write(format("Time fragment[%d] successfully replayed.", index))
+                        .write(format("Time fragment[%d] successfully replayed %d times.", index, i+1))
                         .write("\n");
-                affect.rCnt(1);
-                process.write(affect.toString()).write("\n");
             }
-            method.setAccessible(accessible);
-
+        } catch (Throwable t) {
+            logger.warn("tt replay failed.", t);
         } finally {
+            method.setAccessible(accessible);
             process.end();
         }
     }
