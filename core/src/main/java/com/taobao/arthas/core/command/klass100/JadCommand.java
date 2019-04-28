@@ -180,8 +180,20 @@ public class JadCommand extends AnnotatedCommand {
 
     @Override
     public void complete(Completion completion) {
-        if (!CompletionUtils.completeClassName(completion)) {
-            super.complete(completion);
+        int argumentIndex = CompletionUtils.detectArgumentIndex(completion);
+
+        if (argumentIndex == 1) {
+            if (!CompletionUtils.completeClassName(completion)) {
+                super.complete(completion);
+            }
+            return;
+        } else if (argumentIndex == 2) {
+            if (!CompletionUtils.completeMethodName(completion)) {
+                super.complete(completion);
+            }
+            return;
         }
+
+        super.complete(completion);
     }
 }
