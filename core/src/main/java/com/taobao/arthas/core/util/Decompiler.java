@@ -1,5 +1,7 @@
 package com.taobao.arthas.core.util;
 
+import static org.benf.cfr.reader.util.collections.ListFactory.newList;
+
 import java.io.IOException;
 import java.io.StringWriter;
 import java.util.ArrayList;
@@ -13,18 +15,18 @@ import org.benf.cfr.reader.relationship.MemberNameResolver;
 import org.benf.cfr.reader.state.ClassFileSourceImpl;
 import org.benf.cfr.reader.state.DCCommonState;
 import org.benf.cfr.reader.state.TypeUsageCollector;
+import org.benf.cfr.reader.state.TypeUsageCollectorImpl;
 import org.benf.cfr.reader.state.TypeUsageInformation;
 import org.benf.cfr.reader.util.AnalysisType;
 import org.benf.cfr.reader.util.CannotLoadClassException;
 import org.benf.cfr.reader.util.ConfusedCFRException;
-import org.benf.cfr.reader.util.ListFactory;
 import org.benf.cfr.reader.util.getopt.GetOptParser;
 import org.benf.cfr.reader.util.getopt.Options;
 import org.benf.cfr.reader.util.getopt.OptionsImpl;
 import org.benf.cfr.reader.util.output.Dumper;
 import org.benf.cfr.reader.util.output.DumperFactory;
-import org.benf.cfr.reader.util.output.DumperFactoryImpl;
 import org.benf.cfr.reader.util.output.IllegalIdentifierDump;
+import org.benf.cfr.reader.util.output.InternalDumperFactoryImpl;
 import org.benf.cfr.reader.util.output.StreamDumper;
 import org.benf.cfr.reader.util.output.ToStringDumper;
 
@@ -42,7 +44,9 @@ public class Decompiler {
      * @return
      */
     public static String decompile(String classFilePath, String methodName) {
+        // CHECKSTYLE:OFF
         StringBuilder result = new StringBuilder(8192);
+        // CHECKSTYLE:ON
 
         List<String> argList = new ArrayList<String>();
         argList.add(classFilePath);
@@ -50,7 +54,7 @@ public class Decompiler {
             argList.add("--methodname");
             argList.add(methodName);
         }
-        String args[] = argList.toArray(new String[0]);
+        String[] args = argList.toArray(new String[0]);
 
         GetOptParser getOptParser = new GetOptParser();
 
@@ -61,7 +65,8 @@ public class Decompiler {
             files = (List) processedArgs.getFirst();
             options = (Options) processedArgs.getSecond();
         } catch (Exception e) {
-            getOptParser.showHelp(OptionsImpl.getFactory(), e);
+            // getOptParser.showHelp(OptionsImpl.getFactory(), e);
+            getOptParser.showHelp(e);
             System.exit(1);
         }
 
@@ -78,11 +83,12 @@ public class Decompiler {
         Collections.sort(files);
 
         for (String path : files) {
-            classFileSource.clearConfiguration();
+            // classFileSource.clearConfiguration();
             DCCommonState dcCommonState = new DCCommonState(options, classFileSource);
-            DumperFactory dumperFactory = new DumperFactoryImpl(options);
+            DumperFactory dumperFactory = new InternalDumperFactoryImpl(options);
 
-            path = classFileSource.adjustInputPath(path);
+            // path = classFileSource.adjustInputPath(path);
+            path = classFileSource.getPossiblyRenamedPath(path);
 
             AnalysisType type = (AnalysisType) options.getOption(OptionsImpl.ANALYSE_AS);
             if (type == null) {
@@ -101,7 +107,9 @@ public class Decompiler {
 
     public static String doClass(DCCommonState dcCommonState, String path, boolean skipInnerClass,
                     DumperFactory dumperFactory) {
+        // CHECKSTYLE:OFF
         StringBuilder result = new StringBuilder(8192);
+        // CHECKSTYLE:ON
         Options options = dcCommonState.getOptions();
         IllegalIdentifierDump illegalIdentifierDump = IllegalIdentifierDump.Factory.get(options);
         Dumper d = new ToStringDumper();
@@ -121,12 +129,12 @@ public class Decompiler {
             }
             if (((Boolean) options.getOption(OptionsImpl.RENAME_DUP_MEMBERS)).booleanValue()) {
                 MemberNameResolver.resolveNames(dcCommonState,
-                                ListFactory.newList(dcCommonState.getClassCache().getLoadedTypes()));
+                                newList(dcCommonState.getClassCache().getLoadedTypes()));
             }
 
             c.analyseTop(dcCommonState);
 
-            TypeUsageCollector collectingDumper = new TypeUsageCollector(c);
+            TypeUsageCollector collectingDumper = new TypeUsageCollectorImpl(c);
             c.collectTypeUsages(collectingDumper);
 
             d = new StringDumper(collectingDumper.getTypeUsageInformation(), options, illegalIdentifierDump);
@@ -137,8 +145,7 @@ public class Decompiler {
             String methname = (String) options.getOption(OptionsImpl.METHODNAME);
             if (methname == null) {
                 c.dump(d);
-            }
-            else {
+            } else {
                 try {
                     for (Method method : c.getMethodByName(methname)) {
                         method.dump(d, true);
@@ -170,6 +177,9 @@ public class Decompiler {
         return result.toString();
     }
 
+    /**
+     *
+     */
     public static class StringDumper extends StreamDumper {
         private StringWriter sw = new StringWriter();
 
