@@ -23,6 +23,10 @@ public class ClassUtils {
         return cs.getLocation().getFile();
     }
 
+    public static boolean isLambdaClass(Class<?> clazz) {
+        return clazz.getName().contains("$$Lambda$");
+    }
+
     public static Element renderClassInfo(Class<?> clazz) {
         return renderClassInfo(clazz, false, null);
     }
