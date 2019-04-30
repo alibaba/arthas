@@ -391,6 +391,7 @@ $ classloader
 ![雪球财经](static/xueqiu.png)
 ![百安居](static/bthome.png)
 ![安心保险](static/95303.png)
+![杭州源诚科技](static/hzyc.png)
 
 ### Credit
 
