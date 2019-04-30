@@ -137,6 +137,11 @@
             <artifactId>cfr</artifactId>
             <version>0.132</version>
         </dependency>
+        <dependency>
+            <groupId>org.mvel</groupId>
+            <artifactId>mvel2</artifactId>
+            <version>2.4.4.Final</version>
+        </dependency>
         <!-- for com.sun.tools.attach.VirtualMachine api -->
         <dependency>
             <groupId>com.github.olivergondza</groupId>

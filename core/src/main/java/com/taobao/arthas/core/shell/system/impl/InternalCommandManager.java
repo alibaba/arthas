@@ -1,18 +1,18 @@
 package com.taobao.arthas.core.shell.system.impl;
 
-import com.taobao.arthas.core.command.BuiltinCommandPack;
-import com.taobao.arthas.core.shell.cli.CliToken;
-import com.taobao.arthas.core.shell.cli.Completion;
-import com.taobao.arthas.core.shell.cli.CompletionUtils;
-import com.taobao.arthas.core.shell.command.Command;
-import com.taobao.arthas.core.shell.command.CommandResolver;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.ListIterator;
+
+import com.taobao.arthas.core.command.BuiltinCommandPack;
+import com.taobao.arthas.core.shell.cli.CliToken;
+import com.taobao.arthas.core.shell.cli.Completion;
+import com.taobao.arthas.core.shell.cli.CompletionUtils;
+import com.taobao.arthas.core.shell.command.Command;
+import com.taobao.arthas.core.shell.command.CommandResolver;
 
 /**
  * @author <a href="mailto:julien@julienviet.com">Julien Viet</a>

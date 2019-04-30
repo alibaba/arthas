@@ -7,23 +7,29 @@ package com.taobao.arthas.core.command.express;
  */
 public class ExpressFactory {
 
-    private static final ThreadLocal<Express> expressRef = new ThreadLocal<Express>() {
+    private static final ThreadLocal<Express> EXPRESS_REF = new ThreadLocal<Express>() {
         @Override
         protected Express initialValue() {
             return new OgnlExpress();
         }
     };
 
+    private static final MvelExpress MVEL_EXPRESS = new MvelExpress();
+
     /**
      * get ThreadLocal Express Object
-     * @param object
-     * @return
+     * @param object obj
+     * @return express
      */
     public static Express threadLocalExpress(Object object) {
-        return expressRef.get().reset().bind(object);
+        return EXPRESS_REF.get().reset().bind(object);
     }
 
     public static Express unpooledExpress(ClassLoader classloader) {
         return new OgnlExpress(new ClassLoaderClassResolver(classloader));
+    }
+
+    public static Express mvelExpress(ClassLoader classloader) {
+        return MVEL_EXPRESS;
     }
 }

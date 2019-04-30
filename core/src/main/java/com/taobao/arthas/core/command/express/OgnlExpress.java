@@ -15,7 +15,7 @@ import ognl.OgnlContext;
  */
 public class OgnlExpress implements Express {
     private static final MemberAccess MEMBER_ACCESS = new DefaultMemberAccess(true);
-    Logger logger = LogUtil.getArthasLogger();
+    private final Logger logger = LogUtil.getArthasLogger();
 
     private Object bindObject;
     private final OgnlContext context;

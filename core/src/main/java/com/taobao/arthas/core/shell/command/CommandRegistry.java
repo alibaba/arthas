@@ -13,7 +13,8 @@ import java.util.concurrent.ConcurrentHashMap;
  * @author <a href="mailto:julien@julienviet.com">Julien Viet</a>
  */
 public class CommandRegistry implements CommandResolver {
-    final ConcurrentHashMap<String, Command> commandMap = new ConcurrentHashMap<String, Command>();
+
+    private final ConcurrentHashMap<String, Command> commandMap = new ConcurrentHashMap<String, Command>();
 
     /**
      * Create a new registry.
@@ -53,7 +54,6 @@ public class CommandRegistry implements CommandResolver {
         }
         return this;
     }
-
 
     /**
      * Unregister a command.
