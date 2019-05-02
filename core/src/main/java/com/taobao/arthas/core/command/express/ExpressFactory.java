@@ -1,5 +1,7 @@
 package com.taobao.arthas.core.command.express;
 
+import java.util.concurrent.ConcurrentHashMap;
+
 /**
  * ExpressFactory
  * @author ralf0131 2017-01-04 14:40.
@@ -14,7 +16,7 @@ public class ExpressFactory {
         }
     };
 
-    private static final MvelExpress MVEL_EXPRESS = new MvelExpress();
+    private static final ConcurrentHashMap<String, MvelExpress> MVEL_EXPRESS = new ConcurrentHashMap<String, MvelExpress>();
 
     /**
      * get ThreadLocal Express Object
@@ -30,6 +32,12 @@ public class ExpressFactory {
     }
 
     public static Express mvelExpress(ClassLoader classloader) {
-        return MVEL_EXPRESS;
+        String classLoaderName = classloader.getClass().getName();
+        MvelExpress express = MVEL_EXPRESS.get(classLoaderName);
+        if (express == null) {
+            express = new MvelExpress(classloader);
+            MVEL_EXPRESS.put(classLoaderName, express);
+        }
+        return express;
     }
 }

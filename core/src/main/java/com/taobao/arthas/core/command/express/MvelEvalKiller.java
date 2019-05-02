@@ -18,8 +18,8 @@ public class MvelEvalKiller {
     // local context 现在没啥用
     private HashMap<String, Object> localContext = new HashMap<String, Object>();
 
-    public MvelEvalKiller() {
-        this.globalContext = new MvelContext(this);
+    public MvelEvalKiller(ClassLoader classLoader) {
+        this.globalContext = new MvelContext(this, classLoader);
     }
 
     public Object eval(String command) {

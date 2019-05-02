@@ -82,7 +82,7 @@ public class MvelCommand extends AnnotatedCommand {
             Instrumentation inst = process.session().getInstrumentation();
             ClassLoader classLoader;
             if (hashCode == null) {
-                classLoader = ClassLoader.getSystemClassLoader();
+                classLoader = getDefaultClassLoader(inst);
             } else {
                 classLoader = findClassLoader(inst, hashCode);
             }
@@ -117,5 +117,19 @@ public class MvelCommand extends AnnotatedCommand {
             }
         }
         return null;
+    }
+
+    private static ClassLoader getDefaultClassLoader(Instrumentation inst) {
+        for (Class<?> clazz : inst.getAllLoadedClasses()) {
+            ClassLoader classLoader = clazz.getClassLoader();
+            if (classLoader != null) {
+                String classLoaderName = classLoader.getClass().getName();
+                // 如果是 Tomcat 环境，优先使用 Tomcat 的 ClassLoader
+                if (classLoaderName.equals("org.apache.catalina.loader.WebappClassLoader")) {
+                    return classLoader;
+                }
+            }
+        }
+        return ClassLoader.getSystemClassLoader();
     }
 }

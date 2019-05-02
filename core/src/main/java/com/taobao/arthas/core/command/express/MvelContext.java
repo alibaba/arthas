@@ -23,8 +23,11 @@ public class MvelContext extends HashMap<String, Object> {
 
     private final MvelEvalKiller evalKiller;
 
-    public MvelContext(MvelEvalKiller evalKiller) {
+    private final ClassLoader classLoader;
+
+    public MvelContext(MvelEvalKiller evalKiller, ClassLoader classLoader) {
         this.evalKiller = evalKiller;
+        this.classLoader = classLoader;
     }
 
     @Override
@@ -64,6 +67,10 @@ public class MvelContext extends HashMap<String, Object> {
                         bean = evalKiller.evalWithoutContext(String.format("%s(%s)", GET_BEAN_BY_CLASS, getClassEvalString));
                     }
                 } else {
+                    try {
+                        clazz = classLoader.loadClass(beanName);
+                    } catch (Exception ignored) {
+                    }
                     clazz = Class.forName(beanName);
                 }
             }

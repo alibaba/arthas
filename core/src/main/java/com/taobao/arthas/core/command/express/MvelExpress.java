@@ -12,8 +12,8 @@ public class MvelExpress implements Express {
 
     private final MvelEvalKiller evalKiller;
 
-    public MvelExpress() {
-        evalKiller = new MvelEvalKiller();
+    public MvelExpress(ClassLoader classLoader) {
+        evalKiller = new MvelEvalKiller(classLoader);
     }
 
     @Override
