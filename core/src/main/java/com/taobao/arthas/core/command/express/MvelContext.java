@@ -52,11 +52,11 @@ public class MvelContext extends HashMap<String, Object> {
         }
         Object bean = null;
         Class<?> clazz = null;
-        if (this.containsKey(GET_BEAN_BY_NAME)) {
-            bean = evalKiller.evalWithoutContext(String.format("%s(\"%s\")", GET_BEAN_BY_NAME, beanName));
-        }
-        if (bean == null) {
-            try {
+        try {
+            if (this.containsKey(GET_BEAN_BY_NAME)) {
+                bean = evalKiller.evalWithoutContext(String.format("%s(\"%s\")", GET_BEAN_BY_NAME, beanName));
+            }
+            if (bean == null) {
                 String getClassEvalString = String.format("%s(\"%s\")", GET_CLASS_BY_NAME, beanName);
                 if (this.containsKey(GET_CLASS_BY_NAME)) {
                     clazz = (Class<?>) evalKiller.evalWithoutContext(getClassEvalString);
@@ -66,9 +66,9 @@ public class MvelContext extends HashMap<String, Object> {
                 } else {
                     clazz = Class.forName(beanName);
                 }
-            } catch (Exception e) {
-                // pass
             }
+        } catch (Exception e) {
+            // pass
         }
         if (bean != null) {
             return bean;
