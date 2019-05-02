@@ -1,5 +1,8 @@
 package com.taobao.arthas.core.shell.cli;
 
+/**
+ *
+ */
 public interface CliToken {
     /**
      * @return the token value

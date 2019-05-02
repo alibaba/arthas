@@ -6,7 +6,9 @@ import com.taobao.arthas.core.command.Constants;
 import com.taobao.arthas.core.command.express.Express;
 import com.taobao.arthas.core.command.express.ExpressException;
 import com.taobao.arthas.core.command.express.ExpressFactory;
+import com.taobao.arthas.core.shell.cli.CliToken;
 import com.taobao.arthas.core.shell.command.AnnotatedCommand;
+import com.taobao.arthas.core.shell.command.Command;
 import com.taobao.arthas.core.shell.command.CommandProcess;
 import com.taobao.arthas.core.util.LogUtil;
 import com.taobao.arthas.core.util.StringUtils;
@@ -44,6 +46,12 @@ public class MvelCommand extends AnnotatedCommand {
 
     private int expand = 3;
 
+    private static Command instance = Command.create(MvelCommand.class);
+
+    public static Command getInstance() {
+        return instance;
+    }
+
     @Argument(argName = "express", index = 0)
     @Description("The mvel expression.")
     public void setExpress(String express) {
@@ -65,6 +73,11 @@ public class MvelCommand extends AnnotatedCommand {
     @Override
     public void process(CommandProcess process) {
         int exitCode = 0;
+        StringBuilder sb = new StringBuilder();
+        for (CliToken cliToken: process.argsTokens()) {
+            sb.append(cliToken.raw());
+        }
+        String evalString = sb.toString();
         try {
             Instrumentation inst = process.session().getInstrumentation();
             ClassLoader classLoader;
@@ -82,7 +95,7 @@ public class MvelCommand extends AnnotatedCommand {
 
             Express unpooledExpress = ExpressFactory.mvelExpress(classLoader);
             try {
-                Object value = unpooledExpress.get(express);
+                Object value = unpooledExpress.get(evalString);
                 String result = StringUtils.objectToString(expand >= 0 ? new ObjectView(value, expand).draw() : value);
                 process.write(result + "\n");
             } catch (ExpressException e) {

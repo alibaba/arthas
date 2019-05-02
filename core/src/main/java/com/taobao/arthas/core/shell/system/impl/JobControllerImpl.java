@@ -1,7 +1,21 @@
 package com.taobao.arthas.core.shell.system.impl;
 
+import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.List;
+import java.util.ListIterator;
+import java.util.Set;
+import java.util.SortedMap;
+import java.util.TreeMap;
+import java.util.concurrent.atomic.AtomicInteger;
+
 import com.taobao.arthas.core.GlobalOptions;
+import com.taobao.arthas.core.command.klass100.MvelCommand;
 import com.taobao.arthas.core.shell.cli.CliToken;
+import com.taobao.arthas.core.shell.cli.impl.CliTokenImpl;
 import com.taobao.arthas.core.shell.command.Command;
 import com.taobao.arthas.core.shell.command.internal.RedirectHandler;
 import com.taobao.arthas.core.shell.command.internal.StdoutHandler;
@@ -19,23 +33,12 @@ import com.taobao.arthas.core.util.TokenUtils;
 
 import io.termd.core.function.Function;
 
-import java.io.File;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.List;
-import java.util.ListIterator;
-import java.util.Set;
-import java.util.SortedMap;
-import java.util.TreeMap;
-import java.util.concurrent.atomic.AtomicInteger;
-
 /**
  * @author <a href="mailto:julien@julienviet.com">Julien Viet</a>
  */
 public class JobControllerImpl implements JobController {
 
+    // CHECKSTYLE:OFF
     private final SortedMap<Integer, JobImpl> jobs = new TreeMap<Integer, JobImpl>();
     private final AtomicInteger idGenerator = new AtomicInteger(0);
     private boolean closed = false;
@@ -123,6 +126,12 @@ public class JobControllerImpl implements JobController {
     private Process createProcess(List<CliToken> line, InternalCommandManager commandManager, int jobId, Term term) {
         try {
             ListIterator<CliToken> tokens = line.listIterator();
+            StringBuilder sb = new StringBuilder();
+            for (CliToken cliToken: line) {
+                sb.append(cliToken.raw());
+            }
+            String rawLine = sb.toString();
+
             while (tokens.hasNext()) {
                 CliToken token = tokens.next();
                 if (token.isText()) {
@@ -130,7 +139,10 @@ public class JobControllerImpl implements JobController {
                     if (command != null) {
                         return createCommandProcess(command, tokens, jobId, term);
                     } else {
-                        throw new IllegalArgumentException(token.value() + ": command not found");
+                        // 找不到的，就是 MVEL
+                        command = MvelCommand.getInstance();
+                        CliToken tempToken = new CliTokenImpl(true, rawLine, rawLine);
+                        return createMvelCommandProcess(command, tempToken, term);
                     }
                 }
             }
@@ -148,6 +160,23 @@ public class JobControllerImpl implements JobController {
             tokens.remove(last);
         }
         return runInBackground;
+    }
+
+    @SuppressWarnings("Duplicates")
+    private Process createMvelCommandProcess(Command command, CliToken remainingToken, Term term) {
+        List<CliToken> remaining = new ArrayList<CliToken>();
+        List<CliToken> pipelineTokens = new ArrayList<CliToken>();
+        List<Function<String, String>> stdoutHandlerChain = new ArrayList<Function<String, String>>();
+        remaining.add(remainingToken);
+
+        injectHandler(stdoutHandlerChain, pipelineTokens);
+        stdoutHandlerChain.add(new TermHandler(term));
+
+        if (GlobalOptions.isSaveResult) {
+            stdoutHandlerChain.add(new RedirectHandler());
+        }
+        ProcessOutput processOutput = new ProcessOutput(stdoutHandlerChain, null, term);
+        return new ProcessImpl(command, remaining, command.processHandler(), processOutput);
     }
 
     private Process createCommandProcess(Command command, ListIterator<CliToken> tokens, int jobId, Term term) throws IOException {
@@ -196,8 +225,8 @@ public class JobControllerImpl implements JobController {
                 stdoutHandlerChain.add(new RedirectHandler());
             }
         }
-        ProcessOutput ProcessOutput = new ProcessOutput(stdoutHandlerChain, cacheLocation, term);
-        return new ProcessImpl(command, remaining, command.processHandler(), ProcessOutput);
+        ProcessOutput processOutput = new ProcessOutput(stdoutHandlerChain, cacheLocation, term);
+        return new ProcessImpl(command, remaining, command.processHandler(), processOutput);
     }
 
     private String getRedirectFileName(ListIterator<CliToken> tokens) {
@@ -224,4 +253,5 @@ public class JobControllerImpl implements JobController {
     public void close() {
         close(null);
     }
+    // CHECKSTYLE:ON
 }

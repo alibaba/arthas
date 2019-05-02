@@ -1,19 +1,20 @@
 package com.taobao.arthas.core.shell.cli.impl;
 
-import com.taobao.arthas.core.shell.cli.CliToken;
-import io.termd.core.readline.LineStatus;
-
 import java.util.LinkedList;
 import java.util.List;
+
+import com.taobao.arthas.core.shell.cli.CliToken;
+
+import io.termd.core.readline.LineStatus;
 
 /**
  * @author <a href="mailto:julien@julienviet.com">Julien Viet</a>
  */
 public class CliTokenImpl implements CliToken {
 
-    final boolean text;
-    final String raw;
-    final String value;
+    private final boolean text;
+    private final String raw;
+    private final String value;
 
     public CliTokenImpl(boolean text, String value) {
         this(text, value, value);
