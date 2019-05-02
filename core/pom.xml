@@ -140,7 +140,7 @@
         <dependency>
             <groupId>com.xhinliang</groupId>
             <artifactId>jugg</artifactId>
-            <version>2.1.4</version>
+            <version>2.1.5</version>
         </dependency>
         <!-- for com.sun.tools.attach.VirtualMachine api -->
         <dependency>
