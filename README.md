@@ -11,6 +11,9 @@
 
 `Arthas` is a Java Diagnostic tool open sourced by Alibaba.
 
+`Arthas-MVEL` use MVEL as first-class command parser.
+* Supports Linux/Mac/Windows.
+
 Arthas allows developers to troubleshoot production issues for Java applications without modifying code or restarting servers.
 
 [中文说明/Chinese Documentation](README_CN.md)
@@ -40,7 +43,6 @@ Arthas was built to solve these issues. A developer can troubleshoot your produc
 * Supports JDK 6+.
 * Supports Linux/Mac/Windows.
 
-
 ### Online Tutorials(Recommend)
 
 * [Arthas Basics](https://alibaba.github.io/arthas/arthas-tutorials?language=en&id=arthas-basics)
@@ -48,12 +50,10 @@ Arthas was built to solve these issues. A developer can troubleshoot your produc
 
 ### Quick start
 
-#### Use `arthas-boot`(Recommend)
-
 Download`arthas-boot.jar`，Start with `java` command:
 
 ```bash
-wget https://alibaba.github.io/arthas/arthas-boot.jar
+wget https://statics.xhinliang.com/arthas-boot.jar
 java -jar arthas-boot.jar
 ```
 
@@ -62,19 +62,6 @@ Print usage:
 ```bash
 java -jar arthas-boot.jar -h
 ```
-
-#### Use `as.sh`
-
-You can install Arthas with one single line command on Linux, Unix, and Mac. Copy the following command and paste it into the command line, then press *Enter* to run:
-
-```bash
-curl -L https://alibaba.github.io/arthas/install.sh | sh
-```
-
-The command above will download the bootstrap script `as.sh` to the current directory. You can move it the any other place you want, or put its location in `$PATH`.
-
-You can enter its interactive interface by executing `as.sh`, or execute `as.sh -h` for more help information.
-
 
 ### Documentation
 
