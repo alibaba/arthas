@@ -138,9 +138,9 @@
             <version>0.141</version>
         </dependency>
         <dependency>
-            <groupId>org.mvel</groupId>
-            <artifactId>mvel2</artifactId>
-            <version>2.4.4.Final</version>
+            <groupId>com.xhinliang</groupId>
+            <artifactId>jugg</artifactId>
+            <version>2.1.4</version>
         </dependency>
         <!-- for com.sun.tools.attach.VirtualMachine api -->
         <dependency>
