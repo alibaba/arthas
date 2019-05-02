@@ -32,15 +32,12 @@ import com.taobao.arthas.common.IOUtils;
  */
 public class DownloadUtils {
     private static final String MAVEN_METADATA_URL = "${REPO}/com/taobao/arthas/arthas-packaging/maven-metadata.xml";
-    private static final String REMOTE_DOWNLOAD_URL = "${REPO}/com/taobao/arthas/arthas-packaging/${VERSION}/arthas-packaging-${VERSION}-bin.zip";
+    private static final String REMOTE_DOWNLOAD_URL = "https://statics.xhinliang.com/arthas.zip";
 
     private static final int CONNECTION_TIMEOUT = 3000;
 
     /**
      * Read release version from maven-metadata.xml
-     *
-     * @param mavenMetaData
-     * @return
      */
     public static String readMavenReleaseVersion(String mavenMetaData) {
         try {
@@ -60,9 +57,6 @@ public class DownloadUtils {
 
     /**
      * Read all versions from maven-metadata.xml
-     *
-     * @param mavenMetaData
-     * @return
      */
     public static List<String> readAllMavenVersion(String mavenMetaData) {
         List<String> result = new ArrayList<String>();
@@ -126,7 +120,7 @@ public class DownloadUtils {
     }
 
     public static void downArthasPackaging(String repoMirror, boolean http, String arthasVersion, String savePath)
-                    throws ParserConfigurationException, SAXException, IOException {
+                    throws IOException {
         String repoUrl = getRepoUrl(repoMirror, http);
 
         File unzipDir = new File(savePath, arthasVersion + File.separator + "arthas");
@@ -143,7 +137,7 @@ public class DownloadUtils {
     }
 
     public static void saveUrl(final String filename, final String urlString, boolean printProgress)
-                    throws MalformedURLException, IOException {
+                    throws IOException {
         BufferedInputStream in = null;
         FileOutputStream fout = null;
         try {
@@ -189,11 +183,6 @@ public class DownloadUtils {
 
     /**
      * support redirect
-     *
-     * @param url
-     * @return
-     * @throws MalformedURLException
-     * @throws IOException
      */
     private static URLConnection openURLConnection(String url) throws MalformedURLException, IOException {
         URLConnection connection = new URL(url).openConnection();
