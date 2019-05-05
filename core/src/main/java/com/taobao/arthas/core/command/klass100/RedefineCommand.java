@@ -10,6 +10,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.taobao.arthas.core.util.LogUtil;
+import com.taobao.middleware.logger.Logger;
 import org.objectweb.asm.ClassReader;
 
 import com.taobao.arthas.core.command.Constants;
@@ -36,7 +38,7 @@ import com.taobao.middleware.cli.annotations.Summary;
                 "  redefine -c 327a647b /tmp/Test.class /tmp/Test\\$Inner.class \n" +
                 Constants.WIKI + Constants.WIKI_HOME + "redefine")
 public class RedefineCommand extends AnnotatedCommand {
-
+    private static final Logger logger = LogUtil.getArthasLogger();
     private static final int MAX_FILE_SIZE = 10 * 1024 * 1024;
 
     private String hashCode;
@@ -116,6 +118,7 @@ public class RedefineCommand extends AnnotatedCommand {
                     continue;
                 }
                 definitions.add(new ClassDefinition(clazz, bytesMap.get(clazz.getName())));
+                logger.info("redefine", "Try redefine class name: {}, ClassLoader: {}", clazz.getName(), clazz.getClassLoader());
             }
         }
 
