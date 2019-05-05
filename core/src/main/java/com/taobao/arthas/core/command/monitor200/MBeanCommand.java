@@ -64,8 +64,8 @@ import static javax.management.MBeanOperationInfo.UNKNOWN;
 @Summary("Display the mbean information")
 @Description("\nExamples:\n" +
              "  mbean\n" +
-             "  mbean java.lang:type=Memory\n" +
-             "  mbean -m java.lang:type=Memory\n" +
+             "  mbean -m java.lang:type=Threading\n" +
+             "  mbean java.lang:type=Threading\n" +
              "  mbean java.lang:type=Threading *Count\n" +
              "  mbean -E java.lang:type=Threading PeakThreadCount|ThreadCount|DaemonThreadCount\n" +
              "  mbean -i 1000 java.lang:type=Threading *Count\n" +
