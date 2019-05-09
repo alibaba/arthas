@@ -57,7 +57,8 @@ public class AbstractTraceAdviceListener extends ReflectAdviceListenerAdapter {
     @Override
     public void afterThrowing(ClassLoader loader, Class<?> clazz, ArthasMethod method, Object target, Object[] args,
                               Throwable throwable) throws Throwable {
-        threadBoundEntity.get().view.begin("throw:" + throwable.getClass().getName() + "()").end().end();
+        int lineNumber = throwable.getStackTrace()[0].getLineNumber();
+        threadBoundEntity.get().view.begin("throw:" + throwable.getClass().getName() + "()" + " #" + lineNumber).end().end();
         final Advice advice = Advice.newForAfterThrowing(loader, clazz, method, target, args, throwable);
         finishing(advice);
     }
