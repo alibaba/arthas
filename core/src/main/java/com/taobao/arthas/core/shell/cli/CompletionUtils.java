@@ -73,7 +73,7 @@ public class CompletionUtils {
             return true;
         } else {
             completion.complete(candidates);
-            return false;
+            return true;
         }
     }
 

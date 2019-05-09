@@ -26,6 +26,7 @@
 * [sysenv](sysenv.md)——查看JVM的环境变量
 * [getstatic](getstatic.md)——查看类的静态属性
 * **New!** [ognl](ognl.md)——执行ognl表达式
+* **New!** [mbean](mbean.md)——查看 Mbean 的信息
 
 ## class/classloader相关
 
