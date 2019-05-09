@@ -295,7 +295,7 @@ public class DashboardCommand extends AnnotatedCommand {
         return RenderUtil.render(table, width, height);
     }
 
-    String drawRuntineInfoAndTomcatInfo(int width, int height) {
+    String drawRuntimeInfoAndTomcatInfo(int width, int height) {
         TableElement table = new TableElement(1, 1);
 
         TableElement runtimeInfoTable = new TableElement(1, 1).rightCellPadding(1);
@@ -405,7 +405,7 @@ public class DashboardCommand extends AnnotatedCommand {
 
             String threadInfo = drawThreadInfo(width, threadTopHeight);
             String memoryAndGc = drawMemoryInfoAndGcInfo(width, runtimeInfoHeight);
-            String runTimeAndTomcat = drawRuntineInfoAndTomcatInfo(width, heapInfoHeight);
+            String runTimeAndTomcat = drawRuntimeInfoAndTomcatInfo(width, heapInfoHeight);
 
             process.write(threadInfo + memoryAndGc + runTimeAndTomcat);
 
