@@ -20,7 +20,6 @@
             <groupId>com.alibaba.middleware</groupId>
             <artifactId>cli</artifactId>
         </dependency>
-
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
