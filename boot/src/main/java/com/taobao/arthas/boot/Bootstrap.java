@@ -53,8 +53,7 @@ public class Bootstrap {
     private static final int DEFAULT_TELNET_PORT = 3658;
     private static final int DEFAULT_HTTP_PORT = 8563;
     private static final String DEFAULT_TARGET_IP = "127.0.0.1";
-    private static final File ARTHAS_LIB_DIR = new File(
-                    System.getProperty("user.home") + File.separator + ".arthas" + File.separator + "lib");
+    private static File ARTHAS_LIB_DIR;
 
     private boolean help = false;
 
@@ -106,6 +105,28 @@ public class Bootstrap {
 
     private String command;
     private String batchFile;
+
+    static {
+        ARTHAS_LIB_DIR = new File(
+                System.getProperty("user.home") + File.separator + ".arthas" + File.separator + "lib");
+        try {
+            ARTHAS_LIB_DIR.mkdirs();
+        } catch (Throwable t) {
+            //ignore
+        }
+        if (!ARTHAS_LIB_DIR.exists()) {
+            // try to set a temp directory
+            ARTHAS_LIB_DIR = new File(System.getProperty("java.io.tmpdir") + File.separator + ".arthas" + File.separator + "lib");
+            try {
+                ARTHAS_LIB_DIR.mkdirs();
+            } catch (Throwable e) {
+                // ignore
+            }
+        }
+        if (!ARTHAS_LIB_DIR.exists()) {
+            System.err.println("Can not find directory to save arthas lib. please try to set user home by -Duser.home=");
+        }
+    }
 
     @Argument(argName = "pid", index = 0, required = false)
     @Description("Target pid")
