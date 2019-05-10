@@ -6,6 +6,8 @@ import com.taobao.middleware.logger.LoggerFactory;
 import com.taobao.middleware.logger.support.LogLog;
 import com.taobao.middleware.logger.support.LoggerHelper;
 
+import java.io.File;
+
 /**
  * Arthas日志
  * Created by vlinux on 15/3/8.
@@ -29,9 +31,22 @@ public class LogUtil {
      */
     private static final Logger termdLogger;
 
-    public static final String LOGGER_FILE = LoggerHelper.getLogFile("arthas", "arthas.log");
+    public static final String LOGGER_FILE;
+
+    /**
+     * default value is ~/logs
+     */
+    public static String LOGS_DIR;
+
+    /**
+     * default value is ~/logs/arthas
+     */
+    public static String LOGS_ARTHAS_DIR;
 
     static {
+        detectArthasLogDirectory();
+        LOGGER_FILE = LoggerHelper.getLogFile("arthas", "arthas.log");
+
         LogLog.setQuietMode(true);
 
         LoggerHelper.setPattern("arthas-cache", "%d{yyyy-MM-dd HH:mm:ss.SSS}%n%m%n");
@@ -56,6 +71,38 @@ public class LogUtil {
         termdLogger.activateAppender(arthasLogger);
         termdLogger.setLevel(Level.INFO);
         termdLogger.setAdditivity(false);
+    }
+
+    private static void detectArthasLogDirectory() {
+        String dpath = System.getProperty("JM.LOG.PATH");
+        if (StringUtils.isEmpty(dpath)) {
+            File logDirectory = new File(System.getProperty("user.home") + File.separator + "logs" + File.separator);
+            try {
+                // when user is nobody mkdir will fail. #572
+                logDirectory.mkdirs();
+            } catch (Throwable e) {
+                // ignore
+            }
+            if (!logDirectory.exists()) {
+                // try to set a temp directory
+                logDirectory = new File(System.getProperty("java.io.tmpdir") + File.separator + "logs" + File.separator);
+                try {
+                    logDirectory.mkdirs();
+                } catch (Throwable e) {
+                    // ignore
+                }
+            }
+            if (logDirectory.exists()) {
+                LOGS_DIR = logDirectory.getAbsolutePath();
+                System.setProperty("JM.LOG.PATH", logDirectory.getAbsolutePath());
+            }
+        } else {
+            LOGS_DIR = dpath;
+        }
+        if (StringUtils.isEmpty(LOGS_DIR)) {
+            LOGS_DIR = "logs";
+        }
+        LOGS_ARTHAS_DIR = LOGS_DIR + File.separator + "arthas";
     }
 
     public static Logger getArthasLogger() {
