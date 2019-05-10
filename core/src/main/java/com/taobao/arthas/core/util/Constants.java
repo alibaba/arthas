@@ -4,6 +4,8 @@ import java.io.File;
 
 import com.taobao.arthas.core.view.Ansi;
 
+import static com.taobao.arthas.core.util.LogUtil.LOGS_DIR;
+
 /**
  * @author ralf0131 2016-12-28 16:20.
  */
@@ -50,6 +52,6 @@ public interface Constants {
     /**
      * 缓存目录
      */
-    String CACHE_ROOT = System.getProperty("user.home") + File.separator + "logs" + File.separator + "arthas-cache";
+    String CACHE_ROOT = LOGS_DIR + File.separator + "arthas-cache";
 
 }

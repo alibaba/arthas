@@ -33,7 +33,7 @@ class ClassDumpTransformer implements ClassFileTransformer {
     public ClassDumpTransformer(Set<Class<?>> classesToEnhance, File directory) {
         this.classesToEnhance = classesToEnhance;
         this.dumpResult = new HashMap<Class<?>, File>();
-        this.arthasLogHome = new File(LogUtil.LOGGER_FILE).getParentFile();
+        this.arthasLogHome = new File(LogUtil.LOGS_ARTHAS_DIR);
         this.directory = directory;
     }
 
