@@ -35,10 +35,23 @@ public class AgentBootstrap {
     private static PrintStream ps = System.err;
     static {
         try {
-            File log = new File(System.getProperty("user.home") + File.separator + "logs" + File.separator
-                    + "arthas" + File.separator + "arthas.log");
+            File arthasLogDir = new File(System.getProperty("user.home") + File.separator + "logs" + File.separator
+                    + "arthas" + File.separator);
+            if (!arthasLogDir.exists()) {
+                arthasLogDir.mkdirs();
+            }
+            if (!arthasLogDir.exists()) {
+                // #572
+                arthasLogDir = new File(System.getProperty("java.io.tmpdir") + File.separator + "logs" + File.separator
+                        + "arthas" + File.separator);
+                if (!arthasLogDir.exists()) {
+                    arthasLogDir.mkdirs();
+                }
+            }
+
+            File log = new File(arthasLogDir, "arthas.log");
+
             if (!log.exists()) {
-                log.getParentFile().mkdirs();
                 log.createNewFile();
             }
             ps = new PrintStream(new FileOutputStream(log, true));
