@@ -33,6 +33,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * @author <a href="mailto:julien@julienviet.com">Julien Viet</a>
+ * @author hengyunabc 2019-05-14
  */
 public class JobControllerImpl implements JobController {
 
@@ -170,8 +171,8 @@ public class JobControllerImpl implements JobController {
                     String name = getRedirectFileName(tokens);
                     if (name == null) {
                         // 如果没有指定重定向文件名，那么重定向到以jobid命名的缓存中
-                        name = Constants.PID + File.separator + jobId;
-                        cacheLocation = Constants.CACHE_ROOT + File.separator + name;
+                        name = Constants.CACHE_ROOT + File.separator + Constants.PID + File.separator + jobId;
+                        cacheLocation = name;
 
                         if (getRedirectJobCount() == 8) {
                             throw new IllegalStateException("The amount of async command that saving result to file can't > 8");
