@@ -14,6 +14,7 @@ import com.taobao.arthas.core.shell.system.Process;
 
 /**
  * @author <a href="mailto:julien@julienviet.com">Julien Viet</a>
+ * @author hengyunabc 2019-05-14
  */
 public class JobImpl implements Job {
 
@@ -75,7 +76,7 @@ public class JobImpl implements Job {
     @Override
     public Job resume(boolean foreground) {
         try {
-            process.resume(new ResumeHandler());
+            process.resume(foreground, new ResumeHandler());
         } catch (IllegalStateException ignore) {
 
         }
