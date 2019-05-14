@@ -42,6 +42,7 @@ public class RedirectHandler extends PlainTextHandler implements CloseFunction {
         data = super.apply(data);
         if (out != null) {
             out.write(data);
+            out.flush();
         } else {
             LogUtil.getResultLogger().info(data);
         }
