@@ -1,6 +1,8 @@
 package com.taobao.arthas.core.shell.system.impl;
 
+import java.io.File;
 import java.util.Date;
+import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import com.taobao.arthas.core.shell.future.Future;
@@ -11,6 +13,10 @@ import com.taobao.arthas.core.shell.session.Session;
 import com.taobao.arthas.core.shell.system.ExecStatus;
 import com.taobao.arthas.core.shell.system.Job;
 import com.taobao.arthas.core.shell.system.Process;
+import com.taobao.arthas.core.shell.term.Term;
+import com.taobao.arthas.core.shell.term.impl.TermImpl;
+import com.taobao.arthas.core.util.Constants;
+import com.taobao.arthas.core.util.FileUtils;
 
 /**
  * @author <a href="mailto:julien@julienviet.com">Julien Viet</a>
@@ -234,6 +240,12 @@ public class JobImpl implements Job {
             }
             terminateFuture.complete();
 
+            // save command history
+            Term term = shell.term();
+            if (term instanceof TermImpl) {
+                List<int[]> history = ((TermImpl) term).getReadline().getHistory();
+                FileUtils.saveCommandHistory(history, new File(Constants.CMD_HISTORY_FILE));
+            }
         }
     }
 
