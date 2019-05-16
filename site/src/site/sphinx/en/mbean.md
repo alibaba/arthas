@@ -43,7 +43,7 @@ Mbean name support wildcard matcher:
 mbean java.lang:type=Th*
 ```
 
-> Notes：ObjectName matching rules differ from normal wildcards, Reference resources：[javax.management.ObjectName](https://docs.oracle.com/javase/6/docs/api/javax/management/ObjectName.html?is-external=true)
+> Notes：ObjectName matching rules differ from normal wildcards, Reference resources：[javax.management.ObjectName](https://docs.oracle.com/javase/8/docs/api/javax/management/ObjectName.html?is-external=true)
 
 Wildcards match specific attributes:
 

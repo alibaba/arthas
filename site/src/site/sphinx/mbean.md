@@ -42,7 +42,7 @@ mbean的name支持通配符匹配：
 mbean java.lang:type=Th*
 ```
 
->注意：ObjectName 的匹配规则与正常的通配符存在差异，详细参见：[javax.management.ObjectName](https://docs.oracle.com/javase/6/docs/api/javax/management/ObjectName.html?is-external=true)
+>注意：ObjectName 的匹配规则与正常的通配符存在差异，详细参见：[javax.management.ObjectName](https://docs.oracle.com/javase/8/docs/api/javax/management/ObjectName.html?is-external=true)
 
 通配符匹配特定的属性字段：
 
