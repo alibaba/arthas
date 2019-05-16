@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>trace &mdash; Arthas 3.1.0 文档</title>
+  <title>trace &mdash; Arthas 3.1.1 文档</title>
   
 
   
@@ -65,7 +65,7 @@
             
             
               <div class="version">
-                3.1.0
+                3.1.1
               </div>
             
           
@@ -90,7 +90,6 @@
             
             
               <ul class="current">
-<li class="toctree-l1"><a class="reference internal" href="jd-2019.html">2019校园招聘</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://alibaba.github.io/arthas/en/">English Docs</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://alibaba.github.io/arthas/arthas-tutorials?language=cn">在线教程(推荐)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="install-detail.html">安装</a></li>
@@ -102,6 +101,7 @@
 <li class="toctree-l2"><a class="reference internal" href="jvm.html">jvm</a></li>
 <li class="toctree-l2"><a class="reference internal" href="sysprop.html">sysprop</a></li>
 <li class="toctree-l2"><a class="reference internal" href="sysenv.html">sysenv</a></li>
+<li class="toctree-l2"><a class="reference internal" href="mbean.html">mbean</a></li>
 <li class="toctree-l2"><a class="reference internal" href="getstatic.html">getstatic</a></li>
 <li class="toctree-l2"><a class="reference internal" href="ognl.html">ognl</a></li>
 <li class="toctree-l2"><a class="reference internal" href="sc.html">sc</a></li>
@@ -311,7 +311,7 @@ Affect(class-cnt:1 , method-cnt:1) cost in 41 ms.
 </pre></div>
 </div>
 <blockquote>
-<div>只会展示耗时大于4ms的调用路径，有助于在排查问题的时候，只关注异常情况</div></blockquote>
+<div>只会展示耗时大于10ms的调用路径，有助于在排查问题的时候，只关注异常情况</div></blockquote>
 <ul class="simple">
 <li>是不是很眼熟，没错，在 JProfiler 等收费软件中你曾经见识类似的功能，这里你将可以通过命令就能打印出指定调用路径。 友情提醒下，<tt class="docutils literal">trace</tt> 在执行的过程中本身是会有一定的性能开销，在统计的报告中并未像 JProfiler 一样预先减去其自身的统计开销。所以这统计出来有些许的不准，渲染路径上调用的类、方法越多，性能偏差越大。但还是能让你看清一些事情的。</li>
 <li>[12.033735ms] 的含义，<tt class="docutils literal">12.033735</tt> 的含义是：当前节点在当前步骤的耗时，单位为毫秒</li>
@@ -372,7 +372,7 @@ Affect(class-cnt:1 , method-cnt:1) cost in 41 ms.
     <script type="text/javascript">
         var DOCUMENTATION_OPTIONS = {
             URL_ROOT:'./',
-            VERSION:'3.1.0',
+            VERSION:'3.1.1',
             LANGUAGE:'zh_CN',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',

@@ -2,6 +2,12 @@
 Release Notes
 ===
 
+
+v3.1.1
+---
+
+* [https://github.com/alibaba/arthas/releases/tag/arthas-all-3.1.1](https://github.com/alibaba/arthas/releases/tag/arthas-all-3.1.1)
+
 v3.1.0
 ---
 

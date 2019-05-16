@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>手动安装Arthas &mdash; Arthas 3.1.0 文档</title>
+  <title>手动安装Arthas &mdash; Arthas 3.1.1 文档</title>
   
 
   
@@ -63,7 +63,7 @@
             
             
               <div class="version">
-                3.1.0
+                3.1.1
               </div>
             
           
@@ -88,7 +88,6 @@
             
             
               <ul>
-<li class="toctree-l1"><a class="reference internal" href="jd-2019.html">2019校园招聘</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://alibaba.github.io/arthas/en/">English Docs</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://alibaba.github.io/arthas/arthas-tutorials?language=cn">在线教程(推荐)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="install-detail.html">安装</a></li>
@@ -218,6 +217,14 @@ cd arthas
 <p>下载解压后在bin目录有 <tt class="docutils literal">as.bat</tt>。此脚本暂时只接受一个参数 pid，即只能诊断本机上的 Java 进程。（欢迎精通bat脚本的开发者改进）</p>
 <div class="highlight-default notranslate"><pre class="literal-block">as.bat &lt;pid&gt;</pre>
 </div>
+<p>使用以下命令诊断windows服务模式运行的Java进程 (–interact 打开服务UI交互模式，方便诊断问题)：</p>
+<div class="highlight-default notranslate"><pre class="literal-block">as-service.bat -port &lt;port&gt;
+as-service.bat -pid &lt;pid&gt;
+as-service.bat -pid &lt;pid&gt; --interact</pre>
+</div>
+<p>清理arthas windows服务执行以下命令：</p>
+<div class="highlight-default notranslate"><pre class="literal-block">as-service.bat -remove</pre>
+</div>
 </div>
 </div>
 <div class="section" id="">
@@ -290,7 +297,7 @@ cd arthas
     <script type="text/javascript">
         var DOCUMENTATION_OPTIONS = {
             URL_ROOT:'./',
-            VERSION:'3.1.0',
+            VERSION:'3.1.1',
             LANGUAGE:'zh_CN',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
