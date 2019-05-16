@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Manually Install Arthas &mdash; Arthas 3.1.0 documentation</title>
+  <title>Manually Install Arthas &mdash; Arthas 3.1.1 documentation</title>
   
 
   
@@ -63,7 +63,7 @@
             
             
               <div class="version">
-                3.1.0
+                3.1.1
               </div>
             
           
@@ -214,6 +214,16 @@ cd arthas
 <div class="highlight-bash notranslate"><div class="highlight hljs"><pre class="bash">as.bat &lt;pid&gt;
 </pre></div>
 </div>
+<p>If you want to diagnose Java process run as windows service, try these commands:</p>
+<div class="highlight-bash notranslate"><div class="highlight hljs"><pre class="bash">as-service.bat -port &lt;port&gt;
+as-service.bat -pid &lt;pid&gt;
+as-service.bat -pid &lt;pid&gt; --interact
+</pre></div>
+</div>
+<p>Use this command to remove arthas service:</p>
+<div class="highlight-bash notranslate"><div class="highlight hljs"><pre class="bash">as-service.bat -remove
+</pre></div>
+</div>
 </div>
 </div>
 <div class="section" id="manual-command-line-startup">
@@ -290,7 +300,7 @@ cd arthas
     <script type="text/javascript">
         var DOCUMENTATION_OPTIONS = {
             URL_ROOT:'./',
-            VERSION:'3.1.0',
+            VERSION:'3.1.1',
             LANGUAGE:'en',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
