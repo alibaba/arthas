@@ -399,6 +399,7 @@ Welcome to register the company name in this issue: https://github.com/alibaba/a
 ![安心保险](static/95303.png)
 ![杭州源诚科技](static/hzyc.png)
 ![91moxie](static/91moxie.png)
+![智慧开源](static/wisdom.png)
 
 ### Credit
 
