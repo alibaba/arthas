@@ -10,6 +10,7 @@ import org.objectweb.asm.Type;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
+import java.util.Set;
 
 /**
  * 反射通知适配器<br/>
@@ -17,6 +18,8 @@ import java.lang.reflect.Method;
  * 当然性能开销要比普通监听器高许多
  */
 public abstract class ReflectAdviceListenerAdapter implements AdviceListener {
+
+    Set<Class<?>> listenClasses;
 
     @Override
     public void create() {
@@ -230,4 +233,13 @@ public abstract class ReflectAdviceListenerAdapter implements AdviceListener {
         process.end();
     }
 
+    @Override
+    public Set<Class<?>> getListenClasses() {
+        return listenClasses;
+    }
+
+    @Override
+    public void setListenClasses(Set<Class<?>> listenClasses) {
+        this.listenClasses = listenClasses;
+    }
 }

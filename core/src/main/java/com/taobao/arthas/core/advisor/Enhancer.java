@@ -2,7 +2,6 @@ package com.taobao.arthas.core.advisor;
 
 import com.taobao.arthas.core.GlobalOptions;
 import com.taobao.arthas.core.util.Constants;
-import com.taobao.arthas.core.util.FileUtils;
 import com.taobao.arthas.core.util.LogUtil;
 import com.taobao.arthas.core.util.matcher.Matcher;
 import com.taobao.arthas.core.util.SearchUtils;
@@ -13,8 +12,6 @@ import com.taobao.middleware.logger.Logger;
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.ClassWriter;
 
-import java.io.File;
-import java.io.IOException;
 import java.lang.instrument.ClassFileTransformer;
 import java.lang.instrument.IllegalClassFormatException;
 import java.lang.instrument.Instrumentation;
@@ -44,9 +41,6 @@ public class Enhancer implements ClassFileTransformer {
     private final Matcher methodNameMatcher;
     private final EnhancerAffect affect;
 
-    // 类-字节码缓存
-    private final static Map<Class<?>/*Class*/, byte[]/*bytes of Class*/> classBytesCache
-            = new WeakHashMap<Class<?>, byte[]>();
 
     /**
      * @param adviceId          通知编号
@@ -107,7 +101,7 @@ public class Enhancer implements ClassFileTransformer {
 
             // 首先先检查是否在缓存中存在Class字节码
             // 因为要支持多人协作,存在多人同时增强的情况
-            final byte[] byteOfClassInCache = classBytesCache.get(classBeingRedefined);
+            final byte[] byteOfClassInCache = EnhanceUtils.CLASS_BYTES_CACHE.get(classBeingRedefined);
             if (null != byteOfClassInCache) {
                 cr = new ClassReader(byteOfClassInCache);
             }
@@ -163,10 +157,10 @@ public class Enhancer implements ClassFileTransformer {
             final byte[] enhanceClassByteArray = cw.toByteArray();
 
             // 生成成功,推入缓存
-            classBytesCache.put(classBeingRedefined, enhanceClassByteArray);
+            EnhanceUtils.CLASS_BYTES_CACHE.put(classBeingRedefined, enhanceClassByteArray);
 
             // dump the class
-            dumpClassIfNecessary(className, enhanceClassByteArray, affect);
+            EnhanceUtils.dumpClassIfNecessary(className, enhanceClassByteArray, affect);
 
             // 成功计数
             affect.cCnt(1);
@@ -188,144 +182,35 @@ public class Enhancer implements ClassFileTransformer {
     }
 
     /**
-     * dump class to file
-     */
-    private static void dumpClassIfNecessary(String className, byte[] data, EnhancerAffect affect) {
-        if (!GlobalOptions.isDump) {
-            return;
-        }
-        final File dumpClassFile = new File("./arthas-class-dump/" + className + ".class");
-        final File classPath = new File(dumpClassFile.getParent());
-
-        // 创建类所在的包路径
-        if (!classPath.mkdirs()
-                && !classPath.exists()) {
-            logger.warn("create dump classpath:{} failed.", classPath);
-            return;
-        }
-
-        // 将类字节码写入文件
-        try {
-            FileUtils.writeByteArrayToFile(dumpClassFile, data);
-            affect.getClassDumpFiles().add(dumpClassFile);
-        } catch (IOException e) {
-            logger.warn("dump class:{} to file {} failed.", className, dumpClassFile, e);
-        }
-
-    }
-
-
-    /**
-     * 是否需要过滤的类
-     *
-     * @param classes 类集合
-     */
-    private static void filter(Set<Class<?>> classes) {
-        final Iterator<Class<?>> it = classes.iterator();
-        while (it.hasNext()) {
-            final Class<?> clazz = it.next();
-            if (null == clazz
-                    || isSelf(clazz)
-                    || isUnsafeClass(clazz)
-                    || isUnsupportedClass(clazz)) {
-                it.remove();
-            }
-        }
-    }
-
-    /**
-     * 是否过滤Arthas加载的类
-     */
-    private static boolean isSelf(Class<?> clazz) {
-        return null != clazz
-                && isEquals(clazz.getClassLoader(), Enhancer.class.getClassLoader());
-    }
-
-    /**
-     * 是否过滤unsafe类
-     */
-    private static boolean isUnsafeClass(Class<?> clazz) {
-        return !GlobalOptions.isUnsafe
-                && clazz.getClassLoader() == null;
-    }
-
-    /**
-     * 是否过滤目前暂不支持的类
-     */
-    private static boolean isUnsupportedClass(Class<?> clazz) {
-
-        return clazz.isArray()
-                || clazz.isInterface()
-                || clazz.isEnum()
-                || clazz.equals(Class.class) || clazz.equals(Integer.class) || clazz.equals(Method.class);
-    }
-
-    /**
-     * 对象增强
+     * Enhance classes.
      *
      * @param inst              inst
-     * @param adviceId          通知ID
-     * @param isTracing         可跟踪方法调用
-     * @param skipJDKTrace      是否忽略对JDK内部方法的跟踪
-     * @param classNameMatcher  类名匹配
-     * @param methodNameMatcher 方法名匹配
-     * @return 增强影响范围
-     * @throws UnmodifiableClassException 增强失败
+     * @param adviceId          the advice id
+     * @param isTracing         is tracing
+     * @param skipJDKTrace      is skip JDK inner method
+     * @param enhanceClassSet   the class set
+     * @param methodNameMatcher the method matcher
+     * @return the affect
+     * @throws UnmodifiableClassException the fail exception
      */
     public static synchronized EnhancerAffect enhance(
             final Instrumentation inst,
             final int adviceId,
             final boolean isTracing,
             final boolean skipJDKTrace,
-            final Matcher classNameMatcher,
+            final Set<Class<?>> enhanceClassSet,
             final Matcher methodNameMatcher) throws UnmodifiableClassException {
 
         final EnhancerAffect affect = new EnhancerAffect();
-
-        // 获取需要增强的类集合
-        final Set<Class<?>> enhanceClassSet = GlobalOptions.isDisableSubClass
-                ? SearchUtils.searchClass(inst, classNameMatcher)
-                : SearchUtils.searchSubClass(inst, SearchUtils.searchClass(inst, classNameMatcher));
-
-        // 过滤掉无法被增强的类
-        filter(enhanceClassSet);
 
         // 构建增强器
         final Enhancer enhancer = new Enhancer(adviceId, isTracing, skipJDKTrace, enhanceClassSet, methodNameMatcher, affect);
         try {
             inst.addTransformer(enhancer, true);
-
-            // 批量增强
-            if (GlobalOptions.isBatchReTransform) {
-                final int size = enhanceClassSet.size();
-                final Class<?>[] classArray = new Class<?>[size];
-                arraycopy(enhanceClassSet.toArray(), 0, classArray, 0, size);
-                if (classArray.length > 0) {
-                    inst.retransformClasses(classArray);
-                    logger.info("Success to batch transform classes: " + Arrays.toString(classArray));
-                }
-            } else {
-                // for each 增强
-                for (Class<?> clazz : enhanceClassSet) {
-                    try {
-                        inst.retransformClasses(clazz);
-                        logger.info("Success to transform class: " + clazz);
-                    } catch (Throwable t) {
-                        logger.warn("retransform {} failed.", clazz, t);
-                        if (t instanceof UnmodifiableClassException) {
-                            throw (UnmodifiableClassException) t;
-                        } else if (t instanceof RuntimeException) {
-                            throw (RuntimeException) t;
-                        } else {
-                            throw new RuntimeException(t);
-                        }
-                    }
-                }
-            }
+            EnhanceUtils.transform(inst, enhanceClassSet);
         } finally {
             inst.removeTransformer(enhancer);
         }
-
         return affect;
     }
 
@@ -345,7 +230,7 @@ public class Enhancer implements ClassFileTransformer {
         final EnhancerAffect affect = new EnhancerAffect();
         final Set<Class<?>> enhanceClassSet = new HashSet<Class<?>>();
 
-        for (Class<?> classInCache : classBytesCache.keySet()) {
+        for (Class<?> classInCache : EnhanceUtils.CLASS_BYTES_CACHE.keySet()) {
             if (classNameMatcher.matching(classInCache.getName())) {
                 enhanceClassSet.add(classInCache);
             }
@@ -368,7 +253,7 @@ public class Enhancer implements ClassFileTransformer {
             logger.info("Success to reset classes: " + enhanceClassSet);
         } finally {
             for (Class<?> resetClass : enhanceClassSet) {
-                classBytesCache.remove(resetClass);
+                EnhanceUtils.CLASS_BYTES_CACHE.remove(resetClass);
                 affect.cCnt(1);
             }
         }

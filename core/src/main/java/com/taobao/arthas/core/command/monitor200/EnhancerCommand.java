@@ -4,10 +4,13 @@ import java.lang.instrument.Instrumentation;
 import java.lang.instrument.UnmodifiableClassException;
 import java.util.Collections;
 import java.util.List;
+import java.util.Set;
 
+import com.taobao.arthas.core.GlobalOptions;
 import com.taobao.arthas.core.advisor.AdviceListener;
 import com.taobao.arthas.core.advisor.Enhancer;
 import com.taobao.arthas.core.advisor.InvokeTraceable;
+import com.taobao.arthas.core.advisor.UnEnhancer;
 import com.taobao.arthas.core.shell.cli.Completion;
 import com.taobao.arthas.core.shell.cli.CompletionUtils;
 import com.taobao.arthas.core.shell.command.AnnotatedCommand;
@@ -17,6 +20,7 @@ import com.taobao.arthas.core.shell.handlers.shell.QExitHandler;
 import com.taobao.arthas.core.shell.session.Session;
 import com.taobao.arthas.core.util.Constants;
 import com.taobao.arthas.core.util.LogUtil;
+import com.taobao.arthas.core.util.SearchUtils;
 import com.taobao.arthas.core.util.affect.EnhancerAffect;
 import com.taobao.arthas.core.util.matcher.Matcher;
 import com.taobao.middleware.logger.Logger;
@@ -108,8 +112,15 @@ public abstract class EnhancerCommand extends AnnotatedCommand {
                 skipJDKTrace = ((AbstractTraceAdviceListener) listener).getCommand().isSkipJDKTrace();
             }
 
+            Set<Class<?>> enhanceClassSet = GlobalOptions.isDisableSubClass
+                                            ? SearchUtils.searchClass(inst, getClassNameMatcher())
+                                            : SearchUtils.searchSubClass(inst, SearchUtils.searchClass(inst, getClassNameMatcher()));
+
+            // for unregister trigger unEnhance
+            listener.setListenClasses(enhanceClassSet);
+
             EnhancerAffect effect = Enhancer.enhance(inst, lock, listener instanceof InvokeTraceable,
-                    skipJDKTrace, getClassNameMatcher(), getMethodNameMatcher());
+                    skipJDKTrace, enhanceClassSet, getMethodNameMatcher());
 
             if (effect.cCnt() == 0 || effect.mCnt() == 0) {
                 // no class effected
@@ -125,13 +136,15 @@ public abstract class EnhancerCommand extends AnnotatedCommand {
 
             // 这里做个补偿,如果在enhance期间,unLock被调用了,则补偿性放弃
             if (session.getLock() == lock) {
-                // 注册通知监听器
+                // register listener
                 process.register(lock, listener);
                 if (process.isForeground()) {
                     process.echoTips(Constants.Q_OR_CTRL_C_ABORT_MSG + "\n");
                 }
             }
 
+            // trigger unEnhance
+            UnEnhancer.unEnhance(inst, enhanceClassSet);
             process.write(effect + "\n");
         } catch (UnmodifiableClassException e) {
             logger.error(null, "error happens when enhancing class", e);

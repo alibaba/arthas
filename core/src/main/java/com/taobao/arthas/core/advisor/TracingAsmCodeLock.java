@@ -10,13 +10,9 @@ public class TracingAsmCodeLock extends AsmCodeLock {
 
     public TracingAsmCodeLock(AdviceAdapter aa) {
         super(
-                aa,
-                new int[]{
-                        ACONST_NULL, ICONST_0, ICONST_1, SWAP, SWAP, POP2, POP
-                },
-                new int[]{
-                        ICONST_1, ACONST_NULL, ICONST_0, SWAP, SWAP, POP, POP2
-                }
-        );
+            aa,
+            LockOpStream.BEGIN_CODE_STREAM,
+            LockOpStream.END_CODE_STREAM,
+            LockOpStream.INS_MARK_STREAM);
     }
 }

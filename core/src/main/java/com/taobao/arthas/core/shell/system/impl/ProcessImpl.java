@@ -1,7 +1,7 @@
 package com.taobao.arthas.core.shell.system.impl;
 
 import com.taobao.arthas.core.advisor.AdviceListener;
-import com.taobao.arthas.core.advisor.AdviceWeaver;
+import com.taobao.arthas.core.advisor.EnhanceUtils;
 import com.taobao.arthas.core.server.ArthasBootstrap;
 import com.taobao.arthas.core.shell.cli.CliToken;
 import com.taobao.arthas.core.shell.command.Command;
@@ -383,7 +383,6 @@ public class ProcessImpl implements Process {
         private final CommandLine commandLine;
         private int enhanceLock = -1;
         private AtomicInteger times = new AtomicInteger();
-        private AdviceListener suspendedListener = null;
 
         public CommandProcessImpl(List<String> args2, Tty tty, CommandLine commandLine) {
             this.args2 = args2;
@@ -525,26 +524,25 @@ public class ProcessImpl implements Process {
         @Override
         public void register(int enhanceLock, AdviceListener listener) {
             this.enhanceLock = enhanceLock;
-            AdviceWeaver.reg(enhanceLock, listener);
+            EnhanceUtils.register(enhanceLock, listener);
         }
 
         @Override
         public void unregister() {
-            AdviceWeaver.unReg(enhanceLock);
+            EnhanceUtils.unRegister(enhanceLock, session.getInstrumentation());
         }
 
         @Override
         public void resume() {
-            if (this.enhanceLock >= 0 && suspendedListener != null) {
-                AdviceWeaver.resume(enhanceLock, suspendedListener);
-                suspendedListener = null;
+            if (this.enhanceLock >= 0) {
+                EnhanceUtils.resume(enhanceLock);
             }
         }
 
         @Override
         public void suspend() {
             if (this.enhanceLock >= 0) {
-                suspendedListener = AdviceWeaver.suspend(enhanceLock);
+                EnhanceUtils.suspend(enhanceLock);
             }
         }
 

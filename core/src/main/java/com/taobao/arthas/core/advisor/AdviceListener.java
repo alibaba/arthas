@@ -1,5 +1,7 @@
 package com.taobao.arthas.core.advisor;
 
+import java.util.Set;
+
 /**
  * 通知监听器<br/>
  * Created by vlinux on 15/5/17.
@@ -70,5 +72,18 @@ public interface AdviceListener {
             ClassLoader loader, String className, String methodName, String methodDesc,
             Object target, Object[] args,
             Throwable throwable) throws Throwable;
+
+    /**
+     * Get listen classes.
+     *
+     * @return listen classes
+     */
+    Set<Class<?>> getListenClasses();
+
+    /**
+     * Set listen classes.
+     *
+     */
+    void setListenClasses( Set<Class<?>> listenClasses);
 
 }

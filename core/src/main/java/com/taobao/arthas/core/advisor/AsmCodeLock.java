@@ -4,45 +4,58 @@ import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.commons.AdviceAdapter;
 
 /**
- * ASM代码锁<br/>
+ * ASM code lock.
+ *
  * Created by vlinux on 15/5/28.
  */
 public class AsmCodeLock implements CodeLock, Opcodes {
 
     private final AdviceAdapter aa;
 
-    // 锁标记
-    private boolean isLook;
-
-    // 代码块开始特征数组
-    private final int[] beginCodeArray;
-
-    // 代码块结束特征数组
-    private final int[] endCodeArray;
-
-    // 代码匹配索引
-    private int index = 0;
-
+    /**
+     * The lock mark.
+     */
+    private boolean isLock;
 
     /**
-     * 用ASM构建代码锁
-     *
-     * @param aa             ASM
-     * @param beginCodeArray 代码块开始特征数组
-     *                       字节码流要求不能破坏执行堆栈
-     * @param endCodeArray   代码块结束特征数组
-     *                       字节码流要求不能破坏执行堆栈
+     * The special opcode array to begin code block.
      */
-    public AsmCodeLock(AdviceAdapter aa, int[] beginCodeArray, int[] endCodeArray) {
+    private final int[] beginCodeArray;
+
+    /**
+     * The special opcode array to end code block.
+     */
+    private final int[] endCodeArray;
+
+    /**
+     * The special opcode array to mark a instruction.
+     */
+    private final int[] insMarkArray;
+
+    /**
+     * Code matching Index.
+     */
+    private int index = 0;
+
+    /**
+     * ASM code lock.
+     *
+     * @param aa             ASM MethodVisitor
+     * @param beginCodeArray the special opcode stream to mark begin of a code block.
+     * @param endCodeArray   the special opcode stream to mark end of a code block.
+     * @param insMarkArray   the special opcode stream to mark a instruction.
+     */
+    public AsmCodeLock(AdviceAdapter aa, int[] beginCodeArray, int[] endCodeArray, int[] insMarkArray) {
         if (null == beginCodeArray
-                || null == endCodeArray
-                || beginCodeArray.length != endCodeArray.length) {
+            || null == endCodeArray
+            || beginCodeArray.length != endCodeArray.length) {
             throw new IllegalArgumentException();
         }
 
         this.aa = aa;
         this.beginCodeArray = beginCodeArray;
         this.endCodeArray = endCodeArray;
+        this.insMarkArray = insMarkArray;
 
     }
 
@@ -62,57 +75,76 @@ public class AsmCodeLock implements CodeLock, Opcodes {
         }
 
         if (++index == codes.length) {
-            // 翻转锁状态
-            isLook = !isLook;
+            // revers lock
+            isLock = !isLock;
             reset();
         }
 
     }
 
-    /*
-     * 重置索引<br/>
-     * 一般在代码序列判断失败时，则会对索引进行重置，冲头开始匹配特征序列
+    /**
+     * Reset match index.
      */
     private void reset() {
         index = 0;
     }
 
 
-    private void asm(int opcode) {
+    private void visitInsn(int opcode) {
         aa.visitInsn(opcode);
     }
 
     /**
-     * 锁定序列
+     * Push advice id to the byte code.
+     *
+     * @param adviceId advice id
      */
-    private void lock() {
-        for (int op : beginCodeArray) {
-            asm(op);
-        }
+    private void adviceMark(int adviceId) {
+        aa.push(adviceId);
+        aa.pop();
     }
 
-    /*
-     * 解锁序列
+    /**
+     * Insert lock opcode stream.
+     */
+    private void lock(Integer adviceId) {
+        for (int op : beginCodeArray) {
+            visitInsn(op);
+        }
+        adviceMark(adviceId);
+    }
+
+    /**
+     * Insert unlock opcode stream.
      */
     private void unLock() {
         for (int op : endCodeArray) {
-            asm(op);
+            visitInsn(op);
         }
     }
 
     @Override
     public boolean isLock() {
-        return isLook;
+        return isLock;
     }
 
     @Override
-    public void lock(Block block) {
-        lock();
+    public void lock(Block block, int adviceId) {
+        lock(adviceId);
         try {
             block.code();
         } finally {
             unLock();
         }
+    }
+
+    @Override
+    public void markInsn(Block block, int adviceId) {
+        for (int op : insMarkArray) {
+            visitInsn(op);
+        }
+        adviceMark(adviceId);
+        block.code();
     }
 
 }

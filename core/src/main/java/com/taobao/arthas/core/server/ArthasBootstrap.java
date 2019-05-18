@@ -107,7 +107,7 @@ public class ArthasBootstrap {
 
             shellServer.listen(new BindHandler(isBindRef));
 
-            logger.info("as-server listening on network={};telnet={};http={};timeout={};", configure.getIp(),
+            logger.info(null,"as-server listening on network={};telnet={};http={};timeout={};", configure.getIp(),
                     configure.getTelnetPort(), configure.getHttpPort(), options.getConnectionTimeout());
             // 异步回报启动次数
             UserStatUtil.arthasStart();

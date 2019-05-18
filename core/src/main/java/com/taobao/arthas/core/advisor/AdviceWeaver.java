@@ -15,8 +15,6 @@ import org.objectweb.asm.commons.Method;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * 通知编织者<br/>
@@ -30,13 +28,9 @@ public class AdviceWeaver extends ClassVisitor implements Opcodes {
 
     private final static Logger logger = LogUtil.getArthasLogger();
 
-
-
     // 线程帧栈堆栈大小
     private final static int FRAME_STACK_SIZE = 7;
-    // 通知监听器集合
-    private final static Map<Integer/*ADVICE_ID*/, AdviceListener> advices
-            = new ConcurrentHashMap<Integer, AdviceListener>();
+
     // 线程帧封装
     private static final ThreadLocal<GaStack<GaStack<Object>>> threadBoundContext
             = new ThreadLocal<GaStack<GaStack<Object>>>();
@@ -238,61 +232,7 @@ public class AdviceWeaver extends ClassVisitor implements Opcodes {
     }
 
     private static AdviceListener getListener(int adviceId) {
-        return advices.get(adviceId);
-    }
-
-    /**
-     * 注册监听器
-     *
-     * @param adviceId 通知ID
-     * @param listener 通知监听器
-     */
-    public static void reg(int adviceId, AdviceListener listener) {
-
-        // 触发监听器创建
-        listener.create();
-
-        // 注册监听器
-        advices.put(adviceId, listener);
-    }
-
-    /**
-     * 注销监听器
-     *
-     * @param adviceId 通知ID
-     */
-    public static void unReg(int adviceId) {
-
-        // 注销监听器
-        final AdviceListener listener = advices.remove(adviceId);
-
-        // 触发监听器销毁
-        if (null != listener) {
-            listener.destroy();
-        }
-
-    }
-
-
-    /**
-     * 恢复监听
-     *
-     * @param adviceId 通知ID
-     * @param listener 通知监听器
-     */
-    public static void resume(int adviceId, AdviceListener listener) {
-        // 注册监听器
-        advices.put(adviceId, listener);
-    }
-
-    /**
-     * 暂停监听
-     *
-     * @param adviceId 通知ID
-     */
-    public static AdviceListener suspend(int adviceId) {
-        // 注销监听器
-        return advices.remove(adviceId);
+        return EnhanceUtils.getListener(adviceId);
     }
 
     private static void before(AdviceListener listener,
@@ -440,9 +380,11 @@ public class AdviceWeaver extends ClassVisitor implements Opcodes {
             private final Method ASM_METHOD_METHOD_INVOKE = Method.getMethod("Object invoke(Object,Object[])");
 
             // 代码锁
-            private final CodeLock codeLockForTracing = new TracingAsmCodeLock(this);
+            private final TracingAsmCodeLock codeLockForTracing = new TracingAsmCodeLock(this);
 
             private int lineNumber;
+
+            private int lockId = -1;
 
             private void _debug(final StringBuilder append, final String msg) {
 
@@ -620,7 +562,7 @@ public class AdviceWeaver extends ClassVisitor implements Opcodes {
 
                         _debug(append, "debug:onMethodEnter() > loadAdviceMethod() > loadArrayForBefore() > invokeVirtual()");
                     }
-                });
+                }, adviceId);
 
                 mark(beginLabel);
 
@@ -675,7 +617,7 @@ public class AdviceWeaver extends ClassVisitor implements Opcodes {
 
                             _debug(append, "debug:onMethodExit() > loadReturn() > loadAdviceMethod() > loadReturnArgs() > invokeVirtual()");
                         }
-                    });
+                    }, adviceId);
                 }
 
             }
@@ -734,9 +676,14 @@ public class AdviceWeaver extends ClassVisitor implements Opcodes {
                         _debug(append, "debug:catchException() > loadThrow() > loadAdviceMethod() > loadThrowArgs() > invokeVirtual()");
 
                     }
-                });
+                }, adviceId);
 
-                throwException();
+                codeLockForTracing.markInsn(new CodeLock.Block() {
+                    @Override
+                    public void code() {
+                        throwException();
+                    }
+                }, adviceId);
 
                 super.visitMaxs(maxStack, maxLocals);
             }
@@ -924,7 +871,7 @@ public class AdviceWeaver extends ClassVisitor implements Opcodes {
                         _debug(append, "invokeVirtual()");
 
                     }
-                });
+                }, adviceId);
 
             }
 
@@ -962,7 +909,13 @@ public class AdviceWeaver extends ClassVisitor implements Opcodes {
 
                 // 方法调用后通知
                 tracing(KEY_ARTHAS_ADVICE_AFTER_INVOKING_METHOD, owner, name, desc, lineNumber);
-                goTo(finallyLabel);
+
+                codeLockForTracing.markInsn(new CodeLock.Block() {
+                    @Override
+                    public void code() {
+                        goTo(finallyLabel);
+                    }
+                }, adviceId);
 
                 // }
                 // catch
@@ -971,7 +924,12 @@ public class AdviceWeaver extends ClassVisitor implements Opcodes {
                 catchException(beginLabel, endLabel, ASM_TYPE_THROWABLE);
                 tracing(KEY_ARTHAS_ADVICE_THROW_INVOKING_METHOD, owner, name, desc, lineNumber);
 
-                throwException();
+                codeLockForTracing.markInsn(new CodeLock.Block() {
+                    @Override
+                    public void code() {
+                        throwException();
+                    }
+                }, adviceId);
 
                 // }
                 // finally
