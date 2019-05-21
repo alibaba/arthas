@@ -111,7 +111,7 @@ public class DTraceCommand extends AnnotatedCommand {
     @Option(longName = "port")
     @Description("The debug port.")
     public void setPort(int port) {
-        this.port = 8000;
+        this.port = port;
     }
 
     @Override
