@@ -47,7 +47,7 @@ import java.util.Map;
  */
 @Name("dtrace")
 @Summary("Dtrace the execution time of specified method invocation.")
-@Description(value = Constants.EXPRESS_DESCRIPTION + Constants.EXAMPLE +
+@Description(value = "\nExamples:\n" +
                      "  dtrace demo.MathGame run -p demo.*\n" +
                      "  dtrace demo.MathGame run -p java.* demo.*\n" +
                      "  dtrace --host 127.0.0.1 --port 8000 demo.MathGame run -p java.*\n" +
