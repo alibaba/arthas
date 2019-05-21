@@ -158,6 +158,10 @@ public class TreeView implements View {
         return this;
     }
 
+    public boolean isRoot() {
+        return current.isRoot();
+    }
+
 
     /**
      * 树节点

@@ -1,5 +1,7 @@
 package com.taobao.arthas.agent;
 
+import com.taobao.arthas.common.JavaVersionUtils;
+
 import java.arthas.Spy;
 import java.io.*;
 import java.lang.instrument.Instrumentation;
@@ -81,9 +83,57 @@ public class AgentBootstrap {
     private static ClassLoader getClassLoader(Instrumentation inst, File spyJarFile, File agentJarFile) throws Throwable {
         // 将Spy添加到BootstrapClassLoader
         inst.appendToBootstrapClassLoaderSearch(new JarFile(spyJarFile));
-
         // 构造自定义的类加载器，尽量减少Arthas对现有工程的侵蚀
         return loadOrDefineClassLoader(agentJarFile);
+    }
+
+    private static void loadToolsJar(Instrumentation inst) throws IOException {
+        String javaHome = System.getProperty("java.home");
+
+        if (JavaVersionUtils.isLessThanJava9()) {
+            File toolsJar = new File(javaHome, "lib/tools.jar");
+            if (!toolsJar.exists()) {
+                toolsJar = new File(javaHome, "../lib/tools.jar");
+            }
+            if (!toolsJar.exists()) {
+                // maybe jre
+                toolsJar = new File(javaHome, "../../lib/tools.jar");
+            }
+
+            if (toolsJar.exists()) {
+                //todo ServiceLoader resources issue. java.lang.ClassLoader.getSystemResources
+                inst.appendToSystemClassLoaderSearch(new JarFile(toolsJar.getAbsolutePath()));
+                inst.appendToBootstrapClassLoaderSearch(new JarFile(toolsJar.getAbsolutePath()));
+                ps.println("Load tools success, jarFile path:" + toolsJar.getAbsolutePath());
+                return;
+            }
+
+            if (!toolsJar.exists()) {
+                ps.println("Can not find tools.jar under java.home: " + javaHome);
+                String javaHomeEnv = System.getenv("JAVA_HOME");
+                if (javaHomeEnv != null && !javaHomeEnv.isEmpty()) {
+                    ps.println("Try to find tools.jar in System Env JAVA_HOME: " + javaHomeEnv);
+                    // $JAVA_HOME/lib/tools.jar
+                    toolsJar = new File(javaHomeEnv, "lib/tools.jar");
+                    if (!toolsJar.exists()) {
+                        // maybe jre
+                        toolsJar = new File(javaHomeEnv, "../lib/tools.jar");
+                    }
+                }
+
+                if (toolsJar.exists()) {
+                    ps.println("Found java home from System Env JAVA_HOME: " + javaHomeEnv);
+                    inst.appendToSystemClassLoaderSearch(new JarFile(toolsJar.getAbsolutePath()));
+                    inst.appendToBootstrapClassLoaderSearch(new JarFile(toolsJar.getAbsolutePath()));
+                    ps.println("Load tools success, jarFile path:" + toolsJar.getAbsolutePath());
+                    return;
+                }
+
+                throw new IllegalArgumentException("Can not find tools.jar under java home: " + javaHome
+                                                   + ", please try to start arthas-boot with full path java. Such as /opt/jdk/bin/java -jar arthas-boot.jar");
+            }
+        }
+        ps.println("Load tools fail.");
     }
 
     private static ClassLoader loadOrDefineClassLoader(File agentJar) throws Throwable {
@@ -132,6 +182,7 @@ public class AgentBootstrap {
              */
             final ClassLoader agentLoader = getClassLoader(inst, spyJarFile, agentJarFile);
             initSpy(agentLoader);
+            loadToolsJar(inst);
 
             Thread bindingThread = new Thread() {
                 @Override

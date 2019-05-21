@@ -10,6 +10,14 @@
     <artifactId>arthas-demo</artifactId>
     <name>arthas-demo</name>
 
+    <dependencies>
+        <dependency>
+            <groupId>com.github.olivergondza</groupId>
+            <artifactId>maven-jdk-tools-wrapper</artifactId>
+            <version>0.1</version>
+        </dependency>
+    </dependencies>
+
     <build>
         <finalName>arthas-demo</finalName>
         <plugins>
