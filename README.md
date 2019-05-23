@@ -404,7 +404,6 @@ Welcome to register the company name in this issue: https://github.com/alibaba/a
 ![鼎尖软件](static/dingjiansoft.png)
 ![广通软件](static/broada.png)
 
-
 ### Credit
 
 #### Contributors
