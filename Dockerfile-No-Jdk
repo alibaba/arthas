@@ -7,7 +7,7 @@ ENV MAVEN_HOST=http://repo1.maven.org/maven2 \
   MIRROR_MAVEN_HOST=http://maven.aliyun.com/repository/public
 
 # if use mirror change to aliyun mirror site
-RUN if [ "x$MIRROR" = "xtrue" ]; then MAVEN_HOST=${MIRROR_MAVEN_HOST} ; fi && \
+RUN if [[ "$MIRROR" =~ ^(true|y|yes|1)$ ]]; then MAVEN_HOST=${MIRROR_MAVEN_HOST} ; fi && \
   # download & install arthas
   wget -qO /tmp/arthas.zip "${MAVEN_HOST}/com/taobao/arthas/arthas-packaging/${ARTHAS_VERSION}/arthas-packaging-${ARTHAS_VERSION}-bin.zip" && \
   mkdir -p /opt/arthas && \
