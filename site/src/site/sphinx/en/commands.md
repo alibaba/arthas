@@ -6,6 +6,7 @@ All Commands
 * [jvm](jvm.md)
 * [sysprop](sysprop.md)
 * [sysenv](sysenv.md)
+* [mbean](mbean.md)
 * [getstatic](getstatic.md)
 
 * [ognl](ognl.md)

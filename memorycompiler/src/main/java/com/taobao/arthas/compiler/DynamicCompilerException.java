@@ -54,13 +54,11 @@ public class DynamicCompilerException extends RuntimeException {
     private String getErrors() {
         StringBuilder errors = new StringBuilder();
 
-        for (Map<String, Object> entry : getErrorList()) {
-
-            for (String key : entry.keySet()) {
-
-                Object value = entry.get(key);
+        for (Map<String, Object> message : getErrorList()) {
+            for (Map.Entry<String, Object> entry : message.entrySet()) {
+                Object value = entry.getValue();
                 if (value != null && !value.toString().isEmpty()) {
-                    errors.append(key);
+                    errors.append(entry.getKey());
                     errors.append(": ");
                     errors.append(value);
                 }

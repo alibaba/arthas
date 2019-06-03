@@ -28,7 +28,7 @@ public class Spy {
      */
     public static volatile Method AGENT_RESET_METHOD;
 
-    /*
+    /**
      * 用于普通的间谍初始化
      */
     public static void init(
@@ -48,7 +48,7 @@ public class Spy {
         THROW_INVOKING_METHOD = throwInvokingMethod;
     }
 
-    /*
+    /**
      * 用于启动线程初始化
      */
     public static void initForAgentLauncher(

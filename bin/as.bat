@@ -101,7 +101,7 @@ set JAVACMD="%JAVA_HOME%"\bin\java
 
 %JAVACMD% -Dfile.encoding=UTF-8 %BOOT_CLASSPATH% -jar "%CORE_JAR%" -pid "%PID%"  -target-ip 127.0.0.1 -telnet-port %TELNET_PORT% -http-port %HTTP_PORT% -core "%CORE_JAR%" -agent "%AGENT_JAR%"
 if %ERRORLEVEL% NEQ 0 goto exit_bat
-if "%exitProcess%" == "true" goto :exit_bat
+if %exitProcess%==1 goto exit_bat
 goto attachSuccess
 
 
@@ -116,5 +116,5 @@ IF %ERRORLEVEL% NEQ 0 (
 )
 
 :exit_bat
-if "%exitProcess%" == "true" exit %ERROR_CODE%
+if %exitProcess%==1 exit %ERROR_CODE%
 exit /B %ERROR_CODE%

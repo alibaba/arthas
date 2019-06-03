@@ -295,8 +295,8 @@ public class DashboardCommand extends AnnotatedCommand {
         return RenderUtil.render(table, width, height);
     }
 
-    String drawRuntineInfoAndTomcatInfo(int width, int height) {
-        TableElement table = new TableElement(1, 1);
+    String drawRuntimeInfoAndTomcatInfo(int width, int height) {
+        TableElement resultTable = new TableElement(1, 1);
 
         TableElement runtimeInfoTable = new TableElement(1, 1).rightCellPadding(1);
         runtimeInfoTable
@@ -304,11 +304,12 @@ public class DashboardCommand extends AnnotatedCommand {
 
         addRuntimeInfo(runtimeInfoTable);
 
-        TableElement tomcatInfoTable = new TableElement(1, 1).rightCellPadding(1);
+        TableElement tomcatInfoTable = null;
 
         try {
             // 如果请求tomcat信息失败，则不显示tomcat信息
             if (NetUtils.request("http://localhost:8006").isSuccess()) {
+                tomcatInfoTable = new TableElement(1, 1).rightCellPadding(1);
                 tomcatInfoTable
                         .add(new RowElement().style(Decoration.bold.fg(Color.black).bg(Color.white)).add("Tomcat", ""));
                 addTomcatInfo(tomcatInfoTable);
@@ -317,8 +318,13 @@ public class DashboardCommand extends AnnotatedCommand {
             logger.error(null, "get Tomcat Info error!", t);
         }
 
-        table.row(runtimeInfoTable, tomcatInfoTable);
-        return RenderUtil.render(table, width, height);
+        if (tomcatInfoTable != null) {
+            resultTable.row(runtimeInfoTable, tomcatInfoTable);
+        } else {
+            resultTable = runtimeInfoTable;
+        }
+
+        return RenderUtil.render(resultTable, width, height);
     }
 
     static class MemoryEntry {
@@ -405,7 +411,7 @@ public class DashboardCommand extends AnnotatedCommand {
 
             String threadInfo = drawThreadInfo(width, threadTopHeight);
             String memoryAndGc = drawMemoryInfoAndGcInfo(width, runtimeInfoHeight);
-            String runTimeAndTomcat = drawRuntineInfoAndTomcatInfo(width, heapInfoHeight);
+            String runTimeAndTomcat = drawRuntimeInfoAndTomcatInfo(width, heapInfoHeight);
 
             process.write(threadInfo + memoryAndGc + runTimeAndTomcat);
 

@@ -104,7 +104,7 @@ public class FileUtils {
     public static void saveCommandHistory(List<int[]> history, File file) {
         OutputStream out = null;
         try {
-            out = openOutputStream(file, false);
+            out = new BufferedOutputStream(openOutputStream(file, false));
             for (int[] command: history) {
                 for (int i : command) {
                     out.write(i);

@@ -22,8 +22,9 @@ Advanced Usage
 * [jvm](jvm.md) - show JVM information
 * [sysprop](sysprop.md) - view/modify system properties
 * [sysenv](sysenv.md) — view system environment variables
-* **New!** [getstatic](getstatic.md) - examine class's static properties
+* [getstatic](getstatic.md) - examine class's static properties
 * **New!** [ognl](ognl.md) - execute ongl expression
+* **New!** [mbean](mbean.md) - show Mbean information
 
 ## class/classloader
 

@@ -221,7 +221,7 @@ public abstract class ReflectAdviceListenerAdapter implements AdviceListener {
     }
 
     /**
-     * 超过次数上限，则不在输出，命令终止
+     * 超过次数上限，则不再输出，命令终止
      * @param process the process to be aborted
      * @param limit the limit to be printed
      */

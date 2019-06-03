@@ -8,10 +8,10 @@
 
 # program : Arthas
 #  author : Core Engine @ Taobao.com
-#    date : 2019-02-14
+#    date : 2019-05-15
 
 # current arthas script version
-ARTHAS_SCRIPT_VERSION=3.1.0
+ARTHAS_SCRIPT_VERSION=3.1.1
 
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
@@ -426,7 +426,7 @@ EXAMPLES:
   ./as.sh --telnet-port 9999 --http-port -1
   ./as.sh -c 'sysprop; thread' <pid>
   ./as.sh -f batch.as <pid>
-  ./as.sh --use-version 3.1.0
+  ./as.sh --use-version 3.1.1
   ./as.sh --session-timeout 3600
   ./as.sh --attach-only
   ./as.sh --repo-mirror aliyun --use-http
