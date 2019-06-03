@@ -69,9 +69,9 @@ public class CorePluginActivator implements PluginActivator {
                 String.class, String.class, Object.class, Object[].class);
         Method onReturn = adviceWeaverClass.getMethod(ON_RETURN, Object.class);
         Method onThrows = adviceWeaverClass.getMethod(ON_THROWS, Throwable.class);
-        Method beforeInvoke = adviceWeaverClass.getMethod(BEFORE_INVOKE, int.class, String.class, String.class, String.class);
-        Method afterInvoke = adviceWeaverClass.getMethod(AFTER_INVOKE, int.class, String.class, String.class, String.class);
-        Method throwInvoke = adviceWeaverClass.getMethod(THROW_INVOKE, int.class, String.class, String.class, String.class);
+        Method beforeInvoke = adviceWeaverClass.getMethod(BEFORE_INVOKE, int.class, String.class, String.class, String.class, int.class);
+        Method afterInvoke = adviceWeaverClass.getMethod(AFTER_INVOKE, int.class, String.class, String.class, String.class, int.class);
+        Method throwInvoke = adviceWeaverClass.getMethod(THROW_INVOKE, int.class, String.class, String.class, String.class, int.class);
 
         Method reset = null;
         Spy.initForAgentLauncher(CorePluginActivator.class.getClassLoader(), onBefore, onReturn, onThrows, beforeInvoke, afterInvoke, throwInvoke, reset);
