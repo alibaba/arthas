@@ -113,8 +113,9 @@ public class DynamicJavaFileManager extends ForwardingJavaFileManager<JavaFileMa
 
         @Override
         public T next() {
-            if (first.hasNext())
+            if (first.hasNext()) {
                 return first.next();
+            }
             return next.next();
         }
 
