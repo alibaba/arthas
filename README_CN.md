@@ -397,6 +397,8 @@ $ classloader
 ![富佳科技](static/fujias.png)
 ![鼎尖软件](static/dingjiansoft.png)
 ![广通软件](static/broada.png)
+![九鼎瑞信](static/evercreative.jpg)
+![小米有品](static/xiaomiyoupin.png)
 
 ### Credit
 
