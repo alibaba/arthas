@@ -68,6 +68,7 @@
         <module>boot</module>
         <module>demo</module>
         <module>apm-demo</module>
+        <module>security-plugin</module>
         <module>testcase</module>
         <module>site</module>
         <module>packaging</module>
