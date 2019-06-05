@@ -2,6 +2,7 @@ package com.taobao.arthas.agent;
 
 import java.io.File;
 import java.lang.instrument.Instrumentation;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.security.CodeSource;
 import java.util.Map;
@@ -11,6 +12,7 @@ import com.alibaba.arthas.deps.org.slf4j.Logger;
 import com.alibaba.arthas.deps.org.slf4j.LoggerFactory;
 import com.alibaba.arthas.plugin.PluginManager;
 import com.taobao.arthas.common.FeatureCodec;
+import com.taobao.arthas.common.URLUtils;
 
 /**
  *
@@ -63,7 +65,19 @@ public class ArthasAgent {
     private void initLogger() {
         String arthasLoggerConfiguration = System.getProperty(defaultLoggerConfigurationFileProperty);
         if (arthasLoggerConfiguration == null || arthasLoggerConfiguration.trim().isEmpty()) {
-            System.setProperty(defaultLoggerConfigurationFileProperty, defaultLoggerConfigurationFile);
+            // try to find logback-arthas.xml in the agent jar directory
+            File agentJarLocation = new File(URLUtils.classLocation(getClass()));
+            if(agentJarLocation.isFile()) {
+                File configurationFile = new File(agentJarLocation.getParentFile(), defaultLoggerConfigurationFile);
+                if(configurationFile.exists()) {
+                    try {
+                        System.setProperty(defaultLoggerConfigurationFileProperty,
+                                        configurationFile.toURI().toURL().toString());
+                    } catch (MalformedURLException e) {
+                        // ignore
+                    }
+                }
+            }
         }
         if (logger == null) {
             logger = LoggerFactory.getLogger("arthas");
