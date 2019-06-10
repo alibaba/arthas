@@ -405,6 +405,7 @@ Welcome to register the company name in this issue: https://github.com/alibaba/a
 ![广通软件](static/broada.png)
 ![九鼎瑞信](static/evercreative.jpg)
 ![小米有品](static/xiaomiyoupin.png)
+![欧冶云商](static/ouyeel.png)
 
 ### Credit
 
