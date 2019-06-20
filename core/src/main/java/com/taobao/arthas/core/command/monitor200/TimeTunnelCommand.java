@@ -466,7 +466,7 @@ public class TimeTunnelCommand extends EnhancerCommand {
                     if (!process.isRunning()) {
                         return;
                     }
-                }                
+                }
                 ThreadLocalWatch threadLocalWatch = new ThreadLocalWatch();
                 TableElement table = TimeTunnelTable.createDefaultTable();
                 if (i != 0) {
