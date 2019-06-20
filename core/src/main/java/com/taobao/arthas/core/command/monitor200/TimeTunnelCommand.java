@@ -12,6 +12,7 @@ import com.taobao.arthas.core.shell.handlers.shell.QExitHandler;
 import com.taobao.arthas.core.util.LogUtil;
 import com.taobao.arthas.core.util.SearchUtils;
 import com.taobao.arthas.core.util.StringUtils;
+import com.taobao.arthas.core.util.ThreadLocalWatch;
 import com.taobao.arthas.core.util.affect.RowAffect;
 import com.taobao.arthas.core.util.matcher.Matcher;
 import com.taobao.arthas.core.view.ObjectView;
@@ -465,8 +466,8 @@ public class TimeTunnelCommand extends EnhancerCommand {
                     if (!process.isRunning()) {
                         return;
                     }
-                }
-                long beginTime = System.nanoTime();
+                }                
+                ThreadLocalWatch threadLocalWatch = new ThreadLocalWatch();
                 TableElement table = TimeTunnelTable.createDefaultTable();
                 if (i != 0) {
                     // empty line separator
@@ -477,7 +478,7 @@ public class TimeTunnelCommand extends EnhancerCommand {
 
                 try {
                     Object returnObj = method.invoke(advice.getTarget(), advice.getParams());
-                    double cost = (System.nanoTime() - beginTime) / 1000000.0;
+                    double cost = threadLocalWatch.costInMillis();
                     TimeTunnelTable.drawPlayResult(table, returnObj, isNeedExpand(), expand, sizeLimit, cost);
                 } catch (Throwable t) {
                     TimeTunnelTable.drawPlayException(table, t, isNeedExpand(), expand);

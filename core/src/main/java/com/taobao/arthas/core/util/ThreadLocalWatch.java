@@ -21,11 +21,15 @@ public class ThreadLocalWatch {
     }
 
     public long cost() {
+        long ct = System.nanoTime();
+        do {
+            ct = System.nanoTime();
+        } while (ct < timestampRef.get());
         return (System.nanoTime() - timestampRef.get());
     }
 
     public double costInMillis() {
-        return (System.nanoTime() - timestampRef.get()) / 1000000.0;
+        return (double)cost() / 1000000.0;
     }
 
     public void clear() {
