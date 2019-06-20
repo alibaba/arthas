@@ -22,9 +22,6 @@ public class ThreadLocalWatch {
 
     public long cost() {
         long ct = System.nanoTime();
-        do {
-            ct = System.nanoTime();
-        } while (ct < timestampRef.get());
         return (ct - timestampRef.get());
     }
 
