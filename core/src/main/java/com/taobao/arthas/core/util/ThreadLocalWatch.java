@@ -22,7 +22,14 @@ public class ThreadLocalWatch {
 
     public long cost() {
         long ct = System.nanoTime();
-        return (ct - timestampRef.get());
+        long ctp = -1;
+        do {
+            ctp = System.nanoTime() - timestampRef.get();
+            if (ctp > 0) {
+                return ctp;
+            } 
+        } while (ctp <= 0);
+        return 0;
     }
 
     public double costInMillis() {
