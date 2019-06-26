@@ -351,6 +351,7 @@ $ classloader
 ![狐狸金服](static/hulijingfu.png)
 ![三体云](static/santiyun.png)
 ![证大文化](static/zhengdawenhua.png)
+![连连支付](static/lianlianpay.png)
 ![Acmedcare+](static/acmedcare.png)
 ![好慷](static/homeking365_log.png)
 ![来电科技](static/laidian.png)
