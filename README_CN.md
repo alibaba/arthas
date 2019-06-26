@@ -401,6 +401,9 @@ $ classloader
 ![九鼎瑞信](static/evercreative.jpg)
 ![小米有品](static/xiaomiyoupin.png)
 ![欧冶云商](static/ouyeel.png)
+![投投科技](static/toutou.png)
+![饿了么](static/ele.png)
+![58同城](static/58.png)
 
 ### Credit
 
