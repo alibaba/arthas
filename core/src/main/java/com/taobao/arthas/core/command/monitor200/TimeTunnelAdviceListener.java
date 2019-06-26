@@ -57,9 +57,6 @@ public class TimeTunnelAdviceListener extends ReflectAdviceListenerAdapter {
         double cost = threadLocalWatch.costInMillis();
         TimeFragment timeTunnel = new TimeFragment(advice, new Date(), cost);
 
-        // reset the timestamp
-        threadLocalWatch.clear();
-
         boolean match = false;
         try {
             match = isConditionMet(command.getConditionExpress(), advice, cost);
