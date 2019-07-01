@@ -127,7 +127,6 @@
         <dependency>
             <groupId>org.benf</groupId>
             <artifactId>cfr</artifactId>
-            <version>0.132</version>
         </dependency>
         <!-- for com.sun.tools.attach.VirtualMachine api -->
         <dependency>

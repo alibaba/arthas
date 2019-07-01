@@ -351,6 +351,7 @@ $ classloader
 ![狐狸金服](static/hulijingfu.png)
 ![三体云](static/santiyun.png)
 ![证大文化](static/zhengdawenhua.png)
+![连连支付](static/lianlianpay.png)
 ![Acmedcare+](static/acmedcare.png)
 ![好慷](static/homeking365_log.png)
 ![来电科技](static/laidian.png)
@@ -400,6 +401,10 @@ $ classloader
 ![九鼎瑞信](static/evercreative.jpg)
 ![小米有品](static/xiaomiyoupin.png)
 ![欧冶云商](static/ouyeel.png)
+![投投科技](static/toutou.png)
+![饿了么](static/ele.png)
+![58同城](static/58.png)
+![上海浪沙](static/runsa.png)
 
 ### Credit
 
