@@ -26,7 +26,10 @@ import com.taobao.middleware.cli.annotations.Description;
 import com.taobao.middleware.cli.annotations.Name;
 import com.taobao.middleware.cli.annotations.Option;
 import com.taobao.middleware.cli.annotations.Summary;
+import com.taobao.text.Color;
+import com.taobao.text.Decoration;
 import com.taobao.text.ui.Element;
+import com.taobao.text.ui.LabelElement;
 import com.taobao.text.ui.TableElement;
 import com.taobao.text.util.RenderUtil;
 
@@ -51,6 +54,7 @@ public class SearchMethodCommand extends AnnotatedCommand {
     private String methodPattern;
     private boolean isDetail = false;
     private boolean isRegEx = false;
+    private String hashCode = null;
 
     @Argument(argName = "class-pattern", index = 0)
     @Description("Class name pattern, use either '.' or '/' as separator")
@@ -76,48 +80,61 @@ public class SearchMethodCommand extends AnnotatedCommand {
         isRegEx = regEx;
     }
 
+    @Option(shortName = "c", longName = "classloader")
+    @Description("The hash code of the special class's classLoader")
+    public void setHashCode(String hashCode) {
+        this.hashCode = hashCode;
+    }
+
     @Override
     public void process(CommandProcess process) {
         RowAffect affect = new RowAffect();
 
         Instrumentation inst = process.session().getInstrumentation();
         Matcher<String> methodNameMatcher = methodNameMatcher();
-        Set<Class<?>> matchedClasses = SearchUtils.searchClass(inst, classPattern, isRegEx);
+        Set<Class<?>> matchedClasses = SearchUtils.searchClassOnly(inst, classPattern, isRegEx, hashCode);
 
-        for (Class<?> clazz : matchedClasses) {
-            for (Constructor<?> constructor : clazz.getDeclaredConstructors()) {
-                String methodNameWithDescriptor = org.objectweb.asm.commons.Method.getMethod(constructor).toString();
-                if (!methodNameMatcher.matching("<init>")) {
-                    continue;
-                }
+        try{
+            if (matchedClasses == null || matchedClasses.isEmpty()) {
+                process.write("No class found for: " + classPattern + "\n");
+            } else if (matchedClasses.size() > 1) {
+                processMatches(process, matchedClasses);
+                affect.rCnt(matchedClasses.size());
+            }else{
+                Class clazz = matchedClasses.iterator().next();
+                for (Constructor<?> constructor : clazz.getDeclaredConstructors()) {
+                    String methodNameWithDescriptor = org.objectweb.asm.commons.Method.getMethod(constructor).toString();
+                    if (!methodNameMatcher.matching("<init>")) {
+                        continue;
+                    }
 
-                if (isDetail) {
-                    process.write(RenderUtil.render(renderConstructor(constructor), process.width()) + "\n");
-                } else {
-                    String line = format("%s %s%n", clazz.getName(), methodNameWithDescriptor);
-                    process.write(line);
+                    if (isDetail) {
+                        process.write(RenderUtil.render(renderConstructor(constructor), process.width()) + "\n");
+                    } else {
+                        String line = format("%s %s%n", clazz.getName(), methodNameWithDescriptor);
+                        process.write(line);
+                    }
+                    affect.rCnt(1);
                 }
-                affect.rCnt(1);
+                for (Method method : clazz.getDeclaredMethods()) {
+                    String methodNameWithDescriptor = org.objectweb.asm.commons.Method.getMethod(method).toString();
+                    if (!methodNameMatcher.matching(method.getName())) {
+                        continue;
+                    }
+
+                    if (isDetail) {
+                        process.write(RenderUtil.render(renderMethod(method), process.width()) + "\n");
+                    } else {
+                        String line = format("%s %s%n", clazz.getName(), methodNameWithDescriptor);
+                        process.write(line);
+                    }
+                    affect.rCnt(1);
+                }
             }
-
-            for (Method method : clazz.getDeclaredMethods()) {
-                String methodNameWithDescriptor = org.objectweb.asm.commons.Method.getMethod(method).toString();
-                if (!methodNameMatcher.matching(method.getName())) {
-                    continue;
-                }
-
-                if (isDetail) {
-                    process.write(RenderUtil.render(renderMethod(method), process.width()) + "\n");
-                } else {
-                    String line = format("%s %s%n", clazz.getName(), methodNameWithDescriptor);
-                    process.write(line);
-                }
-                affect.rCnt(1);
-            }
+        }finally {
+            process.write(affect + "\n");
+            process.end();
         }
-
-        process.write(affect + "\n");
-        process.end();
     }
 
     private Matcher<String> methodNameMatcher() {
@@ -151,6 +168,25 @@ public class SearchMethodCommand extends AnnotatedCommand {
              .row(label("parameters").style(bold.bold()), label(TypeRenderUtils.drawParameters(constructor)))
              .row(label("exceptions").style(bold.bold()), label(TypeRenderUtils.drawExceptions(constructor)));
         return table;
+    }
+
+    private void processMatches(CommandProcess process, Set<Class<?>> matchedClasses) {
+        Element usage = new LabelElement("sm -c <hashcode> " + classPattern + " " + methodPattern).style(
+                Decoration.bold.fg(Color.blue));
+        process.write("\n Found more than one class for: " + classPattern + ", Please use " + RenderUtil.render(usage,
+                process.width()));
+
+        TableElement table = new TableElement().leftCellPadding(1).rightCellPadding(1);
+        table.row(new LabelElement("HASHCODE").style(Decoration.bold.bold()),
+                new LabelElement("CLASSLOADER").style(Decoration.bold.bold()));
+
+        for (Class<?> c : matchedClasses) {
+            ClassLoader classLoader = c.getClassLoader();
+            table.row(label(Integer.toHexString(classLoader.hashCode())).style(Decoration.bold.fg(Color.red)),
+                    TypeRenderUtils.drawClassLoader(c));
+        }
+
+        process.write(RenderUtil.render(table, process.width()) + "\n");
     }
 
     @Override
