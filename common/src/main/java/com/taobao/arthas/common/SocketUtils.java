@@ -17,17 +17,16 @@ public class SocketUtils {
     public static int findTcpListenProcess(int port) {
         try {
             if (OSUtils.isWindows()) {
-                String[] command = { "netstat", "-ano", "-p", "TCP" };
+                String command = "cmd /c netstat -ano -p \"TCP\" |findstr \"LISTENING\"|findstr :" + port;
                 List<String> lines = ExecutingCommand.runNative(command);
                 for (String line : lines) {
-                    if (line.contains("LISTENING")) {
-                        // TCP 0.0.0.0:49168 0.0.0.0:0 LISTENING 476
-                        String[] strings = line.trim().split("\\s+");
-                        if (strings.length == 5) {
-                            if (strings[1].endsWith(":" + port)) {
-                                return Integer.parseInt(strings[4]);
-                            }
-                        }
+                    // TCP 0.0.0.0:49168 0.0.0.0:0 LISTENING 476
+                    String[] strings = line.trim().split("\\s+");
+                    if (strings.length != 5) {
+                        continue;
+                    }
+                    if (strings[1].endsWith(":" + port)) {
+                        return Integer.parseInt(strings[4]);
                     }
                 }
             }
