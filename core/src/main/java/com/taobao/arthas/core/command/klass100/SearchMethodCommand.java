@@ -26,6 +26,8 @@ import com.taobao.middleware.cli.annotations.Description;
 import com.taobao.middleware.cli.annotations.Name;
 import com.taobao.middleware.cli.annotations.Option;
 import com.taobao.middleware.cli.annotations.Summary;
+import com.taobao.text.Color;
+import com.taobao.text.Decoration;
 import com.taobao.text.ui.Element;
 import com.taobao.text.ui.TableElement;
 import com.taobao.text.util.RenderUtil;
@@ -84,6 +86,7 @@ public class SearchMethodCommand extends AnnotatedCommand {
         Matcher<String> methodNameMatcher = methodNameMatcher();
         Set<Class<?>> matchedClasses = SearchUtils.searchClass(inst, classPattern, isRegEx);
 
+        boolean shouldRenderClassLoaderHash = false;
         for (Class<?> clazz : matchedClasses) {
             for (Constructor<?> constructor : clazz.getDeclaredConstructors()) {
                 String methodNameWithDescriptor = org.objectweb.asm.commons.Method.getMethod(constructor).toString();
@@ -93,6 +96,7 @@ public class SearchMethodCommand extends AnnotatedCommand {
 
                 if (isDetail) {
                     process.write(RenderUtil.render(renderConstructor(constructor), process.width()) + "\n");
+                    shouldRenderClassLoaderHash = true;
                 } else {
                     String line = format("%s %s%n", clazz.getName(), methodNameWithDescriptor);
                     process.write(line);
@@ -108,10 +112,16 @@ public class SearchMethodCommand extends AnnotatedCommand {
 
                 if (isDetail) {
                     process.write(RenderUtil.render(renderMethod(method), process.width()) + "\n");
+                    shouldRenderClassLoaderHash = true;
                 } else {
                     String line = format("%s %s%n", clazz.getName(), methodNameWithDescriptor);
                     process.write(line);
                 }
+                affect.rCnt(1);
+            }
+
+            if (shouldRenderClassLoaderHash) {
+                process.write(RenderUtil.render(renderClassLoaderHash(clazz)) + "\n");
                 affect.rCnt(1);
             }
         }
@@ -152,6 +162,14 @@ public class SearchMethodCommand extends AnnotatedCommand {
              .row(label("exceptions").style(bold.bold()), label(TypeRenderUtils.drawExceptions(constructor)));
         return table;
     }
+
+    private Element renderClassLoaderHash(Class clazz) {
+        TableElement table = new TableElement().leftCellPadding(1).rightCellPadding(1);
+        table.row(label("classLoaderHash").style(Decoration.bold.bold()),
+                label(StringUtils.classLoaderHash(clazz)).style(Decoration.bold.fg(Color.red)));
+        return table;
+    }
+
 
     @Override
     public void complete(Completion completion) {
