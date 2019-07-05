@@ -2,10 +2,7 @@ package com.taobao.arthas.core.command.klass100;
 
 
 import java.lang.instrument.Instrumentation;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
+import java.util.*;
 
 import com.taobao.arthas.core.command.Constants;
 import com.taobao.arthas.core.shell.cli.Completion;
@@ -15,13 +12,21 @@ import com.taobao.arthas.core.shell.command.CommandProcess;
 import com.taobao.arthas.core.util.ClassUtils;
 import com.taobao.arthas.core.util.SearchUtils;
 import com.taobao.arthas.core.util.StringUtils;
+import com.taobao.arthas.core.util.TypeRenderUtils;
 import com.taobao.arthas.core.util.affect.RowAffect;
 import com.taobao.middleware.cli.annotations.Argument;
 import com.taobao.middleware.cli.annotations.Description;
 import com.taobao.middleware.cli.annotations.Name;
 import com.taobao.middleware.cli.annotations.Option;
 import com.taobao.middleware.cli.annotations.Summary;
+import com.taobao.text.Color;
+import com.taobao.text.Decoration;
+import com.taobao.text.ui.Element;
+import com.taobao.text.ui.LabelElement;
+import com.taobao.text.ui.TableElement;
 import com.taobao.text.util.RenderUtil;
+
+import static com.taobao.text.ui.Element.label;
 
 /**
  * 展示类信息
@@ -43,6 +48,7 @@ public class SearchClassCommand extends AnnotatedCommand {
     private boolean isField = false;
     private boolean isRegEx = false;
     private Integer expand;
+    private String hashCode = null;
 
     @Argument(argName = "class-pattern", index = 0)
     @Description("Class name pattern, use either '.' or '/' as separator")
@@ -74,12 +80,19 @@ public class SearchClassCommand extends AnnotatedCommand {
         this.expand = expand;
     }
 
+    @Option(shortName = "c", longName = "classloader")
+    @Description("The hash code of the special class's classLoader")
+    public void setHashCode(String hashCode) {
+        this.hashCode = hashCode;
+    }
+
+
     @Override
     public void process(CommandProcess process) {
         // TODO: null check
         RowAffect affect = new RowAffect();
         Instrumentation inst = process.session().getInstrumentation();
-        List<Class<?>> matchedClasses = new ArrayList<Class<?>>(SearchUtils.searchClass(inst, classPattern, isRegEx));
+        List<Class<?>> matchedClasses = new ArrayList<Class<?>>(SearchUtils.searchClassOnly(inst, classPattern, isRegEx, hashCode));
         Collections.sort(matchedClasses, new Comparator<Class<?>>() {
             @Override
             public int compare(Class<?> c1, Class<?> c2) {
@@ -87,13 +100,21 @@ public class SearchClassCommand extends AnnotatedCommand {
             }
         });
 
-        for (Class<?> clazz : matchedClasses) {
-            processClass(process, clazz);
+        try {
+            if (matchedClasses == null || matchedClasses.isEmpty()) {
+                process.write("No class found for: " + classPattern + "\n");
+            }else if(matchedClasses.size() > 1){
+                processMatches(process, matchedClasses);
+                affect.rCnt(matchedClasses.size());
+            }else{
+                processClass(process, matchedClasses.iterator().next());
+                affect.rCnt(1);
+            }
+        }finally {
+            process.write(affect + "\n");
+            process.end();
         }
 
-        affect.rCnt(matchedClasses.size());
-        process.write(affect + "\n");
-        process.end();
     }
 
     private void processClass(CommandProcess process, Class<?> clazz) {
@@ -103,6 +124,26 @@ public class SearchClassCommand extends AnnotatedCommand {
             process.write(clazz.getName() + "\n");
         }
     }
+
+    private void processMatches(CommandProcess process, List<Class<?>> matchedClasses) {
+        Element usage = new LabelElement("sc -c <hashcode> " + classPattern).style(
+                Decoration.bold.fg(Color.blue));
+        process.write("\n Found more than one class for: " + classPattern + ", Please use " + RenderUtil.render(usage,
+                process.width()));
+
+        TableElement table = new TableElement().leftCellPadding(1).rightCellPadding(1);
+        table.row(new LabelElement("HASHCODE").style(Decoration.bold.bold()),
+                new LabelElement("CLASSLOADER").style(Decoration.bold.bold()));
+
+        for (Class<?> c : matchedClasses) {
+            ClassLoader classLoader = c.getClassLoader();
+            table.row(label(Integer.toHexString(classLoader.hashCode())).style(Decoration.bold.fg(Color.red)),
+                    TypeRenderUtils.drawClassLoader(c));
+        }
+
+        process.write(RenderUtil.render(table, process.width()) + "\n");
+    }
+
 
     @Override
     public void complete(Completion completion) {
