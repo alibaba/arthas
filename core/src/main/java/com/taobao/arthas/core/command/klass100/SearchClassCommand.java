@@ -42,6 +42,7 @@ public class SearchClassCommand extends AnnotatedCommand {
     private boolean isDetail = false;
     private boolean isField = false;
     private boolean isRegEx = false;
+    private String hashCode = null;
     private Integer expand;
 
     @Argument(argName = "class-pattern", index = 0)
@@ -74,12 +75,18 @@ public class SearchClassCommand extends AnnotatedCommand {
         this.expand = expand;
     }
 
+    @Option(shortName = "c", longName = "classloader")
+    @Description("The hash code of the special class's classLoader")
+    public void setHashCode(String hashCode) {
+        this.hashCode = hashCode;
+    }
+
     @Override
     public void process(CommandProcess process) {
         // TODO: null check
         RowAffect affect = new RowAffect();
         Instrumentation inst = process.session().getInstrumentation();
-        List<Class<?>> matchedClasses = new ArrayList<Class<?>>(SearchUtils.searchClass(inst, classPattern, isRegEx));
+        List<Class<?>> matchedClasses = new ArrayList<Class<?>>(SearchUtils.searchClass(inst, classPattern, isRegEx, hashCode));
         Collections.sort(matchedClasses, new Comparator<Class<?>>() {
             @Override
             public int compare(Class<?> c1, Class<?> c2) {
