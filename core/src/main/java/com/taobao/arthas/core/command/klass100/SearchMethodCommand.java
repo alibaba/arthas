@@ -49,6 +49,7 @@ public class SearchMethodCommand extends AnnotatedCommand {
 
     private String classPattern;
     private String methodPattern;
+    private String hashCode = null;
     private boolean isDetail = false;
     private boolean isRegEx = false;
 
@@ -76,13 +77,19 @@ public class SearchMethodCommand extends AnnotatedCommand {
         isRegEx = regEx;
     }
 
+    @Option(shortName = "c", longName = "classloader")
+    @Description("The hash code of the special class's classLoader")
+    public void setHashCode(String hashCode) {
+        this.hashCode = hashCode;
+    }
+
     @Override
     public void process(CommandProcess process) {
         RowAffect affect = new RowAffect();
 
         Instrumentation inst = process.session().getInstrumentation();
         Matcher<String> methodNameMatcher = methodNameMatcher();
-        Set<Class<?>> matchedClasses = SearchUtils.searchClass(inst, classPattern, isRegEx);
+        Set<Class<?>> matchedClasses = SearchUtils.searchClass(inst, classPattern, isRegEx, hashCode);
 
         for (Class<?> clazz : matchedClasses) {
             for (Constructor<?> constructor : clazz.getDeclaredConstructors()) {
