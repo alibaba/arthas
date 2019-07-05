@@ -16,12 +16,17 @@ import java.lang.instrument.UnmodifiableClassException;
  * 关闭命令
  *
  * @author vlinux on 14/10/23.
+ * @see StopCommand
  */
 @Name("shutdown")
 @Summary("Shutdown Arthas server and exit the console")
 public class ShutdownCommand extends AnnotatedCommand {
     @Override
     public void process(CommandProcess process) {
+        shutdown(process);
+    }
+
+    public static void shutdown(CommandProcess process) {
         try {
             // 退出之前需要重置所有的增强类
             Instrumentation inst = process.session().getInstrumentation();
