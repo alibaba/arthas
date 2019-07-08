@@ -165,8 +165,7 @@ public class SearchMethodCommand extends AnnotatedCommand {
 
     private Element renderClassLoaderHash(Class clazz) {
         TableElement table = new TableElement().leftCellPadding(1).rightCellPadding(1);
-        table.row(label("classLoaderHash").style(Decoration.bold.bold()),
-                label(StringUtils.classLoaderHash(clazz)).style(Decoration.bold.fg(Color.red)));
+        table.row(label("classLoaderHash").style(bold.bold()), label(StringUtils.classLoaderHash(clazz)));
         return table;
     }
 
