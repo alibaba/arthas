@@ -32,6 +32,126 @@
                     </execution>
                 </executions>
             </plugin>
+            <plugin>
+                <artifactId>jdeb</artifactId>
+                <groupId>org.vafer</groupId>
+                <version>1.7</version>
+        <executions>
+        <execution>
+            <phase>package</phase>
+            <goals>
+                <goal>jdeb</goal>
+            </goals>
+        </execution>
+    </executions>
+    <dependencies>
+	</dependencies>
+
+    <configuration>
+        <skipPOMs>false</skipPOMs>
+        <deb>${project.basedir}/target/arthas-all.deb</deb>
+        <dataSet>
+            <data>
+                <src>../spy/target/arthas-spy.jar</src>
+                <type>file</type>
+                <dst>arthas-spy.jar</dst>
+
+                <mapper>
+                    <type>perm</type>
+                    <strip>1</strip>
+                    <prefix>/usr/share/arthas</prefix>
+                    <user>root</user>
+                    <group>root</group>
+                </mapper>
+            </data>
+            <data>
+                <src>../core/target/arthas-core-jar-with-dependencies.jar </src>
+                <type>file</type>
+                <missingSrc>ignore</missingSrc>
+                <mapper>
+                    <type>perm</type>
+                    <strip>1</strip>
+                    <prefix>/usr/share/arthas</prefix>
+                    <user>root</user>
+                    <group>root</group>
+                </mapper>
+            </data>
+            <data>
+                <src>../agent/target/arthas-agent-jar-with-dependencies.jar</src>
+                <type>file</type>
+                <missingSrc>ignore</missingSrc>
+                <mapper>
+                    <type>perm</type>
+                    <strip>1</strip>
+                    <prefix>/usr/share/arthas</prefix>
+                    <user>root</user>
+                    <group>root</group>
+                </mapper>
+            </data>
+            <data>
+                <src>../client/target/arthas-client-jar-with-dependencies.jar</src>
+                <type>file</type>
+                <missingSrc>ignore</missingSrc>
+                <mapper>
+                    <type>perm</type>
+                    <strip>1</strip>
+                    <prefix>/usr/share/arthas</prefix>
+                    <user>root</user>
+                    <group>root</group>
+                </mapper>
+            </data>
+            <data>
+                <src>../boot/target/arthas-boot-jar-with-dependencies.jar</src>
+                <type>file</type>
+                <missingSrc>ignore</missingSrc>
+                <mapper>
+                    <type>perm</type>
+                    <strip>1</strip>
+                    <prefix>/usr/share/arthas</prefix>
+                    <user>root</user>
+                    <group>root</group>
+                </mapper>
+            </data>
+            <data>
+                <src>../demo/target/arthas-demo.jar</src>
+                <type>file</type>
+                <missingSrc>ignore</missingSrc>
+                <mapper>
+                    <type>perm</type>
+                    <strip>1</strip>
+                    <prefix>/usr/share/arthas</prefix>
+                    <user>root</user>
+                    <group>root</group>
+                </mapper>
+            </data>
+            <data>
+                <src>../bin/as.sh </src>
+                <type>file</type>
+                <missingSrc>ignore</missingSrc>
+                <mapper>
+                    <type>perm</type>
+                    <strip>1</strip>
+                    <prefix>/usr/bin</prefix>
+                    <user>root</user>
+                    <filemode>755</filemode>
+                    <group>root</group>
+                </mapper>
+            </data>
+            <data>
+                <src>${project.basedir}/packaging/target/arthas-3.1.2-SNAPSHOT-bin/as.sh</src>
+                <type>file</type>
+                <missingSrc>ignore</missingSrc>
+                <mapper>
+                    <type>perm</type>
+                    <strip>1</strip>
+                    <prefix>/usr/bin</prefix>
+                    <user>root</user>
+                    <group>root</group>
+                </mapper>
+            </data>
+        </dataSet>
+    </configuration>
+</plugin>
         </plugins>
     </build>
 
