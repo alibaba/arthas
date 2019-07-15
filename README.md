@@ -411,6 +411,9 @@ Welcome to register the company name in this issue: https://github.com/alibaba/a
 ![饿了么](static/ele.png)
 ![58同城](static/58.png)
 ![上海浪沙](static/runsa.png)
+![符律科技](static/fhldtech.png)
+![顺丰科技](static/sf.png)
+![新致软件](static/newtouch.png)
 
 ### Credit
 
