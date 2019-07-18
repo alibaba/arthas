@@ -49,6 +49,7 @@ public class SearchMethodCommand extends AnnotatedCommand {
 
     private String classPattern;
     private String methodPattern;
+    private String hashCode = null;
     private boolean isDetail = false;
     private boolean isRegEx = false;
 
@@ -76,13 +77,19 @@ public class SearchMethodCommand extends AnnotatedCommand {
         isRegEx = regEx;
     }
 
+    @Option(shortName = "c", longName = "classloader")
+    @Description("The hash code of the special class's classLoader")
+    public void setHashCode(String hashCode) {
+        this.hashCode = hashCode;
+    }
+
     @Override
     public void process(CommandProcess process) {
         RowAffect affect = new RowAffect();
 
         Instrumentation inst = process.session().getInstrumentation();
         Matcher<String> methodNameMatcher = methodNameMatcher();
-        Set<Class<?>> matchedClasses = SearchUtils.searchClass(inst, classPattern, isRegEx);
+        Set<Class<?>> matchedClasses = SearchUtils.searchClass(inst, classPattern, isRegEx, hashCode);
 
         for (Class<?> clazz : matchedClasses) {
             for (Constructor<?> constructor : clazz.getDeclaredConstructors()) {
@@ -92,7 +99,7 @@ public class SearchMethodCommand extends AnnotatedCommand {
                 }
 
                 if (isDetail) {
-                    process.write(RenderUtil.render(renderConstructor(constructor), process.width()) + "\n");
+                    process.write(RenderUtil.render(renderConstructor(constructor, clazz), process.width()) + "\n");
                 } else {
                     String line = format("%s %s%n", clazz.getName(), methodNameWithDescriptor);
                     process.write(line);
@@ -107,7 +114,7 @@ public class SearchMethodCommand extends AnnotatedCommand {
                 }
 
                 if (isDetail) {
-                    process.write(RenderUtil.render(renderMethod(method), process.width()) + "\n");
+                    process.write(RenderUtil.render(renderMethod(method, clazz), process.width()) + "\n");
                 } else {
                     String line = format("%s %s%n", clazz.getName(), methodNameWithDescriptor);
                     process.write(line);
@@ -128,7 +135,7 @@ public class SearchMethodCommand extends AnnotatedCommand {
         return isRegEx ? new RegexMatcher(methodPattern) : new WildcardMatcher(methodPattern);
     }
 
-    private Element renderMethod(Method method) {
+    private Element renderMethod(Method method, Class<?> clazz) {
         TableElement table = new TableElement().leftCellPadding(1).rightCellPadding(1);
 
         table.row(label("declaring-class").style(bold.bold()), label(method.getDeclaringClass().getName()))
@@ -137,11 +144,12 @@ public class SearchMethodCommand extends AnnotatedCommand {
                 .row(label("annotation").style(bold.bold()), label(TypeRenderUtils.drawAnnotation(method)))
                 .row(label("parameters").style(bold.bold()), label(TypeRenderUtils.drawParameters(method)))
                 .row(label("return").style(bold.bold()), label(TypeRenderUtils.drawReturn(method)))
-                .row(label("exceptions").style(bold.bold()), label(TypeRenderUtils.drawExceptions(method)));
+                .row(label("exceptions").style(bold.bold()), label(TypeRenderUtils.drawExceptions(method)))
+                .row(label("classLoaderHash").style(bold.bold()), label(StringUtils.classLoaderHash(clazz)));
         return table;
     }
 
-    private Element renderConstructor(Constructor<?> constructor) {
+    private Element renderConstructor(Constructor<?> constructor, Class<?> clazz) {
         TableElement table = new TableElement().leftCellPadding(1).rightCellPadding(1);
 
         table.row(label("declaring-class").style(bold.bold()), label(constructor.getDeclaringClass().getName()))
@@ -149,7 +157,8 @@ public class SearchMethodCommand extends AnnotatedCommand {
              .row(label("modifier").style(bold.bold()), label(StringUtils.modifier(constructor.getModifiers(), ',')))
              .row(label("annotation").style(bold.bold()), label(TypeRenderUtils.drawAnnotation(constructor.getDeclaredAnnotations())))
              .row(label("parameters").style(bold.bold()), label(TypeRenderUtils.drawParameters(constructor)))
-             .row(label("exceptions").style(bold.bold()), label(TypeRenderUtils.drawExceptions(constructor)));
+             .row(label("exceptions").style(bold.bold()), label(TypeRenderUtils.drawExceptions(constructor)))
+             .row(label("classLoaderHash").style(bold.bold()), label(StringUtils.classLoaderHash(clazz)));
         return table;
     }
 
