@@ -7,4 +7,4 @@ Depends: jdk (>= 1.5)
 Maintainer: Sahil <sjha200000@gmail.com>
 Description: arthas
 Distribution: development
-Depends: 
+Depends: telnet
