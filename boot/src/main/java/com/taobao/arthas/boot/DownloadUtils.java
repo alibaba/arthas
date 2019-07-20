@@ -44,13 +44,8 @@ public class DownloadUtils {
      */
     public static String readMavenReleaseVersion(String mavenMetaData) {
         try {
-            ByteArrayInputStream inputStream = new ByteArrayInputStream(mavenMetaData.getBytes("UTF-8"));
-            DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
-            DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
-            Document document = dBuilder.parse(inputStream);
-
+            Document document = transformMavenMetaData(mavenMetaData);
             NodeList nodeList = document.getDocumentElement().getElementsByTagName("release");
-
             return nodeList.item(0).getTextContent();
         } catch (Exception e) {
             // ignore
@@ -67,11 +62,7 @@ public class DownloadUtils {
     public static List<String> readAllMavenVersion(String mavenMetaData) {
         List<String> result = new ArrayList<String>();
         try {
-            ByteArrayInputStream inputStream = new ByteArrayInputStream(mavenMetaData.getBytes("UTF-8"));
-            DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
-            DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
-            Document document = dBuilder.parse(inputStream);
-
+            Document document = transformMavenMetaData(mavenMetaData);
             NodeList nodeList = document.getDocumentElement().getElementsByTagName("version");
             int length = nodeList.getLength();
             for (int i = 0; i < length; ++i) {
@@ -185,6 +176,20 @@ public class DownloadUtils {
             IOUtils.close(in);
             IOUtils.close(fout);
         }
+    }
+
+    /**
+     * transform the maven meta data which is in the format of String into document object.
+     *
+     * @param mavenMetaData
+     * @return
+     * @throws Exception
+     */
+    private static Document transformMavenMetaData(String mavenMetaData) throws Exception {
+        ByteArrayInputStream inputStream = new ByteArrayInputStream(mavenMetaData.getBytes("UTF-8"));
+        DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
+        DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
+        return dBuilder.parse(inputStream);
     }
 
     /**
