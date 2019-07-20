@@ -79,6 +79,18 @@
                             <linkName>/usr/bin/as.sh</linkName>
                             <linkTarget>/usr/share/arthas/as.sh</linkTarget>
                         </data>
+                        <data>
+                            <src>../packaging/src/deb/man1/arthas.1</src>
+                            <type>file</type>
+                            <mapper>
+                                <type>perm</type>
+                                <strip>1</strip>
+                                <prefix>/usr/share/man/man1</prefix>
+                                <filemode>755</filemode>
+                                <user>loader</user>
+                                <group>loader</group>
+                            </mapper>
+                        </data>
                     </dataSet>
                 </configuration>
             </plugin>
