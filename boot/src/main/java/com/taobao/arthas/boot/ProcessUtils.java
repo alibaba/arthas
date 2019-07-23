@@ -111,7 +111,7 @@ public class ProcessUtils {
             if (pid == currentPid) {
                 continue;
             }
-            if (strings.length >= 2 && isJspProcess(strings[1])) { // skip jps
+            if (strings.length >= 2 && isJpsProcess(strings[1])) { // skip jps
                 continue;
             }
 
@@ -140,14 +140,7 @@ public class ProcessUtils {
         String javaHome = System.getProperty("java.home");
 
         if (JavaVersionUtils.isLessThanJava9()) {
-            File toolsJar = new File(javaHome, "lib/tools.jar");
-            if (!toolsJar.exists()) {
-                toolsJar = new File(javaHome, "../lib/tools.jar");
-            }
-            if (!toolsJar.exists()) {
-                // maybe jre
-                toolsJar = new File(javaHome, "../../lib/tools.jar");
-            }
+            File toolsJar = tryToFindToolsJarUnderGivenDirectory(javaHome);
 
             if (toolsJar.exists()) {
                 FOUND_JAVA_HOME = javaHome;
@@ -174,7 +167,7 @@ public class ProcessUtils {
                 }
 
                 throw new IllegalArgumentException("Can not find tools.jar under java home: " + javaHome
-                                + ", please try to start arthas-boot with full path java. Such as /opt/jdk/bin/java -jar arthas-boot.jar");
+                        + ", please try to start arthas-boot with full path java. Such as /opt/jdk/bin/java -jar arthas-boot.jar");
             }
         } else {
             FOUND_JAVA_HOME = javaHome;
@@ -190,7 +183,7 @@ public class ProcessUtils {
         File javaPath = findJava();
         if (javaPath == null) {
             throw new IllegalArgumentException(
-                            "Can not find java/java.exe executable file under java home: " + javaHome);
+                    "Can not find java/java.exe executable file under java home: " + javaHome);
         }
 
         File toolsJar = findToolsJar();
@@ -282,19 +275,7 @@ public class ProcessUtils {
         }
 
         // find the shortest path, jre path longer than jdk path
-        if (javaList.size() > 1) {
-            Collections.sort(javaList, new Comparator<File>() {
-                @Override
-                public int compare(File file1, File file2) {
-                    try {
-                        return file1.getCanonicalPath().length() - file2.getCanonicalPath().length();
-                    } catch (IOException e) {
-                        // ignore
-                    }
-                    return -1;
-                }
-            });
-        }
+        sortFilesIfNecessary(javaList);
         return javaList.get(0);
     }
 
@@ -304,14 +285,7 @@ public class ProcessUtils {
         }
 
         String javaHome = findJavaHome();
-        File toolsJar = new File(javaHome, "lib/tools.jar");
-        if (!toolsJar.exists()) {
-            toolsJar = new File(javaHome, "../lib/tools.jar");
-        }
-        if (!toolsJar.exists()) {
-            // maybe jre
-            toolsJar = new File(javaHome, "../../lib/tools.jar");
-        }
+        File toolsJar = tryToFindToolsJarUnderGivenDirectory(javaHome);
 
         if (!toolsJar.exists()) {
             throw new IllegalArgumentException("Can not find tools.jar under java home: " + javaHome);
@@ -323,29 +297,16 @@ public class ProcessUtils {
 
     private static File findJps() {
         // Try to find jps under java.home and System env JAVA_HOME
-        String javaHome = System.getProperty("java.home");
-        String[] paths = { "bin/jps", "bin/jps.exe", "../bin/jps", "../bin/jps.exe" };
-
         List<File> jpsList = new ArrayList<File>();
-        for (String path : paths) {
-            File jpsFile = new File(javaHome, path);
-            if (jpsFile.exists()) {
-                AnsiLog.debug("Found jps: " + jpsFile.getAbsolutePath());
-                jpsList.add(jpsFile);
-            }
-        }
+
+        String javaHome = System.getProperty("java.home");
+        tryToFindJpsUnderGivenDirectory(javaHome, jpsList);
 
         if (jpsList.isEmpty()) {
             AnsiLog.debug("Can not find jps under :" + javaHome);
             String javaHomeEnv = System.getenv("JAVA_HOME");
             AnsiLog.debug("Try to find jps under env JAVA_HOME :" + javaHomeEnv);
-            for (String path : paths) {
-                File jpsFile = new File(javaHomeEnv, path);
-                if (jpsFile.exists()) {
-                    AnsiLog.debug("Found jps: " + jpsFile.getAbsolutePath());
-                    jpsList.add(jpsFile);
-                }
-            }
+            tryToFindJpsUnderGivenDirectory(javaHomeEnv, jpsList);
         }
 
         if (jpsList.isEmpty()) {
@@ -354,8 +315,36 @@ public class ProcessUtils {
         }
 
         // find the shortest path, jre path longer than jdk path
-        if (jpsList.size() > 1) {
-            Collections.sort(jpsList, new Comparator<File>() {
+        sortFilesIfNecessary(jpsList);
+        return jpsList.get(0);
+    }
+
+    /**
+     * Try to find the jps file under the given directory
+     * and then add all the potential jps candidates to the given jpsList
+     *
+     * @param directory given directory to search for
+     * @param jpsList list to hold the found jps file
+     */
+    private static void tryToFindJpsUnderGivenDirectory(String directory, List<File> jpsList) {
+        String[] paths = { "bin/jps", "bin/jps.exe", "../bin/jps", "../bin/jps.exe" };
+        for (String path : paths) {
+            File jpsFile = new File(directory, path);
+            if (jpsFile.exists()) {
+                AnsiLog.debug("Found jps: " + jpsFile.getAbsolutePath());
+                jpsList.add(jpsFile);
+            }
+        }
+    }
+
+    /**
+     * Sort the file list such that elements' canonical paths are in ascending order
+     *
+     * @param files
+     */
+    private static void sortFilesIfNecessary(List<File> files) {
+        if (files.size() > 1) {
+            Collections.sort(files, new Comparator<File>() {
                 @Override
                 public int compare(File file1, File file2) {
                     try {
@@ -367,10 +356,27 @@ public class ProcessUtils {
                 }
             });
         }
-        return jpsList.get(0);
     }
 
-    private static boolean isJspProcess(String mainClassName) {
+    /**
+     * Try to find the tools.jar file under the specified directory
+     *
+     * @param javaHome specified directory to search for
+     * @return toolsJar file
+     */
+    private static File tryToFindToolsJarUnderGivenDirectory(String javaHome) {
+        File toolsJar = new File(javaHome, "lib/tools.jar");
+        if (!toolsJar.exists()) {
+            toolsJar = new File(javaHome, "../lib/tools.jar");
+        }
+        if (!toolsJar.exists()) {
+            // maybe jre
+            toolsJar = new File(javaHome, "../../lib/tools.jar");
+        }
+        return toolsJar;
+    }
+
+    private static boolean isJpsProcess(String mainClassName) {
         return "sun.tools.jps.Jps".equals(mainClassName) || "jdk.jcmd/sun.tools.jps.Jps".equals(mainClassName);
     }
 }
