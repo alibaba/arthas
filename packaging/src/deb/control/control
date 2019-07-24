@@ -1,4 +1,4 @@
-Package: [[name]]
+Package: arthas
 Version: [[version]]
 Section: misc
 Priority: optional
@@ -7,4 +7,4 @@ Depends: jdk (>= 1.5)
 Maintainer: Sahil <sjha200000@gmail.com>
 Description: arthas
 Distribution: development
-Depends: telnet
+Depends: telnet, curl, unzip

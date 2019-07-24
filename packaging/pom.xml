@@ -67,17 +67,11 @@
                             <mapper>
                                 <type>perm</type>
                                 <strip>1</strip>
-                                <prefix>/usr/share/as.sh</prefix>
+                                <prefix>/usr/bin</prefix>
                                 <filemode>755</filemode>
-                                <user>loader</user>
-                                <group>loader</group>
+                                <user>root</user>
+                                <group>root</group>
                             </mapper>
-                        </data>
-                        <data>
-                            <type>link</type>
-                            <symlink>true</symlink>
-                            <linkName>/usr/bin/as.sh</linkName>
-                            <linkTarget>/usr/share/arthas/as.sh</linkTarget>
                         </data>
                         <data>
                             <src>../packaging/src/deb/man1/arthas.1</src>
@@ -86,6 +80,18 @@
                                 <type>perm</type>
                                 <strip>1</strip>
                                 <prefix>/usr/share/man/man1</prefix>
+                                <filemode>755</filemode>
+                                <user>loader</user>
+                                <group>loader</group>
+                            </mapper>
+                        </data>
+                        <data>
+                            <src>../packaging/src/deb/copyright/copyright.1</src>
+                            <type>file</type>
+                            <mapper>    
+                                <type>perm</type>
+                                <strip>1</strip>
+                                <prefix>/usr/share/doc/arthas</prefix>
                                 <filemode>755</filemode>
                                 <user>loader</user>
                                 <group>loader</group>
