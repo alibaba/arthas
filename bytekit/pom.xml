@@ -12,14 +12,6 @@
     <artifactId>arthas-bytekit</artifactId>
     <name>arthas-bytekit</name>
 
-    <repositories>
-        <repository>
-            <id>in-project</id>
-            <name>In Project Repo</name>
-            <url>file://${project.basedir}/../lib</url>
-        </repository>
-    </repositories>
-
     <dependencies>
         <dependency>
             <groupId>com.alibaba.arthas</groupId>
