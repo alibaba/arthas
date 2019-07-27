@@ -5,6 +5,6 @@ Priority: optional
 Architecture: all
 Depends: jdk (>= 1.5)
 Maintainer: Sahil <sjha200000@gmail.com>
-Description: arthas
+Description: Arthas is a Java Diagnostic tool open sourced by Alibaba.
 Distribution: development
 Depends: telnet, curl, unzip

@@ -56,8 +56,8 @@
                                 <type>perm</type>
                                 <strip>1</strip>
                                 <prefix>/usr/share/arthas</prefix>
-                                <user>loader</user>
-                                <group>loader</group>
+                                <user>root</user>
+                                <group>root</group>
                             </mapper>
                         </data>
 
@@ -81,8 +81,8 @@
                                 <strip>1</strip>
                                 <prefix>/usr/share/man/man1</prefix>
                                 <filemode>755</filemode>
-                                <user>loader</user>
-                                <group>loader</group>
+                                <user>root</user>
+                                <group>root</group>
                             </mapper>
                         </data>
                         <data>
@@ -93,8 +93,8 @@
                                 <strip>1</strip>
                                 <prefix>/usr/share/doc/arthas</prefix>
                                 <filemode>755</filemode>
-                                <user>loader</user>
-                                <group>loader</group>
+                                <user>root</user>
+                                <group>root</group>
                             </mapper>
                         </data>
                     </dataSet>
