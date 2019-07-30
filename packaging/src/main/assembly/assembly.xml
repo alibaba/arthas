@@ -4,6 +4,7 @@
   <id>bin</id>
   <includeBaseDirectory>false</includeBaseDirectory>
   <formats>
+    <format>dir</format>
     <format>zip</format>
   </formats>
 
