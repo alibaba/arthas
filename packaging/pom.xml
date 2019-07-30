@@ -32,78 +32,88 @@
                     </execution>
                 </executions>
             </plugin>
-            <plugin>
-                <artifactId>jdeb</artifactId>
-                <groupId>org.vafer</groupId>
-                <version>1.7</version>
-                <executions>
-                    <execution>
-                        <phase>package</phase>
-                        <goals>
-                            <goal>jdeb</goal>
-                        </goals>
-                    </execution>
-                </executions>
-                <configuration>
-                    <skipPOMs>false</skipPOMs>
-                    <deb>${project.build.directory}/arthas.deb</deb>
-                    <dataSet>
-                        <data>
-                            <src>${project.build.directory}/arthas-${project.version}-bin</src>
-                            <type>directory</type>
-
-                            <mapper>
-                                <type>perm</type>
-                                <strip>1</strip>
-                                <prefix>/usr/share/arthas</prefix>
-                                <user>root</user>
-                                <group>root</group>
-                            </mapper>
-                        </data>
-
-                        <data>
-                            <src>${project.build.directory}/arthas-${project.version}-bin/as.sh </src>
-                            <type>file</type>
-                            <mapper>
-                                <type>perm</type>
-                                <strip>1</strip>
-                                <prefix>/usr/bin</prefix>
-                                <filemode>755</filemode>
-                                <user>root</user>
-                                <group>root</group>
-                            </mapper>
-                        </data>
-                        <data>
-                            <src>../packaging/src/deb/man1/arthas.1</src>
-                            <type>file</type>
-                            <mapper>
-                                <type>perm</type>
-                                <strip>1</strip>
-                                <prefix>/usr/share/man/man1</prefix>
-                                <filemode>755</filemode>
-                                <user>root</user>
-                                <group>root</group>
-                            </mapper>
-                        </data>
-                        <data>
-                            <src>../packaging/src/deb/copyright/copyright.1</src>
-                            <type>file</type>
-                            <mapper>    
-                                <type>perm</type>
-                                <strip>1</strip>
-                                <prefix>/usr/share/doc/arthas</prefix>
-                                <filemode>755</filemode>
-                                <user>root</user>
-                                <group>root</group>
-                            </mapper>
-                        </data>
-                    </dataSet>
-                </configuration>
-            </plugin>
         </plugins>
     </build>
 
     <profiles>
+        <profile>
+            <id>deb</id>
+            <activation>
+                <jdk>[1.8,)</jdk>
+            </activation>
+            <build>
+                <plugins>
+                    <plugin>
+                        <artifactId>jdeb</artifactId>
+                        <groupId>org.vafer</groupId>
+                        <version>1.7</version>
+                        <executions>
+                            <execution>
+                                <phase>package</phase>
+                                <goals>
+                                    <goal>jdeb</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                        <configuration>
+                            <skipPOMs>false</skipPOMs>
+                            <deb>${project.build.directory}/arthas.deb</deb>
+                            <dataSet>
+                                <data>
+                                    <src>${project.build.directory}/arthas-${project.version}-bin</src>
+                                    <type>directory</type>
+
+                                    <mapper>
+                                        <type>perm</type>
+                                        <strip>1</strip>
+                                        <prefix>/usr/share/arthas</prefix>
+                                        <user>loader</user>
+                                        <group>loader</group>
+                                    </mapper>
+                                </data>
+
+                                <data>
+                                    <src>${project.build.directory}/arthas-${project.version}-bin/as.sh </src>
+                                    <type>file</type>
+                                    <mapper>
+                                        <type>perm</type>
+                                        <strip>1</strip>
+                                        <prefix>/usr/bin</prefix>
+                                        <filemode>755</filemode>
+                                        <user>root</user>
+                                        <group>root</group>
+                                    </mapper>
+                                </data>
+                                <data>
+                                    <src>../packaging/src/deb/man1/arthas.1</src>
+                                    <type>file</type>
+                                    <mapper>
+                                        <type>perm</type>
+                                        <strip>1</strip>
+                                        <prefix>/usr/share/man/man1</prefix>
+                                        <filemode>755</filemode>
+                                        <user>loader</user>
+                                        <group>loader</group>
+                                    </mapper>
+                                </data>
+                                <data>
+                                    <src>../packaging/src/deb/copyright/copyright.1</src>
+                                    <type>file</type>
+                                    <mapper>
+                                        <type>perm</type>
+                                        <strip>1</strip>
+                                        <prefix>/usr/share/doc/arthas</prefix>
+                                        <filemode>755</filemode>
+                                        <user>loader</user>
+                                        <group>loader</group>
+                                    </mapper>
+                                </data>
+                            </dataSet>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
         <profile>
             <id>full</id>
             <build>
