@@ -10,14 +10,6 @@
     <artifactId>arthas-core</artifactId>
     <name>arthas-core</name>
 
-    <repositories>
-        <repository>
-            <id>in-project</id>
-            <name>In Project Repo</name>
-            <url>file://${project.basedir}/../lib</url>
-        </repository>
-    </repositories>
-
     <build>
         <finalName>arthas-core</finalName>
         <plugins>
