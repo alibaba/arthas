@@ -18,17 +18,19 @@ public class SecurityPluginActivator implements PluginActivator{
 
 	@Override
 	public void init(PluginContext context) throws Exception {
+		try {
+			SecurityManager securityManager = System.getSecurityManager();
 
+			securityManager = new ArthasSecurityManager(securityManager);
+			System.setSecurityManager(securityManager);
+		} catch (Throwable e) {
+			e.printStackTrace();
+		}
 	}
 
 	@Override
 	public void start(PluginContext context) throws Exception {
-		SecurityManager securityManager = System.getSecurityManager();
-		
-		if(securityManager != null) {
-			securityManager = new ArthasSecurityManager(securityManager);
-			System.setSecurityManager(securityManager);
-		}
+
 	}
 
 	@Override
