@@ -409,6 +409,9 @@ $ classloader
 ![顺丰科技](static/sf.png)
 ![新致软件](static/newtouch.png)
 ![北京华宇信息](static/thunisoft.png)
+![太平洋保险](static/cpic.png)
+![旅享网络](static/risingch.png)
+![水滴互联](static/shuidihuzhu.png)
 
 ### Credit
 
