@@ -323,7 +323,7 @@ public class Bootstrap {
         if (telnetPortPid > 0 && pid != telnetPortPid) {
             AnsiLog.error("Target process {} is not the process using port {}, you will connect to an unexpected process.",
                             pid, bootstrap.getTelnetPort());
-            AnsiLog.error("1. Try to restart arthas-boot, select process {}, shutdown it first.",
+            AnsiLog.error("1. Try to restart arthas-boot, select process {}, shutdown it first with running the 'shutdown' command.",
                             telnetPortPid);
             AnsiLog.error("2. Or try to use different telnet port, for example: java -jar arthas-boot.jar --telnet-port 9998 --http-port -1");
             System.exit(1);
@@ -332,7 +332,7 @@ public class Bootstrap {
         if (httpPortPid > 0 && pid != httpPortPid) {
             AnsiLog.error("Target process {} is not the process using port {}, you will connect to an unexpected process.",
                             pid, bootstrap.getHttpPort());
-            AnsiLog.error("1. Try to restart arthas-boot, select process {}, shutdown it first.",
+            AnsiLog.error("1. Try to restart arthas-boot, select process {}, shutdown it first with running the 'shutdown' command.",
                             httpPortPid);
             AnsiLog.error("2. Or try to use different http port, for example: java -jar arthas-boot.jar --telnet-port 9998 --http-port 9999", httpPortPid);
             System.exit(1);

@@ -110,9 +110,9 @@ public class ClassLoaderCommand extends AnnotatedCommand {
         } else if (hashCode != null && this.loadClass != null) {
             processLoadClass(process, inst);
         } else if (hashCode != null) {
-            processClassloader(process, inst);
+            processClassLoader(process, inst);
         } else if (listClassLoader || isTree){
-            processClassloaders(process, inst);
+            processClassLoaders(process, inst);
         } else {
             processClassLoaderStats(process, inst);
         }
@@ -152,7 +152,7 @@ public class ClassLoaderCommand extends AnnotatedCommand {
         process.end();
     }
 
-    private void processClassloaders(CommandProcess process, Instrumentation inst) {
+    private void processClassLoaders(CommandProcess process, Instrumentation inst) {
         RowAffect affect = new RowAffect();
         List<ClassLoaderInfo> classLoaderInfos = includeReflectionClassLoader ? getAllClassLoaderInfo(inst) :
                 getAllClassLoaderInfo(inst, new SunReflectionClassLoaderFilter());
@@ -165,10 +165,10 @@ public class ClassLoaderCommand extends AnnotatedCommand {
     }
 
     // 根据 hashCode 来打印URLClassLoader的urls
-    private void processClassloader(CommandProcess process, Instrumentation inst) {
+    private void processClassLoader(CommandProcess process, Instrumentation inst) {
         RowAffect affect = new RowAffect();
 
-        Set<ClassLoader> allClassLoader = getAllClassLoader(inst);
+        Set<ClassLoader> allClassLoader = getAllClassLoaders(inst);
         for (ClassLoader cl : allClassLoader) {
             if (Integer.toHexString(cl.hashCode()).equals(hashCode)) {
                 process.write(RenderUtil.render(renderClassLoaderUrls(cl), process.width()));
@@ -184,7 +184,7 @@ public class ClassLoaderCommand extends AnnotatedCommand {
     private void processResources(CommandProcess process, Instrumentation inst) {
         RowAffect affect = new RowAffect();
         int rowCount = 0;
-        Set<ClassLoader> allClassLoader = getAllClassLoader(inst);
+        Set<ClassLoader> allClassLoader = getAllClassLoaders(inst);
         for (ClassLoader cl : allClassLoader) {
             if (Integer.toHexString(cl.hashCode()).equals(hashCode)) {
                 TableElement table = new TableElement().leftCellPadding(1).rightCellPadding(1);
@@ -209,7 +209,7 @@ public class ClassLoaderCommand extends AnnotatedCommand {
 
     // Use ClassLoader to loadClass
     private void processLoadClass(CommandProcess process, Instrumentation inst) {
-        Set<ClassLoader> allClassLoader = getAllClassLoader(inst);
+        Set<ClassLoader> allClassLoader = getAllClassLoaders(inst);
         for (ClassLoader cl : allClassLoader) {
             if (Integer.toHexString(cl.hashCode()).equals(hashCode)) {
                 try {
@@ -382,7 +382,7 @@ public class ClassLoaderCommand extends AnnotatedCommand {
         }
     }
 
-    private static Set<ClassLoader> getAllClassLoader(Instrumentation inst, Filter... filters) {
+    private static Set<ClassLoader> getAllClassLoaders(Instrumentation inst, Filter... filters) {
         Set<ClassLoader> classLoaderSet = new HashSet<ClassLoader>();
 
         for (Class<?> clazz : inst.getAllLoadedClasses()) {
