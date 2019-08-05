@@ -22,7 +22,6 @@
         <dependency>
             <groupId>org.benf</groupId>
             <artifactId>cfr</artifactId>
-            <version>0.132</version>
             <scope>provided</scope>
             <optional>true</optional>
         </dependency>
