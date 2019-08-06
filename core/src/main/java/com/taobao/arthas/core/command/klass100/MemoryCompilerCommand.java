@@ -1,8 +1,6 @@
 package com.taobao.arthas.core.command.klass100;
 
 import java.io.File;
-import java.io.IOException;
-import java.io.Writer;
 import java.lang.instrument.Instrumentation;
 import java.nio.charset.Charset;
 import java.util.List;
@@ -89,22 +87,7 @@ public class MemoryCompilerCommand extends AnnotatedCommand {
                 }
             }
 
-            DynamicCompiler dynamicCompiler = new DynamicCompiler(classloader, new Writer() {
-                @Override
-                public void write(char[] cbuf, int off, int len) throws IOException {
-                    process.write(new String(cbuf, off, len));
-                }
-
-                @Override
-                public void flush() throws IOException {
-                }
-
-                @Override
-                public void close() throws IOException {
-
-                }
-
-            });
+            DynamicCompiler dynamicCompiler = new DynamicCompiler(classloader);
 
             Charset charset = Charset.defaultCharset();
             if (encoding != null) {
