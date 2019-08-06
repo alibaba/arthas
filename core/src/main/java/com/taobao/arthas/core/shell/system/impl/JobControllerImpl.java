@@ -14,10 +14,13 @@ import com.taobao.arthas.core.shell.system.JobController;
 import com.taobao.arthas.core.shell.system.Process;
 import com.taobao.arthas.core.shell.system.impl.ProcessImpl.ProcessOutput;
 import com.taobao.arthas.core.shell.term.Term;
+import com.taobao.arthas.core.shell.term.impl.TermImpl;
 import com.taobao.arthas.core.util.Constants;
 import com.taobao.arthas.core.util.TokenUtils;
 
 import io.termd.core.function.Function;
+import io.termd.core.readline.Readline;
+import io.termd.core.util.Helper;
 
 import java.io.File;
 import java.io.IOException;
@@ -126,6 +129,25 @@ public class JobControllerImpl implements JobController {
             ListIterator<CliToken> tokens = line.listIterator();
             while (tokens.hasNext()) {
                 CliToken token = tokens.next();
+                //if the input string start with "!"
+                if (token.isText() && (token.value().startsWith("!"))) {
+                    //wipe off the  "!"
+                    String historyId = token.value().substring(1);
+                    //obtain commandName from history list
+                    String commandName = getCommandName( term, Integer.valueOf(historyId));
+                    // if the history command still contains the "!" , such as "!!40"
+                    while (commandName!=null && commandName.startsWith("!")){
+                        commandName= getCommandName( term,Integer.valueOf(commandName.substring(1)) );
+                    }
+                    //obtain command Object from the CommandManager
+                    Command command = commandManager.getCommand(commandName);
+                    if (command != null) {
+                        //create the CommandProcess
+                        return createCommandProcess(command, tokens, jobId, term);
+                    } else {
+                        throw new IllegalArgumentException(commandName + ": history command not found");
+                    }
+                }
                 if (token.isText()) {
                     Command command = commandManager.getCommand(token.value());
                     if (command != null) {
@@ -139,6 +161,27 @@ public class JobControllerImpl implements JobController {
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
+    }
+
+    /**
+     * obtain commandName from history list
+     * @param termObject  terminal Object
+     * @param historyId the number input after the "!"
+     * @return CommandName
+     */
+    private String getCommandName(Term termObject, int historyId) {
+        if (termObject != null && termObject instanceof TermImpl) {
+            TermImpl term = (TermImpl) termObject;
+            Readline readline = term.getReadline();
+            List<int[]> history = readline.getHistory();
+            StringBuilder sb = new StringBuilder();
+            int size = history.size();
+            int[] line = history.get(size - historyId);
+            Helper.appendCodePoints(line, sb);
+            return sb.toString().trim();
+        }
+
+        return null;
     }
 
     private boolean runInBackground(List<CliToken> tokens) {
