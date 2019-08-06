@@ -129,14 +129,16 @@ public class JobControllerImpl implements JobController {
             ListIterator<CliToken> tokens = line.listIterator();
             while (tokens.hasNext()) {
                 CliToken token = tokens.next();
-                //if the input string start with "!"
+
+				//if the input string start with "!"
                 if (token.isText() && (token.value().startsWith("!"))) {
                     //wipe off the  "!"
-                    String historyId = token.value().substring(1);
+                    String historyId = token.value().substring(1); //去除第一个叹号
                     //obtain commandName from history list
                     String commandName = getCommandName( term, Integer.valueOf(historyId));
-                    // if the history command still contains the "!" , such as "!!40"
-                    while (commandName!=null && commandName.startsWith("!")){
+                   // if the history command still contains the "!" , such as "!!40"
+                    while (commandName!=null && commandName.startsWith("!")){ //如果历史命令中还有！开头的
+
                         commandName= getCommandName( term,Integer.valueOf(commandName.substring(1)) );
                     }
                     //obtain command Object from the CommandManager
@@ -162,8 +164,7 @@ public class JobControllerImpl implements JobController {
             throw new RuntimeException(e);
         }
     }
-
-    /**
+	/**
      * obtain commandName from history list
      * @param termObject  terminal Object
      * @param historyId the number input after the "!"
@@ -183,6 +184,7 @@ public class JobControllerImpl implements JobController {
 
         return null;
     }
+
 
     private boolean runInBackground(List<CliToken> tokens) {
         boolean runInBackground = false;
