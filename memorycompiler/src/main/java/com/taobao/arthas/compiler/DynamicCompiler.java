@@ -25,6 +25,11 @@ public class DynamicCompiler {
     private final List<Diagnostic<? extends JavaFileObject>> warnings = new ArrayList<Diagnostic<? extends JavaFileObject>>();
 
     public DynamicCompiler(ClassLoader classLoader) {
+        if (javaCompiler == null) {
+            throw new IllegalStateException(
+                            "Can not load JavaCompiler from javax.tools.ToolProvider#getSystemJavaCompiler(),"
+                                            + " please confirm the application running in JDK not JRE.");
+        }
         standardFileManager = javaCompiler.getStandardFileManager(null, null, null);
 
         options.add("-Xlint:unchecked");
