@@ -2,6 +2,8 @@ package com.taobao.arthas.core.shell.system.impl;
 
 import com.taobao.arthas.core.GlobalOptions;
 import com.taobao.arthas.core.shell.cli.CliToken;
+import com.taobao.arthas.core.shell.cli.CliTokens;
+import com.taobao.arthas.core.shell.cli.impl.CliTokenImpl;
 import com.taobao.arthas.core.shell.command.Command;
 import com.taobao.arthas.core.shell.command.internal.RedirectHandler;
 import com.taobao.arthas.core.shell.command.internal.StdoutHandler;
@@ -14,10 +16,13 @@ import com.taobao.arthas.core.shell.system.JobController;
 import com.taobao.arthas.core.shell.system.Process;
 import com.taobao.arthas.core.shell.system.impl.ProcessImpl.ProcessOutput;
 import com.taobao.arthas.core.shell.term.Term;
+import com.taobao.arthas.core.shell.term.impl.TermImpl;
 import com.taobao.arthas.core.util.Constants;
 import com.taobao.arthas.core.util.TokenUtils;
 
 import io.termd.core.function.Function;
+import io.termd.core.readline.Readline;
+import io.termd.core.util.Helper;
 
 import java.io.File;
 import java.io.IOException;
@@ -37,6 +42,7 @@ import java.util.concurrent.atomic.AtomicInteger;
  */
 public class JobControllerImpl implements JobController {
 
+    public static final String EXCLAMATION_MARK = "!";
     private final SortedMap<Integer, JobImpl> jobs = new TreeMap<Integer, JobImpl>();
     private final AtomicInteger idGenerator = new AtomicInteger(0);
     private boolean closed = false;
@@ -126,6 +132,32 @@ public class JobControllerImpl implements JobController {
             ListIterator<CliToken> tokens = line.listIterator();
             while (tokens.hasNext()) {
                 CliToken token = tokens.next();
+                //if the input string start with "!"
+                if (token.isText() && (token.value().startsWith(EXCLAMATION_MARK))) {
+                    //wipe off the  "!" & blank
+                    String historyId = token.value().substring(1).trim();
+                    //obtain commandName from history list
+                    String commandName = getCommandName( term, Integer.valueOf(historyId));
+
+                    // if the history command still contains the "!" , such as "!!40"
+                    while (commandName!=null && commandName.startsWith(EXCLAMATION_MARK)){
+                        commandName= getCommandName( term,Integer.valueOf(commandName.substring(1)) );
+                    }
+
+                    //command with args eg: 33 sc com.taobao.arthas.core.shell.system.impl.JobControllerImpl
+                    if(commandName.contains("\u0020")){
+                        return createProcess(CliTokens.tokenize(commandName),commandManager,jobId,term);
+                    }
+
+                    //command with out args, obtain command Object from the CommandManager
+                    Command command = commandManager.getCommand(commandName);
+                    if (command != null) {
+                        //create the CommandProcess
+                        return createCommandProcess(command, tokens, jobId, term);
+                    } else {
+                        throw new IllegalArgumentException(commandName + ": history command not found");
+                    }
+                }
                 if (token.isText()) {
                     Command command = commandManager.getCommand(token.value());
                     if (command != null) {
@@ -139,6 +171,30 @@ public class JobControllerImpl implements JobController {
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
+    }
+
+    /**
+     * obtain commandName from history list
+     * @param termObject  terminal Object
+     * @param historyId the number input after the "!"
+     * @return CommandName
+     */
+    private String getCommandName(Term termObject, int historyId) {
+        if (termObject != null && termObject instanceof TermImpl) {
+            TermImpl term = (TermImpl) termObject;
+            Readline readline = term.getReadline();
+            List<int[]> history = readline.getHistory();
+            StringBuilder sb = new StringBuilder();
+            int size = history.size();
+            if(historyId>size){
+                throw new IllegalArgumentException(historyId+" is to big, please input the right number,less than "+size);
+            }
+            int[] line = history.get(size - historyId);
+            Helper.appendCodePoints(line, sb);
+            return sb.toString().trim();
+        }
+
+        return null;
     }
 
     private boolean runInBackground(List<CliToken> tokens) {
