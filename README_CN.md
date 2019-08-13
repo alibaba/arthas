@@ -414,6 +414,7 @@ $ classloader
 ![水滴互联](static/shuidihuzhu.png)
 ![贝壳找房](static/ke.png)
 ![嘟嘟牛](static/dodonew.png)
+![云幂信息](static/yunmixinxi.png)
 
 ### Credit
 
