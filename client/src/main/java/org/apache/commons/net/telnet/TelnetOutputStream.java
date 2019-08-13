@@ -122,7 +122,7 @@ final class TelnetOutputStream extends OutputStream
      *            stream.
      ***/
     @Override
-    public void write(byte buffer[]) throws IOException
+    public void write(byte[] buffer) throws IOException
     {
         write(buffer, 0, buffer.length);
     }
@@ -139,7 +139,7 @@ final class TelnetOutputStream extends OutputStream
      *            stream.
      ***/
     @Override
-    public void write(byte buffer[], int offset, int length) throws IOException
+    public void write(byte[] buffer, int offset, int length) throws IOException
     {
         synchronized (__client)
         {

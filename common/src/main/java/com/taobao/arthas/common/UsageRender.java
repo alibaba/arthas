@@ -10,7 +10,7 @@ public class UsageRender {
     public static String render(String usage) {
         if (AnsiLog.enableColor()) {
             StringBuilder sb = new StringBuilder(1024);
-            String lines[] = usage.split("\\r?\\n");
+            String[] lines = usage.split("\\r?\\n");
             for (String line : lines) {
                 if (line.startsWith("Usage: ")) {
                     sb.append(AnsiLog.green("Usage: "));

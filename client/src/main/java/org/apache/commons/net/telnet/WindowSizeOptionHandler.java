@@ -129,7 +129,7 @@ public class WindowSizeOptionHandler extends TelnetOptionHandler
         //
         // allocate response array
         //
-        int response[] = new int[nResponseSize];
+        int[] response = new int[nResponseSize];
 
         //
         // Build response array.

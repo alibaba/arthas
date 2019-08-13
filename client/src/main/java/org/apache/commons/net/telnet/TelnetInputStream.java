@@ -45,7 +45,7 @@ final class TelnetInputStream extends BufferedInputStream implements Runnable
     private IOException __ioException;
 
     /* TERMINAL-TYPE option (start)*/
-    private final int __suboption[] = new int[512];
+    private final int[] __suboption = new int[512];
     private int __suboption_count = 0;
     /* TERMINAL-TYPE option (end)*/
 
@@ -486,7 +486,7 @@ final class TelnetInputStream extends BufferedInputStream implements Runnable
      *            stream.
      ***/
     @Override
-    public int read(byte buffer[]) throws IOException
+    public int read(byte[] buffer) throws IOException
     {
         return read(buffer, 0, buffer.length);
     }
@@ -507,7 +507,7 @@ final class TelnetInputStream extends BufferedInputStream implements Runnable
      *            stream.
      ***/
     @Override
-    public int read(byte buffer[], int offset, int length) throws IOException
+    public int read(byte[] buffer, int offset, int length) throws IOException
     {
         int ch, off;
 

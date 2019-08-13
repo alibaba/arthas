@@ -152,7 +152,7 @@ public class DownloadUtils {
 
             fout = new FileOutputStream(filename);
 
-            final byte data[] = new byte[1024 * 1024];
+            final byte[] data = new byte[1024 * 1024];
             int totalCount = 0;
             int count;
             long lastPrintTime = System.currentTimeMillis();

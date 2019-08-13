@@ -96,7 +96,7 @@ class Telnet extends SocketClient
     /***
      * Array of option handlers
      ***/
-    private final TelnetOptionHandler optionHandlers[];
+    private final TelnetOptionHandler[] optionHandlers;
 
     /* open TelnetOptionHandler functionality (end)*/
 
@@ -272,8 +272,7 @@ class Telnet extends SocketClient
             {
                 optionHandlers[option].setWill(true);
 
-                int subneg[] =
-                    optionHandlers[option].startSubnegotiationLocal();
+                int[] subneg = optionHandlers[option].startSubnegotiationLocal();
 
                 if (subneg != null)
                 {
@@ -301,8 +300,7 @@ class Telnet extends SocketClient
             {
                 optionHandlers[option].setDo(true);
 
-                int subneg[] =
-                    optionHandlers[option].startSubnegotiationRemote();
+                int[] subneg = optionHandlers[option].startSubnegotiationRemote();
 
                 if (subneg != null)
                 {
@@ -684,7 +682,7 @@ class Telnet extends SocketClient
      * @param suboptionLength - length of data received
      * @throws IOException - Exception in I/O.
      **/
-    void _processSuboption(int suboption[], int suboptionLength)
+    void _processSuboption(int[] suboption, int suboptionLength)
     throws IOException
     {
         if (debug)
@@ -697,9 +695,7 @@ class Telnet extends SocketClient
         {
             if (optionHandlers[suboption[0]] != null)
             {
-                int responseSuboption[] =
-                  optionHandlers[suboption[0]].answerSubnegotiation(suboption,
-                  suboptionLength);
+                int[] responseSuboption = optionHandlers[suboption[0]].answerSubnegotiation(suboption, suboptionLength);
                 _sendSubnegotiation(responseSuboption);
             }
             else
@@ -756,7 +752,7 @@ class Telnet extends SocketClient
      * @param subn - subnegotiation data to be sent
      * @throws IOException - Exception in I/O.
      **/
-    final synchronized void _sendSubnegotiation(int subn[])
+    final synchronized void _sendSubnegotiation(int[] subn)
     throws IOException
     {
         if (debug)

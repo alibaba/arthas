@@ -50,7 +50,7 @@ public class GlobalJobControllerImpl extends JobControllerImpl {
             jobTimeoutTask.cancel();
         }
         return super.removeJob(id);
-    };
+    }
 
     @Override
     public Job createJob(InternalCommandManager commandManager, List<CliToken> tokens, ShellImpl shell) {

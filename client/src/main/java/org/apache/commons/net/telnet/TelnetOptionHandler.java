@@ -200,7 +200,7 @@ public abstract class TelnetOptionHandler
      * @return response to be sent to the subnegotiation sequence. TelnetClient
      * will add IAC SB &amp; IAC SE. null means no response
      ***/
-    public int[] answerSubnegotiation(int suboptionData[], int suboptionLength) {
+    public int[] answerSubnegotiation(int[] suboptionData, int suboptionLength) {
         return null;
     }
 

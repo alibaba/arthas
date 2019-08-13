@@ -93,10 +93,8 @@ public final class TelnetCommand
     public static final int SYNCH = 242;
 
     /*** String representations of commands. ***/
-    private static final String __commandString[] = {
-                "IAC", "DONT", "DO", "WONT", "WILL", "SB", "GA", "EL", "EC", "AYT",
-                "AO", "IP", "BRK", "DMARK", "NOP", "SE", "EOR", "ABORT", "SUSP", "EOF"
-            };
+    private static final String[] __commandString = {"IAC", "DONT", "DO", "WONT", "WILL", "SB", "GA", "EL", "EC", "AYT",
+        "AO", "IP", "BRK", "DMARK", "NOP", "SE", "EOR", "ABORT", "SUSP", "EOF"};
 
     private static final int __FIRST_COMMAND = IAC;
     private static final int __LAST_COMMAND = EOF;
