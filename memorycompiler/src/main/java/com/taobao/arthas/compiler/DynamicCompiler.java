@@ -1,6 +1,5 @@
 package com.taobao.arthas.compiler;
 
-import java.io.Writer;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -25,18 +24,16 @@ public class DynamicCompiler {
     private final List<Diagnostic<? extends JavaFileObject>> errors = new ArrayList<Diagnostic<? extends JavaFileObject>>();
     private final List<Diagnostic<? extends JavaFileObject>> warnings = new ArrayList<Diagnostic<? extends JavaFileObject>>();
 
-    private Writer writer;
-
     public DynamicCompiler(ClassLoader classLoader) {
-        this(classLoader, null);
-    }
-
-    public DynamicCompiler(ClassLoader classLoader, Writer writer) {
+        if (javaCompiler == null) {
+            throw new IllegalStateException(
+                            "Can not load JavaCompiler from javax.tools.ToolProvider#getSystemJavaCompiler(),"
+                                            + " please confirm the application running in JDK not JRE.");
+        }
         standardFileManager = javaCompiler.getStandardFileManager(null, null, null);
 
         options.add("-Xlint:unchecked");
         dynamicClassLoader = new DynamicClassLoader(classLoader);
-        this.writer = writer;
     }
 
     public void addSource(String className, String source) {
@@ -89,7 +86,7 @@ public class DynamicCompiler {
 
             return dynamicClassLoader.getClasses();
         } catch (Throwable e) {
-            throw new DynamicCompilerException(e);
+            throw new DynamicCompilerException(e, errors);
         } finally {
             compilationUnits.clear();
 
@@ -139,7 +136,7 @@ public class DynamicCompiler {
 
             return dynamicClassLoader.getByteCodes();
         } catch (ClassFormatError e) {
-            throw new DynamicCompilerException(e);
+            throw new DynamicCompilerException(e, errors);
         } finally {
             compilationUnits.clear();
 

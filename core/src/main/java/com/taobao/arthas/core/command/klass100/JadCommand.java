@@ -1,6 +1,5 @@
 package com.taobao.arthas.core.command.klass100;
 
-import com.taobao.arthas.core.advisor.Enhancer;
 import com.taobao.arthas.core.command.Constants;
 import com.taobao.arthas.core.shell.cli.Completion;
 import com.taobao.arthas.core.shell.cli.CompletionUtils;
@@ -26,13 +25,12 @@ import com.taobao.text.ui.LabelElement;
 import com.taobao.text.ui.TableElement;
 import com.taobao.text.util.RenderUtil;
 
-import static java.lang.System.arraycopy;
-
 import java.io.File;
 import java.lang.instrument.ClassFileTransformer;
 import java.lang.instrument.Instrumentation;
-import java.lang.instrument.UnmodifiableClassException;
-import java.util.*;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
 import java.util.regex.Pattern;
 
 import static com.taobao.text.ui.Element.label;

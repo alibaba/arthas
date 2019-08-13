@@ -6,7 +6,7 @@
 
 [![Build Status](https://travis-ci.org/alibaba/arthas.svg?branch=master)](https://travis-ci.org/alibaba/arthas)
 [![codecov](https://codecov.io/gh/alibaba/arthas/branch/master/graph/badge.svg)](https://codecov.io/gh/alibaba/arthas)
-![maven](https://img.shields.io/maven-central/v/com.taobao.arthas/arthas-packaging.svg)
+[![maven](https://img.shields.io/maven-central/v/com.taobao.arthas/arthas-packaging.svg)](https://search.maven.org/search?q=g:com.taobao.arthas)
 ![license](https://img.shields.io/github/license/alibaba/arthas.svg)
 [![Average time to resolve an issue](http://isitmaintained.com/badge/resolution/alibaba/arthas.svg)](http://isitmaintained.com/project/alibaba/arthas "Average time to resolve an issue")
 [![Percentage of issues still open](http://isitmaintained.com/badge/open/alibaba/arthas.svg)](http://isitmaintained.com/project/alibaba/arthas "Percentage of issues still open")
@@ -405,7 +405,17 @@ $ classloader
 ![饿了么](static/ele.png)
 ![58同城](static/58.png)
 ![上海浪沙](static/runsa.png)
+![符律科技](static/fhldtech.png)
+![顺丰科技](static/sf.png)
+![新致软件](static/newtouch.png)
+![北京华宇信息](static/thunisoft.png)
+![太平洋保险](static/cpic.png)
+![旅享网络](static/risingch.png)
+![水滴互联](static/shuidihuzhu.png)
+![贝壳找房](static/ke.png)
+![嘟嘟牛](static/dodonew.png)
 ![云幂信息](static/yunmixinxi.png)
+
 ### Credit
 
 #### Contributors

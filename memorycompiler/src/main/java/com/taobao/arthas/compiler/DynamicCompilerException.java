@@ -33,8 +33,9 @@ public class DynamicCompilerException extends RuntimeException {
         this.diagnostics = diagnostics;
     }
 
-    public DynamicCompilerException(Throwable cause) {
+    public DynamicCompilerException(Throwable cause, List<Diagnostic<? extends JavaFileObject>> diagnostics) {
         super(cause);
+        this.diagnostics = diagnostics;
     }
 
     private List<Map<String, Object>> getErrorList() {
