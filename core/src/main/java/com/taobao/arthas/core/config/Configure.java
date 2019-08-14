@@ -122,18 +122,14 @@ public class Configure {
      * @param toString 序列化字符串
      * @return 反序列化的对象
      */
-    public static Configure toConfigure(String toString) {
+    public static Configure toConfigure(String toString) throws IllegalAccessException {
         final Configure configure = new Configure();
         final Map<String, String> map = codec.toMap(toString);
 
         for (Map.Entry<String, String> entry : map.entrySet()) {
-            try {
-                final Field field = ArthasReflectUtils.getField(Configure.class, entry.getKey());
-                if (null != field && !isStatic(field.getModifiers())) {
-                    ArthasReflectUtils.set(field, ArthasReflectUtils.valueOf(field.getType(), entry.getValue()), configure);
-                }
-            } catch (Throwable t) {
-                //
+            final Field field = ArthasReflectUtils.getField(Configure.class, entry.getKey());
+            if (null != field && !isStatic(field.getModifiers())) {
+                ArthasReflectUtils.set(field, ArthasReflectUtils.valueOf(field.getType(), entry.getValue()), configure);
             }
         }
         return configure;
