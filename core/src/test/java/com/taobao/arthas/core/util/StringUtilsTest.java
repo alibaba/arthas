@@ -4,18 +4,21 @@ import org.junit.Assert;
 import org.junit.rules.ExpectedException;
 import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.Timeout;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.TreeMap;
 import java.util.TreeSet;
 import java.util.Properties;
+
 /**
  * @author bohrqiu 2018-09-21 01:01
  * @author paulkennethkent 2019-04-08 10:29
  */
 public class StringUtilsTest {
     @Rule public final ExpectedException thrown = ExpectedException.none();
+	@Rule public final Timeout globalTimeout = new Timeout(10000);
 
     @Test
     public void testHumanReadableByteCount() {
@@ -412,4 +415,39 @@ public class StringUtilsTest {
     public void testClassLoaderHash() {
         Assert.assertEquals("null", StringUtils.classLoaderHash(null));
     }
+
+	// Test written by Diffblue Cover.
+	@Test
+	public void splitArrayElementsIntoPropertiesInput0NotNullOutputNull() {
+
+		// Arrange
+		final String[] array = {};
+
+		// Act and Assert result
+		Assert.assertNull(StringUtils.splitArrayElementsIntoProperties(array, "a/b/c"));
+	}
+
+	// Test written by Diffblue Cover.
+
+	@Test
+	public void startsWithIgnoreCaseInputNotNullNotNullOutputTrue() {
+
+		// Arrange
+		final String str = "\'";
+		final String prefix = "\'";
+
+		// Act
+		final boolean actual = StringUtils.startsWithIgnoreCase(str, prefix);
+
+		// Assert result
+		Assert.assertTrue(actual);
+	}
+
+	// Test written by Diffblue Cover.
+	@Test
+	public void substringAfterInputNotNullNotNullOutputNotNull() {
+
+		// Act and Assert result
+		Assert.assertEquals("", StringUtils.substringAfter("3", "a\'b\'c"));
+	}
 }
