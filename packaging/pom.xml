@@ -150,9 +150,9 @@
                                     <username>root</username>
                                     <groupname>root</groupname>
                                     <sources>
-                                        <source>
-                                            <location>${project.build.directory}/arthas-${project.version}-bin/as.sh</location>
-                                        </source>
+                                        <softlinkSource>
+                                            <location>/usr/share/arthas/as.sh</location>
+                                        </softlinkSource>
                                     </sources>
                                 </mapping>
                                 <mapping>
