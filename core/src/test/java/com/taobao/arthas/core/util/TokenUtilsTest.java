@@ -123,4 +123,38 @@ public class TokenUtilsTest {
 
     }
 
+	// Test written by Diffblue Cover.
+	@Test
+	public void getLastInput0OutputNull() {
+
+		// Arrange
+		final ArrayList<CliToken> tokens = new ArrayList<CliToken>();
+
+		// Act and Assert result
+		Assert.assertNull(TokenUtils.getLast(tokens));
+	}
+
+	// Test written by Diffblue Cover.
+	@Test
+	public void getLastInput1OutputNull() {
+
+		// Arrange
+		final ArrayList<CliToken> tokens = new ArrayList<CliToken>();
+		tokens.add(null);
+
+		// Act and Assert result
+		Assert.assertNull(TokenUtils.getLast(tokens));
+	}
+
+	// Test written by Diffblue Cover.
+	@Test
+	public void retrievePreviousArgInput0NotNullOutputNotNull() {
+
+		// Arrange
+		final ArrayList<CliToken> tokens = new ArrayList<CliToken>();
+
+		// Act and Assert result
+		Assert.assertEquals("", TokenUtils.retrievePreviousArg(tokens, "foo"));
+	}
+
 }

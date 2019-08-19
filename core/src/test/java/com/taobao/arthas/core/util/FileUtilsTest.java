@@ -1,5 +1,6 @@
 package com.taobao.arthas.core.util;
 
+import com.taobao.arthas.core.util.FileUtils;
 import com.taobao.arthas.core.testtool.TestUtils;
 import org.junit.Assert;
 import org.junit.Rule;
@@ -20,6 +21,8 @@ import static org.hamcrest.CoreMatchers.allOf;
 import static org.hamcrest.CoreMatchers.endsWith;
 import static org.hamcrest.CoreMatchers.startsWith;
 
+import org.junit.rules.Timeout;
+
 public class FileUtilsTest {
 
     @Rule
@@ -27,6 +30,9 @@ public class FileUtilsTest {
 
     @Rule
     public ExpectedException thrown = ExpectedException.none();
+
+	@Rule
+	public final Timeout globalTimeout = new Timeout(10000);
 
     private File getTestDirectory() {
         return temporaryFolder.getRoot();
@@ -108,6 +114,17 @@ public class FileUtilsTest {
         List<int[]> content = FileUtils.loadCommandHistory(targetFile);
         Assert.assertArrayEquals(command1, content.get(0));
     }
+
+	// Test written by Diffblue Cover.
+	@Test
+	public void saveCommandHistoryInputNullNullOutputNullPointerException() {
+
+		// Act
+		thrown.expect(NullPointerException.class);
+		FileUtils.saveCommandHistory(null, null);
+
+		// The method is not expected to return due to exception thrown
+	}
 
 
 
