@@ -111,6 +111,19 @@
                             </dataSet>
                         </configuration>
                     </plugin>
+                </plugins>
+            </build>
+        </profile>
+
+        <profile>
+            <id>rpm</id>
+            <activation>
+                <os>
+                    <family>linux</family>
+                </os>
+            </activation>
+            <build>
+                <plugins>
                     <plugin>
                         <groupId>org.codehaus.mojo</groupId>
                         <artifactId>rpm-maven-plugin</artifactId>
@@ -177,6 +190,7 @@
                 </plugins>
             </build>
         </profile>
+
         <profile>
             <id>full</id>
             <build>
