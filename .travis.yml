@@ -57,6 +57,7 @@ deploy:
   file:
     - "packaging/target/*.zip"
     - "packaging/target/*.deb"
+    - "packaging/target/*.rpm"
   skip_cleanup: true
   on:
     tags: true
