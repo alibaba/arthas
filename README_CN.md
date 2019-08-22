@@ -422,6 +422,10 @@ $ classloader
 ![伙伴集团](static/zhaoshang800.png)
 ![数梦工场](static/dtdream.png)
 
+### 洐生项目
+
+* [Bistoury: 一个集成了Arthas的项目](https://github.com/qunarcorp/bistoury)
+* [一个使用MVEL脚本的fork](https://github.com/XhinLiang/arthas)
 
 ### Credit
 
