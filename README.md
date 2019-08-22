@@ -87,7 +87,7 @@ You can enter its interactive interface by executing `as.sh`, or execute `as.sh 
 * [Docker](https://alibaba.github.io/arthas/en/docker.html)
 * [User cases](https://github.com/alibaba/arthas/issues?q=label%3Auser-case)
 * [Questions and answers](https://github.com/alibaba/arthas/issues?utf8=%E2%9C%93&q=label%3Aquestion-answered+)
-* [How to contribute](https://github.com/alibaba/arthas/blob/master/CONTRIBUTING.md)
+* [Compile and debug/How to contribute](https://github.com/alibaba/arthas/blob/master/CONTRIBUTING.md)
 * [Release Notes](https://alibaba.github.io/arthas/en/release-notes.html)
 
 
