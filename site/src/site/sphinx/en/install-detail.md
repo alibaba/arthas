@@ -28,7 +28,7 @@ You can install Arthas with one single line command on Linux, Unix, and Mac. Pls
 curl -L https://alibaba.github.io/arthas/install.sh | sh
 ```
 
-The command above will download the bootstrap script `as.sh` to the current directory. You can move it the any other place you want, or put its location in `$PATH`.
+The command above will download the bootstrap script `as.sh` to the current directory. You can move it to any other place you want, or put its location in `$PATH`.
 
 You can enter its interactive interface by executing `as.sh`, or execute `as.sh -h` for more help information.
 
@@ -53,6 +53,30 @@ java -jar arthas-boot.jar -h
 
 [Manual Installation](manual-install.md)
 
+
+## Installation via Packages 
+
+Arthas has packages for Debian and Fedora based systems.
+you can get them from the github releases page https://github.com/alibaba/arthas/releases.
+
+### Instruction for Debian based systems 
+
+```bash
+sudo dpkg -i arthas*.deb
+```
+### Instruction for Fedora based systems 
+
+```bash
+sudo rpm -i arthas*.rpm 
+```
+
+### Usage
+
+After the installation of packages, execute 
+
+```bash
+as.sh
+```
 
 ## Offline Help Documentation
 
