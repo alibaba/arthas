@@ -35,7 +35,7 @@ Contents
 * [用户案例](https://github.com/alibaba/arthas/issues?q=label%3Auser-case)
 * [常见问题](https://github.com/alibaba/arthas/issues?q=label%3Aquestion-answered)
 * [Fork me at GitHub](https://github.com/alibaba/arthas)
-* [参与贡献](https://github.com/alibaba/arthas/blob/master/CONTRIBUTING.md)
+* [编译调试/参与贡献](https://github.com/alibaba/arthas/blob/master/CONTRIBUTING.md)
 * [Release Notes](release-notes.md)
 * [QQ群/钉钉群](contact-us.md)
 
