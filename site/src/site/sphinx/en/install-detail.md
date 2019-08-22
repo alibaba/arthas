@@ -67,7 +67,7 @@ sudo dpkg -i arthas*.deb
 ### Instruction for Fedora based systems 
 
 ```bash
-sudo rpm -i arthas*.rpm 
+sudo rpm -i arthas*.rpm
 ```
 
 ### Usage

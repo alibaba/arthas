@@ -73,6 +73,30 @@ java -jar arthas-boot.jar -h
 [手动安装](manual-install.md)
 
 
+
+## 通过rpm/deb来安装
+
+在releases页面下载rpm/deb包： https://github.com/alibaba/arthas/releases
+
+### 安装deb
+
+```bash
+sudo dpkg -i arthas*.deb
+```
+### 安装rpm
+
+```bash
+sudo rpm -i arthas*.rpm
+```
+
+### deb/rpm安装的用法
+
+在安装后，可以直接执行：
+
+```bash
+as.sh
+```
+
 ## 通过Cloud Toolkit插件使用Arthas
 
 * [通过Cloud Toolkit插件使用Arthas一键诊断远程服务器](https://github.com/alibaba/arthas/issues/570)
