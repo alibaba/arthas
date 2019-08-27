@@ -111,7 +111,7 @@ public class ShellImpl implements Shell {
 
     private void setPrompt(){
         StringBuilder stringBuilder = new StringBuilder();
-        stringBuilder.append("[pid:");
+        stringBuilder.append("[arthas@");
         stringBuilder.append(session.getPid());
         stringBuilder.append("]$ ");
         this.prompt = stringBuilder.toString();
