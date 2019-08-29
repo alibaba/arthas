@@ -57,6 +57,8 @@
     <modules>
         <module>spy</module>
         <module>common</module>
+        <module>tunnel-client</module>
+        <module>tunnel-server</module>
         <module>core</module>
         <module>agent</module>
         <module>client</module>
