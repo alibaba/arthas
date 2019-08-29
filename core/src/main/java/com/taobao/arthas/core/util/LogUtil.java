@@ -31,6 +31,11 @@ public class LogUtil {
      */
     private static final Logger termdLogger;
 
+    /**
+     * 接管tunnel client的Logger
+     */
+    private static final Logger tunnelClientLogger;
+
     public static final String LOGGER_FILE;
 
     /**
@@ -71,6 +76,11 @@ public class LogUtil {
         termdLogger.activateAppender(arthasLogger);
         termdLogger.setLevel(Level.INFO);
         termdLogger.setAdditivity(false);
+
+        tunnelClientLogger = LoggerFactory.getLogger("com.alibaba.arthas.tunnel.client");
+        tunnelClientLogger.activateAppender(arthasLogger);
+        tunnelClientLogger.setLevel(Level.INFO);
+        tunnelClientLogger.setAdditivity(false);
     }
 
     private static void detectArthasLogDirectory() {
