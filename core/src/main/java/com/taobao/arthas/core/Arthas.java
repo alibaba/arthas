@@ -39,8 +39,12 @@ public class Arthas {
                 .setShortName("http-port").setDefaultValue(DEFAULT_HTTP_PORT);
         Option sessionTimeout = new TypedOption<Integer>().setType(Integer.class)
                         .setShortName("session-timeout").setDefaultValue("" + Configure.DEFAULT_SESSION_TIMEOUT_SECONDS);
+
+        Option tunnelServer = new TypedOption<String>().setType(String.class).setShortName("tunnel-server");
+        Option agentId = new TypedOption<String>().setType(String.class).setShortName("agent-id");
+
         CLI cli = CLIs.create("arthas").addOption(pid).addOption(core).addOption(agent).addOption(target)
-                .addOption(telnetPort).addOption(httpPort).addOption(sessionTimeout);
+                .addOption(telnetPort).addOption(httpPort).addOption(sessionTimeout).addOption(tunnelServer).addOption(agentId);
         CommandLine commandLine = cli.parse(Arrays.asList(args));
 
         Configure configure = new Configure();
@@ -56,6 +60,9 @@ public class Arthas {
         configure.setIp((String) commandLine.getOptionValue("target-ip"));
         configure.setTelnetPort((Integer) commandLine.getOptionValue("telnet-port"));
         configure.setHttpPort((Integer) commandLine.getOptionValue("http-port"));
+
+        configure.setTunnelServer((String) commandLine.getOptionValue("tunnel-server"));
+        configure.setAgentId((String) commandLine.getOptionValue("agent-id"));
         return configure;
     }
 

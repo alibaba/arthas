@@ -9,7 +9,9 @@ import java.util.concurrent.TimeUnit;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelHandlerContext;
+import io.netty.channel.ChannelPromise;
 import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.handler.codec.http.QueryStringDecoder;
 import io.netty.handler.codec.http.QueryStringEncoder;
@@ -25,9 +27,19 @@ public class TunnelClientSocketClientHandler extends SimpleChannelInboundHandler
     private final static Logger logger = LoggerFactory.getLogger(TunnelClientSocketClientHandler.class);
 
     private TunnelClient tunnelClient;
+    private ChannelPromise registerPromise;
 
     public TunnelClientSocketClientHandler(TunnelClient tunnelClient) {
         this.tunnelClient = tunnelClient;
+    }
+
+    public ChannelFuture registerFuture() {
+        return registerPromise;
+    }
+
+    @Override
+    public void handlerAdded(ChannelHandlerContext ctx) {
+        registerPromise = ctx.newPromise();
     }
 
     @Override
@@ -51,6 +63,7 @@ public class TunnelClientSocketClientHandler extends SimpleChannelInboundHandler
                 if (idList != null && !idList.isEmpty()) {
                     this.tunnelClient.setId(idList.get(0));
                 }
+                registerPromise.setSuccess();
             }
 
             if ("startTunnel".equals(method)) {
@@ -83,5 +96,13 @@ public class TunnelClientSocketClientHandler extends SimpleChannelInboundHandler
                 }
             }
         }, tunnelClient.getReconnectDelay(), TimeUnit.SECONDS);
+    }
+
+    @Override
+    public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) {
+        if (!registerPromise.isDone()) {
+            registerPromise.setFailure(cause);
+        }
+        ctx.fireExceptionCaught(cause);
     }
 }
