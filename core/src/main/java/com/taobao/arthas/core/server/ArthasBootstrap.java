@@ -1,6 +1,7 @@
 package com.taobao.arthas.core.server;
 
 import com.taobao.arthas.core.config.Configure;
+import com.alibaba.arthas.tunnel.client.TunnelClient;
 import com.taobao.arthas.core.command.BuiltinCommandPack;
 import com.taobao.arthas.core.shell.ShellServer;
 import com.taobao.arthas.core.shell.ShellServerOptions;
@@ -9,19 +10,26 @@ import com.taobao.arthas.core.shell.handlers.BindHandler;
 import com.taobao.arthas.core.shell.impl.ShellServerImpl;
 import com.taobao.arthas.core.shell.term.impl.HttpTermServer;
 import com.taobao.arthas.core.shell.term.impl.TelnetTermServer;
+import com.taobao.arthas.core.util.ArthasBanner;
 import com.taobao.arthas.core.util.Constants;
 import com.taobao.arthas.core.util.LogUtil;
 import com.taobao.arthas.core.util.UserStatUtil;
 import com.taobao.middleware.logger.Logger;
 
+import io.netty.channel.ChannelFuture;
+
 import java.io.IOException;
 import java.lang.instrument.Instrumentation;
 import java.lang.reflect.Method;
+import java.net.URI;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadFactory;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 
@@ -39,6 +47,7 @@ public class ArthasBootstrap {
     private Thread shutdown;
     private ShellServer shellServer;
     private ExecutorService executorService;
+    private TunnelClient tunnelClient;
 
     private ArthasBootstrap(int pid, Instrumentation instrumentation) {
         this.pid = pid;
@@ -78,11 +87,40 @@ public class ArthasBootstrap {
             throw new IllegalStateException("already bind");
         }
 
+        String agentId = null;
+        try {
+            if (configure.getHttpPort() > 0) {
+                tunnelClient = new TunnelClient();
+                tunnelClient.setId(configure.getAgentId());
+                tunnelClient.setTunnelServerUrl(configure.getTunnelServer());
+                // ws://127.0.0.1:8563/ws
+                String host = "127.0.0.1";
+                if(configure.getIp() != null) {
+                    host = configure.getIp();
+                }
+                URI uri = new URI("ws", null, host, configure.getHttpPort(), "/ws", null, null);
+                tunnelClient.setLocalServerUrl(uri.toString());
+                ChannelFuture channelFuture = tunnelClient.start();
+                channelFuture.await(10, TimeUnit.SECONDS);
+                if(channelFuture.isSuccess()) {
+                    agentId = tunnelClient.getId();
+                }
+            }
+        } catch (Throwable t) {
+            logger.error("arthas", "start tunnel client error", t);
+        }
+
         try {
             ShellServerOptions options = new ShellServerOptions()
                             .setInstrumentation(instrumentation)
                             .setPid(pid)
                             .setSessionTimeout(configure.getSessionTimeout() * 1000);
+
+            if (agentId != null) {
+                Map<String, String> welcomeInfos = new HashMap<String, String>();
+                welcomeInfos.put("id", agentId);
+                options.setWelcomeMessage(ArthasBanner.welcome(welcomeInfos));
+            }
             shellServer = new ShellServerImpl(options, this);
             BuiltinCommandPack builtinCommands = new BuiltinCommandPack();
             List<CommandResolver> resolvers = new ArrayList<CommandResolver>();
@@ -132,6 +170,13 @@ public class ArthasBootstrap {
     }
 
     public void destroy() {
+        if (this.tunnelClient != null) {
+            try {
+                tunnelClient.stop();
+            } catch (Throwable e) {
+                logger.error("arthas", "stop tunnel client error", e);
+            }
+        }
         executorService.shutdownNow();
         UserStatUtil.destroy();
         // clear the reference in Spy class.
