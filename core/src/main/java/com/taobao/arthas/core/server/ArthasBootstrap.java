@@ -232,4 +232,8 @@ public class ArthasBootstrap {
             logger.error(null, "Spy destroy failed: ", e);
         }
     }
+
+    public TunnelClient getTunnelClient() {
+        return tunnelClient;
+    }
 }
