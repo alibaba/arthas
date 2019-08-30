@@ -1,5 +1,7 @@
 package com.alibaba.arthas.tunnel.server;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import io.netty.channel.ChannelHandlerContext;
 
 /**
@@ -9,7 +11,10 @@ import io.netty.channel.ChannelHandlerContext;
  */
 public class AgentInfo {
 
+    @JsonIgnore
     private ChannelHandlerContext channelHandlerContext;
+    private String host;
+    private int port;
 
     public ChannelHandlerContext getChannelHandlerContext() {
         return channelHandlerContext;
@@ -17,6 +22,22 @@ public class AgentInfo {
 
     public void setChannelHandlerContext(ChannelHandlerContext channelHandlerContext) {
         this.channelHandlerContext = channelHandlerContext;
+    }
+
+    public String getHost() {
+        return host;
+    }
+
+    public void setHost(String host) {
+        this.host = host;
+    }
+
+    public int getPort() {
+        return port;
+    }
+
+    public void setPort(int port) {
+        this.port = port;
     }
 
 }

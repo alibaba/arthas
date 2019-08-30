@@ -1,6 +1,8 @@
 
 package com.alibaba.arthas.tunnel.server;
 
+import java.net.InetSocketAddress;
+import java.net.SocketAddress;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.Collections;
@@ -88,7 +90,7 @@ public class TunnelSocketFrameHandler extends SimpleChannelInboundHandler<WebSoc
         if (findAgent.isPresent()) {
             ChannelHandlerContext agentCtx = findAgent.get().getChannelHandlerContext();
 
-            String clientConnectionId = RandomStringUtils.random(20, true, true);
+            String clientConnectionId = RandomStringUtils.random(20, true, true).toUpperCase();
 
             logger.info("random clientConnectionId: " + clientConnectionId);
             URI uri = new URI("response", null, "/",
@@ -97,6 +99,12 @@ public class TunnelSocketFrameHandler extends SimpleChannelInboundHandler<WebSoc
             logger.info("startTunnel response: " + uri);
 
             ClientConnectionInfo clientConnectionInfo = new ClientConnectionInfo();
+            SocketAddress remoteAddress = tunnelSocketCtx.channel().remoteAddress();
+            if (remoteAddress instanceof InetSocketAddress) {
+                InetSocketAddress inetSocketAddress = (InetSocketAddress) remoteAddress;
+                clientConnectionInfo.setHost(inetSocketAddress.getHostString());
+                clientConnectionInfo.setPort(inetSocketAddress.getPort());
+            }
             clientConnectionInfo.setChannelHandlerContext(tunnelSocketCtx);
 
             // when the agent open tunnel success, will set result into the promise
@@ -152,7 +160,7 @@ public class TunnelSocketFrameHandler extends SimpleChannelInboundHandler<WebSoc
 
     private void agentRegister(ChannelHandlerContext ctx, String requestUri) throws URISyntaxException {
         // generate a random agent id
-        String id = RandomStringUtils.random(20, true, true);
+        String id = RandomStringUtils.random(20, true, true).toUpperCase();
 
         QueryStringDecoder queryDecoder = new QueryStringDecoder(requestUri);
         List<String> idList = queryDecoder.parameters().get("id");
@@ -165,6 +173,12 @@ public class TunnelSocketFrameHandler extends SimpleChannelInboundHandler<WebSoc
         URI responseUri = new URI("response", null, "/", "method=agentRegister" + "&id=" + id, null);
 
         AgentInfo info = new AgentInfo();
+        SocketAddress remoteAddress = ctx.channel().remoteAddress();
+        if (remoteAddress instanceof InetSocketAddress) {
+            InetSocketAddress inetSocketAddress = (InetSocketAddress) remoteAddress;
+            info.setHost(inetSocketAddress.getHostString());
+            info.setPort(inetSocketAddress.getPort());
+        }
         info.setChannelHandlerContext(ctx);
 
         tunnelServer.addAgent(id, info);

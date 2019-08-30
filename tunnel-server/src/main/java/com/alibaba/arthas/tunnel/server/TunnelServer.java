@@ -32,7 +32,7 @@ public class TunnelServer {
     private String host;
     private int port;
 
-    private Map<String, AgentInfo> agentMap = new ConcurrentHashMap<String, AgentInfo>();
+    private Map<String, AgentInfo> agentInfoMap = new ConcurrentHashMap<String, AgentInfo>();
 
     private Map<String, ClientConnectionInfo> clientConnectionInfoMap = new ConcurrentHashMap<String, ClientConnectionInfo>();
 
@@ -66,7 +66,7 @@ public class TunnelServer {
         workerGroup.scheduleWithFixedDelay(new Runnable() {
             @Override
             public void run() {
-                agentMap.entrySet().removeIf(e -> !e.getValue().getChannelHandlerContext().channel().isActive());
+                agentInfoMap.entrySet().removeIf(e -> !e.getValue().getChannelHandlerContext().channel().isActive());
                 clientConnectionInfoMap.entrySet()
                         .removeIf(e -> !e.getValue().getChannelHandlerContext().channel().isActive());
             }
@@ -83,15 +83,15 @@ public class TunnelServer {
     }
 
     public Optional<AgentInfo> findAgent(String id) {
-        return Optional.ofNullable(this.agentMap.get(id));
+        return Optional.ofNullable(this.agentInfoMap.get(id));
     }
 
     public void addAgent(String id, AgentInfo agentInfo) {
-        agentMap.put(id, agentInfo);
+        agentInfoMap.put(id, agentInfo);
     }
 
     public AgentInfo removeAgent(String id) {
-        return agentMap.remove(id);
+        return agentInfoMap.remove(id);
     }
 
     public Optional<ClientConnectionInfo> findClientConnection(String id) {
@@ -128,5 +128,21 @@ public class TunnelServer {
 
     public void setPort(int port) {
         this.port = port;
+    }
+
+    public Map<String, AgentInfo> getAgentInfoMap() {
+        return agentInfoMap;
+    }
+
+    public void setAgentInfoMap(Map<String, AgentInfo> agentInfoMap) {
+        this.agentInfoMap = agentInfoMap;
+    }
+
+    public Map<String, ClientConnectionInfo> getClientConnectionInfoMap() {
+        return clientConnectionInfoMap;
+    }
+
+    public void setClientConnectionInfoMap(Map<String, ClientConnectionInfo> clientConnectionInfoMap) {
+        this.clientConnectionInfoMap = clientConnectionInfoMap;
     }
 }
