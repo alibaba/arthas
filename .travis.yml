@@ -58,6 +58,7 @@ deploy:
     - "packaging/target/*.zip"
     - "packaging/target/*.deb"
     - "packaging/target/*.rpm"
+    - "tunnel-server/target/*.jar"
   skip_cleanup: true
   on:
     tags: true
