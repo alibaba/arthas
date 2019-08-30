@@ -58,7 +58,6 @@
         <module>spy</module>
         <module>common</module>
         <module>tunnel-client</module>
-        <module>tunnel-server</module>
         <module>core</module>
         <module>agent</module>
         <module>client</module>
@@ -69,6 +68,18 @@
         <module>site</module>
         <module>packaging</module>
     </modules>
+
+    <profiles>
+        <profile>
+            <id>deb</id>
+            <activation>
+                <jdk>[1.8,)</jdk>
+            </activation>
+            <modules>
+                <module>tunnel-server</module>
+            </modules>
+        </profile>
+    </profiles>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
