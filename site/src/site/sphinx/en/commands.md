@@ -15,6 +15,7 @@ All Commands
 * [sc](sc.md)
 * [sm](sm.md)
 * [dump](dump.md)
+* [heapdump](heapdump.md)
 
 * [jad](jad.md)
 * [classloader](classloader.md)
