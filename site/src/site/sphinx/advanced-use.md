@@ -24,9 +24,11 @@
 * [jvm](jvm.md)——查看当前 JVM 的信息
 * [sysprop](sysprop.md)——查看和修改JVM的系统属性
 * [sysenv](sysenv.md)——查看JVM的环境变量
+* [vmoption](vmoption.md)——查看和修改JVM里诊断相关的option
 * [getstatic](getstatic.md)——查看类的静态属性
-* **New!** [ognl](ognl.md)——执行ognl表达式
-* **New!** [mbean](mbean.md)——查看 Mbean 的信息
+* [ognl](ognl.md)——执行ognl表达式
+* [mbean](mbean.md)——查看 Mbean 的信息
+* [heapdump](heapdump.md)——dump java heap, 类似jmap命令的heap dump功能
 
 ## class/classloader相关
 
