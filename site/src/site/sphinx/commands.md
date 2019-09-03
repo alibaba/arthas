@@ -6,6 +6,7 @@
 * [jvm](jvm.md)
 * [sysprop](sysprop.md)
 * [sysenv](sysenv.md)
+* [vmoption](vmoption.md)
 * [mbean](mbean.md)
 * [getstatic](getstatic.md)
 
