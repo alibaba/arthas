@@ -12,6 +12,7 @@ import com.taobao.arthas.core.command.basic1000.ShutdownCommand;
 import com.taobao.arthas.core.command.basic1000.StopCommand;
 import com.taobao.arthas.core.command.basic1000.SystemEnvCommand;
 import com.taobao.arthas.core.command.basic1000.SystemPropertyCommand;
+import com.taobao.arthas.core.command.basic1000.VMOptionCommand;
 import com.taobao.arthas.core.command.basic1000.VersionCommand;
 import com.taobao.arthas.core.command.hidden.JulyCommand;
 import com.taobao.arthas.core.command.hidden.OptionsCommand;
@@ -91,6 +92,7 @@ public class BuiltinCommandPack implements CommandResolver {
         commands.add(Command.create(SessionCommand.class));
         commands.add(Command.create(SystemPropertyCommand.class));
         commands.add(Command.create(SystemEnvCommand.class));
+        commands.add(Command.create(VMOptionCommand.class));
         commands.add(Command.create(HistoryCommand.class));
         commands.add(Command.create(CatCommand.class));
         commands.add(Command.create(PwdCommand.class));
