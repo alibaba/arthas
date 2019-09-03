@@ -41,7 +41,7 @@ public class HeapDumpCommand extends AnnotatedCommand {
     }
 
     @Option(shortName = "l", longName = "live", flag = true)
-    @Description("Only dump live objects, default value true")
+    @Description("Dump only live objects; if not specified, all objects in the heap are dumped.")
     public void setLive(boolean live) {
         this.live = live;
     }
