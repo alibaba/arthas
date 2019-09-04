@@ -427,6 +427,7 @@ Welcome to register the company name in this issue: https://github.com/alibaba/a
 ![BBD数联铭品](static/bbdservice.png)
 ![伙伴集团](static/zhaoshang800.png)
 ![数梦工场](static/dtdream.png)
+![安恒信息](static/dbappsecurity.png)
 
 ### Derivative Projects
 
