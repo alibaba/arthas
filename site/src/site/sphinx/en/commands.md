@@ -7,6 +7,7 @@ All Commands
 * [sysprop](sysprop.md)
 * [sysenv](sysenv.md)
 * [vmoption](vmoption.md)
+* [logger](logger.md)
 * [mbean](mbean.md)
 * [getstatic](getstatic.md)
 
