@@ -5,7 +5,7 @@ Arthas 用户文档
 
 ## Arthas（阿尔萨斯） 能为你做什么？
 
-![arthas](arthas.png)
+![](arthas.png)
 
 `Arthas` 是Alibaba开源的Java诊断工具，深受开发者喜爱。
 
@@ -32,6 +32,7 @@ Contents
 * [快速入门](quick-start.md)
 * [进阶使用](advanced-use.md)
 * [命令列表](commands.md)
+* [WebConsole](web-console.md)
 * [Docker](docker.md)
 * [用户案例](https://github.com/alibaba/arthas/issues?q=label%3Auser-case)
 * [常见问题](https://github.com/alibaba/arthas/issues?q=label%3Aquestion-answered)

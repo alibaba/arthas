@@ -3,7 +3,7 @@ Arthas Documentation
 
 **[中文文档/Chinese Documentation](https://alibaba.github.io/arthas/)**
 
-![arthas](arthas.png)
+![](arthas.png)
 
 Arthas is a Java diagnostic tool open-sourced by Alibaba middleware team. It is widely adopted and popular among the developers inside Alibaba. Arthas helps developers in trouble-shooting issues in production environment for Java based applications without modifying code or restarting servers.
 
@@ -44,6 +44,7 @@ Contents
 * [Quick start](quick-start.md)
 * [Advanced usage](advanced-use.md)
 * [Commands](commands.md)
+* [WebConsole](web-console.md)
 * [Docker](docker.md)
 * [User cases](https://github.com/alibaba/arthas/issues?q=label%3Auser-case)
 * [Questions and answers](https://github.com/alibaba/arthas/issues?q=label%3Aquestion-answered)
