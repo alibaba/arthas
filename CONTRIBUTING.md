@@ -124,7 +124,7 @@ Tip: you can use `--versions` to list all available versions.
 * 修改`as.sh`里的版本
 * 修改本地的maven settings.xml
 * mvn release:prepare -Darguments="-DskipTests"
-* mvn release:perform -Darguments="-DskipTests -P full
+* mvn release:perform -Darguments="-DskipTests -P full"
 
     如果在下载 https://github.com/trustin/sphinx-binary/releases/download/v0.7.1/sphinx.osx-x86_64 时有问题，可以先下载到本地，然后用 `file:/tmp/sphinx.osx-x86_64` 的方式指定
 
