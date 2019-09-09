@@ -50,4 +50,4 @@ Contents
 * [Questions and answers](https://github.com/alibaba/arthas/issues?q=label%3Aquestion-answered)
 * [Fork me at GitHub](https://github.com/alibaba/arthas)
 * [Compile and debug/CONTRIBUTING](https://github.com/alibaba/arthas/blob/master/CONTRIBUTING.md)
-* [Release Notes](release-notes.md)
+* [Release Notes](https://github.com/alibaba/arthas/releases)
