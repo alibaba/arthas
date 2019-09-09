@@ -143,4 +143,4 @@ Tip: you can use `--versions` to list all available versions.
     docker build .  --build-arg ARTHAS_VERSION=3.1.0 -f Dockerfile-No-Jdk -t hengyunabc/arthas:3.1.0-no-jdk
     docker push hengyunabc/arthas:3.1.0-no-jdk
     ```
-
+* 更新README.md，比如增加了新命令，要加上说明，更新wiki的链接
