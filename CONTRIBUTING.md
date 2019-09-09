@@ -121,7 +121,7 @@ Tip: you can use `--versions` to list all available versions.
 
 发布release版本流程：
 
-* 修改`as.sh`里的版本
+* 修改`as.sh`里的版本， `Bootstrap.java`里的版本，Dockerfile里的版本
 * 修改本地的maven settings.xml
 * mvn release:prepare -Darguments="-DskipTests"
 * mvn release:perform -Darguments="-DskipTests -P full"
