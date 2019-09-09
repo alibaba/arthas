@@ -18,7 +18,7 @@ If you have suggestions for the Web Console, please leave a message here: [https
 
 #### Download and deploy arthas tunnel server
 
-https://github.com/alibaba/arthas/releases
+[https://github.com/alibaba/arthas/releases](https://github.com/alibaba/arthas/releases)
 
 Arthas tunnel server is a spring boot fat jar application, start with the `java -jar` command:
 
@@ -28,6 +28,16 @@ java -jar  arthas-tunnel-server.jar
 
 By default, the web port of the arthas tunnel server is `8080`, and the port connected by the arthas agent is `7777`.
 
+Once started, you can go to [http://localhost:8080/](http://localhost:8080/) and connect to the registered arthas agent via `agentId`.
+
+Through Spring Boot's Endpoint, you can view the specific connection information: [http://localhost:8080/actuator/arthas](http://localhost:8080/actuator/arthas), the login user name is `arthas`, and the password can be found in the log of arthas tunnel server, for example:
+
+```
+32851 [main] INFO o.s.b.a.s.s.UserDetailsServiceAutoConfiguration
+
+Using generated security password: f1dca050-3777-48f4-a577-6367e55a78a2
+```
+
 #### Connecting to the tunnel server when starting arthas
 
 
@@ -36,6 +46,8 @@ When starting arthas, you can use the `--tunnel-server` parameter, for example:
 ```bash
 as.sh --tunnel-server 'ws://47.75.156.201:7777/ws'
 ```
+
+* You can specify the agentId by the `--agent-id` parameter. By default, a random ID is generated.
 
 After Arthas attach succeeds, the agentId will be printed, such as:
 
@@ -68,7 +80,16 @@ If the connection is not connected to the tunnel server at startup, you can also
 ```
 
 
-For the above example, go to http://47.75.156.201:8080/ in the browser and input the `agentId` to connect to arthas on remote machine.
+For the above example, go to [http://47.75.156.201:8080/](http://47.75.156.201:8080/) in the browser and input the `agentId` to connect to arthas on remote machine.
 
 
 ![](_static/arthas-tunnel-server.png)
+
+
+#### How arthas tunnel server works
+
+```
+browser <-> arthas tunnel server <-> arthas tunnel client <-> arthas agent
+```
+
+[https://github.com/alibaba/arthas/blob/master/tunnel-server/README.md](https://github.com/alibaba/arthas/blob/master/tunnel-server/README.md)
