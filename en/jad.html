@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>jad &mdash; Arthas 3.1.1 documentation</title>
+  <title>jad &mdash; Arthas 3.1.2 documentation</title>
   
 
   
@@ -19,27 +19,30 @@
   
 
   
+  <script type="text/javascript" src="_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script type="text/javascript" src="_static/jquery.js"></script>
+        <script type="text/javascript" src="_static/underscore.js"></script>
+        <script type="text/javascript" src="_static/doctools.js"></script>
+        <script type="text/javascript" src="_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
 
-  
-  
     
 
   
-
   <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
   <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <link rel="stylesheet" href="_static/overrides.css" type="text/css" />
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="classloader" href="classloader.html" />
-    <link rel="prev" title="dump" href="dump.html" />
+    <link rel="prev" title="heapdump" href="heapdump.html" />
 <script src="_static/center_page.js"></script>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.13.1/styles/github.min.css">
  
-
-
-  
-  <script src="_static/js/modernizr.min.js"></script>
 
 </head>
 
@@ -47,11 +50,10 @@
 
    
   <div class="wy-grid-for-nav">
-
     
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
-        <div class="wy-side-nav-search">
+        <div class="wy-side-nav-search" >
           
 
           
@@ -65,7 +67,7 @@
             
             
               <div class="version">
-                3.1.1
+                3.1.2
               </div>
             
           
@@ -92,6 +94,7 @@
               <ul class="current">
 <li class="toctree-l1"><a class="reference external" href="https://alibaba.github.io/arthas/arthas-tutorials?language=en">Online tutorials(Recommend)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="install-detail.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="download.html">Download</a></li>
 <li class="toctree-l1"><a class="reference internal" href="quick-start.html">Quick start</a></li>
 <li class="toctree-l1"><a class="reference internal" href="advanced-use.html">Advanced usage</a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="commands.html">Commands</a><ul class="current">
@@ -100,16 +103,19 @@
 <li class="toctree-l2"><a class="reference internal" href="jvm.html">jvm</a></li>
 <li class="toctree-l2"><a class="reference internal" href="sysprop.html">sysprop</a></li>
 <li class="toctree-l2"><a class="reference internal" href="sysenv.html">sysenv</a></li>
+<li class="toctree-l2"><a class="reference internal" href="vmoption.html">vmoption</a></li>
+<li class="toctree-l2"><a class="reference internal" href="logger.html">logger</a></li>
 <li class="toctree-l2"><a class="reference internal" href="mbean.html">mbean</a></li>
 <li class="toctree-l2"><a class="reference internal" href="getstatic.html">getstatic</a></li>
 <li class="toctree-l2"><a class="reference internal" href="ognl.html">ognl</a></li>
 <li class="toctree-l2"><a class="reference internal" href="sc.html">sc</a></li>
 <li class="toctree-l2"><a class="reference internal" href="sm.html">sm</a></li>
 <li class="toctree-l2"><a class="reference internal" href="dump.html">dump</a></li>
+<li class="toctree-l2"><a class="reference internal" href="heapdump.html">heapdump</a></li>
 <li class="toctree-l2 current"><a class="current reference internal" href="#">jad</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#options">Options</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#usage">Usage</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="#decompile-java-lang-string">Decompile <tt class="docutils literal">java.lang.String</tt></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#decompile-java-lang-string">Decompile <code class="docutils literal notranslate"><span class="pre">java.lang.String</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#print-source-only">Print source only</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#decompile-the-specified-method">Decompile the specified method</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#decompile-with-specified-classloader">Decompile with specified classLoader</a></li>
@@ -131,12 +137,13 @@
 <li class="toctree-l2"><a class="reference internal" href="commands.html#basic-arthas-commands">Basic Arthas Commands</a></li>
 </ul>
 </li>
+<li class="toctree-l1"><a class="reference internal" href="web-console.html">WebConsole</a></li>
 <li class="toctree-l1"><a class="reference internal" href="docker.html">Docker</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas/issues?q=label%3Auser-case">User cases</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas/issues?q=label%3Aquestion-answered">Questions and answers</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas">Fork me at GitHub</a></li>
-<li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas/blob/master/CONTRIBUTING.md">CONTRIBUTING</a></li>
-<li class="toctree-l1"><a class="reference internal" href="release-notes.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas/blob/master/CONTRIBUTING">Compile and debug/CONTRIBUTING</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas/releases">Release Notes</a></li>
 </ul>
 
             
@@ -206,16 +213,17 @@
            <div itemprop="articleBody">
             
   <div class="section" id="jad">
-<span id="jad"></span><h1>jad<a class="headerlink" href="#jad" title="Permalink to this headline">¶</a></h1>
+<h1>jad<a class="headerlink" href="#jad" title="Permalink to this headline">¶</a></h1>
 <blockquote>
-<div>Decompile the specified classes.</div></blockquote>
-<p><tt class="docutils literal">jad</tt> helps to decompile the byte code running in JVM to the source code to assist you to understand the logic behind better.</p>
+<div><p>Decompile the specified classes.</p>
+</div></blockquote>
+<p><code class="docutils literal notranslate"><span class="pre">jad</span></code> helps to decompile the byte code running in JVM to the source code to assist you to understand the logic behind better.</p>
 <ul class="simple">
-<li>The decompiled code is syntax highlighted for better readability in Arthas console.</li>
-<li>It is possible that there’s grammar error in the decompiled code, but it should not affect your interpretation.</li>
+<li><p>The decompiled code is syntax highlighted for better readability in Arthas console.</p></li>
+<li><p>It is possible that there’s grammar error in the decompiled code, but it should not affect your interpretation.</p></li>
 </ul>
 <div class="section" id="options">
-<span id="options"></span><h2>Options<a class="headerlink" href="#options" title="Permalink to this headline">¶</a></h2>
+<h2>Options<a class="headerlink" href="#options" title="Permalink to this headline">¶</a></h2>
 <table border="1" class="docutils">
 <thead>
 <tr>
@@ -239,9 +247,9 @@
 </tbody>
 </table></div>
 <div class="section" id="usage">
-<span id="usage"></span><h2>Usage<a class="headerlink" href="#usage" title="Permalink to this headline">¶</a></h2>
+<h2>Usage<a class="headerlink" href="#usage" title="Permalink to this headline">¶</a></h2>
 <div class="section" id="decompile-java-lang-string">
-<span id="decompile-java-lang-string"></span><h3>Decompile <tt class="docutils literal">java.lang.String</tt><a class="headerlink" href="#decompile-java-lang-string" title="Permalink to this headline">¶</a></h3>
+<h3>Decompile <code class="docutils literal notranslate"><span class="pre">java.lang.String</span></code><a class="headerlink" href="#decompile-java-lang-string" title="Permalink to this headline">¶</a></h3>
 <div class="highlight-java notranslate"><div class="highlight hljs"><pre class="java">$ jad java.lang.String
 
 ClassLoader:
@@ -269,13 +277,12 @@ CharSequence {
         String.checkBounds(arrby, n, n2);
         this.value = StringCoding.decode(arrby, n, n2);
     }
-...
-</pre></div>
+...</pre></div>
 </div>
 </div>
 <div class="section" id="print-source-only">
-<span id="print-source-only"></span><h3>Print source only<a class="headerlink" href="#print-source-only" title="Permalink to this headline">¶</a></h3>
-<p>By default, the decompile result will have the <tt class="docutils literal">ClassLoader</tt> information. With the <tt class="docutils literal">--source-only</tt> option, you can print only the source code. Conveniently used with the <a class="reference internal" href="mc.html"><span class="doc">mc</span></a>/<a class="reference internal" href="redefine.html"><span class="doc">redefine</span></a> commands.</p>
+<h3>Print source only<a class="headerlink" href="#print-source-only" title="Permalink to this headline">¶</a></h3>
+<p>By default, the decompile result will have the <code class="docutils literal notranslate"><span class="pre">ClassLoader</span></code> information. With the <code class="docutils literal notranslate"><span class="pre">--source-only</span></code> option, you can print only the source code. Conveniently used with the <a class="reference internal" href="mc.html"><span class="doc">mc</span></a>/<a class="reference internal" href="redefine.html"><span class="doc">redefine</span></a> commands.</p>
 <div class="highlight-default notranslate"><pre class="literal-block">$ jad --source-only demo.MathGame
 /*
  * Decompiled with CFR 0_132.
@@ -296,7 +303,7 @@ public class MathGame {
 </div>
 </div>
 <div class="section" id="decompile-the-specified-method">
-<span id="decompile-the-specified-method"></span><h3>Decompile the specified method<a class="headerlink" href="#decompile-the-specified-method" title="Permalink to this headline">¶</a></h3>
+<h3>Decompile the specified method<a class="headerlink" href="#decompile-the-specified-method" title="Permalink to this headline">¶</a></h3>
 <div class="highlight-java notranslate"><div class="highlight hljs"><pre class="java">$ jad demo.MathGame main
 
 ClassLoader:
@@ -314,14 +321,14 @@ public static void main(String[] args) throws InterruptedException {
     } while (true);
 }
 
-Affect(row-cnt:1) cost in 228 ms.
-</pre></div>
+Affect(row-cnt:1) cost in 228 ms.</pre></div>
 </div>
 </div>
 <div class="section" id="decompile-with-specified-classloader">
-<span id="decompile-with-specified-classloader"></span><h3>Decompile with specified classLoader<a class="headerlink" href="#decompile-with-specified-classloader" title="Permalink to this headline">¶</a></h3>
+<h3>Decompile with specified classLoader<a class="headerlink" href="#decompile-with-specified-classloader" title="Permalink to this headline">¶</a></h3>
 <blockquote>
-<div>If the target class is loaded by multiple classloaders, <tt class="docutils literal">jad</tt> outputs the <tt class="docutils literal">hashcode</tt> of the corresponding classloaders, then you can re-run <tt class="docutils literal">jad</tt> and specify <tt class="docutils literal">-c <hashcode></tt> to decompile the target class from the specified classloader.</div></blockquote>
+<div><p>If the target class is loaded by multiple classloaders, <code class="docutils literal notranslate"><span class="pre">jad</span></code> outputs the <code class="docutils literal notranslate"><span class="pre">hashcode</span></code> of the corresponding classloaders, then you can re-run <code class="docutils literal notranslate"><span class="pre">jad</span></code> and specify <code class="docutils literal notranslate"><span class="pre">-c</span> <span class="pre">&lt;hashcode&gt;</span></code> to decompile the target class from the specified classloader.</p>
+</div></blockquote>
 <div class="highlight-java notranslate"><div class="highlight hljs"><pre class="java">$ jad org.apache.log4j.Logger
 
 Found more than one class for: org.apache.log4j.Logger, Please use jad -c hashcode org.apache.log4j.Logger
@@ -357,8 +364,7 @@ public class Logger extends Category
 
 ...
 
-Affect(row-cnt:1) cost in 190 ms.
-</pre></div>
+Affect(row-cnt:1) cost in 190 ms.</pre></div>
 </div>
 </div>
 </div>
@@ -375,7 +381,7 @@ Affect(row-cnt:1) cost in 190 ms.
         <a href="classloader.html" class="btn btn-neutral float-right" title="classloader" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
-        <a href="dump.html" class="btn btn-neutral" title="dump" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+        <a href="heapdump.html" class="btn btn-neutral float-left" title="heapdump" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
       
     </div>
   
@@ -384,7 +390,7 @@ Affect(row-cnt:1) cost in 190 ms.
 
   <div role="contentinfo">
     <p>
-        &copy; Copyright 2018-2019, Alibaba Middleware Group, and contributors.
+        &copy; Copyright 2018-2019, Alibaba Middleware Group, and contributors
 
     </p>
   </div>
@@ -401,33 +407,16 @@ Affect(row-cnt:1) cost in 190 ms.
   
 
 
-  
-
-    <script type="text/javascript">
-        var DOCUMENTATION_OPTIONS = {
-            URL_ROOT:'./',
-            VERSION:'3.1.1',
-            LANGUAGE:'en',
-            COLLAPSE_INDEX:false,
-            FILE_SUFFIX:'.html',
-            HAS_SOURCE:  true,
-            SOURCELINK_SUFFIX: '.txt'
-        };
-    </script>
-      <script type="text/javascript" src="_static/jquery.js"></script>
-      <script type="text/javascript" src="_static/underscore.js"></script>
-      <script type="text/javascript" src="_static/doctools.js"></script>
-      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
-
-  
-
-  <script type="text/javascript" src="_static/js/theme.js"></script>
-
   <script type="text/javascript">
       jQuery(function () {
           SphinxRtdTheme.Navigation.enable(true);
       });
   </script>
+
+  
+  
+    
+  
 <div class="github-fork-ribbon-wrapper right">
   <div class="github-fork-ribbon">
     <a href="https://github.com/alibaba/arthas" target="_blank">Fork me at GitHub</a>

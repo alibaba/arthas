@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>trace &mdash; Arthas 3.1.1 文档</title>
+  <title>trace &mdash; Arthas 3.1.2 文档</title>
   
 
   
@@ -19,13 +19,21 @@
   
 
   
+  <script type="text/javascript" src="_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script type="text/javascript" src="_static/jquery.js"></script>
+        <script type="text/javascript" src="_static/underscore.js"></script>
+        <script type="text/javascript" src="_static/doctools.js"></script>
+        <script type="text/javascript" src="_static/language_data.js"></script>
+        <script type="text/javascript" src="_static/translations.js"></script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
 
-  
-  
     
 
   
-
   <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
   <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <link rel="stylesheet" href="_static/overrides.css" type="text/css" />
@@ -37,21 +45,16 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.13.1/styles/github.min.css">
  
 
-
-  
-  <script src="_static/js/modernizr.min.js"></script>
-
 </head>
 
 <body class="wy-body-for-nav">
 
    
   <div class="wy-grid-for-nav">
-
     
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
-        <div class="wy-side-nav-search">
+        <div class="wy-side-nav-search" >
           
 
           
@@ -65,7 +68,7 @@
             
             
               <div class="version">
-                3.1.1
+                3.1.2
               </div>
             
           
@@ -93,6 +96,7 @@
 <li class="toctree-l1"><a class="reference external" href="https://alibaba.github.io/arthas/en/">English Docs</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://alibaba.github.io/arthas/arthas-tutorials?language=cn">在线教程(推荐)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="install-detail.html">安装</a></li>
+<li class="toctree-l1"><a class="reference internal" href="download.html">下载</a></li>
 <li class="toctree-l1"><a class="reference internal" href="quick-start.html">快速入门</a></li>
 <li class="toctree-l1"><a class="reference internal" href="advanced-use.html">进阶使用</a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="commands.html">命令列表</a><ul class="current">
@@ -101,12 +105,15 @@
 <li class="toctree-l2"><a class="reference internal" href="jvm.html">jvm</a></li>
 <li class="toctree-l2"><a class="reference internal" href="sysprop.html">sysprop</a></li>
 <li class="toctree-l2"><a class="reference internal" href="sysenv.html">sysenv</a></li>
+<li class="toctree-l2"><a class="reference internal" href="vmoption.html">vmoption</a></li>
+<li class="toctree-l2"><a class="reference internal" href="logger.html">logger</a></li>
 <li class="toctree-l2"><a class="reference internal" href="mbean.html">mbean</a></li>
 <li class="toctree-l2"><a class="reference internal" href="getstatic.html">getstatic</a></li>
 <li class="toctree-l2"><a class="reference internal" href="ognl.html">ognl</a></li>
 <li class="toctree-l2"><a class="reference internal" href="sc.html">sc</a></li>
 <li class="toctree-l2"><a class="reference internal" href="sm.html">sm</a></li>
 <li class="toctree-l2"><a class="reference internal" href="dump.html">dump</a></li>
+<li class="toctree-l2"><a class="reference internal" href="heapdump.html">heapdump</a></li>
 <li class="toctree-l2"><a class="reference internal" href="jad.html">jad</a></li>
 <li class="toctree-l2"><a class="reference internal" href="classloader.html">classloader</a></li>
 <li class="toctree-l2"><a class="reference internal" href="mc.html">mc</a></li>
@@ -114,14 +121,14 @@
 <li class="toctree-l2"><a class="reference internal" href="monitor.html">monitor</a></li>
 <li class="toctree-l2"><a class="reference internal" href="watch.html">watch</a></li>
 <li class="toctree-l2 current"><a class="current reference internal" href="#">trace</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#">参数说明</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#">注意事项</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#">使用参考</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id1">参数说明</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id2">注意事项</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id3">使用参考</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="#demo">启动 Demo</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#trace">trace函数</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id4">trace函数</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#jdk">过滤掉jdk的函数</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#">据调用耗时过滤</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#trace">trace多个类或者多个函数</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id5">据调用耗时过滤</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id6">trace多个类或者多个函数</a></li>
 </ul>
 </li>
 </ul>
@@ -134,12 +141,13 @@
 <li class="toctree-l2"><a class="reference internal" href="commands.html#arthas">Arthas 基础命令</a></li>
 </ul>
 </li>
+<li class="toctree-l1"><a class="reference internal" href="web-console.html">WebConsole</a></li>
 <li class="toctree-l1"><a class="reference internal" href="docker.html">Docker</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas/issues?q=label%3Auser-case">用户案例</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas/issues?q=label%3Aquestion-answered">常见问题</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas">Fork me at GitHub</a></li>
-<li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas/blob/master/CONTRIBUTING.md">参与贡献</a></li>
-<li class="toctree-l1"><a class="reference internal" href="release-notes.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas/blob/master/CONTRIBUTING">编译调试/参与贡献</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas/releases">Release Notes</a></li>
 <li class="toctree-l1"><a class="reference internal" href="contact-us.html">QQ群/钉钉群</a></li>
 </ul>
 
@@ -210,12 +218,13 @@
            <div itemprop="articleBody">
             
   <div class="section" id="trace">
-<span id="trace"></span><h1>trace<a class="headerlink" href="#trace" title="永久链接至标题">¶</a></h1>
+<h1>trace<a class="headerlink" href="#trace" title="永久链接至标题">¶</a></h1>
 <blockquote>
-<div>方法内部调用路径，并输出方法路径上的每个节点上耗时</div></blockquote>
-<p><tt class="docutils literal">trace</tt> 命令能主动搜索 <tt class="docutils literal">class-pattern</tt>／<tt class="docutils literal">method-pattern</tt> 对应的方法调用路径，渲染和统计整个调用链路上的所有性能开销和追踪调用链路。</p>
-<div class="section" id="">
-<span id="id1"></span><h2>参数说明<a class="headerlink" href="#" title="永久链接至标题">¶</a></h2>
+<div><p>方法内部调用路径，并输出方法路径上的每个节点上耗时</p>
+</div></blockquote>
+<p><code class="docutils literal notranslate"><span class="pre">trace</span></code> 命令能主动搜索 <code class="docutils literal notranslate"><span class="pre">class-pattern</span></code>／<code class="docutils literal notranslate"><span class="pre">method-pattern</span></code> 对应的方法调用路径，渲染和统计整个调用链路上的所有性能开销和追踪调用链路。</p>
+<div class="section" id="id1">
+<h2>参数说明<a class="headerlink" href="#id1" title="永久链接至标题">¶</a></h2>
 <table border="1" class="docutils">
 <thead>
 <tr>
@@ -249,29 +258,30 @@
 <td align="left">方法执行耗时</td>
 </tr>
 </tbody>
-</table><p>这里重点要说明的是观察表达式，观察表达式的构成主要由 ognl 表达式组成，所以你可以这样写<tt class="docutils literal">"{params,returnObj}"</tt>，只要是一个合法的 ognl 表达式，都能被正常支持。</p>
-<p>观察的维度也比较多，主要体现在参数 <tt class="docutils literal">advice</tt> 的数据结构上。<tt class="docutils literal">Advice</tt> 参数最主要是封装了通知节点的所有信息。</p>
+</table><p>这里重点要说明的是观察表达式，观察表达式的构成主要由 ognl 表达式组成，所以你可以这样写<code class="docutils literal notranslate"><span class="pre">&quot;{params,returnObj}&quot;</span></code>，只要是一个合法的 ognl 表达式，都能被正常支持。</p>
+<p>观察的维度也比较多，主要体现在参数 <code class="docutils literal notranslate"><span class="pre">advice</span></code> 的数据结构上。<code class="docutils literal notranslate"><span class="pre">Advice</span></code> 参数最主要是封装了通知节点的所有信息。</p>
 <p>请参考<a class="reference internal" href="advice-class.html"><span class="doc">表达式核心变量</span></a>中关于该节点的描述。</p>
 <ul class="simple">
-<li>特殊用法请参考：<a class="reference external" href="https://github.com/alibaba/arthas/issues/71">https://github.com/alibaba/arthas/issues/71</a></li>
-<li>OGNL表达式官网：<a class="reference external" href="https://commons.apache.org/proper/commons-ognl/language-guide.html">https://commons.apache.org/proper/commons-ognl/language-guide.html</a></li>
+<li><p>特殊用法请参考：<a class="reference external" href="https://github.com/alibaba/arthas/issues/71">https://github.com/alibaba/arthas/issues/71</a></p></li>
+<li><p>OGNL表达式官网：<a class="reference external" href="https://commons.apache.org/proper/commons-ognl/language-guide.html">https://commons.apache.org/proper/commons-ognl/language-guide.html</a></p></li>
 </ul>
-<p>很多时候我们只想看到某个方法的rt大于某个时间之后的trace结果，现在Arthas可以按照方法执行的耗时来进行过滤了，例如<tt class="docutils literal">trace *StringUtils isBlank '#cost>100'</tt>表示当执行时间超过100ms的时候，才会输出trace的结果。</p>
+<p>很多时候我们只想看到某个方法的rt大于某个时间之后的trace结果，现在Arthas可以按照方法执行的耗时来进行过滤了，例如<code class="docutils literal notranslate"><span class="pre">trace</span> <span class="pre">*StringUtils</span> <span class="pre">isBlank</span> <span class="pre">'#cost&gt;100'</span></code>表示当执行时间超过100ms的时候，才会输出trace的结果。</p>
 <blockquote>
-<div>watch/stack/trace这个三个命令都支持<tt class="docutils literal">#cost</tt></div></blockquote>
+<div><p>watch/stack/trace这个三个命令都支持<code class="docutils literal notranslate"><span class="pre">#cost</span></code></p>
+</div></blockquote>
 </div>
-<div class="section" id="">
-<span id="id2"></span><h2>注意事项<a class="headerlink" href="#" title="永久链接至标题">¶</a></h2>
-<p><tt class="docutils literal">trace</tt> 能方便的帮助你定位和发现因 RT 高而导致的性能问题缺陷，但其每次只能跟踪一级方法的调用链路。</p>
+<div class="section" id="id2">
+<h2>注意事项<a class="headerlink" href="#id2" title="永久链接至标题">¶</a></h2>
+<p><code class="docutils literal notranslate"><span class="pre">trace</span></code> 能方便的帮助你定位和发现因 RT 高而导致的性能问题缺陷，但其每次只能跟踪一级方法的调用链路。</p>
 </div>
-<div class="section" id="">
-<span id="id3"></span><h2>使用参考<a class="headerlink" href="#" title="永久链接至标题">¶</a></h2>
+<div class="section" id="id3">
+<h2>使用参考<a class="headerlink" href="#id3" title="永久链接至标题">¶</a></h2>
 <div class="section" id="demo">
-<span id="demo"></span><h3>启动 Demo<a class="headerlink" href="#demo" title="永久链接至标题">¶</a></h3>
-<p>启动<a class="reference internal" href="quick-start.html"><span class="doc">快速入门</span></a>里的<tt class="docutils literal">arthas-demo</tt>。</p>
+<h3>启动 Demo<a class="headerlink" href="#demo" title="永久链接至标题">¶</a></h3>
+<p>启动<a class="reference internal" href="quick-start.html"><span class="doc">快速入门</span></a>里的<code class="docutils literal notranslate"><span class="pre">arthas-demo</span></code>。</p>
 </div>
-<div class="section" id="trace">
-<span id="id4"></span><h3>trace函数<a class="headerlink" href="#trace" title="永久链接至标题">¶</a></h3>
+<div class="section" id="id4">
+<h3>trace函数<a class="headerlink" href="#id4" title="永久链接至标题">¶</a></h3>
 <div class="highlight-bash notranslate"><div class="highlight hljs"><pre class="bash">$ trace demo.MathGame run
 Press Ctrl+C to abort.
 Affect(class-cnt:1 , method-cnt:1) cost in 42 ms.
@@ -279,27 +289,25 @@ Affect(class-cnt:1 , method-cnt:1) cost in 42 ms.
     `---[10.611029ms] demo.MathGame:run()
         +---[0.05638ms] java.util.Random:nextInt()
         +---[10.036885ms] demo.MathGame:primeFactors()
-        `---[0.170316ms] demo.MathGame:print()
-</pre></div>
+        `---[0.170316ms] demo.MathGame:print()</pre></div>
 </div>
 </div>
 <div class="section" id="jdk">
-<span id="jdk"></span><h3>过滤掉jdk的函数<a class="headerlink" href="#jdk" title="永久链接至标题">¶</a></h3>
+<h3>过滤掉jdk的函数<a class="headerlink" href="#jdk" title="永久链接至标题">¶</a></h3>
 <div class="highlight-bash notranslate"><div class="highlight hljs"><pre class="bash">$ trace -j  demo.MathGame run
 Press Ctrl+C to abort.
 Affect(class-cnt:1 , method-cnt:1) cost in 31 ms.
 `---ts=2018-12-04 01:09:14;thread_name=main;id=1;is_daemon=false;priority=5;TCCL=sun.misc.Launcher$AppClassLoader@3d4eac69
     `---[5.190646ms] demo.MathGame:run()
         +---[4.465779ms] demo.MathGame:primeFactors()
-        `---[0.375324ms] demo.MathGame:print()
-</pre></div>
+        `---[0.375324ms] demo.MathGame:print()</pre></div>
 </div>
 <ul class="simple">
-<li><tt class="docutils literal">-j</tt>: jdkMethodSkip, skip jdk method trace</li>
+<li><p><code class="docutils literal notranslate"><span class="pre">-j</span></code>: jdkMethodSkip, skip jdk method trace</p></li>
 </ul>
 </div>
-<div class="section" id="">
-<span id="id5"></span><h3>据调用耗时过滤<a class="headerlink" href="#" title="永久链接至标题">¶</a></h3>
+<div class="section" id="id5">
+<h3>据调用耗时过滤<a class="headerlink" href="#id5" title="永久链接至标题">¶</a></h3>
 <div class="highlight-bash notranslate"><div class="highlight hljs"><pre class="bash">$ trace demo.MathGame run &#x27;#cost &gt; 10&#x27;
 Press Ctrl+C to abort.
 Affect(class-cnt:1 , method-cnt:1) cost in 41 ms.
@@ -307,24 +315,23 @@ Affect(class-cnt:1 , method-cnt:1) cost in 41 ms.
     `---[12.033735ms] demo.MathGame:run()
         +---[0.006783ms] java.util.Random:nextInt()
         +---[11.852594ms] demo.MathGame:primeFactors()
-        `---[0.05447ms] demo.MathGame:print()
-</pre></div>
+        `---[0.05447ms] demo.MathGame:print()</pre></div>
 </div>
 <blockquote>
-<div>只会展示耗时大于10ms的调用路径，有助于在排查问题的时候，只关注异常情况</div></blockquote>
+<div><p>只会展示耗时大于10ms的调用路径，有助于在排查问题的时候，只关注异常情况</p>
+</div></blockquote>
 <ul class="simple">
-<li>是不是很眼熟，没错，在 JProfiler 等收费软件中你曾经见识类似的功能，这里你将可以通过命令就能打印出指定调用路径。 友情提醒下，<tt class="docutils literal">trace</tt> 在执行的过程中本身是会有一定的性能开销，在统计的报告中并未像 JProfiler 一样预先减去其自身的统计开销。所以这统计出来有些许的不准，渲染路径上调用的类、方法越多，性能偏差越大。但还是能让你看清一些事情的。</li>
-<li>[12.033735ms] 的含义，<tt class="docutils literal">12.033735</tt> 的含义是：当前节点在当前步骤的耗时，单位为毫秒</li>
-<li>[0,0,0ms,11]xxx:yyy() [throws Exception]，对该方法中相同的方法调用进行了合并，<tt class="docutils literal">0,0,0ms,11</tt> 表示方法调用耗时，<tt class="docutils literal">min,max,total,count</tt>；<tt class="docutils literal">throws Exception</tt> 表明该方法调用中存在异常返回</li>
-<li>这里存在一个统计不准确的问题，就是所有方法耗时加起来可能会小于该监测方法的总耗时，这个是由于 Arthas 本身的逻辑会有一定的耗时</li>
+<li><p>是不是很眼熟，没错，在 JProfiler 等收费软件中你曾经见识类似的功能，这里你将可以通过命令就能打印出指定调用路径。 友情提醒下，<code class="docutils literal notranslate"><span class="pre">trace</span></code> 在执行的过程中本身是会有一定的性能开销，在统计的报告中并未像 JProfiler 一样预先减去其自身的统计开销。所以这统计出来有些许的不准，渲染路径上调用的类、方法越多，性能偏差越大。但还是能让你看清一些事情的。</p></li>
+<li><p>[12.033735ms] 的含义，<code class="docutils literal notranslate"><span class="pre">12.033735</span></code> 的含义是：当前节点在当前步骤的耗时，单位为毫秒</p></li>
+<li><p>[0,0,0ms,11]xxx:yyy() [throws Exception]，对该方法中相同的方法调用进行了合并，<code class="docutils literal notranslate"><span class="pre">0,0,0ms,11</span></code> 表示方法调用耗时，<code class="docutils literal notranslate"><span class="pre">min,max,total,count</span></code>；<code class="docutils literal notranslate"><span class="pre">throws</span> <span class="pre">Exception</span></code> 表明该方法调用中存在异常返回</p></li>
+<li><p>这里存在一个统计不准确的问题，就是所有方法耗时加起来可能会小于该监测方法的总耗时，这个是由于 Arthas 本身的逻辑会有一定的耗时</p></li>
 </ul>
 </div>
-<div class="section" id="trace">
-<span id="id6"></span><h3>trace多个类或者多个函数<a class="headerlink" href="#trace" title="永久链接至标题">¶</a></h3>
+<div class="section" id="id6">
+<h3>trace多个类或者多个函数<a class="headerlink" href="#id6" title="永久链接至标题">¶</a></h3>
 <p>trace命令只会trace匹配到的函数里的子调用，并不会向下trace多层。因为trace是代价比较贵的，多层trace可能会导致最终要trace的类和函数非常多。</p>
 <p>可以用正则表匹配路径上的多个类和函数，一定程度上达到多层trace的效果。</p>
-<div class="highlight-bash notranslate"><div class="highlight hljs"><pre class="bash">trace -E com.test.ClassA|org.test.ClassB method1|method2|method3
-</pre></div>
+<div class="highlight-bash notranslate"><div class="highlight hljs"><pre class="bash">trace -E com.test.ClassA|org.test.ClassB method1|method2|method3</pre></div>
 </div>
 </div>
 </div>
@@ -341,7 +348,7 @@ Affect(class-cnt:1 , method-cnt:1) cost in 41 ms.
         <a href="stack.html" class="btn btn-neutral float-right" title="stack" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
-        <a href="watch.html" class="btn btn-neutral" title="watch" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+        <a href="watch.html" class="btn btn-neutral float-left" title="watch" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
       
     </div>
   
@@ -350,7 +357,7 @@ Affect(class-cnt:1 , method-cnt:1) cost in 41 ms.
 
   <div role="contentinfo">
     <p>
-        &copy; Copyright 2018-2019, Alibaba Middleware Group, and contributors.
+        &copy; Copyright 2018-2019, Alibaba Middleware Group, and contributors
 
     </p>
   </div>
@@ -367,34 +374,16 @@ Affect(class-cnt:1 , method-cnt:1) cost in 41 ms.
   
 
 
-  
-
-    <script type="text/javascript">
-        var DOCUMENTATION_OPTIONS = {
-            URL_ROOT:'./',
-            VERSION:'3.1.1',
-            LANGUAGE:'zh_CN',
-            COLLAPSE_INDEX:false,
-            FILE_SUFFIX:'.html',
-            HAS_SOURCE:  true,
-            SOURCELINK_SUFFIX: '.txt'
-        };
-    </script>
-      <script type="text/javascript" src="_static/jquery.js"></script>
-      <script type="text/javascript" src="_static/underscore.js"></script>
-      <script type="text/javascript" src="_static/doctools.js"></script>
-      <script type="text/javascript" src="_static/translations.js"></script>
-      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
-
-  
-
-  <script type="text/javascript" src="_static/js/theme.js"></script>
-
   <script type="text/javascript">
       jQuery(function () {
           SphinxRtdTheme.Navigation.enable(true);
       });
   </script>
+
+  
+  
+    
+  
 <div class="github-fork-ribbon-wrapper right">
   <div class="github-fork-ribbon">
     <a href="https://github.com/alibaba/arthas" target="_blank">Fork me at GitHub</a>

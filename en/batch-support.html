@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Batch Processing &mdash; Arthas 3.1.1 documentation</title>
+  <title>Batch Processing &mdash; Arthas 3.1.2 documentation</title>
   
 
   
@@ -19,13 +19,20 @@
   
 
   
+  <script type="text/javascript" src="_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script type="text/javascript" src="_static/jquery.js"></script>
+        <script type="text/javascript" src="_static/underscore.js"></script>
+        <script type="text/javascript" src="_static/doctools.js"></script>
+        <script type="text/javascript" src="_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
 
-  
-  
     
 
   
-
   <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
   <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <link rel="stylesheet" href="_static/overrides.css" type="text/css" />
@@ -37,21 +44,16 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.13.1/styles/github.min.css">
  
 
-
-  
-  <script src="_static/js/modernizr.min.js"></script>
-
 </head>
 
 <body class="wy-body-for-nav">
 
    
   <div class="wy-grid-for-nav">
-
     
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
-        <div class="wy-side-nav-search">
+        <div class="wy-side-nav-search" >
           
 
           
@@ -65,7 +67,7 @@
             
             
               <div class="version">
-                3.1.1
+                3.1.2
               </div>
             
           
@@ -92,6 +94,7 @@
               <ul class="current">
 <li class="toctree-l1"><a class="reference external" href="https://alibaba.github.io/arthas/arthas-tutorials?language=en">Online tutorials(Recommend)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="install-detail.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="download.html">Download</a></li>
 <li class="toctree-l1"><a class="reference internal" href="quick-start.html">Quick start</a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="advanced-use.html">Advanced usage</a><ul class="current">
 <li class="toctree-l2"><a class="reference internal" href="advanced-use.html#basic">Basic</a></li>
@@ -115,12 +118,13 @@
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="commands.html">Commands</a></li>
+<li class="toctree-l1"><a class="reference internal" href="web-console.html">WebConsole</a></li>
 <li class="toctree-l1"><a class="reference internal" href="docker.html">Docker</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas/issues?q=label%3Auser-case">User cases</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas/issues?q=label%3Aquestion-answered">Questions and answers</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas">Fork me at GitHub</a></li>
-<li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas/blob/master/CONTRIBUTING.md">CONTRIBUTING</a></li>
-<li class="toctree-l1"><a class="reference internal" href="release-notes.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas/blob/master/CONTRIBUTING">Compile and debug/CONTRIBUTING</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas/releases">Release Notes</a></li>
 </ul>
 
             
@@ -190,40 +194,37 @@
            <div itemprop="articleBody">
             
   <div class="section" id="batch-processing">
-<span id="batch-processing"></span><h1>Batch Processing<a class="headerlink" href="#batch-processing" title="Permalink to this headline">¶</a></h1>
+<h1>Batch Processing<a class="headerlink" href="#batch-processing" title="Permalink to this headline">¶</a></h1>
 <p>With the help of Batch Processing, you can run multiple commands in batch and get the final result at the end.</p>
 <div class="section" id="usage">
-<span id="usage"></span><h2>Usage<a class="headerlink" href="#usage" title="Permalink to this headline">¶</a></h2>
+<h2>Usage<a class="headerlink" href="#usage" title="Permalink to this headline">¶</a></h2>
 <div class="section" id="step-1-create-the-script">
-<span id="step-1-create-the-script"></span><h3>Step 1: Create the script<a class="headerlink" href="#step-1-create-the-script" title="Permalink to this headline">¶</a></h3>
-<p>Create a <tt class="docutils literal">test.as</tt> script suffixed with <tt class="docutils literal">as</tt>. Here <tt class="docutils literal">as</tt> is suggested for the suffix of the filename, but in fact any suffix is acceptable.</p>
+<h3>Step 1: Create the script<a class="headerlink" href="#step-1-create-the-script" title="Permalink to this headline">¶</a></h3>
+<p>Create a <code class="docutils literal notranslate"><span class="pre">test.as</span></code> script suffixed with <code class="docutils literal notranslate"><span class="pre">as</span></code>. Here <code class="docutils literal notranslate"><span class="pre">as</span></code> is suggested for the suffix of the filename, but in fact any suffix is acceptable.</p>
 <div class="highlight-bash notranslate"><div class="highlight hljs"><pre class="bash">➜  arthas git:(develop) cat /var/tmp/test.as
 help
 dashboard -b -n 1
 session
 thread
-sc -d org.apache.commons.lang.StringUtils
-</pre></div>
+sc -d org.apache.commons.lang.StringUtils</pre></div>
 </div>
 <p>Note:</p>
 <ul class="simple">
-<li>Each command takes one line.</li>
-<li>Batch mode (via <tt class="docutils literal">-b</tt>) and execution times (via <tt class="docutils literal">-n</tt>) must be explicitly specified for <tt class="docutils literal">dashboard</tt>, otherwise batch script cannot terminate.</li>
-<li>Commands such as <tt class="docutils literal">watch</tt>/<tt class="docutils literal">tt</tt>/<tt class="docutils literal">trace</tt>/<tt class="docutils literal">monitor</tt>/<tt class="docutils literal">stack</tt> should include <tt class="docutils literal">-n</tt> option to ensure the script can be able to quit.</li>
-<li>Also consider to use <tt class="docutils literal">async</tt> (for example: <tt class="docutils literal">watch c.t.X test returnObj > &</tt>) to put commands run at background and get the output from the log file, see more from <a class="reference internal" href="async.html"><span class="doc">asynchronous job</span></a></li>
+<li><p>Each command takes one line.</p></li>
+<li><p>Batch mode (via <code class="docutils literal notranslate"><span class="pre">-b</span></code>) and execution times (via <code class="docutils literal notranslate"><span class="pre">-n</span></code>) must be explicitly specified for <code class="docutils literal notranslate"><span class="pre">dashboard</span></code>, otherwise batch script cannot terminate.</p></li>
+<li><p>Commands such as <code class="docutils literal notranslate"><span class="pre">watch</span></code>/<code class="docutils literal notranslate"><span class="pre">tt</span></code>/<code class="docutils literal notranslate"><span class="pre">trace</span></code>/<code class="docutils literal notranslate"><span class="pre">monitor</span></code>/<code class="docutils literal notranslate"><span class="pre">stack</span></code> should include <code class="docutils literal notranslate"><span class="pre">-n</span></code> option to ensure the script can be able to quit.</p></li>
+<li><p>Also consider to use <code class="docutils literal notranslate"><span class="pre">async</span></code> (for example: <code class="docutils literal notranslate"><span class="pre">watch</span> <span class="pre">c.t.X</span> <span class="pre">test</span> <span class="pre">returnObj</span> <span class="pre">&gt;</span> <span class="pre">&amp;</span></code>) to put commands run at background and get the output from the log file, see more from <a class="reference internal" href="async.html"><span class="doc">asynchronous job</span></a></p></li>
 </ul>
 </div>
 <div class="section" id="step-2-run-the-script">
-<span id="step-2-run-the-script"></span><h3>Step 2: Run the script<a class="headerlink" href="#step-2-run-the-script" title="Permalink to this headline">¶</a></h3>
-<p>Use <tt class="docutils literal">-b</tt> to turn on batch mode, and use <tt class="docutils literal">-f</tt> to specify the script file. By default the result will be output to the standard output, but you can redirect the output to the file like this:</p>
-<div class="highlight-bash notranslate"><div class="highlight hljs"><pre class="bash">./as.sh -b -f /var/tmp/test.as 56328 &gt; test.out
-</pre></div>
+<h3>Step 2: Run the script<a class="headerlink" href="#step-2-run-the-script" title="Permalink to this headline">¶</a></h3>
+<p>Use <code class="docutils literal notranslate"><span class="pre">-b</span></code> to turn on batch mode, and use <code class="docutils literal notranslate"><span class="pre">-f</span></code> to specify the script file. By default the result will be output to the standard output, but you can redirect the output to the file like this:</p>
+<div class="highlight-bash notranslate"><div class="highlight hljs"><pre class="bash">./as.sh -b -f /var/tmp/test.as 56328 &gt; test.out</pre></div>
 </div>
 </div>
 <div class="section" id="step-3-check-the-outputs">
-<span id="step-3-check-the-outputs"></span><h3>Step 3: Check the outputs<a class="headerlink" href="#step-3-check-the-outputs" title="Permalink to this headline">¶</a></h3>
-<div class="highlight-bash notranslate"><div class="highlight hljs"><pre class="bash">cat test.out
-</pre></div>
+<h3>Step 3: Check the outputs<a class="headerlink" href="#step-3-check-the-outputs" title="Permalink to this headline">¶</a></h3>
+<div class="highlight-bash notranslate"><div class="highlight hljs"><pre class="bash">cat test.out</pre></div>
 </div>
 </div>
 </div>
@@ -240,7 +241,7 @@ sc -d org.apache.commons.lang.StringUtils
         <a href="commands.html" class="btn btn-neutral float-right" title="All Commands" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
-        <a href="save-log.html" class="btn btn-neutral" title="Log command outputs" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+        <a href="save-log.html" class="btn btn-neutral float-left" title="Log command outputs" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
       
     </div>
   
@@ -249,7 +250,7 @@ sc -d org.apache.commons.lang.StringUtils
 
   <div role="contentinfo">
     <p>
-        &copy; Copyright 2018-2019, Alibaba Middleware Group, and contributors.
+        &copy; Copyright 2018-2019, Alibaba Middleware Group, and contributors
 
     </p>
   </div>
@@ -266,33 +267,16 @@ sc -d org.apache.commons.lang.StringUtils
   
 
 
-  
-
-    <script type="text/javascript">
-        var DOCUMENTATION_OPTIONS = {
-            URL_ROOT:'./',
-            VERSION:'3.1.1',
-            LANGUAGE:'en',
-            COLLAPSE_INDEX:false,
-            FILE_SUFFIX:'.html',
-            HAS_SOURCE:  true,
-            SOURCELINK_SUFFIX: '.txt'
-        };
-    </script>
-      <script type="text/javascript" src="_static/jquery.js"></script>
-      <script type="text/javascript" src="_static/underscore.js"></script>
-      <script type="text/javascript" src="_static/doctools.js"></script>
-      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
-
-  
-
-  <script type="text/javascript" src="_static/js/theme.js"></script>
-
   <script type="text/javascript">
       jQuery(function () {
           SphinxRtdTheme.Navigation.enable(true);
       });
   </script>
+
+  
+  
+    
+  
 <div class="github-fork-ribbon-wrapper right">
   <div class="github-fork-ribbon">
     <a href="https://github.com/alibaba/arthas" target="_blank">Fork me at GitHub</a>

@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Arthas 用户文档 &mdash; Arthas 3.1.1 文档</title>
+  <title>Arthas 用户文档 &mdash; Arthas 3.1.2 文档</title>
   
 
   
@@ -19,13 +19,21 @@
   
 
   
+  <script type="text/javascript" src="_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script type="text/javascript" src="_static/jquery.js"></script>
+        <script type="text/javascript" src="_static/underscore.js"></script>
+        <script type="text/javascript" src="_static/doctools.js"></script>
+        <script type="text/javascript" src="_static/language_data.js"></script>
+        <script type="text/javascript" src="_static/translations.js"></script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
 
-  
-  
     
 
   
-
   <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
   <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <link rel="stylesheet" href="_static/overrides.css" type="text/css" />
@@ -36,21 +44,16 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.13.1/styles/github.min.css">
  
 
-
-  
-  <script src="_static/js/modernizr.min.js"></script>
-
 </head>
 
 <body class="wy-body-for-nav">
 
    
   <div class="wy-grid-for-nav">
-
     
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
-        <div class="wy-side-nav-search">
+        <div class="wy-side-nav-search" >
           
 
           
@@ -64,7 +67,7 @@
             
             
               <div class="version">
-                3.1.1
+                3.1.2
               </div>
             
           
@@ -92,15 +95,17 @@
 <li class="toctree-l1"><a class="reference external" href="https://alibaba.github.io/arthas/en/">English Docs</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://alibaba.github.io/arthas/arthas-tutorials?language=cn">在线教程(推荐)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="install-detail.html">安装</a></li>
+<li class="toctree-l1"><a class="reference internal" href="download.html">下载</a></li>
 <li class="toctree-l1"><a class="reference internal" href="quick-start.html">快速入门</a></li>
 <li class="toctree-l1"><a class="reference internal" href="advanced-use.html">进阶使用</a></li>
 <li class="toctree-l1"><a class="reference internal" href="commands.html">命令列表</a></li>
+<li class="toctree-l1"><a class="reference internal" href="web-console.html">WebConsole</a></li>
 <li class="toctree-l1"><a class="reference internal" href="docker.html">Docker</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas/issues?q=label%3Auser-case">用户案例</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas/issues?q=label%3Aquestion-answered">常见问题</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas">Fork me at GitHub</a></li>
-<li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas/blob/master/CONTRIBUTING.md">参与贡献</a></li>
-<li class="toctree-l1"><a class="reference internal" href="release-notes.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas/blob/master/CONTRIBUTING">编译调试/参与贡献</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas/releases">Release Notes</a></li>
 <li class="toctree-l1"><a class="reference internal" href="contact-us.html">QQ群/钉钉群</a></li>
 </ul>
 
@@ -169,40 +174,42 @@
            <div itemprop="articleBody">
             
   <div class="section" id="arthas">
-<span id="arthas"></span><h1>Arthas 用户文档<a class="headerlink" href="#arthas" title="永久链接至标题">¶</a></h1>
+<h1>Arthas 用户文档<a class="headerlink" href="#arthas" title="永久链接至标题">¶</a></h1>
 <p><strong><a class="reference external" href="https://alibaba.github.io/arthas/en/">English Docs</a></strong></p>
-<div class="section" id="arthas">
-<span id="id1"></span><h2>Arthas（阿尔萨斯） 能为你做什么？<a class="headerlink" href="#arthas" title="永久链接至标题">¶</a></h2>
-<p><img alt="arthas" src="_images/arthas.png" /></p>
-<p><tt class="docutils literal">Arthas</tt> 是Alibaba开源的Java诊断工具，深受开发者喜爱。</p>
-<p>当你遇到以下类似问题而束手无策时，<tt class="docutils literal">Arthas</tt>可以帮助你解决：</p>
+<div class="section" id="id1">
+<h2>Arthas（阿尔萨斯） 能为你做什么？<a class="headerlink" href="#id1" title="永久链接至标题">¶</a></h2>
+<p><img alt="_images/arthas.png" src="_images/arthas.png" /></p>
+<p><code class="docutils literal notranslate"><span class="pre">Arthas</span></code> 是Alibaba开源的Java诊断工具，深受开发者喜爱。</p>
+<p>当你遇到以下类似问题而束手无策时，<code class="docutils literal notranslate"><span class="pre">Arthas</span></code>可以帮助你解决：</p>
 <ol class="simple">
-<li>这个类从哪个 jar 包加载的？为什么会报各种类相关的 Exception？</li>
-<li>我改的代码为什么没有执行到？难道是我没 commit？分支搞错了？</li>
-<li>遇到问题无法在线上 debug，难道只能通过加日志再重新发布吗？</li>
-<li>线上遇到某个用户的数据处理有问题，但线上同样无法 debug，线下无法重现！</li>
-<li>是否有一个全局视角来查看系统的运行状况？</li>
-<li>有什么办法可以监控到JVM的实时运行状态？</li>
+<li><p>这个类从哪个 jar 包加载的？为什么会报各种类相关的 Exception？</p></li>
+<li><p>我改的代码为什么没有执行到？难道是我没 commit？分支搞错了？</p></li>
+<li><p>遇到问题无法在线上 debug，难道只能通过加日志再重新发布吗？</p></li>
+<li><p>线上遇到某个用户的数据处理有问题，但线上同样无法 debug，线下无法重现！</p></li>
+<li><p>是否有一个全局视角来查看系统的运行状况？</p></li>
+<li><p>有什么办法可以监控到JVM的实时运行状态？</p></li>
 </ol>
-<p><tt class="docutils literal">Arthas</tt>支持JDK 6+，支持Linux/Mac/Winodws，采用命令行交互模式，同时提供丰富的 <tt class="docutils literal">Tab</tt> 自动补全功能，进一步方便进行问题的定位和诊断。</p>
+<p><code class="docutils literal notranslate"><span class="pre">Arthas</span></code>支持JDK 6+，支持Linux/Mac/Winodws，采用命令行交互模式，同时提供丰富的 <code class="docutils literal notranslate"><span class="pre">Tab</span></code> 自动补全功能，进一步方便进行问题的定位和诊断。</p>
 <p><strong>如果您在使用Arthas，请让我们知道，您的使用对我们非常重要：<a class="reference external" href="https://github.com/alibaba/arthas/issues/111">查看</a></strong></p>
 </div>
 <div class="section" id="contents">
-<span id="contents"></span><h2>Contents<a class="headerlink" href="#contents" title="永久链接至标题">¶</a></h2>
+<h2>Contents<a class="headerlink" href="#contents" title="永久链接至标题">¶</a></h2>
 <div class="toctree-wrapper compound">
 <ul>
 <li class="toctree-l1"><a class="reference external" href="https://alibaba.github.io/arthas/en/">English Docs</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://alibaba.github.io/arthas/arthas-tutorials?language=cn">在线教程(推荐)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="install-detail.html">安装</a></li>
+<li class="toctree-l1"><a class="reference internal" href="download.html">下载</a></li>
 <li class="toctree-l1"><a class="reference internal" href="quick-start.html">快速入门</a></li>
 <li class="toctree-l1"><a class="reference internal" href="advanced-use.html">进阶使用</a></li>
 <li class="toctree-l1"><a class="reference internal" href="commands.html">命令列表</a></li>
+<li class="toctree-l1"><a class="reference internal" href="web-console.html">WebConsole</a></li>
 <li class="toctree-l1"><a class="reference internal" href="docker.html">Docker</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas/issues?q=label%3Auser-case">用户案例</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas/issues?q=label%3Aquestion-answered">常见问题</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas">Fork me at GitHub</a></li>
-<li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas/blob/master/CONTRIBUTING.md">参与贡献</a></li>
-<li class="toctree-l1"><a class="reference internal" href="release-notes.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas/blob/master/CONTRIBUTING">编译调试/参与贡献</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas/releases">Release Notes</a></li>
 <li class="toctree-l1"><a class="reference internal" href="contact-us.html">QQ群/钉钉群</a></li>
 </ul>
 </div>
@@ -227,7 +234,7 @@
 
   <div role="contentinfo">
     <p>
-        &copy; Copyright 2018-2019, Alibaba Middleware Group, and contributors.
+        &copy; Copyright 2018-2019, Alibaba Middleware Group, and contributors
 
     </p>
   </div>
@@ -244,34 +251,16 @@
   
 
 
-  
-
-    <script type="text/javascript">
-        var DOCUMENTATION_OPTIONS = {
-            URL_ROOT:'./',
-            VERSION:'3.1.1',
-            LANGUAGE:'zh_CN',
-            COLLAPSE_INDEX:false,
-            FILE_SUFFIX:'.html',
-            HAS_SOURCE:  true,
-            SOURCELINK_SUFFIX: '.txt'
-        };
-    </script>
-      <script type="text/javascript" src="_static/jquery.js"></script>
-      <script type="text/javascript" src="_static/underscore.js"></script>
-      <script type="text/javascript" src="_static/doctools.js"></script>
-      <script type="text/javascript" src="_static/translations.js"></script>
-      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
-
-  
-
-  <script type="text/javascript" src="_static/js/theme.js"></script>
-
   <script type="text/javascript">
       jQuery(function () {
           SphinxRtdTheme.Navigation.enable(true);
       });
   </script>
+
+  
+  
+    
+  
 <div class="github-fork-ribbon-wrapper right">
   <div class="github-fork-ribbon">
     <a href="https://github.com/alibaba/arthas" target="_blank">Fork me at GitHub</a>

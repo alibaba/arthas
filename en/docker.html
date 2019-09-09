@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Docker &mdash; Arthas 3.1.1 documentation</title>
+  <title>Docker &mdash; Arthas 3.1.2 documentation</title>
   
 
   
@@ -19,27 +19,29 @@
   
 
   
+  <script type="text/javascript" src="_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script type="text/javascript" src="_static/jquery.js"></script>
+        <script type="text/javascript" src="_static/underscore.js"></script>
+        <script type="text/javascript" src="_static/doctools.js"></script>
+        <script type="text/javascript" src="_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
 
-  
-  
     
 
   
-
   <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
   <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <link rel="stylesheet" href="_static/overrides.css" type="text/css" />
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="Release Notes" href="release-notes.html" />
     <link rel="prev" title="options" href="options.html" />
 <script src="_static/center_page.js"></script>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.13.1/styles/github.min.css">
  
-
-
-  
-  <script src="_static/js/modernizr.min.js"></script>
 
 </head>
 
@@ -47,11 +49,10 @@
 
    
   <div class="wy-grid-for-nav">
-
     
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
-        <div class="wy-side-nav-search">
+        <div class="wy-side-nav-search" >
           
 
           
@@ -65,7 +66,7 @@
             
             
               <div class="version">
-                3.1.1
+                3.1.2
               </div>
             
           
@@ -92,9 +93,11 @@
               <ul class="current">
 <li class="toctree-l1"><a class="reference external" href="https://alibaba.github.io/arthas/arthas-tutorials?language=en">Online tutorials(Recommend)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="install-detail.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="download.html">Download</a></li>
 <li class="toctree-l1"><a class="reference internal" href="quick-start.html">Quick start</a></li>
 <li class="toctree-l1"><a class="reference internal" href="advanced-use.html">Advanced usage</a></li>
 <li class="toctree-l1"><a class="reference internal" href="commands.html">Commands</a></li>
+<li class="toctree-l1"><a class="reference internal" href="web-console.html">WebConsole</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Docker</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#quick-start-with-docker">Quick start with Docker</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#diagnose-the-java-process-in-docker">Diagnose the Java process in Docker</a></li>
@@ -105,8 +108,8 @@
 <li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas/issues?q=label%3Auser-case">User cases</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas/issues?q=label%3Aquestion-answered">Questions and answers</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas">Fork me at GitHub</a></li>
-<li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas/blob/master/CONTRIBUTING.md">CONTRIBUTING</a></li>
-<li class="toctree-l1"><a class="reference internal" href="release-notes.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas/blob/master/CONTRIBUTING">Compile and debug/CONTRIBUTING</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas/releases">Release Notes</a></li>
 </ul>
 
             
@@ -174,21 +177,19 @@
            <div itemprop="articleBody">
             
   <div class="section" id="docker">
-<span id="docker"></span><h1>Docker<a class="headerlink" href="#docker" title="Permalink to this headline">¶</a></h1>
+<h1>Docker<a class="headerlink" href="#docker" title="Permalink to this headline">¶</a></h1>
 <div class="section" id="quick-start-with-docker">
-<span id="quick-start-with-docker"></span><h2>Quick start with Docker<a class="headerlink" href="#quick-start-with-docker" title="Permalink to this headline">¶</a></h2>
+<h2>Quick start with Docker<a class="headerlink" href="#quick-start-with-docker" title="Permalink to this headline">¶</a></h2>
 <ol>
-<li><p class="first">Delete the existing <tt class="docutils literal">arthas-demo</tt> docker container (not necessary)</p>
-<div class="highlight-sh notranslate"><div class="highlight hljs"><pre class="sh">$ docker stop arthas-demo || true &amp;&amp; docker rm arthas-demo || true
-</pre></div>
+<li><p>Delete the existing <code class="docutils literal notranslate"><span class="pre">arthas-demo</span></code> docker container (not necessary)</p>
+<div class="highlight-sh notranslate"><div class="highlight hljs"><pre class="sh">$ docker stop arthas-demo || true &amp;&amp; docker rm arthas-demo || true</pre></div>
 </div>
 </li>
-<li><p class="first">Start <tt class="docutils literal">arthas-demo</tt></p>
-<div class="highlight-sh notranslate"><div class="highlight hljs"><pre class="sh">$ docker run --name arthas-demo -it hengyunabc/arthas:latest /bin/sh -c &quot;java -jar /opt/arthas/arthas-demo.jar&quot;
-</pre></div>
+<li><p>Start <code class="docutils literal notranslate"><span class="pre">arthas-demo</span></code></p>
+<div class="highlight-sh notranslate"><div class="highlight hljs"><pre class="sh">$ docker run --name arthas-demo -it hengyunabc/arthas:latest /bin/sh -c &quot;java -jar /opt/arthas/arthas-demo.jar&quot;</pre></div>
 </div>
 </li>
-<li><p class="first">Start <tt class="docutils literal">arthas-boot</tt> for diagnosis</p>
+<li><p>Start <code class="docutils literal notranslate"><span class="pre">arthas-boot</span></code> for diagnosis</p>
 <div class="highlight-sh notranslate"><div class="highlight hljs"><pre class="sh">$ docker exec -it arthas-demo /bin/sh -c &quot;java -jar /opt/arthas/arthas-boot.jar&quot;
 * [1]: 9 jar
 
@@ -205,26 +206,23 @@
 wiki: https://alibaba.github.io/arthas
 version: 3.0.5
 pid: 9
-time: 2018-12-18 11:30:36
-</pre></div>
+time: 2018-12-18 11:30:36</pre></div>
 </div>
 </li>
 </ol>
 </div>
 <div class="section" id="diagnose-the-java-process-in-docker">
-<span id="diagnose-the-java-process-in-docker"></span><h2>Diagnose the Java process in Docker<a class="headerlink" href="#diagnose-the-java-process-in-docker" title="Permalink to this headline">¶</a></h2>
-<div class="highlight-sh notranslate"><div class="highlight hljs"><pre class="sh">docker exec -it  ${containerId} /bin/bash -c &quot;wget https://alibaba.github.io/arthas/arthas-boot.jar &amp;&amp; java -jar arthas-boot.jar&quot;
-</pre></div>
+<h2>Diagnose the Java process in Docker<a class="headerlink" href="#diagnose-the-java-process-in-docker" title="Permalink to this headline">¶</a></h2>
+<div class="highlight-sh notranslate"><div class="highlight hljs"><pre class="sh">docker exec -it  ${containerId} /bin/bash -c &quot;wget https://alibaba.github.io/arthas/arthas-boot.jar &amp;&amp; java -jar arthas-boot.jar&quot;</pre></div>
 </div>
 </div>
 <div class="section" id="diagnose-the-java-process-in-the-container-in-k8s">
-<span id="diagnose-the-java-process-in-the-container-in-k8s"></span><h2>Diagnose the Java process in the container in k8s<a class="headerlink" href="#diagnose-the-java-process-in-the-container-in-k8s" title="Permalink to this headline">¶</a></h2>
-<div class="highlight-sh notranslate"><div class="highlight hljs"><pre class="sh">kubectl exec -it ${pod} --container ${containerId} -- /bin/bash -c &quot;wget https://alibaba.github.io/arthas/arthas-boot.jar &amp;&amp; java -jar arthas-boot.jar&quot;
-</pre></div>
+<h2>Diagnose the Java process in the container in k8s<a class="headerlink" href="#diagnose-the-java-process-in-the-container-in-k8s" title="Permalink to this headline">¶</a></h2>
+<div class="highlight-sh notranslate"><div class="highlight hljs"><pre class="sh">kubectl exec -it ${pod} --container ${containerId} -- /bin/bash -c &quot;wget https://alibaba.github.io/arthas/arthas-boot.jar &amp;&amp; java -jar arthas-boot.jar&quot;</pre></div>
 </div>
 </div>
 <div class="section" id="install-arthas-into-the-base-docker-image">
-<span id="install-arthas-into-the-base-docker-image"></span><h2>Install Arthas into the base Docker image<a class="headerlink" href="#install-arthas-into-the-base-docker-image" title="Permalink to this headline">¶</a></h2>
+<h2>Install Arthas into the base Docker image<a class="headerlink" href="#install-arthas-into-the-base-docker-image" title="Permalink to this headline">¶</a></h2>
 <p>It’s easy to install Arthas into your Docker image.</p>
 <div class="highlight-default notranslate"><pre class="literal-block">FROM openjdk:8-jdk-alpine
 
@@ -244,10 +242,8 @@ COPY --from=hengyunabc/arthas:latest /opt/arthas /opt/arthas</pre>
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="release-notes.html" class="btn btn-neutral float-right" title="Release Notes" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
       
-      
-        <a href="options.html" class="btn btn-neutral" title="options" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+        <a href="options.html" class="btn btn-neutral float-left" title="options" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
       
     </div>
   
@@ -256,7 +252,7 @@ COPY --from=hengyunabc/arthas:latest /opt/arthas /opt/arthas</pre>
 
   <div role="contentinfo">
     <p>
-        &copy; Copyright 2018-2019, Alibaba Middleware Group, and contributors.
+        &copy; Copyright 2018-2019, Alibaba Middleware Group, and contributors
 
     </p>
   </div>
@@ -273,33 +269,16 @@ COPY --from=hengyunabc/arthas:latest /opt/arthas /opt/arthas</pre>
   
 
 
-  
-
-    <script type="text/javascript">
-        var DOCUMENTATION_OPTIONS = {
-            URL_ROOT:'./',
-            VERSION:'3.1.1',
-            LANGUAGE:'en',
-            COLLAPSE_INDEX:false,
-            FILE_SUFFIX:'.html',
-            HAS_SOURCE:  true,
-            SOURCELINK_SUFFIX: '.txt'
-        };
-    </script>
-      <script type="text/javascript" src="_static/jquery.js"></script>
-      <script type="text/javascript" src="_static/underscore.js"></script>
-      <script type="text/javascript" src="_static/doctools.js"></script>
-      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
-
-  
-
-  <script type="text/javascript" src="_static/js/theme.js"></script>
-
   <script type="text/javascript">
       jQuery(function () {
           SphinxRtdTheme.Navigation.enable(true);
       });
   </script>
+
+  
+  
+    
+  
 <div class="github-fork-ribbon-wrapper right">
   <div class="github-fork-ribbon">
     <a href="https://github.com/alibaba/arthas" target="_blank">Fork me at GitHub</a>

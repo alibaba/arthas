@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>dashboard &mdash; Arthas 3.1.1 文档</title>
+  <title>dashboard &mdash; Arthas 3.1.2 文档</title>
   
 
   
@@ -19,13 +19,21 @@
   
 
   
+  <script type="text/javascript" src="_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script type="text/javascript" src="_static/jquery.js"></script>
+        <script type="text/javascript" src="_static/underscore.js"></script>
+        <script type="text/javascript" src="_static/doctools.js"></script>
+        <script type="text/javascript" src="_static/language_data.js"></script>
+        <script type="text/javascript" src="_static/translations.js"></script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
 
-  
-  
     
 
   
-
   <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
   <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <link rel="stylesheet" href="_static/overrides.css" type="text/css" />
@@ -37,21 +45,16 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.13.1/styles/github.min.css">
  
 
-
-  
-  <script src="_static/js/modernizr.min.js"></script>
-
 </head>
 
 <body class="wy-body-for-nav">
 
    
   <div class="wy-grid-for-nav">
-
     
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
-        <div class="wy-side-nav-search">
+        <div class="wy-side-nav-search" >
           
 
           
@@ -65,7 +68,7 @@
             
             
               <div class="version">
-                3.1.1
+                3.1.2
               </div>
             
           
@@ -93,25 +96,29 @@
 <li class="toctree-l1"><a class="reference external" href="https://alibaba.github.io/arthas/en/">English Docs</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://alibaba.github.io/arthas/arthas-tutorials?language=cn">在线教程(推荐)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="install-detail.html">安装</a></li>
+<li class="toctree-l1"><a class="reference internal" href="download.html">下载</a></li>
 <li class="toctree-l1"><a class="reference internal" href="quick-start.html">快速入门</a></li>
 <li class="toctree-l1"><a class="reference internal" href="advanced-use.html">进阶使用</a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="commands.html">命令列表</a><ul class="current">
 <li class="toctree-l2 current"><a class="current reference internal" href="#">dashboard</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#">使用参考</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#">数据说明</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#">截图展示</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id1">使用参考</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id2">数据说明</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id3">截图展示</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="thread.html">thread</a></li>
 <li class="toctree-l2"><a class="reference internal" href="jvm.html">jvm</a></li>
 <li class="toctree-l2"><a class="reference internal" href="sysprop.html">sysprop</a></li>
 <li class="toctree-l2"><a class="reference internal" href="sysenv.html">sysenv</a></li>
+<li class="toctree-l2"><a class="reference internal" href="vmoption.html">vmoption</a></li>
+<li class="toctree-l2"><a class="reference internal" href="logger.html">logger</a></li>
 <li class="toctree-l2"><a class="reference internal" href="mbean.html">mbean</a></li>
 <li class="toctree-l2"><a class="reference internal" href="getstatic.html">getstatic</a></li>
 <li class="toctree-l2"><a class="reference internal" href="ognl.html">ognl</a></li>
 <li class="toctree-l2"><a class="reference internal" href="sc.html">sc</a></li>
 <li class="toctree-l2"><a class="reference internal" href="sm.html">sm</a></li>
 <li class="toctree-l2"><a class="reference internal" href="dump.html">dump</a></li>
+<li class="toctree-l2"><a class="reference internal" href="heapdump.html">heapdump</a></li>
 <li class="toctree-l2"><a class="reference internal" href="jad.html">jad</a></li>
 <li class="toctree-l2"><a class="reference internal" href="classloader.html">classloader</a></li>
 <li class="toctree-l2"><a class="reference internal" href="mc.html">mc</a></li>
@@ -127,12 +134,13 @@
 <li class="toctree-l2"><a class="reference internal" href="commands.html#arthas">Arthas 基础命令</a></li>
 </ul>
 </li>
+<li class="toctree-l1"><a class="reference internal" href="web-console.html">WebConsole</a></li>
 <li class="toctree-l1"><a class="reference internal" href="docker.html">Docker</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas/issues?q=label%3Auser-case">用户案例</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas/issues?q=label%3Aquestion-answered">常见问题</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas">Fork me at GitHub</a></li>
-<li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas/blob/master/CONTRIBUTING.md">参与贡献</a></li>
-<li class="toctree-l1"><a class="reference internal" href="release-notes.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas/blob/master/CONTRIBUTING">编译调试/参与贡献</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas/releases">Release Notes</a></li>
 <li class="toctree-l1"><a class="reference internal" href="contact-us.html">QQ群/钉钉群</a></li>
 </ul>
 
@@ -203,12 +211,13 @@
            <div itemprop="articleBody">
             
   <div class="section" id="dashboard">
-<span id="dashboard"></span><h1>dashboard<a class="headerlink" href="#dashboard" title="永久链接至标题">¶</a></h1>
+<h1>dashboard<a class="headerlink" href="#dashboard" title="永久链接至标题">¶</a></h1>
 <blockquote>
-<div>当前系统的实时数据面板，按 ctrl+c 退出。</div></blockquote>
+<div><p>当前系统的实时数据面板，按 ctrl+c 退出。</p>
+</div></blockquote>
 <p>当运行在Ali-tomcat时，会显示当前tomcat的实时信息，如HTTP请求的qps, rt, 错误数, 线程池信息等等。</p>
-<div class="section" id="">
-<span id="id1"></span><h2>使用参考<a class="headerlink" href="#" title="永久链接至标题">¶</a></h2>
+<div class="section" id="id1">
+<h2>使用参考<a class="headerlink" href="#id1" title="永久链接至标题">¶</a></h2>
 <div class="highlight-default notranslate"><pre class="literal-block">$ dashboard
 ID         NAME                              GROUP                  PRIORITY   STATE       %CPU       TIME       INTERRUPTED DAEMON
 889        RMI TCP Connection(15)-30.10.166. RMI Runtime            9          RUNNABLE    48         0:5        false       true
@@ -245,23 +254,23 @@ processors                        4                                 threadpool  
 uptime                            16020s                            busy                              0</pre>
 </div>
 </div>
-<div class="section" id="">
-<span id="id2"></span><h2>数据说明<a class="headerlink" href="#" title="永久链接至标题">¶</a></h2>
+<div class="section" id="id2">
+<h2>数据说明<a class="headerlink" href="#id2" title="永久链接至标题">¶</a></h2>
 <ul class="simple">
-<li>ID: Java级别的线程ID，注意这个ID不能跟jstack中的nativeID一一对应</li>
-<li>NAME: 线程名</li>
-<li>GROUP: 线程组名</li>
-<li>PRIORITY: 线程优先级, 1~10之间的数字，越大表示优先级越高</li>
-<li>STATE: 线程的状态</li>
-<li>CPU%: 线程消耗的cpu占比，采样100ms，将所有线程在这100ms内的cpu使用量求和，再算出每个线程的cpu使用占比。</li>
-<li>TIME: 线程运行总时间，数据格式为<tt class="docutils literal">分：秒</tt></li>
-<li>INTERRUPTED: 线程当前的中断位状态</li>
-<li>DAEMON: 是否是daemon线程</li>
+<li><p>ID: Java级别的线程ID，注意这个ID不能跟jstack中的nativeID一一对应</p></li>
+<li><p>NAME: 线程名</p></li>
+<li><p>GROUP: 线程组名</p></li>
+<li><p>PRIORITY: 线程优先级, 1~10之间的数字，越大表示优先级越高</p></li>
+<li><p>STATE: 线程的状态</p></li>
+<li><p>CPU%: 线程消耗的cpu占比，采样100ms，将所有线程在这100ms内的cpu使用量求和，再算出每个线程的cpu使用占比。</p></li>
+<li><p>TIME: 线程运行总时间，数据格式为<code class="docutils literal notranslate"><span class="pre">分：秒</span></code></p></li>
+<li><p>INTERRUPTED: 线程当前的中断位状态</p></li>
+<li><p>DAEMON: 是否是daemon线程</p></li>
 </ul>
 </div>
-<div class="section" id="">
-<span id="id3"></span><h2>截图展示<a class="headerlink" href="#" title="永久链接至标题">¶</a></h2>
-<p><img alt="alt text" src="_images/dashboard.png" /></p>
+<div class="section" id="id3">
+<h2>截图展示<a class="headerlink" href="#id3" title="永久链接至标题">¶</a></h2>
+<p><img alt="dashboard" src="_images/dashboard.png" /></p>
 </div>
 </div>
 
@@ -276,7 +285,7 @@ uptime                            16020s                            busy        
         <a href="thread.html" class="btn btn-neutral float-right" title="thread" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
-        <a href="commands.html" class="btn btn-neutral" title="命令列表" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+        <a href="commands.html" class="btn btn-neutral float-left" title="命令列表" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
       
     </div>
   
@@ -285,7 +294,7 @@ uptime                            16020s                            busy        
 
   <div role="contentinfo">
     <p>
-        &copy; Copyright 2018-2019, Alibaba Middleware Group, and contributors.
+        &copy; Copyright 2018-2019, Alibaba Middleware Group, and contributors
 
     </p>
   </div>
@@ -302,34 +311,16 @@ uptime                            16020s                            busy        
   
 
 
-  
-
-    <script type="text/javascript">
-        var DOCUMENTATION_OPTIONS = {
-            URL_ROOT:'./',
-            VERSION:'3.1.1',
-            LANGUAGE:'zh_CN',
-            COLLAPSE_INDEX:false,
-            FILE_SUFFIX:'.html',
-            HAS_SOURCE:  true,
-            SOURCELINK_SUFFIX: '.txt'
-        };
-    </script>
-      <script type="text/javascript" src="_static/jquery.js"></script>
-      <script type="text/javascript" src="_static/underscore.js"></script>
-      <script type="text/javascript" src="_static/doctools.js"></script>
-      <script type="text/javascript" src="_static/translations.js"></script>
-      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
-
-  
-
-  <script type="text/javascript" src="_static/js/theme.js"></script>
-
   <script type="text/javascript">
       jQuery(function () {
           SphinxRtdTheme.Navigation.enable(true);
       });
   </script>
+
+  
+  
+    
+  
 <div class="github-fork-ribbon-wrapper right">
   <div class="github-fork-ribbon">
     <a href="https://github.com/alibaba/arthas" target="_blank">Fork me at GitHub</a>

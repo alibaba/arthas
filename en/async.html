@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Arthas Async Jobs &mdash; Arthas 3.1.1 documentation</title>
+  <title>Arthas Async Jobs &mdash; Arthas 3.1.2 documentation</title>
   
 
   
@@ -19,13 +19,20 @@
   
 
   
+  <script type="text/javascript" src="_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script type="text/javascript" src="_static/jquery.js"></script>
+        <script type="text/javascript" src="_static/underscore.js"></script>
+        <script type="text/javascript" src="_static/doctools.js"></script>
+        <script type="text/javascript" src="_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
 
-  
-  
     
 
   
-
   <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
   <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <link rel="stylesheet" href="_static/overrides.css" type="text/css" />
@@ -37,21 +44,16 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.13.1/styles/github.min.css">
  
 
-
-  
-  <script src="_static/js/modernizr.min.js"></script>
-
 </head>
 
 <body class="wy-body-for-nav">
 
    
   <div class="wy-grid-for-nav">
-
     
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
-        <div class="wy-side-nav-search">
+        <div class="wy-side-nav-search" >
           
 
           
@@ -65,7 +67,7 @@
             
             
               <div class="version">
-                3.1.1
+                3.1.2
               </div>
             
           
@@ -92,6 +94,7 @@
               <ul class="current">
 <li class="toctree-l1"><a class="reference external" href="https://alibaba.github.io/arthas/arthas-tutorials?language=en">Online tutorials(Recommend)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="install-detail.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="download.html">Download</a></li>
 <li class="toctree-l1"><a class="reference internal" href="quick-start.html">Quick start</a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="advanced-use.html">Advanced usage</a><ul class="current">
 <li class="toctree-l2"><a class="reference internal" href="advanced-use.html#basic">Basic</a></li>
@@ -121,12 +124,13 @@
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="commands.html">Commands</a></li>
+<li class="toctree-l1"><a class="reference internal" href="web-console.html">WebConsole</a></li>
 <li class="toctree-l1"><a class="reference internal" href="docker.html">Docker</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas/issues?q=label%3Auser-case">User cases</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas/issues?q=label%3Aquestion-answered">Questions and answers</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas">Fork me at GitHub</a></li>
-<li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas/blob/master/CONTRIBUTING.md">CONTRIBUTING</a></li>
-<li class="toctree-l1"><a class="reference internal" href="release-notes.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas/blob/master/CONTRIBUTING">Compile and debug/CONTRIBUTING</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas/releases">Release Notes</a></li>
 </ul>
 
             
@@ -196,77 +200,73 @@
            <div itemprop="articleBody">
             
   <div class="section" id="arthas-async-jobs">
-<span id="arthas-async-jobs"></span><h1>Arthas Async Jobs<a class="headerlink" href="#arthas-async-jobs" title="Permalink to this headline">¶</a></h1>
+<h1>Arthas Async Jobs<a class="headerlink" href="#arthas-async-jobs" title="Permalink to this headline">¶</a></h1>
 <p>Asynchronous jobs in arthas. The idea is borrowed from <a class="reference external" href="http://man7.org/linux/man-pages/man1/jobs.1p.html">linux jobs</a>.</p>
 <div class="section" id="use-to-run-the-command-in-the-background">
-<span id="use-to-run-the-command-in-the-background"></span><h2>1. Use &amp; to run the command in the background<a class="headerlink" href="#use-to-run-the-command-in-the-background" title="Permalink to this headline">¶</a></h2>
+<h2>1. Use &amp; to run the command in the background<a class="headerlink" href="#use-to-run-the-command-in-the-background" title="Permalink to this headline">¶</a></h2>
 <p>For example, execute the trace command in the background:</p>
-<div class="highlight-bash notranslate"><div class="highlight hljs"><pre class="bash">trace Test t &amp;  
-</pre></div>
+<div class="highlight-bash notranslate"><div class="highlight hljs"><pre class="bash">trace Test t &amp;  </pre></div>
 </div>
 <p>By doing this, the current command is put to the background to run,  you can continue to execute other commands in the console.</p>
 </div>
 <div class="section" id="list-background-jobs">
-<span id="list-background-jobs"></span><h2>2. List background jobs<a class="headerlink" href="#list-background-jobs" title="Permalink to this headline">¶</a></h2>
-<p>If you want to list all background jobs, you can execute the <tt class="docutils literal">jobs</tt> command and the results are as follows:</p>
+<h2>2. List background jobs<a class="headerlink" href="#list-background-jobs" title="Permalink to this headline">¶</a></h2>
+<p>If you want to list all background jobs, you can execute the <code class="docutils literal notranslate"><span class="pre">jobs</span></code> command and the results are as follows:</p>
 <div class="highlight-bash notranslate"><div class="highlight hljs"><pre class="bash">$ jobs
 [10]*
        Stopped           watch com.taobao.container.Test test &quot;params[0].{? #this.name == null }&quot; -x 2
        execution count : 19
        start time      : Fri Sep 22 09:59:55 CST 2017
        timeout date    : Sat Sep 23 09:59:55 CST 2017
-       session         : 3648e874-5e69-473f-9eed-7f89660b079b (current)
-</pre></div>
+       session         : 3648e874-5e69-473f-9eed-7f89660b079b (current)</pre></div>
 </div>
 <p>You can see that there is currently a background job executing:</p>
 <ul class="simple">
-<li>job id is 10, <tt class="docutils literal">*</tt> indicates that this job is created by the current session.</li>
-<li>status is <tt class="docutils literal">Stopped</tt></li>
-<li>execution count is the number of executions, which have been executed 19 times since the start.</li>
-<li>timeout date: timeout timestamp, when the time exceeds this timestamp, the job will be automatically timeout and exit.</li>
+<li><p>job id is 10, <code class="docutils literal notranslate"><span class="pre">*</span></code> indicates that this job is created by the current session.</p></li>
+<li><p>status is <code class="docutils literal notranslate"><span class="pre">Stopped</span></code></p></li>
+<li><p>execution count is the number of executions, which have been executed 19 times since the start.</p></li>
+<li><p>timeout date: timeout timestamp, when the time exceeds this timestamp, the job will be automatically timeout and exit.</p></li>
 </ul>
 </div>
 <div class="section" id="suspend-and-cancel-job">
-<span id="suspend-and-cancel-job"></span><h2>3. Suspend and cancel job<a class="headerlink" href="#suspend-and-cancel-job" title="Permalink to this headline">¶</a></h2>
-<p>When the job is executing in the foreground, for example, directly executing the command <tt class="docutils literal">trace Test t</tt>, or executing the background job command <tt class="docutils literal">trace Test t &</tt>, then putting the job back to the foreground via <tt class="docutils literal">fg</tt> command, the console cannot continue to execute other command, but can receive and process the following keyboard events:</p>
+<h2>3. Suspend and cancel job<a class="headerlink" href="#suspend-and-cancel-job" title="Permalink to this headline">¶</a></h2>
+<p>When the job is executing in the foreground, for example, directly executing the command <code class="docutils literal notranslate"><span class="pre">trace</span> <span class="pre">Test</span> <span class="pre">t</span></code>, or executing the background job command <code class="docutils literal notranslate"><span class="pre">trace</span> <span class="pre">Test</span> <span class="pre">t</span> <span class="pre">&amp;</span></code>, then putting the job back to the foreground via <code class="docutils literal notranslate"><span class="pre">fg</span></code> command, the console cannot continue to execute other command, but can receive and process the following keyboard events:</p>
 <ul class="simple">
-<li>‘ctrl + z’: Suspend the job, the job status will change to <tt class="docutils literal">Stopped</tt>, and the job can be restarted by <tt class="docutils literal">bg <job-id></tt> or <tt class="docutils literal">fg <job-id></tt></li>
-<li>‘ctrl + c’: Stop the job</li>
-<li>‘ctrl + d’: According to linux semantics this should lead to exit the terminal, right now Arthas has not implemented this yet, therefore simply ignore this keystroke.</li>
+<li><p>‘ctrl + z’: Suspend the job, the job status will change to <code class="docutils literal notranslate"><span class="pre">Stopped</span></code>, and the job can be restarted by <code class="docutils literal notranslate"><span class="pre">bg</span> <span class="pre">&lt;job-id&gt;</span></code> or <code class="docutils literal notranslate"><span class="pre">fg</span> <span class="pre">&lt;job-id&gt;</span></code></p></li>
+<li><p>‘ctrl + c’: Stop the job</p></li>
+<li><p>‘ctrl + d’: According to linux semantics this should lead to exit the terminal, right now Arthas has not implemented this yet, therefore simply ignore this keystroke.</p></li>
 </ul>
 </div>
 <div class="section" id="fg-bg-switch-the-job-from-the-foreground-to-the-background-and-vise-verse">
-<span id="fg-bg-switch-the-job-from-the-foreground-to-the-background-and-vise-verse"></span><h2>4. fg/bg, switch the job from the foreground to the background, and vise verse<a class="headerlink" href="#fg-bg-switch-the-job-from-the-foreground-to-the-background-and-vise-verse" title="Permalink to this headline">¶</a></h2>
+<h2>4. fg/bg, switch the job from the foreground to the background, and vise verse<a class="headerlink" href="#fg-bg-switch-the-job-from-the-foreground-to-the-background-and-vise-verse" title="Permalink to this headline">¶</a></h2>
 <ul class="simple">
-<li>When a job is executed in the background or in suspended status (use <tt class="docutils literal">ctrl + z</tt> to suspend job), <tt class="docutils literal">fg <job-id></tt> can transfer the job to the foreground to continue to run.</li>
-<li>When a job is in suspended status (use <tt class="docutils literal">ctrl + z</tt> to suspend job), <tt class="docutils literal">bg <job-id></tt> can put the job to the background to continue to run.</li>
-<li>A job created by other session can only be put to the foreground to run by using <tt class="docutils literal">fg</tt> in the current session.</li>
+<li><p>When a job is executed in the background or in suspended status (use <code class="docutils literal notranslate"><span class="pre">ctrl</span> <span class="pre">+</span> <span class="pre">z</span></code> to suspend job), <code class="docutils literal notranslate"><span class="pre">fg</span> <span class="pre">&lt;job-id&gt;</span></code> can transfer the job to the foreground to continue to run.</p></li>
+<li><p>When a job is in suspended status (use <code class="docutils literal notranslate"><span class="pre">ctrl</span> <span class="pre">+</span> <span class="pre">z</span></code> to suspend job), <code class="docutils literal notranslate"><span class="pre">bg</span> <span class="pre">&lt;job-id&gt;</span></code> can put the job to the background to continue to run.</p></li>
+<li><p>A job created by other session can only be put to the foreground to run by using <code class="docutils literal notranslate"><span class="pre">fg</span></code> in the current session.</p></li>
 </ul>
 </div>
 <div class="section" id="redirect-the-output">
-<span id="redirect-the-output"></span><h2>5. Redirect the output<a class="headerlink" href="#redirect-the-output" title="Permalink to this headline">¶</a></h2>
-<p>The job output can be redirect to the specified file by <tt class="docutils literal">></tt> or <tt class="docutils literal">>></tt>, and can be used together with <tt class="docutils literal">&</tt>. By doing this, you can achieve running commands asynchronously, for example:</p>
-<div class="highlight-bash notranslate"><div class="highlight hljs"><pre class="bash">$ trace Test t &gt;&gt; test.out &amp;
-</pre></div>
+<h2>5. Redirect the output<a class="headerlink" href="#redirect-the-output" title="Permalink to this headline">¶</a></h2>
+<p>The job output can be redirect to the specified file by <code class="docutils literal notranslate"><span class="pre">&gt;</span></code> or <code class="docutils literal notranslate"><span class="pre">&gt;&gt;</span></code>, and can be used together with <code class="docutils literal notranslate"><span class="pre">&amp;</span></code>. By doing this, you can achieve running commands asynchronously, for example:</p>
+<div class="highlight-bash notranslate"><div class="highlight hljs"><pre class="bash">$ trace Test t &gt;&gt; test.out &amp;</pre></div>
 </div>
-<p>The trace command will be running in the background and the output will be redirect to <tt class="docutils literal">~/logs/arthas-cache/test.out</tt>. You can continue to execute other commands in the console, at the same time, you can also examine the execution result from the output file.</p>
+<p>The trace command will be running in the background and the output will be redirect to <code class="docutils literal notranslate"><span class="pre">~/logs/arthas-cache/test.out</span></code>. You can continue to execute other commands in the console, at the same time, you can also examine the execution result from the output file.</p>
 <p>When connect to a remote Arthas server, you may not be able to view the output file on the remote machine. In this case, Arthas also supports automatically redirecting the output to the local cache file. Examples are as follows:</p>
 <div class="highlight-bash notranslate"><div class="highlight hljs"><pre class="bash">$ trace Test t &gt;&gt;  &amp;
 job id  : 2
-cache location  : /Users/gehui/logs/arthas-cache/28198/2
-</pre></div>
+cache location  : /Users/gehui/logs/arthas-cache/28198/2</pre></div>
 </div>
-<p>If output path is not given, Arthas will automatically redirect the output to the local cache. Job id and cache location will be shown on the console. Cache location is a directory where the output files are put. For one given job, the path of its output file contains PID and job id in order to avoid potential conflict with other jobs. In the above example, pid is <tt class="docutils literal">28198</tt> and job id is <tt class="docutils literal">2</tt>.</p>
+<p>If output path is not given, Arthas will automatically redirect the output to the local cache. Job id and cache location will be shown on the console. Cache location is a directory where the output files are put. For one given job, the path of its output file contains PID and job id in order to avoid potential conflict with other jobs. In the above example, pid is <code class="docutils literal notranslate"><span class="pre">28198</span></code> and job id is <code class="docutils literal notranslate"><span class="pre">2</span></code>.</p>
 </div>
 <div class="section" id="stop-job">
-<span id="stop-job"></span><h2>6. Stop job<a class="headerlink" href="#stop-job" title="Permalink to this headline">¶</a></h2>
-<p>If you want to stop background job, just <tt class="docutils literal">kill <job-id></tt>.</p>
+<h2>6. Stop job<a class="headerlink" href="#stop-job" title="Permalink to this headline">¶</a></h2>
+<p>If you want to stop background job, just <code class="docutils literal notranslate"><span class="pre">kill</span> <span class="pre">&lt;job-id&gt;</span></code>.</p>
 </div>
 <div class="section" id="others">
-<span id="others"></span><h2>7. Others<a class="headerlink" href="#others" title="Permalink to this headline">¶</a></h2>
+<h2>7. Others<a class="headerlink" href="#others" title="Permalink to this headline">¶</a></h2>
 <ul class="simple">
-<li>Support up to 8 commands at the same time to redirect the output to the log files.</li>
-<li>Do not open too many background jobs at the same time to avoid negative performance effect to the target JVM.</li>
+<li><p>Support up to 8 commands at the same time to redirect the output to the log files.</p></li>
+<li><p>Do not open too many background jobs at the same time to avoid negative performance effect to the target JVM.</p></li>
 </ul>
 </div>
 </div>
@@ -282,7 +282,7 @@ cache location  : /Users/gehui/logs/arthas-cache/28198/2
         <a href="save-log.html" class="btn btn-neutral float-right" title="Log command outputs" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
-        <a href="web-console.html" class="btn btn-neutral" title="Web Console" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+        <a href="web-console.html" class="btn btn-neutral float-left" title="Web Console" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
       
     </div>
   
@@ -291,7 +291,7 @@ cache location  : /Users/gehui/logs/arthas-cache/28198/2
 
   <div role="contentinfo">
     <p>
-        &copy; Copyright 2018-2019, Alibaba Middleware Group, and contributors.
+        &copy; Copyright 2018-2019, Alibaba Middleware Group, and contributors
 
     </p>
   </div>
@@ -308,33 +308,16 @@ cache location  : /Users/gehui/logs/arthas-cache/28198/2
   
 
 
-  
-
-    <script type="text/javascript">
-        var DOCUMENTATION_OPTIONS = {
-            URL_ROOT:'./',
-            VERSION:'3.1.1',
-            LANGUAGE:'en',
-            COLLAPSE_INDEX:false,
-            FILE_SUFFIX:'.html',
-            HAS_SOURCE:  true,
-            SOURCELINK_SUFFIX: '.txt'
-        };
-    </script>
-      <script type="text/javascript" src="_static/jquery.js"></script>
-      <script type="text/javascript" src="_static/underscore.js"></script>
-      <script type="text/javascript" src="_static/doctools.js"></script>
-      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
-
-  
-
-  <script type="text/javascript" src="_static/js/theme.js"></script>
-
   <script type="text/javascript">
       jQuery(function () {
           SphinxRtdTheme.Navigation.enable(true);
       });
   </script>
+
+  
+  
+    
+  
 <div class="github-fork-ribbon-wrapper right">
   <div class="github-fork-ribbon">
     <a href="https://github.com/alibaba/arthas" target="_blank">Fork me at GitHub</a>

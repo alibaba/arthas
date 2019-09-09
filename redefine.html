@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>redefine &mdash; Arthas 3.1.1 文档</title>
+  <title>redefine &mdash; Arthas 3.1.2 文档</title>
   
 
   
@@ -19,13 +19,21 @@
   
 
   
+  <script type="text/javascript" src="_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script type="text/javascript" src="_static/jquery.js"></script>
+        <script type="text/javascript" src="_static/underscore.js"></script>
+        <script type="text/javascript" src="_static/doctools.js"></script>
+        <script type="text/javascript" src="_static/language_data.js"></script>
+        <script type="text/javascript" src="_static/translations.js"></script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
 
-  
-  
     
 
   
-
   <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
   <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <link rel="stylesheet" href="_static/overrides.css" type="text/css" />
@@ -37,21 +45,16 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.13.1/styles/github.min.css">
  
 
-
-  
-  <script src="_static/js/modernizr.min.js"></script>
-
 </head>
 
 <body class="wy-body-for-nav">
 
    
   <div class="wy-grid-for-nav">
-
     
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
-        <div class="wy-side-nav-search">
+        <div class="wy-side-nav-search" >
           
 
           
@@ -65,7 +68,7 @@
             
             
               <div class="version">
-                3.1.1
+                3.1.2
               </div>
             
           
@@ -93,6 +96,7 @@
 <li class="toctree-l1"><a class="reference external" href="https://alibaba.github.io/arthas/en/">English Docs</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://alibaba.github.io/arthas/arthas-tutorials?language=cn">在线教程(推荐)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="install-detail.html">安装</a></li>
+<li class="toctree-l1"><a class="reference internal" href="download.html">下载</a></li>
 <li class="toctree-l1"><a class="reference internal" href="quick-start.html">快速入门</a></li>
 <li class="toctree-l1"><a class="reference internal" href="advanced-use.html">进阶使用</a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="commands.html">命令列表</a><ul class="current">
@@ -101,21 +105,24 @@
 <li class="toctree-l2"><a class="reference internal" href="jvm.html">jvm</a></li>
 <li class="toctree-l2"><a class="reference internal" href="sysprop.html">sysprop</a></li>
 <li class="toctree-l2"><a class="reference internal" href="sysenv.html">sysenv</a></li>
+<li class="toctree-l2"><a class="reference internal" href="vmoption.html">vmoption</a></li>
+<li class="toctree-l2"><a class="reference internal" href="logger.html">logger</a></li>
 <li class="toctree-l2"><a class="reference internal" href="mbean.html">mbean</a></li>
 <li class="toctree-l2"><a class="reference internal" href="getstatic.html">getstatic</a></li>
 <li class="toctree-l2"><a class="reference internal" href="ognl.html">ognl</a></li>
 <li class="toctree-l2"><a class="reference internal" href="sc.html">sc</a></li>
 <li class="toctree-l2"><a class="reference internal" href="sm.html">sm</a></li>
 <li class="toctree-l2"><a class="reference internal" href="dump.html">dump</a></li>
+<li class="toctree-l2"><a class="reference internal" href="heapdump.html">heapdump</a></li>
 <li class="toctree-l2"><a class="reference internal" href="jad.html">jad</a></li>
 <li class="toctree-l2"><a class="reference internal" href="classloader.html">classloader</a></li>
 <li class="toctree-l2"><a class="reference internal" href="mc.html">mc</a></li>
 <li class="toctree-l2 current"><a class="current reference internal" href="#">redefine</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#">参数说明</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#">使用参考</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id1">参数说明</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id2">使用参考</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#jad-mc">结合 jad/mc 命令使用</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#class">上传 .class 文件到服务器的技巧</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#redefine">redefine的限制</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id3">redefine的限制</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="monitor.html">monitor</a></li>
@@ -129,12 +136,13 @@
 <li class="toctree-l2"><a class="reference internal" href="commands.html#arthas">Arthas 基础命令</a></li>
 </ul>
 </li>
+<li class="toctree-l1"><a class="reference internal" href="web-console.html">WebConsole</a></li>
 <li class="toctree-l1"><a class="reference internal" href="docker.html">Docker</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas/issues?q=label%3Auser-case">用户案例</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas/issues?q=label%3Aquestion-answered">常见问题</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas">Fork me at GitHub</a></li>
-<li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas/blob/master/CONTRIBUTING.md">参与贡献</a></li>
-<li class="toctree-l1"><a class="reference internal" href="release-notes.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas/blob/master/CONTRIBUTING">编译调试/参与贡献</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas/releases">Release Notes</a></li>
 <li class="toctree-l1"><a class="reference internal" href="contact-us.html">QQ群/钉钉群</a></li>
 </ul>
 
@@ -205,14 +213,16 @@
            <div itemprop="articleBody">
             
   <div class="section" id="redefine">
-<span id="redefine"></span><h1>redefine<a class="headerlink" href="#redefine" title="永久链接至标题">¶</a></h1>
+<h1>redefine<a class="headerlink" href="#redefine" title="永久链接至标题">¶</a></h1>
 <blockquote>
-<div>加载外部的<tt class="docutils literal">.class</tt>文件，redefine jvm已加载的类。</div></blockquote>
+<div><p>加载外部的<code class="docutils literal notranslate"><span class="pre">.class</span></code>文件，redefine jvm已加载的类。</p>
+</div></blockquote>
 <p>参考：<a class="reference external" href="https://docs.oracle.com/javase/8/docs/api/java/lang/instrument/Instrumentation.html#redefineClasses-java.lang.instrument.ClassDefinition...-">Instrumentation#redefineClasses</a></p>
 <blockquote>
-<div>注意， redefine后的原来的类不能恢复，redefine有可能失败（比如增加了新的field），参考jdk本身的文档。</div></blockquote>
-<div class="section" id="">
-<span id="id1"></span><h2>参数说明<a class="headerlink" href="#" title="永久链接至标题">¶</a></h2>
+<div><p>注意， redefine后的原来的类不能恢复，redefine有可能失败（比如增加了新的field），参考jdk本身的文档。</p>
+</div></blockquote>
+<div class="section" id="id1">
+<h2>参数说明<a class="headerlink" href="#id1" title="永久链接至标题">¶</a></h2>
 <table border="1" class="docutils">
 <thead>
 <tr>
@@ -231,53 +241,47 @@
 </tr>
 </tbody>
 </table></div>
-<div class="section" id="">
-<span id="id2"></span><h2>使用参考<a class="headerlink" href="#" title="永久链接至标题">¶</a></h2>
+<div class="section" id="id2">
+<h2>使用参考<a class="headerlink" href="#id2" title="永久链接至标题">¶</a></h2>
 <div class="highlight-bash notranslate"><div class="highlight hljs"><pre class="bash">   redefine /tmp/Test.class
-   redefine -c 327a647b /tmp/Test.class /tmp/Test\$Inner.class
-</pre></div>
+   redefine -c 327a647b /tmp/Test.class /tmp/Test\$Inner.class</pre></div>
 </div>
 </div>
 <div class="section" id="jad-mc">
-<span id="jad-mc"></span><h2>结合 jad/mc 命令使用<a class="headerlink" href="#jad-mc" title="永久链接至标题">¶</a></h2>
+<h2>结合 jad/mc 命令使用<a class="headerlink" href="#jad-mc" title="永久链接至标题">¶</a></h2>
 <div class="highlight-bash notranslate"><div class="highlight hljs"><pre class="bash">jad --source-only com.example.demo.arthas.user.UserController &gt; /tmp/UserController.java
 
 mc /tmp/UserController.java -d /tmp
 
-redefine /tmp/com/example/demo/arthas/user/UserController.class
-</pre></div>
+redefine /tmp/com/example/demo/arthas/user/UserController.class</pre></div>
 </div>
 <ul class="simple">
-<li>jad命令反编译，然后可以用其它编译器，比如vim来修改源码</li>
-<li>mc命令来内存编译修改过的代码</li>
-<li>用redefine命令加载新的字节码</li>
+<li><p>jad命令反编译，然后可以用其它编译器，比如vim来修改源码</p></li>
+<li><p>mc命令来内存编译修改过的代码</p></li>
+<li><p>用redefine命令加载新的字节码</p></li>
 </ul>
 </div>
 <div class="section" id="class">
-<span id="class"></span><h2>上传 .class 文件到服务器的技巧<a class="headerlink" href="#class" title="永久链接至标题">¶</a></h2>
-<p>使用<tt class="docutils literal">mc</tt>命令来编译<tt class="docutils literal">jad</tt>的反编译的代码有可能失败。可以在本地修改代码，编译好后再上传到服务器上。有的服务器不允许直接上传文件，可以使用<tt class="docutils literal">base64</tt>命令来绕过。</p>
+<h2>上传 .class 文件到服务器的技巧<a class="headerlink" href="#class" title="永久链接至标题">¶</a></h2>
+<p>使用<code class="docutils literal notranslate"><span class="pre">mc</span></code>命令来编译<code class="docutils literal notranslate"><span class="pre">jad</span></code>的反编译的代码有可能失败。可以在本地修改代码，编译好后再上传到服务器上。有的服务器不允许直接上传文件，可以使用<code class="docutils literal notranslate"><span class="pre">base64</span></code>命令来绕过。</p>
 <ol>
-<li><p class="first">在本地先转换<tt class="docutils literal">.class</tt>文件为base64，再保存为result.txt</p>
-<div class="highlight-bash notranslate"><div class="highlight hljs"><pre class="bash">base64 &lt; Test.class &gt; result.txt
-</pre></div>
+<li><p>在本地先转换<code class="docutils literal notranslate"><span class="pre">.class</span></code>文件为base64，再保存为result.txt</p>
+<div class="highlight-bash notranslate"><div class="highlight hljs"><pre class="bash">base64 &lt; Test.class &gt; result.txt</pre></div>
 </div>
 </li>
-<li><p class="first">到服务器上，新建并编辑<tt class="docutils literal">result.txt</tt>，复制本地的内容，粘贴再保存</p>
-</li>
-<li><p class="first">把服务器上的 <tt class="docutils literal">result.txt</tt>还原为<tt class="docutils literal">.class</tt></p>
+<li><p>到服务器上，新建并编辑<code class="docutils literal notranslate"><span class="pre">result.txt</span></code>，复制本地的内容，粘贴再保存</p></li>
+<li><p>把服务器上的 <code class="docutils literal notranslate"><span class="pre">result.txt</span></code>还原为<code class="docutils literal notranslate"><span class="pre">.class</span></code></p>
 <div class="highlight-default notranslate"><pre class="literal-block">base64 -d &lt; result.txt &gt; Test.class</pre>
 </div>
 </li>
-<li><p class="first">用md5命令计算哈希值，校验是否一致</p>
-</li>
+<li><p>用md5命令计算哈希值，校验是否一致</p></li>
 </ol>
 </div>
-<div class="section" id="redefine">
-<span id="id3"></span><h2>redefine的限制<a class="headerlink" href="#redefine" title="永久链接至标题">¶</a></h2>
+<div class="section" id="id3">
+<h2>redefine的限制<a class="headerlink" href="#id3" title="永久链接至标题">¶</a></h2>
 <ul>
-<li><p class="first">不允许新增加field/method</p>
-</li>
-<li><p class="first">正在跑的函数，没有退出不能生效，比如下面新增加的<tt class="docutils literal">System.out.println</tt>，只有<tt class="docutils literal">run()</tt>函数里的会生效</p>
+<li><p>不允许新增加field/method</p></li>
+<li><p>正在跑的函数，没有退出不能生效，比如下面新增加的<code class="docutils literal notranslate"><span class="pre">System.out.println</span></code>，只有<code class="docutils literal notranslate"><span class="pre">run()</span></code>函数里的会生效</p>
 <div class="highlight-java notranslate"><div class="highlight hljs"><pre class="java">public class MathGame {
     public static void main(String[] args) throws InterruptedException {
         MathGame game = new MathGame();
@@ -300,8 +304,7 @@ redefine /tmp/com/example/demo/arthas/user/UserController.class
         } catch (Exception e) {
             System.out.println(String.format(&quot;illegalArgumentCount:%3d, &quot;, illegalArgumentCount) + e.getMessage());
         }
-    }
-</pre></div>
+    }</pre></div>
 </div>
 </li>
 </ul>
@@ -321,7 +324,7 @@ redefine /tmp/com/example/demo/arthas/user/UserController.class
         <a href="monitor.html" class="btn btn-neutral float-right" title="monitor" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
-        <a href="mc.html" class="btn btn-neutral" title="mc" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+        <a href="mc.html" class="btn btn-neutral float-left" title="mc" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
       
     </div>
   
@@ -330,7 +333,7 @@ redefine /tmp/com/example/demo/arthas/user/UserController.class
 
   <div role="contentinfo">
     <p>
-        &copy; Copyright 2018-2019, Alibaba Middleware Group, and contributors.
+        &copy; Copyright 2018-2019, Alibaba Middleware Group, and contributors
 
     </p>
   </div>
@@ -347,34 +350,16 @@ redefine /tmp/com/example/demo/arthas/user/UserController.class
   
 
 
-  
-
-    <script type="text/javascript">
-        var DOCUMENTATION_OPTIONS = {
-            URL_ROOT:'./',
-            VERSION:'3.1.1',
-            LANGUAGE:'zh_CN',
-            COLLAPSE_INDEX:false,
-            FILE_SUFFIX:'.html',
-            HAS_SOURCE:  true,
-            SOURCELINK_SUFFIX: '.txt'
-        };
-    </script>
-      <script type="text/javascript" src="_static/jquery.js"></script>
-      <script type="text/javascript" src="_static/underscore.js"></script>
-      <script type="text/javascript" src="_static/doctools.js"></script>
-      <script type="text/javascript" src="_static/translations.js"></script>
-      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
-
-  
-
-  <script type="text/javascript" src="_static/js/theme.js"></script>
-
   <script type="text/javascript">
       jQuery(function () {
           SphinxRtdTheme.Navigation.enable(true);
       });
   </script>
+
+  
+  
+    
+  
 <div class="github-fork-ribbon-wrapper right">
   <div class="github-fork-ribbon">
     <a href="https://github.com/alibaba/arthas" target="_blank">Fork me at GitHub</a>

@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Arthas Console Keymap &mdash; Arthas 3.1.1 documentation</title>
+  <title>Arthas Console Keymap &mdash; Arthas 3.1.2 documentation</title>
   
 
   
@@ -19,13 +19,20 @@
   
 
   
+  <script type="text/javascript" src="_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script type="text/javascript" src="_static/jquery.js"></script>
+        <script type="text/javascript" src="_static/underscore.js"></script>
+        <script type="text/javascript" src="_static/doctools.js"></script>
+        <script type="text/javascript" src="_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
 
-  
-  
     
 
   
-
   <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
   <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <link rel="stylesheet" href="_static/overrides.css" type="text/css" />
@@ -35,21 +42,16 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.13.1/styles/github.min.css">
  
 
-
-  
-  <script src="_static/js/modernizr.min.js"></script>
-
 </head>
 
 <body class="wy-body-for-nav">
 
    
   <div class="wy-grid-for-nav">
-
     
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
-        <div class="wy-side-nav-search">
+        <div class="wy-side-nav-search" >
           
 
           
@@ -63,7 +65,7 @@
             
             
               <div class="version">
-                3.1.1
+                3.1.2
               </div>
             
           
@@ -90,15 +92,17 @@
               <ul>
 <li class="toctree-l1"><a class="reference external" href="https://alibaba.github.io/arthas/arthas-tutorials?language=en">Online tutorials(Recommend)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="install-detail.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="download.html">Download</a></li>
 <li class="toctree-l1"><a class="reference internal" href="quick-start.html">Quick start</a></li>
 <li class="toctree-l1"><a class="reference internal" href="advanced-use.html">Advanced usage</a></li>
 <li class="toctree-l1"><a class="reference internal" href="commands.html">Commands</a></li>
+<li class="toctree-l1"><a class="reference internal" href="web-console.html">WebConsole</a></li>
 <li class="toctree-l1"><a class="reference internal" href="docker.html">Docker</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas/issues?q=label%3Auser-case">User cases</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas/issues?q=label%3Aquestion-answered">Questions and answers</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas">Fork me at GitHub</a></li>
-<li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas/blob/master/CONTRIBUTING.md">CONTRIBUTING</a></li>
-<li class="toctree-l1"><a class="reference internal" href="release-notes.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas/blob/master/CONTRIBUTING">Compile and debug/CONTRIBUTING</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas/releases">Release Notes</a></li>
 </ul>
 
             
@@ -166,8 +170,8 @@
            <div itemprop="articleBody">
             
   <div class="section" id="arthas-console-keymap">
-<span id="arthas-console-keymap"></span><h1>Arthas Console Keymap<a class="headerlink" href="#arthas-console-keymap" title="Permalink to this headline">¶</a></h1>
-<p>Use <tt class="docutils literal">keymap</tt> command to print the current keymap:</p>
+<h1>Arthas Console Keymap<a class="headerlink" href="#arthas-console-keymap" title="Permalink to this headline">¶</a></h1>
+<p>Use <code class="docutils literal notranslate"><span class="pre">keymap</span></code> command to print the current keymap:</p>
 <p>The default keymap is:</p>
 <table border="1" class="docutils">
 <thead>
@@ -295,13 +299,13 @@
 </tr>
 </tbody>
 </table><ul class="simple">
-<li>Press <tt class="docutils literal">tab</tt> to enable auto-completion prompt at any time.</li>
-<li>Enter command and <tt class="docutils literal">-</tt> or <tt class="docutils literal">--</tt>, then press <tt class="docutils literal">tab</tt> to display the concrete options for the current command.</li>
+<li><p>Press <code class="docutils literal notranslate"><span class="pre">tab</span></code> to enable auto-completion prompt at any time.</p></li>
+<li><p>Enter command and <code class="docutils literal notranslate"><span class="pre">-</span></code> or <code class="docutils literal notranslate"><span class="pre">--</span></code>, then press <code class="docutils literal notranslate"><span class="pre">tab</span></code> to display the concrete options for the current command.</p></li>
 </ul>
 <div class="section" id="custom-shortcuts">
-<span id="custom-shortcuts"></span><h2>Custom shortcuts<a class="headerlink" href="#custom-shortcuts" title="Permalink to this headline">¶</a></h2>
-<p>Specify customization in <tt class="docutils literal">$USER_HOME/.arthas/conf/inputrc</tt> file in the current user home directory.</p>
-<p>Vim user may want to map <tt class="docutils literal">ctrl+h</tt> to moving the cursor forward one character. To achieve this, copy the default configuration first,</p>
+<h2>Custom shortcuts<a class="headerlink" href="#custom-shortcuts" title="Permalink to this headline">¶</a></h2>
+<p>Specify customization in <code class="docutils literal notranslate"><span class="pre">$USER_HOME/.arthas/conf/inputrc</span></code> file in the current user home directory.</p>
+<p>Vim user may want to map <code class="docutils literal notranslate"><span class="pre">ctrl+h</span></code> to moving the cursor forward one character. To achieve this, copy the default configuration first,</p>
 <div class="highlight-default notranslate"><pre class="literal-block">&quot;\C-a&quot;: beginning-of-line
 &quot;\C-e&quot;: end-of-line
 &quot;\C-f&quot;: forward-word
@@ -322,15 +326,15 @@
 &quot;\C-x\e[3~&quot;: backward-kill-line
 &quot;\e\C-?&quot;: backward-kill-word</pre>
 </div>
-<p>then replace <tt class="docutils literal">"\C-h": backward-delete-char</tt> with <tt class="docutils literal">"\C-h": backward-char</tt>, then reconnect to Arthas console to take effect.</p>
+<p>then replace <code class="docutils literal notranslate"><span class="pre">&quot;\C-h&quot;:</span> <span class="pre">backward-delete-char</span></code> with <code class="docutils literal notranslate"><span class="pre">&quot;\C-h&quot;:</span> <span class="pre">backward-char</span></code>, then reconnect to Arthas console to take effect.</p>
 </div>
 <div class="section" id="shortcuts-for-jobs">
-<span id="shortcuts-for-jobs"></span><h2>Shortcuts for jobs<a class="headerlink" href="#shortcuts-for-jobs" title="Permalink to this headline">¶</a></h2>
+<h2>Shortcuts for jobs<a class="headerlink" href="#shortcuts-for-jobs" title="Permalink to this headline">¶</a></h2>
 <ul class="simple">
-<li><tt class="docutils literal">ctrl + c</tt>: Terminate current command</li>
-<li><tt class="docutils literal">ctrl + z</tt>: Suspend the current command, you can restore this command with <tt class="docutils literal">bg</tt>/<tt class="docutils literal">fg</tt>, or <tt class="docutils literal">kill</tt> it.</li>
-<li><tt class="docutils literal">ctrl + a</tt>: Go to the beginning the line</li>
-<li><tt class="docutils literal">ctrl + e</tt>: Go to the end of the line</li>
+<li><p><code class="docutils literal notranslate"><span class="pre">ctrl</span> <span class="pre">+</span> <span class="pre">c</span></code>: Terminate current command</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">ctrl</span> <span class="pre">+</span> <span class="pre">z</span></code>: Suspend the current command, you can restore this command with <code class="docutils literal notranslate"><span class="pre">bg</span></code>/<code class="docutils literal notranslate"><span class="pre">fg</span></code>, or <code class="docutils literal notranslate"><span class="pre">kill</span></code> it.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">ctrl</span> <span class="pre">+</span> <span class="pre">a</span></code>: Go to the beginning the line</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">ctrl</span> <span class="pre">+</span> <span class="pre">e</span></code>: Go to the end of the line</p></li>
 </ul>
 </div>
 </div>
@@ -346,7 +350,7 @@
 
   <div role="contentinfo">
     <p>
-        &copy; Copyright 2018-2019, Alibaba Middleware Group, and contributors.
+        &copy; Copyright 2018-2019, Alibaba Middleware Group, and contributors
 
     </p>
   </div>
@@ -363,33 +367,16 @@
   
 
 
-  
-
-    <script type="text/javascript">
-        var DOCUMENTATION_OPTIONS = {
-            URL_ROOT:'./',
-            VERSION:'3.1.1',
-            LANGUAGE:'en',
-            COLLAPSE_INDEX:false,
-            FILE_SUFFIX:'.html',
-            HAS_SOURCE:  true,
-            SOURCELINK_SUFFIX: '.txt'
-        };
-    </script>
-      <script type="text/javascript" src="_static/jquery.js"></script>
-      <script type="text/javascript" src="_static/underscore.js"></script>
-      <script type="text/javascript" src="_static/doctools.js"></script>
-      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
-
-  
-
-  <script type="text/javascript" src="_static/js/theme.js"></script>
-
   <script type="text/javascript">
       jQuery(function () {
           SphinxRtdTheme.Navigation.enable(true);
       });
   </script>
+
+  
+  
+    
+  
 <div class="github-fork-ribbon-wrapper right">
   <div class="github-fork-ribbon">
     <a href="https://github.com/alibaba/arthas" target="_blank">Fork me at GitHub</a>

@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Arthas 命令行快捷键 &mdash; Arthas 3.1.1 文档</title>
+  <title>Arthas 命令行快捷键 &mdash; Arthas 3.1.2 文档</title>
   
 
   
@@ -19,13 +19,21 @@
   
 
   
+  <script type="text/javascript" src="_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script type="text/javascript" src="_static/jquery.js"></script>
+        <script type="text/javascript" src="_static/underscore.js"></script>
+        <script type="text/javascript" src="_static/doctools.js"></script>
+        <script type="text/javascript" src="_static/language_data.js"></script>
+        <script type="text/javascript" src="_static/translations.js"></script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
 
-  
-  
     
 
   
-
   <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
   <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <link rel="stylesheet" href="_static/overrides.css" type="text/css" />
@@ -35,21 +43,16 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.13.1/styles/github.min.css">
  
 
-
-  
-  <script src="_static/js/modernizr.min.js"></script>
-
 </head>
 
 <body class="wy-body-for-nav">
 
    
   <div class="wy-grid-for-nav">
-
     
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
-        <div class="wy-side-nav-search">
+        <div class="wy-side-nav-search" >
           
 
           
@@ -63,7 +66,7 @@
             
             
               <div class="version">
-                3.1.1
+                3.1.2
               </div>
             
           
@@ -91,15 +94,17 @@
 <li class="toctree-l1"><a class="reference external" href="https://alibaba.github.io/arthas/en/">English Docs</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://alibaba.github.io/arthas/arthas-tutorials?language=cn">在线教程(推荐)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="install-detail.html">安装</a></li>
+<li class="toctree-l1"><a class="reference internal" href="download.html">下载</a></li>
 <li class="toctree-l1"><a class="reference internal" href="quick-start.html">快速入门</a></li>
 <li class="toctree-l1"><a class="reference internal" href="advanced-use.html">进阶使用</a></li>
 <li class="toctree-l1"><a class="reference internal" href="commands.html">命令列表</a></li>
+<li class="toctree-l1"><a class="reference internal" href="web-console.html">WebConsole</a></li>
 <li class="toctree-l1"><a class="reference internal" href="docker.html">Docker</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas/issues?q=label%3Auser-case">用户案例</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas/issues?q=label%3Aquestion-answered">常见问题</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas">Fork me at GitHub</a></li>
-<li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas/blob/master/CONTRIBUTING.md">参与贡献</a></li>
-<li class="toctree-l1"><a class="reference internal" href="release-notes.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas/blob/master/CONTRIBUTING">编译调试/参与贡献</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas/releases">Release Notes</a></li>
 <li class="toctree-l1"><a class="reference internal" href="contact-us.html">QQ群/钉钉群</a></li>
 </ul>
 
@@ -168,8 +173,8 @@
            <div itemprop="articleBody">
             
   <div class="section" id="arthas">
-<span id="arthas"></span><h1>Arthas 命令行快捷键<a class="headerlink" href="#arthas" title="永久链接至标题">¶</a></h1>
-<p><tt class="docutils literal">keymap</tt>命令输出当前的快捷键映射表：</p>
+<h1>Arthas 命令行快捷键<a class="headerlink" href="#arthas" title="永久链接至标题">¶</a></h1>
+<p><code class="docutils literal notranslate"><span class="pre">keymap</span></code>命令输出当前的快捷键映射表：</p>
 <p>默认的快捷键如下：</p>
 <table border="1" class="docutils">
 <thead>
@@ -297,13 +302,13 @@
 </tr>
 </tbody>
 </table><ul class="simple">
-<li>任何时候 <tt class="docutils literal">tab</tt> 键，会根据当前的输入给出提示</li>
-<li>命令后敲 <tt class="docutils literal">-</tt> 或 <tt class="docutils literal">--</tt> ，然后按 <tt class="docutils literal">tab</tt> 键，可以展示出此命令具体的选项</li>
+<li><p>任何时候 <code class="docutils literal notranslate"><span class="pre">tab</span></code> 键，会根据当前的输入给出提示</p></li>
+<li><p>命令后敲 <code class="docutils literal notranslate"><span class="pre">-</span></code> 或 <code class="docutils literal notranslate"><span class="pre">--</span></code> ，然后按 <code class="docutils literal notranslate"><span class="pre">tab</span></code> 键，可以展示出此命令具体的选项</p></li>
 </ul>
-<div class="section" id="">
-<span id="id1"></span><h2>自定义快捷键<a class="headerlink" href="#" title="永久链接至标题">¶</a></h2>
-<p>在当前用户目录下新建<tt class="docutils literal">$USER_HOME/.arthas/conf/inputrc</tt>文件，加入自定义配置。</p>
-<p>假设我是vim的重度用户，我要把<tt class="docutils literal">ctrl+h</tt>设置为光标向前一个字符，则设置如下，首先拷贝默认配置</p>
+<div class="section" id="id1">
+<h2>自定义快捷键<a class="headerlink" href="#id1" title="永久链接至标题">¶</a></h2>
+<p>在当前用户目录下新建<code class="docutils literal notranslate"><span class="pre">$USER_HOME/.arthas/conf/inputrc</span></code>文件，加入自定义配置。</p>
+<p>假设我是vim的重度用户，我要把<code class="docutils literal notranslate"><span class="pre">ctrl+h</span></code>设置为光标向前一个字符，则设置如下，首先拷贝默认配置</p>
 <div class="highlight-default notranslate"><pre class="literal-block">&quot;\C-a&quot;: beginning-of-line
 &quot;\C-e&quot;: end-of-line
 &quot;\C-f&quot;: forward-word
@@ -324,15 +329,15 @@
 &quot;\C-x\e[3~&quot;: backward-kill-line
 &quot;\e\C-?&quot;: backward-kill-word</pre>
 </div>
-<p>然后把<tt class="docutils literal">"\C-h": backward-delete-char</tt>换成<tt class="docutils literal">"\C-h": backward-char</tt>，然后重新连接即可。</p>
+<p>然后把<code class="docutils literal notranslate"><span class="pre">&quot;\C-h&quot;:</span> <span class="pre">backward-delete-char</span></code>换成<code class="docutils literal notranslate"><span class="pre">&quot;\C-h&quot;:</span> <span class="pre">backward-char</span></code>，然后重新连接即可。</p>
 </div>
-<div class="section" id="">
-<span id="id2"></span><h2>后台异步命令相关快捷键<a class="headerlink" href="#" title="永久链接至标题">¶</a></h2>
+<div class="section" id="id2">
+<h2>后台异步命令相关快捷键<a class="headerlink" href="#id2" title="永久链接至标题">¶</a></h2>
 <ul class="simple">
-<li>ctrl + c: 终止当前命令</li>
-<li>ctrl + z: 挂起当前命令，后续可以 bg/fg 重新支持此命令，或 kill 掉</li>
-<li>ctrl + a: 回到行首</li>
-<li>ctrl + e: 回到行尾</li>
+<li><p>ctrl + c: 终止当前命令</p></li>
+<li><p>ctrl + z: 挂起当前命令，后续可以 bg/fg 重新支持此命令，或 kill 掉</p></li>
+<li><p>ctrl + a: 回到行首</p></li>
+<li><p>ctrl + e: 回到行尾</p></li>
 </ul>
 </div>
 </div>
@@ -348,7 +353,7 @@
 
   <div role="contentinfo">
     <p>
-        &copy; Copyright 2018-2019, Alibaba Middleware Group, and contributors.
+        &copy; Copyright 2018-2019, Alibaba Middleware Group, and contributors
 
     </p>
   </div>
@@ -365,34 +370,16 @@
   
 
 
-  
-
-    <script type="text/javascript">
-        var DOCUMENTATION_OPTIONS = {
-            URL_ROOT:'./',
-            VERSION:'3.1.1',
-            LANGUAGE:'zh_CN',
-            COLLAPSE_INDEX:false,
-            FILE_SUFFIX:'.html',
-            HAS_SOURCE:  true,
-            SOURCELINK_SUFFIX: '.txt'
-        };
-    </script>
-      <script type="text/javascript" src="_static/jquery.js"></script>
-      <script type="text/javascript" src="_static/underscore.js"></script>
-      <script type="text/javascript" src="_static/doctools.js"></script>
-      <script type="text/javascript" src="_static/translations.js"></script>
-      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
-
-  
-
-  <script type="text/javascript" src="_static/js/theme.js"></script>
-
   <script type="text/javascript">
       jQuery(function () {
           SphinxRtdTheme.Navigation.enable(true);
       });
   </script>
+
+  
+  
+    
+  
 <div class="github-fork-ribbon-wrapper right">
   <div class="github-fork-ribbon">
     <a href="https://github.com/alibaba/arthas" target="_blank">Fork me at GitHub</a>

@@ -11,13 +11,13 @@
 
 Arthas开源交流钉钉群：21965291 ，搜索群号即可加入。
 
-![web console](_static/dingding_qr.jpg)
+![](_static/dingding_qr.jpg)
 
 ### QQ群
 
 Arthas开源交流QQ群：916328269
 
-![web console](_static/qqgroup_qr.jpg)
+![](_static/qqgroup_qr.jpg)
 
 
 

@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>watch &mdash; Arthas 3.1.1 文档</title>
+  <title>watch &mdash; Arthas 3.1.2 文档</title>
   
 
   
@@ -19,13 +19,21 @@
   
 
   
+  <script type="text/javascript" src="_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script type="text/javascript" src="_static/jquery.js"></script>
+        <script type="text/javascript" src="_static/underscore.js"></script>
+        <script type="text/javascript" src="_static/doctools.js"></script>
+        <script type="text/javascript" src="_static/language_data.js"></script>
+        <script type="text/javascript" src="_static/translations.js"></script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
 
-  
-  
     
 
   
-
   <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
   <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <link rel="stylesheet" href="_static/overrides.css" type="text/css" />
@@ -37,21 +45,16 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.13.1/styles/github.min.css">
  
 
-
-  
-  <script src="_static/js/modernizr.min.js"></script>
-
 </head>
 
 <body class="wy-body-for-nav">
 
    
   <div class="wy-grid-for-nav">
-
     
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
-        <div class="wy-side-nav-search">
+        <div class="wy-side-nav-search" >
           
 
           
@@ -65,7 +68,7 @@
             
             
               <div class="version">
-                3.1.1
+                3.1.2
               </div>
             
           
@@ -93,6 +96,7 @@
 <li class="toctree-l1"><a class="reference external" href="https://alibaba.github.io/arthas/en/">English Docs</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://alibaba.github.io/arthas/arthas-tutorials?language=cn">在线教程(推荐)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="install-detail.html">安装</a></li>
+<li class="toctree-l1"><a class="reference internal" href="download.html">下载</a></li>
 <li class="toctree-l1"><a class="reference internal" href="quick-start.html">快速入门</a></li>
 <li class="toctree-l1"><a class="reference internal" href="advanced-use.html">进阶使用</a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="commands.html">命令列表</a><ul class="current">
@@ -101,29 +105,32 @@
 <li class="toctree-l2"><a class="reference internal" href="jvm.html">jvm</a></li>
 <li class="toctree-l2"><a class="reference internal" href="sysprop.html">sysprop</a></li>
 <li class="toctree-l2"><a class="reference internal" href="sysenv.html">sysenv</a></li>
+<li class="toctree-l2"><a class="reference internal" href="vmoption.html">vmoption</a></li>
+<li class="toctree-l2"><a class="reference internal" href="logger.html">logger</a></li>
 <li class="toctree-l2"><a class="reference internal" href="mbean.html">mbean</a></li>
 <li class="toctree-l2"><a class="reference internal" href="getstatic.html">getstatic</a></li>
 <li class="toctree-l2"><a class="reference internal" href="ognl.html">ognl</a></li>
 <li class="toctree-l2"><a class="reference internal" href="sc.html">sc</a></li>
 <li class="toctree-l2"><a class="reference internal" href="sm.html">sm</a></li>
 <li class="toctree-l2"><a class="reference internal" href="dump.html">dump</a></li>
+<li class="toctree-l2"><a class="reference internal" href="heapdump.html">heapdump</a></li>
 <li class="toctree-l2"><a class="reference internal" href="jad.html">jad</a></li>
 <li class="toctree-l2"><a class="reference internal" href="classloader.html">classloader</a></li>
 <li class="toctree-l2"><a class="reference internal" href="mc.html">mc</a></li>
 <li class="toctree-l2"><a class="reference internal" href="redefine.html">redefine</a></li>
 <li class="toctree-l2"><a class="reference internal" href="monitor.html">monitor</a></li>
 <li class="toctree-l2 current"><a class="current reference internal" href="#">watch</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#">参数说明</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#">使用参考</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id1">参数说明</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id2">使用参考</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="#demo">启动 Demo</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#">观察方法出参和返回值</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#">观察方法入参</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#">同时观察方法调用前和方法返回后</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#x">调整<tt class="docutils literal">-x</tt>的值，观察具体的方法参数值</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#">条件表达式的例子</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#">观察异常信息的例子</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#">按照耗时进行过滤</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#">观察当前对象中的属性</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id3">观察方法出参和返回值</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id4">观察方法入参</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id5">同时观察方法调用前和方法返回后</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#x">调整<code class="docutils literal notranslate"><span class="pre">-x</span></code>的值，观察具体的方法参数值</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id6">条件表达式的例子</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id7">观察异常信息的例子</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id8">按照耗时进行过滤</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id9">观察当前对象中的属性</a></li>
 </ul>
 </li>
 </ul>
@@ -137,12 +144,13 @@
 <li class="toctree-l2"><a class="reference internal" href="commands.html#arthas">Arthas 基础命令</a></li>
 </ul>
 </li>
+<li class="toctree-l1"><a class="reference internal" href="web-console.html">WebConsole</a></li>
 <li class="toctree-l1"><a class="reference internal" href="docker.html">Docker</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas/issues?q=label%3Auser-case">用户案例</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas/issues?q=label%3Aquestion-answered">常见问题</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas">Fork me at GitHub</a></li>
-<li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas/blob/master/CONTRIBUTING.md">参与贡献</a></li>
-<li class="toctree-l1"><a class="reference internal" href="release-notes.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas/blob/master/CONTRIBUTING">编译调试/参与贡献</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas/releases">Release Notes</a></li>
 <li class="toctree-l1"><a class="reference internal" href="contact-us.html">QQ群/钉钉群</a></li>
 </ul>
 
@@ -213,12 +221,13 @@
            <div itemprop="articleBody">
             
   <div class="section" id="watch">
-<span id="watch"></span><h1>watch<a class="headerlink" href="#watch" title="永久链接至标题">¶</a></h1>
+<h1>watch<a class="headerlink" href="#watch" title="永久链接至标题">¶</a></h1>
 <blockquote>
-<div>方法执行数据观测</div></blockquote>
-<p>让你能方便的观察到指定方法的调用情况。能观察到的范围为：<tt class="docutils literal">返回值</tt>、<tt class="docutils literal">抛出异常</tt>、<tt class="docutils literal">入参</tt>，通过编写 OGNL 表达式进行对应变量的查看。</p>
-<div class="section" id="">
-<span id="id1"></span><h2>参数说明<a class="headerlink" href="#" title="永久链接至标题">¶</a></h2>
+<div><p>方法执行数据观测</p>
+</div></blockquote>
+<p>让你能方便的观察到指定方法的调用情况。能观察到的范围为：<code class="docutils literal notranslate"><span class="pre">返回值</span></code>、<code class="docutils literal notranslate"><span class="pre">抛出异常</span></code>、<code class="docutils literal notranslate"><span class="pre">入参</span></code>，通过编写 OGNL 表达式进行对应变量的查看。</p>
+<div class="section" id="id1">
+<h2>参数说明<a class="headerlink" href="#id1" title="永久链接至标题">¶</a></h2>
 <p>watch 的参数比较多，主要是因为它能在 4 个不同的场景观察对象</p>
 <table border="1" class="docutils">
 <thead>
@@ -269,28 +278,28 @@
 <td align="left">指定输出结果的属性遍历深度，默认为 1</td>
 </tr>
 </tbody>
-</table><p>这里重点要说明的是观察表达式，观察表达式的构成主要由 ognl 表达式组成，所以你可以这样写<tt class="docutils literal">"{params,returnObj}"</tt>，只要是一个合法的 ognl 表达式，都能被正常支持。</p>
-<p>观察的维度也比较多，主要体现在参数 <tt class="docutils literal">advice</tt> 的数据结构上。<tt class="docutils literal">Advice</tt> 参数最主要是封装了通知节点的所有信息。请参考<a class="reference internal" href="advice-class.html"><span class="doc">表达式核心变量</span></a>中关于该节点的描述。</p>
+</table><p>这里重点要说明的是观察表达式，观察表达式的构成主要由 ognl 表达式组成，所以你可以这样写<code class="docutils literal notranslate"><span class="pre">&quot;{params,returnObj}&quot;</span></code>，只要是一个合法的 ognl 表达式，都能被正常支持。</p>
+<p>观察的维度也比较多，主要体现在参数 <code class="docutils literal notranslate"><span class="pre">advice</span></code> 的数据结构上。<code class="docutils literal notranslate"><span class="pre">Advice</span></code> 参数最主要是封装了通知节点的所有信息。请参考<a class="reference internal" href="advice-class.html"><span class="doc">表达式核心变量</span></a>中关于该节点的描述。</p>
 <ul class="simple">
-<li>特殊用法请参考：<a class="reference external" href="https://github.com/alibaba/arthas/issues/71">https://github.com/alibaba/arthas/issues/71</a></li>
-<li>OGNL表达式官网：<a class="reference external" href="https://commons.apache.org/proper/commons-ognl/language-guide.html">https://commons.apache.org/proper/commons-ognl/language-guide.html</a></li>
+<li><p>特殊用法请参考：<a class="reference external" href="https://github.com/alibaba/arthas/issues/71">https://github.com/alibaba/arthas/issues/71</a></p></li>
+<li><p>OGNL表达式官网：<a class="reference external" href="https://commons.apache.org/proper/commons-ognl/language-guide.html">https://commons.apache.org/proper/commons-ognl/language-guide.html</a></p></li>
 </ul>
 <p><strong>特别说明</strong>：</p>
 <ul class="simple">
-<li>watch 命令定义了4个观察事件点，即 <tt class="docutils literal">-b</tt> 方法调用前，<tt class="docutils literal">-e</tt> 方法异常后，<tt class="docutils literal">-s</tt> 方法返回后，<tt class="docutils literal">-f</tt> 方法结束后</li>
-<li>4个观察事件点 <tt class="docutils literal">-b</tt>、<tt class="docutils literal">-e</tt>、<tt class="docutils literal">-s</tt> 默认关闭，<tt class="docutils literal">-f</tt> 默认打开，当指定观察点被打开后，在相应事件点会对观察表达式进行求值并输出</li>
-<li>这里要注意<tt class="docutils literal">方法入参</tt>和<tt class="docutils literal">方法出参</tt>的区别，有可能在中间被修改导致前后不一致，除了 <tt class="docutils literal">-b</tt> 事件点 <tt class="docutils literal">params</tt> 代表方法入参外，其余事件都代表方法出参</li>
-<li>当使用 <tt class="docutils literal">-b</tt> 时，由于观察事件点是在方法调用前，此时返回值或异常均不存在</li>
+<li><p>watch 命令定义了4个观察事件点，即 <code class="docutils literal notranslate"><span class="pre">-b</span></code> 方法调用前，<code class="docutils literal notranslate"><span class="pre">-e</span></code> 方法异常后，<code class="docutils literal notranslate"><span class="pre">-s</span></code> 方法返回后，<code class="docutils literal notranslate"><span class="pre">-f</span></code> 方法结束后</p></li>
+<li><p>4个观察事件点 <code class="docutils literal notranslate"><span class="pre">-b</span></code>、<code class="docutils literal notranslate"><span class="pre">-e</span></code>、<code class="docutils literal notranslate"><span class="pre">-s</span></code> 默认关闭，<code class="docutils literal notranslate"><span class="pre">-f</span></code> 默认打开，当指定观察点被打开后，在相应事件点会对观察表达式进行求值并输出</p></li>
+<li><p>这里要注意<code class="docutils literal notranslate"><span class="pre">方法入参</span></code>和<code class="docutils literal notranslate"><span class="pre">方法出参</span></code>的区别，有可能在中间被修改导致前后不一致，除了 <code class="docutils literal notranslate"><span class="pre">-b</span></code> 事件点 <code class="docutils literal notranslate"><span class="pre">params</span></code> 代表方法入参外，其余事件都代表方法出参</p></li>
+<li><p>当使用 <code class="docutils literal notranslate"><span class="pre">-b</span></code> 时，由于观察事件点是在方法调用前，此时返回值或异常均不存在</p></li>
 </ul>
 </div>
-<div class="section" id="">
-<span id="id2"></span><h2>使用参考<a class="headerlink" href="#" title="永久链接至标题">¶</a></h2>
+<div class="section" id="id2">
+<h2>使用参考<a class="headerlink" href="#id2" title="永久链接至标题">¶</a></h2>
 <div class="section" id="demo">
-<span id="demo"></span><h3>启动 Demo<a class="headerlink" href="#demo" title="永久链接至标题">¶</a></h3>
-<p>启动<a class="reference internal" href="quick-start.html"><span class="doc">快速入门</span></a>里的<tt class="docutils literal">arthas-demo</tt>。</p>
+<h3>启动 Demo<a class="headerlink" href="#demo" title="永久链接至标题">¶</a></h3>
+<p>启动<a class="reference internal" href="quick-start.html"><span class="doc">快速入门</span></a>里的<code class="docutils literal notranslate"><span class="pre">arthas-demo</span></code>。</p>
 </div>
-<div class="section" id="">
-<span id="id3"></span><h3>观察方法出参和返回值<a class="headerlink" href="#" title="永久链接至标题">¶</a></h3>
+<div class="section" id="id3">
+<h3>观察方法出参和返回值<a class="headerlink" href="#id3" title="永久链接至标题">¶</a></h3>
 <div class="highlight-bash notranslate"><div class="highlight hljs"><pre class="bash">$ watch demo.MathGame primeFactors &quot;{params,returnObj}&quot; -x 2
 Press Ctrl+C to abort.
 Affect(class-cnt:1 , method-cnt:1) cost in 44 ms.
@@ -304,12 +313,11 @@ ts=2018-12-03 19:16:51; [cost=1.280502ms] result=@ArrayList[
         @Integer[191],
         @Integer[49199],
     ],
-]
-</pre></div>
+]</pre></div>
 </div>
 </div>
-<div class="section" id="">
-<span id="id4"></span><h3>观察方法入参<a class="headerlink" href="#" title="永久链接至标题">¶</a></h3>
+<div class="section" id="id4">
+<h3>观察方法入参<a class="headerlink" href="#id4" title="永久链接至标题">¶</a></h3>
 <div class="highlight-bash notranslate"><div class="highlight hljs"><pre class="bash">$ watch demo.MathGame primeFactors &quot;{params,returnObj}&quot; -x 2 -b
 Press Ctrl+C to abort.
 Affect(class-cnt:1 , method-cnt:1) cost in 50 ms.
@@ -318,15 +326,14 @@ ts=2018-12-03 19:23:23; [cost=0.0353ms] result=@ArrayList[
         @Integer[-1077465243],
     ],
     null,
-]
-</pre></div>
+]</pre></div>
 </div>
 <ul class="simple">
-<li>对比前一个例子，返回值为空（事件点为方法执行前，因此获取不到返回值）</li>
+<li><p>对比前一个例子，返回值为空（事件点为方法执行前，因此获取不到返回值）</p></li>
 </ul>
 </div>
-<div class="section" id="">
-<span id="id5"></span><h3>同时观察方法调用前和方法返回后<a class="headerlink" href="#" title="永久链接至标题">¶</a></h3>
+<div class="section" id="id5">
+<h3>同时观察方法调用前和方法返回后<a class="headerlink" href="#id5" title="永久链接至标题">¶</a></h3>
 <div class="highlight-bash notranslate"><div class="highlight hljs"><pre class="bash">$ watch demo.MathGame primeFactors &quot;{params,target,returnObj}&quot; -x 2 -b -s -n 2
 Press Ctrl+C to abort.
 Affect(class-cnt:1 , method-cnt:1) cost in 46 ms.
@@ -358,17 +365,16 @@ ts=2018-12-03 19:29:54; [cost=4.277392ms] result=@ArrayList[
         @Integer[241],
         @Integer[439],
     ],
-]
-</pre></div>
+]</pre></div>
 </div>
 <ul class="simple">
-<li>参数里<tt class="docutils literal">-n 2</tt>，表示只执行两次</li>
-<li>这里输出结果中，第一次输出的是方法调用前的观察表达式的结果，第二次输出的是方法返回后的表达式的结果</li>
-<li>结果的输出顺序和事件发生的先后顺序一致，和命令中 <tt class="docutils literal">-s -b</tt> 的顺序无关</li>
+<li><p>参数里<code class="docutils literal notranslate"><span class="pre">-n</span> <span class="pre">2</span></code>，表示只执行两次</p></li>
+<li><p>这里输出结果中，第一次输出的是方法调用前的观察表达式的结果，第二次输出的是方法返回后的表达式的结果</p></li>
+<li><p>结果的输出顺序和事件发生的先后顺序一致，和命令中 <code class="docutils literal notranslate"><span class="pre">-s</span> <span class="pre">-b</span></code> 的顺序无关</p></li>
 </ul>
 </div>
 <div class="section" id="x">
-<span id="x"></span><h3>调整<tt class="docutils literal">-x</tt>的值，观察具体的方法参数值<a class="headerlink" href="#x" title="永久链接至标题">¶</a></h3>
+<h3>调整<code class="docutils literal notranslate"><span class="pre">-x</span></code>的值，观察具体的方法参数值<a class="headerlink" href="#x" title="永久链接至标题">¶</a></h3>
 <div class="highlight-bash notranslate"><div class="highlight hljs"><pre class="bash">$ watch demo.MathGame primeFactors &quot;{params,target}&quot; -x 3
 Press Ctrl+C to abort.
 Affect(class-cnt:1 , method-cnt:1) cost in 58 ms.
@@ -396,50 +402,47 @@ ts=2018-12-03 19:34:19; [cost=0.587833ms] result=@ArrayList[
         ],
         illegalArgumentCount=@Integer[13159],
     ],
-]
-</pre></div>
+]</pre></div>
 </div>
 <ul class="simple">
-<li><tt class="docutils literal">-x</tt>表示遍历深度，可以调整来打印具体的参数和结果内容，默认值是1。</li>
+<li><p><code class="docutils literal notranslate"><span class="pre">-x</span></code>表示遍历深度，可以调整来打印具体的参数和结果内容，默认值是1。</p></li>
 </ul>
 </div>
-<div class="section" id="">
-<span id="id6"></span><h3>条件表达式的例子<a class="headerlink" href="#" title="永久链接至标题">¶</a></h3>
+<div class="section" id="id6">
+<h3>条件表达式的例子<a class="headerlink" href="#id6" title="永久链接至标题">¶</a></h3>
 <div class="highlight-bash notranslate"><div class="highlight hljs"><pre class="bash">$ watch demo.MathGame primeFactors &quot;{params[0],target}&quot; &quot;params[0]&lt;0&quot;
 Press Ctrl+C to abort.
 Affect(class-cnt:1 , method-cnt:1) cost in 68 ms.
 ts=2018-12-03 19:36:04; [cost=0.530255ms] result=@ArrayList[
     @Integer[-18178089],
     @MathGame[demo.MathGame@41cf53f9],
-]
-</pre></div>
+]</pre></div>
 </div>
 <ul class="simple">
-<li>只有满足条件的调用，才会有响应。</li>
+<li><p>只有满足条件的调用，才会有响应。</p></li>
 </ul>
 </div>
-<div class="section" id="">
-<span id="id7"></span><h3>观察异常信息的例子<a class="headerlink" href="#" title="永久链接至标题">¶</a></h3>
+<div class="section" id="id7">
+<h3>观察异常信息的例子<a class="headerlink" href="#id7" title="永久链接至标题">¶</a></h3>
 <div class="highlight-bash notranslate"><div class="highlight hljs"><pre class="bash">$ watch demo.MathGame primeFactors &quot;{params[0],throwExp}&quot; -e -x 2
 Press Ctrl+C to abort.
 Affect(class-cnt:1 , method-cnt:1) cost in 62 ms.
 ts=2018-12-03 19:38:00; [cost=1.414993ms] result=@ArrayList[
     @Integer[-1120397038],
     java.lang.IllegalArgumentException: number is: -1120397038, need &gt;= 2
-    at demo.MathGame.primeFactors(MathGame.java:46)
-    at demo.MathGame.run(MathGame.java:24)
-    at demo.MathGame.main(MathGame.java:16)
+	at demo.MathGame.primeFactors(MathGame.java:46)
+	at demo.MathGame.run(MathGame.java:24)
+	at demo.MathGame.main(MathGame.java:16)
 ,
-]
-</pre></div>
+]</pre></div>
 </div>
 <ul class="simple">
-<li><tt class="docutils literal">-e</tt>表示抛出异常时才触发</li>
-<li>express中，表示异常信息的变量是<tt class="docutils literal">throwExp</tt></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">-e</span></code>表示抛出异常时才触发</p></li>
+<li><p>express中，表示异常信息的变量是<code class="docutils literal notranslate"><span class="pre">throwExp</span></code></p></li>
 </ul>
 </div>
-<div class="section" id="">
-<span id="id8"></span><h3>按照耗时进行过滤<a class="headerlink" href="#" title="永久链接至标题">¶</a></h3>
+<div class="section" id="id8">
+<h3>按照耗时进行过滤<a class="headerlink" href="#id8" title="永久链接至标题">¶</a></h3>
 <div class="highlight-bash notranslate"><div class="highlight hljs"><pre class="bash">$ watch demo.MathGame primeFactors &#x27;{params, returnObj}&#x27; &#x27;#cost&gt;200&#x27; -x 2
 Press Ctrl+C to abort.
 Affect(class-cnt:1 , method-cnt:1) cost in 66 ms.
@@ -451,32 +454,29 @@ ts=2018-12-03 19:40:28; [cost=2112.168897ms] result=@ArrayList[
         @Integer[5],
         @Integer[428379493],
     ],
-]
-</pre></div>
+]</pre></div>
 </div>
 <ul class="simple">
-<li><tt class="docutils literal">#cost>200</tt>(单位是<tt class="docutils literal">ms</tt>)表示只有当耗时大于200ms时才会输出，过滤掉执行时间小于200ms的调用</li>
+<li><p><code class="docutils literal notranslate"><span class="pre">#cost&gt;200</span></code>(单位是<code class="docutils literal notranslate"><span class="pre">ms</span></code>)表示只有当耗时大于200ms时才会输出，过滤掉执行时间小于200ms的调用</p></li>
 </ul>
 </div>
-<div class="section" id="">
-<span id="id9"></span><h3>观察当前对象中的属性<a class="headerlink" href="#" title="永久链接至标题">¶</a></h3>
-<p>如果想查看方法运行前后，当前对象中的属性，可以使用<tt class="docutils literal">target</tt>关键字，代表当前对象</p>
+<div class="section" id="id9">
+<h3>观察当前对象中的属性<a class="headerlink" href="#id9" title="永久链接至标题">¶</a></h3>
+<p>如果想查看方法运行前后，当前对象中的属性，可以使用<code class="docutils literal notranslate"><span class="pre">target</span></code>关键字，代表当前对象</p>
 <div class="highlight-bash notranslate"><div class="highlight hljs"><pre class="bash">$ watch demo.MathGame primeFactors &#x27;target&#x27;
 Press Ctrl+C to abort.
 Affect(class-cnt:1 , method-cnt:1) cost in 52 ms.
 ts=2018-12-03 19:41:52; [cost=0.477882ms] result=@MathGame[
     random=@Random[java.util.Random@522b408a],
     illegalArgumentCount=@Integer[13355],
-]
-</pre></div>
+]</pre></div>
 </div>
-<p>然后使用<tt class="docutils literal">target.field_name</tt>访问当前对象的某个属性</p>
+<p>然后使用<code class="docutils literal notranslate"><span class="pre">target.field_name</span></code>访问当前对象的某个属性</p>
 <div class="highlight-bash notranslate"><div class="highlight hljs"><pre class="bash">$ watch demo.MathGame primeFactors &#x27;target.illegalArgumentCount&#x27;
 Press Ctrl+C to abort.
 Affect(class-cnt:1 , method-cnt:1) cost in 67 ms.
 ts=2018-12-03 20:04:34; [cost=131.303498ms] result=@Integer[8]
-ts=2018-12-03 20:04:35; [cost=0.961441ms] result=@Integer[8]
-</pre></div>
+ts=2018-12-03 20:04:35; [cost=0.961441ms] result=@Integer[8]</pre></div>
 </div>
 </div>
 </div>
@@ -493,7 +493,7 @@ ts=2018-12-03 20:04:35; [cost=0.961441ms] result=@Integer[8]
         <a href="trace.html" class="btn btn-neutral float-right" title="trace" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
-        <a href="monitor.html" class="btn btn-neutral" title="monitor" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+        <a href="monitor.html" class="btn btn-neutral float-left" title="monitor" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
       
     </div>
   
@@ -502,7 +502,7 @@ ts=2018-12-03 20:04:35; [cost=0.961441ms] result=@Integer[8]
 
   <div role="contentinfo">
     <p>
-        &copy; Copyright 2018-2019, Alibaba Middleware Group, and contributors.
+        &copy; Copyright 2018-2019, Alibaba Middleware Group, and contributors
 
     </p>
   </div>
@@ -519,34 +519,16 @@ ts=2018-12-03 20:04:35; [cost=0.961441ms] result=@Integer[8]
   
 
 
-  
-
-    <script type="text/javascript">
-        var DOCUMENTATION_OPTIONS = {
-            URL_ROOT:'./',
-            VERSION:'3.1.1',
-            LANGUAGE:'zh_CN',
-            COLLAPSE_INDEX:false,
-            FILE_SUFFIX:'.html',
-            HAS_SOURCE:  true,
-            SOURCELINK_SUFFIX: '.txt'
-        };
-    </script>
-      <script type="text/javascript" src="_static/jquery.js"></script>
-      <script type="text/javascript" src="_static/underscore.js"></script>
-      <script type="text/javascript" src="_static/doctools.js"></script>
-      <script type="text/javascript" src="_static/translations.js"></script>
-      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
-
-  
-
-  <script type="text/javascript" src="_static/js/theme.js"></script>
-
   <script type="text/javascript">
       jQuery(function () {
           SphinxRtdTheme.Navigation.enable(true);
       });
   </script>
+
+  
+  
+    
+  
 <div class="github-fork-ribbon-wrapper right">
   <div class="github-fork-ribbon">
     <a href="https://github.com/alibaba/arthas" target="_blank">Fork me at GitHub</a>

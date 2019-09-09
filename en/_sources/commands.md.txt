@@ -6,6 +6,8 @@ All Commands
 * [jvm](jvm.md)
 * [sysprop](sysprop.md)
 * [sysenv](sysenv.md)
+* [vmoption](vmoption.md)
+* [logger](logger.md)
 * [mbean](mbean.md)
 * [getstatic](getstatic.md)
 
@@ -14,6 +16,7 @@ All Commands
 * [sc](sc.md)
 * [sm](sm.md)
 * [dump](dump.md)
+* [heapdump](heapdump.md)
 
 * [jad](jad.md)
 * [classloader](classloader.md)
@@ -40,6 +43,7 @@ All Commands
 * version - print out Arthas's version
 * history - view command history
 * quit - exit the current Arthas client without affecting other clients
+* stop - the same as `shutdown` command
 * shutdown - terminate the Arthas server, all the Arthas clients connecting to this server will be disconnected
 * [keymap](keymap.md) - list all Arthas keyboard shortcuts and shortcut customizations.
 

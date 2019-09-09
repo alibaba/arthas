@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Web Console &mdash; Arthas 3.1.1 documentation</title>
+  <title>Web Console &mdash; Arthas 3.1.2 documentation</title>
   
 
   
@@ -19,13 +19,20 @@
   
 
   
+  <script type="text/javascript" src="_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script type="text/javascript" src="_static/jquery.js"></script>
+        <script type="text/javascript" src="_static/underscore.js"></script>
+        <script type="text/javascript" src="_static/doctools.js"></script>
+        <script type="text/javascript" src="_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
 
-  
-  
     
 
   
-
   <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
   <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <link rel="stylesheet" href="_static/overrides.css" type="text/css" />
@@ -37,21 +44,16 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.13.1/styles/github.min.css">
  
 
-
-  
-  <script src="_static/js/modernizr.min.js"></script>
-
 </head>
 
 <body class="wy-body-for-nav">
 
    
   <div class="wy-grid-for-nav">
-
     
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
-        <div class="wy-side-nav-search">
+        <div class="wy-side-nav-search" >
           
 
           
@@ -65,7 +67,7 @@
             
             
               <div class="version">
-                3.1.1
+                3.1.2
               </div>
             
           
@@ -92,29 +94,26 @@
               <ul class="current">
 <li class="toctree-l1"><a class="reference external" href="https://alibaba.github.io/arthas/arthas-tutorials?language=en">Online tutorials(Recommend)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="install-detail.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="download.html">Download</a></li>
 <li class="toctree-l1"><a class="reference internal" href="quick-start.html">Quick start</a></li>
-<li class="toctree-l1 current"><a class="reference internal" href="advanced-use.html">Advanced usage</a><ul class="current">
-<li class="toctree-l2"><a class="reference internal" href="advanced-use.html#basic">Basic</a></li>
-<li class="toctree-l2"><a class="reference internal" href="advanced-use.html#jvm">JVM</a></li>
-<li class="toctree-l2"><a class="reference internal" href="advanced-use.html#class-classloader">class/classloader</a></li>
-<li class="toctree-l2"><a class="reference internal" href="advanced-use.html#monitor-watch-trace-related">monitor/watch/trace - related</a></li>
-<li class="toctree-l2"><a class="reference internal" href="advanced-use.html#options">options</a></li>
-<li class="toctree-l2"><a class="reference internal" href="advanced-use.html#pipe">pipe</a></li>
-<li class="toctree-l2"><a class="reference internal" href="advanced-use.html#async-in-background">async in background</a></li>
-<li class="toctree-l2 current"><a class="reference internal" href="advanced-use.html#web-console">Web Console</a><ul class="current">
-<li class="toctree-l3 current"><a class="current reference internal" href="#">Web Console</a></li>
-</ul>
-</li>
-<li class="toctree-l2"><a class="reference internal" href="advanced-use.html#other-features">Other features</a></li>
-</ul>
-</li>
+<li class="toctree-l1"><a class="reference internal" href="advanced-use.html">Advanced usage</a></li>
 <li class="toctree-l1"><a class="reference internal" href="commands.html">Commands</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">WebConsole</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#connect-arthas-through-the-browser">Connect arthas through the browser</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#connect-remote-arthas-through-arthas-tunnel-server">Connect remote arthas through arthas tunnel server</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#download-and-deploy-arthas-tunnel-server">Download and deploy arthas tunnel server</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#connecting-to-the-tunnel-server-when-starting-arthas">Connecting to the tunnel server when starting arthas</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#how-arthas-tunnel-server-works">How arthas tunnel server works</a></li>
+</ul>
+</li>
+</ul>
+</li>
 <li class="toctree-l1"><a class="reference internal" href="docker.html">Docker</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas/issues?q=label%3Auser-case">User cases</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas/issues?q=label%3Aquestion-answered">Questions and answers</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas">Fork me at GitHub</a></li>
-<li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas/blob/master/CONTRIBUTING.md">CONTRIBUTING</a></li>
-<li class="toctree-l1"><a class="reference internal" href="release-notes.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas/blob/master/CONTRIBUTING">Compile and debug/CONTRIBUTING</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas/releases">Release Notes</a></li>
 </ul>
 
             
@@ -184,11 +183,74 @@
            <div itemprop="articleBody">
             
   <div class="section" id="web-console">
-<span id="web-console"></span><h1>Web Console<a class="headerlink" href="#web-console" title="Permalink to this headline">¶</a></h1>
+<h1>Web Console<a class="headerlink" href="#web-console" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="connect-arthas-through-the-browser">
+<h2>Connect arthas through the browser<a class="headerlink" href="#connect-arthas-through-the-browser" title="Permalink to this headline">¶</a></h2>
 <p>Arthas supports the Web Console. After attach success, the user can access: <a class="reference external" href="http://127.0.0.1:8563/">http://127.0.0.1:8563/</a>.</p>
 <p>The user can fill in the IP and connect the remote arthas on other machines.</p>
-<p><img alt="web console" src="_images/web-console-local.png" /></p>
+<p><img alt="_images/web-console-local.png" src="_images/web-console-local.png" /></p>
+<blockquote>
+<div><p>By default, arthas only listens to <code class="docutils literal notranslate"><span class="pre">127.0.0.1</span></code>, so if you want to connect from a remote, you can use the <code class="docutils literal notranslate"><span class="pre">--target-ip</span></code> parameter to specify the IP. See the help description for <code class="docutils literal notranslate"><span class="pre">-h</span></code> for more information.</p>
+</div></blockquote>
 <p>If you have suggestions for the Web Console, please leave a message here: <a class="reference external" href="https://github.com/alibaba/arthas/issues/15">https://github.com/alibaba/arthas/issues/15</a></p>
+</div>
+<div class="section" id="connect-remote-arthas-through-arthas-tunnel-server">
+<h2>Connect remote arthas through arthas tunnel server<a class="headerlink" href="#connect-remote-arthas-through-arthas-tunnel-server" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="download-and-deploy-arthas-tunnel-server">
+<h3>Download and deploy arthas tunnel server<a class="headerlink" href="#download-and-deploy-arthas-tunnel-server" title="Permalink to this headline">¶</a></h3>
+<p><a class="reference external" href="https://github.com/alibaba/arthas/releases">https://github.com/alibaba/arthas/releases</a></p>
+<p>Arthas tunnel server is a spring boot fat jar application, start with the <code class="docutils literal notranslate"><span class="pre">java</span> <span class="pre">-jar</span></code> command:</p>
+<div class="highlight-bash notranslate"><div class="highlight hljs"><pre class="bash">java -jar  arthas-tunnel-server.jar</pre></div>
+</div>
+<p>By default, the web port of the arthas tunnel server is <code class="docutils literal notranslate"><span class="pre">8080</span></code>, and the port connected by the arthas agent is <code class="docutils literal notranslate"><span class="pre">7777</span></code>.</p>
+<p>Once started, you can go to <a class="reference external" href="http://localhost:8080/">http://localhost:8080/</a> and connect to the registered arthas agent via <code class="docutils literal notranslate"><span class="pre">agentId</span></code>.</p>
+<p>Through Spring Boot’s Endpoint, you can view the specific connection information: <a class="reference external" href="http://localhost:8080/actuator/arthas">http://localhost:8080/actuator/arthas</a>, the login user name is <code class="docutils literal notranslate"><span class="pre">arthas</span></code>, and the password can be found in the log of arthas tunnel server, for example:</p>
+<div class="highlight-default notranslate"><pre class="literal-block">32851 [main] INFO o.s.b.a.s.s.UserDetailsServiceAutoConfiguration
+
+Using generated security password: f1dca050-3777-48f4-a577-6367e55a78a2</pre>
+</div>
+</div>
+<div class="section" id="connecting-to-the-tunnel-server-when-starting-arthas">
+<h3>Connecting to the tunnel server when starting arthas<a class="headerlink" href="#connecting-to-the-tunnel-server-when-starting-arthas" title="Permalink to this headline">¶</a></h3>
+<p>When starting arthas, you can use the <code class="docutils literal notranslate"><span class="pre">--tunnel-server</span></code> parameter, for example:</p>
+<div class="highlight-bash notranslate"><div class="highlight hljs"><pre class="bash">as.sh --tunnel-server &#x27;ws://47.75.156.201:7777/ws&#x27;</pre></div>
+</div>
+<ul class="simple">
+<li><p>You can specify the agentId by the <code class="docutils literal notranslate"><span class="pre">--agent-id</span></code> parameter. By default, a random ID is generated.</p></li>
+</ul>
+<p>After Arthas attach succeeds, the agentId will be printed, such as:</p>
+<div class="highlight-bash notranslate"><div class="highlight hljs"><pre class="bash">  ,---.  ,------. ,--------.,--.  ,--.  ,---.   ,---.
+ /  O  \ |  .--. &#x27;&#x27;--.  .--&#x27;|  &#x27;--&#x27;  | /  O  \ &#x27;   .-&#x27;
+|  .-.  ||  &#x27;--&#x27;.&#x27;   |  |   |  .--.  ||  .-.  |`.  `-.
+|  | |  ||  |\  \    |  |   |  |  |  ||  | |  |.-&#x27;    |
+`--&#x27; `--&#x27;`--&#x27; &#x27;--&#x27;   `--&#x27;   `--&#x27;  `--&#x27;`--&#x27; `--&#x27;`-----&#x27;
+
+wiki      https://alibaba.github.io/arthas
+tutorials https://alibaba.github.io/arthas/arthas-tutorials
+version   3.1.2
+pid       86183
+time      2019-08-30 15:40:53
+id        URJZ5L48RPBR2ALI5K4V</pre></div>
+</div>
+<p>If the connection is not connected to the tunnel server at startup, you can also obtain the agentId through the <code class="docutils literal notranslate"><span class="pre">session</span></code> command after reconnection succeeds:</p>
+<div class="highlight-bash notranslate"><div class="highlight hljs"><pre class="bash">[arthas@86183]$ session
+ Name           Value
+-----------------------------------------------------
+ JAVA_PID       86183
+ SESSION_ID     f7273eb5-e7b0-4a00-bc5b-3fe55d741882
+ AGENT_ID       URJZ5L48RPBR2ALI5K4V
+ TUNNEL_SERVER  ws://47.75.156.201:7777/ws</pre></div>
+</div>
+<p>For the above example, go to <a class="reference external" href="http://47.75.156.201:8080/">http://47.75.156.201:8080/</a> in the browser and input the <code class="docutils literal notranslate"><span class="pre">agentId</span></code> to connect to arthas on remote machine.</p>
+<p><img alt="_images/arthas-tunnel-server.png" src="_images/arthas-tunnel-server.png" /></p>
+</div>
+<div class="section" id="how-arthas-tunnel-server-works">
+<h3>How arthas tunnel server works<a class="headerlink" href="#how-arthas-tunnel-server-works" title="Permalink to this headline">¶</a></h3>
+<div class="highlight-default notranslate"><pre class="literal-block">browser &lt;-&gt; arthas tunnel server &lt;-&gt; arthas tunnel client &lt;-&gt; arthas agent</pre>
+</div>
+<p><a class="reference external" href="https://github.com/alibaba/arthas/blob/master/tunnel-server/README">https://github.com/alibaba/arthas/blob/master/tunnel-server/README.md</a></p>
+</div>
+</div>
 </div>
 
 
@@ -202,7 +264,7 @@
         <a href="async.html" class="btn btn-neutral float-right" title="Arthas Async Jobs" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
-        <a href="advanced-use.html" class="btn btn-neutral" title="Advanced Usage" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+        <a href="advanced-use.html" class="btn btn-neutral float-left" title="Advanced Usage" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
       
     </div>
   
@@ -211,7 +273,7 @@
 
   <div role="contentinfo">
     <p>
-        &copy; Copyright 2018-2019, Alibaba Middleware Group, and contributors.
+        &copy; Copyright 2018-2019, Alibaba Middleware Group, and contributors
 
     </p>
   </div>
@@ -228,33 +290,16 @@
   
 
 
-  
-
-    <script type="text/javascript">
-        var DOCUMENTATION_OPTIONS = {
-            URL_ROOT:'./',
-            VERSION:'3.1.1',
-            LANGUAGE:'en',
-            COLLAPSE_INDEX:false,
-            FILE_SUFFIX:'.html',
-            HAS_SOURCE:  true,
-            SOURCELINK_SUFFIX: '.txt'
-        };
-    </script>
-      <script type="text/javascript" src="_static/jquery.js"></script>
-      <script type="text/javascript" src="_static/underscore.js"></script>
-      <script type="text/javascript" src="_static/doctools.js"></script>
-      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
-
-  
-
-  <script type="text/javascript" src="_static/js/theme.js"></script>
-
   <script type="text/javascript">
       jQuery(function () {
           SphinxRtdTheme.Navigation.enable(true);
       });
   </script>
+
+  
+  
+    
+  
 <div class="github-fork-ribbon-wrapper right">
   <div class="github-fork-ribbon">
     <a href="https://github.com/alibaba/arthas" target="_blank">Fork me at GitHub</a>

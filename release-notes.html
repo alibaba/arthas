@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Release Notes &mdash; Arthas 3.1.1 文档</title>
+  <title>Release Notes &mdash; Arthas 3.1.2 文档</title>
   
 
   
@@ -19,27 +19,29 @@
   
 
   
+  <script type="text/javascript" src="_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script type="text/javascript" src="_static/jquery.js"></script>
+        <script type="text/javascript" src="_static/underscore.js"></script>
+        <script type="text/javascript" src="_static/doctools.js"></script>
+        <script type="text/javascript" src="_static/language_data.js"></script>
+        <script type="text/javascript" src="_static/translations.js"></script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
 
-  
-  
     
 
   
-
   <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
   <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <link rel="stylesheet" href="_static/overrides.css" type="text/css" />
     <link rel="index" title="索引" href="genindex.html" />
     <link rel="search" title="搜索" href="search.html" />
-    <link rel="next" title="联系我们" href="contact-us.html" />
-    <link rel="prev" title="Docker" href="docker.html" />
 <script src="_static/center_page.js"></script>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.13.1/styles/github.min.css">
  
-
-
-  
-  <script src="_static/js/modernizr.min.js"></script>
 
 </head>
 
@@ -47,11 +49,10 @@
 
    
   <div class="wy-grid-for-nav">
-
     
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
-        <div class="wy-side-nav-search">
+        <div class="wy-side-nav-search" >
           
 
           
@@ -65,7 +66,7 @@
             
             
               <div class="version">
-                3.1.1
+                3.1.2
               </div>
             
           
@@ -89,49 +90,21 @@
               
             
             
-              <ul class="current">
+              <ul>
 <li class="toctree-l1"><a class="reference external" href="https://alibaba.github.io/arthas/en/">English Docs</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://alibaba.github.io/arthas/arthas-tutorials?language=cn">在线教程(推荐)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="install-detail.html">安装</a></li>
+<li class="toctree-l1"><a class="reference internal" href="download.html">下载</a></li>
 <li class="toctree-l1"><a class="reference internal" href="quick-start.html">快速入门</a></li>
 <li class="toctree-l1"><a class="reference internal" href="advanced-use.html">进阶使用</a></li>
 <li class="toctree-l1"><a class="reference internal" href="commands.html">命令列表</a></li>
+<li class="toctree-l1"><a class="reference internal" href="web-console.html">WebConsole</a></li>
 <li class="toctree-l1"><a class="reference internal" href="docker.html">Docker</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas/issues?q=label%3Auser-case">用户案例</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas/issues?q=label%3Aquestion-answered">常见问题</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas">Fork me at GitHub</a></li>
-<li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas/blob/master/CONTRIBUTING.md">参与贡献</a></li>
-<li class="toctree-l1 current"><a class="current reference internal" href="#">Release Notes</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="#v3-1-1">v3.1.1</a><ul>
-<li class="toctree-l3"><a class="reference external" href="https://github.com/alibaba/arthas/releases/tag/arthas-all-3.1.1">https://github.com/alibaba/arthas/releases/tag/arthas-all-3.1.1</a></li>
-</ul>
-</li>
-<li class="toctree-l2"><a class="reference internal" href="#v3-1-0">v3.1.0</a><ul>
-<li class="toctree-l3"><a class="reference external" href="https://github.com/alibaba/arthas/releases/tag/3.1.0">https://github.com/alibaba/arthas/releases/tag/3.1.0</a></li>
-</ul>
-</li>
-<li class="toctree-l2"><a class="reference internal" href="#v3-0-5">v3.0.5</a><ul>
-<li class="toctree-l3"><a class="reference external" href="https://github.com/alibaba/arthas/releases/tag/arthas-all-3.0.5">https://github.com/alibaba/arthas/releases/tag/arthas-all-3.0.5</a></li>
-</ul>
-</li>
-<li class="toctree-l2"><a class="reference internal" href="#v3-0-4">v3.0.4</a><ul>
-<li class="toctree-l3"><a class="reference external" href="https://github.com/alibaba/arthas/releases/tag/arthas-all-3.0.4">https://github.com/alibaba/arthas/releases/tag/arthas-all-3.0.4</a></li>
-</ul>
-</li>
-<li class="toctree-l2"><a class="reference internal" href="#v2017-11-03">v2017-11-03</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#v2017-09-22">v2017-09-22</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#v2017-09-11">v2017-09-11</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#v2017-05-11">v2017-05-11</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#v2017-05-12">v2017-05-12</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#v2016-12-09">v2016-12-09</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#v2016-06-07">v2016-06-07</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#v2016-04-08">v2016-04-08</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#v2016-03-07">v2016-03-07</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#v2016-01-18">v2016-01-18</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#v2016-01-08">v2016-01-08</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#v2015-12-29">v2015-12-29</a></li>
-</ul>
-</li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas/blob/master/CONTRIBUTING">编译调试/参与贡献</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas/releases">Release Notes</a></li>
 <li class="toctree-l1"><a class="reference internal" href="contact-us.html">QQ群/钉钉群</a></li>
 </ul>
 
@@ -200,9 +173,9 @@
            <div itemprop="articleBody">
             
   <div class="section" id="release-notes">
-<span id="release-notes"></span><h1>Release Notes<a class="headerlink" href="#release-notes" title="永久链接至标题">¶</a></h1>
+<h1>Release Notes<a class="headerlink" href="#release-notes" title="永久链接至标题">¶</a></h1>
 <div class="section" id="v3-1-1">
-<span id="v3-1-1"></span><h2>v3.1.1<a class="headerlink" href="#v3-1-1" title="永久链接至标题">¶</a></h2>
+<h2>v3.1.1<a class="headerlink" href="#v3-1-1" title="永久链接至标题">¶</a></h2>
 <div class="toctree-wrapper compound">
 <ul>
 <li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas/releases/tag/arthas-all-3.1.1">https://github.com/alibaba/arthas/releases/tag/arthas-all-3.1.1</a></li>
@@ -210,7 +183,7 @@
 </div>
 </div>
 <div class="section" id="v3-1-0">
-<span id="v3-1-0"></span><h2>v3.1.0<a class="headerlink" href="#v3-1-0" title="永久链接至标题">¶</a></h2>
+<h2>v3.1.0<a class="headerlink" href="#v3-1-0" title="永久链接至标题">¶</a></h2>
 <div class="toctree-wrapper compound">
 <ul>
 <li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas/releases/tag/3.1.0">https://github.com/alibaba/arthas/releases/tag/3.1.0</a></li>
@@ -218,7 +191,7 @@
 </div>
 </div>
 <div class="section" id="v3-0-5">
-<span id="v3-0-5"></span><h2>v3.0.5<a class="headerlink" href="#v3-0-5" title="永久链接至标题">¶</a></h2>
+<h2>v3.0.5<a class="headerlink" href="#v3-0-5" title="永久链接至标题">¶</a></h2>
 <div class="toctree-wrapper compound">
 <ul>
 <li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas/releases/tag/arthas-all-3.0.5">https://github.com/alibaba/arthas/releases/tag/arthas-all-3.0.5</a></li>
@@ -226,7 +199,7 @@
 </div>
 </div>
 <div class="section" id="v3-0-4">
-<span id="v3-0-4"></span><h2>v3.0.4<a class="headerlink" href="#v3-0-4" title="永久链接至标题">¶</a></h2>
+<h2>v3.0.4<a class="headerlink" href="#v3-0-4" title="永久链接至标题">¶</a></h2>
 <div class="toctree-wrapper compound">
 <ul>
 <li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas/releases/tag/arthas-all-3.0.4">https://github.com/alibaba/arthas/releases/tag/arthas-all-3.0.4</a></li>
@@ -234,144 +207,148 @@
 </div>
 </div>
 <div class="section" id="v2017-11-03">
-<span id="v2017-11-03"></span><h2>v2017-11-03<a class="headerlink" href="#v2017-11-03" title="永久链接至标题">¶</a></h2>
+<h2>v2017-11-03<a class="headerlink" href="#v2017-11-03" title="永久链接至标题">¶</a></h2>
 <ul class="simple">
-<li>增加getstatic方法获取静态变量</li>
-<li>修复arthas classloader加载到应用日志的问题</li>
-<li>增加ognl custom classloader便于调用静态方法</li>
-<li>优化termd输出大字符串的性能问题</li>
-<li>classloader命令默认按类加载器类型分类编译</li>
-<li>修复wc命令统计错误的问题</li>
-<li>禁止增强特定JDK类，如Classloader, Method, Integer等</li>
-<li>支持OGNL表达式出错直接退出命令</li>
-<li>修复管道类命令单独出错的问题</li>
-<li>优化命令重定向功能，使用异步日志输出结果</li>
-<li>trace命令增加过滤jdk方法调用的功能</li>
+<li><p>增加getstatic方法获取静态变量</p></li>
+<li><p>修复arthas classloader加载到应用日志的问题</p></li>
+<li><p>增加ognl custom classloader便于调用静态方法</p></li>
+<li><p>优化termd输出大字符串的性能问题</p></li>
+<li><p>classloader命令默认按类加载器类型分类编译</p></li>
+<li><p>修复wc命令统计错误的问题</p></li>
+<li><p>禁止增强特定JDK类，如Classloader, Method, Integer等</p></li>
+<li><p>支持OGNL表达式出错直接退出命令</p></li>
+<li><p>修复管道类命令单独出错的问题</p></li>
+<li><p>优化命令重定向功能，使用异步日志输出结果</p></li>
+<li><p>trace命令增加过滤jdk方法调用的功能</p></li>
 </ul>
 </div>
 <div class="section" id="v2017-09-22">
-<span id="v2017-09-22"></span><h2>v2017-09-22<a class="headerlink" href="#v2017-09-22" title="永久链接至标题">¶</a></h2>
+<h2>v2017-09-22<a class="headerlink" href="#v2017-09-22" title="永久链接至标题">¶</a></h2>
 <ul class="simple">
-<li>优化agent server启动时的异常信息</li>
-<li>修复异步命令的一些bug</li>
+<li><p>优化agent server启动时的异常信息</p></li>
+<li><p>修复异步命令的一些bug</p></li>
 </ul>
 </div>
 <div class="section" id="v2017-09-11">
-<span id="v2017-09-11"></span><h2>v2017-09-11<a class="headerlink" href="#v2017-09-11" title="永久链接至标题">¶</a></h2>
+<h2>v2017-09-11<a class="headerlink" href="#v2017-09-11" title="永久链接至标题">¶</a></h2>
 <ul class="simple">
-<li>支持<a class="reference internal" href="async.html"><span class="doc">异步后后命令</span></a></li>
-<li>jad命令优化，支持JDK8及内部类</li>
-<li>修复中文乱码问题</li>
+<li><p>支持<a class="reference internal" href="async.html"><span class="doc">异步后后命令</span></a></p></li>
+<li><p>jad命令优化，支持JDK8及内部类</p></li>
+<li><p>修复中文乱码问题</p></li>
 </ul>
 </div>
 <div class="section" id="v2017-05-11">
-<span id="v2017-05-11"></span><h2>v2017-05-11<a class="headerlink" href="#v2017-05-11" title="永久链接至标题">¶</a></h2>
+<h2>v2017-05-11<a class="headerlink" href="#v2017-05-11" title="永久链接至标题">¶</a></h2>
 <ul class="simple">
-<li>tt命令默认只展开1层，防止对象过大造成卡顿</li>
-<li>修复中文无法展示的问题</li>
+<li><p>tt命令默认只展开1层，防止对象过大造成卡顿</p></li>
+<li><p>修复中文无法展示的问题</p></li>
 </ul>
 </div>
 <div class="section" id="v2017-05-12">
-<span id="v2017-05-12"></span><h2>v2017-05-12<a class="headerlink" href="#v2017-05-12" title="永久链接至标题">¶</a></h2>
+<h2>v2017-05-12<a class="headerlink" href="#v2017-05-12" title="永久链接至标题">¶</a></h2>
 <ul class="simple">
-<li>Arthas 3.0 release</li>
+<li><p>Arthas 3.0 release</p></li>
 </ul>
 </div>
 <div class="section" id="v2016-12-09">
-<span id="v2016-12-09"></span><h2>v2016-12-09<a class="headerlink" href="#v2016-12-09" title="永久链接至标题">¶</a></h2>
+<h2>v2016-12-09<a class="headerlink" href="#v2016-12-09" title="永久链接至标题">¶</a></h2>
 <ul class="simple">
-<li>as.sh支持-h输出帮助</li>
-<li>[#121] 修复残留的临时文件导致arthas启动失败的问题</li>
-<li>[#123] 修复反复attach/shutdown造成classloader泄露的问题</li>
-<li>优化命令中的帮助提示信息</li>
-<li>[#126] 修复tm命令文档链接错乱的问题</li>
-<li>[#122] classloader命令中过滤掉<tt class="docutils literal">sun.reflect.DelegatingClassLoader</tt></li>
-<li>[#129] 修复classloader层次展示的问题</li>
-<li>[#125] arthas输出的log不主动换行，对于日志解析更加友好</li>
-<li>[#96] sc等命令支持com/taobao/xxx/TestClass这样的格式，以后复制粘贴不需要在把’/’替换成’.’啦</li>
-<li>[#124] 修复某些情况下trace的时间为负值的问题</li>
-<li>[#128] tt命令的结果默认自动展开，不需要再增加<tt class="docutils literal">-x 2</tt>来看到参数，异常的详细信息了。</li>
-<li>[#130] 修复当端口冲突时，没有很好地打印错误，而是进入了一个出错的交互界面的问题</li>
-<li>[#98] 修复Arthas启动时，如果下载更新失败，导致启动失败的问题</li>
-<li>[#139] 修复某些特殊情况下agent attach失败的问题</li>
-<li>[#156] jd-core-java延迟初始化，避免arthas启动时出错</li>
-<li>修复线程名重复的问题</li>
-<li>[#150] trace命令支持按运行总耗时过滤</li>
-<li>修复sc查找SystemClassloader时可能出现的NPE</li>
-<li>[#180] 修复第一次Attach成功之后，删除之前Arthas的安装包，重新编译打包，再次attach失败的问题</li>
+<li><p>as.sh支持-h输出帮助</p></li>
+<li><p>[#121] 修复残留的临时文件导致arthas启动失败的问题</p></li>
+<li><p>[#123] 修复反复attach/shutdown造成classloader泄露的问题</p></li>
+<li><p>优化命令中的帮助提示信息</p></li>
+<li><p>[#126] 修复tm命令文档链接错乱的问题</p></li>
+<li><p>[#122] classloader命令中过滤掉<code class="docutils literal notranslate"><span class="pre">sun.reflect.DelegatingClassLoader</span></code></p></li>
+<li><p>[#129] 修复classloader层次展示的问题</p></li>
+<li><p>[#125] arthas输出的log不主动换行，对于日志解析更加友好</p></li>
+<li><p>[#96] sc等命令支持com/taobao/xxx/TestClass这样的格式，以后复制粘贴不需要在把’/’替换成’.’啦</p></li>
+<li><p>[#124] 修复某些情况下trace的时间为负值的问题</p></li>
+<li><p>[#128] tt命令的结果默认自动展开，不需要再增加<code class="docutils literal notranslate"><span class="pre">-x</span> <span class="pre">2</span></code>来看到参数，异常的详细信息了。</p></li>
+<li><p>[#130] 修复当端口冲突时，没有很好地打印错误，而是进入了一个出错的交互界面的问题</p></li>
+<li><p>[#98] 修复Arthas启动时，如果下载更新失败，导致启动失败的问题</p></li>
+<li><p>[#139] 修复某些特殊情况下agent attach失败的问题</p></li>
+<li><p>[#156] jd-core-java延迟初始化，避免arthas启动时出错</p></li>
+<li><p>修复线程名重复的问题</p></li>
+<li><p>[#150] trace命令支持按运行总耗时过滤</p></li>
+<li><p>修复sc查找SystemClassloader时可能出现的NPE</p></li>
+<li><p>[#180] 修复第一次Attach成功之后，删除之前Arthas的安装包，重新编译打包，再次attach失败的问题</p></li>
 </ul>
 </div>
 <div class="section" id="v2016-06-07">
-<span id="v2016-06-07"></span><h2>v2016-06-07<a class="headerlink" href="#v2016-06-07" title="永久链接至标题">¶</a></h2>
+<h2>v2016-06-07<a class="headerlink" href="#v2016-06-07" title="永久链接至标题">¶</a></h2>
 <ul class="simple">
-<li>修复以资源方式加载spy类时出现NPE的问题</li>
-<li>支持一键找出线程中获得锁并阻塞住其他线程的线程</li>
-<li>优化 Thread 输出，按线程名排序</li>
-<li>获取topN忙的线程时，支持指定刷新间隔</li>
+<li><p>修复以资源方式加载spy类时出现NPE的问题</p></li>
+<li><p>支持一键找出线程中获得锁并阻塞住其他线程的线程</p></li>
+<li><p>优化 Thread 输出，按线程名排序</p></li>
+<li><p>获取topN忙的线程时，支持指定刷新间隔</p></li>
 </ul>
 </div>
 <div class="section" id="v2016-04-08">
-<span id="v2016-04-08"></span><h2>v2016-04-08<a class="headerlink" href="#v2016-04-08" title="永久链接至标题">¶</a></h2>
+<h2>v2016-04-08<a class="headerlink" href="#v2016-04-08" title="永久链接至标题">¶</a></h2>
 <ul class="simple">
-<li>New feature：<ul>
-<li>dashboard支持指定刷新频率，支持指定执行次数</li>
-<li>命令执行结果保存到日志文件，方便后续查看</li>
-<li>启动速度优化，第一次attach的速度提升一倍</li>
-<li>支持批处理功能，支持执行脚本文件</li>
-<li>优化启动逻辑，arthas脚本启动时交互式选择进程</li>
-<li>类默认启用继承关系查询，查找类时默认会查找子类，如果需要关闭，则通过全局开关 Options disable-sub-class 关闭</li>
-<li>支持在彩色模式和文本模式中切换</li>
+<li><p>New feature：</p>
+<ul>
+<li><p>dashboard支持指定刷新频率，支持指定执行次数</p></li>
+<li><p>命令执行结果保存到日志文件，方便后续查看</p></li>
+<li><p>启动速度优化，第一次attach的速度提升一倍</p></li>
+<li><p>支持批处理功能，支持执行脚本文件</p></li>
+<li><p>优化启动逻辑，arthas脚本启动时交互式选择进程</p></li>
+<li><p>类默认启用继承关系查询，查找类时默认会查找子类，如果需要关闭，则通过全局开关 Options disable-sub-class 关闭</p></li>
+<li><p>支持在彩色模式和文本模式中切换</p></li>
 </ul>
 </li>
-<li>UI Improvement:<ul>
-<li>合并exit和quit命令</li>
-<li>命令帮助信息增加wiki链接</li>
-<li>优化watch的逻辑，更加符合大家的直觉</li>
-<li>thread命令增加example说明</li>
-<li>自动补全的时候，忽略大小写</li>
+<li><p>UI Improvement:</p>
+<ul>
+<li><p>合并exit和quit命令</p></li>
+<li><p>命令帮助信息增加wiki链接</p></li>
+<li><p>优化watch的逻辑，更加符合大家的直觉</p></li>
+<li><p>thread命令增加example说明</p></li>
+<li><p>自动补全的时候，忽略大小写</p></li>
 </ul>
 </li>
-<li>Bugfix:<ul>
-<li>修复trace命令遇到循环造成输出太长</li>
-<li>修复trace命令在方法调用中抛出了异常，会让trace的节点错位</li>
-<li>修正增强BootstrapClassLoader加载的类，找不到Spy的问题</li>
-<li>修复某些配色方案下，结果显示不友好的问题</li>
+<li><p>Bugfix:</p>
+<ul>
+<li><p>修复trace命令遇到循环造成输出太长</p></li>
+<li><p>修复trace命令在方法调用中抛出了异常，会让trace的节点错位</p></li>
+<li><p>修正增强BootstrapClassLoader加载的类，找不到Spy的问题</p></li>
+<li><p>修复某些配色方案下，结果显示不友好的问题</p></li>
 </ul>
 </li>
 </ul>
 </div>
 <div class="section" id="v2016-03-07">
-<span id="v2016-03-07"></span><h2>v2016-03-07<a class="headerlink" href="#v2016-03-07" title="永久链接至标题">¶</a></h2>
+<h2>v2016-03-07<a class="headerlink" href="#v2016-03-07" title="永久链接至标题">¶</a></h2>
 <ul class="simple">
-<li>支持一键查看当前最忙的前N个线程及其堆栈</li>
-<li>修复openjdk下启动arthas失败的问题（需要重新安装as.sh）</li>
-<li>一些体验优化</li>
+<li><p>支持一键查看当前最忙的前N个线程及其堆栈</p></li>
+<li><p>修复openjdk下启动arthas失败的问题（需要重新安装as.sh）</p></li>
+<li><p>一些体验优化</p></li>
 </ul>
 </div>
 <div class="section" id="v2016-01-18">
-<span id="v2016-01-18"></span><h2>v2016-01-18<a class="headerlink" href="#v2016-01-18" title="永久链接至标题">¶</a></h2>
+<h2>v2016-01-18<a class="headerlink" href="#v2016-01-18" title="永久链接至标题">¶</a></h2>
 <ul class="simple">
-<li>优化 jad，实时 dump 内存 byte array，并使用 jd-core-java 反编译，支持<tt class="docutils literal">行号显示</tt></li>
-<li>修复 tt 命令在监控与线程上下文相关的方法调用时，显示/重做等场景下的 bug</li>
+<li><p>优化 jad，实时 dump 内存 byte array，并使用 jd-core-java 反编译，支持<code class="docutils literal notranslate"><span class="pre">行号显示</span></code></p></li>
+<li><p>修复 tt 命令在监控与线程上下文相关的方法调用时，显示/重做等场景下的 bug</p></li>
 </ul>
 </div>
 <div class="section" id="v2016-01-08">
-<span id="v2016-01-08"></span><h2>v2016-01-08<a class="headerlink" href="#v2016-01-08" title="永久链接至标题">¶</a></h2>
+<h2>v2016-01-08<a class="headerlink" href="#v2016-01-08" title="永久链接至标题">¶</a></h2>
 <ul class="simple">
-<li>修复一些 bug<ul>
-<li>jad NPE</li>
-<li>watch/monitor NPE</li>
-<li>不需要转义</li>
-<li>数据统计问题修复</li>
-<li>sc 查看静态变量内部层次结构</li>
+<li><p>修复一些 bug</p>
+<ul>
+<li><p>jad NPE</p></li>
+<li><p>watch/monitor NPE</p></li>
+<li><p>不需要转义</p></li>
+<li><p>数据统计问题修复</p></li>
+<li><p>sc 查看静态变量内部层次结构</p></li>
 </ul>
 </li>
 </ul>
 </div>
 <div class="section" id="v2015-12-29">
-<span id="v2015-12-29"></span><h2>v2015-12-29<a class="headerlink" href="#v2015-12-29" title="永久链接至标题">¶</a></h2>
+<h2>v2015-12-29<a class="headerlink" href="#v2015-12-29" title="永久链接至标题">¶</a></h2>
 <ul class="simple">
-<li>Arthas 2.0 测试版本发布！</li>
+<li><p>Arthas 2.0 测试版本发布！</p></li>
 </ul>
 </div>
 </div>
@@ -382,21 +359,12 @@
           </div>
           <footer>
   
-    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
-      
-        <a href="contact-us.html" class="btn btn-neutral float-right" title="联系我们" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
-      
-      
-        <a href="docker.html" class="btn btn-neutral" title="Docker" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
-      
-    </div>
-  
 
   <hr/>
 
   <div role="contentinfo">
     <p>
-        &copy; Copyright 2018-2019, Alibaba Middleware Group, and contributors.
+        &copy; Copyright 2018-2019, Alibaba Middleware Group, and contributors
 
     </p>
   </div>
@@ -413,34 +381,16 @@
   
 
 
-  
-
-    <script type="text/javascript">
-        var DOCUMENTATION_OPTIONS = {
-            URL_ROOT:'./',
-            VERSION:'3.1.1',
-            LANGUAGE:'zh_CN',
-            COLLAPSE_INDEX:false,
-            FILE_SUFFIX:'.html',
-            HAS_SOURCE:  true,
-            SOURCELINK_SUFFIX: '.txt'
-        };
-    </script>
-      <script type="text/javascript" src="_static/jquery.js"></script>
-      <script type="text/javascript" src="_static/underscore.js"></script>
-      <script type="text/javascript" src="_static/doctools.js"></script>
-      <script type="text/javascript" src="_static/translations.js"></script>
-      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
-
-  
-
-  <script type="text/javascript" src="_static/js/theme.js"></script>
-
   <script type="text/javascript">
       jQuery(function () {
           SphinxRtdTheme.Navigation.enable(true);
       });
   </script>
+
+  
+  
+    
+  
 <div class="github-fork-ribbon-wrapper right">
   <div class="github-fork-ribbon">
     <a href="https://github.com/alibaba/arthas" target="_blank">Fork me at GitHub</a>

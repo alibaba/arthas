@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>jvm &mdash; Arthas 3.1.1 文档</title>
+  <title>jvm &mdash; Arthas 3.1.2 文档</title>
   
 
   
@@ -19,13 +19,21 @@
   
 
   
+  <script type="text/javascript" src="_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script type="text/javascript" src="_static/jquery.js"></script>
+        <script type="text/javascript" src="_static/underscore.js"></script>
+        <script type="text/javascript" src="_static/doctools.js"></script>
+        <script type="text/javascript" src="_static/language_data.js"></script>
+        <script type="text/javascript" src="_static/translations.js"></script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
 
-  
-  
     
 
   
-
   <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
   <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <link rel="stylesheet" href="_static/overrides.css" type="text/css" />
@@ -37,21 +45,16 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.13.1/styles/github.min.css">
  
 
-
-  
-  <script src="_static/js/modernizr.min.js"></script>
-
 </head>
 
 <body class="wy-body-for-nav">
 
    
   <div class="wy-grid-for-nav">
-
     
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
-        <div class="wy-side-nav-search">
+        <div class="wy-side-nav-search" >
           
 
           
@@ -65,7 +68,7 @@
             
             
               <div class="version">
-                3.1.1
+                3.1.2
               </div>
             
           
@@ -93,25 +96,29 @@
 <li class="toctree-l1"><a class="reference external" href="https://alibaba.github.io/arthas/en/">English Docs</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://alibaba.github.io/arthas/arthas-tutorials?language=cn">在线教程(推荐)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="install-detail.html">安装</a></li>
+<li class="toctree-l1"><a class="reference internal" href="download.html">下载</a></li>
 <li class="toctree-l1"><a class="reference internal" href="quick-start.html">快速入门</a></li>
 <li class="toctree-l1"><a class="reference internal" href="advanced-use.html">进阶使用</a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="commands.html">命令列表</a><ul class="current">
 <li class="toctree-l2"><a class="reference internal" href="dashboard.html">dashboard</a></li>
 <li class="toctree-l2"><a class="reference internal" href="thread.html">thread</a></li>
 <li class="toctree-l2 current"><a class="current reference internal" href="#">jvm</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#">使用参考</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id1">使用参考</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#thread">THREAD相关</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#">文件描述符相关</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id2">文件描述符相关</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="sysprop.html">sysprop</a></li>
 <li class="toctree-l2"><a class="reference internal" href="sysenv.html">sysenv</a></li>
+<li class="toctree-l2"><a class="reference internal" href="vmoption.html">vmoption</a></li>
+<li class="toctree-l2"><a class="reference internal" href="logger.html">logger</a></li>
 <li class="toctree-l2"><a class="reference internal" href="mbean.html">mbean</a></li>
 <li class="toctree-l2"><a class="reference internal" href="getstatic.html">getstatic</a></li>
 <li class="toctree-l2"><a class="reference internal" href="ognl.html">ognl</a></li>
 <li class="toctree-l2"><a class="reference internal" href="sc.html">sc</a></li>
 <li class="toctree-l2"><a class="reference internal" href="sm.html">sm</a></li>
 <li class="toctree-l2"><a class="reference internal" href="dump.html">dump</a></li>
+<li class="toctree-l2"><a class="reference internal" href="heapdump.html">heapdump</a></li>
 <li class="toctree-l2"><a class="reference internal" href="jad.html">jad</a></li>
 <li class="toctree-l2"><a class="reference internal" href="classloader.html">classloader</a></li>
 <li class="toctree-l2"><a class="reference internal" href="mc.html">mc</a></li>
@@ -127,12 +134,13 @@
 <li class="toctree-l2"><a class="reference internal" href="commands.html#arthas">Arthas 基础命令</a></li>
 </ul>
 </li>
+<li class="toctree-l1"><a class="reference internal" href="web-console.html">WebConsole</a></li>
 <li class="toctree-l1"><a class="reference internal" href="docker.html">Docker</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas/issues?q=label%3Auser-case">用户案例</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas/issues?q=label%3Aquestion-answered">常见问题</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas">Fork me at GitHub</a></li>
-<li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas/blob/master/CONTRIBUTING.md">参与贡献</a></li>
-<li class="toctree-l1"><a class="reference internal" href="release-notes.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas/blob/master/CONTRIBUTING">编译调试/参与贡献</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas/releases">Release Notes</a></li>
 <li class="toctree-l1"><a class="reference internal" href="contact-us.html">QQ群/钉钉群</a></li>
 </ul>
 
@@ -203,11 +211,12 @@
            <div itemprop="articleBody">
             
   <div class="section" id="jvm">
-<span id="jvm"></span><h1>jvm<a class="headerlink" href="#jvm" title="永久链接至标题">¶</a></h1>
+<h1>jvm<a class="headerlink" href="#jvm" title="永久链接至标题">¶</a></h1>
 <blockquote>
-<div>查看当前JVM信息</div></blockquote>
-<div class="section" id="">
-<span id="id1"></span><h2>使用参考<a class="headerlink" href="#" title="永久链接至标题">¶</a></h2>
+<div><p>查看当前JVM信息</p>
+</div></blockquote>
+<div class="section" id="id1">
+<h2>使用参考<a class="headerlink" href="#id1" title="永久链接至标题">¶</a></h2>
 <div class="highlight-default notranslate"><pre class="literal-block">$ jvm
  CATEGORY            INFO
 ------------------------------------------------------------------------------------------------------------------------------------
@@ -298,20 +307,20 @@ Affect cost in 2 ms.</pre>
 </div>
 </div>
 <div class="section" id="thread">
-<span id="thread"></span><h2>THREAD相关<a class="headerlink" href="#thread" title="永久链接至标题">¶</a></h2>
+<h2>THREAD相关<a class="headerlink" href="#thread" title="永久链接至标题">¶</a></h2>
 <ul class="simple">
-<li>COUNT: JVM当前活跃的线程数</li>
-<li>DAEMON-COUNT: JVM当前活跃的守护线程数</li>
-<li>PEAK-COUNT: 从JVM启动开始曾经活着的最大线程数</li>
-<li>STARTED-COUNT: 从JVM启动开始总共启动过的线程次数</li>
-<li>DEADLOCK-COUNT: JVM当前死锁的线程数</li>
+<li><p>COUNT: JVM当前活跃的线程数</p></li>
+<li><p>DAEMON-COUNT: JVM当前活跃的守护线程数</p></li>
+<li><p>PEAK-COUNT: 从JVM启动开始曾经活着的最大线程数</p></li>
+<li><p>STARTED-COUNT: 从JVM启动开始总共启动过的线程次数</p></li>
+<li><p>DEADLOCK-COUNT: JVM当前死锁的线程数</p></li>
 </ul>
 </div>
-<div class="section" id="">
-<span id="id2"></span><h2>文件描述符相关<a class="headerlink" href="#" title="永久链接至标题">¶</a></h2>
+<div class="section" id="id2">
+<h2>文件描述符相关<a class="headerlink" href="#id2" title="永久链接至标题">¶</a></h2>
 <ul class="simple">
-<li>MAX-FILE-DESCRIPTOR-COUNT：JVM进程最大可以打开的文件描述符数</li>
-<li>OPEN-FILE-DESCRIPTOR-COUNT：JVM当前打开的文件描述符数</li>
+<li><p>MAX-FILE-DESCRIPTOR-COUNT：JVM进程最大可以打开的文件描述符数</p></li>
+<li><p>OPEN-FILE-DESCRIPTOR-COUNT：JVM当前打开的文件描述符数</p></li>
 </ul>
 </div>
 </div>
@@ -327,7 +336,7 @@ Affect cost in 2 ms.</pre>
         <a href="sysprop.html" class="btn btn-neutral float-right" title="sysprop" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
-        <a href="thread.html" class="btn btn-neutral" title="thread" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+        <a href="thread.html" class="btn btn-neutral float-left" title="thread" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
       
     </div>
   
@@ -336,7 +345,7 @@ Affect cost in 2 ms.</pre>
 
   <div role="contentinfo">
     <p>
-        &copy; Copyright 2018-2019, Alibaba Middleware Group, and contributors.
+        &copy; Copyright 2018-2019, Alibaba Middleware Group, and contributors
 
     </p>
   </div>
@@ -353,34 +362,16 @@ Affect cost in 2 ms.</pre>
   
 
 
-  
-
-    <script type="text/javascript">
-        var DOCUMENTATION_OPTIONS = {
-            URL_ROOT:'./',
-            VERSION:'3.1.1',
-            LANGUAGE:'zh_CN',
-            COLLAPSE_INDEX:false,
-            FILE_SUFFIX:'.html',
-            HAS_SOURCE:  true,
-            SOURCELINK_SUFFIX: '.txt'
-        };
-    </script>
-      <script type="text/javascript" src="_static/jquery.js"></script>
-      <script type="text/javascript" src="_static/underscore.js"></script>
-      <script type="text/javascript" src="_static/doctools.js"></script>
-      <script type="text/javascript" src="_static/translations.js"></script>
-      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
-
-  
-
-  <script type="text/javascript" src="_static/js/theme.js"></script>
-
   <script type="text/javascript">
       jQuery(function () {
           SphinxRtdTheme.Navigation.enable(true);
       });
   </script>
+
+  
+  
+    
+  
 <div class="github-fork-ribbon-wrapper right">
   <div class="github-fork-ribbon">
     <a href="https://github.com/alibaba/arthas" target="_blank">Fork me at GitHub</a>

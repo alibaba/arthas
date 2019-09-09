@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>thread &mdash; Arthas 3.1.1 文档</title>
+  <title>thread &mdash; Arthas 3.1.2 文档</title>
   
 
   
@@ -19,13 +19,21 @@
   
 
   
+  <script type="text/javascript" src="_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script type="text/javascript" src="_static/jquery.js"></script>
+        <script type="text/javascript" src="_static/underscore.js"></script>
+        <script type="text/javascript" src="_static/doctools.js"></script>
+        <script type="text/javascript" src="_static/language_data.js"></script>
+        <script type="text/javascript" src="_static/translations.js"></script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
 
-  
-  
     
 
   
-
   <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
   <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <link rel="stylesheet" href="_static/overrides.css" type="text/css" />
@@ -37,21 +45,16 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.13.1/styles/github.min.css">
  
 
-
-  
-  <script src="_static/js/modernizr.min.js"></script>
-
 </head>
 
 <body class="wy-body-for-nav">
 
    
   <div class="wy-grid-for-nav">
-
     
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
-        <div class="wy-side-nav-search">
+        <div class="wy-side-nav-search" >
           
 
           
@@ -65,7 +68,7 @@
             
             
               <div class="version">
-                3.1.1
+                3.1.2
               </div>
             
           
@@ -93,15 +96,16 @@
 <li class="toctree-l1"><a class="reference external" href="https://alibaba.github.io/arthas/en/">English Docs</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://alibaba.github.io/arthas/arthas-tutorials?language=cn">在线教程(推荐)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="install-detail.html">安装</a></li>
+<li class="toctree-l1"><a class="reference internal" href="download.html">下载</a></li>
 <li class="toctree-l1"><a class="reference internal" href="quick-start.html">快速入门</a></li>
 <li class="toctree-l1"><a class="reference internal" href="advanced-use.html">进阶使用</a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="commands.html">命令列表</a><ul class="current">
 <li class="toctree-l2"><a class="reference internal" href="dashboard.html">dashboard</a></li>
 <li class="toctree-l2 current"><a class="current reference internal" href="#">thread</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#">参数说明</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#">使用参考</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id1">参数说明</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id2">使用参考</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="#n">支持一键展示当前最忙的前N个线程并打印堆栈：</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#">当没有参数时，显示所有线程的信息。</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id3">当没有参数时，显示所有线程的信息。</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#thread-id">thread id， 显示指定线程的运行堆栈</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#thread-b">thread -b, 找出当前阻塞其他线程的线程</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#thread-i">thread -i, 指定采样时间间隔</a></li>
@@ -112,12 +116,15 @@
 <li class="toctree-l2"><a class="reference internal" href="jvm.html">jvm</a></li>
 <li class="toctree-l2"><a class="reference internal" href="sysprop.html">sysprop</a></li>
 <li class="toctree-l2"><a class="reference internal" href="sysenv.html">sysenv</a></li>
+<li class="toctree-l2"><a class="reference internal" href="vmoption.html">vmoption</a></li>
+<li class="toctree-l2"><a class="reference internal" href="logger.html">logger</a></li>
 <li class="toctree-l2"><a class="reference internal" href="mbean.html">mbean</a></li>
 <li class="toctree-l2"><a class="reference internal" href="getstatic.html">getstatic</a></li>
 <li class="toctree-l2"><a class="reference internal" href="ognl.html">ognl</a></li>
 <li class="toctree-l2"><a class="reference internal" href="sc.html">sc</a></li>
 <li class="toctree-l2"><a class="reference internal" href="sm.html">sm</a></li>
 <li class="toctree-l2"><a class="reference internal" href="dump.html">dump</a></li>
+<li class="toctree-l2"><a class="reference internal" href="heapdump.html">heapdump</a></li>
 <li class="toctree-l2"><a class="reference internal" href="jad.html">jad</a></li>
 <li class="toctree-l2"><a class="reference internal" href="classloader.html">classloader</a></li>
 <li class="toctree-l2"><a class="reference internal" href="mc.html">mc</a></li>
@@ -133,12 +140,13 @@
 <li class="toctree-l2"><a class="reference internal" href="commands.html#arthas">Arthas 基础命令</a></li>
 </ul>
 </li>
+<li class="toctree-l1"><a class="reference internal" href="web-console.html">WebConsole</a></li>
 <li class="toctree-l1"><a class="reference internal" href="docker.html">Docker</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas/issues?q=label%3Auser-case">用户案例</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas/issues?q=label%3Aquestion-answered">常见问题</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas">Fork me at GitHub</a></li>
-<li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas/blob/master/CONTRIBUTING.md">参与贡献</a></li>
-<li class="toctree-l1"><a class="reference internal" href="release-notes.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas/blob/master/CONTRIBUTING">编译调试/参与贡献</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas/releases">Release Notes</a></li>
 <li class="toctree-l1"><a class="reference internal" href="contact-us.html">QQ群/钉钉群</a></li>
 </ul>
 
@@ -209,11 +217,12 @@
            <div itemprop="articleBody">
             
   <div class="section" id="thread">
-<span id="thread"></span><h1>thread<a class="headerlink" href="#thread" title="永久链接至标题">¶</a></h1>
+<h1>thread<a class="headerlink" href="#thread" title="永久链接至标题">¶</a></h1>
 <blockquote>
-<div>查看当前线程信息，查看线程的堆栈</div></blockquote>
-<div class="section" id="">
-<span id="id1"></span><h2>参数说明<a class="headerlink" href="#" title="永久链接至标题">¶</a></h2>
+<div><p>查看当前线程信息，查看线程的堆栈</p>
+</div></blockquote>
+<div class="section" id="id1">
+<h2>参数说明<a class="headerlink" href="#id1" title="永久链接至标题">¶</a></h2>
 <table border="1" class="docutils">
 <thead>
 <tr>
@@ -240,19 +249,23 @@
 </tr>
 </tbody>
 </table><blockquote>
-<div>cpu占比是如何统计出来的？</div></blockquote>
+<div><p>cpu占比是如何统计出来的？</p>
+</div></blockquote>
 <blockquote>
-<div>这里的cpu统计的是，一段采样间隔内，当前JVM里各个线程所占用的cpu时间占总cpu时间的百分比。其计算方法为：
-首先进行一次采样，获得所有线程的cpu的使用时间(调用的是<tt class="docutils literal">java.lang.management.ThreadMXBean#getThreadCpuTime</tt>这个接口)，然后睡眠一段时间，默认100ms，可以通过<tt class="docutils literal">-i</tt>参数指定，然后再采样一次，最后得出这段时间内各个线程消耗的cpu时间情况，最后算出百分比。</div></blockquote>
+<div><p>这里的cpu统计的是，一段采样间隔内，当前JVM里各个线程所占用的cpu时间占总cpu时间的百分比。其计算方法为：
+首先进行一次采样，获得所有线程的cpu的使用时间(调用的是<code class="docutils literal notranslate"><span class="pre">java.lang.management.ThreadMXBean#getThreadCpuTime</span></code>这个接口)，然后睡眠一段时间，默认100ms，可以通过<code class="docutils literal notranslate"><span class="pre">-i</span></code>参数指定，然后再采样一次，最后得出这段时间内各个线程消耗的cpu时间情况，最后算出百分比。</p>
+</div></blockquote>
 <blockquote>
-<div>注意： 这个统计也会产生一定的开销（JDK这个接口本身开销比较大），因此会看到as的线程占用一定的百分比，为了降低统计自身的开销带来的影响，可以把采样间隔拉长一些，比如5000毫秒。</div></blockquote>
+<div><p>注意： 这个统计也会产生一定的开销（JDK这个接口本身开销比较大），因此会看到as的线程占用一定的百分比，为了降低统计自身的开销带来的影响，可以把采样间隔拉长一些，比如5000毫秒。</p>
+</div></blockquote>
 <blockquote>
-<div>如果想看从Java进程启动开始到现在的cpu占比情况：可以使用<a class="reference external" href="https://github.com/oldratlee/useful-scripts/blob/master/docs/java.md#-show-busy-java-threads">show-busy-java-threads</a>这个脚本</div></blockquote>
+<div><p>如果想看从Java进程启动开始到现在的cpu占比情况：可以使用<a class="reference external" href="https://github.com/oldratlee/useful-scripts/blob/master/docs/java.md#-show-busy-java-threads">show-busy-java-threads</a>这个脚本</p>
+</div></blockquote>
 </div>
-<div class="section" id="">
-<span id="id2"></span><h2>使用参考<a class="headerlink" href="#" title="永久链接至标题">¶</a></h2>
+<div class="section" id="id2">
+<h2>使用参考<a class="headerlink" href="#id2" title="永久链接至标题">¶</a></h2>
 <div class="section" id="n">
-<span id="n"></span><h3>支持一键展示当前最忙的前N个线程并打印堆栈：<a class="headerlink" href="#n" title="永久链接至标题">¶</a></h3>
+<h3>支持一键展示当前最忙的前N个线程并打印堆栈：<a class="headerlink" href="#n" title="永久链接至标题">¶</a></h3>
 <div class="highlight-shell notranslate"><div class="highlight hljs"><pre class="shell">$ thread -n 3
 &quot;as-command-execute-daemon&quot; Id=29 cpuUsage=75% RUNNABLE
     at sun.management.ThreadImpl.dumpThreads0(Native Method)
@@ -276,12 +289,11 @@
     at java.lang.Object.wait(Native Method)
     -  waiting on java.lang.ref.Reference$Lock@69ba0f27
     at java.lang.Object.wait(Object.java:503)
-    at java.lang.ref.Reference$ReferenceHandler.run(Reference.java:133)
-</pre></div>
+    at java.lang.ref.Reference$ReferenceHandler.run(Reference.java:133)</pre></div>
 </div>
 </div>
-<div class="section" id="">
-<span id="id3"></span><h3>当没有参数时，显示所有线程的信息。<a class="headerlink" href="#" title="永久链接至标题">¶</a></h3>
+<div class="section" id="id3">
+<h3>当没有参数时，显示所有线程的信息。<a class="headerlink" href="#id3" title="永久链接至标题">¶</a></h3>
 <div class="highlight-shell notranslate"><div class="highlight hljs"><pre class="shell">$ thread
 Threads Total: 16, NEW: 0, RUNNABLE: 7, BLOCKED: 0, WAITING: 5, TIMED_WAITING: 4, TERMINATED: 0
 ID         NAME                             GROUP                 PRIORITY   STATE      %CPU       TIME       INTERRUPTE DAEMON
@@ -300,12 +312,11 @@ ID         NAME                             GROUP                 PRIORITY   STA
 3          Finalizer                        system                8          WAITING    0          0:0        false      true
 4          Signal Dispatcher                system                9          RUNNABLE   0          0:0        false      true
 20         NonBlockingInputStreamThread     main                  5          WAITING    0          0:0        false      true
-21         Thread-8                         main                  5          RUNNABLE   0          0:0        false      true
-</pre></div>
+21         Thread-8                         main                  5          RUNNABLE   0          0:0        false      true</pre></div>
 </div>
 </div>
 <div class="section" id="thread-id">
-<span id="thread-id"></span><h3>thread id， 显示指定线程的运行堆栈<a class="headerlink" href="#thread-id" title="永久链接至标题">¶</a></h3>
+<h3>thread id， 显示指定线程的运行堆栈<a class="headerlink" href="#thread-id" title="永久链接至标题">¶</a></h3>
 <div class="highlight-shell notranslate"><div class="highlight hljs"><pre class="shell">$ thread 1
 &quot;main&quot; Id=1 WAITING on java.util.concurrent.CountDownLatch$Sync@29fafb28
     at sun.misc.Unsafe.park(Native Method)
@@ -314,13 +325,12 @@ ID         NAME                             GROUP                 PRIORITY   STA
     at java.util.concurrent.locks.AbstractQueuedSynchronizer.parkAndCheckInterrupt(AbstractQueuedSynchronizer.java:836)
     at java.util.concurrent.locks.AbstractQueuedSynchronizer.doAcquireSharedInterruptibly(AbstractQueuedSynchronizer.java:997)
     at java.util.concurrent.locks.AbstractQueuedSynchronizer.acquireSharedInterruptibly(AbstractQueuedSynchronizer.java:1304)
-    at java.util.concurrent.CountDownLatch.await(CountDownLatch.java:231)
-</pre></div>
+    at java.util.concurrent.CountDownLatch.await(CountDownLatch.java:231)</pre></div>
 </div>
 </div>
 <div class="section" id="thread-b">
-<span id="thread-b"></span><h3>thread -b, 找出当前阻塞其他线程的线程<a class="headerlink" href="#thread-b" title="永久链接至标题">¶</a></h3>
-<p>有时候我们发现应用卡住了， 通常是由于某个线程拿住了某个锁， 并且其他线程都在等待这把锁造成的。 为了排查这类问题， arthas提供了<tt class="docutils literal">thread -b</tt>， 一键找出那个罪魁祸首。</p>
+<h3>thread -b, 找出当前阻塞其他线程的线程<a class="headerlink" href="#thread-b" title="永久链接至标题">¶</a></h3>
+<p>有时候我们发现应用卡住了， 通常是由于某个线程拿住了某个锁， 并且其他线程都在等待这把锁造成的。 为了排查这类问题， arthas提供了<code class="docutils literal notranslate"><span class="pre">thread</span> <span class="pre">-b</span></code>， 一键找出那个罪魁祸首。</p>
 <div class="highlight-bash notranslate"><div class="highlight hljs"><pre class="bash">$ thread -b
 &quot;http-bio-8080-exec-4&quot; Id=27 TIMED_WAITING
     at java.lang.Thread.sleep(Native Method)
@@ -356,14 +366,14 @@ ID         NAME                             GROUP                 PRIORITY   STA
     at java.lang.Thread.run(Thread.java:745)
 
     Number of locked synchronizers = 1
-    - java.util.concurrent.ThreadPoolExecutor$Worker@31a6493e
-</pre></div>
+    - java.util.concurrent.ThreadPoolExecutor$Worker@31a6493e</pre></div>
 </div>
 <blockquote>
-<div>注意， 目前只支持找出synchronized关键字阻塞住的线程， 如果是<tt class="docutils literal">java.util.concurrent.Lock</tt>， 目前还不支持。</div></blockquote>
+<div><p>注意， 目前只支持找出synchronized关键字阻塞住的线程， 如果是<code class="docutils literal notranslate"><span class="pre">java.util.concurrent.Lock</span></code>， 目前还不支持。</p>
+</div></blockquote>
 </div>
 <div class="section" id="thread-i">
-<span id="thread-i"></span><h3>thread -i, 指定采样时间间隔<a class="headerlink" href="#thread-i" title="永久链接至标题">¶</a></h3>
+<h3>thread -i, 指定采样时间间隔<a class="headerlink" href="#thread-i" title="永久链接至标题">¶</a></h3>
 <div class="highlight-bash notranslate"><div class="highlight hljs"><pre class="bash">$ thread -n 3 -i 1000
 &quot;as-command-execute-daemon&quot; Id=4759 cpuUsage=23% RUNNABLE
     at sun.management.ThreadImpl.dumpThreads0(Native Method)
@@ -381,8 +391,7 @@ ID         NAME                             GROUP                 PRIORITY   STA
 
     Number of locked synchronizers = 1
     - java.util.concurrent.ThreadPoolExecutor$Worker@546aeec1
-...
-</pre></div>
+...</pre></div>
 </div>
 </div>
 </div>
@@ -399,7 +408,7 @@ ID         NAME                             GROUP                 PRIORITY   STA
         <a href="jvm.html" class="btn btn-neutral float-right" title="jvm" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
-        <a href="dashboard.html" class="btn btn-neutral" title="dashboard" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+        <a href="dashboard.html" class="btn btn-neutral float-left" title="dashboard" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
       
     </div>
   
@@ -408,7 +417,7 @@ ID         NAME                             GROUP                 PRIORITY   STA
 
   <div role="contentinfo">
     <p>
-        &copy; Copyright 2018-2019, Alibaba Middleware Group, and contributors.
+        &copy; Copyright 2018-2019, Alibaba Middleware Group, and contributors
 
     </p>
   </div>
@@ -425,34 +434,16 @@ ID         NAME                             GROUP                 PRIORITY   STA
   
 
 
-  
-
-    <script type="text/javascript">
-        var DOCUMENTATION_OPTIONS = {
-            URL_ROOT:'./',
-            VERSION:'3.1.1',
-            LANGUAGE:'zh_CN',
-            COLLAPSE_INDEX:false,
-            FILE_SUFFIX:'.html',
-            HAS_SOURCE:  true,
-            SOURCELINK_SUFFIX: '.txt'
-        };
-    </script>
-      <script type="text/javascript" src="_static/jquery.js"></script>
-      <script type="text/javascript" src="_static/underscore.js"></script>
-      <script type="text/javascript" src="_static/doctools.js"></script>
-      <script type="text/javascript" src="_static/translations.js"></script>
-      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
-
-  
-
-  <script type="text/javascript" src="_static/js/theme.js"></script>
-
   <script type="text/javascript">
       jQuery(function () {
           SphinxRtdTheme.Navigation.enable(true);
       });
   </script>
+
+  
+  
+    
+  
 <div class="github-fork-ribbon-wrapper right">
   <div class="github-fork-ribbon">
     <a href="https://github.com/alibaba/arthas" target="_blank">Fork me at GitHub</a>

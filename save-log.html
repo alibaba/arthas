@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>执行结果存日志 &mdash; Arthas 3.1.1 文档</title>
+  <title>执行结果存日志 &mdash; Arthas 3.1.2 文档</title>
   
 
   
@@ -19,13 +19,21 @@
   
 
   
+  <script type="text/javascript" src="_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script type="text/javascript" src="_static/jquery.js"></script>
+        <script type="text/javascript" src="_static/underscore.js"></script>
+        <script type="text/javascript" src="_static/doctools.js"></script>
+        <script type="text/javascript" src="_static/language_data.js"></script>
+        <script type="text/javascript" src="_static/translations.js"></script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
 
-  
-  
     
 
   
-
   <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
   <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <link rel="stylesheet" href="_static/overrides.css" type="text/css" />
@@ -37,21 +45,16 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.13.1/styles/github.min.css">
  
 
-
-  
-  <script src="_static/js/modernizr.min.js"></script>
-
 </head>
 
 <body class="wy-body-for-nav">
 
    
   <div class="wy-grid-for-nav">
-
     
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
-        <div class="wy-side-nav-search">
+        <div class="wy-side-nav-search" >
           
 
           
@@ -65,7 +68,7 @@
             
             
               <div class="version">
-                3.1.1
+                3.1.2
               </div>
             
           
@@ -93,17 +96,18 @@
 <li class="toctree-l1"><a class="reference external" href="https://alibaba.github.io/arthas/en/">English Docs</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://alibaba.github.io/arthas/arthas-tutorials?language=cn">在线教程(推荐)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="install-detail.html">安装</a></li>
+<li class="toctree-l1"><a class="reference internal" href="download.html">下载</a></li>
 <li class="toctree-l1"><a class="reference internal" href="quick-start.html">快速入门</a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="advanced-use.html">进阶使用</a><ul class="current">
-<li class="toctree-l2"><a class="reference internal" href="advanced-use.html#">基础命令</a></li>
+<li class="toctree-l2"><a class="reference internal" href="advanced-use.html#id2">基础命令</a></li>
 <li class="toctree-l2"><a class="reference internal" href="advanced-use.html#jvm">jvm相关</a></li>
 <li class="toctree-l2"><a class="reference internal" href="advanced-use.html#class-classloader">class/classloader相关</a></li>
 <li class="toctree-l2"><a class="reference internal" href="advanced-use.html#monitor-watch-trace">monitor/watch/trace相关</a></li>
 <li class="toctree-l2"><a class="reference internal" href="advanced-use.html#options">options</a></li>
-<li class="toctree-l2"><a class="reference internal" href="advanced-use.html#">管道</a></li>
-<li class="toctree-l2"><a class="reference internal" href="advanced-use.html#">后台异步任务</a></li>
+<li class="toctree-l2"><a class="reference internal" href="advanced-use.html#id3">管道</a></li>
+<li class="toctree-l2"><a class="reference internal" href="advanced-use.html#id4">后台异步任务</a></li>
 <li class="toctree-l2"><a class="reference internal" href="advanced-use.html#web-console">Web Console</a></li>
-<li class="toctree-l2 current"><a class="reference internal" href="advanced-use.html#">其他特性</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="advanced-use.html#id5">其他特性</a><ul class="current">
 <li class="toctree-l3"><a class="reference internal" href="async.html">异步命令支持</a></li>
 <li class="toctree-l3 current"><a class="current reference internal" href="#">执行结果存日志</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="#arthas">使用新版本Arthas的异步后台任务将结果存日志文件</a></li>
@@ -116,12 +120,13 @@
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="commands.html">命令列表</a></li>
+<li class="toctree-l1"><a class="reference internal" href="web-console.html">WebConsole</a></li>
 <li class="toctree-l1"><a class="reference internal" href="docker.html">Docker</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas/issues?q=label%3Auser-case">用户案例</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas/issues?q=label%3Aquestion-answered">常见问题</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas">Fork me at GitHub</a></li>
-<li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas/blob/master/CONTRIBUTING.md">参与贡献</a></li>
-<li class="toctree-l1"><a class="reference internal" href="release-notes.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas/blob/master/CONTRIBUTING">编译调试/参与贡献</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas/releases">Release Notes</a></li>
 <li class="toctree-l1"><a class="reference internal" href="contact-us.html">QQ群/钉钉群</a></li>
 </ul>
 
@@ -191,36 +196,35 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
             
-  <div class="section" id="">
-<span id="id1"></span><h1>执行结果存日志<a class="headerlink" href="#" title="永久链接至标题">¶</a></h1>
+  <div class="section" id="id1">
+<h1>执行结果存日志<a class="headerlink" href="#id1" title="永久链接至标题">¶</a></h1>
 <blockquote>
-<div>将命令的结果完整保存在日志文件中，便于后续进行分析</div></blockquote>
+<div><p>将命令的结果完整保存在日志文件中，便于后续进行分析</p>
+</div></blockquote>
 <ul class="simple">
-<li>默认情况下，该功能是关闭的，如果需要开启，请执行以下命令：</li>
+<li><p>默认情况下，该功能是关闭的，如果需要开启，请执行以下命令：</p></li>
 </ul>
 <div class="highlight-bash notranslate"><div class="highlight hljs"><pre class="bash">$ options save-result true
  NAME         BEFORE-VALUE  AFTER-VALUE
 ----------------------------------------
  save-result  false         true
-Affect(row-cnt:1) cost in 3 ms.
-</pre></div>
+Affect(row-cnt:1) cost in 3 ms.</pre></div>
 </div>
 <p>看到上面的输出，即表示成功开启该功能；</p>
 <ul class="simple">
-<li>日志文件路径</li>
+<li><p>日志文件路径</p></li>
 </ul>
-<p>结果会异步保存在：<tt class="docutils literal">{user.home}/logs/arthas-cache/result.log</tt>，请定期进行清理，以免占据磁盘空间</p>
+<p>结果会异步保存在：<code class="docutils literal notranslate"><span class="pre">{user.home}/logs/arthas-cache/result.log</span></code>，请定期进行清理，以免占据磁盘空间</p>
 <div class="section" id="arthas">
-<span id="arthas"></span><h2>使用新版本Arthas的异步后台任务将结果存日志文件<a class="headerlink" href="#arthas" title="永久链接至标题">¶</a></h2>
+<h2>使用新版本Arthas的异步后台任务将结果存日志文件<a class="headerlink" href="#arthas" title="永久链接至标题">¶</a></h2>
 <div class="highlight-bash notranslate"><div class="highlight hljs"><pre class="bash">$ trace Test t &gt;&gt;  &amp;
 job id  : 2
-cache location  : /Users/admin/logs/arthas-cache/28198/2
-</pre></div>
+cache location  : /Users/admin/logs/arthas-cache/28198/2</pre></div>
 </div>
 <p>此时命令会在后台异步执行，并将结果异步保存在文件（~/logs/arthas-cache/${PID}/${JobId}）中；</p>
 <ul class="simple">
-<li>此时任务的执行不受session断开的影响；任务默认超时时间是1天，可以通过全局 <tt class="docutils literal">options</tt> 命令修改默认超时时间；</li>
-<li>此命令的结果将异步输出到文件中；此时不管 <tt class="docutils literal">save-result</tt> 是否为true，都不会再往~/logs/arthas-cache/result.log 中异步写结果</li>
+<li><p>此时任务的执行不受session断开的影响；任务默认超时时间是1天，可以通过全局 <code class="docutils literal notranslate"><span class="pre">options</span></code> 命令修改默认超时时间；</p></li>
+<li><p>此命令的结果将异步输出到文件中；此时不管 <code class="docutils literal notranslate"><span class="pre">save-result</span></code> 是否为true，都不会再往~/logs/arthas-cache/result.log 中异步写结果</p></li>
 </ul>
 </div>
 </div>
@@ -236,7 +240,7 @@ cache location  : /Users/admin/logs/arthas-cache/28198/2
         <a href="batch-support.html" class="btn btn-neutral float-right" title="批处理功能" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
-        <a href="async.html" class="btn btn-neutral" title="Arthas异步调用" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+        <a href="async.html" class="btn btn-neutral float-left" title="Arthas异步调用" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
       
     </div>
   
@@ -245,7 +249,7 @@ cache location  : /Users/admin/logs/arthas-cache/28198/2
 
   <div role="contentinfo">
     <p>
-        &copy; Copyright 2018-2019, Alibaba Middleware Group, and contributors.
+        &copy; Copyright 2018-2019, Alibaba Middleware Group, and contributors
 
     </p>
   </div>
@@ -262,34 +266,16 @@ cache location  : /Users/admin/logs/arthas-cache/28198/2
   
 
 
-  
-
-    <script type="text/javascript">
-        var DOCUMENTATION_OPTIONS = {
-            URL_ROOT:'./',
-            VERSION:'3.1.1',
-            LANGUAGE:'zh_CN',
-            COLLAPSE_INDEX:false,
-            FILE_SUFFIX:'.html',
-            HAS_SOURCE:  true,
-            SOURCELINK_SUFFIX: '.txt'
-        };
-    </script>
-      <script type="text/javascript" src="_static/jquery.js"></script>
-      <script type="text/javascript" src="_static/underscore.js"></script>
-      <script type="text/javascript" src="_static/doctools.js"></script>
-      <script type="text/javascript" src="_static/translations.js"></script>
-      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
-
-  
-
-  <script type="text/javascript" src="_static/js/theme.js"></script>
-
   <script type="text/javascript">
       jQuery(function () {
           SphinxRtdTheme.Navigation.enable(true);
       });
   </script>
+
+  
+  
+    
+  
 <div class="github-fork-ribbon-wrapper right">
   <div class="github-fork-ribbon">
     <a href="https://github.com/alibaba/arthas" target="_blank">Fork me at GitHub</a>

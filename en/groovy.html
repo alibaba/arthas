@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>groovy &mdash; Arthas 3.1.1 documentation</title>
+  <title>groovy &mdash; Arthas 3.1.2 documentation</title>
   
 
   
@@ -19,13 +19,20 @@
   
 
   
+  <script type="text/javascript" src="_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script type="text/javascript" src="_static/jquery.js"></script>
+        <script type="text/javascript" src="_static/underscore.js"></script>
+        <script type="text/javascript" src="_static/doctools.js"></script>
+        <script type="text/javascript" src="_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
 
-  
-  
     
 
   
-
   <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
   <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <link rel="stylesheet" href="_static/overrides.css" type="text/css" />
@@ -35,21 +42,16 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.13.1/styles/github.min.css">
  
 
-
-  
-  <script src="_static/js/modernizr.min.js"></script>
-
 </head>
 
 <body class="wy-body-for-nav">
 
    
   <div class="wy-grid-for-nav">
-
     
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
-        <div class="wy-side-nav-search">
+        <div class="wy-side-nav-search" >
           
 
           
@@ -63,7 +65,7 @@
             
             
               <div class="version">
-                3.1.1
+                3.1.2
               </div>
             
           
@@ -90,15 +92,17 @@
               <ul>
 <li class="toctree-l1"><a class="reference external" href="https://alibaba.github.io/arthas/arthas-tutorials?language=en">Online tutorials(Recommend)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="install-detail.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="download.html">Download</a></li>
 <li class="toctree-l1"><a class="reference internal" href="quick-start.html">Quick start</a></li>
 <li class="toctree-l1"><a class="reference internal" href="advanced-use.html">Advanced usage</a></li>
 <li class="toctree-l1"><a class="reference internal" href="commands.html">Commands</a></li>
+<li class="toctree-l1"><a class="reference internal" href="web-console.html">WebConsole</a></li>
 <li class="toctree-l1"><a class="reference internal" href="docker.html">Docker</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas/issues?q=label%3Auser-case">User cases</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas/issues?q=label%3Aquestion-answered">Questions and answers</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas">Fork me at GitHub</a></li>
-<li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas/blob/master/CONTRIBUTING.md">CONTRIBUTING</a></li>
-<li class="toctree-l1"><a class="reference internal" href="release-notes.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas/blob/master/CONTRIBUTING">Compile and debug/CONTRIBUTING</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas/releases">Release Notes</a></li>
 </ul>
 
             
@@ -166,18 +170,19 @@
            <div itemprop="articleBody">
             
   <div class="section" id="groovy">
-<span id="groovy"></span><h1>groovy<a class="headerlink" href="#groovy" title="Permalink to this headline">¶</a></h1>
+<h1>groovy<a class="headerlink" href="#groovy" title="Permalink to this headline">¶</a></h1>
 <blockquote>
-<div>Arthas support groovy scripting to allow user to use script like BTrace. It is possible to use if/for/switch/while in groovy scripting, but has more limitations compared to BTrace.</div></blockquote>
+<div><p>Arthas support groovy scripting to allow user to use script like BTrace. It is possible to use if/for/switch/while in groovy scripting, but has more limitations compared to BTrace.</p>
+</div></blockquote>
 <div class="section" id="limitations">
-<span id="limitations"></span><h2>Limitations<a class="headerlink" href="#limitations" title="Permalink to this headline">¶</a></h2>
+<h2>Limitations<a class="headerlink" href="#limitations" title="Permalink to this headline">¶</a></h2>
 <ol class="simple">
-<li>Prohibit from alternating the original logic. Like <tt class="docutils literal">watch</tt> command, The major purpose of scripting is monitoring and observing.</li>
-<li>Only allow to monitor at the stages of before/success/exception/finish on one method.</li>
+<li><p>Prohibit from alternating the original logic. Like <code class="docutils literal notranslate"><span class="pre">watch</span></code> command, The major purpose of scripting is monitoring and observing.</p></li>
+<li><p>Only allow to monitor at the stages of before/success/exception/finish on one method.</p></li>
 </ol>
 </div>
 <div class="section" id="parameters">
-<span id="parameters"></span><h2>Parameters<a class="headerlink" href="#parameters" title="Permalink to this headline">¶</a></h2>
+<h2>Parameters<a class="headerlink" href="#parameters" title="Permalink to this headline">¶</a></h2>
 <table border="1" class="docutils">
 <thead>
 <tr>
@@ -207,10 +212,10 @@
 <td align="left">enable regex match, the default is wildcard match</td>
 </tr>
 </tbody>
-</table><p>Note: the third parameter <tt class="docutils literal">script-filepath</tt> must be the absolute path of the groovy script, for example <tt class="docutils literal">/tmp/test.groovy</tt>. It is not recommended to use relative path, e.g. <tt class="docutils literal">./test.groovy</tt>.</p>
+</table><p>Note: the third parameter <code class="docutils literal notranslate"><span class="pre">script-filepath</span></code> must be the absolute path of the groovy script, for example <code class="docutils literal notranslate"><span class="pre">/tmp/test.groovy</span></code>. It is not recommended to use relative path, e.g. <code class="docutils literal notranslate"><span class="pre">./test.groovy</span></code>.</p>
 </div>
 <div class="section" id="explanation-on-the-important-callbacks">
-<span id="explanation-on-the-important-callbacks"></span><h2>Explanation on the important callbacks<a class="headerlink" href="#explanation-on-the-important-callbacks" title="Permalink to this headline">¶</a></h2>
+<h2>Explanation on the important callbacks<a class="headerlink" href="#explanation-on-the-important-callbacks" title="Permalink to this headline">¶</a></h2>
 <div class="highlight-java notranslate"><div class="highlight hljs"><pre class="java">/**
  * Listeners for script to enhance the class
  */
@@ -254,17 +259,16 @@ interface ScriptListener {
      */
     void afterThrowing(Output output, Advice advice);
 
-}
-</pre></div>
+}</pre></div>
 </div>
 </div>
 <div class="section" id="advice-parameter">
-<span id="advice-parameter"></span><h2><tt class="docutils literal">Advice</tt> parameter<a class="headerlink" href="#advice-parameter" title="Permalink to this headline">¶</a></h2>
-<p><tt class="docutils literal">Advice</tt> contains all information necessary for notification. Refer to <a class="reference internal" href="advice-class.html"><span class="doc">expression core parameters</span></a> for more details.</p>
+<h2><code class="docutils literal notranslate"><span class="pre">Advice</span></code> parameter<a class="headerlink" href="#advice-parameter" title="Permalink to this headline">¶</a></h2>
+<p><code class="docutils literal notranslate"><span class="pre">Advice</span></code> contains all information necessary for notification. Refer to <a class="reference internal" href="advice-class.html"><span class="doc">expression core parameters</span></a> for more details.</p>
 </div>
 <div class="section" id="output-parameter">
-<span id="output-parameter"></span><h2><tt class="docutils literal">Output</tt> parameter<a class="headerlink" href="#output-parameter" title="Permalink to this headline">¶</a></h2>
-<p>There are three methods in <tt class="docutils literal">Output</tt>, used for outputting the corresponding text.</p>
+<h2><code class="docutils literal notranslate"><span class="pre">Output</span></code> parameter<a class="headerlink" href="#output-parameter" title="Permalink to this headline">¶</a></h2>
+<p>There are three methods in <code class="docutils literal notranslate"><span class="pre">Output</span></code>, used for outputting the corresponding text.</p>
 <div class="highlight-java notranslate"><div class="highlight hljs"><pre class="java">/**
  * Output
  */
@@ -293,12 +297,11 @@ interface Output {
      */
     Output finish();
 
-}
-</pre></div>
+}</pre></div>
 </div>
 </div>
 <div class="section" id="a-groovy-sample-script-to-output-logs">
-<span id="a-groovy-sample-script-to-output-logs"></span><h2>A groovy sample script to output logs<a class="headerlink" href="#a-groovy-sample-script-to-output-logs" title="Permalink to this headline">¶</a></h2>
+<h2>A groovy sample script to output logs<a class="headerlink" href="#a-groovy-sample-script-to-output-logs" title="Permalink to this headline">¶</a></h2>
 <div class="highlight-groovy notranslate"><div class="highlight hljs"><pre class="groovy">import com.taobao.arthas.core.command.ScriptSupportCommand
 import com.taobao.arthas.core.util.Advice
 
@@ -340,8 +343,7 @@ public class Logger implements ScriptSupportCommand.ScriptListener {
                 advice.getClazz().getSimpleName(),
                 advice.getMethod().getName()))
     }
-}
-</pre></div>
+}</pre></div>
 </div>
 <p>Run the script like this:</p>
 <div class="highlight-bash notranslate"><div class="highlight hljs"><pre class="bash">$ groovy com.alibaba.sample.petstore.dal.dao.ProductDao getProductById /Users/zhuyong/middleware/arthas/scripts/Logger.groovy -S
@@ -351,8 +353,7 @@ Affect(class-cnt:1 , method-cnt:1) cost in 102 ms.
 before:class=IbatisProductDao;method=getProductById;paramslen=1;[Ljava.lang.Object;@45df64fc;
 returning:class=IbatisProductDao;method=getProductById;
 before:class=IbatisProductDao;method=getProductById;paramslen=1;[Ljava.lang.Object;@5b0e2d00;
-returning:class=IbatisProductDao;method=getProductById;
-</pre></div>
+returning:class=IbatisProductDao;method=getProductById;</pre></div>
 </div>
 </div>
 </div>
@@ -368,7 +369,7 @@ returning:class=IbatisProductDao;method=getProductById;
 
   <div role="contentinfo">
     <p>
-        &copy; Copyright 2018-2019, Alibaba Middleware Group, and contributors.
+        &copy; Copyright 2018-2019, Alibaba Middleware Group, and contributors
 
     </p>
   </div>
@@ -385,33 +386,16 @@ returning:class=IbatisProductDao;method=getProductById;
   
 
 
-  
-
-    <script type="text/javascript">
-        var DOCUMENTATION_OPTIONS = {
-            URL_ROOT:'./',
-            VERSION:'3.1.1',
-            LANGUAGE:'en',
-            COLLAPSE_INDEX:false,
-            FILE_SUFFIX:'.html',
-            HAS_SOURCE:  true,
-            SOURCELINK_SUFFIX: '.txt'
-        };
-    </script>
-      <script type="text/javascript" src="_static/jquery.js"></script>
-      <script type="text/javascript" src="_static/underscore.js"></script>
-      <script type="text/javascript" src="_static/doctools.js"></script>
-      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
-
-  
-
-  <script type="text/javascript" src="_static/js/theme.js"></script>
-
   <script type="text/javascript">
       jQuery(function () {
           SphinxRtdTheme.Navigation.enable(true);
       });
   </script>
+
+  
+  
+    
+  
 <div class="github-fork-ribbon-wrapper right">
   <div class="github-fork-ribbon">
     <a href="https://github.com/alibaba/arthas" target="_blank">Fork me at GitHub</a>

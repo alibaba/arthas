@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Docker &mdash; Arthas 3.1.1 文档</title>
+  <title>Docker &mdash; Arthas 3.1.2 文档</title>
   
 
   
@@ -19,27 +19,31 @@
   
 
   
+  <script type="text/javascript" src="_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script type="text/javascript" src="_static/jquery.js"></script>
+        <script type="text/javascript" src="_static/underscore.js"></script>
+        <script type="text/javascript" src="_static/doctools.js"></script>
+        <script type="text/javascript" src="_static/language_data.js"></script>
+        <script type="text/javascript" src="_static/translations.js"></script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
 
-  
-  
     
 
   
-
   <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
   <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <link rel="stylesheet" href="_static/overrides.css" type="text/css" />
     <link rel="index" title="索引" href="genindex.html" />
     <link rel="search" title="搜索" href="search.html" />
-    <link rel="next" title="Release Notes" href="release-notes.html" />
+    <link rel="next" title="联系我们" href="contact-us.html" />
     <link rel="prev" title="options" href="options.html" />
 <script src="_static/center_page.js"></script>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.13.1/styles/github.min.css">
  
-
-
-  
-  <script src="_static/js/modernizr.min.js"></script>
 
 </head>
 
@@ -47,11 +51,10 @@
 
    
   <div class="wy-grid-for-nav">
-
     
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
-        <div class="wy-side-nav-search">
+        <div class="wy-side-nav-search" >
           
 
           
@@ -65,7 +68,7 @@
             
             
               <div class="version">
-                3.1.1
+                3.1.2
               </div>
             
           
@@ -93,11 +96,13 @@
 <li class="toctree-l1"><a class="reference external" href="https://alibaba.github.io/arthas/en/">English Docs</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://alibaba.github.io/arthas/arthas-tutorials?language=cn">在线教程(推荐)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="install-detail.html">安装</a></li>
+<li class="toctree-l1"><a class="reference internal" href="download.html">下载</a></li>
 <li class="toctree-l1"><a class="reference internal" href="quick-start.html">快速入门</a></li>
 <li class="toctree-l1"><a class="reference internal" href="advanced-use.html">进阶使用</a></li>
 <li class="toctree-l1"><a class="reference internal" href="commands.html">命令列表</a></li>
+<li class="toctree-l1"><a class="reference internal" href="web-console.html">WebConsole</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Docker</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="#docker">通过Docker快速入门</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id1">通过Docker快速入门</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#dockerjava">诊断Docker里的Java进程</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#k8sjava">诊断k8s里容器里的Java进程</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#arthas">把Arthas安装到基础镜像里</a></li>
@@ -106,8 +111,8 @@
 <li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas/issues?q=label%3Auser-case">用户案例</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas/issues?q=label%3Aquestion-answered">常见问题</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas">Fork me at GitHub</a></li>
-<li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas/blob/master/CONTRIBUTING.md">参与贡献</a></li>
-<li class="toctree-l1"><a class="reference internal" href="release-notes.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas/blob/master/CONTRIBUTING">编译调试/参与贡献</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas/releases">Release Notes</a></li>
 <li class="toctree-l1"><a class="reference internal" href="contact-us.html">QQ群/钉钉群</a></li>
 </ul>
 
@@ -176,21 +181,19 @@
            <div itemprop="articleBody">
             
   <div class="section" id="docker">
-<span id="docker"></span><h1>Docker<a class="headerlink" href="#docker" title="永久链接至标题">¶</a></h1>
-<div class="section" id="docker">
-<span id="id1"></span><h2>通过Docker快速入门<a class="headerlink" href="#docker" title="永久链接至标题">¶</a></h2>
+<h1>Docker<a class="headerlink" href="#docker" title="永久链接至标题">¶</a></h1>
+<div class="section" id="id1">
+<h2>通过Docker快速入门<a class="headerlink" href="#id1" title="永久链接至标题">¶</a></h2>
 <ol>
-<li><p class="first">删除本地已有的<tt class="docutils literal">arthas-demo</tt> docker container（非必要）</p>
-<div class="highlight-sh notranslate"><div class="highlight hljs"><pre class="sh">$ docker stop arthas-demo || true &amp;&amp; docker rm arthas-demo || true
-</pre></div>
+<li><p>删除本地已有的<code class="docutils literal notranslate"><span class="pre">arthas-demo</span></code> docker container（非必要）</p>
+<div class="highlight-sh notranslate"><div class="highlight hljs"><pre class="sh">$ docker stop arthas-demo || true &amp;&amp; docker rm arthas-demo || true</pre></div>
 </div>
 </li>
-<li><p class="first">启动<tt class="docutils literal">arthas-demo</tt></p>
-<div class="highlight-sh notranslate"><div class="highlight hljs"><pre class="sh">$ docker run --name arthas-demo -it hengyunabc/arthas:latest /bin/sh -c &quot;java -jar /opt/arthas/arthas-demo.jar&quot;
-</pre></div>
+<li><p>启动<code class="docutils literal notranslate"><span class="pre">arthas-demo</span></code></p>
+<div class="highlight-sh notranslate"><div class="highlight hljs"><pre class="sh">$ docker run --name arthas-demo -it hengyunabc/arthas:latest /bin/sh -c &quot;java -jar /opt/arthas/arthas-demo.jar&quot;</pre></div>
 </div>
 </li>
-<li><p class="first">启动<tt class="docutils literal">arthas-boot</tt>来进行诊断</p>
+<li><p>启动<code class="docutils literal notranslate"><span class="pre">arthas-boot</span></code>来进行诊断</p>
 <div class="highlight-sh notranslate"><div class="highlight hljs"><pre class="sh">$ docker exec -it arthas-demo /bin/sh -c &quot;java -jar /opt/arthas/arthas-boot.jar&quot;
 * [1]: 9 jar
 
@@ -207,26 +210,23 @@
 wiki: https://alibaba.github.io/arthas
 version: 3.0.5
 pid: 9
-time: 2018-12-18 11:30:36
-</pre></div>
+time: 2018-12-18 11:30:36</pre></div>
 </div>
 </li>
 </ol>
 </div>
 <div class="section" id="dockerjava">
-<span id="dockerjava"></span><h2>诊断Docker里的Java进程<a class="headerlink" href="#dockerjava" title="永久链接至标题">¶</a></h2>
-<div class="highlight-sh notranslate"><div class="highlight hljs"><pre class="sh">docker exec -it  ${containerId} /bin/bash -c &quot;wget https://alibaba.github.io/arthas/arthas-boot.jar &amp;&amp; java -jar arthas-boot.jar&quot;
-</pre></div>
+<h2>诊断Docker里的Java进程<a class="headerlink" href="#dockerjava" title="永久链接至标题">¶</a></h2>
+<div class="highlight-sh notranslate"><div class="highlight hljs"><pre class="sh">docker exec -it  ${containerId} /bin/bash -c &quot;wget https://alibaba.github.io/arthas/arthas-boot.jar &amp;&amp; java -jar arthas-boot.jar&quot;</pre></div>
 </div>
 </div>
 <div class="section" id="k8sjava">
-<span id="k8sjava"></span><h2>诊断k8s里容器里的Java进程<a class="headerlink" href="#k8sjava" title="永久链接至标题">¶</a></h2>
-<div class="highlight-sh notranslate"><div class="highlight hljs"><pre class="sh">kubectl exec -it ${pod} --container ${containerId} -- /bin/bash -c &quot;wget https://alibaba.github.io/arthas/arthas-boot.jar &amp;&amp; java -jar arthas-boot.jar&quot;
-</pre></div>
+<h2>诊断k8s里容器里的Java进程<a class="headerlink" href="#k8sjava" title="永久链接至标题">¶</a></h2>
+<div class="highlight-sh notranslate"><div class="highlight hljs"><pre class="sh">kubectl exec -it ${pod} --container ${containerId} -- /bin/bash -c &quot;wget https://alibaba.github.io/arthas/arthas-boot.jar &amp;&amp; java -jar arthas-boot.jar&quot;</pre></div>
 </div>
 </div>
 <div class="section" id="arthas">
-<span id="arthas"></span><h2>把Arthas安装到基础镜像里<a class="headerlink" href="#arthas" title="永久链接至标题">¶</a></h2>
+<h2>把Arthas安装到基础镜像里<a class="headerlink" href="#arthas" title="永久链接至标题">¶</a></h2>
 <p>可以很简单把Arthas安装到你的Docker镜像里。</p>
 <div class="highlight-default notranslate"><pre class="literal-block">FROM openjdk:8-jdk-alpine
 
@@ -246,10 +246,10 @@ COPY --from=hengyunabc/arthas:latest /opt/arthas /opt/arthas</pre>
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="release-notes.html" class="btn btn-neutral float-right" title="Release Notes" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+        <a href="contact-us.html" class="btn btn-neutral float-right" title="联系我们" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
-        <a href="options.html" class="btn btn-neutral" title="options" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+        <a href="options.html" class="btn btn-neutral float-left" title="options" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
       
     </div>
   
@@ -258,7 +258,7 @@ COPY --from=hengyunabc/arthas:latest /opt/arthas /opt/arthas</pre>
 
   <div role="contentinfo">
     <p>
-        &copy; Copyright 2018-2019, Alibaba Middleware Group, and contributors.
+        &copy; Copyright 2018-2019, Alibaba Middleware Group, and contributors
 
     </p>
   </div>
@@ -275,34 +275,16 @@ COPY --from=hengyunabc/arthas:latest /opt/arthas /opt/arthas</pre>
   
 
 
-  
-
-    <script type="text/javascript">
-        var DOCUMENTATION_OPTIONS = {
-            URL_ROOT:'./',
-            VERSION:'3.1.1',
-            LANGUAGE:'zh_CN',
-            COLLAPSE_INDEX:false,
-            FILE_SUFFIX:'.html',
-            HAS_SOURCE:  true,
-            SOURCELINK_SUFFIX: '.txt'
-        };
-    </script>
-      <script type="text/javascript" src="_static/jquery.js"></script>
-      <script type="text/javascript" src="_static/underscore.js"></script>
-      <script type="text/javascript" src="_static/doctools.js"></script>
-      <script type="text/javascript" src="_static/translations.js"></script>
-      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
-
-  
-
-  <script type="text/javascript" src="_static/js/theme.js"></script>
-
   <script type="text/javascript">
       jQuery(function () {
           SphinxRtdTheme.Navigation.enable(true);
       });
   </script>
+
+  
+  
+    
+  
 <div class="github-fork-ribbon-wrapper right">
   <div class="github-fork-ribbon">
     <a href="https://github.com/alibaba/arthas" target="_blank">Fork me at GitHub</a>

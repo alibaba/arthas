@@ -1,0 +1,467 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>logger &mdash; Arthas 3.1.2 documentation</title>
+  
+
+  
+  
+    <link rel="shortcut icon" href="_static/favicon.ico"/>
+  
+  
+  
+
+  
+  <script type="text/javascript" src="_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script type="text/javascript" src="_static/jquery.js"></script>
+        <script type="text/javascript" src="_static/underscore.js"></script>
+        <script type="text/javascript" src="_static/doctools.js"></script>
+        <script type="text/javascript" src="_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="_static/overrides.css" type="text/css" />
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="mbean" href="mbean.html" />
+    <link rel="prev" title="vmoption" href="vmoption.html" />
+<script src="_static/center_page.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.13.1/styles/github.min.css">
+ 
+
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="index.html" class="icon icon-home"> Arthas
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                3.1.2
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul class="current">
+<li class="toctree-l1"><a class="reference external" href="https://alibaba.github.io/arthas/arthas-tutorials?language=en">Online tutorials(Recommend)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="install-detail.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="download.html">Download</a></li>
+<li class="toctree-l1"><a class="reference internal" href="quick-start.html">Quick start</a></li>
+<li class="toctree-l1"><a class="reference internal" href="advanced-use.html">Advanced usage</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="commands.html">Commands</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="dashboard.html">dashboard</a></li>
+<li class="toctree-l2"><a class="reference internal" href="thread.html">thread</a></li>
+<li class="toctree-l2"><a class="reference internal" href="jvm.html">jvm</a></li>
+<li class="toctree-l2"><a class="reference internal" href="sysprop.html">sysprop</a></li>
+<li class="toctree-l2"><a class="reference internal" href="sysenv.html">sysenv</a></li>
+<li class="toctree-l2"><a class="reference internal" href="vmoption.html">vmoption</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">logger</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#usage">Usage</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#print-the-logger-information">Print the logger information</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#view-logger-information-for-the-special-name">View logger information for the special name</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#view-logger-information-for-the-special-classloader">View logger information for the special classloader</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#update-logger-level">Update logger level</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#view-the-logger-information-without-appenders">View the logger information without appenders</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="mbean.html">mbean</a></li>
+<li class="toctree-l2"><a class="reference internal" href="getstatic.html">getstatic</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ognl.html">ognl</a></li>
+<li class="toctree-l2"><a class="reference internal" href="sc.html">sc</a></li>
+<li class="toctree-l2"><a class="reference internal" href="sm.html">sm</a></li>
+<li class="toctree-l2"><a class="reference internal" href="dump.html">dump</a></li>
+<li class="toctree-l2"><a class="reference internal" href="heapdump.html">heapdump</a></li>
+<li class="toctree-l2"><a class="reference internal" href="jad.html">jad</a></li>
+<li class="toctree-l2"><a class="reference internal" href="classloader.html">classloader</a></li>
+<li class="toctree-l2"><a class="reference internal" href="mc.html">mc</a></li>
+<li class="toctree-l2"><a class="reference internal" href="redefine.html">redefine</a></li>
+<li class="toctree-l2"><a class="reference internal" href="monitor.html">monitor</a></li>
+<li class="toctree-l2"><a class="reference internal" href="watch.html">watch</a></li>
+<li class="toctree-l2"><a class="reference internal" href="trace.html">trace</a></li>
+<li class="toctree-l2"><a class="reference internal" href="stack.html">stack</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tt.html">tt</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cat.html">cat</a></li>
+<li class="toctree-l2"><a class="reference internal" href="pwd.html">pwd</a></li>
+<li class="toctree-l2"><a class="reference internal" href="options.html">options</a></li>
+<li class="toctree-l2"><a class="reference internal" href="commands.html#basic-arthas-commands">Basic Arthas Commands</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="web-console.html">WebConsole</a></li>
+<li class="toctree-l1"><a class="reference internal" href="docker.html">Docker</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas/issues?q=label%3Auser-case">User cases</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas/issues?q=label%3Aquestion-answered">Questions and answers</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas">Fork me at GitHub</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas/blob/master/CONTRIBUTING">Compile and debug/CONTRIBUTING</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas/releases">Release Notes</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">Arthas</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="commands.html">All Commands</a> &raquo;</li>
+        
+      <li>logger</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            
+              <a href="https://github.com/alibaba/arthas/blob/master/site/src/site/sphinx/en/logger.md" class="fa fa-github"> Edit on GitHub</a>
+            
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="logger">
+<h1>logger<a class="headerlink" href="#logger" title="Permalink to this headline">¶</a></h1>
+<blockquote>
+<div><p>Print the logger information, update the logger level</p>
+</div></blockquote>
+<div class="section" id="usage">
+<h2>Usage<a class="headerlink" href="#usage" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="print-the-logger-information">
+<h3>Print the logger information<a class="headerlink" href="#print-the-logger-information" title="Permalink to this headline">¶</a></h3>
+<p>Take the following <code class="docutils literal notranslate"><span class="pre">logback.xml</span></code> as an example:</p>
+<div class="highlight-xml notranslate"><div class="highlight hljs"><pre class="xml">&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;
+&lt;configuration&gt;
+    &lt;appender name=&quot;APPLICATION&quot; class=&quot;ch.qos.logback.core.rolling.RollingFileAppender&quot;&gt;
+        &lt;file&gt;app.log&lt;/file&gt;
+        &lt;rollingPolicy class=&quot;ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy&quot;&gt;
+            &lt;fileNamePattern&gt;mylog-%d{yyyy-MM-dd}.%i.txt&lt;/fileNamePattern&gt;
+            &lt;maxFileSize&gt;100MB&lt;/maxFileSize&gt;
+            &lt;maxHistory&gt;60&lt;/maxHistory&gt;
+            &lt;totalSizeCap&gt;2GB&lt;/totalSizeCap&gt;
+        &lt;/rollingPolicy&gt;
+        &lt;encoder&gt;
+            &lt;pattern&gt;%logger{35} - %msg%n&lt;/pattern&gt;
+        &lt;/encoder&gt;
+    &lt;/appender&gt;
+
+    &lt;appender name=&quot;ASYNC&quot; class=&quot;ch.qos.logback.classic.AsyncAppender&quot;&gt;
+        &lt;appender-ref ref=&quot;APPLICATION&quot; /&gt;
+    &lt;/appender&gt;
+
+    &lt;appender name=&quot;CONSOLE&quot; class=&quot;ch.qos.logback.core.ConsoleAppender&quot;&gt;
+        &lt;encoder&gt;
+            &lt;pattern&gt;%-4relative [%thread] %-5level %logger{35} - %msg %n
+            &lt;/pattern&gt;
+            &lt;charset&gt;utf8&lt;/charset&gt;
+        &lt;/encoder&gt;
+    &lt;/appender&gt;
+
+    &lt;root level=&quot;INFO&quot;&gt;
+        &lt;appender-ref ref=&quot;CONSOLE&quot; /&gt;
+        &lt;appender-ref ref=&quot;ASYNC&quot; /&gt;
+    &lt;/root&gt;
+&lt;/configuration&gt;</pre></div>
+</div>
+<p>The result of the <code class="docutils literal notranslate"><span class="pre">logger</span></code> command:</p>
+<div class="highlight-bash notranslate"><div class="highlight hljs"><pre class="bash">[arthas@2062]$ logger
+ name                                   ROOT
+ class                                  ch.qos.logback.classic.Logger
+ classLoader                            sun.misc.Launcher$AppClassLoader@2a139a55
+ classLoaderHash                        2a139a55
+ level                                  INFO
+ effectiveLevel                         INFO
+ additivity                             true
+ codeSource                             file:/Users/hengyunabc/.m2/repository/ch/qos/logback/logback-classic/1.2.3/logback-classic-1.2.3.jar
+ appenders                              name            CONSOLE
+                                        class           ch.qos.logback.core.ConsoleAppender
+                                        classLoader     sun.misc.Launcher$AppClassLoader@2a139a55
+                                        classLoaderHash 2a139a55
+                                        target          System.out
+                                        name            APPLICATION
+                                        class           ch.qos.logback.core.rolling.RollingFileAppender
+                                        classLoader     sun.misc.Launcher$AppClassLoader@2a139a55
+                                        classLoaderHash 2a139a55
+                                        file            app.log
+                                        name            ASYNC
+                                        class           ch.qos.logback.classic.AsyncAppender
+                                        classLoader     sun.misc.Launcher$AppClassLoader@2a139a55
+                                        classLoaderHash 2a139a55
+                                        appenderRef     [APPLICATION]</pre></div>
+</div>
+<p>In the <code class="docutils literal notranslate"><span class="pre">appenders</span></code> section:</p>
+<ul class="simple">
+<li><p>The target of <code class="docutils literal notranslate"><span class="pre">CONSOLE</span></code> logger is <code class="docutils literal notranslate"><span class="pre">System.out</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">APPLICATION</span></code> logger is <code class="docutils literal notranslate"><span class="pre">RollingFileAppender</span></code>, the file is <code class="docutils literal notranslate"><span class="pre">app.log</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">ASYNC</span></code> its <code class="docutils literal notranslate"><span class="pre">appenderRef</span></code> is <code class="docutils literal notranslate"><span class="pre">APPLICATION</span></code>, which means asynchronous output to the file</p></li>
+</ul>
+</div>
+<div class="section" id="view-logger-information-for-the-special-name">
+<h3>View logger information for the special name<a class="headerlink" href="#view-logger-information-for-the-special-name" title="Permalink to this headline">¶</a></h3>
+<div class="highlight-bash notranslate"><div class="highlight hljs"><pre class="bash">[arthas@2062]$ logger -n org.springframework.web
+ name                                   org.springframework.web
+ class                                  ch.qos.logback.classic.Logger
+ classLoader                            sun.misc.Launcher$AppClassLoader@2a139a55
+ classLoaderHash                        2a139a55
+ level                                  null
+ effectiveLevel                         INFO
+ additivity                             true
+ codeSource                             file:/Users/hengyunabc/.m2/repository/ch/qos/logback/logback-classic/1.2.3/logback-classic-1.2.3.jar</pre></div>
+</div>
+</div>
+<div class="section" id="view-logger-information-for-the-special-classloader">
+<h3>View logger information for the special classloader<a class="headerlink" href="#view-logger-information-for-the-special-classloader" title="Permalink to this headline">¶</a></h3>
+<div class="highlight-bash notranslate"><div class="highlight hljs"><pre class="bash">[arthas@2062]$ logger -c 2a139a55
+ name                                   ROOT
+ class                                  ch.qos.logback.classic.Logger
+ classLoader                            sun.misc.Launcher$AppClassLoader@2a139a55
+ classLoaderHash                        2a139a55
+ level                                  DEBUG
+ effectiveLevel                         DEBUG
+ additivity                             true
+ codeSource                             file:/Users/hengyunabc/.m2/repository/ch/qos/logback/logback-classic/1.2.3/logback-classic-1.2.3.jar
+ appenders                              name            CONSOLE
+                                        class           ch.qos.logback.core.ConsoleAppender
+                                        classLoader     sun.misc.Launcher$AppClassLoader@2a139a55
+                                        classLoaderHash 2a139a55
+                                        target          System.out
+                                        name            APPLICATION
+                                        class           ch.qos.logback.core.rolling.RollingFileAppender
+                                        classLoader     sun.misc.Launcher$AppClassLoader@2a139a55
+                                        classLoaderHash 2a139a55
+                                        file            app.log
+                                        name            ASYNC
+                                        class           ch.qos.logback.classic.AsyncAppender
+                                        classLoader     sun.misc.Launcher$AppClassLoader@2a139a55
+                                        classLoaderHash 2a139a55
+                                        appenderRef     [APPLICATION]</pre></div>
+</div>
+</div>
+<div class="section" id="update-logger-level">
+<h3>Update logger level<a class="headerlink" href="#update-logger-level" title="Permalink to this headline">¶</a></h3>
+<div class="highlight-bash notranslate"><div class="highlight hljs"><pre class="bash">[arthas@2062]$ logger --name ROOT --level debug
+update logger level success.</pre></div>
+</div>
+</div>
+<div class="section" id="view-the-logger-information-without-appenders">
+<h3>View the logger information without appenders<a class="headerlink" href="#view-the-logger-information-without-appenders" title="Permalink to this headline">¶</a></h3>
+<p>By default, the <code class="docutils literal notranslate"><span class="pre">logger</span></code> command only prints information about the logger with appenders. If you want to see information about loggers without <code class="docutils literal notranslate"><span class="pre">appender</span></code>, you can use the parameter <code class="docutils literal notranslate"><span class="pre">--include-no-appender</span></code>.</p>
+<p>Note that the output will usually be very long.</p>
+<div class="highlight-bash notranslate"><div class="highlight hljs"><pre class="bash">[arthas@2062]$ logger --include-no-appender
+ name                                   ROOT
+ class                                  ch.qos.logback.classic.Logger
+ classLoader                            sun.misc.Launcher$AppClassLoader@2a139a55
+ classLoaderHash                        2a139a55
+ level                                  DEBUG
+ effectiveLevel                         DEBUG
+ additivity                             true
+ codeSource                             file:/Users/hengyunabc/.m2/repository/ch/qos/logback/logback-classic/1.2.3/logback-classic-1.2.3.jar
+ appenders                              name            CONSOLE
+                                        class           ch.qos.logback.core.ConsoleAppender
+                                        classLoader     sun.misc.Launcher$AppClassLoader@2a139a55
+                                        classLoaderHash 2a139a55
+                                        target          System.out
+                                        name            APPLICATION
+                                        class           ch.qos.logback.core.rolling.RollingFileAppender
+                                        classLoader     sun.misc.Launcher$AppClassLoader@2a139a55
+                                        classLoaderHash 2a139a55
+                                        file            app.log
+                                        name            ASYNC
+                                        class           ch.qos.logback.classic.AsyncAppender
+                                        classLoader     sun.misc.Launcher$AppClassLoader@2a139a55
+                                        classLoaderHash 2a139a55
+                                        appenderRef     [APPLICATION]
+
+ name                                   com
+ class                                  ch.qos.logback.classic.Logger
+ classLoader                            sun.misc.Launcher$AppClassLoader@2a139a55
+ classLoaderHash                        2a139a55
+ level                                  null
+ effectiveLevel                         DEBUG
+ additivity                             true
+ codeSource                             file:/Users/hengyunabc/.m2/repository/ch/qos/logback/logback-classic/1.2.3/logback-classic-1.2.3.jar
+
+ name                                   com.alibaba
+ class                                  ch.qos.logback.classic.Logger
+ classLoader                            sun.misc.Launcher$AppClassLoader@2a139a55
+ classLoaderHash                        2a139a55
+ level                                  null
+ effectiveLevel                         DEBUG
+ additivity                             true
+ codeSource                             file:/Users/hengyunabc/.m2/repository/ch/qos/logback/logback-classic/1.2.3/logback-classic-1.2.3.jar
+...</pre></div>
+</div>
+</div>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="mbean.html" class="btn btn-neutral float-right" title="mbean" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="vmoption.html" class="btn btn-neutral float-left" title="vmoption" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2018-2019, Alibaba Middleware Group, and contributors
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+  
+<div class="github-fork-ribbon-wrapper right">
+  <div class="github-fork-ribbon">
+    <a href="https://github.com/alibaba/arthas" target="_blank">Fork me at GitHub</a>
+  </div>
+</div>
+
+<script type="text/javascript" src="_static/add_badges.js"></script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.13.1/highlight.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlightjs-line-numbers.js/2.5.0/highlightjs-line-numbers.min.js"></script>
+<script>
+  document.querySelectorAll('div.hljs > pre').forEach(function(block) {
+    hljs.highlightBlock(block);
+    hljs.lineNumbersBlock(block);
+  });
+</script>
+
+<script>
+  var _hmt = _hmt || [];
+  (function() {
+    var hm = document.createElement("script");
+    hm.src = "https://hm.baidu.com/hm.js?d5c5e25b100f0eb51a4c35c8a86ea9b4";
+    var s = document.getElementsByTagName("script")[0]; 
+    s.parentNode.insertBefore(hm, s);
+  })();
+</script>  
+ 
+
+
+</body>
+</html>

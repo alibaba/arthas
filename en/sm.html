@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>sm &mdash; Arthas 3.1.1 documentation</title>
+  <title>sm &mdash; Arthas 3.1.2 documentation</title>
   
 
   
@@ -19,13 +19,20 @@
   
 
   
+  <script type="text/javascript" src="_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script type="text/javascript" src="_static/jquery.js"></script>
+        <script type="text/javascript" src="_static/underscore.js"></script>
+        <script type="text/javascript" src="_static/doctools.js"></script>
+        <script type="text/javascript" src="_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
 
-  
-  
     
 
   
-
   <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
   <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <link rel="stylesheet" href="_static/overrides.css" type="text/css" />
@@ -37,21 +44,16 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.13.1/styles/github.min.css">
  
 
-
-  
-  <script src="_static/js/modernizr.min.js"></script>
-
 </head>
 
 <body class="wy-body-for-nav">
 
    
   <div class="wy-grid-for-nav">
-
     
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
-        <div class="wy-side-nav-search">
+        <div class="wy-side-nav-search" >
           
 
           
@@ -65,7 +67,7 @@
             
             
               <div class="version">
-                3.1.1
+                3.1.2
               </div>
             
           
@@ -92,6 +94,7 @@
               <ul class="current">
 <li class="toctree-l1"><a class="reference external" href="https://alibaba.github.io/arthas/arthas-tutorials?language=en">Online tutorials(Recommend)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="install-detail.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="download.html">Download</a></li>
 <li class="toctree-l1"><a class="reference internal" href="quick-start.html">Quick start</a></li>
 <li class="toctree-l1"><a class="reference internal" href="advanced-use.html">Advanced usage</a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="commands.html">Commands</a><ul class="current">
@@ -100,6 +103,8 @@
 <li class="toctree-l2"><a class="reference internal" href="jvm.html">jvm</a></li>
 <li class="toctree-l2"><a class="reference internal" href="sysprop.html">sysprop</a></li>
 <li class="toctree-l2"><a class="reference internal" href="sysenv.html">sysenv</a></li>
+<li class="toctree-l2"><a class="reference internal" href="vmoption.html">vmoption</a></li>
+<li class="toctree-l2"><a class="reference internal" href="logger.html">logger</a></li>
 <li class="toctree-l2"><a class="reference internal" href="mbean.html">mbean</a></li>
 <li class="toctree-l2"><a class="reference internal" href="getstatic.html">getstatic</a></li>
 <li class="toctree-l2"><a class="reference internal" href="ognl.html">ognl</a></li>
@@ -110,6 +115,7 @@
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="dump.html">dump</a></li>
+<li class="toctree-l2"><a class="reference internal" href="heapdump.html">heapdump</a></li>
 <li class="toctree-l2"><a class="reference internal" href="jad.html">jad</a></li>
 <li class="toctree-l2"><a class="reference internal" href="classloader.html">classloader</a></li>
 <li class="toctree-l2"><a class="reference internal" href="mc.html">mc</a></li>
@@ -125,12 +131,13 @@
 <li class="toctree-l2"><a class="reference internal" href="commands.html#basic-arthas-commands">Basic Arthas Commands</a></li>
 </ul>
 </li>
+<li class="toctree-l1"><a class="reference internal" href="web-console.html">WebConsole</a></li>
 <li class="toctree-l1"><a class="reference internal" href="docker.html">Docker</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas/issues?q=label%3Auser-case">User cases</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas/issues?q=label%3Aquestion-answered">Questions and answers</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas">Fork me at GitHub</a></li>
-<li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas/blob/master/CONTRIBUTING.md">CONTRIBUTING</a></li>
-<li class="toctree-l1"><a class="reference internal" href="release-notes.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas/blob/master/CONTRIBUTING">Compile and debug/CONTRIBUTING</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas/releases">Release Notes</a></li>
 </ul>
 
             
@@ -200,12 +207,13 @@
            <div itemprop="articleBody">
             
   <div class="section" id="sm">
-<span id="sm"></span><h1>sm<a class="headerlink" href="#sm" title="Permalink to this headline">¶</a></h1>
+<h1>sm<a class="headerlink" href="#sm" title="Permalink to this headline">¶</a></h1>
 <blockquote>
-<div>Search method from the loaded classes.</div></blockquote>
-<p><tt class="docutils literal">sm</tt> stands for search method. This command can search and show method information from all loaded classes. <tt class="docutils literal">sm</tt> can only view the methods declared on the target class, that is, methods from its parent classes are invisible.</p>
+<div><p>Search method from the loaded classes.</p>
+</div></blockquote>
+<p><code class="docutils literal notranslate"><span class="pre">sm</span></code> stands for search method. This command can search and show method information from all loaded classes. <code class="docutils literal notranslate"><span class="pre">sm</span></code> can only view the methods declared on the target class, that is, methods from its parent classes are invisible.</p>
 <div class="section" id="options">
-<span id="options"></span><h2>Options<a class="headerlink" href="#options" title="Permalink to this headline">¶</a></h2>
+<h2>Options<a class="headerlink" href="#options" title="Permalink to this headline">¶</a></h2>
 <table border="1" class="docutils">
 <thead>
 <tr>
@@ -233,8 +241,8 @@
 </tbody>
 </table></div>
 <div class="section" id="usage">
-<span id="usage"></span><h2>Usage<a class="headerlink" href="#usage" title="Permalink to this headline">¶</a></h2>
-<p>View methods of <tt class="docutils literal">java.lang.String</tt>:</p>
+<h2>Usage<a class="headerlink" href="#usage" title="Permalink to this headline">¶</a></h2>
+<p>View methods of <code class="docutils literal notranslate"><span class="pre">java.lang.String</span></code>:</p>
 <div class="highlight-bash notranslate"><div class="highlight hljs"><pre class="bash">$ sm java.lang.String
 java.lang.String-&gt;&lt;init&gt;
 java.lang.String-&gt;equals
@@ -280,10 +288,9 @@ java.lang.String-&gt;toCharArray
 java.lang.String-&gt;format
 java.lang.String-&gt;copyValueOf
 java.lang.String-&gt;intern
-Affect(row-cnt:44) cost in 1342 ms.
-</pre></div>
+Affect(row-cnt:44) cost in 1342 ms.</pre></div>
 </div>
-<p>View method <tt class="docutils literal">java.lang.String#toString</tt> details:</p>
+<p>View method <code class="docutils literal notranslate"><span class="pre">java.lang.String#toString</span></code> details:</p>
 <div class="highlight-bash notranslate"><div class="highlight hljs"><pre class="bash">$ sm -d java.lang.String toString
  declaring-class  java.lang.String
  method-name      toString
@@ -293,8 +300,7 @@ Affect(row-cnt:44) cost in 1342 ms.
  return           java.lang.String
  exceptions
 
-Affect(row-cnt:1) cost in 3 ms.
-</pre></div>
+Affect(row-cnt:1) cost in 3 ms.</pre></div>
 </div>
 </div>
 </div>
@@ -310,7 +316,7 @@ Affect(row-cnt:1) cost in 3 ms.
         <a href="dump.html" class="btn btn-neutral float-right" title="dump" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
-        <a href="sc.html" class="btn btn-neutral" title="sc" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+        <a href="sc.html" class="btn btn-neutral float-left" title="sc" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
       
     </div>
   
@@ -319,7 +325,7 @@ Affect(row-cnt:1) cost in 3 ms.
 
   <div role="contentinfo">
     <p>
-        &copy; Copyright 2018-2019, Alibaba Middleware Group, and contributors.
+        &copy; Copyright 2018-2019, Alibaba Middleware Group, and contributors
 
     </p>
   </div>
@@ -336,33 +342,16 @@ Affect(row-cnt:1) cost in 3 ms.
   
 
 
-  
-
-    <script type="text/javascript">
-        var DOCUMENTATION_OPTIONS = {
-            URL_ROOT:'./',
-            VERSION:'3.1.1',
-            LANGUAGE:'en',
-            COLLAPSE_INDEX:false,
-            FILE_SUFFIX:'.html',
-            HAS_SOURCE:  true,
-            SOURCELINK_SUFFIX: '.txt'
-        };
-    </script>
-      <script type="text/javascript" src="_static/jquery.js"></script>
-      <script type="text/javascript" src="_static/underscore.js"></script>
-      <script type="text/javascript" src="_static/doctools.js"></script>
-      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
-
-  
-
-  <script type="text/javascript" src="_static/js/theme.js"></script>
-
   <script type="text/javascript">
       jQuery(function () {
           SphinxRtdTheme.Navigation.enable(true);
       });
   </script>
+
+  
+  
+    
+  
 <div class="github-fork-ribbon-wrapper right">
   <div class="github-fork-ribbon">
     <a href="https://github.com/alibaba/arthas" target="_blank">Fork me at GitHub</a>
