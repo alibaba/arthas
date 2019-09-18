@@ -16,7 +16,6 @@
  */
 package com.taobao.arthas.core.testtool;
 
-import com.taobao.arthas.core.shell.cli.CliToken;
 import org.junit.Assert;
 
 import java.io.File;
