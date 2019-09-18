@@ -155,7 +155,7 @@ public class TunnelSocketFrameHandler extends SimpleChannelInboundHandler<WebSoc
             }
         } else {
             tunnelSocketCtx.channel().writeAndFlush(new CloseWebSocketFrame(2000, "Can not find arthas agent by id: "+ agentId));
-            logger.error("Can not find arthas agent by id: ", agentId);
+            logger.error("Can not find arthas agent by id: {}", agentId);
             throw new IllegalArgumentException("Can not find arthas agent by id: " + agentId);
         }
     }
