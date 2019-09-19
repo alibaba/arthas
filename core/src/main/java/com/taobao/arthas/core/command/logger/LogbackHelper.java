@@ -153,6 +153,7 @@ public class LogbackHelper {
                     result.add(a);
                 }
                 info.put(LoggerHelper.appenderRef, appenderRef);
+                info.put(LoggerHelper.blocking, !aa.isNeverBlock());
             } else if (appender instanceof ConsoleAppender) {
                 info.put(LoggerHelper.target, ((ConsoleAppender) appender).getTarget());
             }

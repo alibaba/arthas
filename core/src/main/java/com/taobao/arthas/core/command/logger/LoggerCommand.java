@@ -251,6 +251,9 @@ public class LoggerCommand extends AnnotatedCommand {
                         appendersTable.row(label(LoggerHelper.target),
                                         label("" + appenderInfo.get(LoggerHelper.target)));
                     }
+                    if (appenderInfo.get(LoggerHelper.blocking) != null) {
+                        appendersTable.row(label(LoggerHelper.blocking), label("" + appenderInfo.get(LoggerHelper.blocking)));
+                    }
                     if (appenderInfo.get(LoggerHelper.appenderRef) != null) {
                         appendersTable.row(label(LoggerHelper.appenderRef),
                                         label("" + appenderInfo.get(LoggerHelper.appenderRef)));

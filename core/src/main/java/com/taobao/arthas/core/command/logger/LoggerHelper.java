@@ -21,6 +21,7 @@ public interface LoggerHelper {
     // appender info
     public static final String name = "name";
     public static final String file = "file";
+    public static final String blocking = "blocking";
     // type List<String>
     public static final String appenderRef = "appenderRef";
     public static final String target = "target";
