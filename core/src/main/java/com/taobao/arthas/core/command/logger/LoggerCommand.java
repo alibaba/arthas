@@ -43,7 +43,7 @@ import com.taobao.text.util.RenderUtil;
  */
 @Name("logger")
 @Summary("Print logger info, and update the logger level")
-@Description("\nExamples:\n" + "  logger\n" + "  logger -c 327a647b\n" + "  logger --name ROOT --level debug\n"
+@Description("\nExamples:\n" + "  logger\n" + "  logger -c 327a647b\n" + "  logger -c 327a647b --name ROOT --level debug\n"
                 + Constants.WIKI + Constants.WIKI_HOME + "logger")
 public class LoggerCommand extends AnnotatedCommand {
     private static final Logger logger = LogUtil.getArthasLogger();
@@ -87,7 +87,7 @@ public class LoggerCommand extends AnnotatedCommand {
     }
 
     @Option(shortName = "c", longName = "classloader")
-    @Description("classLoader hashcode")
+    @Description("classLoader hashcode, if no value is set, default value is SystemClassLoader")
     public void setHashCode(String hashCode) {
         this.hashCode = hashCode;
     }
