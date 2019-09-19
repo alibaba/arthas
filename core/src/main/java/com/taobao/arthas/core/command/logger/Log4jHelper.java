@@ -146,6 +146,7 @@ public class Log4jHelper {
                     appenderRef.add((String) a.get(LoggerHelper.name));
                     result.add(a);
                 }
+                info.put(LoggerHelper.blocking, ((AsyncAppender) appender).getBlocking());
                 info.put(LoggerHelper.appenderRef, appenderRef);
             }
         }
