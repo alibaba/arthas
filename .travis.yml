@@ -41,7 +41,7 @@ cache:
 
 script:
   - ./mvnw -version
-  - ./mvnw clean package -P full -Dsphinx.binUrl=https://github.com/hengyunabc/sphinx-binary/releases/download/v0.4.0.1/sphinx.linux-x86_64
+  - ./mvnw clean package -P full
 
 after_success:
   - bash <(curl -s https://codecov.io/bash)
