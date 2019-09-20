@@ -14,6 +14,10 @@ public interface LoggerHelper {
     // logger info
     public static final String level = "level";
     public static final String effectiveLevel = "effectiveLevel";
+
+    // log4j2 only
+    public static final String config = "config";
+
     // type boolean
     public static final String additivity = "additivity";
     public static final String appenders = "appenders";
