@@ -18,5 +18,5 @@ public enum PlatformEnum {
      */
     MACOSX,
 
-    UNKNOWN;
+    UNKNOWN
 }

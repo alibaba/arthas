@@ -11,7 +11,7 @@ options
 | json-format        | false | 是否支持json化的输出                             |
 | disable-sub-class  | false | 是否禁用子类匹配，默认在匹配目标类的时候会默认匹配到其子类，如果想精确匹配，可以关闭此开关 |
 | debug-for-asm      | false | 打印ASM相关的调试信息                             |
-| save-result        | false | 是否打开执行结果存日志功能，打开之后所有命令的运行结果都将保存到`/home/admin/logs/arthas/arthas.log`中 |
+| save-result        | false | 是否打开执行结果存日志功能，打开之后所有命令的运行结果都将保存到`~/logs/arthas-cache/result.log`中 |
 | job-timeout        | 1d    | 异步后台任务的默认超时时间，超过这个时间，任务自动停止；比如设置 1d, 2h, 3m, 25s，分别代表天、小时、分、秒 |
 
 ### 使用说明

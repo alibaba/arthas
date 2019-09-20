@@ -8,10 +8,10 @@
 
 # program : Arthas
 #  author : Core Engine @ Taobao.com
-#    date : 2019-05-15
+#    date : 2019-09-19
 
 # current arthas script version
-ARTHAS_SCRIPT_VERSION=3.1.1
+ARTHAS_SCRIPT_VERSION=3.1.3
 
 # SYNOPSIS
 #   rreadlink <fileOrDirPath>
@@ -127,6 +127,11 @@ VERBOSE=false
 COMMAND=
 # batch file to execute
 BATCH_FILE=
+
+# tunnel server url
+TUNNEL_SERVER=
+# agent id
+AGENT_ID=
 
 ############ Command Arguments ############
 
@@ -395,6 +400,7 @@ usage()
 Usage:
     $0 [-h] [--target-ip <value>] [--telnet-port <value>]
        [--http-port <value>] [--session-timeout <value>] [--arthas-home <value>]
+       [--tunnel-server <value>] [--agent-id <value>]
        [--use-version <value>] [--repo-mirror <value>] [--versions] [--use-http]
        [--attach-only] [-c <value>] [-f <value>] [-v] [pid]
 
@@ -412,6 +418,8 @@ Options and Arguments:
     --use-http                  Enforce use http to download, default use https
     --attach-only               Attach target process only, do not connect
     --debug-attach              Debug attach agent
+    --tunnel-server             Remote tunnel server url
+    --agent-id                  Special agent id
  -c,--command <value>           Command to execute, multiple commands separated
                                 by ;
  -f,--batch-file <value>        The batch file to execute
@@ -424,9 +432,11 @@ EXAMPLES:
   ./as.sh <pid>
   ./as.sh --target-ip 0.0.0.0
   ./as.sh --telnet-port 9999 --http-port -1
+  ./as.sh --tunnel-server 'ws://192.168.10.11:7777/ws'
+  ./as.sh --tunnel-server 'ws://192.168.10.11:7777/ws' --agent-id bvDOe8XbTM2pQWjF4cfw
   ./as.sh -c 'sysprop; thread' <pid>
   ./as.sh -f batch.as <pid>
-  ./as.sh --use-version 3.1.1
+  ./as.sh --use-version 3.1.3
   ./as.sh --session-timeout 3600
   ./as.sh --attach-only
   ./as.sh --repo-mirror aliyun --use-http
@@ -516,6 +526,16 @@ parse_arguments()
         -f|--batch-file)
         BATCH_FILE="$2"
         BATCH_MODE=true
+        shift # past argument
+        shift # past value
+        ;;
+        --tunnel-server)
+        TUNNEL_SERVER="$2"
+        shift # past argument
+        shift # past value
+        ;;
+        --agent-id)
+        AGENT_ID="$2"
         shift # past argument
         shift # past value
         ;;
@@ -685,6 +705,16 @@ attach_jvm()
         java_command+=("${BOOT_CLASSPATH}")
     fi
 
+    local tempArgs=()
+    if [ "${TUNNEL_SERVER}" ]; then
+        tempArgs+=("-tunnel-server")
+        tempArgs+=("${TUNNEL_SERVER}")
+    fi
+    if [ "${AGENT_ID}" ]; then
+        tempArgs+=("-agent-id")
+        tempArgs+=("${AGENT_ID}")
+    fi
+
     "${java_command[@]}" \
         ${ARTHAS_OPTS} ${JVM_OPTS} \
         -jar "${arthas_lib_dir}/arthas-core.jar" \
@@ -693,6 +723,7 @@ attach_jvm()
             -telnet-port ${TELNET_PORT} \
             -http-port ${HTTP_PORT} \
             -session-timeout ${SESSION_TIMEOUT} \
+            "${tempArgs[@]}" \
             -core "${arthas_lib_dir}/arthas-core.jar" \
             -agent "${arthas_lib_dir}/arthas-agent.jar"
 

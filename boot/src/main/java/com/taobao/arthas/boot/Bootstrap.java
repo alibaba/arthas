@@ -44,7 +44,7 @@ import com.taobao.middleware.cli.annotations.Summary;
                 + "  java -jar arthas-boot.jar --telnet-port 9999 --http-port -1\n"
                 + "  java -jar arthas-boot.jar -c 'sysprop; thread' <pid>\n"
                 + "  java -jar arthas-boot.jar -f batch.as <pid>\n"
-                + "  java -jar arthas-boot.jar --use-version 3.1.1\n"
+                + "  java -jar arthas-boot.jar --use-version 3.1.3\n"
                 + "  java -jar arthas-boot.jar --versions\n"
                 + "  java -jar arthas-boot.jar --session-timeout 3600\n" + "  java -jar arthas-boot.jar --attach-only\n"
                 + "  java -jar arthas-boot.jar --repo-mirror aliyun --use-http\n" + "WIKI:\n"
@@ -105,6 +105,9 @@ public class Bootstrap {
 
     private String command;
     private String batchFile;
+
+    private String tunnelServer;
+    private String agentId;
 
     static {
         ARTHAS_LIB_DIR = new File(
@@ -228,6 +231,18 @@ public class Bootstrap {
     @Description("Verbose, print debug info.")
     public void setVerbose(boolean verbose) {
         this.verbose = verbose;
+    }
+
+    @Option(longName = "tunnel-server")
+    @Description("The tunnel server url")
+    public void setTunnelServer(String tunnelServer) {
+        this.tunnelServer = tunnelServer;
+    }
+
+    @Option(longName = "agent-id")
+    @Description("The agent id register to tunnel server")
+    public void setAgentId(String agentId) {
+        this.agentId = agentId;
     }
 
     public static void main(String[] args) throws ParserConfigurationException, SAXException, IOException,
@@ -458,6 +473,15 @@ public class Bootstrap {
                 attachArgs.add("" + bootstrap.getSessionTimeout());
             }
 
+            if (bootstrap.getTunnelServer() != null) {
+                attachArgs.add("-tunnel-server");
+                attachArgs.add(bootstrap.getTunnelServer());
+            }
+            if (bootstrap.getAgentId() != null) {
+                attachArgs.add("-agent-id");
+                attachArgs.add(bootstrap.getAgentId());
+            }
+
             AnsiLog.info("Try to attach process " + pid);
             AnsiLog.debug("Start arthas-core.jar args: " + attachArgs);
             ProcessUtils.startArthasCore(pid, attachArgs);
@@ -633,5 +657,13 @@ public class Bootstrap {
 
     public Integer getWidth() {
         return width;
+    }
+
+    public String getTunnelServer() {
+        return tunnelServer;
+    }
+
+    public String getAgentId() {
+        return agentId;
     }
 }

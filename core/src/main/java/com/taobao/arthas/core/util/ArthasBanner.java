@@ -9,6 +9,9 @@ import com.taobao.text.ui.TableElement;
 import com.taobao.text.util.RenderUtil;
 
 import java.io.InputStream;
+import java.util.Collections;
+import java.util.Map;
+import java.util.Map.Entry;
 
 import static com.taobao.text.ui.Element.label;
 
@@ -93,6 +96,10 @@ public class ArthasBanner {
     }
 
     public static String welcome() {
+        return welcome(Collections.<String, String>emptyMap());
+    }
+
+    public static String welcome(Map<String, String> infos) {
         logger.info("arthas version: " + version());
         TableElement table = new TableElement().rightCellPadding(1)
                         .row("wiki", wiki())
@@ -100,6 +107,9 @@ public class ArthasBanner {
                         .row("version", version())
                         .row("pid", PidUtils.currentPid())
                         .row("time", DateUtils.getCurrentDate());
+        for (Entry<String, String> entry : infos.entrySet()) {
+            table.row(entry.getKey(), entry.getValue());
+        }
 
         return logo() + "\n" + RenderUtil.render(table);
     }

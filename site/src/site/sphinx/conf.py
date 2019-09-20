@@ -38,7 +38,7 @@ extensions = [
     'sphinx.ext.napoleon',
     'sphinx.ext.mathjax',
     'sphinx_markdown_tables',
-    'sphinxcontrib.inlinesyntaxhighlight',
+#    'sphinxcontrib.inlinesyntaxhighlight',
     'highlightjs',
 ]
 
@@ -305,12 +305,12 @@ texinfo_documents = [
 #texinfo_no_detailmenu = False
 
 # sphinxcontrib-inlinesyntaxhighlight options
-inline_highlight_literals = False
+#inline_highlight_literals = False
 
 # app setup hook
 def setup(app):
     app.add_config_value('recommonmark_config', {
-        'url_resolver': lambda url: github_doc_root + url,
+        # 'url_resolver': lambda url: github_doc_root + url,
         # 'auto_toc_tree_section': 'Contents',
         'enable_eval_rst': True,
         # 'enable_auto_doc_ref': True,

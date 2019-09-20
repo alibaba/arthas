@@ -81,14 +81,16 @@ You can enter its interactive interface by executing `as.sh`, or execute `as.sh 
 * [Online Tutorials(Recommend)](https://alibaba.github.io/arthas/arthas-tutorials?language=en)
 * [User manual](https://alibaba.github.io/arthas/en)
 * [Installation](https://alibaba.github.io/arthas/en/install-detail.html)
+* [Download](https://alibaba.github.io/arthas/en/download.html)
 * [Quick start](https://alibaba.github.io/arthas/en/quick-start.html)
 * [Advanced usage](https://alibaba.github.io/arthas/en/advanced-use.html)
 * [Commands](https://alibaba.github.io/arthas/en/commands.html)
+* [WebConsole](https://alibaba.github.io/arthas/en/web-console.html)
 * [Docker](https://alibaba.github.io/arthas/en/docker.html)
 * [User cases](https://github.com/alibaba/arthas/issues?q=label%3Auser-case)
 * [Questions and answers](https://github.com/alibaba/arthas/issues?utf8=%E2%9C%93&q=label%3Aquestion-answered+)
 * [Compile and debug/How to contribute](https://github.com/alibaba/arthas/blob/master/CONTRIBUTING.md)
-* [Release Notes](https://alibaba.github.io/arthas/en/release-notes.html)
+* [Release Notes](https://github.com/alibaba/arthas/releases)
 
 
 ### Feature Showcase
@@ -427,6 +429,7 @@ Welcome to register the company name in this issue: https://github.com/alibaba/a
 ![BBD数联铭品](static/bbdservice.png)
 ![伙伴集团](static/zhaoshang800.png)
 ![数梦工场](static/dtdream.png)
+![安恒信息](static/dbappsecurity.png)
 
 ### Derivative Projects
 
