@@ -1,5 +1,6 @@
 package com.taobao.arthas.core.command.logger;
 
+import java.security.CodeSource;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.HashMap;
@@ -26,9 +27,8 @@ public class Log4jHelper {
     static {
         try {
             Class<?> loggerClass = Class.forName("org.apache.log4j.Logger");
-            // 这里可能会加载到应用中依赖的log4j，因此需要判断classloader
+            // 这里可能会加载到其它上游ClassLoader的log4j，因此需要判断是否当前classloader
             if (loggerClass.getClassLoader().equals(Log4jHelper.class.getClassLoader())) {
-                LogManager.getLoggerRepository();
                 Log4j = true;
             }
         } catch (Throwable t) {
@@ -106,6 +106,10 @@ public class Log4jHelper {
         Map<String, Object> info = new HashMap<String, Object>();
         info.put(LoggerHelper.name, logger.getName());
         info.put(LoggerHelper.clazz, logger.getClass());
+        CodeSource codeSource = logger.getClass().getProtectionDomain().getCodeSource();
+        if (codeSource != null) {
+            info.put(LoggerHelper.codeSource, codeSource.getLocation());
+        }
         info.put(LoggerHelper.additivity, logger.getAdditivity());
 
         Level level = logger.getLevel(), effectiveLevel = logger.getEffectiveLevel();

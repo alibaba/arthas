@@ -36,8 +36,6 @@ import com.taobao.text.util.RenderUtil;
 /**
  * logger command
  * 
- * TODO support log4j2
- * 
  * @author hengyunabc 2019-09-04
  *
  */
@@ -51,6 +49,7 @@ public class LoggerCommand extends AnnotatedCommand {
     private static byte[] LoggerHelperBytes;
     private static byte[] Log4jHelperBytes;
     private static byte[] LogbackHelperBytes;
+    private static byte[] Log4j2HelperBytes;
 
     private static Map<Class<?>, byte[]> classToBytesMap = new HashMap<Class<?>, byte[]>();
 
@@ -58,10 +57,12 @@ public class LoggerCommand extends AnnotatedCommand {
         LoggerHelperBytes = loadClassBytes(LoggerHelper.class);
         Log4jHelperBytes = loadClassBytes(Log4jHelper.class);
         LogbackHelperBytes = loadClassBytes(LogbackHelper.class);
+        Log4j2HelperBytes = loadClassBytes(Log4j2Helper.class);
 
         classToBytesMap.put(LoggerHelper.class, LoggerHelperBytes);
         classToBytesMap.put(Log4jHelper.class, Log4jHelperBytes);
         classToBytesMap.put(LogbackHelper.class, LogbackHelperBytes);
+        classToBytesMap.put(Log4j2Helper.class, Log4j2HelperBytes);
     }
 
     private String name;
@@ -145,6 +146,15 @@ public class LoggerCommand extends AnnotatedCommand {
             logger.error("arthas", "logger command update logback level error", e);
         }
 
+        try {
+            Boolean updateResult = this.updateLevel(inst, Log4j2Helper.class);
+            if (Boolean.TRUE.equals(updateResult)) {
+                result = true;
+            }
+        } catch (Throwable e) {
+            logger.error("arthas", "logger command update log4j2 level error", e);
+        }
+
         if (result) {
             process.write("update logger level success.\n");
         } else {
@@ -180,6 +190,8 @@ public class LoggerCommand extends AnnotatedCommand {
                     loggerTypes.addType(LoggerType.LOG4J);
                 } else if ("ch.qos.logback.classic.Logger".equals(className)) {
                     loggerTypes.addType(LoggerType.LOGBACK);
+                } else if ("org.apache.logging.log4j.Logger".equals(className)) {
+                    loggerTypes.addType(LoggerType.LOG4J2);
                 }
             }
         }
@@ -202,6 +214,12 @@ public class LoggerCommand extends AnnotatedCommand {
                 process.write(renderResult);
             }
 
+            if (loggerTypes.contains(LoggerType.LOG4J2)) {
+                Map<String, Map<String, Object>> loggerInfoMap = loggerInfo(classLoader, Log4j2Helper.class);
+                String renderResult = renderLoggerInfo(loggerInfoMap, process.width());
+
+                process.write(renderResult);
+            }
         }
 
     }
@@ -223,11 +241,19 @@ public class LoggerCommand extends AnnotatedCommand {
                             .row(label(LoggerHelper.classLoaderHash).style(Decoration.bold.bold()),
                                             label("" + StringUtils.classLoaderHash(clazz)))
                             .row(label(LoggerHelper.level).style(Decoration.bold.bold()),
-                                            label("" + info.get(LoggerHelper.level)))
-                            .row(label(LoggerHelper.effectiveLevel).style(Decoration.bold.bold()),
-                                            label("" + info.get(LoggerHelper.effectiveLevel)))
-                            .row(label(LoggerHelper.additivity).style(Decoration.bold.bold()),
-                                            label("" + info.get(LoggerHelper.additivity)))
+                                            label("" + info.get(LoggerHelper.level)));
+            if (info.get(LoggerHelper.effectiveLevel) != null) {
+                table.row(label(LoggerHelper.effectiveLevel).style(Decoration.bold.bold()),
+                                label("" + info.get(LoggerHelper.effectiveLevel)));
+            }
+
+            if (info.get(LoggerHelper.config) != null) {
+                table.row(label(LoggerHelper.config).style(Decoration.bold.bold()),
+                                label("" + info.get(LoggerHelper.config)));
+            }
+
+            table.row(label(LoggerHelper.additivity).style(Decoration.bold.bold()),
+                            label("" + info.get(LoggerHelper.additivity)))
                             .row(label(LoggerHelper.codeSource).style(Decoration.bold.bold()),
                                             label("" + info.get(LoggerHelper.codeSource)));
 
@@ -307,7 +333,7 @@ public class LoggerCommand extends AnnotatedCommand {
     }
 
     static enum LoggerType {
-        LOG4J, LOGBACK
+        LOG4J, LOGBACK, LOG4J2
     }
 
     static class LoggerTypes {
