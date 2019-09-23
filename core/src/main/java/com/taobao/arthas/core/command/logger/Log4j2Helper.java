@@ -19,6 +19,8 @@ import org.apache.logging.log4j.core.appender.FileAppender;
 import org.apache.logging.log4j.core.config.Configuration;
 import org.apache.logging.log4j.core.config.LoggerConfig;
 
+import com.taobao.arthas.core.util.StringUtils;
+
 /**
  * 
  * @author hengyunabc 2019-09-20
@@ -30,12 +32,12 @@ public class Log4j2Helper {
 
     static {
         try {
-            Class<?> loggerClass = Class.forName("org.apache.logging.log4j.Logger");
+            Class<?> loggerClass = Log4j2Helper.class.getClassLoader().loadClass("org.apache.logging.log4j.Logger");
             // 这里可能会加载到其它上游ClassLoader的log4j2，因此需要判断是否当前classloader
             if (loggerClass.getClassLoader().equals(Log4j2Helper.class.getClassLoader())) {
                 Log4j2 = true;
             }
-            
+
             try {
                 configField = LoggerConfig.class.getDeclaredField("config");
                 configField.setAccessible(true);
@@ -93,6 +95,10 @@ public class Log4j2Helper {
             if (loggerConfig == null) {
                 return loggerInfoMap;
             }
+            // 排掉非root时，获取到root的logger config
+            if (!name.equalsIgnoreCase(LoggerConfig.ROOT) && StringUtils.isEmpty(loggerConfig.getName())) {
+                return loggerInfoMap;
+            }
             loggerInfoMap.put(name, doGetLoggerInfo(loggerConfig));
         } else {
             // 获取所有logger时，如果没有appender则忽略
@@ -116,7 +122,7 @@ public class Log4j2Helper {
 
     private static Object getConfigField(LoggerConfig loggerConfig) {
         try {
-            if(configField != null) {
+            if (configField != null) {
                 return configField.get(loggerConfig);
             }
         } catch (Throwable e) {
@@ -143,7 +149,7 @@ public class Log4j2Helper {
         if (config != null) {
             info.put(LoggerHelper.config, config);
         }
-        
+
         info.put(LoggerHelper.additivity, loggerConfig.isAdditive());
 
         Level level = loggerConfig.getLevel();
