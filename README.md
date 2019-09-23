@@ -430,6 +430,10 @@ Welcome to register the company name in this issue: https://github.com/alibaba/a
 ![伙伴集团](static/zhaoshang800.png)
 ![数梦工场](static/dtdream.png)
 ![安恒信息](static/dbappsecurity.png)
+![亚信科技](static/asiainfo.png)
+![云舒写](static/yunshuxie.png)
+![微住](static/iweizhu.png)
+![月亮小屋](static/bluemoon.png)
 
 ### Derivative Projects
 
