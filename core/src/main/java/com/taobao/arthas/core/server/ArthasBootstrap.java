@@ -89,7 +89,7 @@ public class ArthasBootstrap {
 
         String agentId = null;
         try {
-            if (configure.getHttpPort() > 0) {
+            if (configure.getTunnelServer() != null && configure.getHttpPort() > 0) {
                 tunnelClient = new TunnelClient();
                 tunnelClient.setId(configure.getAgentId());
                 tunnelClient.setTunnelServerUrl(configure.getTunnelServer());
