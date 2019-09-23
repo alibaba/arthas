@@ -41,8 +41,8 @@ import com.taobao.text.util.RenderUtil;
  */
 @Name("logger")
 @Summary("Print logger info, and update the logger level")
-@Description("\nExamples:\n" + "  logger\n" + "  logger -c 327a647b\n" + "  logger -c 327a647b --name ROOT --level debug\n"
-                + Constants.WIKI + Constants.WIKI_HOME + "logger")
+@Description("\nExamples:\n" + "  logger\n" + "  logger -c 327a647b\n"
+                + "  logger -c 327a647b --name ROOT --level debug\n" + Constants.WIKI + Constants.WIKI_HOME + "logger")
 public class LoggerCommand extends AnnotatedCommand {
     private static final Logger logger = LogUtil.getArthasLogger();
 
@@ -52,6 +52,9 @@ public class LoggerCommand extends AnnotatedCommand {
     private static byte[] Log4j2HelperBytes;
 
     private static Map<Class<?>, byte[]> classToBytesMap = new HashMap<Class<?>, byte[]>();
+
+    private static String arthasClassLoaderHash = ClassLoaderUtils
+                    .classLoaderHash(LoggerCommand.class.getClassLoader());
 
     static {
         LoggerHelperBytes = loadClassBytes(LoggerHelper.class);
@@ -278,7 +281,8 @@ public class LoggerCommand extends AnnotatedCommand {
                                         label("" + appenderInfo.get(LoggerHelper.target)));
                     }
                     if (appenderInfo.get(LoggerHelper.blocking) != null) {
-                        appendersTable.row(label(LoggerHelper.blocking), label("" + appenderInfo.get(LoggerHelper.blocking)));
+                        appendersTable.row(label(LoggerHelper.blocking),
+                                        label("" + appenderInfo.get(LoggerHelper.blocking)));
                     }
                     if (appenderInfo.get(LoggerHelper.appenderRef) != null) {
                         appendersTable.row(label(LoggerHelper.appenderRef),
@@ -294,21 +298,33 @@ public class LoggerCommand extends AnnotatedCommand {
         return sb.toString();
     }
 
+    private static String helperClassNameWithClassLoader(ClassLoader classLoader, Class<?> helperClass) {
+        String classLoaderHash = ClassLoaderUtils.classLoaderHash(classLoader);
+        String className = helperClass.getName();
+        // if want to debug, change to return className
+        return className + arthasClassLoaderHash + classLoaderHash;
+    }
+
     @SuppressWarnings("unchecked")
     private Map<String, Map<String, Object>> loggerInfo(ClassLoader classLoader, Class<?> helperClass) {
         Map<String, Map<String, Object>> loggers = Collections.emptyMap();
+
+        String helperClassName = helperClassNameWithClassLoader(classLoader, helperClass);
         try {
-            classLoader.loadClass(helperClass.getName());
+            classLoader.loadClass(helperClassName);
         } catch (ClassNotFoundException e) {
             try {
-                ReflectUtils.defineClass(helperClass.getName(), classToBytesMap.get(helperClass), classLoader);
-            } catch (Exception e1) {
-                // ignore
+                byte[] helperClassBytes = AsmRenameUtil.renameClass(classToBytesMap.get(helperClass),
+                                helperClass.getName(), helperClassName);
+                ReflectUtils.defineClass(helperClassName, helperClassBytes, classLoader);
+            } catch (Throwable e1) {
+                logger.error("arthas", "arthas loggger command try to define helper class error: " + helperClassName,
+                                e1);
             }
         }
 
         try {
-            Class<?> clazz = classLoader.loadClass(helperClass.getName());
+            Class<?> clazz = classLoader.loadClass(helperClassName);
             Method getLoggersMethod = clazz.getMethod("getLoggers", new Class<?>[] { String.class, boolean.class });
             loggers = (Map<String, Map<String, Object>>) getLoggersMethod.invoke(null,
                             new Object[] { name, includeNoAppender });
@@ -326,7 +342,7 @@ public class LoggerCommand extends AnnotatedCommand {
             classLoader = ClassLoaderUtils.getClassLoader(inst, hashCode);
         }
 
-        Class<?> clazz = classLoader.loadClass(helperClass.getName());
+        Class<?> clazz = classLoader.loadClass(helperClassNameWithClassLoader(classLoader, helperClass));
         Method updateLevelMethod = clazz.getMethod("updateLevel", new Class<?>[] { String.class, String.class });
         return (Boolean) updateLevelMethod.invoke(null, new Object[] { this.name, this.level });
 

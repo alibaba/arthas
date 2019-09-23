@@ -26,7 +26,7 @@ public class Log4jHelper {
 
     static {
         try {
-            Class<?> loggerClass = Class.forName("org.apache.log4j.Logger");
+            Class<?> loggerClass = Log4jHelper.class.getClassLoader().loadClass("org.apache.log4j.Logger");
             // 这里可能会加载到其它上游ClassLoader的log4j，因此需要判断是否当前classloader
             if (loggerClass.getClassLoader().equals(Log4jHelper.class.getClassLoader())) {
                 Log4j = true;
@@ -129,6 +129,10 @@ public class Log4jHelper {
     private static List<Map<String, Object>> doGetLoggerAppenders(Enumeration<Appender> appenders) {
         List<Map<String, Object>> result = new ArrayList<Map<String, Object>>();
 
+        if (appenders == null) {
+            return result;
+        }
+
         while (appenders.hasMoreElements()) {
             Map<String, Object> info = new HashMap<String, Object>();
             Appender appender = appenders.nextElement();
@@ -143,15 +147,18 @@ public class Log4jHelper {
                 info.put(LoggerHelper.target, ((ConsoleAppender) appender).getTarget());
             } else if (appender instanceof AsyncAppender) {
                 @SuppressWarnings("unchecked")
-                List<Map<String, Object>> asyncs = doGetLoggerAppenders(((AsyncAppender) appender).getAllAppenders());
-                // 标明异步appender
-                List<String> appenderRef = new ArrayList<String>();
-                for (Map<String, Object> a : asyncs) {
-                    appenderRef.add((String) a.get(LoggerHelper.name));
-                    result.add(a);
+                Enumeration<Appender> appendersOfAsync = ((AsyncAppender) appender).getAllAppenders();
+                if (appendersOfAsync != null) {
+                    List<Map<String, Object>> asyncs = doGetLoggerAppenders(appendersOfAsync);
+                    // 标明异步appender
+                    List<String> appenderRef = new ArrayList<String>();
+                    for (Map<String, Object> a : asyncs) {
+                        appenderRef.add((String) a.get(LoggerHelper.name));
+                        result.add(a);
+                    }
+                    info.put(LoggerHelper.blocking, ((AsyncAppender) appender).getBlocking());
+                    info.put(LoggerHelper.appenderRef, appenderRef);
                 }
-                info.put(LoggerHelper.blocking, ((AsyncAppender) appender).getBlocking());
-                info.put(LoggerHelper.appenderRef, appenderRef);
             }
         }
 

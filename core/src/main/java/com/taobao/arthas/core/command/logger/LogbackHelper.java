@@ -34,7 +34,7 @@ public class LogbackHelper {
 
     static {
         try {
-            Class<?> loggerClass = Class.forName("ch.qos.logback.classic.Logger");
+            Class<?> loggerClass = LogbackHelper.class.getClassLoader().loadClass("ch.qos.logback.classic.Logger");
             // 这里可能会加载到应用中依赖的logback，因此需要判断classloader
             if (loggerClass.getClassLoader().equals(LogbackHelper.class.getClassLoader())) {
                 ILoggerFactory loggerFactory = org.slf4j.LoggerFactory.getILoggerFactory();
