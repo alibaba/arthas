@@ -85,7 +85,7 @@ public class OgnlCommand extends AnnotatedCommand {
                 process.write(result + "\n");
             } catch (ExpressException e) {
                 logger.warn("ognl: failed execute express: " + express, e);
-                process.write("Failed to get static, exception message: " + e.getMessage()
+                process.write("Failed to execute ognl, exception message: " + e.getMessage()
                                 + ", please check $HOME/logs/arthas/arthas.log for more details. \n");
                 exitCode = -1;
             }
