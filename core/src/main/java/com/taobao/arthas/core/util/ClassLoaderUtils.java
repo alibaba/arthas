@@ -49,7 +49,7 @@ public class ClassLoaderUtils {
         if (hashCode <= 0) {
             hashCode = System.identityHashCode(classLoader);
             if (hashCode < 0) {
-                hashCode = -hashCode;
+                hashCode = hashCode & Integer.MAX_VALUE;
             }
         }
         return Integer.toHexString(hashCode);
