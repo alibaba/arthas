@@ -148,6 +148,10 @@ public class ArthasBootstrap {
             logger.info("as-server listening on network={};telnet={};http={};timeout={};", configure.getIp(),
                     configure.getTelnetPort(), configure.getHttpPort(), options.getConnectionTimeout());
             // 异步回报启动次数
+            if (configure.getStatUrl() != null) {
+                logger.info("arthas stat url: {}", configure.getStatUrl());
+            }
+            UserStatUtil.setStatUrl(configure.getStatUrl());
             UserStatUtil.arthasStart();
 
             logger.info("as-server started in {} ms", System.currentTimeMillis() - start );
