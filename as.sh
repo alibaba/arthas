@@ -11,7 +11,7 @@
 #    date : 2019-09-19
 
 # current arthas script version
-ARTHAS_SCRIPT_VERSION=3.1.3
+ARTHAS_SCRIPT_VERSION=3.1.4
 
 # SYNOPSIS
 #   rreadlink <fileOrDirPath>
@@ -132,6 +132,9 @@ BATCH_FILE=
 TUNNEL_SERVER=
 # agent id
 AGENT_ID=
+
+# stat report url
+STAT_URL=
 
 ############ Command Arguments ############
 
@@ -400,7 +403,7 @@ usage()
 Usage:
     $0 [-h] [--target-ip <value>] [--telnet-port <value>]
        [--http-port <value>] [--session-timeout <value>] [--arthas-home <value>]
-       [--tunnel-server <value>] [--agent-id <value>]
+       [--tunnel-server <value>] [--agent-id <value>] [--stat-url <value>]
        [--use-version <value>] [--repo-mirror <value>] [--versions] [--use-http]
        [--attach-only] [-c <value>] [-f <value>] [-v] [pid]
 
@@ -434,9 +437,10 @@ EXAMPLES:
   ./as.sh --telnet-port 9999 --http-port -1
   ./as.sh --tunnel-server 'ws://192.168.10.11:7777/ws'
   ./as.sh --tunnel-server 'ws://192.168.10.11:7777/ws' --agent-id bvDOe8XbTM2pQWjF4cfw
+  ./as.sh --stat-url 'http://192.168.10.11:8080/api/stat'
   ./as.sh -c 'sysprop; thread' <pid>
   ./as.sh -f batch.as <pid>
-  ./as.sh --use-version 3.1.3
+  ./as.sh --use-version 3.1.4
   ./as.sh --session-timeout 3600
   ./as.sh --attach-only
   ./as.sh --repo-mirror aliyun --use-http
@@ -536,6 +540,11 @@ parse_arguments()
         ;;
         --agent-id)
         AGENT_ID="$2"
+        shift # past argument
+        shift # past value
+        ;;
+        --stat-url)
+        STAT_URL="$2"
         shift # past argument
         shift # past value
         ;;
@@ -713,6 +722,10 @@ attach_jvm()
     if [ "${AGENT_ID}" ]; then
         tempArgs+=("-agent-id")
         tempArgs+=("${AGENT_ID}")
+    fi
+    if [ "${STAT_URL}" ]; then
+        tempArgs+=("-stat-url")
+        tempArgs+=("${STAT_URL}")
     fi
 
     "${java_command[@]}" \
