@@ -90,7 +90,7 @@ Arthas支持使用管道对上述命令的结果进行进一步的处理，如`s
 
 在tunnel server里有一个示例的回报代码，用户可以自己在服务器上实现。
 
-https://github.com/alibaba/arthas/blob/master/tunnel-server/src/main/java/com/alibaba/arthas/tunnel/server/app/web/StatController.java
+[StatController.java](https://github.com/alibaba/arthas/blob/master/tunnel-server/src/main/java/com/alibaba/arthas/tunnel/server/app/web/StatController.java)
 
 
 ## 其他特性
