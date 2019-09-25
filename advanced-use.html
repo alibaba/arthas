@@ -110,7 +110,8 @@
 <li class="toctree-l3"><a class="reference internal" href="web-console.html">Web Console</a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="#id5">其他特性</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#id5">用户数据回报</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id6">其他特性</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="async.html">异步命令支持</a></li>
 <li class="toctree-l3"><a class="reference internal" href="save-log.html">执行结果存日志</a></li>
 <li class="toctree-l3"><a class="reference internal" href="batch-support.html">批处理的支持</a></li>
@@ -289,7 +290,14 @@
 </div>
 </div>
 <div class="section" id="id5">
-<h2>其他特性<a class="headerlink" href="#id5" title="永久链接至标题">¶</a></h2>
+<h2>用户数据回报<a class="headerlink" href="#id5" title="永久链接至标题">¶</a></h2>
+<p>在<code class="docutils literal notranslate"><span class="pre">3.1.4</span></code>版本后，增加了用户数据回报功能，方便统一做安全或者历史数据统计。</p>
+<p>在启动时，指定<code class="docutils literal notranslate"><span class="pre">stat-url</span></code>，就会回报执行的每一行命令，比如： <code class="docutils literal notranslate"><span class="pre">./as.sh</span> <span class="pre">--stat-url</span> <span class="pre">'http://192.168.10.11:8080/api/stat'</span></code></p>
+<p>在tunnel server里有一个示例的回报代码，用户可以自己在服务器上实现。</p>
+<p>https://github.com/alibaba/arthas/blob/master/tunnel-server/src/main/java/com/alibaba/arthas/tunnel/server/app/web/StatController.java</p>
+</div>
+<div class="section" id="id6">
+<h2>其他特性<a class="headerlink" href="#id6" title="永久链接至标题">¶</a></h2>
 <div class="toctree-wrapper compound">
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="async.html">异步命令支持</a></li>
