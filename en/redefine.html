@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>redefine &mdash; Arthas 3.1.3 documentation</title>
+  <title>redefine &mdash; Arthas 3.1.4 documentation</title>
   
 
   
@@ -67,7 +67,7 @@
             
             
               <div class="version">
-                3.1.3
+                3.1.4
               </div>
             
           
@@ -217,6 +217,9 @@
 <p>Reference: <a class="reference external" href="https://docs.oracle.com/javase/8/docs/api/java/lang/instrument/Instrumentation.html#redefineClasses-java.lang.instrument.ClassDefinition...-">Instrumentation#redefineClasses</a></p>
 <blockquote>
 <div><p>Notes: Re-defined classes cannot be restored. There are chances that redefining may fail due to some reasons, for example: there’s new field introduced in the new version of the class, pls. refer to JDK’s documentation for the limitations.</p>
+</div></blockquote>
+<blockquote>
+<div><p>The <code class="docutils literal notranslate"><span class="pre">reset</span></code> command is not valid for classes that have been processed by <code class="docutils literal notranslate"><span class="pre">redefine</span></code>. If you want to reset, you need <code class="docutils literal notranslate"><span class="pre">redefine</span></code> the original bytecode.</p>
 </div></blockquote>
 <div class="section" id="options">
 <h2>Options<a class="headerlink" href="#options" title="Permalink to this headline">¶</a></h2>

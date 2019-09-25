@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>redefine &mdash; Arthas 3.1.3 文档</title>
+  <title>redefine &mdash; Arthas 3.1.4 文档</title>
   
 
   
@@ -68,7 +68,7 @@
             
             
               <div class="version">
-                3.1.3
+                3.1.4
               </div>
             
           
@@ -220,6 +220,9 @@
 <p>参考：<a class="reference external" href="https://docs.oracle.com/javase/8/docs/api/java/lang/instrument/Instrumentation.html#redefineClasses-java.lang.instrument.ClassDefinition...-">Instrumentation#redefineClasses</a></p>
 <blockquote>
 <div><p>注意， redefine后的原来的类不能恢复，redefine有可能失败（比如增加了新的field），参考jdk本身的文档。</p>
+</div></blockquote>
+<blockquote>
+<div><p><code class="docutils literal notranslate"><span class="pre">reset</span></code>命令对<code class="docutils literal notranslate"><span class="pre">redefine</span></code>的类无效。如果想重置，需要<code class="docutils literal notranslate"><span class="pre">redefine</span></code>原始的字节码。</p>
 </div></blockquote>
 <div class="section" id="id1">
 <h2>参数说明<a class="headerlink" href="#id1" title="永久链接至标题">¶</a></h2>
