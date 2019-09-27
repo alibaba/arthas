@@ -51,11 +51,10 @@ Tip: you can use `--versions` to list all available versions.
 * Arthas is using [Sphinx](http://www.sphinx-doc.org/en/master/) to generate the static site
 * `sphinx-maven-plugin` configured in [`site/pom.xml`](https://github.com/alibaba/arthas/tree/master/site)
 * `sphinx-maven-plugin` executes by downloading`sphinx-binary/`
-* a [bug](https://github.com/rtfd/recommonmark/issues/93) in Sphinx plugin `recommonmark`; we fix it by packaging another [version](https://github.com/hengyunabc/sphinx-binary/releases/tag/v0.4.0.1)
-* when packaging the whole project (Packaging All), you need to (Only Unix/Linux/Mac supported):
+* when packaging the whole project (Packaging All), you need to execute:
 
     ```bash
-    ./mvnw clean package -DskipTests -P full -Dsphinx.binUrl=https://github.com/hengyunabc/sphinx-binary/releases/download/v0.4.0.1/sphinx.osx-x86_64
+    ./mvnw clean package -DskipTests -P full
     ```
 
 
@@ -112,7 +111,7 @@ Tip: you can use `--versions` to list all available versions.
 * 在`site/pom.xml`里配置了`sphinx-maven-plugin`
 * `sphinx-maven-plugin`通过下载`sphinx-binary/`来执行
 * sphinx配置的`recommonmark`插件有bug：https://github.com/rtfd/recommonmark/issues/93 ，因此另外打包了一个修复版本： https://github.com/hengyunabc/sphinx-binary/releases/tag/v0.4.0.1
-* 全量打包时，需要配置下面的参数（目前只支持mac/linux）：
+* 全量打包时，需要配置下面的参数：
 
     ```
     ./mvnw clean package -DskipTests -P full -Dsphinx.binUrl=https://github.com/hengyunabc/sphinx-binary/releases/download/v0.4.0.1/sphinx.osx-x86_64
@@ -122,16 +121,16 @@ Tip: you can use `--versions` to list all available versions.
 
 发布release版本流程：
 
-* 修改`as.sh`里的版本
+* 修改`as.sh`里的版本， `Bootstrap.java`里的版本，Dockerfile里的版本
 * 修改本地的maven settings.xml
-* mvn release:prepare -Darguments="-DskipTests"
-* mvn release:perform -Darguments="-DskipTests -P full -Dsphinx.binUrl=https://github.com/hengyunabc/sphinx-binary/releases/download/v0.4.0.1/sphinx.osx-x86_64"
+* mvn release:prepare -Darguments="-DskipTests -P full"
+* mvn release:perform -Darguments="-DskipTests -P full"
 
-    如果在下载 https://github.com/hengyunabc/sphinx-binary/releases/download/v0.4.0.1/sphinx.osx-x86_64 时有问题，可以先下载到本地，然后用 `file:/tmp/sphinx.osx-x86_64` 的方式指定
+    如果在下载 https://github.com/trustin/sphinx-binary/releases/download/v0.7.1/sphinx.osx-x86_64 时有问题，可以先下载到本地，然后用 `file:/tmp/sphinx.osx-x86_64` 的方式指定
 
 * 到 https://oss.sonatype.org/ 上，“Staging Repositories”然后close掉自己的，再release
 * 发布完maven仓库之后，需要到阿里云的仓库里检查是否同步，有可能有延时
-* 需要更新 gh-pages 分支下面的 arthas-boot.jar/arthas-demo.jar/as.sh
+* 需要更新 gh-pages 分支下面的 arthas-boot.jar/arthas-demo.jar/as.sh ，下载 doc.zip，解压覆盖掉文档的更新
 * 需要更新docker镜像，push新的tag
 
     以 3.1.0 版本为例：
@@ -144,4 +143,5 @@ Tip: you can use `--versions` to list all available versions.
     docker build .  --build-arg ARTHAS_VERSION=3.1.0 -f Dockerfile-No-Jdk -t hengyunabc/arthas:3.1.0-no-jdk
     docker push hengyunabc/arthas:3.1.0-no-jdk
     ```
-
+* 更新README.md，比如增加了新命令，要加上说明，更新wiki的链接
+* 更新release页面的 issue信息，修改信息等

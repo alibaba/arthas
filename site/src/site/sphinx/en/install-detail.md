@@ -35,7 +35,7 @@ You can enter its interactive interface by executing `as.sh`, or execute `as.sh 
 
 ## Full installation
 
-Latest Version, Click To Download: [![Arthas](https://img.shields.io/maven-central/v/com.taobao.arthas/arthas-packaging.svg?style=flat-square "Arthas")](http://repository.sonatype.org/service/local/artifact/maven/redirect?r=central-proxy&g=com.taobao.arthas&a=arthas-packaging&e=zip&c=doc&v=LATEST)
+Latest Version, Click To Download: [![](https://img.shields.io/maven-central/v/com.taobao.arthas/arthas-packaging.svg?style=flat-square "Arthas")](http://repository.sonatype.org/service/local/artifact/maven/redirect?r=central-proxy&g=com.taobao.arthas&a=arthas-packaging&e=zip&c=doc&v=LATEST)
 
 Download and unzip, find `arthas-boot.jar` in the directory. Start with `java` command:
 
@@ -80,7 +80,7 @@ as.sh
 
 ## Offline Help Documentation
 
-Latest Version, Click To Download:[![Arthas](https://img.shields.io/maven-central/v/com.taobao.arthas/arthas-packaging.svg?style=flat-square "Arthas")](https://github.com/alibaba/arthas/releases/download/arthas-all-3.0.5/arthas-3.0.5-doc.zip)
+Latest Version Documentation, Click To Download:[![](https://img.shields.io/maven-central/v/com.taobao.arthas/arthas-packaging.svg?style=flat-square "Arthas")](http://repository.sonatype.org/service/local/artifact/maven/redirect?r=central-proxy&g=com.taobao.arthas&a=arthas-packaging&e=zip&c=doc&v=LATEST)
 
 
 ## Uninstall

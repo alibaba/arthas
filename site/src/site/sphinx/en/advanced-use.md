@@ -22,9 +22,12 @@ Advanced Usage
 * [jvm](jvm.md) - show JVM information
 * [sysprop](sysprop.md) - view/modify system properties
 * [sysenv](sysenv.md) — view system environment variables
+* [vmoption](vmoption.md) - view/modify the vm diagnostic options.
+* [logger](logger.md) - print the logger information, update the logger level
 * [getstatic](getstatic.md) - examine class's static properties
-* **New!** [ognl](ognl.md) - execute ongl expression
-* **New!** [mbean](mbean.md) - show Mbean information
+* [ognl](ognl.md) - execute ongl expression
+* [mbean](mbean.md) - show Mbean information
+* [heapdump](heapdump.md) - dump java heap in hprof binary format, like `jmap`
 
 ## class/classloader
 
@@ -74,6 +77,16 @@ Arthas provides `pipe` to process the result returned from commands further, e.g
 Arthas supports living inside a browser. The communication between arthas and browser is via websocket.
 
 * [Web Console](web-console.md)
+
+## User data report
+
+After the `3.1.4` version, arthas support user data report.
+
+At startup, use the `stat-url` option, such as: `./as.sh --stat-url 'http://192.168.10.11:8080/api/stat'`
+
+There is a sample return code in the tunnel server that users can implement on their own.
+
+https://github.com/alibaba/arthas/blob/master/tunnel-server/src/main/java/com/alibaba/arthas/tunnel/server/app/web/StatController.java
 
 ## Other features
 

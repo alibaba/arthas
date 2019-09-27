@@ -11,7 +11,7 @@ options
 | json-format        | false | whether to output in JSON format|
 | disable-sub-class  | false | whether to enable matching child classes. The default value is `true`. If exact match is desire, turn off this flag|
 | debug-for-asm      | false | whether to enable ASM debugging log|
-| save-result        | false | whether to save execution result. All execution results will be saved to `/home/admin/logs/arthas/arthas.log` when it's turned on|
+| save-result        | false | whether to save execution result. All execution results will be saved to `~/logs/arthas-cache/result.log` when it's turned on|
 | job-timeout        | 1d    | default timeout for background jobs. Background job will be terminated once it's timed out (i.e. 1d, 2h, 3m, 25s)|
 
 ### Usage

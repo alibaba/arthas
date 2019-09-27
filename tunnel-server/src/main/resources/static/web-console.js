@@ -119,6 +119,11 @@ function startConnect (silent) {
         ws = null;
         !silent && alert('Connect error');
     };
+    ws.onclose = function (message) {
+        if (message.code === 2000) {
+            alert(message.reason);
+        }
+    };
     ws.onopen = function () {
         console.log('open');
         $('#fullSc').show();

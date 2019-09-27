@@ -58,4 +58,4 @@ uptime                            16020s                            busy        
 
 ### 截图展示
 
-![alt text](_static/dashboard.png "dashboard")
+![](_static/dashboard.png "dashboard")

@@ -47,7 +47,7 @@
 
     <groupId>com.taobao.arthas</groupId>
     <artifactId>arthas-all</artifactId>
-    <version>3.1.2-SNAPSHOT</version>
+    <version>3.1.5-SNAPSHOT</version>
     <packaging>pom</packaging>
 
     <name>arthas-all</name>
@@ -58,7 +58,6 @@
         <module>spy</module>
         <module>common</module>
         <module>tunnel-client</module>
-        <module>tunnel-server</module>
         <module>core</module>
         <module>agent</module>
         <module>client</module>
@@ -69,6 +68,18 @@
         <module>site</module>
         <module>packaging</module>
     </modules>
+
+    <profiles>
+        <profile>
+            <id>deb</id>
+            <activation>
+                <jdk>[1.8,)</jdk>
+            </activation>
+            <modules>
+                <module>tunnel-server</module>
+            </modules>
+        </profile>
+    </profiles>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -91,12 +102,12 @@
             <dependency>
                 <groupId>org.benf</groupId>
                 <artifactId>cfr</artifactId>
-                <version>0.145</version>
+                <version>0.146</version>
             </dependency>
             <dependency>
                 <groupId>com.alibaba.middleware</groupId>
                 <artifactId>termd-core</artifactId>
-                <version>1.1.7.4</version>
+                <version>1.1.7.5</version>
             </dependency>
             <dependency>
                 <groupId>com.alibaba.middleware</groupId>
@@ -106,17 +117,17 @@
             <dependency>
                 <groupId>org.slf4j</groupId>
                 <artifactId>slf4j-api</artifactId>
-                <version>1.7.5</version>
+                <version>1.7.25</version>
             </dependency>
             <dependency>
                 <groupId>ch.qos.logback</groupId>
                 <artifactId>logback-classic</artifactId>
-                <version>1.1.3</version>
+                <version>1.2.3</version>
             </dependency>
             <dependency>
                 <groupId>ch.qos.logback</groupId>
                 <artifactId>logback-core</artifactId>
-                <version>1.1.3</version>
+                <version>1.2.3</version>
             </dependency>
             <dependency>
                 <groupId>com.taobao.middleware</groupId>
