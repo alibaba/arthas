@@ -7,6 +7,8 @@ Reference: [Instrumentation#redefineClasses](https://docs.oracle.com/javase/8/do
 
 > Notes: Re-defined classes cannot be restored. There are chances that redefining may fail due to some reasons, for example: there's new field introduced in the new version of the class, pls. refer to JDK's documentation for the limitations.
 
+> The `reset` command is not valid for classes that have been processed by `redefine`. If you want to reset, you need `redefine` the original bytecode.
+
 ### Options
 
 |Name|Specification|

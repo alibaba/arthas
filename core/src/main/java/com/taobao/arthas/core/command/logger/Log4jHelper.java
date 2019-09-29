@@ -1,5 +1,6 @@
 package com.taobao.arthas.core.command.logger;
 
+import java.security.CodeSource;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.HashMap;
@@ -25,10 +26,9 @@ public class Log4jHelper {
 
     static {
         try {
-            Class<?> loggerClass = Class.forName("org.apache.log4j.Logger");
-            // 这里可能会加载到应用中依赖的log4j，因此需要判断classloader
+            Class<?> loggerClass = Log4jHelper.class.getClassLoader().loadClass("org.apache.log4j.Logger");
+            // 这里可能会加载到其它上游ClassLoader的log4j，因此需要判断是否当前classloader
             if (loggerClass.getClassLoader().equals(Log4jHelper.class.getClassLoader())) {
-                LogManager.getLoggerRepository();
                 Log4j = true;
             }
         } catch (Throwable t) {
@@ -106,6 +106,10 @@ public class Log4jHelper {
         Map<String, Object> info = new HashMap<String, Object>();
         info.put(LoggerHelper.name, logger.getName());
         info.put(LoggerHelper.clazz, logger.getClass());
+        CodeSource codeSource = logger.getClass().getProtectionDomain().getCodeSource();
+        if (codeSource != null) {
+            info.put(LoggerHelper.codeSource, codeSource.getLocation());
+        }
         info.put(LoggerHelper.additivity, logger.getAdditivity());
 
         Level level = logger.getLevel(), effectiveLevel = logger.getEffectiveLevel();
@@ -125,6 +129,10 @@ public class Log4jHelper {
     private static List<Map<String, Object>> doGetLoggerAppenders(Enumeration<Appender> appenders) {
         List<Map<String, Object>> result = new ArrayList<Map<String, Object>>();
 
+        if (appenders == null) {
+            return result;
+        }
+
         while (appenders.hasMoreElements()) {
             Map<String, Object> info = new HashMap<String, Object>();
             Appender appender = appenders.nextElement();
@@ -139,15 +147,18 @@ public class Log4jHelper {
                 info.put(LoggerHelper.target, ((ConsoleAppender) appender).getTarget());
             } else if (appender instanceof AsyncAppender) {
                 @SuppressWarnings("unchecked")
-                List<Map<String, Object>> asyncs = doGetLoggerAppenders(((AsyncAppender) appender).getAllAppenders());
-                // 标明异步appender
-                List<String> appenderRef = new ArrayList<String>();
-                for (Map<String, Object> a : asyncs) {
-                    appenderRef.add((String) a.get(LoggerHelper.name));
-                    result.add(a);
+                Enumeration<Appender> appendersOfAsync = ((AsyncAppender) appender).getAllAppenders();
+                if (appendersOfAsync != null) {
+                    List<Map<String, Object>> asyncs = doGetLoggerAppenders(appendersOfAsync);
+                    // 标明异步appender
+                    List<String> appenderRef = new ArrayList<String>();
+                    for (Map<String, Object> a : asyncs) {
+                        appenderRef.add((String) a.get(LoggerHelper.name));
+                        result.add(a);
+                    }
+                    info.put(LoggerHelper.blocking, ((AsyncAppender) appender).getBlocking());
+                    info.put(LoggerHelper.appenderRef, appenderRef);
                 }
-                info.put(LoggerHelper.blocking, ((AsyncAppender) appender).getBlocking());
-                info.put(LoggerHelper.appenderRef, appenderRef);
             }
         }
 

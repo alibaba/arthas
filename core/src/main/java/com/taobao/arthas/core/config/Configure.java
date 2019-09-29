@@ -28,6 +28,11 @@ public class Configure {
     private String agentId;
 
     /**
+     * report executed command
+     */
+    private String statUrl;
+
+    /**
      * session timeout seconds
      */
     private long sessionTimeout = DEFAULT_SESSION_TIMEOUT_SECONDS;
@@ -102,6 +107,14 @@ public class Configure {
 
     public void setAgentId(String agentId) {
         this.agentId = agentId;
+    }
+
+    public String getStatUrl() {
+        return statUrl;
+    }
+
+    public void setStatUrl(String statUrl) {
+        this.statUrl = statUrl;
     }
 
     // 对象的编码解码器

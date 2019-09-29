@@ -4,6 +4,7 @@ import com.taobao.arthas.core.server.ArthasBootstrap;
 import com.taobao.arthas.core.shell.command.AnnotatedCommand;
 import com.taobao.arthas.core.shell.command.CommandProcess;
 import com.taobao.arthas.core.shell.session.Session;
+import com.taobao.arthas.core.util.UserStatUtil;
 import com.taobao.middleware.cli.annotations.Name;
 import com.taobao.middleware.cli.annotations.Summary;
 import com.taobao.text.Decoration;
@@ -42,6 +43,10 @@ public class SessionCommand extends AnnotatedCommand {
                 table.row("AGENT_ID", "" + id);
             }
             table.row("TUNNEL_SERVER", "" + tunnelClient.getTunnelServerUrl());
+        }
+        String statUrl = UserStatUtil.getStatUrl();
+        if (statUrl != null) {
+            table.row("STAT_URL", statUrl);
         }
         return table;
     }

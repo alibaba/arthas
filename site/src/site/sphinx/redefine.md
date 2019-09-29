@@ -7,6 +7,8 @@ redefine
 
 > 注意， redefine后的原来的类不能恢复，redefine有可能失败（比如增加了新的field），参考jdk本身的文档。
 
+> `reset`命令对`redefine`的类无效。如果想重置，需要`redefine`原始的字节码。
+
 ### 参数说明
 
 |参数名称|参数说明|
