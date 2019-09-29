@@ -19,7 +19,7 @@ Arthas allows developers to troubleshoot production issues for Java applications
 
 Often times, the production system network is inaccessible from the local development environment. If issues are encountered in production systems, it is impossible to use IDEs to debug the application remotely. More importantly, debugging in production environment is unacceptable, as it will suspend all the threads, resulting in the suspension of business services. 
 
-Developers could always try to reproduce the same issue on the test/staging environment. However, this is tricky as some issues cannot be be reproduced easily on a different environment, or even disappear once restarted. 
+Developers could always try to reproduce the same issue on the test/staging environment. However, this is tricky as some issues cannot be reproduced easily on a different environment, or even disappear once restarted. 
 
 And if you're thinking of adding some logs to your code to help troubleshoot the issue, you will have to go through the following lifecycle; test, staging, and then to production. Time is money! This approach is inefficient! Besides, the issue may not be reproducible once the JVM is restarted, as described above.
 
