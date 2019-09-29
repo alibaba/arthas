@@ -8,7 +8,11 @@ import com.taobao.arthas.core.util.StringUtils;
 import com.taobao.arthas.core.util.ThreadUtil;
 import com.taobao.arthas.core.util.affect.Affect;
 import com.taobao.arthas.core.util.affect.RowAffect;
-import com.taobao.middleware.cli.annotations.*;
+import com.taobao.middleware.cli.annotations.Argument;
+import com.taobao.middleware.cli.annotations.Description;
+import com.taobao.middleware.cli.annotations.Name;
+import com.taobao.middleware.cli.annotations.Option;
+import com.taobao.middleware.cli.annotations.Summary;
 import com.taobao.text.renderers.ThreadRenderer;
 import com.taobao.text.ui.LabelElement;
 import com.taobao.text.util.RenderUtil;
@@ -17,8 +21,12 @@ import java.lang.Thread.State;
 import java.lang.management.ManagementFactory;
 import java.lang.management.ThreadInfo;
 import java.lang.management.ThreadMXBean;
-import java.util.*;
-import java.util.stream.Collectors;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * @author hengyunabc 2015年12月7日 下午2:06:21
@@ -120,14 +128,14 @@ public class ThreadCommand extends AnnotatedCommand {
         String stat = RenderUtil.render(new LabelElement(threadStat), process.width());
 
         Collection<Thread> collection = new ArrayList<Thread>();
-        if (!StringUtils.isEmpty(stateOfThread) && states.contains(stateOfThread)){
-            for (Thread thread: threads.values()) {
-                if(stateOfThread.equals(thread.getState().name())){
+        if (!StringUtils.isEmpty(stateOfThread) && states.contains(stateOfThread)) {
+            for (Thread thread : threads.values()) {
+                if (stateOfThread.equals(thread.getState().name())) {
                     collection.add(thread);
                 }
             }
-        }else{
-            collection=threads.values();
+        } else {
+            collection = threads.values();
         }
         String content = RenderUtil.render(collection.iterator(),
                 new ThreadRenderer(sampleInterval), process.width());
