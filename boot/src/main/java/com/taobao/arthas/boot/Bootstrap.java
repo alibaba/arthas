@@ -56,6 +56,7 @@ public class Bootstrap {
     private static final int DEFAULT_TELNET_PORT = 3658;
     private static final int DEFAULT_HTTP_PORT = 8563;
     private static final String DEFAULT_TARGET_IP = "127.0.0.1";
+    private static final String CLASS_LOAD_ADD_METHOD = "addURL";
     private static File ARTHAS_LIB_DIR;
 
     private boolean help = false;
@@ -510,10 +511,14 @@ public class Bootstrap {
 
         // start java telnet client
         // find arthas-client.jar
-        URLClassLoader classLoader = new URLClassLoader(
-                        new URL[] { new File(arthasHomeDir, "arthas-client.jar").toURI().toURL() });
+        URL arthasClientUrl = new File(arthasHomeDir, "arthas-client.jar").toURI().toURL();
+        URLClassLoader classLoader = new URLClassLoader(new URL[] { arthasClientUrl});
+        addArthasClientToSystemClassLoad(arthasClientUrl);
+
+
         Class<?> telnetConsoleClas = classLoader.loadClass("com.taobao.arthas.client.TelnetConsole");
         Method mainMethod = telnetConsoleClas.getMethod("main", String[].class);
+
         List<String> telnetArgs = new ArrayList<String>();
 
         if (bootstrap.getCommand() != null) {
@@ -540,6 +545,14 @@ public class Bootstrap {
         AnsiLog.info("arthas-client connect {} {}", bootstrap.getTargetIp(), bootstrap.getTelnetPort());
         AnsiLog.debug("Start arthas-client.jar args: " + telnetArgs);
         mainMethod.invoke(null, new Object[] { telnetArgs.toArray(new String[0]) });
+    }
+
+    private static void addArthasClientToSystemClassLoad(URL arthasClientUrl) throws NoSuchMethodException, IllegalAccessException, java.lang.reflect.InvocationTargetException {
+        //add to systemclassload path
+        URLClassLoader systemClassLoader = (URLClassLoader) ClassLoader.getSystemClassLoader();
+        Method method = URLClassLoader.class.getMethod(CLASS_LOAD_ADD_METHOD, java.net.URL.class);
+        method.setAccessible(true);
+        method.invoke(systemClassLoader,arthasClientUrl);
     }
 
     private static String listVersions(String mavenMetaData) {
