@@ -58,6 +58,8 @@ public class Bootstrap {
     private static final String DEFAULT_TARGET_IP = "127.0.0.1";
     private static File ARTHAS_LIB_DIR;
 
+    private static final String CLASS_LOAD_ADD_METHOD = "addURL";
+
     private boolean help = false;
 
     private int pid = -1;
@@ -510,8 +512,10 @@ public class Bootstrap {
 
         // start java telnet client
         // find arthas-client.jar
-        URLClassLoader classLoader = new URLClassLoader(
-                        new URL[] { new File(arthasHomeDir, "arthas-client.jar").toURI().toURL() });
+        URL arthasClientUrl = new File(arthasHomeDir, "arthas-client.jar").toURI().toURL();
+        URLClassLoader classLoader = new URLClassLoader(new URL[] { arthasClientUrl});
+        addArthasClientToSystemClassLoad(arthasClientUrl);
+
         Class<?> telnetConsoleClas = classLoader.loadClass("com.taobao.arthas.client.TelnetConsole");
         Method mainMethod = telnetConsoleClas.getMethod("main", String[].class);
         List<String> telnetArgs = new ArrayList<String>();
@@ -541,6 +545,15 @@ public class Bootstrap {
         AnsiLog.debug("Start arthas-client.jar args: " + telnetArgs);
         mainMethod.invoke(null, new Object[] { telnetArgs.toArray(new String[0]) });
     }
+
+    private static void addArthasClientToSystemClassLoad(URL arthasClientUrl) throws NoSuchMethodException, IllegalAccessException, java.lang.reflect.InvocationTargetException {
+        //add to systemclassload path
+        URLClassLoader systemClassLoader = (URLClassLoader) ClassLoader.getSystemClassLoader();
+        Method method = URLClassLoader.class.getDeclaredMethod(CLASS_LOAD_ADD_METHOD, URL.class);
+        method.setAccessible(true);
+        method.invoke(systemClassLoader, arthasClientUrl);
+    }
+
 
     private static String listVersions(String mavenMetaData) {
         StringBuilder result = new StringBuilder(1024);
