@@ -40,7 +40,7 @@ import java.util.Map;
         "  thread -n 5\n" +
         "  thread -b\n" +
         "  thread -i 2000\n" +
-        "  thread -g RUNNABLE\n" +
+        "  thread -f RUNNABLE\n" +
         Constants.WIKI + Constants.WIKI_HOME + "thread")
 public class ThreadCommand extends AnnotatedCommand {
 
@@ -77,8 +77,8 @@ public class ThreadCommand extends AnnotatedCommand {
         this.sampleInterval = sampleInterval;
     }
 
-    @Option(shortName = "g", longName = "group-by-state")
-    @Description("Display the thead group by the state. NEW、RUNNABLE、TIMED_WAITING、WAITING、BLOCKED、TERMINATED is optional.")
+    @Option(shortName = "f", longName = "filter-by-state")
+    @Description("Display the thead filter by the state. NEW、RUNNABLE、TIMED_WAITING、WAITING、BLOCKED、TERMINATED is optional.")
     public void setStateOfThread(String stateOfThread) {
         this.stateOfThread = stateOfThread;
     }
