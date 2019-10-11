@@ -4,7 +4,7 @@
 ## 1. 启动Demo
 
 ```bash
-wget https://alibaba.github.io/arthas/arthas-demo.jar
+curl -O https://alibaba.github.io/arthas/arthas-demo.jar
 java -jar arthas-demo.jar
 ```
 
@@ -18,7 +18,7 @@ java -jar arthas-demo.jar
 在命令行下面执行（使用和目标进程一致的用户启动，否则可能attach失败）：
 
 ```bash
-wget https://alibaba.github.io/arthas/arthas-boot.jar
+curl -O https://alibaba.github.io/arthas/arthas-boot.jar
 java -jar arthas-boot.jar
 ```
 
