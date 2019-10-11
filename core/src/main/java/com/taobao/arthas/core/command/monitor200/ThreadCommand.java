@@ -137,7 +137,6 @@ public class ThreadCommand extends AnnotatedCommand {
                 }
             }else{
                 process.write("Error occur,wrong state NEW、RUNNABLE、TIMED_WAITING、WAITING、BLOCKED、TERMINATED is optional.\n");
-                process.end();
                 return;
             }
         } else {
