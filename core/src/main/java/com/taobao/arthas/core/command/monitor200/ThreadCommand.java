@@ -128,11 +128,17 @@ public class ThreadCommand extends AnnotatedCommand {
         String stat = RenderUtil.render(new LabelElement(threadStat), process.width());
 
         Collection<Thread> collection = new ArrayList<Thread>();
-        if (!StringUtils.isEmpty(stateOfThread) && states.contains(stateOfThread)) {
-            for (Thread thread : threads.values()) {
-                if (stateOfThread.equals(thread.getState().name())) {
-                    collection.add(thread);
+        if (!StringUtils.isEmpty(stateOfThread)){
+            if(states.contains(stateOfThread.toUpperCase())) {
+                for (Thread thread : threads.values()) {
+                    if (stateOfThread.equals(thread.getState().name())) {
+                        collection.add(thread);
+                    }
                 }
+            }else{
+                process.write("please input right state , NEW、RUNNABLE、TIMED_WAITING、WAITING、BLOCKED、TERMINATED is optional.\n");
+                process.end();
+                return;
             }
         } else {
             collection = threads.values();
