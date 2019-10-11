@@ -39,7 +39,7 @@ English version goes [here](README.md).
 下载`arthas-boot.jar`，然后用`java -jar`的方式启动：
 
 ```bash
-wget https://alibaba.github.io/arthas/arthas-boot.jar
+curl -O https://alibaba.github.io/arthas/arthas-boot.jar
 java -jar arthas-boot.jar
 ```
 

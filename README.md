@@ -53,7 +53,7 @@ Arthas was built to solve these issues. A developer can troubleshoot your produc
 Download`arthas-boot.jar`，Start with `java` command:
 
 ```bash
-wget https://alibaba.github.io/arthas/arthas-boot.jar
+curl -O https://alibaba.github.io/arthas/arthas-boot.jar
 java -jar arthas-boot.jar
 ```
 

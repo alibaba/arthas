@@ -9,7 +9,7 @@ Install Arthas
 Download`arthas-boot.jar`，Start with `java` command:
 
 ```bash
-wget https://alibaba.github.io/arthas/arthas-boot.jar
+curl -O https://alibaba.github.io/arthas/arthas-boot.jar
 java -jar arthas-boot.jar
 ```
 
