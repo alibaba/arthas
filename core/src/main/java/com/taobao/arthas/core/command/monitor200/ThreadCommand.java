@@ -1,9 +1,10 @@
 package com.taobao.arthas.core.command.monitor200;
 
-import com.taobao.arthas.core.util.ArrayUtils;
 import com.taobao.arthas.core.command.Constants;
 import com.taobao.arthas.core.shell.command.AnnotatedCommand;
 import com.taobao.arthas.core.shell.command.CommandProcess;
+import com.taobao.arthas.core.util.ArrayUtils;
+import com.taobao.arthas.core.util.StringUtils;
 import com.taobao.arthas.core.util.ThreadUtil;
 import com.taobao.arthas.core.util.affect.Affect;
 import com.taobao.arthas.core.util.affect.RowAffect;
@@ -20,7 +21,11 @@ import java.lang.Thread.State;
 import java.lang.management.ManagementFactory;
 import java.lang.management.ThreadInfo;
 import java.lang.management.ThreadMXBean;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -35,6 +40,7 @@ import java.util.Map;
         "  thread -n 5\n" +
         "  thread -b\n" +
         "  thread -i 2000\n" +
+        "  thread -f RUNNABLE\n" +
         Constants.WIKI + Constants.WIKI_HOME + "thread")
 public class ThreadCommand extends AnnotatedCommand {
 
@@ -44,6 +50,8 @@ public class ThreadCommand extends AnnotatedCommand {
     private Integer topNBusy = null;
     private boolean findMostBlockingThread = false;
     private int sampleInterval = 100;
+    private String stateOfThread;
+    private List<String> states = Arrays.asList(new String[]{"NEW", "RUNNABLE", "TIMED_WAITING", "WAITING", "BLOCKED", "TERMINATED"});
 
     @Argument(index = 0, required = false, argName = "id")
     @Description("Show thread stack")
@@ -67,6 +75,12 @@ public class ThreadCommand extends AnnotatedCommand {
     @Description("Specify the sampling interval (in ms) when calculating cpu usage.")
     public void setSampleInterval(int sampleInterval) {
         this.sampleInterval = sampleInterval;
+    }
+
+    @Option(shortName = "f", longName = "filter-by-state")
+    @Description("Display the thead filter by the state. NEW、RUNNABLE、TIMED_WAITING、WAITING、BLOCKED、TERMINATED is optional.")
+    public void setStateOfThread(String stateOfThread) {
+        this.stateOfThread = stateOfThread;
     }
 
     @Override
@@ -105,13 +119,30 @@ public class ThreadCommand extends AnnotatedCommand {
         }
 
         threadStat.append("Threads Total: ").append(threads.values().size());
+
         for (State s : State.values()) {
             Integer count = stateCountMap.get(s);
             threadStat.append(", ").append(s.name()).append(": ").append(count);
         }
 
         String stat = RenderUtil.render(new LabelElement(threadStat), process.width());
-        String content = RenderUtil.render(threads.values().iterator(),
+
+        Collection<Thread> collection = new ArrayList<Thread>();
+        if (!StringUtils.isEmpty(stateOfThread)){
+            if(states.contains(stateOfThread.toUpperCase())) {
+                for (Thread thread : threads.values()) {
+                    if (stateOfThread.equals(thread.getState().name())) {
+                        collection.add(thread);
+                    }
+                }
+            }else{
+                process.write("Error occur,wrong state NEW、RUNNABLE、TIMED_WAITING、WAITING、BLOCKED、TERMINATED is optional.\n");
+                return;
+            }
+        } else {
+            collection = threads.values();
+        }
+        String content = RenderUtil.render(collection.iterator(),
                 new ThreadRenderer(sampleInterval), process.width());
         process.write(stat + content);
     }
