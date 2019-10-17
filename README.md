@@ -434,6 +434,10 @@ Welcome to register the company name in this issue: https://github.com/alibaba/a
 ![云舒写](static/yunshuxie.png)
 ![微住](static/iweizhu.png)
 ![月亮小屋](static/bluemoon.png)
+![大搜车](static/souche.png)
+![今日图书](static/jinritushu.png)
+![竹间智能](static/emotibot.png)
+![数字认证](static/bjca.png)
 
 ### Derivative Projects
 
