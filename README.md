@@ -438,7 +438,7 @@ Welcome to register the company name in this issue: https://github.com/alibaba/a
 ![今日图书](static/jinritushu.png)
 ![竹间智能](static/emotibot.png)
 ![数字认证](static/bjca.png)
-
+![360金融](static/360jinrong.png)
 ### Derivative Projects
 
 * [Bistoury: A project that integrates Arthas](https://github.com/qunarcorp/bistoury)
