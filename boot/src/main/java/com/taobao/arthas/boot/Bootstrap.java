@@ -539,6 +539,9 @@ public class Bootstrap {
 
         AnsiLog.info("arthas-client connect {} {}", bootstrap.getTargetIp(), bootstrap.getTelnetPort());
         AnsiLog.debug("Start arthas-client.jar args: " + telnetArgs);
+
+        // fix https://github.com/alibaba/arthas/issues/833
+        Thread.currentThread().setContextClassLoader(classLoader);
         mainMethod.invoke(null, new Object[] { telnetArgs.toArray(new String[0]) });
     }
 
