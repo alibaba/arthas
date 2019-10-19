@@ -25,6 +25,13 @@ public class GrepHandler extends StdoutHandler {
     //output file name with :false for disable append mode
     private static final Pattern APPEND_FLAG_PATTERN = Pattern.compile("[:#;](true|false)$");
     private static final Charset UTF8 = Charset.forName("UTF-8");
+    private static final Pattern TRIM_PATTERN;
+    static {
+       //默认删除右边的空白字符是为了解决-n 因空白字符导致显示换行的问题
+       //ie: sysprop | grep -n java
+       final String p = System.getProperty("arthas_grep_trim_pattern", "[ \\f\t\\v]+$");
+       TRIM_PATTERN = "NOP".equals(p) ? null : Pattern.compile(p);
+    }
 
     private String keyword;
     private boolean ignoreCase;
@@ -123,7 +130,7 @@ public class GrepHandler extends StdoutHandler {
         int lastStartPos = 0 ;
         int lastContinueLineNum = -1  ;
         for (int lineNum = 0 ; lineNum < lines.length ;) {
-          String line  = lines[lineNum++];
+          String line  = TRIM_PATTERN.matcher(lines[lineNum++]).replaceAll("");
           final boolean match;
           if (pattern == null) {
             match = (ignoreCase ?  line.toLowerCase() : line).contains(keyword);
@@ -168,7 +175,7 @@ public class GrepHandler extends StdoutHandler {
             }
           }
         }
-        final String str = output.length() > 0 ? output.substring(0, output.length()-1) : "";
+        final String str = output.toString();// output.length() > 0 ? output.substring(0, output.length()-1) : "";
         if (outputFile != null) {
             Writer writer = null;
             try {

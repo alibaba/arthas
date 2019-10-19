@@ -52,7 +52,7 @@ public class GrepHandlerTest {
       String input = (String)args[0];
       final String ret = handler.apply(input);
       final String expected = (String)args[4];
-      Assert.assertEquals(expected, ret);
+      Assert.assertEquals(expected, ret.substring(0,ret.length()-1));
     }
   }
   @Test
@@ -71,7 +71,7 @@ public class GrepHandlerTest {
       String input = (String)args[0];
       final String ret = handler.apply(input);
       final String expected = (String)args[4];
-      Assert.assertEquals(expected, ret);
+      Assert.assertEquals(expected, ret.substring(0,ret.length()-1));
     }
   }
   
@@ -88,7 +88,7 @@ public class GrepHandlerTest {
       String input = (String)args[0];
       final String ret = handler.apply(input);
       final String expected = (String)args[2];
-      Assert.assertEquals(expected, ret);
+      Assert.assertEquals(expected, ret.substring(0,ret.length()-1));
     }
   }
   
@@ -106,7 +106,7 @@ public class GrepHandlerTest {
       String input = (String)args[0];
       final String ret = handler.apply(input);
       final String expected = (String)args[1];
-      Assert.assertEquals(expected, ret);
+      Assert.assertEquals(expected, ret.substring(0,ret.length()-1));
     }
   }
 }
