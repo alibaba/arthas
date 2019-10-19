@@ -30,12 +30,15 @@ public class GrepHandler extends StdoutHandler {
     private final Pattern pattern;
     private final String outputFile;
     private final boolean outputAppend;
+    // -n, --line-number         print line number with output lines
+    private final boolean showLineNumber;
     
     public static StdoutHandler inject(List<CliToken> tokens) {
         List<String> args = StdoutHandler.parseArgs(tokens, NAME);
         CommandLine commandLine = CLIs.create(NAME)
                 .addOption(new Option().setShortName("i").setLongName("ignore-case").setFlag(true))
                 .addOption(new Option().setShortName("v").setLongName("invert-match").setFlag(true))
+                .addOption(new Option().setShortName("n").setLongName("line-number").setFlag(true))
                 .addOption(new Option().setShortName("e").setLongName("regexp").setFlag(true))
                 .addOption(new Option().setShortName("f").setLongName("output").setSingleValued(true))
                 .addArgument(new Argument().setArgName("keyword").setIndex(0))
@@ -45,12 +48,15 @@ public class GrepHandler extends StdoutHandler {
         final boolean invertMatch = commandLine.isFlagEnabled("invert-match");
         final boolean regexpMode = commandLine.isFlagEnabled("regexp");
         final String output = commandLine.getOptionValue("output");
-        return new GrepHandler(keyword, ignoreCase, invertMatch, regexpMode, output);
+        final boolean showLineNumber =  commandLine.isFlagEnabled("line-number");
+        return new GrepHandler(keyword, ignoreCase, invertMatch, regexpMode, showLineNumber, output);
     }
 
-    private GrepHandler(String keyword, boolean ignoreCase, boolean invertMatch, boolean regexpMode, String output) {
+    private GrepHandler(String keyword, boolean ignoreCase, boolean invertMatch, boolean regexpMode
+        , boolean showLineNumber, String output) {
         this.ignoreCase = ignoreCase;
         this.invertMatch = invertMatch;
+        this.showLineNumber = showLineNumber;
         if (regexpMode) {
            final int flags = ignoreCase ?  Pattern.CASE_INSENSITIVE : 0;
            this.pattern = Pattern.compile(keyword, flags);
@@ -81,11 +87,13 @@ public class GrepHandler extends StdoutHandler {
         StringBuilder output = new StringBuilder();
         String[] lines = input.split("\n");
         PrintWriter writer  = null;
+        int lineNum = 0;
         try {
           if (outputFile != null) {
             writer = new PrintWriter(new FileOutputStream(outputFile, outputAppend), true);
           }
           for (String line : lines) {
+            lineNum ++; 
             final boolean match;
             if (pattern == null) {
               match = (ignoreCase ?  line.toLowerCase() : line).contains(keyword);
@@ -93,8 +101,14 @@ public class GrepHandler extends StdoutHandler {
               match = pattern.matcher(line).find();
             }
             if (invertMatch ? !match : match) {
+              if(showLineNumber) {
+                output.append(lineNum).append(':');
+              }
               output.append(line).append("\n");
               if (writer != null) {
+                if(showLineNumber) {
+                  writer.append(Integer.toString(lineNum)).append(':');
+                }
                 writer.println(line);
               }
             }
