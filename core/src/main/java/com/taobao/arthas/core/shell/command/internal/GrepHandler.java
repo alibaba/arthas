@@ -16,21 +16,26 @@ public class GrepHandler extends StdoutHandler {
 
     private String keyword;
     private boolean ignoreCase;
+    // -v, --invert-match        select non-matching lines
+    private final boolean invertMatch;
 
     public static StdoutHandler inject(List<CliToken> tokens) {
         List<String> args = StdoutHandler.parseArgs(tokens, NAME);
         CommandLine commandLine = CLIs.create(NAME)
                 .addOption(new Option().setShortName("i").setLongName("ignore-case").setFlag(true))
+                .addOption(new Option().setShortName("v").setLongName("invert-match").setFlag(true))
                 .addArgument(new Argument().setArgName("keyword").setIndex(0))
                 .parse(args);
         Boolean ignoreCase = commandLine.isFlagEnabled("ignore-case");
         String keyword = commandLine.getArgumentValue(0);
-        return new GrepHandler(keyword, ignoreCase);
+        final boolean invertMatch = commandLine.isFlagEnabled("invert-match");
+        return new GrepHandler(keyword, ignoreCase, invertMatch);
     }
 
-    private GrepHandler(String keyword, boolean ignoreCase) {
+    private GrepHandler(String keyword, boolean ignoreCase, final boolean invertMatch) {
         this.keyword = keyword;
         this.ignoreCase = ignoreCase;
+        this.invertMatch = invertMatch;
     }
 
     @Override
@@ -42,8 +47,8 @@ public class GrepHandler extends StdoutHandler {
                 line = line.toLowerCase();
                 keyword = keyword.toLowerCase();
             }
-
-            if (line.contains(keyword)) {
+            final boolean match =  line.contains(keyword);
+            if (invertMatch ? !match : match) {
                 output.append(line).append("\n");
             }
         }
