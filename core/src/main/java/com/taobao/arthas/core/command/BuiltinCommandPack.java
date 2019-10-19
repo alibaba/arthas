@@ -2,6 +2,7 @@ package com.taobao.arthas.core.command;
 
 import com.taobao.arthas.core.command.basic1000.CatCommand;
 import com.taobao.arthas.core.command.basic1000.ClsCommand;
+import com.taobao.arthas.core.command.basic1000.GrepCommand;
 import com.taobao.arthas.core.command.basic1000.HelpCommand;
 import com.taobao.arthas.core.command.basic1000.HistoryCommand;
 import com.taobao.arthas.core.command.basic1000.KeymapCommand;
@@ -99,5 +100,6 @@ public class BuiltinCommandPack implements CommandResolver {
         commands.add(Command.create(CatCommand.class));
         commands.add(Command.create(PwdCommand.class));
         commands.add(Command.create(MBeanCommand.class));
+        commands.add(Command.create(GrepCommand.class)); 
     }
 }
