@@ -2,11 +2,14 @@ package com.taobao.arthas.core.shell.command.internal;
 
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.PrintWriter;
+import java.io.OutputStreamWriter;
+import java.io.Writer;
+import java.nio.charset.Charset;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import com.taobao.arthas.core.shell.cli.CliToken;
+import com.taobao.arthas.core.util.LogUtil;
 import com.taobao.middleware.cli.Argument;
 import com.taobao.middleware.cli.CLIs;
 import com.taobao.middleware.cli.CommandLine;
@@ -21,6 +24,7 @@ public class GrepHandler extends StdoutHandler {
     private static final String FORCE_OUTPUT_SUFFIX = ".log";
     //output file name with :false for disable append mode
     private static final Pattern APPEND_FLAG_PATTERN = Pattern.compile("[:#;](true|false)$");
+    private static final Charset UTF8 = Charset.forName("UTF-8");
 
     private String keyword;
     private boolean ignoreCase;
@@ -32,6 +36,13 @@ public class GrepHandler extends StdoutHandler {
     private final boolean outputAppend;
     // -n, --line-number         print line number with output lines
     private final boolean showLineNumber;
+/*
+  -B, --before-context=NUM  print NUM lines of leading context
+  -A, --after-context=NUM   print NUM lines of trailing context
+  -C, --context=NUM         print NUM lines of output context
+ */
+    private final int beforeLines;
+    private final int afterLines;
     
     public static StdoutHandler inject(List<CliToken> tokens) {
         List<String> args = StdoutHandler.parseArgs(tokens, NAME);
@@ -39,6 +50,9 @@ public class GrepHandler extends StdoutHandler {
                 .addOption(new Option().setShortName("i").setLongName("ignore-case").setFlag(true))
                 .addOption(new Option().setShortName("v").setLongName("invert-match").setFlag(true))
                 .addOption(new Option().setShortName("n").setLongName("line-number").setFlag(true))
+                .addOption(new Option().setShortName("B").setLongName("before-context").setSingleValued(true))
+                .addOption(new Option().setShortName("A").setLongName("after-context").setSingleValued(true))
+                .addOption(new Option().setShortName("C").setLongName("context").setSingleValued(true))
                 .addOption(new Option().setShortName("e").setLongName("regexp").setFlag(true))
                 .addOption(new Option().setShortName("f").setLongName("output").setSingleValued(true))
                 .addArgument(new Argument().setArgName("keyword").setIndex(0))
@@ -49,14 +63,33 @@ public class GrepHandler extends StdoutHandler {
         final boolean regexpMode = commandLine.isFlagEnabled("regexp");
         final String output = commandLine.getOptionValue("output");
         final boolean showLineNumber =  commandLine.isFlagEnabled("line-number");
-        return new GrepHandler(keyword, ignoreCase, invertMatch, regexpMode, showLineNumber, output);
+        int context =  getInt(commandLine, "context", 0);
+        int beforeLines = getInt(commandLine, "before-context", 0);
+        int afterLines =  getInt(commandLine, "after-context", 0);
+        if (context > 0) {
+          if (beforeLines < 1) {
+            beforeLines = context;
+          }
+          if (afterLines < 1 ){
+            afterLines = context;
+          }
+        }
+        return new GrepHandler(keyword, ignoreCase, invertMatch, regexpMode, showLineNumber, beforeLines, afterLines,output);
+    }
+    
+    private static final int getInt(CommandLine cmdline,  String name , int defaultValue) {
+        final String v = cmdline.getOptionValue(name);
+        final int ret = v== null ? defaultValue : Integer.parseInt(v);
+        return ret;
     }
 
     private GrepHandler(String keyword, boolean ignoreCase, boolean invertMatch, boolean regexpMode
-        , boolean showLineNumber, String output) {
+        , boolean showLineNumber,  int beforeLines, int afterLines, String output) {
         this.ignoreCase = ignoreCase;
         this.invertMatch = invertMatch;
         this.showLineNumber = showLineNumber;
+        this.beforeLines = beforeLines > 0 ? beforeLines : 0;
+        this.afterLines = afterLines > 0 ? afterLines : 0;
         if (regexpMode) {
            final int flags = ignoreCase ?  Pattern.CASE_INSENSITIVE : 0;
            this.pattern = Pattern.compile(keyword, flags);
@@ -86,40 +119,81 @@ public class GrepHandler extends StdoutHandler {
     public String apply(String input) {
         StringBuilder output = new StringBuilder();
         String[] lines = input.split("\n");
-        PrintWriter writer  = null;
-        int lineNum = 0;
-        try {
-          if (outputFile != null) {
-            writer = new PrintWriter(new FileOutputStream(outputFile, outputAppend), true);
+        int continueCount = 0 ;
+        int lastStartPos = 0 ;
+        int lastContinueLineNum = -1  ;
+        for (int lineNum = 0 ; lineNum < lines.length ;) {
+          String line  = lines[lineNum++];
+          final boolean match;
+          if (pattern == null) {
+            match = (ignoreCase ?  line.toLowerCase() : line).contains(keyword);
+          } else {
+            match = pattern.matcher(line).find();
           }
-          for (String line : lines) {
-            lineNum ++; 
-            final boolean match;
-            if (pattern == null) {
-              match = (ignoreCase ?  line.toLowerCase() : line).contains(keyword);
-            } else {
-              match = pattern.matcher(line).find();
-            }
-            if (invertMatch ? !match : match) {
-              if(showLineNumber) {
-                output.append(lineNum).append(':');
-              }
-              output.append(line).append("\n");
-              if (writer != null) {
-                if(showLineNumber) {
-                  writer.append(Integer.toString(lineNum)).append(':');
+          if (invertMatch ? !match : match) {
+
+            if (beforeLines > continueCount) {
+              int n = lastContinueLineNum == -1 ? ( beforeLines >=  lineNum  ?  1  : lineNum - beforeLines )
+                 : lineNum - beforeLines  - continueCount;
+              if ( n >= lastContinueLineNum ||  lastContinueLineNum == -1 ) {
+                StringBuilder  beforeSb = new StringBuilder();
+                for (int i = n ; i < lineNum  ; i++) {
+                    appendLine(beforeSb, i, lines[i - 1]);
                 }
-                writer.println(line);
+                output.insert(lastStartPos, beforeSb);
               }
+            } // end handle before lines
+
+            lastStartPos = output.length();
+            appendLine(output, lineNum, line);
+
+            if (afterLines > continueCount) {
+              int  last  = lineNum +  afterLines - continueCount;
+              if (last > lines.length) {
+                   last = lines.length;
+              }
+               for(int i = lineNum ; i < last ; i++) {
+                    appendLine(output, i+1, lines[i]);
+                    lineNum ++; 
+                    continueCount++;
+                    lastStartPos = output.length();
+              }
+            } //end handle afterLines
+            
+            continueCount++;
+          } else { // not match
+            if(continueCount > 0) {
+              lastContinueLineNum = lineNum -1 ;
+              continueCount = 0;
             }
-          }
-        }catch(IOException ex) {
-          throw new IllegalStateException(ex);
-        }finally {
-          if (writer != null) {
-            writer.close();
           }
         }
-        return output.toString();
+        final String str = output.length() > 0 ? output.substring(0, output.length()-1) : "";
+        if (outputFile != null) {
+            Writer writer = null;
+            try {
+              writer = new OutputStreamWriter(new FileOutputStream(outputFile, outputAppend),UTF8);
+              writer.write(str);
+              writer.flush();
+            } catch (IOException ex) {
+              throw new IllegalStateException(ex);
+            } finally {
+              if( writer != null ) {
+                try {
+                  writer.close();
+                }catch(IOException ex) {
+                  LogUtil.getArthasLogger().error("io-close-err", ex.getMessage(), ex);
+                }
+              }
+            }
+        }
+        return str;
+    }
+
+    protected void appendLine(StringBuilder output, int lineNum, String line) {
+      if(showLineNumber) {
+        output.append(lineNum).append(':');
+        }
+      output.append(line).append('\n');
     }
 }
