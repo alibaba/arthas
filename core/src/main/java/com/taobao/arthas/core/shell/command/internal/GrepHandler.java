@@ -50,6 +50,8 @@ public class GrepHandler extends StdoutHandler {
  */
     private final int beforeLines;
     private final int afterLines;
+    //-m, --max-count=NUM       stop after NUM selected lines
+    private final int maxCount;
     
     public static StdoutHandler inject(List<CliToken> tokens) {
         List<String> args = StdoutHandler.parseArgs(tokens, NAME);
@@ -62,6 +64,7 @@ public class GrepHandler extends StdoutHandler {
                 .addOption(new Option().setShortName("C").setLongName("context").setSingleValued(true))
                 .addOption(new Option().setShortName("e").setLongName("regexp").setFlag(true))
                 .addOption(new Option().setShortName("f").setLongName("output").setSingleValued(true))
+                .addOption(new Option().setShortName("m").setLongName("max-count").setSingleValued(true))
                 .addArgument(new Argument().setArgName("keyword").setIndex(0))
                 .parse(args);
         Boolean ignoreCase = commandLine.isFlagEnabled("ignore-case");
@@ -72,7 +75,7 @@ public class GrepHandler extends StdoutHandler {
         final boolean showLineNumber =  commandLine.isFlagEnabled("line-number");
         int context =  getInt(commandLine, "context", 0);
         int beforeLines = getInt(commandLine, "before-context", 0);
-        int afterLines =  getInt(commandLine, "after-context", 0);
+        int afterLines = getInt(commandLine, "after-context", 0);
         if (context > 0) {
           if (beforeLines < 1) {
             beforeLines = context;
@@ -81,7 +84,9 @@ public class GrepHandler extends StdoutHandler {
             afterLines = context;
           }
         }
-        return new GrepHandler(keyword, ignoreCase, invertMatch, regexpMode, showLineNumber, beforeLines, afterLines,output);
+        final int maxCount = getInt(commandLine, "max-count", 0);
+        return new GrepHandler(keyword, ignoreCase, invertMatch, regexpMode, showLineNumber
+            , beforeLines, afterLines,output, maxCount);
     }
     
     private static final int getInt(CommandLine cmdline,  String name , int defaultValue) {
@@ -91,12 +96,13 @@ public class GrepHandler extends StdoutHandler {
     }
 
     private GrepHandler(String keyword, boolean ignoreCase, boolean invertMatch, boolean regexpMode
-        , boolean showLineNumber,  int beforeLines, int afterLines, String output) {
+        , boolean showLineNumber,  int beforeLines, int afterLines, String output, int maxCount) {
         this.ignoreCase = ignoreCase;
         this.invertMatch = invertMatch;
         this.showLineNumber = showLineNumber;
         this.beforeLines = beforeLines > 0 ? beforeLines : 0;
         this.afterLines = afterLines > 0 ? afterLines : 0;
+        this.maxCount = maxCount > 0 ? maxCount : 0;
         if (regexpMode) {
            final int flags = ignoreCase ?  Pattern.CASE_INSENSITIVE : 0;
            this.pattern = Pattern.compile(keyword, flags);
@@ -128,7 +134,8 @@ public class GrepHandler extends StdoutHandler {
         String[] lines = input.split("\n");
         int continueCount = 0 ;
         int lastStartPos = 0 ;
-        int lastContinueLineNum = -1  ;
+        int lastContinueLineNum = -1;
+        int matchCount = 0;
         for (int lineNum = 0 ; lineNum < lines.length ;) {
           String line  = TRIM_PATTERN.matcher(lines[lineNum++]).replaceAll("");
           final boolean match;
@@ -138,7 +145,7 @@ public class GrepHandler extends StdoutHandler {
             match = pattern.matcher(line).find();
           }
           if (invertMatch ? !match : match) {
-
+            matchCount++;
             if (beforeLines > continueCount) {
               int n = lastContinueLineNum == -1 ? ( beforeLines >=  lineNum  ?  1  : lineNum - beforeLines )
                  : lineNum - beforeLines  - continueCount;
@@ -168,6 +175,9 @@ public class GrepHandler extends StdoutHandler {
             } //end handle afterLines
             
             continueCount++;
+            if(maxCount > 0 && matchCount >= maxCount) {
+                break;
+            }
           } else { // not match
             if(continueCount > 0) {
               lastContinueLineNum = lineNum -1 ;

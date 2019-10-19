@@ -16,12 +16,16 @@ public class GrepHandlerTest {
         constructor = GrepHandler.class.getDeclaredConstructors()[0];
         constructor.setAccessible(true);
       }
+      public static GrepHandler createInst(String keyword, boolean ignoreCase, boolean invertMatch, boolean regexpMode
+          , boolean showLineNumber,  int beforeLines, int afterLines, String output) {
+          return createInst(keyword, ignoreCase, invertMatch, regexpMode, showLineNumber, beforeLines, afterLines, output, 0);
+      }
     //new GrepHandler(keyword, ignoreCase, invertMatch, regexpMode, showLineNumber, beforeLines, afterLines,output)
       public static GrepHandler createInst(String keyword, boolean ignoreCase, boolean invertMatch, boolean regexpMode
-         , boolean showLineNumber,  int beforeLines, int afterLines, String output) {
+         , boolean showLineNumber,  int beforeLines, int afterLines, String output, int maxCount) {
        try {
        final Object[] initargs = new Object[] {   keyword,ignoreCase,invertMatch,regexpMode,showLineNumber
-           ,beforeLines,afterLines,output
+           ,beforeLines,afterLines,output,maxCount
        };
        GrepHandler handler = (GrepHandler)constructor.newInstance(initargs);
        return handler;
@@ -88,6 +92,25 @@ public class GrepHandlerTest {
     for(Object[] args : samples) {
       String word = (String)args[1];
       GrepHandler handler = Hold.createInst(word,false,false,true,false,0,0,null);
+      String input = (String)args[0];
+      final String ret = handler.apply(input);
+      final String expected = (String)args[2];
+      Assert.assertEquals(expected, ret.substring(0,ret.length()-1));
+    }
+  }
+
+  @Test
+  public void test4grep_m() {//-e
+    Object[][] samples = new Object[][] {
+      {"java\n1python\n2\nc", "java|python", "java", 1},
+      {"java\n1python\n2\nc", "ja|py", "java\n1python",2},
+      {"java\n1python\n2\nc", "ja|py", "java\n1python",3}
+    };
+    
+    for(Object[] args : samples) {
+      String word = (String)args[1];
+      int maxCount = args.length > 3 ? (Integer)args[3] : 0;
+      GrepHandler handler = Hold.createInst(word,false,false,true,false,0,0,null, maxCount);
       String input = (String)args[0];
       final String ret = handler.apply(input);
       final String expected = (String)args[2];
