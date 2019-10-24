@@ -22,6 +22,9 @@ import java.util.zip.ZipFile;
  */
 public class IOUtils {
 
+    private IOUtils() {
+    }
+
     public static String toString(InputStream inputStream) throws IOException {
         ByteArrayOutputStream result = new ByteArrayOutputStream();
         byte[] buffer = new byte[1024];
