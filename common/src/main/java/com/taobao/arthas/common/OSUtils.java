@@ -23,6 +23,9 @@ public class OSUtils {
         }
     }
 
+    private OSUtils() {
+    }
+
     public static boolean isWindows() {
         return platform == PlatformEnum.WINDOWS;
     }
