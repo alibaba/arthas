@@ -24,6 +24,9 @@ public class PidUtils {
         }
     }
 
+    private PidUtils() {
+    }
+
     public static String currentPid() {
         return PID;
     }
