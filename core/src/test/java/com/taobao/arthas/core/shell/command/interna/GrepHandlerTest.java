@@ -25,7 +25,7 @@ public class GrepHandlerTest {
          , boolean showLineNumber,  int beforeLines, int afterLines, String output, int maxCount) {
        try {
        final Object[] initargs = new Object[] {   keyword,ignoreCase,invertMatch,regexpMode,showLineNumber
-           ,beforeLines,afterLines,output,maxCount
+           ,beforeLines,afterLines,maxCount
        };
        GrepHandler handler = (GrepHandler)constructor.newInstance(initargs);
        return handler;
@@ -136,25 +136,25 @@ public class GrepHandlerTest {
     }
   }
   
-  @Test
-  public void test4grep_f() throws Exception {//-f
-    Object[][] samples = new Object[][] {
-      {"java\n1\npython\n2\nc","1:java\n3:python", "java|python" },
-      {"java\n1\npython\njava\nc","1:java\n4:java", "java",false }
-    };
-    String output = File.createTempFile("arthas_test", ".log").getAbsolutePath();
-    final Charset charset = Charset.forName("UTF-8");
-    for(Object[] args : samples) {
-      String word = (String)args[2];
-      boolean regexpMode = args.length >3 ? (Boolean)args[3] : true;
-      GrepHandler handler = Hold.createInst(word,false,false,regexpMode,true,0,0,output+":false");
-      String input = (String)args[0];
-      final String ret = handler.apply(input);
-      final String expected = (String)args[1];
-      Assert.assertEquals(expected, ret.substring(0,ret.length()-1));
-      final String ret2 = FileUtils.readFileToString(new File(output), charset);
-      Assert.assertEquals(expected, ret.substring(0,ret2.length()-1));
-    }
-  }
+//  @Test
+//  public void test4grep_f() throws Exception {//-f
+//    Object[][] samples = new Object[][] {
+//      {"java\n1\npython\n2\nc","1:java\n3:python", "java|python" },
+//      {"java\n1\npython\njava\nc","1:java\n4:java", "java",false }
+//    };
+//    String output = File.createTempFile("arthas_test", ".log").getAbsolutePath();
+//    final Charset charset = Charset.forName("UTF-8");
+//    for(Object[] args : samples) {
+//      String word = (String)args[2];
+//      boolean regexpMode = args.length >3 ? (Boolean)args[3] : true;
+//      GrepHandler handler = Hold.createInst(word,false,false,regexpMode,true,0,0,output+":false");
+//      String input = (String)args[0];
+//      final String ret = handler.apply(input);
+//      final String expected = (String)args[1];
+//      Assert.assertEquals(expected, ret.substring(0,ret.length()-1));
+//      final String ret2 = FileUtils.readFileToString(new File(output), charset);
+//      Assert.assertEquals(expected, ret.substring(0,ret2.length()-1));
+//    }
+//  }
   
 }

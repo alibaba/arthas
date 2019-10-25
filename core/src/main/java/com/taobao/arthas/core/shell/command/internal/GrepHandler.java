@@ -1,15 +1,8 @@
 package com.taobao.arthas.core.shell.command.internal;
 
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.OutputStreamWriter;
-import java.io.Writer;
-import java.nio.charset.Charset;
 import java.util.List;
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import com.taobao.arthas.core.shell.cli.CliToken;
-import com.taobao.arthas.core.util.LogUtil;
 import com.taobao.middleware.cli.Argument;
 import com.taobao.middleware.cli.CLIs;
 import com.taobao.middleware.cli.CommandLine;
@@ -20,11 +13,6 @@ import com.taobao.middleware.cli.Option;
  */
 public class GrepHandler extends StdoutHandler {
     public static final String NAME = "grep";
-    //强制指定输出文件后缀名是为了防止无意识输错文件名而覆盖现有价值的现有文件
-    private static final String FORCE_OUTPUT_SUFFIX = ".log";
-    //output file name with :false for disable append mode
-    private static final Pattern APPEND_FLAG_PATTERN = Pattern.compile("[:#;](true|false)$");
-    private static final Charset UTF8 = Charset.forName("UTF-8");
     private static final Pattern TRIM_PATTERN;
     static {
        //默认删除右边的空白字符是为了解决-n 因空白字符导致显示换行的问题
@@ -39,8 +27,6 @@ public class GrepHandler extends StdoutHandler {
     private final boolean invertMatch;
     //-e, --regexp=PATTERN      use PATTERN for matching
     private final Pattern pattern;
-    private final String outputFile;
-    private final boolean outputAppend;
     // -n, --line-number         print line number with output lines
     private final boolean showLineNumber;
 /*
@@ -71,7 +57,6 @@ public class GrepHandler extends StdoutHandler {
         String keyword = commandLine.getArgumentValue(0);
         final boolean invertMatch = commandLine.isFlagEnabled("invert-match");
         final boolean regexpMode = commandLine.isFlagEnabled("regexp");
-        final String output = commandLine.getOptionValue("output");
         final boolean showLineNumber =  commandLine.isFlagEnabled("line-number");
         int context =  getInt(commandLine, "context", 0);
         int beforeLines = getInt(commandLine, "before-context", 0);
@@ -86,7 +71,7 @@ public class GrepHandler extends StdoutHandler {
         }
         final int maxCount = getInt(commandLine, "max-count", 0);
         return new GrepHandler(keyword, ignoreCase, invertMatch, regexpMode, showLineNumber
-            , beforeLines, afterLines,output, maxCount);
+            , beforeLines, afterLines, maxCount);
     }
     
     private static final int getInt(CommandLine cmdline,  String name , int defaultValue) {
@@ -96,7 +81,7 @@ public class GrepHandler extends StdoutHandler {
     }
 
     private GrepHandler(String keyword, boolean ignoreCase, boolean invertMatch, boolean regexpMode
-        , boolean showLineNumber,  int beforeLines, int afterLines, String output, int maxCount) {
+        , boolean showLineNumber,  int beforeLines, int afterLines,int maxCount) {
         this.ignoreCase = ignoreCase;
         this.invertMatch = invertMatch;
         this.showLineNumber = showLineNumber;
@@ -110,22 +95,6 @@ public class GrepHandler extends StdoutHandler {
            this.pattern = null;
         }
         this.keyword = ignoreCase ?  keyword.toLowerCase() : keyword;
-        if (output != null && output.length() > 0) {
-          final Matcher matcher = APPEND_FLAG_PATTERN.matcher(output);
-          if (matcher.find()) {
-            outputAppend = Boolean.parseBoolean(matcher.group(1)) ;
-            output = matcher.replaceAll("");
-          }else {
-            outputAppend = true;
-          }
-          if(!output.endsWith(FORCE_OUTPUT_SUFFIX)) {
-            output += FORCE_OUTPUT_SUFFIX;
-          }
-        } else {
-          output = null;
-          outputAppend = true;
-        }
-        this.outputFile = output;
     }
 
     @Override
@@ -186,24 +155,6 @@ public class GrepHandler extends StdoutHandler {
           }
         }
         final String str = output.toString();// output.length() > 0 ? output.substring(0, output.length()-1) : "";
-        if (outputFile != null) {
-            Writer writer = null;
-            try {
-              writer = new OutputStreamWriter(new FileOutputStream(outputFile, outputAppend),UTF8);
-              writer.write(str);
-              writer.flush();
-            } catch (IOException ex) {
-              throw new IllegalStateException(ex);
-            } finally {
-              if( writer != null ) {
-                try {
-                  writer.close();
-                }catch(IOException ex) {
-                  LogUtil.getArthasLogger().error("io-close-err", ex.getMessage(), ex);
-                }
-              }
-            }
-        }
         return str;
     }
 

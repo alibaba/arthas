@@ -26,7 +26,7 @@ import com.taobao.middleware.cli.annotations.Summary;
   +"-A, --after-context=NUM   print NUM lines of trailing context\n"
   +"-B, --before-context=NUM  print NUM lines of leading context\n"
   +"-C, --context=NUM         print NUM lines of output context\n"
-  +"-f, --output=File         output result to file, filename endsWith :false for disable append mode\n"
+//  +"-f, --output=File         output result to file, filename endsWith :false for disable append mode\n"
   + Constants.WIKI + Constants.WIKI_HOME + "grep")
 public class GrepCommand extends AnnotatedCommand {
     @Override
