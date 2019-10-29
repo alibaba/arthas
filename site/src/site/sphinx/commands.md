@@ -30,6 +30,7 @@
 * [tt](tt.md)
 
 * [cat](cat.md)
+* [grep](grep.md)
 * [pwd](pwd.md)
 * [options](options.md)
 

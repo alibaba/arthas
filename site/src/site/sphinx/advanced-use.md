@@ -6,6 +6,7 @@
 
 * help——查看命令帮助信息
 * [cat](cat.md)——打印文件内容，和linux里的cat命令类似
+* [grep]](grep.md)——匹配查找，和linux里的grep命令类似
 * [pwd](pwd.md)——返回当前的工作目录，和linux命令类似
 * cls——清空当前屏幕区域
 * session——查看当前会话的信息

@@ -14,7 +14,7 @@ import com.taobao.middleware.cli.annotations.Summary;
  * @see com.taobao.arthas.core.shell.command.internal.GrepHandler
  */
 @Name("grep")
-@Summary("grep command for pipes.\n" )
+@Summary("grep command for pipes." )
 @Description(Constants.EXAMPLE +
         " sysprop | grep java \n" +
         " sysprop | grep java -n\n" +
