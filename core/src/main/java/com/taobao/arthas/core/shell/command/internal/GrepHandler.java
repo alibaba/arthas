@@ -75,7 +75,7 @@ public class GrepHandler extends StdoutHandler {
                         afterLines, grepCommand.getMaxCount());
     }
 
-    private GrepHandler(String keyword, boolean ignoreCase, boolean invertMatch, boolean regexpMode,
+    GrepHandler(String keyword, boolean ignoreCase, boolean invertMatch, boolean regexpMode,
                     boolean showLineNumber, boolean trimEnd, int beforeLines, int afterLines, int maxCount) {
         this.ignoreCase = ignoreCase;
         this.invertMatch = invertMatch;
