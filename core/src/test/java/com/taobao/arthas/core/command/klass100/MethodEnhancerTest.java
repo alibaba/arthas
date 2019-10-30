@@ -12,6 +12,7 @@ import java.util.TreeMap;
 
 import com.taobao.arthas.compiler.DynamicCompiler;
 import com.taobao.arthas.core.command.klass100.RunScriptCommand.MethodEnhancer;
+import com.taobao.arthas.core.command.klass100.test.aa.T1;
 import com.taobao.arthas.core.util.FileUtils;
 import org.junit.Before;
 import org.junit.Test;
@@ -44,6 +45,13 @@ public class MethodEnhancerTest {
 
     @Test
     public void testRs() {
+        T1.main(null);
+        System.out.println();
+        System.out.println();
+        System.out.println();
+        System.out.println();
+        System.out.println();
+
         try {
             DynamicCompiler dynamicCompiler = getDynamicCompiler(Collections.singletonList(srcFile));
             final TreeMap<String, byte[]> bytesMap = new TreeMap<String, byte[]>(dynamicCompiler.buildByteCodes());
@@ -51,12 +59,17 @@ public class MethodEnhancerTest {
             ClassLoader runClassloader = new ClassLoader(MethodEnhancer.class.getClassLoader()) {
 
                 @Override
-                public Class<?> loadClass(String name) throws ClassNotFoundException {
+                public Class<?> loadClass(String name, boolean resolve) throws ClassNotFoundException {
+                    final Class<?> loadedClass = findLoadedClass(name);
+                    if (loadedClass != null) {
+                        return loadedClass;
+                    }
+
                     byte[] bytes = bytesMap.get(name);
                     if (bytes != null) {
                         return super.defineClass(name, bytes, 0, bytes.length);
                     }
-                    return super.loadClass(name);
+                    return super.loadClass(name, resolve);
                 }
             };
 

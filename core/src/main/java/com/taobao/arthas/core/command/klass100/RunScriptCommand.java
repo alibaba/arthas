@@ -98,12 +98,17 @@ public class RunScriptCommand extends AnnotatedCommand {
             ClassLoader runClassloader = new ClassLoader(classloader) {
 
                 @Override
-                public Class<?> loadClass(String name) throws ClassNotFoundException {
+                public Class<?> loadClass(String name, boolean resolve) throws ClassNotFoundException {
+                    final Class<?> loadedClass = super.findLoadedClass(name);
+                    if (loadedClass != null) {
+                        return loadedClass;
+                    }
+
                     byte[] bytes = bytesMap.get(name);
                     if (bytes != null) {
                         return super.defineClass(name, bytes, 0, bytes.length);
                     }
-                    return super.loadClass(name);
+                    return super.loadClass(name, resolve);
                 }
             };
 
