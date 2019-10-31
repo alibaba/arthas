@@ -14,7 +14,7 @@
 * version——输出当前目标 Java 进程所加载的 Arthas 版本号
 * history——打印命令历史
 * quit——退出当前 Arthas 客户端，其他 Arthas 客户端不受影响
-* shutdown——关闭 Arthas 服务端，所有 Arthas 客户端全部退出
+* stop/shutdown——关闭 Arthas 服务端，所有 Arthas 客户端全部退出
 * [keymap](keymap.md)——Arthas快捷键列表及自定义快捷键
 
 ## jvm相关
