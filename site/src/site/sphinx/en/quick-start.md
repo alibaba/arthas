@@ -229,4 +229,4 @@ Pls. refer to [advanced usages](advanced-use.md) for more information.
 
 Use `quit` or `exit` to disconnect from the current process. The Arthas instance attached to the target process continues to live inside the process, and its port is standby for further connection.
 
-Use `shutdown` to have Arthas completely quit from the target process.
+Use `stop` command to have Arthas completely quit from the target process.
