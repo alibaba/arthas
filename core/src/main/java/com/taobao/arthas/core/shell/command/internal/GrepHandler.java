@@ -46,12 +46,16 @@ public class GrepHandler extends StdoutHandler {
      */
     private final Integer maxCount;
 
+    private static CLI cli = null;
+
     public static StdoutHandler inject(List<CliToken> tokens) {
         List<String> args = StdoutHandler.parseArgs(tokens, NAME);
 
         GrepCommand grepCommand = new GrepCommand();
-        CLI cli = CLIConfigurator.define(GrepCommand.class);
-        CommandLine commandLine = cli.parse(args);
+        if (cli == null) {
+            cli = CLIConfigurator.define(GrepCommand.class);
+        }
+        CommandLine commandLine = cli.parse(args, true);
 
         try {
             CLIConfigurator.inject(commandLine, grepCommand);
