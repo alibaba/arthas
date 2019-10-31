@@ -10,8 +10,6 @@ import com.taobao.middleware.cli.annotations.Name;
 import com.taobao.middleware.cli.annotations.Option;
 import com.taobao.middleware.cli.annotations.Summary;
 
-import one.profiler.AsyncProfiler;
-
 /**
  * @see com.taobao.arthas.core.shell.command.internal.GrepHandler
  */
@@ -93,9 +91,9 @@ public class GrepCommand extends AnnotatedCommand {
         this.showLineNumber = showLineNumber;
     }
 
-    @Option(longName = "trim-end", flag = true)
+    @Option(longName = "trim-end", flag = false)
     @DefaultValue("true")
-    @Description("Remove whitespaces at the end of the line")
+    @Description("Remove whitespaces at the end of the line, default value true")
     public void setTrimEnd(boolean trimEnd) {
         this.trimEnd = trimEnd;
     }
@@ -170,11 +168,7 @@ public class GrepCommand extends AnnotatedCommand {
 
     @Override
     public void process(CommandProcess process) {
-        process.write("The grep command only for pipes. See 'grep --help'").write("\n");
-        
-        String libPath = "/private/tmp/async-profiler-1.6-macos-x64/build/libasyncProfiler.so";
-        AsyncProfiler instance = AsyncProfiler.getInstance(libPath);
-        process.write(instance.toString());
+        process.write("The grep command only for pipes. See 'grep --help'\n");
         process.end();
     }
 }
