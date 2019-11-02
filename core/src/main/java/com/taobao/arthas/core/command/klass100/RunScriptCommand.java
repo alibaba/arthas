@@ -117,7 +117,7 @@ public class RunScriptCommand extends AnnotatedCommand {
             enhance(bytesMap, runClassloader);
             process.write(">>>>>>" + DateUtils.getCurrentDate() + ": enhance end.\n");
 
-            // 4\ load & run
+            // 4\ init & run
             process.write(">>>>>>" + DateUtils.getCurrentDate() + ": runMain begin.\n");
             runMain(process, runClassloader, bytesMap);
             process.write(">>>>>>" + DateUtils.getCurrentDate() + ": runMain end.\n");
@@ -155,19 +155,19 @@ public class RunScriptCommand extends AnnotatedCommand {
         }
     }
 
-    public static class MethodEnhancer extends AdviceAdapter {
+    static class MethodEnhancer extends AdviceAdapter {
 
         private Class holderClazz;
 
-        public MethodEnhancer(Class holderClazz, int access, String name, String desc, String signature,
-                              String[] exceptions, MethodVisitor mv) {
+        MethodEnhancer(Class holderClazz, int access, String name, String desc, String signature, String[] exceptions,
+                       MethodVisitor mv) {
             super(ASM7, new JSRInlinerAdapter(mv, access, name, desc, signature, exceptions), access, name, desc);
             this.holderClazz = holderClazz;
         }
 
         @Override
         public void visitMethodInsn(int opcode, String owner, String name, String descriptor, boolean isInterface) {
-            // 1\ System.exit not allow
+            // 1\ System.exit not allowed
             if (opcode == INVOKESTATIC && "java/lang/System".equals(owner) && "exit".equals(name)) {
                 throw new RuntimeException("System.exit not allowed");
             }
@@ -240,15 +240,15 @@ public class RunScriptCommand extends AnnotatedCommand {
         }
     }
 
-    private void runMain(CommandProcess process, ClassLoader runClassloader, final Map<String, byte[]> bytesMap)
-        throws Exception {
-        // 5.1\ init
+    private void runMain(CommandProcess process, ClassLoader runClassloader, Map<String, byte[]> bytesMap)
+            throws Exception {
+        // 1\ init
         CommandPrint.process = process;
         Class<?> holderClazz = Class.forName(normalizeClassName(HOLDER_CLASS), true, runClassloader);
         holderClazz.getDeclaredField("printMethod").set(null, CommandPrint.class.getDeclaredMethod("print", String.class));
         holderClazz.getDeclaredField("printlnMethod").set(null, CommandPrint.class.getDeclaredMethod("println", String.class));
 
-        // 5.2\ run first main
+        // 2\ run first main
         for (String aClass : bytesMap.keySet()) {
             Class<?> clazz = Class.forName(aClass, true, runClassloader);
             Method meth = null;

@@ -27,7 +27,7 @@ import static org.objectweb.asm.ClassWriter.COMPUTE_MAXS;
 import static org.objectweb.asm.Opcodes.ASM7;
 
 /**
- * @author bucong
+ * @author guanyum
  * @date 2019/10/30
  */
 public class MethodEnhancerTest {
@@ -38,7 +38,7 @@ public class MethodEnhancerTest {
 
     @Before
     public void before() {
-        //srcFile = "/Users/bucong/study/arthas/core/src/test/resource/T1.java";
+        //srcFile = "/Users/guanyum/study/arthas/core/src/test/resource/T1.java";
         srcFile = MethodEnhancerTest.class.getResource("/T1.java").getPath();
         dumpDir = new File(srcFile).getParentFile();
     }
@@ -106,10 +106,7 @@ public class MethodEnhancerTest {
 
     private DynamicCompiler getDynamicCompiler(List<String> sourcefiles) throws IOException {
         DynamicCompiler dynamicCompiler = new DynamicCompiler(MethodEnhancer.class.getClassLoader());
-        Charset charset = Charset.defaultCharset();
-        if ("UTF-8" != null) {
-            charset = Charset.forName("UTF-8");
-        }
+        Charset charset = Charset.forName("UTF-8");
         for (String sourceFile : sourcefiles) {
             String sourceCode = FileUtils.readFileToString(new File(sourceFile), charset);
             String name = new File(sourceFile).getName();

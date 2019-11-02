@@ -22,6 +22,7 @@ All Commands
 * [classloader](classloader.md)
 * [mc](mc.md)
 * [redefine](redefine.md)
+* [rs](rs.md)
 
 * [monitor](monitor.md)
 * [watch](watch.md)
