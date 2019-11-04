@@ -15,6 +15,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
+import java.util.regex.Pattern;
 
 import com.alibaba.arthas.deps.org.slf4j.Logger;
 import com.alibaba.arthas.deps.org.slf4j.LoggerFactory;
@@ -85,6 +86,27 @@ public class LoggerCommand extends AnnotatedCommand {
      */
     private boolean includeNoAppender;
 
+    /**
+     * include the arthas logger, default false.
+     */
+    private boolean includeArthasLogger;
+
+    private Pattern classPattern;
+
+    private int max  = -1;
+
+    @Option(shortName = "m", longName = "max-loggers")
+    @Description("max logger to display, default is -1")
+    public void setMax(int max) {
+      this.max = max;
+    }
+
+    @Option(shortName = "p", longName = "filter-pattern")
+    @Description("classname pattern for find the classloader or filter logger")
+    public void setClassPattern(String classPattern) {
+      this.classPattern = classPattern  == null || classPattern.isEmpty() ? null : Pattern.compile(classPattern, Pattern.CASE_INSENSITIVE);
+    }
+
     @Option(shortName = "n", longName = "name")
     @Description("logger name")
     public void setName(String name) {
@@ -103,7 +125,7 @@ public class LoggerCommand extends AnnotatedCommand {
         this.level = level;
     }
 
-    @Option(longName = "include-no-appender", flag = true)
+    @Option(shortName = "a",  longName = "include-no-appender", flag = true)
     @Description("include the loggers which don't have appenders, default value false")
     public void setHaveAppender(boolean includeNoAppender) {
         this.includeNoAppender = includeNoAppender;
@@ -126,37 +148,52 @@ public class LoggerCommand extends AnnotatedCommand {
     public void level(CommandProcess process) {
         Instrumentation inst = process.session().getInstrumentation();
         boolean result = false;
-        try {
-            Boolean updateResult = this.updateLevel(inst, Log4jHelper.class);
-            if (Boolean.TRUE.equals(updateResult)) {
-                result = true;
+        final LoggerTypes logTypes =  findLoggerTypes(process);
+        final ClassLoader classloader = logTypes.classLoader;
+
+        Set<LoggerType> types = logTypes.types;
+        getLoggerInfoMap(classloader, logTypes);
+        final Map<LoggerType,Boolean> updatOkTypes = new LinkedHashMap<LoggerType,Boolean>();
+        if (types.size() < 1 || types.contains(LoggerType.LOG4J)) {
+            try {
+                Boolean updateResult = this.updateLevel(inst, Log4jHelper.class, classloader);
+                if (Boolean.TRUE.equals(updateResult)) {
+                    result = true;
+                }
+                updatOkTypes.put(LoggerType.LOG4J, updateResult);
+            } catch (Throwable e) {
+                logger.error("logger command update log4j level error", e);
             }
-        } catch (Throwable e) {
-            logger.error("logger command update log4j level error", e);
+        }
+        if (types.size() < 1 || types.contains(LoggerType.LOGBACK)) {
+            try {
+                Boolean updateResult = this.updateLevel(inst, LogbackHelper.class, classloader);
+                if (Boolean.TRUE.equals(updateResult)) {
+                    result = true;
+                }
+                updatOkTypes.put(LoggerType.LOGBACK, updateResult);
+            } catch (Throwable e) {
+                logger.error("logger command update logback level error", e);
+            }
+        }
+        if (types.size() < 1 || types.contains(LoggerType.LOG4J2)) {
+            try {
+                Boolean updateResult = this.updateLevel(inst, Log4j2Helper.class, classloader);
+                if (Boolean.TRUE.equals(updateResult)) {
+                    result = true;
+                }
+                updatOkTypes.put(LoggerType.LOG4J2, updateResult);
+            } catch (Throwable e) {
+                logger.error("logger command update log4j2 level error", e);
+            }
         }
 
-        try {
-            Boolean updateResult = this.updateLevel(inst, LogbackHelper.class);
-            if (Boolean.TRUE.equals(updateResult)) {
-                result = true;
-            }
-        } catch (Throwable e) {
-            logger.error("logger command update logback level error", e);
-        }
-
-        try {
-            Boolean updateResult = this.updateLevel(inst, Log4j2Helper.class);
-            if (Boolean.TRUE.equals(updateResult)) {
-                result = true;
-            }
-        } catch (Throwable e) {
-            logger.error("logger command update log4j2 level error", e);
-        }
-
+        final String classLoaderHash = ClassLoaderUtils.classLoaderHash(classloader);
         if (result) {
-            process.write("Update logger level success.\n");
+            process.write("update logger level success." + updatOkTypes + " at classloader:" + classLoaderHash + "\n");
         } else {
-            process.write("Update logger level fail. Try to specify the classloader with the -c option. Use `sc -d CLASSNAME` to find out the classloader hashcode.\n");
+            process.write("Update logger level fail. logTypes=" + types + " at classloader:" + classLoaderHash
+              + "\nTry to specify the classloader with the -c option. Use `sc -d CLASSNAME` to find out the classloader hashcode.\n");
         }
     }
 
@@ -166,7 +203,11 @@ public class LoggerCommand extends AnnotatedCommand {
         for (Class<?> clazz : process.session().getInstrumentation().getAllLoadedClasses()) {
             String className = clazz.getName();
             ClassLoader classLoader = clazz.getClassLoader();
-
+            // skip the arthas classloader
+            if (this.includeArthasLogger == false && classLoader != null && this.getClass().getClassLoader().getClass()
+                .getName().equals(classLoader.getClass().getName())) {
+                continue;
+            }
             // if special classloader
             if (this.hashCode != null && !this.hashCode.equals(StringUtils.classLoaderHash(clazz))) {
                 continue;
@@ -175,50 +216,106 @@ public class LoggerCommand extends AnnotatedCommand {
             if (classLoader != null) {
                 LoggerTypes loggerTypes = classLoaderLoggerMap.get(classLoader);
                 if (loggerTypes == null) {
-                    loggerTypes = new LoggerTypes();
+                    loggerTypes = new LoggerTypes(classLoader);
                     classLoaderLoggerMap.put(classLoader, loggerTypes);
                 }
-                if ("org.apache.log4j.Logger".equals(className)) {
-                    loggerTypes.addType(LoggerType.LOG4J);
-                } else if ("ch.qos.logback.classic.Logger".equals(className)) {
-                    loggerTypes.addType(LoggerType.LOGBACK);
-                } else if ("org.apache.logging.log4j.Logger".equals(className)) {
-                    loggerTypes.addType(LoggerType.LOG4J2);
-                }
+                addLoggerTypes(className, loggerTypes);
             }
         }
-
+        int count = 0 ;
         for (Entry<ClassLoader, LoggerTypes> entry : classLoaderLoggerMap.entrySet()) {
             ClassLoader classLoader = entry.getKey();
             LoggerTypes loggerTypes = entry.getValue();
-
-            if (loggerTypes.contains(LoggerType.LOG4J)) {
-                Map<String, Map<String, Object>> loggerInfoMap = loggerInfo(classLoader, Log4jHelper.class);
-                String renderResult = renderLoggerInfo(loggerInfoMap, process.width());
-
-                process.write(renderResult);
-            }
-
-            if (loggerTypes.contains(LoggerType.LOGBACK)) {
-                Map<String, Map<String, Object>> loggerInfoMap = loggerInfo(classLoader, LogbackHelper.class);
-                String renderResult = renderLoggerInfo(loggerInfoMap, process.width());
-
-                process.write(renderResult);
-            }
-
-            if (loggerTypes.contains(LoggerType.LOG4J2)) {
-                Map<String, Map<String, Object>> loggerInfoMap = loggerInfo(classLoader, Log4j2Helper.class);
-                String renderResult = renderLoggerInfo(loggerInfoMap, process.width());
-
-                process.write(renderResult);
+            Map<String, Map<String, Object>> loggerInfoMap = getLoggerInfoMap(classLoader, loggerTypes);
+            if (loggerInfoMap != null) {
+              count  = renderLoggerInfo(loggerInfoMap, process, count);
             }
         }
-
     }
 
-    private String renderLoggerInfo(Map<String, Map<String, Object>> loggerInfos, int width) {
-        StringBuilder sb = new StringBuilder(8192);
 
+    protected LoggerTypes findLoggerTypes(CommandProcess process) {
+      ClassLoader ret = null;
+      final Instrumentation inst = process.session().getInstrumentation();
+      ClassLoader matched = null;
+      Map<ClassLoader, LoggerTypes> classLoaderLoggerMap = new LinkedHashMap<ClassLoader, LoggerTypes>();
+      for (Class<?> clazz : inst.getAllLoadedClasses()) {
+          String className = clazz.getName();
+          // if special classloader
+          ClassLoader classLoader = clazz.getClassLoader();
+          // skip the arthas classloader
+          if (this.includeArthasLogger == false && classLoader != null && this.getClass().getClassLoader().getClass()
+                          .getName().equals(classLoader.getClass().getName())) {
+              continue;
+          }
+          if (classLoader != null) {
+              if (this.hashCode != null && !this.hashCode.equals(StringUtils.classLoaderHash(clazz))) {
+                  continue;
+              } else if(this.hashCode != null){
+                  matched = classLoader;
+              } else if (classPattern != null && classPattern.matcher(className).find()) {
+                  matched = classLoader;
+               // break;
+              } else  if (name != null && className.contains(name)) {
+                  matched = classLoader;
+               // break;
+              }
+
+              LoggerTypes loggerTypes = classLoaderLoggerMap.get(classLoader);
+              if (loggerTypes == null) {
+                  loggerTypes = new LoggerTypes(classLoader);
+                  classLoaderLoggerMap.put(classLoader, loggerTypes);
+              }
+              if (addLoggerTypes(className, loggerTypes)) {
+                  ret = classLoader;
+              }
+           }
+      }
+
+      LoggerTypes loggerTypes = matched != null  ?  classLoaderLoggerMap.get(matched) : null;
+      if (loggerTypes != null && loggerTypes.types().size()>0) {
+          ret = matched;
+      }
+      if(ret != matched && ret != null) {
+          loggerTypes = classLoaderLoggerMap.get(ret);
+      }
+      //logger.info("classloader:{} {}", ClassLoaderUtils.classLoaderHash(ret), ret);
+      return ret == null ? new LoggerTypes(ClassLoader.getSystemClassLoader()): loggerTypes;
+  }
+
+    protected boolean addLoggerTypes(String className, LoggerTypes loggerTypes) {
+      if ("org.apache.log4j.Logger".equals(className)) {
+          loggerTypes.addType(LoggerType.LOG4J);
+      } else if ("ch.qos.logback.classic.Logger".equals(className)) {
+          loggerTypes.addType(LoggerType.LOGBACK);
+      } else if ("org.apache.logging.log4j.Logger".equals(className)) {
+          loggerTypes.addType(LoggerType.LOG4J2);
+      } else {
+        return false;
+      }
+      return true;
+    }
+
+    protected Map<String, Map<String, Object>> getLoggerInfoMap(ClassLoader classLoader,
+        LoggerTypes loggerTypes) {
+      Map<String, Map<String, Object>> loggerInfoMap = null;
+      if (loggerTypes.contains(LoggerType.LOG4J)) {
+          loggerInfoMap = loggerInfo(classLoader, Log4jHelper.class);
+        }
+
+      if (loggerTypes.contains(LoggerType.LOGBACK)) {
+          loggerInfoMap = loggerInfo(classLoader, LogbackHelper.class);
+      }
+
+      if (loggerTypes.contains(LoggerType.LOG4J2)) {
+          loggerInfoMap = loggerInfo(classLoader, Log4j2Helper.class);
+      }
+      return loggerInfoMap;
+    }
+
+    private int renderLoggerInfo( Map<String, Map<String, Object>> loggerInfos, CommandProcess process,int loggerCount) {
+        StringBuilder sb = new StringBuilder(8192);
+        final int width = process.width();
         for (Entry<String, Map<String, Object>> entry : loggerInfos.entrySet()) {
             Map<String, Object> info = entry.getValue();
 
@@ -226,7 +323,12 @@ public class LoggerCommand extends AnnotatedCommand {
             TableElement appendersTable = new TableElement().rightCellPadding(1);
 
             Class<?> clazz = (Class<?>) info.get(LoggerHelper.clazz);
-            table.row(label(LoggerHelper.name).style(Decoration.bold.bold()), label("" + info.get(LoggerHelper.name)))
+            final String loggerName = "" + info.get(LoggerHelper.name);
+            if (classPattern != null && !classPattern.matcher(loggerName).find()) {
+              continue;
+            }
+            loggerCount ++;
+            table.row(label(LoggerHelper.name).style(Decoration.bold.bold()), label(loggerName))
                             .row(label(LoggerHelper.clazz).style(Decoration.bold.bold()), label("" + clazz.getName()))
                             .row(label(LoggerHelper.classLoader).style(Decoration.bold.bold()),
                                             label("" + clazz.getClassLoader()))
@@ -283,8 +385,13 @@ public class LoggerCommand extends AnnotatedCommand {
             }
 
             sb.append(RenderUtil.render(table, width)).append('\n');
+            if (max > 0  && loggerCount > max) {
+                process.write("....over max:" + max + "\n");
+                break;
+            }
         }
-        return sb.toString();
+        process.write(sb.toString());
+        return loggerCount;
     }
 
     private static String helperClassNameWithClassLoader(ClassLoader classLoader, Class<?> helperClass) {
@@ -323,14 +430,7 @@ public class LoggerCommand extends AnnotatedCommand {
         return loggers;
     }
 
-    private Boolean updateLevel(Instrumentation inst, Class<?> helperClass) throws Exception {
-        ClassLoader classLoader = null;
-        if (hashCode == null) {
-            classLoader = ClassLoader.getSystemClassLoader();
-        } else {
-            classLoader = ClassLoaderUtils.getClassLoader(inst, hashCode);
-        }
-
+    private Boolean updateLevel(Instrumentation inst, Class<?> helperClass,  ClassLoader classLoader) throws Exception {
         Class<?> clazz = classLoader.loadClass(helperClassNameWithClassLoader(classLoader, helperClass));
         Method updateLevelMethod = clazz.getMethod("updateLevel", new Class<?>[] { String.class, String.class });
         return (Boolean) updateLevelMethod.invoke(null, new Object[] { this.name, this.level });
@@ -343,6 +443,12 @@ public class LoggerCommand extends AnnotatedCommand {
 
     static class LoggerTypes {
         Set<LoggerType> types = new HashSet<LoggerType>();
+        final ClassLoader classLoader;
+
+        public LoggerTypes(ClassLoader classLoader) {
+            super();
+            this.classLoader = classLoader;
+        }
 
         public Collection<LoggerType> types() {
             return types;
