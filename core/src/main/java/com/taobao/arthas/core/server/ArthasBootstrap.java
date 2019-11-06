@@ -10,6 +10,7 @@ import com.taobao.arthas.core.shell.handlers.BindHandler;
 import com.taobao.arthas.core.shell.impl.ShellServerImpl;
 import com.taobao.arthas.core.shell.term.impl.HttpTermServer;
 import com.taobao.arthas.core.shell.term.impl.TelnetTermServer;
+import com.taobao.arthas.core.shell.term.impl.httptelnet.HttpTelnetTermServer;
 import com.taobao.arthas.core.util.ArthasBanner;
 import com.taobao.arthas.core.util.Constants;
 import com.taobao.arthas.core.util.LogUtil;
@@ -127,7 +128,7 @@ public class ArthasBootstrap {
             resolvers.add(builtinCommands);
             // TODO: discover user provided command resolver
             if (configure.getTelnetPort() > 0) {
-                shellServer.registerTermServer(new TelnetTermServer(configure.getIp(), configure.getTelnetPort(),
+                shellServer.registerTermServer(new HttpTelnetTermServer(configure.getIp(), configure.getTelnetPort(),
                                 options.getConnectionTimeout()));
             } else {
                 logger.info("telnet port is {}, skip bind telnet server.", configure.getTelnetPort());
