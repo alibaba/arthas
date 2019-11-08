@@ -432,6 +432,7 @@ $ classloader
 ![今日图书](static/jinritushu.png)
 ![竹间智能](static/emotibot.png)
 ![数字认证](static/bjca.png)
+![360金融](static/360jinrong.png)
 
 ### 洐生项目
 

@@ -12,6 +12,9 @@ public class JavaVersionUtils {
     private static final String JAVA_VERSION_STR = System.getProperty(VERSION_PROP_NAME);
     private static final float JAVA_VERSION = Float.parseFloat(JAVA_VERSION_STR);
 
+    private JavaVersionUtils() {
+    }
+
     public static String javaVersionStr() {
         return JAVA_VERSION_STR;
     }

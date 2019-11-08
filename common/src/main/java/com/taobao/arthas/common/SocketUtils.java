@@ -14,6 +14,9 @@ import javax.net.ServerSocketFactory;
  */
 public class SocketUtils {
 
+    private SocketUtils() {
+    }
+
     public static int findTcpListenProcess(int port) {
         try {
             if (OSUtils.isWindows()) {
