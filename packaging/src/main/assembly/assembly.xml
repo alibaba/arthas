@@ -50,4 +50,10 @@
       <source>../bin/as-service.bat</source>
     </file>
   </files>
+
+  <fileSets>
+    <fileSet>
+      <directory>../async-profiler</directory>
+    </fileSet>
+  </fileSets>
 </assembly>
