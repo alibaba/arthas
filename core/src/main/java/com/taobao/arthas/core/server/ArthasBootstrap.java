@@ -9,7 +9,6 @@ import com.taobao.arthas.core.shell.command.CommandResolver;
 import com.taobao.arthas.core.shell.handlers.BindHandler;
 import com.taobao.arthas.core.shell.impl.ShellServerImpl;
 import com.taobao.arthas.core.shell.term.impl.HttpTermServer;
-import com.taobao.arthas.core.shell.term.impl.TelnetTermServer;
 import com.taobao.arthas.core.shell.term.impl.httptelnet.HttpTelnetTermServer;
 import com.taobao.arthas.core.util.ArthasBanner;
 import com.taobao.arthas.core.util.Constants;
@@ -19,6 +18,7 @@ import com.taobao.middleware.logger.Logger;
 
 import io.netty.channel.ChannelFuture;
 
+import java.io.File;
 import java.io.IOException;
 import java.lang.instrument.Instrumentation;
 import java.lang.reflect.Method;
@@ -50,9 +50,15 @@ public class ArthasBootstrap {
     private ExecutorService executorService;
     private TunnelClient tunnelClient;
 
+    private File arthasOutputDir;
+
     private ArthasBootstrap(int pid, Instrumentation instrumentation) {
         this.pid = pid;
         this.instrumentation = instrumentation;
+
+        String outputPath = System.getProperty("arthas.output.dir", "arthas-output");
+        arthasOutputDir = new File(outputPath);
+        arthasOutputDir.mkdirs();
 
         executorService = Executors.newCachedThreadPool(new ThreadFactory() {
             @Override
