@@ -15,7 +15,6 @@ import io.netty.handler.stream.ChunkedWriteHandler;
 import io.netty.util.concurrent.ScheduledFuture;
 import io.termd.core.function.Consumer;
 import io.termd.core.function.Supplier;
-import io.termd.core.http.netty.TtyWebSocketFrameHandler;
 import io.termd.core.telnet.TelnetHandler;
 import io.termd.core.telnet.netty.TelnetChannelHandler;
 import io.termd.core.tty.TtyConnection;
@@ -52,7 +51,7 @@ public class ProtocolDetectHandler extends ChannelInboundHandlerAdapter {
                 ctx.fireChannelActive(); // trigger TelnetChannelHandler init
             }
 
-        }, 500, TimeUnit.MILLISECONDS);
+        }, 1000, TimeUnit.MILLISECONDS);
     }
 
     @Override
@@ -83,9 +82,10 @@ public class ProtocolDetectHandler extends ChannelInboundHandlerAdapter {
             pipeline.addLast(new HttpRequestHandler("/ws", new File("arthas-output")));
             pipeline.addLast(new WebSocketServerProtocolHandler("/ws"));
             pipeline.addLast(new TtyWebSocketFrameHandler(channelGroup, ttyConnectionFactory));
+            ctx.fireChannelActive();
         }
-        ctx.fireChannelRead(in);
         pipeline.remove(this);
+        ctx.fireChannelRead(in);
     }
 
 }
