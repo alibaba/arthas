@@ -12,6 +12,7 @@ import com.taobao.arthas.core.util.StringUtils;
 import com.taobao.arthas.core.util.TypeRenderUtils;
 import com.taobao.arthas.core.util.affect.RowAffect;
 import com.taobao.middleware.cli.annotations.Argument;
+import com.taobao.middleware.cli.annotations.DefaultValue;
 import com.taobao.middleware.cli.annotations.Description;
 import com.taobao.middleware.cli.annotations.Name;
 import com.taobao.middleware.cli.annotations.Option;
@@ -19,7 +20,6 @@ import com.taobao.middleware.cli.annotations.Summary;
 import com.taobao.middleware.logger.Logger;
 import com.taobao.text.Color;
 import com.taobao.text.Decoration;
-import com.taobao.text.ui.Element;
 import com.taobao.text.ui.LabelElement;
 import com.taobao.text.ui.TableElement;
 import com.taobao.text.util.RenderUtil;
@@ -53,6 +53,8 @@ public class DumpClassCommand extends AnnotatedCommand {
 
     private String directory;
 
+    private int limit;
+
     @Argument(index = 0, argName = "class-pattern")
     @Description("Class name pattern, use either '.' or '/' as separator")
     public void setClassPattern(String classPattern) {
@@ -77,6 +79,13 @@ public class DumpClassCommand extends AnnotatedCommand {
         this.directory = directory;
     }
 
+    @Option(shortName = "l", longName = "limit")
+    @Description("The limit of dump classes size, default value is 5")
+    @DefaultValue("5")
+    public void setLimit(int limit) {
+        this.limit = limit;
+    }
+
     @Override
     public void process(CommandProcess process) {
         RowAffect effect = new RowAffect();
@@ -94,7 +103,7 @@ public class DumpClassCommand extends AnnotatedCommand {
 
             if (matchedClasses == null || matchedClasses.isEmpty()) {
                 processNoMatch(process);
-            } else if (matchedClasses.size() > 5) {
+            } else if (matchedClasses.size() > limit) {
                 processMatches(process, matchedClasses);
             } else {
                 processMatch(process, effect, inst, matchedClasses);
@@ -137,9 +146,9 @@ public class DumpClassCommand extends AnnotatedCommand {
     }
 
     private void processMatches(CommandProcess process, Set<Class<?>> matchedClasses) {
-        Element usage = new LabelElement("dump -c hashcode " + classPattern).style(Decoration.bold.fg(Color.blue));
-        process.write("Found more than 5 class for: " + classPattern + ", Please use ");
-        process.write(RenderUtil.render(usage, process.width()));
+        process.write(String.format(
+                "Found more than %d class for: %s, Please Try to specify the classloader with the -c option, or try to use --limit option.\n",
+                limit, classPattern));
 
         TableElement table = new TableElement().leftCellPadding(1).rightCellPadding(1);
         table.row(new LabelElement("NAME").style(Decoration.bold.bold()),
