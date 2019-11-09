@@ -23,31 +23,43 @@
                     <showDeprecation>true</showDeprecation>
                 </configuration>
             </plugin>
+
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-assembly-plugin</artifactId>
+                <artifactId>maven-shade-plugin</artifactId>
+                <version>2.4.3</version>
                 <executions>
                     <execution>
-                        <goals>
-                            <goal>single</goal>
-                        </goals>
                         <phase>package</phase>
+                        <goals>
+                            <goal>shade</goal>
+                        </goals>
                         <configuration>
-                            <descriptorRefs>
-                                <descriptorRef>jar-with-dependencies</descriptorRef>
-                            </descriptorRefs>
-                            <archive>
-                                <manifest>
+                            <finalName>arthas-core-shade</finalName>
+                            <transformers>
+                                <transformer
+                                    implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
                                     <mainClass>com.taobao.arthas.core.Arthas</mainClass>
-                                </manifest>
-                                <manifestEntries>
-                                    <Created-By>core engine team, middleware group, alibaba inc.</Created-By>
-                                    <Implementation-Version>${project.version}</Implementation-Version>
-                                    <Implementation-Vendor-Id>com.taobao.arthas</Implementation-Vendor-Id>
-                                    <Specification-Version>${project.version}</Specification-Version>
-                                    <Specification-Title>arthas-core</Specification-Title>
-                                </manifestEntries>
-                            </archive>
+                                    <manifestEntries>
+                                        <Created-By>core engine team, middleware group, alibaba inc.</Created-By>
+                                        <Implementation-Version>${project.version}</Implementation-Version>
+                                        <Implementation-Vendor-Id>com.taobao.arthas</Implementation-Vendor-Id>
+                                        <Specification-Version>${project.version}</Specification-Version>
+                                        <Specification-Title>arthas-core</Specification-Title>
+                                    </manifestEntries>
+                                </transformer>
+                            </transformers>
+                            <filters>
+                                <filter>
+                                    <artifact>com.alibaba.middleware:termd-core</artifact>
+                                    <excludes>
+                                        <exclude>io/termd/core/http/*.js</exclude>
+                                        <exclude>io/termd/core/http/*.css</exclude>
+                                        <exclude>io/termd/core/http/*.html</exclude>
+                                        <exclude>io/termd/core/http/*.png</exclude>
+                                    </excludes>
+                                </filter>
+                            </filters>
                         </configuration>
                     </execution>
                 </executions>

@@ -66,7 +66,7 @@ public class HttpRequestHandler extends SimpleChannelInboundHandler<FullHttpRequ
                 if (fileViewResult != null) {
                     response = fileViewResult;
                 } else {
-                    URL res = HttpTtyConnection.class.getResource("/io/termd/core/http" + path);
+                    URL res = HttpTtyConnection.class.getResource("/com/taobao/arthas/core/http" + path);
                     if (res != null) {
                         DefaultFullHttpResponse fullResp = new DefaultFullHttpResponse(request.protocolVersion(),
                                 HttpResponseStatus.OK);
@@ -99,7 +99,7 @@ public class HttpRequestHandler extends SimpleChannelInboundHandler<FullHttpRequ
                     }
                 }
 
-            } catch (Exception e) {
+            } catch (Throwable e) {
                 e.printStackTrace();
             } finally {
                 ctx.write(response);
