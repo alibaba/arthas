@@ -17,3 +17,5 @@ site/src/site/sphinx/_build
 site/src/site/sphinx/en/_build
 
 **/__pycache__
+
+dependency-reduced-pom.xml

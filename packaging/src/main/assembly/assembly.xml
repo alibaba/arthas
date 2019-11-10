@@ -14,7 +14,7 @@
       <destName>arthas-spy.jar</destName>
     </file>
     <file>
-      <source>../core/target/arthas-core-jar-with-dependencies.jar</source>
+      <source>../core/target/arthas-core-shade.jar</source>
       <destName>arthas-core.jar</destName>
     </file>
     <file>
@@ -50,4 +50,10 @@
       <source>../bin/as-service.bat</source>
     </file>
   </files>
+
+  <fileSets>
+    <fileSet>
+      <directory>../async-profiler</directory>
+    </fileSet>
+  </fileSets>
 </assembly>
