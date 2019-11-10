@@ -35,12 +35,21 @@ import one.profiler.Counter;
  * @author hengyunabc 2019-10-31
  *
  */
+//@formatter:off
 @Name("profiler")
-@Summary("Profiler")
-@Description("\nExamples:\n" + "  mbean\n" + "  mbean -m java.lang:type=Threading\n"
-        + "  mbean java.lang:type=Threading\n" + "  mbean java.lang:type=Threading *Count\n"
-        + "  mbean -E java.lang:type=Threading PeakThreadCount|ThreadCount|DaemonThreadCount\n"
-        + "  mbean -i 1000 java.lang:type=Threading *Count\n" + Constants.WIKI + Constants.WIKI_HOME + "profiler")
+@Summary("Async Profiler. https://github.com/jvm-profiling-tools/async-profiler")
+@Description(Constants.EXAMPLE + "  profiler start\n"
+        + "  profiler stop\n"
+        + "  profiler list                # list all supported events\n"
+        + "  profiler start --event alloc\n"
+        + "  profiler stop --format svg   # output file format, support svg,html,jfr\n"
+        + "  profiler stop --file /tmp/result.html\n"
+        + "  profiler status\n"
+        + "  profiler resume\n"
+        + "  profiler start --threads \n"
+        + "  profiler getSamples          # get current samples count\n"
+        + Constants.WIKI + Constants.WIKI_HOME + "profiler")
+//@formatter:on
 public class ProfilerCommand extends AnnotatedCommand {
     private static final Logger logger = LogUtil.getArthasLogger();
 
@@ -130,7 +139,7 @@ public class ProfilerCommand extends AnnotatedCommand {
         this.event = event;
     }
 
-    @Option(longName = "threads")
+    @Option(longName = "threads", flag = true)
     @Description("profile different threads separately")
     public void setThreads(boolean threads) {
         this.threads = threads;
