@@ -159,7 +159,7 @@ public class ProfilerCommand extends AnnotatedCommand {
             // load from arthas directory
             profiler = AsyncProfiler.getInstance(libPath);
         } else {
-            if (OSUtils.isLinux() || OSUtils.isLinux()) {
+            if (OSUtils.isLinux() || OSUtils.isMac()) {
                 throw new IllegalStateException("Can not find libasyncProfiler so, please check the arthas directory.");
             } else {
                 throw new IllegalStateException("Current OS do not support AsyncProfiler.");
