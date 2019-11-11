@@ -142,6 +142,8 @@
                             <group>Development/tools</group>
                             <packager>Alibaba</packager>
                             <prefix>/usr/share</prefix>
+                            <autoProvides>false</autoProvides>
+                            <autoRequires>false</autoRequires>
                             <defineStatements>
                                 <defineStatement>_unpackaged_files_terminate_build 0</defineStatement>
                             </defineStatements>
