@@ -3,7 +3,7 @@ Version: [[version]]
 Section: misc
 Priority: optional
 Architecture: all
-Depends: jdk (>= 1.5)
+Depends: jdk (>= 1.6)
 Maintainer: arthas <https://github.com/alibaba/arthas>
 Description: Arthas is a Java Diagnostic tool open sourced by Alibaba.
 Distribution: development
