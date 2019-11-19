@@ -12,9 +12,7 @@ public class ThreadLocalWatch {
     private final ThreadLocal<Stack<Long>> timestampRef = new ThreadLocal<Stack<Long>>() {
         @Override
         protected Stack<Long> initialValue() {
-            Stack<Long> stack = new Stack<Long>();
-            stack.push(System.nanoTime());
-            return stack;
+            return new Stack<Long>();
         }
     };
 
