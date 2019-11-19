@@ -3,7 +3,7 @@ package com.taobao.arthas.core.util;
 import java.util.Stack;
 
 /**
- * 简单的调用计时器。TODO 用stack的实现更合理
+ * 简单的调用计时器。
  * Created by vlinux on 16/6/1.
  * @author hengyunabc 2016-10-31
  */
