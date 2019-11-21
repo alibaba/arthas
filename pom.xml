@@ -132,7 +132,7 @@
             <dependency>
                 <groupId>com.taobao.middleware</groupId>
                 <artifactId>logger.api</artifactId>
-                <version>0.2.6</version>
+                <version>0.2.8</version>
             </dependency>
             <dependency>
                 <groupId>com.alibaba</groupId>
