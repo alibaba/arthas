@@ -7,6 +7,8 @@ Arthas 用户文档
 
 ![](arthas.png)
 
+**Arthas 正在参加2019年度最受欢迎开源中国软件评选，请大家投票支持！[查看](https://www.oschina.net/p/arthas)**
+
 `Arthas` 是Alibaba开源的Java诊断工具，深受开发者喜爱。
 
 当你遇到以下类似问题而束手无策时，`Arthas`可以帮助你解决：
@@ -24,7 +26,7 @@ Arthas 用户文档
 
 Contents
 --------
-
+* [最受欢迎开源中国软件评选](https://www.oschina.net/p/arthas)
 * [English Docs](https://alibaba.github.io/arthas/en/)
 * [在线教程(推荐)](https://alibaba.github.io/arthas/arthas-tutorials?language=cn)
 * [安装](install-detail.md)
