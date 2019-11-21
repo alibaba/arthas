@@ -4,6 +4,8 @@
 
 ![arthas](site/src/site/sphinx/arthas.png)
 
+**Arthas 正在参加2019年度最受欢迎开源中国软件评选，请大家投票支持！[查看](https://www.oschina.net/p/arthas)**
+
 [![Build Status](https://travis-ci.org/alibaba/arthas.svg?branch=master)](https://travis-ci.org/alibaba/arthas)
 [![codecov](https://codecov.io/gh/alibaba/arthas/branch/master/graph/badge.svg)](https://codecov.io/gh/alibaba/arthas)
 [![maven](https://img.shields.io/maven-central/v/com.taobao.arthas/arthas-packaging.svg)](https://search.maven.org/search?q=g:com.taobao.arthas)
