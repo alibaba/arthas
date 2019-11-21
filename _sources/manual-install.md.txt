@@ -33,7 +33,7 @@
 
 4. 启动Arthas
 
-    启动之前，请确保老版本的Arthas已经`shutdown`.
+    启动之前，请确保老版本的Arthas已经`stop`.
 
     ```
     ./as.sh

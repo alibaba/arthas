@@ -93,6 +93,7 @@
             
             
               <ul class="current">
+<li class="toctree-l1"><a class="reference external" href="https://www.oschina.net/p/arthas">最受欢迎开源中国软件评选</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://alibaba.github.io/arthas/en/">English Docs</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://alibaba.github.io/arthas/arthas-tutorials?language=cn">在线教程(推荐)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="install-detail.html">安装</a></li>
@@ -187,7 +188,7 @@
 <h1>快速入门<a class="headerlink" href="#id1" title="永久链接至标题">¶</a></h1>
 <div class="section" id="demo">
 <h2>1. 启动Demo<a class="headerlink" href="#demo" title="永久链接至标题">¶</a></h2>
-<div class="highlight-bash notranslate"><div class="highlight hljs"><pre class="bash">wget https://alibaba.github.io/arthas/arthas-demo.jar
+<div class="highlight-bash notranslate"><div class="highlight hljs"><pre class="bash">curl -O https://alibaba.github.io/arthas/arthas-demo.jar
 java -jar arthas-demo.jar</pre></div>
 </div>
 <p><code class="docutils literal notranslate"><span class="pre">arthas-demo</span></code>是一个简单的程序，每隔一秒生成一个随机数，再执行质因式分解，并打印出分解结果。</p>
@@ -196,7 +197,7 @@ java -jar arthas-demo.jar</pre></div>
 <div class="section" id="arthas">
 <h2>2. 启动arthas<a class="headerlink" href="#arthas" title="永久链接至标题">¶</a></h2>
 <p>在命令行下面执行（使用和目标进程一致的用户启动，否则可能attach失败）：</p>
-<div class="highlight-bash notranslate"><div class="highlight hljs"><pre class="bash">wget https://alibaba.github.io/arthas/arthas-boot.jar
+<div class="highlight-bash notranslate"><div class="highlight hljs"><pre class="bash">curl -O https://alibaba.github.io/arthas/arthas-boot.jar
 java -jar arthas-boot.jar</pre></div>
 </div>
 <ul class="simple">
@@ -392,7 +393,7 @@ ts=2018-11-28 19:22:35; [cost=29.969732ms] result=@ArrayList[
 <div class="section" id="id2">
 <h2>7. 退出arthas<a class="headerlink" href="#id2" title="永久链接至标题">¶</a></h2>
 <p>如果只是退出当前的连接，可以用<code class="docutils literal notranslate"><span class="pre">quit</span></code>或者<code class="docutils literal notranslate"><span class="pre">exit</span></code>命令。Attach到目标进程上的arthas还会继续运行，端口会保持开放，下次连接时可以直接连接上。</p>
-<p>如果想完全退出arthas，可以执行<code class="docutils literal notranslate"><span class="pre">shutdown</span></code>命令。</p>
+<p>如果想完全退出arthas，可以执行<code class="docutils literal notranslate"><span class="pre">stop/shutdown</span></code>命令。</p>
 </div>
 </div>
 

@@ -9,6 +9,9 @@ redefine
 
 > `reset`命令对`redefine`的类无效。如果想重置，需要`redefine`原始的字节码。
 
+> `redefine`命令和`jad`/`watch`/`trace`/`monitor`/`tt`等命令会冲突。执行完`redefine`之后，如果再执行上面提到的命令，则会把`redefine`的字节码重置。
+> 原因是jdk本身redefine和Retransform是不同的机制，同时使用两种机制来更新字节码，只有最后修改的会生效。
+
 ### 参数说明
 
 |参数名称|参数说明|

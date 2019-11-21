@@ -520,14 +520,15 @@ dl.citation > dd:after {
 }
 
 dl.field-list {
-    display: flex;
-    flex-wrap: wrap;
+    display: grid;
+    grid-template-columns: fit-content(30%) auto;
 }
 
 dl.field-list > dt {
-    flex-basis: 20%;
     font-weight: bold;
     word-break: break-word;
+    padding-left: 0.5em;
+    padding-right: 5px;
 }
 
 dl.field-list > dt:after {
@@ -535,8 +536,8 @@ dl.field-list > dt:after {
 }
 
 dl.field-list > dd {
-    flex-basis: 70%;
-    padding-left: 1em;
+    padding-left: 0.5em;
+    margin-top: 0em;
     margin-left: 0em;
     margin-bottom: 0em;
 }

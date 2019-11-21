@@ -93,6 +93,7 @@
             
             
               <ul class="current">
+<li class="toctree-l1"><a class="reference external" href="https://www.oschina.net/p/arthas">最受欢迎开源中国软件评选</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://alibaba.github.io/arthas/en/">English Docs</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://alibaba.github.io/arthas/arthas-tutorials?language=cn">在线教程(推荐)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="install-detail.html">安装</a></li>
@@ -109,6 +110,7 @@
 <li class="toctree-l4"><a class="reference internal" href="#thread-id">thread id， 显示指定线程的运行堆栈</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#thread-b">thread -b, 找出当前阻塞其他线程的线程</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#thread-i">thread -i, 指定采样时间间隔</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#thread-state">thread –state ，查看指定状态的线程</a></li>
 </ul>
 </li>
 </ul>
@@ -135,6 +137,7 @@
 <li class="toctree-l2"><a class="reference internal" href="stack.html">stack</a></li>
 <li class="toctree-l2"><a class="reference internal" href="tt.html">tt</a></li>
 <li class="toctree-l2"><a class="reference internal" href="cat.html">cat</a></li>
+<li class="toctree-l2"><a class="reference internal" href="grep.html">grep</a></li>
 <li class="toctree-l2"><a class="reference internal" href="pwd.html">pwd</a></li>
 <li class="toctree-l2"><a class="reference internal" href="options.html">options</a></li>
 <li class="toctree-l2"><a class="reference internal" href="commands.html#arthas">Arthas 基础命令</a></li>
@@ -392,6 +395,18 @@ ID         NAME                             GROUP                 PRIORITY   STA
     Number of locked synchronizers = 1
     - java.util.concurrent.ThreadPoolExecutor$Worker@546aeec1
 ...</pre></div>
+</div>
+</div>
+<div class="section" id="thread-state">
+<h3>thread –state ，查看指定状态的线程<a class="headerlink" href="#thread-state" title="永久链接至标题">¶</a></h3>
+<div class="highlight-bash notranslate"><div class="highlight hljs"><pre class="bash">[arthas@28114]$ thread --state WAITING
+Threads Total: 15, NEW: 0, RUNNABLE: 7, BLOCKED: 0, WAITING: 5, TIMED_WAITING: 3, TERMINATED: 0
+ID       NAME                      GROUP            PRIORITY STATE   %CPU     TIME     INTERRU DAEMON
+198      AsyncAppender-Worker-arth system           9        WAITING 0        0:0      false   true
+3        Finalizer                 system           8        WAITING 0        0:0      false   true
+14       RMI Scheduler(0)          system           9        WAITING 0        0:0      false   true
+2        Reference Handler         system           10       WAITING 0        0:0      false   true
+204      pool-8-thread-1           system           5        WAITING 0        0:0      false   false</pre></div>
 </div>
 </div>
 </div>

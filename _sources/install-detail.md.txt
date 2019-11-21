@@ -8,7 +8,7 @@ Arthas Install
 下载`arthas-boot.jar`，然后用`java -jar`的方式启动：
 
 ```bash
-wget https://alibaba.github.io/arthas/arthas-boot.jar
+curl -O https://alibaba.github.io/arthas/arthas-boot.jar
 java -jar arthas-boot.jar
 ```
 
@@ -27,7 +27,7 @@ java -jar arthas-boot.jar -h
 * 如果从github下载有问题，可以使用gitee镜像
 
     ```bash
-    wget https://arthas.gitee.io/arthas-boot.jar
+    curl -O https://arthas.gitee.io/arthas-boot.jar
     ```
 
 
