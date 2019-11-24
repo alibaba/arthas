@@ -38,16 +38,23 @@ import one.profiler.Counter;
 //@formatter:off
 @Name("profiler")
 @Summary("Async Profiler. https://github.com/jvm-profiling-tools/async-profiler")
-@Description(Constants.EXAMPLE + "  profiler start\n"
+@Description(Constants.EXAMPLE
+        + "  profiler start\n"
         + "  profiler stop\n"
         + "  profiler list                # list all supported events\n"
+        + "  profiler actions             # list all supported actions\n"
         + "  profiler start --event alloc\n"
         + "  profiler stop --format svg   # output file format, support svg,html,jfr\n"
         + "  profiler stop --file /tmp/result.html\n"
+        + "  profiler stop --threads \n"
         + "  profiler status\n"
-        + "  profiler resume\n"
-        + "  profiler start --threads \n"
-        + "  profiler getSamples          # get current samples count\n"
+        + "  profiler resume              # Start or resume profiling without resetting collected data.\n"
+        + "  profiler getSamples          # Get the number of samples collected during the profiling session\n"
+        + "  profiler dumpFlat            # Dump flat profile, i.e. the histogram of the hottest methods\n"
+        + "  profiler dumpCollapsed       # Dump profile in 'collapsed stacktraces' format\n"
+        + "  profiler dumpTraces          # Dump collected stack traces\n"
+        + "  profiler execute 'start'                       # Execute an agent-compatible profiling command\n"
+        + "  profiler execute 'stop,file=/tmp/result.svg'   # Execute an agent-compatible profiling command\n"
         + Constants.WIKI + Constants.WIKI_HOME + "profiler")
 //@formatter:on
 public class ProfilerCommand extends AnnotatedCommand {
@@ -69,7 +76,20 @@ public class ProfilerCommand extends AnnotatedCommand {
      */
     private Long interval;
 
+    /**
+     * profile different threads separately
+     */
     private boolean threads;
+
+    /**
+     * include only kernel-mode events
+     */
+    private boolean allkernel;
+
+    /**
+     * include only user-mode events
+     */
+    private boolean alluser;
 
     private static String libPath;
     private static AsyncProfiler profiler = null;
@@ -145,13 +165,25 @@ public class ProfilerCommand extends AnnotatedCommand {
         this.threads = threads;
     }
 
+    @Option(longName = "allkernel", flag = true)
+    @Description("include only kernel-mode events")
+    public void setAllkernel(boolean allkernel) {
+        this.allkernel = allkernel;
+    }
+
+    @Option(longName = "alluser", flag = true)
+    @Description("include only user-mode events")
+    public void setAlluser(boolean alluser) {
+        this.alluser = alluser;
+    }
+
     private AsyncProfiler profilerInstance() {
         if (profiler != null) {
             return profiler;
         }
 
         // try to load from special path
-        if ("load".equals(action)) {
+        if (ProfilerAction.load.toString().equals(action)) {
             profiler = AsyncProfiler.getInstance(this.actionArg);
         }
 
@@ -162,17 +194,23 @@ public class ProfilerCommand extends AnnotatedCommand {
             if (OSUtils.isLinux() || OSUtils.isMac()) {
                 throw new IllegalStateException("Can not find libasyncProfiler so, please check the arthas directory.");
             } else {
-                throw new IllegalStateException("Current OS do not support AsyncProfiler.");
+                throw new IllegalStateException("Current OS do not support AsyncProfiler, Only support Linux/Mac.");
             }
         }
 
         return profiler;
     }
 
+    /**
+     * https://github.com/jvm-profiling-tools/async-profiler/blob/v1.6/src/arguments.cpp#L34
+     *
+     */
     enum ProfilerAction {
-        execute, start, stop, resume, list, version, status,
+        execute, start, stop, resume, list, version, status, load,
 
         dumpCollapsed, dumpFlat, dumpTraces, getSamples,
+
+        actions
     }
 
     private String executeArgs(ProfilerAction action) {
@@ -195,6 +233,12 @@ public class ProfilerCommand extends AnnotatedCommand {
         if (this.threads) {
             sb.append("threads").append(',');
         }
+        if (this.allkernel) {
+            sb.append("allkernel").append(',');
+        }
+        if (this.alluser) {
+            sb.append("alluser").append(',');
+        }
 
         return sb.toString();
     }
@@ -212,9 +256,14 @@ public class ProfilerCommand extends AnnotatedCommand {
     public void process(CommandProcess process) {
         int status = 0;
         try {
-            AsyncProfiler asyncProfiler = this.profilerInstance();
-
             ProfilerAction profilerAction = ProfilerAction.valueOf(action);
+
+            if (ProfilerAction.actions.equals(profilerAction)) {
+                process.write("Supported Actions: " + actions() + "\n");
+                return;
+            }
+
+            AsyncProfiler asyncProfiler = this.profilerInstance();
 
             if (ProfilerAction.execute.equals(profilerAction)) {
                 String result = execute(asyncProfiler, this.actionArg);
@@ -251,7 +300,6 @@ public class ProfilerCommand extends AnnotatedCommand {
                     actionArg = "TOTAL";
                 }
                 actionArg = actionArg.toUpperCase();
-                System.err.println("actionArg: " + actionArg + ", " + "TOTAL".equals(actionArg));
                 if ("TOTAL".equals(actionArg) || "SAMPLES".equals(actionArg)) {
                     String result = asyncProfiler.dumpCollapsed(Counter.valueOf(actionArg));
                     process.write(result);
@@ -318,6 +366,14 @@ public class ProfilerCommand extends AnnotatedCommand {
         return result;
     }
 
+    private Set<String> actions() {
+        Set<String> values = new HashSet<String>();
+        for (ProfilerAction action : ProfilerAction.values()) {
+            values.add(action.toString());
+        }
+        return values;
+    }
+
     @Override
     public void complete(Completion completion) {
         List<CliToken> tokens = completion.lineTokens();
@@ -343,11 +399,7 @@ public class ProfilerCommand extends AnnotatedCommand {
             return;
         }
 
-        Set<String> values = new HashSet<String>();
-        for (ProfilerAction action : ProfilerAction.values()) {
-            values.add(action.toString());
-        }
-        CompletionUtils.complete(completion, values);
+        CompletionUtils.complete(completion, actions());
     }
 
 }
