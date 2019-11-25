@@ -6,6 +6,8 @@ import java.net.URI;
 import java.net.URL;
 
 import com.taobao.arthas.common.IOUtils;
+import com.taobao.arthas.core.util.LogUtil;
+import com.taobao.middleware.logger.Logger;
 
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelFutureListener;
@@ -29,6 +31,7 @@ import io.termd.core.util.Logging;
  * @author hengyunabc 2019-11-06
  */
 public class HttpRequestHandler extends SimpleChannelInboundHandler<FullHttpRequest> {
+    private static final Logger logger = LogUtil.getArthasLogger();
 
     private final String wsUri;
 
@@ -100,7 +103,7 @@ public class HttpRequestHandler extends SimpleChannelInboundHandler<FullHttpRequ
                 }
 
             } catch (Throwable e) {
-                e.printStackTrace();
+                logger.error("arthas", "arthas process http request error: " + request.uri(), e);
             } finally {
                 ctx.write(response);
                 ChannelFuture future = ctx.writeAndFlush(LastHttpContent.EMPTY_LAST_CONTENT);
