@@ -55,6 +55,10 @@ Advanced Usage
 * [options](options.md) - check/set Arthas global options
 
 
+## profiler/frame graph
+
+* [profiler](profiler.md) - use [async-profiler](https://github.com/jvm-profiling-tools/async-profiler) to generate frame graph
+
 ## pipe
 
 Arthas provides `pipe` to process the result returned from commands further, e.g. `sm java.lang.String * | grep 'index'`. Commands supported in `pipe`:
