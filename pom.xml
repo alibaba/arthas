@@ -47,7 +47,7 @@
 
     <groupId>com.taobao.arthas</groupId>
     <artifactId>arthas-all</artifactId>
-    <version>3.1.5-SNAPSHOT</version>
+    <version>3.1.5</version>
     <packaging>pom</packaging>
 
     <name>arthas-all</name>

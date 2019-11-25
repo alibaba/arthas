@@ -4,7 +4,7 @@
     <parent>
         <groupId>com.taobao.arthas</groupId>
         <artifactId>arthas-all</artifactId>
-        <version>3.1.5-SNAPSHOT</version>
+        <version>3.1.5</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
     <artifactId>arthas-core</artifactId>
@@ -37,8 +37,7 @@
                         <configuration>
                             <finalName>arthas-core-shade</finalName>
                             <transformers>
-                                <transformer
-                                    implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
+                                <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
                                     <mainClass>com.taobao.arthas.core.Arthas</mainClass>
                                     <manifestEntries>
                                         <Created-By>core engine team, middleware group, alibaba inc.</Created-By>
