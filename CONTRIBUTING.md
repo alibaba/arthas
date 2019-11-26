@@ -121,7 +121,7 @@ Tip: you can use `--versions` to list all available versions.
 
 发布release版本流程：
 
-* 修改`as.sh`里的版本， `Bootstrap.java`里的版本，Dockerfile里的版本
+* 修改`as.sh`里的版本，最后修改日期， `Bootstrap.java`里的版本，Dockerfile里的版本
 * 修改本地的maven settings.xml
 * mvn release:prepare -Darguments="-DskipTests -P full"
 * mvn release:perform -Darguments="-DskipTests -P full"
@@ -131,7 +131,7 @@ Tip: you can use `--versions` to list all available versions.
 * 到 https://oss.sonatype.org/ 上，“Staging Repositories”然后close掉自己的，再release
 * 发布完maven仓库之后，需要到阿里云的仓库里检查是否同步，有可能有延时
 * 需要更新 gh-pages 分支下面的 arthas-boot.jar/arthas-demo.jar/as.sh ，下载 doc.zip，解压覆盖掉文档的更新
-* 需要更新docker镜像，push新的tag
+* 需要更新docker镜像，push新的tag：https://hub.docker.com/r/hengyunabc/arthas/tags?page=1&ordering=last_updated
 
     以 3.1.0 版本为例：
     ```
