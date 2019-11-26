@@ -27,7 +27,7 @@ Arthas 用户文档
 
 Contents
 --------
-* [请大家投宝贵的一票支持](https://www.oschina.net/p/arthas)
+* [开源软件评选/请大家投票支持](https://www.oschina.net/p/arthas)
 * [English Docs](https://alibaba.github.io/arthas/en/)
 * [在线教程(推荐)](https://alibaba.github.io/arthas/arthas-tutorials?language=cn)
 * [安装](install-detail.md)
