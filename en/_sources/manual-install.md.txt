@@ -28,7 +28,7 @@ Manually Install Arthas
 
 4. Start Arthas
 
-    Make sure `shutdown` the old Arthas server before start.
+    Make sure `stop` the old Arthas server before start.
 
     ```bash
     ./as.sh

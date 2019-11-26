@@ -6,13 +6,14 @@ Advanced Usage
 * help - display Arthas help
 * cls - clear the screen
 * [cat](cat.md) - Concatenate and print files
+* [grep]](grep.md) - Pattern searcher
 * [pwd](pwd.md) - Return working directory name
 * session - display current session information
-* [reset](reset.md) - reset all the enhanced classes. All enhanced classes will also be reset when Arthas server is closed by `shutdown`
+* [reset](reset.md) - reset all the enhanced classes. All enhanced classes will also be reset when Arthas server is closed by `stop/shutdown`
 * version - print the version for the Arthas attached to the current Java process
 * history - view command history
 * quit/exit - exit the current Arthas session, without effecting other sessions
-* shutdown - terminate the Arthas server, all Arthas sessions will be destroyed
+* stop/shutdown - terminate the Arthas server, all Arthas sessions will be destroyed
 * [keymap](keymap.md) - keymap for Arthas keyboard shortcut
 
 ## JVM
@@ -41,7 +42,7 @@ Advanced Usage
 
 ## monitor/watch/trace - related
 
-> **Attention**: commands here are taking advantage of byte-code-injection, which means we are injecting some [aspects](https://en.wikipedia.org/wiki/Aspect-oriented_programming) into the current classes for monitoring and statistics purpose. Therefore when use it for online troubleshooting in your production environment, you'd better **explicitly specify** classes/methods/criteria, and remember to remove the injected code by `shutdown` or `reset`. 
+> **Attention**: commands here are taking advantage of byte-code-injection, which means we are injecting some [aspects](https://en.wikipedia.org/wiki/Aspect-oriented_programming) into the current classes for monitoring and statistics purpose. Therefore when use it for online troubleshooting in your production environment, you'd better **explicitly specify** classes/methods/criteria, and remember to remove the injected code by `stop` or `reset`. 
 
 * [monitor](monitor.md) - monitor method execution statistics
 * [watch](watch.md) - display the input/output parameter, return object, and thrown exception of specified method invocation
@@ -53,6 +54,10 @@ Advanced Usage
 
 * [options](options.md) - check/set Arthas global options
 
+
+## profiler/frame graph
+
+* [profiler](profiler.md) - use [async-profiler](https://github.com/jvm-profiling-tools/async-profiler) to generate frame graph
 
 ## pipe
 

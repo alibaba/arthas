@@ -54,6 +54,11 @@
 * [stack](stack.md)——输出当前方法被调用的调用路径
 * [tt](tt.md)——方法执行数据的时空隧道，记录下指定方法每次调用的入参和返回信息，并能对这些不同的时间下调用进行观测
 
+
+## profiler/火焰图
+
+* [profiler](profiler.md)--使用[async-profiler](https://github.com/jvm-profiling-tools/async-profiler)对应用采样，生成火焰图
+
 ## options
 
 * [options](options.md)——查看或设置Arthas全局开关

@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Quick Start &mdash; Arthas 3.1.4 documentation</title>
+  <title>Quick Start &mdash; Arthas 3.1.5 documentation</title>
   
 
   
@@ -67,7 +67,7 @@
             
             
               <div class="version">
-                3.1.4
+                3.1.5
               </div>
             
           
@@ -187,7 +187,7 @@
 <h1>Quick Start<a class="headerlink" href="#quick-start" title="Permalink to this headline">¶</a></h1>
 <div class="section" id="start-demo-application">
 <h2>1. Start Demo Application<a class="headerlink" href="#start-demo-application" title="Permalink to this headline">¶</a></h2>
-<div class="highlight-bash notranslate"><div class="highlight hljs"><pre class="bash">wget https://alibaba.github.io/arthas/arthas-demo.jar
+<div class="highlight-bash notranslate"><div class="highlight hljs"><pre class="bash">curl -O https://alibaba.github.io/arthas/arthas-demo.jar
 java -jar arthas-demo.jar</pre></div>
 </div>
 <p><code class="docutils literal notranslate"><span class="pre">arthas-demo</span></code> is a simple program that generates a random number every second, then find all prime factors of the number.</p>
@@ -198,7 +198,7 @@ java -jar arthas-demo.jar</pre></div>
 <div class="section" id="linux-unix-mac">
 <h3>Linux/Unix/Mac<a class="headerlink" href="#linux-unix-mac" title="Permalink to this headline">¶</a></h3>
 <p>Execute the following command in the command line:</p>
-<div class="highlight-bash notranslate"><div class="highlight hljs"><pre class="bash">wget https://alibaba.github.io/arthas/arthas-boot.jar
+<div class="highlight-bash notranslate"><div class="highlight hljs"><pre class="bash">curl -O https://alibaba.github.io/arthas/arthas-boot.jar
 java -jar arthas-boot.jar</pre></div>
 </div>
 <ul class="simple">
@@ -394,7 +394,7 @@ ts=2018-11-28 19:22:35; [cost=29.969732ms] result=@ArrayList[
 <div class="section" id="exit-arthas">
 <h2>7. Exit Arthas<a class="headerlink" href="#exit-arthas" title="Permalink to this headline">¶</a></h2>
 <p>Use <code class="docutils literal notranslate"><span class="pre">quit</span></code> or <code class="docutils literal notranslate"><span class="pre">exit</span></code> to disconnect from the current process. The Arthas instance attached to the target process continues to live inside the process, and its port is standby for further connection.</p>
-<p>Use <code class="docutils literal notranslate"><span class="pre">shutdown</span></code> to have Arthas completely quit from the target process.</p>
+<p>Use <code class="docutils literal notranslate"><span class="pre">stop</span></code> command to have Arthas completely quit from the target process.</p>
 </div>
 </div>
 

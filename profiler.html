@@ -1,0 +1,440 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="zh-CN" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="zh-CN" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>profiler &mdash; Arthas 3.1.5 文档</title>
+  
+
+  
+  
+    <link rel="shortcut icon" href="_static/favicon.ico"/>
+  
+  
+  
+
+  
+  <script type="text/javascript" src="_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script type="text/javascript" src="_static/jquery.js"></script>
+        <script type="text/javascript" src="_static/underscore.js"></script>
+        <script type="text/javascript" src="_static/doctools.js"></script>
+        <script type="text/javascript" src="_static/language_data.js"></script>
+        <script type="text/javascript" src="_static/translations.js"></script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="_static/overrides.css" type="text/css" />
+    <link rel="index" title="索引" href="genindex.html" />
+    <link rel="search" title="搜索" href="search.html" />
+    <link rel="next" title="cat" href="cat.html" />
+    <link rel="prev" title="tt" href="tt.html" />
+<script src="_static/center_page.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.13.1/styles/github.min.css">
+ 
+
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="index.html" class="icon icon-home"> Arthas
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                3.1.5
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul class="current">
+<li class="toctree-l1"><a class="reference external" href="https://www.oschina.net/p/arthas">最受欢迎开源中国软件评选</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://alibaba.github.io/arthas/en/">English Docs</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://alibaba.github.io/arthas/arthas-tutorials?language=cn">在线教程(推荐)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="install-detail.html">安装</a></li>
+<li class="toctree-l1"><a class="reference internal" href="download.html">下载</a></li>
+<li class="toctree-l1"><a class="reference internal" href="quick-start.html">快速入门</a></li>
+<li class="toctree-l1"><a class="reference internal" href="advanced-use.html">进阶使用</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="commands.html">命令列表</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="dashboard.html">dashboard</a></li>
+<li class="toctree-l2"><a class="reference internal" href="thread.html">thread</a></li>
+<li class="toctree-l2"><a class="reference internal" href="jvm.html">jvm</a></li>
+<li class="toctree-l2"><a class="reference internal" href="sysprop.html">sysprop</a></li>
+<li class="toctree-l2"><a class="reference internal" href="sysenv.html">sysenv</a></li>
+<li class="toctree-l2"><a class="reference internal" href="vmoption.html">vmoption</a></li>
+<li class="toctree-l2"><a class="reference internal" href="logger.html">logger</a></li>
+<li class="toctree-l2"><a class="reference internal" href="mbean.html">mbean</a></li>
+<li class="toctree-l2"><a class="reference internal" href="getstatic.html">getstatic</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ognl.html">ognl</a></li>
+<li class="toctree-l2"><a class="reference internal" href="sc.html">sc</a></li>
+<li class="toctree-l2"><a class="reference internal" href="sm.html">sm</a></li>
+<li class="toctree-l2"><a class="reference internal" href="dump.html">dump</a></li>
+<li class="toctree-l2"><a class="reference internal" href="heapdump.html">heapdump</a></li>
+<li class="toctree-l2"><a class="reference internal" href="jad.html">jad</a></li>
+<li class="toctree-l2"><a class="reference internal" href="classloader.html">classloader</a></li>
+<li class="toctree-l2"><a class="reference internal" href="mc.html">mc</a></li>
+<li class="toctree-l2"><a class="reference internal" href="redefine.html">redefine</a></li>
+<li class="toctree-l2"><a class="reference internal" href="monitor.html">monitor</a></li>
+<li class="toctree-l2"><a class="reference internal" href="watch.html">watch</a></li>
+<li class="toctree-l2"><a class="reference internal" href="trace.html">trace</a></li>
+<li class="toctree-l2"><a class="reference internal" href="stack.html">stack</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tt.html">tt</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">profiler</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id1">启动profiler</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#sample">获取已采集的sample的数量</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id2">查看profiler状态</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id3">停止profiler</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#svg">生成svg格式结果</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#html">生成html格式结果</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#arthas-outputprofiler">通过浏览器查看arthas-output下面的profiler结果</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#profilerevents">profiler支持的events</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id4">恢复采样</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#execute">使用<code class="docutils literal notranslate"><span class="pre">execute</span></code>来执行复杂的命令</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#action">查看所有支持的action</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id5">查看版本</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="cat.html">cat</a></li>
+<li class="toctree-l2"><a class="reference internal" href="grep.html">grep</a></li>
+<li class="toctree-l2"><a class="reference internal" href="pwd.html">pwd</a></li>
+<li class="toctree-l2"><a class="reference internal" href="options.html">options</a></li>
+<li class="toctree-l2"><a class="reference internal" href="commands.html#arthas">Arthas 基础命令</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="web-console.html">WebConsole</a></li>
+<li class="toctree-l1"><a class="reference internal" href="docker.html">Docker</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas/issues?q=label%3Auser-case">用户案例</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas/issues?q=label%3Aquestion-answered">常见问题</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas">Fork me at GitHub</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas/blob/master/CONTRIBUTING.md#">编译调试/参与贡献</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas/releases">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="contact-us.html">QQ群/钉钉群</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">Arthas</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="commands.html">命令列表</a> &raquo;</li>
+        
+      <li>profiler</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            
+              <a href="https://github.com/alibaba/arthas/blob/master/site/src/site/sphinx/profiler.md" class="fa fa-github"> Edit on GitHub</a>
+            
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="profiler">
+<h1>profiler<a class="headerlink" href="#profiler" title="永久链接至标题">¶</a></h1>
+<blockquote>
+<div><p>使用<a class="reference external" href="https://github.com/jvm-profiling-tools/async-profiler">async-profiler</a>生成火焰图</p>
+</div></blockquote>
+<p><code class="docutils literal notranslate"><span class="pre">profiler</span></code> 命令支持生成应用热点的火焰图。本质上是通过不断的采样，然后把收集到的采样结果生成火焰图。</p>
+<p><code class="docutils literal notranslate"><span class="pre">profiler</span></code> 命令基本运行结构是 <code class="docutils literal notranslate"><span class="pre">profiler</span> <span class="pre">action</span> <span class="pre">[actionArg]</span></code></p>
+<div class="section" id="id1">
+<h2>启动profiler<a class="headerlink" href="#id1" title="永久链接至标题">¶</a></h2>
+<div class="highlight-default notranslate"><pre class="literal-block">$ profiler start
+Started [cpu] profiling</pre>
+</div>
+<blockquote>
+<div><p>默认情况下，生成的是cpu的火焰图，即event为<code class="docutils literal notranslate"><span class="pre">cpu</span></code>。可以用<code class="docutils literal notranslate"><span class="pre">--event</span></code>参数来指定。</p>
+</div></blockquote>
+</div>
+<div class="section" id="sample">
+<h2>获取已采集的sample的数量<a class="headerlink" href="#sample" title="永久链接至标题">¶</a></h2>
+<div class="highlight-default notranslate"><pre class="literal-block">$ profiler getSamples
+23</pre>
+</div>
+</div>
+<div class="section" id="id2">
+<h2>查看profiler状态<a class="headerlink" href="#id2" title="永久链接至标题">¶</a></h2>
+<div class="highlight-bash notranslate"><div class="highlight hljs"><pre class="bash">$ profiler status
+[cpu] profiling is running for 4 seconds</pre></div>
+</div>
+<p>可以查看当前profiler在采样哪种<code class="docutils literal notranslate"><span class="pre">event</span></code>和采样时间。</p>
+</div>
+<div class="section" id="id3">
+<h2>停止profiler<a class="headerlink" href="#id3" title="永久链接至标题">¶</a></h2>
+<div class="section" id="svg">
+<h3>生成svg格式结果<a class="headerlink" href="#svg" title="永久链接至标题">¶</a></h3>
+<div class="highlight-default notranslate"><pre class="literal-block">$ profiler stop
+profiler output file: /tmp/demo/arthas-output/20191125-135546.svg
+OK</pre>
+</div>
+<p>默认情况下，生成的结果保存到应用的<code class="docutils literal notranslate"><span class="pre">工作目录</span></code>下的<code class="docutils literal notranslate"><span class="pre">arthas-output</span></code>目录。可以通过 <code class="docutils literal notranslate"><span class="pre">--file</span></code>参数来指定输出结果路径。比如：</p>
+<div class="highlight-bash notranslate"><div class="highlight hljs"><pre class="bash">$ profiler stop --file /tmp/output.svg
+profiler output file: /tmp/output.svg
+OK</pre></div>
+</div>
+</div>
+<div class="section" id="html">
+<h3>生成html格式结果<a class="headerlink" href="#html" title="永久链接至标题">¶</a></h3>
+<p>默认情况下，结果文件是<code class="docutils literal notranslate"><span class="pre">svg</span></code>格式，如果想生成<code class="docutils literal notranslate"><span class="pre">html</span></code>格式，可以用<code class="docutils literal notranslate"><span class="pre">--format</span></code>参数指定：</p>
+<div class="highlight-bash notranslate"><div class="highlight hljs"><pre class="bash">$ profiler stop --format html
+profiler output file: /tmp/test/arthas-output/20191125-143329.html
+OK</pre></div>
+</div>
+<p>或者在<code class="docutils literal notranslate"><span class="pre">--file</span></code>参数里用文件名指名格式。比如<code class="docutils literal notranslate"><span class="pre">--file</span> <span class="pre">/tmp/result.html</span></code> 。</p>
+</div>
+</div>
+<div class="section" id="arthas-outputprofiler">
+<h2>通过浏览器查看arthas-output下面的profiler结果<a class="headerlink" href="#arthas-outputprofiler" title="永久链接至标题">¶</a></h2>
+<p>默认情况下，arthas使用3658端口，则可以打开： <a class="reference external" href="http://localhost:3658/arthas-output/">http://localhost:3658/arthas-output/</a> 查看到<code class="docutils literal notranslate"><span class="pre">arthas-output</span></code>目录下面的profiler结果：</p>
+<p><img alt="_images/arthas-output.jpg" src="_images/arthas-output.jpg" /></p>
+<p>点击可以查看具体的结果：</p>
+<p><img alt="_images/arthas-output-svg.jpg" src="_images/arthas-output-svg.jpg" /></p>
+<blockquote>
+<div><p>如果是chrome浏览器，可能需要多次刷新。</p>
+</div></blockquote>
+</div>
+<div class="section" id="profilerevents">
+<h2>profiler支持的events<a class="headerlink" href="#profilerevents" title="永久链接至标题">¶</a></h2>
+<p>在不同的平台，不同的OS下面，支持的events各有不同。比如在macos下面：</p>
+<div class="highlight-bash notranslate"><div class="highlight hljs"><pre class="bash">$ profiler list
+Basic events:
+  cpu
+  alloc
+  lock
+  wall
+  itimer</pre></div>
+</div>
+<p>在linux下面</p>
+<div class="highlight-bash notranslate"><div class="highlight hljs"><pre class="bash">$ profiler list
+Basic events:
+  cpu
+  alloc
+  lock
+  wall
+  itimer
+Perf events:
+  page-faults
+  context-switches
+  cycles
+  instructions
+  cache-references
+  cache-misses
+  branches
+  branch-misses
+  bus-cycles
+  L1-dcache-load-misses
+  LLC-load-misses
+  dTLB-load-misses
+  mem:breakpoint
+  trace:tracepoint</pre></div>
+</div>
+<p>如果遇到OS本身的权限/配置问题，然后缺少部分event，可以参考<code class="docutils literal notranslate"><span class="pre">async-profiler</span></code>本身文档：<a class="reference external" href="https://github.com/jvm-profiling-tools/async-profiler">async-profiler</a></p>
+<p>可以用<code class="docutils literal notranslate"><span class="pre">--event</span></code>参数指定要采样的事件，比如对<code class="docutils literal notranslate"><span class="pre">alloc</span></code>事件进入采样：</p>
+<div class="highlight-bash notranslate"><div class="highlight hljs"><pre class="bash">$ profiler start --event alloc</pre></div>
+</div>
+</div>
+<div class="section" id="id4">
+<h2>恢复采样<a class="headerlink" href="#id4" title="永久链接至标题">¶</a></h2>
+<div class="highlight-bash notranslate"><div class="highlight hljs"><pre class="bash">$ profiler resume
+Started [cpu] profiling</pre></div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">start</span></code>和<code class="docutils literal notranslate"><span class="pre">resume</span></code>的区别是：<code class="docutils literal notranslate"><span class="pre">start</span></code>是新开始采样，<code class="docutils literal notranslate"><span class="pre">resume</span></code>会保留上次<code class="docutils literal notranslate"><span class="pre">stop</span></code>时的数据。</p>
+<p>通过执行<code class="docutils literal notranslate"><span class="pre">profiler</span> <span class="pre">getSamples</span></code>可以查看samples的数量来验证。</p>
+</div>
+<div class="section" id="execute">
+<h2>使用<code class="docutils literal notranslate"><span class="pre">execute</span></code>来执行复杂的命令<a class="headerlink" href="#execute" title="永久链接至标题">¶</a></h2>
+<p>比如开始采样：</p>
+<div class="highlight-bash notranslate"><div class="highlight hljs"><pre class="bash">profiler execute &#x27;start&#x27;</pre></div>
+</div>
+<p>停止采样，并保存到指定文件里：</p>
+<div class="highlight-bash notranslate"><div class="highlight hljs"><pre class="bash">profiler execute &#x27;stop,file=/tmp/result.svg&#x27;</pre></div>
+</div>
+<p>具体的格式参考： <a class="reference external" href="https://github.com/jvm-profiling-tools/async-profiler/blob/v1.6/src/arguments.cpp#L34">arguments.cpp#L34</a></p>
+</div>
+<div class="section" id="action">
+<h2>查看所有支持的action<a class="headerlink" href="#action" title="永久链接至标题">¶</a></h2>
+<div class="highlight-bash notranslate"><div class="highlight hljs"><pre class="bash">$ profiler actions
+Supported Actions: [resume, dumpCollapsed, getSamples, start, list, execute, version, stop, load, dumpFlat, actions, dumpTraces, status]</pre></div>
+</div>
+</div>
+<div class="section" id="id5">
+<h2>查看版本<a class="headerlink" href="#id5" title="永久链接至标题">¶</a></h2>
+<div class="highlight-bash notranslate"><div class="highlight hljs"><pre class="bash">$ profiler version
+Async-profiler 1.6 built on Sep  9 2019
+Copyright 2019 Andrei Pangin</pre></div>
+</div>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="cat.html" class="btn btn-neutral float-right" title="cat" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="tt.html" class="btn btn-neutral float-left" title="tt" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2018-2019, Alibaba Middleware Group, and contributors
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+  
+<div class="github-fork-ribbon-wrapper right">
+  <div class="github-fork-ribbon">
+    <a href="https://github.com/alibaba/arthas" target="_blank">Fork me at GitHub</a>
+  </div>
+</div>
+
+<script type="text/javascript" src="_static/add_badges.js"></script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.13.1/highlight.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlightjs-line-numbers.js/2.5.0/highlightjs-line-numbers.min.js"></script>
+<script>
+  document.querySelectorAll('div.hljs > pre').forEach(function(block) {
+    hljs.highlightBlock(block);
+    hljs.lineNumbersBlock(block);
+  });
+</script>
+
+<script>
+  var _hmt = _hmt || [];
+  (function() {
+    var hm = document.createElement("script");
+    hm.src = "https://hm.baidu.com/hm.js?d5c5e25b100f0eb51a4c35c8a86ea9b4";
+    var s = document.getElementsByTagName("script")[0]; 
+    s.parentNode.insertBefore(hm, s);
+  })();
+</script>  
+ 
+
+
+</body>
+</html>

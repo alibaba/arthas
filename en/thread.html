@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>thread &mdash; Arthas 3.1.4 documentation</title>
+  <title>thread &mdash; Arthas 3.1.5 documentation</title>
   
 
   
@@ -67,7 +67,7 @@
             
             
               <div class="version">
-                3.1.4
+                3.1.5
               </div>
             
           
@@ -107,6 +107,7 @@
 <li class="toctree-l4"><a class="reference internal" href="#thread-id-show-the-running-stack-for-the-target-thread">thread id, show the running stack for the target thread</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#thread-b-locate-the-thread-bocking-the-others">thread -b, locate the thread bocking the others</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#thread-i-specify-the-sampling-interval">thread -i, specify the sampling interval</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#thread-state-view-the-special-state-theads">thread –state , view the special state theads</a></li>
 </ul>
 </li>
 </ul>
@@ -132,7 +133,9 @@
 <li class="toctree-l2"><a class="reference internal" href="trace.html">trace</a></li>
 <li class="toctree-l2"><a class="reference internal" href="stack.html">stack</a></li>
 <li class="toctree-l2"><a class="reference internal" href="tt.html">tt</a></li>
+<li class="toctree-l2"><a class="reference internal" href="profiler.html">profiler</a></li>
 <li class="toctree-l2"><a class="reference internal" href="cat.html">cat</a></li>
+<li class="toctree-l2"><a class="reference internal" href="grep.html">grep</a></li>
 <li class="toctree-l2"><a class="reference internal" href="pwd.html">pwd</a></li>
 <li class="toctree-l2"><a class="reference internal" href="options.html">options</a></li>
 <li class="toctree-l2"><a class="reference internal" href="commands.html#basic-arthas-commands">Basic Arthas Commands</a></li>
@@ -382,6 +385,18 @@ ID         NAME                             GROUP                 PRIORITY   STA
     Number of locked synchronizers = 1
     - java.util.concurrent.ThreadPoolExecutor$Worker@546aeec1
 ...</pre></div>
+</div>
+</div>
+<div class="section" id="thread-state-view-the-special-state-theads">
+<h3>thread –state , view the special state theads<a class="headerlink" href="#thread-state-view-the-special-state-theads" title="Permalink to this headline">¶</a></h3>
+<div class="highlight-bash notranslate"><div class="highlight hljs"><pre class="bash">[arthas@28114]$ thread --state WAITING
+Threads Total: 15, NEW: 0, RUNNABLE: 7, BLOCKED: 0, WAITING: 5, TIMED_WAITING: 3, TERMINATED: 0
+ID       NAME                      GROUP            PRIORITY STATE   %CPU     TIME     INTERRU DAEMON
+198      AsyncAppender-Worker-arth system           9        WAITING 0        0:0      false   true
+3        Finalizer                 system           8        WAITING 0        0:0      false   true
+14       RMI Scheduler(0)          system           9        WAITING 0        0:0      false   true
+2        Reference Handler         system           10       WAITING 0        0:0      false   true
+204      pool-8-thread-1           system           5        WAITING 0        0:0      false   false</pre></div>
 </div>
 </div>
 </div>

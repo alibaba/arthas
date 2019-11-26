@@ -29,6 +29,8 @@
 * [stack](stack.md)
 * [tt](tt.md)
 
+* [profiler](profiler.md)
+
 * [cat](cat.md)
 * [grep](grep.md)
 * [pwd](pwd.md)

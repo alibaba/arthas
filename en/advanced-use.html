@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Advanced Usage &mdash; Arthas 3.1.4 documentation</title>
+  <title>Advanced Usage &mdash; Arthas 3.1.5 documentation</title>
   
 
   
@@ -67,7 +67,7 @@
             
             
               <div class="version">
-                3.1.4
+                3.1.5
               </div>
             
           
@@ -102,6 +102,7 @@
 <li class="toctree-l2"><a class="reference internal" href="#class-classloader">class/classloader</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#monitor-watch-trace-related">monitor/watch/trace - related</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#options">options</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#profiler-frame-graph">profiler/frame graph</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#pipe">pipe</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#async-in-background">async in background</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#web-console">Web Console</a><ul>
@@ -200,13 +201,14 @@
 <li><p>help - display Arthas help</p></li>
 <li><p>cls - clear the screen</p></li>
 <li><p><a class="reference internal" href="cat.html"><span class="doc">cat</span></a> - Concatenate and print files</p></li>
+<li><p>[grep]](grep.md) - Pattern searcher</p></li>
 <li><p><a class="reference internal" href="pwd.html"><span class="doc">pwd</span></a> - Return working directory name</p></li>
 <li><p>session - display current session information</p></li>
-<li><p><a class="reference internal" href="reset.html"><span class="doc">reset</span></a> - reset all the enhanced classes. All enhanced classes will also be reset when Arthas server is closed by <code class="docutils literal notranslate"><span class="pre">shutdown</span></code></p></li>
+<li><p><a class="reference internal" href="reset.html"><span class="doc">reset</span></a> - reset all the enhanced classes. All enhanced classes will also be reset when Arthas server is closed by <code class="docutils literal notranslate"><span class="pre">stop/shutdown</span></code></p></li>
 <li><p>version - print the version for the Arthas attached to the current Java process</p></li>
 <li><p>history - view command history</p></li>
 <li><p>quit/exit - exit the current Arthas session, without effecting other sessions</p></li>
-<li><p>shutdown - terminate the Arthas server, all Arthas sessions will be destroyed</p></li>
+<li><p>stop/shutdown - terminate the Arthas server, all Arthas sessions will be destroyed</p></li>
 <li><p><a class="reference internal" href="keymap.html"><span class="doc">keymap</span></a> - keymap for Arthas keyboard shortcut</p></li>
 </ul>
 </div>
@@ -241,7 +243,7 @@
 <div class="section" id="monitor-watch-trace-related">
 <h2>monitor/watch/trace - related<a class="headerlink" href="#monitor-watch-trace-related" title="Permalink to this headline">¶</a></h2>
 <blockquote>
-<div><p><strong>Attention</strong>: commands here are taking advantage of byte-code-injection, which means we are injecting some <a class="reference external" href="https://en.wikipedia.org/wiki/Aspect-oriented_programming">aspects</a> into the current classes for monitoring and statistics purpose. Therefore when use it for online troubleshooting in your production environment, you’d better <strong>explicitly specify</strong> classes/methods/criteria, and remember to remove the injected code by <code class="docutils literal notranslate"><span class="pre">shutdown</span></code> or <code class="docutils literal notranslate"><span class="pre">reset</span></code>.</p>
+<div><p><strong>Attention</strong>: commands here are taking advantage of byte-code-injection, which means we are injecting some <a class="reference external" href="https://en.wikipedia.org/wiki/Aspect-oriented_programming">aspects</a> into the current classes for monitoring and statistics purpose. Therefore when use it for online troubleshooting in your production environment, you’d better <strong>explicitly specify</strong> classes/methods/criteria, and remember to remove the injected code by <code class="docutils literal notranslate"><span class="pre">stop</span></code> or <code class="docutils literal notranslate"><span class="pre">reset</span></code>.</p>
 </div></blockquote>
 <ul class="simple">
 <li><p><a class="reference internal" href="monitor.html"><span class="doc">monitor</span></a> - monitor method execution statistics</p></li>
@@ -255,6 +257,12 @@
 <h2>options<a class="headerlink" href="#options" title="Permalink to this headline">¶</a></h2>
 <ul class="simple">
 <li><p><a class="reference internal" href="options.html"><span class="doc">options</span></a> - check/set Arthas global options</p></li>
+</ul>
+</div>
+<div class="section" id="profiler-frame-graph">
+<h2>profiler/frame graph<a class="headerlink" href="#profiler-frame-graph" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li><p><a class="reference internal" href="profiler.html"><span class="doc">profiler</span></a> - use <a class="reference external" href="https://github.com/jvm-profiling-tools/async-profiler">async-profiler</a> to generate frame graph</p></li>
 </ul>
 </div>
 <div class="section" id="pipe">

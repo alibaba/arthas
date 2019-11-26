@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>redefine &mdash; Arthas 3.1.4 documentation</title>
+  <title>redefine &mdash; Arthas 3.1.5 documentation</title>
   
 
   
@@ -67,7 +67,7 @@
             
             
               <div class="version">
-                3.1.4
+                3.1.5
               </div>
             
           
@@ -128,7 +128,9 @@
 <li class="toctree-l2"><a class="reference internal" href="trace.html">trace</a></li>
 <li class="toctree-l2"><a class="reference internal" href="stack.html">stack</a></li>
 <li class="toctree-l2"><a class="reference internal" href="tt.html">tt</a></li>
+<li class="toctree-l2"><a class="reference internal" href="profiler.html">profiler</a></li>
 <li class="toctree-l2"><a class="reference internal" href="cat.html">cat</a></li>
+<li class="toctree-l2"><a class="reference internal" href="grep.html">grep</a></li>
 <li class="toctree-l2"><a class="reference internal" href="pwd.html">pwd</a></li>
 <li class="toctree-l2"><a class="reference internal" href="options.html">options</a></li>
 <li class="toctree-l2"><a class="reference internal" href="commands.html#basic-arthas-commands">Basic Arthas Commands</a></li>
@@ -220,6 +222,10 @@
 </div></blockquote>
 <blockquote>
 <div><p>The <code class="docutils literal notranslate"><span class="pre">reset</span></code> command is not valid for classes that have been processed by <code class="docutils literal notranslate"><span class="pre">redefine</span></code>. If you want to reset, you need <code class="docutils literal notranslate"><span class="pre">redefine</span></code> the original bytecode.</p>
+</div></blockquote>
+<blockquote>
+<div><p>The <code class="docutils literal notranslate"><span class="pre">redefine</span></code> command will conflict with the <code class="docutils literal notranslate"><span class="pre">jad</span></code>/<code class="docutils literal notranslate"><span class="pre">watch</span></code>/<code class="docutils literal notranslate"><span class="pre">trace</span></code>/<code class="docutils literal notranslate"><span class="pre">monitor</span></code>/<code class="docutils literal notranslate"><span class="pre">tt</span></code> commands. After executing <code class="docutils literal notranslate"><span class="pre">redefine</span></code>, if you execute the above mentioned command, the bytecode of the class will be reset.
+The reason is that in the JDK <code class="docutils literal notranslate"><span class="pre">redefine</span></code> and <code class="docutils literal notranslate"><span class="pre">retransform</span></code> are different mechanisms. When two mechanisms are both used to update the bytecode, only the last modified will take effect.</p>
 </div></blockquote>
 <div class="section" id="options">
 <h2>Options<a class="headerlink" href="#options" title="Permalink to this headline">¶</a></h2>
