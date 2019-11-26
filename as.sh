@@ -8,10 +8,10 @@
 
 # program : Arthas
 #  author : Core Engine @ Taobao.com
-#    date : 2019-09-19
+#    date : 2019-11-26
 
 # current arthas script version
-ARTHAS_SCRIPT_VERSION=3.1.4
+ARTHAS_SCRIPT_VERSION=3.1.5
 
 # SYNOPSIS
 #   rreadlink <fileOrDirPath>
@@ -440,7 +440,7 @@ EXAMPLES:
   ./as.sh --stat-url 'http://192.168.10.11:8080/api/stat'
   ./as.sh -c 'sysprop; thread' <pid>
   ./as.sh -f batch.as <pid>
-  ./as.sh --use-version 3.1.4
+  ./as.sh --use-version 3.1.5
   ./as.sh --session-timeout 3600
   ./as.sh --attach-only
   ./as.sh --repo-mirror aliyun --use-http
@@ -681,13 +681,13 @@ parse_arguments()
         # check the process already using telnet port if equals to target pid
         if [[ ($telnetPortPid) && ($TARGET_PID != $telnetPortPid) ]]; then
             echo "[ERROR] Target process $TARGET_PID is not the process using port $TELNET_PORT, you will connect to an unexpected process."
-            echo "[ERROR] 1. Try to restart as.sh, select process $telnetPortPid, shutdown it first with running the 'shutdown' command."
+            echo "[ERROR] 1. Try to restart as.sh, select process $telnetPortPid, shutdown it first with running the 'stop' command."
             echo "[ERROR] 2. Try to use different telnet port, for example: as.sh --telnet-port 9998 --http-port -1"
             exit 1
         fi
         if [[ ($httpPortPid) && ($TARGET_PID != $httpPortPid) ]]; then
             echo "Target process $TARGET_PID is not the process using port $HTTP_PORT, you will connect to an unexpected process."
-            echo "1. Try to restart as.sh, select process $httpPortPid, shutdown it first with running the 'shutdown' command."
+            echo "1. Try to restart as.sh, select process $httpPortPid, shutdown it first with running the 'stop' command."
             echo "2. Try to use different http port, for example: as.sh --telnet-port 9998 --http-port 9999"
             exit 1
         fi
