@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>进阶使用 &mdash; Arthas 3.1.4 文档</title>
+  <title>进阶使用 &mdash; Arthas 3.1.5 文档</title>
   
 
   
@@ -68,7 +68,7 @@
             
             
               <div class="version">
-                3.1.4
+                3.1.5
               </div>
             
           
@@ -93,7 +93,7 @@
             
             
               <ul class="current">
-<li class="toctree-l1"><a class="reference external" href="https://www.oschina.net/p/arthas">最受欢迎开源中国软件评选</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://www.oschina.net/p/arthas">开源软件评选/请大家投票支持</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://alibaba.github.io/arthas/en/">English Docs</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://alibaba.github.io/arthas/arthas-tutorials?language=cn">在线教程(推荐)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="install-detail.html">安装</a></li>
@@ -104,6 +104,7 @@
 <li class="toctree-l2"><a class="reference internal" href="#jvm">jvm相关</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#class-classloader">class/classloader相关</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#monitor-watch-trace">monitor/watch/trace相关</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#profiler">profiler/火焰图</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#options">options</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#id3">管道</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#id4">后台异步任务</a></li>
@@ -254,6 +255,12 @@
 <li><p><a class="reference internal" href="trace.html"><span class="doc">trace</span></a>——方法内部调用路径，并输出方法路径上的每个节点上耗时</p></li>
 <li><p><a class="reference internal" href="stack.html"><span class="doc">stack</span></a>——输出当前方法被调用的调用路径</p></li>
 <li><p><a class="reference internal" href="tt.html"><span class="doc">tt</span></a>——方法执行数据的时空隧道，记录下指定方法每次调用的入参和返回信息，并能对这些不同的时间下调用进行观测</p></li>
+</ul>
+</div>
+<div class="section" id="profiler">
+<h2>profiler/火焰图<a class="headerlink" href="#profiler" title="永久链接至标题">¶</a></h2>
+<ul class="simple">
+<li><p><a class="reference internal" href="profiler.html"><span class="doc">profiler</span></a>–使用<a class="reference external" href="https://github.com/jvm-profiling-tools/async-profiler">async-profiler</a>对应用采样，生成火焰图</p></li>
 </ul>
 </div>
 <div class="section" id="options">
