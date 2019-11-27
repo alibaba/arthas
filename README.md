@@ -485,6 +485,8 @@ Welcome to register the company name in this issue: https://github.com/alibaba/a
 ![安居客](static/anjuke.jpg)
 ![qunar](static/qunar.png)
 ![ctrip](static/ctrip.png)
+![Tuniu](static/tuniu.png)
+
 ### Derivative Projects
 
 * [Bistoury: A project that integrates Arthas](https://github.com/qunarcorp/bistoury)
