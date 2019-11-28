@@ -24,6 +24,7 @@ import java.util.List;
  *
  * @author vlinux on 15/5/27.
  */
+// @formatter:off
 @Name("trace")
 @Summary("Trace the execution time of specified method invocation.")
 @Description(value = Constants.EXPRESS_DESCRIPTION + Constants.EXAMPLE +
@@ -33,7 +34,9 @@ import java.util.List;
         "  trace *StringUtils isBlank '#cost>100'\n" +
         "  trace -E org\\\\.apache\\\\.commons\\\\.lang\\\\.StringUtils isBlank\n" +
         "  trace -E com.test.ClassA|org.test.ClassB method1|method2|method3\n" +
+        "  trace demo.MathGame run -n 5\n" +
         Constants.WIKI + Constants.WIKI_HOME + "trace")
+//@formatter:on
 public class TraceCommand extends EnhancerCommand {
 
     private String classPattern;

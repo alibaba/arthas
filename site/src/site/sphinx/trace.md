@@ -54,6 +54,30 @@ Affect(class-cnt:1 , method-cnt:1) cost in 42 ms.
         `---[0.170316ms] demo.MathGame:print()
 ```
 
+#### trace次数限制
+
+如果方法调用的次数很多，那么可以用`-n`参数指定捕捉结果的次数。比如下面的例子里，捕捉到一次调用就退出命令。
+
+```bash
+$ trace demo.MathGame run -n 1
+Press Q or Ctrl+C to abort.
+Affect(class-cnt:1 , method-cnt:1) cost in 35 ms.
+`---ts=2019-11-28 15:54:28;thread_name=main;id=1;is_daemon=false;priority=5;TCCL=sun.misc.Launcher$AppClassLoader@3d4eac69
+    `---[0.866311ms] demo.MathGame:run()
+        +---[0.044001ms] java.util.Random:nextInt() #23
+        +---[0.069037ms] demo.MathGame:primeFactors() #24 [throws Exception]
+        +---[0.003227ms] java.lang.StringBuilder:<init>() #28
+        +---[0.006155ms] java.lang.Integer:valueOf() #28
+        +---[0.071335ms] java.lang.String:format() #28
+        +---[min=0.002142ms,max=0.002237ms,total=0.004379ms,count=2] java.lang.StringBuilder:append() #28
+        +---[0.011072ms] java.lang.Exception:getMessage() #28
+        +---[0.006048ms] java.lang.StringBuilder:toString() #28
+        `---[0.084138ms] java.io.PrintStream:println() #28
+
+Command execution times exceed limit: 1, so command will exit. You can set it with -n option.
+```
+
+
 #### 过滤掉jdk的函数
 
 ```bash
