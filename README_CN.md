@@ -360,7 +360,7 @@ $ classloader
 
 ![web console](site/src/site/sphinx/_static/web-console-local.png)
 
-#### Profiler/FrameGraph/火焰图
+#### Profiler/FlameGraph/火焰图
 
 * https://alibaba.github.io/arthas/profiler
 
