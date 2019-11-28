@@ -37,7 +37,7 @@ Arthas was built to solve these issues. A developer can troubleshoot your produc
 * Monitor system metrics, thread states and cpu usage, gc statistics, and etc.
 * Supports command line interactive mode, with auto-complete feature enabled.
 * Supports telnet and websocket, which enables both local and remote diagnostics with command line and browsers.
-* Supports profiler/Frame Graph
+* Supports profiler/Flame Graph
 * Supports JDK 6+.
 * Supports Linux/Mac/Windows.
 
@@ -367,7 +367,7 @@ $ classloader
 ![web console](site/src/site/sphinx/_static/web-console-local.png)
 
 
-#### Profiler/FrameGraph
+#### Profiler/FlameGraph
 
 * https://alibaba.github.io/arthas/en/profiler
 
