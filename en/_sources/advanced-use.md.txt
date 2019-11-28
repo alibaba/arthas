@@ -55,9 +55,9 @@ Advanced Usage
 * [options](options.md) - check/set Arthas global options
 
 
-## profiler/frame graph
+## profiler/flame graph
 
-* [profiler](profiler.md) - use [async-profiler](https://github.com/jvm-profiling-tools/async-profiler) to generate frame graph
+* [profiler](profiler.md) - use [async-profiler](https://github.com/jvm-profiling-tools/async-profiler) to generate flame graph
 
 ## pipe
 
