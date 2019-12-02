@@ -266,6 +266,11 @@ public class ProfilerCommand extends AnnotatedCommand {
             AsyncProfiler asyncProfiler = this.profilerInstance();
 
             if (ProfilerAction.execute.equals(profilerAction)) {
+                if (actionArg == null) {
+                    process.write("actionArg can not be empty.\n");
+                    status = 1;
+                    return;
+                }
                 String result = execute(asyncProfiler, this.actionArg);
                 process.write(result);
             } else if (ProfilerAction.start.equals(profilerAction)) {
