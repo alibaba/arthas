@@ -37,10 +37,16 @@ import static java.lang.String.format;
  *
  * @author vlinux on 15/6/6.
  */
+// @formatter:off
 @Name("options")
 @Summary("View and change various Arthas options")
-@Description(Constants.EXAMPLE + "options dump true\n"+ "options unsafe true\n" +
+@Description(Constants.EXAMPLE +
+        "options       # list all options\n" +
+        "options json-format true\n" +
+        "options dump true\n" +
+        "options unsafe true\n" +
         Constants.WIKI + Constants.WIKI_HOME + "options")
+//@formatter:on
 public class OptionsCommand extends AnnotatedCommand {
     private String optionName;
     private String optionValue;
