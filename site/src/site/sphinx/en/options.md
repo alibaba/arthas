@@ -12,7 +12,7 @@ options
 | disable-sub-class  | false | whether to enable matching child classes. The default value is `true`. If exact match is desire, turn off this flag|
 | debug-for-asm      | false | whether to enable ASM debugging log|
 | save-result        | false | whether to save execution result. All execution results will be saved to `~/logs/arthas-cache/result.log` when it's turned on|
-| job-timeout        | 1d    | default timeout for background jobs. Background job will be terminated once it's timed out (i.e. 1d, 2h, 3m, 25s)|
+| job-timeout        | 1d    | default timeout for background jobs. Background job will be terminated once it's timed out (i.e. 1d, 2h, 3m, 25s)| print-parent-fields        | true    | This option enables print files in parent class, default value true.|
 
 
 
@@ -33,7 +33,7 @@ $ options
  1      bool  batch-re-tr  true   Option to support   This options enables to reTransform c
         ean   ansform             batch reTransform   lasses with batch mode.
                                   Class
- 2      bool  json-format  true   Option to support   This option enables to format object
+ 2      bool  json-format  false  Option to support   This option enables to format object
         ean                       JSON format of obj  output with JSON when -x option selec
                                   ect output          ted.
  1      bool  disable-sub  false  Option to control   This option disable to include sub cl
@@ -51,6 +51,9 @@ $ options
         ng                        out                 nit can be d, h, m, s for day, hour,
                                                       minute, second. 1d is one day in defa
                                                       ult
+ 1      bool  print-paren  true   Option to print al  This option enables print files in pa
+        ean   t-fields            l fileds in parent  rent class, default value true.
+                                   class
 ```
 
 

@@ -13,7 +13,7 @@ options
 | debug-for-asm      | false | 打印ASM相关的调试信息                             |
 | save-result        | false | 是否打开执行结果存日志功能，打开之后所有命令的运行结果都将保存到`~/logs/arthas-cache/result.log`中 |
 | job-timeout        | 1d    | 异步后台任务的默认超时时间，超过这个时间，任务自动停止；比如设置 1d, 2h, 3m, 25s，分别代表天、小时、分、秒 |
-
+| print-parent-fields       | true    | 是否打印在parent class里的filed |
 
 ### 查看所有的options
 
@@ -32,7 +32,7 @@ $ options
  1      bool  batch-re-tr  true   Option to support   This options enables to reTransform c
         ean   ansform             batch reTransform   lasses with batch mode.
                                   Class
- 2      bool  json-format  true   Option to support   This option enables to format object
+ 2      bool  json-format  false  Option to support   This option enables to format object
         ean                       JSON format of obj  output with JSON when -x option selec
                                   ect output          ted.
  1      bool  disable-sub  false  Option to control   This option disable to include sub cl
@@ -50,6 +50,9 @@ $ options
         ng                        out                 nit can be d, h, m, s for day, hour,
                                                       minute, second. 1d is one day in defa
                                                       ult
+ 1      bool  print-paren  true   Option to print al  This option enables print files in pa
+        ean   t-fields            l fileds in parent  rent class, default value true.
+                                   class
 ```
 
 
