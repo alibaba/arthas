@@ -1,4 +1,4 @@
-package com.taobao.arthas.core.shell.term.impl.httptelnet;
+package com.taobao.arthas.core.shell.term.impl.http;
 
 import java.io.File;
 import java.io.FileInputStream;

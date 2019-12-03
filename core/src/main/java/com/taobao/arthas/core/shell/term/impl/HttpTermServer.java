@@ -4,10 +4,10 @@ import com.taobao.arthas.core.shell.future.Future;
 import com.taobao.arthas.core.shell.handlers.Handler;
 import com.taobao.arthas.core.shell.term.Term;
 import com.taobao.arthas.core.shell.term.TermServer;
+import com.taobao.arthas.core.shell.term.impl.http.NettyWebsocketTtyBootstrap;
 import com.taobao.arthas.core.util.LogUtil;
 import com.taobao.middleware.logger.Logger;
 import io.termd.core.function.Consumer;
-import io.termd.core.http.netty.NettyWebsocketTtyBootstrap;
 import io.termd.core.tty.TtyConnection;
 
 import java.util.concurrent.TimeUnit;

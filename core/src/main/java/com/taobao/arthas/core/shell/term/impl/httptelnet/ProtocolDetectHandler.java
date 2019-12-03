@@ -3,6 +3,9 @@ package com.taobao.arthas.core.shell.term.impl.httptelnet;
 import java.io.File;
 import java.util.concurrent.TimeUnit;
 
+import com.taobao.arthas.core.shell.term.impl.http.HttpRequestHandler;
+import com.taobao.arthas.core.shell.term.impl.http.TtyWebSocketFrameHandler;
+
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
