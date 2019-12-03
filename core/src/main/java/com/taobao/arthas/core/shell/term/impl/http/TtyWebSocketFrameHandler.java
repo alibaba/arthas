@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.taobao.arthas.core.shell.term.impl.httptelnet;
+package com.taobao.arthas.core.shell.term.impl.http;
 
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;

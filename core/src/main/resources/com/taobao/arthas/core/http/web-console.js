@@ -12,6 +12,9 @@ $(function () {
     if (port != '' && port != null) {
         $('#port').val(port);
     }
+    if (port == null && location.port == "8563") {
+        $('#port').val(8563);
+    }
 
     startConnect(true);
 });
