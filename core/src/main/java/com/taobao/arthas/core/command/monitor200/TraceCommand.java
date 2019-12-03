@@ -36,6 +36,7 @@ import java.util.List;
         "  trace -E org\\\\.apache\\\\.commons\\\\.lang\\\\.StringUtils isBlank\n" +
         "  trace -E com.test.ClassA|org.test.ClassB method1|method2|method3\n" +
         "  trace demo.MathGame run -n 5\n" +
+        "  trace demo.MathGame run --skipJDKMethod false\n" +
         Constants.WIKI + Constants.WIKI_HOME + "trace")
 //@formatter:on
 public class TraceCommand extends EnhancerCommand {
