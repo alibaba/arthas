@@ -56,7 +56,7 @@ public class ClassUtils {
                 .row(label("classLoaderHash").style(Decoration.bold.bold()), label(StringUtils.classLoaderHash(clazz)));
 
         if (isPrintField) {
-            table.row(label("fields"), TypeRenderUtils.drawField(clazz, expand));
+            table.row(label("fields").style(Decoration.bold.bold()), TypeRenderUtils.drawField(clazz, expand));
         }
         return table;
     }
