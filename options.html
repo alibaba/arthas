@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>options &mdash; Arthas 3.1.5 文档</title>
+  <title>options &mdash; Arthas 3.1.7 文档</title>
   
 
   
@@ -68,7 +68,7 @@
             
             
               <div class="version">
-                3.1.5
+                3.1.7
               </div>
             
           
@@ -129,7 +129,9 @@
 <li class="toctree-l2"><a class="reference internal" href="grep.html">grep</a></li>
 <li class="toctree-l2"><a class="reference internal" href="pwd.html">pwd</a></li>
 <li class="toctree-l2 current"><a class="current reference internal" href="#">options</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#id1">使用说明</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id1">查看所有的options</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#option">获取option的值</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id2">设置指定的option</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="commands.html#arthas">Arthas 基础命令</a></li>
@@ -265,9 +267,66 @@
 <td>1d</td>
 <td>异步后台任务的默认超时时间，超过这个时间，任务自动停止；比如设置 1d, 2h, 3m, 25s，分别代表天、小时、分、秒</td>
 </tr>
+<tr>
+<td>print-parent-fields</td>
+<td>true</td>
+<td>是否打印在parent class里的filed</td>
+</tr>
 </tbody>
 </table><div class="section" id="id1">
-<h2>使用说明<a class="headerlink" href="#id1" title="永久链接至标题">¶</a></h2>
+<h2>查看所有的options<a class="headerlink" href="#id1" title="永久链接至标题">¶</a></h2>
+<div class="highlight-bash notranslate"><div class="highlight hljs"><pre class="bash">$ options
+ LEVEL  TYPE  NAME         VALUE  SUMMARY             DESCRIPTION
+--------------------------------------------------------------------------------------------
+ 0      bool  unsafe       false  Option to support   This option enables to proxy function
+        ean                       system-level class  ality of JVM classes. Due to serious
+                                                      security risk a JVM crash is possibly
+                                                       be introduced. Do not activate it un
+                                                      less you are able to manage.
+ 1      bool  dump         false  Option to dump the  This option enables the enhanced clas
+        ean                        enhanced classes   ses to be dumped to external file for
+                                                       further de-compilation and analysis.
+ 1      bool  batch-re-tr  true   Option to support   This options enables to reTransform c
+        ean   ansform             batch reTransform   lasses with batch mode.
+                                  Class
+ 2      bool  json-format  false  Option to support   This option enables to format object
+        ean                       JSON format of obj  output with JSON when -x option selec
+                                  ect output          ted.
+ 1      bool  disable-sub  false  Option to control   This option disable to include sub cl
+        ean   -class              include sub class   ass when matching class.
+                                  when class matchin
+                                  g
+ 1      bool  debug-for-a  false  Option to print DE  This option enables to print DEBUG me
+        ean   sm                  BUG message if ASM  ssage of ASM for each method invocati
+                                   is involved        on.
+ 1      bool  save-result  false  Option to print co  This option enables to save each comm
+        ean                       mmand&#x27;s result to   and&#x27;s result to log file, which path
+                                  log file            is ${user.home}/logs/arthas-cache/res
+                                                      ult.log.
+ 2      Stri  job-timeout  1d     Option to job time  This option setting job timeout,The u
+        ng                        out                 nit can be d, h, m, s for day, hour,
+                                                      minute, second. 1d is one day in defa
+                                                      ult
+ 1      bool  print-paren  true   Option to print al  This option enables print files in pa
+        ean   t-fields            l fileds in parent  rent class, default value true.
+                                   class</pre></div>
+</div>
+</div>
+<div class="section" id="option">
+<h2>获取option的值<a class="headerlink" href="#option" title="永久链接至标题">¶</a></h2>
+<div class="highlight-default notranslate"><pre class="literal-block">$ options json-format
+ LEVEL  TYPE  NAME         VALUE  SUMMARY             DESCRIPTION
+--------------------------------------------------------------------------------------------
+ 2      bool  json-format  false  Option to support   This option enables to format object
+        ean                       JSON format of obj  output with JSON when -x option selec
+                                  ect output          ted.</pre>
+</div>
+<blockquote>
+<div><p>默认情况下<code class="docutils literal notranslate"><span class="pre">json-format</span></code>为false，如果希望<code class="docutils literal notranslate"><span class="pre">watch</span></code>/<code class="docutils literal notranslate"><span class="pre">tt</span></code>等命令结果以json格式输出，则可以设置<code class="docutils literal notranslate"><span class="pre">json-format</span></code>为true。</p>
+</div></blockquote>
+</div>
+<div class="section" id="id2">
+<h2>设置指定的option<a class="headerlink" href="#id2" title="永久链接至标题">¶</a></h2>
 <p>例如，想打开执行结果存日志功能，输入如下命令即可：</p>
 <div class="highlight-default notranslate"><pre class="literal-block">$ options save-result true                                                                                         
  NAME         BEFORE-VALUE  AFTER-VALUE                                                                            

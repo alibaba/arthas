@@ -13,8 +13,64 @@ options
 | debug-for-asm      | false | 打印ASM相关的调试信息                             |
 | save-result        | false | 是否打开执行结果存日志功能，打开之后所有命令的运行结果都将保存到`~/logs/arthas-cache/result.log`中 |
 | job-timeout        | 1d    | 异步后台任务的默认超时时间，超过这个时间，任务自动停止；比如设置 1d, 2h, 3m, 25s，分别代表天、小时、分、秒 |
+| print-parent-fields       | true    | 是否打印在parent class里的filed |
 
-### 使用说明
+### 查看所有的options
+
+```bash
+$ options
+ LEVEL  TYPE  NAME         VALUE  SUMMARY             DESCRIPTION
+--------------------------------------------------------------------------------------------
+ 0      bool  unsafe       false  Option to support   This option enables to proxy function
+        ean                       system-level class  ality of JVM classes. Due to serious
+                                                      security risk a JVM crash is possibly
+                                                       be introduced. Do not activate it un
+                                                      less you are able to manage.
+ 1      bool  dump         false  Option to dump the  This option enables the enhanced clas
+        ean                        enhanced classes   ses to be dumped to external file for
+                                                       further de-compilation and analysis.
+ 1      bool  batch-re-tr  true   Option to support   This options enables to reTransform c
+        ean   ansform             batch reTransform   lasses with batch mode.
+                                  Class
+ 2      bool  json-format  false  Option to support   This option enables to format object
+        ean                       JSON format of obj  output with JSON when -x option selec
+                                  ect output          ted.
+ 1      bool  disable-sub  false  Option to control   This option disable to include sub cl
+        ean   -class              include sub class   ass when matching class.
+                                  when class matchin
+                                  g
+ 1      bool  debug-for-a  false  Option to print DE  This option enables to print DEBUG me
+        ean   sm                  BUG message if ASM  ssage of ASM for each method invocati
+                                   is involved        on.
+ 1      bool  save-result  false  Option to print co  This option enables to save each comm
+        ean                       mmand's result to   and's result to log file, which path
+                                  log file            is ${user.home}/logs/arthas-cache/res
+                                                      ult.log.
+ 2      Stri  job-timeout  1d     Option to job time  This option setting job timeout,The u
+        ng                        out                 nit can be d, h, m, s for day, hour,
+                                                      minute, second. 1d is one day in defa
+                                                      ult
+ 1      bool  print-paren  true   Option to print al  This option enables print files in pa
+        ean   t-fields            l fileds in parent  rent class, default value true.
+                                   class
+```
+
+
+### 获取option的值
+
+
+```
+$ options json-format
+ LEVEL  TYPE  NAME         VALUE  SUMMARY             DESCRIPTION
+--------------------------------------------------------------------------------------------
+ 2      bool  json-format  false  Option to support   This option enables to format object
+        ean                       JSON format of obj  output with JSON when -x option selec
+                                  ect output          ted.
+```
+
+> 默认情况下`json-format`为false，如果希望`watch`/`tt`等命令结果以json格式输出，则可以设置`json-format`为true。
+
+### 设置指定的option
 
 例如，想打开执行结果存日志功能，输入如下命令即可：
 

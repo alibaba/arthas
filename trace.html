@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>trace &mdash; Arthas 3.1.5 文档</title>
+  <title>trace &mdash; Arthas 3.1.7 文档</title>
   
 
   
@@ -68,7 +68,7 @@
             
             
               <div class="version">
-                3.1.5
+                3.1.7
               </div>
             
           
@@ -128,7 +128,7 @@
 <li class="toctree-l4"><a class="reference internal" href="#demo">启动 Demo</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#id4">trace函数</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#id5">trace次数限制</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#jdk">过滤掉jdk的函数</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#jdk">包含jdk的函数</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#id6">据调用耗时过滤</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#id7">trace多个类或者多个函数</a></li>
 </ul>
@@ -287,13 +287,15 @@
 <div class="section" id="id4">
 <h3>trace函数<a class="headerlink" href="#id4" title="永久链接至标题">¶</a></h3>
 <div class="highlight-bash notranslate"><div class="highlight hljs"><pre class="bash">$ trace demo.MathGame run
-Press Ctrl+C to abort.
-Affect(class-cnt:1 , method-cnt:1) cost in 42 ms.
-`---ts=2018-12-04 00:44:17;thread_name=main;id=1;is_daemon=false;priority=5;TCCL=sun.misc.Launcher$AppClassLoader@3d4eac69
-    `---[10.611029ms] demo.MathGame:run()
-        +---[0.05638ms] java.util.Random:nextInt()
-        +---[10.036885ms] demo.MathGame:primeFactors()
-        `---[0.170316ms] demo.MathGame:print()</pre></div>
+Press Q or Ctrl+C to abort.
+Affect(class-cnt:1 , method-cnt:1) cost in 28 ms.
+`---ts=2019-12-04 00:45:08;thread_name=main;id=1;is_daemon=false;priority=5;TCCL=sun.misc.Launcher$AppClassLoader@3d4eac69
+    `---[0.617465ms] demo.MathGame:run()
+        `---[0.078946ms] demo.MathGame:primeFactors() #24 [throws Exception]
+
+`---ts=2019-12-04 00:45:09;thread_name=main;id=1;is_daemon=false;priority=5;TCCL=sun.misc.Launcher$AppClassLoader@3d4eac69
+    `---[1.276874ms] demo.MathGame:run()
+        `---[0.03752ms] demo.MathGame:primeFactors() #24 [throws Exception]</pre></div>
 </div>
 </div>
 <div class="section" id="id5">
@@ -301,35 +303,48 @@ Affect(class-cnt:1 , method-cnt:1) cost in 42 ms.
 <p>如果方法调用的次数很多，那么可以用<code class="docutils literal notranslate"><span class="pre">-n</span></code>参数指定捕捉结果的次数。比如下面的例子里，捕捉到一次调用就退出命令。</p>
 <div class="highlight-bash notranslate"><div class="highlight hljs"><pre class="bash">$ trace demo.MathGame run -n 1
 Press Q or Ctrl+C to abort.
-Affect(class-cnt:1 , method-cnt:1) cost in 35 ms.
-`---ts=2019-11-28 15:54:28;thread_name=main;id=1;is_daemon=false;priority=5;TCCL=sun.misc.Launcher$AppClassLoader@3d4eac69
-    `---[0.866311ms] demo.MathGame:run()
-        +---[0.044001ms] java.util.Random:nextInt() #23
-        +---[0.069037ms] demo.MathGame:primeFactors() #24 [throws Exception]
-        +---[0.003227ms] java.lang.StringBuilder:&lt;init&gt;() #28
-        +---[0.006155ms] java.lang.Integer:valueOf() #28
-        +---[0.071335ms] java.lang.String:format() #28
-        +---[min=0.002142ms,max=0.002237ms,total=0.004379ms,count=2] java.lang.StringBuilder:append() #28
-        +---[0.011072ms] java.lang.Exception:getMessage() #28
-        +---[0.006048ms] java.lang.StringBuilder:toString() #28
-        `---[0.084138ms] java.io.PrintStream:println() #28
+Affect(class-cnt:1 , method-cnt:1) cost in 20 ms.
+`---ts=2019-12-04 00:45:53;thread_name=main;id=1;is_daemon=false;priority=5;TCCL=sun.misc.Launcher$AppClassLoader@3d4eac69
+    `---[0.549379ms] demo.MathGame:run()
+        +---[0.059839ms] demo.MathGame:primeFactors() #24
+        `---[0.232887ms] demo.MathGame:print() #25
 
 Command execution times exceed limit: 1, so command will exit. You can set it with -n option.</pre></div>
 </div>
 </div>
 <div class="section" id="jdk">
-<h3>过滤掉jdk的函数<a class="headerlink" href="#jdk" title="永久链接至标题">¶</a></h3>
-<div class="highlight-bash notranslate"><div class="highlight hljs"><pre class="bash">$ trace -j  demo.MathGame run
-Press Ctrl+C to abort.
-Affect(class-cnt:1 , method-cnt:1) cost in 31 ms.
-`---ts=2018-12-04 01:09:14;thread_name=main;id=1;is_daemon=false;priority=5;TCCL=sun.misc.Launcher$AppClassLoader@3d4eac69
-    `---[5.190646ms] demo.MathGame:run()
-        +---[4.465779ms] demo.MathGame:primeFactors()
-        `---[0.375324ms] demo.MathGame:print()</pre></div>
-</div>
+<h3>包含jdk的函数<a class="headerlink" href="#jdk" title="永久链接至标题">¶</a></h3>
 <ul class="simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">-j</span></code>: jdkMethodSkip, skip jdk method trace</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--skipJDKMethod</span> <span class="pre">&lt;value&gt;</span> </code>   skip jdk method trace, default value true.</p></li>
 </ul>
+<p>默认情况下，trace不会包含jdk里的函数调用，如果希望trace jdk里的函数，需要显式设置<code class="docutils literal notranslate"><span class="pre">--skipJDKMethod</span> <span class="pre">false</span></code>。</p>
+<div class="highlight-bash notranslate"><div class="highlight hljs"><pre class="bash">$ trace --skipJDKMethod false demo.MathGame run
+Press Q or Ctrl+C to abort.
+Affect(class-cnt:1 , method-cnt:1) cost in 60 ms.
+`---ts=2019-12-04 00:44:41;thread_name=main;id=1;is_daemon=false;priority=5;TCCL=sun.misc.Launcher$AppClassLoader@3d4eac69
+    `---[1.357742ms] demo.MathGame:run()
+        +---[0.028624ms] java.util.Random:nextInt() #23
+        +---[0.045534ms] demo.MathGame:primeFactors() #24 [throws Exception]
+        +---[0.005372ms] java.lang.StringBuilder:&lt;init&gt;() #28
+        +---[0.012257ms] java.lang.Integer:valueOf() #28
+        +---[0.234537ms] java.lang.String:format() #28
+        +---[min=0.004539ms,max=0.005778ms,total=0.010317ms,count=2] java.lang.StringBuilder:append() #28
+        +---[0.013777ms] java.lang.Exception:getMessage() #28
+        +---[0.004935ms] java.lang.StringBuilder:toString() #28
+        `---[0.06941ms] java.io.PrintStream:println() #28
+
+`---ts=2019-12-04 00:44:42;thread_name=main;id=1;is_daemon=false;priority=5;TCCL=sun.misc.Launcher$AppClassLoader@3d4eac69
+    `---[3.030432ms] demo.MathGame:run()
+        +---[0.010473ms] java.util.Random:nextInt() #23
+        +---[0.023715ms] demo.MathGame:primeFactors() #24 [throws Exception]
+        +---[0.005198ms] java.lang.StringBuilder:&lt;init&gt;() #28
+        +---[0.006405ms] java.lang.Integer:valueOf() #28
+        +---[0.178583ms] java.lang.String:format() #28
+        +---[min=0.011636ms,max=0.838077ms,total=0.849713ms,count=2] java.lang.StringBuilder:append() #28
+        +---[0.008747ms] java.lang.Exception:getMessage() #28
+        +---[0.019768ms] java.lang.StringBuilder:toString() #28
+        `---[0.076457ms] java.io.PrintStream:println() #28</pre></div>
+</div>
 </div>
 <div class="section" id="id6">
 <h3>据调用耗时过滤<a class="headerlink" href="#id6" title="永久链接至标题">¶</a></h3>
