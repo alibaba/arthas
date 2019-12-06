@@ -2,6 +2,7 @@ FROM openjdk:8-jdk-alpine
 
 ARG ARTHAS_VERSION="3.1.7"
 ARG MIRROR=false
+ARG TIMEZONE=""
 
 ENV MAVEN_HOST=http://repo1.maven.org/maven2 \
     ALPINE_HOST=dl-cdn.alpinelinux.org \
@@ -17,6 +18,11 @@ RUN if $MIRROR; then MAVEN_HOST=${MIRROR_MAVEN_HOST} ;ALPINE_HOST=${MIRROR_ALPIN
     mkdir -p /opt/arthas && \
     unzip /tmp/arthas.zip -d /opt/arthas && \
     rm /tmp/arthas.zip
+
+RUN if [ -n "$TIMEZONE" ]; then apk add --no-cache tzdata && \
+    cp "/usr/share/zoneinfo/$TIMEZONE" /etc/localtime && \
+    echo "$TIMEZONE" >  /etc/timezone ; fi
+
 
 # Tini is now available at /sbin/tini
 ENTRYPOINT ["/sbin/tini", "--"]
