@@ -152,7 +152,7 @@ public class ShellServerImpl extends ShellServer {
             scheduledExecutorService = Executors.newSingleThreadScheduledExecutor(new ThreadFactory() {
                 @Override
                 public Thread newThread(Runnable r) {
-                    final Thread t = new Thread(r, "shell-server");
+                    final Thread t = new Thread(r, "arthas-shell-server");
                     return t;
                 }
             });
