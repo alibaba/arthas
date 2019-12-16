@@ -1,20 +1,6 @@
 package com.taobao.arthas.core.command;
 
-import com.taobao.arthas.core.command.basic1000.CatCommand;
-import com.taobao.arthas.core.command.basic1000.ClsCommand;
-import com.taobao.arthas.core.command.basic1000.GrepCommand;
-import com.taobao.arthas.core.command.basic1000.HelpCommand;
-import com.taobao.arthas.core.command.basic1000.HistoryCommand;
-import com.taobao.arthas.core.command.basic1000.KeymapCommand;
-import com.taobao.arthas.core.command.basic1000.PwdCommand;
-import com.taobao.arthas.core.command.basic1000.ResetCommand;
-import com.taobao.arthas.core.command.basic1000.SessionCommand;
-import com.taobao.arthas.core.command.basic1000.ShutdownCommand;
-import com.taobao.arthas.core.command.basic1000.StopCommand;
-import com.taobao.arthas.core.command.basic1000.SystemEnvCommand;
-import com.taobao.arthas.core.command.basic1000.SystemPropertyCommand;
-import com.taobao.arthas.core.command.basic1000.VMOptionCommand;
-import com.taobao.arthas.core.command.basic1000.VersionCommand;
+import com.taobao.arthas.core.command.basic1000.*;
 import com.taobao.arthas.core.command.hidden.JulyCommand;
 import com.taobao.arthas.core.command.hidden.OptionsCommand;
 import com.taobao.arthas.core.command.hidden.ThanksCommand;
@@ -102,6 +88,7 @@ public class BuiltinCommandPack implements CommandResolver {
         commands.add(Command.create(PwdCommand.class));
         commands.add(Command.create(MBeanCommand.class));
         commands.add(Command.create(GrepCommand.class));
+        commands.add(Command.create(TeeCommand.class));
         commands.add(Command.create(ProfilerCommand.class));
     }
 }
