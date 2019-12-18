@@ -33,6 +33,7 @@ All Commands
 
 * [cat](cat.md)
 * [grep](grep.md)
+* [tee](tee.md)
 * [pwd](pwd.md)
 * [options](options.md)
 
