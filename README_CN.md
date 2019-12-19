@@ -475,6 +475,16 @@ OK
 ![qunar](static/qunar.png)
 ![ctrip](static/ctrip.png)
 ![途牛](static/tuniu.png)
+![多点](static/dmall.jpg)
+![转转](static/zhuanzhuan.jpg)
+![金蝶](static/kingdee.jpg)
+![华清飞扬](static/sincetimes.jpg)
+![神奇视角](static/fasterar.jpg)
+![南京昂克软件](static/angke.jpg)
+![网盛生意宝](static/netsun.jpg)
+![北京登云美业网络](static/idengyun.jpg)
+![Holder](static/holder.png)
+
 
 ### 洐生项目
 
