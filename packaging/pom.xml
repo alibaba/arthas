@@ -137,7 +137,7 @@
                             </execution>
                         </executions>
                         <configuration>
-                            <license>(c) Alibaba, GPLv3</license>
+                            <license>(c) Alibaba, Apache-2.0</license>
                             <distribution>Arthas</distribution>
                             <group>Development/tools</group>
                             <packager>Alibaba</packager>
