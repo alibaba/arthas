@@ -10,9 +10,9 @@
 
     <licenses>
         <license>
-        <name>GNU GENERAL PUBLIC LICENSE Version 3</name>
-        <url>https://www.gnu.org/licenses/gpl.txt</url>
-        <distribution>repo</distribution>
+            <name>Apache License, Version 2.0</name>
+            <url>http://www.apache.org/licenses/LICENSE-2.0</url>
+            <distribution>repo</distribution>
         </license>
     </licenses>
 
