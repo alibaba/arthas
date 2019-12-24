@@ -22,7 +22,7 @@ For example:
 
 1. Arhtas tunnel client open a new connection to tunnel server, URL: `ws://127.0.0.1:7777/ws/?method=openTunnel&clientConnectionId=AMku9EFz2gxeL2gedGOC&id=bvDOe8XbTM2pQWjF4cfw`. This connection is `tunnel connection`.
 
-1. Arhtas tunnel client start connect to local arthas agent, URL: `ws://127.0.0.1:8563/ws`. This connection is `local connection`.
+1. Arhtas tunnel client start connect to local arthas agent, URL: `ws://127.0.0.1:3658/ws`. This connection is `local connection`.
 
 1. Forward websocket frame between `tunnel connection` and `local connection`.
 

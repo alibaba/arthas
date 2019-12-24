@@ -99,4 +99,14 @@ public class GlobalOptions {
     )
     public static volatile String jobTimeout = "1d";
 
+    /**
+     * 是否打印parent类里的field
+     * @see com.taobao.arthas.core.view.ObjectView
+     */
+    @Option(level = 1,
+            name = "print-parent-fields",
+            summary = "Option to print all fileds in parent class",
+            description = "This option enables print files in parent class, default value true."
+    )
+    public static volatile boolean printParentFields = true;
 }

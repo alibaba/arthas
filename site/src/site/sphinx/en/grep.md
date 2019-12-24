@@ -1,4 +1,4 @@
-Grep
+grep
 ===
 
 > Similar to the traditional `grep` command.

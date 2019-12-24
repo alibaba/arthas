@@ -1,0 +1,20 @@
+#terminal:-webkit-full-screen{
+    background-color: rgb(255, 255, 12);
+}
+.container {
+    width: 100%;
+    min-height: 600px;
+}
+.fullSc {
+    z-index: 10000;
+    position: fixed;
+    top: 25%;
+    left: 90%;
+    display: none;
+}
+#fullScBtn {
+    border-radius:17px;
+    border: 0;
+    cursor: pointer;
+    background-color: black;
+}

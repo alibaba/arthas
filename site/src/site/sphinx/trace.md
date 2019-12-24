@@ -45,28 +45,68 @@ trace
 
 ```bash
 $ trace demo.MathGame run
-Press Ctrl+C to abort.
-Affect(class-cnt:1 , method-cnt:1) cost in 42 ms.
-`---ts=2018-12-04 00:44:17;thread_name=main;id=1;is_daemon=false;priority=5;TCCL=sun.misc.Launcher$AppClassLoader@3d4eac69
-    `---[10.611029ms] demo.MathGame:run()
-        +---[0.05638ms] java.util.Random:nextInt()
-        +---[10.036885ms] demo.MathGame:primeFactors()
-        `---[0.170316ms] demo.MathGame:print()
+Press Q or Ctrl+C to abort.
+Affect(class-cnt:1 , method-cnt:1) cost in 28 ms.
+`---ts=2019-12-04 00:45:08;thread_name=main;id=1;is_daemon=false;priority=5;TCCL=sun.misc.Launcher$AppClassLoader@3d4eac69
+    `---[0.617465ms] demo.MathGame:run()
+        `---[0.078946ms] demo.MathGame:primeFactors() #24 [throws Exception]
+
+`---ts=2019-12-04 00:45:09;thread_name=main;id=1;is_daemon=false;priority=5;TCCL=sun.misc.Launcher$AppClassLoader@3d4eac69
+    `---[1.276874ms] demo.MathGame:run()
+        `---[0.03752ms] demo.MathGame:primeFactors() #24 [throws Exception]
 ```
 
-#### 过滤掉jdk的函数
+#### trace次数限制
+
+如果方法调用的次数很多，那么可以用`-n`参数指定捕捉结果的次数。比如下面的例子里，捕捉到一次调用就退出命令。
 
 ```bash
-$ trace -j  demo.MathGame run
-Press Ctrl+C to abort.
-Affect(class-cnt:1 , method-cnt:1) cost in 31 ms.
-`---ts=2018-12-04 01:09:14;thread_name=main;id=1;is_daemon=false;priority=5;TCCL=sun.misc.Launcher$AppClassLoader@3d4eac69
-    `---[5.190646ms] demo.MathGame:run()
-        +---[4.465779ms] demo.MathGame:primeFactors()
-        `---[0.375324ms] demo.MathGame:print()
+$ trace demo.MathGame run -n 1
+Press Q or Ctrl+C to abort.
+Affect(class-cnt:1 , method-cnt:1) cost in 20 ms.
+`---ts=2019-12-04 00:45:53;thread_name=main;id=1;is_daemon=false;priority=5;TCCL=sun.misc.Launcher$AppClassLoader@3d4eac69
+    `---[0.549379ms] demo.MathGame:run()
+        +---[0.059839ms] demo.MathGame:primeFactors() #24
+        `---[0.232887ms] demo.MathGame:print() #25
+
+Command execution times exceed limit: 1, so command will exit. You can set it with -n option.
 ```
 
-* `-j`: jdkMethodSkip, skip jdk method trace
+
+#### 包含jdk的函数
+
+* `--skipJDKMethod <value> `   skip jdk method trace, default value true.
+
+默认情况下，trace不会包含jdk里的函数调用，如果希望trace jdk里的函数，需要显式设置`--skipJDKMethod false`。
+
+```bash
+$ trace --skipJDKMethod false demo.MathGame run
+Press Q or Ctrl+C to abort.
+Affect(class-cnt:1 , method-cnt:1) cost in 60 ms.
+`---ts=2019-12-04 00:44:41;thread_name=main;id=1;is_daemon=false;priority=5;TCCL=sun.misc.Launcher$AppClassLoader@3d4eac69
+    `---[1.357742ms] demo.MathGame:run()
+        +---[0.028624ms] java.util.Random:nextInt() #23
+        +---[0.045534ms] demo.MathGame:primeFactors() #24 [throws Exception]
+        +---[0.005372ms] java.lang.StringBuilder:<init>() #28
+        +---[0.012257ms] java.lang.Integer:valueOf() #28
+        +---[0.234537ms] java.lang.String:format() #28
+        +---[min=0.004539ms,max=0.005778ms,total=0.010317ms,count=2] java.lang.StringBuilder:append() #28
+        +---[0.013777ms] java.lang.Exception:getMessage() #28
+        +---[0.004935ms] java.lang.StringBuilder:toString() #28
+        `---[0.06941ms] java.io.PrintStream:println() #28
+
+`---ts=2019-12-04 00:44:42;thread_name=main;id=1;is_daemon=false;priority=5;TCCL=sun.misc.Launcher$AppClassLoader@3d4eac69
+    `---[3.030432ms] demo.MathGame:run()
+        +---[0.010473ms] java.util.Random:nextInt() #23
+        +---[0.023715ms] demo.MathGame:primeFactors() #24 [throws Exception]
+        +---[0.005198ms] java.lang.StringBuilder:<init>() #28
+        +---[0.006405ms] java.lang.Integer:valueOf() #28
+        +---[0.178583ms] java.lang.String:format() #28
+        +---[min=0.011636ms,max=0.838077ms,total=0.849713ms,count=2] java.lang.StringBuilder:append() #28
+        +---[0.008747ms] java.lang.Exception:getMessage() #28
+        +---[0.019768ms] java.lang.StringBuilder:toString() #28
+        `---[0.076457ms] java.io.PrintStream:println() #28
+```
 
 #### 据调用耗时过滤
 

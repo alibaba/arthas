@@ -47,7 +47,7 @@ import com.taobao.middleware.cli.annotations.Summary;
                 + "  java -jar arthas-boot.jar --stat-url 'http://192.168.10.11:8080/api/stat'\n"
                 + "  java -jar arthas-boot.jar -c 'sysprop; thread' <pid>\n"
                 + "  java -jar arthas-boot.jar -f batch.as <pid>\n"
-                + "  java -jar arthas-boot.jar --use-version 3.1.4\n"
+                + "  java -jar arthas-boot.jar --use-version 3.1.7\n"
                 + "  java -jar arthas-boot.jar --versions\n"
                 + "  java -jar arthas-boot.jar --session-timeout 3600\n" + "  java -jar arthas-boot.jar --attach-only\n"
                 + "  java -jar arthas-boot.jar --repo-mirror aliyun --use-http\n" + "WIKI:\n"
@@ -430,8 +430,10 @@ public class Bootstrap {
             if (localLastestVersion == null) {
                 if (remoteLastestVersion == null) {
                     // exit
-                    AnsiLog.error("Can not find Arthas under local: {} and remote: {}", ARTHAS_LIB_DIR,
-                                    bootstrap.getRepoMirror());
+                    AnsiLog.error("Can not find Arthas under local: {} and remote maven repo mirror: {}", ARTHAS_LIB_DIR,
+                            bootstrap.getRepoMirror());
+                    AnsiLog.error(
+                            "Unable to download arthas from remote server, please download the full package according to wiki: https://github.com/alibaba/arthas");
                     System.exit(1);
                 } else {
                     needDownload = true;

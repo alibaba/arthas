@@ -9,6 +9,10 @@ Reference: [Instrumentation#redefineClasses](https://docs.oracle.com/javase/8/do
 
 > The `reset` command is not valid for classes that have been processed by `redefine`. If you want to reset, you need `redefine` the original bytecode.
 
+
+> The `redefine` command will conflict with the `jad`/`watch`/`trace`/`monitor`/`tt` commands. After executing `redefine`, if you execute the above mentioned command, the bytecode of the class will be reset.
+> The reason is that in the JDK `redefine` and `retransform` are different mechanisms. When two mechanisms are both used to update the bytecode, only the last modified will take effect.
+
 ### Options
 
 |Name|Specification|

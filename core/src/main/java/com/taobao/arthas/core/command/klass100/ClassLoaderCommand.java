@@ -473,10 +473,6 @@ public class ClassLoaderCommand extends AnnotatedCommand {
             this.classLoader = classLoader;
         }
 
-        public ClassLoader getClassLoader() {
-            return classLoader;
-        }
-
         public String getName() {
             if (classLoader != null) {
                 return classLoader.toString();

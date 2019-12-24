@@ -31,6 +31,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -148,8 +149,13 @@ public class ShellServerImpl extends ShellServer {
 
     public synchronized void setTimer() {
         if (!closed && reaperInterval > 0) {
-            scheduledExecutorService = Executors.newSingleThreadScheduledExecutor();
-            // TODO rename the thread, currently it is `pool-3-thread-1`, which is ambiguous
+            scheduledExecutorService = Executors.newSingleThreadScheduledExecutor(new ThreadFactory() {
+                @Override
+                public Thread newThread(Runnable r) {
+                    final Thread t = new Thread(r, "arthas-shell-server");
+                    return t;
+                }
+            });
             scheduledExecutorService.scheduleAtFixedRate(new Runnable() {
 
                 @Override

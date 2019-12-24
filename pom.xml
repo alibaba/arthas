@@ -10,9 +10,9 @@
 
     <licenses>
         <license>
-        <name>GNU GENERAL PUBLIC LICENSE Version 3</name>
-        <url>https://www.gnu.org/licenses/gpl.txt</url>
-        <distribution>repo</distribution>
+            <name>Apache License, Version 2.0</name>
+            <url>http://www.apache.org/licenses/LICENSE-2.0</url>
+            <distribution>repo</distribution>
         </license>
     </licenses>
 
@@ -47,7 +47,7 @@
 
     <groupId>com.taobao.arthas</groupId>
     <artifactId>arthas-all</artifactId>
-    <version>3.1.5-SNAPSHOT</version>
+    <version>3.1.8-SNAPSHOT</version>
     <packaging>pom</packaging>
 
     <name>arthas-all</name>
@@ -107,12 +107,12 @@
             <dependency>
                 <groupId>com.alibaba.middleware</groupId>
                 <artifactId>termd-core</artifactId>
-                <version>1.1.7.5</version>
+                <version>1.1.7.7</version>
             </dependency>
             <dependency>
                 <groupId>com.alibaba.middleware</groupId>
                 <artifactId>cli</artifactId>
-                <version>1.0.2</version>
+                <version>1.0.3</version>
             </dependency>
             <dependency>
                 <groupId>org.slf4j</groupId>
@@ -132,7 +132,7 @@
             <dependency>
                 <groupId>com.taobao.middleware</groupId>
                 <artifactId>logger.api</artifactId>
-                <version>0.2.6</version>
+                <version>0.2.8</version>
             </dependency>
             <dependency>
                 <groupId>com.alibaba</groupId>

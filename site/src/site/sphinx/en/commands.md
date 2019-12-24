@@ -29,8 +29,11 @@ All Commands
 * [stack](stack.md)
 * [tt](tt.md)
 
+* [profiler](profiler.md)
+
 * [cat](cat.md)
 * [grep](grep.md)
+* [tee](tee.md)
 * [pwd](pwd.md)
 * [options](options.md)
 

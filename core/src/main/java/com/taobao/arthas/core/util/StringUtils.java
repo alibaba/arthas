@@ -15,15 +15,6 @@ import java.util.TreeSet;
 
 public abstract class StringUtils {
 
-    private static final String FOLDER_SEPARATOR = "/";
-    private static final String WINDOWS_FOLDER_SEPARATOR = "\\";
-    private static final String TOP_PATH = "..";
-    private static final String CURRENT_PATH = ".";
-    private static final char EXTENSION_SEPARATOR = '.';
-    public static final int UNIT = 1024;
-    public static final String STRING_UNITS = "KMGTPE";
-
-
     /**
      * 获取异常的原因描述
      *
@@ -878,16 +869,17 @@ public abstract class StringUtils {
     }
 
     /**
-     * format byte size to human readable format
+     * format byte size to human readable format. https://stackoverflow.com/a/3758880
      * @param bytes byets
      * @return  human readable format
      */
     public static String humanReadableByteCount(long bytes) {
-        if (bytes < UNIT) {
-            return bytes + " B";
-        }
-        int exp = (int) (Math.log(bytes) / Math.log(UNIT));
-        String pre =  STRING_UNITS.charAt(exp-1) +  "i";
-        return String.format("%.2f %sB", bytes / Math.pow(UNIT, exp), pre);
+        return bytes < 1024L ? bytes + " B"
+                : bytes < 0xfffccccccccccccL >> 40 ? String.format("%.1f KiB", bytes / 0x1p10)
+                : bytes < 0xfffccccccccccccL >> 30 ? String.format("%.1f MiB", bytes / 0x1p20)
+                : bytes < 0xfffccccccccccccL >> 20 ? String.format("%.1f GiB", bytes / 0x1p30)
+                : bytes < 0xfffccccccccccccL >> 10 ? String.format("%.1f TiB", bytes / 0x1p40)
+                : bytes < 0xfffccccccccccccL ? String.format("%.1f PiB", (bytes >> 10) / 0x1p40)
+                : String.format("%.1f EiB", (bytes >> 20) / 0x1p40);
     }
 }

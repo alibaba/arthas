@@ -121,7 +121,7 @@ Tip: you can use `--versions` to list all available versions.
 
 发布release版本流程：
 
-* 修改`as.sh`里的版本， `Bootstrap.java`里的版本，Dockerfile里的版本
+* 修改`as.sh`里的版本，最后修改日期， `Bootstrap.java`里的版本，Dockerfile里的版本
 * 修改本地的maven settings.xml
 * mvn release:prepare -Darguments="-DskipTests -P full"
 * mvn release:perform -Darguments="-DskipTests -P full"
@@ -129,9 +129,10 @@ Tip: you can use `--versions` to list all available versions.
     如果在下载 https://github.com/trustin/sphinx-binary/releases/download/v0.7.1/sphinx.osx-x86_64 时有问题，可以先下载到本地，然后用 `file:/tmp/sphinx.osx-x86_64` 的方式指定
 
 * 到 https://oss.sonatype.org/ 上，“Staging Repositories”然后close掉自己的，再release
+* 发布后，可以到这里查看是否同步到仓库里了： https://repo1.maven.org/maven2/com/taobao/arthas/arthas-packaging/
 * 发布完maven仓库之后，需要到阿里云的仓库里检查是否同步，有可能有延时
 * 需要更新 gh-pages 分支下面的 arthas-boot.jar/arthas-demo.jar/as.sh ，下载 doc.zip，解压覆盖掉文档的更新
-* 需要更新docker镜像，push新的tag
+* 需要更新docker镜像，push新的tag：https://hub.docker.com/r/hengyunabc/arthas/tags?page=1&ordering=last_updated
 
     以 3.1.0 版本为例：
     ```
@@ -145,3 +146,4 @@ Tip: you can use `--versions` to list all available versions.
     ```
 * 更新README.md，比如增加了新命令，要加上说明，更新wiki的链接
 * 更新release页面的 issue信息，修改信息等
+* 更新内部的版本

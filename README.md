@@ -37,6 +37,7 @@ Arthas was built to solve these issues. A developer can troubleshoot your produc
 * Monitor system metrics, thread states and cpu usage, gc statistics, and etc.
 * Supports command line interactive mode, with auto-complete feature enabled.
 * Supports telnet and websocket, which enables both local and remote diagnostics with command line and browsers.
+* Supports profiler/Flame Graph
 * Supports JDK 6+.
 * Supports Linux/Mac/Windows.
 
@@ -103,6 +104,8 @@ You can enter its interactive interface by executing `as.sh`, or execute `as.sh 
 
 #### Thread
 
+* https://alibaba.github.io/arthas/en/thread
+
 See what is eating your cpu (ranked by top cpu usage) and what is going on there in one glance:
 
 ```bash
@@ -133,6 +136,8 @@ $ thread -n 3
 ```
 
 #### jad
+
+* https://alibaba.github.io/arthas/en/jad
 
 Decompile your class with one shot:
 
@@ -172,6 +177,7 @@ public interface Servlet {
 ```
 
 #### mc
+* https://alibaba.github.io/arthas/en/mc
 
 Memory compiler, compiles `.java` files into `.class` files in memory.
 
@@ -181,6 +187,8 @@ mc /tmp/Test.java
 
 #### redefine
 
+* https://alibaba.github.io/arthas/en/redefine
+
 Load the external `*.class` files to re-define the loaded classes in JVM.
 
 ```bash
@@ -189,6 +197,8 @@ redefine -c 327a647b /tmp/Test.class /tmp/Test\$Inner.class
 ```
 
 #### sc
+
+* https://alibaba.github.io/arthas/en/sc
 
 Search any loaded class with detailed information.
 
@@ -226,6 +236,8 @@ $ sc -d org.springframework.web.context.support.XmlWebApplicationContext
 
 #### stack
 
+* https://alibaba.github.io/arthas/en/stack
+
 View the call stack of `test.arthas.TestStack#doGet`:
 
 ```bash
@@ -261,11 +273,15 @@ ts=2018-09-18 10:11:45;thread_name=http-bio-8080-exec-10;id=d9;is_daemon=true;pr
 
 #### Trace
 
+* https://alibaba.github.io/arthas/en/trace
+
 See what is slowing down your method invocation with trace command:
 
 ![trace](site/src/site/sphinx/_static/trace.png)
 
 #### Watch
+
+* https://alibaba.github.io/arthas/en/watch
 
 Watch the first parameter and thrown exception of `test.arthas.TestWatch#doGet` only if it throws exception.
 
@@ -280,6 +296,8 @@ ts=2018-09-18 10:26:28;result=@ArrayList[
 ```
 
 #### Monitor
+
+* https://alibaba.github.io/arthas/en/monitor
 
 Monitor a specific method invocation statistics, including total number of invocations, average response time, success rate, and every 5 seconds:
 
@@ -302,6 +320,8 @@ Affect(class-cnt:1 , method-cnt:1) cost in 109 ms.
 
 #### Time Tunnel(tt)
 
+* https://alibaba.github.io/arthas/en/tt
+
 Record method invocation data, so that you can check the method invocation parameters, returned value, and thrown exceptions later. It works as if you could come back and replay the past method invocation via time tunnel.
 
 ```bash
@@ -323,6 +343,8 @@ Affect(class-cnt:1 , method-cnt:1) cost in 75 ms.
 
 #### Classloader
 
+* https://alibaba.github.io/arthas/en/classloader
+
 ```bash
 $ classloader
  name                                                  numberOfInstances  loadedCountTotal
@@ -343,6 +365,27 @@ $ classloader
 * https://alibaba.github.io/arthas/en/web-console
 
 ![web console](site/src/site/sphinx/_static/web-console-local.png)
+
+
+#### Profiler/FlameGraph
+
+* https://alibaba.github.io/arthas/en/profiler
+
+```bash
+$ profiler start
+Started [cpu] profiling
+```
+
+```
+$ profiler stop
+profiler output file: /tmp/demo/arthas-output/20191125-135546.svg
+OK
+```
+
+View profiler results under arthas-output via browser:
+
+![](site/src/site/sphinx/_static/arthas-output-svg.jpg)
+
 
 
 ### Known Users
@@ -439,6 +482,20 @@ Welcome to register the company name in this issue: https://github.com/alibaba/a
 ![竹间智能](static/emotibot.png)
 ![数字认证](static/bjca.png)
 ![360金融](static/360jinrong.png)
+![安居客](static/anjuke.jpg)
+![qunar](static/qunar.png)
+![ctrip](static/ctrip.png)
+![Tuniu](static/tuniu.png)
+![多点](static/dmall.jpg)
+![转转](static/zhuanzhuan.jpg)
+![金蝶](static/kingdee.jpg)
+![华清飞扬](static/sincetimes.jpg)
+![神奇视角](static/fasterar.jpg)
+![南京昂克软件](static/angke.jpg)
+![网盛生意宝](static/netsun.jpg)
+![北京登云美业网络](static/idengyun.jpg)
+![Holder](static/holder.png)
+
 ### Derivative Projects
 
 * [Bistoury: A project that integrates Arthas](https://github.com/qunarcorp/bistoury)
@@ -460,3 +517,4 @@ This project exists thanks to all the people who contribute.
 * [cli](https://github.com/eclipse-vertx/vert.x/tree/master/src/main/java/io/vertx/core/cli): Arthas's command line interface implementation is based on cli, open sourced by vert.x
 * [compiler](https://github.com/skalogs/SkaETL/tree/master/compiler) Arthas's memory compiler.
 * [Apache Commons Net](https://commons.apache.org/proper/commons-net/) Arthas's telnet client.
+* [async-profiler](https://github.com/jvm-profiling-tools/async-profiler) Arthas's profielr command.
