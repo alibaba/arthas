@@ -1,7 +1,7 @@
 reset命令
 ===
 
-> 重置增强类，将被 Arthas 增强过的类全部还原，Arthas 服务端`stop/shutdown`时会重置所有增强过的类
+> 重置增强类，将被 Arthas 增强过的类全部还原，Arthas 服务端`stop`时会重置所有增强过的类
 
 ### 使用参考
 
