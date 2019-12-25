@@ -91,8 +91,6 @@ public class BuiltinCommandPack implements CommandResolver {
         commands.add(Command.create(ClsCommand.class));
         commands.add(Command.create(ResetCommand.class));
         commands.add(Command.create(VersionCommand.class));
-        commands.add(Command.create(ShutdownCommand.class));
-        commands.add(Command.create(StopCommand.class));
         commands.add(Command.create(SessionCommand.class));
         commands.add(Command.create(SystemPropertyCommand.class));
         commands.add(Command.create(SystemEnvCommand.class));
@@ -105,5 +103,7 @@ public class BuiltinCommandPack implements CommandResolver {
         commands.add(Command.create(GrepCommand.class));
         commands.add(Command.create(TeeCommand.class));
         commands.add(Command.create(ProfilerCommand.class));
+        commands.add(Command.create(ShutdownCommand.class));
+        commands.add(Command.create(StopCommand.class));
     }
 }

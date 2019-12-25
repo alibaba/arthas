@@ -47,8 +47,7 @@ All Commands
 * version - print out Arthas's version
 * history - view command history
 * quit - exit the current Arthas client without affecting other clients
-* stop - the same as `shutdown` command
-* shutdown - terminate the Arthas server, all the Arthas clients connecting to this server will be disconnected
+* stop - terminate the Arthas server, all the Arthas clients connecting to this server will be disconnected
 * [keymap](keymap.md) - list all Arthas keyboard shortcuts and shortcut customizations.
 
 
