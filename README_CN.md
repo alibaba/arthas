@@ -409,6 +409,7 @@ $ classloader
 ![顺丰科技](static/sf.png)
 ![新致软件](static/newtouch.png)
 ![北京华宇信息](static/thunisoft.png)
+![金蝶](static/kingdee.png)
 
 ### Credit
 
