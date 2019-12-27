@@ -28,13 +28,13 @@ public class ProcessUtils {
     private static String FOUND_JAVA_HOME = null;
 
     @SuppressWarnings("resource")
-    public static int select(boolean v, int telnetPortPid) throws InputMismatchException {
-        Map<Integer, String> processMap = listProcessByJps(v);
+    public static long select(boolean v, long telnetPortPid) throws InputMismatchException {
+        Map<Long, String> processMap = listProcessByJps(v);
         // Put the port that is already listening at the first
         if (telnetPortPid > 0 && processMap.containsKey(telnetPortPid)) {
             String telnetPortProcess = processMap.get(telnetPortPid);
             processMap.remove(telnetPortPid);
-            Map<Integer, String> newProcessMap = new LinkedHashMap<Integer, String>();
+            Map<Long, String> newProcessMap = new LinkedHashMap<Long, String>();
             newProcessMap.put(telnetPortPid, telnetPortProcess);
             newProcessMap.putAll(processMap);
             processMap = newProcessMap;
@@ -70,7 +70,7 @@ public class ProcessUtils {
             return -1;
         }
 
-        Iterator<Integer> idIter = processMap.keySet().iterator();
+        Iterator<Long> idIter = processMap.keySet().iterator();
         for (int i = 1; i <= choice; ++i) {
             if (i == choice) {
                 return idIter.next();
@@ -81,8 +81,8 @@ public class ProcessUtils {
         return -1;
     }
 
-    private static Map<Integer, String> listProcessByJps(boolean v) {
-        Map<Integer, String> result = new LinkedHashMap<Integer, String>();
+    private static Map<Long, String> listProcessByJps(boolean v) {
+        Map<Long, String> result = new LinkedHashMap<Long, String>();
 
         String jps = "jps";
         File jpsFile = findJps();
@@ -103,14 +103,14 @@ public class ProcessUtils {
 
         AnsiLog.debug("jps result: " + lines);
 
-        int currentPid = Integer.parseInt(PidUtils.currentPid());
+        long currentPid = Long.parseLong(PidUtils.currentPid());
         for (String line : lines) {
             String[] strings = line.trim().split("\\s+");
             if (strings.length < 1) {
                 continue;
             }
             try {
-                int pid = Integer.parseInt(strings[0]);
+                long pid = Long.parseLong(strings[0]);
                 if (pid == currentPid) {
                     continue;
                 }
@@ -189,7 +189,7 @@ public class ProcessUtils {
         return FOUND_JAVA_HOME;
     }
 
-    public static void startArthasCore(int targetPid, List<String> attachArgs) {
+    public static void startArthasCore(long targetPid, List<String> attachArgs) {
         // find java/java.exe, then try to find tools.jar
         String javaHome = findJavaHome();
 

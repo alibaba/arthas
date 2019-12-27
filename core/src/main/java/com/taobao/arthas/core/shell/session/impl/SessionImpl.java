@@ -75,8 +75,8 @@ public class SessionImpl implements Session {
     }
 
     @Override
-    public int getPid() {
-        return (Integer) data.get(PID);
+    public long getPid() {
+        return (Long) data.get(PID);
     }
 
     @Override

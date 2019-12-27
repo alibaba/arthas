@@ -92,7 +92,7 @@ public interface Session {
      *
      * @return java pid
      */
-    int getPid();
+    long getPid();
 
     /**
      * Get all registered command resolvers

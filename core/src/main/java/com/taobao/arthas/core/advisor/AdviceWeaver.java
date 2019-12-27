@@ -30,7 +30,13 @@ public class AdviceWeaver extends ClassVisitor implements Opcodes {
 
     private final static Logger logger = LogUtil.getArthasLogger();
 
-
+    public static final String ON_BEFORE = "methodOnBegin";
+    public static final String ON_RETURN = "methodOnReturnEnd";
+    public static final String ON_THROWS = "methodOnThrowingEnd";
+    public static final String BEFORE_INVOKE = "methodOnInvokeBeforeTracing";
+    public static final String AFTER_INVOKE = "methodOnInvokeAfterTracing";
+    public static final String THROW_INVOKE = "methodOnInvokeThrowTracing";
+    public static final String RESET = "resetArthasClassLoader";
 
     // 线程帧栈堆栈大小
     private final static int FRAME_STACK_SIZE = 7;

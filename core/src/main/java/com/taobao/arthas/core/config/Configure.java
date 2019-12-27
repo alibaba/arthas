@@ -20,7 +20,7 @@ public class Configure {
     private String ip;
     private int telnetPort;
     private int httpPort;
-    private int javaPid;
+    private long javaPid;
     private String arthasCore;
     private String arthasAgent;
 
@@ -61,11 +61,11 @@ public class Configure {
         return httpPort;
     }
 
-    public int getJavaPid() {
+    public long getJavaPid() {
         return javaPid;
     }
 
-    public void setJavaPid(int javaPid) {
+    public void setJavaPid(long javaPid) {
         this.javaPid = javaPid;
     }
 

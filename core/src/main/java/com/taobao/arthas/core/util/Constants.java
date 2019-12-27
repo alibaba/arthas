@@ -2,6 +2,7 @@ package com.taobao.arthas.core.util;
 
 import java.io.File;
 
+import com.taobao.arthas.common.PidUtils;
 import com.taobao.arthas.core.view.Ansi;
 
 import static com.taobao.arthas.core.util.LogUtil.LOGS_DIR;
@@ -50,7 +51,7 @@ public class Constants {
     /**
      * 当前进程PID
      */
-    public static final String PID = ApplicationUtils.getPid();
+    public static final String PID = PidUtils.currentPid();
 
     /**
      * 缓存目录

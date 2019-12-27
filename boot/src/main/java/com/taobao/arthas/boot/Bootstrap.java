@@ -60,7 +60,7 @@ public class Bootstrap {
 
     private boolean help = false;
 
-    private int pid = -1;
+    private long pid = -1;
     private String targetIp = DEFAULT_TARGET_IP;
     private int telnetPort = DEFAULT_TELNET_PORT;
     private int httpPort = DEFAULT_HTTP_PORT;
@@ -138,7 +138,7 @@ public class Bootstrap {
 
     @Argument(argName = "pid", index = 0, required = false)
     @Description("Target pid")
-    public void setPid(int pid) {
+    public void setPid(long pid) {
         this.pid = pid;
     }
 
@@ -314,8 +314,8 @@ public class Bootstrap {
         }
 
         // check telnet/http port
-        int telnetPortPid = -1;
-        int httpPortPid = -1;
+        long telnetPortPid = -1;
+        long httpPortPid = -1;
         if (bootstrap.getTelnetPort() > 0) {
             telnetPortPid = SocketUtils.findTcpListenProcess(bootstrap.getTelnetPort());
             if (telnetPortPid > 0) {
@@ -329,7 +329,7 @@ public class Bootstrap {
             }
         }
 
-        int pid = bootstrap.getPid();
+        long pid = bootstrap.getPid();
         // select pid
         if (pid < 0) {
             try {
@@ -651,7 +651,7 @@ public class Bootstrap {
         return attachOnly;
     }
 
-    public int getPid() {
+    public long getPid() {
         return pid;
     }
 

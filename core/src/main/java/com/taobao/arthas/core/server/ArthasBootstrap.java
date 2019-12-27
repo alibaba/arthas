@@ -2,6 +2,8 @@ package com.taobao.arthas.core.server;
 
 import com.taobao.arthas.core.config.Configure;
 import com.alibaba.arthas.tunnel.client.TunnelClient;
+import com.taobao.arthas.common.PidUtils;
+import com.taobao.arthas.core.advisor.AdviceWeaver;
 import com.taobao.arthas.core.command.BuiltinCommandPack;
 import com.taobao.arthas.core.shell.ShellServer;
 import com.taobao.arthas.core.shell.ShellServerOptions;
@@ -18,6 +20,7 @@ import com.taobao.middleware.logger.Logger;
 
 import io.netty.channel.ChannelFuture;
 
+import java.arthas.Spy;
 import java.io.File;
 import java.io.IOException;
 import java.lang.instrument.Instrumentation;
@@ -43,7 +46,6 @@ public class ArthasBootstrap {
     private static ArthasBootstrap arthasBootstrap;
 
     private AtomicBoolean isBindRef = new AtomicBoolean(false);
-    private int pid;
     private Instrumentation instrumentation;
     private Thread shutdown;
     private ShellServer shellServer;
@@ -52,8 +54,7 @@ public class ArthasBootstrap {
 
     private File arthasOutputDir;
 
-    private ArthasBootstrap(int pid, Instrumentation instrumentation) {
-        this.pid = pid;
+    private ArthasBootstrap(Instrumentation instrumentation) {
         this.instrumentation = instrumentation;
 
         String outputPath = System.getProperty("arthas.output.dir", "arthas-output");
@@ -78,6 +79,24 @@ public class ArthasBootstrap {
         };
 
         Runtime.getRuntime().addShutdownHook(shutdown);
+    }
+
+    private static void initSpy() throws ClassNotFoundException, NoSuchMethodException {
+        Class<?> adviceWeaverClass = AdviceWeaver.class;
+        Method onBefore = adviceWeaverClass.getMethod(AdviceWeaver.ON_BEFORE, int.class, ClassLoader.class, String.class,
+                String.class, String.class, Object.class, Object[].class);
+        Method onReturn = adviceWeaverClass.getMethod(AdviceWeaver.ON_RETURN, Object.class);
+        Method onThrows = adviceWeaverClass.getMethod(AdviceWeaver.ON_THROWS, Throwable.class);
+        Method beforeInvoke = adviceWeaverClass.getMethod(AdviceWeaver.BEFORE_INVOKE, int.class, String.class, String.class, String.class, int.class);
+        Method afterInvoke = adviceWeaverClass.getMethod(AdviceWeaver.AFTER_INVOKE, int.class, String.class, String.class, String.class, int.class);
+        Method throwInvoke = adviceWeaverClass.getMethod(AdviceWeaver.THROW_INVOKE, int.class, String.class, String.class, String.class, int.class);
+        Spy.init(AdviceWeaver.class.getClassLoader(), onBefore, onReturn, onThrows, beforeInvoke, afterInvoke, throwInvoke);
+    }
+    
+    public void bind(String args) throws Throwable {
+        initSpy();
+        Configure configure = Configure.toConfigure(args);
+        bind(configure);
     }
 
     /**
@@ -120,7 +139,7 @@ public class ArthasBootstrap {
         try {
             ShellServerOptions options = new ShellServerOptions()
                             .setInstrumentation(instrumentation)
-                            .setPid(pid)
+                            .setPid(PidUtils.currentLongPid())
                             .setSessionTimeout(configure.getSessionTimeout() * 1000);
 
             if (agentId != null) {
@@ -208,9 +227,9 @@ public class ArthasBootstrap {
      * @param instrumentation JVM增强
      * @return ArthasServer单例
      */
-    public synchronized static ArthasBootstrap getInstance(int javaPid, Instrumentation instrumentation) {
+    public synchronized static ArthasBootstrap getInstance(Instrumentation instrumentation) {
         if (arthasBootstrap == null) {
-            arthasBootstrap = new ArthasBootstrap(javaPid, instrumentation);
+            arthasBootstrap = new ArthasBootstrap(instrumentation);
         }
         return arthasBootstrap;
     }
