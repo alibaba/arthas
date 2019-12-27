@@ -134,6 +134,7 @@
             <groupId>com.taobao.middleware</groupId>
             <artifactId>logger.api</artifactId>
         </dependency>
+
         <dependency>
             <groupId>log4j</groupId>
             <artifactId>log4j</artifactId>
@@ -161,6 +162,12 @@
             <artifactId>junit</artifactId>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>org.assertj</groupId>
+            <artifactId>assertj-core</artifactId>
+            <scope>test</scope>
+        </dependency>
+
         <dependency>
             <groupId>org.benf</groupId>
             <artifactId>cfr</artifactId>
