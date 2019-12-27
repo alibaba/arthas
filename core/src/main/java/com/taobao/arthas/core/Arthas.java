@@ -29,7 +29,7 @@ public class Arthas {
     }
 
     private Configure parse(String[] args) {
-        Option pid = new TypedOption<Integer>().setType(Integer.class).setShortName("pid").setRequired(true);
+        Option pid = new TypedOption<Long>().setType(Long.class).setShortName("pid").setRequired(true);
         Option core = new TypedOption<String>().setType(String.class).setShortName("core").setRequired(true);
         Option agent = new TypedOption<String>().setType(String.class).setShortName("agent").setRequired(true);
         Option target = new TypedOption<String>().setType(String.class).setShortName("target-ip");
@@ -50,7 +50,7 @@ public class Arthas {
         CommandLine commandLine = cli.parse(Arrays.asList(args));
 
         Configure configure = new Configure();
-        configure.setJavaPid((Integer) commandLine.getOptionValue("pid"));
+        configure.setJavaPid((Long) commandLine.getOptionValue("pid"));
         configure.setArthasAgent((String) commandLine.getOptionValue("agent"));
         configure.setArthasCore((String) commandLine.getOptionValue("core"));
         configure.setSessionTimeout((Integer)commandLine.getOptionValue("session-timeout"));
@@ -73,7 +73,7 @@ public class Arthas {
         VirtualMachineDescriptor virtualMachineDescriptor = null;
         for (VirtualMachineDescriptor descriptor : VirtualMachine.list()) {
             String pid = descriptor.id();
-            if (pid.equals(Integer.toString(configure.getJavaPid()))) {
+            if (pid.equals(Long.toString(configure.getJavaPid()))) {
                 virtualMachineDescriptor = descriptor;
             }
         }

@@ -19,7 +19,6 @@ import com.taobao.arthas.core.shell.system.JobController;
 import com.taobao.arthas.core.shell.system.impl.InternalCommandManager;
 import com.taobao.arthas.core.shell.system.impl.JobControllerImpl;
 import com.taobao.arthas.core.shell.term.Term;
-import com.taobao.arthas.core.util.Constants;
 import com.taobao.arthas.core.util.LogUtil;
 import com.taobao.middleware.logger.Logger;
 
@@ -49,7 +48,7 @@ public class ShellImpl implements Shell {
     private String prompt;
 
     public ShellImpl(ShellServer server, Term term, InternalCommandManager commandManager,
-            Instrumentation instrumentation, int pid, JobControllerImpl jobController) {
+            Instrumentation instrumentation, long pid, JobControllerImpl jobController) {
         session.put(Session.COMMAND_MANAGER, commandManager);
         session.put(Session.INSTRUMENTATION, instrumentation);
         session.put(Session.PID, pid);

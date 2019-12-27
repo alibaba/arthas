@@ -50,7 +50,7 @@ public class ShellServerImpl extends ShellServer {
     private String welcomeMessage;
     private ArthasBootstrap bootstrap;
     private Instrumentation instrumentation;
-    private int pid;
+    private long pid;
     private boolean closed = true;
     private final Map<String, ShellImpl> sessions;
     private final Future<Void> sessionsClosed = Future.future();
