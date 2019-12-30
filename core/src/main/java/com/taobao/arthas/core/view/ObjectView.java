@@ -50,7 +50,7 @@ public class ObjectView implements View {
                     .append(", try to specify -M size_limit in your command, check the help command for more.");
             return buf.toString();
         } catch (Throwable t) {
-            return "ERROR DATA!!!";
+            return "ERROR DATA!!! exception message: " + t.getMessage();
         }
     }
 
