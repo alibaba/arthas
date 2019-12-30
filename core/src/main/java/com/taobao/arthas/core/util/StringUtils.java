@@ -1,8 +1,3 @@
-//
-// Source code recreated from a .class file by IntelliJ IDEA
-// (powered by Fernflower decompiler)
-//
-
 package com.taobao.arthas.core.util;
 
 import java.lang.reflect.Modifier;
@@ -516,18 +511,6 @@ public abstract class StringUtils {
         }
     }
 
-
-    private static void validateLocalePart(String localePart) {
-        for(int i = 0; i < localePart.length(); ++i) {
-            char ch = localePart.charAt(i);
-            if(ch != 95 && ch != 32 && !Character.isLetterOrDigit(ch)) {
-                throw new IllegalArgumentException("Locale part \"" + localePart + "\" contains invalid characters");
-            }
-        }
-
-    }
-
-
     public static String[] toStringArray(Collection<String> collection) {
         return collection == null?null:(String[])collection.toArray(new String[0]);
     }
@@ -584,13 +567,13 @@ public abstract class StringUtils {
             return null;
         } else {
             StringTokenizer st = new StringTokenizer(str, delimiters);
-            ArrayList tokens = new ArrayList();
+            ArrayList<String> tokens = new ArrayList<String>();
 
             while(true) {
                 String token;
                 do {
                     if(!st.hasMoreTokens()) {
-                        return toStringArray((Collection)tokens);
+                        return toStringArray(tokens);
                     }
 
                     token = st.nextToken();
@@ -614,7 +597,7 @@ public abstract class StringUtils {
         } else if(delimiter == null) {
             return new String[]{str};
         } else {
-            ArrayList result = new ArrayList();
+            ArrayList<String> result = new ArrayList<String>();
             int pos;
             if("".equals(delimiter)) {
                 for(pos = 0; pos < str.length(); ++pos) {
@@ -631,7 +614,7 @@ public abstract class StringUtils {
                 }
             }
 
-            return toStringArray((Collection)result);
+            return toStringArray(result);
         }
     }
 
@@ -640,7 +623,7 @@ public abstract class StringUtils {
     }
 
     public static Set<String> commaDelimitedListToSet(String str) {
-        TreeSet set = new TreeSet();
+        TreeSet<String> set = new TreeSet<String>();
         String[] tokens = commaDelimitedListToStringArray(str);
         String[] var3 = tokens;
         int var4 = tokens.length;
