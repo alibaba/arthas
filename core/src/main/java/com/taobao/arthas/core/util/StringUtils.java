@@ -36,7 +36,7 @@ public abstract class StringUtils {
         try {
             return obj.toString();
         } catch (Throwable t) {
-            return "ERROR DATA!!!";
+            return "ERROR DATA!!! Method toString() throw exception. obj class: " + obj.getClass() + ", exception message: " + t.getMessage();
         }
     }
 
