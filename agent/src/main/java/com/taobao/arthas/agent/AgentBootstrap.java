@@ -71,7 +71,18 @@ public class AgentBootstrap {
 
     private static ClassLoader getClassLoader(Instrumentation inst, File spyJarFile, File agentJarFile) throws Throwable {
         // 将Spy添加到BootstrapClassLoader
-        inst.appendToBootstrapClassLoaderSearch(new JarFile(spyJarFile));
+        ClassLoader parent = ClassLoader.getSystemClassLoader().getParent();
+        Class<?> spyClass = null;
+        if (parent != null) {
+            try {
+                parent.loadClass("java.arthas.Spy");
+            } catch (Throwable e) {
+                // ignore
+            }
+        }
+        if (spyClass == null) {
+            inst.appendToBootstrapClassLoaderSearch(new JarFile(spyJarFile));
+        }
 
         // 构造自定义的类加载器，尽量减少Arthas对现有工程的侵蚀
         return loadOrDefineClassLoader(agentJarFile);
