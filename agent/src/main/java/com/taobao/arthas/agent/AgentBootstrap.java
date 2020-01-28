@@ -30,7 +30,8 @@ public class AgentBootstrap {
                     + "arthas" + File.separator);
             if (!arthasLogDir.exists()) {
                 arthasLogDir.mkdirs();
-
+            }
+            if (!arthasLogDir.exists()) {
                 // #572
                 arthasLogDir = new File(System.getProperty("java.io.tmpdir") + File.separator + "logs" + File.separator
                         + "arthas" + File.separator);
