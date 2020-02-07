@@ -93,6 +93,7 @@
             
             
               <ul class="current">
+<li class="toctree-l1"><a class="reference external" href="https://mp.weixin.qq.com/s/677GO-3kYx5ygG9rlOlfQg">招聘信息</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://alibaba.github.io/arthas/en/">English Docs</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://alibaba.github.io/arthas/arthas-tutorials?language=cn">在线教程(推荐)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="install-detail.html">安装</a></li>
@@ -204,6 +205,7 @@
 <li><p>help——查看命令帮助信息</p></li>
 <li><p><a class="reference internal" href="cat.html"><span class="doc">cat</span></a>——打印文件内容，和linux里的cat命令类似</p></li>
 <li><p><a class="reference internal" href="grep.html"><span class="doc">grep</span></a>——匹配查找，和linux里的grep命令类似</p></li>
+<li><p><a class="reference internal" href="tee.html"><span class="doc">tee</span></a>——复制标准输入到标准输出和指定的文件，和linux里的tee命令类似</p></li>
 <li><p><a class="reference internal" href="pwd.html"><span class="doc">pwd</span></a>——返回当前的工作目录，和linux命令类似</p></li>
 <li><p>cls——清空当前屏幕区域</p></li>
 <li><p>session——查看当前会话的信息</p></li>
@@ -211,7 +213,7 @@
 <li><p>version——输出当前目标 Java 进程所加载的 Arthas 版本号</p></li>
 <li><p>history——打印命令历史</p></li>
 <li><p>quit——退出当前 Arthas 客户端，其他 Arthas 客户端不受影响</p></li>
-<li><p>stop/shutdown——关闭 Arthas 服务端，所有 Arthas 客户端全部退出</p></li>
+<li><p>stop——关闭 Arthas 服务端，所有 Arthas 客户端全部退出</p></li>
 <li><p><a class="reference internal" href="keymap.html"><span class="doc">keymap</span></a>——Arthas快捷键列表及自定义快捷键</p></li>
 </ul>
 </div>
@@ -246,7 +248,7 @@
 <div class="section" id="monitor-watch-trace">
 <h2>monitor/watch/trace相关<a class="headerlink" href="#monitor-watch-trace" title="永久链接至标题">¶</a></h2>
 <blockquote>
-<div><p>请注意，这些命令，都通过字节码增强技术来实现的，会在指定类的方法中插入一些切面来实现数据统计和观测，因此在线上、预发使用时，请尽量明确需要观测的类、方法以及条件，诊断结束要执行 <code class="docutils literal notranslate"><span class="pre">shutdown</span></code> 或将增强过的类执行 <code class="docutils literal notranslate"><span class="pre">reset</span></code> 命令。</p>
+<div><p>请注意，这些命令，都通过字节码增强技术来实现的，会在指定类的方法中插入一些切面来实现数据统计和观测，因此在线上、预发使用时，请尽量明确需要观测的类、方法以及条件，诊断结束要执行 <code class="docutils literal notranslate"><span class="pre">stop</span></code> 或将增强过的类执行 <code class="docutils literal notranslate"><span class="pre">reset</span></code> 命令。</p>
 </div></blockquote>
 <ul class="simple">
 <li><p><a class="reference internal" href="monitor.html"><span class="doc">monitor</span></a>——方法执行监控</p></li>

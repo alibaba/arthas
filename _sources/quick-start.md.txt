@@ -8,7 +8,7 @@ curl -O https://alibaba.github.io/arthas/arthas-demo.jar
 java -jar arthas-demo.jar
 ```
 
-`arthas-demo`是一个简单的程序，每隔一秒生成一个随机数，再执行质因式分解，并打印出分解结果。
+`arthas-demo`是一个简单的程序，每隔一秒生成一个随机数，再执行质因数分解，并打印出分解结果。
 
 `arthas-demo`源代码：[查看](https://github.com/alibaba/arthas/blob/master/demo/src/main/java/demo/MathGame.java)
 
@@ -230,4 +230,4 @@ ts=2018-11-28 19:22:35; [cost=29.969732ms] result=@ArrayList[
 
 如果只是退出当前的连接，可以用`quit`或者`exit`命令。Attach到目标进程上的arthas还会继续运行，端口会保持开放，下次连接时可以直接连接上。
 
-如果想完全退出arthas，可以执行`stop/shutdown`命令。
+如果想完全退出arthas，可以执行`stop`命令。

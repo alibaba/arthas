@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>grep &mdash; Arthas 3.1.7 文档</title>
+  <title>tee &mdash; Arthas 3.1.7 文档</title>
   
 
   
@@ -39,8 +39,8 @@
     <link rel="stylesheet" href="_static/overrides.css" type="text/css" />
     <link rel="index" title="索引" href="genindex.html" />
     <link rel="search" title="搜索" href="search.html" />
-    <link rel="next" title="tee" href="tee.html" />
-    <link rel="prev" title="cat" href="cat.html" />
+    <link rel="next" title="pwd" href="pwd.html" />
+    <link rel="prev" title="grep" href="grep.html" />
 <script src="_static/center_page.js"></script>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.13.1/styles/github.min.css">
  
@@ -126,8 +126,8 @@
 <li class="toctree-l2"><a class="reference internal" href="tt.html">tt</a></li>
 <li class="toctree-l2"><a class="reference internal" href="profiler.html">profiler</a></li>
 <li class="toctree-l2"><a class="reference internal" href="cat.html">cat</a></li>
-<li class="toctree-l2 current"><a class="current reference internal" href="#">grep</a></li>
-<li class="toctree-l2"><a class="reference internal" href="tee.html">tee</a></li>
+<li class="toctree-l2"><a class="reference internal" href="grep.html">grep</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">tee</a></li>
 <li class="toctree-l2"><a class="reference internal" href="pwd.html">pwd</a></li>
 <li class="toctree-l2"><a class="reference internal" href="options.html">options</a></li>
 <li class="toctree-l2"><a class="reference internal" href="commands.html#arthas">Arthas 基础命令</a></li>
@@ -188,14 +188,14 @@
         
           <li><a href="commands.html">命令列表</a> &raquo;</li>
         
-      <li>grep</li>
+      <li>tee</li>
     
     
       <li class="wy-breadcrumbs-aside">
         
             
             
-              <a href="https://github.com/alibaba/arthas/blob/master/site/src/site/sphinx/grep.md" class="fa fa-github"> Edit on GitHub</a>
+              <a href="https://github.com/alibaba/arthas/blob/master/site/src/site/sphinx/tee.md" class="fa fa-github"> Edit on GitHub</a>
             
           
         
@@ -209,40 +209,28 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
             
-  <div class="section" id="grep">
-<h1>grep<a class="headerlink" href="#grep" title="永久链接至标题">¶</a></h1>
+  <div class="section" id="tee">
+<h1>tee<a class="headerlink" href="#tee" title="永久链接至标题">¶</a></h1>
 <blockquote>
-<div><p>类似传统的<code class="docutils literal notranslate"><span class="pre">grep</span></code>命令。</p>
+<div><p>类似传统的<code class="docutils literal notranslate"><span class="pre">tee</span></code>命令。</p>
 </div></blockquote>
 <div class="highlight-default notranslate"><pre class="literal-block"> USAGE:
-   grep [-A &lt;value&gt;] [-B &lt;value&gt;] [-C &lt;value&gt;] [-h] [-i] [-v] [-n] [-m &lt;value&gt;] [-e] [--trim-end] pattern
+   tee [-a] [-h] [file]
 
  SUMMARY:
-   grep command for pipes.
+   tee command for pipes.
 
  EXAMPLES:
-  sysprop | grep java
-  sysprop | grep java -n
-  sysenv | grep -v JAVA
-  sysenv | grep -e &quot;(?i)(JAVA|sun)&quot; -m 3  -C 2
-  sysenv | grep JAVA -A2 -B3
-  thread | grep -m 10 -e  &quot;TIMED_WAITING|WAITING&quot;
+  sysprop | tee /path/to/logfile | grep java
+  sysprop | tee -a /path/to/logfile | grep java
 
  WIKI:
-   https://alibaba.github.io/arthas/grep
+   https://alibaba.github.io/arthas/tee
 
  OPTIONS:
- -A, --after-context &lt;value&gt;                                                    Print NUM lines of trailing context)
- -B, --before-context &lt;value&gt;                                                   Print NUM lines of leading context)
- -C, --context &lt;value&gt;                                                          Print NUM lines of output context)
- -h, --help                                                                     this help
- -i, --ignore-case                                                              Perform case insensitive matching.  By default, grep is case sensitive.
- -v, --invert-match                                                             Select non-matching lines
- -n, --line-number                                                              Print line number with output lines
- -m, --max-count &lt;value&gt;                                                        stop after NUM selected lines)
- -e, --regex                                                                    Enable regular expression to match
-     --trim-end                                                                 Remove whitespaces at the end of the line
- &lt;pattern&gt;                                                                      Pattern</pre>
+ -a, --append                              Append to file
+ -h, --help                                this help
+ &lt;file&gt;                                    File path</pre>
 </div>
 </div>
 
@@ -254,10 +242,10 @@
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="tee.html" class="btn btn-neutral float-right" title="tee" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+        <a href="pwd.html" class="btn btn-neutral float-right" title="pwd" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
-        <a href="cat.html" class="btn btn-neutral float-left" title="cat" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+        <a href="grep.html" class="btn btn-neutral float-left" title="grep" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
       
     </div>
   

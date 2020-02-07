@@ -93,6 +93,7 @@
             
             
               <ul class="current">
+<li class="toctree-l1"><a class="reference external" href="https://mp.weixin.qq.com/s/677GO-3kYx5ygG9rlOlfQg">招聘信息</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://alibaba.github.io/arthas/en/">English Docs</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://alibaba.github.io/arthas/arthas-tutorials?language=cn">在线教程(推荐)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="install-detail.html">安装</a></li>
@@ -190,7 +191,7 @@
 <div class="highlight-bash notranslate"><div class="highlight hljs"><pre class="bash">curl -O https://alibaba.github.io/arthas/arthas-demo.jar
 java -jar arthas-demo.jar</pre></div>
 </div>
-<p><code class="docutils literal notranslate"><span class="pre">arthas-demo</span></code>是一个简单的程序，每隔一秒生成一个随机数，再执行质因式分解，并打印出分解结果。</p>
+<p><code class="docutils literal notranslate"><span class="pre">arthas-demo</span></code>是一个简单的程序，每隔一秒生成一个随机数，再执行质因数分解，并打印出分解结果。</p>
 <p><code class="docutils literal notranslate"><span class="pre">arthas-demo</span></code>源代码：<a class="reference external" href="https://github.com/alibaba/arthas/blob/master/demo/src/main/java/demo/MathGame.java">查看</a></p>
 </div>
 <div class="section" id="arthas">
@@ -392,7 +393,7 @@ ts=2018-11-28 19:22:35; [cost=29.969732ms] result=@ArrayList[
 <div class="section" id="id2">
 <h2>7. 退出arthas<a class="headerlink" href="#id2" title="永久链接至标题">¶</a></h2>
 <p>如果只是退出当前的连接，可以用<code class="docutils literal notranslate"><span class="pre">quit</span></code>或者<code class="docutils literal notranslate"><span class="pre">exit</span></code>命令。Attach到目标进程上的arthas还会继续运行，端口会保持开放，下次连接时可以直接连接上。</p>
-<p>如果想完全退出arthas，可以执行<code class="docutils literal notranslate"><span class="pre">stop/shutdown</span></code>命令。</p>
+<p>如果想完全退出arthas，可以执行<code class="docutils literal notranslate"><span class="pre">stop</span></code>命令。</p>
 </div>
 </div>
 
