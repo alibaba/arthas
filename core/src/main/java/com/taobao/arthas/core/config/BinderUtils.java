@@ -51,9 +51,12 @@ public class BinderUtils {
                             && methodName.length() > "set".length()) {
 
                         String field = getFieldNameFromSetterMethod(methodName);
-                        Object reslovedValue = environment.getProperty(prefix + '.' + field, parameterTypes[0]);
-                        if (reslovedValue != null) {
-                            method.invoke(instance, new Object[] { reslovedValue });
+                        String configKey = prefix + '.' + field;
+                        if (environment.containsProperty(configKey)) {
+                            Object reslovedValue = environment.getProperty(prefix + '.' + field, parameterTypes[0]);
+                            if (reslovedValue != null) {
+                                method.invoke(instance, new Object[] { reslovedValue });
+                            }
                         }
                     }
                 }
