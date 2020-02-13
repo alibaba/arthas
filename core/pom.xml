@@ -134,6 +134,10 @@
             <groupId>com.taobao.middleware</groupId>
             <artifactId>logger.api</artifactId>
         </dependency>
+        <dependency>
+            <groupId>com.alibaba.arthas</groupId>
+            <artifactId>arthas-repackage-logger</artifactId>
+        </dependency>
 
         <dependency>
             <groupId>log4j</groupId>

@@ -28,6 +28,13 @@ public class ArthasEnvironment implements Environment {
     }
 
     /**
+     * Add the given property source object with highest precedence.
+     */
+    public void addFirst(PropertySource<?> propertySource) {
+        this.propertySources.addFirst(propertySource);
+    }
+
+    /**
      * Add the given property source object with lowest precedence.
      */
     public void addLast(PropertySource<?> propertySource) {

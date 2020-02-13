@@ -15,6 +15,7 @@ import static java.lang.reflect.Modifier.isStatic;
  * @author vlinux
  * @author hengyunabc 2018-11-12
  */
+@Config(prefix = "arthas")
 public class Configure {
     public static final long DEFAULT_SESSION_TIMEOUT_SECONDS = ShellServerOptions.DEFAULT_SESSION_TIMEOUT/1000;
     private String ip;
@@ -117,9 +118,6 @@ public class Configure {
         this.statUrl = statUrl;
     }
 
-    // 对象的编码解码器
-    private final static FeatureCodec codec = new FeatureCodec(';', '=');
-
     /**
      * 序列化成字符串
      *
@@ -148,7 +146,7 @@ public class Configure {
 
         }
 
-        return codec.toString(map);
+        return FeatureCodec.DEFAULT_COMMANDLINE_CODEC.toString(map);
     }
 
     /**
@@ -159,7 +157,7 @@ public class Configure {
      */
     public static Configure toConfigure(String toString) throws IllegalAccessException {
         final Configure configure = new Configure();
-        final Map<String, String> map = codec.toMap(toString);
+        final Map<String, String> map = FeatureCodec.DEFAULT_COMMANDLINE_CODEC.toMap(toString);
 
         for (Map.Entry<String, String> entry : map.entrySet()) {
             final Field field = ArthasReflectUtils.getField(Configure.class, entry.getKey());

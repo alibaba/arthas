@@ -16,6 +16,8 @@ import static com.taobao.arthas.core.util.StringUtils.isBlank;
  * Created by dukun on 15/3/31.
  */
 public class FeatureCodec {
+    // 对象的编码解码器
+    public final static FeatureCodec DEFAULT_COMMANDLINE_CODEC = new FeatureCodec(';', '=');
 
     /**
      * KV片段分割符<br/>

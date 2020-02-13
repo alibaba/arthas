@@ -1,6 +1,9 @@
 package com.taobao.arthas.core.server;
 
 import com.taobao.arthas.core.config.Configure;
+import com.taobao.arthas.core.config.FeatureCodec;
+import com.taobao.arthas.core.env.ArthasEnvironment;
+import com.taobao.arthas.core.env.MapPropertySource;
 import com.alibaba.arthas.tunnel.client.TunnelClient;
 import com.taobao.arthas.common.PidUtils;
 import com.taobao.arthas.core.advisor.AdviceWeaver;
@@ -30,6 +33,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadFactory;
@@ -44,6 +48,8 @@ public class ArthasBootstrap {
 
     private static Logger logger = LogUtil.getArthasLogger();
     private static ArthasBootstrap arthasBootstrap;
+
+    private ArthasEnvironment arthasEnvironment;
 
     private AtomicBoolean isBindRef = new AtomicBoolean(false);
     private Instrumentation instrumentation;
@@ -95,7 +101,21 @@ public class ArthasBootstrap {
     
     public void bind(String args) throws Throwable {
         initSpy();
+
+        if( arthasEnvironment == null) {
+            arthasEnvironment = new ArthasEnvironment();
+        }
         Configure configure = Configure.toConfigure(args);
+        Map<String, String> argsMap = FeatureCodec.DEFAULT_COMMANDLINE_CODEC.toMap(args);
+        // 给配置全加上前缀
+        Map<String, Object> mapWithPrefix = new HashMap<String, Object>(argsMap.size());
+        for(Entry<String, String> entry : argsMap.entrySet()) {
+            mapWithPrefix.put("arthas." + entry.getKey(), entry.getValue());
+        }
+
+        MapPropertySource mapPropertySource = new MapPropertySource("args", mapWithPrefix);
+        arthasEnvironment.addFirst(mapPropertySource);
+
         bind(configure);
     }
 
