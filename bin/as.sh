@@ -645,7 +645,7 @@ parse_arguments()
             return 1
         fi
 
-        echo "Found existing java process, please choose one and hit RETURN."
+        echo "Found existing java process, please choose one and input the serial number of the process, eg : 1. Then hit RETURN."
 
         index=0
         suggest=1
