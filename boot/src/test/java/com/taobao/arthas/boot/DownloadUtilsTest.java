@@ -32,10 +32,7 @@ public class DownloadUtilsTest {
 
     @Test
     public void testReadMavenMetaData() throws IOException {
-        String url = "http://repo1.maven.org/maven2/com/taobao/arthas/arthas-packaging/maven-metadata.xml";
-        Assert.assertEquals(IOUtils.toString(new URL(url).openStream()), readMavenMetaData("center", true));
-
-        Assert.assertNull(readMavenMetaData("", false));
-        Assert.assertNull(readMavenMetaData("https/", false));
+        String url = "https://repo1.maven.org/maven2/com/taobao/arthas/arthas-packaging/maven-metadata.xml";
+        Assert.assertEquals(IOUtils.toString(new URL(url).openStream()), readMavenMetaData("center", false));
     }
 }
