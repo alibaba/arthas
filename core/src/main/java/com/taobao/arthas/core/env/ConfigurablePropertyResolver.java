@@ -16,6 +16,8 @@
 
 package com.taobao.arthas.core.env;
 
+import com.taobao.arthas.core.env.convert.ConfigurableConversionService;
+
 /**
  * Configuration interface to be implemented by most if not all
  * {@link PropertyResolver} types. Provides facilities for accessing and

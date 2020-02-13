@@ -135,6 +135,11 @@
                 <version>0.2.8</version>
             </dependency>
             <dependency>
+                <groupId>com.alibaba.arthas</groupId>
+                <artifactId>arthas-repackage-logger</artifactId>
+                <version>0.0.1</version>
+            </dependency>
+            <dependency>
                 <groupId>com.alibaba</groupId>
                 <artifactId>fastjson</artifactId>
                 <version>1.2.33</version>

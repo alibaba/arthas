@@ -14,7 +14,9 @@
  * limitations under the License.
  */
 
-package com.taobao.arthas.core.env;
+package com.taobao.arthas.core.env.convert;
+
+import com.taobao.arthas.core.env.ConversionService;
 
 /**
  * Configuration interface to be implemented by most if not all
@@ -28,7 +30,7 @@ package com.taobao.arthas.core.env;
  *
  * @author Chris Beams
  * @since 3.1
- * @see org.springframework.core.env.ConfigurablePropertyResolver#getConversionService()
+ * @see com.taobao.arthas.core.env.springframework.core.env.ConfigurablePropertyResolver#getConversionService()
  * @see org.springframework.core.env.ConfigurableEnvironment
  * @see org.springframework.context.ConfigurableApplicationContext#getEnvironment()
  */
