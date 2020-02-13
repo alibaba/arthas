@@ -10,6 +10,7 @@ import java.io.*;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Properties;
 
 public class FileUtils {
 
@@ -163,5 +164,18 @@ public class FileUtils {
         }
     }
 
+    public static Properties readProperties(String file) throws IOException {
+        Properties properties = new Properties();
+
+        FileInputStream in = null;
+        try {
+            in = new FileInputStream(file);
+            properties.load(in);
+            return properties;
+        } finally {
+            com.taobao.arthas.common.IOUtils.close(in);
+        }
+
+    }
 }
 

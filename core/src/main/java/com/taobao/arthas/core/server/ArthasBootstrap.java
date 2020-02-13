@@ -1,13 +1,35 @@
 package com.taobao.arthas.core.server;
 
-import com.taobao.arthas.core.config.Configure;
-import com.taobao.arthas.core.config.FeatureCodec;
-import com.taobao.arthas.core.env.ArthasEnvironment;
-import com.taobao.arthas.core.env.MapPropertySource;
+import java.arthas.Spy;
+import java.io.File;
+import java.io.IOException;
+import java.lang.instrument.Instrumentation;
+import java.lang.reflect.Method;
+import java.net.URI;
+import java.security.CodeSource;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Properties;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ThreadFactory;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicBoolean;
+
 import com.alibaba.arthas.tunnel.client.TunnelClient;
 import com.taobao.arthas.common.PidUtils;
 import com.taobao.arthas.core.advisor.AdviceWeaver;
 import com.taobao.arthas.core.command.BuiltinCommandPack;
+import com.taobao.arthas.core.config.BinderUtils;
+import com.taobao.arthas.core.config.Configure;
+import com.taobao.arthas.core.config.FeatureCodec;
+import com.taobao.arthas.core.env.ArthasEnvironment;
+import com.taobao.arthas.core.env.MapPropertySource;
+import com.taobao.arthas.core.env.PropertiesPropertySource;
+import com.taobao.arthas.core.env.PropertySource;
 import com.taobao.arthas.core.shell.ShellServer;
 import com.taobao.arthas.core.shell.ShellServerOptions;
 import com.taobao.arthas.core.shell.command.CommandResolver;
@@ -17,34 +39,22 @@ import com.taobao.arthas.core.shell.term.impl.HttpTermServer;
 import com.taobao.arthas.core.shell.term.impl.httptelnet.HttpTelnetTermServer;
 import com.taobao.arthas.core.util.ArthasBanner;
 import com.taobao.arthas.core.util.Constants;
+import com.taobao.arthas.core.util.FileUtils;
 import com.taobao.arthas.core.util.LogUtil;
 import com.taobao.arthas.core.util.UserStatUtil;
 import com.taobao.middleware.logger.Logger;
 
 import io.netty.channel.ChannelFuture;
 
-import java.arthas.Spy;
-import java.io.File;
-import java.io.IOException;
-import java.lang.instrument.Instrumentation;
-import java.lang.reflect.Method;
-import java.net.URI;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ThreadFactory;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicBoolean;
-
 
 /**
  * @author vlinux on 15/5/2.
  */
 public class ArthasBootstrap {
+
+    public static final String CONFIG_NAME_PROPERTY  = "arthas.config.name";
+    public static final String CONFIG_LOCATION_PROPERTY = "arthas.config.location";
+    public static final String CONFIG_OVERRIDE_ALL= "arthas.config.overrideAll";
 
     private static Logger logger = LogUtil.getArthasLogger();
     private static ArthasBootstrap arthasBootstrap;
@@ -102,21 +112,82 @@ public class ArthasBootstrap {
     public void bind(String args) throws Throwable {
         initSpy();
 
-        if( arthasEnvironment == null) {
+        if (arthasEnvironment == null) {
             arthasEnvironment = new ArthasEnvironment();
         }
-        Configure configure = Configure.toConfigure(args);
+
+        /**
+         * <pre>
+         * 脚本里传过来的配置项，即命令行参数 > System Env > System Properties > arthas.properties
+         * arthas.properties 指供一个配置项，可以反转优先级。 arthas.config.overrideAll=true
+         * https://github.com/alibaba/arthas/issues/986
+         * </pre>
+         */
         Map<String, String> argsMap = FeatureCodec.DEFAULT_COMMANDLINE_CODEC.toMap(args);
         // 给配置全加上前缀
         Map<String, Object> mapWithPrefix = new HashMap<String, Object>(argsMap.size());
-        for(Entry<String, String> entry : argsMap.entrySet()) {
+        for (Entry<String, String> entry : argsMap.entrySet()) {
             mapWithPrefix.put("arthas." + entry.getKey(), entry.getValue());
         }
 
         MapPropertySource mapPropertySource = new MapPropertySource("args", mapWithPrefix);
         arthasEnvironment.addFirst(mapPropertySource);
 
+        tryToLoadArthasProperties();
+
+        Configure configure = new Configure();
+        BinderUtils.inject(arthasEnvironment, configure);
+
         bind(configure);
+    }
+
+    // try to load arthas.properties
+    private void tryToLoadArthasProperties() throws IOException {
+        this.arthasEnvironment.resolvePlaceholders(CONFIG_LOCATION_PROPERTY);
+
+        String location = null;
+
+        if (arthasEnvironment.containsProperty(CONFIG_LOCATION_PROPERTY)) {
+            location = arthasEnvironment.resolvePlaceholders(CONFIG_LOCATION_PROPERTY);
+        }
+
+        if (location == null) {
+            CodeSource codeSource = ArthasBootstrap.class.getProtectionDomain().getCodeSource();
+            if (codeSource != null) {
+                try {
+                    location = new File(codeSource.getLocation().toURI().getSchemeSpecificPart()).getAbsolutePath();
+                } catch (Throwable e) {
+                    logger.error("arthas", "can not find libasyncProfiler so", e);
+                }
+            }
+        }
+
+        String configName = "arthas";
+        if (arthasEnvironment.containsProperty(CONFIG_NAME_PROPERTY)) {
+            configName = arthasEnvironment.resolvePlaceholders(CONFIG_NAME_PROPERTY);
+        }
+
+        if (location != null) {
+            if (!location.endsWith(".properties")) {
+                location = new File(location, configName + ".properties").getAbsolutePath();
+            }
+        }
+
+        if (new File(location).exists()) {
+            Properties properties = FileUtils.readProperties(location);
+
+            boolean overrideAll = false;
+            if (arthasEnvironment.containsProperty(CONFIG_OVERRIDE_ALL)) {
+                overrideAll = arthasEnvironment.getRequiredProperty(CONFIG_OVERRIDE_ALL, boolean.class);
+            }
+
+            PropertySource propertySource = new PropertiesPropertySource(location, properties);
+            if (overrideAll) {
+                arthasEnvironment.addFirst(propertySource);
+            } else {
+                arthasEnvironment.addLast(propertySource);
+            }
+        }
     }
 
     /**
