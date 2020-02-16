@@ -7,6 +7,7 @@
 * [sysprop](sysprop.md)
 * [sysenv](sysenv.md)
 * [vmoption](vmoption.md)
+* [perfcounter](perfcounter.md)
 * [logger](logger.md)
 * [mbean](mbean.md)
 * [getstatic](getstatic.md)
