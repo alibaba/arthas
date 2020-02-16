@@ -27,6 +27,7 @@
 * [sysprop](sysprop.md)——查看和修改JVM的系统属性
 * [sysenv](sysenv.md)——查看JVM的环境变量
 * [vmoption](vmoption.md)——查看和修改JVM里诊断相关的option
+* [perfcounter](perfcounter.md)——查看当前 JVM 的Perf Counter信息
 * [logger](logger.md)——查看和修改logger
 * [getstatic](getstatic.md)——查看类的静态属性
 * [ognl](ognl.md)——执行ognl表达式
