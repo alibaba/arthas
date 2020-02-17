@@ -2,9 +2,11 @@ package com.taobao.arthas.core.util;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
+import com.taobao.arthas.common.IOUtils;
 
 import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.HttpURLConnection;
@@ -28,12 +30,14 @@ public class NetUtils {
      */
     public static Response request(String urlString) {
         HttpURLConnection urlConnection = null;
+        InputStream in = null;
         try {
             URL url = new URL(urlString);
             urlConnection = (HttpURLConnection)url.openConnection();
             // prefer json to text
             urlConnection.setRequestProperty("Accept", "application/json,text/plain;q=0.2");
-            BufferedReader br = new BufferedReader(new InputStreamReader(urlConnection.getInputStream()));
+            in = urlConnection.getInputStream();
+            BufferedReader br = new BufferedReader(new InputStreamReader(in));
             String line = null;
             StringBuilder sb = new StringBuilder();
             while ((line = br.readLine()) != null) {
@@ -52,6 +56,7 @@ public class NetUtils {
         } catch (IOException e) {
             return new Response(e.getMessage(), false);
         } finally {
+            IOUtils.close(in);
             if (urlConnection != null) {
                 urlConnection.disconnect();
             }
