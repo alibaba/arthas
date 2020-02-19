@@ -102,7 +102,7 @@
             <dependency>
                 <groupId>org.benf</groupId>
                 <artifactId>cfr</artifactId>
-                <version>0.146</version>
+                <version>0.148</version>
             </dependency>
             <dependency>
                 <groupId>com.alibaba.middleware</groupId>
