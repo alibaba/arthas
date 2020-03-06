@@ -291,6 +291,10 @@ public class TelnetConsole {
         InputStream inputStream = telnet.getInputStream();
         OutputStream outputStream = telnet.getOutputStream();
 
+        // read welcome message
+        String welcomeStr = readUntil(inputStream, PROMPT);
+        System.out.print(welcomeStr);
+
         for (String command : commands) {
             if (command.trim().isEmpty()) {
                 continue;
@@ -303,6 +307,8 @@ public class TelnetConsole {
             System.out.print(response);
             System.out.flush();
         }
+        //print line break for alignment
+        System.out.println();
     }
 
     private static String usage(CLI cli) {
