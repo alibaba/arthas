@@ -485,6 +485,7 @@ OK
 ![北京登云美业网络](static/idengyun.jpg)
 ![Holder](static/holder.png)
 ![立林科技](static/leelen.png)
+![嘉云数据](static/clubfactory.png)
 
 
 ### 洐生项目
