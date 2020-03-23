@@ -357,4 +357,8 @@ public class ArthasBootstrap {
     public TunnelClient getTunnelClient() {
         return tunnelClient;
     }
+
+    public ShellServer getShellServer() {
+        return shellServer;
+    }
 }

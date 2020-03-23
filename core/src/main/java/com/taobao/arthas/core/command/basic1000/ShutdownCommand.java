@@ -1,6 +1,7 @@
 package com.taobao.arthas.core.command.basic1000;
 
 import com.taobao.arthas.core.advisor.Enhancer;
+import com.taobao.arthas.core.server.ArthasBootstrap;
 import com.taobao.arthas.core.shell.ShellServer;
 import com.taobao.arthas.core.shell.command.AnnotatedCommand;
 import com.taobao.arthas.core.shell.command.CommandProcess;
@@ -39,7 +40,8 @@ public class ShutdownCommand extends AnnotatedCommand {
             // ignore
         } finally {
             process.end();
-            ShellServer server = process.session().getServer();
+            //ShellServer server = process.session().getServer();
+            ShellServer server = ArthasBootstrap.getInstance().getShellServer();
             server.close();
         }
     }

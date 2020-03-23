@@ -10,6 +10,7 @@ import java.util.List;
  * A shell session.
  *
  * @author <a href="mailto:julien@julienviet.com">Julien Viet</a>
+ * @author gongdewei 2020-03-23
  */
 public interface Session {
     String COMMAND_MANAGER = "arthas-command-manager";
@@ -79,13 +80,6 @@ public interface Session {
      * @return session id
      */
     String getSessionId();
-
-    /**
-     * Get shell server
-     *
-     * @return shell server
-     */
-    ShellServer getServer();
 
     /**
      * Get Java PID

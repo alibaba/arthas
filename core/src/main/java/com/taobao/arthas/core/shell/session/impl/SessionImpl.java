@@ -1,6 +1,5 @@
 package com.taobao.arthas.core.shell.session.impl;
 
-import com.taobao.arthas.core.shell.ShellServer;
 import com.taobao.arthas.core.shell.command.CommandResolver;
 import com.taobao.arthas.core.shell.session.Session;
 import com.taobao.arthas.core.shell.system.impl.InternalCommandManager;
@@ -67,11 +66,6 @@ public class SessionImpl implements Session {
     @Override
     public String getSessionId() {
         return (String) data.get(ID);
-    }
-
-    @Override
-    public ShellServer getServer() {
-        return (ShellServer) data.get(SERVER);
     }
 
     @Override
