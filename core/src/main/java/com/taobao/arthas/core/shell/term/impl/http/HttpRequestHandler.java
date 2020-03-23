@@ -7,6 +7,7 @@ import java.net.URI;
 import java.net.URL;
 
 import com.taobao.arthas.common.IOUtils;
+import com.taobao.arthas.core.shell.term.impl.http.api.HttpApiHandler;
 import com.taobao.arthas.core.util.LogUtil;
 import com.taobao.middleware.logger.Logger;
 
@@ -30,6 +31,7 @@ import io.termd.core.util.Logging;
 /**
  * @author <a href="mailto:julien@julienviet.com">Julien Viet</a>
  * @author hengyunabc 2019-11-06
+ * @author gongdewei 2020-03-18
  */
 public class HttpRequestHandler extends SimpleChannelInboundHandler<FullHttpRequest> {
     private static final Logger logger = LogUtil.getArthasLogger();
@@ -38,10 +40,13 @@ public class HttpRequestHandler extends SimpleChannelInboundHandler<FullHttpRequ
 
     private File dir;
 
+    private HttpApiHandler httpApiHandler;
+
     public HttpRequestHandler(String wsUri, File dir) {
         this.wsUri = wsUri;
         this.dir = dir;
         dir.mkdirs();
+        this.httpApiHandler = new HttpApiHandler();
     }
 
     @Override
@@ -53,35 +58,48 @@ public class HttpRequestHandler extends SimpleChannelInboundHandler<FullHttpRequ
                 send100Continue(ctx);
             }
 
-            HttpResponse response = new DefaultHttpResponse(request.protocolVersion(),
-                    HttpResponseStatus.INTERNAL_SERVER_ERROR);
-
+            HttpResponse response = null;
             String path = new URI(request.uri()).getPath();
-
             if ("/".equals(path)) {
                 path = "/index.html";
             }
 
             try {
-                DefaultFullHttpResponse fileViewResult = DirectoryBrowser.view(dir, path, request.protocolVersion());
-                if (fileViewResult != null) {
-                    response = fileViewResult;
-                } else {
-                    FullHttpResponse fullResp = readFileFromResource(request, path);
-                    if(fullResp != null){
-                        response = fullResp;
-                    } else {
-                        response.setStatus(HttpResponseStatus.NOT_FOUND);
-                    }
+                //handle http restful api
+                if ("/api".equals(path)) {
+                    response = httpApiHandler.handle(request);
+                }
+
+                //try classpath resource first
+                if (response == null){
+                    response = readFileFromResource(request, path);
+                }
+
+                //try output dir later, avoid overlay classpath resources files
+                if (response == null){
+                    response = DirectoryBrowser.view(dir, path, request.protocolVersion());
+                }
+
+                //not found
+                if (response == null){
+                    response = createResponse(request, HttpResponseStatus.NOT_FOUND);
                 }
             } catch (Throwable e) {
                 logger.error("arthas", "arthas process http request error: " + request.uri(), e);
             } finally {
+                //If it is null, an error may occur
+                if (response == null){
+                    response = createResponse(request, HttpResponseStatus.INTERNAL_SERVER_ERROR);
+                }
                 ctx.write(response);
                 ChannelFuture future = ctx.writeAndFlush(LastHttpContent.EMPTY_LAST_CONTENT);
                 future.addListener(ChannelFutureListener.CLOSE);
             }
         }
+    }
+
+    private DefaultHttpResponse createResponse(FullHttpRequest request, HttpResponseStatus status) {
+        return new DefaultHttpResponse(request.protocolVersion(), status);
     }
 
     private FullHttpResponse readFileFromResource(FullHttpRequest request, String path) throws IOException {
