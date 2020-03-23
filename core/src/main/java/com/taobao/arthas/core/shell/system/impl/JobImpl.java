@@ -7,11 +7,10 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 import com.taobao.arthas.core.shell.future.Future;
 import com.taobao.arthas.core.shell.handlers.Handler;
-import com.taobao.arthas.core.shell.handlers.shell.ShellForegroundUpdateHandler;
-import com.taobao.arthas.core.shell.impl.ShellImpl;
 import com.taobao.arthas.core.shell.session.Session;
 import com.taobao.arthas.core.shell.system.ExecStatus;
 import com.taobao.arthas.core.shell.system.Job;
+import com.taobao.arthas.core.shell.system.JobListener;
 import com.taobao.arthas.core.shell.system.Process;
 import com.taobao.arthas.core.shell.term.Term;
 import com.taobao.arthas.core.shell.term.impl.TermImpl;
@@ -21,6 +20,7 @@ import com.taobao.arthas.core.util.FileUtils;
 /**
  * @author <a href="mailto:julien@julienviet.com">Julien Viet</a>
  * @author hengyunabc 2019-05-14
+ * @author gongdewei 2020-03-23
  */
 public class JobImpl implements Job {
 
@@ -28,25 +28,30 @@ public class JobImpl implements Job {
     final JobControllerImpl controller;
     final Process process;
     final String line;
+    private volatile Session session;
     private volatile ExecStatus actualStatus; // Used internally for testing only
     volatile long lastStopped; // When the job was last stopped
-    volatile ShellImpl shell;
+    volatile JobListener jobHandler;
     volatile Handler<ExecStatus> statusUpdateHandler;
     volatile Date timeoutDate;
     final Future<Void> terminateFuture;
     final AtomicBoolean runInBackground;
-    final Handler<Job> foregroundUpdatedHandler;
+    //final Handler<Job> foregroundUpdatedHandler;
 
     JobImpl(int id, final JobControllerImpl controller, Process process, String line, boolean runInBackground,
-            ShellImpl shell) {
+            Session session, JobListener jobHandler) {
         this.id = id;
         this.controller = controller;
         this.process = process;
         this.line = line;
+        this.session = session;
         this.terminateFuture = Future.future();
         this.runInBackground = new AtomicBoolean(runInBackground);
-        this.shell = shell;
-        this.foregroundUpdatedHandler = new ShellForegroundUpdateHandler(shell);
+        this.jobHandler = jobHandler;
+        if (jobHandler == null) {
+            throw new IllegalArgumentException("JobListener is required");
+        }
+        //this.foregroundUpdatedHandler = new ShellForegroundUpdateHandler(shell);
         process.terminatedHandler(new TerminatedHandler(controller));
     }
 
@@ -76,7 +81,7 @@ public class JobImpl implements Job {
 
     @Override
     public Session getSession() {
-        return shell.session();
+        return session;
     }
 
     @Override
@@ -89,19 +94,19 @@ public class JobImpl implements Job {
 
         runInBackground.set(!foreground);
 
-        if (foreground) {
-            if (foregroundUpdatedHandler != null) {
-                foregroundUpdatedHandler.handle(this);
-            }
-        }
+//        if (foreground) {
+//            if (foregroundUpdatedHandler != null) {
+//                foregroundUpdatedHandler.handle(this);
+//            }
+//        }
         if (statusUpdateHandler != null) {
             statusUpdateHandler.handle(process.status());
         }
 
         if (foreground) {
-            shell.setForegroundJob(this);
+            jobHandler.onForeground(this);
         } else {
-            shell.setForegroundJob(null);
+            jobHandler.onBackground(this);
         }
         return this;
     }
@@ -113,14 +118,15 @@ public class JobImpl implements Job {
         } catch (IllegalStateException ignore) {
             return this;
         }
-        if (!runInBackground.get() && foregroundUpdatedHandler != null) {
-            foregroundUpdatedHandler.handle(null);
-        }
+//        if (!runInBackground.get() && foregroundUpdatedHandler != null) {
+//            foregroundUpdatedHandler.handle(null);
+//        }
         if (statusUpdateHandler != null) {
             statusUpdateHandler.handle(process.status());
         }
 
-        shell.setForegroundJob(null);
+//        shell.setForegroundJob(null);
+        jobHandler.onSuspend(this);
         return this;
     }
 
@@ -148,6 +154,11 @@ public class JobImpl implements Job {
     }
 
     @Override
+    public boolean isRunInBackground() {
+        return runInBackground.get();
+    }
+
+    @Override
     public Job toBackground() {
         if (!this.runInBackground.get()) {
             // run in foreground mode
@@ -156,10 +167,12 @@ public class JobImpl implements Job {
                 if (statusUpdateHandler != null) {
                     statusUpdateHandler.handle(process.status());
                 }
+                jobHandler.onBackground(this);
             }
         }
 
-        shell.setForegroundJob(null);
+//        shell.setForegroundJob(null);
+//        jobHandler.onBackground(this);
         return this;
     }
 
@@ -167,15 +180,16 @@ public class JobImpl implements Job {
     public Job toForeground() {
         if (this.runInBackground.get()) {
             if (runInBackground.compareAndSet(true, false)) {
-                if (foregroundUpdatedHandler != null) {
-                    foregroundUpdatedHandler.handle(this);
-                }
+//                if (foregroundUpdatedHandler != null) {
+//                    foregroundUpdatedHandler.handle(this);
+//                }
                 process.toForeground();
                 if (statusUpdateHandler != null) {
                     statusUpdateHandler.handle(process.status());
                 }
 
-                shell.setForegroundJob(this);
+//                shell.setForegroundJob(this);
+                jobHandler.onForeground(this);
             }
         }
 
@@ -194,26 +208,32 @@ public class JobImpl implements Job {
 
     @Override
     public Job run(boolean foreground) {
-        if (foreground && foregroundUpdatedHandler != null) {
-            foregroundUpdatedHandler.handle(this);
-        }
+//        if (foreground && foregroundUpdatedHandler != null) {
+//            foregroundUpdatedHandler.handle(this);
+//        }
 
         actualStatus = ExecStatus.RUNNING;
         if (statusUpdateHandler != null) {
             statusUpdateHandler.handle(ExecStatus.RUNNING);
         }
-        process.setTty(shell.term());
-        process.setSession(shell.session());
+        //TODO process's tty
+        //process.setTty(shell.term());
+        process.setSession(this.session);
         process.run(foreground);
 
-        if (!foreground && foregroundUpdatedHandler != null) {
-            foregroundUpdatedHandler.handle(null);
-        }
-
+//        if (!foreground && foregroundUpdatedHandler != null) {
+//            foregroundUpdatedHandler.handle(null);
+//        }
+//
+//        if (foreground) {
+//            shell.setForegroundJob(this);
+//        } else {
+//            shell.setForegroundJob(null);
+//        }
         if (foreground) {
-            shell.setForegroundJob(this);
+            jobHandler.onForeground(this);
         } else {
-            shell.setForegroundJob(null);
+            jobHandler.onBackground(this);
         }
         return this;
     }
@@ -230,9 +250,10 @@ public class JobImpl implements Job {
         public void handle(Integer exitCode) {
             if (!runInBackground.get() && actualStatus.equals(ExecStatus.RUNNING)) {
                 // 只有前台在运行的任务，才需要调用foregroundUpdateHandler
-                if (foregroundUpdatedHandler != null) {
-                    foregroundUpdatedHandler.handle(null);
-                }
+//                if (foregroundUpdatedHandler != null) {
+//                    foregroundUpdatedHandler.handle(null);
+//                }
+                jobHandler.onTerminated(JobImpl.this);
             }
             controller.removeJob(JobImpl.this.id);
             if (statusUpdateHandler != null) {
@@ -240,12 +261,12 @@ public class JobImpl implements Job {
             }
             terminateFuture.complete();
 
-            // save command history
-            Term term = shell.term();
-            if (term instanceof TermImpl) {
-                List<int[]> history = ((TermImpl) term).getReadline().getHistory();
-                FileUtils.saveCommandHistory(history, new File(Constants.CMD_HISTORY_FILE));
-            }
+            // TODO save command history
+//            Term term = shell.term();
+//            if (term instanceof TermImpl) {
+//                List<int[]> history = ((TermImpl) term).getReadline().getHistory();
+//                FileUtils.saveCommandHistory(history, new File(Constants.CMD_HISTORY_FILE));
+//            }
         }
     }
 

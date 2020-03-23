@@ -11,6 +11,7 @@ import com.taobao.arthas.core.shell.handlers.Handler;
 import com.taobao.arthas.core.shell.impl.ShellImpl;
 import com.taobao.arthas.core.shell.system.Job;
 import com.taobao.arthas.core.shell.system.JobController;
+import com.taobao.arthas.core.shell.system.JobListener;
 import com.taobao.arthas.core.shell.system.Process;
 import com.taobao.arthas.core.shell.system.impl.ProcessImpl.ProcessOutput;
 import com.taobao.arthas.core.shell.term.Term;
@@ -34,6 +35,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 /**
  * @author <a href="mailto:julien@julienviet.com">Julien Viet</a>
  * @author hengyunabc 2019-05-14
+ * @author gongdewei 2020-03-23
  */
 public class JobControllerImpl implements JobController {
 
@@ -66,7 +68,7 @@ public class JobControllerImpl implements JobController {
         boolean runInBackground = runInBackground(tokens);
         Process process = createProcess(tokens, commandManager, jobId, shell.term());
         process.setJobId(jobId);
-        JobImpl job = new JobImpl(jobId, this, process, line.toString(), runInBackground, shell);
+        JobImpl job = new JobImpl(jobId, this, process, line.toString(), runInBackground, shell.session(), new ShellJobHandler(shell));
         jobs.put(jobId, job);
         return job;
     }
@@ -225,4 +227,38 @@ public class JobControllerImpl implements JobController {
     public void close() {
         close(null);
     }
+
+    private class ShellJobHandler implements JobListener {
+        ShellImpl shell;
+
+        public ShellJobHandler(ShellImpl shell) {
+            this.shell = shell;
+        }
+
+        @Override
+        public void onForeground(Job job) {
+            shell.setForegroundJob(job);
+        }
+
+        @Override
+        public void onBackground(Job job) {
+            shell.setForegroundJob(null);
+            shell.readline();
+        }
+
+        @Override
+        public void onTerminated(Job job) {
+            if (!job.isRunInBackground()){
+                shell.readline();
+            }
+        }
+
+        @Override
+        public void onSuspend(Job job) {
+            if (!job.isRunInBackground()){
+                shell.readline();
+            }
+        }
+    }
+
 }
