@@ -216,7 +216,7 @@ public class JobImpl implements Job {
         if (statusUpdateHandler != null) {
             statusUpdateHandler.handle(ExecStatus.RUNNING);
         }
-        //TODO process's tty
+        //set process's tty in JobControllerImpl.createCommandProcess
         //process.setTty(shell.term());
         process.setSession(this.session);
         process.run(foreground);
@@ -248,11 +248,13 @@ public class JobImpl implements Job {
 
         @Override
         public void handle(Integer exitCode) {
-            if (!runInBackground.get() && actualStatus.equals(ExecStatus.RUNNING)) {
+//            if (!runInBackground.get() && actualStatus.equals(ExecStatus.RUNNING)) {
                 // 只有前台在运行的任务，才需要调用foregroundUpdateHandler
 //                if (foregroundUpdatedHandler != null) {
 //                    foregroundUpdatedHandler.handle(null);
 //                }
+//            }
+            if (actualStatus.equals(ExecStatus.RUNNING)) {
                 jobHandler.onTerminated(JobImpl.this);
             }
             controller.removeJob(JobImpl.this.id);
@@ -261,7 +263,7 @@ public class JobImpl implements Job {
             }
             terminateFuture.complete();
 
-            // TODO save command history
+            // save command history (move to JobControllerImpl.ShellJobHandler.onTerminated)
 //            Term term = shell.term();
 //            if (term instanceof TermImpl) {
 //                List<int[]> history = ((TermImpl) term).getReadline().getHistory();

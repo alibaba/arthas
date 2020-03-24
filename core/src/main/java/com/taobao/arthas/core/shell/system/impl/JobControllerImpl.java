@@ -15,7 +15,9 @@ import com.taobao.arthas.core.shell.system.JobListener;
 import com.taobao.arthas.core.shell.system.Process;
 import com.taobao.arthas.core.shell.system.impl.ProcessImpl.ProcessOutput;
 import com.taobao.arthas.core.shell.term.Term;
+import com.taobao.arthas.core.shell.term.impl.TermImpl;
 import com.taobao.arthas.core.util.Constants;
+import com.taobao.arthas.core.util.FileUtils;
 import com.taobao.arthas.core.util.TokenUtils;
 
 import io.termd.core.function.Function;
@@ -200,7 +202,9 @@ public class JobControllerImpl implements JobController {
             }
         }
         ProcessOutput ProcessOutput = new ProcessOutput(stdoutHandlerChain, cacheLocation, term);
-        return new ProcessImpl(command, remaining, command.processHandler(), ProcessOutput);
+        ProcessImpl process = new ProcessImpl(command, remaining, command.processHandler(), ProcessOutput);
+        process.setTty(term);
+        return process;
     }
 
     private String getRedirectFileName(ListIterator<CliToken> tokens) {
@@ -238,27 +242,43 @@ public class JobControllerImpl implements JobController {
         @Override
         public void onForeground(Job job) {
             shell.setForegroundJob(job);
+            //reset stdin handler to job's origin handler
+            //shell.term().stdinHandler(job.process().getStdinHandler());
         }
 
         @Override
         public void onBackground(Job job) {
-            shell.setForegroundJob(null);
-            shell.readline();
+            resetAndReadLine();
         }
 
-        @Override
+       @Override
         public void onTerminated(Job job) {
             if (!job.isRunInBackground()){
-                shell.readline();
+                resetAndReadLine();
+            }
+
+            // save command history
+            Term term = shell.term();
+            if (term instanceof TermImpl) {
+                List<int[]> history = ((TermImpl) term).getReadline().getHistory();
+                FileUtils.saveCommandHistory(history, new File(Constants.CMD_HISTORY_FILE));
             }
         }
 
         @Override
         public void onSuspend(Job job) {
             if (!job.isRunInBackground()){
-                shell.readline();
+                resetAndReadLine();
             }
         }
+
+        private void resetAndReadLine() {
+            //reset stdin handler to echo handler
+            //shell.term().stdinHandler(null);
+            shell.setForegroundJob(null);
+            shell.readline();
+        }
+
     }
 
 }
