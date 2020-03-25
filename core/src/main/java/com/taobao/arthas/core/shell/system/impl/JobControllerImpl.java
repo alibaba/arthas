@@ -8,30 +8,20 @@ import com.taobao.arthas.core.shell.command.internal.StdoutHandler;
 import com.taobao.arthas.core.shell.command.internal.TermHandler;
 import com.taobao.arthas.core.shell.future.Future;
 import com.taobao.arthas.core.shell.handlers.Handler;
-import com.taobao.arthas.core.shell.impl.ShellImpl;
+import com.taobao.arthas.core.shell.session.Session;
 import com.taobao.arthas.core.shell.system.Job;
 import com.taobao.arthas.core.shell.system.JobController;
 import com.taobao.arthas.core.shell.system.JobListener;
 import com.taobao.arthas.core.shell.system.Process;
 import com.taobao.arthas.core.shell.system.impl.ProcessImpl.ProcessOutput;
 import com.taobao.arthas.core.shell.term.Term;
-import com.taobao.arthas.core.shell.term.impl.TermImpl;
 import com.taobao.arthas.core.util.Constants;
-import com.taobao.arthas.core.util.FileUtils;
 import com.taobao.arthas.core.util.TokenUtils;
-
 import io.termd.core.function.Function;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.List;
-import java.util.ListIterator;
-import java.util.Set;
-import java.util.SortedMap;
-import java.util.TreeMap;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
@@ -61,16 +51,16 @@ public class JobControllerImpl implements JobController {
     }
 
     @Override
-    public Job createJob(InternalCommandManager commandManager, List<CliToken> tokens, ShellImpl shell) {
+    public Job createJob(InternalCommandManager commandManager, List<CliToken> tokens, Session session, JobListener jobHandler, Term term) {
         int jobId = idGenerator.incrementAndGet();
         StringBuilder line = new StringBuilder();
         for (CliToken arg : tokens) {
             line.append(arg.raw());
         }
         boolean runInBackground = runInBackground(tokens);
-        Process process = createProcess(tokens, commandManager, jobId, shell.term());
+        Process process = createProcess(tokens, commandManager, jobId, term);
         process.setJobId(jobId);
-        JobImpl job = new JobImpl(jobId, this, process, line.toString(), runInBackground, shell.session(), new ShellJobHandler(shell));
+        JobImpl job = new JobImpl(jobId, this, process, line.toString(), runInBackground, session, jobHandler);
         jobs.put(jobId, job);
         return job;
     }
@@ -230,55 +220,6 @@ public class JobControllerImpl implements JobController {
     @Override
     public void close() {
         close(null);
-    }
-
-    private class ShellJobHandler implements JobListener {
-        ShellImpl shell;
-
-        public ShellJobHandler(ShellImpl shell) {
-            this.shell = shell;
-        }
-
-        @Override
-        public void onForeground(Job job) {
-            shell.setForegroundJob(job);
-            //reset stdin handler to job's origin handler
-            //shell.term().stdinHandler(job.process().getStdinHandler());
-        }
-
-        @Override
-        public void onBackground(Job job) {
-            resetAndReadLine();
-        }
-
-       @Override
-        public void onTerminated(Job job) {
-            if (!job.isRunInBackground()){
-                resetAndReadLine();
-            }
-
-            // save command history
-            Term term = shell.term();
-            if (term instanceof TermImpl) {
-                List<int[]> history = ((TermImpl) term).getReadline().getHistory();
-                FileUtils.saveCommandHistory(history, new File(Constants.CMD_HISTORY_FILE));
-            }
-        }
-
-        @Override
-        public void onSuspend(Job job) {
-            if (!job.isRunInBackground()){
-                resetAndReadLine();
-            }
-        }
-
-        private void resetAndReadLine() {
-            //reset stdin handler to echo handler
-            //shell.term().stdinHandler(null);
-            shell.setForegroundJob(null);
-            shell.readline();
-        }
-
     }
 
 }
