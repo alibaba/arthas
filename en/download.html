@@ -96,6 +96,8 @@
 <li class="toctree-l1"><a class="reference internal" href="install-detail.html">Installation</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Download</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#download-full-package">Download full package</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#dwonload-from-maven-central">Dwonload from maven central</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#download-from-github-releases">Download from Github Releases</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#use-as-sh">Use as.sh</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#use-arthas-boot-jar">Use arthas-boot.jar</a></li>
 </ul>
@@ -183,7 +185,14 @@
 <h1>Download<a class="headerlink" href="#download" title="Permalink to this headline">¶</a></h1>
 <div class="section" id="download-full-package">
 <h2>Download full package<a class="headerlink" href="#download-full-package" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="dwonload-from-maven-central">
+<h3>Dwonload from maven central<a class="headerlink" href="#dwonload-from-maven-central" title="Permalink to this headline">¶</a></h3>
 <p>Latest Version, Click To Download: <a class="reference external" href="http://repository.sonatype.org/service/local/artifact/maven/redirect?r=central-proxy&amp;g=com.taobao.arthas&amp;a=arthas-packaging&amp;e=zip&amp;c=bin&amp;v=LATEST"><img alt="https://img.shields.io/maven-central/v/com.taobao.arthas/arthas-packaging.svg?style=flat-square" src="https://img.shields.io/maven-central/v/com.taobao.arthas/arthas-packaging.svg?style=flat-square" /></a></p>
+</div>
+<div class="section" id="download-from-github-releases">
+<h3>Download from Github Releases<a class="headerlink" href="#download-from-github-releases" title="Permalink to this headline">¶</a></h3>
+<p><a class="reference external" href="https://github.com/alibaba/arthas/releases">https://github.com/alibaba/arthas/releases</a></p>
+</div>
 <div class="section" id="use-as-sh">
 <h3>Use as.sh<a class="headerlink" href="#use-as-sh" title="Permalink to this headline">¶</a></h3>
 <p>Download and unzip, find <code class="docutils literal notranslate"><span class="pre">as.sh</span></code> in the directory. Start it in bash:</p>
@@ -277,7 +286,12 @@
   var _hmt = _hmt || [];
   (function() {
     var hm = document.createElement("script");
-    hm.src = "https://hm.baidu.com/hm.js?d5c5e25b100f0eb51a4c35c8a86ea9b4";
+    if (window.location.hostname == "arthas.gitee.io") {
+      hm.src = "https://hm.baidu.com/hm.js?ecc1b0d9aeb73da1671876133211d4d3";
+    } else { // https://alibaba.github.io/arthas/
+      hm.src = "https://hm.baidu.com/hm.js?d5c5e25b100f0eb51a4c35c8a86ea9b4";
+    }
+
     var s = document.getElementsByTagName("script")[0]; 
     s.parentNode.insertBefore(hm, s);
   })();

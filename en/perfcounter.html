@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>All Commands &mdash; Arthas 3.1.7 documentation</title>
+  <title>perfcounter &mdash; Arthas 3.1.7 documentation</title>
   
 
   
@@ -38,8 +38,8 @@
     <link rel="stylesheet" href="_static/overrides.css" type="text/css" />
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="dashboard" href="dashboard.html" />
-    <link rel="prev" title="Batch Processing" href="batch-support.html" />
+    <link rel="next" title="logger" href="logger.html" />
+    <link rel="prev" title="vmoption" href="vmoption.html" />
 <script src="_static/center_page.js"></script>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.13.1/styles/github.min.css">
  
@@ -97,14 +97,18 @@
 <li class="toctree-l1"><a class="reference internal" href="download.html">Download</a></li>
 <li class="toctree-l1"><a class="reference internal" href="quick-start.html">Quick start</a></li>
 <li class="toctree-l1"><a class="reference internal" href="advanced-use.html">Advanced usage</a></li>
-<li class="toctree-l1 current"><a class="current reference internal" href="#">Commands</a><ul>
+<li class="toctree-l1 current"><a class="reference internal" href="commands.html">Commands</a><ul class="current">
 <li class="toctree-l2"><a class="reference internal" href="dashboard.html">dashboard</a></li>
 <li class="toctree-l2"><a class="reference internal" href="thread.html">thread</a></li>
 <li class="toctree-l2"><a class="reference internal" href="jvm.html">jvm</a></li>
 <li class="toctree-l2"><a class="reference internal" href="sysprop.html">sysprop</a></li>
 <li class="toctree-l2"><a class="reference internal" href="sysenv.html">sysenv</a></li>
 <li class="toctree-l2"><a class="reference internal" href="vmoption.html">vmoption</a></li>
-<li class="toctree-l2"><a class="reference internal" href="perfcounter.html">perfcounter</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">perfcounter</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#usage">Usage</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#jvm-above-jdk9">JVM above JDK9</a></li>
+</ul>
+</li>
 <li class="toctree-l2"><a class="reference internal" href="logger.html">logger</a></li>
 <li class="toctree-l2"><a class="reference internal" href="mbean.html">mbean</a></li>
 <li class="toctree-l2"><a class="reference internal" href="getstatic.html">getstatic</a></li>
@@ -128,7 +132,7 @@
 <li class="toctree-l2"><a class="reference internal" href="tee.html">tee</a></li>
 <li class="toctree-l2"><a class="reference internal" href="pwd.html">pwd</a></li>
 <li class="toctree-l2"><a class="reference internal" href="options.html">options</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#basic-arthas-commands">Basic Arthas Commands</a></li>
+<li class="toctree-l2"><a class="reference internal" href="commands.html#basic-arthas-commands">Basic Arthas Commands</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="web-console.html">WebConsole</a></li>
@@ -183,14 +187,16 @@
     
       <li><a href="index.html">Docs</a> &raquo;</li>
         
-      <li>All Commands</li>
+          <li><a href="commands.html">All Commands</a> &raquo;</li>
+        
+      <li>perfcounter</li>
     
     
       <li class="wy-breadcrumbs-aside">
         
             
             
-              <a href="https://github.com/alibaba/arthas/blob/master/site/src/site/sphinx/en/commands.md" class="fa fa-github"> Edit on GitHub</a>
+              <a href="https://github.com/alibaba/arthas/blob/master/site/src/site/sphinx/en/perfcounter.md" class="fa fa-github"> Edit on GitHub</a>
             
           
         
@@ -204,55 +210,40 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
             
-  <div class="section" id="all-commands">
-<h1>All Commands<a class="headerlink" href="#all-commands" title="Permalink to this headline">¶</a></h1>
-<div class="toctree-wrapper compound">
-<ul>
-<li class="toctree-l1"><a class="reference internal" href="dashboard.html">dashboard</a></li>
-<li class="toctree-l1"><a class="reference internal" href="thread.html">thread</a></li>
-<li class="toctree-l1"><a class="reference internal" href="jvm.html">jvm</a></li>
-<li class="toctree-l1"><a class="reference internal" href="sysprop.html">sysprop</a></li>
-<li class="toctree-l1"><a class="reference internal" href="sysenv.html">sysenv</a></li>
-<li class="toctree-l1"><a class="reference internal" href="vmoption.html">vmoption</a></li>
-<li class="toctree-l1"><a class="reference internal" href="perfcounter.html">perfcounter</a></li>
-<li class="toctree-l1"><a class="reference internal" href="logger.html">logger</a></li>
-<li class="toctree-l1"><a class="reference internal" href="mbean.html">mbean</a></li>
-<li class="toctree-l1"><a class="reference internal" href="getstatic.html">getstatic</a></li>
-<li class="toctree-l1"><a class="reference internal" href="ognl.html">ognl</a></li>
-<li class="toctree-l1"><a class="reference internal" href="sc.html">sc</a></li>
-<li class="toctree-l1"><a class="reference internal" href="sm.html">sm</a></li>
-<li class="toctree-l1"><a class="reference internal" href="dump.html">dump</a></li>
-<li class="toctree-l1"><a class="reference internal" href="heapdump.html">heapdump</a></li>
-<li class="toctree-l1"><a class="reference internal" href="jad.html">jad</a></li>
-<li class="toctree-l1"><a class="reference internal" href="classloader.html">classloader</a></li>
-<li class="toctree-l1"><a class="reference internal" href="mc.html">mc</a></li>
-<li class="toctree-l1"><a class="reference internal" href="redefine.html">redefine</a></li>
-<li class="toctree-l1"><a class="reference internal" href="monitor.html">monitor</a></li>
-<li class="toctree-l1"><a class="reference internal" href="watch.html">watch</a></li>
-<li class="toctree-l1"><a class="reference internal" href="trace.html">trace</a></li>
-<li class="toctree-l1"><a class="reference internal" href="stack.html">stack</a></li>
-<li class="toctree-l1"><a class="reference internal" href="tt.html">tt</a></li>
-<li class="toctree-l1"><a class="reference internal" href="profiler.html">profiler</a></li>
-<li class="toctree-l1"><a class="reference internal" href="cat.html">cat</a></li>
-<li class="toctree-l1"><a class="reference internal" href="grep.html">grep</a></li>
-<li class="toctree-l1"><a class="reference internal" href="tee.html">tee</a></li>
-<li class="toctree-l1"><a class="reference internal" href="pwd.html">pwd</a></li>
-<li class="toctree-l1"><a class="reference internal" href="options.html">options</a></li>
-</ul>
+  <div class="section" id="perfcounter">
+<h1>perfcounter<a class="headerlink" href="#perfcounter" title="Permalink to this headline">¶</a></h1>
+<blockquote>
+<div><p>Check the current JVM Perf Counter information.</p>
+</div></blockquote>
+<div class="section" id="usage">
+<h2>Usage<a class="headerlink" href="#usage" title="Permalink to this headline">¶</a></h2>
+<div class="highlight-default notranslate"><pre class="literal-block">$ perfcounter
+ java.ci.totalTime                            2325637411
+ java.cls.loadedClasses                       3403
+ java.cls.sharedLoadedClasses                 0
+ java.cls.sharedUnloadedClasses               0
+ java.cls.unloadedClasses                     0
+ java.property.java.version                   11.0.4
+ java.property.java.vm.info                   mixed mode
+ java.property.java.vm.name                   OpenJDK 64-Bit Server VM
+...</pre>
 </div>
-<div class="section" id="basic-arthas-commands">
-<h2>Basic Arthas Commands<a class="headerlink" href="#basic-arthas-commands" title="Permalink to this headline">¶</a></h2>
-<ul class="simple">
-<li><p>help - examine help information</p></li>
-<li><p>cls - clear out the screen</p></li>
-<li><p>session - examine the current session</p></li>
-<li><p><a class="reference internal" href="reset.html"><span class="doc">reset</span></a> - reset enhanced classes. All enhanced classes will be reset to their original states. When Arthas server closes, all these enhanced classes will be reset too</p></li>
-<li><p>version - print out Arthas’s version</p></li>
-<li><p>history - view command history</p></li>
-<li><p>quit - exit the current Arthas client without affecting other clients</p></li>
-<li><p>stop - terminate the Arthas server, all the Arthas clients connecting to this server will be disconnected</p></li>
-<li><p><a class="reference internal" href="keymap.html"><span class="doc">keymap</span></a> - list all Arthas keyboard shortcuts and shortcut customizations.</p></li>
-</ul>
+<p>Print more information with the <code class="docutils literal notranslate"><span class="pre">-d</span></code> option:</p>
+<div class="highlight-default notranslate"><pre class="literal-block">$ perfcounter -d
+ Name                                   Variability   Units        Value
+---------------------------------------------------------------------------------
+ java.ci.totalTime                      Monotonic     Ticks        3242526906
+ java.cls.loadedClasses                 Monotonic     Events       3404
+ java.cls.sharedLoadedClasses           Monotonic     Events       0
+ java.cls.sharedUnloadedClasses         Monotonic     Events       0
+ java.cls.unloadedClasses               Monotonic     Events       0</pre>
+</div>
+</div>
+<div class="section" id="jvm-above-jdk9">
+<h2>JVM above JDK9<a class="headerlink" href="#jvm-above-jdk9" title="Permalink to this headline">¶</a></h2>
+<p>If the information is not printed, when the application starts, add the following parameters:</p>
+<div class="highlight-default notranslate"><pre class="literal-block">--add-opens java.base/jdk.internal.perf=ALL-UNNAMED --add-exports java.base/jdk.internal.perf=ALL-UNNAMED</pre>
+</div>
 </div>
 </div>
 
@@ -264,10 +255,10 @@
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="dashboard.html" class="btn btn-neutral float-right" title="dashboard" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+        <a href="logger.html" class="btn btn-neutral float-right" title="logger" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
-        <a href="batch-support.html" class="btn btn-neutral float-left" title="Batch Processing" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+        <a href="vmoption.html" class="btn btn-neutral float-left" title="vmoption" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
       
     </div>
   

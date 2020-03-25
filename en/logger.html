@@ -39,7 +39,7 @@
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="mbean" href="mbean.html" />
-    <link rel="prev" title="vmoption" href="vmoption.html" />
+    <link rel="prev" title="perfcounter" href="perfcounter.html" />
 <script src="_static/center_page.js"></script>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.13.1/styles/github.min.css">
  
@@ -104,6 +104,7 @@
 <li class="toctree-l2"><a class="reference internal" href="sysprop.html">sysprop</a></li>
 <li class="toctree-l2"><a class="reference internal" href="sysenv.html">sysenv</a></li>
 <li class="toctree-l2"><a class="reference internal" href="vmoption.html">vmoption</a></li>
+<li class="toctree-l2"><a class="reference internal" href="perfcounter.html">perfcounter</a></li>
 <li class="toctree-l2 current"><a class="current reference internal" href="#">logger</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#usage">Usage</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="#print-the-logger-information">Print the logger information</a></li>
@@ -134,6 +135,7 @@
 <li class="toctree-l2"><a class="reference internal" href="profiler.html">profiler</a></li>
 <li class="toctree-l2"><a class="reference internal" href="cat.html">cat</a></li>
 <li class="toctree-l2"><a class="reference internal" href="grep.html">grep</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tee.html">tee</a></li>
 <li class="toctree-l2"><a class="reference internal" href="pwd.html">pwd</a></li>
 <li class="toctree-l2"><a class="reference internal" href="options.html">options</a></li>
 <li class="toctree-l2"><a class="reference internal" href="commands.html#basic-arthas-commands">Basic Arthas Commands</a></li>
@@ -400,7 +402,7 @@ update logger level success.</pre></div>
         <a href="mbean.html" class="btn btn-neutral float-right" title="mbean" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
-        <a href="vmoption.html" class="btn btn-neutral float-left" title="vmoption" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+        <a href="perfcounter.html" class="btn btn-neutral float-left" title="perfcounter" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
       
     </div>
   
@@ -457,7 +459,12 @@ update logger level success.</pre></div>
   var _hmt = _hmt || [];
   (function() {
     var hm = document.createElement("script");
-    hm.src = "https://hm.baidu.com/hm.js?d5c5e25b100f0eb51a4c35c8a86ea9b4";
+    if (window.location.hostname == "arthas.gitee.io") {
+      hm.src = "https://hm.baidu.com/hm.js?ecc1b0d9aeb73da1671876133211d4d3";
+    } else { // https://alibaba.github.io/arthas/
+      hm.src = "https://hm.baidu.com/hm.js?d5c5e25b100f0eb51a4c35c8a86ea9b4";
+    }
+
     var s = document.getElementsByTagName("script")[0]; 
     s.parentNode.insertBefore(hm, s);
   })();
