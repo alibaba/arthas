@@ -226,6 +226,7 @@
 <li><p><a class="reference internal" href="sysprop.html"><span class="doc">sysprop</span></a>——查看和修改JVM的系统属性</p></li>
 <li><p><a class="reference internal" href="sysenv.html"><span class="doc">sysenv</span></a>——查看JVM的环境变量</p></li>
 <li><p><a class="reference internal" href="vmoption.html"><span class="doc">vmoption</span></a>——查看和修改JVM里诊断相关的option</p></li>
+<li><p><a class="reference internal" href="perfcounter.html"><span class="doc">perfcounter</span></a>——查看当前 JVM 的Perf Counter信息</p></li>
 <li><p><a class="reference internal" href="logger.html"><span class="doc">logger</span></a>——查看和修改logger</p></li>
 <li><p><a class="reference internal" href="getstatic.html"><span class="doc">getstatic</span></a>——查看类的静态属性</p></li>
 <li><p><a class="reference internal" href="ognl.html"><span class="doc">ognl</span></a>——执行ognl表达式</p></li>
@@ -387,7 +388,12 @@
   var _hmt = _hmt || [];
   (function() {
     var hm = document.createElement("script");
-    hm.src = "https://hm.baidu.com/hm.js?d5c5e25b100f0eb51a4c35c8a86ea9b4";
+    if (window.location.hostname == "arthas.gitee.io") {
+      hm.src = "https://hm.baidu.com/hm.js?ecc1b0d9aeb73da1671876133211d4d3";
+    } else { // https://alibaba.github.io/arthas/
+      hm.src = "https://hm.baidu.com/hm.js?d5c5e25b100f0eb51a4c35c8a86ea9b4";
+    }
+
     var s = document.getElementsByTagName("script")[0]; 
     s.parentNode.insertBefore(hm, s);
   })();

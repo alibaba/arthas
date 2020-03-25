@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>stack &mdash; Arthas 3.1.7 文档</title>
+  <title>perfcounter &mdash; Arthas 3.1.7 文档</title>
   
 
   
@@ -39,8 +39,8 @@
     <link rel="stylesheet" href="_static/overrides.css" type="text/css" />
     <link rel="index" title="索引" href="genindex.html" />
     <link rel="search" title="搜索" href="search.html" />
-    <link rel="next" title="tt" href="tt.html" />
-    <link rel="prev" title="trace" href="trace.html" />
+    <link rel="next" title="logger" href="logger.html" />
+    <link rel="prev" title="vmoption" href="vmoption.html" />
 <script src="_static/center_page.js"></script>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.13.1/styles/github.min.css">
  
@@ -107,7 +107,11 @@
 <li class="toctree-l2"><a class="reference internal" href="sysprop.html">sysprop</a></li>
 <li class="toctree-l2"><a class="reference internal" href="sysenv.html">sysenv</a></li>
 <li class="toctree-l2"><a class="reference internal" href="vmoption.html">vmoption</a></li>
-<li class="toctree-l2"><a class="reference internal" href="perfcounter.html">perfcounter</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">perfcounter</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id1">使用参考</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#jdk9">jdk9以上的应用</a></li>
+</ul>
+</li>
 <li class="toctree-l2"><a class="reference internal" href="logger.html">logger</a></li>
 <li class="toctree-l2"><a class="reference internal" href="mbean.html">mbean</a></li>
 <li class="toctree-l2"><a class="reference internal" href="getstatic.html">getstatic</a></li>
@@ -123,17 +127,7 @@
 <li class="toctree-l2"><a class="reference internal" href="monitor.html">monitor</a></li>
 <li class="toctree-l2"><a class="reference internal" href="watch.html">watch</a></li>
 <li class="toctree-l2"><a class="reference internal" href="trace.html">trace</a></li>
-<li class="toctree-l2 current"><a class="current reference internal" href="#">stack</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#id1">参数说明</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#id2">使用例子</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="#demo">启动 Demo</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#id3">stack</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#id4">据条件表达式来过滤</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#id5">据执行时间来过滤</a></li>
-</ul>
-</li>
-</ul>
-</li>
+<li class="toctree-l2"><a class="reference internal" href="stack.html">stack</a></li>
 <li class="toctree-l2"><a class="reference internal" href="tt.html">tt</a></li>
 <li class="toctree-l2"><a class="reference internal" href="profiler.html">profiler</a></li>
 <li class="toctree-l2"><a class="reference internal" href="cat.html">cat</a></li>
@@ -199,14 +193,14 @@
         
           <li><a href="commands.html">命令列表</a> &raquo;</li>
         
-      <li>stack</li>
+      <li>perfcounter</li>
     
     
       <li class="wy-breadcrumbs-aside">
         
             
             
-              <a href="https://github.com/alibaba/arthas/blob/master/site/src/site/sphinx/stack.md" class="fa fa-github"> Edit on GitHub</a>
+              <a href="https://github.com/alibaba/arthas/blob/master/site/src/site/sphinx/perfcounter.md" class="fa fa-github"> Edit on GitHub</a>
             
           
         
@@ -220,92 +214,39 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
             
-  <div class="section" id="stack">
-<h1>stack<a class="headerlink" href="#stack" title="永久链接至标题">¶</a></h1>
+  <div class="section" id="perfcounter">
+<h1>perfcounter<a class="headerlink" href="#perfcounter" title="永久链接至标题">¶</a></h1>
 <blockquote>
-<div><p>输出当前方法被调用的调用路径</p>
+<div><p>查看当前JVM的 Perf Counter信息</p>
 </div></blockquote>
-<p>很多时候我们都知道一个方法被执行，但这个方法被执行的路径非常多，或者你根本就不知道这个方法是从那里被执行了，此时你需要的是 stack 命令。</p>
 <div class="section" id="id1">
-<h2>参数说明<a class="headerlink" href="#id1" title="永久链接至标题">¶</a></h2>
-<table border="1" class="docutils">
-<thead>
-<tr>
-<th align="right">参数名称</th>
-<th align="left">参数说明</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td align="right"><em>class-pattern</em></td>
-<td align="left">类名表达式匹配</td>
-</tr>
-<tr>
-<td align="right"><em>method-pattern</em></td>
-<td align="left">方法名表达式匹配</td>
-</tr>
-<tr>
-<td align="right"><em>condition-express</em></td>
-<td align="left">条件表达式</td>
-</tr>
-<tr>
-<td align="right">[E]</td>
-<td align="left">开启正则表达式匹配，默认为通配符匹配</td>
-</tr>
-<tr>
-<td align="right"><code>[n:]</code></td>
-<td align="left">执行次数限制</td>
-</tr>
-</tbody>
-</table><p>这里重点要说明的是观察表达式，观察表达式的构成主要由 ognl 表达式组成，所以你可以这样写<code class="docutils literal notranslate"><span class="pre">&quot;{params,returnObj}&quot;</span></code>，只要是一个合法的 ognl 表达式，都能被正常支持。</p>
-<p>观察的维度也比较多，主要体现在参数 <code class="docutils literal notranslate"><span class="pre">advice</span></code> 的数据结构上。<code class="docutils literal notranslate"><span class="pre">Advice</span></code> 参数最主要是封装了通知节点的所有信息。</p>
-<p>请参考<a class="reference internal" href="advice-class.html"><span class="doc">表达式核心变量</span></a>中关于该节点的描述。</p>
-<ul class="simple">
-<li><p>特殊用法请参考：<a class="reference external" href="https://github.com/alibaba/arthas/issues/71">https://github.com/alibaba/arthas/issues/71</a></p></li>
-<li><p>OGNL表达式官网：<a class="reference external" href="https://commons.apache.org/proper/commons-ognl/language-guide.html">https://commons.apache.org/proper/commons-ognl/language-guide.html</a></p></li>
-</ul>
+<h2>使用参考<a class="headerlink" href="#id1" title="永久链接至标题">¶</a></h2>
+<div class="highlight-default notranslate"><pre class="literal-block">$ perfcounter
+ java.ci.totalTime                            2325637411
+ java.cls.loadedClasses                       3403
+ java.cls.sharedLoadedClasses                 0
+ java.cls.sharedUnloadedClasses               0
+ java.cls.unloadedClasses                     0
+ java.property.java.version                   11.0.4
+ java.property.java.vm.info                   mixed mode
+ java.property.java.vm.name                   OpenJDK 64-Bit Server VM
+...</pre>
 </div>
-<div class="section" id="id2">
-<h2>使用例子<a class="headerlink" href="#id2" title="永久链接至标题">¶</a></h2>
-<div class="section" id="demo">
-<h3>启动 Demo<a class="headerlink" href="#demo" title="永久链接至标题">¶</a></h3>
-<p>启动<a class="reference internal" href="quick-start.html"><span class="doc">快速入门</span></a>里的<code class="docutils literal notranslate"><span class="pre">arthas-demo</span></code>。</p>
-</div>
-<div class="section" id="id3">
-<h3>stack<a class="headerlink" href="#id3" title="永久链接至标题">¶</a></h3>
-<div class="highlight-bash notranslate"><div class="highlight hljs"><pre class="bash">$ stack demo.MathGame primeFactors
-Press Ctrl+C to abort.
-Affect(class-cnt:1 , method-cnt:1) cost in 36 ms.
-ts=2018-12-04 01:32:19;thread_name=main;id=1;is_daemon=false;priority=5;TCCL=sun.misc.Launcher$AppClassLoader@3d4eac69
-    @demo.MathGame.run()
-        at demo.MathGame.main(MathGame.java:16)</pre></div>
+<p>可以用<code class="docutils literal notranslate"><span class="pre">-d</span></code>参数打印更多信息：</p>
+<div class="highlight-default notranslate"><pre class="literal-block">$ perfcounter -d
+ Name                                   Variability   Units        Value
+---------------------------------------------------------------------------------
+ java.ci.totalTime                      Monotonic     Ticks        3242526906
+ java.cls.loadedClasses                 Monotonic     Events       3404
+ java.cls.sharedLoadedClasses           Monotonic     Events       0
+ java.cls.sharedUnloadedClasses         Monotonic     Events       0
+ java.cls.unloadedClasses               Monotonic     Events       0</pre>
 </div>
 </div>
-<div class="section" id="id4">
-<h3>据条件表达式来过滤<a class="headerlink" href="#id4" title="永久链接至标题">¶</a></h3>
-<div class="highlight-bash notranslate"><div class="highlight hljs"><pre class="bash">$ stack demo.MathGame primeFactors &#x27;params[0]&lt;0&#x27; -n 2
-Press Ctrl+C to abort.
-Affect(class-cnt:1 , method-cnt:1) cost in 30 ms.
-ts=2018-12-04 01:34:27;thread_name=main;id=1;is_daemon=false;priority=5;TCCL=sun.misc.Launcher$AppClassLoader@3d4eac69
-    @demo.MathGame.run()
-        at demo.MathGame.main(MathGame.java:16)
-
-ts=2018-12-04 01:34:30;thread_name=main;id=1;is_daemon=false;priority=5;TCCL=sun.misc.Launcher$AppClassLoader@3d4eac69
-    @demo.MathGame.run()
-        at demo.MathGame.main(MathGame.java:16)
-
-Command execution times exceed limit: 2, so command will exit. You can set it with -n option.</pre></div>
-</div>
-</div>
-<div class="section" id="id5">
-<h3>据执行时间来过滤<a class="headerlink" href="#id5" title="永久链接至标题">¶</a></h3>
-<div class="highlight-bash notranslate"><div class="highlight hljs"><pre class="bash">$ stack demo.MathGame primeFactors &#x27;#cost&gt;5&#x27;
-Press Ctrl+C to abort.
-Affect(class-cnt:1 , method-cnt:1) cost in 35 ms.
-ts=2018-12-04 01:35:58;thread_name=main;id=1;is_daemon=false;priority=5;TCCL=sun.misc.Launcher$AppClassLoader@3d4eac69
-    @demo.MathGame.run()
-        at demo.MathGame.main(MathGame.java:16)</pre></div>
-</div>
+<div class="section" id="jdk9">
+<h2>jdk9以上的应用<a class="headerlink" href="#jdk9" title="永久链接至标题">¶</a></h2>
+<p>如果没有打印出信息，应用在启动时，加下面的参数：</p>
+<div class="highlight-default notranslate"><pre class="literal-block">--add-opens java.base/jdk.internal.perf=ALL-UNNAMED --add-exports java.base/jdk.internal.perf=ALL-UNNAMED</pre>
 </div>
 </div>
 </div>
@@ -318,10 +259,10 @@ ts=2018-12-04 01:35:58;thread_name=main;id=1;is_daemon=false;priority=5;TCCL=sun
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="tt.html" class="btn btn-neutral float-right" title="tt" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+        <a href="logger.html" class="btn btn-neutral float-right" title="logger" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
-        <a href="trace.html" class="btn btn-neutral float-left" title="trace" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+        <a href="vmoption.html" class="btn btn-neutral float-left" title="vmoption" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
       
     </div>
   
