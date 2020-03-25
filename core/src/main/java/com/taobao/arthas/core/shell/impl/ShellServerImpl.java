@@ -241,4 +241,12 @@ public class ShellServerImpl extends ShellServer {
             bootstrap.destroy();
         }
     }
+
+    public JobControllerImpl getJobController() {
+        return jobController;
+    }
+
+    public InternalCommandManager getCommandManager() {
+        return commandManager;
+    }
 }

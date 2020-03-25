@@ -3,6 +3,7 @@ package com.taobao.arthas.core.shell.term.impl.http;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.net.URL;
 
@@ -46,7 +47,7 @@ public class HttpRequestHandler extends SimpleChannelInboundHandler<FullHttpRequ
         this.wsUri = wsUri;
         this.dir = dir;
         dir.mkdirs();
-        this.httpApiHandler = new HttpApiHandler();
+        this.httpApiHandler = HttpApiHandler.getInstance();
     }
 
     @Override
@@ -82,14 +83,14 @@ public class HttpRequestHandler extends SimpleChannelInboundHandler<FullHttpRequ
 
                 //not found
                 if (response == null){
-                    response = createResponse(request, HttpResponseStatus.NOT_FOUND);
+                    response = createResponse(request, HttpResponseStatus.NOT_FOUND, "Not found");
                 }
             } catch (Throwable e) {
                 logger.error("arthas", "arthas process http request error: " + request.uri(), e);
             } finally {
                 //If it is null, an error may occur
                 if (response == null){
-                    response = createResponse(request, HttpResponseStatus.INTERNAL_SERVER_ERROR);
+                    response = createResponse(request, HttpResponseStatus.INTERNAL_SERVER_ERROR, "Server error");
                 }
                 ctx.write(response);
                 ChannelFuture future = ctx.writeAndFlush(LastHttpContent.EMPTY_LAST_CONTENT);
@@ -98,8 +99,14 @@ public class HttpRequestHandler extends SimpleChannelInboundHandler<FullHttpRequ
         }
     }
 
-    private DefaultHttpResponse createResponse(FullHttpRequest request, HttpResponseStatus status) {
-        return new DefaultHttpResponse(request.protocolVersion(), status);
+    private DefaultHttpResponse createResponse(FullHttpRequest request, HttpResponseStatus status, String content) {
+        DefaultFullHttpResponse response = new DefaultFullHttpResponse(request.protocolVersion(), status);
+        response.headers().set(HttpHeaderNames.CONTENT_TYPE, "text/html; charset=utf-8");
+        try {
+            response.content().writeBytes(content.getBytes("UTF-8"));
+        } catch (UnsupportedEncodingException e) {
+        }
+        return response;
     }
 
     private FullHttpResponse readFileFromResource(FullHttpRequest request, String path) throws IOException {

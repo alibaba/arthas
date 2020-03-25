@@ -1,24 +1,5 @@
 package com.taobao.arthas.core.server;
 
-import java.arthas.Spy;
-import java.io.File;
-import java.io.IOException;
-import java.lang.instrument.Instrumentation;
-import java.lang.reflect.Method;
-import java.net.URI;
-import java.security.CodeSource;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Properties;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ThreadFactory;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicBoolean;
-
 import com.alibaba.arthas.tunnel.client.TunnelClient;
 import com.taobao.arthas.common.PidUtils;
 import com.taobao.arthas.core.advisor.AdviceWeaver;
@@ -35,20 +16,33 @@ import com.taobao.arthas.core.shell.ShellServerOptions;
 import com.taobao.arthas.core.shell.command.CommandResolver;
 import com.taobao.arthas.core.shell.handlers.BindHandler;
 import com.taobao.arthas.core.shell.impl.ShellServerImpl;
+import com.taobao.arthas.core.shell.session.SessionManager;
+import com.taobao.arthas.core.shell.session.impl.SessionManagerImpl;
 import com.taobao.arthas.core.shell.term.impl.HttpTermServer;
 import com.taobao.arthas.core.shell.term.impl.httptelnet.HttpTelnetTermServer;
-import com.taobao.arthas.core.util.ArthasBanner;
-import com.taobao.arthas.core.util.Constants;
-import com.taobao.arthas.core.util.FileUtils;
-import com.taobao.arthas.core.util.LogUtil;
-import com.taobao.arthas.core.util.UserStatUtil;
+import com.taobao.arthas.core.util.*;
 import com.taobao.middleware.logger.Logger;
-
 import io.netty.channel.ChannelFuture;
+
+import java.arthas.Spy;
+import java.io.File;
+import java.io.IOException;
+import java.lang.instrument.Instrumentation;
+import java.lang.reflect.Method;
+import java.net.URI;
+import java.security.CodeSource;
+import java.util.*;
+import java.util.Map.Entry;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ThreadFactory;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 
 /**
  * @author vlinux on 15/5/2.
+ * @author gongdewei 2020-03-25
  */
 public class ArthasBootstrap {
 
@@ -65,6 +59,7 @@ public class ArthasBootstrap {
     private Instrumentation instrumentation;
     private Thread shutdown;
     private ShellServer shellServer;
+    private SessionManager sessionManager;
     private ExecutorService executorService;
     private TunnelClient tunnelClient;
 
@@ -247,13 +242,13 @@ public class ArthasBootstrap {
                 shellServer.registerTermServer(new HttpTelnetTermServer(configure.getIp(), configure.getTelnetPort(),
                                 options.getConnectionTimeout()));
             } else {
-                logger.info("telnet port is {}, skip bind telnet server.", configure.getTelnetPort());
+                logger.info("arthas", "telnet port is {}, skip bind telnet server.", configure.getTelnetPort());
             }
             if (configure.getHttpPort() > 0) {
                 shellServer.registerTermServer(new HttpTermServer(configure.getIp(), configure.getHttpPort(),
                                 options.getConnectionTimeout()));
             } else {
-                logger.info("http port is {}, skip bind http server.", configure.getHttpPort());
+                logger.info("arthas", "http port is {}, skip bind http server.", configure.getHttpPort());
             }
 
             for (CommandResolver resolver : resolvers) {
@@ -262,16 +257,20 @@ public class ArthasBootstrap {
 
             shellServer.listen(new BindHandler(isBindRef));
 
-            logger.info("as-server listening on network={};telnet={};http={};timeout={};", configure.getIp(),
+            //http api session manager
+            sessionManager = new SessionManagerImpl(options, this, shellServer.getCommandManager(), shellServer.getJobController());
+
+            logger.info("arthas", "as-server listening on network={};telnet={};http={};timeout={};", configure.getIp(),
                     configure.getTelnetPort(), configure.getHttpPort(), options.getConnectionTimeout());
+
             // 异步回报启动次数
             if (configure.getStatUrl() != null) {
-                logger.info("arthas stat url: {}", configure.getStatUrl());
+                logger.info("arthas", "arthas stat url: {}", configure.getStatUrl());
             }
             UserStatUtil.setStatUrl(configure.getStatUrl());
             UserStatUtil.arthasStart();
 
-            logger.info("as-server started in {} ms", System.currentTimeMillis() - start );
+            logger.info("arthas", "as-server started in {} ms", System.currentTimeMillis() - start );
         } catch (Throwable e) {
             logger.error(null, "Error during bind to port " + configure.getTelnetPort(), e);
             if (shellServer != null) {
@@ -360,5 +359,9 @@ public class ArthasBootstrap {
 
     public ShellServer getShellServer() {
         return shellServer;
+    }
+
+    public SessionManager getSessionManager() {
+        return sessionManager;
     }
 }

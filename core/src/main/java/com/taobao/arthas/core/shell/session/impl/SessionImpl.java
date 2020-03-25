@@ -20,6 +20,12 @@ public class SessionImpl implements Session {
 
     private Map<String, Object> data = new HashMap<String, Object>();
 
+    public SessionImpl() {
+        long now = System.currentTimeMillis();
+        data.put(CREATE_TIME, now);
+        this.setLastAccessTime(now);
+    }
+
     @Override
     public Session put(String key, Object obj) {
         if (obj == null) {
@@ -82,5 +88,20 @@ public class SessionImpl implements Session {
     @Override
     public Instrumentation getInstrumentation() {
         return (Instrumentation) data.get(INSTRUMENTATION);
+    }
+
+    @Override
+    public void setLastAccessTime(long time) {
+        data.put(LAST_ACCESS_TIME, time);
+    }
+
+    @Override
+    public long getLastAccessTime() {
+        return (Long)data.get(LAST_ACCESS_TIME);
+    }
+
+    @Override
+    public long getCreateTime() {
+        return (Long)data.get(CREATE_TIME);
     }
 }

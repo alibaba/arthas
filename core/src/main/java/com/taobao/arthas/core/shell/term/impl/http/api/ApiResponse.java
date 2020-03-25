@@ -17,56 +17,63 @@ public class ApiResponse<T> {
         return requestId;
     }
 
-    public void setRequestId(String requestId) {
+    public ApiResponse<T> setRequestId(String requestId) {
         this.requestId = requestId;
+        return this;
     }
 
     public ApiState getState() {
         return state;
     }
 
-    public void setState(ApiState state) {
+    public ApiResponse<T> setState(ApiState state) {
         this.state = state;
+        return this;
     }
 
     public String getMessage() {
         return message;
     }
 
-    public void setMessage(String message) {
+    public ApiResponse<T> setMessage(String message) {
         this.message = message;
+        return this;
     }
 
     public String getSessionId() {
         return sessionId;
     }
 
-    public void setSessionId(String sessionId) {
+    public ApiResponse<T> setSessionId(String sessionId) {
         this.sessionId = sessionId;
+        return this;
     }
 
     public String getConsumerId() {
         return consumerId;
     }
 
-    public void setConsumerId(String consumerId) {
+    public ApiResponse<T> setConsumerId(String consumerId) {
         this.consumerId = consumerId;
+        return this;
     }
 
     public String getJobId() {
         return jobId;
     }
 
-    public void setJobId(String jobId) {
+    public ApiResponse<T> setJobId(String jobId) {
         this.jobId = jobId;
+        return this;
     }
 
     public T getBody() {
         return body;
     }
 
-    public void setBody(T body) {
+    public ApiResponse<T> setBody(T body) {
         this.body = body;
+        return this;
     }
 
 }

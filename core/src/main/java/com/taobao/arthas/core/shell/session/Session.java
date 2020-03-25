@@ -1,6 +1,5 @@
 package com.taobao.arthas.core.shell.session;
 
-import com.taobao.arthas.core.shell.ShellServer;
 import com.taobao.arthas.core.shell.command.CommandResolver;
 
 import java.lang.instrument.Instrumentation;
@@ -22,6 +21,16 @@ public interface Session {
      * The tty this session related to.
      */
     String TTY = "tty";
+
+    /**
+     * Session create time
+     */
+    String CREATE_TIME = "createTime";
+
+    /**
+     * Session last active time
+     */
+    String LAST_ACCESS_TIME = "lastAccessedTime";
 
     /**
      * Put some data in a session
@@ -101,4 +110,22 @@ public interface Session {
      * @return instrumentation instance
      */
     Instrumentation getInstrumentation();
+
+    /**
+     * Update session last access time
+     * @param time new time
+     */
+    void setLastAccessTime(long time);
+
+    /**
+     * Get session last access time
+     * @return session last access time
+     */
+    long getLastAccessTime();
+
+    /**
+     * Get session create time
+     * @return session create time
+     */
+    long getCreateTime();
 }

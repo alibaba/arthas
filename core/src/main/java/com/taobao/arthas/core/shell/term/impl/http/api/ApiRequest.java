@@ -10,6 +10,8 @@ public class ApiRequest {
     private String action;
     private boolean sync;
     private String command;
+    private String requestId;
+    private String sessionId;
     private Map<String, Object> options;
 
     @Override
@@ -18,6 +20,8 @@ public class ApiRequest {
                 "action='" + action + '\'' +
                 ", sync=" + sync +
                 ", command='" + command + '\'' +
+                ", requestId='" + requestId + '\'' +
+                ", sessionId='" + sessionId + '\'' +
                 ", options=" + options +
                 '}';
     }
@@ -52,5 +56,21 @@ public class ApiRequest {
 
     public void setOptions(Map<String, Object> options) {
         this.options = options;
+    }
+
+    public String getRequestId() {
+        return requestId;
+    }
+
+    public void setRequestId(String requestId) {
+        this.requestId = requestId;
+    }
+
+    public String getSessionId() {
+        return sessionId;
+    }
+
+    public void setSessionId(String sessionId) {
+        this.sessionId = sessionId;
     }
 }
