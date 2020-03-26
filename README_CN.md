@@ -485,12 +485,13 @@ OK
 ![北京登云美业网络](static/idengyun.jpg)
 ![Holder](static/holder.png)
 ![立林科技](static/leelen.png)
-
+![金蝶](static/kingdee.png)
 
 ### 洐生项目
 
 * [Bistoury: 一个集成了Arthas的项目](https://github.com/qunarcorp/bistoury)
 * [一个使用MVEL脚本的fork](https://github.com/XhinLiang/arthas)
+
 
 ### Credit
 
