@@ -807,7 +807,7 @@ active_console()
              ${TARGET_IP} \
              ${TELNET_PORT} \
              "${tempArgs[@]}" \
-             -c ${COMMAND}
+             -c "${COMMAND}"
         fi
         if [ "${BATCH_FILE}" ] ; then
         "${JAVA_HOME}/bin/java" ${ARTHAS_OPTS} ${JVM_OPTS} \
