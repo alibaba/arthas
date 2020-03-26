@@ -498,6 +498,7 @@ Welcome to register the company name in this issue: https://github.com/alibaba/a
 ![立林科技](static/leelen.png)
 ![金蝶](static/kingdee.png)
 ![爱成长](static/aichengzhang.png)
+![嘉云数据](static/clubfactory.png)
 
 ### Derivative Projects
 
