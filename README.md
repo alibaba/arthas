@@ -496,6 +496,7 @@ Welcome to register the company name in this issue: https://github.com/alibaba/a
 ![北京登云美业网络](static/idengyun.jpg)
 ![Holder](static/holder.png)
 ![立林科技](static/leelen.png)
+![金蝶](static/kingdee.png)
 
 ### Derivative Projects
 
