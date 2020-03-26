@@ -58,8 +58,6 @@ public class DashboardCommand extends AnnotatedCommand {
 
     private int numOfExecutions = Integer.MAX_VALUE;
 
-    private boolean batchMode;
-
     private long interval = 5000;
 
     private volatile long count = 0;
@@ -69,12 +67,6 @@ public class DashboardCommand extends AnnotatedCommand {
     @Description("The number of times this command will be executed.")
     public void setNumOfExecutions(int numOfExecutions) {
         this.numOfExecutions = numOfExecutions;
-    }
-
-    @Option(shortName = "b", longName = "batch")
-    @Description("Execute this command in batch mode.")
-    public void setBatchMode(boolean batchMode) {
-        this.batchMode = batchMode;
     }
 
     @Option(shortName = "i", longName = "interval")
@@ -138,10 +130,6 @@ public class DashboardCommand extends AnnotatedCommand {
 
     public int getNumOfExecutions() {
         return numOfExecutions;
-    }
-
-    public boolean isBatchMode() {
-        return batchMode;
     }
 
     public long getInterval() {
