@@ -486,6 +486,8 @@ OK
 ![Holder](static/holder.png)
 ![立林科技](static/leelen.png)
 ![金蝶](static/kingdee.png)
+![爱成长](static/aichengzhang.png)
+
 
 ### 洐生项目
 
