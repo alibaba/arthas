@@ -254,9 +254,7 @@ public class JobImpl implements Job {
 //                    foregroundUpdatedHandler.handle(null);
 //                }
 //            }
-            if (actualStatus.equals(ExecStatus.RUNNING)) {
-                jobHandler.onTerminated(JobImpl.this);
-            }
+            jobHandler.onTerminated(JobImpl.this);
             controller.removeJob(JobImpl.this.id);
             if (statusUpdateHandler != null) {
                 statusUpdateHandler.handle(ExecStatus.TERMINATED);

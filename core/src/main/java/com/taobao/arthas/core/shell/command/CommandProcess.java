@@ -1,6 +1,7 @@
 package com.taobao.arthas.core.shell.command;
 
 import com.taobao.arthas.core.advisor.AdviceListener;
+import com.taobao.arthas.core.command.result.ExecResult;
 import com.taobao.arthas.core.shell.cli.CliToken;
 import com.taobao.arthas.core.shell.handlers.Handler;
 import com.taobao.arthas.core.shell.session.Session;
@@ -118,6 +119,13 @@ public interface CommandProcess extends Tty {
      */
     void end(int status);
 
+    /**
+     * End the process.
+     *
+     * @param status the exit status.
+     */
+    void end(int status, String message);
+
 
     /**
      * Register listener
@@ -167,4 +175,11 @@ public interface CommandProcess extends Tty {
      * Whether the process is running
      */
     boolean isRunning();
+
+    /**
+     * Append the phased result to queue
+     * @param result a phased result of the command
+     */
+    void appendResult(ExecResult result);
+
 }

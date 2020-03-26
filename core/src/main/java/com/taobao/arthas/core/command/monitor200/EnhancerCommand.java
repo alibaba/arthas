@@ -8,6 +8,7 @@ import java.util.List;
 import com.taobao.arthas.core.advisor.AdviceListener;
 import com.taobao.arthas.core.advisor.Enhancer;
 import com.taobao.arthas.core.advisor.InvokeTraceable;
+import com.taobao.arthas.core.command.result.EnhancerAffectResult;
 import com.taobao.arthas.core.shell.cli.Completion;
 import com.taobao.arthas.core.shell.cli.CompletionUtils;
 import com.taobao.arthas.core.shell.command.AnnotatedCommand;
@@ -91,8 +92,7 @@ public abstract class EnhancerCommand extends AnnotatedCommand {
     protected void enhance(CommandProcess process) {
         Session session = process.session();
         if (!session.tryLock()) {
-            process.write("someone else is enhancing classes, pls. wait.\n");
-            process.end();
+            process.end(-1, "someone else is enhancing classes, pls. wait.");
             return;
         }
         int lock = session.getLock();
@@ -100,7 +100,8 @@ public abstract class EnhancerCommand extends AnnotatedCommand {
             Instrumentation inst = session.getInstrumentation();
             AdviceListener listener = getAdviceListener(process);
             if (listener == null) {
-                warn(process, "advice listener is null");
+                logger.error(null, "advice listener is null");
+                process.end(-1, "cannot operate the current command, pls. check arthas.log");
                 return;
             }
             boolean skipJDKTrace = false;
@@ -108,18 +109,18 @@ public abstract class EnhancerCommand extends AnnotatedCommand {
                 skipJDKTrace = ((AbstractTraceAdviceListener) listener).getCommand().isSkipJDKTrace();
             }
 
-            EnhancerAffect effect = Enhancer.enhance(inst, lock, listener instanceof InvokeTraceable,
+            EnhancerAffect affect = Enhancer.enhance(inst, lock, listener instanceof InvokeTraceable,
                     skipJDKTrace, getClassNameMatcher(), getMethodNameMatcher());
 
-            if (effect.cCnt() == 0 || effect.mCnt() == 0) {
+            if (affect.cCnt() == 0 || affect.mCnt() == 0) {
                 // no class effected
                 // might be method code too large
-                process.write("No class or method is affected, try:\n"
-                              + "1. sm CLASS_NAME METHOD_NAME to make sure the method you are tracing actually exists (it might be in your parent class).\n"
-                              + "2. reset CLASS_NAME and try again, your method body might be too large.\n"
-                              + "3. check arthas log: " + LogUtil.LOGGER_FILE + "\n"
-                              + "4. visit https://github.com/alibaba/arthas/issues/47 for more details.\n");
-                process.end();
+                String msg = "No class or method is affected, try:\n"
+                        + "1. sm CLASS_NAME METHOD_NAME to make sure the method you are tracing actually exists (it might be in your parent class).\n"
+                        + "2. reset CLASS_NAME and try again, your method body might be too large.\n"
+                        + "3. check arthas log: " + LogUtil.LOGGER_FILE + "\n"
+                        + "4. visit https://github.com/alibaba/arthas/issues/47 for more details.";
+                process.end(-1, msg);
                 return;
             }
 
@@ -132,7 +133,7 @@ public abstract class EnhancerCommand extends AnnotatedCommand {
                 }
             }
 
-            process.write(effect + "\n");
+            process.appendResult(new EnhancerAffectResult(affect));
         } catch (UnmodifiableClassException e) {
             logger.error(null, "error happens when enhancing class", e);
         } finally {
@@ -145,14 +146,6 @@ public abstract class EnhancerCommand extends AnnotatedCommand {
 
     protected void completeArgument3(Completion completion) {
         super.complete(completion);
-    }
-
-    private static void warn(CommandProcess process, String message) {
-        logger.error(null, message);
-        process.write("cannot operate the current command, pls. check arthas.log\n");
-        if (process.isForeground()) {
-            process.echoTips(Constants.Q_OR_CTRL_C_ABORT_MSG + "\n");
-        }
     }
 
 }

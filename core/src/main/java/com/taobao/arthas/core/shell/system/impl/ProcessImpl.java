@@ -2,6 +2,10 @@ package com.taobao.arthas.core.shell.system.impl;
 
 import com.taobao.arthas.core.advisor.AdviceListener;
 import com.taobao.arthas.core.advisor.AdviceWeaver;
+import com.taobao.arthas.core.command.result.ErrorResult;
+import com.taobao.arthas.core.command.result.ExecResult;
+import com.taobao.arthas.core.distribution.ResultDistributor;
+import com.taobao.arthas.core.distribution.impl.TermResultDistributorImpl;
 import com.taobao.arthas.core.server.ArthasBootstrap;
 import com.taobao.arthas.core.shell.cli.CliToken;
 import com.taobao.arthas.core.shell.command.Command;
@@ -30,6 +34,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * @author beiwei30 on 10/11/2016.
+ * @author gongdewei 2020-03-26
  */
 public class ProcessImpl implements Process {
 
@@ -57,12 +62,14 @@ public class ProcessImpl implements Process {
     private Date startTime;
     private ProcessOutput processOutput;
     private int jobId;
+    private ResultDistributor resultDistributor;
 
     public ProcessImpl(Command commandContext, List<CliToken> args, Handler<CommandProcess> handler,
-                       ProcessOutput processOutput) {
+                       ProcessOutput processOutput, ResultDistributor resultDistributor) {
         this.commandContext = commandContext;
         this.handler = handler;
         this.args = args;
+        this.resultDistributor = resultDistributor;
         this.processStatus = ExecStatus.READY;
         this.processOutput = processOutput;
     }
@@ -328,6 +335,7 @@ public class ProcessImpl implements Process {
         CommandLine cl = null;
         try {
             if (commandContext.cli() != null) {
+                //TODO refactor help command
                 if (commandContext.cli().parse(args2, false).isAskingForHelp()) {
                     UsageMessageFormatter formatter = new StyledUsageFormatter(Color.green);
                     formatter.setWidth(tty.width());
@@ -348,6 +356,9 @@ public class ProcessImpl implements Process {
         }
 
         process = new CommandProcessImpl(args2, tty, cl);
+        if (resultDistributor == null) {
+            resultDistributor = new TermResultDistributorImpl(process);
+        }
         if (cacheLocation() != null) {
             process.echoTips("job id  : " + this.jobId + "\n");
             process.echoTips("cache location  : " + cacheLocation() + "\n");
@@ -370,8 +381,7 @@ public class ProcessImpl implements Process {
                 handler.handle(process);
             } catch (Throwable t) {
                 logger.error(null, "Error during processing the command:", t);
-                process.write("Error during processing the command: " + t.getMessage() + "\n");
-                terminate(1, null);
+                process.end(1, "Error during processing the command: " + t.getMessage() );
             }
         }
     }
@@ -559,8 +569,19 @@ public class ProcessImpl implements Process {
         }
 
         @Override
+        public void end(int statusCode, String message) {
+            appendResult(new ErrorResult(statusCode, message));
+            end(statusCode);
+        }
+
+        @Override
         public boolean isRunning() {
             return processStatus == ExecStatus.RUNNING;
+        }
+
+        @Override
+        public void appendResult(ExecResult result) {
+            resultDistributor.appendResult(result);
         }
     }
 

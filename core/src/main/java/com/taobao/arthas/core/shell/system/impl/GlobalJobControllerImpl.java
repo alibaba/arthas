@@ -1,6 +1,7 @@
 package com.taobao.arthas.core.shell.system.impl;
 
 import com.taobao.arthas.core.GlobalOptions;
+import com.taobao.arthas.core.distribution.ResultDistributor;
 import com.taobao.arthas.core.shell.cli.CliToken;
 import com.taobao.arthas.core.shell.handlers.Handler;
 import com.taobao.arthas.core.shell.session.Session;
@@ -50,8 +51,8 @@ public class GlobalJobControllerImpl extends JobControllerImpl {
     }
 
     @Override
-    public Job createJob(InternalCommandManager commandManager, List<CliToken> tokens, Session session, JobListener jobHandler, Term term) {
-        final Job job = super.createJob(commandManager, tokens, session, jobHandler, term);
+    public Job createJob(InternalCommandManager commandManager, List<CliToken> tokens, Session session, JobListener jobHandler, Term term, ResultDistributor resultDistributor) {
+        final Job job = super.createJob(commandManager, tokens, session, jobHandler, term, resultDistributor);
 
         /*
          * 达到超时时间将会停止job

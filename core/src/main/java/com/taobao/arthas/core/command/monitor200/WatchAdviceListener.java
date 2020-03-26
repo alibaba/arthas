@@ -3,6 +3,7 @@ package com.taobao.arthas.core.command.monitor200;
 import com.taobao.arthas.core.advisor.Advice;
 import com.taobao.arthas.core.advisor.ArthasMethod;
 import com.taobao.arthas.core.advisor.ReflectAdviceListenerAdapter;
+import com.taobao.arthas.core.command.result.WatchResult;
 import com.taobao.arthas.core.shell.command.CommandProcess;
 import com.taobao.arthas.core.util.DateUtils;
 import com.taobao.arthas.core.util.LogUtil;
@@ -82,7 +83,8 @@ class WatchAdviceListener extends ReflectAdviceListenerAdapter {
                 Object value = getExpressionResult(command.getExpress(), advice, cost);
                 String result = StringUtils.objectToString(
                         isNeedExpand() ? new ObjectView(value, command.getExpand(), command.getSizeLimit()).draw() : value);
-                process.write("ts=" + DateUtils.getCurrentDate() + "; [cost=" + cost + "ms] result=" + result + "\n");
+                //process.write("ts=" + DateUtils.getCurrentDate() + "; [cost=" + cost + "ms] result=" + result + "\n");
+                process.appendResult(new WatchResult(DateUtils.getCurrentDate(), cost, result));
                 process.times().incrementAndGet();
                 if (isLimitExceeded(command.getNumberOfLimit(), process.times().get())) {
                     abortProcess(process, command.getNumberOfLimit());
@@ -90,10 +92,9 @@ class WatchAdviceListener extends ReflectAdviceListenerAdapter {
             }
         } catch (Exception e) {
             logger.warn("watch failed.", e);
-            process.write("watch failed, condition is: " + command.getConditionExpress() + ", express is: "
+            process.end(-1, "watch failed, condition is: " + command.getConditionExpress() + ", express is: "
                           + command.getExpress() + ", " + e.getMessage() + ", visit " + LogUtil.LOGGER_FILE
-                          + " for more details.\n");
-            process.end();
+                          + " for more details.");
         }
     }
 }

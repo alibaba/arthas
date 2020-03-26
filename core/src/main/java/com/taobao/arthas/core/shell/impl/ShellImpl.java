@@ -78,7 +78,7 @@ public class ShellImpl implements Shell {
 
     @Override
     public synchronized Job createJob(List<CliToken> args) {
-        Job job = jobController.createJob(commandManager, args, session, new ShellJobHandler(this), term);
+        Job job = jobController.createJob(commandManager, args, session, new ShellJobHandler(this), term, null);
         return job;
     }
 

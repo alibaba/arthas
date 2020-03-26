@@ -1,5 +1,6 @@
 package com.taobao.arthas.core.shell.system;
 
+import com.taobao.arthas.core.distribution.ResultDistributor;
 import com.taobao.arthas.core.shell.cli.CliToken;
 import com.taobao.arthas.core.shell.handlers.Handler;
 import com.taobao.arthas.core.shell.session.Session;
@@ -37,9 +38,10 @@ public interface JobController {
      * @param session     the current session
      * @param jobHandler  job event handler
      * @param term     telnet term
+     * @param resultDistributor
      * @return the created job
      */
-    Job createJob(InternalCommandManager commandManager, List<CliToken> tokens, Session session, JobListener jobHandler, Term term);
+    Job createJob(InternalCommandManager commandManager, List<CliToken> tokens, Session session, JobListener jobHandler, Term term, ResultDistributor resultDistributor);
 
     /**
      * Close the controller and terminate all the underlying jobs, a closed controller does not accept anymore jobs.
