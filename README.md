@@ -499,6 +499,7 @@ Welcome to register the company name in this issue: https://github.com/alibaba/a
 ![金蝶](static/kingdee.png)
 ![爱成长](static/aichengzhang.png)
 ![嘉云数据](static/clubfactory.png)
+![百草味](static/bcw.png)
 
 ### Derivative Projects
 
