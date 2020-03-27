@@ -45,7 +45,7 @@ public class ProcessUtils {
             return -1;
         }
 
-        AnsiLog.info("Found existing java process, please choose one and hit RETURN.");
+        AnsiLog.info("Found existing java process, please choose one and input the serial number of the process, eg : 1. Then hit ENTER.");
         // print list
         int count = 1;
         for (String process : processMap.values()) {
