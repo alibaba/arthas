@@ -497,6 +497,7 @@ OK
 ![上海慧力](static/xiaohuasheng.png)
 ![上海喔噻](static/shouqingba.png)
 ![vipkid](static/vipkid.png)
+![宇中科技](static/yuzhong.png)
 
 ### 洐生项目
 
