@@ -39,10 +39,16 @@ import com.taobao.text.util.RenderUtil;
  * @author hengyunabc 2019-09-04
  *
  */
+//@formatter:off
 @Name("logger")
 @Summary("Print logger info, and update the logger level")
-@Description("\nExamples:\n" + "  logger\n" + "  logger -c 327a647b\n"
-                + "  logger -c 327a647b --name ROOT --level debug\n" + Constants.WIKI + Constants.WIKI_HOME + "logger")
+@Description("\nExamples:\n"
+                + "  logger\n"
+                + "  logger -c 327a647b\n"
+                + "  logger -c 327a647b --name ROOT --level debug\n"
+                + "  logger --include-no-appender\n"
+                + Constants.WIKI + Constants.WIKI_HOME + "logger")
+//@formatter:on
 public class LoggerCommand extends AnnotatedCommand {
     private static final Logger logger = LogUtil.getArthasLogger();
 
@@ -159,9 +165,9 @@ public class LoggerCommand extends AnnotatedCommand {
         }
 
         if (result) {
-            process.write("update logger level success.\n");
+            process.write("Update logger level success.\n");
         } else {
-            process.write("update logger level fail.\n");
+            process.write("Update logger level fail. Try to specify the classloader with the -c option. Use `sc -d CLASSNAME` to find out the classloader hashcode.\n");
         }
     }
 
