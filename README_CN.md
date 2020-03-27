@@ -493,6 +493,10 @@ OK
 ![拓保软件](static/tobosoft.png)
 ![海信集团](static/hisense.png)
 ![小红唇](static/xiaohongchun.png)
+![上海恺英](static/kaiying.png)
+![上海慧力](static/xiaohuasheng.png)
+![上海喔噻](static/shouqingba.png)
+![vipkid](static/vipkid.png)
 
 ### 洐生项目
 
