@@ -6,7 +6,7 @@
 **/.settings
 **/.classpath
 **/.project
-/.idea
+.idea
 **/*.iml
 /nb-configuration.xml
 **/target

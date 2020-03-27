@@ -1,12 +1,18 @@
 package com.taobao.arthas.core.command.result;
 
-import com.taobao.arthas.core.shell.command.CommandProcess;
-
+/**
+ * Watch command result model
+ *
+ * @author gongdewei 2020.03.26
+ */
 public class WatchResult extends ExecResult {
 
     private String ts;
     private double cost;
     private String result;
+
+    public WatchResult() {
+    }
 
     public WatchResult(String ts, double cost, String result) {
         this.ts = ts;
@@ -31,8 +37,4 @@ public class WatchResult extends ExecResult {
         return result;
     }
 
-    @Override
-    protected void write(CommandProcess process) {
-        process.write("ts=" + ts + "; [cost=" + cost + "ms] result=" + result + "\n");
-    }
 }

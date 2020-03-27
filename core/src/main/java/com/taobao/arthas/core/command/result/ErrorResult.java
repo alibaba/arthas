@@ -1,10 +1,11 @@
 package com.taobao.arthas.core.command.result;
 
-import com.taobao.arthas.core.shell.command.CommandProcess;
-
 public class ErrorResult extends ExecResult {
     private int statusCode;
     private String message;
+
+    public ErrorResult() {
+    }
 
     public ErrorResult(int statusCode, String message) {
         this.statusCode = statusCode;
@@ -34,8 +35,4 @@ public class ErrorResult extends ExecResult {
         return "error";
     }
 
-    @Override
-    protected void write(CommandProcess process) {
-        writeln(process, message);
-    }
 }

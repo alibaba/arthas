@@ -1,5 +1,7 @@
 package com.taobao.arthas.core.command.basic1000;
 
+import com.taobao.arthas.core.command.result.SessionResult;
+import com.taobao.arthas.core.command.view.SessionView;
 import com.taobao.arthas.core.server.ArthasBootstrap;
 import com.taobao.arthas.core.shell.command.AnnotatedCommand;
 import com.taobao.arthas.core.shell.command.CommandProcess;
@@ -24,30 +26,31 @@ import com.alibaba.arthas.tunnel.client.TunnelClient;
 @Name("session")
 @Summary("Display current session information")
 public class SessionCommand extends AnnotatedCommand {
+    private SessionView sessionView = new SessionView();
+
     @Override
     public void process(CommandProcess process) {
-        process.write(RenderUtil.render(sessionTable(process.session()), process.width())).end();
-    }
+        SessionResult result = new SessionResult();
+        Session session = process.session();
+        result.setJavaPid(session.getPid());
+        result.setSessionId(session.getSessionId());
 
-    /*
-     * 会话详情
-     */
-    private Element sessionTable(Session session) {
-        TableElement table = new TableElement().leftCellPadding(1).rightCellPadding(1);
-        table.row(true, label("Name").style(Decoration.bold.bold()), label("Value").style(Decoration.bold.bold()));
-        table.row("JAVA_PID", "" + session.getPid()).row("SESSION_ID", "" + session.getSessionId());
+        //tunnel
         TunnelClient tunnelClient = ArthasBootstrap.getInstance().getTunnelClient();
         if (tunnelClient != null) {
             String id = tunnelClient.getId();
             if (id != null) {
-                table.row("AGENT_ID", "" + id);
+                result.setAgentId(id);
             }
-            table.row("TUNNEL_SERVER", "" + tunnelClient.getTunnelServerUrl());
+            result.setTunnelServer(tunnelClient.getTunnelServerUrl());
         }
+
+        //statUrl
         String statUrl = UserStatUtil.getStatUrl();
-        if (statUrl != null) {
-            table.row("STAT_URL", statUrl);
-        }
-        return table;
+        result.setStatUrl(statUrl);
+
+        process.appendResult(result);
+        process.end();
     }
+
 }
