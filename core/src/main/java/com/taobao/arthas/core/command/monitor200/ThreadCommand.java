@@ -53,7 +53,7 @@ public class ThreadCommand extends AnnotatedCommand {
     private String state;
 
     {
-        states = new HashSet<String>(8);
+        states = new HashSet<String>(State.values().length);
         for (State state : State.values()) {
             states.add(state.name());
         }
