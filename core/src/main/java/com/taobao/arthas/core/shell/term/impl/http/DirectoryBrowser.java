@@ -124,7 +124,7 @@ public class DirectoryBrowser {
                 
                 String renderResult = renderDir(file);
                 fullResp.content().writeBytes(renderResult.getBytes("utf-8"));
-                fullResp.headers().set(HttpHeaderNames.CONTENT_TYPE, "content-type: text/html; charset=utf-8");
+                fullResp.headers().set(HttpHeaderNames.CONTENT_TYPE, "text/html; charset=utf-8");
             } else {
                 FileInputStream fileInputStream = new FileInputStream(file);
                 try {
