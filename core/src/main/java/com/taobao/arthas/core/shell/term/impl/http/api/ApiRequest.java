@@ -3,25 +3,26 @@ package com.taobao.arthas.core.shell.term.impl.http.api;
 import java.util.Map;
 
 /**
- * Http Api exception
+ * Http Api request
+ *
  * @author gongdewei 2020-03-19
  */
 public class ApiRequest {
     private String action;
-    private boolean sync;
     private String command;
     private String requestId;
     private String sessionId;
+    private String consumerId;
     private Map<String, Object> options;
 
     @Override
     public String toString() {
         return "ApiRequest{" +
                 "action='" + action + '\'' +
-                ", sync=" + sync +
                 ", command='" + command + '\'' +
                 ", requestId='" + requestId + '\'' +
                 ", sessionId='" + sessionId + '\'' +
+                ", consumerId='" + consumerId + '\'' +
                 ", options=" + options +
                 '}';
     }
@@ -32,14 +33,6 @@ public class ApiRequest {
 
     public void setAction(String action) {
         this.action = action;
-    }
-
-    public boolean isSync() {
-        return sync;
-    }
-
-    public void setSync(boolean sync) {
-        this.sync = sync;
     }
 
     public String getCommand() {
@@ -72,5 +65,13 @@ public class ApiRequest {
 
     public void setSessionId(String sessionId) {
         this.sessionId = sessionId;
+    }
+
+    public String getConsumerId() {
+        return consumerId;
+    }
+
+    public void setConsumerId(String consumerId) {
+        this.consumerId = consumerId;
     }
 }

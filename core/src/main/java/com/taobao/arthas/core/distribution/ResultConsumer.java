@@ -3,7 +3,6 @@ package com.taobao.arthas.core.distribution;
 import com.taobao.arthas.core.command.result.ExecResult;
 
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 
 /**
  * Command result consumer
@@ -21,7 +20,13 @@ public interface ResultConsumer {
      * Retrieves and removes a pack of results from the head
      * @return a pack of results
      */
-    List<ExecResult> pollResults(long timeout, TimeUnit unit);
+    List<ExecResult> pollResults();
 
+    long getLastAccessTime();
 
+    boolean isPolling();
+
+    String getConsumerId();
+
+    void setConsumerId(String consumerId);
 }

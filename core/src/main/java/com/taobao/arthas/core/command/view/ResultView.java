@@ -5,7 +5,7 @@ import com.taobao.arthas.core.shell.command.CommandProcess;
 
 /**
  * Command result view for telnet term/tty.
- * Note: Result view is reusable stateless instance
+ * Note: Result view is a reusable and stateless instance
  *
  * @author gongdewei 2020/3/27
  */

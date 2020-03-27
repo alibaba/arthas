@@ -14,4 +14,10 @@ public interface SharingResultDistributor extends ResultDistributor {
      */
     void removeConsumer(ResultConsumer consumer);
 
+    /**
+     * Get consumer by id
+     * @param consumerId
+     * @return
+     */
+    ResultConsumer getConsumer(String consumerId);
 }

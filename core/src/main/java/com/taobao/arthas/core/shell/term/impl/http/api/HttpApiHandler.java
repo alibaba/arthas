@@ -2,9 +2,12 @@ package com.taobao.arthas.core.shell.term.impl.http.api;
 
 import com.alibaba.fastjson.JSON;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.taobao.arthas.core.command.result.ExecResult;
 import com.taobao.arthas.core.distribution.PackingResultDistributor;
+import com.taobao.arthas.core.distribution.ResultConsumer;
 import com.taobao.arthas.core.distribution.ResultDistributor;
 import com.taobao.arthas.core.distribution.impl.PackingResultDistributorImpl;
+import com.taobao.arthas.core.distribution.impl.ResultConsumerImpl;
 import com.taobao.arthas.core.server.ArthasBootstrap;
 import com.taobao.arthas.core.shell.cli.CliToken;
 import com.taobao.arthas.core.shell.cli.CliTokens;
@@ -34,6 +37,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * Http Restful Api Handler
+ *
  * @author gongdewei 2020-03-18
  */
 public class HttpApiHandler {
@@ -46,8 +50,8 @@ public class HttpApiHandler {
     private final JobControllerImpl jobController;
 
     public static HttpApiHandler getInstance() {
-        if (instance == null){
-            synchronized (HttpApiHandler.class){
+        if (instance == null) {
+            synchronized (HttpApiHandler.class) {
                 instance = new HttpApiHandler();
             }
         }
@@ -69,17 +73,17 @@ public class HttpApiHandler {
         String requestId = "req_" + requestIdGenerator.addAndGet(1);
         try {
             HttpMethod method = request.method();
-            if (HttpMethod.POST.equals(method)){
+            if (HttpMethod.POST.equals(method)) {
                 requestBody = getBody(request);
                 ApiRequest apiRequest = parseRequest(requestBody);
                 apiRequest.setRequestId(requestId);
                 result = processRequest(apiRequest);
             } else {
-                result = createResponse(ApiState.REFUSED, "Unsupported http method: "+method.name());
+                result = createResponse(ApiState.REFUSED, "Unsupported http method: " + method.name());
             }
         } catch (Throwable e) {
-            result = createResponse(ApiState.FAILED, "Process request error: "+e.getMessage());
-            logger.error("arthas", "arthas process http api request error: " + request.uri()+", request body: "+requestBody, e);
+            result = createResponse(ApiState.FAILED, "Process request error: " + e.getMessage());
+            logger.error("arthas", "arthas process http api request error: " + request.uri() + ", request body: " + requestBody, e);
         }
         if (result == null) {
             result = createResponse(ApiState.FAILED, "The request was not processed");
@@ -93,7 +97,7 @@ public class HttpApiHandler {
     }
 
     private ApiRequest parseRequest(String requestBody) throws ApiException {
-        if (StringUtils.isBlank(requestBody)){
+        if (StringUtils.isBlank(requestBody)) {
             throw new ApiException("parse request failed: request body is empty");
         }
         try {
@@ -101,7 +105,7 @@ public class HttpApiHandler {
             ObjectMapper objectMapper = new ObjectMapper();
             return objectMapper.readValue(requestBody, ApiRequest.class);
         } catch (Exception e) {
-            throw new ApiException("parse request failed: "+e.getMessage(), e);
+            throw new ApiException("parse request failed: " + e.getMessage(), e);
         }
     }
 
@@ -109,18 +113,18 @@ public class HttpApiHandler {
 
         String actionStr = apiRequest.getAction();
         try {
-            if (StringUtils.isBlank(actionStr)){
+            if (StringUtils.isBlank(actionStr)) {
                 throw new ApiException("'action' is required");
             }
             ApiAction action;
             try {
-                action = ApiAction.valueOf(actionStr.toUpperCase());
+                action = ApiAction.valueOf(actionStr.trim().toUpperCase());
             } catch (IllegalArgumentException e) {
-                throw new ApiException("unknown action: "+actionStr);
+                throw new ApiException("unknown action: " + actionStr);
             }
 
             //no session required
-            if(ApiAction.INIT_SESSION.equals(action)){
+            if (ApiAction.INIT_SESSION.equals(action)) {
                 return processInitSessionRequest(apiRequest);
             }
 
@@ -130,40 +134,78 @@ public class HttpApiHandler {
                 throw new ApiException("'sessionId' is required");
             }
             Session session = sessionManager.getSession(sessionId);
-            if (session == null){
-                throw new ApiException("session not found");
+            if (session == null) {
+                throw new ApiException("session not found: "+sessionId);
             }
             sessionManager.updateAccessTime(session);
 
-            switch (action) {
-                case EXEC:
-                    return processExecRequest(apiRequest, session);
-                case SESSION_INFO:
-                    return processSessionInfoRequest(apiRequest, session);
-                case CLOSE_SESSION:
-                    return processCloseSessionRequest(apiRequest, session);
+            //dispatch requests
+            ApiResponse response = dispatchRequest(action, apiRequest, session);
+            if (response != null) {
+                return response;
             }
 
         } catch (ApiException e) {
             logger.info("arthas", e.getMessage(), e);
             return createResponse(ApiState.FAILED, e.getMessage());
         } catch (Throwable e) {
-            logger.error("arthas", "process http api request failed", e);
-            return createResponse(ApiState.FAILED, "process http api request failed");
+            logger.error("arthas", "process http api request failed: " + e.getMessage(), e);
+            return createResponse(ApiState.FAILED, "process http api request failed: " + e.getMessage());
         }
 
-        return createResponse(ApiState.REFUSED, "Unsupported action: "+actionStr);
+        return createResponse(ApiState.REFUSED, "Unsupported action: " + actionStr);
+    }
+
+    private ApiResponse dispatchRequest(ApiAction action, ApiRequest apiRequest, Session session) throws ApiException {
+        switch (action) {
+            case EXEC:
+                return processExecRequest(apiRequest, session);
+            case ASYNC_EXEC:
+                return processAsyncExecRequest(apiRequest, session);
+            case PULL_RESULTS:
+                return processPullResultsRequest(apiRequest, session);
+            case SESSION_INFO:
+                return processSessionInfoRequest(apiRequest, session);
+            case JOIN_SESSION:
+                return processJoinSessionRequest(apiRequest, session);
+            case CLOSE_SESSION:
+                return processCloseSessionRequest(apiRequest, session);
+            case INIT_SESSION:
+                break;
+        }
+        return null;
     }
 
     private ApiResponse processInitSessionRequest(ApiRequest apiRequest) throws ApiException {
         ApiResponse response = new ApiResponse();
+
+        //create session
         Session session = sessionManager.createSession();
         if (session != null) {
+
+            //create consumer
+            ResultConsumer resultConsumer = new ResultConsumerImpl();
+            session.getResultDistributor().addConsumer(resultConsumer);
+
             response.setSessionId(session.getSessionId())
+                    .setConsumerId(resultConsumer.getConsumerId())
                     .setState(ApiState.SUCCEEDED);
         } else {
             throw new ApiException("create api session failed");
         }
+        return response;
+    }
+
+    private ApiResponse processJoinSessionRequest(ApiRequest apiRequest, Session session) {
+
+        //create consumer
+        ResultConsumer resultConsumer = new ResultConsumerImpl();
+        session.getResultDistributor().addConsumer(resultConsumer);
+
+        ApiResponse response = new ApiResponse();
+        response.setSessionId(session.getSessionId())
+                .setConsumerId(resultConsumer.getConsumerId())
+                .setState(ApiState.SUCCEEDED);
         return response;
     }
 
@@ -181,23 +223,25 @@ public class HttpApiHandler {
 
     private ApiResponse processCloseSessionRequest(ApiRequest apiRequest, Session session) {
         sessionManager.removeSession(session.getSessionId());
-
-        return null;
+        ApiResponse response = new ApiResponse();
+        response.setState(ApiState.SUCCEEDED);
+        return response;
     }
 
+    /**
+     * Execute command sync, wait for job finish or timeout, sending results immediately
+     *
+     * @param apiRequest
+     * @param session
+     * @return
+     */
     private ApiResponse processExecRequest(ApiRequest apiRequest, Session session) {
 
         PackingResultDistributor packingResultDistributor = new PackingResultDistributorImpl(session);
 
         String commandLine = apiRequest.getCommand();
         Job job = this.createJob(commandLine, session, packingResultDistributor);
-
-        if (apiRequest.isSync()) {
-            job.run();
-            //get job result
-        } else {
-            //schedule job
-        }
+        job.run();
 
         //wait for job completed or timeout
         boolean timeExpired = !waitForJob(job);
@@ -219,15 +263,63 @@ public class HttpApiHandler {
         return response;
     }
 
+    /**
+     * Execute command async, create and schedule the job running, but no wait for the results.
+     *
+     * @param apiRequest
+     * @param session
+     * @return
+     */
+    private ApiResponse processAsyncExecRequest(ApiRequest apiRequest, Session session) {
+        String commandLine = apiRequest.getCommand();
+        Job job = this.createJob(commandLine, session, session.getResultDistributor());
+        job.run();
+
+        //packing results
+        Map<String, Object> body = new TreeMap<String, Object>();
+        body.put("jobId", job.id());
+        body.put("jobStatus", job.status());
+        body.put("sessionId", session.getSessionId());
+
+        ApiResponse response = new ApiResponse();
+        response.setState(ApiState.SCHEDULED).setBody(body);
+        return response;
+    }
+
+    /**
+     * Pull results from result queue
+     *
+     * @param apiRequest
+     * @param session
+     * @return
+     */
+    private ApiResponse processPullResultsRequest(ApiRequest apiRequest, Session session) throws ApiException {
+        String consumerId = apiRequest.getConsumerId();
+        if (StringUtils.isBlank(consumerId)) {
+            throw new ApiException("'consumerId' is required");
+        }
+        ResultConsumer consumer = session.getResultDistributor().getConsumer(consumerId);
+        List<ExecResult> results = consumer.pollResults();
+
+        Map<String, Object> body = new TreeMap<String, Object>();
+        body.put("sessionId", session.getSessionId());
+        body.put("consumerId", consumerId);
+        body.put("results", results);
+
+        ApiResponse response = new ApiResponse();
+        response.setState(ApiState.SUCCEEDED).setBody(body);
+        return response;
+    }
+
     private boolean waitForJob(Job job) {
         long startTime = System.currentTimeMillis();
-        while(true){
-            switch (job.status()){
+        while (true) {
+            switch (job.status()) {
                 case STOPPED:
                 case TERMINATED:
-                   return true;
+                    return true;
             }
-            if (System.currentTimeMillis() - startTime > 30000){
+            if (System.currentTimeMillis() - startTime > 30000) {
                 return false;
             }
             try {
@@ -253,7 +345,7 @@ public class HttpApiHandler {
         return apiResponse;
     }
 
-    private String getBody(FullHttpRequest request){
+    private String getBody(FullHttpRequest request) {
         ByteBuf buf = request.content();
         return buf.toString(CharsetUtil.UTF_8);
     }

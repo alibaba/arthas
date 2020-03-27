@@ -1,5 +1,7 @@
 package com.taobao.arthas.core.shell.session.impl;
 
+import com.taobao.arthas.core.distribution.SharingResultDistributor;
+import com.taobao.arthas.core.distribution.impl.SharingResultDistributorImpl;
 import com.taobao.arthas.core.server.ArthasBootstrap;
 import com.taobao.arthas.core.shell.ShellServerOptions;
 import com.taobao.arthas.core.shell.session.Session;
@@ -14,6 +16,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Arthas Session Manager
+ *
  * @author gongdewei 2020-03-20
  */
 public class SessionManagerImpl implements SessionManager {
@@ -50,6 +53,9 @@ public class SessionManagerImpl implements SessionManager {
         //session.put(Session.TTY, term);
         String sessionId = UUID.randomUUID().toString();
         session.put(Session.ID, sessionId);
+
+        //Result Distributor
+        session.setResultDistributor(new SharingResultDistributorImpl(session));
 
         sessions.put(sessionId, session);
         return session;

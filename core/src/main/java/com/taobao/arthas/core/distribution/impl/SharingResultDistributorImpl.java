@@ -1,6 +1,5 @@
 package com.taobao.arthas.core.distribution.impl;
 
-import com.alibaba.fastjson.JSON;
 import com.taobao.arthas.core.command.result.ExecResult;
 import com.taobao.arthas.core.distribution.ResultConsumer;
 import com.taobao.arthas.core.distribution.SharingResultDistributor;
@@ -9,10 +8,12 @@ import com.taobao.arthas.core.util.LogUtil;
 import com.taobao.middleware.logger.Logger;
 
 import java.util.List;
+import java.util.UUID;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class SharingResultDistributorImpl implements SharingResultDistributor {
     private static final Logger logger = LogUtil.getArthasLogger();
@@ -22,6 +23,7 @@ public class SharingResultDistributorImpl implements SharingResultDistributor {
     private final Session session;
     private Thread distributorThread;
     private volatile boolean running;
+    private AtomicInteger consumerNumGenerator = new AtomicInteger(0);
 
     public SharingResultDistributorImpl(Session session) {
         this.session = session;
@@ -48,19 +50,32 @@ public class SharingResultDistributorImpl implements SharingResultDistributor {
                     }
                 }
             } catch (Throwable e) {
-                logger.warn("arthas", "distribute result failed", e);
+                logger.warn("arthas", "distribute result failed: " + e.getMessage(), e);
             }
         }
     }
 
     @Override
     public void addConsumer(ResultConsumer consumer) {
+        int consumerNo = consumerNumGenerator.incrementAndGet();
+        String consumerId = UUID.randomUUID().toString().replaceAll("-", "") + "_" + consumerNo;
+        consumer.setConsumerId(consumerId);
         consumers.add(consumer);
     }
 
     @Override
     public void removeConsumer(ResultConsumer consumer) {
         consumers.remove(consumer);
+    }
+
+    @Override
+    public ResultConsumer getConsumer(String consumerId) {
+        for (ResultConsumer consumer : consumers) {
+            if (consumer.getConsumerId().equals(consumerId)) {
+                return consumer;
+            }
+        }
+        return null;
     }
 
     private class DistributorTask implements Runnable {

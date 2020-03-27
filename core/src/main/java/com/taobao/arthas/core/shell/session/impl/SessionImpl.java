@@ -1,5 +1,6 @@
 package com.taobao.arthas.core.shell.session.impl;
 
+import com.taobao.arthas.core.distribution.SharingResultDistributor;
 import com.taobao.arthas.core.shell.command.CommandResolver;
 import com.taobao.arthas.core.shell.session.Session;
 import com.taobao.arthas.core.shell.system.impl.InternalCommandManager;
@@ -103,5 +104,15 @@ public class SessionImpl implements Session {
     @Override
     public long getCreateTime() {
         return (Long)data.get(CREATE_TIME);
+    }
+
+    @Override
+    public void setResultDistributor(SharingResultDistributor resultDistributor) {
+        data.put(RESULT_DISTRIBUTOR, resultDistributor);
+    }
+
+    @Override
+    public SharingResultDistributor getResultDistributor() {
+        return (SharingResultDistributor) data.get(RESULT_DISTRIBUTOR);
     }
 }

@@ -1,5 +1,6 @@
 package com.taobao.arthas.core.shell.session;
 
+import com.taobao.arthas.core.distribution.SharingResultDistributor;
 import com.taobao.arthas.core.shell.command.CommandResolver;
 
 import java.lang.instrument.Instrumentation;
@@ -31,6 +32,12 @@ public interface Session {
      * Session last active time
      */
     String LAST_ACCESS_TIME = "lastAccessedTime";
+
+    /**
+     * Command Result Distributor
+     */
+    String RESULT_DISTRIBUTOR = "resultDistributor";
+
 
     /**
      * Put some data in a session
@@ -128,4 +135,16 @@ public interface Session {
      * @return session create time
      */
     long getCreateTime();
+
+    /**
+     * Update session's command result distributor
+     * @param resultDistributor
+     */
+    void setResultDistributor(SharingResultDistributor resultDistributor);
+
+    /**
+     * Get session's command result distributor
+     * @return
+     */
+    SharingResultDistributor getResultDistributor();
 }
