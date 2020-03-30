@@ -1,0 +1,92 @@
+###
+
+POST http://localhost:8563/api
+Accept: */*
+Cache-Control: no-cache
+
+{
+"action": "init_session"
+}
+
+###
+
+POST http://localhost:8563/api
+Accept: */*
+Cache-Control: no-cache
+
+{
+"action": "join_session",
+"sessionId":"c8940459-dacb-4798-b721-7f58728b76c8"
+}
+
+###
+POST http://localhost:8563/api
+Accept: */*
+Cache-Control: no-cache
+
+{
+"action": "async_exec",
+"command": "watch demo.MathGame primeFactors 'params' -n 3 ",
+"sessionId":"8132aa34-3e9a-477d-b20d-488032ba76b2"
+}
+
+###
+
+POST http://localhost:8563/api
+Accept: */*
+Cache-Control: no-cache
+
+{
+"action": "async_exec",
+"command": "version ",
+"sessionId":"c8940459-dacb-4798-b721-7f58728b76c8"
+}
+
+###
+
+POST http://localhost:8563/api
+Accept: */*
+Cache-Control: no-cache
+
+{
+"action": "async_exec",
+"command": "session ",
+"sessionId":"c8940459-dacb-4798-b721-7f58728b76c8"
+}
+
+###
+###  SYNC REST API
+###
+POST http://localhost:8563/api
+Accept: */*
+Cache-Control: no-cache
+
+{
+"action": "exec",
+"command": "watch demo.MathGame primeFactors 'params' -n 3 ",
+"sessionId":"8132aa34-3e9a-477d-b20d-488032ba76b2"
+}
+
+###
+POST http://localhost:8563/api
+Accept: */*
+Cache-Control: no-cache
+
+{
+"action": "exec",
+"command": "session",
+"sessionId":"8132aa34-3e9a-477d-b20d-488032ba76b2"
+}
+
+###
+POST http://localhost:8563/api
+Accept: */*
+Cache-Control: no-cache
+
+{
+"action": "exec",
+"command": "version",
+"sessionId":"8132aa34-3e9a-477d-b20d-488032ba76b2"
+}
+
+###
