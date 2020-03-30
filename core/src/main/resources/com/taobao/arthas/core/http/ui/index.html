@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Arthas WebUI</title>
+</head>
+<body>
+<script src="../vue/vue.js"></script>
+<script src="../element-ui@2.13.0/lib/index.js"></script>
+<link rel="stylesheet" href="../element-ui@2.13.0/lib/theme-chalk/index.css">
+<link rel="stylesheet" href="ui.css">
+
+<div id="app">
+    <el-container class="container">
+        <el-header class="header">
+            <el-row >
+                <el-col :span="12">
+                    <div class="logo">
+                        <a href="https://github.com/alibaba/arthas" target="_blank">
+                            <img src="../logo.png" height="25px">
+                        </a>
+                    </div>
+                    <div class="logo">
+                        <a class="nav-link" href="https://alibaba.github.io/arthas" target="_blank">Documentation</a>
+                        <a class="nav-link" href="https://alibaba.github.io/arthas-tutorials" target="_blank">Online Tutorials</a>
+                        <a class="nav-link" href="https://alibaba.github.io/arthas" target="_blank">Github</a>
+                    </div>
+                </el-col>
+                <el-col :span="12" class="header-right">
+                    <el-button type="primary" size="mini">New</el-button>
+                    <el-button type="primary" size="mini">Share</el-button>
+                    <el-button type="primary" size="mini">Close</el-button>
+                    <el-button type="primary" size="mini">Shutdown</el-button>
+                    <div class="user-info">
+                        <i class="el-icon-s-custom user-icon"></i>
+                        <span>Tom</span>
+                    </div>
+                </el-col>
+            </el-row>
+        </el-header>
+        <el-main class="main-body">
+            <el-card>
+<pre>
+  ,---.  ,------. ,--------.,--.  ,--.  ,---.   ,---.
+ /  O  \ |  .--. ''--.  .--'|  '--'  | /  O  \ '   .-'
+|  .-.  ||  '--'.'   |  |   |  .--.  ||  .-.  |`.  `-.
+|  | |  ||  |\  \    |  |   |  |  |  ||  | |  |.-'    |
+`--' `--'`--' '--'   `--'   `--'  `--'`--' `--'`-----'
+</pre>
+
+wiki      https://alibaba.github.io/arthas
+tutorials https://alibaba.github.io/arthas/arthas-tutorials
+version   3.1.8-SNAPSHOT
+pid       1914
+time      2020-03-30 11:21:04
+            </el-card>
+            <div class="min-gap"></div>
+            <el-card>
+<pre>[arthas@1914]$ version
+3.1.8-SNAPSHOT</pre>
+            </el-card>
+            <div class="min-gap"></div>
+            <el-card>
+<pre>[arthas@1914]$ sm *Game
+demo.MathGame <init>()V
+demo.MathGame main([Ljava/lang/String;)V
+demo.MathGame run()V
+demo.MathGame print(ILjava/util/List;)V
+demo.MathGame primeFactors(I)Ljava/util/List;
+Affect(row-cnt:5) cost in 19 ms.</pre>
+            </el-card>
+            <div class="min-gap"></div>
+            <el-card>
+<pre>[arthas@1914]$ watch *Game primeFactors 'params' -n 3
+Press Q or Ctrl+C to abort.
+Affect(class-cnt:1 , method-cnt:1) cost in 60 ms.
+ts=2020-03-30 17:12:43; [cost=2.669414ms] result=@Object[][
+    @Integer[85275],
+]
+ts=2020-03-30 17:12:44; [cost=0.212597ms] result=@Object[][
+    @Integer[-209963],
+]
+ts=2020-03-30 17:12:45; [cost=0.175717ms] result=@Object[][
+    @Integer[212916],
+]
+Command execution times exceed limit: 3, so command will exit. You can set it with -n option.</pre>
+            </el-card>
+            <div class="min-gap"></div>
+            <el-card>
+                <h4>更新 Github 模板</h4>
+                <p>王小虎 提交于 2018/4/12 20:46</p>
+            </el-card>            <div class="min-gap"></div>
+            <el-card>
+                <h4>更新 Github 模板</h4>
+                <p>王小虎 提交于 2018/4/12 20:46</p>
+            </el-card>
+            <div class="min-gap"></div>
+            <el-card>
+                <h4>更新 Github 模板</h4>
+                <p>王小虎 提交于 2018/4/12 20:46</p>
+            </el-card>
+        </el-main>
+
+        <!--  底部  -->
+        <el-footer class="footer-row" height="50px">
+            <div class="footer-left">
+                <div>Command:</div>
+            </div>
+            <div class="footer-input">
+                <el-input
+                        type="textarea"
+                        autosize
+                        placeholder="请输入命令"
+                        v-model="commandLine">
+                </el-input>
+            </div>
+            <div class="footer-button">
+                <el-button type="primary" size="mini">Execute</el-button>
+            </div>
+        </el-footer>
+    </el-container>
+</div>
+<script>
+    new Vue({
+        el: '#app',
+        data: {
+            commandLine: ''
+        },
+        methods: {
+        }
+    });
+</script>
+</body>
+</html>
