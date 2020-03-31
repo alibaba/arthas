@@ -1,4 +1,4 @@
-package com.taobao.arthas.agent;
+package com.taobao.arthas.agent3;
 
 import java.arthas.Spy;
 import java.io.File;
@@ -9,6 +9,8 @@ import java.lang.instrument.Instrumentation;
 import java.net.URL;
 import java.net.URLDecoder;
 import java.util.jar.JarFile;
+
+import com.taobao.arthas.agent.ArthasClassloader;
 
 /**
  * 代理启动类
