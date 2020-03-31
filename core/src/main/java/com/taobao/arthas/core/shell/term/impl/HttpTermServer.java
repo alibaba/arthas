@@ -1,12 +1,13 @@
 package com.taobao.arthas.core.shell.term.impl;
 
+import com.alibaba.arthas.deps.org.slf4j.Logger;
+import com.alibaba.arthas.deps.org.slf4j.LoggerFactory;
 import com.taobao.arthas.core.shell.future.Future;
 import com.taobao.arthas.core.shell.handlers.Handler;
 import com.taobao.arthas.core.shell.term.Term;
 import com.taobao.arthas.core.shell.term.TermServer;
 import com.taobao.arthas.core.shell.term.impl.http.NettyWebsocketTtyBootstrap;
-import com.taobao.arthas.core.util.LogUtil;
-import com.taobao.middleware.logger.Logger;
+import com.taobao.arthas.core.shell.term.impl.httptelnet.HttpTelnetTermServer;
 import io.termd.core.function.Consumer;
 import io.termd.core.tty.TtyConnection;
 
@@ -17,7 +18,7 @@ import java.util.concurrent.TimeUnit;
  */
 public class HttpTermServer extends TermServer {
 
-    private static Logger logger = LogUtil.getArthasLogger();
+    private static final Logger logger = LoggerFactory.getLogger(HttpTermServer.class);
 
     private Handler<Term> termHandler;
     private NettyWebsocketTtyBootstrap bootstrap;
@@ -50,7 +51,7 @@ public class HttpTermServer extends TermServer {
             }).get(connectionTimeout, TimeUnit.MILLISECONDS);
             listenHandler.handle(Future.<TermServer>succeededFuture());
         } catch (Throwable t) {
-            logger.error(null, "Error listening to port " + port, t);
+            logger.error("Error listening to port " + port, t);
             listenHandler.handle(Future.<TermServer>failedFuture(t));
         }
         return this;

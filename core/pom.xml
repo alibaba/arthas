@@ -10,6 +10,10 @@
     <artifactId>arthas-core</artifactId>
     <name>arthas-core</name>
 
+    <properties>
+        <arthas.deps.package>com.alibaba.arthas.deps</arthas.deps.package>
+    </properties>
+
     <build>
         <finalName>arthas-core</finalName>
         <plugins>
@@ -27,7 +31,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-shade-plugin</artifactId>
-                <version>2.4.3</version>
+                <version>3.2.1</version>
                 <executions>
                     <execution>
                         <phase>package</phase>
@@ -48,6 +52,17 @@
                                     </manifestEntries>
                                 </transformer>
                             </transformers>
+                            <relocations>
+                                <!-- https://github.com/hengyunabc/arthas-repackage-deps -->
+                                <relocation>
+                                    <pattern>org.slf4j</pattern>
+                                    <shadedPattern>${arthas.deps.package}.org.slf4j</shadedPattern>
+                                </relocation>
+                                <relocation>
+                                    <pattern>ch.qos.logback</pattern>
+                                    <shadedPattern>${arthas.deps.package}.ch.qos.logback</shadedPattern>
+                                </relocation>
+                            </relocations>
                             <filters>
                                 <filter>
                                     <artifact>com.alibaba.middleware:termd-core</artifact>
@@ -64,6 +79,27 @@
                 </executions>
             </plugin>
 
+             <!-- 把原来的logger command相关类还原，因为被shade plugin relocation修改了package -->
+            <plugin>
+                <artifactId>maven-antrun-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <phase>package</phase>
+                        <configuration>
+                            <tasks>
+                                <unzip src="${project.build.directory}/${project.build.finalName}-shade.${project.packaging}" dest="${project.build.directory}/tmp_out" />
+                                <copy overwrite="true" todir="${project.build.directory}/tmp_out/com/taobao/arthas/core/command/logger">
+                                    <fileset dir="${project.build.directory}/classes/com/taobao/arthas/core/command/logger" />
+                                </copy>
+                                <zip basedir="${project.build.directory}/tmp_out" destfile="${project.build.directory}/${project.build.finalName}-shade.${project.packaging}" />
+                            </tasks>
+                        </configuration>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
         </plugins>
     </build>
 
@@ -129,10 +165,6 @@
         <dependency>
             <groupId>ch.qos.logback</groupId>
             <artifactId>logback-core</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.taobao.middleware</groupId>
-            <artifactId>logger.api</artifactId>
         </dependency>
         <dependency>
             <groupId>com.alibaba.arthas</groupId>

@@ -1,141 +1,137 @@
 package com.taobao.arthas.core.util;
 
-import com.taobao.middleware.logger.Level;
-import com.taobao.middleware.logger.Logger;
-import com.taobao.middleware.logger.LoggerFactory;
-import com.taobao.middleware.logger.support.LogLog;
-import com.taobao.middleware.logger.support.LoggerHelper;
-
 import java.io.File;
+import java.util.Iterator;
+
+import com.alibaba.arthas.deps.ch.qos.logback.classic.LoggerContext;
+import com.alibaba.arthas.deps.ch.qos.logback.classic.joran.JoranConfigurator;
+import com.alibaba.arthas.deps.ch.qos.logback.classic.spi.ILoggingEvent;
+import com.alibaba.arthas.deps.ch.qos.logback.core.Appender;
+import com.alibaba.arthas.deps.ch.qos.logback.core.rolling.RollingFileAppender;
+import com.alibaba.arthas.deps.org.slf4j.Logger;
+import com.alibaba.arthas.deps.org.slf4j.LoggerFactory;
+import com.taobao.arthas.common.AnsiLog;
+import com.taobao.arthas.core.env.ArthasEnvironment;
 
 /**
- * Arthas日志
- * Created by vlinux on 15/3/8.
+ * 
+ * @author hengyunabc
+ *
  */
 public class LogUtil {
 
-    /**
-     * Arthas 内部日志Logger
-     */
-    private static final Logger arthasLogger;
-
-    private static final org.slf4j.Logger resultLogger;
+    public static final String LOGGING_CONFIG_PROPERTY = "arthas.logging.config";
+    public static final String LOGGING_CONFIG = "${arthas.logging.config:${arthas.home}/logback.xml}";
 
     /**
-     * 接管Netty的Logger
+     * The name of the property that contains the name of the log file. Names can be
+     * an exact location or relative to the current directory.
      */
-    private static final Logger nettyLogger;
+    public static final String FILE_NAME_PROPERTY = "arthas.logging.file.name";
+    public static final String ARTHAS_LOG_FILE = "ARTHAS_LOG_FILE";
 
     /**
-     * 接管termd的Logger
+     * The name of the property that contains the directory where log files are
+     * written.
      */
-    private static final Logger termdLogger;
+    public static final String FILE_PATH_PROPERTY = "arthas.logging.file.path";
+    public static final String ARTHAS_LOG_PATH = "ARTHAS_LOG_PATH";
+
+    private static String logFile = "";
 
     /**
-     * 接管tunnel client的Logger
+     * <pre>
+     * 1. 尝试从 arthas.logging.config 这个配置里加载 logback.xml
+     * 2. 尝试从 arthas.home 下面找 logback.xml
+     * 
+     * 可以用 arthas.logging.file.name 指定具体arthas.log的名字
+     * 可以用 arthas.logging.file.path 指定具体arthas.log的目录
+     * 
+     * </pre>
+     * 
+     * @param env
      */
-    private static final Logger tunnelClientLogger;
+    public static LoggerContext initLooger(ArthasEnvironment env) {
+        String loggingConfig = env.resolvePlaceholders(LOGGING_CONFIG);
+        if (loggingConfig == null || loggingConfig.trim().isEmpty()) {
+            return null;
+        }
+        AnsiLog.debug("arthas logging file: " + loggingConfig);
+        File configFile = new File(loggingConfig);
+        if (!configFile.isFile()) {
+            AnsiLog.error("can not find arthas logging config: " + loggingConfig);
+            return null;
+        }
 
-    public static final String LOGGER_FILE;
+        try {
+            LoggerContext loggerContext = (LoggerContext) LoggerFactory.getILoggerFactory();
+            loggerContext.reset();
 
-    /**
-     * default value is ~/logs
-     */
-    public static String LOGS_DIR;
-
-    /**
-     * default value is ~/logs/arthas
-     */
-    public static String LOGS_ARTHAS_DIR;
-
-    static {
-        detectArthasLogDirectory();
-        LOGGER_FILE = LoggerHelper.getLogFile("arthas", "arthas.log");
-
-        LogLog.setQuietMode(true);
-
-        LoggerHelper.setPattern("arthas-cache", "%d{yyyy-MM-dd HH:mm:ss.SSS}%n%m%n");
-
-        arthasLogger = LoggerFactory.getLogger("arthas");
-        arthasLogger.activateAppenderWithTimeAndSizeRolling("arthas", "arthas.log", "UTF-8", "100MB");
-        arthasLogger.setLevel(Level.INFO);
-        arthasLogger.setAdditivity(false);
-
-        com.taobao.middleware.logger.Logger log = LoggerFactory.getLogger("result");
-        log.activateAppenderWithSizeRolling("arthas-cache", "result.log", "UTF-8", "100MB", 3);
-        log.setAdditivity(false);
-        log.activateAsync(64, -1);
-        resultLogger = (org.slf4j.Logger) log.getDelegate();
-
-        nettyLogger = LoggerFactory.getLogger("io.netty");
-        nettyLogger.activateAppender(arthasLogger);
-        nettyLogger.setLevel(Level.INFO);
-        nettyLogger.setAdditivity(false);
-
-        termdLogger = LoggerFactory.getLogger("io.termd");
-        termdLogger.activateAppender(arthasLogger);
-        termdLogger.setLevel(Level.INFO);
-        termdLogger.setAdditivity(false);
-
-        tunnelClientLogger = LoggerFactory.getLogger("com.alibaba.arthas.tunnel.client");
-        tunnelClientLogger.activateAppender(arthasLogger);
-        tunnelClientLogger.setLevel(Level.INFO);
-        tunnelClientLogger.setAdditivity(false);
-    }
-
-    private static void detectArthasLogDirectory() {
-        String dpath = System.getProperty("JM.LOG.PATH");
-        if (StringUtils.isEmpty(dpath)) {
-            File logDirectory = new File(System.getProperty("user.home") + File.separator + "logs" + File.separator);
-            try {
-                // when user is nobody mkdir will fail. #572
-                logDirectory.mkdirs();
-            } catch (Throwable e) {
-                // ignore
+            String fileName = env.getProperty(FILE_NAME_PROPERTY);
+            ;
+            if (fileName != null) {
+                loggerContext.putProperty(ARTHAS_LOG_FILE, fileName);
             }
-            if (!logDirectory.exists()) {
-                // try to set a temp directory
-                logDirectory = new File(System.getProperty("java.io.tmpdir") + File.separator + "logs" + File.separator);
-                try {
-                    logDirectory.mkdirs();
-                } catch (Throwable e) {
-                    // ignore
+            String filePath = env.getProperty(FILE_PATH_PROPERTY);
+            if (filePath != null) {
+                loggerContext.putProperty(ARTHAS_LOG_PATH, filePath);
+            }
+
+            JoranConfigurator configurator = new JoranConfigurator();
+            configurator.setContext(loggerContext);
+            configurator.doConfigure(configFile.toURI().toURL()); // load logback xml file
+
+            // 查找 arthas.log appender
+            Iterator<Appender<ILoggingEvent>> appenders = loggerContext.getLogger("root").iteratorForAppenders();
+
+            while (appenders.hasNext()) {
+                Appender<ILoggingEvent> appender = appenders.next();
+                if (appender instanceof RollingFileAppender) {
+                    RollingFileAppender fileAppender = (RollingFileAppender) appender;
+                    if ("ARTHAS".equalsIgnoreCase(fileAppender.getName())) {
+                        logFile = fileAppender.getFile();
+                    }
                 }
             }
-            if (logDirectory.exists()) {
-                LOGS_DIR = logDirectory.getAbsolutePath();
-                System.setProperty("JM.LOG.PATH", logDirectory.getAbsolutePath());
+
+            return loggerContext;
+        } catch (Throwable e) {
+            AnsiLog.error("try to load arthas logging config file error: " + configFile, e);
+        }
+        return null;
+    }
+
+    public static String loggingFile() {
+        if (logFile == null || logFile.trim().isEmpty()) {
+            return "arthas.log";
+        }
+        return logFile;
+    }
+
+    public static String loggingDir() {
+        if (logFile != null && !logFile.isEmpty()) {
+            String parent = new File(logFile).getParent();
+            if (parent != null) {
+                return parent;
             }
+        }
+        return new File("").getAbsolutePath();
+    }
+
+    public static String cacheDir() {
+        File logsDir = new File(loggingDir()).getParentFile();
+        if (logsDir.exists()) {
+            File arthasCacheDir = new File(logsDir, "arthas-cache");
+            arthasCacheDir.mkdirs();
+            return arthasCacheDir.getAbsolutePath();
         } else {
-            LOGS_DIR = dpath;
+            File arthasCacheDir = new File("arthas-cache");
+            arthasCacheDir.mkdirs();
+            return arthasCacheDir.getAbsolutePath();
         }
-        if (StringUtils.isEmpty(LOGS_DIR)) {
-            LOGS_DIR = "logs";
-        }
-        LOGS_ARTHAS_DIR = LOGS_DIR + File.separator + "arthas";
     }
 
-    public static Logger getArthasLogger() {
-        return arthasLogger;
-    }
-
-    public static org.slf4j.Logger getResultLogger() {
-        return resultLogger;
-    }
-
-    public static void closeResultLogger() {
-        closeSlf4jLogger(resultLogger);
-    }
-
-    public static void closeSlf4jLogger(org.slf4j.Logger logger) {
-        if (logger != null) {
-            if (logger instanceof ch.qos.logback.classic.Logger) {
-                ((ch.qos.logback.classic.Logger) logger).detachAndStopAllAppenders();
-            } else {
-                // arthas strongly depends on logback.
-                // So do nothing here
-                // https://github.com/alibaba/arthas/issues/319
-            }
-        }
+    public static Logger getResultLogger() {
+        return LoggerFactory.getLogger("result");
     }
 }

@@ -1,5 +1,7 @@
 package com.taobao.arthas.core.command.klass100;
 
+import com.alibaba.arthas.deps.org.slf4j.Logger;
+import com.alibaba.arthas.deps.org.slf4j.LoggerFactory;
 import com.taobao.arthas.core.command.Constants;
 import com.taobao.arthas.core.shell.cli.Completion;
 import com.taobao.arthas.core.shell.cli.CompletionUtils;
@@ -7,7 +9,6 @@ import com.taobao.arthas.core.shell.command.AnnotatedCommand;
 import com.taobao.arthas.core.shell.command.CommandProcess;
 import com.taobao.arthas.core.util.ClassUtils;
 import com.taobao.arthas.core.util.Decompiler;
-import com.taobao.arthas.core.util.LogUtil;
 import com.taobao.arthas.core.util.SearchUtils;
 import com.taobao.arthas.core.util.TypeRenderUtils;
 import com.taobao.arthas.core.util.affect.RowAffect;
@@ -16,7 +17,6 @@ import com.taobao.middleware.cli.annotations.Description;
 import com.taobao.middleware.cli.annotations.Name;
 import com.taobao.middleware.cli.annotations.Option;
 import com.taobao.middleware.cli.annotations.Summary;
-import com.taobao.middleware.logger.Logger;
 import com.taobao.text.Color;
 import com.taobao.text.Decoration;
 import com.taobao.text.lang.LangRenderUtil;
@@ -49,7 +49,7 @@ import static com.taobao.text.ui.Element.label;
         "  jad -c 39eb305e -E org\\\\.apache\\\\.*\\\\.StringUtils\n" +
         Constants.WIKI + Constants.WIKI_HOME + "jad")
 public class JadCommand extends AnnotatedCommand {
-    private static final Logger logger = LogUtil.getArthasLogger();
+    private static final Logger logger = LoggerFactory.getLogger(JadCommand.class);
     private static Pattern pattern = Pattern.compile("(?m)^/\\*\\s*\\*/\\s*$" + System.getProperty("line.separator"));
 
     private String classPattern;
@@ -133,7 +133,7 @@ public class JadCommand extends AnnotatedCommand {
                     if(ClassUtils.isLambdaClass(clazz) && e instanceof VerifyError) {
                         errorMsg += ", Please ignore lambda class VerifyError: https://github.com/alibaba/arthas/issues/675";
                     }
-                    logger.error("jad", errorMsg, e);
+                    logger.error(errorMsg, e);
                 }
             }
         } finally {
@@ -176,7 +176,7 @@ public class JadCommand extends AnnotatedCommand {
             process.write(com.taobao.arthas.core.util.Constants.EMPTY_STRING);
             affect.rCnt(classFiles.keySet().size());
         } catch (Throwable t) {
-            logger.error(null, "jad: fail to decompile class: " + c.getName(), t);
+            logger.error("jad: fail to decompile class: " + c.getName(), t);
         }
     }
 

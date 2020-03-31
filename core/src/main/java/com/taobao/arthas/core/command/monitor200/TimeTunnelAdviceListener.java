@@ -3,6 +3,8 @@ package com.taobao.arthas.core.command.monitor200;
 import com.taobao.arthas.core.advisor.ReflectAdviceListenerAdapter;
 import com.taobao.arthas.core.command.express.ExpressException;
 import com.taobao.arthas.core.shell.command.CommandProcess;
+import com.alibaba.arthas.deps.org.slf4j.Logger;
+import com.alibaba.arthas.deps.org.slf4j.LoggerFactory;
 import com.taobao.arthas.core.advisor.Advice;
 import com.taobao.arthas.core.advisor.ArthasMethod;
 import com.taobao.arthas.core.util.LogUtil;
@@ -20,7 +22,7 @@ import static com.taobao.arthas.core.command.monitor200.TimeTunnelTable.fillTabl
  * @author beiwei30 on 30/11/2016.
  */
 public class TimeTunnelAdviceListener extends ReflectAdviceListenerAdapter {
-
+    private static final Logger logger = LoggerFactory.getLogger(TimeTunnelAdviceListener.class);
     private TimeTunnelCommand command;
     private CommandProcess process;
 
@@ -61,9 +63,9 @@ public class TimeTunnelAdviceListener extends ReflectAdviceListenerAdapter {
         try {
             match = isConditionMet(command.getConditionExpress(), advice, cost);
         } catch (ExpressException e) {
-            LogUtil.getArthasLogger().warn("tt failed.", e);
+            logger.warn("tt failed.", e);
             process.write("tt failed, condition is: " + command.getConditionExpress() + ", " + e.getMessage()
-                          + ", visit " + LogUtil.LOGGER_FILE + " for more details.\n");
+                          + ", visit " + LogUtil.loggingFile() + " for more details.\n");
             process.end();
         }
 

@@ -10,11 +10,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import com.taobao.arthas.core.util.LogUtil;
-import com.taobao.middleware.logger.Logger;
 import org.objectweb.asm.ClassReader;
 
+import com.alibaba.arthas.deps.org.slf4j.Logger;
+import com.alibaba.arthas.deps.org.slf4j.LoggerFactory;
 import com.taobao.arthas.core.command.Constants;
+import com.taobao.arthas.core.command.logger.LoggerCommand;
 import com.taobao.arthas.core.shell.cli.Completion;
 import com.taobao.arthas.core.shell.cli.CompletionUtils;
 import com.taobao.arthas.core.shell.command.AnnotatedCommand;
@@ -38,7 +39,7 @@ import com.taobao.middleware.cli.annotations.Summary;
                 "  redefine -c 327a647b /tmp/Test.class /tmp/Test\\$Inner.class \n" +
                 Constants.WIKI + Constants.WIKI_HOME + "redefine")
 public class RedefineCommand extends AnnotatedCommand {
-    private static final Logger logger = LogUtil.getArthasLogger();
+    private static final Logger logger = LoggerFactory.getLogger(RedefineCommand.class);
     private static final int MAX_FILE_SIZE = 10 * 1024 * 1024;
 
     private String hashCode;
@@ -118,7 +119,7 @@ public class RedefineCommand extends AnnotatedCommand {
                     continue;
                 }
                 definitions.add(new ClassDefinition(clazz, bytesMap.get(clazz.getName())));
-                logger.info("redefine", "Try redefine class name: {}, ClassLoader: {}", clazz.getName(), clazz.getClassLoader());
+                logger.info("Try redefine class name: {}, ClassLoader: {}", clazz.getName(), clazz.getClassLoader());
             }
         }
 

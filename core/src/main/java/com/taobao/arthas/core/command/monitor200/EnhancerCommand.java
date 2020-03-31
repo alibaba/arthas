@@ -5,6 +5,8 @@ import java.lang.instrument.UnmodifiableClassException;
 import java.util.Collections;
 import java.util.List;
 
+import com.alibaba.arthas.deps.org.slf4j.Logger;
+import com.alibaba.arthas.deps.org.slf4j.LoggerFactory;
 import com.taobao.arthas.core.advisor.AdviceListener;
 import com.taobao.arthas.core.advisor.Enhancer;
 import com.taobao.arthas.core.advisor.InvokeTraceable;
@@ -19,14 +21,13 @@ import com.taobao.arthas.core.util.Constants;
 import com.taobao.arthas.core.util.LogUtil;
 import com.taobao.arthas.core.util.affect.EnhancerAffect;
 import com.taobao.arthas.core.util.matcher.Matcher;
-import com.taobao.middleware.logger.Logger;
 
 /**
  * @author beiwei30 on 29/11/2016.
  */
 public abstract class EnhancerCommand extends AnnotatedCommand {
 
-    private static final Logger logger = LogUtil.getArthasLogger();
+    private static final Logger logger = LoggerFactory.getLogger(EnhancerCommand.class);
     protected static final List<String> EMPTY = Collections.emptyList();
     public static final String[] EXPRESS_EXAMPLES = { "params", "returnObj", "throwExp", "target", "clazz", "method",
                                                        "{params,returnObj}", "params[0]" };
@@ -117,7 +118,7 @@ public abstract class EnhancerCommand extends AnnotatedCommand {
                 process.write("No class or method is affected, try:\n"
                               + "1. sm CLASS_NAME METHOD_NAME to make sure the method you are tracing actually exists (it might be in your parent class).\n"
                               + "2. reset CLASS_NAME and try again, your method body might be too large.\n"
-                              + "3. check arthas log: " + LogUtil.LOGGER_FILE + "\n"
+                              + "3. check arthas log: " + LogUtil.loggingFile() + "\n"
                               + "4. visit https://github.com/alibaba/arthas/issues/47 for more details.\n");
                 process.end();
                 return;
@@ -134,7 +135,7 @@ public abstract class EnhancerCommand extends AnnotatedCommand {
 
             process.write(effect + "\n");
         } catch (UnmodifiableClassException e) {
-            logger.error(null, "error happens when enhancing class", e);
+            logger.error("error happens when enhancing class", e);
         } finally {
             if (session.getLock() == lock) {
                 // enhance结束后解锁
@@ -148,7 +149,7 @@ public abstract class EnhancerCommand extends AnnotatedCommand {
     }
 
     private static void warn(CommandProcess process, String message) {
-        logger.error(null, message);
+        logger.error(message);
         process.write("cannot operate the current command, pls. check arthas.log\n");
         if (process.isForeground()) {
             process.echoTips(Constants.Q_OR_CTRL_C_ABORT_MSG + "\n");

@@ -160,7 +160,7 @@ public class AgentBootstrap {
          * </pre>
          */
         Class<?> bootstrapClass = agentLoader.loadClass(ARTHAS_BOOTSTRAP);
-        Object bootstrap = bootstrapClass.getMethod(GET_INSTANCE, Instrumentation.class).invoke(null, inst);
+        Object bootstrap = bootstrapClass.getMethod(GET_INSTANCE, Instrumentation.class, String.class).invoke(null, inst, args);
         boolean isBind = (Boolean) bootstrapClass.getMethod(IS_BIND).invoke(bootstrap);
         if (!isBind) {
             try {

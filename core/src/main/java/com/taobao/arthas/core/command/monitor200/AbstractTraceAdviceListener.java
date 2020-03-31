@@ -1,5 +1,7 @@
 package com.taobao.arthas.core.command.monitor200;
 
+import com.alibaba.arthas.deps.org.slf4j.Logger;
+import com.alibaba.arthas.deps.org.slf4j.LoggerFactory;
 import com.taobao.arthas.core.advisor.Advice;
 import com.taobao.arthas.core.advisor.ArthasMethod;
 import com.taobao.arthas.core.advisor.ReflectAdviceListenerAdapter;
@@ -11,7 +13,7 @@ import com.taobao.arthas.core.util.ThreadLocalWatch;
  * @author ralf0131 2017-01-06 16:02.
  */
 public class AbstractTraceAdviceListener extends ReflectAdviceListenerAdapter {
-
+    private static final Logger logger = LoggerFactory.getLogger(AbstractTraceAdviceListener.class);
     protected final ThreadLocalWatch threadLocalWatch = new ThreadLocalWatch();
     protected TraceCommand command;
     protected CommandProcess process;
@@ -84,9 +86,9 @@ public class AbstractTraceAdviceListener extends ReflectAdviceListenerAdapter {
                     }
                 }
             } catch (Throwable e) {
-                LogUtil.getArthasLogger().warn("trace failed.", e);
+                logger.warn("trace failed.", e);
                 process.write("trace failed, condition is: " + command.getConditionExpress() + ", " + e.getMessage()
-                              + ", visit " + LogUtil.LOGGER_FILE + " for more details.\n");
+                              + ", visit " + LogUtil.loggingFile() + " for more details.\n");
                 process.end();
             } finally {
                 threadBoundEntity.remove();

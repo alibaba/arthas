@@ -1,5 +1,7 @@
 package com.taobao.arthas.core.command.monitor200;
 
+import com.alibaba.arthas.deps.org.slf4j.Logger;
+import com.alibaba.arthas.deps.org.slf4j.LoggerFactory;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.taobao.arthas.core.command.Constants;
@@ -8,7 +10,6 @@ import com.taobao.arthas.core.shell.command.CommandProcess;
 import com.taobao.arthas.core.shell.handlers.Handler;
 import com.taobao.arthas.core.shell.handlers.shell.QExitHandler;
 import com.taobao.arthas.core.shell.session.Session;
-import com.taobao.arthas.core.util.LogUtil;
 import com.taobao.arthas.core.util.NetUtils;
 import com.taobao.arthas.core.util.NetUtils.Response;
 import com.taobao.arthas.core.util.ThreadUtil;
@@ -17,7 +18,6 @@ import com.taobao.middleware.cli.annotations.Description;
 import com.taobao.middleware.cli.annotations.Name;
 import com.taobao.middleware.cli.annotations.Option;
 import com.taobao.middleware.cli.annotations.Summary;
-import com.taobao.middleware.logger.Logger;
 import com.taobao.text.Color;
 import com.taobao.text.Decoration;
 import com.taobao.text.Style;
@@ -49,7 +49,7 @@ import java.util.TimerTask;
         Constants.WIKI + Constants.WIKI_HOME + "dashboard")
 public class DashboardCommand extends AnnotatedCommand {
 
-    private static final Logger logger = LogUtil.getArthasLogger();
+    private static final Logger logger = LoggerFactory.getLogger(DashboardCommand.class);
 
     private SumRateCounter tomcatRequestCounter = new SumRateCounter();
     private SumRateCounter tomcatErrorCounter = new SumRateCounter();
@@ -303,7 +303,7 @@ public class DashboardCommand extends AnnotatedCommand {
                 addTomcatInfo(tomcatInfoTable);
             }
         } catch (Throwable t) {
-            logger.error(null, "get Tomcat Info error!", t);
+            logger.error("get Tomcat Info error!", t);
         }
 
         if (tomcatInfoTable != null) {

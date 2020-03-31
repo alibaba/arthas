@@ -15,6 +15,7 @@ import com.taobao.arthas.core.shell.system.Process;
 import com.taobao.arthas.core.shell.system.impl.ProcessImpl.ProcessOutput;
 import com.taobao.arthas.core.shell.term.Term;
 import com.taobao.arthas.core.util.Constants;
+import com.taobao.arthas.core.util.LogUtil;
 import com.taobao.arthas.core.util.TokenUtils;
 
 import io.termd.core.function.Function;
@@ -171,7 +172,7 @@ public class JobControllerImpl implements JobController {
                     String name = getRedirectFileName(tokens);
                     if (name == null) {
                         // 如果没有指定重定向文件名，那么重定向到以jobid命名的缓存中
-                        name = Constants.CACHE_ROOT + File.separator + Constants.PID + File.separator + jobId;
+                        name = LogUtil.cacheDir() + File.separator + Constants.PID + File.separator + jobId;
                         cacheLocation = name;
 
                         if (getRedirectJobCount() == 8) {
