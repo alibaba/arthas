@@ -85,11 +85,6 @@ public class LoggerCommand extends AnnotatedCommand {
      */
     private boolean includeNoAppender;
 
-    /**
-     * include the arthas logger, default false.
-     */
-    private boolean includeArthasLogger;
-
     @Option(shortName = "n", longName = "name")
     @Description("logger name")
     public void setName(String name) {
@@ -112,12 +107,6 @@ public class LoggerCommand extends AnnotatedCommand {
     @Description("include the loggers don't have appender, default value false")
     public void setHaveAppender(boolean includeNoAppender) {
         this.includeNoAppender = includeNoAppender;
-    }
-
-    @Option(longName = "include-arthas-logger", flag = true)
-    @Description("include the arthas loggers, default value false")
-    public void setIncludeArthasLogger(boolean includeArthasLogger) {
-        this.includeArthasLogger = includeArthasLogger;
     }
 
     @Override
@@ -177,12 +166,6 @@ public class LoggerCommand extends AnnotatedCommand {
         for (Class<?> clazz : process.session().getInstrumentation().getAllLoadedClasses()) {
             String className = clazz.getName();
             ClassLoader classLoader = clazz.getClassLoader();
-
-            // skip the arthas classloader
-            if (this.includeArthasLogger == false && classLoader != null && this.getClass().getClassLoader().getClass()
-                            .getName().equals(classLoader.getClass().getName())) {
-                continue;
-            }
 
             // if special classloader
             if (this.hashCode != null && !this.hashCode.equals(StringUtils.classLoaderHash(clazz))) {
