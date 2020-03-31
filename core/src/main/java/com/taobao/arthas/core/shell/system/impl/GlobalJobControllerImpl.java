@@ -8,13 +8,14 @@ import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.TimeUnit;
 
+import com.alibaba.arthas.deps.org.slf4j.Logger;
+import com.alibaba.arthas.deps.org.slf4j.LoggerFactory;
 import com.taobao.arthas.core.GlobalOptions;
 import com.taobao.arthas.core.shell.cli.CliToken;
 import com.taobao.arthas.core.shell.handlers.Handler;
 import com.taobao.arthas.core.shell.impl.ShellImpl;
 import com.taobao.arthas.core.shell.system.Job;
-import com.taobao.arthas.core.util.LogUtil;
-import com.taobao.middleware.logger.Logger;
+import com.taobao.arthas.core.shell.term.impl.httptelnet.HttpTelnetTermServer;
 
 /**
  * 全局的Job Controller，不应该存在启停的概念，不需要在连接的断开时关闭，
@@ -25,7 +26,7 @@ public class GlobalJobControllerImpl extends JobControllerImpl {
 
     private Timer timer = new Timer("job-timeout", true);
     private Map<Integer, TimerTask> jobTimeoutTaskMap = new HashMap<Integer, TimerTask>();
-    private static final Logger logger = LogUtil.getArthasLogger();
+    private static final Logger logger = LoggerFactory.getLogger(GlobalJobControllerImpl.class);
 
     @Override
     public void close(final Handler<Void> completionHandler) {

@@ -1,5 +1,7 @@
 package com.taobao.arthas.core.command.monitor200;
 
+import com.alibaba.arthas.deps.org.slf4j.Logger;
+import com.alibaba.arthas.deps.org.slf4j.LoggerFactory;
 import com.taobao.arthas.core.command.Constants;
 import com.taobao.arthas.core.shell.cli.CliToken;
 import com.taobao.arthas.core.shell.cli.Completion;
@@ -10,7 +12,6 @@ import com.taobao.arthas.core.shell.handlers.Handler;
 import com.taobao.arthas.core.shell.handlers.command.CommandInterruptHandler;
 import com.taobao.arthas.core.shell.handlers.shell.QExitHandler;
 import com.taobao.arthas.core.shell.session.Session;
-import com.taobao.arthas.core.util.LogUtil;
 import com.taobao.arthas.core.util.StringUtils;
 import com.taobao.arthas.core.util.TokenUtils;
 import com.taobao.arthas.core.util.matcher.Matcher;
@@ -21,7 +22,6 @@ import com.taobao.middleware.cli.annotations.Description;
 import com.taobao.middleware.cli.annotations.Name;
 import com.taobao.middleware.cli.annotations.Option;
 import com.taobao.middleware.cli.annotations.Summary;
-import com.taobao.middleware.logger.Logger;
 import com.taobao.text.Color;
 import com.taobao.text.Decoration;
 import com.taobao.text.ui.LabelElement;
@@ -72,7 +72,7 @@ import static javax.management.MBeanOperationInfo.UNKNOWN;
              Constants.WIKI + Constants.WIKI_HOME + "mbean")
 public class MBeanCommand extends AnnotatedCommand {
 
-    private static final Logger logger = LogUtil.getArthasLogger();
+    private static final Logger logger = LoggerFactory.getLogger(MBeanCommand.class);
 
     private String name;
     private String attribute;

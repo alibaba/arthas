@@ -18,6 +18,14 @@
       <destName>arthas-core.jar</destName>
     </file>
     <file>
+      <source>../core/src/main/java/logback.xml</source>
+      <destName>logback.xml</destName>
+    </file>
+    <file>
+      <source>../core/src/main/java/arthas.properties</source>
+      <destName>arthas.properties</destName>
+    </file>
+    <file>
       <source>../agent/target/arthas-agent-jar-with-dependencies.jar</source>
       <destName>arthas-agent.jar</destName>
     </file>

@@ -5,8 +5,6 @@ import java.io.File;
 import com.taobao.arthas.common.PidUtils;
 import com.taobao.arthas.core.view.Ansi;
 
-import static com.taobao.arthas.core.util.LogUtil.LOGS_DIR;
-
 /**
  * @author ralf0131 2016-12-28 16:20.
  */
@@ -52,10 +50,5 @@ public class Constants {
      * 当前进程PID
      */
     public static final String PID = PidUtils.currentPid();
-
-    /**
-     * 缓存目录
-     */
-    public static final String CACHE_ROOT = LOGS_DIR + File.separator + "arthas-cache";
 
 }

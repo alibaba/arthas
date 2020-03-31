@@ -16,19 +16,19 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
+import com.alibaba.arthas.deps.org.slf4j.Logger;
+import com.alibaba.arthas.deps.org.slf4j.LoggerFactory;
 import com.taobao.arthas.common.IOUtils;
 import com.taobao.arthas.common.ReflectUtils;
 import com.taobao.arthas.core.command.Constants;
 import com.taobao.arthas.core.shell.command.AnnotatedCommand;
 import com.taobao.arthas.core.shell.command.CommandProcess;
 import com.taobao.arthas.core.util.ClassLoaderUtils;
-import com.taobao.arthas.core.util.LogUtil;
 import com.taobao.arthas.core.util.StringUtils;
 import com.taobao.middleware.cli.annotations.Description;
 import com.taobao.middleware.cli.annotations.Name;
 import com.taobao.middleware.cli.annotations.Option;
 import com.taobao.middleware.cli.annotations.Summary;
-import com.taobao.middleware.logger.Logger;
 import com.taobao.text.Decoration;
 import com.taobao.text.ui.TableElement;
 import com.taobao.text.util.RenderUtil;
@@ -50,7 +50,7 @@ import com.taobao.text.util.RenderUtil;
                 + Constants.WIKI + Constants.WIKI_HOME + "logger")
 //@formatter:on
 public class LoggerCommand extends AnnotatedCommand {
-    private static final Logger logger = LogUtil.getArthasLogger();
+    private static final Logger logger = LoggerFactory.getLogger(LoggerCommand.class);
 
     private static byte[] LoggerHelperBytes;
     private static byte[] Log4jHelperBytes;
@@ -143,7 +143,7 @@ public class LoggerCommand extends AnnotatedCommand {
                 result = true;
             }
         } catch (Throwable e) {
-            logger.error("arthas", "logger command update log4j level error", e);
+            logger.error("logger command update log4j level error", e);
         }
 
         try {
@@ -152,7 +152,7 @@ public class LoggerCommand extends AnnotatedCommand {
                 result = true;
             }
         } catch (Throwable e) {
-            logger.error("arthas", "logger command update logback level error", e);
+            logger.error("logger command update logback level error", e);
         }
 
         try {
@@ -161,7 +161,7 @@ public class LoggerCommand extends AnnotatedCommand {
                 result = true;
             }
         } catch (Throwable e) {
-            logger.error("arthas", "logger command update log4j2 level error", e);
+            logger.error("logger command update log4j2 level error", e);
         }
 
         if (result) {
@@ -324,7 +324,7 @@ public class LoggerCommand extends AnnotatedCommand {
                                 helperClass.getName(), helperClassName);
                 ReflectUtils.defineClass(helperClassName, helperClassBytes, classLoader);
             } catch (Throwable e1) {
-                logger.error("arthas", "arthas loggger command try to define helper class error: " + helperClassName,
+                logger.error("arthas loggger command try to define helper class error: " + helperClassName,
                                 e1);
             }
         }

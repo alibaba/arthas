@@ -6,17 +6,17 @@ import java.lang.management.ManagementFactory;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import com.alibaba.arthas.deps.org.slf4j.Logger;
+import com.alibaba.arthas.deps.org.slf4j.LoggerFactory;
 import com.sun.management.HotSpotDiagnosticMXBean;
 import com.taobao.arthas.core.command.Constants;
 import com.taobao.arthas.core.shell.command.AnnotatedCommand;
 import com.taobao.arthas.core.shell.command.CommandProcess;
-import com.taobao.arthas.core.util.LogUtil;
 import com.taobao.middleware.cli.annotations.Argument;
 import com.taobao.middleware.cli.annotations.Description;
 import com.taobao.middleware.cli.annotations.Name;
 import com.taobao.middleware.cli.annotations.Option;
 import com.taobao.middleware.cli.annotations.Summary;
-import com.taobao.middleware.logger.Logger;
 
 /**
  * HeapDump command
@@ -29,7 +29,7 @@ import com.taobao.middleware.logger.Logger;
 @Description("\nExamples:\n" + "  heapdump\n" + "  heapdump --live\n" + "  heapdump --live /tmp/dump.hprof\n"
                 + Constants.WIKI + Constants.WIKI_HOME + "heapdump")
 public class HeapDumpCommand extends AnnotatedCommand {
-    private static final Logger logger = LogUtil.getArthasLogger();
+    private static final Logger logger = LoggerFactory.getLogger(HeapDumpCommand.class);
     private String file;
 
     private boolean live;
@@ -65,7 +65,7 @@ public class HeapDumpCommand extends AnnotatedCommand {
             process.write("Heap dump file created\n");
 
         } catch (Throwable t) {
-            logger.error("arthas", "heap dump error", t);
+            logger.error("heap dump error", t);
             process.write("Heap dump error: " + t.getMessage() + '\n');
             status = 1;
         } finally {
