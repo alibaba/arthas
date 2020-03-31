@@ -238,11 +238,11 @@ public class StringUtilsTest {
 
     @Test
     public void testSplit() {
-        Assert.assertNull(StringUtils.split("AAAAAAA@@", "AAAAAAAA"));
-        Assert.assertNull(StringUtils.split("@", ""));
-        Assert.assertNull(StringUtils.split("", "AAAAAAAA"));
-        Assert.assertArrayEquals(new String[] {"", ""}, StringUtils.split("A", "A"));
-        Assert.assertArrayEquals(new String[] {"foo", "foo"}, StringUtils.split("foo,foo", ","));
+        Assert.assertNull(StringUtils.splitFirst("AAAAAAA@@", "AAAAAAAA"));
+        Assert.assertNull(StringUtils.splitFirst("@", ""));
+        Assert.assertNull(StringUtils.splitFirst("", "AAAAAAAA"));
+        Assert.assertArrayEquals(new String[] {"", ""}, StringUtils.splitFirst("A", "A"));
+        Assert.assertArrayEquals(new String[] {"foo", "foo"}, StringUtils.splitFirst("foo,foo", ","));
     }
 
     @Test

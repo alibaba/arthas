@@ -515,7 +515,13 @@ public abstract class StringUtils {
         return collection == null?null:(String[])collection.toArray(new String[0]);
     }
 
-    public static String[] split(String toSplit, String delimiter) {
+
+    /**
+     * Split strings at first meet delimiter
+     * @param toSplit
+     * @param delimiter
+     */
+    public static String[] splitFirst(String toSplit, String delimiter) {
         if(hasLength(toSplit) && hasLength(delimiter)) {
             int offset = toSplit.indexOf(delimiter);
             if(offset < 0) {
@@ -548,7 +554,7 @@ public abstract class StringUtils {
                     element = deleteAny(element, charsToDelete);
                 }
 
-                String[] splittedElement = split(element, delimiter);
+                String[] splittedElement = splitFirst(element, delimiter);
                 if(splittedElement != null) {
                     result.setProperty(splittedElement[0].trim(), splittedElement[1].trim());
                 }
