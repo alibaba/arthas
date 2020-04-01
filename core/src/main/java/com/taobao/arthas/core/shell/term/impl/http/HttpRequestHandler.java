@@ -3,7 +3,6 @@ package com.taobao.arthas.core.shell.term.impl.http;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.net.URL;
 
@@ -17,7 +16,6 @@ import io.netty.channel.ChannelFutureListener;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.handler.codec.http.DefaultFullHttpResponse;
-import io.netty.handler.codec.http.DefaultHttpResponse;
 import io.netty.handler.codec.http.FullHttpRequest;
 import io.netty.handler.codec.http.FullHttpResponse;
 import io.netty.handler.codec.http.HttpHeaderNames;
@@ -28,6 +26,8 @@ import io.netty.handler.codec.http.HttpVersion;
 import io.netty.handler.codec.http.LastHttpContent;
 import io.termd.core.http.HttpTtyConnection;
 import io.termd.core.util.Logging;
+
+import static com.taobao.arthas.core.util.HttpUtils.createResponse;
 
 /**
  * @author <a href="mailto:julien@julienviet.com">Julien Viet</a>
@@ -42,12 +42,14 @@ public class HttpRequestHandler extends SimpleChannelInboundHandler<FullHttpRequ
     private File dir;
 
     private HttpApiHandler httpApiHandler;
+//    private HttpWebUIHandler webUIHandler;
 
     public HttpRequestHandler(String wsUri, File dir) {
         this.wsUri = wsUri;
         this.dir = dir;
         dir.mkdirs();
         this.httpApiHandler = HttpApiHandler.getInstance();
+//        this.webUIHandler = HttpWebUIHandler.getInstance();
     }
 
     @Override
@@ -70,6 +72,11 @@ public class HttpRequestHandler extends SimpleChannelInboundHandler<FullHttpRequ
                 if ("/api".equals(path)) {
                     response = httpApiHandler.handle(request);
                 }
+
+                //handler webui requests
+//                if (path.startsWith(HttpWebUIHandler.WEB_UI_PATH)) {
+//                    response = webUIHandler.handle(request);
+//                }
 
                 //try classpath resource first
                 if (response == null){
@@ -97,16 +104,6 @@ public class HttpRequestHandler extends SimpleChannelInboundHandler<FullHttpRequ
                 future.addListener(ChannelFutureListener.CLOSE);
             }
         }
-    }
-
-    private DefaultHttpResponse createResponse(FullHttpRequest request, HttpResponseStatus status, String content) {
-        DefaultFullHttpResponse response = new DefaultFullHttpResponse(request.protocolVersion(), status);
-        response.headers().set(HttpHeaderNames.CONTENT_TYPE, "text/html; charset=utf-8");
-        try {
-            response.content().writeBytes(content.getBytes("UTF-8"));
-        } catch (UnsupportedEncodingException e) {
-        }
-        return response;
     }
 
     private FullHttpResponse readFileFromResource(FullHttpRequest request, String path) throws IOException {
