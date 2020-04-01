@@ -5,128 +5,303 @@
     <title>Arthas WebUI</title>
 </head>
 <body>
-<script src="../vue/vue.js"></script>
+<script src="../lib/vue/vue-2.6.11.js"></script>
+<script src="../lib/vue/vue-router-3.1.6.js"></script>
+<script src="../lib/axios-0.19.2.min.js"></script>
 <script src="../element-ui@2.13.0/lib/index.js"></script>
 <link rel="stylesheet" href="../element-ui@2.13.0/lib/theme-chalk/index.css">
 <link rel="stylesheet" href="ui.css">
 
 <div id="app">
-    <el-container class="container">
-        <el-header class="header">
-            <el-row >
-                <el-col :span="12">
-                    <div class="logo">
-                        <a href="https://github.com/alibaba/arthas" target="_blank">
-                            <img src="../logo.png" height="25px">
-                        </a>
-                    </div>
-                    <div class="logo">
-                        <a class="nav-link" href="https://alibaba.github.io/arthas" target="_blank">Documentation</a>
-                        <a class="nav-link" href="https://alibaba.github.io/arthas-tutorials" target="_blank">Online Tutorials</a>
-                        <a class="nav-link" href="https://alibaba.github.io/arthas" target="_blank">Github</a>
-                    </div>
-                </el-col>
-                <el-col :span="12" class="header-right">
-                    <el-button type="primary" size="mini">New</el-button>
-                    <el-button type="primary" size="mini">Share</el-button>
-                    <el-button type="primary" size="mini">Close</el-button>
-                    <el-button type="primary" size="mini">Shutdown</el-button>
-                    <div class="user-info">
-                        <i class="el-icon-s-custom user-icon"></i>
-                        <span>Tom</span>
-                    </div>
-                </el-col>
-            </el-row>
-        </el-header>
-        <el-main class="main-body">
-            <el-card>
-<pre>
-  ,---.  ,------. ,--------.,--.  ,--.  ,---.   ,---.
- /  O  \ |  .--. ''--.  .--'|  '--'  | /  O  \ '   .-'
-|  .-.  ||  '--'.'   |  |   |  .--.  ||  .-.  |`.  `-.
-|  | |  ||  |\  \    |  |   |  |  |  ||  | |  |.-'    |
-`--' `--'`--' '--'   `--'   `--'  `--'`--' `--'`-----'
-</pre>
-
-wiki      https://alibaba.github.io/arthas
-tutorials https://alibaba.github.io/arthas/arthas-tutorials
-version   3.1.8-SNAPSHOT
-pid       1914
-time      2020-03-30 11:21:04
-            </el-card>
-            <div class="min-gap"></div>
-            <el-card>
-<pre>[arthas@1914]$ version
-3.1.8-SNAPSHOT</pre>
-            </el-card>
-            <div class="min-gap"></div>
-            <el-card>
-<pre>[arthas@1914]$ sm *Game
-demo.MathGame <init>()V
-demo.MathGame main([Ljava/lang/String;)V
-demo.MathGame run()V
-demo.MathGame print(ILjava/util/List;)V
-demo.MathGame primeFactors(I)Ljava/util/List;
-Affect(row-cnt:5) cost in 19 ms.</pre>
-            </el-card>
-            <div class="min-gap"></div>
-            <el-card>
-<pre>[arthas@1914]$ watch *Game primeFactors 'params' -n 3
-Press Q or Ctrl+C to abort.
-Affect(class-cnt:1 , method-cnt:1) cost in 60 ms.
-ts=2020-03-30 17:12:43; [cost=2.669414ms] result=@Object[][
-    @Integer[85275],
-]
-ts=2020-03-30 17:12:44; [cost=0.212597ms] result=@Object[][
-    @Integer[-209963],
-]
-ts=2020-03-30 17:12:45; [cost=0.175717ms] result=@Object[][
-    @Integer[212916],
-]
-Command execution times exceed limit: 3, so command will exit. You can set it with -n option.</pre>
-            </el-card>
-            <div class="min-gap"></div>
-            <el-card>
-                <h4>更新 Github 模板</h4>
-                <p>王小虎 提交于 2018/4/12 20:46</p>
-            </el-card>            <div class="min-gap"></div>
-            <el-card>
-                <h4>更新 Github 模板</h4>
-                <p>王小虎 提交于 2018/4/12 20:46</p>
-            </el-card>
-            <div class="min-gap"></div>
-            <el-card>
-                <h4>更新 Github 模板</h4>
-                <p>王小虎 提交于 2018/4/12 20:46</p>
-            </el-card>
-        </el-main>
-
-        <!--  底部  -->
-        <el-footer class="footer-row" height="50px">
-            <div class="footer-left">
-                <div>Command:</div>
-            </div>
-            <div class="footer-input">
-                <el-input
-                        type="textarea"
-                        autosize
-                        placeholder="请输入命令"
-                        v-model="commandLine">
-                </el-input>
-            </div>
-            <div class="footer-button">
-                <el-button type="primary" size="mini">Execute</el-button>
-            </div>
-        </el-footer>
-    </el-container>
+    <router-view/>
 </div>
+
+<template id="session-view">
+    <div>
+        <el-container class="container">
+            <el-header class="header">
+                <el-row >
+                    <el-col :span="12">
+                        <div class="logo">
+                            <a href="https://github.com/alibaba/arthas" target="_blank">
+                                <img src="../logo.png" height="25px">
+                            </a>
+                        </div>
+                        <div class="logo">
+                            <a class="nav-link" href="https://alibaba.github.io/arthas" target="_blank">Documentation</a>
+                            <a class="nav-link" href="https://alibaba.github.io/arthas-tutorials" target="_blank">Online Tutorials</a>
+                            <a class="nav-link" href="https://alibaba.github.io/arthas" target="_blank">Github</a>
+                        </div>
+                    </el-col>
+                    <el-col :span="12" class="header-right">
+                        <el-button type="primary" size="mini">New</el-button>
+                        <el-button type="primary" size="mini">Share</el-button>
+                        <el-button type="primary" size="mini">Close</el-button>
+                        <el-button type="primary" size="mini">Shutdown</el-button>
+                        <div class="user-info">
+                            <i class="el-icon-s-custom user-icon"></i>
+                            <span>Tom</span>
+                        </div>
+                    </el-col>
+                </el-row>
+            </el-header>
+            <el-main class="main-body">
+                <div v-for="result in commandResults" >
+                    <el-card>
+                        {{JSON.stringify(result)}}
+                    </el-card>
+                    <div class="min-gap"></div>
+                </div>
+            </el-main>
+
+            <!--  底部  -->
+            <el-footer class="footer-row" height="50px">
+                <div class="footer-left">
+                    <div>Command:</div>
+                </div>
+                <div class="footer-input">
+                    <el-input
+                            type="textarea"
+                            autosize
+                            placeholder="请输入命令"
+                            @key.enter="executeCommand"
+                            :disabled="commandLineDisabled"
+                            v-model="commandLine">
+                    </el-input>
+                </div>
+                <div class="footer-button">
+                    <el-button type="primary" size="mini" @click="executeCommand">Execute</el-button>
+                </div>
+            </el-footer>
+        </el-container>
+    </div>
+</template>
+
+<template id="history-view">
+    <div>
+        <el-container class="container">
+            <el-header class="header">
+                <el-row >
+                    <el-col :span="12">
+                        <div class="logo">
+                            <a href="https://github.com/alibaba/arthas" target="_blank">
+                                <img src="../logo.png" height="25px">
+                            </a>
+                        </div>
+                        <div class="logo">
+                            <a class="nav-link" href="https://alibaba.github.io/arthas" target="_blank">Documentation</a>
+                            <a class="nav-link" href="https://alibaba.github.io/arthas-tutorials" target="_blank">Online Tutorials</a>
+                            <a class="nav-link" href="https://alibaba.github.io/arthas" target="_blank">Github</a>
+                        </div>
+                    </el-col>
+                    <el-col :span="12" class="header-right">
+                        <el-button type="primary" size="mini">New</el-button>
+                        <el-button type="primary" size="mini">Share</el-button>
+                        <el-button type="primary" size="mini">Close</el-button>
+                        <el-button type="primary" size="mini">Shutdown</el-button>
+                        <div class="user-info">
+                            <i class="el-icon-s-custom user-icon"></i>
+                            <span>Tom</span>
+                        </div>
+                    </el-col>
+                </el-row>
+            </el-header>
+            <el-main>
+            </el-main>
+        </el-container>
+    </div>
+</template>
+
+<template id="search-view">
+
+</template>
+
 <script>
-    new Vue({
-        el: '#app',
-        data: {
-            commandLine: ''
+    //session data
+    let commandLineDisabled = false;
+    let commandLine = '';
+    let commandResults = [];
+
+    //session view
+    let SessionView = Vue.component('session-view',{
+        template: '#session-view',
+        data() {
+            return {
+                commandLine,
+                commandLineDisabled,
+                commandResults
+            }
         },
         methods: {
+            executeCommand(){
+                this.$parent.executeCommand(this.commandLine);
+            }
+        }
+    });
+
+    let HistoryView = Vue.component('history-view', {
+        template: '#history-view',
+        data() {
+            return {
+            }
+        }
+    });
+
+    //页面路由
+    const routes = [
+        //{ path: '/', redirect: '/session/123' },
+        { path: '/', component: HistoryView },
+        { path: '/history', component: HistoryView },
+        { path: '/session/:sessionId', component: SessionView }
+    ];
+
+    const router = new VueRouter({
+        routes
+    });
+
+    new Vue({
+        el: '#app',
+        router,
+        data: {
+            sessionId: null,
+            consumerId: null,
+            commandLine,
+            commandLineDisabled,
+            commandResults,
+            lastPullResultTime: 0
+        },
+        methods: {
+            initPage(){
+                let sessionId = this.$route.params.sessionId;
+                if (sessionId && sessionId!='undefined'){
+                    //join_session, init new consumerId
+                    axios
+                        .post('/api',{
+                            "action": "join_session",
+                            "sessionId": sessionId
+                        })
+                        .then(response => {
+                            let apiResponse = response.data;
+                            if (apiResponse.state == "SUCCEEDED" && sessionId == apiResponse.sessionId){
+                                this.sessionId = apiResponse.sessionId;
+                                this.consumerId = apiResponse.consumerId;
+                                this.pullResults();
+                            }else {
+                                //加入会话失败，创建新会话
+                                this.initSession();
+                            }
+                        })
+                        .catch(function (error) { // 请求失败处理
+                            console.log(error);
+                        });
+                } else {
+                    this.initSession();
+                }
+            },
+
+            initSession(){
+                axios
+                    .post('/api',{
+                        "action": "init_session"
+                    })
+                    .then(response => {
+                        let apiResponse = response.data;
+                        if (apiResponse.state == "SUCCEEDED"){
+                            this.sessionId = apiResponse.sessionId;
+                            this.consumerId = apiResponse.consumerId;
+                            this.$router.push("/session/"+this.sessionId);
+                            this.pullResults();
+                        }
+                    })
+                    .catch(function (error) { // 请求失败处理
+                        console.log(error);
+                    });
+            },
+
+            pullResults(){
+                this.lastPullResultTime = new Date().getTime();
+                //接收消息推送
+                axios
+                    .post('/api',{
+                        "action": "pull_results",
+                        "sessionId": this.sessionId,
+                        "consumerId": this.consumerId
+                    })
+                    .then(response => {
+                        let apiResponse = response.data;
+                        if (apiResponse.state == "SUCCEEDED"){
+                            this.appendResults(apiResponse.body.results);
+                        }
+                        let waitTime = (new Date().getTime() - this.lastPullResultTime < 1000)?1000 : 50;
+                        setTimeout(this.pullResults.bind(this), waitTime);
+                    })
+                    .catch(function (error) { // 请求失败处理
+                        console.log(error);
+                        let waitTime = (new Date().getTime() - this.lastPullResultTime < 1000)?1000 : 50;
+                        setTimeout(this.pullResults.bind(this), waitTime);
+                    });
+
+            },
+
+            appendResults(results) {
+                if (!results || !results.length || results.length == 0){
+                    return;
+                }
+                this.commandResults.push(results);
+            },
+
+            executeCommand(commandLine) {
+                commandLine = commandLine || this.commandLine;
+                commandLine = commandLine.trim();
+                if (commandLine == ''){
+                    return;
+                }
+                axios
+                    .post('/api',{
+                        "action": "async_exec",
+                        "sessionId": this.sessionId,
+                        "consumerId": this.consumerId,
+                        "command": commandLine,
+                    })
+                    .then(response => {
+                        let apiResponse = response.data;
+                        if (apiResponse.state == "SUCCEEDED"){
+                            //clear
+                            this.commandLine = '';
+                        }
+                        this.commandLineDisabled = false;
+                    })
+                    .catch(function (error) { // 请求失败处理
+                        console.log(error);
+                        this.commandLineDisabled = false;
+                    });
+
+                //disable input
+                this.commandLineDisabled = true;
+            }
+        },
+        watch: {
+            '$route'(to, from){
+                console.log('route: ', to, from);
+                // if (to.path.startsWith("/session") && to.params.sessionId == null){
+                //     this.$router.push("/session/" + this.sessionId);
+                // }
+
+                //this.initPage();
+            }
+        },
+        created(){
+            this.initPage();
+
+            // let sessionId = this.$route.params.sessionId;
+            // console.log("route: ", this.$route.path, ", sessionId: ", sessionId);
+            // if (sessionId == null || sessionId == ""){
+            //     console.log("init session");
+            //     sessionId = 122;
+            //     console.log("redirect to session");
+            //     this.$router.push("/session/"+sessionId);
+            // }
+            // this.sessionId = sessionId;
         }
     });
 </script>
