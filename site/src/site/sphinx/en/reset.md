@@ -1,7 +1,7 @@
 reset
 ===
 
-> Reset all classes that have been enhanced by Arthas. These enhanced classes will also be reset when Arthas server is `stop/shutdown`.
+> Reset all classes that have been enhanced by Arthas. These enhanced classes will also be reset when Arthas server is `stop`.
 
 ### Usage
 

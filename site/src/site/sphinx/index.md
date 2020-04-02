@@ -25,6 +25,8 @@ Arthas 用户文档
 
 Contents
 --------
+
+* [招聘信息!](https://mp.weixin.qq.com/s/677GO-3kYx5ygG9rlOlfQg)
 * [English Docs](https://alibaba.github.io/arthas/en/)
 * [在线教程(推荐)](https://alibaba.github.io/arthas/arthas-tutorials?language=cn)
 * [安装](install-detail.md)
@@ -40,5 +42,5 @@ Contents
 * [编译调试/参与贡献](https://github.com/alibaba/arthas/blob/master/CONTRIBUTING.md#)
 * [Release Notes](https://github.com/alibaba/arthas/releases)
 * [QQ群/钉钉群](contact-us.md)
-
+* [国内镜像站](https://arthas.gitee.io/)
 

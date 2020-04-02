@@ -9,6 +9,7 @@ import java.lang.management.ManagementFactory;
  */
 public class PidUtils {
     private static String PID = "-1";
+    private static long pid = -1;
 
     static {
         // https://stackoverflow.com/a/7690178
@@ -18,6 +19,7 @@ public class PidUtils {
         if (index > 0) {
             try {
                 PID = Long.toString(Long.parseLong(jvmName.substring(0, index)));
+                pid = Long.parseLong(PID);
             } catch (Throwable e) {
                 // ignore
             }
@@ -29,5 +31,9 @@ public class PidUtils {
 
     public static String currentPid() {
         return PID;
+    }
+
+    public static long currentLongPid() {
+        return pid;
     }
 }

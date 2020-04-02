@@ -11,7 +11,7 @@ import com.taobao.middleware.cli.annotations.Summary;
  * @see ShutdownCommand
  */
 @Name("stop")
-@Summary("Stop/Shutdown Arthas server and exit the console. Alias for shutdown.")
+@Summary("Stop/Shutdown Arthas server and exit the console.")
 public class StopCommand extends AnnotatedCommand {
     @Override
     public void process(CommandProcess process) {

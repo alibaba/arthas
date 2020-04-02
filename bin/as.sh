@@ -8,10 +8,10 @@
 
 # program : Arthas
 #  author : Core Engine @ Taobao.com
-#    date : 2019-12-04
+#    date : 2020-04-02
 
 # current arthas script version
-ARTHAS_SCRIPT_VERSION=3.1.7
+ARTHAS_SCRIPT_VERSION=3.1.8
 
 # SYNOPSIS
 #   rreadlink <fileOrDirPath>
@@ -440,7 +440,7 @@ EXAMPLES:
   ./as.sh --stat-url 'http://192.168.10.11:8080/api/stat'
   ./as.sh -c 'sysprop; thread' <pid>
   ./as.sh -f batch.as <pid>
-  ./as.sh --use-version 3.1.7
+  ./as.sh --use-version 3.1.8
   ./as.sh --session-timeout 3600
   ./as.sh --attach-only
   ./as.sh --repo-mirror aliyun --use-http
@@ -645,7 +645,7 @@ parse_arguments()
             return 1
         fi
 
-        echo "Found existing java process, please choose one and hit RETURN."
+        echo "Found existing java process, please choose one and input the serial number of the process, eg : 1. Then hit ENTER."
 
         index=0
         suggest=1
@@ -807,7 +807,7 @@ active_console()
              ${TARGET_IP} \
              ${TELNET_PORT} \
              "${tempArgs[@]}" \
-             -c ${COMMAND}
+             -c "${COMMAND}"
         fi
         if [ "${BATCH_FILE}" ] ; then
         "${JAVA_HOME}/bin/java" ${ARTHAS_OPTS} ${JVM_OPTS} \

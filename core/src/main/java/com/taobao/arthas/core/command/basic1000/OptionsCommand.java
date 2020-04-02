@@ -1,4 +1,4 @@
-package com.taobao.arthas.core.command.hidden;
+package com.taobao.arthas.core.command.basic1000;
 
 import com.taobao.arthas.core.GlobalOptions;
 import com.taobao.arthas.core.Option;

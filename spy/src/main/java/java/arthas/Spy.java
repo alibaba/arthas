@@ -49,28 +49,6 @@ public class Spy {
     }
 
     /**
-     * 用于启动线程初始化
-     */
-    public static void initForAgentLauncher(
-            ClassLoader classLoader,
-            Method onBeforeMethod,
-            Method onReturnMethod,
-            Method onThrowsMethod,
-            Method beforeInvokingMethod,
-            Method afterInvokingMethod,
-            Method throwInvokingMethod,
-            Method agentResetMethod) {
-        CLASSLOADER = classLoader;
-        ON_BEFORE_METHOD = onBeforeMethod;
-        ON_RETURN_METHOD = onReturnMethod;
-        ON_THROWS_METHOD = onThrowsMethod;
-        BEFORE_INVOKING_METHOD = beforeInvokingMethod;
-        AFTER_INVOKING_METHOD = afterInvokingMethod;
-        THROW_INVOKING_METHOD = throwInvokingMethod;
-        AGENT_RESET_METHOD = agentResetMethod;
-    }
-
-    /**
      * Clean up the reference to com.taobao.arthas.agent.AgentLauncher$1
      * to avoid classloader leak.
      */

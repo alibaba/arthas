@@ -15,7 +15,7 @@
 * version——输出当前目标 Java 进程所加载的 Arthas 版本号
 * history——打印命令历史
 * quit——退出当前 Arthas 客户端，其他 Arthas 客户端不受影响
-* stop/shutdown——关闭 Arthas 服务端，所有 Arthas 客户端全部退出
+* stop——关闭 Arthas 服务端，所有 Arthas 客户端全部退出
 * [keymap](keymap.md)——Arthas快捷键列表及自定义快捷键
 
 ## jvm相关
@@ -27,6 +27,7 @@
 * [sysprop](sysprop.md)——查看和修改JVM的系统属性
 * [sysenv](sysenv.md)——查看JVM的环境变量
 * [vmoption](vmoption.md)——查看和修改JVM里诊断相关的option
+* [perfcounter](perfcounter.md)——查看当前 JVM 的Perf Counter信息
 * [logger](logger.md)——查看和修改logger
 * [getstatic](getstatic.md)——查看类的静态属性
 * [ognl](ognl.md)——执行ognl表达式
@@ -47,7 +48,7 @@
 ## monitor/watch/trace相关
 
 
-> 请注意，这些命令，都通过字节码增强技术来实现的，会在指定类的方法中插入一些切面来实现数据统计和观测，因此在线上、预发使用时，请尽量明确需要观测的类、方法以及条件，诊断结束要执行 `shutdown` 或将增强过的类执行 `reset` 命令。
+> 请注意，这些命令，都通过字节码增强技术来实现的，会在指定类的方法中插入一些切面来实现数据统计和观测，因此在线上、预发使用时，请尽量明确需要观测的类、方法以及条件，诊断结束要执行 `stop` 或将增强过的类执行 `reset` 命令。
 
 * [monitor](monitor.md)——方法执行监控
 * [watch](watch.md)——方法执行数据观测

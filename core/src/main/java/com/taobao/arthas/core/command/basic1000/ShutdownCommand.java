@@ -6,6 +6,7 @@ import com.taobao.arthas.core.shell.command.AnnotatedCommand;
 import com.taobao.arthas.core.shell.command.CommandProcess;
 import com.taobao.arthas.core.util.affect.EnhancerAffect;
 import com.taobao.arthas.core.util.matcher.WildcardMatcher;
+import com.taobao.middleware.cli.annotations.Hidden;
 import com.taobao.middleware.cli.annotations.Name;
 import com.taobao.middleware.cli.annotations.Summary;
 
@@ -20,6 +21,7 @@ import java.lang.instrument.UnmodifiableClassException;
  */
 @Name("shutdown")
 @Summary("Shutdown Arthas server and exit the console")
+@Hidden
 public class ShutdownCommand extends AnnotatedCommand {
     @Override
     public void process(CommandProcess process) {

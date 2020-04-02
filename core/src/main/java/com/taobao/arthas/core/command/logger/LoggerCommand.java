@@ -16,19 +16,19 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
+import com.alibaba.arthas.deps.org.slf4j.Logger;
+import com.alibaba.arthas.deps.org.slf4j.LoggerFactory;
 import com.taobao.arthas.common.IOUtils;
 import com.taobao.arthas.common.ReflectUtils;
 import com.taobao.arthas.core.command.Constants;
 import com.taobao.arthas.core.shell.command.AnnotatedCommand;
 import com.taobao.arthas.core.shell.command.CommandProcess;
 import com.taobao.arthas.core.util.ClassLoaderUtils;
-import com.taobao.arthas.core.util.LogUtil;
 import com.taobao.arthas.core.util.StringUtils;
 import com.taobao.middleware.cli.annotations.Description;
 import com.taobao.middleware.cli.annotations.Name;
 import com.taobao.middleware.cli.annotations.Option;
 import com.taobao.middleware.cli.annotations.Summary;
-import com.taobao.middleware.logger.Logger;
 import com.taobao.text.Decoration;
 import com.taobao.text.ui.TableElement;
 import com.taobao.text.util.RenderUtil;
@@ -39,12 +39,18 @@ import com.taobao.text.util.RenderUtil;
  * @author hengyunabc 2019-09-04
  *
  */
+//@formatter:off
 @Name("logger")
 @Summary("Print logger info, and update the logger level")
-@Description("\nExamples:\n" + "  logger\n" + "  logger -c 327a647b\n"
-                + "  logger -c 327a647b --name ROOT --level debug\n" + Constants.WIKI + Constants.WIKI_HOME + "logger")
+@Description("\nExamples:\n"
+                + "  logger\n"
+                + "  logger -c 327a647b\n"
+                + "  logger -c 327a647b --name ROOT --level debug\n"
+                + "  logger --include-no-appender\n"
+                + Constants.WIKI + Constants.WIKI_HOME + "logger")
+//@formatter:on
 public class LoggerCommand extends AnnotatedCommand {
-    private static final Logger logger = LogUtil.getArthasLogger();
+    private static final Logger logger = LoggerFactory.getLogger(LoggerCommand.class);
 
     private static byte[] LoggerHelperBytes;
     private static byte[] Log4jHelperBytes;
@@ -79,11 +85,6 @@ public class LoggerCommand extends AnnotatedCommand {
      */
     private boolean includeNoAppender;
 
-    /**
-     * include the arthas logger, default false.
-     */
-    private boolean includeArthasLogger;
-
     @Option(shortName = "n", longName = "name")
     @Description("logger name")
     public void setName(String name) {
@@ -106,12 +107,6 @@ public class LoggerCommand extends AnnotatedCommand {
     @Description("include the loggers don't have appender, default value false")
     public void setHaveAppender(boolean includeNoAppender) {
         this.includeNoAppender = includeNoAppender;
-    }
-
-    @Option(longName = "include-arthas-logger", flag = true)
-    @Description("include the arthas loggers, default value false")
-    public void setIncludeArthasLogger(boolean includeArthasLogger) {
-        this.includeArthasLogger = includeArthasLogger;
     }
 
     @Override
@@ -137,7 +132,7 @@ public class LoggerCommand extends AnnotatedCommand {
                 result = true;
             }
         } catch (Throwable e) {
-            logger.error("arthas", "logger command update log4j level error", e);
+            logger.error("logger command update log4j level error", e);
         }
 
         try {
@@ -146,7 +141,7 @@ public class LoggerCommand extends AnnotatedCommand {
                 result = true;
             }
         } catch (Throwable e) {
-            logger.error("arthas", "logger command update logback level error", e);
+            logger.error("logger command update logback level error", e);
         }
 
         try {
@@ -155,13 +150,13 @@ public class LoggerCommand extends AnnotatedCommand {
                 result = true;
             }
         } catch (Throwable e) {
-            logger.error("arthas", "logger command update log4j2 level error", e);
+            logger.error("logger command update log4j2 level error", e);
         }
 
         if (result) {
-            process.write("update logger level success.\n");
+            process.write("Update logger level success.\n");
         } else {
-            process.write("update logger level fail.\n");
+            process.write("Update logger level fail. Try to specify the classloader with the -c option. Use `sc -d CLASSNAME` to find out the classloader hashcode.\n");
         }
     }
 
@@ -171,12 +166,6 @@ public class LoggerCommand extends AnnotatedCommand {
         for (Class<?> clazz : process.session().getInstrumentation().getAllLoadedClasses()) {
             String className = clazz.getName();
             ClassLoader classLoader = clazz.getClassLoader();
-
-            // skip the arthas classloader
-            if (this.includeArthasLogger == false && classLoader != null && this.getClass().getClassLoader().getClass()
-                            .getName().equals(classLoader.getClass().getName())) {
-                continue;
-            }
 
             // if special classloader
             if (this.hashCode != null && !this.hashCode.equals(StringUtils.classLoaderHash(clazz))) {
@@ -318,7 +307,7 @@ public class LoggerCommand extends AnnotatedCommand {
                                 helperClass.getName(), helperClassName);
                 ReflectUtils.defineClass(helperClassName, helperClassBytes, classLoader);
             } catch (Throwable e1) {
-                logger.error("arthas", "arthas loggger command try to define helper class error: " + helperClassName,
+                logger.error("arthas loggger command try to define helper class error: " + helperClassName,
                                 e1);
             }
         }

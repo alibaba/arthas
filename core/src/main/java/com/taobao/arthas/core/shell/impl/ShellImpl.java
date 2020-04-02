@@ -1,5 +1,7 @@
 package com.taobao.arthas.core.shell.impl;
 
+import com.alibaba.arthas.deps.org.slf4j.Logger;
+import com.alibaba.arthas.deps.org.slf4j.LoggerFactory;
 import com.taobao.arthas.core.shell.Shell;
 import com.taobao.arthas.core.shell.ShellServer;
 import com.taobao.arthas.core.shell.cli.CliToken;
@@ -19,9 +21,7 @@ import com.taobao.arthas.core.shell.system.JobController;
 import com.taobao.arthas.core.shell.system.impl.InternalCommandManager;
 import com.taobao.arthas.core.shell.system.impl.JobControllerImpl;
 import com.taobao.arthas.core.shell.term.Term;
-import com.taobao.arthas.core.util.Constants;
-import com.taobao.arthas.core.util.LogUtil;
-import com.taobao.middleware.logger.Logger;
+import com.taobao.arthas.core.shell.term.impl.httptelnet.HttpTelnetTermServer;
 
 import java.lang.instrument.Instrumentation;
 import java.util.Date;
@@ -36,7 +36,7 @@ import java.util.UUID;
  */
 public class ShellImpl implements Shell {
 
-    private static final Logger logger = LogUtil.getArthasLogger();
+    private static final Logger logger = LoggerFactory.getLogger(ShellImpl.class);
 
     private JobControllerImpl jobController;
     final String id;
@@ -49,7 +49,7 @@ public class ShellImpl implements Shell {
     private String prompt;
 
     public ShellImpl(ShellServer server, Term term, InternalCommandManager commandManager,
-            Instrumentation instrumentation, int pid, JobControllerImpl jobController) {
+            Instrumentation instrumentation, long pid, JobControllerImpl jobController) {
         session.put(Session.COMMAND_MANAGER, commandManager);
         session.put(Session.INSTRUMENTATION, instrumentation);
         session.put(Session.PID, pid);

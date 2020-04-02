@@ -5,23 +5,23 @@ import java.io.IOException;
 import java.nio.charset.Charset;
 import java.util.List;
 
+import com.alibaba.arthas.deps.org.slf4j.Logger;
+import com.alibaba.arthas.deps.org.slf4j.LoggerFactory;
 import com.taobao.arthas.core.shell.cli.Completion;
 import com.taobao.arthas.core.shell.cli.CompletionUtils;
 import com.taobao.arthas.core.shell.command.AnnotatedCommand;
 import com.taobao.arthas.core.shell.command.CommandProcess;
 import com.taobao.arthas.core.util.FileUtils;
-import com.taobao.arthas.core.util.LogUtil;
 import com.taobao.middleware.cli.annotations.Argument;
 import com.taobao.middleware.cli.annotations.Description;
 import com.taobao.middleware.cli.annotations.Name;
 import com.taobao.middleware.cli.annotations.Option;
 import com.taobao.middleware.cli.annotations.Summary;
-import com.taobao.middleware.logger.Logger;
 
 @Name("cat")
 @Summary("Concatenate and print files")
 public class CatCommand extends AnnotatedCommand {
-    private static final Logger logger = LogUtil.getArthasLogger();
+    private static final Logger logger = LoggerFactory.getLogger(CatCommand.class);
     private List<String> files;
     private String encoding;
 
@@ -65,7 +65,7 @@ public class CatCommand extends AnnotatedCommand {
                                 encoding == null ? Charset.defaultCharset() : Charset.forName(encoding));
                 process.write(fileToString);
             } catch (IOException e) {
-                logger.error(null, "cat read file error. name: " + file, e);
+                logger.error("cat read file error. name: " + file, e);
                 process.write("cat read file error: " + e.getMessage() + '\n');
                 process.end(1);
                 return;

@@ -1,5 +1,7 @@
 package com.taobao.arthas.core.shell.system.impl;
 
+import com.alibaba.arthas.deps.org.slf4j.Logger;
+import com.alibaba.arthas.deps.org.slf4j.LoggerFactory;
 import com.taobao.arthas.core.advisor.AdviceListener;
 import com.taobao.arthas.core.advisor.AdviceWeaver;
 import com.taobao.arthas.core.server.ArthasBootstrap;
@@ -13,12 +15,11 @@ import com.taobao.arthas.core.shell.session.Session;
 import com.taobao.arthas.core.shell.system.ExecStatus;
 import com.taobao.arthas.core.shell.system.Process;
 import com.taobao.arthas.core.shell.term.Tty;
-import com.taobao.arthas.core.util.LogUtil;
+import com.taobao.arthas.core.shell.term.impl.httptelnet.HttpTelnetTermServer;
 import com.taobao.arthas.core.util.usage.StyledUsageFormatter;
 import com.taobao.middleware.cli.CLIException;
 import com.taobao.middleware.cli.CommandLine;
 import com.taobao.middleware.cli.UsageMessageFormatter;
-import com.taobao.middleware.logger.Logger;
 import com.taobao.text.Color;
 
 import io.termd.core.function.Function;
@@ -33,7 +34,7 @@ import java.util.concurrent.atomic.AtomicInteger;
  */
 public class ProcessImpl implements Process {
 
-    private static final Logger logger = LogUtil.getArthasLogger();
+    private static final Logger logger = LoggerFactory.getLogger(ProcessImpl.class);
 
     private Command commandContext;
     private Handler<CommandProcess> handler;
@@ -369,7 +370,7 @@ public class ProcessImpl implements Process {
             try {
                 handler.handle(process);
             } catch (Throwable t) {
-                logger.error(null, "Error during processing the command:", t);
+                logger.error("Error during processing the command:", t);
                 process.write("Error during processing the command: " + t.getMessage() + "\n");
                 terminate(1, null);
             }

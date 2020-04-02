@@ -1,20 +1,20 @@
 package com.taobao.arthas.core.shell.handlers;
 
+import com.alibaba.arthas.deps.org.slf4j.Logger;
+import com.alibaba.arthas.deps.org.slf4j.LoggerFactory;
 import com.taobao.arthas.core.shell.future.Future;
-import com.taobao.arthas.core.util.LogUtil;
-import com.taobao.middleware.logger.Logger;
 
 /**
  * @author beiwei30 on 22/11/2016.
  */
 public class NoOpHandler implements Handler {
 
-    private static final Logger logger = LogUtil.getArthasLogger();
+    private static final Logger logger = LoggerFactory.getLogger(NoOpHandler.class);
 
     @Override
     public void handle(Object event) {
         if (event instanceof Future && ((Future) event).failed()) {
-            logger.error(null, "Error listening term server:", ((Future) event).cause());
+            logger.error("Error listening term server:", ((Future) event).cause());
         }
     }
 }

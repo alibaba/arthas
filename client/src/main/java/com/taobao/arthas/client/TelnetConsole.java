@@ -7,10 +7,13 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.LinkedBlockingQueue;
 
 import org.apache.commons.net.telnet.InvalidTelnetOptionException;
 import org.apache.commons.net.telnet.TelnetClient;
@@ -42,12 +45,11 @@ import jline.console.KeyMap;
 @Name("arthas-client")
 @Summary("Arthas Telnet Client")
 @Description("EXAMPLES:\n" + "  java -jar arthas-client.jar 127.0.0.1 3658\n"
-                + "  java -jar arthas-client.jar -c 'dashboard -n 1' \n"
-                + "  java -jar arthas-client.jar -f batch.as 127.0.0.1\n")
+        + "  java -jar arthas-client.jar -c 'dashboard -n 1' \n"
+        + "  java -jar arthas-client.jar -f batch.as 127.0.0.1\n")
 public class TelnetConsole {
-    private static final String PROMPT = "$";
+    private static final String PROMPT = "[arthas@"; // [arthas@49603]$
     private static final int DEFAULT_CONNECTION_TIMEOUT = 5000; // 5000 ms
-    private static final int DEFAULT_BUFFER_SIZE = 1024;
 
     private static final byte CTRL_C = 0x03;
 
@@ -105,27 +107,6 @@ public class TelnetConsole {
     }
 
     public TelnetConsole() {
-    }
-
-    private static String readUntil(InputStream in, String prompt) {
-        try {
-            StringBuilder sBuffer = new StringBuilder();
-            byte[] b = new byte[DEFAULT_BUFFER_SIZE];
-            while (true) {
-                int size = in.read(b);
-                if (-1 != size) {
-                    sBuffer.append(new String(b, 0, size));
-                    String data = sBuffer.toString();
-                    if (data.trim().endsWith(prompt)) {
-                        break;
-                    }
-                }
-            }
-            return sBuffer.toString();
-        } catch (Exception e) {
-            e.printStackTrace();
-            return null;
-        }
     }
 
     private static List<String> readLines(File batchFile) {
@@ -268,13 +249,13 @@ public class TelnetConsole {
                 telnet.connect(telnetConsole.getTargetIp(), telnetConsole.getPort());
             } catch (IOException e) {
                 System.out.println("Connect to telnet server error: " + telnetConsole.getTargetIp() + " "
-                                + telnetConsole.getPort());
+                        + telnetConsole.getPort());
                 throw e;
             }
 
             if (cmds.isEmpty()) {
                 IOUtil.readWrite(telnet.getInputStream(), telnet.getOutputStream(), System.in,
-                                consoleReader.getOutput());
+                        consoleReader.getOutput());
             } else {
                 batchModeRun(telnet, cmds);
                 telnet.disconnect();
@@ -287,22 +268,61 @@ public class TelnetConsole {
 
     }
 
-    private static void batchModeRun(TelnetClient telnet, List<String> commands) throws IOException {
-        InputStream inputStream = telnet.getInputStream();
-        OutputStream outputStream = telnet.getOutputStream();
+    private static void batchModeRun(TelnetClient telnet, List<String> commands)
+            throws IOException, InterruptedException {
+        if (commands.size() == 0) {
+            return;
+        }
+
+        final InputStream inputStream = telnet.getInputStream();
+        final OutputStream outputStream = telnet.getOutputStream();
+
+        final BlockingQueue<String> receviedPromptQueue = new LinkedBlockingQueue<String>(1);
+        Thread printResultThread = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    StringBuilder line = new StringBuilder();
+                    BufferedReader in = new BufferedReader(new InputStreamReader(inputStream, "UTF-8"));
+                    int b = -1;
+                    while (true) {
+                        b = in.read();
+                        if (b == -1) {
+                            break;
+                        }
+                        line.appendCodePoint(b);
+
+                        // 检查到有 [arthas@ 时，意味着可以执行下一个命令了
+                        int index = line.indexOf(PROMPT);
+                        if (index > 0) {
+                            line.delete(0, index + PROMPT.length());
+                            receviedPromptQueue.put("");
+                        }
+                        System.out.print(Character.toChars(b));
+                    }
+                } catch (Exception e) {
+                    // ignore
+                }
+            }
+        });
+
+        printResultThread.start();
 
         for (String command : commands) {
             if (command.trim().isEmpty()) {
                 continue;
             }
+            receviedPromptQueue.take();
             // send command to server
             outputStream.write((command + " | plaintext\n").getBytes());
             outputStream.flush();
-            // read result from server and output
-            String response = readUntil(inputStream, PROMPT);
-            System.out.print(response);
-            System.out.flush();
         }
+
+        // 读到最后一个命令执行后的 prompt ，可以直接发 quit命令了。
+        receviedPromptQueue.take();
+        outputStream.write("quit\n".getBytes());
+        outputStream.flush();
+        System.out.println();
     }
 
     private static String usage(CLI cli) {

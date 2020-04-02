@@ -47,7 +47,7 @@ import com.taobao.middleware.cli.annotations.Summary;
                 + "  java -jar arthas-boot.jar --stat-url 'http://192.168.10.11:8080/api/stat'\n"
                 + "  java -jar arthas-boot.jar -c 'sysprop; thread' <pid>\n"
                 + "  java -jar arthas-boot.jar -f batch.as <pid>\n"
-                + "  java -jar arthas-boot.jar --use-version 3.1.7\n"
+                + "  java -jar arthas-boot.jar --use-version 3.1.8\n"
                 + "  java -jar arthas-boot.jar --versions\n"
                 + "  java -jar arthas-boot.jar --session-timeout 3600\n" + "  java -jar arthas-boot.jar --attach-only\n"
                 + "  java -jar arthas-boot.jar --repo-mirror aliyun --use-http\n" + "WIKI:\n"
@@ -60,7 +60,7 @@ public class Bootstrap {
 
     private boolean help = false;
 
-    private int pid = -1;
+    private long pid = -1;
     private String targetIp = DEFAULT_TARGET_IP;
     private int telnetPort = DEFAULT_TELNET_PORT;
     private int httpPort = DEFAULT_HTTP_PORT;
@@ -138,7 +138,7 @@ public class Bootstrap {
 
     @Argument(argName = "pid", index = 0, required = false)
     @Description("Target pid")
-    public void setPid(int pid) {
+    public void setPid(long pid) {
         this.pid = pid;
     }
 
@@ -314,8 +314,8 @@ public class Bootstrap {
         }
 
         // check telnet/http port
-        int telnetPortPid = -1;
-        int httpPortPid = -1;
+        long telnetPortPid = -1;
+        long httpPortPid = -1;
         if (bootstrap.getTelnetPort() > 0) {
             telnetPortPid = SocketUtils.findTcpListenProcess(bootstrap.getTelnetPort());
             if (telnetPortPid > 0) {
@@ -329,7 +329,7 @@ public class Bootstrap {
             }
         }
 
-        int pid = bootstrap.getPid();
+        long pid = bootstrap.getPid();
         // select pid
         if (pid < 0) {
             try {
@@ -651,7 +651,7 @@ public class Bootstrap {
         return attachOnly;
     }
 
-    public int getPid() {
+    public long getPid() {
         return pid;
     }
 
