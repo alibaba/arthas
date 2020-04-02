@@ -10,6 +10,7 @@ import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
 import io.netty.handler.logging.LogLevel;
 import io.netty.handler.logging.LoggingHandler;
+import io.netty.util.concurrent.EventExecutorGroup;
 import io.netty.util.concurrent.Future;
 import io.netty.util.concurrent.GenericFutureListener;
 import io.netty.util.concurrent.ImmediateEventExecutor;
@@ -30,8 +31,10 @@ public class NettyWebsocketTtyBootstrap {
     private int port;
     private EventLoopGroup group;
     private Channel channel;
+    private EventExecutorGroup workerGroup;
 
-    public NettyWebsocketTtyBootstrap() {
+    public NettyWebsocketTtyBootstrap(EventExecutorGroup workerGroup) {
+        this.workerGroup = workerGroup;
         this.host = "localhost";
         this.port = 8080;
     }
@@ -59,7 +62,7 @@ public class NettyWebsocketTtyBootstrap {
 
         ServerBootstrap b = new ServerBootstrap();
         b.group(group).channel(NioServerSocketChannel.class).handler(new LoggingHandler(LogLevel.INFO))
-                .childHandler(new TtyServerInitializer(channelGroup, handler));
+                .childHandler(new TtyServerInitializer(channelGroup, handler, workerGroup));
 
         final ChannelFuture f = b.bind(host, port);
         f.addListener(new GenericFutureListener<Future<? super Void>>() {

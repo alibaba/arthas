@@ -23,6 +23,8 @@ import com.taobao.arthas.core.shell.term.impl.httptelnet.HttpTelnetTermServer;
 import com.taobao.arthas.core.util.*;
 import com.taobao.middleware.logger.Logger;
 import io.netty.channel.ChannelFuture;
+import io.netty.channel.nio.NioEventLoopGroup;
+import io.netty.util.concurrent.EventExecutorGroup;
 
 import java.arthas.Spy;
 import java.io.File;
@@ -233,20 +235,26 @@ public class ArthasBootstrap {
                 welcomeInfos.put("id", agentId);
                 options.setWelcomeMessage(ArthasBanner.welcome(welcomeInfos));
             }
+
             shellServer = new ShellServerImpl(options, this);
             BuiltinCommandPack builtinCommands = new BuiltinCommandPack();
             List<CommandResolver> resolvers = new ArrayList<CommandResolver>();
             resolvers.add(builtinCommands);
+
+            //worker group
+            EventExecutorGroup workerGroup = new NioEventLoopGroup(8);
+
             // TODO: discover user provided command resolver
             if (configure.getTelnetPort() > 0) {
                 shellServer.registerTermServer(new HttpTelnetTermServer(configure.getIp(), configure.getTelnetPort(),
-                                options.getConnectionTimeout()));
+                                options.getConnectionTimeout(), workerGroup));
             } else {
                 logger.info("arthas", "telnet port is {}, skip bind telnet server.", configure.getTelnetPort());
             }
+
             if (configure.getHttpPort() > 0) {
                 shellServer.registerTermServer(new HttpTermServer(configure.getIp(), configure.getHttpPort(),
-                                options.getConnectionTimeout()));
+                                options.getConnectionTimeout(), workerGroup));
             } else {
                 logger.info("arthas", "http port is {}, skip bind http server.", configure.getHttpPort());
             }
