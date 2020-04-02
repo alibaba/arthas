@@ -53,7 +53,7 @@ master_doc = 'index'
 
 # General information about the project.
 project = u'Arthas'
-copyright = u'2018-2019, Alibaba Middleware Group, and contributors'
+copyright = u'2018-2020, Alibaba Middleware Group, and contributors'
 author = u'Alibaba Middleware Group, and contributors'
 
 github_doc_root = 'https://github.com/alibaba/arthas/tree/master/site/src/site/sphinx/'
