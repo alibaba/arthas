@@ -45,9 +45,9 @@
                     </el-col>
                 </el-row>
             </el-header>
-            <el-main class="main-body">
+            <el-main id="main-body" class="main-body">
                 <div v-for="result in commandResults" >
-                    <el-card>
+                    <el-card class="resultMsg" v-bind:class="messageClass(result)">
                         {{JSON.stringify(result)}}
                     </el-card>
                     <div class="min-gap"></div>
@@ -55,16 +55,17 @@
             </el-main>
 
             <!--  底部  -->
-            <el-footer class="footer-row" height="50px">
+            <el-footer class="footer-row">
                 <div class="footer-left">
                     <div>Command:</div>
                 </div>
                 <div class="footer-input">
-                    <el-input
-                            type="textarea"
-                            autosize
+<!--                    type="textarea"-->
+                    <el-input ref="commandInput"
                             placeholder="请输入命令"
-                            @key.enter="executeCommand"
+                            autosize
+                            clearable
+                            @keyup.enter.native="executeCommand"
                             :disabled="commandLineDisabled"
                             v-model="commandLine">
                     </el-input>
@@ -118,60 +119,33 @@
 
 <script>
     //session data
-    let commandLineDisabled = false;
-    let commandLine = '';
-    let commandResults = [];
+    let sessionData = {
+        sessionId: null,
+        consumerId: null,
+        lastPullResultTime: 0,
+        commandLine: '',
+        commandLineDisabled: true,
+        commandResults: []
+    };
 
     //session view
     let SessionView = Vue.component('session-view',{
         template: '#session-view',
         data() {
-            return {
-                commandLine,
-                commandLineDisabled,
-                commandResults
-            }
+            return sessionData;
         },
         methods: {
-            executeCommand(){
-                this.$parent.executeCommand(this.commandLine);
-            }
-        }
-    });
-
-    let HistoryView = Vue.component('history-view', {
-        template: '#history-view',
-        data() {
-            return {
-            }
-        }
-    });
-
-    //页面路由
-    const routes = [
-        //{ path: '/', redirect: '/session/123' },
-        { path: '/', component: HistoryView },
-        { path: '/history', component: HistoryView },
-        { path: '/session/:sessionId', component: SessionView }
-    ];
-
-    const router = new VueRouter({
-        routes
-    });
-
-    new Vue({
-        el: '#app',
-        router,
-        data: {
-            sessionId: null,
-            consumerId: null,
-            commandLine,
-            commandLineDisabled,
-            commandResults,
-            lastPullResultTime: 0
-        },
-        methods: {
+            messageClass(item){
+                return {
+                    commandMsg: item.command!=null,
+                    errorMsg: item.state == 'FAILED' || item.state == 'REFUSED',
+                }
+            },
+            onSessionReady(){
+                this.commandLineDisabled = false;
+            },
             initPage(){
+                console.log("initPage");
                 let sessionId = this.$route.params.sessionId;
                 if (sessionId && sessionId!='undefined'){
                     //join_session, init new consumerId
@@ -186,6 +160,7 @@
                                 this.sessionId = apiResponse.sessionId;
                                 this.consumerId = apiResponse.consumerId;
                                 this.pullResults();
+                                this.onSessionReady();
                             }else {
                                 //加入会话失败，创建新会话
                                 this.initSession();
@@ -200,6 +175,7 @@
             },
 
             initSession(){
+                console.log("initSession");
                 axios
                     .post('/api',{
                         "action": "init_session"
@@ -211,6 +187,7 @@
                             this.consumerId = apiResponse.consumerId;
                             this.$router.push("/session/"+this.sessionId);
                             this.pullResults();
+                            this.onSessionReady();
                         }
                     })
                     .catch(function (error) { // 请求失败处理
@@ -232,12 +209,12 @@
                         if (apiResponse.state == "SUCCEEDED"){
                             this.appendResults(apiResponse.body.results);
                         }
-                        let waitTime = (new Date().getTime() - this.lastPullResultTime < 1000)?1000 : 50;
+                        let waitTime = (new Date().getTime() - this.lastPullResultTime < 500)?500 : 50;
                         setTimeout(this.pullResults.bind(this), waitTime);
                     })
                     .catch(function (error) { // 请求失败处理
                         console.log(error);
-                        let waitTime = (new Date().getTime() - this.lastPullResultTime < 1000)?1000 : 50;
+                        let waitTime = (new Date().getTime() - this.lastPullResultTime < 500)?500 : 50;
                         setTimeout(this.pullResults.bind(this), waitTime);
                     });
 
@@ -247,42 +224,129 @@
                 if (!results || !results.length || results.length == 0){
                     return;
                 }
-                this.commandResults.push(results);
+                //split results
+                while(results.length > 0){
+                    //Restrict command results
+                    while(this.commandResults.length > 500){
+                        this.commandResults.shift();
+                    }
+                    this.commandResults.push(results.shift());
+                }
+
+                this.scrollContentToBottom();
             },
 
-            executeCommand(commandLine) {
-                commandLine = commandLine || this.commandLine;
-                commandLine = commandLine.trim();
-                if (commandLine == ''){
+            appendCommand(response){
+                if (response && response.state) {
+                    //Restrict command results
+                    while(this.commandResults.length > 500){
+                        this.commandResults.shift();
+                    }
+                    response.body.state = response.state;
+                    if (response.message) {
+                        response.body.message = response.message;
+                    }
+                    if ( response.state == 'SCHEDULED' || response.state == 'SUCCEEDED' ){
+                    } else {
+                    }
+                    this.commandResults.push(response.body)
+                }
+            },
+
+            executeCommand(event) {
+                this.commandLine = this.commandLine.trim();
+                if (this.commandLine == ''){
                     return;
                 }
+
+                console.log("executing command: ", this.commandLine);
                 axios
                     .post('/api',{
                         "action": "async_exec",
                         "sessionId": this.sessionId,
                         "consumerId": this.consumerId,
-                        "command": commandLine,
+                        "command": this.commandLine,
                     })
                     .then(response => {
                         let apiResponse = response.data;
-                        if (apiResponse.state == "SUCCEEDED"){
-                            //clear
-                            this.commandLine = '';
+                        if (apiResponse.state == "SCHEDULED"){
+
                         }
+                        //this.appendCommand(apiResponse);
+                        this.commandLine = '';
                         this.commandLineDisabled = false;
+                        this.setFocusCommandInput();
                     })
                     .catch(function (error) { // 请求失败处理
                         console.log(error);
                         this.commandLineDisabled = false;
+                        this.setFocusCommandInput();
                     });
+
 
                 //disable input
                 this.commandLineDisabled = true;
+            },
+
+            scrollContentToBottom(){
+                setTimeout(function () {
+                    var container = this.$el.querySelector("#main-body");
+                    container.scrollTop = container.scrollHeight;
+                }.bind(this), 50);
+            },
+
+            setFocusCommandInput() {
+                setTimeout(function () {
+                    this.$refs.commandInput.focus();
+                }.bind(this), 50);
             }
         },
         watch: {
             '$route'(to, from){
                 console.log('route: ', to, from);
+                this.initPage();
+            }
+        },
+        created(){
+            this.initPage();
+        },
+        updated(){
+
+        }
+    });
+
+    let HistoryView = Vue.component('history-view', {
+        template: '#history-view',
+        data() {
+            return {
+            }
+        }
+    });
+
+    //页面路由
+    const routes = [
+        { path: '/', redirect: '/session/' },
+        //{ path: '/', component: HistoryView },
+        { path: '/session', component: SessionView },
+        { path: '/session/:sessionId', component: SessionView },
+        { path: '/history', component: HistoryView },
+    ];
+
+    const router = new VueRouter({
+        routes
+    });
+
+    new Vue({
+        el: '#app',
+        router,
+        data: {
+            sessionData
+        },
+        methods: {
+        },
+        watch: {
+            '$route'(to, from){
+                //console.log('route: ', to, from);
                 // if (to.path.startsWith("/session") && to.params.sessionId == null){
                 //     this.$router.push("/session/" + this.sessionId);
                 // }
@@ -291,17 +355,7 @@
             }
         },
         created(){
-            this.initPage();
 
-            // let sessionId = this.$route.params.sessionId;
-            // console.log("route: ", this.$route.path, ", sessionId: ", sessionId);
-            // if (sessionId == null || sessionId == ""){
-            //     console.log("init session");
-            //     sessionId = 122;
-            //     console.log("redirect to session");
-            //     this.$router.push("/session/"+sessionId);
-            // }
-            // this.sessionId = sessionId;
         }
     });
 </script>

@@ -61,7 +61,8 @@ a.nav-link:active, a.nav-link:hover, a.nav-link:visited {
 .footer-row {
     flex: 0 0 auto;
     display: flex;
-    padding-top: 10px;
+    padding-top: 5px;
+    height: 45px !important;
     vertical-align: middle;
     border-top: #cccccc 1px solid;
 }
@@ -74,12 +75,27 @@ a.nav-link:active, a.nav-link:hover, a.nav-link:visited {
     flex: 1;
     margin: 0 10px;
 }
+.footer-input .el-input__inner {
+    height: 35px;
+}
 .footer-button {
     /*width: 100px;*/
 }
 
 .main-body pre {
     margin: 0;
+}
+
+.errorMsg {
+    color: #c82333;
+}
+
+.resultMsg {
+    background-color: #f0f0f0;
+}
+
+.commandMsg {
+    background-color: #d9ecff !important;
 }
 /*****************************/
 /* override element-ui class*/
