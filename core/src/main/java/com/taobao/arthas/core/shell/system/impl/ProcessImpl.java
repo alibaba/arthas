@@ -581,6 +581,7 @@ public class ProcessImpl implements Process {
 
         @Override
         public void appendResult(ExecResult result) {
+            result.setJobId(jobId);
             resultDistributor.appendResult(result);
         }
     }

@@ -22,7 +22,7 @@ public class ResultConsumerImpl implements ResultConsumer {
     private long lastAccessTime;
     private volatile boolean polling;
     private ReentrantLock lock = new ReentrantLock();
-    private int resultSizeLimit = 32;
+    private int resultSizeLimit = 100;
     private long pollTimeLimit = 10*1000;
     private String consumerId;
 

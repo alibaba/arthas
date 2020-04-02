@@ -2,6 +2,7 @@ package com.taobao.arthas.core.shell.term.impl.http.api;
 
 import com.alibaba.fastjson.JSON;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.taobao.arthas.core.command.result.CommandResult;
 import com.taobao.arthas.core.command.result.ExecResult;
 import com.taobao.arthas.core.distribution.PackingResultDistributor;
 import com.taobao.arthas.core.distribution.ResultConsumer;
@@ -213,11 +214,13 @@ public class HttpApiHandler {
         ApiResponse response = new ApiResponse();
         Map<String, Object> body = new TreeMap<String, Object>();
         body.put("pid", session.getPid());
-        body.put("sessionId", session.getSessionId());
         body.put("createTime", session.getCreateTime());
         body.put("lastAccessTime", session.getLastAccessTime());
 
-        response.setState(ApiState.SUCCEEDED).setBody(body);
+        response.setState(ApiState.SUCCEEDED)
+                .setSessionId(session.getSessionId())
+                //.setConsumerId(consumerId)
+                .setBody(body);
         return response;
     }
 
@@ -236,12 +239,27 @@ public class HttpApiHandler {
      * @return
      */
     private ApiResponse processExecRequest(ApiRequest apiRequest, Session session) {
-
-        PackingResultDistributor packingResultDistributor = new PackingResultDistributorImpl(session);
-
         String commandLine = apiRequest.getCommand();
-        Job job = this.createJob(commandLine, session, packingResultDistributor);
-        job.run();
+        Map<String, Object> body = new TreeMap<String, Object>();
+        body.put("command", commandLine);
+
+        ApiResponse response = new ApiResponse();
+        response.setSessionId(session.getSessionId())
+                .setBody(body);
+
+        PackingResultDistributor packingResultDistributor = null;
+        Job job = null;
+        try {
+            packingResultDistributor = new PackingResultDistributorImpl(session);
+            job = this.createJob(commandLine, session, packingResultDistributor);
+            job.run();
+
+            response.setState(ApiState.SCHEDULED);
+        } catch (Throwable e) {
+            logger.error("arthas", "Exec command failed:"+e.getMessage()+", command:"+commandLine, e);
+            response.setState(ApiState.FAILED).setMessage("Exec command failed:"+e.getMessage());
+            return response;
+        }
 
         //wait for job completed or timeout
         boolean timeExpired = !waitForJob(job);
@@ -251,15 +269,14 @@ public class HttpApiHandler {
         }
 
         //packing results
-        Map<String, Object> body = new TreeMap<String, Object>();
         body.put("jobId", job.id());
         body.put("jobStatus", job.status());
-        body.put("sessionId", session.getSessionId());
         body.put("timeExpired", timeExpired);
         body.put("results", packingResultDistributor.getResults());
 
-        ApiResponse response = new ApiResponse();
-        response.setState(ApiState.SUCCEEDED).setBody(body);
+        response.setSessionId(session.getSessionId())
+                //.setConsumerId(consumerId)
+                .setBody(body);
         return response;
     }
 
@@ -272,18 +289,36 @@ public class HttpApiHandler {
      */
     private ApiResponse processAsyncExecRequest(ApiRequest apiRequest, Session session) {
         String commandLine = apiRequest.getCommand();
-        Job job = this.createJob(commandLine, session, session.getResultDistributor());
-        job.run();
-
-        //packing results
         Map<String, Object> body = new TreeMap<String, Object>();
-        body.put("jobId", job.id());
-        body.put("jobStatus", job.status());
-        body.put("sessionId", session.getSessionId());
+        body.put("command", commandLine);
 
         ApiResponse response = new ApiResponse();
-        response.setState(ApiState.SCHEDULED).setBody(body);
-        return response;
+        response.setSessionId(session.getSessionId())
+                .setBody(body);
+        try {
+            //create job
+            Job job = this.createJob(commandLine, session, session.getResultDistributor());
+            body.put("jobId", job.id());
+            body.put("jobStatus", job.status());
+            response.setState(ApiState.SCHEDULED);
+
+            //add command before exec job
+            CommandResult commandResult = new CommandResult(commandLine, response.getState());
+            commandResult.setJobId(job.id());
+            session.getResultDistributor().appendResult(commandResult);
+
+            //run job
+            job.run();
+
+            return response;
+
+        } catch (Throwable e) {
+            logger.error("arthas", "Async exec command failed:"+e.getMessage()+", command:"+commandLine, e);
+            response.setState(ApiState.FAILED).setMessage("Async exec command failed:"+e.getMessage());
+            CommandResult commandResult = new CommandResult(commandLine, response.getState(), response.getMessage());
+            session.getResultDistributor().appendResult(commandResult);
+            return response;
+        }
     }
 
     /**
@@ -302,12 +337,13 @@ public class HttpApiHandler {
         List<ExecResult> results = consumer.pollResults();
 
         Map<String, Object> body = new TreeMap<String, Object>();
-        body.put("sessionId", session.getSessionId());
-        body.put("consumerId", consumerId);
         body.put("results", results);
 
         ApiResponse response = new ApiResponse();
-        response.setState(ApiState.SUCCEEDED).setBody(body);
+        response.setState(ApiState.SUCCEEDED)
+                .setSessionId(session.getSessionId())
+                .setConsumerId(consumerId)
+                .setBody(body);
         return response;
     }
 

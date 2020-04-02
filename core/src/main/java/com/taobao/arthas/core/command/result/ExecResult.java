@@ -7,6 +7,8 @@ package com.taobao.arthas.core.command.result;
  */
 public abstract class ExecResult {
 
+    private Integer jobId;
+
     /**
      * Command type (name)
      *
@@ -14,4 +16,12 @@ public abstract class ExecResult {
      */
     public abstract String getType();
 
+
+    public Integer getJobId() {
+        return jobId;
+    }
+
+    public void setJobId(Integer jobId) {
+        this.jobId = jobId;
+    }
 }

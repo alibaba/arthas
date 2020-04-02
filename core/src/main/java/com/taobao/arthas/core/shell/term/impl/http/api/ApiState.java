@@ -10,8 +10,21 @@ public enum ApiState {
      * Scheduled async exec job
      */
     SCHEDULED,
-    RUNNING,
+
+//    RUNNING,
+
+    /**
+     * Process request succeeded
+     */
     SUCCEEDED,
+
+    /**
+     * Process request failed
+     */
     FAILED,
+
+    /**
+     * Request is refused
+     */
     REFUSED
 }
