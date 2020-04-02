@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Batch Processing &mdash; Arthas 3.1.7 documentation</title>
+  <title>Batch Processing &mdash; Arthas 3.1.8 documentation</title>
   
 
   
@@ -67,7 +67,7 @@
             
             
               <div class="version">
-                3.1.7
+                3.1.8
               </div>
             
           
@@ -205,7 +205,7 @@
 <p>Create a <code class="docutils literal notranslate"><span class="pre">test.as</span></code> script suffixed with <code class="docutils literal notranslate"><span class="pre">as</span></code>. Here <code class="docutils literal notranslate"><span class="pre">as</span></code> is suggested for the suffix of the filename, but in fact any suffix is acceptable.</p>
 <div class="highlight-bash notranslate"><div class="highlight hljs"><pre class="bash">➜  arthas git:(develop) cat /var/tmp/test.as
 help
-dashboard -b -n 1
+dashboard -n 1
 session
 thread
 sc -d org.apache.commons.lang.StringUtils</pre></div>
@@ -213,15 +213,18 @@ sc -d org.apache.commons.lang.StringUtils</pre></div>
 <p>Note:</p>
 <ul class="simple">
 <li><p>Each command takes one line.</p></li>
-<li><p>Batch mode (via <code class="docutils literal notranslate"><span class="pre">-b</span></code>) and execution times (via <code class="docutils literal notranslate"><span class="pre">-n</span></code>) must be explicitly specified for <code class="docutils literal notranslate"><span class="pre">dashboard</span></code>, otherwise batch script cannot terminate.</p></li>
+<li><p>Batch mode execution times (via <code class="docutils literal notranslate"><span class="pre">-n</span></code>) must be explicitly specified for <code class="docutils literal notranslate"><span class="pre">dashboard</span></code>, otherwise batch script cannot terminate.</p></li>
 <li><p>Commands such as <code class="docutils literal notranslate"><span class="pre">watch</span></code>/<code class="docutils literal notranslate"><span class="pre">tt</span></code>/<code class="docutils literal notranslate"><span class="pre">trace</span></code>/<code class="docutils literal notranslate"><span class="pre">monitor</span></code>/<code class="docutils literal notranslate"><span class="pre">stack</span></code> should include <code class="docutils literal notranslate"><span class="pre">-n</span></code> option to ensure the script can be able to quit.</p></li>
 <li><p>Also consider to use <code class="docutils literal notranslate"><span class="pre">async</span></code> (for example: <code class="docutils literal notranslate"><span class="pre">watch</span> <span class="pre">c.t.X</span> <span class="pre">test</span> <span class="pre">returnObj</span> <span class="pre">&gt;</span> <span class="pre">&amp;</span></code>) to put commands run at background and get the output from the log file, see more from <a class="reference internal" href="async.html"><span class="doc">asynchronous job</span></a></p></li>
 </ul>
 </div>
 <div class="section" id="step-2-run-the-script">
 <h3>Step 2: Run the script<a class="headerlink" href="#step-2-run-the-script" title="Permalink to this headline">¶</a></h3>
-<p>Use <code class="docutils literal notranslate"><span class="pre">-b</span></code> to turn on batch mode, and use <code class="docutils literal notranslate"><span class="pre">-f</span></code> to specify the script file. By default the result will be output to the standard output, but you can redirect the output to the file like this:</p>
-<div class="highlight-bash notranslate"><div class="highlight hljs"><pre class="bash">./as.sh -b -f /var/tmp/test.as 56328 &gt; test.out</pre></div>
+<p>Use <code class="docutils literal notranslate"><span class="pre">-f</span></code> to specify the script file. By default the result will be output to the standard output, but you can redirect the output to the file like this:</p>
+<div class="highlight-bash notranslate"><div class="highlight hljs"><pre class="bash">./as.sh -f /var/tmp/test.as 56328 &gt; test.out</pre></div>
+</div>
+<p>Use <code class="docutils literal notranslate"><span class="pre">-c</span></code> also can specify the commands, like this:</p>
+<div class="highlight-bash notranslate"><div class="highlight hljs"><pre class="bash">./as.sh -c &#x27;sysprop; thread&#x27; 56328 &gt; test.out</pre></div>
 </div>
 </div>
 <div class="section" id="step-3-check-the-outputs">

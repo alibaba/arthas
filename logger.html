@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>logger &mdash; Arthas 3.1.7 文档</title>
+  <title>logger &mdash; Arthas 3.1.8 文档</title>
   
 
   
@@ -68,7 +68,7 @@
             
             
               <div class="version">
-                3.1.7
+                3.1.8
               </div>
             
           
@@ -114,6 +114,7 @@
 <li class="toctree-l4"><a class="reference internal" href="#id3">查看指定名字的logger信息</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#classloaderlogger">查看指定classloader的logger信息</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#logger-level">更新logger level</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#classloader-logger-level">指定classloader更新 logger level</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#appenderlogger">查看没有appender的logger的信息</a></li>
 </ul>
 </li>
@@ -152,6 +153,7 @@
 <li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas/blob/master/CONTRIBUTING.md#">编译调试/参与贡献</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas/releases">Release Notes</a></li>
 <li class="toctree-l1"><a class="reference internal" href="contact-us.html">QQ群/钉钉群</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://arthas.gitee.io/">国内镜像站</a></li>
 </ul>
 
             
@@ -341,6 +343,13 @@
 <h3>更新logger level<a class="headerlink" href="#logger-level" title="永久链接至标题">¶</a></h3>
 <div class="highlight-bash notranslate"><div class="highlight hljs"><pre class="bash">[arthas@2062]$ logger --name ROOT --level debug
 update logger level success.</pre></div>
+</div>
+</div>
+<div class="section" id="classloader-logger-level">
+<h3>指定classloader更新 logger level<a class="headerlink" href="#classloader-logger-level" title="永久链接至标题">¶</a></h3>
+<p>默认情况下，logger命令会在SystemClassloader下执行，如果应用是传统的<code class="docutils literal notranslate"><span class="pre">war</span></code>应用，或者spring boot fat jar启动的应用，那么需要指定classloader。</p>
+<p>可以先用 <code class="docutils literal notranslate"><span class="pre">sc</span> <span class="pre">-d</span> <span class="pre">yourClassName</span></code> 来查看具体的 classloader hashcode，然后在更新level时指定classloader：</p>
+<div class="highlight-bash notranslate"><div class="highlight hljs"><pre class="bash">[arthas@2062]$ logger -c 2a139a55 --name ROOT --level debug</pre></div>
 </div>
 </div>
 <div class="section" id="appenderlogger">

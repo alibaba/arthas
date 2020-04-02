@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>logger &mdash; Arthas 3.1.7 documentation</title>
+  <title>logger &mdash; Arthas 3.1.8 documentation</title>
   
 
   
@@ -67,7 +67,7 @@
             
             
               <div class="version">
-                3.1.7
+                3.1.8
               </div>
             
           
@@ -111,6 +111,7 @@
 <li class="toctree-l4"><a class="reference internal" href="#view-logger-information-for-the-special-name">View logger information for the special name</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#view-logger-information-for-the-special-classloader">View logger information for the special classloader</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#update-logger-level">Update logger level</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#classloader-logger-level">指定classloader更新 logger level</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#view-the-logger-information-without-appenders">View the logger information without appenders</a></li>
 </ul>
 </li>
@@ -337,6 +338,13 @@
 <h3>Update logger level<a class="headerlink" href="#update-logger-level" title="Permalink to this headline">¶</a></h3>
 <div class="highlight-bash notranslate"><div class="highlight hljs"><pre class="bash">[arthas@2062]$ logger --name ROOT --level debug
 update logger level success.</pre></div>
+</div>
+</div>
+<div class="section" id="classloader-logger-level">
+<h3>指定classloader更新 logger level<a class="headerlink" href="#classloader-logger-level" title="Permalink to this headline">¶</a></h3>
+<p>默认情况下，logger命令会在SystemClassloader下执行，如果应用是传统的<code class="docutils literal notranslate"><span class="pre">war</span></code>应用，或者spring boot fat jar启动的应用，那么需要指定classloader。</p>
+<p>可以先用 <code class="docutils literal notranslate"><span class="pre">sc</span> <span class="pre">-d</span> <span class="pre">yourClassName</span></code> 来查看具体的 classloader hashcode，然后在更新level时指定classloader：</p>
+<div class="highlight-bash notranslate"><div class="highlight hljs"><pre class="bash">[arthas@2062]$ logger -c 2a139a55 --name ROOT --level debug</pre></div>
 </div>
 </div>
 <div class="section" id="view-the-logger-information-without-appenders">

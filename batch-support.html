@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>批处理功能 &mdash; Arthas 3.1.7 文档</title>
+  <title>批处理功能 &mdash; Arthas 3.1.8 文档</title>
   
 
   
@@ -68,7 +68,7 @@
             
             
               <div class="version">
-                3.1.7
+                3.1.8
               </div>
             
           
@@ -131,6 +131,7 @@
 <li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas/blob/master/CONTRIBUTING.md#">编译调试/参与贡献</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas/releases">Release Notes</a></li>
 <li class="toctree-l1"><a class="reference internal" href="contact-us.html">QQ群/钉钉群</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://arthas.gitee.io/">国内镜像站</a></li>
 </ul>
 
             
@@ -213,14 +214,14 @@
 <div><p>注意事项</p>
 <ul class="simple">
 <li><p>目前需要每个命令占一行</p></li>
-<li><p>dashboard务必开启批处理模式(<code class="docutils literal notranslate"><span class="pre">-b</span></code>)，指定执行次数(<code class="docutils literal notranslate"><span class="pre">-n</span></code>)，否则会导致批处理脚本无法终止</p></li>
+<li><p>dashboard务必指定执行次数(<code class="docutils literal notranslate"><span class="pre">-n</span></code>)，否则会导致批处理脚本无法终止</p></li>
 <li><p>watch/tt/trace/monitor/stack等命令务必指定执行次数(<code class="docutils literal notranslate"><span class="pre">-n</span></code>)，否则会导致批处理脚本无法终止</p></li>
 <li><p>可以使用异步后台任务，如 <code class="docutils literal notranslate"><span class="pre">watch</span> <span class="pre">c.t.X</span> <span class="pre">test</span> <span class="pre">returnObj</span> <span class="pre">&gt;</span> <span class="pre">&amp;</span></code>，让命令一直在后台运行，通过日志获取结果，<a class="reference internal" href="async.html"><span class="doc">获取更多异步任务的信息</span></a></p></li>
 </ul>
 </div></blockquote>
 <div class="highlight-default notranslate"><pre class="literal-block">➜  arthas git:(develop) cat /var/tmp/test.as
 help
-dashboard -b -n 1
+dashboard -n 1
 session
 thread
 sc -d org.apache.commons.lang.StringUtils</pre>
@@ -228,8 +229,11 @@ sc -d org.apache.commons.lang.StringUtils</pre>
 </div>
 <div class="section" id="id4">
 <h3>第二步： 运行你的批处理脚本<a class="headerlink" href="#id4" title="永久链接至标题">¶</a></h3>
-<p>通过<code class="docutils literal notranslate"><span class="pre">-b</span></code>开启批处理模式， <code class="docutils literal notranslate"><span class="pre">-f</span></code>执行脚本文件， 批处理脚本默认会输出到标准输出中，可以将结果重定向到文件中。</p>
-<div class="highlight-bash notranslate"><div class="highlight hljs"><pre class="bash">./as.sh -b -f /var/tmp/test.as 56328 &gt; test.out</pre></div>
+<p>通过<code class="docutils literal notranslate"><span class="pre">-f</span></code>执行脚本文件， 批处理脚本默认会输出到标准输出中，可以将结果重定向到文件中。</p>
+<div class="highlight-bash notranslate"><div class="highlight hljs"><pre class="bash">./as.sh -f /var/tmp/test.as 56328 &gt; test.out</pre></div>
+</div>
+<p>也可以通过 <code class="docutils literal notranslate"><span class="pre">-c</span></code> 来指定指行的命令，比如</p>
+<div class="highlight-bash notranslate"><div class="highlight hljs"><pre class="bash">./as.sh -c &#x27;sysprop; thread&#x27; 56328 &gt; test.out</pre></div>
 </div>
 </div>
 <div class="section" id="id5">
