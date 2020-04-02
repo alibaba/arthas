@@ -101,6 +101,9 @@ public class ProfilerCommand extends AnnotatedCommand {
         }
         if (OSUtils.isLinux()) {
             profierSoPath = "async-profiler/libasyncProfiler-linux-x64.so";
+            if (OSUtils.isArm()) {
+                profierSoPath = "async-profiler/libasyncProfiler-linux-arm.so";
+            }
         }
 
         if (profierSoPath != null) {
