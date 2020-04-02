@@ -16,6 +16,8 @@
 
 package one.profiler;
 
+import java.io.IOException;
+
 /**
  * Java API for in-process profiling. Serves as a wrapper around
  * async-profiler native library. This class is a singleton.
@@ -25,10 +27,7 @@ package one.profiler;
 public class AsyncProfiler implements AsyncProfilerMXBean {
     private static AsyncProfiler instance;
 
-    private final String version;
-
     private AsyncProfiler() {
-        this.version = version0();
     }
 
     public static AsyncProfiler getInstance() {
@@ -100,7 +99,11 @@ public class AsyncProfiler implements AsyncProfilerMXBean {
      */
     @Override
     public String getVersion() {
-        return version;
+        try {
+            return execute0("version");
+        } catch (IOException e) {
+            throw new IllegalStateException(e);
+        }
     }
 
     /**
@@ -110,10 +113,10 @@ public class AsyncProfiler implements AsyncProfilerMXBean {
      * @param command Profiling command
      * @return The command result
      * @throws IllegalArgumentException If failed to parse the command
-     * @throws java.io.IOException If failed to create output file
+     * @throws IOException If failed to create output file
      */
     @Override
-    public String execute(String command) throws IllegalArgumentException, java.io.IOException {
+    public String execute(String command) throws IllegalArgumentException, IOException {
         return execute0(command);
     }
 
@@ -125,7 +128,11 @@ public class AsyncProfiler implements AsyncProfilerMXBean {
      */
     @Override
     public String dumpCollapsed(Counter counter) {
-        return dumpCollapsed0(counter.ordinal());
+        try {
+            return execute0("collapsed,counter=" + counter.name().toLowerCase());
+        } catch (IOException e) {
+            throw new IllegalStateException(e);
+        }
     }
 
     /**
@@ -136,7 +143,11 @@ public class AsyncProfiler implements AsyncProfilerMXBean {
      */
     @Override
     public String dumpTraces(int maxTraces) {
-        return dumpTraces0(maxTraces);
+        try {
+            return execute0("summary,traces=" + maxTraces);
+        } catch (IOException e) {
+            throw new IllegalStateException(e);
+        }
     }
 
     /**
@@ -147,14 +158,47 @@ public class AsyncProfiler implements AsyncProfilerMXBean {
      */
     @Override
     public String dumpFlat(int maxMethods) {
-        return dumpFlat0(maxMethods);
+        try {
+            return execute0("summary,flat=" + maxMethods);
+        } catch (IOException e) {
+            throw new IllegalStateException(e);
+        }
+    }
+
+    /**
+     * Add the given thread to the set of profiled threads
+     *
+     * @param thread Thread to include in profiling
+     */
+    public void addThread(Thread thread) {
+        filterThread(thread, true);
+    }
+
+    /**
+     * Remove the given thread from the set of profiled threads
+     *
+     * @param thread Thread to exclude from profiling
+     */
+    public void removeThread(Thread thread) {
+        filterThread(thread, false);
+    }
+
+    private void filterThread(Thread thread, boolean enable) {
+        if (thread == null) {
+            filterThread0(null, enable);
+        } else {
+            // Need to take lock to avoid race condition with a thread state change
+            synchronized (thread) {
+                Thread.State state = thread.getState();
+                if (state != Thread.State.NEW && state != Thread.State.TERMINATED) {
+                    filterThread0(thread, enable);
+                }
+            }
+        }
     }
 
     private native void start0(String event, long interval, boolean reset) throws IllegalStateException;
     private native void stop0() throws IllegalStateException;
-    private native String execute0(String command) throws IllegalArgumentException, java.io.IOException;
-    private native String dumpCollapsed0(int counter);
-    private native String dumpTraces0(int maxTraces);
-    private native String dumpFlat0(int maxMethods);
-    private native String version0();
+    private native String execute0(String command) throws IllegalArgumentException, IOException;
+    private native void filterThread0(Thread thread, boolean enable);
 }
