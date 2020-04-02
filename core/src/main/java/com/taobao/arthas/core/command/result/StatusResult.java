@@ -1,13 +1,13 @@
 package com.taobao.arthas.core.command.result;
 
-public class ErrorResult extends ExecResult {
+public class StatusResult extends ExecResult {
     private int statusCode;
     private String message;
 
-    public ErrorResult() {
+    public StatusResult() {
     }
 
-    public ErrorResult(int statusCode, String message) {
+    public StatusResult(int statusCode, String message) {
         this.statusCode = statusCode;
         this.message = message;
     }
@@ -32,7 +32,7 @@ public class ErrorResult extends ExecResult {
 
     @Override
     public String getType() {
-        return "error";
+        return "status";
     }
 
 }

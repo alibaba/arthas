@@ -24,7 +24,9 @@ public class TermResultDistributorImpl implements ResultDistributor {
     @Override
     public void appendResult(ExecResult result) {
         ResultView resultView = resultViewResolver.getResultView(result.getType());
-        resultView.draw(commandProcess, result);
+        if (resultView != null) {
+            resultView.draw(commandProcess, result);
+        }
     }
 
 }

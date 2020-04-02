@@ -226,8 +226,7 @@ public abstract class ReflectAdviceListenerAdapter implements AdviceListener {
      * @param limit the limit to be printed
      */
     protected void abortProcess(CommandProcess process, int limit) {
-        process.write("Command execution times exceed limit: " + limit + ", so command will exit. You can set it with -n option.\n");
-        process.end();
+        process.end(0, "Command execution times exceed limit: " + limit + ", so command will exit. You can set it with -n option.");
     }
 
 }

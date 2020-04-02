@@ -2,7 +2,7 @@ package com.taobao.arthas.core.shell.system.impl;
 
 import com.taobao.arthas.core.advisor.AdviceListener;
 import com.taobao.arthas.core.advisor.AdviceWeaver;
-import com.taobao.arthas.core.command.result.ErrorResult;
+import com.taobao.arthas.core.command.result.StatusResult;
 import com.taobao.arthas.core.command.result.ExecResult;
 import com.taobao.arthas.core.distribution.ResultDistributor;
 import com.taobao.arthas.core.distribution.impl.TermResultDistributorImpl;
@@ -565,13 +565,13 @@ public class ProcessImpl implements Process {
 
         @Override
         public void end(int statusCode) {
-            terminate(statusCode, null);
+            end(statusCode, null);
         }
 
         @Override
         public void end(int statusCode, String message) {
-            appendResult(new ErrorResult(statusCode, message));
-            end(statusCode);
+            terminate(statusCode, null);
+            appendResult(new StatusResult(statusCode, message));
         }
 
         @Override
