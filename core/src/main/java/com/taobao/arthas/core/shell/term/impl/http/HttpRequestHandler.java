@@ -27,6 +27,7 @@ import io.netty.handler.codec.http.LastHttpContent;
 import io.termd.core.http.HttpTtyConnection;
 import io.termd.core.util.Logging;
 
+import static com.taobao.arthas.core.util.HttpUtils.createRedirectResponse;
 import static com.taobao.arthas.core.util.HttpUtils.createResponse;
 
 /**
@@ -77,6 +78,12 @@ public class HttpRequestHandler extends SimpleChannelInboundHandler<FullHttpRequ
 //                if (path.startsWith(HttpWebUIHandler.WEB_UI_PATH)) {
 //                    response = webUIHandler.handle(request);
 //                }
+                if (path.equals("/ui")){
+                    response = createRedirectResponse(request, "/ui/");
+                }
+                if (path.equals("/ui/")) {
+                    path += "index.html";
+                }
 
                 //try classpath resource first
                 if (response == null){
