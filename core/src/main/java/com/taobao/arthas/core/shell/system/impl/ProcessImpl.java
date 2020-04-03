@@ -2,6 +2,7 @@ package com.taobao.arthas.core.shell.system.impl;
 
 import com.taobao.arthas.core.advisor.AdviceListener;
 import com.taobao.arthas.core.advisor.AdviceWeaver;
+import com.taobao.arthas.core.command.result.MessageResult;
 import com.taobao.arthas.core.command.result.StatusResult;
 import com.taobao.arthas.core.command.result.ExecResult;
 import com.taobao.arthas.core.distribution.ResultDistributor;
@@ -58,7 +59,7 @@ public class ProcessImpl implements Process {
     private Handler<String> stdinHandler;
     private Handler<Void> resizeHandler;
     private Integer exitCode;
-    private CommandProcess process;
+    private CommandProcessImpl process;
     private Date startTime;
     private ProcessOutput processOutput;
     private int jobId;
@@ -241,12 +242,14 @@ public class ProcessImpl implements Process {
 
     @Override
     public void terminate(Handler<Void> completionHandler) {
-        if (!terminate(-10, completionHandler)) {
+        if (!terminate(-10, completionHandler, null)) {
             throw new IllegalStateException("Cannot terminate terminated process");
         }
     }
 
-    private synchronized boolean terminate(int exitCode, Handler<Void> completionHandler) {
+    private synchronized boolean terminate(int exitCode, Handler<Void> completionHandler, String message) {
+
+        this.appendResult(new StatusResult(exitCode, message));
         if (processStatus != ExecStatus.TERMINATED) {
             if (process != null) {
                 processOutput.close();
@@ -258,6 +261,13 @@ public class ProcessImpl implements Process {
             return true;
         } else {
             return false;
+        }
+    }
+
+    private void appendResult(ExecResult result) {
+        result.setJobId(jobId);
+        if (resultDistributor != null) {
+            resultDistributor.appendResult(result);
         }
     }
 
@@ -325,6 +335,11 @@ public class ProcessImpl implements Process {
             throw new IllegalStateException("Cannot execute process without a TTY set");
         }
 
+        process = new CommandProcessImpl(tty);
+        if (resultDistributor == null) {
+            resultDistributor = new TermResultDistributorImpl(process);
+        }
+
         final List<String> args2 = new LinkedList<String>();
         for (CliToken arg : args) {
             if (arg.isText()) {
@@ -342,23 +357,21 @@ public class ProcessImpl implements Process {
                     StringBuilder usage = new StringBuilder();
                     commandContext.cli().usage(usage, formatter);
                     usage.append('\n');
-                    tty.write(usage.toString());
+                    //tty.write(usage.toString());
+                    appendResult(new MessageResult(usage.toString()));
                     terminate();
                     return;
                 }
 
                 cl = commandContext.cli().parse(args2);
+                process.setArgs2(args2);
+                process.setCommandLine(cl);
             }
         } catch (CLIException e) {
-            tty.write(e.getMessage() + "\n");
-            terminate();
+            terminate(-10, null, e.getMessage());
             return;
         }
 
-        process = new CommandProcessImpl(args2, tty, cl);
-        if (resultDistributor == null) {
-            resultDistributor = new TermResultDistributorImpl(process);
-        }
         if (cacheLocation() != null) {
             process.echoTips("job id  : " + this.jobId + "\n");
             process.echoTips("cache location  : " + cacheLocation() + "\n");
@@ -388,17 +401,15 @@ public class ProcessImpl implements Process {
 
     private class CommandProcessImpl implements CommandProcess {
 
-        private final List<String> args2;
+        private List<String> args2;
         private final Tty tty;
-        private final CommandLine commandLine;
+        private CommandLine commandLine;
         private int enhanceLock = -1;
         private AtomicInteger times = new AtomicInteger();
         private AdviceListener suspendedListener = null;
 
-        public CommandProcessImpl(List<String> args2, Tty tty, CommandLine commandLine) {
-            this.args2 = args2;
+        public CommandProcessImpl(Tty tty) {
             this.tty = tty;
-            this.commandLine = commandLine;
         }
 
         @Override
@@ -444,6 +455,14 @@ public class ProcessImpl implements Process {
         @Override
         public AtomicInteger times() {
             return times;
+        }
+
+        public void setArgs2(List<String> args2) {
+            this.args2 = args2;
+        }
+
+        public void setCommandLine(CommandLine commandLine) {
+            this.commandLine = commandLine;
         }
 
         @Override
@@ -570,8 +589,7 @@ public class ProcessImpl implements Process {
 
         @Override
         public void end(int statusCode, String message) {
-            terminate(statusCode, null);
-            appendResult(new StatusResult(statusCode, message));
+            terminate(statusCode, null, message);
         }
 
         @Override
@@ -581,8 +599,7 @@ public class ProcessImpl implements Process {
 
         @Override
         public void appendResult(ExecResult result) {
-            result.setJobId(jobId);
-            resultDistributor.appendResult(result);
+            ProcessImpl.this.appendResult(result);
         }
     }
 

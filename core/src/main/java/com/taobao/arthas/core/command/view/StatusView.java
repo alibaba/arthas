@@ -10,7 +10,9 @@ public class StatusView extends ResultView<StatusResult> {
 
     @Override
     public void draw(CommandProcess process, StatusResult result) {
-        writeln(process, result.getMessage());
+        if (result.getMessage() != null) {
+            writeln(process, result.getMessage());
+        }
     }
 
 }

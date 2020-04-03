@@ -1,5 +1,6 @@
 package com.taobao.arthas.core.distribution.impl;
 
+import com.alibaba.fastjson.JSON;
 import com.taobao.arthas.core.command.result.ExecResult;
 import com.taobao.arthas.core.distribution.ResultConsumer;
 import com.taobao.arthas.core.util.LogUtil;
@@ -71,6 +72,7 @@ public class ResultConsumerImpl implements ResultConsumer {
                 }
 
                 //resultQueue.drainTo(sendingResults, resultSizeLimit-sendingResults.size());
+                logger.info("pollResults: {}, results: {}", sendingResults.size(), JSON.toJSONString(sendingResults));
                 return sendingResults;
             }
         } catch (InterruptedException e) {
