@@ -1,11 +1,11 @@
-package com.taobao.arthas.core.command.result;
+package com.taobao.arthas.core.command.model;
 
 /**
  * Command execute result
  *
  * @author gongdewei 2020-03-26
  */
-public abstract class ExecResult {
+public abstract class ResultModel {
 
     private Integer jobId;
 

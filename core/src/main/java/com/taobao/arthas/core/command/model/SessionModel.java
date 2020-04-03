@@ -1,11 +1,11 @@
-package com.taobao.arthas.core.command.result;
+package com.taobao.arthas.core.command.model;
 
 /**
  * Session command result model
  *
  * @author gongdewei 2020.03.27
  */
-public class SessionResult extends ExecResult {
+public class SessionModel extends ResultModel {
 
     private long javaPid;
     private String sessionId;

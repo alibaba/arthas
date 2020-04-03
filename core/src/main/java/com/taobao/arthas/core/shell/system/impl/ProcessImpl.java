@@ -2,9 +2,9 @@ package com.taobao.arthas.core.shell.system.impl;
 
 import com.taobao.arthas.core.advisor.AdviceListener;
 import com.taobao.arthas.core.advisor.AdviceWeaver;
-import com.taobao.arthas.core.command.result.MessageResult;
-import com.taobao.arthas.core.command.result.StatusResult;
-import com.taobao.arthas.core.command.result.ExecResult;
+import com.taobao.arthas.core.command.model.MessageModel;
+import com.taobao.arthas.core.command.model.StatusResult;
+import com.taobao.arthas.core.command.model.ResultModel;
 import com.taobao.arthas.core.distribution.ResultDistributor;
 import com.taobao.arthas.core.distribution.impl.TermResultDistributorImpl;
 import com.taobao.arthas.core.server.ArthasBootstrap;
@@ -264,7 +264,7 @@ public class ProcessImpl implements Process {
         }
     }
 
-    private void appendResult(ExecResult result) {
+    private void appendResult(ResultModel result) {
         result.setJobId(jobId);
         if (resultDistributor != null) {
             resultDistributor.appendResult(result);
@@ -358,7 +358,7 @@ public class ProcessImpl implements Process {
                     commandContext.cli().usage(usage, formatter);
                     usage.append('\n');
                     //tty.write(usage.toString());
-                    appendResult(new MessageResult(usage.toString()));
+                    appendResult(new MessageModel(usage.toString()));
                     terminate();
                     return;
                 }
@@ -598,7 +598,7 @@ public class ProcessImpl implements Process {
         }
 
         @Override
-        public void appendResult(ExecResult result) {
+        public void appendResult(ResultModel result) {
             ProcessImpl.this.appendResult(result);
         }
     }

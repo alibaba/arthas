@@ -1,4 +1,4 @@
-package com.taobao.arthas.core.command.result;
+package com.taobao.arthas.core.command.model;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -7,18 +7,18 @@ import java.util.Map;
  * Property KV Result
  * @author gongdewei 2020/4/2
  */
-public class PropertyResult extends ExecResult {
+public class PropertyModel extends ResultModel {
 
     private Map<String, String> props = new HashMap<String, String>();
 
-    public PropertyResult() {
+    public PropertyModel() {
     }
 
-    public PropertyResult(Map props) {
+    public PropertyModel(Map props) {
         this.putAll(props);
     }
 
-    public PropertyResult(String name, String value) {
+    public PropertyModel(String name, String value) {
         this.put(name, value);
     }
 

@@ -1,7 +1,7 @@
 package com.taobao.arthas.core.command.basic1000;
 
 
-import com.taobao.arthas.core.command.result.VersionResult;
+import com.taobao.arthas.core.command.model.VersionModel;
 import com.taobao.arthas.core.shell.command.AnnotatedCommand;
 import com.taobao.arthas.core.shell.command.CommandProcess;
 import com.taobao.arthas.core.util.ArthasBanner;
@@ -19,7 +19,7 @@ public class VersionCommand extends AnnotatedCommand {
 
     @Override
     public void process(CommandProcess process) {
-        VersionResult result = new VersionResult();
+        VersionModel result = new VersionModel();
         result.setVersion(ArthasBanner.version());
         process.appendResult(result);
         process.end();

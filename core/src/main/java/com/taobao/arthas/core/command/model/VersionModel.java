@@ -1,6 +1,6 @@
-package com.taobao.arthas.core.command.result;
+package com.taobao.arthas.core.command.model;
 
-public class VersionResult extends ExecResult {
+public class VersionModel extends ResultModel {
 
     private String version;
 

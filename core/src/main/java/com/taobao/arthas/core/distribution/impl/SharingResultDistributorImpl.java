@@ -1,6 +1,6 @@
 package com.taobao.arthas.core.distribution.impl;
 
-import com.taobao.arthas.core.command.result.ExecResult;
+import com.taobao.arthas.core.command.model.ResultModel;
 import com.taobao.arthas.core.distribution.ResultConsumer;
 import com.taobao.arthas.core.distribution.SharingResultDistributor;
 import com.taobao.arthas.core.shell.session.Session;
@@ -20,7 +20,7 @@ public class SharingResultDistributorImpl implements SharingResultDistributor {
     private static final Logger logger = LogUtil.getArthasLogger();
 
     private List<ResultConsumer> consumers = new CopyOnWriteArrayList<ResultConsumer>();
-    private BlockingQueue<ExecResult> resultQueue = new ArrayBlockingQueue<ExecResult>(500);
+    private BlockingQueue<ResultModel> resultQueue = new ArrayBlockingQueue<ResultModel>(500);
     private final Session session;
     private Thread distributorThread;
     private volatile boolean running;
@@ -36,10 +36,10 @@ public class SharingResultDistributorImpl implements SharingResultDistributor {
     }
 
     @Override
-    public void appendResult(ExecResult result) {
+    public void appendResult(ResultModel result) {
         //要避免阻塞影响业务线程执行
         while (!resultQueue.offer(result)) {
-            ExecResult discardResult = resultQueue.poll();
+            ResultModel discardResult = resultQueue.poll();
             //logger.warn("arthas", "result queue is full: {}, discard early result: {}", resultQueue.size(), JSON.toJSONString(discardResult));
         }
     }
@@ -47,7 +47,7 @@ public class SharingResultDistributorImpl implements SharingResultDistributor {
     private void distribute() {
         while (running) {
             try {
-                ExecResult result = resultQueue.poll(100, TimeUnit.MILLISECONDS);
+                ResultModel result = resultQueue.poll(100, TimeUnit.MILLISECONDS);
                 if (result != null) {
                     sharingResultConsumer.appendResult(result);
                     for (ResultConsumer consumer : consumers) {
@@ -95,14 +95,14 @@ public class SharingResultDistributorImpl implements SharingResultDistributor {
     }
 
     private class SharingResultConsumerImpl implements ResultConsumer {
-        private BlockingQueue<ExecResult> resultQueue = new ArrayBlockingQueue<ExecResult>(500);
+        private BlockingQueue<ResultModel> resultQueue = new ArrayBlockingQueue<ResultModel>(500);
         private ReentrantLock queueLock = new ReentrantLock();
         @Override
-        public void appendResult(ExecResult result) {
+        public void appendResult(ResultModel result) {
             queueLock.lock();
             try {
                 while (!resultQueue.offer(result)) {
-                    ExecResult discardResult = resultQueue.poll();
+                    ResultModel discardResult = resultQueue.poll();
                 }
             } finally {
                 if(queueLock.isHeldByCurrentThread()) {
@@ -115,7 +115,7 @@ public class SharingResultDistributorImpl implements SharingResultDistributor {
             //复制时加锁，避免消息顺序错乱，这里堵塞只影响分发线程，不会影响到业务线程
             queueLock.lock();
             try {
-                for (ExecResult result : resultQueue) {
+                for (ResultModel result : resultQueue) {
                     consumer.appendResult(result);
                 }
             } finally {
@@ -126,7 +126,7 @@ public class SharingResultDistributorImpl implements SharingResultDistributor {
         }
 
         @Override
-        public List<ExecResult> pollResults() {
+        public List<ResultModel> pollResults() {
             return null;
         }
 

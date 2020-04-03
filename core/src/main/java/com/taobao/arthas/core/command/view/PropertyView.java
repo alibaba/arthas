@@ -1,6 +1,6 @@
 package com.taobao.arthas.core.command.view;
 
-import com.taobao.arthas.core.command.result.PropertyResult;
+import com.taobao.arthas.core.command.model.PropertyModel;
 import com.taobao.arthas.core.shell.command.CommandProcess;
 import com.taobao.text.Decoration;
 import com.taobao.text.ui.TableElement;
@@ -13,10 +13,10 @@ import static com.taobao.text.ui.Element.label;
 /**
  * @author gongdewei 2020/4/2
  */
-public class PropertyView extends ResultView<PropertyResult> {
+public class PropertyView extends ResultView<PropertyModel> {
 
     @Override
-    public void draw(CommandProcess process, PropertyResult result) {
+    public void draw(CommandProcess process, PropertyModel result) {
         process.write(renderEnv(result.getProps(), process.width()));
     }
 

@@ -1,6 +1,6 @@
 package com.taobao.arthas.core.command.view;
 
-import com.taobao.arthas.core.command.result.ExecResult;
+import com.taobao.arthas.core.command.model.ResultModel;
 import com.taobao.arthas.core.shell.command.CommandProcess;
 
 /**
@@ -9,7 +9,7 @@ import com.taobao.arthas.core.shell.command.CommandProcess;
  *
  * @author gongdewei 2020/3/27
  */
-public abstract class ResultView<T extends ExecResult> {
+public abstract class ResultView<T extends ResultModel> {
 
     /**
      * formatted printing data to term/tty

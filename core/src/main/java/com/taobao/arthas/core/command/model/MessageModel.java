@@ -1,15 +1,15 @@
-package com.taobao.arthas.core.command.result;
+package com.taobao.arthas.core.command.model;
 
 /**
  * @author gongdewei 2020/4/2
  */
-public class MessageResult extends ExecResult {
+public class MessageModel extends ResultModel {
     private String message;
 
-    public MessageResult() {
+    public MessageModel() {
     }
 
-    public MessageResult(String message) {
+    public MessageModel(String message) {
         this.message = message;
     }
 

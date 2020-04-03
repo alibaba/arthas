@@ -1,6 +1,6 @@
 package com.taobao.arthas.core.command.view;
 
-import com.taobao.arthas.core.command.result.SessionResult;
+import com.taobao.arthas.core.command.model.SessionModel;
 import com.taobao.arthas.core.shell.command.CommandProcess;
 import com.taobao.text.Decoration;
 import com.taobao.text.ui.TableElement;
@@ -13,10 +13,10 @@ import static com.taobao.text.ui.Element.label;
  *
  * @author gongdewei 2020/3/27
  */
-public class SessionView extends ResultView<SessionResult> {
+public class SessionView extends ResultView<SessionModel> {
 
     @Override
-    public void draw(CommandProcess process, SessionResult result) {
+    public void draw(CommandProcess process, SessionModel result) {
         //会话详情
         TableElement table = new TableElement().leftCellPadding(1).rightCellPadding(1);
         table.row(true, label("Name").style(Decoration.bold.bold()), label("Value").style(Decoration.bold.bold()));

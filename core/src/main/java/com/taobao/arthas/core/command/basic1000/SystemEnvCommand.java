@@ -1,12 +1,7 @@
 package com.taobao.arthas.core.command.basic1000;
 
-import static com.taobao.text.ui.Element.label;
-
-import java.util.Map;
-import java.util.Map.Entry;
-
 import com.taobao.arthas.core.command.Constants;
-import com.taobao.arthas.core.command.result.PropertyResult;
+import com.taobao.arthas.core.command.model.PropertyModel;
 import com.taobao.arthas.core.shell.cli.Completion;
 import com.taobao.arthas.core.shell.cli.CompletionUtils;
 import com.taobao.arthas.core.shell.command.AnnotatedCommand;
@@ -16,9 +11,6 @@ import com.taobao.middleware.cli.annotations.Argument;
 import com.taobao.middleware.cli.annotations.Description;
 import com.taobao.middleware.cli.annotations.Name;
 import com.taobao.middleware.cli.annotations.Summary;
-import com.taobao.text.Decoration;
-import com.taobao.text.ui.TableElement;
-import com.taobao.text.util.RenderUtil;
 
 /**
  * @author hengyunabc 2018-11-09
@@ -40,7 +32,7 @@ public class SystemEnvCommand extends AnnotatedCommand {
     @Override
     public void process(CommandProcess process) {
         try {
-            PropertyResult result = new PropertyResult();
+            PropertyModel result = new PropertyModel();
             if (StringUtils.isBlank(envName)) {
                 // show all system env
                 result.putAll(System.getenv());

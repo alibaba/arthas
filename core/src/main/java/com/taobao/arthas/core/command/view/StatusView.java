@@ -1,6 +1,6 @@
 package com.taobao.arthas.core.command.view;
 
-import com.taobao.arthas.core.command.result.StatusResult;
+import com.taobao.arthas.core.command.model.StatusResult;
 import com.taobao.arthas.core.shell.command.CommandProcess;
 
 /**

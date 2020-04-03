@@ -1,9 +1,9 @@
 package com.taobao.arthas.core.command.basic1000;
 
 import com.taobao.arthas.core.command.Constants;
-import com.taobao.arthas.core.command.result.MessageResult;
-import com.taobao.arthas.core.command.result.StatusResult;
-import com.taobao.arthas.core.command.result.PropertyResult;
+import com.taobao.arthas.core.command.model.MessageModel;
+import com.taobao.arthas.core.command.model.StatusResult;
+import com.taobao.arthas.core.command.model.PropertyModel;
 import com.taobao.arthas.core.shell.cli.Completion;
 import com.taobao.arthas.core.shell.cli.CompletionUtils;
 import com.taobao.arthas.core.shell.command.AnnotatedCommand;
@@ -13,13 +13,6 @@ import com.taobao.middleware.cli.annotations.Argument;
 import com.taobao.middleware.cli.annotations.Description;
 import com.taobao.middleware.cli.annotations.Name;
 import com.taobao.middleware.cli.annotations.Summary;
-import com.taobao.text.Decoration;
-import com.taobao.text.ui.TableElement;
-import com.taobao.text.util.RenderUtil;
-
-import java.util.Properties;
-
-import static com.taobao.text.ui.Element.label;
 
 /**
  * @author ralf0131 2017-01-09 14:03.
@@ -53,7 +46,7 @@ public class SystemPropertyCommand extends AnnotatedCommand {
             if (StringUtils.isBlank(propertyName) && StringUtils.isBlank(propertyValue)) {
                 // show all system properties
                 //process.write(renderSystemProperties(System.getProperties(), process.width()));
-                process.appendResult(new PropertyResult(System.getProperties()));
+                process.appendResult(new PropertyModel(System.getProperties()));
             } else if (StringUtils.isBlank(propertyValue)) {
                 // view the specified system property
                 String value = System.getProperty(propertyName);
@@ -62,15 +55,15 @@ public class SystemPropertyCommand extends AnnotatedCommand {
                     process.appendResult(new StatusResult(status, "There is no property with the key " + propertyName));
                 } else {
                     //process.write(propertyName + "=" + value + "\n");
-                    process.appendResult(new PropertyResult(propertyName, value));
+                    process.appendResult(new PropertyModel(propertyName, value));
                 }
             } else {
                 // change system property
                 System.setProperty(propertyName, propertyValue);
                 //process.write("Successfully changed the system property.\n");
                 //process.write(propertyName + "=" + System.getProperty(propertyName) + "\n");
-                process.appendResult(new MessageResult("Successfully changed the system property."));
-                process.appendResult(new PropertyResult(propertyName, System.getProperty(propertyName)));
+                process.appendResult(new MessageModel("Successfully changed the system property."));
+                process.appendResult(new PropertyModel(propertyName, System.getProperty(propertyName)));
             }
         } catch (Throwable t) {
             //process.write("Error during setting system property: " + t.getMessage() + "\n");

@@ -1,14 +1,14 @@
-package com.taobao.arthas.core.command.result;
+package com.taobao.arthas.core.command.model;
 
 import com.taobao.arthas.core.util.affect.EnhancerAffect;
 
-public class EnhancerAffectResult extends ExecResult {
+public class EnhancerAffectModel extends ResultModel {
     private EnhancerAffect affect;
 
-    public EnhancerAffectResult() {
+    public EnhancerAffectModel() {
     }
 
-    public EnhancerAffectResult(EnhancerAffect affect) {
+    public EnhancerAffectModel(EnhancerAffect affect) {
         this.affect = affect;
     }
 

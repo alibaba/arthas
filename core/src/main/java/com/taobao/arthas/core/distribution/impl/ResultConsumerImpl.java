@@ -1,7 +1,7 @@
 package com.taobao.arthas.core.distribution.impl;
 
 import com.alibaba.fastjson.JSON;
-import com.taobao.arthas.core.command.result.ExecResult;
+import com.taobao.arthas.core.command.model.ResultModel;
 import com.taobao.arthas.core.distribution.ResultConsumer;
 import com.taobao.arthas.core.util.LogUtil;
 import com.taobao.middleware.logger.Logger;
@@ -19,7 +19,7 @@ import java.util.concurrent.locks.ReentrantLock;
  */
 public class ResultConsumerImpl implements ResultConsumer {
     private static final Logger logger = LogUtil.getArthasLogger();
-    private BlockingQueue<ExecResult> resultQueue = new ArrayBlockingQueue<ExecResult>(500);
+    private BlockingQueue<ResultModel> resultQueue = new ArrayBlockingQueue<ResultModel>(500);
     private long lastAccessTime;
     private volatile boolean polling;
     private ReentrantLock lock = new ReentrantLock();
@@ -32,14 +32,14 @@ public class ResultConsumerImpl implements ResultConsumer {
     }
 
     @Override
-    public void appendResult(ExecResult result) {
+    public void appendResult(ResultModel result) {
         while (!resultQueue.offer(result)) {
-            ExecResult discardResult = resultQueue.poll();
+            ResultModel discardResult = resultQueue.poll();
         }
     }
 
     @Override
-    public List<ExecResult> pollResults() {
+    public List<ResultModel> pollResults() {
         try {
             long accessTime = System.currentTimeMillis();
             if (lock.tryLock(500, TimeUnit.MILLISECONDS)) {
@@ -49,12 +49,12 @@ public class ResultConsumerImpl implements ResultConsumer {
                 long sendingDelay = 0;
                 // waiting time: time elapsed after access
                 long waitingTime = 0;
-                List<ExecResult> sendingResults = new ArrayList<ExecResult>(resultSizeLimit);
+                List<ResultModel> sendingResults = new ArrayList<ResultModel>(resultSizeLimit);
 
                 while (sendingResults.size() < resultSizeLimit
                         && sendingDelay < 200
                         && waitingTime < pollTimeLimit) {
-                    ExecResult aResult = resultQueue.poll(100, TimeUnit.MILLISECONDS);
+                    ResultModel aResult = resultQueue.poll(100, TimeUnit.MILLISECONDS);
                     if (aResult != null) {
                         sendingResults.add(aResult);
                         //是否为第一次获取到数据

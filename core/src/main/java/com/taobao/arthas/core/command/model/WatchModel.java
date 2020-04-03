@@ -1,20 +1,20 @@
-package com.taobao.arthas.core.command.result;
+package com.taobao.arthas.core.command.model;
 
 /**
  * Watch command result model
  *
  * @author gongdewei 2020.03.26
  */
-public class WatchResult extends ExecResult {
+public class WatchModel extends ResultModel {
 
     private String ts;
     private double cost;
     private String result;
 
-    public WatchResult() {
+    public WatchModel() {
     }
 
-    public WatchResult(String ts, double cost, String result) {
+    public WatchModel(String ts, double cost, String result) {
         this.ts = ts;
         this.cost = cost;
         this.result = result;

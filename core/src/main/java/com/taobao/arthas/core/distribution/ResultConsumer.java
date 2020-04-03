@@ -1,6 +1,6 @@
 package com.taobao.arthas.core.distribution;
 
-import com.taobao.arthas.core.command.result.ExecResult;
+import com.taobao.arthas.core.command.model.ResultModel;
 
 import java.util.List;
 
@@ -14,13 +14,13 @@ public interface ResultConsumer {
      * Append the phased result to queue
      * @param result a phased result of the command
      */
-    void appendResult(ExecResult result);
+    void appendResult(ResultModel result);
 
     /**
      * Retrieves and removes a pack of results from the head
      * @return a pack of results
      */
-    List<ExecResult> pollResults();
+    List<ResultModel> pollResults();
 
     long getLastAccessTime();
 

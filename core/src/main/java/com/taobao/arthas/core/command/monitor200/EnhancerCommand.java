@@ -8,7 +8,7 @@ import java.util.List;
 import com.taobao.arthas.core.advisor.AdviceListener;
 import com.taobao.arthas.core.advisor.Enhancer;
 import com.taobao.arthas.core.advisor.InvokeTraceable;
-import com.taobao.arthas.core.command.result.EnhancerAffectResult;
+import com.taobao.arthas.core.command.model.EnhancerAffectModel;
 import com.taobao.arthas.core.shell.cli.Completion;
 import com.taobao.arthas.core.shell.cli.CompletionUtils;
 import com.taobao.arthas.core.shell.command.AnnotatedCommand;
@@ -133,7 +133,7 @@ public abstract class EnhancerCommand extends AnnotatedCommand {
                 }
             }
 
-            process.appendResult(new EnhancerAffectResult(affect));
+            process.appendResult(new EnhancerAffectModel(affect));
         } catch (UnmodifiableClassException e) {
             logger.error(null, "error happens when enhancing class", e);
         } finally {

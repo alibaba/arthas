@@ -1,4 +1,4 @@
-package com.taobao.arthas.core.command.result;
+package com.taobao.arthas.core.command.model;
 
 import com.taobao.arthas.core.shell.term.impl.http.api.ApiState;
 
@@ -6,18 +6,18 @@ import com.taobao.arthas.core.shell.term.impl.http.api.ApiState;
  * Command async exec process result, not the command exec result
  * @author gongdewei 2020/4/2
  */
-public class CommandResult extends ExecResult {
+public class CommandModel extends ResultModel {
 
     private ApiState state;
     private String command;
     private String message;
 
-    public CommandResult(String command, ApiState state) {
+    public CommandModel(String command, ApiState state) {
         this.command = command;
         this.state = state;
     }
 
-    public CommandResult(String command, ApiState state, String message) {
+    public CommandModel(String command, ApiState state, String message) {
         this.state = state;
         this.command = command;
         this.message = message;

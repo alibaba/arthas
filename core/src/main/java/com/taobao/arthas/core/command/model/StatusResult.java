@@ -1,6 +1,6 @@
-package com.taobao.arthas.core.command.result;
+package com.taobao.arthas.core.command.model;
 
-public class StatusResult extends ExecResult {
+public class StatusResult extends ResultModel {
     private int statusCode;
     private String message;
 
@@ -16,7 +16,7 @@ public class StatusResult extends ExecResult {
         return statusCode;
     }
 
-    public ExecResult setStatusCode(int statusCode) {
+    public ResultModel setStatusCode(int statusCode) {
         this.statusCode = statusCode;
         return this;
     }
@@ -25,7 +25,7 @@ public class StatusResult extends ExecResult {
         return message;
     }
 
-    public ExecResult setMessage(String message) {
+    public ResultModel setMessage(String message) {
         this.message = message;
         return this;
     }

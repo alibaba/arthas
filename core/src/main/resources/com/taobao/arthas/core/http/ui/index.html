@@ -233,6 +233,7 @@
                         this.commandResults.shift();
                     }
                     let result = results.shift();
+                    console.log("result: ", result);
                     if (result.type == "status" && result.statusCode!=null){
                         //命令执行完毕后允许输入
                         this.setFinishedJobId(result.jobId);

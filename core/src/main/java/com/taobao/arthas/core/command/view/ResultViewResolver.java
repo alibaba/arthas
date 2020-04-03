@@ -1,6 +1,6 @@
 package com.taobao.arthas.core.command.view;
 
-import com.taobao.arthas.core.command.result.*;
+import com.taobao.arthas.core.command.model.*;
 import com.taobao.arthas.core.util.LogUtil;
 import com.taobao.middleware.logger.Logger;
 
@@ -32,13 +32,13 @@ public class ResultViewResolver {
 
     private void registerResultViews() {
         try {
-            registerView(new SessionResult(), new SessionView());
+            registerView(new SessionModel(), new SessionView());
             registerView(new StatusResult(), new StatusView());
-            registerView(new WatchResult(), new WatchView());
-            registerView(new EnhancerAffectResult(), new EnhancerAffectView());
-            registerView(new VersionResult(), new VersionView());
-            registerView(new PropertyResult(), new PropertyView());
-            registerView(new MessageResult(), new MessageView());
+            registerView(new WatchModel(), new WatchView());
+            registerView(new EnhancerAffectModel(), new EnhancerAffectView());
+            registerView(new VersionModel(), new VersionView());
+            registerView(new PropertyModel(), new PropertyView());
+            registerView(new MessageModel(), new MessageView());
         } catch (Throwable e) {
             logger.error("arthas", "register result view failed", e);
         }
@@ -52,7 +52,7 @@ public class ResultViewResolver {
 //        this.registerView(instance.getType(), view);
 //    }
 
-    public <T extends ExecResult> void registerView(T resultObject, ResultView view) {
+    public <T extends ResultModel> void registerView(T resultObject, ResultView view) {
         this.registerView(resultObject.getType(), view);
     }
 

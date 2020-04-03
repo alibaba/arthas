@@ -1,6 +1,6 @@
 package com.taobao.arthas.core.distribution.impl;
 
-import com.taobao.arthas.core.command.result.ExecResult;
+import com.taobao.arthas.core.command.model.ResultModel;
 import com.taobao.arthas.core.command.view.ResultView;
 import com.taobao.arthas.core.command.view.ResultViewResolver;
 import com.taobao.arthas.core.distribution.ResultDistributor;
@@ -22,7 +22,7 @@ public class TermResultDistributorImpl implements ResultDistributor {
     }
 
     @Override
-    public void appendResult(ExecResult result) {
+    public void appendResult(ResultModel result) {
         ResultView resultView = resultViewResolver.getResultView(result.getType());
         if (resultView != null) {
             resultView.draw(commandProcess, result);
