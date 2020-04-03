@@ -33,12 +33,14 @@ public class ResultViewResolver {
     private void registerResultViews() {
         try {
             registerView(new SessionModel(), new SessionView());
-            registerView(new StatusResult(), new StatusView());
+            registerView(new StatusModel(), new StatusView());
             registerView(new WatchModel(), new WatchView());
             registerView(new EnhancerAffectModel(), new EnhancerAffectView());
             registerView(new VersionModel(), new VersionView());
             registerView(new PropertyModel(), new PropertyView());
             registerView(new MessageModel(), new MessageView());
+            registerView(new HelpListModel(), new HelpListView());
+            registerView(new HelpDetailModel(), new HelpDetailView());
         } catch (Throwable e) {
             logger.error("arthas", "register result view failed", e);
         }

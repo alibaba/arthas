@@ -2,7 +2,7 @@ package com.taobao.arthas.core.command.basic1000;
 
 import com.taobao.arthas.core.command.Constants;
 import com.taobao.arthas.core.command.model.MessageModel;
-import com.taobao.arthas.core.command.model.StatusResult;
+import com.taobao.arthas.core.command.model.StatusModel;
 import com.taobao.arthas.core.command.model.PropertyModel;
 import com.taobao.arthas.core.shell.cli.Completion;
 import com.taobao.arthas.core.shell.cli.CompletionUtils;
@@ -52,7 +52,7 @@ public class SystemPropertyCommand extends AnnotatedCommand {
                 String value = System.getProperty(propertyName);
                 if (value == null) {
                     //process.write("There is no property with the key " + propertyName + ".\n");
-                    process.appendResult(new StatusResult(status, "There is no property with the key " + propertyName));
+                    process.appendResult(new StatusModel(status, "There is no property with the key " + propertyName));
                 } else {
                     //process.write(propertyName + "=" + value + "\n");
                     process.appendResult(new PropertyModel(propertyName, value));
@@ -67,7 +67,7 @@ public class SystemPropertyCommand extends AnnotatedCommand {
             }
         } catch (Throwable t) {
             //process.write("Error during setting system property: " + t.getMessage() + "\n");
-            process.appendResult(new StatusResult(status, "Error during setting system property: " + t.getMessage()));
+            process.appendResult(new StatusModel(status, "Error during setting system property: " + t.getMessage()));
             status = 1;
         } finally {
             process.end(status);

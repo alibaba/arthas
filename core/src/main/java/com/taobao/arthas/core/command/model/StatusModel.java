@@ -1,13 +1,13 @@
 package com.taobao.arthas.core.command.model;
 
-public class StatusResult extends ResultModel {
+public class StatusModel extends ResultModel {
     private int statusCode;
     private String message;
 
-    public StatusResult() {
+    public StatusModel() {
     }
 
-    public StatusResult(int statusCode, String message) {
+    public StatusModel(int statusCode, String message) {
         this.statusCode = statusCode;
         this.message = message;
     }

@@ -2,8 +2,10 @@ package com.taobao.arthas.core.shell.system.impl;
 
 import com.taobao.arthas.core.advisor.AdviceListener;
 import com.taobao.arthas.core.advisor.AdviceWeaver;
+import com.taobao.arthas.core.command.basic1000.HelpCommand;
+import com.taobao.arthas.core.command.model.HelpDetailModel;
 import com.taobao.arthas.core.command.model.MessageModel;
-import com.taobao.arthas.core.command.model.StatusResult;
+import com.taobao.arthas.core.command.model.StatusModel;
 import com.taobao.arthas.core.command.model.ResultModel;
 import com.taobao.arthas.core.distribution.ResultDistributor;
 import com.taobao.arthas.core.distribution.impl.TermResultDistributorImpl;
@@ -249,7 +251,7 @@ public class ProcessImpl implements Process {
 
     private synchronized boolean terminate(int exitCode, Handler<Void> completionHandler, String message) {
 
-        this.appendResult(new StatusResult(exitCode, message));
+        this.appendResult(new StatusModel(exitCode, message));
         if (processStatus != ExecStatus.TERMINATED) {
             if (process != null) {
                 processOutput.close();
@@ -350,15 +352,14 @@ public class ProcessImpl implements Process {
         CommandLine cl = null;
         try {
             if (commandContext.cli() != null) {
-                //TODO refactor help command
                 if (commandContext.cli().parse(args2, false).isAskingForHelp()) {
-                    UsageMessageFormatter formatter = new StyledUsageFormatter(Color.green);
-                    formatter.setWidth(tty.width());
-                    StringBuilder usage = new StringBuilder();
-                    commandContext.cli().usage(usage, formatter);
-                    usage.append('\n');
+                    //UsageMessageFormatter formatter = new StyledUsageFormatter(Color.green);
+                    //formatter.setWidth(tty.width());
+                    //StringBuilder usage = new StringBuilder();
+                    //commandContext.cli().usage(usage, formatter);
+                    //usage.append('\n');
                     //tty.write(usage.toString());
-                    appendResult(new MessageModel(usage.toString()));
+                    appendResult(new HelpCommand().createHelpDetailModel(commandContext));
                     terminate();
                     return;
                 }

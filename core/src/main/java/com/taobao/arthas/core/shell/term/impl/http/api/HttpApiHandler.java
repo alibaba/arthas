@@ -2,7 +2,7 @@ package com.taobao.arthas.core.shell.term.impl.http.api;
 
 import com.alibaba.fastjson.JSON;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.taobao.arthas.core.command.model.CommandModel;
+import com.taobao.arthas.core.command.model.CommandRequestModel;
 import com.taobao.arthas.core.command.model.ResultModel;
 import com.taobao.arthas.core.distribution.PackingResultDistributor;
 import com.taobao.arthas.core.distribution.ResultConsumer;
@@ -303,9 +303,9 @@ public class HttpApiHandler {
             response.setState(ApiState.SCHEDULED);
 
             //add command before exec job
-            CommandModel commandModel = new CommandModel(commandLine, response.getState());
-            commandModel.setJobId(job.id());
-            session.getResultDistributor().appendResult(commandModel);
+            CommandRequestModel commandRequestModel = new CommandRequestModel(commandLine, response.getState());
+            commandRequestModel.setJobId(job.id());
+            session.getResultDistributor().appendResult(commandRequestModel);
 
             //run job
             job.run();
@@ -315,8 +315,8 @@ public class HttpApiHandler {
         } catch (Throwable e) {
             logger.error("arthas", "Async exec command failed:"+e.getMessage()+", command:"+commandLine, e);
             response.setState(ApiState.FAILED).setMessage("Async exec command failed:"+e.getMessage());
-            CommandModel commandModel = new CommandModel(commandLine, response.getState(), response.getMessage());
-            session.getResultDistributor().appendResult(commandModel);
+            CommandRequestModel commandRequestModel = new CommandRequestModel(commandLine, response.getState(), response.getMessage());
+            session.getResultDistributor().appendResult(commandRequestModel);
             return response;
         }
     }
