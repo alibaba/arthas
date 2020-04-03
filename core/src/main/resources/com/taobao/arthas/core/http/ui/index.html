@@ -285,6 +285,9 @@
                         if (apiResponse.state == "SCHEDULED" ){
                             //设置当前任务jobId，禁止输入
                             this.setExecutingJobId(apiResponse.body.jobId);
+                        } else {
+                            //command process error or refused
+                            this.setExecutingJobId(null);
                         }
                         //this.appendCommand(apiResponse);
 
