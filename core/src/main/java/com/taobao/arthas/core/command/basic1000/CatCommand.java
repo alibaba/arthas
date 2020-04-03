@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.nio.charset.Charset;
 import java.util.List;
 
+import com.taobao.arthas.core.command.model.MessageModel;
 import com.taobao.arthas.core.shell.cli.Completion;
 import com.taobao.arthas.core.shell.cli.CompletionUtils;
 import com.taobao.arthas.core.shell.command.AnnotatedCommand;
@@ -42,13 +43,11 @@ public class CatCommand extends AnnotatedCommand {
         for (String file : files) {
             File f = new File(file);
             if (!f.exists()) {
-                process.write("cat " + file + ": No such file or directory\n");
-                process.end();
+                process.end(-1, "cat " + file + ": No such file or directory");
                 return;
             }
             if (f.isDirectory()) {
-                process.write("cat " + file + ": Is a directory\n");
-                process.end();
+                process.end(-1, "cat " + file + ": Is a directory");
                 return;
             }
         }
@@ -56,18 +55,16 @@ public class CatCommand extends AnnotatedCommand {
         for (String file : files) {
             File f = new File(file);
             if (f.length() > 1024 * 1024 * 8) {
-                process.write("cat " + file + ": Is to large, size: " + f.length() + '\n');
-                process.end();
+                process.end(-1, "cat " + file + ": Is to large, size: " + f.length());
                 return;
             }
             try {
                 String fileToString = FileUtils.readFileToString(f,
                                 encoding == null ? Charset.defaultCharset() : Charset.forName(encoding));
-                process.write(fileToString);
+                process.appendResult(new MessageModel(fileToString));
             } catch (IOException e) {
                 logger.error(null, "cat read file error. name: " + file, e);
-                process.write("cat read file error: " + e.getMessage() + '\n');
-                process.end(1);
+                process.end(1, "cat read file error: " + e.getMessage() );
                 return;
             }
         }

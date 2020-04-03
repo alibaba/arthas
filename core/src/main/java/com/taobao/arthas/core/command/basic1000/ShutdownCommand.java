@@ -1,6 +1,8 @@
 package com.taobao.arthas.core.command.basic1000;
 
 import com.taobao.arthas.core.advisor.Enhancer;
+import com.taobao.arthas.core.command.model.EnhancerAffectModel;
+import com.taobao.arthas.core.command.model.MessageModel;
 import com.taobao.arthas.core.server.ArthasBootstrap;
 import com.taobao.arthas.core.shell.ShellServer;
 import com.taobao.arthas.core.shell.command.AnnotatedCommand;
@@ -34,8 +36,10 @@ public class ShutdownCommand extends AnnotatedCommand {
             // 退出之前需要重置所有的增强类
             Instrumentation inst = process.session().getInstrumentation();
             EnhancerAffect enhancerAffect = Enhancer.reset(inst, new WildcardMatcher("*"));
-            process.write(enhancerAffect.toString()).write("\n");
-            process.write("Arthas Server is going to shut down...\n");
+            //process.write(enhancerAffect.toString()).write("\n");
+            //process.write("Arthas Server is going to shut down...\n");
+            process.appendResult(new EnhancerAffectModel(enhancerAffect));
+            process.appendResult(new MessageModel("Arthas Server is going to shut down..."));
         } catch (UnmodifiableClassException e) {
             // ignore
         } finally {
