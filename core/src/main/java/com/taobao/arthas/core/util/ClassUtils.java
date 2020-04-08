@@ -4,6 +4,8 @@ import static com.taobao.text.ui.Element.label;
 
 import java.security.CodeSource;
 
+import com.taobao.arthas.core.command.model.ClassInfoModel;
+import com.taobao.arthas.core.command.model.ClassInfoVO;
 import com.taobao.text.Decoration;
 import com.taobao.text.ui.Element;
 import com.taobao.text.ui.TableElement;
@@ -60,5 +62,36 @@ public class ClassUtils {
         }
         return table;
     }
+
+    public static ClassInfoVO createClassInfo(Class clazz, boolean detail, boolean withFields) {
+        CodeSource cs = clazz.getProtectionDomain().getCodeSource();
+        ClassInfoVO classInfo = new ClassInfoVO();
+        classInfo.setName(StringUtils.classname(clazz));
+        if (detail) {
+            classInfo.setClassInfo(StringUtils.classname(clazz));
+            classInfo.setCodeSource(ClassUtils.getCodeSource(cs));
+            classInfo.setInterface(clazz.isInterface());
+            classInfo.setAnnotation(clazz.isAnnotation());
+            classInfo.setEnum(clazz.isEnum());
+            classInfo.setAnonymousClass(clazz.isAnonymousClass());
+            classInfo.setArray(clazz.isArray());
+            classInfo.setLocalClass(clazz.isLocalClass());
+            classInfo.setMemberClass(clazz.isMemberClass());
+            classInfo.setPrimitive(clazz.isPrimitive());
+            classInfo.setSynthetic(clazz.isSynthetic());
+            classInfo.setSimpleName(clazz.getSimpleName());
+            classInfo.setModifier(StringUtils.modifier(clazz.getModifiers(), ','));
+            classInfo.setAnnotations(TypeRenderUtils.getAnnotations(clazz));
+            classInfo.setInterfaces(TypeRenderUtils.getInterfaces(clazz));
+            classInfo.setSuperClass(TypeRenderUtils.getSuperClass(clazz));
+            classInfo.setClassloader(TypeRenderUtils.getClassloader(clazz));
+            classInfo.setClassLoaderHash(StringUtils.classLoaderHash(clazz));
+        }
+        if (withFields) {
+            classInfo.setFields(TypeRenderUtils.getFields(clazz));
+        }
+        return classInfo;
+    }
+
 
 }

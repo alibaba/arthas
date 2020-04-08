@@ -42,6 +42,8 @@ public class ResultViewResolver {
             registerView(new HelpListModel(), new HelpListView());
             registerView(new HelpDetailModel(), new HelpDetailView());
             //registerView(new HistoryModel(), new HistoryView());
+            registerView(new ClassInfoModel(), new ClassInfoView());
+            registerView(new RowAffectModel(), new RowAffectView());
         } catch (Throwable e) {
             logger.error("register result view failed", e);
         }
