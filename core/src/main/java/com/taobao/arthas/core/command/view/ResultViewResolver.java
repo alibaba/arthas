@@ -1,8 +1,8 @@
 package com.taobao.arthas.core.command.view;
 
+import com.alibaba.arthas.deps.org.slf4j.Logger;
+import com.alibaba.arthas.deps.org.slf4j.LoggerFactory;
 import com.taobao.arthas.core.command.model.*;
-import com.taobao.arthas.core.util.LogUtil;
-import com.taobao.middleware.logger.Logger;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -11,7 +11,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * @author gongdewei 2020/3/27
  */
 public class ResultViewResolver {
-    private static final Logger logger = LogUtil.getArthasLogger();
+    private static final Logger logger = LoggerFactory.getLogger(ResultViewResolver.class);
 
     private Map<String, ResultView> resultViewMap = new ConcurrentHashMap<String, ResultView>();
 
@@ -43,7 +43,7 @@ public class ResultViewResolver {
             registerView(new HelpDetailModel(), new HelpDetailView());
             //registerView(new HistoryModel(), new HistoryView());
         } catch (Throwable e) {
-            logger.error("arthas", "register result view failed", e);
+            logger.error("register result view failed", e);
         }
     }
 

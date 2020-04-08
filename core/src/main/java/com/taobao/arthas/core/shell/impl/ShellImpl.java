@@ -164,7 +164,7 @@ public class ShellImpl implements Shell {
                 // sometimes an NPE will be thrown during shutdown via web-socket,
                 // this ensures the shutdown process is finished properly
                 // https://github.com/alibaba/arthas/issues/320
-                logger.error("ARTHAS", "Error writing data:", t);
+                logger.error("Error writing data:", t);
             }
             term.close();
         } else {

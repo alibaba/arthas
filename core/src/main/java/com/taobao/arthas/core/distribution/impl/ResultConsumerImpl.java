@@ -1,10 +1,10 @@
 package com.taobao.arthas.core.distribution.impl;
 
+import com.alibaba.arthas.deps.org.slf4j.Logger;
+import com.alibaba.arthas.deps.org.slf4j.LoggerFactory;
 import com.alibaba.fastjson.JSON;
 import com.taobao.arthas.core.command.model.ResultModel;
 import com.taobao.arthas.core.distribution.ResultConsumer;
-import com.taobao.arthas.core.util.LogUtil;
-import com.taobao.middleware.logger.Logger;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -18,13 +18,13 @@ import java.util.concurrent.locks.ReentrantLock;
  * @author gongdewei 2020/3/27
  */
 public class ResultConsumerImpl implements ResultConsumer {
-    private static final Logger logger = LogUtil.getArthasLogger();
+    private static final Logger logger = LoggerFactory.getLogger(ResultConsumerImpl.class);
     private BlockingQueue<ResultModel> resultQueue = new ArrayBlockingQueue<ResultModel>(500);
     private long lastAccessTime;
     private volatile boolean polling;
     private ReentrantLock lock = new ReentrantLock();
     private int resultSizeLimit = 100;
-    private long pollTimeLimit = 10*1000;
+    private long pollTimeLimit = 10 * 1000;
     private String consumerId;
 
     public ResultConsumerImpl() {
@@ -58,11 +58,11 @@ public class ResultConsumerImpl implements ResultConsumer {
                     if (aResult != null) {
                         sendingResults.add(aResult);
                         //是否为第一次获取到数据
-                        if (firstResultTime == 0){
+                        if (firstResultTime == 0) {
                             firstResultTime = System.currentTimeMillis();
                         }
                     } else {
-                        if (firstResultTime > 0){
+                        if (firstResultTime > 0) {
                             //获取到部分数据后，队列已经取完，计算发送延时时间
                             sendingDelay = System.currentTimeMillis() - firstResultTime;
                         }

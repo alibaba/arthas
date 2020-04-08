@@ -1,5 +1,7 @@
 package com.taobao.arthas.core.shell.term.impl.http.api;
 
+import com.alibaba.arthas.deps.org.slf4j.Logger;
+import com.alibaba.arthas.deps.org.slf4j.LoggerFactory;
 import com.alibaba.fastjson.JSON;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.taobao.arthas.core.command.model.CommandRequestModel;
@@ -24,10 +26,7 @@ import com.taobao.arthas.core.shell.system.impl.InternalCommandManager;
 import com.taobao.arthas.core.shell.system.impl.JobControllerImpl;
 import com.taobao.arthas.core.shell.term.SignalHandler;
 import com.taobao.arthas.core.shell.term.Term;
-import com.taobao.arthas.core.util.FileUtils;
-import com.taobao.arthas.core.util.LogUtil;
 import com.taobao.arthas.core.util.StringUtils;
-import com.taobao.middleware.logger.Logger;
 import io.netty.buffer.ByteBuf;
 import io.netty.handler.codec.http.*;
 import io.netty.util.CharsetUtil;
@@ -46,7 +45,7 @@ import java.util.concurrent.atomic.AtomicInteger;
  */
 public class HttpApiHandler {
 
-    private static final Logger logger = LogUtil.getArthasLogger();
+    private static final Logger logger = LoggerFactory.getLogger(HttpApiHandler.class);
     private final SessionManager sessionManager;
     private final AtomicInteger requestIdGenerator = new AtomicInteger(0);
     private static HttpApiHandler instance;
@@ -89,7 +88,7 @@ public class HttpApiHandler {
             }
         } catch (Throwable e) {
             result = createResponse(ApiState.FAILED, "Process request error: " + e.getMessage());
-            logger.error("arthas", "arthas process http api request error: " + request.uri() + ", request body: " + requestBody, e);
+            logger.error("arthas process http api request error: " + request.uri() + ", request body: " + requestBody, e);
         }
         if (result == null) {
             result = createResponse(ApiState.FAILED, "The request was not processed");
@@ -141,7 +140,7 @@ public class HttpApiHandler {
             }
             Session session = sessionManager.getSession(sessionId);
             if (session == null) {
-                throw new ApiException("session not found: "+sessionId);
+                throw new ApiException("session not found: " + sessionId);
             }
             sessionManager.updateAccessTime(session);
 
@@ -152,10 +151,10 @@ public class HttpApiHandler {
             }
 
         } catch (ApiException e) {
-            logger.info("arthas", e.getMessage(), e);
+            logger.info(e.getMessage(), e);
             return createResponse(ApiState.FAILED, e.getMessage());
         } catch (Throwable e) {
-            logger.error("arthas", "process http api request failed: " + e.getMessage(), e);
+            logger.error("process http api request failed: " + e.getMessage(), e);
             return createResponse(ApiState.FAILED, "process http api request failed: " + e.getMessage());
         }
 
@@ -261,15 +260,15 @@ public class HttpApiHandler {
 
             response.setState(ApiState.SCHEDULED);
         } catch (Throwable e) {
-            logger.error("arthas", "Exec command failed:"+e.getMessage()+", command:"+commandLine, e);
-            response.setState(ApiState.FAILED).setMessage("Exec command failed:"+e.getMessage());
+            logger.error("Exec command failed:" + e.getMessage() + ", command:" + commandLine, e);
+            response.setState(ApiState.FAILED).setMessage("Exec command failed:" + e.getMessage());
             return response;
         }
 
         //wait for job completed or timeout
         boolean timeExpired = !waitForJob(job);
         if (timeExpired) {
-            logger.warn("arthas", "Job is exceeded time limit, force interrupt it, jobId: {}", job.id());
+            logger.warn("Job is exceeded time limit, force interrupt it, jobId: {}", job.id());
             job.interrupt();
         }
 
@@ -318,8 +317,8 @@ public class HttpApiHandler {
             return response;
 
         } catch (Throwable e) {
-            logger.error("arthas", "Async exec command failed:"+e.getMessage()+", command:"+commandLine, e);
-            response.setState(ApiState.FAILED).setMessage("Async exec command failed:"+e.getMessage());
+            logger.error("Async exec command failed:" + e.getMessage() + ", command:" + commandLine, e);
+            response.setState(ApiState.FAILED).setMessage("Async exec command failed:" + e.getMessage());
             CommandRequestModel commandRequestModel = new CommandRequestModel(commandLine, response.getState(), response.getMessage());
             session.getResultDistributor().appendResult(commandRequestModel);
             return response;
