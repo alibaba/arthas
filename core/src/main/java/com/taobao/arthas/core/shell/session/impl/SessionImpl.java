@@ -115,4 +115,9 @@ public class SessionImpl implements Session {
     public SharingResultDistributor getResultDistributor() {
         return (SharingResultDistributor) data.get(RESULT_DISTRIBUTOR);
     }
+
+    @Override
+    public boolean isTty() {
+        return get(TTY) != null;
+    }
 }

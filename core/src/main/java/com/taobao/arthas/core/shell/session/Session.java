@@ -147,4 +147,9 @@ public interface Session {
      * @return
      */
     SharingResultDistributor getResultDistributor();
+
+    /**
+     * Whether the session is tty term
+     */
+    boolean isTty();
 }

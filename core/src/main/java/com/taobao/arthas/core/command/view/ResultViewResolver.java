@@ -41,6 +41,7 @@ public class ResultViewResolver {
             registerView(new MessageModel(), new MessageView());
             registerView(new HelpListModel(), new HelpListView());
             registerView(new HelpDetailModel(), new HelpDetailView());
+            //registerView(new HistoryModel(), new HistoryView());
         } catch (Throwable e) {
             logger.error("arthas", "register result view failed", e);
         }

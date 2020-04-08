@@ -14,6 +14,8 @@ import com.taobao.arthas.core.shell.cli.CliToken;
 import com.taobao.arthas.core.shell.cli.CliTokens;
 import com.taobao.arthas.core.shell.cli.Completion;
 import com.taobao.arthas.core.shell.handlers.Handler;
+import com.taobao.arthas.core.shell.history.HistoryManager;
+import com.taobao.arthas.core.shell.history.impl.HistoryManagerImpl;
 import com.taobao.arthas.core.shell.session.Session;
 import com.taobao.arthas.core.shell.session.SessionManager;
 import com.taobao.arthas.core.shell.system.Job;
@@ -22,6 +24,7 @@ import com.taobao.arthas.core.shell.system.impl.InternalCommandManager;
 import com.taobao.arthas.core.shell.system.impl.JobControllerImpl;
 import com.taobao.arthas.core.shell.term.SignalHandler;
 import com.taobao.arthas.core.shell.term.Term;
+import com.taobao.arthas.core.util.FileUtils;
 import com.taobao.arthas.core.util.LogUtil;
 import com.taobao.arthas.core.util.StringUtils;
 import com.taobao.middleware.logger.Logger;
@@ -49,6 +52,7 @@ public class HttpApiHandler {
     private static HttpApiHandler instance;
     private final InternalCommandManager commandManager;
     private final JobControllerImpl jobController;
+    private final HistoryManager historyManager;
 
     public static HttpApiHandler getInstance() {
         if (instance == null) {
@@ -63,6 +67,7 @@ public class HttpApiHandler {
         sessionManager = ArthasBootstrap.getInstance().getSessionManager();
         commandManager = sessionManager.getCommandManager();
         jobController = sessionManager.getJobController();
+        historyManager = HistoryManagerImpl.getInstance();
     }
 
     public HttpResponse handle(FullHttpRequest request) throws Exception {
@@ -371,6 +376,8 @@ public class HttpApiHandler {
     }
 
     private Job createJob(String line, Session session, ResultDistributor resultDistributor) {
+        historyManager.addHistory(line);
+        historyManager.saveHistory();
         return createJob(CliTokens.tokenize(line), session, resultDistributor);
     }
 
