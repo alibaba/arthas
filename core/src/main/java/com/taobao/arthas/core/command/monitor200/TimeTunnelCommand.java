@@ -1,5 +1,7 @@
 package com.taobao.arthas.core.command.monitor200;
 
+import com.alibaba.arthas.deps.org.slf4j.Logger;
+import com.alibaba.arthas.deps.org.slf4j.LoggerFactory;
 import com.taobao.arthas.core.advisor.Advice;
 import com.taobao.arthas.core.advisor.AdviceListener;
 import com.taobao.arthas.core.advisor.ArthasMethod;
@@ -20,7 +22,6 @@ import com.taobao.middleware.cli.annotations.Name;
 import com.taobao.middleware.cli.annotations.Option;
 import com.taobao.middleware.cli.annotations.Summary;
 import com.taobao.middleware.cli.annotations.Argument;
-import com.taobao.middleware.logger.Logger;
 import com.taobao.text.ui.TableElement;
 import com.taobao.text.util.RenderUtil;
 
@@ -79,7 +80,7 @@ public class TimeTunnelCommand extends EnhancerCommand {
     private int numberOfLimit = 100;
     private int replayTimes = 1;
     private long replayInterval = 1000L;
-    private static final Logger logger = LogUtil.getArthasLogger();
+    private static final Logger logger = LoggerFactory.getLogger(TimeTunnelCommand.class);
 
     @Argument(index = 0, argName = "class-pattern", required = false)
     @Description("Path and classname of Pattern Matching")
@@ -365,7 +366,7 @@ public class TimeTunnelCommand extends EnhancerCommand {
             affect.rCnt(1);
         } catch (ExpressException e) {
             logger.warn("tt failed.", e);
-            process.write(e.getMessage() + ", visit " + LogUtil.LOGGER_FILE + " for more detail\n");
+            process.write(e.getMessage() + ", visit " + LogUtil.loggingFile() + " for more detail\n");
         } finally {
             process.write(affect.toString()).write("\n");
             process.end();
@@ -402,8 +403,8 @@ public class TimeTunnelCommand extends EnhancerCommand {
 
             affect.rCnt(matchingTimeSegmentMap.size());
         } catch (ExpressException e) {
-            LogUtil.getArthasLogger().warn("tt failed.", e);
-            process.write(e.getMessage() + ", visit " + LogUtil.LOGGER_FILE + " for more detail\n");
+            logger.warn("tt failed.", e);
+            process.write(e.getMessage() + ", visit " + LogUtil.loggingFile() + " for more detail\n");
         } finally {
             process.write(affect.toString()).write("\n");
             process.end();

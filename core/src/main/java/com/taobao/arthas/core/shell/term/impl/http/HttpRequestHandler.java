@@ -6,10 +6,11 @@ import java.io.InputStream;
 import java.net.URI;
 import java.net.URL;
 
+import com.alibaba.arthas.deps.org.slf4j.Logger;
+import com.alibaba.arthas.deps.org.slf4j.LoggerFactory;
 import com.taobao.arthas.common.IOUtils;
 import com.taobao.arthas.core.shell.term.impl.http.api.HttpApiHandler;
-import com.taobao.arthas.core.util.LogUtil;
-import com.taobao.middleware.logger.Logger;
+import com.taobao.arthas.core.shell.term.impl.httptelnet.HttpTelnetTermServer;
 
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelFutureListener;
@@ -36,7 +37,7 @@ import static com.taobao.arthas.core.util.HttpUtils.createResponse;
  * @author gongdewei 2020-03-18
  */
 public class HttpRequestHandler extends SimpleChannelInboundHandler<FullHttpRequest> {
-    private static final Logger logger = LogUtil.getArthasLogger();
+    private static final Logger logger = LoggerFactory.getLogger(HttpTelnetTermServer.class);
 
     private final String wsUri;
 
@@ -100,7 +101,7 @@ public class HttpRequestHandler extends SimpleChannelInboundHandler<FullHttpRequ
                     response = createResponse(request, HttpResponseStatus.NOT_FOUND, "Not found");
                 }
             } catch (Throwable e) {
-                logger.error("arthas", "arthas process http request error: " + request.uri(), e);
+                logger.error("arthas process http request error: " + request.uri(), e);
             } finally {
                 //If it is null, an error may occur
                 if (response == null){

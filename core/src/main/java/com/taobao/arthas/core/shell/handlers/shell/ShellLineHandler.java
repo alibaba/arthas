@@ -41,7 +41,7 @@ public class ShellLineHandler implements Handler<String> {
         }
 
         String name = first.value();
-        if (name.equals("exit") || name.equals("logout") || name.equals("quit")) {
+        if (name.equals("exit") || name.equals("logout") || name.equals("q") || name.equals("quit")) {
             handleExit();
             return;
         } else if (name.equals("jobs")) {

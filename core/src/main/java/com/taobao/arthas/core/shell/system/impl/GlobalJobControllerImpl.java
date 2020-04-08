@@ -1,5 +1,7 @@
 package com.taobao.arthas.core.shell.system.impl;
 
+import com.alibaba.arthas.deps.org.slf4j.Logger;
+import com.alibaba.arthas.deps.org.slf4j.LoggerFactory;
 import com.taobao.arthas.core.GlobalOptions;
 import com.taobao.arthas.core.distribution.ResultDistributor;
 import com.taobao.arthas.core.shell.cli.CliToken;
@@ -8,8 +10,6 @@ import com.taobao.arthas.core.shell.session.Session;
 import com.taobao.arthas.core.shell.system.Job;
 import com.taobao.arthas.core.shell.system.JobListener;
 import com.taobao.arthas.core.shell.term.Term;
-import com.taobao.arthas.core.util.LogUtil;
-import com.taobao.middleware.logger.Logger;
 
 import java.util.*;
 import java.util.concurrent.TimeUnit;
@@ -23,7 +23,7 @@ public class GlobalJobControllerImpl extends JobControllerImpl {
 
     private Timer timer = new Timer("job-timeout", true);
     private Map<Integer, TimerTask> jobTimeoutTaskMap = new HashMap<Integer, TimerTask>();
-    private static final Logger logger = LogUtil.getArthasLogger();
+    private static final Logger logger = LoggerFactory.getLogger(GlobalJobControllerImpl.class);
 
     @Override
     public void close(final Handler<Void> completionHandler) {

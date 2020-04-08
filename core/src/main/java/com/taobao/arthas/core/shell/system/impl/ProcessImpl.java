@@ -1,12 +1,12 @@
 package com.taobao.arthas.core.shell.system.impl;
 
+import com.alibaba.arthas.deps.org.slf4j.Logger;
+import com.alibaba.arthas.deps.org.slf4j.LoggerFactory;
 import com.taobao.arthas.core.advisor.AdviceListener;
 import com.taobao.arthas.core.advisor.AdviceWeaver;
 import com.taobao.arthas.core.command.basic1000.HelpCommand;
-import com.taobao.arthas.core.command.model.HelpDetailModel;
-import com.taobao.arthas.core.command.model.MessageModel;
-import com.taobao.arthas.core.command.model.StatusModel;
 import com.taobao.arthas.core.command.model.ResultModel;
+import com.taobao.arthas.core.command.model.StatusModel;
 import com.taobao.arthas.core.distribution.ResultDistributor;
 import com.taobao.arthas.core.distribution.impl.TermResultDistributorImpl;
 import com.taobao.arthas.core.server.ArthasBootstrap;
@@ -20,14 +20,8 @@ import com.taobao.arthas.core.shell.session.Session;
 import com.taobao.arthas.core.shell.system.ExecStatus;
 import com.taobao.arthas.core.shell.system.Process;
 import com.taobao.arthas.core.shell.term.Tty;
-import com.taobao.arthas.core.util.LogUtil;
-import com.taobao.arthas.core.util.usage.StyledUsageFormatter;
 import com.taobao.middleware.cli.CLIException;
 import com.taobao.middleware.cli.CommandLine;
-import com.taobao.middleware.cli.UsageMessageFormatter;
-import com.taobao.middleware.logger.Logger;
-import com.taobao.text.Color;
-
 import io.termd.core.function.Function;
 
 import java.util.Date;
@@ -41,7 +35,7 @@ import java.util.concurrent.atomic.AtomicInteger;
  */
 public class ProcessImpl implements Process {
 
-    private static final Logger logger = LogUtil.getArthasLogger();
+    private static final Logger logger = LoggerFactory.getLogger(ProcessImpl.class);
 
     private Command commandContext;
     private Handler<CommandProcess> handler;
@@ -250,8 +244,6 @@ public class ProcessImpl implements Process {
     }
 
     private synchronized boolean terminate(int exitCode, Handler<Void> completionHandler, String message) {
-
-        this.appendResult(new StatusModel(exitCode, message));
         if (processStatus != ExecStatus.TERMINATED) {
             if (process != null) {
                 processOutput.close();
@@ -260,6 +252,8 @@ public class ProcessImpl implements Process {
             if (process != null) {
                 process.unregister();
             }
+            //add status message
+            this.appendResult(new StatusModel(exitCode, message));
             return true;
         } else {
             return false;
@@ -353,12 +347,6 @@ public class ProcessImpl implements Process {
         try {
             if (commandContext.cli() != null) {
                 if (commandContext.cli().parse(args2, false).isAskingForHelp()) {
-                    //UsageMessageFormatter formatter = new StyledUsageFormatter(Color.green);
-                    //formatter.setWidth(tty.width());
-                    //StringBuilder usage = new StringBuilder();
-                    //commandContext.cli().usage(usage, formatter);
-                    //usage.append('\n');
-                    //tty.write(usage.toString());
                     appendResult(new HelpCommand().createHelpDetailModel(commandContext));
                     terminate();
                     return;
@@ -394,7 +382,7 @@ public class ProcessImpl implements Process {
             try {
                 handler.handle(process);
             } catch (Throwable t) {
-                logger.error(null, "Error during processing the command:", t);
+                logger.error("Error during processing the command:", t);
                 process.end(1, "Error during processing the command: " + t.getMessage() );
             }
         }

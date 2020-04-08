@@ -1,6 +1,10 @@
 package com.taobao.arthas.core.server;
 
+import com.alibaba.arthas.deps.ch.qos.logback.classic.LoggerContext;
+import com.alibaba.arthas.deps.org.slf4j.Logger;
+import com.alibaba.arthas.deps.org.slf4j.LoggerFactory;
 import com.alibaba.arthas.tunnel.client.TunnelClient;
+import com.taobao.arthas.common.AnsiLog;
 import com.taobao.arthas.common.PidUtils;
 import com.taobao.arthas.core.advisor.AdviceWeaver;
 import com.taobao.arthas.core.command.BuiltinCommandPack;
@@ -21,7 +25,6 @@ import com.taobao.arthas.core.shell.session.impl.SessionManagerImpl;
 import com.taobao.arthas.core.shell.term.impl.HttpTermServer;
 import com.taobao.arthas.core.shell.term.impl.httptelnet.HttpTelnetTermServer;
 import com.taobao.arthas.core.util.*;
-import com.taobao.middleware.logger.Logger;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.util.concurrent.EventExecutorGroup;
@@ -47,15 +50,17 @@ import java.util.concurrent.atomic.AtomicBoolean;
  * @author gongdewei 2020-03-25
  */
 public class ArthasBootstrap {
+    public static final String ARTHAS_HOME_PROPERTY = "arthas.home";
+    private static String ARTHAS_SHOME = null;
 
     public static final String CONFIG_NAME_PROPERTY  = "arthas.config.name";
     public static final String CONFIG_LOCATION_PROPERTY = "arthas.config.location";
     public static final String CONFIG_OVERRIDE_ALL= "arthas.config.overrideAll";
 
-    private static Logger logger = LogUtil.getArthasLogger();
     private static ArthasBootstrap arthasBootstrap;
 
     private ArthasEnvironment arthasEnvironment;
+    private Configure configure;
 
     private AtomicBoolean isBindRef = new AtomicBoolean(false);
     private Instrumentation instrumentation;
@@ -67,12 +72,24 @@ public class ArthasBootstrap {
 
     private File arthasOutputDir;
 
-    private ArthasBootstrap(Instrumentation instrumentation) {
+    private static LoggerContext loggerContext;
+
+    private ArthasBootstrap(Instrumentation instrumentation, String args) throws Throwable {
         this.instrumentation = instrumentation;
 
         String outputPath = System.getProperty("arthas.output.dir", "arthas-output");
         arthasOutputDir = new File(outputPath);
         arthasOutputDir.mkdirs();
+
+        // 1. initSpy()
+        initSpy();
+        // 2. ArthasEnvironment
+        initArthasEnvironment(args);
+        // 3. init logger
+        loggerContext = LogUtil.initLooger(arthasEnvironment);
+
+        // 4. start agent server
+        bind(configure);
 
         executorService = Executors.newCachedThreadPool(new ThreadFactory() {
             @Override
@@ -106,9 +123,7 @@ public class ArthasBootstrap {
         Spy.init(AdviceWeaver.class.getClassLoader(), onBefore, onReturn, onThrows, beforeInvoke, afterInvoke, throwInvoke);
     }
     
-    public void bind(String args) throws Throwable {
-        initSpy();
-
+    private void initArthasEnvironment(String args) throws IOException {
         if (arthasEnvironment == null) {
             arthasEnvironment = new ArthasEnvironment();
         }
@@ -126,16 +141,33 @@ public class ArthasBootstrap {
         for (Entry<String, String> entry : argsMap.entrySet()) {
             mapWithPrefix.put("arthas." + entry.getKey(), entry.getValue());
         }
+        mapWithPrefix.put(ARTHAS_HOME_PROPERTY, arthasHome());
 
         MapPropertySource mapPropertySource = new MapPropertySource("args", mapWithPrefix);
         arthasEnvironment.addFirst(mapPropertySource);
 
         tryToLoadArthasProperties();
 
-        Configure configure = new Configure();
+        configure = new Configure();
         BinderUtils.inject(arthasEnvironment, configure);
+    }
 
-        bind(configure);
+    private String arthasHome() {
+        if (ARTHAS_SHOME != null) {
+            return ARTHAS_SHOME;
+        }
+        CodeSource codeSource = ArthasBootstrap.class.getProtectionDomain().getCodeSource();
+        if (codeSource != null) {
+            try {
+                ARTHAS_SHOME = new File(codeSource.getLocation().toURI().getSchemeSpecificPart()).getParentFile().getAbsolutePath();
+            } catch (Throwable e) {
+                AnsiLog.error("try to load arthas.properties error", e);
+            }
+        }
+        if (ARTHAS_SHOME == null) {
+            ARTHAS_SHOME = new File("").getAbsolutePath();
+        }
+        return ARTHAS_SHOME;
     }
 
     // try to load arthas.properties
@@ -149,14 +181,7 @@ public class ArthasBootstrap {
         }
 
         if (location == null) {
-            CodeSource codeSource = ArthasBootstrap.class.getProtectionDomain().getCodeSource();
-            if (codeSource != null) {
-                try {
-                    location = new File(codeSource.getLocation().toURI().getSchemeSpecificPart()).getAbsolutePath();
-                } catch (Throwable e) {
-                    logger.error("arthas", "can not find libasyncProfiler so", e);
-                }
-            }
+            location = arthasHome();
         }
 
         String configName = "arthas";
@@ -176,6 +201,8 @@ public class ArthasBootstrap {
             boolean overrideAll = false;
             if (arthasEnvironment.containsProperty(CONFIG_OVERRIDE_ALL)) {
                 overrideAll = arthasEnvironment.getRequiredProperty(CONFIG_OVERRIDE_ALL, boolean.class);
+            } else {
+                overrideAll = Boolean.parseBoolean(properties.getProperty(CONFIG_OVERRIDE_ALL, "false"));
             }
 
             PropertySource propertySource = new PropertiesPropertySource(location, properties);
@@ -221,7 +248,7 @@ public class ArthasBootstrap {
                 }
             }
         } catch (Throwable t) {
-            logger.error("arthas", "start tunnel client error", t);
+            logger().error("start tunnel client error", t);
         }
 
         try {
@@ -249,14 +276,13 @@ public class ArthasBootstrap {
                 shellServer.registerTermServer(new HttpTelnetTermServer(configure.getIp(), configure.getTelnetPort(),
                                 options.getConnectionTimeout(), workerGroup));
             } else {
-                logger.info("arthas", "telnet port is {}, skip bind telnet server.", configure.getTelnetPort());
+                logger().info("telnet port is {}, skip bind telnet server.", configure.getTelnetPort());
             }
-
             if (configure.getHttpPort() > 0) {
                 shellServer.registerTermServer(new HttpTermServer(configure.getIp(), configure.getHttpPort(),
                                 options.getConnectionTimeout(), workerGroup));
             } else {
-                logger.info("arthas", "http port is {}, skip bind http server.", configure.getHttpPort());
+                logger().info("http port is {}, skip bind http server.", configure.getHttpPort());
             }
 
             for (CommandResolver resolver : resolvers) {
@@ -268,19 +294,19 @@ public class ArthasBootstrap {
             //http api session manager
             sessionManager = new SessionManagerImpl(options, this, shellServer.getCommandManager(), shellServer.getJobController());
 
-            logger.info("arthas", "as-server listening on network={};telnet={};http={};timeout={};", configure.getIp(),
+            logger().info("as-server listening on network={};telnet={};http={};timeout={};", configure.getIp(),
                     configure.getTelnetPort(), configure.getHttpPort(), options.getConnectionTimeout());
 
             // 异步回报启动次数
             if (configure.getStatUrl() != null) {
-                logger.info("arthas", "arthas stat url: {}", configure.getStatUrl());
+                logger().info("arthas stat url: {}", configure.getStatUrl());
             }
             UserStatUtil.setStatUrl(configure.getStatUrl());
             UserStatUtil.arthasStart();
 
-            logger.info("arthas", "as-server started in {} ms", System.currentTimeMillis() - start );
+            logger().info("as-server started in {} ms", System.currentTimeMillis() - start );
         } catch (Throwable e) {
-            logger.error(null, "Error during bind to port " + configure.getTelnetPort(), e);
+            logger().error("Error during bind to port " + configure.getTelnetPort(), e);
             if (shellServer != null) {
                 shellServer.close();
             }
@@ -302,7 +328,7 @@ public class ArthasBootstrap {
             try {
                 tunnelClient.stop();
             } catch (Throwable e) {
-                logger.error("arthas", "stop tunnel client error", e);
+                logger().error("arthas", "stop tunnel client error", e);
             }
         }
         executorService.shutdownNow();
@@ -314,9 +340,10 @@ public class ArthasBootstrap {
         } catch (Throwable t) {
             // ignore
         }
-        logger.info("as-server destroy completed.");
-        // see https://github.com/alibaba/arthas/issues/319
-        LogUtil.closeResultLogger();
+        logger().info("as-server destroy completed.");
+        if (loggerContext != null) {
+            loggerContext.stop();
+        }
     }
 
     /**
@@ -324,10 +351,11 @@ public class ArthasBootstrap {
      *
      * @param instrumentation JVM增强
      * @return ArthasServer单例
+     * @throws Throwable
      */
-    public synchronized static ArthasBootstrap getInstance(Instrumentation instrumentation) {
+    public synchronized static ArthasBootstrap getInstance(Instrumentation instrumentation, String args) throws Throwable {
         if (arthasBootstrap == null) {
-            arthasBootstrap = new ArthasBootstrap(instrumentation);
+            arthasBootstrap = new ArthasBootstrap(instrumentation, args);
         }
         return arthasBootstrap;
     }
@@ -355,9 +383,9 @@ public class ArthasBootstrap {
             Method agentDestroyMethod = spyClass.getMethod("destroy");
             agentDestroyMethod.invoke(null);
         } catch (ClassNotFoundException e) {
-            logger.error(null, "Spy load failed from ArthasClassLoader, which should not happen", e);
+            logger().error("Spy load failed from ArthasClassLoader, which should not happen", e);
         } catch (Exception e) {
-            logger.error(null, "Spy destroy failed: ", e);
+            logger().error("Spy destroy failed: ", e);
         }
     }
 
@@ -371,5 +399,9 @@ public class ArthasBootstrap {
 
     public SessionManager getSessionManager() {
         return sessionManager;
+    }
+
+    private Logger logger() {
+        return LoggerFactory.getLogger(this.getClass());
     }
 }

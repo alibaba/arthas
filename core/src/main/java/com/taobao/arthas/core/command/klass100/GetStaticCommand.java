@@ -1,11 +1,12 @@
 package com.taobao.arthas.core.command.klass100;
 
+import com.alibaba.arthas.deps.org.slf4j.Logger;
+import com.alibaba.arthas.deps.org.slf4j.LoggerFactory;
 import com.taobao.arthas.core.command.Constants;
 import com.taobao.arthas.core.command.express.ExpressException;
 import com.taobao.arthas.core.command.express.ExpressFactory;
 import com.taobao.arthas.core.shell.command.AnnotatedCommand;
 import com.taobao.arthas.core.shell.command.CommandProcess;
-import com.taobao.arthas.core.util.LogUtil;
 import com.taobao.arthas.core.util.SearchUtils;
 import com.taobao.arthas.core.util.StringUtils;
 import com.taobao.arthas.core.util.TypeRenderUtils;
@@ -19,7 +20,6 @@ import com.taobao.middleware.cli.annotations.Description;
 import com.taobao.middleware.cli.annotations.Name;
 import com.taobao.middleware.cli.annotations.Option;
 import com.taobao.middleware.cli.annotations.Summary;
-import com.taobao.middleware.logger.Logger;
 import com.taobao.text.Color;
 import com.taobao.text.Decoration;
 import com.taobao.text.ui.Element;
@@ -46,7 +46,7 @@ import static com.taobao.text.ui.Element.label;
              Constants.WIKI + Constants.WIKI_HOME + "getstatic")
 public class GetStaticCommand extends AnnotatedCommand {
 
-    private static final Logger logger = LogUtil.getArthasLogger();
+    private static final Logger logger = LoggerFactory.getLogger(GetStaticCommand.class);
 
     private String classPattern;
     private String fieldPattern;
@@ -138,13 +138,11 @@ public class GetStaticCommand extends AnnotatedCommand {
 
                 affect.rCnt(1);
             } catch (IllegalAccessException e) {
-                logger.warn("getstatic: failed to get static value, class: " + clazz + ", field: " + field.getName(),
-                            e);
+                logger.warn("getstatic: failed to get static value, class: {}, field: {} ", clazz, field.getName(), e);
                 process.write("Failed to get static, exception message: " + e.getMessage()
                               + ", please check $HOME/logs/arthas/arthas.log for more details. \n");
             } catch (ExpressException e) {
-                logger.warn("getstatic: failed to get express value, class: " + clazz + ", field: " + field.getName()
-                            + ", express: " + express, e);
+                logger.warn("getstatic: failed to get express value, class: {}, field: {}, express: {}", clazz, field.getName(), express, e);
                 process.write("Failed to get static, exception message: " + e.getMessage()
                               + ", please check $HOME/logs/arthas/arthas.log for more details. \n");
             } finally {

@@ -1,5 +1,7 @@
 package com.taobao.arthas.core.shell.impl;
 
+import com.alibaba.arthas.deps.org.slf4j.Logger;
+import com.alibaba.arthas.deps.org.slf4j.LoggerFactory;
 import com.taobao.arthas.core.shell.Shell;
 import com.taobao.arthas.core.shell.ShellServer;
 import com.taobao.arthas.core.shell.cli.CliToken;
@@ -18,8 +20,6 @@ import com.taobao.arthas.core.shell.term.Term;
 import com.taobao.arthas.core.shell.term.impl.TermImpl;
 import com.taobao.arthas.core.util.Constants;
 import com.taobao.arthas.core.util.FileUtils;
-import com.taobao.arthas.core.util.LogUtil;
-import com.taobao.middleware.logger.Logger;
 
 import java.io.File;
 import java.lang.instrument.Instrumentation;
@@ -35,7 +35,7 @@ import java.util.UUID;
  */
 public class ShellImpl implements Shell {
 
-    private static final Logger logger = LogUtil.getArthasLogger();
+    private static final Logger logger = LoggerFactory.getLogger(ShellImpl.class);
 
     private JobControllerImpl jobController;
     final String id;

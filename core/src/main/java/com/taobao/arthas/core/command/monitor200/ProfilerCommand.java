@@ -11,6 +11,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import com.alibaba.arthas.deps.org.slf4j.Logger;
+import com.alibaba.arthas.deps.org.slf4j.LoggerFactory;
 import com.taobao.arthas.common.OSUtils;
 import com.taobao.arthas.core.command.Constants;
 import com.taobao.arthas.core.shell.cli.CliToken;
@@ -18,14 +20,12 @@ import com.taobao.arthas.core.shell.cli.Completion;
 import com.taobao.arthas.core.shell.cli.CompletionUtils;
 import com.taobao.arthas.core.shell.command.AnnotatedCommand;
 import com.taobao.arthas.core.shell.command.CommandProcess;
-import com.taobao.arthas.core.util.LogUtil;
 import com.taobao.middleware.cli.annotations.Argument;
 import com.taobao.middleware.cli.annotations.DefaultValue;
 import com.taobao.middleware.cli.annotations.Description;
 import com.taobao.middleware.cli.annotations.Name;
 import com.taobao.middleware.cli.annotations.Option;
 import com.taobao.middleware.cli.annotations.Summary;
-import com.taobao.middleware.logger.Logger;
 
 import one.profiler.AsyncProfiler;
 import one.profiler.Counter;
@@ -58,7 +58,7 @@ import one.profiler.Counter;
         + Constants.WIKI + Constants.WIKI_HOME + "profiler")
 //@formatter:on
 public class ProfilerCommand extends AnnotatedCommand {
-    private static final Logger logger = LogUtil.getArthasLogger();
+    private static final Logger logger = LoggerFactory.getLogger(ProfilerCommand.class);
 
     private String action;
     private String actionArg;
@@ -101,6 +101,9 @@ public class ProfilerCommand extends AnnotatedCommand {
         }
         if (OSUtils.isLinux()) {
             profierSoPath = "async-profiler/libasyncProfiler-linux-x64.so";
+            if (OSUtils.isArm()) {
+                profierSoPath = "async-profiler/libasyncProfiler-linux-arm.so";
+            }
         }
 
         if (profierSoPath != null) {
@@ -113,7 +116,7 @@ public class ProfilerCommand extends AnnotatedCommand {
                         libPath = soFile.getAbsolutePath();
                     }
                 } catch (Throwable e) {
-                    logger.error("arthas", "can not find libasyncProfiler so", e);
+                    logger.error("can not find libasyncProfiler so", e);
                 }
             }
         }
@@ -332,7 +335,7 @@ public class ProfilerCommand extends AnnotatedCommand {
             }
         } catch (Throwable e) {
             process.write(e.getMessage()).write("\n");
-            logger.error("arthas", "AsyncProfiler error", e);
+            logger.error("AsyncProfiler error", e);
             status = 1;
         } finally {
             process.end(status);

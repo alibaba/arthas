@@ -130,6 +130,16 @@ In the `appenders` section:
 update logger level success.
 ```
 
+#### 指定classloader更新 logger level
+
+默认情况下，logger命令会在SystemClassloader下执行，如果应用是传统的`war`应用，或者spring boot fat jar启动的应用，那么需要指定classloader。
+
+可以先用 `sc -d yourClassName` 来查看具体的 classloader hashcode，然后在更新level时指定classloader：
+
+```bash
+[arthas@2062]$ logger -c 2a139a55 --name ROOT --level debug
+```
+
 #### View the logger information without appenders
 
 

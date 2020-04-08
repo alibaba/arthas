@@ -1,5 +1,7 @@
 package com.taobao.arthas.core.advisor;
 
+import com.alibaba.arthas.deps.org.slf4j.Logger;
+import com.alibaba.arthas.deps.org.slf4j.LoggerFactory;
 import com.taobao.arthas.core.GlobalOptions;
 import com.taobao.arthas.core.util.matcher.Matcher;
 import com.taobao.arthas.core.util.*;
@@ -7,7 +9,6 @@ import com.taobao.arthas.core.util.affect.EnhancerAffect;
 import com.taobao.arthas.core.util.collection.GaStack;
 import com.taobao.arthas.core.util.collection.ThreadUnsafeFixGaStack;
 import com.taobao.arthas.core.util.collection.ThreadUnsafeGaStack;
-import com.taobao.middleware.logger.Logger;
 import org.objectweb.asm.*;
 import org.objectweb.asm.commons.AdviceAdapter;
 import org.objectweb.asm.commons.JSRInlinerAdapter;
@@ -28,7 +29,7 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public class AdviceWeaver extends ClassVisitor implements Opcodes {
 
-    private final static Logger logger = LogUtil.getArthasLogger();
+    private static final Logger logger = LoggerFactory.getLogger(AdviceWeaver.class);
 
     public static final String ON_BEFORE = "methodOnBegin";
     public static final String ON_RETURN = "methodOnReturnEnd";

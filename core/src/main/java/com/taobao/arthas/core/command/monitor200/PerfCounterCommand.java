@@ -7,17 +7,17 @@ import java.nio.ByteBuffer;
 import java.util.Collections;
 import java.util.List;
 
+import com.alibaba.arthas.deps.org.slf4j.Logger;
+import com.alibaba.arthas.deps.org.slf4j.LoggerFactory;
 import com.taobao.arthas.common.JavaVersionUtils;
 import com.taobao.arthas.common.PidUtils;
 import com.taobao.arthas.core.command.Constants;
 import com.taobao.arthas.core.shell.command.AnnotatedCommand;
 import com.taobao.arthas.core.shell.command.CommandProcess;
-import com.taobao.arthas.core.util.LogUtil;
 import com.taobao.middleware.cli.annotations.Description;
 import com.taobao.middleware.cli.annotations.Name;
 import com.taobao.middleware.cli.annotations.Option;
 import com.taobao.middleware.cli.annotations.Summary;
-import com.taobao.middleware.logger.Logger;
 import com.taobao.text.Decoration;
 import com.taobao.text.ui.TableElement;
 import com.taobao.text.util.RenderUtil;
@@ -32,9 +32,12 @@ import sun.management.counter.perf.PerfInstrumentation;
  */
 @Name("perfcounter")
 @Summary("Display the perf counter infornation.")
-@Description(Constants.WIKI + Constants.WIKI_HOME + "perf")
+@Description("\nExamples:\n" +
+        "  perfcounter\n" +
+        "  perfcounter -d\n" +
+        Constants.WIKI + Constants.WIKI_HOME + "perfcounter")
 public class PerfCounterCommand extends AnnotatedCommand {
-    private static final Logger logger = LogUtil.getArthasLogger();
+    private static final Logger logger = LoggerFactory.getLogger(PerfCounterCommand.class);
     private static Object perfObject;
     private static Method attachMethod;
 
@@ -113,7 +116,7 @@ public class PerfCounterCommand extends AnnotatedCommand {
             PerfInstrumentation perfInstrumentation = new PerfInstrumentation(buffer);
             return perfInstrumentation.getAllCounters();
         } catch (Throwable e) {
-            logger.error("arthas", "get perf counter error", e);
+            logger.error("get perf counter error", e);
         }
         return Collections.emptyList();
     }

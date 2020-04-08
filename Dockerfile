@@ -1,11 +1,11 @@
 FROM openjdk:8-jdk-alpine
 
-ARG ARTHAS_VERSION="3.1.7"
+ARG ARTHAS_VERSION="3.1.8"
 ARG MIRROR=false
 
-ENV MAVEN_HOST=http://repo1.maven.org/maven2 \
+ENV MAVEN_HOST=https://repo1.maven.org/maven2 \
     ALPINE_HOST=dl-cdn.alpinelinux.org \
-    MIRROR_MAVEN_HOST=http://maven.aliyun.com/repository/public \
+    MIRROR_MAVEN_HOST=https://maven.aliyun.com/repository/public \
     MIRROR_ALPINE_HOST=mirrors.aliyun.com 
 
 # if use mirror change to aliyun mirror site

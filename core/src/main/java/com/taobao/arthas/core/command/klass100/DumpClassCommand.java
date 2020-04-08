@@ -1,12 +1,13 @@
 package com.taobao.arthas.core.command.klass100;
 
+import com.alibaba.arthas.deps.org.slf4j.Logger;
+import com.alibaba.arthas.deps.org.slf4j.LoggerFactory;
 import com.taobao.arthas.core.advisor.Enhancer;
 import com.taobao.arthas.core.command.Constants;
 import com.taobao.arthas.core.shell.cli.Completion;
 import com.taobao.arthas.core.shell.cli.CompletionUtils;
 import com.taobao.arthas.core.shell.command.AnnotatedCommand;
 import com.taobao.arthas.core.shell.command.CommandProcess;
-import com.taobao.arthas.core.util.LogUtil;
 import com.taobao.arthas.core.util.SearchUtils;
 import com.taobao.arthas.core.util.StringUtils;
 import com.taobao.arthas.core.util.TypeRenderUtils;
@@ -17,7 +18,6 @@ import com.taobao.middleware.cli.annotations.Description;
 import com.taobao.middleware.cli.annotations.Name;
 import com.taobao.middleware.cli.annotations.Option;
 import com.taobao.middleware.cli.annotations.Summary;
-import com.taobao.middleware.logger.Logger;
 import com.taobao.text.Color;
 import com.taobao.text.Decoration;
 import com.taobao.text.ui.LabelElement;
@@ -45,7 +45,7 @@ import static com.taobao.text.ui.Element.label;
         "  dump -E org\\\\.apache\\\\.commons\\\\.lang\\\\.StringUtils\n" +
         Constants.WIKI + Constants.WIKI_HOME + "dump")
 public class DumpClassCommand extends AnnotatedCommand {
-    private static final Logger logger = LogUtil.getArthasLogger();
+    private static final Logger logger = LoggerFactory.getLogger(DumpClassCommand.class);
 
     private String classPattern;
     private String code = null;
@@ -141,7 +141,7 @@ public class DumpClassCommand extends AnnotatedCommand {
                     .write(com.taobao.arthas.core.util.Constants.EMPTY_STRING);
             effect.rCnt(classFiles.keySet().size());
         } catch (Throwable t) {
-            logger.error(null, "dump: fail to dump classes: " + matchedClasses, t);
+            logger.error("dump: fail to dump classes: " + matchedClasses, t);
         }
     }
 

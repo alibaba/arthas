@@ -47,7 +47,7 @@
 
     <groupId>com.taobao.arthas</groupId>
     <artifactId>arthas-all</artifactId>
-    <version>3.1.8-SNAPSHOT</version>
+    <version>3.1.9-SNAPSHOT</version>
     <packaging>pom</packaging>
 
     <name>arthas-all</name>
@@ -92,17 +92,17 @@
             <dependency>
                 <groupId>org.ow2.asm</groupId>
                 <artifactId>asm</artifactId>
-                <version>7.0</version>
+                <version>7.3.1</version>
             </dependency>
             <dependency>
                 <groupId>org.ow2.asm</groupId>
                 <artifactId>asm-commons</artifactId>
-                <version>7.0</version>
+                <version>7.3.1</version>
             </dependency>
             <dependency>
                 <groupId>org.benf</groupId>
                 <artifactId>cfr</artifactId>
-                <version>0.148</version>
+                <version>0.149</version>
             </dependency>
             <dependency>
                 <groupId>com.alibaba.middleware</groupId>
@@ -130,11 +130,6 @@
                 <version>1.2.3</version>
             </dependency>
             <dependency>
-                <groupId>com.taobao.middleware</groupId>
-                <artifactId>logger.api</artifactId>
-                <version>0.2.8</version>
-            </dependency>
-            <dependency>
                 <groupId>com.alibaba.arthas</groupId>
                 <artifactId>arthas-repackage-logger</artifactId>
                 <version>0.0.1</version>
@@ -142,7 +137,7 @@
             <dependency>
                 <groupId>com.alibaba</groupId>
                 <artifactId>fastjson</artifactId>
-                <version>1.2.33</version>
+                <version>1.2.67</version>
             </dependency>
             <dependency>
                 <groupId>com.taobao.text</groupId>
