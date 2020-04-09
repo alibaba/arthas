@@ -521,7 +521,7 @@ OK
 * [cli](https://github.com/eclipse-vertx/vert.x/tree/master/src/main/java/io/vertx/core/cli): Arthas的命令行界面基于vert.x提供的cli库进行开发，感谢vert.x在这方面做的优秀工作。
 * [compiler](https://github.com/skalogs/SkaETL/tree/master/compiler) Arthas里的内存编绎器代码来源
 * [Apache Commons Net](https://commons.apache.org/proper/commons-net/) Arthas里的Telnet Client代码来源
-* [async-profiler](https://github.com/jvm-profiling-tools/async-profiler) Arthas's profielr 命令.
+* [async-profiler](https://github.com/jvm-profiling-tools/async-profiler) Arthas's profiler 命令.
 
 ### 仓库镜像
 
