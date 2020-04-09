@@ -10,6 +10,8 @@ import java.lang.reflect.Method;
 import java.util.Set;
 
 import com.taobao.arthas.core.command.Constants;
+import com.taobao.arthas.core.command.model.MethodModel;
+import com.taobao.arthas.core.command.model.RowAffectModel;
 import com.taobao.arthas.core.shell.cli.Completion;
 import com.taobao.arthas.core.shell.cli.CompletionUtils;
 import com.taobao.arthas.core.shell.command.AnnotatedCommand;
@@ -98,12 +100,7 @@ public class SearchMethodCommand extends AnnotatedCommand {
                     continue;
                 }
 
-                if (isDetail) {
-                    process.write(RenderUtil.render(renderConstructor(constructor, clazz), process.width()) + "\n");
-                } else {
-                    String line = format("%s %s%n", clazz.getName(), methodNameWithDescriptor);
-                    process.write(line);
-                }
+                process.appendResult(new MethodModel(constructor, clazz, isDetail));
                 affect.rCnt(1);
             }
 
@@ -112,18 +109,12 @@ public class SearchMethodCommand extends AnnotatedCommand {
                 if (!methodNameMatcher.matching(method.getName())) {
                     continue;
                 }
-
-                if (isDetail) {
-                    process.write(RenderUtil.render(renderMethod(method, clazz), process.width()) + "\n");
-                } else {
-                    String line = format("%s %s%n", clazz.getName(), methodNameWithDescriptor);
-                    process.write(line);
-                }
+                process.appendResult(new MethodModel(method, clazz, isDetail));
                 affect.rCnt(1);
             }
         }
 
-        process.write(affect + "\n");
+        process.appendResult(new RowAffectModel(affect));
         process.end();
     }
 
@@ -133,33 +124,6 @@ public class SearchMethodCommand extends AnnotatedCommand {
             methodPattern = isRegEx ? ".*" : "*";
         }
         return isRegEx ? new RegexMatcher(methodPattern) : new WildcardMatcher(methodPattern);
-    }
-
-    private Element renderMethod(Method method, Class<?> clazz) {
-        TableElement table = new TableElement().leftCellPadding(1).rightCellPadding(1);
-
-        table.row(label("declaring-class").style(bold.bold()), label(method.getDeclaringClass().getName()))
-                .row(label("method-name").style(bold.bold()), label(method.getName()).style(bold.bold()))
-                .row(label("modifier").style(bold.bold()), label(StringUtils.modifier(method.getModifiers(), ',')))
-                .row(label("annotation").style(bold.bold()), label(TypeRenderUtils.drawAnnotation(method)))
-                .row(label("parameters").style(bold.bold()), label(TypeRenderUtils.drawParameters(method)))
-                .row(label("return").style(bold.bold()), label(TypeRenderUtils.drawReturn(method)))
-                .row(label("exceptions").style(bold.bold()), label(TypeRenderUtils.drawExceptions(method)))
-                .row(label("classLoaderHash").style(bold.bold()), label(StringUtils.classLoaderHash(clazz)));
-        return table;
-    }
-
-    private Element renderConstructor(Constructor<?> constructor, Class<?> clazz) {
-        TableElement table = new TableElement().leftCellPadding(1).rightCellPadding(1);
-
-        table.row(label("declaring-class").style(bold.bold()), label(constructor.getDeclaringClass().getName()))
-             .row(label("constructor-name").style(bold.bold()), label("<init>").style(bold.bold()))
-             .row(label("modifier").style(bold.bold()), label(StringUtils.modifier(constructor.getModifiers(), ',')))
-             .row(label("annotation").style(bold.bold()), label(TypeRenderUtils.drawAnnotation(constructor.getDeclaredAnnotations())))
-             .row(label("parameters").style(bold.bold()), label(TypeRenderUtils.drawParameters(constructor)))
-             .row(label("exceptions").style(bold.bold()), label(TypeRenderUtils.drawExceptions(constructor)))
-             .row(label("classLoaderHash").style(bold.bold()), label(StringUtils.classLoaderHash(clazz)));
-        return table;
     }
 
     @Override

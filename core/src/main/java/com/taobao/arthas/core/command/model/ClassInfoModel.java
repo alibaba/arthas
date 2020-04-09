@@ -7,7 +7,7 @@ import com.taobao.arthas.core.util.ClassUtils;
  * @author gongdewei 2020/04/08
  */
 public class ClassInfoModel extends ResultModel {
-    private ClassInfoVO classInfo;
+    private ClassVO classInfo;
     private Class clazz;
     private boolean withField;
     private boolean detail;
@@ -25,10 +25,10 @@ public class ClassInfoModel extends ResultModel {
 
     @Override
     public String getType() {
-        return "ClassInfo";
+        return "class";
     }
 
-    public ClassInfoVO getClassInfo() {
+    public ClassVO getClassInfo() {
         if (classInfo == null) {
             synchronized (this) {
                 classInfo = ClassUtils.createClassInfo(clazz, detail, withField);
@@ -37,7 +37,7 @@ public class ClassInfoModel extends ResultModel {
         return classInfo;
     }
 
-    public void setClassInfo(ClassInfoVO classInfo) {
+    public void setClassInfo(ClassVO classInfo) {
         this.classInfo = classInfo;
     }
 

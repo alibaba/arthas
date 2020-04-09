@@ -180,11 +180,8 @@ public class TypeRenderUtils {
     }
 
     public static String[] getInterfaces(Class clazz) {
-        List<String> list = new ArrayList<String>();
-        for (Class anInterface : clazz.getInterfaces()) {
-            list.add(StringUtils.classname(anInterface));
-        }
-        return list.toArray(new String[0]);
+        Class[] interfaces = clazz.getInterfaces();
+        return ClassUtils.getClassNameList(interfaces);
     }
 
     public static String[] getSuperClass(Class clazz) {
@@ -253,4 +250,5 @@ public class TypeRenderUtils {
         }
         return null;
     }
+
 }

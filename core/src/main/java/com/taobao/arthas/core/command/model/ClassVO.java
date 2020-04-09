@@ -5,7 +5,7 @@ import java.util.List;
 /**
  * @author gongdewei 2020/4/8
  */
-public class ClassInfoVO {
+public class ClassVO {
 
     private String name;
     private String classInfo;
@@ -187,4 +187,6 @@ public class ClassInfoVO {
     public void setFields(FieldVO[] fields) {
         this.fields = fields;
     }
+
+
 }
