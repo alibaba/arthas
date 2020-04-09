@@ -509,6 +509,7 @@ Welcome to register the company name in this issue: https://github.com/alibaba/a
 ![上海喔噻](static/shouqingba.png)
 ![vipkid](static/vipkid.png)
 ![宇中科技](static/yuzhong.png)
+![蘑菇财富科技](static/mogu.jpg)
 
 ### Derivative Projects
 
