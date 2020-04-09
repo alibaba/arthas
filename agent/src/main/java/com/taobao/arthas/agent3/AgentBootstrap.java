@@ -8,6 +8,7 @@ import java.io.UnsupportedEncodingException;
 import java.lang.instrument.Instrumentation;
 import java.net.URL;
 import java.net.URLDecoder;
+import java.security.CodeSource;
 import java.util.jar.JarFile;
 
 import com.taobao.arthas.agent.ArthasClassloader;
@@ -20,6 +21,7 @@ import com.taobao.arthas.agent.ArthasClassloader;
 public class AgentBootstrap {
     private static final String RESET = "resetArthasClassLoader";
     private static final String ARTHAS_SPY_JAR = "arthas-spy.jar";
+    private static final String ARTHAS_CORE_JAR = "arthas-core.jar";
     private static final String ARTHAS_BOOTSTRAP = "com.taobao.arthas.core.server.ArthasBootstrap";
     private static final String GET_INSTANCE = "getInstance";
     private static final String IS_BIND = "isBind";
@@ -71,7 +73,7 @@ public class AgentBootstrap {
         arthasClassLoader = null;
     }
 
-    private static ClassLoader getClassLoader(Instrumentation inst, File spyJarFile, File agentJarFile) throws Throwable {
+    private static ClassLoader getClassLoader(Instrumentation inst, File spyJarFile, File arthasCoreJarFile) throws Throwable {
         // 将Spy添加到BootstrapClassLoader
         ClassLoader parent = ClassLoader.getSystemClassLoader().getParent();
         Class<?> spyClass = null;
@@ -87,12 +89,12 @@ public class AgentBootstrap {
         }
 
         // 构造自定义的类加载器，尽量减少Arthas对现有工程的侵蚀
-        return loadOrDefineClassLoader(agentJarFile);
+        return loadOrDefineClassLoader(arthasCoreJarFile);
     }
 
-    private static ClassLoader loadOrDefineClassLoader(File agentJar) throws Throwable {
+    private static ClassLoader loadOrDefineClassLoader(File arthasCoreJarFile) throws Throwable {
         if (arthasClassLoader == null) {
-            arthasClassLoader = new ArthasClassloader(new URL[]{agentJar.toURI().toURL()});
+            arthasClassLoader = new ArthasClassloader(new URL[]{arthasCoreJarFile.toURI().toURL()});
         }
         return arthasClassLoader;
     }
@@ -104,19 +106,46 @@ public class AgentBootstrap {
     private static synchronized void main(String args, final Instrumentation inst) {
         try {
             ps.println("Arthas server agent start...");
-            // 传递的args参数分两个部分:agentJar路径和agentArgs, 分别是Agent的JAR包路径和期望传递到服务端的参数
+            // 传递的args参数分两个部分:arthasCoreJar路径和agentArgs, 分别是Agent的JAR包路径和期望传递到服务端的参数
+            if (args == null) {
+                args = "";
+            }
             args = decodeArg(args);
-            int index = args.indexOf(';');
-            String agentJar = args.substring(0, index);
-            final String agentArgs = args.substring(index);
 
-            File agentJarFile = new File(agentJar);
-            if (!agentJarFile.exists()) {
-                ps.println("Agent jar file does not exist: " + agentJarFile);
+            String arthasCoreJar;
+            final String agentArgs;
+            int index = args.indexOf(';');
+            if (index != -1) {
+                arthasCoreJar = args.substring(0, index);
+                agentArgs = args.substring(index);
+            } else {
+                arthasCoreJar = "";
+                agentArgs = args;
+            }
+
+            File arthasCoreJarFile = new File(arthasCoreJar);
+            if (!arthasCoreJarFile.exists()) {
+                ps.println("Can not find arthas-core jar file from args: " + arthasCoreJarFile);
+                // try to find from arthas-agent.jar directory
+                CodeSource codeSource = AgentBootstrap.class.getProtectionDomain().getCodeSource();
+                if (codeSource != null) {
+                    try {
+                        File arthasAgentJarFile = new File(codeSource.getLocation().toURI().getSchemeSpecificPart());
+                        arthasCoreJarFile = new File(arthasAgentJarFile.getParentFile(), ARTHAS_CORE_JAR);
+                        if (!arthasCoreJarFile.exists()) {
+                            ps.println("Can not find arthas-core jar file from agent jar directory: " + arthasAgentJarFile);
+                        }
+                    } catch (Throwable e) {
+                        ps.println("Can not find arthas-core jar file from " + codeSource.getLocation());
+                        e.printStackTrace(ps);
+                    }
+                }
+            }
+            if (!arthasCoreJarFile.exists()) {
                 return;
             }
 
-            File spyJarFile = new File(agentJarFile.getParentFile(), ARTHAS_SPY_JAR);
+            File spyJarFile = new File(arthasCoreJarFile.getParentFile(), ARTHAS_SPY_JAR);
             if (!spyJarFile.exists()) {
                 ps.println("Spy jar file does not exist: " + spyJarFile);
                 return;
@@ -125,7 +154,7 @@ public class AgentBootstrap {
             /**
              * Use a dedicated thread to run the binding logic to prevent possible memory leak. #195
              */
-            final ClassLoader agentLoader = getClassLoader(inst, spyJarFile, agentJarFile);
+            final ClassLoader agentLoader = getClassLoader(inst, spyJarFile, arthasCoreJarFile);
             initSpy();
 
             Thread bindingThread = new Thread() {
