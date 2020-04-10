@@ -531,4 +531,4 @@ This project exists thanks to all the people who contribute.
 * [cli](https://github.com/eclipse-vertx/vert.x/tree/master/src/main/java/io/vertx/core/cli): Arthas's command line interface implementation is based on cli, open sourced by vert.x
 * [compiler](https://github.com/skalogs/SkaETL/tree/master/compiler) Arthas's memory compiler.
 * [Apache Commons Net](https://commons.apache.org/proper/commons-net/) Arthas's telnet client.
-* [async-profiler](https://github.com/jvm-profiling-tools/async-profiler) Arthas's profielr command.
+* [async-profiler](https://github.com/jvm-profiling-tools/async-profiler) Arthas's profiler command.
