@@ -115,6 +115,7 @@ public abstract class EnhancerCommand extends AnnotatedCommand {
             if (effect.cCnt() == 0 || effect.mCnt() == 0) {
                 // no class effected
                 // might be method code too large
+                process.write("Matched class-cnt: " + effect.cCnt() + ", method-cnt: " + effect.mCnt() + "\n");
                 process.write("No class or method is affected, try:\n"
                               + "1. sm CLASS_NAME METHOD_NAME to make sure the method you are tracing actually exists (it might be in your parent class).\n"
                               + "2. reset CLASS_NAME and try again, your method body might be too large.\n"
