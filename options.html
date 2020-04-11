@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>options &mdash; Arthas 3.1.8 文档</title>
+  <title>options &mdash; Arthas 3.2.0 文档</title>
   
 
   
@@ -68,7 +68,7 @@
             
             
               <div class="version">
-                3.1.8
+                3.2.0
               </div>
             
           
@@ -127,6 +127,7 @@
 <li class="toctree-l2"><a class="reference internal" href="tt.html">tt</a></li>
 <li class="toctree-l2"><a class="reference internal" href="profiler.html">profiler</a></li>
 <li class="toctree-l2"><a class="reference internal" href="cat.html">cat</a></li>
+<li class="toctree-l2"><a class="reference internal" href="echo.html">echo</a></li>
 <li class="toctree-l2"><a class="reference internal" href="grep.html">grep</a></li>
 <li class="toctree-l2"><a class="reference internal" href="tee.html">tee</a></li>
 <li class="toctree-l2"><a class="reference internal" href="pwd.html">pwd</a></li>
@@ -256,6 +257,11 @@
 <td>是否禁用子类匹配，默认在匹配目标类的时候会默认匹配到其子类，如果想精确匹配，可以关闭此开关</td>
 </tr>
 <tr>
+<td>support-default-method</td>
+<td>true</td>
+<td>是否支持匹配到default method，默认会查找interface，匹配里面的default method。参考 <a href="https://github.com/alibaba/arthas/issues/1105">#1105</a></td>
+</tr>
+<tr>
 <td>debug-for-asm</td>
 <td>false</td>
 <td>打印ASM相关的调试信息</td>
@@ -359,7 +365,7 @@
 
   <div role="contentinfo">
     <p>
-        &copy; Copyright 2018-2019, Alibaba Middleware Group, and contributors
+        &copy; Copyright 2018-2020, Alibaba Middleware Group, and contributors
 
     </p>
   </div>

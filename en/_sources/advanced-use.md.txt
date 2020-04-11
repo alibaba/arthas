@@ -6,6 +6,7 @@ Advanced Usage
 * help - display Arthas help
 * cls - clear the screen
 * [cat](cat.md) - Concatenate and print files
+* [echo](echo.md) - write arguments to the standard output
 * [grep](grep.md) - Pattern searcher
 * [tee](tee.md) - Copies standard input to standard output, making a copy in zero or more files.
 * [pwd](pwd.md) - Return working directory name
@@ -84,6 +85,10 @@ Arthas provides `pipe` to process the result returned from commands further, e.g
 Arthas supports living inside a browser. The communication between arthas and browser is via websocket.
 
 * [Web Console](web-console.md)
+
+## Start as a Java Agent
+
+* [Start as a Java Agent](agent.md)
 
 ## User data report
 

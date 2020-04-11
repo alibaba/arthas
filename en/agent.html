@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>reset &mdash; Arthas 3.2.0 documentation</title>
+  <title>Start as a Java Agent &mdash; Arthas 3.2.0 documentation</title>
   
 
   
@@ -38,6 +38,8 @@
     <link rel="stylesheet" href="_static/overrides.css" type="text/css" />
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Arthas Async Jobs" href="async.html" />
+    <link rel="prev" title="Web Console" href="web-console.html" />
 <script src="_static/center_page.js"></script>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.13.1/styles/github.min.css">
  
@@ -89,12 +91,29 @@
               
             
             
-              <ul>
+              <ul class="current">
 <li class="toctree-l1"><a class="reference external" href="https://alibaba.github.io/arthas/arthas-tutorials?language=en">Online tutorials(Recommend)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="install-detail.html">Installation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="download.html">Download</a></li>
 <li class="toctree-l1"><a class="reference internal" href="quick-start.html">Quick start</a></li>
-<li class="toctree-l1"><a class="reference internal" href="advanced-use.html">Advanced usage</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="advanced-use.html">Advanced usage</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="advanced-use.html#basic">Basic</a></li>
+<li class="toctree-l2"><a class="reference internal" href="advanced-use.html#jvm">JVM</a></li>
+<li class="toctree-l2"><a class="reference internal" href="advanced-use.html#class-classloader">class/classloader</a></li>
+<li class="toctree-l2"><a class="reference internal" href="advanced-use.html#monitor-watch-trace-related">monitor/watch/trace - related</a></li>
+<li class="toctree-l2"><a class="reference internal" href="advanced-use.html#options">options</a></li>
+<li class="toctree-l2"><a class="reference internal" href="advanced-use.html#profiler-flame-graph">profiler/flame graph</a></li>
+<li class="toctree-l2"><a class="reference internal" href="advanced-use.html#pipe">pipe</a></li>
+<li class="toctree-l2"><a class="reference internal" href="advanced-use.html#async-in-background">async in background</a></li>
+<li class="toctree-l2"><a class="reference internal" href="advanced-use.html#web-console">Web Console</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="advanced-use.html#start-as-a-java-agent">Start as a Java Agent</a><ul class="current">
+<li class="toctree-l3 current"><a class="current reference internal" href="#">Start as a Java Agent</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="advanced-use.html#user-data-report">User data report</a></li>
+<li class="toctree-l2"><a class="reference internal" href="advanced-use.html#other-features">Other features</a></li>
+</ul>
+</li>
 <li class="toctree-l1"><a class="reference internal" href="commands.html">Commands</a></li>
 <li class="toctree-l1"><a class="reference internal" href="web-console.html">WebConsole</a></li>
 <li class="toctree-l1"><a class="reference internal" href="docker.html">Docker</a></li>
@@ -148,14 +167,16 @@
     
       <li><a href="index.html">Docs</a> &raquo;</li>
         
-      <li>reset</li>
+          <li><a href="advanced-use.html">Advanced Usage</a> &raquo;</li>
+        
+      <li>Start as a Java Agent</li>
     
     
       <li class="wy-breadcrumbs-aside">
         
             
             
-              <a href="https://github.com/alibaba/arthas/blob/master/site/src/site/sphinx/en/reset.md" class="fa fa-github"> Edit on GitHub</a>
+              <a href="https://github.com/alibaba/arthas/blob/master/site/src/site/sphinx/en/agent.md" class="fa fa-github"> Edit on GitHub</a>
             
           
         
@@ -169,58 +190,14 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
             
-  <div class="section" id="reset">
-<h1>reset<a class="headerlink" href="#reset" title="Permalink to this headline">¶</a></h1>
-<blockquote>
-<div><p>Reset all classes that have been enhanced by Arthas. These enhanced classes will also be reset when Arthas server is <code class="docutils literal notranslate"><span class="pre">stop</span></code>.</p>
-</div></blockquote>
-<div class="section" id="usage">
-<h2>Usage<a class="headerlink" href="#usage" title="Permalink to this headline">¶</a></h2>
-<div class="highlight-default notranslate"><pre class="literal-block">$ reset -h
- USAGE:
-   reset [-h] [-E] [class-pattern]
-
- SUMMARY:
-   Reset all the enhanced classes
-
- EXAMPLES:
-   reset
-   reset *List
-   reset -E .*List
-
- OPTIONS:
- -h, --help                                                         this help
- -E, --regex                                                        Enable regular expression to match (wildcard matching by default)
- &lt;class-pattern&gt;                                                    Path and classname of Pattern Matching</pre>
+  <div class="section" id="start-as-a-java-agent">
+<h1>Start as a Java Agent<a class="headerlink" href="#start-as-a-java-agent" title="Permalink to this headline">¶</a></h1>
+<p>Usually Arthas dynamic attach the applications on the fly, but from version <code class="docutils literal notranslate"><span class="pre">3.2.0</span></code> onwards, Arthas supports starting directly as a java agent.</p>
+<p>For example, download the full arthas zip package, decompress it and start it by specifying <code class="docutils literal notranslate"><span class="pre">arthas-agent.jar</span></code> with the parameter <code class="docutils literal notranslate"><span class="pre">-javaagent</span></code>.</p>
+<div class="highlight-default notranslate"><pre class="literal-block">java -javaagent:/tmp/test/arthas-agent.jar -jar arthas-demo.jar</pre>
 </div>
-</div>
-<div class="section" id="reset-specified-class">
-<h2>Reset specified class<a class="headerlink" href="#reset-specified-class" title="Permalink to this headline">¶</a></h2>
-<div class="highlight-default notranslate"><pre class="literal-block">$ trace Test test
-Press Ctrl+C to abort.
-Affect(class-cnt:1 , method-cnt:1) cost in 57 ms.
-`---ts=2017-10-26 17:10:33;thread_name=main;id=1;is_daemon=false;priority=5;TCCL=sun.misc.Launcher$AppClassLoader@14dad5dc
-    `---[0.590102ms] Test:test()
-
-`---ts=2017-10-26 17:10:34;thread_name=main;id=1;is_daemon=false;priority=5;TCCL=sun.misc.Launcher$AppClassLoader@14dad5dc
-    `---[0.068692ms] Test:test()
-
-$ reset Test
-Affect(class-cnt:1 , method-cnt:0) cost in 11 ms.</pre>
-</div>
-</div>
-<div class="section" id="reset-all-classes">
-<h2>Reset all classes<a class="headerlink" href="#reset-all-classes" title="Permalink to this headline">¶</a></h2>
-<div class="highlight-default notranslate"><pre class="literal-block">$ trace Test test
-Press Ctrl+C to abort.
-Affect(class-cnt:1 , method-cnt:1) cost in 15 ms.
-`---ts=2017-10-26 17:12:06;thread_name=main;id=1;is_daemon=false;priority=5;TCCL=sun.misc.Launcher$AppClassLoader@14dad5dc
-    `---[0.128518ms] Test:test()
-
-$ reset
-Affect(class-cnt:1 , method-cnt:0) cost in 9 ms.</pre>
-</div>
-</div>
+<p>The default configuration is in the <code class="docutils literal notranslate"><span class="pre">arthas.properties</span></code> file in the decompression directory.</p>
+<p>Reference: https://docs.oracle.com/javase/8/docs/api/java/lang/instrument/package-summary.html</p>
 </div>
 
 
@@ -228,6 +205,15 @@ Affect(class-cnt:1 , method-cnt:0) cost in 9 ms.</pre>
            
           </div>
           <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="async.html" class="btn btn-neutral float-right" title="Arthas Async Jobs" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="web-console.html" class="btn btn-neutral float-left" title="Web Console" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
   
 
   <hr/>

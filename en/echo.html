@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Fundamental Fields in Expressions &mdash; Arthas 3.2.0 documentation</title>
+  <title>echo &mdash; Arthas 3.2.0 documentation</title>
   
 
   
@@ -38,8 +38,8 @@
     <link rel="stylesheet" href="_static/overrides.css" type="text/css" />
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="trace" href="trace.html" />
-    <link rel="prev" title="watch" href="watch.html" />
+    <link rel="next" title="grep" href="grep.html" />
+    <link rel="prev" title="cat" href="cat.html" />
 <script src="_static/center_page.js"></script>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.13.1/styles/github.min.css">
  
@@ -118,22 +118,13 @@
 <li class="toctree-l2"><a class="reference internal" href="mc.html">mc</a></li>
 <li class="toctree-l2"><a class="reference internal" href="redefine.html">redefine</a></li>
 <li class="toctree-l2"><a class="reference internal" href="monitor.html">monitor</a></li>
-<li class="toctree-l2 current"><a class="reference internal" href="watch.html">watch</a><ul class="current">
-<li class="toctree-l3 current"><a class="reference internal" href="watch.html#parameters-options">Parameters &amp; Options</a><ul class="current">
-<li class="toctree-l4 current"><a class="current reference internal" href="#">Critical fields in</a></li>
-<li class="toctree-l4"><a class="reference external" href="https://github.com/alibaba/arthas/issues/71">Special usages</a></li>
-<li class="toctree-l4"><a class="reference external" href="https://commons.apache.org/proper/commons-ognl/language-guide.html">OGNL official guide</a></li>
-</ul>
-</li>
-<li class="toctree-l3"><a class="reference internal" href="watch.html#usage">Usage</a></li>
-</ul>
-</li>
+<li class="toctree-l2"><a class="reference internal" href="watch.html">watch</a></li>
 <li class="toctree-l2"><a class="reference internal" href="trace.html">trace</a></li>
 <li class="toctree-l2"><a class="reference internal" href="stack.html">stack</a></li>
 <li class="toctree-l2"><a class="reference internal" href="tt.html">tt</a></li>
 <li class="toctree-l2"><a class="reference internal" href="profiler.html">profiler</a></li>
 <li class="toctree-l2"><a class="reference internal" href="cat.html">cat</a></li>
-<li class="toctree-l2"><a class="reference internal" href="echo.html">echo</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">echo</a></li>
 <li class="toctree-l2"><a class="reference internal" href="grep.html">grep</a></li>
 <li class="toctree-l2"><a class="reference internal" href="tee.html">tee</a></li>
 <li class="toctree-l2"><a class="reference internal" href="pwd.html">pwd</a></li>
@@ -195,16 +186,14 @@
         
           <li><a href="commands.html">All Commands</a> &raquo;</li>
         
-          <li><a href="watch.html">watch</a> &raquo;</li>
-        
-      <li>Fundamental Fields in Expressions</li>
+      <li>echo</li>
     
     
       <li class="wy-breadcrumbs-aside">
         
             
             
-              <a href="https://github.com/alibaba/arthas/blob/master/site/src/site/sphinx/en/advice-class.md" class="fa fa-github"> Edit on GitHub</a>
+              <a href="https://github.com/alibaba/arthas/blob/master/site/src/site/sphinx/en/echo.md" class="fa fa-github"> Edit on GitHub</a>
             
           
         
@@ -218,80 +207,13 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
             
-  <div class="section" id="fundamental-fields-in-expressions">
-<h1>Fundamental Fields in Expressions<a class="headerlink" href="#fundamental-fields-in-expressions" title="Permalink to this headline">¶</a></h1>
-<p>There is a very fundamental class <code class="docutils literal notranslate"><span class="pre">Advice</span></code> for the expressions used in filtering, tracing or monitoring and other aspects in commands.</p>
-<div class="highlight-java notranslate"><div class="highlight hljs"><pre class="java">public class Advice {
-
-    private final ClassLoader loader;
-    private final Class&lt;?&gt; clazz;
-    private final ArthasMethod method;
-    private final Object target;
-    private final Object[] params;
-    private final Object returnObj;
-    private final Throwable throwExp;
-    private final boolean isBefore;
-    private final boolean isThrow;
-    private final boolean isReturn;
-    
-    // getter/setter  
-}  </pre></div>
+  <div class="section" id="echo">
+<h1>echo<a class="headerlink" href="#echo" title="Permalink to this headline">¶</a></h1>
+<blockquote>
+<div><p>write arguments to the standard output.</p>
+</div></blockquote>
+<div class="highlight-bash notranslate"><div class="highlight hljs"><pre class="bash">$ echo &#x27;hello&#x27;</pre></div>
 </div>
-<p>Description for the variables in the class <code class="docutils literal notranslate"><span class="pre">Advice</span></code>:</p>
-<table border="1" class="docutils">
-<thead>
-<tr>
-<th align="right">Name</th>
-<th align="left">Specification</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td align="right">loader</td>
-<td align="left">the class loader for the current called class</td>
-</tr>
-<tr>
-<td align="right">clazz</td>
-<td align="left">the reference to the current called class</td>
-</tr>
-<tr>
-<td align="right">method</td>
-<td align="left">the reference to the current called method</td>
-</tr>
-<tr>
-<td align="right">target</td>
-<td align="left">the instance of the current called class</td>
-</tr>
-<tr>
-<td align="right">params</td>
-<td align="left">the parameters for the current call, which is an array (when there's no parameter, it will be an empty array)</td>
-</tr>
-<tr>
-<td align="right">returnObj</td>
-<td align="left">the return value from the current call - only available when the method call returns normally (<code>isReturn==true</code>), and <code>null</code> is for <code>void</code> return value</td>
-</tr>
-<tr>
-<td align="right">throwExp</td>
-<td align="left">the exceptions thrown from the current call - only available when the method call throws exception (<code>isThrow==true</code>)</td>
-</tr>
-<tr>
-<td align="right">isBefore</td>
-<td align="left">flag to indicate the method is about to execute. <code>isBefore==true</code> but <code>isThrow==false</code> and <code>isReturn==false</code> since it's no way to know how the method call will end</td>
-</tr>
-<tr>
-<td align="right">isThrow</td>
-<td align="left">flag to indicate the method call ends with exception thrown</td>
-</tr>
-<tr>
-<td align="right">isReturn</td>
-<td align="left">flag to indicate the method call ends normally without exception thrown</td>
-</tr>
-</tbody>
-</table><p>All variables listed above can be used directly in the <a class="reference external" href="https://commons.apache.org/proper/commons-ognl/language-guide.html">OGNL expression</a>. The command will not execute and exit if there’s illegal OGNL grammar or unexpected variable in the expression.</p>
-<ul class="simple">
-<li><p><a class="reference external" href="https://github.com/alibaba/arthas/issues/71">typical use cases</a>;</p></li>
-<li><p><a class="reference external" href="https://commons.apache.org/proper/commons-ognl/language-guide.html">OGNL language guide</a>.</p></li>
-</ul>
 </div>
 
 
@@ -302,10 +224,10 @@
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="trace.html" class="btn btn-neutral float-right" title="trace" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+        <a href="grep.html" class="btn btn-neutral float-right" title="grep" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
-        <a href="watch.html" class="btn btn-neutral float-left" title="watch" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+        <a href="cat.html" class="btn btn-neutral float-left" title="cat" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
       
     </div>
   

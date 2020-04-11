@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>表达式核心变量 &mdash; Arthas 3.2.0 文档</title>
+  <title>以Java Agent的方式启动 &mdash; Arthas 3.2.0 文档</title>
   
 
   
@@ -39,6 +39,8 @@
     <link rel="stylesheet" href="_static/overrides.css" type="text/css" />
     <link rel="index" title="索引" href="genindex.html" />
     <link rel="search" title="搜索" href="search.html" />
+    <link rel="next" title="Arthas异步调用" href="async.html" />
+    <link rel="prev" title="Web Console" href="web-console.html" />
 <script src="_static/center_page.js"></script>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.13.1/styles/github.min.css">
  
@@ -90,14 +92,31 @@
               
             
             
-              <ul>
+              <ul class="current">
 <li class="toctree-l1"><a class="reference external" href="https://mp.weixin.qq.com/s/677GO-3kYx5ygG9rlOlfQg">招聘信息</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://alibaba.github.io/arthas/en/">English Docs</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://alibaba.github.io/arthas/arthas-tutorials?language=cn">在线教程(推荐)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="install-detail.html">安装</a></li>
 <li class="toctree-l1"><a class="reference internal" href="download.html">下载</a></li>
 <li class="toctree-l1"><a class="reference internal" href="quick-start.html">快速入门</a></li>
-<li class="toctree-l1"><a class="reference internal" href="advanced-use.html">进阶使用</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="advanced-use.html">进阶使用</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="advanced-use.html#id2">基础命令</a></li>
+<li class="toctree-l2"><a class="reference internal" href="advanced-use.html#jvm">jvm相关</a></li>
+<li class="toctree-l2"><a class="reference internal" href="advanced-use.html#class-classloader">class/classloader相关</a></li>
+<li class="toctree-l2"><a class="reference internal" href="advanced-use.html#monitor-watch-trace">monitor/watch/trace相关</a></li>
+<li class="toctree-l2"><a class="reference internal" href="advanced-use.html#profiler">profiler/火焰图</a></li>
+<li class="toctree-l2"><a class="reference internal" href="advanced-use.html#options">options</a></li>
+<li class="toctree-l2"><a class="reference internal" href="advanced-use.html#id3">管道</a></li>
+<li class="toctree-l2"><a class="reference internal" href="advanced-use.html#id4">后台异步任务</a></li>
+<li class="toctree-l2"><a class="reference internal" href="advanced-use.html#web-console">Web Console</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="advanced-use.html#java-agent">以java agent方式启动</a><ul class="current">
+<li class="toctree-l3 current"><a class="current reference internal" href="#">以java agent方式启动</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="advanced-use.html#id5">用户数据回报</a></li>
+<li class="toctree-l2"><a class="reference internal" href="advanced-use.html#id6">其他特性</a></li>
+</ul>
+</li>
 <li class="toctree-l1"><a class="reference internal" href="commands.html">命令列表</a></li>
 <li class="toctree-l1"><a class="reference internal" href="web-console.html">WebConsole</a></li>
 <li class="toctree-l1"><a class="reference internal" href="docker.html">Docker</a></li>
@@ -153,14 +172,16 @@
     
       <li><a href="index.html">Docs</a> &raquo;</li>
         
-      <li>表达式核心变量</li>
+          <li><a href="advanced-use.html">进阶使用</a> &raquo;</li>
+        
+      <li>以Java Agent的方式启动</li>
     
     
       <li class="wy-breadcrumbs-aside">
         
             
             
-              <a href="https://github.com/alibaba/arthas/blob/master/site/src/site/sphinx/advice-class.md" class="fa fa-github"> Edit on GitHub</a>
+              <a href="https://github.com/alibaba/arthas/blob/master/site/src/site/sphinx/agent.md" class="fa fa-github"> Edit on GitHub</a>
             
           
         
@@ -174,81 +195,14 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
             
-  <div class="section" id="id1">
-<h1>表达式核心变量<a class="headerlink" href="#id1" title="永久链接至标题">¶</a></h1>
-<p>无论是匹配表达式也好、观察表达式也罢，他们核心判断变量都是围绕着一个 Arthas 中的通用通知对象 <code class="docutils literal notranslate"><span class="pre">Advice</span></code> 进行。</p>
-<p>它的简略代码结构如下</p>
-<div class="highlight-java notranslate"><div class="highlight hljs"><pre class="java">public class Advice {
-
-    private final ClassLoader loader;
-    private final Class&lt;?&gt; clazz;
-    private final ArthasMethod method;
-    private final Object target;
-    private final Object[] params;
-    private final Object returnObj;
-    private final Throwable throwExp;
-    private final boolean isBefore;
-    private final boolean isThrow;
-    private final boolean isReturn;
-    
-    // getter/setter  
-}  </pre></div>
+  <div class="section" id="java-agent">
+<h1>以Java Agent的方式启动<a class="headerlink" href="#java-agent" title="永久链接至标题">¶</a></h1>
+<p>通常Arthas是以动态attach的方式来诊断应用，但从<code class="docutils literal notranslate"><span class="pre">3.2.0</span></code>版本起，Arthas支持直接以 java agent的方式启动。</p>
+<p>比如下载全量的arthas zip包，解压之后以 <code class="docutils literal notranslate"><span class="pre">-javaagent</span></code> 的参数指定<code class="docutils literal notranslate"><span class="pre">arthas-agent.jar</span></code>来启动：</p>
+<div class="highlight-default notranslate"><pre class="literal-block">java -javaagent:/tmp/test/arthas-agent.jar -jar arthas-demo.jar</pre>
 </div>
-<p>这里列一个表格来说明不同变量的含义</p>
-<table border="1" class="docutils">
-<thead>
-<tr>
-<th align="right">变量名</th>
-<th align="left">变量解释</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td align="right">loader</td>
-<td align="left">本次调用类所在的 ClassLoader</td>
-</tr>
-<tr>
-<td align="right">clazz</td>
-<td align="left">本次调用类的 Class 引用</td>
-</tr>
-<tr>
-<td align="right">method</td>
-<td align="left">本次调用方法反射引用</td>
-</tr>
-<tr>
-<td align="right">target</td>
-<td align="left">本次调用类的实例</td>
-</tr>
-<tr>
-<td align="right">params</td>
-<td align="left">本次调用参数列表，这是一个数组，如果方法是无参方法则为空数组</td>
-</tr>
-<tr>
-<td align="right">returnObj</td>
-<td align="left">本次调用返回的对象。当且仅当 <code>isReturn==true</code> 成立时候有效，表明方法调用是以正常返回的方式结束。如果当前方法无返回值 <code>void</code>，则值为 null</td>
-</tr>
-<tr>
-<td align="right">throwExp</td>
-<td align="left">本次调用抛出的异常。当且仅当 <code>isThrow==true</code> 成立时有效，表明方法调用是以抛出异常的方式结束。</td>
-</tr>
-<tr>
-<td align="right">isBefore</td>
-<td align="left">辅助判断标记，当前的通知节点有可能是在方法一开始就通知，此时 <code>isBefore==true</code> 成立，同时 <code>isThrow==false</code> 和 <code>isReturn==false</code>，因为在方法刚开始时，还无法确定方法调用将会如何结束。</td>
-</tr>
-<tr>
-<td align="right">isThrow</td>
-<td align="left">辅助判断标记，当前的方法调用以抛异常的形式结束。</td>
-</tr>
-<tr>
-<td align="right">isReturn</td>
-<td align="left">辅助判断标记，当前的方法调用以正常返回的形式结束。</td>
-</tr>
-</tbody>
-</table><p>所有变量都可以在表达式中直接使用，如果在表达式中编写了不符合 OGNL 脚本语法或者引入了不在表格中的变量，则退出命令的执行；用户可以根据当前的异常信息修正<code class="docutils literal notranslate"><span class="pre">条件表达式</span></code>或<code class="docutils literal notranslate"><span class="pre">观察表达式</span></code></p>
-<ul class="simple">
-<li><p>特殊用法请参考：<a class="reference external" href="https://github.com/alibaba/arthas/issues/71">https://github.com/alibaba/arthas/issues/71</a></p></li>
-<li><p>OGNL表达式官网：<a class="reference external" href="https://commons.apache.org/proper/commons-ognl/language-guide.html">https://commons.apache.org/proper/commons-ognl/language-guide.html</a></p></li>
-</ul>
+<p>默认的配置项在解压目录里的<code class="docutils literal notranslate"><span class="pre">arthas.properties</span></code>文件里。</p>
+<p>参考： https://docs.oracle.com/javase/8/docs/api/java/lang/instrument/package-summary.html</p>
 </div>
 
 
@@ -256,6 +210,15 @@
            
           </div>
           <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="async.html" class="btn btn-neutral float-right" title="Arthas异步调用" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="web-console.html" class="btn btn-neutral float-left" title="Web Console" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
   
 
   <hr/>
