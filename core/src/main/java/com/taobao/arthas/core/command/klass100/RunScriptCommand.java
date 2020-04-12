@@ -216,7 +216,6 @@ public class RunScriptCommand extends AnnotatedCommand {
 
         private void convertByValueOf(String descriptor) {
             if (descriptor.equals("()V")) {
-                // out.println()
                 super.push("");
             } else if (descriptor.equals("([C)V")) {
                 super.invokeStatic(getType(String.class), getMethod("String valueOf(char[])"));
