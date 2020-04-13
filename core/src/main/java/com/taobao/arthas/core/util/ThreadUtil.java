@@ -1,5 +1,6 @@
 package com.taobao.arthas.core.util;
 
+import com.taobao.arthas.core.command.model.StackModel;
 import com.taobao.arthas.core.view.Ansi;
 
 import java.lang.management.*;
@@ -372,6 +373,26 @@ abstract public class ThreadUtil {
         return builder.toString();
     }
 
+    public static StackModel getThreadStackModel(Thread currentThread) {
+        StackModel stackModel = new StackModel();
+        stackModel.setThreadName(currentThread.getName());
+        stackModel.setThreadId(Long.toHexString(currentThread.getId()));
+        stackModel.setDaemon(currentThread.isDaemon());
+        stackModel.setPriority(currentThread.getPriority());
+        stackModel.setTccl(getTCCL(currentThread));
+
+        getEagleeyeTraceInfo(currentThread, stackModel);
+
+        //stack
+        StackTraceElement[] stackTraceElementArray = currentThread.getStackTrace();
+        //drop top 10 frames of Enhancer
+        int droppingFrames = 10;
+        StackTraceElement[] actualStackFrames = new StackTraceElement[stackTraceElementArray.length - droppingFrames];
+        System.arraycopy(stackTraceElementArray, droppingFrames, actualStackFrames, 0, actualStackFrames.length);
+        stackModel.setStackTrace(actualStackFrames);
+        return stackModel;
+    }
+
     public static String getThreadTitle(Thread currentThread) {
         StringBuilder sb = new StringBuilder("thread_name=");
         sb.append(currentThread.getName())
@@ -379,7 +400,31 @@ abstract public class ThreadUtil {
                 .append(";is_daemon=").append(currentThread.isDaemon())
                 .append(";priority=").append(currentThread.getPriority())
                 .append(";TCCL=").append(getTCCL(currentThread));
-        getEagleeyeTraceInfo(currentThread, sb);
+
+        StackModel stackModel = new StackModel();
+        getEagleeyeTraceInfo(currentThread, stackModel);
+        if (stackModel.getTraceId() != null) {
+            sb.append(";trace_id=").append(stackModel.getTraceId());
+        }
+        if (stackModel.getRpcId() != null) {
+            sb.append(";rpc_id=").append(stackModel.getRpcId());
+        }
+        return sb.toString();
+    }
+
+    public static String getThreadTitle(StackModel stackModel) {
+        StringBuilder sb = new StringBuilder("thread_name=");
+        sb.append(stackModel.getThreadName())
+                .append(";id=").append(stackModel.getThreadId())
+                .append(";is_daemon=").append(stackModel.isDaemon())
+                .append(";priority=").append(stackModel.getPriority())
+                .append(";TCCL=").append(stackModel.getTccl());
+        if (stackModel.getTraceId() != null) {
+            sb.append(";trace_id=").append(stackModel.getTraceId());
+        }
+        if (stackModel.getRpcId() != null) {
+            sb.append(";rpc_id=").append(stackModel.getRpcId());
+        }
         return sb.toString();
     }
 
@@ -392,7 +437,7 @@ abstract public class ThreadUtil {
         }
     }
 
-    private static void getEagleeyeTraceInfo(Thread currentThread, StringBuilder sb) {
+    private static void getEagleeyeTraceInfo(Thread currentThread, StackModel stackModel) {
         try {
             // access to Thread#threadlocals field
             Field threadLocalsField = Thread.class.getDeclaredField("threadLocals");
@@ -416,12 +461,12 @@ abstract public class ThreadUtil {
                     Method getTraceIdMethod = threadLocalValue.getClass().getMethod("getTraceId");
                     getTraceIdMethod.setAccessible(true);
                     String traceId = (String)getTraceIdMethod.invoke(threadLocalValue);
-                    sb.append(";trace_id=").append(traceId);
+                    stackModel.setTraceId(traceId);
                     // get rpc id
                     Method getRpcIdMethod = threadLocalValue.getClass().getMethod("getRpcId");
                     getTraceIdMethod.setAccessible(true);
                     String rpcId = (String)getRpcIdMethod.invoke(threadLocalValue);
-                    sb.append(";rpc_id=").append(rpcId);
+                    stackModel.setRpcId(rpcId);
                     return;
                 }
             }

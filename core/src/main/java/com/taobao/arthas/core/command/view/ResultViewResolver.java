@@ -45,6 +45,7 @@ public class ResultViewResolver {
             registerView(new ClassInfoModel(), new ClassInfoView());
             registerView(new RowAffectModel(), new RowAffectView());
             registerView(new MethodModel(), new MethodView());
+            registerView(new StackModel(), new StackView());
         } catch (Throwable e) {
             logger.error("register result view failed", e);
         }
