@@ -70,10 +70,7 @@ class WatchAdviceListener extends ReflectAdviceListenerAdapter {
         }
     }
 
-    private boolean isNeedExpand() {
-        Integer expand = command.getExpand();
-        return null != expand && expand >= 0;
-    }
+
 
     private void watching(Advice advice) {
         try {
@@ -82,10 +79,15 @@ class WatchAdviceListener extends ReflectAdviceListenerAdapter {
             if (isConditionMet(command.getConditionExpress(), advice, cost)) {
                 // TODO: concurrency issues for process.write
                 Object value = getExpressionResult(command.getExpress(), advice, cost);
-                String result = StringUtils.objectToString(
-                        isNeedExpand() ? new ObjectView(value, command.getExpand(), command.getSizeLimit()).draw() : value);
-                //process.write("ts=" + DateUtils.getCurrentDate() + "; [cost=" + cost + "ms] result=" + result + "\n");
-                process.appendResult(new WatchModel(DateUtils.getCurrentDate(), cost, result));
+
+                WatchModel model = new WatchModel();
+                model.setCost(cost);
+                model.setTs(DateUtils.getCurrentDate());
+                model.setValue(value);
+                model.setExpand(command.getExpand());
+                model.setSizeLimit(command.getSizeLimit());
+
+                process.appendResult(model);
                 process.times().incrementAndGet();
                 if (isLimitExceeded(command.getNumberOfLimit(), process.times().get())) {
                     abortProcess(process, command.getNumberOfLimit());

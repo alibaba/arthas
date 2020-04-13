@@ -9,15 +9,12 @@ public class WatchModel extends ResultModel {
 
     private String ts;
     private double cost;
-    private String result;
+    private Object value;
+
+    private Integer expand;
+    private Integer sizeLimit;
 
     public WatchModel() {
-    }
-
-    public WatchModel(String ts, double cost, String result) {
-        this.ts = ts;
-        this.cost = cost;
-        this.result = result;
     }
 
     @Override
@@ -33,8 +30,35 @@ public class WatchModel extends ResultModel {
         return cost;
     }
 
-    public String getResult() {
-        return result;
+    public Object getValue() {
+        return value;
     }
 
+    public void setTs(String ts) {
+        this.ts = ts;
+    }
+
+    public void setCost(double cost) {
+        this.cost = cost;
+    }
+
+    public void setValue(Object value) {
+        this.value = value;
+    }
+
+    public void setExpand(Integer expand) {
+        this.expand = expand;
+    }
+
+    public void setSizeLimit(Integer sizeLimit) {
+        this.sizeLimit = sizeLimit;
+    }
+
+    public Integer expand() {
+        return expand;
+    }
+
+    public Integer sizeLimit() {
+        return sizeLimit;
+    }
 }

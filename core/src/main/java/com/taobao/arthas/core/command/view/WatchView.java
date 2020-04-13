@@ -2,6 +2,8 @@ package com.taobao.arthas.core.command.view;
 
 import com.taobao.arthas.core.command.model.WatchModel;
 import com.taobao.arthas.core.shell.command.CommandProcess;
+import com.taobao.arthas.core.util.StringUtils;
+import com.taobao.arthas.core.view.ObjectView;
 
 /**
  * @author gongdewei 2020/3/27
@@ -9,8 +11,16 @@ import com.taobao.arthas.core.shell.command.CommandProcess;
 public class WatchView extends ResultView<WatchModel> {
 
     @Override
-    public void draw(CommandProcess process, WatchModel result) {
-        process.write("ts=" + result.getTs() + "; [cost=" + result.getCost() + "ms] result=" + result.getResult() + "\n");
+    public void draw(CommandProcess process, WatchModel model) {
+        Object value = model.getValue();
+        String result = StringUtils.objectToString(
+                isNeedExpand(model) ? new ObjectView(value, model.expand(), model.sizeLimit()).draw() : value);
+
+        process.write("ts=" + model.getTs() + "; [cost=" + model.getCost() + "ms] result=" + result + "\n");
     }
 
+    private boolean isNeedExpand(WatchModel model) {
+        Integer expand = model.expand();
+        return null != expand && expand >= 0;
+    }
 }
