@@ -167,6 +167,8 @@ public class HttpApiHandler {
                 return processExecRequest(apiRequest, session);
             case ASYNC_EXEC:
                 return processAsyncExecRequest(apiRequest, session);
+            case INTERRUPT_JOB:
+                return processInterruptJob(apiRequest, session);
             case PULL_RESULTS:
                 return processPullResultsRequest(apiRequest, session);
             case SESSION_INFO:
@@ -256,6 +258,7 @@ public class HttpApiHandler {
         try {
             packingResultDistributor = new PackingResultDistributorImpl(session);
             job = this.createJob(commandLine, session, packingResultDistributor);
+            session.setForegroundJob(job);
             job.run();
 
             response.setState(ApiState.SCHEDULED);
@@ -271,6 +274,7 @@ public class HttpApiHandler {
             logger.warn("Job is exceeded time limit, force interrupt it, jobId: {}", job.id());
             job.interrupt();
         }
+        //session.setForegroundJob(null);
 
         //packing results
         body.put("jobId", job.id());
@@ -310,6 +314,7 @@ public class HttpApiHandler {
             CommandRequestModel commandRequestModel = new CommandRequestModel(commandLine, response.getState());
             commandRequestModel.setJobId(job.id());
             session.getResultDistributor().appendResult(commandRequestModel);
+            session.setForegroundJob(job);
 
             //run job
             job.run();
@@ -323,6 +328,15 @@ public class HttpApiHandler {
             session.getResultDistributor().appendResult(commandRequestModel);
             return response;
         }
+    }
+
+    private ApiResponse processInterruptJob(ApiRequest apiRequest, Session session) {
+        Job job = session.getForegroundJob();
+        if (job == null) {
+            return new ApiResponse().setState(ApiState.FAILED).setMessage("no foreground job is running");
+        }
+        job.interrupt();
+        return new ApiResponse().setState(ApiState.SUCCEEDED);
     }
 
     /**
@@ -402,22 +416,28 @@ public class HttpApiHandler {
 
         @Override
         public void onForeground(Job job) {
-
+            session.setForegroundJob(job);
         }
 
         @Override
         public void onBackground(Job job) {
-
+            if (session.getForegroundJob() == job){
+                session.setForegroundJob(null);
+            }
         }
 
         @Override
         public void onTerminated(Job job) {
-
+            if (session.getForegroundJob() == job){
+                session.setForegroundJob(null);
+            }
         }
 
         @Override
         public void onSuspend(Job job) {
-
+            if (session.getForegroundJob() == job){
+                session.setForegroundJob(null);
+            }
         }
     }
 

@@ -71,7 +71,8 @@
                     </el-input>
                 </div>
                 <div class="footer-button">
-                    <el-button type="primary" size="mini" @click="executeCommand">Execute</el-button>
+                    <el-button v-if="commandLineDisabled==false" type="primary" size="mini" @click="executeCommand">Execute</el-button>
+                    <el-button v-else type="danger" size="mini" @click="interruptJob">Interrupt</el-button>
                 </div>
             </el-footer>
         </el-container>
@@ -189,6 +190,24 @@
                             this.consumerId = apiResponse.consumerId;
                             this.$router.push("/session/"+this.sessionId);
                             this.pullResults();
+                            this.onSessionReady();
+                        }
+                    })
+                    .catch(function (error) { // 请求失败处理
+                        console.log(error);
+                    });
+            },
+
+            interruptJob(){
+                console.log("interruptJob");
+                axios
+                    .post('/api',{
+                        "action": "interrupt_job",
+                        "sessionId": this.sessionId,
+                    })
+                    .then(response => {
+                        let apiResponse = response.data;
+                        if (apiResponse.state == "SUCCEEDED"){
                             this.onSessionReady();
                         }
                     })

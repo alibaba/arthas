@@ -2,6 +2,7 @@ package com.taobao.arthas.core.shell.session;
 
 import com.taobao.arthas.core.distribution.SharingResultDistributor;
 import com.taobao.arthas.core.shell.command.CommandResolver;
+import com.taobao.arthas.core.shell.system.Job;
 
 import java.lang.instrument.Instrumentation;
 import java.util.List;
@@ -37,6 +38,11 @@ public interface Session {
      * Command Result Distributor
      */
     String RESULT_DISTRIBUTOR = "resultDistributor";
+
+    /**
+     * The executing foreground job
+     */
+    String FOREGROUND_JOB = "foregroundJob";
 
 
     /**
@@ -147,6 +153,16 @@ public interface Session {
      * @return
      */
     SharingResultDistributor getResultDistributor();
+
+    /**
+     * Set the foreground job
+     */
+    void setForegroundJob(Job job);
+
+    /**
+     * Get the foreground job
+     */
+    Job getForegroundJob();
 
     /**
      * Whether the session is tty term

@@ -17,6 +17,11 @@ public enum ApiAction {
     ASYNC_EXEC,
 
     /**
+     * Interrupt executing job
+     */
+    INTERRUPT_JOB,
+
+    /**
      * Pull the results from result queue of the session
      */
     PULL_RESULTS,

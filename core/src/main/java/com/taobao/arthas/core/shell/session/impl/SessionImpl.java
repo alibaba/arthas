@@ -3,6 +3,7 @@ package com.taobao.arthas.core.shell.session.impl;
 import com.taobao.arthas.core.distribution.SharingResultDistributor;
 import com.taobao.arthas.core.shell.command.CommandResolver;
 import com.taobao.arthas.core.shell.session.Session;
+import com.taobao.arthas.core.shell.system.Job;
 import com.taobao.arthas.core.shell.system.impl.InternalCommandManager;
 
 import java.lang.instrument.Instrumentation;
@@ -117,7 +118,18 @@ public class SessionImpl implements Session {
     }
 
     @Override
+    public void setForegroundJob(Job job) {
+        data.put(FOREGROUND_JOB, job);
+    }
+
+    @Override
+    public Job getForegroundJob() {
+        return (Job) data.get(FOREGROUND_JOB);
+    }
+
+    @Override
     public boolean isTty() {
         return get(TTY) != null;
     }
+
 }
