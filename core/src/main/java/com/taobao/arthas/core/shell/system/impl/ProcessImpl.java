@@ -248,12 +248,12 @@ public class ProcessImpl implements Process {
             if (process != null) {
                 processOutput.close();
             }
+            //add status message
+            this.appendResult(new StatusModel(exitCode, message));
             updateStatus(ExecStatus.TERMINATED, exitCode, false, endHandler, terminatedHandler, completionHandler);
             if (process != null) {
                 process.unregister();
             }
-            //add status message
-            this.appendResult(new StatusModel(exitCode, message));
             return true;
         } else {
             return false;
