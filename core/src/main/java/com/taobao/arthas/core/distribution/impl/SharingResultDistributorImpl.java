@@ -2,6 +2,7 @@ package com.taobao.arthas.core.distribution.impl;
 
 import com.alibaba.arthas.deps.org.slf4j.Logger;
 import com.alibaba.arthas.deps.org.slf4j.LoggerFactory;
+import com.taobao.arthas.core.command.model.InputStatusVO;
 import com.taobao.arthas.core.command.model.ResultModel;
 import com.taobao.arthas.core.distribution.ResultConsumer;
 import com.taobao.arthas.core.distribution.SharingResultDistributor;
@@ -97,11 +98,17 @@ public class SharingResultDistributorImpl implements SharingResultDistributor {
     private class SharingResultConsumerImpl implements ResultConsumer {
         private BlockingQueue<ResultModel> resultQueue = new ArrayBlockingQueue<ResultModel>(500);
         private ReentrantLock queueLock = new ReentrantLock();
+        private InputStatusVO lastInputStatus;
 
         @Override
         public void appendResult(ResultModel result) {
             queueLock.lock();
             try {
+                //输入状态不入历史指令队列，复制时在最后发送
+                if (result instanceof InputStatusVO) {
+                    lastInputStatus = (InputStatusVO) result;
+                    return;
+                }
                 while (!resultQueue.offer(result)) {
                     ResultModel discardResult = resultQueue.poll();
                 }
@@ -118,6 +125,10 @@ public class SharingResultDistributorImpl implements SharingResultDistributor {
             try {
                 for (ResultModel result : resultQueue) {
                     consumer.appendResult(result);
+                }
+                //发送输入状态
+                if (lastInputStatus != null) {
+                    consumer.appendResult(lastInputStatus);
                 }
             } finally {
                 if (queueLock.isHeldByCurrentThread()) {

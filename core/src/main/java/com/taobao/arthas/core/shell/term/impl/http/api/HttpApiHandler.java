@@ -5,6 +5,8 @@ import com.alibaba.arthas.deps.org.slf4j.LoggerFactory;
 import com.alibaba.fastjson.JSON;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.taobao.arthas.core.command.model.CommandRequestModel;
+import com.taobao.arthas.core.command.model.InputStatus;
+import com.taobao.arthas.core.command.model.InputStatusVO;
 import com.taobao.arthas.core.command.model.ResultModel;
 import com.taobao.arthas.core.distribution.PackingResultDistributor;
 import com.taobao.arthas.core.distribution.ResultConsumer;
@@ -194,6 +196,9 @@ public class HttpApiHandler {
             ResultConsumer resultConsumer = new ResultConsumerImpl();
             session.getResultDistributor().addConsumer(resultConsumer);
 
+            //allow input
+            updateSessionInputStatus(session, InputStatus.ALLOW_INPUT);
+
             response.setSessionId(session.getSessionId())
                     .setConsumerId(resultConsumer.getConsumerId())
                     .setState(ApiState.SUCCEEDED);
@@ -203,10 +208,21 @@ public class HttpApiHandler {
         return response;
     }
 
+    /**
+     * Update session input status for all consumer
+     * @param session
+     * @param inputStatus
+     */
+    private void updateSessionInputStatus(Session session, InputStatus inputStatus) {
+        session.getResultDistributor().appendResult(new InputStatusVO(inputStatus));
+    }
+
     private ApiResponse processJoinSessionRequest(ApiRequest apiRequest, Session session) {
 
         //create consumer
         ResultConsumer resultConsumer = new ResultConsumerImpl();
+        //disable input and interrupt
+        resultConsumer.appendResult(new InputStatusVO(InputStatus.DISABLED));
         session.getResultDistributor().addConsumer(resultConsumer);
 
         ApiResponse response = new ApiResponse();
@@ -303,7 +319,21 @@ public class HttpApiHandler {
         ApiResponse response = new ApiResponse();
         response.setSessionId(session.getSessionId())
                 .setBody(body);
+
+        if(!session.tryLock()){
+            response.setState(ApiState.REFUSED)
+                    .setMessage("Another command is executing.");
+            return response;
+        }
+        int lock = session.getLock();
         try {
+
+            if (session.getForegroundJob() != null){
+                response.setState(ApiState.REFUSED)
+                        .setMessage("The foreground job of session is running.");
+                return response;
+            }
+
             //create job
             Job job = this.createJob(commandLine, session, session.getResultDistributor());
             body.put("jobId", job.id());
@@ -315,18 +345,22 @@ public class HttpApiHandler {
             commandRequestModel.setJobId(job.id());
             session.getResultDistributor().appendResult(commandRequestModel);
             session.setForegroundJob(job);
+            updateSessionInputStatus(session, InputStatus.ALLOW_INTERRUPT);
 
             //run job
             job.run();
 
             return response;
-
         } catch (Throwable e) {
             logger.error("Async exec command failed:" + e.getMessage() + ", command:" + commandLine, e);
             response.setState(ApiState.FAILED).setMessage("Async exec command failed:" + e.getMessage());
             CommandRequestModel commandRequestModel = new CommandRequestModel(commandLine, response.getState(), response.getMessage());
             session.getResultDistributor().appendResult(commandRequestModel);
             return response;
+        }finally {
+            if (session.getLock() == lock) {
+                session.unLock();
+            }
         }
     }
 
@@ -423,6 +457,7 @@ public class HttpApiHandler {
         public void onBackground(Job job) {
             if (session.getForegroundJob() == job){
                 session.setForegroundJob(null);
+                updateSessionInputStatus(session, InputStatus.ALLOW_INPUT);
             }
         }
 
@@ -430,6 +465,7 @@ public class HttpApiHandler {
         public void onTerminated(Job job) {
             if (session.getForegroundJob() == job){
                 session.setForegroundJob(null);
+                updateSessionInputStatus(session, InputStatus.ALLOW_INPUT);
             }
         }
 
@@ -437,6 +473,7 @@ public class HttpApiHandler {
         public void onSuspend(Job job) {
             if (session.getForegroundJob() == job){
                 session.setForegroundJob(null);
+                updateSessionInputStatus(session, InputStatus.ALLOW_INPUT);
             }
         }
     }

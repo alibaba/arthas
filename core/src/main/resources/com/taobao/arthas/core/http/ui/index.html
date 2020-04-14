@@ -66,13 +66,13 @@
                             autosize
                             clearable
                             @keyup.enter.native="executeCommand"
-                            :disabled="commandLineDisabled"
+                            :disabled="inputStatus!='ALLOW_INPUT'"
                             v-model="commandLine">
                     </el-input>
                 </div>
                 <div class="footer-button">
-                    <el-button v-if="commandLineDisabled==false" type="primary" size="mini" @click="executeCommand">Execute</el-button>
-                    <el-button v-else type="danger" size="mini" @click="interruptJob">Interrupt</el-button>
+                    <el-button v-if="inputStatus=='ALLOW_INPUT'" type="primary" size="mini" @click="executeCommand">Execute</el-button>
+                    <el-button v-if="inputStatus=='ALLOW_INTERRUPT'" type="danger" size="mini" @click="interruptJob">Interrupt</el-button>
                 </div>
             </el-footer>
         </el-container>
@@ -119,6 +119,23 @@
 </template>
 
 <script>
+    const InputStatus= {
+        /**
+         * Allow input new commands
+         */
+        ALLOW_INPUT: 'ALLOW_INPUT',
+
+        /**
+         * Allow interrupt running job
+         */
+        ALLOW_INTERRUPT: 'ALLOW_INTERRUPT',
+
+        /**
+         * Disable input and interrupt
+         */
+        DISABLED: 'DISABLED'
+    };
+
     //session data
     let sessionData = {
         sessionId: null,
@@ -129,6 +146,7 @@
         commandResults: [],
         executingJobId: null,
         lastFinishedJobId: 0,
+        inputStatus: InputStatus.DISABLED,
     };
 
     //session view
@@ -253,6 +271,10 @@
                     }
                     let result = results.shift();
                     console.log("result: ", result);
+                    if (result.type == 'input_status') {
+                        this.inputStatus = result.inputStatus;
+                        continue;
+                    }
                     if (result.type == "status" && result.statusCode!=null){
                         //命令执行完毕后允许输入
                         this.setFinishedJobId(result.jobId);
@@ -262,7 +284,6 @@
                     } else {
                         this.commandResults.push(result);
                     }
-
                 }
 
                 this.scrollContentToBottom();
