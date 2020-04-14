@@ -265,20 +265,32 @@
                         let apiResponse = response.data;
                         if (apiResponse.state == "SUCCEEDED"){
                             this.appendResults(apiResponse.body.results);
+                            this.delayPullResults();
+                        } else {
+                            console.error("Pull results failed: ", apiResponse);
+                            this.inputStatus = InputStatus.DISABLED;
+                            this.$message({
+                                duration: 0,//不自动关闭
+                                showClose: false,
+                                message: 'Pull results failed: '+apiResponse.message,
+                                type: 'error'
+                            });
                         }
-                        this.delayPullResults();
                     })
                     .catch(error => { // 请求失败处理
                         console.log(error);
-                        this.delayPullResults();
+                        //this.pullStatus = false;
+                        //TODO show pull error
+                        this.delayPullResults(2000);
                     });
-
             },
 
-            delayPullResults() {
+            delayPullResults(delay) {
                 this.startPullResults = false;
-                let waitTime = (new Date().getTime() - this.lastPullResultTime < 500)?500 : 50;
-                setTimeout(this.pullResults.bind(this), waitTime);
+                if(!delay){
+                    delay = (new Date().getTime() - this.lastPullResultTime < 500)?500 : 50;
+                }
+                setTimeout(this.pullResults.bind(this), delay);
             },
 
             appendResults(results) {
