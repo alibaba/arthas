@@ -34,7 +34,7 @@
                         </div>
                     </el-col>
                     <el-col :span="12" class="header-right">
-                        <el-button type="primary" size="mini">New</el-button>
+                        <el-button type="primary" size="mini" @click="openNewSession">New</el-button>
                         <el-button type="primary" size="mini">Share</el-button>
                         <el-button type="primary" size="mini">Close</el-button>
                         <el-button type="primary" size="mini">Shutdown</el-button>
@@ -137,17 +137,22 @@
     };
 
     //session data
-    let sessionData = {
-        sessionId: null,
-        consumerId: null,
-        lastPullResultTime: 0,
-        commandLine: '',
-        commandLineDisabled: true,
-        commandResults: [],
-        executingJobId: null,
-        lastFinishedJobId: 0,
-        inputStatus: InputStatus.DISABLED,
-    };
+    function getDefaultSessionData() {
+        return {
+            sessionId: null,
+            consumerId: null,
+            lastPullResultTime: 0,
+            commandLine: '',
+            commandLineDisabled: true,
+            commandResults: [],
+            executingJobId: null,
+            lastFinishedJobId: 0,
+            inputStatus: InputStatus.DISABLED,
+            startPullResults: false,
+        };
+    }
+
+    let sessionData = getDefaultSessionData();
 
     //session view
     let SessionView = Vue.component('session-view',{
@@ -156,6 +161,9 @@
             return sessionData;
         },
         methods: {
+            resetData: function () {
+                Object.assign(this.$data, getDefaultSessionData());
+            },
             messageClass(item){
                 return {
                     commandMsg: item.command!=null,
@@ -165,8 +173,13 @@
             onSessionReady(){
                 this.commandLineDisabled = false;
             },
+            openNewSession(){
+                this.$router.push("/session/new");
+
+            },
             initPage(){
                 console.log("initPage");
+                this.resetData();
                 let sessionId = this.$route.params.sessionId;
                 if (sessionId && sessionId!='undefined'){
                     //join_session, init new consumerId
@@ -235,6 +248,11 @@
             },
 
             pullResults(){
+                //保证只有一个拉取消息的timer
+                if (this.startPullResults){
+                    return;
+                }
+                this.startPullResults = true;
                 this.lastPullResultTime = new Date().getTime();
                 //接收消息推送
                 axios
@@ -248,15 +266,19 @@
                         if (apiResponse.state == "SUCCEEDED"){
                             this.appendResults(apiResponse.body.results);
                         }
-                        let waitTime = (new Date().getTime() - this.lastPullResultTime < 500)?500 : 50;
-                        setTimeout(this.pullResults.bind(this), waitTime);
+                        this.delayPullResults();
                     })
-                    .catch(function (error) { // 请求失败处理
+                    .catch(error => { // 请求失败处理
                         console.log(error);
-                        let waitTime = (new Date().getTime() - this.lastPullResultTime < 500)?500 : 50;
-                        setTimeout(this.pullResults.bind(this), waitTime);
+                        this.delayPullResults();
                     });
 
+            },
+
+            delayPullResults() {
+                this.startPullResults = false;
+                let waitTime = (new Date().getTime() - this.lastPullResultTime < 500)?500 : 50;
+                setTimeout(this.pullResults.bind(this), waitTime);
             },
 
             appendResults(results) {
