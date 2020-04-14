@@ -8,6 +8,7 @@ import com.taobao.arthas.core.distribution.ResultConsumer;
 import com.taobao.arthas.core.distribution.SharingResultDistributor;
 import com.taobao.arthas.core.shell.session.Session;
 
+import java.util.Iterator;
 import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.ArrayBlockingQueue;
@@ -76,6 +77,11 @@ public class SharingResultDistributorImpl implements SharingResultDistributor {
     @Override
     public void removeConsumer(ResultConsumer consumer) {
         consumers.remove(consumer);
+    }
+
+    @Override
+    public List<ResultConsumer> getConsumers() {
+        return consumers;
     }
 
     @Override

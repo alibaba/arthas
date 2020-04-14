@@ -19,6 +19,8 @@ public interface SessionManager {
 
     void updateAccessTime(Session session);
 
+    void close();
+
     InternalCommandManager getCommandManager();
 
     Instrumentation getInstrumentation();
