@@ -310,6 +310,9 @@ public class ArthasBootstrap {
             if (shellServer != null) {
                 shellServer.close();
             }
+            if (sessionManager != null){
+                sessionManager.close();
+            }
             throw e;
         }
     }
