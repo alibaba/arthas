@@ -385,8 +385,8 @@ abstract public class ThreadUtil {
 
         //stack
         StackTraceElement[] stackTraceElementArray = currentThread.getStackTrace();
-        //drop top 10 frames of Enhancer
-        int droppingFrames = 10;
+        //drop top 9 frames of Enhancer
+        int droppingFrames = 9;
         StackTraceElement[] actualStackFrames = new StackTraceElement[stackTraceElementArray.length - droppingFrames];
         System.arraycopy(stackTraceElementArray, droppingFrames, actualStackFrames, 0, actualStackFrames.length);
         stackModel.setStackTrace(actualStackFrames);
