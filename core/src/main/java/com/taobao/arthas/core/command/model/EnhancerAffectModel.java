@@ -26,7 +26,7 @@ public class EnhancerAffectModel extends ResultModel {
 
     @Override
     public String getType() {
-        return "EnhancerAffect";
+        return "enhancer_affect";
     }
 
 }

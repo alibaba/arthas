@@ -17,7 +17,7 @@ public class RowAffectModel extends ResultModel {
 
     @Override
     public String getType() {
-        return "RowAffect";
+        return "row_affect";
     }
 
     public int getRowCount() {

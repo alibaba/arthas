@@ -28,6 +28,6 @@ public class HelpDetailModel extends ResultModel {
 
     @Override
     public String getType() {
-        return "HelpDetail";
+        return "help_detail";
     }
 }
