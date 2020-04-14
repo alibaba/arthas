@@ -245,11 +245,11 @@ public class ProcessImpl implements Process {
 
     private synchronized boolean terminate(int exitCode, Handler<Void> completionHandler, String message) {
         if (processStatus != ExecStatus.TERMINATED) {
+            //add status message
+            this.appendResult(new StatusModel(exitCode, message));
             if (process != null) {
                 processOutput.close();
             }
-            //add status message
-            this.appendResult(new StatusModel(exitCode, message));
             updateStatus(ExecStatus.TERMINATED, exitCode, false, endHandler, terminatedHandler, completionHandler);
             if (process != null) {
                 process.unregister();

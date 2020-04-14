@@ -103,10 +103,12 @@ public class JobImpl implements Job {
             statusUpdateHandler.handle(process.status());
         }
 
-        if (foreground) {
-            jobHandler.onForeground(this);
-        } else {
-            jobHandler.onBackground(this);
+        if (this.status() == ExecStatus.RUNNING) {
+            if (foreground) {
+                jobHandler.onForeground(this);
+            } else {
+                jobHandler.onBackground(this);
+            }
         }
         return this;
     }
@@ -230,10 +232,12 @@ public class JobImpl implements Job {
 //        } else {
 //            shell.setForegroundJob(null);
 //        }
-        if (foreground) {
-            jobHandler.onForeground(this);
-        } else {
-            jobHandler.onBackground(this);
+        if (this.status() == ExecStatus.RUNNING) {
+            if (foreground) {
+                jobHandler.onForeground(this);
+            } else {
+                jobHandler.onBackground(this);
+            }
         }
         return this;
     }
