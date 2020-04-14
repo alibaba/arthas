@@ -153,7 +153,7 @@ public class HttpApiHandler {
             }
 
         } catch (ApiException e) {
-            logger.info(e.getMessage(), e);
+            logger.info("process http api request failed: {}", e.getMessage());
             return createResponse(ApiState.FAILED, e.getMessage());
         } catch (Throwable e) {
             logger.error("process http api request failed: " + e.getMessage(), e);
