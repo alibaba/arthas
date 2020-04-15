@@ -93,7 +93,9 @@ public class SessionManagerImpl implements SessionManager {
 
         ArrayList<Session> sessions = new ArrayList<Session>(this.sessions.values());
         for (Session session : sessions) {
-            session.getResultDistributor().appendResult(new MessageModel("arthas server is going to shutdown."));
+            SharingResultDistributor resultDistributor = session.getResultDistributor();
+            resultDistributor.appendResult(new MessageModel("arthas server is going to shutdown."));
+            resultDistributor.close();
             logger.info("Removing session before shutdown: {}, last access time: {}", session.getSessionId(), session.getLastAccessTime());
             this.removeSession(session.getSessionId());
         }

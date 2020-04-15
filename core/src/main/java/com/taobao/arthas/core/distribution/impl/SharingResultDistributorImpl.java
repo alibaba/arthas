@@ -63,6 +63,11 @@ public class SharingResultDistributorImpl implements SharingResultDistributor {
     }
 
     @Override
+    public void close() {
+        this.running = false;
+    }
+
+    @Override
     public void addConsumer(ResultConsumer consumer) {
         int consumerNo = consumerNumGenerator.incrementAndGet();
         String consumerId = UUID.randomUUID().toString().replaceAll("-", "") + "_" + consumerNo;
@@ -77,6 +82,7 @@ public class SharingResultDistributorImpl implements SharingResultDistributor {
     @Override
     public void removeConsumer(ResultConsumer consumer) {
         consumers.remove(consumer);
+        consumer.close();
     }
 
     @Override
@@ -151,6 +157,16 @@ public class SharingResultDistributorImpl implements SharingResultDistributor {
         @Override
         public long getLastAccessTime() {
             return 0;
+        }
+
+        @Override
+        public void close() {
+
+        }
+
+        @Override
+        public boolean isClosed() {
+            return false;
         }
 
         @Override

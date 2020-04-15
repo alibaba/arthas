@@ -24,6 +24,10 @@ public interface ResultConsumer {
 
     long getLastAccessTime();
 
+    void close();
+
+    boolean isClosed();
+
     boolean isPolling();
 
     String getConsumerId();

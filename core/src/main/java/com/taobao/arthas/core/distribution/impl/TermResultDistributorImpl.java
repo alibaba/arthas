@@ -29,4 +29,8 @@ public class TermResultDistributorImpl implements ResultDistributor {
         }
     }
 
+    @Override
+    public void close() {
+    }
+
 }

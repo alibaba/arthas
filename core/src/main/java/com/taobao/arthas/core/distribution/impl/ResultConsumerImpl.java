@@ -26,6 +26,7 @@ public class ResultConsumerImpl implements ResultConsumer {
     private int resultSizeLimit = 100;
     private long pollTimeLimit = 10 * 1000;
     private String consumerId;
+    private boolean closed;
 
     public ResultConsumerImpl() {
         lastAccessTime = System.currentTimeMillis();
@@ -51,7 +52,8 @@ public class ResultConsumerImpl implements ResultConsumer {
                 long waitingTime = 0;
                 List<ResultModel> sendingResults = new ArrayList<ResultModel>(resultSizeLimit);
 
-                while (sendingResults.size() < resultSizeLimit
+                while (!closed
+                        &&sendingResults.size() < resultSizeLimit
                         && sendingDelay < 200
                         && waitingTime < pollTimeLimit) {
                     ResultModel aResult = resultQueue.poll(100, TimeUnit.MILLISECONDS);
@@ -90,6 +92,16 @@ public class ResultConsumerImpl implements ResultConsumer {
     @Override
     public long getLastAccessTime() {
         return lastAccessTime;
+    }
+
+    @Override
+    public void close(){
+        this.closed = true;
+    }
+
+    @Override
+    public boolean isClosed() {
+        return closed;
     }
 
     @Override

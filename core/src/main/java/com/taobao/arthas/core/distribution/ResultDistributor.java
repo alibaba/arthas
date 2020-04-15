@@ -14,4 +14,8 @@ public interface ResultDistributor {
      */
     void appendResult(ResultModel result);
 
+    /**
+     * Close result distribtor, release resources
+     */
+    void close();
 }

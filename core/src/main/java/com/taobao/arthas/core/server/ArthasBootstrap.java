@@ -73,6 +73,7 @@ public class ArthasBootstrap {
     private File arthasOutputDir;
 
     private static LoggerContext loggerContext;
+    private EventExecutorGroup workerGroup;
 
     private ArthasBootstrap(Instrumentation instrumentation, String args) throws Throwable {
         this.instrumentation = instrumentation;
@@ -269,7 +270,7 @@ public class ArthasBootstrap {
             resolvers.add(builtinCommands);
 
             //worker group
-            EventExecutorGroup workerGroup = new NioEventLoopGroup(8);
+            workerGroup = new NioEventLoopGroup(24);
 
             // TODO: discover user provided command resolver
             if (configure.getTelnetPort() > 0) {
@@ -313,7 +314,15 @@ public class ArthasBootstrap {
             if (sessionManager != null){
                 sessionManager.close();
             }
+            shutdownWorkGroup();
             throw e;
+        }
+    }
+
+    private void shutdownWorkGroup() {
+        if (workerGroup != null) {
+            workerGroup.shutdownGracefully(200, 200, TimeUnit.MILLISECONDS);
+            workerGroup = null;
         }
     }
 
@@ -336,6 +345,7 @@ public class ArthasBootstrap {
         }
         executorService.shutdownNow();
         UserStatUtil.destroy();
+        shutdownWorkGroup();
         // clear the reference in Spy class.
         cleanUpSpyReference();
         try {
@@ -347,6 +357,8 @@ public class ArthasBootstrap {
         if (loggerContext != null) {
             loggerContext.stop();
         }
+        shellServer = null;
+        sessionManager = null;
     }
 
     /**
