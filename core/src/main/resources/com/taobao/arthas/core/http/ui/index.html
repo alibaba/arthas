@@ -174,12 +174,10 @@
                 this.commandLineDisabled = false;
             },
             openNewSession(){
-                this.$router.push("/session/new");
-
+                window.open("/ui/", "_blank");
             },
             initPage(){
                 console.log("initPage");
-                this.resetData();
                 let sessionId = this.$route.params.sessionId;
                 if (sessionId && sessionId!='undefined'){
                     //join_session, init new consumerId
@@ -197,12 +195,30 @@
                                 this.onSessionReady();
                             }else {
                                 //加入会话失败，创建新会话
-                                this.initSession();
+                                this.askForNewSession(true);
                             }
                         })
-                        .catch(function (error) { // 请求失败处理
+                        .catch(error => { // 请求失败处理
                             console.log(error);
+                            this.$alert('Connect to server failed: '+error.message, {
+                                type: 'error'
+                            });
                         });
+                } else {
+                    this.askForNewSession(false);
+                }
+            },
+
+            askForNewSession(showAlert){
+                if (showAlert) {
+                    this.$alert('The session does not exist, new session will be opened', {
+                        type: 'warning',
+                        callback: action => {
+                            if (action == 'confirm') {
+                                this.initSession();
+                            }
+                        }
+                    });
                 } else {
                     this.initSession();
                 }
@@ -210,6 +226,7 @@
 
             initSession(){
                 console.log("initSession");
+                this.resetData();
                 axios
                     .post('/api',{
                         "action": "init_session"
@@ -224,8 +241,11 @@
                             this.onSessionReady();
                         }
                     })
-                    .catch(function (error) { // 请求失败处理
+                    .catch(error => { // 请求失败处理
                         console.log(error);
+                        this.$alert('Init session failed: '+error.message, {
+                            type: 'error'
+                        });
                     });
             },
 
@@ -242,8 +262,9 @@
                             this.onSessionReady();
                         }
                     })
-                    .catch(function (error) { // 请求失败处理
+                    .catch(error =>{ // 请求失败处理
                         console.log(error);
+                        this.$message.error('Interrupt current job failed: '+error.message);
                     });
             },
 
@@ -262,6 +283,7 @@
                         "consumerId": this.consumerId
                     })
                     .then(response => {
+                        this.pullResultFailedCount = 0;
                         let apiResponse = response.data;
                         if (apiResponse.state == "SUCCEEDED"){
                             this.appendResults(apiResponse.body.results);
@@ -269,19 +291,22 @@
                         } else {
                             console.error("Pull results failed: ", apiResponse);
                             this.inputStatus = InputStatus.DISABLED;
-                            this.$message({
-                                duration: 0,//不自动关闭
-                                showClose: false,
-                                message: 'Pull results failed: '+apiResponse.message,
+                            this.$alert('Pull results failed: '+apiResponse.message, {
                                 type: 'error'
                             });
                         }
                     })
                     .catch(error => { // 请求失败处理
                         console.log(error);
-                        //this.pullStatus = false;
-                        //TODO show pull error
-                        this.delayPullResults(2000);
+                        if(++this.pullResultFailedCount > 10){
+                            this.inputStatus = InputStatus.DISABLED;
+                            //show pull error
+                            this.$alert('Pull results failed: '+error.message, {
+                                type: 'error'
+                            });
+                        } else {
+                            this.delayPullResults(2000);
+                        }
                     });
             },
 
@@ -366,9 +391,10 @@
                         //this.appendCommand(apiResponse);
 
                     })
-                    .catch(function (error) { // 请求失败处理
+                    .catch(error =>{ // 请求失败处理
                         console.log(error);
-                        this.setExecutingJobId(null);
+                        //this.setExecutingJobId(null);
+                        this.$message.error('Execute command failed: '+error.message);
                     });
 
 
