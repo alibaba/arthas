@@ -30,18 +30,7 @@ import com.taobao.arthas.core.command.klass100.RedefineCommand;
 import com.taobao.arthas.core.command.klass100.SearchClassCommand;
 import com.taobao.arthas.core.command.klass100.SearchMethodCommand;
 import com.taobao.arthas.core.command.logger.LoggerCommand;
-import com.taobao.arthas.core.command.monitor200.DashboardCommand;
-import com.taobao.arthas.core.command.monitor200.HeapDumpCommand;
-import com.taobao.arthas.core.command.monitor200.JvmCommand;
-import com.taobao.arthas.core.command.monitor200.MBeanCommand;
-import com.taobao.arthas.core.command.monitor200.MonitorCommand;
-import com.taobao.arthas.core.command.monitor200.PerfCounterCommand;
-import com.taobao.arthas.core.command.monitor200.ProfilerCommand;
-import com.taobao.arthas.core.command.monitor200.StackCommand;
-import com.taobao.arthas.core.command.monitor200.ThreadCommand;
-import com.taobao.arthas.core.command.monitor200.TimeTunnelCommand;
-import com.taobao.arthas.core.command.monitor200.TraceCommand;
-import com.taobao.arthas.core.command.monitor200.WatchCommand;
+import com.taobao.arthas.core.command.monitor200.*;
 import com.taobao.arthas.core.shell.command.Command;
 import com.taobao.arthas.core.shell.command.CommandResolver;
 
@@ -78,6 +67,7 @@ public class BuiltinCommandPack implements CommandResolver {
         commands.add(Command.create(ThreadCommand.class));
         commands.add(Command.create(TraceCommand.class));
         commands.add(Command.create(WatchCommand.class));
+        commands.add(Command.create(WatchVariableCommand.class));
         commands.add(Command.create(TimeTunnelCommand.class));
         commands.add(Command.create(JvmCommand.class));
         commands.add(Command.create(PerfCounterCommand.class));

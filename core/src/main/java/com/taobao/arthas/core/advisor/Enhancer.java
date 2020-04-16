@@ -40,6 +40,7 @@ public class Enhancer implements ClassFileTransformer {
     private final int adviceId;
     private final boolean isTracing;
     private final boolean skipJDKTrace;
+    private final boolean isVariableStore;
     private final Set<Class<?>> matchingClasses;
     private final Matcher methodNameMatcher;
     private final EnhancerAffect affect;
@@ -52,6 +53,7 @@ public class Enhancer implements ClassFileTransformer {
      * @param adviceId          通知编号
      * @param isTracing         可跟踪方法调用
      * @param skipJDKTrace      是否忽略对JDK内部方法的跟踪
+     * @param isVariableStore   监控变量赋值
      * @param matchingClasses   匹配中的类
      * @param methodNameMatcher 方法名匹配
      * @param affect            影响统计
@@ -59,12 +61,14 @@ public class Enhancer implements ClassFileTransformer {
     private Enhancer(int adviceId,
                      boolean isTracing,
                      boolean skipJDKTrace,
+                     boolean isVariableStore,
                      Set<Class<?>> matchingClasses,
                      Matcher methodNameMatcher,
                      EnhancerAffect affect) {
         this.adviceId = adviceId;
         this.isTracing = isTracing;
         this.skipJDKTrace = skipJDKTrace;
+        this.isVariableStore = isVariableStore;
         this.matchingClasses = matchingClasses;
         this.methodNameMatcher = methodNameMatcher;
         this.affect = affect;
@@ -83,14 +87,17 @@ public class Enhancer implements ClassFileTransformer {
         // 初始化间谍, AgentLauncher会把各种hook设置到ArthasClassLoader当中
         // 这里我们需要把这些hook取出来设置到目标classloader当中
         Method initMethod = spyClass.getMethod("init", ClassLoader.class, Method.class,
-                Method.class, Method.class, Method.class, Method.class, Method.class);
+                Method.class, Method.class, Method.class, Method.class, Method.class, Method.class);
         initMethod.invoke(null, arthasClassLoader,
                 FieldUtils.getField(spyClass, "ON_BEFORE_METHOD").get(null),
                 FieldUtils.getField(spyClass, "ON_RETURN_METHOD").get(null),
                 FieldUtils.getField(spyClass, "ON_THROWS_METHOD").get(null),
                 FieldUtils.getField(spyClass, "BEFORE_INVOKING_METHOD").get(null),
                 FieldUtils.getField(spyClass, "AFTER_INVOKING_METHOD").get(null),
-                FieldUtils.getField(spyClass, "THROW_INVOKING_METHOD").get(null));
+                FieldUtils.getField(spyClass, "THROW_INVOKING_METHOD").get(null),
+                FieldUtils.getField(spyClass, "VARIABLE_STORE_METHOD").get(null)
+
+                );
 	}
 
     @Override
@@ -158,7 +165,7 @@ public class Enhancer implements ClassFileTransformer {
             };
 
             // 生成增强字节码
-            cr.accept(new AdviceWeaver(adviceId, isTracing, skipJDKTrace, cr.getClassName(), methodNameMatcher, affect,
+            cr.accept(new AdviceWeaver(adviceId, isTracing, skipJDKTrace,isVariableStore, cr.getClassName(), methodNameMatcher, affect,
                             cw), EXPAND_FRAMES);
             final byte[] enhanceClassByteArray = cw.toByteArray();
 
@@ -266,6 +273,7 @@ public class Enhancer implements ClassFileTransformer {
      * @param adviceId          通知ID
      * @param isTracing         可跟踪方法调用
      * @param skipJDKTrace      是否忽略对JDK内部方法的跟踪
+     * @param isVariableStore   是否监控变量赋值
      * @param classNameMatcher  类名匹配
      * @param methodNameMatcher 方法名匹配
      * @return 增强影响范围
@@ -276,6 +284,7 @@ public class Enhancer implements ClassFileTransformer {
             final int adviceId,
             final boolean isTracing,
             final boolean skipJDKTrace,
+            final boolean isVariableStore,
             final Matcher classNameMatcher,
             final Matcher methodNameMatcher) throws UnmodifiableClassException {
 
@@ -290,7 +299,7 @@ public class Enhancer implements ClassFileTransformer {
         filter(enhanceClassSet);
 
         // 构建增强器
-        final Enhancer enhancer = new Enhancer(adviceId, isTracing, skipJDKTrace, enhanceClassSet, methodNameMatcher, affect);
+        final Enhancer enhancer = new Enhancer(adviceId, isTracing, skipJDKTrace,isVariableStore, enhanceClassSet, methodNameMatcher, affect);
         try {
             inst.addTransformer(enhancer, true);
 

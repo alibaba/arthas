@@ -123,7 +123,10 @@ public class ArthasBootstrap {
         Method beforeInvoke = adviceWeaverClass.getMethod(AdviceWeaver.BEFORE_INVOKE, int.class, String.class, String.class, String.class, int.class);
         Method afterInvoke = adviceWeaverClass.getMethod(AdviceWeaver.AFTER_INVOKE, int.class, String.class, String.class, String.class, int.class);
         Method throwInvoke = adviceWeaverClass.getMethod(AdviceWeaver.THROW_INVOKE, int.class, String.class, String.class, String.class, int.class);
-        Spy.init(AdviceWeaver.class.getClassLoader(), onBefore, onReturn, onThrows, beforeInvoke, afterInvoke, throwInvoke);
+        Method variableStore = adviceWeaverClass.getMethod(AdviceWeaver.VARIABLE_STORE, int.class, int.class, int.class, Object.class, String.class, String.class);
+
+        Spy.init(AdviceWeaver.class.getClassLoader(), onBefore, onReturn, onThrows, beforeInvoke, afterInvoke, throwInvoke,variableStore);
+//        Spy.init(AdviceWeaver.class.getClassLoader(), onBefore, onReturn, onThrows, beforeInvoke, afterInvoke, throwInvoke);
     }
     
     private void initArthasEnvironment(String args) throws IOException {

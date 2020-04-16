@@ -10,6 +10,7 @@ import com.alibaba.arthas.deps.org.slf4j.LoggerFactory;
 import com.taobao.arthas.core.advisor.AdviceListener;
 import com.taobao.arthas.core.advisor.Enhancer;
 import com.taobao.arthas.core.advisor.InvokeTraceable;
+import com.taobao.arthas.core.advisor.VariableStore;
 import com.taobao.arthas.core.shell.cli.Completion;
 import com.taobao.arthas.core.shell.cli.CompletionUtils;
 import com.taobao.arthas.core.shell.command.AnnotatedCommand;
@@ -109,8 +110,10 @@ public abstract class EnhancerCommand extends AnnotatedCommand {
                 skipJDKTrace = ((AbstractTraceAdviceListener) listener).getCommand().isSkipJDKTrace();
             }
 
-            EnhancerAffect effect = Enhancer.enhance(inst, lock, listener instanceof InvokeTraceable,
-                    skipJDKTrace, getClassNameMatcher(), getMethodNameMatcher());
+            EnhancerAffect effect = Enhancer.enhance(inst, lock,
+                    listener instanceof InvokeTraceable, skipJDKTrace,
+                    listener instanceof VariableStore,
+                    getClassNameMatcher(), getMethodNameMatcher());
 
             if (effect.cCnt() == 0 || effect.mCnt() == 0) {
                 // no class effected
