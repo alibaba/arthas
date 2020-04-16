@@ -8,6 +8,7 @@ import com.taobao.arthas.core.command.Constants;
 import com.taobao.arthas.core.command.express.Express;
 import com.taobao.arthas.core.command.express.ExpressException;
 import com.taobao.arthas.core.command.express.ExpressFactory;
+import com.taobao.arthas.core.command.model.MessageModel;
 import com.taobao.arthas.core.shell.command.AnnotatedCommand;
 import com.taobao.arthas.core.shell.command.CommandProcess;
 import com.taobao.arthas.core.util.ClassLoaderUtils;
@@ -73,7 +74,7 @@ public class OgnlCommand extends AnnotatedCommand {
             }
 
             if (classLoader == null) {
-                process.write("Can not find classloader with hashCode: " + hashCode + ".\n");
+                process.end(-1, "Can not find classloader with hashCode: " + hashCode + ".");
                 exitCode = -1;
                 return;
             }
@@ -82,10 +83,10 @@ public class OgnlCommand extends AnnotatedCommand {
             try {
                 Object value = unpooledExpress.get(express);
                 String result = StringUtils.objectToString(expand >= 0 ? new ObjectView(value, expand).draw() : value);
-                process.write(result + "\n");
+                process.appendResult(new MessageModel(result));
             } catch (ExpressException e) {
                 logger.warn("ognl: failed execute express: " + express, e);
-                process.write("Failed to execute ognl, exception message: " + e.getMessage()
+                process.end(-1, "Failed to execute ognl, exception message: " + e.getMessage()
                                 + ", please check $HOME/logs/arthas/arthas.log for more details. \n");
                 exitCode = -1;
             }

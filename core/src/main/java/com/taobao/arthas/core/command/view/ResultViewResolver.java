@@ -49,6 +49,7 @@ public class ResultViewResolver {
             registerView(new VMOptionModel(), new VMOptionView());
             registerView(new OptionsModel(), new OptionsView());
             registerView(new ChangeResultModel(), new ChangeResultView());
+            registerView(new RedefineModel(), new RedefineView());
         } catch (Throwable e) {
             logger.error("register result view failed", e);
         }

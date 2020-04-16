@@ -10,12 +10,13 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.taobao.arthas.core.command.model.MessageModel;
+import com.taobao.arthas.core.command.model.RedefineModel;
 import org.objectweb.asm.ClassReader;
 
 import com.alibaba.arthas.deps.org.slf4j.Logger;
 import com.alibaba.arthas.deps.org.slf4j.LoggerFactory;
 import com.taobao.arthas.core.command.Constants;
-import com.taobao.arthas.core.command.logger.LoggerCommand;
 import com.taobao.arthas.core.shell.cli.Completion;
 import com.taobao.arthas.core.shell.cli.CompletionUtils;
 import com.taobao.arthas.core.shell.command.AnnotatedCommand;
@@ -60,23 +61,20 @@ public class RedefineCommand extends AnnotatedCommand {
 
     @Override
     public void process(CommandProcess process) {
+        RedefineModel redefineModel = new RedefineModel();
         Instrumentation inst = process.session().getInstrumentation();
-
         for (String path : paths) {
             File file = new File(path);
             if (!file.exists()) {
-                process.write("file does not exist, path:" + path + "\n");
-                process.end();
+                process.end(-1, "file does not exist, path:" + path);
                 return;
             }
             if (!file.isFile()) {
-                process.write("not a normal file, path:" + path + "\n");
-                process.end();
+                process.end(-1, "not a normal file, path:" + path);
                 return;
             }
             if (file.length() >= MAX_FILE_SIZE) {
-                process.write("file size: " + file.length() + " >= " + MAX_FILE_SIZE + ", path: " + path + "\n");
-                process.end();
+                process.end(-1, "file size: " + file.length() + " >= " + MAX_FILE_SIZE + ", path: " + path);
                 return;
             }
         }
@@ -94,7 +92,8 @@ public class RedefineCommand extends AnnotatedCommand {
                 bytesMap.put(clazzName, bytes);
 
             } catch (Exception e) {
-                process.write("" + e + "\n");
+                logger.warn("load class file failed: "+path, e);
+                process.end(-1, "load class file failed: " +path+", error: " + e);
             } finally {
                 if (f != null) {
                     try {
@@ -107,8 +106,7 @@ public class RedefineCommand extends AnnotatedCommand {
         }
 
         if (bytesMap.size() != paths.size()) {
-            process.write("paths may contains same class name!\n");
-            process.end();
+            process.end(-1, "paths may contains same class name!");
             return;
         }
 
@@ -119,21 +117,20 @@ public class RedefineCommand extends AnnotatedCommand {
                     continue;
                 }
                 definitions.add(new ClassDefinition(clazz, bytesMap.get(clazz.getName())));
+                redefineModel.addRedefineClass(clazz.getName());
                 logger.info("Try redefine class name: {}, ClassLoader: {}", clazz.getName(), clazz.getClassLoader());
             }
         }
 
         try {
             if (definitions.isEmpty()) {
-                process.write("These classes are not found in the JVM and may not be loaded: " + bytesMap.keySet()
-                                + "\n");
-                process.end();
+                process.end(-1, "These classes are not found in the JVM and may not be loaded: " + bytesMap.keySet());
                 return;
             }
             inst.redefineClasses(definitions.toArray(new ClassDefinition[0]));
-            process.write("redefine success, size: " + definitions.size() + "\n");
+            process.appendResult(redefineModel);
         } catch (Exception e) {
-            process.write("redefine error! " + e + "\n");
+            process.end(-1, "redefine error! " + e);
         }
 
         process.end();
