@@ -1,47 +1,46 @@
 package com.taobao.arthas.core.command.model;
 
-
 /**
- * @author gongdewei 2020/4/3
+ * @author gongdewei 2020/4/15
  */
 public class OptionVO {
-    /**
-     * the option long name.
-     */
-    private String longName;
-
-    /**
-     * the option short name.
-     */
-    private String shortName;
-
-    /**
-     * The option description.
-     */
+    private int level;
+    private String type;
+    private String name;
+    private String value;
+    private String summary;
     private String description;
 
-    /**
-     * whether or not the option receives a single value or  multiple values.
-     */
-    private boolean acceptValue;
-
-    public OptionVO() {
+    public int getLevel() {
+        return level;
     }
 
-    public String getLongName() {
-        return longName;
+    public void setLevel(int level) {
+        this.level = level;
     }
 
-    public void setLongName(String longName) {
-        this.longName = longName;
+    public String getType() {
+        return type;
     }
 
-    public String getShortName() {
-        return shortName;
+    public void setType(String type) {
+        this.type = type;
     }
 
-    public void setShortName(String shortName) {
-        this.shortName = shortName;
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getSummary() {
+        return summary;
+    }
+
+    public void setSummary(String summary) {
+        this.summary = summary;
     }
 
     public String getDescription() {
@@ -52,11 +51,11 @@ public class OptionVO {
         this.description = description;
     }
 
-    public boolean isAcceptValue() {
-        return acceptValue;
+    public String getValue() {
+        return value;
     }
 
-    public void setAcceptValue(boolean acceptValue) {
-        this.acceptValue = acceptValue;
+    public void setValue(String value) {
+        this.value = value;
     }
 }

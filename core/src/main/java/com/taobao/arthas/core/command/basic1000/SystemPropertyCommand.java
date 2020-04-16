@@ -45,28 +45,22 @@ public class SystemPropertyCommand extends AnnotatedCommand {
 
             if (StringUtils.isBlank(propertyName) && StringUtils.isBlank(propertyValue)) {
                 // show all system properties
-                //process.write(renderSystemProperties(System.getProperties(), process.width()));
                 process.appendResult(new PropertyModel(System.getProperties()));
             } else if (StringUtils.isBlank(propertyValue)) {
                 // view the specified system property
                 String value = System.getProperty(propertyName);
                 if (value == null) {
-                    //process.write("There is no property with the key " + propertyName + ".\n");
                     process.appendResult(new StatusModel(status, "There is no property with the key " + propertyName));
                 } else {
-                    //process.write(propertyName + "=" + value + "\n");
                     process.appendResult(new PropertyModel(propertyName, value));
                 }
             } else {
                 // change system property
                 System.setProperty(propertyName, propertyValue);
-                //process.write("Successfully changed the system property.\n");
-                //process.write(propertyName + "=" + System.getProperty(propertyName) + "\n");
                 process.appendResult(new MessageModel("Successfully changed the system property."));
                 process.appendResult(new PropertyModel(propertyName, System.getProperty(propertyName)));
             }
         } catch (Throwable t) {
-            //process.write("Error during setting system property: " + t.getMessage() + "\n");
             process.appendResult(new StatusModel(status, "Error during setting system property: " + t.getMessage()));
             status = 1;
         } finally {

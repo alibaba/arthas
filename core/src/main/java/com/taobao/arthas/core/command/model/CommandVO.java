@@ -11,7 +11,7 @@ public class CommandVO {
     private String description;
     private String usage;
     private String summary;
-    private List<OptionVO> options = new ArrayList<OptionVO>();
+    private List<CommandOptionVO> options = new ArrayList<CommandOptionVO>();
     private List<ArgumentVO> arguments = new ArrayList<ArgumentVO>();
 
     public CommandVO() {
@@ -22,7 +22,7 @@ public class CommandVO {
         this.description = description;
     }
 
-    public CommandVO addOption(OptionVO optionVO){
+    public CommandVO addOption(CommandOptionVO optionVO){
         this.options.add(optionVO);
         return this;
     }
@@ -64,11 +64,11 @@ public class CommandVO {
         this.summary = summary;
     }
 
-    public List<OptionVO> getOptions() {
+    public List<CommandOptionVO> getOptions() {
         return options;
     }
 
-    public void setOptions(List<OptionVO> options) {
+    public void setOptions(List<CommandOptionVO> options) {
         this.options = options;
     }
 

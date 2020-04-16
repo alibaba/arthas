@@ -3,6 +3,9 @@ package com.taobao.arthas.core.command.basic1000;
 import com.taobao.arthas.core.GlobalOptions;
 import com.taobao.arthas.core.Option;
 import com.taobao.arthas.core.command.Constants;
+import com.taobao.arthas.core.command.model.ChangeResultModel;
+import com.taobao.arthas.core.command.model.OptionVO;
+import com.taobao.arthas.core.command.model.OptionsModel;
 import com.taobao.arthas.core.shell.cli.CliToken;
 import com.taobao.arthas.core.shell.cli.Completion;
 import com.taobao.arthas.core.shell.cli.CompletionUtils;
@@ -18,10 +21,6 @@ import com.taobao.middleware.cli.annotations.Argument;
 import com.taobao.middleware.cli.annotations.Description;
 import com.taobao.middleware.cli.annotations.Name;
 import com.taobao.middleware.cli.annotations.Summary;
-import com.taobao.text.Decoration;
-import com.taobao.text.ui.Element;
-import com.taobao.text.ui.TableElement;
-import com.taobao.text.util.RenderUtil;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
@@ -29,7 +28,6 @@ import java.util.Collection;
 import java.util.List;
 
 import static com.taobao.arthas.core.util.ArthasCheckUtils.isIn;
-import static com.taobao.text.ui.Element.label;
 import static java.lang.String.format;
 
 /**
@@ -102,12 +100,12 @@ public class OptionsCommand extends AnnotatedCommand {
 
     private void processShow(CommandProcess process) throws IllegalAccessException {
         Collection<Field> fields = findOptionFields(new RegexMatcher(".*"));
-        process.write(RenderUtil.render(drawShowTable(fields), process.width()));
+        process.appendResult(new OptionsModel(convertToOptionVOs(fields)));
     }
 
     private void processShowName(CommandProcess process) throws IllegalAccessException {
         Collection<Field> fields = findOptionFields(new EqualsMatcher<String>(optionName));
-        process.write(RenderUtil.render(drawShowTable(fields), process.width()));
+        process.appendResult(new OptionsModel(convertToOptionVOs(fields)));
     }
 
     private void processChangeNameValue(CommandProcess process) throws IllegalAccessException {
@@ -115,7 +113,7 @@ public class OptionsCommand extends AnnotatedCommand {
 
         // name not exists
         if (fields.isEmpty()) {
-            process.write(format("options[%s] not found.\n", optionName));
+            process.end(-1, format("options[%s] not found.", optionName));
             return;
         }
 
@@ -144,22 +142,17 @@ public class OptionsCommand extends AnnotatedCommand {
             } else if (isIn(type, short.class, String.class)) {
                 FieldUtils.writeStaticField(field, afterValue = optionValue);
             } else {
-                process.write(format("Options[%s] type[%s] desupported.\n", optionName, type.getSimpleName()));
+                process.end(-1, format("Options[%s] type[%s] was unsupported.", optionName, type.getSimpleName()));
                 return;
             }
 
         } catch (Throwable t) {
-            process.write(format("Cannot cast option value[%s] to type[%s].\n", optionValue, type.getSimpleName()));
+            process.end(-1, format("Cannot cast option value[%s] to type[%s].", optionValue, type.getSimpleName()));
             return;
         }
 
-        TableElement table = new TableElement().leftCellPadding(1).rightCellPadding(1);
-        table.row(true, label("NAME").style(Decoration.bold.bold()),
-                label("BEFORE-VALUE").style(Decoration.bold.bold()),
-                label("AFTER-VALUE").style(Decoration.bold.bold()));
-        table.row(optionAnnotation.name(), StringUtils.objectToString(beforeValue),
-                StringUtils.objectToString(afterValue));
-        process.write(RenderUtil.render(table, process.width()));
+        process.appendResult(new ChangeResultModel(optionAnnotation.name(), StringUtils.objectToString(beforeValue),
+                StringUtils.objectToString(afterValue)));
     }
 
 
@@ -207,25 +200,24 @@ public class OptionsCommand extends AnnotatedCommand {
         return optionAnnotation != null && optionNameMatcher.matching(optionAnnotation.name());
     }
 
-    private Element drawShowTable(Collection<Field> optionFields) throws IllegalAccessException {
-        TableElement table = new TableElement(1, 1, 2, 1, 3, 6)
-                .leftCellPadding(1).rightCellPadding(1);
-        table.row(true, label("LEVEL").style(Decoration.bold.bold()),
-                label("TYPE").style(Decoration.bold.bold()),
-                label("NAME").style(Decoration.bold.bold()),
-                label("VALUE").style(Decoration.bold.bold()),
-                label("SUMMARY").style(Decoration.bold.bold()),
-                label("DESCRIPTION").style(Decoration.bold.bold()));
-
-        for (final Field optionField : optionFields) {
-            final Option optionAnnotation = optionField.getAnnotation(Option.class);
-            table.row("" + optionAnnotation.level(),
-                    optionField.getType().getSimpleName(),
-                    optionAnnotation.name(),
-                    "" + optionField.get(null),
-                    optionAnnotation.summary(),
-                    optionAnnotation.description());
+    private List<OptionVO> convertToOptionVOs(Collection<Field> fields) throws IllegalAccessException {
+        List<OptionVO> list = new ArrayList<OptionVO>();
+        for (Field field : fields) {
+            list.add(convertToOptionVO(field));
         }
-        return table;
+        return list;
     }
+
+    private OptionVO convertToOptionVO(Field optionField) throws IllegalAccessException {
+        Option optionAnnotation = optionField.getAnnotation(Option.class);
+        OptionVO optionVO = new OptionVO();
+        optionVO.setLevel(optionAnnotation.level());
+        optionVO.setName(optionAnnotation.name());
+        optionVO.setSummary(optionAnnotation.summary());
+        optionVO.setDescription(optionAnnotation.description());
+        optionVO.setType(optionField.getType().getSimpleName());
+        optionVO.setValue(""+optionField.get(null));
+        return optionVO;
+    }
+
 }

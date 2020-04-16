@@ -106,8 +106,8 @@ public class HelpCommand extends AnnotatedCommand {
         return argumentVO;
     }
 
-    private OptionVO createOptionVO(Option option) {
-        OptionVO optionVO = new OptionVO();
+    private CommandOptionVO createOptionVO(Option option) {
+        CommandOptionVO optionVO = new CommandOptionVO();
         if (!isEmptyName(option.getLongName())) {
             optionVO.setLongName(option.getLongName());
         }
