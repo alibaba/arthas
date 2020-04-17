@@ -18,7 +18,7 @@ public class WatchVariableListener extends ReflectAdviceListenerAdapter implemen
     private WatchVariableCommand command;
     private CommandProcess process;
 
-    private JSONObject variableJSON = new JSONObject();
+    private ThreadLocal<JSONObject> variableJSON = new ThreadLocal<JSONObject>();
 
     public WatchVariableListener(WatchVariableCommand command, CommandProcess process) {
         this.command = command;
@@ -28,7 +28,6 @@ public class WatchVariableListener extends ReflectAdviceListenerAdapter implemen
 
     @Override
     public void before(ClassLoader loader, Class<?> clazz, ArthasMethod method, Object target, Object[] args) throws Throwable {
-
         handle(0,VAR_IN_PARAMS,args);
     }
 
@@ -67,17 +66,21 @@ public class WatchVariableListener extends ReflectAdviceListenerAdapter implemen
 
 
     private void saveVariable(String key, Object args) {
-        variableJSON.put(key, args);
+        if (variableJSON.get() == null){
+            variableJSON.set(new JSONObject());
+        }
+        variableJSON.get().put(key, args);
     }
 
     private void finish() {
         try {
-            process.write(variableJSON.toJSONString());
+            process.write(variableJSON.get() == null ? "" : variableJSON.get().toJSONString());
         } catch (Exception e) {
             logger.warn("watch failed.", e);
             process.write("watch failed, condition is: " + e.getMessage());
         } finally {
             process.write("\n");
+            variableJSON.remove();
             process.end();
         }
     }
