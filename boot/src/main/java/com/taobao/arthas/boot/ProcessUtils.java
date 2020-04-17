@@ -314,7 +314,7 @@ public class ProcessUtils {
                 public void run() {
                     InputStream inputStream = proc.getErrorStream();
                     try {
-                        IOUtils.copy(inputStream, System.err);
+                        IOUtils.copy(inputStream, out);
                     } catch (IOException e) {
                         IOUtils.close(inputStream);
                     }
