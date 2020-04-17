@@ -1,5 +1,6 @@
 package com.taobao.arthas.boot;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -267,7 +268,69 @@ public class ProcessUtils {
         } catch (Throwable e) {
             // ignore
         }
+    }
 
+    public static String startArthasClient(List<String> args) {
+        // find java/java.exe, then try to find tools.jar
+        String javaHome = findJavaHome();
+
+        // find java/java.exe
+        File javaPath = findJava();
+        if (javaPath == null) {
+            throw new IllegalArgumentException(
+                    "Can not find java/java.exe executable file under java home: " + javaHome);
+        }
+
+        List<String> command = new ArrayList<String>();
+        command.add(javaPath.getAbsolutePath());
+
+        command.addAll(args);
+        // "${JAVA_HOME}"/bin/java \
+        // ${opts} \
+        // -jar "${arthas_lib_dir}/arthas-client.jar" \
+        // ${TARGET_IP} \
+        // ${TELNET_PORT} \
+        // -c "session"
+
+        final ByteArrayOutputStream out = new ByteArrayOutputStream(1024);
+        ProcessBuilder pb = new ProcessBuilder(command);
+        try {
+            final Process proc = pb.start();
+            Thread redirectStdout = new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    InputStream inputStream = proc.getInputStream();
+                    try {
+                        IOUtils.copy(inputStream, out);
+                    } catch (IOException e) {
+                        IOUtils.close(inputStream);
+                    }
+
+                }
+            });
+
+            Thread redirectStderr = new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    InputStream inputStream = proc.getErrorStream();
+                    try {
+                        IOUtils.copy(inputStream, System.err);
+                    } catch (IOException e) {
+                        IOUtils.close(inputStream);
+                    }
+
+                }
+            });
+            redirectStdout.start();
+            redirectStderr.start();
+            redirectStdout.join();
+            redirectStderr.join();
+
+            return out.toString();
+        } catch (Throwable e) {
+            // ignore
+        }
+        return null;
     }
 
     private static File findJava() {

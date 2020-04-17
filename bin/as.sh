@@ -470,6 +470,25 @@ find_listen_port_process()
     fi
 }
 
+# find the process pid of target telnet port
+# maybe another user start an arthas server at the same port, but invisible for current user
+find_listen_port_process_by_client()
+{
+    local arthas_lib_dir=$1
+    # http://www.inonit.com/cygwin/faq/
+    if [ "${OS_TYPE}" = "Cygwin" ]; then
+        arthas_lib_dir=`cygpath -wp "$arthas_lib_dir"`
+    fi
+
+    "${JAVA_HOME}/bin/java" ${ARTHAS_OPTS} ${JVM_OPTS} \
+             -jar "${arthas_lib_dir}/arthas-client.jar" \
+             ${TARGET_IP} \
+             ${TELNET_PORT} \
+             -c "session" \
+             | grep JAVA_PID \
+             | awk '{ print $2 }'
+}
+
 parse_arguments()
 {
     POSITIONAL=()
@@ -680,9 +699,7 @@ parse_arguments()
 
         # check the process already using telnet port if equals to target pid
         if [[ ($telnetPortPid) && ($TARGET_PID != $telnetPortPid) ]]; then
-            echo "[ERROR] Target process $TARGET_PID is not the process using port $TELNET_PORT, you will connect to an unexpected process."
-            echo "[ERROR] 1. Try to restart as.sh, select process $telnetPortPid, shutdown it first with running the 'stop' command."
-            echo "[ERROR] 2. Try to use different telnet port, for example: as.sh --telnet-port 9998 --http-port -1"
+            print_telnet_port_pid_error
             exit 1
         fi
         if [[ ($httpPortPid) && ($TARGET_PID != $httpPortPid) ]]; then
@@ -777,6 +794,25 @@ sanity_check() {
         echo "  2) sudo -u $target_user -EH ./as.sh"
         exit_on_err 1
     fi
+}
+
+port_pid_check() {
+    if [[ $TELNET_PORT > 0 ]]; then
+        telnetPortPid=$(find_listen_port_process_by_client "${ARTHAS_HOME}")
+
+        # check the process already using telnet port if equals to target pid
+        if [[ ($telnetPortPid) && ($TARGET_PID != $telnetPortPid) ]]; then
+            print_telnet_port_pid_error
+            exit 1
+        fi
+    fi
+}
+
+print_telnet_port_pid_error() {
+    echo "[ERROR] The telnet port $TELNET_PORT is used by process $telnetPortPid instead of target process $TARGET_PID, you will connect to an unexpected process."
+    echo "[ERROR] 1. Try to restart as.sh, select process $telnetPortPid, shutdown it first with running the 'stop' command."
+    echo "[ERROR] 2. Try to stop the existing arthas instance: java -jar arthas-client.jar 127.0.0.1 $TELNET_PORT -c \"stop\""
+    echo "[ERROR] 3. Try to use different telnet port, for example: as.sh --telnet-port 9998 --http-port -1"
 }
 
 # active console
@@ -879,6 +915,8 @@ main()
     fi
 
     sanity_check
+
+    port_pid_check
 
     echo "Calculating attach execution time..."
     time (attach_jvm "${ARTHAS_HOME}" || exit 1)
