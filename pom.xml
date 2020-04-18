@@ -79,95 +79,62 @@
                 <module>tunnel-server</module>
             </modules>
         </profile>
+    <!-- http://www.mojohaus.org/buildnumber-maven-plugin/
+    -Dmaven.buildNumber.doCheck=true for deploy
+    -->
     <profile>
-     <id>addBuildInfoTojar</id>
-     <activation>
-       <!--<activeByDefault>true</activeByDefault>-->
-         <file><exists>.</exists></file>
-     </activation>
-     <properties>
+      <id>addBuildInfoTojar</id>
+      <activation>
+        <property>
+          <name>!buildNumberOff</name>
+        </property>
+      </activation>
+      <properties>
         <jar_with_pom>true</jar_with_pom>
-        <scmVerCmdPhase>prepare-package</scmVerCmdPhase>
-        <scmVerCmd1>git log --oneline -n 1 --abbrev=16</scmVerCmd1>
-        <scmVerCmd2>awk '{ print $1 ;}'</scmVerCmd2>
-        <timezone>GMT+8</timezone>
-     </properties>
-     <build>
+        <maven.buildNumber.shortRevisionLength>0</maven.buildNumber.shortRevisionLength>
+        <maven.buildNumber.useLastCommittedRevision>false</maven.buildNumber.useLastCommittedRevision>
+      </properties>
+      <build>
         <plugins>
-           <plugin>
-               <groupId>org.apache.maven.plugins</groupId>
-               <artifactId>maven-antrun-plugin</artifactId>
-           </plugin>
-           <plugin>
-             <groupId>org.apache.maven.plugins</groupId>
-             <artifactId>maven-jar-plugin</artifactId>
-           </plugin>
+          <plugin>
+            <groupId>org.codehaus.mojo</groupId>
+            <artifactId>buildnumber-maven-plugin</artifactId>
+            <version>1.4</version>
+            <executions>
+              <execution>
+                <phase>validate</phase>
+                <goals>
+                  <goal>create</goal>
+                </goals>
+              </execution>
+            </executions>
+            <configuration>
+              <locale>en_US</locale>
+              <timestampFormat>{0,date,yyyy-MM-dd'T'HH:mm:ssX}</timestampFormat>
+              <items>
+                <item>timestamp</item>
+                <item>buildNumber</item>
+              </items>
+            </configuration>
+          </plugin>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-jar-plugin</artifactId>
+            <version>2.6</version>
+            <configuration>
+              <archive>
+                <addMavenDescriptor>${jar_with_pom}</addMavenDescriptor>
+                <manifestEntries>
+                  <SCM-Revision>${buildNumber}</SCM-Revision>
+                  <SCM-Branch>${scmBranch}</SCM-Branch>
+                  <Built-On>${timestamp}</Built-On>
+                  <Java-Target>${maven.compiler.target}</Java-Target>
+                  <Build-Info>${buildInfo}</Build-Info>
+                </manifestEntries>
+              </archive>
+            </configuration>
+          </plugin>
         </plugins>
-        <pluginManagement>
-          <plugins>
-            <plugin>
-              <groupId>org.apache.maven.plugins</groupId>
-              <artifactId>maven-antrun-plugin</artifactId>
-              <version>1.8</version>
-              <configuration>
-                  <exportAntProperties>true</exportAntProperties>
-              </configuration>
-              <executions>
-                <execution>
-                  <id>init-build-info</id>
-                  <phase>${scmVerCmdPhase}</phase>
-                  <goals>
-                    <goal>run</goal>
-                  </goals>
-                  <configuration>
-                    <target>
-                      <tstamp>
-                          <format property="buildTime" pattern="yyyy-MM-dd HH:mm Z"  timezone="${timezone}" />
-                      </tstamp>
-                      <macrodef name="getVer">
-                          <attribute name="dir" default="."/>
-                          <attribute name="pName"/>
-                          <sequential>
-                              <echo>pName: @{pName} dir: @{dir} </echo>
-                              <property name="cmd1@{pName}"  >${scmVerCmd1} @{dir} | ${scmVerCmd2}</property>
-                              <echo>@{pName} cmd:${cmd1@{pName}}</echo>
-                              <exec executable="cmd.exe" dir="${basedir}"  failifexecutionfails="false" errorproperty="err@{pName}"
-                                   outputproperty="@{pName}"  osfamily="Windows">
-                                  <arg line=" /c"  />
-                                  <arg value="${cmd1@{pName}}"/>
-                              </exec>
-                              <exec executable="sh" dir="${basedir}"    failifexecutionfails="false"  errorproperty="err@{pName}"
-                                  outputproperty="@{pName}"  osfamily="unix">
-                                  <arg line=" -c"  />
-                                  <arg value="${cmd1@{pName}}"/>
-                              </exec> 
-                              <echo>${err@{pName}}</echo>
-                          </sequential>
-                      </macrodef>
-                      <getVer dir="." pName="scmRevVer"  />
-                      <echo>scmRevVer:${scmRevVer}  buildTime:${buildTime}</echo>
-                  </target>
-                  </configuration>
-                </execution>
-              </executions>
-            </plugin>
-            <plugin>
-              <groupId>org.apache.maven.plugins</groupId>
-              <artifactId>maven-jar-plugin</artifactId>
-              <version>2.6</version>
-              <configuration>
-                  <archive>
-                      <addMavenDescriptor>${jar_with_pom}</addMavenDescriptor>
-                      <manifestEntries>
-                          <SCM-Revision>${scmRevVer}</SCM-Revision>
-                          <Build-Time>${buildTime}</Build-Time>
-                          <Java-Target>${maven.compiler.target}</Java-Target>
-                      </manifestEntries>
-                   </archive>
-              </configuration>
-            </plugin>
-          </plugins>
-        </pluginManagement>
       </build>
     </profile>
     </profiles>
