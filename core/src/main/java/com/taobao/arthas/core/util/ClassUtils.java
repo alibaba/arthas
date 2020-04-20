@@ -127,6 +127,14 @@ public class ClassUtils {
         return classInfo;
     }
 
+    public static ClassVO createSimpleClassInfo(Class clazz) {
+        ClassVO classInfo = new ClassVO();
+        classInfo.setName(StringUtils.classname(clazz));
+        classInfo.setClassloader(TypeRenderUtils.getClassloader(clazz));
+        classInfo.setClassLoaderHash(StringUtils.classLoaderHash(clazz));
+        return classInfo;
+    }
+
     public static MethodVO createMethodInfo(Method method, Class clazz, boolean detail) {
         String methodNameWithDescriptor = org.objectweb.asm.commons.Method.getMethod(method).toString();
         MethodVO methodVO = new MethodVO();

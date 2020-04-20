@@ -4,10 +4,8 @@ import com.alibaba.arthas.deps.org.slf4j.Logger;
 import com.alibaba.arthas.deps.org.slf4j.LoggerFactory;
 import com.alibaba.fastjson.JSON;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.taobao.arthas.core.command.model.CommandRequestModel;
-import com.taobao.arthas.core.command.model.InputStatus;
-import com.taobao.arthas.core.command.model.InputStatusVO;
-import com.taobao.arthas.core.command.model.ResultModel;
+import com.taobao.arthas.common.PidUtils;
+import com.taobao.arthas.core.command.model.*;
 import com.taobao.arthas.core.distribution.PackingResultDistributor;
 import com.taobao.arthas.core.distribution.ResultConsumer;
 import com.taobao.arthas.core.distribution.ResultDistributor;
@@ -28,6 +26,8 @@ import com.taobao.arthas.core.shell.system.impl.InternalCommandManager;
 import com.taobao.arthas.core.shell.system.impl.JobControllerImpl;
 import com.taobao.arthas.core.shell.term.SignalHandler;
 import com.taobao.arthas.core.shell.term.Term;
+import com.taobao.arthas.core.util.ArthasBanner;
+import com.taobao.arthas.core.util.DateUtils;
 import com.taobao.arthas.core.util.StringUtils;
 import io.netty.buffer.ByteBuf;
 import io.netty.handler.codec.http.*;
@@ -195,6 +195,17 @@ public class HttpApiHandler {
             //create consumer
             ResultConsumer resultConsumer = new ResultConsumerImpl();
             session.getResultDistributor().addConsumer(resultConsumer);
+
+            session.getResultDistributor().appendResult(new MessageModel("Welcome to arthas!"));
+
+            //welcome message
+            WelcomeModel welcomeModel = new WelcomeModel();
+            welcomeModel.setVersion(ArthasBanner.version());
+            welcomeModel.setWiki(ArthasBanner.wiki());
+            welcomeModel.setTutorials(ArthasBanner.tutorials());
+            welcomeModel.setPid(PidUtils.currentPid());
+            welcomeModel.setTime(DateUtils.getCurrentDate());
+            session.getResultDistributor().appendResult(welcomeModel);
 
             //allow input
             updateSessionInputStatus(session, InputStatus.ALLOW_INPUT);

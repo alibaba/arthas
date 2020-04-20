@@ -16,7 +16,7 @@ public class StatusModel extends ResultModel {
         return statusCode;
     }
 
-    public ResultModel setStatusCode(int statusCode) {
+    public StatusModel setStatusCode(int statusCode) {
         this.statusCode = statusCode;
         return this;
     }
@@ -25,9 +25,14 @@ public class StatusModel extends ResultModel {
         return message;
     }
 
-    public ResultModel setMessage(String message) {
+    public StatusModel setMessage(String message) {
         this.message = message;
         return this;
+    }
+
+    public void setStatus(int statusCode, String message) {
+        this.statusCode = statusCode;
+        this.message = message;
     }
 
     @Override

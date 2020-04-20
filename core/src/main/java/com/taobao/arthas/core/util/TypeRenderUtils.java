@@ -1,5 +1,6 @@
 package com.taobao.arthas.core.util;
 
+import com.taobao.arthas.core.command.model.ClassVO;
 import com.taobao.arthas.core.command.model.FieldVO;
 import com.taobao.arthas.core.view.ObjectView;
 import com.taobao.text.ui.Element;
@@ -95,6 +96,18 @@ public class TypeRenderUtils {
                 parent.addChild(tempChild);
                 parent = tempChild;
             }
+        }
+        return root;
+    }
+
+    public static Element drawClassLoader(ClassVO clazz) {
+        TreeElement root = new TreeElement();
+        TreeElement parent = root;
+        String[] classloaders = clazz.getClassloader();
+        for (String classloader : classloaders) {
+            TreeElement child = new TreeElement(label(classloader));
+            parent.addChild(child);
+            parent = child;
         }
         return root;
     }

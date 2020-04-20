@@ -50,6 +50,9 @@ public class ResultViewResolver {
             registerView(new OptionsModel(), new OptionsView());
             registerView(new ChangeResultModel(), new ChangeResultView());
             registerView(new RedefineModel(), new RedefineView());
+            registerView(new MemoryCompilerModel(), new MemoryCompilerView());
+            registerView(new ClassMatchesModel(), new ClassMatchesView());
+            registerView(new GetStaticModel(), new GetStaticView());
         } catch (Throwable e) {
             logger.error("register result view failed", e);
         }
