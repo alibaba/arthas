@@ -31,10 +31,8 @@ public class VerifyUtils {
     public static Object instanceVerity(byte[] bytes) throws Exception {
         String name = Type.getObjectType(AsmUtils.toClassNode(bytes).name).getClassName();
 
-        URLClassLoader systemClassLoader = (URLClassLoader) ClassLoader.getSystemClassLoader();
-
         @SuppressWarnings("resource")
-        ClassbyteClassLoader cl = new ClassbyteClassLoader(systemClassLoader.getURLs(),
+        ClassbyteClassLoader cl = new ClassbyteClassLoader(ClassLoaderUtils.getUrls(ClassLoader.getSystemClassLoader()),
                         ClassLoader.getSystemClassLoader().getParent());
 
         cl.addClass(name, bytes);
