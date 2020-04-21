@@ -25,7 +25,7 @@ public class ReturnBinding extends Binding {
             AsmOpUtils.push(instructions, null);
         }else {
             LocalVariableNode returnVariableNode = bindingContext.getMethodProcessor().initReturnVariableNode();
-            AsmOpUtils.storeVar(instructions, returnType, returnVariableNode.index);
+            AsmOpUtils.loadVar(instructions, returnType, returnVariableNode.index);
         }
         
     }
