@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
+import com.taobao.arthas.core.command.model.ClassLoaderVO;
 import com.taobao.arthas.core.command.model.ClassVO;
 import com.taobao.arthas.core.command.model.MethodVO;
 import com.taobao.text.Decoration;
@@ -36,6 +37,10 @@ public class ClassUtils {
     }
 
     public static Element renderClassInfo(Class<?> clazz) {
+        return renderClassInfo(clazz, false, null);
+    }
+
+    public static Element renderClassInfo(ClassVO clazz) {
         return renderClassInfo(clazz, false, null);
     }
 
@@ -69,34 +74,34 @@ public class ClassUtils {
         return table;
     }
 
-//    public static Element renderClassInfo(ClassVO clazz, boolean isPrintField, Integer expand) {
-//        TableElement table = new TableElement().leftCellPadding(1).rightCellPadding(1);
-//
-//        table.row(label("class-info").style(Decoration.bold.bold()), label(clazz.getClassInfo()))
-//                .row(label("code-source").style(Decoration.bold.bold()), label(clazz.getCodeSource()))
-//                .row(label("name").style(Decoration.bold.bold()), label(clazz.getName()))
-//                .row(label("isInterface").style(Decoration.bold.bold()), label("" + clazz.getInterface()))
-//                .row(label("isAnnotation").style(Decoration.bold.bold()), label("" + clazz.getAnnotation()))
-//                .row(label("isEnum").style(Decoration.bold.bold()), label("" + clazz.getEnum()))
-//                .row(label("isAnonymousClass").style(Decoration.bold.bold()), label("" + clazz.getAnonymousClass()))
-//                .row(label("isArray").style(Decoration.bold.bold()), label("" + clazz.getArray()))
-//                .row(label("isLocalClass").style(Decoration.bold.bold()), label("" + clazz.getLocalClass()))
-//                .row(label("isMemberClass").style(Decoration.bold.bold()), label("" + clazz.getMemberClass()))
-//                .row(label("isPrimitive").style(Decoration.bold.bold()), label("" + clazz.getPrimitive()))
-//                .row(label("isSynthetic").style(Decoration.bold.bold()), label("" + clazz.getSynthetic()))
-//                .row(label("simple-name").style(Decoration.bold.bold()), label(clazz.getSimpleName()))
-//                .row(label("modifier").style(Decoration.bold.bold()), label(clazz.getModifier()))
-//                .row(label("annotation").style(Decoration.bold.bold()), label(StringUtils.join(clazz.getAnnotations(), ",")))
-//                .row(label("interfaces").style(Decoration.bold.bold()), label(StringUtils.join(clazz.getInterfaces(), ",")))
-//                .row(label("super-class").style(Decoration.bold.bold()), TypeRenderUtils.drawSuperClass(clazz))
-//                .row(label("class-loader").style(Decoration.bold.bold()), TypeRenderUtils.drawClassLoader(clazz))
-//                .row(label("classLoaderHash").style(Decoration.bold.bold()), label(clazz.getClassLoaderHash()));
-//
-//        if (isPrintField) {
-//            table.row(label("fields").style(Decoration.bold.bold()), TypeRenderUtils.drawField(clazz, expand));
-//        }
-//        return table;
-//    }
+    public static Element renderClassInfo(ClassVO clazz, boolean isPrintField, Integer expand) {
+        TableElement table = new TableElement().leftCellPadding(1).rightCellPadding(1);
+
+        table.row(label("class-info").style(Decoration.bold.bold()), label(clazz.getClassInfo()))
+                .row(label("code-source").style(Decoration.bold.bold()), label(clazz.getCodeSource()))
+                .row(label("name").style(Decoration.bold.bold()), label(clazz.getName()))
+                .row(label("isInterface").style(Decoration.bold.bold()), label("" + clazz.getInterface()))
+                .row(label("isAnnotation").style(Decoration.bold.bold()), label("" + clazz.getAnnotation()))
+                .row(label("isEnum").style(Decoration.bold.bold()), label("" + clazz.getEnum()))
+                .row(label("isAnonymousClass").style(Decoration.bold.bold()), label("" + clazz.getAnonymousClass()))
+                .row(label("isArray").style(Decoration.bold.bold()), label("" + clazz.getArray()))
+                .row(label("isLocalClass").style(Decoration.bold.bold()), label("" + clazz.getLocalClass()))
+                .row(label("isMemberClass").style(Decoration.bold.bold()), label("" + clazz.getMemberClass()))
+                .row(label("isPrimitive").style(Decoration.bold.bold()), label("" + clazz.getPrimitive()))
+                .row(label("isSynthetic").style(Decoration.bold.bold()), label("" + clazz.getSynthetic()))
+                .row(label("simple-name").style(Decoration.bold.bold()), label(clazz.getSimpleName()))
+                .row(label("modifier").style(Decoration.bold.bold()), label(clazz.getModifier()))
+                .row(label("annotation").style(Decoration.bold.bold()), label(StringUtils.join(clazz.getAnnotations(), ",")))
+                .row(label("interfaces").style(Decoration.bold.bold()), label(StringUtils.join(clazz.getInterfaces(), ",")))
+                .row(label("super-class").style(Decoration.bold.bold()), TypeRenderUtils.drawSuperClass(clazz))
+                .row(label("class-loader").style(Decoration.bold.bold()), TypeRenderUtils.drawClassLoader(clazz))
+                .row(label("classLoaderHash").style(Decoration.bold.bold()), label(clazz.getClassLoaderHash()));
+
+        if (isPrintField) {
+            table.row(label("fields").style(Decoration.bold.bold()), TypeRenderUtils.drawField(clazz, expand));
+        }
+        return table;
+    }
 
     public static ClassVO createClassInfo(Class clazz, boolean detail, boolean withFields) {
         CodeSource cs = clazz.getProtectionDomain().getCodeSource();
@@ -214,5 +219,28 @@ public class ClassUtils {
             classVOs.add(classVO);
         }
         return classVOs;
+    }
+
+    public static ClassLoaderVO createClassLoaderVO(ClassLoader classLoader) {
+        ClassLoaderVO classLoaderVO = new ClassLoaderVO();
+        classLoaderVO.setHash(classLoaderHash(classLoader));
+        classLoaderVO.setName(classLoader==null?"BootstrapClassLoader":classLoader.toString());
+        ClassLoader parent = classLoader == null ? null : classLoader.getParent();
+        classLoaderVO.setParent(parent==null?null:parent.toString());
+        return classLoaderVO;
+    }
+
+    public static String classLoaderHash(Class<?> clazz) {
+        if (clazz == null || clazz.getClassLoader() == null) {
+            return "null";
+        }
+        return Integer.toHexString(clazz.getClassLoader().hashCode());
+    }
+
+    public static String classLoaderHash(ClassLoader classLoader) {
+        if (classLoader == null ) {
+            return "null";
+        }
+        return Integer.toHexString(classLoader.hashCode());
     }
 }

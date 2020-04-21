@@ -84,6 +84,22 @@ public abstract class StringUtils {
         return builder.toString();
     }
 
+    public static String concat(String seperator, String... types) {
+        if (types == null || types.length == 0) {
+            return Constants.EMPTY_STRING;
+        }
+
+        StringBuilder builder = new StringBuilder();
+        for (int i = 0; i < types.length; i++) {
+            builder.append(types[i]);
+            if (i < types.length - 1) {
+                builder.append(seperator);
+            }
+        }
+
+        return builder.toString();
+    }
+
     /**
      * 翻译Modifier值
      *

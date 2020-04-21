@@ -79,6 +79,10 @@ public class TypeRenderUtils {
         return root;
     }
 
+    public static Element drawSuperClass(ClassVO clazz) {
+        return drawTree(clazz.getSuperClass());
+    }
+
     public static Element drawClassLoader(Class<?> clazz) {
         TreeElement root = new TreeElement();
         TreeElement parent = root;
@@ -101,11 +105,15 @@ public class TypeRenderUtils {
     }
 
     public static Element drawClassLoader(ClassVO clazz) {
+        String[] classloaders = clazz.getClassloader();
+        return drawTree(classloaders);
+    }
+
+    public static Element drawTree(String[] nodes) {
         TreeElement root = new TreeElement();
         TreeElement parent = root;
-        String[] classloaders = clazz.getClassloader();
-        for (String classloader : classloaders) {
-            TreeElement child = new TreeElement(label(classloader));
+        for (String node : nodes) {
+            TreeElement child = new TreeElement(label(node));
             parent.addChild(child);
             parent = child;
         }
@@ -132,6 +140,36 @@ public class TypeRenderUtils {
 
             if (Modifier.isStatic(field.getModifiers())) {
                 fieldTable.row("value", drawFieldValue(field, expand));
+            }
+
+            fieldTable.row(label(""));
+            fieldsTable.row(fieldTable);
+        }
+
+        return fieldsTable;
+    }
+
+    public static Element drawField(ClassVO clazz, Integer expand) {
+        TableElement fieldsTable = new TableElement(1).leftCellPadding(0).rightCellPadding(0);
+        FieldVO[] fields = clazz.getFields();
+        if (fields == null || fields.length == 0) {
+            return fieldsTable;
+        }
+
+        for (FieldVO field : fields) {
+            TableElement fieldTable = new TableElement().leftCellPadding(0).rightCellPadding(1);
+            fieldTable.row("name", field.getName())
+                    .row("type", field.getType())
+                    .row("modifier", field.getModifier());
+
+            String[] annotations = field.getAnnotations();
+            if (annotations != null && annotations.length > 0) {
+                fieldTable.row("annotation", drawAnnotation(annotations));
+            }
+
+            if (field.isStatic()) {
+                Object o = (expand != null && expand >= 0) ? new ObjectView(field.getValue(), expand).draw() : field.getValue();
+                fieldTable.row("value", StringUtils.objectToString(o));
             }
 
             fieldTable.row(label(""));
@@ -176,6 +214,10 @@ public class TypeRenderUtils {
             }
         }
         return StringUtils.concat(",", types.toArray(new Class<?>[0]));
+    }
+
+    public static String drawAnnotation(String... annotations) {
+        return StringUtils.concat(",", annotations);
     }
 
     public static String[] getAnnotations(Class<?> clazz) {
@@ -243,7 +285,10 @@ public class TypeRenderUtils {
             fieldVO.setModifier(StringUtils.modifier(field.getModifiers(), ','));
             fieldVO.setAnnotations(getAnnotations(field.getAnnotations()));
             if (Modifier.isStatic(field.getModifiers())) {
+                fieldVO.setStatic(true);
                 fieldVO.setValue(getFieldValue(field));
+            } else {
+                fieldVO.setStatic(false);
             }
             list.add(fieldVO);
         }

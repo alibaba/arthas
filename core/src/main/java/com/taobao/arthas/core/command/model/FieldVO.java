@@ -9,6 +9,7 @@ public class FieldVO {
     private String modifier;
     private String[] annotations;
     private Object value;
+    private boolean isStatic;
 
     public String getName() {
         return name;
@@ -48,5 +49,13 @@ public class FieldVO {
 
     public void setAnnotations(String[] annotations) {
         this.annotations = annotations;
+    }
+
+    public boolean isStatic() {
+        return isStatic;
+    }
+
+    public void setStatic(boolean aStatic) {
+        isStatic = aStatic;
     }
 }
