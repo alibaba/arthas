@@ -48,7 +48,7 @@ public abstract class Binding {
     @Retention(RetentionPolicy.RUNTIME)
     @java.lang.annotation.Target(ElementType.PARAMETER)
     @BindingParserHandler(parser = ArgsBindingParser.class)
-    public @interface Args {
+    public static @interface Args {
         
         boolean optional() default false;
 
@@ -65,7 +65,7 @@ public abstract class Binding {
     @Retention(RetentionPolicy.RUNTIME)
     @java.lang.annotation.Target(ElementType.PARAMETER)
     @BindingParserHandler(parser = ArgNamesBindingParser.class)
-    public @interface ArgNames {
+    public static @interface ArgNames {
         
         boolean optional() default false;
 
@@ -82,7 +82,7 @@ public abstract class Binding {
     @Retention(RetentionPolicy.RUNTIME)
     @java.lang.annotation.Target(ElementType.PARAMETER)
     @BindingParserHandler(parser = LocalVarsBindingParser.class)
-    public @interface LocalVars {
+    public static @interface LocalVars {
         
         boolean optional() default false;
 
@@ -99,7 +99,7 @@ public abstract class Binding {
     @Retention(RetentionPolicy.RUNTIME)
     @java.lang.annotation.Target(ElementType.PARAMETER)
     @BindingParserHandler(parser = LocalVarNamesBindingParser.class)
-    public @interface LocalVarNames {
+    public static @interface LocalVarNames {
         
         boolean optional() default false;
 
@@ -116,7 +116,7 @@ public abstract class Binding {
     @Retention(RetentionPolicy.RUNTIME)
     @java.lang.annotation.Target(ElementType.PARAMETER)
     @BindingParserHandler(parser = ClassBindingParser.class)
-    public @interface Class {
+    public static @interface Class {
         
         boolean optional() default false;
 
@@ -135,7 +135,7 @@ public abstract class Binding {
     @Retention(RetentionPolicy.RUNTIME)
     @java.lang.annotation.Target(ElementType.PARAMETER)
     @BindingParserHandler(parser = FieldBindingParser.class)
-    public @interface Field {
+    public static @interface Field {
         boolean optional() default false;
         java.lang.Class<?> owner() default Void.class;
         java.lang.Class<?> type() default Void.class;
@@ -166,7 +166,7 @@ public abstract class Binding {
     @Retention(RetentionPolicy.RUNTIME)
     @java.lang.annotation.Target(ElementType.PARAMETER)
     @BindingParserHandler(parser = InvokeArgsBindingParser.class)
-    public @interface InvokeArgs {
+    public static @interface InvokeArgs {
         
         boolean optional() default false;
 
@@ -184,7 +184,7 @@ public abstract class Binding {
     @Retention(RetentionPolicy.RUNTIME)
     @java.lang.annotation.Target(ElementType.PARAMETER)
     @BindingParserHandler(parser = InvokeReturnBindingParser.class)
-    public @interface InvokeReturn {
+    public static @interface InvokeReturn {
         
         boolean optional() default false;
 
@@ -202,7 +202,7 @@ public abstract class Binding {
     @Retention(RetentionPolicy.RUNTIME)
     @java.lang.annotation.Target(ElementType.PARAMETER)
     @BindingParserHandler(parser = InvokeMethodDeclarationBindingParser.class)
-    public @interface InvokeMethodDeclaration {
+    public static @interface InvokeMethodDeclaration {
         
         boolean optional() default false;
 
@@ -220,7 +220,7 @@ public abstract class Binding {
     @Retention(RetentionPolicy.RUNTIME)
     @java.lang.annotation.Target(ElementType.PARAMETER)
     @BindingParserHandler(parser = MethodBindingParser.class)
-    public @interface Method {
+    public static @interface Method {
         boolean optional() default false;
     }
     
@@ -236,7 +236,7 @@ public abstract class Binding {
     @Retention(RetentionPolicy.RUNTIME)
     @java.lang.annotation.Target(ElementType.PARAMETER)
     @BindingParserHandler(parser = ReturnBindingParser.class)
-    public @interface Return {
+    public static @interface Return {
         
         boolean optional() default false;
 
@@ -254,7 +254,7 @@ public abstract class Binding {
     @Retention(RetentionPolicy.RUNTIME)
     @java.lang.annotation.Target(ElementType.PARAMETER)
     @BindingParserHandler(parser = ThisBindingParser.class)
-    public @interface This {
+    public static @interface This {
 
     }
     
@@ -270,7 +270,7 @@ public abstract class Binding {
     @Retention(RetentionPolicy.RUNTIME)
     @java.lang.annotation.Target(ElementType.PARAMETER)
     @BindingParserHandler(parser = ThrowableBindingParser.class)
-    public @interface Throwable {
+    public static @interface Throwable {
         
         boolean optional() default false;
 
@@ -289,7 +289,7 @@ public abstract class Binding {
     @Retention(RetentionPolicy.RUNTIME)
     @java.lang.annotation.Target(ElementType.PARAMETER)
     @BindingParserHandler(parser = LineBindingParser.class)
-    public @interface Line {
+    public static @interface Line {
         
         boolean optional() default false;
 
@@ -308,7 +308,7 @@ public abstract class Binding {
     @Retention(RetentionPolicy.RUNTIME)
     @java.lang.annotation.Target(ElementType.PARAMETER)
     @BindingParserHandler(parser = MonitorBindingParser.class)
-    public @interface Monitor {
+    public static @interface Monitor {
         
         boolean optional() default false;
 
