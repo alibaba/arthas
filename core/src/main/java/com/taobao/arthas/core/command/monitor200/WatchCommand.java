@@ -8,9 +8,9 @@ import com.taobao.arthas.core.shell.cli.Completion;
 import com.taobao.arthas.core.shell.cli.CompletionUtils;
 import com.taobao.arthas.core.shell.command.CommandProcess;
 import com.taobao.arthas.core.util.SearchUtils;
-import com.taobao.arthas.core.util.StringUtils;
 import com.taobao.arthas.core.util.matcher.Matcher;
 import com.taobao.middleware.cli.annotations.Argument;
+import com.taobao.middleware.cli.annotations.DefaultValue;
 import com.taobao.middleware.cli.annotations.Description;
 import com.taobao.middleware.cli.annotations.Name;
 import com.taobao.middleware.cli.annotations.Option;
@@ -56,6 +56,7 @@ public class WatchCommand extends EnhancerCommand {
     }
 
     @Argument(index = 2, argName = "express", required = false)
+    @DefaultValue("{params, target, returnObj}")
     @Description("the content you want to watch, written by ognl.\n" + Constants.EXPRESS_EXAMPLES)
     public void setExpress(String express) {
         this.express = express;
@@ -124,9 +125,6 @@ public class WatchCommand extends EnhancerCommand {
     }
 
     public String getExpress() {
-        if (express == null) {
-            express ="{params, target, returnObj}";
-        }
         return express;
     }
 
