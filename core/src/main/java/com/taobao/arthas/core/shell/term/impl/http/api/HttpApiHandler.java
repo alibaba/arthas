@@ -288,7 +288,6 @@ public class HttpApiHandler {
             session.setForegroundJob(job);
             job.run();
 
-            response.setState(ApiState.SCHEDULED);
         } catch (Throwable e) {
             logger.error("Exec command failed:" + e.getMessage() + ", command:" + commandLine, e);
             response.setState(ApiState.FAILED).setMessage("Exec command failed:" + e.getMessage());
@@ -300,6 +299,9 @@ public class HttpApiHandler {
         if (timeExpired) {
             logger.warn("Job is exceeded time limit, force interrupt it, jobId: {}", job.id());
             job.interrupt();
+            response.setState(ApiState.FAILED).setMessage("The job is exceeded time limit, force interrupt");
+        } else {
+            response.setState(ApiState.SUCCEEDED);
         }
         //session.setForegroundJob(null);
 
