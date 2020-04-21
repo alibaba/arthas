@@ -4,10 +4,12 @@ import com.alibaba.arthas.deps.org.slf4j.Logger;
 import com.alibaba.arthas.deps.org.slf4j.LoggerFactory;
 import com.taobao.arthas.core.advisor.Enhancer;
 import com.taobao.arthas.core.command.Constants;
+import com.taobao.arthas.core.command.model.*;
 import com.taobao.arthas.core.shell.cli.Completion;
 import com.taobao.arthas.core.shell.cli.CompletionUtils;
 import com.taobao.arthas.core.shell.command.AnnotatedCommand;
 import com.taobao.arthas.core.shell.command.CommandProcess;
+import com.taobao.arthas.core.util.ClassUtils;
 import com.taobao.arthas.core.util.SearchUtils;
 import com.taobao.arthas.core.util.StringUtils;
 import com.taobao.arthas.core.util.TypeRenderUtils;
@@ -27,8 +29,7 @@ import com.taobao.text.util.RenderUtil;
 import java.io.File;
 import java.lang.instrument.Instrumentation;
 import java.lang.instrument.UnmodifiableClassException;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 import static com.taobao.text.ui.Element.label;
 
@@ -89,28 +90,27 @@ public class DumpClassCommand extends AnnotatedCommand {
     @Override
     public void process(CommandProcess process) {
         RowAffect effect = new RowAffect();
-
+        StatusModel statusModel = new StatusModel(-1, "unknown error");
         try {
             if (directory != null) {
                 File dir = new File(directory);
                 if (dir.isFile()) {
-                    process.write(directory + " :is not a directory, please check it\n");
+                    process.end(-1, directory + " :is not a directory, please check it");
                     return;
                 }
             }
             Instrumentation inst = process.session().getInstrumentation();
             Set<Class<?>> matchedClasses = SearchUtils.searchClass(inst, classPattern, isRegEx, code);
-
             if (matchedClasses == null || matchedClasses.isEmpty()) {
-                processNoMatch(process);
+                processNoMatch(process, statusModel);
             } else if (matchedClasses.size() > limit) {
-                processMatches(process, matchedClasses);
+                processMatches(process, matchedClasses, statusModel);
             } else {
-                processMatch(process, effect, inst, matchedClasses);
+                processMatch(process, effect, inst, matchedClasses, statusModel);
             }
         } finally {
-            process.write(effect + "\n");
-            process.end();
+            process.appendResult(new RowAffectModel(effect));
+            process.end(statusModel.getStatusCode(), statusModel.getMessage());
         }
     }
 
@@ -121,50 +121,39 @@ public class DumpClassCommand extends AnnotatedCommand {
         }
     }
 
-    private void processMatch(CommandProcess process, RowAffect effect, Instrumentation inst, Set<Class<?>> matchedClasses) {
+    private void processMatch(CommandProcess process, RowAffect effect, Instrumentation inst, Set<Class<?>> matchedClasses, StatusModel statusModel) {
         try {
             Map<Class<?>, File> classFiles = dump(inst, matchedClasses);
-            TableElement table = new TableElement().leftCellPadding(1).rightCellPadding(1);
-            table.row(new LabelElement("HASHCODE").style(Decoration.bold.bold()),
-                    new LabelElement("CLASSLOADER").style(Decoration.bold.bold()),
-                    new LabelElement("LOCATION").style(Decoration.bold.bold()));
-
+            List<ClassVO> dumpedClasses = new ArrayList<ClassVO>(classFiles.size());
             for (Map.Entry<Class<?>, File> entry : classFiles.entrySet()) {
                 Class<?> clazz = entry.getKey();
                 File file = entry.getValue();
-                table.row(label(StringUtils.classLoaderHash(clazz)).style(Decoration.bold.fg(Color.red)),
-                        TypeRenderUtils.drawClassLoader(clazz),
-                        label(file.getCanonicalPath()).style(Decoration.bold.fg(Color.red)));
+                ClassVO classVO = ClassUtils.createSimpleClassInfo(clazz);
+                classVO.setLocation(file.getCanonicalPath());
+                dumpedClasses.add(classVO);
             }
+            process.appendResult(new DumpClassModel(dumpedClasses));
 
-            process.write(RenderUtil.render(table, process.width()))
-                    .write(com.taobao.arthas.core.util.Constants.EMPTY_STRING);
             effect.rCnt(classFiles.keySet().size());
+            statusModel.setStatus(0);
         } catch (Throwable t) {
             logger.error("dump: fail to dump classes: " + matchedClasses, t);
         }
     }
 
-    private void processMatches(CommandProcess process, Set<Class<?>> matchedClasses) {
-        process.write(String.format(
-                "Found more than %d class for: %s, Please Try to specify the classloader with the -c option, or try to use --limit option.\n",
-                limit, classPattern));
+    private void processMatches(CommandProcess process, Set<Class<?>> matchedClasses, StatusModel statusModel) {
+        String msg = String.format(
+                "Found more than %d class for: %s, Please Try to specify the classloader with the -c option, or try to use --limit option.",
+                limit, classPattern);
+        process.appendResult(new MessageModel(msg));
 
-        TableElement table = new TableElement().leftCellPadding(1).rightCellPadding(1);
-        table.row(new LabelElement("NAME").style(Decoration.bold.bold()),
-                new LabelElement("HASHCODE").style(Decoration.bold.bold()),
-                new LabelElement("CLASSLOADER").style(Decoration.bold.bold()));
-
-        for (Class<?> c : matchedClasses) {
-            table.row(label(c.getName()), label(StringUtils.classLoaderHash(c)).style(Decoration.bold.fg(Color.red)),
-                    TypeRenderUtils.drawClassLoader(c));
-        }
-
-        process.write(RenderUtil.render(table, process.width()) + "\n");
+        List<ClassVO> classVOs = ClassUtils.createClassVOList(matchedClasses);
+        process.appendResult(new ClassMatchesModel(classVOs));
+        statusModel.setStatus(-1, msg);
     }
 
-    private void processNoMatch(CommandProcess process) {
-        process.write("No class found for: " + classPattern + "\n");
+    private void processNoMatch(CommandProcess process, StatusModel statusModel) {
+        statusModel.setStatus(-1, "No class found for: " + classPattern);
     }
 
     private Map<Class<?>, File> dump(Instrumentation inst, Set<Class<?>> classes) throws UnmodifiableClassException {

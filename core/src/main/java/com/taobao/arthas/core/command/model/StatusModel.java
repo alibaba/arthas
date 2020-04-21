@@ -35,6 +35,11 @@ public class StatusModel extends ResultModel {
         this.message = message;
     }
 
+    public void setStatus(int statusCode) {
+        this.statusCode = statusCode;
+        this.message = null;
+    }
+
     @Override
     public String getType() {
         return "status";

@@ -8,6 +8,7 @@ import java.lang.reflect.Method;
 import java.security.CodeSource;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 import com.taobao.arthas.core.command.model.ClassVO;
 import com.taobao.arthas.core.command.model.MethodVO;
@@ -204,5 +205,14 @@ public class ClassUtils {
             list.add(StringUtils.classname(anInterface));
         }
         return list.toArray(new String[0]);
+    }
+
+    public static List<ClassVO> createClassVOList(Set<Class<?>> matchedClasses) {
+        List<ClassVO> classVOs = new ArrayList<ClassVO>(matchedClasses.size());
+        for (Class<?> aClass : matchedClasses) {
+            ClassVO classVO = createSimpleClassInfo(aClass);
+            classVOs.add(classVO);
+        }
+        return classVOs;
     }
 }

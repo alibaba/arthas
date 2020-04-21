@@ -159,11 +159,7 @@ public class GetStaticCommand extends AnnotatedCommand {
         String usage = "getstatic -c <hashcode> " + classPattern + " " + fieldPattern;
         process.appendResult(new MessageModel("Found more than one class for: " + classPattern + ", Please use: "+usage));
 
-        List<ClassVO> matchedClassVOs = new ArrayList<ClassVO>(matchedClasses.size());
-        for (Class<?> aClass : matchedClasses) {
-            ClassVO classVO = ClassUtils.createSimpleClassInfo(aClass);
-            matchedClassVOs.add(classVO);
-        }
+        List<ClassVO> matchedClassVOs = ClassUtils.createClassVOList(matchedClasses);
         process.appendResult(new ClassMatchesModel(matchedClassVOs));
         statusModel.setStatus(-1, "Found more than one class for: " + classPattern + ", Please use: "+usage);
     }

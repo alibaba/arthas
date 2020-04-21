@@ -1,7 +1,5 @@
 package com.taobao.arthas.core.command.model;
 
-import java.util.List;
-
 /**
  * @author gongdewei 2020/4/8
  */
@@ -27,6 +25,7 @@ public class ClassVO {
     private String[] classloader;
     private String classLoaderHash;
     private FieldVO[] fields;
+    private String location;
 
     public String getName() {
         return name;
@@ -188,5 +187,11 @@ public class ClassVO {
         this.fields = fields;
     }
 
+    public String getLocation() {
+        return location;
+    }
 
+    public void setLocation(String location) {
+        this.location = location;
+    }
 }

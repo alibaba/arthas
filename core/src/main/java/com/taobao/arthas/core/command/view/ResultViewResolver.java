@@ -53,6 +53,7 @@ public class ResultViewResolver {
             registerView(new MemoryCompilerModel(), new MemoryCompilerView());
             registerView(new ClassMatchesModel(), new ClassMatchesView());
             registerView(new GetStaticModel(), new GetStaticView());
+            registerView(new DumpClassModel(), new DumpClassView());
         } catch (Throwable e) {
             logger.error("register result view failed", e);
         }
