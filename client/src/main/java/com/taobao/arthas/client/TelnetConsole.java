@@ -204,10 +204,6 @@ public class TelnetConsole {
      * @throws InterruptedException
      */
     public static int process(String[] args, ActionListener eotEventCallback) throws IOException, InterruptedException {
-        // support mingw/cygw jline color
-        if (OSUtils.isCygwinOrMinGW()) {
-            System.setProperty("jline.terminal", System.getProperty("jline.terminal", "jline.UnixTerminal"));
-        }
 
         TelnetConsole telnetConsole = new TelnetConsole();
         CLI cli = CLIConfigurator.define(TelnetConsole.class);
@@ -317,7 +313,8 @@ public class TelnetConsole {
         }
 
         if (cmds.isEmpty()) {
-            IOUtil.readWrite(telnet.getInputStream(), telnet.getOutputStream(), System.in,
+            final InputStream input = OSUtils.isWindows() ? consoleReader.getInput() : System.in;
+            IOUtil.readWrite(telnet.getInputStream(), telnet.getOutputStream(), input,
                     consoleReader.getOutput());
         } else {
             try {
