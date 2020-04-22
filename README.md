@@ -526,9 +526,9 @@ This project exists thanks to all the people who contribute.
 #### Projects
 
 * [greys-anatomy](https://github.com/oldmanpushcart/greys-anatomy): The Arthas code base has derived from Greys, we thank for the excellent work done by Greys.
-* [termd](https://github.com/termd/termd): Arthas's terminal implementation is based on termd, an open source library for writing terminal applications in Java.
+* [termd](https://github.com/alibaba/termd): Arthas's terminal implementation is based on termd, an open source library for writing terminal applications in Java.
 * [crash](https://github.com/crashub/crash): Arthas's text based user interface rendering is based on codes extracted from [here](https://github.com/crashub/crash/tree/1.3.2/shell)
-* [cli](https://github.com/eclipse-vertx/vert.x/tree/master/src/main/java/io/vertx/core/cli): Arthas's command line interface implementation is based on cli, open sourced by vert.x
+* [cli](https://github.com/alibaba/cli): Arthas's command line interface implementation is based on cli, open sourced by vert.x
 * [compiler](https://github.com/skalogs/SkaETL/tree/master/compiler) Arthas's memory compiler.
 * [Apache Commons Net](https://commons.apache.org/proper/commons-net/) Arthas's telnet client.
 * [async-profiler](https://github.com/jvm-profiling-tools/async-profiler) Arthas's profiler command.
