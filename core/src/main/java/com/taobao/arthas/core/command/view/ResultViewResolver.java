@@ -55,6 +55,7 @@ public class ResultViewResolver {
             registerView(new GetStaticModel(), new GetStaticView());
             registerView(new DumpClassModel(), new DumpClassView());
             registerView(new ClassLoaderModel(), new ClassLoaderView());
+            registerView(new JadModel(), new JadView());
         } catch (Throwable e) {
             logger.error("register result view failed", e);
         }

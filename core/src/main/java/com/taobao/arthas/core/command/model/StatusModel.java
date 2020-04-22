@@ -30,14 +30,14 @@ public class StatusModel extends ResultModel {
         return this;
     }
 
-    public void setStatus(int statusCode, String message) {
+    public StatusModel setStatus(int statusCode, String message) {
         this.statusCode = statusCode;
         this.message = message;
+        return this;
     }
 
-    public void setStatus(int statusCode) {
-        this.statusCode = statusCode;
-        this.message = null;
+    public StatusModel setStatus(int statusCode) {
+        return this.setStatus(statusCode, null);
     }
 
     @Override
