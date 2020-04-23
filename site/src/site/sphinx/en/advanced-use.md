@@ -86,6 +86,10 @@ Arthas supports living inside a browser. The communication between arthas and br
 
 * [Web Console](web-console.md)
 
+## Start as a Java Agent
+
+* [Start as a Java Agent](agent.md)
+
 ## User data report
 
 After the `3.1.4` version, arthas support user data report.
