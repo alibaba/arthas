@@ -172,6 +172,12 @@
                 <version>2.9.1</version>
                 <scope>test</scope>
             </dependency>
+            <dependency>
+                <groupId>org.mockito</groupId>
+                <artifactId>mockito-core</artifactId>
+                <version>3.3.3</version>
+                <scope>test</scope>
+            </dependency>
 
             <dependency>
                 <groupId>io.netty</groupId>
