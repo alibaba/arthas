@@ -91,6 +91,10 @@ Arthas支持使用管道对上述命令的结果进行进一步的处理，如`s
 
 * [Web Console](web-console.md)
 
+## 以java agent方式启动
+
+* [以java agent方式启动](agent.md)
+
 ## 用户数据回报
 
 在`3.1.4`版本后，增加了用户数据回报功能，方便统一做安全或者历史数据统计。
