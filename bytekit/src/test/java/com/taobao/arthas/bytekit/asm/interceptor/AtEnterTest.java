@@ -63,9 +63,13 @@ public class AtEnterTest {
                @Binding.Field(name = "longField") Object longFieldObject,
                @Binding.Field(name = "intField") int intField,
                @Binding.Field(name = "strField") String strField,
-               @Binding.Field(name = "intField") Object intFielObject
+               @Binding.Field(name = "intField") Object intFielObject,
+               @Binding.MethodName String methodName,
+               @Binding.MethodDesc String methodDesc
                ) {
             System.err.println("onEnter, object:" + object);
+            System.err.println("onEnter, methodName:" + methodName);
+            System.err.println("onEnter, methodDesc:" + methodDesc);
             return 123L;
         }
 

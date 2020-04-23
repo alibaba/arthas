@@ -214,7 +214,6 @@ public abstract class Binding {
             return new InvokeMethodDeclarationBinding();
         }
     }
-    
 
     @Documented
     @Retention(RetentionPolicy.RUNTIME)
@@ -223,15 +222,46 @@ public abstract class Binding {
     public static @interface Method {
         boolean optional() default false;
     }
-    
+
     public static class MethodBindingParser implements BindingParser {
         @Override
         public Binding parse(Annotation annotation) {
             return new MethodBinding();
         }
-        
+
     }
-    
+
+    @Documented
+    @Retention(RetentionPolicy.RUNTIME)
+    @java.lang.annotation.Target(ElementType.PARAMETER)
+    @BindingParserHandler(parser = MethodNameBindingParser.class)
+    public static @interface MethodName {
+        boolean optional() default false;
+    }
+
+    public static class MethodNameBindingParser implements BindingParser {
+        @Override
+        public Binding parse(Annotation annotation) {
+            return new MethodNameBinding();
+        }
+
+    }
+
+    @Documented
+    @Retention(RetentionPolicy.RUNTIME)
+    @java.lang.annotation.Target(ElementType.PARAMETER)
+    @BindingParserHandler(parser = MethodDescBindingParser.class)
+    public static @interface MethodDesc {
+        boolean optional() default false;
+    }
+
+    public static class MethodDescBindingParser implements BindingParser {
+        @Override
+        public Binding parse(Annotation annotation) {
+            return new MethodDeclarationBinding();
+        }
+    }
+
     @Documented
     @Retention(RetentionPolicy.RUNTIME)
     @java.lang.annotation.Target(ElementType.PARAMETER)
