@@ -10,6 +10,8 @@ import com.alibaba.arthas.deps.org.slf4j.Logger;
 import com.alibaba.arthas.deps.org.slf4j.LoggerFactory;
 import com.sun.management.HotSpotDiagnosticMXBean;
 import com.taobao.arthas.core.command.Constants;
+import com.taobao.arthas.core.command.model.HeapDumpModel;
+import com.taobao.arthas.core.command.model.MessageModel;
 import com.taobao.arthas.core.shell.command.AnnotatedCommand;
 import com.taobao.arthas.core.shell.command.CommandProcess;
 import com.taobao.middleware.cli.annotations.Argument;
@@ -49,6 +51,7 @@ public class HeapDumpCommand extends AnnotatedCommand {
     @Override
     public void process(CommandProcess process) {
         int status = 0;
+        String errorMsg = null;
         try {
             String dumpFile = file;
             if (dumpFile == null || dumpFile.isEmpty()) {
@@ -58,18 +61,19 @@ public class HeapDumpCommand extends AnnotatedCommand {
                 file.delete();
             }
 
-            process.write("Dumping heap to " + dumpFile + "...\n");
+            process.appendResult(new MessageModel("Dumping heap to " + dumpFile + " ..."));
 
             run(process, dumpFile, live);
 
-            process.write("Heap dump file created\n");
+            process.appendResult(new MessageModel("Heap dump file created"));
+            process.appendResult(new HeapDumpModel(dumpFile, live));
 
         } catch (Throwable t) {
             logger.error("heap dump error", t);
-            process.write("Heap dump error: " + t.getMessage() + '\n');
             status = 1;
+            errorMsg = "Heap dump error: " + t.getMessage();
         } finally {
-            process.end(status);
+            process.end(status, errorMsg);
         }
 
     }
