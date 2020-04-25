@@ -313,27 +313,33 @@ public abstract class Binding {
         }
         
     }
-    
-    
+
+
     @Documented
     @Retention(RetentionPolicy.RUNTIME)
     @java.lang.annotation.Target(ElementType.PARAMETER)
     @BindingParserHandler(parser = LineBindingParser.class)
     public static @interface Line {
-        
         boolean optional() default false;
 
+        /**
+         * 是否精确是在某个 LineNumberNode 上。如果为true的话，会向上找到最接近的 LineNumberNode
+         * 
+         * @return
+         */
+        boolean exact() default false;
+
     }
-    
+
     public static class LineBindingParser implements BindingParser {
         @Override
         public Binding parse(Annotation annotation) {
-            return new LineBinding();
+            Line line = (Line) annotation;
+            return new LineBinding(line.exact());
         }
-        
     }
-    
-    
+
+
     @Documented
     @Retention(RetentionPolicy.RUNTIME)
     @java.lang.annotation.Target(ElementType.PARAMETER)
