@@ -28,6 +28,7 @@ public class AtInvokeTest {
         public int testCall(int ii) {
             toBeCall(ii, 123L, "");
             System.err.println("abc");
+
             aaa("abc");
             return 123;
         }
@@ -60,10 +61,12 @@ public class AtInvokeTest {
         public static void onInvoke(
                 @Binding.This Object object,
                 @Binding.Class Object clazz
-                ,  
+                , 
+                @Binding.Line int line,
                 @Binding.InvokeArgs Object[] args
                 ) {
-            System.err.println("onInvoke: this" + object);
+            System.err.println("onInvoke: line: " + line);
+            System.err.println("onInvoke: this: " + object);
         }
         
         @AtInvoke(name = "toBeCall", inline = false, whenComplete = true)
