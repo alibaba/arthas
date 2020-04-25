@@ -31,6 +31,11 @@ import com.alibaba.arthas.deps.org.objectweb.asm.tree.TypeInsnNode;
 import com.alibaba.arthas.deps.org.objectweb.asm.util.ASMifier;
 import com.alibaba.arthas.deps.org.objectweb.asm.util.TraceClassVisitor;
 
+/**
+ * 
+ * @author hengyunabc
+ *
+ */
 public class AsmUtils {
 
 	public static ClassNode loadClass(Class<?> clazz) throws IOException {
@@ -236,6 +241,19 @@ public class AsmUtils {
         return result;
     }
 
+    public static boolean containsMethodInsnNode(MethodNode methodNode, String owner, String name) {
+        for (AbstractInsnNode insnNode = methodNode.instructions.getFirst(); insnNode != null; insnNode = insnNode
+                .getNext()) {
+            if (insnNode instanceof MethodInsnNode) {
+                final MethodInsnNode methodInsnNode = (MethodInsnNode) insnNode;
+                if (methodInsnNode.owner.equals(owner) && methodInsnNode.name.equals(name)) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+    
 	public static boolean isStatic(MethodNode methodNode) {
 		return (methodNode.access & Opcodes.ACC_STATIC) != 0;
 	}
