@@ -483,8 +483,12 @@ public class MBeanCommand extends AnnotatedCommand {
             try {
                 MBeanServer platformMBeanServer = ManagementFactory.getPlatformMBeanServer();
                 Set<ObjectName> objectNames = queryObjectNames();
-                TableElement table = createTable();
                 for (ObjectName objectName : objectNames) {
+                    TableElement table = new TableElement().leftCellPadding(1).rightCellPadding(1);
+                    table.row(true, "OBJECT_NAME", objectName.toString());
+                    table.row(true, label("NAME").style(Decoration.bold.bold()),
+                            label("VALUE").style(Decoration.bold.bold()));
+                    boolean found = false;
                     MBeanInfo mBeanInfo = platformMBeanServer.getMBeanInfo(objectName);
                     MBeanAttributeInfo[] attributes = mBeanInfo.getAttributes();
                     for (MBeanAttributeInfo attribute : attributes) {
@@ -500,9 +504,12 @@ public class MBeanCommand extends AnnotatedCommand {
                             value = String.valueOf(attributeObj);
                         }
                         table.row(attributeName, value);
+                        found = true;
                     }
-                    process.write(RenderUtil.render(table, process.width()));
-                    process.write("\n");
+                    if (found) {
+                        process.write(RenderUtil.render(table, process.width()));
+                        process.write("\n");
+                    }
                 }
             } catch (Throwable e) {
                 logger.warn("mbean error", e);
