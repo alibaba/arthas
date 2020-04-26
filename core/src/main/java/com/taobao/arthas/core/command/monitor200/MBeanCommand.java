@@ -107,7 +107,7 @@ public class MBeanCommand extends AnnotatedCommand {
         isRegEx = regEx;
     }
 
-    @Option(shortName = "m", longName = "metadata", flag = false)
+    @Option(shortName = "m", longName = "metadata", flag = true)
     @Description("Show metadata of mbean.")
     public void setMetaData(boolean metaData) {
         this.metaData = metaData;
