@@ -2,17 +2,15 @@ package com.taobao.arthas.core.command.view;
 
 import com.taobao.arthas.core.command.model.*;
 import com.taobao.arthas.core.shell.command.CommandProcess;
+import com.taobao.arthas.core.util.ThreadUtil;
 import com.taobao.text.Color;
 import com.taobao.text.Decoration;
 import com.taobao.text.Style;
-import com.taobao.text.ui.LabelElement;
-import com.taobao.text.ui.Overflow;
 import com.taobao.text.ui.RowElement;
 import com.taobao.text.ui.TableElement;
 import com.taobao.text.util.RenderUtil;
 
 import java.lang.management.MemoryUsage;
-import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
 
@@ -20,18 +18,6 @@ import java.util.Map;
  * @author gongdewei 2020/4/22
  */
 public class DashboardView extends ResultView<DashboardModel> {
-
-    /** . */
-    private static final EnumMap<Thread.State, Color> colorMapping = new EnumMap<Thread.State, Color>(Thread.State.class);
-
-    static {
-        colorMapping.put(Thread.State.NEW, Color.cyan);
-        colorMapping.put(Thread.State.RUNNABLE, Color.green);
-        colorMapping.put(Thread.State.BLOCKED, Color.red);
-        colorMapping.put(Thread.State.WAITING, Color.yellow);
-        colorMapping.put(Thread.State.TIMED_WAITING, Color.magenta);
-        colorMapping.put(Thread.State.TERMINATED, Color.blue);
-    }
 
     @Override
     public void draw(CommandProcess process, DashboardModel result) {
@@ -47,55 +33,11 @@ public class DashboardView extends ResultView<DashboardModel> {
         int runtimeInfoHeight = lowerHalf / 2;
         int heapInfoHeight = lowerHalf - runtimeInfoHeight;
 
-        String threadInfo = drawThreadInfo(result.getThreads(), width, threadTopHeight);
+        String threadInfo = ThreadUtil.drawThreadInfo(result.getThreads(), width, threadTopHeight);
         String memoryAndGc = drawMemoryInfoAndGcInfo(result.getMemoryInfo(), result.getGcInfos(), width, runtimeInfoHeight);
         String runTimeAndTomcat = drawRuntimeInfoAndTomcatInfo(result.getRuntimeInfo(), result.getTomcatInfo(), width, heapInfoHeight);
 
         process.write(threadInfo + memoryAndGc + runTimeAndTomcat);
-    }
-
-    static String drawThreadInfo(List<ThreadVO> threads, int width, int height) {
-        TableElement table = new TableElement(1,3,2,1,1,1,1,1,1).overflow(Overflow.HIDDEN).rightCellPadding(1);
-
-        // Header
-        table.add(
-                new RowElement().style(Decoration.bold.fg(Color.black).bg(Color.white)).add(
-                        "ID",
-                        "NAME",
-                        "GROUP",
-                        "PRIORITY",
-                        "STATE",
-                        "%CPU",
-                        "TIME",
-                        "INTERRUPTED",
-                        "DAEMON"
-                )
-        );
-
-        for (ThreadVO thread : threads) {
-            Color color = colorMapping.get(thread.getState());
-            long seconds = thread.getTime();
-            long min = seconds / 60;
-            String time = min + ":" + (seconds % 60);
-            long cpu = thread.getCpu();
-
-            LabelElement daemonLabel = new LabelElement(thread.isDaemon());
-            if (!thread.isDaemon()) {
-                daemonLabel.setStyle(Style.style(Color.magenta));
-            }
-            table.row(
-                    new LabelElement(thread.getId()),
-                    new LabelElement(thread.getName()),
-                    new LabelElement(thread.getGroup()),
-                    new LabelElement(thread.getPriority()),
-                    new LabelElement(thread.getState()).style(color.fg()),
-                    new LabelElement(cpu),
-                    new LabelElement(time),
-                    new LabelElement(thread.isInterrupted()),
-                    daemonLabel
-            );
-        }
-        return RenderUtil.render(table, width, height);
     }
 
     static String drawMemoryInfoAndGcInfo(Map<String, List<MemoryEntryVO>> memoryInfo, List<GcInfoVO> gcInfos, int width, int height) {

@@ -1,7 +1,16 @@
 package com.taobao.arthas.core.util;
 
 import com.taobao.arthas.core.command.model.StackModel;
+import com.taobao.arthas.core.command.model.ThreadVO;
 import com.taobao.arthas.core.view.Ansi;
+import com.taobao.text.Color;
+import com.taobao.text.Decoration;
+import com.taobao.text.Style;
+import com.taobao.text.ui.LabelElement;
+import com.taobao.text.ui.Overflow;
+import com.taobao.text.ui.RowElement;
+import com.taobao.text.ui.TableElement;
+import com.taobao.text.util.RenderUtil;
 
 import java.lang.management.*;
 import java.lang.reflect.Field;
@@ -16,6 +25,17 @@ import java.util.*;
 abstract public class ThreadUtil {
 
     private static final BlockingLockInfo EMPTY_INFO = new BlockingLockInfo();
+    /** . */
+    private static final EnumMap<Thread.State, Color> colorMapping = new EnumMap<Thread.State, Color>(Thread.State.class);
+
+    static {
+        colorMapping.put(Thread.State.NEW, Color.cyan);
+        colorMapping.put(Thread.State.RUNNABLE, Color.green);
+        colorMapping.put(Thread.State.BLOCKED, Color.red);
+        colorMapping.put(Thread.State.WAITING, Color.yellow);
+        colorMapping.put(Thread.State.TIMED_WAITING, Color.magenta);
+        colorMapping.put(Thread.State.TERMINATED, Color.blue);
+    }
 
     private static ThreadMXBean threadMXBean = ManagementFactory.getThreadMXBean();
 
@@ -329,6 +349,50 @@ abstract public class ThreadUtil {
         return sb.toString().replace("\t", "    ");
     }
 
+    public static String drawThreadInfo(List<ThreadVO> threads, int width, int height) {
+        TableElement table = new TableElement(1,3,2,1,1,1,1,1,1).overflow(Overflow.HIDDEN).rightCellPadding(1);
+
+        // Header
+        table.add(
+                new RowElement().style(Decoration.bold.fg(Color.black).bg(Color.white)).add(
+                        "ID",
+                        "NAME",
+                        "GROUP",
+                        "PRIORITY",
+                        "STATE",
+                        "%CPU",
+                        "TIME",
+                        "INTERRUPTED",
+                        "DAEMON"
+                )
+        );
+
+        for (ThreadVO thread : threads) {
+            Color color = colorMapping.get(thread.getState());
+            long seconds = thread.getTime();
+            long min = seconds / 60;
+            String time = min + ":" + (seconds % 60);
+            long cpu = thread.getCpu();
+
+            LabelElement daemonLabel = new LabelElement(thread.isDaemon());
+            if (!thread.isDaemon()) {
+                daemonLabel.setStyle(Style.style(Color.magenta));
+            }
+            table.row(
+                    new LabelElement(thread.getId()),
+                    new LabelElement(thread.getName()),
+                    new LabelElement(thread.getGroup()),
+                    new LabelElement(thread.getPriority()),
+                    new LabelElement(thread.getState()).style(color.fg()),
+                    new LabelElement(cpu),
+                    new LabelElement(time),
+                    new LabelElement(thread.isInterrupted()),
+                    daemonLabel
+            );
+        }
+        return RenderUtil.render(table, width, height);
+    }
+
     public static class BlockingLockInfo {
 
         // the thread info that is holing this lock.
@@ -338,6 +402,17 @@ abstract public class ThreadUtil {
         // the number of thread that is blocked on this lock
         public int blockingThreadCount = 0;
 
+        public ThreadInfo getThreadInfo() {
+            return threadInfo;
+        }
+
+        public int getLockIdentityHashCode() {
+            return lockIdentityHashCode;
+        }
+
+        public int getBlockingThreadCount() {
+            return blockingThreadCount;
+        }
     }
 
 

@@ -7,6 +7,10 @@ public class StatusModel extends ResultModel {
     public StatusModel() {
     }
 
+    public StatusModel(int statusCode) {
+        this.statusCode = statusCode;
+    }
+
     public StatusModel(int statusCode, String message) {
         this.statusCode = statusCode;
         this.message = message;

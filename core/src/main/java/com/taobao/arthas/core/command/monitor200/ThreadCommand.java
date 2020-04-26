@@ -1,32 +1,26 @@
 package com.taobao.arthas.core.command.monitor200;
 
 import com.taobao.arthas.core.command.Constants;
+import com.taobao.arthas.core.command.model.StatusModel;
+import com.taobao.arthas.core.command.model.ThreadInfoExt;
+import com.taobao.arthas.core.command.model.ThreadModel;
+import com.taobao.arthas.core.command.model.ThreadVO;
 import com.taobao.arthas.core.shell.command.AnnotatedCommand;
 import com.taobao.arthas.core.shell.command.CommandProcess;
 import com.taobao.arthas.core.util.ArrayUtils;
 import com.taobao.arthas.core.util.StringUtils;
 import com.taobao.arthas.core.util.ThreadUtil;
-import com.taobao.arthas.core.util.affect.Affect;
-import com.taobao.arthas.core.util.affect.RowAffect;
 import com.taobao.middleware.cli.annotations.Argument;
 import com.taobao.middleware.cli.annotations.Description;
 import com.taobao.middleware.cli.annotations.Name;
 import com.taobao.middleware.cli.annotations.Option;
 import com.taobao.middleware.cli.annotations.Summary;
-import com.taobao.text.renderers.ThreadRenderer;
-import com.taobao.text.ui.LabelElement;
-import com.taobao.text.util.RenderUtil;
 
 import java.lang.Thread.State;
 import java.lang.management.ManagementFactory;
 import java.lang.management.ThreadInfo;
 import java.lang.management.ThreadMXBean;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 /**
  * @author hengyunabc 2015年12月7日 下午2:06:21
@@ -91,31 +85,27 @@ public class ThreadCommand extends AnnotatedCommand {
 
     @Override
     public void process(CommandProcess process) {
-        Affect affect = new RowAffect();
-        int status = 0;
+        StatusModel statusModel = new StatusModel(-1, "unknown error");
         try {
             if (id > 0) {
-                status = processThread(process);
+                statusModel = processThread(process);
             } else if (topNBusy != null) {
-                status = processTopBusyThreads(process);
+                statusModel = processTopBusyThreads(process);
             } else if (findMostBlockingThread) {
-                status = processBlockingThread(process);
+                statusModel = processBlockingThread(process);
             } else {
-                status = processAllThreads(process);
+                statusModel = processAllThreads(process);
             }
         } finally {
-            process.write(affect + "\n");
-            process.end(status);
+            process.end(statusModel.getStatusCode(), statusModel.getMessage());
         }
     }
 
-    private int processAllThreads(CommandProcess process) {
-        int status = 0;
+    private StatusModel processAllThreads(CommandProcess process) {
         Map<String, Thread> threads = ThreadUtil.getThreads();
 
         // 统计各种线程状态
-        StringBuilder threadStat = new StringBuilder();
-        Map<State, Integer> stateCountMap = new HashMap<State, Integer>();
+        Map<State, Integer> stateCountMap = new LinkedHashMap<State, Integer>();
         for (State s : State.values()) {
             stateCountMap.put(s, 0);
         }
@@ -125,15 +115,6 @@ public class ThreadCommand extends AnnotatedCommand {
             Integer count = stateCountMap.get(threadState);
             stateCountMap.put(threadState, count + 1);
         }
-
-        threadStat.append("Threads Total: ").append(threads.values().size());
-
-        for (State s : State.values()) {
-            Integer count = stateCountMap.get(s);
-            threadStat.append(", ").append(s.name()).append(": ").append(count);
-        }
-
-        String stat = RenderUtil.render(new LabelElement(threadStat), process.width());
 
         Collection<Thread> resultThreads = new ArrayList<Thread>();
         if (!StringUtils.isEmpty(this.state)){
@@ -145,62 +126,54 @@ public class ThreadCommand extends AnnotatedCommand {
                     }
                 }
             }else{
-                process.write("Illegal argument, state should be one of " + states + "\n");
-                status = 1;
-                return status;
+                return new StatusModel(1, "Illegal argument, state should be one of " + states);
             }
         } else {
             resultThreads = threads.values();
         }
-        String content = RenderUtil.render(resultThreads.iterator(),
-                new ThreadRenderer(sampleInterval), process.width());
-        process.write(stat + content);
-        return status;
+
+        //thread stats
+        ThreadSampler threadSampler = new ThreadSampler();
+        threadSampler.setSampleInterval(sampleInterval);
+        List<ThreadVO> threadStats = threadSampler.sample(resultThreads);
+
+        process.appendResult(new ThreadModel(threadStats, stateCountMap));
+        return new StatusModel(0);
     }
 
-    private int processBlockingThread(CommandProcess process) {
-        int status = 0;
+    private StatusModel processBlockingThread(CommandProcess process) {
         ThreadUtil.BlockingLockInfo blockingLockInfo = ThreadUtil.findMostBlockingLock();
-
         if (blockingLockInfo.threadInfo == null) {
-            process.write("No most blocking thread found!\n");
-            status = 1;
-        } else {
-            String stacktrace = ThreadUtil.getFullStacktrace(blockingLockInfo);
-            process.write(stacktrace);
+            return new StatusModel(1, "No most blocking thread found!");
         }
-        return status;
-    }
+        process.appendResult(new ThreadModel(blockingLockInfo));
+        return new StatusModel(0);    }
 
-    private int processTopBusyThreads(CommandProcess process) {
-        int status = 0;
+    private StatusModel processTopBusyThreads(CommandProcess process) {
         Map<Long, Long> topNThreads = ThreadUtil.getTopNThreads(sampleInterval, topNBusy);
         Long[] tids = topNThreads.keySet().toArray(new Long[0]);
         ThreadInfo[] threadInfos = threadMXBean.getThreadInfo(ArrayUtils.toPrimitive(tids), true, true);
         if (threadInfos == null) {
-            process.write("thread do not exist! id: " + id + "\n");
-            status = 1;
-        } else {
-            for (ThreadInfo info : threadInfos) {
-                String stacktrace = ThreadUtil.getFullStacktrace(info, topNThreads.get(info.getThreadId()));
-                process.write(stacktrace + "\n");
-            }
+            return new StatusModel(1, "get top busy threads failed");
         }
-        return status;
+
+        //convert to ThreadInfoExt with cpuUsage
+        ThreadInfoExt[] threadInfoExts = new ThreadInfoExt[threadInfos.length];
+        for (int i = 0; i < threadInfos.length; i++) {
+            ThreadInfo threadInfo = threadInfos[i];
+            threadInfoExts[i] = new ThreadInfoExt(threadInfo, topNThreads.get(threadInfo.getThreadId()));
+        }
+        process.appendResult(new ThreadModel(threadInfoExts));
+        return new StatusModel(0);
     }
 
-    private int processThread(CommandProcess process) {
-        int status = 0;
-        String content;
+    private StatusModel processThread(CommandProcess process) {
         ThreadInfo[] threadInfos = threadMXBean.getThreadInfo(new long[]{id}, true, true);
-        if (threadInfos == null || threadInfos[0] == null) {
-            content = "thread do not exist! id: " + id + "\n";
-            status = 1;
-        } else {
-            // no cpu usage info
-            content = ThreadUtil.getFullStacktrace(threadInfos[0], -1);
+        if (threadInfos == null || threadInfos.length < 1 || threadInfos[0] == null) {
+            return new StatusModel(1, "thread do not exist! id: " + id);
         }
-        process.write(content);
-        return status;
+
+        process.appendResult(new ThreadModel(threadInfos[0]));
+        return new StatusModel(0);
     }
 }

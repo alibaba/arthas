@@ -1,22 +1,22 @@
 package com.taobao.arthas.core.command.monitor200;
 
 import com.taobao.arthas.core.command.model.ThreadVO;
-import com.taobao.text.util.Utils;
 
 import java.lang.management.ManagementFactory;
 import java.lang.management.ThreadMXBean;
 import java.util.*;
 
 /**
+ * Thread cpu sampler
  * @author gongdewei 2020/4/23
  */
 public class ThreadSampler {
 
     private long sampleInterval = 100;
 
-    public List<ThreadVO> sample(Iterator<Thread> stream) {
+    public List<ThreadVO> sample(Collection<Thread> originThreads) {
 
-        List<Thread> threads = Utils.list(stream);
+        List<Thread> threads = new ArrayList<Thread>(originThreads);
         ThreadMXBean threadMXBean = ManagementFactory.getThreadMXBean();
 
         // Sample CPU
@@ -101,4 +101,11 @@ public class ThreadSampler {
         return threadVOList;
     }
 
+    public long getSampleInterval() {
+        return sampleInterval;
+    }
+
+    public void setSampleInterval(long sampleInterval) {
+        this.sampleInterval = sampleInterval;
+    }
 }
