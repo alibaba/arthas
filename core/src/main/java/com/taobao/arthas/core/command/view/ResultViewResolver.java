@@ -60,6 +60,7 @@ public class ResultViewResolver {
             registerView(new DashboardModel(), new DashboardView());
             registerView(new JvmModel(), new JvmView());
             registerView(new ThreadModel(), new ThreadView());
+            registerView(new MBeanModel(), new MBeanView());
         } catch (Throwable e) {
             logger.error("register result view failed", e);
         }
