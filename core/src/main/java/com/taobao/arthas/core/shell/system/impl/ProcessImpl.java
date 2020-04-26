@@ -371,7 +371,8 @@ public class ProcessImpl implements Process {
                 handler.handle(process);
             } catch (Throwable t) {
                 logger.error("Error during processing the command:", t);
-                process.write("Error during processing the command: " + t.getMessage() + "\n");
+                process.write("Error during processing the command, exception type: " + t.getClass().getName() + ", message:" + t.getMessage()
+                        + ", please check $HOME/logs/arthas/arthas.log for more details. \n");
                 terminate(1, null);
             }
         }
