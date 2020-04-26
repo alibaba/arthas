@@ -37,17 +37,7 @@ import java.util.Set;
 import java.util.Timer;
 import java.util.TimerTask;
 
-import javax.management.Descriptor;
-import javax.management.DescriptorRead;
-import javax.management.MBeanAttributeInfo;
-import javax.management.MBeanConstructorInfo;
-import javax.management.MBeanInfo;
-import javax.management.MBeanNotificationInfo;
-import javax.management.MBeanOperationInfo;
-import javax.management.MBeanParameterInfo;
-import javax.management.MBeanServer;
-import javax.management.MalformedObjectNameException;
-import javax.management.ObjectName;
+import javax.management.*;
 
 import static com.taobao.text.ui.Element.label;
 import static javax.management.MBeanOperationInfo.ACTION;
@@ -67,6 +57,8 @@ import static javax.management.MBeanOperationInfo.UNKNOWN;
              "  mbean -m java.lang:type=Threading\n" +
              "  mbean java.lang:type=Threading\n" +
              "  mbean java.lang:type=Threading *Count\n" +
+             "  mbean java.lang:type=MemoryPool,name=PS\\ Old\\ Gen\n" +
+             "  mbean java.lang:type=MemoryPool,name=* Usage\n" +
              "  mbean -E java.lang:type=Threading PeakThreadCount|ThreadCount|DaemonThreadCount\n" +
              "  mbean -i 1000 java.lang:type=Threading *Count\n" +
              Constants.WIKI + Constants.WIKI_HOME + "mbean")
@@ -500,8 +492,20 @@ public class MBeanCommand extends AnnotatedCommand {
                         if (!attribute.isReadable()) {
                             value = RenderUtil.render(new LabelElement("Unavailable").style(Decoration.bold_off.fg(Color.red)));
                         } else {
-                            Object attributeObj = platformMBeanServer.getAttribute(objectName, attributeName);
-                            value = String.valueOf(attributeObj);
+                            try {
+                                Object attributeObj = platformMBeanServer.getAttribute(objectName, attributeName);
+                                value = String.valueOf(attributeObj);
+                            } catch (Throwable e) {
+                                logger.error("read mbean attribute failed: objectName={}, attributeName={}", objectName, attributeName, e);
+                                String errorStr;
+                                Throwable cause = e.getCause();
+                                if(cause!=null && cause instanceof UnsupportedOperationException) {
+                                    errorStr = "Unsupported";
+                                } else {
+                                    errorStr = "Read failure";
+                                }
+                                value = RenderUtil.render(new LabelElement(errorStr).style(Decoration.bold_off.fg(Color.red)));
+                            }
                         }
                         table.row(attributeName, value);
                         found = true;
@@ -512,7 +516,10 @@ public class MBeanCommand extends AnnotatedCommand {
                     }
                 }
             } catch (Throwable e) {
-                logger.warn("mbean error", e);
+                logger.warn("read mbean error", e);
+                process.write("read mbean error.\n");
+                stop();
+                process.end(1);
             }
 
             count++;
