@@ -61,6 +61,7 @@ public class ResultViewResolver {
             registerView(new JvmModel(), new JvmView());
             registerView(new ThreadModel(), new ThreadView());
             registerView(new MBeanModel(), new MBeanView());
+            registerView(new PerfCounterModel(), new PerfCounterView());
         } catch (Throwable e) {
             logger.error("register result view failed", e);
         }
