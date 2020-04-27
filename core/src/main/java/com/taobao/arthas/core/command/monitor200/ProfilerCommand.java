@@ -15,6 +15,8 @@ import com.alibaba.arthas.deps.org.slf4j.Logger;
 import com.alibaba.arthas.deps.org.slf4j.LoggerFactory;
 import com.taobao.arthas.common.OSUtils;
 import com.taobao.arthas.core.command.Constants;
+import com.taobao.arthas.core.command.model.MessageModel;
+import com.taobao.arthas.core.command.model.ProfilerModel;
 import com.taobao.arthas.core.shell.cli.CliToken;
 import com.taobao.arthas.core.shell.cli.Completion;
 import com.taobao.arthas.core.shell.cli.CompletionUtils;
@@ -262,7 +264,8 @@ public class ProfilerCommand extends AnnotatedCommand {
             ProfilerAction profilerAction = ProfilerAction.valueOf(action);
 
             if (ProfilerAction.actions.equals(profilerAction)) {
-                process.write("Supported Actions: " + actions() + "\n");
+                process.appendResult(new MessageModel("Supported Actions: "));
+                process.appendResult(new ProfilerModel(action, actionArg, actions()));
                 return;
             }
 
@@ -270,39 +273,43 @@ public class ProfilerCommand extends AnnotatedCommand {
 
             if (ProfilerAction.execute.equals(profilerAction)) {
                 if (actionArg == null) {
-                    process.write("actionArg can not be empty.\n");
+                    process.end(1, "actionArg can not be empty.");
                     status = 1;
                     return;
                 }
                 String result = execute(asyncProfiler, this.actionArg);
-                process.write(result);
+                appendResult(process, actionArg, result);
             } else if (ProfilerAction.start.equals(profilerAction)) {
                 String executeArgs = executeArgs(ProfilerAction.start);
                 String result = execute(asyncProfiler, executeArgs);
-                process.write(result);
+                appendResult(process, executeArgs, result);
             } else if (ProfilerAction.stop.equals(profilerAction)) {
                 if (this.file == null) {
                     this.file = new File("arthas-output",
                             new SimpleDateFormat("yyyyMMdd-HHmmss").format(new Date()) + "." + this.format)
                                     .getAbsolutePath();
                 }
-                process.write("profiler output file: " + new File(this.file).getAbsolutePath() + "\n");
+                process.appendResult(new MessageModel("profiler output file: " + new File(this.file).getAbsolutePath()));
                 String executeArgs = executeArgs(ProfilerAction.stop);
                 String result = execute(asyncProfiler, executeArgs);
-                process.write(result);
+
+                ProfilerModel profilerModel = new ProfilerModel(action, executeArgs, result);
+                profilerModel.setFile(file);
+                profilerModel.setFormat(format);
+                process.appendResult(profilerModel);
             } else if (ProfilerAction.resume.equals(profilerAction)) {
                 String executeArgs = executeArgs(ProfilerAction.resume);
                 String result = execute(asyncProfiler, executeArgs);
-                process.write(result);
+                appendResult(process, executeArgs, result);
             } else if (ProfilerAction.list.equals(profilerAction)) {
                 String result = asyncProfiler.execute("list");
-                process.write(result);
+                appendResult(process, null, result);
             } else if (ProfilerAction.version.equals(profilerAction)) {
                 String result = asyncProfiler.execute("version");
-                process.write(result);
+                appendResult(process, null, result);
             } else if (ProfilerAction.status.equals(profilerAction)) {
                 String result = asyncProfiler.execute("status");
-                process.write(result);
+                appendResult(process, null, result);
             } else if (ProfilerAction.dumpCollapsed.equals(profilerAction)) {
                 if (actionArg == null) {
                     actionArg = "TOTAL";
@@ -310,9 +317,9 @@ public class ProfilerCommand extends AnnotatedCommand {
                 actionArg = actionArg.toUpperCase();
                 if ("TOTAL".equals(actionArg) || "SAMPLES".equals(actionArg)) {
                     String result = asyncProfiler.dumpCollapsed(Counter.valueOf(actionArg));
-                    process.write(result);
+                    appendResult(process, actionArg, result);
                 } else {
-                    process.write("ERROR: dumpCollapsed argumment should be TOTAL or SAMPLES. \n");
+                    process.end(1, "ERROR: dumpCollapsed argumment should be TOTAL or SAMPLES. ");
                     status = 1;
                 }
             } else if (ProfilerAction.dumpFlat.equals(profilerAction)) {
@@ -321,25 +328,29 @@ public class ProfilerCommand extends AnnotatedCommand {
                     maxMethods = Integer.valueOf(actionArg);
                 }
                 String result = asyncProfiler.dumpFlat(maxMethods);
-                process.write(result);
+                appendResult(process, actionArg, result);
             } else if (ProfilerAction.dumpTraces.equals(profilerAction)) {
                 int maxTraces = 0;
                 if (actionArg != null) {
                     maxTraces = Integer.valueOf(actionArg);
                 }
                 String result = asyncProfiler.dumpTraces(maxTraces);
-                process.write(result);
+                appendResult(process, actionArg, result);
             } else if (ProfilerAction.getSamples.equals(profilerAction)) {
                 String result = "" + asyncProfiler.getSamples() + "\n";
-                process.write(result);
+                appendResult(process, null, result);
             }
         } catch (Throwable e) {
-            process.write(e.getMessage()).write("\n");
             logger.error("AsyncProfiler error", e);
+            process.end(1, "AsyncProfiler error: "+e.getMessage());
             status = 1;
         } finally {
             process.end(status);
         }
+    }
+
+    private void appendResult(CommandProcess process, String executeArgs, String result) {
+        process.appendResult(new ProfilerModel(action, executeArgs, result));
     }
 
     private List<String> events() {

@@ -62,6 +62,7 @@ public class ResultViewResolver {
             registerView(new ThreadModel(), new ThreadView());
             registerView(new MBeanModel(), new MBeanView());
             registerView(new PerfCounterModel(), new PerfCounterView());
+            registerView(new ProfilerModel(), new ProfilerView());
         } catch (Throwable e) {
             logger.error("register result view failed", e);
         }
