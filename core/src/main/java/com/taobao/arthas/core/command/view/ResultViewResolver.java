@@ -63,6 +63,7 @@ public class ResultViewResolver {
             registerView(new MBeanModel(), new MBeanView());
             registerView(new PerfCounterModel(), new PerfCounterView());
             registerView(new ProfilerModel(), new ProfilerView());
+            registerView(new TimeTunnelModel(), new TimeTunnelView());
         } catch (Throwable e) {
             logger.error("register result view failed", e);
         }

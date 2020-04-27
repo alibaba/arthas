@@ -2,6 +2,8 @@ package com.taobao.arthas.core.command.monitor200;
 
 import com.taobao.arthas.core.advisor.ReflectAdviceListenerAdapter;
 import com.taobao.arthas.core.command.express.ExpressException;
+import com.taobao.arthas.core.command.model.TimeFragmentVO;
+import com.taobao.arthas.core.command.model.TimeTunnelModel;
 import com.taobao.arthas.core.shell.command.CommandProcess;
 import com.alibaba.arthas.deps.org.slf4j.Logger;
 import com.alibaba.arthas.deps.org.slf4j.LoggerFactory;
@@ -9,14 +11,9 @@ import com.taobao.arthas.core.advisor.Advice;
 import com.taobao.arthas.core.advisor.ArthasMethod;
 import com.taobao.arthas.core.util.LogUtil;
 import com.taobao.arthas.core.util.ThreadLocalWatch;
-import com.taobao.text.ui.TableElement;
-import com.taobao.text.util.RenderUtil;
 
+import java.util.Arrays;
 import java.util.Date;
-
-import static com.taobao.arthas.core.command.monitor200.TimeTunnelTable.createTable;
-import static com.taobao.arthas.core.command.monitor200.TimeTunnelTable.fillTableHeader;
-import static com.taobao.arthas.core.command.monitor200.TimeTunnelTable.fillTableRow;
 
 /**
  * @author beiwei30 on 30/11/2016.
@@ -64,9 +61,8 @@ public class TimeTunnelAdviceListener extends ReflectAdviceListenerAdapter {
             match = isConditionMet(command.getConditionExpress(), advice, cost);
         } catch (ExpressException e) {
             logger.warn("tt failed.", e);
-            process.write("tt failed, condition is: " + command.getConditionExpress() + ", " + e.getMessage()
-                          + ", visit " + LogUtil.loggingFile() + " for more details.\n");
-            process.end();
+            process.end(-1, "tt failed, condition is: " + command.getConditionExpress() + ", " + e.getMessage()
+                          + ", visit " + LogUtil.loggingFile() + " for more details.");
         }
 
         if (!match) {
@@ -74,20 +70,17 @@ public class TimeTunnelAdviceListener extends ReflectAdviceListenerAdapter {
         }
 
         int index = command.putTimeTunnel(timeTunnel);
-        TableElement table = createTable();
+
+        TimeFragmentVO timeFragmentVO = TimeTunnelCommand.createTimeFragmentVO(index, timeTunnel);
+        TimeTunnelModel timeTunnelModel = new TimeTunnelModel()
+                .setTimeFragmentList(Arrays.asList(timeFragmentVO))
+                .setFirst(isFirst);
+        process.appendResult(timeTunnelModel);
 
         if (isFirst) {
             isFirst = false;
-
-            // 填充表格头部
-            fillTableHeader(table);
         }
 
-        // 填充表格内容
-        fillTableRow(table, index, timeTunnel);
-
-        // TODO: concurrency issues for process.write
-        process.write(RenderUtil.render(table, process.width()));
         process.times().incrementAndGet();
         if (isLimitExceeded(command.getNumberOfLimit(), process.times().get())) {
             abortProcess(process, command.getNumberOfLimit());
