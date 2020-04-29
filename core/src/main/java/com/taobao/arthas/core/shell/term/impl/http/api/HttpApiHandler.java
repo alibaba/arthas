@@ -399,8 +399,11 @@ public class HttpApiHandler {
             throw new ApiException("'consumerId' is required");
         }
         ResultConsumer consumer = session.getResultDistributor().getConsumer(consumerId);
-        List<ResultModel> results = consumer.pollResults();
+        if (consumer == null) {
+            throw new ApiException("consumer not found: "+consumerId);
+        }
 
+        List<ResultModel> results = consumer.pollResults();
         Map<String, Object> body = new TreeMap<String, Object>();
         body.put("results", results);
 
