@@ -253,9 +253,8 @@ public class Enhancer implements ClassFileTransformer {
      * 是否过滤目前暂不支持的类
      */
     private static boolean isUnsupportedClass(Class<?> clazz) {
-
         return clazz.isArray()
-                || clazz.isInterface()
+                || (clazz.isInterface() && !GlobalOptions.isSupportDefaultMethod)
                 || clazz.isEnum()
                 || clazz.equals(Class.class) || clazz.equals(Integer.class) || clazz.equals(Method.class);
     }

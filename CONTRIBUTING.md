@@ -110,12 +110,22 @@ Tip: you can use `--versions` to list all available versions.
 * arthas是用sphinx来生成静态网站
 * 在`site/pom.xml`里配置了`sphinx-maven-plugin`
 * `sphinx-maven-plugin`通过下载`sphinx-binary/`来执行
-* sphinx配置的`recommonmark`插件有bug：https://github.com/rtfd/recommonmark/issues/93 ，因此另外打包了一个修复版本： https://github.com/hengyunabc/sphinx-binary/releases/tag/v0.4.0.1
+
+
 * 全量打包时，需要配置下面的参数：
 
     ```
-    ./mvnw clean package -DskipTests -P full -Dsphinx.binUrl=https://github.com/hengyunabc/sphinx-binary/releases/download/v0.4.0.1/sphinx.osx-x86_64
+    ./mvnw clean package -DskipTests -P full
     ```
+#### 当 sphinx-maven-plugin 下载出错时，可以用下面的方式
+
+到 https://github.com/trustin/sphinx-binary/releases 下载对应版本的二进制文件，并在本地加上可执行权限。例如：
+
+```
+wget https://github.com/hengyunabc/sphinx-binary/releases/download/v0.4.0.1/sphinx.osx-x86_64 -o /tmp/sphinx.osx-x86_64
+chmod +x /tmp/sphinx.osx-x86_64
+./mvnw clean package -DskipTests -P full -Dsphinx.binUrl=file:/tmp/sphinx.osx-x86_64
+```
 
 ### Release Steps
 
@@ -126,7 +136,7 @@ Tip: you can use `--versions` to list all available versions.
 * mvn release:prepare -Darguments="-DskipTests -P full"
 * mvn release:perform -Darguments="-DskipTests -P full"
 
-    如果在下载 https://github.com/trustin/sphinx-binary/releases/download/v0.7.1/sphinx.osx-x86_64 时有问题，可以先下载到本地，然后用 `file:/tmp/sphinx.osx-x86_64` 的方式指定
+    如果在下载 sphinx-binary 出错，参考上面的 全量打包 的说明。
 
 * 到 https://oss.sonatype.org/ 上，“Staging Repositories”然后close掉自己的，再release
 * 发布后，可以到这里查看是否同步到仓库里了： https://repo1.maven.org/maven2/com/taobao/arthas/arthas-packaging/

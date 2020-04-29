@@ -110,12 +110,14 @@ public abstract class EnhancerCommand extends AnnotatedCommand {
                 skipJDKTrace = ((AbstractTraceAdviceListener) listener).getCommand().isSkipJDKTrace();
             }
 
-            EnhancerAffect affect = Enhancer.enhance(inst, lock, listener instanceof InvokeTraceable,
+            EnhancerAffect effect = Enhancer.enhance(inst, lock, listener instanceof InvokeTraceable,
                     skipJDKTrace, getClassNameMatcher(), getMethodNameMatcher());
 
-            if (affect.cCnt() == 0 || affect.mCnt() == 0) {
+            if (effect.cCnt() == 0 || effect.mCnt() == 0) {
                 // no class effected
                 // might be method code too large
+                process.appendResult(new EnhancerAffectModel(effect));
+
                 String msg = "No class or method is affected, try:\n"
                         + "1. sm CLASS_NAME METHOD_NAME to make sure the method you are tracing actually exists (it might be in your parent class).\n"
                         + "2. reset CLASS_NAME and try again, your method body might be too large.\n"
@@ -134,7 +136,7 @@ public abstract class EnhancerCommand extends AnnotatedCommand {
                 }
             }
 
-            process.appendResult(new EnhancerAffectModel(affect));
+            process.appendResult(new EnhancerAffectModel(effect));
         } catch (UnmodifiableClassException e) {
             logger.error("error happens when enhancing class", e);
         } finally {

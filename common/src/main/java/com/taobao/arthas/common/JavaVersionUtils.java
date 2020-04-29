@@ -47,6 +47,10 @@ public class JavaVersionUtils {
         return JAVA_VERSION < 9.0f;
     }
 
+    public static boolean isGreaterThanJava7() {
+        return JAVA_VERSION > 1.7f;
+    }
+
     public static boolean isGreaterThanJava8() {
         return JAVA_VERSION > 1.8f;
     }
