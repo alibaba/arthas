@@ -1,8 +1,5 @@
 package com.taobao.arthas.core.command.klass100;
 
-import static com.taobao.text.Decoration.bold;
-import static com.taobao.text.ui.Element.label;
-import static java.lang.String.format;
 
 import java.lang.instrument.Instrumentation;
 import java.lang.reflect.Constructor;
@@ -18,7 +15,6 @@ import com.taobao.arthas.core.shell.command.AnnotatedCommand;
 import com.taobao.arthas.core.shell.command.CommandProcess;
 import com.taobao.arthas.core.util.SearchUtils;
 import com.taobao.arthas.core.util.StringUtils;
-import com.taobao.arthas.core.util.TypeRenderUtils;
 import com.taobao.arthas.core.util.affect.RowAffect;
 import com.taobao.arthas.core.util.matcher.Matcher;
 import com.taobao.arthas.core.util.matcher.RegexMatcher;
@@ -28,9 +24,6 @@ import com.taobao.middleware.cli.annotations.Description;
 import com.taobao.middleware.cli.annotations.Name;
 import com.taobao.middleware.cli.annotations.Option;
 import com.taobao.middleware.cli.annotations.Summary;
-import com.taobao.text.ui.Element;
-import com.taobao.text.ui.TableElement;
-import com.taobao.text.util.RenderUtil;
 
 /**
  * 展示方法信息
@@ -95,7 +88,6 @@ public class SearchMethodCommand extends AnnotatedCommand {
 
         for (Class<?> clazz : matchedClasses) {
             for (Constructor<?> constructor : clazz.getDeclaredConstructors()) {
-                String methodNameWithDescriptor = org.objectweb.asm.commons.Method.getMethod(constructor).toString();
                 if (!methodNameMatcher.matching("<init>")) {
                     continue;
                 }
@@ -105,7 +97,6 @@ public class SearchMethodCommand extends AnnotatedCommand {
             }
 
             for (Method method : clazz.getDeclaredMethods()) {
-                String methodNameWithDescriptor = org.objectweb.asm.commons.Method.getMethod(method).toString();
                 if (!methodNameMatcher.matching(method.getName())) {
                     continue;
                 }

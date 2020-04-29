@@ -7,12 +7,17 @@ import java.util.List;
  */
 public class OptionsModel extends ResultModel{
     private List<OptionVO> options;
+    private ChangeResultVO changeResult;
 
     public OptionsModel() {
     }
 
     public OptionsModel(List<OptionVO> options) {
         this.options = options;
+    }
+
+    public OptionsModel(ChangeResultVO changeResult) {
+        this.changeResult = changeResult;
     }
 
     @Override
@@ -26,5 +31,13 @@ public class OptionsModel extends ResultModel{
 
     public void setOptions(List<OptionVO> options) {
         this.options = options;
+    }
+
+    public ChangeResultVO getChangeResult() {
+        return changeResult;
+    }
+
+    public void setChangeResult(ChangeResultVO changeResult) {
+        this.changeResult = changeResult;
     }
 }

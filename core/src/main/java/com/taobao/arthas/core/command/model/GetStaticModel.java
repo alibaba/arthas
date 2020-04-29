@@ -1,12 +1,15 @@
 package com.taobao.arthas.core.command.model;
 
+import java.util.Collection;
+
 /**
  * @author gongdewei 2020/4/20
  */
 public class GetStaticModel extends ResultModel {
 
-    private String fieldName;
-    private Object fieldValue;
+    private ObjectVO field;
+    private Collection<ClassVO> matchedClasses;
+
     //only for view
     private transient int expand;
 
@@ -14,25 +17,28 @@ public class GetStaticModel extends ResultModel {
     }
 
     public GetStaticModel(String fieldName, Object fieldValue, int expand) {
-        this.fieldName = fieldName;
-        this.fieldValue = fieldValue;
+        this.field = new ObjectVO(fieldName, fieldValue);
         this.expand = expand;
     }
 
-    public String getFieldName() {
-        return fieldName;
+    public GetStaticModel(Collection<ClassVO> matchedClasses) {
+        this.matchedClasses = matchedClasses;
     }
 
-    public void setFieldName(String fieldName) {
-        this.fieldName = fieldName;
+    public ObjectVO getField() {
+        return field;
     }
 
-    public Object getFieldValue() {
-        return fieldValue;
+    public void setField(ObjectVO field) {
+        this.field = field;
     }
 
-    public void setFieldValue(Object fieldValue) {
-        this.fieldValue = fieldValue;
+    public Collection<ClassVO> getMatchedClasses() {
+        return matchedClasses;
+    }
+
+    public void setMatchedClasses(Collection<ClassVO> matchedClasses) {
+        this.matchedClasses = matchedClasses;
     }
 
     public int expand() {

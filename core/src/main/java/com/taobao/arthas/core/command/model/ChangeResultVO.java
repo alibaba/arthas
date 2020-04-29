@@ -3,23 +3,18 @@ package com.taobao.arthas.core.command.model;
 /**
  * @author gongdewei 2020/4/16
  */
-public class ChangeResultModel extends ResultModel {
+public class ChangeResultVO {
     private String name;
-    private String beforeValue;
-    private String afterValue;
+    private Object beforeValue;
+    private Object afterValue;
 
-    public ChangeResultModel() {
+    public ChangeResultVO() {
     }
 
-    public ChangeResultModel(String name, String beforeValue, String afterValue) {
+    public ChangeResultVO(String name, Object beforeValue, Object afterValue) {
         this.name = name;
         this.beforeValue = beforeValue;
         this.afterValue = afterValue;
-    }
-
-    @Override
-    public String getType() {
-        return "change_result";
     }
 
     public String getName() {
@@ -30,21 +25,20 @@ public class ChangeResultModel extends ResultModel {
         this.name = name;
     }
 
-    public String getBeforeValue() {
+    public Object getBeforeValue() {
         return beforeValue;
     }
 
-    public void setBeforeValue(String beforeValue) {
+    public void setBeforeValue(Object beforeValue) {
         this.beforeValue = beforeValue;
     }
 
-    public String getAfterValue() {
+    public Object getAfterValue() {
         return afterValue;
     }
 
-    public void setAfterValue(String afterValue) {
+    public void setAfterValue(Object afterValue) {
         this.afterValue = afterValue;
     }
-
 }
 

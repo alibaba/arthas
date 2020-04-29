@@ -1,15 +1,15 @@
 package com.taobao.arthas.core.command.view;
 
-import com.taobao.arthas.core.Option;
+import com.taobao.arthas.core.command.model.ChangeResultVO;
 import com.taobao.arthas.core.command.model.OptionVO;
 import com.taobao.arthas.core.command.model.OptionsModel;
 import com.taobao.arthas.core.shell.command.CommandProcess;
+import com.taobao.arthas.core.util.StringUtils;
 import com.taobao.text.Decoration;
 import com.taobao.text.ui.Element;
 import com.taobao.text.ui.TableElement;
 import com.taobao.text.util.RenderUtil;
 
-import java.lang.reflect.Field;
 import java.util.Collection;
 
 import static com.taobao.text.ui.Element.label;
@@ -20,7 +20,11 @@ import static com.taobao.text.ui.Element.label;
 public class OptionsView extends ResultView<OptionsModel> {
     @Override
     public void draw(CommandProcess process, OptionsModel result) {
-        process.write(RenderUtil.render(drawShowTable(result.getOptions()), process.width()));
+        if (result.getOptions() != null) {
+            process.write(RenderUtil.render(drawShowTable(result.getOptions()), process.width()));
+        } else if (result.getChangeResult() != null) {
+            drawChangeResult(process, result.getChangeResult());
+        }
     }
 
     private Element drawShowTable(Collection<OptionVO> options) {
@@ -43,4 +47,15 @@ public class OptionsView extends ResultView<OptionsModel> {
         }
         return table;
     }
+
+    public static void drawChangeResult(CommandProcess process, ChangeResultVO result) {
+        TableElement table = new TableElement().leftCellPadding(1).rightCellPadding(1);
+        table.row(true, label("NAME").style(Decoration.bold.bold()),
+                label("BEFORE-VALUE").style(Decoration.bold.bold()),
+                label("AFTER-VALUE").style(Decoration.bold.bold()));
+        table.row(result.getName(), StringUtils.objectToString(result.getBeforeValue()),
+                StringUtils.objectToString(result.getAfterValue()));
+        process.write(RenderUtil.render(table, process.width()));
+    }
+
 }

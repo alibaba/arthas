@@ -39,8 +39,7 @@ public class ResultViewResolver {
             registerView(new VersionModel(), new VersionView());
             registerView(new PropertyModel(), new PropertyView());
             registerView(new MessageModel(), new MessageView());
-            registerView(new HelpListModel(), new HelpListView());
-            registerView(new HelpDetailModel(), new HelpDetailView());
+            registerView(new HelpModel(), new HelpView());
             //registerView(new HistoryModel(), new HistoryView());
             registerView(new ClassInfoModel(), new ClassInfoView());
             registerView(new RowAffectModel(), new RowAffectView());
@@ -48,10 +47,8 @@ public class ResultViewResolver {
             registerView(new StackModel(), new StackView());
             registerView(new VMOptionModel(), new VMOptionView());
             registerView(new OptionsModel(), new OptionsView());
-            registerView(new ChangeResultModel(), new ChangeResultView());
             registerView(new RedefineModel(), new RedefineView());
             registerView(new MemoryCompilerModel(), new MemoryCompilerView());
-            registerView(new ClassMatchesModel(), new ClassMatchesView());
             registerView(new GetStaticModel(), new GetStaticView());
             registerView(new DumpClassModel(), new DumpClassView());
             registerView(new ClassLoaderModel(), new ClassLoaderView());
@@ -66,6 +63,7 @@ public class ResultViewResolver {
             registerView(new TimeTunnelModel(), new TimeTunnelView());
             registerView(new MonitorModel(), new MonitorView());
             registerView(new TraceModel(), new TraceView());
+            registerView(new OgnlModel(), new OgnlView());
         } catch (Throwable e) {
             logger.error("register result view failed", e);
         }

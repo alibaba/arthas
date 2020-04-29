@@ -1,5 +1,7 @@
 package com.taobao.arthas.core.command.model;
 
+import java.util.Collection;
+
 /**
  * @author gongdewei 2020/4/22
  */
@@ -7,6 +9,9 @@ public class JadModel extends ResultModel {
     private ClassVO classInfo;
     private String location;
     private String source;
+
+    //match multiple classes
+    private Collection<ClassVO> matchedClasses;
 
     @Override
     public String getType() {
@@ -38,5 +43,13 @@ public class JadModel extends ResultModel {
 
     public void setSource(String source) {
         this.source = source;
+    }
+
+    public Collection<ClassVO> getMatchedClasses() {
+        return matchedClasses;
+    }
+
+    public void setMatchedClasses(Collection<ClassVO> matchedClasses) {
+        this.matchedClasses = matchedClasses;
     }
 }

@@ -3,9 +3,11 @@ package com.taobao.arthas.core.command.view;
 import com.taobao.arthas.core.command.model.ClassVO;
 import com.taobao.arthas.core.command.model.DumpClassModel;
 import com.taobao.arthas.core.shell.command.CommandProcess;
+import com.taobao.arthas.core.util.ClassUtils;
 import com.taobao.arthas.core.util.TypeRenderUtils;
 import com.taobao.text.Color;
 import com.taobao.text.Decoration;
+import com.taobao.text.ui.Element;
 import com.taobao.text.ui.LabelElement;
 import com.taobao.text.ui.TableElement;
 import com.taobao.text.util.RenderUtil;
@@ -21,8 +23,16 @@ public class DumpClassView extends ResultView<DumpClassModel> {
 
     @Override
     public void draw(CommandProcess process, DumpClassModel result) {
-        List<ClassVO> classFiles = result.getClassFiles();
+        if (result.getDumpedClassFiles() != null) {
+            drawDumpedClassFiles(process, result.getDumpedClassFiles());
 
+        } else if (result.getMatchedClasses() != null) {
+            Element table = ClassUtils.renderMatchedClasses(result.getMatchedClasses());
+            process.write(RenderUtil.render(table)).write("\n");
+        }
+    }
+
+    private void drawDumpedClassFiles(CommandProcess process, List<ClassVO> classFiles) {
         TableElement table = new TableElement().leftCellPadding(1).rightCellPadding(1);
         table.row(new LabelElement("HASHCODE").style(Decoration.bold.bold()),
                 new LabelElement("CLASSLOADER").style(Decoration.bold.bold()),

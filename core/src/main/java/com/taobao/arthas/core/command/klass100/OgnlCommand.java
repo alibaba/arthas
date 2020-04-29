@@ -8,12 +8,10 @@ import com.taobao.arthas.core.command.Constants;
 import com.taobao.arthas.core.command.express.Express;
 import com.taobao.arthas.core.command.express.ExpressException;
 import com.taobao.arthas.core.command.express.ExpressFactory;
-import com.taobao.arthas.core.command.model.MessageModel;
+import com.taobao.arthas.core.command.model.OgnlModel;
 import com.taobao.arthas.core.shell.command.AnnotatedCommand;
 import com.taobao.arthas.core.shell.command.CommandProcess;
 import com.taobao.arthas.core.util.ClassLoaderUtils;
-import com.taobao.arthas.core.util.StringUtils;
-import com.taobao.arthas.core.view.ObjectView;
 import com.taobao.middleware.cli.annotations.Argument;
 import com.taobao.middleware.cli.annotations.Description;
 import com.taobao.middleware.cli.annotations.Name;
@@ -82,12 +80,14 @@ public class OgnlCommand extends AnnotatedCommand {
             Express unpooledExpress = ExpressFactory.unpooledExpress(classLoader);
             try {
                 Object value = unpooledExpress.get(express);
-                String result = StringUtils.objectToString(expand >= 0 ? new ObjectView(value, expand).draw() : value);
-                process.appendResult(new MessageModel(result));
+                OgnlModel ognlModel = new OgnlModel()
+                        .setValue(value)
+                        .setExpand(expand);
+                process.appendResult(ognlModel);
             } catch (ExpressException e) {
                 logger.warn("ognl: failed execute express: " + express, e);
                 process.end(-1, "Failed to execute ognl, exception message: " + e.getMessage()
-                                + ", please check $HOME/logs/arthas/arthas.log for more details. \n");
+                                + ", please check $HOME/logs/arthas/arthas.log for more details. ");
                 exitCode = -1;
             }
         } finally {

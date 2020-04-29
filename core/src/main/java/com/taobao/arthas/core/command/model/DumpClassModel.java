@@ -1,5 +1,6 @@
 package com.taobao.arthas.core.command.model;
 
+import java.util.Collection;
 import java.util.List;
 
 /**
@@ -7,26 +8,34 @@ import java.util.List;
  */
 public class DumpClassModel extends ResultModel {
 
-    private List<ClassVO> classFiles;
+    private List<ClassVO> dumpedClassFiles;
+
+    private Collection<ClassVO> matchedClasses;
 
     public DumpClassModel() {
-    }
-
-    public DumpClassModel(List<ClassVO> classFiles) {
-        this.classFiles = classFiles;
-    }
-
-    public List<ClassVO> getClassFiles() {
-        return classFiles;
-    }
-
-    public void setClassFiles(List<ClassVO> classFiles) {
-        this.classFiles = classFiles;
     }
 
     @Override
     public String getType() {
         return "dump";
+    }
+
+    public List<ClassVO> getDumpedClassFiles() {
+        return dumpedClassFiles;
+    }
+
+    public DumpClassModel setDumpedClassFiles(List<ClassVO> dumpedClassFiles) {
+        this.dumpedClassFiles = dumpedClassFiles;
+        return this;
+    }
+
+    public Collection<ClassVO> getMatchedClasses() {
+        return matchedClasses;
+    }
+
+    public DumpClassModel setMatchedClasses(Collection<ClassVO> matchedClasses) {
+        this.matchedClasses = matchedClasses;
+        return this;
     }
 
 }

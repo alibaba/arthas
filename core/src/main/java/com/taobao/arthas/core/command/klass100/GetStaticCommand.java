@@ -24,7 +24,6 @@ import com.taobao.middleware.cli.annotations.Summary;
 import java.lang.instrument.Instrumentation;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
@@ -160,7 +159,7 @@ public class GetStaticCommand extends AnnotatedCommand {
         process.appendResult(new MessageModel("Found more than one class for: " + classPattern + ", Please use: "+usage));
 
         List<ClassVO> matchedClassVOs = ClassUtils.createClassVOList(matchedClasses);
-        process.appendResult(new ClassMatchesModel(matchedClassVOs));
+        process.appendResult(new GetStaticModel(matchedClassVOs));
         statusModel.setStatus(-1, "Found more than one class for: " + classPattern + ", Please use: "+usage);
     }
 

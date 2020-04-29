@@ -1,5 +1,7 @@
 package com.taobao.arthas.core.command.model;
 
+import com.taobao.middleware.cli.CLI;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -7,6 +9,8 @@ import java.util.List;
  * @author gongdewei 2020/4/3
  */
 public class CommandVO {
+    //TODO remove cli
+    private transient CLI cli;
     private String name;
     private String description;
     private String usage;
@@ -30,6 +34,14 @@ public class CommandVO {
     public CommandVO addArgument(ArgumentVO argumentVO){
         this.arguments.add(argumentVO);
         return this;
+    }
+
+    public CLI cli() {
+        return cli;
+    }
+
+    public void setCli(CLI cli) {
+        this.cli = cli;
     }
 
     public String getName() {

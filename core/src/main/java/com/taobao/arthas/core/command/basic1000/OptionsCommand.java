@@ -3,7 +3,7 @@ package com.taobao.arthas.core.command.basic1000;
 import com.taobao.arthas.core.GlobalOptions;
 import com.taobao.arthas.core.Option;
 import com.taobao.arthas.core.command.Constants;
-import com.taobao.arthas.core.command.model.ChangeResultModel;
+import com.taobao.arthas.core.command.model.ChangeResultVO;
 import com.taobao.arthas.core.command.model.OptionVO;
 import com.taobao.arthas.core.command.model.OptionsModel;
 import com.taobao.arthas.core.shell.cli.CliToken;
@@ -151,8 +151,8 @@ public class OptionsCommand extends AnnotatedCommand {
             return;
         }
 
-        process.appendResult(new ChangeResultModel(optionAnnotation.name(), StringUtils.objectToString(beforeValue),
-                StringUtils.objectToString(afterValue)));
+        ChangeResultVO changeResultVO = new ChangeResultVO(optionAnnotation.name(), beforeValue, afterValue);
+        process.appendResult(new OptionsModel(changeResultVO));
     }
 
 

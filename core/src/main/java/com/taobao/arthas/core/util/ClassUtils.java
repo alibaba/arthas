@@ -7,14 +7,17 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 import java.security.CodeSource;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 
 import com.taobao.arthas.core.command.model.ClassLoaderVO;
 import com.taobao.arthas.core.command.model.ClassVO;
 import com.taobao.arthas.core.command.model.MethodVO;
+import com.taobao.text.Color;
 import com.taobao.text.Decoration;
 import com.taobao.text.ui.Element;
+import com.taobao.text.ui.LabelElement;
 import com.taobao.text.ui.TableElement;
 
 /**
@@ -242,5 +245,19 @@ public class ClassUtils {
             return "null";
         }
         return Integer.toHexString(classLoader.hashCode());
+    }
+
+    public static Element renderMatchedClasses(Collection<ClassVO> matchedClasses) {
+        TableElement table = new TableElement().leftCellPadding(1).rightCellPadding(1);
+        table.row(new LabelElement("NAME").style(Decoration.bold.bold()),
+                new LabelElement("HASHCODE").style(Decoration.bold.bold()),
+                new LabelElement("CLASSLOADER").style(Decoration.bold.bold()));
+
+        for (ClassVO c : matchedClasses) {
+            table.row(label(c.getName()),
+                    label(c.getClassLoaderHash()).style(Decoration.bold.fg(Color.red)),
+                    TypeRenderUtils.drawClassLoader(c));
+        }
+        return table;
     }
 }

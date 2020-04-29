@@ -47,17 +47,17 @@ public class HelpCommand extends AnnotatedCommand {
         process.end();
     }
 
-    public HelpDetailModel createHelpDetailModel(Command targetCmd) {
-        return new HelpDetailModel(createCommandVO(targetCmd, true), targetCmd.cli());
+    public HelpModel createHelpDetailModel(Command targetCmd) {
+        return new HelpModel(createCommandVO(targetCmd, true));
     }
 
-    private HelpListModel createHelpModel(List<Command> commands) {
-        HelpListModel helpModel = new HelpListModel();
+    private HelpModel createHelpModel(List<Command> commands) {
+        HelpModel helpModel = new HelpModel();
         for (Command command : commands) {
-            if(command.cli() == null){
+            if(command.cli() == null || command.cli().isHidden()){
                 continue;
             }
-            helpModel.addCommandVO(createCommandVO(command, false), command.cli());
+            helpModel.addCommandVO(createCommandVO(command, false));
         }
         return helpModel;
     }
@@ -67,12 +67,13 @@ public class HelpCommand extends AnnotatedCommand {
         CommandVO commandVO = new CommandVO();
         commandVO.setName(command.name());
         if (cli!=null){
-            commandVO.setDescription(cli.getDescription());
+            commandVO.setSummary(cli.getSummary());
             if (withDetail){
+                commandVO.setCli(cli);
                 StyledUsageFormatter usageFormatter = new StyledUsageFormatter(null);
                 String usageLine = usageFormatter.computeUsageLine(null, cli);
                 commandVO.setUsage(usageLine);
-                commandVO.setSummary(cli.getSummary());
+                commandVO.setDescription(cli.getDescription());
 
                 //以线程安全的方式遍历options
                 List<Option> options = cli.getOptions();

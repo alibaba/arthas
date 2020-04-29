@@ -187,7 +187,9 @@ public class JadCommand extends AnnotatedCommand {
         process.appendResult(new MessageModel(msg));
 
         List<ClassVO> classVOs = ClassUtils.createClassVOList(matchedClasses);
-        process.appendResult(new ClassMatchesModel(classVOs));
+        JadModel jadModel = new JadModel();
+        jadModel.setMatchedClasses(classVOs);
+        process.appendResult(jadModel);
 
         return new StatusModel(-1, msg);
     }

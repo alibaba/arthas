@@ -11,8 +11,6 @@ import com.taobao.arthas.core.shell.command.AnnotatedCommand;
 import com.taobao.arthas.core.shell.command.CommandProcess;
 import com.taobao.arthas.core.util.ClassUtils;
 import com.taobao.arthas.core.util.SearchUtils;
-import com.taobao.arthas.core.util.StringUtils;
-import com.taobao.arthas.core.util.TypeRenderUtils;
 import com.taobao.arthas.core.util.affect.RowAffect;
 import com.taobao.middleware.cli.annotations.Argument;
 import com.taobao.middleware.cli.annotations.DefaultValue;
@@ -132,7 +130,7 @@ public class DumpClassCommand extends AnnotatedCommand {
                 classVO.setLocation(file.getCanonicalPath());
                 dumpedClasses.add(classVO);
             }
-            process.appendResult(new DumpClassModel(dumpedClasses));
+            process.appendResult(new DumpClassModel().setDumpedClassFiles(dumpedClasses));
 
             effect.rCnt(classFiles.keySet().size());
             statusModel.setStatus(0);
@@ -148,7 +146,7 @@ public class DumpClassCommand extends AnnotatedCommand {
         process.appendResult(new MessageModel(msg));
 
         List<ClassVO> classVOs = ClassUtils.createClassVOList(matchedClasses);
-        process.appendResult(new ClassMatchesModel(classVOs));
+        process.appendResult(new DumpClassModel().setMatchedClasses(classVOs));
         statusModel.setStatus(-1, msg);
     }
 
