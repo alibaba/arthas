@@ -51,6 +51,7 @@ public class MBeanView extends ResultView<MBeanModel> {
                     valueStr = RenderUtil.render(new LabelElement(attributeVO.getError()).style(Decoration.bold_off.fg(Color.red)));
                 } else {
                     //convert array to list
+                    // TODO support all array type
                     Object value = attributeVO.getValue();
                     if (value instanceof String[]) {
                         value = Arrays.asList((String[]) value);

@@ -1,6 +1,7 @@
 package com.taobao.arthas.core.util;
 
 import com.taobao.arthas.core.command.model.StackModel;
+import com.taobao.arthas.core.command.model.ThreadNode;
 import com.taobao.arthas.core.command.model.ThreadVO;
 import com.taobao.arthas.core.view.Ansi;
 import com.taobao.text.Color;
@@ -485,6 +486,22 @@ abstract public class ThreadUtil {
             sb.append(";rpc_id=").append(stackModel.getRpcId());
         }
         return sb.toString();
+    }
+
+    public static ThreadNode getThreadNode(Thread currentThread) {
+        ThreadNode threadNode = new ThreadNode();
+        threadNode.setThreadId(Long.toHexString(currentThread.getId()));
+        threadNode.setThreadName(currentThread.getName());
+        threadNode.setDaemon(currentThread.isDaemon());
+        threadNode.setPriority(currentThread.getPriority());
+        threadNode.setClassloader(getTCCL(currentThread));
+
+        //trace_id
+        StackModel stackModel = new StackModel();
+        getEagleeyeTraceInfo(currentThread, stackModel);
+        threadNode.setTraceId(stackModel.getTraceId());
+        threadNode.setRpcId(stackModel.getRpcId());
+        return threadNode;
     }
 
     public static String getThreadTitle(StackModel stackModel) {

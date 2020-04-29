@@ -65,6 +65,7 @@ public class ResultViewResolver {
             registerView(new ProfilerModel(), new ProfilerView());
             registerView(new TimeTunnelModel(), new TimeTunnelView());
             registerView(new MonitorModel(), new MonitorView());
+            registerView(new TraceModel(), new TraceView());
         } catch (Throwable e) {
             logger.error("register result view failed", e);
         }
