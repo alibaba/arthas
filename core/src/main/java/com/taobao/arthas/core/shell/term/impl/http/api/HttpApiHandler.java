@@ -328,7 +328,7 @@ public class HttpApiHandler {
         if (timeExpired) {
             logger.warn("Job is exceeded time limit, force interrupt it, jobId: {}", job.id());
             job.interrupt();
-            response.setState(ApiState.FAILED).setMessage("The job is exceeded time limit, force interrupt");
+            response.setState(ApiState.INTERRUPTED).setMessage("The job is exceeded time limit, force interrupt");
         } else {
             response.setState(ApiState.SUCCEEDED);
         }

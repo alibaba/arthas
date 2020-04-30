@@ -14,12 +14,17 @@ public enum ApiState {
 //    RUNNING,
 
     /**
-     * Process request succeeded
+     * Request processed successfully
      */
     SUCCEEDED,
 
     /**
-     * Process request failed
+     * Request processing interrupt
+     */
+    INTERRUPTED,
+
+    /**
+     * Request processing failed
      */
     FAILED,
 
