@@ -63,8 +63,31 @@ Cache-Control: no-cache
 
 {
 "action": "exec",
-"command": "watch demo.MathGame primeFactors 'params' -n 3 ",
-"sessionId":"8132aa34-3e9a-477d-b20d-488032ba76b2"
+"timeout": 5000,
+"command": "watch demo.MathGame primeFactors 'params' -n 2 ",
+"sessionId":"940874b4-829a-4770-a01c-f10f6be4d53a"
+}
+
+###
+POST http://localhost:8563/api
+Accept: */*
+Cache-Control: no-cache
+
+{
+"action": "exec",
+"timeout": 5000,
+"command": "trace demo.MathGame primeFactors ",
+"sessionId":"940874b4-829a-4770-a01c-f10f6be4d53a"
+}
+
+###
+POST http://localhost:8563/api
+Accept: */*
+Cache-Control: no-cache
+
+{
+"action": "interrupt_job",
+"sessionId":"940874b4-829a-4770-a01c-f10f6be4d53a"
 }
 
 ###

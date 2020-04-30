@@ -48,6 +48,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class HttpApiHandler {
 
     private static final Logger logger = LoggerFactory.getLogger(HttpApiHandler.class);
+    public static final int DEFAULT_EXEC_TIMEOUT = 30000;
     private final SessionManager sessionManager;
     private final AtomicInteger requestIdGenerator = new AtomicInteger(0);
     private static HttpApiHandler instance;
@@ -280,9 +281,24 @@ public class HttpApiHandler {
         response.setSessionId(session.getSessionId())
                 .setBody(body);
 
+        if(!session.tryLock()){
+            response.setState(ApiState.REFUSED)
+                    .setMessage("Another command is executing.");
+            return response;
+        }
+
+        int lock = session.getLock();
         PackingResultDistributor packingResultDistributor = null;
         Job job = null;
         try {
+            Job foregroundJob = session.getForegroundJob();
+            if (foregroundJob != null){
+                response.setState(ApiState.REFUSED)
+                        .setMessage("Another job is running.");
+                logger.info("Another job is running, jobId: {}", foregroundJob.id());
+                return response;
+            }
+
             packingResultDistributor = new PackingResultDistributorImpl(session);
             job = this.createJob(commandLine, session, packingResultDistributor);
             session.setForegroundJob(job);
@@ -292,10 +308,18 @@ public class HttpApiHandler {
             logger.error("Exec command failed:" + e.getMessage() + ", command:" + commandLine, e);
             response.setState(ApiState.FAILED).setMessage("Exec command failed:" + e.getMessage());
             return response;
+        } finally {
+            if (session.getLock() == lock) {
+                session.unLock();
+            }
         }
 
         //wait for job completed or timeout
-        boolean timeExpired = !waitForJob(job);
+        Integer timeout = apiRequest.getTimeout();
+        if (timeout == null || timeout <= 0) {
+            timeout = DEFAULT_EXEC_TIMEOUT;
+        }
+        boolean timeExpired = !waitForJob(job, timeout);
         if (timeExpired) {
             logger.warn("Job is exceeded time limit, force interrupt it, jobId: {}", job.id());
             job.interrupt();
@@ -303,12 +327,14 @@ public class HttpApiHandler {
         } else {
             response.setState(ApiState.SUCCEEDED);
         }
-        //session.setForegroundJob(null);
 
         //packing results
         body.put("jobId", job.id());
         body.put("jobStatus", job.status());
         body.put("timeExpired", timeExpired);
+        if (timeExpired) {
+            body.put("timeout", timeout);
+        }
         body.put("results", packingResultDistributor.getResults());
 
         response.setSessionId(session.getSessionId())
@@ -341,9 +367,11 @@ public class HttpApiHandler {
         int lock = session.getLock();
         try {
 
-            if (session.getForegroundJob() != null){
+            Job foregroundJob = session.getForegroundJob();
+            if (foregroundJob != null){
                 response.setState(ApiState.REFUSED)
-                        .setMessage("The foreground job of session is running.");
+                        .setMessage("Another job is running.");
+                logger.info("Another job is running, jobId: {}", foregroundJob.id());
                 return response;
             }
 
@@ -383,7 +411,13 @@ public class HttpApiHandler {
             return new ApiResponse().setState(ApiState.FAILED).setMessage("no foreground job is running");
         }
         job.interrupt();
-        return new ApiResponse().setState(ApiState.SUCCEEDED);
+
+        Map<String, Object> body = new TreeMap<String, Object>();
+        body.put("jobId", job.id());
+        body.put("jobStatus", job.status());
+        return new ApiResponse()
+                .setState(ApiState.SUCCEEDED)
+                .setBody(body);
     }
 
     /**
@@ -415,7 +449,7 @@ public class HttpApiHandler {
         return response;
     }
 
-    private boolean waitForJob(Job job) {
+    private boolean waitForJob(Job job, int timeout) {
         long startTime = System.currentTimeMillis();
         while (true) {
             switch (job.status()) {
@@ -423,7 +457,7 @@ public class HttpApiHandler {
                 case TERMINATED:
                     return true;
             }
-            if (System.currentTimeMillis() - startTime > 30000) {
+            if (System.currentTimeMillis() - startTime > timeout) {
                 return false;
             }
             try {

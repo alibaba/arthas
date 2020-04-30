@@ -13,6 +13,7 @@ public class ApiRequest {
     private String requestId;
     private String sessionId;
     private String consumerId;
+    private Integer timeout;
     private Map<String, Object> options;
 
     @Override
@@ -23,6 +24,7 @@ public class ApiRequest {
                 ", requestId='" + requestId + '\'' +
                 ", sessionId='" + sessionId + '\'' +
                 ", consumerId='" + consumerId + '\'' +
+                ", timeout=" + timeout +
                 ", options=" + options +
                 '}';
     }
@@ -73,5 +75,13 @@ public class ApiRequest {
 
     public void setConsumerId(String consumerId) {
         this.consumerId = consumerId;
+    }
+
+    public Integer getTimeout() {
+        return timeout;
+    }
+
+    public void setTimeout(Integer timeout) {
+        this.timeout = timeout;
     }
 }
