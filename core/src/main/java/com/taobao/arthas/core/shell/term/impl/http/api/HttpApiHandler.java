@@ -9,6 +9,7 @@ import com.taobao.arthas.core.command.model.*;
 import com.taobao.arthas.core.distribution.PackingResultDistributor;
 import com.taobao.arthas.core.distribution.ResultConsumer;
 import com.taobao.arthas.core.distribution.ResultDistributor;
+import com.taobao.arthas.core.distribution.impl.CompositeResultDistributorImpl;
 import com.taobao.arthas.core.distribution.impl.PackingResultDistributorImpl;
 import com.taobao.arthas.core.distribution.impl.ResultConsumerImpl;
 import com.taobao.arthas.core.server.ArthasBootstrap;
@@ -299,9 +300,13 @@ public class HttpApiHandler {
                 return response;
             }
 
+            //distribute result message both to origin session channel and request channel by CompositeResultDistributor
             packingResultDistributor = new PackingResultDistributorImpl(session);
-            job = this.createJob(commandLine, session, packingResultDistributor);
+            ResultDistributor resultDistributor = new CompositeResultDistributorImpl(packingResultDistributor, session.getResultDistributor());
+            job = this.createJob(commandLine, session, resultDistributor);
             session.setForegroundJob(job);
+            updateSessionInputStatus(session, InputStatus.ALLOW_INTERRUPT);
+
             job.run();
 
         } catch (Throwable e) {
