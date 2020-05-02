@@ -1,17 +1,28 @@
 package com.taobao.arthas.bytekit.asm.location;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
+import com.alibaba.arthas.deps.org.objectweb.asm.Opcodes;
 import com.alibaba.arthas.deps.org.objectweb.asm.Type;
 import com.alibaba.arthas.deps.org.objectweb.asm.tree.AbstractInsnNode;
+import com.alibaba.arthas.deps.org.objectweb.asm.tree.InsnList;
+import com.alibaba.arthas.deps.org.objectweb.asm.tree.JumpInsnNode;
+import com.alibaba.arthas.deps.org.objectweb.asm.tree.LabelNode;
 import com.alibaba.arthas.deps.org.objectweb.asm.tree.MethodInsnNode;
-
+import com.alibaba.arthas.deps.org.objectweb.asm.tree.MethodNode;
 import com.taobao.arthas.bytekit.asm.MethodProcessor;
+import com.taobao.arthas.bytekit.asm.TryCatchBlock;
+import com.taobao.arthas.bytekit.asm.location.Location.InvokeExceptionExitLocation;
 import com.taobao.arthas.bytekit.asm.location.Location.InvokeLocation;
+import com.taobao.arthas.bytekit.utils.AsmOpUtils;
 import com.taobao.arthas.bytekit.utils.MatchUtils;
 
+/**
+ * 
+ * @author hengyunabc
+ *
+ */
 public class InvokeLocationMatcher implements LocationMatcher {
 
     /**
@@ -21,8 +32,7 @@ public class InvokeLocationMatcher implements LocationMatcher {
     private String methodName;
 
     /**
-     * the name of the type to which the method belongs or null if any type will
-     * do
+     * the name of the type to which the method belongs or null if any type will do
      */
     private String owner;
 
@@ -32,8 +42,8 @@ public class InvokeLocationMatcher implements LocationMatcher {
     private String desc;
 
     /**
-     * count identifying which invocation should be taken as the trigger point.
-     * if not specified as a parameter this defaults to the first invocation.
+     * count identifying which invocation should be taken as the trigger point. if
+     * not specified as a parameter this defaults to the first invocation.
      */
     private int count;
 
@@ -44,12 +54,15 @@ public class InvokeLocationMatcher implements LocationMatcher {
     private boolean whenComplete;
 
     /**
-     * wildcard matcher to exclude class, such as java.* to exclude jdk invoke.
+     * wildcard matcher to exclude the invoke class, such as java.* to exclude jdk
+     * invoke.
      */
     private List<String> excludes = new ArrayList<String>();
-    
+
+    private boolean atInvokeExcpetionExit = false;
+
     public InvokeLocationMatcher(String owner, String methodName, String desc, int count, boolean whenComplete,
-            List<String> excludes) {
+            List<String> excludes, boolean atInvokeExcpetionExit) {
         super();
         this.owner = owner;
         this.methodName = methodName;
@@ -57,6 +70,12 @@ public class InvokeLocationMatcher implements LocationMatcher {
         this.count = count;
         this.whenComplete = whenComplete;
         this.excludes = excludes;
+        this.atInvokeExcpetionExit = atInvokeExcpetionExit;
+    }
+
+    public InvokeLocationMatcher(String owner, String methodName, String desc, int count, boolean whenComplete,
+            List<String> excludes) {
+        this(owner, methodName, desc, count, whenComplete, excludes, false);
     }
 
     public InvokeLocationMatcher(String owner, String methodName, String desc, int count, boolean whenComplete) {
@@ -65,9 +84,12 @@ public class InvokeLocationMatcher implements LocationMatcher {
 
     @Override
     public List<Location> match(MethodProcessor methodProcessor) {
+        if (this.atInvokeExcpetionExit) {
+            return matchForException(methodProcessor);
+        }
         List<Location> locations = new ArrayList<Location>();
         AbstractInsnNode insnNode = methodProcessor.getEnterInsnNode();
-        
+
         int matchedCount = 0;
         while (insnNode != null) {
             if (insnNode instanceof MethodInsnNode) {
@@ -76,8 +98,7 @@ public class InvokeLocationMatcher implements LocationMatcher {
                 if (matchCall(methodInsnNode)) {
                     matchedCount++;
                     if (count <= 0 || count == matchedCount) {
-                        InvokeLocation invokeLocation = new InvokeLocation(methodInsnNode, count,
-                                whenComplete);
+                        InvokeLocation invokeLocation = new InvokeLocation(methodInsnNode, count, whenComplete);
                         locations.add(invokeLocation);
                     }
                 }
@@ -88,16 +109,64 @@ public class InvokeLocationMatcher implements LocationMatcher {
         return locations;
     }
 
+    public List<Location> matchForException(MethodProcessor methodProcessor) {
+        List<Location> locations = new ArrayList<Location>();
+        AbstractInsnNode insnNode = methodProcessor.getEnterInsnNode();
+
+        MethodNode methodNode = methodProcessor.getMethodNode();
+
+        List<MethodInsnNode> methodInsnNodes = new ArrayList<MethodInsnNode>();
+
+        int matchedCount = 0;
+        while (insnNode != null) {
+            if (insnNode instanceof MethodInsnNode) {
+                MethodInsnNode methodInsnNode = (MethodInsnNode) insnNode;
+
+                if (matchCall(methodInsnNode)) {
+                    matchedCount++;
+                    if (count <= 0 || count == matchedCount) {
+                        methodInsnNodes.add(methodInsnNode);
+                    }
+                }
+            }
+            insnNode = insnNode.getNext();
+        }
+
+        // insert try/catch
+        for (MethodInsnNode methodInsnNode : methodInsnNodes) {
+            TryCatchBlock tryCatchBlock = new TryCatchBlock(methodNode);
+
+            InsnList toInsert = new InsnList();
+
+            LabelNode gotoDest = new LabelNode();
+
+            LabelNode startLabelNode = tryCatchBlock.getStartLabelNode();
+            LabelNode endLabelNode = tryCatchBlock.getEndLabelNode();
+
+            toInsert.add(new JumpInsnNode(Opcodes.GOTO, gotoDest));
+            toInsert.add(endLabelNode);
+            AsmOpUtils.throwException(toInsert);
+            locations.add(new InvokeExceptionExitLocation(methodInsnNode, endLabelNode));
+
+            toInsert.add(gotoDest);
+
+            methodNode.instructions.insertBefore(methodInsnNode, startLabelNode);
+            methodNode.instructions.insert(methodInsnNode, toInsert);
+
+            tryCatchBlock.sort();
+        }
+
+        return locations;
+    }
+
     private boolean matchCall(MethodInsnNode methodInsnNode) {
-        
-        if(methodName == null || methodName.isEmpty()) {
-            return true;
+
+        if (methodName != null && !methodName.isEmpty()) {
+            if (!this.methodName.equals(methodInsnNode.name)) {
+                return false;
+            }
         }
-        
-        if (!this.methodName.equals(methodInsnNode.name)) {
-            return false;
-        }
-        
+
         if (!excludes.isEmpty()) {
             String ownerClassName = Type.getObjectType(methodInsnNode.owner).getClassName();
             for (String exclude : excludes) {

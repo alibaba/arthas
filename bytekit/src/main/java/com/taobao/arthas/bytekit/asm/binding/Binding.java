@@ -185,18 +185,51 @@ public abstract class Binding {
     @java.lang.annotation.Target(ElementType.PARAMETER)
     @BindingParserHandler(parser = InvokeReturnBindingParser.class)
     public static @interface InvokeReturn {
-        
+
         boolean optional() default false;
 
     }
-    
+
     public static class InvokeReturnBindingParser implements BindingParser {
         @Override
         public Binding parse(Annotation annotation) {
             return new InvokeReturnBinding();
         }
     }
-    
+
+    @Documented
+    @Retention(RetentionPolicy.RUNTIME)
+    @java.lang.annotation.Target(ElementType.PARAMETER)
+    @BindingParserHandler(parser = InvokeMethodNameBindingParser.class)
+    public static @interface InvokeMethodName {
+
+        boolean optional() default false;
+
+    }
+
+    public static class InvokeMethodNameBindingParser implements BindingParser {
+        @Override
+        public Binding parse(Annotation annotation) {
+            return new InvokeMethodNameBinding();
+        }
+    }
+
+    @Documented
+    @Retention(RetentionPolicy.RUNTIME)
+    @java.lang.annotation.Target(ElementType.PARAMETER)
+    @BindingParserHandler(parser = InvokeMethodOwnerBindingParser.class)
+    public static @interface InvokeMethodOwner {
+
+        boolean optional() default false;
+
+    }
+
+    public static class InvokeMethodOwnerBindingParser implements BindingParser {
+        @Override
+        public Binding parse(Annotation annotation) {
+            return new InvokeMethodOwnerBinding();
+        }
+    }
     
     @Documented
     @Retention(RetentionPolicy.RUNTIME)

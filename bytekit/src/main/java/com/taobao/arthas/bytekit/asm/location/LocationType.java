@@ -46,6 +46,11 @@ public enum LocationType {
      *
      */
     INVOKE_COMPLETED,
+    
+    /**
+     * method invoke exception
+     */
+    INVOKE_EXCEPTION_EXIT,
     /**
      * synchronize operation
      *
