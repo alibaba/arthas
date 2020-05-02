@@ -2,6 +2,7 @@ package com.taobao.arthas.bytekit.utils;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.lang.reflect.Method;
 import java.net.URL;
 import java.net.URLClassLoader;
@@ -19,6 +20,12 @@ import com.alibaba.arthas.deps.org.objectweb.asm.util.CheckClassAdapter;
  */
 public class VerifyUtils {
 
+    public static void asmVerify(byte[] bytes, boolean printResults) throws IOException {
+        ByteArrayInputStream inputStream = new ByteArrayInputStream(bytes);
+        ClassReader cr = new ClassReader(inputStream);
+        CheckClassAdapter.verify(cr, true, new PrintWriter(System.out));
+    }
+    
     public static void asmVerify(byte[] bytes) throws IOException {
         ByteArrayInputStream inputStream = new ByteArrayInputStream(bytes);
         ClassReader cr = new ClassReader(inputStream);
