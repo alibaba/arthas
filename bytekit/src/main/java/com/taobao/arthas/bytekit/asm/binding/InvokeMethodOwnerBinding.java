@@ -9,10 +9,10 @@ import com.taobao.arthas.bytekit.utils.AsmOpUtils;
 
 /**
  * 
- * @author hengyunabc
+ * @author hengyunabc 2020-05-02
  *
  */
-public class InvokeMethodDeclarationBinding extends Binding {
+public class InvokeMethodOwnerBinding extends Binding {
 
     @Override
     public void pushOntoStack(InsnList instructions, BindingContext bindingContext) {
@@ -20,11 +20,11 @@ public class InvokeMethodDeclarationBinding extends Binding {
         if (location instanceof MethodInsnNodeWare) {
             MethodInsnNodeWare methodInsnNodeWare = (MethodInsnNodeWare) location;
             MethodInsnNode methodInsnNode = methodInsnNodeWare.methodInsnNode();
-            AsmOpUtils.push(instructions, methodInsnNode.desc);
+            AsmOpUtils.push(instructions, methodInsnNode.owner);
 
         } else {
             throw new IllegalArgumentException(
-                    "InvokeMethodDeclarationBinding location is not Invocation location, location: " + location);
+                    "InvokeMethodOwnerBinding location is not Invocation location, location: " + location);
         }
 
     }
