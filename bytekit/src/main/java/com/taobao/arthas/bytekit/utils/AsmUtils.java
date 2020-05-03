@@ -49,7 +49,7 @@ public class AsmUtils {
 
 	public static ClassNode toClassNode(byte[] classBytes) {
 		ClassReader reader = new ClassReader(classBytes);
-		ClassNode result = new ClassNode(Opcodes.ASM7);
+		ClassNode result = new ClassNode(Opcodes.ASM8);
 		reader.accept(result, ClassReader.SKIP_FRAMES);
 		return result;
 	}
@@ -135,7 +135,7 @@ public class AsmUtils {
 	}
 
 	public static MethodNode newMethodNode(MethodNode source) {
-		return new MethodNode(Opcodes.ASM7, source.access, source.name, source.desc, source.signature,
+		return new MethodNode(Opcodes.ASM8, source.access, source.name, source.desc, source.signature,
 				source.exceptions.toArray(new String[source.exceptions.size()]));
 	}
 
@@ -149,7 +149,7 @@ public class AsmUtils {
 
 	public static MethodNode removeLineNumbers(MethodNode methodNode) {
 		MethodNode result = newMethodNode(methodNode);
-		methodNode.accept(new MethodVisitor(Opcodes.ASM7, result) {
+		methodNode.accept(new MethodVisitor(Opcodes.ASM8, result) {
 			public void visitLineNumber(int line, Label start) {
 			}
 		});
@@ -330,8 +330,8 @@ public class AsmUtils {
     }
 
     public static ClassNode copy(ClassNode source) {
-        ClassNode result = new ClassNode(Opcodes.ASM7);
-        source.accept(new ClassVisitor(Opcodes.ASM7, result) {
+        ClassNode result = new ClassNode(Opcodes.ASM8);
+        source.accept(new ClassVisitor(Opcodes.ASM8, result) {
             @Override
             public MethodVisitor visitMethod(int access, String name, String desc, String signature,
                             String[] exceptions) {
