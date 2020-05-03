@@ -9,9 +9,8 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
+import java.util.UUID;
 
-import org.apache.commons.io.FileUtils;
-import org.apache.commons.lang3.RandomStringUtils;
 import org.benf.cfr.reader.api.CfrDriver;
 import org.benf.cfr.reader.api.OutputSinkFactory;
 
@@ -23,6 +22,7 @@ import com.alibaba.arthas.deps.org.objectweb.asm.util.Printer;
 import com.alibaba.arthas.deps.org.objectweb.asm.util.Textifier;
 import com.alibaba.arthas.deps.org.objectweb.asm.util.TraceClassVisitor;
 import com.alibaba.arthas.deps.org.objectweb.asm.util.TraceMethodVisitor;
+import com.taobao.arthas.common.FileUtils;
 
 /**
  * TODO com.taobao.arthas.core.util.Decompiler
@@ -34,8 +34,8 @@ public class Decompiler {
 	public static String decompile(byte[] bytecode) throws IOException {
 		String result = "";
 
-		File tempDirectory = FileUtils.getTempDirectory();
-		File file = new File(tempDirectory, RandomStringUtils.randomAlphabetic(8));
+		File tempDirectory = new File(System.getProperty("java.io.tmpdir"));
+		File file = new File(tempDirectory, UUID.randomUUID().toString());
 		FileUtils.writeByteArrayToFile(file, bytecode);
 
 		result = decompile(file.getAbsolutePath(), null);

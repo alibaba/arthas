@@ -128,18 +128,6 @@
             <scope>provided</scope>
             <optional>true</optional>
         </dependency>
-        <dependency>
-            <groupId>commons-io</groupId>
-            <artifactId>commons-io</artifactId>
-            <version>2.6</version>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.commons</groupId>
-            <artifactId>commons-lang3</artifactId>
-            <version>3.7</version>
-            <scope>provided</scope>
-        </dependency>
 
         <dependency>
             <groupId>com.taobao.arthas</groupId>

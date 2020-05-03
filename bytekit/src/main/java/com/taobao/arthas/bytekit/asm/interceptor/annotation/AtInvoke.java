@@ -40,6 +40,10 @@ public @interface AtInvoke {
 
     boolean whenComplete() default false;
 
+    /**
+     * method name excludes
+     * @return
+     */
     String[] excludes() default {};
 
     class InvokeInterceptorProcessorParser implements InterceptorProcessorParser {

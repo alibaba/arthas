@@ -313,15 +313,6 @@ public abstract class Location {
                             boolean isStatic = AsmUtils.isStatic(methodInsnNode);
                             Type[] argumentTypes = methodType.getArgumentTypes();
                             
-                            //保存到 var里，再从var取出放到数组里 
-                            for(int i = argumentTypes.length - 1; i >= 0 ; --i) {
-                                LocalVariableNode methodInvokeArgVar = methodProcessor.addInterceptorLocalVariable("__" + i, argumentTypes[i].getDescriptor());
-                                AsmOpUtils.storeVar(instructions, argumentTypes[i], methodInvokeArgVar.index);
-                            }
-                            // 保存this到 var
-                            LocalVariableNode methodInvokeThis = methodProcessor.addInterceptorLocalVariable("__invokemethodthis", AsmOpUtils.OBJECT_TYPE.getDescriptor());
-                            AsmOpUtils.storeVar(instructions, AsmOpUtils.OBJECT_TYPE, methodInvokeThis.index);
-                            
 //                            // 如果是非static，则存放到数组的index要多 1
 //                            AsmOpUtils.push(instructions, argumentTypes.length + (isStatic ? 0 : 1));
 //                            AsmOpUtils.newArray(instructions, AsmOpUtils.OBJECT_TYPE);
@@ -371,17 +362,6 @@ public abstract class Location {
                             Type methodType = Type.getMethodType(methodInsnNode.desc);
                             boolean isStatic = AsmUtils.isStatic(methodInsnNode);
                             Type[] argumentTypes = methodType.getArgumentTypes();
-                            
-                            // 从var里取回this
-                            LocalVariableNode methodInvokeThis = methodProcessor.findLocalVariableLabel("__invokemethodthis");
-                            AsmOpUtils.loadVar(instructions, AsmOpUtils.OBJECT_TYPE, methodInvokeThis.index);
-                            AsmOpUtils.checkCast(instructions, Type.getObjectType(methodInsnNode.owner));
-                            
-                            // 从 var里取出原来的数据，放回栈上
-                            for(int i = 0; i < argumentTypes.length; ++i) {
-                                LocalVariableNode methodInvokeArgVar = methodProcessor.findLocalVariableLabel("__" + i);
-                                AsmOpUtils.loadVar(instructions, argumentTypes[i], methodInvokeArgVar.index);
-                            }
                             
 //                            if(!isStatic) {
 //                                // 取出this
