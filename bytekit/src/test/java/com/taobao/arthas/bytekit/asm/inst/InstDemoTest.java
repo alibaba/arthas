@@ -1,20 +1,16 @@
 package com.taobao.arthas.bytekit.asm.inst;
 
-import java.io.File;
-import java.io.IOException;
 import java.util.List;
 
-import org.apache.commons.io.FileUtils;
 import org.junit.Test;
+
 import com.alibaba.arthas.deps.org.objectweb.asm.Type;
 import com.alibaba.arthas.deps.org.objectweb.asm.tree.AnnotationNode;
 import com.alibaba.arthas.deps.org.objectweb.asm.tree.ClassNode;
 import com.alibaba.arthas.deps.org.objectweb.asm.tree.FieldNode;
 import com.alibaba.arthas.deps.org.objectweb.asm.tree.MethodInsnNode;
 import com.alibaba.arthas.deps.org.objectweb.asm.tree.MethodNode;
-
 import com.taobao.arthas.bytekit.asm.MethodProcessor;
-import com.taobao.arthas.bytekit.utils.AsmOpUtils;
 import com.taobao.arthas.bytekit.utils.AsmUtils;
 import com.taobao.arthas.bytekit.utils.Decompiler;
 import com.taobao.arthas.bytekit.utils.VerifyUtils;
@@ -93,8 +89,6 @@ public class InstDemoTest {
 		System.err.println(Decompiler.decompile(resutlBytes));
 
 		System.err.println(AsmUtils.toASMCode(resutlBytes));
-
-		FileUtils.writeByteArrayToFile(new File("/tmp/ttt/InstDemo.class"), resutlBytes);
 
 		VerifyUtils.asmVerify(resutlBytes);
 		VerifyUtils.instanceVerity(resutlBytes);
