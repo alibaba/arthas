@@ -363,7 +363,7 @@ public class AdviceWeaver extends ClassVisitor implements Opcodes {
      * @param cv           ClassVisitor for ASM
      */
     public AdviceWeaver(int adviceId, boolean isTracing, boolean skipJDKTrace, String className, Matcher matcher, EnhancerAffect affect, ClassVisitor cv) {
-        super(Opcodes.ASM7, cv);
+        super(Opcodes.ASM8, cv);
         this.adviceId = adviceId;
         this.isTracing = isTracing;
         this.skipJDKTrace = skipJDKTrace;
@@ -418,7 +418,7 @@ public class AdviceWeaver extends ClassVisitor implements Opcodes {
         // 编织方法计数
         affect.mCnt(1);
 
-        return new AdviceAdapter(Opcodes.ASM7, new JSRInlinerAdapter(mv, access, name, desc, signature, exceptions), access, name, desc) {
+        return new AdviceAdapter(Opcodes.ASM8, new JSRInlinerAdapter(mv, access, name, desc, signature, exceptions), access, name, desc) {
 
             // -- Label for try...catch block
             private final Label beginLabel = new Label();

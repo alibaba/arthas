@@ -37,7 +37,7 @@ public abstract class MethodCallInliner extends GeneratorAdapter {
 
 	public MethodCallInliner(int access, String name, String desc, MethodVisitor mv,
 			MethodNode toBeInlined) {
-		super(Opcodes.ASM7, mv, access, name, desc);
+		super(Opcodes.ASM8, mv, access, name, desc);
 		this.toBeInlined = toBeInlined;
 	}
 
