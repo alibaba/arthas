@@ -225,6 +225,19 @@ public class AsmUtils {
 	    return result;
 	}
 
+    public static List<MethodInsnNode> findMethodInsnNode(MethodNode methodNode, String owner, String name) {
+        List<MethodInsnNode> result = new ArrayList<MethodInsnNode>();
+        for (AbstractInsnNode insnNode = methodNode.instructions.getFirst(); insnNode != null; insnNode = insnNode
+                        .getNext()) {
+            if (insnNode instanceof MethodInsnNode) {
+                final MethodInsnNode methodInsnNode = (MethodInsnNode) insnNode;
+                if (methodInsnNode.owner.equals(owner) && methodInsnNode.name.equals(name)) {
+                    result.add(methodInsnNode);
+                }
+            }
+        }
+        return result;
+    }
     public static List<MethodInsnNode> findMethodInsnNode(MethodNode methodNode, String owner, String name,
                     String desc) {
         List<MethodInsnNode> result = new ArrayList<MethodInsnNode>();

@@ -44,7 +44,7 @@ public class InterceptorProcessor {
         this.classLoader = classLoader;
     }
 
-    public void process(MethodProcessor methodProcessor) throws Exception {
+    public List<Location> process(MethodProcessor methodProcessor) throws Exception {
         List<Location> locations = locationMatcher.match(methodProcessor);
 
         List<Binding> interceptorBindings = interceptorMethodConfig.getBindings();
@@ -186,6 +186,8 @@ public class InterceptorProcessor {
 //            System.err.println(Decompiler.toString(methodProcessor.getMethodNode()));
 //            System.err.println(AsmUtils.toASMCode(methodProcessor.getMethodNode()));
         }
+        
+        return locations;
     }
 
     private void errorHandler(MethodProcessor methodProcessor, InsnList insnList) {

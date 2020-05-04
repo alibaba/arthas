@@ -25,7 +25,8 @@ import com.alibaba.arthas.deps.org.objectweb.asm.tree.MethodNode;
 import com.alibaba.arthas.deps.org.objectweb.asm.tree.TryCatchBlockNode;
 import com.alibaba.arthas.deps.org.objectweb.asm.tree.TypeInsnNode;
 import com.alibaba.arthas.deps.org.objectweb.asm.tree.VarInsnNode;
-
+import com.taobao.arthas.bytekit.asm.location.filter.DefaultLocationFilter;
+import com.taobao.arthas.bytekit.asm.location.filter.LocationFilter;
 import com.taobao.arthas.bytekit.utils.AsmOpUtils;
 import com.taobao.arthas.bytekit.utils.AsmUtils;
 
@@ -111,9 +112,16 @@ public class MethodProcessor {
     private Map<String, LocalVariableNode> invokeReturnVariableNodeMap = new HashMap<String, LocalVariableNode>();
 
     private TryCatchBlock tryCatchBlock = null;
+    
+    private LocationFilter locationFilter = new DefaultLocationFilter();
 
     public MethodProcessor(final ClassNode classNode, final MethodNode methodNode) {
         this(classNode, methodNode, false);
+    }
+    
+    public MethodProcessor(final ClassNode classNode, final MethodNode methodNode, LocationFilter locationFilter) {
+        this(classNode, methodNode, false);
+        this.locationFilter = locationFilter;
     }
 
     public MethodProcessor(final ClassNode classNode, final MethodNode methodNode, boolean keepLocalVariableNames) {
@@ -643,6 +651,10 @@ public class MethodProcessor {
     public void setClassNode(ClassNode classNode) {
         this.classNode = classNode;
     }
+    public LocationFilter getLocationFilter() {
+        return locationFilter;
+    }
+
     /**
      * TODO 可以考虑实现修改值的功能，原理是传入的 args实际转化为一个stack上的slot，只要在inline之后，把 stack上面的对应的slot保存到想要保存的位置就可以了。
      * @param owner

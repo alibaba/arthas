@@ -9,6 +9,7 @@ import com.alibaba.arthas.deps.org.objectweb.asm.tree.InsnNode;
 
 import com.taobao.arthas.bytekit.asm.MethodProcessor;
 import com.taobao.arthas.bytekit.asm.location.Location.ExitLocation;
+import com.taobao.arthas.bytekit.asm.location.filter.LocationFilter;
 
 public class ExitLocationMatcher implements LocationMatcher {
 
@@ -21,8 +22,11 @@ public class ExitLocationMatcher implements LocationMatcher {
             if (insnNode instanceof InsnNode) {
                 InsnNode node = (InsnNode) insnNode;
                 if (matchExit(node)) {
-                    ExitLocation ExitLocation = new ExitLocation(node);
-                    locations.add(ExitLocation);
+                    LocationFilter locationFilter = methodProcessor.getLocationFilter();
+                    if (locationFilter.allow(node, LocationType.EXIT, false)) {
+                        ExitLocation ExitLocation = new ExitLocation(node);
+                        locations.add(ExitLocation);
+                    }
                 }
             }
             insnNode = insnNode.getNext();
