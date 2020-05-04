@@ -15,6 +15,7 @@ import com.taobao.arthas.bytekit.asm.MethodProcessor;
 import com.taobao.arthas.bytekit.asm.TryCatchBlock;
 import com.taobao.arthas.bytekit.asm.location.Location.InvokeExceptionExitLocation;
 import com.taobao.arthas.bytekit.asm.location.Location.InvokeLocation;
+import com.taobao.arthas.bytekit.asm.location.filter.LocationFilter;
 import com.taobao.arthas.bytekit.utils.AsmOpUtils;
 import com.taobao.arthas.bytekit.utils.MatchUtils;
 
@@ -89,6 +90,10 @@ public class InvokeLocationMatcher implements LocationMatcher {
         }
         List<Location> locations = new ArrayList<Location>();
         AbstractInsnNode insnNode = methodProcessor.getEnterInsnNode();
+        
+        LocationFilter locationFilter = methodProcessor.getLocationFilter();
+        
+        LocationType locationType = whenComplete ? LocationType.INVOKE_COMPLETED : LocationType.INVOKE;
 
         int matchedCount = 0;
         while (insnNode != null) {
@@ -96,10 +101,12 @@ public class InvokeLocationMatcher implements LocationMatcher {
                 MethodInsnNode methodInsnNode = (MethodInsnNode) insnNode;
 
                 if (matchCall(methodInsnNode)) {
-                    matchedCount++;
-                    if (count <= 0 || count == matchedCount) {
-                        InvokeLocation invokeLocation = new InvokeLocation(methodInsnNode, count, whenComplete);
-                        locations.add(invokeLocation);
+                    if(locationFilter.allow(methodInsnNode, locationType, this.whenComplete)) {
+                        matchedCount++;
+                        if (count <= 0 || count == matchedCount) {
+                            InvokeLocation invokeLocation = new InvokeLocation(methodInsnNode, count, whenComplete);
+                            locations.add(invokeLocation);
+                        }
                     }
                 }
             }
@@ -116,6 +123,10 @@ public class InvokeLocationMatcher implements LocationMatcher {
         MethodNode methodNode = methodProcessor.getMethodNode();
 
         List<MethodInsnNode> methodInsnNodes = new ArrayList<MethodInsnNode>();
+        
+        LocationFilter locationFilter = methodProcessor.getLocationFilter();
+        
+        LocationType locationType = LocationType.INVOKE_EXCEPTION_EXIT;
 
         int matchedCount = 0;
         while (insnNode != null) {
@@ -123,9 +134,11 @@ public class InvokeLocationMatcher implements LocationMatcher {
                 MethodInsnNode methodInsnNode = (MethodInsnNode) insnNode;
 
                 if (matchCall(methodInsnNode)) {
-                    matchedCount++;
-                    if (count <= 0 || count == matchedCount) {
-                        methodInsnNodes.add(methodInsnNode);
+                    if(locationFilter.allow(methodInsnNode, locationType, this.whenComplete)) {
+                        matchedCount++;
+                        if (count <= 0 || count == matchedCount) {
+                            methodInsnNodes.add(methodInsnNode);
+                        }
                     }
                 }
             }
