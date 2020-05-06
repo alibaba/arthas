@@ -10,6 +10,7 @@ import com.taobao.arthas.core.server.ArthasBootstrap;
 import com.taobao.arthas.core.shell.ShellServerOptions;
 import com.taobao.arthas.core.shell.session.Session;
 import com.taobao.arthas.core.shell.session.SessionManager;
+import com.taobao.arthas.core.shell.system.Job;
 import com.taobao.arthas.core.shell.system.impl.InternalCommandManager;
 import com.taobao.arthas.core.shell.system.impl.JobControllerImpl;
 
@@ -139,6 +140,11 @@ public class SessionManagerImpl implements SessionManager {
             evictConsumers(session);
         }
         for (Session session : toClose) {
+            //interrupt foreground job
+            Job job = session.getForegroundJob();
+            if (job != null) {
+                job.interrupt();
+            }
             long timeOutInMinutes = timeoutMillis / 1000 / 60;
             String reason = "session is inactive for " + timeOutInMinutes + " min(s).";
             session.getResultDistributor().appendResult(new MessageModel(reason));
@@ -159,7 +165,7 @@ public class SessionManagerImpl implements SessionManager {
             long now = System.currentTimeMillis();
             for (ResultConsumer consumer : consumers) {
                 long inactiveTime = now - consumer.getLastAccessTime();
-                if (inactiveTime > 20000) {
+                if (inactiveTime > 30000) {
                     //inactive duration must be large than pollTimeLimit
                     logger.info("Removing inactive consumer from session, sessionId: {}, consumerId: {}, inactive duration: {}",
                             session.getSessionId(), consumer.getConsumerId(), inactiveTime);
