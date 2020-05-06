@@ -490,7 +490,7 @@ abstract public class ThreadUtil {
 
     public static ThreadNode getThreadNode(Thread currentThread) {
         ThreadNode threadNode = new ThreadNode();
-        threadNode.setThreadId(Long.toHexString(currentThread.getId()));
+        threadNode.setThreadId(currentThread.getId());
         threadNode.setThreadName(currentThread.getName());
         threadNode.setDaemon(currentThread.isDaemon());
         threadNode.setPriority(currentThread.getPriority());

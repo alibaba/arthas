@@ -8,7 +8,7 @@ import java.util.Date;
 public class ThreadNode extends TraceNode {
 
     private String threadName;
-    private String threadId;
+    private long threadId;
     private boolean daemon;
     private int priority;
     private String classloader;
@@ -21,7 +21,7 @@ public class ThreadNode extends TraceNode {
         timestamp = new Date();
     }
 
-    public ThreadNode(String threadName, String threadId, boolean daemon, int priority, String classloader) {
+    public ThreadNode(String threadName, long threadId, boolean daemon, int priority, String classloader) {
         this.threadName = threadName;
         this.threadId = threadId;
         this.daemon = daemon;
@@ -38,11 +38,11 @@ public class ThreadNode extends TraceNode {
         this.threadName = threadName;
     }
 
-    public String getThreadId() {
+    public long getThreadId() {
         return threadId;
     }
 
-    public void setThreadId(String threadId) {
+    public void setThreadId(long threadId) {
         this.threadId = threadId;
     }
 

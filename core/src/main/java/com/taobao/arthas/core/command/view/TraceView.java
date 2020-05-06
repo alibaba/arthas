@@ -89,7 +89,7 @@ public class TraceView extends ResultView<TraceModel> {
             sb.append(format("ts=%s;thread_name=%s;id=%s;is_daemon=%s;priority=%d;TCCL=%s",
                     DateUtils.formatDate(threadNode.getTimestamp()),
                     threadNode.getThreadName(),
-                    threadNode.getThreadId(),
+                    Long.toHexString(threadNode.getThreadId()),
                     threadNode.isDaemon(),
                     threadNode.getPriority(),
                     threadNode.getClassloader()));
