@@ -4,16 +4,35 @@ import argparse
 import requests
 from datetime import datetime
 
+def str2bool(v):
+    if isinstance(v, bool):
+        return v
+    if v.lower() in ('yes', 'true', 't', 'y', '1'):
+        return True
+    elif v.lower() in ('no', 'false', 'f', 'n', '0'):
+        return False
+    else:
+        raise argparse.ArgumentTypeError('Boolean value expected.')
+
 parser = argparse.ArgumentParser(description='Trace step by step, find slow method tree.')
 parser.add_argument('--host', help='Arthas server host (default: 127.0.0.1:8563)', default="127.0.0.1:8563")
 parser.add_argument('--times', '-n', help='Max trace times of every round (default: 100)', type=int, default=100)
-parser.add_argument('--method-path', '-m', help='Exact method path to trace, eg: "className1::methodName1[,className2::methodName2]"', required=True)
-parser.add_argument('--addit-method', help='Additional methods to trace, but not in the method path, eg: "className1::methodName1[,className2::methodName2]"')
+parser.add_argument('--method-path', '-m',
+                    help='Exact method path to trace, eg: "className1::methodName1[,className2::methodName2]"',
+                    required=True)
+parser.add_argument('--addit-method',
+                    help='Additional methods to trace, but not in the method path, '
+                         'eg: "className1::methodName1[,className2::methodName2]"')
 # parser.add_argument('--condition', '-c', help='condition express', default='')
-parser.add_argument('--min-cost', help='min cost in condition: #cost > min_cost', default=0)
-parser.add_argument('--timeout', '-t', help='request timeout(ms) (default:30000)', default=30000)
-parser.add_argument('--reset-on-start', help='reset classes once on start (default:True)', default=True)
-parser.add_argument('--reset-on-round', help='reset classes on every round (default:False)', default=False)
+parser.add_argument('--min-cost', help='min cost in condition: #cost > min_cost', type=int, default=0)
+# TODO filter by min cost of specify method
+parser.add_argument('--timeout', '-t', help='request timeout(ms) (default:30000)', type=int, default=30000)
+parser.add_argument('--skip-jdk-method', help='skip jdk method trace, (default:True)', type=str2bool, default=True)
+parser.add_argument('--reset-on-start', help='reset classes once on start (default:True)', type=str2bool, default=True)
+parser.add_argument('--reset-on-round', help='reset classes on every round (default:False)', type=str2bool, default=False)
+parser.add_argument('--stop-match-times',
+                    help='If primary call tree matching times was exceeded, assuming no new call tree can be found (default: 10)',
+                    type=int, default=10)
 args = parser.parse_args()
 # print args
 print(args)
@@ -26,24 +45,26 @@ else:
     condition = ''
 trace_times = args.times
 timeout = args.timeout
+stop_match_times = args.stop_match_times
+is_skip_jdk_method = args.skip_jdk_method
+
 
 # trace method path, 方法的顺序与调用树一致
 # {
 #  className: xxx,
-#  methodName: yyy,
-#  name: xxx.yyy
-#  parent: aaa.bbb
-#  level: 1,
+#  methodName: yyy
 # }
-trace_methods = []
+trace_method_path = []
+trace_method_path_code = 0
 
-# unmatched method paths
+# Partial matching method paths
 # [[{},{}], [path]]
-unmatched_method_paths = []
+partial_matching_method_paths = []
 
 # additional trace methods, not in trace tree
 additional_methods = []
 
+call_tree_match_times = 0
 
 # call stack tree
 # {
@@ -145,7 +166,7 @@ def interrupt_job(session_id):
     # print(resp.text)
     result = resp.json()
     if resp.status_code == 200:  # and result['state'] == 'SUCCEEDED'
-        return
+        return result
     else:
         raise Exception('init http session failed: ' + resp.text)
 
@@ -200,6 +221,10 @@ def pull_results(session_id, consumer_id, job_id, handler):
                     res_job_id = result['jobId'];
                     if res_job_id == job_id:
                         handler(result)
+                        # check call tree match times
+                        if call_tree_match_times >= stop_match_times:
+                            print("The primary call tree matching times is exceeded, assuming no new call tree can be found.")
+                            return
                         # receive status code of job, the job is terminated.
                         if result['type'] == 'status':
                             if result.get('message'): print(result['message'])
@@ -217,19 +242,24 @@ def handle_trace_result(result):
     if type == 'trace':
         root = result['root']
         trace_tree = root['children'][0]
-        found = False
-        next_node = find_next_call(trace_tree)
-        while next_node:
-            if not found:
-                found = True
-                # cancel job for executing other command
-                interrupt_job(session_id)
-                # print
-                print_trace_tree(root)
+        method_path = match_call_tree(trace_tree)
+        if method_path:
+            # cancel job for executing other command
+            interrupt_job(session_id)
             # add new method to path
-            add_trace_method2(next_node)
-            # search next
-            next_node = find_next_call(trace_tree)
+            index = len(trace_method_path)
+            size = len(method_path)
+            while index < size:
+                tm = method_path[index]
+                add_trace_method(tm['className'], tm['methodName'])
+                index += 1
+
+            # print
+            method_path_code = get_method_path_hash(method_path)
+            print("New primary call tree [%x]" % method_path_code)
+            print_trace_tree(root)
+            print_method_path(method_path, method_path_code)
+            print("")
 
 
 def get_class_detail(class_name):
@@ -250,33 +280,34 @@ def is_derived_from(class_detail, super_class):
     return False
 
 
-def add_trace_method(class_name, method_name, parent):
-    level = 0
-    if parent:
-        level = parent['level'] + 1
+def add_additional_method(class_name, method_name):
+    # class_name = replace_regex_chars(class_name)
+    # method_name = replace_regex_chars(method_name)
+    additional_methods.append({'className': class_name, 'methodName': method_name})
+
+
+def add_trace_method(class_name, method_name):
+    # class_name = replace_regex_chars(class_name)
+    # method_name = replace_regex_chars(method_name)
     tm = {
         'className': class_name,
         'methodName': method_name,
-        'name': class_name + '.' + method_name,
-        'parent': parent,
-        'level': level
     }
-    trace_methods.append(tm)
+    global trace_method_path_code
+    trace_method_path.append(tm)
+    trace_method_path_code = get_method_path_hash(trace_method_path)
+
     # add java.lang.reflect.InvocationHandler for java.lang.reflect.Proxy instance
     if 'java.lang.reflect.InvocationHandler' not in additional_methods:
         class_detail = get_class_detail(class_name)
         if is_derived_from(class_detail, 'java.lang.reflect.Proxy'):
-            additional_methods.append({'className': 'java.lang.reflect.InvocationHandler', 'methodName': 'invoke'})
+            add_additional_method('java.lang.reflect.InvocationHandler', 'invoke')
     return tm
-
-def add_trace_method2(node):
-    add_trace_method(node['className'], node['methodName'], trace_methods[-1])
-    pass
 
 
 def print_trace_method_path():
     print("trace method path: ")
-    for tm in trace_methods:
+    for tm in trace_method_path:
         print("    %s:%s()" % (tm['className'], tm['methodName']))
 
     print("additional methods: ")
@@ -284,36 +315,48 @@ def print_trace_method_path():
         print("    %s:%s()" % (am['className'], am['methodName']))
     pass
 
+# replace regex chars
+def replace_regex_chars(str):
+    return str.replace("$", "\\\\$")
+    #.replace(".", "\\.")
 
 def start_trace():
     # concat trace regex match pattern
     # filter duplicated item by set
-    class_pattern = []
-    method_pattern = []
-    for tm in trace_methods:
+    global is_skip_jdk_method
+    class_names = []
+    method_names = []
+    for tm in trace_method_path:
         class_name = tm['className']
         method_name = tm['methodName']
-        if class_name not in class_pattern:
-            class_pattern.append(class_name)
-        if method_name not in method_pattern:
-            method_pattern.append(method_name)
+        if class_name not in class_names:
+            class_names.append(class_name)
+        if method_name not in method_names:
+            method_names.append(method_name)
 
     # append additional methods
     for am in additional_methods:
         class_name = am['className']
         method_name = am['methodName']
-        if class_name not in class_pattern:
-            class_pattern.append(class_name)
-        if method_name not in method_pattern:
-            method_pattern.append(method_name)
+        if class_name not in class_names:
+            class_names.append(class_name)
+        if method_name not in method_names:
+            method_names.append(method_name)
 
-    # async exec trace
-    command = "trace -E {0} {1} {2} -n {3}".format("|".join(class_pattern), "|".join(method_pattern), condition, trace_times)
+    class_pattern = "|".join(class_names)
+    method_pattern = "|".join(method_names)
+    class_pattern = replace_regex_chars(class_pattern)
+    method_pattern = replace_regex_chars(method_pattern)
+
+    command = "trace -E {0} {1} {2} -n {3}".format(class_pattern, method_pattern, condition, trace_times)
+    if not is_skip_jdk_method:
+        command += " --skipJDKMethod false"
 
     print("")
     print_trace_method_path()
     print("command: %s" % command)
 
+    # async exec trace
     job_id = async_exec(session_id, command)
     print("job_id: %d" % job_id)
 
@@ -324,42 +367,75 @@ def match_node(node, class_name, method_name):
     return node['className'] == class_name and node['methodName'] == method_name
 
 
-def find_next_call(trace_tree):
-    # TODO compare trace methods
-    node = trace_tree
-    level = 0
-    class_name = ''
-    method_name = ''
-    for tm in trace_methods:
-        class_name = tm['className']
-        method_name = tm['methodName']
-        if level == 0:
-            if not match_node(node, class_name, method_name):
-                return None
+# 遍历调用树，生成关键方法路径
+def create_method_path_from_tree(root):
+    method_path = []
+    node = root
+    while node:
+        class_name = node['className']
+        method_name = node['methodName']
+        method_path.append({'className': class_name, 'methodName': method_name})
+        node = replace_duplicated_node(node, class_name, method_name)
+        node = get_max_cost_node(node)
+
+    return method_path
+
+
+def get_method_path_hash(method_path):
+    return hash(str(method_path))
+
+
+def print_method_path(method_path, method_path_code):
+    print("slow method path [%x]: " % method_path_code)
+    for m in method_path:
+        print("    %s:%s()" % (m["className"], m["methodName"]))
+
+
+def get_match_size(method_path1, method_path2):
+    for index in range(len(method_path1)):
+        if method_path1[index] != method_path2[index]:
+            return index
+    return len(method_path1)
+
+# compare trace method path
+# return:
+#   method_path: new call tree found
+#   None: match none / exact match / partial matching
+def match_call_tree(trace_tree):
+    # compare trace method path
+    global call_tree_match_times
+    method_path = create_method_path_from_tree(trace_tree)
+    match_size = get_match_size(trace_method_path, method_path)
+    if match_size == len(trace_method_path):
+        if match_size == len(method_path):
+            # exact match
+            call_tree_match_times+=1
+            print("Exact matching primary call tree [%x] times: %d" % (trace_method_path_code, call_tree_match_times))
+            return None
+        elif len(method_path) > match_size:
+            # new call tree
+            return method_path
         else:
-            if not node.get('children'):
-                break
-            # find children
-            children = node['children']
-            found = False
-            for child0 in children:
-                child = replace_duplicated_node(child0, class_name, method_name)
-                if match_node(child, class_name, method_name):
-                    found = True
-                    node = child
-                    break
+            # error, len(method_path) < match_size
+            raise Exception("Matching call tree error")
+    elif match_size > 0:
+        # TODO 本次结果与之前的不完全匹配，如果方法时间比之前的大，应该进行修正
+        # print partial match on first meet
+        method_path_code = get_method_path_hash(method_path)
+        print("Partial matching call tree [%x]" % method_path_code)
+        if method_path not in partial_matching_method_paths:
+            partial_matching_method_paths.append(method_path)
+            print_trace_tree(trace_tree)
+            print_method_path(method_path, method_path_code)
+            print("")
+        return None
+    else:
+        # match none
+        # TODO match interface and it's impl class
+        return None
 
-            if not found:
-                # TODO 本次结果与之前的不完全匹配，如果方法时间比之前的大，应该进行修正
-                if level > 0:
-                    print("non-matched call tree:")
-                    print_trace_tree(trace_tree)
-                return None
-        level += 1
 
-    node = replace_duplicated_node(node, class_name, method_name)
-
-    # find next trace node
+def get_max_cost_node(node):
     children = node.get('children')
     if not children:
         return None
@@ -371,7 +447,6 @@ def find_next_call(trace_tree):
                 next_node = child
         else:
             next_node = child
-
     return next_node
 
 
@@ -395,43 +470,49 @@ Main
 (session_id, consumer_id) = init_session()
 print("session_id: {0}, consumer_id: {1}".format(session_id, consumer_id))
 
-# parse method path
-methods = args.method_path.split(',')
-parent = None
-for m in methods:
-    strs = m.split(':')
-    class_name = strs[0].strip()
-    method_name = strs[1].replace('()','').strip()
-    # add trace method
-    parent = add_trace_method(class_name, method_name, parent)
-
-# parse addit-method
-if args.addit_method:
-    methods = args.addit_method.split(',')
+try:
+    # parse method path
+    methods = args.method_path.split(',')
     for m in methods:
         strs = m.split(':')
         class_name = strs[0].strip()
         method_name = strs[1].replace('()','').strip()
-        # add method
-        additional_methods.append({'className': class_name, 'methodName': method_name})
+        # add trace method
+        add_trace_method(class_name, method_name)
 
-if args.reset_on_start:
-    reset_classes()
+    # parse addit-method
+    if args.addit_method:
+        methods = args.addit_method.split(',')
+        for m in methods:
+            strs = m.split(':')
+            class_name = strs[0].strip()
+            method_name = strs[1].replace('()','').strip()
+            # additional method
+            add_additional_method(class_name, method_name)
 
-trace_method_size = 0
-while trace_method_size < len(trace_methods):
-    # async trace
-    job_id = start_trace()
-    trace_method_size = len(trace_methods)
-
-    # pull results
-    pull_results(session_id, consumer_id, job_id, handle_trace_result)
-    # reset on round
-    if args.reset_on_round:
+    if args.reset_on_start:
         reset_classes()
 
+    trace_method_size = 0
+    while trace_method_size < len(trace_method_path):
+        # async trace
+        job_id = start_trace()
+        trace_method_size = len(trace_method_path)
 
-print("")
-print("")
-# print_trace_method_path()
-print("Trace finished.")
+        # pull results
+        pull_results(session_id, consumer_id, job_id, handle_trace_result)
+        # reset on round
+        if args.reset_on_round:
+            reset_classes()
+
+
+    # print("")
+    # print("")
+    # print_trace_method_path()
+    print("Job is finished.")
+except KeyboardInterrupt:
+    print("")
+    print("Job is canceled.")
+finally:
+    interrupt_job(session_id)
+    reset_classes()
