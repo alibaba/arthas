@@ -7,13 +7,13 @@ public class MethodNode extends TraceNode {
 
     private String className;
     private String methodName;
-    private Integer lineNumber;
+    private int lineNumber;
     private Boolean isThrow;
     private String throwExp;
     /**
      * 是否为beforeInvoke方法，true为beforeInvoke，false为方法体入口的onBefore
      */
-    private Boolean isInvoking;
+    private boolean isInvoking;
 
     /**
      * 开始时间戳
@@ -34,8 +34,7 @@ public class MethodNode extends TraceNode {
     private long times = 0;
 
 
-    public MethodNode(Integer id, String className, String methodName, Integer lineNumber, Boolean isInvoking) {
-        this.nodeId = id;
+    public MethodNode(String className, String methodName, int lineNumber, boolean isInvoking) {
         this.className = className;
         this.methodName = methodName;
         this.lineNumber = lineNumber;
@@ -80,11 +79,11 @@ public class MethodNode extends TraceNode {
         this.methodName = methodName;
     }
 
-    public Integer getLineNumber() {
+    public int getLineNumber() {
         return lineNumber;
     }
 
-    public void setLineNumber(Integer lineNumber) {
+    public void setLineNumber(int lineNumber) {
         this.lineNumber = lineNumber;
     }
 
@@ -136,8 +135,11 @@ public class MethodNode extends TraceNode {
         this.times = times;
     }
 
-    public Boolean getInvoking() {
+    public boolean isInvoking() {
         return isInvoking;
     }
 
+    public void setInvoking(boolean invoking) {
+        isInvoking = invoking;
+    }
 }

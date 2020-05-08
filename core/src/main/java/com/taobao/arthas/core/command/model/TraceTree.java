@@ -1,6 +1,10 @@
 package com.taobao.arthas.core.command.model;
 
 
+import com.taobao.arthas.core.util.StringUtils;
+
+import java.util.List;
+
 /**
  * @author gongdewei 2020/4/28
  */
@@ -15,25 +19,46 @@ public class TraceTree {
     }
 
     public void begin(String className, String methodName) {
-        Integer nodeId = getNodeId(className, methodName, -1);
-        TraceNode child = current.findChild(nodeId);
+        //non-invoking
+        begin(className, methodName, -1, false);
+    }
+
+    public void begin(String className, String methodName, int lineNumber) {
+        //invoking
+        begin(className, methodName, lineNumber, true);
+    }
+
+    private void begin(String className, String methodName, int lineNumber, boolean isInvoking) {
+        //Integer nodeId = getNodeId(className, methodName, lineNumber);
+        TraceNode child = findChild(current, className, methodName, lineNumber);
         if (child == null) {
-            child = new MethodNode(nodeId, className, methodName, -1, false);
+            child = new MethodNode(className, methodName, lineNumber, isInvoking);
             current.addChild(child);
         }
         child.begin();
         current = child;
     }
 
-    public void begin(String className, String methodName, int lineNumber) {
-        Integer nodeId = getNodeId(className, methodName, lineNumber);
-        TraceNode child = current.findChild(nodeId);
-        if (child == null) {
-            child = new MethodNode(nodeId, className, methodName, lineNumber, true);
-            current.addChild(child);
+    private TraceNode findChild(TraceNode node, String className, String methodName, int lineNumber) {
+        List<TraceNode> childList = node.getChildren();
+        if (childList != null) {
+            for (TraceNode child : childList) {
+                if (matchNode(child, className, methodName, lineNumber)) {
+                    return child;
+                }
+            }
         }
-        child.begin();
-        current = child;
+        return null;
+    }
+
+    private boolean matchNode(TraceNode node, String className, String methodName, int lineNumber) {
+        if (node instanceof MethodNode) {
+            MethodNode methodNode = (MethodNode) node;
+            if (lineNumber != methodNode.getLineNumber()) return false;
+            if (className != null ? !className.equals(methodNode.getClassName()) : methodNode.getClassName() != null) return false;
+            return methodName != null ? methodName.equals(methodNode.getMethodName()) : methodNode.getMethodName() == null;
+        }
+        return false;
     }
 
     public void end() {

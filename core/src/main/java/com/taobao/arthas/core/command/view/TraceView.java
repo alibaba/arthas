@@ -79,7 +79,7 @@ public class TraceView extends ResultView<TraceModel> {
             //clazz.getName() + ":" + method.getName() + "()"
             sb.append(methodNode.getClassName()).append(":").append(methodNode.getMethodName()).append("()");
             // #lineNumber
-            if (methodNode.getLineNumber() != null && methodNode.getLineNumber()!= -1) {
+            if (methodNode.getLineNumber()!= -1) {
                 sb.append(" #").append(methodNode.getLineNumber());
             }
         } else if (node instanceof ThreadNode) {

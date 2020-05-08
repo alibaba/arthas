@@ -9,10 +9,8 @@ import java.util.Map;
  * @author gongdewei 2020/4/28
  */
 public abstract class TraceNode {
-    protected Integer nodeId;
     protected TraceNode parent;
     protected List<TraceNode> children ;//= new ArrayList<TraceNode>();
-    protected Map<Integer, TraceNode> childrenMap = new HashMap<Integer, TraceNode>();
     /**
      * 备注
      */
@@ -22,16 +20,11 @@ public abstract class TraceNode {
      */
     private int marks = 0;
 
-    public TraceNode findChild(Integer nodeId) {
-        return childrenMap.get(nodeId);
-    }
-
     public void addChild(TraceNode child) {
         if (children == null) {
             children = new ArrayList<TraceNode>();
         }
         this.children.add(child);
-        this.childrenMap.put(child.nodeId, child);
         child.setParent(this);
     }
 
@@ -60,14 +53,6 @@ public abstract class TraceNode {
 
     public void setParent(TraceNode parent) {
         this.parent = parent;
-    }
-
-    public Integer nodeId() {
-        return nodeId;
-    }
-
-    public void setNodeId(Integer nodeId) {
-        this.nodeId = nodeId;
     }
 
     public List<TraceNode> getChildren() {
