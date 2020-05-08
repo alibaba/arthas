@@ -8,11 +8,13 @@ import java.util.Set;
 
 import com.taobao.arthas.core.command.Constants;
 import com.taobao.arthas.core.command.model.MethodModel;
+import com.taobao.arthas.core.command.model.MethodVO;
 import com.taobao.arthas.core.command.model.RowAffectModel;
 import com.taobao.arthas.core.shell.cli.Completion;
 import com.taobao.arthas.core.shell.cli.CompletionUtils;
 import com.taobao.arthas.core.shell.command.AnnotatedCommand;
 import com.taobao.arthas.core.shell.command.CommandProcess;
+import com.taobao.arthas.core.util.ClassUtils;
 import com.taobao.arthas.core.util.SearchUtils;
 import com.taobao.arthas.core.util.StringUtils;
 import com.taobao.arthas.core.util.affect.RowAffect;
@@ -92,7 +94,8 @@ public class SearchMethodCommand extends AnnotatedCommand {
                     continue;
                 }
 
-                process.appendResult(new MethodModel(constructor, clazz, isDetail));
+                MethodVO methodInfo = ClassUtils.createMethodInfo(constructor, clazz, isDetail);
+                process.appendResult(new MethodModel(methodInfo, isDetail));
                 affect.rCnt(1);
             }
 
@@ -100,7 +103,8 @@ public class SearchMethodCommand extends AnnotatedCommand {
                 if (!methodNameMatcher.matching(method.getName())) {
                     continue;
                 }
-                process.appendResult(new MethodModel(method, clazz, isDetail));
+                MethodVO methodInfo = ClassUtils.createMethodInfo(method, clazz, isDetail);
+                process.appendResult(new MethodModel(methodInfo, isDetail));
                 affect.rCnt(1);
             }
         }

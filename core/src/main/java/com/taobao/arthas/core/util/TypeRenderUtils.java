@@ -44,6 +44,10 @@ public class TypeRenderUtils {
         return StringUtils.concat("\n", constructor.getParameterTypes());
     }
 
+    public static String drawParameters(String[] parameterTypes) {
+        return StringUtils.concat("\n", parameterTypes);
+    }
+
     public static String drawReturn(Method method) {
         return StringUtils.classname(method.getReturnType());
     }
@@ -54,6 +58,10 @@ public class TypeRenderUtils {
 
     public static String drawExceptions(Constructor constructor) {
         return StringUtils.concat("\n", constructor.getExceptionTypes());
+    }
+
+    public static String drawExceptions(String[] exceptionTypes) {
+        return StringUtils.concat("\n", exceptionTypes);
     }
 
     public static Element drawSuperClass(Class<?> clazz) {

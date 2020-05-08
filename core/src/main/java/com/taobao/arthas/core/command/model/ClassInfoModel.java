@@ -8,7 +8,6 @@ import com.taobao.arthas.core.util.ClassUtils;
  */
 public class ClassInfoModel extends ResultModel {
     private ClassVO classInfo;
-    private Class clazz;
     private boolean withField;
     private boolean detail;
     private Integer expand;
@@ -16,8 +15,8 @@ public class ClassInfoModel extends ResultModel {
     public ClassInfoModel() {
     }
 
-    public ClassInfoModel(Class clazz, boolean detail, boolean withField, Integer expand) {
-        this.clazz = clazz;
+    public ClassInfoModel(ClassVO classInfo, boolean detail, boolean withField, Integer expand) {
+        this.classInfo = classInfo;
         this.detail = detail;
         this.withField = withField;
         this.expand = expand;
@@ -29,20 +28,11 @@ public class ClassInfoModel extends ResultModel {
     }
 
     public ClassVO getClassInfo() {
-        if (classInfo == null) {
-            synchronized (this) {
-                classInfo = ClassUtils.createClassInfo(clazz, detail, withField);
-            }
-        }
         return classInfo;
     }
 
     public void setClassInfo(ClassVO classInfo) {
         this.classInfo = classInfo;
-    }
-
-    public Class clazz() {
-        return clazz;
     }
 
     public boolean detail() {

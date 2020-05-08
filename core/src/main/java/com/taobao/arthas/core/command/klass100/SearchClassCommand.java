@@ -9,11 +9,13 @@ import java.util.List;
 
 import com.taobao.arthas.core.command.Constants;
 import com.taobao.arthas.core.command.model.ClassInfoModel;
+import com.taobao.arthas.core.command.model.ClassVO;
 import com.taobao.arthas.core.command.model.RowAffectModel;
 import com.taobao.arthas.core.shell.cli.Completion;
 import com.taobao.arthas.core.shell.cli.CompletionUtils;
 import com.taobao.arthas.core.shell.command.AnnotatedCommand;
 import com.taobao.arthas.core.shell.command.CommandProcess;
+import com.taobao.arthas.core.util.ClassUtils;
 import com.taobao.arthas.core.util.SearchUtils;
 import com.taobao.arthas.core.util.StringUtils;
 import com.taobao.arthas.core.util.affect.RowAffect;
@@ -95,7 +97,8 @@ public class SearchClassCommand extends AnnotatedCommand {
         });
 
         for (Class<?> clazz : matchedClasses) {
-            process.appendResult(new ClassInfoModel(clazz, isDetail, isField, expand));
+            ClassVO classInfo = ClassUtils.createClassInfo(clazz, isDetail, isField);
+            process.appendResult(new ClassInfoModel(classInfo, isDetail, isField, expand));
         }
 
         affect.rCnt(matchedClasses.size());

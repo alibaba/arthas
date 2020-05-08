@@ -12,9 +12,9 @@ public class ClassInfoView extends ResultView<ClassInfoModel> {
     @Override
     public void draw(CommandProcess process, ClassInfoModel result) {
         if (result.detail()) {
-            process.write(RenderUtil.render(ClassUtils.renderClassInfo(result.clazz(), result.withField(), result.expand()), process.width()));
+            process.write(RenderUtil.render(ClassUtils.renderClassInfo(result.getClassInfo(), result.withField(), result.expand()), process.width()));
         } else {
-            process.write(result.clazz().getName());
+            process.write(result.getClassInfo().getName());
         }
         process.write("\n");
     }
