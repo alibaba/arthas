@@ -646,4 +646,3 @@ except KeyboardInterrupt:
     print("Job is canceled.")
 finally:
     interrupt_job(session_id)
-    reset_classes()
