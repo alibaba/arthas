@@ -98,6 +98,19 @@ public class TraceTree {
         return result;
     }
 
+    public void normalizeClassName(TraceNode node) {
+        if (node instanceof MethodNode) {
+            MethodNode methodNode = (MethodNode) node;
+            methodNode.setClassName(StringUtils.normalizeClassName(methodNode.getClassName()));
+        }
+        List<TraceNode> children = node.getChildren();
+        if (children != null) {
+            for (TraceNode child : children) {
+                normalizeClassName(child);
+            }
+        }
+    }
+
     public TraceNode getRoot() {
         return root;
     }

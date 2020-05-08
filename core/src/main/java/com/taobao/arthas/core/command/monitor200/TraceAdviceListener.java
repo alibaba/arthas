@@ -22,9 +22,12 @@ public class TraceAdviceListener extends AbstractTraceAdviceListener implements 
     @Override
     public void invokeBeforeTracing(String tracingClassName, String tracingMethodName, String tracingMethodDesc, int tracingLineNumber)
             throws Throwable {
-        //TODO memory optimizing: avoid create new String object
-        threadBoundEntity.get().tree.begin(
-            StringUtils.normalizeClassName(tracingClassName), tracingMethodName, tracingLineNumber);
+        //memory optimizing: avoid create lots of String object
+//        threadBoundEntity.get().tree.begin(
+//            StringUtils.normalizeClassName(tracingClassName), tracingMethodName, tracingLineNumber);
+
+        // normalizeClassName later
+        threadBoundEntity.get().tree.begin(tracingClassName, tracingMethodName, tracingLineNumber);
     }
 
     @Override

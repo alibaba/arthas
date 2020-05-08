@@ -32,6 +32,7 @@ public class TraceEntity {
     }
 
     public ResultModel getModel() {
+        tree.normalizeClassName(tree.getRoot());
         return new TraceModel(tree.getRoot());
     }
 }
