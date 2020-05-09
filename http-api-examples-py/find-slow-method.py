@@ -366,6 +366,8 @@ def get_class_detail(class_name):
 
 def is_derived_from(class_detail, super_class):
     super_classes = class_detail['superClass']
+    if not super_classes:
+        return False
     for sc in super_classes:
         if sc == super_class:
             return True
@@ -373,16 +375,12 @@ def is_derived_from(class_detail, super_class):
 
 
 def add_additional_method(class_name, method_name):
-    # class_name = replace_regex_chars(class_name)
-    # method_name = replace_regex_chars(method_name)
     m = {'className': class_name, 'methodName': method_name}
     if m not in additional_methods:
         additional_methods.append(m)
 
 
 def add_trace_method(class_name, method_name):
-    # class_name = replace_regex_chars(class_name)
-    # method_name = replace_regex_chars(method_name)
     tm = {
         'className': class_name,
         'methodName': method_name,
@@ -395,7 +393,7 @@ def add_trace_method(class_name, method_name):
     m = {"className": 'java.lang.reflect.InvocationHandler', "methodName": 'invoke'}
     if m not in additional_methods:
         class_detail = get_class_detail(class_name)
-        if is_derived_from(class_detail, 'java.lang.reflect.Proxy'):
+        if class_detail and is_derived_from(class_detail, 'java.lang.reflect.Proxy'):
             add_additional_method('java.lang.reflect.InvocationHandler', 'invoke')
 
     # java.lang.reflect.Method:invoke
@@ -435,13 +433,14 @@ def start_trace():
     class_pattern = replace_regex_chars(class_pattern)
     method_pattern = replace_regex_chars(method_pattern)
 
-    command = "trace -E {0} {1} {2} -n {3}".format(class_pattern, method_pattern, condition, trace_times)
+    command = 'trace -E "{0}" "{1}" {2} -n {3}'.format(class_pattern, method_pattern, condition, trace_times)
     if not is_skip_jdk_method:
         command += " --skipJDKMethod false"
 
     print("")
+    print("start new trace:")
     print_trace_method_path()
-    print("command: %s" % command)
+    # print("command: %s" % command)
 
     # async exec trace
     job_id = async_exec(session_id, command)
