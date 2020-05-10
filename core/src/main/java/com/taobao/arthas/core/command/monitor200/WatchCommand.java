@@ -63,6 +63,7 @@ public class WatchCommand extends EnhancerCommand {
     }
 
     @Argument(index = 3, argName = "condition-express", required = false)
+    @Option(shortName = "c", longName = "condition-express", flag = false, required = false)
     @Description(Constants.CONDITION_EXPRESS)
     public void setConditionExpress(String conditionExpress) {
         this.conditionExpress = conditionExpress;
