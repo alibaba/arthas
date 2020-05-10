@@ -70,6 +70,9 @@ public class CliTokenImplTest {
      * case2:
      * trace -E classA|classB methodA|methodB|grep classA
      * [trace, -E, classA|classB, methodA|methodB|grep, classA] -> [trace, -E, classA|classB, methodA|methodB|grep, classA]
+     * case3:
+     * trace -E classA|classB| methodA|methodB | grep classA
+     * [trace, -E, classA|classB|, methodA|methodB, |, grep, classA] -> [trace, -E, classA|classB，|, methodA|methodB, |, grep, classA]
      */
     @Test
     public void testUnSupportedPipeChar() {
@@ -79,6 +82,10 @@ public class CliTokenImplTest {
 
         expectedTextTokenValue = new String[]{"trace", "-E", "classA|classB", "methodA|methodB|grep", "classA"};
         actualTokens = CliTokenImpl.tokenize("trace -E classA|classB methodA|methodB|grep classA");
+        assertEquals(expectedTextTokenValue, actualTokens);
+
+        expectedTextTokenValue = new String[]{"trace", "-E", "classA|classB", "|", "methodA|methodB", "|", "grep", "classA"};
+        actualTokens = CliTokenImpl.tokenize("trace -E classA|classB| methodA|methodB | grep classA");
         assertEquals(expectedTextTokenValue, actualTokens);
     }
 
