@@ -5,7 +5,7 @@ import java.io.IOException;
 import java.nio.charset.Charset;
 import java.util.List;
 
-import com.taobao.arthas.core.command.model.MessageModel;
+import com.taobao.arthas.core.command.model.CatModel;
 import com.alibaba.arthas.deps.org.slf4j.Logger;
 import com.alibaba.arthas.deps.org.slf4j.LoggerFactory;
 import com.taobao.arthas.core.shell.cli.Completion;
@@ -61,7 +61,7 @@ public class CatCommand extends AnnotatedCommand {
             try {
                 String fileToString = FileUtils.readFileToString(f,
                                 encoding == null ? Charset.defaultCharset() : Charset.forName(encoding));
-                process.appendResult(new MessageModel(fileToString));
+                process.appendResult(new CatModel(file, fileToString));
             } catch (IOException e) {
                 logger.error("cat read file error. name: " + file, e);
                 process.end(1, "cat read file error: " + e.getMessage() );

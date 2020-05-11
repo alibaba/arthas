@@ -2,7 +2,7 @@ package com.taobao.arthas.core.command.basic1000;
 
 import java.io.File;
 
-import com.taobao.arthas.core.command.model.MessageModel;
+import com.taobao.arthas.core.command.model.PwdModel;
 import com.taobao.arthas.core.shell.command.AnnotatedCommand;
 import com.taobao.arthas.core.shell.command.CommandProcess;
 import com.taobao.middleware.cli.annotations.Name;
@@ -14,7 +14,7 @@ public class PwdCommand extends AnnotatedCommand {
     @Override
     public void process(CommandProcess process) {
         String path = new File("").getAbsolutePath();
-        process.appendResult(new MessageModel(path));
+        process.appendResult(new PwdModel(path));
         process.end();
     }
 }

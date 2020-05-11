@@ -64,6 +64,9 @@ public class ResultViewResolver {
             registerView(new MonitorModel(), new MonitorView());
             registerView(new TraceModel(), new TraceView());
             registerView(new OgnlModel(), new OgnlView());
+            registerView(new PwdModel(), new PwdView());
+            registerView(new EchoModel(), new EchoView());
+            registerView(new CatModel(), new CatView());
         } catch (Throwable e) {
             logger.error("register result view failed", e);
         }
