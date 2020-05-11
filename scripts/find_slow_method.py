@@ -1,9 +1,10 @@
 #!/usr/bin/env python3
 
 import argparse
-import requests
-from datetime import datetime
+from http_api_demo import *
+from tree_render import *
 
+#------------------------- parse args begin ------------------------#
 def str2bool(v):
     if isinstance(v, bool):
         return v
@@ -39,7 +40,9 @@ args = parser.parse_args()
 # print args
 print(args)
 
-url = 'http://' + args.host + "/api"
+#------------------------- parse args end ------------------------#
+
+as_url = 'http://' + args.host + "/api"
 min_cost = args.min_cost
 if min_cost > 0:
     condition = '"#cost > %s"' % (min_cost)
@@ -92,170 +95,8 @@ method_path_stats = {}
 # call_stack_tree = None
 
 
-"""
-Tree rendering
-"""
-STEP_FIRST_CHAR = "`---"
-STEP_NORMAL_CHAR = "+---"
-STEP_HAS_BOARD = "|   "
-STEP_EMPTY_BOARD = "    "
 
-
-def nano_to_millis(nanoSeconds):
-    return nanoSeconds / 1000000.0
-
-def render_node(node):
-    str = ''
-    if node.get('threadName'):
-        # thread
-        str += "ts=%s;thread_name=%s;id=%s;is_daemon=%s;priority=%d;TCCL=%s" % (
-            datetime.fromtimestamp(node['timestamp']/1000).strftime("%Y-%m-%d %H:%M:%S"),
-            node['threadName'],
-            hex(node['threadId']),
-            node['daemon'],
-            node['priority'],
-            node['classloader']
-        )
-        if node.get('traceId'):
-            str += ";trace_id="+node['traceId']
-        if node.get('rpcId'):
-            str += ";rpc_id="+node['rpcId']
-    else:
-        # cost
-        times = node['times']
-        if times == 1:
-            str += '[%.3fms] ' % nano_to_millis(node['cost'])
-        else:
-            str += '[min=%.3fms,max=%.3fms,total=%.3fms,count=%d] ' % (nano_to_millis(node['minCost']),
-                                                                       nano_to_millis(node['maxCost']),
-                                                                       nano_to_millis(node['totalCost']),
-                                                                       times)
-        # method
-        str += "%s:%s()" % (node['className'], node['methodName'])
-        if node['lineNumber'] > 0:
-            str += " #%d" % node['lineNumber']
-    # mark
-    if node.get('mark'):
-        str += ' ['+node['mark']+']'
-    return str
-
-def print_node(prefix, node, is_last):
-    current_prefix = (prefix+STEP_FIRST_CHAR) if is_last else (prefix+STEP_NORMAL_CHAR)
-    print("%s%s" % (current_prefix, render_node(node)))
-    # children
-    if node.get('children'):
-        children = node['children']
-        size = len(children)
-        for index in range(size):
-            current_prefix = (prefix + STEP_EMPTY_BOARD) if is_last else (prefix + STEP_HAS_BOARD)
-            is_last_child = (index == size-1)
-            print_node(current_prefix, children[index], is_last_child)
-
-
-def print_trace_tree(root):
-    print_node('', root, True)
-
-#------------------------ Tree Rendering End ---------------------------#
-
-
-def init_session():
-    resp = requests.post(url, json={
-        "action": "init_session"
-    })
-    # print(resp.text)
-    result = resp.json()
-    if resp.status_code == 200 and result['state'] == 'SUCCEEDED':
-        session_id = result['sessionId']
-        consumer_id = result['consumerId']
-        return (session_id, consumer_id)
-
-    raise Exception('init http session failed: ' + resp.text)
-
-
-def interrupt_job(session_id):
-    resp = requests.post(url, json={
-        "action": "interrupt_job",
-        "sessionId": session_id
-    })
-    # print(resp.text)
-    result = resp.json()
-    if resp.status_code == 200:  # and result['state'] == 'SUCCEEDED'
-        return result
-    else:
-        raise Exception('init http session failed: ' + resp.text)
-
-
-# Execute command sync
-def exec_command(session_id, command):
-    print("exec command: "+command)
-    resp = requests.post(url, json={
-        "action": "exec",
-        "command": command,
-        "sessionId": session_id
-    })
-    # print(resp.text)
-    result = resp.json()
-    state = result['state']
-    if resp.status_code == 200 and state == 'SUCCEEDED':
-        return result['body']['results']
-    else:
-        raise Exception('exec command failed: ' + resp.text)
-
-
-# Execute command async
-def async_exec(session_id, command):
-    print("async exec command: "+command)
-    resp = requests.post(url, json={
-        "action": "async_exec",
-        "command": command,
-        "sessionId": session_id
-    })
-    # print(resp.text)
-    result = resp.json()
-    state = result['state']
-    if resp.status_code == 200 and state == 'SCHEDULED':
-        return result['body']['jobId']
-    else:
-        raise Exception('async exec command failed: ' + resp.text)
-
-
-# pull results of job
-def pull_results(session_id, consumer_id, job_id, handler):
-    while True:
-        resp = requests.post(url, json={
-            "action": "pull_results",
-            "sessionId": session_id,
-            "consumerId": consumer_id
-        })
-        # print(resp.text)
-        json_resp = resp.json()
-        state = json_resp['state']
-        if resp.status_code == 200 and state == 'SUCCEEDED':
-            results = json_resp['body']['results']
-            for result in results:
-                if result.get('jobId'):
-                    res_job_id = result['jobId'];
-                    if res_job_id == job_id:
-                        if not handler(result):
-                            # interrupt this round, start new trace
-                            return True
-                        # check call tree match times
-                        if call_tree_match_times >= stop_match_times:
-                            interrupt_job(session_id)
-                            print("The primary call tree matching times is exceeded, assuming no new call tree can be found.")
-                            return False
-                        # receive status code of job, the job is terminated.
-                        if result['type'] == 'status':
-                            if result.get('message'): print(result['message'])
-                            return True
-                    elif res_job_id > job_id:
-                        # new job is executing, stop pull results
-                        return True
-            # TODO handle no response, timeout, cancel job
-        else:
-            raise Exception('pull results failed: ' + resp.text)
-
-
+# stat trace data
 def stat_trace_tree(root, method_path, method_path_code):
     trace_tree = root['children'][0]
     key = hex(method_path_code)
@@ -310,7 +151,7 @@ def reset_trace_method_path(method_path):
     reset_method_path_stats()
 
 
-def handle_trace_result(result):
+def handle_trace_result(context, result):
     type = result['type']
     if type == 'trace':
         root = result['root']
@@ -352,26 +193,13 @@ def handle_trace_result(result):
                 interrupt_job(session_id)
                 # return false, interrupt pull results
                 return False
+
+        # check call tree match times
+        if call_tree_match_times >= stop_match_times:
+            interrupt_job(session_id)
+            return False
+
     return True
-
-
-def get_class_detail(class_name):
-    command = "sc -d " + class_name
-    results = exec_command(session_id, command)
-    for result in results:
-        type = result['type']
-        if type == 'class' and result['classInfo']['name'] == class_name:
-            return result['classInfo']
-
-
-def is_derived_from(class_detail, super_class):
-    super_classes = class_detail['superClass']
-    if not super_classes:
-        return False
-    for sc in super_classes:
-        if sc == super_class:
-            return True
-    return False
 
 
 def add_additional_method(class_name, method_name):
@@ -392,7 +220,7 @@ def add_trace_method(class_name, method_name):
     # add java.lang.reflect.InvocationHandler for java.lang.reflect.Proxy instance
     m = {"className": 'java.lang.reflect.InvocationHandler', "methodName": 'invoke'}
     if m not in additional_methods:
-        class_detail = get_class_detail(class_name)
+        class_detail = get_class_detail(session_id, class_name)
         if class_detail and is_derived_from(class_detail, 'java.lang.reflect.Proxy'):
             add_additional_method('java.lang.reflect.InvocationHandler', 'invoke')
 
@@ -413,8 +241,10 @@ def print_trace_method_path():
 
 # replace regex chars
 def replace_regex_chars(str):
-    return str.replace("$", "\\\\$")
-    #.replace(".", "\\.")
+    #in quote
+    return str.replace("$", "\\$")
+    #no quote
+    #return str.replace("$", "\\\\$")
 
 def start_trace():
     # concat trace regex match pattern
@@ -443,10 +273,10 @@ def start_trace():
     # print("command: %s" % command)
 
     # async exec trace
-    job_id = async_exec(session_id, command)
-    print("job_id: %d" % job_id)
+    context = async_exec(session_id, command)
+    print("job_id: %d" % context['job_id'])
 
-    return job_id
+    return context
 
 
 def split_class_method_names(method_path_or_list, class_names, method_names):
@@ -586,62 +416,70 @@ def print_all_method_paths():
 """
 Main 
 """
-# init session
-(session_id, consumer_id) = init_session()
-print("session_id: {0}, consumer_id: {1}".format(session_id, consumer_id))
+if __name__ == "__main__":
+    # init session
+    (session_id, consumer_id) = init_session(as_url)
+    print("session_id: {0}, consumer_id: {1}".format(session_id, consumer_id))
 
 
-
-try:
-    # parse method path
-    methods = args.method_path.split(',')
-    for m in methods:
-        strs = m.split(':')
-        class_name = strs[0].strip()
-        method_name = strs[1].replace('()','').strip()
-        # add trace method
-        add_trace_method(class_name, method_name)
-
-    # parse addit-method
-    if args.addit_method:
-        methods = args.addit_method.split(',')
+    try:
+        # parse method path
+        methods = args.method_path.split(',')
         for m in methods:
             strs = m.split(':')
             class_name = strs[0].strip()
             method_name = strs[1].replace('()','').strip()
-            # additional method
-            add_additional_method(class_name, method_name)
+            # add trace method
+            add_trace_method(class_name, method_name)
 
-    if args.reset_on_start:
-        reset_classes()
+        # parse addit-method
+        if args.addit_method:
+            methods = args.addit_method.split(',')
+            for m in methods:
+                strs = m.split(':')
+                class_name = strs[0].strip()
+                method_name = strs[1].replace('()','').strip()
+                # additional method
+                add_additional_method(class_name, method_name)
 
-    last_trace_method_path_code = 0
-    while last_trace_method_path_code != trace_method_path_code:
-        # async trace
-        job_id = start_trace()
-        last_trace_method_path_code = trace_method_path_code
-
-        # pull results
-        if not pull_results(session_id, consumer_id, job_id, handle_trace_result):
-            break
-        # check max trace depth
-        if len(trace_method_path) > max_depth:
-            print("Exceed max trace depth: %d" % len(trace_method_path))
-            break
-
-        # reset on round
-        if args.reset_on_round:
+        if args.reset_on_start:
             reset_classes()
 
+        # trace loop
+        last_trace_method_path_code = 0
+        while last_trace_method_path_code != trace_method_path_code:
+            # async trace
+            context = start_trace()
+            reset_method_path_stats()
+            last_trace_method_path_code = trace_method_path_code
 
-    # print("")
-    # print("")
-    # print_all_method_paths()
-    print("Job is finished.")
-except KeyboardInterrupt:
-    print("")
-    # print("")
-    # print_all_method_paths()
-    print("Job is canceled.")
-finally:
-    interrupt_job(session_id)
+            # pull results
+            pull_results(context, consumer_id, ['trace'], handle_trace_result)
+
+            # check call tree match times
+            if call_tree_match_times >= stop_match_times:
+                interrupt_job(session_id)
+                print("The primary call tree matching times is exceeded, assuming no new call tree can be found.")
+                break
+
+            # check max trace depth
+            if len(trace_method_path) > max_depth:
+                print("Exceed max trace depth: %d" % len(trace_method_path))
+                break
+
+            # reset on round
+            if args.reset_on_round:
+                reset_classes()
+
+
+        # print("")
+        # print("")
+        # print_all_method_paths()
+        print("Job is finished.")
+    except KeyboardInterrupt:
+        print("")
+        # print("")
+        # print_all_method_paths()
+        print("Job is canceled.")
+    finally:
+        interrupt_job(session_id)
