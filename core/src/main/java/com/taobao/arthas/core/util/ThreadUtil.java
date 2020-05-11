@@ -455,7 +455,7 @@ abstract public class ThreadUtil {
         stackModel.setThreadId(Long.toHexString(currentThread.getId()));
         stackModel.setDaemon(currentThread.isDaemon());
         stackModel.setPriority(currentThread.getPriority());
-        stackModel.setTccl(getTCCL(currentThread));
+        stackModel.setClassloader(getTCCL(currentThread));
 
         getEagleeyeTraceInfo(currentThread, stackModel);
 
@@ -510,7 +510,7 @@ abstract public class ThreadUtil {
                 .append(";id=").append(stackModel.getThreadId())
                 .append(";is_daemon=").append(stackModel.isDaemon())
                 .append(";priority=").append(stackModel.getPriority())
-                .append(";TCCL=").append(stackModel.getTccl());
+                .append(";TCCL=").append(stackModel.getClassloader());
         if (stackModel.getTraceId() != null) {
             sb.append(";trace_id=").append(stackModel.getTraceId());
         }

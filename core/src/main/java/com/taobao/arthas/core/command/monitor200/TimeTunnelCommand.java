@@ -48,6 +48,7 @@ import static java.lang.String.format;
         "  tt -i 1000 -w params[0]\n" +
         "  tt -i 1000 -p \n" +
         "  tt -i 1000 -p --replay-times 3 --replay-interval 3000\n" +
+        "  tt -s '{params[0] > 1}' -w '{params}' \n" +
         "  tt --delete-all\n" +
         Constants.WIKI + Constants.WIKI_HOME + "tt")
 public class TimeTunnelCommand extends EnhancerCommand {

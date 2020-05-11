@@ -2,6 +2,7 @@ package com.taobao.arthas.core.command.view;
 
 import com.taobao.arthas.core.command.model.StackModel;
 import com.taobao.arthas.core.shell.command.CommandProcess;
+import com.taobao.arthas.core.util.DateUtils;
 import com.taobao.arthas.core.util.ThreadUtil;
 
 /**
@@ -33,7 +34,7 @@ public class StackView extends ResultView<StackModel> {
                     .append(ste.getLineNumber())
                     .append(")\n");
         }
-        process.write("ts=" + result.getTs() + ";" + sb.toString() + "\n");
+        process.write("ts=" + DateUtils.formatDate(result.getTs()) + ";" + sb.toString() + "\n");
     }
 
 }

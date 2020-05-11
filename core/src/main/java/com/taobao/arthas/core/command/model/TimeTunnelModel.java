@@ -25,6 +25,7 @@ public class TimeTunnelModel extends ResultModel {
 
     private Object watchValue;
 
+    //search: tt -s {} -w {}
     private Map<Integer, Object> watchResults;
 
     private Integer expand;

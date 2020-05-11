@@ -1,5 +1,7 @@
 package com.taobao.arthas.core.command.model;
 
+import java.util.Date;
+
 /**
  * Watch command result model
  *
@@ -7,7 +9,7 @@ package com.taobao.arthas.core.command.model;
  */
 public class WatchModel extends ResultModel {
 
-    private String ts;
+    private Date ts;
     private double cost;
     private Object value;
 
@@ -22,8 +24,12 @@ public class WatchModel extends ResultModel {
         return "watch";
     }
 
-    public String getTs() {
+    public Date getTs() {
         return ts;
+    }
+
+    public void setTs(Date ts) {
+        this.ts = ts;
     }
 
     public double getCost() {
@@ -32,10 +38,6 @@ public class WatchModel extends ResultModel {
 
     public Object getValue() {
         return value;
-    }
-
-    public void setTs(String ts) {
-        this.ts = ts;
     }
 
     public void setCost(double cost) {

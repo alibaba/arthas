@@ -1,12 +1,14 @@
 package com.taobao.arthas.core.command.model;
 
+import java.util.Date;
+
 /**
  * StackCommand result model
  * @author gongdewei 2020/4/13
  */
 public class StackModel extends ResultModel {
 
-    private String ts;
+    private Date ts;
     private double cost;
     private String traceId;
     private String rpcId;
@@ -15,7 +17,7 @@ public class StackModel extends ResultModel {
     private boolean daemon;
     private int priority;
     /* Thread Current ClassLoader */
-    private String tccl;
+    private String classloader;
     private StackTraceElement[] stackTrace;
 
     @Override
@@ -23,11 +25,11 @@ public class StackModel extends ResultModel {
         return "stack";
     }
 
-    public String getTs() {
+    public Date getTs() {
         return ts;
     }
 
-    public void setTs(String ts) {
+    public void setTs(Date ts) {
         this.ts = ts;
     }
 
@@ -71,12 +73,12 @@ public class StackModel extends ResultModel {
         this.priority = priority;
     }
 
-    public String getTccl() {
-        return tccl;
+    public String getClassloader() {
+        return classloader;
     }
 
-    public void setTccl(String tccl) {
-        this.tccl = tccl;
+    public void setClassloader(String classloader) {
+        this.classloader = classloader;
     }
 
     public String getTraceId() {

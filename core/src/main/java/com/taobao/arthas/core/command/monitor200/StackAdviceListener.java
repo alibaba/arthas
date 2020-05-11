@@ -12,6 +12,8 @@ import com.taobao.arthas.core.util.LogUtil;
 import com.taobao.arthas.core.util.ThreadLocalWatch;
 import com.taobao.arthas.core.util.ThreadUtil;
 
+import java.util.Date;
+
 /**
  * @author beiwei30 on 29/11/2016.
  */
@@ -58,7 +60,7 @@ public class StackAdviceListener extends ReflectAdviceListenerAdapter {
                 // TODO: concurrency issues for process.write
                 // TODO: should clear stackThreadLocal?
                 StackModel stackModel = stackThreadLocal.get();
-                stackModel.setTs(DateUtils.getCurrentDate());
+                stackModel.setTs(new Date());
                 process.appendResult(stackModel);
                 process.times().incrementAndGet();
                 if (isLimitExceeded(command.getNumberOfLimit(), process.times().get())) {

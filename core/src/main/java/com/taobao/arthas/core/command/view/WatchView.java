@@ -2,6 +2,7 @@ package com.taobao.arthas.core.command.view;
 
 import com.taobao.arthas.core.command.model.WatchModel;
 import com.taobao.arthas.core.shell.command.CommandProcess;
+import com.taobao.arthas.core.util.DateUtils;
 import com.taobao.arthas.core.util.StringUtils;
 import com.taobao.arthas.core.view.ObjectView;
 
@@ -16,7 +17,7 @@ public class WatchView extends ResultView<WatchModel> {
         String result = StringUtils.objectToString(
                 isNeedExpand(model) ? new ObjectView(value, model.expand(), model.sizeLimit()).draw() : value);
 
-        process.write("ts=" + model.getTs() + "; [cost=" + model.getCost() + "ms] result=" + result + "\n");
+        process.write("ts=" + DateUtils.formatDate(model.getTs()) + "; [cost=" + model.getCost() + "ms] result=" + result + "\n");
     }
 
     private boolean isNeedExpand(WatchModel model) {

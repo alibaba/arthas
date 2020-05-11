@@ -7,11 +7,10 @@ import com.taobao.arthas.core.advisor.ArthasMethod;
 import com.taobao.arthas.core.advisor.ReflectAdviceListenerAdapter;
 import com.taobao.arthas.core.command.model.WatchModel;
 import com.taobao.arthas.core.shell.command.CommandProcess;
-import com.taobao.arthas.core.util.DateUtils;
 import com.taobao.arthas.core.util.LogUtil;
-import com.taobao.arthas.core.util.StringUtils;
 import com.taobao.arthas.core.util.ThreadLocalWatch;
-import com.taobao.arthas.core.view.ObjectView;
+
+import java.util.Date;
 
 /**
  * @author beiwei30 on 29/11/2016.
@@ -81,8 +80,8 @@ class WatchAdviceListener extends ReflectAdviceListenerAdapter {
                 Object value = getExpressionResult(command.getExpress(), advice, cost);
 
                 WatchModel model = new WatchModel();
+                model.setTs(new Date());
                 model.setCost(cost);
-                model.setTs(DateUtils.getCurrentDate());
                 model.setValue(value);
                 model.setExpand(command.getExpand());
                 model.setSizeLimit(command.getSizeLimit());
