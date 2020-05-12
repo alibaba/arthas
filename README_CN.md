@@ -498,6 +498,7 @@ OK
 ![上海喔噻](static/shouqingba.png)
 ![vipkid](static/vipkid.png)
 ![宇中科技](static/yuzhong.png)
+![得物](static/dewu.png)
 
 ### 洐生项目
 
