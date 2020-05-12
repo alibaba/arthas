@@ -185,9 +185,18 @@ public class DownloadUtils {
      * @return
      * @throws Exception
      */
-    private static Document transformMavenMetaData(String mavenMetaData) throws Exception {
+    static Document transformMavenMetaData(String mavenMetaData) throws Exception {
         ByteArrayInputStream inputStream = new ByteArrayInputStream(mavenMetaData.getBytes("UTF-8"));
         DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
+        //disable XXE before newDocumentBuilder
+        dbFactory.setFeature("http://javax.xml.XMLConstants/feature/secure-processing", true);
+        dbFactory.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true);
+        dbFactory.setFeature("http://xml.org/sax/features/external-parameter-entities", false);
+        dbFactory.setFeature("http://xml.org/sax/features/external-general-entities", false);
+        dbFactory.setFeature("http://apache.org/xml/features/nonvalidating/load-external-dtd", false);
+        dbFactory.setXIncludeAware(false);
+        dbFactory.setExpandEntityReferences(false);
+        //create doc builder
         DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
         return dBuilder.parse(inputStream);
     }
