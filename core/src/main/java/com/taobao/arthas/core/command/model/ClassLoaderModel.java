@@ -10,7 +10,7 @@ import java.util.Map;
  */
 public class ClassLoaderModel extends ResultModel {
 
-    private List<ClassSetVO> allClasses;
+    private ClassSetVO classSet;
     private List<String> resources;
     private ClassVO loadClass;
     private List<String> urls;
@@ -28,12 +28,12 @@ public class ClassLoaderModel extends ResultModel {
         return "classloader";
     }
 
-    public List<ClassSetVO> getAllClasses() {
-        return allClasses;
+    public ClassSetVO getClassSet() {
+        return classSet;
     }
 
-    public ClassLoaderModel setAllClasses(List<ClassSetVO> allClasses) {
-        this.allClasses = allClasses;
+    public ClassLoaderModel setClassSet(ClassSetVO classSet) {
+        this.classSet = classSet;
         return this;
     }
 

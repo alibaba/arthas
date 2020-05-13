@@ -6,6 +6,7 @@ import com.taobao.arthas.core.command.Constants;
 import com.taobao.arthas.core.command.model.*;
 import com.taobao.arthas.core.shell.command.AnnotatedCommand;
 import com.taobao.arthas.core.shell.command.CommandProcess;
+import com.taobao.arthas.core.shell.handlers.Handler;
 import com.taobao.arthas.core.util.ClassUtils;
 import com.taobao.arthas.core.util.affect.RowAffect;
 import com.taobao.middleware.cli.annotations.Description;
@@ -16,19 +17,9 @@ import com.taobao.middleware.cli.annotations.Summary;
 import java.lang.instrument.Instrumentation;
 import java.net.URL;
 import java.net.URLClassLoader;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.Enumeration;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.Map.Entry;
-import java.util.Set;
-import java.util.SortedSet;
-import java.util.TreeMap;
-import java.util.TreeSet;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 @Name("classloader")
 @Summary("Show classloader info")
@@ -53,6 +44,8 @@ public class ClassLoaderCommand extends AnnotatedCommand {
     private boolean listClassLoader = false;
 
     private String loadClass = null;
+
+    private AtomicBoolean isInterrupted = new AtomicBoolean(false);
 
     @Option(shortName = "t", longName = "tree", flag = true)
     @Description("Display ClassLoader tree")
@@ -98,6 +91,9 @@ public class ClassLoaderCommand extends AnnotatedCommand {
 
     @Override
     public void process(CommandProcess process) {
+        // ctrl-C support
+        process.interruptHandler(new ClassLoaderInterruptHandler(process, isInterrupted));
+
         Instrumentation inst = process.session().getInstrumentation();
         if (all) {
             processAllClasses(process, inst);
@@ -242,10 +238,20 @@ public class ClassLoaderCommand extends AnnotatedCommand {
 
     private void processAllClasses(CommandProcess process, Instrumentation inst) {
         RowAffect affect = new RowAffect();
-        List<ClassSetVO> allClasses = getAllClasses(hashCode, inst, affect);
-        process.appendResult(new ClassLoaderModel().setAllClasses(allClasses));
+        getAllClasses(hashCode, inst, affect, process);
+        if (checkInterrupted(process)) {
+            return;
+        }
         process.appendResult(new RowAffectModel(affect));
         process.end();
+    }
+
+    private boolean checkInterrupted(CommandProcess process) {
+        if (isInterrupted.get()) {
+            process.end(1, "Interrupted by user");
+            return true;
+        }
+        return false;
     }
 
     /**
@@ -253,12 +259,9 @@ public class ClassLoaderCommand extends AnnotatedCommand {
      * <p>
      * 当hashCode是null，则把所有的classloader的都打印
      *
-     * @param hashCode
-     * @param affect
-     * @return
      */
     @SuppressWarnings("rawtypes")
-    private static List<ClassSetVO> getAllClasses(String hashCode, Instrumentation inst, RowAffect affect) {
+    private void getAllClasses(String hashCode, Instrumentation inst, RowAffect affect, CommandProcess process) {
         int hashCodeInt = -1;
         if (hashCode != null) {
             hashCodeInt = Integer.valueOf(hashCode, 16);
@@ -301,26 +304,39 @@ public class ClassLoaderCommand extends AnnotatedCommand {
         }
 
         //convert to vo
-        List<ClassSetVO> classSets = new ArrayList<ClassSetVO>();
-        classSets.add(new ClassSetVO(ClassUtils.createClassLoaderVO(null), toClassNames(bootstrapClassSet)));
+        int sizeLimit = 1024;
+        processClassSet(process, ClassUtils.createClassLoaderVO(null), bootstrapClassSet, sizeLimit);
         affect.rCnt(bootstrapClassSet.size());
 
         for (Entry<ClassLoader, SortedSet<Class>> entry : classLoaderClassMap.entrySet()) {
+            if (checkInterrupted(process)) {
+                return;
+            }
             ClassLoader classLoader = entry.getKey();
             SortedSet<Class> classSet = entry.getValue();
-            List<String> classNames = toClassNames(classSet);
-            classSets.add(new ClassSetVO(ClassUtils.createClassLoaderVO(classLoader), classNames));
+            processClassSet(process, ClassUtils.createClassLoaderVO(classLoader), classSet, sizeLimit);
             affect.rCnt(classSet.size());
         }
-        return classSets;
     }
 
-    private static List<String> toClassNames(SortedSet<Class> classSet) {
-        List<String> classNames = new ArrayList<String>(classSet.size());
-        for (Class aClass : classSet) {
+    private void processClassSet(CommandProcess process, ClassLoaderVO classLoaderVO, Collection<Class> classes, int sizeLimit) {
+        List<String> classNames = new ArrayList<String>(512);
+        int segment = 0;
+        for (Class aClass : classes) {
             classNames.add(aClass.getName());
+            //slice segment
+            if(classNames.size() >= sizeLimit) {
+                if (checkInterrupted(process)) {
+                    return;
+                }
+                process.appendResult(new ClassLoaderModel().setClassSet(new ClassSetVO(classLoaderVO, classNames, segment++)));
+                classNames = new ArrayList<String>(512);
+            }
         }
-        return classNames;
+        //last segment
+        if (classNames.size() > 0) {
+            process.appendResult(new ClassLoaderModel().setClassSet(new ClassSetVO(classLoaderVO, classNames, segment++)));
+        }
     }
 
     private static List<String> getClassLoaderUrls(ClassLoader classLoader) {
@@ -564,6 +580,21 @@ public class ClassLoaderCommand extends AnnotatedCommand {
                 return -1;
             }
             return unsortedStats.get(o2).getLoadedCount() - unsortedStats.get(o1).getLoadedCount();
+        }
+    }
+
+    private class ClassLoaderInterruptHandler implements Handler<Void> {
+        private final CommandProcess process;
+        private final AtomicBoolean isInterrupted;
+
+        public ClassLoaderInterruptHandler(CommandProcess process, AtomicBoolean isInterrupted) {
+            this.process = process;
+            this.isInterrupted = isInterrupted;
+        }
+
+        @Override
+        public void handle(Void event) {
+            isInterrupted.set(true);
         }
     }
 }

@@ -21,8 +21,8 @@ public class ClassLoaderView extends ResultView<ClassLoaderModel> {
 
     @Override
     public void draw(CommandProcess process, ClassLoaderModel result) {
-        if (result.getAllClasses() != null) {
-            drawAllClasses(process, result.getAllClasses());
+        if (result.getClassSet() != null) {
+            drawAllClasses(process, result.getClassSet());
         }
         if (result.getResources() != null) {
             drawResources(process, result.getResources());
@@ -72,8 +72,9 @@ public class ClassLoaderView extends ResultView<ClassLoaderModel> {
         process.write(RenderUtil.render(ClassUtils.renderClassInfo(loadClass), process.width()) + "\n");
     }
 
-    private void drawAllClasses(CommandProcess process, List<ClassSetVO> allClasses) {
-        process.write(RenderUtil.render(renderClasses(allClasses), process.width()));
+    private void drawAllClasses(CommandProcess process, ClassSetVO classSetVO) {
+        process.write(RenderUtil.render(renderClasses(classSetVO), process.width()));
+        process.write("\n");
     }
 
     private void drawResources(CommandProcess process, List<String> resources) {
@@ -85,18 +86,15 @@ public class ClassLoaderView extends ResultView<ClassLoaderModel> {
         process.write(com.taobao.arthas.core.util.Constants.EMPTY_STRING);
     }
 
-    private Element renderClasses(List<ClassSetVO> allClasses) {
+    private Element renderClasses(ClassSetVO classSetVO) {
         TableElement table = new TableElement().leftCellPadding(1).rightCellPadding(1);
-
-        for (ClassSetVO classSetVO : allClasses) {
+        if (classSetVO.getSegment() == 0) {
             table.row(new LabelElement("hash:" + classSetVO.getClassloader().getHash() + ", " + classSetVO.getClassloader().getName())
                     .style(Decoration.bold.bold()));
-            for (String className : classSetVO.getClasses()) {
-                table.row(new LabelElement(className));
-            }
-            table.row(new LabelElement(" "));
         }
-
+        for (String className : classSetVO.getClasses()) {
+            table.row(new LabelElement(className));
+        }
         return table;
     }
 

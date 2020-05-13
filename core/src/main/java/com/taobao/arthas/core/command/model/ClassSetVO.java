@@ -1,17 +1,23 @@
 package com.taobao.arthas.core.command.model;
 
-import java.util.List;
+import java.util.Collection;
 
 /**
  * @author gongdewei 2020/4/21
  */
 public class ClassSetVO {
     private ClassLoaderVO classloader;
-    private List<String> classes;
+    private Collection<String> classes;
+    private int segment;
 
-    public ClassSetVO(ClassLoaderVO classloader, List<String> classes) {
+    public ClassSetVO(ClassLoaderVO classloader, Collection<String> classes) {
+        this(classloader, classes, 0);
+    }
+
+    public ClassSetVO(ClassLoaderVO classloader, Collection<String> classes, int segment) {
         this.classloader = classloader;
         this.classes = classes;
+        this.segment = segment;
     }
 
     public ClassLoaderVO getClassloader() {
@@ -22,11 +28,19 @@ public class ClassSetVO {
         this.classloader = classloader;
     }
 
-    public List<String> getClasses() {
+    public Collection<String> getClasses() {
         return classes;
     }
 
-    public void setClasses(List<String> classes) {
+    public void setClasses(Collection<String> classes) {
         this.classes = classes;
+    }
+
+    public int getSegment() {
+        return segment;
+    }
+
+    public void setSegment(int segment) {
+        this.segment = segment;
     }
 }
