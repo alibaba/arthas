@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 
 import argparse
-from http_api_demo import *
+from arthas_api_common import *
 from tree_render import *
 
 #------------------------- parse args begin ------------------------#
