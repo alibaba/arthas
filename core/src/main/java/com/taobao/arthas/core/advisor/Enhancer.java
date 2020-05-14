@@ -1,18 +1,9 @@
 package com.taobao.arthas.core.advisor;
 
-import com.alibaba.arthas.deps.org.slf4j.Logger;
-import com.alibaba.arthas.deps.org.slf4j.LoggerFactory;
-import com.taobao.arthas.core.GlobalOptions;
-import com.taobao.arthas.core.util.Constants;
-import com.taobao.arthas.core.util.FileUtils;
-import com.taobao.arthas.core.util.matcher.Matcher;
-import com.taobao.arthas.core.util.SearchUtils;
-import com.taobao.arthas.core.util.affect.EnhancerAffect;
+import static com.taobao.arthas.core.util.ArthasCheckUtils.isEquals;
+import static java.lang.System.arraycopy;
 
-import com.taobao.arthas.core.util.reflect.FieldUtils;
-import org.objectweb.asm.ClassReader;
-import org.objectweb.asm.ClassWriter;
-
+import java.arthas.SpyAPI;
 import java.io.File;
 import java.io.IOException;
 import java.lang.instrument.ClassFileTransformer;
@@ -21,23 +12,55 @@ import java.lang.instrument.Instrumentation;
 import java.lang.instrument.UnmodifiableClassException;
 import java.lang.reflect.Method;
 import java.security.ProtectionDomain;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.WeakHashMap;
 
-import static com.taobao.arthas.core.util.ArthasCheckUtils.isEquals;
-import static java.lang.System.arraycopy;
-import static org.objectweb.asm.ClassReader.EXPAND_FRAMES;
-import static org.objectweb.asm.ClassWriter.COMPUTE_FRAMES;
-import static org.objectweb.asm.ClassWriter.COMPUTE_MAXS;
+import com.alibaba.arthas.deps.org.objectweb.asm.Opcodes;
+import com.alibaba.arthas.deps.org.objectweb.asm.Type;
+import com.alibaba.arthas.deps.org.objectweb.asm.tree.ClassNode;
+import com.alibaba.arthas.deps.org.objectweb.asm.tree.MethodInsnNode;
+import com.alibaba.arthas.deps.org.objectweb.asm.tree.MethodNode;
+import com.alibaba.arthas.deps.org.slf4j.Logger;
+import com.alibaba.arthas.deps.org.slf4j.LoggerFactory;
+import com.taobao.arthas.bytekit.asm.MethodProcessor;
+import com.taobao.arthas.bytekit.asm.binding.Binding;
+import com.taobao.arthas.bytekit.asm.interceptor.InterceptorProcessor;
+import com.taobao.arthas.bytekit.asm.interceptor.annotation.AtEnter;
+import com.taobao.arthas.bytekit.asm.interceptor.annotation.AtExceptionExit;
+import com.taobao.arthas.bytekit.asm.interceptor.annotation.AtExit;
+import com.taobao.arthas.bytekit.asm.interceptor.annotation.AtInvoke;
+import com.taobao.arthas.bytekit.asm.interceptor.annotation.AtInvokeException;
+import com.taobao.arthas.bytekit.asm.interceptor.parser.DefaultInterceptorClassParser;
+import com.taobao.arthas.bytekit.asm.location.Location;
+import com.taobao.arthas.bytekit.asm.location.LocationType;
+import com.taobao.arthas.bytekit.asm.location.MethodInsnNodeWare;
+import com.taobao.arthas.bytekit.asm.location.filter.GroupLocationFilter;
+import com.taobao.arthas.bytekit.asm.location.filter.InvokeCheckLocationFilter;
+import com.taobao.arthas.bytekit.asm.location.filter.InvokeContainLocationFilter;
+import com.taobao.arthas.bytekit.asm.location.filter.LocationFilter;
+import com.taobao.arthas.bytekit.utils.AsmUtils;
+import com.taobao.arthas.core.GlobalOptions;
+import com.taobao.arthas.core.bytecode.AdviceListenerManager;
+import com.taobao.arthas.core.util.ArthasCheckUtils;
+import com.taobao.arthas.core.util.FileUtils;
+import com.taobao.arthas.core.util.SearchUtils;
+import com.taobao.arthas.core.util.affect.EnhancerAffect;
+import com.taobao.arthas.core.util.matcher.Matcher;
 
 /**
- * 对类进行通知增强
- * Created by vlinux on 15/5/17.
+ * 对类进行通知增强 Created by vlinux on 15/5/17.
  */
 public class Enhancer implements ClassFileTransformer {
 
     private static final Logger logger = LoggerFactory.getLogger(Enhancer.class);
 
-    private final int adviceId;
+    private final AdviceListener listener;
     private final boolean isTracing;
     private final boolean skipJDKTrace;
     private final Set<Class<?>> matchingClasses;
@@ -45,8 +68,7 @@ public class Enhancer implements ClassFileTransformer {
     private final EnhancerAffect affect;
 
     // 类-字节码缓存
-    private final static Map<Class<?>/*Class*/, byte[]/*bytes of Class*/> classBytesCache
-            = new WeakHashMap<Class<?>, byte[]>();
+    private final static Map<Class<?>/* Class */, byte[]/* bytes of Class */> classBytesCache = new WeakHashMap<Class<?>, byte[]>();
 
     /**
      * @param adviceId          通知编号
@@ -56,13 +78,9 @@ public class Enhancer implements ClassFileTransformer {
      * @param methodNameMatcher 方法名匹配
      * @param affect            影响统计
      */
-    private Enhancer(int adviceId,
-                     boolean isTracing,
-                     boolean skipJDKTrace,
-                     Set<Class<?>> matchingClasses,
-                     Matcher methodNameMatcher,
-                     EnhancerAffect affect) {
-        this.adviceId = adviceId;
+    private Enhancer(AdviceListener listener, boolean isTracing, boolean skipJDKTrace, Set<Class<?>> matchingClasses,
+            Matcher methodNameMatcher, EnhancerAffect affect) {
+        this.listener = listener;
         this.isTracing = isTracing;
         this.skipJDKTrace = skipJDKTrace;
         this.matchingClasses = matchingClasses;
@@ -70,32 +88,75 @@ public class Enhancer implements ClassFileTransformer {
         this.affect = affect;
     }
 
-	private void spy(final ClassLoader targetClassLoader) throws Exception {
-        if (targetClassLoader == null) {
-            // 增强JDK自带的类,targetClassLoader为null
-            return;
+    public static class SpyInterceptor {
+
+        @AtEnter(inline = true)
+        public static void atEnter(@Binding.This Object target, @Binding.Class Class<?> clazz,
+                @Binding.MethodName String methodName, @Binding.MethodDesc String methodDesc,
+                @Binding.Args Object[] args) {
+            SpyAPI.atEnter(clazz, methodName, methodDesc, target, args);
         }
-        // 因为 Spy 是被bootstrap classloader加载的，所以一定可以被找到，如果找不到的话，说明应用方的classloader实现有问题
-        Class<?> spyClass = targetClassLoader.loadClass(Constants.SPY_CLASSNAME);
 
-        final ClassLoader arthasClassLoader = Enhancer.class.getClassLoader();
+        @AtExit(inline = true)
+        public static void atExit(@Binding.This Object target, @Binding.Class Class<?> clazz,
+                @Binding.MethodName String methodName, @Binding.MethodDesc String methodDesc,
+                @Binding.Args Object[] args, @Binding.Return Object returnObj) {
+            SpyAPI.atExit(clazz, methodName, methodDesc, target, args, returnObj);
+        }
 
-        // 初始化间谍, AgentLauncher会把各种hook设置到ArthasClassLoader当中
-        // 这里我们需要把这些hook取出来设置到目标classloader当中
-        Method initMethod = spyClass.getMethod("init", ClassLoader.class, Method.class,
-                Method.class, Method.class, Method.class, Method.class, Method.class);
-        initMethod.invoke(null, arthasClassLoader,
-                FieldUtils.getField(spyClass, "ON_BEFORE_METHOD").get(null),
-                FieldUtils.getField(spyClass, "ON_RETURN_METHOD").get(null),
-                FieldUtils.getField(spyClass, "ON_THROWS_METHOD").get(null),
-                FieldUtils.getField(spyClass, "BEFORE_INVOKING_METHOD").get(null),
-                FieldUtils.getField(spyClass, "AFTER_INVOKING_METHOD").get(null),
-                FieldUtils.getField(spyClass, "THROW_INVOKING_METHOD").get(null));
-	}
+        @AtExceptionExit(inline = true)
+        public static void atExceptionExit(@Binding.This Object target, @Binding.Class Class<?> clazz,
+                @Binding.MethodName String methodName, @Binding.MethodDesc String methodDesc,
+                @Binding.Args Object[] args, @Binding.Throwable Throwable throwable) {
+            SpyAPI.atExceptionExit(clazz, methodName, methodDesc, target, args, throwable);
+        }
+    }
+
+    public static class SpyTraceExcludeJDKInterceptor {
+        @AtInvoke(name = "", inline = true, whenComplete = false, excludes = "java.**")
+        public static void onInvoke(@Binding.This Object target, @Binding.Class Class<?> clazz,
+                @Binding.InvokeInfo String invokeInfo) {
+            SpyAPI.atBeforeInvoke(clazz, invokeInfo, target);
+        }
+
+        @AtInvoke(name = "", inline = true, whenComplete = true, excludes = "java.**")
+        public static void onInvokeAfter(@Binding.This Object target, @Binding.Class Class<?> clazz,
+                @Binding.InvokeInfo String invokeInfo) {
+            SpyAPI.atAfterInvoke(clazz, invokeInfo, target);
+        }
+
+        @AtInvokeException(name = "", inline = true, excludes = "java.**")
+        public static void onInvokeException(@Binding.This Object target, @Binding.Class Class<?> clazz,
+                @Binding.InvokeInfo String invokeInfo, @Binding.Throwable Throwable throwable) {
+            SpyAPI.atInvokeException(clazz, invokeInfo, target, throwable);
+        }
+    }
+
+    public static class SpyTraceInterceptor {
+        @AtInvoke(name = "", inline = true, whenComplete = false, excludes = "java.arthas.SpyAPI")
+        public static void onInvoke(@Binding.This Object target, @Binding.Class Class<?> clazz,
+                @Binding.InvokeInfo String invokeInfo) {
+            SpyAPI.atBeforeInvoke(clazz, invokeInfo, target);
+        }
+
+        @AtInvoke(name = "", inline = true, whenComplete = true, excludes = "java.arthas.SpyAPI")
+        public static void onInvokeAfter(@Binding.This Object target, @Binding.Class Class<?> clazz,
+                @Binding.InvokeInfo String invokeInfo) {
+            SpyAPI.atAfterInvoke(clazz, invokeInfo, target);
+        }
+
+        @AtInvokeException(name = "", inline = true, excludes = "java.arthas.SpyAPI")
+        public static void onInvokeException(@Binding.This Object target, @Binding.Class Class<?> clazz,
+                @Binding.InvokeInfo String invokeInfo, @Binding.Throwable Throwable throwable) {
+            SpyAPI.atInvokeException(clazz, invokeInfo, target, throwable);
+        }
+    }
+
+    com.taobao.arthas.core.bytecode.SpyImpl spyImpl = new com.taobao.arthas.core.bytecode.SpyImpl();
 
     @Override
     public byte[] transform(final ClassLoader inClassLoader, String className, Class<?> classBeingRedefined,
-                    ProtectionDomain protectionDomain, byte[] classfileBuffer) throws IllegalClassFormatException {
+            ProtectionDomain protectionDomain, byte[] classfileBuffer) throws IllegalClassFormatException {
         try {
             // 这里要再次过滤一次，为啥？因为在transform的过程中，有可能还会再诞生新的类
             // 所以需要将之前需要转换的类集合传递下来，再次进行判断
@@ -103,64 +164,99 @@ public class Enhancer implements ClassFileTransformer {
                 return null;
             }
 
-            final ClassReader cr;
+            ClassNode classNode;
+
+            SpyAPI.setSpy(spyImpl);
 
             // 首先先检查是否在缓存中存在Class字节码
             // 因为要支持多人协作,存在多人同时增强的情况
-            final byte[] byteOfClassInCache = classBytesCache.get(classBeingRedefined);
-            if (null != byteOfClassInCache) {
-                cr = new ClassReader(byteOfClassInCache);
+//            final byte[] byteOfClassInCache = classBytesCache.get(classBeingRedefined);
+//            if (null != byteOfClassInCache) {
+//                classNode = AsmUtils.toClassNode(byteOfClassInCache);
+//            }
+//
+//            // 如果没有命中缓存,则从原始字节码开始增强
+//            else {
+//                classNode = AsmUtils.toClassNode(classfileBuffer);
+//            }
+
+            classNode = AsmUtils.toClassNode(classfileBuffer);
+
+            // 生成增强字节码
+            DefaultInterceptorClassParser defaultInterceptorClassParser = new DefaultInterceptorClassParser();
+
+            final List<InterceptorProcessor> interceptorProcessors = new ArrayList<InterceptorProcessor>();
+
+            List<InterceptorProcessor> traceProcessors = defaultInterceptorClassParser.parse(SpyInterceptor.class);
+            interceptorProcessors.addAll(traceProcessors);
+
+            if (this.isTracing) {
+                Class<?> spyTraceInterceptorClass = SpyTraceExcludeJDKInterceptor.class;
+                if (this.skipJDKTrace == false) {
+                    spyTraceInterceptorClass = SpyTraceInterceptor.class;
+                }
+                List<InterceptorProcessor> traceInvokeProcessors = defaultInterceptorClassParser
+                        .parse(spyTraceInterceptorClass);
+                interceptorProcessors.addAll(traceInvokeProcessors);
             }
 
-            // 如果没有命中缓存,则从原始字节码开始增强
-            else {
-                cr = new ClassReader(classfileBuffer);
+            List<MethodNode> matchedMethods = new ArrayList<MethodNode>();
+            for (MethodNode methodNode : classNode.methods) {
+                if (!isIgnore(methodNode, methodNameMatcher)) {
+                    matchedMethods.add(methodNode);
+                }
             }
 
-            // 字节码增强
-            final ClassWriter cw = new ClassWriter(cr, COMPUTE_FRAMES | COMPUTE_MAXS) {
+            // 用于检查是否已插入了 spy函数，如果已有则不重复处理
+            GroupLocationFilter groupLocationFilter = new GroupLocationFilter();
 
-                /*
-                 * 注意，为了自动计算帧的大小，有时必须计算两个类共同的父类。
-                 * 缺省情况下，ClassWriter将会在getCommonSuperClass方法中计算这些，通过在加载这两个类进入虚拟机时，使用反射API来计算。
-                 * 但是，如果你将要生成的几个类相互之间引用，这将会带来问题，因为引用的类可能还不存在。
-                 * 在这种情况下，你可以重写getCommonSuperClass方法来解决这个问题。
-                 *
-                 * 通过重写 getCommonSuperClass() 方法，更正获取ClassLoader的方式，改成使用指定ClassLoader的方式进行。
-                 * 规避了原有代码采用Object.class.getClassLoader()的方式
-                 */
-                @Override
-                protected String getCommonSuperClass(String type1, String type2) {
-                    Class<?> c, d;
-                    final ClassLoader classLoader = inClassLoader;
+            LocationFilter enterFilter = new InvokeContainLocationFilter(Type.getInternalName(SpyAPI.class), "atEnter",
+                    LocationType.ENTER);
+            LocationFilter existFilter = new InvokeContainLocationFilter(Type.getInternalName(SpyAPI.class), "atExit",
+                    LocationType.EXIT);
+            LocationFilter exceptionFilter = new InvokeContainLocationFilter(Type.getInternalName(SpyAPI.class),
+                    "atExceptionExit", LocationType.EXCEPTION_EXIT);
+
+            groupLocationFilter.addFilter(enterFilter);
+            groupLocationFilter.addFilter(existFilter);
+            groupLocationFilter.addFilter(exceptionFilter);
+
+            LocationFilter invokeBeforeFilter = new InvokeCheckLocationFilter(Type.getInternalName(SpyAPI.class),
+                    "atBeforeInvoke", LocationType.INVOKE);
+            LocationFilter invokeAfterFilter = new InvokeCheckLocationFilter(Type.getInternalName(SpyAPI.class),
+                    "atInvokeException", LocationType.INVOKE_COMPLETED);
+            LocationFilter invokeExceptionFilter = new InvokeCheckLocationFilter(Type.getInternalName(SpyAPI.class),
+                    "atInvokeException", LocationType.INVOKE_EXCEPTION_EXIT);
+            groupLocationFilter.addFilter(invokeBeforeFilter);
+            groupLocationFilter.addFilter(invokeAfterFilter);
+            groupLocationFilter.addFilter(invokeExceptionFilter);
+
+            for (MethodNode methodNode : matchedMethods) {
+                MethodProcessor methodProcessor = new MethodProcessor(classNode, methodNode, groupLocationFilter);
+                for (InterceptorProcessor interceptor : interceptorProcessors) {
                     try {
-                        c = Class.forName(type1.replace('/', '.'), false, classLoader);
-                        d = Class.forName(type2.replace('/', '.'), false, classLoader);
-                    } catch (Exception e) {
-                        throw new RuntimeException(e);
-                    }
-                    if (c.isAssignableFrom(d)) {
-                        return type1;
-                    }
-                    if (d.isAssignableFrom(c)) {
-                        return type2;
-                    }
-                    if (c.isInterface() || d.isInterface()) {
-                        return "java/lang/Object";
-                    } else {
-                        do {
-                            c = c.getSuperclass();
-                        } while (!c.isAssignableFrom(d));
-                        return c.getName().replace('.', '/');
+                        List<Location> locations = interceptor.process(methodProcessor);
+                        for (Location location : locations) {
+                            if (location instanceof MethodInsnNodeWare) {
+                                MethodInsnNodeWare methodInsnNodeWare = (MethodInsnNodeWare) location;
+                                MethodInsnNode methodInsnNode = methodInsnNodeWare.methodInsnNode();
+
+                                AdviceListenerManager.registerTraceAdviceListener(inClassLoader, className,
+                                        methodInsnNode.owner, methodInsnNode.name, methodInsnNode.desc, listener);
+                            }
+                        }
+
+                    } catch (Throwable e) {
+                        e.printStackTrace();
                     }
                 }
 
-            };
+                AdviceListenerManager.registerAdviceListener(inClassLoader, className, methodNode.name, methodNode.desc,
+                        listener);
+                affect.mCnt(1);
+            }
 
-            // 生成增强字节码
-            cr.accept(new AdviceWeaver(adviceId, isTracing, skipJDKTrace, cr.getClassName(), methodNameMatcher, affect,
-                            cw), EXPAND_FRAMES);
-            final byte[] enhanceClassByteArray = cw.toByteArray();
+            byte[] enhanceClassByteArray = AsmUtils.toBytes(classNode);
 
             // 生成成功,推入缓存
             classBytesCache.put(classBeingRedefined, enhanceClassByteArray);
@@ -171,20 +267,27 @@ public class Enhancer implements ClassFileTransformer {
             // 成功计数
             affect.cCnt(1);
 
-            // 派遣间谍
-            try {
-                spy(inClassLoader);
-            } catch (Throwable t) {
-                logger.warn("print spy failed. classname={};loader={};", className, inClassLoader, t);
-                throw t;
-            }
-
             return enhanceClassByteArray;
         } catch (Throwable t) {
             logger.warn("transform loader[{}]:class[{}] failed.", inClassLoader, className, t);
         }
 
         return null;
+    }
+
+    /**
+     * 是否抽象属性
+     */
+    private boolean isAbstract(int access) {
+        return (Opcodes.ACC_ABSTRACT & access) == Opcodes.ACC_ABSTRACT;
+    }
+
+    /**
+     * 是否需要忽略
+     */
+    private boolean isIgnore(MethodNode methodNode, Matcher methodNameMatcher) {
+        return null == methodNode || isAbstract(methodNode.access) || !methodNameMatcher.matching(methodNode.name)
+                || ArthasCheckUtils.isEquals(methodNode.name, "<clinit>");
     }
 
     /**
@@ -198,8 +301,7 @@ public class Enhancer implements ClassFileTransformer {
         final File classPath = new File(dumpClassFile.getParent());
 
         // 创建类所在的包路径
-        if (!classPath.mkdirs()
-                && !classPath.exists()) {
+        if (!classPath.mkdirs() && !classPath.exists()) {
             logger.warn("create dump classpath:{} failed.", classPath);
             return;
         }
@@ -214,7 +316,6 @@ public class Enhancer implements ClassFileTransformer {
 
     }
 
-
     /**
      * 是否需要过滤的类
      *
@@ -224,10 +325,7 @@ public class Enhancer implements ClassFileTransformer {
         final Iterator<Class<?>> it = classes.iterator();
         while (it.hasNext()) {
             final Class<?> clazz = it.next();
-            if (null == clazz
-                    || isSelf(clazz)
-                    || isUnsafeClass(clazz)
-                    || isUnsupportedClass(clazz)) {
+            if (null == clazz || isSelf(clazz) || isUnsafeClass(clazz) || isUnsupportedClass(clazz)) {
                 it.remove();
             }
         }
@@ -237,25 +335,21 @@ public class Enhancer implements ClassFileTransformer {
      * 是否过滤Arthas加载的类
      */
     private static boolean isSelf(Class<?> clazz) {
-        return null != clazz
-                && isEquals(clazz.getClassLoader(), Enhancer.class.getClassLoader());
+        return null != clazz && isEquals(clazz.getClassLoader(), Enhancer.class.getClassLoader());
     }
 
     /**
      * 是否过滤unsafe类
      */
     private static boolean isUnsafeClass(Class<?> clazz) {
-        return !GlobalOptions.isUnsafe
-                && clazz.getClassLoader() == null;
+        return !GlobalOptions.isUnsafe && clazz.getClassLoader() == null;
     }
 
     /**
      * 是否过滤目前暂不支持的类
      */
     private static boolean isUnsupportedClass(Class<?> clazz) {
-        return clazz.isArray()
-                || (clazz.isInterface() && !GlobalOptions.isSupportDefaultMethod)
-                || clazz.isEnum()
+        return clazz.isArray() || (clazz.isInterface() && !GlobalOptions.isSupportDefaultMethod) || clazz.isEnum()
                 || clazz.equals(Class.class) || clazz.equals(Integer.class) || clazz.equals(Method.class);
     }
 
@@ -271,12 +365,8 @@ public class Enhancer implements ClassFileTransformer {
      * @return 增强影响范围
      * @throws UnmodifiableClassException 增强失败
      */
-    public static synchronized EnhancerAffect enhance(
-            final Instrumentation inst,
-            final int adviceId,
-            final boolean isTracing,
-            final boolean skipJDKTrace,
-            final Matcher classNameMatcher,
+    public static synchronized EnhancerAffect enhance(final Instrumentation inst, final AdviceListener listener,
+            final boolean isTracing, final boolean skipJDKTrace, final Matcher classNameMatcher,
             final Matcher methodNameMatcher) throws UnmodifiableClassException {
 
         final EnhancerAffect affect = new EnhancerAffect();
@@ -290,7 +380,8 @@ public class Enhancer implements ClassFileTransformer {
         filter(enhanceClassSet);
 
         // 构建增强器
-        final Enhancer enhancer = new Enhancer(adviceId, isTracing, skipJDKTrace, enhanceClassSet, methodNameMatcher, affect);
+        final Enhancer enhancer = new Enhancer(listener, isTracing, skipJDKTrace, enhanceClassSet, methodNameMatcher,
+                affect);
         try {
             inst.addTransformer(enhancer, true);
 
@@ -328,7 +419,6 @@ public class Enhancer implements ClassFileTransformer {
         return affect;
     }
 
-
     /**
      * 重置指定的Class
      *
@@ -337,9 +427,8 @@ public class Enhancer implements ClassFileTransformer {
      * @return 增强影响范围
      * @throws UnmodifiableClassException
      */
-    public static synchronized EnhancerAffect reset(
-            final Instrumentation inst,
-            final Matcher classNameMatcher) throws UnmodifiableClassException {
+    public static synchronized EnhancerAffect reset(final Instrumentation inst, final Matcher classNameMatcher)
+            throws UnmodifiableClassException {
 
         final EnhancerAffect affect = new EnhancerAffect();
         final Set<Class<?>> enhanceClassSet = new HashSet<Class<?>>();
@@ -352,12 +441,8 @@ public class Enhancer implements ClassFileTransformer {
 
         final ClassFileTransformer resetClassFileTransformer = new ClassFileTransformer() {
             @Override
-            public byte[] transform(
-                    ClassLoader loader,
-                    String className,
-                    Class<?> classBeingRedefined,
-                    ProtectionDomain protectionDomain,
-                    byte[] classfileBuffer) throws IllegalClassFormatException {
+            public byte[] transform(ClassLoader loader, String className, Class<?> classBeingRedefined,
+                    ProtectionDomain protectionDomain, byte[] classfileBuffer) throws IllegalClassFormatException {
                 return null;
             }
         };
