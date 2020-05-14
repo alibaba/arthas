@@ -1,5 +1,6 @@
 package com.taobao.arthas.core.command.monitor200;
 
+import java.arthas.SpyAPI;
 import java.lang.instrument.Instrumentation;
 import java.lang.instrument.UnmodifiableClassException;
 import java.util.Collections;
@@ -7,6 +8,10 @@ import java.util.List;
 
 import com.alibaba.arthas.deps.org.slf4j.Logger;
 import com.alibaba.arthas.deps.org.slf4j.LoggerFactory;
+import com.taobao.arthas.bytekit.asm.binding.Binding;
+import com.taobao.arthas.bytekit.asm.interceptor.annotation.AtEnter;
+import com.taobao.arthas.bytekit.asm.interceptor.annotation.AtExceptionExit;
+import com.taobao.arthas.bytekit.asm.interceptor.annotation.AtExit;
 import com.taobao.arthas.core.advisor.AdviceListener;
 import com.taobao.arthas.core.advisor.Enhancer;
 import com.taobao.arthas.core.advisor.InvokeTraceable;
@@ -109,7 +114,7 @@ public abstract class EnhancerCommand extends AnnotatedCommand {
                 skipJDKTrace = ((AbstractTraceAdviceListener) listener).getCommand().isSkipJDKTrace();
             }
 
-            EnhancerAffect effect = Enhancer.enhance(inst, lock, listener instanceof InvokeTraceable,
+            EnhancerAffect effect = Enhancer.enhance(inst, listener, listener instanceof InvokeTraceable,
                     skipJDKTrace, getClassNameMatcher(), getMethodNameMatcher());
 
             if (effect.cCnt() == 0 || effect.mCnt() == 0) {
