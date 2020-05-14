@@ -26,21 +26,33 @@ public class LineBinding extends Binding {
         Location location = bindingContext.getLocation();
         AbstractInsnNode insnNode = location.getInsnNode();
 
+        int line = -1;
         if (exact) {
             if (insnNode instanceof LineNumberNode) {
-                AsmOpUtils.push(instructions, ((LineNumberNode) insnNode).line);
+                line = ((LineNumberNode) insnNode).line;
             } else {
                 throw new IllegalArgumentException("LineBinding location is not LineNumberNode, insnNode: " + insnNode);
             }
         } else {
-            while (insnNode != null) {
-                if (insnNode instanceof LineNumberNode) {
-                    AsmOpUtils.push(instructions, ((LineNumberNode) insnNode).line);
-                    break;
+            if (location.isWhenComplete() == false) {
+                while (insnNode != null) {
+                    if (insnNode instanceof LineNumberNode) {
+                        line = ((LineNumberNode) insnNode).line;
+                        break;
+                    }
+                    insnNode = insnNode.getPrevious();
                 }
-                insnNode = insnNode.getPrevious();
+            } else {
+                while (insnNode != null) {
+                    if (insnNode instanceof LineNumberNode) {
+                        line = ((LineNumberNode) insnNode).line;
+                        break;
+                    }
+                    insnNode = insnNode.getNext();
+                }
             }
         }
+        AsmOpUtils.push(instructions, line);
     }
 
     @Override
