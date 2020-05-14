@@ -121,6 +121,8 @@ def stat_trace_tree(root, method_path, method_path_code):
         stat['minCost'] = trace_tree['minCost']
 
 def reset_method_path_stats():
+    global call_tree_match_times
+    call_tree_match_times = 0
     # reset method path stats
     for stat in method_path_stats.values():
         stat['count'] = 0
@@ -177,22 +179,23 @@ def handle_trace_result(context, result):
         # switch primary call tree
         if is_switch_path:
             candidate_stat = get_candidate_call_tree()
-            current_stat = get_method_path_stat(trace_method_path_code)
-            if not current_stat:
-                current_stat = {
-                    "count": 0,
-                    "method_path": trace_method_path,
-                    "method_path_code": trace_method_path_code
-                }
-            candidate_method_path_code = candidate_stat['method_path_code']
-            if candidate_method_path_code != trace_method_path_code and candidate_stat['count'] >= current_stat['count'] + 3:
-                print("switch primary call tree from [%x] to [%x]" % (trace_method_path_code, candidate_method_path_code))
-                new_method_path = candidate_stat["method_path"]
-                print_method_path(new_method_path, candidate_method_path_code)
-                reset_trace_method_path(new_method_path)
-                interrupt_job(session_id)
-                # return false, interrupt pull results
-                return False
+            if candidate_stat:
+                current_stat = get_method_path_stat(trace_method_path_code)
+                if not current_stat:
+                    current_stat = {
+                        "count": 0,
+                        "method_path": trace_method_path,
+                        "method_path_code": trace_method_path_code
+                    }
+                candidate_method_path_code = candidate_stat['method_path_code']
+                if candidate_method_path_code != trace_method_path_code and candidate_stat['count'] >= current_stat['count'] + 3:
+                    print("switch primary call tree from [%x] to [%x]" % (trace_method_path_code, candidate_method_path_code))
+                    new_method_path = candidate_stat["method_path"]
+                    print_method_path(new_method_path, candidate_method_path_code)
+                    reset_trace_method_path(new_method_path)
+                    interrupt_job(session_id)
+                    # return false, interrupt pull results
+                    return False
 
         # check call tree match times
         if call_tree_match_times >= stop_match_times:
@@ -268,7 +271,7 @@ def start_trace():
         command += " --skipJDKMethod false"
 
     print("")
-    print("start new trace:")
+    print("start new trace [%x]:" % trace_method_path_code)
     print_trace_method_path()
     # print("command: %s" % command)
 
@@ -455,12 +458,6 @@ if __name__ == "__main__":
 
             # pull results
             pull_results(context, consumer_id, ['trace'], handle_trace_result)
-
-            # check call tree match times
-            if call_tree_match_times >= stop_match_times:
-                interrupt_job(session_id)
-                print("The primary call tree matching times is exceeded, assuming no new call tree can be found.")
-                break
 
             # check max trace depth
             if len(trace_method_path) > max_depth:
