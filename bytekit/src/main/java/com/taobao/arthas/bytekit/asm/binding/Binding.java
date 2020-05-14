@@ -251,6 +251,23 @@ public abstract class Binding {
     @Documented
     @Retention(RetentionPolicy.RUNTIME)
     @java.lang.annotation.Target(ElementType.PARAMETER)
+    @BindingParserHandler(parser = InvokeInfoBindingParser.class)
+    public static @interface InvokeInfo {
+
+        boolean optional() default false;
+
+    }
+
+    public static class InvokeInfoBindingParser implements BindingParser {
+        @Override
+        public Binding parse(Annotation annotation) {
+            return new InvokeInfoBinding();
+        }
+    }
+
+    @Documented
+    @Retention(RetentionPolicy.RUNTIME)
+    @java.lang.annotation.Target(ElementType.PARAMETER)
     @BindingParserHandler(parser = MethodBindingParser.class)
     public static @interface Method {
         boolean optional() default false;
