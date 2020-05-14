@@ -63,7 +63,10 @@ public class TraceTree {
 
     public void end() {
         current.end();
-        current = current.parent();
+        if (current.parent() != null) {
+            //TODO 为什么会到达这里？ 调用end次数比begin多？
+            current = current.parent();
+        }
     }
 
     public void end(String exceptionClassName, int lineNumber) {
