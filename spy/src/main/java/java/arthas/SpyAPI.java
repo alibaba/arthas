@@ -32,18 +32,18 @@ public class SpyAPI {
         spyInstance = spy;
     }
 
-    public static void atEnter(Class<?> clazz, String methodName, String methodDesc, Object target, Object[] args) {
-        spyInstance.atEnter(clazz, methodName, methodDesc, target, args);
+    public static void atEnter(Class<?> clazz, String methodInfo, Object target, Object[] args) {
+        spyInstance.atEnter(clazz, methodInfo, target, args);
     }
 
-    public static void atExit(Class<?> clazz, String methodName, String methodDesc, Object target, Object[] args,
+    public static void atExit(Class<?> clazz, String methodInfo, Object target, Object[] args,
             Object returnObject) {
-        spyInstance.atExit(clazz, methodName, methodDesc, target, args, returnObject);
+        spyInstance.atExit(clazz, methodInfo, target, args, returnObject);
     }
 
-    public static void atExceptionExit(Class<?> clazz, String methodName, String methodDesc, Object target,
+    public static void atExceptionExit(Class<?> clazz, String methodInfo, Object target,
             Object[] args, Throwable throwable) {
-        spyInstance.atExceptionExit(clazz, methodName, methodDesc, target, args, throwable);
+        spyInstance.atExceptionExit(clazz, methodInfo, target, args, throwable);
     }
 
     public static void atBeforeInvoke(Class<?> clazz, String invokeInfo, Object target) {
@@ -59,13 +59,13 @@ public class SpyAPI {
     }
 
     public static abstract class AbstractSpy {
-        public abstract void atEnter(Class<?> clazz, String methodName, String methodDesc, Object target,
+        public abstract void atEnter(Class<?> clazz, String methodInfo, Object target,
                 Object[] args);
 
-        public abstract void atExit(Class<?> clazz, String methodName, String methodDesc, Object target, Object[] args,
+        public abstract void atExit(Class<?> clazz, String methodInfo, Object target, Object[] args,
                 Object returnObject);
 
-        public abstract void atExceptionExit(Class<?> clazz, String methodName, String methodDesc, Object target,
+        public abstract void atExceptionExit(Class<?> clazz, String methodInfo, Object target,
                 Object[] args, Throwable throwable);
 
         public abstract void atBeforeInvoke(Class<?> clazz, String invokeInfo, Object target);
@@ -78,16 +78,16 @@ public class SpyAPI {
     static class NopSpy extends AbstractSpy {
 
         @Override
-        public void atEnter(Class<?> clazz, String methodName, String methodDesc, Object target, Object[] args) {
+        public void atEnter(Class<?> clazz, String methodInfo, Object target, Object[] args) {
         }
 
         @Override
-        public void atExit(Class<?> clazz, String methodName, String methodDesc, Object target, Object[] args,
+        public void atExit(Class<?> clazz, String methodInfo, Object target, Object[] args,
                 Object returnObject) {
         }
 
         @Override
-        public void atExceptionExit(Class<?> clazz, String methodName, String methodDesc, Object target, Object[] args,
+        public void atExceptionExit(Class<?> clazz, String methodInfo, Object target, Object[] args,
                 Throwable throwable) {
         }
 

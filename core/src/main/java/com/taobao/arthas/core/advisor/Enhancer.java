@@ -92,23 +92,21 @@ public class Enhancer implements ClassFileTransformer {
 
         @AtEnter(inline = true)
         public static void atEnter(@Binding.This Object target, @Binding.Class Class<?> clazz,
-                @Binding.MethodName String methodName, @Binding.MethodDesc String methodDesc,
-                @Binding.Args Object[] args) {
-            SpyAPI.atEnter(clazz, methodName, methodDesc, target, args);
+                @Binding.MethodInfo String methodInfo, @Binding.Args Object[] args) {
+            SpyAPI.atEnter(clazz, methodInfo, target, args);
         }
 
         @AtExit(inline = true)
         public static void atExit(@Binding.This Object target, @Binding.Class Class<?> clazz,
-                @Binding.MethodName String methodName, @Binding.MethodDesc String methodDesc,
-                @Binding.Args Object[] args, @Binding.Return Object returnObj) {
-            SpyAPI.atExit(clazz, methodName, methodDesc, target, args, returnObj);
+                @Binding.MethodInfo String methodInfo, @Binding.Args Object[] args, @Binding.Return Object returnObj) {
+            SpyAPI.atExit(clazz, methodInfo, target, args, returnObj);
         }
 
         @AtExceptionExit(inline = true)
         public static void atExceptionExit(@Binding.This Object target, @Binding.Class Class<?> clazz,
-                @Binding.MethodName String methodName, @Binding.MethodDesc String methodDesc,
-                @Binding.Args Object[] args, @Binding.Throwable Throwable throwable) {
-            SpyAPI.atExceptionExit(clazz, methodName, methodDesc, target, args, throwable);
+                @Binding.MethodInfo String methodInfo, @Binding.Args Object[] args,
+                @Binding.Throwable Throwable throwable) {
+            SpyAPI.atExceptionExit(clazz, methodInfo, target, args, throwable);
         }
     }
 
