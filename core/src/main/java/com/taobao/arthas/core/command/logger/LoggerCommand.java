@@ -81,7 +81,7 @@ public class LoggerCommand extends AnnotatedCommand {
     private String level;
 
     /**
-     * include the logger which don't have appenders, default false.
+     * include the loggers which don't have appenders, default false.
      */
     private boolean includeNoAppender;
 
