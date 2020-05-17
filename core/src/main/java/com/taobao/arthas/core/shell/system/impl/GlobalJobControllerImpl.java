@@ -24,7 +24,7 @@ import com.taobao.arthas.core.shell.term.impl.httptelnet.HttpTelnetTermServer;
  */
 public class GlobalJobControllerImpl extends JobControllerImpl {
 
-    private Timer timer = new Timer("job-timeout", true);
+    private Timer timer = new Timer("arthas-job-timeout", true);
     private Map<Integer, TimerTask> jobTimeoutTaskMap = new HashMap<Integer, TimerTask>();
     private static final Logger logger = LoggerFactory.getLogger(GlobalJobControllerImpl.class);
 
