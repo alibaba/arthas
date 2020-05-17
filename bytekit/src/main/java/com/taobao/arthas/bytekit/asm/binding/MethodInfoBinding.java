@@ -20,7 +20,7 @@ public class MethodInfoBinding extends Binding {
     public void pushOntoStack(InsnList instructions, BindingContext bindingContext) {
         MethodProcessor methodProcessor = bindingContext.getMethodProcessor();
         MethodNode methodNode = methodProcessor.getMethodNode();
-        AsmOpUtils.ldc(instructions, methodNode.name + methodNode.desc);
+        AsmOpUtils.ldc(instructions, methodNode.name + '|' +  methodNode.desc);
     }
 
     @Override
