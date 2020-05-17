@@ -321,6 +321,7 @@ public class ArthasBootstrap {
     }
 
     public void destroy() {
+        timer.cancel();
         if (this.tunnelClient != null) {
             try {
                 tunnelClient.stop();
