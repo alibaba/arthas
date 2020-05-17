@@ -13,6 +13,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Properties;
+import java.util.Timer;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadFactory;
@@ -76,6 +77,8 @@ public class ArthasBootstrap {
     private File arthasOutputDir;
 
     private static LoggerContext loggerContext;
+
+    private Timer timer = new Timer("arthas-timer", true);
 
     private ArthasBootstrap(Instrumentation instrumentation, String args) throws Throwable {
         this.instrumentation = instrumentation;
@@ -385,6 +388,10 @@ public class ArthasBootstrap {
 
     public TunnelClient getTunnelClient() {
         return tunnelClient;
+    }
+
+    public Timer getTimer() {
+        return this.timer;
     }
 
     private Logger logger() {
