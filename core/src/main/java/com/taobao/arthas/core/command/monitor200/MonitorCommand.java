@@ -31,6 +31,7 @@ public class MonitorCommand extends EnhancerCommand {
     private int cycle = 60;
     private boolean isRegEx = false;
     private int numberOfLimit = 100;
+    private int width = -1;
 
     @Argument(argName = "class-pattern", index = 0)
     @Description("Path and classname of Pattern Matching")
@@ -62,6 +63,12 @@ public class MonitorCommand extends EnhancerCommand {
         this.numberOfLimit = numberOfLimit;
     }
 
+    @Option(shortName = "w", longName = "width")
+    @Description("The shell TTY width")
+    public void setWidth(int width) {
+        this.width = width;
+    }
+
     public String getClassPattern() {
         return classPattern;
     }
@@ -80,6 +87,10 @@ public class MonitorCommand extends EnhancerCommand {
 
     public int getNumberOfLimit() {
         return numberOfLimit;
+    }
+
+    public int getWidth() {
+        return width;
     }
 
     @Override

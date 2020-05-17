@@ -84,7 +84,7 @@ class MonitorAdviceListener extends ReflectAdviceListenerAdapter {
     public synchronized void create() {
         if (timer == null) {
             timer = new Timer("Timer-for-arthas-monitor-" + process.session().getSessionId(), true);
-            timer.scheduleAtFixedRate(new MonitorTimer(monitorData, process, command.getNumberOfLimit()),
+            timer.scheduleAtFixedRate(new MonitorTimer(monitorData, process, command.getNumberOfLimit(), command.getWidth()),
                     0, command.getCycle() * 1000);
         }
     }
@@ -150,11 +150,13 @@ class MonitorAdviceListener extends ReflectAdviceListenerAdapter {
         private Map<Key, AtomicReference<Data>> monitorData;
         private CommandProcess process;
         private int limit;
+        private int width;
 
-        MonitorTimer(Map<Key, AtomicReference<Data>> monitorData, CommandProcess process, int limit) {
+        MonitorTimer(Map<Key, AtomicReference<Data>> monitorData, CommandProcess process, int limit, int width) {
             this.monitorData = monitorData;
             this.process = process;
             this.limit = limit;
+            this.width = width;
         }
 
         @Override
@@ -208,7 +210,8 @@ class MonitorAdviceListener extends ReflectAdviceListenerAdapter {
                 }
             }
 
-            process.write(RenderUtil.render(table, process.width()) + "\n");
+            width = width > 0 ? width : process.width();
+            process.write(RenderUtil.render(table, width) + "\n");
         }
 
         private double div(double a, double b) {
