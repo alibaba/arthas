@@ -41,7 +41,6 @@ public class GlobalJobControllerImpl extends JobControllerImpl {
 
     @Override
     public void close() {
-        timer.cancel();
         jobTimeoutTaskMap.clear();
         for (Job job : jobs()) {
             job.terminate();
