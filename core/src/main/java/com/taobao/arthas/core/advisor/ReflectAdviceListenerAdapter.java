@@ -4,12 +4,15 @@ import com.taobao.arthas.core.command.express.ExpressException;
 import com.taobao.arthas.core.command.express.ExpressFactory;
 import com.taobao.arthas.core.shell.command.CommandProcess;
 import com.taobao.arthas.core.util.ArthasCheckUtils;
+import com.taobao.arthas.core.util.ClassUtils;
 import com.taobao.arthas.core.util.Constants;
 import com.taobao.arthas.core.util.StringUtils;
 import org.objectweb.asm.Type;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * 反射通知适配器<br/>
@@ -17,6 +20,10 @@ import java.lang.reflect.Method;
  * 当然性能开销要比普通监听器高许多
  */
 public abstract class ReflectAdviceListenerAdapter implements AdviceListener {
+
+    //转换增强字节码回调方法中的非标准类名
+    //normalizeClassName:  a/b/c/MyClass -> a.b.c.MyClass
+    protected Map<String, String> normalizeClassNameMap = new ConcurrentHashMap<String, String>();
 
     @Override
     public void create() {
@@ -35,7 +42,7 @@ public abstract class ReflectAdviceListenerAdapter implements AdviceListener {
     }
 
     private Class<?> toClass(ClassLoader loader, String className) throws ClassNotFoundException {
-        return Class.forName(StringUtils.normalizeClassName(className), true, toClassLoader(loader));
+        return Class.forName(ClassUtils.normalizeClassName(className, normalizeClassNameMap), true, toClassLoader(loader));
     }
 
     private ArthasMethod toMethod(ClassLoader loader, Class<?> clazz, String methodName, String methodDesc)

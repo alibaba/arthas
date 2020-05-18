@@ -6,10 +6,7 @@ import static com.taobao.text.ui.Element.label;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 import java.security.CodeSource;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 import com.taobao.arthas.core.command.model.ClassLoaderVO;
 import com.taobao.arthas.core.command.model.ClassVO;
@@ -282,5 +279,26 @@ public class ClassUtils {
                     TypeRenderUtils.drawClassLoader(c));
         }
         return table;
+    }
+
+    /**
+     * 转换增强字节码回调方法中的非标准类名
+     * normalizeClassName:  a/b/c/MyClass -> a.b.c.MyClass
+     * @param className  maybe path class name
+     * @param normalizeClassNameMap
+     */
+    public static String normalizeClassName(String className, Map<String, String> normalizeClassNameMap) {
+        //如果类名包含'/'，需要转换为标准类名
+        String normalClassName = null;
+        if (className.indexOf('/') != -1) {
+            normalClassName = normalizeClassNameMap.get(className);
+            if (normalClassName == null) {
+                normalClassName = StringUtils.normalizeClassName(className);
+                normalizeClassNameMap.put(className, normalClassName);
+            }
+        } else {
+            normalClassName = className;
+        }
+        return normalClassName;
     }
 }

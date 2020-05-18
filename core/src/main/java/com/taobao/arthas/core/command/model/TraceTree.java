@@ -1,9 +1,10 @@
 package com.taobao.arthas.core.command.model;
 
 
-import com.taobao.arthas.core.util.StringUtils;
+import com.taobao.arthas.core.util.ClassUtils;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author gongdewei 2020/4/28
@@ -12,10 +13,12 @@ public class TraceTree {
     private TraceNode root;
 
     private TraceNode current;
+    private Map<String, String> normalizeClassNameMap;
 
-    public TraceTree(ThreadNode root) {
+    public TraceTree(ThreadNode root, Map<String, String> normalizeClassNameMap) {
         this.root = root;
         this.current = root;
+        this.normalizeClassNameMap = normalizeClassNameMap;
     }
 
     public void begin(String className, String methodName) {
@@ -42,7 +45,9 @@ public class TraceTree {
     private TraceNode findChild(TraceNode node, String className, String methodName, int lineNumber) {
         List<TraceNode> childList = node.getChildren();
         if (childList != null) {
-            for (TraceNode child : childList) {
+            //less memory than foreach/iterator
+            for (int i = 0; i < childList.size(); i++) {
+                TraceNode child = childList.get(i);
                 if (matchNode(child, className, methodName, lineNumber)) {
                     return child;
                 }
@@ -101,14 +106,22 @@ public class TraceTree {
         return result;
     }
 
+    /**
+     * 转换标准类名，放在trace结束后统一转换，减少重复操作
+     * @param node
+     */
     public void normalizeClassName(TraceNode node) {
         if (node instanceof MethodNode) {
             MethodNode methodNode = (MethodNode) node;
-            methodNode.setClassName(StringUtils.normalizeClassName(methodNode.getClassName()));
+            String nodeClassName = methodNode.getClassName();
+            String normalizeClassName = ClassUtils.normalizeClassName(nodeClassName, normalizeClassNameMap);
+            methodNode.setClassName(normalizeClassName);
         }
         List<TraceNode> children = node.getChildren();
         if (children != null) {
-            for (TraceNode child : children) {
+            //less memory fragment than foreach
+            for (int i = 0; i < children.size(); i++) {
+                TraceNode child = children.get(i);
                 normalizeClassName(child);
             }
         }

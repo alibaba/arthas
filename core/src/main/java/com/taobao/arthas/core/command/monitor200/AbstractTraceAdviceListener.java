@@ -22,7 +22,7 @@ public class AbstractTraceAdviceListener extends ReflectAdviceListenerAdapter {
 
         @Override
         protected TraceEntity initialValue() {
-            return new TraceEntity();
+            return new TraceEntity(normalizeClassNameMap);
         }
     };
 

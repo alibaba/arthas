@@ -5,6 +5,8 @@ import com.taobao.arthas.core.command.model.TraceModel;
 import com.taobao.arthas.core.command.model.TraceTree;
 import com.taobao.arthas.core.util.ThreadUtil;
 
+import java.util.Map;
+
 /**
  * 用于在ThreadLocal中传递的实体
  * @author ralf0131 2017-01-05 14:05.
@@ -14,8 +16,8 @@ public class TraceEntity {
     protected TraceTree tree;
     protected int deep;
 
-    public TraceEntity() {
-        this.tree = createTraceTree();
+    public TraceEntity(Map<String, String> normalizeClassNameMap) {
+        this.tree = createTraceTree(normalizeClassNameMap);
         this.deep = 0;
     }
 
@@ -27,8 +29,8 @@ public class TraceEntity {
         this.deep = deep;
     }
 
-    private TraceTree createTraceTree() {
-        return new TraceTree(ThreadUtil.getThreadNode(Thread.currentThread()));
+    private TraceTree createTraceTree(Map<String, String> normalizeClassNameMap) {
+        return new TraceTree(ThreadUtil.getThreadNode(Thread.currentThread()), normalizeClassNameMap);
     }
 
     public ResultModel getModel() {
