@@ -71,7 +71,8 @@ public class SharingResultDistributorImpl implements SharingResultDistributor {
                     sharingResultConsumer.appendResult(result);
                     //判断是否有至少一个consumer是健康的
                     int healthCount = 0;
-                    for (ResultConsumer consumer : consumers) {
+                    for (int i = 0; i < consumers.size(); i++) {
+                        ResultConsumer consumer = consumers.get(i);
                         if(consumer.isHealthy()){
                             healthCount += 1;
                         }
@@ -118,7 +119,8 @@ public class SharingResultDistributorImpl implements SharingResultDistributor {
 
     @Override
     public ResultConsumer getConsumer(String consumerId) {
-        for (ResultConsumer consumer : consumers) {
+        for (int i = 0; i < consumers.size(); i++) {
+            ResultConsumer consumer = consumers.get(i);
             if (consumer.getConsumerId().equals(consumerId)) {
                 return consumer;
             }

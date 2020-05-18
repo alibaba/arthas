@@ -14,6 +14,7 @@ public class TraceTree {
 
     private TraceNode current;
     private Map<String, String> normalizeClassNameMap;
+    private int nodeCount = 0;
 
     public TraceTree(ThreadNode root, Map<String, String> normalizeClassNameMap) {
         this.root = root;
@@ -40,6 +41,7 @@ public class TraceTree {
         }
         child.begin();
         current = child;
+        nodeCount += 1;
     }
 
     private TraceNode findChild(TraceNode node, String className, String methodName, int lineNumber) {
@@ -96,15 +98,15 @@ public class TraceTree {
         this.end();
     }
 
-    private int getNodeId(String className, String methodName, int lineNumber) {
-        //from Arrays.hashCode(Object a[])
-        //memory optimizing: avoid create new object[]
-        int result = 1;
-        result = 31 * result + className.hashCode();
-        result = 31 * result + methodName.hashCode();
-        result = 31 * result + lineNumber;
-        return result;
-    }
+//    private int getNodeId(String className, String methodName, int lineNumber) {
+//        //from Arrays.hashCode(Object a[])
+//        //memory optimizing: avoid create new object[]
+//        int result = 1;
+//        result = 31 * result + className.hashCode();
+//        result = 31 * result + methodName.hashCode();
+//        result = 31 * result + lineNumber;
+//        return result;
+//    }
 
     /**
      * 转换标准类名，放在trace结束后统一转换，减少重复操作
@@ -135,4 +137,7 @@ public class TraceTree {
         return current;
     }
 
+    public int getNodeCount() {
+        return nodeCount;
+    }
 }
