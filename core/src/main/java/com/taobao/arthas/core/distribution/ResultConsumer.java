@@ -13,8 +13,9 @@ public interface ResultConsumer {
     /**
      * Append the phased result to queue
      * @param result a phased result of the command
+     * @return true means distribution success, return false means discard data
      */
-    void appendResult(ResultModel result);
+    boolean appendResult(ResultModel result);
 
     /**
      * Retrieves and removes a pack of results from the head
@@ -33,4 +34,10 @@ public interface ResultConsumer {
     String getConsumerId();
 
     void setConsumerId(String consumerId);
+
+    /**
+     * Retrieves the consumer's health status
+     * @return
+     */
+    boolean isHealthy();
 }

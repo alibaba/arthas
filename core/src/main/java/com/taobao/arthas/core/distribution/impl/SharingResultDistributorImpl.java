@@ -3,12 +3,14 @@ package com.taobao.arthas.core.distribution.impl;
 import com.alibaba.arthas.deps.org.slf4j.Logger;
 import com.alibaba.arthas.deps.org.slf4j.LoggerFactory;
 import com.taobao.arthas.core.command.model.InputStatusVO;
+import com.taobao.arthas.core.command.model.MessageModel;
 import com.taobao.arthas.core.command.model.ResultModel;
+import com.taobao.arthas.core.distribution.DistributorOptions;
 import com.taobao.arthas.core.distribution.ResultConsumer;
 import com.taobao.arthas.core.distribution.SharingResultDistributor;
 import com.taobao.arthas.core.shell.session.Session;
+import com.taobao.arthas.core.shell.system.Job;
 
-import java.util.Iterator;
 import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.ArrayBlockingQueue;
@@ -22,7 +24,7 @@ public class SharingResultDistributorImpl implements SharingResultDistributor {
     private static final Logger logger = LoggerFactory.getLogger(SharingResultDistributorImpl.class);
 
     private List<ResultConsumer> consumers = new CopyOnWriteArrayList<ResultConsumer>();
-    private BlockingQueue<ResultModel> resultQueue = new ArrayBlockingQueue<ResultModel>(500);
+    private BlockingQueue<ResultModel> pendingResultQueue = new ArrayBlockingQueue<ResultModel>(10);
     private final Session session;
     private Thread distributorThread;
     private volatile boolean running;
@@ -40,20 +42,44 @@ public class SharingResultDistributorImpl implements SharingResultDistributor {
     @Override
     public void appendResult(ResultModel result) {
         //要避免阻塞影响业务线程执行
-        while (!resultQueue.offer(result)) {
-            ResultModel discardResult = resultQueue.poll();
-            //logger.warn("result queue is full: {}, discard early result: {}", resultQueue.size(), JSON.toJSONString(discardResult));
+        try {
+            if (!pendingResultQueue.offer(result, 100, TimeUnit.MILLISECONDS)) {
+                ResultModel discardResult = pendingResultQueue.poll();
+                // 正常情况走不到这里，除非distribute 循环堵塞或异常终止
+                // 输出队列满，终止当前执行的命令
+                interruptJob("result queue is full: "+ pendingResultQueue.size());
+            }
+        } catch (InterruptedException e) {
+            //ignore
+        }
+    }
+
+    private void interruptJob(String message) {
+        Job job = session.getForegroundJob();
+        if (job != null) {
+            logger.warn(message+", current job was interrupted.", job.id());
+            job.interrupt();
+            pendingResultQueue.offer(new MessageModel(message+", current job was interrupted."));
         }
     }
 
     private void distribute() {
         while (running) {
             try {
-                ResultModel result = resultQueue.poll(100, TimeUnit.MILLISECONDS);
+                ResultModel result = pendingResultQueue.poll(100, TimeUnit.MILLISECONDS);
                 if (result != null) {
                     sharingResultConsumer.appendResult(result);
+                    //判断是否有至少一个consumer是健康的
+                    int healthCount = 0;
                     for (ResultConsumer consumer : consumers) {
+                        if(consumer.isHealthy()){
+                            healthCount += 1;
+                        }
                         consumer.appendResult(result);
+                    }
+                    //所有consumer都不是健康状态，终止当前执行的命令
+                    if (healthCount == 0) {
+                        interruptJob("all consumers are unhealthy");
                     }
                 }
             } catch (Throwable e) {
@@ -108,18 +134,18 @@ public class SharingResultDistributorImpl implements SharingResultDistributor {
     }
 
     private class SharingResultConsumerImpl implements ResultConsumer {
-        private BlockingQueue<ResultModel> resultQueue = new ArrayBlockingQueue<ResultModel>(500);
+        private BlockingQueue<ResultModel> resultQueue = new ArrayBlockingQueue<ResultModel>(DistributorOptions.resultQueueSize);
         private ReentrantLock queueLock = new ReentrantLock();
         private InputStatusVO lastInputStatus;
 
         @Override
-        public void appendResult(ResultModel result) {
+        public boolean appendResult(ResultModel result) {
             queueLock.lock();
             try {
                 //输入状态不入历史指令队列，复制时在最后发送
                 if (result instanceof InputStatusVO) {
                     lastInputStatus = (InputStatusVO) result;
-                    return;
+                    return true;
                 }
                 while (!resultQueue.offer(result)) {
                     ResultModel discardResult = resultQueue.poll();
@@ -129,6 +155,7 @@ public class SharingResultDistributorImpl implements SharingResultDistributor {
                     queueLock.unlock();
                 }
             }
+            return true;
         }
 
         public void copyTo(ResultConsumer consumer) {
@@ -181,6 +208,11 @@ public class SharingResultDistributorImpl implements SharingResultDistributor {
 
         @Override
         public void setConsumerId(String consumerId) {
+        }
+
+        @Override
+        public boolean isHealthy() {
+            return true;
         }
     }
 }

@@ -4,7 +4,9 @@ import com.alibaba.arthas.deps.org.slf4j.Logger;
 import com.alibaba.arthas.deps.org.slf4j.LoggerFactory;
 import com.alibaba.fastjson.JSON;
 import com.taobao.arthas.core.command.model.ResultModel;
+import com.taobao.arthas.core.distribution.DistributorOptions;
 import com.taobao.arthas.core.distribution.ResultConsumer;
+import com.taobao.arthas.core.distribution.ResultConsumerHelper;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -19,42 +21,51 @@ import java.util.concurrent.locks.ReentrantLock;
  */
 public class ResultConsumerImpl implements ResultConsumer {
     private static final Logger logger = LoggerFactory.getLogger(ResultConsumerImpl.class);
-    private BlockingQueue<ResultModel> resultQueue = new ArrayBlockingQueue<ResultModel>(500);
-    private long lastAccessTime;
+    private BlockingQueue<ResultModel> resultQueue;
+    private volatile long lastAccessTime;
     private volatile boolean polling;
     private ReentrantLock lock = new ReentrantLock();
-    private int resultSizeLimit = 100;
-    private long pollTimeLimit = 10 * 1000;
+    private int resultBatchSizeLimit = 20;
+    private int resultQueueSize = DistributorOptions.resultQueueSize;
+    private long pollTimeLimit = 2 * 1000;
     private String consumerId;
     private boolean closed;
+    private long sendingItemCount;
 
     public ResultConsumerImpl() {
         lastAccessTime = System.currentTimeMillis();
+        resultQueue = new ArrayBlockingQueue<ResultModel>(resultQueueSize);
     }
 
     @Override
-    public void appendResult(ResultModel result) {
+    public boolean appendResult(ResultModel result) {
+        //可能某些Consumer已经断开，不会再读取，这里不能堵塞！
+        boolean discard = false;
         while (!resultQueue.offer(result)) {
             ResultModel discardResult = resultQueue.poll();
+            discard = true;
         }
+        return !discard;
     }
 
     @Override
     public List<ResultModel> pollResults() {
         try {
-            long accessTime = System.currentTimeMillis();
+            lastAccessTime = System.currentTimeMillis();
+            long accessTime = lastAccessTime;
             if (lock.tryLock(500, TimeUnit.MILLISECONDS)) {
                 polling = true;
+                sendingItemCount = 0;
                 long firstResultTime = 0;
                 // sending delay: time elapsed after firstResultTime
                 long sendingDelay = 0;
                 // waiting time: time elapsed after access
                 long waitingTime = 0;
-                List<ResultModel> sendingResults = new ArrayList<ResultModel>(resultSizeLimit);
+                List<ResultModel> sendingResults = new ArrayList<ResultModel>(resultBatchSizeLimit);
 
                 while (!closed
-                        &&sendingResults.size() < resultSizeLimit
-                        && sendingDelay < 200
+                        &&sendingResults.size() < resultBatchSizeLimit
+                        && sendingDelay < 100
                         && waitingTime < pollTimeLimit) {
                     ResultModel aResult = resultQueue.poll(100, TimeUnit.MILLISECONDS);
                     if (aResult != null) {
@@ -62,6 +73,10 @@ public class ResultConsumerImpl implements ResultConsumer {
                         //是否为第一次获取到数据
                         if (firstResultTime == 0) {
                             firstResultTime = System.currentTimeMillis();
+                        }
+                        //判断是否需要立即发送出去
+                        if (shouldFlush(sendingResults, aResult)) {
+                            break;
                         }
                     } else {
                         if (firstResultTime > 0) {
@@ -74,19 +89,41 @@ public class ResultConsumerImpl implements ResultConsumer {
                 }
 
                 //resultQueue.drainTo(sendingResults, resultSizeLimit-sendingResults.size());
-                logger.info("pollResults: {}, results: {}", sendingResults.size(), JSON.toJSONString(sendingResults));
+                if(logger.isDebugEnabled()) {
+                    logger.debug("pollResults: {}, results: {}", sendingResults.size(), JSON.toJSONString(sendingResults));
+                }
                 return sendingResults;
             }
         } catch (InterruptedException e) {
             //e.printStackTrace();
         } finally {
             if (lock.isHeldByCurrentThread()) {
-                polling = false;
                 lastAccessTime = System.currentTimeMillis();
+                polling = false;
                 lock.unlock();
             }
         }
         return Collections.emptyList();
+    }
+
+    /**
+     * 估算对象数量及大小，判断是否需要立即发送出去
+     * @param sendingResults
+     * @param last
+     * @return
+     */
+    private boolean shouldFlush(List<ResultModel> sendingResults, ResultModel last) {
+        //TODO 引入一个估算模型，每个model自统计对象数量
+        sendingItemCount += ResultConsumerHelper.getItemCount(last);
+        return sendingItemCount >= 100;
+    }
+
+    @Override
+    public boolean isHealthy() {
+
+        return isPolling()
+                || resultQueue.size() < resultQueueSize
+                || System.currentTimeMillis() - lastAccessTime < 1000;
     }
 
     @Override
@@ -109,12 +146,12 @@ public class ResultConsumerImpl implements ResultConsumer {
         return polling;
     }
 
-    public int getResultSizeLimit() {
-        return resultSizeLimit;
+    public int getResultBatchSizeLimit() {
+        return resultBatchSizeLimit;
     }
 
-    public void setResultSizeLimit(int resultSizeLimit) {
-        this.resultSizeLimit = resultSizeLimit;
+    public void setResultBatchSizeLimit(int resultBatchSizeLimit) {
+        this.resultBatchSizeLimit = resultBatchSizeLimit;
     }
 
     @Override
@@ -126,4 +163,5 @@ public class ResultConsumerImpl implements ResultConsumer {
     public void setConsumerId(String consumerId) {
         this.consumerId = consumerId;
     }
+
 }
