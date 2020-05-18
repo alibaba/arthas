@@ -39,6 +39,9 @@ abstract public class ThreadUtil {
     }
 
     private static ThreadMXBean threadMXBean = ManagementFactory.getThreadMXBean();
+    private static Field threadLocalsField;
+    private static Field threadLocalsTableFiled;
+    private static Field threadLocalEntryValueField;
 
     public static ThreadGroup getRoot() {
         ThreadGroup group = Thread.currentThread().getThreadGroup();
@@ -524,29 +527,40 @@ abstract public class ThreadUtil {
         if (null == currentThread.getContextClassLoader()) {
             return "null";
         } else {
-            return currentThread.getContextClassLoader().getClass().getName() +
-                    "@" + Integer.toHexString(currentThread.getContextClassLoader().hashCode());
+            String classloaderClassName = currentThread.getContextClassLoader().getClass().getName();
+            StringBuilder sb = new StringBuilder(classloaderClassName.length()+10);
+            sb.append(classloaderClassName)
+                    .append("@")
+                    .append(Integer.toHexString(currentThread.getContextClassLoader().hashCode()));
+            return  sb.toString();
         }
     }
 
     private static void getEagleeyeTraceInfo(Thread currentThread, StackModel stackModel) {
         try {
             // access to Thread#threadlocals field
-            Field threadLocalsField = Thread.class.getDeclaredField("threadLocals");
+            if (threadLocalsField == null) {
+                threadLocalsField = Thread.class.getDeclaredField("threadLocals");
+            }
             threadLocalsField.setAccessible(true);
             Object threadLocalMap = threadLocalsField.get(currentThread);
+
             // access to ThreadLocal$ThreadLocalMap#table filed
-            Field tableFiled = threadLocalMap.getClass().getDeclaredField("table");
-            tableFiled.setAccessible(true);
-            Object[] tableEntries = (Object[])tableFiled.get(threadLocalMap);
+            if (threadLocalsTableFiled == null) {
+                threadLocalsTableFiled = threadLocalMap.getClass().getDeclaredField("table");
+            }
+            threadLocalsTableFiled.setAccessible(true);
+            Object[] tableEntries = (Object[]) threadLocalsTableFiled.get(threadLocalMap);
             for (Object entry: tableEntries) {
                 if (entry == null) {
                     continue;
                 }
                 // access to ThreadLocal$ThreadLocalMap$Entry#value field
-                Field valueField = entry.getClass().getDeclaredField("value");
-                valueField.setAccessible(true);
-                Object threadLocalValue = valueField.get(entry);
+                if (threadLocalEntryValueField == null) {
+                    threadLocalEntryValueField = entry.getClass().getDeclaredField("value");
+                }
+                threadLocalEntryValueField.setAccessible(true);
+                Object threadLocalValue = threadLocalEntryValueField.get(entry);
                 if (threadLocalValue != null &&
                         "com.taobao.eagleeye.RpcContext_inner".equals(threadLocalValue.getClass().getName())) {
                     // finally we got the chance to access trace id
