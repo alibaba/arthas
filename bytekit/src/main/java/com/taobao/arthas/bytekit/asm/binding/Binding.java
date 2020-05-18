@@ -323,7 +323,7 @@ public abstract class Binding {
     public static class MethodInfoBindingParser implements BindingParser {
         @Override
         public Binding parse(Annotation annotation) {
-            return new MethodDeclarationBinding();
+            return new MethodInfoBinding();
         }
     }
 

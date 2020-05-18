@@ -4,7 +4,6 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.TimeUnit;
 
@@ -23,14 +22,8 @@ import com.taobao.arthas.core.shell.system.Job;
  * @author gehui 2017年7月31日 上午11:55:41
  */
 public class GlobalJobControllerImpl extends JobControllerImpl {
-
-    private Timer timer;
     private Map<Integer, TimerTask> jobTimeoutTaskMap = new HashMap<Integer, TimerTask>();
     private static final Logger logger = LoggerFactory.getLogger(GlobalJobControllerImpl.class);
-
-    public GlobalJobControllerImpl() {
-        timer = ArthasBootstrap.getInstance().getTimer();
-    }
 
     @Override
     public void close(final Handler<Void> completionHandler) {
@@ -70,7 +63,7 @@ public class GlobalJobControllerImpl extends JobControllerImpl {
             }
         };
         Date timeoutDate = new Date(System.currentTimeMillis() + (getJobTimeoutInSecond() * 1000));
-        timer.schedule(jobTimeoutTask, timeoutDate);
+        ArthasBootstrap.getInstance().getTimer().schedule(jobTimeoutTask, timeoutDate);
         jobTimeoutTaskMap.put(job.id(), jobTimeoutTask);
         job.setTimeoutDate(timeoutDate);
 
