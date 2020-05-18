@@ -304,7 +304,7 @@ public class ClassLoaderCommand extends AnnotatedCommand {
         }
 
         //convert to vo
-        int sizeLimit = 1024;
+        int sizeLimit = 512;
         processClassSet(process, ClassUtils.createClassLoaderVO(null), bootstrapClassSet, sizeLimit);
         affect.rCnt(bootstrapClassSet.size());
 
