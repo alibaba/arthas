@@ -3,13 +3,11 @@ package com.taobao.arthas.core.shell.term.impl.http.api;
 import com.alibaba.arthas.deps.org.slf4j.Logger;
 import com.alibaba.arthas.deps.org.slf4j.LoggerFactory;
 import com.alibaba.fastjson.JSON;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.taobao.arthas.common.PidUtils;
 import com.taobao.arthas.core.command.model.*;
 import com.taobao.arthas.core.distribution.PackingResultDistributor;
 import com.taobao.arthas.core.distribution.ResultConsumer;
 import com.taobao.arthas.core.distribution.ResultDistributor;
-import com.taobao.arthas.core.distribution.impl.CompositeResultDistributorImpl;
 import com.taobao.arthas.core.distribution.impl.PackingResultDistributorImpl;
 import com.taobao.arthas.core.distribution.impl.ResultConsumerImpl;
 import com.taobao.arthas.core.server.ArthasBootstrap;
@@ -29,15 +27,21 @@ import com.taobao.arthas.core.shell.term.SignalHandler;
 import com.taobao.arthas.core.shell.term.Term;
 import com.taobao.arthas.core.util.ArthasBanner;
 import com.taobao.arthas.core.util.DateUtils;
+import com.taobao.arthas.core.util.JsonUtils;
 import com.taobao.arthas.core.util.StringUtils;
 import io.netty.buffer.ByteBuf;
+import io.netty.buffer.ByteBufOutputStream;
+import io.netty.buffer.Unpooled;
 import io.netty.handler.codec.http.*;
 import io.netty.util.CharsetUtil;
 import io.termd.core.function.Function;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
+import java.util.concurrent.ArrayBlockingQueue;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
 
@@ -57,6 +61,12 @@ public class HttpApiHandler {
     private final JobControllerImpl jobController;
     private final HistoryManager historyManager;
 
+    private int jsonBufferSize = 1024 * 256;
+    private int poolSize = 8;
+    private ArrayBlockingQueue<ByteBuf> byteBufPool = new ArrayBlockingQueue<ByteBuf>(poolSize);
+    private ArrayBlockingQueue<char[]> charsBufPool = new ArrayBlockingQueue<char[]>(poolSize);
+    private ArrayBlockingQueue<byte[]> bytesPool = new ArrayBlockingQueue<byte[]>(poolSize);
+
     public static HttpApiHandler getInstance() {
         if (instance == null) {
             synchronized (HttpApiHandler.class) {
@@ -71,11 +81,17 @@ public class HttpApiHandler {
         commandManager = sessionManager.getCommandManager();
         jobController = sessionManager.getJobController();
         historyManager = HistoryManagerImpl.getInstance();
+
+        //init buf pool
+        JsonUtils.setSerializeWriterBufferThreshold(jsonBufferSize);
+        for (int i = 0; i < poolSize; i++) {
+            byteBufPool.offer(Unpooled.buffer(jsonBufferSize));
+            charsBufPool.offer(new char[jsonBufferSize]);
+            bytesPool.offer(new byte[jsonBufferSize]);
+        }
     }
 
     public HttpResponse handle(FullHttpRequest request) throws Exception {
-        DefaultFullHttpResponse response = new DefaultFullHttpResponse(request.protocolVersion(),
-                HttpResponseStatus.OK);
 
         ApiResponse result;
         String requestBody = null;
@@ -97,12 +113,79 @@ public class HttpApiHandler {
         if (result == null) {
             result = createResponse(ApiState.FAILED, "The request was not processed");
         }
-
         result.setRequestId(requestId);
-        String jsonResult = JSON.toJSONString(result);
-        response.headers().set(HttpHeaderNames.CONTENT_TYPE, "application/json; charset=utf-8");
-        response.content().writeBytes(jsonResult.getBytes("UTF-8"));
-        return response;
+
+
+        //http response content
+        ByteBuf content = null;
+        //fastjson buf
+        char[] charsBuf = null;
+        byte[] bytesBuf = null;
+
+        try {
+            //apply response content buf first
+            content = byteBufPool.poll(2000, TimeUnit.MILLISECONDS);
+            if (content == null) {
+                throw new ApiException("get response content buf failure");
+            }
+
+            //apply fastjson buf from pool
+            charsBuf = charsBufPool.poll();
+            bytesBuf = bytesPool.poll();
+            if (charsBuf == null || bytesBuf == null) {
+                throw new ApiException("get json buf failure");
+            }
+            JsonUtils.setSerializeWriterBufThreadLocal(charsBuf, bytesBuf);
+
+            //create http response
+            DefaultFullHttpResponse response = new DefaultFullHttpResponse(request.protocolVersion(),
+                    HttpResponseStatus.OK, content.retain());
+            response.headers().set(HttpHeaderNames.CONTENT_TYPE, "application/json; charset=utf-8");
+            writeResult(response, result);
+            return response;
+        } catch (Exception e) {
+            //response is discarded
+            if (content != null) {
+                content.release();
+                byteBufPool.offer(content);
+            }
+            throw e;
+        } finally {
+            //give back json buf to pool
+            JsonUtils.setSerializeWriterBufThreadLocal(null, null);
+            if (charsBuf != null) {
+                charsBufPool.offer(charsBuf);
+            }
+            if (bytesBuf != null) {
+                bytesPool.offer(bytesBuf);
+            }
+        }
+    }
+
+    public void onCompleted(DefaultFullHttpResponse httpResponse) {
+        ByteBuf content = httpResponse.content();
+        content.clear();
+        if (content.capacity() == jsonBufferSize) {
+            if (!byteBufPool.offer(content)) {
+                content.release();
+            }
+        } else {
+            //replace content ByteBuf
+            content.release();
+            if (byteBufPool.remainingCapacity() > 0) {
+                byteBufPool.offer(Unpooled.buffer(jsonBufferSize));
+            }
+        }
+    }
+
+    private void writeResult(DefaultFullHttpResponse response, Object result) throws IOException {
+        ByteBufOutputStream out = new ByteBufOutputStream(response.content());
+        try {
+            JSON.writeJSONString(out, result);
+        } catch (IOException e) {
+            logger.error("write json to response failed", e);
+            throw e;
+        }
     }
 
     private ApiRequest parseRequest(String requestBody) throws ApiException {
@@ -110,9 +193,9 @@ public class HttpApiHandler {
             throw new ApiException("parse request failed: request body is empty");
         }
         try {
-            //Object jsonRequest = JSON.parse(requestBody);
-            ObjectMapper objectMapper = new ObjectMapper();
-            return objectMapper.readValue(requestBody, ApiRequest.class);
+            //ObjectMapper objectMapper = new ObjectMapper();
+            //return objectMapper.readValue(requestBody, ApiRequest.class);
+            return JSON.parseObject(requestBody, ApiRequest.class);
         } catch (Exception e) {
             throw new ApiException("parse request failed: " + e.getMessage(), e);
         }
@@ -223,6 +306,7 @@ public class HttpApiHandler {
 
     /**
      * Update session input status for all consumer
+     *
      * @param session
      * @param inputStatus
      */
@@ -282,7 +366,7 @@ public class HttpApiHandler {
         response.setSessionId(session.getSessionId())
                 .setBody(body);
 
-        if(!session.tryLock()){
+        if (!session.tryLock()) {
             response.setState(ApiState.REFUSED)
                     .setMessage("Another command is executing.");
             return response;
@@ -293,7 +377,7 @@ public class HttpApiHandler {
         Job job = null;
         try {
             Job foregroundJob = session.getForegroundJob();
-            if (foregroundJob != null){
+            if (foregroundJob != null) {
                 response.setState(ApiState.REFUSED)
                         .setMessage("Another job is running.");
                 logger.info("Another job is running, jobId: {}", foregroundJob.id());
@@ -302,8 +386,8 @@ public class HttpApiHandler {
 
             //distribute result message both to origin session channel and request channel by CompositeResultDistributor
             packingResultDistributor = new PackingResultDistributorImpl(session);
-            ResultDistributor resultDistributor = new CompositeResultDistributorImpl(packingResultDistributor, session.getResultDistributor());
-            job = this.createJob(commandLine, session, resultDistributor);
+            //ResultDistributor resultDistributor = new CompositeResultDistributorImpl(packingResultDistributor, session.getResultDistributor());
+            job = this.createJob(commandLine, session, packingResultDistributor);
             session.setForegroundJob(job);
             updateSessionInputStatus(session, InputStatus.ALLOW_INTERRUPT);
 
@@ -364,7 +448,7 @@ public class HttpApiHandler {
         response.setSessionId(session.getSessionId())
                 .setBody(body);
 
-        if(!session.tryLock()){
+        if (!session.tryLock()) {
             response.setState(ApiState.REFUSED)
                     .setMessage("Another command is executing.");
             return response;
@@ -373,7 +457,7 @@ public class HttpApiHandler {
         try {
 
             Job foregroundJob = session.getForegroundJob();
-            if (foregroundJob != null){
+            if (foregroundJob != null) {
                 response.setState(ApiState.REFUSED)
                         .setMessage("Another job is running.");
                 logger.info("Another job is running, jobId: {}", foregroundJob.id());
@@ -403,7 +487,7 @@ public class HttpApiHandler {
             CommandRequestModel commandRequestModel = new CommandRequestModel(commandLine, response.getState(), response.getMessage());
             session.getResultDistributor().appendResult(commandRequestModel);
             return response;
-        }finally {
+        } finally {
             if (session.getLock() == lock) {
                 session.unLock();
             }
@@ -439,7 +523,7 @@ public class HttpApiHandler {
         }
         ResultConsumer consumer = session.getResultDistributor().getConsumer(consumerId);
         if (consumer == null) {
-            throw new ApiException("consumer not found: "+consumerId);
+            throw new ApiException("consumer not found: " + consumerId);
         }
 
         List<ResultModel> results = consumer.pollResults();
@@ -510,7 +594,7 @@ public class HttpApiHandler {
 
         @Override
         public void onBackground(Job job) {
-            if (session.getForegroundJob() == job){
+            if (session.getForegroundJob() == job) {
                 session.setForegroundJob(null);
                 updateSessionInputStatus(session, InputStatus.ALLOW_INPUT);
             }
@@ -518,7 +602,7 @@ public class HttpApiHandler {
 
         @Override
         public void onTerminated(Job job) {
-            if (session.getForegroundJob() == job){
+            if (session.getForegroundJob() == job) {
                 session.setForegroundJob(null);
                 updateSessionInputStatus(session, InputStatus.ALLOW_INPUT);
             }
@@ -526,7 +610,7 @@ public class HttpApiHandler {
 
         @Override
         public void onSuspend(Job job) {
-            if (session.getForegroundJob() == job){
+            if (session.getForegroundJob() == job) {
                 session.setForegroundJob(null);
                 updateSessionInputStatus(session, InputStatus.ALLOW_INPUT);
             }
