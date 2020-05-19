@@ -80,7 +80,7 @@ public class AtEnterTest {
     @Test
     public void testEnter() throws Exception {
         TestHelper helper = TestHelper.builder().interceptorClass(EnterInterceptor.class).methodMatcher("hello")
-                .redefine(true);
+                .reTransform(true);
         byte[] bytes = helper.process(Sample.class);
 
         new Sample().hello("abc", false);

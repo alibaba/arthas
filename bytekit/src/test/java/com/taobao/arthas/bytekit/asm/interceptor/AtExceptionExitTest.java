@@ -67,7 +67,7 @@ public class AtExceptionExitTest {
     public void testExecptionExitException() throws Exception {
 
         TestHelper helper = TestHelper.builder().interceptorClass(ExceptionExitInterceptor.class).methodMatcher("hello")
-                .redefine(true);
+                .reTransform(true);
         byte[] bytes = helper.process(Sample.class);
 
         System.err.println(Decompiler.decompile(bytes));

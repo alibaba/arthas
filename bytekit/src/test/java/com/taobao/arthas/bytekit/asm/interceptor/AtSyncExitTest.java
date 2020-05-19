@@ -75,7 +75,7 @@ public class AtSyncExitTest {
     @Test
     public void test() throws Exception {
         TestHelper helper = TestHelper.builder().interceptorClass(TestInterceptor.class).methodMatcher("*")
-                .redefine(true);
+                .reTransform(true);
         byte[] bytes = helper.process(Sample.class);
 
         new Sample().testLine(100);
