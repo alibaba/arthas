@@ -8,6 +8,7 @@ import com.taobao.arthas.core.shell.command.AnnotatedCommand;
 import com.taobao.arthas.core.shell.command.CommandProcess;
 import com.taobao.arthas.core.shell.handlers.Handler;
 import com.taobao.arthas.core.util.ClassUtils;
+import com.taobao.arthas.core.util.ResultUtils;
 import com.taobao.arthas.core.util.affect.RowAffect;
 import com.taobao.middleware.cli.annotations.Description;
 import com.taobao.middleware.cli.annotations.Name;
@@ -304,8 +305,8 @@ public class ClassLoaderCommand extends AnnotatedCommand {
         }
 
         //convert to vo
-        int sizeLimit = 512;
-        processClassSet(process, ClassUtils.createClassLoaderVO(null), bootstrapClassSet, sizeLimit);
+        int pageSize = 256;
+        processClassSet(process, ClassUtils.createClassLoaderVO(null), bootstrapClassSet, pageSize);
         affect.rCnt(bootstrapClassSet.size());
 
         for (Entry<ClassLoader, SortedSet<Class>> entry : classLoaderClassMap.entrySet()) {
@@ -314,29 +315,20 @@ public class ClassLoaderCommand extends AnnotatedCommand {
             }
             ClassLoader classLoader = entry.getKey();
             SortedSet<Class> classSet = entry.getValue();
-            processClassSet(process, ClassUtils.createClassLoaderVO(classLoader), classSet, sizeLimit);
+            processClassSet(process, ClassUtils.createClassLoaderVO(classLoader), classSet, pageSize);
             affect.rCnt(classSet.size());
         }
     }
 
-    private void processClassSet(CommandProcess process, ClassLoaderVO classLoaderVO, Collection<Class> classes, int sizeLimit) {
-        List<String> classNames = new ArrayList<String>(512);
-        int segment = 0;
-        for (Class aClass : classes) {
-            classNames.add(aClass.getName());
-            //slice segment
-            if(classNames.size() >= sizeLimit) {
-                if (checkInterrupted(process)) {
-                    return;
-                }
-                process.appendResult(new ClassLoaderModel().setClassSet(new ClassSetVO(classLoaderVO, classNames, segment++)));
-                classNames = new ArrayList<String>(512);
+    private void processClassSet(final CommandProcess process, final ClassLoaderVO classLoaderVO, Collection<Class> classes, int pageSize) {
+
+        ResultUtils.processClassNames(classes, pageSize, new ResultUtils.PaginationHandler<List<String>>() {
+            @Override
+            public boolean handle(List<String> classNames, int segment) {
+                process.appendResult(new ClassLoaderModel().setClassSet(new ClassSetVO(classLoaderVO, classNames, segment)));
+                return !checkInterrupted(process);
             }
-        }
-        //last segment
-        if (classNames.size() > 0) {
-            process.appendResult(new ClassLoaderModel().setClassSet(new ClassSetVO(classLoaderVO, classNames, segment++)));
-        }
+        });
     }
 
     private static List<String> getClassLoaderUrls(ClassLoader classLoader) {
