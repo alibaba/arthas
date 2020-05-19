@@ -23,6 +23,7 @@ import java.util.WeakHashMap;
 
 import com.alibaba.arthas.deps.org.objectweb.asm.Opcodes;
 import com.alibaba.arthas.deps.org.objectweb.asm.Type;
+import com.alibaba.arthas.deps.org.objectweb.asm.tree.AbstractInsnNode;
 import com.alibaba.arthas.deps.org.objectweb.asm.tree.ClassNode;
 import com.alibaba.arthas.deps.org.objectweb.asm.tree.MethodInsnNode;
 import com.alibaba.arthas.deps.org.objectweb.asm.tree.MethodNode;
@@ -44,10 +45,9 @@ import com.taobao.arthas.bytekit.asm.location.filter.GroupLocationFilter;
 import com.taobao.arthas.bytekit.asm.location.filter.InvokeCheckLocationFilter;
 import com.taobao.arthas.bytekit.asm.location.filter.InvokeContainLocationFilter;
 import com.taobao.arthas.bytekit.asm.location.filter.LocationFilter;
+import com.taobao.arthas.bytekit.utils.AsmOpUtils;
 import com.taobao.arthas.bytekit.utils.AsmUtils;
 import com.taobao.arthas.core.GlobalOptions;
-import com.taobao.arthas.core.bytecode.AdviceListenerManager;
-import com.taobao.arthas.core.bytecode.SpyImpl;
 import com.taobao.arthas.core.server.ArthasBootstrap;
 import com.taobao.arthas.core.util.ArthasCheckUtils;
 import com.taobao.arthas.core.util.FileUtils;
@@ -248,25 +248,47 @@ public class Enhancer implements ClassFileTransformer {
             groupLocationFilter.addFilter(invokeExceptionFilter);
 
             for (MethodNode methodNode : matchedMethods) {
-                MethodProcessor methodProcessor = new MethodProcessor(classNode, methodNode, groupLocationFilter);
-                for (InterceptorProcessor interceptor : interceptorProcessors) {
-                    try {
-                        List<Location> locations = interceptor.process(methodProcessor);
-                        for (Location location : locations) {
-                            if (location instanceof MethodInsnNodeWare) {
-                                MethodInsnNodeWare methodInsnNodeWare = (MethodInsnNodeWare) location;
-                                MethodInsnNode methodInsnNode = methodInsnNodeWare.methodInsnNode();
-
-                                AdviceListenerManager.registerTraceAdviceListener(inClassLoader, className,
-                                        methodInsnNode.owner, methodInsnNode.name, methodInsnNode.desc, listener);
+                // 先查找是否有 atBeforeInvoke 函数，如果有，则说明已经有trace了，则直接不再尝试增强，直接插入 listener
+                if(AsmUtils.containsMethodInsnNode(methodNode, Type.getInternalName(SpyAPI.class), "atBeforeInvoke")) {
+                    for (AbstractInsnNode insnNode = methodNode.instructions.getFirst(); insnNode != null; insnNode = insnNode
+                            .getNext()) {
+                        if (insnNode instanceof MethodInsnNode) {
+                            final MethodInsnNode methodInsnNode = (MethodInsnNode) insnNode;
+                            if(this.skipJDKTrace) {
+                                if(methodInsnNode.owner.startsWith("java/")) {
+                                    continue;
+                                }
                             }
+                            // 原始类型的box类型相关的都跳过
+                            if(AsmOpUtils.isBoxType(Type.getObjectType(methodInsnNode.owner))) {
+                                continue;
+                            }
+                            AdviceListenerManager.registerTraceAdviceListener(inClassLoader, className,
+                                    methodInsnNode.owner, methodInsnNode.name, methodInsnNode.desc, listener);
                         }
+                    }
+                }else {
+                    MethodProcessor methodProcessor = new MethodProcessor(classNode, methodNode, groupLocationFilter);
+                    for (InterceptorProcessor interceptor : interceptorProcessors) {
+                        try {
+                            List<Location> locations = interceptor.process(methodProcessor);
+                            for (Location location : locations) {
+                                if (location instanceof MethodInsnNodeWare) {
+                                    MethodInsnNodeWare methodInsnNodeWare = (MethodInsnNodeWare) location;
+                                    MethodInsnNode methodInsnNode = methodInsnNodeWare.methodInsnNode();
 
-                    } catch (Throwable e) {
-                        e.printStackTrace();
+                                    AdviceListenerManager.registerTraceAdviceListener(inClassLoader, className,
+                                            methodInsnNode.owner, methodInsnNode.name, methodInsnNode.desc, listener);
+                                }
+                            }
+
+                        } catch (Throwable e) {
+                            logger.error("enhancer error, class: {}, method: {}, interceptor: {}", classNode.name, methodNode.name, interceptor.getClass().getName(), e);
+                        }
                     }
                 }
 
+                // enter/exist 总是要插入 listener
                 AdviceListenerManager.registerAdviceListener(inClassLoader, className, methodNode.name, methodNode.desc,
                         listener);
                 affect.mCnt(1);

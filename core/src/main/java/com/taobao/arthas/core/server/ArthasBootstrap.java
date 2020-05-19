@@ -27,6 +27,7 @@ import com.alibaba.arthas.tunnel.client.TunnelClient;
 import com.taobao.arthas.common.AnsiLog;
 import com.taobao.arthas.common.PidUtils;
 import com.taobao.arthas.core.advisor.AdviceWeaver;
+import com.taobao.arthas.core.advisor.TransformerManager;
 import com.taobao.arthas.core.command.BuiltinCommandPack;
 import com.taobao.arthas.core.config.BinderUtils;
 import com.taobao.arthas.core.config.Configure;
@@ -80,6 +81,8 @@ public class ArthasBootstrap {
 
     private Timer timer = new Timer("arthas-timer", true);
 
+    private TransformerManager transformerManager;
+
     private ArthasBootstrap(Instrumentation instrumentation, String args) throws Throwable {
         this.instrumentation = instrumentation;
 
@@ -114,6 +117,7 @@ public class ArthasBootstrap {
             }
         };
 
+        transformerManager = new TransformerManager(instrumentation);
         Runtime.getRuntime().addShutdownHook(shutdown);
     }
 
@@ -330,6 +334,7 @@ public class ArthasBootstrap {
             }
         }
         executorService.shutdownNow();
+        transformerManager.destroy();
         UserStatUtil.destroy();
         // clear the reference in Spy class.
         cleanUpSpyReference();
@@ -393,6 +398,14 @@ public class ArthasBootstrap {
 
     public Timer getTimer() {
         return this.timer;
+    }
+
+    public Instrumentation getInstrumentation() {
+        return this.instrumentation;
+    }
+
+    public TransformerManager getTransformerManager() {
+        return this.transformerManager;
     }
 
     private Logger logger() {
