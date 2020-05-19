@@ -2,6 +2,7 @@ package com.taobao.arthas.core.util;
 
 import java.lang.reflect.Modifier;
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 
 public abstract class StringUtils {
 
@@ -37,6 +38,7 @@ public abstract class StringUtils {
         }
     }
 
+    private static Map<String, String> arrayClassMap = new ConcurrentHashMap<String, String>();
     /**
      * 翻译类名称
      *
@@ -45,13 +47,19 @@ public abstract class StringUtils {
      */
     public static String classname(Class<?> clazz) {
         if (clazz.isArray()) {
-            StringBuilder sb = new StringBuilder(clazz.getName());
-            sb.delete(0, 2);
-            if (sb.length() > 0 && sb.charAt(sb.length() - 1) == ';') {
-                sb.deleteCharAt(sb.length() - 1);
+            //cache className of array type
+            String className = arrayClassMap.get(clazz.getName());
+            if (className == null) {
+                StringBuilder sb = new StringBuilder(clazz.getName());
+                sb.delete(0, 2);
+                if (sb.length() > 0 && sb.charAt(sb.length() - 1) == ';') {
+                    sb.deleteCharAt(sb.length() - 1);
+                }
+                sb.append("[]");
+                className = sb.toString();
+                arrayClassMap.put(clazz.getName(), className);
             }
-            sb.append("[]");
-            return sb.toString();
+            return className;
         } else {
             return clazz.getName();
         }
