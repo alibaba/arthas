@@ -75,6 +75,7 @@ public class Arthas {
             String pid = descriptor.id();
             if (pid.equals(Long.toString(configure.getJavaPid()))) {
                 virtualMachineDescriptor = descriptor;
+                break;
             }
         }
         VirtualMachine virtualMachine = null;
