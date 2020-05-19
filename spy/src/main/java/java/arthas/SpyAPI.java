@@ -21,7 +21,7 @@ package java.arthas;
  *
  */
 public class SpyAPI {
-
+    private static final AbstractSpy NOPSPY = new NopSpy();
     private static volatile AbstractSpy spyInstance = new NopSpy();
 
     public static AbstractSpy getSpy() {
@@ -30,6 +30,10 @@ public class SpyAPI {
 
     public static void setSpy(AbstractSpy spy) {
         spyInstance = spy;
+    }
+    
+    public static void setNopSpy() {
+        setSpy(NOPSPY);
     }
 
     public static void atEnter(Class<?> clazz, String methodInfo, Object target, Object[] args) {
