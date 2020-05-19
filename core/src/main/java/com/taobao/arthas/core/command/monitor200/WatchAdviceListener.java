@@ -4,7 +4,7 @@ import com.alibaba.arthas.deps.org.slf4j.Logger;
 import com.alibaba.arthas.deps.org.slf4j.LoggerFactory;
 import com.taobao.arthas.core.advisor.Advice;
 import com.taobao.arthas.core.advisor.ArthasMethod;
-import com.taobao.arthas.core.advisor.ReflectAdviceListenerAdapter;
+import com.taobao.arthas.core.advisor.AdviceListenerAdapter;
 import com.taobao.arthas.core.shell.command.CommandProcess;
 import com.taobao.arthas.core.util.DateUtils;
 import com.taobao.arthas.core.util.LogUtil;
@@ -15,7 +15,7 @@ import com.taobao.arthas.core.view.ObjectView;
 /**
  * @author beiwei30 on 29/11/2016.
  */
-class WatchAdviceListener extends ReflectAdviceListenerAdapter {
+class WatchAdviceListener extends AdviceListenerAdapter {
 
     private static final Logger logger = LoggerFactory.getLogger(WatchAdviceListener.class);
     private final ThreadLocalWatch threadLocalWatch = new ThreadLocalWatch();
