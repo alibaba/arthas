@@ -14,11 +14,18 @@ import com.taobao.arthas.bytekit.utils.AsmUtils;
 import com.taobao.arthas.bytekit.utils.MatchUtils;
 import com.taobao.arthas.bytekit.utils.VerifyUtils;
 
+/**
+ * 
+ * @author hengyunabc
+ *
+ */
 public class TestHelper {
 
     private Class<?> interceptorClass;
 
     private boolean redefine;
+
+    private boolean reTransform;
 
     private String methodMatcher = "*";
 
@@ -35,6 +42,11 @@ public class TestHelper {
 
     public TestHelper redefine(boolean redefine) {
         this.redefine = redefine;
+        return this;
+    }
+
+    public TestHelper reTransform(boolean reTransform) {
+        this.reTransform = reTransform;
         return this;
     }
 
@@ -71,6 +83,10 @@ public class TestHelper {
 
         if (redefine) {
             AgentUtils.redefine(transform, bytes);
+        }
+
+        if (reTransform) {
+            AgentUtils.reTransform(transform, bytes);
         }
 
         return bytes;

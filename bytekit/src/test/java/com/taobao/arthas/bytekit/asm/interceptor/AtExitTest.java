@@ -65,7 +65,7 @@ public class AtExitTest {
     @Test
     public void testExit() throws Exception {
         TestHelper helper = TestHelper.builder().interceptorClass(TestAccessInterceptor.class).methodMatcher("voidExit")
-                .redefine(true);
+                .reTransform(true);
         byte[] bytes = helper.process(Sample.class);
 
         new Sample().voidExit();
@@ -80,7 +80,7 @@ public class AtExitTest {
     public void testExitAndChangeReturn() throws Exception {
 
         TestHelper helper = TestHelper.builder().interceptorClass(ChangeReturnInterceptor.class).methodMatcher("longExit")
-                .redefine(true);
+                .reTransform(true);
         byte[] bytes = helper.process(Sample.class);
 
         System.err.println(Decompiler.decompile(bytes));

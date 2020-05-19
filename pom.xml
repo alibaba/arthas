@@ -279,6 +279,7 @@
                         </goals>
                         <configuration>
                             <excludes>com/taobao/arthas/core/view/ObjectViewTest*</excludes>
+                            <excludes>com/taobao/arthas/bytekit/asm/interceptor*</excludes>
                         </configuration>
                     </execution>
                     <execution>

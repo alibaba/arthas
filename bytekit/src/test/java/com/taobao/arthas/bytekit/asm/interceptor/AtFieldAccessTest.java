@@ -46,7 +46,7 @@ public class AtFieldAccessTest {
     @Test
     public void testEnter() throws Exception {
         TestHelper helper = TestHelper.builder().interceptorClass(FieldAccessInterceptor.class).methodMatcher("testReadField")
-                .redefine(true);
+                .reTransform(true);
         byte[] bytes = helper.process(Sample.class);
 
         new Sample().testReadField(100);

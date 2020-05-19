@@ -71,7 +71,7 @@ public class AtLineTest {
     @Test
     public void testLine() throws Exception {
         TestHelper helper = TestHelper.builder().interceptorClass(TestAccessInterceptor.class).methodMatcher("*")
-                .redefine(true);
+                .reTransform(true);
         byte[] bytes = helper.process(Sample.class);
 
         new Sample().testLine(100);

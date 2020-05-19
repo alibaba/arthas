@@ -62,7 +62,7 @@ public class AtThrowTest {
     @Test
     public void testThrow() throws Exception {
         TestHelper helper = TestHelper.builder().interceptorClass(TestAccessInterceptor.class).methodMatcher("testThrow")
-                .redefine(true);
+                .reTransform(true);
         byte[] bytes = helper.process(Sample.class);
 
         Sample.testThrow(-1, 0, null);
