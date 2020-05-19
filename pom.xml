@@ -278,8 +278,10 @@
                             <goal>prepare-agent</goal>
                         </goals>
                         <configuration>
-                            <excludes>com/taobao/arthas/core/view/ObjectViewTest*</excludes>
-                            <excludes>com/taobao/arthas/bytekit/asm/interceptor*</excludes>
+                            <excludes>
+                                <exclude>com/taobao/arthas/core/view/ObjectViewTest*</exclude>
+                                <exclude>com/taobao/arthas/bytekit/asm/interceptor*</exclude>
+                            </excludes>
                         </configuration>
                     </execution>
                     <execution>
