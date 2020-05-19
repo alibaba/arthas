@@ -47,6 +47,8 @@ import com.taobao.arthas.bytekit.asm.location.filter.LocationFilter;
 import com.taobao.arthas.bytekit.utils.AsmUtils;
 import com.taobao.arthas.core.GlobalOptions;
 import com.taobao.arthas.core.bytecode.AdviceListenerManager;
+import com.taobao.arthas.core.bytecode.SpyImpl;
+import com.taobao.arthas.core.server.ArthasBootstrap;
 import com.taobao.arthas.core.util.ArthasCheckUtils;
 import com.taobao.arthas.core.util.FileUtils;
 import com.taobao.arthas.core.util.SearchUtils;
@@ -55,6 +57,7 @@ import com.taobao.arthas.core.util.matcher.Matcher;
 
 /**
  * 对类进行通知增强 Created by vlinux on 15/5/17.
+ * @author hengyunabc
  */
 public class Enhancer implements ClassFileTransformer {
 
@@ -69,6 +72,11 @@ public class Enhancer implements ClassFileTransformer {
 
     // 类-字节码缓存
     private final static Map<Class<?>/* Class */, byte[]/* bytes of Class */> classBytesCache = new WeakHashMap<Class<?>, byte[]>();
+    private static SpyImpl spyImpl = new SpyImpl();
+
+    static {
+        SpyAPI.setSpy(spyImpl);
+    }
 
     /**
      * @param adviceId          通知编号
@@ -78,7 +86,7 @@ public class Enhancer implements ClassFileTransformer {
      * @param methodNameMatcher 方法名匹配
      * @param affect            影响统计
      */
-    private Enhancer(AdviceListener listener, boolean isTracing, boolean skipJDKTrace, Set<Class<?>> matchingClasses,
+    Enhancer(AdviceListener listener, boolean isTracing, boolean skipJDKTrace, Set<Class<?>> matchingClasses,
             Matcher methodNameMatcher, EnhancerAffect affect) {
         this.listener = listener;
         this.isTracing = isTracing;
@@ -131,26 +139,45 @@ public class Enhancer implements ClassFileTransformer {
     }
 
     public static class SpyTraceInterceptor {
-        @AtInvoke(name = "", inline = true, whenComplete = false, excludes = "java.arthas.SpyAPI")
+        @AtInvoke(name = "", inline = true, whenComplete = false, excludes = {"java.arthas.SpyAPI", "java.lang.Byte"
+                , "java.lang.Boolean"
+                , "java.lang.Short"
+                , "java.lang.Character"
+                , "java.lang.Integer"
+                , "java.lang.Float"
+                , "java.lang.Long"
+                , "java.lang.Double"})
         public static void onInvoke(@Binding.This Object target, @Binding.Class Class<?> clazz,
                 @Binding.InvokeInfo String invokeInfo) {
             SpyAPI.atBeforeInvoke(clazz, invokeInfo, target);
         }
 
-        @AtInvoke(name = "", inline = true, whenComplete = true, excludes = "java.arthas.SpyAPI")
+        @AtInvoke(name = "", inline = true, whenComplete = true, excludes = {"java.arthas.SpyAPI", "java.lang.Byte"
+                , "java.lang.Boolean"
+                , "java.lang.Short"
+                , "java.lang.Character"
+                , "java.lang.Integer"
+                , "java.lang.Float"
+                , "java.lang.Long"
+                , "java.lang.Double"})
         public static void onInvokeAfter(@Binding.This Object target, @Binding.Class Class<?> clazz,
                 @Binding.InvokeInfo String invokeInfo) {
             SpyAPI.atAfterInvoke(clazz, invokeInfo, target);
         }
 
-        @AtInvokeException(name = "", inline = true, excludes = "java.arthas.SpyAPI")
+        @AtInvokeException(name = "", inline = true, excludes = {"java.arthas.SpyAPI", "java.lang.Byte"
+                , "java.lang.Boolean"
+                , "java.lang.Short"
+                , "java.lang.Character"
+                , "java.lang.Integer"
+                , "java.lang.Float"
+                , "java.lang.Long"
+                , "java.lang.Double"})
         public static void onInvokeException(@Binding.This Object target, @Binding.Class Class<?> clazz,
                 @Binding.InvokeInfo String invokeInfo, @Binding.Throwable Throwable throwable) {
             SpyAPI.atInvokeException(clazz, invokeInfo, target, throwable);
         }
     }
-
-    com.taobao.arthas.core.bytecode.SpyImpl spyImpl = new com.taobao.arthas.core.bytecode.SpyImpl();
 
     @Override
     public byte[] transform(final ClassLoader inClassLoader, String className, Class<?> classBeingRedefined,
@@ -162,23 +189,14 @@ public class Enhancer implements ClassFileTransformer {
                 return null;
             }
 
-            ClassNode classNode;
-
-            SpyAPI.setSpy(spyImpl);
-
             // 首先先检查是否在缓存中存在Class字节码
             // 因为要支持多人协作,存在多人同时增强的情况
-//            final byte[] byteOfClassInCache = classBytesCache.get(classBeingRedefined);
-//            if (null != byteOfClassInCache) {
-//                classNode = AsmUtils.toClassNode(byteOfClassInCache);
-//            }
-//
-//            // 如果没有命中缓存,则从原始字节码开始增强
-//            else {
-//                classNode = AsmUtils.toClassNode(classfileBuffer);
-//            }
+            final byte[] byteOfClassInCache = classBytesCache.get(classBeingRedefined);
+            if (null != byteOfClassInCache) {
+                classfileBuffer = byteOfClassInCache;
+            }
 
-            classNode = AsmUtils.toClassNode(classfileBuffer);
+            ClassNode classNode = AsmUtils.toClassNode(classfileBuffer);
 
             // 生成增强字节码
             DefaultInterceptorClassParser defaultInterceptorClassParser = new DefaultInterceptorClassParser();
@@ -380,8 +398,11 @@ public class Enhancer implements ClassFileTransformer {
         // 构建增强器
         final Enhancer enhancer = new Enhancer(listener, isTracing, skipJDKTrace, enhanceClassSet, methodNameMatcher,
                 affect);
+        affect.setTransformer(enhancer);
+
         try {
-            inst.addTransformer(enhancer, true);
+            ArthasBootstrap.getInstance().getTransformerManager().addTransformer(enhancer, isTracing);
+            //inst.addTransformer(enhancer, true);
 
             // 批量增强
             if (GlobalOptions.isBatchReTransform) {
@@ -411,7 +432,7 @@ public class Enhancer implements ClassFileTransformer {
                 }
             }
         } finally {
-            inst.removeTransformer(enhancer);
+            //inst.removeTransformer(enhancer);
         }
 
         return affect;
