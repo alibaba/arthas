@@ -31,7 +31,7 @@ public interface AdviceListener {
      * @throws Throwable 通知过程出错
      */
     void before(
-            ClassLoader loader, String className, String methodName, String methodDesc,
+            Class<?> clazz, String methodName, String methodDesc,
             Object target, Object[] args) throws Throwable;
 
     /**
@@ -49,7 +49,7 @@ public interface AdviceListener {
      * @throws Throwable 通知过程出错
      */
     void afterReturning(
-            ClassLoader loader, String className, String methodName, String methodDesc,
+            Class<?> clazz, String methodName, String methodDesc,
             Object target, Object[] args,
             Object returnObject) throws Throwable;
 
@@ -67,7 +67,7 @@ public interface AdviceListener {
      * @throws Throwable 通知过程出错
      */
     void afterThrowing(
-            ClassLoader loader, String className, String methodName, String methodDesc,
+            Class<?> clazz, String methodName, String methodDesc,
             Object target, Object[] args,
             Throwable throwable) throws Throwable;
 

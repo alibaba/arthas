@@ -130,26 +130,23 @@ public abstract class ReflectAdviceListenerAdapter implements AdviceListener , P
 
     @Override
     final public void before(
-            ClassLoader loader, String className, String methodName, String methodDesc,
+            Class<?> clazz, String methodName, String methodDesc,
             Object target, Object[] args) throws Throwable {
-        final Class<?> clazz = toClass(loader, className);
-        before(loader, clazz, toMethod(loader, clazz, methodName, methodDesc), target, args);
+        before(clazz.getClassLoader(), clazz, toMethod(clazz.getClassLoader(), clazz, methodName, methodDesc), target, args);
     }
 
     @Override
     final public void afterReturning(
-            ClassLoader loader, String className, String methodName, String methodDesc,
+            Class<?> clazz, String methodName, String methodDesc,
             Object target, Object[] args, Object returnObject) throws Throwable {
-        final Class<?> clazz = toClass(loader, className);
-        afterReturning(loader, clazz, toMethod(loader, clazz, methodName, methodDesc), target, args, returnObject);
+        afterReturning(clazz.getClassLoader(), clazz, toMethod(clazz.getClassLoader(), clazz, methodName, methodDesc), target, args, returnObject);
     }
 
     @Override
     final public void afterThrowing(
-            ClassLoader loader, String className, String methodName, String methodDesc,
+            Class<?> clazz, String methodName, String methodDesc,
             Object target, Object[] args, Throwable throwable) throws Throwable {
-        final Class<?> clazz = toClass(loader, className);
-        afterThrowing(loader, clazz, toMethod(loader, clazz, methodName, methodDesc), target, args, throwable);
+        afterThrowing(clazz.getClassLoader(), clazz, toMethod(clazz.getClassLoader(), clazz, methodName, methodDesc), target, args, throwable);
     }
 
 

@@ -39,7 +39,7 @@ public class SpyImpl extends AbstractSpy {
                     if (skipAdviceListener(adviceListener)) {
                         continue;
                     }
-                    adviceListener.before(classLoader, clazz.getName(), methodName, methodDesc, target, args);
+                    adviceListener.before(clazz, methodName, methodDesc, target, args);
                 } catch (Throwable e) {
                     if (logger.isDebugEnabled()) {
                         logger.error("class: {}, methodInfo: {}", clazz.getName(), methodInfo, e);
@@ -66,8 +66,7 @@ public class SpyImpl extends AbstractSpy {
                     if (skipAdviceListener(adviceListener)) {
                         continue;
                     }
-                    adviceListener.afterReturning(classLoader, clazz.getName(), methodName, methodDesc, target, args,
-                            returnObject);
+                    adviceListener.afterReturning(clazz, methodName, methodDesc, target, args, returnObject);
                 } catch (Throwable e) {
                     if (logger.isDebugEnabled()) {
                         logger.error("class: {}, methodInfo: {}", clazz.getName(), methodInfo, e);
@@ -93,8 +92,7 @@ public class SpyImpl extends AbstractSpy {
                     if (skipAdviceListener(adviceListener)) {
                         continue;
                     }
-                    adviceListener.afterThrowing(classLoader, clazz.getName(), methodName, methodDesc, target, args,
-                            throwable);
+                    adviceListener.afterThrowing(clazz, methodName, methodDesc, target, args, throwable);
                 } catch (Throwable e) {
                     if (logger.isDebugEnabled()) {
                         logger.error("class: {}, methodInfo: {}", clazz.getName(), methodInfo, e);
