@@ -43,9 +43,9 @@ public class ResultConsumerHelper {
             for (int i = 0; i < declaredFields.length; i++) {
                 Field field = declaredFields[i];
                 Class<?> fieldClass = field.getType();
-                if (fieldClass.isAssignableFrom(Collection.class)
+                if (Collection.class.isAssignableFrom(fieldClass)
+                        || Map.class.isAssignableFrom(fieldClass)
                         || fieldClass.isArray()
-                        || fieldClass.isAssignableFrom(Map.class)
                         || fieldClass == ClassSetVO.class) {
                     field.setAccessible(true);
                     fields.add(field);
