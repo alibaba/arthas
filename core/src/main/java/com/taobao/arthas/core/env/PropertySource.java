@@ -18,8 +18,6 @@ package com.taobao.arthas.core.env;
 
 import java.util.Arrays;
 
-import com.sun.tools.javac.util.Log;
-
 /**
  * Abstract base class representing a source of name/value property pairs. The
  * underlying {@linkplain #getSource() source object} may be of any type

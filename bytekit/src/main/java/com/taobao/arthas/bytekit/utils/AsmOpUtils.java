@@ -62,6 +62,15 @@ public class AsmOpUtils {
 
 	private static final Method DOUBLE_VALUE = Method.getMethod("double doubleValue()");
 
+    public static boolean isBoxType(final Type type) {
+        if (BYTE_TYPE.equals(type) || BOOLEAN_TYPE.equals(type) || SHORT_TYPE.equals(type)
+                || CHARACTER_TYPE.equals(type) || INTEGER_TYPE.equals(type) || FLOAT_TYPE.equals(type)
+                || LONG_TYPE.equals(type) || DOUBLE_TYPE.equals(type)) {
+            return true;
+        }
+        return false;
+    }
+
 	public static Type getBoxedType(final Type type) {
 		switch (type.getSort()) {
 		case Type.BYTE:

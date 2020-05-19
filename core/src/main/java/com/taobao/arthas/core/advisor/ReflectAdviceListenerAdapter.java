@@ -3,6 +3,8 @@ package com.taobao.arthas.core.advisor;
 import com.taobao.arthas.core.command.express.ExpressException;
 import com.taobao.arthas.core.command.express.ExpressFactory;
 import com.taobao.arthas.core.shell.command.CommandProcess;
+import com.taobao.arthas.core.shell.system.Process;
+import com.taobao.arthas.core.shell.system.ProcessAware;
 import com.taobao.arthas.core.util.ArthasCheckUtils;
 import com.taobao.arthas.core.util.Constants;
 import com.taobao.arthas.core.util.StringUtils;
@@ -16,7 +18,8 @@ import java.lang.reflect.Method;
  * 通过反射拿到对应的Class/Method类，而不是原始的ClassName/MethodName
  * 当然性能开销要比普通监听器高许多
  */
-public abstract class ReflectAdviceListenerAdapter implements AdviceListener {
+public abstract class ReflectAdviceListenerAdapter implements AdviceListener , ProcessAware{
+    private Process process;
 
     @Override
     public void create() {
@@ -26,6 +29,14 @@ public abstract class ReflectAdviceListenerAdapter implements AdviceListener {
     @Override
     public void destroy() {
         // default no-op
+    }
+
+    public Process getProcess() {
+        return process;
+    }
+
+    public void setProcess(Process process) {
+        this.process = process;
     }
 
     private ClassLoader toClassLoader(ClassLoader loader) {

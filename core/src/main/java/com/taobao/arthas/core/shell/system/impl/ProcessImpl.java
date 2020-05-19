@@ -14,8 +14,8 @@ import com.taobao.arthas.core.shell.handlers.Handler;
 import com.taobao.arthas.core.shell.session.Session;
 import com.taobao.arthas.core.shell.system.ExecStatus;
 import com.taobao.arthas.core.shell.system.Process;
+import com.taobao.arthas.core.shell.system.ProcessAware;
 import com.taobao.arthas.core.shell.term.Tty;
-import com.taobao.arthas.core.shell.term.impl.httptelnet.HttpTelnetTermServer;
 import com.taobao.arthas.core.util.usage.StyledUsageFormatter;
 import com.taobao.middleware.cli.CLIException;
 import com.taobao.middleware.cli.CommandLine;
@@ -24,6 +24,7 @@ import com.taobao.text.Color;
 
 import io.termd.core.function.Function;
 
+import java.lang.instrument.ClassFileTransformer;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
@@ -348,7 +349,7 @@ public class ProcessImpl implements Process {
             return;
         }
 
-        process = new CommandProcessImpl(args2, tty, cl);
+        process = new CommandProcessImpl(this, args2, tty, cl);
         if (cacheLocation() != null) {
             process.echoTips("job id  : " + this.jobId + "\n");
             process.echoTips("cache location  : " + cacheLocation() + "\n");
@@ -379,15 +380,17 @@ public class ProcessImpl implements Process {
     }
 
     private class CommandProcessImpl implements CommandProcess {
-
+        private final Process process;
         private final List<String> args2;
         private final Tty tty;
         private final CommandLine commandLine;
         private int enhanceLock = -1;
         private AtomicInteger times = new AtomicInteger();
         private AdviceListener suspendedListener = null;
+        private ClassFileTransformer transformer;
 
-        public CommandProcessImpl(List<String> args2, Tty tty, CommandLine commandLine) {
+        public CommandProcessImpl(Process process, List<String> args2, Tty tty, CommandLine commandLine) {
+            this.process = process;
             this.args2 = args2;
             this.tty = tty;
             this.commandLine = commandLine;
@@ -525,13 +528,23 @@ public class ProcessImpl implements Process {
         }
 
         @Override
-        public void register(int enhanceLock, AdviceListener listener) {
+        public void register(int enhanceLock, AdviceListener listener, ClassFileTransformer transformer) {
             this.enhanceLock = enhanceLock;
+
+            if (listener instanceof ProcessAware) {
+                ((ProcessAware) listener).setProcess(this.process);
+            }
             AdviceWeaver.reg(enhanceLock, listener);
+            
+            this.transformer = transformer;
         }
 
         @Override
         public void unregister() {
+            if (transformer != null) {
+                ArthasBootstrap.getInstance().getTransformerManager().removeTransformer(transformer);
+            }
+            
             AdviceWeaver.unReg(enhanceLock);
         }
 
