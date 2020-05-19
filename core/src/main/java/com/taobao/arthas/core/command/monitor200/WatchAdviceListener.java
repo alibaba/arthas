@@ -5,6 +5,7 @@ import com.alibaba.arthas.deps.org.slf4j.LoggerFactory;
 import com.taobao.arthas.core.advisor.Advice;
 import com.taobao.arthas.core.advisor.ArthasMethod;
 import com.taobao.arthas.core.advisor.ReflectAdviceListenerAdapter;
+import com.taobao.arthas.core.advisor.VariableStore;
 import com.taobao.arthas.core.shell.command.CommandProcess;
 import com.taobao.arthas.core.util.DateUtils;
 import com.taobao.arthas.core.util.LogUtil;
@@ -97,4 +98,10 @@ class WatchAdviceListener extends ReflectAdviceListenerAdapter {
             process.end();
         }
     }
+
+  /*  @Override
+    public void variableStored(int line, String varName, Object varValue) {
+        process.write(String.format("line:%s %s=%s \n",line,varName,StringUtils.objectToString(
+                isNeedExpand() ? new ObjectView(varValue, command.getExpand(), command.getSizeLimit()).draw() : varValue)));
+    }*/
 }

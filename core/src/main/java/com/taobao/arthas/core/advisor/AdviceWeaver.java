@@ -37,6 +37,7 @@ public class AdviceWeaver extends ClassVisitor implements Opcodes {
     public static final String BEFORE_INVOKE = "methodOnInvokeBeforeTracing";
     public static final String AFTER_INVOKE = "methodOnInvokeAfterTracing";
     public static final String THROW_INVOKE = "methodOnInvokeThrowTracing";
+    public static final String VARIABLE_STORE = "methodOnVariableStore";
     public static final String RESET = "resetArthasClassLoader";
 
     // 线程帧栈堆栈大小
@@ -56,7 +57,8 @@ public class AdviceWeaver extends ClassVisitor implements Opcodes {
         }
 
     };
-
+    // 记录方法中局部变量名称<class+method+index,varName>
+    private static final Map<String,String> variableNameMap = new ConcurrentHashMap<String, String>();
 
     /**
      * 方法开始<br/>
@@ -227,6 +229,28 @@ public class AdviceWeaver extends ClassVisitor implements Opcodes {
         }
     }
 
+    /**
+     * 局部变量被赋值
+     * @param adviceId 通知ID
+     * @param lineNumber 当前行号
+     * @param varIndex 变量在局部变量表中的位置
+     * @param varValue 变量具体的值
+     */
+    public static void methodOnVariableStore(int adviceId,int lineNumber,int varIndex,Object varValue,String className,String methodName){
+        final VariableStore listener = (VariableStore) getListener(adviceId);
+        if (null != listener) {
+            try {
+                String varName = variableNameMap.get(className+methodName+varIndex);
+                if (varName == null){
+                    varName = "";
+                }
+                listener.variableStored(lineNumber,varName,varValue);
+            } catch (Throwable t) {
+                logger.warn("advice variable store failed.", t);
+            }
+        }
+    }
+
     /*
      * 线程帧栈压栈<br/>
      * 将当前执行帧栈压入线程栈
@@ -344,6 +368,7 @@ public class AdviceWeaver extends ClassVisitor implements Opcodes {
     private final int adviceId;
     private final boolean isTracing;
     private final boolean skipJDKTrace;
+    private final boolean isVariableStore;
     private final String className;
     private String superName;
     private final Matcher matcher;
@@ -356,17 +381,19 @@ public class AdviceWeaver extends ClassVisitor implements Opcodes {
      * @param adviceId     通知ID
      * @param isTracing    可跟踪方法调用
      * @param skipJDKTrace 是否忽略对JDK内部方法的跟踪
+     * @param isVariableStore    监控变量赋值
      * @param className    类名称
      * @param matcher      方法匹配
      *                     只有匹配上的方法才会被织入通知器
      * @param affect       影响计数
      * @param cv           ClassVisitor for ASM
      */
-    public AdviceWeaver(int adviceId, boolean isTracing, boolean skipJDKTrace, String className, Matcher matcher, EnhancerAffect affect, ClassVisitor cv) {
+    public AdviceWeaver(int adviceId, boolean isTracing,  boolean skipJDKTrace,boolean isVariableStore, String className, Matcher matcher, EnhancerAffect affect, ClassVisitor cv) {
         super(Opcodes.ASM7, cv);
         this.adviceId = adviceId;
         this.isTracing = isTracing;
         this.skipJDKTrace = skipJDKTrace;
+        this.isVariableStore = isVariableStore;
         this.className = className;
         this.matcher = matcher;
         this.affect = affect;
@@ -431,6 +458,7 @@ public class AdviceWeaver extends ClassVisitor implements Opcodes {
             private final int KEY_ARTHAS_ADVICE_BEFORE_INVOKING_METHOD = 3;
             private final int KEY_ARTHAS_ADVICE_AFTER_INVOKING_METHOD = 4;
             private final int KEY_ARTHAS_ADVICE_THROW_INVOKING_METHOD = 5;
+            private final int KEY_ARTHAS_ADVICE_VARIABLE_STORE_METHOD = 6;
 
 
             // -- KEY of ASM_TYPE or ASM_METHOD --
@@ -439,6 +467,12 @@ public class AdviceWeaver extends ClassVisitor implements Opcodes {
             private final Type ASM_TYPE_OBJECT_ARRAY = Type.getType(Object[].class);
             private final Type ASM_TYPE_CLASS = Type.getType(Class.class);
             private final Type ASM_TYPE_INTEGER = Type.getType(Integer.class);
+            private final Type ASM_TYPE_LONG = Type.getType(Long.class);
+            private final Type ASM_TYPE_L = Type.getType(long.class);
+            private final Type ASM_TYPE_FLOAT = Type.getType(Float.class);
+            private final Type ASM_TYPE_F = Type.getType(float.class);
+            private final Type ASM_TYPE_DOUBLE = Type.getType(Double.class);
+            private final Type ASM_TYPE_D = Type.getType(double.class);
             private final Type ASM_TYPE_CLASS_LOADER = Type.getType(ClassLoader.class);
             private final Type ASM_TYPE_STRING = Type.getType(String.class);
             private final Type ASM_TYPE_THROWABLE = Type.getType(Throwable.class);
@@ -522,6 +556,11 @@ public class AdviceWeaver extends ClassVisitor implements Opcodes {
 
                     case KEY_ARTHAS_ADVICE_THROW_INVOKING_METHOD: {
                         getStatic(ASM_TYPE_SPY, "THROW_INVOKING_METHOD", ASM_TYPE_METHOD);
+                        break;
+                    }
+
+                    case KEY_ARTHAS_ADVICE_VARIABLE_STORE_METHOD:{
+                        getStatic(ASM_TYPE_SPY, "VARIABLE_STORE_METHOD", ASM_TYPE_METHOD);
                         break;
                     }
 
@@ -753,6 +792,137 @@ public class AdviceWeaver extends ClassVisitor implements Opcodes {
                 super.visitLineNumber(line, start);
                 lineNumber = line;
             }
+
+            @Override
+            public void visitLocalVariable(String name, String descriptor, String signature, Label start, Label end, int index) {
+                super.visitLocalVariable(name, descriptor, signature, start, end, index);
+                variableNameMap.put(className + getName() + index, name);
+            }
+
+            @Override
+            public void visitVarInsn(final int opcode, final int var) {
+                super.visitVarInsn(opcode, var);
+
+                if ( isVariableStore && (opcode >= ISTORE && opcode <= ASTORE) || (opcode >= IASTORE && opcode <= SASTORE) ){
+                    codeLockForTracing.lock(new CodeLock.Block() {
+                        @Override
+                        public void code() {
+
+
+
+                            // 加载methodOnVariableStore方法
+                            loadAdviceMethod(KEY_ARTHAS_ADVICE_VARIABLE_STORE_METHOD);
+
+                            // 推入Method.invoke()的第一个参数
+                            pushNull();
+
+                            loadArrayForVariableStore(opcode,var);
+                            // 调用方法
+                            invokeVirtual(ASM_TYPE_METHOD, ASM_METHOD_METHOD_INVOKE);
+                            pop();
+
+                        }
+                    });
+                }
+            }
+
+            /**
+             * 加载VariableStore通知参数数组
+             */
+            private void loadArrayForVariableStore(int opcode, int var) {
+                push(6);
+                newArray(ASM_TYPE_OBJECT);
+
+                dup();
+                push(0);
+                push(adviceId);
+                box(ASM_TYPE_INT);
+                arrayStore(ASM_TYPE_INTEGER);
+
+                dup();
+                push(1);
+                push(lineNumber);
+                box(ASM_TYPE_INT);
+                arrayStore(ASM_TYPE_INTEGER);
+
+                dup();
+                push(2);
+                push(var);
+                box(ASM_TYPE_INT);
+                arrayStore(ASM_TYPE_INTEGER);
+
+                dup();
+                push(3);
+                switch (opcode){
+                    case Opcodes.ISTORE:
+                        mv.visitVarInsn(Opcodes.ILOAD,var);
+                        box(ASM_TYPE_INT);
+                        arrayStore(ASM_TYPE_INTEGER);
+                        break;
+                    case Opcodes.LSTORE:
+                        mv.visitVarInsn(Opcodes.LLOAD,var);
+                        box(ASM_TYPE_L);
+                        arrayStore(ASM_TYPE_LONG);
+                        break;
+                    case Opcodes.FSTORE:
+                        mv.visitVarInsn(Opcodes.FLOAD,var);
+                        box(ASM_TYPE_F);
+                        arrayStore(ASM_TYPE_FLOAT);
+                        break;
+                    case Opcodes.DSTORE:
+                        mv.visitVarInsn(Opcodes.DLOAD,var);
+                        box(ASM_TYPE_D);
+                        arrayStore(ASM_TYPE_DOUBLE);
+                        break;
+                    case Opcodes.ASTORE:
+                        mv.visitVarInsn(Opcodes.ALOAD,var);
+                        arrayStore(ASM_TYPE_OBJECT);
+                        break;
+                    case Opcodes.IASTORE:
+                        mv.visitVarInsn(Opcodes.IALOAD,var);
+                        arrayStore(ASM_TYPE_INTEGER);
+                        break;
+                    case Opcodes.LASTORE:
+                        mv.visitVarInsn(Opcodes.LALOAD,var);
+                        arrayStore(ASM_TYPE_LONG);
+                        break;
+                    case Opcodes.FASTORE:
+                        mv.visitVarInsn(Opcodes.FALOAD,var);
+                        arrayStore(ASM_TYPE_FLOAT);
+                        break;
+                    case Opcodes.DASTORE:
+                        mv.visitVarInsn(Opcodes.DALOAD,var);
+                        arrayStore(ASM_TYPE_DOUBLE);
+                        break;
+                    case Opcodes.AASTORE:
+                        mv.visitVarInsn(Opcodes.AALOAD,var);
+                        arrayStore(ASM_TYPE_OBJECT);
+                        break;
+                    case Opcodes.BASTORE:
+                        mv.visitVarInsn(Opcodes.BALOAD,var);
+                        arrayStore(ASM_TYPE_OBJECT);
+                        break;
+                    case Opcodes.CASTORE:
+                        mv.visitVarInsn(Opcodes.CALOAD,var);
+                        arrayStore(ASM_TYPE_OBJECT);
+                        break;
+                    case Opcodes.SASTORE:
+                        mv.visitVarInsn(Opcodes.SALOAD,var);
+                        arrayStore(ASM_TYPE_OBJECT);
+                        break;
+                }
+
+                dup();
+                push(4);
+                push(className);
+                arrayStore(ASM_TYPE_STRING);
+
+                dup();
+                push(5);
+                push(getName());
+                arrayStore(ASM_TYPE_STRING);
+            }
+
 
             /**
              * 是否静态方法

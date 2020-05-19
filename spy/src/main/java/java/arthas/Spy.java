@@ -14,6 +14,7 @@ public class Spy {
     public static final String BEFORE_INVOKE = "methodOnInvokeBeforeTracing";
     public static final String AFTER_INVOKE = "methodOnInvokeAfterTracing";
     public static final String THROW_INVOKE = "methodOnInvokeThrowTracing";
+    public static final String VARIABLE_STORE = "methodOnVariableStore";
 
     // -- 各种Advice的钩子引用 --
     public static volatile Method ON_BEFORE_METHOD;
@@ -22,6 +23,7 @@ public class Spy {
     public static volatile Method BEFORE_INVOKING_METHOD;
     public static volatile Method AFTER_INVOKING_METHOD;
     public static volatile Method THROW_INVOKING_METHOD;
+    public static volatile Method VARIABLE_STORE_METHOD;
 
     /**
      * arthas's classloader 引用
@@ -43,7 +45,8 @@ public class Spy {
             Method onThrowsMethod,
             Method beforeInvokingMethod,
             Method afterInvokingMethod,
-            Method throwInvokingMethod) {
+            Method throwInvokingMethod,
+            Method variableStoreMethod) {
         CLASSLOADER = classLoader;
         ON_BEFORE_METHOD = onBeforeMethod;
         ON_RETURN_METHOD = onReturnMethod;
@@ -51,6 +54,7 @@ public class Spy {
         BEFORE_INVOKING_METHOD = beforeInvokingMethod;
         AFTER_INVOKING_METHOD = afterInvokingMethod;
         THROW_INVOKING_METHOD = throwInvokingMethod;
+        VARIABLE_STORE_METHOD = variableStoreMethod;
     }
 
     /**
@@ -83,7 +87,9 @@ public class Spy {
                     String.class, int.class);
             Method throwInvoke = adviceWeaverClass.getMethod(Spy.THROW_INVOKE, int.class, String.class, String.class,
                     String.class, int.class);
-            Spy.init(null, onBefore, onReturn, onThrows, beforeInvoke, afterInvoke, throwInvoke);
+            Method variableStore = adviceWeaverClass.getMethod(Spy.VARIABLE_STORE, int.class, int.class, int.class, Object.class, String.class, String.class);
+              Spy.init(null, onBefore, onReturn, onThrows, beforeInvoke, afterInvoke, throwInvoke,variableStore);
+//            Spy.init(null, onBefore, onReturn, onThrows, beforeInvoke, afterInvoke, throwInvoke);
         } catch (Exception e) {
         }
     }
@@ -127,5 +133,8 @@ public class Spy {
 
     public static void methodOnInvokeThrowTracing(int adviceId, String owner, String name, String desc,
             int lineNumber) {
+    }
+
+    public static void methodOnVariableStore(int adviceId,int lineNumber,int varIndex,Object varValue,String className,String methodName){
     }
 }
