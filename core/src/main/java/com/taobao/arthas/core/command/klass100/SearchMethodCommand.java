@@ -7,7 +7,7 @@ import java.lang.reflect.Method;
 import java.util.Set;
 
 import com.taobao.arthas.core.command.Constants;
-import com.taobao.arthas.core.command.model.MethodModel;
+import com.taobao.arthas.core.command.model.SearchMethodModel;
 import com.taobao.arthas.core.command.model.MethodVO;
 import com.taobao.arthas.core.command.model.RowAffectModel;
 import com.taobao.arthas.core.shell.cli.Completion;
@@ -49,6 +49,7 @@ public class SearchMethodCommand extends AnnotatedCommand {
     private String hashCode = null;
     private boolean isDetail = false;
     private boolean isRegEx = false;
+    private int numberOfLimit = 100;
 
     @Argument(argName = "class-pattern", index = 0)
     @Description("Class name pattern, use either '.' or '/' as separator")
@@ -80,6 +81,12 @@ public class SearchMethodCommand extends AnnotatedCommand {
         this.hashCode = hashCode;
     }
 
+    @Option(shortName = "n", longName = "limits")
+    @Description("Maximum number of matching classes (100 by default)")
+    public void setNumberOfLimit(int numberOfLimit) {
+        this.numberOfLimit = numberOfLimit;
+    }
+
     @Override
     public void process(CommandProcess process) {
         RowAffect affect = new RowAffect();
@@ -88,6 +95,10 @@ public class SearchMethodCommand extends AnnotatedCommand {
         Matcher<String> methodNameMatcher = methodNameMatcher();
         Set<Class<?>> matchedClasses = SearchUtils.searchClass(inst, classPattern, isRegEx, hashCode);
 
+        if (matchedClasses.size() > numberOfLimit) {
+            process.end(-1, "Matching classes are too many: "+matchedClasses.size());
+            return;
+        }
         for (Class<?> clazz : matchedClasses) {
             for (Constructor<?> constructor : clazz.getDeclaredConstructors()) {
                 if (!methodNameMatcher.matching("<init>")) {
@@ -95,7 +106,7 @@ public class SearchMethodCommand extends AnnotatedCommand {
                 }
 
                 MethodVO methodInfo = ClassUtils.createMethodInfo(constructor, clazz, isDetail);
-                process.appendResult(new MethodModel(methodInfo, isDetail));
+                process.appendResult(new SearchMethodModel(methodInfo, isDetail));
                 affect.rCnt(1);
             }
 
@@ -104,7 +115,7 @@ public class SearchMethodCommand extends AnnotatedCommand {
                     continue;
                 }
                 MethodVO methodInfo = ClassUtils.createMethodInfo(method, clazz, isDetail);
-                process.appendResult(new MethodModel(methodInfo, isDetail));
+                process.appendResult(new SearchMethodModel(methodInfo, isDetail));
                 affect.rCnt(1);
             }
         }

@@ -1,22 +1,18 @@
 package com.taobao.arthas.core.command.model;
 
-import com.taobao.arthas.core.util.ClassUtils;
-
-import java.lang.reflect.Constructor;
-import java.lang.reflect.Method;
 
 /**
  * Model of SearchMethodCommand
  * @author gongdewei 2020/4/9
  */
-public class MethodModel extends ResultModel {
+public class SearchMethodModel extends ResultModel {
     private MethodVO methodInfo;
     private boolean detail;
 
-    public MethodModel() {
+    public SearchMethodModel() {
     }
 
-    public MethodModel(MethodVO methodInfo, boolean detail) {
+    public SearchMethodModel(MethodVO methodInfo, boolean detail) {
         this.methodInfo = methodInfo;
         this.detail = detail;
     }
@@ -39,6 +35,6 @@ public class MethodModel extends ResultModel {
 
     @Override
     public String getType() {
-        return "method";
+        return "sm";
     }
 }

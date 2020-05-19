@@ -41,9 +41,9 @@ public class ResultViewResolver {
             registerView(new MessageModel(), new MessageView());
             registerView(new HelpModel(), new HelpView());
             //registerView(new HistoryModel(), new HistoryView());
-            registerView(new ClassInfoModel(), new ClassInfoView());
+            registerView(new SearchClassModel(), new SearchClassView());
             registerView(new RowAffectModel(), new RowAffectView());
-            registerView(new MethodModel(), new MethodView());
+            registerView(new SearchMethodModel(), new SearchMethodView());
             registerView(new StackModel(), new StackView());
             registerView(new VMOptionModel(), new VMOptionView());
             registerView(new OptionsModel(), new OptionsView());

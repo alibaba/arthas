@@ -8,7 +8,7 @@ import java.util.Comparator;
 import java.util.List;
 
 import com.taobao.arthas.core.command.Constants;
-import com.taobao.arthas.core.command.model.ClassInfoModel;
+import com.taobao.arthas.core.command.model.SearchClassModel;
 import com.taobao.arthas.core.command.model.ClassVO;
 import com.taobao.arthas.core.command.model.RowAffectModel;
 import com.taobao.arthas.core.shell.cli.Completion;
@@ -16,6 +16,7 @@ import com.taobao.arthas.core.shell.cli.CompletionUtils;
 import com.taobao.arthas.core.shell.command.AnnotatedCommand;
 import com.taobao.arthas.core.shell.command.CommandProcess;
 import com.taobao.arthas.core.util.ClassUtils;
+import com.taobao.arthas.core.util.ResultUtils;
 import com.taobao.arthas.core.util.SearchUtils;
 import com.taobao.arthas.core.util.StringUtils;
 import com.taobao.arthas.core.util.affect.RowAffect;
@@ -46,6 +47,7 @@ public class SearchClassCommand extends AnnotatedCommand {
     private boolean isRegEx = false;
     private String hashCode = null;
     private Integer expand;
+    private int numberOfLimit = 100;
 
     @Argument(argName = "class-pattern", index = 0)
     @Description("Class name pattern, use either '.' or '/' as separator")
@@ -83,23 +85,45 @@ public class SearchClassCommand extends AnnotatedCommand {
         this.hashCode = hashCode;
     }
 
+    @Option(shortName = "n", longName = "limits")
+    @Description("Maximum number of matching classes with details (100 by default)")
+    public void setNumberOfLimit(int numberOfLimit) {
+        this.numberOfLimit = numberOfLimit;
+    }
+
     @Override
-    public void process(CommandProcess process) {
+    public void process(final CommandProcess process) {
         // TODO: null check
         RowAffect affect = new RowAffect();
         Instrumentation inst = process.session().getInstrumentation();
-        List<Class<?>> matchedClasses = new ArrayList<Class<?>>(SearchUtils.searchClass(inst, classPattern, isRegEx, hashCode));
-        Collections.sort(matchedClasses, new Comparator<Class<?>>() {
+        List<Class> matchedClasses = new ArrayList<Class>(SearchUtils.searchClass(inst, classPattern, isRegEx, hashCode));
+        Collections.sort(matchedClasses, new Comparator<Class>() {
             @Override
-            public int compare(Class<?> c1, Class<?> c2) {
+            public int compare(Class c1, Class c2) {
                 return StringUtils.classname(c1).compareTo(StringUtils.classname(c2));
             }
         });
 
-        for (Class<?> clazz : matchedClasses) {
-            ClassVO classInfo = ClassUtils.createClassInfo(clazz, isDetail, isField);
-            process.appendResult(new ClassInfoModel(classInfo, isDetail, isField, expand));
+        if (isDetail) {
+            if (matchedClasses.size() > numberOfLimit) {
+                process.end(-1, "Matching classes are too many: "+matchedClasses.size());
+                return;
+            }
+            for (Class<?> clazz : matchedClasses) {
+                ClassVO classInfo = ClassUtils.createClassInfo(clazz, isDetail, isField);
+                process.appendResult(new SearchClassModel(classInfo, isDetail, isField, expand));
+            }
+        } else {
+            int pageSize = 256;
+            ResultUtils.processClassNames(matchedClasses, pageSize, new ResultUtils.PaginationHandler<List<String>>() {
+                @Override
+                public boolean handle(List<String> list, int segment) {
+                    process.appendResult(new SearchClassModel(list, segment));
+                    return true;
+                }
+            });
         }
+
 
         affect.rCnt(matchedClasses.size());
         process.appendResult(new RowAffectModel(affect));
