@@ -16,6 +16,7 @@ import com.taobao.text.Decoration;
 import com.taobao.text.ui.Element;
 import com.taobao.text.ui.LabelElement;
 import com.taobao.text.ui.TableElement;
+import org.objectweb.asm.Type;
 
 /**
  *
@@ -142,11 +143,10 @@ public class ClassUtils {
     }
 
     public static MethodVO createMethodInfo(Method method, Class clazz, boolean detail) {
-        String methodNameWithDescriptor = org.objectweb.asm.commons.Method.getMethod(method).toString();
         MethodVO methodVO = new MethodVO();
         methodVO.setDeclaringClass(clazz.getName());
-        methodVO.setDescriptor(methodNameWithDescriptor);
         methodVO.setMethodName(method.getName());
+        methodVO.setDescriptor(Type.getMethodDescriptor(method));
         methodVO.setConstructor(false);
         if (detail) {
             methodVO.setModifier(StringUtils.modifier(method.getModifiers(), ','));
@@ -160,10 +160,9 @@ public class ClassUtils {
     }
 
     public static MethodVO createMethodInfo(Constructor constructor, Class clazz, boolean detail) {
-        String methodNameWithDescriptor = org.objectweb.asm.commons.Method.getMethod(constructor).toString();
         MethodVO methodVO = new MethodVO();
         methodVO.setDeclaringClass(clazz.getName());
-        methodVO.setDescriptor(methodNameWithDescriptor);
+        methodVO.setDescriptor(Type.getConstructorDescriptor(constructor));
         methodVO.setMethodName("<init>");
         methodVO.setConstructor(true);
         if (detail) {
