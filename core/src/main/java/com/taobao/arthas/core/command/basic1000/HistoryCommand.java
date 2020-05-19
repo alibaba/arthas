@@ -29,7 +29,7 @@ public class HistoryCommand extends AnnotatedCommand {
     boolean clear = false;
     int n = -1;
 
-    @Option(shortName = "c", longName = "clear")
+    @Option(shortName = "c", longName = "clear", flag = true , acceptValue = false)
     @Description("clear history")
     public void setClear(boolean clear) {
         this.clear = clear;
@@ -56,7 +56,7 @@ public class HistoryCommand extends AnnotatedCommand {
                 StringBuilder sb = new StringBuilder();
 
                 int size = history.size();
-                if (n < 0) {
+                if (n < 0 || n > size) {
                     n = size;
                 }
 

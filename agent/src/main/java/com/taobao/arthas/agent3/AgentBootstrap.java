@@ -77,7 +77,7 @@ public class AgentBootstrap {
         Class<?> spyClass = null;
         if (parent != null) {
             try {
-                parent.loadClass("java.arthas.SpyAPI");
+                spyClass =parent.loadClass("java.arthas.SpyAPI");
             } catch (Throwable e) {
                 // ignore
             }
