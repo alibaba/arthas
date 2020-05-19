@@ -629,7 +629,10 @@ public class ProcessImpl implements Process {
 
         private void write(String data) {
             if (stdoutHandlerChain != null) {
-                for (Function<String, String> function : stdoutHandlerChain) {
+                //hotspot, reduce memory fragment (foreach/iterator)
+                int size = stdoutHandlerChain.size();
+                for (int i = 0; i < size; i++) {
+                    Function<String, String> function = stdoutHandlerChain.get(i);
                     data = function.apply(data);
                 }
             }
