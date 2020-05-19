@@ -227,6 +227,12 @@
             <version>${project.version}</version>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>org.zeroturnaround</groupId>
+            <artifactId>zt-zip</artifactId>
+            <version>1.14</version>
+            <scope>test</scope>
+        </dependency>
 
         <dependency>
             <groupId>org.benf</groupId>
@@ -240,6 +246,7 @@
             <scope>provided</scope>
             <optional>true</optional>
         </dependency>
+
     </dependencies>
 
 </project>
