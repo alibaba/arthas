@@ -6,9 +6,7 @@ import com.taobao.arthas.core.util.matcher.RegexMatcher;
 import com.taobao.arthas.core.util.matcher.WildcardMatcher;
 
 import java.lang.instrument.Instrumentation;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 
 /**
  * 类搜索工具
@@ -106,8 +104,11 @@ public class SearchUtils {
      */
     public static Set<Class<?>> searchSubClass(Instrumentation inst, Set<Class<?>> classSet) {
         final Set<Class<?>> matches = new HashSet<Class<?>>();
+        //classSet转换为List, 使用fori遍历，减少嵌套遍历foreach创建的iterator对象数量
+        List<Class<?>> classList = new ArrayList<Class<?>>(classSet);
         for (Class<?> clazz : inst.getAllLoadedClasses()) {
-            for (Class<?> superClass : classSet) {
+            for (int i = 0; i < classList.size(); i++) {
+                Class<?> superClass = classList.get(i);
                 if (superClass.isAssignableFrom(clazz)) {
                     matches.add(clazz);
                     break;
