@@ -25,6 +25,8 @@ public class CatCommand extends AnnotatedCommand {
     private static final Logger logger = LoggerFactory.getLogger(CatCommand.class);
     private List<String> files;
     private String encoding;
+    private Integer sizeLimit = 128 * 1024;
+    private int maxSizeLimit = 8 * 1024 * 1024;
 
     @Argument(argName = "files", index = 0)
     @Description("files")
@@ -38,8 +40,18 @@ public class CatCommand extends AnnotatedCommand {
         this.encoding = encoding;
     }
 
+    @Option(shortName = "M", longName = "sizeLimit")
+    @Description("Upper size limit in bytes for the result (128 * 1024 by default, the maximum value is 8 * 1024 * 1024)")
+    public void setSizeLimit(Integer sizeLimit) {
+        this.sizeLimit = sizeLimit;
+    }
+
     @Override
     public void process(CommandProcess process) {
+        if (!verifyOptions(process)) {
+            return;
+        }
+
         for (String file : files) {
             File f = new File(file);
             if (!f.exists()) {
@@ -54,8 +66,8 @@ public class CatCommand extends AnnotatedCommand {
 
         for (String file : files) {
             File f = new File(file);
-            if (f.length() > 1024 * 1024 * 8) {
-                process.end(-1, "cat " + file + ": Is to large, size: " + f.length());
+            if (f.length() > sizeLimit) {
+                process.end(-1, "cat " + file + ": Is too large, size: " + f.length());
                 return;
             }
             try {
@@ -70,6 +82,22 @@ public class CatCommand extends AnnotatedCommand {
         }
 
         process.end();
+    }
+
+    private boolean verifyOptions(CommandProcess process) {
+        if (sizeLimit > maxSizeLimit) {
+            process.end(-1, "sizeLimit cannot be large than: "+maxSizeLimit);
+            return false;
+        }
+
+        //限制http请求执行的文件大小，目前不支持过滤
+        int maxSizeLimitOfHttp = 128 * 1024;
+        boolean isHttpApiRequest = !process.session().isTty();
+        if (isHttpApiRequest && sizeLimit > maxSizeLimitOfHttp) {
+            process.end(-1, "When executing commands with http, sizeLimit cannot be large than: "+maxSizeLimitOfHttp);
+            return false;
+        }
+        return true;
     }
 
     @Override
