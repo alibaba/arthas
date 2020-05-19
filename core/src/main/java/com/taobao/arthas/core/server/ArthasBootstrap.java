@@ -1,6 +1,6 @@
 package com.taobao.arthas.core.server;
 
-import java.arthas.Spy;
+import java.arthas.SpyAPI;
 import java.io.File;
 import java.io.IOException;
 import java.lang.instrument.Instrumentation;
@@ -26,7 +26,6 @@ import com.alibaba.arthas.deps.org.slf4j.LoggerFactory;
 import com.alibaba.arthas.tunnel.client.TunnelClient;
 import com.taobao.arthas.common.AnsiLog;
 import com.taobao.arthas.common.PidUtils;
-import com.taobao.arthas.core.advisor.AdviceWeaver;
 import com.taobao.arthas.core.advisor.TransformerManager;
 import com.taobao.arthas.core.command.BuiltinCommandPack;
 import com.taobao.arthas.core.config.BinderUtils;
@@ -44,7 +43,6 @@ import com.taobao.arthas.core.shell.impl.ShellServerImpl;
 import com.taobao.arthas.core.shell.term.impl.HttpTermServer;
 import com.taobao.arthas.core.shell.term.impl.httptelnet.HttpTelnetTermServer;
 import com.taobao.arthas.core.util.ArthasBanner;
-import com.taobao.arthas.core.util.Constants;
 import com.taobao.arthas.core.util.FileUtils;
 import com.taobao.arthas.core.util.LogUtil;
 import com.taobao.arthas.core.util.UserStatUtil;
@@ -121,18 +119,10 @@ public class ArthasBootstrap {
         Runtime.getRuntime().addShutdownHook(shutdown);
     }
 
-    private static void initSpy() throws ClassNotFoundException, NoSuchMethodException {
-        Class<?> adviceWeaverClass = AdviceWeaver.class;
-        Method onBefore = adviceWeaverClass.getMethod(AdviceWeaver.ON_BEFORE, int.class, ClassLoader.class, String.class,
-                String.class, String.class, Object.class, Object[].class);
-        Method onReturn = adviceWeaverClass.getMethod(AdviceWeaver.ON_RETURN, Object.class);
-        Method onThrows = adviceWeaverClass.getMethod(AdviceWeaver.ON_THROWS, Throwable.class);
-        Method beforeInvoke = adviceWeaverClass.getMethod(AdviceWeaver.BEFORE_INVOKE, int.class, String.class, String.class, String.class, int.class);
-        Method afterInvoke = adviceWeaverClass.getMethod(AdviceWeaver.AFTER_INVOKE, int.class, String.class, String.class, String.class, int.class);
-        Method throwInvoke = adviceWeaverClass.getMethod(AdviceWeaver.THROW_INVOKE, int.class, String.class, String.class, String.class, int.class);
-        Spy.init(AdviceWeaver.class.getClassLoader(), onBefore, onReturn, onThrows, beforeInvoke, afterInvoke, throwInvoke);
+    private static void initSpy() {
+        // TODO init SpyImpl ?
     }
-    
+
     private void initArthasEnvironment(String args) throws IOException {
         if (arthasEnvironment == null) {
             arthasEnvironment = new ArthasEnvironment();
@@ -377,18 +367,17 @@ public class ArthasBootstrap {
     }
 
     /**
-     * 清除spy中对classloader的引用，避免内存泄露
+     * 清除SpyAPI里的引用
      */
     private void cleanUpSpyReference() {
+        SpyAPI.setNopSpy();
+        // AgentBootstrap.resetArthasClassLoader();
         try {
-            // 从ArthasClassLoader中加载Spy
-            Class<?> spyClass = this.getClass().getClassLoader().loadClass(Constants.SPY_CLASSNAME);
-            Method agentDestroyMethod = spyClass.getMethod("destroy");
-            agentDestroyMethod.invoke(null);
-        } catch (ClassNotFoundException e) {
-            logger().error("Spy load failed from ArthasClassLoader, which should not happen", e);
-        } catch (Exception e) {
-            logger().error("Spy destroy failed: ", e);
+            Class<?> clazz = ClassLoader.getSystemClassLoader().loadClass("com.taobao.arthas.agent3.AgentBootstrap");
+            Method method = clazz.getDeclaredMethod("resetArthasClassLoader");
+            method.invoke(null);
+        } catch (Throwable e) {
+            e.printStackTrace();
         }
     }
 
