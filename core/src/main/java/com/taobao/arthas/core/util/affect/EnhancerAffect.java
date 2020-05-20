@@ -93,7 +93,7 @@ public final class EnhancerAffect extends Affect {
                 infoSB.append("[dump: ").append(classDumpFile.getAbsoluteFile()).append("]\n");
             }
         }
-        infoSB.append(format("Affect(class-cnt:%d , method-cnt:%d) cost in %s ms.",
+        infoSB.append(format("Affect(class count:%d , method count:%d) cost in %s ms.",
                 cCnt(),
                 mCnt(),
                 cost()));
