@@ -295,7 +295,7 @@ public class Enhancer implements ClassFileTransformer {
                 // enter/exist 总是要插入 listener
                 AdviceListenerManager.registerAdviceListener(inClassLoader, className, methodNode.name, methodNode.desc,
                         listener);
-                affect.mCnt(1);
+                affect.addMethodAndCount(inClassLoader, className, methodNode.name, methodNode.desc);
             }
 
             byte[] enhanceClassByteArray = AsmUtils.toBytes(classNode);
@@ -351,7 +351,7 @@ public class Enhancer implements ClassFileTransformer {
         // 将类字节码写入文件
         try {
             FileUtils.writeByteArrayToFile(dumpClassFile, data);
-            affect.getClassDumpFiles().add(dumpClassFile);
+            affect.addClassDumpFile(dumpClassFile);
         } catch (IOException e) {
             logger.warn("dump class:{} to file {} failed.", className, dumpClassFile, e);
         }

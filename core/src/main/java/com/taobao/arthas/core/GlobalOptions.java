@@ -132,5 +132,5 @@ public class GlobalOptions {
             summary = "Option to print verbose information",
             description = "This option enables print verbose information, default value false."
     )
-    public static volatile boolean verbose = true;
+    public static volatile boolean verbose = false;
 }

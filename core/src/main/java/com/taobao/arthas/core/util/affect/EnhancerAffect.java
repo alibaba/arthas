@@ -1,11 +1,13 @@
 package com.taobao.arthas.core.util.affect;
 
 import com.taobao.arthas.core.GlobalOptions;
+import com.taobao.arthas.core.util.ClassLoaderUtils;
 
 import java.io.File;
 import java.lang.instrument.ClassFileTransformer;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import static java.lang.String.format;
@@ -24,6 +26,8 @@ public final class EnhancerAffect extends Affect {
      * dumpClass的文件存放集合
      */
     private final Collection<File> classDumpFiles = new ArrayList<File>();
+
+    private final List<String> methods = new ArrayList<String>();
 
     public EnhancerAffect() {
     }
@@ -49,6 +53,16 @@ public final class EnhancerAffect extends Affect {
     }
 
     /**
+     * 记录影响的函数，并增加计数
+     * @param mc
+     * @return
+     */
+    public int addMethodAndCount(ClassLoader classLoader, String clazz, String method, String methodDesc) {
+        this.methods.add(ClassLoaderUtils.classLoaderHash(classLoader) + "|" + clazz.replace('/', '.') + "#" + method + "|" + methodDesc);
+        return mCnt.addAndGet(1);
+    }
+
+    /**
      * 获取影响类个数
      *
      * @return 影响类个数
@@ -66,13 +80,8 @@ public final class EnhancerAffect extends Affect {
         return mCnt.get();
     }
 
-    /**
-     * 获取dump的Class文件集合
-     *
-     * @return classDumpList
-     */
-    public Collection<File> getClassDumpFiles() {
-        return classDumpFiles;
+    public void addClassDumpFile(File file) {
+        classDumpFiles.add(file);
     }
 
     public ClassFileTransformer getTransformer() {
@@ -91,6 +100,12 @@ public final class EnhancerAffect extends Affect {
 
             for (File classDumpFile : classDumpFiles) {
                 infoSB.append("[dump: ").append(classDumpFile.getAbsoluteFile()).append("]\n");
+            }
+        }
+
+        if (GlobalOptions.verbose && !methods.isEmpty()) {
+            for (String method : methods) {
+                infoSB.append("[Affect method: ").append(method).append("]\n");
             }
         }
         infoSB.append(format("Affect(class count:%d , method count:%d) cost in %s ms.",
