@@ -3,6 +3,7 @@ package com.taobao.arthas.core.util.affect;
 import com.taobao.arthas.core.GlobalOptions;
 
 import java.io.File;
+import java.lang.instrument.ClassFileTransformer;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -18,19 +19,13 @@ public final class EnhancerAffect extends Affect {
 
     private final AtomicInteger cCnt = new AtomicInteger();
     private final AtomicInteger mCnt = new AtomicInteger();
-
+    private ClassFileTransformer transformer;
     /**
      * dumpClass的文件存放集合
      */
     private final Collection<File> classDumpFiles = new ArrayList<File>();
 
     public EnhancerAffect() {
-
-    }
-
-    public EnhancerAffect(int cCnt, int mCnt) {
-        this.cCnt(cCnt);
-        this.mCnt(mCnt);
     }
 
     /**
@@ -78,6 +73,14 @@ public final class EnhancerAffect extends Affect {
      */
     public Collection<File> getClassDumpFiles() {
         return classDumpFiles;
+    }
+
+    public ClassFileTransformer getTransformer() {
+        return transformer;
+    }
+
+    public void setTransformer(ClassFileTransformer transformer) {
+        this.transformer = transformer;
     }
 
     @Override

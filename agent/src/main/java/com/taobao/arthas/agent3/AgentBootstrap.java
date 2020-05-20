@@ -1,6 +1,5 @@
 package com.taobao.arthas.agent3;
 
-import java.arthas.Spy;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.PrintStream;
@@ -19,7 +18,6 @@ import com.taobao.arthas.agent.ArthasClassloader;
  * @author vlinux on 15/5/19.
  */
 public class AgentBootstrap {
-    private static final String RESET = "resetArthasClassLoader";
     private static final String ARTHAS_SPY_JAR = "arthas-spy.jar";
     private static final String ARTHAS_CORE_JAR = "arthas-core.jar";
     private static final String ARTHAS_BOOTSTRAP = "com.taobao.arthas.core.server.ArthasBootstrap";
@@ -79,7 +77,7 @@ public class AgentBootstrap {
         Class<?> spyClass = null;
         if (parent != null) {
             try {
-                spyClass = parent.loadClass("java.arthas.Spy");
+                spyClass =parent.loadClass("java.arthas.SpyAPI");
             } catch (Throwable e) {
                 // ignore
             }
@@ -97,10 +95,6 @@ public class AgentBootstrap {
             arthasClassLoader = new ArthasClassloader(new URL[]{arthasCoreJarFile.toURI().toURL()});
         }
         return arthasClassLoader;
-    }
-
-    private static void initSpy() throws NoSuchMethodException {
-        Spy.AGENT_RESET_METHOD = AgentBootstrap.class.getMethod(RESET);
     }
 
     private static synchronized void main(String args, final Instrumentation inst) {
@@ -155,7 +149,6 @@ public class AgentBootstrap {
              * Use a dedicated thread to run the binding logic to prevent possible memory leak. #195
              */
             final ClassLoader agentLoader = getClassLoader(inst, spyJarFile, arthasCoreJarFile);
-            initSpy();
 
             Thread bindingThread = new Thread() {
                 @Override

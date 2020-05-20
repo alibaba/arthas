@@ -4,7 +4,7 @@ import com.alibaba.arthas.deps.org.slf4j.Logger;
 import com.alibaba.arthas.deps.org.slf4j.LoggerFactory;
 import com.taobao.arthas.core.advisor.Advice;
 import com.taobao.arthas.core.advisor.ArthasMethod;
-import com.taobao.arthas.core.advisor.ReflectAdviceListenerAdapter;
+import com.taobao.arthas.core.advisor.AdviceListenerAdapter;
 import com.taobao.arthas.core.shell.command.CommandProcess;
 import com.taobao.arthas.core.util.LogUtil;
 import com.taobao.arthas.core.util.ThreadLocalWatch;
@@ -12,7 +12,7 @@ import com.taobao.arthas.core.util.ThreadLocalWatch;
 /**
  * @author ralf0131 2017-01-06 16:02.
  */
-public class AbstractTraceAdviceListener extends ReflectAdviceListenerAdapter {
+public class AbstractTraceAdviceListener extends AdviceListenerAdapter {
     private static final Logger logger = LoggerFactory.getLogger(AbstractTraceAdviceListener.class);
     protected final ThreadLocalWatch threadLocalWatch = new ThreadLocalWatch();
     protected TraceCommand command;

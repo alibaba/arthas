@@ -1,6 +1,6 @@
 package com.taobao.arthas.core.command.monitor200;
 
-import com.taobao.arthas.core.advisor.ReflectAdviceListenerAdapter;
+import com.taobao.arthas.core.advisor.AdviceListenerAdapter;
 import com.taobao.arthas.core.shell.command.CommandProcess;
 import com.alibaba.arthas.deps.org.slf4j.Logger;
 import com.alibaba.arthas.deps.org.slf4j.LoggerFactory;
@@ -14,7 +14,7 @@ import com.taobao.arthas.core.util.ThreadUtil;
 /**
  * @author beiwei30 on 29/11/2016.
  */
-public class StackAdviceListener extends ReflectAdviceListenerAdapter {
+public class StackAdviceListener extends AdviceListenerAdapter {
     private static final Logger logger = LoggerFactory.getLogger(StackAdviceListener.class);
 
     private final ThreadLocal<String> stackThreadLocal = new ThreadLocal<String>();
