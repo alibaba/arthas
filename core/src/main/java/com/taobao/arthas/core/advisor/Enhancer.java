@@ -70,8 +70,8 @@ public class Enhancer implements ClassFileTransformer {
     private final Matcher methodNameMatcher;
     private final EnhancerAffect affect;
 
-    // 类-字节码缓存
-    private final static Map<Class<?>/* Class */, byte[]/* bytes of Class */> classBytesCache = new WeakHashMap<Class<?>, byte[]>();
+    // 被增强的类的缓存
+    private final static Map<Class<?>/* Class */, Object> classBytesCache = new WeakHashMap<Class<?>, Object>();
     private static SpyImpl spyImpl = new SpyImpl();
 
     static {
@@ -190,7 +190,7 @@ public class Enhancer implements ClassFileTransformer {
                 }
             } catch (Throwable e) {
                 logger.error("the classloader can not load SpyAPI, ignore it. classloader: {}, className: {}",
-                        inClassLoader.getName(), className);
+                        inClassLoader.getClass().getName(), className);
                 return null;
             }
 
@@ -198,13 +198,6 @@ public class Enhancer implements ClassFileTransformer {
             // 所以需要将之前需要转换的类集合传递下来，再次进行判断
             if (!matchingClasses.contains(classBeingRedefined)) {
                 return null;
-            }
-
-            // 首先先检查是否在缓存中存在Class字节码
-            // 因为要支持多人协作,存在多人同时增强的情况
-            final byte[] byteOfClassInCache = classBytesCache.get(classBeingRedefined);
-            if (null != byteOfClassInCache) {
-                classfileBuffer = byteOfClassInCache;
             }
 
             ClassNode classNode = AsmUtils.toClassNode(classfileBuffer);
@@ -307,8 +300,8 @@ public class Enhancer implements ClassFileTransformer {
 
             byte[] enhanceClassByteArray = AsmUtils.toBytes(classNode);
 
-            // 生成成功,推入缓存
-            classBytesCache.put(classBeingRedefined, enhanceClassByteArray);
+            // 增强成功，记录类
+            classBytesCache.put(classBeingRedefined, new Object());
 
             // dump the class
             dumpClassIfNecessary(className, enhanceClassByteArray, affect);
