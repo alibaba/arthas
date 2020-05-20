@@ -117,7 +117,7 @@ public class TimeTunnelAdviceListener extends AdviceListenerAdapter {
      * 
      * </pre>
      * 
-     * @author hengyunabc 2019-11-20
+     * @author hengyunabc 2020-05-20
      *
      */
     static class ObjectStack {
@@ -147,11 +147,15 @@ public class TimeTunnelAdviceListener extends AdviceListenerAdapter {
         public Object pop() {
             if (pos > 0) {
                 pos--;
-                return array[pos];
+                Object object = array[pos];
+                array[pos] = null;
+                return object;
             } else {
                 pos = cap;
                 pos--;
-                return array[pos];
+                Object object = array[pos];
+                array[pos] = null;
+                return object;
             }
         }
     }
