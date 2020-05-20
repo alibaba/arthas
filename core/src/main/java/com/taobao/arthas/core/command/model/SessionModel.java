@@ -3,7 +3,7 @@ package com.taobao.arthas.core.command.model;
 /**
  * Session command result model
  *
- * @author gongdewei 2020.03.27
+ * @author gongdewei 2020/03/27
  */
 public class SessionModel extends ResultModel {
 

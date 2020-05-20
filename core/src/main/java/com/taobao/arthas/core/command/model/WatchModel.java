@@ -5,7 +5,7 @@ import java.util.Date;
 /**
  * Watch command result model
  *
- * @author gongdewei 2020.03.26
+ * @author gongdewei 2020/03/26
  */
 public class WatchModel extends ResultModel {
 
