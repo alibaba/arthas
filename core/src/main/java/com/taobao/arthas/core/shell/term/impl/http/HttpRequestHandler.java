@@ -44,14 +44,12 @@ public class HttpRequestHandler extends SimpleChannelInboundHandler<FullHttpRequ
     private File dir;
 
     private HttpApiHandler httpApiHandler;
-//    private HttpWebUIHandler webUIHandler;
 
     public HttpRequestHandler(String wsUri, File dir) {
         this.wsUri = wsUri;
         this.dir = dir;
         dir.mkdirs();
         this.httpApiHandler = HttpApiHandler.getInstance();
-//        this.webUIHandler = HttpWebUIHandler.getInstance();
     }
 
     @Override
@@ -77,10 +75,7 @@ public class HttpRequestHandler extends SimpleChannelInboundHandler<FullHttpRequ
                     isHttpApiResponse = true;
                 }
 
-                //handler webui requests
-//                if (path.startsWith(HttpWebUIHandler.WEB_UI_PATH)) {
-//                    response = webUIHandler.handle(request);
-//                }
+                //handle webui requests
                 if (path.equals("/ui")){
                     response = createRedirectResponse(request, "/ui/");
                 }

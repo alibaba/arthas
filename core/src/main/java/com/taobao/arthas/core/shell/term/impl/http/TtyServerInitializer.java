@@ -1,7 +1,5 @@
 package com.taobao.arthas.core.shell.term.impl.http;
 
-import java.io.File;
-
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.ChannelPipeline;
 import io.netty.channel.group.ChannelGroup;
@@ -12,7 +10,10 @@ import io.netty.handler.codec.http.websocketx.WebSocketServerProtocolHandler;
 import io.netty.handler.stream.ChunkedWriteHandler;
 import io.netty.util.concurrent.EventExecutorGroup;
 import io.termd.core.function.Consumer;
+import io.termd.core.http.netty.TtyWebSocketFrameHandler;
 import io.termd.core.tty.TtyConnection;
+
+import java.io.File;
 
 
 /**
@@ -39,6 +40,6 @@ public class TtyServerInitializer extends ChannelInitializer<SocketChannel> {
     pipeline.addLast(new HttpObjectAggregator(64 * 1024));
     pipeline.addLast(workerGroup, "HttpRequestHandler", new HttpRequestHandler("/ws", new File("arthas-output")));
     pipeline.addLast(new WebSocketServerProtocolHandler("/ws"));
-    pipeline.addLast(new TtyWebSocketFrameHandler(group, handler));
+    pipeline.addLast(new TtyWebSocketFrameHandler(group, handler, HttpRequestHandler.class));
   }
 }

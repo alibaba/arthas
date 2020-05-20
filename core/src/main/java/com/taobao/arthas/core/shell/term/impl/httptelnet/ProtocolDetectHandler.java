@@ -4,7 +4,6 @@ import java.io.File;
 import java.util.concurrent.TimeUnit;
 
 import com.taobao.arthas.core.shell.term.impl.http.HttpRequestHandler;
-import com.taobao.arthas.core.shell.term.impl.http.TtyWebSocketFrameHandler;
 
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
@@ -19,6 +18,7 @@ import io.netty.util.concurrent.EventExecutorGroup;
 import io.netty.util.concurrent.ScheduledFuture;
 import io.termd.core.function.Consumer;
 import io.termd.core.function.Supplier;
+import io.termd.core.http.netty.TtyWebSocketFrameHandler;
 import io.termd.core.telnet.TelnetHandler;
 import io.termd.core.telnet.netty.TelnetChannelHandler;
 import io.termd.core.tty.TtyConnection;
@@ -87,7 +87,7 @@ public class ProtocolDetectHandler extends ChannelInboundHandlerAdapter {
             pipeline.addLast(new HttpObjectAggregator(64 * 1024));
             pipeline.addLast(workerGroup, "HttpRequestHandler", new HttpRequestHandler("/ws", new File("arthas-output")));
             pipeline.addLast(new WebSocketServerProtocolHandler("/ws"));
-            pipeline.addLast(new TtyWebSocketFrameHandler(channelGroup, ttyConnectionFactory));
+            pipeline.addLast(new TtyWebSocketFrameHandler(channelGroup, ttyConnectionFactory, HttpRequestHandler.class));
             ctx.fireChannelActive();
         }
         pipeline.remove(this);
