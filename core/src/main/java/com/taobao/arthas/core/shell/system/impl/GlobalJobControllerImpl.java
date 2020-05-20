@@ -56,12 +56,7 @@ public class GlobalJobControllerImpl extends JobControllerImpl {
         /*
          * 达到超时时间将会停止job
          */
-        TimerTask jobTimeoutTask = new TimerTask() {
-            @Override
-            public void run() {
-                job.terminate();
-            }
-        };
+        TimerTask jobTimeoutTask = new JobTimeoutTask(job);
         Date timeoutDate = new Date(System.currentTimeMillis() + (getJobTimeoutInSecond() * 1000));
         ArthasBootstrap.getInstance().getTimer().schedule(jobTimeoutTask, timeoutDate);
         jobTimeoutTaskMap.put(job.id(), jobTimeoutTask);
@@ -102,5 +97,28 @@ public class GlobalJobControllerImpl extends JobControllerImpl {
             logger.warn("Configuration with job timeout " + jobTimeoutConfig + " is error, use 1d in default.");
         }
         return result;
+    }
+
+    private static class JobTimeoutTask extends TimerTask {
+        Job job;
+
+        public JobTimeoutTask(Job job) {
+            this.job = job;
+        }
+
+        @Override
+        public void run() {
+            if (job != null) {
+                job.terminate();
+            }
+        }
+
+        @Override
+        public boolean cancel() {
+            // clear job reference from timer
+            // fix issue: https://github.com/alibaba/arthas/issues/1189
+            job = null;
+            return super.cancel();
+        }
     }
 }
