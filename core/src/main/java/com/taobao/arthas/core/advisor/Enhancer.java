@@ -183,6 +183,17 @@ public class Enhancer implements ClassFileTransformer {
     public byte[] transform(final ClassLoader inClassLoader, String className, Class<?> classBeingRedefined,
             ProtectionDomain protectionDomain, byte[] classfileBuffer) throws IllegalClassFormatException {
         try {
+            // 检查classloader能否加载到 SpyAPI，如果不能，则放弃增强
+            try {
+                if (inClassLoader != null) {
+                    inClassLoader.loadClass(SpyAPI.class.getName());
+                }
+            } catch (Throwable e) {
+                logger.error("the classloader can not load SpyAPI, ignore it. classloader: {}, className: {}",
+                        inClassLoader.getName(), className);
+                return null;
+            }
+
             // 这里要再次过滤一次，为啥？因为在transform的过程中，有可能还会再诞生新的类
             // 所以需要将之前需要转换的类集合传递下来，再次进行判断
             if (!matchingClasses.contains(classBeingRedefined)) {
