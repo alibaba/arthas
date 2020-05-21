@@ -45,7 +45,7 @@ public class ByteKitDemo {
         }
     }
 
-    public static class EnterInterceptor {
+    public static class SampleInterceptor {
 
         @AtEnter(inline = true, suppress = RuntimeException.class, suppressHandler = PrintExceptionSuppressHandler.class)
         public static void atEnter(@Binding.This Object object, 
@@ -92,7 +92,7 @@ public class ByteKitDemo {
 
         // 解析定义的 Interceptor类 和相关的注解
         DefaultInterceptorClassParser interceptorClassParser = new DefaultInterceptorClassParser();
-        List<InterceptorProcessor> processors = interceptorClassParser.parse(EnterInterceptor.class);
+        List<InterceptorProcessor> processors = interceptorClassParser.parse(SampleInterceptor.class);
 
         // 加载字节码
         ClassNode classNode = AsmUtils.loadClass(Sample.class);
