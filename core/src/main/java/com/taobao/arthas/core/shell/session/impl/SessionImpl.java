@@ -1,8 +1,9 @@
 package com.taobao.arthas.core.shell.session.impl;
 
-import com.taobao.arthas.core.shell.ShellServer;
+import com.taobao.arthas.core.distribution.SharingResultDistributor;
 import com.taobao.arthas.core.shell.command.CommandResolver;
 import com.taobao.arthas.core.shell.session.Session;
+import com.taobao.arthas.core.shell.system.Job;
 import com.taobao.arthas.core.shell.system.impl.InternalCommandManager;
 
 import java.lang.instrument.Instrumentation;
@@ -20,6 +21,12 @@ public class SessionImpl implements Session {
     private final AtomicInteger lock = new AtomicInteger(LOCK_TX_EMPTY);
 
     private Map<String, Object> data = new HashMap<String, Object>();
+
+    public SessionImpl() {
+        long now = System.currentTimeMillis();
+        data.put(CREATE_TIME, now);
+        this.setLastAccessTime(now);
+    }
 
     @Override
     public Session put(String key, Object obj) {
@@ -70,11 +77,6 @@ public class SessionImpl implements Session {
     }
 
     @Override
-    public ShellServer getServer() {
-        return (ShellServer) data.get(SERVER);
-    }
-
-    @Override
     public long getPid() {
         return (Long) data.get(PID);
     }
@@ -89,4 +91,45 @@ public class SessionImpl implements Session {
     public Instrumentation getInstrumentation() {
         return (Instrumentation) data.get(INSTRUMENTATION);
     }
+
+    @Override
+    public void setLastAccessTime(long time) {
+        data.put(LAST_ACCESS_TIME, time);
+    }
+
+    @Override
+    public long getLastAccessTime() {
+        return (Long)data.get(LAST_ACCESS_TIME);
+    }
+
+    @Override
+    public long getCreateTime() {
+        return (Long)data.get(CREATE_TIME);
+    }
+
+    @Override
+    public void setResultDistributor(SharingResultDistributor resultDistributor) {
+        data.put(RESULT_DISTRIBUTOR, resultDistributor);
+    }
+
+    @Override
+    public SharingResultDistributor getResultDistributor() {
+        return (SharingResultDistributor) data.get(RESULT_DISTRIBUTOR);
+    }
+
+    @Override
+    public void setForegroundJob(Job job) {
+        data.put(FOREGROUND_JOB, job);
+    }
+
+    @Override
+    public Job getForegroundJob() {
+        return (Job) data.get(FOREGROUND_JOB);
+    }
+
+    @Override
+    public boolean isTty() {
+        return get(TTY) != null;
+    }
+
 }

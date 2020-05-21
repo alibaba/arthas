@@ -40,6 +40,8 @@ import com.taobao.arthas.core.shell.ShellServerOptions;
 import com.taobao.arthas.core.shell.command.CommandResolver;
 import com.taobao.arthas.core.shell.handlers.BindHandler;
 import com.taobao.arthas.core.shell.impl.ShellServerImpl;
+import com.taobao.arthas.core.shell.session.SessionManager;
+import com.taobao.arthas.core.shell.session.impl.SessionManagerImpl;
 import com.taobao.arthas.core.shell.term.impl.HttpTermServer;
 import com.taobao.arthas.core.shell.term.impl.httptelnet.HttpTelnetTermServer;
 import com.taobao.arthas.core.util.ArthasBanner;
@@ -48,10 +50,29 @@ import com.taobao.arthas.core.util.LogUtil;
 import com.taobao.arthas.core.util.UserStatUtil;
 
 import io.netty.channel.ChannelFuture;
+import io.netty.channel.nio.NioEventLoopGroup;
+import io.netty.util.concurrent.EventExecutorGroup;
+
+import java.arthas.SpyAPI;
+import java.io.File;
+import java.io.IOException;
+import java.lang.instrument.Instrumentation;
+import java.lang.reflect.Method;
+import java.net.URI;
+import java.security.CodeSource;
+import java.util.*;
+import java.util.Map.Entry;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ThreadFactory;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicBoolean;
+
 
 
 /**
  * @author vlinux on 15/5/2.
+ * @author gongdewei 2020-03-25
  */
 public class ArthasBootstrap {
     public static final String ARTHAS_HOME_PROPERTY = "arthas.home";
@@ -71,6 +92,7 @@ public class ArthasBootstrap {
     private Thread shutdown;
     private ShellServer shellServer;
     private ScheduledExecutorService executorService;
+    private SessionManager sessionManager;
     private TunnelClient tunnelClient;
 
     private File arthasOutputDir;
@@ -286,8 +308,12 @@ public class ArthasBootstrap {
 
             shellServer.listen(new BindHandler(isBindRef));
 
+            //http api session manager
+            sessionManager = new SessionManagerImpl(options, this, shellServer.getCommandManager(), shellServer.getJobController());
+
             logger().info("as-server listening on network={};telnet={};http={};timeout={};", configure.getIp(),
                     configure.getTelnetPort(), configure.getHttpPort(), options.getConnectionTimeout());
+
             // 异步回报启动次数
             if (configure.getStatUrl() != null) {
                 logger().info("arthas stat url: {}", configure.getStatUrl());
@@ -301,6 +327,10 @@ public class ArthasBootstrap {
             if (shellServer != null) {
                 shellServer.close();
             }
+            if (sessionManager != null){
+                sessionManager.close();
+            }
+            //shutdownWorkGroup();
             throw e;
         }
     }
@@ -337,6 +367,8 @@ public class ArthasBootstrap {
         if (loggerContext != null) {
             loggerContext.stop();
         }
+        shellServer = null;
+        sessionManager = null;
     }
 
     /**
@@ -383,6 +415,14 @@ public class ArthasBootstrap {
 
     public TunnelClient getTunnelClient() {
         return tunnelClient;
+    }
+
+    public ShellServer getShellServer() {
+        return shellServer;
+    }
+
+    public SessionManager getSessionManager() {
+        return sessionManager;
     }
 
     public Timer getTimer() {
