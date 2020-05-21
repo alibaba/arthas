@@ -54,6 +54,7 @@ public class JadCommand extends AnnotatedCommand {
     private String methodName;
     private String code = null;
     private boolean isRegEx = false;
+    private boolean hideUnicode = false;
 
     /**
      * jad output source code only
@@ -83,6 +84,12 @@ public class JadCommand extends AnnotatedCommand {
     @Description("Enable regular expression to match (wildcard matching by default)")
     public void setRegEx(boolean regEx) {
         isRegEx = regEx;
+    }
+
+    @Option(longName = "hideUnicode", flag = true)
+    @Description("hide unicode, default value false")
+    public void setHideUnicode(boolean hideUnicode) {
+        this.hideUnicode = hideUnicode;
     }
 
     @Option(longName = "source-only", flag = true)
@@ -153,7 +160,7 @@ public class JadCommand extends AnnotatedCommand {
             Map<Class<?>, File> classFiles = transformer.getDumpResult();
             File classFile = classFiles.get(c);
 
-            String source = Decompiler.decompile(classFile.getAbsolutePath(), methodName);
+            String source = Decompiler.decompile(classFile.getAbsolutePath(), methodName, hideUnicode);
             if (source != null) {
                 source = pattern.matcher(source).replaceAll("");
             } else {

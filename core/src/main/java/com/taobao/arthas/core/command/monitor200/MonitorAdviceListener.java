@@ -1,6 +1,6 @@
 package com.taobao.arthas.core.command.monitor200;
 
-import com.taobao.arthas.core.advisor.ReflectAdviceListenerAdapter;
+import com.taobao.arthas.core.advisor.AdviceListenerAdapter;
 import com.taobao.arthas.core.command.model.MonitorModel;
 import com.taobao.arthas.core.shell.command.CommandProcess;
 import com.taobao.arthas.core.advisor.ArthasMethod;
@@ -57,7 +57,7 @@ import static com.taobao.arthas.core.util.ArthasCheckUtils.isEquals;
  *
  * @author beiwei30 on 28/11/2016.
  */
-class MonitorAdviceListener extends ReflectAdviceListenerAdapter {
+class MonitorAdviceListener extends AdviceListenerAdapter {
     // 输出定时任务
     private Timer timer;
     // 监控数据

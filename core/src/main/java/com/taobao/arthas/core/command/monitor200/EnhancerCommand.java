@@ -110,7 +110,7 @@ public abstract class EnhancerCommand extends AnnotatedCommand {
                 skipJDKTrace = ((AbstractTraceAdviceListener) listener).getCommand().isSkipJDKTrace();
             }
 
-            EnhancerAffect effect = Enhancer.enhance(inst, lock, listener instanceof InvokeTraceable,
+            EnhancerAffect effect = Enhancer.enhance(inst, listener, listener instanceof InvokeTraceable,
                     skipJDKTrace, getClassNameMatcher(), getMethodNameMatcher());
 
             if (effect.cCnt() == 0 || effect.mCnt() == 0) {
@@ -130,7 +130,7 @@ public abstract class EnhancerCommand extends AnnotatedCommand {
             // 这里做个补偿,如果在enhance期间,unLock被调用了,则补偿性放弃
             if (session.getLock() == lock) {
                 // 注册通知监听器
-                process.register(lock, listener);
+                process.register(lock, listener, effect.getTransformer());
                 if (process.isForeground()) {
                     process.echoTips(Constants.Q_OR_CTRL_C_ABORT_MSG + "\n");
                 }

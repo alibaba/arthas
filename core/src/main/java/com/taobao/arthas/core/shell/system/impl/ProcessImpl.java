@@ -19,11 +19,13 @@ import com.taobao.arthas.core.shell.handlers.Handler;
 import com.taobao.arthas.core.shell.session.Session;
 import com.taobao.arthas.core.shell.system.ExecStatus;
 import com.taobao.arthas.core.shell.system.Process;
+import com.taobao.arthas.core.shell.system.ProcessAware;
 import com.taobao.arthas.core.shell.term.Tty;
 import com.taobao.middleware.cli.CLIException;
 import com.taobao.middleware.cli.CommandLine;
 import io.termd.core.function.Function;
 
+import java.lang.instrument.ClassFileTransformer;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
@@ -331,7 +333,7 @@ public class ProcessImpl implements Process {
             throw new IllegalStateException("Cannot execute process without a TTY set");
         }
 
-        process = new CommandProcessImpl(tty);
+        process = new CommandProcessImpl(this, tty);
         if (resultDistributor == null) {
             resultDistributor = new TermResultDistributorImpl(process);
         }
@@ -383,21 +385,25 @@ public class ProcessImpl implements Process {
                 handler.handle(process);
             } catch (Throwable t) {
                 logger.error("Error during processing the command:", t);
-                process.end(1, "Error during processing the command: " + t.getMessage() );
+                process.end(1, "Error during processing the command: " + t.getClass().getName() + ", message:" + t.getMessage()
+                        + ", please check $HOME/logs/arthas/arthas.log for more details." );
             }
         }
     }
 
     private class CommandProcessImpl implements CommandProcess {
 
-        private List<String> args2;
+        private final Process process;
         private final Tty tty;
+        private List<String> args2;
         private CommandLine commandLine;
         private int enhanceLock = -1;
         private AtomicInteger times = new AtomicInteger();
         private AdviceListener suspendedListener = null;
+        private ClassFileTransformer transformer;
 
-        public CommandProcessImpl(Tty tty) {
+        public CommandProcessImpl(Process process, Tty tty) {
+            this.process = process;
             this.tty = tty;
         }
 
@@ -541,13 +547,23 @@ public class ProcessImpl implements Process {
         }
 
         @Override
-        public void register(int enhanceLock, AdviceListener listener) {
+        public void register(int enhanceLock, AdviceListener listener, ClassFileTransformer transformer) {
             this.enhanceLock = enhanceLock;
+
+            if (listener instanceof ProcessAware) {
+                ((ProcessAware) listener).setProcess(this.process);
+            }
             AdviceWeaver.reg(enhanceLock, listener);
+            
+            this.transformer = transformer;
         }
 
         @Override
         public void unregister() {
+            if (transformer != null) {
+                ArthasBootstrap.getInstance().getTransformerManager().removeTransformer(transformer);
+            }
+            
             AdviceWeaver.unReg(enhanceLock);
         }
 

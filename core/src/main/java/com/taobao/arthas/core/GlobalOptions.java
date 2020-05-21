@@ -123,4 +123,14 @@ public class GlobalOptions {
             description = "This option enables print files in parent class, default value true."
     )
     public static volatile boolean printParentFields = true;
+
+    /**
+     * 是否打开verbose 开关
+     */
+    @Option(level = 1,
+            name = "verbose",
+            summary = "Option to print verbose information",
+            description = "This option enables print verbose information, default value false."
+    )
+    public static volatile boolean verbose = false;
 }

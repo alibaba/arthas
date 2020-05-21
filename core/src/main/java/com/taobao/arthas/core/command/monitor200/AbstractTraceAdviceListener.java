@@ -4,19 +4,26 @@ import com.alibaba.arthas.deps.org.slf4j.Logger;
 import com.alibaba.arthas.deps.org.slf4j.LoggerFactory;
 import com.taobao.arthas.core.advisor.Advice;
 import com.taobao.arthas.core.advisor.ArthasMethod;
-import com.taobao.arthas.core.advisor.ReflectAdviceListenerAdapter;
+import com.taobao.arthas.core.advisor.AdviceListenerAdapter;
 import com.taobao.arthas.core.shell.command.CommandProcess;
 import com.taobao.arthas.core.util.LogUtil;
 import com.taobao.arthas.core.util.ThreadLocalWatch;
 
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+
 /**
  * @author ralf0131 2017-01-06 16:02.
  */
-public class AbstractTraceAdviceListener extends ReflectAdviceListenerAdapter {
+public class AbstractTraceAdviceListener extends AdviceListenerAdapter {
     private static final Logger logger = LoggerFactory.getLogger(AbstractTraceAdviceListener.class);
     protected final ThreadLocalWatch threadLocalWatch = new ThreadLocalWatch();
     protected TraceCommand command;
     protected CommandProcess process;
+
+    //转换增强字节码回调方法中的非标准类名
+    //normalizeClassName:  a/b/c/MyClass -> a.b.c.MyClass
+    protected Map<String, String> normalizeClassNameMap = new ConcurrentHashMap<String, String>();
 
     protected final ThreadLocal<TraceEntity> threadBoundEntity = new ThreadLocal<TraceEntity>() {
 

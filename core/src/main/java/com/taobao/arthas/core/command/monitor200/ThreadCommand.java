@@ -46,7 +46,10 @@ public class ThreadCommand extends AnnotatedCommand {
     private int sampleInterval = 100;
     private String state;
 
-    {
+    private boolean lockedMonitors = false;
+    private boolean lockedSynchronizers = false;
+
+    static {
         states = new HashSet<String>(State.values().length);
         for (State state : State.values()) {
             states.add(state.name());
@@ -81,6 +84,18 @@ public class ThreadCommand extends AnnotatedCommand {
     @Description("Display the thead filter by the state. NEW, RUNNABLE, TIMED_WAITING, WAITING, BLOCKED, TERMINATED is optional.")
     public void setState(String state) {
         this.state = state;
+    }
+
+    @Option(longName = "lockedMonitors", flag = true)
+    @Description("Find the thread info with lockedMonitors flag, default value is false.")
+    public void setLockedMonitors(boolean lockedMonitors) {
+        this.lockedMonitors = lockedMonitors;
+    }
+
+    @Option(longName = "lockedSynchronizers", flag = true)
+    @Description("Find the thread info with lockedSynchronizers flag, default value is false.")
+    public void setLockedSynchronizers(boolean lockedSynchronizers) {
+        this.lockedSynchronizers = lockedSynchronizers;
     }
 
     @Override
@@ -152,7 +167,7 @@ public class ThreadCommand extends AnnotatedCommand {
     private StatusModel processTopBusyThreads(CommandProcess process) {
         Map<Long, Long> topNThreads = ThreadUtil.getTopNThreads(sampleInterval, topNBusy);
         Long[] tids = topNThreads.keySet().toArray(new Long[0]);
-        ThreadInfo[] threadInfos = threadMXBean.getThreadInfo(ArrayUtils.toPrimitive(tids), true, true);
+        ThreadInfo[] threadInfos = threadMXBean.getThreadInfo(ArrayUtils.toPrimitive(tids), lockedMonitors, lockedSynchronizers);
         if (threadInfos == null) {
             return new StatusModel(1, "get top busy threads failed");
         }
@@ -168,7 +183,7 @@ public class ThreadCommand extends AnnotatedCommand {
     }
 
     private StatusModel processThread(CommandProcess process) {
-        ThreadInfo[] threadInfos = threadMXBean.getThreadInfo(new long[]{id}, true, true);
+        ThreadInfo[] threadInfos = threadMXBean.getThreadInfo(new long[]{id}, lockedMonitors, lockedSynchronizers);
         if (threadInfos == null || threadInfos.length < 1 || threadInfos[0] == null) {
             return new StatusModel(1, "thread do not exist! id: " + id);
         }
