@@ -1,9 +1,11 @@
 package com.taobao.arthas.core.command.basic1000;
 
 import com.taobao.arthas.core.advisor.Enhancer;
+import com.taobao.arthas.core.server.ArthasBootstrap;
 import com.taobao.arthas.core.shell.ShellServer;
 import com.taobao.arthas.core.shell.command.AnnotatedCommand;
 import com.taobao.arthas.core.shell.command.CommandProcess;
+import com.taobao.arthas.core.shell.session.SessionManager;
 import com.taobao.arthas.core.util.affect.EnhancerAffect;
 import com.taobao.arthas.core.util.matcher.WildcardMatcher;
 import com.taobao.middleware.cli.annotations.Hidden;
@@ -39,8 +41,15 @@ public class ShutdownCommand extends AnnotatedCommand {
             // ignore
         } finally {
             process.end();
-            ShellServer server = process.session().getServer();
-            server.close();
+            ShellServer server = ArthasBootstrap.getInstance().getShellServer();
+            if (server != null) {
+                server.close();
+            }
+
+            SessionManager sessionManager = ArthasBootstrap.getInstance().getSessionManager();
+            if (sessionManager != null){
+                sessionManager.close();
+            }
         }
     }
 }
