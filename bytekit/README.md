@@ -12,7 +12,7 @@
 ## 对比
 
 |  功能   |  函数Enter/Exit注入点 |  绑定数据   | inline  | 防止重复增强   | 避免装箱/拆箱开销  |origin调用替换  | `@ExceptionHandler`  |
-|  ----  | ----                  |----       | :----:      |:----:       | :----:       |:----:         | :----:       |----  | ----  |----  | ----  |----  | ----  |
+|  ----  | ----                  |----       | :----:      |:----:       | :----:       |:----:         | :----:       |
 | ByteKit  | `@AtEnter` <br>  `@AtExit` <br>`@AtExceptionExit` <br> `@AtFieldAccess` <br> `@AtInvoke`<br>`@AtInvokeException`<br>`@AtLine`<br>`@AtSyncEnter`<br>`@AtSyncExit`<br>`@AtThrow`| this/args/return/throw<br>field<br>locals<br>子调用入参/返回值/子调用异常<br>line number|✓|✓|✓|✓|✓|
 | ByteBuddy  | `OnMethodEnter`<br>`@OnMethodExit`<br> `@OnMethodExit#onThrowable()`| this/args/return/throw<br>field<br>locals|✓|✗|✓|✓|✓|
 | 传统AOP  | `Enter`<br>`Exit`<br>`Exception` |this/args/return/throw|✗|✗|✗|✗|✗
