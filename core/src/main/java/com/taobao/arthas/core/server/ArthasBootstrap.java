@@ -48,26 +48,9 @@ import com.taobao.arthas.core.util.ArthasBanner;
 import com.taobao.arthas.core.util.FileUtils;
 import com.taobao.arthas.core.util.LogUtil;
 import com.taobao.arthas.core.util.UserStatUtil;
-
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.util.concurrent.EventExecutorGroup;
-
-import java.arthas.SpyAPI;
-import java.io.File;
-import java.io.IOException;
-import java.lang.instrument.Instrumentation;
-import java.lang.reflect.Method;
-import java.net.URI;
-import java.security.CodeSource;
-import java.util.*;
-import java.util.Map.Entry;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ThreadFactory;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicBoolean;
-
 
 
 /**
@@ -78,9 +61,9 @@ public class ArthasBootstrap {
     public static final String ARTHAS_HOME_PROPERTY = "arthas.home";
     private static String ARTHAS_SHOME = null;
 
-    public static final String CONFIG_NAME_PROPERTY  = "arthas.config.name";
+    public static final String CONFIG_NAME_PROPERTY = "arthas.config.name";
     public static final String CONFIG_LOCATION_PROPERTY = "arthas.config.location";
-    public static final String CONFIG_OVERRIDE_ALL= "arthas.config.overrideAll";
+    public static final String CONFIG_OVERRIDE_ALL = "arthas.config.overrideAll";
 
     private static ArthasBootstrap arthasBootstrap;
 
@@ -98,6 +81,7 @@ public class ArthasBootstrap {
     private File arthasOutputDir;
 
     private static LoggerContext loggerContext;
+    private EventExecutorGroup workerGroup;
 
     private Timer timer = new Timer("arthas-timer", true);
 
@@ -258,14 +242,14 @@ public class ArthasBootstrap {
                 tunnelClient.setTunnelServerUrl(configure.getTunnelServer());
                 // ws://127.0.0.1:8563/ws
                 String host = "127.0.0.1";
-                if(configure.getIp() != null) {
+                if (configure.getIp() != null) {
                     host = configure.getIp();
                 }
                 URI uri = new URI("ws", null, host, configure.getHttpPort(), "/ws", null, null);
                 tunnelClient.setLocalServerUrl(uri.toString());
                 ChannelFuture channelFuture = tunnelClient.start();
                 channelFuture.await(10, TimeUnit.SECONDS);
-                if(channelFuture.isSuccess()) {
+                if (channelFuture.isSuccess()) {
                     agentId = tunnelClient.getId();
                 }
             }
@@ -275,29 +259,34 @@ public class ArthasBootstrap {
 
         try {
             ShellServerOptions options = new ShellServerOptions()
-                            .setInstrumentation(instrumentation)
-                            .setPid(PidUtils.currentLongPid())
-                            .setSessionTimeout(configure.getSessionTimeout() * 1000);
+                    .setInstrumentation(instrumentation)
+                    .setPid(PidUtils.currentLongPid())
+                    .setSessionTimeout(configure.getSessionTimeout() * 1000);
 
             if (agentId != null) {
                 Map<String, String> welcomeInfos = new HashMap<String, String>();
                 welcomeInfos.put("id", agentId);
                 options.setWelcomeMessage(ArthasBanner.welcome(welcomeInfos));
             }
+
             shellServer = new ShellServerImpl(options, this);
             BuiltinCommandPack builtinCommands = new BuiltinCommandPack();
             List<CommandResolver> resolvers = new ArrayList<CommandResolver>();
             resolvers.add(builtinCommands);
+
+            //worker group
+            workerGroup = new NioEventLoopGroup(24);
+
             // TODO: discover user provided command resolver
             if (configure.getTelnetPort() > 0) {
                 shellServer.registerTermServer(new HttpTelnetTermServer(configure.getIp(), configure.getTelnetPort(),
-                                options.getConnectionTimeout()));
+                        options.getConnectionTimeout(), workerGroup));
             } else {
                 logger().info("telnet port is {}, skip bind telnet server.", configure.getTelnetPort());
             }
             if (configure.getHttpPort() > 0) {
                 shellServer.registerTermServer(new HttpTermServer(configure.getIp(), configure.getHttpPort(),
-                                options.getConnectionTimeout()));
+                        options.getConnectionTimeout(), workerGroup));
             } else {
                 logger().info("http port is {}, skip bind http server.", configure.getHttpPort());
             }
@@ -321,7 +310,7 @@ public class ArthasBootstrap {
             UserStatUtil.setStatUrl(configure.getStatUrl());
             UserStatUtil.arthasStart();
 
-            logger().info("as-server started in {} ms", System.currentTimeMillis() - start );
+            logger().info("as-server started in {} ms", System.currentTimeMillis() - start);
         } catch (Throwable e) {
             logger().error("Error during bind to port " + configure.getTelnetPort(), e);
             if (shellServer != null) {
@@ -330,8 +319,15 @@ public class ArthasBootstrap {
             if (sessionManager != null){
                 sessionManager.close();
             }
-            //shutdownWorkGroup();
+            shutdownWorkGroup();
             throw e;
+        }
+    }
+
+    private void shutdownWorkGroup() {
+        if (workerGroup != null) {
+            workerGroup.shutdownGracefully(200, 200, TimeUnit.MILLISECONDS);
+            workerGroup = null;
         }
     }
 
@@ -350,12 +346,13 @@ public class ArthasBootstrap {
             try {
                 tunnelClient.stop();
             } catch (Throwable e) {
-                logger().error("arthas", "stop tunnel client error", e);
+                logger().error("stop tunnel client error", e);
             }
         }
         executorService.shutdownNow();
         transformerManager.destroy();
         UserStatUtil.destroy();
+        shutdownWorkGroup();
         // clear the reference in Spy class.
         cleanUpSpyReference();
         try {
@@ -384,6 +381,7 @@ public class ArthasBootstrap {
         }
         return arthasBootstrap;
     }
+
     /**
      * @return ArthasServer单例
      */
