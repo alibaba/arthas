@@ -20,9 +20,9 @@ import com.taobao.arthas.core.shell.history.impl.HistoryManagerImpl;
 import com.taobao.arthas.core.shell.session.Session;
 import com.taobao.arthas.core.shell.session.SessionManager;
 import com.taobao.arthas.core.shell.system.Job;
+import com.taobao.arthas.core.shell.system.JobController;
 import com.taobao.arthas.core.shell.system.JobListener;
 import com.taobao.arthas.core.shell.system.impl.InternalCommandManager;
-import com.taobao.arthas.core.shell.system.impl.JobControllerImpl;
 import com.taobao.arthas.core.shell.term.SignalHandler;
 import com.taobao.arthas.core.shell.term.Term;
 import com.taobao.arthas.core.util.ArthasBanner;
@@ -58,7 +58,7 @@ public class HttpApiHandler {
     private final AtomicInteger requestIdGenerator = new AtomicInteger(0);
     private static HttpApiHandler instance;
     private final InternalCommandManager commandManager;
-    private final JobControllerImpl jobController;
+    private final JobController jobController;
     private final HistoryManager historyManager;
 
     private int jsonBufferSize = 1024 * 256;

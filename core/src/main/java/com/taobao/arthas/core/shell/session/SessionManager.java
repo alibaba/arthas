@@ -1,7 +1,7 @@
 package com.taobao.arthas.core.shell.session;
 
+import com.taobao.arthas.core.shell.system.JobController;
 import com.taobao.arthas.core.shell.system.impl.InternalCommandManager;
-import com.taobao.arthas.core.shell.system.impl.JobControllerImpl;
 
 import java.lang.instrument.Instrumentation;
 
@@ -25,5 +25,5 @@ public interface SessionManager {
 
     Instrumentation getInstrumentation();
 
-    JobControllerImpl getJobController();
+    JobController getJobController();
 }
