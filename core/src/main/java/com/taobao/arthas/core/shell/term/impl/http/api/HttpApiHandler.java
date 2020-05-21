@@ -311,7 +311,7 @@ public class HttpApiHandler {
      * @param inputStatus
      */
     private void updateSessionInputStatus(Session session, InputStatus inputStatus) {
-        session.getResultDistributor().appendResult(new InputStatusVO(inputStatus));
+        session.getResultDistributor().appendResult(new InputStatusModel(inputStatus));
     }
 
     private ApiResponse processJoinSessionRequest(ApiRequest apiRequest, Session session) {
@@ -319,7 +319,7 @@ public class HttpApiHandler {
         //create consumer
         ResultConsumer resultConsumer = new ResultConsumerImpl();
         //disable input and interrupt
-        resultConsumer.appendResult(new InputStatusVO(InputStatus.DISABLED));
+        resultConsumer.appendResult(new InputStatusModel(InputStatus.DISABLED));
         session.getResultDistributor().addConsumer(resultConsumer);
 
         ApiResponse response = new ApiResponse();

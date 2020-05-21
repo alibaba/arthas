@@ -4,11 +4,11 @@ package com.taobao.arthas.core.command.model;
  * Input status for webui
  * @author gongdewei 2020/4/14
  */
-public class InputStatusVO extends ResultModel {
+public class InputStatusModel extends ResultModel {
 
     private InputStatus inputStatus;
 
-    public InputStatusVO(InputStatus inputStatus) {
+    public InputStatusModel(InputStatus inputStatus) {
         this.inputStatus = inputStatus;
     }
 
