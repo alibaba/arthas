@@ -131,7 +131,7 @@ public class ArthasBootstrap {
         /**
          * <pre>
          * 脚本里传过来的配置项，即命令行参数 > System Env > System Properties > arthas.properties
-         * arthas.properties 指供一个配置项，可以反转优先级。 arthas.config.overrideAll=true
+         * arthas.properties 提供一个配置项，可以反转优先级。 arthas.config.overrideAll=true
          * https://github.com/alibaba/arthas/issues/986
          * </pre>
          */
