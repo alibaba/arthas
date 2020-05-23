@@ -14,8 +14,8 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Properties;
 import java.util.Timer;
-import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -70,7 +70,7 @@ public class ArthasBootstrap {
     private Instrumentation instrumentation;
     private Thread shutdown;
     private ShellServer shellServer;
-    private ExecutorService executorService;
+    private ScheduledExecutorService executorService;
     private TunnelClient tunnelClient;
 
     private File arthasOutputDir;
@@ -98,7 +98,7 @@ public class ArthasBootstrap {
         // 4. start agent server
         bind(configure);
 
-        executorService = Executors.newCachedThreadPool(new ThreadFactory() {
+        executorService = Executors.newScheduledThreadPool(1, new ThreadFactory() {
             @Override
             public Thread newThread(Runnable r) {
                 final Thread t = new Thread(r, "as-command-execute-daemon");
@@ -387,6 +387,10 @@ public class ArthasBootstrap {
 
     public Timer getTimer() {
         return this.timer;
+    }
+
+    public ScheduledExecutorService getScheduledExecutorService() {
+        return this.executorService;
     }
 
     public Instrumentation getInstrumentation() {

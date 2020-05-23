@@ -4,7 +4,6 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.TimerTask;
 import java.util.concurrent.TimeUnit;
 
 import com.alibaba.arthas.deps.org.slf4j.Logger;
@@ -22,7 +21,7 @@ import com.taobao.arthas.core.shell.system.Job;
  * @author gehui 2017年7月31日 上午11:55:41
  */
 public class GlobalJobControllerImpl extends JobControllerImpl {
-    private Map<Integer, TimerTask> jobTimeoutTaskMap = new HashMap<Integer, TimerTask>();
+    private Map<Integer, JobTimeoutTask> jobTimeoutTaskMap = new HashMap<Integer, JobTimeoutTask>();
     private static final Logger logger = LoggerFactory.getLogger(GlobalJobControllerImpl.class);
 
     @Override
@@ -42,7 +41,7 @@ public class GlobalJobControllerImpl extends JobControllerImpl {
 
     @Override
     public boolean removeJob(int id) {
-        TimerTask jobTimeoutTask = jobTimeoutTaskMap.remove(id);
+        JobTimeoutTask jobTimeoutTask = jobTimeoutTaskMap.remove(id);
         if (jobTimeoutTask != null) {
             jobTimeoutTask.cancel();
         }
@@ -56,9 +55,10 @@ public class GlobalJobControllerImpl extends JobControllerImpl {
         /*
          * 达到超时时间将会停止job
          */
-        TimerTask jobTimeoutTask = new JobTimeoutTask(job);
-        Date timeoutDate = new Date(System.currentTimeMillis() + (getJobTimeoutInSecond() * 1000));
-        ArthasBootstrap.getInstance().getTimer().schedule(jobTimeoutTask, timeoutDate);
+        JobTimeoutTask jobTimeoutTask = new JobTimeoutTask(job);
+        long jobTimeoutInSecond = getJobTimeoutInSecond();
+        Date timeoutDate = new Date(System.currentTimeMillis() + (jobTimeoutInSecond * 1000));
+        ArthasBootstrap.getInstance().getScheduledExecutorService().schedule(jobTimeoutTask, jobTimeoutInSecond, TimeUnit.SECONDS);
         jobTimeoutTaskMap.put(job.id(), jobTimeoutTask);
         job.setTimeoutDate(timeoutDate);
 
@@ -99,8 +99,8 @@ public class GlobalJobControllerImpl extends JobControllerImpl {
         return result;
     }
 
-    private static class JobTimeoutTask extends TimerTask {
-        Job job;
+    private static class JobTimeoutTask implements Runnable {
+        private Job job;
 
         public JobTimeoutTask(Job job) {
             this.job = job;
@@ -110,15 +110,12 @@ public class GlobalJobControllerImpl extends JobControllerImpl {
         public void run() {
             if (job != null) {
                 job.terminate();
+                job = null;
             }
         }
 
-        @Override
-        public boolean cancel() {
-            // clear job reference from timer
-            // fix issue: https://github.com/alibaba/arthas/issues/1189
+        public void cancel() {
             job = null;
-            return super.cancel();
         }
     }
 }
