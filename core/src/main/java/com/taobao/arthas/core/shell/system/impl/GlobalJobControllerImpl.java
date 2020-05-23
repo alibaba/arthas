@@ -109,8 +109,9 @@ public class GlobalJobControllerImpl extends JobControllerImpl {
         @Override
         public void run() {
             if (job != null) {
-                job.terminate();
+                Job temp = job;
                 job = null;
+                temp.terminate();
             }
         }
 

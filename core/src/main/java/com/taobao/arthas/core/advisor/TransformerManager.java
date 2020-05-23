@@ -66,6 +66,8 @@ public class TransformerManager {
     }
 
     public void destroy() {
+        watchTransformers.clear();
+        traceTransformers.clear();
         instrumentation.removeTransformer(classFileTransformer);
     }
 
