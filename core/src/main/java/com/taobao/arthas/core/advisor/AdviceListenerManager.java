@@ -11,6 +11,7 @@ import com.alibaba.arthas.deps.org.slf4j.LoggerFactory;
 import com.taobao.arthas.common.concurrent.ConcurrentWeakKeyHashMap;
 import com.taobao.arthas.core.server.ArthasBootstrap;
 import com.taobao.arthas.core.shell.system.ExecStatus;
+import com.taobao.arthas.core.shell.system.Process;
 import com.taobao.arthas.core.shell.system.ProcessAware;
 
 /**
@@ -69,7 +70,11 @@ public class AdviceListenerManager {
                                     for (AdviceListener listener : listeners) {
                                         if (listener instanceof ProcessAware) {
                                             ProcessAware processAware = (ProcessAware) listener;
-                                            ExecStatus status = processAware.getProcess().status();
+                                            Process process = processAware.getProcess();
+                                            if (process == null) {
+                                                continue;
+                                            }
+                                            ExecStatus status = process.status();
                                             if (!status.equals(ExecStatus.TERMINATED)) {
                                                 newResult.add(listener);
                                             }
