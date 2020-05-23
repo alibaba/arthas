@@ -197,7 +197,7 @@ public class Enhancer implements ClassFileTransformer {
 
             // 这里要再次过滤一次，为啥？因为在transform的过程中，有可能还会再诞生新的类
             // 所以需要将之前需要转换的类集合传递下来，再次进行判断
-            if (!matchingClasses.contains(classBeingRedefined)) {
+            if (matchingClasses != null && !matchingClasses.contains(classBeingRedefined)) {
                 return null;
             }
 
