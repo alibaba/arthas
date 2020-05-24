@@ -6,6 +6,8 @@ package com.taobao.arthas.core.advisor;
  */
 public interface AdviceListener {
 
+    long id();
+
     /**
      * 监听器创建<br/>
      * 监听器被注册时触发

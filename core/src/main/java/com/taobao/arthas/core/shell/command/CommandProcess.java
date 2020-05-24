@@ -123,10 +123,9 @@ public interface CommandProcess extends Tty {
     /**
      * Register listener
      *
-     * @param lock the lock for enhance class
      * @param listener
      */
-    void register(int lock, AdviceListener listener, ClassFileTransformer transformer);
+    void register(AdviceListener listener, ClassFileTransformer transformer);
 
     /**
      * Unregister listener

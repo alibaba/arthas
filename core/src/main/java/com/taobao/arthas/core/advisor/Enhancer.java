@@ -94,7 +94,8 @@ public class Enhancer implements ClassFileTransformer {
         this.skipJDKTrace = skipJDKTrace;
         this.classNameMatcher = classNameMatcher;
         this.methodNameMatcher = methodNameMatcher;
-        this.affect = new EnhancerAffect();;
+        this.affect = new EnhancerAffect();
+        affect.setListenerId(listener.id());
     }
 
     public static class SpyInterceptor {

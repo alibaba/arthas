@@ -384,9 +384,8 @@ public class ProcessImpl implements Process {
         private final List<String> args2;
         private final Tty tty;
         private final CommandLine commandLine;
-        private int enhanceLock = -1;
         private AtomicInteger times = new AtomicInteger();
-        private AdviceListener suspendedListener = null;
+        private AdviceListener listener = null;
         private ClassFileTransformer transformer;
 
         public CommandProcessImpl(Process process, List<String> args2, Tty tty, CommandLine commandLine) {
@@ -528,13 +527,15 @@ public class ProcessImpl implements Process {
         }
 
         @Override
-        public void register(int enhanceLock, AdviceListener listener, ClassFileTransformer transformer) {
-            this.enhanceLock = enhanceLock;
-
+        public void register(AdviceListener listener, ClassFileTransformer transformer) {
             if (listener instanceof ProcessAware) {
-                ((ProcessAware) listener).setProcess(this.process);
+                ProcessAware processAware = (ProcessAware) listener;
+                // listener 有可能是其它 command 创建的
+                if(processAware.getProcess() == null) {
+                    processAware.setProcess(this.process);
+                }
             }
-            AdviceWeaver.reg(enhanceLock, listener);
+            AdviceWeaver.reg(listener);
             
             this.transformer = transformer;
         }
@@ -545,22 +546,29 @@ public class ProcessImpl implements Process {
                 ArthasBootstrap.getInstance().getTransformerManager().removeTransformer(transformer);
             }
             
-            AdviceWeaver.unReg(enhanceLock);
+            if (listener instanceof ProcessAware) {
+                // listener有可能其它 command 创建的，所以不能unRge
+                if (this.process.equals(((ProcessAware) listener).getProcess())) {
+                    AdviceWeaver.unReg(listener);
+                }
+            } else {
+                AdviceWeaver.unReg(listener);
+            }
         }
 
         @Override
         public void resume() {
-            if (this.enhanceLock >= 0 && suspendedListener != null) {
-                AdviceWeaver.resume(enhanceLock, suspendedListener);
-                suspendedListener = null;
-            }
+//            if (suspendedListener != null) {
+//                AdviceWeaver.resume(suspendedListener);
+//                suspendedListener = null;
+//            }
         }
 
         @Override
         public void suspend() {
-            if (this.enhanceLock >= 0) {
-                suspendedListener = AdviceWeaver.suspend(enhanceLock);
-            }
+//            if (this.enhanceLock >= 0) {
+//                suspendedListener = AdviceWeaver.suspend(enhanceLock);
+//            }
         }
 
         @Override
