@@ -108,10 +108,18 @@ public class GlobalJobControllerImpl extends JobControllerImpl {
 
         @Override
         public void run() {
-            if (job != null) {
-                Job temp = job;
-                job = null;
-                temp.terminate();
+            try {
+                if (job != null) {
+                    Job temp = job;
+                    job = null;
+                    temp.terminate();
+                }
+            } catch (Throwable e) {
+                try {
+                    logger.error("JobTimeoutTask error, job id: {}, line: {}", job.id(), job.line(), e);
+                } catch (Throwable t) {
+                    // ignore
+                }
             }
         }
 
