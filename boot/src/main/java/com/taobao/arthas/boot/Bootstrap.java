@@ -49,6 +49,7 @@ import com.taobao.middleware.cli.annotations.Summary;
                 + "  java -jar arthas-boot.jar -f batch.as <pid>\n"
                 + "  java -jar arthas-boot.jar --use-version 3.2.0\n"
                 + "  java -jar arthas-boot.jar --versions\n"
+                + "  java -jar arthas-boot.jar --select arthas-demo\n"
                 + "  java -jar arthas-boot.jar --session-timeout 3600\n" + "  java -jar arthas-boot.jar --attach-only\n"
                 + "  java -jar arthas-boot.jar --repo-mirror aliyun --use-http\n" + "WIKI:\n"
                 + "  https://alibaba.github.io/arthas\n")
@@ -114,7 +115,9 @@ public class Bootstrap {
 
     private String statUrl;
 
-    static {
+    private String select;
+
+	static {
         ARTHAS_LIB_DIR = new File(
                 System.getProperty("user.home") + File.separator + ".arthas" + File.separator + "lib");
         try {
@@ -256,6 +259,12 @@ public class Bootstrap {
         this.statUrl = statUrl;
     }
 
+    @Option(longName = "select")
+    @Description("select target process by classname or JARfilename")
+    public void setSelect(String select) {
+        this.select = select;
+    }
+
     public static void main(String[] args) throws ParserConfigurationException, SAXException, IOException,
                     ClassNotFoundException, NoSuchMethodException, SecurityException, IllegalAccessException,
                     IllegalArgumentException, InvocationTargetException {
@@ -333,7 +342,7 @@ public class Bootstrap {
         // select pid
         if (pid < 0) {
             try {
-                pid = ProcessUtils.select(bootstrap.isVerbose(), telnetPortPid);
+                pid = ProcessUtils.select(bootstrap.isVerbose(), telnetPortPid, bootstrap.getSelect());
             } catch (InputMismatchException e) {
                 System.out.println("Please input an integer to select pid.");
                 System.exit(1);
@@ -690,4 +699,8 @@ public class Bootstrap {
     public String getStatUrl() {
         return statUrl;
     }
+
+    public String getSelect() {
+		return select;
+	}
 }

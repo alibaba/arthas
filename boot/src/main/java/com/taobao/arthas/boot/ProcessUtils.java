@@ -10,6 +10,7 @@ import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Scanner;
 import java.util.InputMismatchException;
 
@@ -28,7 +29,7 @@ public class ProcessUtils {
     private static String FOUND_JAVA_HOME = null;
 
     @SuppressWarnings("resource")
-    public static long select(boolean v, long telnetPortPid) throws InputMismatchException {
+    public static long select(boolean v, long telnetPortPid, String select) throws InputMismatchException {
         Map<Long, String> processMap = listProcessByJps(v);
         // Put the port that is already listening at the first
         if (telnetPortPid > 0 && processMap.containsKey(telnetPortPid)) {
@@ -44,6 +45,28 @@ public class ProcessUtils {
             AnsiLog.info("Can not find java process. Try to pass <pid> in command line.");
             return -1;
         }
+
+		// select target process by the '--select' option when match only one process
+		if (select != null && !select.trim().isEmpty()) {
+			int matchedSelectCount = 0;
+			Long matchedPid = null;
+			for (Entry<Long, String> entry : processMap.entrySet()) {
+				if (entry.getValue().contains(select)) {
+					matchedSelectCount++;
+					matchedPid = entry.getKey();
+				}
+			}
+			if (matchedSelectCount == 1) {
+				return matchedPid;
+			}
+		}
+
+		if (processMap.size() == 1) {
+			Entry<Long, String> entry = processMap.entrySet().iterator().next();
+			if (entry.getValue().contains(select)) {
+				return entry.getKey();
+			}
+		}
 
         AnsiLog.info("Found existing java process, please choose one and input the serial number of the process, eg : 1. Then hit ENTER.");
         // print list

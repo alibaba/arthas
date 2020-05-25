@@ -120,6 +120,9 @@ HEIGHT=
 # arthas-client terminal width
 WIDTH=
 
+# select target process by classname or JARfilename
+SELECT=
+
 # Verbose, print debug info.
 VERBOSE=false
 
@@ -423,6 +426,7 @@ Options and Arguments:
     --debug-attach              Debug attach agent
     --tunnel-server             Remote tunnel server url
     --agent-id                  Special agent id
+    --select                    select target process by classname or JARfilename
  -c,--command <value>           Command to execute, multiple commands separated
                                 by ;
  -f,--batch-file <value>        The batch file to execute
@@ -443,6 +447,7 @@ EXAMPLES:
   ./as.sh --use-version 3.2.0
   ./as.sh --session-timeout 3600
   ./as.sh --attach-only
+  ./as.sh --select arthas-demo
   ./as.sh --repo-mirror aliyun --use-http
 WIKI:
   https://alibaba.github.io/arthas
@@ -583,6 +588,11 @@ parse_arguments()
         shift # past argument
         shift # past value
         ;;
+        --select)
+        SELECT="$2"
+        shift # past argument
+        shift # past value
+        ;;
         -v|--verbose)
         VERBOSE=true
         shift # past argument
@@ -631,6 +641,15 @@ parse_arguments()
         # if timezone is +0800, set REPO_MIRROR to aliyun
         if [[ -x "$(command -v date)" ]] && [[  $(date +%z) == "+0800" ]]; then
             REPO_MIRROR="aliyun"
+        fi
+    fi
+
+    # try to find target pid by --select option
+    if [ -z ${TARGET_PID} ] && [ ${SELECT} ]; then
+        local IFS=$'\n'
+        CANDIDATES=($(call_jps | grep -v sun.tools.jps.Jps | grep "${SELECT}" | awk '{print $0}'))
+        if [ ${#CANDIDATES[@]} -eq 1 ]; then
+            TARGET_PID=${CANDIDATES[0]}
         fi
     fi
 
