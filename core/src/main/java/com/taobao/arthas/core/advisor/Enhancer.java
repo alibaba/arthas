@@ -503,7 +503,7 @@ public class Enhancer implements ClassFileTransformer {
     }
 
     // 批量增强
-    public static void enhance(Instrumentation inst, ClassFileTransformer transformer, Set<Class<?>> classes)
+    private static void enhance(Instrumentation inst, ClassFileTransformer transformer, Set<Class<?>> classes)
             throws UnmodifiableClassException {
         try {
             inst.addTransformer(transformer, true);
