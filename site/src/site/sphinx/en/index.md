@@ -34,7 +34,7 @@ Arthas is built to solve these issues. A developer can troubleshoot production i
 * Supports Linux/Mac/Windows
 
 
-**If you are using Arthas, please let us know. Your use is very important to us: [View](https://github.com/alibaba/arthas/issues/111)**
+**If you are using Arthas, please let us know. Your feedback is very important to us: [View](https://github.com/alibaba/arthas/issues/111)**
 
 Contents
 --------

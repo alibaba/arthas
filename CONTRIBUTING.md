@@ -62,7 +62,7 @@ Tip: you can use `--versions` to list all available versions.
 
 
 
-## issue
+## Issue
 
 欢迎在issue里对arthas做反馈，分享使用技巧，排查问题的经历。
 
