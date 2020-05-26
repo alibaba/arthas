@@ -271,7 +271,6 @@ public class ProcessUtils {
     }
 
     public static String startArthasClient(List<String> args) {
-        // find java/java.exe, then try to find tools.jar
         String javaHome = findJavaHome();
 
         // find java/java.exe

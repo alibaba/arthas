@@ -7,9 +7,15 @@ import java.lang.reflect.Method;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.security.CodeSource;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+import java.util.Scanner;
+import java.util.TimeZone;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
+import java.util.InputMismatchException;
 
 import javax.xml.parsers.ParserConfigurationException;
 
@@ -558,17 +564,26 @@ public class Bootstrap {
         telnetArgs.add(new File(arthasHomeDir, "arthas-client.jar").getAbsolutePath());
         telnetArgs.add("-c");
         telnetArgs.add("session");
+        telnetArgs.add("--execution-timeout");
+        telnetArgs.add("2000");
         // telnet port ,ip
         telnetArgs.add("127.0.0.1");
         telnetArgs.add("" + telnetPort);
 
         String output = ProcessUtils.startArthasClient(telnetArgs);
         String javaPidLine = null;
+        //execution timeout keyword from arthas-client TelnetConsole
+        String timeoutKeyword = "execution timeout";
         Scanner scanner = new Scanner(output);
         while (scanner.hasNextLine()) {
             String line = scanner.nextLine();
             if (line.contains("JAVA_PID")){
                 javaPidLine = line;
+                break;
+            } else if (line.contains(timeoutKeyword)) {
+                AnsiLog.error("The telnet port {} is used, but process detection timeout, you will connect to an unexpected process.", telnetPort);
+                AnsiLog.error("Try to use a different telnet port, for example: java -jar arthas-boot.jar --telnet-port 9998 --http-port -1");
+                System.exit(1);
                 break;
             }
         }
