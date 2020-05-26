@@ -117,8 +117,8 @@ public class SearchClassCommand extends AnnotatedCommand {
             int pageSize = 256;
             ResultUtils.processClassNames(matchedClasses, pageSize, new ResultUtils.PaginationHandler<List<String>>() {
                 @Override
-                public boolean handle(List<String> list, int segment) {
-                    process.appendResult(new SearchClassModel(list, segment));
+                public boolean handle(List<String> classNames, int segment) {
+                    process.appendResult(new SearchClassModel(classNames, segment));
                     return true;
                 }
             });
