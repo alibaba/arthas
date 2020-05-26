@@ -54,8 +54,24 @@ public class TelnetConsole {
 
     private static final byte CTRL_C = 0x03;
 
-    //命令执行超时标记
-    private static volatile boolean executionOvertime = false;
+    // ------- Status codes ------- //
+    /**
+     * Process success
+     */
+    public static final int STATUS_OK = 0;
+    /**
+     * Generic error
+     */
+    public static final int STATUS_ERROR = 1;
+    /**
+     * Execute commands timeout
+     */
+    public static final int STATUS_EXEC_TIMEOUT = 100;
+    /**
+     * Execute commands error
+     */
+    public static final int STATUS_EXEC_ERROR = 101;
+
 
     private boolean help = false;
 
@@ -147,17 +163,18 @@ public class TelnetConsole {
     public static void main(String[] args) throws Exception {
 
         try {
-            process(args, new ActionListener() {
+            int status = process(args, new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) {
-                    System.exit(0);
+                    System.exit(STATUS_OK);
                 }
             });
+            System.exit(status);
         } catch (Throwable e) {
             e.printStackTrace();
             CLI cli = CLIConfigurator.define(TelnetConsole.class);
             System.out.println(usage(cli));
-            System.exit(1);
+            System.exit(STATUS_ERROR);
         }
 
     }
@@ -201,7 +218,7 @@ public class TelnetConsole {
 
         if (telnetConsole.isHelp()) {
             System.out.println(usage(cli));
-            return 0;
+            return STATUS_ERROR;
         }
 
         // Try to read cmds
@@ -303,20 +320,30 @@ public class TelnetConsole {
             IOUtil.readWrite(telnet.getInputStream(), telnet.getOutputStream(), System.in,
                     consoleReader.getOutput());
         } else {
-            batchModeRun(telnet, cmds, telnetConsole.getExecutionTimeout());
-            telnet.disconnect();
+            try {
+                return batchModeRun(telnet, cmds, telnetConsole.getExecutionTimeout());
+            } catch (Throwable e) {
+                System.out.println("Execute commands error: " + e.getMessage());
+                e.printStackTrace();
+                return STATUS_EXEC_ERROR;
+            } finally {
+                try {
+                    telnet.disconnect();
+                } catch (IOException e) {
+                    //ignore ex
+                }
+            }
         }
-        return 0;
+        return STATUS_OK;
     }
 
-    private static void batchModeRun(TelnetClient telnet, List<String> commands, final int executionTimeout)
+    private static int batchModeRun(TelnetClient telnet, List<String> commands, final int executionTimeout)
             throws IOException, InterruptedException {
         if (commands.size() == 0) {
-            return;
+            return STATUS_OK;
         }
 
-        //reset overtime flag
-        executionOvertime = false;
+        long startTime = System.currentTimeMillis();
         final InputStream inputStream = telnet.getInputStream();
         final OutputStream outputStream = telnet.getOutputStream();
 
@@ -348,35 +375,21 @@ public class TelnetConsole {
                 }
             }
         });
-
         printResultThread.start();
 
-        //check commands execution timeout
-        Thread commandTimeoutThread = null;
-        if (executionTimeout > 0) {
-            commandTimeoutThread = new Thread(new Runnable() {
-                @Override
-                public void run() {
-                    try {
-                        Thread.sleep(executionTimeout);
-                        //exceed execution timeout, set overtime flag
-                        executionOvertime = true;
-                        System.out.println("Commands execution timeout.");
-                    } catch (InterruptedException e) {
-                        //ignore interrupted
-                    }
-                }
-            }, "commands-execution-timeout-checker");
-            commandTimeoutThread.setDaemon(true);
-            commandTimeoutThread.start();
-        }
-
+        // send commands to arthas server
         for (String command : commands) {
             if (command.trim().isEmpty()) {
                 continue;
             }
-            if (!pollShellPrompt(receviedPromptQueue)) {
-                return;
+            // try poll prompt and check timeout
+            while (receviedPromptQueue.poll(100, TimeUnit.MILLISECONDS) == null) {
+                if (executionTimeout > 0) {
+                    long now = System.currentTimeMillis();
+                    if (now - startTime > executionTimeout) {
+                        return STATUS_EXEC_TIMEOUT;
+                    }
+                }
             }
             // send command to server
             outputStream.write((command + " | plaintext\n").getBytes());
@@ -389,23 +402,7 @@ public class TelnetConsole {
         outputStream.flush();
         System.out.println();
 
-        //cancel timeout checker
-        if (commandTimeoutThread != null) {
-            try {
-                commandTimeoutThread.interrupt();
-            } catch (Exception e) {
-                //ignore ex
-            }
-        }
-    }
-
-    private static boolean pollShellPrompt(BlockingQueue<String> receviedPromptQueue) throws InterruptedException {
-        while (receviedPromptQueue.poll(100, TimeUnit.MILLISECONDS) == null) {
-            if (executionOvertime) {
-                return false;
-            }
-        }
-        return true;
+        return STATUS_OK;
     }
 
     private static String usage(CLI cli) {
@@ -434,14 +431,6 @@ public class TelnetConsole {
 
     public int getExecutionTimeout() {
         return executionTimeout;
-    }
-
-    /**
-     * check commands execution overtime, KEEP it for arthas-boot
-     * @return
-     */
-    public static boolean isExecutionOvertime() {
-        return executionOvertime;
     }
 
     public Integer getWidth() {

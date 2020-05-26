@@ -36,6 +36,9 @@ import com.taobao.middleware.cli.annotations.Name;
 import com.taobao.middleware.cli.annotations.Option;
 import com.taobao.middleware.cli.annotations.Summary;
 
+import static com.taobao.arthas.boot.ProcessUtils.STATUS_EXEC_ERROR;
+import static com.taobao.arthas.boot.ProcessUtils.STATUS_EXEC_TIMEOUT;
+
 /**
  * @author hengyunabc 2018-10-26
  *
@@ -571,9 +574,19 @@ public class Bootstrap {
 
         try {
             ByteArrayOutputStream out = new ByteArrayOutputStream(1024);
-            Boolean isOvertime = ProcessUtils.startArthasClient(arthasHomeDir, telnetArgs, out);
-            if (isOvertime) {
-                AnsiLog.error("The telnet port {} is used, but process detection timeout, you will connect to an unexpected process.", telnetPort);
+            String error = null;
+            int status = ProcessUtils.startArthasClient(arthasHomeDir, telnetArgs, out);
+            if (status == STATUS_EXEC_TIMEOUT) {
+                error = "detection timeout";
+            } else if (status == STATUS_EXEC_ERROR) {
+                error = "detection error";
+                AnsiLog.error("process status: {}", status);
+                AnsiLog.error("process output: {}", out.toString());
+            } else {
+                // ignore connect error
+            }
+            if (error != null) {
+                AnsiLog.error("The telnet port {} is used, but process {}, you will connect to an unexpected process.", telnetPort, error);
                 AnsiLog.error("Try to use a different telnet port, for example: java -jar arthas-boot.jar --telnet-port 9998 --http-port -1");
                 System.exit(1);
             }
