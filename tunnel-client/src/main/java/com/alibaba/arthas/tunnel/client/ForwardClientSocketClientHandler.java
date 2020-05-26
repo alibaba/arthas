@@ -11,6 +11,7 @@ import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.ChannelPipeline;
+import io.netty.channel.ChannelPromise;
 import io.netty.channel.EventLoopGroup;
 import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.channel.nio.NioEventLoopGroup;
@@ -34,6 +35,7 @@ public class ForwardClientSocketClientHandler extends SimpleChannelInboundHandle
 
     private static final Logger logger = LoggerFactory.getLogger(ForwardClientSocketClientHandler.class);
 
+    private ChannelPromise handshakeFuture;
     private final URI localServerURI;
 
     public ForwardClientSocketClientHandler(URI localServerURI) {
@@ -83,8 +85,8 @@ public class ForwardClientSocketClientHandler extends SimpleChannelInboundHandle
                 });
 
         Channel localChannel = b.connect(localServerURI.getHost(), localServerURI.getPort()).sync().channel();
-        localFrameHandler.handshakeFuture()
-                .addListener(new GenericFutureListener<ChannelFuture>() {
+        this.handshakeFuture = localFrameHandler.handshakeFuture();
+        handshakeFuture.addListener(new GenericFutureListener<ChannelFuture>() {
                     @Override
                     public void operationComplete(ChannelFuture future) throws Exception {
                         ChannelPipeline pipeline = future.channel().pipeline();
@@ -93,7 +95,7 @@ public class ForwardClientSocketClientHandler extends SimpleChannelInboundHandle
                     }
                 });
 
-        localFrameHandler.handshakeFuture().sync();
+        handshakeFuture.sync();
         ctx.pipeline().remove(ForwardClientSocketClientHandler.this);
         ctx.pipeline().addLast(new RelayHandler(localChannel));
         logger.info("ForwardClientSocketClientHandler connect local arthas server success");
@@ -105,7 +107,10 @@ public class ForwardClientSocketClientHandler extends SimpleChannelInboundHandle
 
     @Override
     public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) {
-        cause.printStackTrace();
+        logger.error("ForwardClientSocketClient channel: {}" , ctx.channel(), cause);
+        if (!handshakeFuture.isDone()) {
+            handshakeFuture.setFailure(cause);
+        }
         ctx.close();
     }
 }
