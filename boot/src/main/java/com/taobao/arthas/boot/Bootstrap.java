@@ -1,5 +1,6 @@
 package com.taobao.arthas.boot;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
@@ -560,8 +561,6 @@ public class Bootstrap {
     private static long findProcessByTelnetClient(String arthasHomeDir, int telnetPort) {
         // start java telnet client
         List<String> telnetArgs = new ArrayList<String>();
-        telnetArgs.add("-jar");
-        telnetArgs.add(new File(arthasHomeDir, "arthas-client.jar").getAbsolutePath());
         telnetArgs.add("-c");
         telnetArgs.add("session");
         telnetArgs.add("--execution-timeout");
@@ -570,33 +569,40 @@ public class Bootstrap {
         telnetArgs.add("127.0.0.1");
         telnetArgs.add("" + telnetPort);
 
-        String output = ProcessUtils.startArthasClient(telnetArgs);
-        String javaPidLine = null;
-        //execution timeout keyword from arthas-client TelnetConsole
-        String timeoutKeyword = "execution timeout";
-        Scanner scanner = new Scanner(output);
-        while (scanner.hasNextLine()) {
-            String line = scanner.nextLine();
-            if (line.contains("JAVA_PID")){
-                javaPidLine = line;
-                break;
-            } else if (line.contains(timeoutKeyword)) {
+        try {
+            ByteArrayOutputStream out = new ByteArrayOutputStream(1024);
+            Boolean isOvertime = ProcessUtils.startArthasClient(arthasHomeDir, telnetArgs, out);
+            if (isOvertime) {
                 AnsiLog.error("The telnet port {} is used, but process detection timeout, you will connect to an unexpected process.", telnetPort);
                 AnsiLog.error("Try to use a different telnet port, for example: java -jar arthas-boot.jar --telnet-port 9998 --http-port -1");
                 System.exit(1);
-                break;
             }
-        }
-        if (javaPidLine!=null){
-            // JAVA_PID    10473
-            try {
-                String[] strs = javaPidLine.split("JAVA_PID");
-                if (strs.length > 1){
-                    return Long.parseLong(strs[strs.length-1].trim());
+
+            //parse output, find java pid
+            String output = out.toString("UTF-8");
+            String javaPidLine = null;
+            Scanner scanner = new Scanner(output);
+            while (scanner.hasNextLine()) {
+                String line = scanner.nextLine();
+                if (line.contains("JAVA_PID")) {
+                    javaPidLine = line;
+                    break;
                 }
-            } catch (NumberFormatException e) {
-                // ignore
             }
+            if (javaPidLine != null) {
+                // JAVA_PID    10473
+                try {
+                    String[] strs = javaPidLine.split("JAVA_PID");
+                    if (strs.length > 1) {
+                        return Long.parseLong(strs[strs.length - 1].trim());
+                    }
+                } catch (NumberFormatException e) {
+                    // ignore
+                }
+            }
+        } catch (Throwable ex) {
+            AnsiLog.error("Detection telnet port error");
+            AnsiLog.error(ex);
         }
 
         return -1;

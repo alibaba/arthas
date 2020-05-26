@@ -1,9 +1,13 @@
 package com.taobao.arthas.boot;
 
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
+import java.io.PrintStream;
+import java.lang.reflect.Method;
+import java.net.URL;
+import java.net.URLClassLoader;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -270,66 +274,55 @@ public class ProcessUtils {
         }
     }
 
-    public static String startArthasClient(List<String> args) {
-        String javaHome = findJavaHome();
+    public static Boolean startArthasClient(String arthasHomeDir, List<String> telnetArgs, OutputStream out) throws Throwable {
+        // start java telnet client
+        // find arthas-client.jar
+        URLClassLoader classLoader = new URLClassLoader(
+                new URL[]{new File(arthasHomeDir, "arthas-client.jar").toURI().toURL()});
+        Class<?> telnetConsoleClas = classLoader.loadClass("com.taobao.arthas.client.TelnetConsole");
+        Method processMethod = telnetConsoleClas.getMethod("process", String[].class);
+        Method isExecutionOvertimeMethod = telnetConsoleClas.getMethod("isExecutionOvertime");
 
-        // find java/java.exe
-        File javaPath = findJava();
-        if (javaPath == null) {
-            throw new IllegalArgumentException(
-                    "Can not find java/java.exe executable file under java home: " + javaHome);
-        }
-
-        List<String> command = new ArrayList<String>();
-        command.add(javaPath.getAbsolutePath());
-
-        command.addAll(args);
-        // "${JAVA_HOME}"/bin/java \
-        // ${opts} \
-        // -jar "${arthas_lib_dir}/arthas-client.jar" \
-        // ${TARGET_IP} \
-        // ${TELNET_PORT} \
-        // -c "session"
-
-        final ByteArrayOutputStream out = new ByteArrayOutputStream(1024);
-        ProcessBuilder pb = new ProcessBuilder(command);
+        //redirect System.out/System.err
+        PrintStream originSysOut = System.out;
+        PrintStream originSysErr = System.err;
+        PrintStream newOut = new PrintStream(out);
+        PrintStream newErr = new PrintStream(out);
         try {
-            final Process proc = pb.start();
-            Thread redirectStdout = new Thread(new Runnable() {
-                @Override
-                public void run() {
-                    InputStream inputStream = proc.getInputStream();
-                    try {
-                        IOUtils.copy(inputStream, out);
-                    } catch (IOException e) {
-                        IOUtils.close(inputStream);
-                    }
+            System.setOut(newOut);
+            System.setErr(newErr);
 
+            // call TelnetConsole.process()
+            // fix https://github.com/alibaba/arthas/issues/833
+            ClassLoader tccl = Thread.currentThread().getContextClassLoader();
+            try {
+                Thread.currentThread().setContextClassLoader(classLoader);
+                processMethod.invoke(null, new Object[]{telnetArgs.toArray(new String[0])});
+            } catch (Throwable e) {
+                //java.lang.reflect.InvocationTargetException : java.net.ConnectException
+                e = e.getCause();
+                if (e instanceof IOException) {
+                    // ignore connection error
+                } else if (e instanceof InterruptedException) {
+                    // ignore interrupted error
+                } else {
+                    // detection error
+                    throw e;
                 }
-            });
+            } finally {
+                Thread.currentThread().setContextClassLoader(tccl);
+            }
 
-            Thread redirectStderr = new Thread(new Runnable() {
-                @Override
-                public void run() {
-                    InputStream inputStream = proc.getErrorStream();
-                    try {
-                        IOUtils.copy(inputStream, out);
-                    } catch (IOException e) {
-                        IOUtils.close(inputStream);
-                    }
+            //flush output
+            newOut.flush();
+            newErr.flush();
 
-                }
-            });
-            redirectStdout.start();
-            redirectStderr.start();
-            redirectStdout.join();
-            redirectStderr.join();
-
-            return out.toString();
-        } catch (Throwable e) {
-            // ignore
+            //check execution overtime
+            return (Boolean) isExecutionOvertimeMethod.invoke(null);
+        } finally {
+            System.setOut(originSysOut);
+            System.setErr(originSysErr);
         }
-        return null;
     }
 
     private static File findJava() {
