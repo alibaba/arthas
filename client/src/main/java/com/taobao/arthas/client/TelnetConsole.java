@@ -60,6 +60,7 @@ public class TelnetConsole {
 
     private String command;
     private String batchFile;
+    private int executionTimeout = -1;
 
     private Integer width = null;
     private Integer height = null;
@@ -92,6 +93,12 @@ public class TelnetConsole {
     @Description("The batch file to execute")
     public void setBatchFile(String batchFile) {
         this.batchFile = batchFile;
+    }
+
+    @Option(shortName = "t", longName = "execution-timeout")
+    @Description("The timeout (ms) of execute commands or batch file ")
+    public void setExecutionTimeout(int executionTimeout) {
+        this.executionTimeout = executionTimeout;
     }
 
     @Option(shortName = "w", longName = "width")
@@ -257,7 +264,7 @@ public class TelnetConsole {
                 IOUtil.readWrite(telnet.getInputStream(), telnet.getOutputStream(), System.in,
                         consoleReader.getOutput());
             } else {
-                batchModeRun(telnet, cmds);
+                batchModeRun(telnet, cmds, telnetConsole.getExecutionTimeout());
                 telnet.disconnect();
             }
         } catch (Throwable e) {
@@ -268,7 +275,7 @@ public class TelnetConsole {
 
     }
 
-    private static void batchModeRun(TelnetClient telnet, List<String> commands)
+    private static void batchModeRun(TelnetClient telnet, List<String> commands, final int executionTimeout)
             throws IOException, InterruptedException {
         if (commands.size() == 0) {
             return;
@@ -308,6 +315,29 @@ public class TelnetConsole {
 
         printResultThread.start();
 
+        //check commands execution timeout
+        Thread commandTimeoutThread = null;
+        if (executionTimeout > 0) {
+            commandTimeoutThread = new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        Thread.sleep(executionTimeout);
+                        //exceed execution timeout, stop application
+                        //Notice: "execution timeout" as the detection keyword
+                        //注意："execution timeout" 作为检测关键字使用，请勿修改
+                        String timeoutKeyword = "execution timeout";
+                        System.out.println("Commands " + timeoutKeyword + ".");
+                        System.exit(20);
+                    } catch (InterruptedException e) {
+                        //ignore interrupted
+                    }
+                }
+            }, "commands-execution-timeout-checker");
+            commandTimeoutThread.setDaemon(true);
+            commandTimeoutThread.start();
+        }
+
         for (String command : commands) {
             if (command.trim().isEmpty()) {
                 continue;
@@ -323,6 +353,15 @@ public class TelnetConsole {
         outputStream.write("quit\n".getBytes());
         outputStream.flush();
         System.out.println();
+
+        //cancel timeout checker
+        if (commandTimeoutThread != null) {
+            try {
+                commandTimeoutThread.interrupt();
+            } catch (Exception e) {
+                //ignore ex
+            }
+        }
     }
 
     private static String usage(CLI cli) {
@@ -347,6 +386,10 @@ public class TelnetConsole {
 
     public String getBatchFile() {
         return batchFile;
+    }
+
+    public int getExecutionTimeout() {
+        return executionTimeout;
     }
 
     public Integer getWidth() {
