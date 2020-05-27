@@ -113,7 +113,8 @@ public class RedefineCommand extends AnnotatedCommand {
         List<ClassDefinition> definitions = new ArrayList<ClassDefinition>();
         for (Class<?> clazz : inst.getAllLoadedClasses()) {
             if (bytesMap.containsKey(clazz.getName())) {
-                if (hashCode != null && !Integer.toHexString(clazz.getClassLoader().hashCode()).equals(hashCode)) {
+                ClassLoader classLoader = clazz.getClassLoader();
+                if (classLoader != null && hashCode != null && !Integer.toHexString(classLoader.hashCode()).equals(hashCode)) {
                     continue;
                 }
                 definitions.add(new ClassDefinition(clazz, bytesMap.get(clazz.getName())));
