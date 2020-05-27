@@ -666,6 +666,26 @@ public class Ansi {
         return this;
     }
 
+    /**
+     * write to external StringBuilder directly
+     * 直接写到外部sb，避免toString()复制一次。
+     * 使用方法：
+     * <pre>
+     *  Ansi highlighted = Ansi.ansi().fg(Ansi.Color.RED);
+     *  //ansi begin
+     *  highlighted.flush(sb);
+     *
+     *  //append others
+     *  renderCost(sb, methodNode);
+     *
+     *  //ansi end
+     *  highlighted.reset().flush(sb);
+     * </pre>
+     * @param sb
+     */
+    public void flush(StringBuilder sb) {
+        flushAttributes0(sb);
+    }
 
     @Override
     public String toString() {
@@ -696,10 +716,14 @@ public class Ansi {
 
     private Ansi appendEscapeSequence(char command, Object... options) {
         flushAttributes();
-        return _appendEscapeSequence(command, options);
+        return _appendEscapeSequence(builder, command, options);
     }
 
     private void flushAttributes() {
+        flushAttributes0(builder);
+    }
+
+    private void flushAttributes0(StringBuilder builder) {
         if (attributeOptions.isEmpty()) {
             return;
         }
@@ -708,12 +732,12 @@ public class Ansi {
             builder.append(SECOND_ESC_CHAR);
             builder.append('m');
         } else {
-            _appendEscapeSequence('m', attributeOptions.toArray());
+            _appendEscapeSequence(builder, 'm', attributeOptions.toArray());
         }
         attributeOptions.clear();
     }
 
-    private Ansi _appendEscapeSequence(char command, Object... options) {
+    private Ansi _appendEscapeSequence(StringBuilder builder, char command, Object... options) {
         builder.append(FIRST_ESC_CHAR);
         builder.append(SECOND_ESC_CHAR);
         int size = options.length;
