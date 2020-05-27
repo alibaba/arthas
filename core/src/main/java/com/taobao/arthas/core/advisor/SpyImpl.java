@@ -1,13 +1,14 @@
 package com.taobao.arthas.core.advisor;
 
 import java.arthas.SpyAPI.AbstractSpy;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.regex.Pattern;
 
 import com.alibaba.arthas.deps.org.slf4j.Logger;
 import com.alibaba.arthas.deps.org.slf4j.LoggerFactory;
 import com.taobao.arthas.core.shell.system.ExecStatus;
 import com.taobao.arthas.core.shell.system.ProcessAware;
+import com.taobao.arthas.core.util.StringUtils;
 
 /**
  * <pre>
@@ -22,14 +23,20 @@ import com.taobao.arthas.core.shell.system.ProcessAware;
  */
 public class SpyImpl extends AbstractSpy {
     private static final Logger logger = LoggerFactory.getLogger(SpyImpl.class);
+    private final ThreadLocal<List> splitListLocal = new ThreadLocal<List>(){
+        @Override
+        protected List initialValue() {
+            return new ArrayList();
+        }
+    };
 
     @Override
     public void atEnter(Class<?> clazz, String methodInfo, Object target, Object[] args) {
         ClassLoader classLoader = clazz.getClassLoader();
 
-        String[] info = splitMethodInfo(methodInfo);
-        String methodName = info[0];
-        String methodDesc = info[1];
+        List<String> strs = splitMethodInfo(methodInfo);
+        String methodName = strs.get(0);
+        String methodDesc = strs.get(1);
         // TODO listener 只用查一次，放到 thread local里保存起来就可以了！
         List<AdviceListener> listeners = AdviceListenerManager.queryAdviceListeners(classLoader, clazz.getName(),
                 methodName, methodDesc);
@@ -54,9 +61,9 @@ public class SpyImpl extends AbstractSpy {
     public void atExit(Class<?> clazz, String methodInfo, Object target, Object[] args, Object returnObject) {
         ClassLoader classLoader = clazz.getClassLoader();
 
-        String[] info = splitMethodInfo(methodInfo);
-        String methodName = info[0];
-        String methodDesc = info[1];
+        List<String> strs = splitMethodInfo(methodInfo);
+        String methodName = strs.get(0);
+        String methodDesc = strs.get(1);
 
         List<AdviceListener> listeners = AdviceListenerManager.queryAdviceListeners(classLoader, clazz.getName(),
                 methodName, methodDesc);
@@ -80,9 +87,9 @@ public class SpyImpl extends AbstractSpy {
     public void atExceptionExit(Class<?> clazz, String methodInfo, Object target, Object[] args, Throwable throwable) {
         ClassLoader classLoader = clazz.getClassLoader();
 
-        String[] info = splitMethodInfo(methodInfo);
-        String methodName = info[0];
-        String methodDesc = info[1];
+        List<String> strs = splitMethodInfo(methodInfo);
+        String methodName = strs.get(0);
+        String methodDesc = strs.get(1);
 
         List<AdviceListener> listeners = AdviceListenerManager.queryAdviceListeners(classLoader, clazz.getName(),
                 methodName, methodDesc);
@@ -105,22 +112,23 @@ public class SpyImpl extends AbstractSpy {
     @Override
     public void atBeforeInvoke(Class<?> clazz, String invokeInfo, Object target) {
         ClassLoader classLoader = clazz.getClassLoader();
-        String[] info = splitInvokeInfo(invokeInfo);
-        String owner = info[0];
-        String methodName = info[1];
-        String methodDesc = info[2];
+        List<String> strs = splitInvokeInfo(invokeInfo);
+        String owner = strs.get(0);
+        String methodName = strs.get(1);
+        String methodDesc = strs.get(2);
 
         List<AdviceListener> listeners = AdviceListenerManager.queryTraceAdviceListeners(classLoader, clazz.getName(),
                 owner, methodName, methodDesc);
 
         if (listeners != null) {
+            int lineNumber = Integer.parseInt(strs.get(3));
             for (AdviceListener adviceListener : listeners) {
                 try {
                     if (skipAdviceListener(adviceListener)) {
                         continue;
                     }
                     final InvokeTraceable listener = (InvokeTraceable) adviceListener;
-                    listener.invokeBeforeTracing(owner, methodName, methodDesc, Integer.parseInt(info[3]));
+                    listener.invokeBeforeTracing(owner, methodName, methodDesc, lineNumber);
                 } catch (Throwable e) {
                     if (logger.isDebugEnabled()) {
                         logger.error("class: {}, invokeInfo: {}", clazz.getName(), invokeInfo, e);
@@ -133,21 +141,22 @@ public class SpyImpl extends AbstractSpy {
     @Override
     public void atAfterInvoke(Class<?> clazz, String invokeInfo, Object target) {
         ClassLoader classLoader = clazz.getClassLoader();
-        String[] info = splitInvokeInfo(invokeInfo);
-        String owner = info[0];
-        String methodName = info[1];
-        String methodDesc = info[2];
+        List<String> strs = splitInvokeInfo(invokeInfo);
+        String owner = strs.get(0);
+        String methodName = strs.get(1);
+        String methodDesc = strs.get(2);
         List<AdviceListener> listeners = AdviceListenerManager.queryTraceAdviceListeners(classLoader, clazz.getName(),
                 owner, methodName, methodDesc);
 
         if (listeners != null) {
+            int lineNumber = Integer.parseInt(strs.get(3));
             for (AdviceListener adviceListener : listeners) {
                 try {
                     if (skipAdviceListener(adviceListener)) {
                         continue;
                     }
                     final InvokeTraceable listener = (InvokeTraceable) adviceListener;
-                    listener.invokeAfterTracing(owner, methodName, methodDesc, Integer.parseInt(info[3]));
+                    listener.invokeAfterTracing(owner, methodName, methodDesc, lineNumber);
                 } catch (Throwable e) {
                     if (logger.isDebugEnabled()) {
                         logger.error("class: {}, invokeInfo: {}", clazz.getName(), invokeInfo, e);
@@ -161,22 +170,23 @@ public class SpyImpl extends AbstractSpy {
     @Override
     public void atInvokeException(Class<?> clazz, String invokeInfo, Object target, Throwable throwable) {
         ClassLoader classLoader = clazz.getClassLoader();
-        String[] info = splitInvokeInfo(invokeInfo);
-        String owner = info[0];
-        String methodName = info[1];
-        String methodDesc = info[2];
+        List<String> strs = splitInvokeInfo(invokeInfo);
+        String owner = strs.get(0);
+        String methodName = strs.get(1);
+        String methodDesc = strs.get(2);
 
         List<AdviceListener> listeners = AdviceListenerManager.queryTraceAdviceListeners(classLoader, clazz.getName(),
                 owner, methodName, methodDesc);
 
         if (listeners != null) {
+            int lineNumber = Integer.parseInt(strs.get(3));
             for (AdviceListener adviceListener : listeners) {
                 try {
                     if (skipAdviceListener(adviceListener)) {
                         continue;
                     }
                     final InvokeTraceable listener = (InvokeTraceable) adviceListener;
-                    listener.invokeThrowTracing(owner, methodName, methodDesc, Integer.parseInt(info[3]));
+                    listener.invokeThrowTracing(owner, methodName, methodDesc, lineNumber);
                 } catch (Throwable e) {
                     if (logger.isDebugEnabled()) {
                         logger.error("class: {}, invokeInfo: {}", clazz.getName(), invokeInfo, e);
@@ -186,12 +196,27 @@ public class SpyImpl extends AbstractSpy {
         }
     }
 
-    private String[] splitMethodInfo(String methodInfo) {
-        return methodInfo.split(Pattern.quote("|"));
+    private List<String> splitMethodInfo(String methodInfo) {
+        return splitString(methodInfo, '|');
     }
 
-    private String[] splitInvokeInfo(String invokeInfo) {
-        return invokeInfo.split(Pattern.quote("|"));
+    private List<String> splitInvokeInfo(String invokeInfo) {
+        return splitString(invokeInfo, '|');
+    }
+
+    /**
+     * 经过优化的字符串split方法，减少产生的内存碎片。
+     * trace/watch 等字节码拦截回调每次都需要进行字符串split，是一个性能瓶颈hotspot。
+     * 注意： 返回的List为重用的缓存对象，不能直接引用它，有需要请复制一份
+     * @param str
+     * @param separatorChar
+     * @return
+     */
+    private List<String> splitString(String str, char separatorChar) {
+        List<String> list = splitListLocal.get();
+        list.clear();
+        StringUtils.splitToList(str, separatorChar, list);
+        return list;
     }
 
     private boolean skipAdviceListener(AdviceListener adviceListener) {
