@@ -84,13 +84,6 @@ public class ProcessUtils {
 			}
 		}
 
-		if (processMap.size() == 1) {
-			Entry<Long, String> entry = processMap.entrySet().iterator().next();
-			if (entry.getValue().contains(select)) {
-				return entry.getKey();
-			}
-		}
-
         AnsiLog.info("Found existing java process, please choose one and input the serial number of the process, eg : 1. Then hit ENTER.");
         // print list
         int count = 1;
