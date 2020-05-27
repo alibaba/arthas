@@ -922,6 +922,17 @@ public abstract class StringUtils {
     }
 
     /**
+     * Memory optimization for string split.
+     * Split string to outputList, avoiding create temporary list instance.
+     * @param str
+     * @param separatorChar
+     * @param outputList
+     */
+    public static void splitToList(String str, char separatorChar, List<String> outputList) {
+        splitWorker(str, separatorChar, false, outputList);
+    }
+
+    /**
      * Performs the logic for the {@code split} and
      * {@code splitPreserveAllTokens} methods that do not return a
      * maximum array length.
@@ -944,6 +955,18 @@ public abstract class StringUtils {
             return EMPTY_STRING_ARRAY;
         }
         final List<String> list = new ArrayList<String>();
+        splitWorker(str, separatorChar, preserveAllTokens, list);
+        return list.toArray(new String[list.size()]);
+    }
+
+    private static void splitWorker(String str, char separatorChar, boolean preserveAllTokens, List<String> list) {
+        if (str == null) {
+            return;
+        }
+        final int len = str.length();
+        if (len == 0) {
+            return;
+        }
         int i = 0, start = 0;
         boolean match = false;
         boolean lastMatch = false;
@@ -964,7 +987,6 @@ public abstract class StringUtils {
         if (match || preserveAllTokens && lastMatch) {
             list.add(str.substring(start, i));
         }
-        return list.toArray(new String[list.size()]);
     }
 
 }

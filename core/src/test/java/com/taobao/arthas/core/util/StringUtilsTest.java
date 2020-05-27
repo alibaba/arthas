@@ -6,7 +6,9 @@ import org.junit.Rule;
 import org.junit.Test;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
+import java.util.List;
 import java.util.TreeMap;
 import java.util.TreeSet;
 import java.util.Properties;
@@ -237,7 +239,7 @@ public class StringUtilsTest {
     }
 
     @Test
-    public void testSplit() {
+    public void testSplitFirst() {
         Assert.assertNull(StringUtils.splitFirst("AAAAAAA@@", "AAAAAAAA"));
         Assert.assertNull(StringUtils.splitFirst("@", ""));
         Assert.assertNull(StringUtils.splitFirst("", "AAAAAAAA"));
@@ -412,4 +414,30 @@ public class StringUtilsTest {
     public void testClassLoaderHash() {
         Assert.assertEquals("null", StringUtils.classLoaderHash(null));
     }
+
+    @Test
+    public void testSplit() {
+        Assert.assertArrayEquals(new String[]{"sample/mybatis/mapper/HotelMapper","selectByCityId","(I)Lsample/mybatis/domain/Hotel;","49"},
+                StringUtils.split("sample/mybatis/mapper/HotelMapper|selectByCityId|(I)Lsample/mybatis/domain/Hotel;|49", '|'));
+        Assert.assertArrayEquals(new String[0], StringUtils.split("", '|'));
+        Assert.assertNull(StringUtils.split(null, '|'));
+    }
+
+    @Test
+    public void testSplitToList() {
+        List<String> strs = new ArrayList<String>();
+        StringUtils.splitToList("sample/mybatis/mapper/HotelMapper|selectByCityId|(I)Lsample/mybatis/domain/Hotel;|49", '|', strs);
+        List<String> expected = Arrays.asList(new String[]{"sample/mybatis/mapper/HotelMapper", "selectByCityId", "(I)Lsample/mybatis/domain/Hotel;", "49"});
+        Assert.assertEquals(expected, strs);
+
+        strs.clear();
+        StringUtils.splitToList("", '|', strs);
+        Assert.assertEquals(0, strs.size());
+
+        strs.clear();
+        StringUtils.splitToList(null, '|', strs);
+        Assert.assertEquals(0, strs.size());
+
+    }
+
 }
