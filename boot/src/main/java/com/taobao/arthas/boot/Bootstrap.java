@@ -1,5 +1,6 @@
 package com.taobao.arthas.boot;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
@@ -11,6 +12,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.Scanner;
 import java.util.TimeZone;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
@@ -33,6 +35,9 @@ import com.taobao.middleware.cli.annotations.Description;
 import com.taobao.middleware.cli.annotations.Name;
 import com.taobao.middleware.cli.annotations.Option;
 import com.taobao.middleware.cli.annotations.Summary;
+
+import static com.taobao.arthas.boot.ProcessUtils.STATUS_EXEC_ERROR;
+import static com.taobao.arthas.boot.ProcessUtils.STATUS_EXEC_TIMEOUT;
 
 /**
  * @author hengyunabc 2018-10-26
@@ -353,14 +358,7 @@ public class Bootstrap {
             }
         }
 
-        if (telnetPortPid > 0 && pid != telnetPortPid) {
-            AnsiLog.error("Target process {} is not the process using port {}, you will connect to an unexpected process.",
-                            pid, bootstrap.getTelnetPort());
-            AnsiLog.error("1. Try to restart arthas-boot, select process {}, shutdown it first with running the 'stop' command.",
-                            telnetPortPid);
-            AnsiLog.error("2. Or try to use different telnet port, for example: java -jar arthas-boot.jar --telnet-port 9998 --http-port -1");
-            System.exit(1);
-        }
+        checkTelnetPortPid(bootstrap, telnetPortPid, pid);
 
         if (httpPortPid > 0 && pid != httpPortPid) {
             AnsiLog.error("Target process {} is not the process using port {}, you will connect to an unexpected process.",
@@ -474,6 +472,10 @@ public class Bootstrap {
         if (telnetPortPid > 0 && pid == telnetPortPid) {
             AnsiLog.info("The target process already listen port {}, skip attach.", bootstrap.getTelnetPort());
         } else {
+            //double check telnet port and pid before attach
+            telnetPortPid = findProcessByTelnetClient(arthasHomeDir.getAbsolutePath(), bootstrap.getTelnetPort());
+            checkTelnetPortPid(bootstrap, telnetPortPid, pid);
+
             // start arthas-core.jar
             List<String> attachArgs = new ArrayList<String>();
             attachArgs.add("-jar");
@@ -554,6 +556,78 @@ public class Bootstrap {
         // fix https://github.com/alibaba/arthas/issues/833
         Thread.currentThread().setContextClassLoader(classLoader);
         mainMethod.invoke(null, new Object[] { telnetArgs.toArray(new String[0]) });
+    }
+
+    private static void checkTelnetPortPid(Bootstrap bootstrap, long telnetPortPid, long targetPid) {
+        if (telnetPortPid > 0 && targetPid != telnetPortPid) {
+            AnsiLog.error("The telnet port {} is used by process {} instead of target process {}, you will connect to an unexpected process.",
+                    bootstrap.getTelnetPort(), telnetPortPid, targetPid);
+            AnsiLog.error("1. Try to restart arthas-boot, select process {}, shutdown it first with running the 'stop' command.",
+                            telnetPortPid);
+            AnsiLog.error("2. Or try to stop the existing arthas instance: java -jar arthas-client.jar 127.0.0.1 {} -c \"stop\"", bootstrap.getTelnetPort());
+            AnsiLog.error("3. Or try to use different telnet port, for example: java -jar arthas-boot.jar --telnet-port 9998 --http-port -1");
+            System.exit(1);
+        }
+    }
+
+    private static long findProcessByTelnetClient(String arthasHomeDir, int telnetPort) {
+        // start java telnet client
+        List<String> telnetArgs = new ArrayList<String>();
+        telnetArgs.add("-c");
+        telnetArgs.add("session");
+        telnetArgs.add("--execution-timeout");
+        telnetArgs.add("2000");
+        // telnet port ,ip
+        telnetArgs.add("127.0.0.1");
+        telnetArgs.add("" + telnetPort);
+
+        try {
+            ByteArrayOutputStream out = new ByteArrayOutputStream(1024);
+            String error = null;
+            int status = ProcessUtils.startArthasClient(arthasHomeDir, telnetArgs, out);
+            if (status == STATUS_EXEC_TIMEOUT) {
+                error = "detection timeout";
+            } else if (status == STATUS_EXEC_ERROR) {
+                error = "detection error";
+                AnsiLog.error("process status: {}", status);
+                AnsiLog.error("process output: {}", out.toString());
+            } else {
+                // ignore connect error
+            }
+            if (error != null) {
+                AnsiLog.error("The telnet port {} is used, but process {}, you will connect to an unexpected process.", telnetPort, error);
+                AnsiLog.error("Try to use a different telnet port, for example: java -jar arthas-boot.jar --telnet-port 9998 --http-port -1");
+                System.exit(1);
+            }
+
+            //parse output, find java pid
+            String output = out.toString("UTF-8");
+            String javaPidLine = null;
+            Scanner scanner = new Scanner(output);
+            while (scanner.hasNextLine()) {
+                String line = scanner.nextLine();
+                if (line.contains("JAVA_PID")) {
+                    javaPidLine = line;
+                    break;
+                }
+            }
+            if (javaPidLine != null) {
+                // JAVA_PID    10473
+                try {
+                    String[] strs = javaPidLine.split("JAVA_PID");
+                    if (strs.length > 1) {
+                        return Long.parseLong(strs[strs.length - 1].trim());
+                    }
+                } catch (NumberFormatException e) {
+                    // ignore
+                }
+            }
+        } catch (Throwable ex) {
+            AnsiLog.error("Detection telnet port error");
+            AnsiLog.error(ex);
+        }
+
+        return -1;
     }
 
     private static String listVersions(String mavenMetaData) {
