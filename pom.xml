@@ -91,16 +91,6 @@
     <dependencyManagement>
         <dependencies>
             <dependency>
-                <groupId>org.ow2.asm</groupId>
-                <artifactId>asm</artifactId>
-                <version>8.0.1</version>
-            </dependency>
-            <dependency>
-                <groupId>org.ow2.asm</groupId>
-                <artifactId>asm-commons</artifactId>
-                <version>8.0.1</version>
-            </dependency>
-            <dependency>
                 <groupId>org.benf</groupId>
                 <artifactId>cfr</artifactId>
                 <version>0.150</version>

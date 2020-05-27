@@ -97,7 +97,7 @@ public class SearchMethodCommand extends AnnotatedCommand {
         for (Class<?> clazz : matchedClasses) {
             try {
                 for (Constructor<?> constructor : clazz.getDeclaredConstructors()) {
-                    String methodNameWithDescriptor = org.objectweb.asm.commons.Method.getMethod(constructor).toString();
+                    String methodNameWithDescriptor = com.alibaba.arthas.deps.org.objectweb.asm.commons.Method.getMethod(constructor).toString();
                     if (!methodNameMatcher.matching("<init>")) {
                         continue;
                     }
@@ -112,7 +112,7 @@ public class SearchMethodCommand extends AnnotatedCommand {
                 }
 
                 for (Method method : clazz.getDeclaredMethods()) {
-                    String methodNameWithDescriptor = org.objectweb.asm.commons.Method.getMethod(method).toString();
+                    String methodNameWithDescriptor = com.alibaba.arthas.deps.org.objectweb.asm.commons.Method.getMethod(method).toString();
                     if (!methodNameMatcher.matching(method.getName())) {
                         continue;
                     }
