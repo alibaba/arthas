@@ -3,29 +3,27 @@ package com.taobao.arthas.core.command.klass100;
 import com.alibaba.arthas.deps.org.slf4j.Logger;
 import com.alibaba.arthas.deps.org.slf4j.LoggerFactory;
 import com.taobao.arthas.core.command.Constants;
-import com.taobao.arthas.core.command.model.*;
+import com.taobao.arthas.core.command.model.ClassVO;
+import com.taobao.arthas.core.command.model.JadModel;
+import com.taobao.arthas.core.command.model.MessageModel;
+import com.taobao.arthas.core.command.model.RowAffectModel;
+import com.taobao.arthas.core.command.model.StatusModel;
 import com.taobao.arthas.core.shell.cli.Completion;
 import com.taobao.arthas.core.shell.cli.CompletionUtils;
 import com.taobao.arthas.core.shell.command.AnnotatedCommand;
 import com.taobao.arthas.core.shell.command.CommandProcess;
 import com.taobao.arthas.core.util.ClassUtils;
 import com.taobao.arthas.core.util.Decompiler;
+import com.taobao.arthas.core.util.InstrumentationUtils;
 import com.taobao.arthas.core.util.SearchUtils;
-import com.taobao.arthas.core.util.TypeRenderUtils;
 import com.taobao.arthas.core.util.affect.RowAffect;
 import com.taobao.middleware.cli.annotations.Argument;
 import com.taobao.middleware.cli.annotations.Description;
 import com.taobao.middleware.cli.annotations.Name;
 import com.taobao.middleware.cli.annotations.Option;
 import com.taobao.middleware.cli.annotations.Summary;
-import com.taobao.text.Color;
-import com.taobao.text.Decoration;
-import com.taobao.text.lang.LangRenderUtil;
-import com.taobao.text.ui.LabelElement;
-import com.taobao.text.util.RenderUtil;
 
 import java.io.File;
-import java.lang.instrument.ClassFileTransformer;
 import java.lang.instrument.Instrumentation;
 import java.util.HashSet;
 import java.util.List;
@@ -126,27 +124,6 @@ public class JadCommand extends AnnotatedCommand {
         }
     }
 
-
-    public static void retransformClasses(Instrumentation inst, ClassFileTransformer transformer, Set<Class<?>> classes) {
-        try {
-            inst.addTransformer(transformer, true);
-
-            for(Class<?> clazz : classes) {
-                try{
-                    inst.retransformClasses(clazz);
-                }catch(Throwable e) {
-                    String errorMsg = "retransformClasses class error, name: " + clazz.getName();
-                    if(ClassUtils.isLambdaClass(clazz) && e instanceof VerifyError) {
-                        errorMsg += ", Please ignore lambda class VerifyError: https://github.com/alibaba/arthas/issues/675";
-                    }
-                    logger.error(errorMsg, e);
-                }
-            }
-        } finally {
-            inst.removeTransformer(transformer);
-        }
-    }
-
     private StatusModel processExactMatch(CommandProcess process, RowAffect affect, Instrumentation inst, Set<Class<?>> matchedClasses, Set<Class<?>> withInnerClasses) {
         StatusModel statusModel = new StatusModel();
         Class<?> c = matchedClasses.iterator().next();
@@ -155,7 +132,7 @@ public class JadCommand extends AnnotatedCommand {
 
         try {
             ClassDumpTransformer transformer = new ClassDumpTransformer(allClasses);
-            retransformClasses(inst, transformer, allClasses);
+            InstrumentationUtils.retransformClasses(inst, transformer, allClasses);
 
             Map<Class<?>, File> classFiles = transformer.getDumpResult();
             File classFile = classFiles.get(c);

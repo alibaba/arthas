@@ -10,6 +10,7 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.TimeUnit;
 
 import com.alibaba.arthas.deps.org.slf4j.Logger;
 import com.alibaba.arthas.deps.org.slf4j.LoggerFactory;
@@ -17,6 +18,7 @@ import com.taobao.arthas.common.OSUtils;
 import com.taobao.arthas.core.command.Constants;
 import com.taobao.arthas.core.command.model.MessageModel;
 import com.taobao.arthas.core.command.model.ProfilerModel;
+import com.taobao.arthas.core.server.ArthasBootstrap;
 import com.taobao.arthas.core.shell.cli.CliToken;
 import com.taobao.arthas.core.shell.cli.Completion;
 import com.taobao.arthas.core.shell.cli.CompletionUtils;
@@ -92,6 +94,11 @@ public class ProfilerCommand extends AnnotatedCommand {
      * include only user-mode events
      */
     private boolean alluser;
+
+    /**
+     * run profiling for <duration> seconds
+     */
+    private Long duration;
 
     private static String libPath;
     private static AsyncProfiler profiler = null;
@@ -182,6 +189,12 @@ public class ProfilerCommand extends AnnotatedCommand {
         this.alluser = alluser;
     }
 
+    @Option(shortName = "d", longName = "duration")
+    @Description("run profiling for <duration> seconds")
+    public void setDuration(long duration) {
+        this.duration = duration;
+    }
+
     private AsyncProfiler profilerInstance() {
         if (profiler != null) {
             return profiler;
@@ -258,7 +271,7 @@ public class ProfilerCommand extends AnnotatedCommand {
     }
 
     @Override
-    public void process(CommandProcess process) {
+    public void process(final CommandProcess process) {
         int status = 0;
         try {
             ProfilerAction profilerAction = ProfilerAction.valueOf(action);
@@ -269,7 +282,7 @@ public class ProfilerCommand extends AnnotatedCommand {
                 return;
             }
 
-            AsyncProfiler asyncProfiler = this.profilerInstance();
+            final AsyncProfiler asyncProfiler = this.profilerInstance();
 
             if (ProfilerAction.execute.equals(profilerAction)) {
                 if (actionArg == null) {
@@ -283,13 +296,30 @@ public class ProfilerCommand extends AnnotatedCommand {
                 String executeArgs = executeArgs(ProfilerAction.start);
                 String result = execute(asyncProfiler, executeArgs);
                 appendResult(process, executeArgs, result);
-            } else if (ProfilerAction.stop.equals(profilerAction)) {
-                if (this.file == null) {
-                    this.file = new File("arthas-output",
-                            new SimpleDateFormat("yyyyMMdd-HHmmss").format(new Date()) + "." + this.format)
-                                    .getAbsolutePath();
+
+                if (this.duration != null) {
+                    final String outputFile = outputFile();
+                    final String stopExecuteArgs = executeArgs(ProfilerAction.stop);
+                    process.appendResult(new MessageModel(String.format("profiler will silent stop after %d seconds.", this.duration.longValue())));
+                    process.appendResult(new MessageModel("profiler output file will be: " + new File(outputFile).getAbsolutePath()));
+                    ArthasBootstrap.getInstance().getScheduledExecutorService().schedule(new Runnable() {
+                        @Override
+                        public void run() {
+                            try {
+                                logger.info("profiler output file: " + new File(outputFile).getAbsolutePath() + "\n");
+                                String result = execute(asyncProfiler, stopExecuteArgs);
+                                logger.info("profiler stop result: " + result);
+                            } catch (Throwable e) {
+                                logger.error("", e);
+                            }
+                        }
+                    }, this.duration, TimeUnit.SECONDS);
                 }
-                process.appendResult(new MessageModel("profiler output file: " + new File(this.file).getAbsolutePath()));
+
+            } else if (ProfilerAction.stop.equals(profilerAction)) {
+                String outputFile = outputFile();
+                process.appendResult(new MessageModel("profiler output file: " + new File(outputFile).getAbsolutePath()));
+
                 String executeArgs = executeArgs(ProfilerAction.stop);
                 String result = execute(asyncProfiler, executeArgs);
 
@@ -351,6 +381,14 @@ public class ProfilerCommand extends AnnotatedCommand {
 
     private void appendResult(CommandProcess process, String executeArgs, String result) {
         process.appendResult(new ProfilerModel(action, executeArgs, result));
+    }
+
+    private String outputFile() {
+        if (this.file == null) {
+            this.file = new File("arthas-output",
+                    new SimpleDateFormat("yyyyMMdd-HHmmss").format(new Date()) + "." + this.format).getAbsolutePath();
+        }
+        return file;
     }
 
     private List<String> events() {

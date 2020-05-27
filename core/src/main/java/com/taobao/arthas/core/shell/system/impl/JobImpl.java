@@ -12,10 +12,6 @@ import com.taobao.arthas.core.shell.system.ExecStatus;
 import com.taobao.arthas.core.shell.system.Job;
 import com.taobao.arthas.core.shell.system.JobListener;
 import com.taobao.arthas.core.shell.system.Process;
-import com.taobao.arthas.core.shell.term.Term;
-import com.taobao.arthas.core.shell.term.impl.TermImpl;
-import com.taobao.arthas.core.util.Constants;
-import com.taobao.arthas.core.util.FileUtils;
 
 /**
  * @author <a href="mailto:julien@julienviet.com">Julien Viet</a>

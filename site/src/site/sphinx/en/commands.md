@@ -42,15 +42,15 @@ All Commands
 
 ### Basic Arthas Commands
 
-* help - examine help information
-* cls - clear out the screen
-* session - examine the current session
-* [reset](reset.md) - reset enhanced classes. All enhanced classes will be reset to their original states. When Arthas server closes, all these enhanced classes will be reset too
-* version - print out Arthas's version
+* help - examines help information
+* cls - clears out the screen
+* session - examines the current session
+* [reset](reset.md) - resets enhanced classes. All enhanced classes will be reset to their original states. When Arthas server closes, all these enhanced classes will be reset too
+* version - prints out Arthas's version
 * history - view command history
 * quit - exit the current Arthas client without affecting other clients
-* stop - terminate the Arthas server, all the Arthas clients connecting to this server will be disconnected
-* [keymap](keymap.md) - list all Arthas keyboard shortcuts and shortcut customizations.
+* stop - terminates the Arthas server, all the Arthas clients connecting to this server will be disconnected
+* [keymap](keymap.md) - lists all Arthas keyboard shortcuts and shortcut customizations.
 
 
 

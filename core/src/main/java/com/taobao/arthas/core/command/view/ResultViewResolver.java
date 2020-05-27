@@ -32,15 +32,16 @@ public class ResultViewResolver {
 
     private void registerResultViews() {
         try {
-            registerView(new SessionModel(), new SessionView());
             registerView(new StatusModel(), new StatusView());
-            registerView(new WatchModel(), new WatchView());
-            registerView(new EnhancerAffectModel(), new EnhancerAffectView());
             registerView(new VersionModel(), new VersionView());
-            registerView(new PropertyModel(), new PropertyView());
             registerView(new MessageModel(), new MessageView());
             registerView(new HelpModel(), new HelpView());
             //registerView(new HistoryModel(), new HistoryView());
+            registerView(new EchoModel(), new EchoView());
+            registerView(new SessionModel(), new SessionView());
+            registerView(new WatchModel(), new WatchView());
+            registerView(new EnhancerAffectModel(), new EnhancerAffectView());
+            registerView(new PropertyModel(), new PropertyView());
             registerView(new SearchClassModel(), new SearchClassView());
             registerView(new RowAffectModel(), new RowAffectView());
             registerView(new SearchMethodModel(), new SearchMethodView());
@@ -65,7 +66,6 @@ public class ResultViewResolver {
             registerView(new TraceModel(), new TraceView());
             registerView(new OgnlModel(), new OgnlView());
             registerView(new PwdModel(), new PwdView());
-            registerView(new EchoModel(), new EchoView());
             registerView(new CatModel(), new CatView());
         } catch (Throwable e) {
             logger.error("register result view failed", e);

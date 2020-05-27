@@ -22,6 +22,7 @@ public final class EnhancerAffect extends Affect {
     private final AtomicInteger cCnt = new AtomicInteger();
     private final AtomicInteger mCnt = new AtomicInteger();
     private ClassFileTransformer transformer;
+    private long listenerId;
     /**
      * dumpClass的文件存放集合
      */
@@ -92,6 +93,14 @@ public final class EnhancerAffect extends Affect {
         this.transformer = transformer;
     }
 
+    public long getListenerId() {
+        return listenerId;
+    }
+
+    public void setListenerId(long listenerId) {
+        this.listenerId = listenerId;
+    }
+
     @Override
     public String toString() {
         final StringBuilder infoSB = new StringBuilder();
@@ -108,10 +117,11 @@ public final class EnhancerAffect extends Affect {
                 infoSB.append("[Affect method: ").append(method).append("]\n");
             }
         }
-        infoSB.append(format("Affect(class count:%d , method count:%d) cost in %s ms.",
+        infoSB.append(format("Affect(class count: %d , method count: %d) cost in %s ms, listenerId: %d",
                 cCnt(),
                 mCnt(),
-                cost()));
+                cost(),
+                listenerId));
         return infoSB.toString();
     }
 

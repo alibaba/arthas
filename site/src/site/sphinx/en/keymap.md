@@ -62,8 +62,8 @@ then replace `"\C-h": backward-delete-char` with `"\C-h": backward-char`, then r
 
 #### Shortcuts for jobs
 
-* `ctrl + c`: Terminate current command
-* `ctrl + z`: Suspend the current command, you can restore this command with `bg`/`fg`, or `kill` it.
+* `ctrl + c`: Terminates current command
+* `ctrl + z`: Suspends the current command, you can restore this command with `bg`/`fg`, or `kill` it.
 * `ctrl + a`: Go to the beginning the line 
 * `ctrl + e`: Go to the end of the line
 

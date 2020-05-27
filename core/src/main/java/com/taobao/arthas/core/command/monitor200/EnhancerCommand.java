@@ -8,6 +8,7 @@ import java.util.List;
 import com.alibaba.arthas.deps.org.slf4j.Logger;
 import com.alibaba.arthas.deps.org.slf4j.LoggerFactory;
 import com.taobao.arthas.core.advisor.AdviceListener;
+import com.taobao.arthas.core.advisor.AdviceWeaver;
 import com.taobao.arthas.core.advisor.Enhancer;
 import com.taobao.arthas.core.advisor.InvokeTraceable;
 import com.taobao.arthas.core.command.model.EnhancerAffectModel;
@@ -22,6 +23,8 @@ import com.taobao.arthas.core.util.Constants;
 import com.taobao.arthas.core.util.LogUtil;
 import com.taobao.arthas.core.util.affect.EnhancerAffect;
 import com.taobao.arthas.core.util.matcher.Matcher;
+import com.taobao.middleware.cli.annotations.Description;
+import com.taobao.middleware.cli.annotations.Option;
 
 /**
  * @author beiwei30 on 29/11/2016.
@@ -35,6 +38,14 @@ public abstract class EnhancerCommand extends AnnotatedCommand {
 
     protected Matcher classNameMatcher;
     protected Matcher methodNameMatcher;
+
+    protected long listenerId;
+
+    @Option(longName = "listenerId")
+    @Description("The special listenerId")
+    public void setListenerId(long listenerId) {
+        this.listenerId = listenerId;
+    }
 
     /**
      * 类名匹配
@@ -57,6 +68,15 @@ public abstract class EnhancerCommand extends AnnotatedCommand {
      */
     protected abstract AdviceListener getAdviceListener(CommandProcess process);
 
+    AdviceListener getAdviceListenerWithId(CommandProcess process) {
+        if (listenerId != 0) {
+            AdviceListener listener = AdviceWeaver.listener(listenerId);
+            if (listener != null) {
+                return listener;
+            }
+        }
+        return getAdviceListener(process);
+    }
     @Override
     public void process(final CommandProcess process) {
         // ctrl-C support
@@ -99,7 +119,7 @@ public abstract class EnhancerCommand extends AnnotatedCommand {
         int lock = session.getLock();
         try {
             Instrumentation inst = session.getInstrumentation();
-            AdviceListener listener = getAdviceListener(process);
+            AdviceListener listener = getAdviceListenerWithId(process);
             if (listener == null) {
                 logger.error("advice listener is null");
                 process.end(-1, "cannot operate the current command, pls. check arthas.log");
@@ -110,8 +130,10 @@ public abstract class EnhancerCommand extends AnnotatedCommand {
                 skipJDKTrace = ((AbstractTraceAdviceListener) listener).getCommand().isSkipJDKTrace();
             }
 
-            EnhancerAffect effect = Enhancer.enhance(inst, listener, listener instanceof InvokeTraceable,
-                    skipJDKTrace, getClassNameMatcher(), getMethodNameMatcher());
+            Enhancer enhancer = new Enhancer(listener, listener instanceof InvokeTraceable, skipJDKTrace, getClassNameMatcher(), getMethodNameMatcher());
+            // 注册通知监听器
+            process.register(listener, enhancer);
+            EnhancerAffect effect = enhancer.enhance(inst);
 
             if (effect.cCnt() == 0 || effect.mCnt() == 0) {
                 // no class effected
@@ -129,8 +151,6 @@ public abstract class EnhancerCommand extends AnnotatedCommand {
 
             // 这里做个补偿,如果在enhance期间,unLock被调用了,则补偿性放弃
             if (session.getLock() == lock) {
-                // 注册通知监听器
-                process.register(lock, listener, effect.getTransformer());
                 if (process.isForeground()) {
                     process.echoTips(Constants.Q_OR_CTRL_C_ABORT_MSG + "\n");
                 }

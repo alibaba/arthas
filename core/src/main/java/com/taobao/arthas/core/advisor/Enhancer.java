@@ -66,9 +66,10 @@ public class Enhancer implements ClassFileTransformer {
     private final AdviceListener listener;
     private final boolean isTracing;
     private final boolean skipJDKTrace;
-    private final Set<Class<?>> matchingClasses;
+    private final Matcher classNameMatcher;
     private final Matcher methodNameMatcher;
     private final EnhancerAffect affect;
+    private Set<Class<?>> matchingClasses = null;
 
     // 被增强的类的缓存
     private final static Map<Class<?>/* Class */, Object> classBytesCache = new WeakHashMap<Class<?>, Object>();
@@ -86,14 +87,15 @@ public class Enhancer implements ClassFileTransformer {
      * @param methodNameMatcher 方法名匹配
      * @param affect            影响统计
      */
-    Enhancer(AdviceListener listener, boolean isTracing, boolean skipJDKTrace, Set<Class<?>> matchingClasses,
-            Matcher methodNameMatcher, EnhancerAffect affect) {
+    public Enhancer(AdviceListener listener, boolean isTracing, boolean skipJDKTrace, Matcher classNameMatcher,
+            Matcher methodNameMatcher) {
         this.listener = listener;
         this.isTracing = isTracing;
         this.skipJDKTrace = skipJDKTrace;
-        this.matchingClasses = matchingClasses;
+        this.classNameMatcher = classNameMatcher;
         this.methodNameMatcher = methodNameMatcher;
-        this.affect = affect;
+        this.affect = new EnhancerAffect();
+        affect.setListenerId(listener.id());
     }
 
     public static class SpyInterceptor {
@@ -196,7 +198,7 @@ public class Enhancer implements ClassFileTransformer {
 
             // 这里要再次过滤一次，为啥？因为在transform的过程中，有可能还会再诞生新的类
             // 所以需要将之前需要转换的类集合传递下来，再次进行判断
-            if (!matchingClasses.contains(classBeingRedefined)) {
+            if (matchingClasses != null && !matchingClasses.contains(classBeingRedefined)) {
                 return null;
             }
 
@@ -352,6 +354,9 @@ public class Enhancer implements ClassFileTransformer {
         try {
             FileUtils.writeByteArrayToFile(dumpClassFile, data);
             affect.addClassDumpFile(dumpClassFile);
+            if (GlobalOptions.verbose) {
+                logger.info("dump enhanced class: {}, path: {}", className, dumpClassFile);
+            }
         } catch (IOException e) {
             logger.warn("dump class:{} to file {} failed.", className, dumpClassFile, e);
         }
@@ -407,41 +412,33 @@ public class Enhancer implements ClassFileTransformer {
      * @return 增强影响范围
      * @throws UnmodifiableClassException 增强失败
      */
-    public static synchronized EnhancerAffect enhance(final Instrumentation inst, final AdviceListener listener,
-            final boolean isTracing, final boolean skipJDKTrace, final Matcher classNameMatcher,
-            final Matcher methodNameMatcher) throws UnmodifiableClassException {
-
-        final EnhancerAffect affect = new EnhancerAffect();
-
+    public synchronized EnhancerAffect enhance(final Instrumentation inst) throws UnmodifiableClassException {
         // 获取需要增强的类集合
-        final Set<Class<?>> enhanceClassSet = GlobalOptions.isDisableSubClass
+        this.matchingClasses = GlobalOptions.isDisableSubClass
                 ? SearchUtils.searchClass(inst, classNameMatcher)
                 : SearchUtils.searchSubClass(inst, SearchUtils.searchClass(inst, classNameMatcher));
 
         // 过滤掉无法被增强的类
-        filter(enhanceClassSet);
+        filter(matchingClasses);
 
-        // 构建增强器
-        final Enhancer enhancer = new Enhancer(listener, isTracing, skipJDKTrace, enhanceClassSet, methodNameMatcher,
-                affect);
-        affect.setTransformer(enhancer);
+        affect.setTransformer(this);
 
         try {
-            ArthasBootstrap.getInstance().getTransformerManager().addTransformer(enhancer, isTracing);
+            ArthasBootstrap.getInstance().getTransformerManager().addTransformer(this, isTracing);
             //inst.addTransformer(enhancer, true);
 
             // 批量增强
             if (GlobalOptions.isBatchReTransform) {
-                final int size = enhanceClassSet.size();
+                final int size = matchingClasses.size();
                 final Class<?>[] classArray = new Class<?>[size];
-                arraycopy(enhanceClassSet.toArray(), 0, classArray, 0, size);
+                arraycopy(matchingClasses.toArray(), 0, classArray, 0, size);
                 if (classArray.length > 0) {
                     inst.retransformClasses(classArray);
                     logger.info("Success to batch transform classes: " + Arrays.toString(classArray));
                 }
             } else {
                 // for each 增强
-                for (Class<?> clazz : enhanceClassSet) {
+                for (Class<?> clazz : matchingClasses) {
                     try {
                         inst.retransformClasses(clazz);
                         logger.info("Success to transform class: " + clazz);
@@ -506,7 +503,7 @@ public class Enhancer implements ClassFileTransformer {
     }
 
     // 批量增强
-    public static void enhance(Instrumentation inst, ClassFileTransformer transformer, Set<Class<?>> classes)
+    private static void enhance(Instrumentation inst, ClassFileTransformer transformer, Set<Class<?>> classes)
             throws UnmodifiableClassException {
         try {
             inst.addTransformer(transformer, true);

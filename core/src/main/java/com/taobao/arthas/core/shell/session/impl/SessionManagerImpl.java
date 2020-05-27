@@ -11,8 +11,8 @@ import com.taobao.arthas.core.shell.ShellServerOptions;
 import com.taobao.arthas.core.shell.session.Session;
 import com.taobao.arthas.core.shell.session.SessionManager;
 import com.taobao.arthas.core.shell.system.Job;
+import com.taobao.arthas.core.shell.system.JobController;
 import com.taobao.arthas.core.shell.system.impl.InternalCommandManager;
-import com.taobao.arthas.core.shell.system.impl.JobControllerImpl;
 
 import java.lang.instrument.Instrumentation;
 import java.util.*;
@@ -28,7 +28,7 @@ public class SessionManagerImpl implements SessionManager {
     private final ArthasBootstrap bootstrap;
     private final InternalCommandManager commandManager;
     private final Instrumentation instrumentation;
-    private final JobControllerImpl jobController;
+    private final JobController jobController;
     private final long timeoutMillis;
     private final long reaperInterval;
     private final Map<String, Session> sessions;
@@ -37,7 +37,7 @@ public class SessionManagerImpl implements SessionManager {
     private ScheduledExecutorService scheduledExecutorService;
 
     public SessionManagerImpl(ShellServerOptions options, ArthasBootstrap bootstrap, InternalCommandManager commandManager,
-                              JobControllerImpl jobController) {
+                              JobController jobController) {
         this.bootstrap = bootstrap;
         this.commandManager = commandManager;
         this.jobController = jobController;
@@ -187,7 +187,7 @@ public class SessionManagerImpl implements SessionManager {
     }
 
     @Override
-    public JobControllerImpl getJobController() {
+    public JobController getJobController() {
         return jobController;
     }
 }

@@ -2,7 +2,6 @@ package com.taobao.arthas.core.command.klass100;
 
 import com.alibaba.arthas.deps.org.slf4j.Logger;
 import com.alibaba.arthas.deps.org.slf4j.LoggerFactory;
-import com.taobao.arthas.core.advisor.Enhancer;
 import com.taobao.arthas.core.command.Constants;
 import com.taobao.arthas.core.command.model.*;
 import com.taobao.arthas.core.shell.cli.Completion;
@@ -10,6 +9,7 @@ import com.taobao.arthas.core.shell.cli.CompletionUtils;
 import com.taobao.arthas.core.shell.command.AnnotatedCommand;
 import com.taobao.arthas.core.shell.command.CommandProcess;
 import com.taobao.arthas.core.util.ClassUtils;
+import com.taobao.arthas.core.util.InstrumentationUtils;
 import com.taobao.arthas.core.util.SearchUtils;
 import com.taobao.arthas.core.util.affect.RowAffect;
 import com.taobao.middleware.cli.annotations.Argument;
@@ -18,18 +18,15 @@ import com.taobao.middleware.cli.annotations.Description;
 import com.taobao.middleware.cli.annotations.Name;
 import com.taobao.middleware.cli.annotations.Option;
 import com.taobao.middleware.cli.annotations.Summary;
-import com.taobao.text.Color;
-import com.taobao.text.Decoration;
-import com.taobao.text.ui.LabelElement;
-import com.taobao.text.ui.TableElement;
-import com.taobao.text.util.RenderUtil;
 
 import java.io.File;
 import java.lang.instrument.Instrumentation;
 import java.lang.instrument.UnmodifiableClassException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
-import static com.taobao.text.ui.Element.label;
 
 /**
  * Dump class byte array
@@ -80,7 +77,7 @@ public class DumpClassCommand extends AnnotatedCommand {
 
     @Option(shortName = "l", longName = "limit")
     @Description("The limit of dump classes size, default value is 5")
-    @DefaultValue("5")
+    @DefaultValue("50")
     public void setLimit(int limit) {
         this.limit = limit;
     }
@@ -161,7 +158,7 @@ public class DumpClassCommand extends AnnotatedCommand {
         } else {
             transformer = new ClassDumpTransformer(classes);
         }
-        Enhancer.enhance(inst, transformer, classes);
+        InstrumentationUtils.retransformClasses(inst, transformer, classes);
         return transformer.getDumpResult();
     }
 }

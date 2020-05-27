@@ -1,5 +1,25 @@
 package com.taobao.arthas.core.server;
 
+import java.arthas.SpyAPI;
+import java.io.File;
+import java.io.IOException;
+import java.lang.instrument.Instrumentation;
+import java.lang.reflect.Method;
+import java.net.URI;
+import java.security.CodeSource;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Properties;
+import java.util.Timer;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ThreadFactory;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicBoolean;
+
 import com.alibaba.arthas.deps.ch.qos.logback.classic.LoggerContext;
 import com.alibaba.arthas.deps.org.slf4j.Logger;
 import com.alibaba.arthas.deps.org.slf4j.LoggerFactory;
@@ -32,22 +52,6 @@ import io.netty.channel.ChannelFuture;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.util.concurrent.EventExecutorGroup;
 
-import java.arthas.SpyAPI;
-import java.io.File;
-import java.io.IOException;
-import java.lang.instrument.Instrumentation;
-import java.lang.reflect.Method;
-import java.net.URI;
-import java.security.CodeSource;
-import java.util.*;
-import java.util.Map.Entry;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ThreadFactory;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicBoolean;
-
-
 
 /**
  * @author vlinux on 15/5/2.
@@ -70,8 +74,8 @@ public class ArthasBootstrap {
     private Instrumentation instrumentation;
     private Thread shutdown;
     private ShellServer shellServer;
+    private ScheduledExecutorService executorService;
     private SessionManager sessionManager;
-    private ExecutorService executorService;
     private TunnelClient tunnelClient;
 
     private File arthasOutputDir;
@@ -100,7 +104,7 @@ public class ArthasBootstrap {
         // 4. start agent server
         bind(configure);
 
-        executorService = Executors.newCachedThreadPool(new ThreadFactory() {
+        executorService = Executors.newScheduledThreadPool(1, new ThreadFactory() {
             @Override
             public Thread newThread(Runnable r) {
                 final Thread t = new Thread(r, "as-command-execute-daemon");
@@ -133,7 +137,7 @@ public class ArthasBootstrap {
         /**
          * <pre>
          * 脚本里传过来的配置项，即命令行参数 > System Env > System Properties > arthas.properties
-         * arthas.properties 指供一个配置项，可以反转优先级。 arthas.config.overrideAll=true
+         * arthas.properties 提供一个配置项，可以反转优先级。 arthas.config.overrideAll=true
          * https://github.com/alibaba/arthas/issues/986
          * </pre>
          */
@@ -238,14 +242,14 @@ public class ArthasBootstrap {
                 tunnelClient.setTunnelServerUrl(configure.getTunnelServer());
                 // ws://127.0.0.1:8563/ws
                 String host = "127.0.0.1";
-                if (configure.getIp() != null) {
+                if(configure.getIp() != null) {
                     host = configure.getIp();
                 }
                 URI uri = new URI("ws", null, host, configure.getHttpPort(), "/ws", null, null);
                 tunnelClient.setLocalServerUrl(uri.toString());
                 ChannelFuture channelFuture = tunnelClient.start();
                 channelFuture.await(10, TimeUnit.SECONDS);
-                if (channelFuture.isSuccess()) {
+                if(channelFuture.isSuccess()) {
                     agentId = tunnelClient.getId();
                 }
             }
@@ -255,9 +259,9 @@ public class ArthasBootstrap {
 
         try {
             ShellServerOptions options = new ShellServerOptions()
-                    .setInstrumentation(instrumentation)
-                    .setPid(PidUtils.currentLongPid())
-                    .setSessionTimeout(configure.getSessionTimeout() * 1000);
+                            .setInstrumentation(instrumentation)
+                            .setPid(PidUtils.currentLongPid())
+                            .setSessionTimeout(configure.getSessionTimeout() * 1000);
 
             if (agentId != null) {
                 Map<String, String> welcomeInfos = new HashMap<String, String>();
@@ -421,6 +425,10 @@ public class ArthasBootstrap {
 
     public Timer getTimer() {
         return this.timer;
+    }
+
+    public ScheduledExecutorService getScheduledExecutorService() {
+        return this.executorService;
     }
 
     public Instrumentation getInstrumentation() {

@@ -6,6 +6,8 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 import java.util.Set;
 
+import com.alibaba.arthas.deps.org.slf4j.Logger;
+import com.alibaba.arthas.deps.org.slf4j.LoggerFactory;
 import com.taobao.arthas.core.command.Constants;
 import com.taobao.arthas.core.command.model.SearchMethodModel;
 import com.taobao.arthas.core.command.model.MethodVO;
@@ -43,6 +45,7 @@ import com.taobao.middleware.cli.annotations.Summary;
         "  sm -Ed org\\\\.apache\\\\.commons\\\\.lang\\.StringUtils .*\n" +
         Constants.WIKI + Constants.WIKI_HOME + "sm")
 public class SearchMethodCommand extends AnnotatedCommand {
+    private static final Logger logger = LoggerFactory.getLogger(SearchMethodCommand.class);
 
     private String classPattern;
     private String methodPattern;
@@ -100,23 +103,31 @@ public class SearchMethodCommand extends AnnotatedCommand {
             return;
         }
         for (Class<?> clazz : matchedClasses) {
-            for (Constructor<?> constructor : clazz.getDeclaredConstructors()) {
-                if (!methodNameMatcher.matching("<init>")) {
-                    continue;
+            try {
+                for (Constructor<?> constructor : clazz.getDeclaredConstructors()) {
+                    if (!methodNameMatcher.matching("<init>")) {
+                        continue;
+                    }
+
+                    MethodVO methodInfo = ClassUtils.createMethodInfo(constructor, clazz, isDetail);
+                    process.appendResult(new SearchMethodModel(methodInfo, isDetail));
+                    affect.rCnt(1);
                 }
 
-                MethodVO methodInfo = ClassUtils.createMethodInfo(constructor, clazz, isDetail);
-                process.appendResult(new SearchMethodModel(methodInfo, isDetail));
-                affect.rCnt(1);
-            }
-
-            for (Method method : clazz.getDeclaredMethods()) {
-                if (!methodNameMatcher.matching(method.getName())) {
-                    continue;
+                for (Method method : clazz.getDeclaredMethods()) {
+                    if (!methodNameMatcher.matching(method.getName())) {
+                        continue;
+                    }
+                    MethodVO methodInfo = ClassUtils.createMethodInfo(method, clazz, isDetail);
+                    process.appendResult(new SearchMethodModel(methodInfo, isDetail));
+                    affect.rCnt(1);
                 }
-                MethodVO methodInfo = ClassUtils.createMethodInfo(method, clazz, isDetail);
-                process.appendResult(new SearchMethodModel(methodInfo, isDetail));
-                affect.rCnt(1);
+            } catch (Error e) {
+                //print failed className
+                String msg = String.format("process class failed: %s, error: %s", clazz.getName(), e.toString());
+                logger.error(msg, e);
+                process.end(1, msg);
+                return;
             }
         }
 

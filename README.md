@@ -42,14 +42,14 @@ Arthas was built to solve these issues. A developer can troubleshoot your produc
 * Supports Linux/Mac/Windows.
 
 
-### Online Tutorials(Recommend)
+### Online Tutorials(Recommended)
 
 * [Arthas Basics](https://alibaba.github.io/arthas/arthas-tutorials?language=en&id=arthas-basics)
 * [Arthas Advanced](https://alibaba.github.io/arthas/arthas-tutorials?language=en&id=arthas-advanced)
 
 ### Quick start
 
-#### Use `arthas-boot`(Recommend)
+#### Use `arthas-boot`(Recommended)
 
 Download`arthas-boot.jar`，Start with `java` command:
 
@@ -79,7 +79,7 @@ You can enter its interactive interface by executing `as.sh`, or execute `as.sh 
 
 ### Documentation
 
-* [Online Tutorials(Recommend)](https://alibaba.github.io/arthas/arthas-tutorials?language=en)
+* [Online Tutorials(Recommended)](https://alibaba.github.io/arthas/arthas-tutorials?language=en)
 * [User manual](https://alibaba.github.io/arthas/en)
 * [Installation](https://alibaba.github.io/arthas/en/install-detail.html)
 * [Download](https://alibaba.github.io/arthas/en/download.html)
@@ -106,7 +106,7 @@ You can enter its interactive interface by executing `as.sh`, or execute `as.sh 
 
 * https://alibaba.github.io/arthas/en/thread
 
-See what is eating your cpu (ranked by top cpu usage) and what is going on there in one glance:
+See what is eating your CPU (ranked by top CPU usage) and what is going on there in one glance:
 
 ```bash
 $ thread -n 3
@@ -510,17 +510,18 @@ Welcome to register the company name in this issue: https://github.com/alibaba/a
 ![vipkid](static/vipkid.png)
 ![宇中科技](static/yuzhong.png)
 ![蘑菇财富](static/mogu.jpg)
+![喔趣科技](static/woqu.png)
 
 ### Derivative Projects
 
 * [Bistoury: A project that integrates Arthas](https://github.com/qunarcorp/bistoury)
 * [A fork of arthas using MVEL](https://github.com/XhinLiang/arthas)
 
-### Credit
+### Credits
 
 #### Contributors
 
-This project exists thanks to all the people who contribute.
+This project exists, thanks to all the people who contributed.
 
 <a href="https://github.com/alibaba/arthas/graphs/contributors"><img src="https://opencollective.com/arthas/contributors.svg?width=890&button=false" /></a>
 

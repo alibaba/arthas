@@ -3,13 +3,15 @@ package com.taobao.arthas.core.advisor;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map.Entry;
-import java.util.Timer;
-import java.util.TimerTask;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.TimeUnit;
 
+import com.alibaba.arthas.deps.org.slf4j.Logger;
+import com.alibaba.arthas.deps.org.slf4j.LoggerFactory;
 import com.taobao.arthas.common.concurrent.ConcurrentWeakKeyHashMap;
 import com.taobao.arthas.core.server.ArthasBootstrap;
 import com.taobao.arthas.core.shell.system.ExecStatus;
+import com.taobao.arthas.core.shell.system.Process;
 import com.taobao.arthas.core.shell.system.ProcessAware;
 
 /**
@@ -49,43 +51,53 @@ import com.taobao.arthas.core.shell.system.ProcessAware;
  *
  */
 public class AdviceListenerManager {
-
-    private static Timer timer = ArthasBootstrap.getInstance().getTimer();
+    private static final Logger logger = LoggerFactory.getLogger(AdviceListenerManager.class);
     private static final FakeBootstrapClassLoader FAKEBOOTSTRAPCLASSLOADER = new FakeBootstrapClassLoader();
 
     static {
-        timer.scheduleAtFixedRate(new TimerTask() {
-
+        // 清理失效的 AdviceListener
+        ArthasBootstrap.getInstance().getScheduledExecutorService().scheduleWithFixedDelay(new Runnable() {
             @Override
             public void run() {
-                if (adviceListenerMap != null) {
-                    for (Entry<ClassLoader, ClassLoaderAdviceListenerManager> entry : adviceListenerMap.entrySet()) {
-                        ClassLoaderAdviceListenerManager adviceListenerManager = entry.getValue();
-                        synchronized (adviceListenerManager) {
-                            for (Entry<String, List<AdviceListener>> eee : adviceListenerManager.map.entrySet()) {
-                                List<AdviceListener> listeners = eee.getValue();
-                                List<AdviceListener> newResult = new ArrayList<AdviceListener>();
-                                for (AdviceListener listener : listeners) {
-                                    if (listener instanceof ProcessAware) {
-                                        ProcessAware processAware = (ProcessAware) listener;
-                                        ExecStatus status = processAware.getProcess().status();
-                                        if (!status.equals(ExecStatus.TERMINATED)) {
-                                            newResult.add(listener);
+                try {
+                    if (adviceListenerMap != null) {
+                        for (Entry<ClassLoader, ClassLoaderAdviceListenerManager> entry : adviceListenerMap.entrySet()) {
+                            ClassLoaderAdviceListenerManager adviceListenerManager = entry.getValue();
+                            synchronized (adviceListenerManager) {
+                                for (Entry<String, List<AdviceListener>> eee : adviceListenerManager.map.entrySet()) {
+                                    List<AdviceListener> listeners = eee.getValue();
+                                    List<AdviceListener> newResult = new ArrayList<AdviceListener>();
+                                    for (AdviceListener listener : listeners) {
+                                        if (listener instanceof ProcessAware) {
+                                            ProcessAware processAware = (ProcessAware) listener;
+                                            Process process = processAware.getProcess();
+                                            if (process == null) {
+                                                continue;
+                                            }
+                                            ExecStatus status = process.status();
+                                            if (!status.equals(ExecStatus.TERMINATED)) {
+                                                newResult.add(listener);
+                                            }
                                         }
                                     }
-                                }
 
-                                if (newResult.size() != listeners.size()) {
-                                    adviceListenerManager.map.put(eee.getKey(), newResult);
-                                }
+                                    if (newResult.size() != listeners.size()) {
+                                        adviceListenerManager.map.put(eee.getKey(), newResult);
+                                    }
 
+                                }
                             }
                         }
                     }
+                } catch (Throwable e) {
+                    try {
+                        logger.error("clean AdviceListener error", e);
+                    } catch (Throwable t) {
+                        // ignore
+                    }
                 }
             }
-
-        }, 3000, 3000);
+        }, 3, 3, TimeUnit.SECONDS);
     }
 
     static private ConcurrentWeakKeyHashMap<ClassLoader, ClassLoaderAdviceListenerManager> adviceListenerMap = new ConcurrentWeakKeyHashMap<ClassLoader, ClassLoaderAdviceListenerManager>();
