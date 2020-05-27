@@ -242,14 +242,14 @@ public class ArthasBootstrap {
                 tunnelClient.setTunnelServerUrl(configure.getTunnelServer());
                 // ws://127.0.0.1:8563/ws
                 String host = "127.0.0.1";
-                if (configure.getIp() != null) {
+                if(configure.getIp() != null) {
                     host = configure.getIp();
                 }
                 URI uri = new URI("ws", null, host, configure.getHttpPort(), "/ws", null, null);
                 tunnelClient.setLocalServerUrl(uri.toString());
                 ChannelFuture channelFuture = tunnelClient.start();
                 channelFuture.await(10, TimeUnit.SECONDS);
-                if (channelFuture.isSuccess()) {
+                if(channelFuture.isSuccess()) {
                     agentId = tunnelClient.getId();
                 }
             }
@@ -259,9 +259,9 @@ public class ArthasBootstrap {
 
         try {
             ShellServerOptions options = new ShellServerOptions()
-                    .setInstrumentation(instrumentation)
-                    .setPid(PidUtils.currentLongPid())
-                    .setSessionTimeout(configure.getSessionTimeout() * 1000);
+                            .setInstrumentation(instrumentation)
+                            .setPid(PidUtils.currentLongPid())
+                            .setSessionTimeout(configure.getSessionTimeout() * 1000);
 
             if (agentId != null) {
                 Map<String, String> welcomeInfos = new HashMap<String, String>();

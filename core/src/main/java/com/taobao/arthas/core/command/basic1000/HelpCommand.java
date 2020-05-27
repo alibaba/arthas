@@ -1,6 +1,9 @@
 package com.taobao.arthas.core.command.basic1000;
 
-import com.taobao.arthas.core.command.model.*;
+import com.taobao.arthas.core.command.model.ArgumentVO;
+import com.taobao.arthas.core.command.model.CommandOptionVO;
+import com.taobao.arthas.core.command.model.CommandVO;
+import com.taobao.arthas.core.command.model.HelpModel;
 import com.taobao.arthas.core.shell.cli.Completion;
 import com.taobao.arthas.core.shell.cli.CompletionUtils;
 import com.taobao.arthas.core.shell.command.AnnotatedCommand;

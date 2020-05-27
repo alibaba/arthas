@@ -19,11 +19,19 @@ import com.taobao.arthas.core.shell.term.Term;
 import com.taobao.arthas.core.util.Constants;
 import com.taobao.arthas.core.util.LogUtil;
 import com.taobao.arthas.core.util.TokenUtils;
+
 import io.termd.core.function.Function;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.List;
+import java.util.ListIterator;
+import java.util.Set;
+import java.util.SortedMap;
+import java.util.TreeMap;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
@@ -224,5 +232,4 @@ public class JobControllerImpl implements JobController {
     public void close() {
         close(null);
     }
-
 }
