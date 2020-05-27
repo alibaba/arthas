@@ -2,6 +2,7 @@ package com.taobao.arthas.core.advisor;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Map.Entry;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
@@ -13,6 +14,8 @@ import com.taobao.arthas.core.server.ArthasBootstrap;
 import com.taobao.arthas.core.shell.system.ExecStatus;
 import com.taobao.arthas.core.shell.system.Process;
 import com.taobao.arthas.core.shell.system.ProcessAware;
+import com.taobao.arthas.core.util.ClassUtils;
+import com.taobao.arthas.core.util.HierarchyStringBuilder;
 
 /**
  * 
@@ -104,19 +107,25 @@ public class AdviceListenerManager {
 
     static class ClassLoaderAdviceListenerManager {
         private ConcurrentHashMap<String, List<AdviceListener>> map = new ConcurrentHashMap<String, List<AdviceListener>>();
+        private HierarchyStringBuilder stringBuilder = new HierarchyStringBuilder(null);
+        //转换增强字节码回调方法中的非标准类名
+        //normalizeClassName:  a/b/c/MyClass -> a.b.c.MyClass
+        protected Map<String, String> normalizeClassNameMap = new ConcurrentHashMap<String, String>();
 
         private String key(String className, String methodName, String methodDesc) {
-            return className + methodName + methodDesc;
+            //return className + methodName + methodDesc;
+            return stringBuilder.concat(className, methodName, methodDesc);
         }
 
         private String keyForTrace(String className, String owner, String methodName, String methodDesc) {
-            return className + owner + methodName + methodDesc;
+            //return className + owner + methodName + methodDesc;
+            return stringBuilder.concat(className, owner, methodName, methodDesc);
         }
 
         public void registerAdviceListener(String className, String methodName, String methodDesc,
                 AdviceListener listener) {
             synchronized (this) {
-                className = className.replace('/', '.');
+                className = ClassUtils.normalizeClassName(className, normalizeClassNameMap);
                 String key = key(className, methodName, methodDesc);
 
                 List<AdviceListener> listeners = map.get(key);
@@ -131,7 +140,7 @@ public class AdviceListenerManager {
         }
 
         public List<AdviceListener> queryAdviceListeners(String className, String methodName, String methodDesc) {
-            className = className.replace('/', '.');
+            className = ClassUtils.normalizeClassName(className, normalizeClassNameMap);
             String key = key(className, methodName, methodDesc);
 
             List<AdviceListener> listeners = map.get(key);
@@ -142,7 +151,7 @@ public class AdviceListenerManager {
         public void registerTraceAdviceListener(String className, String owner, String methodName, String methodDesc,
                 AdviceListener listener) {
 
-            className = className.replace('/', '.');
+            className = ClassUtils.normalizeClassName(className, normalizeClassNameMap);
             String key = keyForTrace(className, owner, methodName, methodDesc);
 
             List<AdviceListener> listeners = map.get(key);
@@ -157,7 +166,7 @@ public class AdviceListenerManager {
 
         public List<AdviceListener> queryTraceAdviceListeners(String className, String owner, String methodName,
                 String methodDesc) {
-            className = className.replace('/', '.');
+            className = ClassUtils.normalizeClassName(className, normalizeClassNameMap);
             String key = keyForTrace(className, owner, methodName, methodDesc);
 
             List<AdviceListener> listeners = map.get(key);
@@ -169,7 +178,7 @@ public class AdviceListenerManager {
     public static void registerAdviceListener(ClassLoader classLoader, String className, String methodName,
             String methodDesc, AdviceListener listener) {
         classLoader = wrap(classLoader);
-        className = className.replace('/', '.');
+        //className = className.replace('/', '.');
 
         ClassLoaderAdviceListenerManager manager = adviceListenerMap.get(classLoader);
 
@@ -187,7 +196,7 @@ public class AdviceListenerManager {
     public static List<AdviceListener> queryAdviceListeners(ClassLoader classLoader, String className,
             String methodName, String methodDesc) {
         classLoader = wrap(classLoader);
-        className = className.replace('/', '.');
+        //className = className.replace('/', '.');
         ClassLoaderAdviceListenerManager manager = adviceListenerMap.get(classLoader);
 
         if (manager != null) {
@@ -200,7 +209,7 @@ public class AdviceListenerManager {
     public static void registerTraceAdviceListener(ClassLoader classLoader, String className, String owner,
             String methodName, String methodDesc, AdviceListener listener) {
         classLoader = wrap(classLoader);
-        className = className.replace('/', '.');
+        //className = className.replace('/', '.');
 
         ClassLoaderAdviceListenerManager manager = adviceListenerMap.get(classLoader);
 
@@ -214,7 +223,7 @@ public class AdviceListenerManager {
     public static List<AdviceListener> queryTraceAdviceListeners(ClassLoader classLoader, String className,
             String owner, String methodName, String methodDesc) {
         classLoader = wrap(classLoader);
-        className = className.replace('/', '.');
+        //className = className.replace('/', '.');
         ClassLoaderAdviceListenerManager manager = adviceListenerMap.get(classLoader);
 
         if (manager != null) {
