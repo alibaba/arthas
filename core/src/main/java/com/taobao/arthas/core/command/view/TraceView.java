@@ -11,7 +11,6 @@ import com.taobao.arthas.core.view.Ansi;
 
 import java.util.List;
 
-import static java.lang.String.format;
 
 /**
  * @author gongdewei 2020/4/29
@@ -64,12 +63,13 @@ public class TraceView extends ResultView<TraceModel> {
         if (isPrintCost && node instanceof MethodNode) {
             MethodNode methodNode = (MethodNode) node;
 
-            String costStr = renderCost(methodNode);
             if (node == maxCostNode) {
                 // the node with max cost will be highlighted
-                sb.append(highlighted.a(costStr).reset().toString());
+                highlighted.flush(sb);
+                renderCost(sb, methodNode);
+                highlighted.reset().flush(sb);
             } else {
-                sb.append(costStr);
+                renderCost(sb, methodNode);
             }
         }
 
@@ -86,13 +86,12 @@ public class TraceView extends ResultView<TraceModel> {
             //render thread info
             ThreadNode threadNode = (ThreadNode) node;
             //ts=2020-04-29 10:34:00;thread_name=main;id=1;is_daemon=false;priority=5;TCCL=sun.misc.Launcher$AppClassLoader@18b4aac2
-            sb.append(format("ts=%s;thread_name=%s;id=%s;is_daemon=%s;priority=%d;TCCL=%s",
-                    DateUtils.formatDate(threadNode.getTimestamp()),
-                    threadNode.getThreadName(),
-                    Long.toHexString(threadNode.getThreadId()),
-                    threadNode.isDaemon(),
-                    threadNode.getPriority(),
-                    threadNode.getClassloader()));
+            sb.append("ts=").append(DateUtils.formatDate(threadNode.getTimestamp()))
+                    .append(";thread_name=").append(threadNode.getThreadName())
+                    .append(";id=").append(Long.toHexString(threadNode.getThreadId()))
+                    .append(";is_daemon=").append(threadNode.isDaemon())
+                    .append(";priority=").append(threadNode.getPriority())
+                    .append(";TCCL=").append(threadNode.getClassloader());
 
             //trace_id
             if (threadNode.getTraceId() != null) {
@@ -104,8 +103,7 @@ public class TraceView extends ResultView<TraceModel> {
         }
     }
 
-    private String renderCost(MethodNode node) {
-        StringBuilder sb = new StringBuilder();
+    private void renderCost(StringBuilder sb, MethodNode node) {
         if (node.getTimes() <= 1) {
             sb.append("[").append(nanoToMillis(node.getCost())).append(TIME_UNIT).append("] ");
         } else {
@@ -114,7 +112,6 @@ public class TraceView extends ResultView<TraceModel> {
                     .append(nanoToMillis(node.getTotalCost())).append(TIME_UNIT).append(",count=")
                     .append(node.getTimes()).append("] ");
         }
-        return sb.toString();
     }
 
     /**
