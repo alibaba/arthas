@@ -37,7 +37,7 @@ public class TraceView extends ResultView<TraceModel> {
         maxCostNode = null;
         findMaxCostNode(root);
 
-        final StringBuilder treeSB = new StringBuilder(2048);
+        final StringBuilder treeSB = new StringBuilder(1024);
 
         final Ansi highlighted = Ansi.ansi().fg(Ansi.Color.RED);
 
