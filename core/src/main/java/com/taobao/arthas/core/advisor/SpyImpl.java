@@ -3,6 +3,8 @@ package com.taobao.arthas.core.advisor;
 import java.arthas.SpyAPI.AbstractSpy;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 import com.alibaba.arthas.deps.org.slf4j.Logger;
 import com.alibaba.arthas.deps.org.slf4j.LoggerFactory;
@@ -23,12 +25,7 @@ import com.taobao.arthas.core.util.StringUtils;
  */
 public class SpyImpl extends AbstractSpy {
     private static final Logger logger = LoggerFactory.getLogger(SpyImpl.class);
-    private final ThreadLocal<List> splitListLocal = new ThreadLocal<List>(){
-        @Override
-        protected List initialValue() {
-            return new ArrayList();
-        }
-    };
+    private final Map<String, List<String>> splitCache = new ConcurrentHashMap<String, List<String>>();
 
     @Override
     public void atEnter(Class<?> clazz, String methodInfo, Object target, Object[] args) {
@@ -197,11 +194,11 @@ public class SpyImpl extends AbstractSpy {
     }
 
     private List<String> splitMethodInfo(String methodInfo) {
-        return splitString(methodInfo, '|');
+        return splitString(methodInfo);
     }
 
     private List<String> splitInvokeInfo(String invokeInfo) {
-        return splitString(invokeInfo, '|');
+        return splitString(invokeInfo);
     }
 
     /**
@@ -209,14 +206,16 @@ public class SpyImpl extends AbstractSpy {
      * trace/watch 等字节码拦截回调每次都需要进行字符串split，是一个性能瓶颈hotspot。
      * 注意： 返回的List为重用的缓存对象，不能直接引用它，有需要请复制一份
      * @param str
-     * @param separatorChar
      * @return
      */
-    private List<String> splitString(String str, char separatorChar) {
-        List<String> list = splitListLocal.get();
-        list.clear();
-        StringUtils.splitToList(str, separatorChar, list);
-        return list;
+    private List<String> splitString(String str) {
+        List<String> strs = splitCache.get(str);
+        if (strs == null) {
+            strs = new ArrayList<String>();
+            StringUtils.splitToList(str, '|', strs);
+            splitCache.put(str, strs);
+        }
+        return strs;
     }
 
     private boolean skipAdviceListener(AdviceListener adviceListener) {
