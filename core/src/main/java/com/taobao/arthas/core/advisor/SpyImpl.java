@@ -203,7 +203,7 @@ public class SpyImpl extends AbstractSpy {
 
     /**
      * 经过优化的字符串split方法，减少产生的内存碎片。
-     * trace/watch 等字节码拦截回调每次都需要进行字符串split，是一个性能瓶颈hotspot。
+     * trace/watch 等字节码拦截回调每次都需要进行字符串split，调用很频繁，产生较多小对象。
      * 注意： 返回的List为重用的缓存对象，不能直接引用它，有需要请复制一份
      * @param str
      * @return
@@ -211,7 +211,7 @@ public class SpyImpl extends AbstractSpy {
     private List<String> splitString(String str) {
         List<String> strs = splitCache.get(str);
         if (strs == null) {
-            strs = new ArrayList<String>();
+            strs = new ArrayList<String>(8);
             StringUtils.splitToList(str, '|', strs);
             splitCache.put(str, strs);
         }
