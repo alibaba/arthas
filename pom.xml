@@ -47,7 +47,7 @@
 
     <groupId>com.taobao.arthas</groupId>
     <artifactId>arthas-all</artifactId>
-    <version>3.1.9-SNAPSHOT</version>
+    <version>3.3.1-SNAPSHOT</version>
     <packaging>pom</packaging>
 
     <name>arthas-all</name>
@@ -58,6 +58,7 @@
         <module>spy</module>
         <module>common</module>
         <module>tunnel-client</module>
+        <module>bytekit</module>
         <module>core</module>
         <module>agent</module>
         <module>client</module>
@@ -90,29 +91,19 @@
     <dependencyManagement>
         <dependencies>
             <dependency>
-                <groupId>org.ow2.asm</groupId>
-                <artifactId>asm</artifactId>
-                <version>7.3.1</version>
-            </dependency>
-            <dependency>
-                <groupId>org.ow2.asm</groupId>
-                <artifactId>asm-commons</artifactId>
-                <version>7.3.1</version>
-            </dependency>
-            <dependency>
                 <groupId>org.benf</groupId>
                 <artifactId>cfr</artifactId>
-                <version>0.149</version>
+                <version>0.150</version>
             </dependency>
             <dependency>
                 <groupId>com.alibaba.middleware</groupId>
                 <artifactId>termd-core</artifactId>
-                <version>1.1.7.8</version>
+                <version>1.1.7.9</version>
             </dependency>
             <dependency>
                 <groupId>com.alibaba.middleware</groupId>
                 <artifactId>cli</artifactId>
-                <version>1.0.3</version>
+                <version>1.0.4</version>
             </dependency>
             <dependency>
                 <groupId>org.slf4j</groupId>
@@ -132,12 +123,17 @@
             <dependency>
                 <groupId>com.alibaba.arthas</groupId>
                 <artifactId>arthas-repackage-logger</artifactId>
-                <version>0.0.1</version>
+                <version>0.0.3</version>
+            </dependency>
+            <dependency>
+                <groupId>com.alibaba.arthas</groupId>
+                <artifactId>arthas-repackage-asm</artifactId>
+                <version>0.0.3</version>
             </dependency>
             <dependency>
                 <groupId>com.alibaba</groupId>
                 <artifactId>fastjson</artifactId>
-                <version>1.2.67</version>
+                <version>1.2.68</version>
             </dependency>
             <dependency>
                 <groupId>com.taobao.text</groupId>
@@ -164,6 +160,12 @@
                 <groupId>org.assertj</groupId>
                 <artifactId>assertj-core</artifactId>
                 <version>2.9.1</version>
+                <scope>test</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.mockito</groupId>
+                <artifactId>mockito-core</artifactId>
+                <version>2.28.2</version>
                 <scope>test</scope>
             </dependency>
 
@@ -219,6 +221,26 @@
         </pluginManagement>
 
         <plugins>
+            <!-- git commit info -->
+            <plugin>
+                <groupId>pl.project13.maven</groupId>
+                <artifactId>git-commit-id-plugin</artifactId>
+                <version>2.2.1</version>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>revision</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <verbose>false</verbose>
+                    <dateFormat>yyyy-MM-dd'T'HH:mm:ssZ</dateFormat>
+                    <generateGitPropertiesFile>true</generateGitPropertiesFile>
+                    <generateGitPropertiesFilename>${project.build.outputDirectory}/arthas-git.properties</generateGitPropertiesFilename>
+                    <excludeProperties>git.build.host</excludeProperties>
+                </configuration>
+            </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-jar-plugin</artifactId>
@@ -266,7 +288,10 @@
                             <goal>prepare-agent</goal>
                         </goals>
                         <configuration>
-                            <excludes>com/taobao/arthas/core/view/ObjectViewTest*</excludes>
+                            <excludes>
+                                <exclude>com/taobao/arthas/core/view/ObjectViewTest*</exclude>
+                                <exclude>com/taobao/arthas/bytekit/asm/interceptor*</exclude>
+                            </excludes>
                         </configuration>
                     </execution>
                     <execution>

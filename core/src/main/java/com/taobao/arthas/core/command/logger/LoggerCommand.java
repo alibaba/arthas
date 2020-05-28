@@ -81,7 +81,7 @@ public class LoggerCommand extends AnnotatedCommand {
     private String level;
 
     /**
-     * include the logger don't have appender, default false.
+     * include the loggers which don't have appenders, default false.
      */
     private boolean includeNoAppender;
 
@@ -104,7 +104,7 @@ public class LoggerCommand extends AnnotatedCommand {
     }
 
     @Option(longName = "include-no-appender", flag = true)
-    @Description("include the loggers don't have appender, default value false")
+    @Description("include the loggers which don't have appenders, default value false")
     public void setHaveAppender(boolean includeNoAppender) {
         this.includeNoAppender = includeNoAppender;
     }

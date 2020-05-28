@@ -7,6 +7,7 @@ import com.taobao.arthas.core.shell.session.Session;
 import com.taobao.arthas.core.shell.term.Tty;
 import com.taobao.middleware.cli.CommandLine;
 
+import java.lang.instrument.ClassFileTransformer;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -122,10 +123,9 @@ public interface CommandProcess extends Tty {
     /**
      * Register listener
      *
-     * @param lock the lock for enhance class
      * @param listener
      */
-    void register(int lock, AdviceListener listener);
+    void register(AdviceListener listener, ClassFileTransformer transformer);
 
     /**
      * Unregister listener

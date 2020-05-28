@@ -32,7 +32,10 @@ import sun.management.counter.perf.PerfInstrumentation;
  */
 @Name("perfcounter")
 @Summary("Display the perf counter infornation.")
-@Description(Constants.WIKI + Constants.WIKI_HOME + "perf")
+@Description("\nExamples:\n" +
+        "  perfcounter\n" +
+        "  perfcounter -d\n" +
+        Constants.WIKI + Constants.WIKI_HOME + "perfcounter")
 public class PerfCounterCommand extends AnnotatedCommand {
     private static final Logger logger = LoggerFactory.getLogger(PerfCounterCommand.class);
     private static Object perfObject;

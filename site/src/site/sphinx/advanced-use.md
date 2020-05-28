@@ -6,6 +6,7 @@
 
 * help——查看命令帮助信息
 * [cat](cat.md)——打印文件内容，和linux里的cat命令类似
+* [echo](echo.md)--打印参数，和linux里的echo命令类似
 * [grep](grep.md)——匹配查找，和linux里的grep命令类似
 * [tee](tee.md)——复制标准输入到标准输出和指定的文件，和linux里的tee命令类似
 * [pwd](pwd.md)——返回当前的工作目录，和linux命令类似
@@ -40,7 +41,7 @@
 * [sc](sc.md)——查看JVM已加载的类信息
 * [sm](sm.md)——查看已加载类的方法信息
 * [jad](jad.md)——反编译指定已加载类的源码
-* [mc](mc.md)——内存编绎器，内存编绎`.java`文件为`.class`文件
+* [mc](mc.md)——内存编译器，内存编译`.java`文件为`.class`文件
 * [redefine](redefine.md)——加载外部的`.class`文件，redefine到JVM里
 * [dump](dump.md)——dump 已加载类的 byte code 到特定目录
 * [classloader](classloader.md)——查看classloader的继承树，urls，类加载信息，使用classloader去getResource
@@ -89,6 +90,10 @@ Arthas支持使用管道对上述命令的结果进行进一步的处理，如`s
 通过websocket连接Arthas。
 
 * [Web Console](web-console.md)
+
+## 以java agent方式启动
+
+* [以java agent方式启动](agent.md)
 
 ## 用户数据回报
 

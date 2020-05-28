@@ -10,6 +10,7 @@ import com.taobao.arthas.core.shell.command.CommandProcess;
 import com.taobao.arthas.core.util.SearchUtils;
 import com.taobao.arthas.core.util.matcher.Matcher;
 import com.taobao.middleware.cli.annotations.Argument;
+import com.taobao.middleware.cli.annotations.DefaultValue;
 import com.taobao.middleware.cli.annotations.Description;
 import com.taobao.middleware.cli.annotations.Name;
 import com.taobao.middleware.cli.annotations.Option;
@@ -41,7 +42,7 @@ public class WatchCommand extends EnhancerCommand {
     private Integer sizeLimit = 10 * 1024 * 1024;
     private boolean isRegEx = false;
     private int numberOfLimit = 100;
-
+    
     @Argument(index = 0, argName = "class-pattern")
     @Description("The full qualified class name you want to watch")
     public void setClassPattern(String classPattern) {
@@ -54,7 +55,8 @@ public class WatchCommand extends EnhancerCommand {
         this.methodPattern = methodPattern;
     }
 
-    @Argument(index = 2, argName = "express")
+    @Argument(index = 2, argName = "express", required = false)
+    @DefaultValue("{params, target, returnObj}")
     @Description("the content you want to watch, written by ognl.\n" + Constants.EXPRESS_EXAMPLES)
     public void setExpress(String express) {
         this.express = express;

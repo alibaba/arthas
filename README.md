@@ -42,14 +42,14 @@ Arthas was built to solve these issues. A developer can troubleshoot your produc
 * Supports Linux/Mac/Windows.
 
 
-### Online Tutorials(Recommend)
+### Online Tutorials(Recommended)
 
 * [Arthas Basics](https://alibaba.github.io/arthas/arthas-tutorials?language=en&id=arthas-basics)
 * [Arthas Advanced](https://alibaba.github.io/arthas/arthas-tutorials?language=en&id=arthas-advanced)
 
 ### Quick start
 
-#### Use `arthas-boot`(Recommend)
+#### Use `arthas-boot`(Recommended)
 
 Download`arthas-boot.jar`，Start with `java` command:
 
@@ -79,7 +79,7 @@ You can enter its interactive interface by executing `as.sh`, or execute `as.sh 
 
 ### Documentation
 
-* [Online Tutorials(Recommend)](https://alibaba.github.io/arthas/arthas-tutorials?language=en)
+* [Online Tutorials(Recommended)](https://alibaba.github.io/arthas/arthas-tutorials?language=en)
 * [User manual](https://alibaba.github.io/arthas/en)
 * [Installation](https://alibaba.github.io/arthas/en/install-detail.html)
 * [Download](https://alibaba.github.io/arthas/en/download.html)
@@ -106,7 +106,7 @@ You can enter its interactive interface by executing `as.sh`, or execute `as.sh 
 
 * https://alibaba.github.io/arthas/en/thread
 
-See what is eating your cpu (ranked by top cpu usage) and what is going on there in one glance:
+See what is eating your CPU (ranked by top CPU usage) and what is going on there in one glance:
 
 ```bash
 $ thread -n 3
@@ -509,26 +509,28 @@ Welcome to register the company name in this issue: https://github.com/alibaba/a
 ![上海喔噻](static/shouqingba.png)
 ![vipkid](static/vipkid.png)
 ![宇中科技](static/yuzhong.png)
+![蘑菇财富](static/mogu.jpg)
+![喔趣科技](static/woqu.png)
 
 ### Derivative Projects
 
 * [Bistoury: A project that integrates Arthas](https://github.com/qunarcorp/bistoury)
 * [A fork of arthas using MVEL](https://github.com/XhinLiang/arthas)
 
-### Credit
+### Credits
 
 #### Contributors
 
-This project exists thanks to all the people who contribute.
+This project exists, thanks to all the people who contributed.
 
 <a href="https://github.com/alibaba/arthas/graphs/contributors"><img src="https://opencollective.com/arthas/contributors.svg?width=890&button=false" /></a>
 
 #### Projects
 
 * [greys-anatomy](https://github.com/oldmanpushcart/greys-anatomy): The Arthas code base has derived from Greys, we thank for the excellent work done by Greys.
-* [termd](https://github.com/termd/termd): Arthas's terminal implementation is based on termd, an open source library for writing terminal applications in Java.
+* [termd](https://github.com/alibaba/termd): Arthas's terminal implementation is based on termd, an open source library for writing terminal applications in Java.
 * [crash](https://github.com/crashub/crash): Arthas's text based user interface rendering is based on codes extracted from [here](https://github.com/crashub/crash/tree/1.3.2/shell)
-* [cli](https://github.com/eclipse-vertx/vert.x/tree/master/src/main/java/io/vertx/core/cli): Arthas's command line interface implementation is based on cli, open sourced by vert.x
+* [cli](https://github.com/alibaba/cli): Arthas's command line interface implementation is based on cli, open sourced by vert.x
 * [compiler](https://github.com/skalogs/SkaETL/tree/master/compiler) Arthas's memory compiler.
 * [Apache Commons Net](https://commons.apache.org/proper/commons-net/) Arthas's telnet client.
-* [async-profiler](https://github.com/jvm-profiling-tools/async-profiler) Arthas's profielr command.
+* [async-profiler](https://github.com/jvm-profiling-tools/async-profiler) Arthas's profiler command.

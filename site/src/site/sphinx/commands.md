@@ -33,6 +33,7 @@
 * [profiler](profiler.md)
 
 * [cat](cat.md)
+* [echo](echo.md)
 * [grep](grep.md)
 * [tee](tee.md)
 * [pwd](pwd.md)

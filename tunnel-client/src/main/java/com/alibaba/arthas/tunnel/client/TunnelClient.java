@@ -101,7 +101,7 @@ public class TunnelClient {
 
         Bootstrap bs = new Bootstrap();
 
-        bs.group(eventLoopGroup).channel(NioSocketChannel.class).remoteAddress(agentRegisterURI.getHost(), port)
+        bs.group(eventLoopGroup).channel(NioSocketChannel.class).remoteAddress(host, port)
                 .handler(new ChannelInitializer<SocketChannel>() {
                     @Override
                     protected void initChannel(SocketChannel ch) {

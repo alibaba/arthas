@@ -6,6 +6,7 @@ Advanced Usage
 * help - display Arthas help
 * cls - clear the screen
 * [cat](cat.md) - Concatenate and print files
+* [echo](echo.md) - write arguments to the standard output
 * [grep](grep.md) - Pattern searcher
 * [tee](tee.md) - Copies standard input to standard output, making a copy in zero or more files.
 * [pwd](pwd.md) - Return working directory name
@@ -44,7 +45,7 @@ Advanced Usage
 
 ## monitor/watch/trace - related
 
-> **Attention**: commands here are taking advantage of byte-code-injection, which means we are injecting some [aspects](https://en.wikipedia.org/wiki/Aspect-oriented_programming) into the current classes for monitoring and statistics purpose. Therefore when use it for online troubleshooting in your production environment, you'd better **explicitly specify** classes/methods/criteria, and remember to remove the injected code by `stop` or `reset`. 
+> **Attention**: commands here are taking advantage of byte-code-injection, which means we are injecting some [aspects](https://en.wikipedia.org/wiki/Aspect-oriented_programming) into the current classes for monitoring and statistics purpose. Therefore, when using it for online troubleshooting in your production environment, you'd better **explicitly specify** classes/methods/criteria, and remember to remove the injected code by `stop` or `reset`. 
 
 * [monitor](monitor.md) - monitor method execution statistics
 * [watch](watch.md) - display the input/output parameter, return object, and thrown exception of specified method invocation
@@ -84,6 +85,10 @@ Arthas provides `pipe` to process the result returned from commands further, e.g
 Arthas supports living inside a browser. The communication between arthas and browser is via websocket.
 
 * [Web Console](web-console.md)
+
+## Start as a Java Agent
+
+* [Start as a Java Agent](agent.md)
 
 ## User data report
 

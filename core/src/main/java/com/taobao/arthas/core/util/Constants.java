@@ -14,11 +14,6 @@ public class Constants {
     }
 
     /**
-     * Spy的全类名
-     */
-    public static final String SPY_CLASSNAME = "java.arthas.Spy";
-
-    /**
      * 中断提示
      */
     public static final String Q_OR_CTRL_C_ABORT_MSG = "Press Q or Ctrl+C to abort.";

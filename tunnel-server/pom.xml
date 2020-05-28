@@ -4,7 +4,7 @@
 	<parent>
 		<groupId>com.taobao.arthas</groupId>
 		<artifactId>arthas-all</artifactId>
-		<version>3.1.9-SNAPSHOT</version>
+		<version>3.3.1-SNAPSHOT</version>
 		<relativePath>../pom.xml</relativePath>
 	</parent>
 	<artifactId>arthas-tunnel-server</artifactId>
@@ -87,6 +87,7 @@
 			<plugin>
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
+				<version>2.1.7.RELEASE</version>
 				<executions>
 					<execution>
 						<phase>package</phase>

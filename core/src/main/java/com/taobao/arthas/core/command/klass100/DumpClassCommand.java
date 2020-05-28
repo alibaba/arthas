@@ -2,12 +2,12 @@ package com.taobao.arthas.core.command.klass100;
 
 import com.alibaba.arthas.deps.org.slf4j.Logger;
 import com.alibaba.arthas.deps.org.slf4j.LoggerFactory;
-import com.taobao.arthas.core.advisor.Enhancer;
 import com.taobao.arthas.core.command.Constants;
 import com.taobao.arthas.core.shell.cli.Completion;
 import com.taobao.arthas.core.shell.cli.CompletionUtils;
 import com.taobao.arthas.core.shell.command.AnnotatedCommand;
 import com.taobao.arthas.core.shell.command.CommandProcess;
+import com.taobao.arthas.core.util.InstrumentationUtils;
 import com.taobao.arthas.core.util.SearchUtils;
 import com.taobao.arthas.core.util.StringUtils;
 import com.taobao.arthas.core.util.TypeRenderUtils;
@@ -81,7 +81,7 @@ public class DumpClassCommand extends AnnotatedCommand {
 
     @Option(shortName = "l", longName = "limit")
     @Description("The limit of dump classes size, default value is 5")
-    @DefaultValue("5")
+    @DefaultValue("50")
     public void setLimit(int limit) {
         this.limit = limit;
     }
@@ -174,7 +174,7 @@ public class DumpClassCommand extends AnnotatedCommand {
         } else {
             transformer = new ClassDumpTransformer(classes);
         }
-        Enhancer.enhance(inst, transformer, classes);
+        InstrumentationUtils.retransformClasses(inst, transformer, classes);
         return transformer.getDumpResult();
     }
 }

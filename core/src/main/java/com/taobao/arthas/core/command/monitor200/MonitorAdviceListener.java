@@ -1,6 +1,6 @@
 package com.taobao.arthas.core.command.monitor200;
 
-import com.taobao.arthas.core.advisor.ReflectAdviceListenerAdapter;
+import com.taobao.arthas.core.advisor.AdviceListenerAdapter;
 import com.taobao.arthas.core.shell.command.CommandProcess;
 import com.taobao.arthas.core.advisor.ArthasMethod;
 import com.taobao.arthas.core.util.ThreadLocalWatch;
@@ -66,7 +66,7 @@ import static com.taobao.text.ui.Element.label;
  *
  * @author beiwei30 on 28/11/2016.
  */
-class MonitorAdviceListener extends ReflectAdviceListenerAdapter {
+class MonitorAdviceListener extends AdviceListenerAdapter {
     // 输出定时任务
     private Timer timer;
     // 监控数据
@@ -169,7 +169,7 @@ class MonitorAdviceListener extends ReflectAdviceListenerAdapter {
                 return;
             }
 
-            TableElement table = new TableElement().leftCellPadding(1).rightCellPadding(1);
+            TableElement table = new TableElement(2, 3, 3, 1, 1, 1, 1, 1).leftCellPadding(1).rightCellPadding(1);
             table.row(true, label("timestamp").style(Decoration.bold.bold()),
                     label("class").style(Decoration.bold.bold()),
                     label("method").style(Decoration.bold.bold()),

@@ -9,6 +9,7 @@ import com.taobao.arthas.core.shell.command.AnnotatedCommand;
 import com.taobao.arthas.core.shell.command.CommandProcess;
 import com.taobao.arthas.core.util.ClassUtils;
 import com.taobao.arthas.core.util.Decompiler;
+import com.taobao.arthas.core.util.InstrumentationUtils;
 import com.taobao.arthas.core.util.SearchUtils;
 import com.taobao.arthas.core.util.TypeRenderUtils;
 import com.taobao.arthas.core.util.affect.RowAffect;
@@ -26,7 +27,6 @@ import com.taobao.text.ui.TableElement;
 import com.taobao.text.util.RenderUtil;
 
 import java.io.File;
-import java.lang.instrument.ClassFileTransformer;
 import java.lang.instrument.Instrumentation;
 import java.util.HashSet;
 import java.util.Map;
@@ -56,6 +56,7 @@ public class JadCommand extends AnnotatedCommand {
     private String methodName;
     private String code = null;
     private boolean isRegEx = false;
+    private boolean hideUnicode = false;
 
     /**
      * jad output source code only
@@ -85,6 +86,12 @@ public class JadCommand extends AnnotatedCommand {
     @Description("Enable regular expression to match (wildcard matching by default)")
     public void setRegEx(boolean regEx) {
         isRegEx = regEx;
+    }
+
+    @Option(longName = "hideUnicode", flag = true)
+    @Description("hide unicode, default value false")
+    public void setHideUnicode(boolean hideUnicode) {
+        this.hideUnicode = hideUnicode;
     }
 
     @Option(longName = "source-only", flag = true)
@@ -120,27 +127,6 @@ public class JadCommand extends AnnotatedCommand {
         }
     }
 
-
-    public static void retransformClasses(Instrumentation inst, ClassFileTransformer transformer, Set<Class<?>> classes) {
-        try {
-            inst.addTransformer(transformer, true);
-
-            for(Class<?> clazz : classes) {
-                try{
-                    inst.retransformClasses(clazz);
-                }catch(Throwable e) {
-                    String errorMsg = "retransformClasses class error, name: " + clazz.getName();
-                    if(ClassUtils.isLambdaClass(clazz) && e instanceof VerifyError) {
-                        errorMsg += ", Please ignore lambda class VerifyError: https://github.com/alibaba/arthas/issues/675";
-                    }
-                    logger.error(errorMsg, e);
-                }
-            }
-        } finally {
-            inst.removeTransformer(transformer);
-        }
-    }
-
     private void processExactMatch(CommandProcess process, RowAffect affect, Instrumentation inst, Set<Class<?>> matchedClasses, Set<Class<?>> withInnerClasses) {
         Class<?> c = matchedClasses.iterator().next();
         Set<Class<?>> allClasses = new HashSet<Class<?>>(withInnerClasses);
@@ -148,12 +134,12 @@ public class JadCommand extends AnnotatedCommand {
 
         try {
             ClassDumpTransformer transformer = new ClassDumpTransformer(allClasses);
-            retransformClasses(inst, transformer, allClasses);
+            InstrumentationUtils.retransformClasses(inst, transformer, allClasses);
 
             Map<Class<?>, File> classFiles = transformer.getDumpResult();
             File classFile = classFiles.get(c);
 
-            String source = Decompiler.decompile(classFile.getAbsolutePath(), methodName);
+            String source = Decompiler.decompile(classFile.getAbsolutePath(), methodName, hideUnicode);
             if (source != null) {
                 source = pattern.matcher(source).replaceAll("");
             } else {
