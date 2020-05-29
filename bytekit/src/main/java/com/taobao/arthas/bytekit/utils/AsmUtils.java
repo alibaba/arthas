@@ -30,6 +30,7 @@ import com.alibaba.arthas.deps.org.objectweb.asm.tree.MethodNode;
 import com.alibaba.arthas.deps.org.objectweb.asm.tree.TypeInsnNode;
 import com.alibaba.arthas.deps.org.objectweb.asm.util.ASMifier;
 import com.alibaba.arthas.deps.org.objectweb.asm.util.TraceClassVisitor;
+import com.taobao.arthas.bytekit.asm.ClassLoaderAwareClassWriter;
 
 /**
  * 
@@ -53,6 +54,13 @@ public class AsmUtils {
 		reader.accept(result, ClassReader.SKIP_FRAMES);
 		return result;
 	}
+
+    public static byte[] toBytes(ClassNode classNode, ClassLoader classLoader) {
+        ClassWriter writer = new ClassLoaderAwareClassWriter(ClassWriter.COMPUTE_FRAMES | ClassWriter.COMPUTE_MAXS,
+                classLoader);
+        classNode.accept(writer);
+        return writer.toByteArray();
+    }
 
 	public static byte[] toBytes(ClassNode classNode) {
 		ClassWriter writer = new ClassWriter(ClassWriter.COMPUTE_FRAMES | ClassWriter.COMPUTE_MAXS);

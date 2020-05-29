@@ -300,7 +300,7 @@ public class Enhancer implements ClassFileTransformer {
                 affect.addMethodAndCount(inClassLoader, className, methodNode.name, methodNode.desc);
             }
 
-            byte[] enhanceClassByteArray = AsmUtils.toBytes(classNode);
+            byte[] enhanceClassByteArray = AsmUtils.toBytes(classNode, inClassLoader);
 
             // 增强成功，记录类
             classBytesCache.put(classBeingRedefined, new Object());
