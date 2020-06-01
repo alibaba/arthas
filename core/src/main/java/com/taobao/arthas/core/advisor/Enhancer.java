@@ -300,6 +300,11 @@ public class Enhancer implements ClassFileTransformer {
                 affect.addMethodAndCount(inClassLoader, className, methodNode.name, methodNode.desc);
             }
 
+            // https://github.com/alibaba/arthas/issues/1223
+            if (classNode.version < Opcodes.V1_5) {
+                classNode.version = Opcodes.V1_5;
+            }
+
             byte[] enhanceClassByteArray = AsmUtils.toBytes(classNode, inClassLoader);
 
             // 增强成功，记录类
