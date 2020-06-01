@@ -319,6 +319,7 @@ public class Enhancer implements ClassFileTransformer {
             return enhanceClassByteArray;
         } catch (Throwable t) {
             logger.warn("transform loader[{}]:class[{}] failed.", inClassLoader, className, t);
+            affect.setThrowable(t);
         }
 
         return null;
@@ -426,11 +427,12 @@ public class Enhancer implements ClassFileTransformer {
         // 过滤掉无法被增强的类
         filter(matchingClasses);
 
+        logger.info("enhance matched classes: {}", matchingClasses);
+
         affect.setTransformer(this);
 
         try {
             ArthasBootstrap.getInstance().getTransformerManager().addTransformer(this, isTracing);
-            //inst.addTransformer(enhancer, true);
 
             // 批量增强
             if (GlobalOptions.isBatchReTransform) {
@@ -459,8 +461,9 @@ public class Enhancer implements ClassFileTransformer {
                     }
                 }
             }
-        } finally {
-            //inst.removeTransformer(enhancer);
+        } catch (Throwable e) {
+            logger.error("Enhancer error, matchingClasses: {}", matchingClasses, e);
+            affect.setThrowable(e);
         }
 
         return affect;

@@ -134,6 +134,12 @@ public abstract class EnhancerCommand extends AnnotatedCommand {
             process.register(listener, enhancer);
             EnhancerAffect effect = enhancer.enhance(inst);
 
+            if (effect.getThrowable() != null) {
+                process.write(effect.toString() + ", check arthas log: " + LogUtil.loggingFile() + "\n");
+                process.end(1);
+                return;
+            }
+
             if (effect.cCnt() == 0 || effect.mCnt() == 0) {
                 // no class effected
                 // might be method code too large
