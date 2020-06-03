@@ -16,6 +16,7 @@ import static java.lang.String.format;
  * 增强影响范围<br/>
  * 统计影响类/方法/耗时
  * Created by vlinux on 15/5/19.
+ * @author hengyunabc 2020-06-01
  */
 public final class EnhancerAffect extends Affect {
 
@@ -23,6 +24,9 @@ public final class EnhancerAffect extends Affect {
     private final AtomicInteger mCnt = new AtomicInteger();
     private ClassFileTransformer transformer;
     private long listenerId;
+
+    private Throwable throwable;
+
     /**
      * dumpClass的文件存放集合
      */
@@ -101,6 +105,14 @@ public final class EnhancerAffect extends Affect {
         this.listenerId = listenerId;
     }
 
+    public Throwable getThrowable() {
+        return throwable;
+    }
+
+    public void setThrowable(Throwable throwable) {
+        this.throwable = throwable;
+    }
+
     @Override
     public String toString() {
         final StringBuilder infoSB = new StringBuilder();
@@ -122,6 +134,9 @@ public final class EnhancerAffect extends Affect {
                 mCnt(),
                 cost(),
                 listenerId));
+        if (this.throwable != null) {
+            infoSB.append("\nEnhance error! exception: " + this.throwable);
+        }
         return infoSB.toString();
     }
 

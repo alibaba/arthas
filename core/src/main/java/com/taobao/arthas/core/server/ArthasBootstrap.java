@@ -373,7 +373,7 @@ public class ArthasBootstrap {
         SpyAPI.setNopSpy();
         // AgentBootstrap.resetArthasClassLoader();
         try {
-            Class<?> clazz = ClassLoader.getSystemClassLoader().loadClass("com.taobao.arthas.agent3.AgentBootstrap");
+            Class<?> clazz = ClassLoader.getSystemClassLoader().loadClass("com.taobao.arthas.agent332.AgentBootstrap");
             Method method = clazz.getDeclaredMethod("resetArthasClassLoader");
             method.invoke(null);
         } catch (Throwable e) {
