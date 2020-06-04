@@ -52,3 +52,4 @@ Contents
 * [Fork me at GitHub](https://github.com/alibaba/arthas)
 * [Compile and debug/CONTRIBUTING](https://github.com/alibaba/arthas/blob/master/CONTRIBUTING.md#)
 * [Release Notes](https://github.com/alibaba/arthas/releases)
+* [Contact us](contact-us.md)
