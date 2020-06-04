@@ -30,8 +30,6 @@ $ ognl -c 1be6f5c3 '@com.example.demo.arthas.user.UserController@logger'
 ]
 ```
 
-可以知道`UserController@logger`实际使用的是logback。可以看到`level=null`，则说明实际最终的level是从`root` logger里来的。
-
 The user can know that `UserController@logger` actually uses logback. Because `level=null`, the actual final level is from the `root` logger.
 
 ### Change the logger level of UserController

@@ -12,6 +12,11 @@
         "course_id": "basic-cmd",
         "title": "Arthas 基础命令和知识",
         "description": "这里讲解了Arthas基础命令和知识，这些指令是help, cls, session, reset, version, history, quit, stop, keymap"
+      },
+      {
+        "course_id": "ognl",
+        "title": "ognl",
+        "description": "这里讲解了Arthas的ognl命令"
       }
     ]
 }

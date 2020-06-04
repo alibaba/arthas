@@ -33,7 +33,7 @@ Arthas is built to solve these issues. A developer can troubleshoot production i
 - Supports JDK 6+
 - Supports Linux/Mac/Windows
 
-This tutorial takes a normal Spring Boot application as an example to demonstrate the basic command and knowledge for help, cls, session, reset, version, history, quit, stop, keymap.
+This tutorial takes a normal Spring Boot application as an example to demonstrate the the usage of ognl.
 
 * Github: https://github.com/alibaba/arthas
 * Docs: https://alibaba.github.io/arthas/

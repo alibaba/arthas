@@ -1,15 +1,13 @@
 
 The `ognl` command can execute code dynamically.
 
+Check the usage: `ognl --help`{{execute T2}}
+
 ### Invoke the static method
 
 `ognl '@java.lang.System@out.println("hello ognl")'`{{execute T2}}
 
-可以检查`Terminal 1`里的进程输出，可以发现打印出了`hello ognl`。
-
-
-The `Terminal 1` will print `hello ognl`.
-
+You can check the output of the process in `Terminal 1`, and find that it displays `hello ognl`.
 
 ### Find the ClassLoader of the UserController
 

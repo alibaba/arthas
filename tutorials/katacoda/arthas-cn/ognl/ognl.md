@@ -2,6 +2,8 @@
 在Arthas里，有一个单独的`ognl`命令，可以动态执行代码。
 
 
+查看用法：`ognl --help`{{execute T2}}
+
 ### 调用static函数
 
 `ognl '@java.lang.System@out.println("hello ognl")'`{{execute T2}}
