@@ -3,14 +3,15 @@ package com.taobao.arthas.core.command.monitor200;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import com.alibaba.arthas.deps.org.slf4j.Logger;
 import com.alibaba.arthas.deps.org.slf4j.LoggerFactory;
 import com.taobao.arthas.core.command.Constants;
 import com.taobao.arthas.core.shell.command.AnnotatedCommand;
 import com.taobao.arthas.core.shell.command.CommandProcess;
-import com.taobao.arthas.core.util.affect.Affect;
-import com.taobao.arthas.core.util.affect.RowAffect;
+import com.taobao.arthas.core.shell.handlers.shell.QExitHandler;
 import com.taobao.middleware.cli.annotations.Description;
 import com.taobao.middleware.cli.annotations.Name;
 import com.taobao.middleware.cli.annotations.Option;
@@ -26,24 +27,28 @@ import com.taobao.middleware.cli.annotations.Summary;
  */
 @Name("gc")
 @Summary("Display gc info")
-@Description(Constants.EXAMPLE + "  gc\n" + "  gc -i 1000  -1\n" + "  gc -i 1000 -n 5\n")
+@Description(Constants.EXAMPLE + "  gc\n" + "  gc -i 1000  \n" + "  gc -i 1000 -n 5\n")
 public class GcCommand extends AnnotatedCommand {
 
     private static final Logger logger = LoggerFactory.getLogger(GcCommand.class);
 
-	private int interval = -1;// 获取gc执行情况间隔时间
+	private volatile int interval = -1;// 默认间隔时间
 
-	private int count = -1;// 获取gc执行情况次数
+	private volatile int loopCount = -1;// 次数
+
+	private volatile int priCount = 0;// 初始化数字
 
 	private long pid = 0;
 
+	private volatile Timer timer;
+
 	@Option(shortName = "n", longName = "gc-show-count")
-	@Description("The number of gc to show.")
-	public void setCount(Integer count) {
-		this.count = count;
+	@Description("The number of gc info to show, the default count is 5.")
+	public void setLoopCount(Integer count) {
+		this.loopCount = count;
 	}
 
-	@Option(shortName = "i", longName = "gc-show-intervalTime")
+	@Option(shortName = "i", longName = "gc-show-intervalTime,the default interval is 1000ms")
 	@Description("Get gc info interval.")
 	public void setInterval(int interval) {
 		this.interval = interval;
@@ -51,41 +56,74 @@ public class GcCommand extends AnnotatedCommand {
 
 	@Override
 	public void process(CommandProcess process) {
-		Affect affect = new RowAffect();
-		try {
-			pid = process.session().getPid();
-			if (pid > 0) {
-				count = count==-1?5:count;
-				interval = interval==-1?1000:interval;
-				logger.info("pid:{},count:{},interval:{}",pid,count,interval);
-				processGC(process);
-			}else {
-				process.write("pid cannot get!");
-			}
-		} finally {
-			process.write(affect + "\n");
-			process.end();
+		pid = process.session().getPid();
+		logger.info("pid:" + pid + ",internal:" + interval + ",n:" + loopCount);
+		if (pid > 0) {
+			loopCount = loopCount == -1 ? 5 : loopCount;
+			interval = interval == -1 ? 1000 : interval;
+
+			timer = new Timer("Timer-for-arthas-gc-" + process.session().getSessionId(), true);
+
+			// ctrl-C exit support
+			process.interruptHandler(new DashboardInterruptHandler(process, timer));
+
+			// q exit support
+			process.stdinHandler(new QExitHandler(process));
+			// start the timer
+			timer.scheduleAtFixedRate(new GCTimerTask(process), 0, interval);
+
+		} else {
+			process.write("pid cannot get!");
 		}
+
 	}
 
+	private class GCTimerTask extends TimerTask {
+
+		private CommandProcess process;
+
+		/**
+		 * @param process
+		 */
+		public GCTimerTask(CommandProcess process) {
+			this.process = process;
+		}
+
+		@Override
+		public void run() {
+			if (priCount > loopCount) {
+				// stop the timer
+				timer.cancel();
+				timer.purge();
+				process.write("Process ends after " + loopCount + " time(s).\n");
+				process.end();
+				return;
+			}
+			processGC(process);
+			priCount++;
+		}
+
+	}
 
 	private void processGC(CommandProcess process) {
-		StringBuilder command = new StringBuilder("jstat -gcutil ");
-		command.append(pid);
-		command.append(" ");
-		command.append(interval);
-		command.append(" ");
-		command.append(count);
-		logger.info("command:{}",command.toString());
-		StringBuilder content = new StringBuilder();
+		StringBuilder content = new StringBuilder("");
 		Runtime run = Runtime.getRuntime();
 		try {
-			Process p = run.exec(command.toString());
+			logger.info("command:" + assembleCommand());
+			Process p = run.exec(assembleCommand());
 			BufferedReader br = new BufferedReader(new InputStreamReader(p.getInputStream()));
 			String line = null;
 			while ((line = br.readLine()) != null) {
-				content.append(line);
-				content.append("\n");
+				if (priCount == 0) {
+					content.append(line);
+					content.append("\n");
+				} else {
+					if (!line.contains("S0")) {
+						content.append(line);
+						content.append("\n");
+					}
+				}
+
 			}
 			p.destroy();
 		} catch (IOException e) {
@@ -93,5 +131,14 @@ public class GcCommand extends AnnotatedCommand {
 		}
 		process.write(content.toString());
 	}
-	
+
+	private String assembleCommand() {
+		StringBuilder command = new StringBuilder("jstat -gcutil ");
+		command.append(pid);
+		command.append(" ");
+		command.append(interval);
+		command.append(" ");
+		command.append(1);
+		return command.toString();
+	}
 }
