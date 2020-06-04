@@ -4,7 +4,7 @@
 
 下载`demo-arthas-spring-boot.jar`，再用`java -jar`命令启动：
 
-`wget https://github.com/hengyunabc/katacoda-scenarios/raw/master/demo-arthas-spring-boot.jar
+`wget https://alibaba.github.io/arthas/demo-arthas-spring-boot.jar
 java -jar demo-arthas-spring-boot.jar`{{execute T1}}
 
 `demo-arthas-spring-boot`是一个很简单的spring boot应用，源代码：[查看](https://github.com/hengyunabc/spring-boot-inside/tree/master/demo-arthas-spring-boot)
