@@ -4,7 +4,7 @@
 
 Download `demo-arthas-spring-boot.jar`, and start with `java -jar` command:
 
-`wget https://github.com/hengyunabc/katacoda-scenarios/raw/master/demo-arthas-spring-boot.jar
+`wget https://github.com/alibaba/arthas/raw/master/tutorials/katacoda/demo-arthas-spring-boot.jar
 java -jar demo-arthas-spring-boot.jar`{{execute T1}}
 
 `demo-arthas-spring-boot` is a simple Spring Boot demo, the source code here: [View](https://github.com/hengyunabc/spring-boot-inside/tree/master/demo-arthas-spring-boot)
