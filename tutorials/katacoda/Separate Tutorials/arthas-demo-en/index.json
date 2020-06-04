@@ -1,0 +1,31 @@
+{
+    "title": "Arthas Demo",
+    "description": "Learn about arthas-demo program",
+    "difficulty": "beginner",
+    "time": "1 minute",
+    "details": {
+      "steps": [
+        {
+          "title": "Start arthas-demo",
+          "text": "arthas-demo.md"
+        },
+        {
+          "title": "Exit/Stop",
+          "text": "exit.md"
+        }
+      ],
+      "intro": {
+        "text": "intro.md"
+      },
+      "finish": {
+        "text": "finish.md"
+      }
+    },
+    "environment": {
+      "uilayout": "terminal"
+    },
+    "backend": {
+      "imageid": "java",
+      "environmentsprotocol": "http"
+    }
+  }
