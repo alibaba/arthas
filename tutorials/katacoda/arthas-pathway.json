@@ -1,0 +1,17 @@
+{
+    "title": "Arthas Tutorials",
+    "description": "Example of Arthas",
+    "icon": "fa-katacoda",
+    "courses": [
+      {
+        "course_id": "arthas-basics-en",
+        "title": "Arthas Basics",
+        "description": "Arthas Basics"
+      },
+      {
+        "course_id": "arthas-advanced-en",
+        "title": "Arthas Advanced",
+        "description": "Arthas Advanced"
+      }
+    ]
+}

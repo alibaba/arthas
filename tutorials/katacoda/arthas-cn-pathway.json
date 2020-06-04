@@ -1,0 +1,17 @@
+{
+    "title": "Arthas 教程",
+    "description": "使用Arthas的教程",
+    "icon": "fa-katacoda",
+    "courses": [
+      {
+        "course_id": "arthas-basics-cn",
+        "title": "Arthas基础教程",
+        "description": "Arthas基础教程"
+      },
+      {
+        "course_id": "arthas-advanced-cn",
+        "title": "Arthas进阶教程",
+        "description": "Arthas进阶教程"
+      }
+    ]
+}
