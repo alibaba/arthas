@@ -16,6 +16,9 @@
     <title>Arthas Tutorials</title>
 
     <style>
+        #bd-courses{
+            padding-left: 25px;
+        }
         /* This is all that's required */
         .dropdown-item-checked::before {
         position: absolute;
@@ -60,7 +63,6 @@
                     <li class="nav-item">
                         <a class="nav-link" href="https://github.com/alibaba/arthas" target="_blank">Github</a>
                     </li>
-
                     <li class="nav-item dropdown active show">
                         <!-- <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenu2" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                             Dropdown
@@ -74,8 +76,18 @@
                                 class="dropdown-item" v-bind:href='currentUrl() + "?language=" + language + "&id=" + tutorial.id'>
                                 {{ tutorial.names[language] }}
                             </a>
+                            <a v-for="course in courses" v-bind:class="{ 'dropdown-item-checked': course.id == tutorialId.trim().split(' ')[0] }"
+                            class="nav-item nav-link dropdown-toggle mr-md-2 dropdown-item" href="#" id="bd-courses" data-toggle="dropdown"
+                            aria-haspopup="true" aria-expanded="true">
+                                {{  course.names[language]  }}
+                            </a>
+                            <div class="dropdown-menu" aria-labelledby="bd-tutorials">
+                                <a v-for="scenario in scenarios" v-bind:class="{ 'dropdown-item-checked': (scenario.course +' '+ scenario.id) === tutorialId }"
+                                    class="dropdown-item" v-bind:href='currentUrl() + "?language=" + language + "&id=" +scenario.course +"+"+ scenario.id'>
+                                    {{ scenario.names[language] }}
+                                </a>
+                            </div>
                         </div>
-
                     </li>
                 </ul>
             </div>
@@ -154,7 +166,47 @@
                         cn: "arthas-advanced-cn",
                     }
                 }
+
             ],
+            courses: [
+                {
+                    id: "arthas",
+                    names: {
+                        en: "Arthas Full",
+                        cn: "Arthas百科",
+                    },
+                    ids: {
+                        en: "arthas-en",
+                        cn: "arthas-cn",
+                    }
+                }
+            ],
+            scenarios: [
+                {
+                    id: "cases",
+                    names: {
+                        en: "Use Cases",
+                        cn: "案例",
+                    },
+                    course: "arthas"
+                },
+                {
+                    id: "basic-cmd",
+                    names: {
+                        en: "Basic Cmd & Skills",
+                        cn: "基础命令和知识",
+                    },
+                    course: "arthas"
+                },
+                {
+                    id: "ognl",
+                    names: {
+                        en: "Ognl",
+                        cn: "Ognl",
+                    },
+                    course: "arthas"
+                }
+            ]
         },
         methods: {
             languageChange: function (event) {
@@ -181,13 +233,27 @@
                         return this.tutorials[index].names[this.language];
                     }
                 }
-
+                for (index in this.scenarios) {
+                    if ((this.scenarios[index].course+" "+this.scenarios[index].id) == this.tutorialId) {
+                        return this.scenarios[index].names[this.language];
+                    }
+                }
             },
             currentKatacodaId: function () {
                 // https://katacoda.com/embed/hengyunabc/arthas-advanced-cn/?embed=true
                 for (index in this.tutorials) {
                     if (this.tutorials[index].id == this.tutorialId) {
                         return "hengyunabc/" + this.tutorials[index].ids[this.language];
+                    }
+                }
+                // https://www.katacoda.com/embed/arthas/courses/arthas-cn/cases/?embed=true
+                for (index in this.scenarios) {
+                    if ((this.scenarios[index].course+" "+this.scenarios[index].id) == this.tutorialId) {
+                        for(index2 in this.courses){
+                            if(this.courses[index2].id==this.scenarios[index].course){
+                                return "arthas/courses/" + this.courses[index2].ids[this.language]+"/"+this.scenarios[index].id;
+                            }
+                        }
                     }
                 }
             },
