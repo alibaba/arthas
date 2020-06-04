@@ -17,21 +17,7 @@
 - 有什么办法可以监控到JVM的实时运行状态？
 - 怎么快速定位应用的热点，生成火焰图？
 
-本教程会以一个普通的Spring Boot应用为例，演示Arthas的一些精选案例。
+本教程会以一个普通的Spring Boot应用为例，演示Arthas的基础命令和知识。
 
 * Github: https://github.com/alibaba/arthas
 * 文档: https://alibaba.github.io/arthas/
-
-## 案例列表
-
-* Step 3 Web Console
-* Step 4 排查函数调用异常
-* Step 5 热更新代码
-* Step 6 动态更新应用Logger Level
-* Step 7 排查logger冲突问题
-* Step 8 获取Spring Context
-* Step 9 排查HTTP请求返回401
-* Step 10 排查HTTP请求返回404
-* Step 11 理解Spring Boot应用的ClassLoader结构
-* Step 12 查找Top N线程
-* Step 14 arthas-boot支持的参数

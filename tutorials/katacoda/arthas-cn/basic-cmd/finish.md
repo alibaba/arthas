@@ -1,5 +1,5 @@
 
-在“Arthas 案例”中，我们演示了一些使用Arthas过程中可能出现的情况以及解决方案，希望对大家排查问题有帮助。如果有更多的技巧或者使用疑问，欢迎在Issue里提出。
+在“Arthas 基础命令和知识”中，我们演示了一些使用Arthas的基础命令和知识。如果有更多的技巧或者使用疑问，欢迎在Issue里提出。
 
 * Issues: https://github.com/alibaba/arthas/issues
 * 文档： https://alibaba.github.io/arthas

@@ -1,0 +1,71 @@
+{
+  "title": "Arthas Basic Command and Knowledge",
+  "description": "Arthas Basic Command and Knowledge",
+  "details": {
+    "steps": [
+      {
+        "title": "Start demo",
+        "text": "start-demo.md"
+      },
+      {
+        "title": "Start arthas-boot",
+        "text": "arthas-boot.md"
+      },
+      {
+        "title": "cls",
+        "text": "cls.md"
+      },
+      {
+        "title": "session",
+        "text": "session.md"
+      },
+      {
+        "title": "reset",
+        "text": "reset.md"
+      },
+      {
+        "title": "version",
+        "text": "version.md"
+      },
+      {
+        "title": "history",
+        "text": "history.md"
+      },
+      {
+        "title": "keymap",
+        "text": "keymap.md"
+      },
+      {
+        "title": "Tips",
+        "text": "tips.md"
+      },
+      {
+        "title": "exit/quit/stop",
+        "text": "exit.md"
+      }
+    ],
+    "intro": {
+      "text": "intro.md"
+    },
+    "finish": {
+      "text": "finish.md"
+    },
+    "assets": {
+      "host01": []
+    }
+  },
+  "environment": {
+    "uilayout": "terminal",
+    "showdashboard": true,
+    "dashboards": [
+      {
+        "name": "Web Port 80",
+        "port": 80
+      }
+    ]
+  },
+  "backend": {
+    "imageid": "java",
+    "environmentsprotocol": "http"
+  }
+}

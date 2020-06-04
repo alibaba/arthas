@@ -33,21 +33,8 @@ Arthas is built to solve these issues. A developer can troubleshoot production i
 - Supports JDK 6+
 - Supports Linux/Mac/Windows
 
-This tutorial takes a normal Spring Boot application as an example to demonstrate the use cases of the Arthas.
+This tutorial takes a normal Spring Boot application as an example to demonstrate the basic command and knowledge for help, cls, session, reset, version, history, quit, stop, keymap.
 
 * Github: https://github.com/alibaba/arthas
 * Docs: https://alibaba.github.io/arthas/
 
-## Use Cases List
-
-* Step 3 Web Console
-* Step 4 Troubleshooting method invoke exception
-* Step 5 Hotswap code
-* Step 6 Change Logger Level
-* Step 7 Troubleshoot logger conflicts
-* Step 8 Get the Spring Context
-* Step 9 Troubleshooting HTTP request returns 401
-* Step 10 Troubleshooting HTTP request returns 404
-* Step 11 The ClassLoaders in Spring Boot application
-* Step 12 Find CPU usage Top N threads
-* Step 14 arthas-boot supported options
