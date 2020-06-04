@@ -1,0 +1,12 @@
+{
+    "title": "Arthas 教程",
+    "description": "使用Arthas的教程",
+    "icon": "fa-katacoda",
+    "courses": [
+      {
+        "course_id": "cases",
+        "title": "Arthas 案例",
+        "description": "这里精选了一些使用Arthas过程中可能出现的情况以及解决方案，供你参考！"
+      }
+    ]
+}

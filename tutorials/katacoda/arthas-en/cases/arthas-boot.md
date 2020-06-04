@@ -13,4 +13,4 @@ Select the first process, type `1`{{execute T2}} ，then type `Enter`：
 
 After the Attach is successful, Arthas LOGO is printed. Enter `help`{{execute T2}} for more help.
 
-![Arthas Boot](/arthas/scenarios/arthas-advanced-en/assets/arthas-boot.png)
+![Arthas Boot](/arthas/scenarios/arthas-en/assets/arthas-boot.png)

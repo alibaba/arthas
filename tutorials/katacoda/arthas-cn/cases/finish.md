@@ -1,5 +1,5 @@
 
-在“进阶教程”，演示了Arthas的大部分高级用法，希望对大家排查问题有帮助。如果有更多的技巧或者使用疑问，欢迎在Issue里提出。
+在“Arthas 案例”中，我们演示了一些使用Arthas过程中可能出现的情况以及解决方案，希望对大家排查问题有帮助。如果有更多的技巧或者使用疑问，欢迎在Issue里提出。
 
 * Issues: https://github.com/alibaba/arthas/issues
 * 文档： https://alibaba.github.io/arthas
@@ -9,4 +9,4 @@
 
 欢迎关注公众号，获取Arthas项目的信息，源码分析，案例实践。
 
-![Arthas公众号](/arthas/scenarios/arthas-basics-cn/assets/qrcode_gongzhonghao.jpg)
+![Arthas公众号](/arthas/scenarios/arthas-cn/assets/qrcode_gongzhonghao.jpg)

@@ -1,9 +1,5 @@
 
 
-## reset
-
-When Arthas executes commands such as watch/trace, it actually modifies the application's bytecode and inserts the enhanced code. These enhancement codes can be removed by explicitly executing the `reset`{{execute T2}} command.
-
 ## Exit/Stop Arthas
 
 Arthas can be exited with the `exit`{{execute interrupt}} or `quit`{{execute interrupt}} command.

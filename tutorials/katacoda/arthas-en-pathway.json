@@ -1,0 +1,12 @@
+{
+    "title": "Arthas Tutorials",
+    "description": "Arthas Tutorials",
+    "icon": "fa-katacoda",
+    "courses": [
+      {
+        "course_id": "cases",
+        "title": "Arthas Use Cases",
+        "description": "This Scenario demonstrates the use cases of the Arthas that are specially selected by us."
+      }
+    ]
+}
