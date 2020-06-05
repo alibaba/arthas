@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>jad &mdash; Arthas 3.2.0 文档</title>
+  <title>jad &mdash; Arthas 3.3.2 文档</title>
   
 
   
@@ -68,7 +68,7 @@
             
             
               <div class="version">
-                3.2.0
+                3.3.2
               </div>
             
           
@@ -120,7 +120,7 @@
 <li class="toctree-l3"><a class="reference internal" href="#id1">参数说明</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#id2">使用参考</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="#java-lang-string">编译<code class="docutils literal notranslate"><span class="pre">java.lang.String</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="#id3">反编绎时只显示源代码</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id3">反编译时只显示源代码</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#id4">反编译指定的函数</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#classloader">反编译时指定ClassLoader</a></li>
 </ul>
@@ -291,7 +291,7 @@ CharSequence {
 </div>
 </div>
 <div class="section" id="id3">
-<h3>反编绎时只显示源代码<a class="headerlink" href="#id3" title="永久链接至标题">¶</a></h3>
+<h3>反编译时只显示源代码<a class="headerlink" href="#id3" title="永久链接至标题">¶</a></h3>
 <p>默认情况下，反编译结果里会带有<code class="docutils literal notranslate"><span class="pre">ClassLoader</span></code>信息，通过<code class="docutils literal notranslate"><span class="pre">--source-only</span></code>选项，可以只打印源代码。方便和<a class="reference internal" href="mc.html"><span class="doc">mc</span></a>/<a class="reference internal" href="redefine.html"><span class="doc">redefine</span></a>命令结合使用。</p>
 <div class="highlight-default notranslate"><pre class="literal-block">$ jad --source-only demo.MathGame
 /*

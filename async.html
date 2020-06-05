@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Arthas异步调用 &mdash; Arthas 3.2.0 文档</title>
+  <title>Arthas异步调用 &mdash; Arthas 3.3.2 文档</title>
   
 
   
@@ -68,7 +68,7 @@
             
             
               <div class="version">
-                3.2.0
+                3.3.2
               </div>
             
           
@@ -275,6 +275,7 @@ cache location  : /Users/gehui/logs/arthas-cache/28198/2</pre></div>
 <ul class="simple">
 <li><p>最多同时支持8个命令使用重定向将结果写日志</p></li>
 <li><p>请勿同时开启过多的后台异步命令，以免对目标JVM性能造成影响</p></li>
+<li><p>如果不想停止arthas，继续执行后台任务，可以执行 <code class="docutils literal notranslate"><span class="pre">quit</span></code> 退出arthas控制台（<code class="docutils literal notranslate"><span class="pre">stop</span></code> 会停止arthas 服务）</p></li>
 </ul>
 </div>
 </div>

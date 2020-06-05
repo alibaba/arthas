@@ -52,7 +52,7 @@ CharSequence {
 ...
 ```
 
-#### 反编绎时只显示源代码
+#### 反编译时只显示源代码
 
 默认情况下，反编译结果里会带有`ClassLoader`信息，通过`--source-only`选项，可以只打印源代码。方便和[mc](mc.md)/[redefine](redefine.md)命令结合使用。
 
