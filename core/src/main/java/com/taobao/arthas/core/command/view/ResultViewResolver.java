@@ -38,6 +38,7 @@ public class ResultViewResolver {
             registerView(new HelpModel(), new HelpView());
             //registerView(new HistoryModel(), new HistoryView());
             registerView(new EchoModel(), new EchoView());
+            registerView(new CatModel(), new CatView());
         } catch (Throwable e) {
             logger.error("register result view failed", e);
         }
