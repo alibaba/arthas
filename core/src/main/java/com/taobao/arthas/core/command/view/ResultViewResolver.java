@@ -18,7 +18,7 @@ public class ResultViewResolver {
     private static final Logger logger = LoggerFactory.getLogger(ResultViewResolver.class);
 
     // modelClass -> view
-    private Map<String, ResultView> resultViewMap = new ConcurrentHashMap<String, ResultView>();
+    private Map<Class, ResultView> resultViewMap = new ConcurrentHashMap<Class, ResultView>();
 
     private static ResultViewResolver viewResolver;
 
@@ -52,9 +52,13 @@ public class ResultViewResolver {
     private ResultViewResolver() {
     }
 
+    public ResultView getResultView(ResultModel model) {
+        return resultViewMap.get(model.getClass());
+    }
+
     public void registerView(Class modelClass, ResultView view) {
         //TODO 检查model的type是否重复，减少复制代码带来的bug
-        this.resultViewMap.put(modelClass.getName(), view);
+        this.resultViewMap.put(modelClass, view);
     }
 
     public void registerView(ResultView view) {
@@ -74,11 +78,6 @@ public class ResultViewResolver {
         }
         this.registerView(view);
     }
-
-    public ResultView getResultView(ResultModel model) {
-        return resultViewMap.get(model.getClass().getName());
-    }
-
 
     /**
      * Get model class of result view
