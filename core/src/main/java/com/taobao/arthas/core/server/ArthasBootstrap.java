@@ -275,7 +275,7 @@ public class ArthasBootstrap {
             resolvers.add(builtinCommands);
 
             //worker group
-            workerGroup = new NioEventLoopGroup(24);
+            workerGroup = new NioEventLoopGroup(8);
 
             // TODO: discover user provided command resolver
             if (configure.getTelnetPort() > 0) {
