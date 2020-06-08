@@ -22,10 +22,10 @@ public class TermResultDistributorImpl implements ResultDistributor {
     }
 
     @Override
-    public void appendResult(ResultModel result) {
-        ResultView resultView = resultViewResolver.getResultView(result.getType());
+    public void appendResult(ResultModel model) {
+        ResultView resultView = resultViewResolver.getResultView(model);
         if (resultView != null) {
-            resultView.draw(commandProcess, result);
+            resultView.draw(commandProcess, model);
         }
     }
 
