@@ -27,7 +27,7 @@ public class JsonUtils {
             }
             serializeWriterBufferThreshold.setAccessible(true);
             serializeWriterBufferThreshold.set(null, value);
-        } catch (Exception e) {
+        } catch (Throwable e) {
             logger.error("update SerializeWriter.BUFFER_THRESHOLD value failed", e);
         }
     }
@@ -59,7 +59,7 @@ public class JsonUtils {
             if (bytesLocal == null || bytesLocal.length < bufSize) {
                 bytesBufLocal.set(new byte[bufSize]);
             }
-        } catch (Exception e) {
+        } catch (Throwable e) {
             logger.error("update SerializeWriter.BUFFER_THRESHOLD value failed", e);
         }
     }
@@ -84,7 +84,7 @@ public class JsonUtils {
             serializeWriterBytesBufLocal.setAccessible(true);
             ThreadLocal<byte[]> bytesBufLocal = (ThreadLocal<byte[]>) serializeWriterBytesBufLocal.get(null);
             bytesBufLocal.set(bytesBuf);
-        } catch (Exception e) {
+        } catch (Throwable e) {
             logger.error("update SerializeWriter.BUFFER_THRESHOLD value failed", e);
         }
     }
