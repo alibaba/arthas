@@ -12,16 +12,8 @@
         "text": "arthas-boot.md"
       },
       {
-        "title": "Ognl详解",
-        "text": "ognl.md"
-      },
-      {
-        "title": "案例: 动态更新应用Logger Level",
-        "text": "case-ognl-update-logger-level.md"
-      },
-      {
-        "title": "案例: 排查logger冲突问题",
-        "text": "case-logger-config-problem.md"
+        "title": "Thread详解",
+        "text": "thread.md"
       },
       {
         "title": "Exit/Stop",

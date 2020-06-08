@@ -1,5 +1,5 @@
 
-在“ognl”中，我们演示了了Arthas的ognl命令。如果有更多的技巧或者使用疑问，欢迎在Issue里提出。
+在“thread”中，我们演示了了Arthas的thread命令。如果有更多的技巧或者使用疑问，欢迎在Issue里提出。
 
 * Issues: https://github.com/alibaba/arthas/issues
 * 文档： https://alibaba.github.io/arthas

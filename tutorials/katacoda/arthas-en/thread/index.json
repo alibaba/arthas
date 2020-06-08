@@ -12,16 +12,8 @@
         "text": "arthas-boot.md"
       },
       {
-        "title": "ognl Details",
-        "text": "ognl.md"
-      },
-      {
-        "title": "Case: Change Logger Level",
-        "text": "case-ognl-update-logger-level.md"
-      },
-      {
-        "title": "Case: Troubleshoot logger conflicts",
-        "text": "case-logger-config-problem.md"
+        "title": "Thread Details",
+        "text": "thread.md"
       },
       {
         "title": "Exit/Stop",
