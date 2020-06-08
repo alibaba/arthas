@@ -1,6 +1,7 @@
 package com.taobao.arthas.core.distribution;
 
 import com.alibaba.fastjson.JSON;
+import com.taobao.arthas.core.command.model.Countable;
 import com.taobao.arthas.core.command.model.ResultModel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -14,49 +15,56 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
+ * 命令结果模型辅助类
+ *
  * @author gongdewei 2020/5/18
  */
 public class ResultConsumerHelper {
 
     private static final Logger logger = LoggerFactory.getLogger(ResultConsumerHelper.class);
 
-    private static Map<String, List<Field>> modelFieldMap = new ConcurrentHashMap<String, List<Field>>();
+    private static ConcurrentHashMap<String, List<Field>> modelFieldMap = new ConcurrentHashMap<String, List<Field>>();
 
     /**
-     * 估算命令执行结果的item数量
-     * 注意：此方法调用频繁，不能产生内存碎片
+     * 估算命令执行结果的item数量，目的是提供一个度量值，作为Consumer分发时进行切片的参考依据，避免单次发送大量数据。
+     * 注意：此方法调用频繁，避免产生内存碎片
+     *
      * @param model
      * @return
      */
     public static int getItemCount(ResultModel model) {
-        int count = processSpecialCommand(model);
-        if (count > 0) {
-            return count;
+        //如果实现Countable接口，则认为model自己统计元素数量
+        if (model instanceof Countable) {
+            return ((Countable) model).size();
         }
 
-        //TODO 抽取ItemSet/ItemGroup接口，解决ClassSetVO/mbean等分组的情况
-
+        //对于普通的Model，通过类反射统计容器类字段统计元素数量
         //缓存Field对象，避免产生内存碎片
         Class modelClass = model.getClass();
         List<Field> fields = modelFieldMap.get(modelClass.getName());
         if (fields == null) {
             fields = new ArrayList<Field>();
-            modelFieldMap.put(modelClass.getName(), fields);
             Field[] declaredFields = modelClass.getDeclaredFields();
             for (int i = 0; i < declaredFields.length; i++) {
                 Field field = declaredFields[i];
                 Class<?> fieldClass = field.getType();
+                //如果是List/Map/Array/Countable类型的字段，则缓存起来后面统计数量
                 if (Collection.class.isAssignableFrom(fieldClass)
                         || Map.class.isAssignableFrom(fieldClass)
-                        || fieldClass.isArray()
-                       /* || fieldClass == ClassSetVO.class*/) {
+                        || Countable.class.isAssignableFrom(fieldClass)
+                        || fieldClass.isArray()) {
                     field.setAccessible(true);
                     fields.add(field);
                 }
             }
+            List<Field> old_fields = modelFieldMap.putIfAbsent(modelClass.getName(), fields);
+            if (old_fields != null) {
+                fields = old_fields;
+            }
         }
 
-        //获取item数量
+        //统计Model对象的item数量
+        int count = 0;
         try {
             for (int i = 0; i < fields.size(); i++) {
                 Field field = fields.get(i);
@@ -65,14 +73,14 @@ public class ResultConsumerHelper {
                 }
                 Object value = field.get(model);
                 if (value != null) {
-                    if (value instanceof  Collection) {
-                        return ((Collection) value).size();
+                    if (value instanceof Collection) {
+                        count += ((Collection) value).size();
                     } else if (value.getClass().isArray()) {
-                        return Array.getLength(value);
+                        count += Array.getLength(value);
                     } else if (value instanceof Map) {
-                        return ((Map) value).size();
-//                    } else if (value.getClass() == ClassSetVO.class) {
-//                        return ((ClassSetVO) value).getClasses().size();
+                        count += ((Map) value).size();
+                    } else if (value instanceof Countable) {
+                        count += ((Countable) value).size();
                     }
                 }
             }
@@ -80,18 +88,7 @@ public class ResultConsumerHelper {
             logger.error("get item count of result model failed, model: {}", JSON.toJSONString(model), e);
         }
 
-        return 1;
-    }
-
-    private static int processSpecialCommand(ResultModel model) {
-//        if (model instanceof CatModel) {
-//            //特殊处理cat
-//            return ((CatModel) model).getContent().length()/100 + 1 ;
-//        } else if (model instanceof TraceModel) {
-//            //特殊处理trace
-//            return ((TraceModel) model).getNodeCount();
-//        }
-        return 0;
+        return count > 0 ? count : 1;
     }
 
 }
