@@ -7,7 +7,7 @@ package com.taobao.arthas.core.command.model;
  */
 public abstract class ResultModel {
 
-    private Integer jobId;
+    private int jobId;
 
     /**
      * Command type (name)
@@ -17,11 +17,11 @@ public abstract class ResultModel {
     public abstract String getType();
 
 
-    public Integer getJobId() {
+    public int getJobId() {
         return jobId;
     }
 
-    public void setJobId(Integer jobId) {
+    public void setJobId(int jobId) {
         this.jobId = jobId;
     }
 }
