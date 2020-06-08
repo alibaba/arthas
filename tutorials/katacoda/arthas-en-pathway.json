@@ -17,6 +17,11 @@
         "course_id": "ognl",
         "title": "ognl",
         "description": "This Scenario demonstrates the usage of ognl"
+      },
+      {
+        "course_id": "thread",
+        "title": "thread",
+        "description": "This Scenario demonstrates the usage of thread"
       }
     ]
 }

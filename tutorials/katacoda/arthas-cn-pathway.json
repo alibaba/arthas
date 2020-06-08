@@ -17,6 +17,11 @@
         "course_id": "ognl",
         "title": "ognl",
         "description": "这里讲解了Arthas的ognl命令"
+      },
+      {
+        "course_id": "thread",
+        "title": "thread",
+        "description": "这里讲解了Arthas的thread命令"
       }
     ]
 }
