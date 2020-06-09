@@ -29,32 +29,62 @@ $ reset -h
 
 ## Reset specified class
 
+ `trace demo.MathGame primeFactors`{{execute T2}}
+
+ `reset demo.MathGame`{{execute T2}}
+
 ```bash
-$ trace Test test
-Press Ctrl+C to abort.
-Affect(class-cnt:1 , method-cnt:1) cost in 57 ms.
-`---ts=2017-10-26 17:10:33;thread_name=main;id=1;is_daemon=false;priority=5;TCCL=sun.misc.Launcher$AppClassLoader@14dad5dc
-    `---[0.590102ms] Test:test()
+$ trace demo.MathGame primeFactors
+Press Q or Ctrl+C to abort.
+Affect(class count: 1 , method count: 1) cost in 94 ms, listenerId: 1
+`---ts=2020-06-09 20:01:29;thread_name=main;id=1;is_daemon=false;priority=5;TCCL=sun.misc.Launcher$AppClassLoader@70dea4e
+    `---[1.954979ms] demo.MathGame:primeFactors()
 
-`---ts=2017-10-26 17:10:34;thread_name=main;id=1;is_daemon=false;priority=5;TCCL=sun.misc.Launcher$AppClassLoader@14dad5dc
-    `---[0.068692ms] Test:test()
+`---ts=2020-06-09 20:01:30;thread_name=main;id=1;is_daemon=false;priority=5;TCCL=sun.misc.Launcher$AppClassLoader@70dea4e
+    `---[0.285145ms] demo.MathGame:primeFactors()
+        `---[0.001224ms] throw:java.lang.IllegalArgumentException() #46
 
-$ reset Test
-Affect(class-cnt:1 , method-cnt:0) cost in 11 ms.
+`---ts=2020-06-09 20:01:31;thread_name=main;id=1;is_daemon=false;priority=5;TCCL=sun.misc.Launcher$AppClassLoader@70dea4e
+    `---[0.244009ms] demo.MathGame:primeFactors()
+
+`---ts=2020-06-09 20:01:32;thread_name=main;id=1;is_daemon=false;priority=5;TCCL=sun.misc.Launcher$AppClassLoader@70dea4e
+    `---[1.852209ms] demo.MathGame:primeFactors()
+
+`---ts=2020-06-09 20:01:33;thread_name=main;id=1;is_daemon=false;priority=5;TCCL=sun.misc.Launcher$AppClassLoader@70dea4e
+    `---[0.192515ms] demo.MathGame:primeFactors()
+        `---[9.01E-4ms] throw:java.lang.IllegalArgumentException() #46
+
+$ reset demo.MathGame
+Affect(class count: 1 , method count: 0) cost in 5 ms, listenerId: 0
 ```
 
 ## Reset all classes
 
+ `trace demo.MathGame primeFactors`{{execute T2}}
+
+ `reset`{{execute T2}}
+
 ```bash
-$ trace Test test
-Press Ctrl+C to abort.
-Affect(class-cnt:1 , method-cnt:1) cost in 57 ms.
-`---ts=2017-10-26 17:10:33;thread_name=main;id=1;is_daemon=false;priority=5;TCCL=sun.misc.Launcher$AppClassLoader@14dad5dc
-    `---[0.590102ms] Test:test()
+$ trace demo.MathGame primeFactors
+Press Q or Ctrl+C to abort.
+Affect(class count: 1 , method count: 1) cost in 94 ms, listenerId: 1
+`---ts=2020-06-09 20:01:29;thread_name=main;id=1;is_daemon=false;priority=5;TCCL=sun.misc.Launcher$AppClassLoader@70dea4e
+    `---[1.954979ms] demo.MathGame:primeFactors()
 
-`---ts=2017-10-26 17:10:34;thread_name=main;id=1;is_daemon=false;priority=5;TCCL=sun.misc.Launcher$AppClassLoader@14dad5dc
-    `---[0.068692ms] Test:test()
+`---ts=2020-06-09 20:01:30;thread_name=main;id=1;is_daemon=false;priority=5;TCCL=sun.misc.Launcher$AppClassLoader@70dea4e
+    `---[0.285145ms] demo.MathGame:primeFactors()
+        `---[0.001224ms] throw:java.lang.IllegalArgumentException() #46
 
-$ reset Test
+`---ts=2020-06-09 20:01:31;thread_name=main;id=1;is_daemon=false;priority=5;TCCL=sun.misc.Launcher$AppClassLoader@70dea4e
+    `---[0.244009ms] demo.MathGame:primeFactors()
+
+`---ts=2020-06-09 20:01:32;thread_name=main;id=1;is_daemon=false;priority=5;TCCL=sun.misc.Launcher$AppClassLoader@70dea4e
+    `---[1.852209ms] demo.MathGame:primeFactors()
+
+`---ts=2020-06-09 20:01:33;thread_name=main;id=1;is_daemon=false;priority=5;TCCL=sun.misc.Launcher$AppClassLoader@70dea4e
+    `---[0.192515ms] demo.MathGame:primeFactors()
+        `---[9.01E-4ms] throw:java.lang.IllegalArgumentException() #46
+
+$ reset
 Affect(class-cnt:1 , method-cnt:0) cost in 11 ms.
 ```
