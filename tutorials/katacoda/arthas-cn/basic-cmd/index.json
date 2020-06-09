@@ -7,7 +7,7 @@
     "steps": [
       {
         "title": "启动demo",
-        "text": "start-demo.md"
+        "text": "arthas-demo.md"
       },
       {
         "title": "启动arthas-boot，help命令",
