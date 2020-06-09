@@ -31,6 +31,8 @@ $ reset -h
 
  `trace demo.MathGame primeFactors`{{execute T2}}
 
+ `Ctrl+C (abort)`{{execute interrupt}}
+
  `reset demo.MathGame`{{execute T2}}
 
 ```bash
@@ -61,6 +63,8 @@ Affect(class count: 1 , method count: 0) cost in 5 ms, listenerId: 0
 ## 还原所有类
 
  `trace demo.MathGame primeFactors`{{execute T2}}
+
+ `Ctrl+C (abort)`{{execute interrupt}}
 
  `reset`{{execute T2}}
 
