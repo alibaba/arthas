@@ -1,6 +1,8 @@
 {
   "title": "Arthas ognl",
   "description": "Arthas ognl",
+  "difficulty": "入门者",
+  "time": "10-20 分钟",
   "details": {
     "steps": [
       {

@@ -1,6 +1,8 @@
 {
   "title": "Arthas Cases",
   "description": "Arthas Cases",
+  "difficulty": "expert",
+  "time": "2 hours",
   "details": {
     "steps": [
       {
