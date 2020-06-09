@@ -57,14 +57,7 @@
     }
   },
   "environment": {
-    "uilayout": "terminal",
-    "showdashboard": true,
-    "dashboards": [
-      {
-        "name": "Web Port 80",
-        "port": 80
-      }
-    ]
+    "uilayout": "terminal"
   },
   "backend": {
     "imageid": "java",
