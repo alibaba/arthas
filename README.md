@@ -511,6 +511,7 @@ Welcome to register the company name in this issue: https://github.com/alibaba/a
 ![宇中科技](static/yuzhong.png)
 ![蘑菇财富](static/mogu.jpg)
 ![喔趣科技](static/woqu.png)
+![百度凤巢](static/baidufengchao.png)
 
 ### Derivative Projects
 
