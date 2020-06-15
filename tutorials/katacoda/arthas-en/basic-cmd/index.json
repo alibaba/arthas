@@ -14,6 +14,26 @@
         "text": "arthas-demo.md"
       },
       {
+        "title": "cat",
+        "text": "cat.md"
+      },
+      {
+        "title": "echo",
+        "text": "echo.md"
+      },
+      {
+        "title": "grep",
+        "text": "grep.md"
+      },
+      {
+        "title": "tee",
+        "text": "tee.md"
+      },
+      {
+        "title": "pwd",
+        "text": "pwd.md"
+      },
+      {
         "title": "cls",
         "text": "cls.md"
       },

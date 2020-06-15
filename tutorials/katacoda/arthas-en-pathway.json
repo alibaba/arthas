@@ -11,7 +11,7 @@
       {
         "course_id": "basic-cmd",
         "title": "Arthas Basic Command and Knowledge",
-        "description": "This Scenario demonstrates the basic command and knowledge for help, cls, session, reset, version, history, quit, stop, keymap"
+        "description": "This Scenario demonstrates the basic command and knowledge for help, cat, echo, grep, tee, pwd, cls, session, reset, version, history, quit, stop, keymap"
       },
       {
         "course_id": "ognl",
