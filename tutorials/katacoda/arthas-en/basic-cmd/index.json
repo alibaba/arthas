@@ -7,7 +7,7 @@
     "steps": [
       {
         "title": "Start demo",
-        "text": "start-demo.md"
+        "text": "arthas-boot.md"
       },
       {
         "title": "Start arthas-boot",
