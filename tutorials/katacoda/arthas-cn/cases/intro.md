@@ -34,6 +34,7 @@
 * Step 10 排查HTTP请求返回404
 * Step 11 理解Spring Boot应用的ClassLoader结构
 * Step 12 查找Top N线程
-* Step 14 arthas-boot支持的参数
-* Step 15 以Java Agent的方式启动
-* Step 16 用户数据回报
+* Step 13 执行结果存日志
+* Step 15 arthas-boot支持的参数
+* Step 16 以Java Agent的方式启动
+* Step 17 用户数据回报

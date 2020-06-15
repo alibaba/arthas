@@ -54,6 +54,10 @@
         "text": "case-thread.md"
       },
       {
+        "title": "Log the output",
+        "text": "save-log.md"
+      },
+      {
         "title": "Exit/Stop",
         "text": "exit.md"
       },

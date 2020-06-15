@@ -54,6 +54,10 @@
         "text": "case-thread.md"
       },
       {
+        "title": "执行结果存日志",
+        "text": "/save-log.md"
+      },
+      {
         "title": "Exit/Stop",
         "text": "exit.md"
       },

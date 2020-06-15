@@ -50,6 +50,7 @@ This tutorial takes a normal Spring Boot application as an example to demonstrat
 * Step 10 Troubleshooting HTTP request returns 404
 * Step 11 The ClassLoaders in Spring Boot application
 * Step 12 Find CPU usage Top N threads
-* Step 14 arthas-boot supported options
-* Step 15 Start as a Java Agent
-* Step 16 User data report
+* Step 13 Log the output
+* Step 15 arthas-boot supported options
+* Step 16 Start as a Java Agent
+* Step 17 User data report
