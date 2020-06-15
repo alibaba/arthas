@@ -72,6 +72,10 @@
       {
         "title": "User data report",
         "text": "user-data-report.md"
+      },
+      {
+        "title": "Batch Processing",
+        "text": "batch-support.md"
       }
       
     ],

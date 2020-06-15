@@ -72,6 +72,10 @@
       {
         "title": "用户数据回报",
         "text": "user-data-report.md"
+      },
+      {
+        "title": "批处理功能",
+        "text": "batch-support.md"
       }
     ],
     "intro": {
