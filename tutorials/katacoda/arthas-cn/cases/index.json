@@ -60,6 +60,10 @@
       {
         "title": "arthas-boot支持的参数",
         "text": "arthas-boot-details.md"
+      },
+      {
+        "title": "以Java Agent的方式启动",
+        "text": "agent.md"
       }
     ],
     "intro": {

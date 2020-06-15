@@ -60,6 +60,10 @@
       {
         "title": "arthas-boot supported options",
         "text": "arthas-boot-details.md"
+      },
+      {
+        "title": "Start as a Java Agent",
+        "text": "agent.md"
       }
     ],
     "intro": {
