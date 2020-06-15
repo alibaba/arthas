@@ -64,6 +64,10 @@
       {
         "title": "以Java Agent的方式启动",
         "text": "agent.md"
+      },
+      {
+        "title": "用户数据回报",
+        "text": "user-data-report.md"
       }
     ],
     "intro": {

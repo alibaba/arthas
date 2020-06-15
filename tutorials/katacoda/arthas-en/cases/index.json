@@ -64,7 +64,12 @@
       {
         "title": "Start as a Java Agent",
         "text": "agent.md"
+      },
+      {
+        "title": "User data report",
+        "text": "user-data-report.md"
       }
+      
     ],
     "intro": {
       "text": "intro.md"
