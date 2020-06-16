@@ -1,6 +1,8 @@
 reset命令
 ===
 
+[点击这里访问“基础命令和知识”在线教程](https://alibaba.github.io/arthas/arthas-tutorials.html?language=cn&id=arthas+basic-cmd)
+
 > 重置增强类，将被 Arthas 增强过的类全部还原，Arthas 服务端`stop`时会重置所有增强过的类
 
 ### 使用参考

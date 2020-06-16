@@ -1,6 +1,8 @@
 reset
 ===
 
+[Click to visit "Basic Cmd & Skills" online tutorial](https://alibaba.github.io/arthas/arthas-tutorials.html?language=en&id=arthas+basic-cmd)
+
 > Reset all classes that have been enhanced by Arthas. These enhanced classes will also be reset when Arthas server is `stop`.
 
 ### Usage

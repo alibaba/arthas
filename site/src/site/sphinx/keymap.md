@@ -1,6 +1,8 @@
 Arthas 命令行快捷键
 ===
 
+[点击这里访问“基础命令和知识”在线教程](https://alibaba.github.io/arthas/arthas-tutorials.html?language=cn&id=arthas+basic-cmd)
+
 `keymap`命令输出当前的快捷键映射表：
 
 默认的快捷键如下：
