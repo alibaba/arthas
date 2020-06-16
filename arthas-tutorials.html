@@ -76,13 +76,17 @@
                                 class="dropdown-item" v-bind:href='currentUrl() + "?language=" + language + "&id=" + tutorial.id'>
                                 {{ tutorial.names[language] }}
                             </a>
-                            <a v-for="course in courses" v-bind:class="{ 'dropdown-item-checked': course.id == tutorialId.trim().split(' ')[0] }"
+                            <a v-for="scenario in scenarios" v-bind:class="{ 'dropdown-item-checked': (scenario.course +' '+ scenario.id) === tutorialId }"
+                                class="dropdown-item" v-bind:href='currentUrl() + "?language=" + language + "&id=" +scenario.course +"+"+ scenario.id'>
+                                {{ scenario.names[language] }}
+                            </a>
+                            <a v-for="category in categories" v-bind:class="{ 'dropdown-item-checked': category.id === currentCategory() }"
                             class="nav-item nav-link dropdown-toggle mr-md-2 dropdown-item" href="#" id="bd-courses" data-toggle="dropdown"
-                            aria-haspopup="true" aria-expanded="true">
-                                {{  course.names[language]  }}
+                            aria-haspopup="true" aria-expanded="true" v-on:click="{ categoryId = category.id }">
+                                {{  category.names[language]  }}
                             </a>
                             <div class="dropdown-menu" aria-labelledby="bd-tutorials">
-                                <a v-for="scenario in scenarios" v-bind:class="{ 'dropdown-item-checked': (scenario.course +' '+ scenario.id) === tutorialId }"
+                                <a v-for="scenario in categories[findCategory()].scenarios" v-bind:class="{ 'dropdown-item-checked': (scenario.course +' '+ scenario.id) === tutorialId }"
                                     class="dropdown-item" v-bind:href='currentUrl() + "?language=" + language + "&id=" +scenario.course +"+"+ scenario.id'>
                                     {{ scenario.names[language] }}
                                 </a>
@@ -143,6 +147,7 @@
                 { text: '中文', value: 'cn' }
             ],
             tutorialId: "arthas-basics",
+            categoryId: null,
             tutorials: [
                 {
                     id: "arthas-basics",
@@ -168,17 +173,266 @@
                 }
 
             ],
-            courses: [
+            categories: [
                 {
-                    id: "arthas",
+                    id: "jvm",
                     names: {
-                        en: "Arthas Full",
-                        cn: "Arthas百科",
+                        en: "JVM related",
+                        cn: "JVM相关",
                     },
-                    ids: {
-                        en: "arthas-en",
-                        cn: "arthas-cn",
-                    }
+                    scenarios: [
+                        {
+                            id:"dashboardcmd",
+                            names: {
+                                en: "dashboard",
+                                cn: "dashboard",
+                            },
+                            course: "arthas"
+                        },
+                        {
+                            id:"thread",
+                            names: {
+                                en: "thread",
+                                cn: "thread",
+                            },
+                            course: "arthas"
+                        },
+                        {
+                            id:"jvm",
+                            names: {
+                                en: "jvm",
+                                cn: "jvm",
+                            },
+                            course: "arthas"
+                        },
+                        {
+                            id:"sysprop",
+                            names: {
+                                en: "sysprop",
+                                cn: "sysprop",
+                            },
+                            course: "arthas"
+                        },
+                        {
+                            id:"sysenv",
+                            names: {
+                                en: "sysenv",
+                                cn: "sysenv",
+                            },
+                            course: "arthas"
+                        },
+                        {
+                            id:"vmoption",
+                            names: {
+                                en: "vmoption",
+                                cn: "vmoption",
+                            },
+                            course: "arthas"
+                        },
+                        {
+                            id:"perfcounter",
+                            names: {
+                                en: "perfcounter",
+                                cn: "perfcounter",
+                            },
+                            course: "arthas"
+                        },
+                        {
+                            id:"logger",
+                            names: {
+                                en: "logger",
+                                cn: "logger",
+                            },
+                            course: "arthas"
+                        },
+                        {
+                            id:"getstatic",
+                            names: {
+                                en: "getstatic",
+                                cn: "getstatic",
+                            },
+                            course: "arthas"
+                        },
+                        {
+                            id:"ognl",
+                            names: {
+                                en: "ognl",
+                                cn: "ognl",
+                            },
+                            course: "arthas"
+                        },
+                        {
+                            id:"mbean",
+                            names: {
+                                en: "mbean",
+                                cn: "mbean",
+                            },
+                            course: "arthas"
+                        },
+                        {
+                            id:"heapdump",
+                            names: {
+                                en: "heapdump",
+                                cn: "heapdump",
+                            },
+                            course: "arthas"
+                        }
+                    ]
+                },
+                {
+                    id: "clcll",
+                    names: {
+                        en: "class/classloader - related",
+                        cn: "class/classloader相关",
+                    },
+                    scenarios: [
+                        {
+                            id:"sc",
+                            names: {
+                                en: "sc",
+                                cn: "sc",
+                            },
+                            course: "arthas"
+                        },
+                        {
+                            id:"sm",
+                            names: {
+                                en: "sm",
+                                cn: "sm",
+                            },
+                            course: "arthas"
+                        },
+                        {
+                            id:"jad",
+                            names: {
+                                en: "jad",
+                                cn: "jad",
+                            },
+                            course: "arthas"
+                        },
+                        {
+                            id:"mc",
+                            names: {
+                                en: "mc",
+                                cn: "mc",
+                            },
+                            course: "arthas"
+                        },
+                        {
+                            id:"redefine",
+                            names: {
+                                en: "redefine",
+                                cn: "redefine",
+                            },
+                            course: "arthas"
+                        },
+                        {
+                            id:"dump",
+                            names: {
+                                en: "dump",
+                                cn: "dump",
+                            },
+                            course: "arthas"
+                        },
+                        {
+                            id:"classloader",
+                            names: {
+                                en: "classloader",
+                                cn: "classloader",
+                            },
+                            course: "arthas"
+                        }
+                    ]
+                },
+                {
+                    id: "mwtrl",
+                    names: {
+                        en: "monitor/watch/trace - related",
+                        cn: "monitor/watch/trace相关",
+                    },
+                    scenarios: [
+                        {
+                            id:"monitor",
+                            names: {
+                                en: "monitor",
+                                cn: "monitor",
+                            },
+                            course: "arthas"
+                        },
+                        {
+                            id:"watch",
+                            names: {
+                                en: "watch",
+                                cn: "watch",
+                            },
+                            course: "arthas"
+                        },
+                        {
+                            id:"trace",
+                            names: {
+                                en: "trace",
+                                cn: "trace",
+                            },
+                            course: "arthas"
+                        },
+                        {
+                            id:"stack",
+                            names: {
+                                en: "stack",
+                                cn: "stack",
+                            },
+                            course: "arthas"
+                        },
+                        {
+                            id:"tt",
+                            names: {
+                                en: "tt",
+                                cn: "tt",
+                            },
+                            course: "arthas"
+                        }
+                    ]
+                },
+                {
+                    id: "others",
+                    names: {
+                        en: "Other Commands",
+                        cn: "其他命令",
+                    },
+                    scenarios: [
+                        {
+                            id: "profiler",
+                            names: {
+                                en: "profiler/flame graph",
+                                cn: "profiler/火焰图",
+                            },
+                            course: "arthas"
+                        },
+                        {
+                            id: "options",
+                            names: {
+                                en: "options",
+                                cn: "options",
+                            },
+                            course: "arthas"
+                        },
+                        {
+                            id: "pipe",
+                            names: {
+                                en: "pipe",
+                                cn: "管道",
+                            },
+                            course: "arthas"
+                        },
+                        {
+                            id: "async",
+                            names: {
+                                en: "async in background",
+                                cn: "后台异步任务",
+                            },
+                            course: "arthas"
+                        }
+                    ]
                 }
             ],
             scenarios: [
@@ -197,22 +451,15 @@
                         cn: "基础命令和知识",
                     },
                     course: "arthas"
-                },
+                }
+            ],
+            courses: [
                 {
-                    id: "ognl",
-                    names: {
-                        en: "Ognl",
-                        cn: "Ognl",
-                    },
-                    course: "arthas"
-                },
-                {
-                    id: "thread",
-                    names: {
-                        en: "Thread",
-                        cn: "Thread",
-                    },
-                    course: "arthas"
+                    id: "arthas",
+                    ids: {
+                        en: "arthas-en",
+                        cn: "arthas-cn",
+                    }
                 }
             ]
         },
@@ -227,6 +474,19 @@
             logoUrl: function () {
                 var url = this.currentUrl();
                 return url.substring(0, url.lastIndexOf('/')) + "/_static/logo.png";
+            },
+            findCategory:function () {
+                if (this.categoryId===null){
+                    for(index in this.categories){
+                        return index;
+                    }
+                }
+                else{
+                    for(index in this.categories){
+                        if(this.categoryId === this.categories[index].id)
+                            return index;
+                    }
+                }
             },
             docUrl: function () {
                 if (this.language === "en") {
@@ -246,12 +506,28 @@
                         return this.scenarios[index].names[this.language];
                     }
                 }
+                for (index in this.categories) {
+                    for (index2 in this.categories[index].scenarios) {
+                        if (this.categories[index].scenarios[index2].course+" "+this.categories[index].scenarios[index2].id == this.tutorialId){
+                            return this.categories[index].scenarios[index2].names[this.language];
+                        }
+                    }
+                }
+            },
+            currentCategory: function () {
+                for (index in this.categories) {
+                    for (index2 in this.categories[index].scenarios) {
+                        if (this.categories[index].scenarios[index2].course+" "+this.categories[index].scenarios[index2].id == this.tutorialId){
+                            return this.categories[index].id;
+                        }
+                    }
+                }
             },
             currentKatacodaId: function () {
                 // https://katacoda.com/embed/hengyunabc/arthas-advanced-cn/?embed=true
                 for (index in this.tutorials) {
                     if (this.tutorials[index].id == this.tutorialId) {
-                        return "hengyunabc/" + this.tutorials[index].ids[this.language];
+                        return "arthas/" + this.tutorials[index].ids[this.language];
                     }
                 }
                 // https://www.katacoda.com/embed/arthas/courses/arthas-cn/cases/?embed=true
@@ -260,6 +536,17 @@
                         for(index2 in this.courses){
                             if(this.courses[index2].id==this.scenarios[index].course){
                                 return "arthas/courses/" + this.courses[index2].ids[this.language]+"/"+this.scenarios[index].id;
+                            }
+                        }
+                    }
+                }
+                for (index in this.categories) {
+                    for (index2 in this.categories[index].scenarios) {
+                        if ((this.categories[index].scenarios[index2].course+" "+this.categories[index].scenarios[index2].id) == this.tutorialId) {
+                            for(index3 in this.courses){
+                                if(this.courses[index3].id==this.categories[index].scenarios[index2].course){
+                                    return "arthas/courses/" + this.courses[index3].ids[this.language]+"/"+this.categories[index].scenarios[index2].id;
+                                }
                             }
                         }
                     }
