@@ -43,7 +43,7 @@ public class LocalVarsBinding extends Binding{
 
     @Override
     public Type getType(BindingContext bindingContext) {
-        return AsmOpUtils.OBJECT_TYPE;
+        return Type.getType(Object[].class);
     }
 
 }
