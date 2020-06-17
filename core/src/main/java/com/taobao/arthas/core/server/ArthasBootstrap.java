@@ -40,26 +40,30 @@ import com.taobao.arthas.core.shell.ShellServerOptions;
 import com.taobao.arthas.core.shell.command.CommandResolver;
 import com.taobao.arthas.core.shell.handlers.BindHandler;
 import com.taobao.arthas.core.shell.impl.ShellServerImpl;
+import com.taobao.arthas.core.shell.session.SessionManager;
+import com.taobao.arthas.core.shell.session.impl.SessionManagerImpl;
 import com.taobao.arthas.core.shell.term.impl.HttpTermServer;
 import com.taobao.arthas.core.shell.term.impl.httptelnet.HttpTelnetTermServer;
 import com.taobao.arthas.core.util.ArthasBanner;
 import com.taobao.arthas.core.util.FileUtils;
 import com.taobao.arthas.core.util.LogUtil;
 import com.taobao.arthas.core.util.UserStatUtil;
-
 import io.netty.channel.ChannelFuture;
+import io.netty.channel.nio.NioEventLoopGroup;
+import io.netty.util.concurrent.EventExecutorGroup;
 
 
 /**
  * @author vlinux on 15/5/2.
+ * @author gongdewei 2020-03-25
  */
 public class ArthasBootstrap {
     public static final String ARTHAS_HOME_PROPERTY = "arthas.home";
     private static String ARTHAS_SHOME = null;
 
-    public static final String CONFIG_NAME_PROPERTY  = "arthas.config.name";
+    public static final String CONFIG_NAME_PROPERTY = "arthas.config.name";
     public static final String CONFIG_LOCATION_PROPERTY = "arthas.config.location";
-    public static final String CONFIG_OVERRIDE_ALL= "arthas.config.overrideAll";
+    public static final String CONFIG_OVERRIDE_ALL = "arthas.config.overrideAll";
 
     private static ArthasBootstrap arthasBootstrap;
 
@@ -71,11 +75,13 @@ public class ArthasBootstrap {
     private Thread shutdown;
     private ShellServer shellServer;
     private ScheduledExecutorService executorService;
+    private SessionManager sessionManager;
     private TunnelClient tunnelClient;
 
     private File arthasOutputDir;
 
     private static LoggerContext loggerContext;
+    private EventExecutorGroup workerGroup;
 
     private Timer timer = new Timer("arthas-timer", true);
 
@@ -262,20 +268,25 @@ public class ArthasBootstrap {
                 welcomeInfos.put("id", agentId);
                 options.setWelcomeMessage(ArthasBanner.welcome(welcomeInfos));
             }
+
             shellServer = new ShellServerImpl(options, this);
             BuiltinCommandPack builtinCommands = new BuiltinCommandPack();
             List<CommandResolver> resolvers = new ArrayList<CommandResolver>();
             resolvers.add(builtinCommands);
+
+            //worker group
+            workerGroup = new NioEventLoopGroup(8);
+
             // TODO: discover user provided command resolver
             if (configure.getTelnetPort() > 0) {
                 shellServer.registerTermServer(new HttpTelnetTermServer(configure.getIp(), configure.getTelnetPort(),
-                                options.getConnectionTimeout()));
+                        options.getConnectionTimeout(), workerGroup));
             } else {
                 logger().info("telnet port is {}, skip bind telnet server.", configure.getTelnetPort());
             }
             if (configure.getHttpPort() > 0) {
                 shellServer.registerTermServer(new HttpTermServer(configure.getIp(), configure.getHttpPort(),
-                                options.getConnectionTimeout()));
+                        options.getConnectionTimeout(), workerGroup));
             } else {
                 logger().info("http port is {}, skip bind http server.", configure.getHttpPort());
             }
@@ -286,8 +297,12 @@ public class ArthasBootstrap {
 
             shellServer.listen(new BindHandler(isBindRef));
 
+            //http api session manager
+            sessionManager = new SessionManagerImpl(options, this, shellServer.getCommandManager(), shellServer.getJobController());
+
             logger().info("as-server listening on network={};telnet={};http={};timeout={};", configure.getIp(),
                     configure.getTelnetPort(), configure.getHttpPort(), options.getConnectionTimeout());
+
             // 异步回报启动次数
             if (configure.getStatUrl() != null) {
                 logger().info("arthas stat url: {}", configure.getStatUrl());
@@ -295,13 +310,24 @@ public class ArthasBootstrap {
             UserStatUtil.setStatUrl(configure.getStatUrl());
             UserStatUtil.arthasStart();
 
-            logger().info("as-server started in {} ms", System.currentTimeMillis() - start );
+            logger().info("as-server started in {} ms", System.currentTimeMillis() - start);
         } catch (Throwable e) {
             logger().error("Error during bind to port " + configure.getTelnetPort(), e);
             if (shellServer != null) {
                 shellServer.close();
             }
+            if (sessionManager != null){
+                sessionManager.close();
+            }
+            shutdownWorkGroup();
             throw e;
+        }
+    }
+
+    private void shutdownWorkGroup() {
+        if (workerGroup != null) {
+            workerGroup.shutdownGracefully(200, 200, TimeUnit.MILLISECONDS);
+            workerGroup = null;
         }
     }
 
@@ -320,12 +346,13 @@ public class ArthasBootstrap {
             try {
                 tunnelClient.stop();
             } catch (Throwable e) {
-                logger().error("arthas", "stop tunnel client error", e);
+                logger().error("stop tunnel client error", e);
             }
         }
         executorService.shutdownNow();
         transformerManager.destroy();
         UserStatUtil.destroy();
+        shutdownWorkGroup();
         // clear the reference in Spy class.
         cleanUpSpyReference();
         try {
@@ -337,6 +364,8 @@ public class ArthasBootstrap {
         if (loggerContext != null) {
             loggerContext.stop();
         }
+        shellServer = null;
+        sessionManager = null;
     }
 
     /**
@@ -352,6 +381,7 @@ public class ArthasBootstrap {
         }
         return arthasBootstrap;
     }
+
     /**
      * @return ArthasServer单例
      */
@@ -383,6 +413,14 @@ public class ArthasBootstrap {
 
     public TunnelClient getTunnelClient() {
         return tunnelClient;
+    }
+
+    public ShellServer getShellServer() {
+        return shellServer;
+    }
+
+    public SessionManager getSessionManager() {
+        return sessionManager;
     }
 
     public Timer getTimer() {
