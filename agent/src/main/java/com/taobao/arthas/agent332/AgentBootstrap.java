@@ -8,7 +8,6 @@ import java.lang.instrument.Instrumentation;
 import java.net.URL;
 import java.net.URLDecoder;
 import java.security.CodeSource;
-import java.util.jar.JarFile;
 
 import com.taobao.arthas.agent.ArthasClassloader;
 
@@ -18,7 +17,6 @@ import com.taobao.arthas.agent.ArthasClassloader;
  * @author vlinux on 15/5/19.
  */
 public class AgentBootstrap {
-    private static final String ARTHAS_SPY_JAR = "arthas-spy.jar";
     private static final String ARTHAS_CORE_JAR = "arthas-core.jar";
     private static final String ARTHAS_BOOTSTRAP = "com.taobao.arthas.core.server.ArthasBootstrap";
     private static final String GET_INSTANCE = "getInstance";
@@ -70,21 +68,7 @@ public class AgentBootstrap {
         arthasClassLoader = null;
     }
 
-    private static ClassLoader getClassLoader(Instrumentation inst, File spyJarFile, File arthasCoreJarFile) throws Throwable {
-        // 将Spy添加到BootstrapClassLoader
-        ClassLoader parent = ClassLoader.getSystemClassLoader().getParent();
-        Class<?> spyClass = null;
-        if (parent != null) {
-            try {
-                spyClass =parent.loadClass("java.arthas.SpyAPI");
-            } catch (Throwable e) {
-                // ignore
-            }
-        }
-        if (spyClass == null) {
-            inst.appendToBootstrapClassLoaderSearch(new JarFile(spyJarFile));
-        }
-
+    private static ClassLoader getClassLoader(Instrumentation inst, File arthasCoreJarFile) throws Throwable {
         // 构造自定义的类加载器，尽量减少Arthas对现有工程的侵蚀
         return loadOrDefineClassLoader(arthasCoreJarFile);
     }
@@ -138,16 +122,10 @@ public class AgentBootstrap {
                 return;
             }
 
-            File spyJarFile = new File(arthasCoreJarFile.getParentFile(), ARTHAS_SPY_JAR);
-            if (!spyJarFile.exists()) {
-                ps.println("Spy jar file does not exist: " + spyJarFile);
-                return;
-            }
-
             /**
              * Use a dedicated thread to run the binding logic to prevent possible memory leak. #195
              */
-            final ClassLoader agentLoader = getClassLoader(inst, spyJarFile, arthasCoreJarFile);
+            final ClassLoader agentLoader = getClassLoader(inst, arthasCoreJarFile);
 
             Thread bindingThread = new Thread() {
                 @Override
