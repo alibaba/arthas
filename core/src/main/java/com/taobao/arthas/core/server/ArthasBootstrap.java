@@ -19,6 +19,7 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.jar.JarFile;
 
 import com.alibaba.arthas.deps.ch.qos.logback.classic.LoggerContext;
 import com.alibaba.arthas.deps.org.slf4j.Logger;
@@ -58,6 +59,7 @@ import io.netty.util.concurrent.EventExecutorGroup;
  * @author gongdewei 2020-03-25
  */
 public class ArthasBootstrap {
+    private static final String ARTHAS_SPY_JAR = "arthas-spy.jar";
     public static final String ARTHAS_HOME_PROPERTY = "arthas.home";
     private static String ARTHAS_SHOME = null;
 
@@ -95,7 +97,7 @@ public class ArthasBootstrap {
         arthasOutputDir.mkdirs();
 
         // 1. initSpy()
-        initSpy();
+        initSpy(instrumentation);
         // 2. ArthasEnvironment
         initArthasEnvironment(args);
         // 3. init logger
@@ -125,8 +127,29 @@ public class ArthasBootstrap {
         Runtime.getRuntime().addShutdownHook(shutdown);
     }
 
-    private static void initSpy() {
+    private static void initSpy(Instrumentation instrumentation) throws Throwable {
         // TODO init SpyImpl ?
+
+        // 将Spy添加到BootstrapClassLoader
+        ClassLoader parent = ClassLoader.getSystemClassLoader().getParent();
+        Class<?> spyClass = null;
+        if (parent != null) {
+            try {
+                spyClass =parent.loadClass("java.arthas.SpyAPI");
+            } catch (Throwable e) {
+                // ignore
+            }
+        }
+        if (spyClass == null) {
+            CodeSource codeSource = ArthasBootstrap.class.getProtectionDomain().getCodeSource();
+            if (codeSource != null) {
+                File arthasCoreJarFile = new File(codeSource.getLocation().toURI().getSchemeSpecificPart());
+                File spyJarFile = new File(arthasCoreJarFile.getParentFile(), ARTHAS_SPY_JAR);
+                instrumentation.appendToBootstrapClassLoaderSearch(new JarFile(spyJarFile));
+            } else {
+                throw new IllegalStateException("can not find " + ARTHAS_SPY_JAR);
+            }
+        }
     }
 
     private void initArthasEnvironment(Map<String, String> argsMap) throws IOException {
