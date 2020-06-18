@@ -87,7 +87,7 @@ public class ArthasBootstrap {
 
     private TransformerManager transformerManager;
 
-    private ArthasBootstrap(Instrumentation instrumentation, String args) throws Throwable {
+    private ArthasBootstrap(Instrumentation instrumentation, Map<String, String> args) throws Throwable {
         this.instrumentation = instrumentation;
 
         String outputPath = System.getProperty("arthas.output.dir", "arthas-output");
@@ -129,7 +129,7 @@ public class ArthasBootstrap {
         // TODO init SpyImpl ?
     }
 
-    private void initArthasEnvironment(String args) throws IOException {
+    private void initArthasEnvironment(Map<String, String> argsMap) throws IOException {
         if (arthasEnvironment == null) {
             arthasEnvironment = new ArthasEnvironment();
         }
@@ -141,7 +141,6 @@ public class ArthasBootstrap {
          * https://github.com/alibaba/arthas/issues/986
          * </pre>
          */
-        Map<String, String> argsMap = FeatureCodec.DEFAULT_COMMANDLINE_CODEC.toMap(args);
         // 给配置全加上前缀
         Map<String, Object> mapWithPrefix = new HashMap<String, Object>(argsMap.size());
         for (Entry<String, String> entry : argsMap.entrySet()) {
@@ -376,6 +375,22 @@ public class ArthasBootstrap {
      * @throws Throwable
      */
     public synchronized static ArthasBootstrap getInstance(Instrumentation instrumentation, String args) throws Throwable {
+        if (arthasBootstrap != null) {
+            return arthasBootstrap;
+        }
+
+        Map<String, String> argsMap = FeatureCodec.DEFAULT_COMMANDLINE_CODEC.toMap(args);
+        return getInstance(instrumentation, argsMap);
+    }
+
+    /**
+     * 单例
+     *
+     * @param instrumentation JVM增强
+     * @return ArthasServer单例
+     * @throws Throwable
+     */
+    public synchronized static ArthasBootstrap getInstance(Instrumentation instrumentation, Map<String, String> args) throws Throwable {
         if (arthasBootstrap == null) {
             arthasBootstrap = new ArthasBootstrap(instrumentation, args);
         }
