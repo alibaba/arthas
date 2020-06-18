@@ -1,28 +1,27 @@
 package com.taobao.arthas.bytekit.asm.inst;
 
-import java.io.IOException;
-
+import com.alibaba.arthas.deps.org.objectweb.asm.Type;
+import com.alibaba.arthas.deps.org.objectweb.asm.tree.ClassNode;
+import com.alibaba.arthas.deps.org.objectweb.asm.tree.MethodNode;
+import com.taobao.arthas.bytekit.asm.inst.impl.InstrumentImpl;
+import com.taobao.arthas.bytekit.utils.AsmUtils;
+import com.taobao.arthas.bytekit.utils.Decompiler;
+import com.taobao.arthas.bytekit.utils.VerifyUtils;
 import org.assertj.core.api.Assertions;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TestName;
-import com.alibaba.arthas.deps.org.objectweb.asm.Type;
-import com.alibaba.arthas.deps.org.objectweb.asm.tree.ClassNode;
-import com.alibaba.arthas.deps.org.objectweb.asm.tree.MethodNode;
 
-import com.taobao.arthas.bytekit.asm.inst.impl.InstrumentImpl;
-import com.taobao.arthas.bytekit.utils.AsmUtils;
-import com.taobao.arthas.bytekit.utils.Decompiler;
-import com.taobao.arthas.bytekit.utils.VerifyUtils;
+import java.io.IOException;
 
 /**
  *
  * @author hengyunabc 2019-03-18
- *
+ * @author gongdewei 2020-06-18
  */
-public class InvokeOriginTest {
+public class DelegateInvokeOriginTest {
 
     ClassNode apmClassNode;
     ClassNode originClassNode;
@@ -52,33 +51,32 @@ public class InvokeOriginTest {
 
     private Object replace(String methodName) throws Exception {
         System.err.println(methodName);
-        for (MethodNode methodNode : apmClassNode.methods) {
-            if (methodNode.name.equals(methodName)) {
-                methodNode = AsmUtils.removeLineNumbers(methodNode);
+        for (MethodNode apmMethodNode : apmClassNode.methods) {
+            if (apmMethodNode.name.equals(methodName)) {
+                apmMethodNode = AsmUtils.removeLineNumbers(apmMethodNode);
                 // 从原来的类里查找对应的函数
-                MethodNode findMethod = AsmUtils.findMethod(originClassNode.methods, methodNode);
-                if (findMethod != null) {
-                    MethodNode methodNode2 = InstrumentImpl.inlineInvokeOrigin(targetClassNode, findMethod,
-                                    methodNode);
+                MethodNode originMethod = AsmUtils.findMethod(originClassNode.methods, apmMethodNode);
+                if (originMethod != null) {
+                    MethodNode apmMethodNode2 = InstrumentImpl.delegateInvokeOrigin(targetClassNode, originMethod,
+                                    apmMethodNode);
 
-                    System.err.println(Decompiler.toString(methodNode2));
-
+                    System.err.println(Decompiler.toString(apmMethodNode2));
                 } else {
 
                 }
             }
         }
 
-        byte[] resutlBytes = AsmUtils.toBytes(targetClassNode);
+        byte[] resultBytes = AsmUtils.toBytes(targetClassNode);
 
         System.err.println("=================");
 
-        System.err.println(Decompiler.decompile(resutlBytes));
+        System.err.println(Decompiler.decompile(resultBytes));
 
-        // System.err.println(AsmUtils.toASMCode(resutlBytes));
+        // System.err.println(AsmUtils.toASMCode(resultBytes));
 
-        VerifyUtils.asmVerify(resutlBytes);
-        return VerifyUtils.instanceVerity(resutlBytes);
+        VerifyUtils.asmVerify(resultBytes);
+        return VerifyUtils.instanceVerity(resultBytes);
     }
 
     @Test

@@ -6,6 +6,7 @@ import com.alibaba.arthas.deps.org.objectweb.asm.Opcodes;
 import com.alibaba.arthas.deps.org.objectweb.asm.Type;
 import com.alibaba.arthas.deps.org.objectweb.asm.commons.Method;
 import com.alibaba.arthas.deps.org.objectweb.asm.tree.AbstractInsnNode;
+import com.alibaba.arthas.deps.org.objectweb.asm.tree.ClassNode;
 import com.alibaba.arthas.deps.org.objectweb.asm.tree.InsnList;
 import com.alibaba.arthas.deps.org.objectweb.asm.tree.InsnNode;
 import com.alibaba.arthas.deps.org.objectweb.asm.tree.MethodInsnNode;
@@ -17,14 +18,69 @@ import com.taobao.arthas.bytekit.utils.AsmOpUtils;
 import com.taobao.arthas.bytekit.utils.AsmUtils;
 
 /**
+ * InstrumentApi.invokeOrigin()的处理类
  *
  * @author hengyunabc 2019-03-15
- *
+ * @author gongdewei 2020-06-18
  */
 public class InstrumentImpl {
 
-    public static MethodNode replaceInvokeOrigin(String originOwner, MethodNode originMethodNode,
-                    MethodNode apmMethodNode) {
+    /**
+     * 使用inline方式实现invokeOrigin功能
+     * @param classNode target classNode
+     * @param originMethodNode origin method node
+     * @param apmMethodNode apm method node
+     * @return
+     */
+    public static MethodNode inlineInvokeOrigin(ClassNode classNode, MethodNode originMethodNode,
+                                                MethodNode apmMethodNode) {
+        // 修改apmMethodNode：替换InstrumentApi.invokeOrigin()语句为originMethod invoke语句
+        String originOwner = classNode.name;
+        replaceInvokeOrigin(originOwner, originMethodNode, apmMethodNode);
+
+        // 修改apmMethodNode：将originMethod invoke语句替换为originMethod内容
+        MethodProcessor methodProcessor = new MethodProcessor(originOwner, apmMethodNode);
+        methodProcessor.inline(originOwner, originMethodNode);
+
+        // 用apmMethod替换originMethod内容
+        AsmUtils.replaceMethod(classNode, apmMethodNode);
+
+        return apmMethodNode;
+    }
+
+    /**
+     * 使用delegate方式实现invokeOrigin功能
+     *
+     * @param classNode target classNode
+     * @param originMethodNode origin method node
+     * @param apmMethodNode apm method node
+     * @return
+     */
+    public static MethodNode delegateInvokeOrigin(ClassNode classNode, MethodNode originMethodNode,
+                                                  MethodNode apmMethodNode) {
+        // 生成幂等性delegateMethodName，重复retransform的方法名相同
+        String delegateMethodName = originMethodNode.name+"_origin_"+ getHash(classNode.name, originMethodNode.name, originMethodNode.desc);
+        // 复制originMethod字节码内容到delegateMethod
+        MethodNode delegateMethodNode = AsmUtils.copyAsMethod(originMethodNode, Opcodes.ACC_PRIVATE, delegateMethodName);
+
+        // 修改apmMethodNode：替换InstrumentApi.invokeOrigin()语句为delegateMethod invoke语句
+        replaceInvokeOrigin(classNode.name, delegateMethodNode, apmMethodNode);
+
+        // 添加delegateMethod 到classNode
+        classNode.methods.add(delegateMethodNode);
+
+        // 用apmMethod替换originMethod内容
+        AsmUtils.replaceMethod(classNode, apmMethodNode);
+
+        return apmMethodNode;
+    }
+
+    private static String getHash(String originOwner, String methodName, String methodDesc) {
+        return Integer.toHexString((originOwner+"_"+methodName+"_"+methodDesc).hashCode());
+    }
+
+    private static void replaceInvokeOrigin(String originOwner, MethodNode originMethodNode,
+                                            MethodNode apmMethodNode) {
 
         // 查找到所有的 InstrumentApi.invokeOrigin() 指令
         List<MethodInsnNode> methodInsnNodes = AsmUtils.findMethodInsnNode(apmMethodNode,
@@ -115,11 +171,6 @@ public class InstrumentImpl {
             apmMethodNode.instructions.insertBefore(methodInsnNode, instructions);
             apmMethodNode.instructions.remove(methodInsnNode);
         }
-
-        MethodProcessor methodProcessor = new MethodProcessor(originOwner, apmMethodNode);
-        methodProcessor.inline(originOwner, originMethodNode);
-
-        return apmMethodNode;
     }
 
 }

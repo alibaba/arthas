@@ -1,5 +1,7 @@
 package com.taobao.arthas.bytekit.asm.inst;
 
+import java.util.Arrays;
+
 /**
  *
  * @author hengyunabc 2019-03-18
@@ -59,9 +61,11 @@ public class InvokeOriginDemo_APM {
     }
 
     public String[] returnStrArrayWithArgs(int i, String s, long l) {
-        System.out.println(i);
+        l -= 100;
+        System.out.println("l = "+l);
         String[] result = InstrumentApi.invokeOrigin();
         result[0] = "fff";
+        System.out.println("result = "+ Arrays.asList(result));
         return result;
     }
 
