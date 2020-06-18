@@ -23,7 +23,6 @@ public class AgentBootstrap {
     private static final String ARTHAS_BOOTSTRAP = "com.taobao.arthas.core.server.ArthasBootstrap";
     private static final String GET_INSTANCE = "getInstance";
     private static final String IS_BIND = "isBind";
-    private static final String BIND = "bind";
 
     private static PrintStream ps = System.err;
     static {
@@ -187,15 +186,9 @@ public class AgentBootstrap {
         Object bootstrap = bootstrapClass.getMethod(GET_INSTANCE, Instrumentation.class, String.class).invoke(null, inst, args);
         boolean isBind = (Boolean) bootstrapClass.getMethod(IS_BIND).invoke(bootstrap);
         if (!isBind) {
-            try {
-                ps.println("Arthas start to bind...");
-                bootstrapClass.getMethod(BIND, String.class).invoke(bootstrap, args);
-                ps.println("Arthas server bind success.");
-                return;
-            } catch (Exception e) {
-                ps.println("Arthas server port binding failed! Please check $HOME/logs/arthas/arthas.log for more details.");
-                throw e;
-            }
+            String errorMsg = "Arthas server port binding failed! Please check $HOME/logs/arthas/arthas.log for more details.";
+            ps.println(errorMsg);
+            throw new RuntimeException(errorMsg);
         }
         ps.println("Arthas server already bind.");
     }

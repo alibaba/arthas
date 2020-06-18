@@ -225,7 +225,7 @@ public class ArthasBootstrap {
      * @param configure 配置信息
      * @throws IOException 服务器启动失败
      */
-    public void bind(Configure configure) throws Throwable {
+    private void bind(Configure configure) throws Throwable {
 
         long start = System.currentTimeMillis();
 
