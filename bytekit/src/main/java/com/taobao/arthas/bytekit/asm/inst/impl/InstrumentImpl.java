@@ -58,19 +58,23 @@ public class InstrumentImpl {
      */
     public static MethodNode delegateInvokeOrigin(ClassNode classNode, MethodNode originMethodNode,
                                                   MethodNode apmMethodNode) {
-        // 生成幂等性delegateMethodName，重复retransform的方法名相同
-        String delegateMethodName = originMethodNode.name+"_origin_"+ getHash(classNode.name, originMethodNode.name, originMethodNode.desc);
-        // 复制originMethod字节码内容到delegateMethod
-        MethodNode delegateMethodNode = AsmUtils.copyAsMethod(originMethodNode, Opcodes.ACC_PRIVATE, delegateMethodName);
+        // 生成幂等delegateMethodName，重复retransform的方法名相同
+        String originMethodName = originMethodNode.name;
+        String delegateMethodName = originMethodName +"_origin_"+ getHash(classNode.name, originMethodName, originMethodNode.desc);
+
+        // rename originMethod to delegateMethodName
+        MethodNode delegateMethodNode = originMethodNode;
+        delegateMethodNode.name = delegateMethodName;
 
         // 修改apmMethodNode：替换InstrumentApi.invokeOrigin()语句为delegateMethod invoke语句
         replaceInvokeOrigin(classNode.name, delegateMethodNode, apmMethodNode);
 
+        // 用apmMethod替换originMethod内容
+        apmMethodNode.name = originMethodName;
+        AsmUtils.replaceMethod(classNode, apmMethodNode);
+
         // 添加delegateMethod 到classNode
         classNode.methods.add(delegateMethodNode);
-
-        // 用apmMethod替换originMethod内容
-        AsmUtils.replaceMethod(classNode, apmMethodNode);
 
         return apmMethodNode;
     }

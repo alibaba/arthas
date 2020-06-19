@@ -113,28 +113,6 @@ public class AsmUtils {
 		}
 	}
 
-	/**
-	 * copy origin method as new method
-	 * @param classNode
-	 * @param originMethodNode
-	 * @param newMethodName
-	 * @return
-	 */
-	public static MethodNode copyAsMethod(MethodNode originMethodNode, int access, String newMethodName) {
-		//replace new method's public/protected to arg `access`
-		access |= originMethodNode.access;
-		access &= ~(Opcodes.ACC_PUBLIC|Opcodes.ACC_PROTECTED);
-
-		//copy method inst and localVariables
-		MethodNode newMethod = new MethodNode(access, newMethodName, originMethodNode.desc, originMethodNode.signature,
-				originMethodNode.exceptions.toArray(new String[0]));
-		originMethodNode.instructions.accept(newMethod);
-		for (LocalVariableNode localVariable : originMethodNode.localVariables) {
-			localVariable.accept(newMethod);
-		}
-		return newMethod;
-	}
-
 	public static String toASMCode(byte[] bytecode) throws IOException {
 		return toASMCode(bytecode, true);
 	}

@@ -173,4 +173,18 @@ public class InvokeOriginTest {
         Object object = replace(methodName);
         Assertions.assertThat(VerifyUtils.invoke(object, methodName, 100)).isEqualTo((100 + 1) * 100 / 2);
     }
+
+    @Test
+    public void test_tryCatch1() throws Exception {
+        String methodName = testName.getMethodName().substring("test_".length());
+        Object object = replace(methodName);
+        Assertions.assertThat(VerifyUtils.invoke(object, methodName, -1)).isEqualTo(1);
+    }
+
+    @Test
+    public void test_tryCatch2() throws Exception {
+        String methodName = testName.getMethodName().substring("test_".length());
+        Object object = replace(methodName);
+        Assertions.assertThat(VerifyUtils.invoke(object, methodName, -1)).isEqualTo(1);
+    }
 }

@@ -86,4 +86,20 @@ public class InvokeOriginDemo_APM {
         System.err.println(result);
         return result;
     }
+
+    public int tryCatch1(int i) {
+        int result = InstrumentApi.invokeOrigin();
+        return result;
+    }
+
+    public int tryCatch2(int i) {
+        int result = -1;
+        try {
+            result = InstrumentApi.invokeOrigin();
+        } catch (Exception e) {
+            System.err.println("outer catch: "+e.getMessage());
+            result = 1;
+        }
+        return result;
+    }
 }

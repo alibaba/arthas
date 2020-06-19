@@ -74,4 +74,23 @@ public class InvokeOriginDemo {
         }
         return i + recursive(i - 1);
     }
+
+    public int tryCatch1(int i) {
+        try {
+            if (i < 1) {
+                throw new IllegalArgumentException("input i is less than 1");
+            }
+        } catch (IllegalArgumentException e) {
+            System.out.println("inner catch: "+e.getMessage());
+            return 1;
+        }
+        return i*10;
+    }
+
+    public int tryCatch2(int i) {
+        if (i < 1) {
+            throw new IllegalArgumentException("input i is less than 1");
+        }
+        return i*10;
+    }
 }
