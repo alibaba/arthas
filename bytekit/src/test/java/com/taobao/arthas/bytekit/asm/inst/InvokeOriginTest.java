@@ -216,6 +216,7 @@ public class InvokeOriginTest {
             VerifyUtils.invoke(object, methodName, 1);
         } catch (Throwable e) {
             throwable = e.getCause();
+            throwable.printStackTrace();
         }
         Assertions.assertThat(throwable.getMessage().contains("input i is less than 10"));
     }
