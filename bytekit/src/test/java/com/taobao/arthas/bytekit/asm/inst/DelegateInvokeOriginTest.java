@@ -185,4 +185,11 @@ public class DelegateInvokeOriginTest {
         Object object = replace(methodName);
         Assertions.assertThat(VerifyUtils.invoke(object, methodName, -1)).isEqualTo(1);
     }
+
+    @Test
+    public void test_nestClass() throws Exception {
+        String methodName = testName.getMethodName().substring("test_".length());
+        Object object = replace(methodName);
+        Assertions.assertThat(VerifyUtils.invoke(object, methodName)).isEqualTo(100);
+    }
 }

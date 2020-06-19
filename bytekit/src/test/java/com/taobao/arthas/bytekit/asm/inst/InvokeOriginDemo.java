@@ -1,6 +1,7 @@
 package com.taobao.arthas.bytekit.asm.inst;
 
 import java.util.Date;
+import java.util.concurrent.Callable;
 
 /**
  * @author hengyunabc 2019-03-13
@@ -92,5 +93,24 @@ public class InvokeOriginDemo {
             throw new IllegalArgumentException("input i is less than 1");
         }
         return i*10;
+    }
+
+    public int nestClass() throws Exception {
+
+        Callable callable = new Callable() {
+            @Override
+            public Object call() throws Exception {
+                return new Result(100).count;
+            }
+
+            class Result {
+                int count;
+
+                public Result(int count) {
+                    this.count = count;
+                }
+            }
+        };
+        return (Integer) callable.call();
     }
 }

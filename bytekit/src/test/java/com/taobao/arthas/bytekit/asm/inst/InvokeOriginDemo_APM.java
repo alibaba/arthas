@@ -102,4 +102,9 @@ public class InvokeOriginDemo_APM {
         }
         return result;
     }
+
+    public int nestClass() throws Exception {
+        int result = InstrumentApi.invokeOrigin();
+        return result;
+    }
 }
