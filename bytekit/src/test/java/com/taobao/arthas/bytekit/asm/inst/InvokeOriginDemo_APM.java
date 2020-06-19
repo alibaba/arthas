@@ -1,6 +1,7 @@
 package com.taobao.arthas.bytekit.asm.inst;
 
 import java.util.Arrays;
+import java.util.List;
 
 /**
  *
@@ -107,4 +108,29 @@ public class InvokeOriginDemo_APM {
         int result = InstrumentApi.invokeOrigin();
         return result;
     }
+
+    public int finallyCase(List<Integer> inputs) {
+        return InstrumentApi.invokeOrigin();
+    }
+
+    public int throwCase1(int i) {
+        return InstrumentApi.invokeOrigin();
+    }
+
+    public int throwCase2(int i) {
+        int result = InstrumentApi.invokeOrigin();
+        if (result < 10) {
+            throw new IllegalArgumentException("input i is less than 10");
+        }
+        return result;
+    }
+
+    public int throwCase3(int i) {
+        if (i < 10) {
+            throw new IllegalArgumentException("input i is less than 10");
+        }
+        int result = InstrumentApi.invokeOrigin();
+        return result;
+    }
+
 }

@@ -1,6 +1,7 @@
 package com.taobao.arthas.bytekit.asm.inst;
 
 import java.util.Date;
+import java.util.List;
 import java.util.concurrent.Callable;
 
 /**
@@ -92,7 +93,7 @@ public class InvokeOriginDemo {
         if (i < 1) {
             throw new IllegalArgumentException("input i is less than 1");
         }
-        return i*10;
+        return i;
     }
 
     public int nestClass() throws Exception {
@@ -112,5 +113,36 @@ public class InvokeOriginDemo {
             }
         };
         return (Integer) callable.call();
+    }
+
+    public int finallyCase(List<Integer> inputs) {
+        try {
+            return inputs.get(0);
+        } finally {
+            inputs.clear();
+        }
+    }
+
+    public int throwCase1(int i) {
+        if (i < 1) {
+            throw new IllegalArgumentException("input i is less than 1");
+        } else if (i < 10) {
+            throw new IllegalArgumentException("input i is less than 10");
+        }
+        return i;
+    }
+
+    public int throwCase2(int i) {
+        if (i < 1) {
+            throw new IllegalArgumentException("input i is less than 1");
+        }
+        return i;
+    }
+
+    public int throwCase3(int i) {
+        if (i < 1) {
+            throw new IllegalArgumentException("input i is less than 1");
+        }
+        return i;
     }
 }

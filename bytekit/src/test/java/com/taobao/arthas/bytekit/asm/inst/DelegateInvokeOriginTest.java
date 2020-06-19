@@ -15,6 +15,8 @@ import org.junit.Test;
 import org.junit.rules.TestName;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  *
@@ -192,4 +194,54 @@ public class DelegateInvokeOriginTest {
         Object object = replace(methodName);
         Assertions.assertThat(VerifyUtils.invoke(object, methodName)).isEqualTo(100);
     }
+
+    @Test
+    public void test_finallyCase() throws Exception {
+        String methodName = testName.getMethodName().substring("test_".length());
+        Object object = replace(methodName);
+        List<Integer> inputs = new ArrayList<Integer>();
+        inputs.add(100);
+        Assertions.assertThat(VerifyUtils.invoke(object, methodName, inputs)).isEqualTo(100);
+        Assertions.assertThat(inputs.isEmpty());
+    }
+
+    @Test
+    public void test_throwCase1() throws Exception {
+        final String methodName = testName.getMethodName().substring("test_".length());
+        final Object object = replace(methodName);
+        Throwable throwable = null;
+        try {
+            VerifyUtils.invoke(object, methodName, 1);
+        } catch (Throwable e) {
+            throwable = e.getCause();
+        }
+        Assertions.assertThat(throwable.getMessage().contains("input i is less than 10"));
+    }
+
+    @Test
+    public void test_throwCase2() throws Exception {
+        final String methodName = testName.getMethodName().substring("test_".length());
+        final Object object = replace(methodName);
+        Throwable throwable = null;
+        try {
+            VerifyUtils.invoke(object, methodName, 1);
+        } catch (Throwable e) {
+            throwable = e.getCause();
+        }
+        Assertions.assertThat(throwable.getMessage().contains("input i is less than 10"));
+    }
+
+    @Test
+    public void test_throwCase3() throws Exception {
+        final String methodName = testName.getMethodName().substring("test_".length());
+        final Object object = replace(methodName);
+        Throwable throwable = null;
+        try {
+            VerifyUtils.invoke(object, methodName, 1);
+        } catch (Throwable e) {
+            throwable = e.getCause();
+        }
+        Assertions.assertThat(throwable.getMessage().contains("input i is less than 10"));
+    }
+
 }
