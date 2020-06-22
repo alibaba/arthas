@@ -61,7 +61,7 @@ import io.netty.util.concurrent.EventExecutorGroup;
 public class ArthasBootstrap {
     private static final String ARTHAS_SPY_JAR = "arthas-spy.jar";
     public static final String ARTHAS_HOME_PROPERTY = "arthas.home";
-    private static String ARTHAS_SHOME = null;
+    private static String ARTHAS_HOME = null;
 
     public static final String CONFIG_NAME_PROPERTY = "arthas.config.name";
     public static final String CONFIG_LOCATION_PROPERTY = "arthas.config.location";
@@ -164,14 +164,13 @@ public class ArthasBootstrap {
          * https://github.com/alibaba/arthas/issues/986
          * </pre>
          */
-        // 给配置全加上前缀
-        Map<String, Object> mapWithPrefix = new HashMap<String, Object>(argsMap.size());
-        for (Entry<String, String> entry : argsMap.entrySet()) {
-            mapWithPrefix.put("arthas." + entry.getKey(), entry.getValue());
+        Map<String, String> copyMap = new HashMap<String, String>(argsMap);
+        // 添加 arthas.home
+        if (!copyMap.containsKey(ARTHAS_HOME_PROPERTY)) {
+            copyMap.put(ARTHAS_HOME_PROPERTY, arthasHome());
         }
-        mapWithPrefix.put(ARTHAS_HOME_PROPERTY, arthasHome());
 
-        MapPropertySource mapPropertySource = new MapPropertySource("args", mapWithPrefix);
+        MapPropertySource mapPropertySource = new MapPropertySource("args", (Map<String, Object>)(Object)copyMap);
         arthasEnvironment.addFirst(mapPropertySource);
 
         tryToLoadArthasProperties();
@@ -180,22 +179,22 @@ public class ArthasBootstrap {
         BinderUtils.inject(arthasEnvironment, configure);
     }
 
-    private String arthasHome() {
-        if (ARTHAS_SHOME != null) {
-            return ARTHAS_SHOME;
+    private static String arthasHome() {
+        if (ARTHAS_HOME != null) {
+            return ARTHAS_HOME;
         }
         CodeSource codeSource = ArthasBootstrap.class.getProtectionDomain().getCodeSource();
         if (codeSource != null) {
             try {
-                ARTHAS_SHOME = new File(codeSource.getLocation().toURI().getSchemeSpecificPart()).getParentFile().getAbsolutePath();
+                ARTHAS_HOME = new File(codeSource.getLocation().toURI().getSchemeSpecificPart()).getParentFile().getAbsolutePath();
             } catch (Throwable e) {
-                AnsiLog.error("try to load arthas.properties error", e);
+                AnsiLog.error("try to find arthas.home from CodeSource error", e);
             }
         }
-        if (ARTHAS_SHOME == null) {
-            ARTHAS_SHOME = new File("").getAbsolutePath();
+        if (ARTHAS_HOME == null) {
+            ARTHAS_HOME = new File("").getAbsolutePath();
         }
-        return ARTHAS_SHOME;
+        return ARTHAS_HOME;
     }
 
     // try to load arthas.properties
@@ -403,7 +402,12 @@ public class ArthasBootstrap {
         }
 
         Map<String, String> argsMap = FeatureCodec.DEFAULT_COMMANDLINE_CODEC.toMap(args);
-        return getInstance(instrumentation, argsMap);
+        // 给配置全加上前缀
+        Map<String, String> mapWithPrefix = new HashMap<String, String>(argsMap.size());
+        for (Entry<String, String> entry : argsMap.entrySet()) {
+            mapWithPrefix.put("arthas." + entry.getKey(), entry.getValue());
+        }
+        return getInstance(instrumentation, mapWithPrefix);
     }
 
     /**
