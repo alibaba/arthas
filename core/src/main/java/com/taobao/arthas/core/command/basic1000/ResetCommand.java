@@ -2,6 +2,7 @@ package com.taobao.arthas.core.command.basic1000;
 
 import com.taobao.arthas.core.advisor.Enhancer;
 import com.taobao.arthas.core.command.Constants;
+import com.taobao.arthas.core.command.model.EnhancerAffectModel;
 import com.taobao.arthas.core.shell.command.AnnotatedCommand;
 import com.taobao.arthas.core.shell.command.CommandProcess;
 import com.taobao.arthas.core.util.matcher.Matcher;
@@ -50,7 +51,7 @@ public class ResetCommand extends AnnotatedCommand {
         EnhancerAffect enhancerAffect = null;
         try {
             enhancerAffect = Enhancer.reset(inst, matcher);
-            process.write(enhancerAffect.toString()).write("\n");
+            process.appendResult(new EnhancerAffectModel(enhancerAffect));
         } catch (UnmodifiableClassException e) {
             // ignore
         } finally {

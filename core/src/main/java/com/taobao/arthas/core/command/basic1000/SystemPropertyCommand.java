@@ -1,6 +1,9 @@
 package com.taobao.arthas.core.command.basic1000;
 
 import com.taobao.arthas.core.command.Constants;
+import com.taobao.arthas.core.command.model.MessageModel;
+import com.taobao.arthas.core.command.model.StatusModel;
+import com.taobao.arthas.core.command.model.SystemPropertyModel;
 import com.taobao.arthas.core.shell.cli.Completion;
 import com.taobao.arthas.core.shell.cli.CompletionUtils;
 import com.taobao.arthas.core.shell.command.AnnotatedCommand;
@@ -10,13 +13,6 @@ import com.taobao.middleware.cli.annotations.Argument;
 import com.taobao.middleware.cli.annotations.Description;
 import com.taobao.middleware.cli.annotations.Name;
 import com.taobao.middleware.cli.annotations.Summary;
-import com.taobao.text.Decoration;
-import com.taobao.text.ui.TableElement;
-import com.taobao.text.util.RenderUtil;
-
-import java.util.Properties;
-
-import static com.taobao.text.ui.Element.label;
 
 /**
  * @author ralf0131 2017-01-09 14:03.
@@ -46,25 +42,26 @@ public class SystemPropertyCommand extends AnnotatedCommand {
     public void process(CommandProcess process) {
         int status = 0;
         try {
+
             if (StringUtils.isBlank(propertyName) && StringUtils.isBlank(propertyValue)) {
                 // show all system properties
-                process.write(renderSystemProperties(System.getProperties(), process.width()));
+                process.appendResult(new SystemPropertyModel(System.getProperties()));
             } else if (StringUtils.isBlank(propertyValue)) {
                 // view the specified system property
                 String value = System.getProperty(propertyName);
                 if (value == null) {
-                    process.write("There is no property with the key " + propertyName + ".\n");
+                    process.appendResult(new StatusModel(status, "There is no property with the key " + propertyName));
                 } else {
-                    process.write(propertyName + "=" + value + "\n");
+                    process.appendResult(new SystemPropertyModel(propertyName, value));
                 }
             } else {
                 // change system property
                 System.setProperty(propertyName, propertyValue);
-                process.write("Successfully changed the system property.\n");
-                process.write(propertyName + "=" + System.getProperty(propertyName) + "\n");
+                process.appendResult(new MessageModel("Successfully changed the system property."));
+                process.appendResult(new SystemPropertyModel(propertyName, System.getProperty(propertyName)));
             }
         } catch (Throwable t) {
-            process.write("Error during setting system property: " + t.getMessage() + "\n");
+            process.appendResult(new StatusModel(status, "Error during setting system property: " + t.getMessage()));
             status = 1;
         } finally {
             process.end(status);
@@ -79,17 +76,5 @@ public class SystemPropertyCommand extends AnnotatedCommand {
     @Override
     public void complete(Completion completion) {
         CompletionUtils.complete(completion, System.getProperties().stringPropertyNames());
-    }
-
-    private String renderSystemProperties(Properties properties, int width) {
-        TableElement table = new TableElement(1, 4).leftCellPadding(1).rightCellPadding(1);
-        table.row(true, label("KEY").style(Decoration.bold.bold()),
-                label("VALUE").style(Decoration.bold.bold()));
-
-        for (String name: properties.stringPropertyNames()) {
-            table.row(name, properties.getProperty(name));
-        }
-
-        return RenderUtil.render(table, width);
     }
 }

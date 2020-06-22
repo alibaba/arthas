@@ -168,7 +168,6 @@ public class GrepCommand extends AnnotatedCommand {
 
     @Override
     public void process(CommandProcess process) {
-        process.write("The grep command only for pipes. See 'grep --help'\n");
-        process.end();
+        process.end(-1, "The grep command only for pipes. See 'grep --help'\n");
     }
 }

@@ -2,7 +2,7 @@ package com.taobao.arthas.core.command.view;
 
 import com.alibaba.arthas.deps.org.slf4j.Logger;
 import com.alibaba.arthas.deps.org.slf4j.LoggerFactory;
-import com.taobao.arthas.core.command.model.*;
+import com.taobao.arthas.core.command.model.ResultModel;
 import com.taobao.arthas.core.shell.command.CommandProcess;
 
 import java.lang.reflect.Method;
@@ -16,6 +16,10 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public class ResultViewResolver {
     private static final Logger logger = LoggerFactory.getLogger(ResultViewResolver.class);
+
+    static {
+        getInstance().registerResultViews();
+    }
 
     // modelClass -> view
     private Map<Class, ResultView> resultViewMap = new ConcurrentHashMap<Class, ResultView>();
@@ -31,12 +35,9 @@ public class ResultViewResolver {
         return viewResolver;
     }
 
-    static {
-        getInstance().registerResultViews();
-    }
-
     private void registerResultViews() {
         try {
+            //basic1000
             registerView(StatusView.class);
             registerView(VersionView.class);
             registerView(MessageView.class);
@@ -44,6 +45,20 @@ public class ResultViewResolver {
             //registerView(HistoryView.class);
             registerView(EchoView.class);
             registerView(CatView.class);
+            registerView(EnhancerAffectView.class);
+            registerView(OptionsView.class);
+            registerView(SystemPropertyView.class);
+            registerView(SystemEnvView.class);
+            registerView(PwdView.class);
+            registerView(VMOptionView.class);
+            registerView(SessionView.class);
+
+            //klass100
+
+            //logger
+
+            //monitor2000
+
         } catch (Throwable e) {
             logger.error("register result view failed", e);
         }
@@ -56,17 +71,18 @@ public class ResultViewResolver {
         return resultViewMap.get(model.getClass());
     }
 
-    public void registerView(Class modelClass, ResultView view) {
-        //TODO 检查model的type是否重复，减少复制代码带来的bug
+    public ResultViewResolver registerView(Class modelClass, ResultView view) {
+        //TODO 检查model的type是否重复，避免复制代码带来的bug
         this.resultViewMap.put(modelClass, view);
+        return this;
     }
 
-    public void registerView(ResultView view) {
+    public ResultViewResolver registerView(ResultView view) {
         Class modelClass = getModelClass(view);
         if (modelClass == null) {
             throw new NullPointerException("model class is null");
         }
-        this.registerView(modelClass, view);
+        return this.registerView(modelClass, view);
     }
 
     public void registerView(Class<? extends ResultView> viewClass) {
