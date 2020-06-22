@@ -21,7 +21,8 @@ public class OptionsView extends ResultView<OptionsModel> {
         if (result.getOptions() != null) {
             process.write(RenderUtil.render(drawShowTable(result.getOptions()), process.width()));
         } else if (result.getChangeResult() != null) {
-            ViewRenderUtil.drawChangeResult(process, result.getChangeResult());
+            TableElement table = ViewRenderUtil.renderChangeResult(result.getChangeResult());
+            process.write(RenderUtil.render(table, process.width()));
         }
     }
 

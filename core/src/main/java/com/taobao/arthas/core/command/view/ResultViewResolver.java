@@ -45,13 +45,14 @@ public class ResultViewResolver {
             //registerView(HistoryView.class);
             registerView(EchoView.class);
             registerView(CatView.class);
-            registerView(EnhancerAffectView.class);
             registerView(OptionsView.class);
             registerView(SystemPropertyView.class);
             registerView(SystemEnvView.class);
             registerView(PwdView.class);
             registerView(VMOptionView.class);
             registerView(SessionView.class);
+            registerView(ResetView.class);
+            registerView(ShutdownView.class);
 
             //klass100
 
