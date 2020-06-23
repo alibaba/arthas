@@ -356,14 +356,6 @@ new Vue({
     methods: {
     },
     watch: {
-        '$route'(to, from){
-            //console.log('route: ', to, from);
-            // if (to.path.startsWith("/session") && to.params.sessionId == null){
-            //     this.$router.push("/session/" + this.sessionId);
-            // }
-
-            //this.initPage();
-        }
     },
     created(){
 
