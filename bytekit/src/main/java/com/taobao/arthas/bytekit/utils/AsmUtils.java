@@ -113,6 +113,16 @@ public class AsmUtils {
 		}
 	}
 
+	public static void insertMethodBefore(ClassNode classNode, MethodNode methodNode, MethodNode newMethodNode) {
+		for (int index = 0; index < classNode.methods.size(); ++index) {
+			MethodNode tmp = classNode.methods.get(index);
+			if (tmp.name.equals(methodNode.name) && tmp.desc.equals(methodNode.desc)) {
+				classNode.methods.add(index, newMethodNode);
+				break;
+			}
+		}
+	}
+
 	public static String toASMCode(byte[] bytecode) throws IOException {
 		return toASMCode(bytecode, true);
 	}
