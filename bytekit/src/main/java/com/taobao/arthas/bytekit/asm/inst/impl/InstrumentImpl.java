@@ -34,11 +34,11 @@ public class InstrumentImpl {
      */
     public static MethodNode inlineInvokeOrigin(ClassNode classNode, MethodNode originMethodNode,
                                                 MethodNode apmMethodNode) {
-        // 修改apmMethodNode：替换InstrumentApi.invokeOrigin()语句为originMethod invoke语句
+        // 修改apmMethod字节码：替换InstrumentApi.invokeOrigin()语句为originMethod invoke语句
         String originOwner = classNode.name;
         replaceInvokeOrigin(originOwner, originMethodNode, apmMethodNode);
 
-        // 修改apmMethodNode：将originMethod invoke语句替换为originMethod内容
+        // 修改apmMethod字节码：将originMethod invoke语句替换为originMethod内容
         MethodProcessor methodProcessor = new MethodProcessor(originOwner, apmMethodNode);
         methodProcessor.inline(originOwner, originMethodNode);
 
@@ -58,23 +58,22 @@ public class InstrumentImpl {
      */
     public static MethodNode delegateInvokeOrigin(ClassNode classNode, MethodNode originMethodNode,
                                                   MethodNode apmMethodNode) {
-        // 生成幂等delegateMethodName，重复retransform的方法名相同
+        // 生成幂等renamedMethodName，重复retransform的方法名相同
         String originMethodName = originMethodNode.name;
-        String delegateMethodName = originMethodName +"_origin_"+ getHash(classNode.name, originMethodName, originMethodNode.desc);
+        String renamedMethodName = originMethodName +"_origin_"+ getHash(classNode.name, originMethodName, originMethodNode.desc);
 
-        // rename originMethod to delegateMethodName
-        MethodNode delegateMethodNode = originMethodNode;
-        delegateMethodNode.name = delegateMethodName;
+        // find copied method of origin method
+        MethodNode renamedMethodNode = AsmUtils.findMethod(classNode.methods, originMethodNode);
+        // rename copied method
+        renamedMethodNode.name = renamedMethodName;
 
-        // 修改apmMethodNode：替换InstrumentApi.invokeOrigin()语句为delegateMethod invoke语句
-        replaceInvokeOrigin(classNode.name, delegateMethodNode, apmMethodNode);
+        // 修改apmMethod字节码：替换InstrumentApi.invokeOrigin()语句为renamedMethod invoke语句
+        replaceInvokeOrigin(classNode.name, renamedMethodNode, apmMethodNode);
 
         // 用apmMethod替换originMethod内容
         apmMethodNode.name = originMethodName;
-        AsmUtils.replaceMethod(classNode, apmMethodNode);
-
-        // 添加delegateMethod 到classNode
-        classNode.methods.add(delegateMethodNode);
+        // 将apmMethod插入到renamedMethod前面
+        AsmUtils.insertMethodBefore(classNode, renamedMethodNode, apmMethodNode);
 
         return apmMethodNode;
     }
