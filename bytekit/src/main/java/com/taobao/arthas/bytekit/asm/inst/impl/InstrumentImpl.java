@@ -70,7 +70,7 @@ public class InstrumentImpl {
         // 修改apmMethod字节码：替换InstrumentApi.invokeOrigin()语句为renamedMethod invoke语句
         replaceInvokeOrigin(classNode.name, renamedMethodNode, apmMethodNode);
 
-        // 用apmMethod替换originMethod内容
+        // apmMethod名称必须为originMethod名称
         apmMethodNode.name = originMethodName;
         // 将apmMethod插入到renamedMethod前面
         AsmUtils.insertMethodBefore(classNode, renamedMethodNode, apmMethodNode);
