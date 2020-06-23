@@ -17,6 +17,8 @@ import com.taobao.middleware.cli.annotations.Name;
 import com.taobao.middleware.cli.annotations.Option;
 import com.taobao.middleware.cli.annotations.Summary;
 
+import io.netty.util.internal.StringUtil;
+
 /**
  * <pre>
  * 此gc命令提供的后端一次性获取，然后展示；
@@ -65,7 +67,7 @@ public class GcCommand extends AnnotatedCommand {
 			timer = new Timer("Timer-for-arthas-gc-" + process.session().getSessionId(), true);
 
 			// ctrl-C exit support
-			process.interruptHandler(new DashboardInterruptHandler(process, timer));
+			process.interruptHandler(new GcInfoInterruptHandler(process, timer));
 
 			// q exit support
 			process.stdinHandler(new QExitHandler(process));
@@ -100,7 +102,6 @@ public class GcCommand extends AnnotatedCommand {
 				return;
 			}
 			processGC(process);
-			priCount++;
 		}
 
 	}
@@ -119,12 +120,21 @@ public class GcCommand extends AnnotatedCommand {
 					content.append(line);
 					content.append("\n");
 				} else {
-					if (!line.contains("S0")) { //命令每次返回结果，都会有列名，只取第一次执行的列名，后续的直接取值
+					if (!line.contains("S0")) { // 命令每次返回结果，都会有列名，只取第一次执行的列名，后续的直接取值
 						content.append(line);
 						content.append("\n");
 					}
 				}
 
+			}
+			StringBuilder errorMessage = new StringBuilder();
+			BufferedReader error = new BufferedReader(new InputStreamReader(p.getErrorStream()));
+			while ((line = error.readLine()) != null) {
+				errorMessage.append(line).append("\n");
+			}
+			if (errorMessage.toString().length()!=0) {
+				logger.error("jstat -gcutil command has error:"+errorMessage.toString());
+				content.append(errorMessage);
 			}
 			process.write(content.toString());
 		} catch (IOException e) {
@@ -134,7 +144,7 @@ public class GcCommand extends AnnotatedCommand {
 			if (p != null) {
 				p.destroy();
 			}
-
+			priCount++;
 		}
 
 	}
