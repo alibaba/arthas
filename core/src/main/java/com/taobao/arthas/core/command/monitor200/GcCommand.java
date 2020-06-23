@@ -23,33 +23,33 @@ import com.taobao.middleware.cli.annotations.Summary;
  * 后期再改造一下
  * </pre>
  * 
- *  @author wangdong 2020年06月01日 下午2:06:21
+ * @author wangdong 2020年06月01日 下午2:06:21
  */
 @Name("gc")
 @Summary("Display gc info")
 @Description(Constants.EXAMPLE + "  gc\n" + "  gc -i 1000  \n" + "  gc -i 1000 -n 5\n")
 public class GcCommand extends AnnotatedCommand {
 
-    private static final Logger logger = LoggerFactory.getLogger(GcCommand.class);
+	private static final Logger logger = LoggerFactory.getLogger(GcCommand.class);
 
 	private volatile int interval = -1;// 默认间隔时间
 
-	private volatile int loopCount = -1;// 次数
+	private volatile int loopCount = -1;// 循环次数
 
-	private volatile int priCount = 0;// 初始化数字
+	private volatile int priCount = 0;// 初始化次数
 
 	private long pid = 0;
 
 	private volatile Timer timer;
 
 	@Option(shortName = "n", longName = "gc-show-count")
-	@Description("The number of gc info to show, the default count is 5.")
+	@Description("the number of gc info to show, the default count is 5.")
 	public void setLoopCount(Integer count) {
 		this.loopCount = count;
 	}
 
-	@Option(shortName = "i", longName = "gc-show-intervalTime,the default interval is 1000ms")
-	@Description("Get gc info interval.")
+	@Option(shortName = "i", longName = "gc-show-intervalTime")
+	@Description("get gc info interval,the default interval is 1000ms.")
 	public void setInterval(int interval) {
 		this.interval = interval;
 	}
@@ -73,7 +73,7 @@ public class GcCommand extends AnnotatedCommand {
 			timer.scheduleAtFixedRate(new GCTimerTask(process), 0, interval);
 
 		} else {
-			process.write("pid cannot get!");
+			process.write("get pid failure!");
 		}
 
 	}
@@ -108,9 +108,10 @@ public class GcCommand extends AnnotatedCommand {
 	private void processGC(CommandProcess process) {
 		StringBuilder content = new StringBuilder("");
 		Runtime run = Runtime.getRuntime();
+		Process p = null;
 		try {
 			logger.info("command:" + assembleCommand());
-			Process p = run.exec(assembleCommand());
+			p = run.exec(assembleCommand());
 			BufferedReader br = new BufferedReader(new InputStreamReader(p.getInputStream()));
 			String line = null;
 			while ((line = br.readLine()) != null) {
@@ -118,18 +119,24 @@ public class GcCommand extends AnnotatedCommand {
 					content.append(line);
 					content.append("\n");
 				} else {
-					if (!line.contains("S0")) {
+					if (!line.contains("S0")) { //命令每次返回结果，都会有列名，只取第一次执行的列名，后续的直接取值
 						content.append(line);
 						content.append("\n");
 					}
 				}
 
 			}
-			p.destroy();
+			process.write(content.toString());
 		} catch (IOException e) {
-			process.write("jstat gc has error!\n");
+			logger.error("jstat -gcutil command has error!", e);
+			process.write("jstat -gcutil has error!\n");
+		} finally {
+			if (p != null) {
+				p.destroy();
+			}
+
 		}
-		process.write(content.toString());
+
 	}
 
 	private String assembleCommand() {
