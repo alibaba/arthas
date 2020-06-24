@@ -62,6 +62,8 @@ public class InvokeLocationMatcher implements LocationMatcher {
 
     private boolean atInvokeExcpetionExit = false;
 
+    private boolean stackNeedSave = false;
+
     public InvokeLocationMatcher(String owner, String methodName, String desc, int count, boolean whenComplete,
             List<String> excludes, boolean atInvokeExcpetionExit) {
         super();
@@ -104,7 +106,7 @@ public class InvokeLocationMatcher implements LocationMatcher {
                     if(locationFilter.allow(methodInsnNode, locationType, this.whenComplete)) {
                         matchedCount++;
                         if (count <= 0 || count == matchedCount) {
-                            InvokeLocation invokeLocation = new InvokeLocation(methodInsnNode, count, whenComplete);
+                            InvokeLocation invokeLocation = new InvokeLocation(methodInsnNode, count, whenComplete, stackNeedSave);
                             locations.add(invokeLocation);
                         }
                     }
@@ -199,6 +201,14 @@ public class InvokeLocationMatcher implements LocationMatcher {
 
         return true;
 
+    }
+
+    public boolean isStackNeedSave() {
+        return stackNeedSave;
+    }
+
+    public void setStackNeedSave(boolean stackNeedSave) {
+        this.stackNeedSave = stackNeedSave;
     }
 
     public String getMethodName() {
