@@ -32,7 +32,6 @@
         <dependency>
             <groupId>net.bytebuddy</groupId>
             <artifactId>byte-buddy</artifactId>
-            <version>1.7.10</version>
             <scope>provided</scope>
             <optional>true</optional>
         </dependency>
@@ -40,7 +39,6 @@
         <dependency>
             <groupId>net.bytebuddy</groupId>
             <artifactId>byte-buddy-agent</artifactId>
-            <version>1.7.10</version>
             <scope>provided</scope>
             <optional>true</optional>
         </dependency>
