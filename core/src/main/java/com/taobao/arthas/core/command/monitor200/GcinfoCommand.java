@@ -17,8 +17,6 @@ import com.taobao.middleware.cli.annotations.Name;
 import com.taobao.middleware.cli.annotations.Option;
 import com.taobao.middleware.cli.annotations.Summary;
 
-import io.netty.util.internal.StringUtil;
-
 /**
  * <pre>
  * 此gc命令提供的后端一次性获取，然后展示；
@@ -27,12 +25,12 @@ import io.netty.util.internal.StringUtil;
  * 
  * @author wangdong 2020年06月01日 下午2:06:21
  */
-@Name("gc")
+@Name("gcinfo")
 @Summary("Display gc info")
-@Description(Constants.EXAMPLE + "  gc\n" + "  gc -i 1000  \n" + "  gc -i 1000 -n 5\n")
-public class GcCommand extends AnnotatedCommand {
+@Description(Constants.EXAMPLE + "  gcinfo \n" + "  gcinfo -i 1000  \n" + "  gcinfo -i 1000 -n 5\n")
+public class GcinfoCommand extends AnnotatedCommand {
 
-	private static final Logger logger = LoggerFactory.getLogger(GcCommand.class);
+	private static final Logger logger = LoggerFactory.getLogger(GcinfoCommand.class);
 
 	private volatile int interval = -1;// 默认间隔时间
 
@@ -44,13 +42,13 @@ public class GcCommand extends AnnotatedCommand {
 
 	private volatile Timer timer;
 
-	@Option(shortName = "n", longName = "gc-show-count")
+	@Option(shortName = "n", longName = "gcinfo-show-count")
 	@Description("the number of gc info to show, the default count is 5.")
 	public void setLoopCount(Integer count) {
 		this.loopCount = count;
 	}
 
-	@Option(shortName = "i", longName = "gc-show-intervalTime")
+	@Option(shortName = "i", longName = "gcinfo-show-intervalTime")
 	@Description("get gc info interval,the default interval is 1000ms.")
 	public void setInterval(int interval) {
 		this.interval = interval;
@@ -64,7 +62,7 @@ public class GcCommand extends AnnotatedCommand {
 			loopCount = loopCount == -1 ? 5 : loopCount;
 			interval = interval == -1 ? 1000 : interval;
 
-			timer = new Timer("Timer-for-arthas-gc-" + process.session().getSessionId(), true);
+			timer = new Timer("Timer-for-arthas-gcinfo-" + process.session().getSessionId(), true);
 
 			// ctrl-C exit support
 			process.interruptHandler(new GcInfoInterruptHandler(process, timer));
