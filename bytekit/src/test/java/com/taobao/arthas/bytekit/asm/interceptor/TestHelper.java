@@ -7,10 +7,10 @@ import com.alibaba.arthas.deps.org.objectweb.asm.tree.ClassNode;
 import com.alibaba.arthas.deps.org.objectweb.asm.tree.MethodNode;
 
 import com.taobao.arthas.bytekit.asm.MethodProcessor;
-import com.taobao.arthas.bytekit.asm.interceptor.InterceptorProcessor;
 import com.taobao.arthas.bytekit.asm.interceptor.parser.DefaultInterceptorClassParser;
 import com.taobao.arthas.bytekit.utils.AgentUtils;
 import com.taobao.arthas.bytekit.utils.AsmUtils;
+import com.taobao.arthas.bytekit.utils.Decompiler;
 import com.taobao.arthas.bytekit.utils.MatchUtils;
 import com.taobao.arthas.bytekit.utils.VerifyUtils;
 
@@ -31,6 +31,8 @@ public class TestHelper {
 
     private boolean asmVerity = true;
 
+    private boolean debug;
+
     public static TestHelper builder() {
         return new TestHelper();
     }
@@ -47,6 +49,11 @@ public class TestHelper {
 
     public TestHelper reTransform(boolean reTransform) {
         this.reTransform = reTransform;
+        return this;
+    }
+
+    public TestHelper debug(boolean debug) {
+        this.debug = debug;
         return this;
     }
 
@@ -70,7 +77,7 @@ public class TestHelper {
         }
 
         for (MethodNode methodNode : matchedMethods) {
-            MethodProcessor methodProcessor = new MethodProcessor(classNode, methodNode);
+            MethodProcessor methodProcessor = new MethodProcessor(classNode, methodNode, true);
             for (InterceptorProcessor interceptor : interceptorProcessors) {
                 interceptor.process(methodProcessor);
             }
@@ -79,6 +86,10 @@ public class TestHelper {
         byte[] bytes = AsmUtils.toBytes(classNode);
         if (asmVerity) {
             VerifyUtils.asmVerify(bytes);
+        }
+
+        if (debug) {
+            System.err.println(Decompiler.toString(classNode));
         }
 
         if (redefine) {
