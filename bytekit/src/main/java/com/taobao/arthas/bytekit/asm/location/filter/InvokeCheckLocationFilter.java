@@ -3,6 +3,7 @@ package com.taobao.arthas.bytekit.asm.location.filter;
 import com.alibaba.arthas.deps.org.objectweb.asm.tree.AbstractInsnNode;
 import com.alibaba.arthas.deps.org.objectweb.asm.tree.MethodInsnNode;
 import com.taobao.arthas.bytekit.asm.location.LocationType;
+import com.taobao.arthas.bytekit.utils.AsmOpUtils;
 
 /**
  * 
@@ -46,6 +47,9 @@ public class InvokeCheckLocationFilter implements LocationFilter {
                 insnNode = insnNode.getNext();
                 if (insnNode instanceof MethodInsnNode) {
                     MethodInsnNode methodInsnNode = (MethodInsnNode) insnNode;
+                    if (isIgnoredMethod(methodInsnNode)){
+                        continue;
+                    }
                     return methodInsnNode;
                 }
             }
@@ -54,11 +58,22 @@ public class InvokeCheckLocationFilter implements LocationFilter {
                 insnNode = insnNode.getPrevious();
                 if (insnNode instanceof MethodInsnNode) {
                     MethodInsnNode methodInsnNode = (MethodInsnNode) insnNode;
+                    if (isIgnoredMethod(methodInsnNode)){
+                        continue;
+                    }
                     return methodInsnNode;
                 }
             }
         }
         return null;
+    }
+
+    private boolean isIgnoredMethod(MethodInsnNode methodInsnNode) {
+        //过滤unbox的方法调用，解决invokeBefore判断不准确的问题（保存invoke args时可能进行box转换，额外引入了unbox方法）
+        if (AsmOpUtils.isUnBoxMethod(methodInsnNode)) {
+            return true;
+        }
+        return false;
     }
 
 }
