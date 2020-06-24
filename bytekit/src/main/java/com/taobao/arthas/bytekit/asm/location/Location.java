@@ -310,37 +310,38 @@ public abstract class Location {
                             // 如果是非 static的，会有this指针 
                             MethodInsnNode methodInsnNode = (MethodInsnNode)invokeLocation.getInsnNode();
                             Type methodType = Type.getMethodType(methodInsnNode.desc);
-                            boolean isStatic = AsmUtils.isStatic(methodInsnNode);
+                            //静态方法和构造函数都没有this
+                            boolean hasThis = !(AsmUtils.isStatic(methodInsnNode) || AsmUtils.isConstructor(methodInsnNode));
                             Type[] argumentTypes = methodType.getArgumentTypes();
                             
-//                            // 如果是非static，则存放到数组的index要多 1
-//                            AsmOpUtils.push(instructions, argumentTypes.length + (isStatic ? 0 : 1));
-//                            AsmOpUtils.newArray(instructions, AsmOpUtils.OBJECT_TYPE);
-//                            LocalVariableNode invokeArgsVariableNode = methodProcessor.initInvokeArgsVariableNode();
-//                            AsmOpUtils.storeVar(instructions, AsmOpUtils.OBJECT_ARRAY_TYPE, invokeArgsVariableNode.index);
+                            // 如果是非static，则存放到数组的index要多 1
+                            AsmOpUtils.push(instructions, argumentTypes.length + (hasThis ? 1 : 0));
+                            AsmOpUtils.newArray(instructions, AsmOpUtils.OBJECT_TYPE);
+                            LocalVariableNode invokeArgsVariableNode = methodProcessor.initInvokeArgsVariableNode();
+                            AsmOpUtils.storeVar(instructions, AsmOpUtils.OBJECT_ARRAY_TYPE, invokeArgsVariableNode.index);
 
                             // 从invoke的参数的后面，一个个存到数组里
-//                            for(int i = argumentTypes.length - 1; i >= 0 ; --i) {
-//                                AsmOpUtils.loadVar(instructions, AsmOpUtils.OBJECT_ARRAY_TYPE, invokeArgsVariableNode.index);
-//
-//                                AsmOpUtils.swap(instructions, argumentTypes[i], AsmOpUtils.OBJECT_ARRAY_TYPE);
-//                                // 如果是非static，则存放到数组的index要多 1
-//                                AsmOpUtils.push(instructions, i + (isStatic ? 0 : 1));
-//                                AsmOpUtils.swap(instructions, argumentTypes[i], Type.INT_TYPE);
-//                                
-//                                AsmOpUtils.box(instructions, argumentTypes[i]);
-//                                AsmOpUtils.arrayStore(instructions, AsmOpUtils.OBJECT_TYPE);
-//                                
-//                            }
+                            for(int i = argumentTypes.length - 1; i >= 0 ; --i) {
+                                AsmOpUtils.loadVar(instructions, AsmOpUtils.OBJECT_ARRAY_TYPE, invokeArgsVariableNode.index);
+
+                                AsmOpUtils.swap(instructions, argumentTypes[i], AsmOpUtils.OBJECT_ARRAY_TYPE);
+                                // 如果是非static，则存放到数组的index要多 1
+                                AsmOpUtils.push(instructions, i + (hasThis ? 1 : 0));
+                                AsmOpUtils.swap(instructions, argumentTypes[i], Type.INT_TYPE);
+
+                                AsmOpUtils.box(instructions, argumentTypes[i]);
+                                AsmOpUtils.arrayStore(instructions, AsmOpUtils.OBJECT_TYPE);
+
+                            }
                             // 处理this
-//                            if(!isStatic) {
-//                                AsmOpUtils.loadVar(instructions, AsmOpUtils.OBJECT_ARRAY_TYPE, invokeArgsVariableNode.index);
-//
-//                                AsmOpUtils.swap(instructions, AsmOpUtils.OBJECT_TYPE, AsmOpUtils.OBJECT_ARRAY_TYPE);
-//                                AsmOpUtils.push(instructions, 0);
-//                                AsmOpUtils.swap(instructions, AsmOpUtils.OBJECT_TYPE, Type.INT_TYPE);
-//                                AsmOpUtils.arrayStore(instructions, AsmOpUtils.OBJECT_TYPE);
-//                            }
+                            if(hasThis) {
+                                AsmOpUtils.loadVar(instructions, AsmOpUtils.OBJECT_ARRAY_TYPE, invokeArgsVariableNode.index);
+
+                                AsmOpUtils.swap(instructions, AsmOpUtils.OBJECT_TYPE, AsmOpUtils.OBJECT_ARRAY_TYPE);
+                                AsmOpUtils.push(instructions, 0);
+                                AsmOpUtils.swap(instructions, AsmOpUtils.OBJECT_TYPE, Type.INT_TYPE);
+                                AsmOpUtils.arrayStore(instructions, AsmOpUtils.OBJECT_TYPE);
+                            }
                             
                         }else {
                             throw new IllegalArgumentException("location is not a InvokeLocation, location: " + location);
@@ -360,28 +361,29 @@ public abstract class Location {
                             // 如果是非 static的，会有this指针 
                             MethodInsnNode methodInsnNode = (MethodInsnNode)invokeLocation.getInsnNode();
                             Type methodType = Type.getMethodType(methodInsnNode.desc);
-                            boolean isStatic = AsmUtils.isStatic(methodInsnNode);
+                            //静态方法和构造函数都没有this
+                            boolean hasThis = !(AsmUtils.isStatic(methodInsnNode) || AsmUtils.isConstructor(methodInsnNode));
                             Type[] argumentTypes = methodType.getArgumentTypes();
                             
-//                            if(!isStatic) {
-//                                // 取出this
-//                                AsmOpUtils.loadVar(instructions, AsmOpUtils.OBJECT_ARRAY_TYPE, invokeArgsVariableNode.index);
-//                                AsmOpUtils.push(instructions, 0);
-//                                AsmOpUtils.arrayLoad(instructions, AsmOpUtils.OBJECT_TYPE);
-//                                AsmOpUtils.checkCast(instructions, Type.getObjectType(methodInsnNode.owner));
-//                            }
-//                            
-//                            for(int i = 0; i < argumentTypes.length; ++i) {
-//                                AsmOpUtils.loadVar(instructions, AsmOpUtils.OBJECT_ARRAY_TYPE, invokeArgsVariableNode.index);
-//                                AsmOpUtils.push(instructions, i + (isStatic ? 0 : 1));
-//                                AsmOpUtils.arrayLoad(instructions, AsmOpUtils.OBJECT_TYPE);
-//                                // TODO 这里直接 unbox 就可以了？？unbox里带有 check cast
-//                                if(AsmOpUtils.needBox(argumentTypes[i])) {
-//                                    AsmOpUtils.unbox(instructions, argumentTypes[i]);
-//                                }else {
-//                                    AsmOpUtils.checkCast(instructions, argumentTypes[i]);
-//                                }
-//                            }
+                            if(hasThis) {
+                                // 取出this
+                                AsmOpUtils.loadVar(instructions, AsmOpUtils.OBJECT_ARRAY_TYPE, invokeArgsVariableNode.index);
+                                AsmOpUtils.push(instructions, 0);
+                                AsmOpUtils.arrayLoad(instructions, AsmOpUtils.OBJECT_TYPE);
+                                AsmOpUtils.checkCast(instructions, Type.getObjectType(methodInsnNode.owner));
+                            }
+
+                            for(int i = 0; i < argumentTypes.length; ++i) {
+                                AsmOpUtils.loadVar(instructions, AsmOpUtils.OBJECT_ARRAY_TYPE, invokeArgsVariableNode.index);
+                                AsmOpUtils.push(instructions, i + (hasThis ? 1 : 0));
+                                AsmOpUtils.arrayLoad(instructions, AsmOpUtils.OBJECT_TYPE);
+                                // TODO 这里直接 unbox 就可以了？？unbox里带有 check cast
+                                if(AsmOpUtils.needBox(argumentTypes[i])) {
+                                    AsmOpUtils.unbox(instructions, argumentTypes[i]);
+                                }else {
+                                    AsmOpUtils.checkCast(instructions, argumentTypes[i]);
+                                }
+                            }
                             
                         }else {
                             throw new IllegalArgumentException("location is not a InvokeLocation, location: " + location);

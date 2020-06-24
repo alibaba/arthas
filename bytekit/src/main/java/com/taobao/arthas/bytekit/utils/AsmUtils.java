@@ -275,6 +275,9 @@ public class AsmUtils {
         return methodInsnNode.getOpcode() == Opcodes.INVOKESTATIC;
     }
 
+	public static boolean isConstructor(MethodInsnNode methodInsnNode) {
+		return methodInsnNode.getOpcode() == Opcodes.INVOKESPECIAL && methodInsnNode.name != null && methodInsnNode.name.equals("<init>");
+	}
 
 	public static boolean isConstructor(MethodNode methodNode) {
 		return methodNode.name != null && methodNode.name.equals("<init>");
