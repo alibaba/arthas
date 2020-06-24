@@ -1,5 +1,6 @@
 package com.taobao.arthas.agent332;
 
+import java.arthas.SpyAPI;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.PrintStream;
@@ -50,7 +51,13 @@ public class AgentBootstrap {
         }
     }
 
-    // 全局持有classloader用于隔离 Arthas 实现
+    /**
+     * <pre>
+     * 1. 全局持有classloader用于隔离 Arthas 实现，防止多次attach重复初始化
+     * 2. ClassLoader在arthas停止时会被reset
+     * 3. 如果ClassLoader一直没变，则 com.taobao.arthas.core.server.ArthasBootstrap#getInstance 返回结果一直是一样的
+     * </pre>
+     */
     private static volatile ClassLoader arthasClassLoader;
 
     public static void premain(String args, Instrumentation inst) {
@@ -81,6 +88,17 @@ public class AgentBootstrap {
     }
 
     private static synchronized void main(String args, final Instrumentation inst) {
+        // 尝试判断arthas是否已在运行，如果是的话，直接就退出
+        try {
+            Class.forName("java.arthas.SpyAPI"); // 加载不到会抛异常
+            if (SpyAPI.isInited()) {
+                ps.println("Arthas server already stared, skip attach.");
+                ps.flush();
+                return;
+            }
+        } catch (Throwable e) {
+            // ignore
+        }
         try {
             ps.println("Arthas server agent start...");
             // 传递的args参数分两个部分:arthasCoreJar路径和agentArgs, 分别是Agent的JAR包路径和期望传递到服务端的参数

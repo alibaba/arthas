@@ -331,6 +331,12 @@ public class ArthasBootstrap {
             UserStatUtil.setStatUrl(configure.getStatUrl());
             UserStatUtil.arthasStart();
 
+            try {
+                SpyAPI.init();
+            } catch (Throwable e) {
+                // ignore
+            }
+
             logger().info("as-server started in {} ms", System.currentTimeMillis() - start);
         } catch (Throwable e) {
             logger().error("Error during bind to port " + configure.getTelnetPort(), e);
@@ -442,7 +448,12 @@ public class ArthasBootstrap {
      * 清除SpyAPI里的引用
      */
     private void cleanUpSpyReference() {
-        SpyAPI.setNopSpy();
+        try {
+            SpyAPI.setNopSpy();
+            SpyAPI.destroy();
+        } catch (Throwable e) {
+            // ignore
+        }
         // AgentBootstrap.resetArthasClassLoader();
         try {
             Class<?> clazz = ClassLoader.getSystemClassLoader().loadClass("com.taobao.arthas.agent332.AgentBootstrap");
