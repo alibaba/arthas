@@ -213,10 +213,10 @@ public abstract class Location {
          */
         private int count;
 
-        public InvokeLocation(MethodInsnNode insnNode, int count, boolean whenComplete) {
+        public InvokeLocation(MethodInsnNode insnNode, int count, boolean whenComplete, boolean stackNeedSave) {
             super(insnNode, whenComplete);
             this.count = count;
-            this.stackNeedSave = false;
+            this.stackNeedSave = stackNeedSave;
         }
 
         @Override
