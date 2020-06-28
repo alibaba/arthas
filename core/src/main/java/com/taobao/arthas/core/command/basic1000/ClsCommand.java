@@ -12,7 +12,7 @@ public class ClsCommand extends AnnotatedCommand {
     @Override
     public void process(CommandProcess process) {
         if (!process.session().isTty()) {
-            process.end(-1, "Command 'cls' is not supported by http api.");
+            process.end(-1, "Command 'cls' is only support tty session.");
             return;
         }
         process.write(RenderUtil.cls()).write("\n");

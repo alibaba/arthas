@@ -91,10 +91,9 @@ public class CatCommand extends AnnotatedCommand {
         }
 
         //目前不支持过滤，限制http请求执行的文件大小
-        int maxSizeLimitOfHttp = 128 * 1024;
-        boolean isHttpApiRequest = !process.session().isTty();
-        if (isHttpApiRequest && sizeLimit > maxSizeLimitOfHttp) {
-            process.end(-1, "When executing commands with http, sizeLimit cannot be large than: " + maxSizeLimitOfHttp);
+        int maxSizeLimitOfNonTty = 128 * 1024;
+        if (!process.session().isTty() && sizeLimit > maxSizeLimitOfNonTty) {
+            process.end(-1, "When executing in non-tty session, sizeLimit cannot be large than: " + maxSizeLimitOfNonTty);
             return false;
         }
         return true;
