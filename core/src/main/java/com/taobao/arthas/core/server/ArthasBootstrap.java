@@ -40,10 +40,13 @@ import com.taobao.arthas.core.shell.ShellServer;
 import com.taobao.arthas.core.shell.ShellServerOptions;
 import com.taobao.arthas.core.shell.command.CommandResolver;
 import com.taobao.arthas.core.shell.handlers.BindHandler;
+import com.taobao.arthas.core.shell.history.HistoryManager;
+import com.taobao.arthas.core.shell.history.impl.HistoryManagerImpl;
 import com.taobao.arthas.core.shell.impl.ShellServerImpl;
 import com.taobao.arthas.core.shell.session.SessionManager;
 import com.taobao.arthas.core.shell.session.impl.SessionManagerImpl;
 import com.taobao.arthas.core.shell.term.impl.HttpTermServer;
+import com.taobao.arthas.core.shell.term.impl.http.api.HttpApiHandler;
 import com.taobao.arthas.core.shell.term.impl.httptelnet.HttpTelnetTermServer;
 import com.taobao.arthas.core.util.ArthasBanner;
 import com.taobao.arthas.core.util.FileUtils;
@@ -90,6 +93,10 @@ public class ArthasBootstrap {
 
     private ResultViewResolver resultViewResolver;
 
+    private HistoryManager historyManager;
+
+    private HttpApiHandler httpApiHandler;
+
     private ArthasBootstrap(Instrumentation instrumentation, String args) throws Throwable {
         this.instrumentation = instrumentation;
 
@@ -104,8 +111,8 @@ public class ArthasBootstrap {
         // 3. init logger
         loggerContext = LogUtil.initLooger(arthasEnvironment);
 
-        // 4. init result views
-        initResultViewResolver();
+        // 4. init beans
+        initBeans();
 
         // 5. start agent server
         bind(configure);
@@ -131,8 +138,10 @@ public class ArthasBootstrap {
         Runtime.getRuntime().addShutdownHook(shutdown);
     }
 
-    private void initResultViewResolver() {
+    private void initBeans() {
         this.resultViewResolver = new ResultViewResolver();
+
+        this.historyManager = new HistoryManagerImpl();
     }
 
     private static void initSpy() {
@@ -309,6 +318,8 @@ public class ArthasBootstrap {
 
             //http api session manager
             sessionManager = new SessionManagerImpl(options, this, shellServer.getCommandManager(), shellServer.getJobController());
+            //http api handler
+            httpApiHandler = new HttpApiHandler(historyManager, sessionManager);
 
             logger().info("as-server listening on network={};telnet={};http={};timeout={};", configure.getIp(),
                     configure.getTelnetPort(), configure.getHttpPort(), options.getConnectionTimeout());
@@ -455,5 +466,13 @@ public class ArthasBootstrap {
 
     public ResultViewResolver getResultViewResolver() {
         return resultViewResolver;
+    }
+
+    public HistoryManager getHistoryManager() {
+        return historyManager;
+    }
+
+    public HttpApiHandler getHttpApiHandler() {
+        return httpApiHandler;
     }
 }
