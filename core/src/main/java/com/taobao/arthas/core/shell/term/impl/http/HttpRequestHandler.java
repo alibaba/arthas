@@ -9,6 +9,7 @@ import java.net.URL;
 import com.alibaba.arthas.deps.org.slf4j.Logger;
 import com.alibaba.arthas.deps.org.slf4j.LoggerFactory;
 import com.taobao.arthas.common.IOUtils;
+import com.taobao.arthas.core.server.ArthasBootstrap;
 import com.taobao.arthas.core.shell.term.impl.http.api.HttpApiHandler;
 import com.taobao.arthas.core.shell.term.impl.httptelnet.HttpTelnetTermServer;
 
@@ -49,7 +50,7 @@ public class HttpRequestHandler extends SimpleChannelInboundHandler<FullHttpRequ
         this.wsUri = wsUri;
         this.dir = dir;
         dir.mkdirs();
-        this.httpApiHandler = HttpApiHandler.getInstance();
+        this.httpApiHandler = ArthasBootstrap.getInstance().getHttpApiHandler();
     }
 
     @Override

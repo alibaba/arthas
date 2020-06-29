@@ -35,6 +35,11 @@ public class KeymapCommand extends AnnotatedCommand {
 
     @Override
     public void process(CommandProcess process) {
+        if (!process.session().isTty()) {
+            process.end(-1, "Command 'keymap' is only support tty session.");
+            return;
+        }
+
         InputStream inputrc = Helper.loadInputRcFile();
         try {
             TableElement table = new TableElement(1, 1, 2).leftCellPadding(1).rightCellPadding(1);

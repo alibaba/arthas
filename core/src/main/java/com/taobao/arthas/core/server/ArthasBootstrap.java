@@ -29,6 +29,7 @@ import com.taobao.arthas.common.AnsiLog;
 import com.taobao.arthas.common.PidUtils;
 import com.taobao.arthas.core.advisor.TransformerManager;
 import com.taobao.arthas.core.command.BuiltinCommandPack;
+import com.taobao.arthas.core.command.view.ResultViewResolver;
 import com.taobao.arthas.core.config.BinderUtils;
 import com.taobao.arthas.core.config.Configure;
 import com.taobao.arthas.core.config.FeatureCodec;
@@ -40,10 +41,13 @@ import com.taobao.arthas.core.shell.ShellServer;
 import com.taobao.arthas.core.shell.ShellServerOptions;
 import com.taobao.arthas.core.shell.command.CommandResolver;
 import com.taobao.arthas.core.shell.handlers.BindHandler;
+import com.taobao.arthas.core.shell.history.HistoryManager;
+import com.taobao.arthas.core.shell.history.impl.HistoryManagerImpl;
 import com.taobao.arthas.core.shell.impl.ShellServerImpl;
 import com.taobao.arthas.core.shell.session.SessionManager;
 import com.taobao.arthas.core.shell.session.impl.SessionManagerImpl;
 import com.taobao.arthas.core.shell.term.impl.HttpTermServer;
+import com.taobao.arthas.core.shell.term.impl.http.api.HttpApiHandler;
 import com.taobao.arthas.core.shell.term.impl.httptelnet.HttpTelnetTermServer;
 import com.taobao.arthas.core.util.ArthasBanner;
 import com.taobao.arthas.core.util.FileUtils;
@@ -56,7 +60,6 @@ import io.netty.util.concurrent.EventExecutorGroup;
 
 /**
  * @author vlinux on 15/5/2.
- * @author gongdewei 2020-03-25
  */
 public class ArthasBootstrap {
     private static final String ARTHAS_SPY_JAR = "arthas-spy.jar";
@@ -89,6 +92,12 @@ public class ArthasBootstrap {
 
     private TransformerManager transformerManager;
 
+    private ResultViewResolver resultViewResolver;
+
+    private HistoryManager historyManager;
+
+    private HttpApiHandler httpApiHandler;
+
     private ArthasBootstrap(Instrumentation instrumentation, Map<String, String> args) throws Throwable {
         this.instrumentation = instrumentation;
 
@@ -103,7 +112,10 @@ public class ArthasBootstrap {
         // 3. init logger
         loggerContext = LogUtil.initLooger(arthasEnvironment);
 
-        // 4. start agent server
+        // 4. init beans
+        initBeans();
+
+        // 5. start agent server
         bind(configure);
 
         executorService = Executors.newScheduledThreadPool(1, new ThreadFactory() {
@@ -125,6 +137,12 @@ public class ArthasBootstrap {
 
         transformerManager = new TransformerManager(instrumentation);
         Runtime.getRuntime().addShutdownHook(shutdown);
+    }
+
+    private void initBeans() {
+        this.resultViewResolver = new ResultViewResolver();
+
+        this.historyManager = new HistoryManagerImpl();
     }
 
     private static void initSpy(Instrumentation instrumentation) throws Throwable {
@@ -320,6 +338,8 @@ public class ArthasBootstrap {
 
             //http api session manager
             sessionManager = new SessionManagerImpl(options, this, shellServer.getCommandManager(), shellServer.getJobController());
+            //http api handler
+            httpApiHandler = new HttpApiHandler(historyManager, sessionManager);
 
             logger().info("as-server listening on network={};telnet={};http={};timeout={};", configure.getIp(),
                     configure.getTelnetPort(), configure.getHttpPort(), options.getConnectionTimeout());
@@ -494,5 +514,17 @@ public class ArthasBootstrap {
 
     private Logger logger() {
         return LoggerFactory.getLogger(this.getClass());
+    }
+
+    public ResultViewResolver getResultViewResolver() {
+        return resultViewResolver;
+    }
+
+    public HistoryManager getHistoryManager() {
+        return historyManager;
+    }
+
+    public HttpApiHandler getHttpApiHandler() {
+        return httpApiHandler;
     }
 }

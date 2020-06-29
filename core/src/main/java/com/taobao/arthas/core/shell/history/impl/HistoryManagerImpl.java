@@ -19,18 +19,7 @@ public class HistoryManagerImpl implements HistoryManager {
 
     private List<String> history = new ArrayList<String>();
 
-    private static HistoryManager instance;
-
-    public static HistoryManager getInstance() {
-        if (instance == null) {
-            synchronized (HistoryManagerImpl.class) {
-                instance = new HistoryManagerImpl();
-            }
-        }
-        return instance;
-    }
-
-    private HistoryManagerImpl() {
+    public HistoryManagerImpl() {
     }
 
     @Override

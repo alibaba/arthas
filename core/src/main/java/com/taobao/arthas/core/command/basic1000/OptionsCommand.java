@@ -3,6 +3,10 @@ package com.taobao.arthas.core.command.basic1000;
 import com.taobao.arthas.core.GlobalOptions;
 import com.taobao.arthas.core.Option;
 import com.taobao.arthas.core.command.Constants;
+import com.taobao.arthas.core.command.model.ChangeResultVO;
+import com.taobao.arthas.core.command.model.OptionVO;
+import com.taobao.arthas.core.command.model.OptionsModel;
+import com.taobao.arthas.core.command.model.StatusModel;
 import com.taobao.arthas.core.shell.cli.CliToken;
 import com.taobao.arthas.core.shell.cli.Completion;
 import com.taobao.arthas.core.shell.cli.CompletionUtils;
@@ -18,10 +22,8 @@ import com.taobao.middleware.cli.annotations.Argument;
 import com.taobao.middleware.cli.annotations.Description;
 import com.taobao.middleware.cli.annotations.Name;
 import com.taobao.middleware.cli.annotations.Summary;
-import com.taobao.text.Decoration;
-import com.taobao.text.ui.Element;
-import com.taobao.text.ui.TableElement;
-import com.taobao.text.util.RenderUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
@@ -29,7 +31,6 @@ import java.util.Collection;
 import java.util.List;
 
 import static com.taobao.arthas.core.util.ArthasCheckUtils.isIn;
-import static com.taobao.text.ui.Element.label;
 import static java.lang.String.format;
 
 /**
@@ -48,6 +49,9 @@ import static java.lang.String.format;
         Constants.WIKI + Constants.WIKI_HOME + "options")
 //@formatter:on
 public class OptionsCommand extends AnnotatedCommand {
+
+    private static final Logger logger = LoggerFactory.getLogger(OptionsCommand.class);
+
     private String optionName;
     private String optionValue;
 
@@ -66,17 +70,23 @@ public class OptionsCommand extends AnnotatedCommand {
     @Override
     public void process(CommandProcess process) {
         try {
+            StatusModel statusModel = null;
             if (isShow()) {
-                processShow(process);
+                statusModel = processShow(process);
             } else if (isShowName()) {
-                processShowName(process);
+                statusModel = processShowName(process);
             } else {
-                processChangeNameValue(process);
+                statusModel = processChangeNameValue(process);
+            }
+
+            if (statusModel != null) {
+                process.end(statusModel.getStatusCode(), statusModel.getMessage());
+            } else {
+                process.end(-1, "command was not processed");
             }
         } catch (Throwable t) {
-            // ignore
-        } finally {
-            process.end();
+            logger.error("process options command error", t);
+            process.end(-1, "process options command error");
         }
     }
 
@@ -100,23 +110,24 @@ public class OptionsCommand extends AnnotatedCommand {
         }
     }
 
-    private void processShow(CommandProcess process) throws IllegalAccessException {
+    private StatusModel processShow(CommandProcess process) throws IllegalAccessException {
         Collection<Field> fields = findOptionFields(new RegexMatcher(".*"));
-        process.write(RenderUtil.render(drawShowTable(fields), process.width()));
+        process.appendResult(new OptionsModel(convertToOptionVOs(fields)));
+        return StatusModel.success();
     }
 
-    private void processShowName(CommandProcess process) throws IllegalAccessException {
+    private StatusModel processShowName(CommandProcess process) throws IllegalAccessException {
         Collection<Field> fields = findOptionFields(new EqualsMatcher<String>(optionName));
-        process.write(RenderUtil.render(drawShowTable(fields), process.width()));
+        process.appendResult(new OptionsModel(convertToOptionVOs(fields)));
+        return StatusModel.success();
     }
 
-    private void processChangeNameValue(CommandProcess process) throws IllegalAccessException {
+    private StatusModel processChangeNameValue(CommandProcess process) throws IllegalAccessException {
         Collection<Field> fields = findOptionFields(new EqualsMatcher<String>(optionName));
 
         // name not exists
         if (fields.isEmpty()) {
-            process.write(format("options[%s] not found.\n", optionName));
-            return;
+            return StatusModel.failure(-1, format("options[%s] not found.", optionName));
         }
 
         Field field = fields.iterator().next();
@@ -144,22 +155,16 @@ public class OptionsCommand extends AnnotatedCommand {
             } else if (isIn(type, short.class, String.class)) {
                 FieldUtils.writeStaticField(field, afterValue = optionValue);
             } else {
-                process.write(format("Options[%s] type[%s] desupported.\n", optionName, type.getSimpleName()));
-                return;
+                return StatusModel.failure(-1, format("Options[%s] type[%s] was unsupported.", optionName, type.getSimpleName()));
             }
 
         } catch (Throwable t) {
-            process.write(format("Cannot cast option value[%s] to type[%s].\n", optionValue, type.getSimpleName()));
-            return;
+            return StatusModel.failure(-1, format("Cannot cast option value[%s] to type[%s].", optionValue, type.getSimpleName()));
         }
 
-        TableElement table = new TableElement().leftCellPadding(1).rightCellPadding(1);
-        table.row(true, label("NAME").style(Decoration.bold.bold()),
-                label("BEFORE-VALUE").style(Decoration.bold.bold()),
-                label("AFTER-VALUE").style(Decoration.bold.bold()));
-        table.row(optionAnnotation.name(), StringUtils.objectToString(beforeValue),
-                StringUtils.objectToString(afterValue));
-        process.write(RenderUtil.render(table, process.width()));
+        ChangeResultVO changeResultVO = new ChangeResultVO(optionAnnotation.name(), beforeValue, afterValue);
+        process.appendResult(new OptionsModel(changeResultVO));
+        return StatusModel.success();
     }
 
 
@@ -207,25 +212,24 @@ public class OptionsCommand extends AnnotatedCommand {
         return optionAnnotation != null && optionNameMatcher.matching(optionAnnotation.name());
     }
 
-    private Element drawShowTable(Collection<Field> optionFields) throws IllegalAccessException {
-        TableElement table = new TableElement(1, 1, 2, 1, 3, 6)
-                .leftCellPadding(1).rightCellPadding(1);
-        table.row(true, label("LEVEL").style(Decoration.bold.bold()),
-                label("TYPE").style(Decoration.bold.bold()),
-                label("NAME").style(Decoration.bold.bold()),
-                label("VALUE").style(Decoration.bold.bold()),
-                label("SUMMARY").style(Decoration.bold.bold()),
-                label("DESCRIPTION").style(Decoration.bold.bold()));
-
-        for (final Field optionField : optionFields) {
-            final Option optionAnnotation = optionField.getAnnotation(Option.class);
-            table.row("" + optionAnnotation.level(),
-                    optionField.getType().getSimpleName(),
-                    optionAnnotation.name(),
-                    "" + optionField.get(null),
-                    optionAnnotation.summary(),
-                    optionAnnotation.description());
+    private List<OptionVO> convertToOptionVOs(Collection<Field> fields) throws IllegalAccessException {
+        List<OptionVO> list = new ArrayList<OptionVO>();
+        for (Field field : fields) {
+            list.add(convertToOptionVO(field));
         }
-        return table;
+        return list;
     }
+
+    private OptionVO convertToOptionVO(Field optionField) throws IllegalAccessException {
+        Option optionAnnotation = optionField.getAnnotation(Option.class);
+        OptionVO optionVO = new OptionVO();
+        optionVO.setLevel(optionAnnotation.level());
+        optionVO.setName(optionAnnotation.name());
+        optionVO.setSummary(optionAnnotation.summary());
+        optionVO.setDescription(optionAnnotation.description());
+        optionVO.setType(optionField.getType().getSimpleName());
+        optionVO.setValue(""+optionField.get(null));
+        return optionVO;
+    }
+
 }

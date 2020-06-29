@@ -10,13 +10,11 @@ import com.taobao.arthas.core.distribution.ResultConsumer;
 import com.taobao.arthas.core.distribution.ResultDistributor;
 import com.taobao.arthas.core.distribution.impl.PackingResultDistributorImpl;
 import com.taobao.arthas.core.distribution.impl.ResultConsumerImpl;
-import com.taobao.arthas.core.server.ArthasBootstrap;
 import com.taobao.arthas.core.shell.cli.CliToken;
 import com.taobao.arthas.core.shell.cli.CliTokens;
 import com.taobao.arthas.core.shell.cli.Completion;
 import com.taobao.arthas.core.shell.handlers.Handler;
 import com.taobao.arthas.core.shell.history.HistoryManager;
-import com.taobao.arthas.core.shell.history.impl.HistoryManagerImpl;
 import com.taobao.arthas.core.shell.session.Session;
 import com.taobao.arthas.core.shell.session.SessionManager;
 import com.taobao.arthas.core.shell.system.Job;
@@ -67,20 +65,11 @@ public class HttpApiHandler {
     private ArrayBlockingQueue<char[]> charsBufPool = new ArrayBlockingQueue<char[]>(poolSize);
     private ArrayBlockingQueue<byte[]> bytesPool = new ArrayBlockingQueue<byte[]>(poolSize);
 
-    public static HttpApiHandler getInstance() {
-        if (instance == null) {
-            synchronized (HttpApiHandler.class) {
-                instance = new HttpApiHandler();
-            }
-        }
-        return instance;
-    }
-
-    private HttpApiHandler() {
-        sessionManager = ArthasBootstrap.getInstance().getSessionManager();
-        commandManager = sessionManager.getCommandManager();
-        jobController = sessionManager.getJobController();
-        historyManager = HistoryManagerImpl.getInstance();
+    public HttpApiHandler(HistoryManager historyManager, SessionManager sessionManager) {
+        this.historyManager = historyManager;
+        this.sessionManager = sessionManager;
+        commandManager = this.sessionManager.getCommandManager();
+        jobController = this.sessionManager.getJobController();
 
         //init buf pool
         JsonUtils.setSerializeWriterBufferThreshold(jsonBufferSize);

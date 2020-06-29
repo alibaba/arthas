@@ -16,9 +16,9 @@ public class TermResultDistributorImpl implements ResultDistributor {
     private final CommandProcess commandProcess;
     private final ResultViewResolver resultViewResolver;
 
-    public TermResultDistributorImpl(CommandProcess commandProcess) {
+    public TermResultDistributorImpl(CommandProcess commandProcess, ResultViewResolver resultViewResolver) {
         this.commandProcess = commandProcess;
-        this.resultViewResolver = ResultViewResolver.getInstance();
+        this.resultViewResolver = resultViewResolver;
     }
 
     @Override
