@@ -10,6 +10,13 @@
     <artifactId>arthas-packaging</artifactId>
     <name>arthas-packaging</name>
 
+    <dependencies>
+        <dependency>
+            <groupId>com.taobao.arthas</groupId>
+            <artifactId>arthas-site</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+    </dependencies>
     <build>
         <finalName>arthas</finalName>
         <plugins>
