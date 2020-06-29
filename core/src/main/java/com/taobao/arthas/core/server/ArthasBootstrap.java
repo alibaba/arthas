@@ -28,6 +28,7 @@ import com.taobao.arthas.common.AnsiLog;
 import com.taobao.arthas.common.PidUtils;
 import com.taobao.arthas.core.advisor.TransformerManager;
 import com.taobao.arthas.core.command.BuiltinCommandPack;
+import com.taobao.arthas.core.command.view.ResultViewResolver;
 import com.taobao.arthas.core.config.BinderUtils;
 import com.taobao.arthas.core.config.Configure;
 import com.taobao.arthas.core.config.FeatureCodec;
@@ -101,7 +102,10 @@ public class ArthasBootstrap {
         // 3. init logger
         loggerContext = LogUtil.initLooger(arthasEnvironment);
 
-        // 4. start agent server
+        // 4. init result views
+        ResultViewResolver.getInstance().initResultViews();
+
+        // 5. start agent server
         bind(configure);
 
         executorService = Executors.newScheduledThreadPool(1, new ThreadFactory() {

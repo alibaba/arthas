@@ -17,10 +17,6 @@ import java.util.concurrent.ConcurrentHashMap;
 public class ResultViewResolver {
     private static final Logger logger = LoggerFactory.getLogger(ResultViewResolver.class);
 
-    static {
-        getInstance().registerResultViews();
-    }
-
     // modelClass -> view
     private Map<Class, ResultView> resultViewMap = new ConcurrentHashMap<Class, ResultView>();
 
@@ -35,7 +31,13 @@ public class ResultViewResolver {
         return viewResolver;
     }
 
-    private void registerResultViews() {
+    private ResultViewResolver() {
+    }
+
+    /**
+     * 需要调用此方法初始化注册ResultView
+     */
+    public void initResultViews() {
         try {
             //basic1000
             registerView(StatusView.class);
@@ -63,9 +65,6 @@ public class ResultViewResolver {
         } catch (Throwable e) {
             logger.error("register result view failed", e);
         }
-    }
-
-    private ResultViewResolver() {
     }
 
     public ResultView getResultView(ResultModel model) {
