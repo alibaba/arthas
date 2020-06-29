@@ -25,7 +25,9 @@ public class ResultViewResolver {
     public static ResultViewResolver getInstance() {
         if (viewResolver == null) {
             synchronized (ResultViewResolver.class) {
-                viewResolver = new ResultViewResolver();
+                if (viewResolver == null) {
+                    viewResolver = new ResultViewResolver();
+                }
             }
         }
         return viewResolver;

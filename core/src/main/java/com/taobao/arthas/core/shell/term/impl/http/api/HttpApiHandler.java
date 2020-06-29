@@ -70,7 +70,9 @@ public class HttpApiHandler {
     public static HttpApiHandler getInstance() {
         if (instance == null) {
             synchronized (HttpApiHandler.class) {
-                instance = new HttpApiHandler();
+                if (instance == null) {
+                    instance = new HttpApiHandler();
+                }
             }
         }
         return instance;

@@ -24,7 +24,9 @@ public class HistoryManagerImpl implements HistoryManager {
     public static HistoryManager getInstance() {
         if (instance == null) {
             synchronized (HistoryManagerImpl.class) {
-                instance = new HistoryManagerImpl();
+                if (instance == null) {
+                    instance = new HistoryManagerImpl();
+                }
             }
         }
         return instance;
