@@ -476,7 +476,7 @@ public class ArthasBootstrap {
         }
         // AgentBootstrap.resetArthasClassLoader();
         try {
-            Class<?> clazz = ClassLoader.getSystemClassLoader().loadClass("com.taobao.arthas.agent332.AgentBootstrap");
+            Class<?> clazz = ClassLoader.getSystemClassLoader().loadClass("com.taobao.arthas.agent334.AgentBootstrap");
             Method method = clazz.getDeclaredMethod("resetArthasClassLoader");
             method.invoke(null);
         } catch (Throwable e) {

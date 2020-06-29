@@ -52,8 +52,8 @@
                             </descriptorRefs>
                             <archive>
                                 <manifestEntries>
-                                    <Premain-Class>com.taobao.arthas.agent332.AgentBootstrap</Premain-Class>
-                                    <Agent-Class>com.taobao.arthas.agent332.AgentBootstrap</Agent-Class>
+                                    <Premain-Class>com.taobao.arthas.agent334.AgentBootstrap</Premain-Class>
+                                    <Agent-Class>com.taobao.arthas.agent334.AgentBootstrap</Agent-Class>
                                     <Can-Redefine-Classes>true</Can-Redefine-Classes>
                                     <Can-Retransform-Classes>true</Can-Retransform-Classes>
                                     <Specification-Title>${project.name}</Specification-Title>
