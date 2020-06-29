@@ -1,7 +1,5 @@
 package com.taobao.arthas.core.command.basic1000;
 
-import static com.taobao.text.ui.Element.label;
-
 import java.lang.management.ManagementFactory;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -12,7 +10,7 @@ import com.alibaba.arthas.deps.org.slf4j.LoggerFactory;
 import com.sun.management.HotSpotDiagnosticMXBean;
 import com.sun.management.VMOption;
 import com.taobao.arthas.core.command.Constants;
-import com.taobao.arthas.core.command.express.OgnlExpress;
+import com.taobao.arthas.core.command.model.ChangeResultVO;
 import com.taobao.arthas.core.command.model.MessageModel;
 import com.taobao.arthas.core.command.model.VMOptionModel;
 import com.taobao.arthas.core.shell.cli.Completion;
@@ -24,9 +22,6 @@ import com.taobao.middleware.cli.annotations.Argument;
 import com.taobao.middleware.cli.annotations.Description;
 import com.taobao.middleware.cli.annotations.Name;
 import com.taobao.middleware.cli.annotations.Summary;
-import com.taobao.text.Decoration;
-import com.taobao.text.ui.TableElement;
-import com.taobao.text.util.RenderUtil;
 
 /**
  * vmoption command
@@ -78,10 +73,14 @@ public class VMOptionCommand extends AnnotatedCommand {
                     process.appendResult(new VMOptionModel(Arrays.asList(option)));
                 }
             } else {
+                VMOption vmOption = hotSpotDiagnosticMXBean.getVMOption(name);
+                String originValue = vmOption.getValue();
+
                 // change vm option
                 hotSpotDiagnosticMXBean.setVMOption(name, value);
                 process.appendResult(new MessageModel("Successfully updated the vm option."));
-                process.appendResult(new MessageModel(name + "=" + hotSpotDiagnosticMXBean.getVMOption(name).getValue()));
+                process.appendResult(new VMOptionModel(new ChangeResultVO(name, originValue,
+                        hotSpotDiagnosticMXBean.getVMOption(name).getValue())));
             }
         } catch (Throwable t) {
             logger.error("Error during setting vm option", t);

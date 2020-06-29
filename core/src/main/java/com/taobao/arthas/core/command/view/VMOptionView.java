@@ -18,7 +18,12 @@ public class VMOptionView extends ResultView<VMOptionModel> {
 
     @Override
     public void draw(CommandProcess process, VMOptionModel result) {
-        process.write(renderVMOptions(result.getVmOptions(), process.width()));
+        if (result.getVmOptions() != null) {
+            process.write(renderVMOptions(result.getVmOptions(), process.width()));
+        } else if (result.getChangeResult() != null) {
+            TableElement table = ViewRenderUtil.renderChangeResult(result.getChangeResult());
+            process.write(RenderUtil.render(table, process.width()));
+        }
     }
 
     private static String renderVMOptions(List<VMOption> diagnosticOptions, int width) {
