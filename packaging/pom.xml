@@ -4,7 +4,7 @@
     <parent>
         <groupId>com.taobao.arthas</groupId>
         <artifactId>arthas-all</artifactId>
-        <version>3.3.4-SNAPSHOT</version>
+        <version>3.3.4</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
     <artifactId>arthas-packaging</artifactId>
@@ -48,9 +48,7 @@
                         <phase>package</phase>
                         <configuration>
                             <tasks>
-                                <zip update="true" destfile="${project.build.directory}/${project.build.finalName}.${project.packaging}"
-                                    basedir="${project.build.directory}"
-                                    includes="arthas-bin.zip">
+                                <zip update="true" destfile="${project.build.directory}/${project.build.finalName}.${project.packaging}" basedir="${project.build.directory}" includes="arthas-bin.zip">
                                 </zip>
                             </tasks>
                         </configuration>
