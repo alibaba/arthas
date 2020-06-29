@@ -88,6 +88,8 @@ public class ArthasBootstrap {
 
     private TransformerManager transformerManager;
 
+    private ResultViewResolver resultViewResolver;
+
     private ArthasBootstrap(Instrumentation instrumentation, String args) throws Throwable {
         this.instrumentation = instrumentation;
 
@@ -103,7 +105,7 @@ public class ArthasBootstrap {
         loggerContext = LogUtil.initLooger(arthasEnvironment);
 
         // 4. init result views
-        ResultViewResolver.getInstance().initResultViews();
+        initResultViewResolver();
 
         // 5. start agent server
         bind(configure);
@@ -127,6 +129,10 @@ public class ArthasBootstrap {
 
         transformerManager = new TransformerManager(instrumentation);
         Runtime.getRuntime().addShutdownHook(shutdown);
+    }
+
+    private void initResultViewResolver() {
+        this.resultViewResolver = new ResultViewResolver();
     }
 
     private static void initSpy() {
@@ -445,5 +451,9 @@ public class ArthasBootstrap {
 
     private Logger logger() {
         return LoggerFactory.getLogger(this.getClass());
+    }
+
+    public ResultViewResolver getResultViewResolver() {
+        return resultViewResolver;
     }
 }

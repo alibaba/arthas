@@ -335,7 +335,7 @@ public class ProcessImpl implements Process {
 
         process = new CommandProcessImpl(this, tty);
         if (resultDistributor == null) {
-            resultDistributor = new TermResultDistributorImpl(process);
+            resultDistributor = new TermResultDistributorImpl(process, ArthasBootstrap.getInstance().getResultViewResolver());
         }
 
         final List<String> args2 = new LinkedList<String>();

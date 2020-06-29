@@ -20,26 +20,14 @@ public class ResultViewResolver {
     // modelClass -> view
     private Map<Class, ResultView> resultViewMap = new ConcurrentHashMap<Class, ResultView>();
 
-    private static ResultViewResolver viewResolver;
-
-    public static ResultViewResolver getInstance() {
-        if (viewResolver == null) {
-            synchronized (ResultViewResolver.class) {
-                if (viewResolver == null) {
-                    viewResolver = new ResultViewResolver();
-                }
-            }
-        }
-        return viewResolver;
-    }
-
-    private ResultViewResolver() {
+    public ResultViewResolver() {
+        initResultViews();
     }
 
     /**
      * 需要调用此方法初始化注册ResultView
      */
-    public void initResultViews() {
+    private void initResultViews() {
         try {
             //basic1000
             registerView(StatusView.class);
