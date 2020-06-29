@@ -1,5 +1,6 @@
 package com.taobao.arthas.agent332;
 
+import java.arthas.SpyAPI;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.PrintStream;
@@ -8,7 +9,6 @@ import java.lang.instrument.Instrumentation;
 import java.net.URL;
 import java.net.URLDecoder;
 import java.security.CodeSource;
-import java.util.jar.JarFile;
 
 import com.taobao.arthas.agent.ArthasClassloader;
 
@@ -18,12 +18,10 @@ import com.taobao.arthas.agent.ArthasClassloader;
  * @author vlinux on 15/5/19.
  */
 public class AgentBootstrap {
-    private static final String ARTHAS_SPY_JAR = "arthas-spy.jar";
     private static final String ARTHAS_CORE_JAR = "arthas-core.jar";
     private static final String ARTHAS_BOOTSTRAP = "com.taobao.arthas.core.server.ArthasBootstrap";
     private static final String GET_INSTANCE = "getInstance";
     private static final String IS_BIND = "isBind";
-    private static final String BIND = "bind";
 
     private static PrintStream ps = System.err;
     static {
@@ -53,7 +51,13 @@ public class AgentBootstrap {
         }
     }
 
-    // 全局持有classloader用于隔离 Arthas 实现
+    /**
+     * <pre>
+     * 1. 全局持有classloader用于隔离 Arthas 实现，防止多次attach重复初始化
+     * 2. ClassLoader在arthas停止时会被reset
+     * 3. 如果ClassLoader一直没变，则 com.taobao.arthas.core.server.ArthasBootstrap#getInstance 返回结果一直是一样的
+     * </pre>
+     */
     private static volatile ClassLoader arthasClassLoader;
 
     public static void premain(String args, Instrumentation inst) {
@@ -71,21 +75,7 @@ public class AgentBootstrap {
         arthasClassLoader = null;
     }
 
-    private static ClassLoader getClassLoader(Instrumentation inst, File spyJarFile, File arthasCoreJarFile) throws Throwable {
-        // 将Spy添加到BootstrapClassLoader
-        ClassLoader parent = ClassLoader.getSystemClassLoader().getParent();
-        Class<?> spyClass = null;
-        if (parent != null) {
-            try {
-                spyClass =parent.loadClass("java.arthas.SpyAPI");
-            } catch (Throwable e) {
-                // ignore
-            }
-        }
-        if (spyClass == null) {
-            inst.appendToBootstrapClassLoaderSearch(new JarFile(spyJarFile));
-        }
-
+    private static ClassLoader getClassLoader(Instrumentation inst, File arthasCoreJarFile) throws Throwable {
         // 构造自定义的类加载器，尽量减少Arthas对现有工程的侵蚀
         return loadOrDefineClassLoader(arthasCoreJarFile);
     }
@@ -98,6 +88,17 @@ public class AgentBootstrap {
     }
 
     private static synchronized void main(String args, final Instrumentation inst) {
+        // 尝试判断arthas是否已在运行，如果是的话，直接就退出
+        try {
+            Class.forName("java.arthas.SpyAPI"); // 加载不到会抛异常
+            if (SpyAPI.isInited()) {
+                ps.println("Arthas server already stared, skip attach.");
+                ps.flush();
+                return;
+            }
+        } catch (Throwable e) {
+            // ignore
+        }
         try {
             ps.println("Arthas server agent start...");
             // 传递的args参数分两个部分:arthasCoreJar路径和agentArgs, 分别是Agent的JAR包路径和期望传递到服务端的参数
@@ -139,16 +140,10 @@ public class AgentBootstrap {
                 return;
             }
 
-            File spyJarFile = new File(arthasCoreJarFile.getParentFile(), ARTHAS_SPY_JAR);
-            if (!spyJarFile.exists()) {
-                ps.println("Spy jar file does not exist: " + spyJarFile);
-                return;
-            }
-
             /**
              * Use a dedicated thread to run the binding logic to prevent possible memory leak. #195
              */
-            final ClassLoader agentLoader = getClassLoader(inst, spyJarFile, arthasCoreJarFile);
+            final ClassLoader agentLoader = getClassLoader(inst, arthasCoreJarFile);
 
             Thread bindingThread = new Thread() {
                 @Override
@@ -187,15 +182,9 @@ public class AgentBootstrap {
         Object bootstrap = bootstrapClass.getMethod(GET_INSTANCE, Instrumentation.class, String.class).invoke(null, inst, args);
         boolean isBind = (Boolean) bootstrapClass.getMethod(IS_BIND).invoke(bootstrap);
         if (!isBind) {
-            try {
-                ps.println("Arthas start to bind...");
-                bootstrapClass.getMethod(BIND, String.class).invoke(bootstrap, args);
-                ps.println("Arthas server bind success.");
-                return;
-            } catch (Exception e) {
-                ps.println("Arthas server port binding failed! Please check $HOME/logs/arthas/arthas.log for more details.");
-                throw e;
-            }
+            String errorMsg = "Arthas server port binding failed! Please check $HOME/logs/arthas/arthas.log for more details.";
+            ps.println(errorMsg);
+            throw new RuntimeException(errorMsg);
         }
         ps.println("Arthas server already bind.");
     }

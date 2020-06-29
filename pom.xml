@@ -64,6 +64,8 @@
         <module>client</module>
         <module>memorycompiler</module>
         <module>boot</module>
+        <module>arthas-agent-attach</module>
+        <module>arthas-spring-boot-starter</module>
         <module>demo</module>
         <module>testcase</module>
         <module>site</module>
@@ -86,6 +88,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.compiler.target>1.6</maven.compiler.target>
         <maven.compiler.source>1.6</maven.compiler.source>
+        <spring-boot.version>2.3.1.RELEASE</spring-boot.version>
     </properties>
 
     <dependencyManagement>
@@ -201,6 +204,23 @@
                 <version>2.14.6</version>
             </dependency>
 
+            <dependency>
+                <groupId>net.bytebuddy</groupId>
+                <artifactId>byte-buddy</artifactId>
+                <version>1.7.10</version>
+            </dependency>
+
+            <dependency>
+                <groupId>net.bytebuddy</groupId>
+                <artifactId>byte-buddy-agent</artifactId>
+                <version>1.7.10</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.zeroturnaround</groupId>
+                <artifactId>zt-zip</artifactId>
+                <version>1.14</version>
+            </dependency>
         </dependencies>
     </dependencyManagement>
 

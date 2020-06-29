@@ -19,6 +19,7 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.jar.JarFile;
 
 import com.alibaba.arthas.deps.ch.qos.logback.classic.LoggerContext;
 import com.alibaba.arthas.deps.org.slf4j.Logger;
@@ -59,11 +60,11 @@ import io.netty.util.concurrent.EventExecutorGroup;
 
 /**
  * @author vlinux on 15/5/2.
- * @author gongdewei 2020-03-25
  */
 public class ArthasBootstrap {
+    private static final String ARTHAS_SPY_JAR = "arthas-spy.jar";
     public static final String ARTHAS_HOME_PROPERTY = "arthas.home";
-    private static String ARTHAS_SHOME = null;
+    private static String ARTHAS_HOME = null;
 
     public static final String CONFIG_NAME_PROPERTY = "arthas.config.name";
     public static final String CONFIG_LOCATION_PROPERTY = "arthas.config.location";
@@ -97,7 +98,7 @@ public class ArthasBootstrap {
 
     private HttpApiHandler httpApiHandler;
 
-    private ArthasBootstrap(Instrumentation instrumentation, String args) throws Throwable {
+    private ArthasBootstrap(Instrumentation instrumentation, Map<String, String> args) throws Throwable {
         this.instrumentation = instrumentation;
 
         String outputPath = System.getProperty("arthas.output.dir", "arthas-output");
@@ -105,7 +106,7 @@ public class ArthasBootstrap {
         arthasOutputDir.mkdirs();
 
         // 1. initSpy()
-        initSpy();
+        initSpy(instrumentation);
         // 2. ArthasEnvironment
         initArthasEnvironment(args);
         // 3. init logger
@@ -144,11 +145,32 @@ public class ArthasBootstrap {
         this.historyManager = new HistoryManagerImpl();
     }
 
-    private static void initSpy() {
+    private static void initSpy(Instrumentation instrumentation) throws Throwable {
         // TODO init SpyImpl ?
+
+        // 将Spy添加到BootstrapClassLoader
+        ClassLoader parent = ClassLoader.getSystemClassLoader().getParent();
+        Class<?> spyClass = null;
+        if (parent != null) {
+            try {
+                spyClass =parent.loadClass("java.arthas.SpyAPI");
+            } catch (Throwable e) {
+                // ignore
+            }
+        }
+        if (spyClass == null) {
+            CodeSource codeSource = ArthasBootstrap.class.getProtectionDomain().getCodeSource();
+            if (codeSource != null) {
+                File arthasCoreJarFile = new File(codeSource.getLocation().toURI().getSchemeSpecificPart());
+                File spyJarFile = new File(arthasCoreJarFile.getParentFile(), ARTHAS_SPY_JAR);
+                instrumentation.appendToBootstrapClassLoaderSearch(new JarFile(spyJarFile));
+            } else {
+                throw new IllegalStateException("can not find " + ARTHAS_SPY_JAR);
+            }
+        }
     }
 
-    private void initArthasEnvironment(String args) throws IOException {
+    private void initArthasEnvironment(Map<String, String> argsMap) throws IOException {
         if (arthasEnvironment == null) {
             arthasEnvironment = new ArthasEnvironment();
         }
@@ -160,15 +182,13 @@ public class ArthasBootstrap {
          * https://github.com/alibaba/arthas/issues/986
          * </pre>
          */
-        Map<String, String> argsMap = FeatureCodec.DEFAULT_COMMANDLINE_CODEC.toMap(args);
-        // 给配置全加上前缀
-        Map<String, Object> mapWithPrefix = new HashMap<String, Object>(argsMap.size());
-        for (Entry<String, String> entry : argsMap.entrySet()) {
-            mapWithPrefix.put("arthas." + entry.getKey(), entry.getValue());
+        Map<String, String> copyMap = new HashMap<String, String>(argsMap);
+        // 添加 arthas.home
+        if (!copyMap.containsKey(ARTHAS_HOME_PROPERTY)) {
+            copyMap.put(ARTHAS_HOME_PROPERTY, arthasHome());
         }
-        mapWithPrefix.put(ARTHAS_HOME_PROPERTY, arthasHome());
 
-        MapPropertySource mapPropertySource = new MapPropertySource("args", mapWithPrefix);
+        MapPropertySource mapPropertySource = new MapPropertySource("args", (Map<String, Object>)(Object)copyMap);
         arthasEnvironment.addFirst(mapPropertySource);
 
         tryToLoadArthasProperties();
@@ -177,22 +197,22 @@ public class ArthasBootstrap {
         BinderUtils.inject(arthasEnvironment, configure);
     }
 
-    private String arthasHome() {
-        if (ARTHAS_SHOME != null) {
-            return ARTHAS_SHOME;
+    private static String arthasHome() {
+        if (ARTHAS_HOME != null) {
+            return ARTHAS_HOME;
         }
         CodeSource codeSource = ArthasBootstrap.class.getProtectionDomain().getCodeSource();
         if (codeSource != null) {
             try {
-                ARTHAS_SHOME = new File(codeSource.getLocation().toURI().getSchemeSpecificPart()).getParentFile().getAbsolutePath();
+                ARTHAS_HOME = new File(codeSource.getLocation().toURI().getSchemeSpecificPart()).getParentFile().getAbsolutePath();
             } catch (Throwable e) {
-                AnsiLog.error("try to load arthas.properties error", e);
+                AnsiLog.error("try to find arthas.home from CodeSource error", e);
             }
         }
-        if (ARTHAS_SHOME == null) {
-            ARTHAS_SHOME = new File("").getAbsolutePath();
+        if (ARTHAS_HOME == null) {
+            ARTHAS_HOME = new File("").getAbsolutePath();
         }
-        return ARTHAS_SHOME;
+        return ARTHAS_HOME;
     }
 
     // try to load arthas.properties
@@ -245,7 +265,7 @@ public class ArthasBootstrap {
      * @param configure 配置信息
      * @throws IOException 服务器启动失败
      */
-    public void bind(Configure configure) throws Throwable {
+    private void bind(Configure configure) throws Throwable {
 
         long start = System.currentTimeMillis();
 
@@ -331,6 +351,12 @@ public class ArthasBootstrap {
             UserStatUtil.setStatUrl(configure.getStatUrl());
             UserStatUtil.arthasStart();
 
+            try {
+                SpyAPI.init();
+            } catch (Throwable e) {
+                // ignore
+            }
+
             logger().info("as-server started in {} ms", System.currentTimeMillis() - start);
         } catch (Throwable e) {
             logger().error("Error during bind to port " + configure.getTelnetPort(), e);
@@ -397,6 +423,27 @@ public class ArthasBootstrap {
      * @throws Throwable
      */
     public synchronized static ArthasBootstrap getInstance(Instrumentation instrumentation, String args) throws Throwable {
+        if (arthasBootstrap != null) {
+            return arthasBootstrap;
+        }
+
+        Map<String, String> argsMap = FeatureCodec.DEFAULT_COMMANDLINE_CODEC.toMap(args);
+        // 给配置全加上前缀
+        Map<String, String> mapWithPrefix = new HashMap<String, String>(argsMap.size());
+        for (Entry<String, String> entry : argsMap.entrySet()) {
+            mapWithPrefix.put("arthas." + entry.getKey(), entry.getValue());
+        }
+        return getInstance(instrumentation, mapWithPrefix);
+    }
+
+    /**
+     * 单例
+     *
+     * @param instrumentation JVM增强
+     * @return ArthasServer单例
+     * @throws Throwable
+     */
+    public synchronized static ArthasBootstrap getInstance(Instrumentation instrumentation, Map<String, String> args) throws Throwable {
         if (arthasBootstrap == null) {
             arthasBootstrap = new ArthasBootstrap(instrumentation, args);
         }
@@ -421,7 +468,12 @@ public class ArthasBootstrap {
      * 清除SpyAPI里的引用
      */
     private void cleanUpSpyReference() {
-        SpyAPI.setNopSpy();
+        try {
+            SpyAPI.setNopSpy();
+            SpyAPI.destroy();
+        } catch (Throwable e) {
+            // ignore
+        }
         // AgentBootstrap.resetArthasClassLoader();
         try {
             Class<?> clazz = ClassLoader.getSystemClassLoader().loadClass("com.taobao.arthas.agent332.AgentBootstrap");
