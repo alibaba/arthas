@@ -42,6 +42,8 @@ public class SystemEnvCommand extends AnnotatedCommand {
                 result.put(envName, value);
             }
             process.appendResult(result);
+        } catch (Throwable t) {
+            process.end(-1, "Error during setting system env: " + t.getMessage());
         } finally {
             process.end();
         }

@@ -6,6 +6,7 @@ import com.taobao.arthas.core.command.Constants;
 import com.taobao.arthas.core.command.model.ChangeResultVO;
 import com.taobao.arthas.core.command.model.OptionVO;
 import com.taobao.arthas.core.command.model.OptionsModel;
+import com.taobao.arthas.core.command.model.StatusModel;
 import com.taobao.arthas.core.shell.cli.CliToken;
 import com.taobao.arthas.core.shell.cli.Completion;
 import com.taobao.arthas.core.shell.cli.CompletionUtils;
@@ -21,6 +22,8 @@ import com.taobao.middleware.cli.annotations.Argument;
 import com.taobao.middleware.cli.annotations.Description;
 import com.taobao.middleware.cli.annotations.Name;
 import com.taobao.middleware.cli.annotations.Summary;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
@@ -46,6 +49,9 @@ import static java.lang.String.format;
         Constants.WIKI + Constants.WIKI_HOME + "options")
 //@formatter:on
 public class OptionsCommand extends AnnotatedCommand {
+
+    private static final Logger logger = LoggerFactory.getLogger(OptionsCommand.class);
+
     private String optionName;
     private String optionValue;
 
@@ -64,17 +70,23 @@ public class OptionsCommand extends AnnotatedCommand {
     @Override
     public void process(CommandProcess process) {
         try {
+            StatusModel statusModel = null;
             if (isShow()) {
-                processShow(process);
+                statusModel = processShow(process);
             } else if (isShowName()) {
-                processShowName(process);
+                statusModel = processShowName(process);
             } else {
-                processChangeNameValue(process);
+                statusModel = processChangeNameValue(process);
+            }
+
+            if (statusModel != null) {
+                process.end(statusModel.getStatusCode(), statusModel.getMessage());
+            } else {
+                process.end(-1, "command was not processed");
             }
         } catch (Throwable t) {
-            // ignore
-        } finally {
-            process.end();
+            logger.error("process options command error", t);
+            process.end(-1, "process options command error");
         }
     }
 
@@ -98,23 +110,24 @@ public class OptionsCommand extends AnnotatedCommand {
         }
     }
 
-    private void processShow(CommandProcess process) throws IllegalAccessException {
+    private StatusModel processShow(CommandProcess process) throws IllegalAccessException {
         Collection<Field> fields = findOptionFields(new RegexMatcher(".*"));
         process.appendResult(new OptionsModel(convertToOptionVOs(fields)));
+        return StatusModel.success();
     }
 
-    private void processShowName(CommandProcess process) throws IllegalAccessException {
+    private StatusModel processShowName(CommandProcess process) throws IllegalAccessException {
         Collection<Field> fields = findOptionFields(new EqualsMatcher<String>(optionName));
         process.appendResult(new OptionsModel(convertToOptionVOs(fields)));
+        return StatusModel.success();
     }
 
-    private void processChangeNameValue(CommandProcess process) throws IllegalAccessException {
+    private StatusModel processChangeNameValue(CommandProcess process) throws IllegalAccessException {
         Collection<Field> fields = findOptionFields(new EqualsMatcher<String>(optionName));
 
         // name not exists
         if (fields.isEmpty()) {
-            process.end(-1, format("options[%s] not found.", optionName));
-            return;
+            return StatusModel.failure(-1, format("options[%s] not found.", optionName));
         }
 
         Field field = fields.iterator().next();
@@ -142,17 +155,16 @@ public class OptionsCommand extends AnnotatedCommand {
             } else if (isIn(type, short.class, String.class)) {
                 FieldUtils.writeStaticField(field, afterValue = optionValue);
             } else {
-                process.end(-1, format("Options[%s] type[%s] was unsupported.", optionName, type.getSimpleName()));
-                return;
+                return StatusModel.failure(-1, format("Options[%s] type[%s] was unsupported.", optionName, type.getSimpleName()));
             }
 
         } catch (Throwable t) {
-            process.end(-1, format("Cannot cast option value[%s] to type[%s].", optionValue, type.getSimpleName()));
-            return;
+            return StatusModel.failure(-1, format("Cannot cast option value[%s] to type[%s].", optionValue, type.getSimpleName()));
         }
 
         ChangeResultVO changeResultVO = new ChangeResultVO(optionAnnotation.name(), beforeValue, afterValue);
         process.appendResult(new OptionsModel(changeResultVO));
+        return StatusModel.success();
     }
 
 
