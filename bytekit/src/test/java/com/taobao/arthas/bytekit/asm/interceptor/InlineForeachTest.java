@@ -75,6 +75,7 @@ public class InlineForeachTest {
             System.err.println("onEnter, methodName:" + methodName);
             System.err.println("onEnter, methodDesc:" + methodDesc);
 
+            // foreach map entries
             Map<String, Object> map = new HashMap<String, Object>();
             map.put("a", 1);
             map.put("b", 2);
@@ -86,6 +87,7 @@ public class InlineForeachTest {
             }
             System.out.println("map: "+sb.toString());
 
+            // foreach list
             List<Integer> list = Arrays.asList(1, 2, 3, 6, 7, 29);
             int total = 0;
             for (Integer n : list) {
