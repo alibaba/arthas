@@ -9,7 +9,6 @@
         <relativePath>../pom.xml</relativePath>
     </parent>
 
-    <groupId>com.alibaba.arthas</groupId>
     <artifactId>arthas-spring-boot-starter</artifactId>
     <packaging>jar</packaging>
 
