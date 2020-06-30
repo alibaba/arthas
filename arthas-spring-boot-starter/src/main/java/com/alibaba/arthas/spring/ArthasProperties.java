@@ -33,11 +33,6 @@ public class ArthasProperties {
 	 */
 	private boolean slientInit = false;
 
-	/**
-	 * arthas agent init in a background thread by default.
-	 */
-	private boolean syncInit = false;
-
 	public String getHome() {
 		return home;
 	}
@@ -52,14 +47,6 @@ public class ArthasProperties {
 
 	public void setSlientInit(boolean slientInit) {
 		this.slientInit = slientInit;
-	}
-
-	public boolean isSyncInit() {
-		return syncInit;
-	}
-
-	public void setSyncInit(boolean syncInit) {
-		this.syncInit = syncInit;
 	}
 
 	public String getIp() {

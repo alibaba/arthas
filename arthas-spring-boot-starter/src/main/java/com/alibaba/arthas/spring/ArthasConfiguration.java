@@ -46,24 +46,8 @@ public class ArthasConfiguration {
 		final ArthasAgent arthasAgent = new ArthasAgent(mapWithPrefix, arthasProperties.getHome(),
 				arthasProperties.isSlientInit(), null);
 
-		if (arthasProperties.isSyncInit()) {
-			arthasAgent.init();
-			logger.info("Arthas agent start success.");
-		} else {
-			Thread thread = new Thread(new Runnable() {
-				@Override
-				public void run() {
-					try {
-						arthasAgent.init();
-						logger.info("Arthas agent start success.");
-					} catch (Throwable e) {
-						logger.error("Arthas agent start error", e);
-					}
-				}
-
-			});
-			thread.start();
-		}
+		arthasAgent.init();
+		logger.info("Arthas agent start success.");
 		return arthasAgent;
 
 	}

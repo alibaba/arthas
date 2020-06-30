@@ -1,7 +1,5 @@
 package com.alibaba.arthas.spring;
 
-import static org.junit.Assert.fail;
-
 import java.util.HashMap;
 import java.util.Map;
 

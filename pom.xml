@@ -87,7 +87,7 @@
                     <plugin>
                         <groupId>pl.project13.maven</groupId>
                         <artifactId>git-commit-id-plugin</artifactId>
-                        <version>4.0.0</version>
+                        <version>2.2.1</version>
                         <executions>
                             <execution>
                                 <goals>
@@ -113,6 +113,7 @@
         <maven.compiler.target>1.6</maven.compiler.target>
         <maven.compiler.source>1.6</maven.compiler.source>
         <spring-boot.version>2.3.1.RELEASE</spring-boot.version>
+        <maven-invoker-plugin.version>3.0.0</maven-invoker-plugin.version>
     </properties>
 
     <dependencyManagement>
