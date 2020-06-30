@@ -47,6 +47,15 @@ public class ResultViewResolver {
             registerView(ShutdownView.class);
 
             //klass100
+            registerView(ClassLoaderView.class);
+            registerView(DumpClassView.class);
+            registerView(GetStaticView.class);
+            registerView(JadView.class);
+            registerView(MemoryCompilerView.class);
+            registerView(OgnlView.class);
+            registerView(RedefineView.class);
+            registerView(SearchClassView.class);
+            registerView(SearchMethodView.class);
 
             //logger
 
