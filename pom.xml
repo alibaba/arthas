@@ -207,13 +207,13 @@
             <dependency>
                 <groupId>net.bytebuddy</groupId>
                 <artifactId>byte-buddy</artifactId>
-                <version>1.7.10</version>
+                <version>1.10.13</version>
             </dependency>
 
             <dependency>
                 <groupId>net.bytebuddy</groupId>
                 <artifactId>byte-buddy-agent</artifactId>
-                <version>1.7.10</version>
+                <version>1.10.13</version>
             </dependency>
 
             <dependency>
