@@ -74,13 +74,37 @@
 
     <profiles>
         <profile>
-            <id>deb</id>
+            <id>jdk8</id>
             <activation>
                 <jdk>[1.8,)</jdk>
             </activation>
             <modules>
                 <module>tunnel-server</module>
             </modules>
+            <build>
+                <plugins>
+                    <!-- git commit info -->
+                    <plugin>
+                        <groupId>pl.project13.maven</groupId>
+                        <artifactId>git-commit-id-plugin</artifactId>
+                        <version>4.0.0</version>
+                        <executions>
+                            <execution>
+                                <goals>
+                                    <goal>revision</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                        <configuration>
+                            <verbose>false</verbose>
+                            <dateFormat>yyyy-MM-dd'T'HH:mm:ssZ</dateFormat>
+                            <generateGitPropertiesFile>true</generateGitPropertiesFile>
+                            <generateGitPropertiesFilename>${project.build.outputDirectory}/arthas-git.properties</generateGitPropertiesFilename>
+                            <excludeProperties>git.build.host</excludeProperties>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
         </profile>
     </profiles>
 
@@ -241,26 +265,6 @@
         </pluginManagement>
 
         <plugins>
-            <!-- git commit info -->
-            <plugin>
-                <groupId>pl.project13.maven</groupId>
-                <artifactId>git-commit-id-plugin</artifactId>
-                <version>2.2.1</version>
-                <executions>
-                    <execution>
-                        <goals>
-                            <goal>revision</goal>
-                        </goals>
-                    </execution>
-                </executions>
-                <configuration>
-                    <verbose>false</verbose>
-                    <dateFormat>yyyy-MM-dd'T'HH:mm:ssZ</dateFormat>
-                    <generateGitPropertiesFile>true</generateGitPropertiesFile>
-                    <generateGitPropertiesFilename>${project.build.outputDirectory}/arthas-git.properties</generateGitPropertiesFilename>
-                    <excludeProperties>git.build.host</excludeProperties>
-                </configuration>
-            </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-jar-plugin</artifactId>
