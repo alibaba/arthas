@@ -6,12 +6,7 @@ import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.reflect.Method;
-import java.util.List;
 
-import com.alibaba.arthas.deps.org.objectweb.asm.Type;
-
-import com.taobao.arthas.bytekit.asm.binding.Binding;
-import com.taobao.arthas.bytekit.asm.interceptor.InterceptorMethodConfig;
 import com.taobao.arthas.bytekit.asm.interceptor.InterceptorProcessor;
 import com.taobao.arthas.bytekit.asm.interceptor.annotation.AtThrow.ThrowInterceptorProcessorParser;
 import com.taobao.arthas.bytekit.asm.interceptor.parser.InterceptorProcessorParser;
@@ -36,31 +31,15 @@ public @interface AtThrow {
         @Override
         public InterceptorProcessor parse(Method method, Annotation annotationOnMethod) {
 
-            InterceptorProcessor interceptorProcessor = new InterceptorProcessor(method.getDeclaringClass().getClassLoader());
-            InterceptorMethodConfig interceptorMethodConfig = new InterceptorMethodConfig();
-            interceptorProcessor.setInterceptorMethodConfig(interceptorMethodConfig);
-
-            interceptorMethodConfig.setOwner(Type.getInternalName(method.getDeclaringClass()));
-            interceptorMethodConfig.setMethodName(method.getName());
-            interceptorMethodConfig.setMethodDesc(Type.getMethodDescriptor(method));
-
             AtThrow atThrow = (AtThrow) annotationOnMethod;
+
             LocationMatcher locationMatcher = new ThrowLocationMatcher(atThrow.count());
-            interceptorProcessor.setLocationMatcher(locationMatcher);
 
-            interceptorMethodConfig.setInline(atThrow.inline());
-
-            List<Binding> bindings = BindingParserUtils.parseBindings(method);
-
-            interceptorMethodConfig.setBindings(bindings);
-
-            InterceptorMethodConfig errorHandlerMethodConfig = ExceptionHandlerUtils
-                    .errorHandlerMethodConfig(atThrow.suppress(), atThrow.suppressHandler());
-            if (errorHandlerMethodConfig != null) {
-                interceptorProcessor.setExceptionHandlerConfig(errorHandlerMethodConfig);
-            }
-
-            return interceptorProcessor;
+            return InterceptorParserUtils.createInterceptorProcessor(method,
+                    locationMatcher,
+                    atThrow.inline(),
+                    atThrow.suppress(),
+                    atThrow.suppressHandler());
         }
 
     }

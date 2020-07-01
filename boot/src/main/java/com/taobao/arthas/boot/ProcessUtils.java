@@ -3,6 +3,11 @@ package com.taobao.arthas.boot;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
+import java.io.PrintStream;
+import java.lang.reflect.Method;
+import java.net.URL;
+import java.net.URLClassLoader;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -10,6 +15,7 @@ import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Scanner;
 import java.util.InputMismatchException;
 
@@ -27,8 +33,26 @@ import com.taobao.arthas.common.PidUtils;
 public class ProcessUtils {
     private static String FOUND_JAVA_HOME = null;
 
+    //status code from com.taobao.arthas.client.TelnetConsole
+    /**
+     * Process success
+     */
+    public static final int STATUS_OK = 0;
+    /**
+     * Generic error
+     */
+    public static final int STATUS_ERROR = 1;
+    /**
+     * Execute commands timeout
+     */
+    public static final int STATUS_EXEC_TIMEOUT = 100;
+    /**
+     * Execute commands error
+     */
+    public static final int STATUS_EXEC_ERROR = 101;
+
     @SuppressWarnings("resource")
-    public static long select(boolean v, long telnetPortPid) throws InputMismatchException {
+    public static long select(boolean v, long telnetPortPid, String select) throws InputMismatchException {
         Map<Long, String> processMap = listProcessByJps(v);
         // Put the port that is already listening at the first
         if (telnetPortPid > 0 && processMap.containsKey(telnetPortPid)) {
@@ -44,6 +68,21 @@ public class ProcessUtils {
             AnsiLog.info("Can not find java process. Try to pass <pid> in command line.");
             return -1;
         }
+
+		// select target process by the '--select' option when match only one process
+		if (select != null && !select.trim().isEmpty()) {
+			int matchedSelectCount = 0;
+			Long matchedPid = null;
+			for (Entry<Long, String> entry : processMap.entrySet()) {
+				if (entry.getValue().contains(select)) {
+					matchedSelectCount++;
+					matchedPid = entry.getKey();
+				}
+			}
+			if (matchedSelectCount == 1) {
+				return matchedPid;
+			}
+		}
 
         AnsiLog.info("Found existing java process, please choose one and input the serial number of the process, eg : 1. Then hit ENTER.");
         // print list
@@ -267,7 +306,52 @@ public class ProcessUtils {
         } catch (Throwable e) {
             // ignore
         }
+    }
 
+    public static int startArthasClient(String arthasHomeDir, List<String> telnetArgs, OutputStream out) throws Throwable {
+        // start java telnet client
+        // find arthas-client.jar
+        URLClassLoader classLoader = new URLClassLoader(
+                new URL[]{new File(arthasHomeDir, "arthas-client.jar").toURI().toURL()});
+        Class<?> telnetConsoleClas = classLoader.loadClass("com.taobao.arthas.client.TelnetConsole");
+        Method processMethod = telnetConsoleClas.getMethod("process", String[].class);
+
+        //redirect System.out/System.err
+        PrintStream originSysOut = System.out;
+        PrintStream originSysErr = System.err;
+        PrintStream newOut = new PrintStream(out);
+        PrintStream newErr = new PrintStream(out);
+
+        // call TelnetConsole.process()
+        // fix https://github.com/alibaba/arthas/issues/833
+        ClassLoader tccl = Thread.currentThread().getContextClassLoader();
+        try {
+            System.setOut(newOut);
+            System.setErr(newErr);
+            Thread.currentThread().setContextClassLoader(classLoader);
+            return (Integer) processMethod.invoke(null, new Object[]{telnetArgs.toArray(new String[0])});
+        } catch (Throwable e) {
+            //java.lang.reflect.InvocationTargetException : java.net.ConnectException
+            e = e.getCause();
+            if (e instanceof IOException || e instanceof InterruptedException) {
+                // ignore connection error and interrupted error
+                return STATUS_ERROR;
+            } else {
+                // process error
+                AnsiLog.error("process error: {}", e.toString());
+                AnsiLog.error(e);
+                return STATUS_EXEC_ERROR;
+            }
+        } finally {
+            Thread.currentThread().setContextClassLoader(tccl);
+
+            //reset System.out/System.err
+            System.setOut(originSysOut);
+            System.setErr(originSysErr);
+            //flush output
+            newOut.flush();
+            newErr.flush();
+        }
     }
 
     private static File findJava() {

@@ -11,6 +11,7 @@ import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
 import io.netty.handler.logging.LogLevel;
 import io.netty.handler.logging.LoggingHandler;
+import io.netty.util.concurrent.EventExecutorGroup;
 import io.netty.util.concurrent.Future;
 import io.netty.util.concurrent.GenericFutureListener;
 import io.netty.util.concurrent.ImmediateEventExecutor;
@@ -28,8 +29,10 @@ public class NettyHttpTelnetBootstrap extends TelnetBootstrap {
 
     private EventLoopGroup group;
     private ChannelGroup channelGroup;
+    private EventExecutorGroup workerGroup;
 
-    public NettyHttpTelnetBootstrap() {
+    public NettyHttpTelnetBootstrap(EventExecutorGroup workerGroup) {
+        this.workerGroup = workerGroup;
         this.group = new NioEventLoopGroup();
         this.channelGroup = new DefaultChannelGroup(ImmediateEventExecutor.INSTANCE);
     }
@@ -56,7 +59,7 @@ public class NettyHttpTelnetBootstrap extends TelnetBootstrap {
                         .childHandler(new ChannelInitializer<SocketChannel>() {
                             @Override
                             public void initChannel(SocketChannel ch) throws Exception {
-                                ch.pipeline().addLast(new ProtocolDetectHandler(channelGroup, handlerFactory, factory));
+                                ch.pipeline().addLast(new ProtocolDetectHandler(channelGroup, handlerFactory, factory, workerGroup));
                             }
                         });
 

@@ -1,6 +1,6 @@
 FROM alpine
 
-ARG ARTHAS_VERSION="3.2.0"
+ARG ARTHAS_VERSION="3.3.6"
 ARG MIRROR=false
 
 ENV MAVEN_HOST=https://repo1.maven.org/maven2 \

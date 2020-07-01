@@ -103,7 +103,7 @@ public class StyledUsageFormatter extends UsageMessageFormatter {
         return Style.style(Decoration.bold, fontColor);
     }
 
-    private String computeUsageLine(String prefix, CLI cli) {
+    public String computeUsageLine(String prefix, CLI cli) {
         // initialise the string buffer
         StringBuilder buff;
         if (prefix == null) {

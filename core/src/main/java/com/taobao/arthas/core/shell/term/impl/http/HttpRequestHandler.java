@@ -1,6 +1,7 @@
 package com.taobao.arthas.core.shell.term.impl.http;
 
 import java.io.File;
+import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
 import java.net.URL;
@@ -8,6 +9,8 @@ import java.net.URL;
 import com.alibaba.arthas.deps.org.slf4j.Logger;
 import com.alibaba.arthas.deps.org.slf4j.LoggerFactory;
 import com.taobao.arthas.common.IOUtils;
+import com.taobao.arthas.core.server.ArthasBootstrap;
+import com.taobao.arthas.core.shell.term.impl.http.api.HttpApiHandler;
 import com.taobao.arthas.core.shell.term.impl.httptelnet.HttpTelnetTermServer;
 
 import io.netty.channel.ChannelFuture;
@@ -15,7 +18,6 @@ import io.netty.channel.ChannelFutureListener;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.handler.codec.http.DefaultFullHttpResponse;
-import io.netty.handler.codec.http.DefaultHttpResponse;
 import io.netty.handler.codec.http.FullHttpRequest;
 import io.netty.handler.codec.http.FullHttpResponse;
 import io.netty.handler.codec.http.HttpHeaderNames;
@@ -27,9 +29,13 @@ import io.netty.handler.codec.http.LastHttpContent;
 import io.termd.core.http.HttpTtyConnection;
 import io.termd.core.util.Logging;
 
+import static com.taobao.arthas.core.util.HttpUtils.createRedirectResponse;
+import static com.taobao.arthas.core.util.HttpUtils.createResponse;
+
 /**
  * @author <a href="mailto:julien@julienviet.com">Julien Viet</a>
  * @author hengyunabc 2019-11-06
+ * @author gongdewei 2020-03-18
  */
 public class HttpRequestHandler extends SimpleChannelInboundHandler<FullHttpRequest> {
     private static final Logger logger = LoggerFactory.getLogger(HttpTelnetTermServer.class);
@@ -38,10 +44,13 @@ public class HttpRequestHandler extends SimpleChannelInboundHandler<FullHttpRequ
 
     private File dir;
 
+    private HttpApiHandler httpApiHandler;
+
     public HttpRequestHandler(String wsUri, File dir) {
         this.wsUri = wsUri;
         this.dir = dir;
         dir.mkdirs();
+        this.httpApiHandler = ArthasBootstrap.getInstance().getHttpApiHandler();
     }
 
     @Override
@@ -53,65 +62,103 @@ public class HttpRequestHandler extends SimpleChannelInboundHandler<FullHttpRequ
                 send100Continue(ctx);
             }
 
-            HttpResponse response = new DefaultHttpResponse(request.protocolVersion(),
-                    HttpResponseStatus.INTERNAL_SERVER_ERROR);
-
+            HttpResponse response = null;
             String path = new URI(request.uri()).getPath();
-
             if ("/".equals(path)) {
                 path = "/index.html";
             }
 
-            InputStream in = null;
+            boolean isHttpApiResponse = false;
             try {
-
-                DefaultFullHttpResponse fileViewResult = DirectoryBrowser.view(dir, path, request.protocolVersion());
-
-                if (fileViewResult != null) {
-                    response = fileViewResult;
-                } else {
-                    URL res = HttpTtyConnection.class.getResource("/com/taobao/arthas/core/http" + path);
-                    if (res != null) {
-                        DefaultFullHttpResponse fullResp = new DefaultFullHttpResponse(request.protocolVersion(),
-                                HttpResponseStatus.OK);
-                        in = res.openStream();
-                        byte[] tmp = new byte[256];
-                        for (int l = 0; l != -1; l = in.read(tmp)) {
-                            fullResp.content().writeBytes(tmp, 0, l);
-                        }
-                        int li = path.lastIndexOf('.');
-                        if (li != -1 && li != path.length() - 1) {
-                            String ext = path.substring(li + 1, path.length());
-                            String contentType;
-                            if ("html".equals(ext)) {
-                                contentType = "text/html";
-                            } else if ("js".equals(ext)) {
-                                contentType = "application/javascript";
-                            } else if ("css".equals(ext)) {
-                                contentType = "text/css";
-                            } else {
-                                contentType = null;
-                            }
-
-                            if (contentType != null) {
-                                fullResp.headers().set(HttpHeaderNames.CONTENT_TYPE, contentType);
-                            }
-                        }
-                        response = fullResp;
-                    } else {
-                        response.setStatus(HttpResponseStatus.NOT_FOUND);
-                    }
+                //handle http restful api
+                if ("/api".equals(path)) {
+                    response = httpApiHandler.handle(request);
+                    isHttpApiResponse = true;
                 }
 
+                //handle webui requests
+                if (path.equals("/ui")){
+                    response = createRedirectResponse(request, "/ui/");
+                }
+                if (path.equals("/ui/")) {
+                    path += "index.html";
+                }
+
+                //try classpath resource first
+                if (response == null){
+                    response = readFileFromResource(request, path);
+                }
+
+                //try output dir later, avoid overlay classpath resources files
+                if (response == null){
+                    response = DirectoryBrowser.view(dir, path, request.protocolVersion());
+                }
+
+                //not found
+                if (response == null){
+                    response = createResponse(request, HttpResponseStatus.NOT_FOUND, "Not found");
+                }
             } catch (Throwable e) {
                 logger.error("arthas process http request error: " + request.uri(), e);
             } finally {
+                //If it is null, an error may occur
+                if (response == null){
+                    response = createResponse(request, HttpResponseStatus.INTERNAL_SERVER_ERROR, "Server error");
+                }
                 ctx.write(response);
                 ChannelFuture future = ctx.writeAndFlush(LastHttpContent.EMPTY_LAST_CONTENT);
                 future.addListener(ChannelFutureListener.CLOSE);
-                IOUtils.close(in);
+
+                //reuse http api response buf
+                if (isHttpApiResponse && response instanceof DefaultFullHttpResponse) {
+                    final HttpResponse finalResponse = response;
+                    future.addListener(new ChannelFutureListener() {
+                        @Override
+                        public void operationComplete(ChannelFuture future) throws Exception {
+                            httpApiHandler.onCompleted((DefaultFullHttpResponse) finalResponse);
+                        }
+                    });
+                }
             }
         }
+    }
+
+    private FullHttpResponse readFileFromResource(FullHttpRequest request, String path) throws IOException {
+        DefaultFullHttpResponse fullResp = null;
+        InputStream in = null;
+        try {
+            URL res = HttpTtyConnection.class.getResource("/com/taobao/arthas/core/http" + path);
+            if (res != null) {
+                fullResp = new DefaultFullHttpResponse(request.protocolVersion(),
+                        HttpResponseStatus.OK);
+                in = res.openStream();
+                byte[] tmp = new byte[256];
+                for (int l = 0; l != -1; l = in.read(tmp)) {
+                    fullResp.content().writeBytes(tmp, 0, l);
+                }
+                int li = path.lastIndexOf('.');
+                if (li != -1 && li != path.length() - 1) {
+                    String ext = path.substring(li + 1, path.length());
+                    String contentType;
+                    if ("html".equals(ext)) {
+                        contentType = "text/html";
+                    } else if ("js".equals(ext)) {
+                        contentType = "application/javascript";
+                    } else if ("css".equals(ext)) {
+                        contentType = "text/css";
+                    } else {
+                        contentType = null;
+                    }
+
+                    if (contentType != null) {
+                        fullResp.headers().set(HttpHeaderNames.CONTENT_TYPE, contentType);
+                    }
+                }
+            }
+        } finally {
+            IOUtils.close(in);
+        }
+        return fullResp;
     }
 
     private static void send100Continue(ChannelHandlerContext ctx) {

@@ -5,6 +5,8 @@ import com.taobao.arthas.core.shell.future.Future;
 import com.taobao.arthas.core.shell.handlers.Handler;
 import com.taobao.arthas.core.shell.handlers.NoOpHandler;
 import com.taobao.arthas.core.shell.impl.ShellServerImpl;
+import com.taobao.arthas.core.shell.system.impl.InternalCommandManager;
+import com.taobao.arthas.core.shell.system.impl.JobControllerImpl;
 import com.taobao.arthas.core.shell.term.Term;
 import com.taobao.arthas.core.shell.term.TermServer;
 
@@ -102,4 +104,14 @@ public abstract class ShellServer {
      * @param completionHandler handler for getting notified when service is stopped
      */
     public abstract void close(Handler<Future<Void>> completionHandler);
+
+    /**
+     * @return global job controller instance
+     */
+    public abstract JobControllerImpl getJobController();
+
+    /**
+     * @return get command manager instance
+     */
+    public abstract InternalCommandManager getCommandManager();
 }

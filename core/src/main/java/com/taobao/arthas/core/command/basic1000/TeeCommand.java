@@ -34,8 +34,7 @@ public class TeeCommand extends AnnotatedCommand {
 
     @Override
     public void process(CommandProcess process) {
-        process.write("The tee command only for pipes. See 'tee --help'\n");
-        process.end();
+        process.end(-1, "The tee command only for pipes. See 'tee --help'");
     }
 
     public String getFilePath() {

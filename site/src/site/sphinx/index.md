@@ -27,6 +27,7 @@ Contents
 --------
 
 * [招聘信息!](https://mp.weixin.qq.com/s/677GO-3kYx5ygG9rlOlfQg)
+* [技术征文!](https://developer.aliyun.com/article/751641)
 * [English Docs](https://alibaba.github.io/arthas/en/)
 * [在线教程(推荐)](https://alibaba.github.io/arthas/arthas-tutorials?language=cn)
 * [安装](install-detail.md)
@@ -36,6 +37,7 @@ Contents
 * [命令列表](commands.md)
 * [WebConsole](web-console.md)
 * [Docker](docker.md)
+* [Arthas Spring Boot Starter](spring-boot-starter.md)
 * [用户案例](https://github.com/alibaba/arthas/issues?q=label%3Auser-case)
 * [常见问题](https://github.com/alibaba/arthas/issues?q=label%3Aquestion-answered)
 * [Fork me at GitHub](https://github.com/alibaba/arthas)

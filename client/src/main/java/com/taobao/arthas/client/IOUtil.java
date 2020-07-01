@@ -53,7 +53,6 @@ public final class IOUtil {
                     }
                 } catch (IOException e) {
                     e.printStackTrace();
-                    System.exit(1);
                 }
             }
         };

@@ -10,8 +10,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.objectweb.asm.ClassReader;
-
+import com.alibaba.arthas.deps.org.objectweb.asm.ClassReader;
 import com.alibaba.arthas.deps.org.slf4j.Logger;
 import com.alibaba.arthas.deps.org.slf4j.LoggerFactory;
 import com.taobao.arthas.core.command.Constants;
@@ -114,7 +113,8 @@ public class RedefineCommand extends AnnotatedCommand {
         List<ClassDefinition> definitions = new ArrayList<ClassDefinition>();
         for (Class<?> clazz : inst.getAllLoadedClasses()) {
             if (bytesMap.containsKey(clazz.getName())) {
-                if (hashCode != null && !Integer.toHexString(clazz.getClassLoader().hashCode()).equals(hashCode)) {
+                ClassLoader classLoader = clazz.getClassLoader();
+                if (classLoader != null && hashCode != null && !Integer.toHexString(classLoader.hashCode()).equals(hashCode)) {
                     continue;
                 }
                 definitions.add(new ClassDefinition(clazz, bytesMap.get(clazz.getName())));

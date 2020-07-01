@@ -11,8 +11,6 @@ import java.util.List;
 
 import com.alibaba.arthas.deps.org.objectweb.asm.Type;
 
-import com.taobao.arthas.bytekit.asm.binding.Binding;
-import com.taobao.arthas.bytekit.asm.interceptor.InterceptorMethodConfig;
 import com.taobao.arthas.bytekit.asm.interceptor.InterceptorProcessor;
 import com.taobao.arthas.bytekit.asm.interceptor.annotation.AtInvoke.InvokeInterceptorProcessorParser;
 import com.taobao.arthas.bytekit.asm.interceptor.parser.InterceptorProcessorParser;
@@ -51,14 +49,6 @@ public @interface AtInvoke {
         @Override
         public InterceptorProcessor parse(Method method, Annotation annotationOnMethod) {
 
-            InterceptorProcessor interceptorProcessor = new InterceptorProcessor(method.getDeclaringClass().getClassLoader());
-            InterceptorMethodConfig interceptorMethodConfig = new InterceptorMethodConfig();
-            interceptorProcessor.setInterceptorMethodConfig(interceptorMethodConfig);
-
-            interceptorMethodConfig.setOwner(Type.getInternalName(method.getDeclaringClass()));
-            interceptorMethodConfig.setMethodName(method.getName());
-            interceptorMethodConfig.setMethodDesc(Type.getMethodDescriptor(method));
-
             AtInvoke atInvoke = (AtInvoke) annotationOnMethod;
 
             String owner = null;
@@ -77,21 +67,12 @@ public @interface AtInvoke {
 
             LocationMatcher locationMatcher = new InvokeLocationMatcher(owner, atInvoke.name(), desc, atInvoke.count(),
                     atInvoke.whenComplete(), excludes);
-            interceptorProcessor.setLocationMatcher(locationMatcher);
 
-            interceptorMethodConfig.setInline(atInvoke.inline());
-
-            List<Binding> bindings = BindingParserUtils.parseBindings(method);
-
-            interceptorMethodConfig.setBindings(bindings);
-
-            InterceptorMethodConfig errorHandlerMethodConfig = ExceptionHandlerUtils
-                    .errorHandlerMethodConfig(atInvoke.suppress(), atInvoke.suppressHandler());
-            if (errorHandlerMethodConfig != null) {
-                interceptorProcessor.setExceptionHandlerConfig(errorHandlerMethodConfig);
-            }
-
-            return interceptorProcessor;
+            return InterceptorParserUtils.createInterceptorProcessor(method,
+                    locationMatcher,
+                    atInvoke.inline(),
+                    atInvoke.suppress(),
+                    atInvoke.suppressHandler());
         }
 
     }

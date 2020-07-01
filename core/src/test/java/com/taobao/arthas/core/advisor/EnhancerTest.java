@@ -41,14 +41,10 @@ public class EnhancerTest {
 
         AdviceListener listener = Mockito.mock(AdviceListener.class);
 
-        EnhancerAffect affect = new EnhancerAffect();
+        EqualsMatcher<String> methodNameMatcher = new EqualsMatcher<String>("print");
+        EqualsMatcher<String> classNameMatcher = new EqualsMatcher<String>(MathGame.class.getName());
 
-        Set<Class<?>> matchingClasses = new HashSet<Class<?>>();
-        matchingClasses.add(MathGame.class);
-
-        EqualsMatcher<String> matcher = new EqualsMatcher<String>("print");
-
-        Enhancer enhancer = new Enhancer(listener, true, false, matchingClasses, matcher, affect);
+        Enhancer enhancer = new Enhancer(listener, true, false, classNameMatcher, methodNameMatcher);
 
         ClassLoader inClassLoader = MathGame.class.getClassLoader();
         String className = MathGame.class.getName();

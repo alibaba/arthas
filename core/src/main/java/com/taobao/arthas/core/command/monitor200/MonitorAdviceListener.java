@@ -169,7 +169,7 @@ class MonitorAdviceListener extends AdviceListenerAdapter {
                 return;
             }
 
-            TableElement table = new TableElement().leftCellPadding(1).rightCellPadding(1);
+            TableElement table = new TableElement(2, 3, 3, 1, 1, 1, 1, 1).leftCellPadding(1).rightCellPadding(1);
             table.row(true, label("timestamp").style(Decoration.bold.bold()),
                     label("class").style(Decoration.bold.bold()),
                     label("method").style(Decoration.bold.bold()),

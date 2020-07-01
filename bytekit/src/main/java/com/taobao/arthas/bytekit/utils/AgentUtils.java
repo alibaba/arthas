@@ -7,14 +7,17 @@ import java.lang.instrument.Instrumentation;
 import java.lang.instrument.UnmodifiableClassException;
 import java.security.ProtectionDomain;
 
-import com.alibaba.arthas.deps.org.objectweb.asm.Type;
-
 import net.bytebuddy.agent.ByteBuddyAgent;
 
 public class AgentUtils {
 
     private static class InstrumentationHolder {
         static final Instrumentation instance = ByteBuddyAgent.install();
+    }
+
+    public static Instrumentation install() {
+        return InstrumentationHolder.instance;
+
     }
 
     public static void redefine(Class<?> clazz, byte[] classFile)

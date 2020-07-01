@@ -42,7 +42,7 @@ public class WatchCommand extends EnhancerCommand {
     private Integer sizeLimit = 10 * 1024 * 1024;
     private boolean isRegEx = false;
     private int numberOfLimit = 100;
-
+    
     @Argument(index = 0, argName = "class-pattern")
     @Description("The full qualified class name you want to watch")
     public void setClassPattern(String classPattern) {

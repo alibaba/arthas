@@ -1,0 +1,3 @@
+org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
+  com.alibaba.arthas.spring.ArthasConfiguration,\
+  com.alibaba.arthas.spring.endpoints.ArthasEndPointAutoConfiguration

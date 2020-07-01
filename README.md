@@ -42,14 +42,14 @@ Arthas was built to solve these issues. A developer can troubleshoot your produc
 * Supports Linux/Mac/Windows.
 
 
-### Online Tutorials(Recommend)
+### Online Tutorials(Recommended)
 
 * [Arthas Basics](https://alibaba.github.io/arthas/arthas-tutorials?language=en&id=arthas-basics)
 * [Arthas Advanced](https://alibaba.github.io/arthas/arthas-tutorials?language=en&id=arthas-advanced)
 
 ### Quick start
 
-#### Use `arthas-boot`(Recommend)
+#### Use `arthas-boot`(Recommended)
 
 Download`arthas-boot.jar`，Start with `java` command:
 
@@ -79,7 +79,7 @@ You can enter its interactive interface by executing `as.sh`, or execute `as.sh 
 
 ### Documentation
 
-* [Online Tutorials(Recommend)](https://alibaba.github.io/arthas/arthas-tutorials?language=en)
+* [Online Tutorials(Recommended)](https://alibaba.github.io/arthas/arthas-tutorials?language=en)
 * [User manual](https://alibaba.github.io/arthas/en)
 * [Installation](https://alibaba.github.io/arthas/en/install-detail.html)
 * [Download](https://alibaba.github.io/arthas/en/download.html)
@@ -88,6 +88,7 @@ You can enter its interactive interface by executing `as.sh`, or execute `as.sh 
 * [Commands](https://alibaba.github.io/arthas/en/commands.html)
 * [WebConsole](https://alibaba.github.io/arthas/en/web-console.html)
 * [Docker](https://alibaba.github.io/arthas/en/docker.html)
+* [Arthas Spring Boot Starter](https://alibaba.github.io/arthas/en/spring-boot-starter.html)
 * [User cases](https://github.com/alibaba/arthas/issues?q=label%3Auser-case)
 * [Questions and answers](https://github.com/alibaba/arthas/issues?utf8=%E2%9C%93&q=label%3Aquestion-answered+)
 * [Compile and debug/How to contribute](https://github.com/alibaba/arthas/blob/master/CONTRIBUTING.md)
@@ -106,7 +107,7 @@ You can enter its interactive interface by executing `as.sh`, or execute `as.sh 
 
 * https://alibaba.github.io/arthas/en/thread
 
-See what is eating your cpu (ranked by top cpu usage) and what is going on there in one glance:
+See what is eating your CPU (ranked by top CPU usage) and what is going on there in one glance:
 
 ```bash
 $ thread -n 3
@@ -386,7 +387,9 @@ View profiler results under arthas-output via browser:
 
 ![](site/src/site/sphinx/_static/arthas-output-svg.jpg)
 
+#### Arthas Spring Boot Starter
 
+* [Arthas Spring Boot Starter](https://alibaba.github.io/arthas/spring-boot-starter.html)
 
 ### Known Users
 
@@ -510,17 +513,19 @@ Welcome to register the company name in this issue: https://github.com/alibaba/a
 ![vipkid](static/vipkid.png)
 ![宇中科技](static/yuzhong.png)
 ![蘑菇财富](static/mogu.jpg)
+![喔趣科技](static/woqu.png)
+![百度凤巢](static/baidufengchao.png)
 
 ### Derivative Projects
 
 * [Bistoury: A project that integrates Arthas](https://github.com/qunarcorp/bistoury)
 * [A fork of arthas using MVEL](https://github.com/XhinLiang/arthas)
 
-### Credit
+### Credits
 
 #### Contributors
 
-This project exists thanks to all the people who contribute.
+This project exists, thanks to all the people who contributed.
 
 <a href="https://github.com/alibaba/arthas/graphs/contributors"><img src="https://opencollective.com/arthas/contributors.svg?width=890&button=false" /></a>
 
