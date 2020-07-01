@@ -39,7 +39,7 @@ http://localhost:8080/actuator/arthas
 ```
 {
     "arthasConfigMap": {
-        "agentId": "hsehdfsfghhwertyfad",
+        "agent-id": "hsehdfsfghhwertyfad",
         "tunnel-server": "ws://47.75.156.201:7777/ws",
     }
 }
