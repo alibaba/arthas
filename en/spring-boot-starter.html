@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Log command outputs &mdash; Arthas 3.3.6 documentation</title>
+  <title>Arthas Spring Boot Starter &mdash; Arthas 3.3.6 documentation</title>
   
 
   
@@ -38,8 +38,8 @@
     <link rel="stylesheet" href="_static/overrides.css" type="text/css" />
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="Batch Processing" href="batch-support.html" />
-    <link rel="prev" title="Arthas Async Jobs" href="async.html" />
+    <link rel="next" title="Contact Us" href="contact-us.html" />
+    <link rel="prev" title="Docker" href="docker.html" />
 <script src="_static/center_page.js"></script>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.13.1/styles/github.min.css">
  
@@ -96,34 +96,16 @@
 <li class="toctree-l1"><a class="reference internal" href="install-detail.html">Installation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="download.html">Download</a></li>
 <li class="toctree-l1"><a class="reference internal" href="quick-start.html">Quick start</a></li>
-<li class="toctree-l1 current"><a class="reference internal" href="advanced-use.html">Advanced usage</a><ul class="current">
-<li class="toctree-l2"><a class="reference internal" href="advanced-use.html#basic">Basic</a></li>
-<li class="toctree-l2"><a class="reference internal" href="advanced-use.html#jvm">JVM</a></li>
-<li class="toctree-l2"><a class="reference internal" href="advanced-use.html#class-classloader">class/classloader</a></li>
-<li class="toctree-l2"><a class="reference internal" href="advanced-use.html#monitor-watch-trace-related">monitor/watch/trace - related</a></li>
-<li class="toctree-l2"><a class="reference internal" href="advanced-use.html#options">options</a></li>
-<li class="toctree-l2"><a class="reference internal" href="advanced-use.html#profiler-flame-graph">profiler/flame graph</a></li>
-<li class="toctree-l2"><a class="reference internal" href="advanced-use.html#pipe">pipe</a></li>
-<li class="toctree-l2"><a class="reference internal" href="advanced-use.html#async-in-background">async in background</a></li>
-<li class="toctree-l2"><a class="reference internal" href="advanced-use.html#web-console">Web Console</a></li>
-<li class="toctree-l2"><a class="reference internal" href="advanced-use.html#start-as-a-java-agent">Start as a Java Agent</a></li>
-<li class="toctree-l2"><a class="reference internal" href="advanced-use.html#user-data-report">User data report</a></li>
-<li class="toctree-l2 current"><a class="reference internal" href="advanced-use.html#other-features">Other features</a><ul class="current">
-<li class="toctree-l3"><a class="reference internal" href="async.html">Async support</a></li>
-<li class="toctree-l3 current"><a class="current reference internal" href="#">log the output</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="#use-asynchronous-job-to-log">Use asynchronous job to log</a></li>
-</ul>
-</li>
-<li class="toctree-l3"><a class="reference internal" href="batch-support.html">batch</a></li>
-<li class="toctree-l3"><a class="reference external" href="https://github.com/alibaba/arthas/issues/11">how to use ognl</a></li>
-</ul>
-</li>
-</ul>
-</li>
+<li class="toctree-l1"><a class="reference internal" href="advanced-use.html">Advanced usage</a></li>
 <li class="toctree-l1"><a class="reference internal" href="commands.html">Commands</a></li>
 <li class="toctree-l1"><a class="reference internal" href="web-console.html">WebConsole</a></li>
 <li class="toctree-l1"><a class="reference internal" href="docker.html">Docker</a></li>
-<li class="toctree-l1"><a class="reference internal" href="spring-boot-starter.html">Arthas Spring Boot Starter</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Arthas Spring Boot Starter</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#configuration-properties">Configuration properties</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#view-endpoint-information">View Endpoint Information</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#non-spring-boot-application-usage">Non-spring boot application usage</a></li>
+</ul>
+</li>
 <li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas/issues?q=label%3Auser-case">User cases</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas/issues?q=label%3Aquestion-answered">Questions and answers</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas">Fork me at GitHub</a></li>
@@ -175,16 +157,14 @@
     
       <li><a href="index.html">Docs</a> &raquo;</li>
         
-          <li><a href="advanced-use.html">Advanced Usage</a> &raquo;</li>
-        
-      <li>Log command outputs</li>
+      <li>Arthas Spring Boot Starter</li>
     
     
       <li class="wy-breadcrumbs-aside">
         
             
             
-              <a href="https://github.com/alibaba/arthas/blob/master/site/src/site/sphinx/en/save-log.md" class="fa fa-github"> Edit on GitHub</a>
+              <a href="https://github.com/alibaba/arthas/blob/master/site/src/site/sphinx/en/spring-boot-starter.md" class="fa fa-github"> Edit on GitHub</a>
             
           
         
@@ -198,36 +178,59 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
             
-  <div class="section" id="log-command-outputs">
-<h1>Log command outputs<a class="headerlink" href="#log-command-outputs" title="Permalink to this headline">¶</a></h1>
+  <div class="section" id="arthas-spring-boot-starter">
+<h1>Arthas Spring Boot Starter<a class="headerlink" href="#arthas-spring-boot-starter" title="Permalink to this headline">¶</a></h1>
 <blockquote>
-<div><p>Log command outputs for later analysis</p>
+<div><p>Support spring boot 2</p>
 </div></blockquote>
-<ul>
-<li><p>By default, this behavior is turned off. To enable it, execute the command below:</p>
-<div class="highlight-bash notranslate"><div class="highlight hljs"><pre class="bash">$ options save-result true
- NAME         BEFORE-VALUE  AFTER-VALUE
-----------------------------------------
-save-result  false         true
-Affect(row-cnt:1) cost in 3 ms.</pre></div>
+<p>Latest Version: <a class="reference external" href="https://search.maven.org/search?q=arthas-spring-boot-starter">View</a></p>
+<p>Add maven dependency:</p>
+<div class="highlight-xml notranslate"><div class="highlight hljs"><pre class="xml">        &lt;dependency&gt;
+            &lt;groupId&gt;com.taobao.arthas&lt;/groupId&gt;
+            &lt;artifactId&gt;arthas-spring-boot-starter&lt;/artifactId&gt;
+            &lt;version&gt;${arthas.version}&lt;/version&gt;
+        &lt;/dependency&gt;</pre></div>
 </div>
-<p>If the message above is output on the console, then this behavior is enabled successfully.</p>
-</li>
-<li><p>Log file path</p>
-<p>The command execution result will be save in <code class="docutils literal notranslate"><span class="pre">{user.home}/logs/arthas-cache/result.log</span></code>. Pls. clean it up regularly to save disk space.</p>
-</li>
-</ul>
-<div class="section" id="use-asynchronous-job-to-log">
-<h2>Use asynchronous job to log<a class="headerlink" href="#use-asynchronous-job-to-log" title="Permalink to this headline">¶</a></h2>
-<div class="highlight-bash notranslate"><div class="highlight hljs"><pre class="bash">$ trace Test t &gt;&gt;  &amp;
-job id  : 2
-cache location  : /Users/zhuyong/logs/arthas-cache/28198/2</pre></div>
+<p>When the application is started, spring will start arthas and attach its own process.</p>
+<div class="section" id="configuration-properties">
+<h2>Configuration properties<a class="headerlink" href="#configuration-properties" title="Permalink to this headline">¶</a></h2>
+<p>For example, by configuring the tunnel server for remote management.</p>
+<div class="highlight-default notranslate"><pre class="literal-block">arthas.agentId=hsehdfsfghhwertyfad
+arthas.tunnel-server=ws://47.75.156.201:7777/ws</pre>
 </div>
-<p>By doing this, the command will run at background asynchronously, and output the execution result into <code class="docutils literal notranslate"><span class="pre">~/logs/arthas-cache/{PID}/{JobId}</span></code>:</p>
-<ul class="simple">
-<li><p>The background job will continue to run even if the current session is disconnected. The default job timeout value is 1 day, use global ‘<a class="reference internal" href="options.html"><span class="doc">options</span></a>’ command to alternate it.</p></li>
-<li><p>The execution result will be output into the file asynchronously. Pls. note the behavior of this command is not controlled by <code class="docutils literal notranslate"><span class="pre">save-result</span></code> option from global <a class="reference internal" href="options.html"><span class="doc">options</span></a>. No matter <code class="docutils literal notranslate"><span class="pre">save-result</span></code> is set to <code class="docutils literal notranslate"><span class="pre">true</span></code> or not, this command will write into <code class="docutils literal notranslate"><span class="pre">~/logs/arthas-cache/{PID}/{JobId}</span></code> anyway, instead of into <code class="docutils literal notranslate"><span class="pre">~/logs/arthas-cache/result.log</span></code>.</p></li>
-</ul>
+<p>All supported configuration: <a class="reference external" href="https://github.com/alibaba/arthas/blob/master/arthas-spring-boot-starter/src/main/java/com/alibaba/arthas/spring/ArthasProperties.java">Reference</a></p>
+</div>
+<div class="section" id="view-endpoint-information">
+<h2>View Endpoint Information<a class="headerlink" href="#view-endpoint-information" title="Permalink to this headline">¶</a></h2>
+<p>Assuming the endpoint port is 8080, it can be viewed via the following url.</p>
+<p>http://localhost:8080/actuator/arthas</p>
+<div class="highlight-js notranslate"><div class="highlight hljs"><pre class="js">{
+    &quot;arthasConfigMap&quot;: {
+        &quot;agentId&quot;: &quot;hsehdfsfghhwertyfad&quot;,
+        &quot;tunnel-server&quot;: &quot;ws://47.75.156.201:7777/ws&quot;,
+    }
+}</pre></div>
+</div>
+</div>
+<div class="section" id="non-spring-boot-application-usage">
+<h2>Non-spring boot application usage<a class="headerlink" href="#non-spring-boot-application-usage" title="Permalink to this headline">¶</a></h2>
+<p>Non-Spring Boot applications can be used in the following ways.</p>
+<div class="highlight-xml notranslate"><div class="highlight hljs"><pre class="xml">        &lt;dependency&gt;
+            &lt;groupId&gt;com.taobao.arthas&lt;/groupId&gt;
+            &lt;artifactId&gt;arthas-agent-attach&lt;/artifactId&gt;
+            &lt;version&gt;${arthas.version}&lt;/version&gt;
+        &lt;/dependency&gt;</pre></div>
+</div>
+<div class="highlight-java notranslate"><div class="highlight hljs"><pre class="java">import com.taobao.arthas.agent.attach.ArthasAgent;
+
+public class ArthasAttachExample {
+	
+	public static void main(String[] args) {
+		ArthasAgent.attach();
+	}
+
+}</pre></div>
+</div>
 </div>
 </div>
 
@@ -239,10 +242,10 @@ cache location  : /Users/zhuyong/logs/arthas-cache/28198/2</pre></div>
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="batch-support.html" class="btn btn-neutral float-right" title="Batch Processing" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+        <a href="contact-us.html" class="btn btn-neutral float-right" title="Contact Us" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
-        <a href="async.html" class="btn btn-neutral float-left" title="Arthas Async Jobs" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+        <a href="docker.html" class="btn btn-neutral float-left" title="Docker" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
       
     </div>
   

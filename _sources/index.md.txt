@@ -37,6 +37,7 @@ Contents
 * [命令列表](commands.md)
 * [WebConsole](web-console.md)
 * [Docker](docker.md)
+* [Arthas Spring Boot Starter](spring-boot-starter.md)
 * [用户案例](https://github.com/alibaba/arthas/issues?q=label%3Auser-case)
 * [常见问题](https://github.com/alibaba/arthas/issues?q=label%3Aquestion-answered)
 * [Fork me at GitHub](https://github.com/alibaba/arthas)

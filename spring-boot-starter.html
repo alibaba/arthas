@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>pwd &mdash; Arthas 3.3.6 文档</title>
+  <title>Arthas Spring Boot Starter &mdash; Arthas 3.3.6 文档</title>
   
 
   
@@ -39,8 +39,8 @@
     <link rel="stylesheet" href="_static/overrides.css" type="text/css" />
     <link rel="index" title="索引" href="genindex.html" />
     <link rel="search" title="搜索" href="search.html" />
-    <link rel="next" title="options" href="options.html" />
-    <link rel="prev" title="tee" href="tee.html" />
+    <link rel="next" title="联系我们" href="contact-us.html" />
+    <link rel="prev" title="Docker" href="docker.html" />
 <script src="_static/center_page.js"></script>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.13.1/styles/github.min.css">
  
@@ -101,44 +101,15 @@
 <li class="toctree-l1"><a class="reference internal" href="download.html">下载</a></li>
 <li class="toctree-l1"><a class="reference internal" href="quick-start.html">快速入门</a></li>
 <li class="toctree-l1"><a class="reference internal" href="advanced-use.html">进阶使用</a></li>
-<li class="toctree-l1 current"><a class="reference internal" href="commands.html">命令列表</a><ul class="current">
-<li class="toctree-l2"><a class="reference internal" href="dashboard.html">dashboard</a></li>
-<li class="toctree-l2"><a class="reference internal" href="thread.html">thread</a></li>
-<li class="toctree-l2"><a class="reference internal" href="jvm.html">jvm</a></li>
-<li class="toctree-l2"><a class="reference internal" href="sysprop.html">sysprop</a></li>
-<li class="toctree-l2"><a class="reference internal" href="sysenv.html">sysenv</a></li>
-<li class="toctree-l2"><a class="reference internal" href="vmoption.html">vmoption</a></li>
-<li class="toctree-l2"><a class="reference internal" href="perfcounter.html">perfcounter</a></li>
-<li class="toctree-l2"><a class="reference internal" href="logger.html">logger</a></li>
-<li class="toctree-l2"><a class="reference internal" href="mbean.html">mbean</a></li>
-<li class="toctree-l2"><a class="reference internal" href="getstatic.html">getstatic</a></li>
-<li class="toctree-l2"><a class="reference internal" href="ognl.html">ognl</a></li>
-<li class="toctree-l2"><a class="reference internal" href="sc.html">sc</a></li>
-<li class="toctree-l2"><a class="reference internal" href="sm.html">sm</a></li>
-<li class="toctree-l2"><a class="reference internal" href="dump.html">dump</a></li>
-<li class="toctree-l2"><a class="reference internal" href="heapdump.html">heapdump</a></li>
-<li class="toctree-l2"><a class="reference internal" href="jad.html">jad</a></li>
-<li class="toctree-l2"><a class="reference internal" href="classloader.html">classloader</a></li>
-<li class="toctree-l2"><a class="reference internal" href="mc.html">mc</a></li>
-<li class="toctree-l2"><a class="reference internal" href="redefine.html">redefine</a></li>
-<li class="toctree-l2"><a class="reference internal" href="monitor.html">monitor</a></li>
-<li class="toctree-l2"><a class="reference internal" href="watch.html">watch</a></li>
-<li class="toctree-l2"><a class="reference internal" href="trace.html">trace</a></li>
-<li class="toctree-l2"><a class="reference internal" href="stack.html">stack</a></li>
-<li class="toctree-l2"><a class="reference internal" href="tt.html">tt</a></li>
-<li class="toctree-l2"><a class="reference internal" href="profiler.html">profiler</a></li>
-<li class="toctree-l2"><a class="reference internal" href="cat.html">cat</a></li>
-<li class="toctree-l2"><a class="reference internal" href="echo.html">echo</a></li>
-<li class="toctree-l2"><a class="reference internal" href="grep.html">grep</a></li>
-<li class="toctree-l2"><a class="reference internal" href="tee.html">tee</a></li>
-<li class="toctree-l2 current"><a class="current reference internal" href="#">pwd</a></li>
-<li class="toctree-l2"><a class="reference internal" href="options.html">options</a></li>
-<li class="toctree-l2"><a class="reference internal" href="commands.html#arthas">Arthas 基础命令</a></li>
-</ul>
-</li>
+<li class="toctree-l1"><a class="reference internal" href="commands.html">命令列表</a></li>
 <li class="toctree-l1"><a class="reference internal" href="web-console.html">WebConsole</a></li>
 <li class="toctree-l1"><a class="reference internal" href="docker.html">Docker</a></li>
-<li class="toctree-l1"><a class="reference internal" href="spring-boot-starter.html">Arthas Spring Boot Starter</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Arthas Spring Boot Starter</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#id1">配置属性</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#endpoint">查看Endpoint信息</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#spring-boot">非spring boot应用使用方式</a></li>
+</ul>
+</li>
 <li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas/issues?q=label%3Auser-case">用户案例</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas/issues?q=label%3Aquestion-answered">常见问题</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas">Fork me at GitHub</a></li>
@@ -191,16 +162,14 @@
     
       <li><a href="index.html">Docs</a> &raquo;</li>
         
-          <li><a href="commands.html">命令列表</a> &raquo;</li>
-        
-      <li>pwd</li>
+      <li>Arthas Spring Boot Starter</li>
     
     
       <li class="wy-breadcrumbs-aside">
         
             
             
-              <a href="https://github.com/alibaba/arthas/blob/master/site/src/site/sphinx/pwd.md" class="fa fa-github"> Edit on GitHub</a>
+              <a href="https://github.com/alibaba/arthas/blob/master/site/src/site/sphinx/spring-boot-starter.md" class="fa fa-github"> Edit on GitHub</a>
             
           
         
@@ -214,12 +183,59 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
             
-  <div class="section" id="pwd">
-<h1>pwd<a class="headerlink" href="#pwd" title="永久链接至标题">¶</a></h1>
+  <div class="section" id="arthas-spring-boot-starter">
+<h1>Arthas Spring Boot Starter<a class="headerlink" href="#arthas-spring-boot-starter" title="永久链接至标题">¶</a></h1>
 <blockquote>
-<div><p>返回当前的工作目录，和linux命令类似</p>
+<div><p>只支持 spring boot 2</p>
 </div></blockquote>
-<div class="highlight-bash notranslate"><div class="highlight hljs"><pre class="bash">$ pwd</pre></div>
+<p>最新版本：<a class="reference external" href="https://search.maven.org/search?q=arthas-spring-boot-starter">查看</a></p>
+<p>配置maven依赖：</p>
+<div class="highlight-xml notranslate"><div class="highlight hljs"><pre class="xml">        &lt;dependency&gt;
+            &lt;groupId&gt;com.taobao.arthas&lt;/groupId&gt;
+            &lt;artifactId&gt;arthas-spring-boot-starter&lt;/artifactId&gt;
+            &lt;version&gt;${arthas.version}&lt;/version&gt;
+        &lt;/dependency&gt;</pre></div>
+</div>
+<p>应用启动后，spring会启动arthas，并且attach自身进程。</p>
+<div class="section" id="id1">
+<h2>配置属性<a class="headerlink" href="#id1" title="永久链接至标题">¶</a></h2>
+<p>比如，通过配置tunnel server实现远程管理：</p>
+<div class="highlight-default notranslate"><pre class="literal-block">arthas.agentId=hsehdfsfghhwertyfad
+arthas.tunnel-server=ws://47.75.156.201:7777/ws</pre>
+</div>
+<p>全部支持的配置项：<a class="reference external" href="https://github.com/alibaba/arthas/blob/master/arthas-spring-boot-starter/src/main/java/com/alibaba/arthas/spring/ArthasProperties.java">参考</a></p>
+</div>
+<div class="section" id="endpoint">
+<h2>查看Endpoint信息<a class="headerlink" href="#endpoint" title="永久链接至标题">¶</a></h2>
+<p>假定endpoint端口是 8080，则通过下面url可以查看：</p>
+<p>http://localhost:8080/actuator/arthas</p>
+<div class="highlight-default notranslate"><pre class="literal-block">{
+    &quot;arthasConfigMap&quot;: {
+        &quot;agentId&quot;: &quot;hsehdfsfghhwertyfad&quot;,
+        &quot;tunnel-server&quot;: &quot;ws://47.75.156.201:7777/ws&quot;,
+    }
+}</pre>
+</div>
+</div>
+<div class="section" id="spring-boot">
+<h2>非spring boot应用使用方式<a class="headerlink" href="#spring-boot" title="永久链接至标题">¶</a></h2>
+<p>非Spring Boot应用，可以通过下面的方式来使用：</p>
+<div class="highlight-xml notranslate"><div class="highlight hljs"><pre class="xml">        &lt;dependency&gt;
+            &lt;groupId&gt;com.taobao.arthas&lt;/groupId&gt;
+            &lt;artifactId&gt;arthas-agent-attach&lt;/artifactId&gt;
+            &lt;version&gt;${arthas.version}&lt;/version&gt;
+        &lt;/dependency&gt;</pre></div>
+</div>
+<div class="highlight-java notranslate"><div class="highlight hljs"><pre class="java">import com.taobao.arthas.agent.attach.ArthasAgent;
+
+public class ArthasAttachExample {
+	
+	public static void main(String[] args) {
+		ArthasAgent.attach();
+	}
+
+}</pre></div>
+</div>
 </div>
 </div>
 
@@ -231,10 +247,10 @@
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="options.html" class="btn btn-neutral float-right" title="options" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+        <a href="contact-us.html" class="btn btn-neutral float-right" title="联系我们" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
-        <a href="tee.html" class="btn btn-neutral float-left" title="tee" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+        <a href="docker.html" class="btn btn-neutral float-left" title="Docker" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
       
     </div>
   
