@@ -88,6 +88,7 @@ You can enter its interactive interface by executing `as.sh`, or execute `as.sh 
 * [Commands](https://alibaba.github.io/arthas/en/commands.html)
 * [WebConsole](https://alibaba.github.io/arthas/en/web-console.html)
 * [Docker](https://alibaba.github.io/arthas/en/docker.html)
+* [Arthas Spring Boot Starter](https://alibaba.github.io/arthas/en/spring-boot-starter.html)
 * [User cases](https://github.com/alibaba/arthas/issues?q=label%3Auser-case)
 * [Questions and answers](https://github.com/alibaba/arthas/issues?utf8=%E2%9C%93&q=label%3Aquestion-answered+)
 * [Compile and debug/How to contribute](https://github.com/alibaba/arthas/blob/master/CONTRIBUTING.md)
@@ -386,7 +387,9 @@ View profiler results under arthas-output via browser:
 
 ![](site/src/site/sphinx/_static/arthas-output-svg.jpg)
 
+#### Arthas Spring Boot Starter
 
+* [Arthas Spring Boot Starter](https://alibaba.github.io/arthas/spring-boot-starter.html)
 
 ### Known Users
 

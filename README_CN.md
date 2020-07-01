@@ -77,6 +77,7 @@ curl -L https://alibaba.github.io/arthas/install.sh | sh
 * [命令列表](https://alibaba.github.io/arthas/commands.html)
 * [WebConsole](https://alibaba.github.io/arthas/web-console.html)
 * [Docker](https://alibaba.github.io/arthas/docker.html)
+* [Arthas Spring Boot Starter](https://alibaba.github.io/arthas/spring-boot-starter.html)
 * [用户案例](https://github.com/alibaba/arthas/issues?q=label%3Auser-case)
 * [常见问题](https://github.com/alibaba/arthas/issues?utf8=%E2%9C%93&q=label%3Aquestion-answered+)
 * [编译调试/参与贡献](https://github.com/alibaba/arthas/blob/master/CONTRIBUTING.md)
@@ -376,6 +377,10 @@ OK
 通过浏览器查看profiler结果：
 
 ![](site/src/site/sphinx/_static/arthas-output-svg.jpg)
+
+#### Arthas Spring Boot Starter
+
+* [Arthas Spring Boot Starter](https://alibaba.github.io/arthas/spring-boot-starter.html)
 
 ### Known Users
 
