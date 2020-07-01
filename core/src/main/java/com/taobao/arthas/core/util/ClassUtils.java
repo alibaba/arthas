@@ -8,7 +8,6 @@ import java.security.CodeSource;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 import com.alibaba.arthas.deps.org.objectweb.asm.Type;
@@ -42,42 +41,8 @@ public class ClassUtils {
         return clazz.getName().contains("$$Lambda$");
     }
 
-    public static Element renderClassInfo(Class<?> clazz) {
-        return renderClassInfo(clazz, false, null);
-    }
-
     public static Element renderClassInfo(ClassVO clazz) {
         return renderClassInfo(clazz, false, null);
-    }
-
-    public static Element renderClassInfo(Class<?> clazz, boolean isPrintField, Integer expand) {
-        TableElement table = new TableElement().leftCellPadding(1).rightCellPadding(1);
-        CodeSource cs = clazz.getProtectionDomain().getCodeSource();
-
-        table.row(label("class-info").style(Decoration.bold.bold()), label(StringUtils.classname(clazz)))
-                .row(label("code-source").style(Decoration.bold.bold()), label(getCodeSource(cs)))
-                .row(label("name").style(Decoration.bold.bold()), label(StringUtils.classname(clazz)))
-                .row(label("isInterface").style(Decoration.bold.bold()), label("" + clazz.isInterface()))
-                .row(label("isAnnotation").style(Decoration.bold.bold()), label("" + clazz.isAnnotation()))
-                .row(label("isEnum").style(Decoration.bold.bold()), label("" + clazz.isEnum()))
-                .row(label("isAnonymousClass").style(Decoration.bold.bold()), label("" + clazz.isAnonymousClass()))
-                .row(label("isArray").style(Decoration.bold.bold()), label("" + clazz.isArray()))
-                .row(label("isLocalClass").style(Decoration.bold.bold()), label("" + clazz.isLocalClass()))
-                .row(label("isMemberClass").style(Decoration.bold.bold()), label("" + clazz.isMemberClass()))
-                .row(label("isPrimitive").style(Decoration.bold.bold()), label("" + clazz.isPrimitive()))
-                .row(label("isSynthetic").style(Decoration.bold.bold()), label("" + clazz.isSynthetic()))
-                .row(label("simple-name").style(Decoration.bold.bold()), label(clazz.getSimpleName()))
-                .row(label("modifier").style(Decoration.bold.bold()), label(StringUtils.modifier(clazz.getModifiers(), ',')))
-                .row(label("annotation").style(Decoration.bold.bold()), label(TypeRenderUtils.drawAnnotation(clazz)))
-                .row(label("interfaces").style(Decoration.bold.bold()), label(TypeRenderUtils.drawInterface(clazz)))
-                .row(label("super-class").style(Decoration.bold.bold()), TypeRenderUtils.drawSuperClass(clazz))
-                .row(label("class-loader").style(Decoration.bold.bold()), TypeRenderUtils.drawClassLoader(clazz))
-                .row(label("classLoaderHash").style(Decoration.bold.bold()), label(StringUtils.classLoaderHash(clazz)));
-
-        if (isPrintField) {
-            table.row(label("fields").style(Decoration.bold.bold()), TypeRenderUtils.drawField(clazz, expand));
-        }
-        return table;
     }
 
     public static Element renderClassInfo(ClassVO clazz, boolean isPrintField, Integer expand) {
@@ -180,20 +145,6 @@ public class ClassUtils {
         return methodVO;
     }
 
-
-    public static Element renderMethod(Method method, Class<?> clazz) {
-        TableElement table = new TableElement().leftCellPadding(1).rightCellPadding(1);
-        table.row(label("declaring-class").style(bold.bold()), label(method.getDeclaringClass().getName()))
-                .row(label("method-name").style(bold.bold()), label(method.getName()).style(bold.bold()))
-                .row(label("modifier").style(bold.bold()), label(StringUtils.modifier(method.getModifiers(), ',')))
-                .row(label("annotation").style(bold.bold()), label(TypeRenderUtils.drawAnnotation(method)))
-                .row(label("parameters").style(bold.bold()), label(TypeRenderUtils.drawParameters(method)))
-                .row(label("return").style(bold.bold()), label(TypeRenderUtils.drawReturn(method)))
-                .row(label("exceptions").style(bold.bold()), label(TypeRenderUtils.drawExceptions(method)))
-                .row(label("classLoaderHash").style(bold.bold()), label(StringUtils.classLoaderHash(clazz)));
-        return table;
-    }
-
     public static Element renderMethod(MethodVO method) {
         TableElement table = new TableElement().leftCellPadding(1).rightCellPadding(1);
         table.row(label("declaring-class").style(bold.bold()), label(method.getDeclaringClass()))
@@ -204,18 +155,6 @@ public class ClassUtils {
                 .row(label("return").style(bold.bold()), label(method.getReturnType()))
                 .row(label("exceptions").style(bold.bold()), label(TypeRenderUtils.drawExceptions(method.getExceptions())))
                 .row(label("classLoaderHash").style(bold.bold()), label(method.getClassLoaderHash()));
-        return table;
-    }
-
-    public static Element renderConstructor(Constructor<?> constructor, Class<?> clazz) {
-        TableElement table = new TableElement().leftCellPadding(1).rightCellPadding(1);
-        table.row(label("declaring-class").style(bold.bold()), label(constructor.getDeclaringClass().getName()))
-                .row(label("constructor-name").style(bold.bold()), label("<init>").style(bold.bold()))
-                .row(label("modifier").style(bold.bold()), label(StringUtils.modifier(constructor.getModifiers(), ',')))
-                .row(label("annotation").style(bold.bold()), label(TypeRenderUtils.drawAnnotation(constructor.getDeclaredAnnotations())))
-                .row(label("parameters").style(bold.bold()), label(TypeRenderUtils.drawParameters(constructor)))
-                .row(label("exceptions").style(bold.bold()), label(TypeRenderUtils.drawExceptions(constructor)))
-                .row(label("classLoaderHash").style(bold.bold()), label(StringUtils.classLoaderHash(clazz)));
         return table;
     }
 
@@ -285,24 +224,4 @@ public class ClassUtils {
         return table;
     }
 
-    /**
-     * 转换增强字节码回调方法中的非标准类名
-     * normalizeClassName:  a/b/c/MyClass -> a.b.c.MyClass
-     * @param className  maybe path class name
-     * @param normalizeClassNameMap
-     */
-    public static String normalizeClassName(String className, Map<String, String> normalizeClassNameMap) {
-        //如果类名包含'/'，需要转换为标准类名
-        String normalClassName = null;
-        if (className.indexOf('/') != -1) {
-            normalClassName = normalizeClassNameMap.get(className);
-            if (normalClassName == null) {
-                normalClassName = StringUtils.normalizeClassName(className);
-                normalizeClassNameMap.put(className, normalClassName);
-            }
-        } else {
-            normalClassName = className;
-        }
-        return normalClassName;
-    }
 }
