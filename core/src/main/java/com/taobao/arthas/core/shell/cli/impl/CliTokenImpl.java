@@ -3,6 +3,7 @@ package com.taobao.arthas.core.shell.cli.impl;
 import com.taobao.arthas.core.shell.cli.CliToken;
 import io.termd.core.readline.LineStatus;
 
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -70,8 +71,51 @@ public class CliTokenImpl implements CliToken {
 
         tokenize(s, 0, tokens);
 
+        tokens = correctPipeChar(tokens);
         return tokens;
 
+    }
+
+    /**
+     * fix pipe char '|' problem: https://github.com/alibaba/arthas/issues/1151
+     * supported:
+     * 1) thread| grep xxx
+     *   [thread|, grep]  -> [thread, |, grep]
+     * 2) thread |grep xxx
+     *   [thread, |grep] -> [thread, |, grep]
+     *
+     * unsupported:
+     * 3) thread|grep xxx
+     * 4) trace -E  classA|classB methodA|methodB|grep classA
+     * @param tokens
+     * @return
+     */
+    private static List<CliToken> correctPipeChar(List<CliToken> tokens) {
+        List<CliToken> newTokens = new ArrayList<CliToken>(tokens.size()+4);
+        for (CliToken token : tokens) {
+            String tokenValue = token.value();
+            if (tokenValue.length()>1 && tokenValue.endsWith("|")) {
+                //split last char '|'
+                tokenValue = tokenValue.substring(0, tokenValue.length()-1);
+                String rawValue = token.raw();
+                rawValue = rawValue.substring(0, rawValue.length()-1);
+                newTokens.add(new CliTokenImpl(token.isText(), rawValue, tokenValue));
+                //add '|' char
+                newTokens.add(new CliTokenImpl(true, "|", "|"));
+
+            } else if (tokenValue.length()>1 && tokenValue.startsWith("|")) {
+                //add '|' char
+                newTokens.add(new CliTokenImpl(true, "|", "|"));
+                //remove first char '|'
+                tokenValue = tokenValue.substring(1);
+                String rawValue = token.raw();
+                rawValue = rawValue.substring(1);
+                newTokens.add(new CliTokenImpl(token.isText(), rawValue, tokenValue));
+            } else {
+                newTokens.add(token);
+            }
+        }
+        return newTokens;
     }
 
     private static void tokenize(String s, int index, List<CliToken> builder) {

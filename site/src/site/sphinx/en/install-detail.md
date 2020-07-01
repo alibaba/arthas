@@ -4,7 +4,7 @@ Install Arthas
 ## Quick installation
 
 
-### Use `arthas-boot`(Recommend)
+### Use `arthas-boot`(Recommended)
 
 Download`arthas-boot.jar`，Start with `java` command:
 

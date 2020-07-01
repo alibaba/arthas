@@ -1,0 +1,116 @@
+
+body {
+    margin: 0px;
+    overflow: hidden;
+}
+h4 {
+    margin: 0 5px 5px 5px;
+}
+p {
+    margin: 0px;
+}
+
+.min-gap {
+    height: 6px;
+}
+
+.logo {
+    vertical-align: middle;
+    display: inline-block;
+}
+
+.user-info {
+    margin-left: 10px;
+    vertical-align: middle;
+    display: inline-block;
+}
+.user-icon {
+    font-size: 24px;
+}
+
+a.nav-link:active, a.nav-link:hover, a.nav-link:visited {
+    color: rgba(0,0,0,.9);
+    text-decoration: none;
+}
+
+.nav-link {
+    color: rgba(0,0,0,.5);
+    display: inline-block;
+    padding: .5rem 0.3rem;
+    text-decoration: none;
+}
+
+.container {
+    display: flex;
+    flex-direction:column;
+    height: 100vh;
+}
+.header {
+    flex: 0 0 auto;
+    padding: 8px;
+    border-bottom: #cccccc 1px solid;
+}
+.header-right {
+    text-align: right;
+}
+.main-body {
+    /*height: 80vh;*/
+    flex: 1 1 auto;
+    overflow-y: auto;
+}
+.footer-row {
+    flex: 0 0 auto;
+    display: flex;
+    padding-top: 5px;
+    height: 45px !important;
+    vertical-align: middle;
+    border-top: #cccccc 1px solid;
+}
+.footer-left {
+    /*width: 100px;*/
+    vertical-align: middle;
+    padding: 0.5em;
+}
+.footer-input {
+    flex: 1;
+    margin: 0 10px;
+}
+.footer-input .el-input__inner {
+    height: 35px;
+}
+.footer-button {
+    /*width: 100px;*/
+}
+
+.main-body pre {
+    margin: 0;
+}
+
+.errorMsg {
+    color: #c82333;
+}
+
+.resultMsg {
+    background-color: #f0f0f0;
+}
+
+.commandMsg {
+    background-color: #d9ecff !important;
+}
+/*****************************/
+/* override element-ui class*/
+/*****************************/
+
+.el-card__body {
+    /*margin: 2px;*/
+    padding: 8px;
+    /*background-color: #cccccc;*/
+}
+.el-main {
+    padding: 10px;
+    /*background-color: #f7f8f9;*/
+}
+.el-header {
+    padding: 10px;
+    background-color: #f7f8f9;
+}

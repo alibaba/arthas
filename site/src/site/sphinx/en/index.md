@@ -34,7 +34,7 @@ Arthas is built to solve these issues. A developer can troubleshoot production i
 * Supports Linux/Mac/Windows
 
 
-**If you are using Arthas, please let us know. Your use is very important to us: [View](https://github.com/alibaba/arthas/issues/111)**
+**If you are using Arthas, please let us know. Your feedback is very important to us: [View](https://github.com/alibaba/arthas/issues/111)**
 
 Contents
 --------
@@ -47,8 +47,10 @@ Contents
 * [Commands](commands.md)
 * [WebConsole](web-console.md)
 * [Docker](docker.md)
+* [Arthas Spring Boot Starter](spring-boot-starter.md)
 * [User cases](https://github.com/alibaba/arthas/issues?q=label%3Auser-case)
 * [Questions and answers](https://github.com/alibaba/arthas/issues?q=label%3Aquestion-answered)
 * [Fork me at GitHub](https://github.com/alibaba/arthas)
 * [Compile and debug/CONTRIBUTING](https://github.com/alibaba/arthas/blob/master/CONTRIBUTING.md#)
 * [Release Notes](https://github.com/alibaba/arthas/releases)
+* [Contact us](contact-us.md)

@@ -8,7 +8,7 @@ curl -O https://alibaba.github.io/arthas/arthas-demo.jar
 java -jar arthas-demo.jar
 ```
 
-`arthas-demo` is a simple program that generates a random number every second, then find all prime factors of the number.
+`arthas-demo` is a simple program that generates a random number every second, then it finds all prime factors of that number.
 
 The source code of `arthas-demo`: [View](https://github.com/alibaba/arthas/blob/master/demo/src/main/java/demo/MathGame.java)
 

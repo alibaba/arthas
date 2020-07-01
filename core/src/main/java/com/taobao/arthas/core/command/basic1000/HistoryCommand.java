@@ -4,8 +4,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.taobao.arthas.core.command.Constants;
+import com.taobao.arthas.core.command.model.HistoryModel;
+import com.taobao.arthas.core.server.ArthasBootstrap;
 import com.taobao.arthas.core.shell.command.AnnotatedCommand;
 import com.taobao.arthas.core.shell.command.CommandProcess;
+import com.taobao.arthas.core.shell.history.HistoryManager;
 import com.taobao.arthas.core.shell.session.Session;
 import com.taobao.arthas.core.shell.term.impl.TermImpl;
 import com.taobao.middleware.cli.annotations.Argument;
@@ -44,6 +47,7 @@ public class HistoryCommand extends AnnotatedCommand {
     @Override
     public void process(CommandProcess process) {
         Session session = process.session();
+        //TODO 修改term history实现方式，统一使用HistoryManager
         Object termObject = session.get(Session.TTY);
         if (termObject != null && termObject instanceof TermImpl) {
             TermImpl term = (TermImpl) termObject;
@@ -68,6 +72,15 @@ public class HistoryCommand extends AnnotatedCommand {
                 }
 
                 process.write(sb.toString());
+            }
+        } else {
+            //http api
+            HistoryManager historyManager = ArthasBootstrap.getInstance().getHistoryManager();
+            if (clear) {
+                historyManager.clearHistory();
+            } else {
+                List<String> history = historyManager.getHistory();
+                process.appendResult(new HistoryModel(new ArrayList<String>(history)));
             }
         }
 

@@ -9,6 +9,8 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 import java.util.Set;
 
+import com.alibaba.arthas.deps.org.slf4j.Logger;
+import com.alibaba.arthas.deps.org.slf4j.LoggerFactory;
 import com.taobao.arthas.core.command.Constants;
 import com.taobao.arthas.core.shell.cli.Completion;
 import com.taobao.arthas.core.shell.cli.CompletionUtils;
@@ -46,6 +48,7 @@ import com.taobao.text.util.RenderUtil;
         "  sm -Ed org\\\\.apache\\\\.commons\\\\.lang\\.StringUtils .*\n" +
         Constants.WIKI + Constants.WIKI_HOME + "sm")
 public class SearchMethodCommand extends AnnotatedCommand {
+    private static final Logger logger = LoggerFactory.getLogger(SearchMethodCommand.class);
 
     private String classPattern;
     private String methodPattern;
@@ -92,34 +95,42 @@ public class SearchMethodCommand extends AnnotatedCommand {
         Set<Class<?>> matchedClasses = SearchUtils.searchClass(inst, classPattern, isRegEx, hashCode);
 
         for (Class<?> clazz : matchedClasses) {
-            for (Constructor<?> constructor : clazz.getDeclaredConstructors()) {
-                String methodNameWithDescriptor = org.objectweb.asm.commons.Method.getMethod(constructor).toString();
-                if (!methodNameMatcher.matching("<init>")) {
-                    continue;
+            try {
+                for (Constructor<?> constructor : clazz.getDeclaredConstructors()) {
+                    String methodNameWithDescriptor = com.alibaba.arthas.deps.org.objectweb.asm.commons.Method.getMethod(constructor).toString();
+                    if (!methodNameMatcher.matching("<init>")) {
+                        continue;
+                    }
+
+                    if (isDetail) {
+                        process.write(RenderUtil.render(renderConstructor(constructor, clazz), process.width()) + "\n");
+                    } else {
+                        String line = format("%s %s%n", clazz.getName(), methodNameWithDescriptor);
+                        process.write(line);
+                    }
+                    affect.rCnt(1);
                 }
 
-                if (isDetail) {
-                    process.write(RenderUtil.render(renderConstructor(constructor, clazz), process.width()) + "\n");
-                } else {
-                    String line = format("%s %s%n", clazz.getName(), methodNameWithDescriptor);
-                    process.write(line);
-                }
-                affect.rCnt(1);
-            }
+                for (Method method : clazz.getDeclaredMethods()) {
+                    String methodNameWithDescriptor = com.alibaba.arthas.deps.org.objectweb.asm.commons.Method.getMethod(method).toString();
+                    if (!methodNameMatcher.matching(method.getName())) {
+                        continue;
+                    }
 
-            for (Method method : clazz.getDeclaredMethods()) {
-                String methodNameWithDescriptor = org.objectweb.asm.commons.Method.getMethod(method).toString();
-                if (!methodNameMatcher.matching(method.getName())) {
-                    continue;
+                    if (isDetail) {
+                        process.write(RenderUtil.render(renderMethod(method, clazz), process.width()) + "\n");
+                    } else {
+                        String line = format("%s %s%n", clazz.getName(), methodNameWithDescriptor);
+                        process.write(line);
+                    }
+                    affect.rCnt(1);
                 }
-
-                if (isDetail) {
-                    process.write(RenderUtil.render(renderMethod(method, clazz), process.width()) + "\n");
-                } else {
-                    String line = format("%s %s%n", clazz.getName(), methodNameWithDescriptor);
-                    process.write(line);
-                }
-                affect.rCnt(1);
+            } catch (Error e) {
+                //print failed className
+                String msg = String.format("process class failed: %s, error: %s", clazz.getName(), e.toString());
+                logger.error(msg, e);
+                process.write(msg).write("\n");
+                throw e;
             }
         }
 

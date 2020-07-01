@@ -1,4 +1,3 @@
-
 package com.alibaba.arthas.tunnel.client;
 
 import java.net.URI;
@@ -30,18 +29,14 @@ import io.netty.handler.codec.http.websocketx.WebSocketVersion;
 import io.netty.util.concurrent.GenericFutureListener;
 
 /**
- * 
  * @author hengyunabc 2019-08-28
- *
  */
 public class ForwardClientSocketClientHandler extends SimpleChannelInboundHandler<WebSocketFrame> {
-    private final static Logger logger = LoggerFactory.getLogger(ForwardClientSocketClientHandler.class);
+
+    private static final Logger logger = LoggerFactory.getLogger(ForwardClientSocketClientHandler.class);
 
     private ChannelPromise handshakeFuture;
-
-    private Channel localChannel;
-
-    private URI localServerURI;
+    private final URI localServerURI;
 
     public ForwardClientSocketClientHandler(URI localServerURI) {
         this.localServerURI = localServerURI;
@@ -49,7 +44,6 @@ public class ForwardClientSocketClientHandler extends SimpleChannelInboundHandle
 
     @Override
     public void channelActive(ChannelHandlerContext ctx) {
-
     }
 
     @Override
@@ -58,26 +52,30 @@ public class ForwardClientSocketClientHandler extends SimpleChannelInboundHandle
     }
 
     @Override
-    public void userEventTriggered(final ChannelHandlerContext ctx, Object evt) throws Exception {
-
+    public void userEventTriggered(final ChannelHandlerContext ctx, Object evt) {
         if (evt.equals(ClientHandshakeStateEvent.HANDSHAKE_COMPLETE)) {
-
-            EventLoopGroup group = new NioEventLoopGroup();
-
             try {
+                connectLocalServer(ctx);
+            } catch (Throwable e) {
+                logger.error("ForwardClientSocketClientHandler connect local arthas server error", e);
+            }
+        } else {
+            ctx.fireUserEventTriggered(evt);
+        }
+    }
 
-                logger.info("ForwardClientSocketClientHandler star connect local arthas server");
+    private void connectLocalServer(final ChannelHandlerContext ctx) throws InterruptedException {
+        EventLoopGroup group = new NioEventLoopGroup();
+        logger.info("ForwardClientSocketClientHandler star connect local arthas server");
+        WebSocketClientHandshaker newHandshaker = WebSocketClientHandshakerFactory.newHandshaker(localServerURI,
+                WebSocketVersion.V13, null, true, new DefaultHttpHeaders());
+        final WebSocketClientProtocolHandler websocketClientHandler = new WebSocketClientProtocolHandler(
+                newHandshaker);
+        final LocalFrameHandler localFrameHandler = new LocalFrameHandler();
 
-                WebSocketClientHandshaker newHandshaker = WebSocketClientHandshakerFactory.newHandshaker(localServerURI,
-                        WebSocketVersion.V13, null, true, new DefaultHttpHeaders());
-
-                final WebSocketClientProtocolHandler websocketClientHandler = new WebSocketClientProtocolHandler(
-                        newHandshaker);
-
-                final LocalFrameHandler localFrameHandler = new LocalFrameHandler();
-
-                Bootstrap b = new Bootstrap();
-                b.group(group).channel(NioSocketChannel.class).handler(new ChannelInitializer<SocketChannel>() {
+        Bootstrap b = new Bootstrap();
+        b.group(group).channel(NioSocketChannel.class)
+                .handler(new ChannelInitializer<SocketChannel>() {
                     @Override
                     protected void initChannel(SocketChannel ch) {
                         ChannelPipeline p = ch.pipeline();
@@ -86,42 +84,30 @@ public class ForwardClientSocketClientHandler extends SimpleChannelInboundHandle
                     }
                 });
 
-                localChannel = b.connect(localServerURI.getHost(), localServerURI.getPort()).sync().channel();
-
-                localFrameHandler.handshakeFuture().addListener(new GenericFutureListener<ChannelFuture>() {
+        Channel localChannel = b.connect(localServerURI.getHost(), localServerURI.getPort()).sync().channel();
+        this.handshakeFuture = localFrameHandler.handshakeFuture();
+        handshakeFuture.addListener(new GenericFutureListener<ChannelFuture>() {
                     @Override
                     public void operationComplete(ChannelFuture future) throws Exception {
                         ChannelPipeline pipeline = future.channel().pipeline();
                         pipeline.remove(localFrameHandler);
                         pipeline.addLast(new RelayHandler(ctx.channel()));
-
                     }
                 });
 
-                localFrameHandler.handshakeFuture().sync();
-
-                ctx.pipeline().remove(ForwardClientSocketClientHandler.this);
-
-                ctx.pipeline().addLast(new RelayHandler(localChannel));
-
-                logger.info("ForwardClientSocketClientHandler connect local arthas server success");
-            } catch (Throwable e) {
-                logger.error("ForwardClientSocketClientHandler connect local arthas server error", e);
-            }
-
-        } else {
-            ctx.fireUserEventTriggered(evt);
-        }
+        handshakeFuture.sync();
+        ctx.pipeline().remove(ForwardClientSocketClientHandler.this);
+        ctx.pipeline().addLast(new RelayHandler(localChannel));
+        logger.info("ForwardClientSocketClientHandler connect local arthas server success");
     }
 
     @Override
-    protected void channelRead0(ChannelHandlerContext ctx, WebSocketFrame msg) throws Exception {
-
+    protected void channelRead0(ChannelHandlerContext ctx, WebSocketFrame msg) {
     }
 
     @Override
     public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) {
-        cause.printStackTrace();
+        logger.error("ForwardClientSocketClient channel: {}" , ctx.channel(), cause);
         if (!handshakeFuture.isDone()) {
             handshakeFuture.setFailure(cause);
         }

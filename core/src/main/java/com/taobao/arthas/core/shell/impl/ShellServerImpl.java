@@ -19,7 +19,6 @@ import com.taobao.arthas.core.shell.system.impl.InternalCommandManager;
 import com.taobao.arthas.core.shell.system.impl.JobControllerImpl;
 import com.taobao.arthas.core.shell.term.Term;
 import com.taobao.arthas.core.shell.term.TermServer;
-import com.taobao.arthas.core.shell.term.impl.httptelnet.HttpTelnetTermServer;
 
 import java.lang.instrument.Instrumentation;
 import java.util.ArrayList;
@@ -184,6 +183,7 @@ public class ShellServerImpl extends ShellServer {
 
         synchronized (ShellServerImpl.this) {
             sessions.remove(shell.id);
+            shell.close("network error");
             completeSessionClosed = sessions.isEmpty() && closed;
         }
         if (completeSessionClosed) {
@@ -241,5 +241,13 @@ public class ShellServerImpl extends ShellServer {
             sessionsClosed.setHandler(handler);
             bootstrap.destroy();
         }
+    }
+
+    public JobControllerImpl getJobController() {
+        return jobController;
+    }
+
+    public InternalCommandManager getCommandManager() {
+        return commandManager;
     }
 }

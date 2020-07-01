@@ -4,8 +4,7 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
-import org.objectweb.asm.Type;
-
+import com.alibaba.arthas.deps.org.objectweb.asm.Type;
 import com.taobao.arthas.core.util.StringUtils;
 
 /**
@@ -31,7 +30,7 @@ public class ArthasMethod {
 
         try {
             ClassLoader loader = this.clazz.getClassLoader();
-            final org.objectweb.asm.Type asmType = org.objectweb.asm.Type.getMethodType(methodDesc);
+            final Type asmType = Type.getMethodType(methodDesc);
 
             // to arg types
             final Class<?>[] argsClasses = new Class<?>[asmType.getArgumentTypes().length];

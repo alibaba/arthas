@@ -1,7 +1,7 @@
 getstatic
 =========
 
-* It is recommended to use the [OGNL] (ognl.md) command, which will be more flexibility.
+* It is recommended to use the [OGNL] (ognl.md) command, which will be more flexible.
 
 Check the static fields of classes conveniently, the usage is `getstatic class_name field_name`.
 

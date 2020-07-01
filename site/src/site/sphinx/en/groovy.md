@@ -6,7 +6,7 @@ groovy
 ### Limitations
 
 1. Prohibit from alternating the original logic. Like `watch` command, The major purpose of scripting is monitoring and observing.
-1. Only allow to monitor at the stages of before/success/exception/finish on one method.
+2. Only allow to monitor at the stages of before/success/exception/finish on one method.
 
 ### Parameters
 

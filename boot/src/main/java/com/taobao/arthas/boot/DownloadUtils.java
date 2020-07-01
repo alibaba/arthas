@@ -16,11 +16,9 @@ import java.util.List;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.NodeList;
-import org.xml.sax.SAXException;
 
 import com.taobao.arthas.common.AnsiLog;
 import com.taobao.arthas.common.IOUtils;
@@ -98,7 +96,7 @@ public class DownloadUtils {
 
     public static String getRepoUrl(String repoMirror, boolean http) {
         repoMirror = repoMirror.trim();
-        String repoUrl = "";
+        String repoUrl;
         if (repoMirror.equals("center")) {
             repoUrl = "https://repo1.maven.org/maven2";
         } else if (repoMirror.equals("aliyun")) {
@@ -111,13 +109,13 @@ public class DownloadUtils {
         }
 
         if (http && repoUrl.startsWith("https")) {
-            repoUrl = "http" + repoUrl.substring("https".length(), repoUrl.length());
+            repoUrl = "http" + repoUrl.substring("https".length());
         }
         return repoUrl;
     }
 
     public static void downArthasPackaging(String repoMirror, boolean http, String arthasVersion, String savePath)
-                    throws ParserConfigurationException, SAXException, IOException {
+            throws IOException {
         String repoUrl = getRepoUrl(repoMirror, http);
 
         File unzipDir = new File(savePath, arthasVersion + File.separator + "arthas");
@@ -134,7 +132,7 @@ public class DownloadUtils {
     }
 
     public static void saveUrl(final String filename, final String urlString, boolean printProgress)
-                    throws MalformedURLException, IOException {
+            throws IOException {
         BufferedInputStream in = null;
         FileOutputStream fout = null;
         try {
@@ -143,7 +141,7 @@ public class DownloadUtils {
             List<String> values = connection.getHeaderFields().get("Content-Length");
             int fileSize = 0;
             if (values != null && !values.isEmpty()) {
-                String contentLength = (String) values.get(0);
+                String contentLength = values.get(0);
                 if (contentLength != null) {
                     // parse the length into an integer...
                     fileSize = Integer.parseInt(contentLength);
@@ -152,7 +150,7 @@ public class DownloadUtils {
 
             fout = new FileOutputStream(filename);
 
-            final byte data[] = new byte[1024 * 1024];
+            final byte[] data = new byte[1024 * 1024];
             int totalCount = 0;
             int count;
             long lastPrintTime = System.currentTimeMillis();
@@ -162,7 +160,7 @@ public class DownloadUtils {
                     long now = System.currentTimeMillis();
                     if (now - lastPrintTime > 1000) {
                         AnsiLog.info("File size: {}, downloaded size: {}, downloading ...", formatFileSize(fileSize),
-                                        formatFileSize(totalCount));
+                                formatFileSize(totalCount));
                         lastPrintTime = now;
                     }
                 }
@@ -185,9 +183,18 @@ public class DownloadUtils {
      * @return
      * @throws Exception
      */
-    private static Document transformMavenMetaData(String mavenMetaData) throws Exception {
+    static Document transformMavenMetaData(String mavenMetaData) throws Exception {
         ByteArrayInputStream inputStream = new ByteArrayInputStream(mavenMetaData.getBytes("UTF-8"));
         DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
+        //disable XXE before newDocumentBuilder
+        dbFactory.setFeature("http://javax.xml.XMLConstants/feature/secure-processing", true);
+        dbFactory.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true);
+        dbFactory.setFeature("http://xml.org/sax/features/external-parameter-entities", false);
+        dbFactory.setFeature("http://xml.org/sax/features/external-general-entities", false);
+        dbFactory.setFeature("http://apache.org/xml/features/nonvalidating/load-external-dtd", false);
+        dbFactory.setXIncludeAware(false);
+        dbFactory.setExpandEntityReferences(false);
+        //create doc builder
         DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
         return dBuilder.parse(inputStream);
     }
@@ -203,13 +210,13 @@ public class DownloadUtils {
     private static URLConnection openURLConnection(String url) throws MalformedURLException, IOException {
         URLConnection connection = new URL(url).openConnection();
         if (connection instanceof HttpURLConnection) {
-            ((HttpURLConnection) connection).setConnectTimeout(CONNECTION_TIMEOUT);
+            connection.setConnectTimeout(CONNECTION_TIMEOUT);
             // normally, 3xx is redirect
             int status = ((HttpURLConnection) connection).getResponseCode();
             if (status != HttpURLConnection.HTTP_OK) {
                 if (status == HttpURLConnection.HTTP_MOVED_TEMP || status == HttpURLConnection.HTTP_MOVED_PERM
-                                || status == HttpURLConnection.HTTP_SEE_OTHER) {
-                    String newUrl = ((HttpURLConnection) connection).getHeaderField("Location");
+                        || status == HttpURLConnection.HTTP_SEE_OTHER) {
+                    String newUrl = connection.getHeaderField("Location");
                     AnsiLog.debug("Try to open url: {}, redirect to: {}", url, newUrl);
                     return openURLConnection(newUrl);
                 }
@@ -219,7 +226,7 @@ public class DownloadUtils {
     }
 
     private static String formatFileSize(long size) {
-        String hrSize = null;
+        String hrSize;
 
         double b = size;
         double k = size / 1024.0;

@@ -62,7 +62,7 @@ Tip: you can use `--versions` to list all available versions.
 
 
 
-## issue
+## Issue
 
 欢迎在issue里对arthas做反馈，分享使用技巧，排查问题的经历。
 
@@ -141,6 +141,9 @@ chmod +x /tmp/sphinx.osx-x86_64
 * 到 https://oss.sonatype.org/ 上，“Staging Repositories”然后close掉自己的，再release
 * 发布后，可以到这里查看是否同步到仓库里了： https://repo1.maven.org/maven2/com/taobao/arthas/arthas-packaging/
 * 发布完maven仓库之后，需要到阿里云的仓库里检查是否同步，有可能有延时
+
+    比如下载地址： https://maven.aliyun.com/repository/public/com/taobao/arthas/arthas-packaging/3.x.x/arthas-packaging-3.x.x-bin.zip
+
 * 需要更新 gh-pages 分支下面的 arthas-boot.jar/arthas-demo.jar/as.sh ，下载 doc.zip，解压覆盖掉文档的更新
 * 需要更新docker镜像，push新的tag：https://hub.docker.com/r/hengyunabc/arthas/tags?page=1&ordering=last_updated
 

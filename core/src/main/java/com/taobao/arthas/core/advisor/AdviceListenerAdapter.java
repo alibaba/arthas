@@ -1,5 +1,7 @@
 package com.taobao.arthas.core.advisor;
 
+import java.util.concurrent.atomic.AtomicLong;
+
 import com.taobao.arthas.core.command.express.ExpressException;
 import com.taobao.arthas.core.command.express.ExpressFactory;
 import com.taobao.arthas.core.shell.command.CommandProcess;
@@ -14,7 +16,14 @@ import com.taobao.arthas.core.util.StringUtils;
  *
  */
 public abstract class AdviceListenerAdapter implements AdviceListener, ProcessAware {
+    private static final  AtomicLong ID_GENERATOR = new AtomicLong(0);
     private Process process;
+    private long id = ID_GENERATOR.addAndGet(1);
+
+    @Override
+    public long id() {
+        return id;
+    }
 
     @Override
     public void create() {

@@ -11,6 +11,7 @@ import com.taobao.arthas.core.shell.term.TermServer;
 import com.taobao.arthas.core.shell.term.impl.Helper;
 import com.taobao.arthas.core.shell.term.impl.TermImpl;
 
+import io.netty.util.concurrent.EventExecutorGroup;
 import io.termd.core.function.Consumer;
 import io.termd.core.tty.TtyConnection;
 
@@ -29,11 +30,13 @@ public class HttpTelnetTermServer extends TermServer {
     private String hostIp;
     private int port;
     private long connectionTimeout;
+    private EventExecutorGroup workerGroup;
 
-    public HttpTelnetTermServer(String hostIp, int port, long connectionTimeout) {
+    public HttpTelnetTermServer(String hostIp, int port, long connectionTimeout, EventExecutorGroup workerGroup) {
         this.hostIp = hostIp;
         this.port = port;
         this.connectionTimeout = connectionTimeout;
+        this.workerGroup = workerGroup;
     }
 
     @Override
@@ -45,7 +48,7 @@ public class HttpTelnetTermServer extends TermServer {
     @Override
     public TermServer listen(Handler<Future<TermServer>> listenHandler) {
         // TODO: charset and inputrc from options
-        bootstrap = new NettyHttpTelnetTtyBootstrap().setHost(hostIp).setPort(port);
+        bootstrap = new NettyHttpTelnetTtyBootstrap(workerGroup).setHost(hostIp).setPort(port);
         try {
             bootstrap.start(new Consumer<TtyConnection>() {
                 @Override
