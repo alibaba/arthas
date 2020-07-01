@@ -15,6 +15,8 @@
             <groupId>com.taobao.arthas</groupId>
             <artifactId>arthas-site</artifactId>
             <version>${project.version}</version>
+            <scope>provided</scope>
+            <optional>true</optional>
         </dependency>
     </dependencies>
     <build>
