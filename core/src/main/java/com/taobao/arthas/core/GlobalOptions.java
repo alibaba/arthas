@@ -133,4 +133,14 @@ public class GlobalOptions {
             description = "This option enables print verbose information, default value false."
     )
     public static volatile boolean verbose = false;
+
+    /*
+     * default search limit size
+     */
+    @Option(level = 1,
+            name = "search-limit",
+            summary = "default search limit size",
+            description = ""
+    )
+    public static volatile int searchLimit = 0;
 }

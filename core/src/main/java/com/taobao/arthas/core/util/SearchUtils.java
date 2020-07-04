@@ -34,7 +34,7 @@ public class SearchUtils {
             if (classNameMatcher.matching(clazz.getName())) {
                 matches.add(clazz);
             }
-            if (matches.size() >= limit) {
+            if (limit > 0 && matches.size() >= limit) {
                 break;
             }
         }
@@ -42,17 +42,25 @@ public class SearchUtils {
     }
 
     public static Set<Class<?>> searchClass(Instrumentation inst, Matcher<String> classNameMatcher) {
-        return searchClass(inst, classNameMatcher, Integer.MAX_VALUE);
+        return searchClass(inst, classNameMatcher, 0);
     }
 
     public static Set<Class<?>> searchClass(Instrumentation inst, String classPattern, boolean isRegEx) {
+        return searchClass(inst, classPattern, isRegEx, 0);
+    }
+
+    public static Set<Class<?>> searchClass(Instrumentation inst, String classPattern, boolean isRegEx, int limit) {
         Matcher<String> classNameMatcher = classNameMatcher(classPattern, isRegEx);
-        return GlobalOptions.isDisableSubClass ? searchClass(inst, classNameMatcher) :
-                searchSubClass(inst, searchClass(inst, classNameMatcher));
+        return GlobalOptions.isDisableSubClass ? searchClass(inst, classNameMatcher, limit) :
+                searchSubClass(inst, searchClass(inst, classNameMatcher, limit));
     }
 
     public static Set<Class<?>> searchClass(Instrumentation inst, String classPattern, boolean isRegEx, String code) {
-        Set<Class<?>> matchedClasses = searchClass(inst, classPattern, isRegEx);
+        return searchClass(inst, classPattern, isRegEx, code, 0);
+    }
+
+    public static Set<Class<?>> searchClass(Instrumentation inst, String classPattern, boolean isRegEx, String code, int limit) {
+        Set<Class<?>> matchedClasses = searchClass(inst, classPattern, isRegEx, limit);
         return filter(matchedClasses, code);
     }
 

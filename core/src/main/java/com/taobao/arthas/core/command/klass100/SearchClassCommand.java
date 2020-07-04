@@ -7,6 +7,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
+import com.taobao.arthas.core.GlobalOptions;
 import com.taobao.arthas.core.command.Constants;
 import com.taobao.arthas.core.shell.cli.Completion;
 import com.taobao.arthas.core.shell.cli.CompletionUtils;
@@ -44,6 +45,7 @@ public class SearchClassCommand extends AnnotatedCommand {
     private boolean isRegEx = false;
     private String hashCode = null;
     private Integer expand;
+    private int limit = GlobalOptions.searchLimit;
 
     @Argument(argName = "class-pattern", index = 0)
     @Description("Class name pattern, use either '.' or '/' as separator")
@@ -81,12 +83,18 @@ public class SearchClassCommand extends AnnotatedCommand {
         this.hashCode = hashCode;
     }
 
+    @Option(shortName = "l", longName = "limit")
+    @Description("Limit for the result, default is no limit")
+    public void setLimit(int limit) {
+        this.limit = limit;
+    }
+
     @Override
     public void process(CommandProcess process) {
         // TODO: null check
         RowAffect affect = new RowAffect();
         Instrumentation inst = process.session().getInstrumentation();
-        List<Class<?>> matchedClasses = new ArrayList<Class<?>>(SearchUtils.searchClass(inst, classPattern, isRegEx, hashCode));
+        List<Class<?>> matchedClasses = new ArrayList<Class<?>>(SearchUtils.searchClass(inst, classPattern, isRegEx, hashCode, limit));
         Collections.sort(matchedClasses, new Comparator<Class<?>>() {
             @Override
             public int compare(Class<?> c1, Class<?> c2) {

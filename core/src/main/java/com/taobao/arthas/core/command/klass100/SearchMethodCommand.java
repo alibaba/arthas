@@ -11,6 +11,7 @@ import java.util.Set;
 
 import com.alibaba.arthas.deps.org.slf4j.Logger;
 import com.alibaba.arthas.deps.org.slf4j.LoggerFactory;
+import com.taobao.arthas.core.GlobalOptions;
 import com.taobao.arthas.core.command.Constants;
 import com.taobao.arthas.core.shell.cli.Completion;
 import com.taobao.arthas.core.shell.cli.CompletionUtils;
@@ -55,6 +56,7 @@ public class SearchMethodCommand extends AnnotatedCommand {
     private String hashCode = null;
     private boolean isDetail = false;
     private boolean isRegEx = false;
+    private int limit = GlobalOptions.searchLimit;
 
     @Argument(argName = "class-pattern", index = 0)
     @Description("Class name pattern, use either '.' or '/' as separator")
@@ -86,14 +88,21 @@ public class SearchMethodCommand extends AnnotatedCommand {
         this.hashCode = hashCode;
     }
 
+    @Option(shortName = "l", longName = "limit")
+    @Description("Limit for the result, default is no limit")
+    public void setLimit(int limit) {
+        this.limit = limit;
+    }
+
     @Override
     public void process(CommandProcess process) {
         RowAffect affect = new RowAffect();
 
         Instrumentation inst = process.session().getInstrumentation();
         Matcher<String> methodNameMatcher = methodNameMatcher();
-        Set<Class<?>> matchedClasses = SearchUtils.searchClass(inst, classPattern, isRegEx, hashCode);
-
+        Set<Class<?>> matchedClasses = SearchUtils.searchClass(inst, classPattern, isRegEx, hashCode, limit);
+        int founded = 0;
+        outer:
         for (Class<?> clazz : matchedClasses) {
             try {
                 for (Constructor<?> constructor : clazz.getDeclaredConstructors()) {
@@ -116,7 +125,7 @@ public class SearchMethodCommand extends AnnotatedCommand {
                     if (!methodNameMatcher.matching(method.getName())) {
                         continue;
                     }
-
+                    founded ++;
                     if (isDetail) {
                         process.write(RenderUtil.render(renderMethod(method, clazz), process.width()) + "\n");
                     } else {
@@ -124,6 +133,9 @@ public class SearchMethodCommand extends AnnotatedCommand {
                         process.write(line);
                     }
                     affect.rCnt(1);
+                    if (limit > 0 && founded > limit) {
+                        break outer;
+                    }
                 }
             } catch (Error e) {
                 //print failed className
