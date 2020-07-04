@@ -63,6 +63,7 @@
                                     <Specification-Version>${project.version}</Specification-Version>
                                     <Implementation-Title>${project.name}</Implementation-Title>
                                     <Implementation-Version>${project.version}</Implementation-Version>
+                                    <Implementation-Title>${git.commit.id}</Implementation-Title>
                                 </manifestEntries>
                             </archive>
                         </configuration>

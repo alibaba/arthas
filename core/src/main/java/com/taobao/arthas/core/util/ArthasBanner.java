@@ -40,9 +40,14 @@ public class ArthasBanner {
             if (versionInputStream != null) {
                 VERSION = IOUtils.toString(versionInputStream).trim();
             } else {
-                String implementationVersion = ArthasBanner.class.getPackage().getImplementationVersion();
+                final Package p = ArthasBanner.class.getPackage();
+                String implementationVersion = p.getImplementationVersion();
                 if (implementationVersion != null) {
                     VERSION = implementationVersion;
+                    final String implementationTitle = p.getImplementationTitle();
+                    if (implementationTitle != null && implementationTitle.length() > 16) {
+                        VERSION += " # " + implementationTitle.substring(0,16);
+                    }
                 }
             }
 

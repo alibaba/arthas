@@ -277,6 +277,10 @@ public class Bootstrap {
         if (bootstrapPackage != null) {
             String arthasBootVersion = bootstrapPackage.getImplementationVersion();
             if (arthasBootVersion != null) {
+                final String implementationTitle = bootstrapPackage.getImplementationTitle();
+                if (implementationTitle != null && implementationTitle.length() > 16) {
+                    arthasBootVersion += " # " + implementationTitle.substring(0,16);
+                }
                 AnsiLog.info("arthas-boot version: " + arthasBootVersion);
             }
         }

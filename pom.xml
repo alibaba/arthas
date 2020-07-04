@@ -103,6 +103,25 @@
                             <excludeProperties>git.build.host</excludeProperties>
                         </configuration>
                     </plugin>
+                    <plugin>
+                        <groupId>org.codehaus.mojo</groupId>
+                        <artifactId>properties-maven-plugin</artifactId>
+                        <version>1.0.0</version>
+                        <executions>
+                          <execution>
+                            <phase>prepare-package</phase>
+                            <goals>
+                              <goal>read-project-properties</goal>
+                            </goals>
+                            <configuration>
+                              <quiet>true</quiet>
+                              <files>
+                                <file>${project.build.outputDirectory}/arthas-git.properties</file>
+                              </files>
+                            </configuration>
+                          </execution>
+                        </executions>
+                    </plugin>
                 </plugins>
             </build>
         </profile>
