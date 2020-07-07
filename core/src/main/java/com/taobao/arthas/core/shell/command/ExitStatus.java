@@ -6,6 +6,11 @@ package com.taobao.arthas.core.shell.command;
 public class ExitStatus {
 
     /**
+     * 命令执行成功的状态
+     */
+    public static final ExitStatus SUCCESS_STATUS = new ExitStatus(0);
+
+    /**
      * 异步执行的命令返回此状态，注意避免状态码冲突
      */
     public static final ExitStatus PENDING_STATUS = new ExitStatus(0x300000);
@@ -20,7 +25,7 @@ public class ExitStatus {
      * @return
      */
     public static ExitStatus success() {
-        return new ExitStatus(0);
+        return SUCCESS_STATUS;
     }
 
     /**
