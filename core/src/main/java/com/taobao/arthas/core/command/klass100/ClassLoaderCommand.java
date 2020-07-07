@@ -9,6 +9,7 @@ import com.taobao.arthas.core.command.model.ClassSetVO;
 import com.taobao.arthas.core.command.model.ClassVO;
 import com.taobao.arthas.core.command.model.MessageModel;
 import com.taobao.arthas.core.command.model.RowAffectModel;
+import com.taobao.arthas.core.command.model.StatusModel;
 import com.taobao.arthas.core.shell.command.AnnotatedCommand;
 import com.taobao.arthas.core.shell.command.CommandProcess;
 import com.taobao.arthas.core.shell.handlers.Handler;
@@ -109,23 +110,23 @@ public class ClassLoaderCommand extends AnnotatedCommand {
     }
 
     @Override
-    public void process(CommandProcess process) {
+    public StatusModel process(CommandProcess process) {
         // ctrl-C support
         process.interruptHandler(new ClassLoaderInterruptHandler(process, isInterrupted));
 
         Instrumentation inst = process.session().getInstrumentation();
         if (all) {
-            processAllClasses(process, inst);
+            return processAllClasses(process, inst);
         } else if (hashCode != null && resource != null) {
-            processResources(process, inst);
+            return processResources(process, inst);
         } else if (hashCode != null && this.loadClass != null) {
-            processLoadClass(process, inst);
+            return processLoadClass(process, inst);
         } else if (hashCode != null) {
-            processClassLoader(process, inst);
-        } else if (listClassLoader || isTree){
-            processClassLoaders(process, inst);
+            return processClassLoader(process, inst);
+        } else if (listClassLoader || isTree) {
+            return processClassLoaders(process, inst);
         } else {
-            processClassLoaderStats(process, inst);
+            return processClassLoaderStats(process, inst);
         }
     }
 
@@ -134,12 +135,13 @@ public class ClassLoaderCommand extends AnnotatedCommand {
      * e.g. In JVM, there are 100 GrooyClassLoader instances, which loaded 200 classes in total
      * @param process
      * @param inst
+     * @return
      */
-    private void processClassLoaderStats(CommandProcess process, Instrumentation inst) {
+    private StatusModel processClassLoaderStats(CommandProcess process, Instrumentation inst) {
         RowAffect affect = new RowAffect();
         List<ClassLoaderInfo> classLoaderInfos = getAllClassLoaderInfo(inst);
         Map<String, ClassLoaderStat> classLoaderStats = new HashMap<String, ClassLoaderStat>();
-        for (ClassLoaderInfo info: classLoaderInfos) {
+        for (ClassLoaderInfo info : classLoaderInfos) {
             String name = info.classLoader == null ? "BootstrapClassLoader" : info.classLoader.getClass().getName();
             ClassLoaderStat stat = classLoaderStats.get(name);
             if (null == stat) {
@@ -158,10 +160,10 @@ public class ClassLoaderCommand extends AnnotatedCommand {
 
         affect.rCnt(sorted.keySet().size());
         process.appendResult(new RowAffectModel(affect));
-        process.end();
+        return StatusModel.success();
     }
 
-    private void processClassLoaders(CommandProcess process, Instrumentation inst) {
+    private StatusModel processClassLoaders(CommandProcess process, Instrumentation inst) {
         RowAffect affect = new RowAffect();
         List<ClassLoaderInfo> classLoaderInfos = includeReflectionClassLoader ? getAllClassLoaderInfo(inst) :
                 getAllClassLoaderInfo(inst, new SunReflectionClassLoaderFilter());
@@ -172,18 +174,18 @@ public class ClassLoaderCommand extends AnnotatedCommand {
             classLoaderVO.setLoadedCount(classLoaderInfo.loadedClassCount());
             classLoaderVOs.add(classLoaderVO);
         }
-        if (isTree){
+        if (isTree) {
             classLoaderVOs = processClassLoaderTree(classLoaderVOs);
         }
         process.appendResult(new ClassLoaderModel().setClassLoaders(classLoaderVOs).setTree(isTree));
 
         affect.rCnt(classLoaderInfos.size());
         process.appendResult(new RowAffectModel(affect));
-        process.end();
+        return StatusModel.success();
     }
 
     // 根据 hashCode 来打印URLClassLoader的urls
-    private void processClassLoader(CommandProcess process, Instrumentation inst) {
+    private StatusModel processClassLoader(CommandProcess process, Instrumentation inst) {
         RowAffect affect = new RowAffect();
         Set<ClassLoader> allClassLoader = getAllClassLoaders(inst);
         for (ClassLoader cl : allClassLoader) {
@@ -191,7 +193,7 @@ public class ClassLoaderCommand extends AnnotatedCommand {
                 if (cl instanceof URLClassLoader) {
                     List<String> classLoaderUrls = getClassLoaderUrls(cl);
                     affect.rCnt(classLoaderUrls.size());
-                    if (classLoaderUrls.isEmpty()){
+                    if (classLoaderUrls.isEmpty()) {
                         process.appendResult(new MessageModel("urls is empty."));
                     } else {
                         process.appendResult(new ClassLoaderModel().setUrls(classLoaderUrls));
@@ -199,16 +201,16 @@ public class ClassLoaderCommand extends AnnotatedCommand {
                     }
                 } else {
                     process.appendResult(new MessageModel("not a URLClassLoader."));
-            }
+                }
                 break;
-        }
+            }
         }
         process.appendResult(new RowAffectModel(affect));
-        process.end();
+        return StatusModel.success();
     }
 
     // 使用ClassLoader去getResources
-    private void processResources(CommandProcess process, Instrumentation inst) {
+    private StatusModel processResources(CommandProcess process, Instrumentation inst) {
         RowAffect affect = new RowAffect();
         int rowCount = 0;
         Set<ClassLoader> allClassLoader = getAllClassLoaders(inst);
@@ -231,11 +233,11 @@ public class ClassLoaderCommand extends AnnotatedCommand {
 
         process.appendResult(new ClassLoaderModel().setResources(resources));
         process.appendResult(new RowAffectModel(affect));
-        process.end();
+        return StatusModel.success();
     }
 
     // Use ClassLoader to loadClass
-    private void processLoadClass(CommandProcess process, Instrumentation inst) {
+    private StatusModel processLoadClass(CommandProcess process, Instrumentation inst) {
         Set<ClassLoader> allClassLoader = getAllClassLoaders(inst);
         for (ClassLoader cl : allClassLoader) {
             if (Integer.toHexString(cl.hashCode()).equals(hashCode)) {
@@ -247,40 +249,33 @@ public class ClassLoaderCommand extends AnnotatedCommand {
 
                 } catch (Throwable e) {
                     logger.warn("load class error, class: {}", this.loadClass, e);
-                    process.end(-1, "load class error, class:"+this.loadClass+", error: "+e.toString());
-                    break;
+                    return StatusModel.failure(-1, "load class error, class:" + this.loadClass + ", error: " + e.toString());
                 }
             }
         }
-        process.end();
+        return StatusModel.success();
     }
 
-    private void processAllClasses(CommandProcess process, Instrumentation inst) {
+    private StatusModel processAllClasses(CommandProcess process, Instrumentation inst) {
         RowAffect affect = new RowAffect();
-        getAllClasses(hashCode, inst, affect, process);
-        if (checkInterrupted(process)) {
-            return;
+        StatusModel statusModel = getAllClasses(hashCode, inst, affect, process);
+        if (StatusModel.isFailed(statusModel)) {
+            return statusModel;
+        }
+        if (isInterrupted.get()) {
+            return StatusModel.failure(1, "Interrupted by user");
         }
         process.appendResult(new RowAffectModel(affect));
-        process.end();
-    }
-
-    private boolean checkInterrupted(CommandProcess process) {
-        if (isInterrupted.get()) {
-            process.end(1, "Interrupted by user");
-            return true;
-        }
-        return false;
+        return StatusModel.success();
     }
 
     /**
      * 获取到所有的class, 还有它们的classloader，按classloader归类好，统一输出每个classloader里有哪些class
      * <p>
      * 当hashCode是null，则把所有的classloader的都打印
-     *
      */
     @SuppressWarnings("rawtypes")
-    private void getAllClasses(String hashCode, Instrumentation inst, RowAffect affect, CommandProcess process) {
+    private StatusModel getAllClasses(String hashCode, Instrumentation inst, RowAffect affect, CommandProcess process) {
         int hashCodeInt = -1;
         if (hashCode != null) {
             hashCodeInt = Integer.valueOf(hashCode, 16);
@@ -328,15 +323,16 @@ public class ClassLoaderCommand extends AnnotatedCommand {
         affect.rCnt(bootstrapClassSet.size());
 
         for (Entry<ClassLoader, SortedSet<Class>> entry : classLoaderClassMap.entrySet()) {
-            if (checkInterrupted(process)) {
-                return;
+            if (isInterrupted.get()) {
+                return StatusModel.failure(1, "Interrupted by user");
             }
             ClassLoader classLoader = entry.getKey();
             SortedSet<Class> classSet = entry.getValue();
             processClassSet(process, ClassUtils.createClassLoaderVO(classLoader), classSet, pageSize);
             affect.rCnt(classSet.size());
         }
-            }
+        return null;
+    }
 
     private void processClassSet(final CommandProcess process, final ClassLoaderVO classLoaderVO, Collection<Class> classes, int pageSize) {
 
@@ -344,8 +340,8 @@ public class ClassLoaderCommand extends AnnotatedCommand {
             @Override
             public boolean handle(List<String> classNames, int segment) {
                 process.appendResult(new ClassLoaderModel().setClassSet(new ClassSetVO(classLoaderVO, classNames, segment)));
-                return !checkInterrupted(process);
-        }
+                return !isInterrupted.get();
+            }
         });
     }
 
@@ -377,14 +373,14 @@ public class ClassLoaderCommand extends AnnotatedCommand {
 
         for (ClassLoaderVO classLoaderVO : rootClassLoaders) {
             buildTree(classLoaderVO, parentNotNullClassLoaders);
-    }
+        }
 
         return rootClassLoaders;
     }
 
     private static void buildTree(ClassLoaderVO parent, List<ClassLoaderVO> parentNotNullClassLoaders) {
         for (ClassLoaderVO classLoaderVO : parentNotNullClassLoaders) {
-            if (parent.getName().equals(classLoaderVO.getParent())){
+            if (parent.getName().equals(classLoaderVO.getParent())) {
                 parent.addChild(classLoaderVO);
                 buildTree(classLoaderVO, parentNotNullClassLoaders);
             }

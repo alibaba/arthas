@@ -1,5 +1,6 @@
 package com.taobao.arthas.core.shell.command;
 
+import com.taobao.arthas.core.command.model.StatusModel;
 import com.taobao.arthas.core.shell.cli.Completion;
 import com.taobao.arthas.core.shell.cli.CompletionUtils;
 import com.taobao.middleware.cli.CLI;
@@ -31,8 +32,9 @@ public abstract class AnnotatedCommand {
      * Process the command, when the command is done processing it should call the {@link CommandProcess#end()} method.
      *
      * @param process the command process
+     * @return statusModel of command execute
      */
-    public abstract void process(CommandProcess process);
+    public abstract StatusModel process(CommandProcess process);
 
     /**
      * Perform command completion, when the command is done completing it should call {@link Completion#complete(List)}

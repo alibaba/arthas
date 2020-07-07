@@ -2,7 +2,7 @@ package com.taobao.arthas.core.command.basic1000;
 
 import com.taobao.arthas.core.command.Constants;
 import com.taobao.arthas.core.command.model.EchoModel;
-import com.taobao.arthas.core.command.model.MessageModel;
+import com.taobao.arthas.core.command.model.StatusModel;
 import com.taobao.arthas.core.shell.command.AnnotatedCommand;
 import com.taobao.arthas.core.shell.command.CommandProcess;
 import com.taobao.middleware.cli.annotations.Argument;
@@ -30,12 +30,12 @@ public class EchoCommand extends AnnotatedCommand {
     }
 
     @Override
-    public void process(CommandProcess process) {
+    public StatusModel process(CommandProcess process) {
         if (message != null) {
             process.appendResult(new EchoModel(message));
         }
 
-        process.end();
+        return StatusModel.success();
     }
 
 }

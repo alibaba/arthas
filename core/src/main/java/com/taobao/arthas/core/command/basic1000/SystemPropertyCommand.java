@@ -39,7 +39,7 @@ public class SystemPropertyCommand extends AnnotatedCommand {
     }
 
     @Override
-    public void process(CommandProcess process) {
+    public StatusModel process(CommandProcess process) {
         try {
 
             if (StringUtils.isBlank(propertyName) && StringUtils.isBlank(propertyValue)) {
@@ -49,8 +49,7 @@ public class SystemPropertyCommand extends AnnotatedCommand {
                 // view the specified system property
                 String value = System.getProperty(propertyName);
                 if (value == null) {
-                    process.end(1, "There is no property with the key " + propertyName);
-                    return;
+                    return StatusModel.failure(1, "There is no property with the key " + propertyName);
                 } else {
                     process.appendResult(new SystemPropertyModel(propertyName, value));
                 }
@@ -60,10 +59,9 @@ public class SystemPropertyCommand extends AnnotatedCommand {
                 process.appendResult(new MessageModel("Successfully changed the system property."));
                 process.appendResult(new SystemPropertyModel(propertyName, System.getProperty(propertyName)));
             }
+            return StatusModel.success();
         } catch (Throwable t) {
-            process.end(-1, "Error during setting system property: " + t.getMessage());
-        } finally {
-            process.end();
+            return StatusModel.failure(-1, "Error during setting system property: " + t.getMessage());
         }
     }
 

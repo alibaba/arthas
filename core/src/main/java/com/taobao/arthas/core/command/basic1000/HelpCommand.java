@@ -4,6 +4,7 @@ import com.taobao.arthas.core.command.model.ArgumentVO;
 import com.taobao.arthas.core.command.model.CommandOptionVO;
 import com.taobao.arthas.core.command.model.CommandVO;
 import com.taobao.arthas.core.command.model.HelpModel;
+import com.taobao.arthas.core.command.model.StatusModel;
 import com.taobao.arthas.core.shell.cli.Completion;
 import com.taobao.arthas.core.shell.cli.CompletionUtils;
 import com.taobao.arthas.core.shell.command.AnnotatedCommand;
@@ -39,7 +40,7 @@ public class HelpCommand extends AnnotatedCommand {
     }
 
     @Override
-    public void process(CommandProcess process) {
+    public StatusModel process(CommandProcess process) {
         List<Command> commands = allCommands(process.session());
         Command targetCmd = findCommand(commands);
         if (targetCmd == null) {
@@ -47,7 +48,7 @@ public class HelpCommand extends AnnotatedCommand {
         } else {
             process.appendResult(createHelpDetailModel(targetCmd));
         }
-        process.end();
+        return StatusModel.success();
     }
 
     public HelpModel createHelpDetailModel(Command targetCmd) {

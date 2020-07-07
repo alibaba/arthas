@@ -1,5 +1,6 @@
 package com.taobao.arthas.core.command.basic1000;
 
+import com.taobao.arthas.core.command.model.StatusModel;
 import com.taobao.arthas.core.shell.command.AnnotatedCommand;
 import com.taobao.arthas.core.shell.command.CommandProcess;
 import com.taobao.middleware.cli.annotations.Name;
@@ -14,7 +15,8 @@ import com.taobao.middleware.cli.annotations.Summary;
 @Summary("Stop/Shutdown Arthas server and exit the console.")
 public class StopCommand extends AnnotatedCommand {
     @Override
-    public void process(CommandProcess process) {
+    public StatusModel process(CommandProcess process) {
         ShutdownCommand.shutdown(process);
+        return StatusModel.success();
     }
 }

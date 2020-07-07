@@ -68,25 +68,19 @@ public class OptionsCommand extends AnnotatedCommand {
     }
 
     @Override
-    public void process(CommandProcess process) {
+    public StatusModel process(CommandProcess process) {
         try {
-            StatusModel statusModel = null;
             if (isShow()) {
-                statusModel = processShow(process);
+                return processShow(process);
             } else if (isShowName()) {
-                statusModel = processShowName(process);
+                return processShowName(process);
             } else {
-                statusModel = processChangeNameValue(process);
+                return processChangeNameValue(process);
             }
 
-            if (statusModel != null) {
-                process.end(statusModel.getStatusCode(), statusModel.getMessage());
-            } else {
-                process.end(-1, "command was not processed");
-            }
         } catch (Throwable t) {
             logger.error("process options command error", t);
-            process.end(-1, "process options command error");
+            return StatusModel.failure(-1, "process options command error");
         }
     }
 

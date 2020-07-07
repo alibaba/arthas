@@ -16,6 +16,7 @@ import com.alibaba.arthas.deps.org.slf4j.Logger;
 import com.alibaba.arthas.deps.org.slf4j.LoggerFactory;
 import com.taobao.arthas.common.OSUtils;
 import com.taobao.arthas.core.command.Constants;
+import com.taobao.arthas.core.command.model.StatusModel;
 import com.taobao.arthas.core.server.ArthasBootstrap;
 import com.taobao.arthas.core.shell.cli.CliToken;
 import com.taobao.arthas.core.shell.cli.Completion;
@@ -269,14 +270,14 @@ public class ProfilerCommand extends AnnotatedCommand {
     }
 
     @Override
-    public void process(final CommandProcess process) {
+    public StatusModel process(final CommandProcess process) {
         int status = 0;
         try {
             ProfilerAction profilerAction = ProfilerAction.valueOf(action);
 
             if (ProfilerAction.actions.equals(profilerAction)) {
                 process.write("Supported Actions: " + actions() + "\n");
-                return;
+                return StatusModel.IGNORED_STATUS;
             }
 
             final AsyncProfiler asyncProfiler = this.profilerInstance();
@@ -285,7 +286,7 @@ public class ProfilerCommand extends AnnotatedCommand {
                 if (actionArg == null) {
                     process.write("actionArg can not be empty.\n");
                     status = 1;
-                    return;
+                    return StatusModel.IGNORED_STATUS;
                 }
                 String result = execute(asyncProfiler, this.actionArg);
                 process.write(result);
@@ -368,6 +369,8 @@ public class ProfilerCommand extends AnnotatedCommand {
         } finally {
             process.end(status);
         }
+
+        return StatusModel.IGNORED_STATUS;
     }
 
     private String outputFile() {

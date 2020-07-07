@@ -12,6 +12,7 @@ import com.sun.management.VMOption;
 import com.taobao.arthas.core.command.Constants;
 import com.taobao.arthas.core.command.model.ChangeResultVO;
 import com.taobao.arthas.core.command.model.MessageModel;
+import com.taobao.arthas.core.command.model.StatusModel;
 import com.taobao.arthas.core.command.model.VMOptionModel;
 import com.taobao.arthas.core.shell.cli.Completion;
 import com.taobao.arthas.core.shell.cli.CompletionUtils;
@@ -52,11 +53,11 @@ public class VMOptionCommand extends AnnotatedCommand {
     }
 
     @Override
-    public void process(CommandProcess process) {
-        run(process, name, value);
+    public StatusModel process(CommandProcess process) {
+        return run(process, name, value);
     }
 
-    private static void run(CommandProcess process, String name, String value) {
+    private static StatusModel run(CommandProcess process, String name, String value) {
         try {
             HotSpotDiagnosticMXBean hotSpotDiagnosticMXBean = ManagementFactory
                             .getPlatformMXBean(HotSpotDiagnosticMXBean.class);
@@ -68,7 +69,7 @@ public class VMOptionCommand extends AnnotatedCommand {
                 // view the specified option
                 VMOption option = hotSpotDiagnosticMXBean.getVMOption(name);
                 if (option == null) {
-                    process.end(-1, "In order to change the system properties, you must specify the property value.");
+                    return StatusModel.failure(-1, "In order to change the system properties, you must specify the property value.");
                 } else {
                     process.appendResult(new VMOptionModel(Arrays.asList(option)));
                 }
@@ -82,11 +83,10 @@ public class VMOptionCommand extends AnnotatedCommand {
                 process.appendResult(new VMOptionModel(new ChangeResultVO(name, originValue,
                         hotSpotDiagnosticMXBean.getVMOption(name).getValue())));
             }
+            return StatusModel.success();
         } catch (Throwable t) {
             logger.error("Error during setting vm option", t);
-            process.end(-1, "Error during setting vm option: " + t.getMessage());
-        } finally {
-            process.end();
+            return StatusModel.failure(-1, "Error during setting vm option: " + t.getMessage());
         }
     }
 

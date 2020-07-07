@@ -1,5 +1,6 @@
 package com.taobao.arthas.core.command.hidden;
 
+import com.taobao.arthas.core.command.model.StatusModel;
 import com.taobao.arthas.core.shell.command.AnnotatedCommand;
 import com.taobao.arthas.core.shell.command.CommandProcess;
 import com.taobao.middleware.cli.annotations.Hidden;
@@ -14,8 +15,9 @@ import com.taobao.middleware.cli.annotations.Summary;
 @Hidden
 public class JulyCommand extends AnnotatedCommand {
     @Override
-    public void process(CommandProcess process) {
-        process.write(new String($$())).write("\n").end();
+    public StatusModel process(CommandProcess process) {
+        process.write(new String($$())).write("\n");
+        return StatusModel.success();
     }
 
     private static byte[] $$() {

@@ -1,6 +1,7 @@
 package com.taobao.arthas.core.command.monitor200;
 
 import com.taobao.arthas.core.command.Constants;
+import com.taobao.arthas.core.command.model.StatusModel;
 import com.taobao.arthas.core.shell.command.AnnotatedCommand;
 import com.taobao.arthas.core.shell.command.CommandProcess;
 import com.taobao.arthas.core.util.StringUtils;
@@ -42,7 +43,7 @@ public class JvmCommand extends AnnotatedCommand {
     private final ThreadMXBean threadMXBean = ManagementFactory.getThreadMXBean();
 
     @Override
-    public void process(CommandProcess process) {
+    public StatusModel process(CommandProcess process) {
         RowAffect affect = new RowAffect();
         TableElement table = new TableElement(2, 5).leftCellPadding(1).rightCellPadding(1);
         table.row(true, label("RUNTIME").style(Decoration.bold.bold()));
@@ -81,6 +82,8 @@ public class JvmCommand extends AnnotatedCommand {
         process.write(RenderUtil.render(table, process.width()));
         process.write(affect.toString()).write("\n");
         process.end();
+
+        return StatusModel.IGNORED_STATUS;
     }
 
     private void drawFileDescriptorTable(TableElement table) {

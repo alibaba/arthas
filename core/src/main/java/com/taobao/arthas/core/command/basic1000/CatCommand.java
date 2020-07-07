@@ -8,6 +8,7 @@ import java.util.List;
 import com.taobao.arthas.core.command.model.CatModel;
 import com.alibaba.arthas.deps.org.slf4j.Logger;
 import com.alibaba.arthas.deps.org.slf4j.LoggerFactory;
+import com.taobao.arthas.core.command.model.StatusModel;
 import com.taobao.arthas.core.shell.cli.Completion;
 import com.taobao.arthas.core.shell.cli.CompletionUtils;
 import com.taobao.arthas.core.shell.command.AnnotatedCommand;
@@ -47,28 +48,31 @@ public class CatCommand extends AnnotatedCommand {
     }
 
     @Override
-    public void process(CommandProcess process) {
-        if (!verifyOptions(process)) {
-            return;
+    public StatusModel process(CommandProcess process) {
+        if (sizeLimit > maxSizeLimit) {
+            return StatusModel.failure(-1, "sizeLimit cannot be large than: " + maxSizeLimit);
+        }
+
+        //目前不支持过滤，限制http请求执行的文件大小
+        int maxSizeLimitOfNonTty = 128 * 1024;
+        if (!process.session().isTty() && sizeLimit > maxSizeLimitOfNonTty) {
+            return StatusModel.failure(-1, "When executing in non-tty session, sizeLimit cannot be large than: " + maxSizeLimitOfNonTty);
         }
 
         for (String file : files) {
             File f = new File(file);
             if (!f.exists()) {
-                process.end(-1, "cat " + file + ": No such file or directory");
-                return;
+                return StatusModel.failure(-1, "cat " + file + ": No such file or directory");
             }
             if (f.isDirectory()) {
-                process.end(-1, "cat " + file + ": Is a directory");
-                return;
+                return StatusModel.failure(-1, "cat " + file + ": Is a directory");
             }
         }
 
         for (String file : files) {
             File f = new File(file);
             if (f.length() > sizeLimit) {
-                process.end(-1, "cat " + file + ": Is too large, size: " + f.length());
-                return;
+                return StatusModel.failure(-1, "cat " + file + ": Is too large, size: " + f.length());
             }
             try {
                 String fileToString = FileUtils.readFileToString(f,
@@ -76,27 +80,11 @@ public class CatCommand extends AnnotatedCommand {
                 process.appendResult(new CatModel(file, fileToString));
             } catch (IOException e) {
                 logger.error("cat read file error. name: " + file, e);
-                process.end(1, "cat read file error: " + e.getMessage());
-                return;
+                return StatusModel.failure(1, "cat read file error: " + e.getMessage());
             }
         }
 
-        process.end();
-    }
-
-    private boolean verifyOptions(CommandProcess process) {
-        if (sizeLimit > maxSizeLimit) {
-            process.end(-1, "sizeLimit cannot be large than: " + maxSizeLimit);
-            return false;
-        }
-
-        //目前不支持过滤，限制http请求执行的文件大小
-        int maxSizeLimitOfNonTty = 128 * 1024;
-        if (!process.session().isTty() && sizeLimit > maxSizeLimitOfNonTty) {
-            process.end(-1, "When executing in non-tty session, sizeLimit cannot be large than: " + maxSizeLimitOfNonTty);
-            return false;
-        }
-        return true;
+        return StatusModel.success();
     }
 
     @Override

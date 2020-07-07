@@ -9,6 +9,7 @@ import com.taobao.arthas.core.command.express.Express;
 import com.taobao.arthas.core.command.express.ExpressException;
 import com.taobao.arthas.core.command.express.ExpressFactory;
 import com.taobao.arthas.core.command.model.OgnlModel;
+import com.taobao.arthas.core.command.model.StatusModel;
 import com.taobao.arthas.core.shell.command.AnnotatedCommand;
 import com.taobao.arthas.core.shell.command.CommandProcess;
 import com.taobao.arthas.core.util.ClassLoaderUtils;
@@ -60,8 +61,7 @@ public class OgnlCommand extends AnnotatedCommand {
     }
 
     @Override
-    public void process(CommandProcess process) {
-        int exitCode = 0;
+    public StatusModel process(CommandProcess process) {
         try {
             Instrumentation inst = process.session().getInstrumentation();
             ClassLoader classLoader = null;
@@ -72,9 +72,7 @@ public class OgnlCommand extends AnnotatedCommand {
             }
 
             if (classLoader == null) {
-                process.end(-1, "Can not find classloader with hashCode: " + hashCode + ".");
-                exitCode = -1;
-                return;
+                return StatusModel.failure(-1, "Can not find classloader with hashCode: " + hashCode + ".");
             }
 
             Express unpooledExpress = ExpressFactory.unpooledExpress(classLoader);
@@ -86,12 +84,13 @@ public class OgnlCommand extends AnnotatedCommand {
                 process.appendResult(ognlModel);
             } catch (ExpressException e) {
                 logger.warn("ognl: failed execute express: " + express, e);
-                process.end(-1, "Failed to execute ognl, exception message: " + e.getMessage()
-                                + ", please check $HOME/logs/arthas/arthas.log for more details. ");
-                exitCode = -1;
+                return StatusModel.failure(-1, "Failed to execute ognl, exception message: " + e.getMessage()
+                        + ", please check $HOME/logs/arthas/arthas.log for more details. ");
             }
-        } finally {
-            process.end(exitCode);
+            return StatusModel.success();
+        } catch(Throwable e){
+            logger.error("process failure", e);
+            return StatusModel.failure(-1, "process failure: "+e.toString());
         }
     }
 

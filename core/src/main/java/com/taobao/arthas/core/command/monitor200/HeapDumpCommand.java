@@ -10,6 +10,7 @@ import com.alibaba.arthas.deps.org.slf4j.Logger;
 import com.alibaba.arthas.deps.org.slf4j.LoggerFactory;
 import com.sun.management.HotSpotDiagnosticMXBean;
 import com.taobao.arthas.core.command.Constants;
+import com.taobao.arthas.core.command.model.StatusModel;
 import com.taobao.arthas.core.shell.command.AnnotatedCommand;
 import com.taobao.arthas.core.shell.command.CommandProcess;
 import com.taobao.middleware.cli.annotations.Argument;
@@ -47,7 +48,7 @@ public class HeapDumpCommand extends AnnotatedCommand {
     }
 
     @Override
-    public void process(CommandProcess process) {
+    public StatusModel process(CommandProcess process) {
         int status = 0;
         try {
             String dumpFile = file;
@@ -72,6 +73,7 @@ public class HeapDumpCommand extends AnnotatedCommand {
             process.end(status);
         }
 
+        return StatusModel.IGNORED_STATUS;
     }
 
     private static void run(CommandProcess process, String file, boolean live) throws IOException {

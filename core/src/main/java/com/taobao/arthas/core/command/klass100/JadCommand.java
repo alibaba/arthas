@@ -97,35 +97,32 @@ public class JadCommand extends AnnotatedCommand {
     }
 
     @Override
-    public void process(CommandProcess process) {
+    public StatusModel process(CommandProcess process) {
         RowAffect affect = new RowAffect();
         Instrumentation inst = process.session().getInstrumentation();
         Set<Class<?>> matchedClasses = SearchUtils.searchClassOnly(inst, classPattern, isRegEx, code);
 
-        StatusModel statusModel = new StatusModel(-1, "unknown error");
         try {
             if (matchedClasses == null || matchedClasses.isEmpty()) {
-                statusModel = processNoMatch(process);
+                return processNoMatch(process);
             } else if (matchedClasses.size() > 1) {
-                statusModel = processMatches(process, matchedClasses);
+                return processMatches(process, matchedClasses);
             } else { // matchedClasses size is 1
                 // find inner classes.
                 Set<Class<?>> withInnerClasses = SearchUtils.searchClassOnly(inst,  matchedClasses.iterator().next().getName() + "$*", false, code);
                 if(withInnerClasses.isEmpty()) {
                     withInnerClasses = matchedClasses;
                 }
-                statusModel = processExactMatch(process, affect, inst, matchedClasses, withInnerClasses);
+                return processExactMatch(process, affect, inst, matchedClasses, withInnerClasses);
             }
         } finally {
             if (!this.sourceOnly) {
                 process.appendResult(new RowAffectModel(affect));
             }
-            process.end(statusModel.getStatusCode(), statusModel.getMessage());
         }
     }
 
     private StatusModel processExactMatch(CommandProcess process, RowAffect affect, Instrumentation inst, Set<Class<?>> matchedClasses, Set<Class<?>> withInnerClasses) {
-        StatusModel statusModel = new StatusModel();
         Class<?> c = matchedClasses.iterator().next();
         Set<Class<?>> allClasses = new HashSet<Class<?>>(withInnerClasses);
         allClasses.add(c);
@@ -153,12 +150,11 @@ public class JadCommand extends AnnotatedCommand {
             process.appendResult(jadModel);
 
             affect.rCnt(classFiles.keySet().size());
-            statusModel.setStatus(0);
+            return StatusModel.success();
         } catch (Throwable t) {
             logger.error("jad: fail to decompile class: " + c.getName(), t);
-            statusModel.setStatus(-1, "jad: fail to decompile class: " + c.getName());
+            return StatusModel.failure(-1, "jad: fail to decompile class: " + c.getName());
         }
-        return statusModel;
     }
 
     private StatusModel processMatches(CommandProcess process, Set<Class<?>> matchedClasses) {
@@ -175,11 +171,11 @@ public class JadCommand extends AnnotatedCommand {
         jadModel.setMatchedClasses(classVOs);
         process.appendResult(jadModel);
 
-        return new StatusModel(-1, msg);
+        return StatusModel.failure(-1, msg);
     }
 
     private StatusModel processNoMatch(CommandProcess process) {
-        return new StatusModel().setStatus(-1, "No class found for: " + classPattern);
+        return StatusModel.failure(-1, "No class found for: " + classPattern);
     }
 
     @Override

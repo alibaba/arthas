@@ -4,6 +4,7 @@ import com.alibaba.arthas.deps.org.slf4j.Logger;
 import com.alibaba.arthas.deps.org.slf4j.LoggerFactory;
 import com.taobao.arthas.common.IOUtils;
 import com.taobao.arthas.core.command.Constants;
+import com.taobao.arthas.core.command.model.StatusModel;
 import com.taobao.arthas.core.shell.command.AnnotatedCommand;
 import com.taobao.arthas.core.shell.command.CommandProcess;
 import com.taobao.arthas.core.shell.term.impl.Helper;
@@ -34,10 +35,9 @@ public class KeymapCommand extends AnnotatedCommand {
     private static final Logger logger = LoggerFactory.getLogger(KeymapCommand.class);
 
     @Override
-    public void process(CommandProcess process) {
+    public StatusModel process(CommandProcess process) {
         if (!process.session().isTty()) {
-            process.end(-1, "Command 'keymap' is only support tty session.");
-            return;
+            return StatusModel.failure(-1, "Command 'keymap' is only support tty session.");
         }
 
         InputStream inputrc = Helper.loadInputRcFile();
@@ -63,11 +63,12 @@ public class KeymapCommand extends AnnotatedCommand {
 
             }
             process.write(RenderUtil.render(table, process.width()));
-        } catch (IOException e) {
+            return StatusModel.success();
+        } catch (Throwable e) {
             logger.error("read inputrc file error.", e);
+            return StatusModel.failure(-1, "read inputrc file error.");
         } finally {
             IOUtils.close(inputrc);
-            process.end();
         }
     }
 
