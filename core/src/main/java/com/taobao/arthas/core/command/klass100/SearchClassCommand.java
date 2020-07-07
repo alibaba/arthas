@@ -11,7 +11,7 @@ import com.taobao.arthas.core.command.Constants;
 import com.taobao.arthas.core.command.model.SearchClassModel;
 import com.taobao.arthas.core.command.model.ClassVO;
 import com.taobao.arthas.core.command.model.RowAffectModel;
-import com.taobao.arthas.core.command.model.StatusModel;
+import com.taobao.arthas.core.shell.command.ExitStatus;
 import com.taobao.arthas.core.shell.cli.Completion;
 import com.taobao.arthas.core.shell.cli.CompletionUtils;
 import com.taobao.arthas.core.shell.command.AnnotatedCommand;
@@ -93,7 +93,7 @@ public class SearchClassCommand extends AnnotatedCommand {
     }
 
     @Override
-    public StatusModel process(final CommandProcess process) {
+    public ExitStatus process(final CommandProcess process) {
         // TODO: null check
         RowAffect affect = new RowAffect();
         Instrumentation inst = process.session().getInstrumentation();
@@ -107,7 +107,7 @@ public class SearchClassCommand extends AnnotatedCommand {
 
         if (isDetail) {
             if (matchedClasses.size() > numberOfLimit) {
-                return StatusModel.failure(-1, "Matching classes are too many: " + matchedClasses.size());
+                return ExitStatus.failure(-1, "Matching classes are too many: " + matchedClasses.size());
             }
             for (Class<?> clazz : matchedClasses) {
                 ClassVO classInfo = ClassUtils.createClassInfo(clazz, isDetail, isField);
@@ -126,7 +126,7 @@ public class SearchClassCommand extends AnnotatedCommand {
 
         affect.rCnt(matchedClasses.size());
         process.appendResult(new RowAffectModel(affect));
-        return StatusModel.success();
+        return ExitStatus.success();
     }
 
     @Override

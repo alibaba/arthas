@@ -5,7 +5,7 @@ import com.alibaba.arthas.deps.org.slf4j.LoggerFactory;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.taobao.arthas.core.command.Constants;
-import com.taobao.arthas.core.command.model.StatusModel;
+import com.taobao.arthas.core.shell.command.ExitStatus;
 import com.taobao.arthas.core.shell.command.AnnotatedCommand;
 import com.taobao.arthas.core.shell.command.CommandProcess;
 import com.taobao.arthas.core.shell.handlers.Handler;
@@ -78,7 +78,7 @@ public class DashboardCommand extends AnnotatedCommand {
 
 
     @Override
-    public StatusModel process(final CommandProcess process) {
+    public ExitStatus process(final CommandProcess process) {
 
         Session session = process.session();
         timer = new Timer("Timer-for-arthas-dashboard-" + session.getSessionId(), true);
@@ -112,7 +112,7 @@ public class DashboardCommand extends AnnotatedCommand {
         // start the timer
         timer.scheduleAtFixedRate(new DashboardTimerTask(process), 0, getInterval());
 
-        return StatusModel.IGNORED_STATUS;
+        return ExitStatus.IGNORED_STATUS;
     }
 
     public synchronized void stop() {

@@ -7,7 +7,7 @@ import com.taobao.arthas.core.command.model.ClassVO;
 import com.taobao.arthas.core.command.model.DumpClassModel;
 import com.taobao.arthas.core.command.model.MessageModel;
 import com.taobao.arthas.core.command.model.RowAffectModel;
-import com.taobao.arthas.core.command.model.StatusModel;
+import com.taobao.arthas.core.shell.command.ExitStatus;
 import com.taobao.arthas.core.shell.cli.Completion;
 import com.taobao.arthas.core.shell.cli.CompletionUtils;
 import com.taobao.arthas.core.shell.command.AnnotatedCommand;
@@ -87,11 +87,11 @@ public class DumpClassCommand extends AnnotatedCommand {
     }
 
     @Override
-    public StatusModel process(CommandProcess process) {
+    public ExitStatus process(CommandProcess process) {
         if (directory != null) {
             File dir = new File(directory);
             if (dir.isFile()) {
-                return StatusModel.failure(-1, directory + " :is not a directory, please check it");
+                return ExitStatus.failure(-1, directory + " :is not a directory, please check it");
             }
         }
         Instrumentation inst = process.session().getInstrumentation();
@@ -112,7 +112,7 @@ public class DumpClassCommand extends AnnotatedCommand {
         }
     }
 
-    private StatusModel processMatch(CommandProcess process, Instrumentation inst, Set<Class<?>> matchedClasses) {
+    private ExitStatus processMatch(CommandProcess process, Instrumentation inst, Set<Class<?>> matchedClasses) {
         RowAffect effect = new RowAffect();
         try {
             Map<Class<?>, File> classFiles = dump(inst, matchedClasses);
@@ -127,16 +127,16 @@ public class DumpClassCommand extends AnnotatedCommand {
             }
             process.appendResult(new DumpClassModel().setDumpedClassFiles(dumpedClasses));
 
-            return StatusModel.success();
+            return ExitStatus.success();
         } catch (Throwable t) {
             logger.error("dump: fail to dump classes: " + matchedClasses, t);
-            return StatusModel.failure(-1, "dump: fail to dump classes: " + matchedClasses);
+            return ExitStatus.failure(-1, "dump: fail to dump classes: " + matchedClasses);
         } finally {
             process.appendResult(new RowAffectModel(effect));
         }
     }
 
-    private StatusModel processMatches(CommandProcess process, Set<Class<?>> matchedClasses) {
+    private ExitStatus processMatches(CommandProcess process, Set<Class<?>> matchedClasses) {
         String msg = String.format(
                 "Found more than %d class for: %s, Please Try to specify the classloader with the -c option, or try to use --limit option.",
                 limit, classPattern);
@@ -144,11 +144,11 @@ public class DumpClassCommand extends AnnotatedCommand {
 
         List<ClassVO> classVOs = ClassUtils.createClassVOList(matchedClasses);
         process.appendResult(new DumpClassModel().setMatchedClasses(classVOs));
-        return StatusModel.failure(-1, msg);
+        return ExitStatus.failure(-1, msg);
     }
 
-    private StatusModel processNoMatch(CommandProcess process) {
-        return StatusModel.failure(-1, "No class found for: " + classPattern);
+    private ExitStatus processNoMatch(CommandProcess process) {
+        return ExitStatus.failure(-1, "No class found for: " + classPattern);
     }
 
     private Map<Class<?>, File> dump(Instrumentation inst, Set<Class<?>> classes) throws UnmodifiableClassException {

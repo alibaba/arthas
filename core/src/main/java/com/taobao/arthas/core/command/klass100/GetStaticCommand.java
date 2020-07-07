@@ -9,7 +9,7 @@ import com.taobao.arthas.core.command.model.ClassVO;
 import com.taobao.arthas.core.command.model.GetStaticModel;
 import com.taobao.arthas.core.command.model.MessageModel;
 import com.taobao.arthas.core.command.model.RowAffectModel;
-import com.taobao.arthas.core.command.model.StatusModel;
+import com.taobao.arthas.core.shell.command.ExitStatus;
 import com.taobao.arthas.core.shell.command.AnnotatedCommand;
 import com.taobao.arthas.core.shell.command.CommandProcess;
 import com.taobao.arthas.core.util.ClassUtils;
@@ -89,11 +89,11 @@ public class GetStaticCommand extends AnnotatedCommand {
     }
 
     @Override
-    public StatusModel process(CommandProcess process) {
+    public ExitStatus process(CommandProcess process) {
         Instrumentation inst = process.session().getInstrumentation();
         Set<Class<?>> matchedClasses = SearchUtils.searchClassOnly(inst, classPattern, isRegEx, hashCode);
         if (matchedClasses == null || matchedClasses.isEmpty()) {
-            return StatusModel.failure(-1, "No class found for: " + classPattern);
+            return ExitStatus.failure(-1, "No class found for: " + classPattern);
         } else if (matchedClasses.size() > 1) {
             return processMatches(process, matchedClasses);
         } else {
@@ -101,8 +101,8 @@ public class GetStaticCommand extends AnnotatedCommand {
         }
     }
 
-    private StatusModel processExactMatch(CommandProcess process, Instrumentation inst,
-                                          Set<Class<?>> matchedClasses) {
+    private ExitStatus processExactMatch(CommandProcess process, Instrumentation inst,
+                                         Set<Class<?>> matchedClasses) {
         RowAffect affect = new RowAffect();
         Matcher<String> fieldNameMatcher = fieldNameMatcher();
 
@@ -142,16 +142,16 @@ public class GetStaticCommand extends AnnotatedCommand {
             }
 
             if (!found) {
-                return StatusModel.failure(-1, "getstatic: no matched static field was found");
+                return ExitStatus.failure(-1, "getstatic: no matched static field was found");
             } else {
-                return StatusModel.success();
+                return ExitStatus.success();
             }
         } finally {
             process.appendResult(new RowAffectModel(affect));
         }
     }
 
-    private StatusModel processMatches(CommandProcess process, Set<Class<?>> matchedClasses) {
+    private ExitStatus processMatches(CommandProcess process, Set<Class<?>> matchedClasses) {
 
 //        Element usage = new LabelElement("getstatic -c <hashcode> " + classPattern + " " + fieldPattern).style(
 //                Decoration.bold.fg(Color.blue));
@@ -162,7 +162,7 @@ public class GetStaticCommand extends AnnotatedCommand {
 
         List<ClassVO> matchedClassVOs = ClassUtils.createClassVOList(matchedClasses);
         process.appendResult(new GetStaticModel(matchedClassVOs));
-        return StatusModel.failure(-1, "Found more than one class for: " + classPattern + ", Please use: "+usage);
+        return ExitStatus.failure(-1, "Found more than one class for: " + classPattern + ", Please use: "+usage);
     }
 
     private Matcher<String> fieldNameMatcher() {

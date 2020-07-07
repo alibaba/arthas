@@ -1,7 +1,7 @@
 package com.taobao.arthas.core.command.basic1000;
 
 import com.taobao.arthas.core.command.Constants;
-import com.taobao.arthas.core.command.model.StatusModel;
+import com.taobao.arthas.core.shell.command.ExitStatus;
 import com.taobao.arthas.core.command.model.SystemEnvModel;
 import com.taobao.arthas.core.shell.cli.Completion;
 import com.taobao.arthas.core.shell.cli.CompletionUtils;
@@ -31,7 +31,7 @@ public class SystemEnvCommand extends AnnotatedCommand {
     }
 
     @Override
-    public StatusModel process(CommandProcess process) {
+    public ExitStatus process(CommandProcess process) {
         try {
             SystemEnvModel result = new SystemEnvModel();
             if (StringUtils.isBlank(envName)) {
@@ -43,9 +43,9 @@ public class SystemEnvCommand extends AnnotatedCommand {
                 result.put(envName, value);
             }
             process.appendResult(result);
-            return StatusModel.success();
+            return ExitStatus.success();
         } catch (Throwable t) {
-            return StatusModel.failure(-1, "Error during setting system env: " + t.getMessage());
+            return ExitStatus.failure(-1, "Error during setting system env: " + t.getMessage());
         }
     }
 

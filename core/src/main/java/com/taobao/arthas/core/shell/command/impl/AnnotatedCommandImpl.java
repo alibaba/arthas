@@ -1,6 +1,6 @@
 package com.taobao.arthas.core.shell.command.impl;
 
-import com.taobao.arthas.core.command.model.StatusModel;
+import com.taobao.arthas.core.shell.command.ExitStatus;
 import com.taobao.arthas.core.shell.cli.Completion;
 import com.taobao.arthas.core.shell.command.AnnotatedCommand;
 import com.taobao.arthas.core.shell.command.Command;
@@ -80,12 +80,12 @@ public class AnnotatedCommandImpl extends Command {
             return;
         }
         CLIConfigurator.inject(process.commandLine(), instance);
-        StatusModel status = instance.process(process);
+        ExitStatus status = instance.process(process);
         if (status != null) {
-            if (StatusModel.isIgnored(status)) {
+            if (ExitStatus.isIgnored(status)) {
                 // TODO 暂时兼容老代码，改造完毕后不能返回IGNORED_STATUS状态
 
-            } else if (!StatusModel.isPending(status)) {
+            } else if (!ExitStatus.isPending(status)) {
                 process.end(status.getStatusCode(), status.getMessage());
             }
         } else {

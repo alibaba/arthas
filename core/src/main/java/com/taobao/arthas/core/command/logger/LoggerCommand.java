@@ -21,7 +21,7 @@ import com.alibaba.arthas.deps.org.slf4j.LoggerFactory;
 import com.taobao.arthas.common.IOUtils;
 import com.taobao.arthas.common.ReflectUtils;
 import com.taobao.arthas.core.command.Constants;
-import com.taobao.arthas.core.command.model.StatusModel;
+import com.taobao.arthas.core.shell.command.ExitStatus;
 import com.taobao.arthas.core.shell.command.AnnotatedCommand;
 import com.taobao.arthas.core.shell.command.CommandProcess;
 import com.taobao.arthas.core.util.ClassLoaderUtils;
@@ -111,7 +111,7 @@ public class LoggerCommand extends AnnotatedCommand {
     }
 
     @Override
-    public StatusModel process(CommandProcess process) {
+    public ExitStatus process(CommandProcess process) {
         int status = 0;
         try {
             if (this.name != null && this.level != null) {
@@ -122,7 +122,7 @@ public class LoggerCommand extends AnnotatedCommand {
         } finally {
             process.end(status);
         }
-        return StatusModel.IGNORED_STATUS;
+        return ExitStatus.IGNORED_STATUS;
     }
 
     public void level(CommandProcess process) {

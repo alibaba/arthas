@@ -1,7 +1,7 @@
 package com.taobao.arthas.core.command.basic1000;
 
 
-import com.taobao.arthas.core.command.model.StatusModel;
+import com.taobao.arthas.core.shell.command.ExitStatus;
 import com.taobao.arthas.core.command.model.VersionModel;
 import com.taobao.arthas.core.shell.command.AnnotatedCommand;
 import com.taobao.arthas.core.shell.command.CommandProcess;
@@ -19,11 +19,11 @@ import com.taobao.middleware.cli.annotations.Summary;
 public class VersionCommand extends AnnotatedCommand {
 
     @Override
-    public StatusModel process(CommandProcess process) {
+    public ExitStatus process(CommandProcess process) {
         VersionModel result = new VersionModel();
         result.setVersion(ArthasBanner.version());
         process.appendResult(result);
-        return StatusModel.success();
+        return ExitStatus.success();
     }
 
 }

@@ -7,7 +7,7 @@ import com.taobao.arthas.core.command.model.ClassVO;
 import com.taobao.arthas.core.command.model.JadModel;
 import com.taobao.arthas.core.command.model.MessageModel;
 import com.taobao.arthas.core.command.model.RowAffectModel;
-import com.taobao.arthas.core.command.model.StatusModel;
+import com.taobao.arthas.core.shell.command.ExitStatus;
 import com.taobao.arthas.core.shell.cli.Completion;
 import com.taobao.arthas.core.shell.cli.CompletionUtils;
 import com.taobao.arthas.core.shell.command.AnnotatedCommand;
@@ -97,7 +97,7 @@ public class JadCommand extends AnnotatedCommand {
     }
 
     @Override
-    public StatusModel process(CommandProcess process) {
+    public ExitStatus process(CommandProcess process) {
         RowAffect affect = new RowAffect();
         Instrumentation inst = process.session().getInstrumentation();
         Set<Class<?>> matchedClasses = SearchUtils.searchClassOnly(inst, classPattern, isRegEx, code);
@@ -122,7 +122,7 @@ public class JadCommand extends AnnotatedCommand {
         }
     }
 
-    private StatusModel processExactMatch(CommandProcess process, RowAffect affect, Instrumentation inst, Set<Class<?>> matchedClasses, Set<Class<?>> withInnerClasses) {
+    private ExitStatus processExactMatch(CommandProcess process, RowAffect affect, Instrumentation inst, Set<Class<?>> matchedClasses, Set<Class<?>> withInnerClasses) {
         Class<?> c = matchedClasses.iterator().next();
         Set<Class<?>> allClasses = new HashSet<Class<?>>(withInnerClasses);
         allClasses.add(c);
@@ -150,14 +150,14 @@ public class JadCommand extends AnnotatedCommand {
             process.appendResult(jadModel);
 
             affect.rCnt(classFiles.keySet().size());
-            return StatusModel.success();
+            return ExitStatus.success();
         } catch (Throwable t) {
             logger.error("jad: fail to decompile class: " + c.getName(), t);
-            return StatusModel.failure(-1, "jad: fail to decompile class: " + c.getName());
+            return ExitStatus.failure(-1, "jad: fail to decompile class: " + c.getName());
         }
     }
 
-    private StatusModel processMatches(CommandProcess process, Set<Class<?>> matchedClasses) {
+    private ExitStatus processMatches(CommandProcess process, Set<Class<?>> matchedClasses) {
         //Element usage = new LabelElement("jad -c <hashcode> " + classPattern).style(Decoration.bold.fg(Color.blue));
         //process.write("\n Found more than one class for: " + classPattern + ", Please use "
         //        + RenderUtil.render(usage, process.width()));
@@ -171,11 +171,11 @@ public class JadCommand extends AnnotatedCommand {
         jadModel.setMatchedClasses(classVOs);
         process.appendResult(jadModel);
 
-        return StatusModel.failure(-1, msg);
+        return ExitStatus.failure(-1, msg);
     }
 
-    private StatusModel processNoMatch(CommandProcess process) {
-        return StatusModel.failure(-1, "No class found for: " + classPattern);
+    private ExitStatus processNoMatch(CommandProcess process) {
+        return ExitStatus.failure(-1, "No class found for: " + classPattern);
     }
 
     @Override

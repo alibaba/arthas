@@ -12,7 +12,7 @@ import com.taobao.arthas.core.command.Constants;
 import com.taobao.arthas.core.command.model.SearchMethodModel;
 import com.taobao.arthas.core.command.model.MethodVO;
 import com.taobao.arthas.core.command.model.RowAffectModel;
-import com.taobao.arthas.core.command.model.StatusModel;
+import com.taobao.arthas.core.shell.command.ExitStatus;
 import com.taobao.arthas.core.shell.cli.Completion;
 import com.taobao.arthas.core.shell.cli.CompletionUtils;
 import com.taobao.arthas.core.shell.command.AnnotatedCommand;
@@ -92,7 +92,7 @@ public class SearchMethodCommand extends AnnotatedCommand {
     }
 
     @Override
-    public StatusModel process(CommandProcess process) {
+    public ExitStatus process(CommandProcess process) {
         RowAffect affect = new RowAffect();
 
         Instrumentation inst = process.session().getInstrumentation();
@@ -100,7 +100,7 @@ public class SearchMethodCommand extends AnnotatedCommand {
         Set<Class<?>> matchedClasses = SearchUtils.searchClass(inst, classPattern, isRegEx, hashCode);
 
         if (matchedClasses.size() > numberOfLimit) {
-            return StatusModel.failure(-1, "Matching classes are too many: "+matchedClasses.size());
+            return ExitStatus.failure(-1, "Matching classes are too many: "+matchedClasses.size());
         }
         try {
             for (Class<?> clazz : matchedClasses) {
@@ -127,11 +127,11 @@ public class SearchMethodCommand extends AnnotatedCommand {
                     //print failed className
                     String msg = String.format("process class failed: %s, error: %s", clazz.getName(), e.toString());
                     logger.error(msg, e);
-                    return StatusModel.failure(1, msg);
+                    return ExitStatus.failure(1, msg);
                 }
             }
 
-            return StatusModel.success();
+            return ExitStatus.success();
         } finally {
             process.appendResult(new RowAffectModel(affect));
         }

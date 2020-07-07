@@ -12,7 +12,7 @@ import com.alibaba.arthas.deps.org.slf4j.LoggerFactory;
 import com.taobao.arthas.common.JavaVersionUtils;
 import com.taobao.arthas.common.PidUtils;
 import com.taobao.arthas.core.command.Constants;
-import com.taobao.arthas.core.command.model.StatusModel;
+import com.taobao.arthas.core.shell.command.ExitStatus;
 import com.taobao.arthas.core.shell.command.AnnotatedCommand;
 import com.taobao.arthas.core.shell.command.CommandProcess;
 import com.taobao.middleware.cli.annotations.Description;
@@ -51,7 +51,7 @@ public class PerfCounterCommand extends AnnotatedCommand {
     }
 
     @Override
-    public StatusModel process(CommandProcess process) {
+    public ExitStatus process(CommandProcess process) {
         try {
             TableElement table = new TableElement().leftCellPadding(1).rightCellPadding(1);
             if (this.details) {
@@ -83,7 +83,7 @@ public class PerfCounterCommand extends AnnotatedCommand {
             process.end();
         }
 
-        return StatusModel.IGNORED_STATUS;
+        return ExitStatus.IGNORED_STATUS;
     }
 
     private static List<Counter> getPerfCounters() {

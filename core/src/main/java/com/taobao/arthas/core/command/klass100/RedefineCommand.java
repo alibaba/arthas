@@ -15,7 +15,7 @@ import com.alibaba.arthas.deps.org.slf4j.Logger;
 import com.alibaba.arthas.deps.org.slf4j.LoggerFactory;
 import com.taobao.arthas.core.command.Constants;
 import com.taobao.arthas.core.command.model.RedefineModel;
-import com.taobao.arthas.core.command.model.StatusModel;
+import com.taobao.arthas.core.shell.command.ExitStatus;
 import com.taobao.arthas.core.shell.cli.Completion;
 import com.taobao.arthas.core.shell.cli.CompletionUtils;
 import com.taobao.arthas.core.shell.command.AnnotatedCommand;
@@ -59,19 +59,19 @@ public class RedefineCommand extends AnnotatedCommand {
     }
 
     @Override
-    public StatusModel process(CommandProcess process) {
+    public ExitStatus process(CommandProcess process) {
         RedefineModel redefineModel = new RedefineModel();
         Instrumentation inst = process.session().getInstrumentation();
         for (String path : paths) {
             File file = new File(path);
             if (!file.exists()) {
-                return StatusModel.failure(-1, "file does not exist, path:" + path);
+                return ExitStatus.failure(-1, "file does not exist, path:" + path);
             }
             if (!file.isFile()) {
-                return StatusModel.failure(-1, "not a normal file, path:" + path);
+                return ExitStatus.failure(-1, "not a normal file, path:" + path);
             }
             if (file.length() >= MAX_FILE_SIZE) {
-                return StatusModel.failure(-1, "file size: " + file.length() + " >= " + MAX_FILE_SIZE + ", path: " + path);
+                return ExitStatus.failure(-1, "file size: " + file.length() + " >= " + MAX_FILE_SIZE + ", path: " + path);
             }
         }
 
@@ -89,7 +89,7 @@ public class RedefineCommand extends AnnotatedCommand {
 
             } catch (Exception e) {
                 logger.warn("load class file failed: "+path, e);
-                return StatusModel.failure(-1, "load class file failed: " +path+", error: " + e);
+                return ExitStatus.failure(-1, "load class file failed: " +path+", error: " + e);
             } finally {
                 if (f != null) {
                     try {
@@ -102,7 +102,7 @@ public class RedefineCommand extends AnnotatedCommand {
         }
 
         if (bytesMap.size() != paths.size()) {
-            return StatusModel.failure(-1, "paths may contains same class name!");
+            return ExitStatus.failure(-1, "paths may contains same class name!");
         }
 
         List<ClassDefinition> definitions = new ArrayList<ClassDefinition>();
@@ -120,15 +120,15 @@ public class RedefineCommand extends AnnotatedCommand {
 
         try {
             if (definitions.isEmpty()) {
-                return StatusModel.failure(-1, "These classes are not found in the JVM and may not be loaded: " + bytesMap.keySet());
+                return ExitStatus.failure(-1, "These classes are not found in the JVM and may not be loaded: " + bytesMap.keySet());
             }
             inst.redefineClasses(definitions.toArray(new ClassDefinition[0]));
             process.appendResult(redefineModel);
         } catch (Exception e) {
-            return StatusModel.failure(-1, "redefine error! " + e);
+            return ExitStatus.failure(-1, "redefine error! " + e);
         }
 
-        return StatusModel.success();
+        return ExitStatus.success();
     }
 
     private static String readClassName(final byte[] bytes) {

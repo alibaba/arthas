@@ -12,7 +12,7 @@ import com.sun.management.VMOption;
 import com.taobao.arthas.core.command.Constants;
 import com.taobao.arthas.core.command.model.ChangeResultVO;
 import com.taobao.arthas.core.command.model.MessageModel;
-import com.taobao.arthas.core.command.model.StatusModel;
+import com.taobao.arthas.core.shell.command.ExitStatus;
 import com.taobao.arthas.core.command.model.VMOptionModel;
 import com.taobao.arthas.core.shell.cli.Completion;
 import com.taobao.arthas.core.shell.cli.CompletionUtils;
@@ -53,11 +53,11 @@ public class VMOptionCommand extends AnnotatedCommand {
     }
 
     @Override
-    public StatusModel process(CommandProcess process) {
+    public ExitStatus process(CommandProcess process) {
         return run(process, name, value);
     }
 
-    private static StatusModel run(CommandProcess process, String name, String value) {
+    private static ExitStatus run(CommandProcess process, String name, String value) {
         try {
             HotSpotDiagnosticMXBean hotSpotDiagnosticMXBean = ManagementFactory
                             .getPlatformMXBean(HotSpotDiagnosticMXBean.class);
@@ -69,7 +69,7 @@ public class VMOptionCommand extends AnnotatedCommand {
                 // view the specified option
                 VMOption option = hotSpotDiagnosticMXBean.getVMOption(name);
                 if (option == null) {
-                    return StatusModel.failure(-1, "In order to change the system properties, you must specify the property value.");
+                    return ExitStatus.failure(-1, "In order to change the system properties, you must specify the property value.");
                 } else {
                     process.appendResult(new VMOptionModel(Arrays.asList(option)));
                 }
@@ -83,10 +83,10 @@ public class VMOptionCommand extends AnnotatedCommand {
                 process.appendResult(new VMOptionModel(new ChangeResultVO(name, originValue,
                         hotSpotDiagnosticMXBean.getVMOption(name).getValue())));
             }
-            return StatusModel.success();
+            return ExitStatus.success();
         } catch (Throwable t) {
             logger.error("Error during setting vm option", t);
-            return StatusModel.failure(-1, "Error during setting vm option: " + t.getMessage());
+            return ExitStatus.failure(-1, "Error during setting vm option: " + t.getMessage());
         }
     }
 

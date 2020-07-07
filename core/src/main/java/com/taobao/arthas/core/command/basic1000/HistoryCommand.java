@@ -5,7 +5,7 @@ import java.util.List;
 
 import com.taobao.arthas.core.command.Constants;
 import com.taobao.arthas.core.command.model.HistoryModel;
-import com.taobao.arthas.core.command.model.StatusModel;
+import com.taobao.arthas.core.shell.command.ExitStatus;
 import com.taobao.arthas.core.server.ArthasBootstrap;
 import com.taobao.arthas.core.shell.command.AnnotatedCommand;
 import com.taobao.arthas.core.shell.command.CommandProcess;
@@ -46,7 +46,7 @@ public class HistoryCommand extends AnnotatedCommand {
     }
 
     @Override
-    public StatusModel process(CommandProcess process) {
+    public ExitStatus process(CommandProcess process) {
         Session session = process.session();
         //TODO 修改term history实现方式，统一使用HistoryManager
         Object termObject = session.get(Session.TTY);
@@ -85,6 +85,6 @@ public class HistoryCommand extends AnnotatedCommand {
             }
         }
 
-        return StatusModel.success();
+        return ExitStatus.success();
     }
 }

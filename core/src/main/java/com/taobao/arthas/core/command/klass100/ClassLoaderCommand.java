@@ -9,7 +9,7 @@ import com.taobao.arthas.core.command.model.ClassSetVO;
 import com.taobao.arthas.core.command.model.ClassVO;
 import com.taobao.arthas.core.command.model.MessageModel;
 import com.taobao.arthas.core.command.model.RowAffectModel;
-import com.taobao.arthas.core.command.model.StatusModel;
+import com.taobao.arthas.core.shell.command.ExitStatus;
 import com.taobao.arthas.core.shell.command.AnnotatedCommand;
 import com.taobao.arthas.core.shell.command.CommandProcess;
 import com.taobao.arthas.core.shell.handlers.Handler;
@@ -110,7 +110,7 @@ public class ClassLoaderCommand extends AnnotatedCommand {
     }
 
     @Override
-    public StatusModel process(CommandProcess process) {
+    public ExitStatus process(CommandProcess process) {
         // ctrl-C support
         process.interruptHandler(new ClassLoaderInterruptHandler(process, isInterrupted));
 
@@ -137,7 +137,7 @@ public class ClassLoaderCommand extends AnnotatedCommand {
      * @param inst
      * @return
      */
-    private StatusModel processClassLoaderStats(CommandProcess process, Instrumentation inst) {
+    private ExitStatus processClassLoaderStats(CommandProcess process, Instrumentation inst) {
         RowAffect affect = new RowAffect();
         List<ClassLoaderInfo> classLoaderInfos = getAllClassLoaderInfo(inst);
         Map<String, ClassLoaderStat> classLoaderStats = new HashMap<String, ClassLoaderStat>();
@@ -160,10 +160,10 @@ public class ClassLoaderCommand extends AnnotatedCommand {
 
         affect.rCnt(sorted.keySet().size());
         process.appendResult(new RowAffectModel(affect));
-        return StatusModel.success();
+        return ExitStatus.success();
     }
 
-    private StatusModel processClassLoaders(CommandProcess process, Instrumentation inst) {
+    private ExitStatus processClassLoaders(CommandProcess process, Instrumentation inst) {
         RowAffect affect = new RowAffect();
         List<ClassLoaderInfo> classLoaderInfos = includeReflectionClassLoader ? getAllClassLoaderInfo(inst) :
                 getAllClassLoaderInfo(inst, new SunReflectionClassLoaderFilter());
@@ -181,11 +181,11 @@ public class ClassLoaderCommand extends AnnotatedCommand {
 
         affect.rCnt(classLoaderInfos.size());
         process.appendResult(new RowAffectModel(affect));
-        return StatusModel.success();
+        return ExitStatus.success();
     }
 
     // 根据 hashCode 来打印URLClassLoader的urls
-    private StatusModel processClassLoader(CommandProcess process, Instrumentation inst) {
+    private ExitStatus processClassLoader(CommandProcess process, Instrumentation inst) {
         RowAffect affect = new RowAffect();
         Set<ClassLoader> allClassLoader = getAllClassLoaders(inst);
         for (ClassLoader cl : allClassLoader) {
@@ -206,11 +206,11 @@ public class ClassLoaderCommand extends AnnotatedCommand {
             }
         }
         process.appendResult(new RowAffectModel(affect));
-        return StatusModel.success();
+        return ExitStatus.success();
     }
 
     // 使用ClassLoader去getResources
-    private StatusModel processResources(CommandProcess process, Instrumentation inst) {
+    private ExitStatus processResources(CommandProcess process, Instrumentation inst) {
         RowAffect affect = new RowAffect();
         int rowCount = 0;
         Set<ClassLoader> allClassLoader = getAllClassLoaders(inst);
@@ -233,11 +233,11 @@ public class ClassLoaderCommand extends AnnotatedCommand {
 
         process.appendResult(new ClassLoaderModel().setResources(resources));
         process.appendResult(new RowAffectModel(affect));
-        return StatusModel.success();
+        return ExitStatus.success();
     }
 
     // Use ClassLoader to loadClass
-    private StatusModel processLoadClass(CommandProcess process, Instrumentation inst) {
+    private ExitStatus processLoadClass(CommandProcess process, Instrumentation inst) {
         Set<ClassLoader> allClassLoader = getAllClassLoaders(inst);
         for (ClassLoader cl : allClassLoader) {
             if (Integer.toHexString(cl.hashCode()).equals(hashCode)) {
@@ -249,24 +249,24 @@ public class ClassLoaderCommand extends AnnotatedCommand {
 
                 } catch (Throwable e) {
                     logger.warn("load class error, class: {}", this.loadClass, e);
-                    return StatusModel.failure(-1, "load class error, class:" + this.loadClass + ", error: " + e.toString());
+                    return ExitStatus.failure(-1, "load class error, class:" + this.loadClass + ", error: " + e.toString());
                 }
             }
         }
-        return StatusModel.success();
+        return ExitStatus.success();
     }
 
-    private StatusModel processAllClasses(CommandProcess process, Instrumentation inst) {
+    private ExitStatus processAllClasses(CommandProcess process, Instrumentation inst) {
         RowAffect affect = new RowAffect();
-        StatusModel statusModel = getAllClasses(hashCode, inst, affect, process);
-        if (StatusModel.isFailed(statusModel)) {
-            return statusModel;
+        ExitStatus exitStatus = getAllClasses(hashCode, inst, affect, process);
+        if (ExitStatus.isFailed(exitStatus)) {
+            return exitStatus;
         }
         if (isInterrupted.get()) {
-            return StatusModel.failure(1, "Interrupted by user");
+            return ExitStatus.failure(1, "Interrupted by user");
         }
         process.appendResult(new RowAffectModel(affect));
-        return StatusModel.success();
+        return ExitStatus.success();
     }
 
     /**
@@ -275,7 +275,7 @@ public class ClassLoaderCommand extends AnnotatedCommand {
      * 当hashCode是null，则把所有的classloader的都打印
      */
     @SuppressWarnings("rawtypes")
-    private StatusModel getAllClasses(String hashCode, Instrumentation inst, RowAffect affect, CommandProcess process) {
+    private ExitStatus getAllClasses(String hashCode, Instrumentation inst, RowAffect affect, CommandProcess process) {
         int hashCodeInt = -1;
         if (hashCode != null) {
             hashCodeInt = Integer.valueOf(hashCode, 16);
@@ -324,7 +324,7 @@ public class ClassLoaderCommand extends AnnotatedCommand {
 
         for (Entry<ClassLoader, SortedSet<Class>> entry : classLoaderClassMap.entrySet()) {
             if (isInterrupted.get()) {
-                return StatusModel.failure(1, "Interrupted by user");
+                return ExitStatus.failure(1, "Interrupted by user");
             }
             ClassLoader classLoader = entry.getKey();
             SortedSet<Class> classSet = entry.getValue();

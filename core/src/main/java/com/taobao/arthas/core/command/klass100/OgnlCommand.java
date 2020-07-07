@@ -9,7 +9,7 @@ import com.taobao.arthas.core.command.express.Express;
 import com.taobao.arthas.core.command.express.ExpressException;
 import com.taobao.arthas.core.command.express.ExpressFactory;
 import com.taobao.arthas.core.command.model.OgnlModel;
-import com.taobao.arthas.core.command.model.StatusModel;
+import com.taobao.arthas.core.shell.command.ExitStatus;
 import com.taobao.arthas.core.shell.command.AnnotatedCommand;
 import com.taobao.arthas.core.shell.command.CommandProcess;
 import com.taobao.arthas.core.util.ClassLoaderUtils;
@@ -61,7 +61,7 @@ public class OgnlCommand extends AnnotatedCommand {
     }
 
     @Override
-    public StatusModel process(CommandProcess process) {
+    public ExitStatus process(CommandProcess process) {
         try {
             Instrumentation inst = process.session().getInstrumentation();
             ClassLoader classLoader = null;
@@ -72,7 +72,7 @@ public class OgnlCommand extends AnnotatedCommand {
             }
 
             if (classLoader == null) {
-                return StatusModel.failure(-1, "Can not find classloader with hashCode: " + hashCode + ".");
+                return ExitStatus.failure(-1, "Can not find classloader with hashCode: " + hashCode + ".");
             }
 
             Express unpooledExpress = ExpressFactory.unpooledExpress(classLoader);
@@ -84,13 +84,13 @@ public class OgnlCommand extends AnnotatedCommand {
                 process.appendResult(ognlModel);
             } catch (ExpressException e) {
                 logger.warn("ognl: failed execute express: " + express, e);
-                return StatusModel.failure(-1, "Failed to execute ognl, exception message: " + e.getMessage()
+                return ExitStatus.failure(-1, "Failed to execute ognl, exception message: " + e.getMessage()
                         + ", please check $HOME/logs/arthas/arthas.log for more details. ");
             }
-            return StatusModel.success();
+            return ExitStatus.success();
         } catch(Throwable e){
             logger.error("process failure", e);
-            return StatusModel.failure(-1, "process failure: "+e.toString());
+            return ExitStatus.failure(-1, "process failure: "+e.toString());
         }
     }
 

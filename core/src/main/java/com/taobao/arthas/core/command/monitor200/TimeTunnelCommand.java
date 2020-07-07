@@ -8,7 +8,7 @@ import com.taobao.arthas.core.advisor.ArthasMethod;
 import com.taobao.arthas.core.command.Constants;
 import com.taobao.arthas.core.command.express.ExpressException;
 import com.taobao.arthas.core.command.express.ExpressFactory;
-import com.taobao.arthas.core.command.model.StatusModel;
+import com.taobao.arthas.core.shell.command.ExitStatus;
 import com.taobao.arthas.core.shell.command.CommandProcess;
 import com.taobao.arthas.core.shell.handlers.command.CommandInterruptHandler;
 import com.taobao.arthas.core.shell.handlers.shell.QExitHandler;
@@ -266,7 +266,7 @@ public class TimeTunnelCommand extends EnhancerCommand {
     }
 
     @Override
-    public StatusModel process(final CommandProcess process) {
+    public ExitStatus process(final CommandProcess process) {
         // 检查参数
         checkArguments();
 
@@ -295,7 +295,7 @@ public class TimeTunnelCommand extends EnhancerCommand {
             }
         }
 
-        return StatusModel.IGNORED_STATUS;
+        return ExitStatus.IGNORED_STATUS;
     }
 
     @Override

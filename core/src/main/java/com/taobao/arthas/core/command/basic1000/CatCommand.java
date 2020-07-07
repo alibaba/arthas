@@ -8,7 +8,7 @@ import java.util.List;
 import com.taobao.arthas.core.command.model.CatModel;
 import com.alibaba.arthas.deps.org.slf4j.Logger;
 import com.alibaba.arthas.deps.org.slf4j.LoggerFactory;
-import com.taobao.arthas.core.command.model.StatusModel;
+import com.taobao.arthas.core.shell.command.ExitStatus;
 import com.taobao.arthas.core.shell.cli.Completion;
 import com.taobao.arthas.core.shell.cli.CompletionUtils;
 import com.taobao.arthas.core.shell.command.AnnotatedCommand;
@@ -48,31 +48,31 @@ public class CatCommand extends AnnotatedCommand {
     }
 
     @Override
-    public StatusModel process(CommandProcess process) {
+    public ExitStatus process(CommandProcess process) {
         if (sizeLimit > maxSizeLimit) {
-            return StatusModel.failure(-1, "sizeLimit cannot be large than: " + maxSizeLimit);
+            return ExitStatus.failure(-1, "sizeLimit cannot be large than: " + maxSizeLimit);
         }
 
         //目前不支持过滤，限制http请求执行的文件大小
         int maxSizeLimitOfNonTty = 128 * 1024;
         if (!process.session().isTty() && sizeLimit > maxSizeLimitOfNonTty) {
-            return StatusModel.failure(-1, "When executing in non-tty session, sizeLimit cannot be large than: " + maxSizeLimitOfNonTty);
+            return ExitStatus.failure(-1, "When executing in non-tty session, sizeLimit cannot be large than: " + maxSizeLimitOfNonTty);
         }
 
         for (String file : files) {
             File f = new File(file);
             if (!f.exists()) {
-                return StatusModel.failure(-1, "cat " + file + ": No such file or directory");
+                return ExitStatus.failure(-1, "cat " + file + ": No such file or directory");
             }
             if (f.isDirectory()) {
-                return StatusModel.failure(-1, "cat " + file + ": Is a directory");
+                return ExitStatus.failure(-1, "cat " + file + ": Is a directory");
             }
         }
 
         for (String file : files) {
             File f = new File(file);
             if (f.length() > sizeLimit) {
-                return StatusModel.failure(-1, "cat " + file + ": Is too large, size: " + f.length());
+                return ExitStatus.failure(-1, "cat " + file + ": Is too large, size: " + f.length());
             }
             try {
                 String fileToString = FileUtils.readFileToString(f,
@@ -80,11 +80,11 @@ public class CatCommand extends AnnotatedCommand {
                 process.appendResult(new CatModel(file, fileToString));
             } catch (IOException e) {
                 logger.error("cat read file error. name: " + file, e);
-                return StatusModel.failure(1, "cat read file error: " + e.getMessage());
+                return ExitStatus.failure(1, "cat read file error: " + e.getMessage());
             }
         }
 
-        return StatusModel.success();
+        return ExitStatus.success();
     }
 
     @Override
