@@ -677,7 +677,7 @@ parse_arguments()
         local IFS=$'\n'
         CANDIDATES=($(call_jps | grep -v sun.tools.jps.Jps | grep "${SELECT}" | awk '{print $0}'))
         if [ ${#CANDIDATES[@]} -eq 1 ]; then
-            TARGET_PID=${CANDIDATES[0]}
+            TARGET_PID=`echo ${CANDIDATES[0]} | cut -d ' ' -f 1`
         fi
     fi
 
