@@ -11,7 +11,6 @@ options
 | json-format        | false | whether to output in JSON format|
 | disable-sub-class  | false | whether to enable matching child classes. The default value is `true`. If exact match is desire, turn off this flag|
 | support-default-method  | true | whether to enable matching default method in interface. The default value is `true`. Refer to [#1105](https://github.com/alibaba/arthas/issues/1105) |
-| debug-for-asm      | false | whether to enable ASM debugging log|
 | save-result        | false | whether to save execution result. All execution results will be saved to `~/logs/arthas-cache/result.log` when it's turned on|
 | job-timeout        | 1d    | default timeout for background jobs. Background job will be terminated once it's timed out (i.e. 1d, 2h, 3m, 25s)| print-parent-fields        | true    | This option enables print files in parent class, default value true.|
 
