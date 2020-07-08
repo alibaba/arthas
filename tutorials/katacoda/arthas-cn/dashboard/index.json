@@ -1,6 +1,6 @@
 {
-  "title": "Arthas ognl",
-  "description": "Arthas ognl",
+  "title": "Arthas dashboard",
+  "description": "Arthas dashboard",
   "difficulty": "入门者",
   "time": "10-20 分钟",
   "details": {
@@ -14,16 +14,8 @@
         "text": "arthas-boot.md"
       },
       {
-        "title": "Ognl详解",
-        "text": "ognl.md"
-      },
-      {
-        "title": "案例: 动态更新应用Logger Level",
-        "text": "case-ognl-update-logger-level.md"
-      },
-      {
-        "title": "案例: 排查logger冲突问题",
-        "text": "case-logger-config-problem.md"
+        "title": "Dashboard详解",
+        "text": "dashboard.md"
       },
       {
         "title": "Exit/Stop",

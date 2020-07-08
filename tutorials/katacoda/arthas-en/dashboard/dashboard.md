@@ -1,15 +1,11 @@
-dashboard
-===
 
-[点击这里访问“dashboard”在线教程](https://alibaba.github.io/arthas/arthas-tutorials.html?language=cn&id=arthas+dashboard)
+The `dashboard`{{execute T2}} command allows you to view the real-time data panel of the current system.
 
-> 当前系统的实时数据面板，按 ctrl+c 退出。
+When running in Apache Tomcat Alibaba edition, the dashboard will also present the real time statistics of the tomcat, including [QPS](https://en.wikipedia.org/wiki/Queries_per_second), RT, error counts, and thread pool, etc.
 
-当运行在Ali-tomcat时，会显示当前tomcat的实时信息，如HTTP请求的qps, rt, 错误数, 线程池信息等等。
+## Usage
 
-### 使用参考
-
-```
+```bash
 $ dashboard
 ID         NAME                              GROUP                  PRIORITY   STATE       %CPU       TIME       INTERRUPTED DAEMON
 889        RMI TCP Connection(15)-30.10.166. RMI Runtime            9          RUNNABLE    48         0:5        false       true
@@ -46,18 +42,28 @@ processors                        4                                 threadpool  
 uptime                            16020s                            busy                              0
 ```
 
-### 数据说明
+Enter `Q`{{execute T2}} or `Ctrl+C` to exit the dashboard command.
 
-* ID: Java级别的线程ID，注意这个ID不能跟jstack中的nativeID一一对应
-* NAME: 线程名
-* GROUP: 线程组名
-* PRIORITY: 线程优先级, 1~10之间的数字，越大表示优先级越高
-* STATE: 线程的状态
-* CPU%: 线程消耗的cpu占比，采样100ms，将所有线程在这100ms内的cpu使用量求和，再算出每个线程的cpu使用占比。
-* TIME: 线程运行总时间，数据格式为`分：秒`
-* INTERRUPTED: 线程当前的中断位状态
-* DAEMON: 是否是daemon线程
+## Notes on column headers
 
-### 截图展示
+* *ID*: JVM thread ID, pls. note this ID is different from the nativeID in jstack
 
-![](_static/dashboard.png "dashboard")
+* *NAME*: thread name
+
+* *GROUP*: thread group name
+
+* *PRIORITY*: thread priority, ranged from 1 to 10. The greater number, the higher priority
+
+* *STATE*: thread state
+
+* *CPU%*: the ratio of CPU usage for the thread, sampled every 100ms
+
+* *TIME*: total running time in minute:`second format`
+
+* *INTERRUPTED*: the thread interruption state
+
+* *DAEMON*: daemon thread or not
+
+## Screenshot
+
+![](https://alibaba.github.io/arthas/en/_images/dashboard.png)

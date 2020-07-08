@@ -22,6 +22,11 @@
         "course_id": "thread",
         "title": "thread",
         "description": "这里讲解了Arthas的thread命令"
+      },
+      {
+        "course_id": "dashboard",
+        "title": "dashboard",
+        "description": "这里讲解了Arthas的dashboard命令"
       }
     ]
 }

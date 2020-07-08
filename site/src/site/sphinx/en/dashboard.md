@@ -1,6 +1,8 @@
 dashboard
 =========
 
+[Click to visit "dashboard" online tutorial](https://alibaba.github.io/arthas/arthas-tutorials.html?language=en&id=arthas+dashboard)
+
 > This is the real time statistics dashboard for the current system, press `Ctrl+C` to exit.
 
 When running in Apache Tomcat Alibaba edition, the dashboard will also present the real time statistics of the tomcat,  including [QPS](https://en.wikipedia.org/wiki/Queries_per_second), RT, error counts, and thread pool, etc.
