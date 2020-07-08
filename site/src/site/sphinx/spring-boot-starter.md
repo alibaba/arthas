@@ -23,7 +23,7 @@ Arthas Spring Boot Starter
 比如，通过配置tunnel server实现远程管理：
 
 ```
-arthas.agentId=hsehdfsfghhwertyfad
+arthas.agent-id=hsehdfsfghhwertyfad
 arthas.tunnel-server=ws://47.75.156.201:7777/ws
 ```
 
