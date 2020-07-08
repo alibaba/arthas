@@ -23,7 +23,7 @@ When the application is started, spring will start arthas and attach its own pro
 For example, by configuring the tunnel server for remote management.
 
 ```
-arthas.agentId=hsehdfsfghhwertyfad
+arthas.agent-id=hsehdfsfghhwertyfad
 arthas.tunnel-server=ws://47.75.156.201:7777/ws
 ```
 
