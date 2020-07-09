@@ -124,11 +124,12 @@
 <li class="toctree-l3"><a class="reference internal" href="#notice">Notice</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#usage">Usage</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="#start-demo">Start Demo</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#trace-method">trace method</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#trace-times-limit">trace times limit</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#trace-method">Trace method</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#trace-times-limit">Trace times limit</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#include-jdk-method">Include jdk method</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#filtering-by-cost">Filtering by cost</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#trace-multiple-classes-or-multiple-methods">trace multiple classes or multiple methods</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#trace-multiple-classes-or-multiple-methods">Trace multiple classes or multiple methods</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#dynamic-trace">Dynamic trace</a></li>
 </ul>
 </li>
 </ul>
@@ -278,6 +279,7 @@
 <div class="section" id="notice">
 <h2>Notice<a class="headerlink" href="#notice" title="Permalink to this headline">¶</a></h2>
 <p><code class="docutils literal notranslate"><span class="pre">trace</span></code> is handy to help discovering and locating the performance flaws in your system, but pls. note Arthas can only trace the first level method call each time.</p>
+<p>After version 3.3.0, you can use the Dynamic Trace feature to add new matching classes/methods, see the following example.</p>
 </div>
 <div class="section" id="usage">
 <h2>Usage<a class="headerlink" href="#usage" title="Permalink to this headline">¶</a></h2>
@@ -286,7 +288,7 @@
 <p>Start <code class="docutils literal notranslate"><span class="pre">arthas-demo</span></code> in <a class="reference internal" href="quick-start.html"><span class="doc">Quick Start</span></a>.</p>
 </div>
 <div class="section" id="trace-method">
-<h3>trace method<a class="headerlink" href="#trace-method" title="Permalink to this headline">¶</a></h3>
+<h3>Trace method<a class="headerlink" href="#trace-method" title="Permalink to this headline">¶</a></h3>
 <div class="highlight-bash notranslate"><div class="highlight hljs"><pre class="bash">$ trace demo.MathGame run
 Press Q or Ctrl+C to abort.
 Affect(class-cnt:1 , method-cnt:1) cost in 28 ms.
@@ -300,7 +302,7 @@ Affect(class-cnt:1 , method-cnt:1) cost in 28 ms.
 </div>
 </div>
 <div class="section" id="trace-times-limit">
-<h3>trace times limit<a class="headerlink" href="#trace-times-limit" title="Permalink to this headline">¶</a></h3>
+<h3>Trace times limit<a class="headerlink" href="#trace-times-limit" title="Permalink to this headline">¶</a></h3>
 <p>If the method invoked many times, use <code class="docutils literal notranslate"><span class="pre">-n</span></code> options to specify trace times. For example, the command will exit when received a trace result.</p>
 <div class="highlight-bash notranslate"><div class="highlight hljs"><pre class="bash">$ trace demo.MathGame run -n 1
 Press Q or Ctrl+C to abort.
@@ -368,11 +370,50 @@ Affect(class-cnt:1 , method-cnt:1) cost in 41 ms.
 </ul>
 </div>
 <div class="section" id="trace-multiple-classes-or-multiple-methods">
-<h3>trace multiple classes or multiple methods<a class="headerlink" href="#trace-multiple-classes-or-multiple-methods" title="Permalink to this headline">¶</a></h3>
+<h3>Trace multiple classes or multiple methods<a class="headerlink" href="#trace-multiple-classes-or-multiple-methods" title="Permalink to this headline">¶</a></h3>
 <p>The trace command will only trace the subcalls in the method to the trace, and will not trace down multiple layers. Because traces are expensive, multi-layer traces can lead to a lot of classes and methods that ultimately have to be traced.</p>
 <p>You can use the regular expression to match multiple classes and methods on the path to achieve a multi-layer trace effect to some extent.</p>
 <div class="highlight-bash notranslate"><div class="highlight hljs"><pre class="bash">Trace -E com.test.ClassA|org.test.ClassB method1|method2|method3</pre></div>
 </div>
+</div>
+<div class="section" id="dynamic-trace">
+<h3>Dynamic trace<a class="headerlink" href="#dynamic-trace" title="Permalink to this headline">¶</a></h3>
+<blockquote>
+<div><p>Supported since version 3.3.0.</p>
+</div></blockquote>
+<p>Open terminal 1, trace the <code class="docutils literal notranslate"><span class="pre">run</span></code> method, and you can see the printout <code class="docutils literal notranslate"><span class="pre">listenerId:</span> <span class="pre">1</span></code> .</p>
+<div class="highlight-bash notranslate"><div class="highlight hljs"><pre class="bash">[arthas@59161]$ trace demo.MathGame run
+Press Q or Ctrl+C to abort.
+Affect(class count: 1 , method count: 1) cost in 112 ms, listenerId: 1
+`---ts=2020-07-09 16:48:11;thread_name=main;id=1;is_daemon=false;priority=5;TCCL=sun.misc.Launcher$AppClassLoader@3d4eac69
+    `---[1.389634ms] demo.MathGame:run()
+        `---[0.123934ms] demo.MathGame:primeFactors() #24 [throws Exception]
+
+`---ts=2020-07-09 16:48:12;thread_name=main;id=1;is_daemon=false;priority=5;TCCL=sun.misc.Launcher$AppClassLoader@3d4eac69
+    `---[3.716391ms] demo.MathGame:run()
+        +---[3.182813ms] demo.MathGame:primeFactors() #24
+        `---[0.167786ms] demo.MathGame:print() #25</pre></div>
+</div>
+<p>Now to drill down into the sub method <code class="docutils literal notranslate"><span class="pre">primeFactors</span></code>, you can open a new terminal 2 and use the <code class="docutils literal notranslate"><span class="pre">telnet</span> <span class="pre">localhost</span> <span class="pre">3658</span></code> connects to the arthas, then trace <code class="docutils literal notranslate"><span class="pre">primeFactors</span></code> with the specify <code class="docutils literal notranslate"><span class="pre">listenerId</span></code>.</p>
+<div class="highlight-bash notranslate"><div class="highlight hljs"><pre class="bash">[arthas@59161]$ trace demo.MathGame primeFactors --listenerId 1
+Press Q or Ctrl+C to abort.
+Affect(class count: 1 , method count: 1) cost in 34 ms, listenerId: 1</pre></div>
+</div>
+<p>At Terminal 2 prints the results, indicating that a method has been enhanced: <code class="docutils literal notranslate"><span class="pre">Affect(class</span> <span class="pre">count:</span> <span class="pre">1</span> <span class="pre">,</span> <span class="pre">method</span> <span class="pre">count:</span> <span class="pre">1)</span></code>, but no more results are printed.</p>
+<p>At terminal 1, you can see that the trace result has increased by one layer:</p>
+<div class="highlight-bash notranslate"><div class="highlight hljs"><pre class="bash">`---ts=2020-07-09 16:49:29;thread_name=main;id=1;is_daemon=false;priority=5;TCCL=sun.misc.Launcher$AppClassLoader@3d4eac69
+    `---[0.492551ms] demo.MathGame:run()
+        `---[0.113929ms] demo.MathGame:primeFactors() #24 [throws Exception]
+            `---[0.061462ms] demo.MathGame:primeFactors()
+                `---[0.001018ms] throw:java.lang.IllegalArgumentException() #46
+
+`---ts=2020-07-09 16:49:30;thread_name=main;id=1;is_daemon=false;priority=5;TCCL=sun.misc.Launcher$AppClassLoader@3d4eac69
+    `---[0.409446ms] demo.MathGame:run()
+        +---[0.232606ms] demo.MathGame:primeFactors() #24
+        |   `---[0.1294ms] demo.MathGame:primeFactors()
+        `---[0.084025ms] demo.MathGame:print() #25</pre></div>
+</div>
+<p>Dynamic trace by specifying <code class="docutils literal notranslate"><span class="pre">listenerId</span></code>, you can go deeper and deeper. In addition, commands such as <code class="docutils literal notranslate"><span class="pre">watch</span></code>/<code class="docutils literal notranslate"><span class="pre">tt</span></code>/<code class="docutils literal notranslate"><span class="pre">monitor</span></code> also support similar functionality.</p>
 </div>
 </div>
 </div>

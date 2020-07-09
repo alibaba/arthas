@@ -93,7 +93,7 @@
             
             
               <ul class="current">
-<li class="toctree-l1"><a class="reference external" href="https://mp.weixin.qq.com/s/VVSc_a3mLELW35lMH7rR0Q">实习生招聘</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://mp.weixin.qq.com/s/VVSc_a3mLELW35lMH7rR0Q">应届生招聘</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://mp.weixin.qq.com/s/677GO-3kYx5ygG9rlOlfQg">社招信息</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://developer.aliyun.com/article/751641">技术征文</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://alibaba.github.io/arthas/en/">English Docs</a></li>
@@ -136,6 +136,7 @@
 <li class="toctree-l4"><a class="reference internal" href="#id7">trace多个类或者多个函数</a></li>
 </ul>
 </li>
+<li class="toctree-l3"><a class="reference internal" href="#id8">动态trace</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="stack.html">stack</a></li>
@@ -284,6 +285,8 @@
 <div class="section" id="id2">
 <h2>注意事项<a class="headerlink" href="#id2" title="永久链接至标题">¶</a></h2>
 <p><code class="docutils literal notranslate"><span class="pre">trace</span></code> 能方便的帮助你定位和发现因 RT 高而导致的性能问题缺陷，但其每次只能跟踪一级方法的调用链路。</p>
+<p>参考：<a class="reference external" href="https://github.com/alibaba/arthas/issues/597">Trace命令的实现原理</a></p>
+<p>3.3.0 版本后，可以使用动态Trace功能，不断增加新的匹配类，参考下面的示例。</p>
 </div>
 <div class="section" id="id3">
 <h2>使用参考<a class="headerlink" href="#id3" title="永久链接至标题">¶</a></h2>
@@ -381,6 +384,43 @@ Affect(class-cnt:1 , method-cnt:1) cost in 41 ms.
 <div class="highlight-bash notranslate"><div class="highlight hljs"><pre class="bash">trace -E com.test.ClassA|org.test.ClassB method1|method2|method3</pre></div>
 </div>
 </div>
+</div>
+<div class="section" id="id8">
+<h2>动态trace<a class="headerlink" href="#id8" title="永久链接至标题">¶</a></h2>
+<p>3.3.0 版本后支持。</p>
+<p>打开终端1，trace <code class="docutils literal notranslate"><span class="pre">run</span></code>函数，可以看到打印出 <code class="docutils literal notranslate"><span class="pre">listenerId:</span> <span class="pre">1</span></code>：</p>
+<div class="highlight-bash notranslate"><div class="highlight hljs"><pre class="bash">[arthas@59161]$ trace demo.MathGame run
+Press Q or Ctrl+C to abort.
+Affect(class count: 1 , method count: 1) cost in 112 ms, listenerId: 1
+`---ts=2020-07-09 16:48:11;thread_name=main;id=1;is_daemon=false;priority=5;TCCL=sun.misc.Launcher$AppClassLoader@3d4eac69
+    `---[1.389634ms] demo.MathGame:run()
+        `---[0.123934ms] demo.MathGame:primeFactors() #24 [throws Exception]
+
+`---ts=2020-07-09 16:48:12;thread_name=main;id=1;is_daemon=false;priority=5;TCCL=sun.misc.Launcher$AppClassLoader@3d4eac69
+    `---[3.716391ms] demo.MathGame:run()
+        +---[3.182813ms] demo.MathGame:primeFactors() #24
+        `---[0.167786ms] demo.MathGame:print() #25</pre></div>
+</div>
+<p>现在想要深入子函数<code class="docutils literal notranslate"><span class="pre">primeFactors</span></code>，可以打开一个新终端2，使用<code class="docutils literal notranslate"><span class="pre">telnet</span> <span class="pre">localhost</span> <span class="pre">3658</span></code>连接上arthas，再trace <code class="docutils literal notranslate"><span class="pre">primeFactors</span></code>时，指定<code class="docutils literal notranslate"><span class="pre">listenerId</span></code>。</p>
+<div class="highlight-bash notranslate"><div class="highlight hljs"><pre class="bash">[arthas@59161]$ trace demo.MathGame primeFactors --listenerId 1
+Press Q or Ctrl+C to abort.
+Affect(class count: 1 , method count: 1) cost in 34 ms, listenerId: 1</pre></div>
+</div>
+<p>这时终端2打印的结果，说明已经增强了一个函数：<code class="docutils literal notranslate"><span class="pre">Affect(class</span> <span class="pre">count:</span> <span class="pre">1</span> <span class="pre">,</span> <span class="pre">method</span> <span class="pre">count:</span> <span class="pre">1)</span></code>，但不再打印更多的结果。</p>
+<p>再查看终端1，可以发现trace的结果增加了一层，打印了<code class="docutils literal notranslate"><span class="pre">primeFactors</span></code>函数里的内容：</p>
+<div class="highlight-bash notranslate"><div class="highlight hljs"><pre class="bash">`---ts=2020-07-09 16:49:29;thread_name=main;id=1;is_daemon=false;priority=5;TCCL=sun.misc.Launcher$AppClassLoader@3d4eac69
+    `---[0.492551ms] demo.MathGame:run()
+        `---[0.113929ms] demo.MathGame:primeFactors() #24 [throws Exception]
+            `---[0.061462ms] demo.MathGame:primeFactors()
+                `---[0.001018ms] throw:java.lang.IllegalArgumentException() #46
+
+`---ts=2020-07-09 16:49:30;thread_name=main;id=1;is_daemon=false;priority=5;TCCL=sun.misc.Launcher$AppClassLoader@3d4eac69
+    `---[0.409446ms] demo.MathGame:run()
+        +---[0.232606ms] demo.MathGame:primeFactors() #24
+        |   `---[0.1294ms] demo.MathGame:primeFactors()
+        `---[0.084025ms] demo.MathGame:print() #25</pre></div>
+</div>
+<p>通过指定<code class="docutils literal notranslate"><span class="pre">listenerId</span></code>的方式动态trace，可以不断深入。另外 <code class="docutils literal notranslate"><span class="pre">watch</span></code>/<code class="docutils literal notranslate"><span class="pre">tt</span></code>/<code class="docutils literal notranslate"><span class="pre">monitor</span></code>等命令也支持类似的功能。</p>
 </div>
 </div>
 
