@@ -9,10 +9,11 @@ import com.taobao.arthas.core.command.model.ClassVO;
 import com.taobao.arthas.core.command.model.GetStaticModel;
 import com.taobao.arthas.core.command.model.MessageModel;
 import com.taobao.arthas.core.command.model.RowAffectModel;
-import com.taobao.arthas.core.command.model.StatusModel;
 import com.taobao.arthas.core.shell.command.AnnotatedCommand;
 import com.taobao.arthas.core.shell.command.CommandProcess;
+import com.taobao.arthas.core.shell.command.ExitStatus;
 import com.taobao.arthas.core.util.ClassUtils;
+import com.taobao.arthas.core.util.CommandUtil;
 import com.taobao.arthas.core.util.SearchUtils;
 import com.taobao.arthas.core.util.StringUtils;
 import com.taobao.arthas.core.util.affect.RowAffect;
@@ -93,23 +94,28 @@ public class GetStaticCommand extends AnnotatedCommand {
         RowAffect affect = new RowAffect();
         Instrumentation inst = process.session().getInstrumentation();
         Set<Class<?>> matchedClasses = SearchUtils.searchClassOnly(inst, classPattern, isRegEx, hashCode);
-        StatusModel statusModel = new StatusModel(-1, "unknown error");
         try {
             if (matchedClasses == null || matchedClasses.isEmpty()) {
-                statusModel.setStatus(-1, "No class found for: " + classPattern);
-            } else if (matchedClasses.size() > 1) {
-                processMatches(process, matchedClasses, statusModel);
-            } else {
-                processExactMatch(process, affect, inst, matchedClasses, statusModel);
+                process.end(-1, "No class found for: " + classPattern);
+                return;
             }
-        } finally {
+            ExitStatus status = null;
+            if (matchedClasses.size() > 1) {
+                status = processMatches(process, matchedClasses);
+            } else {
+                status = processExactMatch(process, affect, inst, matchedClasses);
+            }
             process.appendResult(new RowAffectModel(affect));
-            process.end(statusModel.getStatusCode(), statusModel.getMessage());
+            CommandUtil.end(process, status);
+        } catch (Throwable e){
+            logger.error("processing error", e);
+            process.appendResult(new RowAffectModel(affect));
+            process.end(-1, "processing error");
         }
     }
 
-    private void processExactMatch(CommandProcess process, RowAffect affect, Instrumentation inst,
-                                   Set<Class<?>> matchedClasses, StatusModel statusModel) {
+    private ExitStatus processExactMatch(CommandProcess process, RowAffect affect, Instrumentation inst,
+                                   Set<Class<?>> matchedClasses) {
         Matcher<String> fieldNameMatcher = fieldNameMatcher();
 
         Class<?> clazz = matchedClasses.iterator().next();
@@ -147,13 +153,13 @@ public class GetStaticCommand extends AnnotatedCommand {
         }
 
         if (!found) {
-            statusModel.setStatus(-1, "getstatic: no matched static field was found");
+            return ExitStatus.failure(-1, "getstatic: no matched static field was found");
         } else {
-            statusModel.setStatus(0, null);
+            return ExitStatus.success();
         }
     }
 
-    private void processMatches(CommandProcess process, Set<Class<?>> matchedClasses, StatusModel statusModel) {
+    private ExitStatus processMatches(CommandProcess process, Set<Class<?>> matchedClasses) {
 
 //        Element usage = new LabelElement("getstatic -c <hashcode> " + classPattern + " " + fieldPattern).style(
 //                Decoration.bold.fg(Color.blue));
@@ -164,7 +170,7 @@ public class GetStaticCommand extends AnnotatedCommand {
 
         List<ClassVO> matchedClassVOs = ClassUtils.createClassVOList(matchedClasses);
         process.appendResult(new GetStaticModel(matchedClassVOs));
-        statusModel.setStatus(-1, "Found more than one class for: " + classPattern + ", Please use: "+usage);
+        return ExitStatus.failure(-1, "Found more than one class for: " + classPattern + ", Please use: "+usage);
     }
 
     private Matcher<String> fieldNameMatcher() {

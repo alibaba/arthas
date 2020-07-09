@@ -73,7 +73,6 @@ public class MemoryCompilerCommand extends AnnotatedCommand {
 
     @Override
     public void process(final CommandProcess process) {
-        int exitCode = -1;
         RowAffect affect = new RowAffect();
 
         try {
@@ -84,7 +83,6 @@ public class MemoryCompilerCommand extends AnnotatedCommand {
             } else {
                 classloader = ClassLoaderUtils.getClassLoader(inst, hashCode);
                 if (classloader == null) {
-                    exitCode = -1;
                     process.end(-1, "Can not find classloader with hashCode: " + hashCode + ".");
                     return;
                 }
@@ -123,15 +121,12 @@ public class MemoryCompilerCommand extends AnnotatedCommand {
                 affect.rCnt(1);
             }
             process.appendResult(new MemoryCompilerModel(files));
-            exitCode = 0;
+            process.appendResult(new RowAffectModel(affect));
+            process.end();
         } catch (Throwable e) {
             logger.warn("Memory compiler error", e);
             process.end(-1, "Memory compiler error, exception message: " + e.getMessage()
                             + ", please check $HOME/logs/arthas/arthas.log for more details.");
-            exitCode = -1;
-        } finally {
-            process.appendResult(new RowAffectModel(affect));
-            process.end(exitCode);
         }
     }
 

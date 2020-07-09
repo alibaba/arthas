@@ -106,10 +106,10 @@ public class SearchClassCommand extends AnnotatedCommand {
 
         if (isDetail) {
             if (matchedClasses.size() > numberOfLimit) {
-                process.end(-1, "Matching classes are too many: "+matchedClasses.size());
+                process.end(-1, "Matching classes are too many: " + matchedClasses.size());
                 return;
             }
-        for (Class<?> clazz : matchedClasses) {
+            for (Class<?> clazz : matchedClasses) {
                 ClassVO classInfo = ClassUtils.createClassInfo(clazz, isDetail, isField);
                 process.appendResult(new SearchClassModel(classInfo, isDetail, isField, expand));
             }
@@ -120,10 +120,9 @@ public class SearchClassCommand extends AnnotatedCommand {
                 public boolean handle(List<String> classNames, int segment) {
                     process.appendResult(new SearchClassModel(classNames, segment));
                     return true;
-        }
+                }
             });
         }
-
 
         affect.rCnt(matchedClasses.size());
         process.appendResult(new RowAffectModel(affect));

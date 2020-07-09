@@ -92,6 +92,7 @@ public class RedefineCommand extends AnnotatedCommand {
             } catch (Exception e) {
                 logger.warn("load class file failed: "+path, e);
                 process.end(-1, "load class file failed: " +path+", error: " + e);
+                return;
             } finally {
                 if (f != null) {
                     try {
@@ -128,11 +129,11 @@ public class RedefineCommand extends AnnotatedCommand {
             }
             inst.redefineClasses(definitions.toArray(new ClassDefinition[0]));
             process.appendResult(redefineModel);
+            process.end();
         } catch (Exception e) {
             process.end(-1, "redefine error! " + e);
         }
 
-        process.end();
     }
 
     private static String readClassName(final byte[] bytes) {
