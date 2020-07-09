@@ -6,7 +6,6 @@ import com.taobao.arthas.core.advisor.Enhancer;
 import com.taobao.arthas.core.command.model.MessageModel;
 import com.taobao.arthas.core.command.model.ResetModel;
 import com.taobao.arthas.core.command.model.ShutdownModel;
-import com.taobao.arthas.core.shell.command.ExitStatus;
 import com.taobao.arthas.core.server.ArthasBootstrap;
 import com.taobao.arthas.core.shell.ShellServer;
 import com.taobao.arthas.core.shell.command.AnnotatedCommand;
@@ -34,9 +33,8 @@ public class ShutdownCommand extends AnnotatedCommand {
     private static final Logger logger = LoggerFactory.getLogger(ShutdownCommand.class);
 
     @Override
-    public ExitStatus process(CommandProcess process) {
+    public void process(CommandProcess process) {
         shutdown(process);
-        return ExitStatus.success();
     }
 
     public static void shutdown(CommandProcess process) {

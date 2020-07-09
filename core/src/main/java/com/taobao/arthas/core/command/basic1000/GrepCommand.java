@@ -1,7 +1,6 @@
 package com.taobao.arthas.core.command.basic1000;
 
 import com.taobao.arthas.core.command.Constants;
-import com.taobao.arthas.core.shell.command.ExitStatus;
 import com.taobao.arthas.core.shell.command.AnnotatedCommand;
 import com.taobao.arthas.core.shell.command.CommandProcess;
 import com.taobao.middleware.cli.annotations.Argument;
@@ -168,7 +167,7 @@ public class GrepCommand extends AnnotatedCommand {
     }
 
     @Override
-    public ExitStatus process(CommandProcess process) {
-        return ExitStatus.failure(-1, "The grep command only for pipes. See 'grep --help'\n");
+    public void process(CommandProcess process) {
+        process.end(-1, "The grep command only for pipes. See 'grep --help'\n");
     }
 }

@@ -7,7 +7,7 @@ import com.taobao.arthas.core.command.model.ClassVO;
 import com.taobao.arthas.core.command.model.JadModel;
 import com.taobao.arthas.core.command.model.MessageModel;
 import com.taobao.arthas.core.command.model.RowAffectModel;
-import com.taobao.arthas.core.shell.command.ExitStatus;
+import com.taobao.arthas.core.command.model.StatusModel;
 import com.taobao.arthas.core.shell.cli.Completion;
 import com.taobao.arthas.core.shell.cli.CompletionUtils;
 import com.taobao.arthas.core.shell.command.AnnotatedCommand;
@@ -97,32 +97,35 @@ public class JadCommand extends AnnotatedCommand {
     }
 
     @Override
-    public ExitStatus process(CommandProcess process) {
+    public void process(CommandProcess process) {
         RowAffect affect = new RowAffect();
         Instrumentation inst = process.session().getInstrumentation();
         Set<Class<?>> matchedClasses = SearchUtils.searchClassOnly(inst, classPattern, isRegEx, code);
 
+        StatusModel statusModel = new StatusModel(-1, "unknown error");
         try {
             if (matchedClasses == null || matchedClasses.isEmpty()) {
-                return processNoMatch(process);
+                statusModel = processNoMatch(process);
             } else if (matchedClasses.size() > 1) {
-                return processMatches(process, matchedClasses);
+                statusModel = processMatches(process, matchedClasses);
             } else { // matchedClasses size is 1
                 // find inner classes.
                 Set<Class<?>> withInnerClasses = SearchUtils.searchClassOnly(inst,  matchedClasses.iterator().next().getName() + "$*", false, code);
                 if(withInnerClasses.isEmpty()) {
                     withInnerClasses = matchedClasses;
                 }
-                return processExactMatch(process, affect, inst, matchedClasses, withInnerClasses);
+                statusModel = processExactMatch(process, affect, inst, matchedClasses, withInnerClasses);
             }
         } finally {
             if (!this.sourceOnly) {
                 process.appendResult(new RowAffectModel(affect));
             }
+            process.end(statusModel.getStatusCode(), statusModel.getMessage());
         }
     }
 
-    private ExitStatus processExactMatch(CommandProcess process, RowAffect affect, Instrumentation inst, Set<Class<?>> matchedClasses, Set<Class<?>> withInnerClasses) {
+    private StatusModel processExactMatch(CommandProcess process, RowAffect affect, Instrumentation inst, Set<Class<?>> matchedClasses, Set<Class<?>> withInnerClasses) {
+        StatusModel statusModel = new StatusModel();
         Class<?> c = matchedClasses.iterator().next();
         Set<Class<?>> allClasses = new HashSet<Class<?>>(withInnerClasses);
         allClasses.add(c);
@@ -150,14 +153,15 @@ public class JadCommand extends AnnotatedCommand {
             process.appendResult(jadModel);
 
             affect.rCnt(classFiles.keySet().size());
-            return ExitStatus.success();
+            statusModel.setStatus(0);
         } catch (Throwable t) {
             logger.error("jad: fail to decompile class: " + c.getName(), t);
-            return ExitStatus.failure(-1, "jad: fail to decompile class: " + c.getName());
+            statusModel.setStatus(-1, "jad: fail to decompile class: " + c.getName());
         }
+        return statusModel;
     }
 
-    private ExitStatus processMatches(CommandProcess process, Set<Class<?>> matchedClasses) {
+    private StatusModel processMatches(CommandProcess process, Set<Class<?>> matchedClasses) {
         //Element usage = new LabelElement("jad -c <hashcode> " + classPattern).style(Decoration.bold.fg(Color.blue));
         //process.write("\n Found more than one class for: " + classPattern + ", Please use "
         //        + RenderUtil.render(usage, process.width()));
@@ -171,11 +175,11 @@ public class JadCommand extends AnnotatedCommand {
         jadModel.setMatchedClasses(classVOs);
         process.appendResult(jadModel);
 
-        return ExitStatus.failure(-1, msg);
+        return new StatusModel(-1, msg);
     }
 
-    private ExitStatus processNoMatch(CommandProcess process) {
-        return ExitStatus.failure(-1, "No class found for: " + classPattern);
+    private StatusModel processNoMatch(CommandProcess process) {
+        return new StatusModel().setStatus(-1, "No class found for: " + classPattern);
     }
 
     @Override

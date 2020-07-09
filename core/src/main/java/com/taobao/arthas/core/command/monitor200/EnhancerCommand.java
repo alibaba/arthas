@@ -11,7 +11,6 @@ import com.taobao.arthas.core.advisor.AdviceListener;
 import com.taobao.arthas.core.advisor.AdviceWeaver;
 import com.taobao.arthas.core.advisor.Enhancer;
 import com.taobao.arthas.core.advisor.InvokeTraceable;
-import com.taobao.arthas.core.shell.command.ExitStatus;
 import com.taobao.arthas.core.shell.cli.Completion;
 import com.taobao.arthas.core.shell.cli.CompletionUtils;
 import com.taobao.arthas.core.shell.command.AnnotatedCommand;
@@ -78,7 +77,7 @@ public abstract class EnhancerCommand extends AnnotatedCommand {
         return getAdviceListener(process);
     }
     @Override
-    public ExitStatus process(final CommandProcess process) {
+    public void process(final CommandProcess process) {
         // ctrl-C support
         process.interruptHandler(new CommandInterruptHandler(process));
         // q exit support
@@ -86,8 +85,6 @@ public abstract class EnhancerCommand extends AnnotatedCommand {
 
         // start to enhance
         enhance(process);
-
-        return ExitStatus.IGNORED_STATUS;
     }
 
     @Override

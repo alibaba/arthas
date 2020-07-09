@@ -2,7 +2,6 @@ package com.taobao.arthas.core.command.basic1000;
 
 
 import com.taobao.arthas.core.command.Constants;
-import com.taobao.arthas.core.shell.command.ExitStatus;
 import com.taobao.arthas.core.shell.command.AnnotatedCommand;
 import com.taobao.arthas.core.shell.command.CommandProcess;
 import com.taobao.middleware.cli.annotations.*;
@@ -34,8 +33,8 @@ public class TeeCommand extends AnnotatedCommand {
     }
 
     @Override
-    public ExitStatus process(CommandProcess process) {
-        return ExitStatus.failure(-1, "The tee command only for pipes. See 'tee --help'");
+    public void process(CommandProcess process) {
+        process.end(-1, "The tee command only for pipes. See 'tee --help'");
     }
 
     public String getFilePath() {

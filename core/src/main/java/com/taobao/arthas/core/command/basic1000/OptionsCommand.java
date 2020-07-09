@@ -6,7 +6,7 @@ import com.taobao.arthas.core.command.Constants;
 import com.taobao.arthas.core.command.model.ChangeResultVO;
 import com.taobao.arthas.core.command.model.OptionVO;
 import com.taobao.arthas.core.command.model.OptionsModel;
-import com.taobao.arthas.core.shell.command.ExitStatus;
+import com.taobao.arthas.core.command.model.StatusModel;
 import com.taobao.arthas.core.shell.cli.CliToken;
 import com.taobao.arthas.core.shell.cli.Completion;
 import com.taobao.arthas.core.shell.cli.CompletionUtils;
@@ -68,19 +68,25 @@ public class OptionsCommand extends AnnotatedCommand {
     }
 
     @Override
-    public ExitStatus process(CommandProcess process) {
+    public void process(CommandProcess process) {
         try {
+            StatusModel statusModel = null;
             if (isShow()) {
-                return processShow(process);
+                statusModel = processShow(process);
             } else if (isShowName()) {
-                return processShowName(process);
+                statusModel = processShowName(process);
             } else {
-                return processChangeNameValue(process);
+                statusModel = processChangeNameValue(process);
             }
 
+            if (statusModel != null) {
+                process.end(statusModel.getStatusCode(), statusModel.getMessage());
+            } else {
+                process.end(-1, "command was not processed");
+            }
         } catch (Throwable t) {
             logger.error("process options command error", t);
-            return ExitStatus.failure(-1, "process options command error");
+            process.end(-1, "process options command error");
         }
     }
 
@@ -104,24 +110,24 @@ public class OptionsCommand extends AnnotatedCommand {
         }
     }
 
-    private ExitStatus processShow(CommandProcess process) throws IllegalAccessException {
+    private StatusModel processShow(CommandProcess process) throws IllegalAccessException {
         Collection<Field> fields = findOptionFields(new RegexMatcher(".*"));
         process.appendResult(new OptionsModel(convertToOptionVOs(fields)));
-        return ExitStatus.success();
+        return StatusModel.success();
     }
 
-    private ExitStatus processShowName(CommandProcess process) throws IllegalAccessException {
+    private StatusModel processShowName(CommandProcess process) throws IllegalAccessException {
         Collection<Field> fields = findOptionFields(new EqualsMatcher<String>(optionName));
         process.appendResult(new OptionsModel(convertToOptionVOs(fields)));
-        return ExitStatus.success();
+        return StatusModel.success();
     }
 
-    private ExitStatus processChangeNameValue(CommandProcess process) throws IllegalAccessException {
+    private StatusModel processChangeNameValue(CommandProcess process) throws IllegalAccessException {
         Collection<Field> fields = findOptionFields(new EqualsMatcher<String>(optionName));
 
         // name not exists
         if (fields.isEmpty()) {
-            return ExitStatus.failure(-1, format("options[%s] not found.", optionName));
+            return StatusModel.failure(-1, format("options[%s] not found.", optionName));
         }
 
         Field field = fields.iterator().next();
@@ -149,16 +155,16 @@ public class OptionsCommand extends AnnotatedCommand {
             } else if (isIn(type, short.class, String.class)) {
                 FieldUtils.writeStaticField(field, afterValue = optionValue);
             } else {
-                return ExitStatus.failure(-1, format("Options[%s] type[%s] was unsupported.", optionName, type.getSimpleName()));
+                return StatusModel.failure(-1, format("Options[%s] type[%s] was unsupported.", optionName, type.getSimpleName()));
             }
 
         } catch (Throwable t) {
-            return ExitStatus.failure(-1, format("Cannot cast option value[%s] to type[%s].", optionValue, type.getSimpleName()));
+            return StatusModel.failure(-1, format("Cannot cast option value[%s] to type[%s].", optionValue, type.getSimpleName()));
         }
 
         ChangeResultVO changeResultVO = new ChangeResultVO(optionAnnotation.name(), beforeValue, afterValue);
         process.appendResult(new OptionsModel(changeResultVO));
-        return ExitStatus.success();
+        return StatusModel.success();
     }
 
 

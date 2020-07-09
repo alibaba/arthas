@@ -11,7 +11,6 @@ import com.taobao.arthas.core.command.Constants;
 import com.taobao.arthas.core.command.model.SearchClassModel;
 import com.taobao.arthas.core.command.model.ClassVO;
 import com.taobao.arthas.core.command.model.RowAffectModel;
-import com.taobao.arthas.core.shell.command.ExitStatus;
 import com.taobao.arthas.core.shell.cli.Completion;
 import com.taobao.arthas.core.shell.cli.CompletionUtils;
 import com.taobao.arthas.core.shell.command.AnnotatedCommand;
@@ -93,7 +92,7 @@ public class SearchClassCommand extends AnnotatedCommand {
     }
 
     @Override
-    public ExitStatus process(final CommandProcess process) {
+    public void process(final CommandProcess process) {
         // TODO: null check
         RowAffect affect = new RowAffect();
         Instrumentation inst = process.session().getInstrumentation();
@@ -107,9 +106,10 @@ public class SearchClassCommand extends AnnotatedCommand {
 
         if (isDetail) {
             if (matchedClasses.size() > numberOfLimit) {
-                return ExitStatus.failure(-1, "Matching classes are too many: " + matchedClasses.size());
+                process.end(-1, "Matching classes are too many: "+matchedClasses.size());
+                return;
             }
-            for (Class<?> clazz : matchedClasses) {
+        for (Class<?> clazz : matchedClasses) {
                 ClassVO classInfo = ClassUtils.createClassInfo(clazz, isDetail, isField);
                 process.appendResult(new SearchClassModel(classInfo, isDetail, isField, expand));
             }
@@ -120,13 +120,14 @@ public class SearchClassCommand extends AnnotatedCommand {
                 public boolean handle(List<String> classNames, int segment) {
                     process.appendResult(new SearchClassModel(classNames, segment));
                     return true;
-                }
+        }
             });
         }
 
+
         affect.rCnt(matchedClasses.size());
         process.appendResult(new RowAffectModel(affect));
-        return ExitStatus.success();
+        process.end();
     }
 
     @Override

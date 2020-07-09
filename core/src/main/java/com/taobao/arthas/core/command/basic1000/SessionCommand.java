@@ -1,7 +1,6 @@
 package com.taobao.arthas.core.command.basic1000;
 
 import com.taobao.arthas.core.command.model.SessionModel;
-import com.taobao.arthas.core.shell.command.ExitStatus;
 import com.taobao.arthas.core.server.ArthasBootstrap;
 import com.taobao.arthas.core.shell.command.AnnotatedCommand;
 import com.taobao.arthas.core.shell.command.CommandProcess;
@@ -22,7 +21,7 @@ import com.alibaba.arthas.tunnel.client.TunnelClient;
 public class SessionCommand extends AnnotatedCommand {
 
     @Override
-    public ExitStatus process(CommandProcess process) {
+    public void process(CommandProcess process) {
         SessionModel result = new SessionModel();
         Session session = process.session();
         result.setJavaPid(session.getPid());
@@ -43,7 +42,7 @@ public class SessionCommand extends AnnotatedCommand {
         result.setStatUrl(statUrl);
 
         process.appendResult(result);
-        return ExitStatus.success();
+        process.end();
     }
 
 }

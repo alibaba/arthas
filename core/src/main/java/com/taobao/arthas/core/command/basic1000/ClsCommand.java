@@ -1,6 +1,5 @@
 package com.taobao.arthas.core.command.basic1000;
 
-import com.taobao.arthas.core.shell.command.ExitStatus;
 import com.taobao.arthas.core.shell.command.AnnotatedCommand;
 import com.taobao.arthas.core.shell.command.CommandProcess;
 import com.taobao.middleware.cli.annotations.Name;
@@ -11,11 +10,12 @@ import com.taobao.text.util.RenderUtil;
 @Summary("Clear the screen")
 public class ClsCommand extends AnnotatedCommand {
     @Override
-    public ExitStatus process(CommandProcess process) {
+    public void process(CommandProcess process) {
         if (!process.session().isTty()) {
-            return ExitStatus.failure(-1, "Command 'cls' is only support tty session.");
+            process.end(-1, "Command 'cls' is only support tty session.");
+            return;
         }
         process.write(RenderUtil.cls()).write("\n");
-        return ExitStatus.success();
+        process.end();
     }
 }

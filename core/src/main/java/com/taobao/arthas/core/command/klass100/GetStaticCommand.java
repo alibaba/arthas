@@ -9,7 +9,7 @@ import com.taobao.arthas.core.command.model.ClassVO;
 import com.taobao.arthas.core.command.model.GetStaticModel;
 import com.taobao.arthas.core.command.model.MessageModel;
 import com.taobao.arthas.core.command.model.RowAffectModel;
-import com.taobao.arthas.core.shell.command.ExitStatus;
+import com.taobao.arthas.core.command.model.StatusModel;
 import com.taobao.arthas.core.shell.command.AnnotatedCommand;
 import com.taobao.arthas.core.shell.command.CommandProcess;
 import com.taobao.arthas.core.util.ClassUtils;
@@ -89,69 +89,71 @@ public class GetStaticCommand extends AnnotatedCommand {
     }
 
     @Override
-    public ExitStatus process(CommandProcess process) {
+    public void process(CommandProcess process) {
+        RowAffect affect = new RowAffect();
         Instrumentation inst = process.session().getInstrumentation();
         Set<Class<?>> matchedClasses = SearchUtils.searchClassOnly(inst, classPattern, isRegEx, hashCode);
-        if (matchedClasses == null || matchedClasses.isEmpty()) {
-            return ExitStatus.failure(-1, "No class found for: " + classPattern);
-        } else if (matchedClasses.size() > 1) {
-            return processMatches(process, matchedClasses);
-        } else {
-            return processExactMatch(process, inst, matchedClasses);
+        StatusModel statusModel = new StatusModel(-1, "unknown error");
+        try {
+            if (matchedClasses == null || matchedClasses.isEmpty()) {
+                statusModel.setStatus(-1, "No class found for: " + classPattern);
+            } else if (matchedClasses.size() > 1) {
+                processMatches(process, matchedClasses, statusModel);
+            } else {
+                processExactMatch(process, affect, inst, matchedClasses, statusModel);
+            }
+        } finally {
+            process.appendResult(new RowAffectModel(affect));
+            process.end(statusModel.getStatusCode(), statusModel.getMessage());
         }
     }
 
-    private ExitStatus processExactMatch(CommandProcess process, Instrumentation inst,
-                                         Set<Class<?>> matchedClasses) {
-        RowAffect affect = new RowAffect();
+    private void processExactMatch(CommandProcess process, RowAffect affect, Instrumentation inst,
+                                   Set<Class<?>> matchedClasses, StatusModel statusModel) {
         Matcher<String> fieldNameMatcher = fieldNameMatcher();
 
         Class<?> clazz = matchedClasses.iterator().next();
 
         boolean found = false;
 
-        try {
-            for (Field field : clazz.getDeclaredFields()) {
-                if (!Modifier.isStatic(field.getModifiers()) || !fieldNameMatcher.matching(field.getName())) {
-                    continue;
-                }
-                if (!field.isAccessible()) {
-                    field.setAccessible(true);
-                }
-                try {
-                    Object value = field.get(null);
-
-                    if (!StringUtils.isEmpty(express)) {
-                        value = ExpressFactory.threadLocalExpress(value).get(express);
-                    }
-
-                    process.appendResult(new GetStaticModel(field.getName(), value, expand));
-
-                    affect.rCnt(1);
-                } catch (IllegalAccessException e) {
-                    logger.warn("getstatic: failed to get static value, class: {}, field: {} ", clazz, field.getName(), e);
-                    process.appendResult(new MessageModel("Failed to get static, exception message: " + e.getMessage()
-                                  + ", please check $HOME/logs/arthas/arthas.log for more details. "));
-                } catch (ExpressException e) {
-                    logger.warn("getstatic: failed to get express value, class: {}, field: {}, express: {}", clazz, field.getName(), express, e);
-                    process.appendResult(new MessageModel("Failed to get static, exception message: " + e.getMessage()
-                                  + ", please check $HOME/logs/arthas/arthas.log for more details. "));
-                } finally {
-                    found = true;
-                }
+        for (Field field : clazz.getDeclaredFields()) {
+            if (!Modifier.isStatic(field.getModifiers()) || !fieldNameMatcher.matching(field.getName())) {
+                continue;
             }
-
-            if (!found) {
-                return ExitStatus.failure(-1, "getstatic: no matched static field was found");
-            } else {
-                return ExitStatus.success();
+            if (!field.isAccessible()) {
+                field.setAccessible(true);
             }
-        } finally {
-            process.appendResult(new RowAffectModel(affect));
+            try {
+                Object value = field.get(null);
+
+                if (!StringUtils.isEmpty(express)) {
+                    value = ExpressFactory.threadLocalExpress(value).get(express);
+                }
+
+                process.appendResult(new GetStaticModel(field.getName(), value, expand));
+
+                affect.rCnt(1);
+            } catch (IllegalAccessException e) {
+                logger.warn("getstatic: failed to get static value, class: {}, field: {} ", clazz, field.getName(), e);
+                process.appendResult(new MessageModel("Failed to get static, exception message: " + e.getMessage()
+                              + ", please check $HOME/logs/arthas/arthas.log for more details. "));
+            } catch (ExpressException e) {
+                logger.warn("getstatic: failed to get express value, class: {}, field: {}, express: {}", clazz, field.getName(), express, e);
+                process.appendResult(new MessageModel("Failed to get static, exception message: " + e.getMessage()
+                              + ", please check $HOME/logs/arthas/arthas.log for more details. "));
+            } finally {
+                found = true;
+            }
+        }
+
+        if (!found) {
+            statusModel.setStatus(-1, "getstatic: no matched static field was found");
+        } else {
+            statusModel.setStatus(0, null);
         }
     }
 
-    private ExitStatus processMatches(CommandProcess process, Set<Class<?>> matchedClasses) {
+    private void processMatches(CommandProcess process, Set<Class<?>> matchedClasses, StatusModel statusModel) {
 
 //        Element usage = new LabelElement("getstatic -c <hashcode> " + classPattern + " " + fieldPattern).style(
 //                Decoration.bold.fg(Color.blue));
@@ -162,7 +164,7 @@ public class GetStaticCommand extends AnnotatedCommand {
 
         List<ClassVO> matchedClassVOs = ClassUtils.createClassVOList(matchedClasses);
         process.appendResult(new GetStaticModel(matchedClassVOs));
-        return ExitStatus.failure(-1, "Found more than one class for: " + classPattern + ", Please use: "+usage);
+        statusModel.setStatus(-1, "Found more than one class for: " + classPattern + ", Please use: "+usage);
     }
 
     private Matcher<String> fieldNameMatcher() {

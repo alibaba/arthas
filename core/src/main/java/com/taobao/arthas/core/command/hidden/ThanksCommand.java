@@ -1,6 +1,5 @@
 package com.taobao.arthas.core.command.hidden;
 
-import com.taobao.arthas.core.shell.command.ExitStatus;
 import com.taobao.arthas.core.shell.command.AnnotatedCommand;
 import com.taobao.arthas.core.shell.command.CommandProcess;
 import com.taobao.arthas.core.util.ArthasBanner;
@@ -19,8 +18,7 @@ import com.taobao.middleware.cli.annotations.Summary;
 @Hidden
 public class ThanksCommand extends AnnotatedCommand {
     @Override
-    public ExitStatus process(CommandProcess process) {
-        process.write(ArthasBanner.credit()).write("\n");
-        return ExitStatus.success();
+    public void process(CommandProcess process) {
+        process.write(ArthasBanner.credit()).write("\n").end();
     }
 }

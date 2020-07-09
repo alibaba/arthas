@@ -31,9 +31,8 @@ public abstract class AnnotatedCommand {
      * Process the command, when the command is done processing it should call the {@link CommandProcess#end()} method.
      *
      * @param process the command process
-     * @return statusModel of command execute
      */
-    public abstract ExitStatus process(CommandProcess process);
+    public abstract void process(CommandProcess process);
 
     /**
      * Perform command completion, when the command is done completing it should call {@link Completion#complete(List)}

@@ -12,7 +12,6 @@ import com.taobao.arthas.core.command.Constants;
 import com.taobao.arthas.core.command.model.SearchMethodModel;
 import com.taobao.arthas.core.command.model.MethodVO;
 import com.taobao.arthas.core.command.model.RowAffectModel;
-import com.taobao.arthas.core.shell.command.ExitStatus;
 import com.taobao.arthas.core.shell.cli.Completion;
 import com.taobao.arthas.core.shell.cli.CompletionUtils;
 import com.taobao.arthas.core.shell.command.AnnotatedCommand;
@@ -92,7 +91,7 @@ public class SearchMethodCommand extends AnnotatedCommand {
     }
 
     @Override
-    public ExitStatus process(CommandProcess process) {
+    public void process(CommandProcess process) {
         RowAffect affect = new RowAffect();
 
         Instrumentation inst = process.session().getInstrumentation();
@@ -100,41 +99,40 @@ public class SearchMethodCommand extends AnnotatedCommand {
         Set<Class<?>> matchedClasses = SearchUtils.searchClass(inst, classPattern, isRegEx, hashCode);
 
         if (matchedClasses.size() > numberOfLimit) {
-            return ExitStatus.failure(-1, "Matching classes are too many: "+matchedClasses.size());
+            process.end(-1, "Matching classes are too many: "+matchedClasses.size());
+            return;
         }
-        try {
-            for (Class<?> clazz : matchedClasses) {
-                try {
-                    for (Constructor<?> constructor : clazz.getDeclaredConstructors()) {
-                        if (!methodNameMatcher.matching("<init>")) {
-                            continue;
-                        }
-
-                        MethodVO methodInfo = ClassUtils.createMethodInfo(constructor, clazz, isDetail);
-                        process.appendResult(new SearchMethodModel(methodInfo, isDetail));
-                        affect.rCnt(1);
+        for (Class<?> clazz : matchedClasses) {
+            try {
+                for (Constructor<?> constructor : clazz.getDeclaredConstructors()) {
+                    if (!methodNameMatcher.matching("<init>")) {
+                        continue;
                     }
 
-                    for (Method method : clazz.getDeclaredMethods()) {
-                        if (!methodNameMatcher.matching(method.getName())) {
-                            continue;
-                        }
-                        MethodVO methodInfo = ClassUtils.createMethodInfo(method, clazz, isDetail);
-                        process.appendResult(new SearchMethodModel(methodInfo, isDetail));
-                        affect.rCnt(1);
-                    }
-                } catch (Error e) {
-                    //print failed className
-                    String msg = String.format("process class failed: %s, error: %s", clazz.getName(), e.toString());
-                    logger.error(msg, e);
-                    return ExitStatus.failure(1, msg);
+                    MethodVO methodInfo = ClassUtils.createMethodInfo(constructor, clazz, isDetail);
+                    process.appendResult(new SearchMethodModel(methodInfo, isDetail));
+                    affect.rCnt(1);
                 }
-            }
 
-            return ExitStatus.success();
-        } finally {
-            process.appendResult(new RowAffectModel(affect));
+                for (Method method : clazz.getDeclaredMethods()) {
+                    if (!methodNameMatcher.matching(method.getName())) {
+                        continue;
+                    }
+                    MethodVO methodInfo = ClassUtils.createMethodInfo(method, clazz, isDetail);
+                    process.appendResult(new SearchMethodModel(methodInfo, isDetail));
+                    affect.rCnt(1);
+                }
+            } catch (Error e) {
+                //print failed className
+                String msg = String.format("process class failed: %s, error: %s", clazz.getName(), e.toString());
+                logger.error(msg, e);
+                process.end(1, msg);
+                return;
+            }
         }
+
+        process.appendResult(new RowAffectModel(affect));
+        process.end();
     }
 
     private Matcher<String> methodNameMatcher() {

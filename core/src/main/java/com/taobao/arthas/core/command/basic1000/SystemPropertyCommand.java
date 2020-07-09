@@ -2,7 +2,7 @@ package com.taobao.arthas.core.command.basic1000;
 
 import com.taobao.arthas.core.command.Constants;
 import com.taobao.arthas.core.command.model.MessageModel;
-import com.taobao.arthas.core.shell.command.ExitStatus;
+import com.taobao.arthas.core.command.model.StatusModel;
 import com.taobao.arthas.core.command.model.SystemPropertyModel;
 import com.taobao.arthas.core.shell.cli.Completion;
 import com.taobao.arthas.core.shell.cli.CompletionUtils;
@@ -39,7 +39,7 @@ public class SystemPropertyCommand extends AnnotatedCommand {
     }
 
     @Override
-    public ExitStatus process(CommandProcess process) {
+    public void process(CommandProcess process) {
         try {
 
             if (StringUtils.isBlank(propertyName) && StringUtils.isBlank(propertyValue)) {
@@ -49,7 +49,8 @@ public class SystemPropertyCommand extends AnnotatedCommand {
                 // view the specified system property
                 String value = System.getProperty(propertyName);
                 if (value == null) {
-                    return ExitStatus.failure(1, "There is no property with the key " + propertyName);
+                    process.end(1, "There is no property with the key " + propertyName);
+                    return;
                 } else {
                     process.appendResult(new SystemPropertyModel(propertyName, value));
                 }
@@ -59,9 +60,10 @@ public class SystemPropertyCommand extends AnnotatedCommand {
                 process.appendResult(new MessageModel("Successfully changed the system property."));
                 process.appendResult(new SystemPropertyModel(propertyName, System.getProperty(propertyName)));
             }
-            return ExitStatus.success();
         } catch (Throwable t) {
-            return ExitStatus.failure(-1, "Error during setting system property: " + t.getMessage());
+            process.end(-1, "Error during setting system property: " + t.getMessage());
+        } finally {
+            process.end();
         }
     }
 

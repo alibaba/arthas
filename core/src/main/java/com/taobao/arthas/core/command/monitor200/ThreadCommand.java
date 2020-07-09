@@ -1,7 +1,6 @@
 package com.taobao.arthas.core.command.monitor200;
 
 import com.taobao.arthas.core.command.Constants;
-import com.taobao.arthas.core.shell.command.ExitStatus;
 import com.taobao.arthas.core.shell.command.AnnotatedCommand;
 import com.taobao.arthas.core.shell.command.CommandProcess;
 import com.taobao.arthas.core.util.ArrayUtils;
@@ -106,7 +105,7 @@ public class ThreadCommand extends AnnotatedCommand {
     }
 
     @Override
-    public ExitStatus process(CommandProcess process) {
+    public void process(CommandProcess process) {
         Affect affect = new RowAffect();
         int status = 0;
         try {
@@ -123,8 +122,6 @@ public class ThreadCommand extends AnnotatedCommand {
             process.write(affect + "\n");
             process.end(status);
         }
-
-        return ExitStatus.IGNORED_STATUS;
     }
 
     private int processAllThreads(CommandProcess process) {

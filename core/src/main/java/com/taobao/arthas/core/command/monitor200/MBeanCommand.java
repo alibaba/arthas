@@ -3,7 +3,6 @@ package com.taobao.arthas.core.command.monitor200;
 import com.alibaba.arthas.deps.org.slf4j.Logger;
 import com.alibaba.arthas.deps.org.slf4j.LoggerFactory;
 import com.taobao.arthas.core.command.Constants;
-import com.taobao.arthas.core.shell.command.ExitStatus;
 import com.taobao.arthas.core.shell.cli.CliToken;
 import com.taobao.arthas.core.shell.cli.Completion;
 import com.taobao.arthas.core.shell.cli.CompletionUtils;
@@ -141,7 +140,7 @@ public class MBeanCommand extends AnnotatedCommand {
     }
 
     @Override
-    public ExitStatus process(CommandProcess process) {
+    public void process(CommandProcess process) {
         if (StringUtils.isEmpty(getName())) {
             listMBean(process);
         } else if (isMetaData()) {
@@ -149,8 +148,6 @@ public class MBeanCommand extends AnnotatedCommand {
         } else {
             listAttribute(process);
         }
-
-        return ExitStatus.IGNORED_STATUS;
     }
 
     private void listMBean(CommandProcess process) {

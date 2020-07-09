@@ -3,7 +3,6 @@ package com.taobao.arthas.core.command.basic1000;
 import com.taobao.arthas.core.advisor.Enhancer;
 import com.taobao.arthas.core.command.Constants;
 import com.taobao.arthas.core.command.model.ResetModel;
-import com.taobao.arthas.core.shell.command.ExitStatus;
 import com.taobao.arthas.core.shell.command.AnnotatedCommand;
 import com.taobao.arthas.core.shell.command.CommandProcess;
 import com.taobao.arthas.core.util.matcher.Matcher;
@@ -46,18 +45,16 @@ public class ResetCommand extends AnnotatedCommand {
     }
 
     @Override
-    public ExitStatus process(CommandProcess process) {
+    public void process(CommandProcess process) {
         Instrumentation inst = process.session().getInstrumentation();
         Matcher matcher = SearchUtils.classNameMatcher(classPattern, isRegEx);
         try {
             EnhancerAffect enhancerAffect = Enhancer.reset(inst, matcher);
             process.appendResult(new ResetModel(enhancerAffect));
-            return ExitStatus.success();
         } catch (UnmodifiableClassException e) {
             // ignore
-            return ExitStatus.failure(1, "unmodifiable class exception");
-        } catch (Throwable e) {
-            return ExitStatus.failure(-1, "process failure: "+e.toString());
+        } finally {
+            process.end();
         }
     }
 }

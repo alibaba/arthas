@@ -1,6 +1,5 @@
 package com.taobao.arthas.core.shell.command.impl;
 
-import com.taobao.arthas.core.shell.command.ExitStatus;
 import com.taobao.arthas.core.shell.cli.Completion;
 import com.taobao.arthas.core.shell.command.AnnotatedCommand;
 import com.taobao.arthas.core.shell.command.Command;
@@ -80,18 +79,7 @@ public class AnnotatedCommandImpl extends Command {
             return;
         }
         CLIConfigurator.inject(process.commandLine(), instance);
-        ExitStatus status = instance.process(process);
-        if (status != null) {
-            if (ExitStatus.isIgnored(status)) {
-                // TODO 暂时兼容老代码，改造完毕后不能返回IGNORED_STATUS状态
-
-            } else if (!ExitStatus.isPending(status)) {
-                process.end(status.getStatusCode(), status.getMessage());
-            }
-        } else {
-            //代码处理不正确，不应该返回null状态
-            throw new IllegalStateException("Command exit status is null");
-        }
+        instance.process(process);
         UserStatUtil.arthasUsageSuccess(name(), process.args());
     }
 

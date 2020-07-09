@@ -14,7 +14,6 @@ import com.taobao.arthas.compiler.DynamicCompiler;
 import com.taobao.arthas.core.command.Constants;
 import com.taobao.arthas.core.command.model.MemoryCompilerModel;
 import com.taobao.arthas.core.command.model.RowAffectModel;
-import com.taobao.arthas.core.shell.command.ExitStatus;
 import com.taobao.arthas.core.shell.cli.Completion;
 import com.taobao.arthas.core.shell.cli.CompletionUtils;
 import com.taobao.arthas.core.shell.command.AnnotatedCommand;
@@ -73,7 +72,8 @@ public class MemoryCompilerCommand extends AnnotatedCommand {
     }
 
     @Override
-    public ExitStatus process(final CommandProcess process) {
+    public void process(final CommandProcess process) {
+        int exitCode = -1;
         RowAffect affect = new RowAffect();
 
         try {
@@ -84,7 +84,9 @@ public class MemoryCompilerCommand extends AnnotatedCommand {
             } else {
                 classloader = ClassLoaderUtils.getClassLoader(inst, hashCode);
                 if (classloader == null) {
-                    return ExitStatus.failure(-1, "Can not find classloader with hashCode: " + hashCode + ".");
+                    exitCode = -1;
+                    process.end(-1, "Can not find classloader with hashCode: " + hashCode + ".");
+                    return;
                 }
             }
 
@@ -121,13 +123,15 @@ public class MemoryCompilerCommand extends AnnotatedCommand {
                 affect.rCnt(1);
             }
             process.appendResult(new MemoryCompilerModel(files));
-            return ExitStatus.success();
+            exitCode = 0;
         } catch (Throwable e) {
             logger.warn("Memory compiler error", e);
-            return ExitStatus.failure(-1, "Memory compiler error, exception message: " + e.getMessage()
+            process.end(-1, "Memory compiler error, exception message: " + e.getMessage()
                             + ", please check $HOME/logs/arthas/arthas.log for more details.");
+            exitCode = -1;
         } finally {
             process.appendResult(new RowAffectModel(affect));
+            process.end(exitCode);
         }
     }
 
