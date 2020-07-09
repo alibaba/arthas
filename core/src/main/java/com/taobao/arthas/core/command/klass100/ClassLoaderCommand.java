@@ -64,7 +64,7 @@ public class ClassLoaderCommand extends AnnotatedCommand {
 
     private String loadClass = null;
 
-    private AtomicBoolean isInterrupted = new AtomicBoolean(false);
+    private volatile boolean isInterrupted = false;
 
     @Option(shortName = "t", longName = "tree", flag = true)
     @Description("Display ClassLoader tree")
@@ -111,7 +111,7 @@ public class ClassLoaderCommand extends AnnotatedCommand {
     @Override
     public void process(CommandProcess process) {
         // ctrl-C support
-        process.interruptHandler(new ClassLoaderInterruptHandler(process, isInterrupted));
+        process.interruptHandler(new ClassLoaderInterruptHandler(this));
 
         Instrumentation inst = process.session().getInstrumentation();
         if (all) {
@@ -247,8 +247,8 @@ public class ClassLoaderCommand extends AnnotatedCommand {
 
                 } catch (Throwable e) {
                     logger.warn("load class error, class: {}", this.loadClass, e);
-                    process.end(-1, "load class error, class:"+this.loadClass+", error: "+e.toString());
-                    break;
+                    process.end(-1, "load class error, class: "+this.loadClass+", error: "+e.toString());
+                    return;
                 }
             }
         }
@@ -263,14 +263,6 @@ public class ClassLoaderCommand extends AnnotatedCommand {
         }
         process.appendResult(new RowAffectModel(affect));
         process.end();
-    }
-
-    private boolean checkInterrupted(CommandProcess process) {
-        if (isInterrupted.get()) {
-            process.end(1, "Interrupted by user");
-            return true;
-        }
-        return false;
     }
 
     /**
@@ -322,31 +314,43 @@ public class ClassLoaderCommand extends AnnotatedCommand {
             classSet.add(clazz);
         }
 
-        //convert to vo
+        // output bootstrapClassSet
         int pageSize = 256;
-        processClassSet(process, ClassUtils.createClassLoaderVO(null), bootstrapClassSet, pageSize);
-        affect.rCnt(bootstrapClassSet.size());
+        processClassSet(process, ClassUtils.createClassLoaderVO(null), bootstrapClassSet, pageSize, affect);
 
+        // output other classSet
         for (Entry<ClassLoader, SortedSet<Class>> entry : classLoaderClassMap.entrySet()) {
             if (checkInterrupted(process)) {
                 return;
             }
             ClassLoader classLoader = entry.getKey();
             SortedSet<Class> classSet = entry.getValue();
-            processClassSet(process, ClassUtils.createClassLoaderVO(classLoader), classSet, pageSize);
-            affect.rCnt(classSet.size());
+            processClassSet(process, ClassUtils.createClassLoaderVO(classLoader), classSet, pageSize, affect);
         }
-            }
+    }
 
-    private void processClassSet(final CommandProcess process, final ClassLoaderVO classLoaderVO, Collection<Class> classes, int pageSize) {
-
+    private void processClassSet(final CommandProcess process, final ClassLoaderVO classLoaderVO, Collection<Class> classes, int pageSize, final RowAffect affect) {
+        //分批输出classNames, Ctrl+C可以中断执行
         ResultUtils.processClassNames(classes, pageSize, new ResultUtils.PaginationHandler<List<String>>() {
             @Override
             public boolean handle(List<String> classNames, int segment) {
                 process.appendResult(new ClassLoaderModel().setClassSet(new ClassSetVO(classLoaderVO, classNames, segment)));
+                affect.rCnt(classNames.size());
                 return !checkInterrupted(process);
-        }
+            }
         });
+    }
+
+    private boolean checkInterrupted(CommandProcess process) {
+        if (!process.isRunning()) {
+            return true;
+        }
+        if(isInterrupted){
+            process.end(-1, "Processing has been interrupted");
+            return true;
+        } else {
+            return false;
+        }
     }
 
     private static List<String> getClassLoaderUrls(ClassLoader classLoader) {
@@ -377,8 +381,7 @@ public class ClassLoaderCommand extends AnnotatedCommand {
 
         for (ClassLoaderVO classLoaderVO : rootClassLoaders) {
             buildTree(classLoaderVO, parentNotNullClassLoaders);
-    }
-
+        }
         return rootClassLoaders;
     }
 
@@ -595,17 +598,16 @@ public class ClassLoaderCommand extends AnnotatedCommand {
     }
 
     private class ClassLoaderInterruptHandler implements Handler<Void> {
-        private final CommandProcess process;
-        private final AtomicBoolean isInterrupted;
 
-        public ClassLoaderInterruptHandler(CommandProcess process, AtomicBoolean isInterrupted) {
-            this.process = process;
-            this.isInterrupted = isInterrupted;
+        private ClassLoaderCommand command;
+
+        public ClassLoaderInterruptHandler(ClassLoaderCommand command) {
+            this.command = command;
         }
 
         @Override
         public void handle(Void event) {
-            isInterrupted.set(true);
+            command.isInterrupted = true;
         }
     }
 }
