@@ -98,7 +98,7 @@ public class SearchMethodCommand extends AnnotatedCommand {
         Matcher<String> methodNameMatcher = methodNameMatcher();
         Set<Class<?>> matchedClasses = SearchUtils.searchClass(inst, classPattern, isRegEx, hashCode);
 
-        if (matchedClasses.size() > numberOfLimit) {
+        if (numberOfLimit > 0 && matchedClasses.size() > numberOfLimit) {
             process.end(-1, "Matching classes are too many: "+matchedClasses.size());
             return;
         }
