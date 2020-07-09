@@ -96,10 +96,10 @@ public class SearchClassCommand extends AnnotatedCommand {
         // TODO: null check
         RowAffect affect = new RowAffect();
         Instrumentation inst = process.session().getInstrumentation();
-        List<Class> matchedClasses = new ArrayList<Class>(SearchUtils.searchClass(inst, classPattern, isRegEx, hashCode));
-        Collections.sort(matchedClasses, new Comparator<Class>() {
+        List<Class<?>> matchedClasses = new ArrayList<Class<?>>(SearchUtils.searchClass(inst, classPattern, isRegEx, hashCode));
+        Collections.sort(matchedClasses, new Comparator<Class<?>>() {
             @Override
-            public int compare(Class c1, Class c2) {
+            public int compare(Class<?> c1, Class<?> c2) {
                 return StringUtils.classname(c1).compareTo(StringUtils.classname(c2));
             }
         });

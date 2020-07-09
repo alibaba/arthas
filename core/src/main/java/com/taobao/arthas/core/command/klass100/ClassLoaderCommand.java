@@ -278,7 +278,7 @@ public class ClassLoaderCommand extends AnnotatedCommand {
             hashCodeInt = Integer.valueOf(hashCode, 16);
         }
 
-        SortedSet<Class> bootstrapClassSet = new TreeSet<Class>(new Comparator<Class>() {
+        SortedSet<Class<?>> bootstrapClassSet = new TreeSet<Class<?>>(new Comparator<Class>() {
             @Override
             public int compare(Class o1, Class o2) {
                 return o1.getName().compareTo(o2.getName());
@@ -286,7 +286,7 @@ public class ClassLoaderCommand extends AnnotatedCommand {
         });
 
         Class[] allLoadedClasses = inst.getAllLoadedClasses();
-        Map<ClassLoader, SortedSet<Class>> classLoaderClassMap = new HashMap<ClassLoader, SortedSet<Class>>();
+        Map<ClassLoader, SortedSet<Class<?>>> classLoaderClassMap = new HashMap<ClassLoader, SortedSet<Class<?>>>();
         for (Class clazz : allLoadedClasses) {
             ClassLoader classLoader = clazz.getClassLoader();
             // Class loaded by BootstrapClassLoader
@@ -301,11 +301,11 @@ public class ClassLoaderCommand extends AnnotatedCommand {
                 continue;
             }
 
-            SortedSet<Class> classSet = classLoaderClassMap.get(classLoader);
+            SortedSet<Class<?>> classSet = classLoaderClassMap.get(classLoader);
             if (classSet == null) {
-                classSet = new TreeSet<Class>(new Comparator<Class>() {
+                classSet = new TreeSet<Class<?>>(new Comparator<Class<?>>() {
                     @Override
-                    public int compare(Class o1, Class o2) {
+                    public int compare(Class<?> o1, Class<?> o2) {
                         return o1.getName().compareTo(o2.getName());
                     }
                 });
@@ -319,17 +319,17 @@ public class ClassLoaderCommand extends AnnotatedCommand {
         processClassSet(process, ClassUtils.createClassLoaderVO(null), bootstrapClassSet, pageSize, affect);
 
         // output other classSet
-        for (Entry<ClassLoader, SortedSet<Class>> entry : classLoaderClassMap.entrySet()) {
+        for (Entry<ClassLoader, SortedSet<Class<?>>> entry : classLoaderClassMap.entrySet()) {
             if (checkInterrupted(process)) {
                 return;
             }
             ClassLoader classLoader = entry.getKey();
-            SortedSet<Class> classSet = entry.getValue();
+            SortedSet<Class<?>> classSet = entry.getValue();
             processClassSet(process, ClassUtils.createClassLoaderVO(classLoader), classSet, pageSize, affect);
         }
     }
 
-    private void processClassSet(final CommandProcess process, final ClassLoaderVO classLoaderVO, Collection<Class> classes, int pageSize, final RowAffect affect) {
+    private void processClassSet(final CommandProcess process, final ClassLoaderVO classLoaderVO, Collection<Class<?>> classes, int pageSize, final RowAffect affect) {
         //分批输出classNames, Ctrl+C可以中断执行
         ResultUtils.processClassNames(classes, pageSize, new ResultUtils.PaginationHandler<List<String>>() {
             @Override

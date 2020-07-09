@@ -16,7 +16,7 @@ public class ResultUtils {
      * @param pageSize
      * @param handler
      */
-    public static void processClassNames(Collection<Class> classes, int pageSize, PaginationHandler<List<String>> handler) {
+    public static void processClassNames(Collection<Class<?>> classes, int pageSize, PaginationHandler<List<String>> handler) {
         List<String> classNames = new ArrayList<String>(pageSize);
         int segment = 0;
         for (Class aClass : classes) {
