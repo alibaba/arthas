@@ -163,9 +163,6 @@ public class JadCommand extends AnnotatedCommand {
     }
 
     private ExitStatus processMatches(CommandProcess process, Set<Class<?>> matchedClasses) {
-        //Element usage = new LabelElement("jad -c <hashcode> " + classPattern).style(Decoration.bold.fg(Color.blue));
-        //process.write("\n Found more than one class for: " + classPattern + ", Please use "
-        //        + RenderUtil.render(usage, process.width()));
 
         String usage = "jad -c <hashcode> " + classPattern;
         String msg = " Found more than one class for: " + classPattern + ", Please use " + usage;

@@ -19,11 +19,7 @@ public class ClassLoaderVO {
 
     public void addChild(ClassLoaderVO child){
         if (this.children == null){
-            synchronized (this){
-                if (this.children == null) {
-                    this.children = new ArrayList<ClassLoaderVO>();
-                }
-            }
+            this.children = new ArrayList<ClassLoaderVO>();
         }
         this.children.add(child);
     }
