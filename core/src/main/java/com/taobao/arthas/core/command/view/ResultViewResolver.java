@@ -29,6 +29,8 @@ public class ResultViewResolver {
      */
     private void initResultViews() {
         try {
+            registerView(RowAffectView.class);
+
             //basic1000
             registerView(StatusView.class);
             registerView(VersionView.class);
