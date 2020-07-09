@@ -32,6 +32,8 @@ All supported configuration: [Reference](https://github.com/alibaba/arthas/blob/
 
 ### View Endpoint Information
 
+> Need to configure spring boot to expose endpoint: [Reference](https://docs.spring.io/spring-boot/docs/current/reference/html/production-ready-features.html#production-ready-endpoints).
+
 Assuming the endpoint port is 8080, it can be viewed via the following url.
 
 http://localhost:8080/actuator/arthas
