@@ -32,6 +32,8 @@ arthas.tunnel-server=ws://47.75.156.201:7777/ws
 
 ### 查看Endpoint信息
 
+> 需要配置spring boot暴露endpoint：[参考](https://docs.spring.io/spring-boot/docs/current/reference/html/production-ready-features.html#production-ready-endpoints)
+
 假定endpoint端口是 8080，则通过下面url可以查看：
 
 http://localhost:8080/actuator/arthas

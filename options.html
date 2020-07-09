@@ -242,7 +242,7 @@
 <tr>
 <td>dump</td>
 <td>false</td>
-<td>是否支持被增强了的类dump到外部文件中，如果打开开关，class文件会被dump到<code>/${application dir}/arthas-class-dump/</code>目录下，具体位置详见控制台输出</td>
+<td>是否支持被增强了的类dump到外部文件中，如果打开开关，class文件会被dump到<code>/${application working dir}/arthas-class-dump/</code>目录下，具体位置详见控制台输出</td>
 </tr>
 <tr>
 <td>batch-re-transform</td>
@@ -263,11 +263,6 @@
 <td>support-default-method</td>
 <td>true</td>
 <td>是否支持匹配到default method，默认会查找interface，匹配里面的default method。参考 <a href="https://github.com/alibaba/arthas/issues/1105">#1105</a></td>
-</tr>
-<tr>
-<td>debug-for-asm</td>
-<td>false</td>
-<td>打印ASM相关的调试信息</td>
 </tr>
 <tr>
 <td>save-result</td>
@@ -308,9 +303,6 @@
         ean   -class              include sub class   ass when matching class.
                                   when class matchin
                                   g
- 1      bool  debug-for-a  false  Option to print DE  This option enables to print DEBUG me
-        ean   sm                  BUG message if ASM  ssage of ASM for each method invocati
-                                   is involved        on.
  1      bool  save-result  false  Option to print co  This option enables to save each comm
         ean                       mmand&#x27;s result to   and&#x27;s result to log file, which path
                                   log file            is ${user.home}/logs/arthas-cache/res
