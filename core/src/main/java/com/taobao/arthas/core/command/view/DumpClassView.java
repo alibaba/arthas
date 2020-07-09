@@ -1,7 +1,7 @@
 package com.taobao.arthas.core.command.view;
 
-import com.taobao.arthas.core.command.model.ClassVO;
 import com.taobao.arthas.core.command.model.DumpClassModel;
+import com.taobao.arthas.core.command.model.DumpClassVO;
 import com.taobao.arthas.core.shell.command.CommandProcess;
 import com.taobao.arthas.core.util.ClassUtils;
 import com.taobao.arthas.core.util.TypeRenderUtils;
@@ -23,8 +23,8 @@ public class DumpClassView extends ResultView<DumpClassModel> {
 
     @Override
     public void draw(CommandProcess process, DumpClassModel result) {
-        if (result.getDumpedClassFiles() != null) {
-            drawDumpedClassFiles(process, result.getDumpedClassFiles());
+        if (result.getDumpedClasses() != null) {
+            drawDumpedClasses(process, result.getDumpedClasses());
 
         } else if (result.getMatchedClasses() != null) {
             Element table = ClassUtils.renderMatchedClasses(result.getMatchedClasses());
@@ -32,13 +32,13 @@ public class DumpClassView extends ResultView<DumpClassModel> {
         }
     }
 
-    private void drawDumpedClassFiles(CommandProcess process, List<ClassVO> classFiles) {
+    private void drawDumpedClasses(CommandProcess process, List<DumpClassVO> classVOs) {
         TableElement table = new TableElement().leftCellPadding(1).rightCellPadding(1);
         table.row(new LabelElement("HASHCODE").style(Decoration.bold.bold()),
                 new LabelElement("CLASSLOADER").style(Decoration.bold.bold()),
                 new LabelElement("LOCATION").style(Decoration.bold.bold()));
 
-        for (ClassVO clazz : classFiles) {
+        for (DumpClassVO clazz : classVOs) {
             table.row(label(clazz.getClassLoaderHash()).style(Decoration.bold.fg(Color.red)),
                     TypeRenderUtils.drawClassLoader(clazz),
                     label(clazz.getLocation()).style(Decoration.bold.fg(Color.red)));

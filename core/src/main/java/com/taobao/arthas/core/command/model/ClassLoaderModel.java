@@ -12,7 +12,7 @@ public class ClassLoaderModel extends ResultModel {
 
     private ClassSetVO classSet;
     private List<String> resources;
-    private ClassVO loadClass;
+    private ClassDetailVO loadClass;
     private List<String> urls;
     //classloader -l -t
     private List<ClassLoaderVO> classLoaders;
@@ -46,11 +46,11 @@ public class ClassLoaderModel extends ResultModel {
         return this;
     }
 
-    public ClassVO getLoadClass() {
+    public ClassDetailVO getLoadClass() {
         return loadClass;
     }
 
-    public ClassLoaderModel setLoadClass(ClassVO loadClass) {
+    public ClassLoaderModel setLoadClass(ClassDetailVO loadClass) {
         this.loadClass = loadClass;
         return this;
     }

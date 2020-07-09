@@ -3,10 +3,10 @@ package com.taobao.arthas.core.command.klass100;
 import com.alibaba.arthas.deps.org.slf4j.Logger;
 import com.alibaba.arthas.deps.org.slf4j.LoggerFactory;
 import com.taobao.arthas.core.command.Constants;
+import com.taobao.arthas.core.command.model.ClassDetailVO;
 import com.taobao.arthas.core.command.model.ClassLoaderModel;
 import com.taobao.arthas.core.command.model.ClassLoaderVO;
 import com.taobao.arthas.core.command.model.ClassSetVO;
-import com.taobao.arthas.core.command.model.ClassVO;
 import com.taobao.arthas.core.command.model.MessageModel;
 import com.taobao.arthas.core.command.model.RowAffectModel;
 import com.taobao.arthas.core.shell.command.AnnotatedCommand;
@@ -38,7 +38,6 @@ import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeMap;
 import java.util.TreeSet;
-import java.util.concurrent.atomic.AtomicBoolean;
 
 @Name("classloader")
 @Summary("Show classloader info")
@@ -242,7 +241,7 @@ public class ClassLoaderCommand extends AnnotatedCommand {
                 try {
                     Class<?> clazz = cl.loadClass(this.loadClass);
                     process.appendResult(new MessageModel("load class success."));
-                    ClassVO classInfo = ClassUtils.createClassInfo(clazz, true, false);
+                    ClassDetailVO classInfo = ClassUtils.createClassInfo(clazz, false);
                     process.appendResult(new ClassLoaderModel().setLoadClass(classInfo));
 
                 } catch (Throwable e) {

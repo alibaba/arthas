@@ -1,5 +1,6 @@
 package com.taobao.arthas.core.util;
 
+import com.taobao.arthas.core.command.model.ClassDetailVO;
 import com.taobao.arthas.core.command.model.ClassVO;
 import com.taobao.arthas.core.command.model.FieldVO;
 import com.taobao.arthas.core.view.ObjectView;
@@ -13,8 +14,6 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.LinkedList;
 import java.util.List;
 
 import static com.taobao.text.ui.Element.label;
@@ -56,7 +55,7 @@ public class TypeRenderUtils {
         return StringUtils.concat("\n", exceptionTypes);
     }
 
-    public static Element drawSuperClass(ClassVO clazz) {
+    public static Element drawSuperClass(ClassDetailVO clazz) {
         return drawTree(clazz.getSuperClass());
     }
 
@@ -76,7 +75,7 @@ public class TypeRenderUtils {
         return root;
     }
 
-    public static Element drawField(ClassVO clazz, Integer expand) {
+    public static Element drawField(ClassDetailVO clazz, Integer expand) {
         TableElement fieldsTable = new TableElement(1).leftCellPadding(0).rightCellPadding(0);
         FieldVO[] fields = clazz.getFields();
         if (fields == null || fields.length == 0) {

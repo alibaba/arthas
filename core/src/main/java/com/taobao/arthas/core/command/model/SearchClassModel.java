@@ -8,7 +8,7 @@ import java.util.List;
  * @author gongdewei 2020/04/08
  */
 public class SearchClassModel extends ResultModel {
-    private ClassVO classInfo;
+    private ClassDetailVO classInfo;
     private boolean withField;
     private boolean detail;
     private Integer expand;
@@ -18,7 +18,7 @@ public class SearchClassModel extends ResultModel {
     public SearchClassModel() {
     }
 
-    public SearchClassModel(ClassVO classInfo, boolean detail, boolean withField, Integer expand) {
+    public SearchClassModel(ClassDetailVO classInfo, boolean detail, boolean withField, Integer expand) {
         this.classInfo = classInfo;
         this.detail = detail;
         this.withField = withField;
@@ -35,11 +35,11 @@ public class SearchClassModel extends ResultModel {
         return "sc";
     }
 
-    public ClassVO getClassInfo() {
+    public ClassDetailVO getClassInfo() {
         return classInfo;
     }
 
-    public void setClassInfo(ClassVO classInfo) {
+    public void setClassInfo(ClassDetailVO classInfo) {
         this.classInfo = classInfo;
     }
 

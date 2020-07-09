@@ -8,7 +8,7 @@ import java.util.List;
  */
 public class DumpClassModel extends ResultModel {
 
-    private List<ClassVO> dumpedClassFiles;
+    private List<DumpClassVO> dumpedClasses;
 
     private Collection<ClassVO> matchedClasses;
 
@@ -20,12 +20,12 @@ public class DumpClassModel extends ResultModel {
         return "dump";
     }
 
-    public List<ClassVO> getDumpedClassFiles() {
-        return dumpedClassFiles;
+    public List<DumpClassVO> getDumpedClasses() {
+        return dumpedClasses;
     }
 
-    public DumpClassModel setDumpedClassFiles(List<ClassVO> dumpedClassFiles) {
-        this.dumpedClassFiles = dumpedClassFiles;
+    public DumpClassModel setDumpedClasses(List<DumpClassVO> dumpedClasses) {
+        this.dumpedClasses = dumpedClasses;
         return this;
     }
 

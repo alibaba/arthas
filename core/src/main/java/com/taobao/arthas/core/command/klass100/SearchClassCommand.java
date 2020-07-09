@@ -8,8 +8,8 @@ import java.util.Comparator;
 import java.util.List;
 
 import com.taobao.arthas.core.command.Constants;
+import com.taobao.arthas.core.command.model.ClassDetailVO;
 import com.taobao.arthas.core.command.model.SearchClassModel;
-import com.taobao.arthas.core.command.model.ClassVO;
 import com.taobao.arthas.core.command.model.RowAffectModel;
 import com.taobao.arthas.core.shell.cli.Completion;
 import com.taobao.arthas.core.shell.cli.CompletionUtils;
@@ -110,7 +110,7 @@ public class SearchClassCommand extends AnnotatedCommand {
                 return;
             }
             for (Class<?> clazz : matchedClasses) {
-                ClassVO classInfo = ClassUtils.createClassInfo(clazz, isDetail, isField);
+                ClassDetailVO classInfo = ClassUtils.createClassInfo(clazz, isField);
                 process.appendResult(new SearchClassModel(classInfo, isDetail, isField, expand));
             }
         } else {

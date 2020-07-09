@@ -1,10 +1,10 @@
 package com.taobao.arthas.core.command.view;
 
 import com.taobao.arthas.core.command.klass100.ClassLoaderCommand.ClassLoaderStat;
+import com.taobao.arthas.core.command.model.ClassDetailVO;
 import com.taobao.arthas.core.command.model.ClassLoaderModel;
 import com.taobao.arthas.core.command.model.ClassLoaderVO;
 import com.taobao.arthas.core.command.model.ClassSetVO;
-import com.taobao.arthas.core.command.model.ClassVO;
 import com.taobao.arthas.core.shell.command.CommandProcess;
 import com.taobao.arthas.core.util.ClassUtils;
 import com.taobao.text.Decoration;
@@ -68,7 +68,7 @@ public class ClassLoaderView extends ResultView<ClassLoaderModel> {
         process.write(com.taobao.arthas.core.util.Constants.EMPTY_STRING);
     }
 
-    private void drawLoadClass(CommandProcess process, ClassVO loadClass) {
+    private void drawLoadClass(CommandProcess process, ClassDetailVO loadClass) {
         process.write(RenderUtil.render(ClassUtils.renderClassInfo(loadClass), process.width()) + "\n");
     }
 

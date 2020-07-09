@@ -11,6 +11,7 @@ import java.util.List;
 import java.util.Set;
 
 import com.alibaba.arthas.deps.org.objectweb.asm.Type;
+import com.taobao.arthas.core.command.model.ClassDetailVO;
 import com.taobao.arthas.core.command.model.ClassLoaderVO;
 import com.taobao.arthas.core.command.model.ClassVO;
 import com.taobao.arthas.core.command.model.MethodVO;
@@ -41,25 +42,25 @@ public class ClassUtils {
         return clazz.getName().contains("$$Lambda$");
     }
 
-    public static Element renderClassInfo(ClassVO clazz) {
+    public static Element renderClassInfo(ClassDetailVO clazz) {
         return renderClassInfo(clazz, false, null);
     }
 
-    public static Element renderClassInfo(ClassVO clazz, boolean isPrintField, Integer expand) {
+    public static Element renderClassInfo(ClassDetailVO clazz, boolean isPrintField, Integer expand) {
         TableElement table = new TableElement().leftCellPadding(1).rightCellPadding(1);
 
         table.row(label("class-info").style(Decoration.bold.bold()), label(clazz.getClassInfo()))
                 .row(label("code-source").style(Decoration.bold.bold()), label(clazz.getCodeSource()))
                 .row(label("name").style(Decoration.bold.bold()), label(clazz.getName()))
-                .row(label("isInterface").style(Decoration.bold.bold()), label("" + clazz.getInterface()))
-                .row(label("isAnnotation").style(Decoration.bold.bold()), label("" + clazz.getAnnotation()))
-                .row(label("isEnum").style(Decoration.bold.bold()), label("" + clazz.getEnum()))
-                .row(label("isAnonymousClass").style(Decoration.bold.bold()), label("" + clazz.getAnonymousClass()))
-                .row(label("isArray").style(Decoration.bold.bold()), label("" + clazz.getArray()))
-                .row(label("isLocalClass").style(Decoration.bold.bold()), label("" + clazz.getLocalClass()))
-                .row(label("isMemberClass").style(Decoration.bold.bold()), label("" + clazz.getMemberClass()))
-                .row(label("isPrimitive").style(Decoration.bold.bold()), label("" + clazz.getPrimitive()))
-                .row(label("isSynthetic").style(Decoration.bold.bold()), label("" + clazz.getSynthetic()))
+                .row(label("isInterface").style(Decoration.bold.bold()), label("" + clazz.isInterface()))
+                .row(label("isAnnotation").style(Decoration.bold.bold()), label("" + clazz.isAnnotation()))
+                .row(label("isEnum").style(Decoration.bold.bold()), label("" + clazz.isEnum()))
+                .row(label("isAnonymousClass").style(Decoration.bold.bold()), label("" + clazz.isAnonymousClass()))
+                .row(label("isArray").style(Decoration.bold.bold()), label("" + clazz.isArray()))
+                .row(label("isLocalClass").style(Decoration.bold.bold()), label("" + clazz.isLocalClass()))
+                .row(label("isMemberClass").style(Decoration.bold.bold()), label("" + clazz.isMemberClass()))
+                .row(label("isPrimitive").style(Decoration.bold.bold()), label("" + clazz.isPrimitive()))
+                .row(label("isSynthetic").style(Decoration.bold.bold()), label("" + clazz.isSynthetic()))
                 .row(label("simple-name").style(Decoration.bold.bold()), label(clazz.getSimpleName()))
                 .row(label("modifier").style(Decoration.bold.bold()), label(clazz.getModifier()))
                 .row(label("annotation").style(Decoration.bold.bold()), label(StringUtils.join(clazz.getAnnotations(), ",")))
@@ -74,30 +75,28 @@ public class ClassUtils {
         return table;
     }
 
-    public static ClassVO createClassInfo(Class clazz, boolean detail, boolean withFields) {
+    public static ClassDetailVO createClassInfo(Class clazz, boolean withFields) {
         CodeSource cs = clazz.getProtectionDomain().getCodeSource();
-        ClassVO classInfo = new ClassVO();
+        ClassDetailVO classInfo = new ClassDetailVO();
         classInfo.setName(StringUtils.classname(clazz));
-        if (detail) {
-            classInfo.setClassInfo(StringUtils.classname(clazz));
-            classInfo.setCodeSource(ClassUtils.getCodeSource(cs));
-            classInfo.setInterface(clazz.isInterface());
-            classInfo.setAnnotation(clazz.isAnnotation());
-            classInfo.setEnum(clazz.isEnum());
-            classInfo.setAnonymousClass(clazz.isAnonymousClass());
-            classInfo.setArray(clazz.isArray());
-            classInfo.setLocalClass(clazz.isLocalClass());
-            classInfo.setMemberClass(clazz.isMemberClass());
-            classInfo.setPrimitive(clazz.isPrimitive());
-            classInfo.setSynthetic(clazz.isSynthetic());
-            classInfo.setSimpleName(clazz.getSimpleName());
-            classInfo.setModifier(StringUtils.modifier(clazz.getModifiers(), ','));
-            classInfo.setAnnotations(TypeRenderUtils.getAnnotations(clazz));
-            classInfo.setInterfaces(TypeRenderUtils.getInterfaces(clazz));
-            classInfo.setSuperClass(TypeRenderUtils.getSuperClass(clazz));
-            classInfo.setClassloader(TypeRenderUtils.getClassloader(clazz));
-            classInfo.setClassLoaderHash(StringUtils.classLoaderHash(clazz));
-        }
+        classInfo.setClassInfo(StringUtils.classname(clazz));
+        classInfo.setCodeSource(ClassUtils.getCodeSource(cs));
+        classInfo.setInterface(clazz.isInterface());
+        classInfo.setAnnotation(clazz.isAnnotation());
+        classInfo.setEnum(clazz.isEnum());
+        classInfo.setAnonymousClass(clazz.isAnonymousClass());
+        classInfo.setArray(clazz.isArray());
+        classInfo.setLocalClass(clazz.isLocalClass());
+        classInfo.setMemberClass(clazz.isMemberClass());
+        classInfo.setPrimitive(clazz.isPrimitive());
+        classInfo.setSynthetic(clazz.isSynthetic());
+        classInfo.setSimpleName(clazz.getSimpleName());
+        classInfo.setModifier(StringUtils.modifier(clazz.getModifiers(), ','));
+        classInfo.setAnnotations(TypeRenderUtils.getAnnotations(clazz));
+        classInfo.setInterfaces(TypeRenderUtils.getInterfaces(clazz));
+        classInfo.setSuperClass(TypeRenderUtils.getSuperClass(clazz));
+        classInfo.setClassloader(TypeRenderUtils.getClassloader(clazz));
+        classInfo.setClassLoaderHash(StringUtils.classLoaderHash(clazz));
         if (withFields) {
             classInfo.setFields(TypeRenderUtils.getFields(clazz));
         }
@@ -106,10 +105,14 @@ public class ClassUtils {
 
     public static ClassVO createSimpleClassInfo(Class clazz) {
         ClassVO classInfo = new ClassVO();
+        fillSimpleClassVO(clazz, classInfo);
+        return classInfo;
+    }
+
+    public static void fillSimpleClassVO(Class clazz, ClassVO classInfo) {
         classInfo.setName(StringUtils.classname(clazz));
         classInfo.setClassloader(TypeRenderUtils.getClassloader(clazz));
         classInfo.setClassLoaderHash(StringUtils.classLoaderHash(clazz));
-        return classInfo;
     }
 
     public static MethodVO createMethodInfo(Method method, Class clazz, boolean detail) {

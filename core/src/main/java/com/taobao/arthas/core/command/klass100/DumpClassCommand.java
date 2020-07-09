@@ -5,6 +5,7 @@ import com.alibaba.arthas.deps.org.slf4j.LoggerFactory;
 import com.taobao.arthas.core.command.Constants;
 import com.taobao.arthas.core.command.model.ClassVO;
 import com.taobao.arthas.core.command.model.DumpClassModel;
+import com.taobao.arthas.core.command.model.DumpClassVO;
 import com.taobao.arthas.core.command.model.MessageModel;
 import com.taobao.arthas.core.command.model.RowAffectModel;
 import com.taobao.arthas.core.shell.cli.Completion;
@@ -127,15 +128,16 @@ public class DumpClassCommand extends AnnotatedCommand {
     private ExitStatus processMatch(CommandProcess process, RowAffect effect, Instrumentation inst, Set<Class<?>> matchedClasses) {
         try {
             Map<Class<?>, File> classFiles = dump(inst, matchedClasses);
-            List<ClassVO> dumpedClasses = new ArrayList<ClassVO>(classFiles.size());
+            List<DumpClassVO> dumpedClasses = new ArrayList<DumpClassVO>(classFiles.size());
             for (Map.Entry<Class<?>, File> entry : classFiles.entrySet()) {
                 Class<?> clazz = entry.getKey();
                 File file = entry.getValue();
-                ClassVO classVO = ClassUtils.createSimpleClassInfo(clazz);
-                classVO.setLocation(file.getCanonicalPath());
-                dumpedClasses.add(classVO);
+                DumpClassVO dumpClassVO = new DumpClassVO();
+                dumpClassVO.setLocation(file.getCanonicalPath());
+                ClassUtils.fillSimpleClassVO(clazz, dumpClassVO);
+                dumpedClasses.add(dumpClassVO);
             }
-            process.appendResult(new DumpClassModel().setDumpedClassFiles(dumpedClasses));
+            process.appendResult(new DumpClassModel().setDumpedClasses(dumpedClasses));
 
             effect.rCnt(classFiles.keySet().size());
             return ExitStatus.success();
