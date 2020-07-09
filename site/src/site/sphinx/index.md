@@ -26,7 +26,7 @@ Arthas 用户文档
 Contents
 --------
 
-* [实习生招聘!](https://mp.weixin.qq.com/s/VVSc_a3mLELW35lMH7rR0Q)
+* [应届生招聘!](https://mp.weixin.qq.com/s/VVSc_a3mLELW35lMH7rR0Q)
 * [社招信息!](https://mp.weixin.qq.com/s/677GO-3kYx5ygG9rlOlfQg)
 * [技术征文!](https://developer.aliyun.com/article/751641)
 * [English Docs](https://alibaba.github.io/arthas/en/)
