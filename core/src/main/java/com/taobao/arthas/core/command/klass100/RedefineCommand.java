@@ -130,8 +130,10 @@ public class RedefineCommand extends AnnotatedCommand {
             inst.redefineClasses(definitions.toArray(new ClassDefinition[0]));
             process.appendResult(redefineModel);
             process.end();
-        } catch (Exception e) {
-            process.end(-1, "redefine error! " + e);
+        } catch (Throwable e) {
+            String message = "redefine error! " + e.toString();
+            logger.error(message, e);
+            process.end(-1, message);
         }
 
     }
