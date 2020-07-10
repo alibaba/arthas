@@ -10,7 +10,7 @@ import java.util.List;
 public class SearchClassModel extends ResultModel {
     private ClassDetailVO classInfo;
     private boolean withField;
-    private boolean detail;
+    private boolean detailed;
     private Integer expand;
     private List<String> classNames;
     private int segment;
@@ -18,9 +18,9 @@ public class SearchClassModel extends ResultModel {
     public SearchClassModel() {
     }
 
-    public SearchClassModel(ClassDetailVO classInfo, boolean detail, boolean withField, Integer expand) {
+    public SearchClassModel(ClassDetailVO classInfo, boolean detailed, boolean withField, Integer expand) {
         this.classInfo = classInfo;
-        this.detail = detail;
+        this.detailed = detailed;
         this.withField = withField;
         this.expand = expand;
     }
@@ -59,16 +59,15 @@ public class SearchClassModel extends ResultModel {
         this.segment = segment;
     }
 
-    public boolean isDetail() {
-        return detail;
+    public boolean isDetailed() {
+        return detailed;
     }
 
-    public boolean withField() {
+    public boolean isWithField() {
         return withField;
     }
 
-    public Integer expand() {
+    public Integer getExpand() {
         return expand;
     }
-
 }

@@ -12,9 +12,9 @@ public class SearchClassView extends ResultView<SearchClassModel> {
     @Override
     public void draw(CommandProcess process, SearchClassModel result) {
 
-        if (result.isDetail()) {
+        if (result.isDetailed()) {
             process.write(RenderUtil.render(ClassUtils.renderClassInfo(result.getClassInfo(),
-                    result.withField(), result.expand()), process.width()));
+                    result.isWithField(), result.getExpand()), process.width()));
             process.write("\n");
         } else if (result.getClassNames() != null) {
             for (String className : result.getClassNames()) {
