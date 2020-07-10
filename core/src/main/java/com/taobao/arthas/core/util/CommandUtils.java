@@ -6,7 +6,7 @@ import com.taobao.arthas.core.shell.command.ExitStatus;
 /**
  * Command Process util
  */
-public class CommandUtil {
+public class CommandUtils {
 
     /**
      * check exit status and end command processing

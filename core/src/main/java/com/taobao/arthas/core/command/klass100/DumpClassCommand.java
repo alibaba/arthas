@@ -14,7 +14,7 @@ import com.taobao.arthas.core.shell.command.AnnotatedCommand;
 import com.taobao.arthas.core.shell.command.CommandProcess;
 import com.taobao.arthas.core.shell.command.ExitStatus;
 import com.taobao.arthas.core.util.ClassUtils;
-import com.taobao.arthas.core.util.CommandUtil;
+import com.taobao.arthas.core.util.CommandUtils;
 import com.taobao.arthas.core.util.InstrumentationUtils;
 import com.taobao.arthas.core.util.SearchUtils;
 import com.taobao.arthas.core.util.affect.RowAffect;
@@ -111,7 +111,7 @@ public class DumpClassCommand extends AnnotatedCommand {
                 status = processMatch(process, effect, inst, matchedClasses);
             }
             process.appendResult(new RowAffectModel(effect));
-            CommandUtil.end(process, status);
+            CommandUtils.end(process, status);
         } catch (Throwable e){
             logger.error("processing error", e);
             process.end(-1, "processing error");

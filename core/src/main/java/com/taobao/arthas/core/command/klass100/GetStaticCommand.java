@@ -13,7 +13,7 @@ import com.taobao.arthas.core.shell.command.AnnotatedCommand;
 import com.taobao.arthas.core.shell.command.CommandProcess;
 import com.taobao.arthas.core.shell.command.ExitStatus;
 import com.taobao.arthas.core.util.ClassUtils;
-import com.taobao.arthas.core.util.CommandUtil;
+import com.taobao.arthas.core.util.CommandUtils;
 import com.taobao.arthas.core.util.SearchUtils;
 import com.taobao.arthas.core.util.StringUtils;
 import com.taobao.arthas.core.util.affect.RowAffect;
@@ -106,7 +106,7 @@ public class GetStaticCommand extends AnnotatedCommand {
                 status = processExactMatch(process, affect, inst, matchedClasses);
             }
             process.appendResult(new RowAffectModel(affect));
-            CommandUtil.end(process, status);
+            CommandUtils.end(process, status);
         } catch (Throwable e){
             logger.error("processing error", e);
             process.appendResult(new RowAffectModel(affect));
