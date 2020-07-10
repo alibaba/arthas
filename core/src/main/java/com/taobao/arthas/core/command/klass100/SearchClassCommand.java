@@ -106,7 +106,8 @@ public class SearchClassCommand extends AnnotatedCommand {
 
         if (isDetail) {
             if (numberOfLimit > 0 && matchedClasses.size() > numberOfLimit) {
-                process.end(-1, "Matching classes are too many: " + matchedClasses.size());
+                process.end(-1, "The number of matching classes is greater than : " + numberOfLimit+". \n" +
+                        "Please specify a more accurate 'class-patten' or use the parameter '-n' to change the maximum number of matching classes.");
                 return;
             }
             for (Class<?> clazz : matchedClasses) {
