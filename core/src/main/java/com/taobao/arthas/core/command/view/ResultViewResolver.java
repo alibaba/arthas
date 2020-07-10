@@ -29,6 +29,8 @@ public class ResultViewResolver {
      */
     private void initResultViews() {
         try {
+            registerView(RowAffectView.class);
+
             //basic1000
             registerView(StatusView.class);
             registerView(VersionView.class);
@@ -47,6 +49,15 @@ public class ResultViewResolver {
             registerView(ShutdownView.class);
 
             //klass100
+            registerView(ClassLoaderView.class);
+            registerView(DumpClassView.class);
+            registerView(GetStaticView.class);
+            registerView(JadView.class);
+            registerView(MemoryCompilerView.class);
+            registerView(OgnlView.class);
+            registerView(RedefineView.class);
+            registerView(SearchClassView.class);
+            registerView(SearchMethodView.class);
 
             //logger
 

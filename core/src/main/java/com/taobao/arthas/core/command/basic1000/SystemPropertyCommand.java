@@ -2,7 +2,6 @@ package com.taobao.arthas.core.command.basic1000;
 
 import com.taobao.arthas.core.command.Constants;
 import com.taobao.arthas.core.command.model.MessageModel;
-import com.taobao.arthas.core.command.model.StatusModel;
 import com.taobao.arthas.core.command.model.SystemPropertyModel;
 import com.taobao.arthas.core.shell.cli.Completion;
 import com.taobao.arthas.core.shell.cli.CompletionUtils;
@@ -60,10 +59,9 @@ public class SystemPropertyCommand extends AnnotatedCommand {
                 process.appendResult(new MessageModel("Successfully changed the system property."));
                 process.appendResult(new SystemPropertyModel(propertyName, System.getProperty(propertyName)));
             }
+            process.end();
         } catch (Throwable t) {
             process.end(-1, "Error during setting system property: " + t.getMessage());
-        } finally {
-            process.end();
         }
     }
 

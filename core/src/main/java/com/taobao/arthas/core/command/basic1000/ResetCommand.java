@@ -51,9 +51,9 @@ public class ResetCommand extends AnnotatedCommand {
         try {
             EnhancerAffect enhancerAffect = Enhancer.reset(inst, matcher);
             process.appendResult(new ResetModel(enhancerAffect));
+            process.end();
         } catch (UnmodifiableClassException e) {
             // ignore
-        } finally {
             process.end();
         }
     }
