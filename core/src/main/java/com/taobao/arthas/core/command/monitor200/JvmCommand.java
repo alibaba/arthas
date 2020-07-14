@@ -1,7 +1,6 @@
 package com.taobao.arthas.core.command.monitor200;
 
 import com.taobao.arthas.core.command.Constants;
-import com.taobao.arthas.core.command.model.GcInfoVO;
 import com.taobao.arthas.core.command.model.JvmModel;
 import com.taobao.arthas.core.shell.command.AnnotatedCommand;
 import com.taobao.arthas.core.shell.command.CommandProcess;
