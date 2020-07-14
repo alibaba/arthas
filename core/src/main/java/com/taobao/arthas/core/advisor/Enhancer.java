@@ -123,6 +123,8 @@ public class Enhancer implements ClassFileTransformer {
             }
 
             ClassNode classNode = AsmUtils.toClassNode(classfileBuffer);
+            // remove JSR https://github.com/alibaba/arthas/issues/1304
+            classNode = AsmUtils.removeJSRInstructions(classNode);
 
             // 生成增强字节码
             DefaultInterceptorClassParser defaultInterceptorClassParser = new DefaultInterceptorClassParser();
