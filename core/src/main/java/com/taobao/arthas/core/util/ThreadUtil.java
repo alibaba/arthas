@@ -1,5 +1,6 @@
 package com.taobao.arthas.core.util;
 
+import com.taobao.arthas.core.command.model.BlockingLockInfo;
 import com.taobao.arthas.core.view.Ansi;
 
 import java.arthas.SpyAPI;
@@ -221,9 +222,9 @@ abstract public class ThreadUtil {
         }
 
         BlockingLockInfo blockingLockInfo = new BlockingLockInfo();
-        blockingLockInfo.threadInfo = ownerThreadPerLock.get(mostBlockingLock);
-        blockingLockInfo.lockIdentityHashCode = mostBlockingLock;
-        blockingLockInfo.blockingThreadCount = blockCountPerLock.get(mostBlockingLock);
+        blockingLockInfo.setThreadInfo(ownerThreadPerLock.get(mostBlockingLock));
+        blockingLockInfo.setLockIdentityHashCode(mostBlockingLock);
+        blockingLockInfo.setBlockingThreadCount(blockCountPerLock.get(mostBlockingLock));
         return blockingLockInfo;
     }
 
@@ -234,8 +235,8 @@ abstract public class ThreadUtil {
 
 
     public static String getFullStacktrace(BlockingLockInfo blockingLockInfo) {
-        return getFullStacktrace(blockingLockInfo.threadInfo, -1, blockingLockInfo.lockIdentityHashCode,
-                blockingLockInfo.blockingThreadCount);
+        return getFullStacktrace(blockingLockInfo.getThreadInfo(), -1, blockingLockInfo.getLockIdentityHashCode(),
+                blockingLockInfo.getBlockingThreadCount());
     }
 
 
@@ -327,17 +328,6 @@ abstract public class ThreadUtil {
         }
         sb.append('\n');
         return sb.toString().replace("\t", "    ");
-    }
-
-    public static class BlockingLockInfo {
-
-        // the thread info that is holing this lock.
-        public ThreadInfo threadInfo = null;
-        // the associated LockInfo object
-        public int lockIdentityHashCode = 0;
-        // the number of thread that is blocked on this lock
-        public int blockingThreadCount = 0;
-
     }
 
     /**
