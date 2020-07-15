@@ -506,6 +506,7 @@ OK
 ![蘑菇财富](static/mogu.jpg)
 ![喔趣科技](static/woqu.png)
 ![百度凤巢](static/baidufengchao.png)
+![喜百年供应链科技](static/xbn.png)
 
 ### 洐生项目
 
