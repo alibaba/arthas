@@ -12,6 +12,9 @@ import com.taobao.arthas.core.shell.handlers.shell.QExitHandler;
 import com.taobao.arthas.core.shell.session.Session;
 import com.taobao.arthas.core.util.NetUtils;
 import com.taobao.arthas.core.util.NetUtils.Response;
+import com.taobao.arthas.core.spi.ServerConnectorMetricsProvider;
+import com.taobao.arthas.core.spi.impl.ServerConnectorMetricsProvider4AliTomcat;
+import com.taobao.arthas.core.spi.impl.ServerConnectorMetricsProvider4TomcatJmx;
 import com.taobao.arthas.core.util.ThreadUtil;
 import com.taobao.arthas.core.util.metrics.SumRateCounter;
 import com.taobao.middleware.cli.annotations.Description;
@@ -32,8 +35,10 @@ import java.lang.management.ManagementFactory;
 import java.lang.management.MemoryPoolMXBean;
 import java.lang.management.MemoryType;
 import java.lang.management.MemoryUsage;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.ServiceLoader;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -219,12 +224,8 @@ public class DashboardCommand extends AnnotatedCommand {
     }
 
     private void addTomcatInfo(TableElement table) {
-
-        String threadPoolPath = "http://localhost:8006/connector/threadpool";
-        String connectorStatPath = "http://localhost:8006/connector/stats";
-        Response connectorStatResponse = NetUtils.request(connectorStatPath);
-        if (connectorStatResponse.isSuccess()) {
-            List<JSONObject> connectorStats = JSON.parseArray(connectorStatResponse.getContent(), JSONObject.class);
+        final List<JSONObject> connectorStats = SERVER_CONNECTOR_METRICS_PROVIDER.getConnectorStats();
+        if (connectorStats != null) {
             for (JSONObject stat : connectorStats) {
                 String name = stat.getString("name").replace("\"", "");
                 long bytesReceived = stat.getLongValue("bytesReceived");
@@ -246,10 +247,8 @@ public class DashboardCommand extends AnnotatedCommand {
                 table.row("sent/s", formatBytes((long) tomcatSentBytesCounter.rate()));
             }
         }
-
-        Response threadPoolResponse = NetUtils.request(threadPoolPath);
-        if (threadPoolResponse.isSuccess()) {
-            List<JSONObject> threadPoolInfos = JSON.parseArray(threadPoolResponse.getContent(), JSONObject.class);
+        List<JSONObject> threadPoolInfos = SERVER_CONNECTOR_METRICS_PROVIDER.getThreadPoolInfos();
+        if (threadPoolInfos != null) {
             for (JSONObject info : threadPoolInfos) {
                 String name = info.getString("name").replace("\"", "");
                 long busy = info.getLongValue("threadBusy");
@@ -282,7 +281,28 @@ public class DashboardCommand extends AnnotatedCommand {
         table.row(memoryInfoTable, gcInfoTable);
         return RenderUtil.render(table, width, height);
     }
-
+    
+    private static final ServerConnectorMetricsProvider SERVER_CONNECTOR_METRICS_PROVIDER;
+    static {
+        ServerConnectorMetricsProvider provider = null;
+        String cls = System.getProperty("ServerConnectorMetricsProvider");
+        if (cls != null) {
+            if ("old".contentEquals(cls)) {
+                provider = new ServerConnectorMetricsProvider4AliTomcat();
+            } 
+            if (provider == null && "new".contentEquals(cls)) {
+                provider = new ServerConnectorMetricsProvider4TomcatJmx();
+            }
+        }
+        if (provider == null) {
+            Iterator<ServerConnectorMetricsProvider> iter = ServiceLoader.load(ServerConnectorMetricsProvider.class, ServerConnectorMetricsProvider.class.getClassLoader()).iterator();
+            if (iter.hasNext()) {
+                provider = iter.next();
+            }
+        }
+        SERVER_CONNECTOR_METRICS_PROVIDER = provider;
+        logger.info("ServerConnectorMetricsProvider:" + provider);
+    }
     String drawRuntimeInfoAndTomcatInfo(int width, int height) {
         TableElement resultTable = new TableElement(1, 1);
 
@@ -293,19 +313,19 @@ public class DashboardCommand extends AnnotatedCommand {
         addRuntimeInfo(runtimeInfoTable);
 
         TableElement tomcatInfoTable = null;
-
-        try {
-            // 如果请求tomcat信息失败，则不显示tomcat信息
-            if (NetUtils.request("http://localhost:8006").isSuccess()) {
-                tomcatInfoTable = new TableElement(1, 1).rightCellPadding(1);
-                tomcatInfoTable
-                        .add(new RowElement().style(Decoration.bold.fg(Color.black).bg(Color.white)).add("Tomcat", ""));
-                addTomcatInfo(tomcatInfoTable);
+        if (SERVER_CONNECTOR_METRICS_PROVIDER != null) {
+            try {
+                // 如果请求tomcat信息失败，则不显示tomcat信息
+                if (SERVER_CONNECTOR_METRICS_PROVIDER.isMetricOn()) {
+                    tomcatInfoTable = new TableElement(1, 1).rightCellPadding(1);
+                    tomcatInfoTable
+                            .add(new RowElement().style(Decoration.bold.fg(Color.black).bg(Color.white)).add("Tomcat", ""));
+                    addTomcatInfo(tomcatInfoTable);
+                }
+            } catch (Throwable t) {
+                logger.error("get Tomcat Info error!", t);
             }
-        } catch (Throwable t) {
-            logger.error("get Tomcat Info error!", t);
         }
-
         if (tomcatInfoTable != null) {
             resultTable.row(runtimeInfoTable, tomcatInfoTable);
         } else {
