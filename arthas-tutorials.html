@@ -62,20 +62,39 @@
                     </li>
 
                     <li class="nav-item dropdown active show">
-                        <!-- <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenu2" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                            Dropdown
-                          </button> -->
-                        <a class="nav-item nav-link dropdown-toggle mr-md-2" href="#" id="bd-tutorials" data-toggle="dropdown"
-                            aria-haspopup="true" aria-expanded="true">
-                            {{currentTutorialName()}}
-                        </a>
+                        <button class="btn dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            {{tutorialsStr()}}
+                          </button>
                         <div class="dropdown-menu" aria-labelledby="bd-tutorials">
-                            <a v-for="tutorial in tutorials" v-bind:class="{ 'dropdown-item-checked': tutorial.id === tutorialId }"
+                            <a v-for="tutorial in getTutorials('TUTORIAL')" v-bind:class="{ 'dropdown-item-checked': tutorial.id === tutorialId }"
                                 class="dropdown-item" v-bind:href='currentUrl() + "?language=" + language + "&id=" + tutorial.id'>
                                 {{ tutorial.names[language] }}
                             </a>
                         </div>
+                    </li>
 
+                    <li class="nav-item dropdown active show">
+                        <button class="btn dropdown-toggle" type="button" id="dropdownMenu2" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            {{commandsStr()}}
+                          </button>
+                        <div class="dropdown-menu" aria-labelledby="bd-tutorials">
+                            <a v-for="tutorial in getTutorials('COMMAND')" v-bind:class="{ 'dropdown-item-checked': tutorial.id === tutorialId }"
+                                class="dropdown-item" v-bind:href='currentUrl() + "?language=" + language + "&id=" + tutorial.id'>
+                                {{ tutorial.names[language] }}
+                            </a>
+                        </div>
+                    </li>
+
+                    <li class="nav-item dropdown active show">
+                        <button class="btn dropdown-toggle" type="button" id="dropdownMenu3" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            {{userCasesStr()}}
+                          </button>
+                        <div class="dropdown-menu" aria-labelledby="bd-tutorials">
+                            <a v-for="tutorial in getTutorials('USERCASE')" v-bind:class="{ 'dropdown-item-checked': tutorial.id === tutorialId }"
+                                class="dropdown-item" v-bind:href='currentUrl() + "?language=" + language + "&id=" + tutorial.id'>
+                                {{ tutorial.names[language] }}
+                            </a>
+                        </div>
                     </li>
                 </ul>
             </div>
@@ -134,6 +153,7 @@
             tutorials: [
                 {
                     id: "arthas-basics",
+                    type: "TUTORIAL",
                     names: {
                         en: "Arthas Basics",
                         cn: "Arthas基础教程",
@@ -145,6 +165,7 @@
                 },
                 {
                     id: "arthas-advanced",
+                    type: "TUTORIAL",
                     names: {
                         en: "Arthas Advanced",
                         cn: "Arthas进阶教程",
@@ -153,10 +174,25 @@
                         en: "arthas-advanced-en",
                         cn: "arthas-advanced-cn",
                     }
+                },
+                {
+                    id: "command-help",
+                    type: "COMMAND",
+                    names: {
+                        en: "help",
+                        cn: "help",
+                    },
+                    ids: {
+                        en: "command-help-en",
+                        cn: "command-help-cn",
+                    }
                 }
             ],
         },
         methods: {
+            getTutorials: function(type) {
+                return this.tutorials.filter(v => v.type === type);
+            },
             languageChange: function (event) {
                 // alert(event.target.value)
                 window.location = this.currentUrl() + "?language=" + this.language + "&id=" + this.tutorialId;
@@ -173,6 +209,27 @@
                     return "https://alibaba.github.io/arthas/en";
                 } else {
                     return "https://alibaba.github.io/arthas";
+                }
+            },
+            tutorialsStr: function () {
+                if (this.language === "en") {
+                    return "Tutorials";
+                } else {
+                    return "入门教程";
+                }
+            },
+            commandsStr: function () {
+                if (this.language === "en") {
+                    return "Commands";
+                } else {
+                    return "命令教程";
+                }
+            },
+            userCasesStr: function () {
+                if (this.language === "en") {
+                    return "User Cases";
+                } else {
+                    return "用户案例";
                 }
             },
             currentTutorialName: function () {
