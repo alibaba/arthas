@@ -1,5 +1,5 @@
 
-Through this tutorial, you can know how to use Arthas `reset`. More advanced features can be found in the Advanced Guide below.
+Through this tutorial, you can know how to use Arthas `version`. More advanced features can be found in the Advanced Guide below.
 
 * [Arthas Advanced](https://alibaba.github.io/arthas/arthas-tutorials?language=en&id=arthas-advanced)
 * [Arthas Github](https://github.com/alibaba/arthas)
