@@ -60,8 +60,14 @@ public class ResultViewResolver {
             registerView(SearchMethodView.class);
 
             //logger
+            registerView(LoggerView.class);
 
             //monitor2000
+            registerView(DashboardView.class);
+            registerView(JvmView.class);
+            registerView(MBeanView.class);
+            registerView(PerfCounterView.class);
+            registerView(ThreadView.class);
 
         } catch (Throwable e) {
             logger.error("register result view failed", e);
