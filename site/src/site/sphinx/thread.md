@@ -1,6 +1,8 @@
 thread
 ===
 
+[`thread`在线教程](https://alibaba.github.io/arthas/arthas-tutorials?language=cn&id=command-thread)
+
 > 查看当前线程信息，查看线程的堆栈
 
 
