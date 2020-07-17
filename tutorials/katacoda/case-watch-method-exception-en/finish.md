@@ -1,5 +1,5 @@
 
-Through this tutorial, you can know how to Log the output. More advanced features can be found in the Advanced Guide below.
+Through this tutorial, you can know how to Troubleshooting method invoke exception. More advanced features can be found in the Advanced Guide below.
 
 * [Arthas Advanced](https://alibaba.github.io/arthas/arthas-tutorials?language=en&id=arthas-advanced)
 * [Arthas Github](https://github.com/alibaba/arthas)
