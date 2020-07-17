@@ -1,7 +1,7 @@
 dashboard
 =========
 
-[`dashboard` online tutorial](https://alibaba.github.io/arthas/arthas-tutorials?language=cn&id=command-dashboard)
+[`dashboard` online tutorial](https://alibaba.github.io/arthas/arthas-tutorials?language=en&id=command-dashboard)
 
 > This is the real time statistics dashboard for the current system, press `Ctrl+C` to exit.
 
