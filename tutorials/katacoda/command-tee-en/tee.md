@@ -1,12 +1,9 @@
-tee
-===
 
-[`tee`在线教程](https://alibaba.github.io/arthas/arthas-tutorials?language=cn&id=command-tee)
+Similar to the traditional `tee` command.
 
-> 类似传统的`tee`命令。
+`tee -h`{{execute T2}}
 
-
-```
+```bash
  USAGE:
    tee [-a] [-h] [file]
 
