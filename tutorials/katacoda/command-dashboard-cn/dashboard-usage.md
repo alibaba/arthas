@@ -1,15 +1,5 @@
-dashboard
-===
 
-[`dashboard`在线教程](https://alibaba.github.io/arthas/arthas-tutorials?language=cn&id=command-dashboard)
-
-> 当前系统的实时数据面板，按 ctrl+c 退出。
-
-当运行在Ali-tomcat时，会显示当前tomcat的实时信息，如HTTP请求的qps, rt, 错误数, 线程池信息等等。
-
-### 使用参考
-
-```
+```bash
 $ dashboard
 ID         NAME                              GROUP                  PRIORITY   STATE       %CPU       TIME       INTERRUPTED DAEMON
 889        RMI TCP Connection(15)-30.10.166. RMI Runtime            9          RUNNABLE    48         0:5        false       true
@@ -46,18 +36,4 @@ processors                        4                                 threadpool  
 uptime                            16020s                            busy                              0
 ```
 
-### 数据说明
-
-* ID: Java级别的线程ID，注意这个ID不能跟jstack中的nativeID一一对应
-* NAME: 线程名
-* GROUP: 线程组名
-* PRIORITY: 线程优先级, 1~10之间的数字，越大表示优先级越高
-* STATE: 线程的状态
-* CPU%: 线程消耗的cpu占比，采样100ms，将所有线程在这100ms内的cpu使用量求和，再算出每个线程的cpu使用占比。
-* TIME: 线程运行总时间，数据格式为`分：秒`
-* INTERRUPTED: 线程当前的中断位状态
-* DAEMON: 是否是daemon线程
-
-### 截图展示
-
-![](_static/dashboard.png "dashboard")
+输入 `Q`{{execute T2}} 或者 `Ctrl+C` 可以退出dashboard命令。
