@@ -1,6 +1,8 @@
 
 `trace demo.MathGame primeFactors`{{execute T2}}
 
+输入 `Q`{{execute T2}} 或者 `Ctrl+C` 可以退出
+
 `reset`{{execute T2}}
 
 
