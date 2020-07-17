@@ -1,12 +1,9 @@
-grep
-===
 
-[`grep`在线教程](https://alibaba.github.io/arthas/arthas-tutorials?language=cn&id=command-grep)
+类似传统的`grep`命令。
 
-> 类似传统的`grep`命令。
+`grep -h`{{execute T2}}
 
-
-```
+```bash
  USAGE:
    grep [-A <value>] [-B <value>] [-C <value>] [-h] [-i] [-v] [-n] [-m <value>] [-e] [--trim-end] pattern
 
