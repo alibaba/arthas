@@ -1,7 +1,7 @@
 tee
 ===
 
-[`tee` online tutorial](https://alibaba.github.io/arthas/arthas-tutorials?language=cn&id=command-tee)
+[`tee` online tutorial](https://alibaba.github.io/arthas/arthas-tutorials?language=en&id=command-tee)
 
 > Similar to the traditional `tee` command.
 
