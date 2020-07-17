@@ -18,11 +18,11 @@
         "text": "sysenv.md"
       },
       {
-        "title": "Check all properties",
+        "title": "Check all environment variables",
         "text": "check-all-properties.md"
       },
       {
-        "title": "Check One Single Property",
+        "title": "Check One Single environment variable",
         "text": "check-one-single-property.md"
       },
       {

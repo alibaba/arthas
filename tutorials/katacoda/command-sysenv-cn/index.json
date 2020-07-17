@@ -18,11 +18,11 @@
         "text": "sysenv.md"
       },
       {
-        "title": "查看所有属性",
+        "title": "查看所有环境变量",
         "text": "check-all-properties.md"
       },
       {
-        "title": "查看单个属性",
+        "title": "查看单个环境变量",
         "text": "check-one-single-property.md"
       },
       {
