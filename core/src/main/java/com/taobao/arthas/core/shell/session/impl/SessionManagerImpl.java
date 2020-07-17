@@ -111,6 +111,7 @@ public class SessionManagerImpl implements SessionManager {
                 @Override
                 public Thread newThread(Runnable r) {
                     final Thread t = new Thread(r, "arthas-shell-server");
+                    t.setDaemon(true);
                     return t;
                 }
             });

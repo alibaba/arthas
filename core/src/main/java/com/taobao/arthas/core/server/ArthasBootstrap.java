@@ -122,7 +122,7 @@ public class ArthasBootstrap {
         executorService = Executors.newScheduledThreadPool(1, new ThreadFactory() {
             @Override
             public Thread newThread(Runnable r) {
-                final Thread t = new Thread(r, "as-command-execute-daemon");
+                final Thread t = new Thread(r, "arthas-command-execute");
                 t.setDaemon(true);
                 return t;
             }
