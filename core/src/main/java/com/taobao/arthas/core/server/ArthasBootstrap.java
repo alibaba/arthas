@@ -55,6 +55,7 @@ import com.taobao.arthas.core.util.LogUtil;
 import com.taobao.arthas.core.util.UserStatUtil;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.nio.NioEventLoopGroup;
+import io.netty.util.concurrent.DefaultThreadFactory;
 import io.netty.util.concurrent.EventExecutorGroup;
 
 
@@ -314,7 +315,7 @@ public class ArthasBootstrap {
             resolvers.add(builtinCommands);
 
             //worker group
-            workerGroup = new NioEventLoopGroup(8);
+            workerGroup = new NioEventLoopGroup(new DefaultThreadFactory("arthas-TermServer", true));
 
             // TODO: discover user provided command resolver
             if (configure.getTelnetPort() > 0) {
