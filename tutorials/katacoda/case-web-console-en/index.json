@@ -1,0 +1,25 @@
+{
+  "title": "Arthas Web Console",
+  "description": "Arthas Web Console",
+  "details": {
+    "steps": [
+      {
+        "title": "Web Console",
+        "text": "web-console.md"
+      }
+    ],
+    "intro": {
+      "text": "intro.md"
+    },
+    "finish": {
+      "text": "finish.md"
+    }
+  },
+  "environment": {
+    "uilayout": "terminal"
+  },
+  "backend": {
+    "imageid": "java",
+    "environmentsprotocol": "http"
+  }
+}
