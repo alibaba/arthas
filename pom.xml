@@ -101,6 +101,7 @@
                             <generateGitPropertiesFile>true</generateGitPropertiesFile>
                             <generateGitPropertiesFilename>${project.build.outputDirectory}/arthas-git.properties</generateGitPropertiesFilename>
                             <excludeProperties>git.build.host</excludeProperties>
+                            <injectAllReactorProjects>true</injectAllReactorProjects>
                         </configuration>
                     </plugin>
                 </plugins>
