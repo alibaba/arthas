@@ -1,13 +1,35 @@
-vmoption
-===
 
-[`vmoption` online tutorial](https://alibaba.github.io/arthas/arthas-tutorials?language=en&id=command-vmoption)
+查看，更新VM诊断相关的参数
 
-> Display, and update the vm diagnostic options.
+`vmoption -h`{{execute T2}}
 
-### Usage
+```bash
+[arthas@48]$ vmoption -h
+ USAGE:
+   vmoption [-h] [name] [value]
 
-#### View all options
+ SUMMARY:
+   Display, and update the vm diagnostic options.
+
+ Examples:
+   vmoption
+   vmoption PrintGCDetails
+   vmoption PrintGCDetails true
+
+ WIKI:
+   https://alibaba.github.io/arthas/vmoption
+
+ OPTIONS:
+ -h, --help                           this help
+ <name>                               VMOption name
+ <value>                              VMOption value
+ ```
+
+## 使用参考
+
+### 查看所有的option：
+
+`vmoption`{{execute T2}}
 
 ```bash
 [arthas@56963]$ vmoption
@@ -37,7 +59,9 @@ vmoption
  PrintConcurrentLocks   false                   DEFAULT                true
 ```
 
-#### View individual option
+### 查看指定的option
+
+`vmoption PrintGCDetails`{{execute T2}}
 
 ```bash
 [arthas@56963]$ vmoption PrintGCDetails
@@ -46,7 +70,9 @@ vmoption
  PrintGCDetails         false                   MANAGEMENT             true
 ```
 
-#### Update individual option
+### 更新指定的option
+
+`vmoption PrintGCDetails true`{{execute T2}}
 
 ```bash
 [arthas@56963]$ vmoption PrintGCDetails true
