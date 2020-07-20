@@ -74,7 +74,11 @@ public class AbstractTraceAdviceListener extends AdviceListenerAdapter {
         double cost = threadLocalWatch.costInMillis();
         if (--threadBoundEntity.get().deep == 0) {
             try {
-                if (isConditionMet(command.getConditionExpress(), advice, cost)) {
+                boolean conditionResult = isConditionMet(command.getConditionExpress(), advice, cost);
+                if (this.isVerbose()) {
+                    process.write("Condition express: " + command.getConditionExpress() + " , result: " + conditionResult + "\n");
+                }
+                if (conditionResult) {
                     // 满足输出条件
                     if (isLimitExceeded(command.getNumberOfLimit(), process.times().get())) {
                         // TODO: concurrency issue to abort process

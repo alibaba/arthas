@@ -2,6 +2,7 @@ package com.taobao.arthas.core.command.monitor200;
 
 import com.alibaba.arthas.deps.org.slf4j.Logger;
 import com.alibaba.arthas.deps.org.slf4j.LoggerFactory;
+import com.taobao.arthas.core.GlobalOptions;
 import com.taobao.arthas.core.advisor.Advice;
 import com.taobao.arthas.core.advisor.ArthasMethod;
 import com.taobao.arthas.core.advisor.AdviceListenerAdapter;
@@ -22,9 +23,10 @@ class WatchAdviceListener extends AdviceListenerAdapter {
     private WatchCommand command;
     private CommandProcess process;
 
-    public WatchAdviceListener(WatchCommand command, CommandProcess process) {
+    public WatchAdviceListener(WatchCommand command, CommandProcess process, boolean verbose) {
         this.command = command;
         this.process = process;
+        super.setVerbose(verbose);
     }
 
     private boolean isFinish() {
@@ -78,7 +80,11 @@ class WatchAdviceListener extends AdviceListenerAdapter {
         try {
             // 本次调用的耗时
             double cost = threadLocalWatch.costInMillis();
-            if (isConditionMet(command.getConditionExpress(), advice, cost)) {
+            boolean conditionResult = isConditionMet(command.getConditionExpress(), advice, cost);
+            if (this.isVerbose()) {
+                process.write("Condition express: " + command.getConditionExpress() + " , result: " + conditionResult + "\n");
+            }
+            if (conditionResult) {
                 // TODO: concurrency issues for process.write
                 Object value = getExpressionResult(command.getExpress(), advice, cost);
                 String result = StringUtils.objectToString(
@@ -89,7 +95,7 @@ class WatchAdviceListener extends AdviceListenerAdapter {
                     abortProcess(process, command.getNumberOfLimit());
                 }
             }
-        } catch (Exception e) {
+        } catch (Throwable e) {
             logger.warn("watch failed.", e);
             process.write("watch failed, condition is: " + command.getConditionExpress() + ", express is: "
                           + command.getExpress() + ", " + e.getMessage() + ", visit " + LogUtil.loggingFile()

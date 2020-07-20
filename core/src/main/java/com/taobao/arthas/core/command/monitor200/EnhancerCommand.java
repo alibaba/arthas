@@ -40,10 +40,18 @@ public abstract class EnhancerCommand extends AnnotatedCommand {
 
     protected long listenerId;
 
+    protected boolean verbose;
+
     @Option(longName = "listenerId")
     @Description("The special listenerId")
     public void setListenerId(long listenerId) {
         this.listenerId = listenerId;
+    }
+
+    @Option(shortName = "v", longName = "verbose", flag = true)
+    @Description("Enables print verbose information, default value false.")
+    public void setVerbosee(boolean verbose) {
+        this.verbose = verbose;
     }
 
     /**

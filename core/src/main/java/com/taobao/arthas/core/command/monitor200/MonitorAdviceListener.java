@@ -75,9 +75,10 @@ class MonitorAdviceListener extends AdviceListenerAdapter {
     private MonitorCommand command;
     private CommandProcess process;
 
-    MonitorAdviceListener(MonitorCommand command, CommandProcess process) {
+    MonitorAdviceListener(MonitorCommand command, CommandProcess process, boolean verbose) {
         this.command = command;
         this.process = process;
+        super.setVerbose(verbose);
     }
 
     @Override

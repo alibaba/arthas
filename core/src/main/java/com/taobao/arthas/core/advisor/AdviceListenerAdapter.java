@@ -20,6 +20,8 @@ public abstract class AdviceListenerAdapter implements AdviceListener, ProcessAw
     private Process process;
     private long id = ID_GENERATOR.addAndGet(1);
 
+    private boolean verbose;
+
     @Override
     public long id() {
         return id;
@@ -142,6 +144,14 @@ public abstract class AdviceListenerAdapter implements AdviceListener, ProcessAw
         process.write("Command execution times exceed limit: " + limit
                 + ", so command will exit. You can set it with -n option.\n");
         process.end();
+    }
+
+    public boolean isVerbose() {
+        return verbose;
+    }
+
+    public void setVerbose(boolean verbose) {
+        this.verbose = verbose;
     }
 
 }

@@ -40,9 +40,10 @@ public class TimeTunnelAdviceListener extends AdviceListenerAdapter {
     // 方法执行时间戳
     private final ThreadLocalWatch threadLocalWatch = new ThreadLocalWatch();
 
-    public TimeTunnelAdviceListener(TimeTunnelCommand command, CommandProcess process) {
+    public TimeTunnelAdviceListener(TimeTunnelCommand command, CommandProcess process, boolean verbose) {
         this.command = command;
         this.process = process;
+        super.setVerbose(verbose);
     }
 
     @Override
@@ -75,6 +76,9 @@ public class TimeTunnelAdviceListener extends AdviceListenerAdapter {
         boolean match = false;
         try {
             match = isConditionMet(command.getConditionExpress(), advice, cost);
+            if (this.isVerbose()) {
+                process.write("Condition express: " + command.getConditionExpress() + " , result: " + match + "\n");
+            }
         } catch (ExpressException e) {
             logger.warn("tt failed.", e);
             process.write("tt failed, condition is: " + command.getConditionExpress() + ", " + e.getMessage()

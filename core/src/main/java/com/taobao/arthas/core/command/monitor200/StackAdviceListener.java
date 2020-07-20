@@ -22,9 +22,10 @@ public class StackAdviceListener extends AdviceListenerAdapter {
     private StackCommand command;
     private CommandProcess process;
 
-    public StackAdviceListener(StackCommand command, CommandProcess process) {
+    public StackAdviceListener(StackCommand command, CommandProcess process, boolean verbose) {
         this.command = command;
         this.process = process;
+        super.setVerbose(verbose);
     }
 
     @Override
@@ -53,7 +54,11 @@ public class StackAdviceListener extends AdviceListenerAdapter {
         // 本次调用的耗时
         try {
             double cost = threadLocalWatch.costInMillis();
-            if (isConditionMet(command.getConditionExpress(), advice, cost)) {
+            boolean conditionResult = isConditionMet(command.getConditionExpress(), advice, cost);
+            if (this.isVerbose()) {
+                process.write("Condition express: " + command.getConditionExpress() + " , result: " + conditionResult + "\n");
+            }
+            if (conditionResult) {
                 // TODO: concurrency issues for process.write
                 process.write("ts=" + DateUtils.getCurrentDate() + ";" + stackThreadLocal.get() + "\n");
                 process.times().incrementAndGet();
@@ -61,7 +66,7 @@ public class StackAdviceListener extends AdviceListenerAdapter {
                     abortProcess(process, command.getNumberOfLimit());
                 }
             }
-        } catch (Exception e) {
+        } catch (Throwable e) {
             logger.warn("stack failed.", e);
             process.write("stack failed, condition is: " + command.getConditionExpress() + ", " + e.getMessage()
                           + ", visit " + LogUtil.loggingFile() + " for more details.\n");

@@ -12,8 +12,9 @@ public class TraceAdviceListener extends AbstractTraceAdviceListener implements 
     /**
      * Constructor
      */
-    public TraceAdviceListener(TraceCommand command, CommandProcess process) {
+    public TraceAdviceListener(TraceCommand command, CommandProcess process, boolean verbose) {
         super(command, process);
+        super.setVerbose(verbose);
     }
 
     /**
