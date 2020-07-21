@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
+ * Class enhance affect vo
  * @author gongdewei 2020/6/22
  */
 public class EnhancerAffectVO {
