@@ -1,6 +1,8 @@
 perfcounter
 ===
 
+[`perfcounter`在线教程](https://alibaba.github.io/arthas/arthas-tutorials?language=cn&id=command-perfcounter)
+
 > 查看当前JVM的 Perf Counter信息
 
 ### 使用参考
