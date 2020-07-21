@@ -13,6 +13,8 @@ import com.taobao.arthas.core.util.StringUtils;
 import com.taobao.arthas.core.util.ThreadLocalWatch;
 import com.taobao.arthas.core.view.ObjectView;
 
+import java.util.concurrent.CompletableFuture;
+
 /**
  * @author beiwei30 on 29/11/2016.
  */
@@ -46,12 +48,33 @@ class WatchAdviceListener extends AdviceListenerAdapter {
     @Override
     public void afterReturning(ClassLoader loader, Class<?> clazz, ArthasMethod method, Object target, Object[] args,
                                Object returnObject) throws Throwable {
-        Advice advice = Advice.newForAfterRetuning(loader, clazz, method, target, args, returnObject);
-        if (command.isSuccess()) {
-            watching(advice);
-        }
+        if (returnObject instanceof CompletableFuture && command.isAsync()) {
+            CompletableFuture<?> returnFuture = (CompletableFuture<?>) returnObject;
+            returnFuture.whenComplete((returnValue, e) -> {
+                Advice advice;
+                if (returnValue != null) {
+                    advice = Advice.newForAfterRetuning(loader, clazz, method, target, args, returnValue);
+                    if (command.isSuccess()) {
+                        watching(advice);
+                    }
+                } else {
+                    advice = Advice.newForAfterThrowing(loader, clazz, method, target, args, e);
+                    if (command.isException()) {
+                        watching(advice);
+                    }
+                }
 
-        finishing(advice);
+                finishing(advice);
+            });
+        } else {
+
+            Advice advice = Advice.newForAfterRetuning(loader, clazz, method, target, args, returnObject);
+            if (command.isSuccess()) {
+                watching(advice);
+            }
+
+            finishing(advice);
+        }
     }
 
     @Override
@@ -98,8 +121,8 @@ class WatchAdviceListener extends AdviceListenerAdapter {
         } catch (Throwable e) {
             logger.warn("watch failed.", e);
             process.write("watch failed, condition is: " + command.getConditionExpress() + ", express is: "
-                          + command.getExpress() + ", " + e.getMessage() + ", visit " + LogUtil.loggingFile()
-                          + " for more details.\n");
+                    + command.getExpress() + ", " + e.getMessage() + ", visit " + LogUtil.loggingFile()
+                    + " for more details.\n");
             process.end();
         }
     }

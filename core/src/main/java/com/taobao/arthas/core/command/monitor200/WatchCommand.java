@@ -36,6 +36,7 @@ public class WatchCommand extends EnhancerCommand {
     private String express;
     private String conditionExpress;
     private boolean isBefore = false;
+    private boolean isAsync = false;
     private boolean isFinish = false;
     private boolean isException = false;
     private boolean isSuccess = false;
@@ -73,6 +74,12 @@ public class WatchCommand extends EnhancerCommand {
     @Description("Watch before invocation")
     public void setBefore(boolean before) {
         isBefore = before;
+    }
+
+    @Option(shortName = "a", longName = "async", flag = true)
+    @Description("watch async call")
+    public void setAsync(boolean async) {
+        isAsync = async;
     }
 
     @Option(shortName = "f", longName = "finish", flag = true)
@@ -135,6 +142,10 @@ public class WatchCommand extends EnhancerCommand {
 
     public boolean isBefore() {
         return isBefore;
+    }
+
+    public boolean isAsync() {
+        return isAsync;
     }
 
     public boolean isFinish() {
