@@ -11,4 +11,4 @@ java -jar demo-arthas-spring-boot.jar`{{execute T1}}
 
 After booting, access port 80: https://[[HOST_SUBDOMAIN]]-80-[[KATACODA_HOST]].environments.katacoda.com
 
-![Demo Web](/arthas/scenarios/arthas-en/assets/demo-web.png)
+![Demo Web](/arthas/scenarios/common-resources/assets/demo-web.png)
