@@ -6,8 +6,8 @@
   "details": {
     "steps": [
       {
-        "title": "Start demo",
-        "text": "start-demo.md"
+        "title": "Arthas demo",
+        "text": "arthas-demo.md"
       },
       {
         "title": "Start arthas-boot",
@@ -43,20 +43,10 @@
     },
     "finish": {
       "text": "finish.md"
-    },
-    "assets": {
-      "host01": []
     }
   },
   "environment": {
-    "uilayout": "terminal",
-    "showdashboard": true,
-    "dashboards": [
-      {
-        "name": "Web Port 80",
-        "port": 80
-      }
-    ]
+    "uilayout": "terminal"
   },
   "backend": {
     "imageid": "java",
