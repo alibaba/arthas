@@ -1,35 +1,7 @@
-sysenv
-=======================
 
-[`sysenv`在线教程](https://alibaba.github.io/arthas/arthas-tutorials?language=cn&id=command-sysenv)
+`sysenv`{{execute T2}} 
 
-> 查看当前JVM的环境属性(`System Environment Variables`)
-
-### 使用参考
-
-```
- USAGE:
-   sysenv [-h] [env-name]
-
- SUMMARY:
-   Display the system env.
-
- EXAMPLES:
-   sysenv
-   sysenv USER
-
- WIKI:
-   https://alibaba.github.io/arthas/sysenv
-
- OPTIONS:
- -h, --help                                                 this help
- <env-name>                                                 env name
- ```
-
-#### 查看所有环境变量
-
-
-```
+```bash
 $ sysenv
  KEY                      VALUE
 ----------------------------------------------------------------------------------------------------------------------------
@@ -63,13 +35,4 @@ $ sysenv
  HOME                     /Users/admin
  SHLVL                    1
  AUTOJUMP_ERROR_PATH      /Users/admin/Library/autojump/errors.log
-```
-
-#### 查看单个环境变量
-
-> 支持通过`TAB`键自动补全
-
-```
-$ sysenv USER
-USER=admin
 ```
