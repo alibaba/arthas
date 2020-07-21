@@ -11,4 +11,4 @@ java -jar demo-arthas-spring-boot.jar`{{execute T1}}
 
 启动之后，可以访问80端口： https://[[HOST_SUBDOMAIN]]-80-[[KATACODA_HOST]].environments.katacoda.com
 
-![Demo Web](/arthas/scenarios/arthas-cn/assets/demo-web.png)
+![Demo Web](/arthas/scenarios/common-resources/assets/demo-web.png)
