@@ -1,6 +1,8 @@
 package com.taobao.arthas.core.util;
 
 import com.taobao.arthas.core.command.model.BlockingLockInfo;
+import com.taobao.arthas.core.command.model.StackModel;
+import com.taobao.arthas.core.command.model.ThreadNode;
 import com.taobao.arthas.core.view.Ansi;
 
 import java.arthas.SpyAPI;
@@ -19,6 +21,9 @@ abstract public class ThreadUtil {
     private static final BlockingLockInfo EMPTY_INFO = new BlockingLockInfo();
 
     private static ThreadMXBean threadMXBean = ManagementFactory.getThreadMXBean();
+    private static Field threadLocalsField;
+    private static Field threadLocalsTableFiled;
+    private static Field threadLocalEntryValueField;
 
     public static ThreadGroup getRoot() {
         ThreadGroup group = Thread.currentThread().getThreadGroup();
@@ -393,6 +398,31 @@ abstract public class ThreadUtil {
         return builder.toString();
     }
 
+    /**
+     * 获取方法执行堆栈信息
+     *
+     * @return 方法堆栈信息
+     */
+    public static StackModel getThreadStackModel(Thread currentThread) {
+        StackModel stackModel = new StackModel();
+        stackModel.setThreadName(currentThread.getName());
+        stackModel.setThreadId(Long.toHexString(currentThread.getId()));
+        stackModel.setDaemon(currentThread.isDaemon());
+        stackModel.setPriority(currentThread.getPriority());
+        stackModel.setClassloader(getTCCL(currentThread));
+
+        getEagleeyeTraceInfo(currentThread, stackModel);
+
+
+        //stack
+        StackTraceElement[] stackTraceElementArray = currentThread.getStackTrace();
+        int magicStackDepth = findTheSpyAPIDepth(stackTraceElementArray);
+        StackTraceElement[] actualStackFrames = new StackTraceElement[stackTraceElementArray.length - magicStackDepth];
+        System.arraycopy(stackTraceElementArray, magicStackDepth , actualStackFrames, 0, actualStackFrames.length);
+        stackModel.setStackTrace(actualStackFrames);
+        return stackModel;
+    }
+
     public static String getThreadTitle(Thread currentThread) {
         StringBuilder sb = new StringBuilder("thread_name=");
         sb.append(currentThread.getName())
@@ -400,7 +430,47 @@ abstract public class ThreadUtil {
                 .append(";is_daemon=").append(currentThread.isDaemon())
                 .append(";priority=").append(currentThread.getPriority())
                 .append(";TCCL=").append(getTCCL(currentThread));
-        getEagleeyeTraceInfo(currentThread, sb);
+
+        StackModel stackModel = new StackModel();
+        getEagleeyeTraceInfo(currentThread, stackModel);
+        if (stackModel.getTraceId() != null) {
+            sb.append(";trace_id=").append(stackModel.getTraceId());
+        }
+        if (stackModel.getRpcId() != null) {
+            sb.append(";rpc_id=").append(stackModel.getRpcId());
+        }
+        return sb.toString();
+    }
+
+    public static ThreadNode getThreadNode(Thread currentThread) {
+        ThreadNode threadNode = new ThreadNode();
+        threadNode.setThreadId(currentThread.getId());
+        threadNode.setThreadName(currentThread.getName());
+        threadNode.setDaemon(currentThread.isDaemon());
+        threadNode.setPriority(currentThread.getPriority());
+        threadNode.setClassloader(getTCCL(currentThread));
+
+        //trace_id
+        StackModel stackModel = new StackModel();
+        getEagleeyeTraceInfo(currentThread, stackModel);
+        threadNode.setTraceId(stackModel.getTraceId());
+        threadNode.setRpcId(stackModel.getRpcId());
+        return threadNode;
+    }
+
+    public static String getThreadTitle(StackModel stackModel) {
+        StringBuilder sb = new StringBuilder("thread_name=");
+        sb.append(stackModel.getThreadName())
+                .append(";id=").append(stackModel.getThreadId())
+                .append(";is_daemon=").append(stackModel.isDaemon())
+                .append(";priority=").append(stackModel.getPriority())
+                .append(";TCCL=").append(stackModel.getClassloader());
+        if (stackModel.getTraceId() != null) {
+            sb.append(";trace_id=").append(stackModel.getTraceId());
+        }
+        if (stackModel.getRpcId() != null) {
+            sb.append(";rpc_id=").append(stackModel.getRpcId());
+        }
         return sb.toString();
     }
 
@@ -408,41 +478,52 @@ abstract public class ThreadUtil {
         if (null == currentThread.getContextClassLoader()) {
             return "null";
         } else {
-            return currentThread.getContextClassLoader().getClass().getName() +
-                    "@" + Integer.toHexString(currentThread.getContextClassLoader().hashCode());
+            String classloaderClassName = currentThread.getContextClassLoader().getClass().getName();
+            StringBuilder sb = new StringBuilder(classloaderClassName.length()+10);
+            sb.append(classloaderClassName)
+                    .append("@")
+                    .append(Integer.toHexString(currentThread.getContextClassLoader().hashCode()));
+            return  sb.toString();
         }
     }
 
-    private static void getEagleeyeTraceInfo(Thread currentThread, StringBuilder sb) {
+    private static void getEagleeyeTraceInfo(Thread currentThread, StackModel stackModel) {
         try {
             // access to Thread#threadlocals field
-            Field threadLocalsField = Thread.class.getDeclaredField("threadLocals");
+            if (threadLocalsField == null) {
+                threadLocalsField = Thread.class.getDeclaredField("threadLocals");
+            }
             threadLocalsField.setAccessible(true);
             Object threadLocalMap = threadLocalsField.get(currentThread);
+
             // access to ThreadLocal$ThreadLocalMap#table filed
-            Field tableFiled = threadLocalMap.getClass().getDeclaredField("table");
-            tableFiled.setAccessible(true);
-            Object[] tableEntries = (Object[])tableFiled.get(threadLocalMap);
+            if (threadLocalsTableFiled == null) {
+                threadLocalsTableFiled = threadLocalMap.getClass().getDeclaredField("table");
+            }
+            threadLocalsTableFiled.setAccessible(true);
+            Object[] tableEntries = (Object[]) threadLocalsTableFiled.get(threadLocalMap);
             for (Object entry: tableEntries) {
                 if (entry == null) {
                     continue;
                 }
                 // access to ThreadLocal$ThreadLocalMap$Entry#value field
-                Field valueField = entry.getClass().getDeclaredField("value");
-                valueField.setAccessible(true);
-                Object threadLocalValue = valueField.get(entry);
+                if (threadLocalEntryValueField == null) {
+                    threadLocalEntryValueField = entry.getClass().getDeclaredField("value");
+                }
+                threadLocalEntryValueField.setAccessible(true);
+                Object threadLocalValue = threadLocalEntryValueField.get(entry);
                 if (threadLocalValue != null &&
                         "com.taobao.eagleeye.RpcContext_inner".equals(threadLocalValue.getClass().getName())) {
                     // finally we got the chance to access trace id
                     Method getTraceIdMethod = threadLocalValue.getClass().getMethod("getTraceId");
                     getTraceIdMethod.setAccessible(true);
                     String traceId = (String)getTraceIdMethod.invoke(threadLocalValue);
-                    sb.append(";trace_id=").append(traceId);
+                    stackModel.setTraceId(traceId);
                     // get rpc id
                     Method getRpcIdMethod = threadLocalValue.getClass().getMethod("getRpcId");
                     getTraceIdMethod.setAccessible(true);
                     String rpcId = (String)getRpcIdMethod.invoke(threadLocalValue);
-                    sb.append(";rpc_id=").append(rpcId);
+                    stackModel.setRpcId(rpcId);
                     return;
                 }
             }
