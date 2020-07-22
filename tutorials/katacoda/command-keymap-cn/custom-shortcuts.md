@@ -1,9 +1,13 @@
 
-在当前用户目录下新建`$USER_HOME/.arthas/conf/inputrc`文件，可加入自定义配置。
+首先退出Arthas, 在当前用户目录下新建`$USER_HOME/.arthas/conf/inputrc`文件，可加入自定义配置。
 
-假设我是vim的重度用户，我要把`ctrl+h`设置为光标向前一个字符，则设置如下，首先拷贝默认配置
+`exit`{{execute interrupt}}
 
-```
+`mkdir -p $USER_HOME/.arthas/conf/inputrc`{{execute T2}}
+
+假设我是vim的重度用户，我要把`ctrl+h`设置为光标向前一个字符，则首先拷贝默认配置，然后把`"\C-h": backward-delete-char`换成`"\C-h": backward-char`:
+
+`cat > $USER_HOME/.arthas/conf/inputrc <<EOF
 "\C-a": beginning-of-line
 "\C-e": end-of-line
 "\C-f": forward-word
@@ -12,7 +16,7 @@
 "\e[C": forward-char
 "\e[B": next-history
 "\e[A": previous-history
-"\C-h": backward-delete-char
+"\C-h": backward-char
 "\C-?": backward-delete-char
 "\C-u": undo
 "\C-d": delete-char
@@ -22,7 +26,8 @@
 "\C-m": accept-line
 "\C-w": backward-delete-word
 "\C-x\e[3~": backward-kill-line
-"\e\C-?": backward-kill-word
-```
+"\e\C-?": backward-kill-word`{{execute T2}}
 
-然后把`"\C-h": backward-delete-char`换成`"\C-h": backward-char`，然后重新连接即可。
+然后重新连接即可。
+
+`java -jar arthas-boot.jar --target-ip 0.0.0.0`{{execute interrupt}}
