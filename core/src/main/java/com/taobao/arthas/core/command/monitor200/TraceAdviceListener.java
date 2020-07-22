@@ -22,20 +22,20 @@ public class TraceAdviceListener extends AbstractTraceAdviceListener implements 
     @Override
     public void invokeBeforeTracing(String tracingClassName, String tracingMethodName, String tracingMethodDesc, int tracingLineNumber)
             throws Throwable {
-        threadBoundEntity.get().view.begin(
-            StringUtils.normalizeClassName(tracingClassName) + ":" + tracingMethodName + "()" + " #" + tracingLineNumber);
+        // normalize className later
+        threadBoundEntity.get().tree.begin(tracingClassName, tracingMethodName, tracingLineNumber, true);
     }
 
     @Override
     public void invokeAfterTracing(String tracingClassName, String tracingMethodName, String tracingMethodDesc, int tracingLineNumber)
             throws Throwable {
-        threadBoundEntity.get().view.end();
+        threadBoundEntity.get().tree.end();
     }
 
     @Override
     public void invokeThrowTracing(String tracingClassName, String tracingMethodName, String tracingMethodDesc, int tracingLineNumber)
             throws Throwable {
-        threadBoundEntity.get().view.end("throws Exception");
+        threadBoundEntity.get().tree.end(true);
     }
 
 }
