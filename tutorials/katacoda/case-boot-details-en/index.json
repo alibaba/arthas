@@ -10,9 +10,17 @@
         "text": "start-demo.md"
       },
       {
-        "title": "boot supported options",
+        "title": "arthas-boot supported options",
         "text": "arthas-boot-details.md"
-      }  
+      },
+      {
+        "title": "usage",
+        "text": "boot-examples.md"
+      },
+      {
+        "title": "use as.sh",
+        "text": "use-as-sh.md"
+      }
     ],
     "intro": {
       "text": "intro.md"

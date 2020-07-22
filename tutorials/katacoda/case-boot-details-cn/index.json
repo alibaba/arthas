@@ -12,6 +12,14 @@
       {
         "title": "arthas-boot支持的参数",
         "text": "arthas-boot-details.md"
+      },
+      {
+        "title": "参数详解",
+        "text": "boot-examples.md"
+      },
+      {
+        "title": "使用as.sh",
+        "text": "use-as-sh.md"
       }
     ],
     "intro": {
