@@ -16,7 +16,7 @@ public class GetStaticView extends ResultView<GetStaticModel> {
 
     @Override
     public void draw(CommandProcess process, GetStaticModel result) {
-        int expand = result.expand();
+        int expand = result.getExpand();
         if (result.getField() != null) {
             ObjectVO field = result.getField();
             String valueStr = StringUtils.objectToString(expand >= 0 ? new ObjectView(field.getValue(), expand).draw() : field.getValue());
