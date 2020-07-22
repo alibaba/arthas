@@ -1,6 +1,6 @@
 {
-  "title": "Arthas 异步调用 案例",
-  "description": "Arthas 异步调用 案例",
+  "title": "Arthas 后台异步任务 案例",
+  "description": "Arthas 后台异步任务 案例",
   "difficulty": "高级使用者",
   "time": "10分钟",
   "details": {
@@ -14,7 +14,7 @@
         "text": "arthas-boot.md"
       },
       {
-        "title": "异步调用",
+        "title": "后台异步任务",
         "text": "async-jobs.md"
       },
       {

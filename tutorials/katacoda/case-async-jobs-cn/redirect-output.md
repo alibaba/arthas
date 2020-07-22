@@ -1,5 +1,5 @@
 
-可通过>或者>>将任务输出结果输出到指定的文件中，可以和&一起使用，实现arthas命令的异步调用。比如：
+可通过>或者>>将任务输出结果输出到指定的文件中，可以和&一起使用，实现arthas命令的后台异步任务。比如：
 
 `trace demo.MathGame primeFactors >> test.out &`{{execute T2}}
 
