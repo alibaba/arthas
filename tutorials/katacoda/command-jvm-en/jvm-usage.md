@@ -1,91 +1,95 @@
 
 ```bash
 $ jvm
- CATEGORY            INFO
-------------------------------------------------------------------------------------------------------------------------------------
+RUNTIME
+--------------------------------------------------------------------------------------------------------------
+ MACHINE-NAME                   37@ff267334bb65
+ JVM-START-TIME                 2020-07-23 07:50:36
+ MANAGEMENT-SPEC-VERSION        1.2
+ SPEC-NAME                      Java Virtual Machine Specification
+ SPEC-VENDOR                    Oracle Corporation
+ SPEC-VERSION                   1.8
+ VM-NAME                        Java HotSpot(TM) 64-Bit Server VM
+ VM-VENDOR                      Oracle Corporation
+ VM-VERSION                     25.201-b09
+ INPUT-ARGUMENTS                []
+ CLASS-PATH                     demo-arthas-spring-boot.jar
+ BOOT-CLASS-PATH                /usr/lib/jvm/java-8-oracle/jre/lib/resources.jar:/usr/lib/jvm/java-8-oracle/j
+                                re/lib/rt.jar:/usr/lib/jvm/java-8-oracle/jre/lib/sunrsasign.jar:/usr/lib/jvm/
+                                java-8-oracle/jre/lib/jsse.jar:/usr/lib/jvm/java-8-oracle/jre/lib/jce.jar:/us
+                                r/lib/jvm/java-8-oracle/jre/lib/charsets.jar:/usr/lib/jvm/java-8-oracle/jre/l
+                                ib/jfr.jar:/usr/lib/jvm/java-8-oracle/jre/classes
+ LIBRARY-PATH                   /usr/java/packages/lib/amd64:/usr/lib64:/lib64:/lib:/usr/lib
 
- RUNTIME              MACHINE-NAME             hellodeMacBook-Air.local
-                      JVM-START-TIME           2015-12-23 10:54:18
-                      MANAGEMENT-SPEC-VERSION  1.2
-                      SPEC-NAME                Java Virtual Machine Specification
-                      SPEC-VENDOR              Oracle Corporation
-                      SPEC-VERSION             1.8
-                      VM-NAME                  Java HotSpot(TM) 64-Bit Server VM
-                      VM-VENDOR                Oracle Corporation
-                      VM-VERSION               25.60-b23
-                      INPUT-ARGUMENTS          -Xbootclasspath/a:/Users/hello/.jenv/versions/1.8/lib/tools.jar
-                                               -Djava.util.logging.config.file=/Users/hello/code/java/crash/packaging/target/
-                                               conf/logging.properties
+--------------------------------------------------------------------------------------------------------------
+ CLASS-LOADING
+--------------------------------------------------------------------------------------------------------------
+ LOADED-CLASS-COUNT             7529
+ TOTAL-LOADED-CLASS-COUNT       7529
+ UNLOADED-CLASS-COUNT           0
+ IS-VERBOSE                     false
 
-                      CLASS-PATH               /Users/hello/.jenv/versions/1.8/lib/tools.jar:/Users/hello/code/java/cras
-                                               h/packaging/target/bin/crash.cli-1.3.2-SNAPSHOT.jar::/Users/hello/code/java/cr
-                                               ash/packaging/target/lib/bcpkix-jdk15on-1.51.jar:/Users/hello/code/java/crash/
-                                               packaging/target/lib/bcprov-jdk15on-1.51.jar:/Users/hello/code/java/crash/pack
-                                               aging/target/lib/crash.connectors.ssh-1.3.2-SNAPSHOT-standalone.jar:/Users/hengyuna
-                                               bc/code/java/crash/packaging/target/lib/crash.connectors.telnet-1.3.2-SNAPSHOT-stan
-                                               dalone.jar:/Users/hello/code/java/crash/packaging/target/lib/crash.shell-1.3.2
-                                               -SNAPSHOT.jar:/Users/hello/code/java/crash/packaging/target/lib/groovy-all-1.8
-                                               .9.jar:/Users/hello/code/java/crash/packaging/target/lib/ivy-2.2.0.jar
-                      BOOT-CLASS-PATH          /Library/Java/JavaVirtualMachines/jdk1.8.0_60.jdk/Contents/Home/jre/lib/resources.j
-                                               ar:/Library/Java/JavaVirtualMachines/jdk1.8.0_60.jdk/Contents/Home/jre/lib/rt.jar:/
-                                               Library/Java/JavaVirtualMachines/jdk1.8.0_60.jdk/Contents/Home/jre/lib/sunrsasign.j
-                                               ar:/Library/Java/JavaVirtualMachines/jdk1.8.0_60.jdk/Contents/Home/jre/lib/jsse.jar
-                                               :/Library/Java/JavaVirtualMachines/jdk1.8.0_60.jdk/Contents/Home/jre/lib/jce.jar:/L
-                                               ibrary/Java/JavaVirtualMachines/jdk1.8.0_60.jdk/Contents/Home/jre/lib/charsets.jar:
-                                               /Library/Java/JavaVirtualMachines/jdk1.8.0_60.jdk/Contents/Home/jre/lib/jfr.jar:/Li
-                                               brary/Java/JavaVirtualMachines/jdk1.8.0_60.jdk/Contents/Home/jre/classes:/Users/hen
-                                               gyunabc/.jenv/versions/1.8/lib/tools.jar
-                      LIBRARY-PATH             /Users/hello/Library/Java/Extensions:/Library/Java/Extensions:/Network/Library
-                                               /Java/Extensions:/System/Library/Java/Extensions:/usr/lib/java:.
+--------------------------------------------------------------------------------------------------------------
+ COMPILATION
+--------------------------------------------------------------------------------------------------------------
+ NAME                           HotSpot 64-Bit Tiered Compilers
+ TOTAL-COMPILE-TIME             14921(ms)
 
- CLASS-LOADING        LOADED-CLASS-COUNT        4264
-                      TOTAL-LOADED-CLASS-COUNT  4264
-                      UNLOADED-CLASS-COUNT      0
-                      IS-VERBOSE                false
+--------------------------------------------------------------------------------------------------------------
+ GARBAGE-COLLECTORS
+--------------------------------------------------------------------------------------------------------------
+ Copy                           152/523(ms)
+ [count/time]
+ MarkSweepCompact               3/268(ms)
+ [count/time]
 
- COMPILATION          NAME                HotSpot 64-Bit Tiered Compilers
-                      TOTAL-COMPILE-TIME  5145(ms)
+--------------------------------------------------------------------------------------------------------------
+ MEMORY-MANAGERS
+--------------------------------------------------------------------------------------------------------------
+ CodeCacheManager               Code Cache
 
- GARBAGE-COLLECTORS   PS Scavenge   6/74(ms)
-                      [count/time]
-                      PS MarkSweep  1/64(ms)
-                      [count/time]
+ Metaspace Manager              Metaspace
+                                Compressed Class Space
 
- MEMORY-MANAGERS      CodeCacheManager   Code Cache
+ Copy                           Eden Space
+                                Survivor Space
 
-                      Metaspace Manager  Metaspace
-                                         Compressed Class Space
+ MarkSweepCompact               Eden Space
+                                Survivor Space
+                                Tenured Gen
 
-                      PS Scavenge        PS Eden Space
-                                         PS Survivor Space
 
-                      PS MarkSweep       PS Eden Space
-                                         PS Survivor Space
-                                         PS Old Gen
+--------------------------------------------------------------------------------------------------------------
+ MEMORY
+--------------------------------------------------------------------------------------------------------------
+ HEAP-MEMORY-USAGE              48005120(45.8 MiB)/12582912(12.0 MiB)/186515456(177.9 MiB)/37404168(35.7 MiB)
+ [committed/init/max/used]
+ NO-HEAP-MEMORY-USAGE           59834368(57.1 MiB)/2555904(2.4 MiB)/-1(-1 B)/58356376(55.7 MiB)
+ [committed/init/max/used]
+ PENDING-FINALIZE-COUNT         0
 
- MEMORY               HEAP-MEMORY-USAGE          186646528/134217728/1908932608/31245568
-                      [committed/init/max/used]
-                      NO-HEAP-MEMORY-USAGE       35520512/2555904/-1/34584616
-                      [committed/init/max/used]
-                      PENDING-FINALIZE-COUNT     0
+--------------------------------------------------------------------------------------------------------------
+ OPERATING-SYSTEM
+--------------------------------------------------------------------------------------------------------------
+ OS                             Linux
+ ARCH                           amd64
+ PROCESSORS-COUNT               3
+ LOAD-AVERAGE                   29.53
+ VERSION                        4.15.0-52-generic
 
- OPERATING-SYSTEM     OS                Mac OS X
-                      ARCH              x86_64
-                      PROCESSORS-COUNT  4
-                      LOAD-AVERAGE      2.328125
-                      VERSION           10.10.5
+--------------------------------------------------------------------------------------------------------------
+ THREAD
+--------------------------------------------------------------------------------------------------------------
+ COUNT                          30
+ DAEMON-COUNT                   24
+ PEAK-COUNT                     31
+ STARTED-COUNT                  36
+ DEADLOCK-COUNT                 0
 
- THREAD               COUNT          16
-                      DAEMON-COUNT   10
-                      PEAK-COUNT     18
-                      STARTED-COUNT  19
-                      DEADLOCK-COUNT  0
-                      
+--------------------------------------------------------------------------------------------------------------
  FILE-DESCRIPTOR
- 
-                      MAX-FILE-DESCRIPTOR-COUNT  10240
-                      OPEN-FILE-DESCRIPTOR-COUNT 648
-Affect cost in 2 ms.
+--------------------------------------------------------------------------------------------------------------
+ MAX-FILE-DESCRIPTOR-COUNT      1048576
+ OPEN-FILE-DESCRIPTOR-COUNT     100
+Affect(row-cnt:0) cost in 88 ms.
 ```
-
-Enter `Q`{{execute T2}} or `Ctrl+C` to exit the dashboard command.
