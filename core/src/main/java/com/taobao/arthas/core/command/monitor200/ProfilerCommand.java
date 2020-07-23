@@ -302,7 +302,7 @@ public class ProfilerCommand extends AnnotatedCommand {
                     ArthasBootstrap.getInstance().getScheduledExecutorService().schedule(new Runnable() {
                         @Override
                         public void run() {
-                            //在异步线程执行，profiler命令已经结束
+                            //在异步线程执行，profiler命令已经结束，不能输出到客户端
                             try {
                                 logger.info("stopping profiler ...");
                                 ProfilerModel model = processStop(asyncProfiler);
