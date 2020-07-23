@@ -1,6 +1,7 @@
 package com.taobao.arthas.core.command.klass100;
 
 import java.lang.instrument.Instrumentation;
+import java.util.Collection;
 import java.util.List;
 
 import com.alibaba.arthas.deps.org.slf4j.Logger;
@@ -9,10 +10,12 @@ import com.taobao.arthas.core.command.Constants;
 import com.taobao.arthas.core.command.express.Express;
 import com.taobao.arthas.core.command.express.ExpressException;
 import com.taobao.arthas.core.command.express.ExpressFactory;
+import com.taobao.arthas.core.command.model.ClassLoaderVO;
 import com.taobao.arthas.core.command.model.OgnlModel;
 import com.taobao.arthas.core.shell.command.AnnotatedCommand;
 import com.taobao.arthas.core.shell.command.CommandProcess;
 import com.taobao.arthas.core.util.ClassLoaderUtils;
+import com.taobao.arthas.core.util.ClassUtils;
 import com.taobao.middleware.cli.annotations.Argument;
 import com.taobao.middleware.cli.annotations.Description;
 import com.taobao.middleware.cli.annotations.Name;
@@ -72,21 +75,28 @@ public class OgnlCommand extends AnnotatedCommand {
         ClassLoader classLoader = null;
         if (hashCode != null) {
             classLoader = ClassLoaderUtils.getClassLoader(inst, hashCode);
+            if (classLoader == null) {
+                process.end(-1, "Can not find classloader with hashCode: " + hashCode + ".");
+                return;
+            }
         } else if (classLoaderClass != null) {
             List<ClassLoader> matchedClassLoaders = ClassLoaderUtils.getClassLoaderByClassName(inst, classLoaderClass);
-            if (matchedClassLoaders.size() > 1) {
-                process.end(-1, "Find more than one classloader matching the specified class name : " + classLoaderClass);
-                return;
-            } else if (matchedClassLoaders.size() == 1) {
+            if (matchedClassLoaders.size() == 1) {
                 classLoader = matchedClassLoaders.get(0);
+            } else if (matchedClassLoaders.size() > 1) {
+                Collection<ClassLoaderVO> classLoaderVOList = ClassUtils.createClassLoaderVOList(matchedClassLoaders);
+                OgnlModel ognlModel = new OgnlModel()
+                        .setClassLoaderClass(classLoaderClass)
+                        .setMatchedClassLoaders(classLoaderVOList);
+                process.appendResult(ognlModel);
+                process.end(-1, "Found more than one classloader of the specified class, please specify classloader by '-c <classloader hash>'");
+                return;
+            } else {
+                process.end(-1, "Can not find classloader of class: " + classLoaderClass + ".");
+                return;
             }
         } else {
             classLoader = ClassLoader.getSystemClassLoader();
-        }
-
-        if (classLoader == null) {
-            process.end(-1, "Can not find classloader with hashCode: " + hashCode + ".");
-            return;
         }
 
         Express unpooledExpress = ExpressFactory.unpooledExpress(classLoader);
