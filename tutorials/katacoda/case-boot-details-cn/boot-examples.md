@@ -91,7 +91,7 @@
 
 `java -jar arthas-boot.jar --height 25 --width 80`{{execute T2}}
 
-## 指定arthas家目录
+## 指定arthas主目录
 
 `java -jar arthas-boot.jar --arthas-home .`{{execute T2}}
 
