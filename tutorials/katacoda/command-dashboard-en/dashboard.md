@@ -1,15 +1,10 @@
-dashboard
-=========
 
-[`dashboard` online tutorial](https://alibaba.github.io/arthas/arthas-tutorials?language=en&id=command-dashboard)
+The `dashboard`{{execute T2}} command allows you to view the real-time data panel of the current system.
 
-> This is the real time statistics dashboard for the current system, press `Ctrl+C` to exit.
+When running in Apache Tomcat Alibaba edition, the dashboard will also present the real time statistics of the tomcat, including [QPS](https://en.wikipedia.org/wiki/Queries_per_second), RT, error counts, and thread pool, etc.
 
-When running in Apache Tomcat Alibaba edition, the dashboard will also present the real time statistics of the tomcat,  including [QPS](https://en.wikipedia.org/wiki/Queries_per_second), RT, error counts, and thread pool, etc.
 
-### Usage
-
-```
+```bash
 $ dashboard
 ID         NAME                              GROUP                  PRIORITY   STATE       %CPU       TIME       INTERRUPTED DAEMON
 889        RMI TCP Connection(15)-30.10.166. RMI Runtime            9          RUNNABLE    48         0:5        false       true
@@ -46,18 +41,4 @@ processors                        4                                 threadpool  
 uptime                            16020s                            busy                              0
 ```
 
-### Notes on column headers
-
-* ID: JVM thread ID, pls. note this ID is different from the nativeID in jstack
-* NAME: thread name
-* GROUP: thread group name
-* PRIORITY: thread priority, ranged from 1 to 10. The greater number, the higher priority
-* STATE: thread state
-* CPU%: the ratio of CPU usage for the thread, sampled every 100ms
-* TIME: total running time in `minute:second` format
-* INTERRUPTED: the thread interruption state
-* DAEMON: daemon thread or not
-
-### Screenshot
-
-![](../_static/dashboard.png "dashboard")
+Enter `Q`{{execute T2}} or `Ctrl+C` to exit the dashboard command.
