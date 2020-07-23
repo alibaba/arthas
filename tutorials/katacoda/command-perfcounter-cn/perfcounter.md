@@ -1,13 +1,32 @@
-perfcounter
-===
 
-[`perfcounter` online tutorial](https://alibaba.github.io/arthas/arthas-tutorials?language=en&id=command-perfcounter)
+查看当前JVM的 Perf Counter信息
 
-> Check the current JVM Perf Counter information.
+`perfcounter -h`{{execute T2}}
 
-### Usage
+```bash
+ USAGE:
+   perfcounter [-d] [-h]
 
+ SUMMARY:
+   Display the perf counter infornation.
+
+ Examples:
+   perfcounter
+   perfcounter -d
+
+ WIKI:
+   https://alibaba.github.io/arthas/perfcounter
+
+ OPTIONS:
+ -d, --details                        print all perf counter details
+ -h, --help                           this help
 ```
+
+## 使用参考
+
+`perfcounter`{{execute T2}}
+
+```bash
 $ perfcounter
  java.ci.totalTime                            2325637411
  java.cls.loadedClasses                       3403
@@ -17,12 +36,13 @@ $ perfcounter
  java.property.java.version                   11.0.4
  java.property.java.vm.info                   mixed mode
  java.property.java.vm.name                   OpenJDK 64-Bit Server VM
-...
-```
+ ```
 
-Print more information with the `-d` option:
+可以用-d参数打印更多信息：
 
-```
+`perfcounter -d`{{execute T2}}
+
+```bash
 $ perfcounter -d
  Name                                   Variability   Units        Value
 ---------------------------------------------------------------------------------
@@ -33,10 +53,8 @@ $ perfcounter -d
  java.cls.unloadedClasses               Monotonic     Events       0
 ```
 
-### JVM above JDK9
+## 备注: 对于jdk9以上的应用
 
-If the information is not printed, when the application starts, add the following parameters:
+如果没有打印出信息，应用在启动时，加下面的参数：
 
-```
---add-opens java.base/jdk.internal.perf=ALL-UNNAMED --add-exports java.base/jdk.internal.perf=ALL-UNNAMED
-```
+`--add-opens java.base/jdk.internal.perf=ALL-UNNAMED --add-exports java.base/jdk.internal.perf=ALL-UNNAMED`
