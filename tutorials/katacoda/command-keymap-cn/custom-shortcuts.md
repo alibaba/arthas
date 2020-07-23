@@ -3,7 +3,7 @@
 
 `exit`{{execute interrupt}}
 
-`mkdir -p $USER_HOME/.arthas/conf/inputrc`{{execute T2}}
+`mkdir -p /root/.arthas/conf/`{{execute T2}}
 
 假设我是vim的重度用户，我要把`ctrl+h`设置为光标向前一个字符，则首先拷贝默认配置:
 
@@ -31,7 +31,7 @@
 
 然后把`"\C-h": backward-delete-char`换成`"\C-h": backward-char`，修改后的keymap配置即以下内容:
 
-`cat > $USER_HOME/.arthas/conf/inputrc <<EOF
+`cat > /root/.arthas/conf/inputrc <<EOF
 "\C-a": beginning-of-line
 "\C-e": end-of-line
 "\C-f": forward-word
@@ -54,4 +54,8 @@
 
 然后重新连接即可。
 
-`java -jar arthas-boot.jar --target-ip 0.0.0.0`{{execute interrupt}}
+`java -jar arthas-boot.jar`{{execute interrupt}}
+
+最后执行下面命令查看效果：
+
+`keymap | grep C-h`{{execute T2}}

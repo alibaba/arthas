@@ -3,7 +3,7 @@ Specify customization in `$USER_HOME/.arthas/conf/inputrc` file in the current u
 
 `exit`{{execute interrupt}}
 
-`mkdir -p $USER_HOME/.arthas/conf/inputrc`{{execute T2}}
+`mkdir -p /root/.arthas/conf/`{{execute T2}}
 
 The default configuration is as follows:
 
@@ -31,7 +31,7 @@ The default configuration is as follows:
 
 Vim user may want to map `ctrl+h` to moving the cursor forward one character. To achieve this, replace `"\C-h": backward-delete-char` with `"\C-h": backward-char` in the default configuration. The modified configuration is as follows:
 
-`cat > $USER_HOME/.arthas/conf/inputrc <<EOF
+`cat > /root/.arthas/conf/inputrc <<EOF
 "\C-a": beginning-of-line
 "\C-e": end-of-line
 "\C-f": forward-word
@@ -54,4 +54,8 @@ Vim user may want to map `ctrl+h` to moving the cursor forward one character. To
 
 Then reconnect to Arthas console to take effect.
 
-`java -jar arthas-boot.jar --target-ip 0.0.0.0`{{execute interrupt}}
+`java -jar arthas-boot.jar`{{execute interrupt}}
+
+Finally you can see the modification by executing
+
+`keymap | grep C-h`{{execute T2}}
