@@ -6,12 +6,12 @@ import com.taobao.arthas.core.GlobalOptions;
 import com.taobao.arthas.core.advisor.Advice;
 import com.taobao.arthas.core.advisor.ArthasMethod;
 import com.taobao.arthas.core.advisor.AdviceListenerAdapter;
+import com.taobao.arthas.core.command.model.WatchModel;
 import com.taobao.arthas.core.shell.command.CommandProcess;
-import com.taobao.arthas.core.util.DateUtils;
 import com.taobao.arthas.core.util.LogUtil;
-import com.taobao.arthas.core.util.StringUtils;
 import com.taobao.arthas.core.util.ThreadLocalWatch;
-import com.taobao.arthas.core.view.ObjectView;
+
+import java.util.Date;
 
 /**
  * @author beiwei30 on 29/11/2016.
@@ -71,10 +71,7 @@ class WatchAdviceListener extends AdviceListenerAdapter {
         }
     }
 
-    private boolean isNeedExpand() {
-        Integer expand = command.getExpand();
-        return null != expand && expand >= 0;
-    }
+
 
     private void watching(Advice advice) {
         try {
@@ -87,9 +84,15 @@ class WatchAdviceListener extends AdviceListenerAdapter {
             if (conditionResult) {
                 // TODO: concurrency issues for process.write
                 Object value = getExpressionResult(command.getExpress(), advice, cost);
-                String result = StringUtils.objectToString(
-                        isNeedExpand() ? new ObjectView(value, command.getExpand(), command.getSizeLimit()).draw() : value);
-                process.write("ts=" + DateUtils.getCurrentDate() + "; [cost=" + cost + "ms] result=" + result + "\n");
+
+                WatchModel model = new WatchModel();
+                model.setTs(new Date());
+                model.setCost(cost);
+                model.setValue(value);
+                model.setExpand(command.getExpand());
+                model.setSizeLimit(command.getSizeLimit());
+
+                process.appendResult(model);
                 process.times().incrementAndGet();
                 if (isLimitExceeded(command.getNumberOfLimit(), process.times().get())) {
                     abortProcess(process, command.getNumberOfLimit());
@@ -97,10 +100,9 @@ class WatchAdviceListener extends AdviceListenerAdapter {
             }
         } catch (Throwable e) {
             logger.warn("watch failed.", e);
-            process.write("watch failed, condition is: " + command.getConditionExpress() + ", express is: "
+            process.end(-1, "watch failed, condition is: " + command.getConditionExpress() + ", express is: "
                           + command.getExpress() + ", " + e.getMessage() + ", visit " + LogUtil.loggingFile()
-                          + " for more details.\n");
-            process.end();
+                          + " for more details.");
         }
     }
 }

@@ -1,15 +1,17 @@
 package com.taobao.arthas.core.command.monitor200;
 
 import com.taobao.arthas.core.advisor.AdviceListenerAdapter;
+import com.taobao.arthas.core.command.model.StackModel;
 import com.taobao.arthas.core.shell.command.CommandProcess;
 import com.alibaba.arthas.deps.org.slf4j.Logger;
 import com.alibaba.arthas.deps.org.slf4j.LoggerFactory;
 import com.taobao.arthas.core.advisor.Advice;
 import com.taobao.arthas.core.advisor.ArthasMethod;
-import com.taobao.arthas.core.util.DateUtils;
 import com.taobao.arthas.core.util.LogUtil;
 import com.taobao.arthas.core.util.ThreadLocalWatch;
 import com.taobao.arthas.core.util.ThreadUtil;
+
+import java.util.Date;
 
 /**
  * @author beiwei30 on 29/11/2016.
@@ -17,7 +19,7 @@ import com.taobao.arthas.core.util.ThreadUtil;
 public class StackAdviceListener extends AdviceListenerAdapter {
     private static final Logger logger = LoggerFactory.getLogger(StackAdviceListener.class);
 
-    private final ThreadLocal<String> stackThreadLocal = new ThreadLocal<String>();
+    private final ThreadLocal<StackModel> stackThreadLocal = new ThreadLocal<StackModel>();
     private final ThreadLocalWatch threadLocalWatch = new ThreadLocalWatch();
     private StackCommand command;
     private CommandProcess process;
@@ -31,7 +33,7 @@ public class StackAdviceListener extends AdviceListenerAdapter {
     @Override
     public void before(ClassLoader loader, Class<?> clazz, ArthasMethod method, Object target, Object[] args)
             throws Throwable {
-        stackThreadLocal.set(ThreadUtil.getThreadStack(Thread.currentThread()));
+        stackThreadLocal.set(ThreadUtil.getThreadStackModel(Thread.currentThread()));
         // 开始计算本次方法调用耗时
         threadLocalWatch.start();
     }
@@ -60,7 +62,10 @@ public class StackAdviceListener extends AdviceListenerAdapter {
             }
             if (conditionResult) {
                 // TODO: concurrency issues for process.write
-                process.write("ts=" + DateUtils.getCurrentDate() + ";" + stackThreadLocal.get() + "\n");
+                // TODO: should clear stackThreadLocal?
+                StackModel stackModel = stackThreadLocal.get();
+                stackModel.setTs(new Date());
+                process.appendResult(stackModel);
                 process.times().incrementAndGet();
                 if (isLimitExceeded(command.getNumberOfLimit(), process.times().get())) {
                     abortProcess(process, command.getNumberOfLimit());
@@ -68,9 +73,8 @@ public class StackAdviceListener extends AdviceListenerAdapter {
             }
         } catch (Throwable e) {
             logger.warn("stack failed.", e);
-            process.write("stack failed, condition is: " + command.getConditionExpress() + ", " + e.getMessage()
-                          + ", visit " + LogUtil.loggingFile() + " for more details.\n");
-            process.end();
+            process.end(-1, "stack failed, condition is: " + command.getConditionExpress() + ", " + e.getMessage()
+                          + ", visit " + LogUtil.loggingFile() + " for more details.");
         }
     }
 }

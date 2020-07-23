@@ -68,6 +68,13 @@ public class ResultViewResolver {
             registerView(MBeanView.class);
             registerView(PerfCounterView.class);
             registerView(ThreadView.class);
+            registerView(ProfilerView.class);
+            registerView(EnhancerView.class);
+            registerView(MonitorView.class);
+            registerView(StackView.class);
+            registerView(TimeTunnelView.class);
+            registerView(TraceView.class);
+            registerView(WatchView.class);
 
         } catch (Throwable e) {
             logger.error("register result view failed", e);

@@ -190,7 +190,7 @@ public class ClassLoaderCommand extends AnnotatedCommand {
                 if (cl instanceof URLClassLoader) {
                     List<String> classLoaderUrls = getClassLoaderUrls(cl);
                     affect.rCnt(classLoaderUrls.size());
-                    if (classLoaderUrls.isEmpty()){
+                    if (classLoaderUrls.isEmpty()) {
                         process.appendResult(new MessageModel("urls is empty."));
                     } else {
                         process.appendResult(new ClassLoaderModel().setUrls(classLoaderUrls));
@@ -198,9 +198,9 @@ public class ClassLoaderCommand extends AnnotatedCommand {
                     }
                 } else {
                     process.appendResult(new MessageModel("not a URLClassLoader."));
-            }
+                }
                 break;
-        }
+            }
         }
         process.appendResult(new RowAffectModel(affect));
         process.end();
