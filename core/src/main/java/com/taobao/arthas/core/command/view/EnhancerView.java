@@ -10,11 +10,7 @@ import com.taobao.arthas.core.shell.command.CommandProcess;
 public class EnhancerView extends ResultView<EnhancerModel> {
     @Override
     public void draw(CommandProcess process, EnhancerModel result) {
-        if (result.isSuccess()) {
-            process.write("Classes enhanced successfully.\n");
-        } else {
-            process.write("Classes enhanced failed.\n");
-        }
+        // ignore enhance result status, judge by the following output
         if (result.getEffect() != null) {
             process.write(ViewRenderUtil.renderEnhancerAffect(result.getEffect()));
         }
