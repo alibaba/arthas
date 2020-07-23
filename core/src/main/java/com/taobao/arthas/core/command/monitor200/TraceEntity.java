@@ -13,8 +13,8 @@ public class TraceEntity {
     protected TraceTree tree;
     protected int deep;
 
-    public TraceEntity() {
-        this.tree = createTraceTree();
+    public TraceEntity(ClassLoader loader) {
+        this.tree = createTraceTree(loader);
         this.deep = 0;
     }
 
@@ -26,8 +26,8 @@ public class TraceEntity {
         this.deep = deep;
     }
 
-    private TraceTree createTraceTree() {
-        return new TraceTree(ThreadUtil.getThreadNode(Thread.currentThread()));
+    private TraceTree createTraceTree(ClassLoader loader) {
+        return new TraceTree(ThreadUtil.getThreadNode(loader, Thread.currentThread()));
     }
 
     public TraceModel getModel() {
