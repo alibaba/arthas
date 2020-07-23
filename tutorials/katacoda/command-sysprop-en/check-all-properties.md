@@ -1,37 +1,7 @@
-sysprop
-=======
 
-[`sysprop` online tutorial](https://alibaba.github.io/arthas/arthas-tutorials?language=en&id=command-sysprop)
+`sysprop`{{execute T2}} 
 
-> Examine the system properties from the target JVM
-
-### Usage
-
-```
- USAGE:
-   sysprop [-h] [property-name] [property-value]
-
- SUMMARY:
-   Display, and change all the system properties.
-
- EXAMPLES:
- sysprop
- sysprop file.encoding
- sysprop production.mode true
-
- WIKI:
-   https://alibaba.github.io/arthas/sysprop
-
- OPTIONS:
- -h, --help                                  this help
- <property-name>                             property name
- <property-value>                            property value
-```
-
-#### Check all properties
-
-
-```
+```bash
 $ sysprop
  KEY                                                  VALUE
 -------------------------------------------------------------------------------------------------------------------------------------
@@ -102,23 +72,4 @@ $ sysprop
  sun.cpu.endian                                       little
  sun.io.unicode.encoding                              UnicodeBig
  sun.cpu.isalist
-```
-
-#### Check One Single Property
-
-> Use `tab` for auto-completion
-
-```bash
-$ sysprop java.version
-java.version=1.8.0_51
-```
-
-#### Modify Single Property
-
-```
-$ sysprop user.country
-user.country=US
-$ sysprop user.country CN
-Successfully changed the system property.
-user.country=CN
 ```
