@@ -38,10 +38,13 @@ RUNTIME
 --------------------------------------------------------------------------------------------------------------
  GARBAGE-COLLECTORS
 --------------------------------------------------------------------------------------------------------------
- Copy                           152/523(ms)
- [count/time]
- MarkSweepCompact               3/268(ms)
- [count/time]
+ PS Scavenge                            name : PS Scavenge                                                                             
+ [count/time (ms)]                      collectionCount : 7                                                                            
+                                        collectionTime : 68                                                                            
+                                                                                                                                       
+ PS MarkSweep                           name : PS MarkSweep                                                                            
+ [count/time (ms)]                      collectionCount : 1                                                                            
+                                        collectionTime : 47 
 
 --------------------------------------------------------------------------------------------------------------
  MEMORY-MANAGERS
