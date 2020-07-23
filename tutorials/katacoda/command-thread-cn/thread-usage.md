@@ -1,29 +1,9 @@
-thread
-======
 
-[`thread` online tutorial](https://alibaba.github.io/arthas/arthas-tutorials?language=en&id=command-thread)
+### 支持一键展示当前最忙的前N个线程并打印堆栈：
 
-> Check the basic info and stack trace of the target thread.
+`thread -n 3`{{execute T2}}
 
-### Parameters
-
-|Name|Specification|
-|---:|:---|
-|*id*|thread id in JVM|
-|`[n:]`|the top n busiest threads with stack traces printed|
-|`[b]`|locate the thread blocking the others|
-|[i `<value>`]|specify the interval to collect data to compute CPU ratios (ms)|
-
-> How the CPU ratios are calculated? <br/><br/>
-> CPU ratio for a given thread is the CPU time it takes divided by the total CPU time within a specified interval period. It is calculated in the following way: sample CPU times for all the thread by calling `java.lang.management.ThreadMXBean#getThreadCpuTime` first, then sleep for a period (the default value is 100ms, which can be specified by `-i`), then sample CPU times again. By this, we can get the time cost for this period for each thread, then come up with the ratio. <br/><br/>
-> Note: this operation consumes CPU time too (`getThreadCpuTime` is time-consuming), therefore it is possible to observe Arthas's thread appears in the list. To avoid this, try to increase sample interval, for example: 5000 ms.<br/><br/>
-> If you'd like to check the CPU ratios from the very beginning of the Java process, [show-busy-java-threads](https://github.com/oldratlee/useful-scripts/blob/master/docs/java.md#-show-busy-java-threads) can come to help. 
-
-### Usage
-
-#### List the top n busiest threads with detailed stack trace
-
-```shell
+```bash
 $ thread -n 3
 "as-command-execute-daemon" Id=29 cpuUsage=75% RUNNABLE
     at sun.management.ThreadImpl.dumpThreads0(Native Method)
@@ -35,18 +15,14 @@ $ thread -n 3
     at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1145)
     at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:615)
     at java.lang.Thread.run(Thread.java:745)
-
+ 
     Number of locked synchronizers = 1
     - java.util.concurrent.ThreadPoolExecutor$Worker@6cd0b6f8
-
-
-
+ 
 "as-session-expire-daemon" Id=25 cpuUsage=24% TIMED_WAITING
     at java.lang.Thread.sleep(Native Method)
     at com.taobao.arthas.core.server.DefaultSessionManager$2.run(DefaultSessionManager.java:85)
-
-
-
+ 
 "Reference Handler" Id=2 cpuUsage=0% WAITING on java.lang.ref.Reference$Lock@69ba0f27
     at java.lang.Object.wait(Native Method)
     -  waiting on java.lang.ref.Reference$Lock@69ba0f27
@@ -54,9 +30,11 @@ $ thread -n 3
     at java.lang.ref.Reference$ReferenceHandler.run(Reference.java:133)
 ```
 
-#### List all threads' info when no options provided
+### 当没有参数时，显示所有线程的信息。
 
-```shell
+`thread`{{execute T2}}
+
+```bash
 $ thread
 Threads Total: 16, NEW: 0, RUNNABLE: 7, BLOCKED: 0, WAITING: 5, TIMED_WAITING: 4, TERMINATED: 0
 ID         NAME                             GROUP                 PRIORITY   STATE      %CPU       TIME       INTERRUPTE DAEMON
@@ -78,9 +56,13 @@ ID         NAME                             GROUP                 PRIORITY   STA
 21         Thread-8                         main                  5          RUNNABLE   0          0:0        false      true
 ```
 
-#### thread id, show the running stack for the target thread
+### thread id， 显示指定线程的运行堆栈
 
-```shell
+查看线程ID 16的栈：
+
+`thread 16`{{execute T2}}
+
+```bash
 $ thread 1
 "main" Id=1 WAITING on java.util.concurrent.CountDownLatch$Sync@29fafb28
     at sun.misc.Unsafe.park(Native Method)
@@ -92,9 +74,11 @@ $ thread 1
     at java.util.concurrent.CountDownLatch.await(CountDownLatch.java:231)
 ```
 
-#### thread -b, locate the thread bocking the others
+### thread -b, 找出当前阻塞其他线程的线程
 
-In some occasions, we experience the whole application is stuck because there's one particular thread hold one lock that other threads are relying on. To diagnose such an issue, Arthas provides `thread -b` to find the problematic thread in one single command.
+有时候我们发现应用卡住了， 通常是由于某个线程拿住了某个锁， 并且其他线程都在等待这把锁造成的。 为了排查这类问题， arthas提供了`thread -b`， 一键找出那个罪魁祸首。
+
+`thread -b`{{execute T2}}
 
 ```bash
 $ thread -b
@@ -130,15 +114,16 @@ $ thread -b
     at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:617)
     at org.apache.tomcat.util.threads.TaskThread$WrappingRunnable.run(TaskThread.java:61)
     at java.lang.Thread.run(Thread.java:745)
-
+ 
     Number of locked synchronizers = 1
     - java.util.concurrent.ThreadPoolExecutor$Worker@31a6493e
 ```
 
-> Note: By now Arthas only supports to locate the thread blocked by `synchronzied`, while `java.util.concurrent.Lock` is not supported yet.
+**注意**， 目前只支持找出synchronized关键字阻塞住的线程， 如果是`java.util.concurrent.Lock`， 目前还不支持。
 
+### thread -i, 指定采样时间间隔
 
-#### thread -i, specify the sampling interval
+`thread -n 3 -i 5000`{{execute T2}}
 
 ```bash
 $ thread -n 3 -i 1000
@@ -155,13 +140,15 @@ $ thread -n 3 -i 1000
     at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1142)
     at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:617)
     at java.lang.Thread.run(Thread.java:756)
-
+ 
     Number of locked synchronizers = 1
     - java.util.concurrent.ThreadPoolExecutor$Worker@546aeec1
 ...
 ```
 
-#### thread --state , view the special state theads
+### thread –state ，查看指定状态的线程
+
+`thread --state WAITING`{{execute T2}}
 
 ```bash
 [arthas@28114]$ thread --state WAITING
