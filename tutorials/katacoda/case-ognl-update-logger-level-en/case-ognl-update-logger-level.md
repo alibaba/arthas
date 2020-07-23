@@ -10,9 +10,13 @@ $ sc -d com.example.demo.arthas.user.UserController | grep classLoaderHash
  classLoaderHash   1be6f5c3
 ```
 
+Please write down your classLoaderHash here, in the case here, it's `1be6f5c3`. It will be used in the future steps.
+
+Note: Please replace `<classLoaderHash>` with your classLoaderHash above, then execute the commands manually in the following steps:
+
 ### Use ognl command to get the logger
 
-`ognl -c 1be6f5c3 '@com.example.demo.arthas.user.UserController@logger'`{{execute T2}}
+`ognl -c <classLoaderHash> '@com.example.demo.arthas.user.UserController@logger'`
 
 ```bash
 $ ognl -c 1be6f5c3 '@com.example.demo.arthas.user.UserController@logger'
@@ -34,11 +38,11 @@ The user can know that `UserController@logger` actually uses logback. Because `l
 
 ### Change the logger level of UserController
 
-`ognl -c 1be6f5c3 '@com.example.demo.arthas.user.UserController@logger.setLevel(@ch.qos.logback.classic.Level@DEBUG)'`{{execute T2}}
+`ognl -c <classLoaderHash> '@com.example.demo.arthas.user.UserController@logger.setLevel(@ch.qos.logback.classic.Level@DEBUG)'`
 
 Get `UserController@logger` again, the user can see that it is already `DEBUG`:
 
-`ognl -c 1be6f5c3 '@com.example.demo.arthas.user.UserController@logger'`{{execute T2}}
+`ognl -c <classLoaderHash> '@com.example.demo.arthas.user.UserController@logger'`
 
 ```bash
 $ ognl -c 1be6f5c3 '@com.example.demo.arthas.user.UserController@logger'
@@ -60,5 +64,5 @@ $ ognl -c 1be6f5c3 '@com.example.demo.arthas.user.UserController@logger'
 
 By getting the `root` logger, the user can modify the global logger level:
 
-`ognl -c 1be6f5c3 '@org.slf4j.LoggerFactory@getLogger("root").setLevel(@ch.qos.logback.classic.Level@DEBUG)'`{{execute T2}}
+`ognl -c <classLoaderHash> '@org.slf4j.LoggerFactory@getLogger("root").setLevel(@ch.qos.logback.classic.Level@DEBUG)'`
 
