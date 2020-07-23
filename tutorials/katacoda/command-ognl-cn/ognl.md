@@ -20,15 +20,19 @@ $ sc -d com.example.demo.arthas.user.UserController | grep classLoaderHash
  classLoaderHash   1be6f5c3
 ```
 
+请记下你的classLoaderHash，后面需要使用它。在这里，它是 `1be6f5c3`。
+
+注意：请使用你的classLoaderHash值覆盖 `<classLoaderHash>` ，然后手动执行下面所有所述命令：
+
 ### 获取静态类的静态字段
 
 获取`UserController`类里的`logger`字段：
 
-`ognl -c 1be6f5c3 @com.example.demo.arthas.user.UserController@logger`{{execute T2}}
+`ognl -c <classLoaderHash> @com.example.demo.arthas.user.UserController@logger`
 
 还可以通过`-x`参数控制返回值的展开层数。比如：
 
-`ognl -c 1be6f5c3 -x 2 @com.example.demo.arthas.user.UserController@logger`{{execute T2}}
+`ognl -c <classLoaderHash> -x 2 @com.example.demo.arthas.user.UserController@logger`
 
 ### 执行多行表达式，赋值给临时变量，返回一个List
 

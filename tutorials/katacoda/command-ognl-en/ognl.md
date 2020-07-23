@@ -18,15 +18,19 @@ $ sc -d com.example.demo.arthas.user.UserController | grep classLoaderHash
  classLoaderHash   1be6f5c3
 ```
 
+Please write down your classLoaderHash here, in the case here, it's `1be6f5c3`. It will be used in the future steps.
+
+Note: Please replace `<classLoaderHash>` with your classLoaderHash above, then execute the commands manually in the following steps:
+
 ### Get static fields of static classes
 
 Get the `logger` field of the `UserController` class:
 
-`ognl -c 1be6f5c3 @com.example.demo.arthas.user.UserController@logger`{{execute T2}}
+`ognl -c <classLoaderHash> @com.example.demo.arthas.user.UserController@logger`
 
 Control the number of expansion layers of the return value with the `-x` parameter. such as:
 
-`ognl -c 1be6f5c3 -x 2 @com.example.demo.arthas.user.UserController@logger`{{execute T2}}
+`ognl -c <classLoaderHash> -x 2 @com.example.demo.arthas.user.UserController@logger`
 
 ### Execute multi-line expressions
 
