@@ -2,11 +2,24 @@
 
 在这个案例里，展示排查logger冲突的方法。
 
+### 查找UserController的ClassLoader
+
+`sc -d com.example.demo.arthas.user.UserController | grep classLoaderHash`{{execute T2}}
+
+```bash
+$ sc -d com.example.demo.arthas.user.UserController | grep classLoaderHash
+ classLoaderHash   1be6f5c3
+```
+
+请记下你的classLoaderHash，后面需要使用它。在这里，它是 `1be6f5c3`。
+
+注意：请使用你的classLoaderHash值覆盖 `<classLoaderHash>` ，然后手动执行下面所有所述命令：
+
 ### 确认应用使用的logger系统
 
 以`UserController`为例，它使用的是slf4j api，但实际使用到的logger系统是logback。
 
-`ognl -c 1be6f5c3 '@com.example.demo.arthas.user.UserController@logger'`{{execute T2}}
+`ognl -c <classLoaderHash> '@com.example.demo.arthas.user.UserController@logger'`
 
 
 ```bash
@@ -28,12 +41,12 @@ $ ognl -c 1be6f5c3 '@com.example.demo.arthas.user.UserController@logger'
 ### 获取logback实际加载的配置文件
 
 
-`ognl -c 1be6f5c3 '#map1=@org.slf4j.LoggerFactory@getLogger("root").loggerContext.objectMap, #map1.get("CONFIGURATION_WATCH_LIST")'`{{execute T2}}
+`ognl -c <classLoaderHash> '#map1=@org.slf4j.LoggerFactory@getLogger("root").loggerContext.objectMap, #map1.get("CONFIGURATION_WATCH_LIST")'`
 
 
 ### 使用classloader命令查找可能存在的logger配置文件
 
-`classloader -c 1be6f5c3 -r logback-spring.xml`{{execute T2}}
+`classloader -c <classLoaderHash> -r logback-spring.xml`
 
 ```
 $ classloader -c 1be6f5c3 -r logback-spring.xml
@@ -45,8 +58,8 @@ Affect(row-cnt:1) cost in 13 ms.
 
 可以尝试加载容易冲突的文件：
 
-`classloader -c 1be6f5c3 -r logback.xml`{{execute T2}}
+`classloader -c <classLoaderHash> -r logback.xml`
 
-`classloader -c 1be6f5c3 -r log4j.properties`{{execute T2}}
+`classloader -c <classLoaderHash> -r log4j.properties`
 
 
