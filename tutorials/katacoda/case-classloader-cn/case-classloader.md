@@ -86,7 +86,7 @@ $ classloader -t
 
 ### 查看URLClassLoader实际的urls
 
-比如上面查看到的spring LaunchedURLClassLoader的 hashcode是`1be6f5c3`，可以通过`-c`参数来列出它的所有urls：
+比如上面查看到的spring LaunchedURLClassLoader的 hashcode是`1be6f5c3`，可以通过`-c`参数来指定classloader，从而查看URLClassLoader实际的urls：
 
 `classloader -c <classLoaderHash>`
 

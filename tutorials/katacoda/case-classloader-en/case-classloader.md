@@ -87,7 +87,7 @@ $ classloader -t
 
 ### Show the URLs of the URLClassLoader
 
-For example, the hashcode of spring `LaunchedURLClassLoader` viewed above is `1be6f5c3`, and all its urls can be listed by the `-c` parameter:
+For example, the hashcode of spring `LaunchedURLClassLoader` viewed above is `1be6f5c3`, and all its urls can be listed by specifying classloader using the `-c` parameter and then executing the following command:
 
 `classloader -c <classLoaderHash>`
 
