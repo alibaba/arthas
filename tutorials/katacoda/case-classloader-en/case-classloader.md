@@ -50,19 +50,9 @@ $ classloader -a -c 65361d9a
  org.apache.jsp.jsp.hello_jsp
 ```
 
-### Decompile dynamically generated jsp classes
+### Check the structure of classloader
 
-`jad org.apache.jsp.jsp.hello_jsp`{{execute T2}}
-
-```bash
-$ jad org.apache.jsp.jsp.hello_jsp
-
-ClassLoader:
-+-org.apache.jasper.servlet.JasperLoader@65361d9a
-  +-TomcatEmbeddedWebappClassLoader
-      context: ROOT
-...
-```
+`sc -d org.apache.jsp.jsp.hello_jsp`{{execute T2}}
 
 ### View the ClassLoader tree
 

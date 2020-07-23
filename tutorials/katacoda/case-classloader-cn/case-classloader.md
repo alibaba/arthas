@@ -49,19 +49,9 @@ $ classloader -a -c 65361d9a
  org.apache.jsp.jsp.hello_jsp
 ```
 
-### 反编译jsp的代码
+### 查看类的classloader层次
 
-`jad org.apache.jsp.jsp.hello_jsp`{{execute T2}}
-
-```bash
-$ jad org.apache.jsp.jsp.hello_jsp
-
-ClassLoader:
-+-org.apache.jasper.servlet.JasperLoader@65361d9a
-  +-TomcatEmbeddedWebappClassLoader
-      context: ROOT
-...
-```
+`sc -d org.apache.jsp.jsp.hello_jsp`{{execute T2}}
 
 ### 查看ClassLoader树
 
