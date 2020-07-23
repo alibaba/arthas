@@ -1,12 +1,9 @@
-grep
-===
 
-[`grep`在线教程](https://alibaba.github.io/arthas/arthas-tutorials?language=cn&id=command-grep)
+Similar to the traditional `grep` command.
 
-> 类似传统的`grep`命令。
+`grep -h`{{execute T2}}
 
-
-```
+```bash
  USAGE:
    grep [-A <value>] [-B <value>] [-C <value>] [-h] [-i] [-v] [-n] [-m <value>] [-e] [--trim-end] pattern
 
@@ -37,3 +34,27 @@ grep
      --trim-end                                                                 Remove whitespaces at the end of the line
  <pattern>                                                                      Pattern
 ```
+
+## Example
+
+### Print matched lines
+
+`sysprop | grep java`{{execute T2}}
+
+### `-n` to show line numbers
+
+`sysprop | grep java -n`{{execute T2}}
+
+### `-v` to show non-matching lines
+
+`sysenv | grep -v JAVA`{{execute T2}}
+
+### `-e` to enable regular expression to match，`-m` stop after the specified number of selected lines
+
+`sysenv | grep -e "(?i)(JAVA|sun)" -m 3  -C 2`{{execute T2}}
+
+`thread | grep -m 10 -e  "TIMED_WAITING|WAITING"`{{execute T2}}
+
+### `-A` to print specified line number of trailing context，`-B` to print specified line number of leading context
+
+`sysenv | grep JAVA -A2 -B3`{{execute T2}}
