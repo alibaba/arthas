@@ -1,53 +1,11 @@
-logger
-===
 
-[`logger`在线教程](https://alibaba.github.io/arthas/arthas-tutorials?language=cn&id=command-logger)
+Print the logger information, update the logger level
 
-> 查看logger信息，更新logger level
+### Usage
 
-### 使用参考
+#### Print the logger information
 
-#### 查看所有logger信息
-
-以下面的`logback.xml`为例：
-
-```xml
-<?xml version="1.0" encoding="UTF-8"?>
-<configuration>
-    <appender name="APPLICATION" class="ch.qos.logback.core.rolling.RollingFileAppender">
-        <file>app.log</file>
-        <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
-            <fileNamePattern>mylog-%d{yyyy-MM-dd}.%i.txt</fileNamePattern>
-            <maxFileSize>100MB</maxFileSize>
-            <maxHistory>60</maxHistory>
-            <totalSizeCap>2GB</totalSizeCap>
-        </rollingPolicy>
-        <encoder>
-            <pattern>%logger{35} - %msg%n</pattern>
-        </encoder>
-    </appender>
-
-    <appender name="ASYNC" class="ch.qos.logback.classic.AsyncAppender">
-        <appender-ref ref="APPLICATION" />
-    </appender>
-
-    <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
-        <encoder>
-            <pattern>%-4relative [%thread] %-5level %logger{35} - %msg %n
-            </pattern>
-            <charset>utf8</charset>
-        </encoder>
-    </appender>
-
-    <root level="INFO">
-        <appender-ref ref="CONSOLE" />
-        <appender-ref ref="ASYNC" />
-    </root>
-</configuration>
-```
-
-
-使用`logger`命令打印的结果是：
+`logger`{{execute T2}}
 
 ```bash
 [arthas@2062]$ logger
@@ -76,14 +34,9 @@ logger
                                         appenderRef     [APPLICATION]
 ```
 
-从`appenders`的信息里，可以看到
+#### View logger information for the special name
 
-* `CONSOLE` logger的target是`System.out`
-* `APPLICATION` logger是`RollingFileAppender`，它的file是`app.log`
-* `ASYNC`它的`appenderRef`是`APPLICATION`，即异步输出到文件里
-
-
-#### 查看指定名字的logger信息
+`logger -n org.springframework.web`{{execute T2}}
 
 ```bash
 [arthas@2062]$ logger -n org.springframework.web
@@ -97,7 +50,14 @@ logger
  codeSource                             file:/Users/hengyunabc/.m2/repository/ch/qos/logback/logback-classic/1.2.3/logback-classic-1.2.3.jar
 ```
 
-#### 查看指定classloader的logger信息
+
+Please write down your classLoaderHash here, in the case here, it's `2a139a55`. It will be used in the future steps.
+
+Note: Please replace `<classLoaderHash>` with your classLoaderHash above, then execute the commands manually in the following steps:
+
+#### View logger information for the special classloader
+
+`logger -c <classLoaderHash>`
 
 ```bash
 [arthas@2062]$ logger -c 2a139a55
@@ -126,7 +86,9 @@ logger
                                         appenderRef     [APPLICATION]
 ```
 
-#### 更新logger level
+#### Update logger level
+
+`logger --name ROOT --level debug`{{execute T2}}
 
 ```bash
 [arthas@2062]$ logger --name ROOT --level debug
@@ -139,16 +101,20 @@ update logger level success.
 
 可以先用 `sc -d yourClassName` 来查看具体的 classloader hashcode，然后在更新level时指定classloader：
 
+`logger -c <classLoaderHash> --name ROOT --level debug`
+
 ```bash
 [arthas@2062]$ logger -c 2a139a55 --name ROOT --level debug
 ```
 
-#### 查看没有appender的logger的信息
+#### View the logger information without appenders
 
 
-默认情况下，`logger`命令只打印有appender的logger的信息。如果想查看没有`appender`的logger的信息，可以加上参数`--include-no-appender`。
+By default, the `logger` command only prints information about the logger with appenders. If you want to see information about loggers without `appender`, you can use the parameter `--include-no-appender`.
 
-注意，通常输出结果会很长。
+Note that the output will usually be very long.
+
+`logger --include-no-appender`{{execute T2}}
 
 ```bash
 [arthas@2062]$ logger --include-no-appender
