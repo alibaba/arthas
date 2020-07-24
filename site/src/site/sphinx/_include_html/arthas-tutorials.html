@@ -78,12 +78,12 @@
                             {{commandsStr()}}
                           </button>
                         <div class="dropdown-menu" aria-labelledby="bd-tutorials">
-                            <a v-for="tutorial in getTutorials('BASIC-COMMAND')" v-bind:class="{ 'dropdown-item-checked': tutorial.id === tutorialId }"
+                            <a v-for="tutorial in getTutorials('COMMAND-JVM-RELATED')" v-bind:class="{ 'dropdown-item-checked': tutorial.id === tutorialId }"
                                 class="dropdown-item" v-bind:href='currentUrl() + "?language=" + language + "&id=" + tutorial.id'>
                                 {{ tutorial.names[language] }}
                             </a>
                             <div class="dropdown-divider"></div>
-                            <a v-for="tutorial in getTutorials('JVM-RELATED-COMMAND')" v-bind:class="{ 'dropdown-item-checked': tutorial.id === tutorialId }"
+                            <a v-for="tutorial in getTutorials('COMMAND-BASIC')" v-bind:class="{ 'dropdown-item-checked': tutorial.id === tutorialId }"
                                 class="dropdown-item" v-bind:href='currentUrl() + "?language=" + language + "&id=" + tutorial.id'>
                                 {{ tutorial.names[language] }}
                             </a>
@@ -182,7 +182,7 @@
                 },
                 {
                     id: "command-help",
-                    type: "BASIC-COMMAND",
+                    type: "COMMAND-BASIC",
                     names: {
                         en: "help",
                         cn: "help",
@@ -194,7 +194,7 @@
                 },
                 {
                     id: "command-cls",
-                    type: "BASIC-COMMAND",
+                    type: "COMMAND-BASIC",
                     names: {
                         en: "cls",
                         cn: "cls",
@@ -206,7 +206,7 @@
                 },
                 {
                     id: "command-session",
-                    type: "BASIC-COMMAND",
+                    type: "COMMAND-BASIC",
                     names: {
                         en: "session",
                         cn: "session",
@@ -218,7 +218,7 @@
                 },
                 {
                     id: "command-reset",
-                    type: "BASIC-COMMAND",
+                    type: "COMMAND-BASIC",
                     names: {
                         en: "reset",
                         cn: "reset",
@@ -230,7 +230,7 @@
                 },
                 {
                     id: "command-version",
-                    type: "BASIC-COMMAND",
+                    type: "COMMAND-BASIC",
                     names: {
                         en: "version",
                         cn: "version",
@@ -242,7 +242,7 @@
                 },
                 {
                     id: "command-history",
-                    type: "BASIC-COMMAND",
+                    type: "COMMAND-BASIC",
                     names: {
                         en: "history",
                         cn: "history",
@@ -254,7 +254,7 @@
                 },
                 {
                     id: "command-quit-stop",
-                    type: "BASIC-COMMAND",
+                    type: "COMMAND-BASIC",
                     names: {
                         en: "quit-stop",
                         cn: "quit-stop",
@@ -266,7 +266,7 @@
                 },
                 {
                     id: "command-keymap",
-                    type: "BASIC-COMMAND",
+                    type: "COMMAND-BASIC",
                     names: {
                         en: "keymap",
                         cn: "keymap",
@@ -278,7 +278,7 @@
                 },
                 {
                     id: "command-cat",
-                    type: "BASIC-COMMAND",
+                    type: "COMMAND-BASIC",
                     names: {
                         en: "cat",
                         cn: "cat",
@@ -290,7 +290,7 @@
                 },
                 {
                     id: "command-echo",
-                    type: "BASIC-COMMAND",
+                    type: "COMMAND-BASIC",
                     names: {
                         en: "echo",
                         cn: "echo",
@@ -302,7 +302,7 @@
                 },
                 {
                     id: "command-grep",
-                    type: "BASIC-COMMAND",
+                    type: "COMMAND-BASIC",
                     names: {
                         en: "grep",
                         cn: "grep",
@@ -314,7 +314,7 @@
                 },
                 {
                     id: "command-tee",
-                    type: "BASIC-COMMAND",
+                    type: "COMMAND-BASIC",
                     names: {
                         en: "tee",
                         cn: "tee",
@@ -326,7 +326,7 @@
                 },
                 {
                     id: "command-pwd",
-                    type: "BASIC-COMMAND",
+                    type: "COMMAND-BASIC",
                     names: {
                         en: "pwd",
                         cn: "pwd",
@@ -338,7 +338,7 @@
                 },
                 {
                     id: "command-dashboard",
-                    type: "JVM-RELATED-COMMAND",
+                    type: "COMMAND-JVM-RELATED",
                     names: {
                         en: "dashboard",
                         cn: "dashboard",
@@ -350,7 +350,7 @@
                 },
                 {
                     id: "command-thread",
-                    type: "JVM-RELATED-COMMAND",
+                    type: "COMMAND-JVM-RELATED",
                     names: {
                         en: "thread",
                         cn: "thread",
@@ -362,7 +362,7 @@
                 },
                 {
                     id: "command-jvm",
-                    type: "JVM-RELATED-COMMAND",
+                    type: "COMMAND-JVM-RELATED",
                     names: {
                         en: "jvm",
                         cn: "jvm",
@@ -374,7 +374,7 @@
                 },
                 {
                     id: "command-sysprop",
-                    type: "JVM-RELATED-COMMAND",
+                    type: "COMMAND-JVM-RELATED",
                     names: {
                         en: "sysprop",
                         cn: "sysprop",
@@ -386,7 +386,7 @@
                 },
                 {
                     id: "command-sysenv",
-                    type: "JVM-RELATED-COMMAND",
+                    type: "COMMAND-JVM-RELATED",
                     names: {
                         en: "sysenv",
                         cn: "sysenv",
@@ -398,7 +398,7 @@
                 },
                 {
                     id: "command-vmoption",
-                    type: "JVM-RELATED-COMMAND",
+                    type: "COMMAND-JVM-RELATED",
                     names: {
                         en: "vmoption",
                         cn: "vmoption",
@@ -410,7 +410,7 @@
                 },
                 {
                     id: "command-perfcounter",
-                    type: "JVM-RELATED-COMMAND",
+                    type: "COMMAND-JVM-RELATED",
                     names: {
                         en: "perfcounter",
                         cn: "perfcounter",
