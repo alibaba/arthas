@@ -33,7 +33,7 @@ Arthas is built to solve these issues. A developer can troubleshoot production i
 - Supports JDK 6+
 - Supports Linux/Mac/Windows
 
-This tutorial takes a normal Spring Boot application as an example to demonstrate the the usage of perfcounter.
+This tutorial takes a simple application as an example to demonstrate the the usage of perfcounter.
 
 * Github: https://github.com/alibaba/arthas
 * Docs: https://arthas.aliyun.com/doc/
