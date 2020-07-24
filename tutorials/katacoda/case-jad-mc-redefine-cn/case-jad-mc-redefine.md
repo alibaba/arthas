@@ -45,11 +45,15 @@ $ sc -d *UserController | grep classLoaderHash
 
 可以发现是 spring boot `LaunchedURLClassLoader@1be6f5c3` 加载的。
 
+请记下你的classLoaderHash，后面需要使用它。在这里，它是 `1be6f5c3`。
+
+注意：请使用你的classLoaderHash值覆盖 `<classLoaderHash>` ，然后手动执行下面所有所述命令：
+
 ### mc
 
 保存好`/tmp/UserController.java`之后，使用`mc`(Memory Compiler)命令来编译，并且通过`-c`参数指定ClassLoader：
 
-`mc -c 1be6f5c3 /tmp/UserController.java -d /tmp`{{execute T2}}
+`mc -c <classLoaderHash> /tmp/UserController.java -d /tmp`
 
 ```bash
 $ mc -c 1be6f5c3 /tmp/UserController.java -d /tmp
