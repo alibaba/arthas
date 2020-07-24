@@ -78,7 +78,12 @@
                             {{commandsStr()}}
                           </button>
                         <div class="dropdown-menu" aria-labelledby="bd-tutorials">
-                            <a v-for="tutorial in getTutorials('COMMAND')" v-bind:class="{ 'dropdown-item-checked': tutorial.id === tutorialId }"
+                            <a v-for="tutorial in getTutorials('BASIC-COMMAND')" v-bind:class="{ 'dropdown-item-checked': tutorial.id === tutorialId }"
+                                class="dropdown-item" v-bind:href='currentUrl() + "?language=" + language + "&id=" + tutorial.id'>
+                                {{ tutorial.names[language] }}
+                            </a>
+                            <div class="dropdown-divider"></div>
+                            <a v-for="tutorial in getTutorials('JVM-RELATED-COMMAND')" v-bind:class="{ 'dropdown-item-checked': tutorial.id === tutorialId }"
                                 class="dropdown-item" v-bind:href='currentUrl() + "?language=" + language + "&id=" + tutorial.id'>
                                 {{ tutorial.names[language] }}
                             </a>
@@ -177,7 +182,7 @@
                 },
                 {
                     id: "command-help",
-                    type: "COMMAND",
+                    type: "BASIC-COMMAND",
                     names: {
                         en: "help",
                         cn: "help",
@@ -189,7 +194,7 @@
                 },
                 {
                     id: "command-cls",
-                    type: "COMMAND",
+                    type: "BASIC-COMMAND",
                     names: {
                         en: "cls",
                         cn: "cls",
@@ -201,7 +206,7 @@
                 },
                 {
                     id: "command-session",
-                    type: "COMMAND",
+                    type: "BASIC-COMMAND",
                     names: {
                         en: "session",
                         cn: "session",
@@ -209,6 +214,210 @@
                     ids: {
                         en: "command-session-en",
                         cn: "command-session-cn",
+                    }
+                },
+                {
+                    id: "command-reset",
+                    type: "BASIC-COMMAND",
+                    names: {
+                        en: "reset",
+                        cn: "reset",
+                    },
+                    ids: {
+                        en: "command-reset-en",
+                        cn: "command-reset-cn",
+                    }
+                },
+                {
+                    id: "command-version",
+                    type: "BASIC-COMMAND",
+                    names: {
+                        en: "version",
+                        cn: "version",
+                    },
+                    ids: {
+                        en: "command-version-en",
+                        cn: "command-version-cn",
+                    }
+                },
+                {
+                    id: "command-history",
+                    type: "BASIC-COMMAND",
+                    names: {
+                        en: "history",
+                        cn: "history",
+                    },
+                    ids: {
+                        en: "command-history-en",
+                        cn: "command-history-cn",
+                    }
+                },
+                {
+                    id: "command-quit-stop",
+                    type: "BASIC-COMMAND",
+                    names: {
+                        en: "quit-stop",
+                        cn: "quit-stop",
+                    },
+                    ids: {
+                        en: "command-quit-stop-en",
+                        cn: "command-quit-stop-cn",
+                    }
+                },
+                {
+                    id: "command-keymap",
+                    type: "BASIC-COMMAND",
+                    names: {
+                        en: "keymap",
+                        cn: "keymap",
+                    },
+                    ids: {
+                        en: "command-keymap-en",
+                        cn: "command-keymap-cn",
+                    }
+                },
+                {
+                    id: "command-cat",
+                    type: "BASIC-COMMAND",
+                    names: {
+                        en: "cat",
+                        cn: "cat",
+                    },
+                    ids: {
+                        en: "command-cat-en",
+                        cn: "command-cat-cn",
+                    }
+                },
+                {
+                    id: "command-echo",
+                    type: "BASIC-COMMAND",
+                    names: {
+                        en: "echo",
+                        cn: "echo",
+                    },
+                    ids: {
+                        en: "command-echo-en",
+                        cn: "command-echo-cn",
+                    }
+                },
+                {
+                    id: "command-grep",
+                    type: "BASIC-COMMAND",
+                    names: {
+                        en: "grep",
+                        cn: "grep",
+                    },
+                    ids: {
+                        en: "command-grep-en",
+                        cn: "command-grep-cn",
+                    }
+                },
+                {
+                    id: "command-tee",
+                    type: "BASIC-COMMAND",
+                    names: {
+                        en: "tee",
+                        cn: "tee",
+                    },
+                    ids: {
+                        en: "command-tee-en",
+                        cn: "command-tee-cn",
+                    }
+                },
+                {
+                    id: "command-pwd",
+                    type: "BASIC-COMMAND",
+                    names: {
+                        en: "pwd",
+                        cn: "pwd",
+                    },
+                    ids: {
+                        en: "command-pwd-en",
+                        cn: "command-pwd-cn",
+                    }
+                },
+                {
+                    id: "command-dashboard",
+                    type: "JVM-RELATED-COMMAND",
+                    names: {
+                        en: "dashboard",
+                        cn: "dashboard",
+                    },
+                    ids: {
+                        en: "command-dashboard-en",
+                        cn: "command-dashboard-cn",
+                    }
+                },
+                {
+                    id: "command-thread",
+                    type: "JVM-RELATED-COMMAND",
+                    names: {
+                        en: "thread",
+                        cn: "thread",
+                    },
+                    ids: {
+                        en: "command-thread-en",
+                        cn: "command-thread-cn",
+                    }
+                },
+                {
+                    id: "command-jvm",
+                    type: "JVM-RELATED-COMMAND",
+                    names: {
+                        en: "jvm",
+                        cn: "jvm",
+                    },
+                    ids: {
+                        en: "command-jvm-en",
+                        cn: "command-jvm-cn",
+                    }
+                },
+                {
+                    id: "command-sysprop",
+                    type: "JVM-RELATED-COMMAND",
+                    names: {
+                        en: "sysprop",
+                        cn: "sysprop",
+                    },
+                    ids: {
+                        en: "command-sysprop-en",
+                        cn: "command-sysprop-cn",
+                    }
+                },
+                {
+                    id: "command-sysenv",
+                    type: "JVM-RELATED-COMMAND",
+                    names: {
+                        en: "sysenv",
+                        cn: "sysenv",
+                    },
+                    ids: {
+                        en: "command-sysenv-en",
+                        cn: "command-sysenv-cn",
+                    }
+                },
+                {
+                    id: "command-vmoption",
+                    type: "JVM-RELATED-COMMAND",
+                    names: {
+                        en: "vmoption",
+                        cn: "vmoption",
+                    },
+                    ids: {
+                        en: "command-vmoption-en",
+                        cn: "command-vmoption-cn",
+                    }
+                },
+                {
+                    id: "command-perfcounter",
+                    type: "JVM-RELATED-COMMAND",
+                    names: {
+                        en: "perfcounter",
+                        cn: "perfcounter",
+                    },
+                    ids: {
+                        en: "command-perfcounter-en",
+                        cn: "command-perfcounter-cn",
                     }
                 }
             ],
