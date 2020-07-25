@@ -340,9 +340,9 @@ get_remote_version()
 # check version greater
 version_gt()
 {
-    [[ $1 == $2 ]] && return 1
-    local gtVersion=`echo -e "$1\n$2" | sort | tail -1`
-    [[ $gtVersion == $1 ]] && return 0 || return 1
+    local remote_version=$1
+    local arthas_local_version=$2
+    [[ "$remote_version" > "$arthas_local_version" ]] && return 0 || return 1
 }
 
 # update arthas if necessary
