@@ -1,12 +1,10 @@
-getstatic
-===
 
-[`getstatic`在线教程](https://alibaba.github.io/arthas/arthas-tutorials?language=cn&id=command-getstatic)
 
-* 推荐直接使用[ognl](ognl.md)命令，更加灵活。
+* 推荐直接使用[ognl](https://alibaba.github.io/arthas/arthas-tutorials?language=cn&id=command-ognl)命令，更加灵活。
 
 通过getstatic命令可以方便的查看类的静态属性。使用方法为`getstatic class_name field_name`
 
+`getstatic demo.MathGame random`{{execute T2}}
 
 ```bash
 $ getstatic demo.MathGame random
@@ -34,22 +32,3 @@ field: random
 
 * OGNL特殊用法请参考：[https://github.com/alibaba/arthas/issues/71](https://github.com/alibaba/arthas/issues/71)
 * OGNL表达式官方指南：[https://commons.apache.org/proper/commons-ognl/language-guide.html](https://commons.apache.org/proper/commons-ognl/language-guide.html)
-
-
-例如，假设n是一个Map，Map的Key是一个Enum，我们想过滤出Map中Key为某个Enum的值，可以写如下命令
-
-```
-$ getstatic com.alibaba.arthas.Test n 'entrySet().iterator.{? #this.key.name()=="STOP"}'
-field: n
-@ArrayList[
-    @Node[STOP=bbb],
-]
-Affect(row-cnt:1) cost in 68 ms.
-
-
-$ getstatic com.alibaba.arthas.Test m 'entrySet().iterator.{? #this.key=="a"}'
-field: m
-@ArrayList[
-    @Node[a=aaa],
-]
-```
