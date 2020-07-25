@@ -109,6 +109,8 @@
                                 <excludeProperty>git.remote.origin.url</excludeProperty>
                                 <excludeProperty>git.total.commit.count</excludeProperty>
                                 <excludeProperty>git.commit.time</excludeProperty>
+                                <excludeProperty>git.local.branch.ahead</excludeProperty>
+                                <excludeProperty>git.local.branch.behind</excludeProperty>
                             </excludeProperties>
                             <injectAllReactorProjects>true</injectAllReactorProjects>
                         </configuration>
