@@ -1,49 +1,44 @@
-watch
-=====
 
-[`watch` online tutorial](https://alibaba.github.io/arthas/arthas-tutorials?language=en&id=command-watch)
+> 方法执行数据观测
 
-Monitor methods in data aspect including `return values`, `exceptions` and `parameters`.
+让你能方便的观察到指定方法的调用情况。能观察到的范围为：`返回值`、`抛出异常`、`入参`，通过编写 OGNL 表达式进行对应变量的查看。
 
-With the help of [OGNL](https://commons.apache.org/proper/commons-ognl/index.html), you can easily check the details of variables when methods being invoked.
+### 参数说明
 
-### Parameters & Options
+watch 的参数比较多，主要是因为它能在 4 个不同的场景观察对象
 
-There are four different scenarios for `watch` command, which makes it rather complicated. 
-
-|Name|Specification|
+|参数名称|参数说明|
 |---:|:---|
-|*class-pattern*|pattern for the class name|
-|*method-pattern*|pattern for the method name|
-|*expression*|expression to monitor|
-|*condition-expression*|condition expression to filter|
-|[b]|before method being invoked|
-|[e]|when method encountering exceptions|
-|[s]|when method exits normally|
-|[f]|when method exits (either succeed or fail with exceptions)|
-|[E]|turn on regex matching while the default is wildcard matching|
-|[x:]|the depth to print the specified property with default value: 1|
+|*class-pattern*|类名表达式匹配|
+|*method-pattern*|方法名表达式匹配|
+|*express*|观察表达式|
+|*condition-express*|条件表达式|
+|[b]|在**方法调用之前**观察|
+|[e]|在**方法异常之后**观察|
+|[s]|在**方法返回之后**观察|
+|[f]|在**方法结束之后**(正常返回和异常返回)观察|
+|[E]|开启正则表达式匹配，默认为通配符匹配|
+|[x:]|指定输出结果的属性遍历深度，默认为 1|
 
-F.Y.I
-1. any valid OGNL expression as `"{params,returnObj}"` supported
-2. there are four *watching* points: `-b`, `-e`, `-s` and `-f` (the first three are off in default while `-f` on);
-3. at the *watching* point, Arthas will use the *expression* to evaluate the variables and print them out;
-4. `in parameters` and `out parameters` are different since they can be modified within the invoked methods; `params` stands for `in parameters` in `-b`while `out parameters` in other *watching* points;
-5. there are no `return values` and `exceptions` when using `-b`.
+这里重点要说明的是观察表达式，观察表达式的构成主要由 ognl 表达式组成，所以你可以这样写`"{params,returnObj}"`，只要是一个合法的 ognl 表达式，都能被正常支持。
 
+观察的维度也比较多，主要体现在参数 `advice` 的数据结构上。`Advice` 参数最主要是封装了通知节点的所有信息。请参考[表达式核心变量](advice-class.md)中关于该节点的描述。
 
-Advanced:
-* [Critical fields in *expression*](advice-class.md)
-* [Special usages](https://github.com/alibaba/arthas/issues/71)
-* [OGNL official guide](https://commons.apache.org/proper/commons-ognl/language-guide.html)
+* 特殊用法请参考：[https://github.com/alibaba/arthas/issues/71](https://github.com/alibaba/arthas/issues/71)
+* OGNL表达式官网：[https://commons.apache.org/proper/commons-ognl/language-guide.html](https://commons.apache.org/proper/commons-ognl/language-guide.html)
 
-### Usage
+**特别说明**：
 
-#### Start Demo
+* watch 命令定义了4个观察事件点，即 `-b` 方法调用前，`-e` 方法异常后，`-s` 方法返回后，`-f` 方法结束后
+* 4个观察事件点 `-b`、`-e`、`-s` 默认关闭，`-f` 默认打开，当指定观察点被打开后，在相应事件点会对观察表达式进行求值并输出
+* 这里要注意`方法入参`和`方法出参`的区别，有可能在中间被修改导致前后不一致，除了 `-b` 事件点 `params` 代表方法入参外，其余事件都代表方法出参
+* 当使用 `-b` 时，由于观察事件点是在方法调用前，此时返回值或异常均不存在
 
-Start `arthas-demo` in [Quick Start](quick-start.md).
+### 使用参考
 
-#### Check the `out parameters` and `return value`
+#### 观察方法出参和返回值
+
+`watch demo.MathGame primeFactors "{params,returnObj}" -x 2`{{execute T2}}
 
 ```bash
 $ watch demo.MathGame primeFactors "{params,returnObj}" -x 2
@@ -62,7 +57,9 @@ ts=2018-12-03 19:16:51; [cost=1.280502ms] result=@ArrayList[
 ]
 ```
 
-#### Check `in parameters`
+#### 观察方法入参
+
+`watch demo.MathGame primeFactors "{params,returnObj}" -x 2 -b`{{execute T2}}
 
 ```bash
 $ watch demo.MathGame primeFactors "{params,returnObj}" -x 2 -b
@@ -76,13 +73,12 @@ ts=2018-12-03 19:23:23; [cost=0.0353ms] result=@ArrayList[
 ]
 ```
 
-Compared to the previous *check*: 
-
-* `return value` is `null` since it's `-b`.
+* 对比前一个例子，返回值为空（事件点为方法执行前，因此获取不到返回值）
 
 
-#### Check *before* and *after* at the same time
+#### 同时观察方法调用前和方法返回后
 
+`watch demo.MathGame primeFactors "{params,target,returnObj}" -x 2 -b -s -n 2`{{execute T2}}
 
 ```bash
 $ watch demo.MathGame primeFactors "{params,target,returnObj}" -x 2 -b -s -n 2
@@ -119,13 +115,15 @@ ts=2018-12-03 19:29:54; [cost=4.277392ms] result=@ArrayList[
 ]
 ```
 
-F.Y.I
+* 参数里`-n 2`，表示只执行两次
 
-* `-n 2`: threshold of execution times is 2.
-* the first block of output is the *before watching* point;
-* *the order of the output determined by the *watching* order itself (nothing to do with the order of the options `-b -s`).
+* 这里输出结果中，第一次输出的是方法调用前的观察表达式的结果，第二次输出的是方法返回后的表达式的结果
 
-#### Use `-x` to check more details
+* 结果的输出顺序和事件发生的先后顺序一致，和命令中 `-s -b` 的顺序无关
+
+#### 调整`-x`的值，观察具体的方法参数值
+
+`watch demo.MathGame primeFactors "{params,target}" -x 3`{{execute T2}}
 
 ```bash
 $ watch demo.MathGame primeFactors "{params,target}" -x 3
@@ -158,9 +156,11 @@ ts=2018-12-03 19:34:19; [cost=0.587833ms] result=@ArrayList[
 ]
 ```
 
-* `-x`: Expand level of object (1 by default)
+* `-x`表示遍历深度，可以调整来打印具体的参数和结果内容，默认值是1。
 
-#### Use condition expressions to locate specific call
+#### 条件表达式的例子
+
+`watch demo.MathGame primeFactors "{params[0],target}" "params[0]<0"`{{execute T2}}
 
 ```bash
 $ watch demo.MathGame primeFactors "{params[0],target}" "params[0]<0"
@@ -172,7 +172,11 @@ ts=2018-12-03 19:36:04; [cost=0.530255ms] result=@ArrayList[
 ]
 ```
 
-#### Check `exceptions`
+* 只有满足条件的调用，才会有响应。
+
+#### 观察异常信息的例子
+
+`watch demo.MathGame primeFactors "{params[0],throwExp}" -e -x 2`{{execute T2}}
 
 ```bash
 $ watch demo.MathGame primeFactors "{params[0],throwExp}" -e -x 2
@@ -188,10 +192,12 @@ ts=2018-12-03 19:38:00; [cost=1.414993ms] result=@ArrayList[
 ]
 ```
 
-* `-e`: Trigger when an exception is thrown
-* `throwExp`: the exception object
+* `-e`表示抛出异常时才触发
+* express中，表示异常信息的变量是`throwExp`
 
-#### Filter by time cost
+#### 按照耗时进行过滤
+
+`watch demo.MathGame primeFactors '{params, returnObj}' '#cost>200' -x 2`{{execute T2}}
 
 ```bash
 $ watch demo.MathGame primeFactors '{params, returnObj}' '#cost>200' -x 2
@@ -208,12 +214,14 @@ ts=2018-12-03 19:40:28; [cost=2112.168897ms] result=@ArrayList[
 ]
 ```
 
-* `#cost>200` (`ms`) filter out all invokings that take less than `200ms`.
+* `#cost>200`(单位是`ms`)表示只有当耗时大于200ms时才会输出，过滤掉执行时间小于200ms的调用
 
 
-#### Check the field of the target object
+#### 观察当前对象中的属性
 
-* `target` is the `this` object in java.
+`watch demo.MathGame primeFactors 'target'`{{execute T2}}
+
+如果想查看方法运行前后，当前对象中的属性，可以使用`target`关键字，代表当前对象
 
 ```bash
 $ watch demo.MathGame primeFactors 'target'
@@ -225,7 +233,9 @@ ts=2018-12-03 19:41:52; [cost=0.477882ms] result=@MathGame[
 ]
 ```
 
-* `target.field_name`: the field of the current object.
+然后使用`target.field_name`访问当前对象的某个属性
+
+`watch demo.MathGame primeFactors 'target.illegalArgumentCount'`{{execute T2}}
 
 ```bash
 $ watch demo.MathGame primeFactors 'target.illegalArgumentCount'
