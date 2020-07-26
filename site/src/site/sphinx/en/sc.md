@@ -1,6 +1,8 @@
 sc
 ==
 
+[`sc` online tutorial](https://alibaba.github.io/arthas/arthas-tutorials?language=en&id=command-sc)
+
 > Search classes loaded by JVM.
 
 `sc` stands for search class. This command can search all possible classes loaded by JVM and show their information. The supported options are: `[d]`、`[E]`、`[f]` and `[x:]`.

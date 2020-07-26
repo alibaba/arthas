@@ -1,6 +1,8 @@
 sc
 ===
 
+[`sc`在线教程](https://alibaba.github.io/arthas/arthas-tutorials?language=cn&id=command-sc)
+
 > 查看JVM已加载的类信息
 
 “Search-Class” 的简写，这个命令能搜索出所有已经加载到 JVM 中的 Class 信息，这个命令支持的参数有 `[d]`、`[E]`、`[f]` 和 `[x:]`。
