@@ -1,6 +1,8 @@
 trace
 ===
 
+[`trace`在线教程](https://alibaba.github.io/arthas/arthas-tutorials?language=cn&id=command-trace)
+
 > 方法内部调用路径，并输出方法路径上的每个节点上耗时
 
 `trace` 命令能主动搜索 `class-pattern`／`method-pattern` 对应的方法调用路径，渲染和统计整个调用链路上的所有性能开销和追踪调用链路。

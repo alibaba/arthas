@@ -1,7 +1,3 @@
-trace
-=====
-
-[`trace` online tutorial](https://alibaba.github.io/arthas/arthas-tutorials?language=en&id=command-trace)
 
 > Trace method calling path, and output the time cost for each node in the path.
 
@@ -40,11 +36,9 @@ After version 3.3.0, you can use the Dynamic Trace feature to add new matching c
 
 ### Usage
 
-#### Start Demo
-
-Start `arthas-demo` in [Quick Start](quick-start.md).
-
 #### Trace method
+
+`trace demo.MathGame run`{{execute T2}}
 
 ```bash
 $ trace demo.MathGame run
@@ -64,6 +58,8 @@ Affect(class-cnt:1 , method-cnt:1) cost in 28 ms.
 
 If the method invoked many times, use `-n` options to specify trace times. For example, the command will exit when received a trace result.
 
+`trace demo.MathGame run -n 1`{{execute T2}}
+
 ```bash
 $ trace demo.MathGame run -n 1
 Press Q or Ctrl+C to abort.
@@ -79,6 +75,8 @@ Command execution times exceed limit: 1, so command will exit. You can set it wi
 #### Include jdk method
 
 * `--skipJDKMethod <value> `   skip jdk method trace, default value true.
+
+`trace --skipJDKMethod false demo.MathGame run`{{execute T2}}
 
 ```bash
 $ trace --skipJDKMethod false demo.MathGame run
@@ -110,6 +108,8 @@ Affect(class-cnt:1 , method-cnt:1) cost in 60 ms.
 ```
 
 #### Filtering by cost
+
+`trace demo.MathGame run '#cost > 10'`{{execute T2}}
 
 ```bash
 $ trace demo.MathGame run '#cost > 10'
@@ -147,6 +147,8 @@ Trace -E com.test.ClassA|org.test.ClassB method1|method2|method3
 
 Open terminal 1, trace the `run` method, and you can see the printout `listenerId: 1` .
 
+`trace demo.MathGame run`{{execute T2}}
+
 ```bash
 [arthas@59161]$ trace demo.MathGame run
 Press Q or Ctrl+C to abort.
@@ -162,6 +164,8 @@ Affect(class count: 1 , method count: 1) cost in 112 ms, listenerId: 1
 ```
 
 Now to drill down into the sub method `primeFactors`, you can open a new terminal 2 and use the `telnet localhost 3658` connects to the arthas, then trace `primeFactors` with the specify `listenerId`.
+
+`trace demo.MathGame primeFactors --listenerId 1`{{execute T2}}
 
 ```bash
 [arthas@59161]$ trace demo.MathGame primeFactors --listenerId 1
