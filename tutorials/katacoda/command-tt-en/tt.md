@@ -1,7 +1,3 @@
-tt
-==
-
-[`tt` online tutorial](https://alibaba.github.io/arthas/arthas-tutorials?language=en&id=command-tt)
 
 Check the `parameters`, `return values` and `exceptions` of the methods at different times.
 
@@ -13,14 +9,9 @@ With the help of `tt` (*TimeTunnel*), you can check the contexts of the methods 
 
 ### Usage
 
-
-#### Start Demo
-
-Start `arthas-demo` in [Quick Start](quick-start.md).
-
-
 #### Record method calls
 
+`tt -t demo.MathGame primeFactors`{{execute T2}}
 
 ```bash
 $ tt -t demo.MathGame primeFactors
@@ -64,11 +55,13 @@ Tips:
 3. `tt -t *Test print params[0].mobile=="13989838402"` with specified parameter.
   
 Advanced:
-* [Critical fields in expression](advice-class.md)
+* [Critical fields in expression](https://alibaba.github.io/arthas/en/advice-class.html)
 * [Special usage](https://github.com/alibaba/arthas/issues/71)
 * [OGNL official guide](https://commons.apache.org/proper/commons-ognl/language-guide.html)
 
 #### List all records
+
+`tt -l`{{execute T2}}
 
 ```bash
 $ tt -l
@@ -86,6 +79,8 @@ Affect(row-cnt:6) cost in 4 ms.
 
 
 #### Searching for records
+
+`tt -s 'method.name=="primeFactors"'`{{execute T2}}
 
 ```bash
 $ tt -s 'method.name=="primeFactors"'
@@ -105,6 +100,8 @@ Advanced:
 * [Critical fields in expression](advice-class.md)
 
 #### Check context of the call
+
+`tt -i 1003`{{execute T2}}
 
 Using `tt -i <index>` to check a specific calling details.
 
@@ -131,6 +128,8 @@ Affect(row-cnt:1) cost in 11 ms.
 
 Since Arthas stores the context of the call, you can even *replay* the method calling afterwards with extra option `-p` to replay the issue for advanced troubleshooting, option `--replay-times` 
 define the replay execution times, option  `--replay-interval` define the interval(unit in ms,with default value 1000) of replays   
+
+`tt -i 1004 -p`{{execute T2}}
 
 ```bash
 $ tt -i 1004 -p
