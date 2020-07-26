@@ -1,25 +1,24 @@
-sm
-==
 
-[`sc` online tutorial](https://alibaba.github.io/arthas/arthas-tutorials?language=en&id=command-sc)
+> 查看已加载类的方法信息
 
-> Search method from the loaded classes.
+“Search-Method” 的简写，这个命令能搜索出所有已经加载了 Class 信息的方法信息。
 
-`sm` stands for search method. This command can search and show method information from all loaded classes. `sm` can only view the methods declared on the target class, that is, methods from its parent classes are invisible.
+`sm` 命令只能看到由当前类所声明 (declaring) 的方法，父类则无法看到。
 
+### 参数说明
 
-### Options
-
-|Name|Specification|
+|参数名称|参数说明|
 |---:|:---|
-|*class-pattern*|pattern for class name|
-|*method-pattern*|pattern for method name|
-|`[d]`|print the details of the method|
-|`[E]`|turn on regex matching while the default mode is wildcard matching|
+|*class-pattern*|类名表达式匹配|
+|*method-pattern*|方法名表达式匹配|
+|[d]|展示每个方法的详细信息|
+|[E]|开启正则表达式匹配，默认为通配符匹配|
 
-### Usage
+### 使用参考
 
-View methods of `java.lang.String`:
+* 查找`java.lang.String`类的具体方法
+
+`sm java.lang.String`{{execute T2}}
 
 ```bash
 $ sm java.lang.String
@@ -70,8 +69,9 @@ java.lang.String->intern
 Affect(row-cnt:44) cost in 1342 ms.
 ```
 
+* 查找`java.lang.String#toString`函数并打印详细信息
 
-View method `java.lang.String#toString` details:
+`sm -d java.lang.String toString`{{execute T2}}
 
 ```bash
 $ sm -d java.lang.String toString

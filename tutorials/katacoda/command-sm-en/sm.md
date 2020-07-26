@@ -1,7 +1,3 @@
-sm
-==
-
-[`sc` online tutorial](https://alibaba.github.io/arthas/arthas-tutorials?language=en&id=command-sc)
 
 > Search method from the loaded classes.
 
@@ -19,7 +15,9 @@ sm
 
 ### Usage
 
-View methods of `java.lang.String`:
+* View methods of `java.lang.String`:
+
+`sm java.lang.String`{{execute T2}}
 
 ```bash
 $ sm java.lang.String
@@ -71,7 +69,9 @@ Affect(row-cnt:44) cost in 1342 ms.
 ```
 
 
-View method `java.lang.String#toString` details:
+* View method `java.lang.String#toString` details:
+
+`sm -d java.lang.String toString`{{execute T2}}
 
 ```bash
 $ sm -d java.lang.String toString

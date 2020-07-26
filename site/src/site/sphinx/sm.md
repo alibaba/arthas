@@ -1,6 +1,8 @@
 sm
 ===
 
+[`sc`在线教程](https://alibaba.github.io/arthas/arthas-tutorials?language=cn&id=command-sc)
+
 > 查看已加载类的方法信息
 
 “Search-Method” 的简写，这个命令能搜索出所有已经加载了 Class 信息的方法信息。
