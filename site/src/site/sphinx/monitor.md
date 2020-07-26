@@ -1,6 +1,8 @@
 monitor
 =======
 
+[`monitor`在线教程](https://alibaba.github.io/arthas/arthas-tutorials?language=cn&id=command-monitor)
+
 > 方法执行监控
 
 对匹配 `class-pattern`／`method-pattern`的类、方法的调用进行监控。
