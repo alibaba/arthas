@@ -1,7 +1,7 @@
 jad
 ===
 
-[`heapdump` online tutorial](https://alibaba.github.io/arthas/arthas-tutorials?language=en&id=command-heapdump)
+[`jad` online tutorial](https://alibaba.github.io/arthas/arthas-tutorials?language=en&id=command-jad)
 
 > Decompile the specified classes.
 

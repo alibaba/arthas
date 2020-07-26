@@ -1,7 +1,7 @@
 jad
 ===
 
-[`heapdump`在线教程](https://alibaba.github.io/arthas/arthas-tutorials?language=cn&id=command-heapdump)
+[`jad`在线教程](https://alibaba.github.io/arthas/arthas-tutorials?language=cn&id=command-jad)
 
 > 反编译指定已加载类的源码
 
