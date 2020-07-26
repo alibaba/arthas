@@ -1,7 +1,3 @@
-options
-===
-
-[`options` online tutorial](https://alibaba.github.io/arthas/arthas-tutorials?language=en&id=command-options)
 
 > Global options
 
@@ -19,6 +15,8 @@ options
 
 
 ### View all options
+
+`options`{{execute T2}}
 
 ```bash
 $ options
@@ -61,6 +59,7 @@ $ options
 
 ### Get special option value
 
+`options json-format`{{execute T2}}
 
 ```
 $ options json-format
@@ -75,11 +74,28 @@ $ options json-format
 
 ### Set special option value
 
-For example, to enable saving command execution result, input the command below:
+For example, to enable saving command execution result, first check the log, and you can see there's no result:
+
+`cat /root/logs/arthas-cache/result.log`{{execute T2}}
+
+To enable saving command execution result, input the command below:
+
+`options save-result true`{{execute T2}}
 
 ```
 $ options save-result true                                                                                         
  NAME         BEFORE-VALUE  AFTER-VALUE                                                                            
 ----------------------------------------                                                                           
  save-result  false         true
+```
+
+Wait for a second, and you will see there exist some results:
+
+
+`cat /root/logs/arthas-cache/result.log`{{execute T2}}
+
+```bash
+$ cat /root/logs/arthas-cache/result.log
+2020-07-26 04:27:08 [arthas-command-execute] INFO  result -
+2020-07-26 04:27:08 [arthas-command-execute] INFO  result -
 ```

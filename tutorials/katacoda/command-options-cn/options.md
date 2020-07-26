@@ -1,24 +1,21 @@
-options
-===
 
-[`options` online tutorial](https://alibaba.github.io/arthas/arthas-tutorials?language=en&id=command-options)
+> 全局开关
 
-> Global options
+| 名称                | 默认值   | 描述                                       |
+| ------------------ | ----- | ---------------------------------------- |
+| unsafe             | false | 是否支持对系统级别的类进行增强，打开该开关可能导致把JVM搞挂，请慎重选择！   |
+| dump               | false | 是否支持被增强了的类dump到外部文件中，如果打开开关，class文件会被dump到`/${application working dir}/arthas-class-dump/`目录下，具体位置详见控制台输出 |
+| batch-re-transform | true  | 是否支持批量对匹配到的类执行retransform操作              |
+| json-format        | false | 是否支持json化的输出                             |
+| disable-sub-class  | false | 是否禁用子类匹配，默认在匹配目标类的时候会默认匹配到其子类，如果想精确匹配，可以关闭此开关 |
+| support-default-method  | true | 是否支持匹配到default method，默认会查找interface，匹配里面的default method。参考 [#1105](https://github.com/alibaba/arthas/issues/1105) |
+| save-result        | false | 是否打开执行结果存日志功能，打开之后所有命令的运行结果都将保存到`~/logs/arthas-cache/result.log`中 |
+| job-timeout        | 1d    | 异步后台任务的默认超时时间，超过这个时间，任务自动停止；比如设置 1d, 2h, 3m, 25s，分别代表天、小时、分、秒 |
+| print-parent-fields       | true    | 是否打印在parent class里的filed |
 
-|Name| Default Value   |         Description             |
-| ------------------------- | ----- | ---------------------------------------- |
-| unsafe             | false | whether to enhance to system-level class. Use it with caution since JVM may hang|
-| dump               | false | whether to dump enhanced class to the external files. If it's on, enhanced class will be dumped into `/${application dir}/arthas-class-dump/`, the specific output path will be output in the console |
-| batch-re-transform | true  | whether to re-transform matched classes in batch|
-| json-format        | false | whether to output in JSON format|
-| disable-sub-class  | false | whether to enable matching child classes. The default value is `true`. If exact match is desire, turn off this flag|
-| support-default-method  | true | whether to enable matching default method in interface. The default value is `true`. Refer to [#1105](https://github.com/alibaba/arthas/issues/1105) |
-| save-result        | false | whether to save execution result. All execution results will be saved to `~/logs/arthas-cache/result.log` when it's turned on|
-| job-timeout        | 1d    | default timeout for background jobs. Background job will be terminated once it's timed out (i.e. 1d, 2h, 3m, 25s)| print-parent-fields        | true    | This option enables print files in parent class, default value true.|
+### 查看所有的options
 
-
-
-### View all options
+`options`{{execute T2}}
 
 ```bash
 $ options
@@ -42,9 +39,6 @@ $ options
         ean   -class              include sub class   ass when matching class.
                                   when class matchin
                                   g
- 1      bool  debug-for-a  false  Option to print DE  This option enables to print DEBUG me
-        ean   sm                  BUG message if ASM  ssage of ASM for each method invocati
-                                   is involved        on.
  1      bool  save-result  false  Option to print co  This option enables to save each comm
         ean                       mmand's result to   and's result to log file, which path
                                   log file            is ${user.home}/logs/arthas-cache/res
@@ -59,8 +53,9 @@ $ options
 ```
 
 
-### Get special option value
+### 获取option的值
 
+`options json-format`{{execute T2}}
 
 ```
 $ options json-format
@@ -71,15 +66,31 @@ $ options json-format
                                   ect output          ted.
 ```
 
-> By default, `json-format` is false. When set `json-format` to true, commands like `wathc`/`tt` will print result with `json` format. 
+> 默认情况下`json-format`为false，如果希望`watch`/`tt`等命令结果以json格式输出，则可以设置`json-format`为true。
 
-### Set special option value
+### 设置指定的option
 
-For example, to enable saving command execution result, input the command below:
+例如，想打开执行结果存日志功能首先查看日志，发现无记录：
+
+`cat /root/logs/arthas-cache/result.log`{{execute T2}}
+
+输入如下命令即可激活记录日志功能：
+
+`options save-result true`{{execute T2}}
 
 ```
 $ options save-result true                                                                                         
  NAME         BEFORE-VALUE  AFTER-VALUE                                                                            
 ----------------------------------------                                                                           
  save-result  false         true
+```
+
+稍候片刻，再次查看，发现出现记录：
+
+`cat /root/logs/arthas-cache/result.log`{{execute T2}}
+
+```bash
+$ cat /root/logs/arthas-cache/result.log
+2020-07-26 04:27:08 [arthas-command-execute] INFO  result -
+2020-07-26 04:27:08 [arthas-command-execute] INFO  result -
 ```
