@@ -1,6 +1,8 @@
 mc
 ===
 
+[`mc-redefine` online tutorial](https://alibaba.github.io/arthas/arthas-tutorials?language=en&id=command-mc-redefine)
+
 > Memory compiler, compiles `.java` files into `.class` files in memory.
 
 ```bash

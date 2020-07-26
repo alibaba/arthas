@@ -1,6 +1,8 @@
 mc
 ===
 
+[`mc-redefine`在线教程](https://alibaba.github.io/arthas/arthas-tutorials?language=cn&id=command-mc-redefine)
+
 > Memory Compiler/内存编译器，编译`.java`文件生成`.class`。
 
 ```bash
