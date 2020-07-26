@@ -1,6 +1,8 @@
 dump
 ===
 
+[`dump` online tutorial](https://alibaba.github.io/arthas/arthas-tutorials?language=en&id=command-dump)
+
 > Dump the bytecode for the particular classes to the specified directory.
 
 ### Options

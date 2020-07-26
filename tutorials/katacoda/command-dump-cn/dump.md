@@ -1,7 +1,3 @@
-dump
-===
-
-[`dump`在线教程](https://alibaba.github.io/arthas/arthas-tutorials?language=cn&id=command-dump)
 
 > dump 已加载类的 bytecode 到特定目录
 
@@ -15,12 +11,16 @@ dump
 
 ### 使用参考
 
+`dump java.lang.String`{{execute T2}}
+
 ```bash
 $ dump java.lang.String
  HASHCODE  CLASSLOADER  LOCATION
  null                   /Users/admin/logs/arthas/classdump/java/lang/String.class
 Affect(row-cnt:1) cost in 119 ms.
 ```
+
+`dump demo.*`{{execute T2}}
 
 ```bash
 $ dump demo.*

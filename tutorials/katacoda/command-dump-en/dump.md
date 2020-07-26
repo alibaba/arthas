@@ -1,19 +1,17 @@
-dump
-===
 
-[`dump`在线教程](https://alibaba.github.io/arthas/arthas-tutorials?language=cn&id=command-dump)
+> Dump the bytecode for the particular classes to the specified directory.
 
-> dump 已加载类的 bytecode 到特定目录
+### Options
 
-### 参数说明
-
-|参数名称|参数说明|
+|Name|Specification|
 |---:|:---|
-|*class-pattern*|类名表达式匹配|
-|`[c:]`|类所属 ClassLoader 的 hashcode|
-|[E]|开启正则表达式匹配，默认为通配符匹配|
+|*class-pattern*|class name pattern|
+|`[c:]`|hashcode of the [class loader](classloader.md) that loaded the target class|
+|`[E]`|turn on regex match, the default behavior is wild card match|
 
-### 使用参考
+### Usage
+
+`dump java.lang.String`{{execute T2}}
 
 ```bash
 $ dump java.lang.String
@@ -21,6 +19,8 @@ $ dump java.lang.String
  null                   /Users/admin/logs/arthas/classdump/java/lang/String.class
 Affect(row-cnt:1) cost in 119 ms.
 ```
+
+`dump demo.*`{{execute T2}}
 
 ```bash
 $ dump demo.*
