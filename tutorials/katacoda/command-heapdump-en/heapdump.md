@@ -1,7 +1,3 @@
-heapdump
-===
-
-[`heapdump` online tutorial](https://alibaba.github.io/arthas/arthas-tutorials?language=en&id=command-heapdump)
 
 > dump java heap in hprof binary format, like `jmap`.
 
@@ -9,6 +5,8 @@ heapdump
 ### Usage
 
 #### Dump to file
+
+`heapdump /tmp/dump.hprof`{{execute T2}}
 
 ```bash
 [arthas@58205]$ heapdump /tmp/dump.hprof
@@ -18,6 +16,8 @@ Heap dump file created
 
 #### Dump only live objects
 
+`heapdump --live /tmp/dump.hprof`{{execute T2}}
+
 ```bash
 [arthas@58205]$ heapdump --live /tmp/dump.hprof
 Dumping heap to /tmp/dump.hprof...
@@ -25,6 +25,8 @@ Heap dump file created
 ```
 
 #### Dump to tmp file
+
+`heapdump`{{execute T2}}
 
 ```bash
 [arthas@58205]$ heapdump
