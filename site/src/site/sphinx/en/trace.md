@@ -33,13 +33,16 @@ Many times what we are interested is the exact trace result when the method call
 
 `trace` is handy to help discovering and locating the performance flaws in your system, but pls. note Arthas can only trace the first level method call each time.
 
+
+After version 3.3.0, you can use the Dynamic Trace feature to add new matching classes/methods, see the following example.
+
 ### Usage
 
 #### Start Demo
 
 Start `arthas-demo` in [Quick Start](quick-start.md).
 
-#### trace method
+#### Trace method
 
 ```bash
 $ trace demo.MathGame run
@@ -55,7 +58,7 @@ Affect(class-cnt:1 , method-cnt:1) cost in 28 ms.
 ```
 
 
-#### trace times limit
+#### Trace times limit
 
 If the method invoked many times, use `-n` options to specify trace times. For example, the command will exit when received a trace result.
 
@@ -125,7 +128,7 @@ Affect(class-cnt:1 , method-cnt:1) cost in 41 ms.
 * The total time cost may not equal to the sum of the time costs each sub method call takes, this is because Arthas instrumented code takes time too.
 
 
-#### trace multiple classes or multiple methods
+#### Trace multiple classes or multiple methods
 
 The trace command will only trace the subcalls in the method to the trace, and will not trace down multiple layers. Because traces are expensive, multi-layer traces can lead to a lot of classes and methods that ultimately have to be traced.
 
@@ -134,3 +137,52 @@ You can use the regular expression to match multiple classes and methods on the 
 ```bash
 Trace -E com.test.ClassA|org.test.ClassB method1|method2|method3
 ```
+
+
+#### Dynamic trace
+
+> Supported since version 3.3.0.
+
+Open terminal 1, trace the `run` method, and you can see the printout `listenerId: 1` .
+
+```bash
+[arthas@59161]$ trace demo.MathGame run
+Press Q or Ctrl+C to abort.
+Affect(class count: 1 , method count: 1) cost in 112 ms, listenerId: 1
+`---ts=2020-07-09 16:48:11;thread_name=main;id=1;is_daemon=false;priority=5;TCCL=sun.misc.Launcher$AppClassLoader@3d4eac69
+    `---[1.389634ms] demo.MathGame:run()
+        `---[0.123934ms] demo.MathGame:primeFactors() #24 [throws Exception]
+
+`---ts=2020-07-09 16:48:12;thread_name=main;id=1;is_daemon=false;priority=5;TCCL=sun.misc.Launcher$AppClassLoader@3d4eac69
+    `---[3.716391ms] demo.MathGame:run()
+        +---[3.182813ms] demo.MathGame:primeFactors() #24
+        `---[0.167786ms] demo.MathGame:print() #25
+```
+
+Now to drill down into the sub method `primeFactors`, you can open a new terminal 2 and use the `telnet localhost 3658` connects to the arthas, then trace `primeFactors` with the specify `listenerId`.
+
+```bash
+[arthas@59161]$ trace demo.MathGame primeFactors --listenerId 1
+Press Q or Ctrl+C to abort.
+Affect(class count: 1 , method count: 1) cost in 34 ms, listenerId: 1
+```
+
+At Terminal 2 prints the results, indicating that a method has been enhanced: `Affect(class count: 1 , method count: 1)`, but no more results are printed.
+
+At terminal 1, you can see that the trace result has increased by one layer:
+
+```bash
+`---ts=2020-07-09 16:49:29;thread_name=main;id=1;is_daemon=false;priority=5;TCCL=sun.misc.Launcher$AppClassLoader@3d4eac69
+    `---[0.492551ms] demo.MathGame:run()
+        `---[0.113929ms] demo.MathGame:primeFactors() #24 [throws Exception]
+            `---[0.061462ms] demo.MathGame:primeFactors()
+                `---[0.001018ms] throw:java.lang.IllegalArgumentException() #46
+
+`---ts=2020-07-09 16:49:30;thread_name=main;id=1;is_daemon=false;priority=5;TCCL=sun.misc.Launcher$AppClassLoader@3d4eac69
+    `---[0.409446ms] demo.MathGame:run()
+        +---[0.232606ms] demo.MathGame:primeFactors() #24
+        |   `---[0.1294ms] demo.MathGame:primeFactors()
+        `---[0.084025ms] demo.MathGame:print() #25
+```
+
+Dynamic trace by specifying `listenerId`, you can go deeper and deeper. In addition, commands such as `watch`/`tt`/`monitor` also support similar functionality.

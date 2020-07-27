@@ -3,37 +3,34 @@ package com.taobao.arthas.core.command.klass100;
 import com.alibaba.arthas.deps.org.slf4j.Logger;
 import com.alibaba.arthas.deps.org.slf4j.LoggerFactory;
 import com.taobao.arthas.core.command.Constants;
+import com.taobao.arthas.core.command.model.ClassVO;
+import com.taobao.arthas.core.command.model.JadModel;
+import com.taobao.arthas.core.command.model.MessageModel;
+import com.taobao.arthas.core.command.model.RowAffectModel;
 import com.taobao.arthas.core.shell.cli.Completion;
 import com.taobao.arthas.core.shell.cli.CompletionUtils;
 import com.taobao.arthas.core.shell.command.AnnotatedCommand;
 import com.taobao.arthas.core.shell.command.CommandProcess;
+import com.taobao.arthas.core.shell.command.ExitStatus;
 import com.taobao.arthas.core.util.ClassUtils;
+import com.taobao.arthas.core.util.CommandUtils;
 import com.taobao.arthas.core.util.Decompiler;
 import com.taobao.arthas.core.util.InstrumentationUtils;
 import com.taobao.arthas.core.util.SearchUtils;
-import com.taobao.arthas.core.util.TypeRenderUtils;
 import com.taobao.arthas.core.util.affect.RowAffect;
 import com.taobao.middleware.cli.annotations.Argument;
 import com.taobao.middleware.cli.annotations.Description;
 import com.taobao.middleware.cli.annotations.Name;
 import com.taobao.middleware.cli.annotations.Option;
 import com.taobao.middleware.cli.annotations.Summary;
-import com.taobao.text.Color;
-import com.taobao.text.Decoration;
-import com.taobao.text.lang.LangRenderUtil;
-import com.taobao.text.ui.Element;
-import com.taobao.text.ui.LabelElement;
-import com.taobao.text.ui.TableElement;
-import com.taobao.text.util.RenderUtil;
 
 import java.io.File;
 import java.lang.instrument.Instrumentation;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.regex.Pattern;
-
-import static com.taobao.text.ui.Element.label;
 
 /**
  * @author diecui1202 on 15/11/24.
@@ -107,27 +104,30 @@ public class JadCommand extends AnnotatedCommand {
         Set<Class<?>> matchedClasses = SearchUtils.searchClassOnly(inst, classPattern, isRegEx, code);
 
         try {
+            ExitStatus status = null;
             if (matchedClasses == null || matchedClasses.isEmpty()) {
-                processNoMatch(process);
+                status = processNoMatch(process);
             } else if (matchedClasses.size() > 1) {
-                processMatches(process, matchedClasses);
+                status = processMatches(process, matchedClasses);
             } else { // matchedClasses size is 1
                 // find inner classes.
                 Set<Class<?>> withInnerClasses = SearchUtils.searchClassOnly(inst,  matchedClasses.iterator().next().getName() + "$*", false, code);
                 if(withInnerClasses.isEmpty()) {
                     withInnerClasses = matchedClasses;
                 }
-                processExactMatch(process, affect, inst, matchedClasses, withInnerClasses);
+                status = processExactMatch(process, affect, inst, matchedClasses, withInnerClasses);
             }
-        } finally {
             if (!this.sourceOnly) {
-                process.write(affect + "\n");
+                process.appendResult(new RowAffectModel(affect));
             }
-            process.end();
+            CommandUtils.end(process, status);
+        } catch (Throwable e){
+            logger.error("processing error", e);
+            process.end(-1, "processing error");
         }
     }
 
-    private void processExactMatch(CommandProcess process, RowAffect affect, Instrumentation inst, Set<Class<?>> matchedClasses, Set<Class<?>> withInnerClasses) {
+    private ExitStatus processExactMatch(CommandProcess process, RowAffect affect, Instrumentation inst, Set<Class<?>> matchedClasses, Set<Class<?>> withInnerClasses) {
         Class<?> c = matchedClasses.iterator().next();
         Set<Class<?>> allClasses = new HashSet<Class<?>>(withInnerClasses);
         allClasses.add(c);
@@ -146,46 +146,38 @@ public class JadCommand extends AnnotatedCommand {
                 source = "unknown";
             }
 
-            if (this.sourceOnly) {
-                process.write(LangRenderUtil.render(source) + "\n");
-                return;
+            JadModel jadModel = new JadModel();
+            jadModel.setSource(source);
+            if (!this.sourceOnly) {
+                jadModel.setClassInfo(ClassUtils.createSimpleClassInfo(c));
+                jadModel.setLocation(ClassUtils.getCodeSource(c.getProtectionDomain().getCodeSource()));
             }
+            process.appendResult(jadModel);
 
-
-            process.write("\n");
-            process.write(RenderUtil.render(new LabelElement("ClassLoader: ").style(Decoration.bold.fg(Color.red)), process.width()));
-            process.write(RenderUtil.render(TypeRenderUtils.drawClassLoader(c), process.width()) + "\n");
-            process.write(RenderUtil.render(new LabelElement("Location: ").style(Decoration.bold.fg(Color.red)), process.width()));
-            process.write(RenderUtil.render(new LabelElement(ClassUtils.getCodeSource(
-                    c.getProtectionDomain().getCodeSource())).style(Decoration.bold.fg(Color.blue)), process.width()) + "\n");
-            process.write(LangRenderUtil.render(source) + "\n");
-            process.write(com.taobao.arthas.core.util.Constants.EMPTY_STRING);
             affect.rCnt(classFiles.keySet().size());
+            return ExitStatus.success();
         } catch (Throwable t) {
             logger.error("jad: fail to decompile class: " + c.getName(), t);
+            return ExitStatus.failure(-1, "jad: fail to decompile class: " + c.getName());
         }
     }
 
-    private void processMatches(CommandProcess process, Set<Class<?>> matchedClasses) {
-        Element usage = new LabelElement("jad -c <hashcode> " + classPattern).style(Decoration.bold.fg(Color.blue));
-        process.write("\n Found more than one class for: " + classPattern + ", Please use "
-                + RenderUtil.render(usage, process.width()));
+    private ExitStatus processMatches(CommandProcess process, Set<Class<?>> matchedClasses) {
 
-        TableElement table = new TableElement().leftCellPadding(1).rightCellPadding(1);
-        table.row(new LabelElement("HASHCODE").style(Decoration.bold.bold()),
-                new LabelElement("CLASSLOADER").style(Decoration.bold.bold()));
+        String usage = "jad -c <hashcode> " + classPattern;
+        String msg = " Found more than one class for: " + classPattern + ", Please use " + usage;
+        process.appendResult(new MessageModel(msg));
 
-        for (Class<?> c : matchedClasses) {
-            ClassLoader classLoader = c.getClassLoader();
-            table.row(label(Integer.toHexString(classLoader.hashCode())).style(Decoration.bold.fg(Color.red)),
-                    TypeRenderUtils.drawClassLoader(c));
-        }
+        List<ClassVO> classVOs = ClassUtils.createClassVOList(matchedClasses);
+        JadModel jadModel = new JadModel();
+        jadModel.setMatchedClasses(classVOs);
+        process.appendResult(jadModel);
 
-        process.write(RenderUtil.render(table, process.width()) + "\n");
+        return ExitStatus.failure(-1, msg);
     }
 
-    private void processNoMatch(CommandProcess process) {
-        process.write("No class found for: " + classPattern + "\n");
+    private ExitStatus processNoMatch(CommandProcess process) {
+        return ExitStatus.failure(-1, "No class found for: " + classPattern);
     }
 
     @Override

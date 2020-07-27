@@ -9,6 +9,7 @@ import java.net.URLEncoder;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.ThreadFactory;
 
 /**
  * Arthas 使用情况统计
@@ -16,7 +17,14 @@ import java.util.concurrent.Executors;
  * Created by zhuyong on 15/11/12.
  */
 public class UserStatUtil {
-    private static final ExecutorService executorService = Executors.newSingleThreadExecutor();
+    private static final ExecutorService executorService = Executors.newSingleThreadExecutor(new ThreadFactory() {
+        @Override
+        public Thread newThread(Runnable r) {
+            final Thread t = new Thread(r, "arthas-UserStat");
+            t.setDaemon(true);
+            return t;
+        }
+    });
     private static final String ip = IPUtils.getLocalIP();
 
     private static final String version = URLEncoder.encode(ArthasBanner.version().replace("\n", ""));

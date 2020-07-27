@@ -13,6 +13,7 @@ import com.alibaba.arthas.deps.org.objectweb.asm.commons.Method;
 import com.alibaba.arthas.deps.org.objectweb.asm.tree.AbstractInsnNode;
 import com.alibaba.arthas.deps.org.objectweb.asm.tree.ClassNode;
 import com.alibaba.arthas.deps.org.objectweb.asm.tree.FrameNode;
+import com.alibaba.arthas.deps.org.objectweb.asm.tree.IincInsnNode;
 import com.alibaba.arthas.deps.org.objectweb.asm.tree.InsnList;
 import com.alibaba.arthas.deps.org.objectweb.asm.tree.InsnNode;
 import com.alibaba.arthas.deps.org.objectweb.asm.tree.IntInsnNode;
@@ -717,10 +718,15 @@ public class MethodProcessor {
                             continue;
                         }
 
+                        //修改inline代码中的使用到局部变量的指令的var操作数(变量slot)
                         if(abstractInsnNode instanceof  VarInsnNode) {
                             VarInsnNode varInsnNode = (VarInsnNode) abstractInsnNode;
                             varInsnNode.var += currentMaxLocals;
+                        } else if (abstractInsnNode instanceof IincInsnNode) {
+                            IincInsnNode iincInsnNode = (IincInsnNode) abstractInsnNode;
+                            iincInsnNode.var += currentMaxLocals;
                         }
+
                         int opcode = abstractInsnNode.getOpcode();
                         if (opcode >= Opcodes.IRETURN && opcode <= Opcodes.RETURN) {
 //                            super.visitJumpInsn(Opcodes.GOTO, end);

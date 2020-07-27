@@ -3,6 +3,8 @@ package com.taobao.arthas.core.command.monitor200;
 import com.alibaba.arthas.deps.org.slf4j.Logger;
 import com.alibaba.arthas.deps.org.slf4j.LoggerFactory;
 import com.taobao.arthas.core.command.Constants;
+import com.taobao.arthas.core.command.model.MBeanAttributeVO;
+import com.taobao.arthas.core.command.model.MBeanModel;
 import com.taobao.arthas.core.shell.cli.CliToken;
 import com.taobao.arthas.core.shell.cli.Completion;
 import com.taobao.arthas.core.shell.cli.CompletionUtils;
@@ -22,38 +24,25 @@ import com.taobao.middleware.cli.annotations.Description;
 import com.taobao.middleware.cli.annotations.Name;
 import com.taobao.middleware.cli.annotations.Option;
 import com.taobao.middleware.cli.annotations.Summary;
-import com.taobao.text.Color;
-import com.taobao.text.Decoration;
-import com.taobao.text.ui.LabelElement;
-import com.taobao.text.ui.TableElement;
-import com.taobao.text.util.RenderUtil;
 
 import java.lang.management.ManagementFactory;
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.Timer;
 import java.util.TimerTask;
 
-import javax.management.Descriptor;
-import javax.management.DescriptorRead;
 import javax.management.MBeanAttributeInfo;
-import javax.management.MBeanConstructorInfo;
 import javax.management.MBeanInfo;
-import javax.management.MBeanNotificationInfo;
-import javax.management.MBeanOperationInfo;
-import javax.management.MBeanParameterInfo;
 import javax.management.MBeanServer;
 import javax.management.MalformedObjectNameException;
 import javax.management.ObjectName;
-
-import static com.taobao.text.ui.Element.label;
-import static javax.management.MBeanOperationInfo.ACTION;
-import static javax.management.MBeanOperationInfo.ACTION_INFO;
-import static javax.management.MBeanOperationInfo.INFO;
-import static javax.management.MBeanOperationInfo.UNKNOWN;
+import javax.management.openmbean.CompositeData;
+import javax.management.openmbean.TabularData;
 
 /**
  * Date: 2019/4/18
@@ -63,13 +52,16 @@ import static javax.management.MBeanOperationInfo.UNKNOWN;
 @Name("mbean")
 @Summary("Display the mbean information")
 @Description("\nExamples:\n" +
-             "  mbean\n" +
-             "  mbean -m java.lang:type=Threading\n" +
-             "  mbean java.lang:type=Threading\n" +
-             "  mbean java.lang:type=Threading *Count\n" +
-             "  mbean -E java.lang:type=Threading PeakThreadCount|ThreadCount|DaemonThreadCount\n" +
-             "  mbean -i 1000 java.lang:type=Threading *Count\n" +
-             Constants.WIKI + Constants.WIKI_HOME + "mbean")
+        "  mbean\n" +
+        "  mbean -m java.lang:type=Threading\n" +
+        "  mbean java.lang:type=Threading\n" +
+        "  mbean java.lang:type=Threading *Count\n" +
+        "  mbean java.lang:type=MemoryPool,name=PS\\ Old\\ Gen\n" +
+        "  mbean java.lang:type=MemoryPool,name=*\n" +
+        "  mbean java.lang:type=MemoryPool,name=* Usage\n" +
+        "  mbean -E java.lang:type=Threading PeakThreadCount|ThreadCount|DaemonThreadCount\n" +
+        "  mbean -i 1000 java.lang:type=Threading *Count\n" +
+        Constants.WIKI + Constants.WIKI_HOME + "mbean")
 public class MBeanCommand extends AnnotatedCommand {
 
     private static final Logger logger = LoggerFactory.getLogger(MBeanCommand.class);
@@ -84,7 +76,12 @@ public class MBeanCommand extends AnnotatedCommand {
     private long count = 0;
 
     @Argument(argName = "name-pattern", index = 0, required = false)
-    @Description("ObjectName pattern, see javax.management.ObjectName for more detail.")
+    @Description("ObjectName pattern, see javax.management.ObjectName for more detail. \n" +
+            "It looks like this: \n" +
+            "  domain: key-property-list\n" +
+            "For example: \n" +
+            "  java.lang:name=G1 Old Gen,type=MemoryPool\n" +
+            "  java.lang:name=*,type=MemoryPool")
     public void setNamePattern(String name) {
         this.name = name;
     }
@@ -107,7 +104,7 @@ public class MBeanCommand extends AnnotatedCommand {
         isRegEx = regEx;
     }
 
-    @Option(shortName = "m", longName = "metadata", flag = false)
+    @Option(shortName = "m", longName = "metadata", flag = true)
     @Description("Show metadata of mbean.")
     public void setMetaData(boolean metaData) {
         this.metaData = metaData;
@@ -141,6 +138,7 @@ public class MBeanCommand extends AnnotatedCommand {
 
     @Override
     public void process(CommandProcess process) {
+        //每个分支调用process.end()结束执行
         if (StringUtils.isEmpty(getName())) {
             listMBean(process);
         } else if (isMetaData()) {
@@ -152,10 +150,11 @@ public class MBeanCommand extends AnnotatedCommand {
 
     private void listMBean(CommandProcess process) {
         Set<ObjectName> objectNames = queryObjectNames();
+        List<String> mbeanNames = new ArrayList<String>(objectNames.size());
         for (ObjectName objectName : objectNames) {
-            process.write(objectName.toString());
-            process.write("\n");
+            mbeanNames.add(objectName.toString());
         }
+        process.appendResult(new MBeanModel(mbeanNames));
         process.end();
     }
 
@@ -192,6 +191,8 @@ public class MBeanCommand extends AnnotatedCommand {
         } else {
             timer.schedule(new MBeanTimerTask(process), 0);
         }
+
+        //异步执行，这里不能调用process.end()，在timer task中结束命令执行
     }
 
     public synchronized void stop() {
@@ -214,19 +215,18 @@ public class MBeanCommand extends AnnotatedCommand {
         Set<ObjectName> objectNames = queryObjectNames();
         MBeanServer mBeanServer = ManagementFactory.getPlatformMBeanServer();
         try {
-            TableElement table = createTable();
+            MBeanModel mbeanModel = new MBeanModel();
+            Map<String, MBeanInfo> mbeanMetaData = new LinkedHashMap<String, MBeanInfo>();
+            mbeanModel.setMbeanMetadata(mbeanMetaData);
             for (ObjectName objectName : objectNames) {
                 MBeanInfo mBeanInfo = mBeanServer.getMBeanInfo(objectName);
-                drawMetaInfo(mBeanInfo, objectName, table);
-                drawAttributeInfo(mBeanInfo.getAttributes(), table);
-                drawOperationInfo(mBeanInfo.getOperations(), table);
-                drawNotificationInfo(mBeanInfo.getNotifications(), table);
+                mbeanMetaData.put(objectName.toString(), mBeanInfo);
             }
-            process.write(RenderUtil.render(table, process.width()));
+            process.appendResult(mbeanModel);
+            process.end();
         } catch (Throwable e) {
             logger.warn("listMetaData error", e);
-        } finally {
-            process.end();
+            process.end(1, "list mbean metadata error");
         }
     }
 
@@ -348,102 +348,6 @@ public class MBeanCommand extends AnnotatedCommand {
         return isRegEx ? new RegexMatcher(attribute) : new WildcardMatcher(attribute);
     }
 
-    private void drawMetaInfo(MBeanInfo mBeanInfo, ObjectName objectName, TableElement table) {
-        table.row(new LabelElement("MBeanInfo").style(Decoration.bold.fg(Color.red)));
-        table.row(new LabelElement("Info:").style(Decoration.bold.fg(Color.yellow)));
-        table.row("ObjectName", objectName.toString());
-        table.row("ClassName", mBeanInfo.getClassName());
-        table.row("Description", mBeanInfo.getDescription());
-        drawDescriptorInfo("Info Descriptor:", mBeanInfo, table);
-        MBeanConstructorInfo[] constructors = mBeanInfo.getConstructors();
-        if (constructors.length > 0) {
-            for (int i = 0; i < constructors.length; i++) {
-                table.row(new LabelElement("Constructor-" + i).style(Decoration.bold.fg(Color.yellow)));
-                table.row("Name", constructors[i].getName());
-                table.row("Description", constructors[i].getDescription());
-            }
-        }
-    }
-
-    private void drawAttributeInfo(MBeanAttributeInfo[] attributes, TableElement table) {
-        for (MBeanAttributeInfo attribute : attributes) {
-            table.row(new LabelElement("MBeanAttributeInfo").style(Decoration.bold.fg(Color.red)));
-            table.row(new LabelElement("Attribute:").style(Decoration.bold.fg(Color.yellow)));
-            table.row("Name", attribute.getName());
-            table.row("Description", attribute.getDescription());
-            table.row("Readable", String.valueOf(attribute.isReadable()));
-            table.row("Writable", String.valueOf(attribute.isWritable()));
-            table.row("Is", String.valueOf(attribute.isIs()));
-            table.row("Type", attribute.getType());
-            drawDescriptorInfo("Attribute Descriptor:", attribute, table);
-        }
-    }
-
-    private void drawOperationInfo(MBeanOperationInfo[] operations, TableElement table) {
-        for (MBeanOperationInfo operation : operations) {
-            table.row(new LabelElement("MBeanOperationInfo").style(Decoration.bold.fg(Color.red)));
-            table.row(new LabelElement("Operation:").style(Decoration.bold.fg(Color.yellow)));
-            table.row("Name", operation.getName());
-            table.row("Description", operation.getDescription());
-            String impact = "";
-            switch (operation.getImpact()) {
-                case ACTION:
-                    impact = "action";
-                    break;
-                case ACTION_INFO:
-                    impact = "action/info";
-                    break;
-                case INFO:
-                    impact = "info";
-                    break;
-                case UNKNOWN:
-                    impact = "unknown";
-                    break;
-            }
-            table.row("Impact", impact);
-            table.row("ReturnType", operation.getReturnType());
-            MBeanParameterInfo[] signature = operation.getSignature();
-            if (signature.length > 0) {
-                for (int i = 0; i < signature.length; i++) {
-                    table.row(new LabelElement("Parameter-" + i).style(Decoration.bold.fg(Color.yellow)));
-                    table.row("Name", signature[i].getName());
-                    table.row("Type", signature[i].getType());
-                    table.row("Description", signature[i].getDescription());
-                }
-            }
-            drawDescriptorInfo("Operation Descriptor:", operation, table);
-        }
-    }
-
-    private void drawNotificationInfo(MBeanNotificationInfo[] notificationInfos, TableElement table) {
-        for (MBeanNotificationInfo notificationInfo : notificationInfos) {
-            table.row(new LabelElement("MBeanNotificationInfo").style(Decoration.bold.fg(Color.red)));
-            table.row(new LabelElement("Notification:").style(Decoration.bold.fg(Color.yellow)));
-            table.row("Name", notificationInfo.getName());
-            table.row("Description", notificationInfo.getDescription());
-            table.row("NotifTypes", Arrays.toString(notificationInfo.getNotifTypes()));
-            drawDescriptorInfo("Notification Descriptor:", notificationInfo, table);
-        }
-    }
-
-    private void drawDescriptorInfo(String title, DescriptorRead descriptorRead, TableElement table) {
-        Descriptor descriptor = descriptorRead.getDescriptor();
-        String[] fieldNames = descriptor.getFieldNames();
-        if (fieldNames.length > 0) {
-            table.row(new LabelElement(title).style(Decoration.bold.fg(Color.yellow)));
-            for (String fieldName : fieldNames) {
-                Object fieldValue = descriptor.getFieldValue(fieldName);
-                table.row(fieldName, fieldValue.toString());
-            }
-        }
-    }
-
-    private static TableElement createTable() {
-        TableElement table = new TableElement().leftCellPadding(1).rightCellPadding(1);
-        table.row(true, label("NAME").style(Decoration.bold.bold()),
-                  label("VALUE").style(Decoration.bold.bold()));
-        return table;
-    }
 
     public class MBeanInterruptHandler extends CommandInterruptHandler {
 
@@ -475,16 +379,20 @@ public class MBeanCommand extends AnnotatedCommand {
                 // stop the timer
                 timer.cancel();
                 timer.purge();
-                process.write("Process ends after " + getNumOfExecutions() + " time(s).\n");
-                process.end();
+                process.end(-1, "Process ends after " + getNumOfExecutions() + " time(s).");
                 return;
             }
 
             try {
+                //result model
+                MBeanModel mBeanModel = new MBeanModel();
+                Map<String, List<MBeanAttributeVO>> mbeanAttributeMap = new LinkedHashMap<String, List<MBeanAttributeVO>>();
+                mBeanModel.setMbeanAttribute(mbeanAttributeMap);
+
                 MBeanServer platformMBeanServer = ManagementFactory.getPlatformMBeanServer();
                 Set<ObjectName> objectNames = queryObjectNames();
-                TableElement table = createTable();
                 for (ObjectName objectName : objectNames) {
+                    List<MBeanAttributeVO> attributeVOs = null;
                     MBeanInfo mBeanInfo = platformMBeanServer.getMBeanInfo(objectName);
                     MBeanAttributeInfo[] attributes = mBeanInfo.getAttributes();
                     for (MBeanAttributeInfo attribute : attributes) {
@@ -492,29 +400,99 @@ public class MBeanCommand extends AnnotatedCommand {
                         if (!getAttributeMatcher().matching(attributeName)) {
                             continue;
                         }
-                        String value;
-                        if (!attribute.isReadable()) {
-                            value = RenderUtil.render(new LabelElement("Unavailable").style(Decoration.bold_off.fg(Color.red)));
-                        } else {
-                            Object attributeObj = platformMBeanServer.getAttribute(objectName, attributeName);
-                            value = String.valueOf(attributeObj);
+
+                        //create attributeVO list
+                        if (attributeVOs == null) {
+                            attributeVOs = new ArrayList<MBeanAttributeVO>();
+                            mbeanAttributeMap.put(objectName.toString(), attributeVOs);
                         }
-                        table.row(attributeName, value);
+
+                        if (!attribute.isReadable()) {
+                            attributeVOs.add(new MBeanAttributeVO(attributeName, null, "Unavailable"));
+                        } else {
+                            try {
+                                Object attributeObj = platformMBeanServer.getAttribute(objectName, attributeName);
+                                attributeVOs.add(createMBeanAttributeVO(attributeName, attributeObj));
+                            } catch (Throwable e) {
+                                logger.error("read mbean attribute failed: objectName={}, attributeName={}", objectName, attributeName, e);
+                                String errorStr;
+                                Throwable cause = e.getCause();
+                                if (cause != null && cause instanceof UnsupportedOperationException) {
+                                    errorStr = "Unsupported";
+                                } else {
+                                    errorStr = "Failure";
+                                }
+                                attributeVOs.add(new MBeanAttributeVO(attributeName, null, errorStr));
+                            }
+                        }
                     }
-                    process.write(RenderUtil.render(table, process.width()));
-                    process.write("\n");
                 }
+                process.appendResult(mBeanModel);
             } catch (Throwable e) {
-                logger.warn("mbean error", e);
+                logger.warn("read mbean error", e);
+                stop();
+                process.end(1, "read mbean error.");
+                return;
             }
 
             count++;
             process.times().incrementAndGet();
-
             if (getInterval() <= 0) {
                 stop();
                 process.end();
             }
         }
+    }
+
+    private MBeanAttributeVO createMBeanAttributeVO(String attributeName, Object originAttrValue) {
+        Object attrValue = convertAttrValue(attributeName, originAttrValue);
+
+        return new MBeanAttributeVO(attributeName, attrValue);
+    }
+
+    private Object convertAttrValue(String attributeName, Object originAttrValue) {
+        Object attrValue = originAttrValue;
+
+        try {
+            if (originAttrValue instanceof ObjectName) {
+                attrValue = String.valueOf(originAttrValue);
+            } else if (attrValue instanceof CompositeData) {
+                //mbean java.lang:type=MemoryPool,name=*
+                CompositeData compositeData = (CompositeData) attrValue;
+                attrValue = convertCompositeData(attributeName, compositeData);
+            } else if (attrValue instanceof CompositeData[]) {
+                //mbean com.sun.management:type=HotSpotDiagnostic
+                CompositeData[] compositeDataArray = (CompositeData[]) attrValue;
+                List<Map<String, Object>> dataList = new ArrayList<Map<String, Object>>(compositeDataArray.length);
+                for (CompositeData compositeData : compositeDataArray) {
+                    dataList.add(convertCompositeData(attributeName, compositeData));
+                }
+                attrValue = dataList;
+            } else if (attrValue instanceof TabularData) {
+                //mbean java.lang:type=GarbageCollector,name=*
+                TabularData tabularData = (TabularData) attrValue;
+                Collection<CompositeData> compositeDataList = (Collection<CompositeData>) tabularData.values();
+                List<Map<String, Object>> dataList = new ArrayList<Map<String, Object>>(compositeDataList.size());
+                for (CompositeData compositeData : compositeDataList) {
+                    dataList.add(convertCompositeData(attributeName, compositeData));
+                }
+                attrValue = dataList;
+            }
+        } catch (Throwable e) {
+            logger.error("convert mbean attribute error, attribute: {}={}", attributeName, originAttrValue, e);
+            attrValue = String.valueOf(originAttrValue);
+        }
+        return attrValue;
+    }
+
+    private Map<String, Object> convertCompositeData(String attributeName, CompositeData compositeData) {
+        Set<String> keySet = compositeData.getCompositeType().keySet();
+        String[] keys = keySet.toArray(new String[0]);
+        Object[] values = compositeData.getAll(keys);
+        Map<String, Object> data = new LinkedHashMap<String, Object>();
+        for (int i = 0; i < keys.length; i++) {
+            data.put(keys[i], convertAttrValue(attributeName + "." + keys[i], values[i]));
+        }
+        return data;
     }
 }

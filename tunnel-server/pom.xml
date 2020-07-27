@@ -4,7 +4,7 @@
 	<parent>
 		<groupId>com.taobao.arthas</groupId>
 		<artifactId>arthas-all</artifactId>
-		<version>3.3.1-SNAPSHOT</version>
+		<version>3.3.8-SNAPSHOT</version>
 		<relativePath>../pom.xml</relativePath>
 	</parent>
 	<artifactId>arthas-tunnel-server</artifactId>
@@ -24,7 +24,7 @@
 				<!-- Import dependency management from Spring Boot -->
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-dependencies</artifactId>
-				<version>2.1.7.RELEASE</version>
+				<version>${spring-boot.version}</version>
 				<type>pom</type>
 				<scope>import</scope>
 			</dependency>

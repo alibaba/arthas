@@ -38,7 +38,7 @@ exit_on_err()
 
 rm -r "$DIR/core/src/main/resources/com/taobao/arthas/core/res/version"
 
-packaging_bin_path=$(ls "${DIR}"/packaging/target/arthas-*-bin.zip)
+packaging_bin_path=$(ls "${DIR}"/packaging/target/arthas-bin.zip)
 
 # install to local
 mkdir -p "${NEWEST_ARTHAS_LIB_HOME}"

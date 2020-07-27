@@ -3,6 +3,7 @@ package com.taobao.arthas.core.command.klass100;
 import java.io.File;
 import java.lang.instrument.Instrumentation;
 import java.nio.charset.Charset;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -11,6 +12,8 @@ import com.alibaba.arthas.deps.org.slf4j.Logger;
 import com.alibaba.arthas.deps.org.slf4j.LoggerFactory;
 import com.taobao.arthas.compiler.DynamicCompiler;
 import com.taobao.arthas.core.command.Constants;
+import com.taobao.arthas.core.command.model.MemoryCompilerModel;
+import com.taobao.arthas.core.command.model.RowAffectModel;
 import com.taobao.arthas.core.shell.cli.Completion;
 import com.taobao.arthas.core.shell.cli.CompletionUtils;
 import com.taobao.arthas.core.shell.command.AnnotatedCommand;
@@ -70,7 +73,6 @@ public class MemoryCompilerCommand extends AnnotatedCommand {
 
     @Override
     public void process(final CommandProcess process) {
-        int exitCode = 0;
         RowAffect affect = new RowAffect();
 
         try {
@@ -81,8 +83,7 @@ public class MemoryCompilerCommand extends AnnotatedCommand {
             } else {
                 classloader = ClassLoaderUtils.getClassLoader(inst, hashCode);
                 if (classloader == null) {
-                    process.write("Can not find classloader with hashCode: " + hashCode + ".\n");
-                    exitCode = -1;
+                    process.end(-1, "Can not find classloader with hashCode: " + hashCode + ".");
                     return;
                 }
             }
@@ -112,22 +113,20 @@ public class MemoryCompilerCommand extends AnnotatedCommand {
                 outputDir = new File("").getAbsoluteFile();
             }
 
-            process.write("Memory compiler output:\n");
+            List<String> files = new ArrayList<String>();
             for (Entry<String, byte[]> entry : byteCodes.entrySet()) {
                 File byteCodeFile = new File(outputDir, entry.getKey().replace('.', '/') + ".class");
                 FileUtils.writeByteArrayToFile(byteCodeFile, entry.getValue());
-                process.write(byteCodeFile.getAbsolutePath() + '\n');
+                files.add(byteCodeFile.getAbsolutePath());
                 affect.rCnt(1);
             }
-
+            process.appendResult(new MemoryCompilerModel(files));
+            process.appendResult(new RowAffectModel(affect));
+            process.end();
         } catch (Throwable e) {
             logger.warn("Memory compiler error", e);
-            process.write("Memory compiler error, exception message: " + e.getMessage()
-                            + ", please check $HOME/logs/arthas/arthas.log for more details. \n");
-            exitCode = -1;
-        } finally {
-            process.write(affect + "\n");
-            process.end(exitCode);
+            process.end(-1, "Memory compiler error, exception message: " + e.getMessage()
+                            + ", please check $HOME/logs/arthas/arthas.log for more details.");
         }
     }
 

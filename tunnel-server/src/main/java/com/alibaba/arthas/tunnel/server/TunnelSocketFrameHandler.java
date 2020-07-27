@@ -27,6 +27,7 @@ import io.netty.handler.codec.http.websocketx.WebSocketServerProtocolHandler.Han
 import io.netty.util.concurrent.Future;
 import io.netty.util.concurrent.FutureListener;
 import io.netty.util.concurrent.GenericFutureListener;
+import io.netty.util.concurrent.GlobalEventExecutor;
 import io.netty.util.concurrent.Promise;
 
 /**
@@ -109,7 +110,7 @@ public class TunnelSocketFrameHandler extends SimpleChannelInboundHandler<WebSoc
             clientConnectionInfo.setChannelHandlerContext(tunnelSocketCtx);
 
             // when the agent open tunnel success, will set result into the promise
-            Promise<Channel> promise = agentCtx.executor().newPromise();
+            Promise<Channel> promise = GlobalEventExecutor.INSTANCE.newPromise();
             promise.addListener(new FutureListener<Channel>() {
                 @Override
                 public void operationComplete(final Future<Channel> future) throws Exception {

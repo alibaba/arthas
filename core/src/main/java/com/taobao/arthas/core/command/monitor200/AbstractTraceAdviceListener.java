@@ -18,13 +18,7 @@ public class AbstractTraceAdviceListener extends AdviceListenerAdapter {
     protected TraceCommand command;
     protected CommandProcess process;
 
-    protected final ThreadLocal<TraceEntity> threadBoundEntity = new ThreadLocal<TraceEntity>() {
-
-        @Override
-        protected TraceEntity initialValue() {
-            return new TraceEntity();
-        }
-    };
+    protected final ThreadLocal<TraceEntity> threadBoundEntity = new ThreadLocal<TraceEntity>();
 
     /**
      * Constructor
@@ -32,6 +26,15 @@ public class AbstractTraceAdviceListener extends AdviceListenerAdapter {
     public AbstractTraceAdviceListener(TraceCommand command, CommandProcess process) {
         this.command = command;
         this.process = process;
+    }
+
+    protected TraceEntity threadLocalTraceEntity(ClassLoader loader) {
+        TraceEntity traceEntity = threadBoundEntity.get();
+        if (traceEntity == null) {
+            traceEntity = new TraceEntity(loader);
+            threadBoundEntity.set(traceEntity);
+        }
+        return traceEntity;
     }
 
     @Override
@@ -42,8 +45,9 @@ public class AbstractTraceAdviceListener extends AdviceListenerAdapter {
     @Override
     public void before(ClassLoader loader, Class<?> clazz, ArthasMethod method, Object target, Object[] args)
             throws Throwable {
-        threadBoundEntity.get().view.begin(clazz.getName() + ":" + method.getName() + "()");
-        threadBoundEntity.get().deep++;
+        TraceEntity traceEntity = threadLocalTraceEntity(loader);
+        traceEntity.tree.begin(clazz.getName(), method.getName(), -1, false);
+        traceEntity.deep++;
         // 开始计算本次方法调用耗时
         threadLocalWatch.start();
     }
@@ -51,45 +55,50 @@ public class AbstractTraceAdviceListener extends AdviceListenerAdapter {
     @Override
     public void afterReturning(ClassLoader loader, Class<?> clazz, ArthasMethod method, Object target, Object[] args,
                                Object returnObject) throws Throwable {
-        threadBoundEntity.get().view.end();
+        threadLocalTraceEntity(loader).tree.end();
         final Advice advice = Advice.newForAfterRetuning(loader, clazz, method, target, args, returnObject);
-        finishing(advice);
+        finishing(loader, advice);
     }
 
     @Override
     public void afterThrowing(ClassLoader loader, Class<?> clazz, ArthasMethod method, Object target, Object[] args,
                               Throwable throwable) throws Throwable {
         int lineNumber = throwable.getStackTrace()[0].getLineNumber();
-        threadBoundEntity.get().view.begin("throw:" + throwable.getClass().getName() + "()" + " #" + lineNumber).end().end();
+        threadLocalTraceEntity(loader).tree.end(throwable, lineNumber);
         final Advice advice = Advice.newForAfterThrowing(loader, clazz, method, target, args, throwable);
-        finishing(advice);
+        finishing(loader, advice);
     }
 
     public TraceCommand getCommand() {
         return command;
     }
 
-    private void finishing(Advice advice) {
+    private void finishing(ClassLoader loader, Advice advice) {
         // 本次调用的耗时
+        TraceEntity traceEntity = threadLocalTraceEntity(loader);
         double cost = threadLocalWatch.costInMillis();
-        if (--threadBoundEntity.get().deep == 0) {
+        if (--traceEntity.deep == 0) {
             try {
-                if (isConditionMet(command.getConditionExpress(), advice, cost)) {
+                boolean conditionResult = isConditionMet(command.getConditionExpress(), advice, cost);
+                if (this.isVerbose()) {
+                    process.write("Condition express: " + command.getConditionExpress() + " , result: " + conditionResult + "\n");
+                }
+                if (conditionResult) {
                     // 满足输出条件
+                    process.times().incrementAndGet();
+                    // TODO: concurrency issues for process.write
+                    process.appendResult(traceEntity.getModel());
+
+                    // 是否到达数量限制
                     if (isLimitExceeded(command.getNumberOfLimit(), process.times().get())) {
                         // TODO: concurrency issue to abort process
                         abortProcess(process, command.getNumberOfLimit());
-                    } else {
-                        process.times().incrementAndGet();
-                        // TODO: concurrency issues for process.write
-                        process.write(threadBoundEntity.get().view.draw() + "\n");
                     }
                 }
             } catch (Throwable e) {
                 logger.warn("trace failed.", e);
-                process.write("trace failed, condition is: " + command.getConditionExpress() + ", " + e.getMessage()
-                              + ", visit " + LogUtil.loggingFile() + " for more details.\n");
-                process.end();
+                process.end(1, "trace failed, condition is: " + command.getConditionExpress() + ", " + e.getMessage()
+                              + ", visit " + LogUtil.loggingFile() + " for more details.");
             } finally {
                 threadBoundEntity.remove();
             }
