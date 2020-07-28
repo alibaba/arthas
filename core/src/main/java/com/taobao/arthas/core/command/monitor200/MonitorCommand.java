@@ -1,6 +1,7 @@
 package com.taobao.arthas.core.command.monitor200;
 
 
+import com.taobao.arthas.core.GlobalOptions;
 import com.taobao.arthas.core.advisor.AdviceListener;
 import com.taobao.arthas.core.command.Constants;
 import com.taobao.arthas.core.shell.command.CommandProcess;
@@ -100,7 +101,7 @@ public class MonitorCommand extends EnhancerCommand {
 
     @Override
     protected AdviceListener getAdviceListener(CommandProcess process) {
-        final AdviceListener listener = new MonitorAdviceListener(this, process);
+        final AdviceListener listener = new MonitorAdviceListener(this, process, GlobalOptions.verbose || this.verbose);
         /*
          * 通过handle回调，在suspend时停止timer，resume时重启timer
          */

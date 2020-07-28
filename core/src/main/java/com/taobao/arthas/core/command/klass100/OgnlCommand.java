@@ -8,11 +8,10 @@ import com.taobao.arthas.core.command.Constants;
 import com.taobao.arthas.core.command.express.Express;
 import com.taobao.arthas.core.command.express.ExpressException;
 import com.taobao.arthas.core.command.express.ExpressFactory;
+import com.taobao.arthas.core.command.model.OgnlModel;
 import com.taobao.arthas.core.shell.command.AnnotatedCommand;
 import com.taobao.arthas.core.shell.command.CommandProcess;
 import com.taobao.arthas.core.util.ClassLoaderUtils;
-import com.taobao.arthas.core.util.StringUtils;
-import com.taobao.arthas.core.view.ObjectView;
 import com.taobao.middleware.cli.annotations.Argument;
 import com.taobao.middleware.cli.annotations.Description;
 import com.taobao.middleware.cli.annotations.Name;
@@ -62,36 +61,31 @@ public class OgnlCommand extends AnnotatedCommand {
 
     @Override
     public void process(CommandProcess process) {
-        int exitCode = 0;
+        Instrumentation inst = process.session().getInstrumentation();
+        ClassLoader classLoader = null;
+        if (hashCode == null) {
+            classLoader = ClassLoader.getSystemClassLoader();
+        } else {
+            classLoader = ClassLoaderUtils.getClassLoader(inst, hashCode);
+        }
+
+        if (classLoader == null) {
+            process.end(-1, "Can not find classloader with hashCode: " + hashCode + ".");
+            return;
+        }
+
+        Express unpooledExpress = ExpressFactory.unpooledExpress(classLoader);
         try {
-            Instrumentation inst = process.session().getInstrumentation();
-            ClassLoader classLoader = null;
-            if (hashCode == null) {
-                classLoader = ClassLoader.getSystemClassLoader();
-            } else {
-                classLoader = ClassLoaderUtils.getClassLoader(inst, hashCode);
-            }
-
-            if (classLoader == null) {
-                process.write("Can not find classloader with hashCode: " + hashCode + ".\n");
-                exitCode = -1;
-                return;
-            }
-
-            Express unpooledExpress = ExpressFactory.unpooledExpress(classLoader);
-            try {
-                Object value = unpooledExpress.get(express);
-                String result = StringUtils.objectToString(expand >= 0 ? new ObjectView(value, expand).draw() : value);
-                process.write(result + "\n");
-            } catch (ExpressException e) {
-                logger.warn("ognl: failed execute express: " + express, e);
-                process.write("Failed to execute ognl, exception message: " + e.getMessage()
-                                + ", please check $HOME/logs/arthas/arthas.log for more details. \n");
-                exitCode = -1;
-            }
-        } finally {
-            process.end(exitCode);
+            Object value = unpooledExpress.get(express);
+            OgnlModel ognlModel = new OgnlModel()
+                    .setValue(value)
+                    .setExpand(expand);
+            process.appendResult(ognlModel);
+            process.end();
+        } catch (ExpressException e) {
+            logger.warn("ognl: failed execute express: " + express, e);
+            process.end(-1, "Failed to execute ognl, exception message: " + e.getMessage()
+                    + ", please check $HOME/logs/arthas/arthas.log for more details. ");
         }
     }
-
 }

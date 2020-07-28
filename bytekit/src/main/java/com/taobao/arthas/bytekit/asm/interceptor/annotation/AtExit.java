@@ -6,12 +6,7 @@ import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.reflect.Method;
-import java.util.List;
 
-import com.alibaba.arthas.deps.org.objectweb.asm.Type;
-
-import com.taobao.arthas.bytekit.asm.binding.Binding;
-import com.taobao.arthas.bytekit.asm.interceptor.InterceptorMethodConfig;
 import com.taobao.arthas.bytekit.asm.interceptor.InterceptorProcessor;
 import com.taobao.arthas.bytekit.asm.interceptor.annotation.AtExit.ExitInterceptorProcessorParser;
 import com.taobao.arthas.bytekit.asm.interceptor.parser.InterceptorProcessorParser;
@@ -32,31 +27,16 @@ public @interface AtExit {
         @Override
         public InterceptorProcessor parse(Method method, Annotation annotationOnMethod) {
 
-            InterceptorProcessor interceptorProcessor = new InterceptorProcessor(method.getDeclaringClass().getClassLoader());
-            InterceptorMethodConfig interceptorMethodConfig = new InterceptorMethodConfig();
-            interceptorProcessor.setInterceptorMethodConfig(interceptorMethodConfig);
-
-            interceptorMethodConfig.setOwner(Type.getInternalName(method.getDeclaringClass()));
-            interceptorMethodConfig.setMethodName(method.getName());
-            interceptorMethodConfig.setMethodDesc(Type.getMethodDescriptor(method));
+            AtExit atExit = (AtExit) annotationOnMethod;
 
             LocationMatcher locationMatcher = new ExitLocationMatcher();
-            interceptorProcessor.setLocationMatcher(locationMatcher);
 
-            AtExit atExit = (AtExit) annotationOnMethod;
-            interceptorMethodConfig.setInline(atExit.inline());
+            return InterceptorParserUtils.createInterceptorProcessor(method,
+                    locationMatcher,
+                    atExit.inline(),
+                    atExit.suppress(),
+                    atExit.suppressHandler());
 
-            List<Binding> bindings = BindingParserUtils.parseBindings(method);
-
-            interceptorMethodConfig.setBindings(bindings);
-
-            InterceptorMethodConfig errorHandlerMethodConfig = ExceptionHandlerUtils
-                    .errorHandlerMethodConfig(atExit.suppress(), atExit.suppressHandler());
-            if (errorHandlerMethodConfig != null) {
-                interceptorProcessor.setExceptionHandlerConfig(errorHandlerMethodConfig);
-            }
-
-            return interceptorProcessor;
         }
 
     }

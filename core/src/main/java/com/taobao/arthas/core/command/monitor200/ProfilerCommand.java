@@ -16,6 +16,7 @@ import com.alibaba.arthas.deps.org.slf4j.Logger;
 import com.alibaba.arthas.deps.org.slf4j.LoggerFactory;
 import com.taobao.arthas.common.OSUtils;
 import com.taobao.arthas.core.command.Constants;
+import com.taobao.arthas.core.command.model.ProfilerModel;
 import com.taobao.arthas.core.server.ArthasBootstrap;
 import com.taobao.arthas.core.shell.cli.CliToken;
 import com.taobao.arthas.core.shell.cli.Completion;
@@ -221,7 +222,7 @@ public class ProfilerCommand extends AnnotatedCommand {
      * https://github.com/jvm-profiling-tools/async-profiler/blob/v1.6/src/arguments.cpp#L34
      *
      */
-    enum ProfilerAction {
+    public enum ProfilerAction {
         execute, start, stop, resume, list, version, status, load,
 
         dumpCollapsed, dumpFlat, dumpTraces, getSamples,
@@ -270,12 +271,11 @@ public class ProfilerCommand extends AnnotatedCommand {
 
     @Override
     public void process(final CommandProcess process) {
-        int status = 0;
         try {
             ProfilerAction profilerAction = ProfilerAction.valueOf(action);
 
             if (ProfilerAction.actions.equals(profilerAction)) {
-                process.write("Supported Actions: " + actions() + "\n");
+                process.appendResult(new ProfilerModel(actions()));
                 return;
             }
 
@@ -283,54 +283,54 @@ public class ProfilerCommand extends AnnotatedCommand {
 
             if (ProfilerAction.execute.equals(profilerAction)) {
                 if (actionArg == null) {
-                    process.write("actionArg can not be empty.\n");
-                    status = 1;
+                    process.end(1, "actionArg can not be empty.");
                     return;
                 }
                 String result = execute(asyncProfiler, this.actionArg);
-                process.write(result);
+                appendExecuteResult(process, result);
             } else if (ProfilerAction.start.equals(profilerAction)) {
                 String executeArgs = executeArgs(ProfilerAction.start);
                 String result = execute(asyncProfiler, executeArgs);
-                process.write(result);
+                ProfilerModel profilerModel = createProfilerModel(result);
 
                 if (this.duration != null) {
                     final String outputFile = outputFile();
-                    final String stopExecuteArgs = executeArgs(ProfilerAction.stop);
-                    process.write(String.format("profiler will silent stop after %d seconds.\n", this.duration.longValue()));
-                    process.write("profiler output file will be: " + new File(outputFile).getAbsolutePath() + "\n");
+                    profilerModel.setOutputFile(outputFile);
+                    profilerModel.setDuration(duration);
+
+                    // 延时执行stop
                     ArthasBootstrap.getInstance().getScheduledExecutorService().schedule(new Runnable() {
                         @Override
                         public void run() {
+                            //在异步线程执行，profiler命令已经结束，不能输出到客户端
                             try {
-                                logger.info("profiler output file: " + new File(outputFile).getAbsolutePath() + "\n");
-                                String result = execute(asyncProfiler, stopExecuteArgs);
-                                logger.info("profiler stop result: " + result);
+                                logger.info("stopping profiler ...");
+                                ProfilerModel model = processStop(asyncProfiler);
+                                logger.info("profiler output file: " + model.getOutputFile());
+                                logger.info("stop profiler successfully.");
                             } catch (Throwable e) {
-                                logger.error("", e);
+                                logger.error("stop profiler failure", e);
                             }
                         }
                     }, this.duration, TimeUnit.SECONDS);
                 }
+                process.appendResult(profilerModel);
             } else if (ProfilerAction.stop.equals(profilerAction)) {
-                String outputFile = outputFile();
-                process.write("profiler output file: " + new File(outputFile).getAbsolutePath() + "\n");
-                String executeArgs = executeArgs(ProfilerAction.stop);
-                String result = execute(asyncProfiler, executeArgs);
-                process.write(result);
+                ProfilerModel profilerModel = processStop(asyncProfiler);
+                process.appendResult(profilerModel);
             } else if (ProfilerAction.resume.equals(profilerAction)) {
                 String executeArgs = executeArgs(ProfilerAction.resume);
                 String result = execute(asyncProfiler, executeArgs);
-                process.write(result);
+                appendExecuteResult(process, result);
             } else if (ProfilerAction.list.equals(profilerAction)) {
                 String result = asyncProfiler.execute("list");
-                process.write(result);
+                appendExecuteResult(process, result);
             } else if (ProfilerAction.version.equals(profilerAction)) {
                 String result = asyncProfiler.execute("version");
-                process.write(result);
+                appendExecuteResult(process, result);
             } else if (ProfilerAction.status.equals(profilerAction)) {
                 String result = asyncProfiler.execute("status");
-                process.write(result);
+                appendExecuteResult(process, result);
             } else if (ProfilerAction.dumpCollapsed.equals(profilerAction)) {
                 if (actionArg == null) {
                     actionArg = "TOTAL";
@@ -338,10 +338,10 @@ public class ProfilerCommand extends AnnotatedCommand {
                 actionArg = actionArg.toUpperCase();
                 if ("TOTAL".equals(actionArg) || "SAMPLES".equals(actionArg)) {
                     String result = asyncProfiler.dumpCollapsed(Counter.valueOf(actionArg));
-                    process.write(result);
+                    appendExecuteResult(process, result);
                 } else {
-                    process.write("ERROR: dumpCollapsed argumment should be TOTAL or SAMPLES. \n");
-                    status = 1;
+                    process.end(1, "ERROR: dumpCollapsed argumment should be TOTAL or SAMPLES. ");
+                    return;
                 }
             } else if (ProfilerAction.dumpFlat.equals(profilerAction)) {
                 int maxMethods = 0;
@@ -349,25 +349,33 @@ public class ProfilerCommand extends AnnotatedCommand {
                     maxMethods = Integer.valueOf(actionArg);
                 }
                 String result = asyncProfiler.dumpFlat(maxMethods);
-                process.write(result);
+                appendExecuteResult(process, result);
             } else if (ProfilerAction.dumpTraces.equals(profilerAction)) {
                 int maxTraces = 0;
                 if (actionArg != null) {
                     maxTraces = Integer.valueOf(actionArg);
                 }
                 String result = asyncProfiler.dumpTraces(maxTraces);
-                process.write(result);
+                appendExecuteResult(process, result);
             } else if (ProfilerAction.getSamples.equals(profilerAction)) {
                 String result = "" + asyncProfiler.getSamples() + "\n";
-                process.write(result);
+                appendExecuteResult(process, result);
             }
+            process.end();
         } catch (Throwable e) {
-            process.write(e.getMessage()).write("\n");
             logger.error("AsyncProfiler error", e);
-            status = 1;
-        } finally {
-            process.end(status);
+            process.end(1, "AsyncProfiler error: "+e.getMessage());
         }
+    }
+
+    private ProfilerModel processStop(AsyncProfiler asyncProfiler) throws IOException {
+        String outputFile = outputFile();
+        String executeArgs = executeArgs(ProfilerAction.stop);
+        String result = execute(asyncProfiler, executeArgs);
+
+        ProfilerModel profilerModel = createProfilerModel(result);
+        profilerModel.setOutputFile(outputFile);
+        return profilerModel;
     }
 
     private String outputFile() {
@@ -376,6 +384,19 @@ public class ProfilerCommand extends AnnotatedCommand {
                     new SimpleDateFormat("yyyyMMdd-HHmmss").format(new Date()) + "." + this.format).getAbsolutePath();
         }
         return file;
+    }
+
+    private void appendExecuteResult(CommandProcess process, String result) {
+        ProfilerModel profilerModel = createProfilerModel(result);
+        process.appendResult(profilerModel);
+    }
+
+    private ProfilerModel createProfilerModel(String result) {
+        ProfilerModel profilerModel = new ProfilerModel();
+        profilerModel.setAction(action);
+        profilerModel.setActionArg(actionArg);
+        profilerModel.setExecuteResult(result);
+        return profilerModel;
     }
 
     private List<String> events() {

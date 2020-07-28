@@ -20,7 +20,8 @@
         <connection>scm:git:git@github.com:alibaba/arthas.git</connection>
         <developerConnection>scm:git:git@github.com:alibaba/arthas.git</developerConnection>
         <url>https://github.com/alibaba/arthas</url>
-    </scm>
+      <tag>HEAD</tag>
+  </scm>
 
     <developers>
         <developer>
@@ -47,7 +48,7 @@
 
     <groupId>com.taobao.arthas</groupId>
     <artifactId>arthas-all</artifactId>
-    <version>3.3.3-SNAPSHOT</version>
+    <version>3.3.8-SNAPSHOT</version>
     <packaging>pom</packaging>
 
     <name>arthas-all</name>
@@ -64,6 +65,8 @@
         <module>client</module>
         <module>memorycompiler</module>
         <module>boot</module>
+        <module>arthas-agent-attach</module>
+        <module>arthas-spring-boot-starter</module>
         <module>demo</module>
         <module>testcase</module>
         <module>site</module>
@@ -72,13 +75,48 @@
 
     <profiles>
         <profile>
-            <id>deb</id>
+            <id>jdk8</id>
             <activation>
                 <jdk>[1.8,)</jdk>
             </activation>
             <modules>
                 <module>tunnel-server</module>
             </modules>
+            <build>
+                <plugins>
+                    <!-- git commit info -->
+                    <plugin>
+                        <groupId>pl.project13.maven</groupId>
+                        <artifactId>git-commit-id-plugin</artifactId>
+                        <version>4.0.1</version>
+                        <executions>
+                            <execution>
+                                <goals>
+                                    <goal>revision</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                        <configuration>
+                            <verbose>false</verbose>
+                            <dateFormat>yyyy-MM-dd'T'HH:mm:ssZ</dateFormat>
+                            <generateGitPropertiesFile>true</generateGitPropertiesFile>
+                            <generateGitPropertiesFilename>${project.build.outputDirectory}/arthas-git.properties</generateGitPropertiesFilename>
+                            <excludeProperties>
+                                <excludeProperty>git.build.host</excludeProperty>
+                                <excludeProperty>git.build.time</excludeProperty>
+                                <excludeProperty>git.build.user.email</excludeProperty>
+                                <excludeProperty>git.build.user.name</excludeProperty>
+                                <excludeProperty>git.remote.origin.url</excludeProperty>
+                                <excludeProperty>git.total.commit.count</excludeProperty>
+                                <excludeProperty>git.commit.time</excludeProperty>
+                                <excludeProperty>git.local.branch.ahead</excludeProperty>
+                                <excludeProperty>git.local.branch.behind</excludeProperty>
+                            </excludeProperties>
+                            <injectAllReactorProjects>true</injectAllReactorProjects>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
         </profile>
     </profiles>
 
@@ -86,6 +124,9 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.compiler.target>1.6</maven.compiler.target>
         <maven.compiler.source>1.6</maven.compiler.source>
+        <spring-boot.version>2.3.1.RELEASE</spring-boot.version>
+        <maven-invoker-plugin.version>3.0.0</maven-invoker-plugin.version>
+        <project.build.outputTimestamp>2020-07-23T16:30:54Z</project.build.outputTimestamp>
     </properties>
 
     <dependencyManagement>
@@ -123,17 +164,17 @@
             <dependency>
                 <groupId>com.alibaba.arthas</groupId>
                 <artifactId>arthas-repackage-logger</artifactId>
-                <version>0.0.3</version>
+                <version>0.0.4</version>
             </dependency>
             <dependency>
                 <groupId>com.alibaba.arthas</groupId>
                 <artifactId>arthas-repackage-asm</artifactId>
-                <version>0.0.3</version>
+                <version>0.0.4</version>
             </dependency>
             <dependency>
                 <groupId>com.alibaba</groupId>
                 <artifactId>fastjson</artifactId>
-                <version>1.2.68</version>
+                <version>1.2.71</version>
             </dependency>
             <dependency>
                 <groupId>com.taobao.text</groupId>
@@ -172,27 +213,27 @@
             <dependency>
                 <groupId>io.netty</groupId>
                 <artifactId>netty-common</artifactId>
-                <version>4.1.45.Final</version>
+                <version>4.1.46.Final</version>
             </dependency>
             <dependency>
                 <groupId>io.netty</groupId>
                 <artifactId>netty-buffer</artifactId>
-                <version>4.1.45.Final</version>
+                <version>4.1.46.Final</version>
             </dependency>
             <dependency>
                 <groupId>io.netty</groupId>
                 <artifactId>netty-handler</artifactId>
-                <version>4.1.45.Final</version>
+                <version>4.1.46.Final</version>
             </dependency>
             <dependency>
                 <groupId>io.netty</groupId>
                 <artifactId>netty-transport</artifactId>
-                <version>4.1.45.Final</version>
+                <version>4.1.46.Final</version>
             </dependency>
             <dependency>
                 <groupId>io.netty</groupId>
                 <artifactId>netty-codec-http</artifactId>
-                <version>4.1.45.Final</version>
+                <version>4.1.46.Final</version>
             </dependency>
 
             <dependency>
@@ -201,6 +242,23 @@
                 <version>2.14.6</version>
             </dependency>
 
+            <dependency>
+                <groupId>net.bytebuddy</groupId>
+                <artifactId>byte-buddy</artifactId>
+                <version>1.10.13</version>
+            </dependency>
+
+            <dependency>
+                <groupId>net.bytebuddy</groupId>
+                <artifactId>byte-buddy-agent</artifactId>
+                <version>1.10.13</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.zeroturnaround</groupId>
+                <artifactId>zt-zip</artifactId>
+                <version>1.14</version>
+            </dependency>
         </dependencies>
     </dependencyManagement>
 
@@ -215,36 +273,21 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-assembly-plugin</artifactId>
-                    <version>3.1.0</version>
+                    <version>3.2.0</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-release-plugin</artifactId>
+                    <version>3.0.0-M1</version>
                 </plugin>
             </plugins>
         </pluginManagement>
 
         <plugins>
-            <!-- git commit info -->
-            <plugin>
-                <groupId>pl.project13.maven</groupId>
-                <artifactId>git-commit-id-plugin</artifactId>
-                <version>2.2.1</version>
-                <executions>
-                    <execution>
-                        <goals>
-                            <goal>revision</goal>
-                        </goals>
-                    </execution>
-                </executions>
-                <configuration>
-                    <verbose>false</verbose>
-                    <dateFormat>yyyy-MM-dd'T'HH:mm:ssZ</dateFormat>
-                    <generateGitPropertiesFile>true</generateGitPropertiesFile>
-                    <generateGitPropertiesFilename>${project.build.outputDirectory}/arthas-git.properties</generateGitPropertiesFilename>
-                    <excludeProperties>git.build.host</excludeProperties>
-                </configuration>
-            </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-jar-plugin</artifactId>
-                <version>2.5</version>
+                <version>3.2.0</version>
                 <configuration>
                     <archive>
                         <manifest>
@@ -266,7 +309,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-source-plugin</artifactId>
-                <version>3.0.1</version>
+                <version>3.2.1</version>
                 <executions>
                     <execution>
                         <id>attach-sources</id>

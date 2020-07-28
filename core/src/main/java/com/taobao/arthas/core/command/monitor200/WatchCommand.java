@@ -2,6 +2,7 @@ package com.taobao.arthas.core.command.monitor200;
 
 import java.util.Arrays;
 
+import com.taobao.arthas.core.GlobalOptions;
 import com.taobao.arthas.core.advisor.AdviceListener;
 import com.taobao.arthas.core.command.Constants;
 import com.taobao.arthas.core.shell.cli.Completion;
@@ -182,7 +183,7 @@ public class WatchCommand extends EnhancerCommand {
 
     @Override
     protected AdviceListener getAdviceListener(CommandProcess process) {
-        return new WatchAdviceListener(this, process);
+        return new WatchAdviceListener(this, process, GlobalOptions.verbose || this.verbose);
     }
 
     @Override

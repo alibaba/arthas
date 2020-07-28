@@ -34,6 +34,11 @@ trace
 
 `trace` 能方便的帮助你定位和发现因 RT 高而导致的性能问题缺陷，但其每次只能跟踪一级方法的调用链路。
 
+参考：[Trace命令的实现原理](https://github.com/alibaba/arthas/issues/597)
+
+3.3.0 版本后，可以使用动态Trace功能，不断增加新的匹配类，参考下面的示例。
+
+
 ### 使用参考
 
 
@@ -137,3 +142,52 @@ trace命令只会trace匹配到的函数里的子调用，并不会向下trace�
 ```bash
 trace -E com.test.ClassA|org.test.ClassB method1|method2|method3
 ```
+
+### 动态trace
+
+3.3.0 版本后支持。
+
+
+打开终端1，trace `run`函数，可以看到打印出 `listenerId: 1`：
+
+```bash
+[arthas@59161]$ trace demo.MathGame run
+Press Q or Ctrl+C to abort.
+Affect(class count: 1 , method count: 1) cost in 112 ms, listenerId: 1
+`---ts=2020-07-09 16:48:11;thread_name=main;id=1;is_daemon=false;priority=5;TCCL=sun.misc.Launcher$AppClassLoader@3d4eac69
+    `---[1.389634ms] demo.MathGame:run()
+        `---[0.123934ms] demo.MathGame:primeFactors() #24 [throws Exception]
+
+`---ts=2020-07-09 16:48:12;thread_name=main;id=1;is_daemon=false;priority=5;TCCL=sun.misc.Launcher$AppClassLoader@3d4eac69
+    `---[3.716391ms] demo.MathGame:run()
+        +---[3.182813ms] demo.MathGame:primeFactors() #24
+        `---[0.167786ms] demo.MathGame:print() #25
+```
+
+现在想要深入子函数`primeFactors`，可以打开一个新终端2，使用`telnet localhost 3658`连接上arthas，再trace `primeFactors`时，指定`listenerId`。
+
+```bash
+[arthas@59161]$ trace demo.MathGame primeFactors --listenerId 1
+Press Q or Ctrl+C to abort.
+Affect(class count: 1 , method count: 1) cost in 34 ms, listenerId: 1
+```
+
+这时终端2打印的结果，说明已经增强了一个函数：`Affect(class count: 1 , method count: 1)`，但不再打印更多的结果。
+
+再查看终端1，可以发现trace的结果增加了一层，打印了`primeFactors`函数里的内容：
+
+```bash
+`---ts=2020-07-09 16:49:29;thread_name=main;id=1;is_daemon=false;priority=5;TCCL=sun.misc.Launcher$AppClassLoader@3d4eac69
+    `---[0.492551ms] demo.MathGame:run()
+        `---[0.113929ms] demo.MathGame:primeFactors() #24 [throws Exception]
+            `---[0.061462ms] demo.MathGame:primeFactors()
+                `---[0.001018ms] throw:java.lang.IllegalArgumentException() #46
+
+`---ts=2020-07-09 16:49:30;thread_name=main;id=1;is_daemon=false;priority=5;TCCL=sun.misc.Launcher$AppClassLoader@3d4eac69
+    `---[0.409446ms] demo.MathGame:run()
+        +---[0.232606ms] demo.MathGame:primeFactors() #24
+        |   `---[0.1294ms] demo.MathGame:primeFactors()
+        `---[0.084025ms] demo.MathGame:print() #25
+```
+
+通过指定`listenerId`的方式动态trace，可以不断深入。另外 `watch`/`tt`/`monitor`等命令也支持类似的功能。

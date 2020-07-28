@@ -1,7 +1,11 @@
 tee
 ===
 
-> Similar to the traditional `tee` command.
+[`tee` online tutorial](https://alibaba.github.io/arthas/arthas-tutorials?language=en&id=command-tee)
+
+> Similar to the traditional `tee` command, it is used to read standard input data and output its contents into a file.
+
+> `tee` will read data from standard input device, output its content to standard output device, and save it as a file.
 
 
 ```

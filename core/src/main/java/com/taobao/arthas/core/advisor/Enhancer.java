@@ -30,13 +30,7 @@ import com.alibaba.arthas.deps.org.objectweb.asm.tree.MethodNode;
 import com.alibaba.arthas.deps.org.slf4j.Logger;
 import com.alibaba.arthas.deps.org.slf4j.LoggerFactory;
 import com.taobao.arthas.bytekit.asm.MethodProcessor;
-import com.taobao.arthas.bytekit.asm.binding.Binding;
 import com.taobao.arthas.bytekit.asm.interceptor.InterceptorProcessor;
-import com.taobao.arthas.bytekit.asm.interceptor.annotation.AtEnter;
-import com.taobao.arthas.bytekit.asm.interceptor.annotation.AtExceptionExit;
-import com.taobao.arthas.bytekit.asm.interceptor.annotation.AtExit;
-import com.taobao.arthas.bytekit.asm.interceptor.annotation.AtInvoke;
-import com.taobao.arthas.bytekit.asm.interceptor.annotation.AtInvokeException;
 import com.taobao.arthas.bytekit.asm.interceptor.parser.DefaultInterceptorClassParser;
 import com.taobao.arthas.bytekit.asm.location.Location;
 import com.taobao.arthas.bytekit.asm.location.LocationType;
@@ -48,6 +42,15 @@ import com.taobao.arthas.bytekit.asm.location.filter.LocationFilter;
 import com.taobao.arthas.bytekit.utils.AsmOpUtils;
 import com.taobao.arthas.bytekit.utils.AsmUtils;
 import com.taobao.arthas.core.GlobalOptions;
+import com.taobao.arthas.core.advisor.SpyInterceptors.SpyInterceptor1;
+import com.taobao.arthas.core.advisor.SpyInterceptors.SpyInterceptor2;
+import com.taobao.arthas.core.advisor.SpyInterceptors.SpyInterceptor3;
+import com.taobao.arthas.core.advisor.SpyInterceptors.SpyTraceExcludeJDKInterceptor1;
+import com.taobao.arthas.core.advisor.SpyInterceptors.SpyTraceExcludeJDKInterceptor2;
+import com.taobao.arthas.core.advisor.SpyInterceptors.SpyTraceExcludeJDKInterceptor3;
+import com.taobao.arthas.core.advisor.SpyInterceptors.SpyTraceInterceptor1;
+import com.taobao.arthas.core.advisor.SpyInterceptors.SpyTraceInterceptor2;
+import com.taobao.arthas.core.advisor.SpyInterceptors.SpyTraceInterceptor3;
 import com.taobao.arthas.core.server.ArthasBootstrap;
 import com.taobao.arthas.core.util.ArthasCheckUtils;
 import com.taobao.arthas.core.util.FileUtils;
@@ -98,89 +101,6 @@ public class Enhancer implements ClassFileTransformer {
         affect.setListenerId(listener.id());
     }
 
-    public static class SpyInterceptor {
-
-        @AtEnter(inline = true)
-        public static void atEnter(@Binding.This Object target, @Binding.Class Class<?> clazz,
-                @Binding.MethodInfo String methodInfo, @Binding.Args Object[] args) {
-            SpyAPI.atEnter(clazz, methodInfo, target, args);
-        }
-
-        @AtExit(inline = true)
-        public static void atExit(@Binding.This Object target, @Binding.Class Class<?> clazz,
-                @Binding.MethodInfo String methodInfo, @Binding.Args Object[] args, @Binding.Return Object returnObj) {
-            SpyAPI.atExit(clazz, methodInfo, target, args, returnObj);
-        }
-
-        @AtExceptionExit(inline = true)
-        public static void atExceptionExit(@Binding.This Object target, @Binding.Class Class<?> clazz,
-                @Binding.MethodInfo String methodInfo, @Binding.Args Object[] args,
-                @Binding.Throwable Throwable throwable) {
-            SpyAPI.atExceptionExit(clazz, methodInfo, target, args, throwable);
-        }
-    }
-
-    public static class SpyTraceExcludeJDKInterceptor {
-        @AtInvoke(name = "", inline = true, whenComplete = false, excludes = "java.**")
-        public static void onInvoke(@Binding.This Object target, @Binding.Class Class<?> clazz,
-                @Binding.InvokeInfo String invokeInfo) {
-            SpyAPI.atBeforeInvoke(clazz, invokeInfo, target);
-        }
-
-        @AtInvoke(name = "", inline = true, whenComplete = true, excludes = "java.**")
-        public static void onInvokeAfter(@Binding.This Object target, @Binding.Class Class<?> clazz,
-                @Binding.InvokeInfo String invokeInfo) {
-            SpyAPI.atAfterInvoke(clazz, invokeInfo, target);
-        }
-
-        @AtInvokeException(name = "", inline = true, excludes = "java.**")
-        public static void onInvokeException(@Binding.This Object target, @Binding.Class Class<?> clazz,
-                @Binding.InvokeInfo String invokeInfo, @Binding.Throwable Throwable throwable) {
-            SpyAPI.atInvokeException(clazz, invokeInfo, target, throwable);
-        }
-    }
-
-    public static class SpyTraceInterceptor {
-        @AtInvoke(name = "", inline = true, whenComplete = false, excludes = {"java.arthas.SpyAPI", "java.lang.Byte"
-                , "java.lang.Boolean"
-                , "java.lang.Short"
-                , "java.lang.Character"
-                , "java.lang.Integer"
-                , "java.lang.Float"
-                , "java.lang.Long"
-                , "java.lang.Double"})
-        public static void onInvoke(@Binding.This Object target, @Binding.Class Class<?> clazz,
-                @Binding.InvokeInfo String invokeInfo) {
-            SpyAPI.atBeforeInvoke(clazz, invokeInfo, target);
-        }
-
-        @AtInvoke(name = "", inline = true, whenComplete = true, excludes = {"java.arthas.SpyAPI", "java.lang.Byte"
-                , "java.lang.Boolean"
-                , "java.lang.Short"
-                , "java.lang.Character"
-                , "java.lang.Integer"
-                , "java.lang.Float"
-                , "java.lang.Long"
-                , "java.lang.Double"})
-        public static void onInvokeAfter(@Binding.This Object target, @Binding.Class Class<?> clazz,
-                @Binding.InvokeInfo String invokeInfo) {
-            SpyAPI.atAfterInvoke(clazz, invokeInfo, target);
-        }
-
-        @AtInvokeException(name = "", inline = true, excludes = {"java.arthas.SpyAPI", "java.lang.Byte"
-                , "java.lang.Boolean"
-                , "java.lang.Short"
-                , "java.lang.Character"
-                , "java.lang.Integer"
-                , "java.lang.Float"
-                , "java.lang.Long"
-                , "java.lang.Double"})
-        public static void onInvokeException(@Binding.This Object target, @Binding.Class Class<?> clazz,
-                @Binding.InvokeInfo String invokeInfo, @Binding.Throwable Throwable throwable) {
-            SpyAPI.atInvokeException(clazz, invokeInfo, target, throwable);
-        }
-    }
-
     @Override
     public byte[] transform(final ClassLoader inClassLoader, String className, Class<?> classBeingRedefined,
             ProtectionDomain protectionDomain, byte[] classfileBuffer) throws IllegalClassFormatException {
@@ -203,23 +123,28 @@ public class Enhancer implements ClassFileTransformer {
             }
 
             ClassNode classNode = AsmUtils.toClassNode(classfileBuffer);
+            // remove JSR https://github.com/alibaba/arthas/issues/1304
+            classNode = AsmUtils.removeJSRInstructions(classNode);
 
             // 生成增强字节码
             DefaultInterceptorClassParser defaultInterceptorClassParser = new DefaultInterceptorClassParser();
 
             final List<InterceptorProcessor> interceptorProcessors = new ArrayList<InterceptorProcessor>();
 
-            List<InterceptorProcessor> traceProcessors = defaultInterceptorClassParser.parse(SpyInterceptor.class);
-            interceptorProcessors.addAll(traceProcessors);
+            interceptorProcessors.addAll(defaultInterceptorClassParser.parse(SpyInterceptor1.class));
+            interceptorProcessors.addAll(defaultInterceptorClassParser.parse(SpyInterceptor2.class));
+            interceptorProcessors.addAll(defaultInterceptorClassParser.parse(SpyInterceptor3.class));
 
             if (this.isTracing) {
-                Class<?> spyTraceInterceptorClass = SpyTraceExcludeJDKInterceptor.class;
                 if (this.skipJDKTrace == false) {
-                    spyTraceInterceptorClass = SpyTraceInterceptor.class;
+                    interceptorProcessors.addAll(defaultInterceptorClassParser.parse(SpyTraceInterceptor1.class));
+                    interceptorProcessors.addAll(defaultInterceptorClassParser.parse(SpyTraceInterceptor2.class));
+                    interceptorProcessors.addAll(defaultInterceptorClassParser.parse(SpyTraceInterceptor3.class));
+                } else {
+                    interceptorProcessors.addAll(defaultInterceptorClassParser.parse(SpyTraceExcludeJDKInterceptor1.class));
+                    interceptorProcessors.addAll(defaultInterceptorClassParser.parse(SpyTraceExcludeJDKInterceptor2.class));
+                    interceptorProcessors.addAll(defaultInterceptorClassParser.parse(SpyTraceExcludeJDKInterceptor3.class));
                 }
-                List<InterceptorProcessor> traceInvokeProcessors = defaultInterceptorClassParser
-                        .parse(spyTraceInterceptorClass);
-                interceptorProcessors.addAll(traceInvokeProcessors);
             }
 
             List<MethodNode> matchedMethods = new ArrayList<MethodNode>();

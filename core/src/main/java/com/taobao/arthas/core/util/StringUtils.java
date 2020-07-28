@@ -71,7 +71,7 @@ public abstract class StringUtils {
         return StringUtils.replace(className, "/", ".");
     }
 
-    public static String concat(String seperator, Class<?>... types) {
+    public static String concat(String separator, Class<?>... types) {
         if (types == null || types.length == 0) {
             return Constants.EMPTY_STRING;
         }
@@ -80,7 +80,23 @@ public abstract class StringUtils {
         for (int i = 0; i < types.length; i++) {
             builder.append(classname(types[i]));
             if (i < types.length - 1) {
-                builder.append(seperator);
+                builder.append(separator);
+            }
+        }
+
+        return builder.toString();
+    }
+
+    public static String concat(String separator, String... strs) {
+        if (strs == null || strs.length == 0) {
+            return Constants.EMPTY_STRING;
+        }
+
+        StringBuilder builder = new StringBuilder();
+        for (int i = 0; i < strs.length; i++) {
+            builder.append(strs[i]);
+            if (i < strs.length - 1) {
+                builder.append(separator);
             }
         }
 
