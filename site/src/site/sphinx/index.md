@@ -19,7 +19,7 @@ Arthas 用户文档
 0. 有什么办法可以监控到JVM的实时运行状态？
 0. 怎么快速定位应用的热点，生成火焰图？
 
-`Arthas`支持JDK 6+，支持Linux/Mac/Winodws，采用命令行交互模式，同时提供丰富的 `Tab` 自动补全功能，进一步方便进行问题的定位和诊断。
+`Arthas`支持JDK 6+，支持Linux/Mac/Windows，采用命令行交互模式，同时提供丰富的 `Tab` 自动补全功能，进一步方便进行问题的定位和诊断。
 
 **如果您在使用Arthas，请让我们知道，您的使用对我们非常重要：[查看](https://github.com/alibaba/arthas/issues/111)**
 
