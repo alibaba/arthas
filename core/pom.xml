@@ -62,6 +62,10 @@
                                     <pattern>ch.qos.logback</pattern>
                                     <shadedPattern>${arthas.deps.package}.ch.qos.logback</shadedPattern>
                                 </relocation>
+                                <relocation>
+                                    <pattern>io.netty</pattern>
+                                    <shadedPattern>${arthas.deps.package}.io.netty</shadedPattern>
+                                </relocation>
                             </relocations>
                             <filters>
                                 <filter>
