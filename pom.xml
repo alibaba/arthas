@@ -127,7 +127,6 @@
         <spring-boot.version>2.3.1.RELEASE</spring-boot.version>
         <maven-invoker-plugin.version>3.0.0</maven-invoker-plugin.version>
         <project.build.outputTimestamp>2020-07-23T16:30:54Z</project.build.outputTimestamp>
-        <arthas-repackage.version>0.0.5</arthas-repackage.version>
     </properties>
 
     <dependencyManagement>
@@ -165,17 +164,12 @@
             <dependency>
                 <groupId>com.alibaba.arthas</groupId>
                 <artifactId>arthas-repackage-logger</artifactId>
-                <version>${arthas-repackage.version}</version>
+                <version>0.0.4</version>
             </dependency>
             <dependency>
                 <groupId>com.alibaba.arthas</groupId>
                 <artifactId>arthas-repackage-asm</artifactId>
-                <version>${arthas-repackage.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.alibaba.arthas</groupId>
-                <artifactId>arthas-repackage-netty</artifactId>
-                <version>${arthas-repackage.version}</version>
+                <version>0.0.4</version>
             </dependency>
             <dependency>
                 <groupId>com.alibaba</groupId>
