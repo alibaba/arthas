@@ -71,6 +71,8 @@
         <module>testcase</module>
         <module>site</module>
         <module>packaging</module>
+        <module>channel-common</module>
+        <module>channel-server</module>
     </modules>
 
     <profiles>
@@ -127,6 +129,7 @@
         <spring-boot.version>2.3.1.RELEASE</spring-boot.version>
         <maven-invoker-plugin.version>3.0.0</maven-invoker-plugin.version>
         <project.build.outputTimestamp>2020-07-23T16:30:54Z</project.build.outputTimestamp>
+        <grpc.version>1.14.0</grpc.version>
     </properties>
 
     <dependencyManagement>
@@ -259,6 +262,28 @@
                 <artifactId>zt-zip</artifactId>
                 <version>1.14</version>
             </dependency>
+
+            <!-- grpc-java  -->
+            <dependency>
+                <groupId>io.grpc</groupId>
+                <artifactId>grpc-netty</artifactId>
+                <version>${grpc.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.grpc</groupId>
+                <artifactId>grpc-protobuf</artifactId>
+                <version>${grpc.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.grpc</groupId>
+                <artifactId>grpc-stub</artifactId>
+                <version>${grpc.version}</version>
+            </dependency>
+            <dependency> <!-- necessary for Java 9+ -->
+                <groupId>org.apache.tomcat</groupId>
+                <artifactId>annotations-api</artifactId>
+                <version>6.0.53</version>
+            </dependency>
         </dependencies>
     </dependencyManagement>
 
@@ -279,6 +304,16 @@
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-release-plugin</artifactId>
                     <version>3.0.0-M1</version>
+                </plugin>
+                <plugin>
+                    <groupId>kr.motd.maven</groupId>
+                    <artifactId>os-maven-plugin</artifactId>
+                    <version>1.6.2</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.xolstice.maven.plugins</groupId>
+                    <artifactId>protobuf-maven-plugin</artifactId>
+                    <version>0.6.1</version>
                 </plugin>
             </plugins>
         </pluginManagement>

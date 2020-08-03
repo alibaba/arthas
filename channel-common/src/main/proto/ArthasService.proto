@@ -1,0 +1,173 @@
+/*
+ * Copyright 2016 Google, Inc.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+syntax = "proto3";
+
+option java_multiple_files = true;
+
+// import "google/protobuf/timestamp.proto";
+import "google/protobuf/any.proto";
+import "ArthasResults.proto";
+
+package com.alibaba.arthas.channel.proto;
+
+enum ResponseStatus {
+    /*
+     * Request processed successfully
+     */
+    SUCCEEDED = 0;
+
+    /*
+     * Scheduled async exec job
+     */
+    SCHEDULED = 1;
+
+    /*
+     * Request processing was interrupted due to timeout or other reasons
+     */
+    INTERRUPTED = 2;
+
+    /*
+     * Request processing failed
+     */
+    FAILED = 3;
+
+    /*
+     * Request is refused
+     */
+    REFUSED = 4;
+}
+
+enum AgentStatus {
+    UP = 0;
+    DOWN = 1;
+    IN_SERVICE = 2;
+    OUT_OF_SERVICE = 3;
+}
+
+enum RequestAction {
+    /*
+     * Execute command
+     */
+    EXECUTE = 0;
+
+    /*
+     * Interrupt executing job
+     */
+    INTERRUPT_JOB = 1;
+
+    INIT_SESSION = 2;
+    JOIN_SESSION = 3;
+    CLOSE_SESSION = 4;
+}
+
+message ExecuteParams {
+    string commandLine = 1;
+    int32 execTimeout = 2;
+}
+
+message ExecuteResult {
+    int32 jobId = 1;
+    string jobStatus = 2;
+    repeated google.protobuf.Any results = 3;
+}
+
+message ActionRequest {
+    /* Arthas agent id */
+    string agentId = 1;
+
+    /* origin of request, for result message routing */
+    string originId = 2;
+
+    /* incremented request id */
+    uint32 requestId = 3;
+
+    /* Arthas sessionid */
+    string sessionId = 4;
+
+    /* Arthas consumerId of session */
+    string consumerId = 5;
+
+    /* action of request */
+    RequestAction action = 6;
+
+    /* params of execute action */
+    ExecuteParams executeParams = 7;
+
+    string additionalParams = 8;
+}
+
+message ActionResponse {
+    string agentId = 1;
+    string originId = 2;
+    uint32 requestId = 3;
+    string sessionId = 4;
+    string consumerId = 5;
+
+    ResponseStatus status = 6;
+    string message = 7;
+    ExecuteResult executeResult=8;
+}
+
+message GeneralResult {
+    int32 status = 1;
+    string message = 2;
+}
+
+message HeartbeatRequest {
+    string agentId = 1;
+    AgentStatus agentStatus = 2;
+
+}
+
+message HeartbeatResponse {
+    int32 status = 1;
+    string message = 2;
+}
+
+message AgentInfo {
+    string agentId = 1;
+    string agentVersion = 2;
+    AgentStatus agentStatus = 3;
+}
+
+message RegisterResult {
+    int32 status = 1;
+    string message = 2;
+}
+
+service ArthasService {
+
+    /*
+     * Get action request from server
+     */
+    rpc acquireRequest(AgentInfo) returns (stream ActionRequest);
+
+    /*
+     * Submit action response to server from arthas client
+     */
+    rpc submitResponse(stream ActionResponse) returns (stream GeneralResult);
+
+    /*
+     * Register arthas agent to server
+     */
+    rpc register(AgentInfo) returns (RegisterResult);
+
+    /*
+     * Report heartbeat to server from arthas client
+     */
+    rpc heartbeat(HeartbeatRequest) returns (HeartbeatResponse);
+}
