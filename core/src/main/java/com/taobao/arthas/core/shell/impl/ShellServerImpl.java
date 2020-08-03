@@ -1,5 +1,7 @@
 package com.taobao.arthas.core.shell.impl;
 
+import com.alibaba.arthas.deps.org.slf4j.Logger;
+import com.alibaba.arthas.deps.org.slf4j.LoggerFactory;
 import com.taobao.arthas.core.server.ArthasBootstrap;
 import com.taobao.arthas.core.shell.Shell;
 import com.taobao.arthas.core.shell.ShellServer;
@@ -17,8 +19,6 @@ import com.taobao.arthas.core.shell.system.impl.InternalCommandManager;
 import com.taobao.arthas.core.shell.system.impl.JobControllerImpl;
 import com.taobao.arthas.core.shell.term.Term;
 import com.taobao.arthas.core.shell.term.TermServer;
-import com.taobao.arthas.core.util.LogUtil;
-import com.taobao.middleware.logger.Logger;
 
 import java.lang.instrument.Instrumentation;
 import java.util.ArrayList;
@@ -31,6 +31,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -39,7 +40,7 @@ import java.util.concurrent.atomic.AtomicInteger;
  */
 public class ShellServerImpl extends ShellServer {
 
-    private static final Logger logger = LogUtil.getArthasLogger();
+    private static final Logger logger = LoggerFactory.getLogger(ShellServerImpl.class);
 
     private final CopyOnWriteArrayList<CommandResolver> resolvers;
     private final InternalCommandManager commandManager;
@@ -49,7 +50,7 @@ public class ShellServerImpl extends ShellServer {
     private String welcomeMessage;
     private ArthasBootstrap bootstrap;
     private Instrumentation instrumentation;
-    private int pid;
+    private long pid;
     private boolean closed = true;
     private final Map<String, ShellImpl> sessions;
     private final Future<Void> sessionsClosed = Future.future();
@@ -148,8 +149,14 @@ public class ShellServerImpl extends ShellServer {
 
     public synchronized void setTimer() {
         if (!closed && reaperInterval > 0) {
-            scheduledExecutorService = Executors.newSingleThreadScheduledExecutor();
-            // TODO rename the thread, currently it is `pool-3-thread-1`, which is ambiguous
+            scheduledExecutorService = Executors.newSingleThreadScheduledExecutor(new ThreadFactory() {
+                @Override
+                public Thread newThread(Runnable r) {
+                    final Thread t = new Thread(r, "arthas-shell-server");
+                    t.setDaemon(true);
+                    return t;
+                }
+            });
             scheduledExecutorService.scheduleAtFixedRate(new Runnable() {
 
                 @Override
@@ -171,12 +178,13 @@ public class ShellServerImpl extends ShellServer {
         if (job != null) {
             // close shell's foreground job
             job.terminate();
-            logger.info(null, "Session {} closed, so terminate foreground job, id: {}, line: {}",
+            logger.info("Session {} closed, so terminate foreground job, id: {}, line: {}",
                         shell.session().getSessionId(), job.id(), job.line());
         }
 
         synchronized (ShellServerImpl.this) {
             sessions.remove(shell.id);
+            shell.close("network error");
             completeSessionClosed = sessions.isEmpty() && closed;
         }
         if (completeSessionClosed) {
@@ -234,5 +242,13 @@ public class ShellServerImpl extends ShellServer {
             sessionsClosed.setHandler(handler);
             bootstrap.destroy();
         }
+    }
+
+    public JobControllerImpl getJobController() {
+        return jobController;
+    }
+
+    public InternalCommandManager getCommandManager() {
+        return commandManager;
     }
 }

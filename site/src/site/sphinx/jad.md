@@ -18,7 +18,7 @@ jad
 
 ### 使用参考
 
-#### 编绎`java.lang.String`
+#### 编译`java.lang.String`
 
 ```java
 $ jad java.lang.String
@@ -52,7 +52,31 @@ CharSequence {
 ...
 ```
 
-#### 反编绎指定的函数
+#### 反编译时只显示源代码
+
+默认情况下，反编译结果里会带有`ClassLoader`信息，通过`--source-only`选项，可以只打印源代码。方便和[mc](mc.md)/[redefine](redefine.md)命令结合使用。
+
+```
+$ jad --source-only demo.MathGame
+/*
+ * Decompiled with CFR 0_132.
+ */
+package demo;
+
+import java.io.PrintStream;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Random;
+import java.util.concurrent.TimeUnit;
+
+public class MathGame {
+    private static Random random = new Random();
+    public int illegalArgumentCount = 0;
+...
+```
+
+#### 反编译指定的函数
 
 ```java
 $ jad demo.MathGame main
@@ -75,7 +99,7 @@ public static void main(String[] args) throws InterruptedException {
 Affect(row-cnt:1) cost in 228 ms.
 ```
 
-#### 反编绎时指定ClassLoader
+#### 反编译时指定ClassLoader
 
 > 当有多个 `ClassLoader` 都加载了这个类时，`jad` 命令会输出对应 `ClassLoader` 实例的 `hashcode`，然后你只需要重新执行 `jad` 命令，并使用参数 `-c <hashcode>` 就可以反编译指定 ClassLoader 加载的那个类了；
 

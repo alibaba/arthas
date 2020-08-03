@@ -1,4 +1,5 @@
 .DS_Store
+**/.factorypath
 /core/core.iml
 /agent/agent.iml
 /target
@@ -16,3 +17,6 @@ site/src/site/sphinx/_build
 site/src/site/sphinx/en/_build
 
 **/__pycache__
+
+dependency-reduced-pom.xml
+pom.xml.versionsBackup

@@ -1,16 +1,15 @@
 package com.taobao.arthas.core.command.basic1000;
 
+import com.taobao.arthas.core.command.model.SessionModel;
+import com.taobao.arthas.core.server.ArthasBootstrap;
 import com.taobao.arthas.core.shell.command.AnnotatedCommand;
 import com.taobao.arthas.core.shell.command.CommandProcess;
 import com.taobao.arthas.core.shell.session.Session;
+import com.taobao.arthas.core.util.UserStatUtil;
 import com.taobao.middleware.cli.annotations.Name;
 import com.taobao.middleware.cli.annotations.Summary;
-import com.taobao.text.Decoration;
-import com.taobao.text.ui.Element;
-import com.taobao.text.ui.TableElement;
-import com.taobao.text.util.RenderUtil;
 
-import static com.taobao.text.ui.Element.label;
+import com.alibaba.arthas.tunnel.client.TunnelClient;
 
 /**
  * 查看会话状态命令
@@ -20,18 +19,30 @@ import static com.taobao.text.ui.Element.label;
 @Name("session")
 @Summary("Display current session information")
 public class SessionCommand extends AnnotatedCommand {
+
     @Override
     public void process(CommandProcess process) {
-        process.write(RenderUtil.render(sessionTable(process.session()), process.width())).end();
+        SessionModel result = new SessionModel();
+        Session session = process.session();
+        result.setJavaPid(session.getPid());
+        result.setSessionId(session.getSessionId());
+
+        //tunnel
+        TunnelClient tunnelClient = ArthasBootstrap.getInstance().getTunnelClient();
+        if (tunnelClient != null) {
+            String id = tunnelClient.getId();
+            if (id != null) {
+                result.setAgentId(id);
+            }
+            result.setTunnelServer(tunnelClient.getTunnelServerUrl());
+        }
+
+        //statUrl
+        String statUrl = UserStatUtil.getStatUrl();
+        result.setStatUrl(statUrl);
+
+        process.appendResult(result);
+        process.end();
     }
 
-    /*
-     * 会话详情
-     */
-    private Element sessionTable(Session session) {
-        TableElement table = new TableElement().leftCellPadding(1).rightCellPadding(1);
-        table.row(true, label("Name").style(Decoration.bold.bold()), label("Value").style(Decoration.bold.bold()));
-        table.row("JAVA_PID", "" + session.getPid()).row("SESSION_ID", "" + session.getSessionId());
-        return table;
-    }
 }

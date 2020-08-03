@@ -8,7 +8,7 @@ Arthas Install
 下载`arthas-boot.jar`，然后用`java -jar`的方式启动：
 
 ```bash
-wget https://alibaba.github.io/arthas/arthas-boot.jar
+curl -O https://alibaba.github.io/arthas/arthas-boot.jar
 java -jar arthas-boot.jar
 ```
 
@@ -27,7 +27,7 @@ java -jar arthas-boot.jar -h
 * 如果从github下载有问题，可以使用gitee镜像
 
     ```bash
-    wget https://arthas.gitee.io/arthas-boot.jar
+    curl -O https://arthas.gitee.io/arthas-boot.jar
     ```
 
 
@@ -53,7 +53,7 @@ curl -L https://alibaba.github.io/arthas/install.sh | sh
 
 ## 全量安装
 
-最新版本，点击下载：[![Arthas](https://img.shields.io/maven-central/v/com.taobao.arthas/arthas-packaging.svg?style=flat-square "Arthas")](http://repository.sonatype.org/service/local/artifact/maven/redirect?r=central-proxy&g=com.taobao.arthas&a=arthas-packaging&e=zip&c=bin&v=LATEST)
+最新版本，点击下载：[![](https://img.shields.io/maven-central/v/com.taobao.arthas/arthas-packaging.svg?style=flat-square "Arthas")](http://repository.sonatype.org/service/local/artifact/maven/redirect?r=central-proxy&g=com.taobao.arthas&a=arthas-packaging&e=zip&c=bin&v=LATEST)
 
 解压后，在文件夹里有`arthas-boot.jar`，直接用`java -jar`的方式启动：
 
@@ -72,9 +72,38 @@ java -jar arthas-boot.jar -h
 
 [手动安装](manual-install.md)
 
+
+
+## 通过rpm/deb来安装
+
+在releases页面下载rpm/deb包： https://github.com/alibaba/arthas/releases
+
+### 安装deb
+
+```bash
+sudo dpkg -i arthas*.deb
+```
+### 安装rpm
+
+```bash
+sudo rpm -i arthas*.rpm
+```
+
+### deb/rpm安装的用法
+
+在安装后，可以直接执行：
+
+```bash
+as.sh
+```
+
+## 通过Cloud Toolkit插件使用Arthas
+
+* [通过Cloud Toolkit插件使用Arthas一键诊断远程服务器](https://github.com/alibaba/arthas/issues/570)
+
 ## 离线帮助文档
 
-最新版本，点击下载：[![Arthas](https://img.shields.io/maven-central/v/com.taobao.arthas/arthas-packaging.svg?style=flat-square "Arthas")](https://github.com/alibaba/arthas/releases/download/arthas-all-3.0.5/arthas-3.0.5-doc.zip)
+最新版本离线文档下载：[![](https://img.shields.io/maven-central/v/com.taobao.arthas/arthas-packaging.svg?style=flat-square "Arthas")](http://repository.sonatype.org/service/local/artifact/maven/redirect?r=central-proxy&g=com.taobao.arthas&a=arthas-packaging&e=zip&c=doc&v=LATEST)
 
 ## 卸载
 

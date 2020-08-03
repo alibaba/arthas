@@ -14,7 +14,10 @@ import javax.net.ServerSocketFactory;
  */
 public class SocketUtils {
 
-    public static int findTcpListenProcess(int port) {
+    private SocketUtils() {
+    }
+
+    public static long findTcpListenProcess(int port) {
         try {
             if (OSUtils.isWindows()) {
                 String[] command = { "netstat", "-ano", "-p", "TCP" };
@@ -25,7 +28,7 @@ public class SocketUtils {
                         String[] strings = line.trim().split("\\s+");
                         if (strings.length == 5) {
                             if (strings[1].endsWith(":" + port)) {
-                                return Integer.parseInt(strings[4]);
+                                return Long.parseLong(strings[4]);
                             }
                         }
                     }
@@ -35,7 +38,7 @@ public class SocketUtils {
             if (OSUtils.isLinux() || OSUtils.isMac()) {
                 String pid = ExecutingCommand.getFirstAnswer("lsof -t -s TCP:LISTEN -i TCP:" + port);
                 if (!pid.trim().isEmpty()) {
-                    return Integer.parseInt(pid);
+                    return Long.parseLong(pid);
                 }
             }
         } catch (Throwable e) {

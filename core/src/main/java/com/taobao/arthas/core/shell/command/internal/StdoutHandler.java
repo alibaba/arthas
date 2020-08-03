@@ -30,7 +30,9 @@ public abstract class StdoutHandler implements Function<String, String> {
             return PlainTextHandler.inject(tokens);
         } else if (firstTextToken.value().equals(WordCountHandler.NAME)) {
             return WordCountHandler.inject(tokens);
-        } else {
+        } else if (firstTextToken.value().equals(TeeHandler.NAME)){
+            return TeeHandler.inject(tokens);
+        } else{
             return null;
         }
     }

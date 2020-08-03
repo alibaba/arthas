@@ -19,4 +19,8 @@ public class DateUtils {
     public static String getCurrentDate() {
         return dataFormat.get().format(new Date());
     }
+
+    public static String formatDate(Date date) {
+        return dataFormat.get().format(date);
+    }
 }

@@ -4,7 +4,8 @@
     <parent>
         <groupId>com.taobao.arthas</groupId>
         <artifactId>arthas-all</artifactId>
-        <version>3.0.6-SNAPSHOT</version>
+        <version>3.3.8-SNAPSHOT</version>
+        <relativePath>../pom.xml</relativePath>
     </parent>
     <artifactId>arthas-site</artifactId>
     <name>arthas-site</name>
@@ -17,7 +18,7 @@
                     <plugin>
                         <groupId>kr.motd.maven</groupId>
                         <artifactId>sphinx-maven-plugin</artifactId>
-                        <version>2.2.3</version>
+                        <version>2.6.0</version>
                         <executions>
                             <execution>
                                 <id>zh doc</id>

@@ -19,7 +19,7 @@ public class ShellServerOptions {
     /**
      * Default time, in ms, that a shell session lasts for without being accessed before expiring.
      */
-    public static final long DEFAULT_SESSION_TIMEOUT = 5 * 60 * 1000; // 5 minutes
+    public static final long DEFAULT_SESSION_TIMEOUT = 30 * 60 * 1000; // 30 minutes
 
     /**
      * Default time, in ms, that a server waits for a client to connect
@@ -34,7 +34,7 @@ public class ShellServerOptions {
     private long sessionTimeout;
     private long reaperInterval;
     private long connectionTimeout;
-    private int pid;
+    private long pid;
     private Instrumentation instrumentation;
 
     public ShellServerOptions() {
@@ -98,7 +98,7 @@ public class ShellServerOptions {
         return this;
     }
 
-    public ShellServerOptions setPid(int pid) {
+    public ShellServerOptions setPid(long pid) {
         this.pid = pid;
         return this;
     }
@@ -108,7 +108,7 @@ public class ShellServerOptions {
         return this;
     }
 
-    public int getPid() {
+    public long getPid() {
         return pid;
     }
 

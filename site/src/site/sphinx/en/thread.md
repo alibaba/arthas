@@ -1,6 +1,8 @@
 thread
 ======
 
+[`thread` online tutorial](https://alibaba.github.io/arthas/arthas-tutorials?language=en&id=command-thread)
+
 > Check the basic info and stack trace of the target thread.
 
 ### Parameters
@@ -157,4 +159,17 @@ $ thread -n 3 -i 1000
     Number of locked synchronizers = 1
     - java.util.concurrent.ThreadPoolExecutor$Worker@546aeec1
 ...
+```
+
+#### thread --state , view the special state theads
+
+```bash
+[arthas@28114]$ thread --state WAITING
+Threads Total: 15, NEW: 0, RUNNABLE: 7, BLOCKED: 0, WAITING: 5, TIMED_WAITING: 3, TERMINATED: 0
+ID       NAME                      GROUP            PRIORITY STATE   %CPU     TIME     INTERRU DAEMON
+198      AsyncAppender-Worker-arth system           9        WAITING 0        0:0      false   true
+3        Finalizer                 system           8        WAITING 0        0:0      false   true
+14       RMI Scheduler(0)          system           9        WAITING 0        0:0      false   true
+2        Reference Handler         system           10       WAITING 0        0:0      false   true
+204      pool-8-thread-1           system           5        WAITING 0        0:0      false   false
 ```

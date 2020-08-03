@@ -1,11 +1,17 @@
 redefine
 ========
 
-> Load the external `*.class` files to re-define the loaded peer class in JVM.
+> Load the external `*.class` files to re-define the loaded classes in JVM.
 
 Reference: [Instrumentation#redefineClasses](https://docs.oracle.com/javase/8/docs/api/java/lang/instrument/Instrumentation.html#redefineClasses-java.lang.instrument.ClassDefinition...-)
 
 > Notes: Re-defined classes cannot be restored. There are chances that redefining may fail due to some reasons, for example: there's new field introduced in the new version of the class, pls. refer to JDK's documentation for the limitations.
+
+> The `reset` command is not valid for classes that have been processed by `redefine`. If you want to reset, you need `redefine` the original bytecode.
+
+
+> The `redefine` command will conflict with the `jad`/`watch`/`trace`/`monitor`/`tt` commands. After executing `redefine`, if you execute the above mentioned command, the bytecode of the class will be reset.
+> The reason is that in the JDK `redefine` and `retransform` are different mechanisms. When two mechanisms are both used to update the bytecode, only the last modified will take effect.
 
 ### Options
 
@@ -18,9 +24,44 @@ Reference: [Instrumentation#redefineClasses](https://docs.oracle.com/javase/8/do
 ### Usage
 
 ```bash
-redefine -p /tmp/Test.class
-redefine -c 327a647b -p /tmp/Test.class /tmp/Test$Inner.class
+redefine /tmp/Test.class
+redefine -c 327a647b /tmp/Test.class /tmp/Test$Inner.class
 ```
+
+### Use with the jad/mc command
+
+```bash
+jad --source-only com.example.demo.arthas.user.UserController > /tmp/UserController.java
+
+mc /tmp/UserController.java -d /tmp
+
+redefine /tmp/com/example/demo/arthas/user/UserController.class
+```
+
+* Use `jad` command to decompile bytecode, and then you can use other editors, such as vim to modify the source code.
+* `mc` command to compile the modified code
+* Load new bytecode with `redefine` command
+
+### Tips for uploading .class files to the server
+
+The `mc` command may fail. You can modify the code locally, compile it, and upload it to the server. Some servers do not allow direct uploading files, you can use the `base64` command to bypass.
+
+1. Convert the `.class` file to base64 first, then save it as result.txt
+
+    ```bash
+    Base64 < Test.class > result.txt
+    ```
+
+2. Login the server, create and edit `result.txt`, copy the local content, paste and save
+
+3. Restore `result.txt` on the server to `.class`
+
+    ```
+    Base64 -d < result.txt > Test.class
+    ```
+
+4. Use the md5 command to verify that the `.class` files are consistent.
+
 
 ### Restrictions of the redefine command
 

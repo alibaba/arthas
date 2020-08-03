@@ -11,6 +11,8 @@ import com.taobao.middleware.cli.CommandLine;
 import com.taobao.middleware.cli.Option;
 import com.taobao.middleware.cli.TypedOption;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.util.Arrays;
 import java.util.Properties;
 
@@ -27,7 +29,7 @@ public class Arthas {
     }
 
     private Configure parse(String[] args) {
-        Option pid = new TypedOption<Integer>().setType(Integer.class).setShortName("pid").setRequired(true);
+        Option pid = new TypedOption<Long>().setType(Long.class).setShortName("pid").setRequired(true);
         Option core = new TypedOption<String>().setType(String.class).setShortName("core").setRequired(true);
         Option agent = new TypedOption<String>().setType(String.class).setShortName("agent").setRequired(true);
         Option target = new TypedOption<String>().setType(String.class).setShortName("target-ip");
@@ -37,12 +39,18 @@ public class Arthas {
                 .setShortName("http-port").setDefaultValue(DEFAULT_HTTP_PORT);
         Option sessionTimeout = new TypedOption<Integer>().setType(Integer.class)
                         .setShortName("session-timeout").setDefaultValue("" + Configure.DEFAULT_SESSION_TIMEOUT_SECONDS);
+
+        Option tunnelServer = new TypedOption<String>().setType(String.class).setShortName("tunnel-server");
+        Option agentId = new TypedOption<String>().setType(String.class).setShortName("agent-id");
+
+        Option statUrl = new TypedOption<String>().setType(String.class).setShortName("stat-url");
+
         CLI cli = CLIs.create("arthas").addOption(pid).addOption(core).addOption(agent).addOption(target)
-                .addOption(telnetPort).addOption(httpPort).addOption(sessionTimeout);
+                .addOption(telnetPort).addOption(httpPort).addOption(sessionTimeout).addOption(tunnelServer).addOption(agentId).addOption(statUrl);
         CommandLine commandLine = cli.parse(Arrays.asList(args));
 
         Configure configure = new Configure();
-        configure.setJavaPid((Integer) commandLine.getOptionValue("pid"));
+        configure.setJavaPid((Long) commandLine.getOptionValue("pid"));
         configure.setArthasAgent((String) commandLine.getOptionValue("agent"));
         configure.setArthasCore((String) commandLine.getOptionValue("core"));
         configure.setSessionTimeout((Integer)commandLine.getOptionValue("session-timeout"));
@@ -54,6 +62,10 @@ public class Arthas {
         configure.setIp((String) commandLine.getOptionValue("target-ip"));
         configure.setTelnetPort((Integer) commandLine.getOptionValue("telnet-port"));
         configure.setHttpPort((Integer) commandLine.getOptionValue("http-port"));
+
+        configure.setTunnelServer((String) commandLine.getOptionValue("tunnel-server"));
+        configure.setAgentId((String) commandLine.getOptionValue("agent-id"));
+        configure.setStatUrl((String) commandLine.getOptionValue("stat-url"));
         return configure;
     }
 
@@ -61,8 +73,9 @@ public class Arthas {
         VirtualMachineDescriptor virtualMachineDescriptor = null;
         for (VirtualMachineDescriptor descriptor : VirtualMachine.list()) {
             String pid = descriptor.id();
-            if (pid.equals(Integer.toString(configure.getJavaPid()))) {
+            if (pid.equals(Long.toString(configure.getJavaPid()))) {
                 virtualMachineDescriptor = descriptor;
+                break;
             }
         }
         VirtualMachine virtualMachine = null;
@@ -80,13 +93,17 @@ public class Arthas {
                 if (!targetJavaVersion.equals(currentJavaVersion)) {
                     AnsiLog.warn("Current VM java version: {} do not match target VM java version: {}, attach may fail.",
                                     currentJavaVersion, targetJavaVersion);
-                    AnsiLog.warn("Target VM JAVA_HOME is {}, try to set the same JAVA_HOME.",
-                                    targetSystemProperties.getProperty("java.home"));
+                    AnsiLog.warn("Target VM JAVA_HOME is {}, arthas-boot JAVA_HOME is {}, try to set the same JAVA_HOME.",
+                                    targetSystemProperties.getProperty("java.home"), System.getProperty("java.home"));
                 }
             }
 
-            virtualMachine.loadAgent(configure.getArthasAgent(),
-                            configure.getArthasCore() + ";" + configure.toString());
+            String arthasAgentPath = configure.getArthasAgent();
+            //convert jar path to unicode string
+            configure.setArthasAgent(encodeArg(arthasAgentPath));
+            configure.setArthasCore(encodeArg(configure.getArthasCore()));
+            virtualMachine.loadAgent(arthasAgentPath,
+                    configure.getArthasCore() + ";" + configure.toString());
         } finally {
             if (null != virtualMachine) {
                 virtualMachine.detach();
@@ -94,6 +111,13 @@ public class Arthas {
         }
     }
 
+    private static String encodeArg(String arg) {
+        try {
+            return URLEncoder.encode(arg, "utf-8");
+        } catch (UnsupportedEncodingException e) {
+            return arg;
+        }
+    }
 
     public static void main(String[] args) {
         try {

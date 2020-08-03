@@ -1,8 +1,9 @@
 package com.taobao.arthas.core.command.klass100;
 
+import com.alibaba.arthas.deps.org.slf4j.Logger;
+import com.alibaba.arthas.deps.org.slf4j.LoggerFactory;
 import com.taobao.arthas.core.util.FileUtils;
 import com.taobao.arthas.core.util.LogUtil;
-import com.taobao.middleware.logger.Logger;
 
 import java.io.File;
 import java.io.IOException;
@@ -18,16 +19,23 @@ import java.util.Set;
  */
 class ClassDumpTransformer implements ClassFileTransformer {
 
-    private static final Logger logger = LogUtil.getArthasLogger();
+    private static final Logger logger = LoggerFactory.getLogger(ClassDumpTransformer.class);
 
     private Set<Class<?>> classesToEnhance;
     private Map<Class<?>, File> dumpResult;
     private File arthasLogHome;
 
+    private File directory;
+
     public ClassDumpTransformer(Set<Class<?>> classesToEnhance) {
+        this(classesToEnhance, null);
+    }
+
+    public ClassDumpTransformer(Set<Class<?>> classesToEnhance, File directory) {
         this.classesToEnhance = classesToEnhance;
         this.dumpResult = new HashMap<Class<?>, File>();
-        this.arthasLogHome = new File(LogUtil.LOGGER_FILE).getParentFile();
+        this.arthasLogHome = new File(LogUtil.loggingDir());
+        this.directory = directory;
     }
 
     @Override
@@ -50,7 +58,12 @@ class ClassDumpTransformer implements ClassFileTransformer {
         String classDumpDir = "classdump";
 
         // 创建类所在的包路径
-        File dumpDir = new File(arthasLogHome, classDumpDir);
+        File dumpDir = null;
+        if (directory != null) {
+            dumpDir = directory;
+        } else {
+            dumpDir = new File(arthasLogHome, classDumpDir);
+        }
         if (!dumpDir.mkdirs() && !dumpDir.exists()) {
             logger.warn("create dump directory:{} failed.", dumpDir.getAbsolutePath());
             return;

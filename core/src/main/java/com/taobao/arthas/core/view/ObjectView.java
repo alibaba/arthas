@@ -50,7 +50,7 @@ public class ObjectView implements View {
                     .append(", try to specify -M size_limit in your command, check the help command for more.");
             return buf.toString();
         } catch (Throwable t) {
-            return "ERROR DATA!!!";
+            return "ERROR DATA!!! exception message: " + t.getMessage();
         }
     }
 
@@ -582,7 +582,22 @@ public class ObjectView implements View {
                     appendStringBuilder(buf, format("@%s[%s]", className, obj));
                 } else {
                     appendStringBuilder(buf, format("@%s[", className));
-                    final Field[] fields = obj.getClass().getDeclaredFields();
+                    List<Field> fields = new ArrayList<Field>();
+                    Class objClass = obj.getClass();
+                    if (GlobalOptions.printParentFields) {
+                        // 当父类为null的时候说明到达了最上层的父类(Object类).
+                        while (objClass != null) {
+                            for (Field field : objClass.getDeclaredFields()) {
+                                fields.add(field);
+                            }
+                            objClass = objClass.getSuperclass();
+                        }
+                    } else {
+                        for (Field field : objClass.getDeclaredFields()) {
+                            fields.add(field);
+                        }
+                    }
+
                     if (null != fields) {
                         for (Field field : fields) {
 
@@ -619,17 +634,6 @@ public class ObjectView implements View {
             }
         }
     }
-
-    /**
-     * 是否根节点
-     *
-     * @param deep 深度
-     * @return true:根节点 / false:非根节点
-     */
-    private static boolean isRoot(int deep) {
-        return deep == 0;
-    }
-
 
     /**
      * 是否展开当前深度的节点

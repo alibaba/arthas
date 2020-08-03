@@ -238,7 +238,7 @@ public class FieldUtils {
      */
     public static Field[] getAllFields(final Class<?> cls) {
         final List<Field> allFieldsList = getAllFieldsList(cls);
-        return allFieldsList.toArray(new Field[allFieldsList.size()]);
+        return allFieldsList.toArray(new Field[0]);
     }
 
     /**

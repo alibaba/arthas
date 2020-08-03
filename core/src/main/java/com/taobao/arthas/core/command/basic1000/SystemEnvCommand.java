@@ -1,11 +1,7 @@
 package com.taobao.arthas.core.command.basic1000;
 
-import static com.taobao.text.ui.Element.label;
-
-import java.util.Map;
-import java.util.Map.Entry;
-
 import com.taobao.arthas.core.command.Constants;
+import com.taobao.arthas.core.command.model.SystemEnvModel;
 import com.taobao.arthas.core.shell.cli.Completion;
 import com.taobao.arthas.core.shell.cli.CompletionUtils;
 import com.taobao.arthas.core.shell.command.AnnotatedCommand;
@@ -15,9 +11,6 @@ import com.taobao.middleware.cli.annotations.Argument;
 import com.taobao.middleware.cli.annotations.Description;
 import com.taobao.middleware.cli.annotations.Name;
 import com.taobao.middleware.cli.annotations.Summary;
-import com.taobao.text.Decoration;
-import com.taobao.text.ui.TableElement;
-import com.taobao.text.util.RenderUtil;
 
 /**
  * @author hengyunabc 2018-11-09
@@ -39,16 +32,19 @@ public class SystemEnvCommand extends AnnotatedCommand {
     @Override
     public void process(CommandProcess process) {
         try {
+            SystemEnvModel result = new SystemEnvModel();
             if (StringUtils.isBlank(envName)) {
                 // show all system env
-                process.write(renderEnv(System.getenv(), process.width()));
+                result.putAll(System.getenv());
             } else {
                 // view the specified system env
                 String value = System.getenv(envName);
-                process.write(envName + "=" + value + "\n");
+                result.put(envName, value);
             }
-        } finally {
+            process.appendResult(result);
             process.end();
+        } catch (Throwable t) {
+            process.end(-1, "Error during setting system env: " + t.getMessage());
         }
     }
 
@@ -64,14 +60,4 @@ public class SystemEnvCommand extends AnnotatedCommand {
         CompletionUtils.complete(completion, System.getenv().keySet());
     }
 
-    private String renderEnv(Map<String, String> envMap, int width) {
-        TableElement table = new TableElement(1, 4).leftCellPadding(1).rightCellPadding(1);
-        table.row(true, label("KEY").style(Decoration.bold.bold()), label("VALUE").style(Decoration.bold.bold()));
-
-        for (Entry<String, String> entry : envMap.entrySet()) {
-            table.row(entry.getKey(), entry.getValue());
-        }
-
-        return RenderUtil.render(table, width);
-    }
 }

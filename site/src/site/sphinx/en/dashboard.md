@@ -1,6 +1,8 @@
 dashboard
 =========
 
+[`dashboard` online tutorial](https://alibaba.github.io/arthas/arthas-tutorials?language=en&id=command-dashboard)
+
 > This is the real time statistics dashboard for the current system, press `Ctrl+C` to exit.
 
 When running in Apache Tomcat Alibaba edition, the dashboard will also present the real time statistics of the tomcat,  including [QPS](https://en.wikipedia.org/wiki/Queries_per_second), RT, error counts, and thread pool, etc.
@@ -58,4 +60,4 @@ uptime                            16020s                            busy        
 
 ### Screenshot
 
-![alt text](../_static/dashboard.png "dashboard")
+![](../_static/dashboard.png "dashboard")

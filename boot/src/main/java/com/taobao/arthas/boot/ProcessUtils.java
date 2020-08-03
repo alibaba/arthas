@@ -3,7 +3,11 @@ package com.taobao.arthas.boot;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.lang.management.ManagementFactory;
+import java.io.OutputStream;
+import java.io.PrintStream;
+import java.lang.reflect.Method;
+import java.net.URL;
+import java.net.URLClassLoader;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -11,6 +15,7 @@ import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Scanner;
 import java.util.InputMismatchException;
 
@@ -18,6 +23,7 @@ import com.taobao.arthas.common.AnsiLog;
 import com.taobao.arthas.common.ExecutingCommand;
 import com.taobao.arthas.common.IOUtils;
 import com.taobao.arthas.common.JavaVersionUtils;
+import com.taobao.arthas.common.PidUtils;
 
 /**
  *
@@ -25,37 +31,60 @@ import com.taobao.arthas.common.JavaVersionUtils;
  *
  */
 public class ProcessUtils {
-    private static String PID = "-1";
     private static String FOUND_JAVA_HOME = null;
 
-    static {
-        // https://stackoverflow.com/a/7690178
-        String jvmName = ManagementFactory.getRuntimeMXBean().getName();
-        int index = jvmName.indexOf('@');
-
-        if (index > 0) {
-            try {
-                PID = Long.toString(Long.parseLong(jvmName.substring(0, index)));
-            } catch (Throwable e) {
-                // ignore
-            }
-        }
-    }
-
-    public static String getPid() {
-        return PID;
-    }
+    //status code from com.taobao.arthas.client.TelnetConsole
+    /**
+     * Process success
+     */
+    public static final int STATUS_OK = 0;
+    /**
+     * Generic error
+     */
+    public static final int STATUS_ERROR = 1;
+    /**
+     * Execute commands timeout
+     */
+    public static final int STATUS_EXEC_TIMEOUT = 100;
+    /**
+     * Execute commands error
+     */
+    public static final int STATUS_EXEC_ERROR = 101;
 
     @SuppressWarnings("resource")
-    public static int select(boolean v) throws InputMismatchException {
-        Map<Integer, String> processMap = listProcessByJps(v);
+    public static long select(boolean v, long telnetPortPid, String select) throws InputMismatchException {
+        Map<Long, String> processMap = listProcessByJps(v);
+        // Put the port that is already listening at the first
+        if (telnetPortPid > 0 && processMap.containsKey(telnetPortPid)) {
+            String telnetPortProcess = processMap.get(telnetPortPid);
+            processMap.remove(telnetPortPid);
+            Map<Long, String> newProcessMap = new LinkedHashMap<Long, String>();
+            newProcessMap.put(telnetPortPid, telnetPortProcess);
+            newProcessMap.putAll(processMap);
+            processMap = newProcessMap;
+        }
 
         if (processMap.isEmpty()) {
             AnsiLog.info("Can not find java process. Try to pass <pid> in command line.");
             return -1;
         }
 
-        AnsiLog.info("Found existing java process, please choose one and hit RETURN.");
+		// select target process by the '--select' option when match only one process
+		if (select != null && !select.trim().isEmpty()) {
+			int matchedSelectCount = 0;
+			Long matchedPid = null;
+			for (Entry<Long, String> entry : processMap.entrySet()) {
+				if (entry.getValue().contains(select)) {
+					matchedSelectCount++;
+					matchedPid = entry.getKey();
+				}
+			}
+			if (matchedSelectCount == 1) {
+				return matchedPid;
+			}
+		}
+
+        AnsiLog.info("Found existing java process, please choose one and input the serial number of the process, eg : 1. Then hit ENTER.");
         // print list
         int count = 1;
         for (String process : processMap.values()) {
@@ -80,7 +109,7 @@ public class ProcessUtils {
             return -1;
         }
 
-        Iterator<Integer> idIter = processMap.keySet().iterator();
+        Iterator<Long> idIter = processMap.keySet().iterator();
         for (int i = 1; i <= choice; ++i) {
             if (i == choice) {
                 return idIter.next();
@@ -91,8 +120,8 @@ public class ProcessUtils {
         return -1;
     }
 
-    private static Map<Integer, String> listProcessByJps(boolean v) {
-        Map<Integer, String> result = new LinkedHashMap<Integer, String>();
+    private static Map<Long, String> listProcessByJps(boolean v) {
+        Map<Long, String> result = new LinkedHashMap<Long, String>();
 
         String jps = "jps";
         File jpsFile = findJps();
@@ -111,21 +140,28 @@ public class ProcessUtils {
 
         List<String> lines = ExecutingCommand.runNative(command);
 
-        int currentPid = Integer.parseInt(ProcessUtils.getPid());
+        AnsiLog.debug("jps result: " + lines);
+
+        long currentPid = Long.parseLong(PidUtils.currentPid());
         for (String line : lines) {
             String[] strings = line.trim().split("\\s+");
             if (strings.length < 1) {
                 continue;
             }
-            int pid = Integer.parseInt(strings[0]);
-            if (pid == currentPid) {
-                continue;
-            }
-            if (strings.length >= 2 && strings[1].equals("sun.tools.jps.Jps")) { // skip jps
-                continue;
-            }
+            try {
+                long pid = Long.parseLong(strings[0]);
+                if (pid == currentPid) {
+                    continue;
+                }
+                if (strings.length >= 2 && isJpsProcess(strings[1])) { // skip jps
+                    continue;
+                }
 
-            result.put(pid, line);
+                result.put(pid, line);
+            } catch (Throwable e) {
+                // https://github.com/alibaba/arthas/issues/970
+                // ignore
+            }
         }
 
         return result;
@@ -192,7 +228,7 @@ public class ProcessUtils {
         return FOUND_JAVA_HOME;
     }
 
-    public static void startArthasCore(int targetPid, List<String> attachArgs) {
+    public static void startArthasCore(long targetPid, List<String> attachArgs) {
         // find java/java.exe, then try to find tools.jar
         String javaHome = findJavaHome();
 
@@ -270,7 +306,52 @@ public class ProcessUtils {
         } catch (Throwable e) {
             // ignore
         }
+    }
 
+    public static int startArthasClient(String arthasHomeDir, List<String> telnetArgs, OutputStream out) throws Throwable {
+        // start java telnet client
+        // find arthas-client.jar
+        URLClassLoader classLoader = new URLClassLoader(
+                new URL[]{new File(arthasHomeDir, "arthas-client.jar").toURI().toURL()});
+        Class<?> telnetConsoleClas = classLoader.loadClass("com.taobao.arthas.client.TelnetConsole");
+        Method processMethod = telnetConsoleClas.getMethod("process", String[].class);
+
+        //redirect System.out/System.err
+        PrintStream originSysOut = System.out;
+        PrintStream originSysErr = System.err;
+        PrintStream newOut = new PrintStream(out);
+        PrintStream newErr = new PrintStream(out);
+
+        // call TelnetConsole.process()
+        // fix https://github.com/alibaba/arthas/issues/833
+        ClassLoader tccl = Thread.currentThread().getContextClassLoader();
+        try {
+            System.setOut(newOut);
+            System.setErr(newErr);
+            Thread.currentThread().setContextClassLoader(classLoader);
+            return (Integer) processMethod.invoke(null, new Object[]{telnetArgs.toArray(new String[0])});
+        } catch (Throwable e) {
+            //java.lang.reflect.InvocationTargetException : java.net.ConnectException
+            e = e.getCause();
+            if (e instanceof IOException || e instanceof InterruptedException) {
+                // ignore connection error and interrupted error
+                return STATUS_ERROR;
+            } else {
+                // process error
+                AnsiLog.error("process error: {}", e.toString());
+                AnsiLog.error(e);
+                return STATUS_EXEC_ERROR;
+            }
+        } finally {
+            Thread.currentThread().setContextClassLoader(tccl);
+
+            //reset System.out/System.err
+            System.setOut(originSysOut);
+            System.setErr(originSysErr);
+            //flush output
+            newOut.flush();
+            newErr.flush();
+        }
     }
 
     private static File findJava() {
@@ -380,4 +461,7 @@ public class ProcessUtils {
         return jpsList.get(0);
     }
 
+    private static boolean isJpsProcess(String mainClassName) {
+        return "sun.tools.jps.Jps".equals(mainClassName) || "jdk.jcmd/sun.tools.jps.Jps".equals(mainClassName);
+    }
 }

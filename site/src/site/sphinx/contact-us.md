@@ -9,15 +9,19 @@
 
 ### 钉钉群
 
-Arthas开源交流钉钉群：21965291 ，搜索群号即可加入。
+* Arthas开源交流钉钉群2： 30707824 ，搜索群号即可加入。
 
-![web console](_static/dingding_qr.jpg)
+![](_static/dingding2_qr.jpg)
+
+* Arthas开源交流钉钉群： 21965291 （已满员） ，搜索群号即可加入。
+
+![](_static/dingding_qr.jpg)
 
 ### QQ群
 
 Arthas开源交流QQ群：916328269
 
-![web console](_static/qqgroup_qr.jpg)
+![](_static/qqgroup_qr.jpg)
 
 
 

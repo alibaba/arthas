@@ -3,7 +3,7 @@ Arthas Documentation
 
 **[中文文档/Chinese Documentation](https://alibaba.github.io/arthas/)**
 
-![arthas](arthas.png)
+![](arthas.png)
 
 Arthas is a Java diagnostic tool open-sourced by Alibaba middleware team. It is widely adopted and popular among the developers inside Alibaba. Arthas helps developers in trouble-shooting issues in production environment for Java based applications without modifying code or restarting servers.
 
@@ -29,21 +29,28 @@ Arthas is built to solve these issues. A developer can troubleshoot production i
 * Monitor system metrics, thread states and CPU usage, GC statistics and etc.
 * Supports command line interactive mode, with auto-complete feature enabled.
 * Supports telnet and WebSocket, which enables both local and remote diagnostics with command line and browsers.
+* Supports profiler/Flame Graph
 * Supports JDK 6+
+* Supports Linux/Mac/Windows
 
 
-**If you are using Arthas, please let us know. Your use is very important to us: [View](https://github.com/alibaba/arthas/issues/111)**
+**If you are using Arthas, please let us know. Your feedback is very important to us: [View](https://github.com/alibaba/arthas/issues/111)**
 
 Contents
 --------
 
+* [Online tutorials(Recommend)](https://alibaba.github.io/arthas/arthas-tutorials?language=en)
 * [Installation](install-detail.md)
+* [Download](download.md)
 * [Quick start](quick-start.md)
 * [Advanced usage](advanced-use.md)
 * [Commands](commands.md)
+* [WebConsole](web-console.md)
 * [Docker](docker.md)
+* [Arthas Spring Boot Starter](spring-boot-starter.md)
 * [User cases](https://github.com/alibaba/arthas/issues?q=label%3Auser-case)
 * [Questions and answers](https://github.com/alibaba/arthas/issues?q=label%3Aquestion-answered)
 * [Fork me at GitHub](https://github.com/alibaba/arthas)
-* [CONTRIBUTING](https://github.com/alibaba/arthas/blob/master/CONTRIBUTING.md)
-* [Release Notes](release-notes.md)
+* [Compile and debug/CONTRIBUTING](https://github.com/alibaba/arthas/blob/master/CONTRIBUTING.md#)
+* [Release Notes](https://github.com/alibaba/arthas/releases)
+* [Contact us](contact-us.md)

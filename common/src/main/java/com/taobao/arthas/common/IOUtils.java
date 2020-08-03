@@ -22,6 +22,9 @@ import java.util.zip.ZipFile;
  */
 public class IOUtils {
 
+    private IOUtils() {
+    }
+
     public static String toString(InputStream inputStream) throws IOException {
         ByteArrayOutputStream result = new ByteArrayOutputStream();
         byte[] buffer = new byte[1024];
@@ -38,6 +41,18 @@ public class IOUtils {
         while ((len = in.read(buffer)) != -1) {
             out.write(buffer, 0, len);
         }
+    }
+
+    /**
+     * @return a byte[] containing the information contained in the specified
+     *         InputStream.
+     * @throws java.io.IOException
+     */
+    public static byte[] getBytes(InputStream input) throws IOException {
+        ByteArrayOutputStream result = new ByteArrayOutputStream();
+        copy(input, result);
+        result.close();
+        return result.toByteArray();
     }
 
     public static IOException close(InputStream input) {

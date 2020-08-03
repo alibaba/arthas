@@ -1,38 +1,39 @@
 package com.taobao.arthas.core.command.klass100;
 
+
+import java.lang.instrument.Instrumentation;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.Method;
+import java.util.Set;
+
+import com.alibaba.arthas.deps.org.slf4j.Logger;
+import com.alibaba.arthas.deps.org.slf4j.LoggerFactory;
 import com.taobao.arthas.core.command.Constants;
+import com.taobao.arthas.core.command.model.SearchMethodModel;
+import com.taobao.arthas.core.command.model.MethodVO;
+import com.taobao.arthas.core.command.model.RowAffectModel;
+import com.taobao.arthas.core.shell.cli.Completion;
+import com.taobao.arthas.core.shell.cli.CompletionUtils;
 import com.taobao.arthas.core.shell.command.AnnotatedCommand;
 import com.taobao.arthas.core.shell.command.CommandProcess;
+import com.taobao.arthas.core.util.ClassUtils;
+import com.taobao.arthas.core.util.SearchUtils;
+import com.taobao.arthas.core.util.StringUtils;
+import com.taobao.arthas.core.util.affect.RowAffect;
 import com.taobao.arthas.core.util.matcher.Matcher;
 import com.taobao.arthas.core.util.matcher.RegexMatcher;
 import com.taobao.arthas.core.util.matcher.WildcardMatcher;
-import com.taobao.arthas.core.util.SearchUtils;
-import com.taobao.arthas.core.util.StringUtils;
-import com.taobao.arthas.core.util.TypeRenderUtils;
-import com.taobao.arthas.core.util.affect.RowAffect;
 import com.taobao.middleware.cli.annotations.Argument;
 import com.taobao.middleware.cli.annotations.Description;
 import com.taobao.middleware.cli.annotations.Name;
 import com.taobao.middleware.cli.annotations.Option;
 import com.taobao.middleware.cli.annotations.Summary;
-import com.taobao.text.ui.Element;
-import com.taobao.text.ui.TableElement;
-import com.taobao.text.util.RenderUtil;
-
-import java.lang.instrument.Instrumentation;
-import java.lang.reflect.Constructor;
-import java.lang.reflect.Method;
-import java.util.HashSet;
-import java.util.Set;
-
-import static com.taobao.text.Decoration.bold;
-import static com.taobao.text.ui.Element.label;
-import static java.lang.String.format;
 
 /**
  * 展示方法信息
  *
  * @author vlinux
+ * @author hengyunabc 2019-02-13
  */
 @Name("sm")
 @Summary("Search the method of classes loaded by JVM")
@@ -44,11 +45,14 @@ import static java.lang.String.format;
         "  sm -Ed org\\\\.apache\\\\.commons\\\\.lang\\.StringUtils .*\n" +
         Constants.WIKI + Constants.WIKI_HOME + "sm")
 public class SearchMethodCommand extends AnnotatedCommand {
+    private static final Logger logger = LoggerFactory.getLogger(SearchMethodCommand.class);
 
     private String classPattern;
     private String methodPattern;
+    private String hashCode = null;
     private boolean isDetail = false;
     private boolean isRegEx = false;
+    private int numberOfLimit = 100;
 
     @Argument(argName = "class-pattern", index = 0)
     @Description("Class name pattern, use either '.' or '/' as separator")
@@ -74,54 +78,61 @@ public class SearchMethodCommand extends AnnotatedCommand {
         isRegEx = regEx;
     }
 
+    @Option(shortName = "c", longName = "classloader")
+    @Description("The hash code of the special class's classLoader")
+    public void setHashCode(String hashCode) {
+        this.hashCode = hashCode;
+    }
+
+    @Option(shortName = "n", longName = "limits")
+    @Description("Maximum number of matching classes (100 by default)")
+    public void setNumberOfLimit(int numberOfLimit) {
+        this.numberOfLimit = numberOfLimit;
+    }
+
     @Override
     public void process(CommandProcess process) {
         RowAffect affect = new RowAffect();
 
         Instrumentation inst = process.session().getInstrumentation();
         Matcher<String> methodNameMatcher = methodNameMatcher();
-        Set<Class<?>> matchedClasses = SearchUtils.searchClass(inst, classPattern, isRegEx);
+        Set<Class<?>> matchedClasses = SearchUtils.searchClass(inst, classPattern, isRegEx, hashCode);
 
+        if (numberOfLimit > 0 && matchedClasses.size() > numberOfLimit) {
+            process.end(-1, "The number of matching classes is greater than : " + numberOfLimit+". \n" +
+                    "Please specify a more accurate 'class-patten' or use the parameter '-n' to change the maximum number of matching classes.");
+            return;
+        }
         for (Class<?> clazz : matchedClasses) {
-            Set<String> methodNames = new HashSet<String>();
-            for (Constructor constructor : clazz.getDeclaredConstructors()) {
-                if (!methodNameMatcher.matching("<init>")) {
-                    continue;
-                }
-
-                if (isDetail) {
-                    process.write(RenderUtil.render(renderConstructor(constructor), process.width()) + "\n");
-                } else {
-                    if (methodNames.contains("<init>")) {
+            try {
+                for (Constructor<?> constructor : clazz.getDeclaredConstructors()) {
+                    if (!methodNameMatcher.matching("<init>")) {
                         continue;
                     }
-                    methodNames.add("<init>");
-                    String line = format("%s->%s%n", clazz.getName(), "<init>");
-                    process.write(line);
-                }
-                affect.rCnt(1);
-            }
 
-            for (Method method : clazz.getDeclaredMethods()) {
-                if (!methodNameMatcher.matching(method.getName())) {
-                    continue;
+                    MethodVO methodInfo = ClassUtils.createMethodInfo(constructor, clazz, isDetail);
+                    process.appendResult(new SearchMethodModel(methodInfo, isDetail));
+                    affect.rCnt(1);
                 }
 
-                if (isDetail) {
-                    process.write(RenderUtil.render(renderMethod(method), process.width()) + "\n");
-                } else {
-                    if (methodNames.contains(method.getName())) {
+                for (Method method : clazz.getDeclaredMethods()) {
+                    if (!methodNameMatcher.matching(method.getName())) {
                         continue;
                     }
-                    methodNames.add(method.getName());
-                    String line = format("%s->%s%n", clazz.getName(), method.getName());
-                    process.write(line);
+                    MethodVO methodInfo = ClassUtils.createMethodInfo(method, clazz, isDetail);
+                    process.appendResult(new SearchMethodModel(methodInfo, isDetail));
+                    affect.rCnt(1);
                 }
-                affect.rCnt(1);
+            } catch (Error e) {
+                //print failed className
+                String msg = String.format("process class failed: %s, error: %s", clazz.getName(), e.toString());
+                logger.error(msg, e);
+                process.end(1, msg);
+                return;
             }
         }
 
-        process.write(affect + "\n");
+        process.appendResult(new RowAffectModel(affect));
         process.end();
     }
 
@@ -133,28 +144,22 @@ public class SearchMethodCommand extends AnnotatedCommand {
         return isRegEx ? new RegexMatcher(methodPattern) : new WildcardMatcher(methodPattern);
     }
 
-    private Element renderMethod(Method method) {
-        TableElement table = new TableElement().leftCellPadding(1).rightCellPadding(1);
+    @Override
+    public void complete(Completion completion) {
+        int argumentIndex = CompletionUtils.detectArgumentIndex(completion);
 
-        table.row(label("declaring-class").style(bold.bold()), label(method.getDeclaringClass().getName()))
-                .row(label("method-name").style(bold.bold()), label(method.getName()).style(bold.bold()))
-                .row(label("modifier").style(bold.bold()), label(StringUtils.modifier(method.getModifiers(), ',')))
-                .row(label("annotation").style(bold.bold()), label(TypeRenderUtils.drawAnnotation(method)))
-                .row(label("parameters").style(bold.bold()), label(TypeRenderUtils.drawParameters(method)))
-                .row(label("return").style(bold.bold()), label(TypeRenderUtils.drawReturn(method)))
-                .row(label("exceptions").style(bold.bold()), label(TypeRenderUtils.drawExceptions(method)));
-        return table;
-    }
+        if (argumentIndex == 1) {
+            if (!CompletionUtils.completeClassName(completion)) {
+                super.complete(completion);
+            }
+            return;
+        } else if (argumentIndex == 2) {
+            if (!CompletionUtils.completeMethodName(completion)) {
+                super.complete(completion);
+            }
+            return;
+        }
 
-    private Element renderConstructor(Constructor constructor) {
-        TableElement table = new TableElement().leftCellPadding(1).rightCellPadding(1);
-
-        table.row(label("declaring-class").style(bold.bold()), label(constructor.getDeclaringClass().getName()))
-             .row(label("constructor-name").style(bold.bold()), label("<init>").style(bold.bold()))
-             .row(label("modifier").style(bold.bold()), label(StringUtils.modifier(constructor.getModifiers(), ',')))
-             .row(label("annotation").style(bold.bold()), label(TypeRenderUtils.drawAnnotation(constructor.getDeclaredAnnotations())))
-             .row(label("parameters").style(bold.bold()), label(TypeRenderUtils.drawParameters(constructor)))
-             .row(label("exceptions").style(bold.bold()), label(TypeRenderUtils.drawExceptions(constructor)));
-        return table;
+        super.complete(completion);
     }
 }

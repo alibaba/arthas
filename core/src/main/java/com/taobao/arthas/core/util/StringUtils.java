@@ -1,8 +1,3 @@
-//
-// Source code recreated from a .class file by IntelliJ IDEA
-// (powered by Fernflower decompiler)
-//
-
 package com.taobao.arthas.core.util;
 
 import java.lang.reflect.Modifier;
@@ -14,15 +9,6 @@ import java.util.StringTokenizer;
 import java.util.TreeSet;
 
 public abstract class StringUtils {
-
-    private static final String FOLDER_SEPARATOR = "/";
-    private static final String WINDOWS_FOLDER_SEPARATOR = "\\";
-    private static final String TOP_PATH = "..";
-    private static final String CURRENT_PATH = ".";
-    private static final char EXTENSION_SEPARATOR = '.';
-    public static final int UNIT = 1024;
-    public static final String STRING_UNITS = "KMGTPE";
-
 
     /**
      * 获取异常的原因描述
@@ -50,7 +36,7 @@ public abstract class StringUtils {
         try {
             return obj.toString();
         } catch (Throwable t) {
-            return "ERROR DATA!!!";
+            return "ERROR DATA!!! Method toString() throw exception. obj class: " + obj.getClass() + ", exception message: " + t.getMessage();
         }
     }
 
@@ -85,7 +71,7 @@ public abstract class StringUtils {
         return StringUtils.replace(className, "/", ".");
     }
 
-    public static String concat(String seperator, Class<?>... types) {
+    public static String concat(String separator, Class<?>... types) {
         if (types == null || types.length == 0) {
             return Constants.EMPTY_STRING;
         }
@@ -94,7 +80,23 @@ public abstract class StringUtils {
         for (int i = 0; i < types.length; i++) {
             builder.append(classname(types[i]));
             if (i < types.length - 1) {
-                builder.append(seperator);
+                builder.append(separator);
+            }
+        }
+
+        return builder.toString();
+    }
+
+    public static String concat(String separator, String... strs) {
+        if (strs == null || strs.length == 0) {
+            return Constants.EMPTY_STRING;
+        }
+
+        StringBuilder builder = new StringBuilder();
+        for (int i = 0; i < strs.length; i++) {
+            builder.append(strs[i]);
+            if (i < strs.length - 1) {
+                builder.append(separator);
             }
         }
 
@@ -525,20 +527,8 @@ public abstract class StringUtils {
         }
     }
 
-
-    private static void validateLocalePart(String localePart) {
-        for(int i = 0; i < localePart.length(); ++i) {
-            char ch = localePart.charAt(i);
-            if(ch != 95 && ch != 32 && !Character.isLetterOrDigit(ch)) {
-                throw new IllegalArgumentException("Locale part \"" + localePart + "\" contains invalid characters");
-            }
-        }
-
-    }
-
-
     public static String[] toStringArray(Collection<String> collection) {
-        return collection == null?null:(String[])collection.toArray(new String[collection.size()]);
+        return collection == null?null:(String[])collection.toArray(new String[0]);
     }
 
     public static String[] split(String toSplit, String delimiter) {
@@ -593,13 +583,13 @@ public abstract class StringUtils {
             return null;
         } else {
             StringTokenizer st = new StringTokenizer(str, delimiters);
-            ArrayList tokens = new ArrayList();
+            ArrayList<String> tokens = new ArrayList<String>();
 
             while(true) {
                 String token;
                 do {
                     if(!st.hasMoreTokens()) {
-                        return toStringArray((Collection)tokens);
+                        return toStringArray(tokens);
                     }
 
                     token = st.nextToken();
@@ -623,7 +613,7 @@ public abstract class StringUtils {
         } else if(delimiter == null) {
             return new String[]{str};
         } else {
-            ArrayList result = new ArrayList();
+            ArrayList<String> result = new ArrayList<String>();
             int pos;
             if("".equals(delimiter)) {
                 for(pos = 0; pos < str.length(); ++pos) {
@@ -640,7 +630,7 @@ public abstract class StringUtils {
                 }
             }
 
-            return toStringArray((Collection)result);
+            return toStringArray(result);
         }
     }
 
@@ -649,7 +639,7 @@ public abstract class StringUtils {
     }
 
     public static Set<String> commaDelimitedListToSet(String str) {
-        TreeSet set = new TreeSet();
+        TreeSet<String> set = new TreeSet<String>();
         String[] tokens = commaDelimitedListToStringArray(str);
         String[] var3 = tokens;
         int var4 = tokens.length;
@@ -871,19 +861,24 @@ public abstract class StringUtils {
     }
 
     public static String classLoaderHash(Class<?> clazz) {
-        if (clazz == null || clazz.getClassLoader() == null) return "null";
+        if (clazz == null || clazz.getClassLoader() == null) {
+            return "null";
+        }
         return Integer.toHexString(clazz.getClassLoader().hashCode());
     }
 
     /**
-     * format byte size to human readable format
+     * format byte size to human readable format. https://stackoverflow.com/a/3758880
      * @param bytes byets
      * @return  human readable format
      */
     public static String humanReadableByteCount(long bytes) {
-        if (bytes < UNIT) return bytes + " B";
-        int exp = (int) (Math.log(bytes) / Math.log(UNIT));
-        String pre =  STRING_UNITS.charAt(exp-1) +  "i";
-        return String.format("%.2f %sB", bytes / Math.pow(UNIT, exp), pre);
+        return bytes < 1024L ? bytes + " B"
+                : bytes < 0xfffccccccccccccL >> 40 ? String.format("%.1f KiB", bytes / 0x1p10)
+                : bytes < 0xfffccccccccccccL >> 30 ? String.format("%.1f MiB", bytes / 0x1p20)
+                : bytes < 0xfffccccccccccccL >> 20 ? String.format("%.1f GiB", bytes / 0x1p30)
+                : bytes < 0xfffccccccccccccL >> 10 ? String.format("%.1f TiB", bytes / 0x1p40)
+                : bytes < 0xfffccccccccccccL ? String.format("%.1f PiB", (bytes >> 10) / 0x1p40)
+                : String.format("%.1f EiB", (bytes >> 20) / 0x1p40);
     }
 }
