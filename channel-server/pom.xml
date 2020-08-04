@@ -19,6 +19,14 @@
             <artifactId>arthas-channel-common</artifactId>
             <version>${project.version}</version>
         </dependency>
+
+        <!-- for server-reflect -->
+        <dependency>
+            <groupId>io.grpc</groupId>
+            <artifactId>grpc-services</artifactId>
+            <version>${grpc.version}</version>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
 
 </project>

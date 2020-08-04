@@ -3,6 +3,11 @@ option java_multiple_files = true;
 
 package com.alibaba.arthas.channel.proto;
 
+message StatusResult {
+    int32 statusCode = 1;
+    string message = 2;
+}
+
 message SystemEnvResult {
     string type = 1;
     map<string, string> env = 2;
