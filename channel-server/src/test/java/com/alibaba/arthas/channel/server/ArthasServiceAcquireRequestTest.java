@@ -9,6 +9,7 @@ import com.alibaba.arthas.channel.proto.ExecuteParams;
 import com.alibaba.arthas.channel.proto.ExecuteResult;
 import com.alibaba.arthas.channel.proto.GeneralResult;
 import com.alibaba.arthas.channel.proto.ResponseStatus;
+import com.alibaba.arthas.channel.proto.SessionResult;
 import com.alibaba.arthas.channel.proto.StatusResult;
 import com.alibaba.arthas.channel.proto.SystemEnvResult;
 import com.alibaba.arthas.channel.proto.VersionResult;
@@ -161,6 +162,10 @@ public class ArthasServiceAcquireRequestTest {
                             .setStatusCode(0)
                             .build()));
                 } else {
+                    results.add(Any.pack(SessionResult.newBuilder()
+                            .setJavaPid(1923)
+                            .setSessionId("sessionId-222")
+                            .build()));
                     results.add(Any.pack(StatusResult.newBuilder()
                             .setStatusCode(-1)
                             .setMessage("Not supported command")

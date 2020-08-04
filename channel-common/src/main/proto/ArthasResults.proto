@@ -4,8 +4,9 @@ option java_multiple_files = true;
 package com.alibaba.arthas.channel.proto;
 
 message StatusResult {
-    int32 statusCode = 1;
-    string message = 2;
+    string type = 1;
+    sint32 statusCode = 2;
+    string message = 3;
 }
 
 message SystemEnvResult {
@@ -16,4 +17,10 @@ message SystemEnvResult {
 message VersionResult {
     string type = 1;
     string version = 2;
+}
+
+message SessionResult {
+    string type = 1;
+    int64 javaPid = 2;
+    string sessionId = 3;
 }

@@ -162,15 +162,21 @@ public class ArthasServiceServerTest {
                         executeResult.getJobId();
                         executeResult.getJobStatus();
                         List<Any> resultsList = executeResult.getResultsList();
-                        try {
-                            for (Any result : resultsList) {
-                                String clazzName = result.getTypeUrl().split("/")[1];
+                        for (Any result : resultsList) {
+                            String clazzName = result.getTypeUrl().split("/")[1];;
+                            Message resultMessage = null;
+                            //catch unknown message type error
+                            try {
                                 Class<Message> resultClass = (Class<Message>) Class.forName(clazzName);
-                                Message resultMessage = result.unpack(resultClass);
+                                resultMessage = result.unpack(resultClass);
+                            } catch (Throwable e) {
+                                System.out.println("parse result failure, clazzName: " + clazzName +", error: " + e.toString());
+                                e.printStackTrace();
+                            }
+
+                            if (resultMessage != null) {
                                 handleResultMessage(resultMessage);
                             }
-                        } catch (Exception e) {
-                            e.printStackTrace();
                         }
                     }
                     try {
@@ -238,6 +244,8 @@ public class ArthasServiceServerTest {
     }
 
     private static void handleResultMessage(Message resultMessage) {
+
         System.out.println("result message: "+resultMessage.getClass().getName());
+
     }
 }
