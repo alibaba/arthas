@@ -276,6 +276,7 @@ public class ProfilerCommand extends AnnotatedCommand {
 
             if (ProfilerAction.actions.equals(profilerAction)) {
                 process.appendResult(new ProfilerModel(actions()));
+                process.end();
                 return;
             }
 
