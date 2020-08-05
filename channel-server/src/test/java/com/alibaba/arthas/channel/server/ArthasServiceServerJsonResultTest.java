@@ -12,21 +12,21 @@ import com.alibaba.arthas.channel.proto.HeartbeatResponse;
 import com.alibaba.arthas.channel.proto.RegisterResult;
 import com.alibaba.arthas.channel.proto.RequestAction;
 import com.alibaba.arthas.channel.proto.ResultFormat;
-import com.google.protobuf.Any;
-import com.google.protobuf.Message;
+import com.alibaba.fastjson.JSON;
 import io.grpc.Server;
 import io.grpc.ServerBuilder;
 import io.grpc.protobuf.services.ProtoReflectionService;
 import io.grpc.stub.StreamObserver;
 
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 
 /**
  * @author gongdewei 2020/8/3
  */
-public class ArthasServiceServerTest {
+public class ArthasServiceServerJsonResultTest {
 
     public static void main(String[] args) {
         TestArthasService arthasService = new TestArthasService();
@@ -48,13 +48,12 @@ public class ArthasServiceServerTest {
     }
 
     private static void startRequestProducerThread(final TestArthasService arthasService) {
-
         Thread thread = new Thread(new Runnable() {
             @Override
             public void run() {
                 for (int i = 0; i < 10000; i++) {
                     try {
-                        String commandLine = i % 3 == 0 ? "sysenv" : (i % 3 == 1 ? "version" : "sysprop");
+                        String commandLine = i % 3 == 0 ? "sysenv" : (i % 3 == 1 ? "version" : "cat");
                         arthasService.putActionRequest(ActionRequest.newBuilder()
                                 .setAction(RequestAction.EXECUTE)
                                 .setAgentId("agent-1002")
@@ -63,7 +62,7 @@ public class ArthasServiceServerTest {
                                 .setExecuteParams(ExecuteParams.newBuilder()
                                         .setCommandLine(commandLine)
                                         .setExecTimeout(10000)
-                                        .setResultFormat(ResultFormat.PROTO)
+                                        .setResultFormat(ResultFormat.JSON)
                                         .build())
                                 .build());
                     } catch (Exception e) {
@@ -164,22 +163,11 @@ public class ArthasServiceServerTest {
                         ExecuteResult executeResult = response.getExecuteResult();
                         executeResult.getJobId();
                         executeResult.getJobStatus();
-                        List<Any> resultsList = executeResult.getResultsList();
-                        for (Any result : resultsList) {
-                            String clazzName = result.getTypeUrl().split("/")[1];;
-                            Message resultMessage = null;
-                            //catch unknown message type error
-                            try {
-                                Class<Message> resultClass = (Class<Message>) Class.forName(clazzName);
-                                resultMessage = result.unpack(resultClass);
-                            } catch (Throwable e) {
-                                System.out.println("parse result failure, clazzName: " + clazzName +", error: " + e.toString());
-                                e.printStackTrace();
-                            }
 
-                            if (resultMessage != null) {
-                                handleResultMessage(resultMessage);
-                            }
+                        // get json results
+                        if (executeResult.hasResultsJson()) {
+                            String resultsJson = executeResult.getResultsJson().getValue();
+                            handleResultJson(resultsJson);
                         }
                     }
                     try {
@@ -246,9 +234,12 @@ public class ArthasServiceServerTest {
         }
     }
 
-    private static void handleResultMessage(Message resultMessage) {
-
-        System.out.println("result message: "+resultMessage.getClass().getName());
+    private static void handleResultJson(String resultsJson) {
+        List<Map<String, Object>> results = (List<Map<String, Object>>) JSON.parse(resultsJson);
+        for (int i = 0; i < results.size(); i++) {
+            System.out.println("result type: "+results.get(i).get("type"));
+        }
 
     }
+
 }

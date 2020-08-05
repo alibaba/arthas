@@ -9,6 +9,14 @@ message StatusResult {
     string message = 3;
 }
 
+/*
+ * Proto data format not supported for the command result
+ */
+message UnknownResult {
+    string type = 1;
+    string message = 2;
+}
+
 message SystemEnvResult {
     string type = 1;
     map<string, string> env = 2;

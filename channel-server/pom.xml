@@ -19,6 +19,27 @@
             <artifactId>arthas-channel-common</artifactId>
             <version>${project.version}</version>
         </dependency>
+        <dependency>
+            <groupId>com.taobao.arthas</groupId>
+            <artifactId>arthas-core</artifactId>
+            <version>${project.version}</version>
+            <scope>test</scope>
+            <exclusions>
+                <exclusion>
+                    <artifactId>arthas-tunnel-client</artifactId>
+                    <groupId>com.taobao.arthas</groupId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>termd-core</artifactId>
+                    <groupId>com.alibaba.middleware</groupId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+
+        <dependency>
+            <groupId>com.alibaba</groupId>
+            <artifactId>fastjson</artifactId>
+        </dependency>
 
         <!-- for server-reflect -->
         <dependency>

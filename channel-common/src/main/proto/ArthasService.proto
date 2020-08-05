@@ -20,6 +20,7 @@ option java_multiple_files = true;
 
 // import "google/protobuf/timestamp.proto";
 import "google/protobuf/any.proto";
+import "google/protobuf/wrappers.proto";
 import "ArthasResults.proto";
 
 package com.alibaba.arthas.channel.proto;
@@ -52,9 +53,16 @@ enum ResponseStatus {
 }
 
 enum AgentStatus {
+    /* Arthas agent is up */
     UP = 0;
+
+    /* Arthas agent is down */
     DOWN = 1;
+
+    /* Arthas agent is ready  */
     IN_SERVICE = 2;
+
+    /* Arthas agent is out-of-service */
     OUT_OF_SERVICE = 3;
 }
 
@@ -74,15 +82,35 @@ enum RequestAction {
     CLOSE_SESSION = 4;
 }
 
+enum ResultFormat {
+    /* command results use proto format (ExecuteResult.results) */
+    PROTO = 0;
+
+    /* command results use json format  (ExecuteResult.resultsJson)*/
+    JSON = 1;
+}
+
 message ExecuteParams {
+
+    /* command line to execute */
     string commandLine = 1;
+
+    /* execute timeout */
     int32 execTimeout = 2;
+
+    /* command results data format, default value is ResultFormat.PROTO */
+    ResultFormat resultFormat = 3;
 }
 
 message ExecuteResult {
     int32 jobId = 1;
     string jobStatus = 2;
+
+    /* results of proto format */
     repeated google.protobuf.Any results = 3;
+
+    /* results of json format */
+    google.protobuf.StringValue resultsJson = 4;
 }
 
 message ActionRequest {
