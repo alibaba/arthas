@@ -29,7 +29,8 @@ public class SessionManagerImpl implements SessionManager {
     private final InternalCommandManager commandManager;
     private final Instrumentation instrumentation;
     private final JobController jobController;
-    private final long timeoutMillis;
+    private final long sessionTimeoutMillis;
+    private final int consumerTimeoutMillis;
     private final long reaperInterval;
     private final Map<String, Session> sessions;
     private final long pid;
@@ -42,7 +43,8 @@ public class SessionManagerImpl implements SessionManager {
         this.commandManager = commandManager;
         this.jobController = jobController;
         this.sessions = new ConcurrentHashMap<String, Session>();
-        this.timeoutMillis = options.getSessionTimeout();
+        this.sessionTimeoutMillis = options.getSessionTimeout();
+        this.consumerTimeoutMillis = 5 * 60 * 1000; // 5 minutes
         this.reaperInterval = options.getReaperInterval();
         this.instrumentation = options.getInstrumentation();
         this.pid = options.getPid();
@@ -61,9 +63,6 @@ public class SessionManagerImpl implements SessionManager {
         //session.put(Session.TTY, term);
         String sessionId = UUID.randomUUID().toString();
         session.put(Session.ID, sessionId);
-
-        //Result Distributor
-        session.setResultDistributor(new SharingResultDistributorImpl(session));
 
         sessions.put(sessionId, session);
         return session;
@@ -135,7 +134,7 @@ public class SessionManagerImpl implements SessionManager {
             // do not close if there is still job running,
             // e.g. trace command might wait for a long time before condition is met
             //TODO check background job size
-            if (now - session.getLastAccessTime() > timeoutMillis && session.getForegroundJob() == null) {
+            if (now - session.getLastAccessTime() > sessionTimeoutMillis && session.getForegroundJob() == null) {
                 toClose.add(session);
             }
             evictConsumers(session);
@@ -146,7 +145,7 @@ public class SessionManagerImpl implements SessionManager {
             if (job != null) {
                 job.interrupt();
             }
-            long timeOutInMinutes = timeoutMillis / 1000 / 60;
+            long timeOutInMinutes = sessionTimeoutMillis / 1000 / 60;
             String reason = "session is inactive for " + timeOutInMinutes + " min(s).";
             session.getResultDistributor().appendResult(new MessageModel(reason));
             this.removeSession(session.getSessionId());
@@ -166,7 +165,7 @@ public class SessionManagerImpl implements SessionManager {
             long now = System.currentTimeMillis();
             for (ResultConsumer consumer : consumers) {
                 long inactiveTime = now - consumer.getLastAccessTime();
-                if (inactiveTime > 30000) {
+                if (inactiveTime > consumerTimeoutMillis) {
                     //inactive duration must be large than pollTimeLimit
                     logger.info("Removing inactive consumer from session, sessionId: {}, consumerId: {}, inactive duration: {}",
                             session.getSessionId(), consumer.getConsumerId(), inactiveTime);
