@@ -39,7 +39,7 @@ http://127.0.0.1:8563/api。
 目前支持的请求Action如下： 
 
 * `exec` : 同步执行命令，命令正常结束或者超时后中断命令执行后返回命令的执行结果。
-*  `async_exec` : 异步执行命令，立即返回命令的调度结果，命令执行结果通过`PULL_RESULTS`获取。
+*  `async_exec` : 异步执行命令，立即返回命令的调度结果，命令执行结果通过`pull_results`获取。
 *  `interrupt_job` : 中断会话当前的命令，类似Telnet `Ctrl + c`的功能。
 *  `pull_results` : 获取异步执行的命令的结果，以http 长轮询（long-polling）方式重复执行
 *  `init_session` : 创建会话
