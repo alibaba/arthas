@@ -1,43 +1,41 @@
-monitor
-=======
 
-[`monitor` online tutorial](https://alibaba.github.io/arthas/arthas-tutorials?language=en&id=command-monitor)
+> 方法执行监控
 
-> Monitor method invocation.
+对匹配 `class-pattern`／`method-pattern`的类、方法的调用进行监控。
 
-Monitor invocation for the method matched with `class-pattern` and `method-pattern`.
+`monitor` 命令是一个非实时返回命令.
 
-`monitor` is not a command returning immediately.
+实时返回命令是输入之后立即返回，而非实时返回的命令，则是不断的等待目标 Java 进程返回信息，直到用户输入 `Ctrl+C` 为止。
 
-A command returning immediately is a command immediately returns with the result after the command is input, while a non-immediate returning command will keep outputting the information from the target JVM process until user presses `Ctrl+C`.
+服务端是以任务的形式在后台跑任务，植入的代码随着任务的中止而不会被执行，所以任务关闭后，不会对原有性能产生太大影响，而且原则上，任何Arthas命令不会引起原有业务逻辑的改变。
 
-On Arthas's server side, the command is running as a background job, but the weaved code will not take further effect once the job is terminated, therefore, it will not impact the performance after the job quits. Furthermore, Arthas is designed to have no side effect to the business logic.
+### 监控的维度说明
 
-### Items to monitor
-
-|Item|Specification|
+|监控项|说明|
 |---:|:---|
-|timestamp|timestamp|
-|class|Java class|
-|method|method (constructor and regular methods)|
-|total|calling times|
-|success|success count|
-|fail|failure count|
-|rt|average RT|
-|fail-rate|failure ratio|
+|timestamp|时间戳|
+|class|Java类|
+|method|方法（构造方法、普通方法）|
+|total|调用次数|
+|success|成功次数|
+|fail|失败次数|
+|rt|平均RT|
+|fail-rate|失败率|
 
-### Parameters
+### 参数说明
 
-Parameter `[c:]` stands for cycles of statistics. Its value is an integer value in seconds.
+方法拥有一个命名参数 `[c:]`，意思是统计周期（cycle of output），拥有一个整型的参数值
 
-|Name|Specification|
+|参数名称|参数说明|
 |---:|:---|
-|*class-pattern*|pattern for the class name|
-|*method-pattern*|pattern for the method name|
-|`[E]`|turn on regex matching while the default is wildcard matching|
-|`[c:]`|cycle of statistics, the default value: `120`s|
+|*class-pattern*|类名表达式匹配|
+|*method-pattern*|方法名表达式匹配|
+|[E]|开启正则表达式匹配，默认为通配符匹配|
+|`[c:]`|统计周期，默认值为120秒|
 
-### Usage
+### 使用参考
+
+`monitor -c 5 demo.MathGame primeFactors`{{execute T2}}
 
 ```bash
 $ monitor -c 5 demo.MathGame primeFactors

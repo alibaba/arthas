@@ -1,8 +1,6 @@
 monitor
 =======
 
-[`monitor` online tutorial](https://alibaba.github.io/arthas/arthas-tutorials?language=en&id=command-monitor)
-
 > Monitor method invocation.
 
 Monitor invocation for the method matched with `class-pattern` and `method-pattern`.
@@ -38,6 +36,8 @@ Parameter `[c:]` stands for cycles of statistics. Its value is an integer value 
 |`[c:]`|cycle of statistics, the default value: `120`s|
 
 ### Usage
+
+`monitor -c 5 demo.MathGame primeFactors`{{execute T2}}
 
 ```bash
 $ monitor -c 5 demo.MathGame primeFactors
