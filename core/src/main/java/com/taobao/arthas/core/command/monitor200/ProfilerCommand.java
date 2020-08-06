@@ -290,6 +290,10 @@ public class ProfilerCommand extends AnnotatedCommand {
                 String result = execute(asyncProfiler, this.actionArg);
                 appendExecuteResult(process, result);
             } else if (ProfilerAction.start.equals(profilerAction)) {
+                //jfr录制，必须在start的时候就指定文件路径
+                if (this.file == null && "jfr".equals(format)) {
+                    this.file = outputFile();
+                }
                 String executeArgs = executeArgs(ProfilerAction.start);
                 String result = execute(asyncProfiler, executeArgs);
                 ProfilerModel profilerModel = createProfilerModel(result);
