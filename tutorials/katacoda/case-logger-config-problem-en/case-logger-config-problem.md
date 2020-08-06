@@ -12,15 +12,30 @@ $ sc -d com.example.demo.arthas.user.UserController | grep classLoaderHash
  classLoaderHash   1be6f5c3
 ```
 
-Please write down your classLoaderHash here, in the case here, it's `1be6f5c3`. It will be used in the future steps.
+Please write down your classLoaderHash here since it's dynamic. In the case here, it's `1be6f5c3`.
 
-Note: Please replace `<classLoaderHash>` with your classLoaderHash above, then execute the commands manually in the following steps:
+if you use`-c`, you have to manually type hashcode by `-c <hashcode>`.
+
+```bash
+$ ognl -c 1be6f5c3 @com.example.demo.arthas.user.UserController@logger
+```
+
+For classloader with only one instance, it can be specified by `--classLoaderClass` using class name, which is more convenient to use.
+
+```bash
+$ ognl --classLoaderClass org.springframework.boot.loader.LaunchedURLClassLoader  @org.springframework.boot.SpringApplication@logger
+@Slf4jLocationAwareLog[
+    FQCN=@String[org.apache.commons.logging.LogAdapter$Slf4jLocationAwareLog],
+    name=@String[org.springframework.boot.SpringApplication],
+    logger=@Logger[Logger[org.springframework.boot.SpringApplication]],
+]
+```
 
 ### View the logger system used by the app
 
 Take `UserController` as an example, it uses slf4j api, but the actual logger system used is logback.
 
-`ognl -c <classLoaderHash> '@com.example.demo.arthas.user.UserController@logger'`
+`ognl --classLoaderClass com.example.demo.arthas.user.UserController '@com.example.demo.arthas.user.UserController@logger'`{{execute T2}}
 
 
 ```bash
@@ -42,12 +57,12 @@ $ ognl -c 1be6f5c3 '@com.example.demo.arthas.user.UserController@logger'
 ### Find the configuration file actually loaded by the logback
 
 
-`ognl -c <classLoaderHash> '#map1=@org.slf4j.LoggerFactory@getLogger("root").loggerContext.objectMap, #map1.get("CONFIGURATION_WATCH_LIST")'`
+`ognl --classLoaderClass com.example.demo.arthas.user.UserController '#map1=@org.slf4j.LoggerFactory@getLogger("root").loggerContext.objectMap, #map1.get("CONFIGURATION_WATCH_LIST")'`{{execute T2}}
 
 
 ### Use the classloader command to find possible logger configuration files
 
-`classloader -c <classLoaderHash> -r logback-spring.xml`
+`classloader --classLoaderClass com.example.demo.arthas.user.UserController -r logback-spring.xml`{{execute T2}}
 
 ```
 $ classloader -c 1be6f5c3 -r logback-spring.xml
@@ -59,8 +74,8 @@ You can know the specific source of the loaded configuration.
 
 You can try to load files that are prone to conflict:
 
-`classloader -c <classLoaderHash> -r logback.xml`
+`classloader --classLoaderClass com.example.demo.arthas.user.UserController -r logback.xml`{{execute T2}}
 
-`classloader -c <classLoaderHash> -r log4j.properties`
+`classloader --classLoaderClass com.example.demo.arthas.user.UserController -r log4j.properties`{{execute T2}}
 
 
