@@ -157,6 +157,9 @@ ts=2018-12-03 19:34:19; [cost=0.587833ms] result=@ArrayList[
 ```
 
 * `-x`表示遍历深度，可以调整来打印具体的参数和结果内容，默认值是1。
+* `watch-express` 单个值可以不加'{}'，多个值需要加'{a,b,c}'。
+* `condition-express` 不能加'{}'，可以使用逗号分隔子表达式，取表达式最后一个值来判断。
+
 
 #### 条件表达式的例子
 
@@ -173,6 +176,14 @@ ts=2018-12-03 19:36:04; [cost=0.530255ms] result=@ArrayList[
 ```
 
 * 只有满足条件的调用，才会有响应。
+
+* 根据参数类型进行过滤，用于方法重载后相同方法名称不同参数的判断:
+
+`watch demo.MathGame primeFactors '{params, params[0].class.name}' 'params[0].class.name == "java.lang.Integer"'`{{execute T2}}
+
+* 根据参数个数过滤：
+
+`watch demo.MathGame primeFactors '{params, params.length}' 'params.length==1'`{{execute T2}}
 
 #### 观察异常信息的例子
 
@@ -192,8 +203,12 @@ ts=2018-12-03 19:38:00; [cost=1.414993ms] result=@ArrayList[
 ]
 ```
 
-* `-e`表示抛出异常时才触发
+* `-e`表示抛出异常时才触发
 * express中，表示异常信息的变量是`throwExp`
+
+根据异常类型或者message进行过滤：
+
+`watch demo.MathGame primeFactors '{params, throwExp}' '#msg=throwExp.toString(), #msg.contains("IllegalArgumentException")' -e -x 2`{{execute T2}}
 
 #### 按照耗时进行过滤
 

@@ -157,6 +157,8 @@ ts=2018-12-03 19:34:19; [cost=0.587833ms] result=@ArrayList[
 ```
 
 * `-x`: Expand level of object (1 by default)
+* `Watch Express` single value can not be added '{}', and multiple values need to be added '{a, B, C}'.
+* `condition Express` cannot add '{}', you can use commas to separate subexpressions and take the last value of the expression to judge.
 
 #### Use condition expressions to locate specific call
 
@@ -171,6 +173,16 @@ ts=2018-12-03 19:36:04; [cost=0.530255ms] result=@ArrayList[
     @MathGame[demo.MathGame@41cf53f9],
 ]
 ```
+
+* Only calls that meet the conditions will respond.
+
+* Filtering according to the parameter type is used to judge different parameters of the same method name after method overloading
+
+`watch demo.MathGame primeFactors '{params, params[0].class.name}' 'params[0].class.name == "java.lang.Integer"'`{{execute T2}}
+
+* Filter according to the number of parameters:
+
+`watch demo.MathGame primeFactors '{params, params.length}' 'params.length==1'`{{execute T2}}
 
 #### Check `exceptions`
 
@@ -192,6 +204,10 @@ ts=2018-12-03 19:38:00; [cost=1.414993ms] result=@ArrayList[
 
 * `-e`: Trigger when an exception is thrown
 * `throwExp`: the exception object
+
+Filter according to exception type or message:
+
+`watch demo.MathGame primeFactors '{params, throwExp}' '#msg=throwExp.toString(), #msg.contains("IllegalArgumentException")' -e -x 2`{{execute T2}}
 
 #### Filter by time cost
 
