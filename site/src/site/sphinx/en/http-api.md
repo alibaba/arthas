@@ -11,10 +11,12 @@ a series of diagnostic operations in specific application scenarios.
 
 ### Interface Description
 
-**Access address**  
+**Access address**
+
 The Http API address is: `http://ip:port/api`, the request parameters
 must be submitted using `POST`. Such as POST
-`http://127.0.0.1:8563/api`.  
+`http://127.0.0.1:8563/api`.
+
 Note: The telnet port `3658` has compatibility issues with the Chrome
 browser. It is recommended to use the http port `8563` to access the
 http api.
@@ -46,7 +48,8 @@ Request data format description:
 Note that different actions use different parameters. Set the parameters
 according to the specific action.
 
-**Request Action Description**  
+**Request Action Description**
+
 Currently supported request actions are as follows:
 
 * `exec` : The command is executed synchronously, and the command
@@ -63,7 +66,8 @@ Currently supported request actions are as follows:
    sharing the same Arthas session.
 *  `close_session` : Close the session.
 
-**Response status**  
+**Response status**
+
 The state attribute in the response indicates the request processing
 state, and its value is as follows:
 
@@ -163,7 +167,8 @@ commands such as watch/trace, but you can't interrupt the command
 execution, and there may be hang up for a long time. Please refer to the
 example in the
 "[Make watch command output a map object](#change_watch_value_to_map)"
-section.  
+section.
+
 Please try to deal with it in the following way:
 
 * Set a reasonable `execTimeout` to forcibly interrupt the command

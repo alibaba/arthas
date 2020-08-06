@@ -7,9 +7,12 @@ Http API
 API可以提供结构化的数据，支持实现复杂的交互功能，比如特定应用场景的一系列诊断操作。
 
 ### 接口说明
-**访问地址**  
+
+**访问地址**
+
 Http接口地址为： http://ip:port/api，必须使用POST方式提交请求参数。如POST
-http://127.0.0.1:8563/api。  
+http://127.0.0.1:8563/api。
+
 注意：telnet服务的3658端口与Chrome浏览器有兼容性问题，建议使用http端口8563来访问http接口。
 
 **请求格式**
@@ -35,7 +38,8 @@ http://127.0.0.1:8563/api。
 
 注意不同的action使用到参数不同，根据具体的action来设置参数。
 
-**请求Action说明**  
+**请求Action说明**
+
 目前支持的请求Action如下： 
 
 * `exec` : 同步执行命令，命令正常结束或者超时后中断命令执行后返回命令的执行结果。
@@ -46,7 +50,8 @@ http://127.0.0.1:8563/api。
 *  `join_session` : 加入会话，用于支持多人共享同一个Arthas会话
 *  `close_session` : 关闭会话
 
-**接口响应状态**  
+**接口响应状态**
+
 响应中的state属性表示请求处理状态，取值如下：
 
 * SCHEDULED：异步执行命令时表示已经创建job并已提交到命令执行队列，命令可能还没开始执行或者执行中；
@@ -55,6 +60,7 @@ http://127.0.0.1:8563/api。
 * REFUSED：请求被拒绝（完成状态），通常附带message说明原因；
 
 ### 一次性命令
+
 与执行批处理命令类似，不需要创建/关闭会话，以同步方式执行命令，不指定`sessionId`参数。
 
 ```
@@ -137,6 +143,7 @@ curl -Ss -XPOST http://localhost:8563/api -d '
   1`也会挂起等待到执行超时。
 
 ### 会话方式访问
+
 用户创建管理Arthas会话，适用于复杂的交互过程。访问流程如下：
 
 * 创建会话
@@ -430,9 +437,11 @@ curl -Ss -XPOST http://localhost:8563/api -d '''
     "type" : "status"
 }
 ```
-`type`为`status`表示命令状态结果：  
+`type`为`status`表示命令状态结果：
+
 每个命令执行结束后都有唯一一个status结果。`statusCode`
-为0表示执行成功，`statusCode` 为非0值表示执行失败，类似进程退出码(exit code)。  
+为0表示执行成功，`statusCode` 为非0值表示执行失败，类似进程退出码(exit code)。
+
 命令执行失败时一般会提供错误消息，如：
 
 ```
@@ -454,7 +463,8 @@ curl -Ss -XPOST http://localhost:8563/api -d '''
  }
 ```
 
-`type`为`input_status`表示输入状态：  
+`type`为`input_status`表示输入状态：
+
 用于UI交互时控制用户输入，每次执行命令前后会发送改变的消息。
 `inputStatus` 的值说明：
 
@@ -475,8 +485,8 @@ curl -Ss -XPOST http://localhost:8563/api -d '''
     "command" : "watch demo.MathGame primeFactors \"{params, returnObj, throwExp}\" "
  }
 ```
-`type`
-为`command`表示输入的命令数据：  
+`type` 为`command`表示输入的命令数据：
+
 用于交互UI回显用户当前输入的命令，拉取会话历史记录按顺序处理即可。
 
 
@@ -495,9 +505,9 @@ curl -Ss -XPOST http://localhost:8563/api -d '''
     "type" : "enhancer"
  }
 ```
-`type`为`enhancer`表示类增强结果：  
-trace/watch/jad/tt
-等命令需要对类进行增强，会接收到这个`enhancer`结果。可能出现`enhancer`结果成功，但没有命中方法的情况，客户端可以根据`enhancer`结果提示用户。
+`type`为`enhancer`表示类增强结果：
+
+trace/watch/jad/tt等命令需要对类进行增强，会接收到这个`enhancer`结果。可能出现`enhancer`结果成功，但没有命中方法的情况，客户端可以根据`enhancer`结果提示用户。
 
 #### 其它问题
 
