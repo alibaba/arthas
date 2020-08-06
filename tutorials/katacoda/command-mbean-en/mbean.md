@@ -34,6 +34,12 @@ This command can show or monitor Mbean attribute information.
 
 Notes：ObjectName matching rules differ from normal wildcards, Reference resources：[javax.management.ObjectName](https://docs.oracle.com/javase/8/docs/api/javax/management/ObjectName.html?is-external=true)
 
+### Multiple properties name matcher
+
+Check memory pool:
+
+`mbean java.lang:name=*,type=MemoryPool`{{execute T2}}
+
 ### Wildcards match specific attributes
 
 `mbean java.lang:type=Threading *Count`{{execute T2}}
@@ -41,6 +47,10 @@ Notes：ObjectName matching rules differ from normal wildcards, Reference resour
 ### Switch to regular matching using the `-E` command
 
 `mbean -E java.lang:type=Threading PeakThreadCount|ThreadCount|DaemonThreadCount`{{execute T2}}
+
+Check memory pool:
+
+`mbean -E java.lang:name=*,type=MemoryPool Name|Usage|Type | grep " HEAP" -A3 -B1`{{execute T2}}
 
 ### Real-time monitoring using `-i` command
 

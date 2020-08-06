@@ -34,6 +34,12 @@
 
 注意：ObjectName 的匹配规则与正常的通配符存在差异，详细参见：[javax.management.ObjectName](https://docs.oracle.com/javase/8/docs/api/javax/management/ObjectName.html?is-external=true)
 
+### 多属性名称的匹配
+
+查看内存池：
+
+`mbean java.lang:name=*,type=MemoryPool`{{execute T2}}
+
 ### 通配符匹配特定的属性字段
 
 `mbean java.lang:type=Threading *Count`{{execute T2}}
@@ -41,6 +47,10 @@
 ### 使用`-E`命令切换为正则匹配
 
 `mbean -E java.lang:type=Threading PeakThreadCount|ThreadCount|DaemonThreadCount`{{execute T2}}
+
+查看内存池：
+
+`mbean -E java.lang:name=*,type=MemoryPool Name|Usage|Type | grep " HEAP" -A3 -B1`{{execute T2}}
 
 ### 使用`-i`命令实时监控
 
