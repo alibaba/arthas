@@ -11,6 +11,7 @@ ognl
 |---:|:---|
 |*express*|执行的表达式|
 |`[c:]`|执行表达式的 ClassLoader 的 hashcode，默认值是SystemClassLoader|
+|`[classLoaderClass:]`|指定执行表达式的 ClassLoader 的 class name|
 |[x]|结果对象的展开层次，默认值1|
 
 
@@ -49,6 +50,38 @@ $ ognl '@demo.MathGame@random'
     seedOffset=@Long[24],
 ]
 ```
+
+通过hashcode指定ClassLoader：
+
+```bash
+$ classloader -t
++-BootstrapClassLoader                                                                                                                                                                          
++-jdk.internal.loader.ClassLoaders$PlatformClassLoader@301ec38b                                                                                                                                 
+  +-com.taobao.arthas.agent.ArthasClassloader@472067c7                                                                                                                                          
+  +-jdk.internal.loader.ClassLoaders$AppClassLoader@4b85612c                                                                                                                                    
+    +-org.springframework.boot.loader.LaunchedURLClassLoader@7f9a81e8 
+
+$ ognl -c 7f9a81e8 @org.springframework.boot.SpringApplication@logger
+@Slf4jLocationAwareLog[
+    FQCN=@String[org.apache.commons.logging.LogAdapter$Slf4jLocationAwareLog],
+    name=@String[org.springframework.boot.SpringApplication],
+    logger=@Logger[Logger[org.springframework.boot.SpringApplication]],
+]
+$ 
+```
+注意hashcode是变化的，需要先查看当前的ClassLoader信息，提取对应ClassLoader的hashcode。
+
+对于只有唯一实例的ClassLoader可以通过class name指定，使用起来更加方便：
+
+```bash
+$ ognl --classLoaderClass org.springframework.boot.loader.LaunchedURLClassLoader  @org.springframework.boot.SpringApplication@logger
+@Slf4jLocationAwareLog[
+    FQCN=@String[org.apache.commons.logging.LogAdapter$Slf4jLocationAwareLog],
+    name=@String[org.springframework.boot.SpringApplication],
+    logger=@Logger[Logger[org.springframework.boot.SpringApplication]],
+]
+```
+
 
 执行多行表达式，赋值给临时变量，返回一个List：
 

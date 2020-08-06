@@ -199,6 +199,14 @@ public class ClassUtils {
         return classLoaderVO;
     }
 
+    public static List<ClassLoaderVO> createClassLoaderVOList(Collection<ClassLoader> classLoaders) {
+        List<ClassLoaderVO> classLoaderVOList = new ArrayList<ClassLoaderVO>();
+        for (ClassLoader classLoader : classLoaders) {
+            classLoaderVOList.add(createClassLoaderVO(classLoader));
+        }
+        return classLoaderVOList;
+    }
+
     public static String classLoaderHash(Class<?> clazz) {
         if (clazz == null || clazz.getClassLoader() == null) {
             return "null";
