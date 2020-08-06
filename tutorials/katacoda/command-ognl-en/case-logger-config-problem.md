@@ -7,7 +7,7 @@ In this case, show how to troubleshoot logger conflicts.
 
 Take `UserController` as an example, it uses slf4j api, but the actual logger system used is logback.
 
-`ognl -c <classLoaderHash> '@com.example.demo.arthas.user.UserController@logger'`
+`ognl --classLoaderClass com.example.demo.arthas.user.UserController '@com.example.demo.arthas.user.UserController@logger'`{{execute T2}}
 
 
 ```bash
@@ -29,12 +29,12 @@ $ ognl -c 1be6f5c3 '@com.example.demo.arthas.user.UserController@logger'
 ### Find the configuration file actually loaded by the logback
 
 
-`ognl -c <classLoaderHash> '#map1=@org.slf4j.LoggerFactory@getLogger("root").loggerContext.objectMap, #map1.get("CONFIGURATION_WATCH_LIST")'`
+`ognl --classLoaderClass com.example.demo.arthas.user.UserController '#map1=@org.slf4j.LoggerFactory@getLogger("root").loggerContext.objectMap, #map1.get("CONFIGURATION_WATCH_LIST")'`{{execute T2}}
 
 
 ### Use the classloader command to find possible logger configuration files
 
-`classloader -c <classLoaderHash> -r logback-spring.xml`
+`classloader --classLoaderClass com.example.demo.arthas.user.UserController -r logback-spring.xml`{{execute T2}}
 
 ```
 $ classloader -c 1be6f5c3 -r logback-spring.xml
@@ -46,8 +46,8 @@ You can know the specific source of the loaded configuration.
 
 You can try to load files that are prone to conflict:
 
-`classloader -c <classLoaderHash> -r logback.xml`
+`classloader --classLoaderClass com.example.demo.arthas.user.UserController -r logback.xml`{{execute T2}}
 
-`classloader -c <classLoaderHash> -r log4j.properties`
+`classloader --classLoaderClass com.example.demo.arthas.user.UserController -r log4j.properties`{{execute T2}}
 
 

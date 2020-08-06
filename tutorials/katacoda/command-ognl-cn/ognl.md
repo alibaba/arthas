@@ -20,19 +20,34 @@ $ sc -d com.example.demo.arthas.user.UserController | grep classLoaderHash
  classLoaderHash   1be6f5c3
 ```
 
-请记下你的classLoaderHash，后面需要使用它。在这里，它是 `1be6f5c3`。
+注意hashcode是变化的，需要先查看当前的ClassLoader信息，提取对应ClassLoader的hashcode。
 
-注意：请使用你的classLoaderHash值覆盖 `<classLoaderHash>` ，然后手动执行下面所有所述命令：
+如果你使用`-c`，你需要手动输入hashcode：`-c <hashcode>`
+
+```bash
+$ ognl -c 1be6f5c3 @com.example.demo.arthas.user.UserController@logger
+```
+
+对于只有唯一实例的ClassLoader可以通过`--classLoaderClass`指定class name，使用起来更加方便：
+
+```bash
+$ ognl --classLoaderClass org.springframework.boot.loader.LaunchedURLClassLoader  @org.springframework.boot.SpringApplication@logger
+@Slf4jLocationAwareLog[
+    FQCN=@String[org.apache.commons.logging.LogAdapter$Slf4jLocationAwareLog],
+    name=@String[org.springframework.boot.SpringApplication],
+    logger=@Logger[Logger[org.springframework.boot.SpringApplication]],
+]
+```
 
 ### 获取静态类的静态字段
 
 获取`UserController`类里的`logger`字段：
 
-`ognl -c <classLoaderHash> @com.example.demo.arthas.user.UserController@logger`
+`ognl --classLoaderClass com.example.demo.arthas.user.UserController @com.example.demo.arthas.user.UserController@logger`{{execute T2}}
 
 还可以通过`-x`参数控制返回值的展开层数。比如：
 
-`ognl -c <classLoaderHash> -x 2 @com.example.demo.arthas.user.UserController@logger`
+`ognl --classLoaderClass com.example.demo.arthas.user.UserController -x 2 @com.example.demo.arthas.user.UserController@logger`{{execute T2}}
 
 ### 执行多行表达式，赋值给临时变量，返回一个List
 

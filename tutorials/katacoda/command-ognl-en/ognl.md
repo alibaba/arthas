@@ -18,19 +18,34 @@ $ sc -d com.example.demo.arthas.user.UserController | grep classLoaderHash
  classLoaderHash   1be6f5c3
 ```
 
-Please write down your classLoaderHash here, in the case here, it's `1be6f5c3`. It will be used in the future steps.
+Please write down your classLoaderHash here since it's dynamic. In the case here, it's `1be6f5c3`.
 
-Note: Please replace `<classLoaderHash>` with your classLoaderHash above, then execute the commands manually in the following steps:
+if you use`-c`, you have to manually type hashcode by `-c <hashcode>`.
+
+```bash
+$ ognl -c 1be6f5c3 @com.example.demo.arthas.user.UserController@logger
+```
+
+For classloader with only one instance, it can be specified by `--classLoaderClass` using class name, which is more convenient to use.
+
+```bash
+$ ognl --classLoaderClass org.springframework.boot.loader.LaunchedURLClassLoader  @org.springframework.boot.SpringApplication@logger
+@Slf4jLocationAwareLog[
+    FQCN=@String[org.apache.commons.logging.LogAdapter$Slf4jLocationAwareLog],
+    name=@String[org.springframework.boot.SpringApplication],
+    logger=@Logger[Logger[org.springframework.boot.SpringApplication]],
+]
+```
 
 ### Get static fields of static classes
 
 Get the `logger` field of the `UserController` class:
 
-`ognl -c <classLoaderHash> @com.example.demo.arthas.user.UserController@logger`
+`ognl --classLoaderClass com.example.demo.arthas.user.UserController @com.example.demo.arthas.user.UserController@logger`{{execute T2}}
 
 Control the number of expansion layers of the return value with the `-x` parameter. such as:
 
-`ognl -c <classLoaderHash> -x 2 @com.example.demo.arthas.user.UserController@logger`
+`ognl --classLoaderClass com.example.demo.arthas.user.UserController -x 2 @com.example.demo.arthas.user.UserController@logger`{{execute T2}}
 
 ### Execute multi-line expressions
 
