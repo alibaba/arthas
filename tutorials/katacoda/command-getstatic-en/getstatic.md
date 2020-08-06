@@ -1,11 +1,9 @@
-getstatic
-=========
 
-[`getstatic` online tutorial](https://alibaba.github.io/arthas/arthas-tutorials?language=en&id=command-getstatic)
-
-* It is recommended to use the [OGNL] (ognl.md) command, which will be more flexible.
+* It is recommended to use the [OGNL] (https://alibaba.github.io/arthas/arthas-tutorials?language=en&id=command-ognl) command, which will be more flexible.
 
 Check the static fields of classes conveniently, the usage is `getstatic class_name field_name`.
+
+`getstatic demo.MathGame random`{{execute T2}}
 
 ```bash
 $ getstatic demo.MathGame random
@@ -34,22 +32,3 @@ Tip: if the static field is a complex class, you can even use [`OGNL`](https://c
 
 * [OGNL official guide](https://commons.apache.org/proper/commons-ognl/language-guide.html)
 * [Special usages](https://github.com/alibaba/arthas/issues/71)
-
-
-E.g. suppose `n` is a `Map` and its key is a `Enum`, then you can achieve this if you want to pick the key with a specific `Enum` value:
-
-```bash
-$ getstatic com.alibaba.arthas.Test n 'entrySet().iterator.{? #this.key.name()=="STOP"}'
-field: n
-@ArrayList[
-    @Node[STOP=bbb],
-]
-Affect(row-cnt:1) cost in 68 ms.
-
-
-$ getstatic com.alibaba.arthas.Test m 'entrySet().iterator.{? #this.key=="a"}'
-field: m
-@ArrayList[
-    @Node[a=aaa],
-]
-```
