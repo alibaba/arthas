@@ -1,7 +1,3 @@
-stack
-=====
-
-[`stack` online tutorial](https://alibaba.github.io/arthas/arthas-tutorials?language=en&id=command-stack)
 
 > Print out the full call stack of the current method.
 
@@ -21,18 +17,14 @@ There's one thing worthy noting here is observation expression. The observation 
 
 Thanks for `advice`'s data structure, it is possible to observe from varieties of different angles. Inside `advice` parameter, all necessary information for notification can be found.
 
-Pls. refer to [core parameters in expression](advice-class.md) for more details.
 * Pls. also refer to [https://github.com/alibaba/arthas/issues/71](https://github.com/alibaba/arthas/issues/71) for more advanced usage
 * OGNL official site: [https://commons.apache.org/proper/commons-ognl/language-guide.html](https://commons.apache.org/proper/commons-ognl/language-guide.html)
 
 ### Usage
 
-#### Start Demo
-
-Start `arthas-demo` in [Quick Start](quick-start.md).
-
-
 #### stack
+
+`stack demo.MathGame primeFactors`{{execute T2}}
 
 ```bash
 $ stack demo.MathGame primeFactors
@@ -44,6 +36,8 @@ ts=2018-12-04 01:32:19;thread_name=main;id=1;is_daemon=false;priority=5;TCCL=sun
 ```
 
 #### Filtering by condition expression
+
+`stack demo.MathGame primeFactors 'params[0]<0' -n 2`{{execute T2}}
 
 ```bash
 $ stack demo.MathGame primeFactors 'params[0]<0' -n 2
@@ -62,6 +56,8 @@ Command execution times exceed limit: 2, so command will exit. You can set it wi
 
 
 #### Filtering by cost
+
+`stack demo.MathGame primeFactors '#cost>5'`{{execute T2}}
 
 ```bash
 $ stack demo.MathGame primeFactors '#cost>5'
