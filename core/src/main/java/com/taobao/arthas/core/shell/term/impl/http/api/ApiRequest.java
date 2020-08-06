@@ -13,8 +13,7 @@ public class ApiRequest {
     private String requestId;
     private String sessionId;
     private String consumerId;
-    private Integer timeout;
-    private Map<String, Object> options;
+    private Integer execTimeout;
 
     @Override
     public String toString() {
@@ -24,8 +23,7 @@ public class ApiRequest {
                 ", requestId='" + requestId + '\'' +
                 ", sessionId='" + sessionId + '\'' +
                 ", consumerId='" + consumerId + '\'' +
-                ", timeout=" + timeout +
-                ", options=" + options +
+                ", execTimeout=" + execTimeout +
                 '}';
     }
 
@@ -43,14 +41,6 @@ public class ApiRequest {
 
     public void setCommand(String command) {
         this.command = command;
-    }
-
-    public Map<String, Object> getOptions() {
-        return options;
-    }
-
-    public void setOptions(Map<String, Object> options) {
-        this.options = options;
     }
 
     public String getRequestId() {
@@ -77,11 +67,11 @@ public class ApiRequest {
         this.consumerId = consumerId;
     }
 
-    public Integer getTimeout() {
-        return timeout;
+    public Integer getExecTimeout() {
+        return execTimeout;
     }
 
-    public void setTimeout(Integer timeout) {
-        this.timeout = timeout;
+    public void setExecTimeout(Integer execTimeout) {
+        this.execTimeout = execTimeout;
     }
 }
