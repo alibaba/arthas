@@ -124,13 +124,11 @@ curl -Ss -XPOST http://localhost:8563/api -d '
  }]
 ```
 
-* `type` :
-  命令结果类型，除了`status`等特殊的几个外，其它的保持与Arthas命令名称一致。请参考"
-  [特殊命令结果说明](#special_command_results) "小节。
+* `type` : 命令结果类型，除了`status`等特殊的几个外，其它的保持与Arthas命令名称一致。请参考"[特殊命令结果说明](#special_command_results)"小节。
 *  `jobId` : 处理命令的任务ID。
 *  其它字段为每个不同命令的数据。
 
-注意：也可以使用一次性命令的方式执行watch/trace等连续输出的命令，但不能中断命令执行，可能出现长时间没有结束的问题。请参考"watch命令输出结果改为map对象"小节的示例。
+注意：也可以使用一次性命令的方式执行watch/trace等连续输出的命令，但不能中断命令执行，可能出现长时间没有结束的问题。请参考"[watch命令输出结果改为map对象](#change_watch_value_to_map)"小节的示例。
 请尽量按照以下方式处理：
 
 * 设置合理的`execTimeout`，到达超时时间后强制中断命令执行，避免长时间挂起。
@@ -379,7 +377,7 @@ curl -Ss -XPOST http://localhost:8563/api -d '''
 
 watch命令结果的`value`为watch-experss的值，上面命令中为`{params, returnObj,
 throwExp}`，所以watch结果的value为一个长度为3的数组，每个元素分别对应相应顺序的表达式。
-请参考"watch命令输出结果改为map对象"小节。
+请参考"[watch命令输出结果改为map对象](#change_watch_value_to_map)"小节。
 
 #### 中断执行命令
 
@@ -502,6 +500,8 @@ trace/watch/jad/tt
 等命令需要对类进行增强，会接收到这个`enhancer`结果。可能出现`enhancer`结果成功，但没有命中方法的情况，客户端可以根据`enhancer`结果提示用户。
 
 #### 其它问题
+
+<a id="change_watch_value_to_map"></a>
 ##### watch命令输出结果改为map对象
 watch的结果由ognl
 计算watch-express而得到，可以通过改变ognl表达式来生成想要的值，请参考[OGNL文档](https://commons.apache.org/proper/commons-ognl/language-guide.html)
