@@ -1,21 +1,21 @@
 {
-  "title": "Arthas heapdump命令",
-  "description": "Arthas heapdump命令",
+  "title": "Arthas jad命令",
+  "description": "Arthas jad命令",
   "difficulty": "精通者",
   "time": "10-20 分钟",
   "details": {
     "steps": [
       {
-        "title": "启动demo",
-        "text": "start-demo.md"
+        "title": "启动arthas demo",
+        "text": "arthas-demo.md"
       },
       {
         "title": "启动arthas-boot",
         "text": "arthas-boot.md"
       },
       {
-        "title": "heapdump命令",
-        "text": "heapdump.md"
+        "title": "jad命令",
+        "text": "jad.md"
       }
     ],
     "intro": {
@@ -23,20 +23,10 @@
     },
     "finish": {
       "text": "finish.md"
-    },
-    "assets": {
-      "host01": []
     }
   },
   "environment": {
-    "uilayout": "terminal",
-    "showdashboard": true,
-    "dashboards": [
-      {
-        "name": "Web Port 80",
-        "port": 80
-      }
-    ]
+    "uilayout": "terminal"
   },
   "backend": {
     "imageid": "java",
