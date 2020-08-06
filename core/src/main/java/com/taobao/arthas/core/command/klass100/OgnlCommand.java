@@ -58,7 +58,7 @@ public class OgnlCommand extends AnnotatedCommand {
     }
 
     @Option(longName = "classLoaderClass")
-    @Description("The class name of the special class's classLoader, default is null")
+    @Description("The class name of the special class's classLoader.")
     public void setClassLoaderClass(String classLoaderClass) {
         this.classLoaderClass = classLoaderClass;
     }
@@ -89,10 +89,10 @@ public class OgnlCommand extends AnnotatedCommand {
                         .setClassLoaderClass(classLoaderClass)
                         .setMatchedClassLoaders(classLoaderVOList);
                 process.appendResult(ognlModel);
-                process.end(-1, "Found more than one classloader of the specified class, please specify classloader by '-c <classloader hash>'");
+                process.end(-1, "Found more than one classloader by class name, please specify classloader with '-c <classloader hash>'");
                 return;
             } else {
-                process.end(-1, "Can not find classloader of class: " + classLoaderClass + ".");
+                process.end(-1, "Can not find classloader by class name: " + classLoaderClass + ".");
                 return;
             }
         } else {
