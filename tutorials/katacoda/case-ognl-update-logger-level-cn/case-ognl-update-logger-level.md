@@ -38,7 +38,7 @@ $ ognl --classLoaderClass org.springframework.boot.loader.LaunchedURLClassLoader
 `ognl --classLoaderClass org.springframework.boot.loader.LaunchedURLClassLoader '@com.example.demo.arthas.user.UserController@logger'`{{execute T2}}
 
 ```bash
-$ ognl -c 1be6f5c3 '@com.example.demo.arthas.user.UserController@logger'
+$ ognl --classLoaderClass org.springframework.boot.loader.LaunchedURLClassLoader '@com.example.demo.arthas.user.UserController@logger'
 @Logger[
     serialVersionUID=@Long[5454405123156820674],
     FQCN=@String[ch.qos.logback.classic.Logger],
@@ -64,7 +64,7 @@ $ ognl -c 1be6f5c3 '@com.example.demo.arthas.user.UserController@logger'
 `ognl --classLoaderClass org.springframework.boot.loader.LaunchedURLClassLoader '@com.example.demo.arthas.user.UserController@logger'`{{execute T2}}
 
 ```bash
-$ ognl -c 1be6f5c3 '@com.example.demo.arthas.user.UserController@logger'
+$ ognl --classLoaderClass org.springframework.boot.loader.LaunchedURLClassLoader '@com.example.demo.arthas.user.UserController@logger'
 @Logger[
     serialVersionUID=@Long[5454405123156820674],
     FQCN=@String[ch.qos.logback.classic.Logger],
