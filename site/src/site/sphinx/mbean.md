@@ -1,7 +1,7 @@
 mbean
 =======
 
-[`mbean`在线教程](https://alibaba.github.io/arthas/arthas-tutorials?language=cn&id=command-mbean)
+[`mbean`在线教程](https://arthas.aliyun.com/doc/arthas-tutorials.html?language=cn&id=command-mbean)
 
 > 查看 Mbean 的信息
 

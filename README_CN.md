@@ -30,8 +30,8 @@ English version goes [here](README.md).
 
 ### 在线教程(推荐)
 
-* [基础教程](https://alibaba.github.io/arthas/arthas-tutorials?language=cn&id=arthas-basics)
-* [进阶教程](https://alibaba.github.io/arthas/arthas-tutorials?language=cn&id=arthas-advanced)
+* [基础教程](https://arthas.aliyun.com/doc/arthas-tutorials.html?language=cn&id=arthas-basics)
+* [进阶教程](https://arthas.aliyun.com/doc/arthas-tutorials.html?language=cn&id=arthas-advanced)
 
 ### 快速开始
 
@@ -68,7 +68,7 @@ curl -L https://alibaba.github.io/arthas/install.sh | sh
 
 ### 文档
 
-* [在线教程(推荐)](https://alibaba.github.io/arthas/arthas-tutorials?language=cn)
+* [在线教程(推荐)](https://arthas.aliyun.com/doc/arthas-tutorials.html?language=cn)
 * [用户文档](https://alibaba.github.io/arthas/)
 * [安装](https://alibaba.github.io/arthas/install-detail.html)
 * [下载](https://alibaba.github.io/arthas/download.html)

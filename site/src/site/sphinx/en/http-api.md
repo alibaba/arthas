@@ -297,7 +297,7 @@ The response content is as follows:
             "message" : "Welcome to arthas!"
          },
          {
-            "tutorials" : "https://alibaba.github.io/arthas/arthas-tutorials",
+            "tutorials" : "https://arthas.aliyun.com/doc/arthas-tutorials.html",
             "time" : "2020-08-06 15:56:43",
             "type" : "welcome",
             "jobId" : 0,

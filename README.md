@@ -44,8 +44,8 @@ Arthas was built to solve these issues. A developer can troubleshoot your produc
 
 ### Online Tutorials(Recommended)
 
-* [Arthas Basics](https://alibaba.github.io/arthas/arthas-tutorials?language=en&id=arthas-basics)
-* [Arthas Advanced](https://alibaba.github.io/arthas/arthas-tutorials?language=en&id=arthas-advanced)
+* [Arthas Basics](https://arthas.aliyun.com/doc/arthas-tutorials.html?language=en&id=arthas-basics)
+* [Arthas Advanced](https://arthas.aliyun.com/doc/arthas-tutorials.html?language=en&id=arthas-advanced)
 
 ### Quick start
 
@@ -79,7 +79,7 @@ You can enter its interactive interface by executing `as.sh`, or execute `as.sh 
 
 ### Documentation
 
-* [Online Tutorials(Recommended)](https://alibaba.github.io/arthas/arthas-tutorials?language=en)
+* [Online Tutorials(Recommended)](https://arthas.aliyun.com/doc/arthas-tutorials.html?language=en)
 * [User manual](https://alibaba.github.io/arthas/en)
 * [Installation](https://alibaba.github.io/arthas/en/install-detail.html)
 * [Download](https://alibaba.github.io/arthas/en/download.html)

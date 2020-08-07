@@ -1,7 +1,7 @@
 monitor
 =======
 
-[`monitor`在线教程](https://alibaba.github.io/arthas/arthas-tutorials?language=cn&id=command-monitor)
+[`monitor`在线教程](https://arthas.aliyun.com/doc/arthas-tutorials.html?language=cn&id=command-monitor)
 
 > 方法执行监控
 

@@ -1,7 +1,7 @@
 watch
 ===
 
-[`watch`在线教程](https://alibaba.github.io/arthas/arthas-tutorials?language=cn&id=command-watch)
+[`watch`在线教程](https://arthas.aliyun.com/doc/arthas-tutorials.html?language=cn&id=command-watch)
 
 > 方法执行数据观测
 

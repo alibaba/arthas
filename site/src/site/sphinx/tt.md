@@ -1,7 +1,7 @@
 tt
 ===
 
-[`tt`在线教程](https://alibaba.github.io/arthas/arthas-tutorials?language=cn&id=command-tt)
+[`tt`在线教程](https://arthas.aliyun.com/doc/arthas-tutorials.html?language=cn&id=command-tt)
 
 > 方法执行数据的时空隧道，记录下指定方法每次调用的入参和返回信息，并能对这些不同的时间下调用进行观测
 

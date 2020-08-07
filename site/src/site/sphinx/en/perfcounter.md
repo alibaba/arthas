@@ -1,7 +1,7 @@
 perfcounter
 ===
 
-[`perfcounter` online tutorial](https://alibaba.github.io/arthas/arthas-tutorials?language=en&id=command-perfcounter)
+[`perfcounter` online tutorial](https://arthas.aliyun.com/doc/arthas-tutorials.html?language=en&id=command-perfcounter)
 
 > Check the current JVM Perf Counter information.
 

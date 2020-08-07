@@ -1,7 +1,7 @@
 getstatic
 ===
 
-[`getstatic`在线教程](https://alibaba.github.io/arthas/arthas-tutorials?language=cn&id=command-getstatic)
+[`getstatic`在线教程](https://arthas.aliyun.com/doc/arthas-tutorials.html?language=cn&id=command-getstatic)
 
 * 推荐直接使用[ognl](ognl.md)命令，更加灵活。
 

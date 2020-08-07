@@ -1,7 +1,7 @@
 heapdump
 ===
 
-[`heapdump` online tutorial](https://alibaba.github.io/arthas/arthas-tutorials?language=en&id=command-heapdump)
+[`heapdump` online tutorial](https://arthas.aliyun.com/doc/arthas-tutorials.html?language=en&id=command-heapdump)
 
 > dump java heap in hprof binary format, like `jmap`.
 

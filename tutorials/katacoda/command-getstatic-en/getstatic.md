@@ -1,5 +1,5 @@
 
-* It is recommended to use the [OGNL] (https://alibaba.github.io/arthas/arthas-tutorials?language=en&id=command-ognl) command, which will be more flexible.
+* It is recommended to use the [OGNL] (https://arthas.aliyun.com/doc/arthas-tutorials.html?language=en&id=command-ognl) command, which will be more flexible.
 
 Check the static fields of classes conveniently, the usage is `getstatic class_name field_name`.
 

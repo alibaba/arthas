@@ -136,7 +136,7 @@ Escape character is '^]'.
 
 
 wiki      https://alibaba.github.io/arthas
-tutorials https://alibaba.github.io/arthas/arthas-tutorials
+tutorials https://arthas.aliyun.com/doc/arthas-tutorials.html
 version   3.3.6
 pid       58883
 ```

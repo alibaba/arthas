@@ -1,7 +1,7 @@
 stack
 ===
 
-[`stack`在线教程](https://alibaba.github.io/arthas/arthas-tutorials?language=cn&id=command-stack)
+[`stack`在线教程](https://arthas.aliyun.com/doc/arthas-tutorials.html?language=cn&id=command-stack)
 
 > 输出当前方法被调用的调用路径
 

@@ -1,7 +1,7 @@
 grep
 ===
 
-[`grep`在线教程](https://alibaba.github.io/arthas/arthas-tutorials?language=cn&id=command-grep)
+[`grep`在线教程](https://arthas.aliyun.com/doc/arthas-tutorials.html?language=cn&id=command-grep)
 
 > 类似传统的`grep`命令。
 

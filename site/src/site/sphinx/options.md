@@ -1,7 +1,7 @@
 options
 ===
 
-[`options`在线教程](https://alibaba.github.io/arthas/arthas-tutorials?language=cn&id=command-options)
+[`options`在线教程](https://arthas.aliyun.com/doc/arthas-tutorials.html?language=cn&id=command-options)
 
 > 全局开关
 

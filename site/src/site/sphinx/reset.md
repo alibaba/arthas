@@ -1,7 +1,7 @@
 reset命令
 ===
 
-[`reset`在线教程](https://alibaba.github.io/arthas/arthas-tutorials?language=cn&id=command-reset)
+[`reset`在线教程](https://arthas.aliyun.com/doc/arthas-tutorials.html?language=cn&id=command-reset)
 
 > 重置增强类，将被 Arthas 增强过的类全部还原，Arthas 服务端`stop`时会重置所有增强过的类
 
