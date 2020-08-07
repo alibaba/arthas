@@ -1,50 +1,47 @@
-trace
-=====
 
-[`trace` online tutorial](https://alibaba.github.io/arthas/arthas-tutorials?language=en&id=command-trace)
+> 方法内部调用路径，并输出方法路径上的每个节点上耗时
 
-> Trace method calling path, and output the time cost for each node in the path.
+`trace` 命令能主动搜索 `class-pattern`／`method-pattern` 对应的方法调用路径，渲染和统计整个调用链路上的所有性能开销和追踪调用链路。
 
-`trace` can track the calling path specified by `class-pattern` / `method-pattern`, and calculate the time cost on the whole path.
+### 参数说明
 
-### Parameters
-
-|Name|Specification|
+|参数名称|参数说明|
 |---:|:---|
-|*class-pattern*|pattern for the class name|
-|*method-pattern*|pattern for the method name|
-|*condition-express*|condition expression|
-|`[E]`|enable regex match, the default behavior is wildcards match|
-|`[n:]`|execution times|
-|#cost|time cost|
+|*class-pattern*|类名表达式匹配|
+|*method-pattern*|方法名表达式匹配|
+|*condition-express*|条件表达式|
+|[E]|开启正则表达式匹配，默认为通配符匹配|
+|`[n:]`|命令执行次数|
+|`#cost`|方法执行耗时|
 
-There's one thing worthy noting here is observation expression. The observation expression supports OGNL grammar, for example, you can come up a expression like this `"{params,returnObj}"`. All OGNL expressions are supported as long as they are legal to the grammar.
+这里重点要说明的是观察表达式，观察表达式的构成主要由 ognl 表达式组成，所以你可以这样写`"{params,returnObj}"`，只要是一个合法的 ognl 表达式，都能被正常支持。
 
-Thanks for `advice`'s data structure, it is possible to observe from varieties of different angles. Inside `advice` parameter, all necessary information for notification can be found.
-
-Pls. refer to [core parameters in expression](advice-class.md) for more details.
-* Pls. also refer to [https://github.com/alibaba/arthas/issues/71](https://github.com/alibaba/arthas/issues/71) for more advanced usage
-* OGNL official site: [https://commons.apache.org/proper/commons-ognl/language-guide.html](https://commons.apache.org/proper/commons-ognl/language-guide.html)
-
-Many times what we are interested is the exact trace result when the method call takes time over one particular period. It is possible to achieve this in Arthas, for example: `trace *StringUtils isBlank '#cost>100'` means trace result will only be output when the executing time exceeds 100ms.
+观察的维度也比较多，主要体现在参数 `advice` 的数据结构上。`Advice` 参数最主要是封装了通知节点的所有信息。
 
 
-> `watch`/`stack`/`trace`, these three commands all support `#cost`.
+请参考[表达式核心变量](advice-class.md)中关于该节点的描述。
 
-### Notice
+* 特殊用法请参考：[https://github.com/alibaba/arthas/issues/71](https://github.com/alibaba/arthas/issues/71)
+* OGNL表达式官网：[https://commons.apache.org/proper/commons-ognl/language-guide.html](https://commons.apache.org/proper/commons-ognl/language-guide.html)
 
-`trace` is handy to help discovering and locating the performance flaws in your system, but pls. note Arthas can only trace the first level method call each time.
+很多时候我们只想看到某个方法的rt大于某个时间之后的trace结果，现在Arthas可以按照方法执行的耗时来进行过滤了，例如`trace *StringUtils isBlank '#cost>100'`表示当执行时间超过100ms的时候，才会输出trace的结果。
+
+> watch/stack/trace这个三个命令都支持`#cost`
+
+### 注意事项
+
+`trace` 能方便的帮助你定位和发现因 RT 高而导致的性能问题缺陷，但其每次只能跟踪一级方法的调用链路。
+
+参考：[Trace命令的实现原理](https://github.com/alibaba/arthas/issues/597)
+
+3.3.0 版本后，可以使用动态Trace功能，不断增加新的匹配类，参考下面的示例。
 
 
-After version 3.3.0, you can use the Dynamic Trace feature to add new matching classes/methods, see the following example.
+### 使用参考
 
-### Usage
+#### trace函数
 
-#### Start Demo
-
-Start `arthas-demo` in [Quick Start](quick-start.md).
-
-#### Trace method
+`trace demo.MathGame run`{{execute T2}}
 
 ```bash
 $ trace demo.MathGame run
@@ -59,10 +56,11 @@ Affect(class-cnt:1 , method-cnt:1) cost in 28 ms.
         `---[0.03752ms] demo.MathGame:primeFactors() #24 [throws Exception]
 ```
 
+#### trace次数限制
 
-#### Trace times limit
+如果方法调用的次数很多，那么可以用`-n`参数指定捕捉结果的次数。比如下面的例子里，捕捉到一次调用就退出命令。
 
-If the method invoked many times, use `-n` options to specify trace times. For example, the command will exit when received a trace result.
+`trace demo.MathGame run -n 1`{{execute T2}}
 
 ```bash
 $ trace demo.MathGame run -n 1
@@ -76,9 +74,14 @@ Affect(class-cnt:1 , method-cnt:1) cost in 20 ms.
 Command execution times exceed limit: 1, so command will exit. You can set it with -n option.
 ```
 
-#### Include jdk method
+
+#### 包含jdk的函数
 
 * `--skipJDKMethod <value> `   skip jdk method trace, default value true.
+
+`trace --skipJDKMethod false demo.MathGame run`{{execute T2}}
+
+默认情况下，trace不会包含jdk里的函数调用，如果希望trace jdk里的函数，需要显式设置`--skipJDKMethod false`。
 
 ```bash
 $ trace --skipJDKMethod false demo.MathGame run
@@ -109,7 +112,9 @@ Affect(class-cnt:1 , method-cnt:1) cost in 60 ms.
         `---[0.076457ms] java.io.PrintStream:println() #28
 ```
 
-#### Filtering by cost
+#### 据调用耗时过滤
+
+`trace demo.MathGame run '#cost > 10'`{{execute T2}}
 
 ```bash
 $ trace demo.MathGame run '#cost > 10'
@@ -122,30 +127,31 @@ Affect(class-cnt:1 , method-cnt:1) cost in 41 ms.
         `---[0.05447ms] demo.MathGame:print()
 ```
 
-> Only the call path which's time cost is higher than `10ms` will be shown. This feature is handy to focus on what's needed to focus when troubleshoot.
+> 只会展示耗时大于10ms的调用路径，有助于在排查问题的时候，只关注异常情况
 
-* Here Arthas provides the similar functionality JProfile and other commercial software provide. Compared to these professional softwares, Arthas doesn't deduce the time cost `trace` itself takes, therefore it is not as accurate as these softwares offer. More classes and methods on the calling path, more inaccurate `trace` output is, but it is still helpful for diagnostics where the bottleneck is.
-* "[12.033735ms]" means the method on the node takes `12.033735` ms.
-* "[min=0.005428ms,max=0.094064ms,total=0.105228ms,count=3] demo:call()" means aggregating all same method calls into one single line. The minimum time cost is `0.005428` ms, the maximum time cost is `0.094064` ms, and the total time cost for all method calls (`3` times in total) to "demo:call()" is `0.105228ms`. If "throws Exception" appears in this line, it means some exceptions have been thrown from this method calls.
-* The total time cost may not equal to the sum of the time costs each sub method call takes, this is because Arthas instrumented code takes time too.
+- 是不是很眼熟，没错，在 JProfiler 等收费软件中你曾经见识类似的功能，这里你将可以通过命令就能打印出指定调用路径。 友情提醒下，`trace` 在执行的过程中本身是会有一定的性能开销，在统计的报告中并未像 JProfiler 一样预先减去其自身的统计开销。所以这统计出来有些许的不准，渲染路径上调用的类、方法越多，性能偏差越大。但还是能让你看清一些事情的。
+- [12.033735ms] 的含义，`12.033735` 的含义是：当前节点在当前步骤的耗时，单位为毫秒
+- [0,0,0ms,11]xxx:yyy() [throws Exception]，对该方法中相同的方法调用进行了合并，`0,0,0ms,11` 表示方法调用耗时，`min,max,total,count`；`throws Exception` 表明该方法调用中存在异常返回
+- 这里存在一个统计不准确的问题，就是所有方法耗时加起来可能会小于该监测方法的总耗时，这个是由于 Arthas 本身的逻辑会有一定的耗时
 
+#### trace多个类或者多个函数
 
-#### Trace multiple classes or multiple methods
+trace命令只会trace匹配到的函数里的子调用，并不会向下trace多层。因为trace是代价比较贵的，多层trace可能会导致最终要trace的类和函数非常多。
 
-The trace command will only trace the subcalls in the method to the trace, and will not trace down multiple layers. Because traces are expensive, multi-layer traces can lead to a lot of classes and methods that ultimately have to be traced.
-
-You can use the regular expression to match multiple classes and methods on the path to achieve a multi-layer trace effect to some extent.
+可以用正则表匹配路径上的多个类和函数，一定程度上达到多层trace的效果。
 
 ```bash
-Trace -E com.test.ClassA|org.test.ClassB method1|method2|method3
+trace -E com.test.ClassA|org.test.ClassB method1|method2|method3
 ```
 
+### 动态trace
 
-#### Dynamic trace
+3.3.0 版本后支持。
 
-> Supported since version 3.3.0.
 
-Open terminal 1, trace the `run` method, and you can see the printout `listenerId: 1` .
+打开终端1，trace `run`函数，可以看到打印出 `listenerId: 1`：
+
+`trace demo.MathGame run`{{execute T2}}
 
 ```bash
 [arthas@59161]$ trace demo.MathGame run
@@ -161,7 +167,9 @@ Affect(class count: 1 , method count: 1) cost in 112 ms, listenerId: 1
         `---[0.167786ms] demo.MathGame:print() #25
 ```
 
-Now to drill down into the sub method `primeFactors`, you can open a new terminal 2 and use the `telnet localhost 3658` connects to the arthas, then trace `primeFactors` with the specify `listenerId`.
+现在想要深入子函数`primeFactors`，可以打开一个新终端2，使用`telnet localhost 3658`连接上arthas，再trace `primeFactors`时，指定`listenerId`。
+
+`trace demo.MathGame primeFactors --listenerId 1`{{execute T2}}
 
 ```bash
 [arthas@59161]$ trace demo.MathGame primeFactors --listenerId 1
@@ -169,9 +177,9 @@ Press Q or Ctrl+C to abort.
 Affect(class count: 1 , method count: 1) cost in 34 ms, listenerId: 1
 ```
 
-At Terminal 2 prints the results, indicating that a method has been enhanced: `Affect(class count: 1 , method count: 1)`, but no more results are printed.
+这时终端2打印的结果，说明已经增强了一个函数：`Affect(class count: 1 , method count: 1)`，但不再打印更多的结果。
 
-At terminal 1, you can see that the trace result has increased by one layer:
+再查看终端1，可以发现trace的结果增加了一层，打印了`primeFactors`函数里的内容：
 
 ```bash
 `---ts=2020-07-09 16:49:29;thread_name=main;id=1;is_daemon=false;priority=5;TCCL=sun.misc.Launcher$AppClassLoader@3d4eac69
@@ -187,4 +195,4 @@ At terminal 1, you can see that the trace result has increased by one layer:
         `---[0.084025ms] demo.MathGame:print() #25
 ```
 
-Dynamic trace by specifying `listenerId`, you can go deeper and deeper. In addition, commands such as `watch`/`tt`/`monitor` also support similar functionality.
+通过指定`listenerId`的方式动态trace，可以不断深入。另外 `watch`/`tt`/`monitor`等命令也支持类似的功能。
