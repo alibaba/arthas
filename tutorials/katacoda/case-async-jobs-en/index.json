@@ -1,6 +1,6 @@
 {
-  "title": "Arthas Async in Background",
-  "description": "Arthas Async in Background",
+  "title": "Arthas Async Jobs",
+  "description": "Arthas Async Jobs",
   "difficulty": "expert",
   "time": "10 minutes",
   "details": {
@@ -14,7 +14,7 @@
         "text": "arthas-boot.md"
       },
       {
-        "title": "Async in Background",
+        "title": "Async Jobs",
         "text": "async-jobs.md"
       },
       {

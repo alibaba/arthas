@@ -33,7 +33,7 @@ Arthas is built to solve these issues. A developer can troubleshoot production i
 - Supports JDK 6+
 - Supports Linux/Mac/Windows
 
-This tutorial takes a simple application as an example to demonstrate the the use case of Async in Background.
+This tutorial takes a simple application as an example to demonstrate the the use case of Async Jobs.
 
 * Github: https://github.com/alibaba/arthas
 * Docs: https://alibaba.github.io/arthas/
