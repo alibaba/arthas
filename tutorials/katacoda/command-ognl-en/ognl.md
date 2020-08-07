@@ -37,15 +37,17 @@ $ ognl --classLoaderClass org.springframework.boot.loader.LaunchedURLClassLoader
 ]
 ```
 
+The value of `--classloaderclass` is the class name of classloader. It can only work when it matches a unique classloader instance. The purpose is to facilitate the input of general commands. However, `-c <hashcode>` is dynamic.
+
 ### Get static fields of static classes
 
 Get the `logger` field of the `UserController` class:
 
-`ognl --classLoaderClass com.example.demo.arthas.user.UserController @com.example.demo.arthas.user.UserController@logger`{{execute T2}}
+`ognl --classLoaderClass org.springframework.boot.loader.LaunchedURLClassLoader @com.example.demo.arthas.user.UserController@logger`{{execute T2}}
 
 Control the number of expansion layers of the return value with the `-x` parameter. such as:
 
-`ognl --classLoaderClass com.example.demo.arthas.user.UserController -x 2 @com.example.demo.arthas.user.UserController@logger`{{execute T2}}
+`ognl --classLoaderClass org.springframework.boot.loader.LaunchedURLClassLoader -x 2 @com.example.demo.arthas.user.UserController@logger`{{execute T2}}
 
 ### Execute multi-line expressions
 

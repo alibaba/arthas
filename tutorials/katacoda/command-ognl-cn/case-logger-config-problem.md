@@ -6,7 +6,7 @@
 
 以`UserController`为例，它使用的是slf4j api，但实际使用到的logger系统是logback。
 
-`ognl --classLoaderClass com.example.demo.arthas.user.UserController '@com.example.demo.arthas.user.UserController@logger'`{{execute T2}}
+`ognl --classLoaderClass org.springframework.boot.loader.LaunchedURLClassLoader '@com.example.demo.arthas.user.UserController@logger'`{{execute T2}}
 
 
 ```bash
@@ -28,12 +28,12 @@ $ ognl -c 1be6f5c3 '@com.example.demo.arthas.user.UserController@logger'
 ### 获取logback实际加载的配置文件
 
 
-`ognl --classLoaderClass com.example.demo.arthas.user.UserController '#map1=@org.slf4j.LoggerFactory@getLogger("root").loggerContext.objectMap, #map1.get("CONFIGURATION_WATCH_LIST")'`{{execute T2}}
+`ognl --classLoaderClass org.springframework.boot.loader.LaunchedURLClassLoader '#map1=@org.slf4j.LoggerFactory@getLogger("root").loggerContext.objectMap, #map1.get("CONFIGURATION_WATCH_LIST")'`{{execute T2}}
 
 
 ### 使用classloader命令查找可能存在的logger配置文件
 
-`classloader --classLoaderClass com.example.demo.arthas.user.UserController -r logback-spring.xml`{{execute T2}}
+`classloader --classLoaderClass org.springframework.boot.loader.LaunchedURLClassLoader -r logback-spring.xml`{{execute T2}}
 
 ```
 $ classloader -c 1be6f5c3 -r logback-spring.xml
@@ -45,8 +45,8 @@ Affect(row-cnt:1) cost in 13 ms.
 
 可以尝试加载容易冲突的文件：
 
-`classloader --classLoaderClass com.example.demo.arthas.user.UserController -r logback.xml`{{execute T2}}
+`classloader --classLoaderClass org.springframework.boot.loader.LaunchedURLClassLoader -r logback.xml`{{execute T2}}
 
-`classloader --classLoaderClass com.example.demo.arthas.user.UserController -r log4j.properties`{{execute T2}}
+`classloader --classLoaderClass org.springframework.boot.loader.LaunchedURLClassLoader -r log4j.properties`{{execute T2}}
 
 

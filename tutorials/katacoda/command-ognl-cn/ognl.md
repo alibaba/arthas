@@ -39,15 +39,17 @@ $ ognl --classLoaderClass org.springframework.boot.loader.LaunchedURLClassLoader
 ]
 ```
 
+ `--classLoaderClass` 的值是ClassLoader的类名，只有匹配到唯一的ClassLoader实例时才能工作，目的是方便输入通用命令，而`-c <hashcode>`是动态变化的。
+
 ### 获取静态类的静态字段
 
 获取`UserController`类里的`logger`字段：
 
-`ognl --classLoaderClass com.example.demo.arthas.user.UserController @com.example.demo.arthas.user.UserController@logger`{{execute T2}}
+`ognl --classLoaderClass org.springframework.boot.loader.LaunchedURLClassLoader @com.example.demo.arthas.user.UserController@logger`{{execute T2}}
 
 还可以通过`-x`参数控制返回值的展开层数。比如：
 
-`ognl --classLoaderClass com.example.demo.arthas.user.UserController -x 2 @com.example.demo.arthas.user.UserController@logger`{{execute T2}}
+`ognl --classLoaderClass org.springframework.boot.loader.LaunchedURLClassLoader -x 2 @com.example.demo.arthas.user.UserController@logger`{{execute T2}}
 
 ### 执行多行表达式，赋值给临时变量，返回一个List
 
