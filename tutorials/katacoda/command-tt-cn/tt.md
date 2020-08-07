@@ -1,7 +1,3 @@
-tt
-===
-
-[`tt`在线教程](https://alibaba.github.io/arthas/arthas-tutorials?language=cn&id=command-tt)
 
 > 方法执行数据的时空隧道，记录下指定方法每次调用的入参和返回信息，并能对这些不同的时间下调用进行观测
 
@@ -13,14 +9,11 @@ tt
 
 ### 使用参考
 
-
-#### 启动 Demo
-
-启动[快速入门](quick-start.md)里的`arthas-demo`。
-
 #### 记录调用
 
 对于一个最基本的使用来说，就是记录下当前方法的每次调用环境现场。
+
+`tt -t demo.MathGame primeFactors`{{execute T2}}
 
 ```bash
 $ tt -t demo.MathGame primeFactors
@@ -82,13 +75,15 @@ Affect(class-cnt:1 , method-cnt:1) cost in 66 ms.
 
 - 构成条件表达式的 `Advice` 对象
 
-    前边看到了很多条件表达式中，都使用了 `params[0]`，有关这个变量的介绍，请参考[表达式核心变量](advice-class.md)
+    前边看到了很多条件表达式中，都使用了 `params[0]`，有关这个变量的介绍，请参考[表达式核心变量](https://alibaba.github.io/arthas/advice-class.html)
 
 #### 检索调用记录
 
 当你用 `tt` 记录了一大片的时间片段之后，你希望能从中筛选出自己需要的时间片段，这个时候你就需要对现有记录进行检索。
 
 假设我们有这些记录
+
+`tt -l`{{execute T2}}
 
 ```bash
 $ tt -l
@@ -105,6 +100,8 @@ Affect(row-cnt:6) cost in 4 ms.
 ```
 
 我需要筛选出 `primeFactors` 方法的调用信息
+
+`tt -s 'method.name=="primeFactors"'`{{execute T2}}
 
 ```bash
 $ tt -s 'method.name=="primeFactors"'
@@ -125,6 +122,8 @@ Affect(row-cnt:6) cost in 607 ms.
 #### 查看调用信息
 
 对于具体一个时间片的信息而言，你可以通过 `-i` 参数后边跟着对应的 `INDEX` 编号查看到他的详细信息。
+
+`tt -i 1003`{{execute T2}}
 
 ```bash
 $ tt -i 1003
@@ -151,6 +150,8 @@ Affect(row-cnt:1) cost in 11 ms.
 
 `tt` 命令由于保存了当时调用的所有现场信息，所以我们可以自己主动对一个 `INDEX` 编号的时间片自主发起一次调用，从而解放你的沟通成本。此时你需要 `-p` 参数。通过 `--replay-times` 指定
 调用次数，通过 `--replay-interval` 指定多次调用间隔(单位ms, 默认1000ms)
+
+`tt -i 1004 -p`{{execute T2}}
 
 ```bash
 $ tt -i 1004 -p
