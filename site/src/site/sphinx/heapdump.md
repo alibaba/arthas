@@ -1,6 +1,8 @@
 heapdump
 ===
 
+[`heapdump`在线教程](https://alibaba.github.io/arthas/arthas-tutorials?language=cn&id=command-heapdump)
+
 > dump java heap, 类似jmap命令的heap dump功能。
 
 
