@@ -31,9 +31,11 @@ $ ognl --classLoaderClass org.springframework.boot.loader.LaunchedURLClassLoader
 ]
 ```
 
+`--classLoaderClass` 的值是ClassLoader的类名，只有匹配到唯一的ClassLoader实例时才能工作，目的是方便输入通用命令，而`-c <hashcode>`是动态变化的。
+
 ### 用ognl获取logger
 
-`ognl --classLoaderClass com.example.demo.arthas.user.UserController '@com.example.demo.arthas.user.UserController@logger'`{{execute T2}}
+`ognl --classLoaderClass org.springframework.boot.loader.LaunchedURLClassLoader '@com.example.demo.arthas.user.UserController@logger'`{{execute T2}}
 
 ```bash
 $ ognl -c 1be6f5c3 '@com.example.demo.arthas.user.UserController@logger'
@@ -55,11 +57,11 @@ $ ognl -c 1be6f5c3 '@com.example.demo.arthas.user.UserController@logger'
 
 ### 单独设置UserController的logger level
 
-`ognl --classLoaderClass com.example.demo.arthas.user.UserController '@com.example.demo.arthas.user.UserController@logger.setLevel(@ch.qos.logback.classic.Level@DEBUG)'`{{execute T2}}
+`ognl --classLoaderClass org.springframework.boot.loader.LaunchedURLClassLoader '@com.example.demo.arthas.user.UserController@logger.setLevel(@ch.qos.logback.classic.Level@DEBUG)'`{{execute T2}}
 
 再次获取`UserController@logger`，可以发现已经是`DEBUG`了：
 
-`ognl --classLoaderClass com.example.demo.arthas.user.UserController '@com.example.demo.arthas.user.UserController@logger'`{{execute T2}}
+`ognl --classLoaderClass org.springframework.boot.loader.LaunchedURLClassLoader '@com.example.demo.arthas.user.UserController@logger'`{{execute T2}}
 
 ```bash
 $ ognl -c 1be6f5c3 '@com.example.demo.arthas.user.UserController@logger'
@@ -81,5 +83,5 @@ $ ognl -c 1be6f5c3 '@com.example.demo.arthas.user.UserController@logger'
 
 通过获取`root` logger，可以修改全局的logger level：
 
-`ognl --classLoaderClass com.example.demo.arthas.user.UserController '@org.slf4j.LoggerFactory@getLogger("root").setLevel(@ch.qos.logback.classic.Level@DEBUG)'`{{execute T2}}
+`ognl --classLoaderClass org.springframework.boot.loader.LaunchedURLClassLoader '@org.slf4j.LoggerFactory@getLogger("root").setLevel(@ch.qos.logback.classic.Level@DEBUG)'`{{execute T2}}
 
