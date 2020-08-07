@@ -1,7 +1,3 @@
-dump
-===
-
-[`dump` online tutorial](https://alibaba.github.io/arthas/arthas-tutorials?language=en&id=command-dump)
 
 > Dump the bytecode for the particular classes to the specified directory.
 
@@ -16,12 +12,16 @@ dump
 
 ### Usage
 
+`dump java.lang.String`{{execute T2}}
+
 ```bash
 $ dump java.lang.String
  HASHCODE  CLASSLOADER  LOCATION
  null                   /Users/admin/logs/arthas/classdump/java/lang/String.class
 Affect(row-cnt:1) cost in 119 ms.
 ```
+
+`dump demo.*`{{execute T2}}
 
 ```bash
 $ dump demo.*
@@ -31,8 +31,10 @@ $ dump demo.*
 Affect(row-cnt:1) cost in 39 ms.
 ```
 
+`dump -d /tmp/output java.lang.String`{{execute T2}}
+
 ```bash
-$ dump -d /tmp/output java.lang.String
+$ dump 
  HASHCODE  CLASSLOADER  LOCATION
  null                   /tmp/output/java/lang/String.class
 Affect(row-cnt:1) cost in 138 ms.

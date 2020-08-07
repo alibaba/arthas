@@ -1,20 +1,18 @@
-dump
-===
 
-[`dump` online tutorial](https://alibaba.github.io/arthas/arthas-tutorials?language=en&id=command-dump)
+> dump 已加载类的 bytecode 到特定目录
 
-> Dump the bytecode for the particular classes to the specified directory.
+### 参数说明
 
-### Options
-
-|Name|Specification|
+|参数名称|参数说明|
 |---:|:---|
-|*class-pattern*|class name pattern|
-|`[c:]`|hashcode of the [class loader](classloader.md) that loaded the target class|
-|`[d:]`|set the destination directory for class files|
-|`[E]`|turn on regex match, the default behavior is wild card match|
+|*class-pattern*|类名表达式匹配|
+|`[c:]`|类所属 ClassLoader 的 hashcode|
+|`[d:]`|设置类文件的目标目录|
+|[E]|开启正则表达式匹配，默认为通配符匹配|
 
-### Usage
+### 使用参考
+
+`dump java.lang.String`{{execute T2}}
 
 ```bash
 $ dump java.lang.String
@@ -23,6 +21,8 @@ $ dump java.lang.String
 Affect(row-cnt:1) cost in 119 ms.
 ```
 
+`dump demo.*`{{execute T2}}
+
 ```bash
 $ dump demo.*
  HASHCODE  CLASSLOADER                                    LOCATION
@@ -30,6 +30,8 @@ $ dump demo.*
              +-sun.misc.Launcher$ExtClassLoader@66350f69
 Affect(row-cnt:1) cost in 39 ms.
 ```
+
+`dump -d /tmp/output java.lang.String`{{execute T2}}
 
 ```bash
 $ dump -d /tmp/output java.lang.String
