@@ -46,6 +46,7 @@ Contents
 * [Advanced usage](advanced-use.md)
 * [Commands](commands.md)
 * [WebConsole](web-console.md)
+* [Http API](http-api.md)
 * [Docker](docker.md)
 * [Arthas Spring Boot Starter](spring-boot-starter.md)
 * [User cases](https://github.com/alibaba/arthas/issues?q=label%3Auser-case)
