@@ -40,7 +40,7 @@ $ ognl --classLoaderClass org.springframework.boot.loader.LaunchedURLClassLoader
 
 
 ```bash
-$ ognl -c 1be6f5c3 '@com.example.demo.arthas.user.UserController@logger'
+$ ognl --classLoaderClass org.springframework.boot.loader.LaunchedURLClassLoader '@com.example.demo.arthas.user.UserController@logger'
 @Logger[
     serialVersionUID=@Long[5454405123156820674],
     FQCN=@String[ch.qos.logback.classic.Logger],
@@ -66,7 +66,7 @@ $ ognl -c 1be6f5c3 '@com.example.demo.arthas.user.UserController@logger'
 `classloader --classLoaderClass org.springframework.boot.loader.LaunchedURLClassLoader -r logback-spring.xml`{{execute T2}}
 
 ```
-$ classloader -c 1be6f5c3 -r logback-spring.xml
+$ classloader --classLoaderClass org.springframework.boot.loader.LaunchedURLClassLoader -r logback-spring.xml
  jar:file:/Users/hengyunabc/code/java/spring-boot-inside/demo-arthas-spring-boot/target/demo-arthas-spring-boot-0.0.1-SNAPSHOT.jar!/BOOT-INF/classes!/logback-spring.xml
 
 Affect(row-cnt:1) cost in 13 ms.
