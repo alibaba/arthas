@@ -7,6 +7,7 @@
 |---:|:---|
 |*class-pattern*|class name pattern|
 |`[c:]`|hashcode of the [class loader](classloader.md) that loaded the target class|
+|`[d:]`|set the destination directory for class files|
 |`[E]`|turn on regex match, the default behavior is wild card match|
 
 ### Usage
@@ -28,4 +29,13 @@ $ dump demo.*
  3d4eac69  +-sun.misc.Launcher$AppClassLoader@3d4eac69    /Users/admin/logs/arthas/classdump/sun.misc.Launcher$AppClassLoader-3d4eac69/demo/MathGame.class
              +-sun.misc.Launcher$ExtClassLoader@66350f69
 Affect(row-cnt:1) cost in 39 ms.
+```
+
+`dump -d /tmp/output java.lang.String`{{execute T2}}
+
+```bash
+$ dump 
+ HASHCODE  CLASSLOADER  LOCATION
+ null                   /tmp/output/java/lang/String.class
+Affect(row-cnt:1) cost in 138 ms.
 ```
