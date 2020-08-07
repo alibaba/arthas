@@ -23,7 +23,7 @@ http api.
 
 #### Request data format
 
-```
+```json
 {
   "action": "exec",
   "requestId": "req112"
@@ -86,7 +86,7 @@ Similar to executing batch commands, the one-time commands are executed
 synchronously. No need to create a session, no need to set the
 `sessionId` option.
 
-```
+```json
 {
   "action": "exec",
   "command": "<Arthas command line>"
@@ -95,7 +95,7 @@ synchronously. No need to create a session, no need to set the
 
 For example, get the Arthas version number:
 
-```
+```bash
 curl -Ss -XPOST http://localhost:8563/api -d '
 {
   "action":"exec",
@@ -105,7 +105,7 @@ curl -Ss -XPOST http://localhost:8563/api -d '
 ```
 The response is as follows:
 
-```
+```json
 {
    "state" : "SUCCEEDED",
    "sessionId" : "ee3bc004-4586-43de-bac0-b69d6db7a869",
@@ -143,7 +143,7 @@ Response data format description:
 
 **Command result format description**
 
-```
+```json
  [{
     "type" : "version",
     "version" : "3.3.8-SNAPSHOT",
@@ -196,7 +196,7 @@ interactive processes. The access process is as follows:
 
 #### Create session
 
-```
+```bash
 curl -Ss -XPOST http://localhost:8563/api -d '
 {
   "action":"init_session"
@@ -205,7 +205,7 @@ curl -Ss -XPOST http://localhost:8563/api -d '
 ```
 Response result:
 
-```
+```json
 {
    "sessionId" : "b09f1353-202c-407b-af24-701b744f971e",
    "consumerId" : "5ae4e5fbab8b4e529ac404f260d4e2d1_1",
@@ -224,7 +224,7 @@ target session. This interface is used to support multiple people
 sharing the same session or refreshing the page to retrieve the session
 history.
 
-```
+```bash
 curl -Ss -XPOST http://localhost:8563/api -d '
 {
   "action":"join_session",
@@ -234,7 +234,7 @@ curl -Ss -XPOST http://localhost:8563/api -d '
 ```
 Response result:
 
-```
+```json
 {
    "consumerId" : "8f7f6ad7bc2d4cb5aa57a530927a95cc_2",
    "sessionId" : "b09f1353-202c-407b-af24-701b744f971e",
@@ -256,7 +256,7 @@ does not affect the content received by the consumer.
 
 The request parameters require session ID and consumer ID:
 
-```
+```bash
 curl -Ss -XPOST http://localhost:8563/api -d '
 {
   "action":"pull_results",
@@ -268,7 +268,7 @@ curl -Ss -XPOST http://localhost:8563/api -d '
 
 Use Bash scripts to regularly pull results messages:
 
-```
+```bash
 while true; do curl -Ss -XPOST http://localhost:8563/api -d '
 {
   "action":"pull_results",
@@ -282,7 +282,7 @@ Note: The `json_pp` tool formats the output content as pretty json.
 
 The response content is as follows:
 
-```
+```json
 {
    "body" : {
       "results" : [
@@ -322,7 +322,7 @@ The response content is as follows:
 
 #### Execute commands asynchronously
 
-```
+```bash
 curl -Ss -XPOST http://localhost:8563/api -d '''
 {
   "action":"async_exec",
@@ -334,7 +334,7 @@ curl -Ss -XPOST http://localhost:8563/api -d '''
 
 Response of `async_exec`:
 
-```
+```json
 {
    "sessionId" : "2b085b5d-883b-4914-ab35-b2c5c1d5aa2a",
    "state" : "SCHEDULED",
@@ -354,7 +354,7 @@ Response of `async_exec`:
 
 The shell output of the script that continuously pulls the result message:
 
-```
+```json
 {
    "body" : {
       "results" : [
@@ -452,7 +452,7 @@ Please refer to the section "[Make watch command output a map object](#change_wa
 
 Interrupt the running foreground job of the session:
 
-```
+```bash
 curl -Ss -XPOST http://localhost:8563/api -d '''
 {
   "action":"interrupt_job",
@@ -461,7 +461,7 @@ curl -Ss -XPOST http://localhost:8563/api -d '''
 '''
 ```
 
-```
+```json
 {
    "state" : "SUCCEEDED",
    "body" : {
@@ -475,7 +475,7 @@ curl -Ss -XPOST http://localhost:8563/api -d '''
 
 Specify the session ID to close the session.
 
-```
+```bash
 curl -Ss -XPOST http://localhost:8563/api -d '''
 {
   "action":"close_session",
@@ -484,7 +484,7 @@ curl -Ss -XPOST http://localhost:8563/api -d '''
 '''
 ```
 
-```
+```json
 {
    "state" : "SUCCEEDED"
 }
@@ -492,7 +492,9 @@ curl -Ss -XPOST http://localhost:8563/api -d '''
 
 ### Web UI
 
-A Web UI based on the Http API interface, the access address is:
+![](../_static/arthas-web-ui.png "arthas web ui")
+
+A Web UI based on Http API, visit url :
 [http://127.0.0.1:8563/ui](http://127.0.0.1:8563/ui) .
 
 Completed functions:
@@ -518,7 +520,7 @@ Pending function:
 
 #### status
 
-```
+```json
 {
     "jobId" : 5,
     "statusCode" : 0,
@@ -536,7 +538,7 @@ similar to the process exit code.
 
 When the command execution fails, an error message is generally provided, such as:
 
-```
+```json
 {
   "jobId":3,
   "message":"The argument 'class-pattern' is required",
@@ -547,7 +549,7 @@ When the command execution fails, an error message is generally provided, such a
 
 #### input_status
 
-```
+```json
  {
     "inputStatus" : "ALLOW_INPUT",
     "type" : "input_status",
@@ -575,7 +577,7 @@ Possible values ​​of `inputStatus`:
 
 #### command
 
-```
+```json
  {
     "type" : "command",
     "jobId" : 3,
@@ -591,7 +593,7 @@ of type `command`, which can be processed in order.
 
 #### enhancer
 
-```
+```json
  {
     "success" : true,
     "jobId" : 3,
@@ -630,13 +632,13 @@ generate the desired value, please refer to
 
 The following command generates values ​​in map format:
 
-```
+```bash
 watch *MathGame prime* '#{ "params" : params, "returnObj" : returnObj, "throwExp": throwExp}' -x 2 -n 5
 ```
 
 Execute the above command in Telnet shell/WebConsole, the output result:
 
-```
+```bash
 ts=2020-08-06 16:57:20; [cost=0.241735ms] result=@LinkedHashMap[
     @String[params]:@Object[][
         @Integer[1],
@@ -652,7 +654,7 @@ ts=2020-08-06 16:57:20; [cost=0.241735ms] result=@LinkedHashMap[
 
 Execute the above command with Http api, pay attention to escaping the JSON double quotes:
 
-```
+```bash
 curl -Ss -XPOST http://localhost:8563/api -d @- << EOF
 {
   "action":"exec",
@@ -664,7 +666,7 @@ EOF
 
 Http api execution result:
 
-```
+```json
 {
     "body": {
          ...

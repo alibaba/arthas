@@ -17,7 +17,7 @@ Http API接口地址为：`http://ip:port/api`，必须使用POST方式提交请
 
 #### 请求数据格式
 
-```
+```json
 {
   "action": "exec",
   "requestId": "req112"
@@ -63,7 +63,7 @@ Http API接口地址为：`http://ip:port/api`，必须使用POST方式提交请
 
 与执行批处理命令类似，一次性命令以同步方式执行。不需要创建会话，不需要设置`sessionId`选项。
 
-```
+```json
 {
   "action": "exec",
   "command": "<Arthas command line>"
@@ -72,7 +72,7 @@ Http API接口地址为：`http://ip:port/api`，必须使用POST方式提交请
 
 比如获取Arthas版本号：
 
-```
+```bash
 curl -Ss -XPOST http://localhost:8563/api -d '
 {
   "action":"exec",
@@ -82,7 +82,7 @@ curl -Ss -XPOST http://localhost:8563/api -d '
 ```
 响应内容如下：
 
-```
+```json
 {
    "state" : "SUCCEEDED",
    "sessionId" : "ee3bc004-4586-43de-bac0-b69d6db7a869",
@@ -117,7 +117,7 @@ curl -Ss -XPOST http://localhost:8563/api -d '
 
 **命令结果格式说明**
 
-```
+```json
  [{
     "type" : "version",
     "version" : "3.3.8-SNAPSHOT",
@@ -156,7 +156,7 @@ curl -Ss -XPOST http://localhost:8563/api -d '
 
 #### 创建会话
 
-```
+```bash
 curl -Ss -XPOST http://localhost:8563/api -d '
 {
   "action":"init_session"
@@ -165,7 +165,7 @@ curl -Ss -XPOST http://localhost:8563/api -d '
 ```
 响应结果：
 
-```
+```json
 {
    "sessionId" : "b09f1353-202c-407b-af24-701b744f971e",
    "consumerId" : "5ae4e5fbab8b4e529ac404f260d4e2d1_1",
@@ -178,7 +178,7 @@ curl -Ss -XPOST http://localhost:8563/api -d '
 
 指定要加入的会话ID，服务端将分配一个新的消费者ID。多个消费者可以接收到同一个会话的命令结果。本接口用于支持多人共享同一个会话或刷新页面后重新拉取会话历史记录。
 
-```
+```bash
 curl -Ss -XPOST http://localhost:8563/api -d '
 {
   "action":"join_session",
@@ -188,7 +188,7 @@ curl -Ss -XPOST http://localhost:8563/api -d '
 ```
 响应结果：
 
-```
+```json
 {
    "consumerId" : "8f7f6ad7bc2d4cb5aa57a530927a95cc_2",
    "sessionId" : "b09f1353-202c-407b-af24-701b744f971e",
@@ -204,7 +204,7 @@ curl -Ss -XPOST http://localhost:8563/api -d '
 
 请求参数需要指定会话ID及消费者ID:
 
-```
+```bash
 curl -Ss -XPOST http://localhost:8563/api -d '
 {
   "action":"pull_results",
@@ -216,7 +216,7 @@ curl -Ss -XPOST http://localhost:8563/api -d '
 
 用Bash脚本定时拉取结果消息:
 
-```
+```bash
 while true; do curl -Ss -XPOST http://localhost:8563/api -d '
 {
   "action":"pull_results",
@@ -229,7 +229,7 @@ while true; do curl -Ss -XPOST http://localhost:8563/api -d '
 
 响应内容如下：
 
-```
+```json
 {
    "body" : {
       "results" : [
@@ -269,7 +269,7 @@ while true; do curl -Ss -XPOST http://localhost:8563/api -d '
 
 #### 异步执行命令
 
-```
+```bash
 curl -Ss -XPOST http://localhost:8563/api -d '''
 {
   "action":"async_exec",
@@ -281,7 +281,7 @@ curl -Ss -XPOST http://localhost:8563/api -d '''
 
 `async_exec` 的结果：
 
-```
+```json
 {
    "sessionId" : "2b085b5d-883b-4914-ab35-b2c5c1d5aa2a",
    "state" : "SCHEDULED",
@@ -301,7 +301,7 @@ curl -Ss -XPOST http://localhost:8563/api -d '''
 
 查看上面自动拉取结果消息脚本的shell输出：
 
-```
+```json
 {
    "body" : {
       "results" : [
@@ -395,7 +395,7 @@ throwExp}`，所以watch结果的value为一个长度为3的数组，每个元�
 
 中断会话正在运行的前台Job（前台任务）：
 
-```
+```bash
 curl -Ss -XPOST http://localhost:8563/api -d '''
 {
   "action":"interrupt_job",
@@ -417,7 +417,7 @@ curl -Ss -XPOST http://localhost:8563/api -d '''
 #### 关闭会话
 指定会话ID，关闭会话。
 
-```
+```bash
 curl -Ss -XPOST http://localhost:8563/api -d '''
 {
   "action":"close_session",
@@ -426,13 +426,15 @@ curl -Ss -XPOST http://localhost:8563/api -d '''
 '''
 ```
 
-```
+```json
 {
    "state" : "SUCCEEDED"
 }
 ```
 
 ### Web UI
+
+![](_static/arthas-web-ui.png "arthas web ui")
 
 一个基于Http API接口实现的Web UI，访问地址为： [http://127.0.0.1:8563/ui](http://127.0.0.1:8563/ui) 。
 
@@ -456,7 +458,7 @@ curl -Ss -XPOST http://localhost:8563/api -d '''
 
 #### status
 
-```
+```json
 {
     "jobId" : 5,
     "statusCode" : 0,
@@ -470,7 +472,7 @@ curl -Ss -XPOST http://localhost:8563/api -d '''
 
 命令执行失败时一般会提供错误消息，如：
 
-```
+```json
 {
   "jobId":3,
   "message":"The argument 'class-pattern' is required",
@@ -481,7 +483,7 @@ curl -Ss -XPOST http://localhost:8563/api -d '''
 
 #### input_status
 
-```
+```json
  {
     "inputStatus" : "ALLOW_INPUT",
     "type" : "input_status",
@@ -503,7 +505,7 @@ curl -Ss -XPOST http://localhost:8563/api -d '''
 
 #### command
 
-```
+```json
  {
     "type" : "command",
     "jobId" : 3,
@@ -518,7 +520,7 @@ curl -Ss -XPOST http://localhost:8563/api -d '''
 
 #### enhancer
 
-```
+```json
  {
     "success" : true,
     "jobId" : 3,
@@ -550,13 +552,13 @@ watch的结果值由计算`watch-express` ognl表达式产生，可以通过改�
 
 下面的命令生成map格式的值：
 
-```
+```bash
 watch *MathGame prime* '#{ "params" : params, "returnObj" : returnObj, "throwExp": throwExp}' -x 2 -n 5
 ```
 
 在Telnet shell/WebConsole 中执行上面的命令，输出的结果：
 
-```
+```bash
 ts=2020-08-06 16:57:20; [cost=0.241735ms] result=@LinkedHashMap[
     @String[params]:@Object[][
         @Integer[1],
@@ -572,7 +574,7 @@ ts=2020-08-06 16:57:20; [cost=0.241735ms] result=@LinkedHashMap[
 
 用Http api 执行上面的命令，注意对JSON双引号转义：
 
-```
+```bash
 curl -Ss -XPOST http://localhost:8563/api -d @- << EOF
 {
   "action":"exec",
@@ -584,7 +586,7 @@ EOF
 
 Http api 执行结果：
 
-```
+```json
 {
     "body": {
          ...
