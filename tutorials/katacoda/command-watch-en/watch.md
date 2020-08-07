@@ -157,8 +157,6 @@ ts=2018-12-03 19:34:19; [cost=0.587833ms] result=@ArrayList[
 ```
 
 * `-x`: Expand level of object (1 by default)
-* `Watch Express` single value can not be added '{}', and multiple values need to be added '{a, B, C}'.
-* `condition Express` cannot add '{}', you can use commas to separate subexpressions and take the last value of the expression to judge.
 
 #### Use condition expressions to locate specific call
 
@@ -176,13 +174,19 @@ ts=2018-12-03 19:36:04; [cost=0.530255ms] result=@ArrayList[
 
 * Only calls that meet the conditions will respond.
 
-* Filtering according to the parameter type is used to judge different parameters of the same method name after method overloading
+* `Watch Express` single value can not be added '{}', and multiple values need to be added '{a, B, C}'.
 
-`watch demo.MathGame primeFactors '{params, params[0].class.name}' 'params[0].class.name == "java.lang.Integer"'`{{execute T2}}
+* `condition Express` cannot add '{}', you can use commas to separate subexpressions and take the last value of the expression to judge.
 
-* Filter according to the number of parameters:
+If there are other overloaded methods with the same name in the watch method, you can filter them by the following methods:
 
-`watch demo.MathGame primeFactors '{params, params.length}' 'params.length==1'`{{execute T2}}
+  * Filter according to parameter type
+
+   `watch demo.MathGame primeFactors '{params, params[0].class.name}' 'params[0].class.name == "java.lang.Integer"'`{{execute T2}}
+
+  * Filter according to the number of parameters
+  
+  `watch demo.MathGame primeFactors '{params, params.length}' 'params.length==1'`{{execute T2}}
 
 #### Check `exceptions`
 
