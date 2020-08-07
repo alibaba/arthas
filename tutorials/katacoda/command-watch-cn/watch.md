@@ -1,11 +1,7 @@
-watch
-===
-
-[`watch`在线教程](https://alibaba.github.io/arthas/arthas-tutorials?language=cn&id=command-watch)
 
 > 方法执行数据观测
 
-让你能方便的观察到指定方法的调用情况。能观察到的范围为：`返回值`、`抛出异常`、`入参`，通过编写 OGNL 表达式进行对应变量的查看。
+让你能方便的观察到指定方法的调用情况。能观察到的范围为：`返回值`、`抛出异常`、`入参`，通过编写 OGNL 表达式进行对应变量的查看。
 
 ### 参数说明
 
@@ -40,11 +36,9 @@ watch 的参数比较多，主要是因为它能在 4 个不同的场景观察�
 
 ### 使用参考
 
-#### 启动 Demo
-
-启动[快速入门](quick-start.md)里的`arthas-demo`。
-
 #### 观察方法出参和返回值
+
+`watch demo.MathGame primeFactors "{params,returnObj}" -x 2`{{execute T2}}
 
 ```bash
 $ watch demo.MathGame primeFactors "{params,returnObj}" -x 2
@@ -65,6 +59,8 @@ ts=2018-12-03 19:16:51; [cost=1.280502ms] result=@ArrayList[
 
 #### 观察方法入参
 
+`watch demo.MathGame primeFactors "{params,returnObj}" -x 2 -b`{{execute T2}}
+
 ```bash
 $ watch demo.MathGame primeFactors "{params,returnObj}" -x 2 -b
 Press Ctrl+C to abort.
@@ -81,6 +77,8 @@ ts=2018-12-03 19:23:23; [cost=0.0353ms] result=@ArrayList[
 
 
 #### 同时观察方法调用前和方法返回后
+
+`watch demo.MathGame primeFactors "{params,target,returnObj}" -x 2 -b -s -n 2`{{execute T2}}
 
 ```bash
 $ watch demo.MathGame primeFactors "{params,target,returnObj}" -x 2 -b -s -n 2
@@ -125,6 +123,8 @@ ts=2018-12-03 19:29:54; [cost=4.277392ms] result=@ArrayList[
 
 #### 调整`-x`的值，观察具体的方法参数值
 
+`watch demo.MathGame primeFactors "{params,target}" -x 3`{{execute T2}}
+
 ```bash
 $ watch demo.MathGame primeFactors "{params,target}" -x 3
 Press Ctrl+C to abort.
@@ -158,7 +158,10 @@ ts=2018-12-03 19:34:19; [cost=0.587833ms] result=@ArrayList[
 
 * `-x`表示遍历深度，可以调整来打印具体的参数和结果内容，默认值是1。
 
+
 #### 条件表达式的例子
+
+`watch demo.MathGame primeFactors "{params[0],target}" "params[0]<0"`{{execute T2}}
 
 ```bash
 $ watch demo.MathGame primeFactors "{params[0],target}" "params[0]<0"
@@ -172,7 +175,23 @@ ts=2018-12-03 19:36:04; [cost=0.530255ms] result=@ArrayList[
 
 * 只有满足条件的调用，才会有响应。
 
+* `watch-express` 单个值可以不加'{}'，多个值需要加'{a,b,c}'。
+
+* `condition-express` 不能加'{}'，可以使用逗号分隔子表达式，取表达式最后一个值来判断。
+
+如果watch的方法存在同名的其它重载方法，可以通过下面的办法进行过滤：
+
+  * 根据参数类型进行过滤
+
+   `watch demo.MathGame primeFactors '{params, params[0].class.name}' 'params[0].class.name == "java.lang.Integer"'`{{execute T2}}
+   
+ * 根据参数个数进行过滤
+   
+  `watch demo.MathGame primeFactors '{params, params.length}' 'params.length==1'`{{execute T2}}
+
 #### 观察异常信息的例子
+
+`watch demo.MathGame primeFactors "{params[0],throwExp}" -e -x 2`{{execute T2}}
 
 ```bash
 $ watch demo.MathGame primeFactors "{params[0],throwExp}" -e -x 2
@@ -188,10 +207,16 @@ ts=2018-12-03 19:38:00; [cost=1.414993ms] result=@ArrayList[
 ]
 ```
 
-* `-e`表示抛出异常时才触发
+* `-e`表示抛出异常时才触发
 * express中，表示异常信息的变量是`throwExp`
 
+根据异常类型或者message进行过滤：
+
+`watch demo.MathGame primeFactors '{params, throwExp}' '#msg=throwExp.toString(), #msg.contains("IllegalArgumentException")' -e -x 2`{{execute T2}}
+
 #### 按照耗时进行过滤
+
+`watch demo.MathGame primeFactors '{params, returnObj}' '#cost>200' -x 2`{{execute T2}}
 
 ```bash
 $ watch demo.MathGame primeFactors '{params, returnObj}' '#cost>200' -x 2
@@ -213,6 +238,8 @@ ts=2018-12-03 19:40:28; [cost=2112.168897ms] result=@ArrayList[
 
 #### 观察当前对象中的属性
 
+`watch demo.MathGame primeFactors 'target'`{{execute T2}}
+
 如果想查看方法运行前后，当前对象中的属性，可以使用`target`关键字，代表当前对象
 
 ```bash
@@ -226,6 +253,8 @@ ts=2018-12-03 19:41:52; [cost=0.477882ms] result=@MathGame[
 ```
 
 然后使用`target.field_name`访问当前对象的某个属性
+
+`watch demo.MathGame primeFactors 'target.illegalArgumentCount'`{{execute T2}}
 
 ```bash
 $ watch demo.MathGame primeFactors 'target.illegalArgumentCount'

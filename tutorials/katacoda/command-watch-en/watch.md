@@ -1,7 +1,3 @@
-watch
-=====
-
-[`watch` online tutorial](https://alibaba.github.io/arthas/arthas-tutorials?language=en&id=command-watch)
 
 Monitor methods in data aspect including `return values`, `exceptions` and `parameters`.
 
@@ -33,17 +29,14 @@ F.Y.I
 
 
 Advanced:
-* [Critical fields in *expression*](advice-class.md)
 * [Special usages](https://github.com/alibaba/arthas/issues/71)
 * [OGNL official guide](https://commons.apache.org/proper/commons-ognl/language-guide.html)
 
 ### Usage
 
-#### Start Demo
-
-Start `arthas-demo` in [Quick Start](quick-start.md).
-
 #### Check the `out parameters` and `return value`
+
+`watch demo.MathGame primeFactors "{params,returnObj}" -x 2`{{execute T2}}
 
 ```bash
 $ watch demo.MathGame primeFactors "{params,returnObj}" -x 2
@@ -64,6 +57,8 @@ ts=2018-12-03 19:16:51; [cost=1.280502ms] result=@ArrayList[
 
 #### Check `in parameters`
 
+`watch demo.MathGame primeFactors "{params,returnObj}" -x 2 -b`{{execute T2}}
+
 ```bash
 $ watch demo.MathGame primeFactors "{params,returnObj}" -x 2 -b
 Press Ctrl+C to abort.
@@ -83,6 +78,7 @@ Compared to the previous *check*:
 
 #### Check *before* and *after* at the same time
 
+`watch demo.MathGame primeFactors "{params,target,returnObj}" -x 2 -b -s -n 2`{{execute T2}}
 
 ```bash
 $ watch demo.MathGame primeFactors "{params,target,returnObj}" -x 2 -b -s -n 2
@@ -127,6 +123,8 @@ F.Y.I
 
 #### Use `-x` to check more details
 
+`watch demo.MathGame primeFactors "{params,target}" -x 3`{{execute T2}}
+
 ```bash
 $ watch demo.MathGame primeFactors "{params,target}" -x 3
 Press Ctrl+C to abort.
@@ -162,6 +160,8 @@ ts=2018-12-03 19:34:19; [cost=0.587833ms] result=@ArrayList[
 
 #### Use condition expressions to locate specific call
 
+`watch demo.MathGame primeFactors "{params[0],target}" "params[0]<0"`{{execute T2}}
+
 ```bash
 $ watch demo.MathGame primeFactors "{params[0],target}" "params[0]<0"
 Press Ctrl+C to abort.
@@ -172,7 +172,25 @@ ts=2018-12-03 19:36:04; [cost=0.530255ms] result=@ArrayList[
 ]
 ```
 
+* Only calls that meet the conditions will respond.
+
+* `Watch Express` single value can not be added '{}', and multiple values need to be added '{a, B, C}'.
+
+* `condition Express` cannot add '{}', you can use commas to separate subexpressions and take the last value of the expression to judge.
+
+If there are other overloaded methods with the same name in the watch method, you can filter them by the following methods:
+
+  * Filter according to parameter type
+
+   `watch demo.MathGame primeFactors '{params, params[0].class.name}' 'params[0].class.name == "java.lang.Integer"'`{{execute T2}}
+
+  * Filter according to the number of parameters
+  
+  `watch demo.MathGame primeFactors '{params, params.length}' 'params.length==1'`{{execute T2}}
+
 #### Check `exceptions`
+
+`watch demo.MathGame primeFactors "{params[0],throwExp}" -e -x 2`{{execute T2}}
 
 ```bash
 $ watch demo.MathGame primeFactors "{params[0],throwExp}" -e -x 2
@@ -188,10 +206,16 @@ ts=2018-12-03 19:38:00; [cost=1.414993ms] result=@ArrayList[
 ]
 ```
 
-* `-e`: Trigger when an exception is thrown
+* `-e`: Trigger when an exception is thrown
 * `throwExp`: the exception object
 
+Filter according to exception type or message:
+
+`watch demo.MathGame primeFactors '{params, throwExp}' '#msg=throwExp.toString(), #msg.contains("IllegalArgumentException")' -e -x 2`{{execute T2}}
+
 #### Filter by time cost
+
+`watch demo.MathGame primeFactors '{params, returnObj}' '#cost>200' -x 2`{{execute T2}}
 
 ```bash
 $ watch demo.MathGame primeFactors '{params, returnObj}' '#cost>200' -x 2
@@ -215,6 +239,8 @@ ts=2018-12-03 19:40:28; [cost=2112.168897ms] result=@ArrayList[
 
 * `target` is the `this` object in java.
 
+`watch demo.MathGame primeFactors 'target'`{{execute T2}}
+
 ```bash
 $ watch demo.MathGame primeFactors 'target'
 Press Ctrl+C to abort.
@@ -226,6 +252,8 @@ ts=2018-12-03 19:41:52; [cost=0.477882ms] result=@MathGame[
 ```
 
 * `target.field_name`: the field of the current object.
+
+`watch demo.MathGame primeFactors 'target.illegalArgumentCount'`{{execute T2}}
 
 ```bash
 $ watch demo.MathGame primeFactors 'target.illegalArgumentCount'
