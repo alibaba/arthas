@@ -1,7 +1,7 @@
 Web Console
 ===
 
-
+[`Web Console`在线教程](https://alibaba.github.io/arthas/arthas-tutorials?language=cn&id=case-web-console)
 
 ### 通过浏览器连接arthas
 
