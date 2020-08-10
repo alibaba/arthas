@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Docker &mdash; Arthas 3.3.7 documentation</title>
+  <title>Docker &mdash; Arthas 3.3.8 documentation</title>
   
 
   
@@ -39,7 +39,7 @@
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="Arthas Spring Boot Starter" href="spring-boot-starter.html" />
-    <link rel="prev" title="options" href="options.html" />
+    <link rel="prev" title="Http API" href="http-api.html" />
 <script src="_static/center_page.js"></script>
 <link rel="stylesheet" href="https://g.alicdn.com/code/lib/highlight.js/9.13.1/styles/github.min.css">
  
@@ -67,7 +67,7 @@
             
             
               <div class="version">
-                3.3.7
+                3.3.8
               </div>
             
           
@@ -92,13 +92,14 @@
             
             
               <ul class="current">
-<li class="toctree-l1"><a class="reference external" href="https://alibaba.github.io/arthas/arthas-tutorials?language=en">Online tutorials(Recommend)</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://arthas.aliyun.com/doc/arthas-tutorials.html?language=en">Online tutorials(Recommend)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="install-detail.html">Installation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="download.html">Download</a></li>
 <li class="toctree-l1"><a class="reference internal" href="quick-start.html">Quick start</a></li>
 <li class="toctree-l1"><a class="reference internal" href="advanced-use.html">Advanced usage</a></li>
 <li class="toctree-l1"><a class="reference internal" href="commands.html">Commands</a></li>
 <li class="toctree-l1"><a class="reference internal" href="web-console.html">WebConsole</a></li>
+<li class="toctree-l1"><a class="reference internal" href="http-api.html">Http API</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Docker</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#quick-start-with-docker">Quick start with Docker</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#diagnose-the-java-process-in-docker">Diagnose the Java process in Docker</a></li>
@@ -206,7 +207,7 @@
 |  | |  ||  |\  \    |  |   |  |  |  ||  | |  |.-&#x27;    |
 `--&#x27; `--&#x27;`--&#x27; &#x27;--&#x27;   `--&#x27;   `--&#x27;  `--&#x27;`--&#x27; `--&#x27;`-----&#x27;
 
-wiki: https://alibaba.github.io/arthas
+wiki: https://arthas.aliyun.com/doc
 version: 3.0.5
 pid: 9
 time: 2018-12-18 11:30:36</pre></div>
@@ -216,12 +217,12 @@ time: 2018-12-18 11:30:36</pre></div>
 </div>
 <div class="section" id="diagnose-the-java-process-in-docker">
 <h2>Diagnose the Java process in Docker<a class="headerlink" href="#diagnose-the-java-process-in-docker" title="Permalink to this headline">¶</a></h2>
-<div class="highlight-sh notranslate"><div class="highlight hljs"><pre class="sh">docker exec -it  ${containerId} /bin/bash -c &quot;wget https://alibaba.github.io/arthas/arthas-boot.jar &amp;&amp; java -jar arthas-boot.jar&quot;</pre></div>
+<div class="highlight-sh notranslate"><div class="highlight hljs"><pre class="sh">docker exec -it  ${containerId} /bin/bash -c &quot;wget https://arthas.aliyun.com/arthas-boot.jar &amp;&amp; java -jar arthas-boot.jar&quot;</pre></div>
 </div>
 </div>
 <div class="section" id="diagnose-the-java-process-in-the-container-in-k8s">
 <h2>Diagnose the Java process in the container in k8s<a class="headerlink" href="#diagnose-the-java-process-in-the-container-in-k8s" title="Permalink to this headline">¶</a></h2>
-<div class="highlight-sh notranslate"><div class="highlight hljs"><pre class="sh">kubectl exec -it ${pod} --container ${containerId} -- /bin/bash -c &quot;wget https://alibaba.github.io/arthas/arthas-boot.jar &amp;&amp; java -jar arthas-boot.jar&quot;</pre></div>
+<div class="highlight-sh notranslate"><div class="highlight hljs"><pre class="sh">kubectl exec -it ${pod} --container ${containerId} -- /bin/bash -c &quot;wget https://arthas.aliyun.com/arthas-boot.jar &amp;&amp; java -jar arthas-boot.jar&quot;</pre></div>
 </div>
 </div>
 <div class="section" id="install-arthas-into-the-base-docker-image">
@@ -248,7 +249,7 @@ COPY --from=hengyunabc/arthas:latest /opt/arthas /opt/arthas</pre>
         <a href="spring-boot-starter.html" class="btn btn-neutral float-right" title="Arthas Spring Boot Starter" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
-        <a href="options.html" class="btn btn-neutral float-left" title="options" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+        <a href="http-api.html" class="btn btn-neutral float-left" title="Http API" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
       
     </div>
   
@@ -301,7 +302,8 @@ COPY --from=hengyunabc/arthas:latest /opt/arthas /opt/arthas</pre>
   });
 </script>
 
-<script type="text/javascript" src="https://s4.cnzz.com/z_stat.php?id=1279151497&web_id=1279151497"></script>
+
+<script type="text/javascript">document.write(unescape("%3Cspan style='display:none;' id='cnzz_stat_icon_1279151497'%3E%3C/span%3E%3Cscript src='https://s4.cnzz.com/z_stat.php%3Fid%3D1279151497' type='text/javascript'%3E%3C/script%3E"));</script>
 
 <script>
   var _hmt = _hmt || [];
@@ -309,7 +311,7 @@ COPY --from=hengyunabc/arthas:latest /opt/arthas /opt/arthas</pre>
     var hm = document.createElement("script");
     if (window.location.hostname == "arthas.gitee.io") {
       hm.src = "https://hm.baidu.com/hm.js?ecc1b0d9aeb73da1671876133211d4d3";
-    } else { // https://alibaba.github.io/arthas/
+    } else { // https://arthas.aliyun.com/doc/
       hm.src = "https://hm.baidu.com/hm.js?d5c5e25b100f0eb51a4c35c8a86ea9b4";
     }
 
@@ -317,17 +319,6 @@ COPY --from=hengyunabc/arthas:latest /opt/arthas /opt/arthas</pre>
     s.parentNode.insertBefore(hm, s);
   })();
 </script>  
-
-<script>
-  var meta = document.createElement('meta');
-  meta.setAttribute('name', 'data-spm');
-  meta.setAttribute('content', 'a2cmt');
-  document.getElementsByTagName('head')[0].appendChild(meta);
-
-  document.getElementsByTagName('body')[0].setAttribute("data-spm","17702181")
-</script>
-
-<script type="text/javascript" id="beacon-aplus" src="https://g.alicdn.com/alilog/mlog/aplus_v2.js"  exparams="clog=o&aplus&sidx=aplusSidx&ckx=aplusCkx"></script>
 
  
 

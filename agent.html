@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>以Java Agent的方式启动 &mdash; Arthas 3.3.7 文档</title>
+  <title>以Java Agent的方式启动 &mdash; Arthas 3.3.8 文档</title>
   
 
   
@@ -39,7 +39,7 @@
     <link rel="stylesheet" href="_static/overrides.css" type="text/css" />
     <link rel="index" title="索引" href="genindex.html" />
     <link rel="search" title="搜索" href="search.html" />
-    <link rel="next" title="Arthas异步调用" href="async.html" />
+    <link rel="next" title="Arthas后台异步任务" href="async.html" />
     <link rel="prev" title="Web Console" href="web-console.html" />
 <script src="_static/center_page.js"></script>
 <link rel="stylesheet" href="https://g.alicdn.com/code/lib/highlight.js/9.13.1/styles/github.min.css">
@@ -68,7 +68,7 @@
             
             
               <div class="version">
-                3.3.7
+                3.3.8
               </div>
             
           
@@ -96,8 +96,8 @@
 <li class="toctree-l1"><a class="reference external" href="https://mp.weixin.qq.com/s/VVSc_a3mLELW35lMH7rR0Q">应届生招聘</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://mp.weixin.qq.com/s/677GO-3kYx5ygG9rlOlfQg">社招信息</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://developer.aliyun.com/article/751641">技术征文</a></li>
-<li class="toctree-l1"><a class="reference external" href="https://alibaba.github.io/arthas/en/">English Docs</a></li>
-<li class="toctree-l1"><a class="reference external" href="https://alibaba.github.io/arthas/arthas-tutorials?language=cn">在线教程(推荐)</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://arthas.aliyun.com/doc/en/">English Docs</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://arthas.aliyun.com/doc/arthas-tutorials.html?language=cn">在线教程(推荐)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="install-detail.html">安装</a></li>
 <li class="toctree-l1"><a class="reference internal" href="download.html">下载</a></li>
 <li class="toctree-l1"><a class="reference internal" href="quick-start.html">快速入门</a></li>
@@ -122,6 +122,7 @@
 </li>
 <li class="toctree-l1"><a class="reference internal" href="commands.html">命令列表</a></li>
 <li class="toctree-l1"><a class="reference internal" href="web-console.html">WebConsole</a></li>
+<li class="toctree-l1"><a class="reference internal" href="http-api.html">Http API</a></li>
 <li class="toctree-l1"><a class="reference internal" href="docker.html">Docker</a></li>
 <li class="toctree-l1"><a class="reference internal" href="spring-boot-starter.html">Arthas Spring Boot Starter</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas/issues?q=label%3Auser-case">用户案例</a></li>
@@ -217,7 +218,7 @@
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="async.html" class="btn btn-neutral float-right" title="Arthas异步调用" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+        <a href="async.html" class="btn btn-neutral float-right" title="Arthas后台异步任务" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
         <a href="web-console.html" class="btn btn-neutral float-left" title="Web Console" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
@@ -273,7 +274,8 @@
   });
 </script>
 
-<script type="text/javascript" src="https://s4.cnzz.com/z_stat.php?id=1279151497&web_id=1279151497"></script>
+
+<script type="text/javascript">document.write(unescape("%3Cspan style='display:none;' id='cnzz_stat_icon_1279151497'%3E%3C/span%3E%3Cscript src='https://s4.cnzz.com/z_stat.php%3Fid%3D1279151497' type='text/javascript'%3E%3C/script%3E"));</script>
 
 <script>
   var _hmt = _hmt || [];
@@ -281,7 +283,7 @@
     var hm = document.createElement("script");
     if (window.location.hostname == "arthas.gitee.io") {
       hm.src = "https://hm.baidu.com/hm.js?ecc1b0d9aeb73da1671876133211d4d3";
-    } else { // https://alibaba.github.io/arthas/
+    } else { // https://arthas.aliyun.com/doc/
       hm.src = "https://hm.baidu.com/hm.js?d5c5e25b100f0eb51a4c35c8a86ea9b4";
     }
 
@@ -289,17 +291,6 @@
     s.parentNode.insertBefore(hm, s);
   })();
 </script>  
-
-<script>
-  var meta = document.createElement('meta');
-  meta.setAttribute('name', 'data-spm');
-  meta.setAttribute('content', 'a2cmt');
-  document.getElementsByTagName('head')[0].appendChild(meta);
-
-  document.getElementsByTagName('body')[0].setAttribute("data-spm","17702181")
-</script>
-
-<script type="text/javascript" id="beacon-aplus" src="https://g.alicdn.com/alilog/mlog/aplus_v2.js"  exparams="clog=o&aplus&sidx=aplusSidx&ckx=aplusCkx"></script>
 
  
 

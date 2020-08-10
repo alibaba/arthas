@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Manually Install Arthas &mdash; Arthas 3.3.7 documentation</title>
+  <title>Manually Install Arthas &mdash; Arthas 3.3.8 documentation</title>
   
 
   
@@ -65,7 +65,7 @@
             
             
               <div class="version">
-                3.3.7
+                3.3.8
               </div>
             
           
@@ -90,13 +90,14 @@
             
             
               <ul>
-<li class="toctree-l1"><a class="reference external" href="https://alibaba.github.io/arthas/arthas-tutorials?language=en">Online tutorials(Recommend)</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://arthas.aliyun.com/doc/arthas-tutorials.html?language=en">Online tutorials(Recommend)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="install-detail.html">Installation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="download.html">Download</a></li>
 <li class="toctree-l1"><a class="reference internal" href="quick-start.html">Quick start</a></li>
 <li class="toctree-l1"><a class="reference internal" href="advanced-use.html">Advanced usage</a></li>
 <li class="toctree-l1"><a class="reference internal" href="commands.html">Commands</a></li>
 <li class="toctree-l1"><a class="reference internal" href="web-console.html">WebConsole</a></li>
+<li class="toctree-l1"><a class="reference internal" href="http-api.html">Http API</a></li>
 <li class="toctree-l1"><a class="reference internal" href="docker.html">Docker</a></li>
 <li class="toctree-l1"><a class="reference internal" href="spring-boot-starter.html">Arthas Spring Boot Starter</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas/issues?q=label%3Auser-case">User cases</a></li>
@@ -177,8 +178,7 @@
 <h2>Manually Install Arthas<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h2>
 <ol>
 <li><p>Download the latest version</p>
-<p><strong>Latest version, Click To Download</strong>: <a class="reference external" href="http://repository.sonatype.org/service/local/artifact/maven/redirect?r=central-proxy&amp;g=com.taobao.arthas&amp;a=arthas-packaging&amp;e=zip&amp;c=bin&amp;v=LATEST"><img alt="https://img.shields.io/maven-central/v/com.taobao.arthas/arthas-packaging.svg?style=flat-square" src="https://img.shields.io/maven-central/v/com.taobao.arthas/arthas-packaging.svg?style=flat-square" /></a></p>
-<p>If the download speed is slow, try to use <a class="reference external" href="https://maven.aliyun.com/">Ali cloud mirror repository</a>, for example, to download version <code class="docutils literal notranslate"><span class="pre">3.x.x</span></code> (you can replace <code class="docutils literal notranslate"><span class="pre">3.x.x</span></code> in the example URL if you want to download other version), the download URL is: https://maven.aliyun.com/repository/public/com/taobao/arthas/arthas-packaging/3.x.x/arthas-packaging-3.x.x-bin.zip</p>
+<p><strong>Latest version, Click To Download</strong>: <a class="reference external" href="https://arthas.aliyun.com/download/latest_version"><img alt="https://img.shields.io/maven-central/v/com.taobao.arthas/arthas-packaging.svg?style=flat-square" src="https://img.shields.io/maven-central/v/com.taobao.arthas/arthas-packaging.svg?style=flat-square" /></a></p>
 </li>
 <li><p>Unzip zip file</p>
 <div class="highlight-bash notranslate"><div class="highlight hljs"><pre class="bash">unzip arthas-packaging-bin.zip</pre></div>
@@ -204,14 +204,14 @@ cd arthas
 <div class="section" id="linux-unix-mac">
 <h3>Linux/Unix/Mac<a class="headerlink" href="#linux-unix-mac" title="Permalink to this headline">¶</a></h3>
 <p>You can install Arthas with one single line command on Linux, Unix, and Mac. Pls. copy the following command and paste it into the command line, then press <em>Enter</em> to run:</p>
-<div class="highlight-bash notranslate"><div class="highlight hljs"><pre class="bash">curl -L https://alibaba.github.io/arthas/install.sh | sh</pre></div>
+<div class="highlight-bash notranslate"><div class="highlight hljs"><pre class="bash">curl -L https://arthas.aliyun.com/install.sh | sh</pre></div>
 </div>
 <p>The command above will download the bootstrap script <code class="docutils literal notranslate"><span class="pre">as.sh</span></code> to the current directory. You can move it the any other place you want, or put its location in <code class="docutils literal notranslate"><span class="pre">$PATH</span></code>.</p>
 <p>You can enter its interactive interface by executing <code class="docutils literal notranslate"><span class="pre">as.sh</span></code>, or execute <code class="docutils literal notranslate"><span class="pre">as.sh</span> <span class="pre">-h</span></code> for more help information.</p>
 </div>
 <div class="section" id="windows">
 <h3>Windows<a class="headerlink" href="#windows" title="Permalink to this headline">¶</a></h3>
-<p>Latest Version, Click To Download: <a class="reference external" href="http://repository.sonatype.org/service/local/artifact/maven/redirect?r=central-proxy&amp;g=com.taobao.arthas&amp;a=arthas-packaging&amp;e=zip&amp;c=bin&amp;v=LATEST"><img alt="https://img.shields.io/maven-central/v/com.taobao.arthas/arthas-packaging.svg?style=flat-square" src="https://img.shields.io/maven-central/v/com.taobao.arthas/arthas-packaging.svg?style=flat-square" /></a></p>
+<p>Latest Version, Click To Download: <a class="reference external" href="https://arthas.aliyun.com/download/latest_version"><img alt="https://img.shields.io/maven-central/v/com.taobao.arthas/arthas-packaging.svg?style=flat-square" src="https://img.shields.io/maven-central/v/com.taobao.arthas/arthas-packaging.svg?style=flat-square" /></a></p>
 <p>Download and unzip, then find <code class="docutils literal notranslate"><span class="pre">as.bat</span></code> from ‘bin’ directory. For now this script will only take one argument <code class="docutils literal notranslate"><span class="pre">pid</span></code>, which means you can only diagnose the local Java process. (Welcome any bat script expert to make it better :heart:)</p>
 <div class="highlight-bash notranslate"><div class="highlight hljs"><pre class="bash">as.bat &lt;pid&gt;</pre></div>
 </div>
@@ -319,7 +319,8 @@ as-service.bat -pid &lt;pid&gt; --interact</pre></div>
   });
 </script>
 
-<script type="text/javascript" src="https://s4.cnzz.com/z_stat.php?id=1279151497&web_id=1279151497"></script>
+
+<script type="text/javascript">document.write(unescape("%3Cspan style='display:none;' id='cnzz_stat_icon_1279151497'%3E%3C/span%3E%3Cscript src='https://s4.cnzz.com/z_stat.php%3Fid%3D1279151497' type='text/javascript'%3E%3C/script%3E"));</script>
 
 <script>
   var _hmt = _hmt || [];
@@ -327,7 +328,7 @@ as-service.bat -pid &lt;pid&gt; --interact</pre></div>
     var hm = document.createElement("script");
     if (window.location.hostname == "arthas.gitee.io") {
       hm.src = "https://hm.baidu.com/hm.js?ecc1b0d9aeb73da1671876133211d4d3";
-    } else { // https://alibaba.github.io/arthas/
+    } else { // https://arthas.aliyun.com/doc/
       hm.src = "https://hm.baidu.com/hm.js?d5c5e25b100f0eb51a4c35c8a86ea9b4";
     }
 
@@ -335,17 +336,6 @@ as-service.bat -pid &lt;pid&gt; --interact</pre></div>
     s.parentNode.insertBefore(hm, s);
   })();
 </script>  
-
-<script>
-  var meta = document.createElement('meta');
-  meta.setAttribute('name', 'data-spm');
-  meta.setAttribute('content', 'a2cmt');
-  document.getElementsByTagName('head')[0].appendChild(meta);
-
-  document.getElementsByTagName('body')[0].setAttribute("data-spm","17702181")
-</script>
-
-<script type="text/javascript" id="beacon-aplus" src="https://g.alicdn.com/alilog/mlog/aplus_v2.js"  exparams="clog=o&aplus&sidx=aplusSidx&ckx=aplusCkx"></script>
 
  
 

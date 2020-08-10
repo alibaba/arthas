@@ -1,6 +1,8 @@
 执行结果存日志
 ===
 
+[`执行结果存日志`在线教程](https://arthas.aliyun.com/doc/arthas-tutorials?language=cn&id=case-save-log)
+
 > 将命令的结果完整保存在日志文件中，便于后续进行分析
 
 * 默认情况下，该功能是关闭的，如果需要开启，请执行以下命令：

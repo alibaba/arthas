@@ -1,7 +1,7 @@
 reset
 ===
 
-[`reset` online tutorial](https://alibaba.github.io/arthas/arthas-tutorials?language=en&id=command-reset)
+[`reset` online tutorial](https://arthas.aliyun.com/doc/arthas-tutorials.html?language=en&id=command-reset)
 
 > Reset all classes that have been enhanced by Arthas. These enhanced classes will also be reset when Arthas server is `stop`.
 

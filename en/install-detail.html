@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Install Arthas &mdash; Arthas 3.3.7 documentation</title>
+  <title>Install Arthas &mdash; Arthas 3.3.8 documentation</title>
   
 
   
@@ -67,7 +67,7 @@
             
             
               <div class="version">
-                3.3.7
+                3.3.8
               </div>
             
           
@@ -92,7 +92,7 @@
             
             
               <ul class="current">
-<li class="toctree-l1"><a class="reference external" href="https://alibaba.github.io/arthas/arthas-tutorials?language=en">Online tutorials(Recommend)</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://arthas.aliyun.com/doc/arthas-tutorials.html?language=en">Online tutorials(Recommend)</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Installation</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#quick-installation">Quick installation</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#use-arthas-boot-recommended">Use <code class="docutils literal notranslate"><span class="pre">arthas-boot</span></code>(Recommended)</a></li>
@@ -116,6 +116,7 @@
 <li class="toctree-l1"><a class="reference internal" href="advanced-use.html">Advanced usage</a></li>
 <li class="toctree-l1"><a class="reference internal" href="commands.html">Commands</a></li>
 <li class="toctree-l1"><a class="reference internal" href="web-console.html">WebConsole</a></li>
+<li class="toctree-l1"><a class="reference internal" href="http-api.html">Http API</a></li>
 <li class="toctree-l1"><a class="reference internal" href="docker.html">Docker</a></li>
 <li class="toctree-l1"><a class="reference internal" href="spring-boot-starter.html">Arthas Spring Boot Starter</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas/issues?q=label%3Auser-case">User cases</a></li>
@@ -197,7 +198,7 @@
 <div class="section" id="use-arthas-boot-recommended">
 <h3>Use <code class="docutils literal notranslate"><span class="pre">arthas-boot</span></code>(Recommended)<a class="headerlink" href="#use-arthas-boot-recommended" title="Permalink to this headline">¶</a></h3>
 <p>Download<code class="docutils literal notranslate"><span class="pre">arthas-boot.jar</span></code>，Start with <code class="docutils literal notranslate"><span class="pre">java</span></code> command:</p>
-<div class="highlight-bash notranslate"><div class="highlight hljs"><pre class="bash">curl -O https://alibaba.github.io/arthas/arthas-boot.jar
+<div class="highlight-bash notranslate"><div class="highlight hljs"><pre class="bash">curl -O https://arthas.aliyun.com/arthas-boot.jar
 java -jar arthas-boot.jar</pre></div>
 </div>
 <p>Print usage:</p>
@@ -207,7 +208,7 @@ java -jar arthas-boot.jar</pre></div>
 <div class="section" id="use-as-sh">
 <h3>Use <code class="docutils literal notranslate"><span class="pre">as.sh</span></code><a class="headerlink" href="#use-as-sh" title="Permalink to this headline">¶</a></h3>
 <p>You can install Arthas with one single line command on Linux, Unix, and Mac. Pls. copy the following command and paste it into the command line, then press <em>Enter</em> to run:</p>
-<div class="highlight-bash notranslate"><div class="highlight hljs"><pre class="bash">curl -L https://alibaba.github.io/arthas/install.sh | sh</pre></div>
+<div class="highlight-bash notranslate"><div class="highlight hljs"><pre class="bash">curl -L https://arthas.aliyun.com/install.sh | sh</pre></div>
 </div>
 <p>The command above will download the bootstrap script <code class="docutils literal notranslate"><span class="pre">as.sh</span></code> to the current directory. You can move it to any other place you want, or put its location in <code class="docutils literal notranslate"><span class="pre">$PATH</span></code>.</p>
 <p>You can enter its interactive interface by executing <code class="docutils literal notranslate"><span class="pre">as.sh</span></code>, or execute <code class="docutils literal notranslate"><span class="pre">as.sh</span> <span class="pre">-h</span></code> for more help information.</p>
@@ -215,7 +216,7 @@ java -jar arthas-boot.jar</pre></div>
 </div>
 <div class="section" id="full-installation">
 <h2>Full installation<a class="headerlink" href="#full-installation" title="Permalink to this headline">¶</a></h2>
-<p>Latest Version, Click To Download: <a class="reference external" href="http://repository.sonatype.org/service/local/artifact/maven/redirect?r=central-proxy&amp;g=com.taobao.arthas&amp;a=arthas-packaging&amp;e=zip&amp;c=doc&amp;v=LATEST"><img alt="https://img.shields.io/maven-central/v/com.taobao.arthas/arthas-packaging.svg?style=flat-square" src="https://img.shields.io/maven-central/v/com.taobao.arthas/arthas-packaging.svg?style=flat-square" /></a></p>
+<p>Latest Version, Click To Download: <a class="reference external" href="https://arthas.aliyun.com/download/latest_version"><img alt="https://img.shields.io/maven-central/v/com.taobao.arthas/arthas-packaging.svg?style=flat-square" src="https://img.shields.io/maven-central/v/com.taobao.arthas/arthas-packaging.svg?style=flat-square" /></a></p>
 <p>Download and unzip, find <code class="docutils literal notranslate"><span class="pre">arthas-boot.jar</span></code> in the directory. Start with <code class="docutils literal notranslate"><span class="pre">java</span></code> command:</p>
 <div class="highlight-bash notranslate"><div class="highlight hljs"><pre class="bash">java -jar arthas-boot.jar</pre></div>
 </div>
@@ -250,7 +251,7 @@ you can get them from the github releases page https://github.com/alibaba/arthas
 </div>
 <div class="section" id="offline-help-documentation">
 <h2>Offline Help Documentation<a class="headerlink" href="#offline-help-documentation" title="Permalink to this headline">¶</a></h2>
-<p>Latest Version Documentation, Click To Download:<a class="reference external" href="http://repository.sonatype.org/service/local/artifact/maven/redirect?r=central-proxy&amp;g=com.taobao.arthas&amp;a=arthas-packaging&amp;e=zip&amp;c=doc&amp;v=LATEST"><img alt="https://img.shields.io/maven-central/v/com.taobao.arthas/arthas-packaging.svg?style=flat-square" src="https://img.shields.io/maven-central/v/com.taobao.arthas/arthas-packaging.svg?style=flat-square" /></a></p>
+<p>Latest Version Documentation, Click To Download:<a class="reference external" href="https://arthas.aliyun.com/download/doc/latest_version"><img alt="https://img.shields.io/maven-central/v/com.taobao.arthas/arthas-packaging.svg?style=flat-square" src="https://img.shields.io/maven-central/v/com.taobao.arthas/arthas-packaging.svg?style=flat-square" /></a></p>
 </div>
 <div class="section" id="uninstall">
 <h2>Uninstall<a class="headerlink" href="#uninstall" title="Permalink to this headline">¶</a></h2>
@@ -329,7 +330,8 @@ rm -rf ~/logs/arthas/</pre></div>
   });
 </script>
 
-<script type="text/javascript" src="https://s4.cnzz.com/z_stat.php?id=1279151497&web_id=1279151497"></script>
+
+<script type="text/javascript">document.write(unescape("%3Cspan style='display:none;' id='cnzz_stat_icon_1279151497'%3E%3C/span%3E%3Cscript src='https://s4.cnzz.com/z_stat.php%3Fid%3D1279151497' type='text/javascript'%3E%3C/script%3E"));</script>
 
 <script>
   var _hmt = _hmt || [];
@@ -337,7 +339,7 @@ rm -rf ~/logs/arthas/</pre></div>
     var hm = document.createElement("script");
     if (window.location.hostname == "arthas.gitee.io") {
       hm.src = "https://hm.baidu.com/hm.js?ecc1b0d9aeb73da1671876133211d4d3";
-    } else { // https://alibaba.github.io/arthas/
+    } else { // https://arthas.aliyun.com/doc/
       hm.src = "https://hm.baidu.com/hm.js?d5c5e25b100f0eb51a4c35c8a86ea9b4";
     }
 
@@ -345,17 +347,6 @@ rm -rf ~/logs/arthas/</pre></div>
     s.parentNode.insertBefore(hm, s);
   })();
 </script>  
-
-<script>
-  var meta = document.createElement('meta');
-  meta.setAttribute('name', 'data-spm');
-  meta.setAttribute('content', 'a2cmt');
-  document.getElementsByTagName('head')[0].appendChild(meta);
-
-  document.getElementsByTagName('body')[0].setAttribute("data-spm","17702181")
-</script>
-
-<script type="text/javascript" id="beacon-aplus" src="https://g.alicdn.com/alilog/mlog/aplus_v2.js"  exparams="clog=o&aplus&sidx=aplusSidx&ckx=aplusCkx"></script>
 
  
 

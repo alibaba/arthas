@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Arthas3.0的新特性 &mdash; Arthas 3.3.7 文档</title>
+  <title>Arthas3.0的新特性 &mdash; Arthas 3.3.8 文档</title>
   
 
   
@@ -66,7 +66,7 @@
             
             
               <div class="version">
-                3.3.7
+                3.3.8
               </div>
             
           
@@ -94,14 +94,15 @@
 <li class="toctree-l1"><a class="reference external" href="https://mp.weixin.qq.com/s/VVSc_a3mLELW35lMH7rR0Q">应届生招聘</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://mp.weixin.qq.com/s/677GO-3kYx5ygG9rlOlfQg">社招信息</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://developer.aliyun.com/article/751641">技术征文</a></li>
-<li class="toctree-l1"><a class="reference external" href="https://alibaba.github.io/arthas/en/">English Docs</a></li>
-<li class="toctree-l1"><a class="reference external" href="https://alibaba.github.io/arthas/arthas-tutorials?language=cn">在线教程(推荐)</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://arthas.aliyun.com/doc/en/">English Docs</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://arthas.aliyun.com/doc/arthas-tutorials.html?language=cn">在线教程(推荐)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="install-detail.html">安装</a></li>
 <li class="toctree-l1"><a class="reference internal" href="download.html">下载</a></li>
 <li class="toctree-l1"><a class="reference internal" href="quick-start.html">快速入门</a></li>
 <li class="toctree-l1"><a class="reference internal" href="advanced-use.html">进阶使用</a></li>
 <li class="toctree-l1"><a class="reference internal" href="commands.html">命令列表</a></li>
 <li class="toctree-l1"><a class="reference internal" href="web-console.html">WebConsole</a></li>
+<li class="toctree-l1"><a class="reference internal" href="http-api.html">Http API</a></li>
 <li class="toctree-l1"><a class="reference internal" href="docker.html">Docker</a></li>
 <li class="toctree-l1"><a class="reference internal" href="spring-boot-starter.html">Arthas Spring Boot Starter</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas/issues?q=label%3Auser-case">用户案例</a></li>
@@ -203,7 +204,7 @@
 </div>
 <p>其中<code class="docutils literal notranslate"><span class="pre">&quot;params</span> <span class="pre">+</span> <span class="pre">'</span> <span class="pre">'</span> <span class="pre">+</span> <span class="pre">returnObj&quot;</span></code>以及<code class="docutils literal notranslate"><span class="pre">params.size()==2</span></code>背后其实都使用了groovy来进行表达式求值，如果反复大量的运行这些表达式，groovy会创建大量的classloader，打满perm区从而触发FGC。</p>
 <p>为了避免这个问题，Arthas 3.0中使用了ognl这个更加轻量的表达式求值库来代替groovy，彻底解决了groovy引起的FGC风险。但由于这个替换，导致原来使用groovy脚本编写的自定义脚本失效。这个问题留待后续解决。</p>
-<p>在3.0中，watch命令的表达式部分的书写有了一些改变，详见<a class="reference external" href="https://alibaba.github.io/arthas/watch">这里</a></p>
+<p>在3.0中，watch命令的表达式部分的书写有了一些改变，详见<a class="reference external" href="https://arthas.aliyun.com/doc/watch">这里</a></p>
 <div class="section" id="rt">
 <h2>提升rt统计精度<a class="headerlink" href="#rt" title="永久链接至标题">¶</a></h2>
 <p>Arthas 2.0中，统计rt都是以<code class="docutils literal notranslate"><span class="pre">ms</span></code>为单位，对于某些比较小的方法调用，耗时在毫秒以下的都会被认为是0ms，造成trace总时间和各方法的时间相加不一致等问题（虽然这里面确实会有误差，主要Arthas自身的开销）。Arthas 3.0中所有rt的单位统一改为使用<code class="docutils literal notranslate"><span class="pre">ns</span></code>来统计，精准捕获你的方法耗时，让0ms这样无意义的统计数据不再出现！</p>
@@ -332,7 +333,8 @@ ID                 NAME                                                     GROU
   });
 </script>
 
-<script type="text/javascript" src="https://s4.cnzz.com/z_stat.php?id=1279151497&web_id=1279151497"></script>
+
+<script type="text/javascript">document.write(unescape("%3Cspan style='display:none;' id='cnzz_stat_icon_1279151497'%3E%3C/span%3E%3Cscript src='https://s4.cnzz.com/z_stat.php%3Fid%3D1279151497' type='text/javascript'%3E%3C/script%3E"));</script>
 
 <script>
   var _hmt = _hmt || [];
@@ -340,7 +342,7 @@ ID                 NAME                                                     GROU
     var hm = document.createElement("script");
     if (window.location.hostname == "arthas.gitee.io") {
       hm.src = "https://hm.baidu.com/hm.js?ecc1b0d9aeb73da1671876133211d4d3";
-    } else { // https://alibaba.github.io/arthas/
+    } else { // https://arthas.aliyun.com/doc/
       hm.src = "https://hm.baidu.com/hm.js?d5c5e25b100f0eb51a4c35c8a86ea9b4";
     }
 
@@ -348,17 +350,6 @@ ID                 NAME                                                     GROU
     s.parentNode.insertBefore(hm, s);
   })();
 </script>  
-
-<script>
-  var meta = document.createElement('meta');
-  meta.setAttribute('name', 'data-spm');
-  meta.setAttribute('content', 'a2cmt');
-  document.getElementsByTagName('head')[0].appendChild(meta);
-
-  document.getElementsByTagName('body')[0].setAttribute("data-spm","17702181")
-</script>
-
-<script type="text/javascript" id="beacon-aplus" src="https://g.alicdn.com/alilog/mlog/aplus_v2.js"  exparams="clog=o&aplus&sidx=aplusSidx&ckx=aplusCkx"></script>
 
  
 

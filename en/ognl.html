@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>ognl &mdash; Arthas 3.3.7 documentation</title>
+  <title>ognl &mdash; Arthas 3.3.8 documentation</title>
   
 
   
@@ -67,7 +67,7 @@
             
             
               <div class="version">
-                3.3.7
+                3.3.8
               </div>
             
           
@@ -92,7 +92,7 @@
             
             
               <ul class="current">
-<li class="toctree-l1"><a class="reference external" href="https://alibaba.github.io/arthas/arthas-tutorials?language=en">Online tutorials(Recommend)</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://arthas.aliyun.com/doc/arthas-tutorials.html?language=en">Online tutorials(Recommend)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="install-detail.html">Installation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="download.html">Download</a></li>
 <li class="toctree-l1"><a class="reference internal" href="quick-start.html">Quick start</a></li>
@@ -141,6 +141,7 @@
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="web-console.html">WebConsole</a></li>
+<li class="toctree-l1"><a class="reference internal" href="http-api.html">Http API</a></li>
 <li class="toctree-l1"><a class="reference internal" href="docker.html">Docker</a></li>
 <li class="toctree-l1"><a class="reference internal" href="spring-boot-starter.html">Arthas Spring Boot Starter</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas/issues?q=label%3Auser-case">User cases</a></li>
@@ -219,6 +220,7 @@
             
   <div class="section" id="ognl">
 <h1>ognl<a class="headerlink" href="#ognl" title="Permalink to this headline">¶</a></h1>
+<p><a class="reference external" href="https://arthas.aliyun.com/doc/arthas-tutorials?language=en&amp;id=command-ognl"><code class="docutils literal notranslate"><span class="pre">ognl</span></code> online tutorial</a></p>
 <blockquote>
 <div><p>Execute ognl expression.</p>
 </div></blockquote>
@@ -240,6 +242,10 @@
 <tr>
 <td align="right"><code>[c:]</code></td>
 <td align="left">The hashcode of the ClassLoader that executes the expression, default ClassLoader is SystemClassLoader.</td>
+</tr>
+<tr>
+<td align="right"><code>[classLoaderClass:]</code></td>
+<td align="left">The class name of the ClassLoader that executes the expression.</td>
 </tr>
 <tr>
 <td align="right">[x]</td>
@@ -277,6 +283,31 @@ null</pre></div>
     serialPersistentFields=@ObjectStreamField[][isEmpty=false;size=3],
     unsafe=@Unsafe[sun.misc.Unsafe@28ea5898],
     seedOffset=@Long[24],
+]</pre></div>
+</div>
+<p>Specify ClassLoader by hashcode:</p>
+<div class="highlight-bash notranslate"><div class="highlight hljs"><pre class="bash">$ classloader -t
++-BootstrapClassLoader                                                                                                                                                                          
++-jdk.internal.loader.ClassLoaders$PlatformClassLoader@301ec38b                                                                                                                                 
+  +-com.taobao.arthas.agent.ArthasClassloader@472067c7                                                                                                                                          
+  +-jdk.internal.loader.ClassLoaders$AppClassLoader@4b85612c                                                                                                                                    
+    +-org.springframework.boot.loader.LaunchedURLClassLoader@7f9a81e8 
+
+$ ognl -c 7f9a81e8 @org.springframework.boot.SpringApplication@logger
+@Slf4jLocationAwareLog[
+    FQCN=@String[org.apache.commons.logging.LogAdapter$Slf4jLocationAwareLog],
+    name=@String[org.springframework.boot.SpringApplication],
+    logger=@Logger[Logger[org.springframework.boot.SpringApplication]],
+]
+$ </pre></div>
+</div>
+<p>Note that the hashcode changes, you need to check the current ClassLoader information first, and extract the hashcode corresponding to the ClassLoader.</p>
+<p>For ClassLoader with only unique instance, it can be specified by class name, which is more convenient to use:</p>
+<div class="highlight-bash notranslate"><div class="highlight hljs"><pre class="bash">$ ognl --classLoaderClass org.springframework.boot.loader.LaunchedURLClassLoader  @org.springframework.boot.SpringApplication@logger
+@Slf4jLocationAwareLog[
+    FQCN=@String[org.apache.commons.logging.LogAdapter$Slf4jLocationAwareLog],
+    name=@String[org.springframework.boot.SpringApplication],
+    logger=@Logger[Logger[org.springframework.boot.SpringApplication]],
 ]</pre></div>
 </div>
 <p>Execute a multi-line expression, and return a list:</p>
@@ -353,7 +384,8 @@ null</pre></div>
   });
 </script>
 
-<script type="text/javascript" src="https://s4.cnzz.com/z_stat.php?id=1279151497&web_id=1279151497"></script>
+
+<script type="text/javascript">document.write(unescape("%3Cspan style='display:none;' id='cnzz_stat_icon_1279151497'%3E%3C/span%3E%3Cscript src='https://s4.cnzz.com/z_stat.php%3Fid%3D1279151497' type='text/javascript'%3E%3C/script%3E"));</script>
 
 <script>
   var _hmt = _hmt || [];
@@ -361,7 +393,7 @@ null</pre></div>
     var hm = document.createElement("script");
     if (window.location.hostname == "arthas.gitee.io") {
       hm.src = "https://hm.baidu.com/hm.js?ecc1b0d9aeb73da1671876133211d4d3";
-    } else { // https://alibaba.github.io/arthas/
+    } else { // https://arthas.aliyun.com/doc/
       hm.src = "https://hm.baidu.com/hm.js?d5c5e25b100f0eb51a4c35c8a86ea9b4";
     }
 
@@ -369,17 +401,6 @@ null</pre></div>
     s.parentNode.insertBefore(hm, s);
   })();
 </script>  
-
-<script>
-  var meta = document.createElement('meta');
-  meta.setAttribute('name', 'data-spm');
-  meta.setAttribute('content', 'a2cmt');
-  document.getElementsByTagName('head')[0].appendChild(meta);
-
-  document.getElementsByTagName('body')[0].setAttribute("data-spm","17702181")
-</script>
-
-<script type="text/javascript" id="beacon-aplus" src="https://g.alicdn.com/alilog/mlog/aplus_v2.js"  exparams="clog=o&aplus&sidx=aplusSidx&ckx=aplusCkx"></script>
 
  
 

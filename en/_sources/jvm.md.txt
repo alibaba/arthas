@@ -1,7 +1,7 @@
 jvm
 ===
 
-[`sysenv` online tutorial](https://alibaba.github.io/arthas/arthas-tutorials?language=en&id=command-sysenv)
+[`sysenv` online tutorial](https://arthas.aliyun.com/doc/arthas-tutorials.html?language=en&id=command-sysenv)
 
 > Check the current JVM's info
 
