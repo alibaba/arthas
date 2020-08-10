@@ -20,7 +20,7 @@
         <connection>scm:git:git@github.com:alibaba/arthas.git</connection>
         <developerConnection>scm:git:git@github.com:alibaba/arthas.git</developerConnection>
         <url>https://github.com/alibaba/arthas</url>
-      <tag>arthas-all-3.3.8</tag>
+      <tag>HEAD</tag>
   </scm>
 
     <developers>
@@ -48,7 +48,7 @@
 
     <groupId>com.taobao.arthas</groupId>
     <artifactId>arthas-all</artifactId>
-    <version>3.3.8</version>
+    <version>3.3.9-SNAPSHOT</version>
     <packaging>pom</packaging>
 
     <name>arthas-all</name>
@@ -126,7 +126,7 @@
         <maven.compiler.source>1.6</maven.compiler.source>
         <spring-boot.version>2.3.1.RELEASE</spring-boot.version>
         <maven-invoker-plugin.version>3.0.0</maven-invoker-plugin.version>
-        <project.build.outputTimestamp>2020-08-10T13:39:24Z</project.build.outputTimestamp>
+        <project.build.outputTimestamp>2020-08-10T13:41:11Z</project.build.outputTimestamp>
     </properties>
 
     <dependencyManagement>
