@@ -85,7 +85,7 @@ public class Bootstrap {
      * The directory contains arthas-core.jar/arthas-client.jar/arthas-spy.jar.
      * 1. When use-version is not empty, try to find arthas home under ~/.arthas/lib
      * 2. Try set the directory where arthas-boot.jar is located to arthas home
-     * 3. Try to download from maven repo
+     * 3. Try to download from remote repo
      * </pre>
      */
     private String arthasHome;
@@ -101,7 +101,7 @@ public class Bootstrap {
     private boolean versions;
 
     /**
-     * download from maven repository. if timezone is +0800, default value is 'aliyun', else is 'center'.
+     * download from remo repository. if timezone is +0800, default value is 'aliyun', else is 'center'.
      */
     private String repoMirror;
 
@@ -193,7 +193,7 @@ public class Bootstrap {
     }
 
     @Option(longName = "repo-mirror")
-    @Description("Use special maven repository mirror, value is center/aliyun or http repo url.")
+    @Description("Use special remote repository mirror, value is center/aliyun or http repo url.")
     public void setRepoMirror(String repoMirror) {
         this.repoMirror = repoMirror;
     }
@@ -281,8 +281,6 @@ public class Bootstrap {
             }
         }
 
-        String mavenMetaData = null;
-
         Bootstrap bootstrap = new Bootstrap();
 
         CLI cli = CLIConfigurator.define(Bootstrap.class);
@@ -314,10 +312,7 @@ public class Bootstrap {
         AnsiLog.debug("Repo mirror:" + bootstrap.getRepoMirror());
 
         if (bootstrap.isVersions()) {
-            if (mavenMetaData == null) {
-                mavenMetaData = DownloadUtils.readMavenMetaData(bootstrap.getRepoMirror(), bootstrap.isuseHttp());
-            }
-            System.out.println(UsageRender.render(listVersions(mavenMetaData)));
+            System.out.println(UsageRender.render(listVersions()));
             System.exit(0);
         }
 
@@ -427,17 +422,13 @@ public class Bootstrap {
                 localLastestVersion = versionList.get(versionList.size() - 1);
             }
 
-            if (mavenMetaData == null) {
-                mavenMetaData = DownloadUtils.readMavenMetaData(bootstrap.getRepoMirror(), bootstrap.isuseHttp());
-            }
-
-            String remoteLastestVersion = DownloadUtils.readMavenReleaseVersion(mavenMetaData);
+            String remoteLastestVersion = DownloadUtils.readLatestReleaseVersion();
 
             boolean needDownload = false;
             if (localLastestVersion == null) {
                 if (remoteLastestVersion == null) {
                     // exit
-                    AnsiLog.error("Can not find Arthas under local: {} and remote maven repo mirror: {}", ARTHAS_LIB_DIR,
+                    AnsiLog.error("Can not find Arthas under local: {} and remote repo mirror: {}", ARTHAS_LIB_DIR,
                             bootstrap.getRepoMirror());
                     AnsiLog.error(
                             "Unable to download arthas from remote server, please download the full package according to wiki: https://github.com/alibaba/arthas");
@@ -630,7 +621,7 @@ public class Bootstrap {
         return -1;
     }
 
-    private static String listVersions(String mavenMetaData) {
+    private static String listVersions() {
         StringBuilder result = new StringBuilder(1024);
         List<String> versionList = listNames(ARTHAS_LIB_DIR);
         Collections.sort(versionList);
@@ -640,13 +631,12 @@ public class Bootstrap {
             result.append(" " + version).append('\n');
         }
         result.append("Remote versions:\n");
-        if (mavenMetaData != null) {
-            List<String> remoteVersions = DownloadUtils.readAllMavenVersion(mavenMetaData);
-            Collections.reverse(remoteVersions);
-            for (String version : remoteVersions) {
-                result.append(" " + version).append('\n');
-            }
-        }
+
+		List<String> remoteVersions = DownloadUtils.readRemoteVersions();
+		Collections.reverse(remoteVersions);
+		for (String version : remoteVersions) {
+			result.append(" " + version).append('\n');
+		}
         return result.toString();
     }
 
