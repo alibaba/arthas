@@ -1,0 +1,865 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="zh-CN" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="zh-CN" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Http API &mdash; Arthas 3.3.8 文档</title>
+  
+
+  
+  
+    <link rel="shortcut icon" href="_static/favicon.ico"/>
+  
+  
+  
+
+  
+  <script type="text/javascript" src="_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script type="text/javascript" src="_static/jquery.js"></script>
+        <script type="text/javascript" src="_static/underscore.js"></script>
+        <script type="text/javascript" src="_static/doctools.js"></script>
+        <script type="text/javascript" src="_static/language_data.js"></script>
+        <script type="text/javascript" src="_static/translations.js"></script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="_static/overrides.css" type="text/css" />
+    <link rel="index" title="索引" href="genindex.html" />
+    <link rel="search" title="搜索" href="search.html" />
+    <link rel="next" title="Docker" href="docker.html" />
+    <link rel="prev" title="options" href="options.html" />
+<script src="_static/center_page.js"></script>
+<link rel="stylesheet" href="https://g.alicdn.com/code/lib/highlight.js/9.13.1/styles/github.min.css">
+ 
+
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="index.html" class="icon icon-home"> Arthas
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                3.3.8
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul class="current">
+<li class="toctree-l1"><a class="reference external" href="https://mp.weixin.qq.com/s/VVSc_a3mLELW35lMH7rR0Q">应届生招聘</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://mp.weixin.qq.com/s/677GO-3kYx5ygG9rlOlfQg">社招信息</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://developer.aliyun.com/article/751641">技术征文</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://arthas.aliyun.com/doc/en/">English Docs</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://arthas.aliyun.com/doc/arthas-tutorials.html?language=cn">在线教程(推荐)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="install-detail.html">安装</a></li>
+<li class="toctree-l1"><a class="reference internal" href="download.html">下载</a></li>
+<li class="toctree-l1"><a class="reference internal" href="quick-start.html">快速入门</a></li>
+<li class="toctree-l1"><a class="reference internal" href="advanced-use.html">进阶使用</a></li>
+<li class="toctree-l1"><a class="reference internal" href="commands.html">命令列表</a></li>
+<li class="toctree-l1"><a class="reference internal" href="web-console.html">WebConsole</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Http API</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#id1">概览</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id2">访问地址</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id3">请求数据格式</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#action">请求Action</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id4">响应状态</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#id5">一次性命令</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id6">会话交互</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id7">创建会话</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id8">加入会话</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id9">拉取命令结果</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id10">异步执行命令</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id11">中断命令执行</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id12">关闭会话</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#web-ui">Web UI</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id13">特殊命令结果</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#status">status</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#input-status">input_status</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#command">command</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#enhancer">enhancer</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#id14">其它</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#watchmap">watch命令输出map对象</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="docker.html">Docker</a></li>
+<li class="toctree-l1"><a class="reference internal" href="spring-boot-starter.html">Arthas Spring Boot Starter</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas/issues?q=label%3Auser-case">用户案例</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas/issues?q=label%3Aquestion-answered">常见问题</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas">Fork me at GitHub</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas/blob/master/CONTRIBUTING.md#">编译调试/参与贡献</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas/releases">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="contact-us.html">QQ群/钉钉群</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://arthas.gitee.io/">国内镜像站</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">Arthas</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+      <li>Http API</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            
+              <a href="https://github.com/alibaba/arthas/blob/master/site/src/site/sphinx/http-api.md" class="fa fa-github"> Edit on GitHub</a>
+            
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="http-api">
+<h1>Http API<a class="headerlink" href="#http-api" title="永久链接至标题">¶</a></h1>
+<div class="section" id="id1">
+<h2>概览<a class="headerlink" href="#id1" title="永久链接至标题">¶</a></h2>
+<p>Http API
+提供类似RESTful的交互接口，请求和响应均为JSON格式的数据。相对于Telnet/WebConsole的输出非结构化文本数据，Http
+API可以提供结构化的数据，支持更复杂的交互功能，比如特定应用场景的一系列诊断操作。</p>
+<div class="section" id="id2">
+<h3>访问地址<a class="headerlink" href="#id2" title="永久链接至标题">¶</a></h3>
+<p>Http API接口地址为：<code class="docutils literal notranslate"><span class="pre">http://ip:port/api</span></code>，必须使用POST方式提交请求参数。如POST
+<code class="docutils literal notranslate"><span class="pre">http://127.0.0.1:8563/api</span></code> 。</p>
+<p>注意：telnet服务的3658端口与Chrome浏览器有兼容性问题，建议使用http端口8563来访问http接口。</p>
+</div>
+<div class="section" id="id3">
+<h3>请求数据格式<a class="headerlink" href="#id3" title="永久链接至标题">¶</a></h3>
+<div class="highlight-json notranslate"><div class="highlight hljs"><pre class="json">{
+  &quot;action&quot;: &quot;exec&quot;,
+  &quot;requestId&quot;: &quot;req112&quot;
+  &quot;sessionId&quot;: &quot;94766d3c-8b39-42d3-8596-98aee3ccbefb&quot;
+  &quot;consumerId&quot;: &quot;955dbd1325334a84972b0f3ac19de4f7_2&quot;
+  &quot;command&quot;: &quot;version&quot;,
+  &quot;execTimeout&quot;: &quot;10000&quot;
+}</pre></div>
+</div>
+<p>请求数据格式说明：</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">action</span></code> : 请求的动作/行为，可选值请参考”请求Action”小节。</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">requestId</span></code> : 可选请求ID，由客户端生成。</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">sessionId</span></code> : Arthas会话ID，一次性命令不需要设置会话ID。</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">consumerId</span></code> : Arthas消费者ID，用于多人共享会话。</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">command</span></code> : Arthas command line 。</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">execTimeout</span></code> : 命令同步执行的超时时间(ms)，默认为30000。</p></li>
+</ul>
+<p>注意: 不同的action使用到参数不同，根据具体的action来设置参数。</p>
+</div>
+<div class="section" id="action">
+<h3>请求Action<a class="headerlink" href="#action" title="永久链接至标题">¶</a></h3>
+<p>目前支持的请求Action如下：</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">exec</span></code> : 同步执行命令，命令正常结束或者超时后中断命令执行后返回命令的执行结果。</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">async_exec</span></code> : 异步执行命令，立即返回命令的调度结果，命令执行结果通过<code class="docutils literal notranslate"><span class="pre">pull_results</span></code>获取。</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">interrupt_job</span></code> : 中断会话当前的命令，类似Telnet <code class="docutils literal notranslate"><span class="pre">Ctrl</span> <span class="pre">+</span> <span class="pre">c</span></code>的功能。</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">pull_results</span></code> : 获取异步执行的命令的结果，以http 长轮询（long-polling）方式重复执行</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">init_session</span></code> : 创建会话</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">join_session</span></code> : 加入会话，用于支持多人共享同一个Arthas会话</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">close_session</span></code> : 关闭会话</p></li>
+</ul>
+</div>
+<div class="section" id="id4">
+<h3>响应状态<a class="headerlink" href="#id4" title="永久链接至标题">¶</a></h3>
+<p>响应中的state属性表示请求处理状态，取值如下：</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">SCHEDULED</span></code>：异步执行命令时表示已经创建job并已提交到命令执行队列，命令可能还没开始执行或者执行中；</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">SUCCEEDED</span></code>：请求处理成功（完成状态）；</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">FAILED</span></code>：请求处理失败（完成状态），通常附带message说明原因；</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">REFUSED</span></code>：请求被拒绝（完成状态），通常附带message说明原因；</p></li>
+</ul>
+</div>
+</div>
+<div class="section" id="id5">
+<h2>一次性命令<a class="headerlink" href="#id5" title="永久链接至标题">¶</a></h2>
+<p>与执行批处理命令类似，一次性命令以同步方式执行。不需要创建会话，不需要设置<code class="docutils literal notranslate"><span class="pre">sessionId</span></code>选项。</p>
+<div class="highlight-json notranslate"><div class="highlight hljs"><pre class="json">{
+  &quot;action&quot;: &quot;exec&quot;,
+  &quot;command&quot;: &quot;&lt;Arthas command line&gt;&quot;
+}</pre></div>
+</div>
+<p>比如获取Arthas版本号：</p>
+<div class="highlight-bash notranslate"><div class="highlight hljs"><pre class="bash">curl -Ss -XPOST http://localhost:8563/api -d &#x27;
+{
+  &quot;action&quot;:&quot;exec&quot;,
+  &quot;command&quot;:&quot;version&quot;
+}
+&#x27;</pre></div>
+</div>
+<p>响应内容如下：</p>
+<div class="highlight-json notranslate"><div class="highlight hljs"><pre class="json">{
+   &quot;state&quot; : &quot;SUCCEEDED&quot;,
+   &quot;sessionId&quot; : &quot;ee3bc004-4586-43de-bac0-b69d6db7a869&quot;,
+   &quot;body&quot; : {
+      &quot;results&quot; : [
+         {
+            &quot;type&quot; : &quot;version&quot;,
+            &quot;version&quot; : &quot;3.3.8-SNAPSHOT&quot;,
+            &quot;jobId&quot; : 5
+         },
+         {
+            &quot;jobId&quot; : 5,
+            &quot;statusCode&quot; : 0,
+            &quot;type&quot; : &quot;status&quot;
+         }
+      ],
+      &quot;timeExpired&quot; : false,
+      &quot;command&quot; : &quot;version&quot;,
+      &quot;jobStatus&quot; : &quot;TERMINATED&quot;,
+      &quot;jobId&quot; : 5
+   }
+}</pre></div>
+</div>
+<p>响应数据解析：</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">state</span></code>: 请求处理状态，参考“接口响应状态”说明</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">sessionId</span> </code>: Arthas会话ID，一次性命令自动创建及销毁临时会话</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">body.jobId</span></code>:  命令的任务ID，同一任务输出的所有Result都是相同的jobId</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">body.jobStatus</span></code>: 任务状态，同步执行正常结束为<code class="docutils literal notranslate"><span class="pre">TERMINATED</span> </code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">body.timeExpired</span></code>: 任务执行是否超时</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">body/results</span></code>: 命令执行的结果列表</p></li>
+</ul>
+<p><strong>命令结果格式说明</strong></p>
+<div class="highlight-json notranslate"><div class="highlight hljs"><pre class="json"> [{
+    &quot;type&quot; : &quot;version&quot;,
+    &quot;version&quot; : &quot;3.3.8-SNAPSHOT&quot;,
+    &quot;jobId&quot; : 5
+ },
+ {
+    &quot;jobId&quot; : 5,
+    &quot;statusCode&quot; : 0,
+    &quot;type&quot; : &quot;status&quot;
+ }]</pre></div>
+</div>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">type</span></code> : 命令结果类型，除了<code class="docutils literal notranslate"><span class="pre">status</span></code>等特殊的几个外，其它的保持与Arthas命令名称一致。请参考”<a class="reference external" href="#special_command_results">特殊命令结果</a>”小节。</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">jobId</span></code> : 处理命令的任务ID。</p></li>
+<li><p>其它字段为每个不同命令的数据。</p></li>
+</ul>
+<p>注意：也可以使用一次性命令的方式执行watch/trace等连续输出的命令，但不能中断命令执行，可能出现长时间没有结束的问题。请参考”<a class="reference external" href="#change_watch_value_to_map">watch命令输出map对象</a>”小节的示例。</p>
+<p>请尽量按照以下方式处理：</p>
+<ul class="simple">
+<li><p>设置合理的<code class="docutils literal notranslate"><span class="pre">execTimeout</span></code>，到达超时时间后强制中断命令执行，避免长时间挂起。</p></li>
+<li><p>通过<code class="docutils literal notranslate"><span class="pre">-n</span></code>参数指定较少的执行次数。</p></li>
+<li><p>保证命令匹配的方法可以成功命中和condition-express编写正确，如果watch/trace没有命中就算指定<code class="docutils literal notranslate"><span class="pre">-n</span> <span class="pre">1</span></code>也会挂起等待到执行超时。</p></li>
+</ul>
+</div>
+<div class="section" id="id6">
+<h2>会话交互<a class="headerlink" href="#id6" title="永久链接至标题">¶</a></h2>
+<p>由用户创建及管理Arthas会话，适用于复杂的交互过程。访问流程如下：</p>
+<ul class="simple">
+<li><p>创建会话</p></li>
+<li><p>加入会话(可选）</p></li>
+<li><p>拉取命令结果</p></li>
+<li><p>执行一系列命令</p></li>
+<li><p>中断命令执行</p></li>
+<li><p>关闭会话</p></li>
+</ul>
+<div class="section" id="id7">
+<h3>创建会话<a class="headerlink" href="#id7" title="永久链接至标题">¶</a></h3>
+<div class="highlight-bash notranslate"><div class="highlight hljs"><pre class="bash">curl -Ss -XPOST http://localhost:8563/api -d &#x27;
+{
+  &quot;action&quot;:&quot;init_session&quot;
+}
+&#x27;</pre></div>
+</div>
+<p>响应结果：</p>
+<div class="highlight-json notranslate"><div class="highlight hljs"><pre class="json">{
+   &quot;sessionId&quot; : &quot;b09f1353-202c-407b-af24-701b744f971e&quot;,
+   &quot;consumerId&quot; : &quot;5ae4e5fbab8b4e529ac404f260d4e2d1_1&quot;,
+   &quot;state&quot; : &quot;SUCCEEDED&quot;
+}</pre></div>
+</div>
+<p>当前会话ID为： <code class="docutils literal notranslate"><span class="pre">b09f1353-202c-407b-af24-701b744f971e</span></code>， 当前消费者ID为：<code class="docutils literal notranslate"><span class="pre">5ae4e5fbab8b4e529ac404f260d4e2d1_1</span> </code>。</p>
+</div>
+<div class="section" id="id8">
+<h3>加入会话<a class="headerlink" href="#id8" title="永久链接至标题">¶</a></h3>
+<p>指定要加入的会话ID，服务端将分配一个新的消费者ID。多个消费者可以接收到同一个会话的命令结果。本接口用于支持多人共享同一个会话或刷新页面后重新拉取会话历史记录。</p>
+<div class="highlight-bash notranslate"><div class="highlight hljs"><pre class="bash">curl -Ss -XPOST http://localhost:8563/api -d &#x27;
+{
+  &quot;action&quot;:&quot;join_session&quot;,
+  &quot;sessionId&quot; : &quot;b09f1353-202c-407b-af24-701b744f971e&quot;
+}
+&#x27;</pre></div>
+</div>
+<p>响应结果：</p>
+<div class="highlight-json notranslate"><div class="highlight hljs"><pre class="json">{
+   &quot;consumerId&quot; : &quot;8f7f6ad7bc2d4cb5aa57a530927a95cc_2&quot;,
+   &quot;sessionId&quot; : &quot;b09f1353-202c-407b-af24-701b744f971e&quot;,
+   &quot;state&quot; : &quot;SUCCEEDED&quot;
+}</pre></div>
+</div>
+<p>新的消费者ID为<code class="docutils literal notranslate"><span class="pre">8f7f6ad7bc2d4cb5aa57a530927a95cc_2</span> </code> 。</p>
+</div>
+<div class="section" id="id9">
+<h3>拉取命令结果<a class="headerlink" href="#id9" title="永久链接至标题">¶</a></h3>
+<p>拉取命令结果消息的action为<code class="docutils literal notranslate"><span class="pre">pull_results</span></code>。请使用Http long-polling方式，定时循环拉取结果消息。
+消费者的超时时间为5分钟，超时后需要调用<code class="docutils literal notranslate"><span class="pre">join_session</span></code>分配新的消费者。每个消费者单独分配一个缓存队列，按顺序拉取命令结果，不会影响到其它消费者。</p>
+<p>请求参数需要指定会话ID及消费者ID:</p>
+<div class="highlight-bash notranslate"><div class="highlight hljs"><pre class="bash">curl -Ss -XPOST http://localhost:8563/api -d &#x27;
+{
+  &quot;action&quot;:&quot;pull_results&quot;,
+  &quot;sessionId&quot; : &quot;b09f1353-202c-407b-af24-701b744f971e&quot;,
+  &quot;consumerId&quot; : &quot;8f7f6ad7bc2d4cb5aa57a530927a95cc_2&quot;
+}
+&#x27;</pre></div>
+</div>
+<p>用Bash脚本定时拉取结果消息:</p>
+<div class="highlight-bash notranslate"><div class="highlight hljs"><pre class="bash">while true; do curl -Ss -XPOST http://localhost:8563/api -d &#x27;
+{
+  &quot;action&quot;:&quot;pull_results&quot;,
+  &quot;sessionId&quot; : &quot;2b085b5d-883b-4914-ab35-b2c5c1d5aa2a&quot;,
+  &quot;consumerId&quot; : &quot;8ecb9cb7c7804d5d92e258b23d5245cc_1&quot;
+}
+&#x27; | json_pp; sleep 2; done</pre></div>
+</div>
+<p>注： <code class="docutils literal notranslate"><span class="pre">json_pp</span></code> 工具将输出内容格式化为pretty json。</p>
+<p>响应内容如下：</p>
+<div class="highlight-json notranslate"><div class="highlight hljs"><pre class="json">{
+   &quot;body&quot; : {
+      &quot;results&quot; : [
+         {
+            &quot;inputStatus&quot; : &quot;DISABLED&quot;,
+            &quot;jobId&quot; : 0,
+            &quot;type&quot; : &quot;input_status&quot;
+         },
+         {
+            &quot;type&quot; : &quot;message&quot;,
+            &quot;jobId&quot; : 0,
+            &quot;message&quot; : &quot;Welcome to arthas!&quot;
+         },
+         {
+            &quot;tutorials&quot; : &quot;https://arthas.aliyun.com/doc/arthas-tutorials.html&quot;,
+            &quot;time&quot; : &quot;2020-08-06 15:56:43&quot;,
+            &quot;type&quot; : &quot;welcome&quot;,
+            &quot;jobId&quot; : 0,
+            &quot;pid&quot; : &quot;7909&quot;,
+            &quot;wiki&quot; : &quot;https://arthas.aliyun.com/doc&quot;,
+            &quot;version&quot; : &quot;3.3.8-SNAPSHOT&quot;
+         },
+         {
+            &quot;inputStatus&quot; : &quot;ALLOW_INPUT&quot;,
+            &quot;type&quot; : &quot;input_status&quot;,
+            &quot;jobId&quot; : 0
+         }
+      ]
+   },
+   &quot;sessionId&quot; : &quot;b09f1353-202c-407b-af24-701b744f971e&quot;,
+   &quot;consumerId&quot; : &quot;8f7f6ad7bc2d4cb5aa57a530927a95cc_2&quot;,
+   &quot;state&quot; : &quot;SUCCEEDED&quot;
+}
+</pre></div>
+</div>
+</div>
+<div class="section" id="id10">
+<h3>异步执行命令<a class="headerlink" href="#id10" title="永久链接至标题">¶</a></h3>
+<div class="highlight-bash notranslate"><div class="highlight hljs"><pre class="bash">curl -Ss -XPOST http://localhost:8563/api -d &#x27;&#x27;&#x27;
+{
+  &quot;action&quot;:&quot;async_exec&quot;,
+  &quot;command&quot;:&quot;watch demo.MathGame primeFactors \&quot;{params, returnObj, throwExp}\&quot; &quot;,
+   &quot;sessionId&quot; : &quot;2b085b5d-883b-4914-ab35-b2c5c1d5aa2a&quot;
+}
+&#x27;&#x27;&#x27;</pre></div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">async_exec</span></code> 的结果：</p>
+<div class="highlight-json notranslate"><div class="highlight hljs"><pre class="json">{
+   &quot;sessionId&quot; : &quot;2b085b5d-883b-4914-ab35-b2c5c1d5aa2a&quot;,
+   &quot;state&quot; : &quot;SCHEDULED&quot;,
+   &quot;body&quot; : {
+      &quot;jobStatus&quot; : &quot;READY&quot;,
+      &quot;jobId&quot; : 3,
+      &quot;command&quot; : &quot;watch demo.MathGame primeFactors \&quot;{params, returnObj, throwExp}\&quot; &quot;
+   }
+}</pre></div>
+</div>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">state</span></code> : <code class="docutils literal notranslate"><span class="pre">SCHEDULED</span></code> 状态表示已经解析命令生成任务，但未开始执行。</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">body.jobId</span></code> :
+异步执行命令的任务ID，可以根据此任务ID来过滤在<code class="docutils literal notranslate"><span class="pre">pull_results</span></code>输出的命令结果。</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">body.jobStatus</span></code> : 任务状态<code class="docutils literal notranslate"><span class="pre">READY</span></code>表示未开始执行。</p></li>
+</ul>
+<p>查看上面自动拉取结果消息脚本的shell输出：</p>
+<div class="highlight-json notranslate"><div class="highlight hljs"><pre class="json">{
+   &quot;body&quot; : {
+      &quot;results&quot; : [
+         {
+            &quot;type&quot; : &quot;command&quot;,
+            &quot;jobId&quot; : 3,
+            &quot;state&quot; : &quot;SCHEDULED&quot;,
+            &quot;command&quot; : &quot;watch demo.MathGame primeFactors \&quot;{params, returnObj, throwExp}\&quot; &quot;
+         },
+         {
+            &quot;inputStatus&quot; : &quot;ALLOW_INTERRUPT&quot;,
+            &quot;jobId&quot; : 0,
+            &quot;type&quot; : &quot;input_status&quot;
+         },
+         {
+            &quot;success&quot; : true,
+            &quot;jobId&quot; : 3,
+            &quot;effect&quot; : {
+               &quot;listenerId&quot; : 3,
+               &quot;cost&quot; : 24,
+               &quot;classCount&quot; : 1,
+               &quot;methodCount&quot; : 1
+            },
+            &quot;type&quot; : &quot;enhancer&quot;
+         },
+         {
+            &quot;sizeLimit&quot; : 10485760,
+            &quot;expand&quot; : 1,
+            &quot;jobId&quot; : 3,
+            &quot;type&quot; : &quot;watch&quot;,
+            &quot;cost&quot; : 0.071499,
+            &quot;ts&quot; : 1596703453237,
+            &quot;value&quot; : [
+               [
+                  -170365
+               ],
+               null,
+               {
+                  &quot;stackTrace&quot; : [
+                     {
+                        &quot;className&quot; : &quot;demo.MathGame&quot;,
+                        &quot;classLoaderName&quot; : &quot;app&quot;,
+                        &quot;methodName&quot; : &quot;primeFactors&quot;,
+                        &quot;nativeMethod&quot; : false,
+                        &quot;lineNumber&quot; : 46,
+                        &quot;fileName&quot; : &quot;MathGame.java&quot;
+                     },
+                     ...
+                  ],
+                  &quot;localizedMessage&quot; : &quot;number is: -170365, need &gt;= 2&quot;,
+                  &quot;@type&quot; : &quot;java.lang.IllegalArgumentException&quot;,
+                  &quot;message&quot; : &quot;number is: -170365, need &gt;= 2&quot;
+               }
+            ]
+         },
+         {
+            &quot;type&quot; : &quot;watch&quot;,
+            &quot;cost&quot; : 0.033375,
+            &quot;jobId&quot; : 3,
+            &quot;ts&quot; : 1596703454241,
+            &quot;value&quot; : [
+               [
+                  1
+               ],
+               [
+                  2,
+                  2,
+                  2,
+                  2,
+                  13,
+                  491
+               ],
+               null
+            ],
+            &quot;sizeLimit&quot; : 10485760,
+            &quot;expand&quot; : 1
+         }
+      ]
+   },
+   &quot;consumerId&quot; : &quot;8ecb9cb7c7804d5d92e258b23d5245cc_1&quot;,
+   &quot;sessionId&quot; : &quot;2b085b5d-883b-4914-ab35-b2c5c1d5aa2a&quot;,
+   &quot;state&quot; : &quot;SUCCEEDED&quot;
+}</pre></div>
+</div>
+<p>watch命令结果的<code class="docutils literal notranslate"><span class="pre">value</span></code>为watch-experss的值，上面命令中为<code class="docutils literal notranslate"><span class="pre">{params,</span> <span class="pre">returnObj,</span> <span class="pre">throwExp}</span></code>，所以watch结果的value为一个长度为3的数组，每个元素分别对应相应顺序的表达式。
+请参考”<a class="reference external" href="#change_watch_value_to_map">watch命令输出map对象</a>”小节。</p>
+</div>
+<div class="section" id="id11">
+<h3>中断命令执行<a class="headerlink" href="#id11" title="永久链接至标题">¶</a></h3>
+<p>中断会话正在运行的前台Job（前台任务）：</p>
+<div class="highlight-bash notranslate"><div class="highlight hljs"><pre class="bash">curl -Ss -XPOST http://localhost:8563/api -d &#x27;&#x27;&#x27;
+{
+  &quot;action&quot;:&quot;interrupt_job&quot;,
+  &quot;sessionId&quot; : &quot;2b085b5d-883b-4914-ab35-b2c5c1d5aa2a&quot;
+}
+&#x27;&#x27;&#x27;</pre></div>
+</div>
+<div class="highlight-default notranslate"><pre class="literal-block">{
+   &quot;state&quot; : &quot;SUCCEEDED&quot;,
+   &quot;body&quot; : {
+      &quot;jobStatus&quot; : &quot;TERMINATED&quot;,
+      &quot;jobId&quot; : 3
+   }
+}</pre>
+</div>
+</div>
+<div class="section" id="id12">
+<h3>关闭会话<a class="headerlink" href="#id12" title="永久链接至标题">¶</a></h3>
+<p>指定会话ID，关闭会话。</p>
+<div class="highlight-bash notranslate"><div class="highlight hljs"><pre class="bash">curl -Ss -XPOST http://localhost:8563/api -d &#x27;&#x27;&#x27;
+{
+  &quot;action&quot;:&quot;close_session&quot;,
+  &quot;sessionId&quot; : &quot;2b085b5d-883b-4914-ab35-b2c5c1d5aa2a&quot;
+}
+&#x27;&#x27;&#x27;</pre></div>
+</div>
+<div class="highlight-json notranslate"><div class="highlight hljs"><pre class="json">{
+   &quot;state&quot; : &quot;SUCCEEDED&quot;
+}</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="web-ui">
+<h2>Web UI<a class="headerlink" href="#web-ui" title="永久链接至标题">¶</a></h2>
+<p><img alt="_images/arthas-web-ui.png" src="_images/arthas-web-ui.png" /></p>
+<p>一个基于Http API接口实现的Web UI，访问地址为： <a class="reference external" href="http://127.0.0.1:8563/ui">http://127.0.0.1:8563/ui</a> 。</p>
+<p>已实现功能：</p>
+<ul class="simple">
+<li><p>创建会话</p></li>
+<li><p>复制并打开url加入会话，多人共享会话</p></li>
+<li><p>周期性拉取会话命令结果消息</p></li>
+<li><p>刷新页面或者加入会话拉取会话历史命令消息</p></li>
+<li><p>输入命令/中断命令状态控制</p></li>
+</ul>
+<p>待开发功能：</p>
+<ul class="simple">
+<li><p>改进将命令结果消息可读性</p></li>
+<li><p>命令输入支持自动完成及命令模板</p></li>
+<li><p>提供命令帮助</p></li>
+<li><p>支持个人选项设置</p></li>
+</ul>
+<p><a id="special_command_results"></a></p>
+</div>
+<div class="section" id="id13">
+<h2>特殊命令结果<a class="headerlink" href="#id13" title="永久链接至标题">¶</a></h2>
+<div class="section" id="status">
+<h3>status<a class="headerlink" href="#status" title="永久链接至标题">¶</a></h3>
+<div class="highlight-json notranslate"><div class="highlight hljs"><pre class="json">{
+    &quot;jobId&quot; : 5,
+    &quot;statusCode&quot; : 0,
+    &quot;type&quot; : &quot;status&quot;
+}</pre></div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">type</span></code>为<code class="docutils literal notranslate"><span class="pre">status</span></code>表示命令执行状态：</p>
+<p>每个命令执行结束后都有唯一一个status结果。<code class="docutils literal notranslate"><span class="pre">statusCode</span></code>
+为0表示执行成功，<code class="docutils literal notranslate"><span class="pre">statusCode</span></code> 为非0值表示执行失败，类似进程退出码(exit code)。</p>
+<p>命令执行失败时一般会提供错误消息，如：</p>
+<div class="highlight-json notranslate"><div class="highlight hljs"><pre class="json">{
+  &quot;jobId&quot;:3,
+  &quot;message&quot;:&quot;The argument &#x27;class-pattern&#x27; is required&quot;,
+  &quot;statusCode&quot;:-10,
+  &quot;type&quot;:&quot;status&quot;
+}</pre></div>
+</div>
+</div>
+<div class="section" id="input-status">
+<h3>input_status<a class="headerlink" href="#input-status" title="永久链接至标题">¶</a></h3>
+<div class="highlight-json notranslate"><div class="highlight hljs"><pre class="json"> {
+    &quot;inputStatus&quot; : &quot;ALLOW_INPUT&quot;,
+    &quot;type&quot; : &quot;input_status&quot;,
+    &quot;jobId&quot; : 0
+ }</pre></div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">type</span></code>为<code class="docutils literal notranslate"><span class="pre">input_status</span></code>表示输入状态：</p>
+<p>用于UI交互时控制用户输入，每次执行命令前后会发送改变的消息。
+<code class="docutils literal notranslate"><span class="pre">inputStatus</span></code> 的值说明：</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">ALLOW_INPUT</span></code> :
+允许用户输入命令，表示会话没有在执行的前台命令，可以接受新的命令。</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">ALLOW_INTERRUPT</span></code> :
+允许用户中断命令执行，表示当前正在执行命令，用户可以发送<code class="docutils literal notranslate"><span class="pre">interrupt_job</span></code>中断执行。</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">DISABLED</span></code> : 禁用状态，不能输入命令也不能中断命令。</p></li>
+</ul>
+</div>
+<div class="section" id="command">
+<h3>command<a class="headerlink" href="#command" title="永久链接至标题">¶</a></h3>
+<div class="highlight-json notranslate"><div class="highlight hljs"><pre class="json"> {
+    &quot;type&quot; : &quot;command&quot;,
+    &quot;jobId&quot; : 3,
+    &quot;state&quot; : &quot;SCHEDULED&quot;,
+    &quot;command&quot; : &quot;watch demo.MathGame primeFactors \&quot;{params, returnObj, throwExp}\&quot; &quot;
+ }</pre></div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">type</span></code> 为<code class="docutils literal notranslate"><span class="pre">command</span></code>表示输入的命令数据：</p>
+<p>用于交互UI回显用户输入的命令，拉取的会话命令消息历史会包含<code class="docutils literal notranslate"><span class="pre">command</span></code>类型的消息，按顺序处理即可。</p>
+</div>
+<div class="section" id="enhancer">
+<h3>enhancer<a class="headerlink" href="#enhancer" title="永久链接至标题">¶</a></h3>
+<div class="highlight-json notranslate"><div class="highlight hljs"><pre class="json"> {
+    &quot;success&quot; : true,
+    &quot;jobId&quot; : 3,
+    &quot;effect&quot; : {
+       &quot;listenerId&quot; : 3,
+       &quot;cost&quot; : 24,
+       &quot;classCount&quot; : 1,
+       &quot;methodCount&quot; : 1
+    },
+    &quot;type&quot; : &quot;enhancer&quot;
+ }</pre></div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">type</span></code>为<code class="docutils literal notranslate"><span class="pre">enhancer</span></code>表示类增强结果：</p>
+<p><code class="docutils literal notranslate"><span class="pre">trace/watch/jad/tt</span></code>等命令需要对类进行增强，会接收到这个<code class="docutils literal notranslate"><span class="pre">enhancer</span></code>结果。可能出现<code class="docutils literal notranslate"><span class="pre">enhancer</span></code>结果成功，但没有命中方法的情况，客户端可以根据<code class="docutils literal notranslate"><span class="pre">enhancer</span></code>结果提示用户。</p>
+</div>
+</div>
+<div class="section" id="id14">
+<h2>其它<a class="headerlink" href="#id14" title="永久链接至标题">¶</a></h2>
+<p><a id="change_watch_value_to_map"></a></p>
+<div class="section" id="watchmap">
+<h3>watch命令输出map对象<a class="headerlink" href="#watchmap" title="永久链接至标题">¶</a></h3>
+<p>watch的结果值由计算<code class="docutils literal notranslate"><span class="pre">watch-express</span></code> ognl表达式产生，可以通过改变ognl表达式来生成想要的值，请参考<a class="reference external" href="https://commons.apache.org/proper/commons-ognl/language-guide.html">OGNL文档</a>。</p>
+<blockquote>
+<div><p>Maps can also be created using a special syntax.</p>
+<p>#{ “foo” : “foo value”, “bar” : “bar value” }</p>
+<p>This creates a Map initialized with mappings for “foo” and “bar”.</p>
+</div></blockquote>
+<p>下面的命令生成map格式的值：</p>
+<div class="highlight-bash notranslate"><div class="highlight hljs"><pre class="bash">watch *MathGame prime* &#x27;#{ &quot;params&quot; : params, &quot;returnObj&quot; : returnObj, &quot;throwExp&quot;: throwExp}&#x27; -x 2 -n 5</pre></div>
+</div>
+<p>在Telnet shell/WebConsole 中执行上面的命令，输出的结果：</p>
+<div class="highlight-bash notranslate"><div class="highlight hljs"><pre class="bash">ts=2020-08-06 16:57:20; [cost=0.241735ms] result=@LinkedHashMap[
+    @String[params]:@Object[][
+        @Integer[1],
+    ],
+    @String[returnObj]:@ArrayList[
+        @Integer[2],
+        @Integer[241],
+        @Integer[379],
+    ],
+    @String[throwExp]:null,
+]</pre></div>
+</div>
+<p>用Http api 执行上面的命令，注意对JSON双引号转义：</p>
+<div class="highlight-bash notranslate"><div class="highlight hljs"><pre class="bash">curl -Ss -XPOST http://localhost:8563/api -d @- &lt;&lt; EOF
+{
+  &quot;action&quot;:&quot;exec&quot;,
+  &quot;execTimeout&quot;: 30000,
+  &quot;command&quot;:&quot;watch *MathGame prime* &#x27;#{ \&quot;params\&quot; : params, \&quot;returnObj\&quot; : returnObj, \&quot;throwExp\&quot;: throwExp}&#x27; -n 3 &quot;
+}
+EOF</pre></div>
+</div>
+<p>Http api 执行结果：</p>
+<div class="highlight-json notranslate"><div class="highlight hljs"><pre class="json">{
+    &quot;body&quot;: {
+         ...
+        &quot;results&quot;: [
+            ...
+            {
+                ...
+                &quot;type&quot;: &quot;watch&quot;,
+                &quot;value&quot;: {
+                    &quot;params&quot;: [
+                        1
+                    ],
+                    &quot;returnObj&quot;: [
+                        2,
+                        5,
+                        17,
+                        23,
+                        23
+                    ]
+                }
+            },
+            {
+                ...
+                &quot;type&quot;: &quot;watch&quot;,
+                &quot;value&quot;: {
+                    &quot;params&quot;: [
+                        -98278
+                    ],
+                    &quot;throwExp&quot;: {
+                        &quot;@type&quot;: &quot;java.lang.IllegalArgumentException&quot;,
+                        &quot;localizedMessage&quot;: &quot;number is: -98278, need &gt;= 2&quot;,
+                        &quot;message&quot;: &quot;number is: -98278, need &gt;= 2&quot;,
+                        &quot;stackTrace&quot;: [
+                            ...
+                        ]
+                    }
+                }
+            },
+            ...
+}</pre></div>
+</div>
+<p>可以看到watch结果的value变成map对象，程序可以通过key读取结果。</p>
+</div>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="docker.html" class="btn btn-neutral float-right" title="Docker" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="options.html" class="btn btn-neutral float-left" title="options" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2018-2020, Alibaba Middleware Group, and contributors
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+  
+<div class="github-fork-ribbon-wrapper right">
+  <div class="github-fork-ribbon">
+    <a href="https://github.com/alibaba/arthas" target="_blank">Fork me at GitHub</a>
+  </div>
+</div>
+
+<script type="text/javascript" src="_static/add_badges.js"></script>
+
+<script src="https://g.alicdn.com/code/lib/highlight.js/9.13.1/highlight.min.js"></script>
+<script src="https://g.alicdn.com/code/lib/highlightjs-line-numbers.js/2.5.0/highlightjs-line-numbers.min.js"></script>
+<script>
+  document.querySelectorAll('div.hljs > pre').forEach(function(block) {
+    hljs.highlightBlock(block);
+    hljs.lineNumbersBlock(block);
+  });
+</script>
+
+
+<script type="text/javascript">document.write(unescape("%3Cspan style='display:none;' id='cnzz_stat_icon_1279151497'%3E%3C/span%3E%3Cscript src='https://s4.cnzz.com/z_stat.php%3Fid%3D1279151497' type='text/javascript'%3E%3C/script%3E"));</script>
+
+<script>
+  var _hmt = _hmt || [];
+  (function() {
+    var hm = document.createElement("script");
+    if (window.location.hostname == "arthas.gitee.io") {
+      hm.src = "https://hm.baidu.com/hm.js?ecc1b0d9aeb73da1671876133211d4d3";
+    } else { // https://arthas.aliyun.com/doc/
+      hm.src = "https://hm.baidu.com/hm.js?d5c5e25b100f0eb51a4c35c8a86ea9b4";
+    }
+
+    var s = document.getElementsByTagName("script")[0]; 
+    s.parentNode.insertBefore(hm, s);
+  })();
+</script>  
+
+ 
+
+
+</body>
+</html>

@@ -1,0 +1,928 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Http API &mdash; Arthas 3.3.8 documentation</title>
+  
+
+  
+  
+    <link rel="shortcut icon" href="_static/favicon.ico"/>
+  
+  
+  
+
+  
+  <script type="text/javascript" src="_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script type="text/javascript" src="_static/jquery.js"></script>
+        <script type="text/javascript" src="_static/underscore.js"></script>
+        <script type="text/javascript" src="_static/doctools.js"></script>
+        <script type="text/javascript" src="_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="_static/overrides.css" type="text/css" />
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Docker" href="docker.html" />
+    <link rel="prev" title="options" href="options.html" />
+<script src="_static/center_page.js"></script>
+<link rel="stylesheet" href="https://g.alicdn.com/code/lib/highlight.js/9.13.1/styles/github.min.css">
+ 
+
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="index.html" class="icon icon-home"> Arthas
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                3.3.8
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul class="current">
+<li class="toctree-l1"><a class="reference external" href="https://arthas.aliyun.com/doc/arthas-tutorials.html?language=en">Online tutorials(Recommend)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="install-detail.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="download.html">Download</a></li>
+<li class="toctree-l1"><a class="reference internal" href="quick-start.html">Quick start</a></li>
+<li class="toctree-l1"><a class="reference internal" href="advanced-use.html">Advanced usage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="commands.html">Commands</a></li>
+<li class="toctree-l1"><a class="reference internal" href="web-console.html">WebConsole</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Http API</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#overview">Overview</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#access-address">Access address</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#request-data-format">Request data format</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#request-actions">Request Actions</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#response-status">Response status</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#one-time-command">One-time command</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#session-interaction">Session interaction</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#create-session">Create session</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#join-session">Join session</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#pull-command-results">Pull command results</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#execute-commands-asynchronously">Execute commands asynchronously</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#interrupt-command-execution">Interrupt command execution</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#close-session">Close session</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#web-ui">Web UI</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#special-command-results">Special command results</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#status">status</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#input-status">input_status</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#command">command</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#enhancer">enhancer</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#others">Others</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#make-watch-command-output-a-map-object">Make watch command output a map object</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="docker.html">Docker</a></li>
+<li class="toctree-l1"><a class="reference internal" href="spring-boot-starter.html">Arthas Spring Boot Starter</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas/issues?q=label%3Auser-case">User cases</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas/issues?q=label%3Aquestion-answered">Questions and answers</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas">Fork me at GitHub</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas/blob/master/CONTRIBUTING.md#">Compile and debug/CONTRIBUTING</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas/releases">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="contact-us.html">Contact us</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">Arthas</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+      <li>Http API</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            
+              <a href="https://github.com/alibaba/arthas/blob/master/site/src/site/sphinx/en/http-api.md" class="fa fa-github"> Edit on GitHub</a>
+            
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="http-api">
+<h1>Http API<a class="headerlink" href="#http-api" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="overview">
+<h2>Overview<a class="headerlink" href="#overview" title="Permalink to this headline">¶</a></h2>
+<p>Http API provides a RESTful-like interactive interface, and both
+requests and responses data in JSON format. Compared with
+Telnet/WebConsole’s output unstructured text data, Http API can provide
+structured data and support more complex interactive functions, such as
+a series of diagnostic operations in specific application scenarios.</p>
+<div class="section" id="access-address">
+<h3>Access address<a class="headerlink" href="#access-address" title="Permalink to this headline">¶</a></h3>
+<p>The Http API address is: <code class="docutils literal notranslate"><span class="pre">http://ip:port/api</span></code>, the request parameters
+must be submitted using <code class="docutils literal notranslate"><span class="pre">POST</span></code>. Such as POST
+<code class="docutils literal notranslate"><span class="pre">http://127.0.0.1:8563/api</span></code>.</p>
+<p>Note: The telnet port <code class="docutils literal notranslate"><span class="pre">3658</span></code> has compatibility issues with the Chrome
+browser. It is recommended to use the http port <code class="docutils literal notranslate"><span class="pre">8563</span></code> to access the
+http api.</p>
+</div>
+<div class="section" id="request-data-format">
+<h3>Request data format<a class="headerlink" href="#request-data-format" title="Permalink to this headline">¶</a></h3>
+<div class="highlight-json notranslate"><div class="highlight hljs"><pre class="json">{
+  &quot;action&quot;: &quot;exec&quot;,
+  &quot;requestId&quot;: &quot;req112&quot;
+  &quot;sessionId&quot;: &quot;94766d3c-8b39-42d3-8596-98aee3ccbefb&quot;
+  &quot;consumerId&quot;: &quot;955dbd1325334a84972b0f3ac19de4f7_2&quot;
+  &quot;command&quot;: &quot;version&quot;,
+  &quot;execTimeout&quot;: &quot;10000&quot;
+}</pre></div>
+</div>
+<p>Request data format description:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">action</span></code> : The requested action/behavior, please refer to “Request
+Actions” for optional values.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">requestId</span></code> : Optional request ID, generated by the client.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">sessionId</span></code> : Arthas session ID, one-time command does not need to
+set the session ID.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">consumerId</span></code> : Arthas consumer ID, used for multi-person sharing
+sessions.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">command</span></code> : Arthas command line</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">execTimeout</span></code> : Timeout for executing commands (ms), default value is 30000.</p></li>
+</ul>
+<p>Note: Different actions use different parameters. Set the parameters
+according to the specific action.</p>
+</div>
+<div class="section" id="request-actions">
+<h3>Request Actions<a class="headerlink" href="#request-actions" title="Permalink to this headline">¶</a></h3>
+<p>Currently supported request actions are as follows:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">exec</span></code> : The command is executed synchronously, and the command
+results is returned after the command execution end or interrupted.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">async_exec</span></code> : The command is executed asynchronously, and the
+scheduling result of the command is returned immediately. The command
+execution result is obtained through <code class="docutils literal notranslate"><span class="pre">pull_results</span></code> action.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">interrupt_job</span></code> : To interrupt the foreground command of the session,
+similar to the function of Telnet <code class="docutils literal notranslate"><span class="pre">Ctrl</span> <span class="pre">+</span> <span class="pre">c</span></code>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">pull_results</span></code> : Get the result of the command executed
+asynchronously, and execute it repeatedly in http long-polling mode.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">init_session</span></code> : Create new session.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">join_session</span></code> : Join the session, used to support multiple people
+sharing the same Arthas session.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">close_session</span></code> : Close the session.</p></li>
+</ul>
+</div>
+<div class="section" id="response-status">
+<h3>Response status<a class="headerlink" href="#response-status" title="Permalink to this headline">¶</a></h3>
+<p>The state attribute in the response indicates the request processing
+state, and its value is as follows:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">SCHEDULED</span></code>: When the command is executed asynchronously, it means that
+the job has been created, and may not be executed yet or is being
+executed;</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">SUCCEEDED</span></code>: The request is processed successfully (completed status);</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">FAILED</span></code>: Request processing failed (completed status), usually
+accompanied by a message explaining the reason;</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">REFUSED</span></code>: The request is rejected (completed status), usually
+accompanied by a message explaining the reason;</p></li>
+</ul>
+</div>
+</div>
+<div class="section" id="one-time-command">
+<h2>One-time command<a class="headerlink" href="#one-time-command" title="Permalink to this headline">¶</a></h2>
+<p>Similar to executing batch commands, the one-time commands are executed
+synchronously. No need to create a session, no need to set the
+<code class="docutils literal notranslate"><span class="pre">sessionId</span></code> option.</p>
+<div class="highlight-json notranslate"><div class="highlight hljs"><pre class="json">{
+  &quot;action&quot;: &quot;exec&quot;,
+  &quot;command&quot;: &quot;&lt;Arthas command line&gt;&quot;
+}</pre></div>
+</div>
+<p>For example, get the Arthas version number:</p>
+<div class="highlight-bash notranslate"><div class="highlight hljs"><pre class="bash">curl -Ss -XPOST http://localhost:8563/api -d &#x27;
+{
+  &quot;action&quot;:&quot;exec&quot;,
+  &quot;command&quot;:&quot;version&quot;
+}
+&#x27;</pre></div>
+</div>
+<p>The response is as follows:</p>
+<div class="highlight-json notranslate"><div class="highlight hljs"><pre class="json">{
+   &quot;state&quot; : &quot;SUCCEEDED&quot;,
+   &quot;sessionId&quot; : &quot;ee3bc004-4586-43de-bac0-b69d6db7a869&quot;,
+   &quot;body&quot; : {
+      &quot;results&quot; : [
+         {
+            &quot;type&quot; : &quot;version&quot;,
+            &quot;version&quot; : &quot;3.3.8-SNAPSHOT&quot;,
+            &quot;jobId&quot; : 5
+         },
+         {
+            &quot;jobId&quot; : 5,
+            &quot;statusCode&quot; : 0,
+            &quot;type&quot; : &quot;status&quot;
+         }
+      ],
+      &quot;timeExpired&quot; : false,
+      &quot;command&quot; : &quot;version&quot;,
+      &quot;jobStatus&quot; : &quot;TERMINATED&quot;,
+      &quot;jobId&quot; : 5
+   }
+}</pre></div>
+</div>
+<p>Response data format description:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">state</span></code>: Request processing status, refer to the description of
+“Response Status”.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">sessionId</span> </code>: Arthas session ID, one-time command to automatically
+create and destroy temporary sessions.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">body.jobId</span></code>: The job ID of the command, all output results of the
+same job are the same jobId.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">body.jobStatus</span></code>: The job status of the command.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">body.timeExpired</span></code>: Whether the job execution timed out.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">body/results</span></code>: Command execution results.</p></li>
+</ul>
+<p><strong>Command result format description</strong></p>
+<div class="highlight-json notranslate"><div class="highlight hljs"><pre class="json"> [{
+    &quot;type&quot; : &quot;version&quot;,
+    &quot;version&quot; : &quot;3.3.8-SNAPSHOT&quot;,
+    &quot;jobId&quot; : 5
+ },
+ {
+    &quot;jobId&quot; : 5,
+    &quot;statusCode&quot; : 0,
+    &quot;type&quot; : &quot;status&quot;
+ }]</pre></div>
+</div>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">type</span></code> : The command result type, except for the special ones such as
+<code class="docutils literal notranslate"><span class="pre">status</span></code>, the others remain the same as the Arthas command name.
+Please refer to the section
+“<a class="reference external" href="#special_command_results">Special command results</a>”.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">jobId</span></code> : The job ID of the command.</p></li>
+<li><p>Other fields are the data of each different command.</p></li>
+</ul>
+<p>Note: You can also use a one-time command to execute continuous output
+commands such as watch/trace, but you can’t interrupt the command
+execution, and there may be hang up for a long time. Please refer to the
+example in the
+“<a class="reference external" href="#change_watch_value_to_map">Make watch command output a map object</a>”
+section.</p>
+<p>Please try to deal with it in the following way:</p>
+<ul class="simple">
+<li><p>Set a reasonable <code class="docutils literal notranslate"><span class="pre">execTimeout</span></code> to forcibly interrupt the command
+execution after the timeout period is reached to avoid a long hang.</p></li>
+<li><p>Use the <code class="docutils literal notranslate"><span class="pre">-n</span></code> parameter to specify a smaller number of executions.</p></li>
+<li><p>Ensure the methods of the command matched can be successfully hit and
+the <code class="docutils literal notranslate"><span class="pre">condition-express</span></code> is written correctly. If the <code class="docutils literal notranslate"><span class="pre">watch/trace</span></code> does
+not hit, even if <code class="docutils literal notranslate"><span class="pre">-n</span> <span class="pre">1</span></code> is specified, it will hang and wait until the
+execution timeout.</p></li>
+</ul>
+</div>
+<div class="section" id="session-interaction">
+<h2>Session interaction<a class="headerlink" href="#session-interaction" title="Permalink to this headline">¶</a></h2>
+<p>Users create and manage Arthas sessions, which are suitable for complex
+interactive processes. The access process is as follows:</p>
+<ul class="simple">
+<li><p>Create a session</p></li>
+<li><p>Join the session (optional)</p></li>
+<li><p>Pull command results</p></li>
+<li><p>Execute a series of commands</p></li>
+<li><p>Interrupt command execution</p></li>
+<li><p>Close the session</p></li>
+</ul>
+<div class="section" id="create-session">
+<h3>Create session<a class="headerlink" href="#create-session" title="Permalink to this headline">¶</a></h3>
+<div class="highlight-bash notranslate"><div class="highlight hljs"><pre class="bash">curl -Ss -XPOST http://localhost:8563/api -d &#x27;
+{
+  &quot;action&quot;:&quot;init_session&quot;
+}
+&#x27;</pre></div>
+</div>
+<p>Response result:</p>
+<div class="highlight-json notranslate"><div class="highlight hljs"><pre class="json">{
+   &quot;sessionId&quot; : &quot;b09f1353-202c-407b-af24-701b744f971e&quot;,
+   &quot;consumerId&quot; : &quot;5ae4e5fbab8b4e529ac404f260d4e2d1_1&quot;,
+   &quot;state&quot; : &quot;SUCCEEDED&quot;
+}</pre></div>
+</div>
+<p>The new session ID is: <code class="docutils literal notranslate"><span class="pre">b09f1353-202c-407b-af24-701b744f971e</span></code>, and
+consumer ID is: <code class="docutils literal notranslate"><span class="pre">5ae4e5fbab8b4e529ac404f260d4e2d1_1</span></code>.</p>
+</div>
+<div class="section" id="join-session">
+<h3>Join session<a class="headerlink" href="#join-session" title="Permalink to this headline">¶</a></h3>
+<p>Specify the session ID to join, and the server will assign a new
+consumer ID. Multiple consumers can receive the same command results of
+target session. This interface is used to support multiple people
+sharing the same session or refreshing the page to retrieve the session
+history.</p>
+<div class="highlight-bash notranslate"><div class="highlight hljs"><pre class="bash">curl -Ss -XPOST http://localhost:8563/api -d &#x27;
+{
+  &quot;action&quot;:&quot;join_session&quot;,
+  &quot;sessionId&quot; : &quot;b09f1353-202c-407b-af24-701b744f971e&quot;
+}
+&#x27;</pre></div>
+</div>
+<p>Response result:</p>
+<div class="highlight-json notranslate"><div class="highlight hljs"><pre class="json">{
+   &quot;consumerId&quot; : &quot;8f7f6ad7bc2d4cb5aa57a530927a95cc_2&quot;,
+   &quot;sessionId&quot; : &quot;b09f1353-202c-407b-af24-701b744f971e&quot;,
+   &quot;state&quot; : &quot;SUCCEEDED&quot;
+}</pre></div>
+</div>
+<p>The new consumer ID is <code class="docutils literal notranslate"><span class="pre">8f7f6ad7bc2d4cb5aa57a530927a95cc_2</span> </code> .</p>
+</div>
+<div class="section" id="pull-command-results">
+<h3>Pull command results<a class="headerlink" href="#pull-command-results" title="Permalink to this headline">¶</a></h3>
+<p>The action of pulling the command result message is <code class="docutils literal notranslate"><span class="pre">pull_results</span></code>.
+Please use the Http long-polling method to periodically pull the result
+messages. The consumer’s timeout period is 5 minutes. After the timeout,
+you need to call <code class="docutils literal notranslate"><span class="pre">join_session</span></code> to allocate a new consumer.</p>
+<p>Each consumer is allocated a cache queue separately, and the pull order
+does not affect the content received by the consumer.</p>
+<p>The request parameters require session ID and consumer ID:</p>
+<div class="highlight-bash notranslate"><div class="highlight hljs"><pre class="bash">curl -Ss -XPOST http://localhost:8563/api -d &#x27;
+{
+  &quot;action&quot;:&quot;pull_results&quot;,
+  &quot;sessionId&quot; : &quot;b09f1353-202c-407b-af24-701b744f971e&quot;,
+  &quot;consumerId&quot; : &quot;8f7f6ad7bc2d4cb5aa57a530927a95cc_2&quot;
+}
+&#x27;</pre></div>
+</div>
+<p>Use Bash scripts to regularly pull results messages:</p>
+<div class="highlight-bash notranslate"><div class="highlight hljs"><pre class="bash">while true; do curl -Ss -XPOST http://localhost:8563/api -d &#x27;
+{
+  &quot;action&quot;:&quot;pull_results&quot;,
+  &quot;sessionId&quot; : &quot;2b085b5d-883b-4914-ab35-b2c5c1d5aa2a&quot;,
+  &quot;consumerId&quot; : &quot;8ecb9cb7c7804d5d92e258b23d5245cc_1&quot;
+}
+&#x27; | json_pp; sleep 2; done</pre></div>
+</div>
+<p>Note: The <code class="docutils literal notranslate"><span class="pre">json_pp</span></code> tool formats the output content as pretty json.</p>
+<p>The response content is as follows:</p>
+<div class="highlight-json notranslate"><div class="highlight hljs"><pre class="json">{
+   &quot;body&quot; : {
+      &quot;results&quot; : [
+         {
+            &quot;inputStatus&quot; : &quot;DISABLED&quot;,
+            &quot;jobId&quot; : 0,
+            &quot;type&quot; : &quot;input_status&quot;
+         },
+         {
+            &quot;type&quot; : &quot;message&quot;,
+            &quot;jobId&quot; : 0,
+            &quot;message&quot; : &quot;Welcome to arthas!&quot;
+         },
+         {
+            &quot;tutorials&quot; : &quot;https://arthas.aliyun.com/doc/arthas-tutorials.html&quot;,
+            &quot;time&quot; : &quot;2020-08-06 15:56:43&quot;,
+            &quot;type&quot; : &quot;welcome&quot;,
+            &quot;jobId&quot; : 0,
+            &quot;pid&quot; : &quot;7909&quot;,
+            &quot;wiki&quot; : &quot;https://arthas.aliyun.com/doc&quot;,
+            &quot;version&quot; : &quot;3.3.8-SNAPSHOT&quot;
+         },
+         {
+            &quot;inputStatus&quot; : &quot;ALLOW_INPUT&quot;,
+            &quot;type&quot; : &quot;input_status&quot;,
+            &quot;jobId&quot; : 0
+         }
+      ]
+   },
+   &quot;sessionId&quot; : &quot;b09f1353-202c-407b-af24-701b744f971e&quot;,
+   &quot;consumerId&quot; : &quot;8f7f6ad7bc2d4cb5aa57a530927a95cc_2&quot;,
+   &quot;state&quot; : &quot;SUCCEEDED&quot;
+}
+</pre></div>
+</div>
+</div>
+<div class="section" id="execute-commands-asynchronously">
+<h3>Execute commands asynchronously<a class="headerlink" href="#execute-commands-asynchronously" title="Permalink to this headline">¶</a></h3>
+<div class="highlight-bash notranslate"><div class="highlight hljs"><pre class="bash">curl -Ss -XPOST http://localhost:8563/api -d &#x27;&#x27;&#x27;
+{
+  &quot;action&quot;:&quot;async_exec&quot;,
+  &quot;command&quot;:&quot;watch demo.MathGame primeFactors \&quot;{params, returnObj, throwExp}\&quot; &quot;,
+  &quot;sessionId&quot; : &quot;2b085b5d-883b-4914-ab35-b2c5c1d5aa2a&quot;
+}
+&#x27;&#x27;&#x27;</pre></div>
+</div>
+<p>Response of <code class="docutils literal notranslate"><span class="pre">async_exec</span></code>:</p>
+<div class="highlight-json notranslate"><div class="highlight hljs"><pre class="json">{
+   &quot;sessionId&quot; : &quot;2b085b5d-883b-4914-ab35-b2c5c1d5aa2a&quot;,
+   &quot;state&quot; : &quot;SCHEDULED&quot;,
+   &quot;body&quot; : {
+      &quot;jobStatus&quot; : &quot;READY&quot;,
+      &quot;jobId&quot; : 3,
+      &quot;command&quot; : &quot;watch demo.MathGame primeFactors \&quot;{params, returnObj, throwExp}\&quot; &quot;
+   }
+}</pre></div>
+</div>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">state</span></code> : The status of <code class="docutils literal notranslate"><span class="pre">SCHEDULED</span></code> means that the command has been
+parsed and generated the job, but the execution has not started.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">body.jobId</span></code> : The job id of command execution, filter the command
+results output in <code class="docutils literal notranslate"><span class="pre">pull_results</span></code> according to this job ID.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">body.jobStatus</span></code> : The job status <code class="docutils literal notranslate"><span class="pre">READY</span></code> means that execution has not started.</p></li>
+</ul>
+<p>The shell output of the script that continuously pulls the result message:</p>
+<div class="highlight-json notranslate"><div class="highlight hljs"><pre class="json">{
+   &quot;body&quot; : {
+      &quot;results&quot; : [
+         {
+            &quot;type&quot; : &quot;command&quot;,
+            &quot;jobId&quot; : 3,
+            &quot;state&quot; : &quot;SCHEDULED&quot;,
+            &quot;command&quot; : &quot;watch demo.MathGame primeFactors \&quot;{params, returnObj, throwExp}\&quot; &quot;
+         },
+         {
+            &quot;inputStatus&quot; : &quot;ALLOW_INTERRUPT&quot;,
+            &quot;jobId&quot; : 0,
+            &quot;type&quot; : &quot;input_status&quot;
+         },
+         {
+            &quot;success&quot; : true,
+            &quot;jobId&quot; : 3,
+            &quot;effect&quot; : {
+               &quot;listenerId&quot; : 3,
+               &quot;cost&quot; : 24,
+               &quot;classCount&quot; : 1,
+               &quot;methodCount&quot; : 1
+            },
+            &quot;type&quot; : &quot;enhancer&quot;
+         },
+         {
+            &quot;sizeLimit&quot; : 10485760,
+            &quot;expand&quot; : 1,
+            &quot;jobId&quot; : 3,
+            &quot;type&quot; : &quot;watch&quot;,
+            &quot;cost&quot; : 0.071499,
+            &quot;ts&quot; : 1596703453237,
+            &quot;value&quot; : [
+               [
+                  -170365
+               ],
+               null,
+               {
+                  &quot;stackTrace&quot; : [
+                     {
+                        &quot;className&quot; : &quot;demo.MathGame&quot;,
+                        &quot;classLoaderName&quot; : &quot;app&quot;,
+                        &quot;methodName&quot; : &quot;primeFactors&quot;,
+                        &quot;nativeMethod&quot; : false,
+                        &quot;lineNumber&quot; : 46,
+                        &quot;fileName&quot; : &quot;MathGame.java&quot;
+                     },
+                     ...
+                  ],
+                  &quot;localizedMessage&quot; : &quot;number is: -170365, need &gt;= 2&quot;,
+                  &quot;@type&quot; : &quot;java.lang.IllegalArgumentException&quot;,
+                  &quot;message&quot; : &quot;number is: -170365, need &gt;= 2&quot;
+               }
+            ]
+         },
+         {
+            &quot;type&quot; : &quot;watch&quot;,
+            &quot;cost&quot; : 0.033375,
+            &quot;jobId&quot; : 3,
+            &quot;ts&quot; : 1596703454241,
+            &quot;value&quot; : [
+               [
+                  1
+               ],
+               [
+                  2,
+                  2,
+                  2,
+                  2,
+                  13,
+                  491
+               ],
+               null
+            ],
+            &quot;sizeLimit&quot; : 10485760,
+            &quot;expand&quot; : 1
+         }
+      ]
+   },
+   &quot;consumerId&quot; : &quot;8ecb9cb7c7804d5d92e258b23d5245cc_1&quot;,
+   &quot;sessionId&quot; : &quot;2b085b5d-883b-4914-ab35-b2c5c1d5aa2a&quot;,
+   &quot;state&quot; : &quot;SUCCEEDED&quot;
+}</pre></div>
+</div>
+<p>The <code class="docutils literal notranslate"><span class="pre">value</span></code> of the watch command result is the value of watch-experss,
+and the above command is <code class="docutils literal notranslate"><span class="pre">{params,</span> <span class="pre">returnObj,</span> <span class="pre">throwExp}</span></code>, so the value
+of the watch result is an array of length 3, and each element
+corresponds to the expression in the corresponding order.</p>
+<p>Please refer to the section “<a class="reference external" href="#change_watch_value_to_map">Make watch command output a map object</a>”.</p>
+</div>
+<div class="section" id="interrupt-command-execution">
+<h3>Interrupt command execution<a class="headerlink" href="#interrupt-command-execution" title="Permalink to this headline">¶</a></h3>
+<p>Interrupt the running foreground job of the session:</p>
+<div class="highlight-bash notranslate"><div class="highlight hljs"><pre class="bash">curl -Ss -XPOST http://localhost:8563/api -d &#x27;&#x27;&#x27;
+{
+  &quot;action&quot;:&quot;interrupt_job&quot;,
+  &quot;sessionId&quot; : &quot;2b085b5d-883b-4914-ab35-b2c5c1d5aa2a&quot;
+}
+&#x27;&#x27;&#x27;</pre></div>
+</div>
+<div class="highlight-json notranslate"><div class="highlight hljs"><pre class="json">{
+   &quot;state&quot; : &quot;SUCCEEDED&quot;,
+   &quot;body&quot; : {
+      &quot;jobStatus&quot; : &quot;TERMINATED&quot;,
+      &quot;jobId&quot; : 3
+   }
+}</pre></div>
+</div>
+</div>
+<div class="section" id="close-session">
+<h3>Close session<a class="headerlink" href="#close-session" title="Permalink to this headline">¶</a></h3>
+<p>Specify the session ID to close the session.</p>
+<div class="highlight-bash notranslate"><div class="highlight hljs"><pre class="bash">curl -Ss -XPOST http://localhost:8563/api -d &#x27;&#x27;&#x27;
+{
+  &quot;action&quot;:&quot;close_session&quot;,
+  &quot;sessionId&quot; : &quot;2b085b5d-883b-4914-ab35-b2c5c1d5aa2a&quot;
+}
+&#x27;&#x27;&#x27;</pre></div>
+</div>
+<div class="highlight-json notranslate"><div class="highlight hljs"><pre class="json">{
+   &quot;state&quot; : &quot;SUCCEEDED&quot;
+}</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="web-ui">
+<h2>Web UI<a class="headerlink" href="#web-ui" title="Permalink to this headline">¶</a></h2>
+<p><img alt="_images/arthas-web-ui.png" src="_images/arthas-web-ui.png" /></p>
+<p>A Web UI based on Http API, visit url :
+<a class="reference external" href="http://127.0.0.1:8563/ui">http://127.0.0.1:8563/ui</a> .</p>
+<p>Completed functions:</p>
+<ul class="simple">
+<li><p>Create a session</p></li>
+<li><p>Copy and open the url to join the session, share the session with
+multiple people</p></li>
+<li><p>Continuously pull session command result messages</p></li>
+<li><p>Refresh the web page or join the session to pull command messages
+history</p></li>
+<li><p>Control input or interrupt command status</p></li>
+</ul>
+<p>Pending function:</p>
+<ul class="simple">
+<li><p>Improve the readability of command result messages</p></li>
+<li><p>Support automatic completion of input commands and command templates</p></li>
+<li><p>Provide command help</p></li>
+<li><p>Support personal profile settings</p></li>
+</ul>
+<p><a id="special_command_results"></a></p>
+</div>
+<div class="section" id="special-command-results">
+<h2>Special command results<a class="headerlink" href="#special-command-results" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="status">
+<h3>status<a class="headerlink" href="#status" title="Permalink to this headline">¶</a></h3>
+<div class="highlight-json notranslate"><div class="highlight hljs"><pre class="json">{
+    &quot;jobId&quot; : 5,
+    &quot;statusCode&quot; : 0,
+    &quot;type&quot; : &quot;status&quot;
+}</pre></div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">type</span></code> is <code class="docutils literal notranslate"><span class="pre">status</span></code> to indicate the command execution status:</p>
+<p>After each command is executed, there is a unique status result. If the
+<code class="docutils literal notranslate"><span class="pre">statusCode</span></code> is 0, it means the execution is successful, and the
+<code class="docutils literal notranslate"><span class="pre">statusCode</span></code> is a non-zero value that means the execution failed,
+similar to the process exit code.</p>
+<p>When the command execution fails, an error message is generally provided, such as:</p>
+<div class="highlight-json notranslate"><div class="highlight hljs"><pre class="json">{
+  &quot;jobId&quot;:3,
+  &quot;message&quot;:&quot;The argument &#x27;class-pattern&#x27; is required&quot;,
+  &quot;statusCode&quot;:-10,
+  &quot;type&quot;:&quot;status&quot;
+}</pre></div>
+</div>
+</div>
+<div class="section" id="input-status">
+<h3>input_status<a class="headerlink" href="#input-status" title="Permalink to this headline">¶</a></h3>
+<div class="highlight-json notranslate"><div class="highlight hljs"><pre class="json"> {
+    &quot;inputStatus&quot; : &quot;ALLOW_INPUT&quot;,
+    &quot;type&quot; : &quot;input_status&quot;,
+    &quot;jobId&quot; : 0
+ }</pre></div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">type</span></code> is <code class="docutils literal notranslate"><span class="pre">input_status</span></code> to indicate input status:</p>
+<p>It is used to control user input during UI interaction, and a change
+message will be sent before and after each command is executed.</p>
+<p>Possible values ​​of <code class="docutils literal notranslate"><span class="pre">inputStatus</span></code>:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">ALLOW_INPUT</span></code> : Allow users to enter commands, which means that the
+session has no foreground command being executed and can accept new
+command.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">ALLOW_INTERRUPT</span></code> : Allow the user to interrupt the command execution,
+indicating that a command is currently being executed, and the user
+can send <code class="docutils literal notranslate"><span class="pre">interrupt_job</span></code> to interrupt the execution.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">DISABLED</span></code> : In the disabled state, commands cannot be entered or
+interrupted.</p></li>
+</ul>
+</div>
+<div class="section" id="command">
+<h3>command<a class="headerlink" href="#command" title="Permalink to this headline">¶</a></h3>
+<div class="highlight-json notranslate"><div class="highlight hljs"><pre class="json"> {
+    &quot;type&quot; : &quot;command&quot;,
+    &quot;jobId&quot; : 3,
+    &quot;state&quot; : &quot;SCHEDULED&quot;,
+    &quot;command&quot; : &quot;watch demo.MathGame primeFactors \&quot;{params, returnObj, throwExp}\&quot; &quot;
+ }</pre></div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">type</span></code> is <code class="docutils literal notranslate"><span class="pre">command</span></code> to indicate the input command data:</p>
+<p>It is used for the interactive UI to echo the commands entered by the
+user. The pulled session command message history will contain messages
+of type <code class="docutils literal notranslate"><span class="pre">command</span></code>, which can be processed in order.</p>
+</div>
+<div class="section" id="enhancer">
+<h3>enhancer<a class="headerlink" href="#enhancer" title="Permalink to this headline">¶</a></h3>
+<div class="highlight-json notranslate"><div class="highlight hljs"><pre class="json"> {
+    &quot;success&quot; : true,
+    &quot;jobId&quot; : 3,
+    &quot;effect&quot; : {
+       &quot;listenerId&quot; : 3,
+       &quot;cost&quot; : 24,
+       &quot;classCount&quot; : 1,
+       &quot;methodCount&quot; : 1
+    },
+    &quot;type&quot; : &quot;enhancer&quot;
+ }</pre></div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">type</span></code> is <code class="docutils literal notranslate"><span class="pre">enhancer</span></code> to indicate the result of class enhancement:</p>
+<p>Commands such as <code class="docutils literal notranslate"><span class="pre">trace/watch/jad/tt</span></code> need to enhance the class and will
+receive this <code class="docutils literal notranslate"><span class="pre">enhancer</span></code> result. It may happen that the result of
+<code class="docutils literal notranslate"><span class="pre">enhancer</span></code> is successful, but there is no hit method. The client can
+prompt the user according to the result of <code class="docutils literal notranslate"><span class="pre">enhancer</span></code>.</p>
+</div>
+</div>
+<div class="section" id="others">
+<h2>Others<a class="headerlink" href="#others" title="Permalink to this headline">¶</a></h2>
+<p><a id="change_watch_value_to_map"></a></p>
+<div class="section" id="make-watch-command-output-a-map-object">
+<h3>Make watch command output a map object<a class="headerlink" href="#make-watch-command-output-a-map-object" title="Permalink to this headline">¶</a></h3>
+<p>The result value of <code class="docutils literal notranslate"><span class="pre">watch</span></code> is generated by calculating the
+<code class="docutils literal notranslate"><span class="pre">watch-express</span></code> ognl expression. You can change the ognl expression to
+generate the desired value, please refer to
+<a class="reference external" href="https://commons.apache.org/proper/commons-ognl/language-guide.html">OGNL document</a>.</p>
+<blockquote>
+<div><p>Maps can also be created using a special syntax.</p>
+<p>#{ “foo” : “foo value”, “bar” : “bar value” }</p>
+<p>This creates a Map initialized with mappings for “foo” and “bar”.</p>
+</div></blockquote>
+<p>The following command generates values ​​in map format:</p>
+<div class="highlight-bash notranslate"><div class="highlight hljs"><pre class="bash">watch *MathGame prime* &#x27;#{ &quot;params&quot; : params, &quot;returnObj&quot; : returnObj, &quot;throwExp&quot;: throwExp}&#x27; -x 2 -n 5</pre></div>
+</div>
+<p>Execute the above command in Telnet shell/WebConsole, the output result:</p>
+<div class="highlight-bash notranslate"><div class="highlight hljs"><pre class="bash">ts=2020-08-06 16:57:20; [cost=0.241735ms] result=@LinkedHashMap[
+    @String[params]:@Object[][
+        @Integer[1],
+    ],
+    @String[returnObj]:@ArrayList[
+        @Integer[2],
+        @Integer[241],
+        @Integer[379],
+    ],
+    @String[throwExp]:null,
+]</pre></div>
+</div>
+<p>Execute the above command with Http api, pay attention to escaping the JSON double quotes:</p>
+<div class="highlight-bash notranslate"><div class="highlight hljs"><pre class="bash">curl -Ss -XPOST http://localhost:8563/api -d @- &lt;&lt; EOF
+{
+  &quot;action&quot;:&quot;exec&quot;,
+  &quot;execTimeout&quot;: 30000,
+  &quot;command&quot;:&quot;watch *MathGame prime* &#x27;#{ \&quot;params\&quot; : params, \&quot;returnObj\&quot; : returnObj, \&quot;throwExp\&quot;: throwExp}&#x27; -n 3 &quot;
+}
+EOF</pre></div>
+</div>
+<p>Http api execution result:</p>
+<div class="highlight-json notranslate"><div class="highlight hljs"><pre class="json">{
+    &quot;body&quot;: {
+         ...
+        &quot;results&quot;: [
+            ...
+            {
+                ...
+                &quot;type&quot;: &quot;watch&quot;,
+                &quot;value&quot;: {
+                    &quot;params&quot;: [
+                        1
+                    ],
+                    &quot;returnObj&quot;: [
+                        2,
+                        5,
+                        17,
+                        23,
+                        23
+                    ]
+                }
+            },
+            {
+                ...
+                &quot;type&quot;: &quot;watch&quot;,
+                &quot;value&quot;: {
+                    &quot;params&quot;: [
+                        -98278
+                    ],
+                    &quot;throwExp&quot;: {
+                        &quot;@type&quot;: &quot;java.lang.IllegalArgumentException&quot;,
+                        &quot;localizedMessage&quot;: &quot;number is: -98278, need &gt;= 2&quot;,
+                        &quot;message&quot;: &quot;number is: -98278, need &gt;= 2&quot;,
+                        &quot;stackTrace&quot;: [
+                            ...
+                        ]
+                    }
+                }
+            },
+            ...
+}</pre></div>
+</div>
+<p>You can see that the value of the watch result becomes a map object, and
+the program can read value through a key .</p>
+</div>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="docker.html" class="btn btn-neutral float-right" title="Docker" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="options.html" class="btn btn-neutral float-left" title="options" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2018-2020, Alibaba Middleware Group, and contributors
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+  
+<div class="github-fork-ribbon-wrapper right">
+  <div class="github-fork-ribbon">
+    <a href="https://github.com/alibaba/arthas" target="_blank">Fork me at GitHub</a>
+  </div>
+</div>
+
+<script type="text/javascript" src="_static/add_badges.js"></script>
+
+<script src="https://g.alicdn.com/code/lib/highlight.js/9.13.1/highlight.min.js"></script>
+<script src="https://g.alicdn.com/code/lib/highlightjs-line-numbers.js/2.5.0/highlightjs-line-numbers.min.js"></script>
+<script>
+  document.querySelectorAll('div.hljs > pre').forEach(function(block) {
+    hljs.highlightBlock(block);
+    hljs.lineNumbersBlock(block);
+  });
+</script>
+
+
+<script type="text/javascript">document.write(unescape("%3Cspan style='display:none;' id='cnzz_stat_icon_1279151497'%3E%3C/span%3E%3Cscript src='https://s4.cnzz.com/z_stat.php%3Fid%3D1279151497' type='text/javascript'%3E%3C/script%3E"));</script>
+
+<script>
+  var _hmt = _hmt || [];
+  (function() {
+    var hm = document.createElement("script");
+    if (window.location.hostname == "arthas.gitee.io") {
+      hm.src = "https://hm.baidu.com/hm.js?ecc1b0d9aeb73da1671876133211d4d3";
+    } else { // https://arthas.aliyun.com/doc/
+      hm.src = "https://hm.baidu.com/hm.js?d5c5e25b100f0eb51a4c35c8a86ea9b4";
+    }
+
+    var s = document.getElementsByTagName("script")[0]; 
+    s.parentNode.insertBefore(hm, s);
+  })();
+</script>  
+
+ 
+
+
+</body>
+</html>
