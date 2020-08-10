@@ -55,7 +55,7 @@ Tips:
 3. `tt -t *Test print params[0].mobile=="13989838402"` with specified parameter.
   
 Advanced:
-* [Critical fields in expression](https://alibaba.github.io/arthas/en/advice-class.html)
+* [Critical fields in expression](https://arthas.aliyun.com/doc/en/advice-class.html)
 * [Special usage](https://github.com/alibaba/arthas/issues/71)
 * [OGNL official guide](https://commons.apache.org/proper/commons-ognl/language-guide.html)
 

@@ -1,7 +1,7 @@
 ognl
 ===
 
-[`ognl`在线教程](https://alibaba.github.io/arthas/arthas-tutorials?language=cn&id=command-ognl)
+[`ognl`在线教程](https://arthas.aliyun.com/doc/arthas-tutorials?language=cn&id=command-ognl)
 
 > 执行ognl表达式
 

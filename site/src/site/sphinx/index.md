@@ -1,7 +1,7 @@
 Arthas 用户文档
 ===
 
-**[English Docs](https://alibaba.github.io/arthas/en/)**
+**[English Docs](https://arthas.aliyun.com/doc/en/)**
 
 ## Arthas（阿尔萨斯） 能为你做什么？
 
@@ -29,7 +29,7 @@ Contents
 * [应届生招聘!](https://mp.weixin.qq.com/s/VVSc_a3mLELW35lMH7rR0Q)
 * [社招信息!](https://mp.weixin.qq.com/s/677GO-3kYx5ygG9rlOlfQg)
 * [技术征文!](https://developer.aliyun.com/article/751641)
-* [English Docs](https://alibaba.github.io/arthas/en/)
+* [English Docs](https://arthas.aliyun.com/doc/en/)
 * [在线教程(推荐)](https://arthas.aliyun.com/doc/arthas-tutorials.html?language=cn)
 * [安装](install-detail.md)
 * [下载](download.md)

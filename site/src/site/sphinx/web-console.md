@@ -64,7 +64,7 @@ attach成功之后，会打印出agentId，比如：
 `--' `--'`--' '--'   `--'   `--'  `--'`--' `--'`-----'
 
 
-wiki      https://alibaba.github.io/arthas
+wiki      https://arthas.aliyun.com/doc
 tutorials https://arthas.aliyun.com/doc/arthas-tutorials.html
 version   3.1.2
 pid       86183

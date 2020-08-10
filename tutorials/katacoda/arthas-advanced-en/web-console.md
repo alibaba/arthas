@@ -17,4 +17,4 @@ When launching locally, you can access Arthas through a browser by visiting http
 ![Arthas WebConsole](/arthas/scenarios/common-resources/assets/web-console.png)
 
 
-It is recommended to experience it through "Quick Start": https://alibaba.github.io/arthas/en/quick-start.html
+It is recommended to experience it through "Quick Start": https://arthas.aliyun.com/doc/en/quick-start.html

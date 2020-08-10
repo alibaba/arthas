@@ -3,7 +3,7 @@
 
 * [Arthas进阶](https://arthas.aliyun.com/doc/arthas-tutorials.html?language=cn&id=arthas-advanced)
 * [Arthas Github](https://github.com/alibaba/arthas)
-* [Arthas 文档](https://alibaba.github.io/arthas/)
+* [Arthas 文档](https://arthas.aliyun.com/doc/)
 
 欢迎关注公众号，获取Arthas项目的信息，源码分析，案例实践。
 

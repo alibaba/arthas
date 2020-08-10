@@ -6,7 +6,7 @@ In this case, the user can get the spring context, get the bean, and invoke the 
 
 `tt` is TimeTunnel, which records the parameters and return value of each invocation of the specified method.
 
-* https://alibaba.github.io/arthas/tt.html
+* https://arthas.aliyun.com/doc/tt.html
 
 `tt -t org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter invokeHandlerMethod`{{execute T2}}
 

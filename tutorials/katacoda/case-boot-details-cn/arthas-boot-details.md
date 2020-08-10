@@ -1,7 +1,7 @@
 
 在新的`Terminal 2`里，下载`arthas-boot.jar`：
 
-`wget https://alibaba.github.io/arthas/arthas-boot.jar`{{execute T2}}
+`wget https://arthas.aliyun.com/arthas-boot.jar`{{execute T2}}
 
 `arthas-boot.jar` 支持很多参数，可以执行 `java -jar arthas-boot.jar -h`{{execute T2}} 来查看。
 
@@ -34,7 +34,7 @@ EXAMPLES:
   java -jar arthas-boot.jar --attach-only
   java -jar arthas-boot.jar --repo-mirror aliyun --use-http
 WIKI:
-  https://alibaba.github.io/arthas
+  https://arthas.aliyun.com/doc
 
 Options and Arguments:
  -h,--help                      Print usage

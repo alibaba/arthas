@@ -1,7 +1,7 @@
 
 Arthas Support express install on Linux/Unix/Mac：
 
-`curl -L https://alibaba.github.io/arthas/install.sh | sh`{{execute T2}}
+`curl -L https://arthas.aliyun.com/install.sh | sh`{{execute T2}}
 
 The command above will download boot script file `as.sh` into current directory，you can put it at any place or list it into `$PATH`.
 

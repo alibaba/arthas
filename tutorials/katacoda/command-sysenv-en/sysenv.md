@@ -17,7 +17,7 @@ The `sysenv`{{execute T2}} command allows you to view the current JVM environmen
    sysenv USER
 
  WIKI:
-   https://alibaba.github.io/arthas/sysenv
+   https://arthas.aliyun.com/doc/sysenv
 
  OPTIONS:
  -h, --help                                                 this help

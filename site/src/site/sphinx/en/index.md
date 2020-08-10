@@ -1,7 +1,7 @@
 Arthas Documentation
 ===
 
-**[中文文档/Chinese Documentation](https://alibaba.github.io/arthas/)**
+**[中文文档/Chinese Documentation](https://arthas.aliyun.com/doc/)**
 
 ![](arthas.png)
 

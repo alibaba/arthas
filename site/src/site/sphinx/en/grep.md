@@ -22,7 +22,7 @@ grep
   thread | grep -m 10 -e  "TIMED_WAITING|WAITING"
 
  WIKI:
-   https://alibaba.github.io/arthas/grep
+   https://arthas.aliyun.com/doc/grep
 
  OPTIONS:
  -A, --after-context <value>                                                    Print NUM lines of trailing context)

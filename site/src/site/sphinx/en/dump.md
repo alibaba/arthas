@@ -1,7 +1,7 @@
 dump
 ===
 
-[`dump` online tutorial](https://alibaba.github.io/arthas/arthas-tutorials?language=en&id=command-dump)
+[`dump` online tutorial](https://arthas.aliyun.com/doc/arthas-tutorials?language=en&id=command-dump)
 
 > Dump the bytecode for the particular classes to the specified directory.
 

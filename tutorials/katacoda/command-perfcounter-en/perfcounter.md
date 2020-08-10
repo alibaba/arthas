@@ -15,7 +15,7 @@ Check the current JVM Perf Counter information.
    perfcounter -d
 
  WIKI:
-   https://alibaba.github.io/arthas/perfcounter
+   https://arthas.aliyun.com/doc/perfcounter
 
  OPTIONS:
  -d, --details                        print all perf counter details

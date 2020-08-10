@@ -249,7 +249,7 @@ while true; do curl -Ss -XPOST http://localhost:8563/api -d '
             "type" : "welcome",
             "jobId" : 0,
             "pid" : "7909",
-            "wiki" : "https://alibaba.github.io/arthas",
+            "wiki" : "https://arthas.aliyun.com/doc",
             "version" : "3.3.8-SNAPSHOT"
          },
          {

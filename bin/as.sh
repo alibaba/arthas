@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-# WIKI: https://alibaba.github.io/arthas
+# WIKI: https://arthas.aliyun.com/doc
 # This script only supports bash, do not support posix sh.
 # If you have the problem like Syntax error: "(" unexpected (expecting "fi"),
 # Try to run "bash -version" to check the version.
@@ -450,7 +450,7 @@ EXAMPLES:
   ./as.sh --select arthas-demo
   ./as.sh --repo-mirror aliyun --use-http
 WIKI:
-  https://alibaba.github.io/arthas
+  https://arthas.aliyun.com/doc
 
 Here is the list of possible java process(es) to attatch:
 "

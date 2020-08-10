@@ -19,7 +19,7 @@ sysenv
    sysenv USER
 
  WIKI:
-   https://alibaba.github.io/arthas/sysenv
+   https://arthas.aliyun.com/doc/sysenv
 
  OPTIONS:
  -h, --help                                                 this help

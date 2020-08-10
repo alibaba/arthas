@@ -61,7 +61,7 @@ You can use these built-in objects in the expressions. For example, return an ar
 `watch com.example.demo.arthas.user.UserController * '{params[0], target, returnObj}'`{{execute T2}}
 
 
-More references: https://alibaba.github.io/arthas/en/advice-class.html
+More references: https://arthas.aliyun.com/doc/en/advice-class.html
 
 
 ### The conditional expression

@@ -17,7 +17,7 @@ Similar to the traditional `tee` command, it is used to read standard input data
   sysprop | tee -a /path/to/logfile | grep java
 
  WIKI:
-   https://alibaba.github.io/arthas/tee
+   https://arthas.aliyun.com/doc/tee
 
  OPTIONS:
  -a, --append                              Append to file

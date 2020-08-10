@@ -16,4 +16,4 @@ http://[[HOST_SUBDOMAIN]]-8563-[[KATACODA_HOST]].environments.katacoda.com/?ip=[
 
 ![Arthas WebConsole](/arthas/scenarios/common-resources/assets/web-console.png)
 
-推荐通过“快速入门”来体验： https://alibaba.github.io/arthas/quick-start.html 
+推荐通过“快速入门”来体验： https://arthas.aliyun.com/doc/quick-start.html 

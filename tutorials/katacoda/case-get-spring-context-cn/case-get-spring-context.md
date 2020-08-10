@@ -6,7 +6,7 @@
 
 `tt`即 TimeTunnel，它可以记录下指定方法每次调用的入参和返回信息，并能对这些不同的时间下调用进行观测。
 
-* https://alibaba.github.io/arthas/tt.html
+* https://arthas.aliyun.com/doc/tt.html
 
 `tt -t org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter invokeHandlerMethod`{{execute T2}}
 

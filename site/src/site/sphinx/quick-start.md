@@ -4,7 +4,7 @@
 ## 1. 启动Demo
 
 ```bash
-curl -O https://alibaba.github.io/arthas/arthas-demo.jar
+curl -O https://arthas.aliyun.com/arthas-demo.jar
 java -jar arthas-demo.jar
 ```
 
@@ -18,7 +18,7 @@ java -jar arthas-demo.jar
 在命令行下面执行（使用和目标进程一致的用户启动，否则可能attach失败）：
 
 ```bash
-curl -O https://alibaba.github.io/arthas/arthas-boot.jar
+curl -O https://arthas.aliyun.com/arthas-boot.jar
 java -jar arthas-boot.jar
 ```
 
@@ -49,7 +49,7 @@ Demo进程是第2个，则输入2，再输入`回车/enter`。Arthas会attach到
 `--' `--'`--' '--'   `--'   `--'  `--'`--' `--'`-----'
 
 
-wiki: https://alibaba.github.io/arthas
+wiki: https://arthas.aliyun.com/doc
 version: 3.0.5.20181127201536
 pid: 71560
 time: 2018-11-28 19:16:24

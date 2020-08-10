@@ -1,7 +1,7 @@
 
 In the new `Terminal 2`, download `arthas-boot.jar` and start with the `java -jar` command:
 
-`wget https://alibaba.github.io/arthas/arthas-boot.jar`{{execute T2}}
+`wget https://arthas.aliyun.com/arthas-boot.jar`{{execute T2}}
 
 `arthas-boot` is the launcher for `Arthas`. It lists all the Java processes, and the user can select the target process to be diagnosed.
 
@@ -37,7 +37,7 @@ EXAMPLES:
   java -jar arthas-boot.jar --attach-only
   java -jar arthas-boot.jar --repo-mirror aliyun --use-http
 WIKI:
-  https://alibaba.github.io/arthas
+  https://arthas.aliyun.com/doc
 
 Options and Arguments:
  -h,--help                      Print usage

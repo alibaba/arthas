@@ -60,7 +60,7 @@ After Arthas attach succeeds, the agentId will be printed, such as:
 `--' `--'`--' '--'   `--'   `--'  `--'`--' `--'`-----'
 
 
-wiki      https://alibaba.github.io/arthas
+wiki      https://arthas.aliyun.com/doc
 tutorials https://arthas.aliyun.com/doc/arthas-tutorials.html
 version   3.1.2
 pid       86183

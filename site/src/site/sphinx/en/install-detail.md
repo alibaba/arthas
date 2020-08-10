@@ -9,7 +9,7 @@ Install Arthas
 Download`arthas-boot.jar`，Start with `java` command:
 
 ```bash
-curl -O https://alibaba.github.io/arthas/arthas-boot.jar
+curl -O https://arthas.aliyun.com/arthas-boot.jar
 java -jar arthas-boot.jar
 ```
 
@@ -25,7 +25,7 @@ java -jar arthas-boot.jar -h
 You can install Arthas with one single line command on Linux, Unix, and Mac. Pls. copy the following command and paste it into the command line, then press *Enter* to run:
 
 ```bash
-curl -L https://alibaba.github.io/arthas/install.sh | sh
+curl -L https://arthas.aliyun.com/install.sh | sh
 ```
 
 The command above will download the bootstrap script `as.sh` to the current directory. You can move it to any other place you want, or put its location in `$PATH`.

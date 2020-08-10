@@ -3,4 +3,4 @@ Through this tutorial, you can know how to use Arthas `tee`. More advanced featu
 
 * [Arthas Advanced](https://arthas.aliyun.com/doc/arthas-tutorials.html?language=en&id=arthas-advanced)
 * [Arthas Github](https://github.com/alibaba/arthas)
-* [Arthas Documentation](https://alibaba.github.io/arthas/en)
+* [Arthas Documentation](https://arthas.aliyun.com/doc/en)

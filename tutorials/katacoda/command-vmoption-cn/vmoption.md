@@ -17,7 +17,7 @@
    vmoption PrintGCDetails true
 
  WIKI:
-   https://alibaba.github.io/arthas/vmoption
+   https://arthas.aliyun.com/doc/vmoption
 
  OPTIONS:
  -h, --help                           this help
