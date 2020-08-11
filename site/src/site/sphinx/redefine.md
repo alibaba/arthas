@@ -1,7 +1,7 @@
 redefine
 ===
 
-[`mc-redefine`在线教程](https://alibaba.github.io/arthas/arthas-tutorials?language=cn&id=command-mc-redefine)
+[`mc-redefine`在线教程](https://arthas.aliyun.com/doc/arthas-tutorials?language=cn&id=command-mc-redefine)
 
 > 加载外部的`.class`文件，redefine jvm已加载的类。
 
