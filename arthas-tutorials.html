@@ -73,30 +73,46 @@
 
                     <li class="nav-item dropdown active show">
                         <button class="btn dropdown-toggle" type="button" id="dropdownMenu2" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                            {{commandsStr()}}
+                            {{commandsStr('BASIC')}}
                           </button>
                         <div class="dropdown-menu" aria-labelledby="bd-tutorials">
-                            <a v-for="tutorial in getTutorials('COMMAND-JVM-RELATED')" v-bind:class="{ 'dropdown-item-checked': tutorial.id === tutorialId }"
-                                class="dropdown-item" v-bind:href='currentUrl() + "?language=" + language + "&id=" + tutorial.id'>
-                                {{ tutorial.names[language] }}
-                            </a>
-                            <div class="dropdown-divider"></div>
-                            <a v-for="tutorial in getTutorials('COMMAND-CLASS-LOADER-RELATED')" v-bind:class="{ 'dropdown-item-checked': tutorial.id === tutorialId }"
-                                class="dropdown-item" v-bind:href='currentUrl() + "?language=" + language + "&id=" + tutorial.id'>
-                                {{ tutorial.names[language] }}
-                            </a>
-                            <div class="dropdown-divider"></div>
-                            <a v-for="tutorial in getTutorials('COMMAND-MONITOR-RELATED')" v-bind:class="{ 'dropdown-item-checked': tutorial.id === tutorialId }"
-                                class="dropdown-item" v-bind:href='currentUrl() + "?language=" + language + "&id=" + tutorial.id'>
-                                {{ tutorial.names[language] }}
-                            </a>
-                            <div class="dropdown-divider"></div>
-                            <a v-for="tutorial in getTutorials('COMMAND-OPTIONS')" v-bind:class="{ 'dropdown-item-checked': tutorial.id === tutorialId }"
-                                class="dropdown-item" v-bind:href='currentUrl() + "?language=" + language + "&id=" + tutorial.id'>
-                                {{ tutorial.names[language] }}
-                            </a>
-                            <div class="dropdown-divider"></div>
                             <a v-for="tutorial in getTutorials('COMMAND-BASIC')" v-bind:class="{ 'dropdown-item-checked': tutorial.id === tutorialId }"
+                                class="dropdown-item" v-bind:href='currentUrl() + "?language=" + language + "&id=" + tutorial.id'>
+                                {{ tutorial.names[language] }}
+                            </a>
+                        </div>
+                    </li>
+
+                    <li class="nav-item dropdown active show">
+                        <button class="btn dropdown-toggle" type="button" id="dropdownMenu2" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            {{commandsStr('SYSTEM')}}
+                          </button>
+                        <div class="dropdown-menu" aria-labelledby="bd-tutorials">
+                            <a v-for="tutorial in getTutorials('COMMAND-SYSTEM')" v-bind:class="{ 'dropdown-item-checked': tutorial.id === tutorialId }"
+                                class="dropdown-item" v-bind:href='currentUrl() + "?language=" + language + "&id=" + tutorial.id'>
+                                {{ tutorial.names[language] }}
+                            </a>
+                        </div>
+                    </li>
+
+                    <li class="nav-item dropdown active show">
+                        <button class="btn dropdown-toggle" type="button" id="dropdownMenu2" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            {{commandsStr('CLASS')}}
+                          </button>
+                          <div class="dropdown-menu" aria-labelledby="bd-tutorials">
+                            <a v-for="tutorial in getTutorials('COMMAND-CLASS')" v-bind:class="{ 'dropdown-item-checked': tutorial.id === tutorialId }"
+                                class="dropdown-item" v-bind:href='currentUrl() + "?language=" + language + "&id=" + tutorial.id'>
+                                {{ tutorial.names[language] }}
+                            </a>
+                        </div>
+                    </li>
+
+                    <li class="nav-item dropdown active show">
+                        <button class="btn dropdown-toggle" type="button" id="dropdownMenu2" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            {{commandsStr('ENHANCED')}}
+                          </button>
+                        <div class="dropdown-menu" aria-labelledby="bd-tutorials">
+                            <a v-for="tutorial in getTutorials('COMMAND-ENHANCED')" v-bind:class="{ 'dropdown-item-checked': tutorial.id === tutorialId }"
                                 class="dropdown-item" v-bind:href='currentUrl() + "?language=" + language + "&id=" + tutorial.id'>
                                 {{ tutorial.names[language] }}
                             </a>
@@ -374,8 +390,20 @@
                     }
                 },
                 {
+                    id: "command-options",
+                    type: "COMMAND-BASIC",
+                    names: {
+                        en: "options",
+                        cn: "options",
+                    },
+                    ids: {
+                        en: "command-options-en",
+                        cn: "command-options-cn",
+                    }
+                },
+                {
                     id: "command-dashboard",
-                    type: "COMMAND-JVM-RELATED",
+                    type: "COMMAND-SYSTEM",
                     names: {
                         en: "dashboard",
                         cn: "dashboard",
@@ -387,7 +415,7 @@
                 },
                 {
                     id: "command-thread",
-                    type: "COMMAND-JVM-RELATED",
+                    type: "COMMAND-SYSTEM",
                     names: {
                         en: "thread",
                         cn: "thread",
@@ -399,7 +427,7 @@
                 },
                 {
                     id: "command-jvm",
-                    type: "COMMAND-JVM-RELATED",
+                    type: "COMMAND-SYSTEM",
                     names: {
                         en: "jvm",
                         cn: "jvm",
@@ -411,7 +439,7 @@
                 },
                 {
                     id: "command-sysprop",
-                    type: "COMMAND-JVM-RELATED",
+                    type: "COMMAND-SYSTEM",
                     names: {
                         en: "sysprop",
                         cn: "sysprop",
@@ -423,7 +451,7 @@
                 },
                 {
                     id: "command-sysenv",
-                    type: "COMMAND-JVM-RELATED",
+                    type: "COMMAND-SYSTEM",
                     names: {
                         en: "sysenv",
                         cn: "sysenv",
@@ -435,7 +463,7 @@
                 },
                 {
                     id: "command-vmoption",
-                    type: "COMMAND-JVM-RELATED",
+                    type: "COMMAND-SYSTEM",
                     names: {
                         en: "vmoption",
                         cn: "vmoption",
@@ -447,7 +475,7 @@
                 },
                 {
                     id: "command-perfcounter",
-                    type: "COMMAND-JVM-RELATED",
+                    type: "COMMAND-SYSTEM",
                     names: {
                         en: "perfcounter",
                         cn: "perfcounter",
@@ -459,7 +487,7 @@
                 },
                 {
                     id: "command-logger",
-                    type: "COMMAND-JVM-RELATED",
+                    type: "COMMAND-SYSTEM",
                     names: {
                         en: "logger",
                         cn: "logger",
@@ -471,7 +499,7 @@
                 },
                 {
                     id: "command-getstatic",
-                    type: "COMMAND-JVM-RELATED",
+                    type: "COMMAND-SYSTEM",
                     names: {
                         en: "getstatic",
                         cn: "getstatic",
@@ -483,7 +511,7 @@
                 },
                 {
                     id: "command-ognl",
-                    type: "COMMAND-JVM-RELATED",
+                    type: "COMMAND-SYSTEM",
                     names: {
                         en: "ognl",
                         cn: "ognl",
@@ -495,7 +523,7 @@
                 },
                 {
                     id: "command-mbean",
-                    type: "COMMAND-JVM-RELATED",
+                    type: "COMMAND-SYSTEM",
                     names: {
                         en: "mbean",
                         cn: "mbean",
@@ -507,7 +535,7 @@
                 },
                 {
                     id: "command-heapdump",
-                    type: "COMMAND-JVM-RELATED",
+                    type: "COMMAND-SYSTEM",
                     names: {
                         en: "heapdump",
                         cn: "heapdump",
@@ -519,7 +547,7 @@
                 },
                 {
                     id: "command-sc",
-                    type: "COMMAND-CLASS-LOADER-RELATED",
+                    type: "COMMAND-CLASS",
                     names: {
                         en: "sc",
                         cn: "sc",
@@ -531,7 +559,7 @@
                 },
                 {
                     id: "command-sm",
-                    type: "COMMAND-CLASS-LOADER-RELATED",
+                    type: "COMMAND-CLASS",
                     names: {
                         en: "sm",
                         cn: "sm",
@@ -543,7 +571,7 @@
                 },
                 {
                     id: "command-jad",
-                    type: "COMMAND-CLASS-LOADER-RELATED",
+                    type: "COMMAND-CLASS",
                     names: {
                         en: "jad",
                         cn: "jad",
@@ -555,7 +583,7 @@
                 },
                 {
                     id: "command-mc",
-                    type: "COMMAND-CLASS-LOADER-RELATED",
+                    type: "COMMAND-CLASS",
                     names: {
                         en: "mc",
                         cn: "mc",
@@ -567,7 +595,7 @@
                 },
                 {
                     id: "command-redefine",
-                    type: "COMMAND-CLASS-LOADER-RELATED",
+                    type: "COMMAND-CLASS",
                     names: {
                         en: "redefine",
                         cn: "redefine",
@@ -579,7 +607,7 @@
                 },
                 {
                     id: "command-dump",
-                    type: "COMMAND-CLASS-LOADER-RELATED",
+                    type: "COMMAND-CLASS",
                     names: {
                         en: "dump",
                         cn: "dump",
@@ -591,7 +619,7 @@
                 },
                 {
                     id: "command-classloader",
-                    type: "COMMAND-CLASS-LOADER-RELATED",
+                    type: "COMMAND-CLASS",
                     names: {
                         en: "classloader",
                         cn: "classloader",
@@ -603,7 +631,7 @@
                 },
                 {
                     id: "command-monitor",
-                    type: "COMMAND-MONITOR-RELATED",
+                    type: "COMMAND-ENHANCED",
                     names: {
                         en: "monitor",
                         cn: "monitor",
@@ -615,7 +643,7 @@
                 },
                 {
                     id: "command-watch",
-                    type: "COMMAND-MONITOR-RELATED",
+                    type: "COMMAND-ENHANCED",
                     names: {
                         en: "watch",
                         cn: "watch",
@@ -627,7 +655,7 @@
                 },
                 {
                     id: "command-trace",
-                    type: "COMMAND-MONITOR-RELATED",
+                    type: "COMMAND-ENHANCED",
                     names: {
                         en: "trace",
                         cn: "trace",
@@ -639,7 +667,7 @@
                 },
                 {
                     id: "command-stack",
-                    type: "COMMAND-MONITOR-RELATED",
+                    type: "COMMAND-ENHANCED",
                     names: {
                         en: "stack",
                         cn: "stack",
@@ -651,7 +679,7 @@
                 },
                 {
                     id: "command-tt",
-                    type: "COMMAND-MONITOR-RELATED",
+                    type: "COMMAND-ENHANCED",
                     names: {
                         en: "tt",
                         cn: "tt",
@@ -659,18 +687,6 @@
                     ids: {
                         en: "command-tt-en",
                         cn: "command-tt-cn",
-                    }
-                },
-                {
-                    id: "command-options",
-                    type: "COMMAND-OPTIONS",
-                    names: {
-                        en: "options",
-                        cn: "options",
-                    },
-                    ids: {
-                        en: "command-options-en",
-                        cn: "command-options-cn",
                     }
                 },
                 {
@@ -860,11 +876,33 @@
                     return "入门教程";
                 }
             },
-            commandsStr: function () {
+            commandsStr: function (name) {
                 if (this.language === "en") {
-                    return "Commands";
+                    if (name === "BASIC"){
+                        return "Basic Commands";
+                    }
+                    else if (name === "SYSTEM"){
+                        return "System Commands";
+                    }
+                    else if (name === "CLASS"){
+                        return "Class Commands";
+                    }
+                    else if (name === "ENHANCED"){
+                        return "Enhanced Commands";
+                    }
                 } else {
-                    return "命令教程";
+                    if (name === "BASIC"){
+                        return "基础命令";
+                    }
+                    else if (name === "SYSTEM"){
+                        return "系统命令";
+                    }
+                    else if (name === "CLASS"){
+                        return "类命令";
+                    }
+                    else if (name === "ENHANCED"){
+                        return "增强命令";
+                    }
                 }
             },
             userCasesStr: function () {
