@@ -73,30 +73,58 @@
 
                     <li class="nav-item dropdown active show">
                         <button class="btn dropdown-toggle" type="button" id="dropdownMenu2" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                            {{commandsStr()}}
+                            {{commandsStr('BASIC')}}
+                          </button>
+                        <div class="dropdown-menu" aria-labelledby="bd-tutorials">
+                            <a v-for="tutorial in getTutorials('COMMAND-BASIC')" v-bind:class="{ 'dropdown-item-checked': tutorial.id === tutorialId }"
+                                class="dropdown-item" v-bind:href='currentUrl() + "?language=" + language + "&id=" + tutorial.id'>
+                                {{ tutorial.names[language] }}
+                            </a>
+                        </div>
+                    </li>
+
+                    <li class="nav-item dropdown active show">
+                        <button class="btn dropdown-toggle" type="button" id="dropdownMenu2" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            {{commandsStr('JVM-RELATED')}}
                           </button>
                         <div class="dropdown-menu" aria-labelledby="bd-tutorials">
                             <a v-for="tutorial in getTutorials('COMMAND-JVM-RELATED')" v-bind:class="{ 'dropdown-item-checked': tutorial.id === tutorialId }"
                                 class="dropdown-item" v-bind:href='currentUrl() + "?language=" + language + "&id=" + tutorial.id'>
                                 {{ tutorial.names[language] }}
                             </a>
-                            <div class="dropdown-divider"></div>
+                        </div>
+                    </li>
+
+                    <li class="nav-item dropdown active show">
+                        <button class="btn dropdown-toggle" type="button" id="dropdownMenu2" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            {{commandsStr('CLASS-LOADER-RELATED')}}
+                          </button>
+                          <div class="dropdown-menu" aria-labelledby="bd-tutorials">
                             <a v-for="tutorial in getTutorials('COMMAND-CLASS-LOADER-RELATED')" v-bind:class="{ 'dropdown-item-checked': tutorial.id === tutorialId }"
                                 class="dropdown-item" v-bind:href='currentUrl() + "?language=" + language + "&id=" + tutorial.id'>
                                 {{ tutorial.names[language] }}
                             </a>
-                            <div class="dropdown-divider"></div>
+                        </div>
+                    </li>
+
+                    <li class="nav-item dropdown active show">
+                        <button class="btn dropdown-toggle" type="button" id="dropdownMenu2" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            {{commandsStr('MONITOR-RELATED')}}
+                          </button>
+                        <div class="dropdown-menu" aria-labelledby="bd-tutorials">
                             <a v-for="tutorial in getTutorials('COMMAND-MONITOR-RELATED')" v-bind:class="{ 'dropdown-item-checked': tutorial.id === tutorialId }"
                                 class="dropdown-item" v-bind:href='currentUrl() + "?language=" + language + "&id=" + tutorial.id'>
                                 {{ tutorial.names[language] }}
                             </a>
-                            <div class="dropdown-divider"></div>
+                        </div>
+                    </li>
+
+                    <li class="nav-item dropdown active show">
+                        <button class="btn dropdown-toggle" type="button" id="dropdownMenu2" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            {{commandsStr('OPTIONS')}}
+                          </button>
+                        <div class="dropdown-menu" aria-labelledby="bd-tutorials">
                             <a v-for="tutorial in getTutorials('COMMAND-OPTIONS')" v-bind:class="{ 'dropdown-item-checked': tutorial.id === tutorialId }"
-                                class="dropdown-item" v-bind:href='currentUrl() + "?language=" + language + "&id=" + tutorial.id'>
-                                {{ tutorial.names[language] }}
-                            </a>
-                            <div class="dropdown-divider"></div>
-                            <a v-for="tutorial in getTutorials('COMMAND-BASIC')" v-bind:class="{ 'dropdown-item-checked': tutorial.id === tutorialId }"
                                 class="dropdown-item" v-bind:href='currentUrl() + "?language=" + language + "&id=" + tutorial.id'>
                                 {{ tutorial.names[language] }}
                             </a>
@@ -860,11 +888,39 @@
                     return "入门教程";
                 }
             },
-            commandsStr: function () {
+            commandsStr: function (name) {
                 if (this.language === "en") {
-                    return "Commands";
+                    if (name === "BASIC"){
+                        return "Basic Commands";
+                    }
+                    else if (name === "JVM-RELATED"){
+                        return "JVM Commands";
+                    }
+                    else if (name === "CLASS-LOADER-RELATED"){
+                        return "Class/Classloader Commands";
+                    }
+                    else if (name === "MONITOR-RELATED"){
+                        return "Monitor/Watch/Trace Commands";
+                    }
+                    else if (name === "OPTIONS"){
+                        return "Options Commands";
+                    }
                 } else {
-                    return "命令教程";
+                    if (name === "BASIC"){
+                        return "基础命令";
+                    }
+                    else if (name === "JVM-RELATED"){
+                        return "JVM相关命令";
+                    }
+                    else if (name === "CLASS-LOADER-RELATED"){
+                        return "Class/Classloader相关命令";
+                    }
+                    else if (name === "MONITOR-RELATED"){
+                        return "Monitor/Watch/Trace相关命令";
+                    }
+                    else if (name === "OPTIONS"){
+                        return "Options相关命令";
+                    }
                 }
             },
             userCasesStr: function () {
