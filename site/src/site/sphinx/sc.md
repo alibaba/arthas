@@ -1,7 +1,7 @@
 sc
 ===
 
-[`sc`在线教程](https://alibaba.github.io/arthas/arthas-tutorials?language=cn&id=command-sc)
+[`sc`在线教程](https://arthas.aliyun.com/doc/arthas-tutorials?language=cn&id=command-sc)
 
 > 查看JVM已加载的类信息
 

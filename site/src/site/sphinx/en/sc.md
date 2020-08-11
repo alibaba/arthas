@@ -1,7 +1,7 @@
 sc
 ==
 
-[`sc` online tutorial](https://alibaba.github.io/arthas/arthas-tutorials?language=en&id=command-sc)
+[`sc` online tutorial](https://arthas.aliyun.com/doc/arthas-tutorials?language=en&id=command-sc)
 
 > Search classes loaded by JVM.
 
