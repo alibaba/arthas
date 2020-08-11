@@ -90,7 +90,7 @@ curl -Ss -XPOST http://localhost:8563/api -d '
       "results" : [
          {
             "type" : "version",
-            "version" : "3.3.8-SNAPSHOT",
+            "version" : "3.3.7",
             "jobId" : 5
          },
          {
@@ -120,7 +120,7 @@ curl -Ss -XPOST http://localhost:8563/api -d '
 ```json
  [{
     "type" : "version",
-    "version" : "3.3.8-SNAPSHOT",
+    "version" : "3.3.7",
     "jobId" : 5
  },
  {
@@ -250,7 +250,7 @@ while true; do curl -Ss -XPOST http://localhost:8563/api -d '
             "jobId" : 0,
             "pid" : "7909",
             "wiki" : "https://arthas.aliyun.com/doc",
-            "version" : "3.3.8-SNAPSHOT"
+            "version" : "3.3.7"
          },
          {
             "inputStatus" : "ALLOW_INPUT",
