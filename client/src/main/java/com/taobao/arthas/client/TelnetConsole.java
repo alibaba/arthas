@@ -335,9 +335,11 @@ public class TelnetConsole {
             return STATUS_OK;
         } finally {
             //reset terminal setting, fix https://github.com/alibaba/arthas/issues/1412
-            terminal.enableInterruptCharacter();
-            if (terminal instanceof UnixTerminal) {
-                ((UnixTerminal) terminal).enableLitteralNextCharacter();
+            try {
+                terminal.restore();
+            } catch (Exception e) {
+                System.out.println("Restore terminal settings failure: "+e.getMessage());
+                e.printStackTrace();
             }
         }
 
