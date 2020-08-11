@@ -1,7 +1,7 @@
 logger
 ===
 
-[`logger`在线教程](https://alibaba.github.io/arthas/arthas-tutorials?language=cn&id=command-logger)
+[`logger`在线教程](https://arthas.aliyun.com/doc/arthas-tutorials?language=cn&id=command-logger)
 
 > 查看logger信息，更新logger level
 
