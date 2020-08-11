@@ -26,8 +26,7 @@ Arthas 用户文档
 Contents
 --------
 
-* [应届生招聘!](https://mp.weixin.qq.com/s/VVSc_a3mLELW35lMH7rR0Q)
-* [社招信息!](https://mp.weixin.qq.com/s/677GO-3kYx5ygG9rlOlfQg)
+* [首页](https://arthas.aliyun.com/)
 * [技术征文!](https://developer.aliyun.com/article/751641)
 * [English Docs](https://arthas.aliyun.com/doc/en/)
 * [在线教程(推荐)](https://arthas.aliyun.com/doc/arthas-tutorials.html?language=cn)
@@ -46,5 +45,5 @@ Contents
 * [编译调试/参与贡献](https://github.com/alibaba/arthas/blob/master/CONTRIBUTING.md#)
 * [Release Notes](https://github.com/alibaba/arthas/releases)
 * [QQ群/钉钉群](contact-us.md)
-* [国内镜像站](https://arthas.gitee.io/)
+
 
