@@ -337,7 +337,7 @@ public class TelnetConsole {
             //reset terminal setting, fix https://github.com/alibaba/arthas/issues/1412
             try {
                 terminal.restore();
-            } catch (Exception e) {
+            } catch (Throwable e) {
                 System.out.println("Restore terminal settings failure: "+e.getMessage());
                 e.printStackTrace();
             }
