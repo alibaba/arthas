@@ -462,6 +462,7 @@ public class TimeTunnelCommand extends EnhancerCommand {
                 .setIndex(index)
                 .setTimestamp(tf.getGmtCreate())
                 .setCost(tf.getCost())
+                .setParams(advice.getParams())
                 .setReturn(advice.isAfterReturning())
                 .setReturnObj(advice.getReturnObj())
                 .setThrow(advice.isAfterThrowing())

@@ -17,7 +17,7 @@ tee指令会从标准输入设备读取数据，将其内容输出到标准输�
   sysprop | tee -a /path/to/logfile | grep java
 
  WIKI:
-   https://alibaba.github.io/arthas/tee
+   https://arthas.aliyun.com/doc/tee
 
  OPTIONS:
  -a, --append                              Append to file

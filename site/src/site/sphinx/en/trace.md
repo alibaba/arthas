@@ -1,6 +1,8 @@
 trace
 =====
 
+[`trace` online tutorial](https://arthas.aliyun.com/doc/arthas-tutorials.html?language=en&id=command-trace)
+
 > Trace method calling path, and output the time cost for each node in the path.
 
 `trace` can track the calling path specified by `class-pattern` / `method-pattern`, and calculate the time cost on the whole path.

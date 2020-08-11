@@ -4,7 +4,7 @@ Quick Start
 ## 1. Start Demo Application
 
 ```bash
-curl -O https://alibaba.github.io/arthas/arthas-demo.jar
+curl -O https://arthas.aliyun.com/arthas-demo.jar
 java -jar arthas-demo.jar
 ```
 
@@ -19,7 +19,7 @@ The source code of `arthas-demo`: [View](https://github.com/alibaba/arthas/blob/
 Execute the following command in the command line:
 
 ```bash
-curl -O https://alibaba.github.io/arthas/arthas-boot.jar
+curl -O https://arthas.aliyun.com/arthas-boot.jar
 java -jar arthas-boot.jar
 ```
 
@@ -48,7 +48,7 @@ The 'Demo' process is the second as shown above, press '2' then 'Enter'. Arthas 
 `--' `--'`--' '--'   `--'   `--'  `--'`--' `--'`-----'
 
 
-wiki: https://alibaba.github.io/arthas
+wiki: https://arthas.aliyun.com/doc
 version: 3.0.5.20181127201536
 pid: 71560
 time: 2018-11-28 19:16:24

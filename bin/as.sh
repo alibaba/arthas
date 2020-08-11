@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-# WIKI: https://alibaba.github.io/arthas
+# WIKI: https://arthas.aliyun.com/doc
 # This script only supports bash, do not support posix sh.
 # If you have the problem like Syntax error: "(" unexpected (expecting "fi"),
 # Try to run "bash -version" to check the version.
@@ -8,10 +8,10 @@
 
 # program : Arthas
 #  author : Core Engine @ Taobao.com
-#    date : 2020-07-24
+#    date : 2020-08-10
 
 # current arthas script version
-ARTHAS_SCRIPT_VERSION=3.3.7
+ARTHAS_SCRIPT_VERSION=3.3.8
 
 # SYNOPSIS
 #   rreadlink <fileOrDirPath>
@@ -103,7 +103,7 @@ SESSION_TIMEOUT=1800
 # use specify version
 USE_VERSION=
 
-# maven repo to download arthas
+# remote repo to download arthas
 REPO_MIRROR=
 
 # use http to download arthas
@@ -150,13 +150,9 @@ TMP_DIR=/tmp
 # last update arthas version
 ARTHAS_VERSION=
 
-# maven-metadata.xml url
-# https://repo1.maven.org/maven2/com/taobao/arthas/arthas-packaging/maven-metadata.xml
-MAVEN_METADATA_URL="PLACEHOLDER_REPO/com/taobao/arthas/arthas-packaging/maven-metadata.xml"
 # arthas remote url
-# https://repo1.maven.org/maven2/com/taobao/arthas/arthas-packaging/3.x.x/arthas-packaging-3.x.x-bin.zip
-REMOTE_DOWNLOAD_URL="PLACEHOLDER_REPO/com/taobao/arthas/arthas-packaging/PLACEHOLDER_VERSION/arthas-packaging-PLACEHOLDER_VERSION-bin.zip"
-
+# https://arthas.aliyun.com/download/3.1.7?mirror=aliyun
+REMOTE_DOWNLOAD_URL="https://arthas.aliyun.com/download/PLACEHOLDER_VERSION?mirror=PLACEHOLDER_REPO"
 # update timeout(sec)
 SO_TIMEOUT=5
 
@@ -314,16 +310,7 @@ get_local_version()
 
 get_repo_url()
 {
-    local repoUrl=""
-    if [[ $REPO_MIRROR == "center" ]] ; then
-        repoUrl="https://repo1.maven.org/maven2"
-    fi
-    if [[ $REPO_MIRROR == "aliyun" ]] ; then
-        repoUrl="https://maven.aliyun.com/repository/public"
-    fi
-    if [ -z ${repoUrl} ] ; then
-        repoUrl="${REPO_MIRROR}"
-    fi
+    local repoUrl="${REPO_MIRROR}"
     if [ "$USE_HTTP" = true ] ; then
         repoUrl=${repoUrl/https/http}
     fi
@@ -333,16 +320,15 @@ get_repo_url()
 # get latest version from remote
 get_remote_version()
 {
-    local url="${MAVEN_METADATA_URL//PLACEHOLDER_REPO/$(get_repo_url)}"
-    curl -sLk "${url}" | sed -n -e 's/.*<release>\(.*\)<\/release>.*/\1/p' | head -n 1
+    curl -sLk "https://arthas.aliyun.com/api/latest_version"
 }
 
 # check version greater
 version_gt()
 {
-    [[ $1 == $2 ]] && return 1
-    local gtVersion=`echo -e "$1\n$2" | sort | tail -1`
-    [[ $gtVersion == $1 ]] && return 0 || return 1
+    local remote_version=$1
+    local arthas_local_version=$2
+    [[ "$remote_version" > "$arthas_local_version" ]] && return 0 || return 1
 }
 
 # update arthas if necessary
@@ -418,7 +404,7 @@ Options and Arguments:
     --session-timeout <value>   The session timeout seconds, default 1800 (30min)
     --arthas-home <value>       The arthas home
     --use-version <value>       Use special version arthas
-    --repo-mirror <value>       Use special maven repository mirror, value is
+    --repo-mirror <value>       Use special remote repository mirror, value is
                                 center/aliyun or http repo url.
     --versions                  List local and remote arthas versions
     --use-http                  Enforce use http to download, default use https
@@ -444,13 +430,13 @@ EXAMPLES:
   ./as.sh --stat-url 'http://192.168.10.11:8080/api/stat'
   ./as.sh -c 'sysprop; thread' <pid>
   ./as.sh -f batch.as <pid>
-  ./as.sh --use-version 3.3.7
+  ./as.sh --use-version 3.3.8
   ./as.sh --session-timeout 3600
   ./as.sh --attach-only
   ./as.sh --select arthas-demo
   ./as.sh --repo-mirror aliyun --use-http
 WIKI:
-  https://alibaba.github.io/arthas
+  https://arthas.aliyun.com/doc
 
 Here is the list of possible java process(es) to attatch:
 "

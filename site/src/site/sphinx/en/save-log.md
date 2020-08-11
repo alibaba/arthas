@@ -1,6 +1,8 @@
 Log command outputs
 ===================
 
+[`Log command outputs` online tutorial](https://arthas.aliyun.com/doc/arthas-tutorials?language=en&id=case-save-log)
+
 > Log command outputs for later analysis
 
 * By default, this behavior is turned off. To enable it, execute the command below:

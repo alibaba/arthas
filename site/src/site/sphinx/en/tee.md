@@ -1,7 +1,7 @@
 tee
 ===
 
-[`tee` online tutorial](https://alibaba.github.io/arthas/arthas-tutorials?language=en&id=command-tee)
+[`tee` online tutorial](https://arthas.aliyun.com/doc/arthas-tutorials.html?language=en&id=command-tee)
 
 > Similar to the traditional `tee` command, it is used to read standard input data and output its contents into a file.
 
@@ -20,7 +20,7 @@ tee
   sysprop | tee -a /path/to/logfile | grep java
 
  WIKI:
-   https://alibaba.github.io/arthas/tee
+   https://arthas.aliyun.com/doc/tee
 
  OPTIONS:
  -a, --append                              Append to file

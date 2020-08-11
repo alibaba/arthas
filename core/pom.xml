@@ -4,7 +4,7 @@
     <parent>
         <groupId>com.taobao.arthas</groupId>
         <artifactId>arthas-all</artifactId>
-        <version>3.3.8-SNAPSHOT</version>
+        <version>3.3.9-SNAPSHOT</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
     <artifactId>arthas-core</artifactId>
@@ -61,6 +61,10 @@
                                 <relocation>
                                     <pattern>ch.qos.logback</pattern>
                                     <shadedPattern>${arthas.deps.package}.ch.qos.logback</shadedPattern>
+                                </relocation>
+                                <relocation>
+                                    <pattern>io.netty</pattern>
+                                    <shadedPattern>${arthas.deps.package}.io.netty</shadedPattern>
                                 </relocation>
                             </relocations>
                             <filters>

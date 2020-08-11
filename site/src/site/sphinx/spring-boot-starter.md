@@ -57,6 +57,11 @@ http://localhost:8080/actuator/arthas
             <artifactId>arthas-agent-attach</artifactId>
             <version>${arthas.version}</version>
         </dependency>
+        <dependency>
+            <groupId>com.taobao.arthas</groupId>
+            <artifactId>arthas-packaging</artifactId>
+            <version>${arthas.version}</version>
+        </dependency>
 ```
 
 ```java

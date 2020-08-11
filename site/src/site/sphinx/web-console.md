@@ -1,7 +1,7 @@
 Web Console
 ===
 
-
+[`Web Console`在线教程](https://arthas.aliyun.com/doc/arthas-tutorials.html?language=cn&id=case-web-console)
 
 ### 通过浏览器连接arthas
 
@@ -64,8 +64,8 @@ attach成功之后，会打印出agentId，比如：
 `--' `--'`--' '--'   `--'   `--'  `--'`--' `--'`-----'
 
 
-wiki      https://alibaba.github.io/arthas
-tutorials https://alibaba.github.io/arthas/arthas-tutorials
+wiki      https://arthas.aliyun.com/doc
+tutorials https://arthas.aliyun.com/doc/arthas-tutorials.html
 version   3.1.2
 pid       86183
 time      2019-08-30 15:40:53
