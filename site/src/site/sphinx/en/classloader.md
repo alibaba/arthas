@@ -1,7 +1,7 @@
 classloader
 ===========
 
-[`classloader` online tutorial](https://alibaba.github.io/arthas/arthas-tutorials?language=en&id=command-classloader)
+[`classloader` online tutorial](https://arthas.aliyun.com/doc/arthas-tutorials?language=en&id=command-classloader)
 
 View hierarchy, urls and classes-loading info for the class-loaders.
 
