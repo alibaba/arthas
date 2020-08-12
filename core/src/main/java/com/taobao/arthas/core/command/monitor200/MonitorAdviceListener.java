@@ -105,7 +105,8 @@ class MonitorAdviceListener extends AdviceListenerAdapter {
         boolean isPass = true;
         if (!StringUtils.isEmpty(this.command.getConditionExpress())) {
             Advice advice = Advice.newForBefore(loader, clazz, method, target, args);
-            isPass = isConditionMet(this.command.getConditionExpress(), advice, 0.1);
+            //todo 真实计算执行耗时
+            isPass = isConditionMet(this.command.getConditionExpress(), advice, 0);
         }
         this.threadLocalContext.setConditionResult(isPass);
     }
