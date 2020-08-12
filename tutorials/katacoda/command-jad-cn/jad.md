@@ -106,7 +106,7 @@ Affect(row-cnt:2) cost in 407 ms.
 
 > 当有多个 `ClassLoader` 都加载了这个类时，`jad` 命令会输出对应 `ClassLoader` 实例的 `hashcode`，然后你只需要重新执行 `jad` 命令，并使用参数 `-c <hashcode>` 就可以反编译指定 ClassLoader 加载的那个类了；
 
-`jad org.apache.log4j.Logger`{{execute T2}}
+例如：
 
 ```java
 $ jad org.apache.log4j.Logger
@@ -121,6 +121,9 @@ HASHCODE  CLASSLOADER
 4c0df5f8  +-pandora-framework's ModuleClassLoader
 
 Affect(row-cnt:0) cost in 38 ms.
+```
+
+```java
 $ jad org.apache.log4j.Logger -c 69dcaba4
 
 ClassLoader:

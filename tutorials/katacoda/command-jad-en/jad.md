@@ -106,7 +106,7 @@ Affect(row-cnt:2) cost in 407 ms.
 
 > If the target class is loaded by multiple classloaders, `jad` outputs the `hashcode` of the corresponding classloaders, then you can re-run `jad` and specify `-c <hashcode>` to decompile the target class from the specified classloader.
 
-`jad org.apache.log4j.Logger`{{execute T2}}
+Examples:
 
 ```java
 $ jad org.apache.log4j.Logger
@@ -121,6 +121,9 @@ HASHCODE  CLASSLOADER
 4c0df5f8  +-pandora-framework's ModuleClassLoader
 
 Affect(row-cnt:0) cost in 38 ms.
+```
+
+```java
 $ jad org.apache.log4j.Logger -c 69dcaba4
 
 ClassLoader:
