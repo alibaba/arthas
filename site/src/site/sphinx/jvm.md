@@ -1,7 +1,7 @@
 jvm
 ===
 
-[`sysenv`在线教程](https://arthas.aliyun.com/doc/arthas-tutorials.html?language=cn&id=command-sysenv)
+[`jvm`在线教程](https://arthas.aliyun.com/doc/arthas-tutorials.html?language=cn&id=command-jvm)
 
 > 查看当前JVM信息
 
