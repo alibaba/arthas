@@ -5,9 +5,6 @@ The `ognl` command can execute code dynamically.
 
 `ognl '@java.lang.System@out.println("hello ognl")'`{{execute T2}}
 
-可以检查`Terminal 1`里的进程输出，可以发现打印出了`hello ognl`。
-
-
 The `Terminal 1` will print `hello ognl`.
 
 
