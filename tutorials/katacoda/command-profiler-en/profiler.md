@@ -1,7 +1,3 @@
-profiler
-===
-
-[`mbean` online tutorial](https://arthas.aliyun.com/doc/arthas-tutorials.html?language=en&id=command-mbean)
 
 > Generate a flame graph using [async-profiler](https://github.com/jvm-profiling-tools/async-profiler)
 
@@ -11,15 +7,20 @@ The basic usage of the `profiler` command is `profiler action [actionArg]`
 
 ### Start profiler
 
+`profiler start -e itimer`{{execute T2}}
+
 ```
 $ profiler start
 Started [cpu] profiling
 ```
 
 > By default, the sample event is `cpu`. Can be specified with the `--event` parameter.
+> Since katacoda environment doesn't support `perf_events`，here use `-e itimer` to specify event to be `itimer`
 
 
 ### Get the number of samples collected
+
+`profiler getSamples`{{execute T2}}
 
 ```
 $ profiler getSamples
@@ -27,6 +28,8 @@ $ profiler getSamples
 ```
 
 ### View profiler status
+
+`profiler status`{{execute T2}}
 
 ```bash
 $ profiler status
@@ -39,6 +42,8 @@ Can view which `event` and sampling time.
 
 #### Generate svg format results
 
+`profiler stop`{{execute T2}}
+
 ```
 $ profiler stop
 profiler output file: /tmp/demo/arthas-output/20191125-135546.svg
@@ -46,6 +51,8 @@ OK
 ```
 
 By default, the generated results are saved to the `arthas-output` directory under the application's `working directory`. The output result path can be specified by the `--file` parameter. such as:
+
+`profiler stop --file /tmp/output.svg`{{execute T2}}
 
 ```bash
 $ profiler stop --file /tmp/output.svg
@@ -57,6 +64,8 @@ OK
 
 By default, the result file is `svg` format. If you want to generate the `html` format, you can specify it with the `--format` parameter:
 
+`profiler stop --format html`{{execute T2}}
+
 ```bash
 $ profiler stop --format html
 profiler output file: /tmp/test/arthas-output/20191125-143329.html
@@ -65,19 +74,23 @@ OK
 
 Or use the file name name format in the `--file` parameter. For example, `--file /tmp/result.html`.
 
+`profiler stop --file /tmp/result.html`{{execute T2}}
+
 ### View profiler results under arthas-output via browser
 
-By default, arthas uses port 3658, which can be opened: [http://localhost:3658/arthas-output/](http://localhost:3658/arthas-output/) View the `arthas-output` directory below Profiler results:
+By default, arthas uses port 3658, which can be opened: https://[[HOST_SUBDOMAIN]]-3658-[[KATACODA_HOST]].environments.katacoda.com/arthas-output/ View the `arthas-output` directory below Profiler results:
 
-![](_static/arthas-output.jpg)
+![](https://arthas.aliyun.com/doc/_images/arthas-output.jpg)
 
 Click to view specific results:
 
-![](_static/arthas-output-svg.jpg)
+![](https://arthas.aliyun.com/doc/_images/arthas-output-svg.jpg)
 
 > If using the chrome browser, may need to be refreshed multiple times.
 
 ### Profiler supported events
+
+`profiler list`{{execute T2}}
 
 Under different platforms and different OSs, the supported events are different. For example, under macos:
 
@@ -122,12 +135,16 @@ If you encounter the permissions/configuration issues of the OS itself and then 
 
 You can use the `--event` parameter to specify the event to sample, such as sampling the `alloc` event:
 
+`profiler start --event alloc`{{execute T2}}
+
 ```bash
 $ profiler start --event alloc
 ```
 
 
 ### Resume sampling
+
+`profiler resume`{{execute T2}}
 
 ```bash
 $ profiler resume
@@ -141,6 +158,8 @@ You can verify the number of samples by executing `profiler getSamples`.
 
 ### Use `execute` action to execute complex commands
 
+`profiler execute 'start'`{{execute T2}}
+
 For example, start sampling:  
 
 ```bash
@@ -148,6 +167,8 @@ profiler execute 'start'
 ```
 
 Stop sampling and save to the specified file:
+
+`profiler execute 'stop,file=/tmp/result.svg'`{{execute T2}}
 
 ```bash
 profiler execute 'stop,file=/tmp/result.svg'
@@ -157,6 +178,8 @@ Specific format reference: [arguments.cpp#L34](https://github.com/jvm-profiling-
 
 ### View all supported actions
 
+`profiler actions`{{execute T2}}
+
 ```bash
 $ profiler actions
 Supported Actions: [resume, dumpCollapsed, getSamples, start, list, execute, version, stop, load, dumpFlat, actions, dumpTraces, status]
@@ -164,6 +187,8 @@ Supported Actions: [resume, dumpCollapsed, getSamples, start, list, execute, ver
 
 
 ### View version
+
+`profiler version`{{execute T2}}
 
 ```bash
 $ profiler version
