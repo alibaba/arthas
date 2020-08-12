@@ -5,22 +5,16 @@ The `profiler` command supports generate flame graph for application hotspots.
 
 The basic usage of the `profiler` command is `profiler action [actionArg]`
 
-Parameters:
+### Supported Options
 
-```
-     --allkernel                      include only kernel-mode events
-     --alluser                        include only user-mode events
- -d, --duration <value>               run profiling for <duration> seconds
- -e, --event <value>                  which event to trace (cpu, alloc, lock, cache-misses etc.), default val
-                                      ue is cpu
- -f, --file <value>                   dump output to <filename>
-     --format <value>                 dump output file format(svg, html, jfr), default valut is svg
- -h, --help                           this help
- -i, --interval <value>               sampling interval in ns (default: 10'000'000, i.e. 10 ms)
-     --threads                        profile different threads separately
- <action>                             Action to execute
- <actionArg>                          Attribute name pattern.
- ```
+|Name|Specification|
+|---:|:---|
+|*action*|Action to execute|
+|*actionArg*|Attribute name pattern|
+|[i:]|sampling interval in ns (default: 10'000'000, i.e. 10 ms)|
+|[f:]|dump output to specified directory|
+|[d:]|run profiling for specified seconds|
+|[e:]|which event to trace (cpu, alloc, lock, cache-misses etc.), default value is cpu|
  
 ### View all supported actions
 

@@ -5,21 +5,16 @@
 
 `profiler` 命令基本运行结构是 `profiler action [actionArg]`
 
-参数：
+### 参数说明
 
-```
-     --allkernel                      仅包括内核模式事件
-     --alluser                        只包括用户模式事件
- -d, --duration <value>               运行评测<duration>秒
- -e, --event <value>                  要跟踪哪个事件（cpu, alloc, lock, cache-misses等），默认是cpu
- -f, --file <value>                   将输出转储到<filename>
-     --format <value>                 转储输出文件为指定格式（svg、html、jfr），默认值为svg
- -h, --help                           帮助
- -i, --interval <value>               采样间隔（单位：ns）（默认值：10'000'000，即10 ms）
-     --threads                        分别对不同的线程进行记录
- <action>                             要执行的操作
- <actionArg>                          属性名模式。
-```
+|参数名称|参数说明|
+|---:|:---|
+|*action*|要执行的操作|
+|*actionArg*|属性名模式|
+|[i:]|采样间隔（单位：ns）（默认值：10'000'000，即10 ms）|
+|[f:]|将输出转储到指定路径|
+|[d:]|运行评测指定秒|
+|[e:]|要跟踪哪个事件（cpu, alloc, lock, cache-misses等），默认是cpu|
 
 ### 查看所有支持的action
 

@@ -9,6 +9,17 @@ profiler
 
 `profiler` 命令基本运行结构是 `profiler action [actionArg]`
 
+### 参数说明
+
+|参数名称|参数说明|
+|---:|:---|
+|*action*|要执行的操作|
+|*actionArg*|属性名模式|
+|[i:]|采样间隔（单位：ns）（默认值：10'000'000，即10 ms）|
+|[f:]|将输出转储到指定路径|
+|[d:]|运行评测指定秒|
+|[e:]|要跟踪哪个事件（cpu, alloc, lock, cache-misses等），默认是cpu|
+
 ### 启动profiler
 
 
