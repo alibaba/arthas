@@ -5,6 +5,41 @@
 
 `profiler` 命令基本运行结构是 `profiler action [actionArg]`
 
+参数：
+
+```
+     --allkernel                      仅包括内核模式事件
+     --alluser                        只包括用户模式事件
+ -d, --duration <value>               运行评测<duration>秒
+ -e, --event <value>                  要跟踪哪个事件（cpu, alloc, lock, cache-misses等），默认是cpu
+ -f, --file <value>                   将输出转储到<filename>
+     --format <value>                 转储输出文件为指定格式（svg、html、jfr），默认值为svg
+ -h, --help                           帮助
+ -i, --interval <value>               采样间隔（单位：ns）（默认值：10'000'000，即10 ms）
+     --threads                        分别对不同的线程进行记录
+ <action>                             要执行的操作
+ <actionArg>                          属性名模式。
+```
+
+### 查看所有支持的action
+
+`profiler actions`{{execute T2}}
+
+```bash
+$ profiler actions
+Supported Actions: [resume, dumpCollapsed, getSamples, start, list, execute, version, stop, load, dumpFlat, actions, dumpTraces, status]
+```
+
+### 查看版本
+
+`profiler version`{{execute T2}}
+
+```bash
+$ profiler version
+Async-profiler 1.6 built on Sep  9 2019
+Copyright 2019 Andrei Pangin
+```
+
 ### 启动profiler
 
 `profiler start -e itimer`{{execute T2}}
@@ -16,6 +51,7 @@ Started [itimer] profiling
 
 > 默认情况下，生成的是cpu的火焰图，即event为`cpu`。可以用`--event`参数来指定。
 > 因为katacoda环境不支持perf_events，所以这里使用`-e itimer`参数指定event为itimer
+
 
 
 ### 获取已采集的sample的数量
@@ -78,7 +114,7 @@ OK
 
 ### 通过浏览器查看arthas-output下面的profiler结果
 
-默认情况下，arthas使用3658端口，则可以打开： https://[[HOST_SUBDOMAIN]]-3658-[[KATACODA_HOST]].environments.katacoda.com/arthas-output/ 目录下面的profiler结果：
+默认情况下，arthas使用8563http端口，则可以打开： https://[[HOST_SUBDOMAIN]]-8563-[[KATACODA_HOST]].environments.katacoda.com/arthas-output/ 目录下面的profiler结果：
 
 ![](https://arthas.aliyun.com/doc/_images/arthas-output.jpg)
 
@@ -175,23 +211,3 @@ profiler execute 'stop,file=/tmp/result.svg'
 ```
 
 具体的格式参考： [arguments.cpp#L34](https://github.com/jvm-profiling-tools/async-profiler/blob/v1.6/src/arguments.cpp#L34)
-
-### 查看所有支持的action
-
-`profiler actions`{{execute T2}}
-
-```bash
-$ profiler actions
-Supported Actions: [resume, dumpCollapsed, getSamples, start, list, execute, version, stop, load, dumpFlat, actions, dumpTraces, status]
-```
-
-
-### 查看版本
-
-`profiler version`{{execute T2}}
-
-```bash
-$ profiler version
-Async-profiler 1.6 built on Sep  9 2019
-Copyright 2019 Andrei Pangin
-```

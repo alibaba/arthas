@@ -5,6 +5,43 @@ The `profiler` command supports generate flame graph for application hotspots.
 
 The basic usage of the `profiler` command is `profiler action [actionArg]`
 
+Parameters:
+
+```
+     --allkernel                      include only kernel-mode events
+     --alluser                        include only user-mode events
+ -d, --duration <value>               run profiling for <duration> seconds
+ -e, --event <value>                  which event to trace (cpu, alloc, lock, cache-misses etc.), default val
+                                      ue is cpu
+ -f, --file <value>                   dump output to <filename>
+     --format <value>                 dump output file format(svg, html, jfr), default valut is svg
+ -h, --help                           this help
+ -i, --interval <value>               sampling interval in ns (default: 10'000'000, i.e. 10 ms)
+     --threads                        profile different threads separately
+ <action>                             Action to execute
+ <actionArg>                          Attribute name pattern.
+ ```
+ 
+### View all supported actions
+
+`profiler actions`{{execute T2}}
+
+```bash
+$ profiler actions
+Supported Actions: [resume, dumpCollapsed, getSamples, start, list, execute, version, stop, load, dumpFlat, actions, dumpTraces, status]
+```
+
+
+### View version
+
+`profiler version`{{execute T2}}
+
+```bash
+$ profiler version
+Async-profiler 1.6 built on Sep  9 2019
+Copyright 2019 Andrei Pangin
+```
+
 ### Start profiler
 
 `profiler start -e itimer`{{execute T2}}
@@ -78,7 +115,7 @@ Or use the file name name format in the `--file` parameter. For example, `--file
 
 ### View profiler results under arthas-output via browser
 
-By default, arthas uses port 3658, which can be opened: https://[[HOST_SUBDOMAIN]]-3658-[[KATACODA_HOST]].environments.katacoda.com/arthas-output/ View the `arthas-output` directory below Profiler results:
+By default, arthas uses http port 8563, which can be opened: https://[[HOST_SUBDOMAIN]]-8563-[[KATACODA_HOST]].environments.katacoda.com/arthas-output/ View the `arthas-output` directory below Profiler results:
 
 ![](https://arthas.aliyun.com/doc/_images/arthas-output.jpg)
 
@@ -175,23 +212,3 @@ profiler execute 'stop,file=/tmp/result.svg'
 ```
 
 Specific format reference: [arguments.cpp#L34](https://github.com/jvm-profiling-tools/async-profiler/blob/v1.6/src/arguments.cpp#L34)
-
-### View all supported actions
-
-`profiler actions`{{execute T2}}
-
-```bash
-$ profiler actions
-Supported Actions: [resume, dumpCollapsed, getSamples, start, list, execute, version, stop, load, dumpFlat, actions, dumpTraces, status]
-```
-
-
-### View version
-
-`profiler version`{{execute T2}}
-
-```bash
-$ profiler version
-Async-profiler 1.6 built on Sep  9 2019
-Copyright 2019 Andrei Pangin
-```

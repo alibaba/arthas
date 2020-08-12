@@ -30,8 +30,8 @@
     "showdashboard": true,
     "dashboards": [
       {
-        "name": "Web Port 3658",
-        "port": 3658
+        "name": "Web Port 8563",
+        "port": 8563
       }
     ]
   },
