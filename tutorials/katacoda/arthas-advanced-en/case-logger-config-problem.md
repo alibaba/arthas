@@ -7,11 +7,11 @@ In this case, show how to troubleshoot logger conflicts.
 
 Take `UserController` as an example, it uses slf4j api, but the actual logger system used is logback.
 
-`ognl -c 1be6f5c3 '@com.example.demo.arthas.user.UserController@logger'`{{execute T2}}
+`ognl --classLoaderClass org.springframework.boot.loader.LaunchedURLClassLoader '@com.example.demo.arthas.user.UserController@logger'`{{execute T2}}
 
 
 ```bash
-$ ognl -c 1be6f5c3 '@com.example.demo.arthas.user.UserController@logger'
+$ ognl --classLoaderClass org.springframework.boot.loader.LaunchedURLClassLoader '@com.example.demo.arthas.user.UserController@logger'
 @Logger[
     serialVersionUID=@Long[5454405123156820674],
     FQCN=@String[ch.qos.logback.classic.Logger],
@@ -29,15 +29,15 @@ $ ognl -c 1be6f5c3 '@com.example.demo.arthas.user.UserController@logger'
 ### Find the configuration file actually loaded by the logback
 
 
-`ognl -c 1be6f5c3 '#map1=@org.slf4j.LoggerFactory@getLogger("root").loggerContext.objectMap, #map1.get("CONFIGURATION_WATCH_LIST")'`{{execute T2}}
+`ognl --classLoaderClass org.springframework.boot.loader.LaunchedURLClassLoader '#map1=@org.slf4j.LoggerFactory@getLogger("root").loggerContext.objectMap, #map1.get("CONFIGURATION_WATCH_LIST")'`{{execute T2}}
 
 
 ### Use the classloader command to find possible logger configuration files
 
-`classloader -c 1be6f5c3 -r logback-spring.xml`{{execute T2}}
+`classloader --classLoaderClass org.springframework.boot.loader.LaunchedURLClassLoader -r logback-spring.xml`{{execute T2}}
 
 ```
-$ classloader -c 1be6f5c3 -r logback-spring.xml
+$ classloader --classLoaderClass org.springframework.boot.loader.LaunchedURLClassLoader -r logback-spring.xml
  jar:file:/Users/hengyunabc/code/java/spring-boot-inside/demo-arthas-spring-boot/target/demo-arthas-spring-boot-0.0.1-SNAPSHOT.jar!/BOOT-INF/classes!/logback-spring.xml
 
 Affect(row-cnt:1) cost in 13 ms.
@@ -46,8 +46,8 @@ You can know the specific source of the loaded configuration.
 
 You can try to load files that are prone to conflict:
 
-`classloader -c 1be6f5c3 -r logback.xml`{{execute T2}}
+`classloader --classLoaderClass org.springframework.boot.loader.LaunchedURLClassLoader -r logback.xml`{{execute T2}}
 
-`classloader -c 1be6f5c3 -r log4j.properties`{{execute T2}}
+`classloader --classLoaderClass org.springframework.boot.loader.LaunchedURLClassLoader -r log4j.properties`{{execute T2}}
 
 

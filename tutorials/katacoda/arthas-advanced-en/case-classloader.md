@@ -81,11 +81,13 @@ $ classloader -t
         +-org.apache.jasper.servlet.JasperLoader@21ae0fe2
 ```
 
+Note: Please replace `<classLoaderHash>` with your classLoaderHash above, then execute the related commands manually in the following steps:
+
 ### List the urls of the ClassLoader
 
 For example, the hashcode of spring `LaunchedURLClassLoader` viewed above is `1be6f5c3`, and all its urls can be listed by the `-c` parameter:
 
-`classloader -c 1be6f5c3`{{execute T2}}
+`classloader -c <classLoaderHash>`
 
 ```
 $ classloader -c 1be6f5c3
@@ -97,7 +99,7 @@ jar:file:/home/scrapbook/tutorial/demo-arthas-spring-boot.jar!/BOOT-INF/lib/spri
 
 ### Load the resource file in the specified ClassLoader
 
-Load the specified resource file: `classloader -c 1be6f5c3 -r logback-spring.xml`{{execute T2}}
+Load the specified resource file: `classloader -c <classLoaderHash> -r logback-spring.xml`
 
 ```
 $ classloader -c 1be6f5c3 -r logback-spring.xml
@@ -108,7 +110,7 @@ $ classloader -c 1be6f5c3 -r logback-spring.xml
 
 For example, try loading `java.lang.String` with spring LaunchedURLClassLoader :
 
-`classloader -c 1be6f5c3 --load java.lang.String`{{execute T2}}
+`classloader -c <classLoaderHash> --load java.lang.String`
 
 ```
 $ classloader -c 1be6f5c3 --load java.lang.String
