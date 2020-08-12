@@ -1,7 +1,3 @@
-jad
-===
-
-[`jad` online tutorial](https://arthas.aliyun.com/doc/arthas-tutorials?language=en&id=command-jad)
 
 > Decompile the specified classes.
 
@@ -21,6 +17,8 @@ jad
 ### Usage
 
 #### Decompile `java.lang.String`
+
+`jad java.lang.String`{{execute T2}}
 
 ```java
 $ jad java.lang.String
@@ -58,52 +56,57 @@ CharSequence {
 
 By default, the decompile result will have the `ClassLoader` information. With the `--source-only` option, you can print only the source code. Conveniently used with the [mc](mc.md)/[redefine](redefine.md) commands.
 
+`jad --source-only java.lang.String`{{execute T2}}
+
 ```
-$ jad --source-only demo.MathGame
-/*
- * Decompiled with CFR 0_132.
- */
-package demo;
-
-import java.io.PrintStream;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Random;
-import java.util.concurrent.TimeUnit;
-
-public class MathGame {
-    private static Random random = new Random();
-    public int illegalArgumentCount = 0;
+$ jad --source-only java.lang.String
 ...
+        @Override
+        public int compare(String string, String string2) {
+            int n = string.length();
+            int n2 = string2.length();
+            int n3 = Math.min(n, n2);
+            for (int i = 0; i < n3; ++i) {
+                char c;
+                char c2 = string.charAt(i);
+                if (c2 == (c = string2.charAt(i)) || (c2 = Character.toUpperCase(c2)) == (c = Character.toUpperCase(c)) || (c2 = Character.toLowerCase(c2)) == (c = Character.toLowerCase(c))) continue;
+                return c2 - c;
+            }
+            return n - n2;
+        }
+
+        private Object readResolve() {
+            return String.CASE_INSENSITIVE_ORDER;
+        }
+    }
+}
 ```
 
 #### Decompile the specified method
 
+`jad java.lang.String toString`{{execute T2}}
+
 ```java
-$ jad demo.MathGame main
+$ jad java.lang.String toString
 
 ClassLoader:
-+-sun.misc.Launcher$AppClassLoader@3d4eac69
-+-sun.misc.Launcher$ExtClassLoader@66350f69
 
 Location:
-/private/tmp/arthas-demo.jar
 
-public static void main(String[] args) throws InterruptedException {
-    MathGame game = new MathGame();
-    do {
-        game.run();
-        TimeUnit.SECONDS.sleep(1L);
-    } while (true);
+
+@Override
+public String toString() {
+    return this;
 }
 
-Affect(row-cnt:1) cost in 228 ms.
+Affect(row-cnt:2) cost in 407 ms.
 ```
 
 #### Decompile with specified classLoader
 
 > If the target class is loaded by multiple classloaders, `jad` outputs the `hashcode` of the corresponding classloaders, then you can re-run `jad` and specify `-c <hashcode>` to decompile the target class from the specified classloader.
+
+Examples:
 
 ```java
 $ jad org.apache.log4j.Logger
@@ -118,6 +121,9 @@ HASHCODE  CLASSLOADER
 4c0df5f8  +-pandora-framework's ModuleClassLoader
 
 Affect(row-cnt:0) cost in 38 ms.
+```
+
+```java
 $ jad org.apache.log4j.Logger -c 69dcaba4
 
 ClassLoader:
