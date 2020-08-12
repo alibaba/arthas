@@ -13,6 +13,8 @@
 |`[E]`|turn on regex match, the default behavior is wildcards match|
 |`[f]`|print the fields info of the current class, MUST be used with `-d` together|
 |`[x:]`|specify the depth of recursive traverse the static fields, the default value is '0' - equivalent to use `toString` to output|
+|`[c:]`|The hash code of the special class's classLoader|
+|`[n:]`|Maximum number of matching classes with details (100 by default)|
 
 > *class-patten* supports full qualified class name, e.g. com.taobao.test.AAA and com/taobao/test/AAA. It also supports the format of 'com/taobao/test/AAA', so that it is convenient to directly copy class name from the exception stack trace without replacing '/' to '.'. <br/><br/>
 > `sc` turns on matching sub-class match by default, that is, `sc` will also search the sub classes of the target class too. If exact-match is desired, pls. use `options disable-sub-class true`.
