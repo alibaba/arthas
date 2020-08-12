@@ -103,9 +103,10 @@
 <li class="toctree-l1"><a class="reference internal" href="advanced-use.html">进阶使用</a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="commands.html">命令列表</a><ul class="current">
 <li class="toctree-l2 current"><a class="current reference internal" href="#">dashboard</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#id1">使用参考</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#id2">数据说明</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#id3">截图展示</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id1">参数说明</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id2">使用参考</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id3">数据说明</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id4">截图展示</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="thread.html">thread</a></li>
@@ -145,6 +146,7 @@
 <li class="toctree-l1"><a class="reference internal" href="http-api.html">Http API</a></li>
 <li class="toctree-l1"><a class="reference internal" href="docker.html">Docker</a></li>
 <li class="toctree-l1"><a class="reference internal" href="spring-boot-starter.html">Arthas Spring Boot Starter</a></li>
+<li class="toctree-l1"><a class="reference internal" href="idea-plugin.html">IDEA 插件</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas/issues?q=label%3Auser-case">用户案例</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas/issues?q=label%3Aquestion-answered">常见问题</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas">Fork me at GitHub</a></li>
@@ -227,7 +229,27 @@
 </div></blockquote>
 <p>当运行在Ali-tomcat时，会显示当前tomcat的实时信息，如HTTP请求的qps, rt, 错误数, 线程池信息等等。</p>
 <div class="section" id="id1">
-<h2>使用参考<a class="headerlink" href="#id1" title="永久链接至标题">¶</a></h2>
+<h2>参数说明<a class="headerlink" href="#id1" title="永久链接至标题">¶</a></h2>
+<table border="1" class="docutils">
+<thead>
+<tr>
+<th align="right">参数名称</th>
+<th align="left">参数说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="right">[i:]</td>
+<td align="left">刷新实时数据的时间间隔 (ms)，默认5000ms</td>
+</tr>
+<tr>
+<td align="right">[n:]</td>
+<td align="left">刷新实时数据的次数</td>
+</tr>
+</tbody>
+</table></div>
+<div class="section" id="id2">
+<h2>使用参考<a class="headerlink" href="#id2" title="永久链接至标题">¶</a></h2>
 <div class="highlight-default notranslate"><pre class="literal-block">$ dashboard
 ID         NAME                              GROUP                  PRIORITY   STATE       %CPU       TIME       INTERRUPTED DAEMON
 889        RMI TCP Connection(15)-30.10.166. RMI Runtime            9          RUNNABLE    48         0:5        false       true
@@ -264,8 +286,8 @@ processors                        4                                 threadpool  
 uptime                            16020s                            busy                              0</pre>
 </div>
 </div>
-<div class="section" id="id2">
-<h2>数据说明<a class="headerlink" href="#id2" title="永久链接至标题">¶</a></h2>
+<div class="section" id="id3">
+<h2>数据说明<a class="headerlink" href="#id3" title="永久链接至标题">¶</a></h2>
 <ul class="simple">
 <li><p>ID: Java级别的线程ID，注意这个ID不能跟jstack中的nativeID一一对应</p></li>
 <li><p>NAME: 线程名</p></li>
@@ -278,8 +300,8 @@ uptime                            16020s                            busy        
 <li><p>DAEMON: 是否是daemon线程</p></li>
 </ul>
 </div>
-<div class="section" id="id3">
-<h2>截图展示<a class="headerlink" href="#id3" title="永久链接至标题">¶</a></h2>
+<div class="section" id="id4">
+<h2>截图展示<a class="headerlink" href="#id4" title="永久链接至标题">¶</a></h2>
 <p><img alt="_images/dashboard.png" src="_images/dashboard.png" /></p>
 </div>
 </div>
