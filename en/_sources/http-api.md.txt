@@ -113,7 +113,7 @@ The response is as follows:
       "results" : [
          {
             "type" : "version",
-            "version" : "3.3.8-SNAPSHOT",
+            "version" : "3.3.7",
             "jobId" : 5
          },
          {
@@ -146,7 +146,7 @@ Response data format description:
 ```json
  [{
     "type" : "version",
-    "version" : "3.3.8-SNAPSHOT",
+    "version" : "3.3.7",
     "jobId" : 5
  },
  {
@@ -303,7 +303,7 @@ The response content is as follows:
             "jobId" : 0,
             "pid" : "7909",
             "wiki" : "https://arthas.aliyun.com/doc",
-            "version" : "3.3.8-SNAPSHOT"
+            "version" : "3.3.7"
          },
          {
             "inputStatus" : "ALLOW_INPUT",
