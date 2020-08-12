@@ -29,6 +29,7 @@ public class MonitorCommand extends EnhancerCommand {
 
     private String classPattern;
     private String methodPattern;
+    private String conditionExpress;
     private int cycle = 60;
     private boolean isRegEx = false;
     private int numberOfLimit = 100;
@@ -43,6 +44,12 @@ public class MonitorCommand extends EnhancerCommand {
     @Description("Method of Pattern Matching")
     public void setMethodPattern(String methodPattern) {
         this.methodPattern = methodPattern;
+    }
+
+    @Argument(argName = "condition-express", index = 2, required = false)
+    @Description("Condition-express before method invoke")
+    public void setConditionExpress(String conditionExpress) {
+        this.conditionExpress = conditionExpress;
     }
 
     @Option(shortName = "c", longName = "cycle")
@@ -69,6 +76,10 @@ public class MonitorCommand extends EnhancerCommand {
 
     public String getMethodPattern() {
         return methodPattern;
+    }
+
+    public String getConditionExpress() {
+        return conditionExpress;
     }
 
     public int getCycle() {

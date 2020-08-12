@@ -1,9 +1,12 @@
 package com.taobao.arthas.core.command.monitor200;
 
+import com.taobao.arthas.core.advisor.Advice;
 import com.taobao.arthas.core.advisor.AdviceListenerAdapter;
 import com.taobao.arthas.core.command.model.MonitorModel;
 import com.taobao.arthas.core.shell.command.CommandProcess;
 import com.taobao.arthas.core.advisor.ArthasMethod;
+import com.taobao.arthas.core.util.StringUtils;
+import com.taobao.arthas.core.util.ThreadLocalContext;
 import com.taobao.arthas.core.util.ThreadLocalWatch;
 
 import java.util.ArrayList;
@@ -68,6 +71,7 @@ class MonitorAdviceListener extends AdviceListenerAdapter {
     // 监控数据
     private ConcurrentHashMap<Key, AtomicReference<MonitorData>> monitorData = new ConcurrentHashMap<Key, AtomicReference<MonitorData>>();
     private final ThreadLocalWatch threadLocalWatch = new ThreadLocalWatch();
+    private final ThreadLocalContext threadLocalContext = new ThreadLocalContext();
     private MonitorCommand command;
     private CommandProcess process;
 
@@ -98,6 +102,12 @@ class MonitorAdviceListener extends AdviceListenerAdapter {
     public void before(ClassLoader loader, Class<?> clazz, ArthasMethod method, Object target, Object[] args)
             throws Throwable {
         threadLocalWatch.start();
+        boolean isPass = true;
+        if (!StringUtils.isEmpty(this.command.getConditionExpress())) {
+            Advice advice = Advice.newForBefore(loader, clazz, method, target, args);
+            isPass = isConditionMet(this.command.getConditionExpress(), advice, 0.1);
+        }
+        this.threadLocalContext.setConditionResult(isPass);
     }
 
     @Override
@@ -114,6 +124,11 @@ class MonitorAdviceListener extends AdviceListenerAdapter {
 
     private void finishing(Class<?> clazz, ArthasMethod method, boolean isThrowing) {
         double cost = threadLocalWatch.costInMillis();
+
+        if (!this.threadLocalContext.getConditionResult()) {
+            return;
+        }
+
         final Key key = new Key(clazz.getName(), method.getName());
 
         while (true) {
