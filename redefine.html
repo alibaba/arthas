@@ -121,11 +121,12 @@
 <li class="toctree-l2"><a class="reference internal" href="classloader.html">classloader</a></li>
 <li class="toctree-l2"><a class="reference internal" href="mc.html">mc</a></li>
 <li class="toctree-l2 current"><a class="current reference internal" href="#">redefine</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#id1">参数说明</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#id2">使用参考</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id1">常见问题</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id2">参数说明</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id3">使用参考</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#jad-mc">结合 jad/mc 命令使用</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#class">上传 .class 文件到服务器的技巧</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#id3">redefine的限制</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id4">redefine的限制</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="monitor.html">monitor</a></li>
@@ -224,10 +225,18 @@
             
   <div class="section" id="redefine">
 <h1>redefine<a class="headerlink" href="#redefine" title="永久链接至标题">¶</a></h1>
+<p><a class="reference external" href="https://arthas.aliyun.com/doc/arthas-tutorials?language=cn&amp;id=command-mc-redefine"><code class="docutils literal notranslate"><span class="pre">mc-redefine</span></code>在线教程</a></p>
 <blockquote>
 <div><p>加载外部的<code class="docutils literal notranslate"><span class="pre">.class</span></code>文件，redefine jvm已加载的类。</p>
 </div></blockquote>
 <p>参考：<a class="reference external" href="https://docs.oracle.com/javase/8/docs/api/java/lang/instrument/Instrumentation.html#redefineClasses-java.lang.instrument.ClassDefinition...-">Instrumentation#redefineClasses</a></p>
+<div class="section" id="id1">
+<h2>常见问题<a class="headerlink" href="#id1" title="永久链接至标题">¶</a></h2>
+<ul class="simple">
+<li><p>redefine的class不能修改、添加、删除类的field和method，包括方法参数、方法名称及返回值</p></li>
+<li><p>如果mc失败，可以在本地开发环境编译好class文件，上传到目标系统，使用redefine热加载class</p></li>
+<li><p>目前redefine 和watch/trace/jad/tt等命令冲突，以后重新实现redefine功能会解决此问题</p></li>
+</ul>
 <blockquote>
 <div><p>注意， redefine后的原来的类不能恢复，redefine有可能失败（比如增加了新的field），参考jdk本身的文档。</p>
 </div></blockquote>
@@ -238,8 +247,9 @@
 <div><p><code class="docutils literal notranslate"><span class="pre">redefine</span></code>命令和<code class="docutils literal notranslate"><span class="pre">jad</span></code>/<code class="docutils literal notranslate"><span class="pre">watch</span></code>/<code class="docutils literal notranslate"><span class="pre">trace</span></code>/<code class="docutils literal notranslate"><span class="pre">monitor</span></code>/<code class="docutils literal notranslate"><span class="pre">tt</span></code>等命令会冲突。执行完<code class="docutils literal notranslate"><span class="pre">redefine</span></code>之后，如果再执行上面提到的命令，则会把<code class="docutils literal notranslate"><span class="pre">redefine</span></code>的字节码重置。
 原因是jdk本身redefine和Retransform是不同的机制，同时使用两种机制来更新字节码，只有最后修改的会生效。</p>
 </div></blockquote>
-<div class="section" id="id1">
-<h2>参数说明<a class="headerlink" href="#id1" title="永久链接至标题">¶</a></h2>
+</div>
+<div class="section" id="id2">
+<h2>参数说明<a class="headerlink" href="#id2" title="永久链接至标题">¶</a></h2>
 <table border="1" class="docutils">
 <thead>
 <tr>
@@ -258,8 +268,8 @@
 </tr>
 </tbody>
 </table></div>
-<div class="section" id="id2">
-<h2>使用参考<a class="headerlink" href="#id2" title="永久链接至标题">¶</a></h2>
+<div class="section" id="id3">
+<h2>使用参考<a class="headerlink" href="#id3" title="永久链接至标题">¶</a></h2>
 <div class="highlight-bash notranslate"><div class="highlight hljs"><pre class="bash">   redefine /tmp/Test.class
    redefine -c 327a647b /tmp/Test.class /tmp/Test\$Inner.class</pre></div>
 </div>
@@ -294,8 +304,8 @@ redefine /tmp/com/example/demo/arthas/user/UserController.class</pre></div>
 <li><p>用md5命令计算哈希值，校验是否一致</p></li>
 </ol>
 </div>
-<div class="section" id="id3">
-<h2>redefine的限制<a class="headerlink" href="#id3" title="永久链接至标题">¶</a></h2>
+<div class="section" id="id4">
+<h2>redefine的限制<a class="headerlink" href="#id4" title="永久链接至标题">¶</a></h2>
 <ul>
 <li><p>不允许新增加field/method</p></li>
 <li><p>正在跑的函数，没有退出不能生效，比如下面新增加的<code class="docutils literal notranslate"><span class="pre">System.out.println</span></code>，只有<code class="docutils literal notranslate"><span class="pre">run()</span></code>函数里的会生效</p>

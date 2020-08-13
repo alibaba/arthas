@@ -20,9 +20,9 @@ Http API接口地址为：`http://ip:port/api`，必须使用POST方式提交请
 ```json
 {
   "action": "exec",
-  "requestId": "req112"
-  "sessionId": "94766d3c-8b39-42d3-8596-98aee3ccbefb"
-  "consumerId": "955dbd1325334a84972b0f3ac19de4f7_2"
+  "requestId": "req112",
+  "sessionId": "94766d3c-8b39-42d3-8596-98aee3ccbefb",
+  "consumerId": "955dbd1325334a84972b0f3ac19de4f7_2",
   "command": "version",
   "execTimeout": "10000"
 }
@@ -537,7 +537,47 @@ curl -Ss -XPOST http://localhost:8563/api -d '''
 
 `trace/watch/jad/tt`等命令需要对类进行增强，会接收到这个`enhancer`结果。可能出现`enhancer`结果成功，但没有命中方法的情况，客户端可以根据`enhancer`结果提示用户。
 
-### 其它
+### 案例
+
+#### 获取Java应用的Classpath
+
+通过Http api查询Java应用的System properties，提取`java.class.path`的值。
+
+
+```bash
+json_data=$(curl -Ss -XPOST http://localhost:8563/api -d '
+{
+  "action":"exec",
+  "command":"sysprop"
+}')
+```
+
+* 使用`sed`提取值：
+
+```bash
+class_path=$(echo $json_data | tr -d '\n' | sed 's/.*"java.class.path":"\([^"]*\).*/\1/')
+echo "classpath: $class_path"
+```
+
+* 使用`json_pp/awk`提取值
+
+```bash
+class_path=$(echo $json_data | tr -d '\n' | json_pp | grep java.class.path | awk -F'"' '{ print $4 }')
+echo "classpath: $class_path"
+```
+
+输出内容：
+
+```
+classpath: demo-arthas-spring-boot.jar
+```
+
+注意：
+
+* `echo $json_data | tr -d '\n'` :  删除换行符(`line.separator`的值)，避免影响`sed`/`json_pp`命令处理。
+* `awk -F'"' '{ print $4 }'` : 使用双引号作为分隔符号
+
+
 
 <a id="change_watch_value_to_map"></a>
 #### watch命令输出map对象
@@ -630,3 +670,5 @@ Http api 执行结果：
 ```
 
 可以看到watch结果的value变成map对象，程序可以通过key读取结果。
+
+

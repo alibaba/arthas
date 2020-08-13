@@ -1,6 +1,8 @@
 jad
 ===
 
+[`jad` online tutorial](https://arthas.aliyun.com/doc/arthas-tutorials?language=en&id=command-jad)
+
 > Decompile the specified classes.
 
 `jad` helps to decompile the byte code running in JVM to the source code to assist you to understand the logic behind better.

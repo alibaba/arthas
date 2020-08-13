@@ -118,6 +118,7 @@
 <li class="toctree-l2"><a class="reference internal" href="classloader.html">classloader</a></li>
 <li class="toctree-l2"><a class="reference internal" href="mc.html">mc</a></li>
 <li class="toctree-l2 current"><a class="current reference internal" href="#">redefine</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#frequently-asked-questions">Frequently asked questions</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#options">Options</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#usage">Usage</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#use-with-the-jad-mc-command">Use with the jad/mc command</a></li>
@@ -221,10 +222,18 @@
             
   <div class="section" id="redefine">
 <h1>redefine<a class="headerlink" href="#redefine" title="Permalink to this headline">¶</a></h1>
+<p><a class="reference external" href="https://arthas.aliyun.com/doc/arthas-tutorials?language=en&amp;id=command-mc-redefine"><code class="docutils literal notranslate"><span class="pre">mc-redefine</span></code> online tutorial</a></p>
 <blockquote>
 <div><p>Load the external <code class="docutils literal notranslate"><span class="pre">*.class</span></code> files to re-define the loaded classes in JVM.</p>
 </div></blockquote>
 <p>Reference: <a class="reference external" href="https://docs.oracle.com/javase/8/docs/api/java/lang/instrument/Instrumentation.html#redefineClasses-java.lang.instrument.ClassDefinition...-">Instrumentation#redefineClasses</a></p>
+<div class="section" id="frequently-asked-questions">
+<h2>Frequently asked questions<a class="headerlink" href="#frequently-asked-questions" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li><p>The class of <code class="docutils literal notranslate"><span class="pre">redefine</span></code> cannot modify, add or delete the field and method of the class, including method parameters, method names and return values.</p></li>
+<li><p>If <code class="docutils literal notranslate"><span class="pre">mc</span></code> fails, you can compile the class file in the local development environment, upload it to the target system, and use <code class="docutils literal notranslate"><span class="pre">redefine</span></code> to hot load the class.</p></li>
+<li><p>At present, <code class="docutils literal notranslate"><span class="pre">redefine</span></code> conflicts with <code class="docutils literal notranslate"><span class="pre">watch</span> <span class="pre">/</span> <span class="pre">trace</span> <span class="pre">/</span> <span class="pre">jad</span> <span class="pre">/</span> <span class="pre">tt</span></code> commands. Reimplementing <code class="docutils literal notranslate"><span class="pre">redefine</span></code> function in the future will solve this problem.</p></li>
+</ul>
 <blockquote>
 <div><p>Notes: Re-defined classes cannot be restored. There are chances that redefining may fail due to some reasons, for example: there’s new field introduced in the new version of the class, pls. refer to JDK’s documentation for the limitations.</p>
 </div></blockquote>
@@ -235,6 +244,7 @@
 <div><p>The <code class="docutils literal notranslate"><span class="pre">redefine</span></code> command will conflict with the <code class="docutils literal notranslate"><span class="pre">jad</span></code>/<code class="docutils literal notranslate"><span class="pre">watch</span></code>/<code class="docutils literal notranslate"><span class="pre">trace</span></code>/<code class="docutils literal notranslate"><span class="pre">monitor</span></code>/<code class="docutils literal notranslate"><span class="pre">tt</span></code> commands. After executing <code class="docutils literal notranslate"><span class="pre">redefine</span></code>, if you execute the above mentioned command, the bytecode of the class will be reset.
 The reason is that in the JDK <code class="docutils literal notranslate"><span class="pre">redefine</span></code> and <code class="docutils literal notranslate"><span class="pre">retransform</span></code> are different mechanisms. When two mechanisms are both used to update the bytecode, only the last modified will take effect.</p>
 </div></blockquote>
+</div>
 <div class="section" id="options">
 <h2>Options<a class="headerlink" href="#options" title="Permalink to this headline">¶</a></h2>
 <table border="1" class="docutils">

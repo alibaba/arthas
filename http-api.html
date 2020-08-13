@@ -129,7 +129,8 @@
 <li class="toctree-l3"><a class="reference internal" href="#enhancer">enhancer</a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="#id14">其它</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#id14">案例</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#javaclasspath">获取Java应用的Classpath</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#watchmap">watch命令输出map对象</a></li>
 </ul>
 </li>
@@ -227,9 +228,9 @@ API可以提供结构化的数据，支持更复杂的交互功能，比如特�
 <h3>请求数据格式<a class="headerlink" href="#id3" title="永久链接至标题">¶</a></h3>
 <div class="highlight-json notranslate"><div class="highlight hljs"><pre class="json">{
   &quot;action&quot;: &quot;exec&quot;,
-  &quot;requestId&quot;: &quot;req112&quot;
-  &quot;sessionId&quot;: &quot;94766d3c-8b39-42d3-8596-98aee3ccbefb&quot;
-  &quot;consumerId&quot;: &quot;955dbd1325334a84972b0f3ac19de4f7_2&quot;
+  &quot;requestId&quot;: &quot;req112&quot;,
+  &quot;sessionId&quot;: &quot;94766d3c-8b39-42d3-8596-98aee3ccbefb&quot;,
+  &quot;consumerId&quot;: &quot;955dbd1325334a84972b0f3ac19de4f7_2&quot;,
   &quot;command&quot;: &quot;version&quot;,
   &quot;execTimeout&quot;: &quot;10000&quot;
 }</pre></div>
@@ -693,8 +694,38 @@ API可以提供结构化的数据，支持更复杂的交互功能，比如特�
 </div>
 </div>
 <div class="section" id="id14">
-<h2>其它<a class="headerlink" href="#id14" title="永久链接至标题">¶</a></h2>
+<h2>案例<a class="headerlink" href="#id14" title="永久链接至标题">¶</a></h2>
+<div class="section" id="javaclasspath">
+<h3>获取Java应用的Classpath<a class="headerlink" href="#javaclasspath" title="永久链接至标题">¶</a></h3>
+<p>通过Http api查询Java应用的System properties，提取<code class="docutils literal notranslate"><span class="pre">java.class.path</span></code>的值。</p>
+<div class="highlight-bash notranslate"><div class="highlight hljs"><pre class="bash">json_data=$(curl -Ss -XPOST http://localhost:8563/api -d &#x27;
+{
+  &quot;action&quot;:&quot;exec&quot;,
+  &quot;command&quot;:&quot;sysprop&quot;
+}&#x27;)</pre></div>
+</div>
+<ul class="simple">
+<li><p>使用<code class="docutils literal notranslate"><span class="pre">sed</span></code>提取值：</p></li>
+</ul>
+<div class="highlight-bash notranslate"><div class="highlight hljs"><pre class="bash">class_path=$(echo $json_data | tr -d &#x27;\n&#x27; | sed &#x27;s/.*&quot;java.class.path&quot;:&quot;\([^&quot;]*\).*/\1/&#x27;)
+echo &quot;classpath: $class_path&quot;</pre></div>
+</div>
+<ul class="simple">
+<li><p>使用<code class="docutils literal notranslate"><span class="pre">json_pp/awk</span></code>提取值</p></li>
+</ul>
+<div class="highlight-bash notranslate"><div class="highlight hljs"><pre class="bash">class_path=$(echo $json_data | tr -d &#x27;\n&#x27; | json_pp | grep java.class.path | awk -F&#x27;&quot;&#x27; &#x27;{ print $4 }&#x27;)
+echo &quot;classpath: $class_path&quot;</pre></div>
+</div>
+<p>输出内容：</p>
+<div class="highlight-default notranslate"><pre class="literal-block">classpath: demo-arthas-spring-boot.jar</pre>
+</div>
+<p>注意：</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">echo</span> <span class="pre">$json_data</span> <span class="pre">|</span> <span class="pre">tr</span> <span class="pre">-d</span> <span class="pre">'\n'</span></code> :  删除换行符(<code class="docutils literal notranslate"><span class="pre">line.separator</span></code>的值)，避免影响<code class="docutils literal notranslate"><span class="pre">sed</span></code>/<code class="docutils literal notranslate"><span class="pre">json_pp</span></code>命令处理。</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">awk</span> <span class="pre">-F'&quot;'</span> <span class="pre">'{</span> <span class="pre">print</span> <span class="pre">$4</span> <span class="pre">}'</span></code> : 使用双引号作为分隔符号</p></li>
+</ul>
 <p><a id="change_watch_value_to_map"></a></p>
+</div>
 <div class="section" id="watchmap">
 <h3>watch命令输出map对象<a class="headerlink" href="#watchmap" title="永久链接至标题">¶</a></h3>
 <p>watch的结果值由计算<code class="docutils literal notranslate"><span class="pre">watch-express</span></code> ognl表达式产生，可以通过改变ognl表达式来生成想要的值，请参考<a class="reference external" href="https://commons.apache.org/proper/commons-ognl/language-guide.html">OGNL文档</a>。</p>

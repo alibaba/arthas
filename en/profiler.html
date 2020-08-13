@@ -124,6 +124,7 @@
 <li class="toctree-l2"><a class="reference internal" href="stack.html">stack</a></li>
 <li class="toctree-l2"><a class="reference internal" href="tt.html">tt</a></li>
 <li class="toctree-l2 current"><a class="current reference internal" href="#">profiler</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#supported-options">Supported Options</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#start-profiler">Start profiler</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#get-the-number-of-samples-collected">Get the number of samples collected</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#view-profiler-status">View profiler status</a></li>
@@ -230,11 +231,48 @@
             
   <div class="section" id="profiler">
 <h1>profiler<a class="headerlink" href="#profiler" title="Permalink to this headline">¶</a></h1>
+<p><a class="reference external" href="https://arthas.aliyun.com/doc/arthas-tutorials.html?language=en&amp;id=command-profiler"><code class="docutils literal notranslate"><span class="pre">profiler</span></code> online tutorial</a></p>
 <blockquote>
 <div><p>Generate a flame graph using <a class="reference external" href="https://github.com/jvm-profiling-tools/async-profiler">async-profiler</a></p>
 </div></blockquote>
 <p>The <code class="docutils literal notranslate"><span class="pre">profiler</span></code> command supports generate flame graph for application hotspots.</p>
 <p>The basic usage of the <code class="docutils literal notranslate"><span class="pre">profiler</span></code> command is <code class="docutils literal notranslate"><span class="pre">profiler</span> <span class="pre">action</span> <span class="pre">[actionArg]</span></code></p>
+<div class="section" id="supported-options">
+<h2>Supported Options<a class="headerlink" href="#supported-options" title="Permalink to this headline">¶</a></h2>
+<table border="1" class="docutils">
+<thead>
+<tr>
+<th align="right">Name</th>
+<th align="left">Specification</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="right"><em>action</em></td>
+<td align="left">Action to execute</td>
+</tr>
+<tr>
+<td align="right"><em>actionArg</em></td>
+<td align="left">Attribute name pattern</td>
+</tr>
+<tr>
+<td align="right">[i:]</td>
+<td align="left">sampling interval in ns (default: 10'000'000, i.e. 10 ms)</td>
+</tr>
+<tr>
+<td align="right">[f:]</td>
+<td align="left">dump output to specified directory</td>
+</tr>
+<tr>
+<td align="right">[d:]</td>
+<td align="left">run profiling for specified seconds</td>
+</tr>
+<tr>
+<td align="right">[e:]</td>
+<td align="left">which event to trace (cpu, alloc, lock, cache-misses etc.), default value is cpu</td>
+</tr>
+</tbody>
+</table></div>
 <div class="section" id="start-profiler">
 <h2>Start profiler<a class="headerlink" href="#start-profiler" title="Permalink to this headline">¶</a></h2>
 <div class="highlight-default notranslate"><pre class="literal-block">$ profiler start
