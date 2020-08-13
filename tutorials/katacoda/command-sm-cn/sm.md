@@ -13,6 +13,8 @@
 |*method-pattern*|方法名表达式匹配|
 |[d]|展示每个方法的详细信息|
 |[E]|开启正则表达式匹配，默认为通配符匹配|
+|`[c:]`|指定class的 ClassLoader 的 hashcode|
+|`[n:]`|具有详细信息的匹配类的最大数量（默认为100）|
 
 ### 使用参考
 
@@ -67,6 +69,33 @@ java.lang.String->format
 java.lang.String->copyValueOf
 java.lang.String->intern
 Affect(row-cnt:44) cost in 1342 ms.
+```
+
+* 指定ClassLoader
+
+查找ClassLoaderHash：
+
+`sc -d demo.MathGame | grep classLoaderHash`{{execute T2}}
+
+```bash
+$ sc -d demo.MathGame | grep classLoaderHash
+ classLoaderHash   70dea4e
+```
+
+记住这里的classLoaderHash：`70dea4e`，并用其替换`<classLoaderHash>`，手动执行下一条命令。
+
+查找classloader下的class的method
+
+`sc -c <classLoaderHash> -d demo.MathGame`
+
+```bash
+$ sm -c 70dea4e demo.MathGame
+demo.MathGame <init>()V
+demo.MathGame primeFactors(I)Ljava/util/List;
+demo.MathGame main([Ljava/lang/String;)V
+demo.MathGame run()V
+demo.MathGame print(ILjava/util/List;)V
+Affect(row-cnt:5) cost in 2 ms.
 ```
 
 * 查找`java.lang.String#toString`函数并打印详细信息

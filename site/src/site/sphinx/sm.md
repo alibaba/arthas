@@ -1,7 +1,7 @@
 sm
 ===
 
-[`sc`在线教程](https://arthas.aliyun.com/doc/arthas-tutorials?language=cn&id=command-sc)
+[`sm`在线教程](https://arthas.aliyun.com/doc/arthas-tutorials?language=cn&id=command-sm)
 
 > 查看已加载类的方法信息
 
@@ -17,6 +17,8 @@ sm
 |*method-pattern*|方法名表达式匹配|
 |[d]|展示每个方法的详细信息|
 |[E]|开启正则表达式匹配，默认为通配符匹配|
+|`[c:]`|指定class的 ClassLoader 的 hashcode|
+|`[n:]`|具有详细信息的匹配类的最大数量（默认为100）|
 
 ### 使用参考
 

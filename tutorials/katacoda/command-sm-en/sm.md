@@ -12,6 +12,8 @@
 |*method-pattern*|pattern for method name|
 |`[d]`|print the details of the method|
 |`[E]`|turn on regex matching while the default mode is wildcard matching|
+|`[c:]`|The hash code of the special class's classLoader|
+|`[n:]`|Maximum number of matching classes with details (100 by default)|
 
 ### Usage
 
@@ -68,6 +70,32 @@ java.lang.String->intern
 Affect(row-cnt:44) cost in 1342 ms.
 ```
 
+* Specify ClassLoader
+
+Find ClassLoaderHash：
+
+`sc -d demo.MathGame | grep classLoaderHash`{{execute T2}}
+
+```bash
+$ sc -d demo.MathGame | grep classLoaderHash
+ classLoaderHash   70dea4e
+```
+
+Take a note of the classLoaderHash here:`70dea4e`, and use it to replace `<classLoaderHash>` and execute the following command.
+
+Find classloader's class methods
+
+`sc -c <classLoaderHash> -d demo.MathGame`
+
+```bash
+$ sm -c 70dea4e demo.MathGame
+demo.MathGame <init>()V
+demo.MathGame primeFactors(I)Ljava/util/List;
+demo.MathGame main([Ljava/lang/String;)V
+demo.MathGame run()V
+demo.MathGame print(ILjava/util/List;)V
+Affect(row-cnt:5) cost in 2 ms.
+```
 
 * View method `java.lang.String#toString` details:
 
