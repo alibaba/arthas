@@ -16,6 +16,22 @@
       {
         "title": "Http API",
         "text": "http-api.md"
+      },
+      {
+        "title": "One-time command",
+        "text": "one-time-command.md"
+      },
+      {
+        "title": "会话交互",
+        "text": "session-interaction.md"
+      },
+      {
+        "title": "Web UI",
+        "text": "web-ui.md"
+      },
+      {
+        "title": "watch命令输出map对象",
+        "text": "watch-output-map.md"
       }
     ],
     "intro": {

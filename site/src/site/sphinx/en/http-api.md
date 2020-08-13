@@ -28,9 +28,9 @@ http api.
 ```json
 {
   "action": "exec",
-  "requestId": "req112"
-  "sessionId": "94766d3c-8b39-42d3-8596-98aee3ccbefb"
-  "consumerId": "955dbd1325334a84972b0f3ac19de4f7_2"
+  "requestId": "req112",
+  "sessionId": "94766d3c-8b39-42d3-8596-98aee3ccbefb",
+  "consumerId": "955dbd1325334a84972b0f3ac19de4f7_2",
   "command": "version",
   "execTimeout": "10000"
 }
@@ -657,12 +657,13 @@ ts=2020-08-06 16:57:20; [cost=0.241735ms] result=@LinkedHashMap[
 Execute the above command with Http api, pay attention to escaping the JSON double quotes:
 
 ```bash
-curl -Ss -XPOST http://localhost:8563/api -d '
+curl -Ss -XPOST http://localhost:8563/api -d @- << EOF
 {
-   "action":"exec",
-   "execTimeout": 30000,
-   "command":"watch *MathGame prime* ''#{ \"params\" : params, \"returnObj\" : returnObj, \"throwExp\": throwExp}'' -n 3 "
-}'
+  "action":"exec",
+  "execTimeout": 30000,
+  "command":"watch *MathGame prime* '#{ \"params\" : params, \"returnObj\" : returnObj, \"throwExp\": throwExp}' -n 3 "
+}
+EOF
 ```
 
 Http api execution result:
