@@ -32,6 +32,10 @@
       {
         "title": "watch命令输出map对象",
         "text": "watch-output-map.md"
+      },
+      {
+        "title": "获取Java应用的Classpath",
+        "text": "classpath-java-app.md"
       }
     ],
     "intro": {

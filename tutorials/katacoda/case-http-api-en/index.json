@@ -22,7 +22,7 @@
         "text": "one-time-command.md"
       },
       {
-        "title": "会话交互",
+        "title": "Session Interaction",
         "text": "session-interaction.md"
       },
       {
@@ -30,8 +30,12 @@
         "text": "web-ui.md"
       },
       {
-        "title": "watch命令输出map对象",
+        "title": "Make watch command output a map object",
         "text": "watch-output-map.md"
+      },
+      {
+        "title": "Get classpath of Java application",
+        "text": "classpath-java-app.md"
       }
     ],
     "intro": {
