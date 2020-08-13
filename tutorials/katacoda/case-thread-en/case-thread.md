@@ -24,4 +24,6 @@ View the CPU usage TOP N thread stack in 5 seconds
 
 ### Find if the thread is blocked
 
+`b` is used to specify to locate the thread blocking the others
+
 `thread -b`{{execute T2}}
