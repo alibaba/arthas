@@ -11,11 +11,16 @@ interactive processes. The access process is as follows:
 
 #### Create session
 
-`curl -Ss -XPOST http://localhost:8563/api -d '
+Create session and save output into bash environment.
+
+`session_data=$(curl -Ss -XPOST http://localhost:8563/api -d '
 {
   "action":"init_session"
 }
-'`{{execute T3}}
+')
+echo $session_data | json_pp`{{execute T3}}
+
+Note: The `json_pp` tool formats the output content as pretty json.
 
 Response result:
 
@@ -26,10 +31,22 @@ Response result:
    "state" : "SUCCEEDED"
 }
 ```
-The new session ID is: `b09f1353-202c-407b-af24-701b744f971e`, and
-consumer ID is: `5ae4e5fbab8b4e529ac404f260d4e2d1_1`.
 
-Please take a note of your session ID, and replace `<sessionId>` below to manually execute related commands.
+extract session ID and consumer ID.
+
+The new session ID is: 
+
+`session_id=$(echo $session_data | sed 's/.*"sessionId":"\([^"]*\)".*/\1/g')
+echo $session_id`{{execute T3}}
+
+`b09f1353-202c-407b-af24-701b744f971e`;
+
+consumer ID is: 
+
+`consumer_id=$(echo $session_data | sed 's/.*"consumerId":"\([^"]*\)".*/\1/g')
+echo $consumer_id`{{execute T3}}
+
+`5ae4e5fbab8b4e529ac404f260d4e2d1_1`.
 
 #### Join session
 
@@ -39,14 +56,15 @@ target session. This interface is used to support multiple people
 sharing the same session or refreshing the page to retrieve the session
 history.
 
-```bash
-curl -Ss -XPOST http://localhost:8563/api -d '
+Join session and save output into bash environment.
+
+`session_data=$(curl -Ss -XPOST http://localhost:8563/api -d '
 {
   "action":"join_session",
-  "sessionId" : "<sessionId>"
+  "sessionId" : "'"$session_id"'"
 }
-'
-```
+')
+echo $session_data | json_pp`{{execute T3}}
 
 Response result:
 
@@ -58,9 +76,14 @@ Response result:
 }
 ```
 
-The new consumer ID is `8f7f6ad7bc2d4cb5aa57a530927a95cc_2 ` .
+extract new consumer ID.
 
-Please take a note of your consumer ID, and replace `<consumerId>` below to manually execute related commands.
+The new consumer ID is 
+
+`consumer_id=$(echo $session_data | sed 's/.*"consumerId":"\([^"]*\)".*/\1/g')
+echo $consumer_id`{{execute T3}}
+
+`8f7f6ad7bc2d4cb5aa57a530927a95cc_2 ` .
 
 #### Pull command results
 
@@ -75,29 +98,23 @@ does not affect the content received by the consumer.
 
 The request parameters require session ID and consumer ID:
 
-```bash
-curl -Ss -XPOST http://localhost:8563/api -d '
+`curl -Ss -XPOST http://localhost:8563/api -d '
 {
   "action":"pull_results",
-  "sessionId" : "<sessionId>",
-  "consumerId" : "<consumerId>"
+  "sessionId" : "'"$session_id"'",
+  "consumerId" : "'"$consumer_id"'"
 }
-'
-```
+' | json_pp`{{execute T3}}
 
 Use Bash scripts to regularly pull results messages:
 
-```bash
-while true; do curl -Ss -XPOST http://localhost:8563/api -d '
+`while true; do curl -Ss -XPOST http://localhost:8563/api -d '
 {
   "action":"pull_results",
-  "sessionId" : "<sessionId>",
-  "consumerId" : "<consumerId>"
+  "sessionId" : "'"$session_id"'",
+  "consumerId" : "'"$consumer_id"'"
 }
-' | json_pp; sleep 2; done
-```
-
-Note: The `json_pp` tool formats the output content as pretty json.
+' | json_pp; sleep 2; done`{{execute T4}}
 
 The response content is as follows:
 
@@ -141,15 +158,13 @@ The response content is as follows:
 
 #### Execute commands asynchronously
 
-```bash
-curl -Ss -XPOST http://localhost:8563/api -d '''
+`curl -Ss -XPOST http://localhost:8563/api -d '''
 {
   "action":"async_exec",
   "command":"watch demo.MathGame primeFactors \"{params, returnObj, throwExp}\" ",
-  "sessionId" : "<sessionId>"
+  "sessionId" : "'"$session_id"'"
 }
-'''
-```
+''' | json_pp`{{execute T3}}
 
 Response of `async_exec`:
 
@@ -265,20 +280,18 @@ and the above command is `{params, returnObj, throwExp}`, so the value
 of the watch result is an array of length 3, and each element
 corresponds to the expression in the corresponding order.
 
-Please refer to the section "[Make watch command output a map object](#change_watch_value_to_map)".
+Please refer to the section "Make watch command output a map object".
 
 #### Interrupt command execution
 
 Interrupt the running foreground job of the session:
 
-```bash
-curl -Ss -XPOST http://localhost:8563/api -d '''
+`curl -Ss -XPOST http://localhost:8563/api -d '''
 {
   "action":"interrupt_job",
-  "sessionId" : "<sessionId>"
+  "sessionId" : "'"$session_id"'"
 }
-'''
-```
+''' | json_pp`{{execute T3}}
 
 ```json
 {
@@ -294,14 +307,12 @@ curl -Ss -XPOST http://localhost:8563/api -d '''
 
 Specify the session ID to close the session.
 
-```bash
-curl -Ss -XPOST http://localhost:8563/api -d '''
+`curl -Ss -XPOST http://localhost:8563/api -d '''
 {
   "action":"close_session",
-  "sessionId" : "<sessionId>"
+  "sessionId" : "'"$session_id"'"
 }
-'''
-```
+''' | json_pp`{{execute T3}}
 
 ```json
 {

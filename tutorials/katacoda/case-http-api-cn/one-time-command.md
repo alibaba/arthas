@@ -15,7 +15,7 @@
   "action":"exec",
   "command":"version"
 }
-'`{{execute T3}}
+' | json_pp`{{execute T3}}
 
 响应内容如下：
 
@@ -68,11 +68,11 @@
  }]
 ```
 
-* `type` : 命令结果类型，除了`status`等特殊的几个外，其它的保持与Arthas命令名称一致。请参考"[特殊命令结果](#special_command_results)"小节。
+* `type` : 命令结果类型，除了`status`等特殊的几个外，其它的保持与Arthas命令名称一致。请参考"特殊命令结果"小节。
 *  `jobId` : 处理命令的任务ID。
 *  其它字段为每个不同命令的数据。
 
-注意：也可以使用一次性命令的方式执行watch/trace等连续输出的命令，但不能中断命令执行，可能出现长时间没有结束的问题。请参考"[watch命令输出map对象](#change_watch_value_to_map)"小节的示例。
+注意：也可以使用一次性命令的方式执行watch/trace等连续输出的命令，但不能中断命令执行，可能出现长时间没有结束的问题。请参考"watch命令输出map对象"小节的示例。
 
 请尽量按照以下方式处理：
 

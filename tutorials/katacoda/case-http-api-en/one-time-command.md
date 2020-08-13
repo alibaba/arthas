@@ -17,7 +17,7 @@ For example, get the Arthas version number:
   "action":"exec",
   "command":"version"
 }
-'`{{execute T3}}
+' | json_pp`{{execute T3}}
 
 The response is as follows:
 
@@ -75,7 +75,7 @@ Response data format description:
 * `type` : The command result type, except for the special ones such as
   `status`, the others remain the same as the Arthas command name.
   Please refer to the section
-  "[Special command results](#special_command_results)".
+  "Special command results".
 *  `jobId` : The job ID of the command.
 *  Other fields are the data of each different command.
 
@@ -83,7 +83,7 @@ Note: You can also use a one-time command to execute continuous output
 commands such as watch/trace, but you can't interrupt the command
 execution, and there may be hang up for a long time. Please refer to the
 example in the
-"[Make watch command output a map object](#change_watch_value_to_map)"
+"Make watch command output a map object"
 section.
 
 Please try to deal with it in the following way:
