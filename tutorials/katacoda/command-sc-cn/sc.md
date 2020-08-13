@@ -65,6 +65,12 @@
   Affect(row-cnt:1) cost in 875 ms.
   ```
 
+记住这里的classLoaderHash：`3d4eac69`，并用其替换`<classLoaderHash>`，手动执行下一条命令。
+
+* 指定classLoader
+
+  `sc -c <classLoaderHash> -d demo*`
+
 * 打印出类的Field信息
 
   `sc -d -f demo.MathGame`{{execute T2}}

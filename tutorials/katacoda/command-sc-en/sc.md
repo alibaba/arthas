@@ -61,6 +61,12 @@
   Affect(row-cnt:1) cost in 875 ms.
   ```
 
+Take a note of the classLoaderHash here:`3d4eac69`, and use it to replace `<classLoaderHash>` and execute the following command.
+
+* Specify classLoader
+
+  `sc -c <classLoaderHash> -d demo*`
+
 * View class fields
 
   `sc -d -f demo.MathGame`{{execute T2}}
