@@ -186,7 +186,7 @@ Response of `async_exec`:
   results output in `pull_results` according to this job ID.
 * `body.jobStatus` : The job status `READY` means that execution has not started.
 
-The shell output of the script that continuously pulls the result message:
+Switch to the shell output of the script that continuously pulls the result message (Terminal 4):
 
 ```json
 {

@@ -175,7 +175,7 @@ echo $consumer_id`{{execute T3}}
 * `body.jobStatus` : 任务状态`READY`表示未开始执行。
 
 
-查看上面自动拉取结果消息脚本的shell输出：
+切换到上面自动拉取结果消息脚本的shell（Terminal 4），查看输出：
 
 ```json
 {
