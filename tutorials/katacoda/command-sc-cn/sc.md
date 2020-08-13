@@ -1,31 +1,33 @@
-sc
-==
 
-[`sc` online tutorial](https://arthas.aliyun.com/doc/arthas-tutorials?language=en&id=command-sc)
+> 查看JVM已加载的类信息
 
-> Search classes loaded by JVM.
+“Search-Class” 的简写，这个命令能搜索出所有已经加载到 JVM 中的 Class 信息，这个命令支持的参数有 `[d]`、`[E]`、`[f]` 和 `[x:]`。
 
-`sc` stands for search class. This command can search all possible classes loaded by JVM and show their information. The supported options are: `[d]`、`[E]`、`[f]` and `[x:]`.
+参数说明
+---
 
-### Supported Options
+### 参数说明
 
-|Name|Specification|
+|参数名称|参数说明|
 |---:|:---|
-|*class-pattern*|pattern for the class name|
-|*method-pattern*|pattern for the method name|
-|`[d]`|print the details of the current class, including its code source, class specification, its class loader and so on.<br/>If a class is loaded by more than one class loader, then the class details will be printed several times|
-|`[E]`|turn on regex match, the default behavior is wildcards match|
-|`[f]`|print the fields info of the current class, MUST be used with `-d` together|
-|`[x:]`|specify the depth of recursive traverse the static fields, the default value is '0' - equivalent to use `toString` to output|
-|`[c:]`|The hash code of the special class's classLoader|
-|`[n:]`|Maximum number of matching classes with details (100 by default)|
+|*class-pattern*|类名表达式匹配|
+|*method-pattern*|方法名表达式匹配|
+|[d]|输出当前类的详细信息，包括这个类所加载的原始文件来源、类的声明、加载的ClassLoader等详细信息。<br/>如果一个类被多个ClassLoader所加载，则会出现多次|
+|[E]|开启正则表达式匹配，默认为通配符匹配|
+|[f]|输出当前类的成员变量信息（需要配合参数-d一起使用）|
+|[x:]|指定输出静态变量时属性的遍历深度，默认为 0，即直接使用 `toString` 输出|
+|`[c:]`|指定class的 ClassLoader 的 hashcode|
+|`[n:]`|具有详细信息的匹配类的最大数量（默认为100）|
 
-> *class-patten* supports full qualified class name, e.g. com.taobao.test.AAA and com/taobao/test/AAA. It also supports the format of 'com/taobao/test/AAA', so that it is convenient to directly copy class name from the exception stack trace without replacing '/' to '.'. <br/><br/>
-> `sc` turns on matching sub-class match by default, that is, `sc` will also search the sub classes of the target class too. If exact-match is desired, pls. use `options disable-sub-class true`.
+> class-pattern支持全限定名，如com.taobao.test.AAA，也支持com/taobao/test/AAA这样的格式，这样，我们从异常堆栈里面把类名拷贝过来的时候，不需要在手动把`/`替换为`.`啦。
 
-### Usage
+> sc 默认开启了子类匹配功能，也就是说所有当前类的子类也会被搜索出来，想要精确的匹配，请打开`options disable-sub-class true`开关
 
-* Wildcards match search
+### 使用参考
+
+* 模糊搜索
+
+  `sc demo.*`{{execute T2}}
 
   ```bash
   $ sc demo.*
@@ -33,7 +35,9 @@ sc
   Affect(row-cnt:1) cost in 55 ms.
   ```
 
-* View class details
+* 打印类的详细信息
+
+  `sc -d demo.MathGame`{{execute T2}}
 
   ```bash
   $ sc -d demo.MathGame
@@ -61,7 +65,15 @@ sc
   Affect(row-cnt:1) cost in 875 ms.
   ```
 
-* View class fields
+记住这里的classLoaderHash：`3d4eac69`，并用其替换`<classLoaderHash>`，手动执行下一条命令。
+
+* 指定classLoader
+
+  `sc -c <classLoaderHash> -d demo*`
+
+* 打印出类的Field信息
+
+  `sc -d -f demo.MathGame`{{execute T2}}
 
   ```bash
   $ sc -d -f demo.MathGame

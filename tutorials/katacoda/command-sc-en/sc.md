@@ -1,7 +1,3 @@
-sc
-==
-
-[`sc` online tutorial](https://arthas.aliyun.com/doc/arthas-tutorials?language=en&id=command-sc)
 
 > Search classes loaded by JVM.
 
@@ -27,6 +23,8 @@ sc
 
 * Wildcards match search
 
+  `sc demo.*`{{execute T2}}
+
   ```bash
   $ sc demo.*
   demo.MathGame
@@ -34,6 +32,8 @@ sc
   ```
 
 * View class details
+
+  `sc -d demo.MathGame`{{execute T2}}
 
   ```bash
   $ sc -d demo.MathGame
@@ -61,7 +61,15 @@ sc
   Affect(row-cnt:1) cost in 875 ms.
   ```
 
+Take a note of the classLoaderHash here:`3d4eac69`, and use it to replace `<classLoaderHash>` and execute the following command.
+
+* Specify classLoader
+
+  `sc -c <classLoaderHash> -d demo*`
+
 * View class fields
+
+  `sc -d -f demo.MathGame`{{execute T2}}
 
   ```bash
   $ sc -d -f demo.MathGame
