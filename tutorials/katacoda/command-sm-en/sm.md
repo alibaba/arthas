@@ -1,7 +1,3 @@
-sm
-==
-
-[`sm` online tutorial](https://arthas.aliyun.com/doc/arthas-tutorials?language=en&id=command-sm)
 
 > Search method from the loaded classes.
 
@@ -21,7 +17,9 @@ sm
 
 ### Usage
 
-View methods of `java.lang.String`:
+* View methods of `java.lang.String`:
+
+`sm java.lang.String`{{execute T2}}
 
 ```bash
 $ sm java.lang.String
@@ -72,8 +70,36 @@ java.lang.String->intern
 Affect(row-cnt:44) cost in 1342 ms.
 ```
 
+* Specify ClassLoader
 
-View method `java.lang.String#toString` details:
+Find ClassLoaderHash：
+
+`sc -d demo.MathGame | grep classLoaderHash`{{execute T2}}
+
+```bash
+$ sc -d demo.MathGame | grep classLoaderHash
+ classLoaderHash   70dea4e
+```
+
+Take a note of the classLoaderHash here:`70dea4e`, and use it to replace `<classLoaderHash>` and execute the following command.
+
+Find classloader's class methods
+
+`sc -c <classLoaderHash> -d demo.MathGame`
+
+```bash
+$ sm -c 70dea4e demo.MathGame
+demo.MathGame <init>()V
+demo.MathGame primeFactors(I)Ljava/util/List;
+demo.MathGame main([Ljava/lang/String;)V
+demo.MathGame run()V
+demo.MathGame print(ILjava/util/List;)V
+Affect(row-cnt:5) cost in 2 ms.
+```
+
+* View method `java.lang.String#toString` details:
+
+`sm -d java.lang.String toString`{{execute T2}}
 
 ```bash
 $ sm -d java.lang.String toString
