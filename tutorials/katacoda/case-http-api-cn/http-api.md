@@ -1,7 +1,3 @@
-Http API
-========
-
-[`Http API`在线教程](https://arthas.aliyun.com/doc/arthas-tutorials.html?language=cn&id=case-http-api)
 
 ### 概览
 
@@ -29,6 +25,7 @@ Http API接口地址为：`http://ip:port/api`，必须使用POST方式提交请
   "execTimeout": "10000"
 }
 ```
+
 请求数据格式说明：
 
 * `action` : 请求的动作/行为，可选值请参考"请求Action"小节。
@@ -74,14 +71,13 @@ Http API接口地址为：`http://ip:port/api`，必须使用POST方式提交请
 
 比如获取Arthas版本号：
 
-```bash
-curl -Ss -XPOST http://localhost:8563/api -d '
+`curl -Ss -XPOST http://localhost:8563/api -d '
 {
   "action":"exec",
   "command":"version"
 }
-'
-```
+'`{{execute T3}}
+
 响应内容如下：
 
 ```json
@@ -108,6 +104,7 @@ curl -Ss -XPOST http://localhost:8563/api -d '
    }
 }
 ```
+
 响应数据解析：
 
 * `state`: 请求处理状态，参考“接口响应状态”说明
@@ -158,13 +155,12 @@ curl -Ss -XPOST http://localhost:8563/api -d '
 
 #### 创建会话
 
-```bash
-curl -Ss -XPOST http://localhost:8563/api -d '
+`curl -Ss -XPOST http://localhost:8563/api -d '
 {
   "action":"init_session"
 }
-'
-```
+'`{{execute T3}}
+
 响应结果：
 
 ```json
@@ -174,7 +170,10 @@ curl -Ss -XPOST http://localhost:8563/api -d '
    "state" : "SUCCEEDED"
 }
 ```
+
 当前会话ID为： `b09f1353-202c-407b-af24-701b744f971e`， 当前消费者ID为：`5ae4e5fbab8b4e529ac404f260d4e2d1_1 `。
+
+请记下你的会话ID，替换下面的`<sessionId>`，便于手动执行下面相关命令。
 
 #### 加入会话
 
@@ -184,10 +183,10 @@ curl -Ss -XPOST http://localhost:8563/api -d '
 curl -Ss -XPOST http://localhost:8563/api -d '
 {
   "action":"join_session",
-  "sessionId" : "b09f1353-202c-407b-af24-701b744f971e"
+  "sessionId" : "<sessionId>"
 }
-'
 ```
+
 响应结果：
 
 ```json
@@ -198,6 +197,8 @@ curl -Ss -XPOST http://localhost:8563/api -d '
 }
 ```
 新的消费者ID为`8f7f6ad7bc2d4cb5aa57a530927a95cc_2 ` 。
+
+请记下你的消费者ID，替换下面的`<consumerId>`，便于手动执行下面相关命令。
 
 #### 拉取命令结果
 
@@ -210,8 +211,8 @@ curl -Ss -XPOST http://localhost:8563/api -d '
 curl -Ss -XPOST http://localhost:8563/api -d '
 {
   "action":"pull_results",
-  "sessionId" : "b09f1353-202c-407b-af24-701b744f971e",
-  "consumerId" : "8f7f6ad7bc2d4cb5aa57a530927a95cc_2"
+  "sessionId" : "<sessionId>",
+  "consumerId" : "<consumerId>"
 }
 '
 ```
@@ -222,11 +223,12 @@ curl -Ss -XPOST http://localhost:8563/api -d '
 while true; do curl -Ss -XPOST http://localhost:8563/api -d '
 {
   "action":"pull_results",
-  "sessionId" : "2b085b5d-883b-4914-ab35-b2c5c1d5aa2a",
-  "consumerId" : "8ecb9cb7c7804d5d92e258b23d5245cc_1"
+  "sessionId" : "<sessionId>",
+  "consumerId" : "<consumerId>"
 }
 ' | json_pp; sleep 2; done
 ```
+
 注： `json_pp` 工具将输出内容格式化为pretty json。
 
 响应内容如下：
@@ -276,7 +278,7 @@ curl -Ss -XPOST http://localhost:8563/api -d '''
 {
   "action":"async_exec",
   "command":"watch demo.MathGame primeFactors \"{params, returnObj, throwExp}\" ",
-   "sessionId" : "2b085b5d-883b-4914-ab35-b2c5c1d5aa2a"
+  "sessionId" : "<sessionId>"
 }
 '''
 ```
@@ -401,7 +403,7 @@ throwExp}`，所以watch结果的value为一个长度为3的数组，每个元�
 curl -Ss -XPOST http://localhost:8563/api -d '''
 {
   "action":"interrupt_job",
-  "sessionId" : "2b085b5d-883b-4914-ab35-b2c5c1d5aa2a"
+  "sessionId" : "<sessionId>"
 }
 '''
 ```
@@ -423,7 +425,7 @@ curl -Ss -XPOST http://localhost:8563/api -d '''
 curl -Ss -XPOST http://localhost:8563/api -d '''
 {
   "action":"close_session",
-  "sessionId" : "2b085b5d-883b-4914-ab35-b2c5c1d5aa2a"
+  "sessionId" : "<sessionId>"
 }
 '''
 ```
@@ -436,9 +438,9 @@ curl -Ss -XPOST http://localhost:8563/api -d '''
 
 ### Web UI
 
-![](_static/arthas-web-ui.png "arthas web ui")
+![](https://arthas.aliyun.com/doc/_images/arthas-web-ui.png "arthas web ui")
 
-一个基于Http API接口实现的Web UI，访问地址为： [http://127.0.0.1:8563/ui](http://127.0.0.1:8563/ui) 。
+一个基于Http API接口实现的Web UI，访问地址为： https://[[HOST_SUBDOMAIN]]-8563-[[KATACODA_HOST]].environments.katacoda.com/ui 。
 
 已实现功能：
 
@@ -455,7 +457,6 @@ curl -Ss -XPOST http://localhost:8563/api -d '''
 * 提供命令帮助
 * 支持个人选项设置
 
-<a id="special_command_results"></a>
 ### 特殊命令结果
 
 #### status
@@ -541,7 +542,6 @@ curl -Ss -XPOST http://localhost:8563/api -d '''
 
 ### 其它
 
-<a id="change_watch_value_to_map"></a>
 #### watch命令输出map对象
 
 watch的结果值由计算`watch-express` ognl表达式产生，可以通过改变ognl表达式来生成想要的值，请参考[OGNL文档](https://commons.apache.org/proper/commons-ognl/language-guide.html)。
@@ -576,14 +576,12 @@ ts=2020-08-06 16:57:20; [cost=0.241735ms] result=@LinkedHashMap[
 
 用Http api 执行上面的命令，注意对JSON双引号转义：
 
-```bash
-curl -Ss -XPOST http://localhost:8563/api -d '
+`curl -Ss -XPOST http://localhost:8563/api -d '
 {
    "action":"exec",
    "execTimeout": 30000,
    "command":"watch *MathGame prime* ''#{ \"params\" : params, \"returnObj\" : returnObj, \"throwExp\": throwExp}'' -n 3 "
-}'
-```
+} '`{{execute T3}}
 
 Http api 执行结果：
 
