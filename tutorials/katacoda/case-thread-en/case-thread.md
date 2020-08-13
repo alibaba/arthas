@@ -1,5 +1,14 @@
 
 
+### Parameters
+
+|  Name   | Specification  |
+|  ----  | ----  |
+| id  | thread id in JVM |
+| [n:]  | the top n busiest threads with stack traces printed |
+| [b]  | locate the thread blocking the others |
+| [i <value>]  | specify the interval to collect data to compute CPU ratios (ms) |
+
 ### View all thread information
 
 `thread`{{execute T2}}
