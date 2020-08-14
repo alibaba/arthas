@@ -3,6 +3,7 @@ package com.taobao.arthas.core.command.klass100;
 
 import java.lang.instrument.Instrumentation;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
@@ -11,6 +12,7 @@ import com.taobao.arthas.core.command.Constants;
 import com.taobao.arthas.core.command.model.ClassDetailVO;
 import com.taobao.arthas.core.command.model.SearchClassModel;
 import com.taobao.arthas.core.command.model.RowAffectModel;
+import com.taobao.arthas.core.command.model.ClassLoaderVO;
 import com.taobao.arthas.core.shell.cli.Completion;
 import com.taobao.arthas.core.shell.cli.CompletionUtils;
 import com.taobao.arthas.core.shell.command.AnnotatedCommand;

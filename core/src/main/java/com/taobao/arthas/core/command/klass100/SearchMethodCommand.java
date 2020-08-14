@@ -14,6 +14,7 @@ import com.taobao.arthas.core.command.Constants;
 import com.taobao.arthas.core.command.model.SearchMethodModel;
 import com.taobao.arthas.core.command.model.MethodVO;
 import com.taobao.arthas.core.command.model.RowAffectModel;
+import com.taobao.arthas.core.command.model.ClassLoaderVO;
 import com.taobao.arthas.core.shell.cli.Completion;
 import com.taobao.arthas.core.shell.cli.CompletionUtils;
 import com.taobao.arthas.core.shell.command.AnnotatedCommand;
