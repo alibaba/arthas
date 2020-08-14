@@ -1,6 +1,8 @@
 Http API
 ========
 
+[`Http API`在线教程](https://arthas.aliyun.com/doc/arthas-tutorials.html?language=cn&id=case-http-api)
+
 ### 概览
 
 Http API
