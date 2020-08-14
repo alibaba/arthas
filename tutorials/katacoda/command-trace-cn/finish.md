@@ -1,5 +1,5 @@
 
-在“mbean”中，我们演示了了Arthas的mbean命令。如果有更多的技巧或者使用疑问，欢迎在Issue里提出。
+在“trace”中，我们演示了了Arthas的trace命令。如果有更多的技巧或者使用疑问，欢迎在Issue里提出。
 
 * Issues: https://github.com/alibaba/arthas/issues
 * 文档： https://arthas.aliyun.com/doc

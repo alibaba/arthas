@@ -1,5 +1,5 @@
 
-在“sc”中，我们演示了了Arthas的sc命令。如果有更多的技巧或者使用疑问，欢迎在Issue里提出。
+在“sm”中，我们演示了了Arthas的sm命令。如果有更多的技巧或者使用疑问，欢迎在Issue里提出。
 
 * Issues: https://github.com/alibaba/arthas/issues
 * 文档： https://arthas.aliyun.com/doc

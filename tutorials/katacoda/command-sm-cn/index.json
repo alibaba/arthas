@@ -1,6 +1,6 @@
 {
-  "title": "Arthas sc命令",
-  "description": "Arthas sc命令",
+  "title": "Arthas sm命令",
+  "description": "Arthas sm命令",
   "difficulty": "精通者",
   "time": "10-20 分钟",
   "details": {
@@ -14,8 +14,8 @@
         "text": "arthas-boot.md"
       },
       {
-        "title": "sc命令",
-        "text": "sc.md"
+        "title": "sm命令",
+        "text": "sm.md"
       }
     ],
     "intro": {

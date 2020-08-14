@@ -1,5 +1,5 @@
 
-The `sc Tutorial` demonstrates the usage of sc. If you have more tips or questions, please feel free to ask in Issue.
+The `sm Tutorial` demonstrates the usage of sm. If you have more tips or questions, please feel free to ask in Issue.
 
 * Issues: https://github.com/alibaba/arthas/issues
 * Documentation: https://arthas.aliyun.com/doc/en
