@@ -14,6 +14,7 @@
 |[t]|打印所有ClassLoader的继承树|
 |[a]|列出所有ClassLoader加载的类，请谨慎使用|
 |`[c:]`|ClassLoader的hashcode|
+|`[classLoaderClass:]`|指定执行表达式的 ClassLoader 的 class name|
 |`[c: r:]`|用ClassLoader去查找resource|
 |`[c: load:]`|用ClassLoader去加载指定的类|
 
@@ -50,18 +51,29 @@ $ classloader -l
 
 * TomcatEmbeddedWebappClassLoader 加载的class数量是0，所以在spring boot embedded tomcat里，它只是一个空壳，所有的类加载都是`LaunchedURLClassLoader`完成的
 
-请记下你的classLoaderHash，后面需要使用它。在这里，它是 `65361d9a`。
+注意hashcode是变化的，需要先查看当前的ClassLoader信息，提取对应ClassLoader的hashcode。
 
-注意：请使用你的classLoaderHash值覆盖 `<classLoaderHash>` ，然后手动执行下面所有所述命令：
+如果你使用`-c`，你需要手动输入hashcode：`-c <hashcode>`
+
+```bash
+$ classloader -c 65361d9a
+```
+
+对于只有唯一实例的ClassLoader可以通过`--classLoaderClass`指定class name，使用起来更加方便：
+
+```bash
+$ classloader --classLoaderClass org.apache.jasper.servlet.JasperLoader
+```
+`--classLoaderClass` 的值是ClassLoader的类名，只有匹配到唯一的ClassLoader实例时才能工作，目的是方便输入通用命令，而`-c <hashcode>`是动态变化的。
 
 ### 列出ClassLoader里加载的所有类
 
 列出上面的`org.apache.jasper.servlet.JasperLoader`加载的类：
 
-`classloader -a -c <classLoaderHash>`
+`classloader -a --classLoaderClass org.apache.jasper.servlet.JasperLoader`{{execute T2}}
 
 ```bash
-$ classloader -a -c 65361d9a
+$ classloader -a --classLoaderClass org.apache.jasper.servlet.JasperLoader
  hash:1698045338, org.apache.jasper.servlet.JasperLoader@65361d9a
  org.apache.jsp.jsp.hello_jsp
 ```
@@ -93,12 +105,12 @@ $ classloader -t
 
 ### 查看URLClassLoader实际的urls
 
-比如上面查看到的spring LaunchedURLClassLoader的 hashcode是`1be6f5c3`，可以通过`-c`参数来指定classloader，从而查看URLClassLoader实际的urls：
+比如上面查看到的spring LaunchedURLClassLoader的 hashcode是`1be6f5c3`，可以通过`-c`参数来指定classloader，或者直接使用`--classLoaderClass`，从而查看URLClassLoader实际的urls：
 
-`classloader -c <classLoaderHash>`
+`classloader --classLoaderClass org.springframework.boot.loader.LaunchedURLClassLoader`{{execute T2}}
 
 ```
-$ classloader -c 1be6f5c3
+$ classloader --classLoaderClass org.springframework.boot.loader.LaunchedURLClassLoader
 jar:file:/home/scrapbook/tutorial/demo-arthas-spring-boot.jar!/BOOT-INF/classes!/
 jar:file:/home/scrapbook/tutorial/demo-arthas-spring-boot.jar!/BOOT-INF/lib/spring-boot-starter-aop-1.5
 .13.RELEASE.jar!/
@@ -107,18 +119,18 @@ jar:file:/home/scrapbook/tutorial/demo-arthas-spring-boot.jar!/BOOT-INF/lib/spri
 
 ### 加载指定ClassLoader里的资源文件
 
-查找指定的资源文件： `classloader -c <classLoaderHash> -r logback-spring.xml`
+查找指定的资源文件： `classloader --classLoaderClass org.springframework.boot.loader.LaunchedURLClassLoader -r logback-spring.xml`{{execute T2}}
 
 ```
-$ classloader -c 1be6f5c3 -r logback-spring.xml
+$ classloader --classLoaderClass org.springframework.boot.loader.LaunchedURLClassLoader -r logback-spring.xml
  jar:file:/home/scrapbook/tutorial/demo-arthas-spring-boot.jar!/BOOT-INF/classes!/logback-spring.xml
 ```
 也可以尝试查找类的class文件：
 
-`classloader -c <classLoaderHash> -r java/lang/String.class`
+`classloader --classLoaderClass org.springframework.boot.loader.LaunchedURLClassLoader -r java/lang/String.class`{{execute T2}}
 
 ```bash
-$ classloader -c 1b6d3586 -r java/lang/String.class
+$ classloader --classLoaderClass org.springframework.boot.loader.LaunchedURLClassLoader -r java/lang/String.class
  jar:file:/Library/Java/JavaVirtualMachines/jdk1.8.0_60.jdk/Contents/Home/jre/lib/rt.jar!/java/lang/String.class
 ```
 
@@ -134,10 +146,10 @@ Affect(row-cnt:0) cost in 18 ms.
 
 因而使用spring LaunchedURLClassLoader 尝试加载：
 
-`classloader -c <classLoaderHash> --load ch.qos.logback.classic.spi.StackTraceElementProxy`
+`classloader --classLoaderClass org.springframework.boot.loader.LaunchedURLClassLoader --load ch.qos.logback.classic.spi.StackTraceElementProxy`{{execute T2}}
 
 ```bash
-$ classloader -c 1be6f5c3 --load ch.qos.logback.classic.spi.StackTraceElementProxy
+$ classloader --classLoaderClass org.springframework.boot.loader.LaunchedURLClassLoader --load ch.qos.logback.classic.spi.StackTraceElementProxy
 load class success.
  class-info        ch.qos.logback.classic.spi.StackTraceElementProxy
  code-source       file:/home/scrapbook/tutorial/demo-arthas-spring-boot.jar!/BOOT-INF/lib/logback-classic-1.

@@ -11,6 +11,7 @@ View hierarchy, urls and classes-loading info for the class-loaders.
 |[t]|print classloader's hierarchy|
 |[a]|list all the classes loaded by all the classloaders (use it with great caution since the output can be huge)|
 |[c:]|print classloader's hashcode|
+|`[classLoaderClass:]`| The class name of the ClassLoader that executes the expression. |
 |`[c: r:]`|using ClassLoader to search resource|
 |`[c: load:]`|using ClassLoader to load class|
 
@@ -47,19 +48,29 @@ $ classloader -l
 
 * The number of classes loaded by TomcatEmbeddedWebappClassLoader is 0, so in spring boot embedded tomcat, it is just an empty ClassLoader, all the classes are loaded by `LaunchedURLClassLoader`
 
+Note that the hashcode changes, you need to check the current ClassLoader information first, and extract the hashcode corresponding to the ClassLoader.
 
-Please write down your classLoaderHash here, in the case here, it's `65361d9a`. It will be used in the future steps.
+if you use`-c`, you have to manually type hashcode by `-c <hashcode>`.
 
-Note: Please replace `<classLoaderHash>` with your classLoaderHash above, then execute the commands manually in the following steps:
+```bash
+$ classloader -c 65361d9a
+```
+
+For classloader with only one instance, it can be specified by `--classLoaderClass` using class name, which is more convenient to use.
+
+```bash
+$ classloader --classLoaderClass org.apache.jasper.servlet.JasperLoader
+```
+The value of `--classloaderclass` is the class name of classloader. It can only work when it matches a unique classloader instance. The purpose is to facilitate the input of general commands. However, `-c <hashcode>` is dynamic.
 
 ### List all classes loaded in ClassLoader
 
 List all classes loaded by `org.apache.jasper.servlet.JasperLoader`:
 
-`classloader -a -c <classLoaderHash>`
+`classloader -a --classLoaderClass org.apache.jasper.servlet.JasperLoader`{{execute T2}}
 
 ```bash
-$ classloader -a -c 65361d9a
+$ classloader -a --classLoaderClass org.apache.jasper.servlet.JasperLoader
  hash:1698045338, org.apache.jasper.servlet.JasperLoader@65361d9a
  org.apache.jsp.jsp.hello_jsp
 ```
@@ -91,12 +102,12 @@ $ classloader -t
 
 ### Show the URLs of the URLClassLoader
 
-For example, the hashcode of spring `LaunchedURLClassLoader` viewed above is `1be6f5c3`, and all its urls can be listed by specifying classloader using the `-c` parameter and then executing the following command:
+For example, the hashcode of spring `LaunchedURLClassLoader` viewed above is `1be6f5c3`, and all its urls can be listed by specifying classloader using the `-c` or`--classLoaderClass` parameter and then executing the following command:
 
-`classloader -c <classLoaderHash>`
+`classloader --classLoaderClass org.springframework.boot.loader.LaunchedURLClassLoader`{{execute T2}}
 
 ```
-$ classloader -c 1be6f5c3
+$ classloader --classLoaderClass org.springframework.boot.loader.LaunchedURLClassLoader
 jar:file:/home/scrapbook/tutorial/demo-arthas-spring-boot.jar!/BOOT-INF/classes!/
 jar:file:/home/scrapbook/tutorial/demo-arthas-spring-boot.jar!/BOOT-INF/lib/spring-boot-starter-aop-1.5
 .13.RELEASE.jar!/
@@ -105,19 +116,19 @@ jar:file:/home/scrapbook/tutorial/demo-arthas-spring-boot.jar!/BOOT-INF/lib/spri
 
 ### Load the resource file in the specified ClassLoader
 
-Load the specified resource file: `classloader -c <classLoaderHash> -r logback-spring.xml`
+Load the specified resource file: `classloader --classLoaderClass org.springframework.boot.loader.LaunchedURLClassLoader -r logback-spring.xml`{{execute T2}}
 
 ```
-$ classloader -c 1be6f5c3 -r logback-spring.xml
+$ classloader --classLoaderClass org.springframework.boot.loader.LaunchedURLClassLoader -r logback-spring.xml
  jar:file:/home/scrapbook/tutorial/demo-arthas-spring-boot.jar!/BOOT-INF/classes!/logback-spring.xml
 ```
 
 Use the classloader to load .class resource
 
-`classloader -c <classLoaderHash> -r java/lang/String.class`
+`classloader --classLoaderClass org.springframework.boot.loader.LaunchedURLClassLoader -r java/lang/String.class`{{execute T2}}
 
 ```bash
-$ classloader -c 1b6d3586 -r java/lang/String.class
+$ classloader --classLoaderClass org.springframework.boot.loader.LaunchedURLClassLoader -r java/lang/String.class
  jar:file:/Library/Java/JavaVirtualMachines/jdk1.8.0_60.jdk/Contents/Home/jre/lib/rt.jar!/java/lang/String.class
 ```
 
@@ -134,10 +145,10 @@ Affect(row-cnt:0) cost in 18 ms.
 
 So use spring LaunchedURLClassLoader to try to load:
 
-`classloader -c <classLoaderHash> --load ch.qos.logback.classic.spi.StackTraceElementProxy`
+`classloader --classLoaderClass org.springframework.boot.loader.LaunchedURLClassLoader --load ch.qos.logback.classic.spi.StackTraceElementProxy`{{execute T2}}
 
 ```bash
-$ classloader -c 1be6f5c3 --load ch.qos.logback.classic.spi.StackTraceElementProxy
+$ classloader --classLoaderClass org.springframework.boot.loader.LaunchedURLClassLoader --load ch.qos.logback.classic.spi.StackTraceElementProxy
 load class success.
  class-info        ch.qos.logback.classic.spi.StackTraceElementProxy
  code-source       file:/home/scrapbook/tutorial/demo-arthas-spring-boot.jar!/BOOT-INF/lib/logback-classic-1.
