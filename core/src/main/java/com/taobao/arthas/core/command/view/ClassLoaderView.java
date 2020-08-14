@@ -24,7 +24,7 @@ public class ClassLoaderView extends ResultView<ClassLoaderModel> {
     public void draw(CommandProcess process, ClassLoaderModel result) {
         if (result.getMatchedClassLoaders() != null) {
             process.write("Matched classloaders: \n");
-            ClassLoaderView.drawClassLoaders(process, result.getMatchedClassLoaders(), false);
+            drawClassLoaders(process, result.getMatchedClassLoaders(), false);
             process.write("\n");
             return;
         }
