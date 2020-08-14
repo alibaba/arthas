@@ -226,6 +226,7 @@
             
   <div class="section" id="classloader">
 <h1>classloader<a class="headerlink" href="#classloader" title="Permalink to this headline">¶</a></h1>
+<p><a class="reference external" href="https://arthas.aliyun.com/doc/arthas-tutorials?language=en&amp;id=command-classloader"><code class="docutils literal notranslate"><span class="pre">classloader</span></code> online tutorial</a></p>
 <p>View hierarchy, urls and classes-loading info for the class-loaders.</p>
 <p><code class="docutils literal notranslate"><span class="pre">classloader</span></code> can search and print out the URLs for a specified resource from one particular classloader. It is quite handy when analyzing <code class="docutils literal notranslate"><span class="pre">ResourceNotFoundException</span></code>.</p>
 <div class="section" id="options">
@@ -253,6 +254,10 @@
 <tr>
 <td align="right">[c:]</td>
 <td align="left">print classloader's hashcode</td>
+</tr>
+<tr>
+<td align="right"><code>[classLoaderClass:]</code></td>
+<td align="left">The class name of the ClassLoader that executes the expression.</td>
 </tr>
 <tr>
 <td align="right"><code>[c: r:]</code></td>
@@ -302,6 +307,14 @@ Affect(row-cnt:4) cost in 3 ms.</pre></div>
 <div class="section" id="show-the-urls-of-the-urlclassloader">
 <h3>Show the URLs of the URLClassLoader<a class="headerlink" href="#show-the-urls-of-the-urlclassloader" title="Permalink to this headline">¶</a></h3>
 <div class="highlight-bash notranslate"><div class="highlight hljs"><pre class="bash">$ classloader -c 3d4eac69
+file:/private/tmp/arthas-demo.jar
+file:/Users/hengyunabc/.arthas/lib/3.0.5/arthas/arthas-agent.jar
+
+Affect(row-cnt:9) cost in 3 ms.</pre></div>
+</div>
+<p>Note that the hashcode changes, you need to check the current ClassLoader information first, and extract the hashcode corresponding to the ClassLoader.</p>
+<p>For ClassLoader with only unique instance, it can be specified by class name, which is more convenient to use:</p>
+<div class="highlight-bash notranslate"><div class="highlight hljs"><pre class="bash">$ classloader --classLoaderClass sun.misc.Launcher$AppClassLoader
 file:/private/tmp/arthas-demo.jar
 file:/Users/hengyunabc/.arthas/lib/3.0.5/arthas/arthas-agent.jar
 

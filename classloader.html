@@ -229,6 +229,7 @@
             
   <div class="section" id="classloader">
 <h1>classloader<a class="headerlink" href="#classloader" title="永久链接至标题">¶</a></h1>
+<p><a class="reference external" href="https://arthas.aliyun.com/doc/arthas-tutorials?language=cn&amp;id=command-classloader"><code class="docutils literal notranslate"><span class="pre">classloader</span></code>在线教程</a></p>
 <blockquote>
 <div><p>查看classloader的继承树，urls，类加载信息</p>
 </div></blockquote>
@@ -259,6 +260,10 @@
 <tr>
 <td align="right"><code>[c:]</code></td>
 <td align="left">ClassLoader的hashcode</td>
+</tr>
+<tr>
+<td align="right"><code>[classLoaderClass:]</code></td>
+<td align="left">指定执行表达式的 ClassLoader 的 class name</td>
 </tr>
 <tr>
 <td align="right"><code>[c: r:]</code></td>
@@ -308,6 +313,14 @@ Affect(row-cnt:4) cost in 3 ms.</pre></div>
 <div class="section" id="urlclassloaderurls">
 <h3>查看URLClassLoader实际的urls<a class="headerlink" href="#urlclassloaderurls" title="永久链接至标题">¶</a></h3>
 <div class="highlight-bash notranslate"><div class="highlight hljs"><pre class="bash">$ classloader -c 3d4eac69
+file:/private/tmp/arthas-demo.jar
+file:/Users/hengyunabc/.arthas/lib/3.0.5/arthas/arthas-agent.jar
+
+Affect(row-cnt:9) cost in 3 ms.</pre></div>
+</div>
+<p><em>注意</em> hashcode是变化的，需要先查看当前的ClassLoader信息，提取对应ClassLoader的hashcode。</p>
+<p>对于只有唯一实例的ClassLoader可以通过class name指定，使用起来更加方便：</p>
+<div class="highlight-bash notranslate"><div class="highlight hljs"><pre class="bash">$ classloader --classLoaderClass sun.misc.Launcher$AppClassLoader
 file:/private/tmp/arthas-demo.jar
 file:/Users/hengyunabc/.arthas/lib/3.0.5/arthas/arthas-agent.jar
 
