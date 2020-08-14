@@ -1,6 +1,6 @@
 package com.taobao.arthas.core.command.model;
 
-
+import java.util.Collection;
 import java.util.List;
 
 /**
@@ -14,6 +14,9 @@ public class SearchClassModel extends ResultModel {
     private Integer expand;
     private List<String> classNames;
     private int segment;
+
+    private Collection<ClassLoaderVO> matchedClassLoaders;
+    private String classLoaderClass;
 
     public SearchClassModel() {
     }
@@ -69,5 +72,23 @@ public class SearchClassModel extends ResultModel {
 
     public Integer getExpand() {
         return expand;
+    }
+    
+    public String getClassLoaderClass() {
+        return classLoaderClass;
+    }
+
+    public SearchClassModel setClassLoaderClass(String classLoaderClass) {
+        this.classLoaderClass = classLoaderClass;
+        return this;
+    }
+
+    public Collection<ClassLoaderVO> getMatchedClassLoaders() {
+        return matchedClassLoaders;
+    }
+
+    public SearchClassModel setMatchedClassLoaders(Collection<ClassLoaderVO> matchedClassLoaders) {
+        this.matchedClassLoaders = matchedClassLoaders;
+        return this;
     }
 }
