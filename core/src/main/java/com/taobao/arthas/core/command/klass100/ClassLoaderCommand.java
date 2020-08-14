@@ -58,6 +58,7 @@ public class ClassLoaderCommand extends AnnotatedCommand {
     private boolean isTree = false;
     private String hashCode;
     private String classLoaderClass;
+    private ClassLoader classLoaderfromhashCode = null;
     private boolean all = false;
     private String resource;
     private boolean includeReflectionClassLoader = true;
@@ -125,7 +126,8 @@ public class ClassLoaderCommand extends AnnotatedCommand {
         if (!all && hashCode == null && classLoaderClass != null) {
             List<ClassLoader> matchedClassLoaders = ClassLoaderUtils.getClassLoaderByClassName(inst, classLoaderClass);
             if (matchedClassLoaders.size() == 1) {
-                hashCode = "" + Integer.toHexString(matchedClassLoaders.get(0).hashCode());
+                classLoaderfromhashCode = matchedClassLoaders.get(0);
+                hashCode = "" + Integer.toHexString(classLoaderfromhashCode.hashCode());
             } else if (matchedClassLoaders.size() > 1) {
                 Collection<ClassLoaderVO> classLoaderVOList = ClassUtils.createClassLoaderVOList(matchedClassLoaders);
                 ClassLoaderModel classloaderModel = new ClassLoaderModel()
@@ -138,15 +140,23 @@ public class ClassLoaderCommand extends AnnotatedCommand {
                 process.end(-1, "Can not find classloader by class name: " + classLoaderClass + ".");
                 return;
             }
+        } else if (!all && hashCode != null) {
+            Set<ClassLoader> allClassLoader = getAllClassLoaders(inst);
+            for (ClassLoader cl : allClassLoader) {
+                if (Integer.toHexString(cl.hashCode()).equals(hashCode)) {
+                    classLoaderfromhashCode = cl;
+                    break;
+                }
+            }
         }
 
         if (all) {
             processAllClasses(process, inst);
-        } else if (hashCode != null && resource != null) {
+        } else if (classLoaderfromhashCode != null && resource != null) {
             processResources(process, inst);
-        } else if (hashCode != null && this.loadClass != null) {
+        } else if (classLoaderfromhashCode != null && this.loadClass != null) {
             processLoadClass(process, inst);
-        } else if (hashCode != null) {
+        } else if (classLoaderfromhashCode != null) {
             processClassLoader(process, inst);
         } else if (listClassLoader || isTree){
             processClassLoaders(process, inst);
@@ -208,25 +218,21 @@ public class ClassLoaderCommand extends AnnotatedCommand {
         process.end();
     }
 
-    // 根据 hashCode 来打印URLClassLoader的urls
+    // 根据 ClassLoader 来打印URLClassLoader的urls
     private void processClassLoader(CommandProcess process, Instrumentation inst) {
         RowAffect affect = new RowAffect();
-        Set<ClassLoader> allClassLoader = getAllClassLoaders(inst);
-        for (ClassLoader cl : allClassLoader) {
-            if (Integer.toHexString(cl.hashCode()).equals(hashCode)) {
-                if (cl instanceof URLClassLoader) {
-                    List<String> classLoaderUrls = getClassLoaderUrls(cl);
-                    affect.rCnt(classLoaderUrls.size());
-                    if (classLoaderUrls.isEmpty()) {
-                        process.appendResult(new MessageModel("urls is empty."));
-                    } else {
-                        process.appendResult(new ClassLoaderModel().setUrls(classLoaderUrls));
-                        affect.rCnt(classLoaderUrls.size());
-                    }
+        if (classLoaderfromhashCode != null) {
+            if (classLoaderfromhashCode instanceof URLClassLoader) {
+                List<String> classLoaderUrls = getClassLoaderUrls(classLoaderfromhashCode);
+                affect.rCnt(classLoaderUrls.size());
+                if (classLoaderUrls.isEmpty()) {
+                    process.appendResult(new MessageModel("urls is empty."));
                 } else {
-                    process.appendResult(new MessageModel("not a URLClassLoader."));
+                    process.appendResult(new ClassLoaderModel().setUrls(classLoaderUrls));
+                    affect.rCnt(classLoaderUrls.size());
                 }
-                break;
+            } else {
+                process.appendResult(new MessageModel("not a URLClassLoader."));
             }
         }
         process.appendResult(new RowAffectModel(affect));
@@ -237,20 +243,17 @@ public class ClassLoaderCommand extends AnnotatedCommand {
     private void processResources(CommandProcess process, Instrumentation inst) {
         RowAffect affect = new RowAffect();
         int rowCount = 0;
-        Set<ClassLoader> allClassLoader = getAllClassLoaders(inst);
         List<String> resources = new ArrayList<String>();
-        for (ClassLoader cl : allClassLoader) {
-            if (Integer.toHexString(cl.hashCode()).equals(hashCode)) {
-                try {
-                    Enumeration<URL> urls = cl.getResources(resource);
-                    while (urls.hasMoreElements()) {
-                        URL url = urls.nextElement();
-                        resources.add(url.toString());
-                        rowCount++;
-                    }
-                } catch (Throwable e) {
-                    logger.warn("get resource failed, resource: {}", resource, e);
+        if (classLoaderfromhashCode != null) {
+            try {
+                Enumeration<URL> urls = classLoaderfromhashCode.getResources(resource);
+                while (urls.hasMoreElements()) {
+                    URL url = urls.nextElement();
+                    resources.add(url.toString());
+                    rowCount++;
                 }
+            } catch (Throwable e) {
+                logger.warn("get resource failed, resource: {}", resource, e);
             }
         }
         affect.rCnt(rowCount);
@@ -262,20 +265,17 @@ public class ClassLoaderCommand extends AnnotatedCommand {
 
     // Use ClassLoader to loadClass
     private void processLoadClass(CommandProcess process, Instrumentation inst) {
-        Set<ClassLoader> allClassLoader = getAllClassLoaders(inst);
-        for (ClassLoader cl : allClassLoader) {
-            if (Integer.toHexString(cl.hashCode()).equals(hashCode)) {
-                try {
-                    Class<?> clazz = cl.loadClass(this.loadClass);
-                    process.appendResult(new MessageModel("load class success."));
-                    ClassDetailVO classInfo = ClassUtils.createClassInfo(clazz, false);
-                    process.appendResult(new ClassLoaderModel().setLoadClass(classInfo));
+        if (classLoaderfromhashCode != null) {
+            try {
+                Class<?> clazz = classLoaderfromhashCode.loadClass(this.loadClass);
+                process.appendResult(new MessageModel("load class success."));
+                ClassDetailVO classInfo = ClassUtils.createClassInfo(clazz, false);
+                process.appendResult(new ClassLoaderModel().setLoadClass(classInfo));
 
-                } catch (Throwable e) {
-                    logger.warn("load class error, class: {}", this.loadClass, e);
-                    process.end(-1, "load class error, class: "+this.loadClass+", error: "+e.toString());
-                    return;
-                }
+            } catch (Throwable e) {
+                logger.warn("load class error, class: {}", this.loadClass, e);
+                process.end(-1, "load class error, class: "+this.loadClass+", error: "+e.toString());
+                return;
             }
         }
         process.end();
