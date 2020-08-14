@@ -13,6 +13,7 @@ View hierarchy, urls and classes-loading info for the class-loaders.
 |[t]|print classloader's hierarchy|
 |[a]|list all the classes loaded by all the classloaders (use it with great caution since the output can be huge)|
 |[c:]|print classloader's hashcode|
+|`[classLoaderClass:]`| The class name of the ClassLoader that executes the expression. |
 |`[c: r:]`|using ClassLoader to search resource|
 |`[c: load:]`|using ClassLoader to load class|
 
@@ -58,6 +59,18 @@ Affect(row-cnt:4) cost in 3 ms.
 
 ```bash
 $ classloader -c 3d4eac69
+file:/private/tmp/arthas-demo.jar
+file:/Users/hengyunabc/.arthas/lib/3.0.5/arthas/arthas-agent.jar
+
+Affect(row-cnt:9) cost in 3 ms.
+```
+
+Note that the hashcode changes, you need to check the current ClassLoader information first, and extract the hashcode corresponding to the ClassLoader.
+
+For ClassLoader with only unique instance, it can be specified by class name, which is more convenient to use:
+
+```bash
+$ classloader --classLoaderClass sun.misc.Launcher$AppClassLoader
 file:/private/tmp/arthas-demo.jar
 file:/Users/hengyunabc/.arthas/lib/3.0.5/arthas/arthas-agent.jar
 
