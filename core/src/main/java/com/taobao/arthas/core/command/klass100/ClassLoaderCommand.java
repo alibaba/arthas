@@ -13,6 +13,7 @@ import com.taobao.arthas.core.shell.command.AnnotatedCommand;
 import com.taobao.arthas.core.shell.command.CommandProcess;
 import com.taobao.arthas.core.shell.handlers.Handler;
 import com.taobao.arthas.core.util.ClassUtils;
+import com.taobao.arthas.core.util.ClassLoaderUtils;
 import com.taobao.arthas.core.util.ResultUtils;
 import com.taobao.arthas.core.util.affect.RowAffect;
 import com.taobao.middleware.cli.annotations.Description;
@@ -56,6 +57,7 @@ public class ClassLoaderCommand extends AnnotatedCommand {
     private Logger logger = LoggerFactory.getLogger(ClassLoaderCommand.class);
     private boolean isTree = false;
     private String hashCode;
+    private String classLoaderClass;
     private boolean all = false;
     private String resource;
     private boolean includeReflectionClassLoader = true;
@@ -69,6 +71,12 @@ public class ClassLoaderCommand extends AnnotatedCommand {
     @Description("Display ClassLoader tree")
     public void setTree(boolean tree) {
         isTree = tree;
+    }
+    
+    @Option(longName = "classLoaderClass")
+    @Description("The class name of the special class's classLoader.")
+    public void setClassLoaderClass(String classLoaderClass) {
+        this.classLoaderClass = classLoaderClass;
     }
 
     @Option(shortName = "c", longName = "classloader")
@@ -113,6 +121,25 @@ public class ClassLoaderCommand extends AnnotatedCommand {
         process.interruptHandler(new ClassLoaderInterruptHandler(this));
 
         Instrumentation inst = process.session().getInstrumentation();
+        
+        if (!all && hashCode == null && classLoaderClass != null) {
+            List<ClassLoader> matchedClassLoaders = ClassLoaderUtils.getClassLoaderByClassName(inst, classLoaderClass);
+            if (matchedClassLoaders.size() == 1) {
+                hashCode = "" + Integer.toHexString(matchedClassLoaders.get(0).hashCode());
+            } else if (matchedClassLoaders.size() > 1) {
+                Collection<ClassLoaderVO> classLoaderVOList = ClassUtils.createClassLoaderVOList(matchedClassLoaders);
+                ClassLoaderModel classloaderModel = new ClassLoaderModel()
+                        .setClassLoaderClass(classLoaderClass)
+                        .setMatchedClassLoaders(classLoaderVOList);
+                process.appendResult(classloaderModel);
+                process.end(-1, "Found more than one classloader by class name, please specify classloader with '-c <classloader hash>'");
+                return;
+            } else {
+                process.end(-1, "Can not find classloader by class name: " + classLoaderClass + ".");
+                return;
+            }
+        }
+
         if (all) {
             processAllClasses(process, inst);
         } else if (hashCode != null && resource != null) {
