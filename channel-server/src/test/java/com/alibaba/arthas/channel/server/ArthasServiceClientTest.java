@@ -181,7 +181,7 @@ public class ArthasServiceClientTest {
 
                 actionResponseStreamObserver.onNext(ActionResponse.newBuilder()
                         .setAgentId(request.getAgentId())
-                        .setOriginId(request.getOriginId())
+                        .setRequestId(request.getRequestId())
                         .setSessionId(request.getSessionId())
                         .setStatus(ResponseStatus.SUCCEEDED)
                         .setExecuteResult(resultBuilder.build()).build());

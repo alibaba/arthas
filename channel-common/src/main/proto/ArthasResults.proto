@@ -32,3 +32,4 @@ message SessionResult {
     int64 javaPid = 2;
     string sessionId = 3;
 }
+

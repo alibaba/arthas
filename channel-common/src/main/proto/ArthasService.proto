@@ -32,9 +32,9 @@ enum ResponseStatus {
     SUCCEEDED = 0;
 
     /*
-     * Scheduled async exec job
+     * Response is CONTINUOUS, receiving streaming data of async exec job
      */
-    SCHEDULED = 1;
+    CONTINUOUS = 1;
 
     /*
      * Request processing was interrupted due to timeout or other reasons
@@ -95,15 +95,19 @@ message ExecuteParams {
     /* command line to execute */
     string commandLine = 1;
 
+    /* unique command id */
+    string cmdId = 2;
+
     /* execute timeout */
-    int32 execTimeout = 2;
+    int32 execTimeout = 3;
 
     /* command results data format, default value is ResultFormat.PROTO */
-    ResultFormat resultFormat = 3;
+    ResultFormat resultFormat = 4;
 }
 
 message ExecuteResult {
     int32 jobId = 1;
+
     string jobStatus = 2;
 
     /* results of proto format */
@@ -117,37 +121,47 @@ message ActionRequest {
     /* Arthas agent id */
     string agentId = 1;
 
-    /* origin of request, for result message routing */
-    string originId = 2;
-
-    /* incremented request id */
-    uint32 requestId = 3;
-
-    /* Arthas sessionid */
-    string sessionId = 4;
-
-    /* Arthas consumerId of session */
-    string consumerId = 5;
+    /* request id for message routing */
+    string requestId = 2;
 
     /* action of request */
-    RequestAction action = 6;
+    RequestAction action = 3;
 
     /* params of execute action */
-    ExecuteParams executeParams = 7;
+    ExecuteParams executeParams = 4;
 
-    string additionalParams = 8;
+    /* additional params */
+    google.protobuf.StringValue additionalParams = 5;
+
+    /* Arthas session id */
+    google.protobuf.StringValue sessionId = 6;
+
+    /* Arthas consumerId of session */
+    google.protobuf.StringValue consumerId = 7;
+
 }
 
 message ActionResponse {
+    /* Arthas agent id */
     string agentId = 1;
-    string originId = 2;
-    uint32 requestId = 3;
-    string sessionId = 4;
-    string consumerId = 5;
 
-    ResponseStatus status = 6;
-    string message = 7;
-    ExecuteResult executeResult=8;
+    /* request id for message routing */
+    string requestId = 2;
+
+    /* status of response */
+    ResponseStatus status = 3;
+
+    /* status message */
+    google.protobuf.StringValue message = 4;
+
+    /* result of command */
+    ExecuteResult executeResult=5;
+
+    /* Arthas session id */
+    google.protobuf.StringValue sessionId = 6;
+
+    /* Arthas consumerId of session */
+    google.protobuf.StringValue consumerId = 7;
 }
 
 message GeneralResult {
@@ -158,7 +172,7 @@ message GeneralResult {
 message HeartbeatRequest {
     string agentId = 1;
     AgentStatus agentStatus = 2;
-
+    string agentVersion = 3;
 }
 
 message HeartbeatResponse {
@@ -168,8 +182,12 @@ message HeartbeatResponse {
 
 message AgentInfo {
     string agentId = 1;
-    string agentVersion = 2;
-    AgentStatus agentStatus = 3;
+    AgentStatus agentStatus = 2;
+    string agentVersion = 3;
+    string hostname = 4;
+    string ip = 5;
+    string osVersion = 6;
+    string appName = 7;
 }
 
 message RegisterResult {

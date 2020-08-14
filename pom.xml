@@ -73,6 +73,7 @@
         <module>packaging</module>
         <module>channel-common</module>
         <module>channel-server</module>
+        <module>channel-client</module>
     </modules>
 
     <profiles>

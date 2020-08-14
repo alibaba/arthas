@@ -14,6 +14,7 @@ import com.alibaba.arthas.channel.proto.RequestAction;
 import com.alibaba.arthas.channel.proto.ResultFormat;
 import com.google.protobuf.Any;
 import com.google.protobuf.Message;
+import com.google.protobuf.StringValue;
 import io.grpc.Server;
 import io.grpc.ServerBuilder;
 import io.grpc.protobuf.services.ProtoReflectionService;
@@ -58,8 +59,8 @@ public class ArthasServiceServerTest {
                         arthasService.putActionRequest(ActionRequest.newBuilder()
                                 .setAction(RequestAction.EXECUTE)
                                 .setAgentId("agent-1002")
-                                .setOriginId("origin-" + i)
-                                .setSessionId("xxx-xxx-xx")
+                                .setRequestId("ArthasServiceServerTest")
+                                .setSessionId(StringValue.of("xxx-xxx-xx"))
                                 .setExecuteParams(ExecuteParams.newBuilder()
                                         .setCommandLine(commandLine)
                                         .setExecTimeout(10000)

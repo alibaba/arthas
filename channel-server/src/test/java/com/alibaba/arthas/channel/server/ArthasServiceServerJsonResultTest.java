@@ -13,6 +13,7 @@ import com.alibaba.arthas.channel.proto.RegisterResult;
 import com.alibaba.arthas.channel.proto.RequestAction;
 import com.alibaba.arthas.channel.proto.ResultFormat;
 import com.alibaba.fastjson.JSON;
+import com.google.protobuf.StringValue;
 import io.grpc.Server;
 import io.grpc.ServerBuilder;
 import io.grpc.protobuf.services.ProtoReflectionService;
@@ -57,8 +58,8 @@ public class ArthasServiceServerJsonResultTest {
                         arthasService.putActionRequest(ActionRequest.newBuilder()
                                 .setAction(RequestAction.EXECUTE)
                                 .setAgentId("agent-1002")
-                                .setOriginId("origin-" + i)
-                                .setSessionId("xxx-xxx-xx")
+                                .setRequestId("ArthasServiceServerJsonResultTest")
+                                .setSessionId(StringValue.of("xxx-xxx-xx"))
                                 .setExecuteParams(ExecuteParams.newBuilder()
                                         .setCommandLine(commandLine)
                                         .setExecTimeout(10000)
