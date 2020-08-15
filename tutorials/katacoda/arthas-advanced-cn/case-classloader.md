@@ -80,12 +80,13 @@ $ classloader -t
 
         +-org.apache.jasper.servlet.JasperLoader@21ae0fe2
 ```
+注意：请使用你的classLoaderHash值覆盖 `<classLoaderHash>` ，然后手动执行下面相关命令：
 
 ### 列出ClassLoader的urls
 
 比如上面查看到的spring LaunchedURLClassLoader的 hashcode是`1be6f5c3`，可以通过`-c`参数来列出它的所有urls：
 
-`classloader -c 1be6f5c3`{{execute T2}}
+`classloader -c <classLoaderHash>`
 
 ```
 $ classloader -c 1be6f5c3
@@ -97,7 +98,7 @@ jar:file:/home/scrapbook/tutorial/demo-arthas-spring-boot.jar!/BOOT-INF/lib/spri
 
 ### 加载指定ClassLoader里的资源文件
 
-查找指定的资源文件： `classloader -c 1be6f5c3 -r logback-spring.xml`{{execute T2}}
+查找指定的资源文件： `classloader -c <classLoaderHash> -r logback-spring.xml`
 
 ```
 $ classloader -c 1be6f5c3 -r logback-spring.xml
@@ -108,7 +109,7 @@ $ classloader -c 1be6f5c3 -r logback-spring.xml
 
 比如用上面的spring LaunchedURLClassLoader 尝试加载 `java.lang.String` ：
 
-`classloader -c 1be6f5c3 --load java.lang.String`{{execute T2}}
+`classloader -c <classLoaderHash> --load java.lang.String`
 
 ```
 $ classloader -c 1be6f5c3 --load java.lang.String

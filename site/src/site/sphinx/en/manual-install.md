@@ -5,9 +5,8 @@ Manually Install Arthas
 
 1. Download the latest version
 
-    **Latest version, Click To Download**: [![](https://img.shields.io/maven-central/v/com.taobao.arthas/arthas-packaging.svg?style=flat-square "Arthas")](http://repository.sonatype.org/service/local/artifact/maven/redirect?r=central-proxy&g=com.taobao.arthas&a=arthas-packaging&e=zip&c=bin&v=LATEST)
+    **Latest version, Click To Download**: [![](https://img.shields.io/maven-central/v/com.taobao.arthas/arthas-packaging.svg?style=flat-square "Arthas")](https://arthas.aliyun.com/download/latest_version)
 
-    If the download speed is slow, try to use [Ali cloud mirror repository](https://maven.aliyun.com/), for example, to download version `3.x.x` (you can replace `3.x.x` in the example URL if you want to download other version), the download URL is: https://maven.aliyun.com/repository/public/com/taobao/arthas/arthas-packaging/3.x.x/arthas-packaging-3.x.x-bin.zip
 
 2. Unzip zip file
 
@@ -42,7 +41,7 @@ Manually Install Arthas
 You can install Arthas with one single line command on Linux, Unix, and Mac. Pls. copy the following command and paste it into the command line, then press *Enter* to run:
 
 ```bash
-curl -L https://alibaba.github.io/arthas/install.sh | sh
+curl -L https://arthas.aliyun.com/install.sh | sh
 ```
 
 The command above will download the bootstrap script `as.sh` to the current directory. You can move it the any other place you want, or put its location in `$PATH`.
@@ -51,7 +50,7 @@ You can enter its interactive interface by executing `as.sh`, or execute `as.sh 
 
 ### Windows
 
-Latest Version, Click To Download: [![](https://img.shields.io/maven-central/v/com.taobao.arthas/arthas-packaging.svg?style=flat-square "Arthas")](http://repository.sonatype.org/service/local/artifact/maven/redirect?r=central-proxy&g=com.taobao.arthas&a=arthas-packaging&e=zip&c=bin&v=LATEST)
+Latest Version, Click To Download: [![](https://img.shields.io/maven-central/v/com.taobao.arthas/arthas-packaging.svg?style=flat-square "Arthas")](https://arthas.aliyun.com/download/latest_version)
 
 Download and unzip, then find `as.bat` from 'bin' directory. For now this script will only take one argument `pid`, which means you can only diagnose the local Java process. (Welcome any bat script expert to make it better :heart:)
 

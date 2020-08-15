@@ -12,10 +12,10 @@ $ sc -d com.example.demo.arthas.user.UserController | grep classLoaderHash
 
 ### Use ognl command to get the logger
 
-`ognl -c 1be6f5c3 '@com.example.demo.arthas.user.UserController@logger'`{{execute T2}}
+`ognl --classLoaderClass org.springframework.boot.loader.LaunchedURLClassLoader '@com.example.demo.arthas.user.UserController@logger'`{{execute T2}}
 
 ```bash
-$ ognl -c 1be6f5c3 '@com.example.demo.arthas.user.UserController@logger'
+$ ognl --classLoaderClass org.springframework.boot.loader.LaunchedURLClassLoader '@com.example.demo.arthas.user.UserController@logger'
 @Logger[
     serialVersionUID=@Long[5454405123156820674],
     FQCN=@String[ch.qos.logback.classic.Logger],
@@ -36,14 +36,14 @@ The user can know that `UserController@logger` actually uses logback. Because `l
 
 ### Change the logger level of UserController
 
-`ognl -c 1be6f5c3 '@com.example.demo.arthas.user.UserController@logger.setLevel(@ch.qos.logback.classic.Level@DEBUG)'`{{execute T2}}
+`ognl --classLoaderClass org.springframework.boot.loader.LaunchedURLClassLoader '@com.example.demo.arthas.user.UserController@logger.setLevel(@ch.qos.logback.classic.Level@DEBUG)'`{{execute T2}}
 
 Get `UserController@logger` again, the user can see that it is already `DEBUG`:
 
-`ognl -c 1be6f5c3 '@com.example.demo.arthas.user.UserController@logger'`{{execute T2}}
+`ognl --classLoaderClass org.springframework.boot.loader.LaunchedURLClassLoader '@com.example.demo.arthas.user.UserController@logger'`{{execute T2}}
 
 ```bash
-$ ognl -c 1be6f5c3 '@com.example.demo.arthas.user.UserController@logger'
+$ ognl --classLoaderClass org.springframework.boot.loader.LaunchedURLClassLoader '@com.example.demo.arthas.user.UserController@logger'
 @Logger[
     serialVersionUID=@Long[5454405123156820674],
     FQCN=@String[ch.qos.logback.classic.Logger],
@@ -62,5 +62,5 @@ $ ognl -c 1be6f5c3 '@com.example.demo.arthas.user.UserController@logger'
 
 By getting the `root` logger, the user can modify the global logger level:
 
-`ognl -c 1be6f5c3 '@org.slf4j.LoggerFactory@getLogger("root").setLevel(@ch.qos.logback.classic.Level@DEBUG)'`{{execute T2}}
+`ognl --classLoaderClass org.springframework.boot.loader.LaunchedURLClassLoader '@org.slf4j.LoggerFactory@getLogger("root").setLevel(@ch.qos.logback.classic.Level@DEBUG)'`{{execute T2}}
 

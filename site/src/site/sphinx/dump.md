@@ -1,6 +1,8 @@
 dump
 ===
 
+[`dump`在线教程](https://arthas.aliyun.com/doc/arthas-tutorials?language=cn&id=command-dump)
+
 > dump 已加载类的 bytecode 到特定目录
 
 ### 参数说明
@@ -9,6 +11,7 @@ dump
 |---:|:---|
 |*class-pattern*|类名表达式匹配|
 |`[c:]`|类所属 ClassLoader 的 hashcode|
+|`[d:]`|设置类文件的目标目录|
 |[E]|开启正则表达式匹配，默认为通配符匹配|
 
 ### 使用参考
@@ -26,4 +29,11 @@ $ dump demo.*
  3d4eac69  +-sun.misc.Launcher$AppClassLoader@3d4eac69    /Users/admin/logs/arthas/classdump/sun.misc.Launcher$AppClassLoader-3d4eac69/demo/MathGame.class
              +-sun.misc.Launcher$ExtClassLoader@66350f69
 Affect(row-cnt:1) cost in 39 ms.
+```
+
+```bash
+$ dump -d /tmp/output java.lang.String
+ HASHCODE  CLASSLOADER  LOCATION
+ null                   /tmp/output/java/lang/String.class
+Affect(row-cnt:1) cost in 138 ms.
 ```

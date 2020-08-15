@@ -1,11 +1,24 @@
 profiler
 ===
 
+[`profiler` online tutorial](https://arthas.aliyun.com/doc/arthas-tutorials.html?language=en&id=command-profiler)
+
 > Generate a flame graph using [async-profiler](https://github.com/jvm-profiling-tools/async-profiler)
 
 The `profiler` command supports generate flame graph for application hotspots.
 
 The basic usage of the `profiler` command is `profiler action [actionArg]`
+
+### Supported Options
+
+|Name|Specification|
+|---:|:---|
+|*action*|Action to execute|
+|*actionArg*|Attribute name pattern|
+|[i:]|sampling interval in ns (default: 10'000'000, i.e. 10 ms)|
+|[f:]|dump output to specified directory|
+|[d:]|run profiling for specified seconds|
+|[e:]|which event to trace (cpu, alloc, lock, cache-misses etc.), default value is cpu|
 
 ### Start profiler
 

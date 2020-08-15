@@ -19,4 +19,4 @@
 
 ## Screenshot
 
-![](https://alibaba.github.io/arthas/en/_images/dashboard.png)
+![](https://arthas.aliyun.com/doc/en/_images/dashboard.png)

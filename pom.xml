@@ -48,7 +48,7 @@
 
     <groupId>com.taobao.arthas</groupId>
     <artifactId>arthas-all</artifactId>
-    <version>3.3.8-SNAPSHOT</version>
+    <version>3.3.10-SNAPSHOT</version>
     <packaging>pom</packaging>
 
     <name>arthas-all</name>
@@ -129,7 +129,7 @@
         <maven.compiler.source>1.6</maven.compiler.source>
         <spring-boot.version>2.3.1.RELEASE</spring-boot.version>
         <maven-invoker-plugin.version>3.0.0</maven-invoker-plugin.version>
-        <project.build.outputTimestamp>2020-07-23T16:30:54Z</project.build.outputTimestamp>
+        <project.build.outputTimestamp>2020-08-11T12:05:59Z</project.build.outputTimestamp>
         <grpc.version>1.14.0</grpc.version>
     </properties>
 

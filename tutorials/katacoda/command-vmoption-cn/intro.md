@@ -1,7 +1,7 @@
 
 
 
-![Arthas](https://alibaba.github.io/arthas/_images/arthas.png)
+![Arthas](https://arthas.aliyun.com/doc/_images/arthas.png)
 
 `Arthas` 是Alibaba开源的Java诊断工具，深受开发者喜爱。在线排查问题，无需重启；动态跟踪Java代码；实时监控JVM状态。
 
@@ -17,7 +17,7 @@
 - 有什么办法可以监控到JVM的实时运行状态？
 - 怎么快速定位应用的热点，生成火焰图？
 
-本教程会以一个普通的Spring Boot应用为例，演示vmoption命令。
+本教程会以一个简单的应用为例，演示vmoption命令。
 
 * Github: https://github.com/alibaba/arthas
-* 文档: https://alibaba.github.io/arthas/
+* 文档: https://arthas.aliyun.com/doc/

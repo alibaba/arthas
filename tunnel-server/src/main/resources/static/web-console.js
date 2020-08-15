@@ -78,7 +78,8 @@ function getTerminalSize () {
 
 /** init websocket **/
 function initWs (ip, port, agentId) {
-    var path = 'ws://' + ip + ':' + port + '/ws?method=connectArthas&id=' + agentId;
+    var protocol= location.protocol === 'https:'  ? 'wss://' : 'ws://';
+    var path = protocol + ip + ':' + port + '/ws?method=connectArthas&id=' + agentId;
     ws = new WebSocket(path);
 }
 

@@ -1,7 +1,9 @@
 package com.taobao.arthas.core.util;
 
 import java.lang.instrument.Instrumentation;
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -37,6 +39,26 @@ public class ClassLoaderUtils {
             }
         }
         return null;
+    }
+
+    /**
+     * 通过类名查找classloader
+     * @param inst
+     * @param classLoaderClassName
+     * @return
+     */
+    public static List<ClassLoader> getClassLoaderByClassName(Instrumentation inst, String classLoaderClassName) {
+        if (classLoaderClassName == null || classLoaderClassName.isEmpty()) {
+            return null;
+        }
+        Set<ClassLoader> classLoaderSet = getAllClassLoader(inst);
+        List<ClassLoader> matchClassLoaders = new ArrayList<ClassLoader>();
+        for (ClassLoader classLoader : classLoaderSet) {
+            if (classLoader.getClass().getName().equals(classLoaderClassName)) {
+                matchClassLoaders.add(classLoader);
+            }
+        }
+        return matchClassLoaders;
     }
 
     public static String classLoaderHash(ClassLoader classLoader) {

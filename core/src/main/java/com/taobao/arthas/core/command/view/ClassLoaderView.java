@@ -11,6 +11,7 @@ import com.taobao.text.Decoration;
 import com.taobao.text.ui.*;
 import com.taobao.text.util.RenderUtil;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
@@ -21,6 +22,12 @@ public class ClassLoaderView extends ResultView<ClassLoaderModel> {
 
     @Override
     public void draw(CommandProcess process, ClassLoaderModel result) {
+        if (result.getMatchedClassLoaders() != null) {
+            process.write("Matched classloaders: \n");
+            drawClassLoaders(process, result.getMatchedClassLoaders(), false);
+            process.write("\n");
+            return;
+        }
         if (result.getClassSet() != null) {
             drawAllClasses(process, result.getClassSet());
         }
@@ -57,7 +64,7 @@ public class ClassLoaderView extends ResultView<ClassLoaderModel> {
         return table;
     }
 
-    private void drawClassLoaders(CommandProcess process, List<ClassLoaderVO> classLoaders, Boolean isTree) {
+    public static void drawClassLoaders(CommandProcess process, Collection<ClassLoaderVO> classLoaders, boolean isTree) {
         Element element = isTree ? renderTree(classLoaders) : renderTable(classLoaders);
         process.write(RenderUtil.render(element, process.width()))
                 .write(com.taobao.arthas.core.util.Constants.EMPTY_STRING);
@@ -107,7 +114,7 @@ public class ClassLoaderView extends ResultView<ClassLoaderModel> {
     }
 
     // 统计所有的ClassLoader的信息
-    private static TableElement renderTable(List<ClassLoaderVO> classLoaderInfos) {
+    private static TableElement renderTable(Collection<ClassLoaderVO> classLoaderInfos) {
         TableElement table = new TableElement().leftCellPadding(1).rightCellPadding(1);
         table.add(new RowElement().style(Decoration.bold.bold()).add("name", "loadedCount", "hash", "parent"));
         for (ClassLoaderVO classLoaderVO : classLoaderInfos) {
@@ -117,7 +124,7 @@ public class ClassLoaderView extends ResultView<ClassLoaderModel> {
     }
 
     // 以树状列出ClassLoader的继承结构
-    private static Element renderTree(List<ClassLoaderVO> classLoaderInfos) {
+    private static Element renderTree(Collection<ClassLoaderVO> classLoaderInfos) {
         TreeElement root = new TreeElement();
         for (ClassLoaderVO classLoader : classLoaderInfos) {
             TreeElement child = new TreeElement(classLoader.getName());

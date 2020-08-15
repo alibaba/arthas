@@ -1,11 +1,18 @@
 dashboard
 ===
 
-[`dashboard`在线教程](https://alibaba.github.io/arthas/arthas-tutorials?language=cn&id=command-dashboard)
+[`dashboard`在线教程](https://arthas.aliyun.com/doc/arthas-tutorials.html?language=cn&id=command-dashboard)
 
 > 当前系统的实时数据面板，按 ctrl+c 退出。
 
 当运行在Ali-tomcat时，会显示当前tomcat的实时信息，如HTTP请求的qps, rt, 错误数, 线程池信息等等。
+
+### 参数说明
+
+|参数名称|参数说明|
+|---:|:---|
+|[i:]|刷新实时数据的时间间隔 (ms)，默认5000ms|
+|[n:]|刷新实时数据的次数|
 
 ### 使用参考
 

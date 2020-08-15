@@ -70,7 +70,7 @@ Arthas provides `pipe` to process the result returned from commands further, e.g
 * plaintext - remove the ANSI color
 * wc - count lines
 
-## async in background
+## async jobs
 
 [async](async.md) can be handy when a problem is hardly to reproduce in the production environment, e.g. one `watch` condition may happen only once in one single day.
 
@@ -130,8 +130,8 @@ Escape character is '^]'.
 `--' `--'`--' '--'   `--'   `--'  `--'`--' `--'`-----'
 
 
-wiki      https://alibaba.github.io/arthas
-tutorials https://alibaba.github.io/arthas/arthas-tutorials
+wiki      https://arthas.aliyun.com/doc
+tutorials https://arthas.aliyun.com/doc/arthas-tutorials.html
 version   3.3.6
 pid       58883
 ```
