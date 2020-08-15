@@ -203,7 +203,12 @@ public class AgentController {
                 public boolean onMessage(ApiResponse response) {
                     try {
                         emitter.send(JSON.toJSONString(response));
-                        return true;
+                        if (!response.getState().equals(ApiState.CONTINUOUS)) {
+                            emitter.complete();
+                            return false;
+                        } else {
+                            return true;
+                        }
                     } catch (IOException e) {
                         logger.error("send response failure", e);
                         emitter.completeWithError(e);

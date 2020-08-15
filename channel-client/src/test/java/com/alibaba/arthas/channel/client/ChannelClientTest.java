@@ -103,6 +103,18 @@ public class ChannelClientTest {
                         }
                     }
 
+                    //send last
+                    try {
+                        channelClient.submitResponse(ActionResponse.newBuilder()
+                                .setStatus(ResponseStatus.SUCCEEDED)
+                                .setAgentId(request.getAgentId())
+                                .setRequestId(request.getRequestId())
+                                .setSessionId(request.getSessionId())
+                                .setConsumerId(request.getConsumerId())
+                                .build());
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
                 }
             });
         }
