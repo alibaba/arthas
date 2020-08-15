@@ -119,10 +119,10 @@ public class AgentController {
             return responsePromise.get(execTimeout, TimeUnit.MILLISECONDS);
 
         } catch (Throwable e) {
-            logger.error("exec command failure: "+e.toString(), e);
+            logger.error("exec command failure: " + e.toString(), e);
             return new ApiResponse()
                     .setState(ApiState.FAILED)
-                    .setMessage("exec command failure: "+e.toString());
+                    .setMessage("exec command failure: " + e.toString());
         }
     }
 
@@ -132,10 +132,10 @@ public class AgentController {
             ApiRequest apiRequest = parseRequest(requestBody);
             return apiActionDelegateService.asyncExecCommand(agentId, apiRequest);
         } catch (Throwable e) {
-            logger.error("async exec command failure: "+e.getMessage(), e);
+            logger.error("async exec command failure: " + e.getMessage(), e);
             return new ApiResponse()
                     .setState(ApiState.FAILED)
-                    .setMessage("async exec command failure: "+e.getMessage());
+                    .setMessage("async exec command failure: " + e.getMessage());
         }
     }
 
@@ -155,40 +155,72 @@ public class AgentController {
     }
 
     @GetMapping("/agent/{agentId}/sse_results/{requestId}")
-    public SseEmitter sse_results(@PathVariable final String agentId, @PathVariable final String requestId,
-                                  @RequestParam(value = "timeout", defaultValue = "30000") final int timeout) {
-        final SseEmitter emitter = new SseEmitter();
-        executorService.execute(new Runnable() {
-            @Override
+    public SseEmitter sse_results(@PathVariable final String agentId,
+                                  @PathVariable final String requestId,
+                                  @RequestParam(value = "timeout", defaultValue = "300000") final int timeout) {
+        final SseEmitter emitter = new SseEmitter(Long.valueOf(timeout));
+        subscribeResults(agentId, requestId, timeout, emitter);
+        return emitter;
+    }
+
+    @PostMapping("/agent/{agentId}/sse_async_exec")
+    public SseEmitter sseAsyncExecCommand(@PathVariable final String agentId,
+                                          @RequestBody final String requestBody,
+                                          @RequestParam(value = "timeout", defaultValue = "300000") final int timeout) {
+        final SseEmitter emitter = new SseEmitter(Long.valueOf(timeout));
+        executorService.submit(new Runnable() {
             public void run() {
+                ApiResponse apiResponse;
                 try {
-                    apiActionDelegateService.subscribeResults(agentId, requestId, timeout, new ApiActionDelegateService.ResponseListener() {
-                        @Override
-                        public boolean onMessage(ApiResponse response) {
-                            try {
-                                emitter.send(JSON.toJSONString(response));
-                                return true;
-                            } catch (IOException e) {
-                                logger.error("send response failure", e);
-                                emitter.completeWithError(e);
-                                return false;
-                            } catch (Throwable e) {
-                                logger.error("process response failure", e);
-                                emitter.completeWithError(e);
-                                return false;
-                            }
-                        }
-                    });
-                    // we could send more events
-                    //emitter.complete();
-                } catch (Exception ex) {
-                    emitter.completeWithError(ex);
+                    ApiRequest apiRequest = parseRequest(requestBody);
+                    apiResponse = apiActionDelegateService.asyncExecCommand(agentId, apiRequest);
+                    //check
+                } catch (Throwable e) {
+                    logger.error("async exec command failure: " + e.getMessage(), e);
+                    ApiResponse response = new ApiResponse()
+                            .setState(ApiState.FAILED)
+                            .setMessage("async exec command failure: " + e.getMessage());
+                    try {
+                        emitter.send(JSON.toJSONString(response));
+                        emitter.complete();
+                    } catch (Exception ex) {
+                        emitter.completeWithError(ex);
+                    }
+                    return;
                 }
+
+                String requestId = apiResponse.getRequestId();
+                subscribeResults(agentId, requestId, timeout, emitter);
             }
         });
         return emitter;
     }
 
+    private void subscribeResults(String agentId, String requestId, int timeout, final SseEmitter emitter) {
+        try {
+            apiActionDelegateService.subscribeResults(agentId, requestId, timeout, new ApiActionDelegateService.ResponseListener() {
+                @Override
+                public boolean onMessage(ApiResponse response) {
+                    try {
+                        emitter.send(JSON.toJSONString(response));
+                        return true;
+                    } catch (IOException e) {
+                        logger.error("send response failure", e);
+                        emitter.completeWithError(e);
+                        return false;
+                    } catch (Throwable e) {
+                        logger.error("process response failure", e);
+                        emitter.completeWithError(e);
+                        return false;
+                    }
+                }
+            });
+            // we could send more events
+            //emitter.complete();
+        } catch (Exception ex) {
+            emitter.completeWithError(ex);
+        }
+    }
 
     private ApiRequest parseRequest(String requestBody) throws ApiException {
         if (StringUtils.isBlank(requestBody)) {

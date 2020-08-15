@@ -1,6 +1,7 @@
 package com.alibaba.arthas.channel.client;
 
 import com.alibaba.arthas.channel.proto.AgentInfo;
+import com.alibaba.arthas.channel.proto.AgentStatus;
 
 /**
  * @author gongdewei 2020/8/14
@@ -8,5 +9,7 @@ import com.alibaba.arthas.channel.proto.AgentInfo;
 public interface AgentService {
 
     AgentInfo getAgentInfo();
+
+    void updateAgentStatus(AgentStatus agentStatus);
 
 }
