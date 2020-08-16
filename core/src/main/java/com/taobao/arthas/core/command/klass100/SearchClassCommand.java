@@ -106,7 +106,6 @@ public class SearchClassCommand extends AnnotatedCommand {
         // TODO: null check
         RowAffect affect = new RowAffect();
         Instrumentation inst = process.session().getInstrumentation();
-
         if (hashCode == null && classLoaderClass != null) {
             List<ClassLoader> matchedClassLoaders = ClassLoaderUtils.getClassLoaderByClassName(inst, classLoaderClass);
             if (matchedClassLoaders.size() == 1) {
@@ -125,7 +124,7 @@ public class SearchClassCommand extends AnnotatedCommand {
             }
         }
 
-        List<Class<?>> matchedClasses = new ArrayList<Class<?>>(SearchUtils.searchClass(inst, classPattern, isRegEx, hashCode));
+        List<Class<?>> matchedClasses = new ArrayList<Class<?>>(SearchUtils.searchClass(inst, classPattern, isRegEx, hashCode, numberOfLimit));
         Collections.sort(matchedClasses, new Comparator<Class<?>>() {
             @Override
             public int compare(Class<?> c1, Class<?> c2) {
@@ -134,11 +133,6 @@ public class SearchClassCommand extends AnnotatedCommand {
         });
 
         if (isDetail) {
-            if (numberOfLimit > 0 && matchedClasses.size() > numberOfLimit) {
-                process.end(-1, "The number of matching classes is greater than : " + numberOfLimit+". \n" +
-                        "Please specify a more accurate 'class-patten' or use the parameter '-n' to change the maximum number of matching classes.");
-                return;
-            }
             for (Class<?> clazz : matchedClasses) {
                 ClassDetailVO classInfo = ClassUtils.createClassInfo(clazz, isField);
                 process.appendResult(new SearchClassModel(classInfo, isDetail, isField, expand));
@@ -156,6 +150,11 @@ public class SearchClassCommand extends AnnotatedCommand {
 
         affect.rCnt(matchedClasses.size());
         process.appendResult(new RowAffectModel(affect));
+        if (numberOfLimit > 0 && matchedClasses.size() >= numberOfLimit) {
+            process.end(-1, "The number of matching classes may greater than : " + numberOfLimit+". \n" +
+                    "Please specify a more accurate 'class-patten' or use the parameter '-n' to change the maximum number of matching classes.");
+            return;
+        }
         process.end();
     }
 

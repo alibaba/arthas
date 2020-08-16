@@ -107,7 +107,7 @@ public class SearchMethodCommand extends AnnotatedCommand {
 
         Instrumentation inst = process.session().getInstrumentation();
         Matcher<String> methodNameMatcher = methodNameMatcher();
-        
+
         if (hashCode == null && classLoaderClass != null) {
             List<ClassLoader> matchedClassLoaders = ClassLoaderUtils.getClassLoaderByClassName(inst, classLoaderClass);
             if (matchedClassLoaders.size() == 1) {
@@ -126,13 +126,8 @@ public class SearchMethodCommand extends AnnotatedCommand {
             }
         }
 
-        Set<Class<?>> matchedClasses = SearchUtils.searchClass(inst, classPattern, isRegEx, hashCode);
+        Set<Class<?>> matchedClasses = SearchUtils.searchClass(inst, classPattern, isRegEx, hashCode, numberOfLimit);
 
-        if (numberOfLimit > 0 && matchedClasses.size() > numberOfLimit) {
-            process.end(-1, "The number of matching classes is greater than : " + numberOfLimit+". \n" +
-                    "Please specify a more accurate 'class-patten' or use the parameter '-n' to change the maximum number of matching classes.");
-            return;
-        }
         for (Class<?> clazz : matchedClasses) {
             try {
                 for (Constructor<?> constructor : clazz.getDeclaredConstructors()) {
@@ -163,6 +158,11 @@ public class SearchMethodCommand extends AnnotatedCommand {
         }
 
         process.appendResult(new RowAffectModel(affect));
+        if (numberOfLimit > 0 && matchedClasses.size() >= numberOfLimit) {
+            process.end(-1, "The number of matching classes may greater than : " + numberOfLimit+". \n" +
+                    "Please specify a more accurate 'class-patten' or use the parameter '-n' to change the maximum number of matching classes.");
+            return;
+        }
         process.end();
     }
 
