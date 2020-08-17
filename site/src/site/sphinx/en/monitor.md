@@ -20,7 +20,6 @@ On Arthas's server side, the command is running as a background job, but the wea
 |timestamp|timestamp|
 |class|Java class|
 |method|method (constructor and regular methods)|
-|condition-expression|condition expression to filter|
 |total|calling times|
 |success|success count|
 |fail|failure count|
@@ -35,6 +34,7 @@ Parameter `[c:]` stands for cycles of statistics. Its value is an integer value 
 |---:|:---|
 |*class-pattern*|pattern for the class name|
 |*method-pattern*|pattern for the method name|
+|*condition-expression*|condition expression to filter|
 |`[E]`|turn on regex matching while the default is wildcard matching|
 |`[c:]`|cycle of statistics, the default value: `120`s|
 
