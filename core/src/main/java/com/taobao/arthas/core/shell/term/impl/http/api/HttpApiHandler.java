@@ -42,7 +42,6 @@ import java.util.Map;
 import java.util.TreeMap;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicInteger;
 
 
 /**
@@ -309,7 +308,7 @@ public class HttpApiHandler {
      * @param inputStatus
      */
     private void updateSessionInputStatus(Session session, InputStatus inputStatus) {
-        SharingResultDistributor resultDistributor = session.getResultDistributor();
+        ResultDistributor resultDistributor = session.getResultDistributor();
         if (resultDistributor != null) {
             resultDistributor.appendResult(new InputStatusModel(inputStatus));
         }
@@ -321,7 +320,14 @@ public class HttpApiHandler {
         ResultConsumer resultConsumer = new ResultConsumerImpl();
         //disable input and interrupt
         resultConsumer.appendResult(new InputStatusModel(InputStatus.DISABLED));
-        session.getResultDistributor().addConsumer(resultConsumer);
+
+        ResultDistributor resultDistributor = session.getResultDistributor();
+        if (resultDistributor instanceof SharingResultDistributor) {
+            SharingResultDistributor sharingResultDistributor = (SharingResultDistributor) resultDistributor;
+            sharingResultDistributor.addConsumer(resultConsumer);
+        } else {
+            throw new UnsupportedOperationException("This session does not support joining.");
+        }
 
         ApiResponse response = new ApiResponse();
         response.setSessionId(session.getSessionId())
@@ -345,7 +351,7 @@ public class HttpApiHandler {
     }
 
     private ApiResponse processCloseSessionRequest(ApiRequest apiRequest, Session session) {
-        sessionManager.removeSession(session.getSessionId());
+        sessionManager.closeSession(session.getSessionId());
         ApiResponse response = new ApiResponse();
         response.setState(ApiState.SUCCEEDED);
         return response;
@@ -440,7 +446,7 @@ public class HttpApiHandler {
             return response;
         } finally {
             if (oneTimeAccess) {
-                sessionManager.removeSession(session.getSessionId());
+                sessionManager.closeSession(session.getSessionId());
             }
         }
     }
@@ -509,10 +515,9 @@ public class HttpApiHandler {
 
     private ApiResponse processInterruptJob(ApiRequest apiRequest, Session session) {
         Job job = session.getForegroundJob();
-        if (job == null) {
-            return new ApiResponse().setState(ApiState.FAILED).setMessage("no foreground job is running");
+        if (job != null) {
+            job.interrupt();
         }
-        job.interrupt();
 
         Map<String, Object> body = new TreeMap<String, Object>();
         body.put("jobId", job.id());
@@ -534,7 +539,11 @@ public class HttpApiHandler {
         if (StringUtils.isBlank(consumerId)) {
             throw new ApiException("'consumerId' is required");
         }
-        ResultConsumer consumer = session.getResultDistributor().getConsumer(consumerId);
+        ResultDistributor resultDistributor = session.getResultDistributor();
+        if (!(resultDistributor instanceof SharingResultDistributor)) {
+            throw new ApiException("This session does not support pull results by consumer");
+        }
+        ResultConsumer consumer = ((SharingResultDistributor)resultDistributor).getConsumer(consumerId);
         if (consumer == null) {
             throw new ApiException("consumer not found: " + consumerId);
         }
