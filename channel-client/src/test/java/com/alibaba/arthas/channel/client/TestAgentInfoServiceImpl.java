@@ -8,7 +8,7 @@ import java.util.UUID;
 /**
  * @author gongdewei 2020/8/14
  */
-public class TestAgentServiceImpl implements AgentService {
+public class TestAgentInfoServiceImpl implements AgentInfoService {
 
     private AgentInfo agentInfo;
 

@@ -6,7 +6,7 @@ import com.alibaba.arthas.channel.proto.AgentStatus;
 /**
  * @author gongdewei 2020/8/14
  */
-public interface AgentService {
+public interface AgentInfoService {
 
     AgentInfo getAgentInfo();
 

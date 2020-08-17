@@ -18,7 +18,7 @@ public class ChannelClientTest {
     public static void main(String[] args) throws IOException {
 
         final ChannelClient channelClient = new ChannelClient("localhost", 7700);
-        channelClient.setAgentService(new TestAgentServiceImpl());
+        channelClient.setAgentInfoService(new TestAgentInfoServiceImpl());
         ScheduledExecutorService executorService = getExecutorService();
         channelClient.setExecutorService(executorService);
         channelClient.setRequestListener(new RequestHandler(channelClient, executorService));
@@ -72,7 +72,6 @@ public class ChannelClientTest {
                         .setAgentId(request.getAgentId())
                         .setRequestId(request.getRequestId())
                         .setSessionId(request.getSessionId())
-                        .setConsumerId(request.getConsumerId())
                         .build());
             } catch (Exception e) {
                 e.printStackTrace();
@@ -91,7 +90,6 @@ public class ChannelClientTest {
                                     .setAgentId(request.getAgentId())
                                     .setRequestId(request.getRequestId())
                                     .setSessionId(request.getSessionId())
-                                    .setConsumerId(request.getConsumerId())
                                     .build());
                         } catch (Exception e) {
                             e.printStackTrace();
@@ -110,7 +108,6 @@ public class ChannelClientTest {
                                 .setAgentId(request.getAgentId())
                                 .setRequestId(request.getRequestId())
                                 .setSessionId(request.getSessionId())
-                                .setConsumerId(request.getConsumerId())
                                 .build());
                     } catch (Exception e) {
                         e.printStackTrace();
@@ -123,7 +120,7 @@ public class ChannelClientTest {
 
 
     private static ScheduledExecutorService getExecutorService() {
-        return Executors.newScheduledThreadPool(1, new ThreadFactory() {
+        return Executors.newScheduledThreadPool(10, new ThreadFactory() {
             @Override
             public Thread newThread(Runnable r) {
                 final Thread t = new Thread(r, "arthas-channel-client-schedule");

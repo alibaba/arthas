@@ -17,12 +17,9 @@ import io.netty.util.concurrent.Promise;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.Iterator;
-import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
 
 /**
  * @author gongdewei 2020/8/14
@@ -31,7 +28,7 @@ public class ChannelClient {
 
     private static final Logger logger = LoggerFactory.getLogger(ChannelClient.class);
 
-    private AgentService agentService;
+    private AgentInfoService agentInfoService;
     private RequestListener requestListener;
     private ScheduledExecutorService executorService;
     private volatile boolean isError;
@@ -39,6 +36,8 @@ public class ChannelClient {
     private int port;
     private ArthasServiceGrpc.ArthasServiceStub arthasServiceStub;
     private StreamObserver<ActionResponse> responseStreamObserver;
+    private ManagedChannel channel;
+    private ScheduledFuture<?> reconnectFuture;
 
     public ChannelClient(String host, int port) {
         this.host = host;
@@ -46,26 +45,44 @@ public class ChannelClient {
     }
 
     public void start() {
-        scheduleReconnectTask();
         isError = true;
         try {
             connect();
         } catch (Exception e) {
             logger.error("connect failure", e);
         }
+        scheduleReconnectTask();
     }
 
     public void stop() {
-        //TODO stop
-        // cancel schedule task
+        isError = true;
+        // cancel reconnect task
+        if (reconnectFuture != null) {
+            try {
+                reconnectFuture.cancel(true);
+            } catch (Exception e) {
+                logger.warn("Cancel reconnect task error", e);
+            }
+        }
+        if (channel != null) {
+            channel.shutdown();
+            try {
+                channel.awaitTermination(5, TimeUnit.SECONDS);
+            } catch (InterruptedException e) {
+                //ignore ex
+            }
+        }
     }
 
     private void connect() throws Exception {
         logger.info("Connecting to channel server [{}:{}] ..", host, port);
-        ManagedChannel channel = ManagedChannelBuilder.forAddress(host, port).usePlaintext(true).build();
+        ManagedChannelBuilder<?> channelBuilder = ManagedChannelBuilder.forAddress(host, port);
+        //TODO support ssl & plain text
+        channelBuilder.usePlaintext(true);
+        channel = channelBuilder.build();
 
         //register
-        AgentInfo agentInfo = agentService.getAgentInfo();
+        AgentInfo agentInfo = agentInfoService.getAgentInfo();
 
 //        ArthasServiceGrpc.ArthasServiceFutureStub arthasServiceFutureStub = ArthasServiceGrpc.newFutureStub(channel);
 //        RegisterResult registerResult;
@@ -75,7 +92,6 @@ public class ChannelClient {
 //            logger.error("Agent registration error: " + e.toString(), e);
 //            throw e;
 //        }
-
 
         arthasServiceStub = ArthasServiceGrpc.newStub(channel);
         final Promise<RegisterResult> promise = GlobalEventExecutor.INSTANCE.newPromise();
@@ -111,6 +127,24 @@ public class ChannelClient {
             logger.info("Agent registered successfully.");
         }
 
+        //submit result
+        responseStreamObserver = arthasServiceStub.submitResponse(new StreamObserver<GeneralResult>() {
+            @Override
+            public void onNext(GeneralResult value) {
+
+            }
+
+            @Override
+            public void onError(Throwable t) {
+                onClientError("submitResponse on error", t);
+            }
+
+            @Override
+            public void onCompleted() {
+                onClientError("submitResponse completed", null);
+            }
+        });
+
         //acquireRequest
         arthasServiceStub.acquireRequest(agentInfo, new StreamObserver<ActionRequest>() {
             @Override
@@ -133,33 +167,15 @@ public class ChannelClient {
             }
         });
 
-        //submit result
-        responseStreamObserver = arthasServiceStub.submitResponse(new StreamObserver<GeneralResult>() {
-            @Override
-            public void onNext(GeneralResult value) {
-
-            }
-
-            @Override
-            public void onError(Throwable t) {
-                onClientError("submitResponse on error", t);
-            }
-
-            @Override
-            public void onCompleted() {
-                onClientError("submitResponse completed", null);
-            }
-        });
-
         isError = false;
-        agentService.updateAgentStatus(AgentStatus.IN_SERVICE);
+        agentInfoService.updateAgentStatus(AgentStatus.IN_SERVICE);
 
         sendHeartbeat(arthasServiceStub);
         logger.info("Channel client is ready.");
     }
 
     private void sendHeartbeat(final ArthasServiceGrpc.ArthasServiceStub arthasServiceStub) {
-        AgentInfo agentInfo = agentService.getAgentInfo();
+        AgentInfo agentInfo = agentInfoService.getAgentInfo();
         HeartbeatRequest heartbeatRequest = HeartbeatRequest.newBuilder()
                 .setAgentId(agentInfo.getAgentId())
                 .setAgentStatus(agentInfo.getAgentStatus())
@@ -193,24 +209,35 @@ public class ChannelClient {
 
     }
 
-    public void submitResponse(ActionResponse response) throws Exception {
-        checkConnection();
-
+    public void submitResponse(ActionResponse response) {
+        //TODO 添加response缓存队列，重连成功发送
         try {
+            checkConnection();
             responseStreamObserver.onNext(response);
         } catch (Exception e) {
             logger.error("submit response failure", e);
-            onClientError("send response failure", e);
-            throw e;
+            onClientError("submit response failure", e);
+            //throw e;
         }
     }
 
     private void scheduleReconnectTask() {
-        ScheduledFuture<?> scheduledFuture = executorService.scheduleAtFixedRate(new Runnable() {
+        reconnectFuture = executorService.scheduleWithFixedDelay(new Runnable() {
             @Override
             public void run() {
                 try {
                     if (isError) {
+                        //stop previous channel
+                        if (channel != null) {
+                            try {
+                                channel.shutdown();
+                                channel.awaitTermination(1, TimeUnit.SECONDS);
+                            } catch (InterruptedException e) {
+                                //ignore ex
+                            }
+                            channel = null;
+                        }
+
                         connect();
                     }
                 } catch (Throwable e) {
@@ -221,11 +248,15 @@ public class ChannelClient {
 
     }
 
-    private void onClientError(String message, Throwable t) {
+    private void onClientError(String message, Throwable ex) {
         isError = true;
-        agentService.updateAgentStatus(AgentStatus.OUT_OF_SERVICE);
+        agentInfoService.updateAgentStatus(AgentStatus.OUT_OF_SERVICE);
 
-        logger.error("Channel client is error: " + message, t);
+        if (ex == null) {
+            logger.error("Channel client is error: " + message);
+        } else {
+            logger.error("Channel client is error: " + message, ex);
+        }
     }
 
     private void checkConnection() throws Exception {
@@ -234,8 +265,8 @@ public class ChannelClient {
         }
     }
 
-    public void setAgentService(AgentService agentService) {
-        this.agentService = agentService;
+    public void setAgentInfoService(AgentInfoService agentInfoService) {
+        this.agentInfoService = agentInfoService;
     }
 
     public void setRequestListener(RequestListener requestListener) {
