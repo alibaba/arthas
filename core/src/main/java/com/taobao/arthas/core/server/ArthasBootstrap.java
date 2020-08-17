@@ -14,6 +14,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Properties;
 import java.util.Timer;
+import java.util.UUID;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ThreadFactory;
@@ -21,6 +22,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.jar.JarFile;
 
+import com.alibaba.arthas.channel.client.ChannelClient;
 import com.alibaba.arthas.deps.ch.qos.logback.classic.LoggerContext;
 import com.alibaba.arthas.deps.org.slf4j.Logger;
 import com.alibaba.arthas.deps.org.slf4j.LoggerFactory;
@@ -28,6 +30,8 @@ import com.alibaba.arthas.tunnel.client.TunnelClient;
 import com.taobao.arthas.common.AnsiLog;
 import com.taobao.arthas.common.PidUtils;
 import com.taobao.arthas.core.advisor.TransformerManager;
+import com.taobao.arthas.core.channel.AgentInfoServiceImpl;
+import com.taobao.arthas.core.channel.ChannelRequestHandler;
 import com.taobao.arthas.core.command.BuiltinCommandPack;
 import com.taobao.arthas.core.command.view.ResultViewResolver;
 import com.taobao.arthas.core.config.BinderUtils;
@@ -98,6 +102,7 @@ public class ArthasBootstrap {
     private HistoryManager historyManager;
 
     private HttpApiHandler httpApiHandler;
+    private ChannelClient channelClient;
 
     private ArthasBootstrap(Instrumentation instrumentation, Map<String, String> args) throws Throwable {
         this.instrumentation = instrumentation;
@@ -119,15 +124,6 @@ public class ArthasBootstrap {
         // 5. start agent server
         bind(configure);
 
-        executorService = Executors.newScheduledThreadPool(1, new ThreadFactory() {
-            @Override
-            public Thread newThread(Runnable r) {
-                final Thread t = new Thread(r, "arthas-command-execute");
-                t.setDaemon(true);
-                return t;
-            }
-        });
-
         shutdown = new Thread("as-shutdown-hooker") {
 
             @Override
@@ -141,6 +137,15 @@ public class ArthasBootstrap {
     }
 
     private void initBeans() {
+        executorService = Executors.newScheduledThreadPool(1, new ThreadFactory() {
+            @Override
+            public Thread newThread(Runnable r) {
+                final Thread t = new Thread(r, "arthas-command-execute");
+                t.setDaemon(true);
+                return t;
+            }
+        });
+
         this.resultViewResolver = new ResultViewResolver();
 
         this.historyManager = new HistoryManagerImpl();
@@ -303,7 +308,11 @@ public class ArthasBootstrap {
                             .setPid(PidUtils.currentLongPid())
                             .setSessionTimeout(configure.getSessionTimeout() * 1000);
 
+            if (agentId == null) {
+                agentId = generateRandomAgentId();
+            }
             if (agentId != null) {
+                configure.setAgentId(agentId);
                 Map<String, String> welcomeInfos = new HashMap<String, String>();
                 welcomeInfos.put("id", agentId);
                 options.setWelcomeMessage(ArthasBanner.welcome(welcomeInfos));
@@ -344,6 +353,15 @@ public class ArthasBootstrap {
 
             logger().info("as-server listening on network={};telnet={};http={};timeout={};", configure.getIp(),
                     configure.getTelnetPort(), configure.getHttpPort(), options.getConnectionTimeout());
+
+            // start channel client
+            //TODO configure channel server
+            channelClient = new ChannelClient("localhost", 7700);
+            channelClient.setAgentInfoService(new AgentInfoServiceImpl(configure));
+            channelClient.setExecutorService(executorService);
+            channelClient.setRequestListener(new ChannelRequestHandler(channelClient, sessionManager, historyManager));
+            channelClient.start();
+
 
             // 异步回报启动次数
             if (configure.getStatUrl() != null) {
@@ -397,6 +415,15 @@ public class ArthasBootstrap {
                 logger().error("stop tunnel client error", e);
             }
         }
+
+        if (channelClient != null) {
+            try {
+                channelClient.stop();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+
         executorService.shutdownNow();
         transformerManager.destroy();
         UserStatUtil.destroy();
@@ -483,6 +510,10 @@ public class ArthasBootstrap {
         } catch (Throwable e) {
             // ignore
         }
+    }
+
+    private String generateRandomAgentId() {
+        return UUID.randomUUID().toString().replaceAll("-", "");
     }
 
     public TunnelClient getTunnelClient() {
