@@ -162,8 +162,6 @@ public class ArthasServiceServerJsonResultTest {
                     System.out.println("submitResponse: " + response);
                     if (response.hasExecuteResult()) {
                         ExecuteResult executeResult = response.getExecuteResult();
-                        executeResult.getJobId();
-                        executeResult.getJobStatus();
 
                         // get json results
                         if (executeResult.hasResultsJson()) {

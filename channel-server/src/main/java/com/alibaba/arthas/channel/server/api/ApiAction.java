@@ -22,19 +22,9 @@ public enum ApiAction {
     INTERRUPT_JOB,
 
     /**
-     * Pull the results from result queue of the session
-     */
-    PULL_RESULTS,
-
-    /**
      * Create a new session
      */
     INIT_SESSION,
-
-    /**
-     * Join a exist session
-     */
-    JOIN_SESSION,
 
     /**
      * Terminate the session
@@ -42,7 +32,8 @@ public enum ApiAction {
     CLOSE_SESSION,
 
     /**
-     * Get session info
+     * Join a exist session
      */
-    SESSION_INFO
+//    JOIN_SESSION,
+
 }

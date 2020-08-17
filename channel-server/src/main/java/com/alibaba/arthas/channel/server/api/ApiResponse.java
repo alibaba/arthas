@@ -10,9 +10,7 @@ public class ApiResponse<T> {
     private ApiState state;
     private String message;
     private String sessionId;
-    private String consumerId;
-    private String jobId;
-    private String jobStatus;
+    // private String consumerId;
     private T result;
 
     public String getAgentId() {
@@ -60,32 +58,14 @@ public class ApiResponse<T> {
         return this;
     }
 
-    public String getConsumerId() {
-        return consumerId;
-    }
-
-    public ApiResponse<T> setConsumerId(String consumerId) {
-        this.consumerId = consumerId;
-        return this;
-    }
-
-    public String getJobId() {
-        return jobId;
-    }
-
-    public ApiResponse<T> setJobId(String jobId) {
-        this.jobId = jobId;
-        return this;
-    }
-
-    public String getJobStatus() {
-        return jobStatus;
-    }
-
-    public ApiResponse<T> setJobStatus(String jobStatus) {
-        this.jobStatus = jobStatus;
-        return this;
-    }
+//    public String getConsumerId() {
+//        return consumerId;
+//    }
+//
+//    public ApiResponse<T> setConsumerId(String consumerId) {
+//        this.consumerId = consumerId;
+//        return this;
+//    }
 
     public T getResult() {
         return result;

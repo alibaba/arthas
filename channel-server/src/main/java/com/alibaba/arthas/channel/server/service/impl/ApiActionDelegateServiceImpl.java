@@ -47,13 +47,13 @@ public class ApiActionDelegateServiceImpl implements ApiActionDelegateService {
         return sendRequestAndSubscribe(agentId, apiRequest);
     }
 
-    @Override
-    public Promise<ApiResponse> joinSession(String agentId, String sessionId) throws Exception {
-        ApiRequest apiRequest = new ApiRequest();
-        apiRequest.setAction(ApiAction.JOIN_SESSION.name());
-        apiRequest.setSessionId(sessionId);
-        return sendRequestAndSubscribe(agentId, apiRequest);
-    }
+//    @Override
+//    public Promise<ApiResponse> joinSession(String agentId, String sessionId) throws Exception {
+//        ApiRequest apiRequest = new ApiRequest();
+//        apiRequest.setAction(ApiAction.JOIN_SESSION.name());
+//        apiRequest.setSessionId(sessionId);
+//        return sendRequestAndSubscribe(agentId, apiRequest);
+//    }
 
     @Override
     public Promise<ApiResponse> closeSession(String agentId, String sessionId) throws Exception {
@@ -226,9 +226,9 @@ public class ApiActionDelegateServiceImpl implements ApiActionDelegateService {
         if (request.getSessionId() != null) {
             actionRequestBuilder = actionRequestBuilder.setSessionId(StringValue.of(request.getSessionId()));
         }
-        if (request.getConsumerId() != null) {
-            actionRequestBuilder = actionRequestBuilder.setConsumerId(StringValue.of(request.getConsumerId()));
-        }
+//        if (request.getConsumerId() != null) {
+//            actionRequestBuilder = actionRequestBuilder.setConsumerId(StringValue.of(request.getConsumerId()));
+//        }
         if (request.getCommand() != null) {
             int execTimeout = request.getExecTimeout() !=null && request.getExecTimeout() > 0 ? request.getExecTimeout() : 30000;
             actionRequestBuilder = actionRequestBuilder.setExecuteParams(ExecuteParams.newBuilder()
@@ -250,16 +250,14 @@ public class ApiActionDelegateServiceImpl implements ApiActionDelegateService {
         if (actionResponse.hasSessionId()) {
             apiResponse.setSessionId(actionResponse.getSessionId().getValue());
         }
-        if (actionResponse.hasConsumerId()) {
-            apiResponse.setConsumerId(actionResponse.getConsumerId().getValue());
-        }
+//        if (actionResponse.hasConsumerId()) {
+//            apiResponse.setConsumerId(actionResponse.getConsumerId().getValue());
+//        }
         if (actionResponse.hasMessage()) {
             apiResponse.setMessage(actionResponse.getMessage().getValue());
         }
         if (actionResponse.hasExecuteResult()) {
             ExecuteResult executeResult = actionResponse.getExecuteResult();
-            apiResponse.setJobId(executeResult.getJobId() + "");
-            apiResponse.setJobStatus(executeResult.getJobStatus());
 
             if (executeResult.hasResultsJson()) {
                 apiResponse.setResult(executeResult.getResultsJson().getValue());
@@ -272,11 +270,12 @@ public class ApiActionDelegateServiceImpl implements ApiActionDelegateService {
         ApiAction apiAction = ApiAction.valueOf(action.trim().toUpperCase());
 
         switch (apiAction) {
-            case ASYNC_EXEC:
             case EXEC:
                 return RequestAction.EXECUTE;
-            case JOIN_SESSION:
-                return RequestAction.JOIN_SESSION;
+            case ASYNC_EXEC:
+                return RequestAction.ASYNC_EXECUTE;
+//            case JOIN_SESSION:
+//                return RequestAction.JOIN_SESSION;
             case INIT_SESSION:
                 return RequestAction.INIT_SESSION;
             case CLOSE_SESSION:

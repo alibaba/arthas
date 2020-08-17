@@ -73,13 +73,24 @@ enum RequestAction {
     EXECUTE = 0;
 
     /*
+     * Async execute command
+     */
+    ASYNC_EXECUTE = 1;
+
+    /*
      * Interrupt executing job
      */
-    INTERRUPT_JOB = 1;
+    INTERRUPT_JOB = 2;
 
-    INIT_SESSION = 2;
-    JOIN_SESSION = 3;
+    /* create new session */
+    INIT_SESSION = 3;
+
+    /* close session */
     CLOSE_SESSION = 4;
+
+    /* join session */
+    /* JOIN_SESSION = 5; */
+
 }
 
 enum ResultFormat {
@@ -95,26 +106,20 @@ message ExecuteParams {
     /* command line to execute */
     string commandLine = 1;
 
-    /* unique command id */
-    string cmdId = 2;
-
     /* execute timeout */
-    int32 execTimeout = 3;
+    int32 execTimeout = 2;
 
     /* command results data format, default value is ResultFormat.PROTO */
-    ResultFormat resultFormat = 4;
+    ResultFormat resultFormat = 3;
 }
 
 message ExecuteResult {
-    int32 jobId = 1;
-
-    string jobStatus = 2;
 
     /* results of proto format */
-    repeated google.protobuf.Any results = 3;
+    repeated google.protobuf.Any results = 1;
 
     /* results of json format */
-    google.protobuf.StringValue resultsJson = 4;
+    google.protobuf.StringValue resultsJson = 2;
 }
 
 message ActionRequest {
@@ -137,7 +142,7 @@ message ActionRequest {
     google.protobuf.StringValue sessionId = 6;
 
     /* Arthas consumerId of session */
-    google.protobuf.StringValue consumerId = 7;
+    /* google.protobuf.StringValue consumerId = 7; */
 
 }
 
@@ -161,7 +166,7 @@ message ActionResponse {
     google.protobuf.StringValue sessionId = 6;
 
     /* Arthas consumerId of session */
-    google.protobuf.StringValue consumerId = 7;
+    /* google.protobuf.StringValue consumerId = 7; */
 }
 
 message GeneralResult {

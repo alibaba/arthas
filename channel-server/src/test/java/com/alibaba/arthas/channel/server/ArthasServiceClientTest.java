@@ -163,9 +163,7 @@ public class ArthasServiceClientTest {
 
                 //convert results
                 boolean isProtoFormat = executeParams.getResultFormat().equals(ResultFormat.PROTO);
-                ExecuteResult.Builder resultBuilder = ExecuteResult.newBuilder()
-                        .setJobId(++jobId)
-                        .setJobStatus("TERMINATED");
+                ExecuteResult.Builder resultBuilder = ExecuteResult.newBuilder();
                 if (isProtoFormat) {
                     try {
                         List<Any> results = convertToProtoResults(resultModels);

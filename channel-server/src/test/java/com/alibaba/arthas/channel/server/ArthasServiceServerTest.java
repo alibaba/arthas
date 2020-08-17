@@ -163,8 +163,6 @@ public class ArthasServiceServerTest {
                     System.out.println("submitResponse: " + response);
                     if (response.hasExecuteResult()) {
                         ExecuteResult executeResult = response.getExecuteResult();
-                        executeResult.getJobId();
-                        executeResult.getJobStatus();
                         List<Any> resultsList = executeResult.getResultsList();
                         for (Any result : resultsList) {
                             String clazzName = result.getTypeUrl().split("/")[1];;

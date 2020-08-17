@@ -11,7 +11,7 @@ public interface ApiActionDelegateService {
 
     Promise<ApiResponse> initSession(String agentId) throws Exception;
 
-    Promise<ApiResponse> joinSession(String agentId, String sessionId) throws Exception;
+//    Promise<ApiResponse> joinSession(String agentId, String sessionId) throws Exception;
 
     Promise<ApiResponse> closeSession(String agentId, String sessionId) throws Exception;
 
