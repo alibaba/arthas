@@ -6,7 +6,6 @@ import com.taobao.arthas.core.command.model.MonitorModel;
 import com.taobao.arthas.core.shell.command.CommandProcess;
 import com.taobao.arthas.core.advisor.ArthasMethod;
 import com.taobao.arthas.core.util.StringUtils;
-import com.taobao.arthas.core.util.ThreadLocalContext;
 import com.taobao.arthas.core.util.ThreadLocalWatch;
 
 import java.util.ArrayList;
@@ -71,7 +70,12 @@ class MonitorAdviceListener extends AdviceListenerAdapter {
     // 监控数据
     private ConcurrentHashMap<Key, AtomicReference<MonitorData>> monitorData = new ConcurrentHashMap<Key, AtomicReference<MonitorData>>();
     private final ThreadLocalWatch threadLocalWatch = new ThreadLocalWatch();
-    private final ThreadLocalContext threadLocalContext = new ThreadLocalContext();
+    private final ThreadLocal<Boolean> conditionResult = new ThreadLocal<Boolean>() {
+        @Override
+        protected Boolean initialValue() {
+            return true;
+        }
+    };
     private MonitorCommand command;
     private CommandProcess process;
 
@@ -108,7 +112,7 @@ class MonitorAdviceListener extends AdviceListenerAdapter {
             //todo 真实计算执行耗时
             isPass = isConditionMet(this.command.getConditionExpress(), advice, 0);
         }
-        this.threadLocalContext.setConditionResult(isPass);
+        this.conditionResult.set(isPass);
     }
 
     @Override
@@ -126,7 +130,7 @@ class MonitorAdviceListener extends AdviceListenerAdapter {
     private void finishing(Class<?> clazz, ArthasMethod method, boolean isThrowing) {
         double cost = threadLocalWatch.costInMillis();
 
-        if (!this.threadLocalContext.getConditionResult()) {
+        if (!this.conditionResult.get()) {
             return;
         }
 
