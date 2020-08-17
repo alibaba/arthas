@@ -44,6 +44,8 @@ import com.taobao.middleware.cli.annotations.Summary;
         "  sc -E org\\\\.apache\\\\.commons\\\\.lang\\\\.StringUtils\n" +
         Constants.WIKI + Constants.WIKI_HOME + "sc")
 public class SearchClassCommand extends AnnotatedCommand {
+    //sc/sm 指定启用-d参数时的默认限制
+    static final int SEARCH_DETAIL_DEFAULT_LIMIT = 100;
     private String classPattern;
     private boolean isDetail = false;
     private boolean isField = false;
@@ -51,7 +53,7 @@ public class SearchClassCommand extends AnnotatedCommand {
     private String hashCode = null;
     private String classLoaderClass;
     private Integer expand;
-    private int numberOfLimit = 100;
+    private int numberOfLimit;
 
     @Argument(argName = "class-pattern", index = 0)
     @Description("Class name pattern, use either '.' or '/' as separator")
@@ -123,7 +125,9 @@ public class SearchClassCommand extends AnnotatedCommand {
                 return;
             }
         }
-
+        if (isDetail && numberOfLimit == 0) {
+            numberOfLimit = SEARCH_DETAIL_DEFAULT_LIMIT;
+        }
         List<Class<?>> matchedClasses = new ArrayList<Class<?>>(SearchUtils.searchClass(inst, classPattern, isRegEx, hashCode, numberOfLimit));
         Collections.sort(matchedClasses, new Comparator<Class<?>>() {
             @Override

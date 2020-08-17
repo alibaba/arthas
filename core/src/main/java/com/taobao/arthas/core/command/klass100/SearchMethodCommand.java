@@ -57,7 +57,7 @@ public class SearchMethodCommand extends AnnotatedCommand {
     private String classLoaderClass;
     private boolean isDetail = false;
     private boolean isRegEx = false;
-    private int numberOfLimit = 100;
+    private int numberOfLimit;
 
     @Argument(argName = "class-pattern", index = 0)
     @Description("Class name pattern, use either '.' or '/' as separator")
@@ -104,7 +104,9 @@ public class SearchMethodCommand extends AnnotatedCommand {
     @Override
     public void process(CommandProcess process) {
         RowAffect affect = new RowAffect();
-
+        if (numberOfLimit == 0) {
+            numberOfLimit = SearchClassCommand.SEARCH_DETAIL_DEFAULT_LIMIT;
+        }
         Instrumentation inst = process.session().getInstrumentation();
         Matcher<String> methodNameMatcher = methodNameMatcher();
 

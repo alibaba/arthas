@@ -51,7 +51,7 @@ public class SearchUtils {
     }
 
     public static Set<Class<?>> searchClass(Instrumentation inst, String classPattern, boolean isRegEx) {
-        return searchClass(inst, classPattern, isRegEx);
+        return searchClass(inst, classPattern, isRegEx, null);
     }
 
     public static Set<Class<?>> searchClass(Instrumentation inst, String classPattern, boolean isRegEx, String code, int limit) {
@@ -61,7 +61,7 @@ public class SearchUtils {
     }
 
     public static Set<Class<?>> searchClass(Instrumentation inst, String classPattern, boolean isRegEx, String code) {
-        return searchClass(inst, classPattern, isRegEx, code, 0);
+        return searchClass(inst, classPattern, isRegEx, code, -1);
     }
 
     public static Set<Class<?>> searchClassOnly(Instrumentation inst, String classPattern, boolean isRegEx) {
