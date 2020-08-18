@@ -58,6 +58,7 @@ public class ClassLoaderCommand extends AnnotatedCommand {
     private boolean isTree = false;
     private String hashCode;
     private String classLoaderClass;
+    private boolean classLoaderSpecified = false;
     private boolean all = false;
     private String resource;
     private boolean includeReflectionClassLoader = true;
@@ -77,12 +78,14 @@ public class ClassLoaderCommand extends AnnotatedCommand {
     @Description("The class name of the special class's classLoader.")
     public void setClassLoaderClass(String classLoaderClass) {
         this.classLoaderClass = classLoaderClass;
+        classLoaderSpecified = true;
     }
 
     @Option(shortName = "c", longName = "classloader")
     @Description("The hash code of the special ClassLoader")
     public void setHashCode(String hashCode) {
         this.hashCode = hashCode;
+        classLoaderSpecified = true;
     }
 
     @Option(shortName = "a", longName = "all", flag = true)
@@ -151,13 +154,11 @@ public class ClassLoaderCommand extends AnnotatedCommand {
 
         if (all) {
             processAllClasses(process, inst);
-        } else if (targetClassLoader != null && resource != null) {
+        } else if (classLoaderSpecified && resource != null) {
             processResources(process, inst, targetClassLoader);
-        } else if (resource != null) {
-            processResources(process, inst, null);
-        } else if (targetClassLoader != null && this.loadClass != null) {
+        } else if (classLoaderSpecified && this.loadClass != null) {
             processLoadClass(process, inst, targetClassLoader);
-        } else if (targetClassLoader != null) {
+        } else if (classLoaderSpecified) {
             processClassLoader(process, inst, targetClassLoader);
         } else if (listClassLoader || isTree){
             processClassLoaders(process, inst);
