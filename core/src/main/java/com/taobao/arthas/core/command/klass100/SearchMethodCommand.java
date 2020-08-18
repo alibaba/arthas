@@ -111,7 +111,7 @@ public class SearchMethodCommand extends AnnotatedCommand {
         if (hashCode == null && classLoaderClass != null) {
             List<ClassLoader> matchedClassLoaders = ClassLoaderUtils.getClassLoaderByClassName(inst, classLoaderClass);
             if (matchedClassLoaders.size() == 1) {
-                hashCode = "" + Integer.toHexString(matchedClassLoaders.get(0).hashCode());
+                hashCode = Integer.toHexString(matchedClassLoaders.get(0).hashCode());
             } else if (matchedClassLoaders.size() > 1) {
                 Collection<ClassLoaderVO> classLoaderVOList = ClassUtils.createClassLoaderVOList(matchedClassLoaders);
                 SearchMethodModel searchmethodModel = new SearchMethodModel()
