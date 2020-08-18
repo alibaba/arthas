@@ -63,7 +63,7 @@ ts=2019-02-15 01:35:25; [cost=0.996655ms] result=@ArrayList[
 `watch com.example.demo.arthas.user.UserController * '{params[0], target, returnObj}'`{{execute T2}}
 
 
-更多参考： https://alibaba.github.io/arthas/advice-class.html
+更多参考： https://arthas.aliyun.com/doc/advice-class.html
 
 
 ### 条件表达式

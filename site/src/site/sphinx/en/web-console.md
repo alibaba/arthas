@@ -1,6 +1,7 @@
 Web Console
 ===
 
+[`Web Console` online tutorial](https://arthas.aliyun.com/doc/arthas-tutorials.html?language=en&id=case-web-console)
 
 ### Connect arthas through the browser
 
@@ -59,8 +60,8 @@ After Arthas attach succeeds, the agentId will be printed, such as:
 `--' `--'`--' '--'   `--'   `--'  `--'`--' `--'`-----'
 
 
-wiki      https://alibaba.github.io/arthas
-tutorials https://alibaba.github.io/arthas/arthas-tutorials
+wiki      https://arthas.aliyun.com/doc
+tutorials https://arthas.aliyun.com/doc/arthas-tutorials.html
 version   3.1.2
 pid       86183
 time      2019-08-30 15:40:53

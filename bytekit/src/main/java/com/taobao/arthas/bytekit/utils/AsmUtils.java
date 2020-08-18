@@ -155,6 +155,19 @@ public class AsmUtils {
 		return result;
 	}
 
+    public static ClassNode removeJSRInstructions(ClassNode classNode) {
+        ClassNode result = new ClassNode(Opcodes.ASM8);
+        classNode.accept(new ClassVisitor(Opcodes.ASM8, result) {
+            @Override
+            public MethodVisitor visitMethod(int access, String name, String desc, String signature,
+                    String[] exceptions) {
+                MethodVisitor mv = super.visitMethod(access, name, desc, signature, exceptions);
+                return new JSRInlinerAdapter(mv, access, name, desc, signature, exceptions);
+            }
+        });
+        return result;
+    }
+
 	public static MethodNode removeLineNumbers(MethodNode methodNode) {
 		MethodNode result = newMethodNode(methodNode);
 		methodNode.accept(new MethodVisitor(Opcodes.ASM8, result) {

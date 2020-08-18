@@ -3,16 +3,23 @@ package com.taobao.arthas.core.command.klass100;
 
 import java.lang.instrument.Instrumentation;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
 import com.taobao.arthas.core.command.Constants;
+import com.taobao.arthas.core.command.model.ClassDetailVO;
+import com.taobao.arthas.core.command.model.SearchClassModel;
+import com.taobao.arthas.core.command.model.RowAffectModel;
+import com.taobao.arthas.core.command.model.ClassLoaderVO;
 import com.taobao.arthas.core.shell.cli.Completion;
 import com.taobao.arthas.core.shell.cli.CompletionUtils;
 import com.taobao.arthas.core.shell.command.AnnotatedCommand;
 import com.taobao.arthas.core.shell.command.CommandProcess;
 import com.taobao.arthas.core.util.ClassUtils;
+import com.taobao.arthas.core.util.ClassLoaderUtils;
+import com.taobao.arthas.core.util.ResultUtils;
 import com.taobao.arthas.core.util.SearchUtils;
 import com.taobao.arthas.core.util.StringUtils;
 import com.taobao.arthas.core.util.affect.RowAffect;
@@ -21,7 +28,6 @@ import com.taobao.middleware.cli.annotations.Description;
 import com.taobao.middleware.cli.annotations.Name;
 import com.taobao.middleware.cli.annotations.Option;
 import com.taobao.middleware.cli.annotations.Summary;
-import com.taobao.text.util.RenderUtil;
 
 /**
  * 展示类信息
@@ -43,7 +49,9 @@ public class SearchClassCommand extends AnnotatedCommand {
     private boolean isField = false;
     private boolean isRegEx = false;
     private String hashCode = null;
+    private String classLoaderClass;
     private Integer expand;
+    private int numberOfLimit = 100;
 
     @Argument(argName = "class-pattern", index = 0)
     @Description("Class name pattern, use either '.' or '/' as separator")
@@ -81,11 +89,42 @@ public class SearchClassCommand extends AnnotatedCommand {
         this.hashCode = hashCode;
     }
 
+    @Option(longName = "classLoaderClass")
+    @Description("The class name of the special class's classLoader.")
+    public void setClassLoaderClass(String classLoaderClass) {
+        this.classLoaderClass = classLoaderClass;
+    }
+
+    @Option(shortName = "n", longName = "limits")
+    @Description("Maximum number of matching classes with details (100 by default)")
+    public void setNumberOfLimit(int numberOfLimit) {
+        this.numberOfLimit = numberOfLimit;
+    }
+
     @Override
-    public void process(CommandProcess process) {
+    public void process(final CommandProcess process) {
         // TODO: null check
         RowAffect affect = new RowAffect();
         Instrumentation inst = process.session().getInstrumentation();
+
+        if (hashCode == null && classLoaderClass != null) {
+            List<ClassLoader> matchedClassLoaders = ClassLoaderUtils.getClassLoaderByClassName(inst, classLoaderClass);
+            if (matchedClassLoaders.size() == 1) {
+                hashCode = Integer.toHexString(matchedClassLoaders.get(0).hashCode());
+            } else if (matchedClassLoaders.size() > 1) {
+                Collection<ClassLoaderVO> classLoaderVOList = ClassUtils.createClassLoaderVOList(matchedClassLoaders);
+                SearchClassModel searchclassModel = new SearchClassModel()
+                        .setClassLoaderClass(classLoaderClass)
+                        .setMatchedClassLoaders(classLoaderVOList);
+                process.appendResult(searchclassModel);
+                process.end(-1, "Found more than one classloader by class name, please specify classloader with '-c <classloader hash>'");
+                return;
+            } else {
+                process.end(-1, "Can not find classloader by class name: " + classLoaderClass + ".");
+                return;
+            }
+        }
+
         List<Class<?>> matchedClasses = new ArrayList<Class<?>>(SearchUtils.searchClass(inst, classPattern, isRegEx, hashCode));
         Collections.sort(matchedClasses, new Comparator<Class<?>>() {
             @Override
@@ -94,21 +133,30 @@ public class SearchClassCommand extends AnnotatedCommand {
             }
         });
 
-        for (Class<?> clazz : matchedClasses) {
-            processClass(process, clazz);
+        if (isDetail) {
+            if (numberOfLimit > 0 && matchedClasses.size() > numberOfLimit) {
+                process.end(-1, "The number of matching classes is greater than : " + numberOfLimit+". \n" +
+                        "Please specify a more accurate 'class-patten' or use the parameter '-n' to change the maximum number of matching classes.");
+                return;
+            }
+            for (Class<?> clazz : matchedClasses) {
+                ClassDetailVO classInfo = ClassUtils.createClassInfo(clazz, isField);
+                process.appendResult(new SearchClassModel(classInfo, isDetail, isField, expand));
+            }
+        } else {
+            int pageSize = 256;
+            ResultUtils.processClassNames(matchedClasses, pageSize, new ResultUtils.PaginationHandler<List<String>>() {
+                @Override
+                public boolean handle(List<String> classNames, int segment) {
+                    process.appendResult(new SearchClassModel(classNames, segment));
+                    return true;
+                }
+            });
         }
 
         affect.rCnt(matchedClasses.size());
-        process.write(affect + "\n");
+        process.appendResult(new RowAffectModel(affect));
         process.end();
-    }
-
-    private void processClass(CommandProcess process, Class<?> clazz) {
-        if (isDetail) {
-            process.write(RenderUtil.render(ClassUtils.renderClassInfo(clazz, isField, expand), process.width()) + "\n");
-        } else {
-            process.write(clazz.getName() + "\n");
-        }
     }
 
     @Override

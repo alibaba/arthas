@@ -29,6 +29,8 @@ public class ResultViewResolver {
      */
     private void initResultViews() {
         try {
+            registerView(RowAffectView.class);
+
             //basic1000
             registerView(StatusView.class);
             registerView(VersionView.class);
@@ -47,10 +49,32 @@ public class ResultViewResolver {
             registerView(ShutdownView.class);
 
             //klass100
+            registerView(ClassLoaderView.class);
+            registerView(DumpClassView.class);
+            registerView(GetStaticView.class);
+            registerView(JadView.class);
+            registerView(MemoryCompilerView.class);
+            registerView(OgnlView.class);
+            registerView(RedefineView.class);
+            registerView(SearchClassView.class);
+            registerView(SearchMethodView.class);
 
             //logger
+            registerView(LoggerView.class);
 
             //monitor2000
+            registerView(DashboardView.class);
+            registerView(JvmView.class);
+            registerView(MBeanView.class);
+            registerView(PerfCounterView.class);
+            registerView(ThreadView.class);
+            registerView(ProfilerView.class);
+            registerView(EnhancerView.class);
+            registerView(MonitorView.class);
+            registerView(StackView.class);
+            registerView(TimeTunnelView.class);
+            registerView(TraceView.class);
+            registerView(WatchView.class);
 
         } catch (Throwable e) {
             logger.error("register result view failed", e);

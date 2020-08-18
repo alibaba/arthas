@@ -69,6 +69,7 @@ public class VMOptionCommand extends AnnotatedCommand {
                 VMOption option = hotSpotDiagnosticMXBean.getVMOption(name);
                 if (option == null) {
                     process.end(-1, "In order to change the system properties, you must specify the property value.");
+                    return;
                 } else {
                     process.appendResult(new VMOptionModel(Arrays.asList(option)));
                 }
@@ -82,11 +83,10 @@ public class VMOptionCommand extends AnnotatedCommand {
                 process.appendResult(new VMOptionModel(new ChangeResultVO(name, originValue,
                         hotSpotDiagnosticMXBean.getVMOption(name).getValue())));
             }
+            process.end();
         } catch (Throwable t) {
             logger.error("Error during setting vm option", t);
             process.end(-1, "Error during setting vm option: " + t.getMessage());
-        } finally {
-            process.end();
         }
     }
 

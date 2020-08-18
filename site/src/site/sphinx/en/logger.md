@@ -1,6 +1,8 @@
 logger
 ===
 
+[`logger` online tutorial](https://arthas.aliyun.com/doc/arthas-tutorials?language=en&id=command-logger)
+
 > Print the logger information, update the logger level
 
 ### Usage

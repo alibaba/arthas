@@ -105,6 +105,7 @@ function startConnect (silent) {
     // init webSocket
     initWs(ip, port);
     ws.onerror = function () {
+        ws.close();
         ws = null;
         !silent && alert('Connect error');
     };
@@ -128,7 +129,7 @@ function startConnect (silent) {
         });
         ws.send(JSON.stringify({action: 'resize', cols: terminalSize.cols, rows: terminalSize.rows}));
         window.setInterval(function () {
-            if (ws != null) {
+            if (ws != null && ws.readyState === 1) {
                 ws.send(JSON.stringify({action: 'read', data: ""}));
             }
         }, 30000);
@@ -137,6 +138,7 @@ function startConnect (silent) {
 
 function disconnect () {
     try {
+        ws.close();
         ws.onmessage = null;
         ws.onclose = null;
         ws = null;

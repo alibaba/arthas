@@ -5,34 +5,32 @@ import com.alibaba.arthas.deps.org.slf4j.LoggerFactory;
 import com.taobao.arthas.core.command.Constants;
 import com.taobao.arthas.core.command.express.ExpressException;
 import com.taobao.arthas.core.command.express.ExpressFactory;
+import com.taobao.arthas.core.command.model.ClassVO;
+import com.taobao.arthas.core.command.model.GetStaticModel;
+import com.taobao.arthas.core.command.model.MessageModel;
+import com.taobao.arthas.core.command.model.RowAffectModel;
 import com.taobao.arthas.core.shell.command.AnnotatedCommand;
 import com.taobao.arthas.core.shell.command.CommandProcess;
+import com.taobao.arthas.core.shell.command.ExitStatus;
+import com.taobao.arthas.core.util.ClassUtils;
+import com.taobao.arthas.core.util.CommandUtils;
 import com.taobao.arthas.core.util.SearchUtils;
 import com.taobao.arthas.core.util.StringUtils;
-import com.taobao.arthas.core.util.TypeRenderUtils;
 import com.taobao.arthas.core.util.affect.RowAffect;
 import com.taobao.arthas.core.util.matcher.Matcher;
 import com.taobao.arthas.core.util.matcher.RegexMatcher;
 import com.taobao.arthas.core.util.matcher.WildcardMatcher;
-import com.taobao.arthas.core.view.ObjectView;
 import com.taobao.middleware.cli.annotations.Argument;
 import com.taobao.middleware.cli.annotations.Description;
 import com.taobao.middleware.cli.annotations.Name;
 import com.taobao.middleware.cli.annotations.Option;
 import com.taobao.middleware.cli.annotations.Summary;
-import com.taobao.text.Color;
-import com.taobao.text.Decoration;
-import com.taobao.text.ui.Element;
-import com.taobao.text.ui.LabelElement;
-import com.taobao.text.ui.TableElement;
-import com.taobao.text.util.RenderUtil;
 
 import java.lang.instrument.Instrumentation;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
+import java.util.List;
 import java.util.Set;
-
-import static com.taobao.text.ui.Element.label;
 
 /**
  * @author diecui1202 on 2017/9/27.
@@ -96,22 +94,27 @@ public class GetStaticCommand extends AnnotatedCommand {
         RowAffect affect = new RowAffect();
         Instrumentation inst = process.session().getInstrumentation();
         Set<Class<?>> matchedClasses = SearchUtils.searchClassOnly(inst, classPattern, isRegEx, hashCode);
-
         try {
             if (matchedClasses == null || matchedClasses.isEmpty()) {
-                process.write("No class found for: " + classPattern + "\n");
-            } else if (matchedClasses.size() > 1) {
-                processMatches(process, matchedClasses);
-            } else {
-                processExactMatch(process, affect, inst, matchedClasses);
+                process.end(-1, "No class found for: " + classPattern);
+                return;
             }
-        } finally {
-            process.write(affect + "\n");
-            process.end();
+            ExitStatus status = null;
+            if (matchedClasses.size() > 1) {
+                status = processMatches(process, matchedClasses);
+            } else {
+                status = processExactMatch(process, affect, inst, matchedClasses);
+            }
+            process.appendResult(new RowAffectModel(affect));
+            CommandUtils.end(process, status);
+        } catch (Throwable e){
+            logger.error("processing error", e);
+            process.appendResult(new RowAffectModel(affect));
+            process.end(-1, "processing error");
         }
     }
 
-    private void processExactMatch(CommandProcess process, RowAffect affect, Instrumentation inst,
+    private ExitStatus processExactMatch(CommandProcess process, RowAffect affect, Instrumentation inst,
                                    Set<Class<?>> matchedClasses) {
         Matcher<String> fieldNameMatcher = fieldNameMatcher();
 
@@ -133,45 +136,41 @@ public class GetStaticCommand extends AnnotatedCommand {
                     value = ExpressFactory.threadLocalExpress(value).get(express);
                 }
 
-                String result = StringUtils.objectToString(expand >= 0 ? new ObjectView(value, expand).draw() : value);
-                process.write("field: " + field.getName() + "\n" + result + "\n");
+                process.appendResult(new GetStaticModel(field.getName(), value, expand));
 
                 affect.rCnt(1);
             } catch (IllegalAccessException e) {
                 logger.warn("getstatic: failed to get static value, class: {}, field: {} ", clazz, field.getName(), e);
-                process.write("Failed to get static, exception message: " + e.getMessage()
-                              + ", please check $HOME/logs/arthas/arthas.log for more details. \n");
+                process.appendResult(new MessageModel("Failed to get static, exception message: " + e.getMessage()
+                              + ", please check $HOME/logs/arthas/arthas.log for more details. "));
             } catch (ExpressException e) {
                 logger.warn("getstatic: failed to get express value, class: {}, field: {}, express: {}", clazz, field.getName(), express, e);
-                process.write("Failed to get static, exception message: " + e.getMessage()
-                              + ", please check $HOME/logs/arthas/arthas.log for more details. \n");
+                process.appendResult(new MessageModel("Failed to get static, exception message: " + e.getMessage()
+                              + ", please check $HOME/logs/arthas/arthas.log for more details. "));
             } finally {
                 found = true;
             }
         }
 
         if (!found) {
-            process.write("getstatic: no matched static field was found\n");
+            return ExitStatus.failure(-1, "getstatic: no matched static field was found");
+        } else {
+            return ExitStatus.success();
         }
     }
 
-    private void processMatches(CommandProcess process, Set<Class<?>> matchedClasses) {
-        Element usage = new LabelElement("getstatic -c <hashcode> " + classPattern + " " + fieldPattern).style(
-                Decoration.bold.fg(Color.blue));
-        process.write("\n Found more than one class for: " + classPattern + ", Please use " + RenderUtil.render(usage,
-                                                                                                                process.width()));
+    private ExitStatus processMatches(CommandProcess process, Set<Class<?>> matchedClasses) {
 
-        TableElement table = new TableElement().leftCellPadding(1).rightCellPadding(1);
-        table.row(new LabelElement("HASHCODE").style(Decoration.bold.bold()),
-                  new LabelElement("CLASSLOADER").style(Decoration.bold.bold()));
+//        Element usage = new LabelElement("getstatic -c <hashcode> " + classPattern + " " + fieldPattern).style(
+//                Decoration.bold.fg(Color.blue));
+//        process.write("\n Found more than one class for: " + classPattern + ", Please use " + RenderUtil.render(usage, process.width()));
+        //TODO support message style
+        String usage = "getstatic -c <hashcode> " + classPattern + " " + fieldPattern;
+        process.appendResult(new MessageModel("Found more than one class for: " + classPattern + ", Please use: "+usage));
 
-        for (Class<?> c : matchedClasses) {
-            ClassLoader classLoader = c.getClassLoader();
-            table.row(label(Integer.toHexString(classLoader.hashCode())).style(Decoration.bold.fg(Color.red)),
-                      TypeRenderUtils.drawClassLoader(c));
-        }
-
-        process.write(RenderUtil.render(table, process.width()) + "\n");
+        List<ClassVO> matchedClassVOs = ClassUtils.createClassVOList(matchedClasses);
+        process.appendResult(new GetStaticModel(matchedClassVOs));
+        return ExitStatus.failure(-1, "Found more than one class for: " + classPattern + ", Please use: "+usage);
     }
 
     private Matcher<String> fieldNameMatcher() {

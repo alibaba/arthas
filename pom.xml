@@ -20,7 +20,8 @@
         <connection>scm:git:git@github.com:alibaba/arthas.git</connection>
         <developerConnection>scm:git:git@github.com:alibaba/arthas.git</developerConnection>
         <url>https://github.com/alibaba/arthas</url>
-    </scm>
+      <tag>HEAD</tag>
+  </scm>
 
     <developers>
         <developer>
@@ -47,7 +48,7 @@
 
     <groupId>com.taobao.arthas</groupId>
     <artifactId>arthas-all</artifactId>
-    <version>3.3.7-SNAPSHOT</version>
+    <version>3.3.10-SNAPSHOT</version>
     <packaging>pom</packaging>
 
     <name>arthas-all</name>
@@ -87,7 +88,7 @@
                     <plugin>
                         <groupId>pl.project13.maven</groupId>
                         <artifactId>git-commit-id-plugin</artifactId>
-                        <version>2.2.1</version>
+                        <version>4.0.1</version>
                         <executions>
                             <execution>
                                 <goals>
@@ -100,7 +101,18 @@
                             <dateFormat>yyyy-MM-dd'T'HH:mm:ssZ</dateFormat>
                             <generateGitPropertiesFile>true</generateGitPropertiesFile>
                             <generateGitPropertiesFilename>${project.build.outputDirectory}/arthas-git.properties</generateGitPropertiesFilename>
-                            <excludeProperties>git.build.host</excludeProperties>
+                            <excludeProperties>
+                                <excludeProperty>git.build.host</excludeProperty>
+                                <excludeProperty>git.build.time</excludeProperty>
+                                <excludeProperty>git.build.user.email</excludeProperty>
+                                <excludeProperty>git.build.user.name</excludeProperty>
+                                <excludeProperty>git.remote.origin.url</excludeProperty>
+                                <excludeProperty>git.total.commit.count</excludeProperty>
+                                <excludeProperty>git.commit.time</excludeProperty>
+                                <excludeProperty>git.local.branch.ahead</excludeProperty>
+                                <excludeProperty>git.local.branch.behind</excludeProperty>
+                            </excludeProperties>
+                            <injectAllReactorProjects>true</injectAllReactorProjects>
                         </configuration>
                     </plugin>
                 </plugins>
@@ -113,8 +125,9 @@
         <maven.compiler.target>1.6</maven.compiler.target>
         <maven.compiler.source>1.6</maven.compiler.source>
         <spring-boot.version>2.3.1.RELEASE</spring-boot.version>
-        <maven-invoker-plugin.version>3.0.0</maven-invoker-plugin.version>
+        <maven-invoker-plugin.version>3.0.0</maven-invoker-plugin.version
         <jacoco.skip>${skipTests}</jacoco.skip>
+        <project.build.outputTimestamp>2020-08-11T12:05:59Z</project.build.outputTimestamp
     </properties>
 
     <dependencyManagement>
@@ -152,12 +165,12 @@
             <dependency>
                 <groupId>com.alibaba.arthas</groupId>
                 <artifactId>arthas-repackage-logger</artifactId>
-                <version>0.0.3</version>
+                <version>0.0.4</version>
             </dependency>
             <dependency>
                 <groupId>com.alibaba.arthas</groupId>
                 <artifactId>arthas-repackage-asm</artifactId>
-                <version>0.0.3</version>
+                <version>0.0.4</version>
             </dependency>
             <dependency>
                 <groupId>com.alibaba</groupId>
@@ -261,7 +274,12 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-assembly-plugin</artifactId>
-                    <version>3.1.0</version>
+                    <version>3.2.0</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-release-plugin</artifactId>
+                    <version>3.0.0-M1</version>
                 </plugin>
             </plugins>
         </pluginManagement>
@@ -270,7 +288,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-jar-plugin</artifactId>
-                <version>2.5</version>
+                <version>3.2.0</version>
                 <configuration>
                     <archive>
                         <manifest>
@@ -292,7 +310,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-source-plugin</artifactId>
-                <version>3.0.1</version>
+                <version>3.2.1</version>
                 <executions>
                     <execution>
                         <id>attach-sources</id>

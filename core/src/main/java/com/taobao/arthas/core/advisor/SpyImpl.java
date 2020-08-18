@@ -114,7 +114,7 @@ public class SpyImpl extends AbstractSpy {
                         continue;
                     }
                     final InvokeTraceable listener = (InvokeTraceable) adviceListener;
-                    listener.invokeBeforeTracing(owner, methodName, methodDesc, Integer.parseInt(info[3]));
+                    listener.invokeBeforeTracing(classLoader, owner, methodName, methodDesc, Integer.parseInt(info[3]));
                 } catch (Throwable e) {
                     logger.error("class: {}, invokeInfo: {}", clazz.getName(), invokeInfo, e);
                 }
@@ -139,7 +139,7 @@ public class SpyImpl extends AbstractSpy {
                         continue;
                     }
                     final InvokeTraceable listener = (InvokeTraceable) adviceListener;
-                    listener.invokeAfterTracing(owner, methodName, methodDesc, Integer.parseInt(info[3]));
+                    listener.invokeAfterTracing(classLoader, owner, methodName, methodDesc, Integer.parseInt(info[3]));
                 } catch (Throwable e) {
                     logger.error("class: {}, invokeInfo: {}", clazz.getName(), invokeInfo, e);
                 }
@@ -166,7 +166,7 @@ public class SpyImpl extends AbstractSpy {
                         continue;
                     }
                     final InvokeTraceable listener = (InvokeTraceable) adviceListener;
-                    listener.invokeThrowTracing(owner, methodName, methodDesc, Integer.parseInt(info[3]));
+                    listener.invokeThrowTracing(classLoader, owner, methodName, methodDesc, Integer.parseInt(info[3]));
                 } catch (Throwable e) {
                     logger.error("class: {}, invokeInfo: {}", clazz.getName(), invokeInfo, e);
                 }

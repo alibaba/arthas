@@ -11,6 +11,7 @@ import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
 import io.netty.handler.logging.LogLevel;
 import io.netty.handler.logging.LoggingHandler;
+import io.netty.util.concurrent.DefaultThreadFactory;
 import io.netty.util.concurrent.EventExecutorGroup;
 import io.netty.util.concurrent.Future;
 import io.netty.util.concurrent.GenericFutureListener;
@@ -33,7 +34,7 @@ public class NettyHttpTelnetBootstrap extends TelnetBootstrap {
 
     public NettyHttpTelnetBootstrap(EventExecutorGroup workerGroup) {
         this.workerGroup = workerGroup;
-        this.group = new NioEventLoopGroup();
+        this.group = new NioEventLoopGroup(new DefaultThreadFactory("arthas-NettyHttpTelnetBootstrap", true));
         this.channelGroup = new DefaultChannelGroup(ImmediateEventExecutor.INSTANCE);
     }
 

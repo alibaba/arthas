@@ -70,7 +70,7 @@ Arthas provides `pipe` to process the result returned from commands further, e.g
 * plaintext - remove the ANSI color
 * wc - count lines
 
-## async in background
+## async jobs
 
 [async](async.md) can be handy when a problem is hardly to reproduce in the production environment, e.g. one `watch` condition may happen only once in one single day.
 
@@ -90,6 +90,52 @@ Arthas supports living inside a browser. The communication between arthas and br
 
 * [Start as a Java Agent](agent.md)
 
+
+## as.sh and arthas-boot tips
+
+* Select the process to be attached via the `select` option.
+
+Normally, `as.sh`/`arthas-boot.jar` needs to a pid, bacause the pid will change.
+
+For example, with `arthas-demo.jar` already started, use the `jps` command to see.
+
+```bash
+$ jps
+58883 arthas-demo.jar
+58884 Jps
+```
+
+The `select` option allows you to specify a process name, which is very convenient.
+
+```bash
+$ ./as.sh --select arthas-demo
+Arthas script version: 3.3.6
+[INFO] JAVA_HOME: /tmp/java/8.0.222-zulu
+Arthas home: /Users/admin/.arthas/lib/3.3.6/arthas
+Calculating attach execution time...
+Attaching to 59161 using version /Users/admin/.arthas/lib/3.3.6/arthas...
+
+real	0m0.572s
+user	0m0.281s
+sys	0m0.039s
+Attach success.
+telnet connecting to arthas server... current timestamp is 1594280799
+Trying 127.0.0.1...
+Connected to localhost.
+Escape character is '^]'.
+  ,---.  ,------. ,--------.,--.  ,--.  ,---.   ,---.
+ /  O  \ |  .--. ''--.  .--'|  '--'  | /  O  \ '   .-'
+|  .-.  ||  '--'.'   |  |   |  .--.  ||  .-.  |`.  `-.
+|  | |  ||  |\  \    |  |   |  |  |  ||  | |  |.-'    |
+`--' `--'`--' '--'   `--'   `--'  `--'`--' `--'`-----'
+
+
+wiki      https://arthas.aliyun.com/doc
+tutorials https://arthas.aliyun.com/doc/arthas-tutorials.html
+version   3.3.6
+pid       58883
+```
+
 ## User data report
 
 After the `3.1.4` version, arthas support user data report.
@@ -106,6 +152,3 @@ There is a sample data report in the tunnel server that users can implement on t
 * [log the output](save-log.md)
 * [batch](batch-support.md)
 * [how to use ognl](https://github.com/alibaba/arthas/issues/11)
-
-
-

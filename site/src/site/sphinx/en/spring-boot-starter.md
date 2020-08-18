@@ -23,7 +23,7 @@ When the application is started, spring will start arthas and attach its own pro
 For example, by configuring the tunnel server for remote management.
 
 ```
-arthas.agentId=hsehdfsfghhwertyfad
+arthas.agent-id=hsehdfsfghhwertyfad
 arthas.tunnel-server=ws://47.75.156.201:7777/ws
 ```
 
@@ -31,6 +31,8 @@ All supported configuration: [Reference](https://github.com/alibaba/arthas/blob/
 
 
 ### View Endpoint Information
+
+> Need to configure spring boot to expose endpoint: [Reference](https://docs.spring.io/spring-boot/docs/current/reference/html/production-ready-features.html#production-ready-endpoints).
 
 Assuming the endpoint port is 8080, it can be viewed via the following url.
 
@@ -53,6 +55,11 @@ Non-Spring Boot applications can be used in the following ways.
         <dependency>
             <groupId>com.taobao.arthas</groupId>
             <artifactId>arthas-agent-attach</artifactId>
+            <version>${arthas.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.taobao.arthas</groupId>
+            <artifactId>arthas-packaging</artifactId>
             <version>${arthas.version}</version>
         </dependency>
 ```

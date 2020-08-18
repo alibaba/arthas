@@ -23,7 +23,7 @@ Arthas Spring Boot Starter
 比如，通过配置tunnel server实现远程管理：
 
 ```
-arthas.agentId=hsehdfsfghhwertyfad
+arthas.agent-id=hsehdfsfghhwertyfad
 arthas.tunnel-server=ws://47.75.156.201:7777/ws
 ```
 
@@ -31,6 +31,8 @@ arthas.tunnel-server=ws://47.75.156.201:7777/ws
 
 
 ### 查看Endpoint信息
+
+> 需要配置spring boot暴露endpoint：[参考](https://docs.spring.io/spring-boot/docs/current/reference/html/production-ready-features.html#production-ready-endpoints)
 
 假定endpoint端口是 8080，则通过下面url可以查看：
 
@@ -53,6 +55,11 @@ http://localhost:8080/actuator/arthas
         <dependency>
             <groupId>com.taobao.arthas</groupId>
             <artifactId>arthas-agent-attach</artifactId>
+            <version>${arthas.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.taobao.arthas</groupId>
+            <artifactId>arthas-packaging</artifactId>
             <version>${arthas.version}</version>
         </dependency>
 ```
