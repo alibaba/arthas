@@ -37,6 +37,7 @@ Parameter `[c:]` stands for cycles of statistics. Its value is an integer value 
 |*condition-expression*|condition expression to filter|
 |`[E]`|turn on regex matching while the default is wildcard matching|
 |`[c:]`|cycle of statistics, the default value: `120`s|
+|`[b]`|execute condition-express before method being invoked|
 
 ### Usage
 
@@ -71,7 +72,7 @@ Affect(class-cnt:1 , method-cnt:1) cost in 94 ms.
 
 #### Example for use condition-express
 ```bash
-$ monitor -c 5 demo.MathGame primeFactors "params[0] >= 2"
+$ monitor -c 5 demo.MathGame primeFactors -b "params[0] >= 2"
 Press Q or Ctrl+C to abort.
 Affect(class count: 1 , method count: 1) cost in 79 ms, listenerId: 1
  timestamp            class          method         total  success  fail  avg-rt(ms)  fail-rate   

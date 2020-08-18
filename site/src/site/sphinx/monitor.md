@@ -37,6 +37,7 @@ monitor
 |*condition-express*|条件表达式|
 |[E]|开启正则表达式匹配，默认为通配符匹配|
 |`[c:]`|统计周期，默认值为120秒|
+|[b]|在**方法调用之前**执行condition-express|
 
 ### 使用参考
 
@@ -71,7 +72,7 @@ Affect(class-cnt:1 , method-cnt:1) cost in 94 ms.
 
 #### 条件表达式的例子
 ```bash
-$ monitor -c 5 demo.MathGame primeFactors "params[0] >= 2"
+$ monitor -c 5 demo.MathGame primeFactors -b "params[0] >= 2"
 Press Q or Ctrl+C to abort.
 Affect(class count: 1 , method count: 1) cost in 79 ms, listenerId: 1
  timestamp            class          method         total  success  fail  avg-rt(ms)  fail-rate   
