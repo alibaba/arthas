@@ -153,6 +153,8 @@ public class ClassLoaderCommand extends AnnotatedCommand {
             processAllClasses(process, inst);
         } else if (targetClassLoader != null && resource != null) {
             processResources(process, inst, targetClassLoader);
+        } else if (resource != null) {
+            processResources(process, inst, null);
         } else if (targetClassLoader != null && this.loadClass != null) {
             processLoadClass(process, inst, targetClassLoader);
         } else if (targetClassLoader != null) {
