@@ -13,6 +13,7 @@
 |`[d]`|print the details of the method|
 |`[E]`|turn on regex matching while the default mode is wildcard matching|
 |`[c:]`|The hash code of the special class's classLoader|
+|`[classLoaderClass:]`| The class name of the ClassLoader that executes the expression. |
 |`[n:]`|Maximum number of matching classes with details (100 by default)|
 
 ### Usage
@@ -81,14 +82,22 @@ $ sc -d demo.MathGame | grep classLoaderHash
  classLoaderHash   70dea4e
 ```
 
-Take a note of the classLoaderHash here:`70dea4e`, and use it to replace `<classLoaderHash>` and execute the following command.
+* Specify Classloader
 
-Find classloader's class methods
+Note that the hashcode changes, you need to check the current ClassLoader information first, and extract the hashcode corresponding to the ClassLoader.
 
-`sc -c <classLoaderHash> -d demo.MathGame`
+if you use`-c`, you have to manually type hashcode by `-c <hashcode>`.
 
 ```bash
 $ sm -c 70dea4e demo.MathGame
+```
+
+For classloader with only one instance, it can be specified by `--classLoaderClass` using class name, which is more convenient to use.
+
+`sm --classLoaderClass sun.misc.Launcher$AppClassLoader demo.MathGame`{{execute T2}}
+
+```bash
+$ sm --classLoaderClass sun.misc.Launcher$AppClassLoader demo.MathGame
 demo.MathGame <init>()V
 demo.MathGame primeFactors(I)Ljava/util/List;
 demo.MathGame main([Ljava/lang/String;)V
@@ -96,6 +105,8 @@ demo.MathGame run()V
 demo.MathGame print(ILjava/util/List;)V
 Affect(row-cnt:5) cost in 2 ms.
 ```
+
+The value of `--classloaderclass` is the class name of classloader. It can only work when it matches a unique classloader instance. The purpose is to facilitate the input of general commands. However, `-c <hashcode>` is dynamic.
 
 * View method `java.lang.String#toString` details:
 
