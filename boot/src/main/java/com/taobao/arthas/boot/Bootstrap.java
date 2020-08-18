@@ -473,8 +473,10 @@ public class Bootstrap {
             AnsiLog.info("The target process already listen port {}, skip attach.", bootstrap.getTelnetPort());
         } else {
             //double check telnet port and pid before attach
-            telnetPortPid = findProcessByTelnetClient(arthasHomeDir.getAbsolutePath(), bootstrap.getTelnetPort());
-            checkTelnetPortPid(bootstrap, telnetPortPid, pid);
+            if (bootstrap.getTelnetPort() > 0) {
+                telnetPortPid = findProcessByTelnetClient(arthasHomeDir.getAbsolutePath(), bootstrap.getTelnetPort());
+                checkTelnetPortPid(bootstrap, telnetPortPid, pid);
+            }
 
             // start arthas-core.jar
             List<String> attachArgs = new ArrayList<String>();
@@ -521,7 +523,7 @@ public class Bootstrap {
             AnsiLog.info("Attach process {} success.", pid);
         }
 
-        if (bootstrap.isAttachOnly()) {
+        if (bootstrap.isAttachOnly() || bootstrap.getTelnetPort() <= 0) {
             System.exit(0);
         }
 

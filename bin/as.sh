@@ -984,9 +984,10 @@ main()
 
     echo "Attach success."
 
-    if [ ${ATTACH_ONLY} = false ]; then
+    if [ ${ATTACH_ONLY} = false ] and [ $TELNET_PORT > 0 ]; then
       active_console "${ARTHAS_HOME}"
     fi
+
 }
 
 
