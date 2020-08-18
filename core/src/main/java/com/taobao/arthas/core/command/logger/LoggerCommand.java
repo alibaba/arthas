@@ -23,6 +23,7 @@ import com.taobao.arthas.core.command.model.LoggerModel;
 import com.taobao.arthas.core.command.model.ClassLoaderVO;
 import com.taobao.arthas.core.shell.command.AnnotatedCommand;
 import com.taobao.arthas.core.shell.command.CommandProcess;
+import com.taobao.arthas.core.util.ClassUtils;
 import com.taobao.arthas.core.util.ClassLoaderUtils;
 import com.taobao.arthas.core.util.StringUtils;
 import com.taobao.middleware.cli.annotations.Description;
@@ -167,6 +168,7 @@ public class LoggerCommand extends AnnotatedCommand {
             ClassLoader classLoader = clazz.getClassLoader();
 
         if (hashCode == null && classLoaderClass != null) {
+            Instrumentation inst = process.session().getInstrumentation();
             List<ClassLoader> matchedClassLoaders = ClassLoaderUtils.getClassLoaderByClassName(inst, classLoaderClass);
             if (matchedClassLoaders.size() == 1) {
                 hashCode = Integer.toHexString(matchedClassLoaders.get(0).hashCode());
