@@ -44,8 +44,17 @@ import com.taobao.middleware.cli.annotations.Summary;
         "  sc -E org\\\\.apache\\\\.commons\\\\.lang\\\\.StringUtils\n" +
         Constants.WIKI + Constants.WIKI_HOME + "sc")
 public class SearchClassCommand extends AnnotatedCommand {
-    //sc/sm 指定启用-d参数时的默认限制
+    //sc/sm时查找结果的强制限制(当isDetail时或当numberOfLimit=0)
     static final int SEARCH_DETAIL_DEFAULT_LIMIT = 100;
+
+    static int prepareLimit(final boolean isDetail, final int numberOfLimit) {
+        if ( isDetail ? (numberOfLimit > SEARCH_DETAIL_DEFAULT_LIMIT || numberOfLimit <= 0)
+                : numberOfLimit == 0 ) {
+            return SEARCH_DETAIL_DEFAULT_LIMIT;
+        }
+        return numberOfLimit;
+    }
+
     private String classPattern;
     private boolean isDetail = false;
     private boolean isField = false;
@@ -53,7 +62,7 @@ public class SearchClassCommand extends AnnotatedCommand {
     private String hashCode = null;
     private String classLoaderClass;
     private Integer expand;
-    private int numberOfLimit;
+    private int numberOfLimit = -1;
 
     @Argument(argName = "class-pattern", index = 0)
     @Description("Class name pattern, use either '.' or '/' as separator")
@@ -128,6 +137,7 @@ public class SearchClassCommand extends AnnotatedCommand {
         if (isDetail && numberOfLimit == 0) {
             numberOfLimit = SEARCH_DETAIL_DEFAULT_LIMIT;
         }
+        numberOfLimit = prepareLimit(isDetail, numberOfLimit);
         List<Class<?>> matchedClasses = new ArrayList<Class<?>>(SearchUtils.searchClass(inst, classPattern, isRegEx, hashCode, numberOfLimit));
         Collections.sort(matchedClasses, new Comparator<Class<?>>() {
             @Override

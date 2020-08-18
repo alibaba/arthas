@@ -11,9 +11,9 @@ import java.util.List;
 import com.alibaba.arthas.deps.org.slf4j.Logger;
 import com.alibaba.arthas.deps.org.slf4j.LoggerFactory;
 import com.taobao.arthas.core.command.Constants;
-import com.taobao.arthas.core.command.model.SearchMethodModel;
 import com.taobao.arthas.core.command.model.MethodVO;
 import com.taobao.arthas.core.command.model.RowAffectModel;
+import com.taobao.arthas.core.command.model.SearchMethodModel;
 import com.taobao.arthas.core.command.model.ClassLoaderVO;
 import com.taobao.arthas.core.shell.cli.Completion;
 import com.taobao.arthas.core.shell.cli.CompletionUtils;
@@ -57,7 +57,7 @@ public class SearchMethodCommand extends AnnotatedCommand {
     private String classLoaderClass;
     private boolean isDetail = false;
     private boolean isRegEx = false;
-    private int numberOfLimit;
+    private int numberOfLimit = -1;
 
     @Argument(argName = "class-pattern", index = 0)
     @Description("Class name pattern, use either '.' or '/' as separator")
@@ -104,9 +104,7 @@ public class SearchMethodCommand extends AnnotatedCommand {
     @Override
     public void process(CommandProcess process) {
         RowAffect affect = new RowAffect();
-        if (numberOfLimit == 0) {
-            numberOfLimit = SearchClassCommand.SEARCH_DETAIL_DEFAULT_LIMIT;
-        }
+
         Instrumentation inst = process.session().getInstrumentation();
         Matcher<String> methodNameMatcher = methodNameMatcher();
 
@@ -128,7 +126,8 @@ public class SearchMethodCommand extends AnnotatedCommand {
             }
         }
 
-        Set<Class<?>> matchedClasses = SearchUtils.searchClass(inst, classPattern, isRegEx, hashCode, numberOfLimit);
+        numberOfLimit = SearchClassCommand.prepareLimit(isDetail, numberOfLimit);
+        final Set<Class<?>> matchedClasses = SearchUtils.searchClass(inst, classPattern, isRegEx, hashCode, numberOfLimit);
 
         for (Class<?> clazz : matchedClasses) {
             try {
