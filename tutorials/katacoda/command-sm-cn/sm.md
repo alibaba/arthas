@@ -107,6 +107,8 @@ demo.MathGame print(ILjava/util/List;)V
 Affect(row-cnt:5) cost in 2 ms.
 ```
 
+  * 注: 这里classLoaderClass 在 java 8 是 sun.misc.Launcher$AppClassLoader，而java 11的classloader是jdk.internal.loader.ClassLoaders$AppClassLoader，katacoda目前环境是java8。
+
 `--classLoaderClass` 的值是ClassLoader的类名，只有匹配到唯一的ClassLoader实例时才能工作，目的是方便输入通用命令，而`-c <hashcode>`是动态变化的。
 
 * 查找`java.lang.String#toString`函数并打印详细信息

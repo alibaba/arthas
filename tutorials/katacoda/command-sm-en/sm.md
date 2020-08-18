@@ -96,6 +96,8 @@ For classloader with only one instance, it can be specified by `--classLoaderCla
 
 `sm --classLoaderClass sun.misc.Launcher$AppClassLoader demo.MathGame`{{execute T2}}
 
+  * PS: Here the classLoaderClass in java 8 is sun.misc.Launcher$AppClassLoader, while in java 11 it's jdk.internal.loader.ClassLoaders$AppClassLoader. Currently katacoda using java 8.
+  
 ```bash
 $ sm --classLoaderClass sun.misc.Launcher$AppClassLoader demo.MathGame
 demo.MathGame <init>()V

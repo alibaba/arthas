@@ -80,6 +80,8 @@ $ sc -c 3d4eac69 -d demo*
 
 `sc --classLoaderClass sun.misc.Launcher$AppClassLoader -d demo*`{{execute T2}}
 
+  * 注: 这里classLoaderClass 在 java 8 是 sun.misc.Launcher$AppClassLoader，而java 11的classloader是jdk.internal.loader.ClassLoaders$AppClassLoader，katacoda目前环境是java8。
+
 `--classLoaderClass` 的值是ClassLoader的类名，只有匹配到唯一的ClassLoader实例时才能工作，目的是方便输入通用命令，而`-c <hashcode>`是动态变化的。
 
 * 打印出类的Field信息
