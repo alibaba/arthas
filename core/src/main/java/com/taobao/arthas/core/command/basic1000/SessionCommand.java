@@ -1,6 +1,8 @@
 package com.taobao.arthas.core.command.basic1000;
 
+import com.alibaba.arthas.channel.client.ChannelClient;
 import com.taobao.arthas.core.command.model.SessionModel;
+import com.taobao.arthas.core.config.Configure;
 import com.taobao.arthas.core.server.ArthasBootstrap;
 import com.taobao.arthas.core.shell.command.AnnotatedCommand;
 import com.taobao.arthas.core.shell.command.CommandProcess;
@@ -27,14 +29,20 @@ public class SessionCommand extends AnnotatedCommand {
         result.setJavaPid(session.getPid());
         result.setSessionId(session.getSessionId());
 
+        //agentId
+        Configure configure = ArthasBootstrap.getInstance().getConfigure();
+        result.setAgentId(configure.getAgentId());
+
         //tunnel
         TunnelClient tunnelClient = ArthasBootstrap.getInstance().getTunnelClient();
         if (tunnelClient != null) {
-            String id = tunnelClient.getId();
-            if (id != null) {
-                result.setAgentId(id);
-            }
             result.setTunnelServer(tunnelClient.getTunnelServerUrl());
+        }
+
+        //channel server
+        ChannelClient channelClient = ArthasBootstrap.getInstance().getChannelClient();
+        if (channelClient != null) {
+            result.setChannelServer(channelClient.getChannelServerAddress());
         }
 
         //statUrl

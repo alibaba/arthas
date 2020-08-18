@@ -27,6 +27,9 @@ public class SessionView extends ResultView<SessionModel> {
         if (result.getTunnelServer() != null) {
             table.row("TUNNEL_SERVER", "" + result.getTunnelServer());
         }
+        if (result.getChannelServer() != null) {
+            table.row("CHANNEL_SERVER", "" + result.getChannelServer());
+        }
         if (result.getStatUrl() != null) {
             table.row("STAT_URL", result.getStatUrl());
         }
