@@ -106,10 +106,9 @@ public class SearchMethodCommand extends AnnotatedCommand {
         RowAffect affect = new RowAffect();
 
         Instrumentation inst = process.session().getInstrumentation();
-
+        Matcher<String> methodNameMatcher = methodNameMatcher();
+        
         if (hashCode == null && classLoaderClass != null) {
-            Matcher<String> methodNameMatcher = methodNameMatcher();
-            
             List<ClassLoader> matchedClassLoaders = ClassLoaderUtils.getClassLoaderByClassName(inst, classLoaderClass);
             if (matchedClassLoaders.size() == 1) {
                 hashCode = "" + Integer.toHexString(matchedClassLoaders.get(0).hashCode());
