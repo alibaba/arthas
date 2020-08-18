@@ -107,20 +107,22 @@ public class SearchClassCommand extends AnnotatedCommand {
         RowAffect affect = new RowAffect();
         Instrumentation inst = process.session().getInstrumentation();
 
-        List<ClassLoader> matchedClassLoaders = ClassLoaderUtils.getClassLoaderByClassName(inst, classLoaderClass);
-        if (matchedClassLoaders.size() == 1) {
-            hashCode = "" + Integer.toHexString(matchedClassLoaders.get(0).hashCode());
-        } else if (matchedClassLoaders.size() > 1) {
-            Collection<ClassLoaderVO> classLoaderVOList = ClassUtils.createClassLoaderVOList(matchedClassLoaders);
-            SearchClassModel searchclassModel = new SearchClassModel()
-                    .setClassLoaderClass(classLoaderClass)
-                    .setMatchedClassLoaders(classLoaderVOList);
-            process.appendResult(searchclassModel);
-            process.end(-1, "Found more than one classloader by class name, please specify classloader with '-c <classloader hash>'");
-            return;
-        } else {
-            process.end(-1, "Can not find classloader by class name: " + classLoaderClass + ".");
-            return;
+        if (hashCode == null && classLoaderClass != null) {
+            List<ClassLoader> matchedClassLoaders = ClassLoaderUtils.getClassLoaderByClassName(inst, classLoaderClass);
+            if (matchedClassLoaders.size() == 1) {
+                hashCode = "" + Integer.toHexString(matchedClassLoaders.get(0).hashCode());
+            } else if (matchedClassLoaders.size() > 1) {
+                Collection<ClassLoaderVO> classLoaderVOList = ClassUtils.createClassLoaderVOList(matchedClassLoaders);
+                SearchClassModel searchclassModel = new SearchClassModel()
+                        .setClassLoaderClass(classLoaderClass)
+                        .setMatchedClassLoaders(classLoaderVOList);
+                process.appendResult(searchclassModel);
+                process.end(-1, "Found more than one classloader by class name, please specify classloader with '-c <classloader hash>'");
+                return;
+            } else {
+                process.end(-1, "Can not find classloader by class name: " + classLoaderClass + ".");
+                return;
+            }
         }
 
         List<Class<?>> matchedClasses = new ArrayList<Class<?>>(SearchUtils.searchClass(inst, classPattern, isRegEx, hashCode));
