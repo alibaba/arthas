@@ -9,6 +9,22 @@
 java -javaagent:/tmp/test/arthas-agent.jar -jar arthas-demo.jar
 ```
 
+设置启动参数：
+
+* 启动并连接到Channel Server
+
+```
+java -javaagent:/tmp/test/arthas-agent.jar="telnetPort=-1;httpPort=-1;channelServer=localhost:7700" -jar arthas-demo.jar
+```
+
+* 启动并连接到Tunnel Server
+
+```
+java -javaagent:/tmp/test/arthas-agent.jar="telnetPort=-1;httpPort=-1;tunnelServer=ws://localhost:7777/ws" -jar arthas-demo.jar
+```
+
+
+
 默认的配置项在解压目录里的`arthas.properties`文件里。
 
 
