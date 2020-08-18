@@ -33,6 +33,7 @@ public class MonitorCommand extends EnhancerCommand {
     private int cycle = 60;
     private boolean isRegEx = false;
     private int numberOfLimit = 100;
+    private boolean isBefore = false;
 
     @Argument(argName = "class-pattern", index = 0)
     @Description("Path and classname of Pattern Matching")
@@ -70,6 +71,12 @@ public class MonitorCommand extends EnhancerCommand {
         this.numberOfLimit = numberOfLimit;
     }
 
+    @Option(shortName = "b", longName = "before", flag = true)
+    @Description("Watch before invocation")
+    public void setBefore(boolean before) {
+        isBefore = before;
+    }
+
     public String getClassPattern() {
         return classPattern;
     }
@@ -92,6 +99,10 @@ public class MonitorCommand extends EnhancerCommand {
 
     public int getNumberOfLimit() {
         return numberOfLimit;
+    }
+
+    public boolean isBefore() {
+        return isBefore;
     }
 
     @Override
