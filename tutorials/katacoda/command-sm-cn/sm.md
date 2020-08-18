@@ -14,6 +14,7 @@
 |[d]|展示每个方法的详细信息|
 |[E]|开启正则表达式匹配，默认为通配符匹配|
 |`[c:]`|指定class的 ClassLoader 的 hashcode|
+|`[classLoaderClass:]`|指定执行表达式的 ClassLoader 的 class name|
 |`[n:]`|具有详细信息的匹配类的最大数量（默认为100）|
 
 ### 使用参考
@@ -82,14 +83,22 @@ $ sc -d demo.MathGame | grep classLoaderHash
  classLoaderHash   70dea4e
 ```
 
-记住这里的classLoaderHash：`70dea4e`，并用其替换`<classLoaderHash>`，手动执行下一条命令。
+* 指定classLoader
 
-查找classloader下的class的method
+注意hashcode是变化的，需要先查看当前的ClassLoader信息，提取对应ClassLoader的hashcode。
 
-`sc -c <classLoaderHash> -d demo.MathGame`
+如果你使用`-c`，你需要手动输入hashcode：`-c <hashcode>`
 
 ```bash
 $ sm -c 70dea4e demo.MathGame
+```
+
+对于只有唯一实例的ClassLoader可以通过`--classLoaderClass`指定class name，使用起来更加方便：
+
+`sm --classLoaderClass sun.misc.Launcher$AppClassLoader demo.MathGame`{{execute T2}}
+
+```bash
+$ sm --classLoaderClass sun.misc.Launcher$AppClassLoader demo.MathGame
 demo.MathGame <init>()V
 demo.MathGame primeFactors(I)Ljava/util/List;
 demo.MathGame main([Ljava/lang/String;)V
@@ -97,6 +106,10 @@ demo.MathGame run()V
 demo.MathGame print(ILjava/util/List;)V
 Affect(row-cnt:5) cost in 2 ms.
 ```
+
+  * 注: 这里classLoaderClass 在 java 8 是 sun.misc.Launcher$AppClassLoader，而java 11的classloader是jdk.internal.loader.ClassLoaders$AppClassLoader，katacoda目前环境是java8。
+
+`--classLoaderClass` 的值是ClassLoader的类名，只有匹配到唯一的ClassLoader实例时才能工作，目的是方便输入通用命令，而`-c <hashcode>`是动态变化的。
 
 * 查找`java.lang.String#toString`函数并打印详细信息
 

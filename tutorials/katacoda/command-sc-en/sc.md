@@ -14,6 +14,7 @@
 |`[f]`|print the fields info of the current class, MUST be used with `-d` together|
 |`[x:]`|specify the depth of recursive traverse the static fields, the default value is '0' - equivalent to use `toString` to output|
 |`[c:]`|The hash code of the special class's classLoader|
+|`[classLoaderClass:]`| The class name of the ClassLoader that executes the expression. |
 |`[n:]`|Maximum number of matching classes with details (100 by default)|
 
 > *class-patten* supports full qualified class name, e.g. com.taobao.test.AAA and com/taobao/test/AAA. It also supports the format of 'com/taobao/test/AAA', so that it is convenient to directly copy class name from the exception stack trace without replacing '/' to '.'. <br/><br/>
@@ -65,7 +66,21 @@ Take a note of the classLoaderHash here:`3d4eac69`, and use it to replace `<clas
 
 * Specify classLoader
 
-  `sc -c <classLoaderHash> -d demo*`
+Note that the hashcode changes, you need to check the current ClassLoader information first, and extract the hashcode corresponding to the ClassLoader.
+
+if you use`-c`, you have to manually type hashcode by `-c <hashcode>`.
+
+```bash
+$ sc -c 3d4eac69 -d demo*
+```
+
+For classloader with only one instance, it can be specified by `--classLoaderClass` using class name, which is more convenient to use.
+
+`sc --classLoaderClass sun.misc.Launcher$AppClassLoader -d demo*`{{execute T2}}
+
+  * PS: Here the classLoaderClass in java 8 is sun.misc.Launcher$AppClassLoader, while in java 11 it's jdk.internal.loader.ClassLoaders$AppClassLoader. Currently katacoda using java 8.
+
+The value of `--classloaderclass` is the class name of classloader. It can only work when it matches a unique classloader instance. The purpose is to facilitate the input of general commands. However, `-c <hashcode>` is dynamic.
 
 * View class fields
 
