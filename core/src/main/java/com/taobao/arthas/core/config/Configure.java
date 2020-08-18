@@ -28,6 +28,8 @@ public class Configure {
     private String tunnelServer;
     private String agentId;
 
+    private String channelServer;
+
     /**
      * report executed command
      */
@@ -100,6 +102,14 @@ public class Configure {
 
     public void setTunnelServer(String tunnelServer) {
         this.tunnelServer = tunnelServer;
+    }
+
+    public String getChannelServer() {
+        return channelServer;
+    }
+
+    public void setChannelServer(String channelServer) {
+        this.channelServer = channelServer;
     }
 
     public String getAgentId() {

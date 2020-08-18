@@ -56,6 +56,7 @@ import com.taobao.arthas.core.shell.term.impl.httptelnet.HttpTelnetTermServer;
 import com.taobao.arthas.core.util.ArthasBanner;
 import com.taobao.arthas.core.util.FileUtils;
 import com.taobao.arthas.core.util.LogUtil;
+import com.taobao.arthas.core.util.StringUtils;
 import com.taobao.arthas.core.util.UserStatUtil;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.nio.NioEventLoopGroup;
@@ -279,7 +280,13 @@ public class ArthasBootstrap {
             throw new IllegalStateException("already bind");
         }
 
-        String agentId = null;
+        //check and gen agent id
+        if (configure.getChannelServer() != null || configure.getTunnelServer() != null) {
+            if (StringUtils.isBlank(configure.getAgentId())) {
+                configure.setAgentId(generateRandomAgentId());
+            }
+        }
+
         try {
             if (configure.getTunnelServer() != null && configure.getHttpPort() > 0) {
                 tunnelClient = new TunnelClient();
@@ -295,7 +302,7 @@ public class ArthasBootstrap {
                 ChannelFuture channelFuture = tunnelClient.start();
                 channelFuture.await(10, TimeUnit.SECONDS);
                 if(channelFuture.isSuccess()) {
-                    agentId = tunnelClient.getId();
+                    configure.setAgentId(tunnelClient.getId());
                 }
             }
         } catch (Throwable t) {
@@ -308,13 +315,10 @@ public class ArthasBootstrap {
                             .setPid(PidUtils.currentLongPid())
                             .setSessionTimeout(configure.getSessionTimeout() * 1000);
 
-            if (agentId == null) {
-                agentId = generateRandomAgentId();
-            }
-            if (agentId != null) {
-                configure.setAgentId(agentId);
+
+            if (configure.getAgentId() != null) {
                 Map<String, String> welcomeInfos = new HashMap<String, String>();
-                welcomeInfos.put("id", agentId);
+                welcomeInfos.put("id", configure.getAgentId());
                 options.setWelcomeMessage(ArthasBanner.welcome(welcomeInfos));
             }
 
@@ -355,13 +359,17 @@ public class ArthasBootstrap {
                     configure.getTelnetPort(), configure.getHttpPort(), options.getConnectionTimeout());
 
             // start channel client
-            //TODO configure channel server
-            channelClient = new ChannelClient("localhost", 7700);
-            channelClient.setAgentInfoService(new AgentInfoServiceImpl(configure));
-            channelClient.setExecutorService(executorService);
-            channelClient.setRequestListener(new ChannelRequestHandler(channelClient, sessionManager, historyManager));
-            channelClient.start();
-
+            if (configure.getChannelServer() != null) {
+                try {
+                    channelClient = new ChannelClient(configure.getChannelServer());
+                    channelClient.setAgentInfoService(new AgentInfoServiceImpl(configure));
+                    channelClient.setExecutorService(executorService);
+                    channelClient.setRequestListener(new ChannelRequestHandler(channelClient, sessionManager, historyManager));
+                    channelClient.start();
+                } catch (Throwable e) {
+                    logger().error("start channel client failure", e);
+                }
+            }
 
             // 异步回报启动次数
             if (configure.getStatUrl() != null) {
@@ -520,6 +528,10 @@ public class ArthasBootstrap {
         return tunnelClient;
     }
 
+    public ChannelClient getChannelClient() {
+        return channelClient;
+    }
+
     public ShellServer getShellServer() {
         return shellServer;
     }
@@ -558,5 +570,9 @@ public class ArthasBootstrap {
 
     public HttpApiHandler getHttpApiHandler() {
         return httpApiHandler;
+    }
+
+    public Configure getConfigure() {
+        return configure;
     }
 }

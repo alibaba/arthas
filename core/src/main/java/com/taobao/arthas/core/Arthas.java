@@ -41,12 +41,15 @@ public class Arthas {
                         .setShortName("session-timeout").setDefaultValue("" + Configure.DEFAULT_SESSION_TIMEOUT_SECONDS);
 
         Option tunnelServer = new TypedOption<String>().setType(String.class).setShortName("tunnel-server");
+        Option channelServer = new TypedOption<String>().setType(String.class).setShortName("channel-server");
         Option agentId = new TypedOption<String>().setType(String.class).setShortName("agent-id");
 
         Option statUrl = new TypedOption<String>().setType(String.class).setShortName("stat-url");
 
         CLI cli = CLIs.create("arthas").addOption(pid).addOption(core).addOption(agent).addOption(target)
-                .addOption(telnetPort).addOption(httpPort).addOption(sessionTimeout).addOption(tunnelServer).addOption(agentId).addOption(statUrl);
+                .addOption(telnetPort).addOption(httpPort).addOption(sessionTimeout)
+                .addOption(tunnelServer).addOption(channelServer).addOption(agentId)
+                .addOption(statUrl);
         CommandLine commandLine = cli.parse(Arrays.asList(args));
 
         Configure configure = new Configure();
@@ -64,6 +67,7 @@ public class Arthas {
         configure.setHttpPort((Integer) commandLine.getOptionValue("http-port"));
 
         configure.setTunnelServer((String) commandLine.getOptionValue("tunnel-server"));
+        configure.setChannelServer((String) commandLine.getOptionValue("channel-server"));
         configure.setAgentId((String) commandLine.getOptionValue("agent-id"));
         configure.setStatUrl((String) commandLine.getOptionValue("stat-url"));
         return configure;

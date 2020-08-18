@@ -49,6 +49,8 @@ import static com.taobao.arthas.boot.ProcessUtils.STATUS_EXEC_TIMEOUT;
                 + "  java -jar arthas-boot.jar --telnet-port 9999 --http-port -1\n"
                 + "  java -jar arthas-boot.jar --tunnel-server 'ws://192.168.10.11:7777/ws'\n"
                 + "  java -jar arthas-boot.jar --tunnel-server 'ws://192.168.10.11:7777/ws' --agent-id bvDOe8XbTM2pQWjF4cfw\n"
+                + "  java -jar arthas-boot.jar --channel-server '192.168.10.11:7700'\n"
+                + "  java -jar arthas-boot.jar --channel-server '192.168.10.11:7700' --agent-id bvDOe8XbTM2pQWjF4cfw\n"
                 + "  java -jar arthas-boot.jar --stat-url 'http://192.168.10.11:8080/api/stat'\n"
                 + "  java -jar arthas-boot.jar -c 'sysprop; thread' <pid>\n"
                 + "  java -jar arthas-boot.jar -f batch.as <pid>\n"
@@ -116,6 +118,7 @@ public class Bootstrap {
     private String batchFile;
 
     private String tunnelServer;
+    private String channelServer;
     private String agentId;
 
     private String statUrl;
@@ -250,6 +253,12 @@ public class Bootstrap {
     @Description("The tunnel server url")
     public void setTunnelServer(String tunnelServer) {
         this.tunnelServer = tunnelServer;
+    }
+
+    @Option(longName = "channel-server")
+    @Description("The channel server address")
+    public void setChannelServer(String channelServer) {
+        this.channelServer = channelServer;
     }
 
     @Option(longName = "agent-id")
@@ -491,6 +500,10 @@ public class Bootstrap {
             if (bootstrap.getTunnelServer() != null) {
                 attachArgs.add("-tunnel-server");
                 attachArgs.add(bootstrap.getTunnelServer());
+            }
+            if (bootstrap.getChannelServer() != null) {
+                attachArgs.add("-channel-server");
+                attachArgs.add(bootstrap.getChannelServer());
             }
             if (bootstrap.getAgentId() != null) {
                 attachArgs.add("-agent-id");
@@ -754,6 +767,10 @@ public class Bootstrap {
 
     public String getTunnelServer() {
         return tunnelServer;
+    }
+
+    public String getChannelServer() {
+        return channelServer;
     }
 
     public String getAgentId() {

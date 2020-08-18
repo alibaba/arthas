@@ -133,6 +133,10 @@ BATCH_FILE=
 
 # tunnel server url
 TUNNEL_SERVER=
+
+# channel server address
+CHANNEL_SERVER=
+
 # agent id
 AGENT_ID=
 
@@ -392,7 +396,7 @@ usage()
 Usage:
     $0 [-h] [--target-ip <value>] [--telnet-port <value>]
        [--http-port <value>] [--session-timeout <value>] [--arthas-home <value>]
-       [--tunnel-server <value>] [--agent-id <value>] [--stat-url <value>]
+       [--tunnel-server <value>] [--channel-server <value>] [--agent-id <value>] [--stat-url <value>]
        [--use-version <value>] [--repo-mirror <value>] [--versions] [--use-http]
        [--attach-only] [-c <value>] [-f <value>] [-v] [pid]
 
@@ -411,6 +415,7 @@ Options and Arguments:
     --attach-only               Attach target process only, do not connect
     --debug-attach              Debug attach agent
     --tunnel-server             Remote tunnel server url
+    --channel-server            Remote channel server address
     --agent-id                  Special agent id
     --select                    select target process by classname or JARfilename
  -c,--command <value>           Command to execute, multiple commands separated
@@ -427,6 +432,8 @@ EXAMPLES:
   ./as.sh --telnet-port 9999 --http-port -1
   ./as.sh --tunnel-server 'ws://192.168.10.11:7777/ws'
   ./as.sh --tunnel-server 'ws://192.168.10.11:7777/ws' --agent-id bvDOe8XbTM2pQWjF4cfw
+  ./as.sh --channel-server '192.168.10.11:7700'
+  ./as.sh --channel-server '192.168.10.11:7700' --agent-id bvDOe8XbTM2pQWjF4cfw
   ./as.sh --stat-url 'http://192.168.10.11:8080/api/stat'
   ./as.sh -c 'sysprop; thread' <pid>
   ./as.sh -f batch.as <pid>
@@ -554,6 +561,11 @@ parse_arguments()
         ;;
         --tunnel-server)
         TUNNEL_SERVER="$2"
+        shift # past argument
+        shift # past value
+        ;;
+        --channel-server)
+        CHANNEL_SERVER="$2"
         shift # past argument
         shift # past value
         ;;
@@ -749,6 +761,10 @@ attach_jvm()
     if [ "${TUNNEL_SERVER}" ]; then
         tempArgs+=("-tunnel-server")
         tempArgs+=("${TUNNEL_SERVER}")
+    fi
+    if [ "${CHANNEL_SERVER}" ]; then
+        tempArgs+=("-channel-server")
+        tempArgs+=("${CHANNEL_SERVER}")
     fi
     if [ "${AGENT_ID}" ]; then
         tempArgs+=("-agent-id")
