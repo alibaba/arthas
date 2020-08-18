@@ -1,6 +1,7 @@
 package com.taobao.arthas.core.command.model;
 
 import java.util.Collection;
+import java.util.List;
 
 /**
  * Data model of GetStaticCommand
@@ -11,6 +12,8 @@ public class GetStaticModel extends ResultModel {
     private Collection<ClassVO> matchedClasses;
     private ObjectVO field;
     private int expand;
+    private Collection<ClassLoaderVO> matchedClassLoaders;
+    private String classLoaderClass;
 
     public GetStaticModel() {
     }
@@ -46,6 +49,24 @@ public class GetStaticModel extends ResultModel {
 
     public void setExpand(int expand) {
         this.expand = expand;
+    }
+
+    public String getClassLoaderClass() {
+        return classLoaderClass;
+    }
+
+    public GetStaticModel setClassLoaderClass(String classLoaderClass) {
+        this.classLoaderClass = classLoaderClass;
+        return this;
+    }
+
+    public Collection<ClassLoaderVO> getMatchedClassLoaders() {
+        return matchedClassLoaders;
+    }
+
+    public GetStaticModel setMatchedClassLoaders(Collection<ClassLoaderVO> matchedClassLoaders) {
+        this.matchedClassLoaders = matchedClassLoaders;
+        return this;
     }
 
     @Override

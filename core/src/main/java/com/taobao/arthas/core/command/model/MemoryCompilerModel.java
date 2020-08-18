@@ -1,5 +1,6 @@
 package com.taobao.arthas.core.command.model;
 
+import java.util.Collection;
 import java.util.List;
 
 /**
@@ -8,6 +9,8 @@ import java.util.List;
 public class MemoryCompilerModel extends ResultModel {
 
     private List<String> files;
+    private Collection<ClassLoaderVO> matchedClassLoaders;
+    private String classLoaderClass;
 
     public MemoryCompilerModel() {
     }
@@ -22,6 +25,24 @@ public class MemoryCompilerModel extends ResultModel {
 
     public List<String> getFiles() {
         return files;
+    }
+
+    public String getClassLoaderClass() {
+        return classLoaderClass;
+    }
+
+    public MemoryCompilerModel setClassLoaderClass(String classLoaderClass) {
+        this.classLoaderClass = classLoaderClass;
+        return this;
+    }
+
+    public Collection<ClassLoaderVO> getMatchedClassLoaders() {
+        return matchedClassLoaders;
+    }
+
+    public MemoryCompilerModel setMatchedClassLoaders(Collection<ClassLoaderVO> matchedClassLoaders) {
+        this.matchedClassLoaders = matchedClassLoaders;
+        return this;
     }
 
     @Override

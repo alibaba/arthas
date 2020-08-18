@@ -46,18 +46,22 @@ $ sc -d *UserController | grep classLoaderHash
 
 It can be found that it is loaded by spring boot `LaunchedURLClassLoader@1be6f5c3`.
 
-Please write down your classLoaderHash here, in the case here, it's `1be6f5c3`. It will be used in the future steps.
+Note that the hashcode changes, you need to check the current ClassLoader information first, and extract the hashcode corresponding to the ClassLoader.
 
-Note: Please replace `<classLoaderHash>` with your classLoaderHash above, then execute the commands manually in the following steps:
+if you use`-c`, you have to manually type hashcode by `-c <hashcode>`.
+
+For classloader with only one instance, it can be specified by `--classLoaderClass` using class name, which is more convenient to use.
+
+The value of `--classloaderclass` is the class name of classloader. It can only work when it matches a unique classloader instance. The purpose is to facilitate the input of general commands. However, `-c <hashcode>` is dynamic.
 
 ### mc
 
-After saving `/tmp/UserController.java`, compile with the `mc` (Memory Compiler) command and specify the ClassLoader with the `-c` option:
+After saving `/tmp/UserController.java`, compile with the `mc` (Memory Compiler) command and specify the ClassLoader with the `--classLoaderClass` option:
 
-`mc -c <classLoaderHash> /tmp/UserController.java -d /tmp`
+`mc --classLoaderClass org.springframework.boot.loader.LaunchedURLClassLoader /tmp/UserController.java -d /tmp`{{execute T2}}
 
 ```bash
-$ mc -c 1be6f5c3 /tmp/UserController.java -d /tmp
+$ mc --classLoaderClass org.springframework.boot.loader.LaunchedURLClassLoader /tmp/UserController.java -d /tmp
 Memory compiler output:
 /tmp/com/example/demo/arthas/user/UserController.class
 Affect(row-cnt:1) cost in 346 ms

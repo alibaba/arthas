@@ -11,6 +11,7 @@ dump
 |---:|:---|
 |*class-pattern*|class name pattern|
 |`[c:]`|hashcode of the [class loader](classloader.md) that loaded the target class|
+|`[classLoaderClass:]`| The class name of the ClassLoader that executes the expression. |
 |`[d:]`|set the destination directory for class files|
 |`[E]`|turn on regex match, the default behavior is wild card match|
 
