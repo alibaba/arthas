@@ -12,6 +12,7 @@
 |---:|:---|
 |*class-pattern*|pattern for the class name|
 |`[c:]`|hashcode of the class loader that loads the class|
+|`[classLoaderClass:]`| The class name of the ClassLoader that executes the expression. |
 |`[E]`|turn on regex match while the default is wildcard match|
 
 ### Usage

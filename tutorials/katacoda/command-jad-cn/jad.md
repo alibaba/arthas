@@ -12,6 +12,7 @@
 |---:|:---|
 |*class-pattern*|类名表达式匹配|
 |`[c:]`|类所属 ClassLoader 的 hashcode|
+|`[classLoaderClass:]`|指定执行表达式的 ClassLoader 的 class name|
 |[E]|开启正则表达式匹配，默认为通配符匹配|
 
 ### 使用参考
