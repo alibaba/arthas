@@ -38,10 +38,36 @@ public class ChannelClient {
     private StreamObserver<ActionResponse> responseStreamObserver;
     private ManagedChannel channel;
     private ScheduledFuture<?> reconnectFuture;
+    private String channelServerAddress;
+    private int reconnectDelay = 5000;
 
     public ChannelClient(String host, int port) {
         this.host = host;
         this.port = port;
+        this.channelServerAddress = host + ":" + port;
+    }
+
+    public ChannelClient(String channelServer) {
+        setServerAddress(channelServer);
+    }
+
+    private void setServerAddress(String channelServer) {
+        String[] strs = channelServer.split(":");
+        if (strs.length != 2) {
+            throw new IllegalArgumentException("server address format must be 'host:port' or 'ip:port'.");
+        }
+
+        this.host = strs[0].trim();
+        if (this.host.length() == 0) {
+            throw new IllegalArgumentException("server host is invalid");
+        }
+
+        try {
+            this.port = Integer.parseInt(strs[1].trim());
+        } catch (Exception e) {
+            throw new IllegalArgumentException("server port is invalid");
+        }
+        this.channelServerAddress = host + ":" + port;
     }
 
     public void start() {
@@ -65,9 +91,9 @@ public class ChannelClient {
             }
         }
         if (channel != null) {
-            channel.shutdown();
+            channel.shutdownNow();
             try {
-                channel.awaitTermination(5, TimeUnit.SECONDS);
+                channel.awaitTermination(2, TimeUnit.SECONDS);
             } catch (InterruptedException e) {
                 //ignore ex
             }
@@ -104,7 +130,9 @@ public class ChannelClient {
 
             @Override
             public void onError(Throwable t) {
-                promise.setFailure(t);
+                if (!promise.isDone()) {
+                    promise.setFailure(t);
+                }
             }
 
             @Override
@@ -116,7 +144,11 @@ public class ChannelClient {
         try {
             registerResult = promise.get(10, TimeUnit.SECONDS);
         } catch (Exception e) {
-            logger.error("Agent registration error: " + e.toString(), e);
+            if (isWellKnownError(e)) {
+                logger.error("Agent registration error: " + e.toString());
+            } else {
+                logger.error("Agent registration error: " + e.toString(), e);
+            }
             throw e;
         }
 
@@ -181,12 +213,12 @@ public class ChannelClient {
                 .setAgentStatus(agentInfo.getAgentStatus())
                 .setAgentVersion(agentInfo.getAgentVersion())
                 .build();
-        logger.info("sending heartbeat: " + heartbeatRequest);
+        logger.debug("sending heartbeat: {}", heartbeatRequest);
 
         arthasServiceStub.heartbeat(heartbeatRequest, new StreamObserver<HeartbeatResponse>() {
             @Override
             public void onNext(HeartbeatResponse value) {
-                logger.info("heartbeat result: " + value);
+                logger.debug("heartbeat result: {}", value);
 
                 //schedule next heartbeat
                 executorService.schedule(new Runnable() {
@@ -230,7 +262,7 @@ public class ChannelClient {
                         //stop previous channel
                         if (channel != null) {
                             try {
-                                channel.shutdown();
+                                channel.shutdownNow();
                                 channel.awaitTermination(1, TimeUnit.SECONDS);
                             } catch (InterruptedException e) {
                                 //ignore ex
@@ -241,10 +273,14 @@ public class ChannelClient {
                         connect();
                     }
                 } catch (Throwable e) {
-                    logger.error("reconnect failure", e);
+                    if (isWellKnownError(e)) {
+                        logger.error("Agent reconnect failure: " + e.toString());
+                    } else {
+                        logger.error("Agent reconnect failure: " + e.toString(), e);
+                    }
                 }
             }
-        }, 10, 1, TimeUnit.SECONDS);
+        }, 10, reconnectDelay, TimeUnit.MILLISECONDS);
 
     }
 
@@ -255,8 +291,22 @@ public class ChannelClient {
         if (ex == null) {
             logger.error("Channel client is error: " + message);
         } else {
-            logger.error("Channel client is error: " + message, ex);
+            if (isWellKnownError(ex)) {
+                logger.error("Channel client is error: " + message + ", error:" + ex.toString());
+            } else {
+                logger.error("Channel client is error: " + message, ex);
+            }
         }
+    }
+
+    protected boolean isWellKnownError(Throwable ex) {
+        String error = ex.toString();
+        if (error.contains("UNAVAILABLE: Channel shutdownNow invoked")) {
+            return true;
+        } else if (error.contains("UNAVAILABLE: io exception")) {
+            return true;
+        }
+        return false;
     }
 
     private void checkConnection() throws Exception {
@@ -275,6 +325,22 @@ public class ChannelClient {
 
     public void setExecutorService(ScheduledExecutorService executorService) {
         this.executorService = executorService;
+    }
+
+    public String getChannelServerAddress() {
+        return channelServerAddress;
+    }
+
+    public int getReconnectDelay() {
+        return reconnectDelay;
+    }
+
+    /**
+     * Set reconnect delay time (ms)
+     * @param reconnectDelay
+     */
+    public void setReconnectDelay(int reconnectDelay) {
+        this.reconnectDelay = reconnectDelay;
     }
 
     public interface RequestListener {

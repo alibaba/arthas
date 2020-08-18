@@ -17,7 +17,7 @@ public class ChannelClientTest {
 
     public static void main(String[] args) throws IOException {
 
-        final ChannelClient channelClient = new ChannelClient("localhost", 7700);
+        final ChannelClient channelClient = new ChannelClient("localhost:7700");
         channelClient.setAgentInfoService(new TestAgentInfoServiceImpl());
         ScheduledExecutorService executorService = getExecutorService();
         channelClient.setExecutorService(executorService);
