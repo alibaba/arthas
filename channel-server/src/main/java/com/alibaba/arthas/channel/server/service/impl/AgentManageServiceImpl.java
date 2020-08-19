@@ -42,14 +42,5 @@ public class AgentManageServiceImpl implements AgentManageService {
         agentStorage.remove(agentId);
     }
 
-    @Override
-    public void heartbeat(String agentId, String agentStatus, String agentVersion) {
-        AgentVO agentVO = this.findAgentById(agentId);
-        if (agentVO != null) {
-            agentVO.setAgentStatus(agentStatus);
-            agentVO.setAgentVersion(agentVersion);
-            agentVO.setHeartbeatTime(new Date());
-            this.updateAgent(agentVO);
-        }
-    }
+
 }

@@ -35,8 +35,4 @@ public class RedisAgentManageServiceImpl implements AgentManageService {
 
     }
 
-    @Override
-    public void heartbeat(String agentId, String agentStatus, String agentVersion) {
-
-    }
 }

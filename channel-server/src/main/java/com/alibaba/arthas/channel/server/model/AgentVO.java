@@ -26,11 +26,11 @@ public class AgentVO {
 
     private String desc;
 
-    private Date heartbeatTime;
+    private long heartbeatTime;
 
-    private Date createdTime;
+    private long createdTime;
 
-    private Date modifiedTime;
+    private long modifiedTime;
 
     public String getAgentId() {
         return agentId;
@@ -54,14 +54,6 @@ public class AgentVO {
 
     public void setAgentStatus(String agentStatus) {
         this.agentStatus = agentStatus;
-    }
-
-    public Date getHeartbeatTime() {
-        return heartbeatTime;
-    }
-
-    public void setHeartbeatTime(Date heartbeatTime) {
-        this.heartbeatTime = heartbeatTime;
     }
 
     public String getHostname() {
@@ -104,21 +96,27 @@ public class AgentVO {
         this.desc = desc;
     }
 
-    public Date getCreatedTime() {
+    public long getHeartbeatTime() {
+        return heartbeatTime;
+    }
+
+    public void setHeartbeatTime(long heartbeatTime) {
+        this.heartbeatTime = heartbeatTime;
+    }
+
+    public long getCreatedTime() {
         return createdTime;
     }
 
-    public void setCreatedTime(Date createdTime) {
+    public void setCreatedTime(long createdTime) {
         this.createdTime = createdTime;
     }
 
-    public Date getModifiedTime() {
+    public long getModifiedTime() {
         return modifiedTime;
     }
 
-    public void setModifiedTime(Date modifiedTime) {
+    public void setModifiedTime(long modifiedTime) {
         this.modifiedTime = modifiedTime;
     }
-
-
 }

@@ -5,8 +5,10 @@ import com.alibaba.arthas.channel.server.grpc.ChannelServer;
 import com.alibaba.arthas.channel.server.message.MessageExchangeService;
 import com.alibaba.arthas.channel.server.message.impl.MessageExchangeServiceImpl;
 import com.alibaba.arthas.channel.server.message.impl.RedisMessageExchangeServiceImpl;
+import com.alibaba.arthas.channel.server.service.AgentBizSerivce;
 import com.alibaba.arthas.channel.server.service.AgentManageService;
 import com.alibaba.arthas.channel.server.service.ApiActionDelegateService;
+import com.alibaba.arthas.channel.server.service.impl.AgentBizServiceImpl;
 import com.alibaba.arthas.channel.server.service.impl.AgentManageServiceImpl;
 import com.alibaba.arthas.channel.server.service.impl.ApiActionDelegateServiceImpl;
 import com.alibaba.arthas.channel.server.service.impl.RedisAgentManageServiceImpl;
@@ -14,11 +16,9 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
 
-import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.ThreadFactory;
-import java.util.concurrent.ThreadPoolExecutor;
 
 /**
  * @author gongdewei 2020/8/14
@@ -53,6 +53,11 @@ public class ChannelConfiguration {
     }
 
     @Bean
+    public AgentBizSerivce agentBizSerivce() {
+        return new AgentBizServiceImpl();
+    }
+
+    @Bean
     public ArthasServiceGrpcImpl arthasServiceGrpc() {
         return new ArthasServiceGrpcImpl();
     }
@@ -61,6 +66,7 @@ public class ChannelConfiguration {
     public ChannelServer channelServer() {
         return new ChannelServer();
     }
+
 
     @Profile("standalone")
     @Configuration

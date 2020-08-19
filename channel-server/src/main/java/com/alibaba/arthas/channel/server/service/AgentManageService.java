@@ -19,6 +19,4 @@ public interface AgentManageService {
 
     void removeAgentById(String agentId);
 
-    void heartbeat(String agentId, String agentStatus, String agentVersion);
-
 }

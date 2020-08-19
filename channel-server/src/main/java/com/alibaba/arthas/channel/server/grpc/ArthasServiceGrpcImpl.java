@@ -11,6 +11,7 @@ import com.alibaba.arthas.channel.proto.RegisterResult;
 import com.alibaba.arthas.channel.server.message.topic.ActionRequestTopic;
 import com.alibaba.arthas.channel.server.message.topic.ActionResponseTopic;
 import com.alibaba.arthas.channel.server.model.AgentVO;
+import com.alibaba.arthas.channel.server.service.AgentBizSerivce;
 import com.alibaba.arthas.channel.server.service.AgentManageService;
 import com.alibaba.arthas.channel.server.message.MessageExchangeService;
 import io.grpc.stub.StreamObserver;
@@ -27,6 +28,9 @@ public class ArthasServiceGrpcImpl extends ArthasServiceGrpc.ArthasServiceImplBa
 
     @Autowired
     private AgentManageService agentManageService;
+
+    @Autowired
+    private AgentBizSerivce agentBizSerivce ;
 
     @Autowired
     private MessageExchangeService messageExchangeService;
@@ -143,10 +147,13 @@ public class ArthasServiceGrpcImpl extends ArthasServiceGrpc.ArthasServiceImplBa
 
     @Override
     public void register(AgentInfo request, StreamObserver<RegisterResult> responseObserver) {
+        long now = System.currentTimeMillis();
         AgentVO agentVO = agentManageService.findAgentById(request.getAgentId());
         if (agentVO != null) {
             agentVO.setAgentStatus(request.getAgentStatus().name());
             agentVO.setAgentVersion(request.getAgentVersion());
+            agentVO.setModifiedTime(now);
+            agentVO.setHeartbeatTime(now);
             agentManageService.updateAgent(agentVO);
             responseObserver.onNext(RegisterResult.newBuilder()
                     .setStatus(0)
@@ -161,6 +168,9 @@ public class ArthasServiceGrpcImpl extends ArthasServiceGrpc.ArthasServiceImplBa
             agentVO.setIp(request.getIp());
             agentVO.setOsVersion(request.getOsVersion());
             agentVO.setAppName(request.getAppName());
+            agentVO.setCreatedTime(now);
+            agentVO.setModifiedTime(now);
+            agentVO.setHeartbeatTime(now);
             agentManageService.addAgent(agentVO);
             responseObserver.onNext(RegisterResult.newBuilder()
                     .setStatus(0)
@@ -181,7 +191,7 @@ public class ArthasServiceGrpcImpl extends ArthasServiceGrpc.ArthasServiceImplBa
             return;
         }
 
-        agentManageService.heartbeat(request.getAgentId(), request.getAgentStatus().name(), request.getAgentVersion());
+        agentBizSerivce.heartbeat(request.getAgentId(), request.getAgentStatus().name(), request.getAgentVersion());
         responseObserver.onNext(HeartbeatResponse.newBuilder()
                 .setStatus(0)
                 .build());
