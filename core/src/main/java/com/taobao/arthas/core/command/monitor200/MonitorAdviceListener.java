@@ -110,15 +110,13 @@ class MonitorAdviceListener extends AdviceListenerAdapter {
     public void before(ClassLoader loader, Class<?> clazz, ArthasMethod method, Object target, Object[] args)
             throws Throwable {
         threadLocalWatch.start();
-        boolean isPass = true;
         if (!StringUtils.isEmpty(this.command.getConditionExpress()) && command.isBefore()) {
             Advice advice = Advice.newForBefore(loader, clazz, method, target, args);
             long cost = threadLocalWatch.cost();
-            isPass = isConditionMet(this.command.getConditionExpress(), advice, cost);
+            this.conditionResult.set(isConditionMet(this.command.getConditionExpress(), advice, cost));
             //重新计算执行方法的耗时(排除执行condition-express耗时)
             threadLocalWatch.start();
         }
-        this.conditionResult.set(isPass);
     }
 
     @Override
@@ -136,11 +134,11 @@ class MonitorAdviceListener extends AdviceListenerAdapter {
     private void finishing(Class<?> clazz, ArthasMethod method, boolean isThrowing, Advice advice) {
         double cost = threadLocalWatch.costInMillis();
 
-        if (!this.conditionResult.get() && command.isBefore()) {
-            return;
-        }
-
-        if (!StringUtils.isEmpty(this.command.getConditionExpress())  && !command.isBefore()) {
+        if (command.isBefore()) {
+            if (!this.conditionResult.get()) {
+                return;
+            }
+        } else {
             try {
                 //不满足condition-express的不纳入统计
                 if (!isConditionMet(this.command.getConditionExpress(), advice, cost)) {

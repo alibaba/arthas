@@ -48,7 +48,7 @@ public class MonitorCommand extends EnhancerCommand {
     }
 
     @Argument(argName = "condition-express", index = 2, required = false)
-    @Description("Condition-express before method invoke")
+    @Description("Condition-express to filter method who need statistics")
     public void setConditionExpress(String conditionExpress) {
         this.conditionExpress = conditionExpress;
     }
@@ -72,7 +72,7 @@ public class MonitorCommand extends EnhancerCommand {
     }
 
     @Option(shortName = "b", longName = "before", flag = true)
-    @Description("Watch before invocation")
+    @Description("timing of condition-express invoke (before method invoke)")
     public void setBefore(boolean before) {
         isBefore = before;
     }
