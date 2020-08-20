@@ -17,7 +17,7 @@
 - 有什么办法可以监控到JVM的实时运行状态？
 - 怎么快速定位应用的热点，生成火焰图？
 
-本教程会以一个普通的Spring Boot应用为例，演示sysenv命令。
+本教程会以一个简单的应用为例，演示sysenv命令。
 
 * Github: https://github.com/alibaba/arthas
 * 文档: https://arthas.aliyun.com/doc/

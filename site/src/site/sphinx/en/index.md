@@ -50,6 +50,7 @@ Contents
 * [Http API](http-api.md)
 * [Docker](docker.md)
 * [Arthas Spring Boot Starter](spring-boot-starter.md)
+* [IDEA Plugin](idea-plugin.md)
 * [User cases](https://github.com/alibaba/arthas/issues?q=label%3Auser-case)
 * [Questions and answers](https://github.com/alibaba/arthas/issues?q=label%3Aquestion-answered)
 * [Fork me at GitHub](https://github.com/alibaba/arthas)

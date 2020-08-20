@@ -1,6 +1,8 @@
 jad
 ===
 
+[`jad`在线教程](https://arthas.aliyun.com/doc/arthas-tutorials?language=cn&id=command-jad)
+
 > 反编译指定已加载类的源码
 
 `jad` 命令将 JVM 中实际运行的 class 的 byte code 反编译成 java 代码，便于你理解业务逻辑；

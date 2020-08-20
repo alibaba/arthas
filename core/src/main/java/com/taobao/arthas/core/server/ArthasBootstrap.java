@@ -481,7 +481,7 @@ public class ArthasBootstrap {
             Method method = clazz.getDeclaredMethod("resetArthasClassLoader");
             method.invoke(null);
         } catch (Throwable e) {
-            e.printStackTrace();
+            // ignore
         }
     }
 

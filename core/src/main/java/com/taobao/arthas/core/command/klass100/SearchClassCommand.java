@@ -3,6 +3,7 @@ package com.taobao.arthas.core.command.klass100;
 
 import java.lang.instrument.Instrumentation;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
@@ -11,11 +12,13 @@ import com.taobao.arthas.core.command.Constants;
 import com.taobao.arthas.core.command.model.ClassDetailVO;
 import com.taobao.arthas.core.command.model.SearchClassModel;
 import com.taobao.arthas.core.command.model.RowAffectModel;
+import com.taobao.arthas.core.command.model.ClassLoaderVO;
 import com.taobao.arthas.core.shell.cli.Completion;
 import com.taobao.arthas.core.shell.cli.CompletionUtils;
 import com.taobao.arthas.core.shell.command.AnnotatedCommand;
 import com.taobao.arthas.core.shell.command.CommandProcess;
 import com.taobao.arthas.core.util.ClassUtils;
+import com.taobao.arthas.core.util.ClassLoaderUtils;
 import com.taobao.arthas.core.util.ResultUtils;
 import com.taobao.arthas.core.util.SearchUtils;
 import com.taobao.arthas.core.util.StringUtils;
@@ -46,6 +49,7 @@ public class SearchClassCommand extends AnnotatedCommand {
     private boolean isField = false;
     private boolean isRegEx = false;
     private String hashCode = null;
+    private String classLoaderClass;
     private Integer expand;
     private int numberOfLimit = 100;
 
@@ -85,6 +89,12 @@ public class SearchClassCommand extends AnnotatedCommand {
         this.hashCode = hashCode;
     }
 
+    @Option(longName = "classLoaderClass")
+    @Description("The class name of the special class's classLoader.")
+    public void setClassLoaderClass(String classLoaderClass) {
+        this.classLoaderClass = classLoaderClass;
+    }
+
     @Option(shortName = "n", longName = "limits")
     @Description("Maximum number of matching classes with details (100 by default)")
     public void setNumberOfLimit(int numberOfLimit) {
@@ -96,6 +106,25 @@ public class SearchClassCommand extends AnnotatedCommand {
         // TODO: null check
         RowAffect affect = new RowAffect();
         Instrumentation inst = process.session().getInstrumentation();
+
+        if (hashCode == null && classLoaderClass != null) {
+            List<ClassLoader> matchedClassLoaders = ClassLoaderUtils.getClassLoaderByClassName(inst, classLoaderClass);
+            if (matchedClassLoaders.size() == 1) {
+                hashCode = Integer.toHexString(matchedClassLoaders.get(0).hashCode());
+            } else if (matchedClassLoaders.size() > 1) {
+                Collection<ClassLoaderVO> classLoaderVOList = ClassUtils.createClassLoaderVOList(matchedClassLoaders);
+                SearchClassModel searchclassModel = new SearchClassModel()
+                        .setClassLoaderClass(classLoaderClass)
+                        .setMatchedClassLoaders(classLoaderVOList);
+                process.appendResult(searchclassModel);
+                process.end(-1, "Found more than one classloader by class name, please specify classloader with '-c <classloader hash>'");
+                return;
+            } else {
+                process.end(-1, "Can not find classloader by class name: " + classLoaderClass + ".");
+                return;
+            }
+        }
+
         List<Class<?>> matchedClasses = new ArrayList<Class<?>>(SearchUtils.searchClass(inst, classPattern, isRegEx, hashCode));
         Collections.sort(matchedClasses, new Comparator<Class<?>>() {
             @Override

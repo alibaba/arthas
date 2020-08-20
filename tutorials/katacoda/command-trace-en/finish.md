@@ -1,5 +1,5 @@
 
-The `mbean Tutorial` demonstrates the usage of mbean. If you have more tips or questions, please feel free to ask in Issue.
+The `trace Tutorial` demonstrates the usage of trace. If you have more tips or questions, please feel free to ask in Issue.
 
 * Issues: https://github.com/alibaba/arthas/issues
 * Documentation: https://arthas.aliyun.com/doc

@@ -22,6 +22,12 @@ public class ClassLoaderView extends ResultView<ClassLoaderModel> {
 
     @Override
     public void draw(CommandProcess process, ClassLoaderModel result) {
+        if (result.getMatchedClassLoaders() != null) {
+            process.write("Matched classloaders: \n");
+            drawClassLoaders(process, result.getMatchedClassLoaders(), false);
+            process.write("\n");
+            return;
+        }
         if (result.getClassSet() != null) {
             drawAllClasses(process, result.getClassSet());
         }
