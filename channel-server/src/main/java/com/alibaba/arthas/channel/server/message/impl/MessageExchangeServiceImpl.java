@@ -3,8 +3,13 @@ package com.alibaba.arthas.channel.server.message.impl;
 import com.alibaba.arthas.channel.server.message.MessageExchangeException;
 import com.alibaba.arthas.channel.server.message.MessageExchangeService;
 import com.alibaba.arthas.channel.server.message.topic.Topic;
+import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ConcurrentHashMap;
@@ -17,6 +22,8 @@ import java.util.concurrent.TimeUnit;
  * @author gongdewei 2020/8/10
  */
 public class MessageExchangeServiceImpl implements MessageExchangeService {
+
+    private static final Logger logger = LoggerFactory.getLogger(MessageExchangeServiceImpl.class);
 
     private Map<Topic, TopicData> topicMap = new ConcurrentHashMap<Topic, TopicData>();
 
@@ -33,6 +40,23 @@ public class MessageExchangeServiceImpl implements MessageExchangeService {
     @Override
     public void removeTopic(Topic topic) throws MessageExchangeException {
         topicMap.remove(topic);
+    }
+
+    @Override
+    public void removeTopicsOfAgent(String agentId) {
+        List<Topic> removingTopics = new ArrayList<>();
+        for (Topic topic : topicMap.keySet()) {
+            if (StringUtils.equals(topic.getAgentId(), agentId)) {
+                removingTopics.add(topic);
+            }
+        }
+        for (Topic topic : removingTopics) {
+            try {
+                removeTopic(topic);
+            } catch (Exception e) {
+                logger.error("remove topic failure: {}", topic, e);
+            }
+        }
     }
 
     @Override
@@ -101,6 +125,10 @@ public class MessageExchangeServiceImpl implements MessageExchangeService {
                         }
                     } catch (InterruptedException e) {
                         e.printStackTrace();
+                    }
+                    // remove message handler
+                    if (finalTopicData.getMessageHandler() == messageHandler){
+                        finalTopicData.setMessageHandler(null);
                     }
                 }
             }

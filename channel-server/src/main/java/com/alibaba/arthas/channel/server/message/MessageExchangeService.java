@@ -11,6 +11,12 @@ public interface MessageExchangeService {
 
     void removeTopic(Topic topic) throws MessageExchangeException;
 
+    /**
+     * clean all topics of agent
+     * @param agentId
+     */
+    void removeTopicsOfAgent(String agentId);
+
     void pushMessage(Topic topic, byte[] messageBytes) throws MessageExchangeException;
 
     byte[] pollMessage(Topic topic, int timeout) throws MessageExchangeException;

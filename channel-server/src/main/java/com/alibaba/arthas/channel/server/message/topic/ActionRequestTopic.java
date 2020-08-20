@@ -11,9 +11,13 @@ public class ActionRequestTopic implements Topic {
         this.agentId = agentId;
     }
 
+    public String getAgentId() {
+        return agentId;
+    }
+
     @Override
     public String getTopic() {
-        return "arthas:channels:agent:" + agentId + ":requests";
+        return "arthas:channel:topics:agent:" + agentId + ":requests";
     }
 
     @Override

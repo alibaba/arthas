@@ -1,11 +1,18 @@
-package com.alibaba.arthas.channel.server.message.impl;
+package com.alibaba.arthas.channel.server.redis;
 
 import com.alibaba.arthas.channel.server.message.MessageExchangeException;
 import com.alibaba.arthas.channel.server.message.MessageExchangeService;
 import com.alibaba.arthas.channel.server.message.topic.Topic;
+import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.connection.RedisConnection;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.core.ScanOptions;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
@@ -15,6 +22,11 @@ import java.util.concurrent.TimeUnit;
  */
 public class RedisMessageExchangeServiceImpl implements MessageExchangeService {
 
+    private static final Logger logger = LoggerFactory.getLogger(RedisMessageExchangeServiceImpl.class);
+
+    private static final String topicPrefix = "arthas:channel:topics:agent:";
+
+
     @Autowired
     private RedisTemplate<String, byte[]> redisTemplate;
 
@@ -23,12 +35,26 @@ public class RedisMessageExchangeServiceImpl implements MessageExchangeService {
 
     @Override
     public void createTopic(Topic topic) throws MessageExchangeException {
-        //redisTemplate.opsForList().
+        //do nothing
     }
 
     @Override
     public void removeTopic(Topic topic) throws MessageExchangeException {
+        redisTemplate.delete(topic.getTopic());
+    }
 
+    @Override
+    public void removeTopicsOfAgent(String agentId) {
+        List<Topic> removingTopics = new ArrayList<>();
+
+        //TODO scan topic and clean
+        for (Topic topic : removingTopics) {
+            try {
+                removeTopic(topic);
+            } catch (Exception e) {
+                logger.error("remove topic failure: {}", topic, e);
+            }
+        }
     }
 
     @Override
@@ -38,7 +64,7 @@ public class RedisMessageExchangeServiceImpl implements MessageExchangeService {
 
     @Override
     public byte[] pollMessage(Topic topic, int timeout) throws MessageExchangeException {
-        return redisTemplate.opsForList().rightPop(topic.getTopic());
+        return redisTemplate.opsForList().rightPop(topic.getTopic(), timeout, TimeUnit.MILLISECONDS);
     }
 
     @Override

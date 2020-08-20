@@ -15,8 +15,17 @@ public class ActionResponseTopic implements Topic {
     }
 
     @Override
+    public String getAgentId() {
+        return agentId;
+    }
+
+    public String getRequestId() {
+        return requestId;
+    }
+
+    @Override
     public String getTopic() {
-        return "arthas:channels:agent:" + agentId + ":response:" + requestId;
+        return "arthas:channel:topics:agent:" + agentId + ":response:" + requestId;
     }
 
     @Override

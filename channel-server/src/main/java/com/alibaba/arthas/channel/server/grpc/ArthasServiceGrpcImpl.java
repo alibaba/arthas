@@ -76,13 +76,6 @@ public class ArthasServiceGrpcImpl extends ArthasServiceGrpc.ArthasServiceImplBa
                         logger.error("send action request message to arthas agent failure", e);
                         //TODO 如何通知请求来源方发送请求失败？
 
-                        // 可能是网络异常，不能再使用本连接的StreamObserver发送请求
-                        try {
-                            messageExchangeService.unsubscribe(requestTopic, this);
-                        } catch (Throwable ex) {
-                            logger.error("unsubscribe action request topic failure: "+requestTopic, e);
-                        }
-
                         //TODO 通知网络异常
                         return false;
                     }

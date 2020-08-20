@@ -28,7 +28,7 @@ public class AgentBizServiceImpl implements AgentBizSerivce {
             agentVO.setAgentStatus(agentStatus);
             agentVO.setAgentVersion(agentVersion);
             agentVO.setHeartbeatTime(System.currentTimeMillis());
-            agentVO.setModifiedTime(agentVO.getHeartbeatTime());
+            //agentVO.setModifiedTime(agentVO.getHeartbeatTime());
             agentManageService.updateAgent(agentVO);
         }
     }
@@ -47,11 +47,13 @@ public class AgentBizServiceImpl implements AgentBizSerivce {
                 if (!AgentStatus.DOWN.name().equals(agent.getAgentStatus())) {
                     logger.info("Mark agent status as DOWN, agentId: {}, heartbeat delay: {}", agent.getAgentId(), heartbeatDelay);
                     agent.setAgentStatus(AgentStatus.DOWN.name());
+                    agentManageService.updateAgent(agent);
                 }
             } else if (heartbeatDelay > 15000) {
                 if (!AgentStatus.OUT_OF_SERVICE.name().equals(agent.getAgentStatus())) {
                     logger.info("Mark agent status as OUT_OF_SERVICE, agentId: {}, heartbeat delay: {}", agent.getAgentId(), heartbeatDelay);
                     agent.setAgentStatus(AgentStatus.OUT_OF_SERVICE.name());
+                    agentManageService.updateAgent(agent);
                 }
             }
         }

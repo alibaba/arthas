@@ -4,18 +4,26 @@ import com.alibaba.arthas.channel.server.grpc.ArthasServiceGrpcImpl;
 import com.alibaba.arthas.channel.server.grpc.ChannelServer;
 import com.alibaba.arthas.channel.server.message.MessageExchangeService;
 import com.alibaba.arthas.channel.server.message.impl.MessageExchangeServiceImpl;
-import com.alibaba.arthas.channel.server.message.impl.RedisMessageExchangeServiceImpl;
+import com.alibaba.arthas.channel.server.redis.RedisMessageExchangeServiceImpl;
 import com.alibaba.arthas.channel.server.service.AgentBizSerivce;
 import com.alibaba.arthas.channel.server.service.AgentManageService;
 import com.alibaba.arthas.channel.server.service.ApiActionDelegateService;
 import com.alibaba.arthas.channel.server.service.impl.AgentBizServiceImpl;
 import com.alibaba.arthas.channel.server.service.impl.AgentManageServiceImpl;
 import com.alibaba.arthas.channel.server.service.impl.ApiActionDelegateServiceImpl;
-import com.alibaba.arthas.channel.server.service.impl.RedisAgentManageServiceImpl;
+import com.alibaba.arthas.channel.server.redis.RedisAgentManageServiceImpl;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
+import org.springframework.boot.autoconfigure.data.redis.RedisAutoConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Import;
 import org.springframework.context.annotation.Profile;
+import org.springframework.data.redis.connection.RedisConnectionFactory;
+import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.core.StringRedisTemplate;
+import org.springframework.data.redis.serializer.RedisSerializer;
 
+import java.net.UnknownHostException;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.ThreadFactory;
@@ -24,7 +32,7 @@ import java.util.concurrent.ThreadFactory;
  * @author gongdewei 2020/8/14
  */
 @Configuration
-public class ChannelConfiguration {
+public class ChannelServerConfiguration {
 
     @Bean
     public ScheduledExecutorService executorService() {
@@ -39,7 +47,7 @@ public class ChannelConfiguration {
             }
         });
 
-        //ScheduledThreadPoolExecutor为无界队列，MaximumPoolSize无效
+        //ScheduledThreadPoolExecutor为无界队列，设置MaximumPoolSize无效
 //        if (executorService instanceof ThreadPoolExecutor) {
 //            ThreadPoolExecutor threadPoolExecutor = (ThreadPoolExecutor) executorService;
 //            threadPoolExecutor.setMaximumPoolSize(50);
@@ -68,7 +76,7 @@ public class ChannelConfiguration {
     }
 
 
-    @Profile("standalone")
+    @Profile("memory")
     @Configuration
     static class StandaloneConfiguration {
 
@@ -97,6 +105,25 @@ public class ChannelConfiguration {
             return new RedisMessageExchangeServiceImpl();
         }
 
+        @Bean
+        public RedisTemplate<String, byte[]> redisTemplate(RedisConnectionFactory redisConnectionFactory)
+                throws UnknownHostException {
+            RedisTemplate<String, byte[]> template = new RedisTemplate<String, byte[]>();
+            template.setKeySerializer(RedisSerializer.string());
+            template.setValueSerializer(RedisSerializer.byteArray());
+            template.setHashKeySerializer(RedisSerializer.string());
+            template.setHashValueSerializer(RedisSerializer.byteArray());
+            template.setConnectionFactory(redisConnectionFactory);
+            return template;
+        }
+
+        @Bean
+        public StringRedisTemplate stringRedisTemplate(RedisConnectionFactory redisConnectionFactory)
+                throws UnknownHostException {
+            StringRedisTemplate template = new StringRedisTemplate();
+            template.setConnectionFactory(redisConnectionFactory);
+            return template;
+        }
     }
 
 
