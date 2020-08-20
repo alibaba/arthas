@@ -7,6 +7,13 @@ dashboard
 
 When running in Apache Tomcat Alibaba edition, the dashboard will also present the real time statistics of the tomcat,  including [QPS](https://en.wikipedia.org/wiki/Queries_per_second), RT, error counts, and thread pool, etc.
 
+### Options
+
+|Name|Specification|
+|---:|:---|
+|[i:]|The interval (in ms) between two executions, default is 5000 ms.|
+|[n:]|The number of times this command will be executed.|
+
 ### Usage
 
 ```

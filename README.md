@@ -72,7 +72,7 @@ You can install Arthas with one single line command on Linux, Unix, and Mac. Cop
 curl -L https://arthas.aliyun.com/install.sh | sh
 ```
 
-The command above will download the bootstrap script `as.sh` to the current directory. You can move it the any other place you want, or put its location in `$PATH`.
+The command above will download the bootstrap script `as.sh` to the current directory. You can move it any other place you want, or put its location in `$PATH`.
 
 You can enter its interactive interface by executing `as.sh`, or execute `as.sh -h` for more help information.
 

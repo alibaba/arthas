@@ -1,9 +1,19 @@
 redefine
 ===
 
+[`mc-redefine`在线教程](https://arthas.aliyun.com/doc/arthas-tutorials?language=cn&id=command-mc-redefine)
+
 > 加载外部的`.class`文件，redefine jvm已加载的类。
 
 参考：[Instrumentation#redefineClasses](https://docs.oracle.com/javase/8/docs/api/java/lang/instrument/Instrumentation.html#redefineClasses-java.lang.instrument.ClassDefinition...-)
+
+### 常见问题
+
+* redefine的class不能修改、添加、删除类的field和method，包括方法参数、方法名称及返回值
+
+* 如果mc失败，可以在本地开发环境编译好class文件，上传到目标系统，使用redefine热加载class
+
+* 目前redefine 和watch/trace/jad/tt等命令冲突，以后重新实现redefine功能会解决此问题
 
 > 注意， redefine后的原来的类不能恢复，redefine有可能失败（比如增加了新的field），参考jdk本身的文档。
 

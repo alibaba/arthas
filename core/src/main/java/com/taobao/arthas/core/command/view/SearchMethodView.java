@@ -14,6 +14,13 @@ import com.taobao.text.util.RenderUtil;
 public class SearchMethodView extends ResultView<SearchMethodModel> {
     @Override
     public void draw(CommandProcess process, SearchMethodModel result) {
+        if (result.getMatchedClassLoaders() != null) {
+            process.write("Matched classloaders: \n");
+            ClassLoaderView.drawClassLoaders(process, result.getMatchedClassLoaders(), false);
+            process.write("\n");
+            return;
+        }
+
         boolean detail = result.isDetail();
         MethodVO methodInfo = result.getMethodInfo();
 
