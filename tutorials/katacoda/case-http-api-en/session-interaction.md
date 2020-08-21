@@ -41,12 +41,16 @@ echo $session_id`{{execute T3}}
 
 `b09f1353-202c-407b-af24-701b744f971e`;
 
+Please take a note of your session ID here, it will be entered in Terminal 4 in the following steps.
+
 consumer ID is: 
 
 `consumer_id=$(echo $session_data | sed 's/.*"consumerId":"\([^"]*\)".*/\1/g')
 echo $consumer_id`{{execute T3}}
 
 `5ae4e5fbab8b4e529ac404f260d4e2d1_1`.
+
+Please take a note of your consumer ID here, it will be entered in Terminal 4 in the following steps.
 
 #### Join session
 
@@ -107,6 +111,20 @@ The request parameters require session ID and consumer ID:
 ' | json_pp`{{execute T3}}
 
 Use Bash scripts to regularly pull results messages:
+
+Please enter the sessionID from your Terminal 3 in Terminal 4, an example is here：
+
+`b09f1353-202c-407b-af24-701b744f971e`
+
+`echo -n "Enter your sessionId in T3:"
+read  session_id`{{execute T4}}
+
+Also, Please enter the consumerID, an example is here：
+
+`8f7f6ad7bc2d4cb5aa57a530927a95cc_2`
+
+`echo -n "Enter your consumerId in T3:"
+read  consumer_id`{{execute T4}}
 
 `while true; do curl -Ss -XPOST http://localhost:8563/api -d '
 {
