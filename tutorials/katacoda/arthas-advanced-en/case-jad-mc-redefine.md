@@ -48,16 +48,14 @@ It can be found that it is loaded by spring boot `LaunchedURLClassLoader@1be6f5c
 
 Please write down your classLoaderHash here, in the case here, it's `1be6f5c3`. It will be used in the future steps.
 
-Note: Please replace `<classLoaderHash>` with your classLoaderHash above, then execute the related commands manually in the following steps:
-
 ### mc
 
-After saving `/tmp/UserController.java`, compile with the `mc` (Memory Compiler) command and specify the ClassLoader with the `-c` option:
+After saving `/tmp/UserController.java`, compile with the `mc` (Memory Compiler) command and specify the ClassLoader with the `-c` or `--classLoaderClass` option:
 
-`mc -c <classLoaderHash> /tmp/UserController.java -d /tmp`
+`mc --classLoaderClass org.springframework.boot.loader.LaunchedURLClassLoader /tmp/UserController.java -d /tmp`{{execute T2}}
 
 ```bash
-$ mc -c 1be6f5c3 /tmp/UserController.java -d /tmp
+$ mc --classLoaderClass org.springframework.boot.loader.LaunchedURLClassLoader /tmp/UserController.java -d /tmp
 Memory compiler output:
 /tmp/com/example/demo/arthas/user/UserController.class
 Affect(row-cnt:1) cost in 346 ms
