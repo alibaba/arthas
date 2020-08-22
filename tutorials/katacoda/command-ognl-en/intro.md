@@ -36,5 +36,5 @@ Arthas is built to solve these issues. A developer can troubleshoot production i
 This tutorial takes a normal Spring Boot application as an example to demonstrate the the usage of ognl.
 
 * Github: https://github.com/alibaba/arthas
-* Docs: https://arthas.aliyun.com/doc/
-
+* Docs: https://arthas.aliyun.com/doc/en
+* Contributer to this tutorial:[@HollowMan6](https://github.com/HollowMan6)

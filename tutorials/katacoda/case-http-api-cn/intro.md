@@ -21,3 +21,4 @@
 
 * Github: https://github.com/alibaba/arthas
 * 文档: https://arthas.aliyun.com/doc
+* 本教程贡献者：[@HollowMan6](https://github.com/HollowMan6)

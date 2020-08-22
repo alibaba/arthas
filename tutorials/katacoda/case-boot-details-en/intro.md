@@ -33,8 +33,8 @@ Arthas is built to solve these issues. A developer can troubleshoot production i
 - Supports JDK 6+
 - Supports Linux/Mac/Windows
 
-This tutorial takes a simple application as an example to demonstrate the the use case of Arthas boot supported options.
+This tutorial takes a simple application as an example to demonstrate the use case of Arthas boot supported options.
 
 * Github: https://github.com/alibaba/arthas
-* Docs: https://arthas.aliyun.com/doc/
-
+* Docs: https://arthas.aliyun.com/doc/en
+* Contributer to this tutorial:[@HollowMan6](https://github.com/HollowMan6)

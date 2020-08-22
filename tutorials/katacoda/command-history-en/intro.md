@@ -37,3 +37,4 @@ This tutorial takes a simple application as an example to demonstrate the the us
 
 * Github: https://github.com/alibaba/arthas
 * Documentation: https://arthas.aliyun.com/doc/en
+* Contributer to this tutorial:[@HollowMan6](https://github.com/HollowMan6)
