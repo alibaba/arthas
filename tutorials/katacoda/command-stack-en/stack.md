@@ -26,6 +26,8 @@ Thanks for `advice`'s data structure, it is possible to observe from varieties o
 
 `stack demo.MathGame primeFactors`{{execute T2}}
 
+Press `Q`{{execute T2}} or `Ctrl+C` to abort
+
 ```bash
 $ stack demo.MathGame primeFactors
 Press Ctrl+C to abort.
@@ -38,6 +40,8 @@ ts=2018-12-04 01:32:19;thread_name=main;id=1;is_daemon=false;priority=5;TCCL=sun
 #### Filtering by condition expression
 
 `stack demo.MathGame primeFactors 'params[0]<0' -n 2`{{execute T2}}
+
+Press `Q`{{execute T2}} or `Ctrl+C` to abort
 
 ```bash
 $ stack demo.MathGame primeFactors 'params[0]<0' -n 2
@@ -58,6 +62,8 @@ Command execution times exceed limit: 2, so command will exit. You can set it wi
 #### Filtering by cost
 
 `stack demo.MathGame primeFactors '#cost>5'`{{execute T2}}
+
+Press `Q`{{execute T2}} or `Ctrl+C` to abort
 
 ```bash
 $ stack demo.MathGame primeFactors '#cost>5'

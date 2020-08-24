@@ -37,6 +37,8 @@
 
 `monitor -c 5 demo.MathGame primeFactors`{{execute T2}}
 
+按`Q`{{execute T2}}或者`Ctrl+c`退出
+
 ```bash
 $ monitor -c 5 demo.MathGame primeFactors
 Press Ctrl+C to abort.

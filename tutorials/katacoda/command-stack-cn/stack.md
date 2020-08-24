@@ -26,6 +26,8 @@
 
 `stack demo.MathGame primeFactors`{{execute T2}}
 
+按`Q`{{execute T2}}或者`Ctrl+c`退出
+
 ```bash
 $ stack demo.MathGame primeFactors
 Press Ctrl+C to abort.
@@ -38,6 +40,8 @@ ts=2018-12-04 01:32:19;thread_name=main;id=1;is_daemon=false;priority=5;TCCL=sun
 #### 据条件表达式来过滤
 
 `stack demo.MathGame primeFactors 'params[0]<0' -n 2`{{execute T2}}
+
+按`Q`{{execute T2}}或者`Ctrl+c`退出
 
 ```bash
 $ stack demo.MathGame primeFactors 'params[0]<0' -n 2
@@ -58,6 +62,8 @@ Command execution times exceed limit: 2, so command will exit. You can set it wi
 #### 据执行时间来过滤
 
 `stack demo.MathGame primeFactors '#cost>5'`{{execute T2}}
+
+按`Q`{{execute T2}}或者`Ctrl+c`退出
 
 ```bash
 $ stack demo.MathGame primeFactors '#cost>5'

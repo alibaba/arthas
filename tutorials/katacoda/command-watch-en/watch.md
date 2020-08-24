@@ -38,6 +38,8 @@ Advanced:
 
 `watch demo.MathGame primeFactors "{params,returnObj}" -x 2`{{execute T2}}
 
+Press `Q`{{execute T2}} or `Ctrl+C` to abort
+
 ```bash
 $ watch demo.MathGame primeFactors "{params,returnObj}" -x 2
 Press Ctrl+C to abort.
@@ -59,6 +61,8 @@ ts=2018-12-03 19:16:51; [cost=1.280502ms] result=@ArrayList[
 
 `watch demo.MathGame primeFactors "{params,returnObj}" -x 2 -b`{{execute T2}}
 
+Press `Q`{{execute T2}} or `Ctrl+C` to abort
+
 ```bash
 $ watch demo.MathGame primeFactors "{params,returnObj}" -x 2 -b
 Press Ctrl+C to abort.
@@ -79,6 +83,8 @@ Compared to the previous *check*:
 #### Check *before* and *after* at the same time
 
 `watch demo.MathGame primeFactors "{params,target,returnObj}" -x 2 -b -s -n 2`{{execute T2}}
+
+Press `Q`{{execute T2}} or `Ctrl+C` to abort
 
 ```bash
 $ watch demo.MathGame primeFactors "{params,target,returnObj}" -x 2 -b -s -n 2
@@ -125,6 +131,8 @@ F.Y.I
 
 `watch demo.MathGame primeFactors "{params,target}" -x 3`{{execute T2}}
 
+Press `Q`{{execute T2}} or `Ctrl+C` to abort
+
 ```bash
 $ watch demo.MathGame primeFactors "{params,target}" -x 3
 Press Ctrl+C to abort.
@@ -162,6 +170,8 @@ ts=2018-12-03 19:34:19; [cost=0.587833ms] result=@ArrayList[
 
 `watch demo.MathGame primeFactors "{params[0],target}" "params[0]<0"`{{execute T2}}
 
+Press `Q`{{execute T2}} or `Ctrl+C` to abort
+
 ```bash
 $ watch demo.MathGame primeFactors "{params[0],target}" "params[0]<0"
 Press Ctrl+C to abort.
@@ -184,13 +194,19 @@ If there are other overloaded methods with the same name in the watch method, yo
 
    `watch demo.MathGame primeFactors '{params, params[0].class.name}' 'params[0].class.name == "java.lang.Integer"'`{{execute T2}}
 
+   Press `Q`{{execute T2}} or `Ctrl+C` to abort
+
   * Filter according to the number of parameters
   
   `watch demo.MathGame primeFactors '{params, params.length}' 'params.length==1'`{{execute T2}}
 
+  Press `Q`{{execute T2}} or `Ctrl+C` to abort
+
 #### Check `exceptions`
 
 `watch demo.MathGame primeFactors "{params[0],throwExp}" -e -x 2`{{execute T2}}
+
+Press `Q`{{execute T2}} or `Ctrl+C` to abort
 
 ```bash
 $ watch demo.MathGame primeFactors "{params[0],throwExp}" -e -x 2
@@ -213,9 +229,13 @@ Filter according to exception type or message:
 
 `watch demo.MathGame primeFactors '{params, throwExp}' '#msg=throwExp.toString(), #msg.contains("IllegalArgumentException")' -e -x 2`{{execute T2}}
 
+Press `Q`{{execute T2}} or `Ctrl+C` to abort
+
 #### Filter by time cost
 
 `watch demo.MathGame primeFactors '{params, returnObj}' '#cost>200' -x 2`{{execute T2}}
+
+Press `Q`{{execute T2}} or `Ctrl+C` to abort
 
 ```bash
 $ watch demo.MathGame primeFactors '{params, returnObj}' '#cost>200' -x 2
@@ -241,6 +261,8 @@ ts=2018-12-03 19:40:28; [cost=2112.168897ms] result=@ArrayList[
 
 `watch demo.MathGame primeFactors 'target'`{{execute T2}}
 
+Press `Q`{{execute T2}} or `Ctrl+C` to abort
+
 ```bash
 $ watch demo.MathGame primeFactors 'target'
 Press Ctrl+C to abort.
@@ -254,6 +276,8 @@ ts=2018-12-03 19:41:52; [cost=0.477882ms] result=@MathGame[
 * `target.field_name`: the field of the current object.
 
 `watch demo.MathGame primeFactors 'target.illegalArgumentCount'`{{execute T2}}
+
+Press `Q`{{execute T2}} or `Ctrl+C` to abort
 
 ```bash
 $ watch demo.MathGame primeFactors 'target.illegalArgumentCount'

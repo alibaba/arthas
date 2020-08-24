@@ -56,6 +56,8 @@
 
 `java -jar arthas-boot.jar`{{execute interrupt}}
 
+`1`{{execute T2}}
+
 最后执行下面命令查看效果：
 
 `keymap | grep C-h`{{execute T2}}
