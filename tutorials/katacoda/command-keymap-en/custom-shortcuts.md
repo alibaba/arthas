@@ -56,6 +56,8 @@ Then reconnect to Arthas console to take effect.
 
 `java -jar arthas-boot.jar`{{execute interrupt}}
 
+`1`{{execute T2}}
+
 Finally you can see the modification by executing
 
 `keymap | grep C-h`{{execute T2}}

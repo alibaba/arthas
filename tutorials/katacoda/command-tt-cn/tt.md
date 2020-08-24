@@ -15,6 +15,8 @@
 
 `tt -t demo.MathGame primeFactors`{{execute T2}}
 
+按`Q`{{execute T2}}或者`Ctrl+c`退出
+
 ```bash
 $ tt -t demo.MathGame primeFactors
 Press Ctrl+C to abort.

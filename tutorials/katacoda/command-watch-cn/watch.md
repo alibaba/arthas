@@ -40,6 +40,8 @@ watch 的参数比较多，主要是因为它能在 4 个不同的场景观察�
 
 `watch demo.MathGame primeFactors "{params,returnObj}" -x 2`{{execute T2}}
 
+按`Q`{{execute T2}}或者`Ctrl+c`退出
+
 ```bash
 $ watch demo.MathGame primeFactors "{params,returnObj}" -x 2
 Press Ctrl+C to abort.
@@ -61,6 +63,8 @@ ts=2018-12-03 19:16:51; [cost=1.280502ms] result=@ArrayList[
 
 `watch demo.MathGame primeFactors "{params,returnObj}" -x 2 -b`{{execute T2}}
 
+按`Q`{{execute T2}}或者`Ctrl+c`退出
+
 ```bash
 $ watch demo.MathGame primeFactors "{params,returnObj}" -x 2 -b
 Press Ctrl+C to abort.
@@ -79,6 +83,8 @@ ts=2018-12-03 19:23:23; [cost=0.0353ms] result=@ArrayList[
 #### 同时观察方法调用前和方法返回后
 
 `watch demo.MathGame primeFactors "{params,target,returnObj}" -x 2 -b -s -n 2`{{execute T2}}
+
+按`Q`{{execute T2}}或者`Ctrl+c`退出
 
 ```bash
 $ watch demo.MathGame primeFactors "{params,target,returnObj}" -x 2 -b -s -n 2
@@ -125,6 +131,8 @@ ts=2018-12-03 19:29:54; [cost=4.277392ms] result=@ArrayList[
 
 `watch demo.MathGame primeFactors "{params,target}" -x 3`{{execute T2}}
 
+按`Q`{{execute T2}}或者`Ctrl+c`退出
+
 ```bash
 $ watch demo.MathGame primeFactors "{params,target}" -x 3
 Press Ctrl+C to abort.
@@ -163,6 +171,8 @@ ts=2018-12-03 19:34:19; [cost=0.587833ms] result=@ArrayList[
 
 `watch demo.MathGame primeFactors "{params[0],target}" "params[0]<0"`{{execute T2}}
 
+按`Q`{{execute T2}}或者`Ctrl+c`退出
+
 ```bash
 $ watch demo.MathGame primeFactors "{params[0],target}" "params[0]<0"
 Press Ctrl+C to abort.
@@ -184,14 +194,20 @@ ts=2018-12-03 19:36:04; [cost=0.530255ms] result=@ArrayList[
   * 根据参数类型进行过滤
 
    `watch demo.MathGame primeFactors '{params, params[0].class.name}' 'params[0].class.name == "java.lang.Integer"'`{{execute T2}}
+
+   按`Q`{{execute T2}}或者`Ctrl+c`退出
    
  * 根据参数个数进行过滤
    
   `watch demo.MathGame primeFactors '{params, params.length}' 'params.length==1'`{{execute T2}}
 
+  按`Q`{{execute T2}}或者`Ctrl+c`退出
+
 #### 观察异常信息的例子
 
 `watch demo.MathGame primeFactors "{params[0],throwExp}" -e -x 2`{{execute T2}}
+
+按`Q`{{execute T2}}或者`Ctrl+c`退出
 
 ```bash
 $ watch demo.MathGame primeFactors "{params[0],throwExp}" -e -x 2
@@ -214,9 +230,13 @@ ts=2018-12-03 19:38:00; [cost=1.414993ms] result=@ArrayList[
 
 `watch demo.MathGame primeFactors '{params, throwExp}' '#msg=throwExp.toString(), #msg.contains("IllegalArgumentException")' -e -x 2`{{execute T2}}
 
+按`Q`{{execute T2}}或者`Ctrl+c`退出
+
 #### 按照耗时进行过滤
 
 `watch demo.MathGame primeFactors '{params, returnObj}' '#cost>200' -x 2`{{execute T2}}
+
+按`Q`{{execute T2}}或者`Ctrl+c`退出
 
 ```bash
 $ watch demo.MathGame primeFactors '{params, returnObj}' '#cost>200' -x 2
@@ -240,6 +260,8 @@ ts=2018-12-03 19:40:28; [cost=2112.168897ms] result=@ArrayList[
 
 `watch demo.MathGame primeFactors 'target'`{{execute T2}}
 
+按`Q`{{execute T2}}或者`Ctrl+c`退出
+
 如果想查看方法运行前后，当前对象中的属性，可以使用`target`关键字，代表当前对象
 
 ```bash
@@ -255,6 +277,8 @@ ts=2018-12-03 19:41:52; [cost=0.477882ms] result=@MathGame[
 然后使用`target.field_name`访问当前对象的某个属性
 
 `watch demo.MathGame primeFactors 'target.illegalArgumentCount'`{{execute T2}}
+
+按`Q`{{execute T2}}或者`Ctrl+c`退出
 
 ```bash
 $ watch demo.MathGame primeFactors 'target.illegalArgumentCount'

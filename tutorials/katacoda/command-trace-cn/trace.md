@@ -43,6 +43,8 @@
 
 `trace demo.MathGame run`{{execute T2}}
 
+按`Q`{{execute T2}}或者`Ctrl+c`退出
+
 ```bash
 $ trace demo.MathGame run
 Press Q or Ctrl+C to abort.
@@ -62,6 +64,8 @@ Affect(class-cnt:1 , method-cnt:1) cost in 28 ms.
 
 `trace demo.MathGame run -n 1`{{execute T2}}
 
+按`Q`{{execute T2}}或者`Ctrl+c`退出
+
 ```bash
 $ trace demo.MathGame run -n 1
 Press Q or Ctrl+C to abort.
@@ -80,6 +84,8 @@ Command execution times exceed limit: 1, so command will exit. You can set it wi
 * `--skipJDKMethod <value> `   skip jdk method trace, default value true.
 
 `trace --skipJDKMethod false demo.MathGame run`{{execute T2}}
+
+按`Q`{{execute T2}}或者`Ctrl+c`退出
 
 默认情况下，trace不会包含jdk里的函数调用，如果希望trace jdk里的函数，需要显式设置`--skipJDKMethod false`。
 
@@ -115,6 +121,8 @@ Affect(class-cnt:1 , method-cnt:1) cost in 60 ms.
 #### 据调用耗时过滤
 
 `trace demo.MathGame run '#cost > 10'`{{execute T2}}
+
+按`Q`{{execute T2}}或者`Ctrl+c`退出
 
 ```bash
 $ trace demo.MathGame run '#cost > 10'
@@ -153,6 +161,8 @@ trace -E com.test.ClassA|org.test.ClassB method1|method2|method3
 
 `trace demo.MathGame run`{{execute T2}}
 
+按`Q`{{execute T2}}或者`Ctrl+c`退出
+
 ```bash
 [arthas@59161]$ trace demo.MathGame run
 Press Q or Ctrl+C to abort.
@@ -170,6 +180,8 @@ Affect(class count: 1 , method count: 1) cost in 112 ms, listenerId: 1
 现在想要深入子函数`primeFactors`，可以打开一个新终端2，使用`telnet localhost 3658`连接上arthas，再trace `primeFactors`时，指定`listenerId`。
 
 `trace demo.MathGame primeFactors --listenerId 1`{{execute T2}}
+
+按`Q`{{execute T2}}或者`Ctrl+c`退出
 
 ```bash
 [arthas@59161]$ trace demo.MathGame primeFactors --listenerId 1
