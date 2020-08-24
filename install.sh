@@ -10,7 +10,7 @@ TARGET_ARTHAS_FILE="./as.sh"
 SO_TIMEOUT=60
 
 # default downloading url
-ARTHAS_FILE_URL="https://alibaba.github.io/arthas/as.sh"
+ARTHAS_FILE_URL="https://arthas.aliyun.com/as.sh"
 
 # exit shell with err_code
 # $1 : err_code
