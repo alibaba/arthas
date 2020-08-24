@@ -12,6 +12,10 @@ Welcome to use [issue tracker](https://github.com/alibaba/arthas/issues) to give
 
 Welcome PR to further improve English [documentation](https://github.com/alibaba/arthas/tree/master/site/src/site/sphinx/en).
 
+## Online Tutorials
+
+Please refer to [README.MD at tutorials/katacoda](tutorials/katacoda/README.md#contribution-guide)
+
 ## Developer
 
 * Arthas runtime supports JDK6+
@@ -73,6 +77,10 @@ Tip: you can use `--versions` to list all available versions.
 用户文档在`site/src/site/sphinx`目录下，如果希望改进arthas用户文档，欢迎提交PR。
 
 英文文档在`site/src/site/sphinx/en`目录下，欢迎提交翻译PR。
+
+## 改进在线教程
+
+请参考[tutorials/katacoda下的说明](tutorials/katacoda/README_CN.md#贡献指南)
 
 ## 开发者相关
 
