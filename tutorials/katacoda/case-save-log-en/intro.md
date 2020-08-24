@@ -37,4 +37,3 @@ This tutorial takes a simple application as an example to demonstrate the use ca
 
 * Github: https://github.com/alibaba/arthas
 * Docs: https://arthas.aliyun.com/doc/en
-* Contributer to this tutorial:[@HollowMan6](https://github.com/HollowMan6)

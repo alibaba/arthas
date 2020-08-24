@@ -37,4 +37,3 @@ This tutorial takes a normal Spring Boot application as an example to demonstrat
 
 * Github: https://github.com/alibaba/arthas
 * Docs: https://arthas.aliyun.com/doc/en
-* Contributer to this tutorial:[@HollowMan6](https://github.com/HollowMan6)

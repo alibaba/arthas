@@ -10,4 +10,3 @@
 
 ![Arthas公众号](/arthas/scenarios/common-resources/assets/qrcode_gongzhonghao.jpg)
 
-* 本教程贡献者：[@HollowMan6](https://github.com/HollowMan6)

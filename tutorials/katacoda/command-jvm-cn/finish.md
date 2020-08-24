@@ -9,5 +9,3 @@
 欢迎关注公众号，获取Arthas项目的信息、源码分析、案例实践。
 
 ![Arthas公众号](/arthas/scenarios/common-resources/assets/qrcode_gongzhonghao.jpg)
-
-* 本教程贡献者：[@HollowMan6](https://github.com/HollowMan6)

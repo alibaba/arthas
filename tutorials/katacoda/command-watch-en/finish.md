@@ -5,5 +5,3 @@ The `watch Tutorial` demonstrates the usage of watch. If you have more tips or q
 * Documentation: https://arthas.aliyun.com/doc/en
 
 If you are using Arthas, please let us know that. Your use is very important to us: [View](https://github.com/alibaba/arthas/issues/111)
-
-* Contributer to this tutorial:[@HollowMan6](https://github.com/HollowMan6)
