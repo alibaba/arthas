@@ -40,6 +40,8 @@ echo $session_id`{{execute T3}}
 
 `b09f1353-202c-407b-af24-701b744f971e`;
 
+请记下这里的会话ID，在Terminal 4中需要手动输入。
+
 当前消费者ID为：
 
 `consumer_id=$(echo $session_data | sed 's/.*"consumerId":"\([^"]*\)".*/\1/g')
@@ -80,6 +82,8 @@ echo $consumer_id`{{execute T3}}
 
 `8f7f6ad7bc2d4cb5aa57a530927a95cc_2 ` 。
 
+请记下这里的消费者ID，在Terminal 4中需要手动输入。
+
 #### 拉取命令结果
 
 拉取命令结果消息的action为`pull_results`。请使用Http long-polling方式，定时循环拉取结果消息。
@@ -96,6 +100,20 @@ echo $consumer_id`{{execute T3}}
 ' | json_pp`{{execute T3}}
 
 用Bash脚本定时拉取结果消息:
+
+请在Terminal 4中输入Terminal 3中的会话ID，这里的例子如下：
+
+`b09f1353-202c-407b-af24-701b744f971e`
+
+`echo -n "Enter your sessionId in T3:"
+read  session_id`{{execute T4}}
+
+同样，接着输入Terminal 3中的消费者ID，这里的例子如下：
+
+`8f7f6ad7bc2d4cb5aa57a530927a95cc_2 `
+
+`echo -n "Enter your consumerId in T3:"
+read  consumer_id`{{execute T4}}
 
 `while true; do curl -Ss -XPOST http://localhost:8563/api -d '
 {
