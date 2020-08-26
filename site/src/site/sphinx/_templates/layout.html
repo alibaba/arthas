@@ -2,6 +2,12 @@
 {% set sticky_navigation = True %}
 {% set extra_css_files = ['_static/overrides.css'] %}
 {% block extrahead %}
+<script>
+  if (window.location.href.startsWith("https://alibaba.github.io/arthas/")) {
+      window.location.href = "https://arthas.aliyun.com/doc/" + window.location.href.substr("https://alibaba.github.io/arthas/".length);
+  }
+</script>
+
 <script src="{{ pathto('_static/center_page.js', 1) }}"></script>
 <link rel="stylesheet" href="https://g.alicdn.com/code/lib/highlight.js/9.13.1/styles/github.min.css">
 {{ super() }}
