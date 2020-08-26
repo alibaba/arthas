@@ -72,7 +72,7 @@ public class MonitorCommand extends EnhancerCommand {
     }
 
     @Option(shortName = "b", longName = "before", flag = true)
-    @Description("timing of condition-express invoke (before method invoke)")
+    @Description("Evaluate the condition-express before method invoke")
     public void setBefore(boolean before) {
         isBefore = before;
     }
