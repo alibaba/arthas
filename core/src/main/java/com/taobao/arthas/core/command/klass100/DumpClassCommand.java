@@ -4,6 +4,7 @@ import com.alibaba.arthas.deps.org.slf4j.Logger;
 import com.alibaba.arthas.deps.org.slf4j.LoggerFactory;
 import com.taobao.arthas.core.command.Constants;
 import com.taobao.arthas.core.command.model.ClassVO;
+import com.taobao.arthas.core.command.model.ClassLoaderVO;
 import com.taobao.arthas.core.command.model.DumpClassModel;
 import com.taobao.arthas.core.command.model.DumpClassVO;
 import com.taobao.arthas.core.command.model.MessageModel;
@@ -14,6 +15,7 @@ import com.taobao.arthas.core.shell.command.AnnotatedCommand;
 import com.taobao.arthas.core.shell.command.CommandProcess;
 import com.taobao.arthas.core.shell.command.ExitStatus;
 import com.taobao.arthas.core.util.ClassUtils;
+import com.taobao.arthas.core.util.ClassLoaderUtils;
 import com.taobao.arthas.core.util.CommandUtils;
 import com.taobao.arthas.core.util.InstrumentationUtils;
 import com.taobao.arthas.core.util.SearchUtils;
@@ -32,6 +34,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.Collection;
 
 
 /**
@@ -51,6 +54,7 @@ public class DumpClassCommand extends AnnotatedCommand {
 
     private String classPattern;
     private String code = null;
+    private String classLoaderClass;
     private boolean isRegEx = false;
 
     private String directory;
@@ -69,6 +73,12 @@ public class DumpClassCommand extends AnnotatedCommand {
         this.code = code;
     }
 
+    @Option(longName = "classLoaderClass")
+    @Description("The class name of the special class's classLoader.")
+    public void setClassLoaderClass(String classLoaderClass) {
+        this.classLoaderClass = classLoaderClass;
+    }
+    
     @Option(shortName = "E", longName = "regex", flag = true)
     @Description("Enable regular expression to match (wildcard matching by default)")
     public void setRegEx(boolean regEx) {
@@ -101,7 +111,26 @@ public class DumpClassCommand extends AnnotatedCommand {
             }
 
             ExitStatus status = null;
+
             Instrumentation inst = process.session().getInstrumentation();
+            if (code == null && classLoaderClass != null) {
+                List<ClassLoader> matchedClassLoaders = ClassLoaderUtils.getClassLoaderByClassName(inst, classLoaderClass);
+                if (matchedClassLoaders.size() == 1) {
+                    code = Integer.toHexString(matchedClassLoaders.get(0).hashCode());
+                } else if (matchedClassLoaders.size() > 1) {
+                    Collection<ClassLoaderVO> classLoaderVOList = ClassUtils.createClassLoaderVOList(matchedClassLoaders);
+                    DumpClassModel dumpClassModel = new DumpClassModel()
+                            .setClassLoaderClass(classLoaderClass)
+                            .setMatchedClassLoaders(classLoaderVOList);
+                    process.appendResult(dumpClassModel);
+                    process.end(-1, "Found more than one classloader by class name, please specify classloader with '-c <classloader hash>'");
+                    return;
+                } else {
+                    process.end(-1, "Can not find classloader by class name: " + classLoaderClass + ".");
+                    return;
+                }
+            }
+
             Set<Class<?>> matchedClasses = SearchUtils.searchClass(inst, classPattern, isRegEx, code);
             if (matchedClasses == null || matchedClasses.isEmpty()) {
                 status = processNoMatch(process);

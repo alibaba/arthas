@@ -10,6 +10,12 @@ public class RedefineView extends ResultView<RedefineModel> {
 
     @Override
     public void draw(CommandProcess process, RedefineModel result) {
+        if (result.getMatchedClassLoaders() != null) {
+            process.write("Matched classloaders: \n");
+            ClassLoaderView.drawClassLoaders(process, result.getMatchedClassLoaders(), false);
+            process.write("\n");
+            return;
+        }
         StringBuilder sb = new StringBuilder();
         for (String aClass : result.getRedefinedClasses()) {
             sb.append(aClass).append("\n");

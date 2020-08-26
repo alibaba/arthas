@@ -27,6 +27,7 @@ redefine
 |参数名称|参数说明|
 |---:|:---|
 |[c:]|ClassLoader的hashcode|
+|`[classLoaderClass:]`|指定执行表达式的 ClassLoader 的 class name|
 |[p:]|外部的`.class`文件的完整路径，支持多个|
 
 
@@ -36,6 +37,7 @@ redefine
 ```bash
    redefine /tmp/Test.class
    redefine -c 327a647b /tmp/Test.class /tmp/Test\$Inner.class
+   redefine --classLoaderClass sun.misc.Launcher$AppClassLoader /tmp/Test.class /tmp/Test\$Inner.class
 ```
 
 ### 结合 jad/mc 命令使用

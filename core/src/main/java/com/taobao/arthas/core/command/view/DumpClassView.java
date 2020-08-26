@@ -23,6 +23,12 @@ public class DumpClassView extends ResultView<DumpClassModel> {
 
     @Override
     public void draw(CommandProcess process, DumpClassModel result) {
+        if (result.getMatchedClassLoaders() != null) {
+            process.write("Matched classloaders: \n");
+            ClassLoaderView.drawClassLoaders(process, result.getMatchedClassLoaders(), false);
+            process.write("\n");
+            return;
+        }
         if (result.getDumpedClasses() != null) {
             drawDumpedClasses(process, result.getDumpedClasses());
 
