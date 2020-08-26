@@ -9,29 +9,21 @@ Print the logger information, update the logger level
 
 ```bash
 [arthas@2062]$ logger
- name                                   ROOT
- class                                  ch.qos.logback.classic.Logger
- classLoader                            sun.misc.Launcher$AppClassLoader@2a139a55
- classLoaderHash                        2a139a55
- level                                  INFO
- effectiveLevel                         INFO
- additivity                             true
- codeSource                             file:/Users/hengyunabc/.m2/repository/ch/qos/logback/logback-classic/1.2.3/logback-classic-1.2.3.jar
- appenders                              name            CONSOLE
-                                        class           ch.qos.logback.core.ConsoleAppender
-                                        classLoader     sun.misc.Launcher$AppClassLoader@2a139a55
-                                        classLoaderHash 2a139a55
-                                        target          System.out
-                                        name            APPLICATION
-                                        class           ch.qos.logback.core.rolling.RollingFileAppender
-                                        classLoader     sun.misc.Launcher$AppClassLoader@2a139a55
-                                        classLoaderHash 2a139a55
-                                        file            app.log
-                                        name            ASYNC
-                                        class           ch.qos.logback.classic.AsyncAppender
-                                        classLoader     sun.misc.Launcher$AppClassLoader@2a139a55
-                                        classLoaderHash 2a139a55
-                                        appenderRef     [APPLICATION]
+ name              ROOT
+ class             ch.qos.logback.classic.Logger
+ classLoader       org.springframework.boot.loader.LaunchedURLClassLoader@5674cd4d
+ classLoaderHash   5674cd4d
+ level             INFO
+ effectiveLevel    INFO
+ additivity        true
+ codeSource        jar:file:/home/scrapbook/tutorial/demo-arthas-spring-boot.jar!/BOOT-INF/lib/logback-classi
+                   c-1.1.11.jar!/
+ appenders         name            CONSOLE
+                   class           ch.qos.logback.core.ConsoleAppender
+                   classLoader     org.springframework.boot.loader.LaunchedURLClassLoader@5674cd4d
+                   classLoaderHash 5674cd4d
+                   target          System.out
+...
 ```
 
 #### View logger information for the special name
@@ -40,18 +32,19 @@ Print the logger information, update the logger level
 
 ```bash
 [arthas@2062]$ logger -n org.springframework.web
- name                                   org.springframework.web
- class                                  ch.qos.logback.classic.Logger
- classLoader                            sun.misc.Launcher$AppClassLoader@2a139a55
- classLoaderHash                        2a139a55
- level                                  null
- effectiveLevel                         INFO
- additivity                             true
- codeSource                             file:/Users/hengyunabc/.m2/repository/ch/qos/logback/logback-classic/1.2.3/logback-classic-1.2.3.jar
+ name              org.springframework.web
+ class             ch.qos.logback.classic.Logger
+ classLoader       org.springframework.boot.loader.LaunchedURLClassLoader@5674cd4d
+ classLoaderHash   5674cd4d
+ level             null
+ effectiveLevel    INFO
+ additivity        true
+ codeSource        jar:file:/home/scrapbook/tutorial/demo-arthas-spring-boot.jar!/BOOT-INF/lib/logback-classi
+                   c-1.1.11.jar!/
 ```
 
 
-Please write down your classLoaderHash here, in the case here, it's `2a139a55`. It will be used in the future steps.
+Please write down your classLoaderHash here, in the case here, it's `5674cd4d`. It will be used in the future steps.
 
 Note: Please replace `<classLoaderHash>` with your classLoaderHash above, then execute the commands manually in the following steps:
 
@@ -62,41 +55,31 @@ Note that the hashcode changes, you need to check the current ClassLoader inform
 if you use`-c`, you have to manually type hashcode by `-c <hashcode>`.
 
 ```bash
-$ logger -c 2a139a55
+$ logger -c 5674cd4d
 ```
 
 For classloader with only one instance, it can be specified by `--classLoaderClass` using class name, which is more convenient to use.
 
-`logger --classLoaderClass sun.misc.Launcher$AppClassLoader`{{execute T2}}
+`logger --classLoaderClass org.springframework.boot.loader.LaunchedURLClassLoader`{{execute T2}}
 
 ```bash
-[arthas@2062]$ logger  --classLoaderClass sun.misc.Launcher$AppClassLoader
- name                                   ROOT
- class                                  ch.qos.logback.classic.Logger
- classLoader                            sun.misc.Launcher$AppClassLoader@2a139a55
- classLoaderHash                        2a139a55
- level                                  DEBUG
- effectiveLevel                         DEBUG
- additivity                             true
- codeSource                             file:/Users/hengyunabc/.m2/repository/ch/qos/logback/logback-classic/1.2.3/logback-classic-1.2.3.jar
- appenders                              name            CONSOLE
-                                        class           ch.qos.logback.core.ConsoleAppender
-                                        classLoader     sun.misc.Launcher$AppClassLoader@2a139a55
-                                        classLoaderHash 2a139a55
-                                        target          System.out
-                                        name            APPLICATION
-                                        class           ch.qos.logback.core.rolling.RollingFileAppender
-                                        classLoader     sun.misc.Launcher$AppClassLoader@2a139a55
-                                        classLoaderHash 2a139a55
-                                        file            app.log
-                                        name            ASYNC
-                                        class           ch.qos.logback.classic.AsyncAppender
-                                        classLoader     sun.misc.Launcher$AppClassLoader@2a139a55
-                                        classLoaderHash 2a139a55
-                                        appenderRef     [APPLICATION]
+[arthas@2062]$ logger --classLoaderClass org.springframework.boot.loader.LaunchedURLClassLoader
+name              ROOT
+ class             ch.qos.logback.classic.Logger
+ classLoader       org.springframework.boot.loader.LaunchedURLClassLoader@5674cd4d
+ classLoaderHash   5674cd4d
+ level             INFO
+ effectiveLevel    INFO
+ additivity        true
+ codeSource        jar:file:/home/scrapbook/tutorial/demo-arthas-spring-boot.jar!/BOOT-INF/lib/logback-classi
+                   c-1.1.11.jar!/
+ appenders         name            CONSOLE
+                   class           ch.qos.logback.core.ConsoleAppender
+                   classLoader     org.springframework.boot.loader.LaunchedURLClassLoader@5674cd4d
+                   classLoaderHash 5674cd4d
+                   target          System.out
+...
 ```
-
-  * PS: Here the classLoaderClass in java 8 is sun.misc.Launcher$AppClassLoader, while in java 11 it's jdk.internal.loader.ClassLoaders$AppClassLoader. Currently katacoda using java 8.
 
 The value of `--classloaderclass` is the class name of classloader. It can only work when it matches a unique classloader instance. The purpose is to facilitate the input of general commands. However, `-c <hashcode>` is dynamic.
 
@@ -109,16 +92,18 @@ The value of `--classloaderclass` is the class name of classloader. It can only 
 update logger level success.
 ```
 
+PS: Here it will come up with an error message in tutorial, we have to specify the classloader. 
+
 #### Speecify classloader to update logger level
 
 By default，logger command will be executed under SystemClassloader, if the application is a traditional `war`, or using spring boot fat jar, then it needs to specify classloader。
 
 You can first use `sc -d yourClassName` to check specified classloader hashcode，then specify classloader when updating logger level:
 
-`logger --classLoaderClass sun.misc.Launcher$AppClassLoader --name ROOT --level debug`{{execute T2}}
+`logger --classLoaderClass org.springframework.boot.loader.LaunchedURLClassLoader --name ROOT --level debug`{{execute T2}}
 
 ```bash
-[arthas@2062]$ logger --classLoaderClass sun.misc.Launcher$AppClassLoader --name ROOT --level debug
+[arthas@2062]$ logger --classLoaderClass org.springframework.boot.loader.LaunchedURLClassLoader --name ROOT --level debug
 ```
 
 #### View the logger information without appenders
@@ -132,46 +117,18 @@ Note that the output will usually be very long.
 
 ```bash
 [arthas@2062]$ logger --include-no-appender
- name                                   ROOT
- class                                  ch.qos.logback.classic.Logger
- classLoader                            sun.misc.Launcher$AppClassLoader@2a139a55
- classLoaderHash                        2a139a55
- level                                  DEBUG
- effectiveLevel                         DEBUG
- additivity                             true
- codeSource                             file:/Users/hengyunabc/.m2/repository/ch/qos/logback/logback-classic/1.2.3/logback-classic-1.2.3.jar
- appenders                              name            CONSOLE
-                                        class           ch.qos.logback.core.ConsoleAppender
-                                        classLoader     sun.misc.Launcher$AppClassLoader@2a139a55
-                                        classLoaderHash 2a139a55
-                                        target          System.out
-                                        name            APPLICATION
-                                        class           ch.qos.logback.core.rolling.RollingFileAppender
-                                        classLoader     sun.misc.Launcher$AppClassLoader@2a139a55
-                                        classLoaderHash 2a139a55
-                                        file            app.log
-                                        name            ASYNC
-                                        class           ch.qos.logback.classic.AsyncAppender
-                                        classLoader     sun.misc.Launcher$AppClassLoader@2a139a55
-                                        classLoaderHash 2a139a55
-                                        appenderRef     [APPLICATION]
-
- name                                   com
- class                                  ch.qos.logback.classic.Logger
- classLoader                            sun.misc.Launcher$AppClassLoader@2a139a55
- classLoaderHash                        2a139a55
- level                                  null
- effectiveLevel                         DEBUG
- additivity                             true
- codeSource                             file:/Users/hengyunabc/.m2/repository/ch/qos/logback/logback-classic/1.2.3/logback-classic-1.2.3.jar
-
- name                                   com.alibaba
- class                                  ch.qos.logback.classic.Logger
- classLoader                            sun.misc.Launcher$AppClassLoader@2a139a55
- classLoaderHash                        2a139a55
- level                                  null
- effectiveLevel                         DEBUG
- additivity                             true
- codeSource                             file:/Users/hengyunabc/.m2/repository/ch/qos/logback/logback-classic/1.2.3/logback-classic-1.2.3.jar
+ name              org.thymeleaf
+ class             ch.qos.logback.classic.Logger
+ classLoader       org.springframework.boot.loader.LaunchedURLClassLoader@5674cd4d
+ classLoaderHash   5674cd4d
+ level             null
+ effectiveLevel    INFO
+ additivity        false
+ codeSource        jar:file:/home/scrapbook/tutorial/demo-arthas-spring-boot.jar!/BOOT-INF/lib/logback-classi
+                   c-1.1.11.jar!/
+ appenders         name            DEBUG_LEVEL_REMAPPER
+                   class           org.springframework.boot.logging.logback.LevelRemappingAppender
+                   classLoader     org.springframework.boot.loader.LaunchedURLClassLoader@5674cd4d
+                   classLoaderHash 5674cd4d
 ...
 ```
