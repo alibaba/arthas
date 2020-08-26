@@ -41,6 +41,12 @@
     <link rel="search" title="搜索" href="search.html" />
     <link rel="next" title="mbean" href="mbean.html" />
     <link rel="prev" title="perfcounter" href="perfcounter.html" />
+<script>
+  if (window.location.href.startsWith("https://alibaba.github.io/arthas/")) {
+      window.location.href = "https://arthas.aliyun.com/doc/" + window.location.href.substr("https://alibaba.github.io/arthas/".length);
+  }
+</script>
+
 <script src="_static/center_page.js"></script>
 <link rel="stylesheet" href="https://g.alicdn.com/code/lib/highlight.js/9.13.1/styles/github.min.css">
  
@@ -318,6 +324,8 @@
 </div>
 <div class="section" id="classloaderlogger">
 <h3>查看指定classloader的logger信息<a class="headerlink" href="#classloaderlogger" title="永久链接至标题">¶</a></h3>
+<p>注意hashcode是变化的，需要先查看当前的ClassLoader信息，提取对应ClassLoader的hashcode。</p>
+<p>如果你使用<code class="docutils literal notranslate"><span class="pre">-c</span></code>，你需要手动输入hashcode：<code class="docutils literal notranslate"><span class="pre">-c</span> <span class="pre">&lt;hashcode&gt;</span></code></p>
 <div class="highlight-bash notranslate"><div class="highlight hljs"><pre class="bash">[arthas@2062]$ logger -c 2a139a55
  name                                   ROOT
  class                                  ch.qos.logback.classic.Logger
@@ -343,6 +351,12 @@
                                         classLoaderHash 2a139a55
                                         appenderRef     [APPLICATION]</pre></div>
 </div>
+<p>对于只有唯一实例的ClassLoader可以通过<code class="docutils literal notranslate"><span class="pre">--classLoaderClass</span></code>指定class name，使用起来更加方便：</p>
+<p><code class="docutils literal notranslate"><span class="pre">logger</span> <span class="pre">--classLoaderClass</span> <span class="pre">sun.misc.Launcher$AppClassLoader</span></code></p>
+<ul class="simple">
+<li><p>注: 这里classLoaderClass 在 java 8 是 sun.misc.Launcher$AppClassLoader，而java 11的classloader是jdk.internal.loader.ClassLoaders$AppClassLoader。</p></li>
+</ul>
+<p><code class="docutils literal notranslate"><span class="pre">--classLoaderClass</span></code> 的值是ClassLoader的类名，只有匹配到唯一的ClassLoader实例时才能工作，目的是方便输入通用命令，而<code class="docutils literal notranslate"><span class="pre">-c</span> <span class="pre">&lt;hashcode&gt;</span></code>是动态变化的。</p>
 </div>
 <div class="section" id="logger-level">
 <h3>更新logger level<a class="headerlink" href="#logger-level" title="永久链接至标题">¶</a></h3>

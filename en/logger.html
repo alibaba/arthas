@@ -40,6 +40,12 @@
     <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="mbean" href="mbean.html" />
     <link rel="prev" title="perfcounter" href="perfcounter.html" />
+<script>
+  if (window.location.href.startsWith("https://alibaba.github.io/arthas/")) {
+      window.location.href = "https://arthas.aliyun.com/doc/" + window.location.href.substr("https://alibaba.github.io/arthas/".length);
+  }
+</script>
+
 <script src="_static/center_page.js"></script>
 <link rel="stylesheet" href="https://g.alicdn.com/code/lib/highlight.js/9.13.1/styles/github.min.css">
  
@@ -315,6 +321,8 @@
 </div>
 <div class="section" id="view-logger-information-for-the-special-classloader">
 <h3>View logger information for the special classloader<a class="headerlink" href="#view-logger-information-for-the-special-classloader" title="Permalink to this headline">¶</a></h3>
+<p>Note that the hashcode changes, you need to check the current ClassLoader information first, and extract the hashcode corresponding to the ClassLoader.</p>
+<p>if you use<code class="docutils literal notranslate"><span class="pre">-c</span></code>, you have to manually type hashcode by <code class="docutils literal notranslate"><span class="pre">-c</span> <span class="pre">&lt;hashcode&gt;</span></code>.</p>
 <div class="highlight-bash notranslate"><div class="highlight hljs"><pre class="bash">[arthas@2062]$ logger -c 2a139a55
  name                                   ROOT
  class                                  ch.qos.logback.classic.Logger
@@ -340,6 +348,12 @@
                                         classLoaderHash 2a139a55
                                         appenderRef     [APPLICATION]</pre></div>
 </div>
+<p>For classloader with only one instance, it can be specified by <code class="docutils literal notranslate"><span class="pre">--classLoaderClass</span></code> using class name, which is more convenient to use.</p>
+<p><code class="docutils literal notranslate"><span class="pre">logger</span>&#160; <span class="pre">--classLoaderClass</span> <span class="pre">sun.misc.Launcher$AppClassLoader</span></code></p>
+<ul class="simple">
+<li><p>PS: Here the classLoaderClass in java 8 is sun.misc.Launcher$AppClassLoader, while in java 11 it’s jdk.internal.loader.ClassLoaders$AppClassLoader.</p></li>
+</ul>
+<p>The value of <code class="docutils literal notranslate"><span class="pre">--classloaderclass</span></code> is the class name of classloader. It can only work when it matches a unique classloader instance. The purpose is to facilitate the input of general commands. However, <code class="docutils literal notranslate"><span class="pre">-c</span> <span class="pre">&lt;hashcode&gt;</span></code> is dynamic.</p>
 </div>
 <div class="section" id="update-logger-level">
 <h3>Update logger level<a class="headerlink" href="#update-logger-level" title="Permalink to this headline">¶</a></h3>

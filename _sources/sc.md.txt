@@ -21,6 +21,7 @@ sc
 |[f]|输出当前类的成员变量信息（需要配合参数-d一起使用）|
 |[x:]|指定输出静态变量时属性的遍历深度，默认为 0，即直接使用 `toString` 输出|
 |`[c:]`|指定class的 ClassLoader 的 hashcode|
+|`[classLoaderClass:]`|指定执行表达式的 ClassLoader 的 class name|
 |`[n:]`|具有详细信息的匹配类的最大数量（默认为100）|
 
 > class-pattern支持全限定名，如com.taobao.test.AAA，也支持com/taobao/test/AAA这样的格式，这样，我们从异常堆栈里面把类名拷贝过来的时候，不需要在手动把`/`替换为`.`啦。
