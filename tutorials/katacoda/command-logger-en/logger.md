@@ -57,10 +57,20 @@ Note: Please replace `<classLoaderHash>` with your classLoaderHash above, then e
 
 #### View logger information for the special classloader
 
-`logger -c <classLoaderHash>`
+Note that the hashcode changes, you need to check the current ClassLoader information first, and extract the hashcode corresponding to the ClassLoader.
+
+if you use`-c`, you have to manually type hashcode by `-c <hashcode>`.
 
 ```bash
-[arthas@2062]$ logger -c 2a139a55
+$ logger -c 2a139a55
+```
+
+For classloader with only one instance, it can be specified by `--classLoaderClass` using class name, which is more convenient to use.
+
+`logger --classLoaderClass sun.misc.Launcher$AppClassLoader`{{execute T2}}
+
+```bash
+[arthas@2062]$ logger  --classLoaderClass sun.misc.Launcher$AppClassLoader
  name                                   ROOT
  class                                  ch.qos.logback.classic.Logger
  classLoader                            sun.misc.Launcher$AppClassLoader@2a139a55
@@ -86,6 +96,10 @@ Note: Please replace `<classLoaderHash>` with your classLoaderHash above, then e
                                         appenderRef     [APPLICATION]
 ```
 
+  * PS: Here the classLoaderClass in java 8 is sun.misc.Launcher$AppClassLoader, while in java 11 it's jdk.internal.loader.ClassLoaders$AppClassLoader. Currently katacoda using java 8.
+
+The value of `--classloaderclass` is the class name of classloader. It can only work when it matches a unique classloader instance. The purpose is to facilitate the input of general commands. However, `-c <hashcode>` is dynamic.
+
 #### Update logger level
 
 `logger --name ROOT --level debug`{{execute T2}}
@@ -101,10 +115,10 @@ update logger level success.
 
 可以先用 `sc -d yourClassName` 来查看具体的 classloader hashcode，然后在更新level时指定classloader：
 
-`logger -c <classLoaderHash> --name ROOT --level debug`
+`logger --classLoaderClass sun.misc.Launcher$AppClassLoader --name ROOT --level debug`{{execute T2}}
 
 ```bash
-[arthas@2062]$ logger -c 2a139a55 --name ROOT --level debug
+[arthas@2062]$ logger --classLoaderClass sun.misc.Launcher$AppClassLoader --name ROOT --level debug
 ```
 
 #### View the logger information without appenders

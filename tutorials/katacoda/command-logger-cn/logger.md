@@ -57,10 +57,20 @@
 
 #### 查看指定classloader的logger信息
 
-`logger -c <classLoaderHash>`
+注意hashcode是变化的，需要先查看当前的ClassLoader信息，提取对应ClassLoader的hashcode。
+
+如果你使用`-c`，你需要手动输入hashcode：`-c <hashcode>`
 
 ```bash
-[arthas@2062]$ logger -c 2a139a55
+$ logger -c 2a139a55
+```
+
+对于只有唯一实例的ClassLoader可以通过`--classLoaderClass`指定class name，使用起来更加方便：
+
+`logger --classLoaderClass sun.misc.Launcher$AppClassLoader`{{execute T2}}
+
+```bash
+[arthas@2062]$ logger --classLoaderClass sun.misc.Launcher$AppClassLoader
  name                                   ROOT
  class                                  ch.qos.logback.classic.Logger
  classLoader                            sun.misc.Launcher$AppClassLoader@2a139a55
@@ -85,6 +95,10 @@
                                         classLoaderHash 2a139a55
                                         appenderRef     [APPLICATION]
 ```
+
+  * 注: 这里classLoaderClass 在 java 8 是 sun.misc.Launcher$AppClassLoader，而java 11的classloader是jdk.internal.loader.ClassLoaders$AppClassLoader，katacoda目前环境是java8。
+
+`--classLoaderClass` 的值是ClassLoader的类名，只有匹配到唯一的ClassLoader实例时才能工作，目的是方便输入通用命令，而`-c <hashcode>`是动态变化的。
 
 #### 更新logger level
 
