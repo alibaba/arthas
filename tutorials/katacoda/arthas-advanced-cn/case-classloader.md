@@ -88,7 +88,7 @@ $ classloader -t
 
 比如上面查看到的spring LaunchedURLClassLoader的 hashcode是`1be6f5c3`，可以通过`-c`或者`--classLoaderClass`参数来列出它的所有urls：
 
-`classloader --classLoaderClass org.springframework.boot.loader.LaunchedURLClassLoader`
+`classloader --classLoaderClass org.springframework.boot.loader.LaunchedURLClassLoader`{{execute T2}}
 
 ```
 $ classloader --classLoaderClass org.springframework.boot.loader.LaunchedURLClassLoader
@@ -100,7 +100,7 @@ jar:file:/home/scrapbook/tutorial/demo-arthas-spring-boot.jar!/BOOT-INF/lib/spri
 
 ### 加载指定ClassLoader里的资源文件
 
-查找指定的资源文件： `classloader --classLoaderClass org.springframework.boot.loader.LaunchedURLClassLoader -r logback-spring.xml`
+查找指定的资源文件： `classloader --classLoaderClass org.springframework.boot.loader.LaunchedURLClassLoader -r logback-spring.xml`{{execute T2}}
 
 ```
 $ classloader --classLoaderClass org.springframework.boot.loader.LaunchedURLClassLoader -r logback-spring.xml
@@ -111,7 +111,7 @@ $ classloader --classLoaderClass org.springframework.boot.loader.LaunchedURLClas
 
 比如用上面的spring LaunchedURLClassLoader 尝试加载 `java.lang.String` ：
 
-`classloader --classLoaderClass org.springframework.boot.loader.LaunchedURLClassLoader --load java.lang.String`
+`classloader --classLoaderClass org.springframework.boot.loader.LaunchedURLClassLoader --load java.lang.String`{{execute T2}}
 
 ```
 $ classloader --classLoaderClass org.springframework.boot.loader.LaunchedURLClassLoader --load java.lang.String
