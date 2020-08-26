@@ -109,11 +109,11 @@ The value of `--classloaderclass` is the class name of classloader. It can only 
 update logger level success.
 ```
 
-#### 指定classloader更新 logger level
+#### Speecify classloader to update logger level
 
-默认情况下，logger命令会在SystemClassloader下执行，如果应用是传统的`war`应用，或者spring boot fat jar启动的应用，那么需要指定classloader。
+By default，logger command will be executed under SystemClassloader, if the application is a traditional `war`, or using spring boot fat jar, then it needs to specify classloader。
 
-可以先用 `sc -d yourClassName` 来查看具体的 classloader hashcode，然后在更新level时指定classloader：
+You can first use `sc -d yourClassName` to check specified classloader hashcode，then specify classloader when updating logger level:
 
 `logger --classLoaderClass sun.misc.Launcher$AppClassLoader --name ROOT --level debug`{{execute T2}}
 
