@@ -4,8 +4,6 @@
 
 English version goes [here](README.md).
 
-访问 https://www.katacoda.com/arthas 来查看Arthas所有的在线教程。
-
 ## 在线教程使用方法
 
 1. 首先访问在线教程：https://arthas.aliyun.com/doc/arthas-tutorials.html?language=cn ，从菜单中选择你想要学习的课程：

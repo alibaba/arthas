@@ -4,8 +4,6 @@
 
 [中文说明/Chinese Documentation](README_CN.md)
 
-Visit https://www.katacoda.com/arthas to view the profile and interactive scenarios.
-
 ## Online Tutorial Usages
 
 1. First visit the online tutorial: https://arthas.aliyun.com/doc/arthas-tutorials.html?language=en , select the course you want to study from the menu:
