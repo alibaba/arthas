@@ -37,7 +37,7 @@ monitor
 |*condition-express*|条件表达式|
 |[E]|开启正则表达式匹配，默认为通配符匹配|
 |`[c:]`|统计周期，默认值为120秒|
-|[b]|在**方法调用之前**执行condition-express|
+|[b]|在**方法调用之前**计算condition-express|
 
 ### 使用参考
 

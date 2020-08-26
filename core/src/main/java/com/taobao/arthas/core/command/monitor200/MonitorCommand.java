@@ -48,7 +48,7 @@ public class MonitorCommand extends EnhancerCommand {
     }
 
     @Argument(argName = "condition-express", index = 2, required = false)
-    @Description("Condition express to filter method calls")
+    @Description("Condition express for filtering method calls")
     public void setConditionExpress(String conditionExpress) {
         this.conditionExpress = conditionExpress;
     }

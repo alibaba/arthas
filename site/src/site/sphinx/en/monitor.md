@@ -34,10 +34,10 @@ Parameter `[c:]` stands for cycles of statistics. Its value is an integer value 
 |---:|:---|
 |*class-pattern*|pattern for the class name|
 |*method-pattern*|pattern for the method name|
-|*condition-expression*|condition expression to filter|
+|*condition-expression*|condition expression for filtering method calls|
 |`[E]`|turn on regex matching while the default is wildcard matching|
 |`[c:]`|cycle of statistics, the default value: `120`s|
-|`[b]`|execute condition-express before method being invoked|
+|`[b]`|evaluate the condition-expression before method invoke|
 
 ### Usage
 
