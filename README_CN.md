@@ -28,10 +28,9 @@ English version goes [here](README.md).
 `Arthas`支持JDK 6+，支持Linux/Mac/Windows，采用命令行交互模式，同时提供丰富的 `Tab` 自动补全功能，进一步方便进行问题的定位和诊断。
 
 
-### 在线教程(推荐)
+### [在线教程(推荐)](https://arthas.aliyun.com/doc/arthas-tutorials.html?language=cn)
 
-* [基础教程](https://arthas.aliyun.com/doc/arthas-tutorials.html?language=cn&id=arthas-basics)
-* [进阶教程](https://arthas.aliyun.com/doc/arthas-tutorials.html?language=cn&id=arthas-advanced)
+* [Usages](tutorials/katacoda/README_CN.md#在线教程使用方法)
 
 ### 快速开始
 
