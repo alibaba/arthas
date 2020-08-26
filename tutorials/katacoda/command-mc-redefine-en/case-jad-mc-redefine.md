@@ -67,6 +67,12 @@ Memory compiler output:
 Affect(row-cnt:1) cost in 346 ms
 ```
 
+You can also execute `mc -c <classLoaderHash> /tmp/UserController.java -d /tmp`，using `-c` to specify ClassLoaderHash:
+
+```bash
+$ mc -c 1be6f5c3 /tmp/UserController.java -d /tmp
+```
+
 ### redefine
 
 Then reload the newly compiled `UserController.class` with the `redefine` command:

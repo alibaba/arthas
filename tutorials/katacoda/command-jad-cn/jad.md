@@ -151,3 +151,6 @@ public class Logger extends Category
 Affect(row-cnt:1) cost in 190 ms.
 ```
 
+对于只有唯一实例的ClassLoader还可以通过`--classLoaderClass`指定class name，使用起来更加方便：
+
+`--classLoaderClass` 的值是ClassLoader的类名，只有匹配到唯一的ClassLoader实例时才能工作，目的是方便输入通用命令，而`-c <hashcode>`是动态变化的。

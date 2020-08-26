@@ -37,6 +37,7 @@ Reference: [Instrumentation#redefineClasses](https://docs.oracle.com/javase/8/do
 ```bash
 redefine /tmp/Test.class
 redefine -c 327a647b /tmp/Test.class /tmp/Test$Inner.class
+redefine --classLoaderClass sun.misc.Launcher$AppClassLoader  /tmp/Test.class /tmp/Test$Inner.class
 ```
 
 ### Use with the jad/mc command

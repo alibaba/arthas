@@ -15,6 +15,15 @@ mc /tmp/Test.java
 mc -c 327a647b /tmp/Test.java
 ```
 
+也可以通过`--classLoaderClass`参数指定ClassLoader：
+
+```bash
+$ mc --classLoaderClass org.springframework.boot.loader.LaunchedURLClassLoader /tmp/UserController.java -d /tmp
+Memory compiler output:
+/tmp/com/example/demo/arthas/user/UserController.class
+Affect(row-cnt:1) cost in 346 ms
+```
+
 可以通过`-d`命令指定输出目录：
 
 ```bash

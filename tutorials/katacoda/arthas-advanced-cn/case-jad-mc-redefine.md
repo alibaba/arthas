@@ -60,6 +60,12 @@ Memory compiler output:
 Affect(row-cnt:1) cost in 346 ms
 ```
 
+也可以通过`mc -c <classLoaderHash> /tmp/UserController.java -d /tmp`，使用`-c`参数指定ClassLoaderHash:
+
+```bash
+$ mc -c 1be6f5c3 /tmp/UserController.java -d /tmp
+```
+
 ### redefine
 
 再使用`redefine`命令重新加载新编译好的`UserController.class`：

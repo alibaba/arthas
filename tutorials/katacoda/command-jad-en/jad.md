@@ -150,3 +150,7 @@ public class Logger extends Category
 
 Affect(row-cnt:1) cost in 190 ms.
 ```
+
+For classloader with only one instance, it can be specified by `--classLoaderClass` using class name, which is more convenient to use.
+
+The value of `--classloaderclass` is the class name of classloader. It can only work when it matches a unique classloader instance. The purpose is to facilitate the input of general commands. However, `-c <hashcode>` is dynamic.

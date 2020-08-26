@@ -115,10 +115,10 @@ update logger level success.
 
 可以先用 `sc -d yourClassName` 来查看具体的 classloader hashcode，然后在更新level时指定classloader：
 
-`logger -c <classLoaderHash> --name ROOT --level debug`
+`logger --classLoaderClass sun.misc.Launcher$AppClassLoader --name ROOT --level debug`{{execute T2}}
 
 ```bash
-[arthas@2062]$ logger -c 2a139a55 --name ROOT --level debug
+[arthas@2062]$ logger --classLoaderClass sun.misc.Launcher$AppClassLoader --name ROOT --level debug
 ```
 
 #### 查看没有appender的logger的信息
