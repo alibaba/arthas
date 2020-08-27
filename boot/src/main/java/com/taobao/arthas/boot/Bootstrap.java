@@ -326,6 +326,7 @@ public class Bootstrap {
         long telnetPortPid = -1;
         long httpPortPid = -1;
         if (bootstrap.getTelnetPort() > 0) {
+            //查找本地占用指定端口的进程
             telnetPortPid = SocketUtils.findTcpListenProcess(bootstrap.getTelnetPort());
             if (telnetPortPid > 0) {
                 AnsiLog.info("Process {} already using port {}", telnetPortPid, bootstrap.getTelnetPort());
@@ -342,6 +343,7 @@ public class Bootstrap {
         // select pid
         if (pid < 0) {
             try {
+                //通过Scanner扫描用户输入进程
                 pid = ProcessUtils.select(bootstrap.isVerbose(), telnetPortPid, bootstrap.getSelect());
             } catch (InputMismatchException e) {
                 System.out.println("Please input an integer to select pid.");
@@ -446,7 +448,7 @@ public class Bootstrap {
                 }
             }
             if (needDownload) {
-                // try to download arthas from remote server.
+                // try to download arthas from remote server. #### 开始去https://arthas.aliyun.com/download/3.3.9?mirror=aliyun 下载arthas-packaging-3.3.9-bin.zip包，然后解压
                 DownloadUtils.downArthasPackaging(bootstrap.getRepoMirror(), bootstrap.isuseHttp(),
                                 remoteLastestVersion, ARTHAS_LIB_DIR.getAbsolutePath());
                 localLastestVersion = remoteLastestVersion;
@@ -502,6 +504,8 @@ public class Bootstrap {
             }
 
             AnsiLog.info("Try to attach process " + pid);
+            //#### Start arthas-core.jar args: [-jar, C:\Users\zhanghongjun\.arthas\lib\3.3.9\arthas\arthas-core.jar, -pid, 56120, -target-ip, 127.0.0.1, -telnet-port, 3658, -http-port, 8563, -core, C:\Users\zhanghongjun\.arthas\lib\3.3.9\arthas\arthas-core.jar, -agent, C:\Users\zhanghongjun\.arthas\lib\3.3.9\arthas\arthas-agent.jar]
+            //### 通过core包去指定进程中开启对应端口
             AnsiLog.debug("Start arthas-core.jar args: " + attachArgs);
             ProcessUtils.startArthasCore(pid, attachArgs);
 

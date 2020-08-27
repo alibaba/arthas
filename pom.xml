@@ -64,6 +64,10 @@
         <module>agent</module>
         <module>client</module>
         <module>memorycompiler</module>
+        <!--
+        arthas-boot.jar和as.sh模块功能类似，分别使用java和shell脚本，下载对应的jar包，并生成服务端和客户端的启动命令，然后启动客户端和服务端
+        当选择attach某个目标进程时，首先会检查arthas工作目录是否下载了core,agent等依赖包， 然后通过启动core会在目标进程中分别启动一个telent和http端口，默认3658和8563,
+        -->
         <module>boot</module>
         <module>arthas-agent-attach</module>
         <module>arthas-spring-boot-starter</module>
