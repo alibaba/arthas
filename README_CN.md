@@ -30,7 +30,7 @@ English version goes [here](README.md).
 
 ### [在线教程(推荐)](https://arthas.aliyun.com/doc/arthas-tutorials.html?language=cn)
 
-* [Usages](tutorials/katacoda/README_CN.md#在线教程使用方法)
+* [使用方法](tutorials/katacoda/README_CN.md#在线教程使用方法)
 
 ### 快速开始
 

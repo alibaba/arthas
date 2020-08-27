@@ -89,7 +89,7 @@ Note: Please replace `<classLoaderHash>` with your classLoaderHash above, then e
 
 For example, the hashcode of spring `LaunchedURLClassLoader` viewed above is `1be6f5c3`, and all its urls can be listed by the `-c` parameter:
 
-`classloader --classLoaderClass org.springframework.boot.loader.LaunchedURLClassLoader`
+`classloader --classLoaderClass org.springframework.boot.loader.LaunchedURLClassLoader`{{execute T2}}
 
 ```
 $ classloader --classLoaderClass org.springframework.boot.loader.LaunchedURLClassLoader
@@ -101,7 +101,7 @@ jar:file:/home/scrapbook/tutorial/demo-arthas-spring-boot.jar!/BOOT-INF/lib/spri
 
 ### Load the resource file in the specified ClassLoader
 
-Load the specified resource file: `classloader --classLoaderClass org.springframework.boot.loader.LaunchedURLClassLoader -r logback-spring.xml`
+Load the specified resource file: `classloader --classLoaderClass org.springframework.boot.loader.LaunchedURLClassLoader -r logback-spring.xml`{{execute T2}}
 
 ```
 $ classloader --classLoaderClass org.springframework.boot.loader.LaunchedURLClassLoader -r logback-spring.xml
@@ -112,7 +112,7 @@ $ classloader --classLoaderClass org.springframework.boot.loader.LaunchedURLClas
 
 For example, try loading `java.lang.String` with spring LaunchedURLClassLoader :
 
-`classloader --classLoaderClass org.springframework.boot.loader.LaunchedURLClassLoader --load java.lang.String`
+`classloader --classLoaderClass org.springframework.boot.loader.LaunchedURLClassLoader --load java.lang.String`{{execute T2}}
 
 ```
 $ classloader --classLoaderClass org.springframework.boot.loader.LaunchedURLClassLoader --load java.lang.String
