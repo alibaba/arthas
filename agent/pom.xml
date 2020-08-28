@@ -52,6 +52,9 @@
                             </descriptorRefs>
                             <archive>
                                 <manifestEntries>
+                                    <!--
+                                    指定了Agent-Class为com.taobao.arthas.agent.AgentBootstrap，同时可以使用Premain的方式和目标进程同时启动
+                                    -->
                                     <Premain-Class>com.taobao.arthas.agent334.AgentBootstrap</Premain-Class>
                                     <Agent-Class>com.taobao.arthas.agent334.AgentBootstrap</Agent-Class>
                                     <Can-Redefine-Classes>true</Can-Redefine-Classes>

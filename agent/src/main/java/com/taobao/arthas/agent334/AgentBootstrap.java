@@ -14,7 +14,7 @@ import com.taobao.arthas.agent.ArthasClassloader;
 
 /**
  * 代理启动类
- *
+ *arthas-agent.jar既可以使用premain方式（在目标进程启动之前，通过-agent参数静态指定），也可以通过agentmain方式（在进程启动之后attach上去）。
  * @author vlinux on 15/5/19.
  */
 public class AgentBootstrap {
@@ -56,14 +56,15 @@ public class AgentBootstrap {
      * 1. 全局持有classloader用于隔离 Arthas 实现，防止多次attach重复初始化
      * 2. ClassLoader在arthas停止时会被reset
      * 3. 如果ClassLoader一直没变，则 com.taobao.arthas.core.server.ArthasBootstrap#getInstance 返回结果一直是一样的
+     * 4 异步调用bind方法，该方法最终启动server监听线程，监听客户端的连接，包括telnet和websocket两种通信方式
      * </pre>
      */
     private static volatile ClassLoader arthasClassLoader;
-
+    //附着方式1
     public static void premain(String args, Instrumentation inst) {
         main(args, inst);
     }
-
+    //附着方式2
     public static void agentmain(String args, Instrumentation inst) {
         main(args, inst);
     }
@@ -87,6 +88,14 @@ public class AgentBootstrap {
         return arthasClassLoader;
     }
 
+    /**
+     * 1 找到arthas-spy.jar路径，并调用Instrumentation#appendToBootstrapClassLoaderSearch方法，使用bootstrapClassLoader来加载arthas-spy.jar里的Spy类。
+     * 2 arthas-agent路径传递给自定义的classloader(ArthasClassloader)，用来隔离arthas本身的类和目标进程的类。
+     * 3 使用 ArthasClassloader#loadClass方法，加载com.taobao.arthas.core.advisor.AdviceWeaver类，并将里面的methodOnBegin、methodOnReturnEnd、methodOnThrowingEnd等方法取出赋值给Spy类对应的方法。同时Spy类里面的方法又会通过ASM字节码增强的方式，编织到目标代码的方法里面。使得Spy 间谍类可以关联由AppClassLoader加载的目标进程的业务类和ArthasClassloader加载的arthas类，因此Spy类可以看做两者之间的桥梁。根据classloader双亲委派特性，子classloader可以访问父classloader加载的类
+     *
+     * @param args
+     * @param inst
+     */
     private static synchronized void main(String args, final Instrumentation inst) {
         // 尝试判断arthas是否已在运行，如果是的话，直接就退出
         try {
@@ -139,7 +148,7 @@ public class AgentBootstrap {
             if (!arthasCoreJarFile.exists()) {
                 return;
             }
-
+            //#### 手动将core加载到
             /**
              * Use a dedicated thread to run the binding logic to prevent possible memory leak. #195
              */

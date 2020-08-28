@@ -110,7 +110,11 @@ public class Arthas {
             //convert jar path to unicode string
             configure.setArthasAgent(encodeArg(arthasAgentPath));
             configure.setArthasCore(encodeArg(configure.getArthasCore()));
-            //参数1,2分别如下
+
+            /**
+             * 使用jdk-tools里面的VirtualMachine.loadAgent，其中第一个参数为agent路径， 第二个参数向jar包中的agentmain()方法传递参数（此处{@link Configure}序列化之后的字符串），
+             */
+            //参数1,2例子分别如下
             // C:\Users\zhanghongjun\.arthas\lib\3.3.9\arthas\arthas-agent.jar
             // C:\Users\zhanghongjun\.arthas\lib\3.3.9\arthas\arthas-core.jar;;telnetPort=3659;httpPort=8564;ip=127.0.0.1;arthasAgent=C:\Users\zhanghongjun\.arthas\lib\3.3.9\arthas\arthas-agent.jar;sessionTimeout=1800;arthasCore=C:\Users\zhanghongjun\.arthas\lib\3.3.9\arthas\arthas-core.jar;javaPid=31860;
             virtualMachine.loadAgent(arthasAgentPath,

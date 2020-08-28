@@ -5,6 +5,8 @@ import java.net.URLClassLoader;
 
 /**
  * @author beiwei30 on 09/12/2016.
+ * arthas-agent会使用自定义的classloader(ArthasClassLoader)加载arthas-core.jar里面的com.taobao.arthas.core.config.Configure类以及com.taobao.arthas.core.server.ArthasBootstrap。
+ *
  */
 public class ArthasClassloader extends URLClassLoader {
     public ArthasClassloader(URL[] urls) {
