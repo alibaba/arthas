@@ -60,15 +60,20 @@
         <module>common</module>
         <module>tunnel-client</module>
         <module>bytekit</module>
+        <!--
+       arthas-boot.jar和as.sh模块功能类似，分别使用java和shell脚本，下载对应的jar包，并生成服务端和客户端的启动命令，然后启动客户端和服务端
+       当选择attach某个目标进程时，首先会检查arthas工作目录(C:\Users\zhanghongjun\.arthas\lib\3.3.9\arthas)是否下载了core,agent等依赖包， 然后通过启动core会在目标进程中分别启动一个telent和http端口，默认3658和8563,
+       -->
+        <module>boot</module>
+        <!--
+        -v参数只是控制boot的一些控制台打印，真正运行起来后core的日志都是由arthashome下logback配置决定，默认日志目录在C:\Users\zhanghongjun\logs\arthas
+        core的作用就是 1 {@link VirtualMachine#attach(VirtualMachineDescriptor)}  获取虚机后， 2 {@link VirtualMachine#loadAgent(String, String)} 通过虚机加载代理
+        通过上面两步将代理在目标进程启动起来，然后core就会退出
+        -->
         <module>core</module>
         <module>agent</module>
         <module>client</module>
         <module>memorycompiler</module>
-        <!--
-        arthas-boot.jar和as.sh模块功能类似，分别使用java和shell脚本，下载对应的jar包，并生成服务端和客户端的启动命令，然后启动客户端和服务端
-        当选择attach某个目标进程时，首先会检查arthas工作目录是否下载了core,agent等依赖包， 然后通过启动core会在目标进程中分别启动一个telent和http端口，默认3658和8563,
-        -->
-        <module>boot</module>
         <module>arthas-agent-attach</module>
         <module>arthas-spring-boot-starter</module>
         <module>demo</module>

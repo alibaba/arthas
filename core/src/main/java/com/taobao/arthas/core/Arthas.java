@@ -69,8 +69,16 @@ public class Arthas {
         return configure;
     }
 
+    /**
+     * 核心就是通过 {@link }
+     * 1 {@link VirtualMachine#attach(VirtualMachineDescriptor)}  获取虚机后， 2 {@link VirtualMachine#loadAgent(String, String)} 通过虚机加载代理
+     * @see VirtualMachine
+     * @param configure
+     * @throws Exception
+     */
     private void attachAgent(Configure configure) throws Exception {
         VirtualMachineDescriptor virtualMachineDescriptor = null;
+        //#### 获取所有java进程，等同jps，查找指定pid的进程
         for (VirtualMachineDescriptor descriptor : VirtualMachine.list()) {
             String pid = descriptor.id();
             if (pid.equals(Long.toString(configure.getJavaPid()))) {
@@ -82,7 +90,7 @@ public class Arthas {
         try {
             if (null == virtualMachineDescriptor) { // 使用 attach(String pid) 这种方式
                 virtualMachine = VirtualMachine.attach("" + configure.getJavaPid());
-            } else {
+            } else { //#### 使用attach方式，附着到指定java进程上，区别于 java -agent参数静态指定premain方式
                 virtualMachine = VirtualMachine.attach(virtualMachineDescriptor);
             }
 
@@ -102,6 +110,9 @@ public class Arthas {
             //convert jar path to unicode string
             configure.setArthasAgent(encodeArg(arthasAgentPath));
             configure.setArthasCore(encodeArg(configure.getArthasCore()));
+            //参数1,2分别如下
+            // C:\Users\zhanghongjun\.arthas\lib\3.3.9\arthas\arthas-agent.jar
+            // C:\Users\zhanghongjun\.arthas\lib\3.3.9\arthas\arthas-core.jar;;telnetPort=3659;httpPort=8564;ip=127.0.0.1;arthasAgent=C:\Users\zhanghongjun\.arthas\lib\3.3.9\arthas\arthas-agent.jar;sessionTimeout=1800;arthasCore=C:\Users\zhanghongjun\.arthas\lib\3.3.9\arthas\arthas-core.jar;javaPid=31860;
             virtualMachine.loadAgent(arthasAgentPath,
                     configure.getArthasCore() + ";" + configure.toString());
         } finally {
@@ -118,7 +129,9 @@ public class Arthas {
             return arg;
         }
     }
-
+    //直接通过boot启动参数为  [-jar, C:\Users\zhanghongjun\.arthas\lib\3.3.9\arthas\arthas-core.jar, -pid, 56120, -target-ip, 127.0.0.1, -telnet-port, 3658, -http-port, 8563, -core, C:\Users\zhanghongjun\.arthas\lib\3.3.9\arthas\arthas-core.jar, -agent, C:\Users\zhanghongjun\.arthas\lib\3.3.9\arthas\arthas-agent.jar]
+    //所以可以自己构建如上参数来调试  -pid 56120 -target-ip 127.0.0.1 -telnet-port 3659 -http-port 8564 -core C:\Users\zhanghongjun\.arthas\lib\3.3.9\arthas\arthas-core.jar -agent C:\Users\zhanghongjun\.arthas\lib\3.3.9\arthas\arthas-agent.jar
+    //指定pid和期望绑定端口以及代理
     public static void main(String[] args) {
         try {
             new Arthas(args);
