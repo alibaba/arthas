@@ -247,6 +247,10 @@
 <td align="left">hashcode of the <a href="classloader.md">class loader</a> that loaded the target class</td>
 </tr>
 <tr>
+<td align="right"><code>[classLoaderClass:]</code></td>
+<td align="left">The class name of the ClassLoader that executes the expression.</td>
+</tr>
+<tr>
 <td align="right"><code>[d:]</code></td>
 <td align="left">set the destination directory for class files</td>
 </tr>
@@ -274,6 +278,24 @@ Affect(row-cnt:1) cost in 39 ms.</pre></div>
  null                   /tmp/output/java/lang/String.class
 Affect(row-cnt:1) cost in 138 ms.</pre></div>
 </div>
+<ul class="simple">
+<li><p>Specify classLoader</p></li>
+</ul>
+<p>Note that the hashcode changes, you need to check the current ClassLoader information first, and extract the hashcode corresponding to the ClassLoader.</p>
+<p>if you use<code class="docutils literal notranslate"><span class="pre">-c</span></code>, you have to manually type hashcode by <code class="docutils literal notranslate"><span class="pre">-c</span> <span class="pre">&lt;hashcode&gt;</span></code>.</p>
+<div class="highlight-bash notranslate"><div class="highlight hljs"><pre class="bash">$ dump -c 3d4eac69 demo.*</pre></div>
+</div>
+<p>For classloader with only one instance, it can be specified by <code class="docutils literal notranslate"><span class="pre">--classLoaderClass</span></code> using class name, which is more convenient to use.</p>
+<div class="highlight-bash notranslate"><div class="highlight hljs"><pre class="bash">$ dump --classLoaderClass sun.misc.Launcher$AppClassLoader demo.*
+ HASHCODE  CLASSLOADER                                    LOCATION
+ 3d4eac69  +-sun.misc.Launcher$AppClassLoader@3d4eac69    /Users/admin/logs/arthas/classdump/sun.misc.Launcher$AppClassLoader-3d4eac69/demo/MathGame.class
+             +-sun.misc.Launcher$ExtClassLoader@66350f69
+Affect(row-cnt:1) cost in 39 ms.</pre></div>
+</div>
+<ul class="simple">
+<li><p>PS: Here the classLoaderClass in java 8 is sun.misc.Launcher$AppClassLoader, while in java 11 it’s jdk.internal.loader.ClassLoaders$AppClassLoader. Currently katacoda using java 8.</p></li>
+</ul>
+<p>The value of <code class="docutils literal notranslate"><span class="pre">--classloaderclass</span></code> is the class name of classloader. It can only work when it matches a unique classloader instance. The purpose is to facilitate the input of general commands. However, <code class="docutils literal notranslate"><span class="pre">-c</span> <span class="pre">&lt;hashcode&gt;</span></code> is dynamic.</p>
 </div>
 </div>
 

@@ -258,6 +258,10 @@
 <td align="left">hashcode of the class loader that loads the class</td>
 </tr>
 <tr>
+<td align="right"><code>[classLoaderClass:]</code></td>
+<td align="left">The class name of the ClassLoader that executes the expression.</td>
+</tr>
+<tr>
 <td align="right"><code>[E]</code></td>
 <td align="left">turn on regex match while the default is wildcard match</td>
 </tr>
@@ -383,6 +387,8 @@ public class Logger extends Category
 
 Affect(row-cnt:1) cost in 190 ms.</pre></div>
 </div>
+<p>For classloader with only one instance, it can be specified by <code class="docutils literal notranslate"><span class="pre">--classLoaderClass</span></code> using class name, which is more convenient to use.</p>
+<p>The value of <code class="docutils literal notranslate"><span class="pre">--classloaderclass</span></code> is the class name of classloader. It can only work when it matches a unique classloader instance. The purpose is to facilitate the input of general commands. However, <code class="docutils literal notranslate"><span class="pre">-c</span> <span class="pre">&lt;hashcode&gt;</span></code> is dynamic.</p>
 </div>
 </div>
 </div>

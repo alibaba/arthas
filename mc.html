@@ -232,6 +232,12 @@
 <p>可以通过<code class="docutils literal notranslate"><span class="pre">-c</span></code>参数指定classloader：</p>
 <div class="highlight-bash notranslate"><div class="highlight hljs"><pre class="bash">mc -c 327a647b /tmp/Test.java</pre></div>
 </div>
+<p>也可以通过<code class="docutils literal notranslate"><span class="pre">--classLoaderClass</span></code>参数指定ClassLoader：</p>
+<div class="highlight-bash notranslate"><div class="highlight hljs"><pre class="bash">$ mc --classLoaderClass org.springframework.boot.loader.LaunchedURLClassLoader /tmp/UserController.java -d /tmp
+Memory compiler output:
+/tmp/com/example/demo/arthas/user/UserController.class
+Affect(row-cnt:1) cost in 346 ms</pre></div>
+</div>
 <p>可以通过<code class="docutils literal notranslate"><span class="pre">-d</span></code>命令指定输出目录：</p>
 <div class="highlight-bash notranslate"><div class="highlight hljs"><pre class="bash">mc -d /tmp/output /tmp/ClassA.java /tmp/ClassB.java</pre></div>
 </div>

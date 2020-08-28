@@ -118,7 +118,7 @@
 <li class="toctree-l4"><a class="reference internal" href="#view-logger-information-for-the-special-name">View logger information for the special name</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#view-logger-information-for-the-special-classloader">View logger information for the special classloader</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#update-logger-level">Update logger level</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#classloader-logger-level">指定classloader更新 logger level</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#speecify-classloader-to-update-logger-level">Speecify classloader to update logger level</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#view-the-logger-information-without-appenders">View the logger information without appenders</a></li>
 </ul>
 </li>
@@ -361,10 +361,10 @@
 update logger level success.</pre></div>
 </div>
 </div>
-<div class="section" id="classloader-logger-level">
-<h3>指定classloader更新 logger level<a class="headerlink" href="#classloader-logger-level" title="Permalink to this headline">¶</a></h3>
-<p>默认情况下，logger命令会在SystemClassloader下执行，如果应用是传统的<code class="docutils literal notranslate"><span class="pre">war</span></code>应用，或者spring boot fat jar启动的应用，那么需要指定classloader。</p>
-<p>可以先用 <code class="docutils literal notranslate"><span class="pre">sc</span> <span class="pre">-d</span> <span class="pre">yourClassName</span></code> 来查看具体的 classloader hashcode，然后在更新level时指定classloader：</p>
+<div class="section" id="speecify-classloader-to-update-logger-level">
+<h3>Speecify classloader to update logger level<a class="headerlink" href="#speecify-classloader-to-update-logger-level" title="Permalink to this headline">¶</a></h3>
+<p>By default，logger command will be executed under SystemClassloader, if the application is a traditional <code class="docutils literal notranslate"><span class="pre">war</span></code>, or using spring boot fat jar, then it needs to specify classloader。</p>
+<p>You can first use <code class="docutils literal notranslate"><span class="pre">sc</span> <span class="pre">-d</span> <span class="pre">yourClassName</span></code> to check specified classloader hashcode，then specify classloader when updating logger level:</p>
 <div class="highlight-bash notranslate"><div class="highlight hljs"><pre class="bash">[arthas@2062]$ logger -c 2a139a55 --name ROOT --level debug</pre></div>
 </div>
 </div>

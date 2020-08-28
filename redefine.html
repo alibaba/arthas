@@ -269,6 +269,10 @@
 <td align="left">ClassLoader的hashcode</td>
 </tr>
 <tr>
+<td align="right"><code>[classLoaderClass:]</code></td>
+<td align="left">指定执行表达式的 ClassLoader 的 class name</td>
+</tr>
+<tr>
 <td align="right">[p:]</td>
 <td align="left">外部的<code>.class</code>文件的完整路径，支持多个</td>
 </tr>
@@ -277,7 +281,8 @@
 <div class="section" id="id3">
 <h2>使用参考<a class="headerlink" href="#id3" title="永久链接至标题">¶</a></h2>
 <div class="highlight-bash notranslate"><div class="highlight hljs"><pre class="bash">   redefine /tmp/Test.class
-   redefine -c 327a647b /tmp/Test.class /tmp/Test\$Inner.class</pre></div>
+   redefine -c 327a647b /tmp/Test.class /tmp/Test\$Inner.class
+   redefine --classLoaderClass sun.misc.Launcher$AppClassLoader /tmp/Test.class /tmp/Test\$Inner.class</pre></div>
 </div>
 </div>
 <div class="section" id="jad-mc">

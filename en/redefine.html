@@ -266,6 +266,10 @@ The reason is that in the JDK <code class="docutils literal notranslate"><span c
 <td align="left">hashcode of the class loader</td>
 </tr>
 <tr>
+<td align="right"><code>[classLoaderClass:]</code></td>
+<td align="left">The class name of the ClassLoader that executes the expression.</td>
+</tr>
+<tr>
 <td align="right"><code>[p:]</code></td>
 <td align="left">absolute path of the external <code>*.class</code>, multiple paths are separated with 'space'</td>
 </tr>
@@ -274,7 +278,8 @@ The reason is that in the JDK <code class="docutils literal notranslate"><span c
 <div class="section" id="usage">
 <h2>Usage<a class="headerlink" href="#usage" title="Permalink to this headline">¶</a></h2>
 <div class="highlight-bash notranslate"><div class="highlight hljs"><pre class="bash">redefine /tmp/Test.class
-redefine -c 327a647b /tmp/Test.class /tmp/Test$Inner.class</pre></div>
+redefine -c 327a647b /tmp/Test.class /tmp/Test\$Inner.class
+redefine --classLoaderClass sun.misc.Launcher$AppClassLoader /tmp/Test.class /tmp/Test\$Inner.class</pre></div>
 </div>
 </div>
 <div class="section" id="use-with-the-jad-mc-command">

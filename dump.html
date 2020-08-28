@@ -250,6 +250,10 @@
 <td align="left">类所属 ClassLoader 的 hashcode</td>
 </tr>
 <tr>
+<td align="right"><code>[classLoaderClass:]</code></td>
+<td align="left">指定执行表达式的 ClassLoader 的 class name</td>
+</tr>
+<tr>
 <td align="right"><code>[d:]</code></td>
 <td align="left">设置类文件的目标目录</td>
 </tr>
@@ -277,6 +281,24 @@ Affect(row-cnt:1) cost in 39 ms.</pre></div>
  null                   /tmp/output/java/lang/String.class
 Affect(row-cnt:1) cost in 138 ms.</pre></div>
 </div>
+<ul class="simple">
+<li><p>指定classLoader</p></li>
+</ul>
+<p>注意hashcode是变化的，需要先查看当前的ClassLoader信息，提取对应ClassLoader的hashcode。</p>
+<p>如果你使用<code class="docutils literal notranslate"><span class="pre">-c</span></code>，你需要手动输入hashcode：<code class="docutils literal notranslate"><span class="pre">-c</span> <span class="pre">&lt;hashcode&gt;</span></code></p>
+<div class="highlight-bash notranslate"><div class="highlight hljs"><pre class="bash">$ dump -c 3d4eac69 demo.*</pre></div>
+</div>
+<p>对于只有唯一实例的ClassLoader可以通过<code class="docutils literal notranslate"><span class="pre">--classLoaderClass</span></code>指定class name，使用起来更加方便：</p>
+<div class="highlight-bash notranslate"><div class="highlight hljs"><pre class="bash">$ dump --classLoaderClass sun.misc.Launcher$AppClassLoader demo.*
+ HASHCODE  CLASSLOADER                                    LOCATION
+ 3d4eac69  +-sun.misc.Launcher$AppClassLoader@3d4eac69    /Users/admin/logs/arthas/classdump/sun.misc.Launcher$AppClassLoader-3d4eac69/demo/MathGame.class
+             +-sun.misc.Launcher$ExtClassLoader@66350f69
+Affect(row-cnt:1) cost in 39 ms.</pre></div>
+</div>
+<ul class="simple">
+<li><p>注: 这里classLoaderClass 在 java 8 是 sun.misc.Launcher$AppClassLoader，而java 11的classloader是jdk.internal.loader.ClassLoaders$AppClassLoader，katacoda目前环境是java8。</p></li>
+</ul>
+<p><code class="docutils literal notranslate"><span class="pre">--classLoaderClass</span></code> 的值是ClassLoader的类名，只有匹配到唯一的ClassLoader实例时才能工作，目的是方便输入通用命令，而<code class="docutils literal notranslate"><span class="pre">-c</span> <span class="pre">&lt;hashcode&gt;</span></code>是动态变化的。</p>
 </div>
 </div>
 

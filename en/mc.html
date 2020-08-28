@@ -229,6 +229,12 @@
 <p>The classloader can be specified with the <code class="docutils literal notranslate"><span class="pre">-c</span></code> option:</p>
 <div class="highlight-bash notranslate"><div class="highlight hljs"><pre class="bash">mc -c 327a647b /tmp/Test.java</pre></div>
 </div>
+<p>You can also specify the ClassLoader with the <code class="docutils literal notranslate"><span class="pre">--classLoaderClass</span></code> option:</p>
+<div class="highlight-bash notranslate"><div class="highlight hljs"><pre class="bash">$ mc --classLoaderClass org.springframework.boot.loader.LaunchedURLClassLoader /tmp/UserController.java -d /tmp
+Memory compiler output:
+/tmp/com/example/demo/arthas/user/UserController.class
+Affect(row-cnt:1) cost in 346 ms</pre></div>
+</div>
 <p>The output directory can be specified with the <code class="docutils literal notranslate"><span class="pre">-d</span></code> option:</p>
 <div class="highlight-bash notranslate"><div class="highlight hljs"><pre class="bash">mc -d /tmp/output /tmp/ClassA.java /tmp/ClassB.java</pre></div>
 </div>

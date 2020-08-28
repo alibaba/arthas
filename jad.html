@@ -261,6 +261,10 @@
 <td align="left">类所属 ClassLoader 的 hashcode</td>
 </tr>
 <tr>
+<td align="right"><code>[classLoaderClass:]</code></td>
+<td align="left">指定执行表达式的 ClassLoader 的 class name</td>
+</tr>
+<tr>
 <td align="right">[E]</td>
 <td align="left">开启正则表达式匹配，默认为通配符匹配</td>
 </tr>
@@ -386,6 +390,8 @@ public class Logger extends Category
 
 Affect(row-cnt:1) cost in 190 ms.</pre></div>
 </div>
+<p>对于只有唯一实例的ClassLoader还可以通过<code class="docutils literal notranslate"><span class="pre">--classLoaderClass</span></code>指定class name，使用起来更加方便：</p>
+<p><code class="docutils literal notranslate"><span class="pre">--classLoaderClass</span></code> 的值是ClassLoader的类名，只有匹配到唯一的ClassLoader实例时才能工作，目的是方便输入通用命令，而<code class="docutils literal notranslate"><span class="pre">-c</span> <span class="pre">&lt;hashcode&gt;</span></code>是动态变化的。</p>
 </div>
 </div>
 </div>
