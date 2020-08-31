@@ -219,14 +219,6 @@ public class ChannelClient {
             @Override
             public void onNext(HeartbeatResponse value) {
                 logger.debug("heartbeat result: {}", value);
-
-                //schedule next heartbeat
-                executorService.schedule(new Runnable() {
-                    @Override
-                    public void run() {
-                        sendHeartbeat(arthasServiceStub);
-                    }
-                }, 10, TimeUnit.SECONDS);
             }
 
             @Override
@@ -257,8 +249,9 @@ public class ChannelClient {
         reconnectFuture = executorService.scheduleWithFixedDelay(new Runnable() {
             @Override
             public void run() {
-                try {
-                    if (isError) {
+                if (isError) {
+                    // reconnect
+                    try {
                         //stop previous channel
                         if (channel != null) {
                             try {
@@ -271,16 +264,23 @@ public class ChannelClient {
                         }
 
                         connect();
+                    } catch (Throwable e) {
+                        if (isWellKnownError(e)) {
+                            logger.error("Agent reconnect failure: " + e.toString());
+                        } else {
+                            logger.error("Agent reconnect failure: " + e.toString(), e);
+                        }
                     }
-                } catch (Throwable e) {
-                    if (isWellKnownError(e)) {
-                        logger.error("Agent reconnect failure: " + e.toString());
-                    } else {
-                        logger.error("Agent reconnect failure: " + e.toString(), e);
+                } else {
+                    // send heartbeat
+                    try {
+                        sendHeartbeat(arthasServiceStub);
+                    } catch (Throwable e) {
+                        logger.error("send heartbeat failure", e);
                     }
                 }
             }
-        }, 10, reconnectDelay, TimeUnit.MILLISECONDS);
+        }, reconnectDelay, reconnectDelay, TimeUnit.MILLISECONDS);
 
     }
 
