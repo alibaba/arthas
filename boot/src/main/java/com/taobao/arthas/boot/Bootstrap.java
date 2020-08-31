@@ -41,6 +41,19 @@ import static com.taobao.arthas.boot.ProcessUtils.STATUS_EXEC_TIMEOUT;
 
 /**
  * @author hengyunabc 2018-10-26
+ * #### boot整个流程日志如下，大致分为 1 下载依赖类库   2 start core包去动态附着agent  3 目标进程代理启动后，启动arthas-client去连接代理
+ * [DEBUG] Arthas download temp file: /tmp/arthas7352136841795112818arthas
+ * [INFO] Start download arthas from remote server: https://arthas.aliyun.com/download/3.3.9?mirror=aliyun
+ * [INFO] Download arthas success.
+ * [INFO] arthas home: /root/.arthas/lib/3.3.9/arthas
+ * [INFO] Try to attach process 20
+ * [DEBUG] Start arthas-core.jar args: [-jar, /root/.arthas/lib/3.3.9/arthas/arthas-core.jar, -pid, 20, -target-ip, 127.0.0.1, -telnet-port, 3658, -http-port, 8563, -core, /root/.arthas/lib/3.3.9/arthas/arthas-core.jar, -agent, /root/.arthas/lib/3.3.9/arthas/arthas-agent.jar]
+ * [DEBUG] Found java: /usr/java/jdk1.8.0_201-amd64/jre/bin/java
+ * [DEBUG] Found java: /usr/java/jdk1.8.0_201-amd64/jre/../bin/java
+ * [DEBUG] Found tools.jar: /usr/java/jdk1.8.0_201-amd64/jre/../lib/tools.jar
+ * [INFO] Attach process 20 success.
+ * [INFO] arthas-client connect 127.0.0.1 3658
+ * [DEBUG] Start arthas-client.jar args: [127.0.0.1, 3658]
  *
  */
 @Name("arthas-boot")
@@ -343,7 +356,7 @@ public class Bootstrap {
         // select pid
         if (pid < 0) {
             try {
-                //通过Scanner扫描用户输入进程
+                //#### 通过Scanner扫描用户输入进程
                 pid = ProcessUtils.select(bootstrap.isVerbose(), telnetPortPid, bootstrap.getSelect());
             } catch (InputMismatchException e) {
                 System.out.println("Please input an integer to select pid.");
@@ -448,7 +461,8 @@ public class Bootstrap {
                 }
             }
             if (needDownload) {
-                // try to download arthas from remote server. #### 开始去https://arthas.aliyun.com/download/3.3.9?mirror=aliyun 下载arthas-packaging-3.3.9-bin.zip包，然后解压
+                // try to download arthas from remote server.
+                //#### 1 开始去https://arthas.aliyun.com/download/3.3.9?mirror=aliyun 下载arthas-packaging-3.3.9-bin.zip包，然后解压
                 DownloadUtils.downArthasPackaging(bootstrap.getRepoMirror(), bootstrap.isuseHttp(),
                                 remoteLastestVersion, ARTHAS_LIB_DIR.getAbsolutePath());
                 localLastestVersion = remoteLastestVersion;
@@ -504,7 +518,8 @@ public class Bootstrap {
             }
 
             AnsiLog.info("Try to attach process " + pid);
-            //#### Start arthas-core.jar args: [-jar, C:\Users\zhanghongjun\.arthas\lib\3.3.9\arthas\arthas-core.jar, -pid, 56120, -target-ip, 127.0.0.1, -telnet-port, 3658, -http-port, 8563, -core, C:\Users\zhanghongjun\.arthas\lib\3.3.9\arthas\arthas-core.jar, -agent, C:\Users\zhanghongjun\.arthas\lib\3.3.9\arthas\arthas-agent.jar]
+            //#### 2 通过core包去对目标进程进行动态附着代理
+            // Start arthas-core.jar args: [-jar, C:\Users\zhanghongjun\.arthas\lib\3.3.9\arthas\arthas-core.jar, -pid, 56120, -target-ip, 127.0.0.1, -telnet-port, 3658, -http-port, 8563, -core, C:\Users\zhanghongjun\.arthas\lib\3.3.9\arthas\arthas-core.jar, -agent, C:\Users\zhanghongjun\.arthas\lib\3.3.9\arthas\arthas-agent.jar]
             //### 通过core包去指定进程中开启对应端口
             AnsiLog.debug("Start arthas-core.jar args: " + attachArgs);
             ProcessUtils.startArthasCore(pid, attachArgs);
@@ -550,6 +565,7 @@ public class Bootstrap {
 
         // fix https://github.com/alibaba/arthas/issues/833
         Thread.currentThread().setContextClassLoader(classLoader);
+        //#### 3 telnet连接到目前进程的代理上 即调用TelnetConsole#main方法
         mainMethod.invoke(null, new Object[] { telnetArgs.toArray(new String[0]) });
     }
 
