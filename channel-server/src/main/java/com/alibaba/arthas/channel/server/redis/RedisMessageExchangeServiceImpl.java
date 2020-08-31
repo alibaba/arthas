@@ -3,13 +3,11 @@ package com.alibaba.arthas.channel.server.redis;
 import com.alibaba.arthas.channel.server.message.MessageExchangeException;
 import com.alibaba.arthas.channel.server.message.MessageExchangeService;
 import com.alibaba.arthas.channel.server.message.topic.Topic;
-import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.redis.connection.RedisConnection;
+import org.springframework.dao.QueryTimeoutException;
 import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.data.redis.core.ScanOptions;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -79,15 +77,23 @@ public class RedisMessageExchangeServiceImpl implements MessageExchangeService {
             @Override
             public void run() {
                 while (true) {
-                    byte[] messageBytes = redisTemplate.opsForList().rightPop(topic.getTopic(), timeout, TimeUnit.MILLISECONDS);
-                    if (messageBytes != null) {
-                        boolean next = messageHandler.onMessage(messageBytes);
-                        if (!next) {
+                    try {
+                        byte[] messageBytes = redisTemplate.opsForList().rightPop(topic.getTopic(), timeout, TimeUnit.MILLISECONDS);
+                        if (messageBytes != null) {
+                            boolean next = messageHandler.onMessage(messageBytes);
+                            if (!next) {
+                                break;
+                            }
+                        }else {
+                            messageHandler.onTimeout();
                             break;
                         }
-                    }else {
-                        messageHandler.onTimeout();
-                        break;
+                    } catch (Throwable e) {
+                        if (e instanceof QueryTimeoutException) {
+                            //ignore Redis command timed out
+                        } else {
+                            logger.error("blocking pop message failure", e);
+                        }
                     }
                 }
             }
