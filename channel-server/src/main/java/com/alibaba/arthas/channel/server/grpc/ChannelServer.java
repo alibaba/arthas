@@ -23,6 +23,7 @@ public class ChannelServer {
     private ScheduledExecutorService executorService;
 
     private Server server;
+    private int port = 7700;
 
     public void start() throws Exception  {
 
@@ -31,17 +32,20 @@ public class ChannelServer {
             public void run() {
                 try {
                     if (server == null) {
-                        server = ServerBuilder.forPort(7700)
+                        server = ServerBuilder.forPort(port)
                                 .addService(arthasServiceGrpc)
                                 //enable server-reflect
                                 //.addService(ProtoReflectionService.newInstance())
                                 .build();
 
                         server.start();
+
+                        logger.info("Channel server started on port: {} (grpc)", port);
+
                         //server.awaitTermination();
                     }
                 } catch (Throwable e) {
-                    logger.error("channel server start failure", e);
+                    logger.error("Channel server start failure", e);
                 }
             }
         });
@@ -51,5 +55,13 @@ public class ChannelServer {
         if (server != null) {
             server.shutdown();
         }
+    }
+
+    public int getPort() {
+        return port;
+    }
+
+    public void setPort(int port) {
+        this.port = port;
     }
 }

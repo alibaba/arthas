@@ -4,6 +4,7 @@ import com.alibaba.arthas.channel.server.grpc.ArthasServiceGrpcImpl;
 import com.alibaba.arthas.channel.server.grpc.ChannelServer;
 import com.alibaba.arthas.channel.server.message.MessageExchangeService;
 import com.alibaba.arthas.channel.server.message.impl.MessageExchangeServiceImpl;
+import com.alibaba.arthas.channel.server.redis.RedisAgentManageServiceImpl;
 import com.alibaba.arthas.channel.server.redis.RedisMessageExchangeServiceImpl;
 import com.alibaba.arthas.channel.server.service.AgentBizSerivce;
 import com.alibaba.arthas.channel.server.service.AgentManageService;
@@ -11,12 +12,10 @@ import com.alibaba.arthas.channel.server.service.ApiActionDelegateService;
 import com.alibaba.arthas.channel.server.service.impl.AgentBizServiceImpl;
 import com.alibaba.arthas.channel.server.service.impl.AgentManageServiceImpl;
 import com.alibaba.arthas.channel.server.service.impl.ApiActionDelegateServiceImpl;
-import com.alibaba.arthas.channel.server.redis.RedisAgentManageServiceImpl;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
-import org.springframework.boot.autoconfigure.data.redis.RedisAutoConfiguration;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Import;
 import org.springframework.context.annotation.Profile;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -71,8 +70,11 @@ public class ChannelServerConfiguration {
     }
 
     @Bean(initMethod = "start", destroyMethod = "stop")
-    public ChannelServer channelServer() {
-        return new ChannelServer();
+    @ConditionalOnProperty(value = "channel.server.backend.enabled", havingValue = "true", matchIfMissing = false)
+    public ChannelServer channelServer(@Value("${channel.server.backend.port}") int port) {
+        ChannelServer channelServer = new ChannelServer();
+        channelServer.setPort(port);
+        return channelServer;
     }
 
 
