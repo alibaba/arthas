@@ -2,6 +2,7 @@ package com.taobao.arthas.core.shell.handlers.term;
 
 import com.taobao.arthas.core.shell.handlers.Handler;
 import com.taobao.arthas.core.shell.term.impl.TermImpl;
+import io.netty.channel.ChannelHandlerContext;
 import io.termd.core.function.Consumer;
 
 /**
@@ -16,6 +17,12 @@ public class RequestHandler implements Consumer<String> {
         this.lineHandler = lineHandler;
     }
 
+    /**
+     * #### telnet收到命令后，
+     * 通过中间件处理(比如{@link io.termd.core.telnet.netty.TelnetChannelHandler#channelRead(ChannelHandlerContext, Object)})
+     * 最终调到这里
+     * @param line
+     */
     @Override
     public void accept(String line) {
         term.setInReadline(false);

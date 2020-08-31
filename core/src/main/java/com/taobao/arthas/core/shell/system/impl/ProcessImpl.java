@@ -367,6 +367,7 @@ public class ProcessImpl implements Process {
             process.echoTips("job id  : " + this.jobId + "\n");
             process.echoTips("cache location  : " + cacheLocation() + "\n");
         }
+        //#### netty线程收到命令，解码后扔到业务线程处理
         Runnable task = new CommandProcessTask(process);
         ArthasBootstrap.getInstance().execute(task);
     }
@@ -378,7 +379,7 @@ public class ProcessImpl implements Process {
         public CommandProcessTask(CommandProcess process) {
             this.process = process;
         }
-
+        //#### 业务线程处理逻辑  执行具体命令指令
         @Override
         public void run() {
             try {
