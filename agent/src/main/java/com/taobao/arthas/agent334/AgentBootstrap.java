@@ -155,7 +155,6 @@ public class AgentBootstrap {
             if (!arthasCoreJarFile.exists()) {
                 return;
             }
-            //#### 手动将core加载到
             /**
              * Use a dedicated thread to run the binding logic to prevent possible memory leak. #195
              */
@@ -165,6 +164,11 @@ public class AgentBootstrap {
                 @Override
                 public void run() {
                     try {
+                        /**
+                         * ####
+                         * 1 首先确保传入的arthas-core存在
+                         * 2 启动异步线程,用ArthasClasloader去加载core包中的ArthasBootstrap，并进一步调用ArthasBootstrap#getInstance方法
+                         */
                         bind(inst, agentLoader, agentArgs);
                     } catch (Throwable throwable) {
                         throwable.printStackTrace(ps);

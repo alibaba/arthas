@@ -41,6 +41,7 @@ import com.taobao.arthas.core.shell.ShellServer;
 import com.taobao.arthas.core.shell.ShellServerOptions;
 import com.taobao.arthas.core.shell.command.CommandResolver;
 import com.taobao.arthas.core.shell.handlers.BindHandler;
+import com.taobao.arthas.core.shell.handlers.Handler;
 import com.taobao.arthas.core.shell.history.HistoryManager;
 import com.taobao.arthas.core.shell.history.impl.HistoryManagerImpl;
 import com.taobao.arthas.core.shell.impl.ShellServerImpl;
@@ -99,6 +100,13 @@ public class ArthasBootstrap {
 
     private HttpApiHandler httpApiHandler;
 
+    /**
+     * #### 真正的核心逻辑
+     *
+     * @param instrumentation
+     * @param args
+     * @throws Throwable
+     */
     private ArthasBootstrap(Instrumentation instrumentation, Map<String, String> args) throws Throwable {
         this.instrumentation = instrumentation;
 
@@ -262,7 +270,7 @@ public class ArthasBootstrap {
 
     /**
      * Bootstrap arthas server
-     *
+     *#### 启动监听逻辑
      * @param configure 配置信息
      * @throws IOException 服务器启动失败
      */
@@ -318,23 +326,33 @@ public class ArthasBootstrap {
             workerGroup = new NioEventLoopGroup(new DefaultThreadFactory("arthas-TermServer", true));
 
             // TODO: discover user provided command resolver
+            /**
+             * #### 注册telnetServer，都是添加到{@link ShellServerImpl#termServers}
+             */
             if (configure.getTelnetPort() > 0) {
                 shellServer.registerTermServer(new HttpTelnetTermServer(configure.getIp(), configure.getTelnetPort(),
                         options.getConnectionTimeout(), workerGroup));
             } else {
                 logger().info("telnet port is {}, skip bind telnet server.", configure.getTelnetPort());
             }
+            //#### 注册httpServer
             if (configure.getHttpPort() > 0) {
                 shellServer.registerTermServer(new HttpTermServer(configure.getIp(), configure.getHttpPort(),
                         options.getConnectionTimeout(), workerGroup));
             } else {
                 logger().info("http port is {}, skip bind http server.", configure.getHttpPort());
             }
-
+            /**
+             * #### 注册客户端命令解析处理器  添加到{@link ShellServerImpl#resolvers}
+             */
             for (CommandResolver resolver : resolvers) {
                 shellServer.registerCommandResolver(resolver);
             }
-
+            /**
+             * #### 真正监听，会依次调用所有注册TermServer的如下方法
+             * {@link com.taobao.arthas.core.shell.term.TermServer#termHandler(Handler)}
+             * {@link com.taobao.arthas.core.shell.term.TermServer#listen(Handler)}
+             */
             shellServer.listen(new BindHandler(isBindRef));
 
             //http api session manager
@@ -417,6 +435,9 @@ public class ArthasBootstrap {
     }
 
     /**
+     *
+     * ####
+     *   agent启动，最终调到这里
      * 单例
      *
      * @param instrumentation JVM增强
@@ -427,7 +448,15 @@ public class ArthasBootstrap {
         if (arthasBootstrap != null) {
             return arthasBootstrap;
         }
-
+        /**
+         * "telnetPort" -> "3659"
+         * "httpPort" -> "8564"
+         * "ip" -> "127.0.0.1"
+         * "arthasAgent" -> "C:\Users\zhanghongjun\.arthas\lib\3.3.9\arthas\arthas-agent.jar"
+         * "arthasCore" -> "C:\Users\zhanghongjun\.arthas\lib\3.3.9\arthas\arthas-core.jar"
+         * "sessionTimeout" -> "1800"
+         * "javaPid" -> "31860"
+         */
         Map<String, String> argsMap = FeatureCodec.DEFAULT_COMMANDLINE_CODEC.toMap(args);
         // 给配置全加上前缀
         Map<String, String> mapWithPrefix = new HashMap<String, String>(argsMap.size());

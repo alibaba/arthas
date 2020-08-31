@@ -64,7 +64,7 @@ public class BuiltinCommandPack implements CommandResolver {
     public List<Command> commands() {
         return commands;
     }
-
+    //#### 添加所有支持的命令
     private static void initCommands() {
         commands.add(Command.create(HelpCommand.class));
         commands.add(Command.create(KeymapCommand.class));

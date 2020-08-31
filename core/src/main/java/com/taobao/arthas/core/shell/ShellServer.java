@@ -22,6 +22,7 @@ import com.taobao.arthas.core.shell.term.TermServer;
  * The {@link #createShell()} method can be used to create {@link com.taobao.arthas.core.shell.system.JobController} instance for testing purposes.
  *
  * @author <a href="mailto:julien@julienviet.com">Julien Viet</a>
+ * #### ShellServer是整个服务端的门面类，调用listen方法启动ShellServer。
  */
 public abstract class ShellServer {
 
@@ -54,7 +55,7 @@ public abstract class ShellServer {
 
     /**
      * Register a term server to this shell server, the term server lifecycle methods are managed by this shell server.
-     *
+     *#### 注册termserver
      * @param termServer the term server to add
      * @return a reference to this, so the API can be used fluently
      */
@@ -77,6 +78,8 @@ public abstract class ShellServer {
 
     /**
      * Start the shell service, this is an asynchronous start.
+     * #### 会调用所有注册的TermServer的listen方法，比如TelnetTermServer。
+     * 然后TelnetTermServer的listen方法会注册一个回调类，该回调类在有新的客户端连接时会调用TermServerTermHandler的handle方法处理。
      */
     @SuppressWarnings("unchecked")
     public ShellServer listen() {
