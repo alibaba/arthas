@@ -11,10 +11,17 @@ import java.net.URLDecoder;
 import java.security.CodeSource;
 
 import com.taobao.arthas.agent.ArthasClassloader;
+import net.bytebuddy.agent.ByteBuddyAgent;
 
 /**
  * 代理启动类
- *arthas-agent.jar既可以使用premain方式（在目标进程启动之前，通过-agent参数静态指定），也可以通过agentmain方式（在进程启动之后attach上去）。
+ *arthas-agent.jar
+ * 既可以使用premain方式（在目标进程启动之前，通过-agent参数静态指定），
+ *      java -javaagent:MyAgent2.jar=thisIsAgentArgs -jar MyProgram.jar
+ *      比如 java -javaagent:C:\Users\zhanghongjun\.arthas\lib\3.3.9\arthas\arthas-agent.jar=C:\Users\zhanghongjun\.arthas\lib\3.3.9\arthas\arthas-core.jar;;telnetPort=3659;httpPort=8564;ip=127.0.0.1;arthasAgent=C:\Users\zhanghongjun\.arthas\lib\3.3.9\arthas\arthas-agent.jar;sessionTimeout=1800;arthasCore=C:\Users\zhanghongjun\.arthas\lib\3.3.9\arthas\arthas-core.jar;javaPid=31860;
+ *      要想本地调试，只要命名行正常如上启动，然后工程中有arthas代码(通过mvn引入)，对arthas打上端点即可(因为调试的本质就是通过jdwp向目标jvm进程发送些调试点，本地调试在启动时会将所有端点通过jdwp进行设置，执行到断点时，会回调给被调试进程(比如idea，它当然可以找到代码的位置，然后逐步调试))
+ * 也可以通过agentmain方式（在进程启动之后attach上去）。
+ *      {@link Arthas#attachAgent}
  * @author vlinux on 15/5/19.
  */
 public class AgentBootstrap {
@@ -205,4 +212,13 @@ public class AgentBootstrap {
             return arg;
         }
     }
+
+    /**
+     * 模拟代理启动  参考core包中{@link Arthas#attachAgent(Configure configure)}
+     * @param args
+     */
+//    public static void main(String[] args) {
+//        String arg="C:\\Users\\zhanghongjun\\.arthas\\lib\\3.3.9\\arthas\\arthas-core.jar;;telnetPort=3659;httpPort=8564;ip=127.0.0.1;arthasAgent=C:\\Users\\zhanghongjun\\.arthas\\lib\\3.3.9\\arthas\\arthas-agent.jar;sessionTimeout=1800;arthasCore=C:\\Users\\zhanghongjun\\.arthas\\lib\\3.3.9\\arthas\\arthas-core.jar;javaPid=31860;";
+//        main(arg, ByteBuddyAgent.install());
+//    }
 }
