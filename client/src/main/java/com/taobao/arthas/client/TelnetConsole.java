@@ -159,9 +159,10 @@ public class TelnetConsole {
         }
         return list;
     }
+    //#### 连接代理
 
     public static void main(String[] args) throws Exception {
-
+        args=new String[]{"127.0.0.1","3660"};
         try {
             int status = process(args, new ActionListener() {
                 @Override
