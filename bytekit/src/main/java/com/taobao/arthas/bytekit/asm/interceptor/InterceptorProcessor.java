@@ -27,6 +27,8 @@ public class InterceptorProcessor {
 
     /**
      * 插入的回调函数的配置
+     * #### 比如{@link SpyInterceptors.SpyInterceptor1#atEnter}
+     *          {@link SpyInterceptors.SpyInterceptor2#atExit}
      */
     private InterceptorMethodConfig interceptorMethodConfig;
 
@@ -45,6 +47,10 @@ public class InterceptorProcessor {
     }
 
     public List<Location> process(MethodProcessor methodProcessor) throws Exception {
+        /**
+         * #### 不同类型的locationMatcher，对方法进行匹配，如果需要植入，会构建对应的Location，指定插入指令的位置{@link Location#insnNode}
+         * 因为{@link MethodProcessor#enterInsnNode} 保存了原始字节码的首尾等关键节点的指令，所以可以根据需要植入的锚点位置，直接指定在特定关键位置进行插入
+         */
         List<Location> locations = locationMatcher.match(methodProcessor);
 
         List<Binding> interceptorBindings = interceptorMethodConfig.getBindings();
@@ -90,7 +96,17 @@ public class InterceptorProcessor {
             }
 
 
-           // 组装好要调用的 static 函数的参数
+            /**
+             * #### 组装好要调用的 static 函数的参数
+             * 比如对于要插入 SpyInterceptors.SpyInterceptor1#atEnter(@Binding.This Object target, @Binding.Class Class<?> clazz,@Binding.MethodInfo String methodInfo, @Binding.Args Object[] args)
+             * 最终构建的toInsert字节指令如下
+             *     ALOAD 0
+             *     LDC Lcom/zhj/instrument/ArthasTest;.class
+             *     LDC "test1|()V"
+             *     ICONST_0
+             *     ANEWARRAY java/lang/Object
+             *     INVOKESTATIC com/taobao/arthas/core/advisor/SpyInterceptors$SpyInterceptor1.atEnter (Ljava/lang/Object;Ljava/lang/Class;Ljava/lang/String;[Ljava/lang/Object;)V
+             */
             for(int i = 0 ; i < argumentTypes.length; ++i) {
                 Binding binding = interceptorBindings.get(i);
                 binding.pushOntoStack(toInsert, bindingContext);
@@ -156,8 +172,14 @@ public class InterceptorProcessor {
             stackSaveInsnList.add(toInsert);
             stackSaveInsnList.add(stackLoadInsnList);
             if (location.isWhenComplete()) {
+                //#### 指令段插入指定指令后边 比如 onInvokeAfter调用生成的指令
                 methodProcessor.getMethodNode().instructions.insert(location.getInsnNode(), stackSaveInsnList);
             }else {
+                /**
+                 * //####  将生成的调用指令插在指定指令{@link Location#insnNode}前边，
+                 * 对于atEnter调用，插入在label0之前
+                 * 对于atExit调用，插入在return指令之前
+                 */
                 methodProcessor.getMethodNode().instructions.insertBefore(location.getInsnNode(), stackSaveInsnList);
             }
 
@@ -166,6 +188,26 @@ public class InterceptorProcessor {
             }
 
             // inline callback
+            /**
+             * #### 将方法进行内联调用处理，比如上面对SpyInterceptor1#atEnter的调用，最终是直接调用SpyAPI.atExit(clazz, methodInfo, target, args, returnObj);
+             * 所以最终内联后生成的字节码如下
+             *  L0
+             *     ALOAD 0
+             *     LDC Lcom/zhj/instrument/ArthasTest;.class
+             *     LDC "test1|()V"
+             *     ICONST_0
+             *     ANEWARRAY java/lang/Object
+             *     ASTORE 4
+             *     ASTORE 3
+             *     ASTORE 2
+             *     ASTORE 1
+             *    L1
+             *     ALOAD 2
+             *     ALOAD 3
+             *     ALOAD 1
+             *     ALOAD 4
+             *     INVOKESTATIC java/arthas/SpyAPI.atEnter (Ljava/lang/Class;Ljava/lang/String;Ljava/lang/Object;[Ljava/lang/Object;)V
+             */
             if(interceptorMethodConfig.isInline()) {
 //                Class<?> forName = Class.forName(Type.getObjectType(interceptorMethodConfig.getOwner()).getClassName());
 

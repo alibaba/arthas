@@ -85,6 +85,11 @@ public abstract class EnhancerCommand extends AnnotatedCommand {
         }
         return getAdviceListener(process);
     }
+
+    /**
+     * #### trace等需要增强的命令处理入口
+     * @param process the command process
+     */
     @Override
     public void process(final CommandProcess process) {
         // ctrl-C support
@@ -146,6 +151,9 @@ public abstract class EnhancerCommand extends AnnotatedCommand {
             Enhancer enhancer = new Enhancer(listener, listener instanceof InvokeTraceable, skipJDKTrace, getClassNameMatcher(), getMethodNameMatcher());
             // 注册通知监听器
             process.register(listener, enhancer);
+            /**
+             * #### 增强,最终会回调到{@link }
+             */
             effect = enhancer.enhance(inst);
 
             if (effect.getThrowable() != null) {

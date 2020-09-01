@@ -101,6 +101,10 @@ public class Enhancer implements ClassFileTransformer {
         affect.setListenerId(listener.id());
     }
 
+    /**
+     * #### 通过实现ClassFileTransformer,来动态修改字节码
+     * 可以通过 Decompiler.decompile(AsmUtils.toBytes(classNode)) 来实时监测字节码的修改情况
+     */
     @Override
     public byte[] transform(final ClassLoader inClassLoader, String className, Class<?> classBeingRedefined,
             ProtectionDomain protectionDomain, byte[] classfileBuffer) throws IllegalClassFormatException {
@@ -121,7 +125,7 @@ public class Enhancer implements ClassFileTransformer {
             if (matchingClasses != null && !matchingClasses.contains(classBeingRedefined)) {
                 return null;
             }
-
+            //#### 原始字节数组生成asm的classnode
             ClassNode classNode = AsmUtils.toClassNode(classfileBuffer);
             // remove JSR https://github.com/alibaba/arthas/issues/1304
             classNode = AsmUtils.removeJSRInstructions(classNode);
@@ -130,7 +134,10 @@ public class Enhancer implements ClassFileTransformer {
             DefaultInterceptorClassParser defaultInterceptorClassParser = new DefaultInterceptorClassParser();
 
             final List<InterceptorProcessor> interceptorProcessors = new ArrayList<InterceptorProcessor>();
-
+            /**
+             * #### 依次加入 atEnter，atExit，atExceptionExit调用拦截，
+             *  会在接下来的{@link InterceptorProcessor#process(MethodProcessor)} 处理中在指定位置植入调用
+             */
             interceptorProcessors.addAll(defaultInterceptorClassParser.parse(SpyInterceptor1.class));
             interceptorProcessors.addAll(defaultInterceptorClassParser.parse(SpyInterceptor2.class));
             interceptorProcessors.addAll(defaultInterceptorClassParser.parse(SpyInterceptor3.class));
@@ -141,6 +148,8 @@ public class Enhancer implements ClassFileTransformer {
                     interceptorProcessors.addAll(defaultInterceptorClassParser.parse(SpyTraceInterceptor2.class));
                     interceptorProcessors.addAll(defaultInterceptorClassParser.parse(SpyTraceInterceptor3.class));
                 } else {
+                    //#### trace跟踪，额外依次加入onInvoke，onInvokeAfter，onInvokeException调用拦截
+                    //遍历找到方法中的INVOKESPECIAL指令，在每个前后分别加入onInvoke，onInvokeAfter调用
                     interceptorProcessors.addAll(defaultInterceptorClassParser.parse(SpyTraceExcludeJDKInterceptor1.class));
                     interceptorProcessors.addAll(defaultInterceptorClassParser.parse(SpyTraceExcludeJDKInterceptor2.class));
                     interceptorProcessors.addAll(defaultInterceptorClassParser.parse(SpyTraceExcludeJDKInterceptor3.class));
@@ -200,6 +209,11 @@ public class Enhancer implements ClassFileTransformer {
                     }
                 }else {
                     MethodProcessor methodProcessor = new MethodProcessor(classNode, methodNode, groupLocationFilter);
+                    /**
+                     * #### 每个InterceptorProcessor通过{@link InterceptorProcessor#locationMatcher}记录了对应要处理的位置信息，
+                     *  构建的{@link MethodProcessor#locationFilter}记录了当期那方法要处理的位置，通过二者匹配可以找到真正要处理的位置Location
+                     *  在{@link InterceptorProcessor#process(MethodProcessor)}中完成指令的插入
+                     */
                     for (InterceptorProcessor interceptor : interceptorProcessors) {
                         try {
                             List<Location> locations = interceptor.process(methodProcessor);
@@ -365,6 +379,10 @@ public class Enhancer implements ClassFileTransformer {
                 final Class<?>[] classArray = new Class<?>[size];
                 arraycopy(matchingClasses.toArray(), 0, classArray, 0, size);
                 if (classArray.length > 0) {
+                    /**
+                     * 重新加载指定的类，会调用inst上注册的classFileTransformer 
+                     *      {@link TransformerManager#TransformerManager(Instrumentation)} 进而调到 {@link Enhancer#transform(ClassLoader, String, Class, ProtectionDomain, byte[])}
+                     */
                     inst.retransformClasses(classArray);
                     logger.info("Success to batch transform classes: " + Arrays.toString(classArray));
                 }

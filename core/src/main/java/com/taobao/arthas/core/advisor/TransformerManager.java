@@ -22,7 +22,11 @@ public class TransformerManager {
 
     public TransformerManager(Instrumentation instrumentation) {
         this.instrumentation = instrumentation;
-
+        /**
+         * #### 由于3处注册了转换器，之后对class进行重新加载时，都会调用该ClassFileTransformer接口中的方法对类进行处理
+         * 比如 {@link Enhancer#enhance(Instrumentation)}
+         *          -->{@link Instrumentation#retransformClasses(Class[])}
+         */
         classFileTransformer = new ClassFileTransformer() {
 
             @Override
@@ -36,7 +40,7 @@ public class TransformerManager {
                         classfileBuffer = transformResult;
                     }
                 }
-
+                //#### 然后逐个调用自己管理的ClassFileTransformer(比如Enhancer)，进行加强
                 for (ClassFileTransformer classFileTransformer : traceTransformers) {
                     byte[] transformResult = classFileTransformer.transform(loader, className, classBeingRedefined,
                             protectionDomain, classfileBuffer);
@@ -49,6 +53,9 @@ public class TransformerManager {
             }
 
         };
+        /**
+         * #### 3这里对Instrumentation添加了ClassFileTransformer
+         */
         instrumentation.addTransformer(classFileTransformer, true);
     }
 

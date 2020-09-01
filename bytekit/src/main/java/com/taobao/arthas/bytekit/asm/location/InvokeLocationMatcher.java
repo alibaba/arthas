@@ -94,7 +94,10 @@ public class InvokeLocationMatcher implements LocationMatcher {
         LocationFilter locationFilter = methodProcessor.getLocationFilter();
         
         LocationType locationType = whenComplete ? LocationType.INVOKE_COMPLETED : LocationType.INVOKE;
-
+        /**
+         * #### 调用指令处理：
+         *  从方法的第一个指令开始，通过链表遍历，找到所有MethodInsnNode类型的指令，添加到List<Location> locations中
+         */
         int matchedCount = 0;
         while (insnNode != null) {
             if (insnNode instanceof MethodInsnNode) {
