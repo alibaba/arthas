@@ -162,6 +162,12 @@ public class JadCommand extends AnnotatedCommand {
         allClasses.add(c);
 
         try {
+            /**
+             * #### jad逻辑
+             *   临时添加ClassDumpTransformer类转换器(dump完后会将该转换器移除)，然后重新加载指定类
+             *      该类转换器不对代码进行任何增强，只是把原始字节码dump到文件中，然后构建JadModel输出到客户端
+             *      所以jad看到的原始字节码(非代理字节码，而且jad之后，因为重新加载，所以类将恢复原始逻辑)
+             */
             ClassDumpTransformer transformer = new ClassDumpTransformer(allClasses);
             InstrumentationUtils.retransformClasses(inst, transformer, allClasses);
 

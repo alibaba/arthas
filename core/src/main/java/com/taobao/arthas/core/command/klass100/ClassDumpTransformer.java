@@ -38,6 +38,9 @@ class ClassDumpTransformer implements ClassFileTransformer {
         this.directory = directory;
     }
 
+    /**
+     * #### jad逻辑
+     */
     @Override
     public byte[] transform(ClassLoader loader, String className, Class<?> classBeingRedefined,
                             ProtectionDomain protectionDomain, byte[] classfileBuffer)
