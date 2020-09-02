@@ -3,6 +3,8 @@ package com.taobao.arthas.core.channel;
 import com.alibaba.arthas.channel.client.ChannelClient;
 import com.alibaba.arthas.channel.proto.ActionRequest;
 import com.alibaba.arthas.channel.proto.ActionResponse;
+import com.alibaba.arthas.channel.proto.ConsoleParams;
+import com.alibaba.arthas.channel.proto.ConsoleResult;
 import com.alibaba.arthas.channel.proto.ExecuteParams;
 import com.alibaba.arthas.channel.proto.ExecuteResult;
 import com.alibaba.arthas.channel.proto.RequestAction;
@@ -13,6 +15,7 @@ import com.alibaba.arthas.deps.org.slf4j.LoggerFactory;
 import com.alibaba.fastjson.JSON;
 import com.google.protobuf.Any;
 import com.google.protobuf.StringValue;
+import com.google.protobuf.UnsafeByteOperations;
 import com.taobao.arthas.common.PidUtils;
 import com.taobao.arthas.core.command.model.CommandRequestModel;
 import com.taobao.arthas.core.command.model.InputStatus;
@@ -24,6 +27,7 @@ import com.taobao.arthas.core.command.model.WelcomeModel;
 import com.taobao.arthas.core.distribution.PackingResultDistributor;
 import com.taobao.arthas.core.distribution.ResultDistributor;
 import com.taobao.arthas.core.distribution.impl.PackingResultDistributorImpl;
+import com.taobao.arthas.core.server.ArthasBootstrap;
 import com.taobao.arthas.core.shell.cli.CliToken;
 import com.taobao.arthas.core.shell.cli.CliTokens;
 import com.taobao.arthas.core.shell.cli.Completion;
@@ -37,14 +41,23 @@ import com.taobao.arthas.core.shell.system.JobListener;
 import com.taobao.arthas.core.shell.system.impl.InternalCommandManager;
 import com.taobao.arthas.core.shell.term.SignalHandler;
 import com.taobao.arthas.core.shell.term.Term;
+import com.taobao.arthas.core.shell.term.impl.LocalTermServer;
 import com.taobao.arthas.core.shell.term.impl.http.api.ApiState;
 import com.taobao.arthas.core.util.ArthasBanner;
 import com.taobao.arthas.core.util.DateUtils;
 import com.taobao.arthas.core.util.StringUtils;
+import io.netty.buffer.ByteBuf;
+import io.netty.channel.Channel;
+import io.netty.handler.codec.http.websocketx.TextWebSocketFrame;
+import io.netty.util.concurrent.Future;
+import io.netty.util.concurrent.GenericFutureListener;
+import io.termd.core.function.Consumer;
 import io.termd.core.function.Function;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import static com.taobao.arthas.core.channel.LocalConsoleClientManager.writeData;
 
 /**
  * @author gongdewei 2020/8/16
@@ -60,6 +73,7 @@ public class ChannelRequestHandler implements ChannelClient.RequestListener {
     private final InternalCommandManager commandManager;
     private final JobController jobController;
 
+    private LocalConsoleClientManager consoleClientManager = new LocalConsoleClientManager();
     private PBResultConverter pbResultConverter = new PBResultConverter();
 
     public ChannelRequestHandler(ChannelClient channelClient, SessionManager sessionManager, HistoryManager historyManager) {
@@ -89,6 +103,22 @@ public class ChannelRequestHandler implements ChannelClient.RequestListener {
     }
 
     private void processRequest(ActionRequest request) throws Exception {
+        RequestAction action = request.getAction();
+
+        // handle console actions
+        switch (action) {
+            case OPEN_CONSOLE:
+                processOpenConsole(request);
+                return;
+            case CONSOLE_INPUT:
+                processConsoleInput(request);
+                return;
+            case CLOSE_CONSOLE:
+                processCloseConsole(request);
+                return;
+        }
+
+        //handle other command request actions
         String sessionId = null;
         if (request.hasSessionId()) {
             sessionId = request.getSessionId().getValue();
@@ -102,7 +132,6 @@ public class ChannelRequestHandler implements ChannelClient.RequestListener {
             }
         }
 
-        RequestAction action = request.getAction();
         switch (action) {
             case EXECUTE:
                 processExec(request, session);
@@ -134,6 +163,105 @@ public class ChannelRequestHandler implements ChannelClient.RequestListener {
 //                return;
         }
 
+    }
+
+    private void processOpenConsole(final ActionRequest request) {
+        try {
+            final String consoleId = consoleClientManager.generateConsoleId();
+
+            LocalTermServer localTermServer = ArthasBootstrap.getInstance().getLocalTermServer();
+            Channel clientChannel = localTermServer.connect(new Consumer<TextWebSocketFrame>() {
+                @Override
+                public void accept(TextWebSocketFrame frame) {
+                    //get tty output bytes
+                    ByteBuf content = frame.content();
+                    byte[] bytes = new byte[content.readableBytes()];
+                    content.readBytes(bytes);
+
+                    //send tty output to channel server
+                    ActionResponse.Builder response = ActionResponse.newBuilder()
+                            .setAgentId(request.getAgentId())
+                            .setRequestId(consoleId)
+                            .setStatus(ResponseStatus.CONTINUOUS)
+                            .setConsoleResult(ConsoleResult.newBuilder()
+                                .setDataType("tty")
+                                .setDataBytes(UnsafeByteOperations.unsafeWrap(bytes))
+                                .build());
+                    try {
+                        sendResponseWithThrows(response);
+                    } catch (Exception e) {
+                        logger.error("send console tty output error, consoleId: {}", consoleId, e);
+                        consoleClientManager.closeConsoleClient(consoleId);
+                    }
+                }
+            });
+
+            //exec session command
+            //writeData(clientChannel, getReadActionJson("session\\r"));
+
+            consoleClientManager.addConsoleClient(consoleId, clientChannel);
+            clientChannel.closeFuture().addListener(new GenericFutureListener<Future<? super Void>>() {
+                @Override
+                public void operationComplete(Future<? super Void> future) throws Exception {
+                    ResponseStatus status = future.isSuccess() ? ResponseStatus.SUCCEEDED : ResponseStatus.FAILED;
+                    consoleClientManager.closeConsoleClient(consoleId);
+                    //send final close event
+                    ActionResponse.Builder response = ActionResponse.newBuilder()
+                            .setAgentId(request.getAgentId())
+                            .setRequestId(consoleId)
+                            .setStatus(status)
+                            .setMessage(StringValue.of("console closed"));
+                    sendResponse(response);
+                }
+            });
+
+            //send consoleId
+            ActionResponse.Builder response = createResponse(request, ResponseStatus.SUCCEEDED);
+            response.setConsoleResult(ConsoleResult.newBuilder()
+                    .setConsoleId(consoleId)
+                    .build());
+            sendResponse(response);
+        } catch (Throwable e) {
+            logger.error("open console error", e);
+            ActionResponse.Builder response = createResponse(request, ResponseStatus.FAILED);
+            response.setMessage(StringValue.of("open console error"));
+            sendResponse(response);
+        }
+    }
+
+    private void processCloseConsole(ActionRequest request) {
+        String consoleId = request.getConsoleParams().getConsoleId();
+        consoleClientManager.closeConsoleClient(consoleId);
+    }
+
+    private void processConsoleInput(ActionRequest request) {
+
+        ConsoleParams consoleParams = request.getConsoleParams();
+        String consoleId = consoleParams.getConsoleId();
+        String inputData = consoleParams.getInputData();
+        Channel consoleClient = consoleClientManager.getConsoleClient(consoleId);
+        if (consoleClient == null) {
+            ActionResponse.Builder response = ActionResponse.newBuilder()
+                    .setAgentId(request.getAgentId())
+                    .setRequestId(consoleId)
+                    .setStatus(ResponseStatus.FAILED)
+                    .setMessage(StringValue.of("console not found"));
+            sendResponse(response);
+            return;
+        }
+
+        try {
+            writeData(consoleClient, inputData);
+        } catch (Throwable e) {
+            logger.error("console write error, consoleId: {}", consoleId, e);
+            ActionResponse.Builder response = ActionResponse.newBuilder()
+                    .setAgentId(request.getAgentId())
+                    .setRequestId(consoleId)
+                    .setStatus(ResponseStatus.FAILED)
+                    .setMessage(StringValue.of("console write error"));
+            sendResponse(response);
+            return;
+        }
     }
 
     private void processExec(ActionRequest request, Session session) {
@@ -343,19 +471,17 @@ public class ChannelRequestHandler implements ChannelClient.RequestListener {
 
     private void processCloseSession(ActionRequest request, Session session) {
         sessionManager.closeSession(session.getSessionId());
-        ActionResponse actionResponse = createResponse(request, session, ResponseStatus.SUCCEEDED)
-                .build();
-        channelClient.submitResponse(actionResponse);
+        ActionResponse.Builder response = createResponse(request, session, ResponseStatus.SUCCEEDED);
+        sendResponse(response);
     }
 
     private void processUnrecognizedAction(ActionRequest request, Session session) {
-        ActionResponse actionResponse = ActionResponse.newBuilder()
+        ActionResponse.Builder response = ActionResponse.newBuilder()
                 .setAgentId(request.getAgentId())
                 .setRequestId(request.getRequestId())
                 .setStatus(ResponseStatus.FAILED)
-                .setMessage(StringValue.of("unsupported action"))
-                .build();
-        channelClient.submitResponse(actionResponse);
+                .setMessage(StringValue.of("unsupported action"));
+        sendResponse(response);
     }
 
     private void sendResults(ActionResponse.Builder response, List<ResultModel> resultModels, ResultFormat resultFormat) {
@@ -378,7 +504,22 @@ public class ChannelRequestHandler implements ChannelClient.RequestListener {
     }
 
     private void sendResponse(ActionResponse.Builder response) {
+        try {
+            channelClient.submitResponse(response.build());
+        } catch (Exception e) {
+            // Has been processed, ignore
+        }
+    }
+
+    private void sendResponseWithThrows(ActionResponse.Builder response) throws Exception {
         channelClient.submitResponse(response.build());
+    }
+
+    private ActionResponse.Builder createResponse(ActionRequest request, ResponseStatus status) {
+        return ActionResponse.newBuilder()
+                .setAgentId(request.getAgentId())
+                .setRequestId(request.getRequestId())
+                .setStatus(status);
     }
 
     private ActionResponse.Builder createResponse(ActionRequest request, Session session, ResponseStatus status) {

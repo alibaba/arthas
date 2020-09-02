@@ -12,8 +12,10 @@ import com.alibaba.arthas.channel.server.service.ApiActionDelegateService;
 import com.alibaba.arthas.channel.server.service.impl.AgentBizServiceImpl;
 import com.alibaba.arthas.channel.server.service.impl.AgentManageServiceImpl;
 import com.alibaba.arthas.channel.server.service.impl.ApiActionDelegateServiceImpl;
+import com.alibaba.arthas.channel.server.ws.WebSocketServer;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
@@ -31,6 +33,7 @@ import java.util.concurrent.ThreadFactory;
  * @author gongdewei 2020/8/14
  */
 @Configuration
+@EnableConfigurationProperties(ChannelServerProperties.class)
 public class ChannelServerConfiguration {
 
     @Bean
@@ -77,6 +80,16 @@ public class ChannelServerConfiguration {
         return channelServer;
     }
 
+    @Bean(initMethod = "start", destroyMethod = "stop")
+    @ConditionalOnProperty(value = "channel.server.websocket.enabled", havingValue = "true", matchIfMissing = false)
+    public WebSocketServer webSocketServer(ChannelServerProperties serverProperties) {
+        WebSocketServer server = new WebSocketServer();
+        ChannelServerProperties.Server websocket = serverProperties.getWebsocket();
+        server.setHost(websocket.getHost());
+        server.setPort(websocket.getPort());
+        server.setSsl(websocket.isSsl());
+        return server;
+    }
 
     @Profile("memory")
     @Configuration

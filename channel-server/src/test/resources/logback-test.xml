@@ -13,4 +13,6 @@
         <appender-ref ref="STDOUT" />
     </root>
 
+    <logger name="io.netty.handler.logging" level="WARN"></logger>
+
 </configuration>

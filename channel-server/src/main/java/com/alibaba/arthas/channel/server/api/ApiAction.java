@@ -34,6 +34,15 @@ public enum ApiAction {
     /**
      * Join a exist session
      */
-//    JOIN_SESSION,
+    JOIN_SESSION,
 
+    /**
+     * Open new WebConsole and create new session
+     */
+    OPEN_CONSOLE,
+
+    /**
+     * WebConsole input
+     */
+    CONSOLE_INPUT
 }

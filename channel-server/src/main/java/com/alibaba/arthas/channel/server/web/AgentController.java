@@ -1,5 +1,8 @@
 package com.alibaba.arthas.channel.server.web;
 
+import com.alibaba.arthas.channel.proto.ActionResponse;
+import com.alibaba.arthas.channel.proto.ExecuteResult;
+import com.alibaba.arthas.channel.proto.ResponseStatus;
 import com.alibaba.arthas.channel.server.api.ApiException;
 import com.alibaba.arthas.channel.server.model.AgentVO;
 import com.alibaba.arthas.channel.server.api.ApiRequest;
@@ -200,10 +203,12 @@ public class AgentController {
         try {
             apiActionDelegateService.subscribeResults(agentId, requestId, timeout, new ApiActionDelegateService.ResponseListener() {
                 @Override
-                public boolean onMessage(ApiResponse response) {
+                public boolean onMessage(ActionResponse response) {
                     try {
-                        emitter.send(JSON.toJSONString(response));
-                        if (!response.getState().equals(ApiState.CONTINUOUS)) {
+                        //TODO convert pb message to json
+                        ApiResponse apiResponse = convertApiResponse(response);
+                        emitter.send(JSON.toJSONString(apiResponse));
+                        if (!response.getStatus().equals(ResponseStatus.CONTINUOUS)) {
                             emitter.complete();
                             return false;
                         } else {
@@ -225,6 +230,48 @@ public class AgentController {
         } catch (Exception ex) {
             emitter.completeWithError(ex);
         }
+    }
+
+    private ApiResponse convertApiResponse(ActionResponse actionResponse) {
+        ApiResponse apiResponse = new ApiResponse()
+                .setState(getState(actionResponse.getStatus()))
+                .setAgentId(actionResponse.getAgentId())
+                .setRequestId(actionResponse.getRequestId());
+
+        if (actionResponse.hasSessionId()) {
+            apiResponse.setSessionId(actionResponse.getSessionId().getValue());
+        }
+//        if (actionResponse.hasConsumerId()) {
+//            apiResponse.setConsumerId(actionResponse.getConsumerId().getValue());
+//        }
+        if (actionResponse.hasMessage()) {
+            apiResponse.setMessage(actionResponse.getMessage().getValue());
+        }
+        if (actionResponse.hasExecuteResult()) {
+            ExecuteResult executeResult = actionResponse.getExecuteResult();
+            if (executeResult.hasResultsJson()) {
+                apiResponse.setResult(executeResult.getResultsJson().getValue());
+            }
+        }
+        return apiResponse;
+    }
+
+    private ApiState getState(ResponseStatus status) {
+        switch (status) {
+            case SUCCEEDED:
+                return ApiState.SUCCEEDED;
+            case REFUSED:
+                return ApiState.REFUSED;
+            case CONTINUOUS:
+                return ApiState.CONTINUOUS;
+            case INTERRUPTED:
+                return ApiState.INTERRUPTED;
+
+            case FAILED:
+            case UNRECOGNIZED:
+                return ApiState.FAILED;
+        }
+        return ApiState.FAILED;
     }
 
     private ApiRequest parseRequest(String requestBody) throws ApiException {

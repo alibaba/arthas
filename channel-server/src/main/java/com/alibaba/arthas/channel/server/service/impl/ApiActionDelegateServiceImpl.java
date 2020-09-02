@@ -2,6 +2,7 @@ package com.alibaba.arthas.channel.server.service.impl;
 
 import com.alibaba.arthas.channel.proto.ActionRequest;
 import com.alibaba.arthas.channel.proto.ActionResponse;
+import com.alibaba.arthas.channel.proto.ConsoleParams;
 import com.alibaba.arthas.channel.proto.ExecuteParams;
 import com.alibaba.arthas.channel.proto.ExecuteResult;
 import com.alibaba.arthas.channel.proto.RequestAction;
@@ -11,20 +12,19 @@ import com.alibaba.arthas.channel.server.api.ApiAction;
 import com.alibaba.arthas.channel.server.api.ApiRequest;
 import com.alibaba.arthas.channel.server.api.ApiResponse;
 import com.alibaba.arthas.channel.server.api.ApiState;
+import com.alibaba.arthas.channel.server.message.MessageExchangeException;
+import com.alibaba.arthas.channel.server.message.MessageExchangeService;
 import com.alibaba.arthas.channel.server.message.topic.ActionRequestTopic;
 import com.alibaba.arthas.channel.server.message.topic.ActionResponseTopic;
-import com.alibaba.arthas.channel.server.service.ApiActionDelegateService;
 import com.alibaba.arthas.channel.server.service.AgentManageService;
-import com.alibaba.arthas.channel.server.message.MessageExchangeService;
-import com.google.protobuf.InvalidProtocolBufferException;
+import com.alibaba.arthas.channel.server.service.ApiActionDelegateService;
 import com.google.protobuf.StringValue;
 import io.netty.util.concurrent.GlobalEventExecutor;
 import io.netty.util.concurrent.Promise;
+import org.apache.commons.lang3.RandomStringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-
-import java.util.UUID;
 
 /**
  * @author gongdewei 2020/8/11
@@ -104,6 +104,49 @@ public class ApiActionDelegateServiceImpl implements ApiActionDelegateService {
     }
 
     @Override
+    public Promise<ActionResponse> openConsole(String agentId, int timeout) throws Exception {
+        //send request
+        String requestId = generateRandomRequestId();
+        ActionRequest actionRequest = ActionRequest.newBuilder()
+                .setAgentId(agentId)
+                .setRequestId(requestId)
+                .setAction(RequestAction.OPEN_CONSOLE)
+                .build();
+        messageExchangeService.pushMessage(new ActionRequestTopic(agentId), actionRequest.toByteArray());
+
+        //subscribe response
+        return subscribeResponse(agentId, requestId, timeout);
+    }
+
+    @Override
+    public void consoleInput(String agentId, String consoleId, String inputData) throws Exception {
+        //send request
+        ActionRequest actionRequest = ActionRequest.newBuilder()
+                .setAgentId(agentId)
+                .setRequestId(consoleId)
+                .setAction(RequestAction.CONSOLE_INPUT)
+                .setConsoleParams(ConsoleParams.newBuilder()
+                        .setConsoleId(consoleId)
+                        .setInputData(inputData))
+                .build();
+
+        messageExchangeService.pushMessage(new ActionRequestTopic(agentId), actionRequest.toByteArray());
+    }
+
+    @Override
+    public void closeConsole(String agentId, String consoleId) throws Exception {
+        //send request
+        ActionRequest actionRequest = ActionRequest.newBuilder()
+                .setAgentId(agentId)
+                .setRequestId(consoleId)
+                .setAction(RequestAction.CLOSE_CONSOLE)
+                .setConsoleParams(ConsoleParams.newBuilder()
+                        .setConsoleId(consoleId))
+                .build();
+        messageExchangeService.pushMessage(new ActionRequestTopic(agentId), actionRequest.toByteArray());
+    }
+
+    @Override
     public ApiResponse pullResults(final String agentId, String requestId, int timeout) throws Exception {
         //subscribe response
         ActionResponseTopic topic = new ActionResponseTopic(agentId, requestId);
@@ -138,21 +181,20 @@ public class ApiActionDelegateServiceImpl implements ApiActionDelegateService {
         messageExchangeService.subscribe(topic, timeout, new MessageExchangeService.MessageHandler() {
             @Override
             public boolean onMessage(byte[] messageBytes) {
-                ApiResponse apiResponse;
+                ActionResponse actionResponse;
                 try {
-                    ActionResponse actionResponse = ActionResponse.parseFrom(messageBytes);
-                    apiResponse = convertApiResponse(actionResponse);
+                    actionResponse = ActionResponse.parseFrom(messageBytes);
                 } catch (Throwable e) {
                     logger.error("process action response message failure", e);
-                    apiResponse = new ApiResponse()
+                    actionResponse = ActionResponse.newBuilder()
                             .setAgentId(agentId)
                             .setRequestId(requestId)
-                            .setState(ApiState.FAILED)
-                            .setMessage("process action response message failure");
-
+                            .setStatus(ResponseStatus.FAILED)
+                            .setMessage(StringValue.of("process action response message failure"))
+                            .build();
                 }
-                boolean next = responseListener.onMessage(apiResponse);
-                return next && apiResponse.getState().equals(ApiState.CONTINUOUS);
+                boolean next = responseListener.onMessage(actionResponse);
+                return next && actionResponse.getStatus().equals(ResponseStatus.CONTINUOUS);
             }
 
             @Override
@@ -175,10 +217,14 @@ public class ApiActionDelegateServiceImpl implements ApiActionDelegateService {
         sendRequest(agentId, requestId, request);
 
         //subscribe response
+        return subscribeResponse1(agentId, requestId, request.getExecTimeout());
+    }
+
+    private Promise<ApiResponse> subscribeResponse1(String agentId, String requestId, Integer timeout) throws MessageExchangeException {
         final Promise<ApiResponse> promise = GlobalEventExecutor.INSTANCE.newPromise();
         int execTimeout = 30000;
-        if (request.getExecTimeout() != null && request.getExecTimeout() > 0) {
-            execTimeout = request.getExecTimeout();
+        if (timeout != null && timeout > 0) {
+            execTimeout = timeout;
         }
         final ActionResponseTopic responseTopic = new ActionResponseTopic(agentId, requestId);
         messageExchangeService.subscribe(responseTopic, execTimeout, new MessageExchangeService.MessageHandler() {
@@ -210,6 +256,48 @@ public class ApiActionDelegateServiceImpl implements ApiActionDelegateService {
                 promise.setSuccess(new ApiResponse()
                         .setState(ApiState.FAILED)
                         .setMessage("Timeout"));
+            }
+        });
+        return promise;
+    }
+
+    private Promise<ActionResponse> subscribeResponse(String agentId, String requestId, Integer timeout) throws MessageExchangeException {
+        final Promise<ActionResponse> promise = GlobalEventExecutor.INSTANCE.newPromise();
+        int execTimeout = 30000;
+        if (timeout != null && timeout > 0) {
+            execTimeout = timeout;
+        }
+        final ActionResponseTopic responseTopic = new ActionResponseTopic(agentId, requestId);
+        messageExchangeService.subscribe(responseTopic, execTimeout, new MessageExchangeService.MessageHandler() {
+            @Override
+            public boolean onMessage(byte[] messageBytes) {
+                try {
+                    ActionResponse actionResponse = ActionResponse.parseFrom(messageBytes);
+
+                    promise.setSuccess(actionResponse);
+                } catch (Throwable e) {
+                    logger.error("process response message failure: "+e.getMessage(), e);
+                    promise.setSuccess(ActionResponse.newBuilder()
+                            .setStatus(ResponseStatus.FAILED)
+                            .setMessage(StringValue.of("process response message failure: "+e.getMessage()))
+                            .build());
+                }
+
+                //promise is one-time subscribe, just remove it after received message
+                try {
+                    messageExchangeService.removeTopic(responseTopic);
+                } catch (Throwable e) {
+                    logger.error("remove topic failure", e);
+                }
+                return false;
+            }
+
+            @Override
+            public void onTimeout() {
+                promise.setSuccess(ActionResponse.newBuilder()
+                        .setStatus(ResponseStatus.FAILED)
+                        .setMessage(StringValue.of("timeout"))
+                        .build());
             }
         });
         return promise;
@@ -258,7 +346,6 @@ public class ApiActionDelegateServiceImpl implements ApiActionDelegateService {
         }
         if (actionResponse.hasExecuteResult()) {
             ExecuteResult executeResult = actionResponse.getExecuteResult();
-
             if (executeResult.hasResultsJson()) {
                 apiResponse.setResult(executeResult.getResultsJson().getValue());
             }
@@ -282,12 +369,17 @@ public class ApiActionDelegateServiceImpl implements ApiActionDelegateService {
                 return RequestAction.CLOSE_SESSION;
             case INTERRUPT_JOB:
                 return RequestAction.INTERRUPT_JOB;
+            case OPEN_CONSOLE:
+                return RequestAction.OPEN_CONSOLE;
+            case CONSOLE_INPUT:
+                return RequestAction.CONSOLE_INPUT;
         }
         throw new IllegalArgumentException("Unsupported request action: " + action);
     }
 
     private String generateRandomRequestId() {
-        return UUID.randomUUID().toString().replaceAll("-", "");
+        //return UUID.randomUUID().toString().replaceAll("-", "");
+        return RandomStringUtils.random(12, true, true);
     }
 
     private ApiState getState(ResponseStatus status) {
@@ -300,6 +392,7 @@ public class ApiActionDelegateServiceImpl implements ApiActionDelegateService {
                 return ApiState.CONTINUOUS;
             case INTERRUPTED:
                 return ApiState.INTERRUPTED;
+
             case FAILED:
             case UNRECOGNIZED:
                 return ApiState.FAILED;

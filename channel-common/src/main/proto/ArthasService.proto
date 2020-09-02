@@ -91,6 +91,15 @@ enum RequestAction {
     /* join session */
     /* JOIN_SESSION = 5; */
 
+    /* Open new WebConsole and create new session */
+    OPEN_CONSOLE = 10;
+
+    /* Close WebConsole and session */
+    CLOSE_CONSOLE = 11;
+
+    /* Input chars to WebConsole */
+    CONSOLE_INPUT = 12;
+
 }
 
 enum ResultFormat {
@@ -122,6 +131,28 @@ message ExecuteResult {
     google.protobuf.StringValue resultsJson = 2;
 }
 
+/* WebConsole input data */
+message ConsoleParams {
+    /* input data json*/
+    string inputData = 1;
+
+    /* console id */
+    string consoleId = 2;
+}
+
+/* WebConsole output data */
+message ConsoleResult {
+
+    /* data type: tty, image */
+    string dataType = 1;
+
+    /* WebConsole output data */
+    bytes dataBytes = 2;
+
+    /* console id */
+    string consoleId = 3;
+}
+
 message ActionRequest {
     /* Arthas agent id */
     string agentId = 1;
@@ -132,11 +163,11 @@ message ActionRequest {
     /* action of request */
     RequestAction action = 3;
 
-    /* params of execute action */
+    /* params of executing command */
     ExecuteParams executeParams = 4;
 
-    /* additional params */
-    google.protobuf.StringValue additionalParams = 5;
+    /* WebConsole input data */
+    ConsoleParams consoleParams = 5;
 
     /* Arthas session id */
     google.protobuf.StringValue sessionId = 6;
@@ -167,6 +198,10 @@ message ActionResponse {
 
     /* Arthas consumerId of session */
     /* google.protobuf.StringValue consumerId = 7; */
+
+    /* WebConsole output data */
+    ConsoleResult consoleResult = 8;
+
 }
 
 message GeneralResult {

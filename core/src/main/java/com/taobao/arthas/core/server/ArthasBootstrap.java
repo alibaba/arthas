@@ -51,6 +51,7 @@ import com.taobao.arthas.core.shell.impl.ShellServerImpl;
 import com.taobao.arthas.core.shell.session.SessionManager;
 import com.taobao.arthas.core.shell.session.impl.SessionManagerImpl;
 import com.taobao.arthas.core.shell.term.impl.HttpTermServer;
+import com.taobao.arthas.core.shell.term.impl.LocalTermServer;
 import com.taobao.arthas.core.shell.term.impl.http.api.HttpApiHandler;
 import com.taobao.arthas.core.shell.term.impl.httptelnet.HttpTelnetTermServer;
 import com.taobao.arthas.core.util.ArthasBanner;
@@ -104,6 +105,8 @@ public class ArthasBootstrap {
 
     private HttpApiHandler httpApiHandler;
     private ChannelClient channelClient;
+    private String localTermServerAddr = "local-term-server";
+    private LocalTermServer localTermServer;
 
     private ArthasBootstrap(Instrumentation instrumentation, Map<String, String> args) throws Throwable {
         this.instrumentation = instrumentation;
@@ -326,6 +329,9 @@ public class ArthasBootstrap {
             BuiltinCommandPack builtinCommands = new BuiltinCommandPack();
             List<CommandResolver> resolvers = new ArrayList<CommandResolver>();
             resolvers.add(builtinCommands);
+            for (CommandResolver resolver : resolvers) {
+                shellServer.registerCommandResolver(resolver);
+            }
 
             //worker group
             workerGroup = new NioEventLoopGroup(new DefaultThreadFactory("arthas-TermServer", true));
@@ -344,8 +350,10 @@ public class ArthasBootstrap {
                 logger().info("http port is {}, skip bind http server.", configure.getHttpPort());
             }
 
-            for (CommandResolver resolver : resolvers) {
-                shellServer.registerCommandResolver(resolver);
+            // start local address server
+            if (configure.getChannelServer() != null) {
+                localTermServer = new LocalTermServer(localTermServerAddr, options.getConnectionTimeout(), workerGroup);
+                shellServer.registerTermServer(localTermServer);
             }
 
             shellServer.listen(new BindHandler(isBindRef));
@@ -574,5 +582,9 @@ public class ArthasBootstrap {
 
     public Configure getConfigure() {
         return configure;
+    }
+
+    public LocalTermServer getLocalTermServer() {
+        return localTermServer;
     }
 }

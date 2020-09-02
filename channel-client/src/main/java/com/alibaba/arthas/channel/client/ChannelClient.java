@@ -233,7 +233,8 @@ public class ChannelClient {
 
     }
 
-    public void submitResponse(ActionResponse response) {
+    //多线程发送数据貌似会出现错误，加上synchronized后没有出现错误
+    public synchronized void submitResponse(ActionResponse response) throws Exception {
         //TODO 添加response缓存队列，重连成功发送
         try {
             checkConnection();
@@ -241,7 +242,7 @@ public class ChannelClient {
         } catch (Exception e) {
             logger.error("submit response failure", e);
             onClientError("submit response failure", e);
-            //throw e;
+            throw e;
         }
     }
 
