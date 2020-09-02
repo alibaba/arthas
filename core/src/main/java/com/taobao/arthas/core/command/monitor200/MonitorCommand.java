@@ -23,6 +23,8 @@ import com.taobao.middleware.cli.annotations.Summary;
 @Description("\nExamples:\n" +
         "  monitor org.apache.commons.lang.StringUtils isBlank\n" +
         "  monitor org.apache.commons.lang.StringUtils isBlank -c 5\n" +
+        "  monitor org.apache.commons.lang.StringUtils isBlank params[0]!=null\n" +
+        "  monitor -b org.apache.commons.lang.StringUtils isBlank params[0]!=null\n" +
         "  monitor -E org\\.apache\\.commons\\.lang\\.StringUtils isBlank\n" +
         Constants.WIKI + Constants.WIKI_HOME + "monitor")
 public class MonitorCommand extends EnhancerCommand {
@@ -48,7 +50,7 @@ public class MonitorCommand extends EnhancerCommand {
     }
 
     @Argument(argName = "condition-express", index = 2, required = false)
-    @Description("Condition express for filtering method calls")
+    @Description(Constants.CONDITION_EXPRESS)
     public void setConditionExpress(String conditionExpress) {
         this.conditionExpress = conditionExpress;
     }
