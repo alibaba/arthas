@@ -27,6 +27,7 @@ import com.alibaba.arthas.deps.org.slf4j.LoggerFactory;
 import com.alibaba.arthas.tunnel.client.TunnelClient;
 import com.taobao.arthas.common.AnsiLog;
 import com.taobao.arthas.common.PidUtils;
+import com.taobao.arthas.common.SocketUtils;
 import com.taobao.arthas.core.advisor.TransformerManager;
 import com.taobao.arthas.core.command.BuiltinCommandPack;
 import com.taobao.arthas.core.command.view.ResultViewResolver;
@@ -272,6 +273,18 @@ public class ArthasBootstrap {
 
         if (!isBindRef.compareAndSet(false, true)) {
             throw new IllegalStateException("already bind");
+        }
+
+        // init random port
+        if (configure.getTelnetPort() == 0) {
+            int newTelnetPort = SocketUtils.findAvailableTcpPort();
+            configure.setTelnetPort(newTelnetPort);
+            logger().info("generate random telnet port: " + newTelnetPort);
+        }
+        if (configure.getHttpPort() == 0) {
+            int newHttpPort = SocketUtils.findAvailableTcpPort();
+            configure.setHttpPort(newHttpPort);
+            logger().info("generate random http port: " + newHttpPort);
         }
 
         String agentId = null;
