@@ -1,9 +1,14 @@
 package com.taobao.arthas.core.command.monitor200;
 
+import com.alibaba.arthas.deps.org.slf4j.Logger;
+import com.alibaba.arthas.deps.org.slf4j.LoggerFactory;
+import com.taobao.arthas.core.advisor.Advice;
 import com.taobao.arthas.core.advisor.AdviceListenerAdapter;
+import com.taobao.arthas.core.command.express.ExpressException;
 import com.taobao.arthas.core.command.model.MonitorModel;
 import com.taobao.arthas.core.shell.command.CommandProcess;
 import com.taobao.arthas.core.advisor.ArthasMethod;
+import com.taobao.arthas.core.util.StringUtils;
 import com.taobao.arthas.core.util.ThreadLocalWatch;
 
 import java.util.ArrayList;
@@ -65,9 +70,16 @@ import static com.taobao.arthas.core.util.ArthasCheckUtils.isEquals;
 class MonitorAdviceListener extends AdviceListenerAdapter {
     // 输出定时任务
     private Timer timer;
+    private static final Logger logger = LoggerFactory.getLogger(MonitorAdviceListener.class);
     // 监控数据
     private ConcurrentHashMap<Key, AtomicReference<MonitorData>> monitorData = new ConcurrentHashMap<Key, AtomicReference<MonitorData>>();
     private final ThreadLocalWatch threadLocalWatch = new ThreadLocalWatch();
+    private final ThreadLocal<Boolean> conditionResult = new ThreadLocal<Boolean>() {
+        @Override
+        protected Boolean initialValue() {
+            return true;
+        }
+    };
     private MonitorCommand command;
     private CommandProcess process;
 
@@ -98,22 +110,47 @@ class MonitorAdviceListener extends AdviceListenerAdapter {
     public void before(ClassLoader loader, Class<?> clazz, ArthasMethod method, Object target, Object[] args)
             throws Throwable {
         threadLocalWatch.start();
+        if (!StringUtils.isEmpty(this.command.getConditionExpress()) && command.isBefore()) {
+            Advice advice = Advice.newForBefore(loader, clazz, method, target, args);
+            long cost = threadLocalWatch.cost();
+            this.conditionResult.set(isConditionMet(this.command.getConditionExpress(), advice, cost));
+            //重新计算执行方法的耗时(排除执行condition-express耗时)
+            threadLocalWatch.start();
+        }
     }
 
     @Override
     public void afterReturning(ClassLoader loader, Class<?> clazz, ArthasMethod method, Object target,
                                Object[] args, Object returnObject) throws Throwable {
-        finishing(clazz, method, false);
+        finishing(clazz, method, false, Advice.newForAfterRetuning(loader, clazz, method, target, args, returnObject));
     }
 
     @Override
     public void afterThrowing(ClassLoader loader, Class<?> clazz, ArthasMethod method, Object target,
                               Object[] args, Throwable throwable) {
-        finishing(clazz, method, true);
+        finishing(clazz, method, true, Advice.newForAfterThrowing(loader, clazz, method, target, args, throwable));
     }
 
-    private void finishing(Class<?> clazz, ArthasMethod method, boolean isThrowing) {
+    private void finishing(Class<?> clazz, ArthasMethod method, boolean isThrowing, Advice advice) {
         double cost = threadLocalWatch.costInMillis();
+
+        if (command.isBefore()) {
+            if (!this.conditionResult.get()) {
+                return;
+            }
+        } else {
+            try {
+                //不满足condition-express的不纳入统计
+                if (!isConditionMet(this.command.getConditionExpress(), advice, cost)) {
+                    return;
+                }
+            } catch (ExpressException e) {
+                //condition-express执行错误的不纳入统计
+                logger.warn("monitor execute condition-express failed.", e);
+                return;
+            }
+        }
+
         final Key key = new Key(clazz.getName(), method.getName());
 
         while (true) {
