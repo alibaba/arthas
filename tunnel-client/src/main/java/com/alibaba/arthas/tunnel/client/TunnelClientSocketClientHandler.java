@@ -2,6 +2,7 @@
 package com.alibaba.arthas.tunnel.client;
 
 import java.net.URI;
+import java.net.URL;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.Executors;
@@ -80,12 +81,10 @@ public class TunnelClientSocketClientHandler extends SimpleChannelInboundHandler
 
                 logger.info("start ForwardClient, uri: {}", forwardUri);
                 try {
-                    ForwardClient forwardClient = new ForwardClient(forwardUri,
-                            new URI(tunnelClient.getLocalServerUrl()));
+                    ForwardClient forwardClient = new ForwardClient(forwardUri);
                     forwardClient.start();
                 } catch (Throwable e) {
-                    logger.error("start ForwardClient error, forwardUri: {}, localServerUri: {}", forwardUri,
-                            tunnelClient.getLocalServerUrl(), e);
+                    logger.error("start ForwardClient error, forwardUri: {}", forwardUri, e);
                 }
             }
 

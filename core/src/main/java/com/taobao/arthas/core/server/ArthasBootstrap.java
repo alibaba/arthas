@@ -62,6 +62,7 @@ import io.netty.util.concurrent.EventExecutorGroup;
 
 /**
  * @author vlinux on 15/5/2.
+ * @author hengyunabc
  */
 public class ArthasBootstrap {
     private static final String ARTHAS_SPY_JAR = "arthas-spy.jar";
@@ -289,17 +290,10 @@ public class ArthasBootstrap {
 
         String agentId = null;
         try {
-            if (configure.getTunnelServer() != null && configure.getHttpPort() > 0) {
+            if (configure.getTunnelServer() != null) {
                 tunnelClient = new TunnelClient();
                 tunnelClient.setId(configure.getAgentId());
                 tunnelClient.setTunnelServerUrl(configure.getTunnelServer());
-                // ws://127.0.0.1:8563/ws
-                String host = "127.0.0.1";
-                if(configure.getIp() != null) {
-                    host = configure.getIp();
-                }
-                URI uri = new URI("ws", null, host, configure.getHttpPort(), "/ws", null, null);
-                tunnelClient.setLocalServerUrl(uri.toString());
                 ChannelFuture channelFuture = tunnelClient.start();
                 channelFuture.await(10, TimeUnit.SECONDS);
                 if(channelFuture.isSuccess()) {
@@ -341,6 +335,11 @@ public class ArthasBootstrap {
                 shellServer.registerTermServer(new HttpTermServer(configure.getIp(), configure.getHttpPort(),
                         options.getConnectionTimeout(), workerGroup));
             } else {
+                // listen local address in VM communication
+                if (configure.getTunnelServer() != null) {
+                    shellServer.registerTermServer(new HttpTermServer(configure.getIp(), configure.getHttpPort(),
+                            options.getConnectionTimeout(), workerGroup));
+                }
                 logger().info("http port is {}, skip bind http server.", configure.getHttpPort());
             }
 
