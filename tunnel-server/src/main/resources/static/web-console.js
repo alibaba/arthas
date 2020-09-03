@@ -85,6 +85,10 @@ function initWs (ip, port, agentId) {
 
 /** init xterm **/
 function initXterm (cols, rows) {
+    //reset xterm
+    if (xterm) {
+        xterm.destroy();
+    }
     xterm = new Terminal({
         cols: cols,
         rows: rows,
@@ -125,6 +129,7 @@ function startConnect (silent) {
         if (message.code === 2000) {
             alert(message.reason);
         }
+        ws = null;
     };
     ws.onopen = function () {
         console.log('open');
