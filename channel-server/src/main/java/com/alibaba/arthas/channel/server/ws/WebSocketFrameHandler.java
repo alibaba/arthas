@@ -140,6 +140,7 @@ public class WebSocketFrameHandler extends SimpleChannelInboundHandler<WebSocket
                 boolean continuous = response.getStatus().equals(ResponseStatus.CONTINUOUS);
                 if (!continuous) {
                     logger.info("console is closed, agentId: {}, consoleId: {}, response: {}", agentId, consoleId, response);
+                    sendErrorAndClose(ctx, "Console is closed, please connect again.");
                 }
                 return continuous;
             }
@@ -172,7 +173,11 @@ public class WebSocketFrameHandler extends SimpleChannelInboundHandler<WebSocket
     }
 
     private void sendErrorAndClose(ChannelHandlerContext ctx, String error) {
-        ctx.channel().writeAndFlush(new CloseWebSocketFrame(2000, error))
-                .addListener(ChannelFutureListener.CLOSE);
+        try {
+            ctx.channel().writeAndFlush(new CloseWebSocketFrame(2000, error))
+                    .addListener(ChannelFutureListener.CLOSE);
+        } catch (Exception e) {
+            // e.printStackTrace();
+        }
     }
 }
