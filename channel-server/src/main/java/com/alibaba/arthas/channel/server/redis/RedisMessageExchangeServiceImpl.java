@@ -57,7 +57,9 @@ public class RedisMessageExchangeServiceImpl implements MessageExchangeService {
 
     @Override
     public void pushMessage(Topic topic, byte[] messageBytes) throws MessageExchangeException {
-        redisTemplate.opsForList().leftPush(topic.getTopic(), messageBytes);
+        String key = topic.getTopic();
+        redisTemplate.opsForList().leftPush(key, messageBytes);
+        redisTemplate.expire(key, 10000, TimeUnit.MILLISECONDS);
     }
 
     @Override
