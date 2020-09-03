@@ -3,6 +3,7 @@ package com.taobao.arthas.core.channel;
 import com.alibaba.arthas.channel.client.ChannelClient;
 import com.alibaba.arthas.channel.proto.ActionRequest;
 import com.alibaba.arthas.channel.proto.ActionResponse;
+import com.alibaba.arthas.channel.proto.ConsoleData;
 import com.alibaba.arthas.channel.proto.ConsoleParams;
 import com.alibaba.arthas.channel.proto.ConsoleResult;
 import com.alibaba.arthas.channel.proto.ExecuteParams;
@@ -56,6 +57,13 @@ import io.termd.core.function.Function;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.Executors;
+import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ScheduledFuture;
+import java.util.concurrent.ThreadFactory;
+import java.util.concurrent.TimeUnit;
 
 import static com.taobao.arthas.core.channel.LocalConsoleClientManager.writeData;
 
@@ -66,6 +74,7 @@ public class ChannelRequestHandler implements ChannelClient.RequestListener {
 
     private static final Logger logger = LoggerFactory.getLogger(ChannelRequestHandler.class);
     public static final int DEFAULT_EXEC_TIMEOUT = 30000;
+    private final ScheduledExecutorService executorService;
 
     private ChannelClient channelClient;
     private final SessionManager sessionManager;
@@ -82,6 +91,15 @@ public class ChannelRequestHandler implements ChannelClient.RequestListener {
         this.historyManager = historyManager;
         commandManager = this.sessionManager.getCommandManager();
         jobController = this.sessionManager.getJobController();
+
+        executorService = Executors.newScheduledThreadPool(1, new ThreadFactory() {
+            @Override
+            public Thread newThread(Runnable r) {
+                final Thread t = new Thread(r, "arthas-command-execute");
+                t.setDaemon(true);
+                return t;
+            }
+        });
     }
 
     @Override
@@ -169,35 +187,71 @@ public class ChannelRequestHandler implements ChannelClient.RequestListener {
         try {
             final String consoleId = consoleClientManager.generateConsoleId();
 
+            final BlockingQueue<ConsoleData> queue = new LinkedBlockingQueue<ConsoleData>(1000);
+
             LocalTermServer localTermServer = ArthasBootstrap.getInstance().getLocalTermServer();
             Channel clientChannel = localTermServer.connect(new Consumer<TextWebSocketFrame>() {
                 @Override
                 public void accept(TextWebSocketFrame frame) {
-                    //get tty output bytes
-                    ByteBuf content = frame.content();
-                    byte[] bytes = new byte[content.readableBytes()];
-                    content.readBytes(bytes);
+                    try {
+                        //get tty output bytes
+                        ByteBuf content = frame.content();
+                        byte[] bytes = new byte[content.readableBytes()];
+                        content.readBytes(bytes);
 
-                    //send tty output to channel server
-                    ActionResponse.Builder response = ActionResponse.newBuilder()
-                            .setAgentId(request.getAgentId())
-                            .setRequestId(consoleId)
-                            .setStatus(ResponseStatus.CONTINUOUS)
-                            .setConsoleResult(ConsoleResult.newBuilder()
+                        queue.put(ConsoleData.newBuilder()
                                 .setDataType("tty")
                                 .setDataBytes(UnsafeByteOperations.unsafeWrap(bytes))
                                 .build());
-                    try {
-                        sendResponseWithThrows(response);
                     } catch (Exception e) {
-                        logger.error("send console tty output error, consoleId: {}", consoleId, e);
-                        consoleClientManager.closeConsoleClient(consoleId);
+                        logger.error("process console data error", e);
                     }
                 }
             });
 
-            //exec session command
-            //writeData(clientChannel, getReadActionJson("session\\r"));
+            //send console data
+            final ScheduledFuture<?> sendDataFuture = executorService.scheduleWithFixedDelay(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        List<ConsoleData> results = new ArrayList<ConsoleData>();
+                        int len = 0;
+                        while (true) {
+                            ConsoleData consoleData = queue.poll();
+                            if (consoleData != null) {
+                                results.add(consoleData);
+                                len += consoleData.getDataBytes().size();
+                                if (len > 10240) {
+                                    break;
+                                }
+                            } else {
+                                break;
+                            }
+                        }
+
+                        if (results.size() > 0) {
+                            //send tty output to channel server
+                            ActionResponse.Builder response = ActionResponse.newBuilder()
+                                    .setAgentId(request.getAgentId())
+                                    .setRequestId(consoleId)
+                                    .setStatus(ResponseStatus.CONTINUOUS)
+                                    .setConsoleResult(ConsoleResult.newBuilder()
+                                            .addAllResults(results)
+                                            .build());
+                            try {
+                                sendResponseWithThrows(response);
+                            } catch (Exception e) {
+                                logger.error("send console tty output error, consoleId: {}", consoleId, e);
+                                consoleClientManager.closeConsoleClient(consoleId);
+                            }
+                        }
+                    } catch (Exception e) {
+                        logger.error("send console data error", e);
+                    }
+
+                }
+            }, 10, 10, TimeUnit.MILLISECONDS);
+
 
             consoleClientManager.addConsoleClient(consoleId, clientChannel);
             clientChannel.closeFuture().addListener(new GenericFutureListener<Future<? super Void>>() {
@@ -205,6 +259,9 @@ public class ChannelRequestHandler implements ChannelClient.RequestListener {
                 public void operationComplete(Future<? super Void> future) throws Exception {
                     ResponseStatus status = future.isSuccess() ? ResponseStatus.SUCCEEDED : ResponseStatus.FAILED;
                     consoleClientManager.closeConsoleClient(consoleId);
+
+                    sendDataFuture.cancel(true);
+
                     //send final close event
                     ActionResponse.Builder response = ActionResponse.newBuilder()
                             .setAgentId(request.getAgentId())
@@ -226,6 +283,7 @@ public class ChannelRequestHandler implements ChannelClient.RequestListener {
             ActionResponse.Builder response = createResponse(request, ResponseStatus.FAILED);
             response.setMessage(StringValue.of("open console error"));
             sendResponse(response);
+
         }
     }
 

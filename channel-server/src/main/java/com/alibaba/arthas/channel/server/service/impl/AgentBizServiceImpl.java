@@ -4,6 +4,7 @@ import com.alibaba.arthas.channel.proto.AgentStatus;
 import com.alibaba.arthas.channel.server.model.AgentVO;
 import com.alibaba.arthas.channel.server.service.AgentBizSerivce;
 import com.alibaba.arthas.channel.server.service.AgentManageService;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,6 +26,10 @@ public class AgentBizServiceImpl implements AgentBizSerivce {
     public void heartbeat(String agentId, String agentStatus, String agentVersion) {
         AgentVO agentVO = agentManageService.findAgentById(agentId);
         if (agentVO != null) {
+            logger.debug("Agent heartbeat, agentId: {}, agentStatus: {}, agentVersion: {}", agentId, agentStatus, agentVersion);
+            if (!StringUtils.equals(agentStatus, agentVO.getAgentStatus())) {
+                logger.info("Agent heartbeat mark agent status as {}, agentId: {}", agentStatus, agentId);
+            }
             agentVO.setAgentStatus(agentStatus);
             agentVO.setAgentVersion(agentVersion);
             agentVO.setHeartbeatTime(System.currentTimeMillis());
@@ -59,5 +64,12 @@ public class AgentBizServiceImpl implements AgentBizSerivce {
         }
     }
 
-
+    @Override
+    public void compareAndUpdateAgentStatus(String agentId, AgentStatus expectedStatus, AgentStatus newStatus) {
+        AgentVO agentVO = agentManageService.findAgentById(agentId);
+        if (expectedStatus.name().equals(agentVO.getAgentStatus())) {
+            agentVO.setAgentStatus(newStatus.name());
+            agentManageService.updateAgent(agentVO);
+        }
+    }
 }

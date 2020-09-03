@@ -52,7 +52,7 @@ public class WebSocketServer {
         }
 
         ServerBootstrap b = new ServerBootstrap();
-        b.group(bossGroup, workerGroup).channel(NioServerSocketChannel.class).handler(new LoggingHandler(LogLevel.INFO))
+        b.group(bossGroup, workerGroup).channel(NioServerSocketChannel.class).handler(new LoggingHandler(LogLevel.TRACE))
                 .childHandler(new WebSocketServerInitializer(this, sslCtx));
 
         if (StringUtils.isBlank(host)) {

@@ -3,6 +3,7 @@ package com.alibaba.arthas.channel.server.grpc;
 import com.alibaba.arthas.channel.proto.ActionRequest;
 import com.alibaba.arthas.channel.proto.ActionResponse;
 import com.alibaba.arthas.channel.proto.AgentInfo;
+import com.alibaba.arthas.channel.proto.AgentStatus;
 import com.alibaba.arthas.channel.proto.ArthasServiceGrpc;
 import com.alibaba.arthas.channel.proto.GeneralResult;
 import com.alibaba.arthas.channel.proto.HeartbeatRequest;
@@ -48,16 +49,26 @@ public class ArthasServiceGrpcImpl extends ArthasServiceGrpc.ArthasServiceImplBa
     public void acquireRequest(AgentInfo request, final StreamObserver<ActionRequest> responseObserver) {
 
         final String agentId = request.getAgentId();
+        subscribeAgentRequests(agentId, responseObserver);
+    }
+
+    private void subscribeAgentRequests(String agentId, StreamObserver<ActionRequest> responseObserver) {
         AgentVO agentVO = agentManageService.findAgentById(agentId);
         if (agentVO == null) {
-            logger.warn("Agent not found: "+agentId);
+            logger.info("Agent not found: "+agentId);
             responseObserver.onError(new RuntimeException("Agent not found: "+agentId));
+            return;
+        }
+
+        if (AgentStatus.DOWN.name().equals(agentVO.getAgentStatus())) {
+            logger.info("Agent status is not ready, stop processing agent requests. agentId: {}", agentId);
+            responseObserver.onError(new RuntimeException("Agent status is not ready: "+agentId));
             return;
         }
 
         final ActionRequestTopic requestTopic = new ActionRequestTopic(agentId);
         try {
-            messageExchangeService.subscribe(requestTopic, 30*60*1000, new MessageExchangeService.MessageHandler() {
+            messageExchangeService.subscribe(requestTopic, 15*1000, new MessageExchangeService.MessageHandler() {
                 @Override
                 public boolean onMessage(byte[] messageBytes) {
                     //convert to pb message, then send it to arthas agent
@@ -74,8 +85,9 @@ public class ArthasServiceGrpcImpl extends ArthasServiceGrpc.ArthasServiceImplBa
                         return true;
                     } catch (Throwable e) {
                         logger.error("send action request message to arthas agent failure", e);
-                        //TODO 如何通知请求来源方发送请求失败？
-
+                        //TODO 如何通知请求来源方发送请求失败？通知打开的WebConsole
+                        agentBizSerivce.compareAndUpdateAgentStatus(agentId, AgentStatus.IN_SERVICE, AgentStatus.OUT_OF_SERVICE);
+                        //responseObserver.onError(e);
                         //TODO 通知网络异常
                         return false;
                     }
@@ -83,7 +95,7 @@ public class ArthasServiceGrpcImpl extends ArthasServiceGrpc.ArthasServiceImplBa
 
                 @Override
                 public void onTimeout() {
-
+                    subscribeAgentRequests(agentId, responseObserver);
                 }
             });
         } catch (Throwable e) {

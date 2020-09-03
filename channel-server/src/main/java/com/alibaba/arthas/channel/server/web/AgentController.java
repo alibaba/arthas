@@ -224,6 +224,12 @@ public class AgentController {
                         return false;
                     }
                 }
+
+                @Override
+                public boolean onTimeout() {
+                    //stop subscribing
+                    return false;
+                }
             });
             // we could send more events
             //emitter.complete();

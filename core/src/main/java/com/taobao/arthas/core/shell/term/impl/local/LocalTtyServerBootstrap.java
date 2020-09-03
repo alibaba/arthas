@@ -61,7 +61,7 @@ public class LocalTtyServerBootstrap {
         serverGroup = new NioEventLoopGroup(new DefaultThreadFactory("arthas-LocalWebsocketTtyBootstrap", true));
 
         ServerBootstrap b = new ServerBootstrap();
-        b.group(serverGroup).channel(LocalServerChannel.class).handler(new LoggingHandler(LogLevel.INFO))
+        b.group(serverGroup).channel(LocalServerChannel.class).handler(new LoggingHandler(LogLevel.TRACE))
                 .childHandler(new LocalTtyServerInitializer(channelGroup, handler, workerGroup));
 
         // Address to bind on / connect to.
@@ -92,7 +92,7 @@ public class LocalTtyServerBootstrap {
                     @Override
                     public void initChannel(LocalChannel ch) throws Exception {
                         ch.pipeline().addLast(
-                                new LoggingHandler(LogLevel.INFO),
+                                new LoggingHandler(LogLevel.TRACE),
                                 new LocalClientHandler(clientHandler));
                     }
                 });

@@ -199,7 +199,15 @@ public class ApiActionDelegateServiceImpl implements ApiActionDelegateService {
 
             @Override
             public void onTimeout() {
-
+                // subscribe timeout
+                boolean subscibing = responseListener.onTimeout();
+                if (subscibing) {
+                    try {
+                        subscribeResults(agentId, requestId, timeout, responseListener);
+                    } catch (Exception e) {
+                        logger.error("subscribe results error", e);
+                    }
+                }
             }
         });
     }

@@ -45,6 +45,17 @@ public interface ApiActionDelegateService {
 
 
     interface ResponseListener {
+        /**
+         * process message
+         * @param response
+         * @return true - processing next message, false - stop processing
+         */
         boolean onMessage(ActionResponse response);
+
+        /**
+         * subscribe message timeout
+         * @return true - continue subscribing, false - stop subscribing
+         */
+        boolean onTimeout();
     }
 }

@@ -1,6 +1,8 @@
 package com.alibaba.arthas.channel.server.ws;
 
 import com.alibaba.arthas.channel.proto.ActionResponse;
+import com.alibaba.arthas.channel.proto.AgentStatus;
+import com.alibaba.arthas.channel.proto.ConsoleData;
 import com.alibaba.arthas.channel.proto.ConsoleResult;
 import com.alibaba.arthas.channel.proto.ResponseStatus;
 import com.alibaba.arthas.channel.server.model.AgentVO;
@@ -8,12 +10,15 @@ import com.alibaba.arthas.channel.server.service.AgentManageService;
 import com.alibaba.arthas.channel.server.service.ApiActionDelegateService;
 import com.google.protobuf.ByteString;
 import io.netty.buffer.Unpooled;
+import io.netty.channel.ChannelFutureListener;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.handler.codec.http.websocketx.CloseWebSocketFrame;
 import io.netty.handler.codec.http.websocketx.TextWebSocketFrame;
 import io.netty.handler.codec.http.websocketx.WebSocketFrame;
 import io.netty.handler.codec.http.websocketx.WebSocketServerProtocolHandler;
+import io.netty.util.concurrent.Future;
+import io.netty.util.concurrent.GenericFutureListener;
 import io.netty.util.concurrent.Promise;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -79,9 +84,17 @@ public class WebSocketFrameHandler extends SimpleChannelInboundHandler<WebSocket
 
         AgentVO agentVO = agentManageService.findAgentById(agentId);
         if (agentVO == null) {
-            ctx.channel().writeAndFlush(new CloseWebSocketFrame(2000, "Can not find arthas agent by id: "+ agentIds));
+            String error = "Can not find arthas agent by id: " + agentIds;
+            sendErrorAndClose(ctx, error);
             logger.error("Can not find arthas agent by id: {}", agentIds);
-            throw new IllegalArgumentException("Can not find arthas agent by id: " + agentIds);
+            throw new IllegalArgumentException(error);
+        }
+
+        if (!AgentStatus.IN_SERVICE.name().equals(agentVO.getAgentStatus())) {
+            String error = "Agent ["+agentId+"] is unavailable, please try again later.";
+            sendErrorAndClose(ctx, error);
+            logger.error(error);
+            throw new IllegalArgumentException(error);
         }
 
         Promise<ActionResponse> responsePromise = apiActionDelegateService.openConsole(agentId, 15000);
@@ -101,28 +114,65 @@ public class WebSocketFrameHandler extends SimpleChannelInboundHandler<WebSocket
         ctx.pipeline().addLast(new ForwardHandler(apiActionDelegateService, agentId, consoleId));
 
         //proxy backward: arthas agent => frontend WebConsole
-        apiActionDelegateService.subscribeResults(agentId, consoleId, 5 * 60 * 1000, new ApiActionDelegateService.ResponseListener() {
+        apiActionDelegateService.subscribeResults(agentId, consoleId, 15 * 1000, new ApiActionDelegateService.ResponseListener() {
             @Override
             public boolean onMessage(ActionResponse response) {
                 if (response.hasConsoleResult()) {
                     ConsoleResult consoleResult = response.getConsoleResult();
-                    String dataType = consoleResult.getDataType();
-                    ByteString dataBytes = consoleResult.getDataBytes();
-                    if ("tty".equals(dataType)) {
-                        TextWebSocketFrame msg = new TextWebSocketFrame(Unpooled.wrappedBuffer(dataBytes.toByteArray()));
-                        try {
-                            ctx.channel().writeAndFlush(msg);
-                        } catch (Exception e) {
-                            logger.error("send console output error, consoleId: {}", consoleId, e);
-                            return false;
+                    List<ConsoleData> resultsList = consoleResult.getResultsList();
+                    for (ConsoleData consoleData : resultsList) {
+                        String dataType = consoleData.getDataType();
+                        ByteString dataBytes = consoleData.getDataBytes();
+                        if ("tty".equals(dataType)) {
+                            TextWebSocketFrame msg = new TextWebSocketFrame(Unpooled.wrappedBuffer(dataBytes.toByteArray()));
+                            try {
+                                ctx.channel().writeAndFlush(msg);
+                            } catch (Exception e) {
+                                logger.error("send console output error, consoleId: {}", consoleId, e);
+                                return false;
+                            }
+                        } else {
+                            logger.info("unsupported data type: {}, consoleId: {}", dataType, consoleId);
                         }
-                    } else {
-                        logger.info("unsupported data type: {}, consoleId: {}", dataType, consoleId);
                     }
+                    //ctx.channel().flush();
                 }
-                return response.getStatus().equals(ResponseStatus.CONTINUOUS);
+                boolean continuous = response.getStatus().equals(ResponseStatus.CONTINUOUS);
+                if (!continuous) {
+                    logger.info("console is closed, agentId: {}, consoleId: {}, response: {}", agentId, consoleId, response);
+                }
+                return continuous;
+            }
+
+            @Override
+            public boolean onTimeout() {
+                if (!ctx.channel().isActive()) {
+                    logger.info("console connection is broken, closing console. agentId: {}, consoleId: {}", agentId, consoleId);
+                    //TODO close clonsole
+                    return false;
+                }
+                //check agent status
+                AgentVO agentVO = agentManageService.findAgentById(agentId);
+                if (agentVO == null || !AgentStatus.IN_SERVICE.name().equals(agentVO.getAgentStatus())) {
+                    logger.warn("Agent status is not ready, closing console. agentId: {}, consoleId: {}", agentId, consoleId);
+                    sendErrorAndClose(ctx, "Agent is unavailable, please try again later.");
+                    return false;
+                }
+                // continue subscribing
+                return true;
             }
         });
 
+        ctx.channel().closeFuture().addListener(new GenericFutureListener<Future<? super Void>>() {
+            @Override
+            public void operationComplete(Future<? super Void> future) throws Exception {
+                //TODO stop subscribeResults
+            }
+        });
+    }
+
+    private void sendErrorAndClose(ChannelHandlerContext ctx, String error) {
+        ctx.channel().writeAndFlush(new CloseWebSocketFrame(2000, error))
+                .addListener(ChannelFutureListener.CLOSE);
     }
 }

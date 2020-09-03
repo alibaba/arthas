@@ -143,14 +143,20 @@ message ConsoleParams {
 /* WebConsole output data */
 message ConsoleResult {
 
+    /* results */
+    repeated ConsoleData results = 1;
+
+    /* console id */
+    string consoleId = 2;
+}
+
+message ConsoleData {
     /* data type: tty, image */
     string dataType = 1;
 
     /* WebConsole output data */
     bytes dataBytes = 2;
 
-    /* console id */
-    string consoleId = 3;
 }
 
 message ActionRequest {

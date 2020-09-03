@@ -1,6 +1,6 @@
 package com.alibaba.arthas.channel.server.service;
 
-import org.springframework.scheduling.annotation.Scheduled;
+import com.alibaba.arthas.channel.proto.AgentStatus;
 
 /**
  * @author gongdewei 2020/8/19
@@ -9,6 +9,7 @@ public interface AgentBizSerivce {
 
     void heartbeat(String agentId, String agentStatus, String agentVersion);
 
-    @Scheduled
     void cleanOutdatedAgents();
+
+    void compareAndUpdateAgentStatus(String agentId, AgentStatus expectedStatus, AgentStatus newStatus);
 }

@@ -82,17 +82,19 @@ public class RedisMessageExchangeServiceImpl implements MessageExchangeService {
                         if (messageBytes != null) {
                             boolean next = messageHandler.onMessage(messageBytes);
                             if (!next) {
+                                logger.debug("message handler interrupted: {}", topic);
                                 break;
                             }
                         }else {
                             messageHandler.onTimeout();
+                            logger.debug("subscribe message timeout: {}", topic);
                             break;
                         }
                     } catch (Throwable e) {
                         if (e instanceof QueryTimeoutException) {
                             //ignore Redis command timed out
                         } else {
-                            logger.error("blocking pop message failure", e);
+                            logger.error("blocking pop message failure: {}", topic, e);
                         }
                     }
                 }
