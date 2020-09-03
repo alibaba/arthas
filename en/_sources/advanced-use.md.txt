@@ -86,6 +86,10 @@ Arthas supports living inside a browser. The communication between arthas and br
 
 * [Web Console](web-console.md)
 
+## Arthas Properties
+
+* [Arthas Properties](arthas-properties.md)
+
 ## Start as a Java Agent
 
 * [Start as a Java Agent](agent.md)

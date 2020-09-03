@@ -40,7 +40,7 @@
     <link rel="index" title="索引" href="genindex.html" />
     <link rel="search" title="搜索" href="search.html" />
     <link rel="next" title="Arthas后台异步任务" href="async.html" />
-    <link rel="prev" title="Web Console" href="web-console.html" />
+    <link rel="prev" title="Arthas Properties" href="arthas-properties.html" />
 <script>
   if (window.location.href.startsWith("https://alibaba.github.io/arthas/")) {
       window.location.href = "https://arthas.aliyun.com/doc/" + window.location.href.substr("https://alibaba.github.io/arthas/".length);
@@ -116,6 +116,7 @@
 <li class="toctree-l2"><a class="reference internal" href="advanced-use.html#id3">管道</a></li>
 <li class="toctree-l2"><a class="reference internal" href="advanced-use.html#id4">后台异步任务</a></li>
 <li class="toctree-l2"><a class="reference internal" href="advanced-use.html#web-console">Web Console</a></li>
+<li class="toctree-l2"><a class="reference internal" href="advanced-use.html#arthas-properties">Arthas Properties</a></li>
 <li class="toctree-l2 current"><a class="reference internal" href="advanced-use.html#java-agent">以java agent方式启动</a><ul class="current">
 <li class="toctree-l3 current"><a class="current reference internal" href="#">以java agent方式启动</a></li>
 </ul>
@@ -211,8 +212,8 @@
 <p>比如下载全量的arthas zip包，解压之后以 <code class="docutils literal notranslate"><span class="pre">-javaagent</span></code> 的参数指定<code class="docutils literal notranslate"><span class="pre">arthas-agent.jar</span></code>来启动：</p>
 <div class="highlight-default notranslate"><pre class="literal-block">java -javaagent:/tmp/test/arthas-agent.jar -jar arthas-demo.jar</pre>
 </div>
-<p>默认的配置项在解压目录里的<code class="docutils literal notranslate"><span class="pre">arthas.properties</span></code>文件里。</p>
-<p>参考： https://docs.oracle.com/javase/8/docs/api/java/lang/instrument/package-summary.html</p>
+<p>默认的配置项在解压目录里的<code class="docutils literal notranslate"><span class="pre">arthas.properties</span></code>文件里。参考：<a class="reference internal" href="arthas-properties.html"><span class="doc">Arthas Properties</span></a></p>
+<p>Java Agent机制参考： https://docs.oracle.com/javase/8/docs/api/java/lang/instrument/package-summary.html</p>
 </div>
 
 
@@ -226,7 +227,7 @@
         <a href="async.html" class="btn btn-neutral float-right" title="Arthas后台异步任务" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
-        <a href="web-console.html" class="btn btn-neutral float-left" title="Web Console" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+        <a href="arthas-properties.html" class="btn btn-neutral float-left" title="Arthas Properties" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
       
     </div>
   

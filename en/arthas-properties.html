@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Batch Processing &mdash; Arthas 3.4.0 documentation</title>
+  <title>Arthas Properties &mdash; Arthas 3.4.0 documentation</title>
   
 
   
@@ -38,8 +38,8 @@
     <link rel="stylesheet" href="_static/overrides.css" type="text/css" />
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="All Commands" href="commands.html" />
-    <link rel="prev" title="Log command outputs" href="save-log.html" />
+    <link rel="next" title="Start as a Java Agent" href="agent.html" />
+    <link rel="prev" title="Web Console" href="web-console.html" />
 <script>
   if (window.location.href.startsWith("https://alibaba.github.io/arthas/")) {
       window.location.href = "https://arthas.aliyun.com/doc/" + window.location.href.substr("https://alibaba.github.io/arthas/".length);
@@ -113,20 +113,18 @@
 <li class="toctree-l2"><a class="reference internal" href="advanced-use.html#pipe">pipe</a></li>
 <li class="toctree-l2"><a class="reference internal" href="advanced-use.html#async-jobs">async jobs</a></li>
 <li class="toctree-l2"><a class="reference internal" href="advanced-use.html#web-console">Web Console</a></li>
-<li class="toctree-l2"><a class="reference internal" href="advanced-use.html#arthas-properties">Arthas Properties</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="advanced-use.html#arthas-properties">Arthas Properties</a><ul class="current">
+<li class="toctree-l3 current"><a class="current reference internal" href="#">Arthas Properties</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#supported-configuration-items">Supported configuration items</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#configured-order">Configured order</a></li>
+</ul>
+</li>
+</ul>
+</li>
 <li class="toctree-l2"><a class="reference internal" href="advanced-use.html#start-as-a-java-agent">Start as a Java Agent</a></li>
 <li class="toctree-l2"><a class="reference internal" href="advanced-use.html#as-sh-and-arthas-boot-tips">as.sh and arthas-boot tips</a></li>
 <li class="toctree-l2"><a class="reference internal" href="advanced-use.html#user-data-report">User data report</a></li>
-<li class="toctree-l2 current"><a class="reference internal" href="advanced-use.html#other-features">Other features</a><ul class="current">
-<li class="toctree-l3"><a class="reference internal" href="async.html">Async support</a></li>
-<li class="toctree-l3"><a class="reference internal" href="save-log.html">log the output</a></li>
-<li class="toctree-l3 current"><a class="current reference internal" href="#">batch</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="#usage">Usage</a></li>
-</ul>
-</li>
-<li class="toctree-l3"><a class="reference external" href="https://github.com/alibaba/arthas/issues/11">how to use ognl</a></li>
-</ul>
-</li>
+<li class="toctree-l2"><a class="reference internal" href="advanced-use.html#other-features">Other features</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="commands.html">Commands</a></li>
@@ -188,14 +186,14 @@
         
           <li><a href="advanced-use.html">Advanced Usage</a> &raquo;</li>
         
-      <li>Batch Processing</li>
+      <li>Arthas Properties</li>
     
     
       <li class="wy-breadcrumbs-aside">
         
             
             
-              <a href="https://github.com/alibaba/arthas/blob/master/site/src/site/sphinx/en/batch-support.md" class="fa fa-github"> Edit on GitHub</a>
+              <a href="https://github.com/alibaba/arthas/blob/master/site/src/site/sphinx/en/arthas-properties.md" class="fa fa-github"> Edit on GitHub</a>
             
           
         
@@ -209,43 +207,40 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
             
-  <div class="section" id="batch-processing">
-<h1>Batch Processing<a class="headerlink" href="#batch-processing" title="Permalink to this headline">¶</a></h1>
-<p>With the help of Batch Processing, you can run multiple commands in batch and get the final result at the end.</p>
-<div class="section" id="usage">
-<h2>Usage<a class="headerlink" href="#usage" title="Permalink to this headline">¶</a></h2>
-<div class="section" id="step-1-create-the-script">
-<h3>Step 1: Create the script<a class="headerlink" href="#step-1-create-the-script" title="Permalink to this headline">¶</a></h3>
-<p>Create a <code class="docutils literal notranslate"><span class="pre">test.as</span></code> script suffixed with <code class="docutils literal notranslate"><span class="pre">as</span></code>. Here <code class="docutils literal notranslate"><span class="pre">as</span></code> is suggested for the suffix of the filename, but in fact any suffix is acceptable.</p>
-<div class="highlight-bash notranslate"><div class="highlight hljs"><pre class="bash">➜  arthas git:(develop) cat /var/tmp/test.as
-help
-dashboard -n 1
-session
-thread
-sc -d org.apache.commons.lang.StringUtils</pre></div>
-</div>
-<p>Note:</p>
+  <div class="section" id="arthas-properties">
+<h1>Arthas Properties<a class="headerlink" href="#arthas-properties" title="Permalink to this headline">¶</a></h1>
+<p>The <code class="docutils literal notranslate"><span class="pre">arthas.properties</span></code> file is in the arthas directory.</p>
 <ul class="simple">
-<li><p>Each command takes one line.</p></li>
-<li><p>Batch mode execution times (via <code class="docutils literal notranslate"><span class="pre">-n</span></code>) must be explicitly specified for <code class="docutils literal notranslate"><span class="pre">dashboard</span></code>, otherwise batch script cannot terminate.</p></li>
-<li><p>Commands such as <code class="docutils literal notranslate"><span class="pre">watch</span></code>/<code class="docutils literal notranslate"><span class="pre">tt</span></code>/<code class="docutils literal notranslate"><span class="pre">trace</span></code>/<code class="docutils literal notranslate"><span class="pre">monitor</span></code>/<code class="docutils literal notranslate"><span class="pre">stack</span></code> should include <code class="docutils literal notranslate"><span class="pre">-n</span></code> option to ensure the script can be able to quit.</p></li>
-<li><p>Also consider to use <code class="docutils literal notranslate"><span class="pre">async</span></code> (for example: <code class="docutils literal notranslate"><span class="pre">watch</span> <span class="pre">c.t.X</span> <span class="pre">test</span> <span class="pre">returnObj</span> <span class="pre">&gt;</span> <span class="pre">&amp;</span></code>) to put commands run at background and get the output from the log file, see more from <a class="reference internal" href="async.html"><span class="doc">asynchronous job</span></a></p></li>
+<li><p>If it is automatically downloaded arthas, the directory is under <code class="docutils literal notranslate"><span class="pre">~/.arthas/lib/3.x.x/arthas/</span></code></p></li>
+<li><p>If it is a downloaded complete package, under the decompression directory of arthas</p></li>
 </ul>
+<div class="section" id="supported-configuration-items">
+<h2>Supported configuration items<a class="headerlink" href="#supported-configuration-items" title="Permalink to this headline">¶</a></h2>
+<div class="highlight-default notranslate"><pre class="literal-block">#arthas.config.overrideAll=true
+arthas.telnetPort=3658
+arthas.httpPort=8563
+arthas.ip=localhost
+
+#arthas.tunnelServer=ws://127.0.0.1:7777/ws
+#arthas.agentId=mmmmmmyiddddd</pre>
 </div>
-<div class="section" id="step-2-run-the-script">
-<h3>Step 2: Run the script<a class="headerlink" href="#step-2-run-the-script" title="Permalink to this headline">¶</a></h3>
-<p>Use <code class="docutils literal notranslate"><span class="pre">-f</span></code> to specify the script file. By default the result will be output to the standard output, but you can redirect the output to the file like this:</p>
-<div class="highlight-bash notranslate"><div class="highlight hljs"><pre class="bash">./as.sh -f /var/tmp/test.as 56328 &gt; test.out</pre></div>
+<ul class="simple">
+<li><p>If the configuration of <code class="docutils literal notranslate"><span class="pre">arthas.telnetPort</span></code> is -1, the telnet port will not be listened. <code class="docutils literal notranslate"><span class="pre">arthas.httpPort</span></code> is similar.</p></li>
+<li><p>If you configure <code class="docutils literal notranslate"><span class="pre">arthas.telnetPort</span></code> to 0, then random listen telnet port, you can find the random port log in <code class="docutils literal notranslate"><span class="pre">~/logs/arthas/arthas.log</span></code>. <code class="docutils literal notranslate"><span class="pre">arthas.httpPort</span></code> is similar.</p></li>
+</ul>
+<blockquote>
+<div><p>If you want to prevent multiple arthas port conflicts on a machine. It can be configured as a random port, or configured as -1, and use arthas through the tunnel server.</p>
+</div></blockquote>
 </div>
-<p>Use <code class="docutils literal notranslate"><span class="pre">-c</span></code> also can specify the commands, like this:</p>
-<div class="highlight-bash notranslate"><div class="highlight hljs"><pre class="bash">./as.sh -c &#x27;sysprop; thread&#x27; 56328 &gt; test.out</pre></div>
-</div>
-</div>
-<div class="section" id="step-3-check-the-output">
-<h3>Step 3: Check the output<a class="headerlink" href="#step-3-check-the-output" title="Permalink to this headline">¶</a></h3>
-<div class="highlight-bash notranslate"><div class="highlight hljs"><pre class="bash">cat test.out</pre></div>
-</div>
-</div>
+<div class="section" id="configured-order">
+<h2>Configured order<a class="headerlink" href="#configured-order" title="Permalink to this headline">¶</a></h2>
+<p>The order of configuration is: command line parameters &gt; System Env &gt; System Properties &gt; arthas.properties.</p>
+<p>such as:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">./as.sh</span> <span class="pre">--telnet-port</span> <span class="pre">9999</span></code> command line configuration will overwrite the default value <code class="docutils literal notranslate"><span class="pre">arthas.telnetPort=3658</span></code> in <code class="docutils literal notranslate"><span class="pre">arthas.properties</span></code>.</p></li>
+<li><p>If the application itself sets system properties <code class="docutils literal notranslate"><span class="pre">arthas.telnetPort=8888</span></code>, it will override the default value <code class="docutils literal notranslate"><span class="pre">arthas.telnetPort=3658</span></code> in <code class="docutils literal notranslate"><span class="pre">arthas.properties</span></code>.</p></li>
+</ul>
+<p>If you want <code class="docutils literal notranslate"><span class="pre">arthas.properties</span></code> to have the highest order, you can configure <code class="docutils literal notranslate"><span class="pre">arthas.config.overrideAll=true</span></code>.</p>
 </div>
 </div>
 
@@ -257,10 +252,10 @@ sc -d org.apache.commons.lang.StringUtils</pre></div>
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="commands.html" class="btn btn-neutral float-right" title="All Commands" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+        <a href="agent.html" class="btn btn-neutral float-right" title="Start as a Java Agent" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
-        <a href="save-log.html" class="btn btn-neutral float-left" title="Log command outputs" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+        <a href="web-console.html" class="btn btn-neutral float-left" title="Web Console" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
       
     </div>
   

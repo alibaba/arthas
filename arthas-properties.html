@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Arthas Spring Boot Starter &mdash; Arthas 3.4.0 文档</title>
+  <title>Arthas Properties &mdash; Arthas 3.4.0 文档</title>
   
 
   
@@ -39,8 +39,8 @@
     <link rel="stylesheet" href="_static/overrides.css" type="text/css" />
     <link rel="index" title="索引" href="genindex.html" />
     <link rel="search" title="搜索" href="search.html" />
-    <link rel="next" title="IDEA Plugin" href="idea-plugin.html" />
-    <link rel="prev" title="Docker" href="docker.html" />
+    <link rel="next" title="以Java Agent的方式启动" href="agent.html" />
+    <link rel="prev" title="Web Console" href="web-console.html" />
 <script>
   if (window.location.href.startsWith("https://alibaba.github.io/arthas/")) {
       window.location.href = "https://arthas.aliyun.com/doc/" + window.location.href.substr("https://alibaba.github.io/arthas/".length);
@@ -106,17 +106,35 @@
 <li class="toctree-l1"><a class="reference internal" href="install-detail.html">安装</a></li>
 <li class="toctree-l1"><a class="reference internal" href="download.html">下载</a></li>
 <li class="toctree-l1"><a class="reference internal" href="quick-start.html">快速入门</a></li>
-<li class="toctree-l1"><a class="reference internal" href="advanced-use.html">进阶使用</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="advanced-use.html">进阶使用</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="advanced-use.html#id2">基础命令</a></li>
+<li class="toctree-l2"><a class="reference internal" href="advanced-use.html#jvm">jvm相关</a></li>
+<li class="toctree-l2"><a class="reference internal" href="advanced-use.html#class-classloader">class/classloader相关</a></li>
+<li class="toctree-l2"><a class="reference internal" href="advanced-use.html#monitor-watch-trace">monitor/watch/trace相关</a></li>
+<li class="toctree-l2"><a class="reference internal" href="advanced-use.html#profiler">profiler/火焰图</a></li>
+<li class="toctree-l2"><a class="reference internal" href="advanced-use.html#options">options</a></li>
+<li class="toctree-l2"><a class="reference internal" href="advanced-use.html#id3">管道</a></li>
+<li class="toctree-l2"><a class="reference internal" href="advanced-use.html#id4">后台异步任务</a></li>
+<li class="toctree-l2"><a class="reference internal" href="advanced-use.html#web-console">Web Console</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="advanced-use.html#arthas-properties">Arthas Properties</a><ul class="current">
+<li class="toctree-l3 current"><a class="current reference internal" href="#">Arthas Properties</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#id1">支持的配置项</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id2">配置的优先级</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="advanced-use.html#java-agent">以java agent方式启动</a></li>
+<li class="toctree-l2"><a class="reference internal" href="advanced-use.html#as-sh-arthas-boot">as.sh 和 arthas-boot 技巧</a></li>
+<li class="toctree-l2"><a class="reference internal" href="advanced-use.html#id5">用户数据回报</a></li>
+<li class="toctree-l2"><a class="reference internal" href="advanced-use.html#id6">其他特性</a></li>
+</ul>
+</li>
 <li class="toctree-l1"><a class="reference internal" href="commands.html">命令列表</a></li>
 <li class="toctree-l1"><a class="reference internal" href="web-console.html">WebConsole</a></li>
 <li class="toctree-l1"><a class="reference internal" href="http-api.html">Http API</a></li>
 <li class="toctree-l1"><a class="reference internal" href="docker.html">Docker</a></li>
-<li class="toctree-l1 current"><a class="current reference internal" href="#">Arthas Spring Boot Starter</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="#id1">配置属性</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#endpoint">查看Endpoint信息</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#spring-boot">非spring boot应用使用方式</a></li>
-</ul>
-</li>
+<li class="toctree-l1"><a class="reference internal" href="spring-boot-starter.html">Arthas Spring Boot Starter</a></li>
 <li class="toctree-l1"><a class="reference internal" href="idea-plugin.html">IDEA 插件</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas/issues?q=label%3Auser-case">用户案例</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas/issues?q=label%3Aquestion-answered">常见问题</a></li>
@@ -169,14 +187,16 @@
     
       <li><a href="index.html">Docs</a> &raquo;</li>
         
-      <li>Arthas Spring Boot Starter</li>
+          <li><a href="advanced-use.html">进阶使用</a> &raquo;</li>
+        
+      <li>Arthas Properties</li>
     
     
       <li class="wy-breadcrumbs-aside">
         
             
             
-              <a href="https://github.com/alibaba/arthas/blob/master/site/src/site/sphinx/spring-boot-starter.md" class="fa fa-github"> Edit on GitHub</a>
+              <a href="https://github.com/alibaba/arthas/blob/master/site/src/site/sphinx/arthas-properties.md" class="fa fa-github"> Edit on GitHub</a>
             
           
         
@@ -190,68 +210,40 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
             
-  <div class="section" id="arthas-spring-boot-starter">
-<h1>Arthas Spring Boot Starter<a class="headerlink" href="#arthas-spring-boot-starter" title="永久链接至标题">¶</a></h1>
-<blockquote>
-<div><p>只支持 spring boot 2</p>
-</div></blockquote>
-<p>最新版本：<a class="reference external" href="https://search.maven.org/search?q=arthas-spring-boot-starter">查看</a></p>
-<p>配置maven依赖：</p>
-<div class="highlight-xml notranslate"><div class="highlight hljs"><pre class="xml">        &lt;dependency&gt;
-            &lt;groupId&gt;com.taobao.arthas&lt;/groupId&gt;
-            &lt;artifactId&gt;arthas-spring-boot-starter&lt;/artifactId&gt;
-            &lt;version&gt;${arthas.version}&lt;/version&gt;
-        &lt;/dependency&gt;</pre></div>
-</div>
-<p>应用启动后，spring会启动arthas，并且attach自身进程。</p>
+  <div class="section" id="arthas-properties">
+<h1>Arthas Properties<a class="headerlink" href="#arthas-properties" title="永久链接至标题">¶</a></h1>
+<p><code class="docutils literal notranslate"><span class="pre">arthas.properties</span></code>文件在arthas的目录下。</p>
+<ul class="simple">
+<li><p>如果是自动下载的arthas，则目录在<code class="docutils literal notranslate"><span class="pre">~/.arthas/lib/3.x.x/arthas/</span></code>下面</p></li>
+<li><p>如果是下载的完整包，在arthas解压目录下</p></li>
+</ul>
 <div class="section" id="id1">
-<h2>配置属性<a class="headerlink" href="#id1" title="永久链接至标题">¶</a></h2>
-<p>比如，通过配置tunnel server实现远程管理：</p>
-<div class="highlight-default notranslate"><pre class="literal-block">arthas.agent-id=hsehdfsfghhwertyfad
-arthas.tunnel-server=ws://47.75.156.201:7777/ws</pre>
+<h2>支持的配置项<a class="headerlink" href="#id1" title="永久链接至标题">¶</a></h2>
+<div class="highlight-default notranslate"><pre class="literal-block">#arthas.config.overrideAll=true
+arthas.telnetPort=3658
+arthas.httpPort=8563
+arthas.ip=localhost
+
+#arthas.tunnelServer=ws://127.0.0.1:7777/ws
+#arthas.agentId=mmmmmmyiddddd</pre>
 </div>
-<p>全部支持的配置项：<a class="reference external" href="https://github.com/alibaba/arthas/blob/master/arthas-spring-boot-starter/src/main/java/com/alibaba/arthas/spring/ArthasProperties.java">参考</a></p>
-<p>参考：<a class="reference internal" href="arthas-properties.html"><span class="doc">Arthas Properties</span></a></p>
-</div>
-<div class="section" id="endpoint">
-<h2>查看Endpoint信息<a class="headerlink" href="#endpoint" title="永久链接至标题">¶</a></h2>
+<ul class="simple">
+<li><p>如果配置 <code class="docutils literal notranslate"><span class="pre">arthas.telnetPort</span></code>为 -1 ，则不listen telnet端口。<code class="docutils literal notranslate"><span class="pre">arthas.httpPort</span></code>类似。</p></li>
+<li><p>如果配置 <code class="docutils literal notranslate"><span class="pre">arthas.telnetPort</span></code>为 0 ，则随机telnet端口，在<code class="docutils literal notranslate"><span class="pre">~/logs/arthas/arthas.log</span></code>里可以找到具体端口日志。<code class="docutils literal notranslate"><span class="pre">arthas.httpPort</span></code>类似。</p></li>
+</ul>
 <blockquote>
-<div><p>需要配置spring boot暴露endpoint：<a class="reference external" href="https://docs.spring.io/spring-boot/docs/current/reference/html/production-ready-features.html#production-ready-endpoints">参考</a></p>
+<div><p>如果是防止一个机器上启动多个 arthas端口冲突。可以配置为随机端口，或者配置为 -1，并且通过tunnel server来使用arthas。</p>
 </div></blockquote>
-<p>假定endpoint端口是 8080，则通过下面url可以查看：</p>
-<p>http://localhost:8080/actuator/arthas</p>
-<div class="highlight-default notranslate"><pre class="literal-block">{
-    &quot;arthasConfigMap&quot;: {
-        &quot;agent-id&quot;: &quot;hsehdfsfghhwertyfad&quot;,
-        &quot;tunnel-server&quot;: &quot;ws://47.75.156.201:7777/ws&quot;,
-    }
-}</pre>
 </div>
-</div>
-<div class="section" id="spring-boot">
-<h2>非spring boot应用使用方式<a class="headerlink" href="#spring-boot" title="永久链接至标题">¶</a></h2>
-<p>非Spring Boot应用，可以通过下面的方式来使用：</p>
-<div class="highlight-xml notranslate"><div class="highlight hljs"><pre class="xml">        &lt;dependency&gt;
-            &lt;groupId&gt;com.taobao.arthas&lt;/groupId&gt;
-            &lt;artifactId&gt;arthas-agent-attach&lt;/artifactId&gt;
-            &lt;version&gt;${arthas.version}&lt;/version&gt;
-        &lt;/dependency&gt;
-        &lt;dependency&gt;
-            &lt;groupId&gt;com.taobao.arthas&lt;/groupId&gt;
-            &lt;artifactId&gt;arthas-packaging&lt;/artifactId&gt;
-            &lt;version&gt;${arthas.version}&lt;/version&gt;
-        &lt;/dependency&gt;</pre></div>
-</div>
-<div class="highlight-java notranslate"><div class="highlight hljs"><pre class="java">import com.taobao.arthas.agent.attach.ArthasAgent;
-
-public class ArthasAttachExample {
-	
-	public static void main(String[] args) {
-		ArthasAgent.attach();
-	}
-
-}</pre></div>
-</div>
+<div class="section" id="id2">
+<h2>配置的优先级<a class="headerlink" href="#id2" title="永久链接至标题">¶</a></h2>
+<p>配置的优先级是：命令行参数 &gt; System Env &gt; System Properties &gt; arthas.properties 。</p>
+<p>比如：</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">./as.sh</span> <span class="pre">--telnet-port</span> <span class="pre">9999</span></code> 传入的配置会覆盖掉<code class="docutils literal notranslate"><span class="pre">arthas.properties</span></code>里的默认值<code class="docutils literal notranslate"><span class="pre">arthas.telnetPort=3658</span></code>。</p></li>
+<li><p>如果应用自身设置了 system properties <code class="docutils literal notranslate"><span class="pre">arthas.telnetPort=8888</span></code>，则会覆盖掉<code class="docutils literal notranslate"><span class="pre">arthas.properties</span></code>里的默认值<code class="docutils literal notranslate"><span class="pre">arthas.telnetPort=3658</span></code>。</p></li>
+</ul>
+<p>如果想要 <code class="docutils literal notranslate"><span class="pre">arthas.properties</span></code>的优先级最高，则可以配置 <code class="docutils literal notranslate"><span class="pre">arthas.config.overrideAll=true</span></code> 。</p>
 </div>
 </div>
 
@@ -263,10 +255,10 @@ public class ArthasAttachExample {
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="idea-plugin.html" class="btn btn-neutral float-right" title="IDEA Plugin" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+        <a href="agent.html" class="btn btn-neutral float-right" title="以Java Agent的方式启动" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
-        <a href="docker.html" class="btn btn-neutral float-left" title="Docker" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+        <a href="web-console.html" class="btn btn-neutral float-left" title="Web Console" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
       
     </div>
   

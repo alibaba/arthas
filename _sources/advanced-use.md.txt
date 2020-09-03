@@ -91,6 +91,10 @@ Arthas支持使用管道对上述命令的结果进行进一步的处理，如`s
 
 * [Web Console](web-console.md)
 
+## Arthas Properties
+
+* [Arthas Properties](arthas-properties.md)
+
 ## 以java agent方式启动
 
 * [以java agent方式启动](agent.md)
