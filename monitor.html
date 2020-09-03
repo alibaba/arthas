@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>monitor &mdash; Arthas 3.3.9 文档</title>
+  <title>monitor &mdash; Arthas 3.4.0 文档</title>
   
 
   
@@ -74,7 +74,7 @@
             
             
               <div class="version">
-                3.3.9
+                3.4.0
               </div>
             
           
@@ -130,7 +130,11 @@
 <li class="toctree-l2 current"><a class="current reference internal" href="#">monitor</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#id1">监控的维度说明</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#id2">参数说明</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#id3">使用参考</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id3">使用参考</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#id4">计算条件表达式过滤统计结果(方法执行完毕之后)</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id5">计算条件表达式过滤统计结果(方法执行完毕之前)</a></li>
+</ul>
+</li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="watch.html">watch</a></li>
@@ -232,7 +236,7 @@
 <blockquote>
 <div><p>方法执行监控</p>
 </div></blockquote>
-<p>对匹配 <code class="docutils literal notranslate"><span class="pre">class-pattern</span></code>／<code class="docutils literal notranslate"><span class="pre">method-pattern</span></code>的类、方法的调用进行监控。</p>
+<p>对匹配 <code class="docutils literal notranslate"><span class="pre">class-pattern</span></code>／<code class="docutils literal notranslate"><span class="pre">method-pattern</span></code>／<code class="docutils literal notranslate"><span class="pre">condition-express</span></code>的类、方法的调用进行监控。</p>
 <p><code class="docutils literal notranslate"><span class="pre">monitor</span></code> 命令是一个非实时返回命令.</p>
 <p>实时返回命令是输入之后立即返回，而非实时返回的命令，则是不断的等待目标 Java 进程返回信息，直到用户输入 <code class="docutils literal notranslate"><span class="pre">Ctrl+C</span></code> 为止。</p>
 <p>服务端是以任务的形式在后台跑任务，植入的代码随着任务的中止而不会被执行，所以任务关闭后，不会对原有性能产生太大影响，而且原则上，任何Arthas命令不会引起原有业务逻辑的改变。</p>
@@ -300,12 +304,20 @@
 <td align="left">方法名表达式匹配</td>
 </tr>
 <tr>
+<td align="right"><em>condition-express</em></td>
+<td align="left">条件表达式</td>
+</tr>
+<tr>
 <td align="right">[E]</td>
 <td align="left">开启正则表达式匹配，默认为通配符匹配</td>
 </tr>
 <tr>
 <td align="right"><code>[c:]</code></td>
 <td align="left">统计周期，默认值为120秒</td>
+</tr>
+<tr>
+<td align="right">[b]</td>
+<td align="left">在<strong>方法调用之前</strong>计算condition-express</td>
 </tr>
 </tbody>
 </table></div>
@@ -337,6 +349,58 @@ Affect(class-cnt:1 , method-cnt:1) cost in 94 ms.
  timestamp            class          method        total  success  fail  avg-rt(ms)  fail-rate
 -----------------------------------------------------------------------------------------------
  2018-12-03 19:07:03  demo.MathGame  primeFactors  2      2        0     3182.72     0.00%</pre></div>
+</div>
+<div class="section" id="id4">
+<h3>计算条件表达式过滤统计结果(方法执行完毕之后)<a class="headerlink" href="#id4" title="永久链接至标题">¶</a></h3>
+<div class="highlight-bash notranslate"><div class="highlight hljs"><pre class="bash">monitor -c 5 demo.MathGame primeFactors &quot;params[0] &lt;= 2&quot;
+Press Q or Ctrl+C to abort.
+Affect(class count: 1 , method count: 1) cost in 19 ms, listenerId: 5
+ timestamp            class          method         total  success  fail  avg-rt(ms)  fail-rate        
+-----------------------------------------------------------------------------------------------
+ 2020-09-02 09:42:36  demo.MathGame  primeFactors    5       3       2      0.09       40.00%           
+
+ timestamp            class          method         total  success  fail  avg-rt(ms)  fail-rate        
+----------------------------------------------------------------------------------------------
+ 2020-09-02 09:42:41  demo.MathGame  primeFactors    5       2       3      0.11       60.00%           
+
+ timestamp            class          method         total  success  fail  avg-rt(ms)  fail-rate        
+----------------------------------------------------------------------------------------------
+ 2020-09-02 09:42:46  demo.MathGame  primeFactors    5       1       4      0.06       80.00%           
+
+ timestamp            class          method         total  success  fail  avg-rt(ms)  fail-rate        
+----------------------------------------------------------------------------------------------
+ 2020-09-02 09:42:51  demo.MathGame  primeFactors    5       1       4      0.12       80.00%           
+
+ timestamp            class          method         total  success  fail  avg-rt(ms)  fail-rate        
+----------------------------------------------------------------------------------------------
+ 2020-09-02 09:42:56  demo.MathGame  primeFactors    5       3       2      0.15       40.00%           </pre></div>
+</div>
+</div>
+<div class="section" id="id5">
+<h3>计算条件表达式过滤统计结果(方法执行完毕之前)<a class="headerlink" href="#id5" title="永久链接至标题">¶</a></h3>
+<div class="highlight-bash notranslate"><div class="highlight hljs"><pre class="bash">monitor -b -c 5 com.test.testes.MathGame primeFactors &quot;params[0] &lt;= 2&quot;
+Press Q or Ctrl+C to abort.
+Affect(class count: 1 , method count: 1) cost in 21 ms, listenerId: 4
+ timestamp            class          method         total  success  fail  avg-rt(ms)  fail-rate        
+----------------------------------------------------------------------------------------------
+ 2020-09-02 09:41:57  demo.MathGame  primeFactors    1       0        1      0.10      100.00%          
+
+ timestamp            class          method         total  success  fail  avg-rt(ms)  fail-rate        
+----------------------------------------------------------------------------------------------
+ 2020-09-02 09:42:02  demo.MathGame  primeFactors    3       0        3      0.06      100.00%  
+
+ timestamp            class          method         total  success  fail  avg-rt(ms)  fail-rate        
+----------------------------------------------------------------------------------------------
+ 2020-09-02 09:42:07  demo.MathGame  primeFactors    2       0        2      0.06      100.00% 
+
+ timestamp            class          method         total  success  fail  avg-rt(ms)  fail-rate        
+----------------------------------------------------------------------------------------------
+ 2020-09-02 09:42:12  demo.MathGame  primeFactors    1       0        1      0.05      100.00% 
+
+ timestamp            class          method         total  success  fail  avg-rt(ms)  fail-rate        
+----------------------------------------------------------------------------------------------
+ 2020-09-02 09:42:17  demo.MathGame  primeFactors    2       0        2      0.10      100.00% </pre></div>
+</div>
 </div>
 </div>
 </div>

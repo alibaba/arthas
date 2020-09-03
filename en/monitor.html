@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>monitor &mdash; Arthas 3.3.9 documentation</title>
+  <title>monitor &mdash; Arthas 3.4.0 documentation</title>
   
 
   
@@ -73,7 +73,7 @@
             
             
               <div class="version">
-                3.3.9
+                3.4.0
               </div>
             
           
@@ -127,7 +127,11 @@
 <li class="toctree-l2 current"><a class="current reference internal" href="#">monitor</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#items-to-monitor">Items to monitor</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#parameters">Parameters</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#usage">Usage</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#usage">Usage</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#evaluate-condition-express-to-filter-method-after-method-call">Evaluate condition-express to filter method (after method call)</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#evaluate-condition-express-to-filter-method-before-method-call">Evaluate condition-express to filter method (before method call)</a></li>
+</ul>
+</li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="watch.html">watch</a></li>
@@ -229,7 +233,7 @@
 <blockquote>
 <div><p>Monitor method invocation.</p>
 </div></blockquote>
-<p>Monitor invocation for the method matched with <code class="docutils literal notranslate"><span class="pre">class-pattern</span></code> and <code class="docutils literal notranslate"><span class="pre">method-pattern</span></code>.</p>
+<p>Monitor invocation for the method matched with <code class="docutils literal notranslate"><span class="pre">class-pattern</span></code> and <code class="docutils literal notranslate"><span class="pre">method-pattern</span></code> and filter by <code class="docutils literal notranslate"><span class="pre">condition-expression</span></code>.</p>
 <p><code class="docutils literal notranslate"><span class="pre">monitor</span></code> is not a command returning immediately.</p>
 <p>A command returning immediately is a command immediately returns with the result after the command is input, while a non-immediate returning command will keep outputting the information from the target JVM process until user presses <code class="docutils literal notranslate"><span class="pre">Ctrl+C</span></code>.</p>
 <p>On Arthas’s server side, the command is running as a background job, but the weaved code will not take further effect once the job is terminated, therefore, it will not impact the performance after the job quits. Furthermore, Arthas is designed to have no side effect to the business logic.</p>
@@ -297,12 +301,20 @@
 <td align="left">pattern for the method name</td>
 </tr>
 <tr>
+<td align="right"><em>condition-expression</em></td>
+<td align="left">condition expression for filtering method calls</td>
+</tr>
+<tr>
 <td align="right"><code>[E]</code></td>
 <td align="left">turn on regex matching while the default is wildcard matching</td>
 </tr>
 <tr>
 <td align="right"><code>[c:]</code></td>
 <td align="left">cycle of statistics, the default value: <code>120</code>s</td>
+</tr>
+<tr>
+<td align="right"><code>[b]</code></td>
+<td align="left">evaluate the condition-expression before method invoke</td>
 </tr>
 </tbody>
 </table></div>
@@ -334,6 +346,58 @@ Affect(class-cnt:1 , method-cnt:1) cost in 94 ms.
  timestamp            class          method        total  success  fail  avg-rt(ms)  fail-rate
 -----------------------------------------------------------------------------------------------
  2018-12-03 19:07:03  demo.MathGame  primeFactors  2      2        0     3182.72     0.00%</pre></div>
+</div>
+<div class="section" id="evaluate-condition-express-to-filter-method-after-method-call">
+<h3>Evaluate condition-express to filter method (after method call)<a class="headerlink" href="#evaluate-condition-express-to-filter-method-after-method-call" title="Permalink to this headline">¶</a></h3>
+<div class="highlight-bash notranslate"><div class="highlight hljs"><pre class="bash">monitor -c 5 demo.MathGame primeFactors &quot;params[0] &lt;= 2&quot;
+Press Q or Ctrl+C to abort.
+Affect(class count: 1 , method count: 1) cost in 19 ms, listenerId: 5
+ timestamp            class          method         total  success  fail  avg-rt(ms)  fail-rate        
+-----------------------------------------------------------------------------------------------
+ 2020-09-02 09:42:36  demo.MathGame  primeFactors    5       3       2      0.09       40.00%           
+
+ timestamp            class          method         total  success  fail  avg-rt(ms)  fail-rate        
+----------------------------------------------------------------------------------------------
+ 2020-09-02 09:42:41  demo.MathGame  primeFactors    5       2       3      0.11       60.00%           
+
+ timestamp            class          method         total  success  fail  avg-rt(ms)  fail-rate        
+----------------------------------------------------------------------------------------------
+ 2020-09-02 09:42:46  demo.MathGame  primeFactors    5       1       4      0.06       80.00%           
+
+ timestamp            class          method         total  success  fail  avg-rt(ms)  fail-rate        
+----------------------------------------------------------------------------------------------
+ 2020-09-02 09:42:51  demo.MathGame  primeFactors    5       1       4      0.12       80.00%           
+
+ timestamp            class          method         total  success  fail  avg-rt(ms)  fail-rate        
+----------------------------------------------------------------------------------------------
+ 2020-09-02 09:42:56  demo.MathGame  primeFactors    5       3       2      0.15       40.00%           </pre></div>
+</div>
+</div>
+<div class="section" id="evaluate-condition-express-to-filter-method-before-method-call">
+<h3>Evaluate condition-express to filter method (before method call)<a class="headerlink" href="#evaluate-condition-express-to-filter-method-before-method-call" title="Permalink to this headline">¶</a></h3>
+<div class="highlight-bash notranslate"><div class="highlight hljs"><pre class="bash">monitor -b -c 5 com.test.testes.MathGame primeFactors &quot;params[0] &lt;= 2&quot;
+Press Q or Ctrl+C to abort.
+Affect(class count: 1 , method count: 1) cost in 21 ms, listenerId: 4
+ timestamp            class          method         total  success  fail  avg-rt(ms)  fail-rate        
+----------------------------------------------------------------------------------------------
+ 2020-09-02 09:41:57  demo.MathGame  primeFactors    1       0        1      0.10      100.00%          
+
+ timestamp            class          method         total  success  fail  avg-rt(ms)  fail-rate        
+----------------------------------------------------------------------------------------------
+ 2020-09-02 09:42:02  demo.MathGame  primeFactors    3       0        3      0.06      100.00%  
+
+ timestamp            class          method         total  success  fail  avg-rt(ms)  fail-rate        
+----------------------------------------------------------------------------------------------
+ 2020-09-02 09:42:07  demo.MathGame  primeFactors    2       0        2      0.06      100.00% 
+
+ timestamp            class          method         total  success  fail  avg-rt(ms)  fail-rate        
+----------------------------------------------------------------------------------------------
+ 2020-09-02 09:42:12  demo.MathGame  primeFactors    1       0        1      0.05      100.00% 
+
+ timestamp            class          method         total  success  fail  avg-rt(ms)  fail-rate        
+----------------------------------------------------------------------------------------------
+ 2020-09-02 09:42:17  demo.MathGame  primeFactors    2       0        2      0.10      100.00% </pre></div>
+</div>
 </div>
 </div>
 </div>
