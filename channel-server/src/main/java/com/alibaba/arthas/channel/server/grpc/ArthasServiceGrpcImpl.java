@@ -155,8 +155,7 @@ public class ArthasServiceGrpcImpl extends ArthasServiceGrpc.ArthasServiceImplBa
         long now = System.currentTimeMillis();
         AgentVO agentVO = agentManageService.findAgentById(request.getAgentId());
         if (agentVO != null) {
-            agentVO.setAgentStatus(request.getAgentStatus().name());
-            agentVO.setAgentVersion(request.getAgentVersion());
+            copyTo(request, agentVO);
             agentVO.setModifiedTime(now);
             agentVO.setHeartbeatTime(now);
             agentManageService.updateAgent(agentVO);
@@ -166,13 +165,7 @@ public class ArthasServiceGrpcImpl extends ArthasServiceGrpc.ArthasServiceImplBa
                     .build());
         } else {
             agentVO = new AgentVO();
-            agentVO.setAgentId(request.getAgentId());
-            agentVO.setAgentVersion(request.getAgentVersion());
-            agentVO.setAgentStatus(request.getAgentStatus().name());
-            agentVO.setHostname(request.getHostname());
-            agentVO.setIp(request.getIp());
-            agentVO.setOsVersion(request.getOsVersion());
-            agentVO.setAppName(request.getAppName());
+            copyTo(request, agentVO);
             agentVO.setCreatedTime(now);
             agentVO.setModifiedTime(now);
             agentVO.setHeartbeatTime(now);
@@ -183,6 +176,18 @@ public class ArthasServiceGrpcImpl extends ArthasServiceGrpc.ArthasServiceImplBa
                     .build());
         }
         logger.info("register agent: "+agentVO.getAgentId());
+    }
+
+    private void copyTo(AgentInfo request, AgentVO agentVO) {
+        agentVO.setAgentId(request.getAgentId());
+        agentVO.setAgentVersion(request.getAgentVersion());
+        agentVO.setAgentStatus(request.getAgentStatus().name());
+        agentVO.setHostname(request.getHostname());
+        agentVO.setIp(request.getIp());
+        agentVO.setOsVersion(request.getOsVersion());
+        agentVO.setAppName(request.getAppName());
+        agentVO.setChannelServer(request.getChannelServer());
+        agentVO.setClassPath(request.getClassPath());
     }
 
     @Override

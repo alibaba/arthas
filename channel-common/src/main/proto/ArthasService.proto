@@ -234,6 +234,8 @@ message AgentInfo {
     string ip = 5;
     string osVersion = 6;
     string appName = 7;
+    string channelServer=8;
+    string classPath=9;
 }
 
 message RegisterResult {

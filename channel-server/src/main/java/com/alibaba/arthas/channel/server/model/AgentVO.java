@@ -1,8 +1,5 @@
 package com.alibaba.arthas.channel.server.model;
 
-
-import java.util.Date;
-
 /**
  *
  * Arthas agent info
@@ -23,6 +20,10 @@ public class AgentVO {
     private String osVersion;
 
     private String appName;
+
+    private String channelServer;
+
+    private String classPath;
 
     private String desc;
 
@@ -86,6 +87,22 @@ public class AgentVO {
 
     public void setAppName(String appName) {
         this.appName = appName;
+    }
+
+    public String getChannelServer() {
+        return channelServer;
+    }
+
+    public void setChannelServer(String channelServer) {
+        this.channelServer = channelServer;
+    }
+
+    public String getClassPath() {
+        return classPath;
+    }
+
+    public void setClassPath(String classPath) {
+        this.classPath = classPath;
     }
 
     public String getDesc() {
