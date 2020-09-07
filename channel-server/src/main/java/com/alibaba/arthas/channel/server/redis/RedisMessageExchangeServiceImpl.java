@@ -81,28 +81,29 @@ public class RedisMessageExchangeServiceImpl implements MessageExchangeService {
 
         Mono<byte[]> mono = redisTemplate.opsForList().rightPop(topic.getTopic(), Duration.ofMillis(timeout));
         mono.doOnSuccess(messageBytes -> {
-            if (messageBytes != null) {
-                boolean next = messageHandler.onMessage(messageBytes);
-                if (next) {
-                    subscribe(topic, timeout, messageHandler);
+            //schedule running, avoid blocking redis reactive
+            executorService.submit(() -> {
+                if (messageBytes != null) {
+                    boolean next = messageHandler.onMessage(messageBytes);
+                    if (next) {
+                        subscribe(topic, timeout, messageHandler);
+                    }
+                } else {
+                    boolean next = messageHandler.onTimeout();
+                    if (next) {
+                        subscribe(topic, timeout, messageHandler);
+                    }
                 }
-            } else {
-                boolean next = messageHandler.onTimeout();
-                if (next) {
-                    subscribe(topic, timeout, messageHandler);
-                }
-            }
+            });
         }).doOnError(throwable -> {
-            if (throwable instanceof QueryTimeoutException) {
-                //ignore Redis command timed out
-                subscribe(topic, timeout, messageHandler);
-
-//                executorService.submit(() -> {
-//                    subscribe(topic, timeout, messageHandler);
-//                });
-            } else {
-                logger.error("blocking pop message failure: {}", topic, throwable);
-            }
+            executorService.submit(() -> {
+                if (throwable instanceof QueryTimeoutException) {
+                    //ignore Redis command timed out
+                    subscribe(topic, timeout, messageHandler);
+                } else {
+                    logger.error("blocking pop message failure: {}", topic, throwable);
+                }
+            });
         }).subscribe();
 
     }
