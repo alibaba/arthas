@@ -20,10 +20,8 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
 import org.springframework.data.redis.connection.ReactiveRedisConnectionFactory;
-import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.data.redis.core.ReactiveRedisTemplate;
-import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.data.redis.core.StringRedisTemplate;
+import org.springframework.data.redis.core.ReactiveStringRedisTemplate;
 import org.springframework.data.redis.serializer.RedisSerializationContext;
 import org.springframework.data.redis.serializer.RedisSerializer;
 
@@ -123,17 +121,6 @@ public class ChannelServerConfiguration {
         }
 
         @Bean
-        public RedisTemplate<String, byte[]> redisTemplate(RedisConnectionFactory redisConnectionFactory) {
-            RedisTemplate<String, byte[]> template = new RedisTemplate<String, byte[]>();
-            template.setKeySerializer(RedisSerializer.string());
-            template.setValueSerializer(RedisSerializer.byteArray());
-            template.setHashKeySerializer(RedisSerializer.string());
-            template.setHashValueSerializer(RedisSerializer.byteArray());
-            template.setConnectionFactory(redisConnectionFactory);
-            return template;
-        }
-
-        @Bean
         public ReactiveRedisTemplate<String, byte[]> reactiveRedisTemplate(ReactiveRedisConnectionFactory redisConnectionFactory) {
             ReactiveRedisTemplate<String, byte[]> template = new ReactiveRedisTemplate (redisConnectionFactory, RedisSerializationContext
                     .<String, byte[]>newSerializationContext()
@@ -146,9 +133,8 @@ public class ChannelServerConfiguration {
         }
 
         @Bean
-        public StringRedisTemplate stringRedisTemplate(RedisConnectionFactory redisConnectionFactory) {
-            StringRedisTemplate template = new StringRedisTemplate();
-            template.setConnectionFactory(redisConnectionFactory);
+        public ReactiveStringRedisTemplate reactiveStringRedisTemplate(ReactiveRedisConnectionFactory redisConnectionFactory) {
+            ReactiveStringRedisTemplate template = new ReactiveStringRedisTemplate(redisConnectionFactory);
             return template;
         }
     }

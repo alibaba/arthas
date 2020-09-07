@@ -20,6 +20,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.util.Optional;
+
 /**
  * @author gongdewei 2020/8/10
  */
@@ -53,13 +55,14 @@ public class ArthasServiceGrpcImpl extends ArthasServiceGrpc.ArthasServiceImplBa
     }
 
     private void subscribeAgentRequests(String agentId, StreamObserver<ActionRequest> responseObserver) {
-        AgentVO agentVO = agentManageService.findAgentById(agentId);
-        if (agentVO == null) {
+        Optional<AgentVO> optionalAgentVO = agentManageService.findAgentById(agentId).block();
+        if (!optionalAgentVO.isPresent()) {
             logger.info("Agent not found: "+agentId);
             responseObserver.onError(new RuntimeException("Agent not found: "+agentId));
             return;
         }
 
+        AgentVO agentVO = optionalAgentVO.get();
         if (AgentStatus.DOWN.name().equals(agentVO.getAgentStatus())) {
             logger.info("Agent status is not ready, stop processing agent requests. agentId: {}", agentId);
             responseObserver.onError(new RuntimeException("Agent status is not ready: "+agentId));
@@ -154,9 +157,11 @@ public class ArthasServiceGrpcImpl extends ArthasServiceGrpc.ArthasServiceImplBa
     @Override
     public void register(AgentInfo request, StreamObserver<RegisterResult> responseObserver) {
         long now = System.currentTimeMillis();
-        AgentVO agentVO = agentManageService.findAgentById(request.getAgentId());
-        if (agentVO != null) {
-            copyTo(request, agentVO);
+        Optional<AgentVO> optionalAgentVO = agentManageService.findAgentById(request.getAgentId()).block();
+        AgentVO agentVO;
+        if (optionalAgentVO.isPresent()) {
+            agentVO = optionalAgentVO.get();
+            copyAgentVO(request, agentVO);
             agentVO.setModifiedTime(now);
             agentVO.setHeartbeatTime(now);
             agentManageService.updateAgent(agentVO);
@@ -166,7 +171,7 @@ public class ArthasServiceGrpcImpl extends ArthasServiceGrpc.ArthasServiceImplBa
                     .build());
         } else {
             agentVO = new AgentVO();
-            copyTo(request, agentVO);
+            copyAgentVO(request, agentVO);
             agentVO.setCreatedTime(now);
             agentVO.setModifiedTime(now);
             agentVO.setHeartbeatTime(now);
@@ -179,7 +184,7 @@ public class ArthasServiceGrpcImpl extends ArthasServiceGrpc.ArthasServiceImplBa
         logger.info("register agent: "+agentVO.getAgentId());
     }
 
-    private void copyTo(AgentInfo request, AgentVO agentVO) {
+    private void copyAgentVO(AgentInfo request, AgentVO agentVO) {
         agentVO.setAgentId(request.getAgentId());
         agentVO.setAgentVersion(request.getAgentVersion());
         agentVO.setAgentStatus(request.getAgentStatus().name());
@@ -193,8 +198,8 @@ public class ArthasServiceGrpcImpl extends ArthasServiceGrpc.ArthasServiceImplBa
 
     @Override
     public void heartbeat(HeartbeatRequest request, StreamObserver<HeartbeatResponse> responseObserver) {
-        AgentVO agentVO = agentManageService.findAgentById(request.getAgentId());
-        if (agentVO == null) {
+        Optional<AgentVO> optionalAgentVO = agentManageService.findAgentById(request.getAgentId()).block();
+        if (!optionalAgentVO.isPresent()) {
             responseObserver.onNext(HeartbeatResponse.newBuilder()
                     .setStatus(1001)
                     .setMessage("Agent not found: "+request.getAgentId())

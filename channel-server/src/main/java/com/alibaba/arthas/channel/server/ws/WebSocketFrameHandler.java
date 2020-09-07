@@ -27,6 +27,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 
 /**
  * @author gongdewei 2020/9/2
@@ -82,14 +83,15 @@ public class WebSocketFrameHandler extends SimpleChannelInboundHandler<WebSocket
         String agentId = agentIds.get(0);
         logger.info("try to connect to arthas agent, id: " + agentId);
 
-        AgentVO agentVO = agentManageService.findAgentById(agentId);
-        if (agentVO == null) {
+        Optional<AgentVO> optionalAgentVO = agentManageService.findAgentById(agentId).block();
+        if (!optionalAgentVO.isPresent()) {
             String error = "Can not find arthas agent by id: " + agentIds;
             sendErrorAndClose(ctx, error);
             logger.error("Can not find arthas agent by id: {}", agentIds);
             throw new IllegalArgumentException(error);
         }
 
+        AgentVO agentVO = optionalAgentVO.get();
         if (!AgentStatus.IN_SERVICE.name().equals(agentVO.getAgentStatus())) {
             String error = "Agent ["+agentId+"] is unavailable, please try again later.";
             sendErrorAndClose(ctx, error);
@@ -153,8 +155,8 @@ public class WebSocketFrameHandler extends SimpleChannelInboundHandler<WebSocket
                     return false;
                 }
                 //check agent status
-                AgentVO agentVO = agentManageService.findAgentById(agentId);
-                if (agentVO == null || !AgentStatus.IN_SERVICE.name().equals(agentVO.getAgentStatus())) {
+                Optional<AgentVO> optionalAgentVO = agentManageService.findAgentById(agentId).block();
+                if (!optionalAgentVO.isPresent() || !AgentStatus.IN_SERVICE.name().equals(optionalAgentVO.get().getAgentStatus())) {
                     logger.warn("Agent status is not ready, closing console. agentId: {}, consoleId: {}", agentId, consoleId);
                     sendErrorAndClose(ctx, "Agent is unavailable, please try again later.");
                     return false;

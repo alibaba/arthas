@@ -2,11 +2,12 @@ package com.alibaba.arthas.channel.server.service.impl;
 
 import com.alibaba.arthas.channel.server.model.AgentVO;
 import com.alibaba.arthas.channel.server.service.AgentManageService;
+import reactor.core.publisher.Mono;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
@@ -18,13 +19,13 @@ public class AgentManageServiceImpl implements AgentManageService {
     private Map<String, AgentVO> agentStorage = new ConcurrentHashMap<String, AgentVO>();
 
     @Override
-    public List<AgentVO> listAgents() {
-        return new ArrayList<AgentVO>(agentStorage.values());
+    public Mono<List<AgentVO>> listAgents() {
+        return Mono.just(new ArrayList<AgentVO>(agentStorage.values()));
     }
 
     @Override
-    public AgentVO findAgentById(String agentId) {
-        return agentStorage.get(agentId);
+    public Mono<Optional<AgentVO>> findAgentById(String agentId) {
+        return Mono.just(Optional.ofNullable(agentStorage.get(agentId)));
     }
 
     @Override

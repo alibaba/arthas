@@ -7,17 +7,14 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.DataAccessException;
-import org.springframework.data.redis.connection.RedisConnection;
-import org.springframework.data.redis.core.Cursor;
-import org.springframework.data.redis.core.RedisCallback;
+import org.springframework.data.redis.core.ReactiveStringRedisTemplate;
 import org.springframework.data.redis.core.ScanOptions;
-import org.springframework.data.redis.core.StringRedisTemplate;
+import reactor.core.publisher.Mono;
 
-import java.io.Closeable;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
+import java.util.function.Function;
 
 /**
  * @author gongdewei 2020/8/10
@@ -29,54 +26,35 @@ public class RedisAgentManageServiceImpl implements AgentManageService {
     private static final Logger logger = LoggerFactory.getLogger(RedisAgentManageServiceImpl.class);
 
     @Autowired
-    private StringRedisTemplate redisTemplate;
+    private ReactiveStringRedisTemplate redisTemplate;
 
     @Override
-    public List<AgentVO> listAgents() {
-        List<AgentVO> agentList = new ArrayList<AgentVO>();
-        List<String> keys = new ArrayList<String>();
+    public Mono<List<AgentVO>> listAgents() {
         ScanOptions scanOptions = ScanOptions.scanOptions().match(prefix + "*").count(1000).build();
-        redisTemplate.executeWithStickyConnection(new RedisCallback<Closeable>() {
-            @Override
-            public Closeable doInRedis(RedisConnection connection) throws DataAccessException {
-                Cursor<byte[]> cursor = null;
-                try {
-                    cursor = connection.scan(scanOptions);
-                    while (cursor.hasNext()) {
-                        String key = new String(cursor.next());
-                        keys.add(key);
-                    }
-                } finally {
-                    try {
-                        if (cursor != null) {
-                            cursor.close();
+        return redisTemplate.scan(scanOptions)
+                .collectList()
+                .flatMap((Function<List<String>, Mono<List<String>>>) keys -> redisTemplate.opsForValue().multiGet(keys))
+                .flatMap((Function<List<String>, Mono<List<AgentVO>>>) jsons -> {
+                    List<AgentVO> agentList = new ArrayList<AgentVO>();
+                    for (String json : jsons) {
+                        AgentVO agentVO = null;
+                        try {
+                            agentVO = JSON.parseObject(json, AgentVO.class);
+                            agentList.add(agentVO);
+                        } catch (Exception e) {
+                            logger.error("parse agent data failure, agent json: {}", json, e);
                         }
-                    } catch (IOException e) {
-                        // e.printStackTrace();
                     }
-                }
-                return null;
-            }
-        });
-
-        for (String key : keys) {
-            String value = redisTemplate.opsForValue().get(key);
-            AgentVO agentVO = null;
-            try {
-                agentVO = JSON.parseObject(value, AgentVO.class);
-                agentList.add(agentVO);
-            } catch (Exception e) {
-                logger.error("parse agent data failure, agent key: {}", key, e);
-            }
-        }
-        return agentList;
+                    return Mono.just(agentList);
+                });
     }
 
     @Override
-    public AgentVO findAgentById(String agentId) {
-        String strValue = redisTemplate.opsForValue().get(prefix + agentId);
-        AgentVO agentVO =  JSON.parseObject(strValue, AgentVO.class);
-        return agentVO;
+    public Mono<Optional<AgentVO>> findAgentById(String agentId) {
+        return redisTemplate.opsForValue()
+                .get(prefix + agentId)
+                .map(json -> Optional.of(JSON.parseObject(json, AgentVO.class)))
+                .switchIfEmpty(Mono.just(Optional.empty()));
     }
 
     @Override
@@ -85,7 +63,7 @@ public class RedisAgentManageServiceImpl implements AgentManageService {
             throw new IllegalArgumentException("agent is empty");
         }
         String json = JSON.toJSONString(agentVO);
-        redisTemplate.opsForValue().set(prefix+agentVO.getAgentId(), json);
+        redisTemplate.opsForValue().set(prefix+agentVO.getAgentId(), json).subscribe();
     }
 
     @Override
@@ -95,7 +73,7 @@ public class RedisAgentManageServiceImpl implements AgentManageService {
 
     @Override
     public void removeAgentById(String agentId) {
-        redisTemplate.delete(prefix+agentId);
+        redisTemplate.delete(prefix+agentId).subscribe();
     }
 
 }

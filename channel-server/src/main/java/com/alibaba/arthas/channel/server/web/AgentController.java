@@ -25,10 +25,13 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.HttpClientErrorException;
+import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
+import reactor.core.publisher.Mono;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Optional;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
@@ -51,7 +54,7 @@ public class AgentController {
 
 
     @RequestMapping("/agents")
-    public List<AgentVO> listAgents() {
+    public Mono<List<AgentVO>> listAgents() {
         return agentManageService.listAgents();
     }
 
@@ -292,11 +295,11 @@ public class AgentController {
     }
 
     private AgentVO checkAgentExists(String agentId) {
-        AgentVO agentVO = agentManageService.findAgentById(agentId);
-        if (agentVO == null) {
-            throw new HttpClientErrorException(HttpStatus.NOT_FOUND, "Agent not found");
+        Optional<AgentVO> optionalAgentVO = agentManageService.findAgentById(agentId).block();
+        if (!optionalAgentVO.isPresent()) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Agent not found");
         }
-        return agentVO;
+        return optionalAgentVO.get();
     }
 
 }
