@@ -189,12 +189,12 @@ You can verify the number of samples by executing `profiler getSamples`.
 
 ### Use `execute` action to execute complex commands
 
-`profiler execute 'start'`{{execute T2}}
+`profiler execute 'start,framebuf=5000000'`{{execute T2}}
 
 For example, start sampling:  
 
 ```bash
-profiler execute 'start'
+profiler execute 'start,framebuf=5000000'
 ```
 
 Stop sampling and save to the specified file:
@@ -205,4 +205,4 @@ Stop sampling and save to the specified file:
 profiler execute 'stop,file=/tmp/result.svg'
 ```
 
-Specific format reference: [arguments.cpp#L34](https://github.com/jvm-profiling-tools/async-profiler/blob/v1.6/src/arguments.cpp#L34)
+Specific format reference: [arguments.cpp](https://github.com/jvm-profiling-tools/async-profiler/blob/v1.8.1/src/arguments.cpp#L50)
