@@ -19,12 +19,14 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
+import org.springframework.data.redis.connection.ReactiveRedisConnectionFactory;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
+import org.springframework.data.redis.core.ReactiveRedisTemplate;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.StringRedisTemplate;
+import org.springframework.data.redis.serializer.RedisSerializationContext;
 import org.springframework.data.redis.serializer.RedisSerializer;
 
-import java.net.UnknownHostException;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.ThreadFactory;
@@ -39,7 +41,7 @@ public class ChannelServerConfiguration {
     @Bean
     public ScheduledExecutorService executorService() {
         // 设置较大的corePoolSize，避免长时间运行的task阻塞调度队列 (https://developer.aliyun.com/article/5897 "1.2 线程数量控制")
-        int corePoolSize = 20;
+        int corePoolSize = 10;
         ScheduledExecutorService executorService = new ScheduledThreadPoolExecutor(corePoolSize, new ThreadFactory() {
             @Override
             public Thread newThread(Runnable r) {
@@ -121,8 +123,7 @@ public class ChannelServerConfiguration {
         }
 
         @Bean
-        public RedisTemplate<String, byte[]> redisTemplate(RedisConnectionFactory redisConnectionFactory)
-                throws UnknownHostException {
+        public RedisTemplate<String, byte[]> redisTemplate(RedisConnectionFactory redisConnectionFactory) {
             RedisTemplate<String, byte[]> template = new RedisTemplate<String, byte[]>();
             template.setKeySerializer(RedisSerializer.string());
             template.setValueSerializer(RedisSerializer.byteArray());
@@ -133,8 +134,19 @@ public class ChannelServerConfiguration {
         }
 
         @Bean
-        public StringRedisTemplate stringRedisTemplate(RedisConnectionFactory redisConnectionFactory)
-                throws UnknownHostException {
+        public ReactiveRedisTemplate<String, byte[]> reactiveRedisTemplate(ReactiveRedisConnectionFactory redisConnectionFactory) {
+            ReactiveRedisTemplate<String, byte[]> template = new ReactiveRedisTemplate (redisConnectionFactory, RedisSerializationContext
+                    .<String, byte[]>newSerializationContext()
+                    .key(RedisSerializer.string())
+                    .value(RedisSerializer.byteArray())
+                    .hashKey(RedisSerializer.string())
+                    .hashValue(RedisSerializer.string())
+                    .build());
+            return template;
+        }
+
+        @Bean
+        public StringRedisTemplate stringRedisTemplate(RedisConnectionFactory redisConnectionFactory) {
             StringRedisTemplate template = new StringRedisTemplate();
             template.setConnectionFactory(redisConnectionFactory);
             return template;

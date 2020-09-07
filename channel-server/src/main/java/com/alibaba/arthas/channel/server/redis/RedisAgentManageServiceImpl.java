@@ -7,11 +7,15 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataAccessException;
 import org.springframework.data.redis.connection.RedisConnection;
 import org.springframework.data.redis.core.Cursor;
+import org.springframework.data.redis.core.RedisCallback;
 import org.springframework.data.redis.core.ScanOptions;
 import org.springframework.data.redis.core.StringRedisTemplate;
 
+import java.io.Closeable;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -32,16 +36,28 @@ public class RedisAgentManageServiceImpl implements AgentManageService {
         List<AgentVO> agentList = new ArrayList<AgentVO>();
         List<String> keys = new ArrayList<String>();
         ScanOptions scanOptions = ScanOptions.scanOptions().match(prefix + "*").count(1000).build();
-        RedisConnection connection = redisTemplate.getConnectionFactory().getConnection();
-        try {
-            Cursor<byte[]> cursor = connection.scan(scanOptions);
-            while (cursor.hasNext()) {
-                String key = new String(cursor.next());
-                keys.add(key);
+        redisTemplate.executeWithStickyConnection(new RedisCallback<Closeable>() {
+            @Override
+            public Closeable doInRedis(RedisConnection connection) throws DataAccessException {
+                Cursor<byte[]> cursor = null;
+                try {
+                    cursor = connection.scan(scanOptions);
+                    while (cursor.hasNext()) {
+                        String key = new String(cursor.next());
+                        keys.add(key);
+                    }
+                } finally {
+                    try {
+                        if (cursor != null) {
+                            cursor.close();
+                        }
+                    } catch (IOException e) {
+                        // e.printStackTrace();
+                    }
+                }
+                return null;
             }
-        } finally {
-            connection.close();
-        }
+        });
 
         for (String key : keys) {
             String value = redisTemplate.opsForValue().get(key);

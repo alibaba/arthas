@@ -35,6 +35,6 @@ public interface MessageExchangeService {
          */
         boolean onMessage(byte[] messageBytes);
 
-        void onTimeout();
+        boolean onTimeout();
     }
 }

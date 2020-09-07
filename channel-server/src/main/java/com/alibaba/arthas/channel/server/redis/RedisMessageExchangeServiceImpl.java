@@ -7,12 +7,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.QueryTimeoutException;
-import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.core.ReactiveRedisTemplate;
+import reactor.core.publisher.Mono;
 
+import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
 
 /**
  * Message exchange for cluster channel server
@@ -26,7 +27,7 @@ public class RedisMessageExchangeServiceImpl implements MessageExchangeService {
 
 
     @Autowired
-    private RedisTemplate<String, byte[]> redisTemplate;
+    private ReactiveRedisTemplate<String, byte[]> redisTemplate;
 
     @Autowired
     private ScheduledExecutorService executorService;
@@ -38,7 +39,7 @@ public class RedisMessageExchangeServiceImpl implements MessageExchangeService {
 
     @Override
     public void removeTopic(Topic topic) throws MessageExchangeException {
-        redisTemplate.delete(topic.getTopic());
+        redisTemplate.delete(topic.getTopic()).subscribe();
     }
 
     @Override
@@ -58,50 +59,52 @@ public class RedisMessageExchangeServiceImpl implements MessageExchangeService {
     @Override
     public void pushMessage(Topic topic, byte[] messageBytes) throws MessageExchangeException {
         String key = topic.getTopic();
-        redisTemplate.opsForList().leftPush(key, messageBytes);
-        redisTemplate.expire(key, 10000, TimeUnit.MILLISECONDS);
+        redisTemplate.opsForList().leftPush(key, messageBytes).doOnSuccess(value -> {
+            redisTemplate.expire(key, Duration.ofMillis(10000)).subscribe();
+        }).subscribe();
+
     }
 
     @Override
     public byte[] pollMessage(Topic topic, int timeout) throws MessageExchangeException {
-        return redisTemplate.opsForList().rightPop(topic.getTopic(), timeout, TimeUnit.MILLISECONDS);
+        //TODO remove mono.block()
+        return redisTemplate.opsForList().rightPop(topic.getTopic(), Duration.ofMillis(timeout)).block();
     }
 
     @Override
-    public void subscribe(Topic topic, MessageHandler messageHandler) throws MessageExchangeException {
+    public void subscribe(Topic topic, MessageHandler messageHandler) {
         this.subscribe(topic, 30000, messageHandler);
     }
 
     @Override
-    public void subscribe(final Topic topic, final int timeout, final MessageHandler messageHandler) throws MessageExchangeException {
+    public void subscribe(final Topic topic, final int timeout, final MessageHandler messageHandler) {
 
-        executorService.submit(new Runnable() {
-            @Override
-            public void run() {
-                while (true) {
-                    try {
-                        byte[] messageBytes = redisTemplate.opsForList().rightPop(topic.getTopic(), timeout, TimeUnit.MILLISECONDS);
-                        if (messageBytes != null) {
-                            boolean next = messageHandler.onMessage(messageBytes);
-                            if (!next) {
-                                logger.debug("message handler interrupted: {}", topic);
-                                break;
-                            }
-                        }else {
-                            messageHandler.onTimeout();
-                            logger.debug("subscribe message timeout: {}", topic);
-                            break;
-                        }
-                    } catch (Throwable e) {
-                        if (e instanceof QueryTimeoutException) {
-                            //ignore Redis command timed out
-                        } else {
-                            logger.error("blocking pop message failure: {}", topic, e);
-                        }
-                    }
+        Mono<byte[]> mono = redisTemplate.opsForList().rightPop(topic.getTopic(), Duration.ofMillis(timeout));
+        mono.doOnSuccess(messageBytes -> {
+            if (messageBytes != null) {
+                boolean next = messageHandler.onMessage(messageBytes);
+                if (next) {
+                    subscribe(topic, timeout, messageHandler);
+                }
+            } else {
+                boolean next = messageHandler.onTimeout();
+                if (next) {
+                    subscribe(topic, timeout, messageHandler);
                 }
             }
-        });
+        }).doOnError(throwable -> {
+            if (throwable instanceof QueryTimeoutException) {
+                //ignore Redis command timed out
+                subscribe(topic, timeout, messageHandler);
+
+//                executorService.submit(() -> {
+//                    subscribe(topic, timeout, messageHandler);
+//                });
+            } else {
+                logger.error("blocking pop message failure: {}", topic, throwable);
+            }
+        }).subscribe();
+
     }
 
     @Override

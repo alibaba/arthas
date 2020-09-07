@@ -198,16 +198,9 @@ public class ApiActionDelegateServiceImpl implements ApiActionDelegateService {
             }
 
             @Override
-            public void onTimeout() {
+            public boolean onTimeout() {
                 // subscribe timeout
-                boolean subscibing = responseListener.onTimeout();
-                if (subscibing) {
-                    try {
-                        subscribeResults(agentId, requestId, timeout, responseListener);
-                    } catch (Exception e) {
-                        logger.error("subscribe results error", e);
-                    }
-                }
+                return responseListener.onTimeout();
             }
         });
     }
@@ -260,10 +253,11 @@ public class ApiActionDelegateServiceImpl implements ApiActionDelegateService {
             }
 
             @Override
-            public void onTimeout() {
+            public boolean onTimeout() {
                 promise.setSuccess(new ApiResponse()
                         .setState(ApiState.FAILED)
                         .setMessage("Timeout"));
+                return false;
             }
         });
         return promise;
@@ -301,11 +295,12 @@ public class ApiActionDelegateServiceImpl implements ApiActionDelegateService {
             }
 
             @Override
-            public void onTimeout() {
+            public boolean onTimeout() {
                 promise.setSuccess(ActionResponse.newBuilder()
                         .setStatus(ResponseStatus.FAILED)
                         .setMessage(StringValue.of("timeout"))
                         .build());
+                return false;
             }
         });
         return promise;

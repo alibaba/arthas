@@ -94,8 +94,9 @@ public class ArthasServiceGrpcImpl extends ArthasServiceGrpc.ArthasServiceImplBa
                 }
 
                 @Override
-                public void onTimeout() {
+                public boolean onTimeout() {
                     subscribeAgentRequests(agentId, responseObserver);
+                    return false;
                 }
             });
         } catch (Throwable e) {
