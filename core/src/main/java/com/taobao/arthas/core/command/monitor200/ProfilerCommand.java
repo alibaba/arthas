@@ -56,7 +56,7 @@ import one.profiler.Counter;
         + "  profiler dumpFlat            # Dump flat profile, i.e. the histogram of the hottest methods\n"
         + "  profiler dumpCollapsed       # Dump profile in 'collapsed stacktraces' format\n"
         + "  profiler dumpTraces          # Dump collected stack traces\n"
-        + "  profiler execute 'start'                       # Execute an agent-compatible profiling command\n"
+        + "  profiler execute 'start,framebuf=5000000'      # Execute an agent-compatible profiling command\n"
         + "  profiler execute 'stop,file=/tmp/result.svg'   # Execute an agent-compatible profiling command\n"
         + Constants.WIKI + Constants.WIKI_HOME + "profiler")
 //@formatter:on
@@ -78,6 +78,11 @@ public class ProfilerCommand extends AnnotatedCommand {
      * sampling interval in ns (default: 10'000'000, i.e. 10 ms)
      */
     private Long interval;
+
+    /**
+     * size of the buffer for stack frames (default: 1'000'000)
+     */
+    private Long framebuf;
 
     /**
      * profile different threads separately
@@ -148,6 +153,13 @@ public class ProfilerCommand extends AnnotatedCommand {
     @DefaultValue("10000000")
     public void setInterval(long interval) {
         this.interval = interval;
+    }
+
+    @Option(shortName = "b", longName = "framebuf")
+    @Description("size of the buffer for stack frames (default: 1'000'000)")
+    @DefaultValue("1000000")
+    public void setFramebuf(long framebuf) {
+        this.framebuf = framebuf;
     }
 
     @Option(shortName = "f", longName = "file")
@@ -246,6 +258,9 @@ public class ProfilerCommand extends AnnotatedCommand {
         }
         if (this.interval != null) {
             sb.append("interval=").append(this.interval).append(',');
+        }
+        if (this.framebuf != null) {
+            sb.append("framebuf=").append(this.framebuf).append(',');
         }
         if (this.threads) {
             sb.append("threads").append(',');
