@@ -86,7 +86,7 @@ public class ChannelServerAutoConfiguration {
 
     @Bean(initMethod = "start", destroyMethod = "stop")
     @ConditionalOnMissingBean
-    @ConditionalOnProperty(value = "channel.server.backend.enabled", havingValue = "true", matchIfMissing = false)
+    @ConditionalOnProperty(value = ChannelServerProperties.PREFIX+".backend.enabled", havingValue = "true", matchIfMissing = false)
     public ChannelServer channelServer(ChannelServerProperties serverProperties) {
         ChannelServer channelServer = new ChannelServer();
         channelServer.setPort(serverProperties.getBackend().getPort());
@@ -95,7 +95,7 @@ public class ChannelServerAutoConfiguration {
 
     @Bean(initMethod = "start", destroyMethod = "stop")
     @ConditionalOnMissingBean
-    @ConditionalOnProperty(value = "channel.server.websocket.enabled", havingValue = "true", matchIfMissing = false)
+    @ConditionalOnProperty(value = ChannelServerProperties.PREFIX+".websocket.enabled", havingValue = "true", matchIfMissing = false)
     public WebSocketServer webSocketServer(ChannelServerProperties serverProperties) {
         WebSocketServer server = new WebSocketServer();
         ChannelServerProperties.Server websocket = serverProperties.getWebsocket();

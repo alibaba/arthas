@@ -2,9 +2,10 @@ package com.alibaba.arthas.channel.server.autoconfigure;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
-@ConfigurationProperties(prefix = "channel.server")
+@ConfigurationProperties(prefix = ChannelServerProperties.PREFIX)
 public class ChannelServerProperties {
 
+    public static final String PREFIX = "arthas.channel.server";
     private Server websocket = new Server();
     private Server backend = new Server();
 
