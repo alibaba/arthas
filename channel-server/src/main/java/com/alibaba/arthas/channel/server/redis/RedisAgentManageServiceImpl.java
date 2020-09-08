@@ -12,6 +12,7 @@ import org.springframework.data.redis.core.ScanOptions;
 import reactor.core.publisher.Mono;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Function;
@@ -33,7 +34,13 @@ public class RedisAgentManageServiceImpl implements AgentManageService {
         ScanOptions scanOptions = ScanOptions.scanOptions().match(prefix + "*").count(1000).build();
         return redisTemplate.scan(scanOptions)
                 .collectList()
-                .flatMap((Function<List<String>, Mono<List<String>>>) keys -> redisTemplate.opsForValue().multiGet(keys))
+                .flatMap((Function<List<String>, Mono<List<String>>>) keys -> {
+                    if (keys.isEmpty()) {
+                        return Mono.empty();
+                    } else {
+                        return redisTemplate.opsForValue().multiGet(keys);
+                    }
+                })
                 .flatMap((Function<List<String>, Mono<List<AgentVO>>>) jsons -> {
                     List<AgentVO> agentList = new ArrayList<AgentVO>();
                     for (String json : jsons) {
@@ -46,7 +53,7 @@ public class RedisAgentManageServiceImpl implements AgentManageService {
                         }
                     }
                     return Mono.just(agentList);
-                });
+                }).defaultIfEmpty(Collections.EMPTY_LIST);
     }
 
     @Override
