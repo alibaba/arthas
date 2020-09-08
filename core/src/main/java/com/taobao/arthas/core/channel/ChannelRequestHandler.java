@@ -184,8 +184,8 @@ public class ChannelRequestHandler implements ChannelClient.RequestListener {
     }
 
     private void processOpenConsole(final ActionRequest request) {
+        final String consoleId = consoleClientManager.generateConsoleId();
         try {
-            final String consoleId = consoleClientManager.generateConsoleId();
 
             final BlockingQueue<ConsoleData> queue = new LinkedBlockingQueue<ConsoleData>(1000);
 
@@ -280,10 +280,10 @@ public class ChannelRequestHandler implements ChannelClient.RequestListener {
             sendResponse(response);
         } catch (Throwable e) {
             logger.error("open console error", e);
+            consoleClientManager.closeConsoleClient(consoleId);
             ActionResponse.Builder response = createResponse(request, ResponseStatus.FAILED);
             response.setMessage(StringValue.of("open console error"));
             sendResponse(response);
-
         }
     }
 
