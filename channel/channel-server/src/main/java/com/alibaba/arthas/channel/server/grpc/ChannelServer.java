@@ -1,14 +1,11 @@
 package com.alibaba.arthas.channel.server.grpc;
 
-import com.alibaba.arthas.channel.server.conf.ScheduledExecutorConfig;
 import io.grpc.Server;
 import io.grpc.ServerBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import java.io.IOException;
-import java.util.concurrent.ScheduledExecutorService;
 
 /**
  * @author gongdewei 2020/8/14
@@ -20,36 +17,28 @@ public class ChannelServer {
     @Autowired
     private ArthasServiceGrpcImpl arthasServiceGrpc;
 
-    @Autowired
-    private ScheduledExecutorConfig executorServiceConfig;
-
     private Server server;
     private int port = 7700;
 
     public void start() throws Exception  {
+        try {
+            if (server == null) {
+                server = ServerBuilder.forPort(port)
+                        .addService(arthasServiceGrpc)
+                        //enable server-reflect
+                        //.addService(ProtoReflectionService.newInstance())
+                        .build();
 
-        executorServiceConfig.getExecutorService().submit(new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    if (server == null) {
-                        server = ServerBuilder.forPort(port)
-                                .addService(arthasServiceGrpc)
-                                //enable server-reflect
-                                //.addService(ProtoReflectionService.newInstance())
-                                .build();
+                server.start();
 
-                        server.start();
+                logger.info("Channel server started on port: {} (grpc)", port);
 
-                        logger.info("Channel server started on port: {} (grpc)", port);
-
-                        //server.awaitTermination();
-                    }
-                } catch (Throwable e) {
-                    logger.error("Channel server start failure", e);
-                }
+                //server.awaitTermination();
             }
-        });
+        } catch (Exception e) {
+            logger.error("Channel server start failure", e);
+            throw e;
+        }
     }
 
     public void stop() throws Exception {
