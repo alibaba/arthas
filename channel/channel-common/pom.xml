@@ -7,7 +7,7 @@
         <groupId>com.taobao.arthas</groupId>
         <artifactId>arthas-all</artifactId>
         <version>3.3.10-SNAPSHOT</version>
-        <relativePath>../pom.xml</relativePath>
+        <relativePath>../../pom.xml</relativePath>
     </parent>
 
     <artifactId>arthas-channel-common</artifactId>

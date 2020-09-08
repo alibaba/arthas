@@ -71,9 +71,9 @@
         <module>testcase</module>
         <module>site</module>
         <module>packaging</module>
-        <module>channel-common</module>
-        <module>channel-server</module>
-        <module>channel-client</module>
+        <module>channel/channel-common</module>
+        <module>channel/channel-server</module>
+        <module>channel/channel-client</module>
     </modules>
 
     <profiles>
