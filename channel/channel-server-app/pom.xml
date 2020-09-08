@@ -2,16 +2,16 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-    <modelVersion>4.0.0</modelVersion>
     <parent>
-        <groupId>com.taobao.arthas</groupId>
         <artifactId>arthas-all</artifactId>
+        <groupId>com.taobao.arthas</groupId>
         <version>3.3.10-SNAPSHOT</version>
         <relativePath>../../pom.xml</relativePath>
     </parent>
+    <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>arthas-channel-server</artifactId>
-    <name>arthas-channel-server</name>
+    <artifactId>arthas-channel-server-app</artifactId>
+    <name>arthas-channel-server-app</name>
 
     <properties>
         <maven.compiler.target>1.8</maven.compiler.target>
@@ -41,55 +41,9 @@
             <artifactId>spring-boot-starter-web</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.springframework.data</groupId>
-            <artifactId>spring-data-redis</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>io.lettuce</groupId>
-            <artifactId>lettuce-core</artifactId>
-        </dependency>
-
-        <dependency>
             <groupId>com.taobao.arthas</groupId>
-            <artifactId>arthas-channel-common</artifactId>
+            <artifactId>arthas-channel-server-starter</artifactId>
             <version>${project.version}</version>
-        </dependency>
-
-        <dependency>
-            <groupId>com.alibaba</groupId>
-            <artifactId>fastjson</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>org.apache.commons</groupId>
-            <artifactId>commons-lang3</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>com.taobao.arthas</groupId>
-            <artifactId>arthas-core</artifactId>
-            <version>${project.version}</version>
-            <scope>test</scope>
-            <optional>true</optional>
-            <exclusions>
-                <exclusion>
-                    <artifactId>arthas-tunnel-client</artifactId>
-                    <groupId>com.taobao.arthas</groupId>
-                </exclusion>
-                <exclusion>
-                    <artifactId>termd-core</artifactId>
-                    <groupId>com.alibaba.middleware</groupId>
-                </exclusion>
-            </exclusions>
-        </dependency>
-
-        <!-- for server-reflect -->
-        <dependency>
-            <groupId>io.grpc</groupId>
-            <artifactId>grpc-services</artifactId>
-            <version>${grpc.version}</version>
-            <scope>test</scope>
-            <optional>true</optional>
         </dependency>
     </dependencies>
 
@@ -101,6 +55,20 @@
                 <configuration>
                     <showDeprecation>true</showDeprecation>
                 </configuration>
+            </plugin>
+
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+                <version>2.1.7.RELEASE</version>
+                <executions>
+                    <execution>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>repackage</goal>
+                        </goals>
+                    </execution>
+                </executions>
             </plugin>
         </plugins>
     </build>

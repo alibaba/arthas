@@ -9,7 +9,5 @@ public interface AgentBizSerivce {
 
     void heartbeat(String agentId, String agentStatus, String agentVersion);
 
-    void cleanOutdatedAgents();
-
     void compareAndUpdateAgentStatus(String agentId, AgentStatus expectedStatus, AgentStatus newStatus);
 }

@@ -1,5 +1,6 @@
 package com.alibaba.arthas.channel.server.grpc;
 
+import com.alibaba.arthas.channel.server.conf.ScheduledExecutorConfig;
 import io.grpc.Server;
 import io.grpc.ServerBuilder;
 import org.slf4j.Logger;
@@ -20,14 +21,14 @@ public class ChannelServer {
     private ArthasServiceGrpcImpl arthasServiceGrpc;
 
     @Autowired
-    private ScheduledExecutorService executorService;
+    private ScheduledExecutorConfig executorServiceConfig;
 
     private Server server;
     private int port = 7700;
 
     public void start() throws Exception  {
 
-        executorService.submit(new Runnable() {
+        executorServiceConfig.getExecutorService().submit(new Runnable() {
             @Override
             public void run() {
                 try {

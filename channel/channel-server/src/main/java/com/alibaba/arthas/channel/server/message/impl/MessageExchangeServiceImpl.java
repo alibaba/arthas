@@ -1,5 +1,6 @@
 package com.alibaba.arthas.channel.server.message.impl;
 
+import com.alibaba.arthas.channel.server.conf.ScheduledExecutorConfig;
 import com.alibaba.arthas.channel.server.message.MessageExchangeException;
 import com.alibaba.arthas.channel.server.message.MessageExchangeService;
 import com.alibaba.arthas.channel.server.message.topic.Topic;
@@ -14,7 +15,6 @@ import java.util.Map;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.LinkedBlockingQueue;
-import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -28,7 +28,7 @@ public class MessageExchangeServiceImpl implements MessageExchangeService {
     private Map<Topic, TopicData> topicMap = new ConcurrentHashMap<Topic, TopicData>();
 
     @Autowired
-    private ScheduledExecutorService executorService;
+    private ScheduledExecutorConfig executorServiceConfig;
 
     @Override
     public void createTopic(Topic topic) throws MessageExchangeException {
@@ -108,7 +108,7 @@ public class MessageExchangeServiceImpl implements MessageExchangeService {
         topicData.setTimeout(timeout);
 
         final TopicData finalTopicData = topicData;
-        executorService.submit(new Runnable() {
+        executorServiceConfig.getExecutorService().submit(new Runnable() {
             @Override
             public void run() {
                 while (true) {

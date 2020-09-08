@@ -74,6 +74,8 @@
         <module>channel/channel-common</module>
         <module>channel/channel-server</module>
         <module>channel/channel-client</module>
+        <module>channel/channel-server-starter</module>
+        <module>channel/channel-server-app</module>
     </modules>
 
     <profiles>

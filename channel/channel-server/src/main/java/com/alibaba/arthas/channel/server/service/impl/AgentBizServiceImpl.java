@@ -8,7 +8,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.scheduling.annotation.Scheduled;
 import reactor.core.publisher.Mono;
 
 import java.util.List;
@@ -41,38 +40,6 @@ public class AgentBizServiceImpl implements AgentBizSerivce {
             }
             return Mono.empty();
         }).subscribe();
-    }
-
-    @Override
-    @Scheduled(fixedDelayString = "5000")
-    public void cleanOutdatedAgents() {
-        long now = System.currentTimeMillis();
-        Mono<List<AgentVO>> agentsMono = agentManageService.listAgents();
-        agentsMono.doOnSuccess(new Consumer<List<AgentVO>>() {
-            @Override
-            public void accept(List<AgentVO> agents) {
-                for (AgentVO agent : agents) {
-                    long heartbeatDelay = now - agent.getHeartbeatTime();
-                    if (heartbeatDelay > 60000) {
-                        logger.info("clean up dead agent: {}, heartbeat delay: {}", agent.getAgentId(), heartbeatDelay);
-                        agentManageService.removeAgentById(agent.getAgentId());
-                    } else if (heartbeatDelay > 30000) {
-                        if (!AgentStatus.DOWN.name().equals(agent.getAgentStatus())) {
-                            logger.info("Mark agent status as DOWN, agentId: {}, heartbeat delay: {}", agent.getAgentId(), heartbeatDelay);
-                            agent.setAgentStatus(AgentStatus.DOWN.name());
-                            agentManageService.updateAgent(agent);
-                        }
-                    } else if (heartbeatDelay > 15000) {
-                        if (!AgentStatus.OUT_OF_SERVICE.name().equals(agent.getAgentStatus())) {
-                            logger.info("Mark agent status as OUT_OF_SERVICE, agentId: {}, heartbeat delay: {}", agent.getAgentId(), heartbeatDelay);
-                            agent.setAgentStatus(AgentStatus.OUT_OF_SERVICE.name());
-                            agentManageService.updateAgent(agent);
-                        }
-                    }
-                }
-            }
-        }).subscribe();
-
     }
 
     @Override

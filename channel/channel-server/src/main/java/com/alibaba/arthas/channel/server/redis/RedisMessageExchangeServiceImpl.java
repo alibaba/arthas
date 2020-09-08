@@ -1,5 +1,6 @@
 package com.alibaba.arthas.channel.server.redis;
 
+import com.alibaba.arthas.channel.server.conf.ScheduledExecutorConfig;
 import com.alibaba.arthas.channel.server.message.MessageExchangeException;
 import com.alibaba.arthas.channel.server.message.MessageExchangeService;
 import com.alibaba.arthas.channel.server.message.topic.Topic;
@@ -13,7 +14,6 @@ import reactor.core.publisher.Mono;
 import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.ScheduledExecutorService;
 
 /**
  * Message exchange for cluster channel server
@@ -30,7 +30,7 @@ public class RedisMessageExchangeServiceImpl implements MessageExchangeService {
     private ReactiveRedisTemplate<String, byte[]> redisTemplate;
 
     @Autowired
-    private ScheduledExecutorService executorService;
+    private ScheduledExecutorConfig executorServiceConfig;
 
     @Override
     public void createTopic(Topic topic) throws MessageExchangeException {
@@ -82,7 +82,7 @@ public class RedisMessageExchangeServiceImpl implements MessageExchangeService {
         Mono<byte[]> mono = redisTemplate.opsForList().rightPop(topic.getTopic(), Duration.ofMillis(timeout));
         mono.doOnSuccess(messageBytes -> {
             //schedule running, avoid blocking redis reactive
-            executorService.submit(() -> {
+            executorServiceConfig.getExecutorService().submit(() -> {
                 if (messageBytes != null) {
                     boolean next = messageHandler.onMessage(messageBytes);
                     if (next) {
@@ -96,7 +96,7 @@ public class RedisMessageExchangeServiceImpl implements MessageExchangeService {
                 }
             });
         }).doOnError(throwable -> {
-            executorService.submit(() -> {
+            executorServiceConfig.getExecutorService().submit(() -> {
                 if (throwable instanceof QueryTimeoutException) {
                     //ignore Redis command timed out
                     subscribe(topic, timeout, messageHandler);

@@ -29,9 +29,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
-/**
- * @author gongdewei 2020/9/2
- */
+
 public class WebSocketFrameHandler extends SimpleChannelInboundHandler<WebSocketFrame> {
 
     private static final Logger logger = LoggerFactory.getLogger(WebSocketFrameHandler.class);

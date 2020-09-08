@@ -4,6 +4,7 @@ import com.alibaba.arthas.channel.proto.ActionResponse;
 import com.alibaba.arthas.channel.proto.ExecuteResult;
 import com.alibaba.arthas.channel.proto.ResponseStatus;
 import com.alibaba.arthas.channel.server.api.ApiException;
+import com.alibaba.arthas.channel.server.conf.ScheduledExecutorConfig;
 import com.alibaba.arthas.channel.server.model.AgentVO;
 import com.alibaba.arthas.channel.server.api.ApiRequest;
 import com.alibaba.arthas.channel.server.api.ApiResponse;
@@ -24,7 +25,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 import reactor.core.publisher.Mono;
@@ -32,7 +32,6 @@ import reactor.core.publisher.Mono;
 import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
-import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -50,7 +49,7 @@ public class AgentController {
     private ApiActionDelegateService apiActionDelegateService;
 
     @Autowired
-    private ScheduledExecutorService executorService;
+    private ScheduledExecutorConfig executorServiceConfig;
 
 
     @RequestMapping("/agents")
@@ -174,7 +173,7 @@ public class AgentController {
                                           @RequestBody final String requestBody,
                                           @RequestParam(value = "timeout", defaultValue = "300000") final int timeout) {
         final SseEmitter emitter = new SseEmitter(Long.valueOf(timeout));
-        executorService.submit(new Runnable() {
+        executorServiceConfig.getExecutorService().submit(new Runnable() {
             public void run() {
                 ApiResponse apiResponse;
                 try {
