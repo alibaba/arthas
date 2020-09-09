@@ -8,8 +8,11 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.FluxSink;
 import reactor.core.publisher.Mono;
 
+import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -17,6 +20,7 @@ import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
 /**
  * Message exchange for standalone channel server
@@ -68,7 +72,7 @@ public class MessageExchangeServiceImpl implements MessageExchangeService {
             topicData = getAndCheckTopicExists(topic);
         }
         try {
-            topicData.messageQueue.put(messageBytes);
+            topicData.pushMessage(messageBytes);
         } catch (Throwable e) {
             throw new MessageExchangeException("push message failure", e);
         }
@@ -105,76 +109,103 @@ public class MessageExchangeServiceImpl implements MessageExchangeService {
             topicData = getAndCheckTopicExists(topic);
         }
 
-        topicData.setMessageHandler(messageHandler);
-        topicData.setTimeout(timeout);
-
-        final TopicData finalTopicData = topicData;
-
-        executorServiceConfig.getExecutorService().submit(new Runnable() {
-            @Override
-            public void run() {
-                while (true) {
-                    try {
-                        byte[] messageBytes = finalTopicData.messageQueue.poll(timeout, TimeUnit.MILLISECONDS);
-                        if (messageBytes != null) {
-                            boolean next = messageHandler.onMessage(messageBytes);
-                            if (!next) {
-                                break;
-                            }
-                        }else {
-                            boolean next = messageHandler.onTimeout();
-                            if (!next) {
-                                break;
-                            }
+        topicData.toFlux(timeout)
+                .takeWhile(bytes -> messageHandler.onMessage(bytes))
+                .doOnError(throwable -> {
+                    if (throwable instanceof TimeoutException) {
+                        boolean next = messageHandler.onTimeout();
+                        if (next) {
+                            executorServiceConfig.getExecutorService().submit(() -> {
+                                try {
+                                    subscribe(topic, timeout, messageHandler);
+                                } catch (MessageExchangeException e) {
+                                    logger.error("subscribe message error", throwable);
+                                }
+                            });
                         }
-                    } catch (InterruptedException e) {
-                        logger.warn("subscribe message is interrupted");
-                        break;
+                    } else {
+                        logger.error("subscribe message error", throwable);
                     }
-                }
-                // remove message handler
-                if (finalTopicData.getMessageHandler() == messageHandler){
-                    finalTopicData.setMessageHandler(null);
-                }
-            }
-        });
+                })
+                .subscribe();
+
+//                final TopicData finalTopicData = topicData;
+//        executorServiceConfig.getExecutorService().submit(new Runnable() {
+//            @Override
+//            public void run() {
+//                while (true) {
+//                    try {
+//                        byte[] messageBytes = finalTopicData.messageQueue.poll(timeout, TimeUnit.MILLISECONDS);
+//                        if (messageBytes != null) {
+//                            boolean next = messageHandler.onMessage(messageBytes);
+//                            if (!next) {
+//                                break;
+//                            }
+//                        }else {
+//                            boolean next = messageHandler.onTimeout();
+//                            if (!next) {
+//                                break;
+//                            }
+//                        }
+//                    } catch (InterruptedException e) {
+//                        logger.warn("subscribe message is interrupted");
+//                        break;
+//                    }
+//                }
+//                // remove message handler
+//                finalTopicData.unregisterMessageHandler(messageHandler);
+//            }
+//        });
+
     }
 
     @Override
     public void unsubscribe(Topic topic, MessageHandler messageHandler) throws MessageExchangeException {
-        TopicData topicData = topicMap.get(topic);
-        //TODO CAS lock
-        if (topicData != null && topicData.getMessageHandler() == messageHandler) {
-            topicData.setMessageHandler(null);
-        }
+//        TopicData topicData = topicMap.get(topic);
+//        if (topicData != null) {
+//        }
     }
 
     static class TopicData {
         private BlockingQueue<byte[]> messageQueue;
-        private MessageHandler messageHandler;
         private Topic topic;
         private long createTime;
         private long updatedTime;
-        private long timeout;
+        private FluxSink<byte[]> emitter;
 
         public TopicData(Topic topic) {
             this.topic = topic;
             messageQueue = new LinkedBlockingQueue<byte[]>(1000);
             createTime = System.currentTimeMillis();
             updatedTime = createTime;
-            timeout = -1;
         }
 
-        public BlockingQueue<byte[]> getMessageQueue() {
-            return messageQueue;
+        synchronized public void pushMessage(byte[] bytes) throws InterruptedException {
+            if (this.emitter != null) {
+                this.emitter.next(bytes);
+            } else {
+                messageQueue.put(bytes);
+            }
         }
 
-        public MessageHandler getMessageHandler() {
-            return messageHandler;
-        }
-
-        public void setMessageHandler(MessageHandler messageHandler) {
-            this.messageHandler = messageHandler;
+        public Flux<byte[]> toFlux(int timeout) {
+            return Flux.fromIterable(messageQueue)
+                    .concatWith(Flux.create(emitter -> {
+                        synchronized (TopicData.this) {
+                            this.emitter = emitter;
+                        }
+                    }))
+                    .timeout(Duration.ofMillis(timeout))
+                    .doOnComplete(() -> {
+                        synchronized (TopicData.this) {
+                            this.emitter = null;
+                        }
+                    })
+                    .doOnCancel(() -> {
+                        synchronized (TopicData.this) {
+                            this.emitter = null;
+                        }
+                    });
         }
 
         public long getCreateTime() {
@@ -193,12 +224,5 @@ public class MessageExchangeServiceImpl implements MessageExchangeService {
             this.updatedTime = updatedTime;
         }
 
-        public long getTimeout() {
-            return timeout;
-        }
-
-        public void setTimeout(long timeout) {
-            this.timeout = timeout;
-        }
     }
 }
