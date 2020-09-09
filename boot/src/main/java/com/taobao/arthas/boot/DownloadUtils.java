@@ -15,6 +15,7 @@ import java.util.List;
 
 import com.taobao.arthas.common.AnsiLog;
 import com.taobao.arthas.common.IOUtils;
+import com.taobao.arthas.common.ProgressBarUtils;
 
 /**
  *
@@ -111,25 +112,22 @@ public class DownloadUtils {
                     fileSize = Integer.parseInt(contentLength);
                 }
             }
+            String formatFileSize = formatFileSize(fileSize);
 
             fout = new FileOutputStream(filename);
 
             final byte[] data = new byte[1024 * 1024];
             int totalCount = 0;
             int count;
-            long lastPrintTime = System.currentTimeMillis();
             while ((count = in.read(data, 0, 1024 * 1024)) != -1) {
                 totalCount += count;
                 if (printProgress) {
-                    long now = System.currentTimeMillis();
-                    if (now - lastPrintTime > 1000) {
-                        AnsiLog.info("File size: {}, downloaded size: {}, downloading ...", formatFileSize(fileSize),
-                                formatFileSize(totalCount));
-                        lastPrintTime = now;
-                    }
+                    ProgressBarUtils.printProgressBar(String.format("Downloading: %%s %s / %s", formatFileSize(totalCount), formatFileSize),
+                            totalCount, fileSize);
                 }
                 fout.write(data, 0, count);
             }
+            System.out.println();
         } catch (javax.net.ssl.SSLException e) {
             AnsiLog.error("TLS connect error, please try to add --use-http argument.");
             AnsiLog.error("URL: " + urlString);
