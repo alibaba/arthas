@@ -8,6 +8,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import reactor.core.publisher.Mono;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -82,12 +83,12 @@ public class MessageExchangeServiceImpl implements MessageExchangeService {
     }
 
     @Override
-    public byte[] pollMessage(Topic topic, int timeout) throws MessageExchangeException {
-        TopicData topicData = getAndCheckTopicExists(topic);
+    public Mono<byte[]> pollMessage(Topic topic, int timeout) {
         try {
-            return topicData.messageQueue.poll(timeout, TimeUnit.MILLISECONDS);
+            TopicData topicData = getAndCheckTopicExists(topic);
+            return Mono.just(topicData.messageQueue.poll(timeout, TimeUnit.MILLISECONDS));
         } catch (Throwable e) {
-            throw new MessageExchangeException("poll message failure", e);
+            return Mono.error(new MessageExchangeException("poll message failure: "+e.getMessage(), e));
         }
     }
 
@@ -108,6 +109,7 @@ public class MessageExchangeServiceImpl implements MessageExchangeService {
         topicData.setTimeout(timeout);
 
         final TopicData finalTopicData = topicData;
+
         executorServiceConfig.getExecutorService().submit(new Runnable() {
             @Override
             public void run() {
@@ -120,16 +122,19 @@ public class MessageExchangeServiceImpl implements MessageExchangeService {
                                 break;
                             }
                         }else {
-                            messageHandler.onTimeout();
-                            break;
+                            boolean next = messageHandler.onTimeout();
+                            if (!next) {
+                                break;
+                            }
                         }
                     } catch (InterruptedException e) {
-                        e.printStackTrace();
+                        logger.warn("subscribe message is interrupted");
+                        break;
                     }
-                    // remove message handler
-                    if (finalTopicData.getMessageHandler() == messageHandler){
-                        finalTopicData.setMessageHandler(null);
-                    }
+                }
+                // remove message handler
+                if (finalTopicData.getMessageHandler() == messageHandler){
+                    finalTopicData.setMessageHandler(null);
                 }
             }
         });

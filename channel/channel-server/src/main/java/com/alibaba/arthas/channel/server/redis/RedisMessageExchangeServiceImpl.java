@@ -66,9 +66,8 @@ public class RedisMessageExchangeServiceImpl implements MessageExchangeService {
     }
 
     @Override
-    public byte[] pollMessage(Topic topic, int timeout) throws MessageExchangeException {
-        //TODO remove mono.block()
-        return redisTemplate.opsForList().rightPop(topic.getTopic(), Duration.ofMillis(timeout)).block();
+    public Mono<byte[]> pollMessage(Topic topic, int timeout) {
+        return redisTemplate.opsForList().rightPop(topic.getTopic(), Duration.ofMillis(timeout));
     }
 
     @Override
@@ -81,7 +80,7 @@ public class RedisMessageExchangeServiceImpl implements MessageExchangeService {
 
         Mono<byte[]> mono = redisTemplate.opsForList().rightPop(topic.getTopic(), Duration.ofMillis(timeout));
         mono.doOnSuccess(messageBytes -> {
-            //schedule running, avoid blocking redis reactive
+            //schedule running, avoid blocking redis reactive in messageHandler callback
             executorServiceConfig.getExecutorService().submit(() -> {
                 if (messageBytes != null) {
                     boolean next = messageHandler.onMessage(messageBytes);

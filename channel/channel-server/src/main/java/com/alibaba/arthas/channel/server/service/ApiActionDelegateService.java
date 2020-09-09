@@ -4,6 +4,7 @@ import com.alibaba.arthas.channel.proto.ActionResponse;
 import com.alibaba.arthas.channel.server.api.ApiRequest;
 import com.alibaba.arthas.channel.server.api.ApiResponse;
 import io.netty.util.concurrent.Promise;
+import reactor.core.publisher.Mono;
 
 /**
  * @author gongdewei 2020/8/10
@@ -39,7 +40,7 @@ public interface ApiActionDelegateService {
      */
     void closeConsole(String agentId, String consoleId) throws Exception;
 
-    ApiResponse pullResults(String agentId, String requestId, int timeout) throws Exception;
+    Mono<ApiResponse> pullResults(String agentId, String requestId, int timeout);
 
     void subscribeResults(String agentId, String requestId, int timeout, ResponseListener responseListener) throws Exception;
 

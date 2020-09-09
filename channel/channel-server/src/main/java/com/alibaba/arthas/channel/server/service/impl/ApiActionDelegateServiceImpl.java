@@ -25,6 +25,9 @@ import org.apache.commons.lang3.RandomStringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import reactor.core.publisher.Mono;
+
+import java.util.function.Function;
 
 /**
  * @author gongdewei 2020/8/11
@@ -147,30 +150,39 @@ public class ApiActionDelegateServiceImpl implements ApiActionDelegateService {
     }
 
     @Override
-    public ApiResponse pullResults(final String agentId, String requestId, int timeout) throws Exception {
+    public Mono<ApiResponse> pullResults(final String agentId, String requestId, int timeout) {
         //subscribe response
         ActionResponseTopic topic = new ActionResponseTopic(agentId, requestId);
-        byte[] messageBytes = messageExchangeService.pollMessage(topic, timeout);
-        if (messageBytes == null) {
-            return new ApiResponse()
-                    .setAgentId(agentId)
-                    .setRequestId(requestId)
-                    .setState(ApiState.FAILED)
-                    .setMessage("Timeout");
-        }
+        Mono<ApiResponse> responseMono = messageExchangeService.pollMessage(topic, timeout)
+                .flatMap((Function<byte[], Mono<ApiResponse>>) messageBytes -> {
+                    try {
+                        ActionResponse actionResponse = ActionResponse.parseFrom(messageBytes);
+                        ApiResponse apiResponse = convertApiResponse(actionResponse);
+                        return Mono.just(apiResponse);
+                    } catch (Throwable e) {
+                        logger.error("process action response message failure", e);
+                        ApiResponse apiResponse = new ApiResponse()
+                                .setAgentId(agentId)
+                                .setRequestId(requestId)
+                                .setState(ApiState.FAILED)
+                                .setMessage("process action response message failure");
+                        return Mono.just(apiResponse);
+                    }
+                }).switchIfEmpty(Mono.just(new ApiResponse()
+                        .setAgentId(agentId)
+                        .setRequestId(requestId)
+                        .setState(ApiState.FAILED)
+                        .setMessage("Timeout")))
+                .onErrorResume(throwable -> {
+                    logger.error("pull results error", throwable);
+                    return Mono.just(new ApiResponse()
+                            .setAgentId(agentId)
+                            .setRequestId(requestId)
+                            .setState(ApiState.FAILED)
+                            .setMessage(throwable.getMessage()));
+                });
 
-        try {
-            ActionResponse actionResponse = ActionResponse.parseFrom(messageBytes);
-            ApiResponse apiResponse = convertApiResponse(actionResponse);
-            return apiResponse;
-        } catch (Throwable e) {
-            logger.error("process action response message failure", e);
-            return new ApiResponse()
-                    .setAgentId(agentId)
-                    .setRequestId(requestId)
-                    .setState(ApiState.FAILED)
-                    .setMessage("process action response message failure");
-        }
+        return responseMono;
     }
 
     @Override

@@ -1,6 +1,7 @@
 package com.alibaba.arthas.channel.server.message;
 
 import com.alibaba.arthas.channel.server.message.topic.Topic;
+import reactor.core.publisher.Mono;
 
 /**
  * @author gongdewei 2020/8/10
@@ -19,7 +20,7 @@ public interface MessageExchangeService {
 
     void pushMessage(Topic topic, byte[] messageBytes) throws MessageExchangeException;
 
-    byte[] pollMessage(Topic topic, int timeout) throws MessageExchangeException;
+    Mono<byte[]> pollMessage(Topic topic, int timeout);
 
     void subscribe(Topic topic, MessageHandler messageHandler) throws MessageExchangeException;
 

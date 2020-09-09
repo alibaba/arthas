@@ -145,18 +145,9 @@ public class AgentController {
     }
 
     @RequestMapping("/agent/{agentId}/results/{requestId}")
-    public ApiResponse pullResults(@PathVariable String agentId, @PathVariable String requestId,
-                                   @RequestParam(value = "timeout", defaultValue = "30000") final int timeout) {
-        try {
-            ApiResponse apiResponse = apiActionDelegateService.pullResults(agentId, requestId, timeout);
-            return apiResponse;
-        } catch (Exception e) {
-            logger.error("pull results failure: " + e.toString(), e);
-            return new ApiResponse()
-                    .setAgentId(agentId)
-                    .setState(ApiState.FAILED)
-                    .setMessage("pull results failure: " + e.toString());
-        }
+    public Mono<ApiResponse> pullResults(@PathVariable String agentId, @PathVariable String requestId,
+                                         @RequestParam(value = "timeout", defaultValue = "30000") final int timeout) {
+        return apiActionDelegateService.pullResults(agentId, requestId, timeout);
     }
 
     @GetMapping("/agent/{agentId}/sse_results/{requestId}")
@@ -173,31 +164,23 @@ public class AgentController {
                                           @RequestBody final String requestBody,
                                           @RequestParam(value = "timeout", defaultValue = "300000") final int timeout) {
         final SseEmitter emitter = new SseEmitter(Long.valueOf(timeout));
-        executorServiceConfig.getExecutorService().submit(new Runnable() {
-            public void run() {
-                ApiResponse apiResponse;
-                try {
-                    ApiRequest apiRequest = parseRequest(requestBody);
-                    apiResponse = apiActionDelegateService.asyncExecCommand(agentId, apiRequest);
-                    //check
-                } catch (Throwable e) {
-                    logger.error("async exec command failure: " + e.getMessage(), e);
-                    ApiResponse response = new ApiResponse()
-                            .setState(ApiState.FAILED)
-                            .setMessage("async exec command failure: " + e.getMessage());
-                    try {
-                        emitter.send(JSON.toJSONString(response));
-                        emitter.complete();
-                    } catch (Exception ex) {
-                        emitter.completeWithError(ex);
-                    }
-                    return;
-                }
-
-                String requestId = apiResponse.getRequestId();
-                subscribeResults(agentId, requestId, timeout, emitter);
+        try {
+            ApiRequest apiRequest = parseRequest(requestBody);
+            ApiResponse apiResponse = apiActionDelegateService.asyncExecCommand(agentId, apiRequest);
+            String requestId = apiResponse.getRequestId();
+            subscribeResults(agentId, requestId, timeout, emitter);
+        } catch (Throwable e) {
+            logger.error("async exec command failure: " + e.getMessage(), e);
+            ApiResponse response = new ApiResponse()
+                    .setState(ApiState.FAILED)
+                    .setMessage("async exec command failure: " + e.getMessage());
+            try {
+                emitter.send(JSON.toJSONString(response));
+                emitter.complete();
+            } catch (Exception ex) {
+                emitter.completeWithError(ex);
             }
-        });
+        }
         return emitter;
     }
 
