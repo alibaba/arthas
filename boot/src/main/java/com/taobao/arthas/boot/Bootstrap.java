@@ -469,8 +469,9 @@ public class Bootstrap {
 
             // start arthas-core.jar
             List<String> attachArgs = new ArrayList<String>();
+            String coreJarAbsPath = new File(arthasHomeDir, "arthas-core.jar").getAbsolutePath();
             attachArgs.add("-jar");
-            attachArgs.add(new File(arthasHomeDir, "arthas-core.jar").getAbsolutePath());
+            attachArgs.add(coreJarAbsPath);
             attachArgs.add("-pid");
             attachArgs.add("" + pid);
             attachArgs.add("-target-ip");
@@ -480,7 +481,7 @@ public class Bootstrap {
             attachArgs.add("-http-port");
             attachArgs.add("" + bootstrap.getHttpPort());
             attachArgs.add("-core");
-            attachArgs.add(new File(arthasHomeDir, "arthas-core.jar").getAbsolutePath());
+            attachArgs.add(coreJarAbsPath);
             attachArgs.add("-agent");
             attachArgs.add(new File(arthasHomeDir, "arthas-agent.jar").getAbsolutePath());
             if (bootstrap.getSessionTimeout() != null) {
