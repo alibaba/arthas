@@ -44,14 +44,14 @@ public class ApiActionDelegateServiceImpl implements ApiActionDelegateService {
     public Mono<ActionResponse> closeSession(String agentId, String sessionId) throws Exception {
         return sendRequestAndSubscribe(agentId, ActionRequest.newBuilder()
                 .setAction(RequestAction.CLOSE_SESSION)
-                .setSessionId(StringValue.of(sessionId)));
+                .setSessionId(sessionId));
     }
 
     @Override
     public Mono<ActionResponse> interruptJob(String agentId, String sessionId) throws Exception {
         return sendRequestAndSubscribe(agentId, ActionRequest.newBuilder()
                 .setAction(RequestAction.INTERRUPT_JOB)
-                .setSessionId(StringValue.of(sessionId)));
+                .setSessionId(sessionId));
     }
 
     /**
@@ -132,7 +132,7 @@ public class ApiActionDelegateServiceImpl implements ApiActionDelegateService {
                                 .setAgentId(agentId)
                                 .setRequestId(requestId)
                                 .setStatus(ResponseStatus.FAILED)
-                                .setMessage(StringValue.of("process action response message failure"))
+                                .setMessage("process action response message failure")
                                 .build();
                         return Mono.just(actionResponse);
                     }
@@ -140,7 +140,7 @@ public class ApiActionDelegateServiceImpl implements ApiActionDelegateService {
                         .setAgentId(agentId)
                         .setRequestId(requestId)
                         .setStatus(ResponseStatus.FAILED)
-                        .setMessage(StringValue.of("Timeout"))
+                        .setMessage("Timeout")
                         .build()))
                 .onErrorResume(throwable -> {
                     logger.error("pull results error", throwable);
@@ -148,7 +148,7 @@ public class ApiActionDelegateServiceImpl implements ApiActionDelegateService {
                             .setAgentId(agentId)
                             .setRequestId(requestId)
                             .setStatus(ResponseStatus.FAILED)
-                            .setMessage(StringValue.of(throwable.getMessage()))
+                            .setMessage(throwable.getMessage())
                             .build());
                 });
 
@@ -172,7 +172,7 @@ public class ApiActionDelegateServiceImpl implements ApiActionDelegateService {
                             .setAgentId(agentId)
                             .setRequestId(requestId)
                             .setStatus(ResponseStatus.FAILED)
-                            .setMessage(StringValue.of("process action response message failure"))
+                            .setMessage("process action response message failure")
                             .build();
                 }
                 boolean next = responseListener.onMessage(actionResponse);
@@ -227,7 +227,7 @@ public class ApiActionDelegateServiceImpl implements ApiActionDelegateService {
                             logger.error("process response message failure: "+e.getMessage(), e);
                             monoSink.success(ActionResponse.newBuilder()
                                     .setStatus(ResponseStatus.FAILED)
-                                    .setMessage(StringValue.of("process response message failure: "+e.getMessage()))
+                                    .setMessage("process response message failure: "+e.getMessage())
                                     .build());
                         }
 
@@ -244,7 +244,7 @@ public class ApiActionDelegateServiceImpl implements ApiActionDelegateService {
                     public boolean onTimeout() {
                         monoSink.success(ActionResponse.newBuilder()
                                 .setStatus(ResponseStatus.FAILED)
-                                .setMessage(StringValue.of("timeout"))
+                                .setMessage("timeout")
                                 .build());
                         return false;
                     }

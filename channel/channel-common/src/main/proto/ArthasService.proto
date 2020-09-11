@@ -26,70 +26,79 @@ import "ArthasResults.proto";
 package com.alibaba.arthas.channel.proto;
 
 enum ResponseStatus {
+    /* Ignored value of json format */
+    IGNORED1 = 0;
+
     /*
      * Request processed successfully
      */
-    SUCCEEDED = 0;
+    SUCCEEDED = 1;
 
     /*
      * Response is CONTINUOUS, receiving streaming data of async exec job
      */
-    CONTINUOUS = 1;
+    CONTINUOUS = 2;
 
     /*
      * Request processing was interrupted due to timeout or other reasons
      */
-    INTERRUPTED = 2;
+    INTERRUPTED = 3;
 
     /*
      * Request processing failed
      */
-    FAILED = 3;
+    FAILED = 4;
 
     /*
      * Request is refused
      */
-    REFUSED = 4;
+    REFUSED = 5;
 }
 
 enum AgentStatus {
+    /* Ignored value of json format */
+    IGNORED2 = 0;
+
     /* Arthas agent is up */
-    UP = 0;
+    UP = 1;
 
     /* Arthas agent is down */
-    DOWN = 1;
+    DOWN = 2;
 
     /* Arthas agent is ready  */
-    IN_SERVICE = 2;
+    IN_SERVICE = 3;
 
     /* Arthas agent is out-of-service */
-    OUT_OF_SERVICE = 3;
+    OUT_OF_SERVICE = 4;
 }
 
 enum RequestAction {
+    /* Ignored value of json format */
+    IGNORED3 = 0;
+
     /*
      * Execute command
      */
-    EXECUTE = 0;
+    EXECUTE = 1;
 
     /*
      * Async execute command
      */
-    ASYNC_EXECUTE = 1;
+    ASYNC_EXECUTE = 2;
 
     /*
      * Interrupt executing job
      */
-    INTERRUPT_JOB = 2;
+    INTERRUPT_JOB = 3;
 
     /* create new session */
-    INIT_SESSION = 3;
+    INIT_SESSION = 4;
 
     /* close session */
-    CLOSE_SESSION = 4;
+    CLOSE_SESSION = 5;
 
     /* join session */
-    /* JOIN_SESSION = 5; */
+    /* JOIN_SESSION = 6; */
 
     /* Open new WebConsole and create new session */
     OPEN_CONSOLE = 10;
@@ -103,11 +112,14 @@ enum RequestAction {
 }
 
 enum ResultFormat {
+    /* Ignored value of json format */
+    IGNORED4 = 0;
+
     /* command results use proto format (ExecuteResult.results) */
-    PROTO = 0;
+    PROTO = 1;
 
     /* command results use json format  (ExecuteResult.resultsJson)*/
-    JSON = 1;
+    JSON = 2;
 }
 
 message ExecuteParams {
@@ -169,17 +181,15 @@ message ActionRequest {
     /* action of request */
     RequestAction action = 3;
 
+    /* Arthas session id */
+    string sessionId = 4;
+
     /* params of executing command */
-    ExecuteParams executeParams = 4;
+    ExecuteParams executeParams = 5;
 
     /* WebConsole input data */
-    ConsoleParams consoleParams = 5;
+    ConsoleParams consoleParams = 6;
 
-    /* Arthas session id */
-    google.protobuf.StringValue sessionId = 6;
-
-    /* Arthas consumerId of session */
-    /* google.protobuf.StringValue consumerId = 7; */
 
 }
 
@@ -194,19 +204,16 @@ message ActionResponse {
     ResponseStatus status = 3;
 
     /* status message */
-    google.protobuf.StringValue message = 4;
-
-    /* result of command */
-    ExecuteResult executeResult=5;
+    string message = 4;
 
     /* Arthas session id */
-    google.protobuf.StringValue sessionId = 6;
+    string sessionId = 5;
 
-    /* Arthas consumerId of session */
-    /* google.protobuf.StringValue consumerId = 7; */
+    /* result of command */
+    ExecuteResult executeResult=6;
 
     /* WebConsole output data */
-    ConsoleResult consoleResult = 8;
+    ConsoleResult consoleResult = 7;
 
 }
 

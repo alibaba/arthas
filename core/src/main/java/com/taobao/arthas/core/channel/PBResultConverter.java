@@ -6,6 +6,7 @@ import com.alibaba.arthas.channel.proto.SystemEnvResult;
 import com.alibaba.arthas.channel.proto.UnknownResult;
 import com.alibaba.arthas.channel.proto.VersionResult;
 import com.google.protobuf.Any;
+import com.taobao.arthas.core.command.model.MessageModel;
 import com.taobao.arthas.core.command.model.ResultModel;
 import com.taobao.arthas.core.command.model.SessionModel;
 import com.taobao.arthas.core.command.model.StatusModel;
@@ -50,7 +51,13 @@ public class PBResultConverter {
                         .setStatusCode(statusModel.getStatusCode())
                         .setMessage(statusModel.getMessage() != null ? statusModel.getMessage() : "")
                         .build()));
-            } else {
+            } else if (resultModel instanceof MessageModel) {
+                MessageModel messageModel = (MessageModel) resultModel;
+                results.add(Any.pack(StatusResult.newBuilder()
+                        .setType(messageModel.getType())
+                        .setMessage(messageModel.getMessage() != null ? messageModel.getMessage() : "")
+                        .build()));
+            } else  {
                 // not supported proto format
                 results.add(Any.pack(UnknownResult.newBuilder()
                         .setType(resultModel.getType())

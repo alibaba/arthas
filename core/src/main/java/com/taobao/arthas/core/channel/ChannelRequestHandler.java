@@ -109,7 +109,7 @@ public class ChannelRequestHandler implements ChannelClient.RequestListener {
                     .setAgentId(request.getAgentId())
                     .setRequestId(request.getRequestId())
                     .setStatus(ResponseStatus.FAILED)
-                    .setMessage(StringValue.of(msg)));
+                    .setMessage(msg));
         }
 
     }
@@ -131,11 +131,7 @@ public class ChannelRequestHandler implements ChannelClient.RequestListener {
         }
 
         //handle other command request actions
-        String sessionId = null;
-        if (request.hasSessionId()) {
-            sessionId = request.getSessionId().getValue();
-        }
-
+        String sessionId = request.getSessionId();
         Session session = null;
         if (!StringUtils.isBlank(sessionId)) {
             session = sessionManager.getSession(sessionId);
@@ -261,7 +257,7 @@ public class ChannelRequestHandler implements ChannelClient.RequestListener {
                             .setAgentId(request.getAgentId())
                             .setRequestId(consoleId)
                             .setStatus(status)
-                            .setMessage(StringValue.of("console closed"));
+                            .setMessage("console closed");
                     sendResponse(response);
                 }
             });
@@ -276,7 +272,7 @@ public class ChannelRequestHandler implements ChannelClient.RequestListener {
             logger.error("open console error", e);
             consoleClientManager.closeConsoleClient(consoleId);
             ActionResponse.Builder response = createResponse(request, ResponseStatus.FAILED);
-            response.setMessage(StringValue.of("open console error"));
+            response.setMessage("open console error");
             sendResponse(response);
         }
     }
@@ -297,7 +293,7 @@ public class ChannelRequestHandler implements ChannelClient.RequestListener {
                     .setAgentId(request.getAgentId())
                     .setRequestId(consoleId)
                     .setStatus(ResponseStatus.FAILED)
-                    .setMessage(StringValue.of("console not found"));
+                    .setMessage("console not found");
             sendResponse(response);
             return;
         }
@@ -310,7 +306,7 @@ public class ChannelRequestHandler implements ChannelClient.RequestListener {
                     .setAgentId(request.getAgentId())
                     .setRequestId(consoleId)
                     .setStatus(ResponseStatus.FAILED)
-                    .setMessage(StringValue.of("console write error"));
+                    .setMessage("console write error");
             sendResponse(response);
             return;
         }
@@ -477,7 +473,7 @@ public class ChannelRequestHandler implements ChannelClient.RequestListener {
             sendResponse(ActionResponse.newBuilder()
                     .setAgentId(request.getAgentId())
                     .setRequestId(request.getRequestId())
-                    .setSessionId(StringValue.of(session.getSessionId()))
+                    .setSessionId(session.getSessionId())
                     //.setConsumerId(StringValue.of(resultConsumer.getConsumerId()))
                     .setStatus(ResponseStatus.SUCCEEDED));
         } else {
@@ -514,7 +510,7 @@ public class ChannelRequestHandler implements ChannelClient.RequestListener {
 //        ActionResponse actionResponse = ActionResponse.newBuilder()
 //                .setAgentId(request.getAgentId())
 //                .setRequestId(request.getRequestId())
-//                .setSessionId(StringValue.of(session.getSessionId()))
+//                .setSessionId(session.getSessionId())
 //                .setConsumerId(StringValue.of(resultConsumer.getConsumerId()))
 //                .setStatus(ResponseStatus.SUCCEEDED)
 //                .build();
@@ -532,7 +528,7 @@ public class ChannelRequestHandler implements ChannelClient.RequestListener {
                 .setAgentId(request.getAgentId())
                 .setRequestId(request.getRequestId())
                 .setStatus(ResponseStatus.FAILED)
-                .setMessage(StringValue.of("unsupported action"));
+                .setMessage("unsupported action");
         sendResponse(response);
     }
 
@@ -578,7 +574,7 @@ public class ChannelRequestHandler implements ChannelClient.RequestListener {
         return ActionResponse.newBuilder()
                 .setAgentId(request.getAgentId())
                 .setRequestId(request.getRequestId())
-                .setSessionId(StringValue.of(session.getSessionId()))
+                .setSessionId(session.getSessionId())
                 .setStatus(status);
     }
 
@@ -586,9 +582,9 @@ public class ChannelRequestHandler implements ChannelClient.RequestListener {
         return ActionResponse.newBuilder()
                 .setAgentId(request.getAgentId())
                 .setRequestId(request.getRequestId())
-                .setSessionId(StringValue.of(session.getSessionId()))
+                .setSessionId(session.getSessionId())
                 .setStatus(status)
-                .setMessage(StringValue.of(message));
+                .setMessage(message);
     }
 
     private boolean waitForJob(Job job, int timeout) {

@@ -9,6 +9,11 @@ message StatusResult {
     string message = 3;
 }
 
+message MessageResult {
+    string type = 1;
+    string message = 2;
+}
+
 /*
  * Proto data format not supported for the command result
  */

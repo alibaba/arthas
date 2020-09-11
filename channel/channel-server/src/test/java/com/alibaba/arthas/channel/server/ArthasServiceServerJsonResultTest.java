@@ -59,7 +59,7 @@ public class ArthasServiceServerJsonResultTest {
                                 .setAction(RequestAction.EXECUTE)
                                 .setAgentId("agent-1002")
                                 .setRequestId("ArthasServiceServerJsonResultTest")
-                                .setSessionId(StringValue.of("xxx-xxx-xx"))
+                                .setSessionId("xxx-xxx-xx")
                                 .setExecuteParams(ExecuteParams.newBuilder()
                                         .setCommandLine(commandLine)
                                         .setExecTimeout(10000)
