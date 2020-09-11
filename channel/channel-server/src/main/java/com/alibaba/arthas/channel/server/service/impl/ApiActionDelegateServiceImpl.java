@@ -55,7 +55,7 @@ public class ApiActionDelegateServiceImpl implements ApiActionDelegateService {
     }
 
     /**
-     * Send request and get results with promise.
+     * exec command and get results.
      *
      * NOTE: This method do not support streaming command results, all results are received after the command is executed.
      * @param agentId
@@ -231,7 +231,7 @@ public class ApiActionDelegateServiceImpl implements ApiActionDelegateService {
                                     .build());
                         }
 
-                        //promise is one-time subscribe, just remove it after received message
+                        //one-time subscribe, just remove it after received message
                         try {
                             messageExchangeService.removeTopic(responseTopic);
                         } catch (Throwable e) {
