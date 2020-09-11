@@ -20,7 +20,6 @@ public class ChannelClientTest {
         final ChannelClient channelClient = new ChannelClient("localhost:7700");
         channelClient.setAgentInfoService(new TestAgentInfoServiceImpl());
         ScheduledExecutorService executorService = getExecutorService();
-        channelClient.setExecutorService(executorService);
         channelClient.setRequestListener(new RequestHandler(channelClient, executorService));
 
         channelClient.start();

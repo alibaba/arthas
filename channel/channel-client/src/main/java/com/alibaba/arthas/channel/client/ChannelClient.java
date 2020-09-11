@@ -12,13 +12,18 @@ import com.alibaba.arthas.channel.proto.RegisterResult;
 import io.grpc.ManagedChannel;
 import io.grpc.ManagedChannelBuilder;
 import io.grpc.stub.StreamObserver;
+import io.netty.channel.EventLoopGroup;
+import io.netty.channel.nio.NioEventLoopGroup;
+import io.netty.util.concurrent.DefaultThreadFactory;
 import io.netty.util.concurrent.GlobalEventExecutor;
 import io.netty.util.concurrent.Promise;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
+import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -40,15 +45,30 @@ public class ChannelClient {
     private ScheduledFuture<?> reconnectFuture;
     private String channelServerAddress;
     private int reconnectDelay = 5000;
+    private EventLoopGroup group;
 
     public ChannelClient(String host, int port) {
         this.host = host;
         this.port = port;
         this.channelServerAddress = host + ":" + port;
+        init();
     }
 
     public ChannelClient(String channelServer) {
         setServerAddress(channelServer);
+        init();
+    }
+
+    private void init() {
+        group = new NioEventLoopGroup(1, new DefaultThreadFactory("arthas-ChannelWebsocketClient", true));
+        executorService = Executors.newScheduledThreadPool(1, new ThreadFactory() {
+            @Override
+            public Thread newThread(Runnable r) {
+                final Thread t = new Thread(r, "arthas-channel-client");
+                t.setDaemon(true);
+                return t;
+            }
+        });
     }
 
     private void setServerAddress(String channelServer) {
@@ -71,6 +91,7 @@ public class ChannelClient {
     }
 
     public void start() {
+
         isError = true;
         try {
             connect();
@@ -97,6 +118,12 @@ public class ChannelClient {
             } catch (InterruptedException e) {
                 //ignore ex
             }
+        }
+        if (executorService != null) {
+            executorService.shutdown();
+        }
+        if (group != null) {
+            group.shutdownGracefully();
         }
     }
 
@@ -324,10 +351,6 @@ public class ChannelClient {
         this.requestListener = requestListener;
     }
 
-    public void setExecutorService(ScheduledExecutorService executorService) {
-        this.executorService = executorService;
-    }
-
     public String getChannelServerAddress() {
         return channelServerAddress;
     }
@@ -342,6 +365,14 @@ public class ChannelClient {
      */
     public void setReconnectDelay(int reconnectDelay) {
         this.reconnectDelay = reconnectDelay;
+    }
+
+    public ScheduledExecutorService getExecutorService() {
+        return executorService;
+    }
+
+    public EventLoopGroup getGroup() {
+        return group;
     }
 
     public interface RequestListener {

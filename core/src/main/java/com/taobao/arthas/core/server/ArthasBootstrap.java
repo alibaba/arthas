@@ -5,7 +5,6 @@ import java.io.File;
 import java.io.IOException;
 import java.lang.instrument.Instrumentation;
 import java.lang.reflect.Method;
-import java.net.URI;
 import java.security.CodeSource;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -52,7 +51,6 @@ import com.taobao.arthas.core.shell.impl.ShellServerImpl;
 import com.taobao.arthas.core.shell.session.SessionManager;
 import com.taobao.arthas.core.shell.session.impl.SessionManagerImpl;
 import com.taobao.arthas.core.shell.term.impl.HttpTermServer;
-import com.taobao.arthas.core.shell.term.impl.LocalTermServer;
 import com.taobao.arthas.core.shell.term.impl.http.api.HttpApiHandler;
 import com.taobao.arthas.core.shell.term.impl.httptelnet.HttpTelnetTermServer;
 import com.taobao.arthas.core.util.ArthasBanner;
@@ -354,7 +352,7 @@ public class ArthasBootstrap {
                         options.getConnectionTimeout(), workerGroup));
             } else {
                 // listen local address in VM communication
-                if (configure.getTunnelServer() != null) {
+                if (configure.getTunnelServer() != null || configure.getChannelServer() != null) {
                     shellServer.registerTermServer(new HttpTermServer(configure.getIp(), configure.getHttpPort(),
                             options.getConnectionTimeout(), workerGroup));
                 }
@@ -376,7 +374,6 @@ public class ArthasBootstrap {
                 try {
                     channelClient = new ChannelClient(configure.getChannelServer());
                     channelClient.setAgentInfoService(new AgentInfoServiceImpl(configure));
-                    channelClient.setExecutorService(executorService);
                     channelClient.setRequestListener(new ChannelRequestHandler(channelClient, sessionManager, historyManager));
                     channelClient.start();
                 } catch (Throwable e) {

@@ -28,7 +28,6 @@ import com.taobao.arthas.core.command.model.WelcomeModel;
 import com.taobao.arthas.core.distribution.PackingResultDistributor;
 import com.taobao.arthas.core.distribution.ResultDistributor;
 import com.taobao.arthas.core.distribution.impl.PackingResultDistributorImpl;
-import com.taobao.arthas.core.server.ArthasBootstrap;
 import com.taobao.arthas.core.shell.cli.CliToken;
 import com.taobao.arthas.core.shell.cli.CliTokens;
 import com.taobao.arthas.core.shell.cli.Completion;
@@ -42,13 +41,13 @@ import com.taobao.arthas.core.shell.system.JobListener;
 import com.taobao.arthas.core.shell.system.impl.InternalCommandManager;
 import com.taobao.arthas.core.shell.term.SignalHandler;
 import com.taobao.arthas.core.shell.term.Term;
-import com.taobao.arthas.core.shell.term.impl.LocalTermServer;
 import com.taobao.arthas.core.shell.term.impl.http.api.ApiState;
 import com.taobao.arthas.core.util.ArthasBanner;
 import com.taobao.arthas.core.util.DateUtils;
 import com.taobao.arthas.core.util.StringUtils;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.Channel;
+import io.netty.channel.EventLoopGroup;
 import io.netty.handler.codec.http.websocketx.TextWebSocketFrame;
 import io.netty.util.concurrent.Future;
 import io.netty.util.concurrent.GenericFutureListener;
@@ -76,6 +75,7 @@ public class ChannelRequestHandler implements ChannelClient.RequestListener {
     public static final int DEFAULT_EXEC_TIMEOUT = 30000;
     private final ScheduledExecutorService executorService;
 
+    private EventLoopGroup group;
     private ChannelClient channelClient;
     private final SessionManager sessionManager;
     private final HistoryManager historyManager;
@@ -92,14 +92,8 @@ public class ChannelRequestHandler implements ChannelClient.RequestListener {
         commandManager = this.sessionManager.getCommandManager();
         jobController = this.sessionManager.getJobController();
 
-        executorService = Executors.newScheduledThreadPool(1, new ThreadFactory() {
-            @Override
-            public Thread newThread(Runnable r) {
-                final Thread t = new Thread(r, "arthas-command-execute");
-                t.setDaemon(true);
-                return t;
-            }
-        });
+        group = channelClient.getGroup();
+        executorService = channelClient.getExecutorService();
     }
 
     @Override
@@ -189,8 +183,8 @@ public class ChannelRequestHandler implements ChannelClient.RequestListener {
 
             final BlockingQueue<ConsoleData> queue = new LinkedBlockingQueue<ConsoleData>(1000);
 
-            LocalTermServer localTermServer = ArthasBootstrap.getInstance().getLocalTermServer();
-            Channel clientChannel = localTermServer.connect(new Consumer<TextWebSocketFrame>() {
+            LocalWebsocketClient websocketClient = new LocalWebsocketClient();
+            Channel clientChannel = websocketClient.connectLocalServer(group, new Consumer<TextWebSocketFrame>() {
                 @Override
                 public void accept(TextWebSocketFrame frame) {
                     try {
