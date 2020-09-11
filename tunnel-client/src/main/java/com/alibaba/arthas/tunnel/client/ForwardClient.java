@@ -38,11 +38,9 @@ import io.netty.util.concurrent.DefaultThreadFactory;
 public class ForwardClient {
     private final static Logger logger = LoggerFactory.getLogger(ForwardClient.class);
     private URI tunnelServerURI;
-    private URI localServerURI;
 
-    public ForwardClient(URI tunnelServerURI, URI localServerURI) {
+    public ForwardClient(URI tunnelServerURI) {
         this.tunnelServerURI = tunnelServerURI;
-        this.localServerURI = localServerURI;
     }
 
     public void start() throws URISyntaxException, SSLException, InterruptedException {
@@ -79,8 +77,7 @@ public class ForwardClient {
                 WebSocketVersion.V13, null, true, new DefaultHttpHeaders());
         final WebSocketClientProtocolHandler websocketClientHandler = new WebSocketClientProtocolHandler(newHandshaker);
 
-        final ForwardClientSocketClientHandler forwardClientSocketClientHandler = new ForwardClientSocketClientHandler(
-                localServerURI);
+        final ForwardClientSocketClientHandler forwardClientSocketClientHandler = new ForwardClientSocketClientHandler();
 
         final EventLoopGroup group = new NioEventLoopGroup(1, new DefaultThreadFactory("arthas-ForwardClient", true));
         ChannelFuture closeFuture = null;

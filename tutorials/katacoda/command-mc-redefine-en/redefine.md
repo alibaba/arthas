@@ -24,6 +24,7 @@ Reference: [Instrumentation#redefineClasses](https://docs.oracle.com/javase/8/do
 |Name|Specification|
 |---:|:---|
 |`[c:]`|hashcode of the class loader|
+|`[classLoaderClass:]`| The class name of the ClassLoader that executes the expression. |
 |`[p:]`|absolute path of the external `*.class`, multiple paths are separated with 'space'|
 
 ### Restrictions of the redefine command

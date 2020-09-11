@@ -19,6 +19,12 @@ public class JadView extends ResultView<JadModel> {
 
     @Override
     public void draw(CommandProcess process, JadModel result) {
+        if (result.getMatchedClassLoaders() != null) {
+            process.write("Matched classloaders: \n");
+            ClassLoaderView.drawClassLoaders(process, result.getMatchedClassLoaders(), false);
+            process.write("\n");
+            return;
+        }
 
         if (result.getMatchedClasses() != null) {
             Element table = ClassUtils.renderMatchedClasses(result.getMatchedClasses());

@@ -17,6 +17,7 @@ sm
 |`[d]`|print the details of the method|
 |`[E]`|turn on regex matching while the default mode is wildcard matching|
 |`[c:]`|The hash code of the special class's classLoader|
+|`[classLoaderClass:]`| The class name of the ClassLoader that executes the expression. |
 |`[n:]`|Maximum number of matching classes with details (100 by default)|
 
 ### Usage

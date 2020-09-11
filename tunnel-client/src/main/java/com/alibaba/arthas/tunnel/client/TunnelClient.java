@@ -10,7 +10,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import io.netty.bootstrap.Bootstrap;
-import io.netty.channel.Channel;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelFutureListener;
 import io.netty.channel.ChannelInitializer;
@@ -42,8 +41,6 @@ public class TunnelClient {
     private final static Logger logger = LoggerFactory.getLogger(TunnelClient.class);
 
     private String tunnelServerUrl;
-
-    private String localServerUrl = "ws://127.0.0.1:8563/ws";
 
     private int reconnectDelay = 5;
 
@@ -146,14 +143,6 @@ public class TunnelClient {
 
     public void setTunnelServerUrl(String tunnelServerUrl) {
         this.tunnelServerUrl = tunnelServerUrl;
-    }
-
-    public String getLocalServerUrl() {
-        return localServerUrl;
-    }
-
-    public void setLocalServerUrl(String localServerUrl) {
-        this.localServerUrl = localServerUrl;
     }
 
     public int getReconnectDelay() {

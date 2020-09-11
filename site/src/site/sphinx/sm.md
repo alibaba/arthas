@@ -18,6 +18,7 @@ sm
 |[d]|展示每个方法的详细信息|
 |[E]|开启正则表达式匹配，默认为通配符匹配|
 |`[c:]`|指定class的 ClassLoader 的 hashcode|
+|`[classLoaderClass:]`|指定执行表达式的 ClassLoader 的 class name|
 |`[n:]`|具有详细信息的匹配类的最大数量（默认为100）|
 
 ### 使用参考

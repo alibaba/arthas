@@ -20,8 +20,10 @@ import com.taobao.arthas.common.IOUtils;
 import com.taobao.arthas.common.ReflectUtils;
 import com.taobao.arthas.core.command.Constants;
 import com.taobao.arthas.core.command.model.LoggerModel;
+import com.taobao.arthas.core.command.model.ClassLoaderVO;
 import com.taobao.arthas.core.shell.command.AnnotatedCommand;
 import com.taobao.arthas.core.shell.command.CommandProcess;
+import com.taobao.arthas.core.util.ClassUtils;
 import com.taobao.arthas.core.util.ClassLoaderUtils;
 import com.taobao.arthas.core.util.StringUtils;
 import com.taobao.middleware.cli.annotations.Description;
@@ -72,6 +74,7 @@ public class LoggerCommand extends AnnotatedCommand {
     private String name;
 
     private String hashCode;
+    private String classLoaderClass;
 
     private String level;
 
@@ -90,6 +93,12 @@ public class LoggerCommand extends AnnotatedCommand {
     @Description("classLoader hashcode, if no value is set, default value is SystemClassLoader")
     public void setHashCode(String hashCode) {
         this.hashCode = hashCode;
+    }
+
+    @Option(longName = "classLoaderClass")
+    @Description("The class name of the special class's classLoader.")
+    public void setClassLoaderClass(String classLoaderClass) {
+        this.classLoaderClass = classLoaderClass;
     }
 
     @Option(shortName = "l", longName = "level")
@@ -157,6 +166,25 @@ public class LoggerCommand extends AnnotatedCommand {
         for (Class<?> clazz : process.session().getInstrumentation().getAllLoadedClasses()) {
             String className = clazz.getName();
             ClassLoader classLoader = clazz.getClassLoader();
+
+        if (hashCode == null && classLoaderClass != null) {
+            Instrumentation inst = process.session().getInstrumentation();
+            List<ClassLoader> matchedClassLoaders = ClassLoaderUtils.getClassLoaderByClassName(inst, classLoaderClass);
+            if (matchedClassLoaders.size() == 1) {
+                hashCode = Integer.toHexString(matchedClassLoaders.get(0).hashCode());
+            } else if (matchedClassLoaders.size() > 1) {
+                Collection<ClassLoaderVO> classLoaderVOList = ClassUtils.createClassLoaderVOList(matchedClassLoaders);
+                LoggerModel loggerModel = new LoggerModel()
+                        .setClassLoaderClass(classLoaderClass)
+                        .setMatchedClassLoaders(classLoaderVOList);
+                process.appendResult(loggerModel);
+                process.end(-1, "Found more than one classloader by class name, please specify classloader with '-c <classloader hash>'");
+                return;
+            } else {
+                process.end(-1, "Can not find classloader by class name: " + classLoaderClass + ".");
+                return;
+            }
+        }
 
             // if special classloader
             if (this.hashCode != null && !this.hashCode.equals(StringUtils.classLoaderHash(clazz))) {

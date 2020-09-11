@@ -191,10 +191,10 @@ Started [cpu] profiling
 
 比如开始采样：
 
-`profiler execute 'start'`{{execute T2}}
+`profiler execute 'start,framebuf=5000000'`{{execute T2}}
 
 ```bash
-profiler execute 'start'
+profiler execute 'start,framebuf=5000000'
 ```
 
 停止采样，并保存到指定文件里：
@@ -205,4 +205,4 @@ profiler execute 'start'
 profiler execute 'stop,file=/tmp/result.svg'
 ```
 
-具体的格式参考： [arguments.cpp#L34](https://github.com/jvm-profiling-tools/async-profiler/blob/v1.6/src/arguments.cpp#L34)
+具体的格式参考： [arguments.cpp](https://github.com/jvm-profiling-tools/async-profiler/blob/v1.8.1/src/arguments.cpp#L50)

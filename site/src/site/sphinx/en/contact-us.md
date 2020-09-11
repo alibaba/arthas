@@ -9,13 +9,16 @@ Questions about how to use Arthas and opinions can be directly raised in issues�
 
 ### DingDing Group
 
+* Arthas open source discussion Group： 21965291  ，You can join by searching for group number。
+
+![](_static/dingding_qr.jpg)
+
+
 * Arthas open source discussion Group 2： 30707824 ，You can join by searching for group number。
 
 ![](_static/dingding2_qr.jpg)
 
-* Arthas open source discussion Group： 21965291 （Full） ，You can join by searching for group number。
 
-![](_static/dingding_qr.jpg)
 
 ### Instructions for Installing DingTalk
 

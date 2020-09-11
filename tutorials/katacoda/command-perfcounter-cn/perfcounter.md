@@ -8,7 +8,7 @@
    perfcounter [-d] [-h]
 
  SUMMARY:
-   Display the perf counter infornation.
+   Display the perf counter information.
 
  Examples:
    perfcounter

@@ -11,6 +11,8 @@ public class DumpClassModel extends ResultModel {
     private List<DumpClassVO> dumpedClasses;
 
     private Collection<ClassVO> matchedClasses;
+    private Collection<ClassLoaderVO> matchedClassLoaders;
+    private String classLoaderClass;
 
     public DumpClassModel() {
     }
@@ -35,6 +37,24 @@ public class DumpClassModel extends ResultModel {
 
     public DumpClassModel setMatchedClasses(Collection<ClassVO> matchedClasses) {
         this.matchedClasses = matchedClasses;
+        return this;
+    }
+
+    public String getClassLoaderClass() {
+        return classLoaderClass;
+    }
+
+    public DumpClassModel setClassLoaderClass(String classLoaderClass) {
+        this.classLoaderClass = classLoaderClass;
+        return this;
+    }
+
+    public Collection<ClassLoaderVO> getMatchedClassLoaders() {
+        return matchedClassLoaders;
+    }
+
+    public DumpClassModel setMatchedClassLoaders(Collection<ClassLoaderVO> matchedClassLoaders) {
+        this.matchedClassLoaders = matchedClassLoaders;
         return this;
     }
 

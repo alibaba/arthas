@@ -28,6 +28,7 @@ Reference: [Instrumentation#redefineClasses](https://docs.oracle.com/javase/8/do
 |Name|Specification|
 |---:|:---|
 |`[c:]`|hashcode of the class loader|
+|`[classLoaderClass:]`| The class name of the ClassLoader that executes the expression. |
 |`[p:]`|absolute path of the external `*.class`, multiple paths are separated with 'space'|
 
 
@@ -35,7 +36,8 @@ Reference: [Instrumentation#redefineClasses](https://docs.oracle.com/javase/8/do
 
 ```bash
 redefine /tmp/Test.class
-redefine -c 327a647b /tmp/Test.class /tmp/Test$Inner.class
+redefine -c 327a647b /tmp/Test.class /tmp/Test\$Inner.class
+redefine --classLoaderClass sun.misc.Launcher$AppClassLoader /tmp/Test.class /tmp/Test\$Inner.class
 ```
 
 ### Use with the jad/mc command
