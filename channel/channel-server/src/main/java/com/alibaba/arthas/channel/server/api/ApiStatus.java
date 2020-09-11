@@ -5,7 +5,7 @@ package com.alibaba.arthas.channel.server.api;
  *
  * @author gongdewei 2020-03-19
  */
-public enum ApiState {
+public enum ApiStatus {
     /**
      * Response is CONTINUOUS, receiving streaming data of async exec job
      */

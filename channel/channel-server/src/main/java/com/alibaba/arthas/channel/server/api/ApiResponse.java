@@ -7,7 +7,7 @@ package com.alibaba.arthas.channel.server.api;
 public class ApiResponse<T> {
     private String agentId;
     private String requestId;
-    private ApiState state;
+    private ApiStatus status;
     private String message;
     private String sessionId;
     // private String consumerId;
@@ -31,12 +31,12 @@ public class ApiResponse<T> {
         return this;
     }
 
-    public ApiState getState() {
-        return state;
+    public ApiStatus getStatus() {
+        return status;
     }
 
-    public ApiResponse<T> setState(ApiState state) {
-        this.state = state;
+    public ApiResponse<T> setStatus(ApiStatus status) {
+        this.status = status;
         return this;
     }
 

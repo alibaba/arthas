@@ -3,15 +3,8 @@ package com.alibaba.arthas.channel.server.service.impl;
 import com.alibaba.arthas.channel.proto.ActionRequest;
 import com.alibaba.arthas.channel.proto.ActionResponse;
 import com.alibaba.arthas.channel.proto.ConsoleParams;
-import com.alibaba.arthas.channel.proto.ExecuteParams;
-import com.alibaba.arthas.channel.proto.ExecuteResult;
 import com.alibaba.arthas.channel.proto.RequestAction;
 import com.alibaba.arthas.channel.proto.ResponseStatus;
-import com.alibaba.arthas.channel.proto.ResultFormat;
-import com.alibaba.arthas.channel.server.api.ApiAction;
-import com.alibaba.arthas.channel.server.api.ApiRequest;
-import com.alibaba.arthas.channel.server.api.ApiResponse;
-import com.alibaba.arthas.channel.server.api.ApiState;
 import com.alibaba.arthas.channel.server.message.MessageExchangeException;
 import com.alibaba.arthas.channel.server.message.MessageExchangeService;
 import com.alibaba.arthas.channel.server.message.topic.ActionRequestTopic;
@@ -19,8 +12,6 @@ import com.alibaba.arthas.channel.server.message.topic.ActionResponseTopic;
 import com.alibaba.arthas.channel.server.service.AgentManageService;
 import com.alibaba.arthas.channel.server.service.ApiActionDelegateService;
 import com.google.protobuf.StringValue;
-import io.netty.util.concurrent.GlobalEventExecutor;
-import io.netty.util.concurrent.Promise;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -44,34 +35,23 @@ public class ApiActionDelegateServiceImpl implements ApiActionDelegateService {
 
 
     @Override
-    public Promise<ApiResponse> initSession(String agentId) throws Exception {
-        ApiRequest apiRequest = new ApiRequest();
-        apiRequest.setAction(ApiAction.INIT_SESSION.name());
-        return sendRequestAndSubscribe(agentId, apiRequest);
-    }
-
-//    @Override
-//    public Promise<ApiResponse> joinSession(String agentId, String sessionId) throws Exception {
-//        ApiRequest apiRequest = new ApiRequest();
-//        apiRequest.setAction(ApiAction.JOIN_SESSION.name());
-//        apiRequest.setSessionId(sessionId);
-//        return sendRequestAndSubscribe(agentId, apiRequest);
-//    }
-
-    @Override
-    public Promise<ApiResponse> closeSession(String agentId, String sessionId) throws Exception {
-        ApiRequest apiRequest = new ApiRequest();
-        apiRequest.setAction(ApiAction.CLOSE_SESSION.name());
-        apiRequest.setSessionId(sessionId);
-        return sendRequestAndSubscribe(agentId, apiRequest);
+    public Mono<ActionResponse> initSession(String agentId) throws Exception {
+        return sendRequestAndSubscribe(agentId, ActionRequest.newBuilder()
+                .setAction(RequestAction.INIT_SESSION));
     }
 
     @Override
-    public Promise<ApiResponse> interruptJob(String agentId, String sessionId) throws Exception {
-        ApiRequest apiRequest = new ApiRequest();
-        apiRequest.setAction(ApiAction.INTERRUPT_JOB.name());
-        apiRequest.setSessionId(sessionId);
-        return sendRequestAndSubscribe(agentId, apiRequest);
+    public Mono<ActionResponse> closeSession(String agentId, String sessionId) throws Exception {
+        return sendRequestAndSubscribe(agentId, ActionRequest.newBuilder()
+                .setAction(RequestAction.CLOSE_SESSION)
+                .setSessionId(StringValue.of(sessionId)));
+    }
+
+    @Override
+    public Mono<ActionResponse> interruptJob(String agentId, String sessionId) throws Exception {
+        return sendRequestAndSubscribe(agentId, ActionRequest.newBuilder()
+                .setAction(RequestAction.INTERRUPT_JOB)
+                .setSessionId(StringValue.of(sessionId)));
     }
 
     /**
@@ -83,8 +63,8 @@ public class ApiActionDelegateServiceImpl implements ApiActionDelegateService {
      * @return
      */
     @Override
-    public Promise<ApiResponse> execCommand(String agentId, ApiRequest request) throws Exception {
-        return sendRequestAndSubscribe(agentId, request);
+    public Mono<ActionResponse> execCommand(String agentId, ActionRequest request) throws Exception {
+        return sendRequestAndSubscribe(agentId, request.toBuilder());
     }
 
     /**
@@ -95,27 +75,24 @@ public class ApiActionDelegateServiceImpl implements ApiActionDelegateService {
      * @return
      */
     @Override
-    public ApiResponse asyncExecCommand(final String agentId, ApiRequest request) throws Exception {
+    public Mono<ActionResponse> asyncExecCommand(final String agentId, ActionRequest request) throws Exception {
         //send request
         String requestId = generateRandomRequestId();
-        sendRequest(agentId, requestId, request);
+        sendRequest(agentId, requestId, request.toBuilder());
 
-        //TODO 获取JobId？
-        return new ApiResponse()
-                .setState(ApiState.CONTINUOUS)
-                .setRequestId(requestId);
+        // 获取JobId？
+        return Mono.just(ActionResponse.newBuilder()
+                .setStatus(ResponseStatus.CONTINUOUS)
+                .setRequestId(requestId)
+                .build());
     }
 
     @Override
-    public Promise<ActionResponse> openConsole(String agentId, int timeout) throws Exception {
+    public Mono<ActionResponse> openConsole(String agentId, int timeout) throws Exception {
         //send request
         String requestId = generateRandomRequestId();
-        ActionRequest actionRequest = ActionRequest.newBuilder()
-                .setAgentId(agentId)
-                .setRequestId(requestId)
-                .setAction(RequestAction.OPEN_CONSOLE)
-                .build();
-        messageExchangeService.pushMessage(new ActionRequestTopic(agentId), actionRequest.toByteArray());
+        sendRequest(agentId, requestId, ActionRequest.newBuilder()
+                .setAction(RequestAction.OPEN_CONSOLE));
 
         //subscribe response
         return subscribeResponse(agentId, requestId, timeout);
@@ -124,62 +101,55 @@ public class ApiActionDelegateServiceImpl implements ApiActionDelegateService {
     @Override
     public void consoleInput(String agentId, String consoleId, String inputData) throws Exception {
         //send request
-        ActionRequest actionRequest = ActionRequest.newBuilder()
-                .setAgentId(agentId)
-                .setRequestId(consoleId)
+        sendRequest(agentId, consoleId, ActionRequest.newBuilder()
                 .setAction(RequestAction.CONSOLE_INPUT)
                 .setConsoleParams(ConsoleParams.newBuilder()
                         .setConsoleId(consoleId)
-                        .setInputData(inputData))
-                .build();
-
-        messageExchangeService.pushMessage(new ActionRequestTopic(agentId), actionRequest.toByteArray());
+                        .setInputData(inputData)));
     }
 
     @Override
     public void closeConsole(String agentId, String consoleId) throws Exception {
         //send request
-        ActionRequest actionRequest = ActionRequest.newBuilder()
-                .setAgentId(agentId)
-                .setRequestId(consoleId)
+        sendRequest(agentId, consoleId, ActionRequest.newBuilder()
                 .setAction(RequestAction.CLOSE_CONSOLE)
                 .setConsoleParams(ConsoleParams.newBuilder()
-                        .setConsoleId(consoleId))
-                .build();
-        messageExchangeService.pushMessage(new ActionRequestTopic(agentId), actionRequest.toByteArray());
+                        .setConsoleId(consoleId)));
     }
 
     @Override
-    public Mono<ApiResponse> pullResults(final String agentId, String requestId, int timeout) {
+    public Mono<ActionResponse> pullResults(final String agentId, String requestId, int timeout) {
         //subscribe response
         ActionResponseTopic topic = new ActionResponseTopic(agentId, requestId);
-        Mono<ApiResponse> responseMono = messageExchangeService.pollMessage(topic, timeout)
-                .flatMap((Function<byte[], Mono<ApiResponse>>) messageBytes -> {
+        Mono<ActionResponse> responseMono = messageExchangeService.pollMessage(topic, timeout)
+                .flatMap((Function<byte[], Mono<ActionResponse>>) messageBytes -> {
                     try {
                         ActionResponse actionResponse = ActionResponse.parseFrom(messageBytes);
-                        ApiResponse apiResponse = convertApiResponse(actionResponse);
-                        return Mono.just(apiResponse);
+                        return Mono.just(actionResponse);
                     } catch (Throwable e) {
                         logger.error("process action response message failure", e);
-                        ApiResponse apiResponse = new ApiResponse()
+                        ActionResponse actionResponse = ActionResponse.newBuilder()
                                 .setAgentId(agentId)
                                 .setRequestId(requestId)
-                                .setState(ApiState.FAILED)
-                                .setMessage("process action response message failure");
-                        return Mono.just(apiResponse);
+                                .setStatus(ResponseStatus.FAILED)
+                                .setMessage(StringValue.of("process action response message failure"))
+                                .build();
+                        return Mono.just(actionResponse);
                     }
-                }).switchIfEmpty(Mono.just(new ApiResponse()
+                }).switchIfEmpty(Mono.just(ActionResponse.newBuilder()
                         .setAgentId(agentId)
                         .setRequestId(requestId)
-                        .setState(ApiState.FAILED)
-                        .setMessage("Timeout")))
+                        .setStatus(ResponseStatus.FAILED)
+                        .setMessage(StringValue.of("Timeout"))
+                        .build()))
                 .onErrorResume(throwable -> {
                     logger.error("pull results error", throwable);
-                    return Mono.just(new ApiResponse()
+                    return Mono.just(ActionResponse.newBuilder()
                             .setAgentId(agentId)
                             .setRequestId(requestId)
-                            .setState(ApiState.FAILED)
-                            .setMessage(throwable.getMessage()));
+                            .setStatus(ResponseStatus.FAILED)
+                            .setMessage(StringValue.of(throwable.getMessage()))
+                            .build());
                 });
 
         return responseMono;
@@ -221,199 +191,83 @@ public class ApiActionDelegateServiceImpl implements ApiActionDelegateService {
      * Send one-time request and subscribe it's response.
      * NOTE: This method do not support streaming results.
      * @param agentId
-     * @param request
+     * @param requestBuilder
      * @return
      */
-    private Promise<ApiResponse> sendRequestAndSubscribe(String agentId, ApiRequest request) throws Exception {
+    private Mono<ActionResponse> sendRequestAndSubscribe(String agentId, ActionRequest.Builder requestBuilder) throws Exception {
         //send request
         String requestId = generateRandomRequestId();
-        sendRequest(agentId, requestId, request);
+        ActionRequest actionRequest = sendRequest(agentId, requestId, requestBuilder);
+
+        int execTimeout = 30000;
+        if (actionRequest.hasExecuteParams()) {
+            int timeout = actionRequest.getExecuteParams().getExecTimeout();
+            if (timeout > 0) {
+                execTimeout = timeout;
+            }
+        }
 
         //subscribe response
-        return subscribeResponse1(agentId, requestId, request.getExecTimeout());
+        return subscribeResponse(agentId, requestId, execTimeout);
     }
 
-    private Promise<ApiResponse> subscribeResponse1(String agentId, String requestId, Integer timeout) throws MessageExchangeException {
-        final Promise<ApiResponse> promise = GlobalEventExecutor.INSTANCE.newPromise();
-        int execTimeout = 30000;
-        if (timeout != null && timeout > 0) {
-            execTimeout = timeout;
-        }
+    private Mono<ActionResponse> subscribeResponse(String agentId, String requestId, int timeout) throws MessageExchangeException {
+
         final ActionResponseTopic responseTopic = new ActionResponseTopic(agentId, requestId);
-        messageExchangeService.subscribe(responseTopic, execTimeout, new MessageExchangeService.MessageHandler() {
-            @Override
-            public boolean onMessage(byte[] messageBytes) {
-                try {
-                    ActionResponse actionResponse = ActionResponse.parseFrom(messageBytes);
-                    ApiResponse apiResponse = convertApiResponse(actionResponse);
+        return Mono.create(monoSink -> {
+            try {
+                messageExchangeService.subscribe(responseTopic, timeout, new MessageExchangeService.MessageHandler() {
+                    @Override
+                    public boolean onMessage(byte[] messageBytes) {
+                        try {
+                            ActionResponse actionResponse = ActionResponse.parseFrom(messageBytes);
 
-                    promise.setSuccess(apiResponse);
-                } catch (Throwable e) {
-                    logger.error("process response message failure: "+e.getMessage(), e);
-                    promise.setSuccess(new ApiResponse()
-                            .setState(ApiState.FAILED)
-                            .setMessage("process response message failure: "+e.getMessage()));
-                }
+                            monoSink.success(actionResponse);
+                        } catch (Throwable e) {
+                            logger.error("process response message failure: "+e.getMessage(), e);
+                            monoSink.success(ActionResponse.newBuilder()
+                                    .setStatus(ResponseStatus.FAILED)
+                                    .setMessage(StringValue.of("process response message failure: "+e.getMessage()))
+                                    .build());
+                        }
 
-                //promise is one-time subscribe, just remove it after received message
-                try {
-                    messageExchangeService.removeTopic(responseTopic);
-                } catch (Throwable e) {
-                    logger.error("remove topic failure", e);
-                }
-                return false;
+                        //promise is one-time subscribe, just remove it after received message
+                        try {
+                            messageExchangeService.removeTopic(responseTopic);
+                        } catch (Throwable e) {
+                            logger.error("remove topic failure", e);
+                        }
+                        return false;
+                    }
+
+                    @Override
+                    public boolean onTimeout() {
+                        monoSink.success(ActionResponse.newBuilder()
+                                .setStatus(ResponseStatus.FAILED)
+                                .setMessage(StringValue.of("timeout"))
+                                .build());
+                        return false;
+                    }
+                });
+            } catch (MessageExchangeException e) {
+                monoSink.error(e);
             }
 
-            @Override
-            public boolean onTimeout() {
-                promise.setSuccess(new ApiResponse()
-                        .setState(ApiState.FAILED)
-                        .setMessage("Timeout"));
-                return false;
-            }
         });
-        return promise;
     }
 
-    private Promise<ActionResponse> subscribeResponse(String agentId, String requestId, Integer timeout) throws MessageExchangeException {
-        final Promise<ActionResponse> promise = GlobalEventExecutor.INSTANCE.newPromise();
-        int execTimeout = 30000;
-        if (timeout != null && timeout > 0) {
-            execTimeout = timeout;
-        }
-        final ActionResponseTopic responseTopic = new ActionResponseTopic(agentId, requestId);
-        messageExchangeService.subscribe(responseTopic, execTimeout, new MessageExchangeService.MessageHandler() {
-            @Override
-            public boolean onMessage(byte[] messageBytes) {
-                try {
-                    ActionResponse actionResponse = ActionResponse.parseFrom(messageBytes);
-
-                    promise.setSuccess(actionResponse);
-                } catch (Throwable e) {
-                    logger.error("process response message failure: "+e.getMessage(), e);
-                    promise.setSuccess(ActionResponse.newBuilder()
-                            .setStatus(ResponseStatus.FAILED)
-                            .setMessage(StringValue.of("process response message failure: "+e.getMessage()))
-                            .build());
-                }
-
-                //promise is one-time subscribe, just remove it after received message
-                try {
-                    messageExchangeService.removeTopic(responseTopic);
-                } catch (Throwable e) {
-                    logger.error("remove topic failure", e);
-                }
-                return false;
-            }
-
-            @Override
-            public boolean onTimeout() {
-                promise.setSuccess(ActionResponse.newBuilder()
-                        .setStatus(ResponseStatus.FAILED)
-                        .setMessage(StringValue.of("timeout"))
-                        .build());
-                return false;
-            }
-        });
-        return promise;
-    }
-
-    private void sendRequest(String agentId, String requestId, ApiRequest request) throws Exception {
-        final RequestAction action = getAction(request.getAction());
-
-        ActionRequest.Builder actionRequestBuilder = ActionRequest.newBuilder()
+    private ActionRequest sendRequest(String agentId, String requestId, ActionRequest.Builder actionRequestBuilder) throws MessageExchangeException {
+        ActionRequest actionRequest = actionRequestBuilder
                 .setAgentId(agentId)
                 .setRequestId(requestId)
-                .setAction(action);
-
-        if (request.getSessionId() != null) {
-            actionRequestBuilder = actionRequestBuilder.setSessionId(StringValue.of(request.getSessionId()));
-        }
-//        if (request.getConsumerId() != null) {
-//            actionRequestBuilder = actionRequestBuilder.setConsumerId(StringValue.of(request.getConsumerId()));
-//        }
-        if (request.getCommand() != null) {
-            int execTimeout = request.getExecTimeout() !=null && request.getExecTimeout() > 0 ? request.getExecTimeout() : 30000;
-            actionRequestBuilder = actionRequestBuilder.setExecuteParams(ExecuteParams.newBuilder()
-                    .setResultFormat(ResultFormat.JSON)
-                    .setCommandLine(request.getCommand())
-                    .setExecTimeout(execTimeout)
-                    .build());
-        }
-        ActionRequest actionRequest = actionRequestBuilder.build();
+                .build();
         messageExchangeService.pushMessage(new ActionRequestTopic(agentId), actionRequest.toByteArray());
-    }
-
-    private ApiResponse convertApiResponse(ActionResponse actionResponse) {
-        ApiResponse apiResponse = new ApiResponse()
-                .setState(getState(actionResponse.getStatus()))
-                .setAgentId(actionResponse.getAgentId())
-                .setRequestId(actionResponse.getRequestId());
-
-        if (actionResponse.hasSessionId()) {
-            apiResponse.setSessionId(actionResponse.getSessionId().getValue());
-        }
-//        if (actionResponse.hasConsumerId()) {
-//            apiResponse.setConsumerId(actionResponse.getConsumerId().getValue());
-//        }
-        if (actionResponse.hasMessage()) {
-            apiResponse.setMessage(actionResponse.getMessage().getValue());
-        }
-        if (actionResponse.hasExecuteResult()) {
-            ExecuteResult executeResult = actionResponse.getExecuteResult();
-            if (executeResult.hasResultsJson()) {
-                apiResponse.setResult(executeResult.getResultsJson().getValue());
-            }
-        }
-        return apiResponse;
-    }
-
-    private RequestAction getAction(String action) {
-        ApiAction apiAction = ApiAction.valueOf(action.trim().toUpperCase());
-
-        switch (apiAction) {
-            case EXEC:
-                return RequestAction.EXECUTE;
-            case ASYNC_EXEC:
-                return RequestAction.ASYNC_EXECUTE;
-//            case JOIN_SESSION:
-//                return RequestAction.JOIN_SESSION;
-            case INIT_SESSION:
-                return RequestAction.INIT_SESSION;
-            case CLOSE_SESSION:
-                return RequestAction.CLOSE_SESSION;
-            case INTERRUPT_JOB:
-                return RequestAction.INTERRUPT_JOB;
-            case OPEN_CONSOLE:
-                return RequestAction.OPEN_CONSOLE;
-            case CONSOLE_INPUT:
-                return RequestAction.CONSOLE_INPUT;
-        }
-        throw new IllegalArgumentException("Unsupported request action: " + action);
+        return actionRequest;
     }
 
     private String generateRandomRequestId() {
         //return UUID.randomUUID().toString().replaceAll("-", "");
         return RandomStringUtils.random(12, true, true);
     }
-
-    private ApiState getState(ResponseStatus status) {
-        switch (status) {
-            case SUCCEEDED:
-                return ApiState.SUCCEEDED;
-            case REFUSED:
-                return ApiState.REFUSED;
-            case CONTINUOUS:
-                return ApiState.CONTINUOUS;
-            case INTERRUPTED:
-                return ApiState.INTERRUPTED;
-
-            case FAILED:
-            case UNRECOGNIZED:
-                return ApiState.FAILED;
-        }
-        return ApiState.FAILED;
-    }
-
 
 }

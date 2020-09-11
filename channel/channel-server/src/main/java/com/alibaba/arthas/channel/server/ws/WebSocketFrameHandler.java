@@ -24,6 +24,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.util.UriComponentsBuilder;
+import reactor.core.publisher.Mono;
 
 import java.util.Collections;
 import java.util.List;
@@ -97,8 +98,8 @@ public class WebSocketFrameHandler extends SimpleChannelInboundHandler<WebSocket
             throw new IllegalArgumentException(error);
         }
 
-        Promise<ActionResponse> responsePromise = apiActionDelegateService.openConsole(agentId, 15000);
-        ActionResponse actionResponse = responsePromise.get();
+        Mono<ActionResponse> responseMono = apiActionDelegateService.openConsole(agentId, 15000);
+        ActionResponse actionResponse = responseMono.block();
         if (!actionResponse.getStatus().equals(ResponseStatus.SUCCEEDED)) {
             logger.error("open console failure, response: {}", actionResponse);
             throw new Exception("open console failure");
