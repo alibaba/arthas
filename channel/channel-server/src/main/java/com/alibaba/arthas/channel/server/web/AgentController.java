@@ -3,21 +3,20 @@ package com.alibaba.arthas.channel.server.web;
 import com.alibaba.arthas.channel.proto.ActionRequest;
 import com.alibaba.arthas.channel.proto.ActionResponse;
 import com.alibaba.arthas.channel.proto.ExecuteParams;
-import com.alibaba.arthas.channel.proto.ExecuteResult;
 import com.alibaba.arthas.channel.proto.RequestAction;
 import com.alibaba.arthas.channel.proto.ResponseStatus;
 import com.alibaba.arthas.channel.proto.ResultFormat;
 import com.alibaba.arthas.channel.server.api.ApiAction;
 import com.alibaba.arthas.channel.server.api.ApiException;
+import com.alibaba.arthas.channel.server.api.ApiRequest;
 import com.alibaba.arthas.channel.server.conf.ScheduledExecutorConfig;
 import com.alibaba.arthas.channel.server.model.AgentVO;
-import com.alibaba.arthas.channel.server.api.ApiRequest;
-import com.alibaba.arthas.channel.server.api.ApiResponse;
-import com.alibaba.arthas.channel.server.api.ApiStatus;
-import com.alibaba.arthas.channel.server.service.ApiActionDelegateService;
 import com.alibaba.arthas.channel.server.service.AgentManageService;
+import com.alibaba.arthas.channel.server.service.ApiActionDelegateService;
 import com.alibaba.fastjson.JSON;
-import com.google.protobuf.StringValue;
+import com.google.protobuf.InvalidProtocolBufferException;
+import com.google.protobuf.MessageOrBuilder;
+import com.google.protobuf.util.JsonFormat;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -69,63 +68,57 @@ public class AgentController {
     }
 
     @RequestMapping("/agent/{agentId}/init_session")
-    public Mono<ApiResponse> initSession(@PathVariable String agentId) throws Exception {
+    public Mono<ActionResponse> initSession(@PathVariable String agentId) throws Exception {
         checkAgentExists(agentId);
         try {
             return apiActionDelegateService.initSession(agentId)
-                    .timeout(Duration.ofMillis(30000))
-                    .map(AgentController::convertApiResponse);
+                    .timeout(Duration.ofMillis(30000));
         } catch (Throwable e) {
             logger.error("create session failure: " + e.toString(), e);
             return Mono.just(ActionResponse.newBuilder()
                     .setAgentId(agentId)
                     .setStatus(ResponseStatus.FAILED)
-                    .setMessage(StringValue.of("create session failure: " + e.toString()))
-                    .build())
-                    .map(AgentController::convertApiResponse);
+                    .setMessage("create session failure: " + e.toString())
+                    .build());
         }
     }
 
     @RequestMapping("/agent/{agentId}/close_session/{sessionId}")
-    public Mono<ApiResponse> closeSession(@PathVariable String agentId, @PathVariable String sessionId) {
+    public Mono<ActionResponse> closeSession(@PathVariable String agentId, @PathVariable String sessionId) {
         checkAgentExists(agentId);
         try {
             return apiActionDelegateService.closeSession(agentId, sessionId)
-                    .timeout(Duration.ofMillis(30000))
-                    .map(AgentController::convertApiResponse);
+                    .timeout(Duration.ofMillis(30000));
         } catch (Throwable e) {
             logger.error("close session failure: " + e.toString(), e);
             return Mono.just(ActionResponse.newBuilder()
                     .setAgentId(agentId)
-                    .setSessionId(StringValue.of(sessionId))
+                    .setSessionId(sessionId)
                     .setStatus(ResponseStatus.FAILED)
-                    .setMessage(StringValue.of("close session failure: " + e.toString()))
-                    .build())
-                    .map(AgentController::convertApiResponse);
+                    .setMessage("close session failure: " + e.toString())
+                    .build());
         }
     }
 
     @RequestMapping("/agent/{agentId}/interrupt_job/{sessionId}")
-    public Mono<ApiResponse> interruptJob(@PathVariable String agentId, @PathVariable String sessionId) {
+    public Mono<ActionResponse> interruptJob(@PathVariable String agentId, @PathVariable String sessionId) {
         checkAgentExists(agentId);
         try {
             return apiActionDelegateService.interruptJob(agentId, sessionId)
-                    .timeout(Duration.ofMillis(30000))
-                    .map(AgentController::convertApiResponse);
+                    .timeout(Duration.ofMillis(30000));
         } catch (Throwable e) {
             logger.error("interrupt job failure: " + e.toString(), e);
             return Mono.just(ActionResponse.newBuilder()
                     .setAgentId(agentId)
-                    .setSessionId(StringValue.of(sessionId))
+                    .setSessionId(sessionId)
                     .setStatus(ResponseStatus.FAILED)
-                    .setMessage(StringValue.of("interrupt job failure: " + e.toString()))
-                    .build())
-                    .map(AgentController::convertApiResponse);
+                    .setMessage("interrupt job failure: " + e.toString())
+                    .build());
         }
     }
 
     @PostMapping("/agent/{agentId}/exec")
-    public Mono<ApiResponse> execCommand(@PathVariable String agentId, @RequestBody String requestBody) {
+    public Mono<ActionResponse> execCommand(@PathVariable String agentId, @RequestBody String requestBody) {
         try {
             ApiRequest apiRequest = parseRequest(requestBody);
             long execTimeout = 30000;
@@ -135,43 +128,38 @@ public class AgentController {
 
             ActionRequest request = convertApiRequest(apiRequest);
             return apiActionDelegateService.execCommand(agentId, request)
-                    .timeout(Duration.ofMillis(execTimeout))
-                    .map(AgentController::convertApiResponse);
+                    .timeout(Duration.ofMillis(execTimeout));
 
         } catch (Throwable e) {
             logger.error("exec command failure: " + e.toString(), e);
             return Mono.just(ActionResponse.newBuilder()
                     .setAgentId(agentId)
                     .setStatus(ResponseStatus.FAILED)
-                    .setMessage(StringValue.of("exec command failure: " + e.toString()))
-                    .build())
-                    .map(AgentController::convertApiResponse);
+                    .setMessage("exec command failure: " + e.toString())
+                    .build());
         }
     }
 
     @PostMapping("/agent/{agentId}/async_exec")
-    public Mono<ApiResponse> asyncExecCommand(@PathVariable String agentId, @RequestBody String requestBody) {
+    public Mono<ActionResponse> asyncExecCommand(@PathVariable String agentId, @RequestBody String requestBody) {
         try {
             ApiRequest apiRequest = parseRequest(requestBody);
             ActionRequest request = convertApiRequest(apiRequest);
-            return apiActionDelegateService.asyncExecCommand(agentId, request)
-                    .map(AgentController::convertApiResponse);
+            return apiActionDelegateService.asyncExecCommand(agentId, request);
         } catch (Throwable e) {
             logger.error("async exec command failure: " + e.getMessage(), e);
             return Mono.just(ActionResponse.newBuilder()
                     .setAgentId(agentId)
                     .setStatus(ResponseStatus.FAILED)
-                    .setMessage(StringValue.of("async exec command failure: " + e.toString()))
-                    .build())
-                    .map(AgentController::convertApiResponse);
+                    .setMessage("async exec command failure: " + e.toString())
+                    .build());
         }
     }
 
     @RequestMapping("/agent/{agentId}/results/{requestId}")
-    public Mono<ApiResponse> pullResults(@PathVariable String agentId, @PathVariable String requestId,
-                                         @RequestParam(value = "timeout", defaultValue = "30000") final int timeout) {
-        return apiActionDelegateService.pullResults(agentId, requestId, timeout)
-                .map(AgentController::convertApiResponse);
+    public Mono<ActionResponse> pullResults(@PathVariable String agentId, @PathVariable String requestId,
+                                            @RequestParam(value = "timeout", defaultValue = "30000") final int timeout) {
+        return apiActionDelegateService.pullResults(agentId, requestId, timeout);
     }
 
     @GetMapping("/agent/{agentId}/sse_results/{requestId}")
@@ -196,17 +184,25 @@ public class AgentController {
             subscribeResults(agentId, requestId, timeout, emitter);
         } catch (Throwable e) {
             logger.error("async exec command failure: " + e.getMessage(), e);
-            ApiResponse response = new ApiResponse()
-                    .setStatus(ApiStatus.FAILED)
-                    .setMessage("async exec command failure: " + e.getMessage());
+            ActionResponse response = ActionResponse
+                    .newBuilder()
+                    .setStatus(ResponseStatus.FAILED)
+                    .setMessage("async exec command failure: " + e.getMessage())
+                    .build();
             try {
-                emitter.send(JSON.toJSONString(response));
+//                ApiResponse apiResponse = convertApiResponse(response);
+//                emitter.send(JSON.toJSONString(apiResponse));
+                emitter.send(convertToJson(response));
                 emitter.complete();
             } catch (Exception ex) {
                 emitter.completeWithError(ex);
             }
         }
         return emitter;
+    }
+
+    private String convertToJson(MessageOrBuilder message) throws InvalidProtocolBufferException {
+        return JsonFormat.printer().print(message);
     }
 
     private void subscribeResults(String agentId, String requestId, int timeout, final SseEmitter emitter) {
@@ -216,8 +212,9 @@ public class AgentController {
                 public boolean onMessage(ActionResponse response) {
                     try {
                         //TODO convert pb message to json
-                        ApiResponse apiResponse = convertApiResponse(response);
-                        emitter.send(JSON.toJSONString(apiResponse));
+//                        ApiResponse apiResponse = convertApiResponse(response);
+//                        emitter.send(JSON.toJSONString(apiResponse));
+                        emitter.send(convertToJson(response));
                         if (!response.getStatus().equals(ResponseStatus.CONTINUOUS)) {
                             emitter.complete();
                             return false;
@@ -248,37 +245,13 @@ public class AgentController {
         }
     }
 
-    private static ApiResponse convertApiResponse(ActionResponse actionResponse) {
-        ApiResponse apiResponse = new ApiResponse()
-                .setStatus(getStatus(actionResponse.getStatus()))
-                .setAgentId(actionResponse.getAgentId())
-                .setRequestId(actionResponse.getRequestId());
-
-        if (actionResponse.hasSessionId()) {
-            apiResponse.setSessionId(actionResponse.getSessionId().getValue());
-        }
-//        if (actionResponse.hasConsumerId()) {
-//            apiResponse.setConsumerId(actionResponse.getConsumerId().getValue());
-//        }
-        if (actionResponse.hasMessage()) {
-            apiResponse.setMessage(actionResponse.getMessage().getValue());
-        }
-        if (actionResponse.hasExecuteResult()) {
-            ExecuteResult executeResult = actionResponse.getExecuteResult();
-            if (executeResult.hasResultsJson()) {
-                apiResponse.setResult(executeResult.getResultsJson().getValue());
-            }
-        }
-        return apiResponse;
-    }
-
     private static ActionRequest convertApiRequest(ApiRequest request) throws Exception {
         RequestAction action = getAction(request.getAction());
         ActionRequest.Builder actionRequestBuilder = ActionRequest.newBuilder()
                 .setAction(action);
 
         if (request.getSessionId() != null) {
-            actionRequestBuilder = actionRequestBuilder.setSessionId(StringValue.of(request.getSessionId()));
+            actionRequestBuilder = actionRequestBuilder.setSessionId(request.getSessionId());
         }
 //        if (request.getConsumerId() != null) {
 //            actionRequestBuilder = actionRequestBuilder.setConsumerId(StringValue.of(request.getConsumerId()));
@@ -318,23 +291,6 @@ public class AgentController {
         throw new IllegalArgumentException("Unsupported request action: " + action);
     }
 
-    private static ApiStatus getStatus(ResponseStatus status) {
-        switch (status) {
-            case SUCCEEDED:
-                return ApiStatus.SUCCEEDED;
-            case REFUSED:
-                return ApiStatus.REFUSED;
-            case CONTINUOUS:
-                return ApiStatus.CONTINUOUS;
-            case INTERRUPTED:
-                return ApiStatus.INTERRUPTED;
-
-            case FAILED:
-            case UNRECOGNIZED:
-                return ApiStatus.FAILED;
-        }
-        return ApiStatus.FAILED;
-    }
 
     private ApiRequest parseRequest(String requestBody) throws ApiException {
         if (StringUtils.isBlank(requestBody)) {

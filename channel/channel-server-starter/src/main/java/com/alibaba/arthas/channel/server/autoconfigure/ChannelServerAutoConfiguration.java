@@ -27,16 +27,29 @@ import org.springframework.data.redis.core.ReactiveRedisTemplate;
 import org.springframework.data.redis.core.ReactiveStringRedisTemplate;
 import org.springframework.data.redis.serializer.RedisSerializationContext;
 import org.springframework.data.redis.serializer.RedisSerializer;
+import org.springframework.http.converter.protobuf.ProtobufJsonFormatHttpMessageConverter;
 
+import java.util.Arrays;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.ThreadFactory;
+
+import static org.springframework.http.MediaType.APPLICATION_JSON;
+import static org.springframework.http.MediaType.TEXT_PLAIN;
+import static org.springframework.http.converter.protobuf.ProtobufHttpMessageConverter.PROTOBUF;
 
 
 @Configuration
 @ConditionalOnClass(ChannelServer.class)
 @EnableConfigurationProperties(ChannelServerProperties.class)
 public class ChannelServerAutoConfiguration {
+
+    @Bean
+    public ProtobufJsonFormatHttpMessageConverter protobufHttpMessageConverter() {
+        ProtobufJsonFormatHttpMessageConverter messageConverter = new ProtobufJsonFormatHttpMessageConverter();
+        messageConverter.setSupportedMediaTypes(Arrays.asList(APPLICATION_JSON, TEXT_PLAIN, PROTOBUF));
+        return messageConverter;
+    }
 
     @Bean
     @ConditionalOnMissingBean

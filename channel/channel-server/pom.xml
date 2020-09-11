@@ -83,6 +83,12 @@
             </exclusions>
         </dependency>
 
+        <dependency>
+            <groupId>com.google.protobuf</groupId>
+            <artifactId>protobuf-java-util</artifactId>
+            <version>3.13.0</version>
+        </dependency>
+
         <!-- for server-reflect -->
         <dependency>
             <groupId>io.grpc</groupId>
