@@ -243,6 +243,10 @@ message AgentInfo {
     string appName = 7;
     string channelServer=8;
     string classPath=9;
+
+    //channel info
+    string channelVersion = 20;
+    repeated string channelFeatures = 21;
 }
 
 message RegisterResult {

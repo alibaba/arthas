@@ -373,7 +373,7 @@ public class ArthasBootstrap {
             if (configure.getChannelServer() != null) {
                 try {
                     channelClient = new ChannelClient(configure.getChannelServer());
-                    channelClient.setAgentInfoService(new AgentInfoServiceImpl(configure));
+                    channelClient.setAgentInfoService(new AgentInfoServiceImpl(channelClient, configure));
                     channelClient.setRequestListener(new ChannelRequestHandler(channelClient, sessionManager, historyManager));
                     channelClient.start();
                 } catch (Throwable e) {

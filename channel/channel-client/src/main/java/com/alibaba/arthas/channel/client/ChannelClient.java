@@ -20,6 +20,8 @@ import io.netty.util.concurrent.Promise;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.Arrays;
+import java.util.List;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
@@ -46,6 +48,10 @@ public class ChannelClient {
     private String channelServerAddress;
     private int reconnectDelay = 5000;
     private EventLoopGroup group;
+
+    //channel info
+    private String channelVersion = "1.0.0";
+    private List<String> channelFeatures = Arrays.asList("WebConsole", "ExecuteCommand");
 
     public ChannelClient(String host, int port) {
         this.host = host;
@@ -341,6 +347,14 @@ public class ChannelClient {
         if (responseStreamObserver == null || isError) {
             throw new Exception("Channel is not ready");
         }
+    }
+
+    public String getChannelVersion() {
+        return channelVersion;
+    }
+
+    public List<String> getChannelFeatures() {
+        return channelFeatures;
     }
 
     public void setAgentInfoService(AgentInfoService agentInfoService) {

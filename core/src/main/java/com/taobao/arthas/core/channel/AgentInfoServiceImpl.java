@@ -1,6 +1,7 @@
 package com.taobao.arthas.core.channel;
 
 import com.alibaba.arthas.channel.client.AgentInfoService;
+import com.alibaba.arthas.channel.client.ChannelClient;
 import com.alibaba.arthas.channel.proto.AgentInfo;
 import com.alibaba.arthas.channel.proto.AgentStatus;
 import com.taobao.arthas.core.config.Configure;
@@ -23,9 +24,12 @@ public class AgentInfoServiceImpl implements AgentInfoService {
 
     private AgentInfo agentInfo;
 
+    private ChannelClient channelClient;
     private Configure configure;
 
-    public AgentInfoServiceImpl(Configure configure) {
+
+    public AgentInfoServiceImpl(ChannelClient channelClient, Configure configure) {
+        this.channelClient = channelClient;
         this.configure = configure;
     }
 
@@ -41,6 +45,8 @@ public class AgentInfoServiceImpl implements AgentInfoService {
                     .setHostname(getHostname())
                     .setIp(getIpAddress())
                     .setOsVersion(getOsVersion())
+                    .setChannelVersion(channelClient.getChannelVersion())
+                    .addAllChannelFeatures(channelClient.getChannelFeatures())
                     .build();
         }
         return agentInfo;

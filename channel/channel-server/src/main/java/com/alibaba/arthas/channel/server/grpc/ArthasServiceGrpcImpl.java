@@ -184,16 +184,18 @@ public class ArthasServiceGrpcImpl extends ArthasServiceGrpc.ArthasServiceImplBa
         logger.info("register agent: "+agentVO.getAgentId());
     }
 
-    private void copyAgentVO(AgentInfo request, AgentVO agentVO) {
-        agentVO.setAgentId(request.getAgentId());
-        agentVO.setAgentVersion(request.getAgentVersion());
-        agentVO.setAgentStatus(request.getAgentStatus().name());
-        agentVO.setHostname(request.getHostname());
-        agentVO.setIp(request.getIp());
-        agentVO.setOsVersion(request.getOsVersion());
-        agentVO.setAppName(request.getAppName());
-        agentVO.setChannelServer(request.getChannelServer());
-        agentVO.setClassPath(request.getClassPath());
+    private void copyAgentVO(AgentInfo agentInfo, AgentVO agentVO) {
+        agentVO.setAgentId(agentInfo.getAgentId());
+        agentVO.setAgentVersion(agentInfo.getAgentVersion());
+        agentVO.setAgentStatus(agentInfo.getAgentStatus().name());
+        agentVO.setHostname(agentInfo.getHostname());
+        agentVO.setIp(agentInfo.getIp());
+        agentVO.setOsVersion(agentInfo.getOsVersion());
+        agentVO.setAppName(agentInfo.getAppName());
+        agentVO.setChannelServer(agentInfo.getChannelServer());
+        agentVO.setClassPath(agentInfo.getClassPath());
+        agentVO.setChannelVersion(agentInfo.getChannelVersion());
+        agentVO.setChannelFeatures(agentInfo.getChannelFeaturesList());
     }
 
     @Override

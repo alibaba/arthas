@@ -1,5 +1,7 @@
 package com.alibaba.arthas.channel.server.model;
 
+import java.util.List;
+
 /**
  *
  * Arthas agent info
@@ -25,6 +27,10 @@ public class AgentVO {
 
     private String classPath;
 
+    private String channelVersion;
+
+    private List<String> channelFeatures;
+
     private String desc;
 
     private long heartbeatTime;
@@ -32,6 +38,7 @@ public class AgentVO {
     private long createdTime;
 
     private long modifiedTime;
+
 
     public String getAgentId() {
         return agentId;
@@ -105,6 +112,22 @@ public class AgentVO {
         this.classPath = classPath;
     }
 
+    public String getChannelVersion() {
+        return channelVersion;
+    }
+
+    public void setChannelVersion(String channelVersion) {
+        this.channelVersion = channelVersion;
+    }
+
+    public List<String> getChannelFeatures() {
+        return channelFeatures;
+    }
+
+    public void setChannelFeatures(List<String> channelFeatures) {
+        this.channelFeatures = channelFeatures;
+    }
+
     public String getDesc() {
         return desc;
     }
@@ -136,4 +159,5 @@ public class AgentVO {
     public void setModifiedTime(long modifiedTime) {
         this.modifiedTime = modifiedTime;
     }
+
 }
