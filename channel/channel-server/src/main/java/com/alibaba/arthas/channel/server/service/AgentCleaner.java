@@ -15,7 +15,7 @@ import java.util.concurrent.TimeUnit;
 public class AgentCleaner {
 
     private static final Logger logger = LoggerFactory.getLogger(AgentCleaner.class);
-    private int removingTimeout = 60000;
+    private int removingTimeout = 1800*1000;
     private int downTimeout = 30000;
     private int outOfServiceTimeout = 15000;
     private int cleanIntervalMills = 5000;
@@ -45,11 +45,14 @@ public class AgentCleaner {
                 doClean();
             }
         }, cleanIntervalMills, cleanIntervalMills, TimeUnit.MILLISECONDS);
+
+        logger.info("Agent cleaner is started.");
     }
 
     public void stop() {
         if (scheduledFuture != null) {
             scheduledFuture.cancel(true);
+            logger.info("Agent cleaner is stopped.");
         }
     }
 

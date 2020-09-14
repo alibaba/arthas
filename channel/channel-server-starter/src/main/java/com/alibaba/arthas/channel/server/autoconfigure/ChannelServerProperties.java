@@ -9,7 +9,7 @@ public class ChannelServerProperties {
     private Server websocket = new Server();
     private Server backend = new Server();
 
-    private Agent agent = new Agent();
+    private AgentCleaner agentCleaner = new AgentCleaner();
 
     public Server getWebsocket() {
         return websocket;
@@ -27,12 +27,12 @@ public class ChannelServerProperties {
         this.backend = backend;
     }
 
-    public Agent getAgent() {
-        return agent;
+    public AgentCleaner getAgentCleaner() {
+        return agentCleaner;
     }
 
-    public void setAgent(Agent agent) {
-        this.agent = agent;
+    public void setAgentCleaner(AgentCleaner agentCleaner) {
+        this.agentCleaner = agentCleaner;
     }
 
     public static class Server {
@@ -74,11 +74,12 @@ public class ChannelServerProperties {
         }
     }
 
-    public static class Agent {
+    public static class AgentCleaner {
         private int cleanIntervalMills = 5000;
         private int outOfServiceTimeoutMills = 15*1000;
         private int downTimeoutMills = 30*1000;
-        private int removingTimeoutMills = 600*1000;
+        private int removingTimeoutMills = 1800*1000;
+        private boolean enabled = true;
 
         public int getCleanIntervalMills() {
             return cleanIntervalMills;
@@ -110,6 +111,14 @@ public class ChannelServerProperties {
 
         public void setRemovingTimeoutMills(int removingTimeoutMills) {
             this.removingTimeoutMills = removingTimeoutMills;
+        }
+
+        public boolean isEnabled() {
+            return enabled;
+        }
+
+        public void setEnabled(boolean enabled) {
+            this.enabled = enabled;
         }
     }
 

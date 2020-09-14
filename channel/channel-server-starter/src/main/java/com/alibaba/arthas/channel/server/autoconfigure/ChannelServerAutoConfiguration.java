@@ -87,13 +87,14 @@ public class ChannelServerAutoConfiguration {
     }
 
     @Bean(initMethod = "start", destroyMethod = "stop")
+    @ConditionalOnProperty(value = ChannelServerProperties.PREFIX+".agent-cleaner.enabled", havingValue = "true", matchIfMissing = false)
     public AgentCleaner agentCleaner(ScheduledExecutorConfig scheduledExecutorConfig, ChannelServerProperties serverProperties) {
-        ChannelServerProperties.Agent agentConfig = serverProperties.getAgent();
+        ChannelServerProperties.AgentCleaner config = serverProperties.getAgentCleaner();
         AgentCleaner agentCleaner = new AgentCleaner(scheduledExecutorConfig);
-        agentCleaner.setCleanIntervalMills(agentConfig.getCleanIntervalMills());
-        agentCleaner.setRemovingTimeout(agentConfig.getRemovingTimeoutMills());
-        agentCleaner.setDownTimeout(agentConfig.getDownTimeoutMills());
-        agentCleaner.setOutOfServiceTimeout(agentConfig.getOutOfServiceTimeoutMills());
+        agentCleaner.setCleanIntervalMills(config.getCleanIntervalMills());
+        agentCleaner.setRemovingTimeout(config.getRemovingTimeoutMills());
+        agentCleaner.setDownTimeout(config.getDownTimeoutMills());
+        agentCleaner.setOutOfServiceTimeout(config.getOutOfServiceTimeoutMills());
         return agentCleaner;
     }
 
