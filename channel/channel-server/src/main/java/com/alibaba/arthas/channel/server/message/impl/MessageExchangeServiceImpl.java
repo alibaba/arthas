@@ -90,7 +90,7 @@ public class MessageExchangeServiceImpl implements MessageExchangeService {
     public Mono<byte[]> pollMessage(Topic topic, int timeout) {
         try {
             TopicData topicData = getAndCheckTopicExists(topic);
-            return Mono.just(topicData.messageQueue.poll(timeout, TimeUnit.MILLISECONDS));
+            return Mono.justOrEmpty(topicData.messageQueue.poll(timeout, TimeUnit.MILLISECONDS));
         } catch (Throwable e) {
             return Mono.error(new MessageExchangeException("poll message failure: "+e.getMessage(), e));
         }

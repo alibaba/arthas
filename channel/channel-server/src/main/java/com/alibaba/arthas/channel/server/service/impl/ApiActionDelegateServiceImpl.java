@@ -82,8 +82,9 @@ public class ApiActionDelegateServiceImpl implements ApiActionDelegateService {
 
         // 获取JobId？
         return Mono.just(ActionResponse.newBuilder()
-                .setStatus(ResponseStatus.CONTINUOUS)
+                .setAgentId(agentId)
                 .setRequestId(requestId)
+                .setStatus(ResponseStatus.CONTINUOUS)
                 .build());
     }
 

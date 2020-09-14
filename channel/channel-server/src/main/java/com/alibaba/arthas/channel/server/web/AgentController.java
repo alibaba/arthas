@@ -3,21 +3,12 @@ package com.alibaba.arthas.channel.server.web;
 import com.alibaba.arthas.channel.proto.ActionRequest;
 import com.alibaba.arthas.channel.proto.ActionResponse;
 import com.alibaba.arthas.channel.proto.ExecuteParams;
-import com.alibaba.arthas.channel.proto.RequestAction;
 import com.alibaba.arthas.channel.proto.ResponseStatus;
-import com.alibaba.arthas.channel.proto.ResultFormat;
-import com.alibaba.arthas.channel.server.api.ApiAction;
-import com.alibaba.arthas.channel.server.api.ApiException;
-import com.alibaba.arthas.channel.server.api.ApiRequest;
 import com.alibaba.arthas.channel.server.conf.ScheduledExecutorConfig;
 import com.alibaba.arthas.channel.server.model.AgentVO;
 import com.alibaba.arthas.channel.server.service.AgentManageService;
 import com.alibaba.arthas.channel.server.service.ApiActionDelegateService;
-import com.alibaba.fastjson.JSON;
-import com.google.protobuf.InvalidProtocolBufferException;
-import com.google.protobuf.MessageOrBuilder;
-import com.google.protobuf.util.JsonFormat;
-import org.apache.commons.lang3.StringUtils;
+import com.alibaba.arthas.channel.server.utils.PbJsonUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -120,13 +111,14 @@ public class AgentController {
     @PostMapping("/agent/{agentId}/exec")
     public Mono<ActionResponse> execCommand(@PathVariable String agentId, @RequestBody String requestBody) {
         try {
-            ApiRequest apiRequest = parseRequest(requestBody);
+            ActionRequest request = PbJsonUtils.parseRequest(requestBody);
             long execTimeout = 30000;
-            if (apiRequest.getExecTimeout() != null && apiRequest.getExecTimeout() > 0) {
-                execTimeout = apiRequest.getExecTimeout();
+            ExecuteParams executeParams = request.getExecuteParams();
+            int execTimeoutParam = executeParams.getExecTimeout();
+            if (execTimeoutParam > 0) {
+                execTimeout = execTimeoutParam;
             }
 
-            ActionRequest request = convertApiRequest(apiRequest);
             return apiActionDelegateService.execCommand(agentId, request)
                     .timeout(Duration.ofMillis(execTimeout));
 
@@ -143,8 +135,7 @@ public class AgentController {
     @PostMapping("/agent/{agentId}/async_exec")
     public Mono<ActionResponse> asyncExecCommand(@PathVariable String agentId, @RequestBody String requestBody) {
         try {
-            ApiRequest apiRequest = parseRequest(requestBody);
-            ActionRequest request = convertApiRequest(apiRequest);
+            ActionRequest request = PbJsonUtils.parseRequest(requestBody);
             return apiActionDelegateService.asyncExecCommand(agentId, request);
         } catch (Throwable e) {
             logger.error("async exec command failure: " + e.getMessage(), e);
@@ -177,8 +168,7 @@ public class AgentController {
                                           @RequestParam(value = "timeout", defaultValue = "300000") final int timeout) {
         final SseEmitter emitter = new SseEmitter(Long.valueOf(timeout));
         try {
-            ApiRequest apiRequest = parseRequest(requestBody);
-            ActionRequest request = convertApiRequest(apiRequest);
+            ActionRequest request = PbJsonUtils.parseRequest(requestBody);
             ActionResponse actionResponse = apiActionDelegateService.asyncExecCommand(agentId, request).block();
             String requestId = actionResponse.getRequestId();
             subscribeResults(agentId, requestId, timeout, emitter);
@@ -190,9 +180,7 @@ public class AgentController {
                     .setMessage("async exec command failure: " + e.getMessage())
                     .build();
             try {
-//                ApiResponse apiResponse = convertApiResponse(response);
-//                emitter.send(JSON.toJSONString(apiResponse));
-                emitter.send(convertToJson(response));
+                emitter.send(PbJsonUtils.convertToJson(response));
                 emitter.complete();
             } catch (Exception ex) {
                 emitter.completeWithError(ex);
@@ -201,20 +189,14 @@ public class AgentController {
         return emitter;
     }
 
-    private String convertToJson(MessageOrBuilder message) throws InvalidProtocolBufferException {
-        return JsonFormat.printer().print(message);
-    }
-
     private void subscribeResults(String agentId, String requestId, int timeout, final SseEmitter emitter) {
         try {
             apiActionDelegateService.subscribeResults(agentId, requestId, timeout, new ApiActionDelegateService.ResponseListener() {
                 @Override
                 public boolean onMessage(ActionResponse response) {
                     try {
-                        //TODO convert pb message to json
-//                        ApiResponse apiResponse = convertApiResponse(response);
-//                        emitter.send(JSON.toJSONString(apiResponse));
-                        emitter.send(convertToJson(response));
+                        // convert pb message to json
+                        emitter.send(PbJsonUtils.convertToJson(response));
                         if (!response.getStatus().equals(ResponseStatus.CONTINUOUS)) {
                             emitter.complete();
                             return false;
@@ -242,64 +224,6 @@ public class AgentController {
             //emitter.complete();
         } catch (Exception ex) {
             emitter.completeWithError(ex);
-        }
-    }
-
-    private static ActionRequest convertApiRequest(ApiRequest request) throws Exception {
-        RequestAction action = getAction(request.getAction());
-        ActionRequest.Builder actionRequestBuilder = ActionRequest.newBuilder()
-                .setAction(action);
-
-        if (request.getSessionId() != null) {
-            actionRequestBuilder = actionRequestBuilder.setSessionId(request.getSessionId());
-        }
-//        if (request.getConsumerId() != null) {
-//            actionRequestBuilder = actionRequestBuilder.setConsumerId(StringValue.of(request.getConsumerId()));
-//        }
-        if (request.getCommand() != null) {
-            int execTimeout = request.getExecTimeout() !=null && request.getExecTimeout() > 0 ? request.getExecTimeout() : 30000;
-            actionRequestBuilder = actionRequestBuilder.setExecuteParams(ExecuteParams.newBuilder()
-                    .setResultFormat(ResultFormat.JSON)
-                    .setCommandLine(request.getCommand())
-                    .setExecTimeout(execTimeout)
-                    .build());
-        }
-        return actionRequestBuilder.build();
-    }
-
-    private static RequestAction getAction(String action) {
-        ApiAction apiAction = ApiAction.valueOf(action.trim().toUpperCase());
-
-        switch (apiAction) {
-            case EXEC:
-                return RequestAction.EXECUTE;
-            case ASYNC_EXEC:
-                return RequestAction.ASYNC_EXECUTE;
-//            case JOIN_SESSION:
-//                return RequestAction.JOIN_SESSION;
-            case INIT_SESSION:
-                return RequestAction.INIT_SESSION;
-            case CLOSE_SESSION:
-                return RequestAction.CLOSE_SESSION;
-            case INTERRUPT_JOB:
-                return RequestAction.INTERRUPT_JOB;
-            case OPEN_CONSOLE:
-                return RequestAction.OPEN_CONSOLE;
-            case CONSOLE_INPUT:
-                return RequestAction.CONSOLE_INPUT;
-        }
-        throw new IllegalArgumentException("Unsupported request action: " + action);
-    }
-
-
-    private ApiRequest parseRequest(String requestBody) throws ApiException {
-        if (StringUtils.isBlank(requestBody)) {
-            throw new ApiException("parse request failed: request body is empty");
-        }
-        try {
-            return JSON.parseObject(requestBody, ApiRequest.class);
-        } catch (Exception e) {
-            throw new ApiException("parse request failed: " + e.getMessage(), e);
         }
     }
 
