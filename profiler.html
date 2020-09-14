@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>profiler &mdash; Arthas 3.4.0 文档</title>
+  <title>profiler &mdash; Arthas 3.4.1 文档</title>
   
 
   
@@ -74,7 +74,7 @@
             
             
               <div class="version">
-                3.4.0
+                3.4.1
               </div>
             
           
@@ -389,12 +389,12 @@ Started [cpu] profiling</pre></div>
 <div class="section" id="execute">
 <h2>使用<code class="docutils literal notranslate"><span class="pre">execute</span></code>来执行复杂的命令<a class="headerlink" href="#execute" title="永久链接至标题">¶</a></h2>
 <p>比如开始采样：</p>
-<div class="highlight-bash notranslate"><div class="highlight hljs"><pre class="bash">profiler execute &#x27;start&#x27;</pre></div>
+<div class="highlight-bash notranslate"><div class="highlight hljs"><pre class="bash">profiler execute &#x27;start,framebuf=5000000&#x27;</pre></div>
 </div>
 <p>停止采样，并保存到指定文件里：</p>
 <div class="highlight-bash notranslate"><div class="highlight hljs"><pre class="bash">profiler execute &#x27;stop,file=/tmp/result.svg&#x27;</pre></div>
 </div>
-<p>具体的格式参考： <a class="reference external" href="https://github.com/jvm-profiling-tools/async-profiler/blob/v1.6/src/arguments.cpp#L34">arguments.cpp#L34</a></p>
+<p>具体的格式参考： <a class="reference external" href="https://github.com/jvm-profiling-tools/async-profiler/blob/v1.8.1/src/arguments.cpp#L50">arguments.cpp</a></p>
 </div>
 <div class="section" id="action">
 <h2>查看所有支持的action<a class="headerlink" href="#action" title="永久链接至标题">¶</a></h2>

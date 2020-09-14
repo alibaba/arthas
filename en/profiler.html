@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>profiler &mdash; Arthas 3.4.0 documentation</title>
+  <title>profiler &mdash; Arthas 3.4.1 documentation</title>
   
 
   
@@ -73,7 +73,7 @@
             
             
               <div class="version">
-                3.4.0
+                3.4.1
               </div>
             
           
@@ -386,12 +386,12 @@ Started [cpu] profiling</pre></div>
 <div class="section" id="use-execute-action-to-execute-complex-commands">
 <h2>Use <code class="docutils literal notranslate"><span class="pre">execute</span></code> action to execute complex commands<a class="headerlink" href="#use-execute-action-to-execute-complex-commands" title="Permalink to this headline">¶</a></h2>
 <p>For example, start sampling:</p>
-<div class="highlight-bash notranslate"><div class="highlight hljs"><pre class="bash">profiler execute &#x27;start&#x27;</pre></div>
+<div class="highlight-bash notranslate"><div class="highlight hljs"><pre class="bash">profiler execute &#x27;start,framebuf=5000000&#x27;</pre></div>
 </div>
 <p>Stop sampling and save to the specified file:</p>
 <div class="highlight-bash notranslate"><div class="highlight hljs"><pre class="bash">profiler execute &#x27;stop,file=/tmp/result.svg&#x27;</pre></div>
 </div>
-<p>Specific format reference: <a class="reference external" href="https://github.com/jvm-profiling-tools/async-profiler/blob/v1.6/src/arguments.cpp#L34">arguments.cpp#L34</a></p>
+<p>Specific format reference: <a class="reference external" href="https://github.com/jvm-profiling-tools/async-profiler/blob/v1.8.1/src/arguments.cpp#L50">arguments.cpp</a></p>
 </div>
 <div class="section" id="view-all-supported-actions">
 <h2>View all supported actions<a class="headerlink" href="#view-all-supported-actions" title="Permalink to this headline">¶</a></h2>
