@@ -71,7 +71,7 @@ public class ArthasServiceGrpcImpl extends ArthasServiceGrpc.ArthasServiceImplBa
 
         final ActionRequestTopic requestTopic = new ActionRequestTopic(agentId);
         try {
-            messageExchangeService.subscribe(requestTopic, 15*1000, new MessageExchangeService.MessageHandler() {
+            messageExchangeService.subscribe(requestTopic, 30*1000, new MessageExchangeService.MessageHandler() {
                 @Override
                 public boolean onMessage(byte[] messageBytes) {
                     //convert to pb message, then send it to arthas agent

@@ -19,6 +19,7 @@ import java.util.Map;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
@@ -34,6 +35,25 @@ public class MessageExchangeServiceImpl implements MessageExchangeService {
 
     @Autowired
     private ScheduledExecutorConfig executorServiceConfig;
+    private ScheduledFuture<?> scheduledFuture;
+
+    @Override
+    public void start() throws MessageExchangeException {
+        scheduledFuture = executorServiceConfig.getExecutorService().scheduleWithFixedDelay(() -> {
+            try {
+                cleanIdleTopics(10000);
+            } catch (Exception e) {
+                logger.error("clean idle topics failure", e);
+            }
+        }, 5000, 5000, TimeUnit.MILLISECONDS);
+    }
+
+    @Override
+    public void stop() throws MessageExchangeException {
+        if (scheduledFuture != null) {
+            scheduledFuture.cancel(true);
+        }
+    }
 
     @Override
     public void createTopic(Topic topic) throws MessageExchangeException {
@@ -45,6 +65,7 @@ public class MessageExchangeServiceImpl implements MessageExchangeService {
     @Override
     public void removeTopic(Topic topic) throws MessageExchangeException {
         topicMap.remove(topic);
+        logger.info("remove topic: {}", topic);
     }
 
     @Override
@@ -109,9 +130,12 @@ public class MessageExchangeServiceImpl implements MessageExchangeService {
             topicData = getAndCheckTopicExists(topic);
         }
 
+        TopicData finalTopicData = topicData;
         topicData.toFlux(timeout)
                 .takeWhile(bytes -> messageHandler.onMessage(bytes))
                 .doOnError(throwable -> {
+                    //must unsubscribe before new subscribe
+                    finalTopicData.unsubscribe();
                     if (throwable instanceof TimeoutException) {
                         boolean next = messageHandler.onTimeout();
                         if (next) {
@@ -126,8 +150,11 @@ public class MessageExchangeServiceImpl implements MessageExchangeService {
                     } else {
                         logger.error("subscribe message error", throwable);
                     }
-                })
-                .subscribe();
+                }).doOnComplete(() -> {
+                    finalTopicData.unsubscribe();
+                }).doOnCancel(() -> {
+                    finalTopicData.unsubscribe();
+                }).subscribe();
 
 //                final TopicData finalTopicData = topicData;
 //        executorServiceConfig.getExecutorService().submit(new Runnable() {
@@ -159,25 +186,34 @@ public class MessageExchangeServiceImpl implements MessageExchangeService {
 
     }
 
-    @Override
-    public void unsubscribe(Topic topic, MessageHandler messageHandler) throws MessageExchangeException {
-//        TopicData topicData = topicMap.get(topic);
-//        if (topicData != null) {
-//        }
+    public void cleanIdleTopics(int timeout) {
+        long now = System.currentTimeMillis();
+        List<TopicData> topicDataList = new ArrayList<>(topicMap.values());
+        for (TopicData topicData : topicDataList) {
+            long idle = now - topicData.getLastActiveTime();
+            if (!topicData.isSubscribed() && idle > timeout) {
+                try {
+                    logger.info("cleaning idle topic: {}, idle time: {}", topicData.topic, idle);
+                    removeTopic(topicData.topic);
+                } catch (Exception e) {
+                    logger.error("clean topic failure, topic: "+ topicData.topic, e);
+                }
+            }
+        }
     }
 
     static class TopicData {
         private BlockingQueue<byte[]> messageQueue;
         private Topic topic;
         private long createTime;
-        private long updatedTime;
-        private FluxSink<byte[]> emitter;
+        private long lastActiveTime;
+        private volatile FluxSink<byte[]> emitter;
 
         public TopicData(Topic topic) {
             this.topic = topic;
             messageQueue = new LinkedBlockingQueue<byte[]>(1000);
             createTime = System.currentTimeMillis();
-            updatedTime = createTime;
+            lastActiveTime = createTime;
         }
 
         synchronized public void pushMessage(byte[] bytes) throws InterruptedException {
@@ -186,42 +222,37 @@ public class MessageExchangeServiceImpl implements MessageExchangeService {
             } else {
                 messageQueue.put(bytes);
             }
+            lastActiveTime = System.currentTimeMillis();
         }
 
         public Flux<byte[]> toFlux(int timeout) {
+            lastActiveTime = System.currentTimeMillis();
+            logger.debug("subscribe topic: {}", topic);
             return Flux.fromIterable(messageQueue)
                     .concatWith(Flux.create(emitter -> {
                         synchronized (TopicData.this) {
                             this.emitter = emitter;
                         }
                     }))
-                    .timeout(Duration.ofMillis(timeout))
-                    .doOnComplete(() -> {
-                        synchronized (TopicData.this) {
-                            this.emitter = null;
-                        }
-                    })
-                    .doOnCancel(() -> {
-                        synchronized (TopicData.this) {
-                            this.emitter = null;
-                        }
-                    });
+                    .timeout(Duration.ofMillis(timeout));
+        }
+
+        synchronized public void unsubscribe() {
+            lastActiveTime = System.currentTimeMillis();
+            this.emitter = null;
+            logger.debug("unsubscribe topic: {}", topic);
+        }
+
+        public boolean isSubscribed() {
+            return this.emitter != null;
         }
 
         public long getCreateTime() {
             return createTime;
         }
 
-        public void setCreateTime(long createTime) {
-            this.createTime = createTime;
-        }
-
-        public long getUpdatedTime() {
-            return updatedTime;
-        }
-
-        public void setUpdatedTime(long updatedTime) {
-            this.updatedTime = updatedTime;
+        public long getLastActiveTime() {
+            return lastActiveTime;
         }
 
     }

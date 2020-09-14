@@ -1,5 +1,7 @@
 package com.alibaba.arthas.channel.server.message.topic;
 
+import java.util.Objects;
+
 /**
  * @author gongdewei 2020/8/12
  */
@@ -43,8 +45,8 @@ public class ActionResponseTopic implements Topic {
 
         ActionResponseTopic that = (ActionResponseTopic) o;
 
-        if (agentId != null ? !agentId.equals(that.agentId) : that.agentId != null) return false;
-        return requestId != null ? requestId.equals(that.requestId) : that.requestId == null;
+        if (!Objects.equals(agentId, that.agentId)) return false;
+        return Objects.equals(requestId, that.requestId);
     }
 
     @Override

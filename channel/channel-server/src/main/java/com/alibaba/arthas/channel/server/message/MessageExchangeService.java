@@ -8,6 +8,10 @@ import reactor.core.publisher.Mono;
  */
 public interface MessageExchangeService {
 
+    void start() throws MessageExchangeException;
+
+    void stop() throws MessageExchangeException;
+
     void createTopic(Topic topic) throws MessageExchangeException;
 
     void removeTopic(Topic topic) throws MessageExchangeException;
@@ -25,8 +29,6 @@ public interface MessageExchangeService {
     void subscribe(Topic topic, MessageHandler messageHandler) throws MessageExchangeException;
 
     void subscribe(Topic topic, int timeout, MessageHandler messageHandler) throws MessageExchangeException;
-
-    void unsubscribe(Topic topic, MessageHandler messageHandler) throws MessageExchangeException;
 
     interface MessageHandler {
         /**

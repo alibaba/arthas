@@ -33,6 +33,16 @@ public class RedisMessageExchangeServiceImpl implements MessageExchangeService {
     private ScheduledExecutorConfig executorServiceConfig;
 
     @Override
+    public void start() throws MessageExchangeException {
+        //do nothing
+    }
+
+    @Override
+    public void stop() throws MessageExchangeException {
+        //do nothing
+    }
+
+    @Override
     public void createTopic(Topic topic) throws MessageExchangeException {
         //do nothing
     }
@@ -107,8 +117,4 @@ public class RedisMessageExchangeServiceImpl implements MessageExchangeService {
 
     }
 
-    @Override
-    public void unsubscribe(Topic topic, MessageHandler messageHandler) throws MessageExchangeException {
-        //TODO unsubscribe
-    }
 }

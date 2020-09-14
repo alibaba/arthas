@@ -128,7 +128,7 @@ public class ChannelServerAutoConfiguration {
             return new AgentManageServiceImpl();
         }
 
-        @Bean
+        @Bean(initMethod = "start", destroyMethod = "stop")
         @ConditionalOnMissingBean
         public MessageExchangeService messageExchangeService() {
             return new MessageExchangeServiceImpl();

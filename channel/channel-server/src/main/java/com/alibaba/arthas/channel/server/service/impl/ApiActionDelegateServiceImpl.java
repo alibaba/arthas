@@ -176,8 +176,9 @@ public class ApiActionDelegateServiceImpl implements ApiActionDelegateService {
                             .setMessage("process action response message failure")
                             .build();
                 }
-                boolean next = responseListener.onMessage(actionResponse);
-                return next && actionResponse.getStatus().equals(ResponseStatus.CONTINUOUS);
+                boolean next = responseListener.onMessage(actionResponse)
+                    && actionResponse.getStatus().equals(ResponseStatus.CONTINUOUS);
+                return next;
             }
 
             @Override
