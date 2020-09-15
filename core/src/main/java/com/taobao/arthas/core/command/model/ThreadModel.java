@@ -18,7 +18,7 @@ public class ThreadModel extends ResultModel {
     private BlockingLockInfo blockingLockInfo;
 
     //thread -n 5
-    private ThreadCpuInfo[] busyThreads;
+    private List<BusyThreadInfo> busyThreads;
 
     //thread stats
     private List<ThreadVO> threadStats;
@@ -35,7 +35,7 @@ public class ThreadModel extends ResultModel {
         this.blockingLockInfo = blockingLockInfo;
     }
 
-    public ThreadModel(ThreadCpuInfo[] busyThreads) {
+    public ThreadModel(List<BusyThreadInfo> busyThreads) {
         this.busyThreads = busyThreads;
     }
 
@@ -65,11 +65,11 @@ public class ThreadModel extends ResultModel {
         this.blockingLockInfo = blockingLockInfo;
     }
 
-    public ThreadCpuInfo[] getBusyThreads() {
+    public List<BusyThreadInfo> getBusyThreads() {
         return busyThreads;
     }
 
-    public void setBusyThreads(ThreadCpuInfo[] busyThreads) {
+    public void setBusyThreads(List<BusyThreadInfo> busyThreads) {
         this.busyThreads = busyThreads;
     }
 

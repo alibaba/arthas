@@ -3,6 +3,7 @@ package com.taobao.arthas.core.util;
 import com.taobao.arthas.core.command.model.BlockingLockInfo;
 import com.taobao.arthas.core.command.model.StackModel;
 import com.taobao.arthas.core.command.model.ThreadNode;
+import com.taobao.arthas.core.command.model.ThreadVO;
 import com.taobao.arthas.core.view.Ansi;
 
 import java.arthas.SpyAPI;
@@ -38,13 +39,13 @@ abstract public class ThreadUtil {
      * 
      * @return
      */
-    public static Map<String, Thread> getThreads() {
+    public static Map<String, ThreadVO> getThreads() {
         ThreadGroup root = getRoot();
         Thread[] threads = new Thread[root.activeCount()];
         while (root.enumerate(threads, true) == threads.length) {
             threads = new Thread[threads.length * 2];
         }
-        SortedMap<String, Thread> map = new TreeMap<String, Thread>(new Comparator<String>() {
+        SortedMap<String, ThreadVO> map = new TreeMap<String, ThreadVO>(new Comparator<String>() {
             @Override
             public int compare(String o1, String o2) {
                 return o1.compareTo(o2);
@@ -52,10 +53,24 @@ abstract public class ThreadUtil {
         });
         for (Thread thread : threads) {
             if (thread != null) {
-                map.put(thread.getName() + "-" + thread.getId(), thread);
+                ThreadVO threadVO = createThreadVO(thread);
+                map.put(thread.getName() + "-" + thread.getId(), threadVO);
             }
         }
         return map;
+    }
+
+    private static ThreadVO createThreadVO(Thread thread) {
+        ThreadGroup group = thread.getThreadGroup();
+        ThreadVO threadVO = new ThreadVO();
+        threadVO.setId(thread.getId());
+        threadVO.setName(thread.getName());
+        threadVO.setGroup(group == null ? "" : group.getName());
+        threadVO.setPriority(thread.getPriority());
+        threadVO.setState(thread.getState());
+        threadVO.setInterrupted(thread.isInterrupted());
+        threadVO.setDaemon(thread.isDaemon());
+        return threadVO;
     }
 
     /**
@@ -76,89 +91,6 @@ abstract public class ThreadUtil {
             }
         }
         return result;
-    }
-
-    /**
-     * get the top N busy thread
-     * @param sampleInterval the interval between two samples
-     * @param topN the number of thread
-     * @return a Map representing <ThreadID, cpuUsage>
-     */
-    public static Map<Long, Long> getTopNThreads(int sampleInterval, int topN) {
-        List<Thread> threads = getThreadList();
-
-        // Sample CPU
-        Map<Long, Long> times1 = new HashMap<Long, Long>();
-        for (Thread thread : threads) {
-            long cpu = threadMXBean.getThreadCpuTime(thread.getId());
-            times1.put(thread.getId(), cpu);
-        }
-
-        try {
-            // Sleep for some time
-            Thread.sleep(sampleInterval);
-        }
-        catch (InterruptedException e) {
-            Thread.currentThread().interrupt();
-        }
-
-        // Resample
-        Map<Long, Long> times2 = new HashMap<Long, Long>(threads.size());
-        for (Thread thread : threads) {
-            long cpu = threadMXBean.getThreadCpuTime(thread.getId());
-            times2.put(thread.getId(), cpu);
-        }
-
-        // Compute delta map and total time
-        long total = 0;
-        Map<Long, Long> deltas = new HashMap<Long, Long>(threads.size());
-        for (Long id : times2.keySet()) {
-            long time1 = times2.get(id);
-            long time2 = times1.get(id);
-            if (time1 == -1) {
-                time1 = time2;
-            } else if (time2 == -1) {
-                time2 = time1;
-            }
-            long delta = time2 - time1;
-            deltas.put(id, delta);
-            total += delta;
-        }
-
-        // Compute cpu
-        final HashMap<Thread, Long> cpus = new HashMap<Thread, Long>(threads.size());
-        for (Thread thread : threads) {
-            long cpu = total == 0 ? 0 : Math.round((deltas.get(thread.getId()) * 100) / total);
-            cpus.put(thread, cpu);
-        }
-
-        // Sort by CPU time : should be a rendering hint...
-        Collections.sort(threads, new Comparator<Thread>() {
-            public int compare(Thread o1, Thread o2) {
-                long l1 = cpus.get(o1);
-                long l2 = cpus.get(o2);
-                if (l1 < l2) {
-                    return 1;
-                } else if (l1 > l2) {
-                    return -1;
-                } else {
-                    return 0;
-                }
-            }
-        });
-
-        // use LinkedHashMap to preserve insert order
-        Map<Long, Long> topNThreads = new LinkedHashMap<Long, Long>();
-
-        List<Thread> topThreads = topN > 0 && topN <= threads.size()
-                ? threads.subList(0, topN) : threads;
-
-        for (Thread thread: topThreads) {
-            // Compute cpu usage
-            topNThreads.put(thread.getId(), cpus.get(thread));
-        }
-
-        return topNThreads;
     }
 
 
@@ -233,13 +165,17 @@ abstract public class ThreadUtil {
     }
 
 
-    public static String getFullStacktrace(ThreadInfo threadInfo, long cpuUsage) {
-        return getFullStacktrace(threadInfo, cpuUsage, 0, 0);
+    public static String getFullStacktrace(ThreadInfo threadInfo) {
+        return getFullStacktrace(threadInfo, -1, -1, -1, 0, 0);
+    }
+
+    public static String getFullStacktrace(ThreadInfo threadInfo, double cpuUsage, long deltaTime, long time) {
+        return getFullStacktrace(threadInfo, cpuUsage, deltaTime, time, 0, 0);
     }
 
 
     public static String getFullStacktrace(BlockingLockInfo blockingLockInfo) {
-        return getFullStacktrace(blockingLockInfo.getThreadInfo(), -1, blockingLockInfo.getLockIdentityHashCode(),
+        return getFullStacktrace(blockingLockInfo.getThreadInfo(), -1, -1, -1, blockingLockInfo.getLockIdentityHashCode(),
                 blockingLockInfo.getBlockingThreadCount());
     }
 
@@ -252,13 +188,19 @@ abstract public class ThreadUtil {
      * @param blockingThreadCount 阻塞了其他线程的数量
      * @return the string representation of the thread stack
      */
-    public static String getFullStacktrace(ThreadInfo threadInfo, long cpuUsage, int lockIdentityHashCode,
+    public static String getFullStacktrace(ThreadInfo threadInfo, double cpuUsage, long deltaTime, long time, int lockIdentityHashCode,
                                            int blockingThreadCount) {
         StringBuilder sb = new StringBuilder("\"" + threadInfo.getThreadName() + "\"" + " Id="
                 + threadInfo.getThreadId());
 
         if (cpuUsage >= 0 && cpuUsage <= 100) {
             sb.append(" cpuUsage=").append(cpuUsage).append("%");
+        }
+        if (deltaTime >= 0 ) {
+            sb.append(" deltaTime=").append(deltaTime).append("ms");
+        }
+        if (time >= 0 ) {
+            sb.append(" time=").append(time).append("ms");
         }
 
         sb.append(" ").append(threadInfo.getThreadState());
@@ -332,6 +274,26 @@ abstract public class ThreadUtil {
         }
         sb.append('\n');
         return sb.toString().replace("\t", "    ");
+    }
+
+    public static String getThreadTitle(long id, String name, double cpuUsage, long deltaTime, long time) {
+        StringBuilder sb = new StringBuilder("\"" + name + "\"");
+
+        if (id > 0) {
+            sb.append(" Id=").append(id);
+        } else {
+            sb.append(" [native]");
+        }
+        if (cpuUsage >= 0 && cpuUsage <= 100) {
+            sb.append(" cpuUsage=").append(cpuUsage).append("%");
+        }
+        if (deltaTime >= 0) {
+            sb.append(" deltaTime=").append(deltaTime).append("ms");
+        }
+        if (time >= 0) {
+            sb.append(" time=").append(time).append("ms");
+        }
+        return sb.toString();
     }
 
     /**

@@ -9,6 +9,7 @@ import com.taobao.arthas.core.command.model.DashboardModel;
 import com.taobao.arthas.core.command.model.GcInfoVO;
 import com.taobao.arthas.core.command.model.MemoryEntryVO;
 import com.taobao.arthas.core.command.model.RuntimeInfoVO;
+import com.taobao.arthas.core.command.model.ThreadVO;
 import com.taobao.arthas.core.command.model.TomcatInfoVO;
 import com.taobao.arthas.core.shell.command.AnnotatedCommand;
 import com.taobao.arthas.core.shell.command.CommandProcess;
@@ -30,6 +31,7 @@ import java.lang.management.ManagementFactory;
 import java.lang.management.MemoryPoolMXBean;
 import java.lang.management.MemoryType;
 import java.lang.management.MemoryUsage;
+import java.lang.management.ThreadMXBean;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -62,7 +64,7 @@ public class DashboardCommand extends AnnotatedCommand {
 
     private int numOfExecutions = Integer.MAX_VALUE;
 
-    private long interval = 5000;
+    private long interval = 2000;
 
     private volatile long count = 0;
     private volatile Timer timer;
@@ -305,7 +307,7 @@ public class DashboardCommand extends AnnotatedCommand {
                 DashboardModel dashboardModel = new DashboardModel();
 
                 //thread sample
-                Map<String, Thread> threads = ThreadUtil.getThreads();
+                Map<String, ThreadVO> threads = ThreadUtil.getThreads();
                 dashboardModel.setThreads(threadSampler.sample(threads.values()));
 
                 //memory

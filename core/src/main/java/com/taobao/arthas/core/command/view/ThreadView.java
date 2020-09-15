@@ -1,6 +1,6 @@
 package com.taobao.arthas.core.command.view;
 
-import com.taobao.arthas.core.command.model.ThreadCpuInfo;
+import com.taobao.arthas.core.command.model.BusyThreadInfo;
 import com.taobao.arthas.core.command.model.ThreadModel;
 import com.taobao.arthas.core.command.model.ThreadVO;
 import com.taobao.arthas.core.shell.command.CommandProcess;
@@ -23,13 +23,18 @@ public class ThreadView extends ResultView<ThreadModel> {
     public void draw(CommandProcess process, ThreadModel result) {
         if (result.getThreadInfo() != null) {
             // no cpu usage info
-            String content = ThreadUtil.getFullStacktrace(result.getThreadInfo(), -1);
+            String content = ThreadUtil.getFullStacktrace(result.getThreadInfo());
             process.write(content);
         } else if (result.getBusyThreads() != null) {
-            ThreadCpuInfo[] threadInfos = result.getBusyThreads();
-            for (ThreadCpuInfo info : threadInfos) {
-                String stacktrace = ThreadUtil.getFullStacktrace(info.threadInfo(), info.getCpuUsage());
-                process.write(stacktrace).write("\n");
+            List<BusyThreadInfo> threadInfos = result.getBusyThreads();
+            for (BusyThreadInfo info : threadInfos) {
+                if (info.getThreadInfo() != null) {
+                    String stacktrace = ThreadUtil.getFullStacktrace(info.getThreadInfo(), info.getCpu(), info.getDeltaTime(), info.getTime());
+                    process.write(stacktrace).write("\n");
+                } else {
+                    process.write(ThreadUtil.getThreadTitle(info.getId(), info.getName(), info.getCpu(), info.getDeltaTime(), info.getTime()));
+                    process.write("\n\n\n");
+                }
             }
         } else if (result.getBlockingLockInfo() != null) {
             String stacktrace = ThreadUtil.getFullStacktrace(result.getBlockingLockInfo());

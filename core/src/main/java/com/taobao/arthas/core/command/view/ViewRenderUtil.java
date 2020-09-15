@@ -105,7 +105,7 @@ public class ViewRenderUtil {
     }
 
     public static String drawThreadInfo(List<ThreadVO> threads, int width, int height) {
-        TableElement table = new TableElement(1, 3, 2, 1, 1, 1, 1, 1, 1).overflow(Overflow.HIDDEN).rightCellPadding(1);
+        TableElement table = new TableElement(1, 3, 2, 1, 1, 1, 1, 1, 1, 1).overflow(Overflow.HIDDEN).rightCellPadding(1);
 
         // Header
         table.add(
@@ -116,6 +116,7 @@ public class ViewRenderUtil {
                         "PRIORITY",
                         "STATE",
                         "%CPU",
+                        "DELTA_TIME",
                         "TIME",
                         "INTERRUPTED",
                         "DAEMON"
@@ -124,27 +125,47 @@ public class ViewRenderUtil {
 
         for (ThreadVO thread : threads) {
             Color color = colorMapping.get(thread.getState());
-            long seconds = thread.getTime();
-            long min = seconds / 60;
-            String time = min + ":" + (seconds % 60);
-            long cpu = thread.getCpu();
+            String time = formatTimeMills(thread.getTime());
+            String deltaTime = formatTimeMillsToSeconds(thread.getDeltaTime());
+            double cpu = thread.getCpu();
 
             LabelElement daemonLabel = new LabelElement(thread.isDaemon());
             if (!thread.isDaemon()) {
                 daemonLabel.setStyle(Style.style(Color.magenta));
             }
+            LabelElement stateElement;
+            if (thread.getState() != null) {
+                stateElement = new LabelElement(thread.getState()).style(color.fg());
+            } else {
+                stateElement = new LabelElement("-");
+            }
             table.row(
                     new LabelElement(thread.getId()),
                     new LabelElement(thread.getName()),
-                    new LabelElement(thread.getGroup()),
+                    new LabelElement(thread.getGroup() != null ? thread.getGroup() : "-"),
                     new LabelElement(thread.getPriority()),
-                    new LabelElement(thread.getState()).style(color.fg()),
+                    stateElement,
                     new LabelElement(cpu),
+                    new LabelElement(deltaTime),
                     new LabelElement(time),
                     new LabelElement(thread.isInterrupted()),
                     daemonLabel
             );
         }
         return RenderUtil.render(table, width, height);
+    }
+
+    private static String formatTimeMills(long timeMills) {
+        long seconds = timeMills / 1000;
+        long mills = timeMills % 1000;
+        long min = seconds / 60;
+        //return min + ":" + (seconds % 60);
+        return String.format("%d:%d.%03d", min, seconds, mills);
+    }
+
+    private static String formatTimeMillsToSeconds(long timeMills) {
+        long seconds = timeMills / 1000;
+        long mills = timeMills % 1000;
+        return String.format("%d.%03d", seconds, mills);
     }
 }

@@ -2,7 +2,7 @@ package com.taobao.arthas.core.command.monitor200;
 
 import com.taobao.arthas.core.command.Constants;
 import com.taobao.arthas.core.command.model.BlockingLockInfo;
-import com.taobao.arthas.core.command.model.ThreadCpuInfo;
+import com.taobao.arthas.core.command.model.BusyThreadInfo;
 import com.taobao.arthas.core.command.model.ThreadModel;
 import com.taobao.arthas.core.command.model.ThreadVO;
 import com.taobao.arthas.core.shell.command.AnnotatedCommand;
@@ -51,7 +51,7 @@ public class ThreadCommand extends AnnotatedCommand {
     private long id = -1;
     private Integer topNBusy = null;
     private boolean findMostBlockingThread = false;
-    private int sampleInterval = 100;
+    private int sampleInterval = 200;
     private String state;
 
     private boolean lockedMonitors = false;
@@ -122,7 +122,7 @@ public class ThreadCommand extends AnnotatedCommand {
     }
 
     private ExitStatus processAllThreads(CommandProcess process) {
-        Map<String, Thread> threads = ThreadUtil.getThreads();
+        Map<String, ThreadVO> threads = ThreadUtil.getThreads();
 
         // 统计各种线程状态
         Map<State, Integer> stateCountMap = new LinkedHashMap<State, Integer>();
@@ -130,18 +130,18 @@ public class ThreadCommand extends AnnotatedCommand {
             stateCountMap.put(s, 0);
         }
 
-        for (Thread thread : threads.values()) {
+        for (ThreadVO thread : threads.values()) {
             State threadState = thread.getState();
             Integer count = stateCountMap.get(threadState);
             stateCountMap.put(threadState, count + 1);
         }
 
-        Collection<Thread> resultThreads = new ArrayList<Thread>();
+        Collection<ThreadVO> resultThreads = new ArrayList<ThreadVO>();
         if (!StringUtils.isEmpty(this.state)) {
             this.state = this.state.toUpperCase();
             if (states.contains(this.state)) {
-                for (Thread thread : threads.values()) {
-                    if (state.equals(thread.getState().name())) {
+                for (ThreadVO thread : threads.values()) {
+                    if (thread.getState() != null && state.equals(thread.getState().name())) {
                         resultThreads.add(thread);
                     }
                 }
@@ -154,7 +154,8 @@ public class ThreadCommand extends AnnotatedCommand {
 
         //thread stats
         ThreadSampler threadSampler = new ThreadSampler();
-        threadSampler.setSampleInterval(sampleInterval);
+        threadSampler.sample(resultThreads);
+        threadSampler.pause(sampleInterval);
         List<ThreadVO> threadStats = threadSampler.sample(resultThreads);
 
         process.appendResult(new ThreadModel(threadStats, stateCountMap));
@@ -171,21 +172,44 @@ public class ThreadCommand extends AnnotatedCommand {
     }
 
     private ExitStatus processTopBusyThreads(CommandProcess process) {
-        Map<Long, Long> topNThreads = ThreadUtil.getTopNThreads(sampleInterval, topNBusy);
-        Long[] tids = topNThreads.keySet().toArray(new Long[0]);
-        ThreadInfo[] threadInfos = threadMXBean.getThreadInfo(ArrayUtils.toPrimitive(tids), lockedMonitors, lockedSynchronizers);
-        if (threadInfos == null) {
+        ThreadSampler threadSampler = new ThreadSampler();
+        threadSampler.sample(ThreadUtil.getThreads().values());
+        threadSampler.pause(sampleInterval);
+        List<ThreadVO> threadStats = threadSampler.sample(ThreadUtil.getThreads().values());
+
+        int limit = Math.min(threadStats.size(), topNBusy);
+        List<ThreadVO> topNThreads = threadStats.subList(0, limit);
+        List<Long> tids = new ArrayList<Long>(topNThreads.size());
+        for (ThreadVO thread : topNThreads) {
+            if (thread.getId() > 0) {
+                tids.add(thread.getId());
+            }
+        }
+
+        ThreadInfo[] threadInfos = threadMXBean.getThreadInfo(ArrayUtils.toPrimitive(tids.toArray(new Long[0])), lockedMonitors, lockedSynchronizers);
+        if (tids.size()> 0 && threadInfos == null) {
             return ExitStatus.failure(1, "get top busy threads failed");
         }
 
         //threadInfo with cpuUsage
-        ThreadCpuInfo[] threadCpuInfos = new ThreadCpuInfo[threadInfos.length];
+        List<BusyThreadInfo> busyThreadInfos = new ArrayList<BusyThreadInfo>(topNThreads.size());
+        for (ThreadVO thread : topNThreads) {
+            ThreadInfo threadInfo = findThreadInfoById(threadInfos, thread.getId());
+            BusyThreadInfo busyThread = new BusyThreadInfo(thread.getId(), thread.getName(), thread.getCpu(), thread.getDeltaTime(), thread.getTime(), threadInfo);
+            busyThreadInfos.add(busyThread);
+        }
+        process.appendResult(new ThreadModel(busyThreadInfos));
+        return ExitStatus.success();
+    }
+
+    private ThreadInfo findThreadInfoById(ThreadInfo[] threadInfos, long id) {
         for (int i = 0; i < threadInfos.length; i++) {
             ThreadInfo threadInfo = threadInfos[i];
-            threadCpuInfos[i] = new ThreadCpuInfo(threadInfo, topNThreads.get(threadInfo.getThreadId()));
+            if ( threadInfo.getThreadId() == id) {
+                return threadInfo;
+            }
         }
-        process.appendResult(new ThreadModel(threadCpuInfos));
-        return ExitStatus.success();
+        return null;
     }
 
     private ExitStatus processThread(CommandProcess process) {
