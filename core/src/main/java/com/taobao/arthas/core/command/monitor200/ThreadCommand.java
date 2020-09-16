@@ -56,6 +56,7 @@ public class ThreadCommand extends AnnotatedCommand {
 
     private boolean lockedMonitors = false;
     private boolean lockedSynchronizers = false;
+    private boolean all = false;
 
     static {
         states = new HashSet<String>(State.values().length);
@@ -68,6 +69,12 @@ public class ThreadCommand extends AnnotatedCommand {
     @Description("Show thread stack")
     public void setId(long id) {
         this.id = id;
+    }
+
+    @Option(longName = "all", flag = true)
+    @Description("Display all thread results instead of the first page")
+    public void setAll(boolean all) {
+        this.all = all;
     }
 
     @Option(shortName = "n", longName = "top-n-threads")
@@ -136,10 +143,12 @@ public class ThreadCommand extends AnnotatedCommand {
             stateCountMap.put(threadState, count + 1);
         }
 
+        boolean includeInternalThreads = true;
         Collection<ThreadVO> resultThreads = new ArrayList<ThreadVO>();
         if (!StringUtils.isEmpty(this.state)) {
             this.state = this.state.toUpperCase();
             if (states.contains(this.state)) {
+                includeInternalThreads = false;
                 for (ThreadVO thread : threads.values()) {
                     if (thread.getState() != null && state.equals(thread.getState().name())) {
                         resultThreads.add(thread);
@@ -154,11 +163,12 @@ public class ThreadCommand extends AnnotatedCommand {
 
         //thread stats
         ThreadSampler threadSampler = new ThreadSampler();
+        threadSampler.setIncludeInternalThreads(includeInternalThreads);
         threadSampler.sample(resultThreads);
         threadSampler.pause(sampleInterval);
         List<ThreadVO> threadStats = threadSampler.sample(resultThreads);
 
-        process.appendResult(new ThreadModel(threadStats, stateCountMap));
+        process.appendResult(new ThreadModel(threadStats, stateCountMap, all));
         return ExitStatus.success();
     }
 

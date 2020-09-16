@@ -277,7 +277,7 @@ abstract public class ThreadUtil {
         if (threadInfo.getId() > 0) {
             sb.append(" Id=").append(threadInfo.getId());
         } else {
-            sb.append(" [native]");
+            sb.append(" [Internal]");
         }
         double cpuUsage = threadInfo.getCpu();
         if (cpuUsage >= 0 && cpuUsage <= 100) {

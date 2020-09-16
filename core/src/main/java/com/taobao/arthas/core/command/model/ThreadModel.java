@@ -23,6 +23,7 @@ public class ThreadModel extends ResultModel {
     //thread stats
     private List<ThreadVO> threadStats;
     private Map<Thread.State, Integer> threadStateCount;
+    private boolean all;
 
     public ThreadModel() {
     }
@@ -39,9 +40,10 @@ public class ThreadModel extends ResultModel {
         this.busyThreads = busyThreads;
     }
 
-    public ThreadModel(List<ThreadVO> threadStats, Map<Thread.State, Integer> threadStateCount) {
+    public ThreadModel(List<ThreadVO> threadStats, Map<Thread.State, Integer> threadStateCount, boolean all) {
         this.threadStats = threadStats;
         this.threadStateCount = threadStateCount;
+        this.all = all;
     }
 
     @Override
@@ -87,5 +89,13 @@ public class ThreadModel extends ResultModel {
 
     public void setThreadStateCount(Map<Thread.State, Integer> threadStateCount) {
         this.threadStateCount = threadStateCount;
+    }
+
+    public boolean isAll() {
+        return all;
+    }
+
+    public void setAll(boolean all) {
+        this.all = all;
     }
 }
