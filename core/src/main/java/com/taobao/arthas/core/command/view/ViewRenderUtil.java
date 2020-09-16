@@ -105,7 +105,7 @@ public class ViewRenderUtil {
     }
 
     public static String drawThreadInfo(List<ThreadVO> threads, int width, int height) {
-        TableElement table = new TableElement(1, 3, 2, 1, 1, 1, 1, 1, 1, 1).overflow(Overflow.HIDDEN).rightCellPadding(1);
+        TableElement table = new TableElement(1, 6, 3, 2, 2, 2, 2, 2, 2, 2).overflow(Overflow.HIDDEN).rightCellPadding(1);
 
         // Header
         table.add(

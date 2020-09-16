@@ -28,13 +28,8 @@ public class ThreadView extends ResultView<ThreadModel> {
         } else if (result.getBusyThreads() != null) {
             List<BusyThreadInfo> threadInfos = result.getBusyThreads();
             for (BusyThreadInfo info : threadInfos) {
-                if (info.getThreadInfo() != null) {
-                    String stacktrace = ThreadUtil.getFullStacktrace(info.getThreadInfo(), info.getCpu(), info.getDeltaTime(), info.getTime());
-                    process.write(stacktrace).write("\n");
-                } else {
-                    process.write(ThreadUtil.getThreadTitle(info.getId(), info.getName(), info.getCpu(), info.getDeltaTime(), info.getTime()));
-                    process.write("\n\n\n");
-                }
+                String stacktrace = ThreadUtil.getFullStacktrace(info, -1, -1);
+                process.write(stacktrace).write("\n");
             }
         } else if (result.getBlockingLockInfo() != null) {
             String stacktrace = ThreadUtil.getFullStacktrace(result.getBlockingLockInfo());

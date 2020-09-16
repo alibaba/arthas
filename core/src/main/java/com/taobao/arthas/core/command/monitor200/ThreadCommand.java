@@ -195,7 +195,7 @@ public class ThreadCommand extends AnnotatedCommand {
         List<BusyThreadInfo> busyThreadInfos = new ArrayList<BusyThreadInfo>(topNThreads.size());
         for (ThreadVO thread : topNThreads) {
             ThreadInfo threadInfo = findThreadInfoById(threadInfos, thread.getId());
-            BusyThreadInfo busyThread = new BusyThreadInfo(thread.getId(), thread.getName(), thread.getCpu(), thread.getDeltaTime(), thread.getTime(), threadInfo);
+            BusyThreadInfo busyThread = new BusyThreadInfo(thread, threadInfo);
             busyThreadInfos.add(busyThread);
         }
         process.appendResult(new ThreadModel(busyThreadInfos));

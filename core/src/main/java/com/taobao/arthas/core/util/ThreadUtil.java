@@ -1,6 +1,7 @@
 package com.taobao.arthas.core.util;
 
 import com.taobao.arthas.core.command.model.BlockingLockInfo;
+import com.taobao.arthas.core.command.model.BusyThreadInfo;
 import com.taobao.arthas.core.command.model.StackModel;
 import com.taobao.arthas.core.command.model.ThreadNode;
 import com.taobao.arthas.core.command.model.ThreadVO;
@@ -169,11 +170,6 @@ abstract public class ThreadUtil {
         return getFullStacktrace(threadInfo, -1, -1, -1, 0, 0);
     }
 
-    public static String getFullStacktrace(ThreadInfo threadInfo, double cpuUsage, long deltaTime, long time) {
-        return getFullStacktrace(threadInfo, cpuUsage, deltaTime, time, 0, 0);
-    }
-
-
     public static String getFullStacktrace(BlockingLockInfo blockingLockInfo) {
         return getFullStacktrace(blockingLockInfo.getThreadInfo(), -1, -1, -1, blockingLockInfo.getLockIdentityHashCode(),
                 blockingLockInfo.getBlockingThreadCount());
@@ -276,24 +272,100 @@ abstract public class ThreadUtil {
         return sb.toString().replace("\t", "    ");
     }
 
-    public static String getThreadTitle(long id, String name, double cpuUsage, long deltaTime, long time) {
-        StringBuilder sb = new StringBuilder("\"" + name + "\"");
-
-        if (id > 0) {
-            sb.append(" Id=").append(id);
+    public static String getFullStacktrace(BusyThreadInfo threadInfo, int lockIdentityHashCode, int blockingThreadCount) {
+        StringBuilder sb = new StringBuilder("\"" + threadInfo.getName() + "\"");
+        if (threadInfo.getId() > 0) {
+            sb.append(" Id=").append(threadInfo.getId());
         } else {
             sb.append(" [native]");
         }
+        double cpuUsage = threadInfo.getCpu();
         if (cpuUsage >= 0 && cpuUsage <= 100) {
             sb.append(" cpuUsage=").append(cpuUsage).append("%");
         }
-        if (deltaTime >= 0) {
-            sb.append(" deltaTime=").append(deltaTime).append("ms");
+        if (threadInfo.getDeltaTime() >= 0 ) {
+            sb.append(" deltaTime=").append(threadInfo.getDeltaTime()).append("ms");
         }
-        if (time >= 0) {
-            sb.append(" time=").append(time).append("ms");
+        if (threadInfo.getTime() >= 0 ) {
+            sb.append(" time=").append(threadInfo.getTime()).append("ms");
         }
-        return sb.toString();
+
+        if (threadInfo.getState() == null) {
+            sb.append("\n\n");
+            return sb.toString();
+        }
+
+        sb.append(" ").append(threadInfo.getState());
+
+        if (threadInfo.getLockName() != null) {
+            sb.append(" on ").append(threadInfo.getLockName());
+        }
+        if (threadInfo.getLockOwnerName() != null) {
+            sb.append(" owned by \"").append(threadInfo.getLockOwnerName()).append("\" Id=").append(threadInfo.getLockOwnerId());
+        }
+        if (threadInfo.isSuspended()) {
+            sb.append(" (suspended)");
+        }
+        if (threadInfo.isInNative()) {
+            sb.append(" (in native)");
+        }
+        sb.append('\n');
+        int i = 0;
+        for (; i < threadInfo.getStackTrace().length; i++) {
+            StackTraceElement ste = threadInfo.getStackTrace()[i];
+            sb.append("\tat ").append(ste.toString());
+            sb.append('\n');
+            if (i == 0 && threadInfo.getLockInfo() != null) {
+                Thread.State ts = threadInfo.getState();
+                switch (ts) {
+                    case BLOCKED:
+                        sb.append("\t-  blocked on ").append(threadInfo.getLockInfo());
+                        sb.append('\n');
+                        break;
+                    case WAITING:
+                        sb.append("\t-  waiting on ").append(threadInfo.getLockInfo());
+                        sb.append('\n');
+                        break;
+                    case TIMED_WAITING:
+                        sb.append("\t-  waiting on ").append(threadInfo.getLockInfo());
+                        sb.append('\n');
+                        break;
+                    default:
+                }
+            }
+
+            for (MonitorInfo mi : threadInfo.getLockedMonitors()) {
+                if (mi.getLockedStackDepth() == i) {
+                    sb.append("\t-  locked ").append(mi);
+                    if (mi.getIdentityHashCode() == lockIdentityHashCode) {
+                        Ansi highlighted = Ansi.ansi().fg(Ansi.Color.RED);
+                        highlighted.a(" <---- but blocks ").a(blockingThreadCount).a(" other threads!");
+                        sb.append(highlighted.reset().toString());
+                    }
+                    sb.append('\n');
+                }
+            }
+        }
+        if (i < threadInfo.getStackTrace().length) {
+            sb.append("\t...");
+            sb.append('\n');
+        }
+
+        LockInfo[] locks = threadInfo.getLockedSynchronizers();
+        if (locks.length > 0) {
+            sb.append("\n\tNumber of locked synchronizers = ").append(locks.length);
+            sb.append('\n');
+            for (LockInfo li : locks) {
+                sb.append("\t- ").append(li);
+                if (li.getIdentityHashCode() == lockIdentityHashCode) {
+                    sb.append(" <---- but blocks ").append(blockingThreadCount);
+                    sb.append(" other threads!");
+                }
+                sb.append('\n');
+            }
+        }
+        sb.append('\n');
+        return sb.toString().replace("\t", "    ");
     }
 
     /**
