@@ -81,8 +81,10 @@ public class DashboardView extends ResultView<DashboardModel> {
 
         //buffer-pool
         List<MemoryEntryVO> bufferPoolMemoryEntries = memoryInfo.get(MemoryEntryVO.TYPE_BUFFER_POOL);
-        for (MemoryEntryVO memoryEntryVO : bufferPoolMemoryEntries) {
-            new MemoryEntry(memoryEntryVO).addTableRow(table);
+        if (bufferPoolMemoryEntries != null) {
+            for (MemoryEntryVO memoryEntryVO : bufferPoolMemoryEntries) {
+                new MemoryEntry(memoryEntryVO).addTableRow(table);
+            }
         }
     }
 
