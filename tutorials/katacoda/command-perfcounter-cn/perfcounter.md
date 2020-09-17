@@ -8,14 +8,14 @@
    perfcounter [-d] [-h]
 
  SUMMARY:
-   Display the perf counter infornation.
+   Display the perf counter information.
 
  Examples:
    perfcounter
    perfcounter -d
 
  WIKI:
-   https://alibaba.github.io/arthas/perfcounter
+   https://arthas.aliyun.com/doc/perfcounter
 
  OPTIONS:
  -d, --details                        print all perf counter details

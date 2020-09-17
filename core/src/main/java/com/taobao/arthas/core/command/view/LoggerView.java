@@ -22,6 +22,12 @@ public class LoggerView extends ResultView<LoggerModel> {
 
     @Override
     public void draw(CommandProcess process, LoggerModel result) {
+        if (result.getMatchedClassLoaders() != null) {
+            process.write("Matched classloaders: \n");
+            ClassLoaderView.drawClassLoaders(process, result.getMatchedClassLoaders(), false);
+            process.write("\n");
+            return;
+        }
         process.write(renderLoggerInfo(result.getLoggerInfoMap(), process.width()));
     }
 

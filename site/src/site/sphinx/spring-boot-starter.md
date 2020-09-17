@@ -29,6 +29,7 @@ arthas.tunnel-server=ws://47.75.156.201:7777/ws
 
 全部支持的配置项：[参考](https://github.com/alibaba/arthas/blob/master/arthas-spring-boot-starter/src/main/java/com/alibaba/arthas/spring/ArthasProperties.java)
 
+参考：[Arthas Properties](arthas-properties.md)
 
 ### 查看Endpoint信息
 
@@ -55,6 +56,11 @@ http://localhost:8080/actuator/arthas
         <dependency>
             <groupId>com.taobao.arthas</groupId>
             <artifactId>arthas-agent-attach</artifactId>
+            <version>${arthas.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.taobao.arthas</groupId>
+            <artifactId>arthas-packaging</artifactId>
             <version>${arthas.version}</version>
         </dependency>
 ```

@@ -1,7 +1,7 @@
 
 
 
-![Arthas](https://alibaba.github.io/arthas/_images/arthas.png)
+![Arthas](https://arthas.aliyun.com/doc/_images/arthas.png)
 
 `Arthas` is a Java diagnostic tool open-sourced by Alibaba middleware team. Arthas helps developers in trouble-shooting issues in production environment for Java based applications without modifying code or restarting servers.
 
@@ -33,8 +33,7 @@ Arthas is built to solve these issues. A developer can troubleshoot production i
 - Supports JDK 6+
 - Supports Linux/Mac/Windows
 
-This tutorial takes a normal Spring Boot application as an example to demonstrate the the usage of vmoption.
+This tutorial takes a simple application as an example to demonstrate the the usage of vmoption.
 
 * Github: https://github.com/alibaba/arthas
-* Docs: https://alibaba.github.io/arthas/
-
+* Docs: https://arthas.aliyun.com/doc/en

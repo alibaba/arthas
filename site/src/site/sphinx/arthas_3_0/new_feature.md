@@ -63,7 +63,7 @@ watch com.alibaba.sample.petstore.web.store.module.screen.ItemList add "params +
 
 为了避免这个问题，Arthas 3.0中使用了ognl这个更加轻量的表达式求值库来代替groovy，彻底解决了groovy引起的FGC风险。但由于这个替换，导致原来使用groovy脚本编写的自定义脚本失效。这个问题留待后续解决。
 
-在3.0中，watch命令的表达式部分的书写有了一些改变，详见[这里](https://alibaba.github.io/arthas/watch)
+在3.0中，watch命令的表达式部分的书写有了一些改变，详见[这里](https://arthas.aliyun.com/doc/watch)
 ### 提升rt统计精度
 
 Arthas 2.0中，统计rt都是以`ms`为单位，对于某些比较小的方法调用，耗时在毫秒以下的都会被认为是0ms，造成trace总时间和各方法的时间相加不一致等问题（虽然这里面确实会有误差，主要Arthas自身的开销）。Arthas 3.0中所有rt的单位统一改为使用`ns`来统计，精准捕获你的方法耗时，让0ms这样无意义的统计数据不再出现！

@@ -27,7 +27,7 @@ watch com.alibaba.sample.petstore.web.store.module.screen.ItemList add "params +
 
 为了避免这个问题，Arthas 3.0中使用了ognl这个更加轻量的表达式求值库来代替groovy，彻底解决了groovy引起的FGC风险。但由于这个替换，导致原来使用groovy脚本编写的自定义脚本失效。这个问题留待后续解决。
 
-在3.0中，watch命令的表达式部分的书写有了一些改变，详见[这里](https://alibaba.github.io/arthas/watch)
+在3.0中，watch命令的表达式部分的书写有了一些改变，详见[这里](https://arthas.aliyun.com/doc/watch)
 
 #### 提升rt统计精度
 

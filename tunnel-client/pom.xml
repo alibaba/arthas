@@ -4,13 +4,19 @@
 	<parent>
 		<groupId>com.taobao.arthas</groupId>
 		<artifactId>arthas-all</artifactId>
-		<version>3.3.8-SNAPSHOT</version>
+		<version>3.4.2-SNAPSHOT</version>
 		<relativePath>../pom.xml</relativePath>
 	</parent>
 	<artifactId>arthas-tunnel-client</artifactId>
 	<name>arthas-tunnel-client</name>
 
 	<dependencies>
+        <dependency>
+            <groupId>com.taobao.arthas</groupId>
+            <artifactId>arthas-common</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+
 		<dependency>
 			<groupId>org.slf4j</groupId>
 			<artifactId>slf4j-api</artifactId>

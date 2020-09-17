@@ -27,6 +27,7 @@ import com.alibaba.arthas.deps.org.slf4j.LoggerFactory;
 import com.alibaba.arthas.tunnel.client.TunnelClient;
 import com.taobao.arthas.common.AnsiLog;
 import com.taobao.arthas.common.PidUtils;
+import com.taobao.arthas.common.SocketUtils;
 import com.taobao.arthas.core.advisor.TransformerManager;
 import com.taobao.arthas.core.command.BuiltinCommandPack;
 import com.taobao.arthas.core.command.view.ResultViewResolver;
@@ -61,6 +62,7 @@ import io.netty.util.concurrent.EventExecutorGroup;
 
 /**
  * @author vlinux on 15/5/2.
+ * @author hengyunabc
  */
 public class ArthasBootstrap {
     private static final String ARTHAS_SPY_JAR = "arthas-spy.jar";
@@ -274,19 +276,24 @@ public class ArthasBootstrap {
             throw new IllegalStateException("already bind");
         }
 
+        // init random port
+        if (configure.getTelnetPort() == 0) {
+            int newTelnetPort = SocketUtils.findAvailableTcpPort();
+            configure.setTelnetPort(newTelnetPort);
+            logger().info("generate random telnet port: " + newTelnetPort);
+        }
+        if (configure.getHttpPort() == 0) {
+            int newHttpPort = SocketUtils.findAvailableTcpPort();
+            configure.setHttpPort(newHttpPort);
+            logger().info("generate random http port: " + newHttpPort);
+        }
+
         String agentId = null;
         try {
-            if (configure.getTunnelServer() != null && configure.getHttpPort() > 0) {
+            if (configure.getTunnelServer() != null) {
                 tunnelClient = new TunnelClient();
                 tunnelClient.setId(configure.getAgentId());
                 tunnelClient.setTunnelServerUrl(configure.getTunnelServer());
-                // ws://127.0.0.1:8563/ws
-                String host = "127.0.0.1";
-                if(configure.getIp() != null) {
-                    host = configure.getIp();
-                }
-                URI uri = new URI("ws", null, host, configure.getHttpPort(), "/ws", null, null);
-                tunnelClient.setLocalServerUrl(uri.toString());
                 ChannelFuture channelFuture = tunnelClient.start();
                 channelFuture.await(10, TimeUnit.SECONDS);
                 if(channelFuture.isSuccess()) {
@@ -328,6 +335,11 @@ public class ArthasBootstrap {
                 shellServer.registerTermServer(new HttpTermServer(configure.getIp(), configure.getHttpPort(),
                         options.getConnectionTimeout(), workerGroup));
             } else {
+                // listen local address in VM communication
+                if (configure.getTunnelServer() != null) {
+                    shellServer.registerTermServer(new HttpTermServer(configure.getIp(), configure.getHttpPort(),
+                            options.getConnectionTimeout(), workerGroup));
+                }
                 logger().info("http port is {}, skip bind http server.", configure.getHttpPort());
             }
 
@@ -481,7 +493,7 @@ public class ArthasBootstrap {
             Method method = clazz.getDeclaredMethod("resetArthasClassLoader");
             method.invoke(null);
         } catch (Throwable e) {
-            e.printStackTrace();
+            // ignore
         }
     }
 

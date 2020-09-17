@@ -30,7 +30,7 @@ import sun.management.counter.perf.PerfInstrumentation;
  * @author hengyunabc 2020-02-16
  */
 @Name("perfcounter")
-@Summary("Display the perf counter infornation.")
+@Summary("Display the perf counter information.")
 @Description("\nExamples:\n" +
         "  perfcounter\n" +
         "  perfcounter -d\n" +

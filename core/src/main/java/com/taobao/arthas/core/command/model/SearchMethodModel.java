@@ -1,5 +1,6 @@
 package com.taobao.arthas.core.command.model;
 
+import java.util.Collection;
 
 /**
  * Model of SearchMethodCommand
@@ -8,6 +9,9 @@ package com.taobao.arthas.core.command.model;
 public class SearchMethodModel extends ResultModel {
     private MethodVO methodInfo;
     private boolean detail;
+
+    private Collection<ClassLoaderVO> matchedClassLoaders;
+    private String classLoaderClass;
 
     public SearchMethodModel() {
     }
@@ -33,6 +37,24 @@ public class SearchMethodModel extends ResultModel {
         this.detail = detail;
     }
 
+    public String getClassLoaderClass() {
+        return classLoaderClass;
+    }
+
+    public SearchMethodModel setClassLoaderClass(String classLoaderClass) {
+        this.classLoaderClass = classLoaderClass;
+        return this;
+    }
+
+    public Collection<ClassLoaderVO> getMatchedClassLoaders() {
+        return matchedClassLoaders;
+    }
+
+    public SearchMethodModel setMatchedClassLoaders(Collection<ClassLoaderVO> matchedClassLoaders) {
+        this.matchedClassLoaders = matchedClassLoaders;
+        return this;
+    }
+    
     @Override
     public String getType() {
         return "sm";

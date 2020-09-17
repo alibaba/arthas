@@ -45,17 +45,25 @@ $ sc -d *UserController | grep classLoaderHash
 
 可以发现是 spring boot `LaunchedURLClassLoader@1be6f5c3` 加载的。
 
+请记下你的classLoaderHash，后面需要使用它。在这里，它是 `1be6f5c3`。
+
 ### mc
 
-保存好`/tmp/UserController.java`之后，使用`mc`(Memory Compiler)命令来编译，并且通过`-c`参数指定ClassLoader：
+保存好`/tmp/UserController.java`之后，使用`mc`(Memory Compiler)命令来编译，并且通过`-c`或者`--classLoaderClass`参数指定ClassLoader：
 
-`mc -c 1be6f5c3 /tmp/UserController.java -d /tmp`{{execute T2}}
+`mc --classLoaderClass org.springframework.boot.loader.LaunchedURLClassLoader /tmp/UserController.java -d /tmp`{{execute T2}}
 
 ```bash
-$ mc -c 1be6f5c3 /tmp/UserController.java -d /tmp
+$ mc --classLoaderClass org.springframework.boot.loader.LaunchedURLClassLoader /tmp/UserController.java -d /tmp
 Memory compiler output:
 /tmp/com/example/demo/arthas/user/UserController.class
 Affect(row-cnt:1) cost in 346 ms
+```
+
+也可以通过`mc -c <classLoaderHash> /tmp/UserController.java -d /tmp`，使用`-c`参数指定ClassLoaderHash:
+
+```bash
+$ mc -c 1be6f5c3 /tmp/UserController.java -d /tmp
 ```
 
 ### redefine

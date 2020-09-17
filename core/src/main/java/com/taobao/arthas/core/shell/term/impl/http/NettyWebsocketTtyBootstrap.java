@@ -1,11 +1,15 @@
 package com.taobao.arthas.core.shell.term.impl.http;
 
+import com.taobao.arthas.common.ArthasConstants;
+
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.EventLoopGroup;
 import io.netty.channel.group.ChannelGroup;
 import io.netty.channel.group.DefaultChannelGroup;
+import io.netty.channel.local.LocalAddress;
+import io.netty.channel.local.LocalServerChannel;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
 import io.netty.handler.logging.LogLevel;
@@ -61,22 +65,43 @@ public class NettyWebsocketTtyBootstrap {
     public void start(Consumer<TtyConnection> handler, final Consumer<Throwable> doneHandler) {
         group = new NioEventLoopGroup(new DefaultThreadFactory("arthas-NettyWebsocketTtyBootstrap", true));
 
-        ServerBootstrap b = new ServerBootstrap();
-        b.group(group).channel(NioServerSocketChannel.class).handler(new LoggingHandler(LogLevel.INFO))
-                .childHandler(new TtyServerInitializer(channelGroup, handler, workerGroup));
+        if (this.port > 0) {
+            ServerBootstrap b = new ServerBootstrap();
+            b.group(group).channel(NioServerSocketChannel.class).handler(new LoggingHandler(LogLevel.INFO))
+                    .childHandler(new TtyServerInitializer(channelGroup, handler, workerGroup));
 
-        final ChannelFuture f = b.bind(host, port);
-        f.addListener(new GenericFutureListener<Future<? super Void>>() {
-            @Override
-            public void operationComplete(Future<? super Void> future) throws Exception {
-                if (future.isSuccess()) {
-                    channel = f.channel();
-                    doneHandler.accept(null);
-                } else {
-                    doneHandler.accept(future.cause());
+            final ChannelFuture f = b.bind(host, port);
+            f.addListener(new GenericFutureListener<Future<? super Void>>() {
+                @Override
+                public void operationComplete(Future<? super Void> future) throws Exception {
+                    if (future.isSuccess()) {
+                        channel = f.channel();
+                        doneHandler.accept(null);
+                    } else {
+                        doneHandler.accept(future.cause());
+                    }
                 }
-            }
-        });
+            });
+        }
+
+        // listen local address in VM communication
+        ServerBootstrap b2 = new ServerBootstrap();
+        b2.group(group).channel(LocalServerChannel.class).handler(new LoggingHandler(LogLevel.INFO))
+                .childHandler(new LocalTtyServerInitializer(channelGroup, handler, workerGroup));
+
+        ChannelFuture bindLocalFuture = b2.bind(new LocalAddress(ArthasConstants.NETTY_LOCAL_ADDRESS));
+        if (this.port < 0) { // 保证回调doneHandler
+            bindLocalFuture.addListener(new GenericFutureListener<Future<? super Void>>() {
+                @Override
+                public void operationComplete(Future<? super Void> future) throws Exception {
+                    if (future.isSuccess()) {
+                        doneHandler.accept(null);
+                    } else {
+                        doneHandler.accept(future.cause());
+                    }
+                }
+            });
+        }
     }
 
     public CompletableFuture<Void> start(Consumer<TtyConnection> handler) {

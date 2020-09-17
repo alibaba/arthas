@@ -1,5 +1,7 @@
 package com.taobao.arthas.core.command.model;
 
+import java.util.Collection;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -10,6 +12,8 @@ import java.util.Map;
 public class LoggerModel extends ResultModel {
 
     private Map<String, Map<String, Object>> loggerInfoMap;
+    private Collection<ClassLoaderVO> matchedClassLoaders;
+    private String classLoaderClass;
 
     public LoggerModel() {
     }
@@ -24,6 +28,24 @@ public class LoggerModel extends ResultModel {
 
     public void setLoggerInfoMap(Map<String, Map<String, Object>> loggerInfoMap) {
         this.loggerInfoMap = loggerInfoMap;
+    }
+
+    public String getClassLoaderClass() {
+        return classLoaderClass;
+    }
+
+    public LoggerModel setClassLoaderClass(String classLoaderClass) {
+        this.classLoaderClass = classLoaderClass;
+        return this;
+    }
+
+    public Collection<ClassLoaderVO> getMatchedClassLoaders() {
+        return matchedClassLoaders;
+    }
+
+    public LoggerModel setMatchedClassLoaders(Collection<ClassLoaderVO> matchedClassLoaders) {
+        this.matchedClassLoaders = matchedClassLoaders;
+        return this;
     }
 
     @Override

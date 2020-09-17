@@ -4,6 +4,7 @@ import com.taobao.arthas.core.command.klass100.ClassLoaderCommand.ClassLoaderSta
 
 import java.util.List;
 import java.util.Map;
+import java.util.Collection;
 
 /**
  * @author gongdewei 2020/4/21
@@ -19,6 +20,9 @@ public class ClassLoaderModel extends ResultModel {
     private Boolean tree;
 
     private Map<String, ClassLoaderStat> classLoaderStats;
+
+    private Collection<ClassLoaderVO> matchedClassLoaders;
+    private String classLoaderClass;
 
     public ClassLoaderModel() {
     }
@@ -88,6 +92,24 @@ public class ClassLoaderModel extends ResultModel {
 
     public ClassLoaderModel setClassLoaderStats(Map<String, ClassLoaderStat> classLoaderStats) {
         this.classLoaderStats = classLoaderStats;
+        return this;
+    }
+
+    public String getClassLoaderClass() {
+        return classLoaderClass;
+    }
+
+    public ClassLoaderModel setClassLoaderClass(String classLoaderClass) {
+        this.classLoaderClass = classLoaderClass;
+        return this;
+    }
+
+    public Collection<ClassLoaderVO> getMatchedClassLoaders() {
+        return matchedClassLoaders;
+    }
+
+    public ClassLoaderModel setMatchedClassLoaders(Collection<ClassLoaderVO> matchedClassLoaders) {
+        this.matchedClassLoaders = matchedClassLoaders;
         return this;
     }
 }

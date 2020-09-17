@@ -38,13 +38,15 @@ $ classloader -l
 
 列出上面的`org.apache.jasper.servlet.JasperLoader`加载的类：
 
-`classloader -a -c 65361d9a`{{execute T2}}
+`classloader -a --classLoaderClass apache.jasper.servlet.JasperLoader`{{execute T2}}
 
 ```bash
-$ classloader -a -c 65361d9a
+$ classloader -a --classLoaderClass apache.jasper.servlet.JasperLoader
  hash:1698045338, org.apache.jasper.servlet.JasperLoader@65361d9a
  org.apache.jsp.jsp.hello_jsp
 ```
+
+* 注：同ognl, 也可用`-c <hashcode>`而不用`--classLoaderClass`指定
 
 ### 反编译jsp的代码
 
@@ -80,15 +82,16 @@ $ classloader -t
 
         +-org.apache.jasper.servlet.JasperLoader@21ae0fe2
 ```
+注意：请使用你的classLoaderHash值覆盖 `<classLoaderHash>` ，然后手动执行下面相关命令：
 
 ### 列出ClassLoader的urls
 
-比如上面查看到的spring LaunchedURLClassLoader的 hashcode是`1be6f5c3`，可以通过`-c`参数来列出它的所有urls：
+比如上面查看到的spring LaunchedURLClassLoader的 hashcode是`1be6f5c3`，可以通过`-c`或者`--classLoaderClass`参数来列出它的所有urls：
 
-`classloader -c 1be6f5c3`{{execute T2}}
+`classloader --classLoaderClass org.springframework.boot.loader.LaunchedURLClassLoader`{{execute T2}}
 
 ```
-$ classloader -c 1be6f5c3
+$ classloader --classLoaderClass org.springframework.boot.loader.LaunchedURLClassLoader
 jar:file:/home/scrapbook/tutorial/demo-arthas-spring-boot.jar!/BOOT-INF/classes!/
 jar:file:/home/scrapbook/tutorial/demo-arthas-spring-boot.jar!/BOOT-INF/lib/spring-boot-starter-aop-1.5
 .13.RELEASE.jar!/
@@ -97,10 +100,10 @@ jar:file:/home/scrapbook/tutorial/demo-arthas-spring-boot.jar!/BOOT-INF/lib/spri
 
 ### 加载指定ClassLoader里的资源文件
 
-查找指定的资源文件： `classloader -c 1be6f5c3 -r logback-spring.xml`{{execute T2}}
+查找指定的资源文件： `classloader --classLoaderClass org.springframework.boot.loader.LaunchedURLClassLoader -r logback-spring.xml`{{execute T2}}
 
 ```
-$ classloader -c 1be6f5c3 -r logback-spring.xml
+$ classloader --classLoaderClass org.springframework.boot.loader.LaunchedURLClassLoader -r logback-spring.xml
  jar:file:/home/scrapbook/tutorial/demo-arthas-spring-boot.jar!/BOOT-INF/classes!/logback-spring.xml
 ```
 
@@ -108,10 +111,10 @@ $ classloader -c 1be6f5c3 -r logback-spring.xml
 
 比如用上面的spring LaunchedURLClassLoader 尝试加载 `java.lang.String` ：
 
-`classloader -c 1be6f5c3 --load java.lang.String`{{execute T2}}
+`classloader --classLoaderClass org.springframework.boot.loader.LaunchedURLClassLoader --load java.lang.String`{{execute T2}}
 
 ```
-$ classloader -c 1be6f5c3 --load java.lang.String
+$ classloader --classLoaderClass org.springframework.boot.loader.LaunchedURLClassLoader --load java.lang.String
 load class success.
  class-info        java.lang.String
  code-source

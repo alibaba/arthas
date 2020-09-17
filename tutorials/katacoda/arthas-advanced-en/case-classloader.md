@@ -38,13 +38,15 @@ $ classloader -l
 
 List all classes loaded by `org.apache.jasper.servlet.JasperLoader`:
 
-`classloader -a -c 65361d9a`{{execute T2}}
+`classloader -a --classLoaderClass apache.jasper.servlet.JasperLoader`{{execute T2}}
 
 ```bash
-$ classloader -a -c 65361d9a
+$ classloader -a --classLoaderClass apache.jasper.servlet.JasperLoader
  hash:1698045338, org.apache.jasper.servlet.JasperLoader@65361d9a
  org.apache.jsp.jsp.hello_jsp
 ```
+
+* PS: Same as `ognl`, you can also use `-c <hashcode>` instead of `--classLoaderClass` to specify
 
 ### Decompile dynamically generated jsp classes
 
@@ -81,14 +83,16 @@ $ classloader -t
         +-org.apache.jasper.servlet.JasperLoader@21ae0fe2
 ```
 
+Note: Please replace `<classLoaderHash>` with your classLoaderHash above, then execute the related commands manually in the following steps:
+
 ### List the urls of the ClassLoader
 
 For example, the hashcode of spring `LaunchedURLClassLoader` viewed above is `1be6f5c3`, and all its urls can be listed by the `-c` parameter:
 
-`classloader -c 1be6f5c3`{{execute T2}}
+`classloader --classLoaderClass org.springframework.boot.loader.LaunchedURLClassLoader`{{execute T2}}
 
 ```
-$ classloader -c 1be6f5c3
+$ classloader --classLoaderClass org.springframework.boot.loader.LaunchedURLClassLoader
 jar:file:/home/scrapbook/tutorial/demo-arthas-spring-boot.jar!/BOOT-INF/classes!/
 jar:file:/home/scrapbook/tutorial/demo-arthas-spring-boot.jar!/BOOT-INF/lib/spring-boot-starter-aop-1.5
 .13.RELEASE.jar!/
@@ -97,10 +101,10 @@ jar:file:/home/scrapbook/tutorial/demo-arthas-spring-boot.jar!/BOOT-INF/lib/spri
 
 ### Load the resource file in the specified ClassLoader
 
-Load the specified resource file: `classloader -c 1be6f5c3 -r logback-spring.xml`{{execute T2}}
+Load the specified resource file: `classloader --classLoaderClass org.springframework.boot.loader.LaunchedURLClassLoader -r logback-spring.xml`{{execute T2}}
 
 ```
-$ classloader -c 1be6f5c3 -r logback-spring.xml
+$ classloader --classLoaderClass org.springframework.boot.loader.LaunchedURLClassLoader -r logback-spring.xml
  jar:file:/home/scrapbook/tutorial/demo-arthas-spring-boot.jar!/BOOT-INF/classes!/logback-spring.xml
 ```
 
@@ -108,10 +112,10 @@ $ classloader -c 1be6f5c3 -r logback-spring.xml
 
 For example, try loading `java.lang.String` with spring LaunchedURLClassLoader :
 
-`classloader -c 1be6f5c3 --load java.lang.String`{{execute T2}}
+`classloader --classLoaderClass org.springframework.boot.loader.LaunchedURLClassLoader --load java.lang.String`{{execute T2}}
 
 ```
-$ classloader -c 1be6f5c3 --load java.lang.String
+$ classloader --classLoaderClass org.springframework.boot.loader.LaunchedURLClassLoader --load java.lang.String
 load class success.
  class-info        java.lang.String
  code-source

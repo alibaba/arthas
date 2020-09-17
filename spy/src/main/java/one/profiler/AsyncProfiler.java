@@ -166,7 +166,8 @@ public class AsyncProfiler implements AsyncProfilerMXBean {
     }
 
     /**
-     * Add the given thread to the set of profiled threads
+     * Add the given thread to the set of profiled threads.
+     * 'filter' option must be enabled to use this method.
      *
      * @param thread Thread to include in profiling
      */
@@ -175,7 +176,8 @@ public class AsyncProfiler implements AsyncProfilerMXBean {
     }
 
     /**
-     * Remove the given thread from the set of profiled threads
+     * Remove the given thread from the set of profiled threads.
+     * 'filter' option must be enabled to use this method.
      *
      * @param thread Thread to exclude from profiling
      */

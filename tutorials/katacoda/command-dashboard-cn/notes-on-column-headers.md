@@ -19,4 +19,4 @@
 
 ## 截图展示
 
-![](https://alibaba.github.io/arthas/_images/dashboard.png)
+![](https://arthas.aliyun.com/doc/_images/dashboard.png)

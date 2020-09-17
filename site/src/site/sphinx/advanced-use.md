@@ -91,6 +91,10 @@ Arthas支持使用管道对上述命令的结果进行进一步的处理，如`s
 
 * [Web Console](web-console.md)
 
+## Arthas Properties
+
+* [Arthas Properties](arthas-properties.md)
+
 ## 以java agent方式启动
 
 * [以java agent方式启动](agent.md)
@@ -135,8 +139,8 @@ Escape character is '^]'.
 `--' `--'`--' '--'   `--'   `--'  `--'`--' `--'`-----'
 
 
-wiki      https://alibaba.github.io/arthas
-tutorials https://alibaba.github.io/arthas/arthas-tutorials
+wiki      https://arthas.aliyun.com/doc
+tutorials https://arthas.aliyun.com/doc/arthas-tutorials.html
 version   3.3.6
 pid       58883
 ```

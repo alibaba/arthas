@@ -21,6 +21,6 @@
 | `"\C-x\e[3~"`  |  | backward-kill-line  |  |
 | `"\e\C-?"`  |  | backward-kill-word  |  |
 
-Press `tab`{{execute T2}} to enable auto-completion prompt at any time.
+Press `tab` to enable auto-completion prompt at any time.
 
 Enter command and `-` or `--`, then press `tab` to display the concrete options for the current command.

@@ -29,6 +29,7 @@ arthas.tunnel-server=ws://47.75.156.201:7777/ws
 
 All supported configuration: [Reference](https://github.com/alibaba/arthas/blob/master/arthas-spring-boot-starter/src/main/java/com/alibaba/arthas/spring/ArthasProperties.java)
 
+Reference: [Arthas Properties](arthas-properties.md)
 
 ### View Endpoint Information
 
@@ -55,6 +56,11 @@ Non-Spring Boot applications can be used in the following ways.
         <dependency>
             <groupId>com.taobao.arthas</groupId>
             <artifactId>arthas-agent-attach</artifactId>
+            <version>${arthas.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.taobao.arthas</groupId>
+            <artifactId>arthas-packaging</artifactId>
             <version>${arthas.version}</version>
         </dependency>
 ```
