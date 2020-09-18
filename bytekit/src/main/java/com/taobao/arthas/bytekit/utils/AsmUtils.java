@@ -55,9 +55,24 @@ public class AsmUtils {
 		return result;
 	}
 
-    public static byte[] toBytes(ClassNode classNode, ClassLoader classLoader) {
-        ClassWriter writer = new ClassLoaderAwareClassWriter(ClassWriter.COMPUTE_FRAMES | ClassWriter.COMPUTE_MAXS,
-                classLoader);
+	public static ClassReader toClassNode(byte[] classBytes, ClassNode classNode) {
+		ClassReader reader = new ClassReader(classBytes);
+		reader.accept(classNode, ClassReader.SKIP_FRAMES);
+		return reader;
+	}
+
+	/**
+	 * Generate class bytes from class node.
+	 * <br>
+	 * <B>NOTE: must pass origin classReader for bytecode optimizations, avoiding JVM metaspace OOM.</B>
+	 * @param classNode
+	 * @param classLoader
+	 * @param classReader  origin class reader
+	 * @return
+	 */
+    public static byte[] toBytes(ClassNode classNode, ClassLoader classLoader, ClassReader classReader) {
+		int flags = ClassWriter.COMPUTE_FRAMES | ClassWriter.COMPUTE_MAXS;
+		ClassWriter writer = new ClassLoaderAwareClassWriter(classReader, flags, classLoader);
         classNode.accept(writer);
         return writer.toByteArray();
     }
