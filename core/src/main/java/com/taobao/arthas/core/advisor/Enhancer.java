@@ -21,6 +21,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.WeakHashMap;
 
+import com.alibaba.arthas.deps.org.objectweb.asm.ClassReader;
 import com.alibaba.arthas.deps.org.objectweb.asm.Opcodes;
 import com.alibaba.arthas.deps.org.objectweb.asm.Type;
 import com.alibaba.arthas.deps.org.objectweb.asm.tree.AbstractInsnNode;
@@ -122,7 +123,9 @@ public class Enhancer implements ClassFileTransformer {
                 return null;
             }
 
-            ClassNode classNode = AsmUtils.toClassNode(classfileBuffer);
+            //keep origin class reader for bytecode optimizations, avoiding JVM metaspace OOM.
+            ClassNode classNode = new ClassNode(Opcodes.ASM8);
+            ClassReader classReader = AsmUtils.toClassNode(classfileBuffer, classNode);
             // remove JSR https://github.com/alibaba/arthas/issues/1304
             classNode = AsmUtils.removeJSRInstructions(classNode);
 
@@ -230,7 +233,7 @@ public class Enhancer implements ClassFileTransformer {
                 classNode.version = Opcodes.V1_5;
             }
 
-            byte[] enhanceClassByteArray = AsmUtils.toBytes(classNode, inClassLoader);
+            byte[] enhanceClassByteArray = AsmUtils.toBytes(classNode, inClassLoader, classReader);
 
             // 增强成功，记录类
             classBytesCache.put(classBeingRedefined, new Object());
