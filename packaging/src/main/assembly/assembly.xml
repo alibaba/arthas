@@ -26,6 +26,10 @@
       <destName>arthas.properties</destName>
     </file>
     <file>
+      <source>../core/src/main/java/plugin.properties</source>
+      <destName>plugin.properties</destName>
+    </file>
+    <file>
       <source>../agent/target/arthas-agent-jar-with-dependencies.jar</source>
       <destName>arthas-agent.jar</destName>
     </file>

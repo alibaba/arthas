@@ -44,6 +44,7 @@ import com.taobao.arthas.core.command.monitor200.TraceCommand;
 import com.taobao.arthas.core.command.monitor200.WatchCommand;
 import com.taobao.arthas.core.shell.command.Command;
 import com.taobao.arthas.core.shell.command.CommandResolver;
+import com.taobao.arthas.oneagent.PluginsCommand;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -109,5 +110,11 @@ public class BuiltinCommandPack implements CommandResolver {
         commands.add(Command.create(ProfilerCommand.class));
         commands.add(Command.create(ShutdownCommand.class));
         commands.add(Command.create(StopCommand.class));
+        try {
+            BuiltinCommandPack.class.getClassLoader().loadClass("com.alibaba.oneagent.plugin.PluginActivator");
+            commands.add(Command.create(PluginsCommand.class));
+        } catch (Throwable e) {
+            // TODO: handle exception
+        }
     }
 }

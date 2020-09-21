@@ -133,6 +133,14 @@
         </dependency>
 
         <dependency>
+            <groupId>com.alibaba.oneagent</groupId>
+            <artifactId>one-java-agent</artifactId>
+            <version>0.0.1-SNAPSHOT</version>
+            <optional>true</optional>
+            <scope>provided</scope>
+        </dependency>
+
+        <dependency>
             <groupId>com.taobao.arthas</groupId>
             <artifactId>arthas-memorycompiler</artifactId>
             <version>${project.version}</version>
