@@ -2,11 +2,17 @@ package com.taobao.arthas.core.command.monitor200;
 
 import com.taobao.arthas.core.command.model.ThreadVO;
 import sun.management.HotspotThreadMBean;
+import sun.management.ManagementFactoryHelper;
 
 import java.lang.management.ManagementFactory;
 import java.lang.management.ThreadMXBean;
-import java.lang.reflect.Method;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Thread cpu sampler
@@ -72,8 +78,7 @@ public class ThreadSampler {
             }
         }
 
-        // Compute delta map and total time
-        long total = 0;
+        // Compute delta time
         final Map<ThreadVO, Long> deltas = new HashMap<ThreadVO, Long>(threads.size());
         for (ThreadVO thread : newCpuTimes.keySet()) {
             Long t = lastCpuTimes.get(thread);
@@ -89,7 +94,6 @@ public class ThreadSampler {
             }
             long delta = time2 - time1;
             deltas.put(thread, delta);
-            total += delta;
         }
 
         long sampleIntervalNanos = newSampleTimeNanos - lastSampleTimeNanos;
@@ -97,7 +101,7 @@ public class ThreadSampler {
         // Compute cpu usage
         final HashMap<ThreadVO, Double> cpuUsages = new HashMap<ThreadVO, Double>(threads.size());
         for (ThreadVO thread : threads) {
-            double cpu = sampleIntervalNanos == 0 ? 0 : (deltas.get(thread) * 10000) / sampleIntervalNanos / 100.0;
+            double cpu = sampleIntervalNanos == 0 ? 0 : (deltas.get(thread) * 10000 / sampleIntervalNanos / 100.0);
             cpuUsages.put(thread, cpu);
         }
 
@@ -136,13 +140,10 @@ public class ThreadSampler {
         if (hotspotThreadMBeanEnable && includeInternalThreads) {
             try {
                 if (hotspotThreadMBean == null) {
-                    //HotspotThreadMBean hotspotThreadMBean = ManagementFactoryHelper.getHotspotThreadMBean();
-                    Class<?> managementFactoryHelperClass = Class.forName("sun.management.ManagementFactoryHelper");
-                    Method getHotspotThreadMBeanMethod = managementFactoryHelperClass.getMethod("getHotspotThreadMBean");
-                    hotspotThreadMBean = (HotspotThreadMBean) getHotspotThreadMBeanMethod.invoke(null);
+                    hotspotThreadMBean = ManagementFactoryHelper.getHotspotThreadMBean();
                 }
                 return hotspotThreadMBean.getInternalThreadCpuTimes();
-            } catch (Exception e) {
+            } catch (Throwable e) {
                 //ignore ex
                 hotspotThreadMBeanEnable = false;
             }

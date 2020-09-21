@@ -31,7 +31,6 @@ import java.lang.management.ManagementFactory;
 import java.lang.management.MemoryPoolMXBean;
 import java.lang.management.MemoryType;
 import java.lang.management.MemoryUsage;
-import java.lang.management.ThreadMXBean;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -64,7 +63,7 @@ public class DashboardCommand extends AnnotatedCommand {
 
     private int numOfExecutions = Integer.MAX_VALUE;
 
-    private long interval = 2000;
+    private long interval = 5000;
 
     private volatile long count = 0;
     private volatile Timer timer;
