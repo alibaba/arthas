@@ -5,8 +5,6 @@ import com.alibaba.arthas.deps.org.slf4j.LoggerFactory;
 import com.taobao.arthas.core.command.model.MessageModel;
 import com.taobao.arthas.core.distribution.ResultConsumer;
 import com.taobao.arthas.core.distribution.SharingResultDistributor;
-import com.taobao.arthas.core.distribution.impl.SharingResultDistributorImpl;
-import com.taobao.arthas.core.server.ArthasBootstrap;
 import com.taobao.arthas.core.shell.ShellServerOptions;
 import com.taobao.arthas.core.shell.session.Session;
 import com.taobao.arthas.core.shell.session.SessionManager;
@@ -25,7 +23,6 @@ import java.util.concurrent.*;
  */
 public class SessionManagerImpl implements SessionManager {
     private static final Logger logger = LoggerFactory.getLogger(SessionManagerImpl.class);
-    private final ArthasBootstrap bootstrap;
     private final InternalCommandManager commandManager;
     private final Instrumentation instrumentation;
     private final JobController jobController;
@@ -37,9 +34,8 @@ public class SessionManagerImpl implements SessionManager {
     private boolean closed = false;
     private ScheduledExecutorService scheduledExecutorService;
 
-    public SessionManagerImpl(ShellServerOptions options, ArthasBootstrap bootstrap, InternalCommandManager commandManager,
+    public SessionManagerImpl(ShellServerOptions options, InternalCommandManager commandManager,
                               JobController jobController) {
-        this.bootstrap = bootstrap;
         this.commandManager = commandManager;
         this.jobController = jobController;
         this.sessions = new ConcurrentHashMap<String, Session>();
@@ -101,7 +97,6 @@ public class SessionManagerImpl implements SessionManager {
         }
 
         jobController.close();
-        bootstrap.destroy();
     }
 
     private synchronized void setEvictTimer() {

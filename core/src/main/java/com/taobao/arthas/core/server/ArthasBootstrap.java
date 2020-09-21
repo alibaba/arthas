@@ -4,8 +4,8 @@ import java.arthas.SpyAPI;
 import java.io.File;
 import java.io.IOException;
 import java.lang.instrument.Instrumentation;
+import java.lang.instrument.UnmodifiableClassException;
 import java.lang.reflect.Method;
-import java.net.URI;
 import java.security.CodeSource;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -28,6 +28,7 @@ import com.alibaba.arthas.tunnel.client.TunnelClient;
 import com.taobao.arthas.common.AnsiLog;
 import com.taobao.arthas.common.PidUtils;
 import com.taobao.arthas.common.SocketUtils;
+import com.taobao.arthas.core.advisor.Enhancer;
 import com.taobao.arthas.core.advisor.TransformerManager;
 import com.taobao.arthas.core.command.BuiltinCommandPack;
 import com.taobao.arthas.core.command.view.ResultViewResolver;
@@ -54,6 +55,9 @@ import com.taobao.arthas.core.util.ArthasBanner;
 import com.taobao.arthas.core.util.FileUtils;
 import com.taobao.arthas.core.util.LogUtil;
 import com.taobao.arthas.core.util.UserStatUtil;
+import com.taobao.arthas.core.util.affect.EnhancerAffect;
+import com.taobao.arthas.core.util.matcher.WildcardMatcher;
+
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.util.concurrent.DefaultThreadFactory;
@@ -316,7 +320,7 @@ public class ArthasBootstrap {
                 options.setWelcomeMessage(ArthasBanner.welcome(welcomeInfos));
             }
 
-            shellServer = new ShellServerImpl(options, this);
+            shellServer = new ShellServerImpl(options);
             BuiltinCommandPack builtinCommands = new BuiltinCommandPack();
             List<CommandResolver> resolvers = new ArrayList<CommandResolver>();
             resolvers.add(builtinCommands);
@@ -350,7 +354,7 @@ public class ArthasBootstrap {
             shellServer.listen(new BindHandler(isBindRef));
 
             //http api session manager
-            sessionManager = new SessionManagerImpl(options, this, shellServer.getCommandManager(), shellServer.getJobController());
+            sessionManager = new SessionManagerImpl(options, shellServer.getCommandManager(), shellServer.getJobController());
             //http api handler
             httpApiHandler = new HttpApiHandler(historyManager, sessionManager);
 
@@ -400,6 +404,13 @@ public class ArthasBootstrap {
         return isBindRef.get();
     }
 
+    public EnhancerAffect reset() throws UnmodifiableClassException {
+        return Enhancer.reset(this.instrumentation, new WildcardMatcher("*"));
+    }
+
+    /**
+     * call reset() before destroy()
+     */
     public void destroy() {
         timer.cancel();
         if (this.tunnelClient != null) {
@@ -409,10 +420,8 @@ public class ArthasBootstrap {
                 logger().error("stop tunnel client error", e);
             }
         }
-        executorService.shutdownNow();
         transformerManager.destroy();
         UserStatUtil.destroy();
-        shutdownWorkGroup();
         // clear the reference in Spy class.
         cleanUpSpyReference();
         try {
@@ -424,8 +433,28 @@ public class ArthasBootstrap {
         if (loggerContext != null) {
             loggerContext.stop();
         }
+
+        if (sessionManager != null){
+            try {
+                sessionManager.close();
+            } catch (Throwable e) {
+                logger().error("close session manager failure", e);
+            }
+        }
+
+        if (shellServer != null) {
+            try {
+                shellServer.close();
+            } catch (Throwable e) {
+                logger().error("close shell server failure", e);
+            }
+        }
+
         shellServer = null;
         sessionManager = null;
+
+        executorService.shutdownNow();
+        shutdownWorkGroup();
     }
 
     /**
