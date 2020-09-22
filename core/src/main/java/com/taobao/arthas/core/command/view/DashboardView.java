@@ -31,34 +31,47 @@ public class DashboardView extends ResultView<DashboardModel> {
         int threadTopHeight = totalHeight / 2;
         int lowerHalf = totalHeight - threadTopHeight;
 
-        int runtimeInfoHeight = lowerHalf / 2;
-        int heapInfoHeight = lowerHalf - runtimeInfoHeight;
+        //Memory至少保留8行, 显示metaspace信息
+        int memoryInfoHeight = lowerHalf / 2;
+        if (memoryInfoHeight < 8) {
+            memoryInfoHeight = Math.min(8, lowerHalf);
+        }
+
+        //runtime
+        TableElement runtimeInfoTable = drawRuntimeInfo(result.getRuntimeInfo());
+        //tomcat
+        TableElement tomcatInfoTable = drawTomcatInfo(result.getTomcatInfo());
+        int runtimeInfoHeight = Math.max(runtimeInfoTable.getRows().size(), tomcatInfoTable == null ? 0 : tomcatInfoTable.getRows().size());
+        if (runtimeInfoHeight < lowerHalf - memoryInfoHeight) {
+            //如果runtimeInfo高度有剩余，则增大MemoryInfo的高度
+            memoryInfoHeight = lowerHalf - runtimeInfoHeight;
+        } else {
+            runtimeInfoHeight = lowerHalf - memoryInfoHeight;
+        }
+
+        //如果MemoryInfo高度有剩余，则增大ThreadHeight
+        memoryInfoHeight = Math.min(memoryInfoHeight, getMemoryInfoHeight(result.getMemoryInfo()));
+        threadTopHeight = totalHeight - memoryInfoHeight - runtimeInfoHeight;
 
         String threadInfo = ViewRenderUtil.drawThreadInfo(result.getThreads(), width, threadTopHeight);
-        String memoryAndGc = drawMemoryInfoAndGcInfo(result.getMemoryInfo(), result.getGcInfos(), width, runtimeInfoHeight);
-        String runTimeAndTomcat = drawRuntimeInfoAndTomcatInfo(result.getRuntimeInfo(), result.getTomcatInfo(), width, heapInfoHeight);
+        String memoryAndGc = drawMemoryInfoAndGcInfo(result.getMemoryInfo(), result.getGcInfos(), width, memoryInfoHeight);
+        String runTimeAndTomcat = drawRuntimeInfoAndTomcatInfo(runtimeInfoTable, tomcatInfoTable, width, runtimeInfoHeight);
 
         process.write(threadInfo + memoryAndGc + runTimeAndTomcat);
     }
 
     static String drawMemoryInfoAndGcInfo(Map<String, List<MemoryEntryVO>> memoryInfo, List<GcInfoVO> gcInfos, int width, int height) {
         TableElement table = new TableElement(1, 1);
-
-        TableElement memoryInfoTable = new TableElement(3, 1, 1, 1, 1).rightCellPadding(1);
-        memoryInfoTable.add(new RowElement().style(Decoration.bold.fg(Color.black).bg(Color.white)).add("Memory",
-                "used", "total", "max", "usage"));
-
-        drawMemoryInfo(memoryInfoTable, memoryInfo);
-
-        TableElement gcInfoTable = new TableElement(1, 1).rightCellPadding(1);
-        gcInfoTable.add(new RowElement().style(Decoration.bold.fg(Color.black).bg(Color.white)).add("GC", ""));
-        drawGcInfo(gcInfoTable, gcInfos);
-
+        TableElement memoryInfoTable = drawMemoryInfo(memoryInfo);
+        TableElement gcInfoTable = drawGcInfo(gcInfos);
         table.row(memoryInfoTable, gcInfoTable);
         return RenderUtil.render(table, width, height);
     }
 
-    private static void drawMemoryInfo(TableElement table, Map<String, List<MemoryEntryVO>> memoryInfo) {
+    private static TableElement drawMemoryInfo(Map<String, List<MemoryEntryVO>> memoryInfo) {
+        TableElement table = new TableElement(3, 1, 1, 1, 1).rightCellPadding(1);
+        table.add(new RowElement().style(Decoration.bold.fg(Color.black).bg(Color.white)).add("Memory",
+                "used", "total", "max", "usage"));
         List<MemoryEntryVO> heapMemoryEntries = memoryInfo.get(MemoryEntryVO.TYPE_HEAP);
         //heap memory
         for (MemoryEntryVO memoryEntryVO : heapMemoryEntries) {
@@ -86,23 +99,33 @@ public class DashboardView extends ResultView<DashboardModel> {
                 new MemoryEntry(memoryEntryVO).addTableRow(table);
             }
         }
+        return table;
     }
 
-    private static void drawGcInfo(TableElement table, List<GcInfoVO> gcInfos) {
+    private static int getMemoryInfoHeight(Map<String, List<MemoryEntryVO>> memoryInfo) {
+        int height = 1;
+        for (List<MemoryEntryVO> memoryEntryVOS : memoryInfo.values()) {
+            height += memoryEntryVOS.size();
+        }
+        return height;
+    }
+
+    private static TableElement drawGcInfo(List<GcInfoVO> gcInfos) {
+        TableElement table = new TableElement(1, 1).rightCellPadding(1);
+        table.add(new RowElement().style(Decoration.bold.fg(Color.black).bg(Color.white)).add("GC", ""));
         for (GcInfoVO gcInfo : gcInfos) {
             table.add(new RowElement().style(Decoration.bold.bold()).add("gc." + gcInfo.getName() + ".count",
                     "" + gcInfo.getCollectionCount()));
             table.row("gc." + gcInfo.getName() + ".time(ms)", "" + gcInfo.getCollectionTime());
         }
+        return table;
     }
 
-    String drawRuntimeInfoAndTomcatInfo(RuntimeInfoVO runtimeInfo, TomcatInfoVO tomcatInfo, int width, int height) {
+    String drawRuntimeInfoAndTomcatInfo(TableElement runtimeInfoTable, TableElement tomcatInfoTable, int width, int height) {
+        if (height <= 0) {
+            return "";
+        }
         TableElement resultTable = new TableElement(1, 1);
-        //runtime
-        TableElement runtimeInfoTable = drawRuntimeInfo(runtimeInfo);
-        //tomcat
-        TableElement tomcatInfoTable = drawTomcatInfo(tomcatInfo);
-
         if (tomcatInfoTable != null) {
             resultTable.row(runtimeInfoTable, tomcatInfoTable);
         } else {
@@ -213,13 +236,17 @@ public class DashboardView extends ResultView<DashboardModel> {
 
         public void addTableRow(TableElement table) {
             double usage = used / (double) (max == -1 || max == Long.MIN_VALUE ? total : max) * 100;
-
+            if (Double.isNaN(usage) || Double.isInfinite(usage)) {
+                usage = 0;
+            }
             table.row(name, format(used), format(total), format(max), String.format("%.2f%%", usage));
         }
 
         public void addTableRow(TableElement table, Style.Composite style) {
             double usage = used / (double) (max == -1 || max == Long.MIN_VALUE ? total : max) * 100;
-
+            if (Double.isNaN(usage) || Double.isInfinite(usage)) {
+                usage = 0;
+            }
             table.add(new RowElement().style(style).add(name, format(used), format(total), format(max),
                     String.format("%.2f%%", usage)));
         }
