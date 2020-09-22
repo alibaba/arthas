@@ -353,7 +353,7 @@ public class ArthasBootstrap {
 
             shellServer.listen(new BindHandler(isBindRef));
             if (!isBind()) {
-                throw new RuntimeException("some ports bind failed");
+                throw new IllegalStateException("One or more ports bind failed");
             }
 
             //http api session manager
@@ -433,9 +433,10 @@ public class ArthasBootstrap {
         if (transformerManager != null) {
             transformerManager.destroy();
         }
-        UserStatUtil.destroy();
         // clear the reference in Spy class.
         cleanUpSpyReference();
+        shutdownWorkGroup();
+        UserStatUtil.destroy();
         if (shutdown != null) {
             try {
                 Runtime.getRuntime().removeShutdownHook(shutdown);

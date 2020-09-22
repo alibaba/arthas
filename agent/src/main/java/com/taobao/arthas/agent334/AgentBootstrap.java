@@ -72,7 +72,6 @@ public class AgentBootstrap {
      * 让下次再次启动时有机会重新加载
      */
     public static void resetArthasClassLoader() {
-        //不能使用main函数相同的锁对象，避免启动失败清理资源时死锁
         arthasClassLoader = null;
     }
 
