@@ -42,7 +42,7 @@ public class ThreadSampler {
                 if (thread.getId() > 0) {
                     long cpu = threadMXBean.getThreadCpuTime(thread.getId());
                     lastCpuTimes.put(thread, cpu);
-                    thread.setTime(cpu);
+                    thread.setTime(cpu / 1000000);
                 }
             }
 
@@ -52,10 +52,27 @@ public class ThreadSampler {
                 for (Map.Entry<String, Long> entry : internalThreadCpuTimes.entrySet()) {
                     String key = entry.getKey();
                     ThreadVO thread = createThreadVO(key);
-                    thread.setTime(entry.getValue());
+                    thread.setTime(entry.getValue() / 1000000);
+                    threads.add(thread);
                     lastCpuTimes.put(thread, entry.getValue());
                 }
             }
+
+            //sort by time
+            Collections.sort(threads, new Comparator<ThreadVO>() {
+                @Override
+                public int compare(ThreadVO o1, ThreadVO o2) {
+                    long l1 = o1.getTime();
+                    long l2 = o2.getTime();
+                    if (l1 < l2) {
+                        return 1;
+                    } else if (l1 > l2) {
+                        return -1;
+                    } else {
+                        return 0;
+                    }
+                }
+            });
             return threads;
         }
 
