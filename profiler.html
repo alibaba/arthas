@@ -148,6 +148,10 @@
 <li class="toctree-l3"><a class="reference internal" href="#execute">使用<code class="docutils literal notranslate"><span class="pre">execute</span></code>来执行复杂的命令</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#action">查看所有支持的action</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#id6">查看版本</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#framebuf">配置 framebuf 参数</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#include-exclude">配置 include/exclude 来过滤数据</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id7">指定执行时间</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#jfr">生成 jfr格式结果</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="cat.html">cat</a></li>
@@ -408,6 +412,47 @@ Supported Actions: [resume, dumpCollapsed, getSamples, start, list, execute, ver
 Async-profiler 1.6 built on Sep  9 2019
 Copyright 2019 Andrei Pangin</pre></div>
 </div>
+</div>
+<div class="section" id="framebuf">
+<h2>配置 framebuf 参数<a class="headerlink" href="#framebuf" title="永久链接至标题">¶</a></h2>
+<blockquote>
+<div><p>如果遇到生成的svg图片有 <code class="docutils literal notranslate"><span class="pre">[frame_buffer_overflow]</span></code>，则需要增大 framebuf（默认值是 1’000’000），可以显式配置，比如：</p>
+</div></blockquote>
+<div class="highlight-bash notranslate"><div class="highlight hljs"><pre class="bash">profiler start --framebuf 5000000</pre></div>
+</div>
+</div>
+<div class="section" id="include-exclude">
+<h2>配置 include/exclude 来过滤数据<a class="headerlink" href="#include-exclude" title="永久链接至标题">¶</a></h2>
+<p>如果应用比较复杂，生成的内容很多，想只关注部分数据，可以通过 include/exclude 来过滤。比如</p>
+<div class="highlight-bash notranslate"><div class="highlight hljs"><pre class="bash">profiler start --include &#x27;java/*&#x27; --include &#x27;demo/*&#x27; --exclude &#x27;*Unsafe.park*&#x27;</pre></div>
+</div>
+<blockquote>
+<div><p>include/exclude 都支持设置多个值 ，但是需要配置在命令行的最后。</p>
+</div></blockquote>
+</div>
+<div class="section" id="id7">
+<h2>指定执行时间<a class="headerlink" href="#id7" title="永久链接至标题">¶</a></h2>
+<p>比如，希望profiler执行 300 秒自动结束，可以用 <code class="docutils literal notranslate"><span class="pre">-d</span></code>/<code class="docutils literal notranslate"><span class="pre">--duration</span></code> 参数指定：</p>
+<div class="highlight-bash notranslate"><div class="highlight hljs"><pre class="bash">profiler start --duration 300</pre></div>
+</div>
+</div>
+<div class="section" id="jfr">
+<h2>生成 jfr格式结果<a class="headerlink" href="#jfr" title="永久链接至标题">¶</a></h2>
+<blockquote>
+<div><p>注意，jfr只支持在 <code class="docutils literal notranslate"><span class="pre">start</span></code>时配置。如果是在<code class="docutils literal notranslate"><span class="pre">stop</span></code>时指定，则不会生效。</p>
+</div></blockquote>
+<div class="highlight-default notranslate"><pre class="literal-block">profiler start --file /tmp/test.jfr</pre>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">file</span></code>参数支持一些变量：</p>
+<ul class="simple">
+<li><p>时间戳： <code class="docutils literal notranslate"><span class="pre">--file</span> <span class="pre">/tmp/test-%t.jfr</span></code></p></li>
+<li><p>进程ID： <code class="docutils literal notranslate"><span class="pre">--file</span> <span class="pre">/tmp/test-%p.jfr</span></code></p></li>
+</ul>
+<p>生成的结果可以用支持jfr格式的工具来查看。比如：</p>
+<ul class="simple">
+<li><p>JDK Mission Control ： https://github.com/openjdk/jmc</p></li>
+<li><p>JProfiler ： https://github.com/alibaba/arthas/issues/1416</p></li>
+</ul>
 </div>
 </div>
 

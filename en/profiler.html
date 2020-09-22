@@ -145,6 +145,10 @@
 <li class="toctree-l3"><a class="reference internal" href="#use-execute-action-to-execute-complex-commands">Use <code class="docutils literal notranslate"><span class="pre">execute</span></code> action to execute complex commands</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#view-all-supported-actions">View all supported actions</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#view-version">View version</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#configure-framebuf-option">Configure framebuf option</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#configure-include-exclude-to-filter-data">Configure include/exclude to filter data</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#specify-execution-time">Specify execution time</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#generate-jfr-format-result">Generate jfr format result</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="cat.html">cat</a></li>
@@ -405,6 +409,47 @@ Supported Actions: [resume, dumpCollapsed, getSamples, start, list, execute, ver
 Async-profiler 1.6 built on Sep  9 2019
 Copyright 2019 Andrei Pangin</pre></div>
 </div>
+</div>
+<div class="section" id="configure-framebuf-option">
+<h2>Configure framebuf option<a class="headerlink" href="#configure-framebuf-option" title="Permalink to this headline">¶</a></h2>
+<blockquote>
+<div><p>If you encounter <code class="docutils literal notranslate"><span class="pre">[frame_buffer_overflow]</span></code> in the generated svg image, you need to increase the framebuf (the default value is 1’000’000), which can be configured explicitly, such as:</p>
+</div></blockquote>
+<div class="highlight-bash notranslate"><div class="highlight hljs"><pre class="bash">profiler start --framebuf 5000000</pre></div>
+</div>
+</div>
+<div class="section" id="configure-include-exclude-to-filter-data">
+<h2>Configure include/exclude to filter data<a class="headerlink" href="#configure-include-exclude-to-filter-data" title="Permalink to this headline">¶</a></h2>
+<p>If the application is complex and generates a lot of content, and you want to focus on only part of the data, you can filter by include/exclude. such as</p>
+<div class="highlight-bash notranslate"><div class="highlight hljs"><pre class="bash">profiler start --include&#x27;java/*&#x27; --include&#x27;demo/*&#x27; --exclude&#x27;*Unsafe.park*&#x27;</pre></div>
+</div>
+<blockquote>
+<div><p>Both include/exclude support setting multiple values, but need to be configured at the end of the command line.</p>
+</div></blockquote>
+</div>
+<div class="section" id="specify-execution-time">
+<h2>Specify execution time<a class="headerlink" href="#specify-execution-time" title="Permalink to this headline">¶</a></h2>
+<p>For example, if you want the profiler to automatically end after 300 seconds, you can specify it with the <code class="docutils literal notranslate"><span class="pre">-d</span></code>/<code class="docutils literal notranslate"><span class="pre">--duration</span></code> parameter:</p>
+<div class="highlight-bash notranslate"><div class="highlight hljs"><pre class="bash">profiler start --duration 300</pre></div>
+</div>
+</div>
+<div class="section" id="generate-jfr-format-result">
+<h2>Generate jfr format result<a class="headerlink" href="#generate-jfr-format-result" title="Permalink to this headline">¶</a></h2>
+<blockquote>
+<div><p>Note that jfr only supports configuration at <code class="docutils literal notranslate"><span class="pre">start</span></code>. If it is specified at <code class="docutils literal notranslate"><span class="pre">stop</span></code>, it will not take effect.</p>
+</div></blockquote>
+<div class="highlight-default notranslate"><pre class="literal-block">profiler start --file /tmp/test.jfr</pre>
+</div>
+<p>The <code class="docutils literal notranslate"><span class="pre">file</span></code> parameter supports some variables:</p>
+<ul class="simple">
+<li><p>Timestamp: <code class="docutils literal notranslate"><span class="pre">--file</span> <span class="pre">/tmp/test-%t.jfr</span></code></p></li>
+<li><p>Process ID: <code class="docutils literal notranslate"><span class="pre">--file</span> <span class="pre">/tmp/test-%p.jfr</span></code></p></li>
+</ul>
+<p>The generated results can be viewed with tools that support the jfr format. such as:</p>
+<ul class="simple">
+<li><p>JDK Mission Control: https://github.com/openjdk/jmc</p></li>
+<li><p>JProfiler: https://github.com/alibaba/arthas/issues/1416</p></li>
+</ul>
 </div>
 </div>
 

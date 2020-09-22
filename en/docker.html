@@ -108,6 +108,11 @@
 <li class="toctree-l1"><a class="reference internal" href="web-console.html">WebConsole</a></li>
 <li class="toctree-l1"><a class="reference internal" href="http-api.html">Http API</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Docker</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#use-jdk-in-docker">Use JDK in Docker</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#use-public-jdk-image">Use public JDK image</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#install-via-package-management-software">Install via package management software</a></li>
+</ul>
+</li>
 <li class="toctree-l2"><a class="reference internal" href="#quick-start-with-docker">Quick start with Docker</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#diagnose-the-java-process-in-docker">Diagnose the Java process in Docker</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#diagnose-the-java-process-in-the-container-in-k8s">Diagnose the Java process in the container in k8s</a></li>
@@ -190,6 +195,50 @@
             
   <div class="section" id="docker">
 <h1>Docker<a class="headerlink" href="#docker" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="use-jdk-in-docker">
+<h2>Use JDK in Docker<a class="headerlink" href="#use-jdk-in-docker" title="Permalink to this headline">¶</a></h2>
+<p>Many times, the problem that arthas can’t work with the application in docker is because the docker does not install JDK, but installs JRE. If only JRE is installed, many JAVA command line tools and class libraries will be missing, and Arthas will not work properly. Here are two common ways to use JDK in Docker.</p>
+<div class="section" id="use-public-jdk-image">
+<h3>Use public JDK image<a class="headerlink" href="#use-public-jdk-image" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li><p>https://hub.docker.com/_/openjdk/</p></li>
+</ul>
+<p>such as:</p>
+<div class="highlight-default notranslate"><pre class="literal-block">FROM openjdk:8-jdk</pre>
+</div>
+<p>or:</p>
+<div class="highlight-default notranslate"><pre class="literal-block">FROM openjdk:8-jdk-alpine</pre>
+</div>
+</div>
+<div class="section" id="install-via-package-management-software">
+<h3>Install via package management software<a class="headerlink" href="#install-via-package-management-software" title="Permalink to this headline">¶</a></h3>
+<p>such as:</p>
+<div class="highlight-bash notranslate"><div class="highlight hljs"><pre class="bash"># Install OpenJDK-8
+RUN apt-get update &amp;&amp; \
+    apt-get install -y openjdk-8-jdk &amp;&amp; \
+    apt-get install -y ant &amp;&amp; \
+    apt-get clean;
+
+# Fix certificate issues
+RUN apt-get update &amp;&amp; \
+    apt-get install ca-certificates-java &amp;&amp; \
+    apt-get clean &amp;&amp; \
+    update-ca-certificates -f;
+
+# Setup JAVA_HOME - useful for docker commandline
+ENV JAVA_HOME /usr/lib/jvm/java-8-openjdk-amd64/
+RUN export JAVA_HOME</pre></div>
+</div>
+<p>or:</p>
+<div class="highlight-bash notranslate"><div class="highlight hljs"><pre class="bash">RUN yum install -y \
+   java-1.8.0-openjdk \
+   java-1.8.0-openjdk-devel
+
+ENV JAVA_HOME /usr/lib/jvm/java-1.8.0-openjdk/
+RUN export JAVA_HOME</pre></div>
+</div>
+</div>
+</div>
 <div class="section" id="quick-start-with-docker">
 <h2>Quick start with Docker<a class="headerlink" href="#quick-start-with-docker" title="Permalink to this headline">¶</a></h2>
 <ol>

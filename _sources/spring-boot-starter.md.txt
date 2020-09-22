@@ -18,6 +18,8 @@ Arthas Spring Boot Starter
 应用启动后，spring会启动arthas，并且attach自身进程。
 
 
+> 一键创建包含 Arthas Spring Boot Starter 的工程：[点击](http://start.aliyun.com/bootstrap.html/#!dependencies=arthas)
+
 ### 配置属性
 
 比如，通过配置tunnel server实现远程管理：
