@@ -7,10 +7,8 @@ import com.taobao.arthas.core.command.model.MessageModel;
 import com.taobao.arthas.core.command.model.ResetModel;
 import com.taobao.arthas.core.command.model.ShutdownModel;
 import com.taobao.arthas.core.server.ArthasBootstrap;
-import com.taobao.arthas.core.shell.ShellServer;
 import com.taobao.arthas.core.shell.command.AnnotatedCommand;
 import com.taobao.arthas.core.shell.command.CommandProcess;
-import com.taobao.arthas.core.shell.session.SessionManager;
 import com.taobao.arthas.core.util.affect.EnhancerAffect;
 import com.taobao.arthas.core.util.matcher.WildcardMatcher;
 import com.taobao.middleware.cli.annotations.Hidden;
@@ -50,23 +48,7 @@ public class ShutdownCommand extends AnnotatedCommand {
             process.appendResult(new ShutdownModel(false, "An error occurred when stopping arthas server."));
         } finally {
             process.end();
-            ShellServer server = ArthasBootstrap.getInstance().getShellServer();
-            if (server != null) {
-                try {
-                    server.close();
-                } catch (Throwable e) {
-                    logger.error("close shell server failure", e);
-                }
-            }
-
-            SessionManager sessionManager = ArthasBootstrap.getInstance().getSessionManager();
-            if (sessionManager != null){
-                try {
-                    sessionManager.close();
-                } catch (Throwable e) {
-                    logger.error("close session manager failure", e);
-                }
-            }
+            ArthasBootstrap.getInstance().destroy();
         }
     }
 }

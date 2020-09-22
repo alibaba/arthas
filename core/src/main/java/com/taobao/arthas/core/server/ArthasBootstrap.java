@@ -373,13 +373,7 @@ public class ArthasBootstrap {
             logger().info("as-server started in {} ms", System.currentTimeMillis() - start);
         } catch (Throwable e) {
             logger().error("Error during bind to port " + configure.getTelnetPort(), e);
-            if (shellServer != null) {
-                shellServer.close();
-            }
-            if (sessionManager != null){
-                sessionManager.close();
-            }
-            shutdownWorkGroup();
+            destroy();
             throw e;
         }
     }
@@ -401,7 +395,17 @@ public class ArthasBootstrap {
     }
 
     public void destroy() {
-        timer.cancel();
+        if (shellServer != null) {
+            shellServer.close();
+            shellServer = null;
+        }
+        if (sessionManager != null) {
+            sessionManager.close();
+            sessionManager = null;
+        }
+        if (timer != null) {
+            timer.cancel();
+        }
         if (this.tunnelClient != null) {
             try {
                 tunnelClient.stop();
@@ -409,23 +413,27 @@ public class ArthasBootstrap {
                 logger().error("stop tunnel client error", e);
             }
         }
-        executorService.shutdownNow();
-        transformerManager.destroy();
+        if (executorService != null) {
+            executorService.shutdownNow();
+        }
+        if (transformerManager != null) {
+            transformerManager.destroy();
+        }
         UserStatUtil.destroy();
         shutdownWorkGroup();
         // clear the reference in Spy class.
         cleanUpSpyReference();
-        try {
-            Runtime.getRuntime().removeShutdownHook(shutdown);
-        } catch (Throwable t) {
-            // ignore
+        if (shutdown != null) {
+            try {
+                Runtime.getRuntime().removeShutdownHook(shutdown);
+            } catch (Throwable t) {
+                // ignore
+            }
         }
         logger().info("as-server destroy completed.");
         if (loggerContext != null) {
             loggerContext.stop();
         }
-        shellServer = null;
-        sessionManager = null;
     }
 
     /**

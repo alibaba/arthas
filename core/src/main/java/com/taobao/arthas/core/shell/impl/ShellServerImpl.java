@@ -240,7 +240,6 @@ public class ShellServerImpl extends ShellServer {
             }
             jobController.close();
             sessionsClosed.setHandler(handler);
-            bootstrap.destroy();
         }
     }
 
