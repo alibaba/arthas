@@ -377,13 +377,7 @@ public class ArthasBootstrap {
             logger().info("as-server started in {} ms", System.currentTimeMillis() - start);
         } catch (Throwable e) {
             logger().error("Error during bind to port " + configure.getTelnetPort(), e);
-            if (shellServer != null) {
-                shellServer.close();
-            }
-            if (sessionManager != null){
-                sessionManager.close();
-            }
-            shutdownWorkGroup();
+            destroy();
             throw e;
         }
     }
@@ -412,7 +406,17 @@ public class ArthasBootstrap {
      * call reset() before destroy()
      */
     public void destroy() {
-        timer.cancel();
+        if (shellServer != null) {
+            shellServer.close();
+            shellServer = null;
+        }
+        if (sessionManager != null) {
+            sessionManager.close();
+            sessionManager = null;
+        }
+        if (timer != null) {
+            timer.cancel();
+        }
         if (this.tunnelClient != null) {
             try {
                 tunnelClient.stop();
@@ -420,41 +424,26 @@ public class ArthasBootstrap {
                 logger().error("stop tunnel client error", e);
             }
         }
-        transformerManager.destroy();
+        if (executorService != null) {
+            executorService.shutdownNow();
+        }
+        if (transformerManager != null) {
+            transformerManager.destroy();
+        }
         UserStatUtil.destroy();
         // clear the reference in Spy class.
         cleanUpSpyReference();
-        try {
-            Runtime.getRuntime().removeShutdownHook(shutdown);
-        } catch (Throwable t) {
-            // ignore
+        if (shutdown != null) {
+            try {
+                Runtime.getRuntime().removeShutdownHook(shutdown);
+            } catch (Throwable t) {
+                // ignore
+            }
         }
         logger().info("as-server destroy completed.");
         if (loggerContext != null) {
             loggerContext.stop();
         }
-
-        if (sessionManager != null){
-            try {
-                sessionManager.close();
-            } catch (Throwable e) {
-                logger().error("close session manager failure", e);
-            }
-        }
-
-        if (shellServer != null) {
-            try {
-                shellServer.close();
-            } catch (Throwable e) {
-                logger().error("close shell server failure", e);
-            }
-        }
-
-        shellServer = null;
-        sessionManager = null;
-
-        executorService.shutdownNow();
-        shutdownWorkGroup();
     }
 
     /**

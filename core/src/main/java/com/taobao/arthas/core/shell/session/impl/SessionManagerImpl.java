@@ -104,7 +104,7 @@ public class SessionManagerImpl implements SessionManager {
             scheduledExecutorService = Executors.newSingleThreadScheduledExecutor(new ThreadFactory() {
                 @Override
                 public Thread newThread(Runnable r) {
-                    final Thread t = new Thread(r, "arthas-shell-server");
+                    final Thread t = new Thread(r, "arthas-session-manager");
                     t.setDaemon(true);
                     return t;
                 }
