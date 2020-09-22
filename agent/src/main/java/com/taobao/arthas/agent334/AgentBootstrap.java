@@ -59,6 +59,7 @@ public class AgentBootstrap {
      * </pre>
      */
     private static volatile ClassLoader arthasClassLoader;
+    private static Object arthasClassLoaderLock = new Object();
 
     public static void premain(String args, Instrumentation inst) {
         main(args, inst);
@@ -71,8 +72,11 @@ public class AgentBootstrap {
     /**
      * 让下次再次启动时有机会重新加载
      */
-    public synchronized static void resetArthasClassLoader() {
-        arthasClassLoader = null;
+    public static void resetArthasClassLoader() {
+        //不能使用main函数相同的锁对象，避免启动失败清理资源时死锁
+        synchronized (arthasClassLoaderLock) {
+            arthasClassLoader = null;
+        }
     }
 
     private static ClassLoader getClassLoader(Instrumentation inst, File arthasCoreJarFile) throws Throwable {
@@ -81,8 +85,10 @@ public class AgentBootstrap {
     }
 
     private static ClassLoader loadOrDefineClassLoader(File arthasCoreJarFile) throws Throwable {
-        if (arthasClassLoader == null) {
-            arthasClassLoader = new ArthasClassloader(new URL[]{arthasCoreJarFile.toURI().toURL()});
+        synchronized (arthasClassLoaderLock) {
+            if (arthasClassLoader == null) {
+                arthasClassLoader = new ArthasClassloader(new URL[]{arthasCoreJarFile.toURI().toURL()});
+            }
         }
         return arthasClassLoader;
     }

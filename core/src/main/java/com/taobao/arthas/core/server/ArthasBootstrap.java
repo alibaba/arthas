@@ -352,6 +352,9 @@ public class ArthasBootstrap {
             }
 
             shellServer.listen(new BindHandler(isBindRef));
+            if (!isBind()) {
+                throw new RuntimeException("some ports bind failed");
+            }
 
             //http api session manager
             sessionManager = new SessionManagerImpl(options, shellServer.getCommandManager(), shellServer.getJobController());
@@ -376,7 +379,7 @@ public class ArthasBootstrap {
 
             logger().info("as-server started in {} ms", System.currentTimeMillis() - start);
         } catch (Throwable e) {
-            logger().error("Error during bind to port " + configure.getTelnetPort(), e);
+            logger().error("Error during start as-server", e);
             destroy();
             throw e;
         }
