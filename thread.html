@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>thread &mdash; Arthas 3.4.1 文档</title>
+  <title>thread &mdash; Arthas 3.4.2 文档</title>
   
 
   
@@ -74,7 +74,7 @@
             
             
               <div class="version">
-                3.4.1
+                3.4.2
               </div>
             
           
@@ -111,10 +111,15 @@
 <li class="toctree-l2"><a class="reference internal" href="dashboard.html">dashboard</a></li>
 <li class="toctree-l2 current"><a class="current reference internal" href="#">thread</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#id1">参数说明</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#id2">使用参考</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#cpu">cpu使用率是如何统计出来的？</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#id2">工作原理说明：</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#id3">使用参考</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="#n">支持一键展示当前最忙的前N个线程并打印堆栈：</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#id3">当没有参数时，显示所有线程的信息。</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#thread-id">thread id， 显示指定线程的运行堆栈</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id4">当没有参数时，显示第一页线程的信息</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#thread-all">thread –all, 显示所有匹配的线程</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#thread-id">thread id, 显示指定线程的运行堆栈</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#thread-b">thread -b, 找出当前阻塞其他线程的线程</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#thread-i">thread -i, 指定采样时间间隔</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#thread-state">thread –state ，查看指定状态的线程</a></li>
@@ -263,78 +268,98 @@
 </tr>
 <tr>
 <td align="right">[i <code>&lt;value&gt;</code>]</td>
-<td align="left">指定cpu占比统计的采样间隔，单位为毫秒</td>
+<td align="left">指定cpu使用率统计的采样间隔，单位为毫秒，默认值为200</td>
+</tr>
+<tr>
+<td align="right">[--all]</td>
+<td align="left">显示所有匹配的线程</td>
 </tr>
 </tbody>
-</table><blockquote>
-<div><p>cpu占比是如何统计出来的？</p>
-</div></blockquote>
-<blockquote>
-<div><p>这里的cpu统计的是，一段采样间隔内，当前JVM里各个线程所占用的cpu时间占总cpu时间的百分比。其计算方法为：
-首先进行一次采样，获得所有线程的cpu的使用时间(调用的是<code class="docutils literal notranslate"><span class="pre">java.lang.management.ThreadMXBean#getThreadCpuTime</span></code>这个接口)，然后睡眠一段时间，默认100ms，可以通过<code class="docutils literal notranslate"><span class="pre">-i</span></code>参数指定，然后再采样一次，最后得出这段时间内各个线程消耗的cpu时间情况，最后算出百分比。</p>
-</div></blockquote>
+</table></div>
+<div class="section" id="cpu">
+<h2>cpu使用率是如何统计出来的？<a class="headerlink" href="#cpu" title="永久链接至标题">¶</a></h2>
+<p>这里的cpu使用率与linux 命令<code class="docutils literal notranslate"><span class="pre">top</span> <span class="pre">-H</span> <span class="pre">-p</span> <span class="pre">&lt;pid&gt;</span></code> 的线程<code class="docutils literal notranslate"><span class="pre">%CPU</span></code>类似，一段采样间隔时间内，当前JVM里各个线程的增量cpu时间与采样间隔时间的比例。</p>
+<div class="section" id="id2">
+<h3>工作原理说明：<a class="headerlink" href="#id2" title="永久链接至标题">¶</a></h3>
+<ul class="simple">
+<li><p>首先第一次采样，获取所有线程的CPU时间(调用的是<code class="docutils literal notranslate"><span class="pre">java.lang.management.ThreadMXBean#getThreadCpuTime()</span></code>及<code class="docutils literal notranslate"><span class="pre">sun.management.HotspotThreadMBean.getInternalThreadCpuTimes()</span></code>接口)</p></li>
+<li><p>然后睡眠等待一个间隔时间（默认为200ms，可以通过<code class="docutils literal notranslate"><span class="pre">-i</span></code>指定间隔时间）</p></li>
+<li><p>再次第二次采样，获取所有线程的CPU时间，对比两次采样数据，计算出每个线程的增量CPU时间</p></li>
+<li><p>线程CPU使用率 = 线程增量CPU时间 / 采样间隔时间 * 100%</p></li>
+</ul>
 <blockquote>
 <div><p>注意： 这个统计也会产生一定的开销（JDK这个接口本身开销比较大），因此会看到as的线程占用一定的百分比，为了降低统计自身的开销带来的影响，可以把采样间隔拉长一些，比如5000毫秒。</p>
 </div></blockquote>
 <blockquote>
-<div><p>如果想看从Java进程启动开始到现在的cpu占比情况：可以使用<a class="reference external" href="https://github.com/oldratlee/useful-scripts/blob/master/docs/java.md#-show-busy-java-threads">show-busy-java-threads</a>这个脚本</p>
+<div><p>另外一种查看Java进程的线程cpu使用率方法：可以使用<a class="reference external" href="https://github.com/oldratlee/useful-scripts/blob/master/docs/java.md#-show-busy-java-threads">show-busy-java-threads</a>这个脚本</p>
 </div></blockquote>
-</div>
-<div class="section" id="id2">
-<h2>使用参考<a class="headerlink" href="#id2" title="永久链接至标题">¶</a></h2>
-<div class="section" id="n">
-<h3>支持一键展示当前最忙的前N个线程并打印堆栈：<a class="headerlink" href="#n" title="永久链接至标题">¶</a></h3>
-<div class="highlight-shell notranslate"><div class="highlight hljs"><pre class="shell">$ thread -n 3
-&quot;as-command-execute-daemon&quot; Id=29 cpuUsage=75% RUNNABLE
-    at sun.management.ThreadImpl.dumpThreads0(Native Method)
-    at sun.management.ThreadImpl.getThreadInfo(ThreadImpl.java:440)
-    at com.taobao.arthas.core.command.monitor200.ThreadCommand$1.action(ThreadCommand.java:58)
-    at com.taobao.arthas.core.command.handler.AbstractCommandHandler.execute(AbstractCommandHandler.java:238)
-    at com.taobao.arthas.core.command.handler.DefaultCommandHandler.handleCommand(DefaultCommandHandler.java:67)
-    at com.taobao.arthas.core.server.ArthasServer$4.run(ArthasServer.java:276)
-    at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1145)
-    at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:615)
-    at java.lang.Thread.run(Thread.java:745)
-
-    Number of locked synchronizers = 1
-    - java.util.concurrent.ThreadPoolExecutor$Worker@6cd0b6f8
-
-&quot;as-session-expire-daemon&quot; Id=25 cpuUsage=24% TIMED_WAITING
-    at java.lang.Thread.sleep(Native Method)
-    at com.taobao.arthas.core.server.DefaultSessionManager$2.run(DefaultSessionManager.java:85)
-
-&quot;Reference Handler&quot; Id=2 cpuUsage=0% WAITING on java.lang.ref.Reference$Lock@69ba0f27
-    at java.lang.Object.wait(Native Method)
-    -  waiting on java.lang.ref.Reference$Lock@69ba0f27
-    at java.lang.Object.wait(Object.java:503)
-    at java.lang.ref.Reference$ReferenceHandler.run(Reference.java:133)</pre></div>
 </div>
 </div>
 <div class="section" id="id3">
-<h3>当没有参数时，显示所有线程的信息。<a class="headerlink" href="#id3" title="永久链接至标题">¶</a></h3>
-<div class="highlight-shell notranslate"><div class="highlight hljs"><pre class="shell">$ thread
-Threads Total: 16, NEW: 0, RUNNABLE: 7, BLOCKED: 0, WAITING: 5, TIMED_WAITING: 4, TERMINATED: 0
-ID         NAME                             GROUP                 PRIORITY   STATE      %CPU       TIME       INTERRUPTE DAEMON
-30         as-command-execute-daemon        system                9          RUNNABLE   72         0:0        false      true
-23         as-session-expire-daemon         system                9          TIMED_WAIT 27         0:0        false      true
-22         Attach Listener                  system                9          RUNNABLE   0          0:0        false      true
-11         pool-2-thread-1                  main                  5          TIMED_WAIT 0          0:0        false      false
-12         Thread-2                         main                  5          RUNNABLE   0          0:0        false      true
-13         pool-3-thread-1                  main                  5          TIMED_WAIT 0          0:0        false      false
-25         as-selector-daemon               system                9          RUNNABLE   0          0:0        false      true
-14         Thread-3                         main                  5          TIMED_WAIT 0          0:0        false      false
-26         pool-5-thread-1                  system                5          WAITING    0          0:0        false      false
-15         Thread-4                         main                  5          RUNNABLE   0          0:0        false      false
-1          main                             main                  5          WAITING    0          0:2        false      false
-2          Reference Handler                system                10         WAITING    0          0:0        false      true
-3          Finalizer                        system                8          WAITING    0          0:0        false      true
-4          Signal Dispatcher                system                9          RUNNABLE   0          0:0        false      true
-20         NonBlockingInputStreamThread     main                  5          WAITING    0          0:0        false      true
-21         Thread-8                         main                  5          RUNNABLE   0          0:0        false      true</pre></div>
+<h2>使用参考<a class="headerlink" href="#id3" title="永久链接至标题">¶</a></h2>
+<div class="section" id="n">
+<h3>支持一键展示当前最忙的前N个线程并打印堆栈：<a class="headerlink" href="#n" title="永久链接至标题">¶</a></h3>
+<div class="highlight-shell notranslate"><div class="highlight hljs"><pre class="shell">$ thread -n 3
+&quot;C1 CompilerThread0&quot; [Internal] cpuUsage=1.63% deltaTime=3ms time=1170ms
+
+&quot;arthas-command-execute&quot; Id=23 cpuUsage=0.11% deltaTime=0ms time=401ms RUNNABLE
+    at java.management@11.0.7/sun.management.ThreadImpl.dumpThreads0(Native Method)
+    at java.management@11.0.7/sun.management.ThreadImpl.getThreadInfo(ThreadImpl.java:466)
+    at com.taobao.arthas.core.command.monitor200.ThreadCommand.processTopBusyThreads(ThreadCommand.java:199)
+    at com.taobao.arthas.core.command.monitor200.ThreadCommand.process(ThreadCommand.java:122)
+    at com.taobao.arthas.core.shell.command.impl.AnnotatedCommandImpl.process(AnnotatedCommandImpl.java:82)
+    at com.taobao.arthas.core.shell.command.impl.AnnotatedCommandImpl.access$100(AnnotatedCommandImpl.java:18)
+    at com.taobao.arthas.core.shell.command.impl.AnnotatedCommandImpl$ProcessHandler.handle(AnnotatedCommandImpl.java:111)
+    at com.taobao.arthas.core.shell.command.impl.AnnotatedCommandImpl$ProcessHandler.handle(AnnotatedCommandImpl.java:108)
+    at com.taobao.arthas.core.shell.system.impl.ProcessImpl$CommandProcessTask.run(ProcessImpl.java:385)
+    at java.base@11.0.7/java.util.concurrent.Executors$RunnableAdapter.call(Executors.java:515)
+    at java.base@11.0.7/java.util.concurrent.FutureTask.run(FutureTask.java:264)
+    at java.base@11.0.7/java.util.concurrent.ScheduledThreadPoolExecutor$ScheduledFutureTask.run(ScheduledThreadPoolExecutor.java:304)
+    at java.base@11.0.7/java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1128)
+    at java.base@11.0.7/java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:628)
+    at java.base@11.0.7/java.lang.Thread.run(Thread.java:834)
+
+&quot;VM Periodic Task Thread&quot; [Internal] cpuUsage=0.07% deltaTime=0ms time=584ms</pre></div>
 </div>
+<ul class="simple">
+<li><p>没有线程ID，包含<code class="docutils literal notranslate"><span class="pre">[Internal]</span></code>表示为JVM内部线程，参考<a class="reference internal" href="dashboard.html"><span class="doc">dashboard</span></a>命令的介绍。</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">cpuUsage</span></code>为采样间隔时间内线程的CPU使用率，与<a class="reference internal" href="dashboard.html"><span class="doc">dashboard</span></a>命令的数据一致。</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">deltaTime</span></code>为采样间隔时间内线程的增量CPU时间，小于1ms时被取整显示为0ms。</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">time</span></code> 线程运行总CPU时间。</p></li>
+</ul>
+<p>注意：线程栈为第二采样结束时获取，不能表明采样间隔时间内该线程都是在处理相同的任务。建议间隔时间不要太长，可能间隔时间越大越不准确。
+可以根据具体情况尝试指定不同的间隔时间，观察输出结果。</p>
+</div>
+<div class="section" id="id4">
+<h3>当没有参数时，显示第一页线程的信息<a class="headerlink" href="#id4" title="永久链接至标题">¶</a></h3>
+<p>默认按照CPU增量时间降序排列，只显示第一页数据。</p>
+<div class="highlight-shell notranslate"><div class="highlight hljs"><pre class="shell">$ thread
+Threads Total: 33, NEW: 0, RUNNABLE: 9, BLOCKED: 0, WAITING: 3, TIMED_WAITING: 4, TERMINATED: 0, Internal threads: 17
+ID   NAME                           GROUP          PRIORITY  STATE     %CPU      DELTA_TIME TIME      INTERRUPT DAEMON
+-1   C2 CompilerThread0             -              -1        -         5.06      0.010      0:0.973   false     true
+-1   C1 CompilerThread0             -              -1        -         0.95      0.001      0:0.603   false     true
+23   arthas-command-execute         system         5         RUNNABLE  0.17      0.000      0:0.226   false     true
+-1   VM Periodic Task Thread        -              -1        -         0.05      0.000      0:0.094   false     true
+-1   Sweeper thread                 -              -1        -         0.04      0.000      0:0.011   false     true
+-1   G1 Young RemSet Sampling       -              -1        -         0.02      0.000      0:0.025   false     true
+12   Attach Listener                system         9         RUNNABLE  0.0       0.000      0:0.022   false     true
+11   Common-Cleaner                 InnocuousThrea 8         TIMED_WAI 0.0       0.000      0:0.000   false     true
+3    Finalizer                      system         8         WAITING   0.0       0.000      0:0.000   false     true
+2    Reference Handler              system         10        RUNNABLE  0.0       0.000      0:0.000   false     true
+4    Signal Dispatcher              system         9         RUNNABLE  0.0       0.000      0:0.000   false     true
+15   arthas-NettyHttpTelnetBootstra system         5         RUNNABLE  0.0       0.000      0:0.029   false     true
+22   arthas-NettyHttpTelnetBootstra system         5         RUNNABLE  0.0       0.000      0:0.196   false     true
+24   arthas-NettyHttpTelnetBootstra system         5         RUNNABLE  0.0       0.000      0:0.038   false     true
+16   arthas-NettyWebsocketTtyBootst system         5         RUNNABLE  0.0       0.000      0:0.001   false     true
+17   arthas-NettyWebsocketTtyBootst system         5         RUNNABLE  0.0       0.000      0:0.001   false     true</pre></div>
+</div>
+</div>
+<div class="section" id="thread-all">
+<h3>thread –all, 显示所有匹配的线程<a class="headerlink" href="#thread-all" title="永久链接至标题">¶</a></h3>
+<p>显示所有匹配线程信息，有时需要获取全部JVM的线程数据进行分析。</p>
 </div>
 <div class="section" id="thread-id">
-<h3>thread id， 显示指定线程的运行堆栈<a class="headerlink" href="#thread-id" title="永久链接至标题">¶</a></h3>
+<h3>thread id, 显示指定线程的运行堆栈<a class="headerlink" href="#thread-id" title="永久链接至标题">¶</a></h3>
 <div class="highlight-shell notranslate"><div class="highlight hljs"><pre class="shell">$ thread 1
 &quot;main&quot; Id=1 WAITING on java.util.concurrent.CountDownLatch$Sync@29fafb28
     at sun.misc.Unsafe.park(Native Method)
@@ -392,6 +417,10 @@ ID         NAME                             GROUP                 PRIORITY   STA
 </div>
 <div class="section" id="thread-i">
 <h3>thread -i, 指定采样时间间隔<a class="headerlink" href="#thread-i" title="永久链接至标题">¶</a></h3>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">thread</span> <span class="pre">-i</span> <span class="pre">1000</span></code> : 统计最近1000ms内的线程CPU时间。</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">thread</span> <span class="pre">-n</span> <span class="pre">3</span> <span class="pre">-i</span> <span class="pre">1000</span></code> : 列出1000ms内最忙的3个线程栈</p></li>
+</ul>
 <div class="highlight-bash notranslate"><div class="highlight hljs"><pre class="bash">$ thread -n 3 -i 1000
 &quot;as-command-execute-daemon&quot; Id=4759 cpuUsage=23% RUNNABLE
     at sun.management.ThreadImpl.dumpThreads0(Native Method)
@@ -415,13 +444,11 @@ ID         NAME                             GROUP                 PRIORITY   STA
 <div class="section" id="thread-state">
 <h3>thread –state ，查看指定状态的线程<a class="headerlink" href="#thread-state" title="永久链接至标题">¶</a></h3>
 <div class="highlight-bash notranslate"><div class="highlight hljs"><pre class="bash">[arthas@28114]$ thread --state WAITING
-Threads Total: 15, NEW: 0, RUNNABLE: 7, BLOCKED: 0, WAITING: 5, TIMED_WAITING: 3, TERMINATED: 0
-ID       NAME                      GROUP            PRIORITY STATE   %CPU     TIME     INTERRU DAEMON
-198      AsyncAppender-Worker-arth system           9        WAITING 0        0:0      false   true
-3        Finalizer                 system           8        WAITING 0        0:0      false   true
-14       RMI Scheduler(0)          system           9        WAITING 0        0:0      false   true
-2        Reference Handler         system           10       WAITING 0        0:0      false   true
-204      pool-8-thread-1           system           5        WAITING 0        0:0      false   false</pre></div>
+Threads Total: 16, NEW: 0, RUNNABLE: 9, BLOCKED: 0, WAITING: 3, TIMED_WAITING: 4, TERMINATED: 0
+ID   NAME                           GROUP           PRIORITY   STATE     %CPU      DELTA_TIME TIME      INTERRUPTE DAEMON
+3    Finalizer                      system          8          WAITING   0.0       0.000      0:0.000   false      true
+20   arthas-UserStat                system          9          WAITING   0.0       0.000      0:0.001   false      true
+14   arthas-timer                   system          9          WAITING   0.0       0.000      0:0.000   false      true</pre></div>
 </div>
 </div>
 </div>
