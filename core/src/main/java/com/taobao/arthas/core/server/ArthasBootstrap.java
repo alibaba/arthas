@@ -353,7 +353,7 @@ public class ArthasBootstrap {
 
             shellServer.listen(new BindHandler(isBindRef));
             if (!isBind()) {
-                throw new IllegalStateException("One or more ports bind failed");
+                throw new IllegalStateException("Arthas failed to bind telnet or http port.");
             }
 
             //http api session manager
