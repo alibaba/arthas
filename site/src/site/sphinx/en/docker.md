@@ -1,6 +1,61 @@
 Docker
 ===
 
+
+## Use JDK in Docker
+
+Many times, the problem that arthas can't work with the application in docker is because the docker does not install JDK, but installs JRE. If only JRE is installed, many JAVA command line tools and class libraries will be missing, and Arthas will not work properly. Here are two common ways to use JDK in Docker.
+
+### Use public JDK image
+
+* https://hub.docker.com/_/openjdk/
+
+such as:
+
+```
+FROM openjdk:8-jdk
+```
+
+or:
+
+```
+FROM openjdk:8-jdk-alpine
+```
+
+### Install via package management software
+
+such as:
+
+```bash
+# Install OpenJDK-8
+RUN apt-get update && \
+    apt-get install -y openjdk-8-jdk && \
+    apt-get install -y ant && \
+    apt-get clean;
+
+# Fix certificate issues
+RUN apt-get update && \
+    apt-get install ca-certificates-java && \
+    apt-get clean && \
+    update-ca-certificates -f;
+
+# Setup JAVA_HOME - useful for docker commandline
+ENV JAVA_HOME /usr/lib/jvm/java-8-openjdk-amd64/
+RUN export JAVA_HOME
+```
+
+or:
+
+```bash
+RUN yum install -y \
+   java-1.8.0-openjdk \
+   java-1.8.0-openjdk-devel
+
+ENV JAVA_HOME /usr/lib/jvm/java-1.8.0-openjdk/
+RUN export JAVA_HOME
+```
+
+
 ## Quick start with Docker
 
 1. Delete the existing `arthas-demo` docker container (not necessary)
