@@ -51,8 +51,8 @@ uptime                                                         272s
 * PRIORITY: 线程优先级, 1~10之间的数字，越大表示优先级越高
 * STATE: 线程的状态
 * CPU%: 线程的cpu使用率。比如采样间隔1000ms，某个线程的增量cpu时间为100ms，则cpu使用率=100/1000=10%
-* DELTA_TIME: 上次采样之后线程运行增量CPU时间，数据格式为`秒.毫秒`
-* TIME: 线程运行总CPU时间，数据格式为`分:秒.毫秒`
+* DELTA_TIME: 上次采样之后线程运行增量CPU时间，数据格式为`秒`
+* TIME: 线程运行总CPU时间，数据格式为`分:秒`
 * INTERRUPTED: 线程当前的中断位状态
 * DAEMON: 是否是daemon线程
 

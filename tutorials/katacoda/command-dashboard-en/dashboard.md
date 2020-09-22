@@ -51,8 +51,8 @@ Enter `Q`{{execute T2}} or `Ctrl+C` to exit the dashboard command.
 * STATE: thread state
 * CPU%: the ratio of CPU usage for the thread. For example, the sampling interval is 1000ms, and the incremental cpu time
  of a thread is 100ms, then the cpu usage rate=100/1000=10%
-* DELTA_TIME: incremental CPU time of thread running after the last sampling in `second.mills` format
-* TIME: total CPU time of the thread in `minute:second.mills` format
+* DELTA_TIME: incremental CPU time of thread running after the last sampling in `second` format
+* TIME: total CPU time of the thread in `minute:second` format
 * INTERRUPTED: the thread interruption state
 * DAEMON: daemon thread or not
 
