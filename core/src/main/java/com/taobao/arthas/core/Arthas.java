@@ -123,9 +123,18 @@ public class Arthas {
         try {
             new Arthas(args);
         } catch (Throwable t) {
-            AnsiLog.error("Start arthas failed, exception stack trace: ");
-            t.printStackTrace();
-            System.exit(-1);
+            //fix https://github.com/alibaba/arthas/issues/1519
+            //JDK 1.8 attach to JDK 11: java.io.IOException: Non-numeric value found - int expected
+            //JDK 11 attach to JDK 1.8: com.sun.tools.attach.AgentLoadException: 0
+            String error = t.toString();
+            if (error.contains("com.sun.tools.attach.AgentLoadException: 0")
+                    || error.contains("java.io.IOException: Non-numeric value found - int expected")) {
+                // ignore error
+            } else {
+                AnsiLog.error("Start arthas failed, exception stack trace: ");
+                t.printStackTrace();
+                System.exit(-1);
+            }
         }
     }
 }
