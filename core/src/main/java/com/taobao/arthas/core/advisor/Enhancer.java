@@ -228,9 +228,9 @@ public class Enhancer implements ClassFileTransformer {
                 affect.addMethodAndCount(inClassLoader, className, methodNode.name, methodNode.desc);
             }
 
-            // https://github.com/alibaba/arthas/issues/1223
-            if (classNode.version < Opcodes.V1_5) {
-                classNode.version = Opcodes.V1_5;
+            // https://github.com/alibaba/arthas/issues/1223 , V1_5 的major version是49
+            if (AsmUtils.getMajorVersion(classNode.version) < 49) {
+                classNode.version = AsmUtils.setMajorVersion(classNode.version, 49);
             }
 
             byte[] enhanceClassByteArray = AsmUtils.toBytes(classNode, inClassLoader, classReader);

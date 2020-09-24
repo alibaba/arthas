@@ -561,6 +561,26 @@ public class AsmUtils {
 	    return new String(charArray);
 	}
 
+    /**
+     * Java ClassFile versions (the minor version is stored in the 16 most
+     * significant bits, and the major version in the 16 least significant bits).
+     * @see com.alibaba.arthas.deps.org.objectweb.asm.Opcodes#V_PREVIEW
+     * @param version
+     * @return
+     */
+    public static int getMajorVersion(int version) {
+        return 0x0000FFFF & version;
+    }
 
+    /**
+     * 替换掉完整 version里的 major version
+     * 
+     * @param version
+     * @param majorVersion
+     * @return
+     */
+    public static int setMajorVersion(int version, int majorVersion) {
+        return (version & 0xFFFF0000) | majorVersion;
+    }
 
 }
