@@ -124,7 +124,7 @@ public class Enhancer implements ClassFileTransformer {
             }
 
             //keep origin class reader for bytecode optimizations, avoiding JVM metaspace OOM.
-            ClassNode classNode = new ClassNode(Opcodes.ASM8);
+            ClassNode classNode = new ClassNode(Opcodes.ASM9);
             ClassReader classReader = AsmUtils.toClassNode(classfileBuffer, classNode);
             // remove JSR https://github.com/alibaba/arthas/issues/1304
             classNode = AsmUtils.removeJSRInstructions(classNode);
@@ -228,9 +228,9 @@ public class Enhancer implements ClassFileTransformer {
                 affect.addMethodAndCount(inClassLoader, className, methodNode.name, methodNode.desc);
             }
 
-            // https://github.com/alibaba/arthas/issues/1223
-            if (classNode.version < Opcodes.V1_5) {
-                classNode.version = Opcodes.V1_5;
+            // https://github.com/alibaba/arthas/issues/1223 , V1_5 的major version是49
+            if (AsmUtils.getMajorVersion(classNode.version) < 49) {
+                classNode.version = AsmUtils.setMajorVersion(classNode.version, 49);
             }
 
             byte[] enhanceClassByteArray = AsmUtils.toBytes(classNode, inClassLoader, classReader);
