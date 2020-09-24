@@ -73,7 +73,7 @@ public class HttpRequestHandler extends SimpleChannelInboundHandler<FullHttpRequ
                 //handle http restful api
                 if ("/api".equals(path)) {
                     response = httpApiHandler.handle(request);
-                    isHttpApiResponse = true;
+                    isHttpApiResponse = (response!=null);
                 }
 
                 //handle webui requests

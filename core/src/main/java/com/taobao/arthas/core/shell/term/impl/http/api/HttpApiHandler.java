@@ -4,7 +4,12 @@ import com.alibaba.arthas.deps.org.slf4j.Logger;
 import com.alibaba.arthas.deps.org.slf4j.LoggerFactory;
 import com.alibaba.fastjson.JSON;
 import com.taobao.arthas.common.PidUtils;
-import com.taobao.arthas.core.command.model.*;
+import com.taobao.arthas.core.command.model.CommandRequestModel;
+import com.taobao.arthas.core.command.model.InputStatus;
+import com.taobao.arthas.core.command.model.InputStatusModel;
+import com.taobao.arthas.core.command.model.MessageModel;
+import com.taobao.arthas.core.command.model.ResultModel;
+import com.taobao.arthas.core.command.model.WelcomeModel;
 import com.taobao.arthas.core.distribution.PackingResultDistributor;
 import com.taobao.arthas.core.distribution.ResultConsumer;
 import com.taobao.arthas.core.distribution.ResultDistributor;
@@ -31,8 +36,12 @@ import com.taobao.arthas.core.util.JsonUtils;
 import com.taobao.arthas.core.util.StringUtils;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.ByteBufOutputStream;
-import io.netty.buffer.Unpooled;
-import io.netty.handler.codec.http.*;
+import io.netty.handler.codec.http.DefaultFullHttpResponse;
+import io.netty.handler.codec.http.FullHttpRequest;
+import io.netty.handler.codec.http.HttpHeaderNames;
+import io.netty.handler.codec.http.HttpMethod;
+import io.netty.handler.codec.http.HttpResponse;
+import io.netty.handler.codec.http.HttpResponseStatus;
 import io.netty.util.CharsetUtil;
 import io.termd.core.function.Function;
 
@@ -40,9 +49,7 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
-import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicInteger;
 
 
 /**
@@ -55,34 +62,21 @@ public class HttpApiHandler {
     private static final Logger logger = LoggerFactory.getLogger(HttpApiHandler.class);
     public static final int DEFAULT_EXEC_TIMEOUT = 30000;
     private final SessionManager sessionManager;
-    private static HttpApiHandler instance;
     private final InternalCommandManager commandManager;
     private final JobController jobController;
     private final HistoryManager historyManager;
 
-    private int jsonBufferSize = 1024 * 256;
-    private int poolSize = 8;
-    private ArrayBlockingQueue<ByteBuf> byteBufPool = new ArrayBlockingQueue<ByteBuf>(poolSize);
-    private ArrayBlockingQueue<char[]> charsBufPool = new ArrayBlockingQueue<char[]>(poolSize);
-    private ArrayBlockingQueue<byte[]> bytesPool = new ArrayBlockingQueue<byte[]>(poolSize);
+    private volatile HttpApiBufferPool bufferPool;
 
     public HttpApiHandler(HistoryManager historyManager, SessionManager sessionManager) {
         this.historyManager = historyManager;
         this.sessionManager = sessionManager;
         commandManager = this.sessionManager.getCommandManager();
         jobController = this.sessionManager.getJobController();
-
-        //init buf pool
-        JsonUtils.setSerializeWriterBufferThreshold(jsonBufferSize);
-        for (int i = 0; i < poolSize; i++) {
-            byteBufPool.offer(Unpooled.buffer(jsonBufferSize));
-            charsBufPool.offer(new char[jsonBufferSize]);
-            bytesPool.offer(new byte[jsonBufferSize]);
-        }
     }
 
     public HttpResponse handle(FullHttpRequest request) throws Exception {
-
+        initBufferPool();
         ApiResponse result;
         String requestBody = null;
         String requestId = null;
@@ -114,14 +108,15 @@ public class HttpApiHandler {
 
         try {
             //apply response content buf first
-            content = byteBufPool.poll(2000, TimeUnit.MILLISECONDS);
+            content = bufferPool.pollByteBuf(5000, TimeUnit.MILLISECONDS);
             if (content == null) {
                 throw new ApiException("get response content buf failure");
             }
+            content = content.retain();
 
             //apply fastjson buf from pool
-            charsBuf = charsBufPool.poll();
-            bytesBuf = bytesPool.poll();
+            charsBuf = bufferPool.pollCharArray();
+            bytesBuf = bufferPool.pollByteArray();
             if (charsBuf == null || bytesBuf == null) {
                 throw new ApiException("get json buf failure");
             }
@@ -129,46 +124,46 @@ public class HttpApiHandler {
 
             //create http response
             DefaultFullHttpResponse response = new DefaultFullHttpResponse(request.protocolVersion(),
-                    HttpResponseStatus.OK, content.retain());
+                    HttpResponseStatus.OK, content);
             response.headers().set(HttpHeaderNames.CONTENT_TYPE, "application/json; charset=utf-8");
-            writeResult(response, result);
+            writeResultAsJson(response, result);
             return response;
         } catch (Exception e) {
             //response is discarded
             if (content != null) {
                 content.release();
-                byteBufPool.offer(content);
+                bufferPool.giveBackByteBuf(content);
             }
             throw e;
         } finally {
             //give back json buf to pool
             JsonUtils.setSerializeWriterBufThreadLocal(null, null);
             if (charsBuf != null) {
-                charsBufPool.offer(charsBuf);
+                bufferPool.offerCharArray(charsBuf);
             }
             if (bytesBuf != null) {
-                bytesPool.offer(bytesBuf);
+                bufferPool.offerByteArray(bytesBuf);
+            }
+        }
+    }
+
+    private void initBufferPool() {
+        if (bufferPool == null) {
+            synchronized (this) {
+                if (bufferPool == null) {
+                    bufferPool = new HttpApiBufferPool();
+                }
             }
         }
     }
 
     public void onCompleted(DefaultFullHttpResponse httpResponse) {
-        ByteBuf content = httpResponse.content();
-        content.clear();
-        if (content.capacity() == jsonBufferSize) {
-            if (!byteBufPool.offer(content)) {
-                content.release();
-            }
-        } else {
-            //replace content ByteBuf
-            content.release();
-            if (byteBufPool.remainingCapacity() > 0) {
-                byteBufPool.offer(Unpooled.buffer(jsonBufferSize));
-            }
+        if (bufferPool != null) {
+            bufferPool.giveBackByteBuf(httpResponse.content());
         }
     }
 
-    private void writeResult(DefaultFullHttpResponse response, Object result) throws IOException {
+    private void writeResultAsJson(DefaultFullHttpResponse response, Object result) throws IOException {
         ByteBufOutputStream out = new ByteBufOutputStream(response.content());
         try {
             JSON.writeJSONString(out, result);
