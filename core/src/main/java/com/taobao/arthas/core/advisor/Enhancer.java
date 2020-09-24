@@ -124,7 +124,7 @@ public class Enhancer implements ClassFileTransformer {
             }
 
             //keep origin class reader for bytecode optimizations, avoiding JVM metaspace OOM.
-            ClassNode classNode = new ClassNode(Opcodes.ASM8);
+            ClassNode classNode = new ClassNode(Opcodes.ASM9);
             ClassReader classReader = AsmUtils.toClassNode(classfileBuffer, classNode);
             // remove JSR https://github.com/alibaba/arthas/issues/1304
             classNode = AsmUtils.removeJSRInstructions(classNode);
