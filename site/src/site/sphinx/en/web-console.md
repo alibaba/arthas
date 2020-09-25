@@ -29,9 +29,9 @@ java -jar  arthas-tunnel-server.jar
 
 By default, the web port of the arthas tunnel server is `8080`, and the port connected by the arthas agent is `7777`.
 
-Once started, you can go to [http://localhost:8080/](http://localhost:8080/) and connect to the registered arthas agent via `agentId`.
+Once started, you can go to [http://127.0.0.1:8080/](http://127.0.0.1:8080/) and connect to the registered arthas agent via `agentId`.
 
-Through Spring Boot's Endpoint, you can view the specific connection information: [http://localhost:8080/actuator/arthas](http://localhost:8080/actuator/arthas), the login user name is `arthas`, and the password can be found in the log of arthas tunnel server, for example:
+Through Spring Boot's Endpoint, you can view the specific connection information: [http://127.0.0.1:8080/actuator/arthas](http://127.0.0.1:8080/actuator/arthas), the login user name is `arthas`, and the password can be found in the log of arthas tunnel server, for example:
 
 ```
 32851 [main] INFO o.s.b.a.s.s.UserDetailsServiceAutoConfiguration
@@ -43,6 +43,12 @@ Using generated security password: f1dca050-3777-48f4-a577-6367e55a78a2
 
 
 When starting arthas, you can use the `--tunnel-server` parameter, for example:
+
+```bash
+as.sh --tunnel-server 'ws://127.0.0.1:7777/ws'
+```
+
+You can also use the following test address (not guaranteed to be available all the time):
 
 ```bash
 as.sh --tunnel-server 'ws://47.75.156.201:7777/ws'
