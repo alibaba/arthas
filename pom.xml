@@ -140,7 +140,7 @@
             <dependency>
                 <groupId>com.alibaba.middleware</groupId>
                 <artifactId>termd-core</artifactId>
-                <version>1.1.7.9</version>
+                <version>1.1.7.10</version>
             </dependency>
             <dependency>
                 <groupId>com.alibaba.middleware</groupId>
