@@ -54,6 +54,7 @@ import com.taobao.arthas.core.advisor.SpyInterceptors.SpyTraceInterceptor2;
 import com.taobao.arthas.core.advisor.SpyInterceptors.SpyTraceInterceptor3;
 import com.taobao.arthas.core.server.ArthasBootstrap;
 import com.taobao.arthas.core.util.ArthasCheckUtils;
+import com.taobao.arthas.core.util.ClassUtils;
 import com.taobao.arthas.core.util.FileUtils;
 import com.taobao.arthas.core.util.SearchUtils;
 import com.taobao.arthas.core.util.affect.EnhancerAffect;
@@ -331,7 +332,7 @@ public class Enhancer implements ClassFileTransformer {
      */
     private static boolean isUnsupportedClass(Class<?> clazz) {
         return clazz.isArray() || (clazz.isInterface() && !GlobalOptions.isSupportDefaultMethod) || clazz.isEnum()
-                || clazz.equals(Class.class) || clazz.equals(Integer.class) || clazz.equals(Method.class);
+                || clazz.equals(Class.class) || clazz.equals(Integer.class) || clazz.equals(Method.class) || ClassUtils.isLambdaClass(clazz);
     }
 
     /**
