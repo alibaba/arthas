@@ -141,4 +141,36 @@ public class AsmUtilsTest {
     	Assertions.assertThat(object.getClass().getName()).isEqualTo("com.test.Test.XXX");
     }
 
+    @Test
+    public void testGetMajorVersion() throws Exception {
+        Assertions.assertThat(AsmUtils.getMajorVersion(Opcodes.V1_1)).isEqualTo(45);
+        Assertions.assertThat(AsmUtils.getMajorVersion(Opcodes.V1_2)).isEqualTo(46);
+        Assertions.assertThat(AsmUtils.getMajorVersion(Opcodes.V1_3)).isEqualTo(47);
+        Assertions.assertThat(AsmUtils.getMajorVersion(Opcodes.V1_4)).isEqualTo(48);
+        Assertions.assertThat(AsmUtils.getMajorVersion(Opcodes.V1_5)).isEqualTo(49);
+        Assertions.assertThat(AsmUtils.getMajorVersion(Opcodes.V1_6)).isEqualTo(50);
+        Assertions.assertThat(AsmUtils.getMajorVersion(Opcodes.V1_7)).isEqualTo(51);
+        Assertions.assertThat(AsmUtils.getMajorVersion(Opcodes.V1_8)).isEqualTo(52);
+
+        Assertions.assertThat(AsmUtils.getMajorVersion(Opcodes.V9)).isEqualTo(53);
+        Assertions.assertThat(AsmUtils.getMajorVersion(Opcodes.V10)).isEqualTo(54);
+        Assertions.assertThat(AsmUtils.getMajorVersion(Opcodes.V11)).isEqualTo(55);
+        Assertions.assertThat(AsmUtils.getMajorVersion(Opcodes.V12)).isEqualTo(56);
+        Assertions.assertThat(AsmUtils.getMajorVersion(Opcodes.V13)).isEqualTo(57);
+        Assertions.assertThat(AsmUtils.getMajorVersion(Opcodes.V14)).isEqualTo(58);
+        Assertions.assertThat(AsmUtils.getMajorVersion(Opcodes.V15)).isEqualTo(59);
+        Assertions.assertThat(AsmUtils.getMajorVersion(Opcodes.V16)).isEqualTo(60);
+
+        Assertions.assertThat(AsmUtils.getMajorVersion(Opcodes.V16 | Opcodes.V_PREVIEW)).isEqualTo(60);
+    }
+
+    @Test
+    public void testSetMajorVersion() throws Exception {
+        int version = Opcodes.V16 | Opcodes.V_PREVIEW;
+        int newVersion = AsmUtils.setMajorVersion(version, 58);
+
+        AsmUtils.getMajorVersion(newVersion);
+
+        Assertions.assertThat(AsmUtils.getMajorVersion(newVersion)).isEqualTo(58);
+    }
 }

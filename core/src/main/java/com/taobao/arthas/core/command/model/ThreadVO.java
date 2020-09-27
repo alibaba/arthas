@@ -13,7 +13,8 @@ public class ThreadVO {
     private String group;
     private int priority;
     private State state;
-    private long cpu;
+    private double cpu;
+    private long deltaTime;
     private long time;
     private boolean interrupted;
     private boolean daemon;
@@ -61,12 +62,20 @@ public class ThreadVO {
         this.state = state;
     }
 
-    public long getCpu() {
+    public double getCpu() {
         return cpu;
     }
 
-    public void setCpu(long cpu) {
+    public void setCpu(double cpu) {
         this.cpu = cpu;
+    }
+
+    public long getDeltaTime() {
+        return deltaTime;
+    }
+
+    public void setDeltaTime(long deltaTime) {
+        this.deltaTime = deltaTime;
     }
 
     public long getTime() {
@@ -91,5 +100,23 @@ public class ThreadVO {
 
     public void setDaemon(boolean daemon) {
         this.daemon = daemon;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        ThreadVO threadVO = (ThreadVO) o;
+
+        if (id != threadVO.id) return false;
+        return name != null ? name.equals(threadVO.name) : threadVO.name == null;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = (int) (id ^ (id >>> 32));
+        result = 31 * result + (name != null ? name.hashCode() : 0);
+        return result;
     }
 }

@@ -48,7 +48,7 @@
 
     <groupId>com.taobao.arthas</groupId>
     <artifactId>arthas-all</artifactId>
-    <version>3.4.2-SNAPSHOT</version>
+    <version>3.4.3-SNAPSHOT</version>
     <packaging>pom</packaging>
 
     <name>arthas-all</name>
@@ -127,7 +127,7 @@
         <spring-boot.version>2.3.1.RELEASE</spring-boot.version>
         <maven-invoker-plugin.version>3.0.0</maven-invoker-plugin.version>
         <jacoco.skip>${skipTests}</jacoco.skip>
-        <project.build.outputTimestamp>2020-09-11T12:45:46Z</project.build.outputTimestamp>
+        <project.build.outputTimestamp>2020-09-22T14:28:38Z</project.build.outputTimestamp>
     </properties>
 
     <dependencyManagement>
@@ -165,12 +165,12 @@
             <dependency>
                 <groupId>com.alibaba.arthas</groupId>
                 <artifactId>arthas-repackage-logger</artifactId>
-                <version>0.0.5</version>
+                <version>0.0.6</version>
             </dependency>
             <dependency>
                 <groupId>com.alibaba.arthas</groupId>
                 <artifactId>arthas-repackage-asm</artifactId>
-                <version>0.0.5</version>
+                <version>0.0.6</version>
             </dependency>
             <dependency>
                 <groupId>com.alibaba</groupId>

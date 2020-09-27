@@ -37,7 +37,7 @@ public class EnhancerTest {
 
         TestHelper.appendSpyJar(instrumentation);
 
-        ArthasBootstrap.getInstance(instrumentation, "");
+        ArthasBootstrap.getInstance(instrumentation, "ip=127.0.0.1");
 
         AdviceListener listener = Mockito.mock(AdviceListener.class);
 

@@ -9,6 +9,7 @@ import com.taobao.arthas.core.command.model.DashboardModel;
 import com.taobao.arthas.core.command.model.GcInfoVO;
 import com.taobao.arthas.core.command.model.MemoryEntryVO;
 import com.taobao.arthas.core.command.model.RuntimeInfoVO;
+import com.taobao.arthas.core.command.model.ThreadVO;
 import com.taobao.arthas.core.command.model.TomcatInfoVO;
 import com.taobao.arthas.core.shell.command.AnnotatedCommand;
 import com.taobao.arthas.core.shell.command.CommandProcess;
@@ -305,7 +306,7 @@ public class DashboardCommand extends AnnotatedCommand {
                 DashboardModel dashboardModel = new DashboardModel();
 
                 //thread sample
-                Map<String, Thread> threads = ThreadUtil.getThreads();
+                Map<String, ThreadVO> threads = ThreadUtil.getThreads();
                 dashboardModel.setThreads(threadSampler.sample(threads.values()));
 
                 //memory

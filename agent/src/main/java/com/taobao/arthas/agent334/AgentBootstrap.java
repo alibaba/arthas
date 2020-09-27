@@ -71,7 +71,7 @@ public class AgentBootstrap {
     /**
      * 让下次再次启动时有机会重新加载
      */
-    public synchronized static void resetArthasClassLoader() {
+    public static void resetArthasClassLoader() {
         arthasClassLoader = null;
     }
 
