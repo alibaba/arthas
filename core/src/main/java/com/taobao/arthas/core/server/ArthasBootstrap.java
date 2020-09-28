@@ -456,7 +456,7 @@ public class ArthasBootstrap {
             try {
                 channelClient.stop();
             } catch (Exception e) {
-                e.printStackTrace();
+                logger().error("stop channel client error", e);
             }
         }
         if (executorService != null) {
