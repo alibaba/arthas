@@ -48,7 +48,7 @@
 
     <groupId>com.taobao.arthas</groupId>
     <artifactId>arthas-all</artifactId>
-    <version>3.4.3-SNAPSHOT</version>
+    <version>3.4.4-SNAPSHOT</version>
     <packaging>pom</packaging>
 
     <name>arthas-all</name>
@@ -127,7 +127,7 @@
         <spring-boot.version>2.3.1.RELEASE</spring-boot.version>
         <maven-invoker-plugin.version>3.0.0</maven-invoker-plugin.version>
         <jacoco.skip>${skipTests}</jacoco.skip>
-        <project.build.outputTimestamp>2020-09-22T14:28:38Z</project.build.outputTimestamp>
+        <project.build.outputTimestamp>2020-09-27T15:10:43Z</project.build.outputTimestamp>
     </properties>
 
     <dependencyManagement>
@@ -140,7 +140,7 @@
             <dependency>
                 <groupId>com.alibaba.middleware</groupId>
                 <artifactId>termd-core</artifactId>
-                <version>1.1.7.9</version>
+                <version>1.1.7.10</version>
             </dependency>
             <dependency>
                 <groupId>com.alibaba.middleware</groupId>

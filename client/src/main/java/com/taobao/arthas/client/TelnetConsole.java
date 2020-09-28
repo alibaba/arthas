@@ -314,7 +314,7 @@ public class TelnetConsole {
             }
 
             if (cmds.isEmpty()) {
-                IOUtil.readWrite(telnet.getInputStream(), telnet.getOutputStream(), System.in,
+                IOUtil.readWrite(telnet.getInputStream(), telnet.getOutputStream(), consoleReader.getInput(),
                         consoleReader.getOutput());
             } else {
                 try {
