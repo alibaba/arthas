@@ -65,10 +65,6 @@ public class ObjectRenderTest {
         testList(atomicIntegers, 1);
         System.out.println("expand 2: ");
         testList(atomicIntegers, 2);
-        System.out.println("expand 3: ");
-        testList(atomicIntegers, 3);
-        System.out.println("expand 4: ");
-        testList(atomicIntegers, 4);
     }
 
     @Test

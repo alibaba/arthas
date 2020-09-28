@@ -339,6 +339,7 @@
                         <configuration>
                             <excludes>
                                 <exclude>com/taobao/arthas/core/view/ObjectViewTest*</exclude>
+                                <exclude>com/taobao/arthas/core/model/ObjectRenderTest*</exclude>
                                 <exclude>com/taobao/arthas/bytekit/asm/interceptor*</exclude>
                             </excludes>
                         </configuration>
