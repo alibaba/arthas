@@ -1,6 +1,6 @@
 package com.taobao.arthas.core.command.model;
 
-import com.taobao.arthas.core.util.ObjectVOUtils;
+import com.taobao.arthas.core.util.object.ObjectRenderer;
 
 import java.util.Collection;
 import java.util.List;
@@ -28,11 +28,22 @@ public class ObjectVO {
     //complex object's fields
     protected List<ObjectVO> fields;
 
+    //exceed number limit
+    private Boolean exceedLimit;
+
+    private Integer objectNumberLimit;
+
     public ObjectVO(String type) {
         this.type = type;
     }
 
     public ObjectVO(String type, Object value) {
+        this.type = type;
+        this.value = value;
+    }
+
+    public ObjectVO(String name, String type, Object value) {
+        this.name = name;
         this.type = type;
         this.value = value;
     }
@@ -53,13 +64,6 @@ public class ObjectVO {
     public static ObjectVO ofCollection(String type, int size, Collection value) {
         ObjectVO objectVO = new ObjectVO(type);
         objectVO.setSize(size);
-        objectVO.setValue(value);
-        return objectVO;
-    }
-
-    public static ObjectVO ofString(String type, int size, String value) {
-        ObjectVO objectVO = new ObjectVO(type);
-        objectVO.setSize(value.length());
         objectVO.setValue(value);
         return objectVO;
     }
@@ -119,6 +123,22 @@ public class ObjectVO {
         this.size = size;
     }
 
+    public Boolean getExceedLimit() {
+        return exceedLimit;
+    }
+
+    public void setExceedLimit(Boolean exceedLimit) {
+        this.exceedLimit = exceedLimit;
+    }
+
+    public Integer getObjectNumberLimit() {
+        return objectNumberLimit;
+    }
+
+    public void setObjectNumberLimit(Integer objectNumberLimit) {
+        this.objectNumberLimit = objectNumberLimit;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -147,8 +167,7 @@ public class ObjectVO {
 
     @Override
     public String toString() {
-        return ObjectVOUtils.toString(this,"");
+        return ObjectRenderer.render(this);
     }
-
 
 }

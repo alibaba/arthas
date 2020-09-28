@@ -1,4 +1,4 @@
-package com.taobao.arthas.core.util;
+package com.taobao.arthas.core.util.object;
 
 import com.taobao.arthas.core.GlobalOptions;
 import com.taobao.arthas.core.command.model.ObjectVO;
@@ -13,23 +13,51 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
-import static com.taobao.arthas.core.view.ObjectView.ASCII_MAP;
 
 /**
  * Create Object VO
  * @author gongdewei 2020/9/24
  */
-public class ObjectVOUtils {
+public class ObjectInspector {
 
-    private static final int ARRAY_LEN_LIMIT = 100;
-    private final static String TAB = "    ";
+    public static final int DEFAULT_OBJECT_NUMBER_LIMIT = 500;
+    public static final int DEFAULT_ARRAY_LEN_LIMIT = 100;
 
-    public static ObjectVO inspectObject(Object object, int expand) {
-        return inspectObject(object, 0, expand);
+    private int objectNumberLimit;
+    private int arrayLenLimit;
+    //子对象数量
+    private int objectCount;
+
+    public ObjectInspector() {
+        this(DEFAULT_OBJECT_NUMBER_LIMIT, DEFAULT_ARRAY_LEN_LIMIT);
     }
 
-    private static ObjectVO inspectObject(Object obj, int deep, int expand) {
-        expand = expand > 4? 4 : expand;
+    public ObjectInspector(int objectNumberLimit) {
+        this(objectNumberLimit, DEFAULT_ARRAY_LEN_LIMIT);
+    }
+
+    public ObjectInspector(int objectNumberLimit, int arrayLenLimit) {
+        this.setObjectNumberLimit(objectNumberLimit);
+        this.setArrayLenLimit(arrayLenLimit);
+    }
+
+    public ObjectVO inspect(Object object, int expand) {
+        try {
+            ObjectVO objectVO = inspectObject(object, 0, expand);
+            if (objectVO != null && isExceedNumLimit()) {
+                objectVO.setExceedLimit(isExceedNumLimit());
+                objectVO.setObjectNumberLimit(objectNumberLimit);
+            }
+            return objectVO;
+        } catch (ObjectTooLargeException e) {
+            // unreachable statement
+            return new ObjectVO(object != null ? object.getClass().getSimpleName() : "", "...");
+        }
+    }
+
+    private ObjectVO inspectObject(Object obj, int deep, int expand) throws ObjectTooLargeException {
+        checkObjectAmount();
+
         if (null == obj) {
             return null;
         } else {
@@ -46,18 +74,19 @@ public class ObjectVOUtils {
                     || Short.class.isInstance(obj)
                     || Byte.class.isInstance(obj)
                     || Boolean.class.isInstance(obj)) {
+
                 return new ObjectVO(className, obj);
             }
 
             // Char要特殊处理,因为有不可见字符的因素
             else if (Character.class.isInstance(obj)) {
-
                 final Character c = (Character) obj;
                 return new ObjectVO(className, escapeChar(c));
             }
 
             // 字符串类型单独处理
             else if (String.class.isInstance(obj)) {
+
                 StringBuffer sb = new StringBuffer();
                 for (char c : ((String) obj).toCharArray()) {
                     switch (c) {
@@ -71,7 +100,6 @@ public class ObjectVOUtils {
                             sb.append(c);
                     }//switch
                 }//for
-
                 return new ObjectVO(className, sb.toString());
             }
 
@@ -89,9 +117,18 @@ public class ObjectVOUtils {
 
                 // 展开展示
                 else {
-                    List<ObjectVO> list = new ArrayList<ObjectVO>(collection.size());
+                    List<ObjectVO> list = new ArrayList<ObjectVO>(Math.min(collection.size(), arrayLenLimit));
                     for (Object e : collection) {
-                        list.add(inspectObject(e, deep+1, expand));
+                        try {
+                            list.add(inspectObject(e, deep+1, expand));
+                            if (list.size() >= arrayLenLimit) {
+                                break;
+                            }
+                        } catch (ObjectTooLargeException ex) {
+                            //ignore
+                            list.add(new ObjectVO(e != null ? e.getClass().getSimpleName() : "", "..."));
+                            break;
+                        }
                     }
                     return ObjectVO.ofCollection(className, collection.size(), list);
                 }
@@ -111,11 +148,28 @@ public class ObjectVOUtils {
 
                 } else {
 
-                    List<ObjectVO> list = new ArrayList<ObjectVO>(map.size());
+                    List<ObjectVO> list = new ArrayList<ObjectVO>(Math.min(map.size(), arrayLenLimit));
                     for (Map.Entry<Object, Object> entry : map.entrySet()) {
-                        ObjectVO keyObj = inspectObject(entry.getKey(), deep + 1, expand);
-                        ObjectVO valueObj = inspectObject(entry.getValue(), deep + 1, expand);
-                        list.add(ObjectVO.ofKeyValue(keyObj, valueObj));
+                        ObjectVO keyObj = null;
+                        ObjectVO valueObj = null;
+                        try {
+                            keyObj = inspectObject(entry.getKey(), deep + 1, expand);
+                            valueObj = inspectObject(entry.getValue(), deep + 1, expand);
+                            list.add(ObjectVO.ofKeyValue(keyObj, valueObj));
+                            if (list.size() >= arrayLenLimit) {
+                                break;
+                            }
+                        } catch (ObjectTooLargeException e) {
+                            //ignore error
+                            if (keyObj == null) {
+                                keyObj = new ObjectVO(entry.getKey() != null ? entry.getKey().getClass().getSimpleName() : "", "...");
+                            }
+                            if (valueObj == null) {
+                                valueObj = new ObjectVO(entry.getValue() != null ? entry.getValue().getClass().getSimpleName() : "", "...");
+                            }
+                            list.add(ObjectVO.ofKeyValue(keyObj, valueObj));
+                            break;
+                        }
                     }
                     return ObjectVO.ofCollection(className, map.size(), list);
                 }
@@ -139,7 +193,7 @@ public class ObjectVOUtils {
                     }
                     // 展开展示
                     else {
-                        return ObjectVO.ofArray(typeName, arrays.length, toArray(arrays, ARRAY_LEN_LIMIT));
+                        return ObjectVO.ofArray(typeName, arrays.length, toArray(arrays, arrayLenLimit));
                     }
 
                 }
@@ -155,7 +209,7 @@ public class ObjectVOUtils {
                     }
                     // 展开展示
                     else {
-                        return ObjectVO.ofArray(typeName, arrays.length, toArray(arrays, ARRAY_LEN_LIMIT));
+                        return ObjectVO.ofArray(typeName, arrays.length, toArray(arrays, arrayLenLimit));
                     }
                 }
 
@@ -172,7 +226,7 @@ public class ObjectVOUtils {
 
                     // 展开展示
                     else {
-                        return ObjectVO.ofArray(typeName, arrays.length, toArray(arrays, ARRAY_LEN_LIMIT));
+                        return ObjectVO.ofArray(typeName, arrays.length, toArray(arrays, arrayLenLimit));
                     }
                 }
 
@@ -189,7 +243,7 @@ public class ObjectVOUtils {
 
                     // 展开展示
                     else {
-                        return ObjectVO.ofArray(typeName, arrays.length, toArray(arrays, ARRAY_LEN_LIMIT));
+                        return ObjectVO.ofArray(typeName, arrays.length, toArray(arrays, arrayLenLimit));
                     }
                 }
 
@@ -206,7 +260,7 @@ public class ObjectVOUtils {
 
                     // 展开展示
                     else {
-                        return ObjectVO.ofArray(typeName, arrays.length, toArray(arrays, ARRAY_LEN_LIMIT));
+                        return ObjectVO.ofArray(typeName, arrays.length, toArray(arrays, arrayLenLimit));
                     }
                 }
 
@@ -223,7 +277,7 @@ public class ObjectVOUtils {
 
                     // 展开展示
                     else {
-                        return ObjectVO.ofArray(typeName, arrays.length, toArray(arrays, ARRAY_LEN_LIMIT));
+                        return ObjectVO.ofArray(typeName, arrays.length, toArray(arrays, arrayLenLimit));
                     }
                 }
 
@@ -240,7 +294,7 @@ public class ObjectVOUtils {
 
                     // 展开展示
                     else {
-                        return ObjectVO.ofArray(typeName, arrays.length, toArray(arrays, ARRAY_LEN_LIMIT));
+                        return ObjectVO.ofArray(typeName, arrays.length, toArray(arrays, arrayLenLimit));
                     }
                 }
 
@@ -257,7 +311,7 @@ public class ObjectVOUtils {
 
                     // 展开展示
                     else {
-                        return ObjectVO.ofArray(typeName, arrays.length, toArray(arrays, ARRAY_LEN_LIMIT));
+                        return ObjectVO.ofArray(typeName, arrays.length, toArray(arrays, arrayLenLimit));
                     }
                 }
 
@@ -274,7 +328,7 @@ public class ObjectVOUtils {
 
                     // 展开展示
                     else {
-                        return ObjectVO.ofArray(typeName, arrays.length, toArray(arrays, ARRAY_LEN_LIMIT));
+                        return ObjectVO.ofArray(typeName, arrays.length, toArray(arrays, arrayLenLimit));
                     }
                 }
 
@@ -291,7 +345,7 @@ public class ObjectVOUtils {
 
                     // 展开展示
                     else {
-                        return ObjectVO.ofArray(typeName, arrays.length, toArray(arrays, ARRAY_LEN_LIMIT));
+                        return ObjectVO.ofArray(typeName, arrays.length, toArray(arrays, arrayLenLimit));
                     }
                 }
 
@@ -308,7 +362,7 @@ public class ObjectVOUtils {
 
                     // 展开展示
                     else {
-                        return ObjectVO.ofArray(typeName, arrays.length, toArray(arrays, ARRAY_LEN_LIMIT));
+                        return ObjectVO.ofArray(typeName, arrays.length, toArray(arrays, arrayLenLimit));
                     }
                 }
 
@@ -325,7 +379,7 @@ public class ObjectVOUtils {
 
                     // 展开展示
                     else {
-                        return ObjectVO.ofArray(typeName, arrays.length, toArray(arrays, ARRAY_LEN_LIMIT));
+                        return ObjectVO.ofArray(typeName, arrays.length, toArray(arrays, arrayLenLimit));
                     }
                 }
 
@@ -342,7 +396,7 @@ public class ObjectVOUtils {
 
                     // 展开展示
                     else {
-                        return ObjectVO.ofArray(typeName, arrays.length, toArray(arrays, ARRAY_LEN_LIMIT));
+                        return ObjectVO.ofArray(typeName, arrays.length, toArray(arrays, arrayLenLimit));
                     }
                 }
 
@@ -359,7 +413,7 @@ public class ObjectVOUtils {
 
                     // 展开展示
                     else {
-                        return ObjectVO.ofArray(typeName, arrays.length, toArray(arrays, ARRAY_LEN_LIMIT));
+                        return ObjectVO.ofArray(typeName, arrays.length, toArray(arrays, arrayLenLimit));
                     }
                 }
 
@@ -376,7 +430,7 @@ public class ObjectVOUtils {
 
                     // 展开展示
                     else {
-                        return ObjectVO.ofArray(typeName, arrays.length, toArray(arrays, ARRAY_LEN_LIMIT));
+                        return ObjectVO.ofArray(typeName, arrays.length, toArray(arrays, arrayLenLimit));
                     }
                 }
 
@@ -393,7 +447,7 @@ public class ObjectVOUtils {
 
                     // 展开展示
                     else {
-                        return ObjectVO.ofArray(typeName, arrays.length, toArray(arrays, ARRAY_LEN_LIMIT));
+                        return ObjectVO.ofArray(typeName, arrays.length, toArray(arrays, arrayLenLimit));
                     }
                 }
 
@@ -410,10 +464,16 @@ public class ObjectVOUtils {
                     // 展开展示
                     else {
 
-                        List<ObjectVO> list = new ArrayList<ObjectVO>(arrays.length);
+                        List<ObjectVO> list = new ArrayList<ObjectVO>(Math.min(arrays.length, arrayLenLimit));
                         for (Object e : arrays) {
-                            list.add(inspectObject(e, deep+1, expand));
-                            if (list.size() >= ARRAY_LEN_LIMIT) {
+                            try {
+                                list.add(inspectObject(e, deep+1, expand));
+                                if (list.size() >= arrayLenLimit) {
+                                    break;
+                                }
+                            } catch (ObjectTooLargeException ex) {
+                                //ignore error
+                                list.add(new ObjectVO(e != null ? e.getClass().getSimpleName() : "", "..."));
                                 break;
                             }
                         }
@@ -442,7 +502,7 @@ public class ObjectVOUtils {
 
             // Date输出
             else if (Date.class.isInstance(obj)) {
-                String strDate = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss,SSS").format(obj);
+                String strDate = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS Z").format(obj);
                 return new ObjectVO(className, strDate);
             }
 
@@ -486,9 +546,9 @@ public class ObjectVOUtils {
                                 fieldObjectVO.setName(field.getName());
                                 fieldVOList.add(fieldObjectVO);
 
-//                            } catch (ObjectView.ObjectTooLargeException t) {
-//                                buf.append("...");
-//                                break;
+                            } catch (ObjectTooLargeException t) {
+                                fieldVOList.add(new ObjectVO(field.getName(), field.getType().getSimpleName(), "..."));
+                                break;
                             } catch (Throwable t) {
                                 // ignore
                             }
@@ -505,107 +565,35 @@ public class ObjectVOUtils {
         }
     }
 
-    public static String toString(ObjectVO vo, String prefix) {
-        StringBuffer sb = new StringBuffer();
-        toString(vo, sb, prefix);
-        return sb.toString();
+    private void checkObjectAmount() throws ObjectTooLargeException {
+        if (objectCount >= objectNumberLimit){
+            throw new ObjectTooLargeException("Number of objects exceeds limit: "+ objectNumberLimit);
+        }
+        objectCount++;
     }
 
-    public static void toString(ObjectVO vo, StringBuffer sb, String prefix) {
-        if (vo.getKey() != null) {
-            //kv entry
-            toString(vo.getKey(), sb, prefix);
-            sb.append(" : ");
-            toString((ObjectVO) vo.getValue(), sb, prefix);
-            return;
-        }
-
-        if (vo.getName() != null) {
-            sb.append(vo.getName()).append('=');
-        }
-        if (vo.getType() != null) {
-            //object
-            sb.append('@').append(vo.getType()).append('[');
-        }
-
-        if (vo.getFields() != null) {
-            //fields
-            String subPrefix = prefix + TAB;
-            sb.append('\n');
-            sb.append(subPrefix);
-            for (ObjectVO field : vo.getFields()) {
-                toString(field, sb, subPrefix);
-                sb.append(",\n");
-                sb.append(subPrefix);
-            }
-        } else {
-            //value
-            if (vo.getSize() != null) {
-                sb.append("size=").append(vo.getSize()).append(";");
-                if (vo.getSize() > 0) {
-                    renderValue(vo, sb, prefix);
-                }
-            } else {
-                renderValue(vo, sb, prefix);
-            }
-        }
-        if (vo.getType() != null) {
-            if (sb.charAt(sb.length() - 1) == '\n') {
-                sb.append(prefix);
-            }
-            sb.append(']');
-        }
+    public boolean isExceedNumLimit() {
+        return objectCount >= objectNumberLimit;
     }
 
-    private static void renderValue(ObjectVO vo, StringBuffer sb, String prefix) {
-        String subPrefix = prefix+TAB;
-        Object value = vo.getValue();
-
-        if (value instanceof Collection) {
-            sb.append('\n');
-            Collection collection = (Collection) value;
-            for (Object e : collection) {
-                if (e instanceof ObjectVO) {
-                    ObjectVO objectVO = (ObjectVO) e;
-                    sb.append(subPrefix);
-                    toString(objectVO, sb, subPrefix);
-                    sb.append(",\n");
-                } else {
-                    sb.append(subPrefix).append(e).append(",\n");
-                }
-            }
-            //如果没有完全显示所有元素，则添加省略提示
-            int count = collection.size();
-            if (vo.getSize() > count) {
-                String msg = count + " out of " + vo.getSize() + " displayed, " + (vo.getSize() - count) + " more.\n";
-                sb.append(subPrefix).append(msg);
-            }
-        } else if (value instanceof Object[]) {
-            sb.append('\n');
-            Object[] objs = (Object[]) value;
-            for (int i = 0; i < objs.length; i++) {
-                Object obj = objs[i];
-                if (obj instanceof ObjectVO) {
-                    ObjectVO objectVO = (ObjectVO) obj;
-                    sb.append(subPrefix);
-                    toString(objectVO, sb, subPrefix);
-                    sb.append(",\n");
-                } else {
-                    sb.append(subPrefix).append(obj).append(",\n");
-                }
-            }
-            //如果没有完全显示所有元素，则添加省略提示
-            int count = objs.length;
-            if (vo.getSize() > count) {
-                String msg = count + " out of " + vo.getSize() + " displayed, " + (vo.getSize() - count) + " more.\n";
-                sb.append(subPrefix).append(msg);
-            }
-        } else {
-            if (vo.getSize() == null) {
-                sb.append(value);
-            }
-        }
+    public int getObjectNumberLimit() {
+        return objectNumberLimit;
     }
+
+    public void setObjectNumberLimit(int objectNumberLimit) {
+        this.objectNumberLimit = objectNumberLimit < 10 ? 10 : objectNumberLimit;
+    }
+
+    public int getArrayLenLimit() {
+        return arrayLenLimit;
+    }
+
+    public void setArrayLenLimit(int arrayLenLimit) {
+        this.arrayLenLimit = arrayLenLimit < 10 ? 10 :arrayLenLimit;
+    }
+
+
+    // --------------- static methods --------------------//
 
     private static Object[] toArray(int[] arrays, int limit) {
         limit = Math.min(arrays.length, limit);
@@ -771,30 +759,36 @@ public class ObjectVOUtils {
         return deep < expand;
     }
 
-    //from com.alibaba.fastjson.util.IOUtils.ASCII_CHARS
-    private final static char[]    ASCII_CHARS                = { '0', '0', '0', '1', '0', '2', '0', '3', '0', '4', '0',
-            '5', '0', '6', '0', '7', '0', '8', '0', '9', '0', 'A', '0', 'B', '0', 'C', '0', 'D', '0', 'E', '0', 'F',
-            '1', '0', '1', '1', '1', '2', '1', '3', '1', '4', '1', '5', '1', '6', '1', '7', '1', '8', '1', '9', '1',
-            'A', '1', 'B', '1', 'C', '1', 'D', '1', 'E', '1', 'F', '2', '0', '2', '1', '2', '2', '2', '3', '2', '4',
-            '2', '5', '2', '6', '2', '7', '2', '8', '2', '9', '2', 'A', '2', 'B', '2', 'C', '2', 'D', '2', 'E', '2',
-            'F',                                            };
-
     private static Object escapeChar(char c) {
         // ASCII的可见字符
         if (c >= 32 && c <= 126) {
             return c;
-        } else if (ASCII_MAP.containsKey((byte) c)) {
+        } else if (c < 32 || c == 127) {
             // ASCII的控制字符
             //return ASCII_MAP.get((byte) c);
 
             // 改为Unicode表示法: \u0001
-            String str = "\\u00";
-            str += ASCII_CHARS[c * 2];
-            str += ASCII_CHARS[c * 2 + 1];
-            return str;
+            String s = Integer.toHexString(c).toUpperCase();
+            if (s.length() == 1) {
+                s = "\\u000" + s;
+            } else if (s.length() == 2) {
+                s = "\\u00" + s;
+            } else if (s.length() == 3) {
+                s = "\\u0" + s;
+            } else {
+                s = "\\u" + s;
+            }
+            return s;
         } else {
             // 超过ASCII的编码范围
             return c;
+        }
+    }
+
+    private static class ObjectTooLargeException extends Exception {
+
+        public ObjectTooLargeException(String message) {
+            super(message);
         }
     }
 }

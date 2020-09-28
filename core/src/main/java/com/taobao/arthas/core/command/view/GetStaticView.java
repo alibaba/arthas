@@ -1,10 +1,9 @@
 package com.taobao.arthas.core.command.view;
 
 import com.taobao.arthas.core.command.model.GetStaticModel;
-import com.taobao.arthas.core.command.model.ObjectVO;
 import com.taobao.arthas.core.shell.command.CommandProcess;
 import com.taobao.arthas.core.util.ClassUtils;
-import com.taobao.arthas.core.util.ObjectVOUtils;
+import com.taobao.arthas.core.util.object.ObjectExpandUtils;
 import com.taobao.text.ui.Element;
 import com.taobao.text.util.RenderUtil;
 
@@ -21,11 +20,8 @@ public class GetStaticView extends ResultView<GetStaticModel> {
             process.write("\n");
             return;
         }
-        int expand = result.getExpand();
-        if (result.getFieldValue() != null) {
-            ObjectVO field = result.getFieldValue();
-//            String valueStr = StringUtils.objectToString(expand >= 0 ? new ObjectView(field.getValue(), expand).draw() : field.getValue());
-            String valueStr = ObjectVOUtils.toString(field, "");
+        if (result.getFieldName() != null) {
+            String valueStr = ObjectExpandUtils.toString(result.getFieldValue());
             process.write("field: " + result.getFieldName() + "\n" + valueStr + "\n");
         } else if (result.getMatchedClasses() != null) {
             Element table = ClassUtils.renderMatchedClasses(result.getMatchedClasses());

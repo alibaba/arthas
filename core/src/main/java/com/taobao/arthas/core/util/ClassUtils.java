@@ -43,10 +43,10 @@ public class ClassUtils {
     }
 
     public static Element renderClassInfo(ClassDetailVO clazz) {
-        return renderClassInfo(clazz, false, null);
+        return renderClassInfo(clazz, false);
     }
 
-    public static Element renderClassInfo(ClassDetailVO clazz, boolean isPrintField, Integer expand) {
+    public static Element renderClassInfo(ClassDetailVO clazz, boolean isPrintField) {
         TableElement table = new TableElement().leftCellPadding(1).rightCellPadding(1);
 
         table.row(label("class-info").style(Decoration.bold.bold()), label(clazz.getClassInfo()))
@@ -70,7 +70,7 @@ public class ClassUtils {
                 .row(label("classLoaderHash").style(Decoration.bold.bold()), label(clazz.getClassLoaderHash()));
 
         if (isPrintField) {
-            table.row(label("fields").style(Decoration.bold.bold()), TypeRenderUtils.drawField(clazz, expand));
+            table.row(label("fields").style(Decoration.bold.bold()), TypeRenderUtils.drawField(clazz));
         }
         return table;
     }

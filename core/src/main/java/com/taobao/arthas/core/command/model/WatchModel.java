@@ -13,8 +13,8 @@ public class WatchModel extends ResultModel {
     private double cost;
     private Object value;
 
-    private Integer expand;
-    private Integer sizeLimit;
+    private int expand;
+    private int sizeLimit;
 
     public WatchModel() {
     }
@@ -48,19 +48,19 @@ public class WatchModel extends ResultModel {
         this.value = value;
     }
 
-    public void setExpand(Integer expand) {
-        this.expand = expand;
-    }
-
-    public void setSizeLimit(Integer sizeLimit) {
-        this.sizeLimit = sizeLimit;
-    }
-
-    public Integer getExpand() {
+    public int getExpand() {
         return expand;
     }
 
-    public Integer getSizeLimit() {
+    public void setExpand(int expand) {
+        this.expand = expand;
+    }
+
+    public int getSizeLimit() {
         return sizeLimit;
+    }
+
+    public void setSizeLimit(int sizeLimit) {
+        this.sizeLimit = sizeLimit;
     }
 }

@@ -1,7 +1,5 @@
 package com.taobao.arthas.core.command.model;
 
-import com.taobao.arthas.core.util.ObjectVOUtils;
-
 import java.util.Collection;
 
 /**
@@ -12,7 +10,7 @@ public class GetStaticModel extends ResultModel {
 
     private Collection<ClassVO> matchedClasses;
     private String fieldName;
-    private ObjectVO fieldValue;
+    private Object fieldValue;
     private int expand;
     private Collection<ClassLoaderVO> matchedClassLoaders;
     private String classLoaderClass;
@@ -22,7 +20,7 @@ public class GetStaticModel extends ResultModel {
 
     public GetStaticModel(String fieldName, Object fieldValue, int expand) {
         this.fieldName = fieldName;
-        this.fieldValue = ObjectVOUtils.inspectObject(fieldValue, expand);
+        this.fieldValue = fieldValue;
         this.expand = expand;
     }
 
@@ -38,11 +36,11 @@ public class GetStaticModel extends ResultModel {
         this.fieldName = fieldName;
     }
 
-    public ObjectVO getFieldValue() {
+    public Object getFieldValue() {
         return fieldValue;
     }
 
-    public void setFieldValue(ObjectVO fieldValue) {
+    public void setFieldValue(Object fieldValue) {
         this.fieldValue = fieldValue;
     }
 
