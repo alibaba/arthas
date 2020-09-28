@@ -187,7 +187,6 @@ public class ObjectRenderTest {
 
     @Test
     public void testMaps() throws ParseException {
-        Date date = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS Z").parse("2020-09-27 16:26:18.587 +0800");
 
         Map<String, Object> map = new LinkedHashMap<String, Object>();
         map.put("strValue", "Arthas中国");
@@ -198,7 +197,6 @@ public class ObjectRenderTest {
         map.put("listValue", Arrays.asList(1,2,3));
         map.put("IntArray", new Integer[]{1,2,3});
         map.put("objectArray", new Object[]{1,2,3});
-        map.put("dateValue", date);
         map.put("objectValue", new Object());
         map.put("nullValue", null);
 
@@ -214,7 +212,6 @@ public class ObjectRenderTest {
                 "    @String[listValue] : @ArrayList[isEmpty=false;size=3],\n" +
                 "    @String[IntArray] : @Integer[][isEmpty=false;size=3],\n" +
                 "    @String[objectArray] : @Object[][isEmpty=false;size=3],\n" +
-                "    @String[dateValue] : @Date[2020-09-27 16:26:18.587 +0800],\n" +
                 "    @String[objectValue] : @Object[java.lang.Object@ffffffff],\n" +
                 "    @String[nullValue] : null,\n" +
                 "]", replaceHashCode(ObjectRenderer.render(objectVO1)));
@@ -243,7 +240,6 @@ public class ObjectRenderTest {
                 "        @Integer[2],\n" +
                 "        @Integer[3],\n" +
                 "    ],\n" +
-                "    @String[dateValue] : @Date[2020-09-27 16:26:18.587 +0800],\n" +
                 "    @String[objectValue] : @Object[\n" +
                 "    ],\n" +
                 "    @String[nullValue] : null,\n" +
@@ -270,10 +266,17 @@ public class ObjectRenderTest {
 
     @Test
     public void testDate() throws ParseException {
-        Date date = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS Z").parse("2020-09-27 16:26:18.587 +0800");
+
+        String pattern = "yyyy-MM-dd HH:mm:ss.SSS Z";
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat(pattern);
+        Date date = simpleDateFormat.parse("2020-09-27 16:26:18.587 +0800");
+
+        //compare with local time zone
+        String str = simpleDateFormat.format(date);
+
         ObjectVO objectVO = inspectObject(date, 1);
         printObject(objectVO);
-        Assert.assertEquals("@Date[2020-09-27 16:26:18.587 +0800]", objectVO.toString());
+        Assert.assertEquals("@Date["+str+"]", objectVO.toString());
 
     }
 
