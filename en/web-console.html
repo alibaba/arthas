@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Web Console &mdash; Arthas 3.4.2 documentation</title>
+  <title>Web Console &mdash; Arthas 3.4.3 documentation</title>
   
 
   
@@ -73,7 +73,7 @@
             
             
               <div class="version">
-                3.4.2
+                3.4.3
               </div>
             
           
@@ -215,8 +215,8 @@
 <div class="highlight-bash notranslate"><div class="highlight hljs"><pre class="bash">java -jar  arthas-tunnel-server.jar</pre></div>
 </div>
 <p>By default, the web port of the arthas tunnel server is <code class="docutils literal notranslate"><span class="pre">8080</span></code>, and the port connected by the arthas agent is <code class="docutils literal notranslate"><span class="pre">7777</span></code>.</p>
-<p>Once started, you can go to <a class="reference external" href="http://localhost:8080/">http://localhost:8080/</a> and connect to the registered arthas agent via <code class="docutils literal notranslate"><span class="pre">agentId</span></code>.</p>
-<p>Through Spring Boot’s Endpoint, you can view the specific connection information: <a class="reference external" href="http://localhost:8080/actuator/arthas">http://localhost:8080/actuator/arthas</a>, the login user name is <code class="docutils literal notranslate"><span class="pre">arthas</span></code>, and the password can be found in the log of arthas tunnel server, for example:</p>
+<p>Once started, you can go to <a class="reference external" href="http://127.0.0.1:8080/">http://127.0.0.1:8080/</a> and connect to the registered arthas agent via <code class="docutils literal notranslate"><span class="pre">agentId</span></code>.</p>
+<p>Through Spring Boot’s Endpoint, you can view the specific connection information: <a class="reference external" href="http://127.0.0.1:8080/actuator/arthas">http://127.0.0.1:8080/actuator/arthas</a>, the login user name is <code class="docutils literal notranslate"><span class="pre">arthas</span></code>, and the password can be found in the log of arthas tunnel server, for example:</p>
 <div class="highlight-default notranslate"><pre class="literal-block">32851 [main] INFO o.s.b.a.s.s.UserDetailsServiceAutoConfiguration
 
 Using generated security password: f1dca050-3777-48f4-a577-6367e55a78a2</pre>
@@ -225,6 +225,9 @@ Using generated security password: f1dca050-3777-48f4-a577-6367e55a78a2</pre>
 <div class="section" id="connecting-to-the-tunnel-server-when-starting-arthas">
 <h3>Connecting to the tunnel server when starting arthas<a class="headerlink" href="#connecting-to-the-tunnel-server-when-starting-arthas" title="Permalink to this headline">¶</a></h3>
 <p>When starting arthas, you can use the <code class="docutils literal notranslate"><span class="pre">--tunnel-server</span></code> parameter, for example:</p>
+<div class="highlight-bash notranslate"><div class="highlight hljs"><pre class="bash">as.sh --tunnel-server &#x27;ws://127.0.0.1:7777/ws&#x27;</pre></div>
+</div>
+<p>You can also use the following test address (not guaranteed to be available all the time):</p>
 <div class="highlight-bash notranslate"><div class="highlight hljs"><pre class="bash">as.sh --tunnel-server &#x27;ws://47.75.156.201:7777/ws&#x27;</pre></div>
 </div>
 <ul class="simple">

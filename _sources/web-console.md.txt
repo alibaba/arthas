@@ -34,9 +34,9 @@ java -jar  arthas-tunnel-server.jar
 
 默认情况下，arthas tunnel server的web端口是`8080`，arthas agent连接的端口是`7777`。
 
-启动之后，可以访问 [http://localhost:8080/](http://localhost:8080/) ，再通过`agentId`连接到已注册的arthas agent上。
+启动之后，可以访问 [http://127.0.0.1:8080/](http://127.0.0.1:8080/) ，再通过`agentId`连接到已注册的arthas agent上。
 
-通过Spring Boot的Endpoint，可以查看到具体的连接信息： [http://localhost:8080/actuator/arthas](http://localhost:8080/actuator/arthas) ，登陆用户名是`arthas`，密码在arthas tunnel server的日志里可以找到，比如：
+通过Spring Boot的Endpoint，可以查看到具体的连接信息： [http://127.0.0.1:8080/actuator/arthas](http://127.0.0.1:8080/actuator/arthas) ，登陆用户名是`arthas`，密码在arthas tunnel server的日志里可以找到，比如：
 
 ```
 32851 [main] INFO  o.s.b.a.s.s.UserDetailsServiceAutoConfiguration
@@ -47,6 +47,12 @@ Using generated security password: f1dca050-3777-48f4-a577-6367e55a78a2
 #### 启动arthas时连接到tunnel server
 
 在启动arthas，可以传递`--tunnel-server`参数，比如：
+
+```bash
+as.sh --tunnel-server 'ws://127.0.0.1:7777/ws'
+```
+
+也可以使用下面的测试地址（不保证一直可用）：
 
 ```bash
 as.sh --tunnel-server 'ws://47.75.156.201:7777/ws'

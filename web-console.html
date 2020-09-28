@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Web Console &mdash; Arthas 3.4.2 文档</title>
+  <title>Web Console &mdash; Arthas 3.4.3 文档</title>
   
 
   
@@ -74,7 +74,7 @@
             
             
               <div class="version">
-                3.4.2
+                3.4.3
               </div>
             
           
@@ -219,8 +219,8 @@
 <div class="highlight-bash notranslate"><div class="highlight hljs"><pre class="bash">java -jar  arthas-tunnel-server.jar</pre></div>
 </div>
 <p>默认情况下，arthas tunnel server的web端口是<code class="docutils literal notranslate"><span class="pre">8080</span></code>，arthas agent连接的端口是<code class="docutils literal notranslate"><span class="pre">7777</span></code>。</p>
-<p>启动之后，可以访问 <a class="reference external" href="http://localhost:8080/">http://localhost:8080/</a> ，再通过<code class="docutils literal notranslate"><span class="pre">agentId</span></code>连接到已注册的arthas agent上。</p>
-<p>通过Spring Boot的Endpoint，可以查看到具体的连接信息： <a class="reference external" href="http://localhost:8080/actuator/arthas">http://localhost:8080/actuator/arthas</a> ，登陆用户名是<code class="docutils literal notranslate"><span class="pre">arthas</span></code>，密码在arthas tunnel server的日志里可以找到，比如：</p>
+<p>启动之后，可以访问 <a class="reference external" href="http://127.0.0.1:8080/">http://127.0.0.1:8080/</a> ，再通过<code class="docutils literal notranslate"><span class="pre">agentId</span></code>连接到已注册的arthas agent上。</p>
+<p>通过Spring Boot的Endpoint，可以查看到具体的连接信息： <a class="reference external" href="http://127.0.0.1:8080/actuator/arthas">http://127.0.0.1:8080/actuator/arthas</a> ，登陆用户名是<code class="docutils literal notranslate"><span class="pre">arthas</span></code>，密码在arthas tunnel server的日志里可以找到，比如：</p>
 <div class="highlight-default notranslate"><pre class="literal-block">32851 [main] INFO  o.s.b.a.s.s.UserDetailsServiceAutoConfiguration
 
 Using generated security password: f1dca050-3777-48f4-a577-6367e55a78a2</pre>
@@ -229,6 +229,9 @@ Using generated security password: f1dca050-3777-48f4-a577-6367e55a78a2</pre>
 <div class="section" id="arthastunnel-server">
 <h3>启动arthas时连接到tunnel server<a class="headerlink" href="#arthastunnel-server" title="永久链接至标题">¶</a></h3>
 <p>在启动arthas，可以传递<code class="docutils literal notranslate"><span class="pre">--tunnel-server</span></code>参数，比如：</p>
+<div class="highlight-bash notranslate"><div class="highlight hljs"><pre class="bash">as.sh --tunnel-server &#x27;ws://127.0.0.1:7777/ws&#x27;</pre></div>
+</div>
+<p>也可以使用下面的测试地址（不保证一直可用）：</p>
 <div class="highlight-bash notranslate"><div class="highlight hljs"><pre class="bash">as.sh --tunnel-server &#x27;ws://47.75.156.201:7777/ws&#x27;</pre></div>
 </div>
 <ul class="simple">
