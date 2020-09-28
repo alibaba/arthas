@@ -21,13 +21,16 @@ public class InstrumentationUtils {
             inst.addTransformer(transformer, true);
 
             for (Class<?> clazz : classes) {
+                if (ClassUtils.isLambdaClass(clazz)) {
+                    logger.info(
+                            "ignore lambda class: {}, because jdk do not support retransform lambda class: https://github.com/alibaba/arthas/issues/1512.",
+                            clazz.getName());
+                    continue;
+                }
                 try {
                     inst.retransformClasses(clazz);
                 } catch (Throwable e) {
                     String errorMsg = "retransformClasses class error, name: " + clazz.getName();
-                    if (ClassUtils.isLambdaClass(clazz) && e instanceof VerifyError) {
-                        errorMsg += ", Please ignore lambda class VerifyError: https://github.com/alibaba/arthas/issues/675";
-                    }
                     logger.error(errorMsg, e);
                 }
             }

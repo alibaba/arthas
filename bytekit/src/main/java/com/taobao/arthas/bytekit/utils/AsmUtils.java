@@ -50,14 +50,29 @@ public class AsmUtils {
 
 	public static ClassNode toClassNode(byte[] classBytes) {
 		ClassReader reader = new ClassReader(classBytes);
-		ClassNode result = new ClassNode(Opcodes.ASM8);
+		ClassNode result = new ClassNode(Opcodes.ASM9);
 		reader.accept(result, ClassReader.SKIP_FRAMES);
 		return result;
 	}
 
-    public static byte[] toBytes(ClassNode classNode, ClassLoader classLoader) {
-        ClassWriter writer = new ClassLoaderAwareClassWriter(ClassWriter.COMPUTE_FRAMES | ClassWriter.COMPUTE_MAXS,
-                classLoader);
+	public static ClassReader toClassNode(byte[] classBytes, ClassNode classNode) {
+		ClassReader reader = new ClassReader(classBytes);
+		reader.accept(classNode, ClassReader.SKIP_FRAMES);
+		return reader;
+	}
+
+	/**
+	 * Generate class bytes from class node.
+	 * <br>
+	 * <B>NOTE: must pass origin classReader for bytecode optimizations, avoiding JVM metaspace OOM.</B>
+	 * @param classNode
+	 * @param classLoader
+	 * @param classReader  origin class reader
+	 * @return
+	 */
+    public static byte[] toBytes(ClassNode classNode, ClassLoader classLoader, ClassReader classReader) {
+		int flags = ClassWriter.COMPUTE_FRAMES | ClassWriter.COMPUTE_MAXS;
+		ClassWriter writer = new ClassLoaderAwareClassWriter(classReader, flags, classLoader);
         classNode.accept(writer);
         return writer.toByteArray();
     }
@@ -143,7 +158,7 @@ public class AsmUtils {
 	}
 
 	public static MethodNode newMethodNode(MethodNode source) {
-		return new MethodNode(Opcodes.ASM8, source.access, source.name, source.desc, source.signature,
+		return new MethodNode(Opcodes.ASM9, source.access, source.name, source.desc, source.signature,
 				source.exceptions.toArray(new String[source.exceptions.size()]));
 	}
 
@@ -156,8 +171,8 @@ public class AsmUtils {
 	}
 
     public static ClassNode removeJSRInstructions(ClassNode classNode) {
-        ClassNode result = new ClassNode(Opcodes.ASM8);
-        classNode.accept(new ClassVisitor(Opcodes.ASM8, result) {
+        ClassNode result = new ClassNode(Opcodes.ASM9);
+        classNode.accept(new ClassVisitor(Opcodes.ASM9, result) {
             @Override
             public MethodVisitor visitMethod(int access, String name, String desc, String signature,
                     String[] exceptions) {
@@ -170,7 +185,7 @@ public class AsmUtils {
 
 	public static MethodNode removeLineNumbers(MethodNode methodNode) {
 		MethodNode result = newMethodNode(methodNode);
-		methodNode.accept(new MethodVisitor(Opcodes.ASM8, result) {
+		methodNode.accept(new MethodVisitor(Opcodes.ASM9, result) {
 			public void visitLineNumber(int line, Label start) {
 			}
 		});
@@ -364,8 +379,8 @@ public class AsmUtils {
     }
 
     public static ClassNode copy(ClassNode source) {
-        ClassNode result = new ClassNode(Opcodes.ASM8);
-        source.accept(new ClassVisitor(Opcodes.ASM8, result) {
+        ClassNode result = new ClassNode(Opcodes.ASM9);
+        source.accept(new ClassVisitor(Opcodes.ASM9, result) {
             @Override
             public MethodVisitor visitMethod(int access, String name, String desc, String signature,
                             String[] exceptions) {
@@ -546,6 +561,26 @@ public class AsmUtils {
 	    return new String(charArray);
 	}
 
+    /**
+     * Java ClassFile versions (the minor version is stored in the 16 most
+     * significant bits, and the major version in the 16 least significant bits).
+     * @see com.alibaba.arthas.deps.org.objectweb.asm.Opcodes#V_PREVIEW
+     * @param version
+     * @return
+     */
+    public static int getMajorVersion(int version) {
+        return 0x0000FFFF & version;
+    }
 
+    /**
+     * 替换掉完整 version里的 major version
+     * 
+     * @param version
+     * @param majorVersion
+     * @return
+     */
+    public static int setMajorVersion(int version, int majorVersion) {
+        return (version & 0xFFFF0000) | majorVersion;
+    }
 
 }

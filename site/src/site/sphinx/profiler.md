@@ -183,3 +183,49 @@ $ profiler version
 Async-profiler 1.6 built on Sep  9 2019
 Copyright 2019 Andrei Pangin
 ```
+
+### 配置 framebuf 参数
+
+> 如果遇到生成的svg图片有 `[frame_buffer_overflow]`，则需要增大 framebuf（默认值是 1'000'000），可以显式配置，比如：
+
+```bash
+profiler start --framebuf 5000000
+```
+
+### 配置 include/exclude 来过滤数据
+
+如果应用比较复杂，生成的内容很多，想只关注部分数据，可以通过 include/exclude 来过滤。比如
+
+```bash
+profiler start --include 'java/*' --include 'demo/*' --exclude '*Unsafe.park*'
+```
+
+> include/exclude 都支持设置多个值 ，但是需要配置在命令行的最后。
+
+
+### 指定执行时间
+
+比如，希望profiler执行 300 秒自动结束，可以用 `-d`/`--duration` 参数指定：
+
+```bash
+profiler start --duration 300
+```
+
+### 生成 jfr格式结果
+
+> 注意，jfr只支持在 `start`时配置。如果是在`stop`时指定，则不会生效。
+
+```
+profiler start --file /tmp/test.jfr
+```
+
+`file`参数支持一些变量：
+
+* 时间戳： `--file /tmp/test-%t.jfr`
+* 进程ID： `--file /tmp/test-%p.jfr`
+
+
+生成的结果可以用支持jfr格式的工具来查看。比如：
+
+* JDK Mission Control ： https://github.com/openjdk/jmc
+* JProfiler ： https://github.com/alibaba/arthas/issues/1416

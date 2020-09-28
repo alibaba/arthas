@@ -48,7 +48,6 @@ public class ShellServerImpl extends ShellServer {
     private final long timeoutMillis;
     private final long reaperInterval;
     private String welcomeMessage;
-    private ArthasBootstrap bootstrap;
     private Instrumentation instrumentation;
     private long pid;
     private boolean closed = true;
@@ -58,10 +57,6 @@ public class ShellServerImpl extends ShellServer {
     private JobControllerImpl jobController = new GlobalJobControllerImpl();
 
     public ShellServerImpl(ShellServerOptions options) {
-        this(options, null);
-    }
-
-    public ShellServerImpl(ShellServerOptions options, ArthasBootstrap bootstrap) {
         this.welcomeMessage = options.getWelcomeMessage();
         this.termServers = new ArrayList<TermServer>();
         this.timeoutMillis = options.getSessionTimeout();
@@ -70,7 +65,6 @@ public class ShellServerImpl extends ShellServer {
         this.resolvers = new CopyOnWriteArrayList<CommandResolver>();
         this.commandManager = new InternalCommandManager(resolvers);
         this.instrumentation = options.getInstrumentation();
-        this.bootstrap = bootstrap;
         this.pid = options.getPid();
 
         // Register builtin commands so they are listed in help
@@ -240,7 +234,6 @@ public class ShellServerImpl extends ShellServer {
             }
             jobController.close();
             sessionsClosed.setHandler(handler);
-            bootstrap.destroy();
         }
     }
 

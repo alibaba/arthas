@@ -181,3 +181,49 @@ $ profiler version
 Async-profiler 1.6 built on Sep  9 2019
 Copyright 2019 Andrei Pangin
 ```
+
+### Configure framebuf option
+
+> If you encounter `[frame_buffer_overflow]` in the generated svg image, you need to increase the framebuf (the default value is 1'000'000), which can be configured explicitly, such as:
+
+```bash
+profiler start --framebuf 5000000
+```
+
+### Configure include/exclude to filter data
+
+If the application is complex and generates a lot of content, and you want to focus on only part of the data, you can filter by include/exclude. such as
+
+```bash
+profiler start --include'java/*' --include'demo/*' --exclude'*Unsafe.park*'
+```
+
+> Both include/exclude support setting multiple values, but need to be configured at the end of the command line.
+
+
+### Specify execution time
+
+For example, if you want the profiler to automatically end after 300 seconds, you can specify it with the `-d`/`--duration` parameter:
+
+```bash
+profiler start --duration 300
+```
+
+### Generate jfr format result
+
+> Note that jfr only supports configuration at `start`. If it is specified at `stop`, it will not take effect.
+
+```
+profiler start --file /tmp/test.jfr
+```
+
+The `file` parameter supports some variables:
+
+* Timestamp: `--file /tmp/test-%t.jfr`
+* Process ID: `--file /tmp/test-%p.jfr`
+
+
+The generated results can be viewed with tools that support the jfr format. such as:
+
+* JDK Mission Control: https://github.com/openjdk/jmc
+* JProfiler: https://github.com/alibaba/arthas/issues/1416

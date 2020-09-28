@@ -21,6 +21,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.WeakHashMap;
 
+import com.alibaba.arthas.deps.org.objectweb.asm.ClassReader;
 import com.alibaba.arthas.deps.org.objectweb.asm.Opcodes;
 import com.alibaba.arthas.deps.org.objectweb.asm.Type;
 import com.alibaba.arthas.deps.org.objectweb.asm.tree.AbstractInsnNode;
@@ -53,6 +54,7 @@ import com.taobao.arthas.core.advisor.SpyInterceptors.SpyTraceInterceptor2;
 import com.taobao.arthas.core.advisor.SpyInterceptors.SpyTraceInterceptor3;
 import com.taobao.arthas.core.server.ArthasBootstrap;
 import com.taobao.arthas.core.util.ArthasCheckUtils;
+import com.taobao.arthas.core.util.ClassUtils;
 import com.taobao.arthas.core.util.FileUtils;
 import com.taobao.arthas.core.util.SearchUtils;
 import com.taobao.arthas.core.util.affect.EnhancerAffect;
@@ -122,7 +124,9 @@ public class Enhancer implements ClassFileTransformer {
                 return null;
             }
 
-            ClassNode classNode = AsmUtils.toClassNode(classfileBuffer);
+            //keep origin class reader for bytecode optimizations, avoiding JVM metaspace OOM.
+            ClassNode classNode = new ClassNode(Opcodes.ASM9);
+            ClassReader classReader = AsmUtils.toClassNode(classfileBuffer, classNode);
             // remove JSR https://github.com/alibaba/arthas/issues/1304
             classNode = AsmUtils.removeJSRInstructions(classNode);
 
@@ -225,12 +229,12 @@ public class Enhancer implements ClassFileTransformer {
                 affect.addMethodAndCount(inClassLoader, className, methodNode.name, methodNode.desc);
             }
 
-            // https://github.com/alibaba/arthas/issues/1223
-            if (classNode.version < Opcodes.V1_5) {
-                classNode.version = Opcodes.V1_5;
+            // https://github.com/alibaba/arthas/issues/1223 , V1_5 的major version是49
+            if (AsmUtils.getMajorVersion(classNode.version) < 49) {
+                classNode.version = AsmUtils.setMajorVersion(classNode.version, 49);
             }
 
-            byte[] enhanceClassByteArray = AsmUtils.toBytes(classNode, inClassLoader);
+            byte[] enhanceClassByteArray = AsmUtils.toBytes(classNode, inClassLoader, classReader);
 
             // 增强成功，记录类
             classBytesCache.put(classBeingRedefined, new Object());
@@ -328,7 +332,7 @@ public class Enhancer implements ClassFileTransformer {
      */
     private static boolean isUnsupportedClass(Class<?> clazz) {
         return clazz.isArray() || (clazz.isInterface() && !GlobalOptions.isSupportDefaultMethod) || clazz.isEnum()
-                || clazz.equals(Class.class) || clazz.equals(Integer.class) || clazz.equals(Method.class);
+                || clazz.equals(Class.class) || clazz.equals(Integer.class) || clazz.equals(Method.class) || ClassUtils.isLambdaClass(clazz);
     }
 
     /**
