@@ -10,6 +10,7 @@ import org.junit.Test;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Date;
@@ -27,7 +28,7 @@ public class ObjectRenderTest {
     static int objectNumLimit = 30;
 
     @Test
-    public void testPrimitiveTypes() {
+    public void testSimpleObjects() {
 
         testSimpleObject(Integer.valueOf(100), "@Integer[100]");
         testSimpleObject(Long.valueOf(1000L), "@Long[1000]");
@@ -37,13 +38,14 @@ public class ObjectRenderTest {
         testSimpleObject(true, "@Boolean[true]");
         testSimpleObject(100.0f, "@Float[100.0]");
         testSimpleObject(100.0, "@Double[100.0]");
-
         testSimpleObject("中文abc", "@String[中文abc]");
-
+        testSimpleObject(null, "null");
     }
 
     @Test
     public void testCollections() {
+        testSimpleList(new ArrayList());
+
         testSimpleList(Arrays.asList(1, 2, 3));
 
         testSimpleList(Arrays.asList((short) 1, (short) 2, (short) 3));
@@ -69,69 +71,73 @@ public class ObjectRenderTest {
 
     @Test
     public void testArrays() {
-        testPrimitiveArray(new int[]{1, 2, 3}, "{\"size\":3,\"type\":\"int[]\",\"value\":[1,2,3]}", "@int[][\n" +
+        testSimpleArray(new int[0], "{\"size\":0,\"type\":\"int[]\"}", "@int[][isEmpty=true;size=0]");
+        testSimpleArray(new Integer[0], "{\"size\":0,\"type\":\"Integer[]\"}", "@Integer[][isEmpty=true;size=0]");
+        testSimpleArray(new Object[0], "{\"size\":0,\"type\":\"Object[]\"}", "@Object[][isEmpty=true;size=0]");
+
+        testSimpleArray(new int[]{1, 2, 3}, "{\"size\":3,\"type\":\"int[]\",\"value\":[1,2,3]}", "@int[][\n" +
                 "    1,\n" +
                 "    2,\n" +
                 "    3,\n" +
                 "]");
-        testPrimitiveArray(new short[]{1, 2, 3}, "{\"size\":3,\"type\":\"short[]\",\"value\":[1,2,3]}", "@short[][\n" +
+        testSimpleArray(new short[]{1, 2, 3}, "{\"size\":3,\"type\":\"short[]\",\"value\":[1,2,3]}", "@short[][\n" +
                 "    1,\n" +
                 "    2,\n" +
                 "    3,\n" +
                 "]");
-        testPrimitiveArray(new byte[]{1, 2, 3}, "{\"size\":3,\"type\":\"byte[]\",\"value\":[1,2,3]}", "@byte[][\n" +
+        testSimpleArray(new byte[]{1, 2, 3}, "{\"size\":3,\"type\":\"byte[]\",\"value\":[1,2,3]}", "@byte[][\n" +
                 "    1,\n" +
                 "    2,\n" +
                 "    3,\n" +
                 "]");
-        testPrimitiveArray(new long[]{1, 2, 3}, "{\"size\":3,\"type\":\"long[]\",\"value\":[1,2,3]}", "@long[][\n" +
+        testSimpleArray(new long[]{1, 2, 3}, "{\"size\":3,\"type\":\"long[]\",\"value\":[1,2,3]}", "@long[][\n" +
                 "    1,\n" +
                 "    2,\n" +
                 "    3,\n" +
                 "]");
-        testPrimitiveArray(new float[]{1, 2, 3}, "{\"size\":3,\"type\":\"float[]\",\"value\":[1.0,2.0,3.0]}", "@float[][\n" +
+        testSimpleArray(new float[]{1, 2, 3}, "{\"size\":3,\"type\":\"float[]\",\"value\":[1.0,2.0,3.0]}", "@float[][\n" +
                 "    1.0,\n" +
                 "    2.0,\n" +
                 "    3.0,\n" +
                 "]");
-        testPrimitiveArray(new double[]{1, 2, 3}, "{\"size\":3,\"type\":\"double[]\",\"value\":[1.0,2.0,3.0]}", "@double[][\n" +
+        testSimpleArray(new double[]{1, 2, 3}, "{\"size\":3,\"type\":\"double[]\",\"value\":[1.0,2.0,3.0]}", "@double[][\n" +
                 "    1.0,\n" +
                 "    2.0,\n" +
                 "    3.0,\n" +
                 "]");
 
-        testPrimitiveArray(new Integer[]{1, 2, 3}, "{\"size\":3,\"type\":\"Integer[]\",\"value\":[1,2,3]}", "@Integer[][\n" +
+        testSimpleArray(new Integer[]{1, 2, 3}, "{\"size\":3,\"type\":\"Integer[]\",\"value\":[1,2,3]}", "@Integer[][\n" +
                 "    1,\n" +
                 "    2,\n" +
                 "    3,\n" +
                 "]");
-        testPrimitiveArray(new Short[]{1, 2, 3}, "{\"size\":3,\"type\":\"Short[]\",\"value\":[1,2,3]}", "@Short[][\n" +
+        testSimpleArray(new Short[]{1, 2, 3}, "{\"size\":3,\"type\":\"Short[]\",\"value\":[1,2,3]}", "@Short[][\n" +
                 "    1,\n" +
                 "    2,\n" +
                 "    3,\n" +
                 "]");
-        testPrimitiveArray(new Byte[]{1, 2, 3}, "{\"size\":3,\"type\":\"Byte[]\",\"value\":[1,2,3]}", "@Byte[][\n" +
+        testSimpleArray(new Byte[]{1, 2, 3}, "{\"size\":3,\"type\":\"Byte[]\",\"value\":[1,2,3]}", "@Byte[][\n" +
                 "    1,\n" +
                 "    2,\n" +
                 "    3,\n" +
                 "]");
-        testPrimitiveArray(new Long[]{1L, 2L, 3L}, "{\"size\":3,\"type\":\"Long[]\",\"value\":[1,2,3]}", "@Long[][\n" +
+        testSimpleArray(new Long[]{1L, 2L, 3L}, "{\"size\":3,\"type\":\"Long[]\",\"value\":[1,2,3]}", "@Long[][\n" +
                 "    1,\n" +
                 "    2,\n" +
                 "    3,\n" +
                 "]");
-        testPrimitiveArray(new Float[]{1f, 2f, 3f}, "{\"size\":3,\"type\":\"Float[]\",\"value\":[1.0,2.0,3.0]}", "@Float[][\n" +
+        testSimpleArray(new Float[]{1f, 2f, 3f}, "{\"size\":3,\"type\":\"Float[]\",\"value\":[1.0,2.0,3.0]}", "@Float[][\n" +
                 "    1.0,\n" +
                 "    2.0,\n" +
                 "    3.0,\n" +
                 "]");
-        testPrimitiveArray(new Double[]{1.0, 2.0, 3.0}, "{\"size\":3,\"type\":\"Double[]\",\"value\":[1.0,2.0,3.0]}", "@Double[][\n" +
+        testSimpleArray(new Double[]{1.0, 2.0, 3.0}, "{\"size\":3,\"type\":\"Double[]\",\"value\":[1.0,2.0,3.0]}", "@Double[][\n" +
                 "    1.0,\n" +
                 "    2.0,\n" +
                 "    3.0,\n" +
                 "]");
 
-        testPrimitiveArray(new int[20], "{\"size\":20,\"type\":\"int[]\",\"value\":[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]}",
+        testSimpleArray(new int[20], "{\"size\":20,\"type\":\"int[]\",\"value\":[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]}",
                 "@int[][\n" +
                         "    0,\n" +
                         "    0,\n" +
@@ -153,7 +159,7 @@ public class ObjectRenderTest {
 
 //        testPrimitiveArray(new char[]{1, 2, 3}, new Object[]{"SOH", "STX", "ETX"});
 //        testPrimitiveArray(new Character[]{1, 2, 3}, new Object[]{"SOH", "STX", "ETX"});
-        testPrimitiveArray(new char[]{1, 2, 3, '\n', '\r'},
+        testSimpleArray(new char[]{1, 2, 3, '\n', '\r'},
                 "{\"size\":5,\"type\":\"char[]\",\"value\":[\"\\\\u0001\",\"\\\\u0002\",\"\\\\u0003\",\"\\\\u000A\",\"\\\\u000D\"]}",
                 "@char[][\n" +
                         "    \\u0001,\n" +
@@ -163,7 +169,7 @@ public class ObjectRenderTest {
                         "    \\u000D,\n" +
                         "]");
 
-        testPrimitiveArray(new Character[]{1, 2, 3, '\n', '\r'},
+        testSimpleArray(new Character[]{1, 2, 3, '\n', '\r'},
                 "{\"size\":5,\"type\":\"Character[]\",\"value\":[\"\\\\u0001\",\"\\\\u0002\",\"\\\\u0003\",\"\\\\u000A\",\"\\\\u000D\"]}",
                 "@Character[][\n" +
                         "    \\u0001,\n" +
@@ -173,11 +179,42 @@ public class ObjectRenderTest {
                         "    \\u000D,\n" +
                         "]");
 
-        testArray(new Object[]{1.0, 2L, 3.0f}, 2);
+        testSimpleArray(new Object[]{1.0, 2L, 3.0f},
+                "{\"size\":3,\"type\":\"Object[]\",\"value\":[{\"type\":\"Double\",\"value\":1.0},{\"type\":\"Long\",\"value\":2},{\"type\":\"Float\",\"value\":3.0}]}",
+                "@Object[][\n" +
+                        "    @Double[1.0],\n" +
+                        "    @Long[2],\n" +
+                        "    @Float[3.0],\n" +
+                        "]");
 
-        testArray(new String[]{"str1", "2", "3"}, 2);
+        testSimpleArray(new String[]{"str1", "2", "3"},
+                "{\"size\":3,\"type\":\"String[]\",\"value\":[{\"type\":\"String\",\"value\":\"str1\"},{\"type\":\"String\",\"value\":\"2\"},{\"type\":\"String\",\"value\":\"3\"}]}",
+                "@String[][\n" +
+                        "    @String[str1],\n" +
+                        "    @String[2],\n" +
+                        "    @String[3],\n" +
+                        "]");
 
-        testArray(new Object[150], 2);
+        testSimpleArray(new Object[150],
+                "{\"size\":150,\"type\":\"Object[]\",\"value\":[null,null,null,null,null,null,null,null,null,null,null,null,null,null,null]}",
+                "@Object[][\n" +
+                        "    null,\n" +
+                        "    null,\n" +
+                        "    null,\n" +
+                        "    null,\n" +
+                        "    null,\n" +
+                        "    null,\n" +
+                        "    null,\n" +
+                        "    null,\n" +
+                        "    null,\n" +
+                        "    null,\n" +
+                        "    null,\n" +
+                        "    null,\n" +
+                        "    null,\n" +
+                        "    null,\n" +
+                        "    null,\n" +
+                        "    15 out of 150 displayed, 135 remaining.\n" +
+                        "]");
 
         //Object[]
         testArray(new Object[]{new AtomicInteger(1), new AtomicInteger(2), new AtomicInteger(3)}, 2);
@@ -246,10 +283,10 @@ public class ObjectRenderTest {
                 "]", replaceHashCode(ObjectRenderer.render(objectVO2)));
     }
 
-    private void printObject(ObjectVO objectVO2) {
-        System.out.println(JSON.toJSONString(objectVO2));
+    private void printObject(ObjectVO objectVO) {
+        System.out.println(JSON.toJSONString(objectVO));
         System.out.println();
-        System.out.println(ObjectRenderer.render(objectVO2));
+        System.out.println(ObjectRenderer.render(objectVO));
         System.out.println();
     }
 
@@ -390,7 +427,7 @@ public class ObjectRenderTest {
         return new ObjectInspector(objectNumLimit, arrayLenLimit).inspect(object, expand);
     }
 
-    private void testPrimitiveArray(Object array, String testJson, String testString) {
+    private void testSimpleArray(Object array, String testJson, String testString) {
         ObjectVO objectVO = inspectObject(array, 2);
         Assert.assertEquals(array.getClass().getSimpleName(), objectVO.getType());
         printObject(objectVO);
@@ -439,8 +476,10 @@ public class ObjectRenderTest {
         ObjectVO objectVO = inspectObject(value, 1);
         printObject(objectVO);
 
-        Assert.assertEquals(value.getClass().getSimpleName(), objectVO.getType());
-        Assert.assertEquals(value, objectVO.getValue());
+        if (value != null) {
+            Assert.assertEquals(value.getClass().getSimpleName(), objectVO.getType());
+            Assert.assertEquals(value, objectVO.getValue());
+        }
         Assert.assertEquals(test, ObjectRenderer.render(objectVO));
     }
 

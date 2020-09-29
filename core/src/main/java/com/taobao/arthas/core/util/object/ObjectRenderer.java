@@ -15,11 +15,10 @@ public abstract class ObjectRenderer {
     public static String render(ObjectVO vo) {
         StringBuffer sb = new StringBuffer();
         render(vo, 0, sb);
-        if (vo.getExceedLimit()!=null && vo.getExceedLimit()) {
-            sb.append(" Number of objects exceeds limit: ")
-                    .append(vo.getObjectNumberLimit())
-                    .append(", try to reduce the expand levels by -x expand_value or increase the number of objects displayed by -M size_limit," +
-                            " check the help command for more.");
+        if (vo != null && vo.getExceedLimit() != null && vo.getExceedLimit()) {
+            sb.append(" Number of objects exceeds limit: ").append(vo.getObjectNumberLimit());
+            sb.append(", try to reduce the expand levels by -x expand_value or increase the number of objects displayed by -M size_limit," +
+                    " check the help command for more.");
         }
         return sb.toString();
     }

@@ -118,15 +118,15 @@ public class ObjectInspector {
                 // 展开展示
                 else {
                     List<ObjectVO> list = new ArrayList<ObjectVO>(Math.min(collection.size(), arrayLenLimit));
-                    for (Object e : collection) {
+                    for (Object el : collection) {
                         try {
-                            list.add(inspectObject(e, deep+1, expand));
+                            list.add(inspectObject(el, deep+1, expand));
                             if (list.size() >= arrayLenLimit) {
                                 break;
                             }
                         } catch (ObjectTooLargeException ex) {
                             //ignore
-                            list.add(new ObjectVO(e != null ? e.getClass().getSimpleName() : "", "..."));
+                            list.add(new ObjectVO(el != null ? el.getClass().getSimpleName() : "", "..."));
                             break;
                         }
                     }
@@ -464,21 +464,17 @@ public class ObjectInspector {
                     // 展开展示
                     else {
 
-                        List<ObjectVO> list = new ArrayList<ObjectVO>(Math.min(arrays.length, arrayLenLimit));
-                        for (Object e : arrays) {
+                        ObjectVO[] elements = new ObjectVO[Math.min(arrays.length, arrayLenLimit)];
+                        for (int i = 0; i < elements.length; i++) {
                             try {
-                                list.add(inspectObject(e, deep+1, expand));
-                                if (list.size() >= arrayLenLimit) {
-                                    break;
-                                }
+                                elements[i] = inspectObject(arrays[i], deep+1, expand);
                             } catch (ObjectTooLargeException ex) {
                                 //ignore error
-                                list.add(new ObjectVO(e != null ? e.getClass().getSimpleName() : "", "..."));
+                                elements[i] = new ObjectVO(arrays[i] != null ? arrays[i].getClass().getSimpleName() : "", "...");
                                 break;
                             }
                         }
-                        //TODO improve list to array
-                        return ObjectVO.ofArray(typeName, arrays.length, list.toArray());
+                        return ObjectVO.ofArray(typeName, arrays.length, elements);
                     }
                 }
 
