@@ -306,8 +306,8 @@ public class DashboardCommand extends AnnotatedCommand {
                 DashboardModel dashboardModel = new DashboardModel();
 
                 //thread sample
-                Map<String, ThreadVO> threads = ThreadUtil.getThreads();
-                dashboardModel.setThreads(threadSampler.sample(threads.values()));
+                List<ThreadVO> threads = ThreadUtil.getThreads();
+                dashboardModel.setThreads(threadSampler.sample(threads));
 
                 //memory
                 addMemoryInfo(dashboardModel);

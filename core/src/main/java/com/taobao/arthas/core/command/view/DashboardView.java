@@ -153,24 +153,10 @@ public class DashboardView extends ResultView<DashboardModel> {
         table.row("os.version", runtimeInfo.getOsVersion());
         table.row("java.version", runtimeInfo.getJavaVersion());
         table.row("java.home", runtimeInfo.getJavaHome());
-        table.row("systemload.average", String.format("%.2f", runtimeInfo.getSystemLoadAverage()));
+        table.row("systemload.average", formatDecimal02(runtimeInfo.getSystemLoadAverage()));
         table.row("processors", "" + runtimeInfo.getProcessors());
         table.row("uptime", "" + runtimeInfo.getUptime() + "s");
         return table;
-    }
-
-    private static String formatBytes(long size) {
-        int unit = 1;
-        String unitStr = "B";
-        if (size / 1024 > 0) {
-            unit = 1024;
-            unitStr = "K";
-        } else if (size / 1024 / 1024 > 0) {
-            unit = 1024 * 1024;
-            unitStr = "M";
-        }
-
-        return String.format("%d%s", size / unit, unitStr);
     }
 
     private TableElement drawTomcatInfo(TomcatInfoVO tomcatInfo) {
@@ -185,9 +171,9 @@ public class DashboardView extends ResultView<DashboardModel> {
         if (tomcatInfo.getConnectorStats() != null) {
             for (TomcatInfoVO.ConnectorStats connectorStat : tomcatInfo.getConnectorStats()) {
                 table.add(new RowElement().style(Decoration.bold.bold()).add("connector", connectorStat.getName()));
-                table.row("QPS", String.format("%.2f", connectorStat.getQps()));
-                table.row("RT(ms)", String.format("%.2f", connectorStat.getRt()));
-                table.row("error/s", String.format("%.2f", connectorStat.getError()));
+                table.row("QPS", formatDecimal02(connectorStat.getQps()));
+                table.row("RT(ms)", formatDecimal02(connectorStat.getRt()));
+                table.row("error/s", formatDecimal02(connectorStat.getError()));
                 table.row("received/s", formatBytes(connectorStat.getReceived()));
                 table.row("sent/s", formatBytes(connectorStat.getSent()));
             }
@@ -201,6 +187,30 @@ public class DashboardView extends ResultView<DashboardModel> {
             }
         }
         return table;
+    }
+
+    private static String formatBytes(long size) {
+        int unit = 1;
+        String unitStr = "B";
+        if (size / 1024 > 0) {
+            unit = 1024;
+            unitStr = "K";
+        } else if (size / 1024 / 1024 > 0) {
+            unit = 1024 * 1024;
+            unitStr = "M";
+        }
+
+        return (size / unit) + unitStr;
+    }
+
+    private static String formatDecimal02(double value) {
+        // return String.format("%.2f", value);
+        return Math.round(value * 100) / 100.0 + "";
+    }
+
+    private static String formatPercent(double value) {
+        // String.format("%.2f%%", value*100)
+        return Math.round(value * 10000) / 100.0 + "%";
     }
 
     static class MemoryEntry {
@@ -234,6 +244,22 @@ public class DashboardView extends ResultView<DashboardModel> {
             this(memoryEntryVO.getName(), memoryEntryVO.getUsed(), memoryEntryVO.getTotal(), memoryEntryVO.getMax());
         }
 
+        private void addTableRow(TableElement table) {
+            double usage = used / (double) (max == -1 || max == Long.MIN_VALUE ? total : max);
+            if (Double.isNaN(usage) || Double.isInfinite(usage)) {
+                usage = 0;
+            }
+            table.row(name, format(used), format(total), format(max), formatPercent(usage));
+        }
+
+        private void addTableRow(TableElement table, Style.Composite style) {
+            double usage = used / (double) (max == -1 || max == Long.MIN_VALUE ? total : max);
+            if (Double.isNaN(usage) || Double.isInfinite(usage)) {
+                usage = 0;
+            }
+            table.add(new RowElement().style(style).add(name, format(used), format(total), format(max), formatPercent(usage)));
+        }
+
         private String format(long value) {
             String valueStr = "-";
             if (value == -1) {
@@ -245,21 +271,5 @@ public class DashboardView extends ResultView<DashboardModel> {
             return valueStr;
         }
 
-        public void addTableRow(TableElement table) {
-            double usage = used / (double) (max == -1 || max == Long.MIN_VALUE ? total : max) * 100;
-            if (Double.isNaN(usage) || Double.isInfinite(usage)) {
-                usage = 0;
-            }
-            table.row(name, format(used), format(total), format(max), String.format("%.2f%%", usage));
-        }
-
-        public void addTableRow(TableElement table, Style.Composite style) {
-            double usage = used / (double) (max == -1 || max == Long.MIN_VALUE ? total : max) * 100;
-            if (Double.isNaN(usage) || Double.isInfinite(usage)) {
-                usage = 0;
-            }
-            table.add(new RowElement().style(style).add(name, format(used), format(total), format(max),
-                    String.format("%.2f%%", usage)));
-        }
     }
 }
