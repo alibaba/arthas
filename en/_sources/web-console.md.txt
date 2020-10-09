@@ -51,7 +51,7 @@ as.sh --tunnel-server 'ws://127.0.0.1:7777/ws'
 You can also use the following test address (not guaranteed to be available all the time):
 
 ```bash
-as.sh --tunnel-server 'ws://47.75.156.201:7777/ws'
+as.sh --tunnel-server 'ws://47.75.156.201:80/ws'
 ```
 
 * You can specify the agentId by the `--agent-id` parameter. By default, a random ID is generated.
@@ -83,11 +83,11 @@ If the connection is not connected to the tunnel server at startup, you can also
  JAVA_PID       86183
  SESSION_ID     f7273eb5-e7b0-4a00-bc5b-3fe55d741882
  AGENT_ID       URJZ5L48RPBR2ALI5K4V
- TUNNEL_SERVER  ws://47.75.156.201:7777/ws
+ TUNNEL_SERVER  ws://47.75.156.201:80/ws
 ```
 
 
-For the above example, go to [http://47.75.156.201:8080/](http://47.75.156.201:8080/) in the browser and input the `agentId` to connect to arthas on remote machine.
+For the above example, go to [http://47.75.156.201/arthas/?port=80](http://47.75.156.201/arthas/?port=80) in the browser and input the `agentId` to connect to arthas on remote machine.
 
 
 ![](_static/arthas-tunnel-server.png)

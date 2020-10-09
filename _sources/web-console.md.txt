@@ -55,7 +55,7 @@ as.sh --tunnel-server 'ws://127.0.0.1:7777/ws'
 也可以使用下面的测试地址（不保证一直可用）：
 
 ```bash
-as.sh --tunnel-server 'ws://47.75.156.201:7777/ws'
+as.sh --tunnel-server 'ws://47.75.156.201:80/ws'
 ```
 
 * 如果有特殊需求，可以通过`--agent-id`参数里指定agentId。默认情况下，会生成随机ID。
@@ -87,11 +87,11 @@ id        URJZ5L48RPBR2ALI5K4V
  JAVA_PID       86183
  SESSION_ID     f7273eb5-e7b0-4a00-bc5b-3fe55d741882
  AGENT_ID       URJZ5L48RPBR2ALI5K4V
- TUNNEL_SERVER  ws://47.75.156.201:7777/ws
+ TUNNEL_SERVER  ws://47.75.156.201:80/ws
 ```
 
 
-以上面的为例，在浏览器里访问 [http://47.75.156.201:8080/](http://47.75.156.201:8080/) ，输入 `agentId`，就可以连接到本机上的arthas了。
+以上面的为例，在浏览器里访问 [http://47.75.156.201/arthas/?port=80](http://47.75.156.201/arthas/?port=80) ，输入 `agentId`，就可以连接到本机上的arthas了。
 
 
 ![](_static/arthas-tunnel-server.png)
