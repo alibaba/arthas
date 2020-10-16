@@ -129,7 +129,7 @@ public class ThreadCommand extends AnnotatedCommand {
     }
 
     private ExitStatus processAllThreads(CommandProcess process) {
-        Map<String, ThreadVO> threads = ThreadUtil.getThreads();
+        List<ThreadVO> threads = ThreadUtil.getThreads();
 
         // 统计各种线程状态
         Map<State, Integer> stateCountMap = new LinkedHashMap<State, Integer>();
@@ -137,7 +137,7 @@ public class ThreadCommand extends AnnotatedCommand {
             stateCountMap.put(s, 0);
         }
 
-        for (ThreadVO thread : threads.values()) {
+        for (ThreadVO thread : threads) {
             State threadState = thread.getState();
             Integer count = stateCountMap.get(threadState);
             stateCountMap.put(threadState, count + 1);
@@ -149,7 +149,7 @@ public class ThreadCommand extends AnnotatedCommand {
             this.state = this.state.toUpperCase();
             if (states.contains(this.state)) {
                 includeInternalThreads = false;
-                for (ThreadVO thread : threads.values()) {
+                for (ThreadVO thread : threads) {
                     if (thread.getState() != null && state.equals(thread.getState().name())) {
                         resultThreads.add(thread);
                     }
@@ -158,7 +158,7 @@ public class ThreadCommand extends AnnotatedCommand {
                 return ExitStatus.failure(1, "Illegal argument, state should be one of " + states);
             }
         } else {
-            resultThreads = threads.values();
+            resultThreads = threads;
         }
 
         //thread stats
@@ -183,9 +183,9 @@ public class ThreadCommand extends AnnotatedCommand {
 
     private ExitStatus processTopBusyThreads(CommandProcess process) {
         ThreadSampler threadSampler = new ThreadSampler();
-        threadSampler.sample(ThreadUtil.getThreads().values());
+        threadSampler.sample(ThreadUtil.getThreads());
         threadSampler.pause(sampleInterval);
-        List<ThreadVO> threadStats = threadSampler.sample(ThreadUtil.getThreads().values());
+        List<ThreadVO> threadStats = threadSampler.sample(ThreadUtil.getThreads());
 
         int limit = Math.min(threadStats.size(), topNBusy);
         List<ThreadVO> topNThreads = threadStats.subList(0, limit);
