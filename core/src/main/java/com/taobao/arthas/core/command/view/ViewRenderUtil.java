@@ -123,6 +123,7 @@ public class ViewRenderUtil {
                 )
         );
 
+        int count = 0;
         for (ThreadVO thread : threads) {
             Color color = colorMapping.get(thread.getState());
             String time = formatTimeMills(thread.getTime());
@@ -151,6 +152,9 @@ public class ViewRenderUtil {
                     new LabelElement(thread.isInterrupted()),
                     daemonLabel
             );
+            if (++count >= height) {
+                break;
+            }
         }
         return RenderUtil.render(table, width, height);
     }
