@@ -1,5 +1,8 @@
 package com.taobao.arthas.bytekit.asm.inst;
 
+import java.util.Arrays;
+import java.util.List;
+
 /**
  *
  * @author hengyunabc 2019-03-18
@@ -59,9 +62,11 @@ public class InvokeOriginDemo_APM {
     }
 
     public String[] returnStrArrayWithArgs(int i, String s, long l) {
-        System.out.println(i);
+        l -= 100;
+        System.out.println("l = "+l);
         String[] result = InstrumentApi.invokeOrigin();
         result[0] = "fff";
+        System.out.println("result = "+ Arrays.asList(result));
         return result;
     }
 
@@ -82,4 +87,50 @@ public class InvokeOriginDemo_APM {
         System.err.println(result);
         return result;
     }
+
+    public int tryCatch1(int i) {
+        int result = InstrumentApi.invokeOrigin();
+        return result;
+    }
+
+    public int tryCatch2(int i) {
+        int result = -1;
+        try {
+            result = InstrumentApi.invokeOrigin();
+        } catch (Exception e) {
+            System.err.println("outer catch: "+e.getMessage());
+            result = 1;
+        }
+        return result;
+    }
+
+    public int nestClass() throws Exception {
+        int result = InstrumentApi.invokeOrigin();
+        return result;
+    }
+
+    public int finallyCase(List<Integer> inputs) {
+        return InstrumentApi.invokeOrigin();
+    }
+
+    public int throwCase1(int i) {
+        return InstrumentApi.invokeOrigin();
+    }
+
+    public int throwCase2(int i) {
+        int result = InstrumentApi.invokeOrigin();
+        if (result < 10) {
+            throw new IllegalArgumentException("input i is less than 10");
+        }
+        return result;
+    }
+
+    public int throwCase3(int i) {
+        if (i < 10) {
+            throw new IllegalArgumentException("input i is less than 10");
+        }
+        int result = InstrumentApi.invokeOrigin();
+        return result;
+    }
+
 }
