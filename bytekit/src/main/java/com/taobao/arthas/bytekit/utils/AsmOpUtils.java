@@ -308,7 +308,26 @@ public class AsmOpUtils {
 		}
 	}
 
-    public static boolean needBox(Type type) {
+	public static boolean isUnBoxMethod(String owner, String methodName, String desc) {
+		Method method = new Method(methodName, desc);
+		if (NUMBER_TYPE.getInternalName().equals(owner)) {
+			return (INT_VALUE.equals(method)
+					|| LONG_VALUE.equals(method)
+					|| DOUBLE_VALUE.equals(method)
+					|| FLOAT_VALUE.equals(method));
+		} else if (CHARACTER_TYPE.getInternalName().equals(owner)) {
+			return method.equals(CHAR_VALUE);
+		} else if (BOOLEAN_TYPE.getInternalName().equals(owner)) {
+			return method.equals(BOOLEAN_VALUE);
+		}
+		return false;
+	}
+
+	public static boolean isUnBoxMethod(MethodInsnNode methodInsnNode) {
+		return isUnBoxMethod(methodInsnNode.owner, methodInsnNode.name, methodInsnNode.desc);
+	}
+
+	public static boolean needBox(Type type) {
         switch (type.getSort()) {
         case Type.BYTE:
         case Type.BOOLEAN:

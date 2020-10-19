@@ -11,11 +11,11 @@ import java.util.List;
 
 import com.alibaba.arthas.deps.org.objectweb.asm.Type;
 
+import com.taobao.arthas.bytekit.asm.binding.Binding;
 import com.taobao.arthas.bytekit.asm.interceptor.InterceptorProcessor;
 import com.taobao.arthas.bytekit.asm.interceptor.annotation.AtInvoke.InvokeInterceptorProcessorParser;
 import com.taobao.arthas.bytekit.asm.interceptor.parser.InterceptorProcessorParser;
 import com.taobao.arthas.bytekit.asm.location.InvokeLocationMatcher;
-import com.taobao.arthas.bytekit.asm.location.LocationMatcher;
 
 @Documented
 @Retention(RetentionPolicy.RUNTIME)
@@ -65,8 +65,20 @@ public @interface AtInvoke {
                 excludes.add(exclude);
             }
 
-            LocationMatcher locationMatcher = new InvokeLocationMatcher(owner, atInvoke.name(), desc, atInvoke.count(),
+            // 检查bindings是否有需要保存当前栈数据，减少不必要的开销
+            // Interceptor使用了@Binding.InvokeArgs/@Binding.InvokeReturn注解才需要保存invoke的栈数据到隐藏局部变量
+            boolean stackNeedSave = false;
+            List<Binding> bindings = BindingParserUtils.parseBindings(method);
+            for (Binding binding : bindings) {
+                if (binding.fromStack()) {
+                    stackNeedSave = true;
+                    break;
+                }
+            }
+
+            InvokeLocationMatcher locationMatcher = new InvokeLocationMatcher(owner, atInvoke.name(), desc, atInvoke.count(),
                     atInvoke.whenComplete(), excludes);
+            locationMatcher.setStackNeedSave(stackNeedSave);
 
             return InterceptorParserUtils.createInterceptorProcessor(method,
                     locationMatcher,

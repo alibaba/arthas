@@ -74,6 +74,31 @@ public class InvokeCheckLocationFilterTest {
         }
     }
 
+    public static class SpyTraceInterceptor3 {
+        // test @Binding.InvokeArgs Object[] args
+        @AtInvoke(owner = TestAAA.class, name = "", inline = true, whenComplete = false, excludes = { "**SpyAPI**" })
+        public static void onInvoke(@Binding.This Object target, @Binding.Class Class<?> clazz,
+                @Binding.InvokeMethodDeclaration String methodDesc, @Binding.InvokeMethodOwner String owner,
+                @Binding.InvokeMethodName String methodName, @Binding.InvokeArgs Object[] args) {
+            SpyAPI.atBeforeInvoke(clazz, owner, methodName, methodDesc, target);
+        }
+
+        // test @Binding.InvokeReturn Object invokeReturn
+        @AtInvoke(owner = TestAAA.class, name = "", inline = true, whenComplete = true, excludes = { "**SpyAPI**" })
+        public static void onInvokeAfter(@Binding.This Object target, @Binding.Class Class<?> clazz,
+                @Binding.InvokeMethodDeclaration String methodDesc, @Binding.InvokeMethodOwner String owner,
+                @Binding.InvokeMethodName String methodName, @Binding.InvokeReturn Object invokeReturn) {
+            SpyAPI.atAfterInvoke(clazz, owner, methodName, methodDesc, target);
+        }
+
+        @AtInvokeException(owner = TestAAA.class, name = "", inline = true, excludes = { "**SpyAPI**" })
+        public static void onInvokeException(@Binding.This Object target, @Binding.Class Class<?> clazz,
+                @Binding.InvokeMethodDeclaration String methodDesc, @Binding.InvokeMethodOwner String owner,
+                @Binding.InvokeMethodName String methodName, @Binding.Throwable Throwable throwable) {
+            SpyAPI.atInvokeException(clazz, owner, methodName, methodDesc, target, throwable);
+        }
+    }
+
     public static class SpyAPI {
 
         public static void atBeforeInvoke(Class<?> clazz, String owner, String methodName, String methodDesc,
@@ -120,80 +145,24 @@ public class InvokeCheckLocationFilterTest {
 
     @Test
     public void test() throws Exception {
-
-        DefaultInterceptorClassParser defaultInterceptorClassParser = new DefaultInterceptorClassParser();
-
-        List<InterceptorProcessor> interceptorProcessors = defaultInterceptorClassParser
-                .parse(SpyTraceInterceptor.class);
-
-        ClassNode classNode = AsmUtils.loadClass(TestAAA.class);
-
-        List<MethodNode> matchedMethods = new ArrayList<MethodNode>();
-        for (MethodNode methodNode : classNode.methods) {
-            if (MatchUtils.wildcardMatch(methodNode.name, "*")) {
-                matchedMethods.add(methodNode);
-            }
-        }
-
-        LocationFilter enterFilter = new InvokeCheckLocationFilter(Type.getInternalName(SpyAPI.class), "atBeforeInvoke",
-                LocationType.INVOKE);
-        LocationFilter existFilter = new InvokeCheckLocationFilter(Type.getInternalName(SpyAPI.class),
-                "atInvokeException", LocationType.INVOKE_COMPLETED);
-        LocationFilter exceptionFilter = new InvokeCheckLocationFilter(Type.getInternalName(SpyAPI.class),
-                "atInvokeException", LocationType.INVOKE_EXCEPTION_EXIT);
-        GroupLocationFilter groupLocationFilter = new GroupLocationFilter();
-        groupLocationFilter.addFilter(enterFilter);
-        groupLocationFilter.addFilter(existFilter);
-        groupLocationFilter.addFilter(exceptionFilter);
-
-        for (MethodNode methodNode : matchedMethods) {
-            MethodProcessor methodProcessor = new MethodProcessor(classNode, methodNode, groupLocationFilter);
-            for (InterceptorProcessor interceptor : interceptorProcessors) {
-                interceptor.process(methodProcessor);
-            }
-        }
-
-        for (MethodNode methodNode : matchedMethods) {
-            MethodProcessor methodProcessor = new MethodProcessor(classNode, methodNode, groupLocationFilter);
-            for (InterceptorProcessor interceptor : interceptorProcessors) {
-                interceptor.process(methodProcessor);
-            }
-        }
-
-        for (MethodNode methodNode : matchedMethods) {
-            MethodProcessor methodProcessor = new MethodProcessor(classNode, methodNode, groupLocationFilter);
-            for (InterceptorProcessor interceptor : interceptorProcessors) {
-                interceptor.process(methodProcessor);
-            }
-        }
-
-        byte[] bytes = AsmUtils.toBytes(classNode);
-        VerifyUtils.asmVerify(bytes);
-
-        VerifyUtils.instanceVerity(bytes);
-
-        System.out.println(Decompiler.decompile(bytes));
-
-        ClassNode classNode2 = AsmUtils.toClassNode(bytes);
-        for (MethodNode methodNode : classNode2.methods) {
-            if (!methodNode.name.equals("xxx")) {
-                System.err.println("method name: " + methodNode.name);
-                Assertions.assertThat(
-                        AsmUtils.findMethodInsnNode(methodNode, Type.getInternalName(SpyAPI.class), "atBeforeInvoke"))
-                        .size().isEqualTo(1);
-            }
-        }
-
+        runTest(SpyTraceInterceptor.class);
     }
     
     
     @Test
     public void test2() throws Exception {
+        runTest(SpyTraceInterceptor2.class);
+    }
 
+    @Test
+    public void test3() throws Exception {
+        runTest(SpyTraceInterceptor3.class);
+    }
+
+    private void runTest(Class interceptorClass) throws Exception {
         DefaultInterceptorClassParser defaultInterceptorClassParser = new DefaultInterceptorClassParser();
-
         List<InterceptorProcessor> interceptorProcessors = defaultInterceptorClassParser
-                .parse(SpyTraceInterceptor2.class);
+                .parse(interceptorClass);
 
         ClassNode classNode = AsmUtils.loadClass(TestAAA.class);
 
@@ -252,7 +221,6 @@ public class InvokeCheckLocationFilterTest {
                         .size().isEqualTo(1);
             }
         }
-
     }
 
 }

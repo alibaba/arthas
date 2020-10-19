@@ -2,6 +2,7 @@ package com.taobao.arthas.bytekit.asm.interceptor;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+import com.alibaba.arthas.deps.org.objectweb.asm.commons.Method;
 import org.junit.Rule;
 import org.junit.Test;
 import org.springframework.boot.test.rule.OutputCapture;
@@ -10,6 +11,8 @@ import com.taobao.arthas.bytekit.asm.binding.Binding;
 import com.taobao.arthas.bytekit.asm.interceptor.annotation.AtInvoke;
 import com.taobao.arthas.bytekit.asm.interceptor.annotation.ExceptionHandler;
 import com.taobao.arthas.bytekit.utils.Decompiler;
+
+import java.util.Arrays;
 
 public class AtInvokeTest {
     @Rule
@@ -26,6 +29,9 @@ public class AtInvokeTest {
         }
         
         public int testCall(int ii) {
+            //测试空构造函数
+            StringBuilder sb = new StringBuilder();
+            sb.append(ii);
             toBeCall(ii, 123L, "");
             System.err.println("abc");
 
@@ -63,42 +69,42 @@ public class AtInvokeTest {
                 @Binding.Class Object clazz
                 , 
                 @Binding.Line int line,
+                @Binding.InvokeMethodDeclaration String declaration,
                 @Binding.InvokeArgs Object[] args
                 ) {
-            System.err.println("onInvoke: line: " + line);
-            System.err.println("onInvoke: this: " + object);
+            System.err.println("onInvoke: line: " + line + ", method: "+ declaration +", args: " + Arrays.toString(args));
         }
         
         @AtInvoke(name = "toBeCall", inline = false, whenComplete = true)
         public static void onInvokeAfter(
                 @Binding.This Object object,
-                @Binding.Class Object clazz
-                , 
-                @Binding.InvokeReturn Object invokeReturn
-                ,
+                @Binding.Class Object clazz,
+                @Binding.Line int line,
+                @Binding.InvokeReturn Object invokeReturn,
                 @Binding.InvokeMethodDeclaration String declaration
                 ) {
+
             System.err.println("onInvokeAfter: this" + object);
             System.err.println("declaration: " + declaration);
-            assertThat(declaration).isEqualTo("long toBeCall(int, long, java.lang.String)");
-            
+            assertThat(declaration).isEqualTo(Method.getMethod("long toBeCall(int, long, java.lang.String)").getDescriptor());
+
             System.err.println("invokeReturn: " + invokeReturn);
             assertThat(invokeReturn).isEqualTo(100 + 123L);
         }
     }
     
-    //@Test
+    @Test
     // TODO fix com.taobao.arthas.bytekit.asm.location.Location.InvokeLocation satck save
     public void testInvokeBefore() throws Exception {
         TestHelper helper = TestHelper.builder().interceptorClass(TestAccessInterceptor.class).methodMatcher("testCall")
                 .redefine(true);
         byte[] bytes = helper.process(Sample.class);
 
-        new Sample(100, 100L, "").testCall(100);
-
         System.err.println(Decompiler.decompile(bytes));
 
-        assertThat(capture.toString()).contains("onInvoke: this");
+        new Sample(100, 100L, "").testCall(100);
+
+        assertThat(capture.toString()).contains("onInvoke:");
     }
 
 
