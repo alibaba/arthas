@@ -121,10 +121,10 @@
             <version>${project.version}</version>
         </dependency>
         <dependency>
-            <groupId>com.taobao.arthas</groupId>
-            <artifactId>arthas-bytekit</artifactId>
-            <version>${project.version}</version>
+            <groupId>com.alibaba</groupId>
+            <artifactId>bytekit-core</artifactId>
         </dependency>
+
         <dependency>
             <groupId>net.bytebuddy</groupId>
             <artifactId>byte-buddy-agent</artifactId>

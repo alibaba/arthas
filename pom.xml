@@ -59,7 +59,6 @@
         <module>spy</module>
         <module>common</module>
         <module>tunnel-client</module>
-        <module>bytekit</module>
         <module>core</module>
         <module>agent</module>
         <module>client</module>
@@ -134,6 +133,11 @@
 
     <dependencyManagement>
         <dependencies>
+            <dependency>
+                <groupId>com.alibaba</groupId>
+                <artifactId>bytekit-core</artifactId>
+                <version>0.0.1</version>
+            </dependency>
             <dependency>
                 <groupId>org.benf</groupId>
                 <artifactId>cfr</artifactId>
