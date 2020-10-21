@@ -385,6 +385,9 @@
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>flatten-maven-plugin</artifactId>
                 <version>1.2.2</version>
+                <configuration>
+                  <flattenMode>minimum</flattenMode>
+                </configuration>
                 <executions>
                     <execution>
                         <id>flatten</id>
