@@ -189,7 +189,10 @@ public class ArthasBootstrap {
          * https://github.com/alibaba/arthas/issues/986
          * </pre>
          */
-        Map<String, String> copyMap = new HashMap<String, String>(argsMap);
+        Map<String, String> copyMap = new HashMap<String, String>();
+        if (argsMap != null) {
+            copyMap.putAll(argsMap);
+        }
         // 添加 arthas.home
         if (!copyMap.containsKey(ARTHAS_HOME_PROPERTY)) {
             copyMap.put(ARTHAS_HOME_PROPERTY, arthasHome());
