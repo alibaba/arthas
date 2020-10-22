@@ -17,6 +17,9 @@ import org.slf4j.LoggerFactory;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.util.UriComponentsBuilder;
 
+import com.alibaba.arthas.tunnel.common.MethodConstants;
+import com.alibaba.arthas.tunnel.common.URIConstans;
+
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
@@ -56,12 +59,12 @@ public class TunnelSocketFrameHandler extends SimpleChannelInboundHandler<WebSoc
             MultiValueMap<String, String> parameters = UriComponentsBuilder.fromUriString(uri).build().getQueryParams();
             String method = parameters.getFirst("method");
 
-            if ("connectArthas".equals(method)) { // form browser
+            if (MethodConstants.CONNECT_ARTHAS.equals(method)) { // form browser
                 connectArthas(ctx, parameters);
-            } else if ("agentRegister".equals(method)) { // form arthas agent, register
+            } else if (MethodConstants.AGENT_REGISTER.equals(method)) { // form arthas agent, register
                 agentRegister(ctx, uri);
             }
-            if ("openTunnel".equals(method)) { // from arthas agent open tunnel
+            if (MethodConstants.OPEN_TUNNEL.equals(method)) { // from arthas agent open tunnel
                 String clientConnectionId = parameters.getFirst("clientConnectionId");
                 openTunnel(ctx, clientConnectionId);
             }
@@ -95,8 +98,11 @@ public class TunnelSocketFrameHandler extends SimpleChannelInboundHandler<WebSoc
             String clientConnectionId = RandomStringUtils.random(20, true, true).toUpperCase();
 
             logger.info("random clientConnectionId: " + clientConnectionId);
-            URI uri = new URI("response", null, "/",
-                    "method=startTunnel" + "&id=" + agentId.get(0) + "&clientConnectionId=" + clientConnectionId, null);
+            // URI uri = new URI("response", null, "/",
+            //        "method=" + MethodConstants.START_TUNNEL + "&id=" + agentId.get(0) + "&clientConnectionId=" + clientConnectionId, null);
+            URI uri = UriComponentsBuilder.newInstance().scheme(URIConstans.RESPONSE).path("/")
+                    .queryParam(URIConstans.METHOD, MethodConstants.START_TUNNEL).queryParam(URIConstans.ID, agentId)
+                    .queryParam(URIConstans.CLIENT_CONNECTION_ID, clientConnectionId).build().toUri();
 
             logger.info("startTunnel response: " + uri);
 
@@ -173,7 +179,10 @@ public class TunnelSocketFrameHandler extends SimpleChannelInboundHandler<WebSoc
 
         final String finalId = id;
 
-        URI responseUri = new URI("response", null, "/", "method=agentRegister" + "&id=" + id, null);
+        // URI responseUri = new URI("response", null, "/", "method=" + MethodConstants.AGENT_REGISTER + "&id=" + id, null);
+        URI responseUri = UriComponentsBuilder.newInstance().scheme(URIConstans.RESPONSE).path("/")
+                .queryParam(URIConstans.METHOD, MethodConstants.AGENT_REGISTER).queryParam(URIConstans.ID, id).build()
+                .encode().toUri();
 
         AgentInfo info = new AgentInfo();
         SocketAddress remoteAddress = ctx.channel().remoteAddress();

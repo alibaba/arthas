@@ -2,26 +2,24 @@
 package com.alibaba.arthas.tunnel.client;
 
 import java.net.URI;
-import java.net.URL;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.alibaba.arthas.tunnel.common.MethodConstants;
+import com.alibaba.arthas.tunnel.common.URIConstans;
+
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelPromise;
-import io.netty.channel.EventLoopGroup;
 import io.netty.channel.SimpleChannelInboundHandler;
-import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.handler.codec.http.QueryStringDecoder;
 import io.netty.handler.codec.http.QueryStringEncoder;
 import io.netty.handler.codec.http.websocketx.TextWebSocketFrame;
 import io.netty.handler.codec.http.websocketx.WebSocketFrame;
-import io.netty.util.concurrent.DefaultThreadFactory;
 
 /**
  * 
@@ -57,25 +55,25 @@ public class TunnelClientSocketClientHandler extends SimpleChannelInboundHandler
 
             QueryStringDecoder queryDecoder = new QueryStringDecoder(text);
             Map<String, List<String>> parameters = queryDecoder.parameters();
-            List<String> methodList = parameters.get("method");
+            List<String> methodList = parameters.get(URIConstans.METHOD);
             String method = null;
             if (methodList != null && !methodList.isEmpty()) {
                 method = methodList.get(0);
             }
 
-            if ("agentRegister".equals(method)) {
-                List<String> idList = parameters.get("id");
+            if (MethodConstants.AGENT_REGISTER.equals(method)) {
+                List<String> idList = parameters.get(URIConstans.ID);
                 if (idList != null && !idList.isEmpty()) {
                     this.tunnelClient.setId(idList.get(0));
                 }
                 registerPromise.setSuccess();
             }
 
-            if ("startTunnel".equals(method)) {
+            if (MethodConstants.START_TUNNEL.equals(method)) {
                 QueryStringEncoder queryEncoder = new QueryStringEncoder(this.tunnelClient.getTunnelServerUrl());
-                queryEncoder.addParam("method", "openTunnel");
-                queryEncoder.addParam("clientConnectionId", parameters.get("clientConnectionId").get(0));
-                queryEncoder.addParam("id", parameters.get("id").get(0));
+                queryEncoder.addParam(URIConstans.METHOD, MethodConstants.OPEN_TUNNEL);
+                queryEncoder.addParam(URIConstans.CLIENT_CONNECTION_ID, parameters.get(URIConstans.CLIENT_CONNECTION_ID).get(0));
+                queryEncoder.addParam(URIConstans.ID, parameters.get(URIConstans.ID).get(0));
 
                 final URI forwardUri = queryEncoder.toUri();
 

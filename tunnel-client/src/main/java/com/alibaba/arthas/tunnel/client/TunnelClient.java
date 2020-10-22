@@ -9,6 +9,9 @@ import javax.net.ssl.SSLException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.alibaba.arthas.tunnel.common.MethodConstants;
+import com.alibaba.arthas.tunnel.common.URIConstans;
+
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelFutureListener;
@@ -57,9 +60,9 @@ public class TunnelClient {
 
     public ChannelFuture connect(boolean reconnect) throws SSLException, URISyntaxException, InterruptedException {
         QueryStringEncoder queryEncoder = new QueryStringEncoder(this.tunnelServerUrl);
-        queryEncoder.addParam("method", "agentRegister");
+        queryEncoder.addParam(URIConstans.METHOD, MethodConstants.AGENT_REGISTER);
         if (id != null) {
-            queryEncoder.addParam("id", id);
+            queryEncoder.addParam(URIConstans.ID, id);
         }
         // ws://127.0.0.1:7777/ws?method=agentRegister
         final URI agentRegisterURI = queryEncoder.toUri();
