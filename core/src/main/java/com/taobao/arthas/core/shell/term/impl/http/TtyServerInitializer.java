@@ -14,6 +14,8 @@ import io.termd.core.tty.TtyConnection;
 
 import java.io.File;
 
+import com.taobao.arthas.common.ArthasConstants;
+
 
 /**
  * @author <a href="mailto:julien@julienviet.com">Julien Viet</a>
@@ -36,8 +38,8 @@ public class TtyServerInitializer extends ChannelInitializer<SocketChannel> {
     ChannelPipeline pipeline = ch.pipeline();
     pipeline.addLast(new HttpServerCodec());
     pipeline.addLast(new ChunkedWriteHandler());
-    pipeline.addLast(new HttpObjectAggregator(64 * 1024));
-    pipeline.addLast(workerGroup, "HttpRequestHandler", new HttpRequestHandler("/ws", new File("arthas-output")));
+    pipeline.addLast(new HttpObjectAggregator(ArthasConstants.MAX_HTTP_CONTENT_LENGTH));
+    pipeline.addLast(workerGroup, "HttpRequestHandler", new HttpRequestHandler("/ws", new File(ArthasConstants.ARTHAS_OUTPUT)));
     pipeline.addLast(new WebSocketServerProtocolHandler("/ws"));
     pipeline.addLast(new TtyWebSocketFrameHandler(group, handler));
   }

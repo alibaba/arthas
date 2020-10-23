@@ -9,6 +9,8 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.alibaba.arthas.tunnel.common.SimpleHttpResponse;
+
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.Channel;
 import io.netty.channel.EventLoopGroup;
@@ -20,6 +22,7 @@ import io.netty.handler.ssl.SslContext;
 import io.netty.handler.ssl.SslContextBuilder;
 import io.netty.handler.ssl.util.SelfSignedCertificate;
 import io.netty.util.concurrent.DefaultThreadFactory;
+import io.netty.util.concurrent.Promise;
 
 /**
  * 
@@ -36,6 +39,11 @@ public class TunnelServer {
     private Map<String, AgentInfo> agentInfoMap = new ConcurrentHashMap<String, AgentInfo>();
 
     private Map<String, ClientConnectionInfo> clientConnectionInfoMap = new ConcurrentHashMap<String, ClientConnectionInfo>();
+    
+    /**
+     * 记录 proxy request
+     */
+    private Map<String, Promise<SimpleHttpResponse>> proxyRequestPromiseMap = new ConcurrentHashMap<String, Promise<SimpleHttpResponse>>();
 
     private EventLoopGroup bossGroup = new NioEventLoopGroup(1, new DefaultThreadFactory("arthas-TunnelServer-boss", true));
     private EventLoopGroup workerGroup = new NioEventLoopGroup(new DefaultThreadFactory("arthas-TunnelServer-worker", true));
@@ -94,7 +102,7 @@ public class TunnelServer {
     public AgentInfo removeAgent(String id) {
         return agentInfoMap.remove(id);
     }
-
+    
     public Optional<ClientConnectionInfo> findClientConnection(String id) {
         return Optional.ofNullable(this.clientConnectionInfoMap.get(id));
     }
@@ -105,6 +113,27 @@ public class TunnelServer {
 
     public ClientConnectionInfo removeClientConnectionInfo(String id) {
         return this.clientConnectionInfoMap.remove(id);
+    }
+    
+    public void addProxyRequestPromise(String requestId, Promise<SimpleHttpResponse> promise) {
+        this.proxyRequestPromiseMap.put(requestId, promise);
+        // 把过期的proxy 请求删掉
+        workerGroup.schedule(new Runnable() {
+
+            @Override
+            public void run() {
+                removeProxyRequestPromise(requestId);
+            }
+
+        }, 60, TimeUnit.SECONDS);
+    }
+
+    public void removeProxyRequestPromise(String requestId) {
+        this.proxyRequestPromiseMap.remove(requestId);
+    }
+    
+    public Promise<SimpleHttpResponse> findProxyRequestPromise(String requestId) {
+        return this.proxyRequestPromiseMap.get(requestId);
     }
 
     public boolean isSsl() {

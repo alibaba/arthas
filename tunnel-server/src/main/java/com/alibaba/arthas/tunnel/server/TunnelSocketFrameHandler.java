@@ -5,6 +5,7 @@ import java.net.InetSocketAddress;
 import java.net.SocketAddress;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.net.URLDecoder;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -12,12 +13,14 @@ import java.util.concurrent.TimeUnit;
 
 import io.netty.handler.codec.http.websocketx.CloseWebSocketFrame;
 import org.apache.commons.lang3.RandomStringUtils;
+import org.apache.tomcat.util.codec.binary.Base64;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import com.alibaba.arthas.tunnel.common.MethodConstants;
+import com.alibaba.arthas.tunnel.common.SimpleHttpResponse;
 import com.alibaba.arthas.tunnel.common.URIConstans;
 
 import io.netty.channel.Channel;
@@ -75,7 +78,41 @@ public class TunnelSocketFrameHandler extends SimpleChannelInboundHandler<WebSoc
 
     @Override
     protected void channelRead0(ChannelHandlerContext ctx, WebSocketFrame frame) throws Exception {
+        // 只有 arthas agent register建立的 channel 才可能有数据到这里
+        if (frame instanceof TextWebSocketFrame) {
+            TextWebSocketFrame textFrame = (TextWebSocketFrame) frame;
+            String text = textFrame.text();
 
+            MultiValueMap<String, String> parameters = UriComponentsBuilder.fromUriString(text).build()
+                    .getQueryParams();
+
+            String method = parameters.getFirst(URIConstans.METHOD);
+
+            /**
+             * <pre>
+             * 1. 之前http proxy请求已发送到 tunnel cleint，这里接收到 tunnel client的结果，并解析出SimpleHttpResponse
+             * 2. 需要据 URIConstans.PROXY_REQUEST_ID 取出当时的 Promise，再设置SimpleHttpResponse进去
+             * </pre>
+             */
+            if (MethodConstants.HTTP_PROXY.equals(method)) {
+                String requestId = URLDecoder.decode(parameters.getFirst(URIConstans.PROXY_REQUEST_ID), "utf-8");
+
+                if (requestId == null) {
+                    logger.error("error, need {}, text: {}", URIConstans.PROXY_REQUEST_ID, text);
+                    return;
+                }
+                logger.info("received http proxy response, requestId: {}", requestId);
+
+                Promise<SimpleHttpResponse> promise = tunnelServer.findProxyRequestPromise(requestId);
+
+                String data = URLDecoder.decode(parameters.getFirst(URIConstans.PROXY_RESPONSE_DATA), "utf-8");
+
+                byte[] bytes = Base64.decodeBase64(data);
+
+                SimpleHttpResponse simpleHttpResponse = SimpleHttpResponse.fromBytes(bytes);
+                promise.setSuccess(simpleHttpResponse);
+            }
+        }
     }
 
     private void connectArthas(ChannelHandlerContext tunnelSocketCtx, MultiValueMap<String, String> parameters)

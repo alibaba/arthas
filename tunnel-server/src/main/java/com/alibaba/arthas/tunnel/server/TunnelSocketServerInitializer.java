@@ -1,5 +1,7 @@
 package com.alibaba.arthas.tunnel.server;
 
+import com.taobao.arthas.common.ArthasConstants;
+
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.ChannelPipeline;
 import io.netty.channel.socket.SocketChannel;
@@ -36,7 +38,7 @@ public class TunnelSocketServerInitializer extends ChannelInitializer<SocketChan
         pipeline.addLast(new HttpServerCodec());
         pipeline.addLast(new HttpObjectAggregator(65536));
         pipeline.addLast(new WebSocketServerCompressionHandler());
-        pipeline.addLast(new WebSocketServerProtocolHandler(WEBSOCKET_PATH, null, true, 65536, false, true, 10000L));
+        pipeline.addLast(new WebSocketServerProtocolHandler(WEBSOCKET_PATH, null, true, ArthasConstants.MAX_HTTP_CONTENT_LENGTH, false, true, 10000L));
 
         pipeline.addLast(new TunnelSocketFrameHandler(tunnelServer));
     }

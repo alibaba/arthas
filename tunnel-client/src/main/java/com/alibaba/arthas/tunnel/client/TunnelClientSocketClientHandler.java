@@ -10,16 +10,22 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.alibaba.arthas.tunnel.common.MethodConstants;
+import com.alibaba.arthas.tunnel.common.SimpleHttpResponse;
 import com.alibaba.arthas.tunnel.common.URIConstans;
 
+import io.netty.buffer.ByteBuf;
+import io.netty.buffer.Unpooled;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelPromise;
 import io.netty.channel.SimpleChannelInboundHandler;
+import io.netty.handler.codec.base64.Base64;
+import io.netty.handler.codec.base64.Base64Encoder;
 import io.netty.handler.codec.http.QueryStringDecoder;
 import io.netty.handler.codec.http.QueryStringEncoder;
 import io.netty.handler.codec.http.websocketx.TextWebSocketFrame;
 import io.netty.handler.codec.http.websocketx.WebSocketFrame;
+import io.netty.util.CharsetUtil;
 
 /**
  * 
@@ -83,6 +89,46 @@ public class TunnelClientSocketClientHandler extends SimpleChannelInboundHandler
                     forwardClient.start();
                 } catch (Throwable e) {
                     logger.error("start ForwardClient error, forwardUri: {}", forwardUri, e);
+                }
+            }
+
+            if (MethodConstants.HTTP_PROXY.equals(method)) {
+                /**
+                 * <pre>
+                 * 1. 从proxy请求里读取到目标的 targetUrl，和 requestId
+                 * 2. 然后通过 ProxyClient直接请求得到结果
+                 * 3. 把response结果转为 byte[]，再转为base64，再统一组合的一个url，再用 TextWebSocketFrame 发回去
+                 * </pre>
+                 * 
+                 */
+                ProxyClient proxyClient = new ProxyClient();
+                List<String> targetUrls = parameters.get(URIConstans.TARGET_URL);
+
+                List<String> requestIDs = parameters.get(URIConstans.PROXY_REQUEST_ID);
+                String id = null;
+                if (requestIDs != null && !requestIDs.isEmpty()) {
+                    id = requestIDs.get(0);
+                }
+                if (id == null) {
+                    logger.error("error, http proxy need {}", URIConstans.PROXY_REQUEST_ID);
+                    return;
+                }
+
+                if (targetUrls != null && !targetUrls.isEmpty()) {
+                    String targetUrl = targetUrls.get(0);
+                    SimpleHttpResponse simpleHttpResponse = proxyClient.query(targetUrl);
+
+                    ByteBuf byteBuf = Base64
+                            .encode(Unpooled.wrappedBuffer(SimpleHttpResponse.toBytes(simpleHttpResponse)));
+                    String requestData = byteBuf.toString(CharsetUtil.UTF_8);
+
+                    QueryStringEncoder queryEncoder = new QueryStringEncoder("");
+                    queryEncoder.addParam(URIConstans.METHOD, MethodConstants.HTTP_PROXY);
+                    queryEncoder.addParam(URIConstans.PROXY_REQUEST_ID, id);
+                    queryEncoder.addParam(URIConstans.PROXY_RESPONSE_DATA, requestData);
+
+                    String url = queryEncoder.toString();
+                    ctx.writeAndFlush(new TextWebSocketFrame(url));
                 }
             }
 

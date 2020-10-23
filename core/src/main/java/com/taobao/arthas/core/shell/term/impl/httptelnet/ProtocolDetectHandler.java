@@ -3,6 +3,7 @@ package com.taobao.arthas.core.shell.term.impl.httptelnet;
 import java.io.File;
 import java.util.concurrent.TimeUnit;
 
+import com.taobao.arthas.common.ArthasConstants;
 import com.taobao.arthas.core.shell.term.impl.http.HttpRequestHandler;
 
 import com.taobao.arthas.core.shell.term.impl.http.TtyWebSocketFrameHandler;
@@ -84,8 +85,8 @@ public class ProtocolDetectHandler extends ChannelInboundHandlerAdapter {
         } else {
             pipeline.addLast(new HttpServerCodec());
             pipeline.addLast(new ChunkedWriteHandler());
-            pipeline.addLast(new HttpObjectAggregator(64 * 1024));
-            pipeline.addLast(workerGroup, "HttpRequestHandler", new HttpRequestHandler("/ws", new File("arthas-output")));
+            pipeline.addLast(new HttpObjectAggregator(ArthasConstants.MAX_HTTP_CONTENT_LENGTH));
+            pipeline.addLast(workerGroup, "HttpRequestHandler", new HttpRequestHandler("/ws", new File(ArthasConstants.ARTHAS_OUTPUT)));
             pipeline.addLast(new WebSocketServerProtocolHandler("/ws"));
             pipeline.addLast(new TtyWebSocketFrameHandler(channelGroup, ttyConnectionFactory));
             ctx.fireChannelActive();
