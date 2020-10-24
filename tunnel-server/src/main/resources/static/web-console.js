@@ -167,6 +167,10 @@ function disconnect () {
     }
 }
 
+function updateArthasOutputLink() {
+    $('#arthasOutputA').prop("href", "proxy/" + $('#agentId').val() + "/arthas-output/")
+}
+
 /** full screen show **/
 function xtermFullScreen () {
     var ele = document.getElementById('terminal-card');
