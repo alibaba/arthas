@@ -39,4 +39,6 @@ public class URIConstans {
      * proxy请求的返回值，base64编码
      */
     public static final String PROXY_RESPONSE_DATA = "responseData";
+ 
+    public static final String ARTHAS_VERSION = "arthasVersion";
 }

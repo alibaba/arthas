@@ -214,6 +214,12 @@ public class TunnelSocketFrameHandler extends SimpleChannelInboundHandler<WebSoc
             id = idList.get(0);
         }
 
+        String arthasVersion = null;
+        List<String> arthasVersionList = queryDecoder.parameters().get(URIConstans.ARTHAS_VERSION);
+        if (arthasVersionList != null && !arthasVersionList.isEmpty()) {
+            arthasVersion = arthasVersionList.get(0);
+        }
+
         final String finalId = id;
 
         // URI responseUri = new URI("response", null, "/", "method=" + MethodConstants.AGENT_REGISTER + "&id=" + id, null);
@@ -229,6 +235,9 @@ public class TunnelSocketFrameHandler extends SimpleChannelInboundHandler<WebSoc
             info.setPort(inetSocketAddress.getPort());
         }
         info.setChannelHandlerContext(ctx);
+        if (arthasVersion != null) {
+            info.setArthasVersion(arthasVersion);
+        }
 
         tunnelServer.addAgent(id, info);
         ctx.channel().closeFuture().addListener(new GenericFutureListener<Future<? super Void>>() {

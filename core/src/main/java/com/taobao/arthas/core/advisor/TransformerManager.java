@@ -9,6 +9,12 @@ import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
  * 
+ * <pre>
+ * * 统一管理 ClassFileTransformer
+ * * 每个增强命令对应一个 Enhancer ，也统一在这里管理
+ * </pre>
+ * 
+ * @see com.taobao.arthas.core.advisor.Enhancer
  * @author hengyunabc 2020-05-18
  *
  */

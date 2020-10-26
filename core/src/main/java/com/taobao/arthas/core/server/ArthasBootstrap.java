@@ -301,6 +301,7 @@ public class ArthasBootstrap {
                 tunnelClient = new TunnelClient();
                 tunnelClient.setId(configure.getAgentId());
                 tunnelClient.setTunnelServerUrl(configure.getTunnelServer());
+                tunnelClient.setVersion(ArthasBanner.version());
                 ChannelFuture channelFuture = tunnelClient.start();
                 channelFuture.await(10, TimeUnit.SECONDS);
                 if(channelFuture.isSuccess()) {

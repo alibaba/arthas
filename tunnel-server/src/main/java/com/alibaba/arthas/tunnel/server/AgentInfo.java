@@ -15,6 +15,7 @@ public class AgentInfo {
     private ChannelHandlerContext channelHandlerContext;
     private String host;
     private int port;
+    private String arthasVersion;
 
     public ChannelHandlerContext getChannelHandlerContext() {
         return channelHandlerContext;
@@ -38,6 +39,14 @@ public class AgentInfo {
 
     public void setPort(int port) {
         this.port = port;
+    }
+
+    public String getArthasVersion() {
+        return arthasVersion;
+    }
+
+    public void setArthasVersion(String arthasVersion) {
+        this.arthasVersion = arthasVersion;
     }
 
 }
