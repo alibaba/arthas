@@ -111,15 +111,33 @@
 			</plugin>
 
 			<plugin>
-				<groupId>org.springframework.boot</groupId>
-				<artifactId>spring-boot-maven-plugin</artifactId>
-				<version>2.1.7.RELEASE</version>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-jar-plugin</artifactId>
 				<executions>
 					<execution>
+						<goals>
+							<goal>jar</goal>
+						</goals>
 						<phase>package</phase>
+						<configuration>
+							<classifier>fatjar</classifier>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<groupId>org.springframework.boot</groupId>
+				<artifactId>spring-boot-maven-plugin</artifactId>
+				<version>${spring-boot.version}</version>
+				<executions>
+					<execution>
+						<id>repackage</id>
 						<goals>
 							<goal>repackage</goal>
 						</goals>
+						<configuration>
+							<classifier>fatjar</classifier>
+						</configuration>
 					</execution>
 				</executions>
 			</plugin>
