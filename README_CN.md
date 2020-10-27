@@ -505,6 +505,7 @@ OK
 ![百度凤巢](static/baidufengchao.png)
 ![喜百年供应链科技](static/xbn.png)
 ![折耳根科技](static/zheergen.png)
+![钱大妈](static/qdm_logo.png)
 
 ### 洐生项目
 
