@@ -1,6 +1,7 @@
 package com.alibaba.arthas.tunnel.server;
 
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
@@ -10,6 +11,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.alibaba.arthas.tunnel.common.SimpleHttpResponse;
+import com.alibaba.arthas.tunnel.server.utils.InetAddressUtil;
 
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.Channel;
@@ -31,10 +33,12 @@ import io.netty.util.concurrent.Promise;
  */
 public class TunnelServer {
     private final static Logger logger = LoggerFactory.getLogger(TunnelServer.class);
+    public static final String DEFAULT_WEBSOCKET_PATH = "/ws";
 
     private boolean ssl;
     private String host;
     private int port;
+    private String path = DEFAULT_WEBSOCKET_PATH;
 
     private Map<String, AgentInfo> agentInfoMap = new ConcurrentHashMap<String, AgentInfo>();
 
@@ -49,6 +53,16 @@ public class TunnelServer {
     private EventLoopGroup workerGroup = new NioEventLoopGroup(new DefaultThreadFactory("arthas-TunnelServer-worker", true));
 
     private Channel channel;
+
+    /**
+     * 在集群部署时，保存agentId和host关系
+     */
+    private TunnelClusterStore tunnelClusterStore;
+    
+    /**
+     * 集群部署时外部连接的host
+     */
+    private String clientConnectHost;
 
     public void start() throws Exception {
         // Configure SSL.
@@ -78,6 +92,17 @@ public class TunnelServer {
                 agentInfoMap.entrySet().removeIf(e -> !e.getValue().getChannelHandlerContext().channel().isActive());
                 clientConnectionInfoMap.entrySet()
                         .removeIf(e -> !e.getValue().getChannelHandlerContext().channel().isActive());
+                
+                // 更新集群key信息
+                if (tunnelClusterStore != null && clientConnectHost != null) {
+                    try {
+                        for (Entry<String, AgentInfo> entry : agentInfoMap.entrySet()) {
+                            tunnelClusterStore.addHost(entry.getKey(), clientConnectHost, 60 * 60, TimeUnit.SECONDS);
+                        }
+                    } catch (Throwable t) {
+                        logger.error("update tunnel info error", t);
+                    }
+                }
             }
 
         }, 60, 60, TimeUnit.SECONDS);
@@ -97,10 +122,17 @@ public class TunnelServer {
 
     public void addAgent(String id, AgentInfo agentInfo) {
         agentInfoMap.put(id, agentInfo);
+        if (this.tunnelClusterStore != null) {
+            this.tunnelClusterStore.addHost(id, clientConnectHost, 60 * 60, TimeUnit.SECONDS);
+        }
     }
 
     public AgentInfo removeAgent(String id) {
-        return agentInfoMap.remove(id);
+        AgentInfo agentInfo = agentInfoMap.remove(id);
+        if (this.tunnelClusterStore != null) {
+            this.tunnelClusterStore.removeAgent(id);
+        }
+        return agentInfo;
     }
     
     public Optional<ClientConnectionInfo> findClientConnection(String id) {
@@ -174,5 +206,29 @@ public class TunnelServer {
 
     public void setClientConnectionInfoMap(Map<String, ClientConnectionInfo> clientConnectionInfoMap) {
         this.clientConnectionInfoMap = clientConnectionInfoMap;
+    }
+
+    public TunnelClusterStore getTunnelClusterStore() {
+        return tunnelClusterStore;
+    }
+
+    public void setTunnelClusterStore(TunnelClusterStore tunnelClusterStore) {
+        this.tunnelClusterStore = tunnelClusterStore;
+    }
+
+    public String getClientConnectHost() {
+        return clientConnectHost;
+    }
+
+    public void setClientConnectHost(String clientConnectHost) {
+        this.clientConnectHost = clientConnectHost;
+    }
+
+    public String getPath() {
+        return path;
+    }
+
+    public void setPath(String path) {
+        this.path = path;
     }
 }

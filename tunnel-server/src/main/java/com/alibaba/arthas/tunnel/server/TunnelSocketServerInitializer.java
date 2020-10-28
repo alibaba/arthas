@@ -18,8 +18,6 @@ import io.netty.handler.ssl.SslContext;
  */
 public class TunnelSocketServerInitializer extends ChannelInitializer<SocketChannel> {
 
-    private static final String WEBSOCKET_PATH = "/ws";
-
     private final SslContext sslCtx;
 
     private TunnelServer tunnelServer;
@@ -38,7 +36,7 @@ public class TunnelSocketServerInitializer extends ChannelInitializer<SocketChan
         pipeline.addLast(new HttpServerCodec());
         pipeline.addLast(new HttpObjectAggregator(65536));
         pipeline.addLast(new WebSocketServerCompressionHandler());
-        pipeline.addLast(new WebSocketServerProtocolHandler(WEBSOCKET_PATH, null, true, ArthasConstants.MAX_HTTP_CONTENT_LENGTH, false, true, 10000L));
+        pipeline.addLast(new WebSocketServerProtocolHandler(tunnelServer.getPath(), null, true, ArthasConstants.MAX_HTTP_CONTENT_LENGTH, false, true, 10000L));
 
         pipeline.addLast(new TunnelSocketFrameHandler(tunnelServer));
     }

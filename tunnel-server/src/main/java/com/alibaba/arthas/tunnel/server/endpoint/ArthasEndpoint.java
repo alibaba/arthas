@@ -8,7 +8,7 @@ import org.springframework.boot.actuate.endpoint.annotation.Endpoint;
 import org.springframework.boot.actuate.endpoint.annotation.ReadOperation;
 
 import com.alibaba.arthas.tunnel.server.TunnelServer;
-import com.alibaba.arthas.tunnel.server.app.ArthasProperties;
+import com.alibaba.arthas.tunnel.server.app.configuration.ArthasProperties;
 
 @Endpoint(id = "arthas")
 public class ArthasEndpoint {
