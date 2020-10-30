@@ -11,7 +11,6 @@ import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 
-import io.netty.handler.codec.http.websocketx.CloseWebSocketFrame;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.tomcat.util.codec.binary.Base64;
 import org.slf4j.Logger;
@@ -26,7 +25,9 @@ import com.alibaba.arthas.tunnel.common.URIConstans;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
+import io.netty.handler.codec.http.HttpHeaders;
 import io.netty.handler.codec.http.QueryStringDecoder;
+import io.netty.handler.codec.http.websocketx.CloseWebSocketFrame;
 import io.netty.handler.codec.http.websocketx.TextWebSocketFrame;
 import io.netty.handler.codec.http.websocketx.WebSocketFrame;
 import io.netty.handler.codec.http.websocketx.WebSocketServerProtocolHandler.HandshakeComplete;
@@ -65,7 +66,7 @@ public class TunnelSocketFrameHandler extends SimpleChannelInboundHandler<WebSoc
             if (MethodConstants.CONNECT_ARTHAS.equals(method)) { // form browser
                 connectArthas(ctx, parameters);
             } else if (MethodConstants.AGENT_REGISTER.equals(method)) { // form arthas agent, register
-                agentRegister(ctx, uri);
+                agentRegister(ctx, handshake, uri);
             }
             if (MethodConstants.OPEN_TUNNEL.equals(method)) { // from arthas agent open tunnel
                 String clientConnectionId = parameters.getFirst("clientConnectionId");
@@ -204,7 +205,7 @@ public class TunnelSocketFrameHandler extends SimpleChannelInboundHandler<WebSoc
         }
     }
 
-    private void agentRegister(ChannelHandlerContext ctx, String requestUri) throws URISyntaxException {
+    private void agentRegister(ChannelHandlerContext ctx, HandshakeComplete handshake, String requestUri) throws URISyntaxException {
         // generate a random agent id
         String id = RandomStringUtils.random(20, true, true).toUpperCase();
 
@@ -228,12 +229,31 @@ public class TunnelSocketFrameHandler extends SimpleChannelInboundHandler<WebSoc
                 .encode().toUri();
 
         AgentInfo info = new AgentInfo();
-        SocketAddress remoteAddress = ctx.channel().remoteAddress();
-        if (remoteAddress instanceof InetSocketAddress) {
-            InetSocketAddress inetSocketAddress = (InetSocketAddress) remoteAddress;
-            info.setHost(inetSocketAddress.getHostString());
-            info.setPort(inetSocketAddress.getPort());
+
+        // 前面可能有nginx代理
+        HttpHeaders headers = handshake.requestHeaders();
+        String host = headers.get("X-Real-IP");
+        String portStr = headers.get("X-Real-Port");
+
+        if (host == null) {
+            SocketAddress remoteAddress = ctx.channel().remoteAddress();
+            if (remoteAddress instanceof InetSocketAddress) {
+                InetSocketAddress inetSocketAddress = (InetSocketAddress) remoteAddress;
+                info.setHost(inetSocketAddress.getHostString());
+                info.setPort(inetSocketAddress.getPort());
+            }
+        } else {
+            info.setHost(host);
+            try {
+                if (portStr != null) {
+                    int port = Integer.parseInt(portStr);
+                    info.setPort(port);
+                }
+            } catch (Throwable e) {
+                // ignore
+            }
         }
+
         info.setChannelHandlerContext(ctx);
         if (arthasVersion != null) {
             info.setArthasVersion(arthasVersion);
