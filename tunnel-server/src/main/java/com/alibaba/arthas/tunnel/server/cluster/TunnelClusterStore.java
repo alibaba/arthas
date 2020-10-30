@@ -1,9 +1,10 @@
-package com.alibaba.arthas.tunnel.server;
+package com.alibaba.arthas.tunnel.server.cluster;
 
 import java.util.Collection;
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
-import org.apache.commons.lang3.tuple.Pair;
+import com.alibaba.arthas.tunnel.server.AgentClusterInfo;
 
 /**
  * 保存agentId连接到哪个具体的 tunnel server，集群部署时使用
@@ -12,13 +13,13 @@ import org.apache.commons.lang3.tuple.Pair;
  *
  */
 public interface TunnelClusterStore {
-    public void addHost(String agentId, String host, long expire, TimeUnit timeUnit);
+    public void addAgent(String agentId, AgentClusterInfo info, long expire, TimeUnit timeUnit);
 
-    public String findHost(String agentId);
+    public AgentClusterInfo findAgent(String agentId);
 
     public void removeAgent(String agentId);
 
     public Collection<String> allAgentIds();
 
-    public Collection<Pair<String, String>> agentInfo(String appName);
+    public Map<String, AgentClusterInfo> agentInfo(String appName);
 }

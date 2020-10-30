@@ -8,8 +8,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import com.alibaba.arthas.tunnel.server.TunnelClusterStore;
+import com.alibaba.arthas.tunnel.server.AgentClusterInfo;
 import com.alibaba.arthas.tunnel.server.TunnelServer;
+import com.alibaba.arthas.tunnel.server.cluster.TunnelClusterStore;
 
 /**
  * 
@@ -30,7 +31,8 @@ public class ClusterController {
 
         String host = null;
         if (tunnelClusterStore != null) {
-            host = tunnelClusterStore.findHost(agentId);
+            AgentClusterInfo info = tunnelClusterStore.findAgent(agentId);
+            host = info.getClientConnectHost();
         }
 
         if (host == null) {
