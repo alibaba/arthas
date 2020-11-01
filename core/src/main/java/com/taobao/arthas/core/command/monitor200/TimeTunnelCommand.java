@@ -21,11 +21,13 @@ import com.taobao.arthas.core.util.SearchUtils;
 import com.taobao.arthas.core.util.StringUtils;
 import com.taobao.arthas.core.util.affect.RowAffect;
 import com.taobao.arthas.core.util.matcher.Matcher;
+import com.taobao.arthas.core.util.object.ObjectExpandUtils;
+import com.taobao.arthas.core.util.object.ObjectInspector;
+import com.taobao.middleware.cli.annotations.Argument;
 import com.taobao.middleware.cli.annotations.Description;
 import com.taobao.middleware.cli.annotations.Name;
 import com.taobao.middleware.cli.annotations.Option;
 import com.taobao.middleware.cli.annotations.Summary;
-import com.taobao.middleware.cli.annotations.Argument;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -75,7 +77,7 @@ public class TimeTunnelCommand extends EnhancerCommand {
     // expand of TimeTunnel
     private Integer expand = 1;
     // upper size limit
-    private Integer sizeLimit = 10 * 1024 * 1024;
+    private Integer sizeLimit = ObjectInspector.DEFAULT_OBJECT_NUMBER_LIMIT;
     // watch the index TimeTunnel
     private String watchExpress = com.taobao.arthas.core.util.Constants.EMPTY_STRING;
     private String searchExpress = com.taobao.arthas.core.util.Constants.EMPTY_STRING;
@@ -138,7 +140,7 @@ public class TimeTunnelCommand extends EnhancerCommand {
     }
 
     @Option(shortName = "M", longName = "sizeLimit")
-    @Description("Upper size limit in bytes for the result (10 * 1024 * 1024 by default)")
+    @Description("Upper number limit of expanded objects for the result ("+ObjectInspector.DEFAULT_OBJECT_NUMBER_LIMIT +" by default)")
     public void setSizeLimit(Integer sizeLimit) {
         this.sizeLimit = sizeLimit;
     }
@@ -179,7 +181,6 @@ public class TimeTunnelCommand extends EnhancerCommand {
     public void setNumberOfLimit(int numberOfLimit) {
         this.numberOfLimit = numberOfLimit;
     }
-
 
     @Option(longName = "replay-times")
     @Description("execution times when play tt")
@@ -328,7 +329,7 @@ public class TimeTunnelCommand extends EnhancerCommand {
                 return;
             }
 
-            TimeFragmentVO timeFragmentVO = createTimeFragmentVO(index, tf);
+            TimeFragmentVO timeFragmentVO = createExpandedTimeFragmentVO(index, tf);
             TimeTunnelModel timeTunnelModel = new TimeTunnelModel()
                     .setTimeFragment(timeFragmentVO)
                     .setExpand(expand)
@@ -355,8 +356,9 @@ public class TimeTunnelCommand extends EnhancerCommand {
 
             Advice advice = tf.getAdvice();
             Object value = ExpressFactory.threadLocalExpress(advice).get(watchExpress);
+
             TimeTunnelModel timeTunnelModel = new TimeTunnelModel()
-                    .setWatchValue(value)
+                    .setWatchValue(getExpandObject(value))
                     .setExpand(expand)
                     .setSizeLimit(sizeLimit);
             process.appendResult(timeTunnelModel);
@@ -367,6 +369,22 @@ public class TimeTunnelCommand extends EnhancerCommand {
         } catch (ExpressException e) {
             logger.warn("tt failed.", e);
             process.end(1, e.getMessage() + ", visit " + LogUtil.loggingFile() + " for more detail");
+        }
+    }
+
+    private Object getExpandObject(Object value) {
+        return ObjectExpandUtils.expand(value, expand, sizeLimit);
+    }
+
+    private Object[] getExpandObjectArray(Object[] array) {
+        if (expand != null && expand >= 0) {
+            Object[] expandObjects = new Object[array.length];
+            for (int i = 0; i < array.length; i++) {
+                expandObjects[i] = getExpandObject(array[i]);
+            }
+            return expandObjects;
+        } else {
+            return array;
         }
     }
 
@@ -392,6 +410,7 @@ public class TimeTunnelCommand extends EnhancerCommand {
                 Map<Integer, Object> searchResults = new LinkedHashMap<Integer, Object>();
                 for (Map.Entry<Integer, TimeFragment> entry : matchingTimeSegmentMap.entrySet()) {
                     Object value = ExpressFactory.threadLocalExpress(entry.getValue().getAdvice()).get(watchExpress);
+                    value = getExpandObject(value);
                     searchResults.put(entry.getKey(), value);
                 }
 
@@ -472,6 +491,26 @@ public class TimeTunnelCommand extends EnhancerCommand {
                 .setMethodName(advice.getMethod().getName());
     }
 
+    public TimeFragmentVO createExpandedTimeFragmentVO(Integer index, TimeFragment tf) {
+        Advice advice = tf.getAdvice();
+        String object = advice.getTarget() == null
+                ? "NULL"
+                : "0x" + toHexString(advice.getTarget().hashCode());
+
+        return new TimeFragmentVO()
+                .setIndex(index)
+                .setTimestamp(tf.getGmtCreate())
+                .setCost(tf.getCost())
+                .setParams(getExpandObjectArray(advice.getParams()))
+                .setReturn(advice.isAfterReturning())
+                .setReturnObj(getExpandObject(advice.getReturnObj()))
+                .setThrow(advice.isAfterThrowing())
+                .setThrowExp(advice.getThrowExp())
+                .setObject(object)
+                .setClassName(advice.getClazz().getName())
+                .setMethodName(advice.getMethod().getName());
+    }
+
     /**
      * 重放指定记录
      */
@@ -499,7 +538,7 @@ public class TimeTunnelCommand extends EnhancerCommand {
                 long beginTime = System.nanoTime();
 
                 //copy from tt record
-                TimeFragmentVO replayResult = createTimeFragmentVO(index, tf);
+                TimeFragmentVO replayResult = createExpandedTimeFragmentVO(index, tf);
                 replayResult.setTimestamp(new Date())
                         .setCost(0)
                         .setReturn(false)
@@ -513,7 +552,7 @@ public class TimeTunnelCommand extends EnhancerCommand {
                     double cost = (System.nanoTime() - beginTime) / 1000000.0;
                     replayResult.setCost(cost)
                             .setReturn(true)
-                            .setReturnObj(returnObj);
+                            .setReturnObj(getExpandObject(returnObj));
                 } catch (Throwable t) {
                     //throw exp
                     double cost = (System.nanoTime() - beginTime) / 1000000.0;

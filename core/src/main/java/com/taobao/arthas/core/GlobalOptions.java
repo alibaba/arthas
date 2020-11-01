@@ -105,7 +105,7 @@ public class GlobalOptions {
 
     /**
      * 是否打印parent类里的field
-     * @see com.taobao.arthas.core.view.ObjectView
+     * @see com.taobao.arthas.core.util.object.ObjectInspector
      */
     @Option(level = 1,
             name = "print-parent-fields",

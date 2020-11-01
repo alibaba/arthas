@@ -1,9 +1,5 @@
 package com.taobao.arthas.core.command.klass100;
 
-import java.lang.instrument.Instrumentation;
-import java.util.Collection;
-import java.util.List;
-
 import com.alibaba.arthas.deps.org.slf4j.Logger;
 import com.alibaba.arthas.deps.org.slf4j.LoggerFactory;
 import com.taobao.arthas.core.command.Constants;
@@ -16,11 +12,16 @@ import com.taobao.arthas.core.shell.command.AnnotatedCommand;
 import com.taobao.arthas.core.shell.command.CommandProcess;
 import com.taobao.arthas.core.util.ClassLoaderUtils;
 import com.taobao.arthas.core.util.ClassUtils;
+import com.taobao.arthas.core.util.object.ObjectExpandUtils;
 import com.taobao.middleware.cli.annotations.Argument;
 import com.taobao.middleware.cli.annotations.Description;
 import com.taobao.middleware.cli.annotations.Name;
 import com.taobao.middleware.cli.annotations.Option;
 import com.taobao.middleware.cli.annotations.Summary;
+
+import java.lang.instrument.Instrumentation;
+import java.util.Collection;
+import java.util.List;
 
 /**
  *
@@ -102,6 +103,8 @@ public class OgnlCommand extends AnnotatedCommand {
         Express unpooledExpress = ExpressFactory.unpooledExpress(classLoader);
         try {
             Object value = unpooledExpress.get(express);
+            value = ObjectExpandUtils.expand(value, expand);
+
             OgnlModel ognlModel = new OgnlModel()
                     .setValue(value)
                     .setExpand(expand);
@@ -113,4 +116,5 @@ public class OgnlCommand extends AnnotatedCommand {
                     + ", please check $HOME/logs/arthas/arthas.log for more details. ");
         }
     }
+
 }

@@ -10,6 +10,7 @@ import com.taobao.arthas.core.shell.cli.CompletionUtils;
 import com.taobao.arthas.core.shell.command.CommandProcess;
 import com.taobao.arthas.core.util.SearchUtils;
 import com.taobao.arthas.core.util.matcher.Matcher;
+import com.taobao.arthas.core.util.object.ObjectInspector;
 import com.taobao.middleware.cli.annotations.Argument;
 import com.taobao.middleware.cli.annotations.DefaultValue;
 import com.taobao.middleware.cli.annotations.Description;
@@ -39,8 +40,8 @@ public class WatchCommand extends EnhancerCommand {
     private boolean isFinish = false;
     private boolean isException = false;
     private boolean isSuccess = false;
-    private Integer expand = 1;
-    private Integer sizeLimit = 10 * 1024 * 1024;
+    private int expand = 1;
+    private int sizeLimit = ObjectInspector.DEFAULT_OBJECT_NUMBER_LIMIT;
     private boolean isRegEx = false;
     private int numberOfLimit = 100;
     
@@ -94,14 +95,14 @@ public class WatchCommand extends EnhancerCommand {
     }
 
     @Option(shortName = "M", longName = "sizeLimit")
-    @Description("Upper size limit in bytes for the result (10 * 1024 * 1024 by default)")
-    public void setSizeLimit(Integer sizeLimit) {
+    @Description("Upper number limit of expanded objects for the result ("+ObjectInspector.DEFAULT_OBJECT_NUMBER_LIMIT +" by default)")
+    public void setSizeLimit(int sizeLimit) {
         this.sizeLimit = sizeLimit;
     }
 
     @Option(shortName = "x", longName = "expand")
     @Description("Expand level of object (1 by default)")
-    public void setExpand(Integer expand) {
+    public void setExpand(int expand) {
         this.expand = expand;
     }
 
@@ -149,11 +150,11 @@ public class WatchCommand extends EnhancerCommand {
         return isSuccess;
     }
 
-    public Integer getExpand() {
+    public int getExpand() {
         return expand;
     }
 
-    public Integer getSizeLimit() {
+    public int getSizeLimit() {
         return sizeLimit;
     }
 

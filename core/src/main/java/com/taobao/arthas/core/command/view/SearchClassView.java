@@ -19,8 +19,8 @@ public class SearchClassView extends ResultView<SearchClassModel> {
         }
 
         if (result.isDetailed()) {
-            process.write(RenderUtil.render(ClassUtils.renderClassInfo(result.getClassInfo(),
-                    result.isWithField(), result.getExpand()), process.width()));
+            process.write(RenderUtil.render(ClassUtils.renderClassInfo(result.getClassInfo(), result.isWithField()),
+                    process.width()));
             process.write("\n");
         } else if (result.getClassNames() != null) {
             for (String className : result.getClassNames()) {

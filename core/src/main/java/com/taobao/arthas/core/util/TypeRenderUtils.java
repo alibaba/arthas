@@ -3,7 +3,7 @@ package com.taobao.arthas.core.util;
 import com.taobao.arthas.core.command.model.ClassDetailVO;
 import com.taobao.arthas.core.command.model.ClassVO;
 import com.taobao.arthas.core.command.model.FieldVO;
-import com.taobao.arthas.core.view.ObjectView;
+import com.taobao.arthas.core.util.object.ObjectExpandUtils;
 import com.taobao.text.ui.Element;
 import com.taobao.text.ui.TableElement;
 import com.taobao.text.ui.TreeElement;
@@ -75,7 +75,7 @@ public class TypeRenderUtils {
         return root;
     }
 
-    public static Element drawField(ClassDetailVO clazz, Integer expand) {
+    public static Element drawField(ClassDetailVO clazz) {
         TableElement fieldsTable = new TableElement(1).leftCellPadding(0).rightCellPadding(0);
         FieldVO[] fields = clazz.getFields();
         if (fields == null || fields.length == 0) {
@@ -94,8 +94,7 @@ public class TypeRenderUtils {
             }
 
             if (field.isStatic()) {
-                Object o = (expand != null && expand >= 0) ? new ObjectView(field.getValue(), expand).draw() : field.getValue();
-                fieldTable.row("value", StringUtils.objectToString(o));
+                fieldTable.row("value", ObjectExpandUtils.toString(field.getValue()));
             }
 
             fieldTable.row(label(""));
