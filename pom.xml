@@ -137,7 +137,7 @@
             <dependency>
                 <groupId>com.alibaba</groupId>
                 <artifactId>bytekit-core</artifactId>
-                <version>0.0.1</version>
+                <version>0.0.2</version>
             </dependency>
             <dependency>
                 <groupId>org.benf</groupId>
@@ -253,13 +253,13 @@
             <dependency>
                 <groupId>net.bytebuddy</groupId>
                 <artifactId>byte-buddy</artifactId>
-                <version>1.10.13</version>
+                <version>1.10.18</version>
             </dependency>
 
             <dependency>
                 <groupId>net.bytebuddy</groupId>
                 <artifactId>byte-buddy-agent</artifactId>
-                <version>1.10.13</version>
+                <version>1.10.18</version>
             </dependency>
 
             <dependency>
@@ -424,7 +424,6 @@
                         <configuration>
                             <excludes>
                                 <exclude>com/taobao/arthas/core/view/ObjectViewTest*</exclude>
-                                <exclude>com/taobao/arthas/bytekit/asm/interceptor*</exclude>
                             </excludes>
                         </configuration>
                     </execution>
