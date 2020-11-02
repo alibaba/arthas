@@ -342,13 +342,13 @@ public class ArthasBootstrap {
             workerGroup = new NioEventLoopGroup(new DefaultThreadFactory("arthas-TermServer", true));
 
             // TODO: discover user provided command resolver
-            if (configure.getTelnetPort() > 0) {
+            if (configure.getTelnetPort() != null && configure.getTelnetPort() > 0) {
                 shellServer.registerTermServer(new HttpTelnetTermServer(configure.getIp(), configure.getTelnetPort(),
                         options.getConnectionTimeout(), workerGroup));
             } else {
                 logger().info("telnet port is {}, skip bind telnet server.", configure.getTelnetPort());
             }
-            if (configure.getHttpPort() > 0) {
+            if (configure.getHttpPort() != null && configure.getHttpPort() > 0) {
                 shellServer.registerTermServer(new HttpTermServer(configure.getIp(), configure.getHttpPort(),
                         options.getConnectionTimeout(), workerGroup));
             } else {
