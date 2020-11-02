@@ -22,9 +22,6 @@ import java.util.Properties;
  */
 public class Arthas {
 
-    private static final String DEFAULT_TELNET_PORT = "3658";
-    private static final String DEFAULT_HTTP_PORT = "8563";
-
     private Arthas(String[] args) throws Exception {
         attachAgent(parse(args));
     }
@@ -35,11 +32,11 @@ public class Arthas {
         Option agent = new TypedOption<String>().setType(String.class).setShortName("agent").setRequired(true);
         Option target = new TypedOption<String>().setType(String.class).setShortName("target-ip");
         Option telnetPort = new TypedOption<Integer>().setType(Integer.class)
-                .setShortName("telnet-port").setDefaultValue(DEFAULT_TELNET_PORT);
+                .setShortName("telnet-port");
         Option httpPort = new TypedOption<Integer>().setType(Integer.class)
-                .setShortName("http-port").setDefaultValue(DEFAULT_HTTP_PORT);
+                .setShortName("http-port");
         Option sessionTimeout = new TypedOption<Integer>().setType(Integer.class)
-                        .setShortName("session-timeout").setDefaultValue("" + Configure.DEFAULT_SESSION_TIMEOUT_SECONDS);
+                        .setShortName("session-timeout");
 
         Option tunnelServer = new TypedOption<String>().setType(String.class).setShortName("tunnel-server");
         Option agentId = new TypedOption<String>().setType(String.class).setShortName("agent-id");
@@ -55,15 +52,20 @@ public class Arthas {
         configure.setJavaPid((Long) commandLine.getOptionValue("pid"));
         configure.setArthasAgent((String) commandLine.getOptionValue("agent"));
         configure.setArthasCore((String) commandLine.getOptionValue("core"));
-        configure.setSessionTimeout((Integer)commandLine.getOptionValue("session-timeout"));
-        if (commandLine.getOptionValue("target-ip") == null) {
-            throw new IllegalStateException("as.sh is too old to support web console, " +
-                    "please run the following command to upgrade to latest version:" +
-                    "\ncurl -sLk https://arthas.aliyun.com/install.sh | sh");
+        if (commandLine.getOptionValue("session-timeout") != null) {
+            configure.setSessionTimeout((Integer) commandLine.getOptionValue("session-timeout"));
         }
-        configure.setIp((String) commandLine.getOptionValue("target-ip"));
-        configure.setTelnetPort((Integer) commandLine.getOptionValue("telnet-port"));
-        configure.setHttpPort((Integer) commandLine.getOptionValue("http-port"));
+
+        if (commandLine.getOptionValue("target-ip") != null) {
+            configure.setIp((String) commandLine.getOptionValue("target-ip"));
+        }
+
+        if (commandLine.getOptionValue("telnet-port") != null) {
+            configure.setTelnetPort((Integer) commandLine.getOptionValue("telnet-port"));
+        }
+        if (commandLine.getOptionValue("http-port") != null) {
+            configure.setHttpPort((Integer) commandLine.getOptionValue("http-port"));
+        }
 
         configure.setTunnelServer((String) commandLine.getOptionValue("tunnel-server"));
         configure.setAgentId((String) commandLine.getOptionValue("agent-id"));

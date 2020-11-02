@@ -17,11 +17,11 @@ import static java.lang.reflect.Modifier.isStatic;
  */
 @Config(prefix = "arthas")
 public class Configure {
-    public static final long DEFAULT_SESSION_TIMEOUT_SECONDS = ShellServerOptions.DEFAULT_SESSION_TIMEOUT/1000;
+
     private String ip;
-    private int telnetPort;
-    private int httpPort;
-    private long javaPid;
+    private Integer telnetPort;
+    private Integer httpPort;
+    private Long javaPid;
     private String arthasCore;
     private String arthasAgent;
 
@@ -43,8 +43,9 @@ public class Configure {
 
     /**
      * session timeout seconds
+     * @see ShellServerOptions#DEFAULT_SESSION_TIMEOUT
      */
-    private long sessionTimeout = DEFAULT_SESSION_TIMEOUT_SECONDS;
+    private Long sessionTimeout;
 
     public String getIp() {
         return ip;
@@ -54,7 +55,7 @@ public class Configure {
         this.ip = ip;
     }
 
-    public int getTelnetPort() {
+    public Integer getTelnetPort() {
         return telnetPort;
     }
 
@@ -66,7 +67,7 @@ public class Configure {
         this.httpPort = httpPort;
     }
 
-    public int getHttpPort() {
+    public Integer getHttpPort() {
         return httpPort;
     }
 
@@ -94,7 +95,7 @@ public class Configure {
         this.arthasCore = arthasCore;
     }
 
-    public long getSessionTimeout() {
+    public Long getSessionTimeout() {
         return sessionTimeout;
     }
 

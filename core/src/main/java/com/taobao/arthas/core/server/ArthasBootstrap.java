@@ -285,12 +285,12 @@ public class ArthasBootstrap {
         }
 
         // init random port
-        if (configure.getTelnetPort() == 0) {
+        if (configure.getTelnetPort() != null && configure.getTelnetPort() == 0) {
             int newTelnetPort = SocketUtils.findAvailableTcpPort();
             configure.setTelnetPort(newTelnetPort);
             logger().info("generate random telnet port: " + newTelnetPort);
         }
-        if (configure.getHttpPort() == 0) {
+        if (configure.getHttpPort() != null && configure.getHttpPort() == 0) {
             int newHttpPort = SocketUtils.findAvailableTcpPort();
             configure.setHttpPort(newHttpPort);
             logger().info("generate random http port: " + newHttpPort);
@@ -322,8 +322,10 @@ public class ArthasBootstrap {
         try {
             ShellServerOptions options = new ShellServerOptions()
                             .setInstrumentation(instrumentation)
-                            .setPid(PidUtils.currentLongPid())
-                            .setSessionTimeout(configure.getSessionTimeout() * 1000);
+                            .setPid(PidUtils.currentLongPid());
+            if (configure.getSessionTimeout() != null) {
+                options.setSessionTimeout(configure.getSessionTimeout() * 1000);
+            }
 
             if (agentId != null) {
                 Map<String, String> welcomeInfos = new HashMap<String, String>();

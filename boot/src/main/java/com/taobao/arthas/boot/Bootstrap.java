@@ -67,9 +67,9 @@ public class Bootstrap {
     private boolean help = false;
 
     private long pid = -1;
-    private String targetIp = DEFAULT_TARGET_IP;
-    private int telnetPort = DEFAULT_TELNET_PORT;
-    private int httpPort = DEFAULT_HTTP_PORT;
+    private String targetIp;
+    private Integer telnetPort;
+    private Integer httpPort;
     /**
      * @see com.taobao.arthas.core.config.Configure#DEFAULT_SESSION_TIMEOUT_SECONDS
      */
@@ -333,16 +333,16 @@ public class Bootstrap {
         // check telnet/http port
         long telnetPortPid = -1;
         long httpPortPid = -1;
-        if (bootstrap.getTelnetPort() > 0) {
-            telnetPortPid = SocketUtils.findTcpListenProcess(bootstrap.getTelnetPort());
+        if (bootstrap.getTelnetPortOrDefault() > 0) {
+            telnetPortPid = SocketUtils.findTcpListenProcess(bootstrap.getTelnetPortOrDefault());
             if (telnetPortPid > 0) {
-                AnsiLog.info("Process {} already using port {}", telnetPortPid, bootstrap.getTelnetPort());
+                AnsiLog.info("Process {} already using port {}", telnetPortPid, bootstrap.getTelnetPortOrDefault());
             }
         }
-        if (bootstrap.getHttpPort() > 0) {
-            httpPortPid = SocketUtils.findTcpListenProcess(bootstrap.getHttpPort());
+        if (bootstrap.getHttpPortOrDefault() > 0) {
+            httpPortPid = SocketUtils.findTcpListenProcess(bootstrap.getHttpPortOrDefault());
             if (httpPortPid > 0) {
-                AnsiLog.info("Process {} already using port {}", httpPortPid, bootstrap.getHttpPort());
+                AnsiLog.info("Process {} already using port {}", httpPortPid, bootstrap.getHttpPortOrDefault());
             }
         }
 
@@ -365,7 +365,7 @@ public class Bootstrap {
 
         if (httpPortPid > 0 && pid != httpPortPid) {
             AnsiLog.error("Target process {} is not the process using port {}, you will connect to an unexpected process.",
-                            pid, bootstrap.getHttpPort());
+                            pid, bootstrap.getHttpPortOrDefault());
             AnsiLog.error("1. Try to restart arthas-boot, select process {}, shutdown it first with running the 'stop' command.",
                             httpPortPid);
             AnsiLog.error("2. Or try to use different http port, for example: java -jar arthas-boot.jar --telnet-port 9998 --http-port 9999", httpPortPid);
@@ -469,10 +469,10 @@ public class Bootstrap {
         AnsiLog.info("arthas home: " + arthasHomeDir);
 
         if (telnetPortPid > 0 && pid == telnetPortPid) {
-            AnsiLog.info("The target process already listen port {}, skip attach.", bootstrap.getTelnetPort());
+            AnsiLog.info("The target process already listen port {}, skip attach.", bootstrap.getTelnetPortOrDefault());
         } else {
             //double check telnet port and pid before attach
-            telnetPortPid = findProcessByTelnetClient(arthasHomeDir.getAbsolutePath(), bootstrap.getTelnetPort());
+            telnetPortPid = findProcessByTelnetClient(arthasHomeDir.getAbsolutePath(), bootstrap.getTelnetPortOrDefault());
             checkTelnetPortPid(bootstrap, telnetPortPid, pid);
 
             // start arthas-core.jar
@@ -481,12 +481,21 @@ public class Bootstrap {
             attachArgs.add(new File(arthasHomeDir, "arthas-core.jar").getAbsolutePath());
             attachArgs.add("-pid");
             attachArgs.add("" + pid);
-            attachArgs.add("-target-ip");
-            attachArgs.add(bootstrap.getTargetIp());
-            attachArgs.add("-telnet-port");
-            attachArgs.add("" + bootstrap.getTelnetPort());
-            attachArgs.add("-http-port");
-            attachArgs.add("" + bootstrap.getHttpPort());
+            if (bootstrap.getTargetIp() != null) {
+                attachArgs.add("-target-ip");
+                attachArgs.add(bootstrap.getTargetIp());
+            }
+
+            if (bootstrap.getTelnetPort() != null) {
+                attachArgs.add("-telnet-port");
+                attachArgs.add("" + bootstrap.getTelnetPort());
+            }
+
+            if (bootstrap.getHttpPort() != null) {
+                attachArgs.add("-http-port");
+                attachArgs.add("" + bootstrap.getHttpPort());
+            }
+
             attachArgs.add("-core");
             attachArgs.add(new File(arthasHomeDir, "arthas-core.jar").getAbsolutePath());
             attachArgs.add("-agent");
@@ -546,10 +555,10 @@ public class Bootstrap {
         }
 
         // telnet port ,ip
-        telnetArgs.add(bootstrap.getTargetIp());
-        telnetArgs.add("" + bootstrap.getTelnetPort());
+        telnetArgs.add(bootstrap.getTargetIpOrDefault());
+        telnetArgs.add("" + bootstrap.getTelnetPortOrDefault());
 
-        AnsiLog.info("arthas-client connect {} {}", bootstrap.getTargetIp(), bootstrap.getTelnetPort());
+        AnsiLog.info("arthas-client connect {} {}", bootstrap.getTargetIpOrDefault(), bootstrap.getTelnetPortOrDefault());
         AnsiLog.debug("Start arthas-client.jar args: " + telnetArgs);
 
         // fix https://github.com/alibaba/arthas/issues/833
@@ -560,10 +569,10 @@ public class Bootstrap {
     private static void checkTelnetPortPid(Bootstrap bootstrap, long telnetPortPid, long targetPid) {
         if (telnetPortPid > 0 && targetPid != telnetPortPid) {
             AnsiLog.error("The telnet port {} is used by process {} instead of target process {}, you will connect to an unexpected process.",
-                    bootstrap.getTelnetPort(), telnetPortPid, targetPid);
+                    bootstrap.getTelnetPortOrDefault(), telnetPortPid, targetPid);
             AnsiLog.error("1. Try to restart arthas-boot, select process {}, shutdown it first with running the 'stop' command.",
                             telnetPortPid);
-            AnsiLog.error("2. Or try to stop the existing arthas instance: java -jar arthas-client.jar 127.0.0.1 {} -c \"stop\"", bootstrap.getTelnetPort());
+            AnsiLog.error("2. Or try to stop the existing arthas instance: java -jar arthas-client.jar 127.0.0.1 {} -c \"stop\"", bootstrap.getTelnetPortOrDefault());
             AnsiLog.error("3. Or try to use different telnet port, for example: java -jar arthas-boot.jar --telnet-port 9998 --http-port -1");
             System.exit(1);
         }
@@ -712,12 +721,36 @@ public class Bootstrap {
         return targetIp;
     }
 
-    public int getTelnetPort() {
-        return telnetPort;
+    public String getTargetIpOrDefault() {
+        if (this.targetIp == null) {
+            return DEFAULT_TARGET_IP;
+        } else {
+            return this.targetIp;
+        }
     }
 
-    public int getHttpPort() {
+    public Integer getTelnetPort() {
+        return telnetPort;
+    }
+    
+    public int getTelnetPortOrDefault() {
+        if (this.telnetPort == null) {
+            return DEFAULT_TELNET_PORT;
+        } else {
+            return this.telnetPort;
+        }
+    }
+
+    public Integer getHttpPort() {
         return httpPort;
+    }
+
+    public int getHttpPortOrDefault() {
+        if (this.httpPort == null) {
+            return DEFAULT_HTTP_PORT;
+        } else {
+            return this.httpPort;
+        }
     }
 
     public String getCommand() {
