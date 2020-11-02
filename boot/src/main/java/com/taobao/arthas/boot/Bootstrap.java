@@ -47,7 +47,7 @@ import static com.taobao.arthas.boot.ProcessUtils.STATUS_EXEC_TIMEOUT;
 @Summary("Bootstrap Arthas")
 @Description("EXAMPLES:\n" + "  java -jar arthas-boot.jar <pid>\n" + "  java -jar arthas-boot.jar --target-ip 0.0.0.0\n"
                 + "  java -jar arthas-boot.jar --telnet-port 9999 --http-port -1\n"
-                + "  java -jar arthas-boot.jar --tunnel-server 'ws://192.168.10.11:7777/ws'\n"
+                + "  java -jar arthas-boot.jar --tunnel-server 'ws://192.168.10.11:7777/ws' --app-name demoapp\n"
                 + "  java -jar arthas-boot.jar --tunnel-server 'ws://192.168.10.11:7777/ws' --agent-id bvDOe8XbTM2pQWjF4cfw\n"
                 + "  java -jar arthas-boot.jar --stat-url 'http://192.168.10.11:8080/api/stat'\n"
                 + "  java -jar arthas-boot.jar -c 'sysprop; thread' <pid>\n"
@@ -117,6 +117,8 @@ public class Bootstrap {
 
     private String tunnelServer;
     private String agentId;
+
+    private String appName;
 
     private String statUrl;
 
@@ -256,6 +258,12 @@ public class Bootstrap {
     @Description("The agent id register to tunnel server")
     public void setAgentId(String agentId) {
         this.agentId = agentId;
+    }
+
+    @Option(longName = "app-name")
+    @Description("The app name")
+    public void setAppName(String appName) {
+        this.appName = appName;
     }
 
     @Option(longName = "stat-url")
@@ -758,6 +766,10 @@ public class Bootstrap {
 
     public String getAgentId() {
         return agentId;
+    }
+
+    public String getAppName() {
+        return appName;
     }
 
     public String getStatUrl() {

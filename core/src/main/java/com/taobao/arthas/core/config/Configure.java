@@ -29,6 +29,14 @@ public class Configure {
     private String agentId;
 
     /**
+     * <pre>
+     * 1. 如果显式传入 arthas.agentId ，则直接使用
+     * 2. 如果用户没有指定，则自动尝试在查找应用的 appname，加为前缀，比如 system properties设置 project.name是 demo，则
+     *    生成的 agentId是  demo-xxxx
+     * </pre>
+     */
+    private String appName;
+    /**
      * report executed command
      */
     private String statUrl;
@@ -116,6 +124,14 @@ public class Configure {
 
     public void setStatUrl(String statUrl) {
         this.statUrl = statUrl;
+    }
+
+    public String getAppName() {
+        return appName;
+    }
+
+    public void setAppName(String appName) {
+        this.appName = appName;
     }
 
     /**

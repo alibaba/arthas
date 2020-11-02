@@ -26,6 +26,7 @@ import com.alibaba.arthas.deps.org.slf4j.Logger;
 import com.alibaba.arthas.deps.org.slf4j.LoggerFactory;
 import com.alibaba.arthas.tunnel.client.TunnelClient;
 import com.taobao.arthas.common.AnsiLog;
+import com.taobao.arthas.common.ArthasConstants;
 import com.taobao.arthas.common.PidUtils;
 import com.taobao.arthas.common.SocketUtils;
 import com.taobao.arthas.core.advisor.Enhancer;
@@ -294,11 +295,17 @@ public class ArthasBootstrap {
             configure.setHttpPort(newHttpPort);
             logger().info("generate random http port: " + newHttpPort);
         }
+        // try to find appName
+        if (configure.getAppName() == null) {
+            configure.setAppName(System.getProperty(ArthasConstants.PROJECT_NAME,
+                    System.getProperty(ArthasConstants.SPRING_APPLICATION_NAME, null)));
+        }
 
         String agentId = null;
         try {
             if (configure.getTunnelServer() != null) {
                 tunnelClient = new TunnelClient();
+                tunnelClient.setAppName(configure.getAppName());
                 tunnelClient.setId(configure.getAgentId());
                 tunnelClient.setTunnelServerUrl(configure.getTunnelServer());
                 tunnelClient.setVersion(ArthasBanner.version());

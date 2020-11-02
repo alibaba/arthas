@@ -17,4 +17,9 @@ public class ArthasConstants {
     public static int MAX_HTTP_CONTENT_LENGTH = 1024 * 1024 * 8;
 
     public static final String ARTHAS_OUTPUT = "arthas-output";
+
+    public static final String APP_NAME = "app-name";
+
+    public static final String PROJECT_NAME = "project.name";
+    public static final String SPRING_APPLICATION_NAME = "spring.application.name";
 }

@@ -41,4 +41,6 @@ public class URIConstans {
     public static final String PROXY_RESPONSE_DATA = "responseData";
  
     public static final String ARTHAS_VERSION = "arthasVersion";
+
+    public static final String APP_NAME = "appName";
 }

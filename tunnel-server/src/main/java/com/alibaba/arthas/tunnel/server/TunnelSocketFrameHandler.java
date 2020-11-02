@@ -8,6 +8,7 @@ import java.net.URISyntaxException;
 import java.net.URLDecoder;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 
@@ -206,17 +207,31 @@ public class TunnelSocketFrameHandler extends SimpleChannelInboundHandler<WebSoc
     }
 
     private void agentRegister(ChannelHandlerContext ctx, HandshakeComplete handshake, String requestUri) throws URISyntaxException {
-        // generate a random agent id
-        String id = RandomStringUtils.random(20, true, true).toUpperCase();
-
         QueryStringDecoder queryDecoder = new QueryStringDecoder(requestUri);
-        List<String> idList = queryDecoder.parameters().get("id");
+        Map<String, List<String>> parameters = queryDecoder.parameters();
+
+        String appName = null;
+        List<String> appNameList = parameters.get(URIConstans.APP_NAME);
+        if (appNameList != null && !appNameList.isEmpty()) {
+            appName = appNameList.get(0);
+        }
+
+        // generate a random agent id
+        String id = null;
+        if (appName != null) {
+            // 如果有传 app name，则生成带 app name前缀的id，方便管理
+            id = appName + "_" + RandomStringUtils.random(20, true, true).toUpperCase();
+        } else {
+            id = RandomStringUtils.random(20, true, true).toUpperCase();
+        }
+        // agent传过来，则优先用 agent的
+        List<String> idList = parameters.get(URIConstans.ID);
         if (idList != null && !idList.isEmpty()) {
             id = idList.get(0);
         }
 
         String arthasVersion = null;
-        List<String> arthasVersionList = queryDecoder.parameters().get(URIConstans.ARTHAS_VERSION);
+        List<String> arthasVersionList = parameters.get(URIConstans.ARTHAS_VERSION);
         if (arthasVersionList != null && !arthasVersionList.isEmpty()) {
             arthasVersion = arthasVersionList.get(0);
         }

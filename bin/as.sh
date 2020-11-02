@@ -139,6 +139,9 @@ AGENT_ID=
 # stat report url
 STAT_URL=
 
+# app name
+APP_NAME=
+
 ############ Command Arguments ############
 
 # if arguments contains -c/--command or -f/--batch-file,  BATCH_MODE will be true
@@ -393,6 +396,7 @@ Usage:
     $0 [-h] [--target-ip <value>] [--telnet-port <value>]
        [--http-port <value>] [--session-timeout <value>] [--arthas-home <value>]
        [--tunnel-server <value>] [--agent-id <value>] [--stat-url <value>]
+       [--app-name <value>]
        [--use-version <value>] [--repo-mirror <value>] [--versions] [--use-http]
        [--attach-only] [-c <value>] [-f <value>] [-v] [pid]
 
@@ -412,6 +416,7 @@ Options and Arguments:
     --debug-attach              Debug attach agent
     --tunnel-server             Remote tunnel server url
     --agent-id                  Special agent id
+    --app-name                  Special app name
     --select                    select target process by classname or JARfilename
  -c,--command <value>           Command to execute, multiple commands separated
                                 by ;
@@ -425,7 +430,7 @@ EXAMPLES:
   ./as.sh <pid>
   ./as.sh --target-ip 0.0.0.0
   ./as.sh --telnet-port 9999 --http-port -1
-  ./as.sh --tunnel-server 'ws://192.168.10.11:7777/ws'
+  ./as.sh --tunnel-server 'ws://192.168.10.11:7777/ws' --app-name demoapp
   ./as.sh --tunnel-server 'ws://192.168.10.11:7777/ws' --agent-id bvDOe8XbTM2pQWjF4cfw
   ./as.sh --stat-url 'http://192.168.10.11:8080/api/stat'
   ./as.sh -c 'sysprop; thread' <pid>
@@ -564,6 +569,11 @@ parse_arguments()
         ;;
         --stat-url)
         STAT_URL="$2"
+        shift # past argument
+        shift # past value
+        ;;
+        --app-name)
+        APP_NAME="$2"
         shift # past argument
         shift # past value
         ;;
@@ -757,6 +767,11 @@ attach_jvm()
     if [ "${STAT_URL}" ]; then
         tempArgs+=("-stat-url")
         tempArgs+=("${STAT_URL}")
+    fi
+
+    if [ "${APP_NAME}" ]; then
+        tempArgs+=("-app-name")
+        tempArgs+=("${APP_NAME}")
     fi
 
     "${java_command[@]}" \
