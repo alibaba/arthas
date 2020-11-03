@@ -36,6 +36,7 @@ Contents
 * [进阶使用](advanced-use.md)
 * [命令列表](commands.md)
 * [WebConsole](web-console.md)
+* [Arthas Tunnel](tunnel.md)
 * [Http API](http-api.md)
 * [Docker](docker.md)
 * [Arthas Spring Boot Starter](spring-boot-starter.md)
