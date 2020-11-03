@@ -1,0 +1,95 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://g.alicdn.com/code/lib/twitter-bootstrap/4.2.1/css/bootstrap.min.css" integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS"
+        crossorigin="anonymous">
+
+    <script src="https://g.alicdn.com/code/lib/vue/2.6.4/vue.min.js" integrity="sha256-isEQDc5Dw7wea1s5iMZjBvPuYzjzMrvtlPwE6LtavFA=" crossorigin="anonymous"></script>
+    <script src="https://g.alicdn.com/code/lib/axios/0.18.0/axios.min.js"></script>
+
+    <title>Arthas Tutorials</title>
+
+    <style>
+        /* This is all that's required */
+        .dropdown-item-checked::before {
+        position: absolute;
+        left: .4rem;
+        content: '✓';
+        font-weight: 600;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Optional JavaScript -->
+    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+    <script src="https://g.alicdn.com/code/lib/jquery/3.3.1/jquery.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
+    <script src="https://g.alicdn.com/code/lib/popper.js/1.14.7/umd/popper.min.js" integrity="sha512-5WvZa4N7Jq3TVNCp4rjcBMlc6pT3lZ7gVxjtI6IkKW+uItSa+rFgtFljvZnCxQGj8SUX5DHraKE6Mn/4smK1Cg==" crossorigin="anonymous"></script>
+    <script src="https://g.alicdn.com/code/lib/twitter-bootstrap/4.2.1/js/bootstrap.min.js" integrity="sha384-B0UglyR+jN6CkvvICOB2joaf5I4l3gm9GU6Hc1og6Ls7i6U/mkkaduKaBhlAXv9k"
+        crossorigin="anonymous"></script>
+
+    <div id="app">
+
+        <table class="table table-hover issue-tracker">
+            <thead>
+                <tr>
+                    <th>IP</th>
+                    <th>AgentId</th>
+                    <th>Version</th>
+                </tr>
+            </thead>
+            <tbody>
+            <tr v-for="(agentInfo, agentId) in agentInfos">
+                <td>
+                    <a class="btn btn-primary btn-xs" v-bind:href="tunnelWebConsoleLink(agentId, agentInfo.clientConnectHost)">{{agentInfo.host}}</a>
+                </td>
+                <td>
+                    <span class="label label-default">{{agentId}}</span>
+                </td>
+                <td>
+                    <span class="label label-default">{{agentInfo.arthasVersion}}</span>
+                </td>
+            </tr>
+            </tbody>
+         </table>
+
+    </div>
+</body>
+
+
+<script>
+    var app = new Vue({
+        el: '#app',
+        data: {
+            agentInfos: [],
+        },
+        methods: {
+            fetchMyApps: function () {
+                var vm = this;
+                var params = new window.URLSearchParams(window.location.search);
+                var appName = params.get('app');
+                axios.get('/api/tunnelAgentInfo?app=' + appName)
+                        .then(function (response) {
+                            vm.agentInfos = response.data
+                        })
+                        .catch(function (error) {
+                            console.log('api error ' + error)
+                        })
+            },
+            tunnelWebConsoleLink: function (agentId, targetServer) {
+                return "/?targetServer=" + targetServer + "&agentId=" + agentId;
+            }
+        },
+        mounted: function() {
+            this.fetchMyApps()
+        }
+    })
+
+</script>
+</html>

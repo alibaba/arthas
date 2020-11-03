@@ -17,12 +17,35 @@ public class ArthasProperties {
 
     private Server server;
 
+    private EmbeddedRedis embeddedRedis;
+
+    /**
+     * supoort apps.html/agents.html
+     */
+    private boolean enableDetatilPages = false;
+
     public Server getServer() {
         return server;
     }
 
     public void setServer(Server server) {
         this.server = server;
+    }
+
+    public EmbeddedRedis getEmbeddedRedis() {
+        return embeddedRedis;
+    }
+
+    public void setEmbeddedRedis(EmbeddedRedis embeddedRedis) {
+        this.embeddedRedis = embeddedRedis;
+    }
+
+    public boolean isEnableDetatilPages() {
+        return enableDetatilPages;
+    }
+
+    public void setEnableDetatilPages(boolean enableDetatilPages) {
+        this.enableDetatilPages = enableDetatilPages;
     }
 
     public static class Server {
@@ -79,6 +102,42 @@ public class ArthasProperties {
             this.path = path;
         }
 
+    }
+
+    /**
+     * for test
+     * 
+     * @author hengyunabc 2020-11-03
+     *
+     */
+    public static class EmbeddedRedis {
+        private boolean enabled = false;
+        private String host = "127.0.0.1";
+        private int port = 6379;
+
+        public boolean isEnabled() {
+            return enabled;
+        }
+
+        public void setEnabled(boolean enabled) {
+            this.enabled = enabled;
+        }
+
+        public String getHost() {
+            return host;
+        }
+
+        public void setHost(String host) {
+            this.host = host;
+        }
+
+        public int getPort() {
+            return port;
+        }
+
+        public void setPort(int port) {
+            this.port = port;
+        }
     }
 
 }
