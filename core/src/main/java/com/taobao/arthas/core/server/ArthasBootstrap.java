@@ -301,7 +301,6 @@ public class ArthasBootstrap {
                     System.getProperty(ArthasConstants.SPRING_APPLICATION_NAME, null)));
         }
 
-        String agentId = null;
         try {
             if (configure.getTunnelServer() != null) {
                 tunnelClient = new TunnelClient();
@@ -311,9 +310,6 @@ public class ArthasBootstrap {
                 tunnelClient.setVersion(ArthasBanner.version());
                 ChannelFuture channelFuture = tunnelClient.start();
                 channelFuture.await(10, TimeUnit.SECONDS);
-                if(channelFuture.isSuccess()) {
-                    agentId = tunnelClient.getId();
-                }
             }
         } catch (Throwable t) {
             logger().error("start tunnel client error", t);
@@ -322,15 +318,10 @@ public class ArthasBootstrap {
         try {
             ShellServerOptions options = new ShellServerOptions()
                             .setInstrumentation(instrumentation)
-                            .setPid(PidUtils.currentLongPid());
+                            .setPid(PidUtils.currentLongPid())
+                            .setWelcomeMessage(ArthasBanner.welcome());
             if (configure.getSessionTimeout() != null) {
                 options.setSessionTimeout(configure.getSessionTimeout() * 1000);
-            }
-
-            if (agentId != null) {
-                Map<String, String> welcomeInfos = new HashMap<String, String>();
-                welcomeInfos.put("id", agentId);
-                options.setWelcomeMessage(ArthasBanner.welcome(welcomeInfos));
             }
 
             shellServer = new ShellServerImpl(options);
