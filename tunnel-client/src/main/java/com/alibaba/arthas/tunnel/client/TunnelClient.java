@@ -61,6 +61,8 @@ public class TunnelClient {
      */
     private String version = "unknown";
 
+    private volatile boolean connected = false;
+
     public ChannelFuture start() throws IOException, InterruptedException, URISyntaxException {
         return connect(false);
     }
@@ -189,5 +191,13 @@ public class TunnelClient {
 
     public void setAppName(String appName) {
         this.appName = appName;
+    }
+
+    public boolean isConnected() {
+        return connected;
+    }
+
+    public void setConnected(boolean connected) {
+        this.connected = connected;
     }
 }

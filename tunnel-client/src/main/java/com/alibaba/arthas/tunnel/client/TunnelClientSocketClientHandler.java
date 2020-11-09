@@ -72,6 +72,7 @@ public class TunnelClientSocketClientHandler extends SimpleChannelInboundHandler
                 if (idList != null && !idList.isEmpty()) {
                     this.tunnelClient.setId(idList.get(0));
                 }
+                tunnelClient.setConnected(true);
                 registerPromise.setSuccess();
             }
 
@@ -137,6 +138,7 @@ public class TunnelClientSocketClientHandler extends SimpleChannelInboundHandler
 
     @Override
     public void channelUnregistered(final ChannelHandlerContext ctx) throws Exception {
+        tunnelClient.setConnected(false);
         ctx.channel().eventLoop().schedule(new Runnable() {
             @Override
             public void run() {
