@@ -353,8 +353,8 @@ public class TimeTunnelCommand extends EnhancerCommand {
             }
 
             Advice advice = tf.getAdvice();
-            Object value = ExpressFactory.threadLocalExpress(advice).get(watchExpress);
-            if (isNeedExpand()) {
+			Object value = ExpressFactory.unpooledExpress(advice.getLoader()).bind(advice).get(watchExpress);
+			if (isNeedExpand()) {
                 process.write(new ObjectView(value, expand, sizeLimit).draw()).write("\n");
             } else {
                 process.write(StringUtils.objectToString(value)).write("\n");
