@@ -1,9 +1,9 @@
 #!/bin/bash
 
-# define newset arthas's version
+# define newest arthas's version
 ARTHAS_VERSION=${project.version}
 
-# define newset arthas lib home
+# define newest arthas's lib home
 ARTHAS_LIB_HOME=${HOME}/.arthas/lib/${ARTHAS_VERSION}/arthas
 
 # exit shell with err_code
@@ -30,5 +30,5 @@ if [[ ! -x ${ARTHAS_LIB_HOME} ]]; then
 
 fi
 
-echo "install to local successed."
+echo "install to local succeeded."
 

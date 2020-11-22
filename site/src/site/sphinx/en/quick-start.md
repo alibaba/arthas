@@ -4,11 +4,11 @@ Quick Start
 ## 1. Start Demo Application
 
 ```bash
-wget https://alibaba.github.io/arthas/arthas-demo.jar
+curl -O https://arthas.aliyun.com/arthas-demo.jar
 java -jar arthas-demo.jar
 ```
 
-`arthas-demo` is a simple program that generates a random number every second, then find all prime factors of the number.
+`arthas-demo` is a simple program that generates a random number every second, then it finds all prime factors of that number.
 
 The source code of `arthas-demo`: [View](https://github.com/alibaba/arthas/blob/master/demo/src/main/java/demo/MathGame.java)
 
@@ -19,7 +19,7 @@ The source code of `arthas-demo`: [View](https://github.com/alibaba/arthas/blob/
 Execute the following command in the command line:
 
 ```bash
-wget https://alibaba.github.io/arthas/arthas-boot.jar
+curl -O https://arthas.aliyun.com/arthas-boot.jar
 java -jar arthas-boot.jar
 ```
 
@@ -48,7 +48,7 @@ The 'Demo' process is the second as shown above, press '2' then 'Enter'. Arthas 
 `--' `--'`--' '--'   `--'   `--'  `--'`--' `--'`-----'
 
 
-wiki: https://alibaba.github.io/arthas
+wiki: https://arthas.aliyun.com/doc
 version: 3.0.5.20181127201536
 pid: 71560
 time: 2018-11-28 19:16:24
@@ -229,4 +229,4 @@ Pls. refer to [advanced usages](advanced-use.md) for more information.
 
 Use `quit` or `exit` to disconnect from the current process. The Arthas instance attached to the target process continues to live inside the process, and its port is standby for further connection.
 
-Use `shutdown` to have Arthas completely quit from the target process.
+Use `stop` command to have Arthas completely quit from the target process.

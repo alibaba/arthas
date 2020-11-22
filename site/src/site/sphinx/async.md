@@ -1,6 +1,9 @@
-Arthas异步调用
+Arthas后台异步任务
 ===
-arthas中的异步调用，使用了仿linux系统任务相关的命令。[linux任务相关介绍](https://ehlxr.me/2017/01/18/Linux-%E4%B8%AD-fg%E3%80%81bg%E3%80%81jobs%E3%80%81-%E6%8C%87%E4%BB%A4/)。
+
+[`后台异步任务`在线教程](https://arthas.aliyun.com/doc/arthas-tutorials?language=cn&id=case-async-jobs)
+
+arthas中的后台异步任务，使用了仿linux系统任务相关的命令。[linux任务相关介绍](https://ehlxr.me/2017/01/18/Linux-%E4%B8%AD-fg%E3%80%81bg%E3%80%81jobs%E3%80%81-%E6%8C%87%E4%BB%A4/)。
 
 
 ## 1. 使用&在后台执行任务
@@ -41,7 +44,7 @@ $ jobs
 * 非当前session创建的job，只能由当前session fg到前台执行
 
 ## 5. 任务输出重定向
-可通过`>`或者`>>`将任务输出结果输出到指定的文件中，可以和`&`一起使用，实现arthas命令的异步调用。比如：
+可通过`>`或者`>>`将任务输出结果输出到指定的文件中，可以和`&`一起使用，实现arthas命令的后台异步任务。比如：
 
 ```bash
 $ trace Test t >> test.out &
@@ -63,3 +66,4 @@ cache location  : /Users/gehui/logs/arthas-cache/28198/2
 
 * 最多同时支持8个命令使用重定向将结果写日志
 * 请勿同时开启过多的后台异步命令，以免对目标JVM性能造成影响
+* 如果不想停止arthas，继续执行后台任务，可以执行 `quit` 退出arthas控制台（`stop` 会停止arthas 服务）

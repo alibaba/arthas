@@ -1,6 +1,8 @@
 sysprop
 =======================
 
+[`sysprop`在线教程](https://arthas.aliyun.com/doc/arthas-tutorials.html?language=cn&id=command-sysprop)
+
 > 查看当前JVM的系统属性(`System Property`)
 
 ### 使用参考
@@ -18,7 +20,7 @@ sysprop
  sysprop production.mode true
 
  WIKI:
-   https://alibaba.github.io/arthas/sysprop
+   https://arthas.aliyun.com/doc/sysprop
 
  OPTIONS:
  -h, --help                                  this help

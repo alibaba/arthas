@@ -4,19 +4,15 @@
     <parent>
         <groupId>com.taobao.arthas</groupId>
         <artifactId>arthas-all</artifactId>
-        <version>3.1.1-SNAPSHOT</version>
+        <version>${revision}</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
     <artifactId>arthas-core</artifactId>
     <name>arthas-core</name>
 
-    <repositories>
-        <repository>
-            <id>in-project</id>
-            <name>In Project Repo</name>
-            <url>file://${project.basedir}/../lib</url>
-        </repository>
-    </repositories>
+    <properties>
+        <arthas.deps.package>com.alibaba.arthas.deps</arthas.deps.package>
+    </properties>
 
     <build>
         <finalName>arthas-core</finalName>
@@ -31,57 +27,120 @@
                     <showDeprecation>true</showDeprecation>
                 </configuration>
             </plugin>
+
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-assembly-plugin</artifactId>
+                <artifactId>maven-shade-plugin</artifactId>
+                <version>3.2.3</version>
                 <executions>
                     <execution>
-                        <goals>
-                            <goal>single</goal>
-                        </goals>
                         <phase>package</phase>
+                        <goals>
+                            <goal>shade</goal>
+                        </goals>
                         <configuration>
-                            <descriptorRefs>
-                                <descriptorRef>jar-with-dependencies</descriptorRef>
-                            </descriptorRefs>
-                            <archive>
-                                <manifest>
+                            <finalName>arthas-core-shade</finalName>
+                            <transformers>
+                                <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
                                     <mainClass>com.taobao.arthas.core.Arthas</mainClass>
-                                </manifest>
-                                <manifestEntries>
-                                    <Created-By>core engine team, middleware group, alibaba inc.</Created-By>
-                                    <Implementation-Version>${project.version}</Implementation-Version>
-                                    <Implementation-Vendor-Id>com.taobao.arthas</Implementation-Vendor-Id>
-                                    <Specification-Version>${project.version}</Specification-Version>
-                                    <Specification-Title>arthas-core</Specification-Title>
-                                </manifestEntries>
-                            </archive>
+                                    <manifestEntries>
+                                        <Created-By>core engine team, middleware group, alibaba inc.</Created-By>
+                                        <Implementation-Version>${project.version}</Implementation-Version>
+                                        <Implementation-Vendor-Id>com.taobao.arthas</Implementation-Vendor-Id>
+                                        <Specification-Version>${project.version}</Specification-Version>
+                                        <Specification-Title>arthas-core</Specification-Title>
+                                    </manifestEntries>
+                                </transformer>
+                            </transformers>
+                            <relocations>
+                                <!-- https://github.com/hengyunabc/arthas-repackage-deps -->
+                                <relocation>
+                                    <pattern>org.slf4j</pattern>
+                                    <shadedPattern>${arthas.deps.package}.org.slf4j</shadedPattern>
+                                </relocation>
+                                <relocation>
+                                    <pattern>ch.qos.logback</pattern>
+                                    <shadedPattern>${arthas.deps.package}.ch.qos.logback</shadedPattern>
+                                </relocation>
+                                <relocation>
+                                    <pattern>io.netty</pattern>
+                                    <shadedPattern>${arthas.deps.package}.io.netty</shadedPattern>
+                                </relocation>
+                            </relocations>
+                            <filters>
+                                <filter>
+                                    <artifact>com.alibaba.middleware:termd-core</artifact>
+                                    <excludes>
+                                        <exclude>io/termd/core/http/*.js</exclude>
+                                        <exclude>io/termd/core/http/*.css</exclude>
+                                        <exclude>io/termd/core/http/*.html</exclude>
+                                        <exclude>io/termd/core/http/*.png</exclude>
+                                    </excludes>
+                                </filter>
+                            </filters>
                         </configuration>
                     </execution>
                 </executions>
             </plugin>
 
+             <!-- 把原来的logger command相关类还原，因为被shade plugin relocation修改了package -->
+            <plugin>
+                <artifactId>maven-antrun-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <phase>package</phase>
+                        <configuration>
+                            <tasks>
+                                <unzip src="${project.build.directory}/${project.build.finalName}-shade.${project.packaging}" dest="${project.build.directory}/tmp_out" />
+                                <copy overwrite="true" todir="${project.build.directory}/tmp_out/com/taobao/arthas/core/command/logger">
+                                    <fileset dir="${project.build.directory}/classes/com/taobao/arthas/core/command/logger" />
+                                </copy>
+                                <zip basedir="${project.build.directory}/tmp_out" destfile="${project.build.directory}/${project.build.finalName}-shade.${project.packaging}" />
+                            </tasks>
+                        </configuration>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
         </plugins>
     </build>
 
     <dependencies>
         <dependency>
             <groupId>com.taobao.arthas</groupId>
+            <artifactId>arthas-spy</artifactId>
+            <version>${project.version}</version>
+            <scope>provided</scope>
+            <optional>true</optional>
+        </dependency>
+        <dependency>
+            <groupId>com.taobao.arthas</groupId>
             <artifactId>arthas-common</artifactId>
             <version>${project.version}</version>
         </dependency>
+        <dependency>
+            <groupId>com.alibaba</groupId>
+            <artifactId>bytekit-core</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>net.bytebuddy</groupId>
+            <artifactId>byte-buddy-agent</artifactId>
+            <scope>provided</scope>
+            <optional>true</optional>
+        </dependency>
+
         <dependency>
             <groupId>com.taobao.arthas</groupId>
             <artifactId>arthas-memorycompiler</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>
-            <groupId>org.ow2.asm</groupId>
-            <artifactId>asm</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.ow2.asm</groupId>
-            <artifactId>asm-commons</artifactId>
+            <groupId>com.taobao.arthas</groupId>
+            <artifactId>arthas-tunnel-client</artifactId>
+            <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>com.alibaba.middleware</groupId>
@@ -103,21 +162,43 @@
             <!--<groupId>org.codehaus.groovy</groupId>-->
             <!--<artifactId>groovy-all</artifactId>-->
         <!--</dependency>-->
+        <!-- slf4j-api/logback-classic/logback-core 不能打包到应用里，因为真正使用的是 arthas-repackage-deps -->
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-api</artifactId>
+            <scope>provided</scope>
+            <optional>true</optional>
         </dependency>
         <dependency>
             <groupId>ch.qos.logback</groupId>
             <artifactId>logback-classic</artifactId>
+            <scope>provided</scope>
+            <optional>true</optional>
         </dependency>
         <dependency>
             <groupId>ch.qos.logback</groupId>
             <artifactId>logback-core</artifactId>
+            <scope>provided</scope>
+            <optional>true</optional>
         </dependency>
         <dependency>
-            <groupId>com.taobao.middleware</groupId>
-            <artifactId>logger.api</artifactId>
+            <groupId>com.alibaba.arthas</groupId>
+            <artifactId>arthas-repackage-logger</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>log4j</groupId>
+            <artifactId>log4j</artifactId>
+            <version>1.2.17</version>
+            <scope>provided</scope>
+            <optional>true</optional>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-core</artifactId>
+            <version>2.12.1</version>
+            <scope>provided</scope>
+            <optional>true</optional>
         </dependency>
         <dependency>
             <groupId>com.alibaba</groupId>
@@ -133,9 +214,30 @@
             <scope>test</scope>
         </dependency>
         <dependency>
+            <groupId>org.assertj</groupId>
+            <artifactId>assertj-core</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.mockito</groupId>
+            <artifactId>mockito-core</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.taobao.arthas</groupId>
+            <artifactId>arthas-demo</artifactId>
+            <version>${project.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.zeroturnaround</groupId>
+            <artifactId>zt-zip</artifactId>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
             <groupId>org.benf</groupId>
             <artifactId>cfr</artifactId>
-            <version>0.132</version>
         </dependency>
         <!-- for com.sun.tools.attach.VirtualMachine api -->
         <dependency>
@@ -145,6 +247,7 @@
             <scope>provided</scope>
             <optional>true</optional>
         </dependency>
+
     </dependencies>
 
 </project>

@@ -66,6 +66,9 @@ public abstract class AnsiLog {
         }
     }
 
+    private AnsiLog() {
+    }
+
     public static boolean enableColor() {
         return enableColor;
     }

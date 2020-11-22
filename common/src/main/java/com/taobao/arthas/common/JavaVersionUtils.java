@@ -8,43 +8,50 @@ import java.util.Properties;
  *
  */
 public class JavaVersionUtils {
-    private static final String versionPropName = "java.specification.version";
-    private static final String javaVersionStr = System.getProperty(versionPropName);
-    private static final float javaVersion = Float.parseFloat(javaVersionStr);
+    private static final String VERSION_PROP_NAME = "java.specification.version";
+    private static final String JAVA_VERSION_STR = System.getProperty(VERSION_PROP_NAME);
+    private static final float JAVA_VERSION = Float.parseFloat(JAVA_VERSION_STR);
+
+    private JavaVersionUtils() {
+    }
 
     public static String javaVersionStr() {
-        return javaVersionStr;
+        return JAVA_VERSION_STR;
     }
 
     public static String javaVersionStr(Properties props) {
-        return (null != props) ? props.getProperty(versionPropName): null;
+        return (null != props) ? props.getProperty(VERSION_PROP_NAME): null;
     }
 
     public static float javaVersion() {
-        return javaVersion;
+        return JAVA_VERSION;
     }
 
     public static boolean isJava6() {
-        return javaVersionStr.equals("1.6");
+        return JAVA_VERSION_STR.equals("1.6");
     }
 
     public static boolean isJava7() {
-        return javaVersionStr.equals("1.7");
+        return JAVA_VERSION_STR.equals("1.7");
     }
 
     public static boolean isJava8() {
-        return javaVersionStr.equals("1.8");
+        return JAVA_VERSION_STR.equals("1.8");
     }
 
     public static boolean isJava9() {
-        return javaVersionStr.equals("9");
+        return JAVA_VERSION_STR.equals("9");
     }
 
     public static boolean isLessThanJava9() {
-        return javaVersion < 9.0f;
+        return JAVA_VERSION < 9.0f;
+    }
+
+    public static boolean isGreaterThanJava7() {
+        return JAVA_VERSION > 1.7f;
     }
 
     public static boolean isGreaterThanJava8() {
-        return javaVersion > 1.8f;
+        return JAVA_VERSION > 1.8f;
     }
 }
