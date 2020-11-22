@@ -1,5 +1,7 @@
 package com.taobao.arthas.core;
 
+import com.taobao.arthas.common.JavaVersionUtils;
+
 /**
  * 全局开关
  * Created by vlinux on 15/6/4.
@@ -68,14 +70,16 @@ public class GlobalOptions {
     public static volatile boolean isDisableSubClass = false;
 
     /**
-     * 是否在asm中输出
+     * 是否在interface类里搜索函数
+     * https://github.com/alibaba/arthas/issues/1105
      */
-    @Option(level = 1,
-            name = "debug-for-asm",
-            summary = "Option to print DEBUG message if ASM is involved",
-            description = "This option enables to print DEBUG message of ASM for each method invocation."
+    @Option(
+            level = 1,
+            name = "support-default-method",
+            summary = "Option to control include default method in interface when class matching",
+            description = "This option disable to include default method in interface when matching class."
     )
-    public static volatile boolean isDebugForAsm = false;
+    public static volatile boolean isSupportDefaultMethod = true && JavaVersionUtils.isGreaterThanJava7();
 
     /**
      * 是否日志中保存命令执行结果
@@ -99,4 +103,24 @@ public class GlobalOptions {
     )
     public static volatile String jobTimeout = "1d";
 
+    /**
+     * 是否打印parent类里的field
+     * @see com.taobao.arthas.core.view.ObjectView
+     */
+    @Option(level = 1,
+            name = "print-parent-fields",
+            summary = "Option to print all fileds in parent class",
+            description = "This option enables print files in parent class, default value true."
+    )
+    public static volatile boolean printParentFields = true;
+
+    /**
+     * 是否打开verbose 开关
+     */
+    @Option(level = 1,
+            name = "verbose",
+            summary = "Option to print verbose information",
+            description = "This option enables print verbose information, default value false."
+    )
+    public static volatile boolean verbose = false;
 }

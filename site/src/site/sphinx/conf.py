@@ -38,7 +38,7 @@ extensions = [
     'sphinx.ext.napoleon',
     'sphinx.ext.mathjax',
     'sphinx_markdown_tables',
-    'sphinxcontrib.inlinesyntaxhighlight',
+#    'sphinxcontrib.inlinesyntaxhighlight',
     'highlightjs',
 ]
 
@@ -53,7 +53,7 @@ master_doc = 'index'
 
 # General information about the project.
 project = u'Arthas'
-copyright = u'2018, Alibaba Middleware Group, and contributors'
+copyright = u'2018-2020, Alibaba Middleware Group, and contributors'
 author = u'Alibaba Middleware Group, and contributors'
 
 github_doc_root = 'https://github.com/alibaba/arthas/tree/master/site/src/site/sphinx/'
@@ -67,13 +67,13 @@ github_doc_root = 'https://github.com/alibaba/arthas/tree/master/site/src/site/s
 # The full version, including alpha/beta/rc tagss
 # release = 
 # read version from pom.xml
-rootDir = os.path.dirname(os.path.abspath(__file__)) + '/../../..'
+rootDir = os.path.dirname(os.path.abspath(__file__)) + '/../../../..'
 pomXml = ET.parse(rootDir + '/pom.xml')
 
 for projectChildrenElem in list(pomXml.getroot()):
-  if projectChildrenElem.tag == '{http://maven.apache.org/POM/4.0.0}parent':
+  if projectChildrenElem.tag == '{http://maven.apache.org/POM/4.0.0}properties':
     for parentChildrenElem in list(projectChildrenElem):
-      if parentChildrenElem.tag == '{http://maven.apache.org/POM/4.0.0}version':
+      if parentChildrenElem.tag == '{http://maven.apache.org/POM/4.0.0}revision':
         version = parentChildrenElem.text
 
 # if version is SNAPSHOT, read final release from maven center
@@ -305,12 +305,12 @@ texinfo_documents = [
 #texinfo_no_detailmenu = False
 
 # sphinxcontrib-inlinesyntaxhighlight options
-inline_highlight_literals = False
+#inline_highlight_literals = False
 
 # app setup hook
 def setup(app):
     app.add_config_value('recommonmark_config', {
-        'url_resolver': lambda url: github_doc_root + url,
+        # 'url_resolver': lambda url: github_doc_root + url,
         # 'auto_toc_tree_section': 'Contents',
         'enable_eval_rst': True,
         # 'enable_auto_doc_ref': True,

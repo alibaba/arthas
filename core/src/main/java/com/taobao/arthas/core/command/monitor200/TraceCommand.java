@@ -1,5 +1,6 @@
 package com.taobao.arthas.core.command.monitor200;
 
+import com.taobao.arthas.core.GlobalOptions;
 import com.taobao.arthas.core.advisor.AdviceListener;
 import com.taobao.arthas.core.command.Constants;
 import com.taobao.arthas.core.shell.command.CommandProcess;
@@ -10,6 +11,7 @@ import com.taobao.arthas.core.util.matcher.RegexMatcher;
 import com.taobao.arthas.core.util.matcher.TrueMatcher;
 import com.taobao.arthas.core.util.matcher.WildcardMatcher;
 import com.taobao.middleware.cli.annotations.Argument;
+import com.taobao.middleware.cli.annotations.DefaultValue;
 import com.taobao.middleware.cli.annotations.Description;
 import com.taobao.middleware.cli.annotations.Name;
 import com.taobao.middleware.cli.annotations.Option;
@@ -24,6 +26,7 @@ import java.util.List;
  *
  * @author vlinux on 15/5/27.
  */
+// @formatter:off
 @Name("trace")
 @Summary("Trace the execution time of specified method invocation.")
 @Description(value = Constants.EXPRESS_DESCRIPTION + Constants.EXAMPLE +
@@ -33,7 +36,10 @@ import java.util.List;
         "  trace *StringUtils isBlank '#cost>100'\n" +
         "  trace -E org\\\\.apache\\\\.commons\\\\.lang\\\\.StringUtils isBlank\n" +
         "  trace -E com.test.ClassA|org.test.ClassB method1|method2|method3\n" +
+        "  trace demo.MathGame run -n 5\n" +
+        "  trace demo.MathGame run --skipJDKMethod false\n" +
         Constants.WIKI + Constants.WIKI_HOME + "trace")
+//@formatter:on
 public class TraceCommand extends EnhancerCommand {
 
     private String classPattern;
@@ -80,8 +86,9 @@ public class TraceCommand extends EnhancerCommand {
         this.pathPatterns = pathPatterns;
     }
 
-    @Option(shortName = "j", longName = "jdkMethodSkip")
-    @Description("skip jdk method trace")
+    @Option(longName = "skipJDKMethod")
+    @DefaultValue("true")
+    @Description("skip jdk method trace, default value true.")
     public void setSkipJDKTrace(boolean skipJDKTrace) {
         this.skipJDKTrace = skipJDKTrace;
     }
@@ -141,7 +148,7 @@ public class TraceCommand extends EnhancerCommand {
     @Override
     protected AdviceListener getAdviceListener(CommandProcess process) {
         if (pathPatterns == null || pathPatterns.isEmpty()) {
-            return new TraceAdviceListener(this, process);
+            return new TraceAdviceListener(this, process, GlobalOptions.verbose || this.verbose);
         } else {
             return new PathTraceAdviceListener(this, process);
         }

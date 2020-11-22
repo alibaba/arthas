@@ -1,8 +1,9 @@
 package com.taobao.arthas.core.command.klass100;
 
+import com.alibaba.arthas.deps.org.slf4j.Logger;
+import com.alibaba.arthas.deps.org.slf4j.LoggerFactory;
 import com.taobao.arthas.core.util.FileUtils;
 import com.taobao.arthas.core.util.LogUtil;
-import com.taobao.middleware.logger.Logger;
 
 import java.io.File;
 import java.io.IOException;
@@ -18,7 +19,7 @@ import java.util.Set;
  */
 class ClassDumpTransformer implements ClassFileTransformer {
 
-    private static final Logger logger = LogUtil.getArthasLogger();
+    private static final Logger logger = LoggerFactory.getLogger(ClassDumpTransformer.class);
 
     private Set<Class<?>> classesToEnhance;
     private Map<Class<?>, File> dumpResult;
@@ -33,7 +34,7 @@ class ClassDumpTransformer implements ClassFileTransformer {
     public ClassDumpTransformer(Set<Class<?>> classesToEnhance, File directory) {
         this.classesToEnhance = classesToEnhance;
         this.dumpResult = new HashMap<Class<?>, File>();
-        this.arthasLogHome = new File(LogUtil.LOGGER_FILE).getParentFile();
+        this.arthasLogHome = new File(LogUtil.loggingDir());
         this.directory = directory;
     }
 

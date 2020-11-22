@@ -1,5 +1,9 @@
 package com.taobao.arthas.core.command.basic1000;
 
+import com.taobao.arthas.core.command.model.ArgumentVO;
+import com.taobao.arthas.core.command.model.CommandOptionVO;
+import com.taobao.arthas.core.command.model.CommandVO;
+import com.taobao.arthas.core.command.model.HelpModel;
 import com.taobao.arthas.core.shell.cli.Completion;
 import com.taobao.arthas.core.shell.cli.CompletionUtils;
 import com.taobao.arthas.core.shell.command.AnnotatedCommand;
@@ -9,23 +13,14 @@ import com.taobao.arthas.core.shell.command.CommandResolver;
 import com.taobao.arthas.core.shell.session.Session;
 import com.taobao.arthas.core.util.usage.StyledUsageFormatter;
 import com.taobao.middleware.cli.CLI;
+import com.taobao.middleware.cli.Option;
 import com.taobao.middleware.cli.annotations.Argument;
 import com.taobao.middleware.cli.annotations.Description;
 import com.taobao.middleware.cli.annotations.Name;
 import com.taobao.middleware.cli.annotations.Summary;
-import com.taobao.text.Color;
-import com.taobao.text.Decoration;
-import com.taobao.text.Style;
-import com.taobao.text.ui.Element;
-import com.taobao.text.ui.LabelElement;
-import com.taobao.text.ui.TableElement;
-import com.taobao.text.util.RenderUtil;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import static com.taobao.text.ui.Element.label;
-import static com.taobao.text.ui.Element.row;
 
 /**
  * @author vlinux on 14/10/26.
@@ -47,14 +42,89 @@ public class HelpCommand extends AnnotatedCommand {
     public void process(CommandProcess process) {
         List<Command> commands = allCommands(process.session());
         Command targetCmd = findCommand(commands);
-        String message;
         if (targetCmd == null) {
-            message = RenderUtil.render(mainHelp(commands), process.width());
+            process.appendResult(createHelpModel(commands));
         } else {
-            message = commandHelp(targetCmd, process.width());
+            process.appendResult(createHelpDetailModel(targetCmd));
         }
-        process.write(message);
         process.end();
+    }
+
+    public HelpModel createHelpDetailModel(Command targetCmd) {
+        return new HelpModel(createCommandVO(targetCmd, true));
+    }
+
+    private HelpModel createHelpModel(List<Command> commands) {
+        HelpModel helpModel = new HelpModel();
+        for (Command command : commands) {
+            if(command.cli() == null || command.cli().isHidden()){
+                continue;
+            }
+            helpModel.addCommandVO(createCommandVO(command, false));
+        }
+        return helpModel;
+    }
+
+    private CommandVO createCommandVO(Command command, boolean withDetail) {
+        CLI cli = command.cli();
+        CommandVO commandVO = new CommandVO();
+        commandVO.setName(command.name());
+        if (cli!=null){
+            commandVO.setSummary(cli.getSummary());
+            if (withDetail){
+                commandVO.setCli(cli);
+                StyledUsageFormatter usageFormatter = new StyledUsageFormatter(null);
+                String usageLine = usageFormatter.computeUsageLine(null, cli);
+                commandVO.setUsage(usageLine);
+                commandVO.setDescription(cli.getDescription());
+
+                //以线程安全的方式遍历options
+                List<Option> options = cli.getOptions();
+                for (int i = 0; i < options.size(); i++) {
+                    Option option = options.get(i);
+                    if (option.isHidden()){
+                        continue;
+                    }
+                    commandVO.addOption(createOptionVO(option));
+                }
+
+                //arguments
+                List<com.taobao.middleware.cli.Argument> arguments = cli.getArguments();
+                for (int i = 0; i < arguments.size(); i++) {
+                    com.taobao.middleware.cli.Argument argument = arguments.get(i);
+                    if (argument.isHidden()){
+                        continue;
+                    }
+                    commandVO.addArgument(createArgumentVO(argument));
+                }
+            }
+        }
+        return commandVO;
+    }
+
+    private ArgumentVO createArgumentVO(com.taobao.middleware.cli.Argument argument) {
+        ArgumentVO argumentVO = new ArgumentVO();
+        argumentVO.setArgName(argument.getArgName());
+        argumentVO.setMultiValued(argument.isMultiValued());
+        argumentVO.setRequired(argument.isRequired());
+        return argumentVO;
+    }
+
+    private CommandOptionVO createOptionVO(Option option) {
+        CommandOptionVO optionVO = new CommandOptionVO();
+        if (!isEmptyName(option.getLongName())) {
+            optionVO.setLongName(option.getLongName());
+        }
+        if (!isEmptyName(option.getShortName())) {
+            optionVO.setShortName(option.getShortName());
+        }
+        optionVO.setDescription(option.getDescription());
+        optionVO.setAcceptValue(option.acceptValue());
+        return optionVO;
+    }
+
+    private boolean isEmptyName(String name) {
+        return name == null || name.equals(Option.NO_NAME);
     }
 
     @Override
@@ -70,24 +140,6 @@ public class HelpCommand extends AnnotatedCommand {
             names.add(command.name());
         }
         CompletionUtils.complete(completion, names);
-    }
-
-    private static String commandHelp(Command command, int width) {
-        return StyledUsageFormatter.styledUsage(command.cli(), width);
-    }
-
-    private static Element mainHelp(List<Command> commands) {
-        TableElement table = new TableElement().leftCellPadding(1).rightCellPadding(1);
-        table.row(new LabelElement("NAME").style(Style.style(Decoration.bold)), new LabelElement("DESCRIPTION"));
-        for (Command command : commands) {
-            CLI cli = command.cli();
-            // com.taobao.arthas.core.shell.impl.BuiltinCommandResolver doesn't have CLI instance
-            if (cli == null || cli.isHidden()) {
-                continue;
-            }
-            table.add(row().add(label(cli.getName()).style(Style.style(Color.green))).add(label(cli.getSummary())));
-        }
-        return table;
     }
 
     private List<Command> allCommands(Session session) {

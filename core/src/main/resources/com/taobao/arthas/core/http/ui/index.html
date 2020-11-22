@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Arthas WebUI</title>
+</head>
+<body>
+<script src="../lib/vue/vue-2.6.11.js"></script>
+<script src="../lib/vue/vue-router-3.1.6.js"></script>
+<script src="../lib/axios-0.19.2.min.js"></script>
+<script src="../element-ui@2.13.0/lib/index.js"></script>
+<link rel="stylesheet" href="../element-ui@2.13.0/lib/theme-chalk/index.css">
+<link rel="stylesheet" href="ui.css">
+
+<div id="app">
+    <router-view/>
+</div>
+
+<template id="session-view">
+    <div>
+        <el-container class="container">
+            <el-header class="header">
+                <el-row >
+                    <el-col :span="12">
+                        <div class="logo">
+                            <a href="https://github.com/alibaba/arthas" target="_blank">
+                                <img src="../logo.png" height="25px">
+                            </a>
+                        </div>
+                        <div class="logo">
+                            <a class="nav-link" href="https://arthas.aliyun.com/doc" target="_blank">Documentation</a>
+                            <a class="nav-link" href="https://arthas.aliyun.com/doc-tutorials" target="_blank">Online Tutorials</a>
+                            <a class="nav-link" href="https://arthas.aliyun.com/doc" target="_blank">Github</a>
+                        </div>
+                    </el-col>
+                    <el-col :span="12" class="header-right">
+                        <el-button type="primary" size="mini" @click="openNewSession">New</el-button>
+                        <el-button type="primary" size="mini">Share</el-button>
+                        <el-button type="primary" size="mini">Close</el-button>
+                        <el-button type="primary" size="mini">Shutdown</el-button>
+                        <div class="user-info">
+                            <i class="el-icon-s-custom user-icon"></i>
+                            <span>Tom</span>
+                        </div>
+                    </el-col>
+                </el-row>
+            </el-header>
+            <el-main id="main-body" class="main-body">
+                <div v-for="result in commandResults" >
+                    <el-card class="resultMsg" v-bind:class="messageClass(result)">
+                        {{JSON.stringify(result)}}
+                    </el-card>
+                    <div class="min-gap"></div>
+                </div>
+            </el-main>
+
+            <!--  底部  -->
+            <el-footer class="footer-row">
+                <div class="footer-left">
+                    <div>Command:</div>
+                </div>
+                <div class="footer-input">
+                    <el-input ref="commandInput"
+                            placeholder="Enter command"
+                            autosize
+                            clearable
+                            @keyup.enter.native="executeCommand"
+                            :disabled="inputStatus!='ALLOW_INPUT'"
+                            v-model="commandLine">
+                    </el-input>
+                </div>
+                <div class="footer-button">
+                    <el-button v-if="inputStatus=='ALLOW_INPUT'" type="primary" size="mini" @click="executeCommand">Execute</el-button>
+                    <el-button v-if="inputStatus=='ALLOW_INTERRUPT'" type="danger" size="mini" @click="interruptJob">Interrupt</el-button>
+                </div>
+            </el-footer>
+        </el-container>
+    </div>
+</template>
+
+<template id="history-view">
+    <div>
+        <el-container class="container">
+            <el-header class="header">
+                <el-row >
+                    <el-col :span="12">
+                        <div class="logo">
+                            <a href="https://github.com/alibaba/arthas" target="_blank">
+                                <img src="../logo.png" height="25px">
+                            </a>
+                        </div>
+                        <div class="logo">
+                            <a class="nav-link" href="https://arthas.aliyun.com/doc" target="_blank">Documentation</a>
+                            <a class="nav-link" href="https://arthas.aliyun.com/doc-tutorials" target="_blank">Online Tutorials</a>
+                            <a class="nav-link" href="https://arthas.aliyun.com/doc" target="_blank">Github</a>
+                        </div>
+                    </el-col>
+                    <el-col :span="12" class="header-right">
+                        <el-button type="primary" size="mini">New</el-button>
+                        <el-button type="primary" size="mini">Share</el-button>
+                        <el-button type="primary" size="mini">Close</el-button>
+                        <el-button type="primary" size="mini">Shutdown</el-button>
+                        <div class="user-info">
+                            <i class="el-icon-s-custom user-icon"></i>
+                            <span>Tom</span>
+                        </div>
+                    </el-col>
+                </el-row>
+            </el-header>
+            <el-main>
+            </el-main>
+        </el-container>
+    </div>
+</template>
+
+<template id="search-view">
+</template>
+
+<script src="ui.js"></script>
+</body>
+</html>

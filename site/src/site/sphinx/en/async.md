@@ -1,6 +1,8 @@
 Arthas Async Jobs
 ===
 
+[`Async Jobs` online tutorial](https://arthas.aliyun.com/doc/arthas-tutorials?language=en&id=case-async-jobs)
+
 Asynchronous jobs in arthas. The idea is borrowed from [linux jobs](http://man7.org/linux/man-pages/man1/jobs.1p.html).
 
 
@@ -40,8 +42,8 @@ You can see that there is currently a background job executing:
 
 When the job is executing in the foreground, for example, directly executing the command `trace Test t`, or executing the background job command `trace Test t &`, then putting the job back to the foreground via `fg` command, the console cannot continue to execute other command, but can receive and process the following keyboard events:
 
-* ‘ctrl + z’: Suspend the job, the job status will change to `Stopped`, and the job can be restarted by `bg <job-id>` or `fg <job-id>`
-* ‘ctrl + c’: Stop the job
+* ‘ctrl + z’: Suspends the job, the job status will change to `Stopped`, and the job can be restarted by `bg <job-id>` or `fg <job-id>`
+* ‘ctrl + c’: Stops the job
 * ‘ctrl + d’: According to linux semantics this should lead to exit the terminal, right now Arthas has not implemented this yet, therefore simply ignore this keystroke.
 
 ## 4. fg/bg, switch the job from the foreground to the background, and vise verse
@@ -60,7 +62,7 @@ $ trace Test t >> test.out &
 
 The trace command will be running in the background and the output will be redirect to `~/logs/arthas-cache/test.out`. You can continue to execute other commands in the console, at the same time, you can also examine the execution result from the output file.
 
-When connect to a remote Arthas server, you may not be able to view the output file on the remote machine. In this case, Arthas also supports automatically redirecting the output to the local cache file. Examples are as follows:
+When connected to a remote Arthas server, you may not be able to view the output file on the remote machine. In this case, Arthas also supports automatically redirecting the output to the local cache file. Examples are as follows:
 
 ```bash
 $ trace Test t >>  &
@@ -78,3 +80,4 @@ If you want to stop background job, just `kill <job-id>`.
 
 * Support up to 8 commands at the same time to redirect the output to the log files.
 * Do not open too many background jobs at the same time to avoid negative performance effect to the target JVM.
+* If you do not want to stop the Arthas service and continue to perform background tasks, you can exit the Arthas console by executing `quit` command (`stop` command will stop the Arthas service)

@@ -4,6 +4,7 @@
   <id>bin</id>
   <includeBaseDirectory>false</includeBaseDirectory>
   <formats>
+    <format>dir</format>
     <format>zip</format>
   </formats>
 
@@ -13,8 +14,16 @@
       <destName>arthas-spy.jar</destName>
     </file>
     <file>
-      <source>../core/target/arthas-core-jar-with-dependencies.jar</source>
+      <source>../core/target/arthas-core-shade.jar</source>
       <destName>arthas-core.jar</destName>
+    </file>
+    <file>
+      <source>../core/src/main/java/logback.xml</source>
+      <destName>logback.xml</destName>
+    </file>
+    <file>
+      <source>../core/src/main/java/arthas.properties</source>
+      <destName>arthas.properties</destName>
     </file>
     <file>
       <source>../agent/target/arthas-agent-jar-with-dependencies.jar</source>
@@ -45,5 +54,14 @@
     <file>
       <source>../bin/as.bat</source>
     </file>
+    <file>
+      <source>../bin/as-service.bat</source>
+    </file>
   </files>
+
+  <fileSets>
+    <fileSet>
+      <directory>../async-profiler</directory>
+    </fileSet>
+  </fileSets>
 </assembly>

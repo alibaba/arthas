@@ -1,0 +1,108 @@
+.\" Manpage for Arthas
+.\" Submit an issue to https://github.com/alibaba/arthas to coreect errors and fix typos.
+.TH man 1 "3" "Arthas man page"
+
+.SH NAME
+Arthas \- Alibaba Java Diagnostic Tool
+
+.SH SYNOPSIS
+.B as [-h] [--target-ip <value>] [--telnet-port <value>]
+       [--http-port <value>] [--session-timeout <value>] [--arthas-home <value>]
+       [--use-version <value>] [--repo-mirror <value>] [--versions] [--use-http]
+       [--attach-only] [-c <value>] [-f <value>] [-v] [pid]
+
+.SH DESCRIPTION
+Arthas is a Java Diagnostic tool open sourced by Alibaba, Arthas allows developers
+to troubleshsoot production issues for Java applications without modifying code
+or restarting servers.
+
+Oftentimes the production system network is inaccessible from local development 
+envoirnment. if issues are encountered in production systems, it is impossible to 
+use the IDE to debug the application remotely, What's even worse, debugging in 
+production envoirnment is unacceptable, as it will suspend all the threads, leading
+to services downtime.
+
+And if you're thinking of adding some logs to your code to help troubleshsoot the 
+issue, you'll have to go through the following lifecycle: test, staging, and then to 
+production, which is for sure going to take a lot of time and also this is an inefficient
+approach! Worse still, the issue may not be fixed since it might be irreproduceable 
+once the JVM is restarted as above.
+
+Arthas is built to solve these issues. A developer can troubleshoot production
+issues on the fly. No JVM restart. no additional code changes. Arthas works as 
+an observer, that is, it will never suspend your running threads.
+
+.SH OPTIONS AND ARGUEMENTS
+
+.TP 
+.B -h, --help 
+print usage
+
+.TP 
+.B --target-ip <value>
+The target JVM listen ip, the default ip is 127.0.0.1
+
+.TP 
+.B --telnet-port <value>
+The target jvm listen telnet port, default is 3658
+
+.TP 
+.B --http-port <value>
+The target jvm listen http port, default is 8563
+
+.TP
+.B --session-timeout <value> 
+The session timeout time in seconds, default 1800 (30min)
+
+.TP
+.B --arthas-home <value> 
+The arthas home
+
+.TP 
+.B --use-version <value>
+Use specific version of arthas
+
+.TP 
+.B --repo-mirror <value>
+Use special maven repository mirror, value is center/aliyun or http repo url.
+
+.TP
+.B --versions
+List local and remote arthas versions
+
+.TP 
+.B --use-http 
+Enforce use http to download, default use https
+
+.TP
+.B --attach-only
+Attach target process only, do not connect
+
+.TP 
+.B --debug-attach 
+Debug attach agent 
+
+.TP 
+.B -c, --command <value> 
+Command to execute, multiple commands separated by ";"
+
+.TP 
+.B -f, --batch-file <value>
+The batch file to execute 
+
+.TP 
+.B --height <value> 
+arthas-client terminal height 
+
+.TP 
+.B --width <value>
+arthas-client terminal width 
+
+.TP 
+.B -v, --verbose 
+Verbose, print debug info.
+
+.TP
+.B <pid>
+Target pid
+

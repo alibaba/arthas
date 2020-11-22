@@ -1,13 +1,14 @@
 package com.taobao.arthas.core.shell.term.impl;
 
+import com.alibaba.arthas.deps.org.slf4j.Logger;
+import com.alibaba.arthas.deps.org.slf4j.LoggerFactory;
 import com.taobao.arthas.core.shell.future.Future;
 import com.taobao.arthas.core.shell.handlers.Handler;
 import com.taobao.arthas.core.shell.term.Term;
 import com.taobao.arthas.core.shell.term.TermServer;
-import com.taobao.arthas.core.util.LogUtil;
-import com.taobao.middleware.logger.Logger;
+import com.taobao.arthas.core.shell.term.impl.http.NettyWebsocketTtyBootstrap;
+import io.netty.util.concurrent.EventExecutorGroup;
 import io.termd.core.function.Consumer;
-import io.termd.core.http.netty.NettyWebsocketTtyBootstrap;
 import io.termd.core.tty.TtyConnection;
 
 import java.util.concurrent.TimeUnit;
@@ -17,18 +18,20 @@ import java.util.concurrent.TimeUnit;
  */
 public class HttpTermServer extends TermServer {
 
-    private static Logger logger = LogUtil.getArthasLogger();
+    private static final Logger logger = LoggerFactory.getLogger(HttpTermServer.class);
 
     private Handler<Term> termHandler;
     private NettyWebsocketTtyBootstrap bootstrap;
     private String hostIp;
     private int port;
     private long connectionTimeout;
+    private EventExecutorGroup workerGroup;
 
-    public HttpTermServer(String hostIp, int port, long connectionTimeout) {
+    public HttpTermServer(String hostIp, int port, long connectionTimeout, EventExecutorGroup workerGroup) {
         this.hostIp = hostIp;
         this.port = port;
         this.connectionTimeout = connectionTimeout;
+        this.workerGroup = workerGroup;
     }
 
     @Override
@@ -40,7 +43,7 @@ public class HttpTermServer extends TermServer {
     @Override
     public TermServer listen(Handler<Future<TermServer>> listenHandler) {
         // TODO: charset and inputrc from options
-        bootstrap = new NettyWebsocketTtyBootstrap().setHost(hostIp).setPort(port);
+        bootstrap = new NettyWebsocketTtyBootstrap(workerGroup).setHost(hostIp).setPort(port);
         try {
             bootstrap.start(new Consumer<TtyConnection>() {
                 @Override
@@ -50,7 +53,7 @@ public class HttpTermServer extends TermServer {
             }).get(connectionTimeout, TimeUnit.MILLISECONDS);
             listenHandler.handle(Future.<TermServer>succeededFuture());
         } catch (Throwable t) {
-            logger.error(null, "Error listening to port " + port, t);
+            logger.error("Error listening to port " + port, t);
             listenHandler.handle(Future.<TermServer>failedFuture(t));
         }
         return this;

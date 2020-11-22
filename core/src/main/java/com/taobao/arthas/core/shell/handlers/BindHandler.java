@@ -1,8 +1,8 @@
 package com.taobao.arthas.core.shell.handlers;
 
+import com.alibaba.arthas.deps.org.slf4j.Logger;
+import com.alibaba.arthas.deps.org.slf4j.LoggerFactory;
 import com.taobao.arthas.core.shell.future.Future;
-import com.taobao.arthas.core.util.LogUtil;
-import com.taobao.middleware.logger.Logger;
 
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -11,7 +11,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
  */
 public class BindHandler implements Handler<Future<Void>> {
 
-    private static final Logger logger = LogUtil.getArthasLogger();
+    private static final Logger logger = LoggerFactory.getLogger(BindHandler.class);
 
     private AtomicBoolean isBindRef;
 
@@ -22,7 +22,7 @@ public class BindHandler implements Handler<Future<Void>> {
     @Override
     public void handle(Future<Void> event) {
         if (event.failed()) {
-            logger.error(null, "Error listening term server:", event.cause());
+            logger.error("Error listening term server:", event.cause());
             isBindRef.compareAndSet(true, false);
         }
     }
