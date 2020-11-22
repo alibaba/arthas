@@ -1,11 +1,12 @@
 package com.taobao.arthas.core.shell.term.impl;
 
+import com.alibaba.arthas.deps.org.slf4j.Logger;
+import com.alibaba.arthas.deps.org.slf4j.LoggerFactory;
 import com.taobao.arthas.core.shell.cli.CliToken;
 import com.taobao.arthas.core.shell.cli.CliTokens;
 import com.taobao.arthas.core.shell.handlers.Handler;
 import com.taobao.arthas.core.shell.session.Session;
-import com.taobao.arthas.core.util.LogUtil;
-import com.taobao.middleware.logger.Logger;
+import com.taobao.arthas.core.shell.term.impl.httptelnet.HttpTelnetTermServer;
 
 import io.termd.core.function.Consumer;
 import io.termd.core.readline.Completion;
@@ -17,7 +18,7 @@ import java.util.List;
  * @author beiwei30 on 23/11/2016.
  */
 class CompletionHandler implements Consumer<Completion> {
-    private static final Logger logger = LogUtil.getArthasLogger();
+    private static final Logger logger = LoggerFactory.getLogger(CompletionHandler.class);
     private final Handler<com.taobao.arthas.core.shell.cli.Completion> completionHandler;
     private final Session session;
 
@@ -35,7 +36,7 @@ class CompletionHandler implements Consumer<Completion> {
             completionHandler.handle(comp);
         } catch (Throwable t) {
             // t.printStackTrace();
-            logger.error(null, "completion error", t);
+            logger.error("completion error", t);
         }
     }
 }

@@ -6,14 +6,7 @@
 
 1. 下载最新版本
 
-    **最新版本，点击下载**：[![Arthas](https://img.shields.io/maven-central/v/com.taobao.arthas/arthas-packaging.svg?style=flat-square "Arthas")](http://repository.sonatype.org/service/local/artifact/maven/redirect?r=central-proxy&g=com.taobao.arthas&a=arthas-packaging&e=zip&c=bin&v=LATEST)
-
-
-    如果下载速度比较慢，可以尝试用[阿里云的镜像仓库](https://maven.aliyun.com/)，比如要下载`3.x.x`版本（替换`3.x.x`为最新版本），下载的url是：
-
-    https://maven.aliyun.com/repository/public/com/taobao/arthas/arthas-packaging/3.x.x/arthas-packaging-3.x.x-bin.zip
-
-
+    **最新版本，点击下载**：[![](https://img.shields.io/maven-central/v/com.taobao.arthas/arthas-packaging.svg?style=flat-square "Arthas")](https://arthas.aliyun.com/download/latest_version?mirror=aliyun)
 
 2. 解压缩arthas的压缩包
     ```
@@ -33,7 +26,7 @@
 
 4. 启动Arthas
 
-    启动之前，请确保老版本的Arthas已经`shutdown`.
+    启动之前，请确保老版本的Arthas已经`stop`.
 
     ```
     ./as.sh
@@ -46,7 +39,7 @@
 Arthas 支持在 Linux/Unix/Mac 等平台上一键安装，请复制以下内容，并粘贴到命令行中，敲 `回车` 执行即可：
 
 ```bash
-curl -L https://alibaba.github.io/arthas/install.sh | sh
+curl -L https://arthas.aliyun.com/install.sh | sh
 ```
 
 上述命令会下载启动脚本文件 `as.sh` 到当前目录，你可以放在任何地方或将其加入到 `$PATH` 中。
@@ -58,7 +51,7 @@ curl -L https://alibaba.github.io/arthas/install.sh | sh
 
 ### Windows
 
-最新版本，点击下载：[![Arthas](https://img.shields.io/maven-central/v/com.taobao.arthas/arthas-packaging.svg?style=flat-square "Arthas")](http://repository.sonatype.org/service/local/artifact/maven/redirect?r=central-proxy&g=com.taobao.arthas&a=arthas-packaging&e=zip&c=bin&v=LATEST)
+最新版本，点击下载：[![](https://img.shields.io/maven-central/v/com.taobao.arthas/arthas-packaging.svg?style=flat-square "Arthas")](https://arthas.aliyun.com/download/latest_version?mirror=aliyun)
 
 
 下载解压后在bin目录有 `as.bat`。此脚本暂时只接受一个参数 pid，即只能诊断本机上的 Java 进程。（欢迎精通bat脚本的开发者改进）
@@ -66,6 +59,19 @@ curl -L https://alibaba.github.io/arthas/install.sh | sh
 ```
 as.bat <pid>
 ```
+
+使用以下命令诊断windows服务模式运行的Java进程 (--interact 打开服务UI交互模式，方便诊断问题)：
+```
+as-service.bat -port <port>
+as-service.bat -pid <pid>
+as-service.bat -pid <pid> --interact
+```
+
+清理arthas windows服务执行以下命令：
+```
+as-service.bat -remove
+```
+
 
 ## 手动拼接命令行启动
 

@@ -1,6 +1,8 @@
 tt
 ===
 
+[`tt`在线教程](https://arthas.aliyun.com/doc/arthas-tutorials.html?language=cn&id=command-tt)
+
 > 方法执行数据的时空隧道，记录下指定方法每次调用的入参和返回信息，并能对这些不同的时间下调用进行观测
 
 `watch` 虽然很方便和灵活，但需要提前想清楚观察表达式的拼写，这对排查问题而言要求太高，因为很多时候我们并不清楚问题出自于何方，只能靠蛛丝马迹进行猜测。
@@ -171,7 +173,7 @@ Time fragment[1004] successfully replayed.
 Affect(row-cnt:1) cost in 14 ms.
 ```
 
-你会发现结果虽然一样，但调用的路径发生了变化，有原来的程序发起变成了 Arthas 自己的内部线程发起的调用了。
+你会发现结果虽然一样，但调用的路径发生了变化，由原来的程序发起变成了 Arthas 自己的内部线程发起的调用了。
 
 - 需要强调的点
 

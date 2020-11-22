@@ -1,6 +1,8 @@
 jad
 ===
 
+[`jad` online tutorial](https://arthas.aliyun.com/doc/arthas-tutorials?language=en&id=command-jad)
+
 > Decompile the specified classes.
 
 `jad` helps to decompile the byte code running in JVM to the source code to assist you to understand the logic behind better.
@@ -14,6 +16,7 @@ jad
 |---:|:---|
 |*class-pattern*|pattern for the class name|
 |`[c:]`|hashcode of the class loader that loads the class|
+|`[classLoaderClass:]`| The class name of the ClassLoader that executes the expression. |
 |`[E]`|turn on regex match while the default is wildcard match|
 
 ### Usage
@@ -49,6 +52,30 @@ CharSequence {
         String.checkBounds(arrby, n, n2);
         this.value = StringCoding.decode(arrby, n, n2);
     }
+...
+```
+
+#### Print source only
+
+By default, the decompile result will have the `ClassLoader` information. With the `--source-only` option, you can print only the source code. Conveniently used with the [mc](mc.md)/[redefine](redefine.md) commands.
+
+```
+$ jad --source-only demo.MathGame
+/*
+ * Decompiled with CFR 0_132.
+ */
+package demo;
+
+import java.io.PrintStream;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Random;
+import java.util.concurrent.TimeUnit;
+
+public class MathGame {
+    private static Random random = new Random();
+    public int illegalArgumentCount = 0;
 ...
 ```
 
@@ -117,3 +144,7 @@ public class Logger extends Category
 
 Affect(row-cnt:1) cost in 190 ms.
 ```
+
+For classloader with only one instance, it can be specified by `--classLoaderClass` using class name, which is more convenient to use.
+
+The value of `--classloaderclass` is the class name of classloader. It can only work when it matches a unique classloader instance. The purpose is to facilitate the input of general commands. However, `-c <hashcode>` is dynamic.

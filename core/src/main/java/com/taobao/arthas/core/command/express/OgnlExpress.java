@@ -1,7 +1,7 @@
 package com.taobao.arthas.core.command.express;
 
-import com.taobao.arthas.core.util.LogUtil;
-import com.taobao.middleware.logger.Logger;
+import com.alibaba.arthas.deps.org.slf4j.Logger;
+import com.alibaba.arthas.deps.org.slf4j.LoggerFactory;
 
 import ognl.ClassResolver;
 import ognl.DefaultMemberAccess;
@@ -15,7 +15,7 @@ import ognl.OgnlContext;
  */
 public class OgnlExpress implements Express {
     private static final MemberAccess MEMBER_ACCESS = new DefaultMemberAccess(true);
-    Logger logger = LogUtil.getArthasLogger();
+    private static final Logger logger = LoggerFactory.getLogger(OgnlExpress.class);
 
     private Object bindObject;
     private final OgnlContext context;
@@ -36,7 +36,7 @@ public class OgnlExpress implements Express {
         try {
             return Ognl.getValue(express, context, bindObject);
         } catch (Exception e) {
-            logger.error(null, "Error during evaluating the expression:", e);
+            logger.error("Error during evaluating the expression:", e);
             throw new ExpressException(express, e);
         }
     }

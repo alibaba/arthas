@@ -73,7 +73,7 @@ public class CompletionUtils {
             return true;
         } else {
             completion.complete(candidates);
-            return false;
+            return true;
         }
     }
 
@@ -199,6 +199,10 @@ public class CompletionUtils {
     public static boolean completeMethodName(Completion completion) {
         List<CliToken> tokens = completion.lineTokens();
         String lastToken = completion.lineTokens().get(tokens.size() - 1).value();
+
+        if (StringUtils.isBlank(lastToken)) {
+            lastToken = "";
+        }
 
         // retrieve the class name
         String className;

@@ -1,6 +1,6 @@
 package com.taobao.arthas.core.command.monitor200;
 
-import com.taobao.arthas.core.advisor.ReflectAdviceListenerAdapter;
+import com.taobao.arthas.core.advisor.AdviceListenerAdapter;
 import com.taobao.arthas.core.command.ScriptSupportCommand;
 import com.taobao.arthas.core.shell.command.CommandProcess;
 import com.taobao.arthas.core.advisor.Advice;
@@ -11,7 +11,7 @@ import com.taobao.arthas.core.advisor.ArthasMethod;
  * @author beiwei30 on 01/12/2016.
  */
 @Deprecated
-public class GroovyAdviceListener extends ReflectAdviceListenerAdapter {
+public class GroovyAdviceListener extends AdviceListenerAdapter {
     private ScriptSupportCommand.ScriptListener scriptListener;
     private ScriptSupportCommand.Output output;
 

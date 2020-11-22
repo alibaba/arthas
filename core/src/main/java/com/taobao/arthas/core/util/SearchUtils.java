@@ -18,10 +18,11 @@ import java.util.Set;
 public class SearchUtils {
 
     /**
-     * 根据类名匹配，搜已经被JVM加载的类
+     * 根据类名匹配，搜索已经被JVM加载的类
      *
      * @param inst             inst
      * @param classNameMatcher 类名匹配
+     * @param limit            最大匹配限制
      * @return 匹配的类集合
      */
     public static Set<Class<?>> searchClass(Instrumentation inst, Matcher<String> classNameMatcher, int limit) {

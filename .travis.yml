@@ -1,24 +1,47 @@
-language: generic
+language: java
 sudo: false
 
-jdk:
-  - openjdk7
-  - openjdk8
-  - openjdk9
-  - openjdk10
-  - openjdk11
-  - oraclejdk7
-  - oraclejdk8
-  - oraclejdk9
-  - oraclejdk10
-  - oraclejdk11
+matrix:
+  include:
+# Target option 6 is no longer supported. Use 7 or later.
+#  - env:
+#      - ZULUJDK=12
+  - env:
+      - ZULUJDK=11
+  - env:
+      - ZULUJDK=10
+  - env:
+      - ZULUJDK=9
+  - env:
+      - ZULUJDK=8
+  - env:
+      - ZULUJDK=7
+# TLS error
+#  - env:
+#      - ZULUJDK=6
+
+before_install:
+  # installing the rpm package 
+  - sudo apt-get update -qq
+  - sudo apt-get install -qq rpm
+  # adding $HOME/.sdkman to cache would create an empty directory, which interferes with the initial installation
+  - "[[ -d $HOME/.sdkman/bin/ ]] || rm -rf $HOME/.sdkman/"
+  - curl -sL https://get.sdkman.io | bash
+  - echo sdkman_auto_answer=true > $HOME/.sdkman/etc/config
+  - source "$HOME/.sdkman/bin/sdkman-init.sh"
+
+install:
+  - sdk install java $(sdk list java | grep -o "$ZULUJDK\.[0-9\.]*-zulu" | head -1)
+  - unset JAVA_HOME
 
 cache:
   directories:
     - "$HOME/.m2/repository"
     - "$HOME/.m2/wrapper"
+
 script:
-  - ./mvnw clean cobertura:cobertura package -P full -Dsphinx.binUrl=https://github.com/hengyunabc/sphinx-binary/releases/download/v0.4.0.1/sphinx.linux-x86_64
+  - ./mvnw -version
+  - travis_wait 30 ./mvnw clean package --batch-mode -P full
 
 after_success:
   - bash <(curl -s https://codecov.io/bash)
@@ -31,7 +54,11 @@ deploy:
   api_key:
     - secure: "V+omzrcAJ/awN3EsDkiELejjInz/rpgPLdyb4uZrcQnqhagbHYE+nY2KcjPEtRBVNkqlh6dxIIsUFvKrs5kxe5EVvI6rLQeZLFMqWUeNfWuhbuQWCV9ZPyQiqXCqNicj+LLHArzQRLx5w5YBvxdzMuXSWo1ZE4wy+c3koprulUSjr6XhNPKyyasq4EXKMXuLCjcvBVPHhXviG59Jbshb2lRHbkxMqYeLhWi/gUOBRbNC1CmcGGAMviFX7HpBOx5fMaVKPR7rzcULw3lXnLhdSwhXJ6ybnsN/osfN8zAx6XZIwvwvVQ12yM8S9eVthnjblFh+WKwOT1AS6hHFXkMTjh1FE5CtUVu+sFbGIngJ4C4O78VzWCKvH/IrIi4p2IkF+fcu8USnm7YZGuyoAwe3O5PqmWBuQV0iCEx0IGo/nPwVzj1+jnz38Go/DP1aVDJZMenysBNxi4l45d3J3CgMPvF00DDQKvxYrkBjdnByANrOisZPjIeUOc7GsWoDLCK9jZtXMID2NM+ehQnDbOJ3BS2Bjg7ojPc0Rw2yJjbzwNqaMiOPXp2ym/5DpaB/l5k2gSi2NCRUFCXhFNRCq9ChFXv+pYJwk0e17sleGvo6tnFDVCR6lFcXrYo/vGC43bL1dT4rY8E6VSRlE0jfoXdFFp4jw3v3a+DqVLGVC9UcTpw="
   file_glob: true
-  file: "packaging/target/*.zip"
+  file:
+    - "packaging/target/*.zip"
+    - "packaging/target/*.deb"
+    - "packaging/target/*.rpm"
+    - "tunnel-server/target/*.jar"
   skip_cleanup: true
   on:
     tags: true

@@ -9,7 +9,7 @@ Start Arthas
 
 ```bash
 ➜  bin git:(develop) ✗ ./as.sh
-Found existing java process, please choose one and hit RETURN.
+Found existing java process, please choose one and input the serial number of the process, eg : 1. Then hit ENTER.
   [1]: 3088 org.jetbrains.idea.maven.server.RemoteMavenServer
 * [2]: 12872 org.apache.catalina.startup.Bootstrap
   [3]: 2455
