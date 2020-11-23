@@ -362,7 +362,6 @@ public class TimeTunnelCommand extends EnhancerCommand {
                     .setSizeLimit(sizeLimit);
             process.appendResult(timeTunnelModel);
 
-
             affect.rCnt(1);
             process.appendResult(new RowAffectModel(affect));
             process.end();
