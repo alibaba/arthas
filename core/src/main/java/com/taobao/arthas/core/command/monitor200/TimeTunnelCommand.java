@@ -354,7 +354,8 @@ public class TimeTunnelCommand extends EnhancerCommand {
             }
 
             Advice advice = tf.getAdvice();
-            Object value = ExpressFactory.threadLocalExpress(advice).get(watchExpress);
+
+			Object value = ExpressFactory.unpooledExpress(advice.getLoader()).bind(advice).get(watchExpress);
             TimeTunnelModel timeTunnelModel = new TimeTunnelModel()
                     .setWatchValue(value)
                     .setExpand(expand)
