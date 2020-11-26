@@ -9,6 +9,7 @@ import org.springframework.context.annotation.Configuration;
 import com.alibaba.arthas.tunnel.server.app.configuration.ArthasProperties.EmbeddedRedis;
 
 import redis.embedded.RedisServer;
+import redis.embedded.RedisServerBuilder;
 
 /**
  * 
@@ -25,10 +26,13 @@ public class EmbeddedRedisConfiguration {
     public RedisServer embeddedRedisServer(ArthasProperties arthasProperties) {
         EmbeddedRedis embeddedRedis = arthasProperties.getEmbeddedRedis();
 
-        RedisServer redisServer = RedisServer.builder().port(embeddedRedis.getPort()).bind(embeddedRedis.getHost())
-                .build();
-        return redisServer;
+        RedisServerBuilder builder = RedisServer.builder().port(embeddedRedis.getPort()).bind(embeddedRedis.getHost());
 
+        for (String setting : embeddedRedis.getSettings()) {
+            builder.setting(setting);
+        }
+        RedisServer redisServer = builder.build();
+        return redisServer;
     }
 
     public static void main(String[] args) {
