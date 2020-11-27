@@ -78,3 +78,14 @@ public class ArthasAttachExample {
 
 }
 ```
+
+也可以配置属性：
+
+```java
+        HashMap<String, String> configMap = new HashMap<String, String>();
+        configMap.put("arthas.appName", "demo");
+        configMap.put("arthas.tunnelServer", "ws://127.0.0.1:7777/ws");
+        ArthasAgent.attach(configMap);
+```
+
+> 注意配置必须是`驼峰`的，和spring boot的`-`风格不一样。spring boot应用才同时支持`驼峰` 和 `-`风格的配置。
