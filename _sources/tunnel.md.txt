@@ -7,8 +7,9 @@ Arthas Tunnel
 
 在这种情况下，可以使用Arthas Tunnel Server/Client。
 
-参考: [Web Console](web-console.md)
-
+参考: 
+* [Web Console](web-console.md)
+* [Arthas Spring Boot Starter](spring-boot-starter.md)
 
 ### 下载部署arthas tunnel server
 

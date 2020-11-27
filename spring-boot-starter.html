@@ -39,8 +39,8 @@
     <link rel="stylesheet" href="_static/overrides.css" type="text/css" />
     <link rel="index" title="索引" href="genindex.html" />
     <link rel="search" title="搜索" href="search.html" />
-    <link rel="next" title="IDEA Plugin" href="idea-plugin.html" />
-    <link rel="prev" title="Docker" href="docker.html" />
+    <link rel="next" title="Http API" href="http-api.html" />
+    <link rel="prev" title="Arthas Tunnel" href="tunnel.html" />
 <script>
   if (window.location.href.startsWith("https://alibaba.github.io/arthas/")) {
       window.location.href = "https://arthas.aliyun.com/doc/" + window.location.href.substr("https://alibaba.github.io/arthas/".length);
@@ -100,7 +100,6 @@
             
               <ul class="current">
 <li class="toctree-l1"><a class="reference external" href="https://arthas.aliyun.com/">首页</a></li>
-<li class="toctree-l1"><a class="reference external" href="https://www.infoq.cn/talk/sQ7eKfv1KW1A0kUafBgv">投Arthas一票！</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://developer.aliyun.com/article/751641">技术征文</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://arthas.aliyun.com/doc/en/">English Docs</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://arthas.aliyun.com/doc/arthas-tutorials.html?language=cn">在线教程(推荐)</a></li>
@@ -110,7 +109,21 @@
 <li class="toctree-l1"><a class="reference internal" href="advanced-use.html">进阶使用</a></li>
 <li class="toctree-l1"><a class="reference internal" href="commands.html">命令列表</a></li>
 <li class="toctree-l1"><a class="reference internal" href="web-console.html">WebConsole</a></li>
-<li class="toctree-l1"><a class="reference internal" href="tunnel.html">Arthas Tunnel</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="tunnel.html">Arthas Tunnel</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="web-console.html">Web Console</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Arthas Spring Boot Starter</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id1">配置属性</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#endpoint">查看Endpoint信息</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#spring-boot">非spring boot应用使用方式</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="tunnel.html#arthas-tunnel-server">下载部署arthas tunnel server</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tunnel.html#arthastunnel-server">启动arthas时连接到tunnel server</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tunnel.html#id1">最佳实践</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tunnel.html#id2">集群方式管理</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tunnel.html#id3">Arthas tunnel server的工作原理</a></li>
+</ul>
+</li>
 <li class="toctree-l1"><a class="reference internal" href="http-api.html">Http API</a></li>
 <li class="toctree-l1"><a class="reference internal" href="docker.html">Docker</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Arthas Spring Boot Starter</a><ul>
@@ -170,6 +183,8 @@
   <ul class="wy-breadcrumbs">
     
       <li><a href="index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="tunnel.html">Arthas Tunnel</a> &raquo;</li>
         
       <li>Arthas Spring Boot Starter</li>
     
@@ -257,6 +272,15 @@ public class ArthasAttachExample {
 
 }</pre></div>
 </div>
+<p>也可以配置属性：</p>
+<div class="highlight-java notranslate"><div class="highlight hljs"><pre class="java">        HashMap&lt;String, String&gt; configMap = new HashMap&lt;String, String&gt;();
+        configMap.put(&quot;arthas.appName&quot;, &quot;demo&quot;);
+        configMap.put(&quot;arthas.tunnelServer&quot;, &quot;ws://127.0.0.1:7777/ws&quot;);
+        ArthasAgent.attach(configMap);</pre></div>
+</div>
+<blockquote>
+<div><p>注意配置必须是<code class="docutils literal notranslate"><span class="pre">驼峰</span></code>的，和spring boot的<code class="docutils literal notranslate"><span class="pre">-</span></code>风格不一样。spring boot应用才同时支持<code class="docutils literal notranslate"><span class="pre">驼峰</span></code> 和 <code class="docutils literal notranslate"><span class="pre">-</span></code>风格的配置。</p>
+</div></blockquote>
 </div>
 </div>
 
@@ -268,10 +292,10 @@ public class ArthasAttachExample {
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="idea-plugin.html" class="btn btn-neutral float-right" title="IDEA Plugin" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+        <a href="http-api.html" class="btn btn-neutral float-right" title="Http API" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
-        <a href="docker.html" class="btn btn-neutral float-left" title="Docker" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+        <a href="tunnel.html" class="btn btn-neutral float-left" title="Arthas Tunnel" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
       
     </div>
   

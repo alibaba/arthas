@@ -217,11 +217,18 @@
 </ul>
 <div class="section" id="supported-configuration-items">
 <h2>Supported configuration items<a class="headerlink" href="#supported-configuration-items" title="Permalink to this headline">¶</a></h2>
+<blockquote>
+<div><p>Note that the configuration must be <code class="docutils literal notranslate"><span class="pre">camel</span> <span class="pre">case</span></code>, which is different from the <code class="docutils literal notranslate"><span class="pre">-</span></code> style of spring boot. Only the spring boot application supports both <code class="docutils literal notranslate"><span class="pre">camel</span> <span class="pre">case</span></code> and <code class="docutils literal notranslate"><span class="pre">-</span></code> style configuration.</p>
+</div></blockquote>
 <div class="highlight-default notranslate"><pre class="literal-block">#arthas.config.overrideAll=true
 arthas.telnetPort=3658
 arthas.httpPort=8563
-arthas.ip=localhost
+arthas.ip=127.0.0.1
 
+# seconds
+arthas.sessionTimeout=1800
+
+#arthas.appName=demoapp
 #arthas.tunnelServer=ws://127.0.0.1:7777/ws
 #arthas.agentId=mmmmmmyiddddd</pre>
 </div>

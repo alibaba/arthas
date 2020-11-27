@@ -38,8 +38,8 @@
     <link rel="stylesheet" href="_static/overrides.css" type="text/css" />
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="IDEA Plugin" href="idea-plugin.html" />
-    <link rel="prev" title="Docker" href="docker.html" />
+    <link rel="next" title="Http API" href="http-api.html" />
+    <link rel="prev" title="Arthas Tunnel" href="tunnel.html" />
 <script>
   if (window.location.href.startsWith("https://alibaba.github.io/arthas/")) {
       window.location.href = "https://arthas.aliyun.com/doc/" + window.location.href.substr("https://alibaba.github.io/arthas/".length);
@@ -106,7 +106,21 @@
 <li class="toctree-l1"><a class="reference internal" href="advanced-use.html">Advanced usage</a></li>
 <li class="toctree-l1"><a class="reference internal" href="commands.html">Commands</a></li>
 <li class="toctree-l1"><a class="reference internal" href="web-console.html">WebConsole</a></li>
-<li class="toctree-l1"><a class="reference internal" href="tunnel.html">Arthas Tunnel</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="tunnel.html">Arthas Tunnel</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="web-console.html">Web Console</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Arthas Spring Boot Starter</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#configuration-properties">Configuration properties</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#view-endpoint-information">View Endpoint Information</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#non-spring-boot-application-usage">Non-spring boot application usage</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="tunnel.html#download-and-deploy-arthas-tunnel-server">Download and deploy arthas tunnel server</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tunnel.html#connecting-to-the-tunnel-server-when-starting-arthas">Connecting to the tunnel server when starting arthas</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tunnel.html#best-practices">Best practices</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tunnel.html#cluster-management">Cluster Management</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tunnel.html#how-arthas-tunnel-server-works">How arthas tunnel server works</a></li>
+</ul>
+</li>
 <li class="toctree-l1"><a class="reference internal" href="http-api.html">Http API</a></li>
 <li class="toctree-l1"><a class="reference internal" href="docker.html">Docker</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Arthas Spring Boot Starter</a><ul>
@@ -166,6 +180,8 @@
   <ul class="wy-breadcrumbs">
     
       <li><a href="index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="tunnel.html">Arthas Tunnel</a> &raquo;</li>
         
       <li>Arthas Spring Boot Starter</li>
     
@@ -250,6 +266,15 @@ public class ArthasAttachExample {
 
 }</pre></div>
 </div>
+<p>You can also configure properties:</p>
+<div class="highlight-java notranslate"><div class="highlight hljs"><pre class="java">        HashMap&lt;String, String&gt; configMap = new HashMap&lt;String, String&gt;();
+        configMap.put(&quot;arthas.appName&quot;, &quot;demo&quot;);
+        configMap.put(&quot;arthas.tunnelServer&quot;, &quot;ws://127.0.0.1:7777/ws&quot;);
+        ArthasAgent.attach(configMap);</pre></div>
+</div>
+<blockquote>
+<div><p>Note that the configuration must be <code class="docutils literal notranslate"><span class="pre">camel</span> <span class="pre">case</span></code>, which is different from the <code class="docutils literal notranslate"><span class="pre">-</span></code> style of spring boot. Only the spring boot application supports both <code class="docutils literal notranslate"><span class="pre">camel</span> <span class="pre">case</span></code> and <code class="docutils literal notranslate"><span class="pre">-</span></code> style configuration.</p>
+</div></blockquote>
 </div>
 </div>
 
@@ -261,10 +286,10 @@ public class ArthasAttachExample {
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="idea-plugin.html" class="btn btn-neutral float-right" title="IDEA Plugin" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+        <a href="http-api.html" class="btn btn-neutral float-right" title="Http API" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
-        <a href="docker.html" class="btn btn-neutral float-left" title="Docker" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+        <a href="tunnel.html" class="btn btn-neutral float-left" title="Arthas Tunnel" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
       
     </div>
   
