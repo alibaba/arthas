@@ -25,6 +25,10 @@ import com.alibaba.arthas.deps.ch.qos.logback.classic.LoggerContext;
 import com.alibaba.arthas.deps.org.slf4j.Logger;
 import com.alibaba.arthas.deps.org.slf4j.LoggerFactory;
 import com.alibaba.arthas.tunnel.client.TunnelClient;
+import com.alibaba.bytekit.asm.instrument.InstrumentParseResult;
+import com.alibaba.bytekit.asm.instrument.InstrumentTemplate;
+import com.alibaba.bytekit.asm.instrument.InstrumentTransformer;
+import com.alibaba.bytekit.utils.IOUtils;
 import com.taobao.arthas.common.AnsiLog;
 import com.taobao.arthas.common.ArthasConstants;
 import com.taobao.arthas.common.PidUtils;
@@ -40,6 +44,7 @@ import com.taobao.arthas.core.env.ArthasEnvironment;
 import com.taobao.arthas.core.env.MapPropertySource;
 import com.taobao.arthas.core.env.PropertiesPropertySource;
 import com.taobao.arthas.core.env.PropertySource;
+import com.taobao.arthas.core.server.instrument.ClassLoader_Instrument;
 import com.taobao.arthas.core.shell.ShellServer;
 import com.taobao.arthas.core.shell.ShellServerOptions;
 import com.taobao.arthas.core.shell.command.CommandResolver;
@@ -85,6 +90,7 @@ public class ArthasBootstrap {
 
     private AtomicBoolean isBindRef = new AtomicBoolean(false);
     private Instrumentation instrumentation;
+    private InstrumentTransformer classLoaderInstrumentTransformer;
     private Thread shutdown;
     private ShellServer shellServer;
     private ScheduledExecutorService executorService;
@@ -114,7 +120,7 @@ public class ArthasBootstrap {
         arthasOutputDir.mkdirs();
 
         // 1. initSpy()
-        initSpy(instrumentation);
+        initSpy();
         // 2. ArthasEnvironment
         initArthasEnvironment(args);
         // 3. init logger
@@ -153,7 +159,7 @@ public class ArthasBootstrap {
         this.historyManager = new HistoryManagerImpl();
     }
 
-    private static void initSpy(Instrumentation instrumentation) throws Throwable {
+    private void initSpy() throws Throwable {
         // TODO init SpyImpl ?
 
         // 将Spy添加到BootstrapClassLoader
@@ -176,6 +182,17 @@ public class ArthasBootstrap {
                 throw new IllegalStateException("can not find " + ARTHAS_SPY_JAR);
             }
         }
+
+        // 增强 ClassLoader#loadClsss ，解决一些ClassLoader加载不到 SpyAPI的问题
+        // https://github.com/alibaba/arthas/issues/1596
+        InstrumentTemplate template = new InstrumentTemplate();
+        byte[] classBytes = IOUtils.getBytes(ArthasBootstrap.class.getClassLoader()
+                .getResourceAsStream(ClassLoader_Instrument.class.getName().replace('.', '/') + ".class"));
+        template.addInstrumentClass(classBytes);
+
+        InstrumentParseResult instrumentParseResult = template.build();
+        classLoaderInstrumentTransformer = new InstrumentTransformer(instrumentParseResult);
+        instrumentation.addTransformer(classLoaderInstrumentTransformer);
     }
 
     private void initArthasEnvironment(Map<String, String> argsMap) throws IOException {
@@ -436,6 +453,9 @@ public class ArthasBootstrap {
         }
         if (transformerManager != null) {
             transformerManager.destroy();
+        }
+        if (classLoaderInstrumentTransformer != null) {
+            instrumentation.removeTransformer(classLoaderInstrumentTransformer);
         }
         // clear the reference in Spy class.
         cleanUpSpyReference();
