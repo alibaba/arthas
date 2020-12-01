@@ -236,6 +236,14 @@
         </dependency>
 
         <dependency>
+            <groupId>org.jboss.modules</groupId>
+            <artifactId>jboss-modules</artifactId>
+            <version>1.11.0.Final</version>
+            <scope>test</scope>
+            <optional>true</optional>
+        </dependency>
+
+        <dependency>
             <groupId>org.benf</groupId>
             <artifactId>cfr</artifactId>
         </dependency>

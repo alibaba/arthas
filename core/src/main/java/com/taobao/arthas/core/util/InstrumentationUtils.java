@@ -2,6 +2,7 @@ package com.taobao.arthas.core.util;
 
 import java.lang.instrument.ClassFileTransformer;
 import java.lang.instrument.Instrumentation;
+import java.util.Collection;
 import java.util.Set;
 
 import com.alibaba.arthas.deps.org.slf4j.Logger;
@@ -36,6 +37,19 @@ public class InstrumentationUtils {
             }
         } finally {
             inst.removeTransformer(transformer);
+        }
+    }
+
+    public static void trigerRetransformClasses(Instrumentation inst, Collection<String> classes) {
+        for (Class<?> clazz : inst.getAllLoadedClasses()) {
+            if (classes.contains(clazz.getName())) {
+                try {
+                    inst.retransformClasses(clazz);
+                } catch (Throwable e) {
+                    String errorMsg = "retransformClasses class error, name: " + clazz.getName();
+                    logger.error(errorMsg, e);
+                }
+            }
         }
     }
 }
