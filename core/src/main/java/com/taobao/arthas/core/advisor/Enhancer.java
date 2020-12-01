@@ -114,7 +114,7 @@ public class Enhancer implements ClassFileTransformer {
                 }
             } catch (Throwable e) {
                 logger.error("the classloader can not load SpyAPI, ignore it. classloader: {}, className: {}",
-                        inClassLoader.getClass().getName(), className);
+                        inClassLoader.getClass().getName(), className, e);
                 return null;
             }
 
