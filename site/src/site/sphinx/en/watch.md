@@ -234,3 +234,42 @@ Affect(class-cnt:1 , method-cnt:1) cost in 67 ms.
 ts=2018-12-03 20:04:34; [cost=131.303498ms] result=@Integer[8]
 ts=2018-12-03 20:04:35; [cost=0.961441ms] result=@Integer[8]
 ``` 
+
+
+#### Use the -v parameter to print more information
+
+> The watch/trace/monitor/stack/tt commands all support the `-v` parameter.
+
+When the command is executed, there is no output result. There are two possibilities:
+
+1. The matched function is not executed
+2. The result of the conditional expression is false
+
+But the user cannot tell which situation is.
+
+Using the `-v` option, the specific value and execution result of `Condition express` will be printed for easy confirmation.
+
+such as:
+
+```
+$ watch -v -x 2 demo.MathGame print 'params' 'params[0] > 100000'
+Press Q or Ctrl+C to abort.
+Affect(class count: 1 , method count: 1) cost in 29 ms, listenerId: 11
+Condition express: params[0] > 100000 , result: false
+Condition express: params[0] > 100000 , result: false
+Condition express: params[0] > 100000 , result: true
+ts=2020-12-02 22:38:56; [cost=0.060843ms] result=@Object[][
+    @Integer[200033],
+    @ArrayList[
+        @Integer[200033],
+    ],
+]
+Condition express: params[0] > 100000 , result: true
+ts=2020-12-02 22:38:57; [cost=0.052877ms] result=@Object[][
+    @Integer[123047],
+    @ArrayList[
+        @Integer[29],
+        @Integer[4243],
+    ],
+]
+```
