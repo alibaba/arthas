@@ -157,6 +157,9 @@
                 <os>
                     <family>linux</family>
                 </os>
+                <property>
+                    <name>rpm</name>
+                </property>
             </activation>
             <build>
                 <plugins>
