@@ -12,7 +12,10 @@ import com.alibaba.bytekit.agent.inst.InstrumentApi;
 public abstract class ClassLoader_Instrument {
     public Class<?> loadClass(String name) throws ClassNotFoundException {
         if (name.startsWith("java.arthas.")) {
-            return ClassLoader.getSystemClassLoader().loadClass(name);
+            ClassLoader extClassLoader = ClassLoader.getSystemClassLoader().getParent();
+            if (extClassLoader != null) {
+                return extClassLoader.loadClass(name);
+            }
         }
 
         Class clazz = InstrumentApi.invokeOrigin();
