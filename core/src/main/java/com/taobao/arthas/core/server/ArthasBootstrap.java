@@ -29,7 +29,6 @@ import com.alibaba.arthas.deps.org.slf4j.LoggerFactory;
 import com.alibaba.arthas.tunnel.client.TunnelClient;
 import com.alibaba.bytekit.asm.instrument.InstrumentConfig;
 import com.alibaba.bytekit.asm.instrument.InstrumentParseResult;
-import com.alibaba.bytekit.asm.instrument.InstrumentTemplate;
 import com.alibaba.bytekit.asm.instrument.InstrumentTransformer;
 import com.alibaba.bytekit.asm.matcher.SimpleClassMatcher;
 import com.alibaba.bytekit.utils.AsmUtils;
