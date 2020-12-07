@@ -183,6 +183,11 @@ public class Enhancer implements ClassFileTransformer {
             groupLocationFilter.addFilter(invokeExceptionFilter);
 
             for (MethodNode methodNode : matchedMethods) {
+                if (AsmUtils.isNative(methodNode)) {
+                    logger.info("ignore native method: {}",
+                            AsmUtils.methodDeclaration(Type.getObjectType(classNode.name), methodNode));
+                    continue;
+                }
                 // 先查找是否有 atBeforeInvoke 函数，如果有，则说明已经有trace了，则直接不再尝试增强，直接插入 listener
                 if(AsmUtils.containsMethodInsnNode(methodNode, Type.getInternalName(SpyAPI.class), "atBeforeInvoke")) {
                     for (AbstractInsnNode insnNode = methodNode.instructions.getFirst(); insnNode != null; insnNode = insnNode
