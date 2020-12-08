@@ -59,6 +59,7 @@ Affect(class-cnt:1 , method-cnt:1) cost in 28 ms.
         `---[0.03752ms] demo.MathGame:primeFactors() #24 [throws Exception]
 ```
 
+> The `#24` in the result indicates that in the run function, the `primeFactors()` function was called on line `24` of the source file.
 
 #### Trace times limit
 
@@ -145,7 +146,7 @@ Trace -E com.test.ClassA|org.test.ClassB method1|method2|method3
 
 > Supported since version 3.3.0.
 
-Open terminal 1, trace the `run` method, and you can see the printout `listenerId: 1` .
+Open terminal 1, trace the `run` method in the above demo, and you can see the printout `listenerId: 1` .
 
 ```bash
 [arthas@59161]$ trace demo.MathGame run

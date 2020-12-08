@@ -63,6 +63,8 @@ Affect(class-cnt:1 , method-cnt:1) cost in 28 ms.
         `---[0.03752ms] demo.MathGame:primeFactors() #24 [throws Exception]
 ```
 
+> 结果里的 `#24`，表示在run函数里，在源文件的第`24`行调用了`primeFactors()`函数。
+
 #### trace次数限制
 
 如果方法调用的次数很多，那么可以用`-n`参数指定捕捉结果的次数。比如下面的例子里，捕捉到一次调用就退出命令。
@@ -147,10 +149,10 @@ trace -E com.test.ClassA|org.test.ClassB method1|method2|method3
 
 ### 动态trace
 
-3.3.0 版本后支持。
+> 3.3.0 版本后支持。
 
 
-打开终端1，trace `run`函数，可以看到打印出 `listenerId: 1`：
+打开终端1，trace上面demo里的`run`函数，可以看到打印出 `listenerId: 1`：
 
 ```bash
 [arthas@59161]$ trace demo.MathGame run
