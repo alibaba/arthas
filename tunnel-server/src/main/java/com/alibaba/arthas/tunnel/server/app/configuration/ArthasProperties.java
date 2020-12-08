@@ -1,5 +1,8 @@
 package com.alibaba.arthas.tunnel.server.app.configuration;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;
 
@@ -114,6 +117,7 @@ public class ArthasProperties {
         private boolean enabled = false;
         private String host = "127.0.0.1";
         private int port = 6379;
+        private List<String> settings = new ArrayList<String>();
 
         public boolean isEnabled() {
             return enabled;
@@ -137,6 +141,14 @@ public class ArthasProperties {
 
         public void setPort(int port) {
             this.port = port;
+        }
+
+        public List<String> getSettings() {
+            return settings;
+        }
+
+        public void setSettings(List<String> settings) {
+            this.settings = settings;
         }
     }
 

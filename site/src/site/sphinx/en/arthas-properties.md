@@ -8,12 +8,18 @@ The `arthas.properties` file is in the arthas directory.
 
 ## Supported configuration items
 
+> Note that the configuration must be `camel case`, which is different from the `-` style of spring boot. Only the spring boot application supports both `camel case` and `-` style configuration.
+
 ```
 #arthas.config.overrideAll=true
 arthas.telnetPort=3658
 arthas.httpPort=8563
-arthas.ip=localhost
+arthas.ip=127.0.0.1
 
+# seconds
+arthas.sessionTimeout=1800
+
+#arthas.appName=demoapp
 #arthas.tunnelServer=ws://127.0.0.1:7777/ws
 #arthas.agentId=mmmmmmyiddddd
 ```

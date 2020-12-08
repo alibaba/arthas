@@ -92,7 +92,6 @@ public class ArthasMethod {
 
             if ("<init>".equals(this.methodName)) {
                 this.constructor = clazz.getDeclaredConstructor(argsClasses);
-                ;
             } else {
                 this.method = clazz.getDeclaredMethod(methodName, argsClasses);
             }

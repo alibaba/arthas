@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
@@ -21,7 +21,7 @@
         <developerConnection>scm:git:git@github.com:alibaba/arthas.git</developerConnection>
         <url>https://github.com/alibaba/arthas</url>
       <tag>HEAD</tag>
-  </scm>
+    </scm>
 
     <developers>
         <developer>
@@ -102,6 +102,7 @@
                             <generateGitPropertiesFile>true</generateGitPropertiesFile>
                             <generateGitPropertiesFilename>${project.build.outputDirectory}/arthas-git.properties</generateGitPropertiesFilename>
                             <excludeProperties>
+                                <excludeProperty>git.branch</excludeProperty>
                                 <excludeProperty>git.build.host</excludeProperty>
                                 <excludeProperty>git.build.time</excludeProperty>
                                 <excludeProperty>git.build.user.email</excludeProperty>
@@ -111,6 +112,7 @@
                                 <excludeProperty>git.commit.time</excludeProperty>
                                 <excludeProperty>git.local.branch.ahead</excludeProperty>
                                 <excludeProperty>git.local.branch.behind</excludeProperty>
+                                <excludeProperty>git.tags</excludeProperty>
                             </excludeProperties>
                             <injectAllReactorProjects>true</injectAllReactorProjects>
                         </configuration>
@@ -175,7 +177,7 @@
     </profiles>
 
     <properties>
-        <revision>3.4.5-SNAPSHOT</revision>
+        <revision>3.4.6-SNAPSHOT</revision>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.compiler.target>1.6</maven.compiler.target>
         <maven.compiler.source>1.6</maven.compiler.source>
@@ -191,7 +193,7 @@
             <dependency>
                 <groupId>com.alibaba</groupId>
                 <artifactId>bytekit-core</artifactId>
-                <version>0.0.2</version>
+                <version>0.0.4-SNAPSHOT</version>
             </dependency>
             <dependency>
                 <groupId>org.benf</groupId>
