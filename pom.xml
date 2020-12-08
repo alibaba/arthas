@@ -21,7 +21,7 @@
         <developerConnection>scm:git:git@github.com:alibaba/arthas.git</developerConnection>
         <url>https://github.com/alibaba/arthas</url>
       <tag>HEAD</tag>
-  </scm>
+    </scm>
 
     <developers>
         <developer>
@@ -102,6 +102,7 @@
                             <generateGitPropertiesFile>true</generateGitPropertiesFile>
                             <generateGitPropertiesFilename>${project.build.outputDirectory}/arthas-git.properties</generateGitPropertiesFilename>
                             <excludeProperties>
+                                <excludeProperty>git.branch</excludeProperty>
                                 <excludeProperty>git.build.host</excludeProperty>
                                 <excludeProperty>git.build.time</excludeProperty>
                                 <excludeProperty>git.build.user.email</excludeProperty>
@@ -111,6 +112,7 @@
                                 <excludeProperty>git.commit.time</excludeProperty>
                                 <excludeProperty>git.local.branch.ahead</excludeProperty>
                                 <excludeProperty>git.local.branch.behind</excludeProperty>
+                                <excludeProperty>git.tags</excludeProperty>
                             </excludeProperties>
                             <injectAllReactorProjects>true</injectAllReactorProjects>
                         </configuration>
