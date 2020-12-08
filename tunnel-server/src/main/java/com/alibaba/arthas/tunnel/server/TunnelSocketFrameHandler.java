@@ -123,7 +123,7 @@ public class TunnelSocketFrameHandler extends SimpleChannelInboundHandler<WebSoc
         List<String> agentId = parameters.getOrDefault("id", Collections.emptyList());
 
         if (agentId.isEmpty()) {
-            logger.error("arthas agent id can not be null, parameters: ", parameters);
+            logger.error("arthas agent id can not be null, parameters: {}", parameters);
             throw new IllegalArgumentException("arthas agent id can not be null");
         }
 
