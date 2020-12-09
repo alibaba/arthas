@@ -13,16 +13,16 @@ public class PidUtils {
 
     static {
         // https://stackoverflow.com/a/7690178
-        String jvmName = ManagementFactory.getRuntimeMXBean().getName();
-        int index = jvmName.indexOf('@');
+        try {
+            String jvmName = ManagementFactory.getRuntimeMXBean().getName();
+            int index = jvmName.indexOf('@');
 
-        if (index > 0) {
-            try {
+            if (index > 0) {
                 PID = Long.toString(Long.parseLong(jvmName.substring(0, index)));
                 pid = Long.parseLong(PID);
-            } catch (Throwable e) {
-                // ignore
             }
+        } catch (Throwable e) {
+            // ignore
         }
     }
 
