@@ -173,6 +173,7 @@ public class HttpApiHandler {
 	private void writeResult(DefaultFullHttpResponse response, Object result) throws IOException {
 		ByteBufOutputStream out = new ByteBufOutputStream(response.content());
 		try {
+//	  add SerializerFeature.DisableCircularReferenceDetect option for circular reference
 			JSON.writeJSONString(out, result, SerializerFeature.DisableCircularReferenceDetect);
 		} catch (IOException e) {
 			logger.error("write json to response failed", e);
