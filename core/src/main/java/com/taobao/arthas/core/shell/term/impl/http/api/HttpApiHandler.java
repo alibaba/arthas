@@ -99,8 +99,7 @@ public class HttpApiHandler {
 			}
 		} catch (Throwable e) {
 			result = createResponse(ApiState.FAILED, "Process request error: " + e.getMessage());
-			logger.error("arthas process http api request error: " + request.uri() + ", request body: " + requestBody,
-					e);
+			logger.error("arthas process http api request error: " + request.uri() + ", request body: " + requestBody, e);
 		}
 		if (result == null) {
 			result = createResponse(ApiState.FAILED, "The request was not processed");
@@ -173,7 +172,7 @@ public class HttpApiHandler {
 	private void writeResult(DefaultFullHttpResponse response, Object result) throws IOException {
 		ByteBufOutputStream out = new ByteBufOutputStream(response.content());
 		try {
-//	  add SerializerFeature.DisableCircularReferenceDetect option for circular reference
+//			add disable object circular reference option
 			JSON.writeJSONString(out, result, SerializerFeature.DisableCircularReferenceDetect);
 		} catch (IOException e) {
 			logger.error("write json to response failed", e);
@@ -296,7 +295,8 @@ public class HttpApiHandler {
 			//allow input
 			updateSessionInputStatus(session, InputStatus.ALLOW_INPUT);
 
-			response.setSessionId(session.getSessionId()).setConsumerId(resultConsumer.getConsumerId())
+			response.setSessionId(session.getSessionId())
+					.setConsumerId(resultConsumer.getConsumerId())
 					.setState(ApiState.SUCCEEDED);
 		} else {
 			throw new ApiException("create api session failed");
@@ -326,7 +326,8 @@ public class HttpApiHandler {
 		session.getResultDistributor().addConsumer(resultConsumer);
 
 		ApiResponse response = new ApiResponse();
-		response.setSessionId(session.getSessionId()).setConsumerId(resultConsumer.getConsumerId())
+		response.setSessionId(session.getSessionId())
+				.setConsumerId(resultConsumer.getConsumerId())
 				.setState(ApiState.SUCCEEDED);
 		return response;
 	}
@@ -338,7 +339,8 @@ public class HttpApiHandler {
 		body.put("createTime", session.getCreateTime());
 		body.put("lastAccessTime", session.getLastAccessTime());
 
-		response.setState(ApiState.SUCCEEDED).setSessionId(session.getSessionId())
+		response.setState(ApiState.SUCCEEDED)
+				.setSessionId(session.getSessionId())
 				//.setConsumerId(consumerId)
 				.setBody(body);
 		return response;
@@ -371,10 +373,12 @@ public class HttpApiHandler {
 			body.put("command", commandLine);
 
 			ApiResponse response = new ApiResponse();
-			response.setSessionId(session.getSessionId()).setBody(body);
+			response.setSessionId(session.getSessionId())
+					.setBody(body);
 
 			if (!session.tryLock()) {
-				response.setState(ApiState.REFUSED).setMessage("Another command is executing.");
+				response.setState(ApiState.REFUSED)
+						.setMessage("Another command is executing.");
 				return response;
 			}
 
@@ -384,7 +388,8 @@ public class HttpApiHandler {
 			try {
 				Job foregroundJob = session.getForegroundJob();
 				if (foregroundJob != null) {
-					response.setState(ApiState.REFUSED).setMessage("Another job is running.");
+					response.setState(ApiState.REFUSED)
+							.setMessage("Another job is running.");
 					logger.info("Another job is running, jobId: {}", foregroundJob.id());
 					return response;
 				}
@@ -455,10 +460,12 @@ public class HttpApiHandler {
 		body.put("command", commandLine);
 
 		ApiResponse response = new ApiResponse();
-		response.setSessionId(session.getSessionId()).setBody(body);
+		response.setSessionId(session.getSessionId())
+				.setBody(body);
 
 		if (!session.tryLock()) {
-			response.setState(ApiState.REFUSED).setMessage("Another command is executing.");
+			response.setState(ApiState.REFUSED)
+					.setMessage("Another command is executing.");
 			return response;
 		}
 		int lock = session.getLock();
@@ -466,7 +473,8 @@ public class HttpApiHandler {
 
 			Job foregroundJob = session.getForegroundJob();
 			if (foregroundJob != null) {
-				response.setState(ApiState.REFUSED).setMessage("Another job is running.");
+				response.setState(ApiState.REFUSED)
+						.setMessage("Another job is running.");
 				logger.info("Another job is running, jobId: {}", foregroundJob.id());
 				return response;
 			}
@@ -491,8 +499,7 @@ public class HttpApiHandler {
 		} catch (Throwable e) {
 			logger.error("Async exec command failed:" + e.getMessage() + ", command:" + commandLine, e);
 			response.setState(ApiState.FAILED).setMessage("Async exec command failed:" + e.getMessage());
-			CommandRequestModel commandRequestModel = new CommandRequestModel(commandLine, response.getState(),
-					response.getMessage());
+			CommandRequestModel commandRequestModel = new CommandRequestModel(commandLine, response.getState(), response.getMessage());
 			session.getResultDistributor().appendResult(commandRequestModel);
 			return response;
 		} finally {
@@ -512,7 +519,9 @@ public class HttpApiHandler {
 		Map<String, Object> body = new TreeMap<String, Object>();
 		body.put("jobId", job.id());
 		body.put("jobStatus", job.status());
-		return new ApiResponse().setState(ApiState.SUCCEEDED).setBody(body);
+		return new ApiResponse()
+				.setState(ApiState.SUCCEEDED)
+				.setBody(body);
 	}
 
 	/**
@@ -537,7 +546,9 @@ public class HttpApiHandler {
 		body.put("results", results);
 
 		ApiResponse response = new ApiResponse();
-		response.setState(ApiState.SUCCEEDED).setSessionId(session.getSessionId()).setConsumerId(consumerId)
+		response.setState(ApiState.SUCCEEDED)
+				.setSessionId(session.getSessionId())
+				.setConsumerId(consumerId)
 				.setBody(body);
 		return response;
 	}
@@ -561,9 +572,7 @@ public class HttpApiHandler {
 	}
 
 	private synchronized Job createJob(List<CliToken> args, Session session, ResultDistributor resultDistributor) {
-		Job job = jobController
-				.createJob(commandManager, args, session, new ApiJobHandler(session), new ApiTerm(session),
-						resultDistributor);
+		Job job = jobController.createJob(commandManager, args, session, new ApiJobHandler(session), new ApiTerm(session), resultDistributor);
 		return job;
 	}
 
