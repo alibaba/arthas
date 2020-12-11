@@ -33,6 +33,8 @@ import com.alibaba.bytekit.asm.instrument.InstrumentTransformer;
 import com.alibaba.bytekit.asm.matcher.SimpleClassMatcher;
 import com.alibaba.bytekit.utils.AsmUtils;
 import com.alibaba.bytekit.utils.IOUtils;
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.serializer.SerializerFeature;
 import com.taobao.arthas.common.AnsiLog;
 import com.taobao.arthas.common.ArthasConstants;
 import com.taobao.arthas.common.PidUtils;
@@ -140,6 +142,9 @@ public class ArthasBootstrap {
         // 6. start agent server
         bind(configure);
 
+        // 7. init property
+        initProperties();
+
         executorService = Executors.newScheduledThreadPool(1, new ThreadFactory() {
             @Override
             public Thread newThread(Runnable r) {
@@ -159,6 +164,11 @@ public class ArthasBootstrap {
 
         transformerManager = new TransformerManager(instrumentation);
         Runtime.getRuntime().addShutdownHook(shutdown);
+    }
+
+    private void initProperties() {
+//  disable  fastjson circular reference option
+        JSON.DEFAULT_GENERATE_FEATURE |= SerializerFeature.DisableCircularReferenceDetect.getMask();
     }
 
     private void initBeans() {
