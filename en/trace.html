@@ -311,6 +311,9 @@ Affect(class-cnt:1 , method-cnt:1) cost in 28 ms.
     `---[1.276874ms] demo.MathGame:run()
         `---[0.03752ms] demo.MathGame:primeFactors() #24 [throws Exception]</pre></div>
 </div>
+<blockquote>
+<div><p>The <code class="docutils literal notranslate"><span class="pre">#24</span></code> in the result indicates that in the run function, the <code class="docutils literal notranslate"><span class="pre">primeFactors()</span></code> function was called on line <code class="docutils literal notranslate"><span class="pre">24</span></code> of the source file.</p>
+</div></blockquote>
 </div>
 <div class="section" id="trace-times-limit">
 <h3>Trace times limit<a class="headerlink" href="#trace-times-limit" title="Permalink to this headline">¶</a></h3>
@@ -392,7 +395,7 @@ Affect(class-cnt:1 , method-cnt:1) cost in 41 ms.
 <blockquote>
 <div><p>Supported since version 3.3.0.</p>
 </div></blockquote>
-<p>Open terminal 1, trace the <code class="docutils literal notranslate"><span class="pre">run</span></code> method, and you can see the printout <code class="docutils literal notranslate"><span class="pre">listenerId:</span> <span class="pre">1</span></code> .</p>
+<p>Open terminal 1, trace the <code class="docutils literal notranslate"><span class="pre">run</span></code> method in the above demo, and you can see the printout <code class="docutils literal notranslate"><span class="pre">listenerId:</span> <span class="pre">1</span></code> .</p>
 <div class="highlight-bash notranslate"><div class="highlight hljs"><pre class="bash">[arthas@59161]$ trace demo.MathGame run
 Press Q or Ctrl+C to abort.
 Affect(class count: 1 , method count: 1) cost in 112 ms, listenerId: 1

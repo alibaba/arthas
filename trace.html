@@ -100,6 +100,7 @@
             
               <ul class="current">
 <li class="toctree-l1"><a class="reference external" href="https://arthas.aliyun.com/">首页</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://mp.weixin.qq.com/s/k5jozrSgmyH0tcQfrDkxUQ">招聘！</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://developer.aliyun.com/article/751641">技术征文</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://arthas.aliyun.com/doc/en/">English Docs</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://arthas.aliyun.com/doc/arthas-tutorials.html?language=cn">在线教程(推荐)</a></li>
@@ -315,6 +316,9 @@ Affect(class-cnt:1 , method-cnt:1) cost in 28 ms.
     `---[1.276874ms] demo.MathGame:run()
         `---[0.03752ms] demo.MathGame:primeFactors() #24 [throws Exception]</pre></div>
 </div>
+<blockquote>
+<div><p>结果里的 <code class="docutils literal notranslate"><span class="pre">#24</span></code>，表示在run函数里，在源文件的第<code class="docutils literal notranslate"><span class="pre">24</span></code>行调用了<code class="docutils literal notranslate"><span class="pre">primeFactors()</span></code>函数。</p>
+</div></blockquote>
 </div>
 <div class="section" id="id5">
 <h3>trace次数限制<a class="headerlink" href="#id5" title="永久链接至标题">¶</a></h3>
@@ -395,8 +399,10 @@ Affect(class-cnt:1 , method-cnt:1) cost in 41 ms.
 </div>
 <div class="section" id="id8">
 <h2>动态trace<a class="headerlink" href="#id8" title="永久链接至标题">¶</a></h2>
-<p>3.3.0 版本后支持。</p>
-<p>打开终端1，trace <code class="docutils literal notranslate"><span class="pre">run</span></code>函数，可以看到打印出 <code class="docutils literal notranslate"><span class="pre">listenerId:</span> <span class="pre">1</span></code>：</p>
+<blockquote>
+<div><p>3.3.0 版本后支持。</p>
+</div></blockquote>
+<p>打开终端1，trace上面demo里的<code class="docutils literal notranslate"><span class="pre">run</span></code>函数，可以看到打印出 <code class="docutils literal notranslate"><span class="pre">listenerId:</span> <span class="pre">1</span></code>：</p>
 <div class="highlight-bash notranslate"><div class="highlight hljs"><pre class="bash">[arthas@59161]$ trace demo.MathGame run
 Press Q or Ctrl+C to abort.
 Affect(class count: 1 , method count: 1) cost in 112 ms, listenerId: 1
