@@ -28,6 +28,7 @@ Contents
 --------
 
 * [首页](https://arthas.aliyun.com/)
+* [招聘！](https://mp.weixin.qq.com/s/k5jozrSgmyH0tcQfrDkxUQ)
 * [技术征文!](https://developer.aliyun.com/article/751641)
 * [English Docs](https://arthas.aliyun.com/doc/en/)
 * [在线教程(推荐)](https://arthas.aliyun.com/doc/arthas-tutorials.html?language=cn)
