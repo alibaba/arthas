@@ -125,9 +125,7 @@ public class ArthasBootstrap {
         String outputPath = System.getProperty("arthas.output.dir", "arthas-output");
         arthasOutputDir = new File(outputPath);
         arthasOutputDir.mkdirs();
-
-        // disable  fastjson circular reference feature
-        JSON.DEFAULT_GENERATE_FEATURE |= SerializerFeature.DisableCircularReferenceDetect.getMask();
+        initFastjson();
 
         // 1. initSpy()
         initSpy();
@@ -165,6 +163,13 @@ public class ArthasBootstrap {
         Runtime.getRuntime().addShutdownHook(shutdown);
     }
 
+    private void initFastjson() {
+        // disable  fastjson circular reference feature
+        JSON.DEFAULT_GENERATE_FEATURE |= SerializerFeature.DisableCircularReferenceDetect.getMask();
+        // add dateformat for thrac
+        JSON.DEFAULT_GENERATE_FEATURE |= SerializerFeature.WriteDateUseDateFormat.getMask();
+    }
+
     private void initBeans() {
         this.resultViewResolver = new ResultViewResolver();
 
@@ -179,7 +184,7 @@ public class ArthasBootstrap {
         Class<?> spyClass = null;
         if (parent != null) {
             try {
-                spyClass =parent.loadClass("java.arthas.SpyAPI");
+                spyClass = parent.loadClass("java.arthas.SpyAPI");
             } catch (Throwable e) {
                 // ignore
             }
@@ -225,7 +230,7 @@ public class ArthasBootstrap {
             InstrumentationUtils.trigerRetransformClasses(instrumentation, loaders);
         }
     }
-    
+
     private void initArthasEnvironment(Map<String, String> argsMap) throws IOException {
         if (arthasEnvironment == null) {
             arthasEnvironment = new ArthasEnvironment();
@@ -247,7 +252,7 @@ public class ArthasBootstrap {
             copyMap.put(ARTHAS_HOME_PROPERTY, arthasHome());
         }
 
-        MapPropertySource mapPropertySource = new MapPropertySource("args", (Map<String, Object>)(Object)copyMap);
+        MapPropertySource mapPropertySource = new MapPropertySource("args", (Map<String, Object>) (Object) copyMap);
         arthasEnvironment.addFirst(mapPropertySource);
 
         tryToLoadArthasProperties();
@@ -263,7 +268,8 @@ public class ArthasBootstrap {
         CodeSource codeSource = ArthasBootstrap.class.getProtectionDomain().getCodeSource();
         if (codeSource != null) {
             try {
-                ARTHAS_HOME = new File(codeSource.getLocation().toURI().getSchemeSpecificPart()).getParentFile().getAbsolutePath();
+                ARTHAS_HOME = new File(codeSource.getLocation().toURI().getSchemeSpecificPart()).getParentFile()
+                        .getAbsolutePath();
             } catch (Throwable e) {
                 AnsiLog.error("try to find arthas.home from CodeSource error", e);
             }
@@ -364,10 +370,8 @@ public class ArthasBootstrap {
         }
 
         try {
-            ShellServerOptions options = new ShellServerOptions()
-                            .setInstrumentation(instrumentation)
-                            .setPid(PidUtils.currentLongPid())
-                            .setWelcomeMessage(ArthasBanner.welcome());
+            ShellServerOptions options = new ShellServerOptions().setInstrumentation(instrumentation)
+                    .setPid(PidUtils.currentLongPid()).setWelcomeMessage(ArthasBanner.welcome());
             if (configure.getSessionTimeout() != null) {
                 options.setSessionTimeout(configure.getSessionTimeout() * 1000);
             }
@@ -388,8 +392,9 @@ public class ArthasBootstrap {
                 logger().info("telnet port is {}, skip bind telnet server.", configure.getTelnetPort());
             }
             if (configure.getHttpPort() != null && configure.getHttpPort() > 0) {
-                shellServer.registerTermServer(new HttpTermServer(configure.getIp(), configure.getHttpPort(),
-                        options.getConnectionTimeout(), workerGroup));
+                shellServer.registerTermServer(
+                        new HttpTermServer(configure.getIp(), configure.getHttpPort(), options.getConnectionTimeout(),
+                                workerGroup));
             } else {
                 // listen local address in VM communication
                 if (configure.getTunnelServer() != null) {
@@ -409,7 +414,8 @@ public class ArthasBootstrap {
             }
 
             //http api session manager
-            sessionManager = new SessionManagerImpl(options, shellServer.getCommandManager(), shellServer.getJobController());
+            sessionManager = new SessionManagerImpl(options, shellServer.getCommandManager(),
+                    shellServer.getJobController());
             //http api handler
             httpApiHandler = new HttpApiHandler(historyManager, sessionManager);
 
@@ -512,7 +518,8 @@ public class ArthasBootstrap {
      * @return ArthasServer单例
      * @throws Throwable
      */
-    public synchronized static ArthasBootstrap getInstance(Instrumentation instrumentation, String args) throws Throwable {
+    public synchronized static ArthasBootstrap getInstance(Instrumentation instrumentation, String args)
+            throws Throwable {
         if (arthasBootstrap != null) {
             return arthasBootstrap;
         }
@@ -533,7 +540,8 @@ public class ArthasBootstrap {
      * @return ArthasServer单例
      * @throws Throwable
      */
-    public synchronized static ArthasBootstrap getInstance(Instrumentation instrumentation, Map<String, String> args) throws Throwable {
+    public synchronized static ArthasBootstrap getInstance(Instrumentation instrumentation, Map<String, String> args)
+            throws Throwable {
         if (arthasBootstrap == null) {
             arthasBootstrap = new ArthasBootstrap(instrumentation, args);
         }
