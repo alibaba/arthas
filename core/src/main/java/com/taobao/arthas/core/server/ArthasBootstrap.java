@@ -125,9 +125,7 @@ public class ArthasBootstrap {
         String outputPath = System.getProperty("arthas.output.dir", "arthas-output");
         arthasOutputDir = new File(outputPath);
         arthasOutputDir.mkdirs();
-
-        // disable  fastjson circular reference feature
-        JSON.DEFAULT_GENERATE_FEATURE |= SerializerFeature.DisableCircularReferenceDetect.getMask();
+        initFastjson();
 
         // 1. initSpy()
         initSpy();
@@ -163,6 +161,13 @@ public class ArthasBootstrap {
 
         transformerManager = new TransformerManager(instrumentation);
         Runtime.getRuntime().addShutdownHook(shutdown);
+    }
+
+    private void initFastjson() {
+        // disable  fastjson circular reference feature
+        JSON.DEFAULT_GENERATE_FEATURE |= SerializerFeature.DisableCircularReferenceDetect.getMask();
+        // add date format option for  fastjson
+        JSON.DEFAULT_GENERATE_FEATURE |= SerializerFeature.WriteDateUseDateFormat.getMask();
     }
 
     private void initBeans() {
