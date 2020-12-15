@@ -435,7 +435,8 @@ public class ProfilerCommand extends AnnotatedCommand {
 
     private String outputFile() {
         if (this.file == null) {
-            this.file = new File("arthas-output",
+            String outputPath = System.getProperty("arthas.output.dir", "arthas-output");
+            this.file = new File(outputPath,
                     new SimpleDateFormat("yyyyMMdd-HHmmss").format(new Date()) + "." + this.format).getAbsolutePath();
         }
         return file;
