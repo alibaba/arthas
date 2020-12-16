@@ -17,6 +17,7 @@ public class WatchModel extends ResultModel {
     private Integer sizeLimit;
     private String className;
     private String methodName;
+    private String moment;
 
     public WatchModel() {
     }
@@ -80,5 +81,13 @@ public class WatchModel extends ResultModel {
 
     public void setMethodName(String methodName) {
         this.methodName = methodName;
+    }
+
+    public String getMoment() {
+        return moment;
+    }
+
+    public void setMoment(String moment) {
+        this.moment = moment;
     }
 }

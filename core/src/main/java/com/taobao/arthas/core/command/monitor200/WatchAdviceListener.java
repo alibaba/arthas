@@ -91,8 +91,15 @@ class WatchAdviceListener extends AdviceListenerAdapter {
                 model.setValue(value);
                 model.setExpand(command.getExpand());
                 model.setSizeLimit(command.getSizeLimit());
-                model.setClassName(advice.getMethod().getClass().getName());
+                model.setClassName(advice.getClazz().getName());
                 model.setMethodName(advice.getMethod().getName());
+                if (advice.isBefore()) {
+                    model.setMoment("ENTER");
+                } else if (advice.isAfterReturning()) {
+                    model.setMoment("EXIT");
+                } else if (advice.isAfterThrowing()) {
+                    model.setMoment("EXCEPTION");
+                }
 
                 process.appendResult(model);
                 process.times().incrementAndGet();
