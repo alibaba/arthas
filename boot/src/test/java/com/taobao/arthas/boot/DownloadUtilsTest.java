@@ -31,16 +31,13 @@ public class DownloadUtilsTest {
 
     @Test
     public void testAliyunDownload() throws IOException {
-        // fix travis-ci failed problem
-        if (TimeUnit.MILLISECONDS.toHours(TimeZone.getDefault().getOffset(System.currentTimeMillis())) == 8) {
-            String version = "3.3.7";
-            File folder = rootFolder.newFolder();
-            System.err.println(folder.getAbsolutePath());
-            DownloadUtils.downArthasPackaging("aliyun", false, version, folder.getAbsolutePath());
+        String version = "3.3.7";
+        File folder = rootFolder.newFolder();
+        System.err.println(folder.getAbsolutePath());
+        DownloadUtils.downArthasPackaging("aliyun", false, version, folder.getAbsolutePath());
 
-            File as = new File(folder, version + File.separator + "arthas" + File.separator + "as.sh");
-            Assert.assertTrue(as.exists());
-        }
+        File as = new File(folder, version + File.separator + "arthas" + File.separator + "as.sh");
+        Assert.assertTrue(as.exists());
     }
 
     @Test
