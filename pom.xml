@@ -122,6 +122,26 @@
         </profile>
 
         <profile>
+            <!-- ci test -->
+            <id>jdk12</id>
+            <activation>
+                <jdk>[12,)</jdk>
+                <property>
+                    <name>JAVA8_HOME</name>
+                </property>
+            </activation>
+            <dependencies>
+                <dependency>
+                    <groupId>com.sun</groupId>
+                    <artifactId>tools</artifactId>
+                    <version>1.6.0</version>
+                    <scope>system</scope>
+                    <systemPath>${JAVA8_HOME}/lib/tools.jar</systemPath>
+                </dependency>
+            </dependencies>
+        </profile>
+
+        <profile>
             <id>full</id>
             <build>
                 <plugins>
@@ -238,7 +258,7 @@
             <dependency>
                 <groupId>com.alibaba</groupId>
                 <artifactId>fastjson</artifactId>
-                <version>1.2.71</version>
+                <version>1.2.75</version>
             </dependency>
             <dependency>
                 <groupId>com.taobao.text</groupId>
@@ -462,7 +482,7 @@
             <plugin>
                 <groupId>org.jacoco</groupId>
                 <artifactId>jacoco-maven-plugin</artifactId>
-                <version>0.8.2</version>
+                <version>0.8.5</version>
                 <executions>
                     <execution>
                         <id>jacoco-initialize</id>
