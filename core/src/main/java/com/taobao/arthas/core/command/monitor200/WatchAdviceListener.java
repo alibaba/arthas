@@ -72,7 +72,6 @@ class WatchAdviceListener extends AdviceListenerAdapter {
     }
 
 
-
     private void watching(Advice advice) {
         try {
             // 本次调用的耗时
@@ -83,6 +82,7 @@ class WatchAdviceListener extends AdviceListenerAdapter {
             }
             if (conditionResult) {
                 // TODO: concurrency issues for process.write
+
                 Object value = getExpressionResult(command.getExpress(), advice, cost);
 
                 WatchModel model = new WatchModel();
@@ -91,6 +91,8 @@ class WatchAdviceListener extends AdviceListenerAdapter {
                 model.setValue(value);
                 model.setExpand(command.getExpand());
                 model.setSizeLimit(command.getSizeLimit());
+                model.setClassName(advice.getMethod().getClass().getName());
+                model.setMethodName(advice.getMethod().getName());
 
                 process.appendResult(model);
                 process.times().incrementAndGet();
@@ -101,8 +103,8 @@ class WatchAdviceListener extends AdviceListenerAdapter {
         } catch (Throwable e) {
             logger.warn("watch failed.", e);
             process.end(-1, "watch failed, condition is: " + command.getConditionExpress() + ", express is: "
-                          + command.getExpress() + ", " + e.getMessage() + ", visit " + LogUtil.loggingFile()
-                          + " for more details.");
+                    + command.getExpress() + ", " + e.getMessage() + ", visit " + LogUtil.loggingFile()
+                    + " for more details.");
         }
     }
 }
