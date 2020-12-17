@@ -17,7 +17,7 @@ public class WatchModel extends ResultModel {
     private Integer sizeLimit;
     private String className;
     private String methodName;
-    private String moment;
+    private String accessPoint;
 
     public WatchModel() {
     }
@@ -83,11 +83,11 @@ public class WatchModel extends ResultModel {
         this.methodName = methodName;
     }
 
-    public String getMoment() {
-        return moment;
+    public String getAccessPoint() {
+        return accessPoint;
     }
 
-    public void setMoment(String moment) {
-        this.moment = moment;
+    public void setAccessPoint(String accessPoint) {
+        this.accessPoint = accessPoint;
     }
 }

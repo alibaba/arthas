@@ -2,7 +2,7 @@ package com.taobao.arthas.core.command.monitor200;
 
 import com.alibaba.arthas.deps.org.slf4j.Logger;
 import com.alibaba.arthas.deps.org.slf4j.LoggerFactory;
-import com.taobao.arthas.core.GlobalOptions;
+import com.taobao.arthas.core.advisor.AccessPoint;
 import com.taobao.arthas.core.advisor.Advice;
 import com.taobao.arthas.core.advisor.ArthasMethod;
 import com.taobao.arthas.core.advisor.AdviceListenerAdapter;
@@ -94,11 +94,11 @@ class WatchAdviceListener extends AdviceListenerAdapter {
                 model.setClassName(advice.getClazz().getName());
                 model.setMethodName(advice.getMethod().getName());
                 if (advice.isBefore()) {
-                    model.setMoment("ENTER");
+                    model.setAccessPoint(AccessPoint.ACCESS_BEFORE.getKey());
                 } else if (advice.isAfterReturning()) {
-                    model.setMoment("EXIT");
+                    model.setAccessPoint(AccessPoint.ACCESS_AFTER_RETUNING.getKey());
                 } else if (advice.isAfterThrowing()) {
-                    model.setMoment("EXCEPTION");
+                    model.setAccessPoint(AccessPoint.ACCESS_AFTER_THROWING.getKey());
                 }
 
                 process.appendResult(model);
