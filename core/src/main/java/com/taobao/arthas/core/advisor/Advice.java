@@ -12,8 +12,6 @@ public class Advice {
     private final Object[] params;
     private final Object returnObj;
     private final Throwable throwExp;
-
-
     private final boolean isBefore;
     private final boolean isThrow;
     private final boolean isReturn;
