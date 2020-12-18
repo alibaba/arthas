@@ -40,6 +40,7 @@ trace
 
 3.3.0 版本后，可以使用动态Trace功能，不断增加新的匹配类，参考下面的示例。
 
+目前不支持 `trace  java.lang.Thread getName`，参考issue: [#1610](https://github.com/alibaba/arthas/issues/1610) ，考虑到不是非常必要场景，且修复有一定难度，因此当前暂不修复
 
 ### 使用参考
 
