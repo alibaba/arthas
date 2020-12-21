@@ -34,13 +34,13 @@ trace
 
 ### 注意事项
 
-`trace` 能方便的帮助你定位和发现因 RT 高而导致的性能问题缺陷，但其每次只能跟踪一级方法的调用链路。
+* `trace` 能方便的帮助你定位和发现因 RT 高而导致的性能问题缺陷，但其每次只能跟踪一级方法的调用链路。
 
-参考：[Trace命令的实现原理](https://github.com/alibaba/arthas/issues/597)
+    参考：[Trace命令的实现原理](https://github.com/alibaba/arthas/issues/597)
 
-3.3.0 版本后，可以使用动态Trace功能，不断增加新的匹配类，参考下面的示例。
+* 3.3.0 版本后，可以使用动态Trace功能，不断增加新的匹配类，参考下面的示例。
 
-目前不支持 `trace  java.lang.Thread getName`，参考issue: [#1610](https://github.com/alibaba/arthas/issues/1610) ，考虑到不是非常必要场景，且修复有一定难度，因此当前暂不修复
+* 目前不支持 `trace  java.lang.Thread getName`，参考issue: [#1610](https://github.com/alibaba/arthas/issues/1610) ，考虑到不是非常必要场景，且修复有一定难度，因此当前暂不修复
 
 ### 使用参考
 
