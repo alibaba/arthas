@@ -86,7 +86,7 @@ public class ProtocolDetectHandler extends ChannelInboundHandlerAdapter {
             pipeline.addLast(new HttpServerCodec());
             pipeline.addLast(new ChunkedWriteHandler());
             pipeline.addLast(new HttpObjectAggregator(ArthasConstants.MAX_HTTP_CONTENT_LENGTH));
-            pipeline.addLast(workerGroup, "HttpRequestHandler", new HttpRequestHandler("/ws", new File(ArthasConstants.ARTHAS_OUTPUT)));
+            pipeline.addLast(workerGroup, "HttpRequestHandler", new HttpRequestHandler("/ws"));
             pipeline.addLast(new WebSocketServerProtocolHandler("/ws"));
             pipeline.addLast(new TtyWebSocketFrameHandler(channelGroup, ttyConnectionFactory));
             ctx.fireChannelActive();

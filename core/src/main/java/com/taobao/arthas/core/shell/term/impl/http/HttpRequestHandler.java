@@ -46,6 +46,10 @@ public class HttpRequestHandler extends SimpleChannelInboundHandler<FullHttpRequ
 
     private HttpApiHandler httpApiHandler;
 
+    public HttpRequestHandler(String wsUri) {
+        this(wsUri, ArthasBootstrap.getInstance().getOutputPath());
+    }
+
     public HttpRequestHandler(String wsUri, File dir) {
         this.wsUri = wsUri;
         this.dir = dir;
