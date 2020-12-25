@@ -1,7 +1,6 @@
 package com.taobao.arthas.core.command.monitor200;
 
 import java.lang.instrument.Instrumentation;
-import java.lang.instrument.UnmodifiableClassException;
 import java.util.Collections;
 import java.util.List;
 
@@ -21,8 +20,10 @@ import com.taobao.arthas.core.shell.handlers.shell.QExitHandler;
 import com.taobao.arthas.core.shell.session.Session;
 import com.taobao.arthas.core.util.Constants;
 import com.taobao.arthas.core.util.LogUtil;
+import com.taobao.arthas.core.util.SearchUtils;
 import com.taobao.arthas.core.util.affect.EnhancerAffect;
 import com.taobao.arthas.core.util.matcher.Matcher;
+import com.taobao.middleware.cli.annotations.Argument;
 import com.taobao.middleware.cli.annotations.Description;
 import com.taobao.middleware.cli.annotations.Option;
 
@@ -35,13 +36,21 @@ public abstract class EnhancerCommand extends AnnotatedCommand {
     protected static final List<String> EMPTY = Collections.emptyList();
     public static final String[] EXPRESS_EXAMPLES = { "params", "returnObj", "throwExp", "target", "clazz", "method",
                                                        "{params,returnObj}", "params[0]" };
+    private String excludeClassPattern;
 
     protected Matcher classNameMatcher;
+    protected Matcher classNameExcludeMatcher;
     protected Matcher methodNameMatcher;
 
     protected long listenerId;
 
     protected boolean verbose;
+
+    @Option(longName = "exclude-class-pattern")
+    @Description("exclude class name pattern, use either '.' or '/' as separator")
+    public void setExcludeClassPattern(String excludeClassPattern) {
+        this.excludeClassPattern = excludeClassPattern;
+    }
 
     @Option(longName = "listenerId")
     @Description("The special listenerId")
@@ -61,6 +70,11 @@ public abstract class EnhancerCommand extends AnnotatedCommand {
      * @return 获取类名匹配
      */
     protected abstract Matcher getClassNameMatcher();
+
+    /**
+     * 排除类名匹配
+     */
+    protected abstract Matcher getClassNameExcludeMatcher();
 
     /**
      * 方法名匹配
@@ -143,7 +157,7 @@ public abstract class EnhancerCommand extends AnnotatedCommand {
                 skipJDKTrace = ((AbstractTraceAdviceListener) listener).getCommand().isSkipJDKTrace();
             }
 
-            Enhancer enhancer = new Enhancer(listener, listener instanceof InvokeTraceable, skipJDKTrace, getClassNameMatcher(), getMethodNameMatcher());
+            Enhancer enhancer = new Enhancer(listener, listener instanceof InvokeTraceable, skipJDKTrace, getClassNameMatcher(), getClassNameExcludeMatcher(), getMethodNameMatcher());
             // 注册通知监听器
             process.register(listener, enhancer);
             effect = enhancer.enhance(inst);
@@ -193,5 +207,9 @@ public abstract class EnhancerCommand extends AnnotatedCommand {
 
     protected void completeArgument3(Completion completion) {
         super.complete(completion);
+    }
+
+    public String getExcludeClassPattern() {
+        return excludeClassPattern;
     }
 }

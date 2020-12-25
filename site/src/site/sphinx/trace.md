@@ -148,6 +148,14 @@ trace命令只会trace匹配到的函数里的子调用，并不会向下trace�
 trace -E com.test.ClassA|org.test.ClassB method1|method2|method3
 ```
 
+#### 排除掉指定的类
+
+使用 `--exclude-class-pattern` 参数可以排除掉指定的类，比如：
+
+```bash
+trace javax.servlet.Filter * --exclude-class-pattern com.demo.TestFilter
+```
+
 ### 动态trace
 
 > 3.3.0 版本后支持。

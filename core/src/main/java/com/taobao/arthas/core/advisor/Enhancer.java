@@ -72,6 +72,7 @@ public class Enhancer implements ClassFileTransformer {
     private final boolean isTracing;
     private final boolean skipJDKTrace;
     private final Matcher classNameMatcher;
+    private final Matcher classNameExcludeMatcher;
     private final Matcher methodNameMatcher;
     private final EnhancerAffect affect;
     private Set<Class<?>> matchingClasses = null;
@@ -93,11 +94,13 @@ public class Enhancer implements ClassFileTransformer {
      * @param affect            影响统计
      */
     public Enhancer(AdviceListener listener, boolean isTracing, boolean skipJDKTrace, Matcher classNameMatcher,
+            Matcher classNameExcludeMatcher,
             Matcher methodNameMatcher) {
         this.listener = listener;
         this.isTracing = isTracing;
         this.skipJDKTrace = skipJDKTrace;
         this.classNameMatcher = classNameMatcher;
+        this.classNameExcludeMatcher = classNameExcludeMatcher;
         this.methodNameMatcher = methodNameMatcher;
         this.affect = new EnhancerAffect();
         affect.setListenerId(listener.id());
@@ -308,14 +311,21 @@ public class Enhancer implements ClassFileTransformer {
      *
      * @param classes 类集合
      */
-    private static void filter(Set<Class<?>> classes) {
+    private void filter(Set<Class<?>> classes) {
         final Iterator<Class<?>> it = classes.iterator();
         while (it.hasNext()) {
             final Class<?> clazz = it.next();
-            if (null == clazz || isSelf(clazz) || isUnsafeClass(clazz) || isUnsupportedClass(clazz)) {
+            if (null == clazz || isSelf(clazz) || isUnsafeClass(clazz) || isUnsupportedClass(clazz) || isExclude(clazz)) {
                 it.remove();
             }
         }
+    }
+
+    private boolean isExclude(Class<?> clazz) {
+        if (this.classNameExcludeMatcher != null) {
+            return classNameExcludeMatcher.matching(clazz.getName());
+        }
+        return false;
     }
 
     /**

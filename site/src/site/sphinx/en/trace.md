@@ -143,6 +143,16 @@ Trace -E com.test.ClassA|org.test.ClassB method1|method2|method3
 ```
 
 
+#### Exclude the specified class
+
+> The watch/trace/monitor/stack/tt commands all support the `--exclude-class-pattern` parameter
+
+Use the `--exclude-class-pattern` parameter to exclude the specified class, for example:
+
+```bash
+watch javax.servlet.Filter * --exclude-class-pattern com.demo.TestFilter
+```
+
 #### Dynamic trace
 
 > Supported since version 3.3.0.
