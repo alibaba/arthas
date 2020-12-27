@@ -29,6 +29,11 @@ public class Configure {
     private String agentId;
 
     /**
+     * @see com.taobao.arthas.common.ArthasConstants#ARTHAS_OUTPUT
+     */
+    private String outputPath;
+
+    /**
      * 需要被增强的ClassLoader的全类名，多个用英文 , 分隔
      */
     private String enhanceLoaders;
@@ -146,6 +151,14 @@ public class Configure {
 
     public void setEnhanceLoaders(String enhanceLoaders) {
         this.enhanceLoaders = enhanceLoaders;
+    }
+
+    public String getOutputPath() {
+        return outputPath;
+    }
+
+    public void setOutputPath(String outputPath) {
+        this.outputPath = outputPath;
     }
 
     /**
