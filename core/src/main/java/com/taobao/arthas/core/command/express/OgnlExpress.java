@@ -48,6 +48,17 @@ public class OgnlExpress implements Express {
     }
 
     @Override
+    public boolean set(String express, Object obj) throws ExpressException {
+        try {
+            Ognl.setValue(express, context, bindObject, obj);
+        } catch (Exception e) {
+            logger.error("Error during evaluating the expression:", e);
+            throw new ExpressException(express, e);
+        }
+        return true;
+    }
+
+    @Override
     public Express bind(Object object) {
         this.bindObject = object;
         return this;

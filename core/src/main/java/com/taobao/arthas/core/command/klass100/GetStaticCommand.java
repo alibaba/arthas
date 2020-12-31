@@ -42,20 +42,20 @@ import java.util.Collection;
 @Name("getstatic")
 @Summary("Show the static field of a class")
 @Description(Constants.EXAMPLE +
-             "  getstatic demo.MathGame random\n" +
-             "  getstatic -c 39eb305e org.apache.log4j.LogManager DEFAULT_CONFIGURATION_FILE\n" +
-             Constants.WIKI + Constants.WIKI_HOME + "getstatic")
+        "  getstatic demo.MathGame random\n" +
+        "  getstatic -c 39eb305e org.apache.log4j.LogManager DEFAULT_CONFIGURATION_FILE\n" +
+        Constants.WIKI + Constants.WIKI_HOME + "getstatic")
 public class GetStaticCommand extends AnnotatedCommand {
 
     private static final Logger logger = LoggerFactory.getLogger(GetStaticCommand.class);
 
-    private String classPattern;
-    private String fieldPattern;
-    private String express;
-    private String hashCode = null;
-    private String classLoaderClass;
-    private boolean isRegEx = false;
-    private int expand = 1;
+    protected String classPattern;
+    protected String fieldPattern;
+    protected String express;
+    protected String hashCode = null;
+    protected String classLoaderClass;
+    protected boolean isRegEx = false;
+    protected int expand = 1;
 
     @Argument(argName = "class-pattern", index = 0)
     @Description("Class name pattern, use either '.' or '/' as separator")
@@ -132,19 +132,19 @@ public class GetStaticCommand extends AnnotatedCommand {
             if (matchedClasses.size() > 1) {
                 status = processMatches(process, matchedClasses);
             } else {
-                status = processExactMatch(process, affect, inst, matchedClasses);
+                status = this.processExactMatch(process, affect, inst, matchedClasses);
             }
             process.appendResult(new RowAffectModel(affect));
             CommandUtils.end(process, status);
-        } catch (Throwable e){
+        } catch (Throwable e) {
             logger.error("processing error", e);
             process.appendResult(new RowAffectModel(affect));
             process.end(-1, "processing error");
         }
     }
 
-    private ExitStatus processExactMatch(CommandProcess process, RowAffect affect, Instrumentation inst,
-                                   Set<Class<?>> matchedClasses) {
+    protected ExitStatus processExactMatch(CommandProcess process, RowAffect affect, Instrumentation inst,
+                                           Set<Class<?>> matchedClasses) {
         Matcher<String> fieldNameMatcher = fieldNameMatcher();
 
         Class<?> clazz = matchedClasses.iterator().next();
@@ -171,11 +171,11 @@ public class GetStaticCommand extends AnnotatedCommand {
             } catch (IllegalAccessException e) {
                 logger.warn("getstatic: failed to get static value, class: {}, field: {} ", clazz, field.getName(), e);
                 process.appendResult(new MessageModel("Failed to get static, exception message: " + e.getMessage()
-                              + ", please check $HOME/logs/arthas/arthas.log for more details. "));
+                        + ", please check $HOME/logs/arthas/arthas.log for more details. "));
             } catch (ExpressException e) {
                 logger.warn("getstatic: failed to get express value, class: {}, field: {}, express: {}", clazz, field.getName(), express, e);
                 process.appendResult(new MessageModel("Failed to get static, exception message: " + e.getMessage()
-                              + ", please check $HOME/logs/arthas/arthas.log for more details. "));
+                        + ", please check $HOME/logs/arthas/arthas.log for more details. "));
             } finally {
                 found = true;
             }
@@ -188,21 +188,21 @@ public class GetStaticCommand extends AnnotatedCommand {
         }
     }
 
-    private ExitStatus processMatches(CommandProcess process, Set<Class<?>> matchedClasses) {
+    protected ExitStatus processMatches(CommandProcess process, Set<Class<?>> matchedClasses) {
 
 //        Element usage = new LabelElement("getstatic -c <hashcode> " + classPattern + " " + fieldPattern).style(
 //                Decoration.bold.fg(Color.blue));
 //        process.write("\n Found more than one class for: " + classPattern + ", Please use " + RenderUtil.render(usage, process.width()));
         //TODO support message style
         String usage = "getstatic -c <hashcode> " + classPattern + " " + fieldPattern;
-        process.appendResult(new MessageModel("Found more than one class for: " + classPattern + ", Please use: "+usage));
+        process.appendResult(new MessageModel("Found more than one class for: " + classPattern + ", Please use: " + usage));
 
         List<ClassVO> matchedClassVOs = ClassUtils.createClassVOList(matchedClasses);
         process.appendResult(new GetStaticModel(matchedClassVOs));
-        return ExitStatus.failure(-1, "Found more than one class for: " + classPattern + ", Please use: "+usage);
+        return ExitStatus.failure(-1, "Found more than one class for: " + classPattern + ", Please use: " + usage);
     }
 
-    private Matcher<String> fieldNameMatcher() {
+    protected Matcher<String> fieldNameMatcher() {
         return isRegEx ? new RegexMatcher(fieldPattern) : new WildcardMatcher(fieldPattern);
     }
 }
