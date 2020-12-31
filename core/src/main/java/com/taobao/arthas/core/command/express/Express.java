@@ -25,6 +25,16 @@ public interface Express {
     boolean is(String express) throws ExpressException;
 
     /**
+     * 设置表达式的值
+     *
+     * @param express 表达式
+     * @param obj     表达式目标设置值
+     * @return 成功/失败
+     * @throws ExpressException
+     */
+    boolean set(String express, Object obj) throws ExpressException;
+
+    /**
      * 绑定对象
      *
      * @param object 待绑定对象

@@ -9,7 +9,12 @@
     </parent>
     <artifactId>arthas-demo</artifactId>
     <name>arthas-demo</name>
-
+    <dependencies>
+        <dependency>
+            <groupId>com.alibaba</groupId>
+            <artifactId>fastjson</artifactId>
+        </dependency>
+    </dependencies>
     <build>
         <finalName>arthas-demo</finalName>
         <plugins>
