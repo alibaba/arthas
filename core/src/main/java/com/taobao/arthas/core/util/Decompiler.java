@@ -16,12 +16,17 @@ import org.benf.cfr.reader.api.OutputSinkFactory;
  */
 public class Decompiler {
 
+    public static String decompile(String classFilePath, String methodName) {
+        return decompile(classFilePath, methodName, false);
+    }
+
     /**
      * @param classFilePath
      * @param methodName
+     * @param hideUnicode
      * @return
      */
-    public static String decompile(String classFilePath, String methodName) {
+    public static String decompile(String classFilePath, String methodName, boolean hideUnicode) {
         final StringBuilder result = new StringBuilder(8192);
 
         OutputSinkFactory mySink = new OutputSinkFactory() {
@@ -52,6 +57,7 @@ public class Decompiler {
          *      the cfr version is wrong. so disable show cfr version.
          */
         options.put("showversion", "false");
+        options.put("hideutf", String.valueOf(hideUnicode));
         if (!StringUtils.isBlank(methodName)) {
             options.put("methodname", methodName);
         }

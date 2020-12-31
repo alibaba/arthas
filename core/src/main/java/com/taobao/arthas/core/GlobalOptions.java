@@ -82,16 +82,6 @@ public class GlobalOptions {
     public static volatile boolean isSupportDefaultMethod = true && JavaVersionUtils.isGreaterThanJava7();
 
     /**
-     * 是否在asm中输出
-     */
-    @Option(level = 1,
-            name = "debug-for-asm",
-            summary = "Option to print DEBUG message if ASM is involved",
-            description = "This option enables to print DEBUG message of ASM for each method invocation."
-    )
-    public static volatile boolean isDebugForAsm = false;
-
-    /**
      * 是否日志中保存命令执行结果
      */
     @Option(level = 1,
@@ -123,4 +113,14 @@ public class GlobalOptions {
             description = "This option enables print files in parent class, default value true."
     )
     public static volatile boolean printParentFields = true;
+
+    /**
+     * 是否打开verbose 开关
+     */
+    @Option(level = 1,
+            name = "verbose",
+            summary = "Option to print verbose information",
+            description = "This option enables print verbose information, default value false."
+    )
+    public static volatile boolean verbose = false;
 }

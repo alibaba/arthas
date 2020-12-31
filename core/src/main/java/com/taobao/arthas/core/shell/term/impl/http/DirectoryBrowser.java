@@ -55,7 +55,7 @@ public class DirectoryBrowser {
     private static String linePart1Str = "<a href=\"%s\" title=\"%s\">";
     private static String linePart2Str = "%-60s";
 
-    private static String renderDir(File dir) {
+    static String renderDir(File dir) {
         File[] listFiles = dir.listFiles();
 
         StringBuilder sb = new StringBuilder(8192);
@@ -112,7 +112,9 @@ public class DirectoryBrowser {
         if (path.startsWith("/")) {
             path = path.substring(1, path.length());
         }
-        File file = new File(path);
+        // path maybe: arthas-output/20201225-203454.svg 
+        // 需要取 dir的parent来去掉前缀
+        File file = new File(dir.getParent(), path);
 
         if (isSubFile(dir, file)) {
             DefaultFullHttpResponse fullResp = new DefaultFullHttpResponse(version, HttpResponseStatus.OK);

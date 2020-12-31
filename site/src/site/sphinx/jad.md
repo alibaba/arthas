@@ -1,6 +1,8 @@
 jad
 ===
 
+[`jad`在线教程](https://arthas.aliyun.com/doc/arthas-tutorials?language=cn&id=command-jad)
+
 > 反编译指定已加载类的源码
 
 `jad` 命令将 JVM 中实际运行的 class 的 byte code 反编译成 java 代码，便于你理解业务逻辑；
@@ -14,6 +16,7 @@ jad
 |---:|:---|
 |*class-pattern*|类名表达式匹配|
 |`[c:]`|类所属 ClassLoader 的 hashcode|
+|`[classLoaderClass:]`|指定执行表达式的 ClassLoader 的 class name|
 |[E]|开启正则表达式匹配，默认为通配符匹配|
 
 ### 使用参考
@@ -52,7 +55,7 @@ CharSequence {
 ...
 ```
 
-#### 反编绎时只显示源代码
+#### 反编译时只显示源代码
 
 默认情况下，反编译结果里会带有`ClassLoader`信息，通过`--source-only`选项，可以只打印源代码。方便和[mc](mc.md)/[redefine](redefine.md)命令结合使用。
 
@@ -142,3 +145,6 @@ public class Logger extends Category
 Affect(row-cnt:1) cost in 190 ms.
 ```
 
+对于只有唯一实例的ClassLoader还可以通过`--classLoaderClass`指定class name，使用起来更加方便：
+
+`--classLoaderClass` 的值是ClassLoader的类名，只有匹配到唯一的ClassLoader实例时才能工作，目的是方便输入通用命令，而`-c <hashcode>`是动态变化的。

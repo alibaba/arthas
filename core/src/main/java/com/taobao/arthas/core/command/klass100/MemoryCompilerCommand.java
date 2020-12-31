@@ -3,20 +3,27 @@ package com.taobao.arthas.core.command.klass100;
 import java.io.File;
 import java.lang.instrument.Instrumentation;
 import java.nio.charset.Charset;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Collection;
 
 import com.alibaba.arthas.deps.org.slf4j.Logger;
 import com.alibaba.arthas.deps.org.slf4j.LoggerFactory;
 import com.taobao.arthas.compiler.DynamicCompiler;
 import com.taobao.arthas.core.command.Constants;
+import com.taobao.arthas.core.command.model.MemoryCompilerModel;
+import com.taobao.arthas.core.command.model.RowAffectModel;
+import com.taobao.arthas.core.command.model.ClassLoaderVO;
 import com.taobao.arthas.core.shell.cli.Completion;
 import com.taobao.arthas.core.shell.cli.CompletionUtils;
 import com.taobao.arthas.core.shell.command.AnnotatedCommand;
 import com.taobao.arthas.core.shell.command.CommandProcess;
 import com.taobao.arthas.core.util.ClassLoaderUtils;
 import com.taobao.arthas.core.util.FileUtils;
+import com.taobao.arthas.core.util.ClassUtils;
+import com.taobao.arthas.core.util.ClassLoaderUtils;
 import com.taobao.arthas.core.util.affect.RowAffect;
 import com.taobao.middleware.cli.annotations.Argument;
 import com.taobao.middleware.cli.annotations.Description;
@@ -40,6 +47,7 @@ public class MemoryCompilerCommand extends AnnotatedCommand {
 
     private String directory;
     private String hashCode;
+    private String classLoaderClass;
     private String encoding;
 
     private List<String> sourcefiles;
@@ -56,6 +64,12 @@ public class MemoryCompilerCommand extends AnnotatedCommand {
         this.hashCode = hashCode;
     }
 
+    @Option(longName = "classLoaderClass")
+    @Description("The class name of the special class's classLoader.")
+    public void setClassLoaderClass(String classLoaderClass) {
+        this.classLoaderClass = classLoaderClass;
+    }
+
     @Option(longName = "encoding")
     @Description("Source file encoding")
     public void setEncoding(String encoding) {
@@ -70,19 +84,36 @@ public class MemoryCompilerCommand extends AnnotatedCommand {
 
     @Override
     public void process(final CommandProcess process) {
-        int exitCode = 0;
         RowAffect affect = new RowAffect();
 
         try {
             Instrumentation inst = process.session().getInstrumentation();
+
+            if (hashCode == null && classLoaderClass != null) {
+                List<ClassLoader> matchedClassLoaders = ClassLoaderUtils.getClassLoaderByClassName(inst, classLoaderClass);
+                if (matchedClassLoaders.size() == 1) {
+                    hashCode = Integer.toHexString(matchedClassLoaders.get(0).hashCode());
+                } else if (matchedClassLoaders.size() > 1) {
+                    Collection<ClassLoaderVO> classLoaderVOList = ClassUtils.createClassLoaderVOList(matchedClassLoaders);
+                    MemoryCompilerModel memoryCompilerModel = new MemoryCompilerModel()
+                            .setClassLoaderClass(classLoaderClass)
+                            .setMatchedClassLoaders(classLoaderVOList);
+                    process.appendResult(memoryCompilerModel);
+                    process.end(-1, "Found more than one classloader by class name, please specify classloader with '-c <classloader hash>'");
+                    return;
+                } else {
+                    process.end(-1, "Can not find classloader by class name: " + classLoaderClass + ".");
+                    return;
+                }
+            }
+            
             ClassLoader classloader = null;
             if (hashCode == null) {
                 classloader = ClassLoader.getSystemClassLoader();
             } else {
                 classloader = ClassLoaderUtils.getClassLoader(inst, hashCode);
                 if (classloader == null) {
-                    process.write("Can not find classloader with hashCode: " + hashCode + ".\n");
-                    exitCode = -1;
+                    process.end(-1, "Can not find classloader with hashCode: " + hashCode + ".");
                     return;
                 }
             }
@@ -112,22 +143,20 @@ public class MemoryCompilerCommand extends AnnotatedCommand {
                 outputDir = new File("").getAbsoluteFile();
             }
 
-            process.write("Memory compiler output:\n");
+            List<String> files = new ArrayList<String>();
             for (Entry<String, byte[]> entry : byteCodes.entrySet()) {
                 File byteCodeFile = new File(outputDir, entry.getKey().replace('.', '/') + ".class");
                 FileUtils.writeByteArrayToFile(byteCodeFile, entry.getValue());
-                process.write(byteCodeFile.getAbsolutePath() + '\n');
+                files.add(byteCodeFile.getAbsolutePath());
                 affect.rCnt(1);
             }
-
+            process.appendResult(new MemoryCompilerModel(files));
+            process.appendResult(new RowAffectModel(affect));
+            process.end();
         } catch (Throwable e) {
             logger.warn("Memory compiler error", e);
-            process.write("Memory compiler error, exception message: " + e.getMessage()
-                            + ", please check $HOME/logs/arthas/arthas.log for more details. \n");
-            exitCode = -1;
-        } finally {
-            process.write(affect + "\n");
-            process.end(exitCode);
+            process.end(-1, "Memory compiler error, exception message: " + e.getMessage()
+                            + ", please check $HOME/logs/arthas/arthas.log for more details.");
         }
     }
 

@@ -2,6 +2,7 @@ package com.taobao.arthas.core.shell.impl;
 
 import com.alibaba.arthas.deps.org.slf4j.Logger;
 import com.alibaba.arthas.deps.org.slf4j.LoggerFactory;
+import com.alibaba.arthas.tunnel.client.TunnelClient;
 import com.taobao.arthas.core.server.ArthasBootstrap;
 import com.taobao.arthas.core.shell.Shell;
 import com.taobao.arthas.core.shell.ShellServer;
@@ -19,11 +20,12 @@ import com.taobao.arthas.core.shell.system.impl.InternalCommandManager;
 import com.taobao.arthas.core.shell.system.impl.JobControllerImpl;
 import com.taobao.arthas.core.shell.term.Term;
 import com.taobao.arthas.core.shell.term.TermServer;
-import com.taobao.arthas.core.shell.term.impl.httptelnet.HttpTelnetTermServer;
+import com.taobao.arthas.core.util.ArthasBanner;
 
 import java.lang.instrument.Instrumentation;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -49,7 +51,6 @@ public class ShellServerImpl extends ShellServer {
     private final long timeoutMillis;
     private final long reaperInterval;
     private String welcomeMessage;
-    private ArthasBootstrap bootstrap;
     private Instrumentation instrumentation;
     private long pid;
     private boolean closed = true;
@@ -59,10 +60,6 @@ public class ShellServerImpl extends ShellServer {
     private JobControllerImpl jobController = new GlobalJobControllerImpl();
 
     public ShellServerImpl(ShellServerOptions options) {
-        this(options, null);
-    }
-
-    public ShellServerImpl(ShellServerOptions options, ArthasBootstrap bootstrap) {
         this.welcomeMessage = options.getWelcomeMessage();
         this.termServers = new ArrayList<TermServer>();
         this.timeoutMillis = options.getSessionTimeout();
@@ -71,7 +68,6 @@ public class ShellServerImpl extends ShellServer {
         this.resolvers = new CopyOnWriteArrayList<CommandResolver>();
         this.commandManager = new InternalCommandManager(resolvers);
         this.instrumentation = options.getInstrumentation();
-        this.bootstrap = bootstrap;
         this.pid = options.getPid();
 
         // Register builtin commands so they are listed in help
@@ -100,11 +96,24 @@ public class ShellServerImpl extends ShellServer {
         }
 
         ShellImpl session = createShell(term);
+        tryUpdateWelcomeMessage();
         session.setWelcome(welcomeMessage);
         session.closedFuture.setHandler(new SessionClosedHandler(this, session));
         session.init();
         sessions.put(session.id, session); // Put after init so the close handler on the connection is set
         session.readline(); // Now readline
+    }
+
+    private void tryUpdateWelcomeMessage() {
+        TunnelClient tunnelClient = ArthasBootstrap.getInstance().getTunnelClient();
+        if (tunnelClient != null) {
+            String id = tunnelClient.getId();
+            if (id != null) {
+                Map<String, String> welcomeInfos = new HashMap<String, String>();
+                welcomeInfos.put("id", id);
+                this.welcomeMessage = ArthasBanner.welcome(welcomeInfos);
+            }
+        }
     }
 
     @Override
@@ -154,6 +163,7 @@ public class ShellServerImpl extends ShellServer {
                 @Override
                 public Thread newThread(Runnable r) {
                     final Thread t = new Thread(r, "arthas-shell-server");
+                    t.setDaemon(true);
                     return t;
                 }
             });
@@ -184,6 +194,7 @@ public class ShellServerImpl extends ShellServer {
 
         synchronized (ShellServerImpl.this) {
             sessions.remove(shell.id);
+            shell.close("network error");
             completeSessionClosed = sessions.isEmpty() && closed;
         }
         if (completeSessionClosed) {
@@ -239,7 +250,14 @@ public class ShellServerImpl extends ShellServer {
             }
             jobController.close();
             sessionsClosed.setHandler(handler);
-            bootstrap.destroy();
         }
+    }
+
+    public JobControllerImpl getJobController() {
+        return jobController;
+    }
+
+    public InternalCommandManager getCommandManager() {
+        return commandManager;
     }
 }

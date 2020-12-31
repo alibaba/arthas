@@ -1,9 +1,9 @@
 package com.taobao.arthas.core.command.monitor200;
 
-import static com.taobao.text.ui.Element.label;
 
 import java.lang.reflect.Method;
 import java.nio.ByteBuffer;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -12,15 +12,14 @@ import com.alibaba.arthas.deps.org.slf4j.LoggerFactory;
 import com.taobao.arthas.common.JavaVersionUtils;
 import com.taobao.arthas.common.PidUtils;
 import com.taobao.arthas.core.command.Constants;
+import com.taobao.arthas.core.command.model.PerfCounterModel;
+import com.taobao.arthas.core.command.model.PerfCounterVO;
 import com.taobao.arthas.core.shell.command.AnnotatedCommand;
 import com.taobao.arthas.core.shell.command.CommandProcess;
 import com.taobao.middleware.cli.annotations.Description;
 import com.taobao.middleware.cli.annotations.Name;
 import com.taobao.middleware.cli.annotations.Option;
 import com.taobao.middleware.cli.annotations.Summary;
-import com.taobao.text.Decoration;
-import com.taobao.text.ui.TableElement;
-import com.taobao.text.util.RenderUtil;
 
 import sun.management.counter.Counter;
 import sun.management.counter.perf.PerfInstrumentation;
@@ -31,7 +30,7 @@ import sun.management.counter.perf.PerfInstrumentation;
  * @author hengyunabc 2020-02-16
  */
 @Name("perfcounter")
-@Summary("Display the perf counter infornation.")
+@Summary("Display the perf counter information.")
 @Description("\nExamples:\n" +
         "  perfcounter\n" +
         "  perfcounter -d\n" +
@@ -51,36 +50,26 @@ public class PerfCounterCommand extends AnnotatedCommand {
 
     @Override
     public void process(CommandProcess process) {
-        try {
-            TableElement table = new TableElement().leftCellPadding(1).rightCellPadding(1);
-            if (this.details) {
-                table = new TableElement(3, 1, 1, 10).leftCellPadding(1).rightCellPadding(1);
-                table.row(true, label("Name").style(Decoration.bold.bold()),
-                        label("Variability").style(Decoration.bold.bold()),
-                        label("Units").style(Decoration.bold.bold()), label("Value").style(Decoration.bold.bold()));
-            }
-
-            List<Counter> perfCounters = getPerfCounters();
-            if (perfCounters.isEmpty()) {
-                process.write(
-                        "please check arthas log. if java version >=9 , try to add jvm options when start your process: "
-                                + "--add-opens java.base/jdk.internal.perf=ALL-UNNAMED "
-                                + "--add-exports java.base/jdk.internal.perf=ALL-UNNAMED\n");
-            } else {
-                for (Counter counter : perfCounters) {
-                    if (details) {
-                        table.row(counter.getName(), String.valueOf(counter.getVariability()),
-                                String.valueOf(counter.getUnits()), String.valueOf(counter.getValue()));
-                    } else {
-                        table.row(counter.getName(), String.valueOf(counter.getValue()));
-                    }
-                }
-            }
-
-            process.write(RenderUtil.render(table, process.width()));
-        } finally {
-            process.end();
+        List<Counter> perfCounters = getPerfCounters();
+        if (perfCounters.isEmpty()) {
+            process.end(1,
+                    "please check arthas log. if java version >=9 , try to add jvm options when start your process: "
+                            + "--add-opens java.base/jdk.internal.perf=ALL-UNNAMED "
+                            + "--add-exports java.base/jdk.internal.perf=ALL-UNNAMED");
+            return;
         }
+
+        List<PerfCounterVO> perfCounterVOs = new ArrayList<PerfCounterVO>();
+        for (Counter counter : perfCounters) {
+            PerfCounterVO perfCounterVO = new PerfCounterVO(counter.getName(), counter.getValue());
+            if (details) {
+                perfCounterVO.setUnits(counter.getUnits().toString());
+                perfCounterVO.setVariability(counter.getVariability().toString());
+            }
+            perfCounterVOs.add(perfCounterVO);
+        }
+        process.appendResult(new PerfCounterModel(perfCounterVOs, details));
+        process.end();
     }
 
     private static List<Counter> getPerfCounters() {

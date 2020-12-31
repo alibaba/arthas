@@ -71,7 +71,7 @@ public abstract class StringUtils {
         return StringUtils.replace(className, "/", ".");
     }
 
-    public static String concat(String seperator, Class<?>... types) {
+    public static String concat(String separator, Class<?>... types) {
         if (types == null || types.length == 0) {
             return Constants.EMPTY_STRING;
         }
@@ -80,7 +80,23 @@ public abstract class StringUtils {
         for (int i = 0; i < types.length; i++) {
             builder.append(classname(types[i]));
             if (i < types.length - 1) {
-                builder.append(seperator);
+                builder.append(separator);
+            }
+        }
+
+        return builder.toString();
+    }
+
+    public static String concat(String separator, String... strs) {
+        if (strs == null || strs.length == 0) {
+            return Constants.EMPTY_STRING;
+        }
+
+        StringBuilder builder = new StringBuilder();
+        for (int i = 0; i < strs.length; i++) {
+            builder.append(strs[i]);
+            if (i < strs.length - 1) {
+                builder.append(separator);
             }
         }
 
@@ -433,10 +449,14 @@ public abstract class StringUtils {
 
     public static String replace(String inString, String oldPattern, String newPattern) {
         if(hasLength(inString) && hasLength(oldPattern) && newPattern != null) {
-            StringBuilder sb = new StringBuilder();
             int pos = 0;
             int index = inString.indexOf(oldPattern);
+            if (index < 0) {
+                //no need to replace
+                return inString;
+            }
 
+            StringBuilder sb = new StringBuilder();
             for(int patLen = oldPattern.length(); index >= 0; index = inString.indexOf(oldPattern, pos)) {
                 sb.append(inString.substring(pos, index));
                 sb.append(newPattern);

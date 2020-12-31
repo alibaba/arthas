@@ -1,6 +1,8 @@
 logger
 ===
 
+[`logger`在线教程](https://arthas.aliyun.com/doc/arthas-tutorials?language=cn&id=command-logger)
+
 > 查看logger信息，更新logger level
 
 ### 使用参考
@@ -97,6 +99,10 @@ logger
 
 #### 查看指定classloader的logger信息
 
+注意hashcode是变化的，需要先查看当前的ClassLoader信息，提取对应ClassLoader的hashcode。
+
+如果你使用`-c`，你需要手动输入hashcode：`-c <hashcode>`
+
 ```bash
 [arthas@2062]$ logger -c 2a139a55
  name                                   ROOT
@@ -123,6 +129,14 @@ logger
                                         classLoaderHash 2a139a55
                                         appenderRef     [APPLICATION]
 ```
+
+对于只有唯一实例的ClassLoader可以通过`--classLoaderClass`指定class name，使用起来更加方便：
+
+`logger --classLoaderClass sun.misc.Launcher$AppClassLoader`
+
+  * 注: 这里classLoaderClass 在 java 8 是 sun.misc.Launcher$AppClassLoader，而java 11的classloader是jdk.internal.loader.ClassLoaders$AppClassLoader。
+
+`--classLoaderClass` 的值是ClassLoader的类名，只有匹配到唯一的ClassLoader实例时才能工作，目的是方便输入通用命令，而`-c <hashcode>`是动态变化的。
 
 #### 更新logger level
 

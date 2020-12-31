@@ -1,17 +1,17 @@
 package com.taobao.arthas.core.command.basic1000;
 
-import com.taobao.arthas.core.advisor.Enhancer;
-import com.taobao.arthas.core.shell.ShellServer;
+import com.alibaba.arthas.deps.org.slf4j.Logger;
+import com.alibaba.arthas.deps.org.slf4j.LoggerFactory;
+import com.taobao.arthas.core.command.model.MessageModel;
+import com.taobao.arthas.core.command.model.ResetModel;
+import com.taobao.arthas.core.command.model.ShutdownModel;
+import com.taobao.arthas.core.server.ArthasBootstrap;
 import com.taobao.arthas.core.shell.command.AnnotatedCommand;
 import com.taobao.arthas.core.shell.command.CommandProcess;
 import com.taobao.arthas.core.util.affect.EnhancerAffect;
-import com.taobao.arthas.core.util.matcher.WildcardMatcher;
 import com.taobao.middleware.cli.annotations.Hidden;
 import com.taobao.middleware.cli.annotations.Name;
 import com.taobao.middleware.cli.annotations.Summary;
-
-import java.lang.instrument.Instrumentation;
-import java.lang.instrument.UnmodifiableClassException;
 
 /**
  * 关闭命令
@@ -23,24 +23,28 @@ import java.lang.instrument.UnmodifiableClassException;
 @Summary("Shutdown Arthas server and exit the console")
 @Hidden
 public class ShutdownCommand extends AnnotatedCommand {
+
+    private static final Logger logger = LoggerFactory.getLogger(ShutdownCommand.class);
+
     @Override
     public void process(CommandProcess process) {
         shutdown(process);
     }
 
     public static void shutdown(CommandProcess process) {
+        ArthasBootstrap arthasBootstrap = ArthasBootstrap.getInstance();
         try {
             // 退出之前需要重置所有的增强类
-            Instrumentation inst = process.session().getInstrumentation();
-            EnhancerAffect enhancerAffect = Enhancer.reset(inst, new WildcardMatcher("*"));
-            process.write(enhancerAffect.toString()).write("\n");
-            process.write("Arthas Server is going to shut down...\n");
-        } catch (UnmodifiableClassException e) {
-            // ignore
+            process.appendResult(new MessageModel("Resetting all enhanced classes ..."));
+            EnhancerAffect enhancerAffect = arthasBootstrap.reset();
+            process.appendResult(new ResetModel(enhancerAffect));
+            process.appendResult(new ShutdownModel(true, "Arthas Server is going to shut down..."));
+        } catch (Throwable e) {
+            logger.error("An error occurred when stopping arthas server.", e);
+            process.appendResult(new ShutdownModel(false, "An error occurred when stopping arthas server."));
         } finally {
             process.end();
-            ShellServer server = process.session().getServer();
-            server.close();
+            arthasBootstrap.destroy();
         }
     }
 }

@@ -1,38 +1,53 @@
 package com.taobao.arthas.boot;
 
-import com.taobao.arthas.common.IOUtils;
-
-import org.junit.Test;
-
+import java.io.File;
 import java.io.IOException;
-import java.net.URL;
-import java.util.ArrayList;
+import java.util.List;
+import java.util.TimeZone;
+import java.util.concurrent.TimeUnit;
 
 import org.junit.Assert;
-import static com.taobao.arthas.boot.DownloadUtils.*;
+import org.junit.Rule;
+import org.junit.Test;
+import org.junit.rules.TemporaryFolder;
 
 public class DownloadUtilsTest {
+    @Rule
+    public TemporaryFolder rootFolder = new TemporaryFolder();
 
     @Test
-    public void testReadMavenReleaseVersion() {
-        Assert.assertNull(readMavenReleaseVersion(""));
+    public void testReadReleaseVersion() {
+        String releaseVersion = DownloadUtils.readLatestReleaseVersion();
+        Assert.assertNotNull(releaseVersion);
+        Assert.assertNotEquals("releaseVersion is empty", "", releaseVersion.trim());
+        System.err.println(releaseVersion);
     }
 
     @Test
-    public void testReadAllMavenVersion() {
-        Assert.assertEquals(new ArrayList<String>(), readAllMavenVersion(""));
+    public void testReadAllVersions() {
+        List<String> versions = DownloadUtils.readRemoteVersions();
+        Assert.assertEquals("", true, versions.contains("3.1.7"));
     }
 
     @Test
-    public void testGetRepoUrl() {
-        Assert.assertEquals("http", getRepoUrl("https/", true));
-        Assert.assertEquals("https://repo1.maven.org/maven2", getRepoUrl("center", false));
-        Assert.assertEquals("https://maven.aliyun.com/repository/public", getRepoUrl("aliyun", false));
+    public void testAliyunDownload() throws IOException {
+        String version = "3.3.7";
+        File folder = rootFolder.newFolder();
+        System.err.println(folder.getAbsolutePath());
+        DownloadUtils.downArthasPackaging("aliyun", false, version, folder.getAbsolutePath());
+
+        File as = new File(folder, version + File.separator + "arthas" + File.separator + "as.sh");
+        Assert.assertTrue(as.exists());
     }
 
     @Test
-    public void testReadMavenMetaData() throws IOException {
-        String url = "https://repo1.maven.org/maven2/com/taobao/arthas/arthas-packaging/maven-metadata.xml";
-        Assert.assertEquals(IOUtils.toString(new URL(url).openStream()), readMavenMetaData("center", false));
+    public void testCenterDownload() throws IOException {
+        String version = "3.1.7";
+        File folder = rootFolder.newFolder();
+        System.err.println(folder.getAbsolutePath());
+        DownloadUtils.downArthasPackaging("center", false, version, folder.getAbsolutePath());
+
+        File as = new File(folder, version + File.separator + "arthas" + File.separator + "as.sh");
+        Assert.assertTrue(as.exists());
     }
 }

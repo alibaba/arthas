@@ -41,7 +41,7 @@
 * [sc](sc.md)——查看JVM已加载的类信息
 * [sm](sm.md)——查看已加载类的方法信息
 * [jad](jad.md)——反编译指定已加载类的源码
-* [mc](mc.md)——内存编绎器，内存编绎`.java`文件为`.class`文件
+* [mc](mc.md)——内存编译器，内存编译`.java`文件为`.class`文件
 * [redefine](redefine.md)——加载外部的`.class`文件，redefine到JVM里
 * [dump](dump.md)——dump 已加载类的 byte code 到特定目录
 * [classloader](classloader.md)——查看classloader的继承树，urls，类加载信息，使用classloader去getResource
@@ -91,9 +91,60 @@ Arthas支持使用管道对上述命令的结果进行进一步的处理，如`s
 
 * [Web Console](web-console.md)
 
+## Arthas Properties
+
+* [Arthas Properties](arthas-properties.md)
+
 ## 以java agent方式启动
 
 * [以java agent方式启动](agent.md)
+
+
+## as.sh 和 arthas-boot 技巧
+
+* 通过`select`功能选择attach的进程。
+
+正常情况下，每次执行`as.sh`/`arthas-boot.jar`需要选择，或者指定PID。这样会比较麻烦，因为每次启动应用，它的PID会变化。
+
+比如，已经启动了`arthas-demo.jar`，使用`jps`命令查看：
+
+```bash
+$ jps
+58883 arthas-demo.jar
+58884 Jps
+```
+
+通过`select`参数可以指定进程名字，非常方便。
+
+```bash
+$ ./as.sh --select arthas-demo
+Arthas script version: 3.3.6
+[INFO] JAVA_HOME: /tmp/java/8.0.222-zulu
+Arthas home: /Users/admin/.arthas/lib/3.3.6/arthas
+Calculating attach execution time...
+Attaching to 59161 using version /Users/admin/.arthas/lib/3.3.6/arthas...
+
+real	0m0.572s
+user	0m0.281s
+sys	0m0.039s
+Attach success.
+telnet connecting to arthas server... current timestamp is 1594280799
+Trying 127.0.0.1...
+Connected to localhost.
+Escape character is '^]'.
+  ,---.  ,------. ,--------.,--.  ,--.  ,---.   ,---.
+ /  O  \ |  .--. ''--.  .--'|  '--'  | /  O  \ '   .-'
+|  .-.  ||  '--'.'   |  |   |  .--.  ||  .-.  |`.  `-.
+|  | |  ||  |\  \    |  |   |  |  |  ||  | |  |.-'    |
+`--' `--'`--' '--'   `--'   `--'  `--'`--' `--'`-----'
+
+
+wiki      https://arthas.aliyun.com/doc
+tutorials https://arthas.aliyun.com/doc/arthas-tutorials.html
+version   3.3.6
+pid       58883
+```
+
 
 ## 用户数据回报
 

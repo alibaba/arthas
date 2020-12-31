@@ -1,99 +1,112 @@
 jvm
 ===
 
+[`jvm`在线教程](https://arthas.aliyun.com/doc/arthas-tutorials.html?language=cn&id=command-jvm)
+
 > 查看当前JVM信息
 
 ### 使用参考
 
 ```
 $ jvm
- CATEGORY            INFO
-------------------------------------------------------------------------------------------------------------------------------------
+RUNTIME
+--------------------------------------------------------------------------------------------------------------
+ MACHINE-NAME                   37@ff267334bb65
+ JVM-START-TIME                 2020-07-23 07:50:36
+ MANAGEMENT-SPEC-VERSION        1.2
+ SPEC-NAME                      Java Virtual Machine Specification
+ SPEC-VENDOR                    Oracle Corporation
+ SPEC-VERSION                   1.8
+ VM-NAME                        Java HotSpot(TM) 64-Bit Server VM
+ VM-VENDOR                      Oracle Corporation
+ VM-VERSION                     25.201-b09
+ INPUT-ARGUMENTS                []
+ CLASS-PATH                     demo-arthas-spring-boot.jar
+ BOOT-CLASS-PATH                /usr/lib/jvm/java-8-oracle/jre/lib/resources.jar:/usr/lib/jvm/java-8-oracle/j
+                                re/lib/rt.jar:/usr/lib/jvm/java-8-oracle/jre/lib/sunrsasign.jar:/usr/lib/jvm/
+                                java-8-oracle/jre/lib/jsse.jar:/usr/lib/jvm/java-8-oracle/jre/lib/jce.jar:/us
+                                r/lib/jvm/java-8-oracle/jre/lib/charsets.jar:/usr/lib/jvm/java-8-oracle/jre/l
+                                ib/jfr.jar:/usr/lib/jvm/java-8-oracle/jre/classes
+ LIBRARY-PATH                   /usr/java/packages/lib/amd64:/usr/lib64:/lib64:/lib:/usr/lib
 
- RUNTIME              MACHINE-NAME             hellodeMacBook-Air.local
-                      JVM-START-TIME           2015-12-23 10:54:18
-                      MANAGEMENT-SPEC-VERSION  1.2
-                      SPEC-NAME                Java Virtual Machine Specification
-                      SPEC-VENDOR              Oracle Corporation
-                      SPEC-VERSION             1.8
-                      VM-NAME                  Java HotSpot(TM) 64-Bit Server VM
-                      VM-VENDOR                Oracle Corporation
-                      VM-VERSION               25.60-b23
-                      INPUT-ARGUMENTS          -Xbootclasspath/a:/Users/hello/.jenv/versions/1.8/lib/tools.jar
-                                               -Djava.util.logging.config.file=/Users/hello/code/java/crash/packaging/target/
-                                               conf/logging.properties
+--------------------------------------------------------------------------------------------------------------
+ CLASS-LOADING
+--------------------------------------------------------------------------------------------------------------
+ LOADED-CLASS-COUNT             7529
+ TOTAL-LOADED-CLASS-COUNT       7529
+ UNLOADED-CLASS-COUNT           0
+ IS-VERBOSE                     false
 
-                      CLASS-PATH               /Users/hello/.jenv/versions/1.8/lib/tools.jar:/Users/hello/code/java/cras
-                                               h/packaging/target/bin/crash.cli-1.3.2-SNAPSHOT.jar::/Users/hello/code/java/cr
-                                               ash/packaging/target/lib/bcpkix-jdk15on-1.51.jar:/Users/hello/code/java/crash/
-                                               packaging/target/lib/bcprov-jdk15on-1.51.jar:/Users/hello/code/java/crash/pack
-                                               aging/target/lib/crash.connectors.ssh-1.3.2-SNAPSHOT-standalone.jar:/Users/hengyuna
-                                               bc/code/java/crash/packaging/target/lib/crash.connectors.telnet-1.3.2-SNAPSHOT-stan
-                                               dalone.jar:/Users/hello/code/java/crash/packaging/target/lib/crash.shell-1.3.2
-                                               -SNAPSHOT.jar:/Users/hello/code/java/crash/packaging/target/lib/groovy-all-1.8
-                                               .9.jar:/Users/hello/code/java/crash/packaging/target/lib/ivy-2.2.0.jar
-                      BOOT-CLASS-PATH          /Library/Java/JavaVirtualMachines/jdk1.8.0_60.jdk/Contents/Home/jre/lib/resources.j
-                                               ar:/Library/Java/JavaVirtualMachines/jdk1.8.0_60.jdk/Contents/Home/jre/lib/rt.jar:/
-                                               Library/Java/JavaVirtualMachines/jdk1.8.0_60.jdk/Contents/Home/jre/lib/sunrsasign.j
-                                               ar:/Library/Java/JavaVirtualMachines/jdk1.8.0_60.jdk/Contents/Home/jre/lib/jsse.jar
-                                               :/Library/Java/JavaVirtualMachines/jdk1.8.0_60.jdk/Contents/Home/jre/lib/jce.jar:/L
-                                               ibrary/Java/JavaVirtualMachines/jdk1.8.0_60.jdk/Contents/Home/jre/lib/charsets.jar:
-                                               /Library/Java/JavaVirtualMachines/jdk1.8.0_60.jdk/Contents/Home/jre/lib/jfr.jar:/Li
-                                               brary/Java/JavaVirtualMachines/jdk1.8.0_60.jdk/Contents/Home/jre/classes:/Users/hen
-                                               gyunabc/.jenv/versions/1.8/lib/tools.jar
-                      LIBRARY-PATH             /Users/hello/Library/Java/Extensions:/Library/Java/Extensions:/Network/Library
-                                               /Java/Extensions:/System/Library/Java/Extensions:/usr/lib/java:.
+--------------------------------------------------------------------------------------------------------------
+ COMPILATION
+--------------------------------------------------------------------------------------------------------------
+ NAME                           HotSpot 64-Bit Tiered Compilers
+ TOTAL-COMPILE-TIME             14921(ms)
 
- CLASS-LOADING        LOADED-CLASS-COUNT        4264
-                      TOTAL-LOADED-CLASS-COUNT  4264
-                      UNLOADED-CLASS-COUNT      0
-                      IS-VERBOSE                false
+--------------------------------------------------------------------------------------------------------------
+ GARBAGE-COLLECTORS
+--------------------------------------------------------------------------------------------------------------
+ PS Scavenge                            name : PS Scavenge                                                                             
+ [count/time (ms)]                      collectionCount : 7                                                                            
+                                        collectionTime : 68                                                                            
+                                                                                                                                       
+ PS MarkSweep                           name : PS MarkSweep                                                                            
+ [count/time (ms)]                      collectionCount : 1                                                                            
+                                        collectionTime : 47 
 
- COMPILATION          NAME                HotSpot 64-Bit Tiered Compilers
-                      TOTAL-COMPILE-TIME  5145(ms)
+--------------------------------------------------------------------------------------------------------------
+ MEMORY-MANAGERS
+--------------------------------------------------------------------------------------------------------------
+ CodeCacheManager               Code Cache
 
- GARBAGE-COLLECTORS   PS Scavenge   6/74(ms)
-                      [count/time]
-                      PS MarkSweep  1/64(ms)
-                      [count/time]
+ Metaspace Manager              Metaspace
+                                Compressed Class Space
 
- MEMORY-MANAGERS      CodeCacheManager   Code Cache
+ Copy                           Eden Space
+                                Survivor Space
 
-                      Metaspace Manager  Metaspace
-                                         Compressed Class Space
-
-                      PS Scavenge        PS Eden Space
-                                         PS Survivor Space
-
-                      PS MarkSweep       PS Eden Space
-                                         PS Survivor Space
-                                         PS Old Gen
+ MarkSweepCompact               Eden Space
+                                Survivor Space
+                                Tenured Gen
 
 
- MEMORY               HEAP-MEMORY-USAGE          1073741824(1.00 GiB)/1073741824(1.00 GiB)/5242880000(4.88 GiB)/278637584(265.73 MiB)
-                      [committed/init/max/used]
-                      NO-HEAP-MEMORY-USAGE       172597248(164.60 MiB)/2555904(2.44 MiB)/1862270976(1.73 GiB)/166521144(158.81 MiB)
-                      [committed/init/max/used]
-                      PENDING-FINALIZE-COUNT     0
+--------------------------------------------------------------------------------------------------------------
+ MEMORY
+--------------------------------------------------------------------------------------------------------------
+ HEAP-MEMORY-USAGE                      init : 268435456(256.0 MiB)                                                                    
+ [memory in bytes]                      used : 18039504(17.2 MiB)                                                                      
+                                        committed : 181403648(173.0 MiB)                                                               
+                                        max : 3817865216(3.6 GiB)                                                                      
+                                                                                                                                       
+ NO-HEAP-MEMORY-USAGE                   init : 2555904(2.4 MiB)                                                                        
+ [memory in bytes]                      used : 33926216(32.4 MiB)                                                                      
+                                        committed : 35176448(33.5 MiB)                                                                 
+                                        max : -1(-1 B)  
 
- OPERATING-SYSTEM     OS                Mac OS X
-                      ARCH              x86_64
-                      PROCESSORS-COUNT  4
-                      LOAD-AVERAGE      2.328125
-                      VERSION           10.10.5
+--------------------------------------------------------------------------------------------------------------
+ OPERATING-SYSTEM
+--------------------------------------------------------------------------------------------------------------
+ OS                             Linux
+ ARCH                           amd64
+ PROCESSORS-COUNT               3
+ LOAD-AVERAGE                   29.53
+ VERSION                        4.15.0-52-generic
 
- THREAD               COUNT          16
-                      DAEMON-COUNT   10
-                      PEAK-COUNT     18
-                      STARTED-COUNT  19
-                      DEADLOCK-COUNT  0
+--------------------------------------------------------------------------------------------------------------
+ THREAD
+--------------------------------------------------------------------------------------------------------------
+ COUNT                          30
+ DAEMON-COUNT                   24
+ PEAK-COUNT                     31
+ STARTED-COUNT                  36
+ DEADLOCK-COUNT                 0
 
+--------------------------------------------------------------------------------------------------------------
  FILE-DESCRIPTOR
- 
-                      MAX-FILE-DESCRIPTOR-COUNT  10240
-                      OPEN-FILE-DESCRIPTOR-COUNT 648
-                      
-Affect cost in 2 ms.
+--------------------------------------------------------------------------------------------------------------
+ MAX-FILE-DESCRIPTOR-COUNT      1048576
+ OPEN-FILE-DESCRIPTOR-COUNT     100
+Affect(row-cnt:0) cost in 88 ms.
 ```
 
 ### THREAD相关

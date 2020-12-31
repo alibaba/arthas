@@ -1,22 +1,28 @@
 package com.taobao.arthas.core.command.klass100;
 
-import static com.taobao.text.Decoration.bold;
-import static com.taobao.text.ui.Element.label;
-import static java.lang.String.format;
 
 import java.lang.instrument.Instrumentation;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 import java.util.Set;
+import java.util.Collection;
+import java.util.List;
 
+import com.alibaba.arthas.deps.org.slf4j.Logger;
+import com.alibaba.arthas.deps.org.slf4j.LoggerFactory;
 import com.taobao.arthas.core.command.Constants;
+import com.taobao.arthas.core.command.model.SearchMethodModel;
+import com.taobao.arthas.core.command.model.MethodVO;
+import com.taobao.arthas.core.command.model.RowAffectModel;
+import com.taobao.arthas.core.command.model.ClassLoaderVO;
 import com.taobao.arthas.core.shell.cli.Completion;
 import com.taobao.arthas.core.shell.cli.CompletionUtils;
 import com.taobao.arthas.core.shell.command.AnnotatedCommand;
 import com.taobao.arthas.core.shell.command.CommandProcess;
+import com.taobao.arthas.core.util.ClassUtils;
+import com.taobao.arthas.core.util.ClassLoaderUtils;
 import com.taobao.arthas.core.util.SearchUtils;
 import com.taobao.arthas.core.util.StringUtils;
-import com.taobao.arthas.core.util.TypeRenderUtils;
 import com.taobao.arthas.core.util.affect.RowAffect;
 import com.taobao.arthas.core.util.matcher.Matcher;
 import com.taobao.arthas.core.util.matcher.RegexMatcher;
@@ -26,9 +32,6 @@ import com.taobao.middleware.cli.annotations.Description;
 import com.taobao.middleware.cli.annotations.Name;
 import com.taobao.middleware.cli.annotations.Option;
 import com.taobao.middleware.cli.annotations.Summary;
-import com.taobao.text.ui.Element;
-import com.taobao.text.ui.TableElement;
-import com.taobao.text.util.RenderUtil;
 
 /**
  * 展示方法信息
@@ -46,12 +49,15 @@ import com.taobao.text.util.RenderUtil;
         "  sm -Ed org\\\\.apache\\\\.commons\\\\.lang\\.StringUtils .*\n" +
         Constants.WIKI + Constants.WIKI_HOME + "sm")
 public class SearchMethodCommand extends AnnotatedCommand {
+    private static final Logger logger = LoggerFactory.getLogger(SearchMethodCommand.class);
 
     private String classPattern;
     private String methodPattern;
     private String hashCode = null;
+    private String classLoaderClass;
     private boolean isDetail = false;
     private boolean isRegEx = false;
+    private int numberOfLimit = 100;
 
     @Argument(argName = "class-pattern", index = 0)
     @Description("Class name pattern, use either '.' or '/' as separator")
@@ -83,47 +89,80 @@ public class SearchMethodCommand extends AnnotatedCommand {
         this.hashCode = hashCode;
     }
 
+    @Option(longName = "classLoaderClass")
+    @Description("The class name of the special class's classLoader.")
+    public void setClassLoaderClass(String classLoaderClass) {
+        this.classLoaderClass = classLoaderClass;
+    }
+
+    @Option(shortName = "n", longName = "limits")
+    @Description("Maximum number of matching classes (100 by default)")
+    public void setNumberOfLimit(int numberOfLimit) {
+        this.numberOfLimit = numberOfLimit;
+    }
+
     @Override
     public void process(CommandProcess process) {
         RowAffect affect = new RowAffect();
 
         Instrumentation inst = process.session().getInstrumentation();
         Matcher<String> methodNameMatcher = methodNameMatcher();
-        Set<Class<?>> matchedClasses = SearchUtils.searchClass(inst, classPattern, isRegEx, hashCode);
-
-        for (Class<?> clazz : matchedClasses) {
-            for (Constructor<?> constructor : clazz.getDeclaredConstructors()) {
-                String methodNameWithDescriptor = org.objectweb.asm.commons.Method.getMethod(constructor).toString();
-                if (!methodNameMatcher.matching("<init>")) {
-                    continue;
-                }
-
-                if (isDetail) {
-                    process.write(RenderUtil.render(renderConstructor(constructor, clazz), process.width()) + "\n");
-                } else {
-                    String line = format("%s %s%n", clazz.getName(), methodNameWithDescriptor);
-                    process.write(line);
-                }
-                affect.rCnt(1);
-            }
-
-            for (Method method : clazz.getDeclaredMethods()) {
-                String methodNameWithDescriptor = org.objectweb.asm.commons.Method.getMethod(method).toString();
-                if (!methodNameMatcher.matching(method.getName())) {
-                    continue;
-                }
-
-                if (isDetail) {
-                    process.write(RenderUtil.render(renderMethod(method, clazz), process.width()) + "\n");
-                } else {
-                    String line = format("%s %s%n", clazz.getName(), methodNameWithDescriptor);
-                    process.write(line);
-                }
-                affect.rCnt(1);
+        
+        if (hashCode == null && classLoaderClass != null) {
+            List<ClassLoader> matchedClassLoaders = ClassLoaderUtils.getClassLoaderByClassName(inst, classLoaderClass);
+            if (matchedClassLoaders.size() == 1) {
+                hashCode = Integer.toHexString(matchedClassLoaders.get(0).hashCode());
+            } else if (matchedClassLoaders.size() > 1) {
+                Collection<ClassLoaderVO> classLoaderVOList = ClassUtils.createClassLoaderVOList(matchedClassLoaders);
+                SearchMethodModel searchmethodModel = new SearchMethodModel()
+                        .setClassLoaderClass(classLoaderClass)
+                        .setMatchedClassLoaders(classLoaderVOList);
+                process.appendResult(searchmethodModel);
+                process.end(-1, "Found more than one classloader by class name, please specify classloader with '-c <classloader hash>'");
+                return;
+            } else {
+                process.end(-1, "Can not find classloader by class name: " + classLoaderClass + ".");
+                return;
             }
         }
 
-        process.write(affect + "\n");
+        Set<Class<?>> matchedClasses = SearchUtils.searchClass(inst, classPattern, isRegEx, hashCode);
+
+        if (numberOfLimit > 0 && matchedClasses.size() > numberOfLimit) {
+            process.end(-1, "The number of matching classes is greater than : " + numberOfLimit+". \n" +
+                    "Please specify a more accurate 'class-patten' or use the parameter '-n' to change the maximum number of matching classes.");
+            return;
+        }
+        for (Class<?> clazz : matchedClasses) {
+            try {
+                for (Constructor<?> constructor : clazz.getDeclaredConstructors()) {
+                    if (!methodNameMatcher.matching("<init>")) {
+                        continue;
+                    }
+
+                    MethodVO methodInfo = ClassUtils.createMethodInfo(constructor, clazz, isDetail);
+                    process.appendResult(new SearchMethodModel(methodInfo, isDetail));
+                    affect.rCnt(1);
+                }
+
+                for (Method method : clazz.getDeclaredMethods()) {
+                    if (!methodNameMatcher.matching(method.getName())) {
+                        continue;
+                    }
+                    MethodVO methodInfo = ClassUtils.createMethodInfo(method, clazz, isDetail);
+                    process.appendResult(new SearchMethodModel(methodInfo, isDetail));
+                    affect.rCnt(1);
+                }
+            } catch (Error e) {
+                //print failed className
+                String msg = String.format("process class failed: %s, error: %s", clazz.getName(), e.toString());
+                logger.error(msg, e);
+                process.end(1, msg);
+                return;
+            }
+        }
+
+        process.appendResult(new RowAffectModel(affect));
         process.end();
     }
 
@@ -133,33 +172,6 @@ public class SearchMethodCommand extends AnnotatedCommand {
             methodPattern = isRegEx ? ".*" : "*";
         }
         return isRegEx ? new RegexMatcher(methodPattern) : new WildcardMatcher(methodPattern);
-    }
-
-    private Element renderMethod(Method method, Class<?> clazz) {
-        TableElement table = new TableElement().leftCellPadding(1).rightCellPadding(1);
-
-        table.row(label("declaring-class").style(bold.bold()), label(method.getDeclaringClass().getName()))
-                .row(label("method-name").style(bold.bold()), label(method.getName()).style(bold.bold()))
-                .row(label("modifier").style(bold.bold()), label(StringUtils.modifier(method.getModifiers(), ',')))
-                .row(label("annotation").style(bold.bold()), label(TypeRenderUtils.drawAnnotation(method)))
-                .row(label("parameters").style(bold.bold()), label(TypeRenderUtils.drawParameters(method)))
-                .row(label("return").style(bold.bold()), label(TypeRenderUtils.drawReturn(method)))
-                .row(label("exceptions").style(bold.bold()), label(TypeRenderUtils.drawExceptions(method)))
-                .row(label("classLoaderHash").style(bold.bold()), label(StringUtils.classLoaderHash(clazz)));
-        return table;
-    }
-
-    private Element renderConstructor(Constructor<?> constructor, Class<?> clazz) {
-        TableElement table = new TableElement().leftCellPadding(1).rightCellPadding(1);
-
-        table.row(label("declaring-class").style(bold.bold()), label(constructor.getDeclaringClass().getName()))
-             .row(label("constructor-name").style(bold.bold()), label("<init>").style(bold.bold()))
-             .row(label("modifier").style(bold.bold()), label(StringUtils.modifier(constructor.getModifiers(), ',')))
-             .row(label("annotation").style(bold.bold()), label(TypeRenderUtils.drawAnnotation(constructor.getDeclaredAnnotations())))
-             .row(label("parameters").style(bold.bold()), label(TypeRenderUtils.drawParameters(constructor)))
-             .row(label("exceptions").style(bold.bold()), label(TypeRenderUtils.drawExceptions(constructor)))
-             .row(label("classLoaderHash").style(bold.bold()), label(StringUtils.classLoaderHash(clazz)));
-        return table;
     }
 
     @Override

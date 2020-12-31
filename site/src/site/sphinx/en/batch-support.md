@@ -38,7 +38,7 @@ Use `-c` also can specify the commands, like this:
 ./as.sh -c 'sysprop; thread' 56328 > test.out
 ```
 
-#### Step 3: Check the outputs
+#### Step 3: Check the output
 
 ```bash
 cat test.out

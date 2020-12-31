@@ -3,9 +3,10 @@ package com.taobao.arthas.core.shell.term.impl.httptelnet;
 import java.io.File;
 import java.util.concurrent.TimeUnit;
 
+import com.taobao.arthas.common.ArthasConstants;
 import com.taobao.arthas.core.shell.term.impl.http.HttpRequestHandler;
-import com.taobao.arthas.core.shell.term.impl.http.TtyWebSocketFrameHandler;
 
+import com.taobao.arthas.core.shell.term.impl.http.TtyWebSocketFrameHandler;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
@@ -15,6 +16,7 @@ import io.netty.handler.codec.http.HttpObjectAggregator;
 import io.netty.handler.codec.http.HttpServerCodec;
 import io.netty.handler.codec.http.websocketx.WebSocketServerProtocolHandler;
 import io.netty.handler.stream.ChunkedWriteHandler;
+import io.netty.util.concurrent.EventExecutorGroup;
 import io.netty.util.concurrent.ScheduledFuture;
 import io.termd.core.function.Consumer;
 import io.termd.core.function.Supplier;
@@ -31,12 +33,14 @@ public class ProtocolDetectHandler extends ChannelInboundHandlerAdapter {
     private ChannelGroup channelGroup;
     private Supplier<TelnetHandler> handlerFactory;
     private Consumer<TtyConnection> ttyConnectionFactory;
+    private EventExecutorGroup workerGroup;
 
     public ProtocolDetectHandler(ChannelGroup channelGroup, final Supplier<TelnetHandler> handlerFactory,
-            Consumer<TtyConnection> ttyConnectionFactory) {
+                                 Consumer<TtyConnection> ttyConnectionFactory, EventExecutorGroup workerGroup) {
         this.channelGroup = channelGroup;
         this.handlerFactory = handlerFactory;
         this.ttyConnectionFactory = ttyConnectionFactory;
+        this.workerGroup = workerGroup;
     }
 
     private ScheduledFuture<?> detectTelnetFuture;
@@ -81,8 +85,8 @@ public class ProtocolDetectHandler extends ChannelInboundHandlerAdapter {
         } else {
             pipeline.addLast(new HttpServerCodec());
             pipeline.addLast(new ChunkedWriteHandler());
-            pipeline.addLast(new HttpObjectAggregator(64 * 1024));
-            pipeline.addLast(new HttpRequestHandler("/ws", new File("arthas-output")));
+            pipeline.addLast(new HttpObjectAggregator(ArthasConstants.MAX_HTTP_CONTENT_LENGTH));
+            pipeline.addLast(workerGroup, "HttpRequestHandler", new HttpRequestHandler("/ws"));
             pipeline.addLast(new WebSocketServerProtocolHandler("/ws"));
             pipeline.addLast(new TtyWebSocketFrameHandler(channelGroup, ttyConnectionFactory));
             ctx.fireChannelActive();

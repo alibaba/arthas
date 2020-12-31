@@ -17,6 +17,7 @@ public interface InvokeTraceable {
      * @throws Throwable 通知过程出错
      */
     void invokeBeforeTracing(
+            ClassLoader classLoader,
             String tracingClassName,
             String tracingMethodName,
             String tracingMethodDesc,
@@ -32,6 +33,7 @@ public interface InvokeTraceable {
      * @throws Throwable 通知过程出错
      */
     void invokeThrowTracing(
+            ClassLoader classLoader,
             String tracingClassName,
             String tracingMethodName,
             String tracingMethodDesc,
@@ -48,6 +50,7 @@ public interface InvokeTraceable {
      * @throws Throwable 通知过程出错
      */
     void invokeAfterTracing(
+            ClassLoader classLoader,
             String tracingClassName,
             String tracingMethodName,
             String tracingMethodDesc,

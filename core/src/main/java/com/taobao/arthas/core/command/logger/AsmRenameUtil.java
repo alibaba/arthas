@@ -1,11 +1,10 @@
 package com.taobao.arthas.core.command.logger;
 
-import org.objectweb.asm.ClassReader;
-import org.objectweb.asm.ClassVisitor;
-import org.objectweb.asm.ClassWriter;
-import org.objectweb.asm.commons.ClassRemapper;
-import org.objectweb.asm.commons.Remapper;
-import org.objectweb.asm.commons.SimpleRemapper;
+import com.alibaba.deps.org.objectweb.asm.ClassReader;
+import com.alibaba.deps.org.objectweb.asm.ClassVisitor;
+import com.alibaba.deps.org.objectweb.asm.ClassWriter;
+import com.alibaba.deps.org.objectweb.asm.commons.ClassRemapper;
+import com.alibaba.deps.org.objectweb.asm.commons.SimpleRemapper;
 
 /**
  * 

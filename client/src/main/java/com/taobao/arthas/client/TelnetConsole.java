@@ -14,6 +14,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.TimeUnit;
 
 import org.apache.commons.net.telnet.InvalidTelnetOptionException;
 import org.apache.commons.net.telnet.TelnetClient;
@@ -53,6 +54,25 @@ public class TelnetConsole {
 
     private static final byte CTRL_C = 0x03;
 
+    // ------- Status codes ------- //
+    /**
+     * Process success
+     */
+    public static final int STATUS_OK = 0;
+    /**
+     * Generic error
+     */
+    public static final int STATUS_ERROR = 1;
+    /**
+     * Execute commands timeout
+     */
+    public static final int STATUS_EXEC_TIMEOUT = 100;
+    /**
+     * Execute commands error
+     */
+    public static final int STATUS_EXEC_ERROR = 101;
+
+
     private boolean help = false;
 
     private String targetIp = "127.0.0.1";
@@ -60,6 +80,7 @@ public class TelnetConsole {
 
     private String command;
     private String batchFile;
+    private int executionTimeout = -1;
 
     private Integer width = null;
     private Integer height = null;
@@ -92,6 +113,12 @@ public class TelnetConsole {
     @Description("The batch file to execute")
     public void setBatchFile(String batchFile) {
         this.batchFile = batchFile;
+    }
+
+    @Option(shortName = "t", longName = "execution-timeout")
+    @Description("The timeout (ms) of execute commands or batch file ")
+    public void setExecutionTimeout(int executionTimeout) {
+        this.executionTimeout = executionTimeout;
     }
 
     @Option(shortName = "w", longName = "width")
@@ -133,55 +160,93 @@ public class TelnetConsole {
         return list;
     }
 
-    public static void main(String[] args) throws IOException {
+    public static void main(String[] args) throws Exception {
+
+        try {
+            int status = process(args, new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    System.exit(STATUS_OK);
+                }
+            });
+            System.exit(status);
+        } catch (Throwable e) {
+            e.printStackTrace();
+            CLI cli = CLIConfigurator.define(TelnetConsole.class);
+            System.out.println(usage(cli));
+            System.exit(STATUS_ERROR);
+        }
+
+    }
+
+    /**
+     * 提供给arthas-boot使用的主处理函数
+     *
+     * @param args
+     * @return status code
+     * @throws IOException
+     * @throws InterruptedException
+     */
+    public static int process(String[] args) throws IOException, InterruptedException {
+        return process(args, null);
+    }
+
+    /**
+     * arthas client 主函数
+     * 注意： process()函数提供给arthas-boot使用，内部不能调用System.exit()结束进程的方法
+     *
+     * @param telnetConsole
+     * @param cli
+     * @param args
+     * @param eotEventCallback Ctrl+D signals an End of Transmission (EOT) event
+     * @return status code
+     * @throws IOException
+     * @throws InterruptedException
+     */
+    public static int process(String[] args, ActionListener eotEventCallback) throws IOException, InterruptedException {
         // support mingw/cygw jline color
         if (OSUtils.isCygwinOrMinGW()) {
             System.setProperty("jline.terminal", System.getProperty("jline.terminal", "jline.UnixTerminal"));
         }
 
         TelnetConsole telnetConsole = new TelnetConsole();
-
         CLI cli = CLIConfigurator.define(TelnetConsole.class);
 
+        CommandLine commandLine = cli.parse(Arrays.asList(args));
+
+        CLIConfigurator.inject(commandLine, telnetConsole);
+
+        if (telnetConsole.isHelp()) {
+            System.out.println(usage(cli));
+            return STATUS_ERROR;
+        }
+
+        // Try to read cmds
+        List<String> cmds = new ArrayList<String>();
+        if (telnetConsole.getCommand() != null) {
+            for (String c : telnetConsole.getCommand().split(";")) {
+                cmds.add(c.trim());
+            }
+        } else if (telnetConsole.getBatchFile() != null) {
+            File file = new File(telnetConsole.getBatchFile());
+            if (!file.exists()) {
+                throw new IllegalArgumentException("batch file do not exist: " + telnetConsole.getBatchFile());
+            } else {
+                cmds.addAll(readLines(file));
+            }
+        }
+
+        final ConsoleReader consoleReader = new ConsoleReader(System.in, System.out);
+        consoleReader.setHandleUserInterrupt(true);
+        Terminal terminal = consoleReader.getTerminal();
+
+        // support catch ctrl+c event
+        terminal.disableInterruptCharacter();
+        if (terminal instanceof UnixTerminal) {
+            ((UnixTerminal) terminal).disableLitteralNextCharacter();
+        }
+
         try {
-            CommandLine commandLine = cli.parse(Arrays.asList(args));
-
-            CLIConfigurator.inject(commandLine, telnetConsole);
-
-            if (telnetConsole.isHelp()) {
-                System.out.println(usage(cli));
-                System.exit(0);
-            }
-
-            // Try to read cmds
-            List<String> cmds = new ArrayList<String>();
-            if (telnetConsole.getCommand() != null) {
-                for (String c : telnetConsole.getCommand().split(";")) {
-                    cmds.add(c.trim());
-                }
-            } else if (telnetConsole.getBatchFile() != null) {
-                File file = new File(telnetConsole.getBatchFile());
-                if (!file.exists()) {
-                    throw new IllegalArgumentException("batch file do not exist: " + telnetConsole.getBatchFile());
-                } else {
-                    cmds.addAll(readLines(file));
-                }
-            }
-
-            final ConsoleReader consoleReader = new ConsoleReader(System.in, System.out);
-            consoleReader.setHandleUserInterrupt(true);
-            Terminal terminal = consoleReader.getTerminal();
-
-            if (terminal instanceof TerminalSupport) {
-                ((TerminalSupport) terminal).disableInterruptCharacter();
-            }
-
-            // support catch ctrl+c event
-            terminal.disableInterruptCharacter();
-            if (terminal instanceof UnixTerminal) {
-                ((UnixTerminal) terminal).disableLitteralNextCharacter();
-            }
-
             int width = TerminalSupport.DEFAULT_WIDTH;
             int height = TerminalSupport.DEFAULT_HEIGHT;
 
@@ -238,12 +303,7 @@ public class TelnetConsole {
             });
 
             // ctrl + d event call back
-            consoleReader.getKeys().bind(new Character(KeyMap.CTRL_D).toString(), new ActionListener() {
-                @Override
-                public void actionPerformed(ActionEvent e) {
-                    System.exit(0);
-                }
-            });
+            consoleReader.getKeys().bind(new Character(KeyMap.CTRL_D).toString(), eotEventCallback);
 
             try {
                 telnet.connect(telnetConsole.getTargetIp(), telnetConsole.getPort());
@@ -254,26 +314,44 @@ public class TelnetConsole {
             }
 
             if (cmds.isEmpty()) {
-                IOUtil.readWrite(telnet.getInputStream(), telnet.getOutputStream(), System.in,
+                IOUtil.readWrite(telnet.getInputStream(), telnet.getOutputStream(), consoleReader.getInput(),
                         consoleReader.getOutput());
             } else {
-                batchModeRun(telnet, cmds);
-                telnet.disconnect();
+                try {
+                    return batchModeRun(telnet, cmds, telnetConsole.getExecutionTimeout());
+                } catch (Throwable e) {
+                    System.out.println("Execute commands error: " + e.getMessage());
+                    e.printStackTrace();
+                    return STATUS_EXEC_ERROR;
+                } finally {
+                    try {
+                        telnet.disconnect();
+                    } catch (IOException e) {
+                        //ignore ex
+                    }
+                }
             }
-        } catch (Throwable e) {
-            e.printStackTrace();
-            System.out.println(usage(cli));
-            System.exit(1);
+
+            return STATUS_OK;
+        } finally {
+            //reset terminal setting, fix https://github.com/alibaba/arthas/issues/1412
+            try {
+                terminal.restore();
+            } catch (Throwable e) {
+                System.out.println("Restore terminal settings failure: "+e.getMessage());
+                e.printStackTrace();
+            }
         }
 
     }
 
-    private static void batchModeRun(TelnetClient telnet, List<String> commands)
+    private static int batchModeRun(TelnetClient telnet, List<String> commands, final int executionTimeout)
             throws IOException, InterruptedException {
         if (commands.size() == 0) {
-            return;
+            return STATUS_OK;
         }
 
+        long startTime = System.currentTimeMillis();
         final InputStream inputStream = telnet.getInputStream();
         final OutputStream outputStream = telnet.getOutputStream();
 
@@ -305,14 +383,22 @@ public class TelnetConsole {
                 }
             }
         });
-
         printResultThread.start();
 
+        // send commands to arthas server
         for (String command : commands) {
             if (command.trim().isEmpty()) {
                 continue;
             }
-            receviedPromptQueue.take();
+            // try poll prompt and check timeout
+            while (receviedPromptQueue.poll(100, TimeUnit.MILLISECONDS) == null) {
+                if (executionTimeout > 0) {
+                    long now = System.currentTimeMillis();
+                    if (now - startTime > executionTimeout) {
+                        return STATUS_EXEC_TIMEOUT;
+                    }
+                }
+            }
             // send command to server
             outputStream.write((command + " | plaintext\n").getBytes());
             outputStream.flush();
@@ -323,6 +409,8 @@ public class TelnetConsole {
         outputStream.write("quit\n".getBytes());
         outputStream.flush();
         System.out.println();
+
+        return STATUS_OK;
     }
 
     private static String usage(CLI cli) {
@@ -347,6 +435,10 @@ public class TelnetConsole {
 
     public String getBatchFile() {
         return batchFile;
+    }
+
+    public int getExecutionTimeout() {
+        return executionTimeout;
     }
 
     public Integer getWidth() {

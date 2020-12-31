@@ -1,11 +1,24 @@
 profiler
 ===
 
+[`profiler`在线教程](https://arthas.aliyun.com/doc/arthas-tutorials.html?language=cn&id=command-profiler)
+
 > 使用[async-profiler](https://github.com/jvm-profiling-tools/async-profiler)生成火焰图
 
 `profiler` 命令支持生成应用热点的火焰图。本质上是通过不断的采样，然后把收集到的采样结果生成火焰图。
 
 `profiler` 命令基本运行结构是 `profiler action [actionArg]`
+
+### 参数说明
+
+|参数名称|参数说明|
+|---:|:---|
+|*action*|要执行的操作|
+|*actionArg*|属性名模式|
+|[i:]|采样间隔（单位：ns）（默认值：10'000'000，即10 ms）|
+|[f:]|将输出转储到指定路径|
+|[d:]|运行评测指定秒|
+|[e:]|要跟踪哪个事件（cpu, alloc, lock, cache-misses等），默认是cpu|
 
 ### 启动profiler
 
@@ -144,7 +157,7 @@ Started [cpu] profiling
 比如开始采样：
 
 ```bash
-profiler execute 'start'
+profiler execute 'start,framebuf=5000000'
 ```
 
 停止采样，并保存到指定文件里：
@@ -153,7 +166,7 @@ profiler execute 'start'
 profiler execute 'stop,file=/tmp/result.svg'
 ```
 
-具体的格式参考： [arguments.cpp#L34](https://github.com/jvm-profiling-tools/async-profiler/blob/v1.6/src/arguments.cpp#L34)
+具体的格式参考： [arguments.cpp](https://github.com/jvm-profiling-tools/async-profiler/blob/v1.8.1/src/arguments.cpp#L50)
 
 ### 查看所有支持的action
 
@@ -170,3 +183,49 @@ $ profiler version
 Async-profiler 1.6 built on Sep  9 2019
 Copyright 2019 Andrei Pangin
 ```
+
+### 配置 framebuf 参数
+
+> 如果遇到生成的svg图片有 `[frame_buffer_overflow]`，则需要增大 framebuf（默认值是 1'000'000），可以显式配置，比如：
+
+```bash
+profiler start --framebuf 5000000
+```
+
+### 配置 include/exclude 来过滤数据
+
+如果应用比较复杂，生成的内容很多，想只关注部分数据，可以通过 include/exclude 来过滤。比如
+
+```bash
+profiler start --include 'java/*' --include 'demo/*' --exclude '*Unsafe.park*'
+```
+
+> include/exclude 都支持设置多个值 ，但是需要配置在命令行的最后。
+
+
+### 指定执行时间
+
+比如，希望profiler执行 300 秒自动结束，可以用 `-d`/`--duration` 参数指定：
+
+```bash
+profiler start --duration 300
+```
+
+### 生成 jfr格式结果
+
+> 注意，jfr只支持在 `start`时配置。如果是在`stop`时指定，则不会生效。
+
+```
+profiler start --file /tmp/test.jfr
+```
+
+`file`参数支持一些变量：
+
+* 时间戳： `--file /tmp/test-%t.jfr`
+* 进程ID： `--file /tmp/test-%p.jfr`
+
+
+生成的结果可以用支持jfr格式的工具来查看。比如：
+
+* JDK Mission Control ： https://github.com/openjdk/jmc
+* JProfiler ： https://github.com/alibaba/arthas/issues/1416

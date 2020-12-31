@@ -7,11 +7,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
     <!-- Bootstrap CSS -->
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css" integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS"
+    <link rel="stylesheet" href="https://g.alicdn.com/code/lib/twitter-bootstrap/4.2.1/css/bootstrap.min.css" integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS"
         crossorigin="anonymous">
 
-    <script src="https://cdn.jsdelivr.net/npm/vue@2.6.4/dist/vue.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/axios@0.18.0/index.min.js"></script>
+    <script src="https://g.alicdn.com/code/lib/vue/2.6.4/vue.min.js" integrity="sha256-isEQDc5Dw7wea1s5iMZjBvPuYzjzMrvtlPwE6LtavFA=" crossorigin="anonymous"></script>
+    <script src="https://g.alicdn.com/code/lib/axios/0.18.0/axios.min.js"></script>
 
     <title>Arthas Tutorials</title>
 
@@ -26,14 +26,18 @@
     </style>
 </head>
 
+<script>
+    if (window.location.href.startsWith("https://alibaba.github.io/arthas/")) {
+        window.location.href = "https://arthas.aliyun.com/doc/" + window.location.href.substr("https://alibaba.github.io/arthas/".length);
+    }
+</script>
+
 <body>
     <!-- Optional JavaScript -->
     <!-- jQuery first, then Popper.js, then Bootstrap JS -->
-    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
-        crossorigin="anonymous"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.6/umd/popper.min.js" integrity="sha384-wHAiFfRlMFy6i5SRaxvfOCifBUQy1xHdJ/yoi7FRNXMRBu5WHdZYu1hA6ZOblgut"
-        crossorigin="anonymous"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/js/bootstrap.min.js" integrity="sha384-B0UglyR+jN6CkvvICOB2joaf5I4l3gm9GU6Hc1og6Ls7i6U/mkkaduKaBhlAXv9k"
+    <script src="https://g.alicdn.com/code/lib/jquery/3.3.1/jquery.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
+    <script src="https://g.alicdn.com/code/lib/popper.js/1.14.7/umd/popper.min.js" integrity="sha512-5WvZa4N7Jq3TVNCp4rjcBMlc6pT3lZ7gVxjtI6IkKW+uItSa+rFgtFljvZnCxQGj8SUX5DHraKE6Mn/4smK1Cg==" crossorigin="anonymous"></script>
+    <script src="https://g.alicdn.com/code/lib/twitter-bootstrap/4.2.1/js/bootstrap.min.js" integrity="sha384-B0UglyR+jN6CkvvICOB2joaf5I4l3gm9GU6Hc1og6Ls7i6U/mkkaduKaBhlAXv9k"
         crossorigin="anonymous"></script>
 
     <script src="https://katacoda.com/embed.js"></script>
@@ -62,20 +66,75 @@
                     </li>
 
                     <li class="nav-item dropdown active show">
-                        <!-- <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenu2" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                            Dropdown
-                          </button> -->
-                        <a class="nav-item nav-link dropdown-toggle mr-md-2" href="#" id="bd-tutorials" data-toggle="dropdown"
-                            aria-haspopup="true" aria-expanded="true">
-                            {{currentTutorialName()}}
-                        </a>
+                        <button class="btn dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            {{tutorialsStr()}}
+                          </button>
                         <div class="dropdown-menu" aria-labelledby="bd-tutorials">
-                            <a v-for="tutorial in tutorials" v-bind:class="{ 'dropdown-item-checked': tutorial.id === tutorialId }"
+                            <a v-for="tutorial in getTutorials('TUTORIAL')" v-bind:class="{ 'dropdown-item-checked': tutorial.id === tutorialId }"
                                 class="dropdown-item" v-bind:href='currentUrl() + "?language=" + language + "&id=" + tutorial.id'>
                                 {{ tutorial.names[language] }}
                             </a>
                         </div>
+                    </li>
 
+                    <li class="nav-item dropdown active show">
+                        <button class="btn dropdown-toggle" type="button" id="dropdownMenu2" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            {{commandsStr('BASIC')}}
+                          </button>
+                        <div class="dropdown-menu" aria-labelledby="bd-tutorials">
+                            <a v-for="tutorial in getTutorials('COMMAND-BASIC')" v-bind:class="{ 'dropdown-item-checked': tutorial.id === tutorialId }"
+                                class="dropdown-item" v-bind:href='currentUrl() + "?language=" + language + "&id=" + tutorial.id'>
+                                {{ tutorial.names[language] }}
+                            </a>
+                        </div>
+                    </li>
+
+                    <li class="nav-item dropdown active show">
+                        <button class="btn dropdown-toggle" type="button" id="dropdownMenu2" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            {{commandsStr('SYSTEM')}}
+                          </button>
+                        <div class="dropdown-menu" aria-labelledby="bd-tutorials">
+                            <a v-for="tutorial in getTutorials('COMMAND-SYSTEM')" v-bind:class="{ 'dropdown-item-checked': tutorial.id === tutorialId }"
+                                class="dropdown-item" v-bind:href='currentUrl() + "?language=" + language + "&id=" + tutorial.id'>
+                                {{ tutorial.names[language] }}
+                            </a>
+                        </div>
+                    </li>
+
+                    <li class="nav-item dropdown active show">
+                        <button class="btn dropdown-toggle" type="button" id="dropdownMenu2" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            {{commandsStr('CLASS')}}
+                          </button>
+                          <div class="dropdown-menu" aria-labelledby="bd-tutorials">
+                            <a v-for="tutorial in getTutorials('COMMAND-CLASS')" v-bind:class="{ 'dropdown-item-checked': tutorial.id === tutorialId }"
+                                class="dropdown-item" v-bind:href='currentUrl() + "?language=" + language + "&id=" + tutorial.id'>
+                                {{ tutorial.names[language] }}
+                            </a>
+                        </div>
+                    </li>
+
+                    <li class="nav-item dropdown active show">
+                        <button class="btn dropdown-toggle" type="button" id="dropdownMenu2" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            {{commandsStr('ENHANCED')}}
+                          </button>
+                        <div class="dropdown-menu" aria-labelledby="bd-tutorials">
+                            <a v-for="tutorial in getTutorials('COMMAND-ENHANCED')" v-bind:class="{ 'dropdown-item-checked': tutorial.id === tutorialId }"
+                                class="dropdown-item" v-bind:href='currentUrl() + "?language=" + language + "&id=" + tutorial.id'>
+                                {{ tutorial.names[language] }}
+                            </a>
+                        </div>
+                    </li>
+
+                    <li class="nav-item dropdown active show">
+                        <button class="btn dropdown-toggle" type="button" id="dropdownMenu3" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            {{userCasesStr()}}
+                          </button>
+                        <div class="dropdown-menu" aria-labelledby="bd-tutorials">
+                            <a v-for="tutorial in getTutorials('USERCASE')" v-bind:class="{ 'dropdown-item-checked': tutorial.id === tutorialId }"
+                                class="dropdown-item" v-bind:href='currentUrl() + "?language=" + language + "&id=" + tutorial.id'>
+                                {{ tutorial.names[language] }}
+                            </a>
+                        </div>
                     </li>
                 </ul>
             </div>
@@ -134,6 +193,7 @@
             tutorials: [
                 {
                     id: "arthas-basics",
+                    type: "TUTORIAL",
                     names: {
                         en: "Arthas Basics",
                         cn: "Arthas基础教程",
@@ -145,6 +205,7 @@
                 },
                 {
                     id: "arthas-advanced",
+                    type: "TUTORIAL",
                     names: {
                         en: "Arthas Advanced",
                         cn: "Arthas进阶教程",
@@ -153,10 +214,661 @@
                         en: "arthas-advanced-en",
                         cn: "arthas-advanced-cn",
                     }
+                },
+                {
+                    id: "command-help",
+                    type: "COMMAND-BASIC",
+                    names: {
+                        en: "help",
+                        cn: "help",
+                    },
+                    ids: {
+                        en: "command-help-en",
+                        cn: "command-help-cn",
+                    }
+                },
+                {
+                    id: "command-cls",
+                    type: "COMMAND-BASIC",
+                    names: {
+                        en: "cls",
+                        cn: "cls",
+                    },
+                    ids: {
+                        en: "command-cls-en",
+                        cn: "command-cls-cn",
+                    }
+                },
+                {
+                    id: "command-session",
+                    type: "COMMAND-BASIC",
+                    names: {
+                        en: "session",
+                        cn: "session",
+                    },
+                    ids: {
+                        en: "command-session-en",
+                        cn: "command-session-cn",
+                    }
+                },
+                {
+                    id: "command-reset",
+                    type: "COMMAND-BASIC",
+                    names: {
+                        en: "reset",
+                        cn: "reset",
+                    },
+                    ids: {
+                        en: "command-reset-en",
+                        cn: "command-reset-cn",
+                    }
+                },
+                {
+                    id: "command-version",
+                    type: "COMMAND-BASIC",
+                    names: {
+                        en: "version",
+                        cn: "version",
+                    },
+                    ids: {
+                        en: "command-version-en",
+                        cn: "command-version-cn",
+                    }
+                },
+                {
+                    id: "command-history",
+                    type: "COMMAND-BASIC",
+                    names: {
+                        en: "history",
+                        cn: "history",
+                    },
+                    ids: {
+                        en: "command-history-en",
+                        cn: "command-history-cn",
+                    }
+                },
+                {
+                    id: "command-quit-stop",
+                    type: "COMMAND-BASIC",
+                    names: {
+                        en: "quit-stop",
+                        cn: "quit-stop",
+                    },
+                    ids: {
+                        en: "command-quit-stop-en",
+                        cn: "command-quit-stop-cn",
+                    }
+                },
+                {
+                    id: "command-keymap",
+                    type: "COMMAND-BASIC",
+                    names: {
+                        en: "keymap",
+                        cn: "keymap",
+                    },
+                    ids: {
+                        en: "command-keymap-en",
+                        cn: "command-keymap-cn",
+                    }
+                },
+                {
+                    id: "command-cat",
+                    type: "COMMAND-BASIC",
+                    names: {
+                        en: "cat",
+                        cn: "cat",
+                    },
+                    ids: {
+                        en: "command-cat-en",
+                        cn: "command-cat-cn",
+                    }
+                },
+                {
+                    id: "command-echo",
+                    type: "COMMAND-BASIC",
+                    names: {
+                        en: "echo",
+                        cn: "echo",
+                    },
+                    ids: {
+                        en: "command-echo-en",
+                        cn: "command-echo-cn",
+                    }
+                },
+                {
+                    id: "command-grep",
+                    type: "COMMAND-BASIC",
+                    names: {
+                        en: "grep",
+                        cn: "grep",
+                    },
+                    ids: {
+                        en: "command-grep-en",
+                        cn: "command-grep-cn",
+                    }
+                },
+                {
+                    id: "command-tee",
+                    type: "COMMAND-BASIC",
+                    names: {
+                        en: "tee",
+                        cn: "tee",
+                    },
+                    ids: {
+                        en: "command-tee-en",
+                        cn: "command-tee-cn",
+                    }
+                },
+                {
+                    id: "command-pwd",
+                    type: "COMMAND-BASIC",
+                    names: {
+                        en: "pwd",
+                        cn: "pwd",
+                    },
+                    ids: {
+                        en: "command-pwd-en",
+                        cn: "command-pwd-cn",
+                    }
+                },
+                {
+                    id: "command-plaintext",
+                    type: "COMMAND-BASIC",
+                    names: {
+                        en: "plaintext",
+                        cn: "plaintext",
+                    },
+                    ids: {
+                        en: "command-plaintext-en",
+                        cn: "command-plaintext-cn",
+                    }
+                },
+                {
+                    id: "command-wc",
+                    type: "COMMAND-BASIC",
+                    names: {
+                        en: "wc",
+                        cn: "wc",
+                    },
+                    ids: {
+                        en: "command-wc-en",
+                        cn: "command-wc-cn",
+                    }
+                },
+                {
+                    id: "command-options",
+                    type: "COMMAND-BASIC",
+                    names: {
+                        en: "options",
+                        cn: "options",
+                    },
+                    ids: {
+                        en: "command-options-en",
+                        cn: "command-options-cn",
+                    }
+                },
+                {
+                    id: "command-dashboard",
+                    type: "COMMAND-SYSTEM",
+                    names: {
+                        en: "dashboard",
+                        cn: "dashboard",
+                    },
+                    ids: {
+                        en: "command-dashboard-en",
+                        cn: "command-dashboard-cn",
+                    }
+                },
+                {
+                    id: "command-thread",
+                    type: "COMMAND-SYSTEM",
+                    names: {
+                        en: "thread",
+                        cn: "thread",
+                    },
+                    ids: {
+                        en: "command-thread-en",
+                        cn: "command-thread-cn",
+                    }
+                },
+                {
+                    id: "command-jvm",
+                    type: "COMMAND-SYSTEM",
+                    names: {
+                        en: "jvm",
+                        cn: "jvm",
+                    },
+                    ids: {
+                        en: "command-jvm-en",
+                        cn: "command-jvm-cn",
+                    }
+                },
+                {
+                    id: "command-sysprop",
+                    type: "COMMAND-SYSTEM",
+                    names: {
+                        en: "sysprop",
+                        cn: "sysprop",
+                    },
+                    ids: {
+                        en: "command-sysprop-en",
+                        cn: "command-sysprop-cn",
+                    }
+                },
+                {
+                    id: "command-sysenv",
+                    type: "COMMAND-SYSTEM",
+                    names: {
+                        en: "sysenv",
+                        cn: "sysenv",
+                    },
+                    ids: {
+                        en: "command-sysenv-en",
+                        cn: "command-sysenv-cn",
+                    }
+                },
+                {
+                    id: "command-vmoption",
+                    type: "COMMAND-SYSTEM",
+                    names: {
+                        en: "vmoption",
+                        cn: "vmoption",
+                    },
+                    ids: {
+                        en: "command-vmoption-en",
+                        cn: "command-vmoption-cn",
+                    }
+                },
+                {
+                    id: "command-perfcounter",
+                    type: "COMMAND-SYSTEM",
+                    names: {
+                        en: "perfcounter",
+                        cn: "perfcounter",
+                    },
+                    ids: {
+                        en: "command-perfcounter-en",
+                        cn: "command-perfcounter-cn",
+                    }
+                },
+                {
+                    id: "command-logger",
+                    type: "COMMAND-SYSTEM",
+                    names: {
+                        en: "logger",
+                        cn: "logger",
+                    },
+                    ids: {
+                        en: "command-logger-en",
+                        cn: "command-logger-cn",
+                    }
+                },
+                {
+                    id: "command-getstatic",
+                    type: "COMMAND-SYSTEM",
+                    names: {
+                        en: "getstatic",
+                        cn: "getstatic",
+                    },
+                    ids: {
+                        en: "command-getstatic-en",
+                        cn: "command-getstatic-cn",
+                    }
+                },
+                {
+                    id: "command-ognl",
+                    type: "COMMAND-SYSTEM",
+                    names: {
+                        en: "ognl",
+                        cn: "ognl",
+                    },
+                    ids: {
+                        en: "command-ognl-en",
+                        cn: "command-ognl-cn",
+                    }
+                },
+                {
+                    id: "command-mbean",
+                    type: "COMMAND-SYSTEM",
+                    names: {
+                        en: "mbean",
+                        cn: "mbean",
+                    },
+                    ids: {
+                        en: "command-mbean-en",
+                        cn: "command-mbean-cn",
+                    }
+                },
+                {
+                    id: "command-heapdump",
+                    type: "COMMAND-SYSTEM",
+                    names: {
+                        en: "heapdump",
+                        cn: "heapdump",
+                    },
+                    ids: {
+                        en: "command-heapdump-en",
+                        cn: "command-heapdump-cn",
+                    }
+                },
+                {
+                    id: "command-sc",
+                    type: "COMMAND-CLASS",
+                    names: {
+                        en: "sc",
+                        cn: "sc",
+                    },
+                    ids: {
+                        en: "command-sc-en",
+                        cn: "command-sc-cn",
+                    }
+                },
+                {
+                    id: "command-sm",
+                    type: "COMMAND-CLASS",
+                    names: {
+                        en: "sm",
+                        cn: "sm",
+                    },
+                    ids: {
+                        en: "command-sm-en",
+                        cn: "command-sm-cn",
+                    }
+                },
+                {
+                    id: "command-jad",
+                    type: "COMMAND-CLASS",
+                    names: {
+                        en: "jad",
+                        cn: "jad",
+                    },
+                    ids: {
+                        en: "command-jad-en",
+                        cn: "command-jad-cn",
+                    }
+                },
+                {
+                    id: "command-mc-redefine",
+                    type: "COMMAND-CLASS",
+                    names: {
+                        en: "mc-redefine",
+                        cn: "mc-redefine",
+                    },
+                    ids: {
+                        en: "command-mc-redefine-en",
+                        cn: "command-mc-redefine-cn",
+                    }
+                },
+                {
+                    id: "command-dump",
+                    type: "COMMAND-CLASS",
+                    names: {
+                        en: "dump",
+                        cn: "dump",
+                    },
+                    ids: {
+                        en: "command-dump-en",
+                        cn: "command-dump-cn",
+                    }
+                },
+                {
+                    id: "command-classloader",
+                    type: "COMMAND-CLASS",
+                    names: {
+                        en: "classloader",
+                        cn: "classloader",
+                    },
+                    ids: {
+                        en: "command-classloader-en",
+                        cn: "command-classloader-cn",
+                    }
+                },
+                {
+                    id: "command-monitor",
+                    type: "COMMAND-ENHANCED",
+                    names: {
+                        en: "monitor",
+                        cn: "monitor",
+                    },
+                    ids: {
+                        en: "command-monitor-en",
+                        cn: "command-monitor-cn",
+                    }
+                },
+                {
+                    id: "command-watch",
+                    type: "COMMAND-ENHANCED",
+                    names: {
+                        en: "watch",
+                        cn: "watch",
+                    },
+                    ids: {
+                        en: "command-watch-en",
+                        cn: "command-watch-cn",
+                    }
+                },
+                {
+                    id: "command-trace",
+                    type: "COMMAND-ENHANCED",
+                    names: {
+                        en: "trace",
+                        cn: "trace",
+                    },
+                    ids: {
+                        en: "command-trace-en",
+                        cn: "command-trace-cn",
+                    }
+                },
+                {
+                    id: "command-stack",
+                    type: "COMMAND-ENHANCED",
+                    names: {
+                        en: "stack",
+                        cn: "stack",
+                    },
+                    ids: {
+                        en: "command-stack-en",
+                        cn: "command-stack-cn",
+                    }
+                },
+                {
+                    id: "command-tt",
+                    type: "COMMAND-ENHANCED",
+                    names: {
+                        en: "tt",
+                        cn: "tt",
+                    },
+                    ids: {
+                        en: "command-tt-en",
+                        cn: "command-tt-cn",
+                    }
+                },
+                {
+                    id: "command-profiler",
+                    type: "COMMAND-ENHANCED",
+                    names: {
+                        en: "profiler",
+                        cn: "profiler",
+                    },
+                    ids: {
+                        en: "command-profiler-en",
+                        cn: "command-profiler-cn",
+                    }
+                },
+                {
+                    id: "case-web-console",
+                    type: "USERCASE",
+                    names: {
+                        en: "Web Console",
+                        cn: "Web Console",
+                    },
+                    ids: {
+                        en: "case-web-console-en",
+                        cn: "case-web-console-cn",
+                    }
+                },
+                {
+                    id: "case-http-api",
+                    type: "USERCASE",
+                    names: {
+                        en: "Http API",
+                        cn: "Http API",
+                    },
+                    ids: {
+                        en: "case-http-api-en",
+                        cn: "case-http-api-cn",
+                    }
+                },
+                {
+                    id: "case-save-log",
+                    type: "USERCASE",
+                    names: {
+                        en: "Log the output",
+                        cn: "执行结果存日志",
+                    },
+                    ids: {
+                        en: "case-save-log-en",
+                        cn: "case-save-log-cn",
+                    }
+                },
+                {
+                    id: "case-watch-method-exception",
+                    type: "USERCASE",
+                    names: {
+                        en: "Troubleshooting method invoke exception",
+                        cn: "排查函数调用异常",
+                    },
+                    ids: {
+                        en: "case-watch-method-exception-en",
+                        cn: "case-watch-method-exception-cn",
+                    }
+                },
+                {
+                    id: "case-thread",
+                    type: "USERCASE",
+                    names: {
+                        en: "Find CPU usage Top N threads",
+                        cn: "查找Top N线程",
+                    },
+                    ids: {
+                        en: "case-thread-en",
+                        cn: "case-thread-cn",
+                    }
+                },
+                {
+                    id: "case-ognl-update-logger-level",
+                    type: "USERCASE",
+                    names: {
+                        en: "Change Logger Level",
+                        cn: "动态更新应用Logger Level",
+                    },
+                    ids: {
+                        en: "case-ognl-update-logger-level-en",
+                        cn: "case-ognl-update-logger-level-cn",
+                    }
+                },
+                {
+                    id: "case-logger-config-problem",
+                    type: "USERCASE",
+                    names: {
+                        en: "Troubleshoot logger conflicts",
+                        cn: "排查logger冲突问题",
+                    },
+                    ids: {
+                        en: "case-logger-config-problem-en",
+                        cn: "case-logger-config-problem-cn",
+                    }
+                },
+                {
+                    id: "case-jad-mc-redefine",
+                    type: "USERCASE",
+                    names: {
+                        en: "Hotswap code",
+                        cn: "热更新代码",
+                    },
+                    ids: {
+                        en: "case-jad-mc-redefine-en",
+                        cn: "case-jad-mc-redefine-cn",
+                    }
+                },
+                {
+                    id: "case-http-404",
+                    type: "USERCASE",
+                    names: {
+                        en: "Troubleshooting HTTP request returns 404",
+                        cn: "排查HTTP请求返回404",
+                    },
+                    ids: {
+                        en: "case-http-404-en",
+                        cn: "case-http-404-cn",
+                    }
+                },
+                {
+                    id: "case-http-401",
+                    type: "USERCASE",
+                    names: {
+                        en: "Troubleshooting HTTP request returns 401",
+                        cn: "排查HTTP请求返回401",
+                    },
+                    ids: {
+                        en: "case-http-401-en",
+                        cn: "case-http-401-cn",
+                    }
+                },
+                {
+                    id: "case-get-spring-context",
+                    type: "USERCASE",
+                    names: {
+                        en: "Get the Spring Context",
+                        cn: "获取Spring Context",
+                    },
+                    ids: {
+                        en: "case-get-spring-context-en",
+                        cn: "case-get-spring-context-cn",
+                    }
+                },
+                {
+                    id: "case-classloader",
+                    type: "USERCASE",
+                    names: {
+                        en: "The ClassLoaders in Spring Boot application",
+                        cn: "理解Spring Boot应用的ClassLoader结构",
+                    },
+                    ids: {
+                        en: "case-classloader-en",
+                        cn: "case-classloader-cn",
+                    }
+                },
+                {
+                    id: "case-boot-details",
+                    type: "USERCASE",
+                    names: {
+                        en: "Arthas boot supported options",
+                        cn: " arthas-boot支持的参数",
+                    },
+                    ids: {
+                        en: "case-boot-details-en",
+                        cn: "case-boot-details-cn",
+                    }
+                },
+                {
+                    id: "case-async-jobs",
+                    type: "USERCASE",
+                    names: {
+                        en: "Async jobs",
+                        cn: "后台异步任务",
+                    },
+                    ids: {
+                        en: "case-async-jobs-en",
+                        cn: "case-async-jobs-cn",
+                    }
                 }
             ],
         },
         methods: {
+            getTutorials: function(type) {
+                return this.tutorials.filter(v => v.type === type);
+            },
             languageChange: function (event) {
                 // alert(event.target.value)
                 window.location = this.currentUrl() + "?language=" + this.language + "&id=" + this.tutorialId;
@@ -170,9 +882,52 @@
             },
             docUrl: function () {
                 if (this.language === "en") {
-                    return "https://alibaba.github.io/arthas/en";
+                    return "https://arthas.aliyun.com/doc/en";
                 } else {
-                    return "https://alibaba.github.io/arthas";
+                    return "https://arthas.aliyun.com/doc";
+                }
+            },
+            tutorialsStr: function () {
+                if (this.language === "en") {
+                    return "Tutorials";
+                } else {
+                    return "入门教程";
+                }
+            },
+            commandsStr: function (name) {
+                if (this.language === "en") {
+                    if (name === "BASIC"){
+                        return "Basic Commands";
+                    }
+                    else if (name === "SYSTEM"){
+                        return "System Commands";
+                    }
+                    else if (name === "CLASS"){
+                        return "Class Commands";
+                    }
+                    else if (name === "ENHANCED"){
+                        return "Enhanced Commands";
+                    }
+                } else {
+                    if (name === "BASIC"){
+                        return "基础命令";
+                    }
+                    else if (name === "SYSTEM"){
+                        return "系统命令";
+                    }
+                    else if (name === "CLASS"){
+                        return "类命令";
+                    }
+                    else if (name === "ENHANCED"){
+                        return "增强命令";
+                    }
+                }
+            },
+            userCasesStr: function () {
+                if (this.language === "en") {
+                    return "User Cases";
+                } else {
+                    return "用户案例";
                 }
             },
             currentTutorialName: function () {
@@ -184,10 +939,10 @@
 
             },
             currentKatacodaId: function () {
-                // https://katacoda.com/embed/hengyunabc/arthas-advanced-cn/?embed=true
+                // https://katacoda.com/embed/arthas/arthas-advanced-cn/?embed=true
                 for (index in this.tutorials) {
                     if (this.tutorials[index].id == this.tutorialId) {
-                        return "hengyunabc/" + this.tutorials[index].ids[this.language];
+                        return "arthas/" + this.tutorials[index].ids[this.language];
                     }
                 }
             },
@@ -219,6 +974,8 @@
     })
 
 </script>
+
+<script type="text/javascript">document.write(unescape("%3Cspan style='display:none;' id='cnzz_stat_icon_1279151497'%3E%3C/span%3E%3Cscript src='https://s4.cnzz.com/z_stat.php%3Fid%3D1279151497' type='text/javascript'%3E%3C/script%3E"));</script>
 
 <script>
     var _hmt = _hmt || [];

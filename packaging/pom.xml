@@ -1,17 +1,33 @@
 <?xml version="1.0"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>com.taobao.arthas</groupId>
         <artifactId>arthas-all</artifactId>
-        <version>3.2.1-SNAPSHOT</version>
+        <version>${revision}</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
     <artifactId>arthas-packaging</artifactId>
     <name>arthas-packaging</name>
 
+    <dependencies>
+        <dependency>
+            <groupId>com.taobao.arthas</groupId>
+            <artifactId>arthas-core</artifactId>
+            <version>${project.version}</version>
+            <scope>provided</scope>
+            <optional>true</optional>
+        </dependency>
+        <dependency>
+            <groupId>com.taobao.arthas</groupId>
+            <artifactId>arthas-site</artifactId>
+            <version>${project.version}</version>
+            <scope>provided</scope>
+            <optional>true</optional>
+        </dependency>
+    </dependencies>
     <build>
-        <finalName>arthas-${project.version}</finalName>
+        <finalName>arthas</finalName>
         <plugins>
             <!-- Assembly plugin -->
             <plugin>
@@ -32,6 +48,26 @@
                     </execution>
                 </executions>
             </plugin>
+
+            <!-- add binary files in jar -->
+            <plugin>
+                <artifactId>maven-antrun-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <phase>package</phase>
+                        <configuration>
+                            <tasks>
+                                <zip update="true" destfile="${project.build.directory}/${project.build.finalName}.${project.packaging}" basedir="${project.build.directory}" includes="arthas-bin.zip">
+                                </zip>
+                            </tasks>
+                        </configuration>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+
         </plugins>
     </build>
 
@@ -60,7 +96,7 @@
                             <deb>${project.build.directory}/arthas-${project.version}.deb</deb>
                             <dataSet>
                                 <data>
-                                    <src>${project.build.directory}/arthas-${project.version}-bin</src>
+                                    <src>${project.build.directory}/arthas-bin</src>
                                     <type>directory</type>
 
                                     <mapper>
@@ -73,7 +109,7 @@
                                 </data>
 
                                 <data>
-                                    <src>${project.build.directory}/arthas-${project.version}-bin/as.sh </src>
+                                    <src>${project.build.directory}/arthas-bin/as.sh </src>
                                     <type>file</type>
                                     <mapper>
                                         <type>perm</type>
@@ -121,6 +157,9 @@
                 <os>
                     <family>linux</family>
                 </os>
+                <property>
+                    <name>rpm</name>
+                </property>
             </activation>
             <build>
                 <plugins>
@@ -155,7 +194,7 @@
                                     <groupname>root</groupname>
                                     <sources>
                                         <source>
-                                            <location>${project.build.directory}/arthas-${project.version}-bin</location>
+                                            <location>${project.build.directory}/arthas-bin</location>
                                         </source>
                                     </sources>
                                 </mapping>
@@ -196,7 +235,6 @@
         <profile>
             <id>full</id>
             <build>
-                <finalName>arthas-${project.version}</finalName>
                 <plugins>
                     <!-- Assembly plugin -->
                     <plugin>

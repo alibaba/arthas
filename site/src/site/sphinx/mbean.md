@@ -1,6 +1,8 @@
 mbean
 =======
 
+[`mbean`在线教程](https://arthas.aliyun.com/doc/arthas-tutorials.html?language=cn&id=command-mbean)
+
 > 查看 Mbean 的信息
 
 这个命令可以便捷的查看或监控 Mbean 的属性信息。
