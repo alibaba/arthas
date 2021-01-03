@@ -73,7 +73,7 @@ public class HttpRequestHandler extends SimpleChannelInboundHandler<FullHttpRequ
             }
 
             boolean isHttpApiResponse = false;
-            boolean isFileResponse = false;
+            boolean isFileResponseFinished = false;
             try {
                 //handle http restful api
                 if ("/api".equals(path)) {
@@ -97,7 +97,7 @@ public class HttpRequestHandler extends SimpleChannelInboundHandler<FullHttpRequ
                 //try output dir later, avoid overlay classpath resources files
                 if (response == null){
                     response = DirectoryBrowser.directView(dir, path, request,ctx);
-                    isFileResponse = (response == null) ? false : true;
+                    isFileResponseFinished = (response == null) ? false : true;
                 }
 
                 //not found
@@ -111,20 +111,20 @@ public class HttpRequestHandler extends SimpleChannelInboundHandler<FullHttpRequ
                 if (response == null){
                     response = createResponse(request, HttpResponseStatus.INTERNAL_SERVER_ERROR, "Server error");
                 }
-                if(!isFileResponse) {
+                if(!isFileResponseFinished) {
                     ctx.write(response);
                     ChannelFuture future = ctx.writeAndFlush(LastHttpContent.EMPTY_LAST_CONTENT);
                     future.addListener(ChannelFutureListener.CLOSE);
-                //reuse http api response buf
-                if (isHttpApiResponse && response instanceof DefaultFullHttpResponse) {
-                    final HttpResponse finalResponse = response;
-                    future.addListener(new ChannelFutureListener() {
-                        @Override
-                        public void operationComplete(ChannelFuture future) throws Exception {
-                            httpApiHandler.onCompleted((DefaultFullHttpResponse) finalResponse);
-                        }
-                    });
-                }
+                    //reuse http api response buf
+                    if (isHttpApiResponse && response instanceof DefaultFullHttpResponse) {
+                        final HttpResponse finalResponse = response;
+                        future.addListener(new ChannelFutureListener() {
+                            @Override
+                            public void operationComplete(ChannelFuture future) throws Exception {
+                                httpApiHandler.onCompleted((DefaultFullHttpResponse) finalResponse);
+                            }
+                        });
+                    }
                 }
             }
         }
