@@ -1,6 +1,7 @@
 package com.taobao.arthas.core.shell.term.impl.http;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.text.SimpleDateFormat;
@@ -11,6 +12,9 @@ import java.util.GregorianCalendar;
 import java.util.Locale;
 import java.util.TimeZone;
 
+import com.alibaba.arthas.deps.org.slf4j.Logger;
+import com.alibaba.arthas.deps.org.slf4j.LoggerFactory;
+import com.taobao.arthas.common.IOUtils;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelFutureListener;
 import io.netty.channel.ChannelHandlerContext;
@@ -45,6 +49,8 @@ public class DirectoryBrowser {
 
     public static final String HTTP_DATE_FORMAT = "EEE, dd MMM yyyy HH:mm:ss zzz";
     public static final String HTTP_DATE_GMT_TIMEZONE = "GMT";
+    public static final long MIN_NETTY_DIRECT_SEND_SIZE = 10 * 1024 * 1024;
+    private static final Logger logger = LoggerFactory.getLogger(DirectoryBrowser.class);
     //@formatter:off
     private static String pageHeader = "<!DOCTYPE html>\n" + 
                     "<html>\n" + 
@@ -165,25 +171,8 @@ public class DirectoryBrowser {
                 future.addListener(ChannelFutureListener.CLOSE);
                 return fullResp;
             } else {
-                /*
-                FileInputStream fileInputStream = new FileInputStream(file);
-                try {
-                    byte[] content = IOUtils.getBytes(fileInputStream);
-                    fullResp.content().writeBytes(content);
-                    HttpUtil.setContentLength(fullResp, fullResp.content().readableBytes());
-                } finally {
-                    IOUtils.close(fileInputStream);
-                }
-                */
-                if (file.isHidden() || !file.exists()) {
-                    return null;
-                }
-
-                if (file.isDirectory()) {
-                    return null;
-                }
-
-                if (!file.isFile()) {
+                logger.info("get file now. file:" + file.getPath());
+                if (file.isHidden() || !file.exists() || file.isDirectory() || !file.isFile()) {
                     return null;
                 }
 
@@ -194,7 +183,21 @@ public class DirectoryBrowser {
                     return null;
                 }
                 long fileLength = raf.length();
-
+                if (fileLength < MIN_NETTY_DIRECT_SEND_SIZE){
+                    FileInputStream fileInputStream = new FileInputStream(file);
+                    try {
+                        byte[] content = IOUtils.getBytes(fileInputStream);
+                        fullResp.content().writeBytes(content);
+                        HttpUtil.setContentLength(fullResp, fullResp.content().readableBytes());
+                    } finally {
+                        IOUtils.close(fileInputStream);
+                    }
+                    ctx.write(fullResp);
+                    ChannelFuture future = ctx.writeAndFlush(LastHttpContent.EMPTY_LAST_CONTENT);
+                    future.addListener(ChannelFutureListener.CLOSE);
+                    return fullResp;
+                }
+                logger.info("file {} size bigger than 10MB, send by future.",file.getName());
                 HttpResponse response = new DefaultHttpResponse(HTTP_1_1, OK);
                 HttpUtil.setContentLength(response, fileLength);
                 setContentTypeHeader(response, file);
@@ -205,7 +208,6 @@ public class DirectoryBrowser {
 
                 // Write the initial line and the header.
                 ctx.write(response);
-
                 // Write the content.
                 ChannelFuture sendFileFuture;
                 ChannelFuture lastContentFuture;
@@ -226,15 +228,15 @@ public class DirectoryBrowser {
                     @Override
                     public void operationProgressed(ChannelProgressiveFuture future, long progress, long total) {
                         if (total < 0) { // total unknown
-                            System.err.println(future.channel() + " Transfer progress: " + progress);
+                            logger.info(future.channel() + " Transfer progress: " + progress);
                         } else {
-                            System.err.println(future.channel() + " Transfer progress: " + progress + " / " + total);
+                            logger.info(future.channel() + " Transfer progress: " + progress + " / " + total);
                         }
                     }
 
                     @Override
                     public void operationComplete(ChannelProgressiveFuture future) {
-                        System.err.println(future.channel() + " Transfer complete.");
+                        logger.info(future.channel() + " Transfer complete.");
                     }
                 });
 
@@ -243,8 +245,8 @@ public class DirectoryBrowser {
                     // Close the connection when the whole content is written out.
                     lastContentFuture.addListener(ChannelFutureListener.CLOSE);
                 }
+                return fullResp;
             }
-            return fullResp;
         }
 
         return null;
@@ -266,8 +268,16 @@ public class DirectoryBrowser {
     }
 
     private static void setContentTypeHeader(HttpResponse response, File file) {
-        MimetypesFileTypeMap mimeTypesMap = new MimetypesFileTypeMap();
-        response.headers().set(HttpHeaderNames.CONTENT_TYPE, mimeTypesMap.getContentType(file.getPath()));
+        String contentType = "application/octet-stream";
+        try{
+            if(null != Class.forName("MimetypesFileTypeMap")) {
+                MimetypesFileTypeMap mimeTypesMap = new MimetypesFileTypeMap();
+                contentType = mimeTypesMap.getContentType(file.getPath());
+            }
+        }catch (Exception e){
+
+        }
+        response.headers().set(HttpHeaderNames.CONTENT_TYPE, contentType);
     }
     public static boolean isSubFile(File parent, File child) throws IOException {
         String parentPath = parent.getCanonicalPath();
