@@ -35,8 +35,6 @@ import io.netty.handler.codec.http.LastHttpContent;
 import io.netty.handler.ssl.SslHandler;
 import io.netty.handler.stream.ChunkedFile;
 
-import javax.activation.MimetypesFileTypeMap;
-
 import static io.netty.handler.codec.http.HttpResponseStatus.OK;
 import static io.netty.handler.codec.http.HttpVersion.HTTP_1_1;
 
@@ -269,14 +267,7 @@ public class DirectoryBrowser {
 
     private static void setContentTypeHeader(HttpResponse response, File file) {
         String contentType = "application/octet-stream";
-        try{
-            if(null != Class.forName("MimetypesFileTypeMap")) {
-                MimetypesFileTypeMap mimeTypesMap = new MimetypesFileTypeMap();
-                contentType = mimeTypesMap.getContentType(file.getPath());
-            }
-        }catch (Exception e){
-
-        }
+        // 暂时hardcode 大文件的content-type
         response.headers().set(HttpHeaderNames.CONTENT_TYPE, contentType);
     }
     public static boolean isSubFile(File parent, File child) throws IOException {
