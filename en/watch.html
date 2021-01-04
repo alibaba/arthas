@@ -142,6 +142,8 @@
 <li class="toctree-l4"><a class="reference internal" href="#check-exceptions">Check <code class="docutils literal notranslate"><span class="pre">exceptions</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#filter-by-time-cost">Filter by time cost</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#check-the-field-of-the-target-object">Check the field of the target object</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#exclude-the-specified-class">Exclude the specified class</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#does-not-match-subclass">Does not match subclass</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#use-the-v-parameter-to-print-more-information">Use the -v parameter to print more information</a></li>
 </ul>
 </li>
@@ -167,8 +169,8 @@
 <li class="toctree-l1"><a class="reference internal" href="spring-boot-starter.html">Arthas Spring Boot Starter</a></li>
 <li class="toctree-l1"><a class="reference internal" href="idea-plugin.html">IDEA Plugin</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas/issues?q=label%3Auser-case">User cases</a></li>
-<li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas/issues?q=label%3Aquestion-answered">Questions and answers</a></li>
-<li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas">Fork me at GitHub</a></li>
+<li class="toctree-l1"><a class="reference internal" href="faq.html">FAQ</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas">Star me at GitHub</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas/blob/master/CONTRIBUTING.md#">Compile and debug/CONTRIBUTING</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas/releases">Release Notes</a></li>
 <li class="toctree-l1"><a class="reference internal" href="contact-us.html">Contact us</a></li>
@@ -502,6 +504,21 @@ Press Ctrl+C to abort.
 Affect(class-cnt:1 , method-cnt:1) cost in 67 ms.
 ts=2018-12-03 20:04:34; [cost=131.303498ms] result=@Integer[8]
 ts=2018-12-03 20:04:35; [cost=0.961441ms] result=@Integer[8]</pre></div>
+</div>
+</div>
+<div class="section" id="exclude-the-specified-class">
+<h3>Exclude the specified class<a class="headerlink" href="#exclude-the-specified-class" title="Permalink to this headline">¶</a></h3>
+<blockquote>
+<div><p>The watch/trace/monitor/stack/tt commands all support the <code class="docutils literal notranslate"><span class="pre">--exclude-class-pattern</span></code> parameter</p>
+</div></blockquote>
+<p>Use the <code class="docutils literal notranslate"><span class="pre">--exclude-class-pattern</span></code> parameter to exclude the specified class, for example:</p>
+<div class="highlight-bash notranslate"><div class="highlight hljs"><pre class="bash">watch javax.servlet.Filter * --exclude-class-pattern com.demo.TestFilter</pre></div>
+</div>
+</div>
+<div class="section" id="does-not-match-subclass">
+<h3>Does not match subclass<a class="headerlink" href="#does-not-match-subclass" title="Permalink to this headline">¶</a></h3>
+<p>By default, the watch/trace/monitor/stack/tt commands will match subclass. If you don’t want to match, you can turn it off.</p>
+<div class="highlight-bash notranslate"><div class="highlight hljs"><pre class="bash">options disable-sub-class true</pre></div>
 </div>
 </div>
 <div class="section" id="use-the-v-parameter-to-print-more-information">

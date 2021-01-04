@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>cat &mdash; Arthas 3.4.5 文档</title>
+  <title>FAQ &mdash; Arthas 3.4.5 文档</title>
   
 
   
@@ -39,8 +39,8 @@
     <link rel="stylesheet" href="_static/overrides.css" type="text/css" />
     <link rel="index" title="索引" href="genindex.html" />
     <link rel="search" title="搜索" href="search.html" />
-    <link rel="next" title="echo" href="echo.html" />
-    <link rel="prev" title="profiler" href="profiler.html" />
+    <link rel="next" title="联系我们" href="contact-us.html" />
+    <link rel="prev" title="IDEA Plugin" href="idea-plugin.html" />
 <script>
   if (window.location.href.startsWith("https://alibaba.github.io/arthas/")) {
       window.location.href = "https://arthas.aliyun.com/doc/" + window.location.href.substr("https://alibaba.github.io/arthas/".length);
@@ -108,41 +108,7 @@
 <li class="toctree-l1"><a class="reference internal" href="download.html">下载</a></li>
 <li class="toctree-l1"><a class="reference internal" href="quick-start.html">快速入门</a></li>
 <li class="toctree-l1"><a class="reference internal" href="advanced-use.html">进阶使用</a></li>
-<li class="toctree-l1 current"><a class="reference internal" href="commands.html">命令列表</a><ul class="current">
-<li class="toctree-l2"><a class="reference internal" href="dashboard.html">dashboard</a></li>
-<li class="toctree-l2"><a class="reference internal" href="thread.html">thread</a></li>
-<li class="toctree-l2"><a class="reference internal" href="jvm.html">jvm</a></li>
-<li class="toctree-l2"><a class="reference internal" href="sysprop.html">sysprop</a></li>
-<li class="toctree-l2"><a class="reference internal" href="sysenv.html">sysenv</a></li>
-<li class="toctree-l2"><a class="reference internal" href="vmoption.html">vmoption</a></li>
-<li class="toctree-l2"><a class="reference internal" href="perfcounter.html">perfcounter</a></li>
-<li class="toctree-l2"><a class="reference internal" href="logger.html">logger</a></li>
-<li class="toctree-l2"><a class="reference internal" href="mbean.html">mbean</a></li>
-<li class="toctree-l2"><a class="reference internal" href="getstatic.html">getstatic</a></li>
-<li class="toctree-l2"><a class="reference internal" href="ognl.html">ognl</a></li>
-<li class="toctree-l2"><a class="reference internal" href="sc.html">sc</a></li>
-<li class="toctree-l2"><a class="reference internal" href="sm.html">sm</a></li>
-<li class="toctree-l2"><a class="reference internal" href="dump.html">dump</a></li>
-<li class="toctree-l2"><a class="reference internal" href="heapdump.html">heapdump</a></li>
-<li class="toctree-l2"><a class="reference internal" href="jad.html">jad</a></li>
-<li class="toctree-l2"><a class="reference internal" href="classloader.html">classloader</a></li>
-<li class="toctree-l2"><a class="reference internal" href="mc.html">mc</a></li>
-<li class="toctree-l2"><a class="reference internal" href="redefine.html">redefine</a></li>
-<li class="toctree-l2"><a class="reference internal" href="monitor.html">monitor</a></li>
-<li class="toctree-l2"><a class="reference internal" href="watch.html">watch</a></li>
-<li class="toctree-l2"><a class="reference internal" href="trace.html">trace</a></li>
-<li class="toctree-l2"><a class="reference internal" href="stack.html">stack</a></li>
-<li class="toctree-l2"><a class="reference internal" href="tt.html">tt</a></li>
-<li class="toctree-l2"><a class="reference internal" href="profiler.html">profiler</a></li>
-<li class="toctree-l2 current"><a class="current reference internal" href="#">cat</a></li>
-<li class="toctree-l2"><a class="reference internal" href="echo.html">echo</a></li>
-<li class="toctree-l2"><a class="reference internal" href="grep.html">grep</a></li>
-<li class="toctree-l2"><a class="reference internal" href="tee.html">tee</a></li>
-<li class="toctree-l2"><a class="reference internal" href="pwd.html">pwd</a></li>
-<li class="toctree-l2"><a class="reference internal" href="options.html">options</a></li>
-<li class="toctree-l2"><a class="reference internal" href="commands.html#arthas">Arthas 基础命令</a></li>
-</ul>
-</li>
+<li class="toctree-l1"><a class="reference internal" href="commands.html">命令列表</a></li>
 <li class="toctree-l1"><a class="reference internal" href="web-console.html">WebConsole</a></li>
 <li class="toctree-l1"><a class="reference internal" href="tunnel.html">Arthas Tunnel</a></li>
 <li class="toctree-l1"><a class="reference internal" href="http-api.html">Http API</a></li>
@@ -150,7 +116,13 @@
 <li class="toctree-l1"><a class="reference internal" href="spring-boot-starter.html">Arthas Spring Boot Starter</a></li>
 <li class="toctree-l1"><a class="reference internal" href="idea-plugin.html">IDEA 插件</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas/issues?q=label%3Auser-case">用户案例</a></li>
-<li class="toctree-l1"><a class="reference internal" href="faq.html">FAQ/常见问题</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">FAQ/常见问题</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#arthas-attach">Arthas attach之后对原进程性能有多大的影响</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#json">怎么以<code class="docutils literal notranslate"><span class="pre">json</span></code>格式查看结果</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#arthas-native">Arthas能否跟踪 native 函数</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id1">能不能查看内存里某个变量的值</a></li>
+</ul>
+</li>
 <li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas">Star me at GitHub</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas/blob/master/CONTRIBUTING.md#">编译调试/参与贡献</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas/releases">Release Notes</a></li>
@@ -200,16 +172,14 @@
     
       <li><a href="index.html">Docs</a> &raquo;</li>
         
-          <li><a href="commands.html">命令列表</a> &raquo;</li>
-        
-      <li>cat</li>
+      <li>FAQ</li>
     
     
       <li class="wy-breadcrumbs-aside">
         
             
             
-              <a href="https://github.com/alibaba/arthas/blob/master/site/src/site/sphinx/cat.md" class="fa fa-github"> Edit on GitHub</a>
+              <a href="https://github.com/alibaba/arthas/blob/master/site/src/site/sphinx/faq.md" class="fa fa-github"> Edit on GitHub</a>
             
           
         
@@ -223,13 +193,28 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
             
-  <div class="section" id="cat">
-<h1>cat<a class="headerlink" href="#cat" title="永久链接至标题">¶</a></h1>
-<p><a class="reference external" href="https://arthas.aliyun.com/doc/arthas-tutorials.html?language=cn&amp;id=command-cat"><code class="docutils literal notranslate"><span class="pre">cat</span></code>在线教程</a></p>
+  <div class="section" id="faq">
+<h1>FAQ<a class="headerlink" href="#faq" title="永久链接至标题">¶</a></h1>
 <blockquote>
-<div><p>打印文件内容，和linux里的cat命令类似。</p>
+<div><p>不在本列表里的问题，请到issue里搜索。 <a class="reference external" href="https://github.com/alibaba/arthas/issues">https://github.com/alibaba/arthas/issues</a></p>
 </div></blockquote>
-<div class="highlight-bash notranslate"><div class="highlight hljs"><pre class="bash">$ cat /tmp/a.txt</pre></div>
+<div class="section" id="arthas-attach">
+<h2>Arthas attach之后对原进程性能有多大的影响<a class="headerlink" href="#arthas-attach" title="永久链接至标题">¶</a></h2>
+<p><a class="reference external" href="https://github.com/alibaba/arthas/issues/44">https://github.com/alibaba/arthas/issues/44</a></p>
+</div>
+<div class="section" id="json">
+<h2>怎么以<code class="docutils literal notranslate"><span class="pre">json</span></code>格式查看结果<a class="headerlink" href="#json" title="永久链接至标题">¶</a></h2>
+<div class="highlight-bash notranslate"><div class="highlight hljs"><pre class="bash">options json-format true</pre></div>
+</div>
+<p>更多参考 <a class="reference internal" href="options.html"><span class="doc">options</span></a></p>
+</div>
+<div class="section" id="arthas-native">
+<h2>Arthas能否跟踪 native 函数<a class="headerlink" href="#arthas-native" title="永久链接至标题">¶</a></h2>
+<p>不能。</p>
+</div>
+<div class="section" id="id1">
+<h2>能不能查看内存里某个变量的值<a class="headerlink" href="#id1" title="永久链接至标题">¶</a></h2>
+<p>不能。但可以用一些技巧，用<code class="docutils literal notranslate"><span class="pre">tt</span></code>命令拦截到对象，或者从静态函数里取到对象。</p>
 </div>
 </div>
 
@@ -241,10 +226,10 @@
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="echo.html" class="btn btn-neutral float-right" title="echo" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+        <a href="contact-us.html" class="btn btn-neutral float-right" title="联系我们" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
-        <a href="profiler.html" class="btn btn-neutral float-left" title="profiler" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+        <a href="idea-plugin.html" class="btn btn-neutral float-left" title="IDEA Plugin" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
       
     </div>
   

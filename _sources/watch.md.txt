@@ -235,6 +235,23 @@ ts=2018-12-03 20:04:34; [cost=131.303498ms] result=@Integer[8]
 ts=2018-12-03 20:04:35; [cost=0.961441ms] result=@Integer[8]
 ``` 
 
+#### 排除掉指定的类
+
+> watch/trace/monitor/stack/tt 命令都支持 `--exclude-class-pattern` 参数
+
+使用 `--exclude-class-pattern` 参数可以排除掉指定的类，比如：
+
+```bash
+watch javax.servlet.Filter * --exclude-class-pattern com.demo.TestFilter
+```
+#### 不匹配子类
+
+默认情况下 watch/trace/monitor/stack/tt 命令都会匹配子类。如果想不匹配，可以通过全局参数关掉。
+
+```bash
+options disable-sub-class true
+```
+
 #### 使用 -v 参数打印更多信息
 
 > watch/trace/monitor/stack/tt 命令都支持 `-v` 参数

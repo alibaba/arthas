@@ -236,6 +236,24 @@ ts=2018-12-03 20:04:35; [cost=0.961441ms] result=@Integer[8]
 ``` 
 
 
+#### Exclude the specified class
+
+> The watch/trace/monitor/stack/tt commands all support the `--exclude-class-pattern` parameter
+
+Use the `--exclude-class-pattern` parameter to exclude the specified class, for example:
+
+```bash
+watch javax.servlet.Filter * --exclude-class-pattern com.demo.TestFilter
+```
+#### Does not match subclass
+
+By default, the watch/trace/monitor/stack/tt commands will match subclass. If you don't want to match, you can turn it off.
+
+```bash
+options disable-sub-class true
+```
+
+
 #### Use the -v parameter to print more information
 
 > The watch/trace/monitor/stack/tt commands all support the `-v` parameter.

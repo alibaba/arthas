@@ -33,10 +33,11 @@ Many times what we are interested is the exact trace result when the method call
 
 ### Notice
 
-`trace` is handy to help discovering and locating the performance flaws in your system, but pls. note Arthas can only trace the first level method call each time.
+* `trace` is handy to help discovering and locating the performance flaws in your system, but pls. note Arthas can only trace the first level method call each time.
 
+* After version 3.3.0, you can use the Dynamic Trace feature to add new matching classes/methods, see the following example.
 
-After version 3.3.0, you can use the Dynamic Trace feature to add new matching classes/methods, see the following example.
+* Currently `trace java.lang.Thread getName` is not supported, please refer to issue: [#1610](https://github.com/alibaba/arthas/issues/1610), considering that it is not very necessary and it is difficult to repair , So it won’t be fixed for now
 
 ### Usage
 
@@ -141,6 +142,16 @@ You can use the regular expression to match multiple classes and methods on the 
 Trace -E com.test.ClassA|org.test.ClassB method1|method2|method3
 ```
 
+
+#### Exclude the specified class
+
+> The watch/trace/monitor/stack/tt commands all support the `--exclude-class-pattern` parameter
+
+Use the `--exclude-class-pattern` parameter to exclude the specified class, for example:
+
+```bash
+watch javax.servlet.Filter * --exclude-class-pattern com.demo.TestFilter
+```
 
 #### Dynamic trace
 

@@ -136,6 +136,7 @@
 <li class="toctree-l4"><a class="reference internal" href="#include-jdk-method">Include jdk method</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#filtering-by-cost">Filtering by cost</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#trace-multiple-classes-or-multiple-methods">Trace multiple classes or multiple methods</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#exclude-the-specified-class">Exclude the specified class</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#dynamic-trace">Dynamic trace</a></li>
 </ul>
 </li>
@@ -160,8 +161,8 @@
 <li class="toctree-l1"><a class="reference internal" href="spring-boot-starter.html">Arthas Spring Boot Starter</a></li>
 <li class="toctree-l1"><a class="reference internal" href="idea-plugin.html">IDEA Plugin</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas/issues?q=label%3Auser-case">User cases</a></li>
-<li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas/issues?q=label%3Aquestion-answered">Questions and answers</a></li>
-<li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas">Fork me at GitHub</a></li>
+<li class="toctree-l1"><a class="reference internal" href="faq.html">FAQ</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas">Star me at GitHub</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas/blob/master/CONTRIBUTING.md#">Compile and debug/CONTRIBUTING</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas/releases">Release Notes</a></li>
 <li class="toctree-l1"><a class="reference internal" href="contact-us.html">Contact us</a></li>
@@ -289,8 +290,11 @@
 </div>
 <div class="section" id="notice">
 <h2>Notice<a class="headerlink" href="#notice" title="Permalink to this headline">¶</a></h2>
-<p><code class="docutils literal notranslate"><span class="pre">trace</span></code> is handy to help discovering and locating the performance flaws in your system, but pls. note Arthas can only trace the first level method call each time.</p>
-<p>After version 3.3.0, you can use the Dynamic Trace feature to add new matching classes/methods, see the following example.</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">trace</span></code> is handy to help discovering and locating the performance flaws in your system, but pls. note Arthas can only trace the first level method call each time.</p></li>
+<li><p>After version 3.3.0, you can use the Dynamic Trace feature to add new matching classes/methods, see the following example.</p></li>
+<li><p>Currently <code class="docutils literal notranslate"><span class="pre">trace</span> <span class="pre">java.lang.Thread</span> <span class="pre">getName</span></code> is not supported, please refer to issue: <a class="reference external" href="https://github.com/alibaba/arthas/issues/1610">#1610</a>, considering that it is not very necessary and it is difficult to repair , So it won’t be fixed for now</p></li>
+</ul>
 </div>
 <div class="section" id="usage">
 <h2>Usage<a class="headerlink" href="#usage" title="Permalink to this headline">¶</a></h2>
@@ -388,6 +392,15 @@ Affect(class-cnt:1 , method-cnt:1) cost in 41 ms.
 <p>The trace command will only trace the subcalls in the method to the trace, and will not trace down multiple layers. Because traces are expensive, multi-layer traces can lead to a lot of classes and methods that ultimately have to be traced.</p>
 <p>You can use the regular expression to match multiple classes and methods on the path to achieve a multi-layer trace effect to some extent.</p>
 <div class="highlight-bash notranslate"><div class="highlight hljs"><pre class="bash">Trace -E com.test.ClassA|org.test.ClassB method1|method2|method3</pre></div>
+</div>
+</div>
+<div class="section" id="exclude-the-specified-class">
+<h3>Exclude the specified class<a class="headerlink" href="#exclude-the-specified-class" title="Permalink to this headline">¶</a></h3>
+<blockquote>
+<div><p>The watch/trace/monitor/stack/tt commands all support the <code class="docutils literal notranslate"><span class="pre">--exclude-class-pattern</span></code> parameter</p>
+</div></blockquote>
+<p>Use the <code class="docutils literal notranslate"><span class="pre">--exclude-class-pattern</span></code> parameter to exclude the specified class, for example:</p>
+<div class="highlight-bash notranslate"><div class="highlight hljs"><pre class="bash">watch javax.servlet.Filter * --exclude-class-pattern com.demo.TestFilter</pre></div>
 </div>
 </div>
 <div class="section" id="dynamic-trace">
