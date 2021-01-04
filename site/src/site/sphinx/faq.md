@@ -27,6 +27,7 @@ options json-format true
 
 不能。但可以用一些技巧，用`tt`命令拦截到对象，或者从静态函数里取到对象。
 
+
 ##### 方法同名过滤
 
 同名方法过滤可以通过匹配表达式,可以使用[表达式核心变量](advice-class.md)中所有变量作为已知条件,可以通过判断参数个数`params.length ==1`, 参数类型`params[0] instanceof java.lang.Integer`、返回值类型 `returnObj instanceof java.util.List` 等等一种或者多种组合进行过滤。
