@@ -14,6 +14,7 @@ import java.util.TimeZone;
 
 import com.alibaba.arthas.deps.org.slf4j.Logger;
 import com.alibaba.arthas.deps.org.slf4j.LoggerFactory;
+import com.taobao.arthas.common.ArthasConstants;
 import com.taobao.arthas.common.IOUtils;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelFutureListener;
@@ -47,7 +48,7 @@ public class DirectoryBrowser {
 
     public static final String HTTP_DATE_FORMAT = "EEE, dd MMM yyyy HH:mm:ss zzz";
     public static final String HTTP_DATE_GMT_TIMEZONE = "GMT";
-    public static final long MIN_NETTY_DIRECT_SEND_SIZE = 10 * 1024 * 1024;
+    public static final long MIN_NETTY_DIRECT_SEND_SIZE = ArthasConstants.MAX_HTTP_CONTENT_LENGTH;
     private static final Logger logger = LoggerFactory.getLogger(DirectoryBrowser.class);
     //@formatter:off
     private static String pageHeader = "<!DOCTYPE html>\n" + 
@@ -195,7 +196,7 @@ public class DirectoryBrowser {
                     future.addListener(ChannelFutureListener.CLOSE);
                     return fullResp;
                 }
-                logger.info("file {} size bigger than 10MB, send by future.",file.getName());
+                logger.info("file {} size bigger than {}, send by future.",file.getName(), MIN_NETTY_DIRECT_SEND_SIZE);
                 HttpResponse response = new DefaultHttpResponse(HTTP_1_1, OK);
                 HttpUtil.setContentLength(response, fileLength);
                 setContentTypeHeader(response, file);
