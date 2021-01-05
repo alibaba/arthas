@@ -78,7 +78,7 @@ curl -L https://arthas.aliyun.com/install.sh | sh
 * [Docker](https://arthas.aliyun.com/doc/docker.html)
 * [Arthas Spring Boot Starter](https://arthas.aliyun.com/doc/spring-boot-starter.html)
 * [用户案例](https://github.com/alibaba/arthas/issues?q=label%3Auser-case)
-* [常见问题](https://github.com/alibaba/arthas/issues?utf8=%E2%9C%93&q=label%3Aquestion-answered+)
+* [FAQ/常见问题](https://arthas.aliyun.com/doc/faq)
 * [编译调试/参与贡献](https://github.com/alibaba/arthas/blob/master/CONTRIBUTING.md)
 * [Release Notes](https://github.com/alibaba/arthas/releases)
 * [QQ群/钉钉群](https://arthas.aliyun.com/doc/contact-us.html)

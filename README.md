@@ -89,7 +89,7 @@ You can enter its interactive interface by executing `as.sh`, or execute `as.sh 
 * [Docker](https://arthas.aliyun.com/doc/en/docker.html)
 * [Arthas Spring Boot Starter](https://arthas.aliyun.com/doc/en/spring-boot-starter.html)
 * [User cases](https://github.com/alibaba/arthas/issues?q=label%3Auser-case)
-* [Questions and answers](https://github.com/alibaba/arthas/issues?utf8=%E2%9C%93&q=label%3Aquestion-answered+)
+* [FAQ](https://arthas.aliyun.com/doc/en/faq)
 * [Compile and debug/How to contribute](https://github.com/alibaba/arthas/blob/master/CONTRIBUTING.md)
 * [Release Notes](https://github.com/alibaba/arthas/releases)
 
