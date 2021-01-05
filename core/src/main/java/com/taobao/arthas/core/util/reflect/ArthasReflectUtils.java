@@ -1,6 +1,9 @@
 package com.taobao.arthas.core.util.reflect;
 
+import com.taobao.arthas.core.command.BuiltinCommandPack;
+import com.taobao.arthas.core.shell.command.AnnotatedCommand;
 import com.taobao.arthas.core.util.ArthasCheckUtils;
+import com.taobao.arthas.core.util.matcher.Matcher;
 
 import java.io.File;
 import java.io.FileFilter;
@@ -11,10 +14,7 @@ import java.lang.reflect.Method;
 import java.net.JarURLConnection;
 import java.net.URL;
 import java.net.URLDecoder;
-import java.util.Collections;
-import java.util.Enumeration;
-import java.util.LinkedHashSet;
-import java.util.Set;
+import java.util.*;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 
@@ -314,8 +314,104 @@ public class ArthasReflectUtils {
                 defineClassMethod.setAccessible(acc);
             }
         }
-
-
     }
 
+
+    public static Set<Class<?>> getClassSetFromPackage(String basePackageName, Matcher matcher) throws IOException {
+        return (Set<Class<?>>) getClassesFromPackage(basePackageName, matcher, new HashSet<Class<?>>());
+    }
+
+    /**
+     * Find all classes from basePackageName according to the condition
+     *
+     * @return
+     */
+    public static List<Class<?>> getClassListFromPackage(String basePackageName, Matcher matcher) throws IOException {
+        return (List<Class<?>>) getClassesFromPackage(basePackageName, matcher, new ArrayList<Class<?>>());
+    }
+
+    public static Collection<Class<?>> getClassesFromPackage(String basePackageName, Matcher matcher, Collection<Class<?>> classes) throws IOException {
+        // replace base package name to file path
+        String packageDirName = basePackageName.replace('.', '/');
+        Enumeration<URL> dirs = BuiltinCommandPack.class.getClassLoader().getResources(packageDirName);
+        while (dirs.hasMoreElements()) {
+            URL url = dirs.nextElement();
+            String protocol = url.getProtocol();
+            if ("jar".equals(protocol)) {
+                // jar
+                findAndAddClassesInPackageByJar(url, basePackageName, classes, matcher);
+            } else {
+                // file
+                String filePath = URLDecoder.decode(url.getFile(), "UTF-8");
+                findAndAddClassesInPackageByFile(basePackageName, filePath, classes, matcher);
+            }
+        }
+        return classes;
+    }
+
+    private static void findAndAddClassesInPackageByJar(URL url, String basePackageName, Collection<Class<?>> classes, Matcher matcher) throws IOException {
+        JarURLConnection connection = (JarURLConnection) url.openConnection();
+        if (connection == null) {
+            throw new RuntimeException("Can't get JarURL connection : " + url.toString());
+        }
+        JarFile jarFile = connection.getJarFile();
+        if (jarFile == null) {
+            throw new RuntimeException("jarFile is null!");
+        }
+        Enumeration<JarEntry> jarEntryEnumeration = jarFile.entries();
+        while (jarEntryEnumeration.hasMoreElements()) {
+            JarEntry entry = jarEntryEnumeration.nextElement();
+            if (entry.isDirectory()) {
+                continue;
+            }
+            String clazzName = entry.getName().replace("/", ".");
+            if (!clazzName.startsWith(basePackageName)) {
+                continue;
+            }
+            addCommandToList(clazzName, classes, matcher);
+        }
+    }
+
+    private static void findAndAddClassesInPackageByFile(String basePackageName, String packagePath,
+                                                         Collection<Class<?>> classes, Matcher matcher) {
+        File[] dirfiles = null;
+        File dir = new File(packagePath);
+        if (!dir.exists()) {
+            return;
+        }
+        if (!dir.isDirectory()) {
+            return;
+        }
+        dirfiles = dir.listFiles(new FileFilter() {
+            @Override
+            public boolean accept(File file) {
+                return file.isDirectory() || (file.getName().endsWith(".class") && !file.getName().endsWith("Test.class"));
+            }
+        });
+        if (dirfiles == null || dirfiles.length == 0) {
+            return;
+        }
+        // loop all files
+        for (File file : dirfiles) {
+            // if is directory do recursion
+            if (file.isDirectory()) {
+                findAndAddClassesInPackageByFile(basePackageName + "." + file.getName(), file.getAbsolutePath(), classes, matcher);
+            } else {
+                // get the class name
+                addCommandToList(basePackageName + '.' + file.getName(), classes, matcher);
+            }
+        }
+    }
+
+    private static void addCommandToList(String classNameWithClassSuffix, Collection<Class<?>> classes, Matcher matcher) {
+        String className = classNameWithClassSuffix.substring(0, classNameWithClassSuffix.length() - 6);
+        Class<?> clazz = null;
+        try {
+            clazz = Class.forName(className);
+            if (matcher.matching(clazz)) {
+                // if is command add to the list
+                classes.add(clazz);
+            }
+        } catch (ClassNotFoundException e) {}
+    }
 }
