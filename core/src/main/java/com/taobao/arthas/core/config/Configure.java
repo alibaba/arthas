@@ -17,11 +17,11 @@ import static java.lang.reflect.Modifier.isStatic;
  */
 @Config(prefix = "arthas")
 public class Configure {
-    public static final long DEFAULT_SESSION_TIMEOUT_SECONDS = ShellServerOptions.DEFAULT_SESSION_TIMEOUT/1000;
+
     private String ip;
-    private int telnetPort;
-    private int httpPort;
-    private long javaPid;
+    private Integer telnetPort;
+    private Integer httpPort;
+    private Long javaPid;
     private String arthasCore;
     private String arthasAgent;
 
@@ -29,14 +29,33 @@ public class Configure {
     private String agentId;
 
     /**
+     * @see com.taobao.arthas.common.ArthasConstants#ARTHAS_OUTPUT
+     */
+    private String outputPath;
+
+    /**
+     * 需要被增强的ClassLoader的全类名，多个用英文 , 分隔
+     */
+    private String enhanceLoaders;
+
+    /**
+     * <pre>
+     * 1. 如果显式传入 arthas.agentId ，则直接使用
+     * 2. 如果用户没有指定，则自动尝试在查找应用的 appname，加为前缀，比如 system properties设置 project.name是 demo，则
+     *    生成的 agentId是  demo-xxxx
+     * </pre>
+     */
+    private String appName;
+    /**
      * report executed command
      */
     private String statUrl;
 
     /**
      * session timeout seconds
+     * @see ShellServerOptions#DEFAULT_SESSION_TIMEOUT
      */
-    private long sessionTimeout = DEFAULT_SESSION_TIMEOUT_SECONDS;
+    private Long sessionTimeout;
 
     public String getIp() {
         return ip;
@@ -46,7 +65,7 @@ public class Configure {
         this.ip = ip;
     }
 
-    public int getTelnetPort() {
+    public Integer getTelnetPort() {
         return telnetPort;
     }
 
@@ -58,7 +77,7 @@ public class Configure {
         this.httpPort = httpPort;
     }
 
-    public int getHttpPort() {
+    public Integer getHttpPort() {
         return httpPort;
     }
 
@@ -86,7 +105,7 @@ public class Configure {
         this.arthasCore = arthasCore;
     }
 
-    public long getSessionTimeout() {
+    public Long getSessionTimeout() {
         return sessionTimeout;
     }
 
@@ -116,6 +135,30 @@ public class Configure {
 
     public void setStatUrl(String statUrl) {
         this.statUrl = statUrl;
+    }
+
+    public String getAppName() {
+        return appName;
+    }
+
+    public void setAppName(String appName) {
+        this.appName = appName;
+    }
+
+    public String getEnhanceLoaders() {
+        return enhanceLoaders;
+    }
+
+    public void setEnhanceLoaders(String enhanceLoaders) {
+        this.enhanceLoaders = enhanceLoaders;
+    }
+
+    public String getOutputPath() {
+        return outputPath;
+    }
+
+    public void setOutputPath(String outputPath) {
+        this.outputPath = outputPath;
     }
 
     /**

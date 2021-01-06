@@ -1,18 +1,11 @@
 package com.taobao.arthas.core.shell.term.impl.http;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.URI;
-import java.net.URL;
-
 import com.alibaba.arthas.deps.org.slf4j.Logger;
 import com.alibaba.arthas.deps.org.slf4j.LoggerFactory;
 import com.taobao.arthas.common.IOUtils;
 import com.taobao.arthas.core.server.ArthasBootstrap;
 import com.taobao.arthas.core.shell.term.impl.http.api.HttpApiHandler;
 import com.taobao.arthas.core.shell.term.impl.httptelnet.HttpTelnetTermServer;
-
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelFutureListener;
 import io.netty.channel.ChannelHandlerContext;
@@ -24,13 +17,19 @@ import io.netty.handler.codec.http.HttpHeaderNames;
 import io.netty.handler.codec.http.HttpResponse;
 import io.netty.handler.codec.http.HttpResponseStatus;
 import io.netty.handler.codec.http.HttpUtil;
-import io.netty.handler.codec.http.HttpVersion;
 import io.netty.handler.codec.http.LastHttpContent;
 import io.termd.core.http.HttpTtyConnection;
 import io.termd.core.util.Logging;
 
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.URI;
+import java.net.URL;
+
 import static com.taobao.arthas.core.util.HttpUtils.createRedirectResponse;
 import static com.taobao.arthas.core.util.HttpUtils.createResponse;
+import static io.netty.handler.codec.http.HttpVersion.HTTP_1_1;
 
 /**
  * @author <a href="mailto:julien@julienviet.com">Julien Viet</a>
@@ -45,6 +44,11 @@ public class HttpRequestHandler extends SimpleChannelInboundHandler<FullHttpRequ
     private File dir;
 
     private HttpApiHandler httpApiHandler;
+
+
+    public HttpRequestHandler(String wsUri) {
+        this(wsUri, ArthasBootstrap.getInstance().getOutputPath());
+    }
 
     public HttpRequestHandler(String wsUri, File dir) {
         this.wsUri = wsUri;
@@ -69,6 +73,7 @@ public class HttpRequestHandler extends SimpleChannelInboundHandler<FullHttpRequ
             }
 
             boolean isHttpApiResponse = false;
+            boolean isFileResponseFinished = false;
             try {
                 //handle http restful api
                 if ("/api".equals(path)) {
@@ -91,7 +96,8 @@ public class HttpRequestHandler extends SimpleChannelInboundHandler<FullHttpRequ
 
                 //try output dir later, avoid overlay classpath resources files
                 if (response == null){
-                    response = DirectoryBrowser.view(dir, path, request.protocolVersion());
+                    response = DirectoryBrowser.directView(dir, path, request,ctx);
+                    isFileResponseFinished = (response == null) ? false : true;
                 }
 
                 //not found
@@ -105,25 +111,26 @@ public class HttpRequestHandler extends SimpleChannelInboundHandler<FullHttpRequ
                 if (response == null){
                     response = createResponse(request, HttpResponseStatus.INTERNAL_SERVER_ERROR, "Server error");
                 }
-                ctx.write(response);
-                ChannelFuture future = ctx.writeAndFlush(LastHttpContent.EMPTY_LAST_CONTENT);
-                future.addListener(ChannelFutureListener.CLOSE);
-
-                //reuse http api response buf
-                if (isHttpApiResponse && response instanceof DefaultFullHttpResponse) {
-                    final HttpResponse finalResponse = response;
-                    future.addListener(new ChannelFutureListener() {
-                        @Override
-                        public void operationComplete(ChannelFuture future) throws Exception {
-                            httpApiHandler.onCompleted((DefaultFullHttpResponse) finalResponse);
-                        }
-                    });
+                if(!isFileResponseFinished) {
+                    ctx.write(response);
+                    ChannelFuture future = ctx.writeAndFlush(LastHttpContent.EMPTY_LAST_CONTENT);
+                    future.addListener(ChannelFutureListener.CLOSE);
+                    //reuse http api response buf
+                    if (isHttpApiResponse && response instanceof DefaultFullHttpResponse) {
+                        final HttpResponse finalResponse = response;
+                        future.addListener(new ChannelFutureListener() {
+                            @Override
+                            public void operationComplete(ChannelFuture future) throws Exception {
+                                httpApiHandler.onCompleted((DefaultFullHttpResponse) finalResponse);
+                            }
+                        });
+                    }
                 }
             }
         }
     }
 
-    private FullHttpResponse readFileFromResource(FullHttpRequest request, String path) throws IOException {
+    private HttpResponse readFileFromResource(FullHttpRequest request, String path) throws IOException {
         DefaultFullHttpResponse fullResp = null;
         InputStream in = null;
         try {
@@ -162,7 +169,7 @@ public class HttpRequestHandler extends SimpleChannelInboundHandler<FullHttpRequ
     }
 
     private static void send100Continue(ChannelHandlerContext ctx) {
-        FullHttpResponse response = new DefaultFullHttpResponse(HttpVersion.HTTP_1_1, HttpResponseStatus.CONTINUE);
+        FullHttpResponse response = new DefaultFullHttpResponse(HTTP_1_1, HttpResponseStatus.CONTINUE);
         ctx.writeAndFlush(response);
     }
 

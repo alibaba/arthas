@@ -21,3 +21,4 @@ site/src/site/sphinx/en/_build
 dependency-reduced-pom.xml
 pom.xml.versionsBackup
 .pmd
+**/.flattened-pom.xml

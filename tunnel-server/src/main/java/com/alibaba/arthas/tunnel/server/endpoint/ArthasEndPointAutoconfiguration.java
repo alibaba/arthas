@@ -6,7 +6,7 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-import com.alibaba.arthas.tunnel.server.app.ArthasProperties;
+import com.alibaba.arthas.tunnel.server.app.configuration.ArthasProperties;
 
 @EnableConfigurationProperties(ArthasProperties.class)
 @Configuration

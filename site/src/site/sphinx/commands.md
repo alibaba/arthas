@@ -35,6 +35,7 @@
 * [cat](cat.md)
 * [echo](echo.md)
 * [grep](grep.md)
+* [base64](base64.md)
 * [tee](tee.md)
 * [pwd](pwd.md)
 * [options](options.md)

@@ -5,55 +5,68 @@
 
 ```bash
 $ thread -n 3
-"as-command-execute-daemon" Id=29 cpuUsage=75% RUNNABLE
-    at sun.management.ThreadImpl.dumpThreads0(Native Method)
-    at sun.management.ThreadImpl.getThreadInfo(ThreadImpl.java:440)
-    at com.taobao.arthas.core.command.monitor200.ThreadCommand$1.action(ThreadCommand.java:58)
-    at com.taobao.arthas.core.command.handler.AbstractCommandHandler.execute(AbstractCommandHandler.java:238)
-    at com.taobao.arthas.core.command.handler.DefaultCommandHandler.handleCommand(DefaultCommandHandler.java:67)
-    at com.taobao.arthas.core.server.ArthasServer$4.run(ArthasServer.java:276)
-    at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1145)
-    at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:615)
-    at java.lang.Thread.run(Thread.java:745)
- 
-    Number of locked synchronizers = 1
-    - java.util.concurrent.ThreadPoolExecutor$Worker@6cd0b6f8
- 
-"as-session-expire-daemon" Id=25 cpuUsage=24% TIMED_WAITING
-    at java.lang.Thread.sleep(Native Method)
-    at com.taobao.arthas.core.server.DefaultSessionManager$2.run(DefaultSessionManager.java:85)
- 
-"Reference Handler" Id=2 cpuUsage=0% WAITING on java.lang.ref.Reference$Lock@69ba0f27
-    at java.lang.Object.wait(Native Method)
-    -  waiting on java.lang.ref.Reference$Lock@69ba0f27
-    at java.lang.Object.wait(Object.java:503)
-    at java.lang.ref.Reference$ReferenceHandler.run(Reference.java:133)
+"C1 CompilerThread0" [Internal] cpuUsage=1.63% deltaTime=3ms time=1170ms
+
+
+"arthas-command-execute" Id=23 cpuUsage=0.11% deltaTime=0ms time=401ms RUNNABLE
+    at java.management@11.0.7/sun.management.ThreadImpl.dumpThreads0(Native Method)
+    at java.management@11.0.7/sun.management.ThreadImpl.getThreadInfo(ThreadImpl.java:466)
+    at com.taobao.arthas.core.command.monitor200.ThreadCommand.processTopBusyThreads(ThreadCommand.java:199)
+    at com.taobao.arthas.core.command.monitor200.ThreadCommand.process(ThreadCommand.java:122)
+    at com.taobao.arthas.core.shell.command.impl.AnnotatedCommandImpl.process(AnnotatedCommandImpl.java:82)
+    at com.taobao.arthas.core.shell.command.impl.AnnotatedCommandImpl.access$100(AnnotatedCommandImpl.java:18)
+    at com.taobao.arthas.core.shell.command.impl.AnnotatedCommandImpl$ProcessHandler.handle(AnnotatedCommandImpl.java:111)
+    at com.taobao.arthas.core.shell.command.impl.AnnotatedCommandImpl$ProcessHandler.handle(AnnotatedCommandImpl.java:108)
+    at com.taobao.arthas.core.shell.system.impl.ProcessImpl$CommandProcessTask.run(ProcessImpl.java:385)
+    at java.base@11.0.7/java.util.concurrent.Executors$RunnableAdapter.call(Executors.java:515)
+    at java.base@11.0.7/java.util.concurrent.FutureTask.run(FutureTask.java:264)
+    at java.base@11.0.7/java.util.concurrent.ScheduledThreadPoolExecutor$ScheduledFutureTask.run(ScheduledThreadPoolExecutor.java:304)
+    at java.base@11.0.7/java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1128)
+    at java.base@11.0.7/java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:628)
+    at java.base@11.0.7/java.lang.Thread.run(Thread.java:834)
+
+
+"VM Periodic Task Thread" [Internal] cpuUsage=0.07% deltaTime=0ms time=584ms
 ```
 
-### List all threads’ info when no options provided
+* Without thread ID, including `[Internal]` means JVM internal thread, refer to the introduction of `dashboard` command.
+* `cpuUsage` is the CPU usage of the thread during the sampling interval, consistent with the data of the `dashboard` command.
+* `deltaTime` is the incremental CPU time of the thread during the sampling interval. If it is less than 1ms, it will be rounded and displayed as 0ms.
+* `time` The total CPU time of thread.
+
+**Note:** The thread stack is acquired at the end of the second sampling, which does not indicate that the thread is 
+processing the same task during the sampling interval. It is recommended that the interval time should not be too long. 
+The larger the interval time, the more inaccurate.
+
+You can try to specify different intervals according to the specific situation and observe the output results.
+
+
+#### List first page threads' info when no options provided
+
+By default, they are arranged in descending order of CPU increment time, and only the first page of data is displayed.
 
 `thread`{{execute T2}}
 
 ```bash
 $ thread
-Threads Total: 16, NEW: 0, RUNNABLE: 7, BLOCKED: 0, WAITING: 5, TIMED_WAITING: 4, TERMINATED: 0
-ID         NAME                             GROUP                 PRIORITY   STATE      %CPU       TIME       INTERRUPTE DAEMON
-30         as-command-execute-daemon        system                9          RUNNABLE   72         0:0        false      true
-23         as-session-expire-daemon         system                9          TIMED_WAIT 27         0:0        false      true
-22         Attach Listener                  system                9          RUNNABLE   0          0:0        false      true
-11         pool-2-thread-1                  main                  5          TIMED_WAIT 0          0:0        false      false
-12         Thread-2                         main                  5          RUNNABLE   0          0:0        false      true
-13         pool-3-thread-1                  main                  5          TIMED_WAIT 0          0:0        false      false
-25         as-selector-daemon               system                9          RUNNABLE   0          0:0        false      true
-14         Thread-3                         main                  5          TIMED_WAIT 0          0:0        false      false
-26         pool-5-thread-1                  system                5          WAITING    0          0:0        false      false
-15         Thread-4                         main                  5          RUNNABLE   0          0:0        false      false
-1          main                             main                  5          WAITING    0          0:2        false      false
-2          Reference Handler                system                10         WAITING    0          0:0        false      true
-3          Finalizer                        system                8          WAITING    0          0:0        false      true
-4          Signal Dispatcher                system                9          RUNNABLE   0          0:0        false      true
-20         NonBlockingInputStreamThread     main                  5          WAITING    0          0:0        false      true
-21         Thread-8                         main                  5          RUNNABLE   0          0:0        false      true
+Threads Total: 33, NEW: 0, RUNNABLE: 9, BLOCKED: 0, WAITING: 3, TIMED_WAITING: 4, TERMINATED: 0, Internal threads: 17
+ID   NAME                           GROUP          PRIORITY  STATE     %CPU      DELTA_TIME TIME      INTERRUPT DAEMON
+-1   C2 CompilerThread0             -              -1        -         5.06      0.010      0:0.973   false     true
+-1   C1 CompilerThread0             -              -1        -         0.95      0.001      0:0.603   false     true
+23   arthas-command-execute         system         5         RUNNABLE  0.17      0.000      0:0.226   false     true
+-1   VM Periodic Task Thread        -              -1        -         0.05      0.000      0:0.094   false     true
+-1   Sweeper thread                 -              -1        -         0.04      0.000      0:0.011   false     true
+-1   G1 Young RemSet Sampling       -              -1        -         0.02      0.000      0:0.025   false     true
+12   Attach Listener                system         9         RUNNABLE  0.0       0.000      0:0.022   false     true
+11   Common-Cleaner                 InnocuousThrea 8         TIMED_WAI 0.0       0.000      0:0.000   false     true
+3    Finalizer                      system         8         WAITING   0.0       0.000      0:0.000   false     true
+2    Reference Handler              system         10        RUNNABLE  0.0       0.000      0:0.000   false     true
+4    Signal Dispatcher              system         9         RUNNABLE  0.0       0.000      0:0.000   false     true
+15   arthas-NettyHttpTelnetBootstra system         5         RUNNABLE  0.0       0.000      0:0.029   false     true
+22   arthas-NettyHttpTelnetBootstra system         5         RUNNABLE  0.0       0.000      0:0.196   false     true
+24   arthas-NettyHttpTelnetBootstra system         5         RUNNABLE  0.0       0.000      0:0.038   false     true
+16   arthas-NettyWebsocketTtyBootst system         5         RUNNABLE  0.0       0.000      0:0.001   false     true
+17   arthas-NettyWebsocketTtyBootst system         5         RUNNABLE  0.0       0.000      0:0.001   false     true
 ```
 
 ### thread id, show the running stack for the target thread
@@ -123,7 +136,13 @@ $ thread -b
 
 ### thread -i, specify the sampling interval
 
-`thread -n 3 -i 5000`{{execute T2}}
+* `thread -i 1000`: Count the thread cpu time of the last 1000ms.
+
+`thread -i 1000`{{execute T2}}
+
+* `thread -n 3 -i 1000`: List the 3 busiest thread stacks in 1000ms.
+
+`thread -n 3 -i 1000`{{execute T2}}
 
 ```bash
 $ thread -n 3 -i 1000
@@ -152,11 +171,9 @@ $ thread -n 3 -i 1000
 
 ```bash
 [arthas@28114]$ thread --state WAITING
-Threads Total: 15, NEW: 0, RUNNABLE: 7, BLOCKED: 0, WAITING: 5, TIMED_WAITING: 3, TERMINATED: 0
-ID       NAME                      GROUP            PRIORITY STATE   %CPU     TIME     INTERRU DAEMON
-198      AsyncAppender-Worker-arth system           9        WAITING 0        0:0      false   true
-3        Finalizer                 system           8        WAITING 0        0:0      false   true
-14       RMI Scheduler(0)          system           9        WAITING 0        0:0      false   true
-2        Reference Handler         system           10       WAITING 0        0:0      false   true
-204      pool-8-thread-1           system           5        WAITING 0        0:0      false   false
+Threads Total: 16, NEW: 0, RUNNABLE: 9, BLOCKED: 0, WAITING: 3, TIMED_WAITING: 4, TERMINATED: 0
+ID   NAME                           GROUP           PRIORITY   STATE     %CPU      DELTA_TIME TIME      INTERRUPTE DAEMON
+3    Finalizer                      system          8          WAITING   0.0       0.000      0:0.000   false      true
+20   arthas-UserStat                system          9          WAITING   0.0       0.000      0:0.001   false      true
+14   arthas-timer                   system          9          WAITING   0.0       0.000      0:0.000   false      true
 ```

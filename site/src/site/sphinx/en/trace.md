@@ -33,10 +33,11 @@ Many times what we are interested is the exact trace result when the method call
 
 ### Notice
 
-`trace` is handy to help discovering and locating the performance flaws in your system, but pls. note Arthas can only trace the first level method call each time.
+* `trace` is handy to help discovering and locating the performance flaws in your system, but pls. note Arthas can only trace the first level method call each time.
 
+* After version 3.3.0, you can use the Dynamic Trace feature to add new matching classes/methods, see the following example.
 
-After version 3.3.0, you can use the Dynamic Trace feature to add new matching classes/methods, see the following example.
+* Currently `trace java.lang.Thread getName` is not supported, please refer to issue: [#1610](https://github.com/alibaba/arthas/issues/1610), considering that it is not very necessary and it is difficult to repair , So it won’t be fixed for now
 
 ### Usage
 
@@ -59,6 +60,7 @@ Affect(class-cnt:1 , method-cnt:1) cost in 28 ms.
         `---[0.03752ms] demo.MathGame:primeFactors() #24 [throws Exception]
 ```
 
+> The `#24` in the result indicates that in the run function, the `primeFactors()` function was called on line `24` of the source file.
 
 #### Trace times limit
 
@@ -141,11 +143,21 @@ Trace -E com.test.ClassA|org.test.ClassB method1|method2|method3
 ```
 
 
+#### Exclude the specified class
+
+> The watch/trace/monitor/stack/tt commands all support the `--exclude-class-pattern` parameter
+
+Use the `--exclude-class-pattern` parameter to exclude the specified class, for example:
+
+```bash
+watch javax.servlet.Filter * --exclude-class-pattern com.demo.TestFilter
+```
+
 #### Dynamic trace
 
 > Supported since version 3.3.0.
 
-Open terminal 1, trace the `run` method, and you can see the printout `listenerId: 1` .
+Open terminal 1, trace the `run` method in the above demo, and you can see the printout `listenerId: 1` .
 
 ```bash
 [arthas@59161]$ trace demo.MathGame run

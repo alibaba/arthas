@@ -21,12 +21,14 @@ Arthas 用户文档
 
 `Arthas`支持JDK 6+，支持Linux/Mac/Windows，采用命令行交互模式，同时提供丰富的 `Tab` 自动补全功能，进一步方便进行问题的定位和诊断。
 
+
 **如果您在使用Arthas，请让我们知道，您的使用对我们非常重要：[查看](https://github.com/alibaba/arthas/issues/111)**
 
 Contents
 --------
 
 * [首页](https://arthas.aliyun.com/)
+* [招聘！](https://mp.weixin.qq.com/s/k5jozrSgmyH0tcQfrDkxUQ)
 * [技术征文!](https://developer.aliyun.com/article/751641)
 * [English Docs](https://arthas.aliyun.com/doc/en/)
 * [在线教程(推荐)](https://arthas.aliyun.com/doc/arthas-tutorials.html?language=cn)
@@ -36,13 +38,14 @@ Contents
 * [进阶使用](advanced-use.md)
 * [命令列表](commands.md)
 * [WebConsole](web-console.md)
+* [Arthas Tunnel](tunnel.md)
 * [Http API](http-api.md)
 * [Docker](docker.md)
 * [Arthas Spring Boot Starter](spring-boot-starter.md)
 * [IDEA 插件](idea-plugin.md)
 * [用户案例](https://github.com/alibaba/arthas/issues?q=label%3Auser-case)
-* [常见问题](https://github.com/alibaba/arthas/issues?q=label%3Aquestion-answered)
-* [Fork me at GitHub](https://github.com/alibaba/arthas)
+* [FAQ/常见问题](faq.md)
+* [Star me at GitHub](https://github.com/alibaba/arthas)
 * [编译调试/参与贡献](https://github.com/alibaba/arthas/blob/master/CONTRIBUTING.md#)
 * [Release Notes](https://github.com/alibaba/arthas/releases)
 * [QQ群/钉钉群](contact-us.md)

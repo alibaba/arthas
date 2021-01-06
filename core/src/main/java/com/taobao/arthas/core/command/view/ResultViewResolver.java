@@ -39,6 +39,7 @@ public class ResultViewResolver {
             //registerView(HistoryView.class);
             registerView(EchoView.class);
             registerView(CatView.class);
+            registerView(Base64View.class);
             registerView(OptionsView.class);
             registerView(SystemPropertyView.class);
             registerView(SystemEnvView.class);

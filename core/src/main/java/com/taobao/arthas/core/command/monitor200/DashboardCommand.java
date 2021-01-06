@@ -9,6 +9,7 @@ import com.taobao.arthas.core.command.model.DashboardModel;
 import com.taobao.arthas.core.command.model.GcInfoVO;
 import com.taobao.arthas.core.command.model.MemoryEntryVO;
 import com.taobao.arthas.core.command.model.RuntimeInfoVO;
+import com.taobao.arthas.core.command.model.ThreadVO;
 import com.taobao.arthas.core.command.model.TomcatInfoVO;
 import com.taobao.arthas.core.shell.command.AnnotatedCommand;
 import com.taobao.arthas.core.shell.command.CommandProcess;
@@ -31,6 +32,7 @@ import java.lang.management.MemoryPoolMXBean;
 import java.lang.management.MemoryType;
 import java.lang.management.MemoryUsage;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -205,6 +207,7 @@ public class DashboardCommand extends AnnotatedCommand {
         runtimeInfo.setSystemLoadAverage(ManagementFactory.getOperatingSystemMXBean().getSystemLoadAverage());
         runtimeInfo.setProcessors(Runtime.getRuntime().availableProcessors());
         runtimeInfo.setUptime(ManagementFactory.getRuntimeMXBean().getUptime() / 1000);
+        runtimeInfo.setTimestamp(new Date().getTime());
         dashboardModel.setRuntimeInfo(runtimeInfo);
     }
 
@@ -305,8 +308,8 @@ public class DashboardCommand extends AnnotatedCommand {
                 DashboardModel dashboardModel = new DashboardModel();
 
                 //thread sample
-                Map<String, Thread> threads = ThreadUtil.getThreads();
-                dashboardModel.setThreads(threadSampler.sample(threads.values()));
+                List<ThreadVO> threads = ThreadUtil.getThreads();
+                dashboardModel.setThreads(threadSampler.sample(threads));
 
                 //memory
                 addMemoryInfo(dashboardModel);

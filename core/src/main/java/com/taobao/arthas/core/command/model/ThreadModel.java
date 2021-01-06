@@ -18,11 +18,12 @@ public class ThreadModel extends ResultModel {
     private BlockingLockInfo blockingLockInfo;
 
     //thread -n 5
-    private ThreadCpuInfo[] busyThreads;
+    private List<BusyThreadInfo> busyThreads;
 
     //thread stats
     private List<ThreadVO> threadStats;
     private Map<Thread.State, Integer> threadStateCount;
+    private boolean all;
 
     public ThreadModel() {
     }
@@ -35,13 +36,14 @@ public class ThreadModel extends ResultModel {
         this.blockingLockInfo = blockingLockInfo;
     }
 
-    public ThreadModel(ThreadCpuInfo[] busyThreads) {
+    public ThreadModel(List<BusyThreadInfo> busyThreads) {
         this.busyThreads = busyThreads;
     }
 
-    public ThreadModel(List<ThreadVO> threadStats, Map<Thread.State, Integer> threadStateCount) {
+    public ThreadModel(List<ThreadVO> threadStats, Map<Thread.State, Integer> threadStateCount, boolean all) {
         this.threadStats = threadStats;
         this.threadStateCount = threadStateCount;
+        this.all = all;
     }
 
     @Override
@@ -65,11 +67,11 @@ public class ThreadModel extends ResultModel {
         this.blockingLockInfo = blockingLockInfo;
     }
 
-    public ThreadCpuInfo[] getBusyThreads() {
+    public List<BusyThreadInfo> getBusyThreads() {
         return busyThreads;
     }
 
-    public void setBusyThreads(ThreadCpuInfo[] busyThreads) {
+    public void setBusyThreads(List<BusyThreadInfo> busyThreads) {
         this.busyThreads = busyThreads;
     }
 
@@ -87,5 +89,13 @@ public class ThreadModel extends ResultModel {
 
     public void setThreadStateCount(Map<Thread.State, Integer> threadStateCount) {
         this.threadStateCount = threadStateCount;
+    }
+
+    public boolean isAll() {
+        return all;
+    }
+
+    public void setAll(boolean all) {
+        this.all = all;
     }
 }

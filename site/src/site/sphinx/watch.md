@@ -234,3 +234,58 @@ Affect(class-cnt:1 , method-cnt:1) cost in 67 ms.
 ts=2018-12-03 20:04:34; [cost=131.303498ms] result=@Integer[8]
 ts=2018-12-03 20:04:35; [cost=0.961441ms] result=@Integer[8]
 ``` 
+
+#### 排除掉指定的类
+
+> watch/trace/monitor/stack/tt 命令都支持 `--exclude-class-pattern` 参数
+
+使用 `--exclude-class-pattern` 参数可以排除掉指定的类，比如：
+
+```bash
+watch javax.servlet.Filter * --exclude-class-pattern com.demo.TestFilter
+```
+#### 不匹配子类
+
+默认情况下 watch/trace/monitor/stack/tt 命令都会匹配子类。如果想不匹配，可以通过全局参数关掉。
+
+```bash
+options disable-sub-class true
+```
+
+#### 使用 -v 参数打印更多信息
+
+> watch/trace/monitor/stack/tt 命令都支持 `-v` 参数
+
+当命令执行之后，没有输出结果。有两种可能：
+
+1. 匹配到的函数没有被执行
+2. 条件表达式结果是 false
+
+但用户区分不出是哪种情况。
+
+使用 `-v`选项，则会打印`Condition express`的具体值和执行结果，方便确认。
+
+比如：
+
+```
+$ watch -v -x 2 demo.MathGame print 'params' 'params[0] > 100000'
+Press Q or Ctrl+C to abort.
+Affect(class count: 1 , method count: 1) cost in 29 ms, listenerId: 11
+Condition express: params[0] > 100000 , result: false
+Condition express: params[0] > 100000 , result: false
+Condition express: params[0] > 100000 , result: true
+ts=2020-12-02 22:38:56; [cost=0.060843ms] result=@Object[][
+    @Integer[200033],
+    @ArrayList[
+        @Integer[200033],
+    ],
+]
+Condition express: params[0] > 100000 , result: true
+ts=2020-12-02 22:38:57; [cost=0.052877ms] result=@Object[][
+    @Integer[123047],
+    @ArrayList[
+        @Integer[29],
+        @Integer[4243],
+    ],
+]
+```

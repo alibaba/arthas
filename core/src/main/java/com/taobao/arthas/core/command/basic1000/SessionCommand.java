@@ -35,6 +35,7 @@ public class SessionCommand extends AnnotatedCommand {
                 result.setAgentId(id);
             }
             result.setTunnelServer(tunnelClient.getTunnelServerUrl());
+            result.setTunnelConnected(tunnelClient.isConnected());
         }
 
         //statUrl

@@ -1,5 +1,6 @@
 package com.taobao.arthas.core.command;
 
+import com.taobao.arthas.core.command.basic1000.Base64Command;
 import com.taobao.arthas.core.command.basic1000.CatCommand;
 import com.taobao.arthas.core.command.basic1000.ClsCommand;
 import com.taobao.arthas.core.command.basic1000.EchoCommand;
@@ -101,6 +102,7 @@ public class BuiltinCommandPack implements CommandResolver {
         commands.add(Command.create(LoggerCommand.class));
         commands.add(Command.create(HistoryCommand.class));
         commands.add(Command.create(CatCommand.class));
+        commands.add(Command.create(Base64Command.class));
         commands.add(Command.create(EchoCommand.class));
         commands.add(Command.create(PwdCommand.class));
         commands.add(Command.create(MBeanCommand.class));

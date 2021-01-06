@@ -449,10 +449,14 @@ public abstract class StringUtils {
 
     public static String replace(String inString, String oldPattern, String newPattern) {
         if(hasLength(inString) && hasLength(oldPattern) && newPattern != null) {
-            StringBuilder sb = new StringBuilder();
             int pos = 0;
             int index = inString.indexOf(oldPattern);
+            if (index < 0) {
+                //no need to replace
+                return inString;
+            }
 
+            StringBuilder sb = new StringBuilder();
             for(int patLen = oldPattern.length(); index >= 0; index = inString.indexOf(oldPattern, pos)) {
                 sb.append(inString.substring(pos, index));
                 sb.append(newPattern);
