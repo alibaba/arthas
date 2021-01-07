@@ -43,6 +43,7 @@
 * [sm](sm.md)——查看已加载类的方法信息
 * [jad](jad.md)——反编译指定已加载类的源码
 * [mc](mc.md)——内存编译器，内存编译`.java`文件为`.class`文件
+* [retransform](retransform.md)——加载外部的`.class`文件，retransform到JVM里
 * [redefine](redefine.md)——加载外部的`.class`文件，redefine到JVM里
 * [dump](dump.md)——dump 已加载类的 byte code 到特定目录
 * [classloader](classloader.md)——查看classloader的继承树，urls，类加载信息，使用classloader去getResource

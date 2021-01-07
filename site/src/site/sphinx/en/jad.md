@@ -57,7 +57,7 @@ CharSequence {
 
 #### Print source only
 
-By default, the decompile result will have the `ClassLoader` information. With the `--source-only` option, you can print only the source code. Conveniently used with the [mc](mc.md)/[redefine](redefine.md) commands.
+By default, the decompile result will have the `ClassLoader` information. With the `--source-only` option, you can print only the source code. Conveniently used with the [mc](mc.md)/[retransform](retransform.md) commands.
 
 ```
 $ jad --source-only demo.MathGame

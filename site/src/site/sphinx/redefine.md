@@ -1,6 +1,8 @@
 redefine
 ===
 
+> 推荐使用 [retransform](retransform.md) 命令
+
 [`mc-redefine`在线教程](https://arthas.aliyun.com/doc/arthas-tutorials?language=cn&id=command-mc-redefine)
 
 > 加载外部的`.class`文件，redefine jvm已加载的类。
@@ -8,6 +10,8 @@ redefine
 参考：[Instrumentation#redefineClasses](https://docs.oracle.com/javase/8/docs/api/java/lang/instrument/Instrumentation.html#redefineClasses-java.lang.instrument.ClassDefinition...-)
 
 ### 常见问题
+
+> 推荐使用 [retransform](retransform.md) 命令
 
 * redefine的class不能修改、添加、删除类的field和method，包括方法参数、方法名称及返回值
 
@@ -28,9 +32,6 @@ redefine
 |---:|:---|
 |[c:]|ClassLoader的hashcode|
 |`[classLoaderClass:]`|指定执行表达式的 ClassLoader 的 class name|
-|[p:]|外部的`.class`文件的完整路径，支持多个|
-
-
 
 ### 使用参考
 
