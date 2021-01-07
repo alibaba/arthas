@@ -9,6 +9,16 @@
 [https://github.com/alibaba/arthas/issues/44](https://github.com/alibaba/arthas/issues/44)
 
 
+##### Can commands such as trace/watch enhance the classes in jdk?
+
+By default, classes beginning with `java.` are filtered out, but they can be turned on:
+
+```bash
+options unsafe true
+```
+
+更多参考 [options](options.md)
+
 ##### 怎么以`json`格式查看结果
 
 ```bash
