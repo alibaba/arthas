@@ -33,10 +33,11 @@ Load the specified .class file, then parse out the class name, and then retransf
 
 ```bash
 $ retransform -l
-Id ClassName LoaderHash LoaderClassName
-1 demo.MathGame null null
+Id              ClassName       TransformCount  LoaderHash      LoaderClassName
+1               demo.MathGame   1               null            null
 ```
 
+* TransformCount counts the times of attempts to return the .class file corresponding to the entry in the ClassFileTransformer#transform method, but it does not mean that the transform must be successful.
 ### Delete the specified retransform entry
 
 Need to specify id:

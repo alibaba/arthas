@@ -34,9 +34,11 @@ demo.MathGame
 
 ```bash
 $ retransform -l
-Id                  ClassName           LoaderHash          LoaderClassName
-1                   demo.MathGame       null                null
+Id              ClassName       TransformCount  LoaderHash      LoaderClassName
+1               demo.MathGame   1               null            null
 ```
+
+* TransformCount 统计在 ClassFileTransformer#transform 函数里尝试返回 entry对应的 .class文件的次数，但并不表明transform一定成功。
 
 ### 删除指定 retransform entry
 

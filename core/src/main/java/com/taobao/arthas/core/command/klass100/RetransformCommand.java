@@ -280,8 +280,6 @@ public class RetransformCommand extends AnnotatedCommand {
                 classList.add(clazz);
                 retransformModel.addRetransformClass(clazz.getName());
 
-                addRetransformEntry(retransformEntry);
-
                 logger.info("Try retransform class name: {}, ClassLoader: {}", clazz.getName(), clazz.getClassLoader());
             }
         }
@@ -291,6 +289,7 @@ public class RetransformCommand extends AnnotatedCommand {
                 process.end(-1, "These classes are not found in the JVM and may not be loaded: " + bytesMap.keySet());
                 return;
             }
+            addRetransformEntry(retransformEntryList);
 
             inst.retransformClasses(classList.toArray(new Class[0]));
 
@@ -352,6 +351,10 @@ public class RetransformCommand extends AnnotatedCommand {
             this.classLoaderClass = classLoaderClass;
         }
 
+        public void incTransformCount() {
+            transformCount++;
+        }
+
         public int getId() {
             return id;
         }
@@ -401,10 +404,10 @@ public class RetransformCommand extends AnnotatedCommand {
         }
     }
 
-    public static synchronized void addRetransformEntry(RetransformEntry retransformEntry) {
+    public static synchronized void addRetransformEntry(List<RetransformEntry> retransformEntryList) {
         List<RetransformEntry> tmp = new ArrayList<RetransformEntry>();
         tmp.addAll(retransformEntries);
-        tmp.add(retransformEntry);
+        tmp.addAll(retransformEntryList);
         Collections.sort(tmp, new Comparator<RetransformEntry>() {
             @Override
             public int compare(RetransformEntry entry1, RetransformEntry entry2) {
@@ -468,6 +471,7 @@ public class RetransformCommand extends AnnotatedCommand {
                 if (updateFlag) {
                     logger.info("RetransformCommand match class: {}, id: {}, classLoaderClass: {}, hashCode: {}",
                             className, id, retransformEntry.getClassLoaderClass(), retransformEntry.getHashCode());
+                    retransformEntry.incTransformCount();
                     return retransformEntry.getBytes();
                 }
 

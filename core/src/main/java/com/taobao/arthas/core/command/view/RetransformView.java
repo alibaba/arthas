@@ -35,12 +35,12 @@ public class RetransformView extends ResultView<RetransformModel> {
         // retransform -l
         if (result.getRetransformEntries() != null) {
             // header
-            TableElement table = new TableElement(1, 1, 1, 1).rightCellPadding(1);
-            table.add(new RowElement().style(Decoration.bold.bold()).add("Id", "ClassName", "LoaderHash",
+            TableElement table = new TableElement(1, 1, 1, 1, 1).rightCellPadding(1);
+            table.add(new RowElement().style(Decoration.bold.bold()).add("Id", "ClassName", "TransformCount", "LoaderHash",
                     "LoaderClassName"));
 
             for (RetransformEntry entry : result.getRetransformEntries()) {
-                table.row("" + entry.getId(), "" + entry.getClassName(), "" + entry.getHashCode(),
+                table.row("" + entry.getId(), "" + entry.getClassName(), "" + entry.getTransformCount(), "" + entry.getHashCode(),
                         "" + entry.getClassLoaderClass());
             }
 
