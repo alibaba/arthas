@@ -49,7 +49,7 @@ example [arthas-demo](quick-start.md)
 watch demo.MathGame primeFactors traceE '{params,returnObj,throwExp}' -v -n 5 -x 3 'params.length >0 && returnObj instanceof java.util.List'
 ``` 
 
-##### How to watch or trace constructor
+##### How to watch or trace constructor?
 
 ```bash
 watch demo.MathGame <init> '{params,returnObj,throwExp}' -v -n 5 -x 3 '1==1'
