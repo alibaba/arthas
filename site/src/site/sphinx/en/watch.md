@@ -235,6 +235,23 @@ ts=2018-12-03 20:04:34; [cost=131.303498ms] result=@Integer[8]
 ts=2018-12-03 20:04:35; [cost=0.961441ms] result=@Integer[8]
 ``` 
 
+#### Get a static field and calling a static method 
+
+```bash
+watch demo.MathGame * '{params,@demo.MathGame@random.nextInt(100)}' -v -n 1 -x 2
+[arthas@6527]$ watch demo.MathGame * '{params,@demo.MathGame@random.nextInt(100)}' -n 1 -x 2
+Press Q or Ctrl+C to abort.
+Affect(class count: 1 , method count: 5) cost in 34 ms, listenerId: 3
+ts=2021-01-05 21:35:20; [cost=0.173966ms] result=@ArrayList[
+    @Object[][
+        @Integer[-138282],
+    ],
+    @Integer[89],
+]
+```
+
+* Note that here you use `Thread.currentThread().getContextClassLoader()` to load, and it is better to use the exact `classloader` [ognl](ognl.md).
+
 
 #### Exclude the specified class
 
