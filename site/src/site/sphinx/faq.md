@@ -9,6 +9,16 @@
 [https://github.com/alibaba/arthas/issues/44](https://github.com/alibaba/arthas/issues/44)
 
 
+##### trace/watch等命令能否增强jdk里的类？
+
+默认情况下会过滤掉`java.`开头的类，但可以通过参数开启。
+
+```bash
+options unsafe true
+```
+
+更多参考 [options](options.md)
+
 ##### 怎么以`json`格式查看结果
 
 ```bash

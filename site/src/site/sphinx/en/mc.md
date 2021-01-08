@@ -30,6 +30,6 @@ The output directory can be specified with the `-d` option:
 mc -d /tmp/output /tmp/ClassA.java /tmp/ClassB.java
 ```
 
-After compiling the `.class` file, you can use the [redefine](redefine.md) command to re-define the loaded classes in JVM.
+After compiling the `.class` file, you can use the [retransform](retransform.md) command to re-define the loaded classes in JVM.
 
-> Note that the mc command may fail. If the compilation fails, the `.class` file can be compiled locally and uploaded to the server. Refer to the [redefine](redefine.md) command description for details.
+> Note that the mc command may fail. If the compilation fails, the `.class` file can be compiled locally and uploaded to the server. Refer to the [retransform](retransform.md) command description for details.

@@ -710,7 +710,7 @@ parse_arguments()
     fi
 
     # check pid
-    if [ -z ${TARGET_PID} ] && [ ${BATCH_MODE} = false ]; then
+    if [ -z ${TARGET_PID} ]; then
         # interactive mode
         local IFS=$'\n'
         CANDIDATES=($(call_jps | grep -v sun.tools.jps.Jps | awk '{print $0}'))
