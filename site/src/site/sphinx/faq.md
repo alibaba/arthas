@@ -49,3 +49,9 @@ options json-format true
 ```bash
 watch demo.MathGame primeFactors traceE '{params,returnObj,throwExp}' -v -n 5 -x 3 'params.length >0 && returnObj instanceof java.util.List'
 ``` 
+
+##### 怎么watch、trace 构造函数 ？
+
+```bash
+watch demo.MathGame <init> '{params,returnObj,throwExp}' -v -n 5 -x 3 '1==1'
+```
