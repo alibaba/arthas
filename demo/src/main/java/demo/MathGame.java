@@ -1,16 +1,40 @@
 package demo;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
 import java.util.concurrent.TimeUnit;
 
 public class MathGame {
     private static Random random = new Random();
 
+    private static String string = "v1";
+    private static Integer integer = 1;
+    private static Map<String, Integer> map = new HashMap<String, Integer>();
+
+    private static User user = null;
+
+    static class User {
+        private String name;
+        private Integer age;
+        public void setName(String name) {
+            this.name = name;
+        }
+        public void setAge(Integer age) {
+            this.age = age;
+        }
+    }
+
     public int illegalArgumentCount = 0;
 
     public static void main(String[] args) throws InterruptedException {
+        map.put("arthas", 1024);
+        User user = new User();
+        user.name = "jack";
+
+
         MathGame game = new MathGame();
         while (true) {
             game.run();
@@ -20,7 +44,7 @@ public class MathGame {
 
     public void run() throws InterruptedException {
         try {
-            int number = random.nextInt()/10000;
+            int number = random.nextInt() / 10000;
             List<Integer> primeFactors = primeFactors(number);
             print(number, primeFactors);
 
@@ -37,7 +61,7 @@ public class MathGame {
         if (sb.charAt(sb.length() - 1) == '*') {
             sb.deleteCharAt(sb.length() - 1);
         }
-        System.out.println(sb);
+        System.out.println(sb + "\t" + string + "\t" + integer);
     }
 
     public List<Integer> primeFactors(int number) {
