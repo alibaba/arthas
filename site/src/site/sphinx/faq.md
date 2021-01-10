@@ -55,3 +55,11 @@ watch demo.MathGame primeFactors traceE '{params,returnObj,throwExp}' -v -n 5 -x
 ```bash
 watch demo.MathGame <init> '{params,returnObj,throwExp}' -v -n 5 -x 3 '1==1'
 ```
+
+
+##### java.lang.ClassFormatError: null、skywalking arthas 兼容使用
+
+当出现这个错误日志`java.lang.ClassFormatError: null`,通常情况下都是被其他字节码工具修改过与arthas修改字节码不兼容。
+
+比如: 使用 skywalking V8.1.0 以下版本 [无法trace、watch 被skywalking agent 增强过的类](https://github.com/alibaba/arthas/issues/1141), V8.1.0 以上版本可以兼容使用,更多参考skywalking配置 [skywalking compatible with other javaagent bytecode processing](https://github.com/apache/skywalking/blob/v8.1.0/docs/en/FAQ/Compatible-with-other-javaagent-bytecode-processing.md)。
+
