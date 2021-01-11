@@ -8,6 +8,7 @@ Advanced Usage
 * [cat](cat.md) - Concatenate and print files
 * [echo](echo.md) - write arguments to the standard output
 * [grep](grep.md) - Pattern searcher
+* [base64](base64.md) - Encode and decode using Base64 representation.
 * [tee](tee.md) - Copies standard input to standard output, making a copy in zero or more files.
 * [pwd](pwd.md) - Return working directory name
 * session - display current session information
@@ -39,6 +40,7 @@ Advanced Usage
 * [sm](sm.md) - check methods info for the loaded classes
 * [jad](jad.md) - decompile the specified loaded classes
 * [mc](mc.md) - Memory compiler, compiles `.java` files into `.class` files in memory
+* [retransform](retransform.md) - load external `*.class` files and retransform it into JVM
 * [redefine](redefine.md) - load external `*.class` files and re-define it into JVM
 * [dump](dump.md) - dump the loaded classes in byte code to the specified location
 * [classloader](classloader.md) - check the inheritance structure, urls, class loading info for the specified class; using classloader to get the url of the resource e.g. `java/lang/String.class`

@@ -2,7 +2,7 @@ package com.taobao.arthas.core.command.monitor200;
 
 import com.alibaba.arthas.deps.org.slf4j.Logger;
 import com.alibaba.arthas.deps.org.slf4j.LoggerFactory;
-import com.taobao.arthas.core.GlobalOptions;
+import com.taobao.arthas.core.advisor.AccessPoint;
 import com.taobao.arthas.core.advisor.Advice;
 import com.taobao.arthas.core.advisor.ArthasMethod;
 import com.taobao.arthas.core.advisor.AdviceListenerAdapter;
@@ -72,7 +72,6 @@ class WatchAdviceListener extends AdviceListenerAdapter {
     }
 
 
-
     private void watching(Advice advice) {
         try {
             // 本次调用的耗时
@@ -83,6 +82,7 @@ class WatchAdviceListener extends AdviceListenerAdapter {
             }
             if (conditionResult) {
                 // TODO: concurrency issues for process.write
+
                 Object value = getExpressionResult(command.getExpress(), advice, cost);
 
                 WatchModel model = new WatchModel();
@@ -91,6 +91,15 @@ class WatchAdviceListener extends AdviceListenerAdapter {
                 model.setValue(value);
                 model.setExpand(command.getExpand());
                 model.setSizeLimit(command.getSizeLimit());
+                model.setClassName(advice.getClazz().getName());
+                model.setMethodName(advice.getMethod().getName());
+                if (advice.isBefore()) {
+                    model.setAccessPoint(AccessPoint.ACCESS_BEFORE.getKey());
+                } else if (advice.isAfterReturning()) {
+                    model.setAccessPoint(AccessPoint.ACCESS_AFTER_RETUNING.getKey());
+                } else if (advice.isAfterThrowing()) {
+                    model.setAccessPoint(AccessPoint.ACCESS_AFTER_THROWING.getKey());
+                }
 
                 process.appendResult(model);
                 process.times().incrementAndGet();
@@ -101,8 +110,8 @@ class WatchAdviceListener extends AdviceListenerAdapter {
         } catch (Throwable e) {
             logger.warn("watch failed.", e);
             process.end(-1, "watch failed, condition is: " + command.getConditionExpress() + ", express is: "
-                          + command.getExpress() + ", " + e.getMessage() + ", visit " + LogUtil.loggingFile()
-                          + " for more details.");
+                    + command.getExpress() + ", " + e.getMessage() + ", visit " + LogUtil.loggingFile()
+                    + " for more details.");
         }
     }
 }
