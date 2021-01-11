@@ -173,6 +173,8 @@ public class ArthasBootstrap {
         JSON.DEFAULT_GENERATE_FEATURE |= SerializerFeature.DisableCircularReferenceDetect.getMask();
         // add date format option for  fastjson
         JSON.DEFAULT_GENERATE_FEATURE |= SerializerFeature.WriteDateUseDateFormat.getMask();
+        // ignore getter error #1661
+        JSON.DEFAULT_GENERATE_FEATURE |= SerializerFeature.IgnoreErrorGetter.getMask();
     }
 
     private void initBeans() {
