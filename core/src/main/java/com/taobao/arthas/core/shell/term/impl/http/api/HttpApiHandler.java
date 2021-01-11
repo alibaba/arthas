@@ -321,7 +321,10 @@ public class HttpApiHandler {
         ResultConsumer resultConsumer = new ResultConsumerImpl();
         //disable input and interrupt
         resultConsumer.appendResult(new InputStatusModel(InputStatus.DISABLED));
-        session.getResultDistributor().addConsumer(resultConsumer);
+        SharingResultDistributor resultDistributor = session.getResultDistributor();
+        if (resultDistributor != null) {
+            resultDistributor.addConsumer(resultConsumer);
+        }
 
         ApiResponse response = new ApiResponse();
         response.setSessionId(session.getSessionId())
@@ -486,7 +489,10 @@ public class HttpApiHandler {
             //add command before exec job
             CommandRequestModel commandRequestModel = new CommandRequestModel(commandLine, response.getState());
             commandRequestModel.setJobId(job.id());
-            session.getResultDistributor().appendResult(commandRequestModel);
+            SharingResultDistributor resultDistributor = session.getResultDistributor();
+            if (resultDistributor != null) {
+                resultDistributor.appendResult(commandRequestModel);
+            }
             session.setForegroundJob(job);
             updateSessionInputStatus(session, InputStatus.ALLOW_INTERRUPT);
 
@@ -534,7 +540,11 @@ public class HttpApiHandler {
         if (StringUtils.isBlank(consumerId)) {
             throw new ApiException("'consumerId' is required");
         }
-        ResultConsumer consumer = session.getResultDistributor().getConsumer(consumerId);
+        ResultConsumer consumer = null;
+        SharingResultDistributor resultDistributor = session.getResultDistributor();
+        if (resultDistributor != null) {
+            consumer = resultDistributor.getConsumer(consumerId);
+        }
         if (consumer == null) {
             throw new ApiException("consumer not found: " + consumerId);
         }

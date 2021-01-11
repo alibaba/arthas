@@ -197,7 +197,7 @@
     </profiles>
 
     <properties>
-        <revision>3.4.6-SNAPSHOT</revision>
+        <revision>3.4.6</revision>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.compiler.target>1.6</maven.compiler.target>
         <maven.compiler.source>1.6</maven.compiler.source>
@@ -213,7 +213,7 @@
             <dependency>
                 <groupId>com.alibaba</groupId>
                 <artifactId>bytekit-core</artifactId>
-                <version>0.0.4-SNAPSHOT</version>
+                <version>0.0.4</version>
             </dependency>
             <dependency>
                 <groupId>org.benf</groupId>
