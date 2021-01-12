@@ -1,0 +1,458 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="zh-CN" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="zh-CN" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>retransform &mdash; Arthas 3.4.6 文档</title>
+  
+
+  
+  
+    <link rel="shortcut icon" href="_static/favicon.ico"/>
+  
+  
+  
+
+  
+  <script type="text/javascript" src="_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script type="text/javascript" src="_static/jquery.js"></script>
+        <script type="text/javascript" src="_static/underscore.js"></script>
+        <script type="text/javascript" src="_static/doctools.js"></script>
+        <script type="text/javascript" src="_static/language_data.js"></script>
+        <script type="text/javascript" src="_static/translations.js"></script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="_static/overrides.css" type="text/css" />
+    <link rel="index" title="索引" href="genindex.html" />
+    <link rel="search" title="搜索" href="search.html" />
+    <link rel="next" title="redefine" href="redefine.html" />
+    <link rel="prev" title="mc" href="mc.html" />
+<script>
+  if (window.location.href.startsWith("https://alibaba.github.io/arthas/")) {
+      window.location.href = "https://arthas.aliyun.com/doc/" + window.location.href.substr("https://alibaba.github.io/arthas/".length);
+  }
+</script>
+
+<script src="_static/center_page.js"></script>
+<link rel="stylesheet" href="https://g.alicdn.com/code/lib/highlight.js/9.13.1/styles/github.min.css">
+ 
+
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="index.html" class="icon icon-home"> Arthas
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                3.4.6
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul class="current">
+<li class="toctree-l1"><a class="reference external" href="https://arthas.aliyun.com/">首页</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://mp.weixin.qq.com/s/k5jozrSgmyH0tcQfrDkxUQ">招聘！</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://developer.aliyun.com/article/751641">技术征文</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://arthas.aliyun.com/doc/en/">English Docs</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://start.aliyun.com/handson-lab/#%21category=arthas">在线教程(国内)</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://arthas.aliyun.com/doc/arthas-tutorials.html?language=cn">在线教程(国外)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="install-detail.html">安装</a></li>
+<li class="toctree-l1"><a class="reference internal" href="download.html">下载</a></li>
+<li class="toctree-l1"><a class="reference internal" href="quick-start.html">快速入门</a></li>
+<li class="toctree-l1"><a class="reference internal" href="advanced-use.html">进阶使用</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="commands.html">命令列表</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="dashboard.html">dashboard</a></li>
+<li class="toctree-l2"><a class="reference internal" href="thread.html">thread</a></li>
+<li class="toctree-l2"><a class="reference internal" href="jvm.html">jvm</a></li>
+<li class="toctree-l2"><a class="reference internal" href="sysprop.html">sysprop</a></li>
+<li class="toctree-l2"><a class="reference internal" href="sysenv.html">sysenv</a></li>
+<li class="toctree-l2"><a class="reference internal" href="vmoption.html">vmoption</a></li>
+<li class="toctree-l2"><a class="reference internal" href="perfcounter.html">perfcounter</a></li>
+<li class="toctree-l2"><a class="reference internal" href="logger.html">logger</a></li>
+<li class="toctree-l2"><a class="reference internal" href="mbean.html">mbean</a></li>
+<li class="toctree-l2"><a class="reference internal" href="getstatic.html">getstatic</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ognl.html">ognl</a></li>
+<li class="toctree-l2"><a class="reference internal" href="sc.html">sc</a></li>
+<li class="toctree-l2"><a class="reference internal" href="sm.html">sm</a></li>
+<li class="toctree-l2"><a class="reference internal" href="dump.html">dump</a></li>
+<li class="toctree-l2"><a class="reference internal" href="heapdump.html">heapdump</a></li>
+<li class="toctree-l2"><a class="reference internal" href="jad.html">jad</a></li>
+<li class="toctree-l2"><a class="reference internal" href="classloader.html">classloader</a></li>
+<li class="toctree-l2"><a class="reference internal" href="mc.html">mc</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">retransform</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id1">使用参考</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#retransform-class">retransform 指定的 .class 文件</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#retransform-entry">查看 retransform entry</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id2">删除指定 retransform entry</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id3">删除所有 retransform entry</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id4">显式触发 retransform</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id5">消除 retransform 的影响</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#jad-mc">结合 jad/mc 命令使用</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#class">上传 .class 文件到服务器的技巧</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id6">retransform的限制</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="redefine.html">redefine</a></li>
+<li class="toctree-l2"><a class="reference internal" href="monitor.html">monitor</a></li>
+<li class="toctree-l2"><a class="reference internal" href="watch.html">watch</a></li>
+<li class="toctree-l2"><a class="reference internal" href="trace.html">trace</a></li>
+<li class="toctree-l2"><a class="reference internal" href="stack.html">stack</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tt.html">tt</a></li>
+<li class="toctree-l2"><a class="reference internal" href="profiler.html">profiler</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cat.html">cat</a></li>
+<li class="toctree-l2"><a class="reference internal" href="echo.html">echo</a></li>
+<li class="toctree-l2"><a class="reference internal" href="grep.html">grep</a></li>
+<li class="toctree-l2"><a class="reference internal" href="base64.html">base64</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tee.html">tee</a></li>
+<li class="toctree-l2"><a class="reference internal" href="pwd.html">pwd</a></li>
+<li class="toctree-l2"><a class="reference internal" href="options.html">options</a></li>
+<li class="toctree-l2"><a class="reference internal" href="commands.html#arthas">Arthas 基础命令</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="web-console.html">WebConsole</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tunnel.html">Arthas Tunnel</a></li>
+<li class="toctree-l1"><a class="reference internal" href="http-api.html">Http API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="docker.html">Docker</a></li>
+<li class="toctree-l1"><a class="reference internal" href="spring-boot-starter.html">Arthas Spring Boot Starter</a></li>
+<li class="toctree-l1"><a class="reference internal" href="idea-plugin.html">IDEA 插件</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas/issues?q=label%3Auser-case">用户案例</a></li>
+<li class="toctree-l1"><a class="reference internal" href="faq.html">FAQ/常见问题</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas">Star me at GitHub</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas/blob/master/CONTRIBUTING.md#">编译调试/参与贡献</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas/releases">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="contact-us.html">QQ群/钉钉群</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">Arthas</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="commands.html">命令列表</a> &raquo;</li>
+        
+      <li>retransform</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            
+              <a href="https://github.com/alibaba/arthas/blob/master/site/src/site/sphinx/retransform.md" class="fa fa-github"> Edit on GitHub</a>
+            
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="retransform">
+<h1>retransform<a class="headerlink" href="#retransform" title="永久链接至标题">¶</a></h1>
+<blockquote>
+<div><p>加载外部的<code class="docutils literal notranslate"><span class="pre">.class</span></code>文件，retransform jvm已加载的类。</p>
+</div></blockquote>
+<p>参考：<a class="reference external" href="https://docs.oracle.com/javase/8/docs/api/java/lang/instrument/Instrumentation.html#retransformClasses-java.lang.Class...-">Instrumentation#retransformClasses</a></p>
+<div class="section" id="id1">
+<h2>使用参考<a class="headerlink" href="#id1" title="永久链接至标题">¶</a></h2>
+<div class="highlight-bash notranslate"><div class="highlight hljs"><pre class="bash">   retransform /tmp/Test.class
+   retransform -l
+   retransform -d 1                    # delete retransform entry
+   retransform --deleteAll             # delete all retransform entries
+   retransform --classPattern demo.*   # triger retransform classes
+   retransform -c 327a647b /tmp/Test.class /tmp/Test\$Inner.class
+   retransform --classLoaderClass &#x27;sun.misc.Launcher$AppClassLoader&#x27; /tmp/Test.class</pre></div>
+</div>
+</div>
+<div class="section" id="retransform-class">
+<h2>retransform 指定的 .class 文件<a class="headerlink" href="#retransform-class" title="永久链接至标题">¶</a></h2>
+<div class="highlight-bash notranslate"><div class="highlight hljs"><pre class="bash">$ retransform /tmp/MathGame.class
+retransform success, size: 1, classes:
+demo.MathGame</pre></div>
+</div>
+<p>加载指定的 .class 文件，然后解析出class name，再retransform jvm中已加载的对应的类。每加载一个 <code class="docutils literal notranslate"><span class="pre">.class</span></code> 文件，则会记录一个 retransform entry.</p>
+<blockquote>
+<div><p>如果多次执行 retransform 加载同一个 class 文件，则会有多条 retransform entry.</p>
+</div></blockquote>
+</div>
+<div class="section" id="retransform-entry">
+<h2>查看 retransform entry<a class="headerlink" href="#retransform-entry" title="永久链接至标题">¶</a></h2>
+<div class="highlight-bash notranslate"><div class="highlight hljs"><pre class="bash">$ retransform -l
+Id              ClassName       TransformCount  LoaderHash      LoaderClassName
+1               demo.MathGame   1               null            null</pre></div>
+</div>
+<ul class="simple">
+<li><p>TransformCount 统计在 ClassFileTransformer#transform 函数里尝试返回 entry对应的 .class文件的次数，但并不表明transform一定成功。</p></li>
+</ul>
+</div>
+<div class="section" id="id2">
+<h2>删除指定 retransform entry<a class="headerlink" href="#id2" title="永久链接至标题">¶</a></h2>
+<p>需要指定 id：</p>
+<div class="highlight-bash notranslate"><div class="highlight hljs"><pre class="bash">retransform -d 1</pre></div>
+</div>
+</div>
+<div class="section" id="id3">
+<h2>删除所有 retransform entry<a class="headerlink" href="#id3" title="永久链接至标题">¶</a></h2>
+<div class="highlight-bash notranslate"><div class="highlight hljs"><pre class="bash">retransform --deleteAll</pre></div>
+</div>
+</div>
+<div class="section" id="id4">
+<h2>显式触发 retransform<a class="headerlink" href="#id4" title="永久链接至标题">¶</a></h2>
+<div class="highlight-bash notranslate"><div class="highlight hljs"><pre class="bash">$ retransform --classPattern demo.MathGame
+retransform success, size: 1, classes:
+demo.MathGame</pre></div>
+</div>
+<blockquote>
+<div><p>注意：对于同一个类，当存在多个 retransform entry时，如果显式触发 retransform ，则最后添加的entry生效(id最大的)。</p>
+</div></blockquote>
+</div>
+<div class="section" id="id5">
+<h2>消除 retransform 的影响<a class="headerlink" href="#id5" title="永久链接至标题">¶</a></h2>
+<p>如果对某个类执行 retransform 之后，想消除影响，则需要：</p>
+<ul class="simple">
+<li><p>删除这个类对应的 retransform entry</p></li>
+<li><p>重新触发 retransform</p></li>
+</ul>
+<blockquote>
+<div><p>如果不清除掉所有的 retransform entry，并重新触发 retransform ，则arthas stop时，retransform过的类仍然生效。</p>
+</div></blockquote>
+</div>
+<div class="section" id="jad-mc">
+<h2>结合 jad/mc 命令使用<a class="headerlink" href="#jad-mc" title="永久链接至标题">¶</a></h2>
+<div class="highlight-bash notranslate"><div class="highlight hljs"><pre class="bash">jad --source-only com.example.demo.arthas.user.UserController &gt; /tmp/UserController.java
+
+mc /tmp/UserController.java -d /tmp
+
+retransform /tmp/com/example/demo/arthas/user/UserController.class</pre></div>
+</div>
+<ul class="simple">
+<li><p>jad命令反编译，然后可以用其它编译器，比如vim来修改源码</p></li>
+<li><p>mc命令来内存编译修改过的代码</p></li>
+<li><p>用retransform命令加载新的字节码</p></li>
+</ul>
+</div>
+<div class="section" id="class">
+<h2>上传 .class 文件到服务器的技巧<a class="headerlink" href="#class" title="永久链接至标题">¶</a></h2>
+<p>使用<code class="docutils literal notranslate"><span class="pre">mc</span></code>命令来编译<code class="docutils literal notranslate"><span class="pre">jad</span></code>的反编译的代码有可能失败。可以在本地修改代码，编译好后再上传到服务器上。有的服务器不允许直接上传文件，可以使用<code class="docutils literal notranslate"><span class="pre">base64</span></code>命令来绕过。</p>
+<ol>
+<li><p>在本地先转换<code class="docutils literal notranslate"><span class="pre">.class</span></code>文件为base64，再保存为result.txt</p>
+<div class="highlight-bash notranslate"><div class="highlight hljs"><pre class="bash">base64 &lt; Test.class &gt; result.txt</pre></div>
+</div>
+</li>
+<li><p>到服务器上，新建并编辑<code class="docutils literal notranslate"><span class="pre">result.txt</span></code>，复制本地的内容，粘贴再保存</p></li>
+<li><p>把服务器上的 <code class="docutils literal notranslate"><span class="pre">result.txt</span></code>还原为<code class="docutils literal notranslate"><span class="pre">.class</span></code></p>
+<div class="highlight-default notranslate"><pre class="literal-block">base64 -d &lt; result.txt &gt; Test.class</pre>
+</div>
+</li>
+<li><p>用md5命令计算哈希值，校验是否一致</p></li>
+</ol>
+</div>
+<div class="section" id="id6">
+<h2>retransform的限制<a class="headerlink" href="#id6" title="永久链接至标题">¶</a></h2>
+<ul>
+<li><p>不允许新增加field/method</p></li>
+<li><p>正在跑的函数，没有退出不能生效，比如下面新增加的<code class="docutils literal notranslate"><span class="pre">System.out.println</span></code>，只有<code class="docutils literal notranslate"><span class="pre">run()</span></code>函数里的会生效</p>
+<div class="highlight-java notranslate"><div class="highlight hljs"><pre class="java">public class MathGame {
+    public static void main(String[] args) throws InterruptedException {
+        MathGame game = new MathGame();
+        while (true) {
+            game.run();
+            TimeUnit.SECONDS.sleep(1);
+            // 这个不生效，因为代码一直跑在 while里
+            System.out.println(&quot;in loop&quot;);
+        }
+    }
+
+    public void run() throws InterruptedException {
+        // 这个生效，因为run()函数每次都可以完整结束
+        System.out.println(&quot;call run()&quot;);
+        try {
+            int number = random.nextInt();
+            List&lt;Integer&gt; primeFactors = primeFactors(number);
+            print(number, primeFactors);
+
+        } catch (Exception e) {
+            System.out.println(String.format(&quot;illegalArgumentCount:%3d, &quot;, illegalArgumentCount) + e.getMessage());
+        }
+    }</pre></div>
+</div>
+</li>
+</ul>
+<div class="highlight-default notranslate"><pre class="literal-block"></pre>
+</div>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="redefine.html" class="btn btn-neutral float-right" title="redefine" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="mc.html" class="btn btn-neutral float-left" title="mc" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2018-2020, Alibaba Middleware Group, and contributors
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+  
+<div class="github-fork-ribbon-wrapper right">
+  <div class="github-fork-ribbon">
+    <a href="https://github.com/alibaba/arthas" target="_blank">Fork me at GitHub</a>
+  </div>
+</div>
+
+<script type="text/javascript" src="_static/add_badges.js"></script>
+
+<script src="https://g.alicdn.com/code/lib/highlight.js/9.13.1/highlight.min.js"></script>
+<script src="https://g.alicdn.com/code/lib/highlightjs-line-numbers.js/2.5.0/highlightjs-line-numbers.min.js"></script>
+<script>
+  document.querySelectorAll('div.hljs > pre').forEach(function(block) {
+    hljs.highlightBlock(block);
+    hljs.lineNumbersBlock(block);
+  });
+</script>
+
+
+<script type="text/javascript">document.write(unescape("%3Cspan style='display:none;' id='cnzz_stat_icon_1279151497'%3E%3C/span%3E%3Cscript src='https://s4.cnzz.com/z_stat.php%3Fid%3D1279151497' type='text/javascript'%3E%3C/script%3E"));</script>
+
+<script>
+  var _hmt = _hmt || [];
+  (function() {
+    var hm = document.createElement("script");
+    hm.src = "https://hm.baidu.com/hm.js?d5c5e25b100f0eb51a4c35c8a86ea9b4";
+    var s = document.getElementsByTagName("script")[0]; 
+    s.parentNode.insertBefore(hm, s);
+  })();
+</script>  
+
+ 
+
+
+</body>
+</html>

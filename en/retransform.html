@@ -1,0 +1,453 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>retransform &mdash; Arthas 3.4.6 documentation</title>
+  
+
+  
+  
+    <link rel="shortcut icon" href="_static/favicon.ico"/>
+  
+  
+  
+
+  
+  <script type="text/javascript" src="_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script type="text/javascript" src="_static/jquery.js"></script>
+        <script type="text/javascript" src="_static/underscore.js"></script>
+        <script type="text/javascript" src="_static/doctools.js"></script>
+        <script type="text/javascript" src="_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="_static/overrides.css" type="text/css" />
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="redefine" href="redefine.html" />
+    <link rel="prev" title="mc" href="mc.html" />
+<script>
+  if (window.location.href.startsWith("https://alibaba.github.io/arthas/")) {
+      window.location.href = "https://arthas.aliyun.com/doc/" + window.location.href.substr("https://alibaba.github.io/arthas/".length);
+  }
+</script>
+
+<script src="_static/center_page.js"></script>
+<link rel="stylesheet" href="https://g.alicdn.com/code/lib/highlight.js/9.13.1/styles/github.min.css">
+ 
+
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="index.html" class="icon icon-home"> Arthas
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                3.4.6
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul class="current">
+<li class="toctree-l1"><a class="reference external" href="https://arthas.aliyun.com/">Home</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://arthas.aliyun.com/doc/arthas-tutorials.html?language=en">Online tutorials(Recommend)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="install-detail.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="download.html">Download</a></li>
+<li class="toctree-l1"><a class="reference internal" href="quick-start.html">Quick start</a></li>
+<li class="toctree-l1"><a class="reference internal" href="advanced-use.html">Advanced usage</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="commands.html">Commands</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="dashboard.html">dashboard</a></li>
+<li class="toctree-l2"><a class="reference internal" href="thread.html">thread</a></li>
+<li class="toctree-l2"><a class="reference internal" href="jvm.html">jvm</a></li>
+<li class="toctree-l2"><a class="reference internal" href="sysprop.html">sysprop</a></li>
+<li class="toctree-l2"><a class="reference internal" href="sysenv.html">sysenv</a></li>
+<li class="toctree-l2"><a class="reference internal" href="vmoption.html">vmoption</a></li>
+<li class="toctree-l2"><a class="reference internal" href="perfcounter.html">perfcounter</a></li>
+<li class="toctree-l2"><a class="reference internal" href="logger.html">logger</a></li>
+<li class="toctree-l2"><a class="reference internal" href="mbean.html">mbean</a></li>
+<li class="toctree-l2"><a class="reference internal" href="getstatic.html">getstatic</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ognl.html">ognl</a></li>
+<li class="toctree-l2"><a class="reference internal" href="sc.html">sc</a></li>
+<li class="toctree-l2"><a class="reference internal" href="sm.html">sm</a></li>
+<li class="toctree-l2"><a class="reference internal" href="dump.html">dump</a></li>
+<li class="toctree-l2"><a class="reference internal" href="heapdump.html">heapdump</a></li>
+<li class="toctree-l2"><a class="reference internal" href="jad.html">jad</a></li>
+<li class="toctree-l2"><a class="reference internal" href="classloader.html">classloader</a></li>
+<li class="toctree-l2"><a class="reference internal" href="mc.html">mc</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">retransform</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#usage">Usage</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#retransform-the-specified-class-file">retransform the specified .class file</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#view-retransform-entry">View retransform entry</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#delete-the-specified-retransform-entry">Delete the specified retransform entry</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#delete-all-retransform-entries">Delete all retransform entries</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#explicitly-trigger-retransform">Explicitly trigger retransform</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#eliminate-the-influence-of-retransform">Eliminate the influence of retransform</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#use-with-the-jad-mc-command">Use with the jad/mc command</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#tips-for-uploading-class-files-to-the-server">Tips for uploading .class files to the server</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#restrictions-of-the-retransform-command">Restrictions of the retransform command</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="redefine.html">redefine</a></li>
+<li class="toctree-l2"><a class="reference internal" href="monitor.html">monitor</a></li>
+<li class="toctree-l2"><a class="reference internal" href="watch.html">watch</a></li>
+<li class="toctree-l2"><a class="reference internal" href="trace.html">trace</a></li>
+<li class="toctree-l2"><a class="reference internal" href="stack.html">stack</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tt.html">tt</a></li>
+<li class="toctree-l2"><a class="reference internal" href="profiler.html">profiler</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cat.html">cat</a></li>
+<li class="toctree-l2"><a class="reference internal" href="echo.html">echo</a></li>
+<li class="toctree-l2"><a class="reference internal" href="grep.html">grep</a></li>
+<li class="toctree-l2"><a class="reference internal" href="base64.html">base64</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tee.html">tee</a></li>
+<li class="toctree-l2"><a class="reference internal" href="pwd.html">pwd</a></li>
+<li class="toctree-l2"><a class="reference internal" href="options.html">options</a></li>
+<li class="toctree-l2"><a class="reference internal" href="commands.html#basic-arthas-commands">Basic Arthas Commands</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="web-console.html">WebConsole</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tunnel.html">Arthas Tunnel</a></li>
+<li class="toctree-l1"><a class="reference internal" href="http-api.html">Http API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="docker.html">Docker</a></li>
+<li class="toctree-l1"><a class="reference internal" href="spring-boot-starter.html">Arthas Spring Boot Starter</a></li>
+<li class="toctree-l1"><a class="reference internal" href="idea-plugin.html">IDEA Plugin</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas/issues?q=label%3Auser-case">User cases</a></li>
+<li class="toctree-l1"><a class="reference internal" href="faq.html">FAQ</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas">Star me at GitHub</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas/blob/master/CONTRIBUTING.md#">Compile and debug/CONTRIBUTING</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas/releases">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="contact-us.html">Contact us</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">Arthas</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="commands.html">All Commands</a> &raquo;</li>
+        
+      <li>retransform</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            
+              <a href="https://github.com/alibaba/arthas/blob/master/site/src/site/sphinx/en/retransform.md" class="fa fa-github"> Edit on GitHub</a>
+            
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="retransform">
+<h1>retransform<a class="headerlink" href="#retransform" title="Permalink to this headline">¶</a></h1>
+<blockquote>
+<div><p>Load the external <code class="docutils literal notranslate"><span class="pre">*.class</span></code> files to retransform the loaded classes in JVM.</p>
+</div></blockquote>
+<p>Reference: <a class="reference external" href="https://docs.oracle.com/javase/8/docs/api/java/lang/instrument/Instrumentation.html#retransformClasses-java.lang.Class...-">Instrumentation#retransformClasses</a></p>
+<div class="section" id="usage">
+<h2>Usage<a class="headerlink" href="#usage" title="Permalink to this headline">¶</a></h2>
+<div class="highlight-bash notranslate"><div class="highlight hljs"><pre class="bash">   retransform /tmp/Test.class
+   retransform -l
+   retransform -d 1                    # delete retransform entry
+   retransform --deleteAll             # delete all retransform entries
+   retransform --classPattern demo.*   # triger retransform classes
+   retransform -c 327a647b /tmp/Test.class /tmp/Test\$Inner.class
+   retransform --classLoaderClass &#x27;sun.misc.Launcher$AppClassLoader&#x27; /tmp/Test.class</pre></div>
+</div>
+</div>
+<div class="section" id="retransform-the-specified-class-file">
+<h2>retransform the specified .class file<a class="headerlink" href="#retransform-the-specified-class-file" title="Permalink to this headline">¶</a></h2>
+<div class="highlight-bash notranslate"><div class="highlight hljs"><pre class="bash">$ retransform /tmp/MathGame.class
+retransform success, size: 1, classes:
+demo.MathGame</pre></div>
+</div>
+<p>Load the specified .class file, then parse out the class name, and then retransform the corresponding class loaded in the jvm. Every time a <code class="docutils literal notranslate"><span class="pre">.class</span></code> file is loaded, a retransform entry is recorded.</p>
+<blockquote>
+<div><p>If retransform is executed multiple times to load the same class file, there will be multiple retransform entries.</p>
+</div></blockquote>
+</div>
+<div class="section" id="view-retransform-entry">
+<h2>View retransform entry<a class="headerlink" href="#view-retransform-entry" title="Permalink to this headline">¶</a></h2>
+<div class="highlight-bash notranslate"><div class="highlight hljs"><pre class="bash">$ retransform -l
+Id              ClassName       TransformCount  LoaderHash      LoaderClassName
+1               demo.MathGame   1               null            null</pre></div>
+</div>
+<ul class="simple">
+<li><p>TransformCount counts the times of attempts to return the .class file corresponding to the entry in the ClassFileTransformer#transform method, but it does not mean that the transform must be successful.</p></li>
+</ul>
+</div>
+<div class="section" id="delete-the-specified-retransform-entry">
+<h2>Delete the specified retransform entry<a class="headerlink" href="#delete-the-specified-retransform-entry" title="Permalink to this headline">¶</a></h2>
+<p>Need to specify id:</p>
+<div class="highlight-bash notranslate"><div class="highlight hljs"><pre class="bash">retransform -d 1</pre></div>
+</div>
+</div>
+<div class="section" id="delete-all-retransform-entries">
+<h2>Delete all retransform entries<a class="headerlink" href="#delete-all-retransform-entries" title="Permalink to this headline">¶</a></h2>
+<div class="highlight-bash notranslate"><div class="highlight hljs"><pre class="bash">retransform --deleteAll</pre></div>
+</div>
+</div>
+<div class="section" id="explicitly-trigger-retransform">
+<h2>Explicitly trigger retransform<a class="headerlink" href="#explicitly-trigger-retransform" title="Permalink to this headline">¶</a></h2>
+<div class="highlight-bash notranslate"><div class="highlight hljs"><pre class="bash">$ retransform --classPattern demo.MathGame
+retransform success, size: 1, classes:
+demo.MathGame</pre></div>
+</div>
+<blockquote>
+<div><p>Note: For the same class, when there are multiple retransform entries, if retransform is explicitly triggered, the entry added last will take effect (the one with the largest id).</p>
+</div></blockquote>
+</div>
+<div class="section" id="eliminate-the-influence-of-retransform">
+<h2>Eliminate the influence of retransform<a class="headerlink" href="#eliminate-the-influence-of-retransform" title="Permalink to this headline">¶</a></h2>
+<p>If you want to eliminate the impact after performing retransform on a class, you need to:</p>
+<ul class="simple">
+<li><p>Delete the retransform entry corresponding to this class</p></li>
+<li><p>Re-trigger retransform</p></li>
+</ul>
+<blockquote>
+<div><p>If you do not clear all retransform entries and trigger retransform again, the retransformed classes will still take effect when arthas stop.</p>
+</div></blockquote>
+</div>
+<div class="section" id="use-with-the-jad-mc-command">
+<h2>Use with the jad/mc command<a class="headerlink" href="#use-with-the-jad-mc-command" title="Permalink to this headline">¶</a></h2>
+<div class="highlight-bash notranslate"><div class="highlight hljs"><pre class="bash">jad --source-only com.example.demo.arthas.user.UserController &gt; /tmp/UserController.java
+
+mc /tmp/UserController.java -d /tmp
+
+retransform /tmp/com/example/demo/arthas/user/UserController.class</pre></div>
+</div>
+<ul class="simple">
+<li><p>Use <code class="docutils literal notranslate"><span class="pre">jad</span></code> command to decompile bytecode, and then you can use other editors, such as vim to modify the source code.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">mc</span></code> command to compile the modified code</p></li>
+<li><p>Load new bytecode with <code class="docutils literal notranslate"><span class="pre">retransform</span></code> command</p></li>
+</ul>
+</div>
+<div class="section" id="tips-for-uploading-class-files-to-the-server">
+<h2>Tips for uploading .class files to the server<a class="headerlink" href="#tips-for-uploading-class-files-to-the-server" title="Permalink to this headline">¶</a></h2>
+<p>The <code class="docutils literal notranslate"><span class="pre">mc</span></code> command may fail. You can modify the code locally, compile it, and upload it to the server. Some servers do not allow direct uploading files, you can use the <code class="docutils literal notranslate"><span class="pre">base64</span></code> command to bypass.</p>
+<ol>
+<li><p>Convert the <code class="docutils literal notranslate"><span class="pre">.class</span></code> file to base64 first, then save it as result.txt</p>
+<div class="highlight-bash notranslate"><div class="highlight hljs"><pre class="bash">Base64 &lt; Test.class &gt; result.txt</pre></div>
+</div>
+</li>
+<li><p>Login the server, create and edit <code class="docutils literal notranslate"><span class="pre">result.txt</span></code>, copy the local content, paste and save</p></li>
+<li><p>Restore <code class="docutils literal notranslate"><span class="pre">result.txt</span></code> on the server to <code class="docutils literal notranslate"><span class="pre">.class</span></code></p>
+<div class="highlight-default notranslate"><pre class="literal-block">Base64 -d &lt; result.txt &gt; Test.class</pre>
+</div>
+</li>
+<li><p>Use the md5 command to verify that the <code class="docutils literal notranslate"><span class="pre">.class</span></code> files are consistent.</p></li>
+</ol>
+</div>
+<div class="section" id="restrictions-of-the-retransform-command">
+<h2>Restrictions of the retransform command<a class="headerlink" href="#restrictions-of-the-retransform-command" title="Permalink to this headline">¶</a></h2>
+<ul>
+<li><p>New field/method is not allowed</p></li>
+<li><p>The function that is running, no exit can not take effect, such as the new <code class="docutils literal notranslate"><span class="pre">System.out.println</span></code> added below, only the <code class="docutils literal notranslate"><span class="pre">run()</span></code> function will take effect.</p>
+<div class="highlight-java notranslate"><div class="highlight hljs"><pre class="java">public class MathGame {
+    public static void main(String[] args) throws InterruptedException {
+        MathGame game = new MathGame();
+        while (true) {
+            game.run();
+            TimeUnit.SECONDS.sleep(1);
+            // This doesn&#x27;t work because the code keeps running in while
+            System.out.println(&quot;in loop&quot;);
+        }
+    }
+
+    public void run() throws InterruptedException {
+        // This works because the run() function ends completely every time
+        System.out.println(&quot;call run()&quot;);
+        try {
+            int number = random.nextInt();
+            List&lt;Integer&gt; primeFactors = primeFactors(number);
+            print(number, primeFactors);
+
+        } catch (Exception e) {
+            System.out.println(String.format(&quot;illegalArgumentCount:%3d, &quot;, illegalArgumentCount) + e.getMessage());
+        }
+    }</pre></div>
+</div>
+</li>
+</ul>
+<div class="highlight-default notranslate"><pre class="literal-block"></pre>
+</div>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="redefine.html" class="btn btn-neutral float-right" title="redefine" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="mc.html" class="btn btn-neutral float-left" title="mc" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2018-2020, Alibaba Middleware Group, and contributors
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+  
+<div class="github-fork-ribbon-wrapper right">
+  <div class="github-fork-ribbon">
+    <a href="https://github.com/alibaba/arthas" target="_blank">Fork me at GitHub</a>
+  </div>
+</div>
+
+<script type="text/javascript" src="_static/add_badges.js"></script>
+
+<script src="https://g.alicdn.com/code/lib/highlight.js/9.13.1/highlight.min.js"></script>
+<script src="https://g.alicdn.com/code/lib/highlightjs-line-numbers.js/2.5.0/highlightjs-line-numbers.min.js"></script>
+<script>
+  document.querySelectorAll('div.hljs > pre').forEach(function(block) {
+    hljs.highlightBlock(block);
+    hljs.lineNumbersBlock(block);
+  });
+</script>
+
+
+<script type="text/javascript">document.write(unescape("%3Cspan style='display:none;' id='cnzz_stat_icon_1279151497'%3E%3C/span%3E%3Cscript src='https://s4.cnzz.com/z_stat.php%3Fid%3D1279151497' type='text/javascript'%3E%3C/script%3E"));</script>
+
+<script>
+  var _hmt = _hmt || [];
+  (function() {
+    var hm = document.createElement("script");
+    hm.src = "https://hm.baidu.com/hm.js?d5c5e25b100f0eb51a4c35c8a86ea9b4";
+    var s = document.getElementsByTagName("script")[0]; 
+    s.parentNode.insertBefore(hm, s);
+  })();
+</script>  
+
+ 
+
+
+</body>
+</html>
