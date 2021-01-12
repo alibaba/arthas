@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>FAQ &mdash; Arthas 3.4.5 文档</title>
+  <title>FAQ &mdash; Arthas 3.4.6 文档</title>
   
 
   
@@ -74,7 +74,7 @@
             
             
               <div class="version">
-                3.4.5
+                3.4.6
               </div>
             
           
@@ -103,7 +103,8 @@
 <li class="toctree-l1"><a class="reference external" href="https://mp.weixin.qq.com/s/k5jozrSgmyH0tcQfrDkxUQ">招聘！</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://developer.aliyun.com/article/751641">技术征文</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://arthas.aliyun.com/doc/en/">English Docs</a></li>
-<li class="toctree-l1"><a class="reference external" href="https://arthas.aliyun.com/doc/arthas-tutorials.html?language=cn">在线教程(推荐)</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://start.aliyun.com/handson-lab/#%21category=arthas">在线教程(国内)</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://arthas.aliyun.com/doc/arthas-tutorials.html?language=cn">在线教程(国外)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="install-detail.html">安装</a></li>
 <li class="toctree-l1"><a class="reference internal" href="download.html">下载</a></li>
 <li class="toctree-l1"><a class="reference internal" href="quick-start.html">快速入门</a></li>
@@ -118,9 +119,13 @@
 <li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas/issues?q=label%3Auser-case">用户案例</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">FAQ/常见问题</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#arthas-attach">Arthas attach之后对原进程性能有多大的影响</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#trace-watchjdk">trace/watch等命令能否增强jdk里的类？</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#json">怎么以<code class="docutils literal notranslate"><span class="pre">json</span></code>格式查看结果</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#arthas-native">Arthas能否跟踪 native 函数</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#id1">能不能查看内存里某个变量的值</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id2">方法同名过滤</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#watchtrace">怎么watch、trace 构造函数 ？</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#java-lang-classformaterror-nullskywalking-arthas">java.lang.ClassFormatError: null、skywalking arthas 兼容使用</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas">Star me at GitHub</a></li>
@@ -202,6 +207,13 @@
 <h2>Arthas attach之后对原进程性能有多大的影响<a class="headerlink" href="#arthas-attach" title="永久链接至标题">¶</a></h2>
 <p><a class="reference external" href="https://github.com/alibaba/arthas/issues/44">https://github.com/alibaba/arthas/issues/44</a></p>
 </div>
+<div class="section" id="trace-watchjdk">
+<h2>trace/watch等命令能否增强jdk里的类？<a class="headerlink" href="#trace-watchjdk" title="永久链接至标题">¶</a></h2>
+<p>默认情况下会过滤掉<code class="docutils literal notranslate"><span class="pre">java.</span></code>开头的类，但可以通过参数开启。</p>
+<div class="highlight-bash notranslate"><div class="highlight hljs"><pre class="bash">options unsafe true</pre></div>
+</div>
+<p>更多参考 <a class="reference internal" href="options.html"><span class="doc">options</span></a></p>
+</div>
 <div class="section" id="json">
 <h2>怎么以<code class="docutils literal notranslate"><span class="pre">json</span></code>格式查看结果<a class="headerlink" href="#json" title="永久链接至标题">¶</a></h2>
 <div class="highlight-bash notranslate"><div class="highlight hljs"><pre class="bash">options json-format true</pre></div>
@@ -215,6 +227,24 @@
 <div class="section" id="id1">
 <h2>能不能查看内存里某个变量的值<a class="headerlink" href="#id1" title="永久链接至标题">¶</a></h2>
 <p>不能。但可以用一些技巧，用<code class="docutils literal notranslate"><span class="pre">tt</span></code>命令拦截到对象，或者从静态函数里取到对象。</p>
+</div>
+<div class="section" id="id2">
+<h2>方法同名过滤<a class="headerlink" href="#id2" title="永久链接至标题">¶</a></h2>
+<p>同名方法过滤可以通过匹配表达式,可以使用<a class="reference internal" href="advice-class.html"><span class="doc">表达式核心变量</span></a>中所有变量作为已知条件,可以通过判断参数个数<code class="docutils literal notranslate"><span class="pre">params.length</span> <span class="pre">==1</span></code>, 参数类型<code class="docutils literal notranslate"><span class="pre">params[0]</span> <span class="pre">instanceof</span> <span class="pre">java.lang.Integer</span></code>、返回值类型 <code class="docutils literal notranslate"><span class="pre">returnObj</span> <span class="pre">instanceof</span> <span class="pre">java.util.List</span></code> 等等一种或者多种组合进行过滤。</p>
+<p>可以使用 <code class="docutils literal notranslate"><span class="pre">-v</span></code> 查看观察匹配表达式的执行结果 <a class="reference external" href="https://github.com/alibaba/arthas/issues/1348">https://github.com/alibaba/arthas/issues/1348</a></p>
+<p>例子<a class="reference internal" href="quick-start.html"><span class="doc">arthas-demo</span></a></p>
+<div class="highlight-bash notranslate"><div class="highlight hljs"><pre class="bash">watch demo.MathGame primeFactors traceE &#x27;{params,returnObj,throwExp}&#x27; -v -n 5 -x 3 &#x27;params.length &gt;0 &amp;&amp; returnObj instanceof java.util.List&#x27;</pre></div>
+</div>
+</div>
+<div class="section" id="watchtrace">
+<h2>怎么watch、trace 构造函数 ？<a class="headerlink" href="#watchtrace" title="永久链接至标题">¶</a></h2>
+<div class="highlight-bash notranslate"><div class="highlight hljs"><pre class="bash">watch demo.MathGame &lt;init&gt; &#x27;{params,returnObj,throwExp}&#x27; -v -n 5 -x 3 &#x27;1==1&#x27;</pre></div>
+</div>
+</div>
+<div class="section" id="java-lang-classformaterror-nullskywalking-arthas">
+<h2>java.lang.ClassFormatError: null、skywalking arthas 兼容使用<a class="headerlink" href="#java-lang-classformaterror-nullskywalking-arthas" title="永久链接至标题">¶</a></h2>
+<p>当出现这个错误日志<code class="docutils literal notranslate"><span class="pre">java.lang.ClassFormatError:</span> <span class="pre">null</span></code>,通常情况下都是被其他字节码工具修改过与arthas修改字节码不兼容。</p>
+<p>比如: 使用 skywalking V8.1.0 以下版本 <a class="reference external" href="https://github.com/alibaba/arthas/issues/1141">无法trace、watch 被skywalking agent 增强过的类</a>, V8.1.0 以上版本可以兼容使用,更多参考skywalking配置 <a class="reference external" href="https://github.com/apache/skywalking/blob/v8.1.0/docs/en/FAQ/Compatible-with-other-javaagent-bytecode-processing">skywalking compatible with other javaagent bytecode processing</a>。</p>
 </div>
 </div>
 

@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>watch &mdash; Arthas ${revision} documentation</title>
+  <title>watch &mdash; Arthas 3.4.6 documentation</title>
   
 
   
@@ -73,7 +73,7 @@
             
             
               <div class="version">
-                ${revision}
+                3.4.6
               </div>
             
           
@@ -123,6 +123,7 @@
 <li class="toctree-l2"><a class="reference internal" href="jad.html">jad</a></li>
 <li class="toctree-l2"><a class="reference internal" href="classloader.html">classloader</a></li>
 <li class="toctree-l2"><a class="reference internal" href="mc.html">mc</a></li>
+<li class="toctree-l2"><a class="reference internal" href="retransform.html">retransform</a></li>
 <li class="toctree-l2"><a class="reference internal" href="redefine.html">redefine</a></li>
 <li class="toctree-l2"><a class="reference internal" href="monitor.html">monitor</a></li>
 <li class="toctree-l2 current"><a class="current reference internal" href="#">watch</a><ul>
@@ -142,6 +143,7 @@
 <li class="toctree-l4"><a class="reference internal" href="#check-exceptions">Check <code class="docutils literal notranslate"><span class="pre">exceptions</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#filter-by-time-cost">Filter by time cost</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#check-the-field-of-the-target-object">Check the field of the target object</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#get-a-static-field-and-calling-a-static-method">Get a static field and calling a static method</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#exclude-the-specified-class">Exclude the specified class</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#does-not-match-subclass">Does not match subclass</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#use-the-v-parameter-to-print-more-information">Use the -v parameter to print more information</a></li>
@@ -156,6 +158,7 @@
 <li class="toctree-l2"><a class="reference internal" href="cat.html">cat</a></li>
 <li class="toctree-l2"><a class="reference internal" href="echo.html">echo</a></li>
 <li class="toctree-l2"><a class="reference internal" href="grep.html">grep</a></li>
+<li class="toctree-l2"><a class="reference internal" href="base64.html">base64</a></li>
 <li class="toctree-l2"><a class="reference internal" href="tee.html">tee</a></li>
 <li class="toctree-l2"><a class="reference internal" href="pwd.html">pwd</a></li>
 <li class="toctree-l2"><a class="reference internal" href="options.html">options</a></li>
@@ -505,6 +508,23 @@ Affect(class-cnt:1 , method-cnt:1) cost in 67 ms.
 ts=2018-12-03 20:04:34; [cost=131.303498ms] result=@Integer[8]
 ts=2018-12-03 20:04:35; [cost=0.961441ms] result=@Integer[8]</pre></div>
 </div>
+</div>
+<div class="section" id="get-a-static-field-and-calling-a-static-method">
+<h3>Get a static field and calling a static method<a class="headerlink" href="#get-a-static-field-and-calling-a-static-method" title="Permalink to this headline">¶</a></h3>
+<div class="highlight-bash notranslate"><div class="highlight hljs"><pre class="bash">watch demo.MathGame * &#x27;{params,@demo.MathGame@random.nextInt(100)}&#x27; -v -n 1 -x 2
+[arthas@6527]$ watch demo.MathGame * &#x27;{params,@demo.MathGame@random.nextInt(100)}&#x27; -n 1 -x 2
+Press Q or Ctrl+C to abort.
+Affect(class count: 1 , method count: 5) cost in 34 ms, listenerId: 3
+ts=2021-01-05 21:35:20; [cost=0.173966ms] result=@ArrayList[
+    @Object[][
+        @Integer[-138282],
+    ],
+    @Integer[89],
+]</pre></div>
+</div>
+<ul class="simple">
+<li><p>Note that here you use <code class="docutils literal notranslate"><span class="pre">Thread.currentThread().getContextClassLoader()</span></code> to load, and it is better to use the exact <code class="docutils literal notranslate"><span class="pre">classloader</span></code> <a class="reference internal" href="ognl.html"><span class="doc">ognl</span></a>.</p></li>
+</ul>
 </div>
 <div class="section" id="exclude-the-specified-class">
 <h3>Exclude the specified class<a class="headerlink" href="#exclude-the-specified-class" title="Permalink to this headline">¶</a></h3>

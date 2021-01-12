@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>tt &mdash; Arthas ${revision} documentation</title>
+  <title>tt &mdash; Arthas 3.4.6 documentation</title>
   
 
   
@@ -73,7 +73,7 @@
             
             
               <div class="version">
-                ${revision}
+                3.4.6
               </div>
             
           
@@ -123,6 +123,7 @@
 <li class="toctree-l2"><a class="reference internal" href="jad.html">jad</a></li>
 <li class="toctree-l2"><a class="reference internal" href="classloader.html">classloader</a></li>
 <li class="toctree-l2"><a class="reference internal" href="mc.html">mc</a></li>
+<li class="toctree-l2"><a class="reference internal" href="retransform.html">retransform</a></li>
 <li class="toctree-l2"><a class="reference internal" href="redefine.html">redefine</a></li>
 <li class="toctree-l2"><a class="reference internal" href="monitor.html">monitor</a></li>
 <li class="toctree-l2"><a class="reference internal" href="watch.html">watch</a></li>
@@ -135,15 +136,17 @@
 <li class="toctree-l4"><a class="reference internal" href="#list-all-records">List all records</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#searching-for-records">Searching for records</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#check-context-of-the-call">Check context of the call</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#replay-record">Replay record</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#watch-express">Watch express</a></li>
 </ul>
 </li>
-<li class="toctree-l3"><a class="reference internal" href="#replay-record">Replay record</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="profiler.html">profiler</a></li>
 <li class="toctree-l2"><a class="reference internal" href="cat.html">cat</a></li>
 <li class="toctree-l2"><a class="reference internal" href="echo.html">echo</a></li>
 <li class="toctree-l2"><a class="reference internal" href="grep.html">grep</a></li>
+<li class="toctree-l2"><a class="reference internal" href="base64.html">base64</a></li>
 <li class="toctree-l2"><a class="reference internal" href="tee.html">tee</a></li>
 <li class="toctree-l2"><a class="reference internal" href="pwd.html">pwd</a></li>
 <li class="toctree-l2"><a class="reference internal" href="options.html">options</a></li>
@@ -381,9 +384,8 @@ Affect(row-cnt:6) cost in 607 ms.</pre></div>
 Affect(row-cnt:1) cost in 11 ms.</pre></div>
 </div>
 </div>
-</div>
 <div class="section" id="replay-record">
-<h2>Replay record<a class="headerlink" href="#replay-record" title="Permalink to this headline">¶</a></h2>
+<h3>Replay record<a class="headerlink" href="#replay-record" title="Permalink to this headline">¶</a></h3>
 <p>Since Arthas stores the context of the call, you can even <em>replay</em> the method calling afterwards with extra option <code class="docutils literal notranslate"><span class="pre">-p</span></code> to replay the issue for advanced troubleshooting, option <code class="docutils literal notranslate"><span class="pre">--replay-times</span></code>
 define the replay execution times, option  <code class="docutils literal notranslate"><span class="pre">--replay-interval</span></code> define the interval(unit in ms,with default value 1000) of replays</p>
 <div class="highlight-bash notranslate"><div class="highlight hljs"><pre class="bash">$ tt -i 1004 -p
@@ -404,6 +406,37 @@ define the replay execution times, option  <code class="docutils literal notrans
 Time fragment[1004] successfully replayed.
 Affect(row-cnt:1) cost in 14 ms.</pre></div>
 </div>
+</div>
+<div class="section" id="watch-express">
+<h3>Watch express<a class="headerlink" href="#watch-express" title="Permalink to this headline">¶</a></h3>
+<p><code class="docutils literal notranslate"><span class="pre">-w,</span> <span class="pre">--watch-express</span></code> watch the time fragment by ognl express.</p>
+<ul class="simple">
+<li><p>You can used all variables in <a class="reference internal" href="advice-class.html"><span class="doc">fundamental fields in expressions</span></a> for the watch express。</p></li>
+</ul>
+<div class="highlight-bash notranslate"><div class="highlight hljs"><pre class="bash">[arthas@10718]$ tt -t demo.MathGame run -n 5 
+Press Q or Ctrl+C to abort.
+Affect(class count: 1 , method count: 1) cost in 56 ms, listenerId: 1
+ INDEX      TIMESTAMP                   COST(ms)     IS-RET     IS-EXP      OBJECT              CLASS                                     METHOD
+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+ 1000       2021-01-08 21:54:17         0.901091     true       false       0x7699a589          MathGame                                  run
+[arthas@10718]$ tt -w &#x27;target.illegalArgumentCount&#x27;  -x 1 -i 1000
+@Integer[60]
+Affect(row-cnt:1) cost in 7 ms.</pre></div>
+</div>
+<ul class="simple">
+<li><p>Get a static field and calling a static method</p></li>
+</ul>
+<div class="highlight-bash notranslate"><div class="highlight hljs"><pre class="bash">[arthas@10718]$ tt -t demo.MathGame run -n 5
+Press Q or Ctrl+C to abort.
+Affect(class count: 1 , method count: 1) cost in 56 ms, listenerId: 1
+ INDEX      TIMESTAMP                   COST(ms)     IS-RET     IS-EXP      OBJECT              CLASS                                     METHOD
+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+ 1000       2021-01-08 21:54:17         0.901091     true       false       0x7699a589          MathGame                                  run
+[arthas@10718]$ tt -w &#x27;@demo.MathGame@random.nextInt(100)&#x27;  -x 1 -i 1000
+@Integer[46]</pre></div>
+</div>
+<p>Note that <code class="docutils literal notranslate"><span class="pre">com.taobao.arthas.core.advisor.Advice#getLoader</span></code> is used here, and that it is better to use the exact <code class="docutils literal notranslate"><span class="pre">classloader</span></code> <a class="reference internal" href="ognl.html"><span class="doc">ognl</span></a>.</p>
+<p>Advanced usage <a class="reference external" href="https://github.com/alibaba/arthas/issues/482">get spring context to call the bean method</a></p>
 <p>F.Y.I</p>
 <ol>
 <li><p><strong>Loss</strong> of the <code class="docutils literal notranslate"><span class="pre">ThreadLocal</span></code></p>
@@ -413,6 +446,7 @@ Affect(row-cnt:1) cost in 14 ms.</pre></div>
 <p>Arthas save params into an array, they are object references. The Objects may be modified by other code.</p>
 </li>
 </ol>
+</div>
 </div>
 </div>
 

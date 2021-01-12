@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>redefine &mdash; Arthas 3.4.5 文档</title>
+  <title>redefine &mdash; Arthas 3.4.6 文档</title>
   
 
   
@@ -40,7 +40,7 @@
     <link rel="index" title="索引" href="genindex.html" />
     <link rel="search" title="搜索" href="search.html" />
     <link rel="next" title="monitor" href="monitor.html" />
-    <link rel="prev" title="mc" href="mc.html" />
+    <link rel="prev" title="retransform" href="retransform.html" />
 <script>
   if (window.location.href.startsWith("https://alibaba.github.io/arthas/")) {
       window.location.href = "https://arthas.aliyun.com/doc/" + window.location.href.substr("https://alibaba.github.io/arthas/".length);
@@ -74,7 +74,7 @@
             
             
               <div class="version">
-                3.4.5
+                3.4.6
               </div>
             
           
@@ -103,7 +103,8 @@
 <li class="toctree-l1"><a class="reference external" href="https://mp.weixin.qq.com/s/k5jozrSgmyH0tcQfrDkxUQ">招聘！</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://developer.aliyun.com/article/751641">技术征文</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://arthas.aliyun.com/doc/en/">English Docs</a></li>
-<li class="toctree-l1"><a class="reference external" href="https://arthas.aliyun.com/doc/arthas-tutorials.html?language=cn">在线教程(推荐)</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://start.aliyun.com/handson-lab/#%21category=arthas">在线教程(国内)</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://arthas.aliyun.com/doc/arthas-tutorials.html?language=cn">在线教程(国外)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="install-detail.html">安装</a></li>
 <li class="toctree-l1"><a class="reference internal" href="download.html">下载</a></li>
 <li class="toctree-l1"><a class="reference internal" href="quick-start.html">快速入门</a></li>
@@ -127,6 +128,7 @@
 <li class="toctree-l2"><a class="reference internal" href="jad.html">jad</a></li>
 <li class="toctree-l2"><a class="reference internal" href="classloader.html">classloader</a></li>
 <li class="toctree-l2"><a class="reference internal" href="mc.html">mc</a></li>
+<li class="toctree-l2"><a class="reference internal" href="retransform.html">retransform</a></li>
 <li class="toctree-l2 current"><a class="current reference internal" href="#">redefine</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#id1">常见问题</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#id2">参数说明</a></li>
@@ -145,6 +147,7 @@
 <li class="toctree-l2"><a class="reference internal" href="cat.html">cat</a></li>
 <li class="toctree-l2"><a class="reference internal" href="echo.html">echo</a></li>
 <li class="toctree-l2"><a class="reference internal" href="grep.html">grep</a></li>
+<li class="toctree-l2"><a class="reference internal" href="base64.html">base64</a></li>
 <li class="toctree-l2"><a class="reference internal" href="tee.html">tee</a></li>
 <li class="toctree-l2"><a class="reference internal" href="pwd.html">pwd</a></li>
 <li class="toctree-l2"><a class="reference internal" href="options.html">options</a></li>
@@ -233,6 +236,9 @@
             
   <div class="section" id="redefine">
 <h1>redefine<a class="headerlink" href="#redefine" title="永久链接至标题">¶</a></h1>
+<blockquote>
+<div><p>推荐使用 <a class="reference internal" href="retransform.html"><span class="doc">retransform</span></a> 命令</p>
+</div></blockquote>
 <p><a class="reference external" href="https://arthas.aliyun.com/doc/arthas-tutorials?language=cn&amp;id=command-mc-redefine"><code class="docutils literal notranslate"><span class="pre">mc-redefine</span></code>在线教程</a></p>
 <blockquote>
 <div><p>加载外部的<code class="docutils literal notranslate"><span class="pre">.class</span></code>文件，redefine jvm已加载的类。</p>
@@ -240,6 +246,9 @@
 <p>参考：<a class="reference external" href="https://docs.oracle.com/javase/8/docs/api/java/lang/instrument/Instrumentation.html#redefineClasses-java.lang.instrument.ClassDefinition...-">Instrumentation#redefineClasses</a></p>
 <div class="section" id="id1">
 <h2>常见问题<a class="headerlink" href="#id1" title="永久链接至标题">¶</a></h2>
+<blockquote>
+<div><p>推荐使用 <a class="reference internal" href="retransform.html"><span class="doc">retransform</span></a> 命令</p>
+</div></blockquote>
 <ul class="simple">
 <li><p>redefine的class不能修改、添加、删除类的field和method，包括方法参数、方法名称及返回值</p></li>
 <li><p>如果mc失败，可以在本地开发环境编译好class文件，上传到目标系统，使用redefine热加载class</p></li>
@@ -273,10 +282,6 @@
 <tr>
 <td align="right"><code>[classLoaderClass:]</code></td>
 <td align="left">指定执行表达式的 ClassLoader 的 class name</td>
-</tr>
-<tr>
-<td align="right">[p:]</td>
-<td align="left">外部的<code>.class</code>文件的完整路径，支持多个</td>
 </tr>
 </tbody>
 </table></div>
@@ -364,7 +369,7 @@ redefine /tmp/com/example/demo/arthas/user/UserController.class</pre></div>
         <a href="monitor.html" class="btn btn-neutral float-right" title="monitor" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
-        <a href="mc.html" class="btn btn-neutral float-left" title="mc" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+        <a href="retransform.html" class="btn btn-neutral float-left" title="retransform" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
       
     </div>
   

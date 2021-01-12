@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>redefine &mdash; Arthas ${revision} documentation</title>
+  <title>redefine &mdash; Arthas 3.4.6 documentation</title>
   
 
   
@@ -39,7 +39,7 @@
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="monitor" href="monitor.html" />
-    <link rel="prev" title="mc" href="mc.html" />
+    <link rel="prev" title="retransform" href="retransform.html" />
 <script>
   if (window.location.href.startsWith("https://alibaba.github.io/arthas/")) {
       window.location.href = "https://arthas.aliyun.com/doc/" + window.location.href.substr("https://alibaba.github.io/arthas/".length);
@@ -73,7 +73,7 @@
             
             
               <div class="version">
-                ${revision}
+                3.4.6
               </div>
             
           
@@ -123,6 +123,7 @@
 <li class="toctree-l2"><a class="reference internal" href="jad.html">jad</a></li>
 <li class="toctree-l2"><a class="reference internal" href="classloader.html">classloader</a></li>
 <li class="toctree-l2"><a class="reference internal" href="mc.html">mc</a></li>
+<li class="toctree-l2"><a class="reference internal" href="retransform.html">retransform</a></li>
 <li class="toctree-l2 current"><a class="current reference internal" href="#">redefine</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#frequently-asked-questions">Frequently asked questions</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#options">Options</a></li>
@@ -141,6 +142,7 @@
 <li class="toctree-l2"><a class="reference internal" href="cat.html">cat</a></li>
 <li class="toctree-l2"><a class="reference internal" href="echo.html">echo</a></li>
 <li class="toctree-l2"><a class="reference internal" href="grep.html">grep</a></li>
+<li class="toctree-l2"><a class="reference internal" href="base64.html">base64</a></li>
 <li class="toctree-l2"><a class="reference internal" href="tee.html">tee</a></li>
 <li class="toctree-l2"><a class="reference internal" href="pwd.html">pwd</a></li>
 <li class="toctree-l2"><a class="reference internal" href="options.html">options</a></li>
@@ -229,6 +231,9 @@
             
   <div class="section" id="redefine">
 <h1>redefine<a class="headerlink" href="#redefine" title="Permalink to this headline">¶</a></h1>
+<blockquote>
+<div><p>Recommend to use the <a class="reference internal" href="retransform.html"><span class="doc">retransform</span></a> command.</p>
+</div></blockquote>
 <p><a class="reference external" href="https://arthas.aliyun.com/doc/arthas-tutorials?language=en&amp;id=command-mc-redefine"><code class="docutils literal notranslate"><span class="pre">mc-redefine</span></code> online tutorial</a></p>
 <blockquote>
 <div><p>Load the external <code class="docutils literal notranslate"><span class="pre">*.class</span></code> files to re-define the loaded classes in JVM.</p>
@@ -236,6 +241,9 @@
 <p>Reference: <a class="reference external" href="https://docs.oracle.com/javase/8/docs/api/java/lang/instrument/Instrumentation.html#redefineClasses-java.lang.instrument.ClassDefinition...-">Instrumentation#redefineClasses</a></p>
 <div class="section" id="frequently-asked-questions">
 <h2>Frequently asked questions<a class="headerlink" href="#frequently-asked-questions" title="Permalink to this headline">¶</a></h2>
+<blockquote>
+<div><p>Recommend to use the <a class="reference internal" href="retransform.html"><span class="doc">retransform</span></a> command.</p>
+</div></blockquote>
 <ul class="simple">
 <li><p>The class of <code class="docutils literal notranslate"><span class="pre">redefine</span></code> cannot modify, add or delete the field and method of the class, including method parameters, method names and return values.</p></li>
 <li><p>If <code class="docutils literal notranslate"><span class="pre">mc</span></code> fails, you can compile the class file in the local development environment, upload it to the target system, and use <code class="docutils literal notranslate"><span class="pre">redefine</span></code> to hot load the class.</p></li>
@@ -269,10 +277,6 @@ The reason is that in the JDK <code class="docutils literal notranslate"><span c
 <tr>
 <td align="right"><code>[classLoaderClass:]</code></td>
 <td align="left">The class name of the ClassLoader that executes the expression.</td>
-</tr>
-<tr>
-<td align="right"><code>[p:]</code></td>
-<td align="left">absolute path of the external <code>*.class</code>, multiple paths are separated with 'space'</td>
 </tr>
 </tbody>
 </table></div>
@@ -360,7 +364,7 @@ redefine /tmp/com/example/demo/arthas/user/UserController.class</pre></div>
         <a href="monitor.html" class="btn btn-neutral float-right" title="monitor" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
-        <a href="mc.html" class="btn btn-neutral float-left" title="mc" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+        <a href="retransform.html" class="btn btn-neutral float-left" title="retransform" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
       
     </div>
   

@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>mc &mdash; Arthas 3.4.5 文档</title>
+  <title>mc &mdash; Arthas 3.4.6 文档</title>
   
 
   
@@ -39,7 +39,7 @@
     <link rel="stylesheet" href="_static/overrides.css" type="text/css" />
     <link rel="index" title="索引" href="genindex.html" />
     <link rel="search" title="搜索" href="search.html" />
-    <link rel="next" title="redefine" href="redefine.html" />
+    <link rel="next" title="retransform" href="retransform.html" />
     <link rel="prev" title="classloader" href="classloader.html" />
 <script>
   if (window.location.href.startsWith("https://alibaba.github.io/arthas/")) {
@@ -74,7 +74,7 @@
             
             
               <div class="version">
-                3.4.5
+                3.4.6
               </div>
             
           
@@ -103,7 +103,8 @@
 <li class="toctree-l1"><a class="reference external" href="https://mp.weixin.qq.com/s/k5jozrSgmyH0tcQfrDkxUQ">招聘！</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://developer.aliyun.com/article/751641">技术征文</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://arthas.aliyun.com/doc/en/">English Docs</a></li>
-<li class="toctree-l1"><a class="reference external" href="https://arthas.aliyun.com/doc/arthas-tutorials.html?language=cn">在线教程(推荐)</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://start.aliyun.com/handson-lab/#%21category=arthas">在线教程(国内)</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://arthas.aliyun.com/doc/arthas-tutorials.html?language=cn">在线教程(国外)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="install-detail.html">安装</a></li>
 <li class="toctree-l1"><a class="reference internal" href="download.html">下载</a></li>
 <li class="toctree-l1"><a class="reference internal" href="quick-start.html">快速入门</a></li>
@@ -127,6 +128,7 @@
 <li class="toctree-l2"><a class="reference internal" href="jad.html">jad</a></li>
 <li class="toctree-l2"><a class="reference internal" href="classloader.html">classloader</a></li>
 <li class="toctree-l2 current"><a class="current reference internal" href="#">mc</a></li>
+<li class="toctree-l2"><a class="reference internal" href="retransform.html">retransform</a></li>
 <li class="toctree-l2"><a class="reference internal" href="redefine.html">redefine</a></li>
 <li class="toctree-l2"><a class="reference internal" href="monitor.html">monitor</a></li>
 <li class="toctree-l2"><a class="reference internal" href="watch.html">watch</a></li>
@@ -137,6 +139,7 @@
 <li class="toctree-l2"><a class="reference internal" href="cat.html">cat</a></li>
 <li class="toctree-l2"><a class="reference internal" href="echo.html">echo</a></li>
 <li class="toctree-l2"><a class="reference internal" href="grep.html">grep</a></li>
+<li class="toctree-l2"><a class="reference internal" href="base64.html">base64</a></li>
 <li class="toctree-l2"><a class="reference internal" href="tee.html">tee</a></li>
 <li class="toctree-l2"><a class="reference internal" href="pwd.html">pwd</a></li>
 <li class="toctree-l2"><a class="reference internal" href="options.html">options</a></li>
@@ -243,9 +246,9 @@ Affect(row-cnt:1) cost in 346 ms</pre></div>
 <p>可以通过<code class="docutils literal notranslate"><span class="pre">-d</span></code>命令指定输出目录：</p>
 <div class="highlight-bash notranslate"><div class="highlight hljs"><pre class="bash">mc -d /tmp/output /tmp/ClassA.java /tmp/ClassB.java</pre></div>
 </div>
-<p>编译生成<code class="docutils literal notranslate"><span class="pre">.class</span></code>文件之后，可以结合<a class="reference internal" href="redefine.html"><span class="doc">redefine</span></a>命令实现热更新代码。</p>
+<p>编译生成<code class="docutils literal notranslate"><span class="pre">.class</span></code>文件之后，可以结合<a class="reference internal" href="retransform.html"><span class="doc">retransform</span></a>命令实现热更新代码。</p>
 <blockquote>
-<div><p>注意，mc命令有可能失败。如果编译失败可以在本地编译好<code class="docutils literal notranslate"><span class="pre">.class</span></code>文件，再上传到服务器。具体参考<a class="reference internal" href="redefine.html"><span class="doc">redefine</span></a>命令说明。</p>
+<div><p>注意，mc命令有可能失败。如果编译失败可以在本地编译好<code class="docutils literal notranslate"><span class="pre">.class</span></code>文件，再上传到服务器。具体参考<a class="reference internal" href="retransform.html"><span class="doc">retransform</span></a>命令说明。</p>
 </div></blockquote>
 </div>
 
@@ -257,7 +260,7 @@ Affect(row-cnt:1) cost in 346 ms</pre></div>
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="redefine.html" class="btn btn-neutral float-right" title="redefine" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+        <a href="retransform.html" class="btn btn-neutral float-right" title="retransform" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
         <a href="classloader.html" class="btn btn-neutral float-left" title="classloader" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>

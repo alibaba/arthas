@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>jad &mdash; Arthas ${revision} documentation</title>
+  <title>jad &mdash; Arthas 3.4.6 documentation</title>
   
 
   
@@ -73,7 +73,7 @@
             
             
               <div class="version">
-                ${revision}
+                3.4.6
               </div>
             
           
@@ -133,6 +133,7 @@
 </li>
 <li class="toctree-l2"><a class="reference internal" href="classloader.html">classloader</a></li>
 <li class="toctree-l2"><a class="reference internal" href="mc.html">mc</a></li>
+<li class="toctree-l2"><a class="reference internal" href="retransform.html">retransform</a></li>
 <li class="toctree-l2"><a class="reference internal" href="redefine.html">redefine</a></li>
 <li class="toctree-l2"><a class="reference internal" href="monitor.html">monitor</a></li>
 <li class="toctree-l2"><a class="reference internal" href="watch.html">watch</a></li>
@@ -143,6 +144,7 @@
 <li class="toctree-l2"><a class="reference internal" href="cat.html">cat</a></li>
 <li class="toctree-l2"><a class="reference internal" href="echo.html">echo</a></li>
 <li class="toctree-l2"><a class="reference internal" href="grep.html">grep</a></li>
+<li class="toctree-l2"><a class="reference internal" href="base64.html">base64</a></li>
 <li class="toctree-l2"><a class="reference internal" href="tee.html">tee</a></li>
 <li class="toctree-l2"><a class="reference internal" href="pwd.html">pwd</a></li>
 <li class="toctree-l2"><a class="reference internal" href="options.html">options</a></li>
@@ -304,7 +306,7 @@ CharSequence {
 </div>
 <div class="section" id="print-source-only">
 <h3>Print source only<a class="headerlink" href="#print-source-only" title="Permalink to this headline">¶</a></h3>
-<p>By default, the decompile result will have the <code class="docutils literal notranslate"><span class="pre">ClassLoader</span></code> information. With the <code class="docutils literal notranslate"><span class="pre">--source-only</span></code> option, you can print only the source code. Conveniently used with the <a class="reference internal" href="mc.html"><span class="doc">mc</span></a>/<a class="reference internal" href="redefine.html"><span class="doc">redefine</span></a> commands.</p>
+<p>By default, the decompile result will have the <code class="docutils literal notranslate"><span class="pre">ClassLoader</span></code> information. With the <code class="docutils literal notranslate"><span class="pre">--source-only</span></code> option, you can print only the source code. Conveniently used with the <a class="reference internal" href="mc.html"><span class="doc">mc</span></a>/<a class="reference internal" href="retransform.html"><span class="doc">retransform</span></a> commands.</p>
 <div class="highlight-default notranslate"><pre class="literal-block">$ jad --source-only demo.MathGame
 /*
  * Decompiled with CFR 0_132.

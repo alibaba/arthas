@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>watch &mdash; Arthas 3.4.5 文档</title>
+  <title>watch &mdash; Arthas 3.4.6 文档</title>
   
 
   
@@ -74,7 +74,7 @@
             
             
               <div class="version">
-                3.4.5
+                3.4.6
               </div>
             
           
@@ -103,7 +103,8 @@
 <li class="toctree-l1"><a class="reference external" href="https://mp.weixin.qq.com/s/k5jozrSgmyH0tcQfrDkxUQ">招聘！</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://developer.aliyun.com/article/751641">技术征文</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://arthas.aliyun.com/doc/en/">English Docs</a></li>
-<li class="toctree-l1"><a class="reference external" href="https://arthas.aliyun.com/doc/arthas-tutorials.html?language=cn">在线教程(推荐)</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://start.aliyun.com/handson-lab/#%21category=arthas">在线教程(国内)</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://arthas.aliyun.com/doc/arthas-tutorials.html?language=cn">在线教程(国外)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="install-detail.html">安装</a></li>
 <li class="toctree-l1"><a class="reference internal" href="download.html">下载</a></li>
 <li class="toctree-l1"><a class="reference internal" href="quick-start.html">快速入门</a></li>
@@ -127,6 +128,7 @@
 <li class="toctree-l2"><a class="reference internal" href="jad.html">jad</a></li>
 <li class="toctree-l2"><a class="reference internal" href="classloader.html">classloader</a></li>
 <li class="toctree-l2"><a class="reference internal" href="mc.html">mc</a></li>
+<li class="toctree-l2"><a class="reference internal" href="retransform.html">retransform</a></li>
 <li class="toctree-l2"><a class="reference internal" href="redefine.html">redefine</a></li>
 <li class="toctree-l2"><a class="reference internal" href="monitor.html">monitor</a></li>
 <li class="toctree-l2 current"><a class="current reference internal" href="#">watch</a><ul>
@@ -141,8 +143,9 @@
 <li class="toctree-l4"><a class="reference internal" href="#id7">观察异常信息的例子</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#id8">按照耗时进行过滤</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#id9">观察当前对象中的属性</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#id10">排除掉指定的类</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#id11">不匹配子类</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id10">获取类的静态字段、调用类的静态方法的例子</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id11">排除掉指定的类</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id12">不匹配子类</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#v">使用 -v 参数打印更多信息</a></li>
 </ul>
 </li>
@@ -155,6 +158,7 @@
 <li class="toctree-l2"><a class="reference internal" href="cat.html">cat</a></li>
 <li class="toctree-l2"><a class="reference internal" href="echo.html">echo</a></li>
 <li class="toctree-l2"><a class="reference internal" href="grep.html">grep</a></li>
+<li class="toctree-l2"><a class="reference internal" href="base64.html">base64</a></li>
 <li class="toctree-l2"><a class="reference internal" href="tee.html">tee</a></li>
 <li class="toctree-l2"><a class="reference internal" href="pwd.html">pwd</a></li>
 <li class="toctree-l2"><a class="reference internal" href="options.html">options</a></li>
@@ -502,7 +506,24 @@ ts=2018-12-03 20:04:35; [cost=0.961441ms] result=@Integer[8]</pre></div>
 </div>
 </div>
 <div class="section" id="id10">
-<h3>排除掉指定的类<a class="headerlink" href="#id10" title="永久链接至标题">¶</a></h3>
+<h3>获取类的静态字段、调用类的静态方法的例子<a class="headerlink" href="#id10" title="永久链接至标题">¶</a></h3>
+<div class="highlight-bash notranslate"><div class="highlight hljs"><pre class="bash">watch demo.MathGame * &#x27;{params,@demo.MathGame@random.nextInt(100)}&#x27; -v -n 1 -x 2
+[arthas@6527]$ watch demo.MathGame * &#x27;{params,@demo.MathGame@random.nextInt(100)}&#x27; -n 1 -x 2
+Press Q or Ctrl+C to abort.
+Affect(class count: 1 , method count: 5) cost in 34 ms, listenerId: 3
+ts=2021-01-05 21:35:20; [cost=0.173966ms] result=@ArrayList[
+    @Object[][
+        @Integer[-138282],
+    ],
+    @Integer[89],
+]</pre></div>
+</div>
+<ul class="simple">
+<li><p>注意这里使用 <code class="docutils literal notranslate"><span class="pre">Thread.currentThread().getContextClassLoader()</span></code> 加载,使用精确<code class="docutils literal notranslate"><span class="pre">classloader</span></code> <a class="reference internal" href="ognl.html"><span class="doc">ognl</span></a>更好。</p></li>
+</ul>
+</div>
+<div class="section" id="id11">
+<h3>排除掉指定的类<a class="headerlink" href="#id11" title="永久链接至标题">¶</a></h3>
 <blockquote>
 <div><p>watch/trace/monitor/stack/tt 命令都支持 <code class="docutils literal notranslate"><span class="pre">--exclude-class-pattern</span></code> 参数</p>
 </div></blockquote>
@@ -510,8 +531,8 @@ ts=2018-12-03 20:04:35; [cost=0.961441ms] result=@Integer[8]</pre></div>
 <div class="highlight-bash notranslate"><div class="highlight hljs"><pre class="bash">watch javax.servlet.Filter * --exclude-class-pattern com.demo.TestFilter</pre></div>
 </div>
 </div>
-<div class="section" id="id11">
-<h3>不匹配子类<a class="headerlink" href="#id11" title="永久链接至标题">¶</a></h3>
+<div class="section" id="id12">
+<h3>不匹配子类<a class="headerlink" href="#id12" title="永久链接至标题">¶</a></h3>
 <p>默认情况下 watch/trace/monitor/stack/tt 命令都会匹配子类。如果想不匹配，可以通过全局参数关掉。</p>
 <div class="highlight-bash notranslate"><div class="highlight hljs"><pre class="bash">options disable-sub-class true</pre></div>
 </div>
