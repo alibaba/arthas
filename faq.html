@@ -119,13 +119,16 @@
 <li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas/issues?q=label%3Auser-case">用户案例</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">FAQ/常见问题</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#arthas-attach">Arthas attach之后对原进程性能有多大的影响</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#trace-watchjdk">trace/watch等命令能否增强jdk里的类？</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#json">怎么以<code class="docutils literal notranslate"><span class="pre">json</span></code>格式查看结果</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#arthas-native">Arthas能否跟踪 native 函数</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#id1">能不能查看内存里某个变量的值</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#id2">方法同名过滤</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#watchtrace">怎么watch、trace 构造函数 ？</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#java-lang-classformaterror-nullskywalking-arthas">java.lang.ClassFormatError: null、skywalking arthas 兼容使用</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#com-sun-tools-attach-attachnotsupportedexception-unable-to-open-socket-file-target-process-not-responding-or-hotspot-vm-not-loaded">com.sun.tools.attach.AttachNotSupportedException: Unable to open socket file: target process not responding or HotSpot VM not loaded</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#trace-watchjdk">trace/watch等命令能否增强jdk里的类？</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#json">怎么以<code class="docutils literal notranslate"><span class="pre">json</span></code>格式查看结果</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#arthas-native">Arthas能否跟踪 native 函数</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id1">能不能查看内存里某个变量的值</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id2">方法同名过滤</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#watchtrace">怎么watch、trace 构造函数 ？</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#java-lang-classformaterror-nullskywalking-arthas">java.lang.ClassFormatError: null、skywalking arthas 兼容使用</a></li>
+</ul>
+</li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas">Star me at GitHub</a></li>
@@ -207,29 +210,36 @@
 <h2>Arthas attach之后对原进程性能有多大的影响<a class="headerlink" href="#arthas-attach" title="永久链接至标题">¶</a></h2>
 <p><a class="reference external" href="https://github.com/alibaba/arthas/issues/44">https://github.com/alibaba/arthas/issues/44</a></p>
 </div>
+<div class="section" id="com-sun-tools-attach-attachnotsupportedexception-unable-to-open-socket-file-target-process-not-responding-or-hotspot-vm-not-loaded">
+<h2>com.sun.tools.attach.AttachNotSupportedException: Unable to open socket file: target process not responding or HotSpot VM not loaded<a class="headerlink" href="#com-sun-tools-attach-attachnotsupportedexception-unable-to-open-socket-file-target-process-not-responding-or-hotspot-vm-not-loaded" title="永久链接至标题">¶</a></h2>
+<ol class="simple">
+<li><p>检查当前用户和目标java进程是否一致。如果不一致，则切换到同一用户。JVM只能attach同样用户下的java 进程。</p></li>
+<li><p>尝试使用 <code class="docutils literal notranslate"><span class="pre">jstack</span> <span class="pre">-l</span> <span class="pre">$pid</span></code>，如果进程没有反应，则说明进程可能假死，无法响应JVM attach信号。所以同样基于attach机制的Arthas无法工作。尝试使用<code class="docutils literal notranslate"><span class="pre">jmap</span></code> heapdump后分析。</p></li>
+<li><p>尝试按<a class="reference internal" href="quick-start.html"><span class="doc">quick-start</span></a>里的方式attach arthas-demo。</p></li>
+</ol>
 <div class="section" id="trace-watchjdk">
-<h2>trace/watch等命令能否增强jdk里的类？<a class="headerlink" href="#trace-watchjdk" title="永久链接至标题">¶</a></h2>
+<h3>trace/watch等命令能否增强jdk里的类？<a class="headerlink" href="#trace-watchjdk" title="永久链接至标题">¶</a></h3>
 <p>默认情况下会过滤掉<code class="docutils literal notranslate"><span class="pre">java.</span></code>开头的类，但可以通过参数开启。</p>
 <div class="highlight-bash notranslate"><div class="highlight hljs"><pre class="bash">options unsafe true</pre></div>
 </div>
 <p>更多参考 <a class="reference internal" href="options.html"><span class="doc">options</span></a></p>
 </div>
 <div class="section" id="json">
-<h2>怎么以<code class="docutils literal notranslate"><span class="pre">json</span></code>格式查看结果<a class="headerlink" href="#json" title="永久链接至标题">¶</a></h2>
+<h3>怎么以<code class="docutils literal notranslate"><span class="pre">json</span></code>格式查看结果<a class="headerlink" href="#json" title="永久链接至标题">¶</a></h3>
 <div class="highlight-bash notranslate"><div class="highlight hljs"><pre class="bash">options json-format true</pre></div>
 </div>
 <p>更多参考 <a class="reference internal" href="options.html"><span class="doc">options</span></a></p>
 </div>
 <div class="section" id="arthas-native">
-<h2>Arthas能否跟踪 native 函数<a class="headerlink" href="#arthas-native" title="永久链接至标题">¶</a></h2>
+<h3>Arthas能否跟踪 native 函数<a class="headerlink" href="#arthas-native" title="永久链接至标题">¶</a></h3>
 <p>不能。</p>
 </div>
 <div class="section" id="id1">
-<h2>能不能查看内存里某个变量的值<a class="headerlink" href="#id1" title="永久链接至标题">¶</a></h2>
+<h3>能不能查看内存里某个变量的值<a class="headerlink" href="#id1" title="永久链接至标题">¶</a></h3>
 <p>不能。但可以用一些技巧，用<code class="docutils literal notranslate"><span class="pre">tt</span></code>命令拦截到对象，或者从静态函数里取到对象。</p>
 </div>
 <div class="section" id="id2">
-<h2>方法同名过滤<a class="headerlink" href="#id2" title="永久链接至标题">¶</a></h2>
+<h3>方法同名过滤<a class="headerlink" href="#id2" title="永久链接至标题">¶</a></h3>
 <p>同名方法过滤可以通过匹配表达式,可以使用<a class="reference internal" href="advice-class.html"><span class="doc">表达式核心变量</span></a>中所有变量作为已知条件,可以通过判断参数个数<code class="docutils literal notranslate"><span class="pre">params.length</span> <span class="pre">==1</span></code>, 参数类型<code class="docutils literal notranslate"><span class="pre">params[0]</span> <span class="pre">instanceof</span> <span class="pre">java.lang.Integer</span></code>、返回值类型 <code class="docutils literal notranslate"><span class="pre">returnObj</span> <span class="pre">instanceof</span> <span class="pre">java.util.List</span></code> 等等一种或者多种组合进行过滤。</p>
 <p>可以使用 <code class="docutils literal notranslate"><span class="pre">-v</span></code> 查看观察匹配表达式的执行结果 <a class="reference external" href="https://github.com/alibaba/arthas/issues/1348">https://github.com/alibaba/arthas/issues/1348</a></p>
 <p>例子<a class="reference internal" href="quick-start.html"><span class="doc">arthas-demo</span></a></p>
@@ -237,14 +247,15 @@
 </div>
 </div>
 <div class="section" id="watchtrace">
-<h2>怎么watch、trace 构造函数 ？<a class="headerlink" href="#watchtrace" title="永久链接至标题">¶</a></h2>
+<h3>怎么watch、trace 构造函数 ？<a class="headerlink" href="#watchtrace" title="永久链接至标题">¶</a></h3>
 <div class="highlight-bash notranslate"><div class="highlight hljs"><pre class="bash">watch demo.MathGame &lt;init&gt; &#x27;{params,returnObj,throwExp}&#x27; -v -n 5 -x 3 &#x27;1==1&#x27;</pre></div>
 </div>
 </div>
 <div class="section" id="java-lang-classformaterror-nullskywalking-arthas">
-<h2>java.lang.ClassFormatError: null、skywalking arthas 兼容使用<a class="headerlink" href="#java-lang-classformaterror-nullskywalking-arthas" title="永久链接至标题">¶</a></h2>
+<h3>java.lang.ClassFormatError: null、skywalking arthas 兼容使用<a class="headerlink" href="#java-lang-classformaterror-nullskywalking-arthas" title="永久链接至标题">¶</a></h3>
 <p>当出现这个错误日志<code class="docutils literal notranslate"><span class="pre">java.lang.ClassFormatError:</span> <span class="pre">null</span></code>,通常情况下都是被其他字节码工具修改过与arthas修改字节码不兼容。</p>
 <p>比如: 使用 skywalking V8.1.0 以下版本 <a class="reference external" href="https://github.com/alibaba/arthas/issues/1141">无法trace、watch 被skywalking agent 增强过的类</a>, V8.1.0 以上版本可以兼容使用,更多参考skywalking配置 <a class="reference external" href="https://github.com/apache/skywalking/blob/v8.1.0/docs/en/FAQ/Compatible-with-other-javaagent-bytecode-processing">skywalking compatible with other javaagent bytecode processing</a>。</p>
+</div>
 </div>
 </div>
 
