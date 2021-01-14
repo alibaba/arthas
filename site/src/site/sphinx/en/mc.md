@@ -1,7 +1,7 @@
 mc
 ===
 
-[`mc-redefine` online tutorial](https://arthas.aliyun.com/doc/arthas-tutorials?language=en&id=command-mc-redefine)
+[`mc-retransform` online tutorial](https://arthas.aliyun.com/doc/arthas-tutorials?language=en&id=command-mc-retransform)
 
 > Memory compiler, compiles `.java` files into `.class` files in memory.
 
