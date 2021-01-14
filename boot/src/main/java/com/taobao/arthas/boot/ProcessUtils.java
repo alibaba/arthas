@@ -233,7 +233,7 @@ public class ProcessUtils {
         String javaHome = findJavaHome();
 
         // find java/java.exe
-        File javaPath = findJava();
+        File javaPath = findJava(javaHome);
         if (javaPath == null) {
             throw new IllegalArgumentException(
                             "Can not find java/java.exe executable file under java home: " + javaHome);
@@ -354,8 +354,7 @@ public class ProcessUtils {
         }
     }
 
-    private static File findJava() {
-        String javaHome = findJavaHome();
+    private static File findJava(String javaHome) {
         String[] paths = { "bin/java", "bin/java.exe", "../bin/java", "../bin/java.exe" };
 
         List<File> javaList = new ArrayList<File>();
