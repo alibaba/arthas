@@ -8,7 +8,9 @@
 [https://github.com/alibaba/arthas/issues/44](https://github.com/alibaba/arthas/issues/44)
 
 
-#### com.sun.tools.attach.AttachNotSupportedException: Unable to open socket file: target process not responding or HotSpot VM not loaded
+##### target process not responding or HotSpot VM not loaded
+
+com.sun.tools.attach.AttachNotSupportedException: Unable to open socket file: target process not responding or HotSpot VM not loaded
 
 1. Check whether the current user and the target java process are consistent. If they are inconsistent, switch to the same user. JVM can only attach java processes under the same user.
 2. Try to use `jstack -l $pid`. If the process does not respond, it means that the process may freeze and fail to respond to the JVM attach signal. So Arthas based on the attach mechanism cannot work. Try to use `jmap` heapdump to analyze.
