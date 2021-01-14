@@ -114,16 +114,14 @@
 <li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas/issues?q=label%3Auser-case">User cases</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">FAQ</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#how-much-impact-does-arthas-attach-have-on-the-performance-of-the-original-process">How much impact does Arthas attach have on the performance of the original process?</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#com-sun-tools-attach-attachnotsupportedexception-unable-to-open-socket-file-target-process-not-responding-or-hotspot-vm-not-loaded">com.sun.tools.attach.AttachNotSupportedException: Unable to open socket file: target process not responding or HotSpot VM not loaded</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#can-commands-such-as-trace-watch-enhance-the-classes-in-jdk">Can commands such as trace/watch enhance the classes in jdk?</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#how-to-view-the-result-in-json-format">How to view the result in <code class="docutils literal notranslate"><span class="pre">json</span></code> format</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#can-arthas-trace-native-methods">Can arthas trace native methods</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#can-arthas-view-the-value-of-a-variable-in-memory">Can arthas view the value of a variable in memory?</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#how-to-filter-method-with-the-same-name">How to filter method with the same name?</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#how-to-watch-or-trace-constructor">How to watch or trace constructor?</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#java-lang-classformaterror-null-skywalking-arthas-compatible-use">java.lang.ClassFormatError: null, skywalking arthas compatible use</a></li>
-</ul>
-</li>
+<li class="toctree-l2"><a class="reference internal" href="#target-process-not-responding-or-hotspot-vm-not-loaded">target process not responding or HotSpot VM not loaded</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#can-commands-such-as-trace-watch-enhance-the-classes-in-jdk">Can commands such as trace/watch enhance the classes in jdk?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#how-to-view-the-result-in-json-format">How to view the result in <code class="docutils literal notranslate"><span class="pre">json</span></code> format</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#can-arthas-trace-native-methods">Can arthas trace native methods</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#can-arthas-view-the-value-of-a-variable-in-memory">Can arthas view the value of a variable in memory?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#how-to-filter-method-with-the-same-name">How to filter method with the same name?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#how-to-watch-or-trace-constructor">How to watch or trace constructor?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#java-lang-classformaterror-null-skywalking-arthas-compatible-use">java.lang.ClassFormatError: null, skywalking arthas compatible use</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas">Star me at GitHub</a></li>
@@ -205,36 +203,38 @@
 <h2>How much impact does Arthas attach have on the performance of the original process?<a class="headerlink" href="#how-much-impact-does-arthas-attach-have-on-the-performance-of-the-original-process" title="Permalink to this headline">¶</a></h2>
 <p><a class="reference external" href="https://github.com/alibaba/arthas/issues/44">https://github.com/alibaba/arthas/issues/44</a></p>
 </div>
-<div class="section" id="com-sun-tools-attach-attachnotsupportedexception-unable-to-open-socket-file-target-process-not-responding-or-hotspot-vm-not-loaded">
-<h2>com.sun.tools.attach.AttachNotSupportedException: Unable to open socket file: target process not responding or HotSpot VM not loaded<a class="headerlink" href="#com-sun-tools-attach-attachnotsupportedexception-unable-to-open-socket-file-target-process-not-responding-or-hotspot-vm-not-loaded" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="target-process-not-responding-or-hotspot-vm-not-loaded">
+<h2>target process not responding or HotSpot VM not loaded<a class="headerlink" href="#target-process-not-responding-or-hotspot-vm-not-loaded" title="Permalink to this headline">¶</a></h2>
+<p>com.sun.tools.attach.AttachNotSupportedException: Unable to open socket file: target process not responding or HotSpot VM not loaded</p>
 <ol class="simple">
 <li><p>Check whether the current user and the target java process are consistent. If they are inconsistent, switch to the same user. JVM can only attach java processes under the same user.</p></li>
 <li><p>Try to use <code class="docutils literal notranslate"><span class="pre">jstack</span> <span class="pre">-l</span> <span class="pre">$pid</span></code>. If the process does not respond, it means that the process may freeze and fail to respond to the JVM attach signal. So Arthas based on the attach mechanism cannot work. Try to use <code class="docutils literal notranslate"><span class="pre">jmap</span></code> heapdump to analyze.</p></li>
 <li><p>Try to attach arthas-demo in <a class="reference internal" href="quick-start.html"><span class="doc">quick-start</span></a>.</p></li>
 </ol>
+</div>
 <div class="section" id="can-commands-such-as-trace-watch-enhance-the-classes-in-jdk">
-<h3>Can commands such as trace/watch enhance the classes in jdk?<a class="headerlink" href="#can-commands-such-as-trace-watch-enhance-the-classes-in-jdk" title="Permalink to this headline">¶</a></h3>
+<h2>Can commands such as trace/watch enhance the classes in jdk?<a class="headerlink" href="#can-commands-such-as-trace-watch-enhance-the-classes-in-jdk" title="Permalink to this headline">¶</a></h2>
 <p>By default, classes beginning with <code class="docutils literal notranslate"><span class="pre">java.</span></code> are filtered out, but they can be turned on:</p>
 <div class="highlight-bash notranslate"><div class="highlight hljs"><pre class="bash">options unsafe true</pre></div>
 </div>
 <p>See more at <a class="reference internal" href="options.html"><span class="doc">options</span></a></p>
 </div>
 <div class="section" id="how-to-view-the-result-in-json-format">
-<h3>How to view the result in <code class="docutils literal notranslate"><span class="pre">json</span></code> format<a class="headerlink" href="#how-to-view-the-result-in-json-format" title="Permalink to this headline">¶</a></h3>
+<h2>How to view the result in <code class="docutils literal notranslate"><span class="pre">json</span></code> format<a class="headerlink" href="#how-to-view-the-result-in-json-format" title="Permalink to this headline">¶</a></h2>
 <div class="highlight-bash notranslate"><div class="highlight hljs"><pre class="bash">options json-format true</pre></div>
 </div>
 <p>See more at <a class="reference internal" href="options.html"><span class="doc">options</span></a></p>
 </div>
 <div class="section" id="can-arthas-trace-native-methods">
-<h3>Can arthas trace native methods<a class="headerlink" href="#can-arthas-trace-native-methods" title="Permalink to this headline">¶</a></h3>
+<h2>Can arthas trace native methods<a class="headerlink" href="#can-arthas-trace-native-methods" title="Permalink to this headline">¶</a></h2>
 <p>No.</p>
 </div>
 <div class="section" id="can-arthas-view-the-value-of-a-variable-in-memory">
-<h3>Can arthas view the value of a variable in memory?<a class="headerlink" href="#can-arthas-view-the-value-of-a-variable-in-memory" title="Permalink to this headline">¶</a></h3>
+<h2>Can arthas view the value of a variable in memory?<a class="headerlink" href="#can-arthas-view-the-value-of-a-variable-in-memory" title="Permalink to this headline">¶</a></h2>
 <p>No. But you can use some tricks to intercept the object with the <code class="docutils literal notranslate"><span class="pre">tt</span></code> command, or fetch it from a static method.</p>
 </div>
 <div class="section" id="how-to-filter-method-with-the-same-name">
-<h3>How to filter method with the same name?<a class="headerlink" href="#how-to-filter-method-with-the-same-name" title="Permalink to this headline">¶</a></h3>
+<h2>How to filter method with the same name?<a class="headerlink" href="#how-to-filter-method-with-the-same-name" title="Permalink to this headline">¶</a></h2>
 <p>You can used all variables in <a class="reference internal" href="advice-class.html"><span class="doc">fundamental fields in expressions</span></a> for the condition express to filter method with the same name, you can use the number of parameters <code class="docutils literal notranslate"><span class="pre">params.length</span> <span class="pre">==1</span></code>,parameter type <code class="docutils literal notranslate"><span class="pre">params[0]</span> <span class="pre">instanceof</span> <span class="pre">java.lang.Integer</span></code>,return value type <code class="docutils literal notranslate"><span class="pre">returnObj</span> <span class="pre">instanceof</span> <span class="pre">java.util.List</span></code> and so on in one or more combinations as condition express.</p>
 <p>You can use <code class="docutils literal notranslate"><span class="pre">-v</span></code> to view the condition express result <a class="reference external" href="https://github.com/alibaba/arthas/issues/1348">https://github.com/alibaba/arthas/issues/1348</a></p>
 <p>example <a class="reference internal" href="quick-start.html"><span class="doc">arthas-demo</span></a></p>
@@ -242,15 +242,14 @@
 </div>
 </div>
 <div class="section" id="how-to-watch-or-trace-constructor">
-<h3>How to watch or trace constructor?<a class="headerlink" href="#how-to-watch-or-trace-constructor" title="Permalink to this headline">¶</a></h3>
+<h2>How to watch or trace constructor?<a class="headerlink" href="#how-to-watch-or-trace-constructor" title="Permalink to this headline">¶</a></h2>
 <div class="highlight-bash notranslate"><div class="highlight hljs"><pre class="bash">watch demo.MathGame &lt;init&gt; &#x27;{params,returnObj,throwExp}&#x27; -v -n 5 -x 3 &#x27;1==1&#x27;</pre></div>
 </div>
 </div>
 <div class="section" id="java-lang-classformaterror-null-skywalking-arthas-compatible-use">
-<h3>java.lang.ClassFormatError: null, skywalking arthas compatible use<a class="headerlink" href="#java-lang-classformaterror-null-skywalking-arthas-compatible-use" title="Permalink to this headline">¶</a></h3>
+<h2>java.lang.ClassFormatError: null, skywalking arthas compatible use<a class="headerlink" href="#java-lang-classformaterror-null-skywalking-arthas-compatible-use" title="Permalink to this headline">¶</a></h2>
 <p>When error log appear <code class="docutils literal notranslate"><span class="pre">java.lang.ClassFormatError:</span> <span class="pre">null</span></code>, it is usually modified by other bytecode tools that are not compatible with arthas modified bytecode.</p>
 <p>For example: use skywalking V8.1.0 below <a class="reference external" href="https://github.com/alibaba/arthas/issues/1141">cannot trace, watch classes enhanced by skywalking agent</a>, V8.1.0 or above is compatible, refer to skywalking configuration for more details. <a class="reference external" href="https://github.com/apache/skywalking/blob/v8.1.0/docs/en/FAQ/Compatible-with-other-javaagent-bytecode-processing">skywalking compatible with other javaagent bytecode processing</a>.</p>
-</div>
 </div>
 </div>
 
