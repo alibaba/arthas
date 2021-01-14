@@ -239,7 +239,7 @@ public class ProcessUtils {
                             "Can not find java/java.exe executable file under java home: " + javaHome);
         }
 
-        File toolsJar = findToolsJar();
+        File toolsJar = findToolsJar(javaHome);
 
         if (JavaVersionUtils.isLessThanJava9()) {
             if (toolsJar == null || !toolsJar.exists()) {
@@ -388,12 +388,11 @@ public class ProcessUtils {
         return javaList.get(0);
     }
 
-    private static File findToolsJar() {
+    private static File findToolsJar(String javaHome) {
         if (JavaVersionUtils.isGreaterThanJava8()) {
             return null;
         }
 
-        String javaHome = findJavaHome();
         File toolsJar = new File(javaHome, "lib/tools.jar");
         if (!toolsJar.exists()) {
             toolsJar = new File(javaHome, "../lib/tools.jar");
