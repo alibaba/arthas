@@ -1,7 +1,7 @@
 mc
 ===
 
-[`mc-redefine`在线教程](https://arthas.aliyun.com/doc/arthas-tutorials?language=cn&id=command-mc-redefine)
+[`mc-retransform`在线教程](https://arthas.aliyun.com/doc/arthas-tutorials?language=cn&id=command-mc-retransform)
 
 > Memory Compiler/内存编译器，编译`.java`文件生成`.class`。
 
