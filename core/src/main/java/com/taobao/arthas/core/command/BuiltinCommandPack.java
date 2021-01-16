@@ -36,6 +36,7 @@ import com.taobao.arthas.core.command.monitor200.DashboardCommand;
 import com.taobao.arthas.core.command.monitor200.HeapDumpCommand;
 import com.taobao.arthas.core.command.monitor200.JvmCommand;
 import com.taobao.arthas.core.command.monitor200.MBeanCommand;
+import com.taobao.arthas.core.command.monitor200.MemoryCommand;
 import com.taobao.arthas.core.command.monitor200.MonitorCommand;
 import com.taobao.arthas.core.command.monitor200.PerfCounterCommand;
 import com.taobao.arthas.core.command.monitor200.ProfilerCommand;
@@ -113,5 +114,6 @@ public class BuiltinCommandPack implements CommandResolver {
         commands.add(Command.create(ProfilerCommand.class));
         commands.add(Command.create(ShutdownCommand.class));
         commands.add(Command.create(StopCommand.class));
+        commands.add(Command.create(MemoryCommand.class));
     }
 }

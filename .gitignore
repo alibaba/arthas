@@ -22,3 +22,5 @@ dependency-reduced-pom.xml
 pom.xml.versionsBackup
 .pmd
 **/.flattened-pom.xml
+/analyzer/src/main/cpp/cmake-build-debug/
+/analyzer/src/main/cpp/.idea/
