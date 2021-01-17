@@ -2,6 +2,7 @@ package com.vdian.vclub;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.net.URL;
 import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.List;
@@ -23,8 +24,11 @@ public class MemoryAnalyzer {
 
     static {
         //加载c++类库
-        String classPath = ClassLoader.getSystemClassLoader().getResource("").getPath();
-        System.load(classPath + "jni-lib.so");
+        URL classPath = ClassLoader.getSystemClassLoader().getResource("");
+        if (null == classPath) {
+            throw new RuntimeException("class path not found !");
+        }
+        System.load(classPath.getPath() + "jni-lib.so");
     }
 
     /**

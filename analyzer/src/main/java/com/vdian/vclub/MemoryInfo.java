@@ -22,16 +22,21 @@ public class MemoryInfo {
     private final long sumSize;
 
     /**
+     * 以MB为单位，展示占用内存
+     */
+    private final String showSize;
+
+    /**
      * 当前所有存活对象占用内存的百分比
      */
     private double percentage;
 
-    private final BigDecimal bigDecimal;
-
     public MemoryInfo(Class<?> klass, long sumSize) {
         this.klass = klass;
         this.sumSize = sumSize;
-        this.bigDecimal = new BigDecimal(sumSize);
+        this.showSize = new BigDecimal(sumSize)
+                .divide(DIVIDER.multiply(DIVIDER), 2, RoundingMode.HALF_UP)
+                .doubleValue() + "MB";
     }
 
     public Class<?> getKlass() {
@@ -52,8 +57,6 @@ public class MemoryInfo {
 
     @Override
     public String toString() {
-        return "{" + klass.toString() +
-                ", sumSize=" + bigDecimal.divide(DIVIDER, 2, RoundingMode.HALF_UP).doubleValue() + " KB" +
-                ", percentage=" + percentage + "%}";
+        return klass.getName() + " " + showSize + " " + percentage + "%";
     }
 }
