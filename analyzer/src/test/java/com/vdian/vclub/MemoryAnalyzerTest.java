@@ -27,8 +27,8 @@ public class MemoryAnalyzerTest {
             System.out.println("allLoadedClasses->" + allLoadedClasses.size());
 
             //通过下面的例子，可以看到getInstances(Class<T> klass)拿到的是当前存活的所有对象
-            WeakReference<MemoryAnalyzer> weakReference1 = new WeakReference<>(new MemoryAnalyzer());
-            WeakReference<MemoryAnalyzer> weakReference2 = new WeakReference<>(new MemoryAnalyzer());
+            WeakReference<MemoryAnalyzer> weakReference1 = new WeakReference<MemoryAnalyzer>(new MemoryAnalyzer());
+            WeakReference<MemoryAnalyzer> weakReference2 = new WeakReference<MemoryAnalyzer>(new MemoryAnalyzer());
             System.out.println(weakReference1.get() + " " + weakReference2.get());
             LinkedList<MemoryAnalyzer> beforeInstances = MemoryAnalyzer.getInstances(MemoryAnalyzer.class);
             System.out.println("before instances->" + beforeInstances);
