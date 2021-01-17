@@ -5,7 +5,7 @@ MemoryAnalyzer能够在不dump的前提下，获取：
  * 3.某个实例的占用内存;
  * 4.某个class在jvm中当前所有存活实例的总个数;
  * 5.所有已加载的类(不包括void、int、boolean、float等小类型);
- * 6.系统中占用内存最多的类及具体KB.
+ * 6.系统中占用内存最多的类及具体MB.
  
  具体使用可参考测试用例`com.vdian.vclub.MemoryAnalyzerTest`;
  
