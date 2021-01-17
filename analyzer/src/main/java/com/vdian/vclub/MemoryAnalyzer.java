@@ -3,10 +3,10 @@ package com.vdian.vclub;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.net.URL;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * 内存分析器，能够在不dump的前提下，获取：
@@ -69,7 +69,7 @@ public class MemoryAnalyzer {
      */
     public static List<MemoryInfo> analyze(boolean all) {
         LinkedList<Class<?>> loadedClasses = getAllLoadedClasses();
-        List<MemoryInfo> list = new LinkedList<>();
+        List<MemoryInfo> list = new LinkedList<MemoryInfo>();
         long sum = 0;
         for (Class<?> loadedClass : loadedClasses) {
             if (loadedClass.isInterface()) {
@@ -83,7 +83,7 @@ public class MemoryAnalyzer {
             list.add(new MemoryInfo(loadedClass, sumSize));
         }
         BigDecimal sumDecimal = new BigDecimal(sum);
-        List<MemoryInfo> result = new LinkedList<>();
+        List<MemoryInfo> result = new LinkedList<MemoryInfo>();
         for (MemoryInfo info : list) {
             double percentage = new BigDecimal(info.getSumSize() * 100)
                     .divide(sumDecimal, 2, RoundingMode.HALF_UP)
@@ -95,9 +95,14 @@ public class MemoryAnalyzer {
             info.setPercentage(percentage);
             result.add(info);
         }
-        return result.stream()
-                .sorted(Comparator.comparingLong(MemoryInfo::getSumSize)
-                        .reversed())
-                .collect(Collectors.toList());
+        Collections.sort(result, new Comparator<MemoryInfo>() {
+            @Override
+            public int compare(MemoryInfo o1, MemoryInfo o2) {
+                long x = o1.getSumSize();
+                long y = o2.getSumSize();
+                return (x < y) ? -1 : ((x == y) ? 0 : 1);
+            }
+        });
+        return result;
     }
 }
