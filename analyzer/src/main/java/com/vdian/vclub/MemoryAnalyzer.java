@@ -63,7 +63,7 @@ public class MemoryAnalyzer {
     /**
      * 根据类所有实例的总大小，分析jvm中占用内存最多的一些类
      */
-    public static List<MemoryInfo> analyze(boolean skipZero) {
+    public static List<MemoryInfo> analyze(boolean all) {
         LinkedList<Class<?>> loadedClasses = getAllLoadedClasses();
         List<MemoryInfo> list = new LinkedList<>();
         long sum = 0;
@@ -81,11 +81,11 @@ public class MemoryAnalyzer {
         BigDecimal sumDecimal = new BigDecimal(sum);
         List<MemoryInfo> result = new LinkedList<>();
         for (MemoryInfo info : list) {
-            double percentage = new BigDecimal(info.getSumSize())
+            double percentage = new BigDecimal(info.getSumSize() * 100)
                     .divide(sumDecimal, 2, RoundingMode.HALF_UP)
-                    .doubleValue() * 100;
+                    .doubleValue();
             //过滤几乎没有影响的class
-            if (skipZero && percentage == 0) {
+            if (!all && percentage == 0) {
                 continue;
             }
             info.setPercentage(percentage);

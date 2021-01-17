@@ -22,26 +22,26 @@ import java.util.List;
  * @date 2021/01/16
  */
 @Name("memory")
-@Summary("show memory usage with detail")
-@Description("\nExamples:\n" + "  memory\n" + "  memory --notskip\n"
+@Summary("detailed display of memory usage without dump")
+@Description("\nExamples:\n" + "  memory\n" + "  memory --all\n"
         + Constants.WIKI + Constants.WIKI_HOME + "memory")
 public class MemoryCommand extends AnnotatedCommand {
 
     private static final Logger logger = LoggerFactory.getLogger(MemoryCommand.class);
 
-    boolean notSkipZero = false;
+    boolean all = false;
 
-    @Option(shortName = "n", longName = "notskip", flag = true)
+    @Option(shortName = "a", longName = "all", flag = true)
     @Description("show all information, even if the memory usage is small")
-    public void setNotSkipZero(boolean notSkipZero) {
-        this.notSkipZero = notSkipZero;
+    public void setAll(boolean all) {
+        this.all = all;
     }
 
     @Override
     public void process(CommandProcess process) {
         process.appendResult(new MessageModel("Memory analyzing ..."));
         try {
-            List<MemoryInfo> memoryInfos = MemoryAnalyzer.analyze(!notSkipZero);
+            List<MemoryInfo> memoryInfos = MemoryAnalyzer.analyze(all);
             process.appendResult(new MessageModel("Memory analyze finished"));
             for (MemoryInfo memoryInfo : memoryInfos) {
                 process.appendResult(new MessageModel(memoryInfo.toString()));

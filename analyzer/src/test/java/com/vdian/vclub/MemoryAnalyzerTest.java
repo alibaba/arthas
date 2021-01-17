@@ -62,7 +62,7 @@ public class MemoryAnalyzerTest {
     @Test
     public void test02() {
         long start = System.currentTimeMillis();
-        List<MemoryInfo> list = MemoryAnalyzer.analyze(true);
+        List<MemoryInfo> list = MemoryAnalyzer.analyze(false);
         long end = System.currentTimeMillis();
         for (MemoryInfo info : list) {
             System.out.println(info);
@@ -73,7 +73,7 @@ public class MemoryAnalyzerTest {
     @Test
     public void test03() {
         long start = System.currentTimeMillis();
-        List<MemoryInfo> list = MemoryAnalyzer.analyze(false);
+        List<MemoryInfo> list = MemoryAnalyzer.analyze(true);
         long end = System.currentTimeMillis();
         for (MemoryInfo info : list) {
             System.out.println(info);
