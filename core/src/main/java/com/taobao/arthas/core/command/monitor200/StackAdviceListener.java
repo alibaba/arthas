@@ -64,6 +64,10 @@ public class StackAdviceListener extends AdviceListenerAdapter {
                 // TODO: concurrency issues for process.write
                 // TODO: should clear stackThreadLocal?
                 StackModel stackModel = stackThreadLocal.get();
+                if (stackModel == null) {
+                    stackModel = ThreadUtil.getThreadStackModel(advice.getLoader(), Thread.currentThread());
+                    stackThreadLocal.set(stackModel);
+                }
                 stackModel.setTs(new Date());
                 process.appendResult(stackModel);
                 process.times().incrementAndGet();
