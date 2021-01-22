@@ -506,6 +506,7 @@ OK
 ![喜百年供应链科技](static/xbn.png)
 ![折耳根科技](static/zheergen.png)
 ![钱大妈](static/qdm_logo.png)
+![有赞](static/youzan.png)
 
 ### 洐生项目
 
