@@ -126,3 +126,26 @@ Welcome to register the company name in this issue: https://github.com/alibaba/a
 ![折耳根科技](static/zheergen.png)
 ![qdama](static/qdm_logo.png)
 ![有赞](static/youzan.png)
+
+* 网易云
+* 派迩信息技术
+* 朴新教育
+* OK智慧教育
+* 云集
+* 业余草科技
+* 家家顺
+* 兰亮
+* 浪潮集团
+* 福建博思软件
+* OPPO
+* 中科软科技
+* 大搜车
+* 泰豪软件
+* 中房
+* 安恒信息
+* 武汉力龙
+* 埃欧体科技
+* 创维
+* 启迪出行
+* 大华股份
+* 黄豆伟业
