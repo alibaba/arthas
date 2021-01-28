@@ -34,9 +34,4 @@ public class EmbeddedRedisConfiguration {
         RedisServer redisServer = builder.build();
         return redisServer;
     }
-
-    public static void main(String[] args) {
-        RedisServer redisServer = new RedisServer();
-        redisServer.start();
-    }
 }
