@@ -28,8 +28,8 @@ Contents
 --------
 
 * [首页](https://arthas.aliyun.com/)
-* [招聘！](https://mp.weixin.qq.com/s/k5jozrSgmyH0tcQfrDkxUQ)
-* [技术征文!](https://developer.aliyun.com/article/751641)
+* [2022实习生招聘!](https://mp.weixin.qq.com/s/jfjvBmrKmHDdKn-Iez-c4Q)
+* [技术分享征文!](https://developer.aliyun.com/article/751641)
 * [English Docs](https://arthas.aliyun.com/doc/en/)
 * [在线教程(katacoda)](https://arthas.aliyun.com/doc/arthas-tutorials.html?language=cn)
 * [在线教程(阿里云)](https://start.aliyun.com/handson-lab/#!category=arthas)
