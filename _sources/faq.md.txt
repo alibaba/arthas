@@ -73,4 +73,4 @@ watch demo.MathGame <init> '{params,returnObj,throwExp}' -v -n 5 -x 3 '1==1'
 
 ##### Arthas能不能离线使用
 
-可以。下载全量包解压即可，参考: [download.md]。
+可以。下载全量包解压即可，参考: [下载](download.md)。

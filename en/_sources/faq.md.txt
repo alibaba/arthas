@@ -74,4 +74,4 @@ For example: use skywalking V8.1.0 below [cannot trace, watch classes enhanced b
 
 ##### Can I use arthas offline?
 
-Yes. Just download the full size package and unzip it, refer to: [download.md].
+Yes. Just download the full size package and unzip it, refer to: [Download](download.md).
