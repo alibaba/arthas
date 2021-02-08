@@ -127,6 +127,7 @@
 <li class="toctree-l2"><a class="reference internal" href="#id2">方法同名过滤</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#watchtrace">怎么watch、trace 构造函数 ？</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#java-lang-classformaterror-nullskywalking-arthas">java.lang.ClassFormatError: null、skywalking arthas 兼容使用</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#arthas">Arthas能不能离线使用</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas">Star me at GitHub</a></li>
@@ -255,6 +256,10 @@
 <h2>java.lang.ClassFormatError: null、skywalking arthas 兼容使用<a class="headerlink" href="#java-lang-classformaterror-nullskywalking-arthas" title="永久链接至标题">¶</a></h2>
 <p>当出现这个错误日志<code class="docutils literal notranslate"><span class="pre">java.lang.ClassFormatError:</span> <span class="pre">null</span></code>,通常情况下都是被其他字节码工具修改过与arthas修改字节码不兼容。</p>
 <p>比如: 使用 skywalking V8.1.0 以下版本 <a class="reference external" href="https://github.com/alibaba/arthas/issues/1141">无法trace、watch 被skywalking agent 增强过的类</a>, V8.1.0 以上版本可以兼容使用,更多参考skywalking配置 <a class="reference external" href="https://github.com/apache/skywalking/blob/v8.1.0/docs/en/FAQ/Compatible-with-other-javaagent-bytecode-processing">skywalking compatible with other javaagent bytecode processing</a>。</p>
+</div>
+<div class="section" id="arthas">
+<h2>Arthas能不能离线使用<a class="headerlink" href="#arthas" title="永久链接至标题">¶</a></h2>
+<p>可以。下载全量包解压即可，参考: [download.md]。</p>
 </div>
 </div>
 

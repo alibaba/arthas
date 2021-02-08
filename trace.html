@@ -146,6 +146,7 @@
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="#id9">动态trace</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id10">trace结果时间不准确问题</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="stack.html">stack</a></li>
@@ -449,6 +450,39 @@ Affect(class count: 1 , method count: 1) cost in 34 ms, listenerId: 1</pre></div
         `---[0.084025ms] demo.MathGame:print() #25</pre></div>
 </div>
 <p>通过指定<code class="docutils literal notranslate"><span class="pre">listenerId</span></code>的方式动态trace，可以不断深入。另外 <code class="docutils literal notranslate"><span class="pre">watch</span></code>/<code class="docutils literal notranslate"><span class="pre">tt</span></code>/<code class="docutils literal notranslate"><span class="pre">monitor</span></code>等命令也支持类似的功能。</p>
+</div>
+<div class="section" id="id10">
+<h2>trace结果时间不准确问题<a class="headerlink" href="#id10" title="永久链接至标题">¶</a></h2>
+<p>比如下面的结果里：<code class="docutils literal notranslate"><span class="pre">0.705196</span> <span class="pre">&gt;</span> <span class="pre">(0.152743</span> <span class="pre">+</span>&#160; <span class="pre">0.145825)</span></code></p>
+<div class="highlight-bash notranslate"><div class="highlight hljs"><pre class="bash">$ trace demo.MathGame run -n 1
+Press Q or Ctrl+C to abort.
+Affect(class count: 1 , method count: 1) cost in 66 ms, listenerId: 1
+`---ts=2021-02-08 11:27:36;thread_name=main;id=1;is_daemon=false;priority=5;TCCL=sun.misc.Launcher$AppClassLoader@232204a1
+    `---[0.705196ms] demo.MathGame:run()
+        +---[0.152743ms] demo.MathGame:primeFactors() #24
+        `---[0.145825ms] demo.MathGame:print() #25</pre></div>
+</div>
+<p>那么其它的时间消耗在哪些地方？</p>
+<ol>
+<li><p>没有被trace到的函数。比如<code class="docutils literal notranslate"><span class="pre">java.*</span></code> 下的函数调用默认会忽略掉。通过增加<code class="docutils literal notranslate"><span class="pre">--skipJDKMethod</span> <span class="pre">false</span></code>参数可以打印出来。</p>
+<div class="highlight-bash notranslate"><div class="highlight hljs"><pre class="bash">$ trace demo.MathGame run --skipJDKMethod false
+Press Q or Ctrl+C to abort.
+Affect(class count: 1 , method count: 1) cost in 35 ms, listenerId: 2
+`---ts=2021-02-08 11:27:48;thread_name=main;id=1;is_daemon=false;priority=5;TCCL=sun.misc.Launcher$AppClassLoader@232204a1
+    `---[0.810591ms] demo.MathGame:run()
+        +---[0.034568ms] java.util.Random:nextInt() #23
+        +---[0.119367ms] demo.MathGame:primeFactors() #24 [throws Exception]
+        +---[0.017407ms] java.lang.StringBuilder:&lt;init&gt;() #28
+        +---[0.127922ms] java.lang.String:format() #57
+        +---[min=0.01419ms,max=0.020221ms,total=0.034411ms,count=2] java.lang.StringBuilder:append() #57
+        +---[0.021911ms] java.lang.Exception:getMessage() #57
+        +---[0.015643ms] java.lang.StringBuilder:toString() #57
+        `---[0.086622ms] java.io.PrintStream:println() #57</pre></div>
+</div>
+</li>
+<li><p>非函数调用的指令消耗。比如 <code class="docutils literal notranslate"><span class="pre">i++</span></code>, <code class="docutils literal notranslate"><span class="pre">getfield</span></code>等指令。</p></li>
+<li><p>在代码执行过程中，JVM可能出现停顿，比如GC，进入同步块等。</p></li>
+</ol>
 </div>
 </div>
 

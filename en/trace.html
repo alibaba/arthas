@@ -141,6 +141,7 @@
 <li class="toctree-l4"><a class="reference internal" href="#dynamic-trace">Dynamic trace</a></li>
 </ul>
 </li>
+<li class="toctree-l3"><a class="reference internal" href="#trace-result-time-inaccuracy-problem">Trace result time inaccuracy problem</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="stack.html">stack</a></li>
@@ -444,6 +445,39 @@ Affect(class count: 1 , method count: 1) cost in 34 ms, listenerId: 1</pre></div
 </div>
 <p>Dynamic trace by specifying <code class="docutils literal notranslate"><span class="pre">listenerId</span></code>, you can go deeper and deeper. In addition, commands such as <code class="docutils literal notranslate"><span class="pre">watch</span></code>/<code class="docutils literal notranslate"><span class="pre">tt</span></code>/<code class="docutils literal notranslate"><span class="pre">monitor</span></code> also support similar functionality.</p>
 </div>
+</div>
+<div class="section" id="trace-result-time-inaccuracy-problem">
+<h2>Trace result time inaccuracy problem<a class="headerlink" href="#trace-result-time-inaccuracy-problem" title="Permalink to this headline">¶</a></h2>
+<p>For example, in the following result: <code class="docutils literal notranslate"><span class="pre">0.705196</span> <span class="pre">&gt;</span> <span class="pre">(0.152743</span> <span class="pre">+</span> <span class="pre">0.145825)</span></code></p>
+<div class="highlight-bash notranslate"><div class="highlight hljs"><pre class="bash">$ trace demo.MathGame run -n 1
+Press Q or Ctrl+C to abort.
+Affect(class count: 1 , method count: 1) cost in 66 ms, listenerId: 1
+`---ts=2021-02-08 11:27:36;thread_name=main;id=1;is_daemon=false;priority=5;TCCL=sun.misc.Launcher$AppClassLoader@232204a1
+    `--[0.705196ms] demo.MathGame:run()
+        +---[0.152743ms] demo.MathGame:primeFactors() #24
+        `--[0.145825ms] demo.MathGame:print() #25</pre></div>
+</div>
+<p>So where is the rest of the time consumed?</p>
+<ol>
+<li><p>Methods that are not traced to. For example, methods under <code class="docutils literal notranslate"><span class="pre">java.*</span></code> are ignored by default. This can be printed out by adding the <code class="docutils literal notranslate"><span class="pre">-skipJDKMethod</span> <span class="pre">false</span></code> parameter.</p>
+<div class="highlight-bash notranslate"><div class="highlight hljs"><pre class="bash">$ trace demo.MathGame run --skipJDKMethod false
+Press Q or Ctrl+C to abort.
+Affect(class count: 1 , method count: 1) cost in 35 ms, listenerId: 2
+`---ts=2021-02-08 11:27:48;thread_name=main;id=1;is_daemon=false;priority=5;TCCL=sun.misc.Launcher$AppClassLoader@232204a1
+    `--[0.810591ms] demo.MathGame:run()
+        +--[0.034568ms] java.util.Random:nextInt() #23
+        +---[0.119367ms] demo.MathGame:timeFactors() #24 [throws Exception]
+        +---[0.017407ms] java.lang.StringBuilder:&lt;init&gt;() #28
+        +--[0.127922ms] java.lang.String:format() #57
+        +---[min=0.01419ms,max=0.020221ms,total=0.034411ms,count=2] java.lang.StringBuilder:append() #57
+        +--[0.021911ms] java.lang.Exception:getMessage() #57
+        +---[0.015643ms] java.lang.StringBuilder:toString() #57
+        `--[0.086622ms] java.io.PrintStream:println() #57</pre></div>
+</div>
+</li>
+<li><p>Instruction consumption. For example, instructions such as <code class="docutils literal notranslate"><span class="pre">i++</span></code>, <code class="docutils literal notranslate"><span class="pre">getfield</span></code>, etc.</p></li>
+<li><p>Possible JVM pause during code execution, such as GC, entering synchronization blocks, etc.</p></li>
+</ol>
 </div>
 </div>
 

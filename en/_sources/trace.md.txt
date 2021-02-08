@@ -200,3 +200,41 @@ At terminal 1, you can see that the trace result has increased by one layer:
 ```
 
 Dynamic trace by specifying `listenerId`, you can go deeper and deeper. In addition, commands such as `watch`/`tt`/`monitor` also support similar functionality.
+
+
+### Trace result time inaccuracy problem
+
+For example, in the following result: `0.705196 > (0.152743 + 0.145825)`
+
+```bash
+$ trace demo.MathGame run -n 1
+Press Q or Ctrl+C to abort.
+Affect(class count: 1 , method count: 1) cost in 66 ms, listenerId: 1
+`---ts=2021-02-08 11:27:36;thread_name=main;id=1;is_daemon=false;priority=5;TCCL=sun.misc.Launcher$AppClassLoader@232204a1
+    `--[0.705196ms] demo.MathGame:run()
+        +---[0.152743ms] demo.MathGame:primeFactors() #24
+        `--[0.145825ms] demo.MathGame:print() #25
+```
+
+So where is the rest of the time consumed?
+
+1. Methods that are not traced to. For example, methods under `java.*` are ignored by default. This can be printed out by adding the `-skipJDKMethod false` parameter.
+
+    ```bash
+    $ trace demo.MathGame run --skipJDKMethod false
+    Press Q or Ctrl+C to abort.
+    Affect(class count: 1 , method count: 1) cost in 35 ms, listenerId: 2
+    `---ts=2021-02-08 11:27:48;thread_name=main;id=1;is_daemon=false;priority=5;TCCL=sun.misc.Launcher$AppClassLoader@232204a1
+        `--[0.810591ms] demo.MathGame:run()
+            +--[0.034568ms] java.util.Random:nextInt() #23
+            +---[0.119367ms] demo.MathGame:timeFactors() #24 [throws Exception]
+            +---[0.017407ms] java.lang.StringBuilder:<init>() #28
+            +--[0.127922ms] java.lang.String:format() #57
+            +---[min=0.01419ms,max=0.020221ms,total=0.034411ms,count=2] java.lang.StringBuilder:append() #57
+            +--[0.021911ms] java.lang.Exception:getMessage() #57
+            +---[0.015643ms] java.lang.StringBuilder:toString() #57
+            `--[0.086622ms] java.io.PrintStream:println() #57
+    ```
+2. Instruction consumption. For example, instructions such as `i++`, `getfield`, etc.
+
+3. Possible JVM pause during code execution, such as GC, entering synchronization blocks, etc.
