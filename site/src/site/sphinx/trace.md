@@ -204,3 +204,41 @@ Affect(class count: 1 , method count: 1) cost in 34 ms, listenerId: 1
 ```
 
 通过指定`listenerId`的方式动态trace，可以不断深入。另外 `watch`/`tt`/`monitor`等命令也支持类似的功能。
+
+
+### trace结果时间不准确问题
+
+比如下面的结果里：`0.705196 > (0.152743 +  0.145825)`
+
+```bash
+$ trace demo.MathGame run -n 1
+Press Q or Ctrl+C to abort.
+Affect(class count: 1 , method count: 1) cost in 66 ms, listenerId: 1
+`---ts=2021-02-08 11:27:36;thread_name=main;id=1;is_daemon=false;priority=5;TCCL=sun.misc.Launcher$AppClassLoader@232204a1
+    `---[0.705196ms] demo.MathGame:run()
+        +---[0.152743ms] demo.MathGame:primeFactors() #24
+        `---[0.145825ms] demo.MathGame:print() #25
+```
+
+那么其它的时间消耗在哪些地方？
+
+1. 没有被trace到的函数。比如`java.*` 下的函数调用默认会忽略掉。通过增加`--skipJDKMethod false`参数可以打印出来。
+
+    ```bash
+    $ trace demo.MathGame run --skipJDKMethod false
+    Press Q or Ctrl+C to abort.
+    Affect(class count: 1 , method count: 1) cost in 35 ms, listenerId: 2
+    `---ts=2021-02-08 11:27:48;thread_name=main;id=1;is_daemon=false;priority=5;TCCL=sun.misc.Launcher$AppClassLoader@232204a1
+        `---[0.810591ms] demo.MathGame:run()
+            +---[0.034568ms] java.util.Random:nextInt() #23
+            +---[0.119367ms] demo.MathGame:primeFactors() #24 [throws Exception]
+            +---[0.017407ms] java.lang.StringBuilder:<init>() #28
+            +---[0.127922ms] java.lang.String:format() #57
+            +---[min=0.01419ms,max=0.020221ms,total=0.034411ms,count=2] java.lang.StringBuilder:append() #57
+            +---[0.021911ms] java.lang.Exception:getMessage() #57
+            +---[0.015643ms] java.lang.StringBuilder:toString() #57
+            `---[0.086622ms] java.io.PrintStream:println() #57
+    ```
+2. 非函数调用的指令消耗。比如 `i++`, `getfield`等指令。
+
+3. 在代码执行过程中，JVM可能出现停顿，比如GC，进入同步块等。
