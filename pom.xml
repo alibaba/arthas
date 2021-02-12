@@ -198,7 +198,7 @@
     </profiles>
 
     <properties>
-        <revision>3.4.6</revision>
+        <revision>3.4.7-SNAPSHOT</revision>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.compiler.target>1.6</maven.compiler.target>
         <maven.compiler.source>1.6</maven.compiler.source>
@@ -207,6 +207,7 @@
         <jacoco.skip>${skipTests}</jacoco.skip>
         <project.build.outputTimestamp>2020-09-27T15:10:43Z</project.build.outputTimestamp>
         <lifecycle-mapping.version>1.0.0</lifecycle-mapping.version>
+        <netty.version>4.1.59.Final</netty.version>
     </properties>
 
     <dependencyManagement>
@@ -214,12 +215,12 @@
             <dependency>
                 <groupId>com.alibaba</groupId>
                 <artifactId>bytekit-core</artifactId>
-                <version>0.0.4</version>
+                <version>0.0.5-SNAPSHOT</version>
             </dependency>
             <dependency>
                 <groupId>org.benf</groupId>
                 <artifactId>cfr</artifactId>
-                <version>0.150</version>
+                <version>0.151</version>
             </dependency>
             <dependency>
                 <groupId>com.alibaba.middleware</groupId>
@@ -298,27 +299,27 @@
             <dependency>
                 <groupId>io.netty</groupId>
                 <artifactId>netty-common</artifactId>
-                <version>4.1.46.Final</version>
+                <version>${netty.version}</version>
             </dependency>
             <dependency>
                 <groupId>io.netty</groupId>
                 <artifactId>netty-buffer</artifactId>
-                <version>4.1.46.Final</version>
+                <version>${netty.version}</version>
             </dependency>
             <dependency>
                 <groupId>io.netty</groupId>
                 <artifactId>netty-handler</artifactId>
-                <version>4.1.46.Final</version>
+                <version>${netty.version}</version>
             </dependency>
             <dependency>
                 <groupId>io.netty</groupId>
                 <artifactId>netty-transport</artifactId>
-                <version>4.1.46.Final</version>
+                <version>${netty.version}</version>
             </dependency>
             <dependency>
                 <groupId>io.netty</groupId>
                 <artifactId>netty-codec-http</artifactId>
-                <version>4.1.46.Final</version>
+                <version>${netty.version}</version>
             </dependency>
 
             <dependency>
