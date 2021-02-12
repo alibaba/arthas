@@ -4,7 +4,6 @@ import com.taobao.arthas.common.AnsiLog;
 import com.taobao.arthas.common.OSUtils;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
-import org.springframework.util.StringUtils;
 import org.zeroturnaround.zip.ZipUtil;
 
 import javax.servlet.ServletContext;
@@ -30,7 +29,7 @@ public class JvmUtils {
         } else if (OSUtils.isWindows()) {
             //todo
         }
-        if (StringUtils.isEmpty(so)) {
+        if (null == so) {
             throw new Error("MemoryAnalyzer is not supported in your operating system!");
         }
         return so;
