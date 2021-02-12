@@ -71,6 +71,7 @@
         <module>testcase</module>
         <module>site</module>
         <module>packaging</module>
+        <module>arthas-beans</module>
     </modules>
 
     <profiles>

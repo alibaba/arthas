@@ -1,0 +1,1 @@
+/Library/Developer/CommandLineTools/usr/bin/c++ -g -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX10.15.sdk -dynamiclib -Wl,-headerpad_max_install_names  -o libjni-lib.dylib -install_name @rpath/libjni-lib.dylib CMakeFiles/jni-lib.dir/jni-library.cpp.o 
