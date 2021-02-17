@@ -71,6 +71,7 @@
         <module>testcase</module>
         <module>site</module>
         <module>packaging</module>
+        <module>web-client</module>
     </modules>
 
     <profiles>
@@ -199,8 +200,8 @@
     <properties>
         <revision>3.4.7-SNAPSHOT</revision>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <maven.compiler.target>1.6</maven.compiler.target>
-        <maven.compiler.source>1.6</maven.compiler.source>
+        <maven.compiler.target>8</maven.compiler.target>
+        <maven.compiler.source>8</maven.compiler.source>
         <spring-boot.version>2.3.1.RELEASE</spring-boot.version>
         <maven-invoker-plugin.version>3.0.0</maven-invoker-plugin.version>
         <jacoco.skip>${skipTests}</jacoco.skip>

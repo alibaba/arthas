@@ -1,0 +1,51 @@
+{
+  "name": "tail-demo",
+  "version": "0.1.0",
+  "private": true,
+  "dependencies": {
+    "react": "^17.0.1",
+    "react-dom": "^17.0.1",
+    "xterm": "^4.10.0",
+    "xterm-addon-attach": "^0.6.0",
+    "xterm-addon-fit": "^0.5.0"
+  },
+  "scripts": {
+    "start": "run-p watch:css react-scripts:start",
+    "build": "run-s build:css react-scripts:build",
+    "test": "react-scripts test",
+    "eject": "react-scripts eject",
+    "build:css": "cross-env NODE_ENV=production postcss src/styles/tailwind.css -o src/styles/index.css",
+    "watch:css": "cross-env NODE_ENV=development postcss src/styles/tailwind.css -o src/styles/index.css --watch",
+    "react-scripts:start": "sleep 5 && react-scripts start",
+    "react-scripts:build": "react-scripts build"
+  },
+  "eslintConfig": {
+    "extends": "react-app"
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  },
+  "devDependencies": {
+    "@types/node": "^14.14.25",
+    "@types/react": "^17.0.1",
+    "@types/react-dom": "^17.0.0",
+    "autoprefixer": "10.x",
+    "cross-env": "^7.0.3",
+    "npm-run-all": "^4.1.5",
+    "postcss": "8.x",
+    "postcss-cli": "8.x",
+    "postcss-preset-env": "6.x",
+    "react-scripts": "4.0.2",
+    "tailwindcss": "2.x",
+    "typescript": "4.x"
+  }
+}
