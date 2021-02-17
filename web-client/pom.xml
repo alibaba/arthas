@@ -11,7 +11,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <properties>
-        <frontend-maven.version>1.9.1</frontend-maven.version>
+        <frontend-maven.version>1.1</frontend-maven.version>
         <npm.registry.url>https://registry.npm.taobao.org/</npm.registry.url>
         <node.download.url>https://npm.taobao.org/mirrors/node/</node.download.url>
     </properties>
