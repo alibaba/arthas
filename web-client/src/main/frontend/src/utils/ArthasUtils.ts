@@ -11,18 +11,9 @@ const openInNewTab = (url: string) => {
 }
 
 const getUrlParam = (name: string): string | null => {
-    const url = window.location.href;
-    name = name.replace(/[\[\]]/g, '\\$&');
-    let regex = new RegExp('[?&]' + name + '(=([^&#]*)|&|#|$)');
-    let results = regex.exec(url);
-    if (!results) {
-        return null;
-    }
-    if (!results[2]) {
-        return '';
-    }
-
-    return decodeURIComponent(results[2].replace(/\+/g, ' '));
+    const queryString = window.location.search;
+    const urlParams = new URLSearchParams(queryString);
+    return urlParams.get(name);
 }
 
 const fullScreen = (ele: any) => {
