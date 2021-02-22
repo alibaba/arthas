@@ -20,11 +20,13 @@ import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelPromise;
 import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.handler.codec.base64.Base64;
-import io.netty.handler.codec.base64.Base64Encoder;
 import io.netty.handler.codec.http.QueryStringDecoder;
 import io.netty.handler.codec.http.QueryStringEncoder;
+import io.netty.handler.codec.http.websocketx.PingWebSocketFrame;
 import io.netty.handler.codec.http.websocketx.TextWebSocketFrame;
 import io.netty.handler.codec.http.websocketx.WebSocketFrame;
+import io.netty.handler.timeout.IdleState;
+import io.netty.handler.timeout.IdleStateEvent;
 import io.netty.util.CharsetUtil;
 
 /**
@@ -150,6 +152,15 @@ public class TunnelClientSocketClientHandler extends SimpleChannelInboundHandler
                 }
             }
         }, tunnelClient.getReconnectDelay(), TimeUnit.SECONDS);
+    }
+
+    @Override
+    public void userEventTriggered(ChannelHandlerContext ctx, Object evt) throws Exception {
+        if (evt instanceof IdleStateEvent) {
+            ctx.writeAndFlush(new PingWebSocketFrame());
+        } else {
+            super.userEventTriggered(ctx, evt);
+        }
     }
 
     @Override
