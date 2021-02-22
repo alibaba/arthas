@@ -234,7 +234,7 @@
             <dependency>
                 <groupId>org.slf4j</groupId>
                 <artifactId>slf4j-api</artifactId>
-                <version>1.7.25</version>
+                <version>1.7.30</version>
             </dependency>
             <dependency>
                 <groupId>ch.qos.logback</groupId>
@@ -249,7 +249,7 @@
             <dependency>
                 <groupId>com.alibaba.arthas</groupId>
                 <artifactId>arthas-repackage-logger</artifactId>
-                <version>0.0.6</version>
+                <version>0.0.8</version>
             </dependency>
             <dependency>
                 <groupId>com.alibaba</groupId>
