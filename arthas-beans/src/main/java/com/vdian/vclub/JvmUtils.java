@@ -13,7 +13,7 @@ import java.util.LinkedList;
  */
 public class JvmUtils {
 
-    private final static String LIB_NAME = "jnilibrary";
+    private final static String LIB_NAME = "ArthasJniLibrary";
 
     static {
         try {
