@@ -181,6 +181,7 @@ public class ArthasBootstrap {
         this.resultViewResolver = new ResultViewResolver();
 
         this.historyManager = new HistoryManagerImpl();
+        this.historyManager.loadHistory();
     }
 
     private void initSpy() throws Throwable {
@@ -480,6 +481,9 @@ public class ArthasBootstrap {
         if (sessionManager != null) {
             sessionManager.close();
             sessionManager = null;
+        }
+        if (historyManager != null) {
+            historyManager.saveHistory();
         }
         if (timer != null) {
             timer.cancel();

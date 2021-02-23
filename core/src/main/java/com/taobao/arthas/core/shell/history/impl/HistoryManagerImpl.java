@@ -1,5 +1,7 @@
 package com.taobao.arthas.core.shell.history.impl;
 
+import com.alibaba.arthas.deps.org.slf4j.Logger;
+import com.alibaba.arthas.deps.org.slf4j.LoggerFactory;
 import com.taobao.arthas.core.shell.history.HistoryManager;
 import com.taobao.arthas.core.util.Constants;
 import com.taobao.arthas.core.util.FileUtils;
@@ -17,6 +19,8 @@ public class HistoryManagerImpl implements HistoryManager {
      */
     private static final int MAX_HISTORY_SIZE = 500;
 
+    private static final Logger logger = LoggerFactory.getLogger(HistoryManagerImpl.class);
+
     private List<String> history = new ArrayList<String>();
 
     public HistoryManagerImpl() {
@@ -24,12 +28,20 @@ public class HistoryManagerImpl implements HistoryManager {
 
     @Override
     public void saveHistory() {
-        FileUtils.saveCommandHistoryString(history, new File(Constants.CMD_HISTORY_FILE));
+        try {
+            FileUtils.saveCommandHistoryString(history, new File(Constants.CMD_HISTORY_FILE));
+        } catch (Throwable e) {
+            logger.error("save command history failed", e);
+        }
     }
 
     @Override
     public void loadHistory() {
-        history = FileUtils.loadCommandHistoryString(new File(Constants.CMD_HISTORY_FILE));
+        try {
+            history = FileUtils.loadCommandHistoryString(new File(Constants.CMD_HISTORY_FILE));
+        } catch (Throwable e) {
+            logger.error("load command history failed", e);
+        }
     }
 
     @Override

@@ -586,7 +586,6 @@ public class HttpApiHandler {
 
     private Job createJob(String line, Session session, ResultDistributor resultDistributor) {
         historyManager.addHistory(line);
-        historyManager.saveHistory();
         return createJob(CliTokens.tokenize(line), session, resultDistributor);
     }
 
