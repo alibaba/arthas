@@ -2,6 +2,7 @@ package com.taobao.arthas.core.command.klass100;
 
 import com.alibaba.arthas.deps.org.slf4j.Logger;
 import com.alibaba.arthas.deps.org.slf4j.LoggerFactory;
+import com.taobao.arthas.common.Pair;
 import com.taobao.arthas.core.command.Constants;
 import com.taobao.arthas.core.command.model.ClassVO;
 import com.taobao.arthas.core.command.model.ClassLoaderVO;
@@ -32,6 +33,7 @@ import java.lang.instrument.Instrumentation;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.NavigableMap;
 import java.util.Set;
 import java.util.Collection;
 import java.util.regex.Pattern;
@@ -177,7 +179,8 @@ public class JadCommand extends AnnotatedCommand {
             Map<Class<?>, File> classFiles = transformer.getDumpResult();
             File classFile = classFiles.get(c);
 
-            String source = Decompiler.decompile(classFile.getAbsolutePath(), methodName, hideUnicode, lineNumber);
+            Pair<String,NavigableMap<Integer,Integer>> decompileResult = Decompiler.decompileWithMappings(classFile.getAbsolutePath(), methodName, hideUnicode, lineNumber);
+            String source = decompileResult.getFirst();
             if (source != null) {
                 source = pattern.matcher(source).replaceAll("");
             } else {
@@ -186,6 +189,7 @@ public class JadCommand extends AnnotatedCommand {
 
             JadModel jadModel = new JadModel();
             jadModel.setSource(source);
+            jadModel.setMappings(decompileResult.getSecond());
             if (!this.sourceOnly) {
                 jadModel.setClassInfo(ClassUtils.createSimpleClassInfo(c));
                 jadModel.setLocation(ClassUtils.getCodeSource(c.getProtectionDomain().getCodeSource()));

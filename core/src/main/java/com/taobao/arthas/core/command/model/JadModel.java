@@ -1,15 +1,17 @@
 package com.taobao.arthas.core.command.model;
 
 import java.util.Collection;
-import java.util.List;
+import java.util.NavigableMap;
 
 /**
  * @author gongdewei 2020/4/22
+ * @author hengyunabc 2021-02-23
  */
 public class JadModel extends ResultModel {
     private ClassVO classInfo;
     private String location;
     private String source;
+    private NavigableMap<Integer,Integer> mappings;
     private Collection<ClassLoaderVO> matchedClassLoaders;
     private String classLoaderClass;
 
@@ -46,6 +48,14 @@ public class JadModel extends ResultModel {
 
     public void setSource(String source) {
         this.source = source;
+    }
+
+    public NavigableMap<Integer, Integer> getMappings() {
+        return mappings;
+    }
+
+    public void setMappings(NavigableMap<Integer, Integer> mappings) {
+        this.mappings = mappings;
     }
 
     public Collection<ClassVO> getMatchedClasses() {
