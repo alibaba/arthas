@@ -27,7 +27,7 @@ public class HistoryManagerImpl implements HistoryManager {
     }
 
     @Override
-    public void saveHistory() {
+    public synchronized void saveHistory() {
         try {
             FileUtils.saveCommandHistoryString(history, new File(Constants.CMD_HISTORY_FILE));
         } catch (Throwable e) {
@@ -36,7 +36,7 @@ public class HistoryManagerImpl implements HistoryManager {
     }
 
     @Override
-    public void loadHistory() {
+    public synchronized void loadHistory() {
         try {
             history = FileUtils.loadCommandHistoryString(new File(Constants.CMD_HISTORY_FILE));
         } catch (Throwable e) {
@@ -45,12 +45,12 @@ public class HistoryManagerImpl implements HistoryManager {
     }
 
     @Override
-    public void clearHistory() {
+    public synchronized void clearHistory() {
         this.history.clear();
     }
 
     @Override
-    public void addHistory(String commandLine) {
+    public synchronized void addHistory(String commandLine) {
         while (history.size() >= MAX_HISTORY_SIZE) {
             history.remove(0);
         }
@@ -58,14 +58,13 @@ public class HistoryManagerImpl implements HistoryManager {
     }
 
     @Override
-    public List<String> getHistory() {
-        return history;
+    public synchronized List<String> getHistory() {
+        return new ArrayList<String>(history);
     }
 
     @Override
-    public void setHistory(List<String> history) {
+    public synchronized void setHistory(List<String> history) {
         this.history = history;
     }
-
 
 }
