@@ -179,7 +179,6 @@ public class ArthasBootstrap {
 
     private void initBeans() {
         this.resultViewResolver = new ResultViewResolver();
-
         this.historyManager = new HistoryManagerImpl();
     }
 
