@@ -24,4 +24,6 @@ public class ArthasConstants {
     public static final String SPRING_APPLICATION_NAME = "spring.application.name";
 
     public static final int TELNET_PORT = 3658;
+
+    public static final int WEBSOCKET_IDLE_SECONDS = 60;
 }

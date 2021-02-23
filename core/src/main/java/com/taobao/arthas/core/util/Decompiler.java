@@ -8,10 +8,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.NavigableMap;
+import java.util.TreeMap;
 
 import org.benf.cfr.reader.api.CfrDriver;
 import org.benf.cfr.reader.api.OutputSinkFactory;
 import org.benf.cfr.reader.api.SinkReturns.LineNumberMapping;
+
+import com.taobao.arthas.common.Pair;
 
 /**
  *
@@ -28,17 +31,11 @@ public class Decompiler {
         return decompile(classFilePath, methodName, hideUnicode, true);
     }
 
-    /**
-     * @param classFilePath
-     * @param methodName
-     * @param hideUnicode
-     * @return
-     */
-    public static String decompile(String classFilePath, String methodName, boolean hideUnicode,
-            boolean printLineNumber) {
+    public static Pair<String, NavigableMap<Integer, Integer>> decompileWithMappings(String classFilePath,
+            String methodName, boolean hideUnicode, boolean printLineNumber) {
         final StringBuilder sb = new StringBuilder(8192);
 
-        final Map<Integer, Integer> lineMapping = new HashMap<Integer, Integer>();
+        final NavigableMap<Integer, Integer> lineMapping = new TreeMap<Integer, Integer>();
 
         OutputSinkFactory mySink = new OutputSinkFactory() {
             @Override
@@ -59,7 +56,7 @@ public class Decompiler {
                         if (sinkType == SinkType.LINENUMBER) {
                             LineNumberMapping mapping = (LineNumberMapping) sinkable;
                             NavigableMap<Integer, Integer> classFileMappings = mapping.getClassFileMappings();
-                            NavigableMap<Integer,Integer> mappings = mapping.getMappings();
+                            NavigableMap<Integer, Integer> mappings = mapping.getMappings();
                             if (classFileMappings != null && mappings != null) {
                                 for (Entry<Integer, Integer> entry : mappings.entrySet()) {
                                     Integer srcLineNumber = classFileMappings.get(entry.getKey());
@@ -91,11 +88,17 @@ public class Decompiler {
         toAnalyse.add(classFilePath);
         driver.analyse(toAnalyse);
 
-        String result = sb.toString();
+        String resultCode = sb.toString();
         if (printLineNumber && !lineMapping.isEmpty()) {
-            result = addLineNumber(result, lineMapping);
+            resultCode = addLineNumber(resultCode, lineMapping);
         }
-        return result;
+
+        return Pair.make(resultCode, lineMapping);
+    }
+
+    public static String decompile(String classFilePath, String methodName, boolean hideUnicode,
+            boolean printLineNumber) {
+        return decompileWithMappings(classFilePath, methodName, hideUnicode, printLineNumber).getFirst();
     }
 
     private static String addLineNumber(String src, Map<Integer, Integer> lineMapping) {

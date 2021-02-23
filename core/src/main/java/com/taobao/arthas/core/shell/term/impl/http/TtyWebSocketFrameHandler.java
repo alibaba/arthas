@@ -21,8 +21,10 @@ import io.netty.buffer.Unpooled;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.channel.group.ChannelGroup;
+import io.netty.handler.codec.http.websocketx.PingWebSocketFrame;
 import io.netty.handler.codec.http.websocketx.TextWebSocketFrame;
 import io.netty.handler.codec.http.websocketx.WebSocketServerProtocolHandler;
+import io.netty.handler.timeout.IdleStateEvent;
 import io.termd.core.function.Consumer;
 import io.termd.core.http.HttpTtyConnection;
 import io.termd.core.tty.TtyConnection;
@@ -87,6 +89,8 @@ public class TtyWebSocketFrameHandler extends SimpleChannelInboundHandler<TextWe
         }
       };
       handler.accept(conn);
+    } else if (evt instanceof IdleStateEvent) {
+      ctx.writeAndFlush(new PingWebSocketFrame());
     } else {
       super.userEventTriggered(ctx, evt);
     }
@@ -105,6 +109,7 @@ public class TtyWebSocketFrameHandler extends SimpleChannelInboundHandler<TextWe
     }
   }
 
+  @Override
   public void channelRead0(ChannelHandlerContext ctx, TextWebSocketFrame msg) throws Exception {
     conn.writeToDecoder(msg.text());
   }
