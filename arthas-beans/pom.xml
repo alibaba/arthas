@@ -12,6 +12,99 @@
     <artifactId>arthas-beans</artifactId>
     <name>arthas-beans</name>
 
+    <profiles>
+        <!-- linux -->
+        <profile>
+            <id>linux32</id>
+            <activation>
+                <property>
+                    <name>platform</name>
+                    <value>linux32</value>
+                </property>
+            </activation>
+            <properties>
+                <os_name>linux</os_name>
+                <os_arch_option>-m32</os_arch_option>
+                <lib_name>libjnilibrary.so</lib_name>
+            </properties>
+        </profile>
+        <profile>
+            <id>linux64</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+                <property>
+                    <name>platform</name>
+                    <value>linux64</value>
+                </property>
+            </activation>
+            <properties>
+                <os_name>linux</os_name>
+                <os_arch_option>-m64</os_arch_option>
+                <lib_name>libjnilibrary.so</lib_name>
+            </properties>
+        </profile>
+
+        <!-- windows -->
+        <profile>
+            <id>windows32</id>
+            <activation>
+                <property>
+                    <name>platform</name>
+                    <value>windows32</value>
+                </property>
+            </activation>
+            <properties>
+                <os_name>win32</os_name>
+                <os_arch_option>-m32</os_arch_option>
+                <lib_name>jnilibrary.dll</lib_name>
+            </properties>
+        </profile>
+        <profile>
+            <id>windows64</id>
+            <activation>
+                <property>
+                    <name>platform</name>
+                    <value>windows64</value>
+                </property>
+            </activation>
+            <properties>
+                <os_name>win32</os_name>
+                <os_arch_option>-m64</os_arch_option>
+                <lib_name>jnilibrary.dll</lib_name>
+            </properties>
+        </profile>
+
+        <!-- macos -->
+        <profile>
+            <id>macos32</id>
+            <activation>
+                <property>
+                    <name>platform</name>
+                    <value>macos32</value>
+                </property>
+            </activation>
+            <properties>
+                <os_name>darwin</os_name>
+                <os_arch_option>-m32</os_arch_option>
+                <lib_name>libjnilibrary.dylib</lib_name>
+            </properties>
+        </profile>
+        <profile>
+            <id>macos64</id>
+            <activation>
+                <property>
+                    <name>platform</name>
+                    <value>macos64</value>
+                </property>
+            </activation>
+            <properties>
+                <os_name>darwin</os_name>
+                <os_arch_option>-m64</os_arch_option>
+                <lib_name>libjnilibrary.dylib</lib_name>
+            </properties>
+        </profile>
+    </profiles>
+
     <build>
         <finalName>arthas-beans</finalName>
         <plugins>
@@ -19,11 +112,61 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
                 <configuration>
-                    <source>1.6</source>
-                    <target>1.6</target>
+                    <source>1.7</source>
+                    <target>1.7</target>
                     <encoding>UTF-8</encoding>
                     <showDeprecation>true</showDeprecation>
                 </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>native-maven-plugin</artifactId>
+                <version>1.0-alpha-11</version>
+                <extensions>true</extensions>
+                <configuration>
+                    <javahOS>${os_name}</javahOS>
+                    <sources>
+                        <source>
+                            <directory>src/main/native/src</directory>
+                            <fileNames>
+                                <fileName>jni-library.cpp</fileName>
+                            </fileNames>
+                        </source>
+                        <source>
+                            <directory>src/main/native/include</directory>
+                        </source>
+                    </sources>
+
+                    <compilerProvider>generic-classic</compilerProvider>
+                    <compilerExecutable>g++</compilerExecutable>
+                    <compilerStartOptions>
+                        <compilerStartOption>${os_arch_option}</compilerStartOption>
+                        <compilerStartOption>-fpic</compilerStartOption>
+                        <compilerStartOption>-shared</compilerStartOption>
+                        <compilerStartOption>-o</compilerStartOption>
+                    </compilerStartOptions>
+
+                    <linkerOutputDirectory>target</linkerOutputDirectory>
+                    <linkerExecutable>g++</linkerExecutable>
+                    <linkerStartOptions>
+                        <linkerStartOption>${os_arch_option}</linkerStartOption>
+                        <linkerStartOption>-shared</linkerStartOption>
+                    </linkerStartOptions>
+                    <linkerEndOptions>
+                        <linkerEndOption>-o ${project.build.directory}/classes/${lib_name}</linkerEndOption>
+                    </linkerEndOptions>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>javah</id>
+                        <phase>compile</phase>
+                        <goals>
+                            <goal>initialize</goal>
+                            <goal>compile</goal>
+                            <goal>link</goal>
+                        </goals>
+                    </execution>
+                </executions>
             </plugin>
         </plugins>
     </build>
@@ -35,20 +178,8 @@
             <version>${project.version}</version>
         </dependency>
         <dependency>
-            <groupId>javax.servlet</groupId>
-            <artifactId>javax.servlet-api</artifactId>
-            <version>3.1.0</version>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-core</artifactId>
-            <version>1.2.9</version>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.zeroturnaround</groupId>
-            <artifactId>zt-zip</artifactId>
+            <groupId>org.scijava</groupId>
+            <artifactId>native-lib-loader</artifactId>
         </dependency>
         <dependency>
             <groupId>junit</groupId>

@@ -1,4 +1,32 @@
-## 如果JvmUtils不支持您的系统或者在使用时遇到`java.lang.UnsatisfiedLinkError`
+# linux
+打64位linux包(默认)：
+```
+mvn clean compile package -DskipTests=true -Plinux64
+```
+打32位linux包：
+```
+mvn clean compile package -DskipTests=true -Plinux32
+```
+#macos
+打64位macos包
+```
+mvn clean compile package -DskipTests=true -Pmacos64
+```
+打32位macos包：
+```
+mvn clean compile package -DskipTests=true -Pmacos32
+```
+#windows
+打64位windows包：
+```
+mvn clean compile package -DskipTests=true -Pwindows64
+```
+打32位windows包：
+```
+mvn clean compile package -DskipTests=true -Pwindows32
+```
+
+#### 如果JvmUtils不支持您的系统或者在使用时遇到`java.lang.UnsatisfiedLinkError`
 
 1. 在您的系统上安装合适版本的g++编译器
 

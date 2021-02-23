@@ -1,13 +1,8 @@
 package com.vdian.vclub;
 
 import com.taobao.arthas.common.AnsiLog;
-import com.taobao.arthas.common.OSUtils;
-import org.springframework.core.io.Resource;
-import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
-import org.zeroturnaround.zip.ZipUtil;
+import org.scijava.nativelib.NativeLoader;
 
-import javax.servlet.ServletContext;
-import java.io.File;
 import java.util.LinkedList;
 
 /**
@@ -18,36 +13,11 @@ import java.util.LinkedList;
  */
 public class JvmUtils {
 
-    private static final PathMatchingResourcePatternResolver LOADER = new PathMatchingResourcePatternResolver();
-
-    private static String getSoLibName() throws Error {
-        String so = null;
-        if (OSUtils.isLinux()) {
-            so = "jni-lib-linux-x64.so";
-        } else if (OSUtils.isMac()) {
-            so = "jni-lib-macos-x64.so";
-        } else if (OSUtils.isWindows()) {
-            //todo
-        }
-        if (null == so) {
-            throw new Error("MemoryAnalyzer is not supported in your operating system!");
-        }
-        return so;
-    }
+    private final static String LIB_NAME = "jnilibrary";
 
     static {
         try {
-            String so = getSoLibName();
-            Resource[] resources = LOADER.getResources("classpath*:/cpp/" + so);
-            if (null == resources || resources.length == 0) {
-                throw new IllegalStateException("jni-lib not found !");
-            }
-            for (Resource resource : resources) {
-                try {
-                    System.load(resource.getURL().getPath());
-                } catch (Throwable ignored) {
-                }
-            }
+            NativeLoader.loadLibrary(LIB_NAME);
             AnsiLog.warn("checkResult->" + check() + ", jni-lib available !");
         } catch (Throwable t) {
             AnsiLog.error("load jni-lib failed:" + t.getMessage(), t);
@@ -92,32 +62,4 @@ public class JvmUtils {
         return getInstances(Class.class);
     }
 
-    public static String init(ServletContext servletContext) {
-        try {
-            String dirPath = servletContext.getRealPath("/WEB-INF/lib");
-            String jarPath = dirPath + "/" + getJarName(dirPath);
-            //解压到lib文件夹下
-            ZipUtil.unpack(new File(jarPath), new File(dirPath));
-            String so = getSoLibName();
-            AnsiLog.warn("try to load " + dirPath + "/cpp/" + so);
-            System.load(dirPath + "/cpp/" + so);
-            return check();
-        } catch (Throwable t) {
-            t.printStackTrace();
-            AnsiLog.error("load jni-lib failed with exception:{}", t.getMessage(), t);
-        }
-        return null;
-    }
-
-    private static String getJarName(String dirPath) {
-        File dir = new File(dirPath);
-        if (dir.exists()) {
-            for (String name : dir.list()) {
-                if (name.startsWith("arthas-beans-")) {
-                    return name;
-                }
-            }
-        }
-        return null;
-    }
 }

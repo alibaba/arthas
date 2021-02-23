@@ -2,7 +2,7 @@
 #include <jni.h>
 #include <jni_md.h>
 #include <jvmti.h>
-#include "head/com_vdian_vclub_JvmUtils.h"
+#include "com_vdian_vclub_JvmUtils.h"
 
 extern "C"
 JNIEXPORT jstring JNICALL
