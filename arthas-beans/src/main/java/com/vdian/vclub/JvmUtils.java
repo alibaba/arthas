@@ -6,18 +6,19 @@ import org.scijava.nativelib.NativeLoader;
 import java.util.LinkedList;
 
 /**
- * 如果是web环境，需要调用init方法。
- *
  * @author 1936978077@qq.com
  * @date 2021/02/12
  */
 public class JvmUtils {
 
-    private final static String LIB_NAME = "ArthasJniLibrary";
+    /**
+     * 不要修改jni-lib的名称
+     */
+    private final static String JNI_LIBRARY_NAME = "ArthasJniLibrary";
 
     static {
         try {
-            NativeLoader.loadLibrary(LIB_NAME);
+            NativeLoader.loadLibrary(JNI_LIBRARY_NAME);
             AnsiLog.warn("checkResult->" + check() + ", jni-lib available !");
         } catch (Throwable t) {
             AnsiLog.error("load jni-lib failed:" + t.getMessage(), t);

@@ -199,7 +199,9 @@
                     <linkerExecutable>g++</linkerExecutable>
                     <linkerStartOptions>
                         <linkerStartOption>${os_arch_option}</linkerStartOption>
+                        <linkerStartOption>-fpic</linkerStartOption>
                         <linkerStartOption>-shared</linkerStartOption>
+                        <linkerStartOption>-o</linkerStartOption>
                     </linkerStartOptions>
                     <linkerEndOptions>
                         <linkerEndOption>-o ${project.build.directory}/classes/${lib_name}</linkerEndOption>
