@@ -22,4 +22,5 @@ dependency-reduced-pom.xml
 pom.xml.versionsBackup
 .pmd
 **/.flattened-pom.xml
-/arthas-beans/src/main/resources/cpp/.idea
+**/.idea/**
+**/cmake-build-debug/**
