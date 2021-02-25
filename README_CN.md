@@ -396,7 +396,7 @@ Arthas有超过120家登记用户，[查看全部](USERS.md)。
 ![vipkid](static/vipkid.png)
 ![百度凤巢](static/baidufengchao.png)
 ![有赞](static/youzan.png)
-
+![泰康在线](static/taikang.png)
 
 ### 洐生项目
 
