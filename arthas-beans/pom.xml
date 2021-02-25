@@ -48,7 +48,7 @@
             <id>linux-x86_64</id>
             <activation>
                 <os>
-                    <family>unix</family>
+                    <name>linux</name>
                     <arch>x86_64</arch>
                 </os>
             </activation>
@@ -62,7 +62,7 @@
             <id>linux-amd64</id>
             <activation>
                 <os>
-                    <family>unix</family>
+                    <name>linux</name>
                     <arch>amd64</arch>
                 </os>
             </activation>

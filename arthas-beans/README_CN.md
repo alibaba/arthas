@@ -3,127 +3,40 @@
     <profiles>
         <!-- macos -->
         <profile>
-            <id>macos-x86</id>
+            <id>macos</id>
             <activation>
                 <os>
                     <family>mac</family>
-                    <arch>x86</arch>
                 </os>
             </activation>
             <properties>
-                <os_arch_name>macos</os_arch_name>
-                <include>darwin</include>
-                <os_arch_option>-m32</os_arch_option>
-                <lib_name>libJniLibrary.dylib</lib_name>
-            </properties>
-        </profile>
-        <profile>
-            <id>macos-x86_64</id>
-            <activation>
-                <os>
-                    <family>mac</family>
-                    <arch>x86_64</arch>
-                </os>
-            </activation>
-            <properties>
-                <os_arch_name>macos</os_arch_name>
-                <include>darwin</include>
-                <os_arch_option>-m64</os_arch_option>
-                <lib_name>libJniLibrary.dylib</lib_name>
-            </properties>
-        </profile>
-        <profile>
-            <id>macos-m1</id>
-            <activation>
-                <os>
-                    <family>mac</family>
-                    <arch>aarch64</arch>
-                </os>
-            </activation>
-            <properties>
-                <os_arch_name>macos</os_arch_name>
-                <include>darwin</include>
-                <os_arch_option>-m64</os_arch_option>
-                <lib_name>libJniLibrary.dylib</lib_name>
+                <os_family>macos</os_family>
             </properties>
         </profile>
 
         <!-- linux -->
         <profile>
-            <id>linux-x86</id>
+            <id>linux</id>
             <activation>
                 <os>
-                    <family>unix</family>
-                    <arch>x86</arch>
+                    <name>linux</name>
                 </os>
             </activation>
             <properties>
-                <os_arch_name>linux</os_arch_name>
-                <include>linux</include>
-                <os_arch_option>-m32</os_arch_option>
-                <lib_name>libJniLibrary.so</lib_name>
+                <os_family>linux</os_family>
             </properties>
         </profile>
-        <profile>
-            <id>linux-x86_64</id>
-            <activation>
-                <os>
-                    <family>unix</family>
-                    <arch>x86_64</arch>
-                </os>
-            </activation>
-            <properties>
-                <os_arch_name>linux</os_arch_name>
-                <include>linux</include>
-                <os_arch_option>-m64</os_arch_option>
-                <lib_name>libJniLibrary.so</lib_name>
-            </properties>
-        </profile>
-        <profile>
-            <id>linux-amd64</id>
-            <activation>
-                <os>
-                    <family>unix</family>
-                    <arch>amd64</arch>
-                </os>
-            </activation>
-            <properties>
-                <os_arch_name>linux</os_arch_name>
-                <include>linux</include>
-                <os_arch_option>-m64</os_arch_option>
-                <lib_name>libJniLibrary.so</lib_name>
-            </properties>
-        </profile>
-
+        
         <!-- windows -->
         <profile>
-            <id>windows-x86</id>
+            <id>windows</id>
             <activation>
                 <os>
                     <family>windows</family>
-                    <arch>x86</arch>
                 </os>
             </activation>
             <properties>
-                <os_arch_name>windows</os_arch_name>
-                <include>win32</include>
-                <os_arch_option>-m32</os_arch_option>
-                <lib_name>JniLibrary.dll</lib_name>
-            </properties>
-        </profile>
-        <profile>
-            <id>windows-x86_64</id>
-            <activation>
-                <os>
-                    <family>windows</family>
-                    <arch>x86_64</arch>
-                </os>
-            </activation>
-            <properties>
-                <os_arch_name>windows</os_arch_name>
-                <include>win32</include>
-                <os_arch_option>-m64</os_arch_option>
-                <lib_name>JniLibrary.dll</lib_name>
+                <os_family>windows</os_family>
             </properties>
         </profile>
     </profiles>
@@ -134,14 +47,16 @@ PS：一定要配置好profile，不然无法自动生成`<classifier>`
 <dependency>
     <groupId>com.taobao.arthas</groupId>
     <artifactId>mana-pool-analyzer</artifactId>
-    <version>${revision}</version>
-    <classifier>${os_arch_name}-${os.arch}</classifier>
+    <version>${arthas.vision}</version>
+    <classifier>${os_family}-${os.arch}</classifier>
 </dependency>
 ```
 
 ##step3 如果没有合适的版本
-1. 请先尝试`mvn clean compile package -DskipTests=true -U`把依赖安装到本地；
+1. 如果是32位的操作系统，不好意思，目前暂不支持。
 
-2. 如果报错，请先确保您本地的g++编译器能够正常工作，重新尝试`mvn clean compile package -DskipTests=true -U`；
+2. 如果是64位操作系统，请先尝试`mvn clean compile package -DskipTests=true -U`把依赖安装到本地；
+
+3. 如果报错，请先确保您本地的g++编译器能够正常工作，再重新尝试`mvn clean compile package -DskipTests=true -U`；
 
 如有问题请联系`1936978077@qq.com`。
