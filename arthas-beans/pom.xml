@@ -13,124 +13,129 @@
     <name>arthas-beans</name>
 
     <profiles>
-        <!-- linux -->
+        <!-- macos -->
         <profile>
-            <id>linux32</id>
+            <id>macos-x86</id>
             <activation>
-                <property>
-                    <name>platform</name>
-                    <!-- fixme 可能需要修复下面的value值-->
-                    <value>linux32</value>
-                </property>
+                <os>
+                    <family>mac</family>
+                    <arch>x86</arch>
+                </os>
             </activation>
             <properties>
-                <os_arch_name>linux-x86</os_arch_name>
-                <include>linux</include>
+                <os_arch_name>macos</os_arch_name>
+                <include>darwin</include>
                 <os_arch_option>-m32</os_arch_option>
-                <lib_name>libArthasJniLibrary.so</lib_name>
+                <lib_name>libJniLibrary.dylib</lib_name>
             </properties>
         </profile>
         <profile>
-            <id>linux64</id>
+            <id>macos-x86_64</id>
             <activation>
-                <activeByDefault>true</activeByDefault>
-                <property>
-                    <name>platform</name>
-                    <!-- fixme 可能需要修复下面的value值-->
-                    <value>linux64</value>
-                </property>
+                <os>
+                    <family>mac</family>
+                    <arch>x86_64</arch>
+                </os>
             </activation>
             <properties>
-                <os_arch_name>linux-x64</os_arch_name>
+                <os_arch_name>macos</os_arch_name>
+                <include>darwin</include>
+                <os_arch_option>-m64</os_arch_option>
+                <lib_name>libJniLibrary.dylib</lib_name>
+            </properties>
+        </profile>
+        <profile>
+            <id>macos-m1</id>
+            <activation>
+                <os>
+                    <family>mac</family>
+                    <arch>aarch64</arch>
+                </os>
+            </activation>
+            <properties>
+                <os_arch_name>macos</os_arch_name>
+                <include>darwin</include>
+                <os_arch_option>-m64</os_arch_option>
+                <lib_name>libJniLibrary.dylib</lib_name>
+            </properties>
+        </profile>
+
+        <!-- linux -->
+        <profile>
+            <id>linux-x86</id>
+            <activation>
+                <os>
+                    <family>unix</family>
+                    <arch>x86</arch>
+                </os>
+            </activation>
+            <properties>
+                <os_arch_name>linux</os_arch_name>
+                <include>linux</include>
+                <os_arch_option>-m32</os_arch_option>
+                <lib_name>libJniLibrary.so</lib_name>
+            </properties>
+        </profile>
+        <profile>
+            <id>linux-x86_64</id>
+            <activation>
+                <os>
+                    <family>unix</family>
+                    <arch>x86_64</arch>
+                </os>
+            </activation>
+            <properties>
+                <os_arch_name>linux</os_arch_name>
                 <include>linux</include>
                 <os_arch_option>-m64</os_arch_option>
-                <lib_name>libArthasJniLibrary.so</lib_name>
+                <lib_name>libJniLibrary.so</lib_name>
+            </properties>
+        </profile>
+        <profile>
+            <id>linux-amd64</id>
+            <activation>
+                <os>
+                    <family>unix</family>
+                    <arch>amd64</arch>
+                </os>
+            </activation>
+            <properties>
+                <os_arch_name>linux</os_arch_name>
+                <include>linux</include>
+                <os_arch_option>-m64</os_arch_option>
+                <lib_name>libJniLibrary.so</lib_name>
             </properties>
         </profile>
 
         <!-- windows -->
         <profile>
-            <id>windows32</id>
+            <id>windows-x86</id>
             <activation>
-                <property>
-                    <name>platform</name>
-                    <!-- fixme 可能需要修复下面的value值-->
-                    <value>windows32</value>
-                </property>
+                <os>
+                    <family>windows</family>
+                    <arch>x86</arch>
+                </os>
             </activation>
             <properties>
-                <os_arch_name>windows-x86</os_arch_name>
+                <os_arch_name>windows</os_arch_name>
                 <include>win32</include>
                 <os_arch_option>-m32</os_arch_option>
-                <lib_name>ArthasJniLibrary.dll</lib_name>
+                <lib_name>JniLibrary.dll</lib_name>
             </properties>
         </profile>
         <profile>
-            <id>windows64</id>
+            <id>windows-x86_64</id>
             <activation>
-                <property>
-                    <name>platform</name>
-                    <!-- fixme 可能需要修复下面的value值-->
-                    <value>windows64</value>
-                </property>
+                <os>
+                    <family>windows</family>
+                    <arch>x86_64</arch>
+                </os>
             </activation>
             <properties>
-                <os_arch_name>windows-x64</os_arch_name>
+                <os_arch_name>windows</os_arch_name>
                 <include>win32</include>
                 <os_arch_option>-m64</os_arch_option>
-                <lib_name>ArthasJniLibrary.dll</lib_name>
-            </properties>
-        </profile>
-
-        <!-- macos -->
-        <profile>
-            <id>macos32</id>
-            <activation>
-                <property>
-                    <name>platform</name>
-                    <!-- fixme 可能需要修复下面的value值-->
-                    <value>macos32</value>
-                </property>
-            </activation>
-            <properties>
-                <os_arch_name>macos-x86</os_arch_name>
-                <include>darwin</include>
-                <os_arch_option>-m32</os_arch_option>
-                <lib_name>libArthasJniLibrary.dylib</lib_name>
-            </properties>
-        </profile>
-        <profile>
-            <id>macos64</id>
-            <activation>
-                <property>
-                    <name>platform</name>
-                    <!-- fixme 可能需要修复下面的value值-->
-                    <value>macos64</value>
-                </property>
-            </activation>
-            <properties>
-                <os_arch_name>macos-x64</os_arch_name>
-                <include>darwin</include>
-                <os_arch_option>-m64</os_arch_option>
-                <lib_name>libArthasJniLibrary.dylib</lib_name>
-            </properties>
-        </profile>
-
-        <profile>
-            <id>macosm1</id>
-            <activation>
-                <property>
-                    <name>platform</name>
-                    <!-- fixme 可能需要修复下面的value值-->
-                    <value>macosm1</value>
-                </property>
-            </activation>
-            <properties>
-                <os_arch_name>macos-m1</os_arch_name>
-                <include>darwin</include>
-                <!-- fixme 可能需要修复下面的os_arch_option值-->
-                <os_arch_option>-m64</os_arch_option>
-                <lib_name>libArthasJniLibrary.dylib</lib_name>
+                <lib_name>JniLibrary.dll</lib_name>
             </properties>
         </profile>
     </profiles>
@@ -161,7 +166,7 @@
                             <goal>jar</goal>
                         </goals>
                         <configuration>
-                            <classifier>${os_arch_name}</classifier>
+                            <classifier>${os_arch_name}-${os.arch}</classifier>
                             <classesDirectory>${project.build.directory}/classes</classesDirectory>
                         </configuration>
                     </execution>

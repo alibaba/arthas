@@ -1,39 +1,147 @@
-# linux
-打64位linux包(默认)：
+##step1 在您的pom.xml中增加profile配置
 ```
-mvn clean compile package -DskipTests=true -Plinux64
+    <profiles>
+        <!-- macos -->
+        <profile>
+            <id>macos-x86</id>
+            <activation>
+                <os>
+                    <family>mac</family>
+                    <arch>x86</arch>
+                </os>
+            </activation>
+            <properties>
+                <os_arch_name>macos</os_arch_name>
+                <include>darwin</include>
+                <os_arch_option>-m32</os_arch_option>
+                <lib_name>libJniLibrary.dylib</lib_name>
+            </properties>
+        </profile>
+        <profile>
+            <id>macos-x86_64</id>
+            <activation>
+                <os>
+                    <family>mac</family>
+                    <arch>x86_64</arch>
+                </os>
+            </activation>
+            <properties>
+                <os_arch_name>macos</os_arch_name>
+                <include>darwin</include>
+                <os_arch_option>-m64</os_arch_option>
+                <lib_name>libJniLibrary.dylib</lib_name>
+            </properties>
+        </profile>
+        <profile>
+            <id>macos-m1</id>
+            <activation>
+                <os>
+                    <family>mac</family>
+                    <arch>aarch64</arch>
+                </os>
+            </activation>
+            <properties>
+                <os_arch_name>macos</os_arch_name>
+                <include>darwin</include>
+                <os_arch_option>-m64</os_arch_option>
+                <lib_name>libJniLibrary.dylib</lib_name>
+            </properties>
+        </profile>
+
+        <!-- linux -->
+        <profile>
+            <id>linux-x86</id>
+            <activation>
+                <os>
+                    <family>unix</family>
+                    <arch>x86</arch>
+                </os>
+            </activation>
+            <properties>
+                <os_arch_name>linux</os_arch_name>
+                <include>linux</include>
+                <os_arch_option>-m32</os_arch_option>
+                <lib_name>libJniLibrary.so</lib_name>
+            </properties>
+        </profile>
+        <profile>
+            <id>linux-x86_64</id>
+            <activation>
+                <os>
+                    <family>unix</family>
+                    <arch>x86_64</arch>
+                </os>
+            </activation>
+            <properties>
+                <os_arch_name>linux</os_arch_name>
+                <include>linux</include>
+                <os_arch_option>-m64</os_arch_option>
+                <lib_name>libJniLibrary.so</lib_name>
+            </properties>
+        </profile>
+        <profile>
+            <id>linux-amd64</id>
+            <activation>
+                <os>
+                    <family>unix</family>
+                    <arch>amd64</arch>
+                </os>
+            </activation>
+            <properties>
+                <os_arch_name>linux</os_arch_name>
+                <include>linux</include>
+                <os_arch_option>-m64</os_arch_option>
+                <lib_name>libJniLibrary.so</lib_name>
+            </properties>
+        </profile>
+
+        <!-- windows -->
+        <profile>
+            <id>windows-x86</id>
+            <activation>
+                <os>
+                    <family>windows</family>
+                    <arch>x86</arch>
+                </os>
+            </activation>
+            <properties>
+                <os_arch_name>windows</os_arch_name>
+                <include>win32</include>
+                <os_arch_option>-m32</os_arch_option>
+                <lib_name>JniLibrary.dll</lib_name>
+            </properties>
+        </profile>
+        <profile>
+            <id>windows-x86_64</id>
+            <activation>
+                <os>
+                    <family>windows</family>
+                    <arch>x86_64</arch>
+                </os>
+            </activation>
+            <properties>
+                <os_arch_name>windows</os_arch_name>
+                <include>win32</include>
+                <os_arch_option>-m64</os_arch_option>
+                <lib_name>JniLibrary.dll</lib_name>
+            </properties>
+        </profile>
+    </profiles>
 ```
-打32位linux包：
+##step2 在您的pom.xml中引入依赖
+PS：一定要配置好profile，不然无法自动生成`<classifier>`
 ```
-mvn clean compile package -DskipTests=true -Plinux32
-```
-#macos
-打64位macos包
-```
-mvn clean compile package -DskipTests=true -Pmacos64
-```
-打32位macos包：
-```
-mvn clean compile package -DskipTests=true -Pmacos32
-```
-#windows
-打64位windows包：
-```
-mvn clean compile package -DskipTests=true -Pwindows64
-```
-打32位windows包：
-```
-mvn clean compile package -DskipTests=true -Pwindows32
+<dependency>
+    <groupId>com.taobao.arthas</groupId>
+    <artifactId>mana-pool-analyzer</artifactId>
+    <version>${revision}</version>
+    <classifier>${os_arch_name}-${os.arch}</classifier>
+</dependency>
 ```
 
-#### 如果JvmUtils不支持您的系统或者在使用时遇到`java.lang.UnsatisfiedLinkError`
+##step3 如果没有合适的版本
+1. 请先尝试`mvn clean compile package -DskipTests=true -U`把依赖安装到本地；
 
-1. 在您的系统上安装合适版本的g++编译器
+2. 如果报错，请先确保您本地的g++编译器能够正常工作，重新尝试`mvn clean compile package -DskipTests=true -U`；
 
-2. 进入机器上tomcat对应的WEB/lib/cpp
-
-3. 使用g++命令生成linux对应的so文件
-
-   g++ -I $JAVA_HOME/include -I $JAVA_HOME/include/linux jni-library.cpp -fPIC -shared -o jni-lib-linux.so
-
-4. 使用`java.lang.System#load`重新加载第3步生成的so文件
+如有问题请联系`1936978077@qq.com`。
