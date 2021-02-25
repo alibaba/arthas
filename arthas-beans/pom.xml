@@ -26,7 +26,7 @@
                 <os_arch_name>macos</os_arch_name>
                 <include>darwin</include>
                 <os_arch_option>-m32</os_arch_option>
-                <lib_name>libJniLibrary.dylib</lib_name>
+                <lib_name>libArthasJniLibrary.dylib</lib_name>
             </properties>
         </profile>
         <profile>
@@ -41,7 +41,7 @@
                 <os_arch_name>macos</os_arch_name>
                 <include>darwin</include>
                 <os_arch_option>-m64</os_arch_option>
-                <lib_name>libJniLibrary.dylib</lib_name>
+                <lib_name>libArthasJniLibrary.dylib</lib_name>
             </properties>
         </profile>
         <profile>
@@ -56,7 +56,7 @@
                 <os_arch_name>macos</os_arch_name>
                 <include>darwin</include>
                 <os_arch_option>-m64</os_arch_option>
-                <lib_name>libJniLibrary.dylib</lib_name>
+                <lib_name>libArthasJniLibrary.dylib</lib_name>
             </properties>
         </profile>
 
@@ -73,7 +73,7 @@
                 <os_arch_name>linux</os_arch_name>
                 <include>linux</include>
                 <os_arch_option>-m32</os_arch_option>
-                <lib_name>libJniLibrary.so</lib_name>
+                <lib_name>libArthasJniLibrary.so</lib_name>
             </properties>
         </profile>
         <profile>
@@ -88,7 +88,7 @@
                 <os_arch_name>linux</os_arch_name>
                 <include>linux</include>
                 <os_arch_option>-m64</os_arch_option>
-                <lib_name>libJniLibrary.so</lib_name>
+                <lib_name>libArthasJniLibrary.so</lib_name>
             </properties>
         </profile>
         <profile>
@@ -103,7 +103,7 @@
                 <os_arch_name>linux</os_arch_name>
                 <include>linux</include>
                 <os_arch_option>-m64</os_arch_option>
-                <lib_name>libJniLibrary.so</lib_name>
+                <lib_name>libArthasJniLibrary.so</lib_name>
             </properties>
         </profile>
 
@@ -120,7 +120,7 @@
                 <os_arch_name>windows</os_arch_name>
                 <include>win32</include>
                 <os_arch_option>-m32</os_arch_option>
-                <lib_name>JniLibrary.dll</lib_name>
+                <lib_name>ArthasJniLibrary.dll</lib_name>
             </properties>
         </profile>
         <profile>
@@ -135,7 +135,7 @@
                 <os_arch_name>windows</os_arch_name>
                 <include>win32</include>
                 <os_arch_option>-m64</os_arch_option>
-                <lib_name>JniLibrary.dll</lib_name>
+                <lib_name>ArthasJniLibrary.dll</lib_name>
             </properties>
         </profile>
     </profiles>
