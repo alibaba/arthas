@@ -15,21 +15,6 @@
     <profiles>
         <!-- macos -->
         <profile>
-            <id>macos-x86</id>
-            <activation>
-                <os>
-                    <family>mac</family>
-                    <arch>x86</arch>
-                </os>
-            </activation>
-            <properties>
-                <os_arch_name>macos</os_arch_name>
-                <include>darwin</include>
-                <os_arch_option>-m32</os_arch_option>
-                <lib_name>libArthasJniLibrary.dylib</lib_name>
-            </properties>
-        </profile>
-        <profile>
             <id>macos-x86_64</id>
             <activation>
                 <os>
@@ -38,44 +23,27 @@
                 </os>
             </activation>
             <properties>
-                <os_arch_name>macos</os_arch_name>
-                <include>darwin</include>
+                <os_name>macos</os_name>
                 <os_arch_option>-m64</os_arch_option>
                 <lib_name>libArthasJniLibrary.dylib</lib_name>
             </properties>
         </profile>
         <profile>
-            <id>macos-m1</id>
+            <id>macos-amd64</id>
             <activation>
                 <os>
                     <family>mac</family>
-                    <arch>aarch64</arch>
+                    <arch>amd64</arch>
                 </os>
             </activation>
             <properties>
-                <os_arch_name>macos</os_arch_name>
-                <include>darwin</include>
+                <os_name>macos</os_name>
                 <os_arch_option>-m64</os_arch_option>
                 <lib_name>libArthasJniLibrary.dylib</lib_name>
             </properties>
         </profile>
 
         <!-- linux -->
-        <profile>
-            <id>linux-x86</id>
-            <activation>
-                <os>
-                    <family>unix</family>
-                    <arch>x86</arch>
-                </os>
-            </activation>
-            <properties>
-                <os_arch_name>linux</os_arch_name>
-                <include>linux</include>
-                <os_arch_option>-m32</os_arch_option>
-                <lib_name>libArthasJniLibrary.so</lib_name>
-            </properties>
-        </profile>
         <profile>
             <id>linux-x86_64</id>
             <activation>
@@ -85,8 +53,7 @@
                 </os>
             </activation>
             <properties>
-                <os_arch_name>linux</os_arch_name>
-                <include>linux</include>
+                <os_name>linux</os_name>
                 <os_arch_option>-m64</os_arch_option>
                 <lib_name>libArthasJniLibrary.so</lib_name>
             </properties>
@@ -100,29 +67,13 @@
                 </os>
             </activation>
             <properties>
-                <os_arch_name>linux</os_arch_name>
-                <include>linux</include>
+                <os_name>linux</os_name>
                 <os_arch_option>-m64</os_arch_option>
                 <lib_name>libArthasJniLibrary.so</lib_name>
             </properties>
         </profile>
 
         <!-- windows -->
-        <profile>
-            <id>windows-x86</id>
-            <activation>
-                <os>
-                    <family>windows</family>
-                    <arch>x86</arch>
-                </os>
-            </activation>
-            <properties>
-                <os_arch_name>windows</os_arch_name>
-                <include>win32</include>
-                <os_arch_option>-m32</os_arch_option>
-                <lib_name>ArthasJniLibrary.dll</lib_name>
-            </properties>
-        </profile>
         <profile>
             <id>windows-x86_64</id>
             <activation>
@@ -132,8 +83,21 @@
                 </os>
             </activation>
             <properties>
-                <os_arch_name>windows</os_arch_name>
-                <include>win32</include>
+                <os_name>windows</os_name>
+                <os_arch_option>-m64</os_arch_option>
+                <lib_name>ArthasJniLibrary.dll</lib_name>
+            </properties>
+        </profile>
+        <profile>
+            <id>windows-amd64</id>
+            <activation>
+                <os>
+                    <family>windows</family>
+                    <arch>amd64</arch>
+                </os>
+            </activation>
+            <properties>
+                <os_name>windows</os_name>
                 <os_arch_option>-m64</os_arch_option>
                 <lib_name>ArthasJniLibrary.dll</lib_name>
             </properties>
@@ -166,7 +130,7 @@
                             <goal>jar</goal>
                         </goals>
                         <configuration>
-                            <classifier>${os_arch_name}-${os.arch}</classifier>
+                            <classifier>${os_name}-${os.arch}</classifier>
                             <classesDirectory>${project.build.directory}/classes</classesDirectory>
                         </configuration>
                     </execution>
@@ -178,7 +142,8 @@
                 <version>1.0-alpha-11</version>
                 <extensions>true</extensions>
                 <configuration>
-                    <javahOS>${include}</javahOS>
+                    <jdkIncludePath>${project.basedir}/src/main/native/head</jdkIncludePath>
+                    <javahOS>${os_name}</javahOS>
                     <sources>
                         <source>
                             <directory>src/main/native/src</directory>

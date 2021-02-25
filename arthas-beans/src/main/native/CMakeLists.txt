@@ -7,13 +7,12 @@ add_library(jni-lib SHARED src/jni-library.cpp)
 
 #使用环境变量来include，把不同系统的兼容问题交给jdk解决
 include_directories("include")
-include_directories("$ENV{JAVA_HOME}/include")
+include_directories(head)
 
 IF (WIN32)
-    include_directories("$ENV{JAVA_HOME}/include/win32")
-    include_directories("$ENV{JAVA_HOME}/include/win32/bridge")
+    include_directories(head/windows)
 ELSEIF (APPLE)
-    include_directories("$ENV{JAVA_HOME}/include/darwin")
-ELSEIF (LINUX)
-    include_directories("$ENV{JAVA_HOME}/include/linux")
+    include_directories(head/macos)
+ELSEIF (common/linux)
+    include_directories(head/linux)
 ENDIF ()
