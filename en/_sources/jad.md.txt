@@ -31,27 +31,31 @@ ClassLoader:
 Location:
 
 
-/*
-* Decompiled with CFR 0_132.
-*/
-package java.lang;
+        /*
+         * Decompiled with CFR.
+         */
+        package java.lang;
 
-import java.io.ObjectStreamField;
+        import java.io.ObjectStreamField;
+        import java.io.Serializable;
 ...
-public final class String
-implements Serializable,
-Comparable<String>,
-CharSequence {
-    private final char[] value;
-    private int hash;
-    private static final long serialVersionUID = -6849794470754667710L;
-    private static final ObjectStreamField[] serialPersistentFields = new ObjectStreamField[0];
-    public static final Comparator<String> CASE_INSENSITIVE_ORDER = new CaseInsensitiveComparator();
-
-    public String(byte[] arrby, int n, int n2) {
-        String.checkBounds(arrby, n, n2);
-        this.value = StringCoding.decode(arrby, n, n2);
-    }
+        public final class String
+        implements Serializable,
+        Comparable<String>,
+        CharSequence {
+            private final char[] value;
+            private int hash;
+            private static final long serialVersionUID = -6849794470754667710L;
+            private static final ObjectStreamField[] serialPersistentFields = new ObjectStreamField[0];
+            public static final Comparator<String> CASE_INSENSITIVE_ORDER = new CaseInsensitiveComparator();
+...
+            public String(byte[] byArray, int n, int n2, Charset charset) {
+/*460*/         if (charset == null) {
+                    throw new NullPointerException("charset");
+                }
+/*462*/         String.checkBounds(byArray, n, n2);
+/*463*/         this.value = StringCoding.decode(charset, byArray, n, n2);
+            }
 ...
 ```
 
@@ -59,7 +63,7 @@ CharSequence {
 
 By default, the decompile result will have the `ClassLoader` information. With the `--source-only` option, you can print only the source code. Conveniently used with the [mc](mc.md)/[retransform](retransform.md) commands.
 
-```
+```java
 $ jad --source-only demo.MathGame
 /*
  * Decompiled with CFR 0_132.
@@ -85,21 +89,42 @@ public class MathGame {
 $ jad demo.MathGame main
 
 ClassLoader:
-+-sun.misc.Launcher$AppClassLoader@3d4eac69
-+-sun.misc.Launcher$ExtClassLoader@66350f69
++-sun.misc.Launcher$AppClassLoader@232204a1
+  +-sun.misc.Launcher$ExtClassLoader@7f31245a
+
+Location:
+/private/tmp/arthas-demo.jar
+
+       public static void main(String[] args) throws InterruptedException {
+           MathGame game = new MathGame();
+           while (true) {
+/*16*/         game.run();
+/*17*/         TimeUnit.SECONDS.sleep(1L);
+           }
+       }
+```
+
+#### Do not print line numbers
+
+* `--lineNumber`:  Output source code contins line numbers, default value true
+
+```java
+$ jad demo.MathGame main --lineNumber false
+
+ClassLoader:
++-sun.misc.Launcher$AppClassLoader@232204a1
+  +-sun.misc.Launcher$ExtClassLoader@7f31245a
 
 Location:
 /private/tmp/arthas-demo.jar
 
 public static void main(String[] args) throws InterruptedException {
     MathGame game = new MathGame();
-    do {
+    while (true) {
         game.run();
         TimeUnit.SECONDS.sleep(1L);
-    } while (true);
+    }
 }
-
-Affect(row-cnt:1) cost in 228 ms.
 ```
 
 #### Decompile with specified classLoader

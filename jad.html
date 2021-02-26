@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>jad &mdash; Arthas 3.4.6 文档</title>
+  <title>jad &mdash; Arthas 3.4.8 文档</title>
   
 
   
@@ -74,7 +74,7 @@
             
             
               <div class="version">
-                3.4.6
+                3.4.8
               </div>
             
           
@@ -128,9 +128,10 @@
 <li class="toctree-l2 current"><a class="current reference internal" href="#">jad</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#id1">参数说明</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#id2">使用参考</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="#java-lang-string">编译<code class="docutils literal notranslate"><span class="pre">java.lang.String</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#java-lang-string">反编译<code class="docutils literal notranslate"><span class="pre">java.lang.String</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#id3">反编译时只显示源代码</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#id4">反编译指定的函数</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id5">反编译时不显示行号</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#classloader">反编译时指定ClassLoader</a></li>
 </ul>
 </li>
@@ -278,41 +279,45 @@
 <div class="section" id="id2">
 <h2>使用参考<a class="headerlink" href="#id2" title="永久链接至标题">¶</a></h2>
 <div class="section" id="java-lang-string">
-<h3>编译<code class="docutils literal notranslate"><span class="pre">java.lang.String</span></code><a class="headerlink" href="#java-lang-string" title="永久链接至标题">¶</a></h3>
+<h3>反编译<code class="docutils literal notranslate"><span class="pre">java.lang.String</span></code><a class="headerlink" href="#java-lang-string" title="永久链接至标题">¶</a></h3>
 <div class="highlight-java notranslate"><div class="highlight hljs"><pre class="java">$ jad java.lang.String
 
 ClassLoader:
 
 Location:
 
-/*
-* Decompiled with CFR 0_132.
-*/
-package java.lang;
+        /*
+         * Decompiled with CFR.
+         */
+        package java.lang;
 
-import java.io.ObjectStreamField;
+        import java.io.ObjectStreamField;
+        import java.io.Serializable;
 ...
-public final class String
-implements Serializable,
-Comparable&lt;String&gt;,
-CharSequence {
-    private final char[] value;
-    private int hash;
-    private static final long serialVersionUID = -6849794470754667710L;
-    private static final ObjectStreamField[] serialPersistentFields = new ObjectStreamField[0];
-    public static final Comparator&lt;String&gt; CASE_INSENSITIVE_ORDER = new CaseInsensitiveComparator();
-
-    public String(byte[] arrby, int n, int n2) {
-        String.checkBounds(arrby, n, n2);
-        this.value = StringCoding.decode(arrby, n, n2);
-    }
+        public final class String
+        implements Serializable,
+        Comparable&lt;String&gt;,
+        CharSequence {
+            private final char[] value;
+            private int hash;
+            private static final long serialVersionUID = -6849794470754667710L;
+            private static final ObjectStreamField[] serialPersistentFields = new ObjectStreamField[0];
+            public static final Comparator&lt;String&gt; CASE_INSENSITIVE_ORDER = new CaseInsensitiveComparator();
+...
+            public String(byte[] byArray, int n, int n2, Charset charset) {
+/*460*/         if (charset == null) {
+                    throw new NullPointerException(&quot;charset&quot;);
+                }
+/*462*/         String.checkBounds(byArray, n, n2);
+/*463*/         this.value = StringCoding.decode(charset, byArray, n, n2);
+            }
 ...</pre></div>
 </div>
 </div>
 <div class="section" id="id3">
 <h3>反编译时只显示源代码<a class="headerlink" href="#id3" title="永久链接至标题">¶</a></h3>
 <p>默认情况下，反编译结果里会带有<code class="docutils literal notranslate"><span class="pre">ClassLoader</span></code>信息，通过<code class="docutils literal notranslate"><span class="pre">--source-only</span></code>选项，可以只打印源代码。方便和<a class="reference internal" href="mc.html"><span class="doc">mc</span></a>/<a class="reference internal" href="retransform.html"><span class="doc">retransform</span></a>命令结合使用。</p>
-<div class="highlight-default notranslate"><pre class="literal-block">$ jad --source-only demo.MathGame
+<div class="highlight-java notranslate"><div class="highlight hljs"><pre class="java">$ jad --source-only demo.MathGame
 /*
  * Decompiled with CFR 0_132.
  */
@@ -328,7 +333,7 @@ import java.util.concurrent.TimeUnit;
 public class MathGame {
     private static Random random = new Random();
     public int illegalArgumentCount = 0;
-...</pre>
+...</pre></div>
 </div>
 </div>
 <div class="section" id="id4">
@@ -336,21 +341,40 @@ public class MathGame {
 <div class="highlight-java notranslate"><div class="highlight hljs"><pre class="java">$ jad demo.MathGame main
 
 ClassLoader:
-+-sun.misc.Launcher$AppClassLoader@3d4eac69
-+-sun.misc.Launcher$ExtClassLoader@66350f69
++-sun.misc.Launcher$AppClassLoader@232204a1
+  +-sun.misc.Launcher$ExtClassLoader@7f31245a
+
+Location:
+/private/tmp/arthas-demo.jar
+
+       public static void main(String[] args) throws InterruptedException {
+           MathGame game = new MathGame();
+           while (true) {
+/*16*/         game.run();
+/*17*/         TimeUnit.SECONDS.sleep(1L);
+           }
+       }</pre></div>
+</div>
+</div>
+<div class="section" id="id5">
+<h3>反编译时不显示行号<a class="headerlink" href="#id5" title="永久链接至标题">¶</a></h3>
+<p><code class="docutils literal notranslate"><span class="pre">--lineNumber</span></code> 参数默认值为true，显示指定为false则不打印行号。</p>
+<div class="highlight-java notranslate"><div class="highlight hljs"><pre class="java">$ jad demo.MathGame main --lineNumber false
+
+ClassLoader:
++-sun.misc.Launcher$AppClassLoader@232204a1
+  +-sun.misc.Launcher$ExtClassLoader@7f31245a
 
 Location:
 /private/tmp/arthas-demo.jar
 
 public static void main(String[] args) throws InterruptedException {
     MathGame game = new MathGame();
-    do {
+    while (true) {
         game.run();
         TimeUnit.SECONDS.sleep(1L);
-    } while (true);
-}
-
-Affect(row-cnt:1) cost in 228 ms.</pre></div>
+    }
+}</pre></div>
 </div>
 </div>
 <div class="section" id="classloader">

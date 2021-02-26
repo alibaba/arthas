@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>jad &mdash; Arthas 3.4.6 documentation</title>
+  <title>jad &mdash; Arthas 3.4.8 documentation</title>
   
 
   
@@ -73,7 +73,7 @@
             
             
               <div class="version">
-                3.4.6
+                3.4.8
               </div>
             
           
@@ -126,6 +126,7 @@
 <li class="toctree-l4"><a class="reference internal" href="#decompile-java-lang-string">Decompile <code class="docutils literal notranslate"><span class="pre">java.lang.String</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#print-source-only">Print source only</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#decompile-the-specified-method">Decompile the specified method</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#do-not-print-line-numbers">Do not print line numbers</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#decompile-with-specified-classloader">Decompile with specified classLoader</a></li>
 </ul>
 </li>
@@ -280,34 +281,38 @@ ClassLoader:
 
 Location:
 
-/*
-* Decompiled with CFR 0_132.
-*/
-package java.lang;
+        /*
+         * Decompiled with CFR.
+         */
+        package java.lang;
 
-import java.io.ObjectStreamField;
+        import java.io.ObjectStreamField;
+        import java.io.Serializable;
 ...
-public final class String
-implements Serializable,
-Comparable&lt;String&gt;,
-CharSequence {
-    private final char[] value;
-    private int hash;
-    private static final long serialVersionUID = -6849794470754667710L;
-    private static final ObjectStreamField[] serialPersistentFields = new ObjectStreamField[0];
-    public static final Comparator&lt;String&gt; CASE_INSENSITIVE_ORDER = new CaseInsensitiveComparator();
-
-    public String(byte[] arrby, int n, int n2) {
-        String.checkBounds(arrby, n, n2);
-        this.value = StringCoding.decode(arrby, n, n2);
-    }
+        public final class String
+        implements Serializable,
+        Comparable&lt;String&gt;,
+        CharSequence {
+            private final char[] value;
+            private int hash;
+            private static final long serialVersionUID = -6849794470754667710L;
+            private static final ObjectStreamField[] serialPersistentFields = new ObjectStreamField[0];
+            public static final Comparator&lt;String&gt; CASE_INSENSITIVE_ORDER = new CaseInsensitiveComparator();
+...
+            public String(byte[] byArray, int n, int n2, Charset charset) {
+/*460*/         if (charset == null) {
+                    throw new NullPointerException(&quot;charset&quot;);
+                }
+/*462*/         String.checkBounds(byArray, n, n2);
+/*463*/         this.value = StringCoding.decode(charset, byArray, n, n2);
+            }
 ...</pre></div>
 </div>
 </div>
 <div class="section" id="print-source-only">
 <h3>Print source only<a class="headerlink" href="#print-source-only" title="Permalink to this headline">¶</a></h3>
 <p>By default, the decompile result will have the <code class="docutils literal notranslate"><span class="pre">ClassLoader</span></code> information. With the <code class="docutils literal notranslate"><span class="pre">--source-only</span></code> option, you can print only the source code. Conveniently used with the <a class="reference internal" href="mc.html"><span class="doc">mc</span></a>/<a class="reference internal" href="retransform.html"><span class="doc">retransform</span></a> commands.</p>
-<div class="highlight-default notranslate"><pre class="literal-block">$ jad --source-only demo.MathGame
+<div class="highlight-java notranslate"><div class="highlight hljs"><pre class="java">$ jad --source-only demo.MathGame
 /*
  * Decompiled with CFR 0_132.
  */
@@ -323,7 +328,7 @@ import java.util.concurrent.TimeUnit;
 public class MathGame {
     private static Random random = new Random();
     public int illegalArgumentCount = 0;
-...</pre>
+...</pre></div>
 </div>
 </div>
 <div class="section" id="decompile-the-specified-method">
@@ -331,21 +336,42 @@ public class MathGame {
 <div class="highlight-java notranslate"><div class="highlight hljs"><pre class="java">$ jad demo.MathGame main
 
 ClassLoader:
-+-sun.misc.Launcher$AppClassLoader@3d4eac69
-+-sun.misc.Launcher$ExtClassLoader@66350f69
++-sun.misc.Launcher$AppClassLoader@232204a1
+  +-sun.misc.Launcher$ExtClassLoader@7f31245a
+
+Location:
+/private/tmp/arthas-demo.jar
+
+       public static void main(String[] args) throws InterruptedException {
+           MathGame game = new MathGame();
+           while (true) {
+/*16*/         game.run();
+/*17*/         TimeUnit.SECONDS.sleep(1L);
+           }
+       }</pre></div>
+</div>
+</div>
+<div class="section" id="do-not-print-line-numbers">
+<h3>Do not print line numbers<a class="headerlink" href="#do-not-print-line-numbers" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">--lineNumber</span></code>:  Output source code contins line numbers, default value true</p></li>
+</ul>
+<div class="highlight-java notranslate"><div class="highlight hljs"><pre class="java">$ jad demo.MathGame main --lineNumber false
+
+ClassLoader:
++-sun.misc.Launcher$AppClassLoader@232204a1
+  +-sun.misc.Launcher$ExtClassLoader@7f31245a
 
 Location:
 /private/tmp/arthas-demo.jar
 
 public static void main(String[] args) throws InterruptedException {
     MathGame game = new MathGame();
-    do {
+    while (true) {
         game.run();
         TimeUnit.SECONDS.sleep(1L);
-    } while (true);
-}
-
-Affect(row-cnt:1) cost in 228 ms.</pre></div>
+    }
+}</pre></div>
 </div>
 </div>
 <div class="section" id="decompile-with-specified-classloader">
