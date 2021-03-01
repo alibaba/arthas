@@ -633,4 +633,7 @@ public class ArthasBootstrap {
         return outputPath;
     }
 
+    public Configure getConfigure() {
+        return configure;
+    }
 }

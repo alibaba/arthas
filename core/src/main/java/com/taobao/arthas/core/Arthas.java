@@ -31,12 +31,10 @@ public class Arthas {
         Option core = new TypedOption<String>().setType(String.class).setShortName("core").setRequired(true);
         Option agent = new TypedOption<String>().setType(String.class).setShortName("agent").setRequired(true);
         Option target = new TypedOption<String>().setType(String.class).setShortName("target-ip");
-        Option telnetPort = new TypedOption<Integer>().setType(Integer.class)
-                .setShortName("telnet-port");
-        Option httpPort = new TypedOption<Integer>().setType(Integer.class)
-                .setShortName("http-port");
-        Option sessionTimeout = new TypedOption<Integer>().setType(Integer.class)
-                        .setShortName("session-timeout");
+        Option telnetPort = new TypedOption<Integer>().setType(Integer.class).setShortName("telnet-port");
+        Option httpPort = new TypedOption<Integer>().setType(Integer.class).setShortName("http-port");
+        Option httpToken = new TypedOption<String>().setType(String.class).setShortName("http-token");
+        Option sessionTimeout = new TypedOption<Integer>().setType(Integer.class).setShortName("session-timeout");
 
         Option tunnelServer = new TypedOption<String>().setType(String.class).setShortName("tunnel-server");
         Option agentId = new TypedOption<String>().setType(String.class).setShortName("agent-id");
@@ -45,7 +43,8 @@ public class Arthas {
         Option statUrl = new TypedOption<String>().setType(String.class).setShortName("stat-url");
 
         CLI cli = CLIs.create("arthas").addOption(pid).addOption(core).addOption(agent).addOption(target)
-                .addOption(telnetPort).addOption(httpPort).addOption(sessionTimeout).addOption(tunnelServer).addOption(agentId).addOption(appName).addOption(statUrl);
+                .addOption(telnetPort).addOption(httpPort).addOption(sessionTimeout).addOption(tunnelServer)
+                .addOption(agentId).addOption(appName).addOption(statUrl).addOption(httpToken);
         CommandLine commandLine = cli.parse(Arrays.asList(args));
 
         Configure configure = new Configure();
@@ -65,6 +64,9 @@ public class Arthas {
         }
         if (commandLine.getOptionValue("http-port") != null) {
             configure.setHttpPort((Integer) commandLine.getOptionValue("http-port"));
+        }
+        if (commandLine.getOptionValue("http-token") != null) {
+            configure.setHttpToken((String)commandLine.getOptionValue("http-token"));
         }
 
         configure.setTunnelServer((String) commandLine.getOptionValue("tunnel-server"));

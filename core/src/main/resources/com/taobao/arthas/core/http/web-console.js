@@ -74,8 +74,11 @@ function getTerminalSize () {
 }
 
 /** init websocket **/
-function initWs (ip, port) {
+function initWs (ip, port, httpToken) {
     var path = 'ws://' + ip + ':' + port + '/ws';
+    if (httpToken) {
+        path = path+'?httpToken='+encodeURIComponent(httpToken);
+    }
     ws = new WebSocket(path);
 }
 
@@ -98,12 +101,14 @@ function startConnect (silent) {
         alert('Ip or port can not be empty');
         return;
     }
+    var httpToken = getUrlParam('httpToken');
+
     if (ws != null) {
         alert('Already connected');
         return;
     }
     // init webSocket
-    initWs(ip, port);
+    initWs(ip, port, httpToken);
     ws.onerror = function () {
         ws.close();
         ws = null;

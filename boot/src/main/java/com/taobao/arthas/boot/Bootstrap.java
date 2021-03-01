@@ -47,6 +47,7 @@ import static com.taobao.arthas.boot.ProcessUtils.STATUS_EXEC_TIMEOUT;
 @Summary("Bootstrap Arthas")
 @Description("EXAMPLES:\n" + "  java -jar arthas-boot.jar <pid>\n" + "  java -jar arthas-boot.jar --target-ip 0.0.0.0\n"
                 + "  java -jar arthas-boot.jar --telnet-port 9999 --http-port -1\n"
+                + "  java -jar arthas-boot.jar --telnet-port -1 --http-port 8563 --http-token 'xs3amjop7da' \n"
                 + "  java -jar arthas-boot.jar --tunnel-server 'ws://192.168.10.11:7777/ws' --app-name demoapp\n"
                 + "  java -jar arthas-boot.jar --tunnel-server 'ws://192.168.10.11:7777/ws' --agent-id bvDOe8XbTM2pQWjF4cfw\n"
                 + "  java -jar arthas-boot.jar --stat-url 'http://192.168.10.11:8080/api/stat'\n"
@@ -70,6 +71,10 @@ public class Bootstrap {
     private String targetIp;
     private Integer telnetPort;
     private Integer httpPort;
+    /**
+     * http access token
+     */
+    private String httpToken;
     /**
      * @see com.taobao.arthas.core.config.Configure#DEFAULT_SESSION_TIMEOUT_SECONDS
      */
@@ -174,6 +179,12 @@ public class Bootstrap {
     @Description("The target jvm listen http port, default 8563")
     public void setHttpPort(int httpPort) {
         this.httpPort = httpPort;
+    }
+
+    @Option(longName = "http-token")
+    @Description("The http access token, default is empty, no authentication")
+    public void setHttpToken(String httpToken) {
+        this.httpToken = httpToken;
     }
 
     @Option(longName = "session-timeout")
@@ -496,6 +507,11 @@ public class Bootstrap {
                 attachArgs.add("" + bootstrap.getHttpPort());
             }
 
+            if (bootstrap.getHttpToken() != null) {
+                attachArgs.add("-http-token");
+                attachArgs.add(bootstrap.getHttpToken());
+            }
+
             attachArgs.add("-core");
             attachArgs.add(new File(arthasHomeDir, "arthas-core.jar").getAbsolutePath());
             attachArgs.add("-agent");
@@ -751,6 +767,10 @@ public class Bootstrap {
         } else {
             return this.httpPort;
         }
+    }
+
+    public String getHttpToken() {
+        return httpToken;
     }
 
     public String getCommand() {

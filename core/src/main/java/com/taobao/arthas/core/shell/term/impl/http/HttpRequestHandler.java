@@ -2,15 +2,18 @@ package com.taobao.arthas.core.shell.term.impl.http;
 
 import com.alibaba.arthas.deps.org.slf4j.Logger;
 import com.alibaba.arthas.deps.org.slf4j.LoggerFactory;
+import com.taobao.arthas.common.ArthasConstants;
 import com.taobao.arthas.common.IOUtils;
 import com.taobao.arthas.core.server.ArthasBootstrap;
 import com.taobao.arthas.core.shell.term.impl.http.api.HttpApiHandler;
 import com.taobao.arthas.core.shell.term.impl.httptelnet.HttpTelnetTermServer;
+import com.taobao.arthas.core.util.StringUtils;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelFutureListener;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.handler.codec.http.DefaultFullHttpResponse;
+import io.netty.handler.codec.http.DefaultHttpResponse;
 import io.netty.handler.codec.http.FullHttpRequest;
 import io.netty.handler.codec.http.FullHttpResponse;
 import io.netty.handler.codec.http.HttpHeaderNames;
@@ -18,6 +21,7 @@ import io.netty.handler.codec.http.HttpResponse;
 import io.netty.handler.codec.http.HttpResponseStatus;
 import io.netty.handler.codec.http.HttpUtil;
 import io.netty.handler.codec.http.LastHttpContent;
+import io.netty.handler.codec.http.QueryStringDecoder;
 import io.termd.core.http.HttpTtyConnection;
 import io.termd.core.util.Logging;
 
@@ -25,7 +29,11 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 import static com.taobao.arthas.core.util.HttpUtils.createRedirectResponse;
 import static com.taobao.arthas.core.util.HttpUtils.createResponse;
@@ -44,7 +52,9 @@ public class HttpRequestHandler extends SimpleChannelInboundHandler<FullHttpRequ
     private File dir;
 
     private HttpApiHandler httpApiHandler;
-
+    private String httpToken;
+    private Map<String, String> checkedUrlMap;
+    private String arthasOutputPath = "/"+ ArthasConstants.ARTHAS_OUTPUT;
 
     public HttpRequestHandler(String wsUri) {
         this(wsUri, ArthasBootstrap.getInstance().getOutputPath());
@@ -53,13 +63,32 @@ public class HttpRequestHandler extends SimpleChannelInboundHandler<FullHttpRequ
     public HttpRequestHandler(String wsUri, File dir) {
         this.wsUri = wsUri;
         this.dir = dir;
+        init();
+    }
+
+    private void init() {
         dir.mkdirs();
         this.httpApiHandler = ArthasBootstrap.getInstance().getHttpApiHandler();
+        this.httpToken = ArthasBootstrap.getInstance().getConfigure().getHttpToken();
+
+        checkedUrlMap = new ConcurrentHashMap<String, String>();
+        checkedUrlMap.put("/", "true");
+        checkedUrlMap.put("/index.html", "true");
+        checkedUrlMap.put(wsUri, "true");
+        checkedUrlMap.put("/api", "true");
+        checkedUrlMap.put("/ui/", "true");
+        checkedUrlMap.put("/ui/index.html", "true");
     }
 
     @Override
     protected void channelRead0(ChannelHandlerContext ctx, FullHttpRequest request) throws Exception {
-        if (wsUri.equalsIgnoreCase(request.uri())) {
+        if (!checkHttpToken(request)) {
+            send401Unauthorized(ctx, request);
+            return;
+        }
+
+        String path = new URI(request.uri()).getPath();
+        if (wsUri.equalsIgnoreCase(path)) {
             ctx.fireChannelRead(request.retain());
         } else {
             if (HttpUtil.is100ContinueExpected(request)) {
@@ -67,7 +96,6 @@ public class HttpRequestHandler extends SimpleChannelInboundHandler<FullHttpRequ
             }
 
             HttpResponse response = null;
-            String path = new URI(request.uri()).getPath();
             if ("/".equals(path)) {
                 path = "/index.html";
             }
@@ -130,6 +158,41 @@ public class HttpRequestHandler extends SimpleChannelInboundHandler<FullHttpRequ
         }
     }
 
+    private boolean checkHttpToken(FullHttpRequest request) throws URISyntaxException {
+        if (!StringUtils.isBlank(httpToken) && shouldCheckUrl(request.uri())) {
+            String requestToken = null;
+
+            //extract token from url parameter
+            QueryStringDecoder queryDecoder = new QueryStringDecoder(request.uri());
+            List<String> values = queryDecoder.parameters().get("httpToken");
+            if (values != null && values.size() > 0) {
+                requestToken = values.get(0);
+            }
+
+            //extract token from request header
+            if (requestToken == null) {
+                requestToken = request.headers().get("Arthas-Http-Token");
+            }
+
+            return requestToken != null && httpToken.equals(requestToken);
+        }
+        return true;
+    }
+
+    private boolean shouldCheckUrl(String uri) throws URISyntaxException {
+        String path = new URI(uri).getPath().toLowerCase();
+
+        if (checkedUrlMap.containsKey(path)) {
+            return true;
+        }
+
+        if (path.startsWith(arthasOutputPath)) {
+            return true;
+        }
+
+        return false;
+    }
+
     private HttpResponse readFileFromResource(FullHttpRequest request, String path) throws IOException {
         DefaultFullHttpResponse fullResp = null;
         InputStream in = null;
@@ -171,6 +234,11 @@ public class HttpRequestHandler extends SimpleChannelInboundHandler<FullHttpRequ
     private static void send100Continue(ChannelHandlerContext ctx) {
         FullHttpResponse response = new DefaultFullHttpResponse(HTTP_1_1, HttpResponseStatus.CONTINUE);
         ctx.writeAndFlush(response);
+    }
+
+    private void send401Unauthorized(ChannelHandlerContext ctx, FullHttpRequest request) {
+        DefaultHttpResponse response = createResponse(request, HttpResponseStatus.UNAUTHORIZED, "Access Unauthorized");
+        ctx.writeAndFlush(response).addListener(ChannelFutureListener.CLOSE);
     }
 
     public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {

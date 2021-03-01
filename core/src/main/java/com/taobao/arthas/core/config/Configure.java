@@ -1,5 +1,6 @@
 package com.taobao.arthas.core.config;
 
+import com.taobao.arthas.common.ArthasConstants;
 import com.taobao.arthas.core.shell.ShellServerOptions;
 import com.taobao.arthas.core.util.reflect.ArthasReflectUtils;
 
@@ -29,7 +30,7 @@ public class Configure {
     private String agentId;
 
     /**
-     * @see com.taobao.arthas.common.ArthasConstants#ARTHAS_OUTPUT
+     * @see ArthasConstants#ARTHAS_OUTPUT
      */
     private String outputPath;
 
@@ -56,6 +57,11 @@ public class Configure {
      * @see ShellServerOptions#DEFAULT_SESSION_TIMEOUT
      */
     private Long sessionTimeout;
+
+    /**
+     * http access token
+     */
+    private String httpToken;
 
     public String getIp() {
         return ip;
@@ -159,6 +165,14 @@ public class Configure {
 
     public void setOutputPath(String outputPath) {
         this.outputPath = outputPath;
+    }
+
+    public void setHttpToken(String httpToken) {
+        this.httpToken = httpToken;
+    }
+
+    public String getHttpToken() {
+        return httpToken;
     }
 
     /**
