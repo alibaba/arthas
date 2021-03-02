@@ -286,6 +286,7 @@ public class HttpApiHandler {
             welcomeModel.setVersion(ArthasBanner.version());
             welcomeModel.setWiki(ArthasBanner.wiki());
             welcomeModel.setTutorials(ArthasBanner.tutorials());
+            welcomeModel.setMainClass(PidUtils.mainClass());
             welcomeModel.setPid(PidUtils.currentPid());
             welcomeModel.setTime(DateUtils.getCurrentDate());
             resultDistributor.appendResult(welcomeModel);
