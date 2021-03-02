@@ -258,6 +258,7 @@ public class TunnelSocketFrameHandler extends SimpleChannelInboundHandler<WebSoc
                 info.setPort(inetSocketAddress.getPort());
             }
         } else {
+            info.setHost(host);
             Integer port = HttpUtils.findClientPort(headers);
             if (port != null) {
                 info.setPort(port);
