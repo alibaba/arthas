@@ -77,7 +77,7 @@ public class ResultViewResolver {
             registerView(TimeTunnelView.class);
             registerView(TraceView.class);
             registerView(WatchView.class);
-
+            registerView(GetCurlView.class);
         } catch (Throwable e) {
             logger.error("register result view failed", e);
         }
