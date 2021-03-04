@@ -520,6 +520,11 @@ public class Bootstrap {
                 attachArgs.add("" + bootstrap.getSessionTimeout());
             }
 
+            if (bootstrap.getAppName() != null) {
+                attachArgs.add("-app-name");
+                attachArgs.add(bootstrap.getAppName());
+            }
+
             if (bootstrap.getUsername() != null) {
                 attachArgs.add("-username");
                 attachArgs.add(bootstrap.getUsername());
