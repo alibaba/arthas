@@ -13,6 +13,7 @@ import java.util.StringTokenizer;
 import java.util.TreeSet;
 
 public abstract class StringUtils {
+    private static final String AB = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
 
     /**
      * 获取异常的原因描述
@@ -911,5 +912,41 @@ public abstract class StringUtils {
             }
         }
         return result;
+    }
+
+    public static String randomString(int length) {
+        StringBuilder sb = new StringBuilder(length);
+        for (int i = 0; i < length; i++)
+            sb.append(AB.charAt(ThreadLocalRandom.current().nextInt(AB.length())));
+        return sb.toString();
+    }
+
+    /**
+     * Returns the string before the given token
+     *
+     * @param text   the text
+     * @param before the token
+     * @return the text before the token, or <tt>null</tt> if text does not contain
+     *         the token
+     */
+    public static String before(String text, String before) {
+        int pos = text.indexOf(before);
+        return pos == -1 ? null : text.substring(0, pos);
+    }
+
+    /**
+     * Returns the string after the given token
+     *
+     * @param text  the text
+     * @param after the token
+     * @return the text after the token, or <tt>null</tt> if text does not contain
+     *         the token
+     */
+    public static String after(String text, String after) {
+        int pos = text.indexOf(after);
+        if (pos == -1) {
+            return null;
+        }
+        return text.substring(pos + after.length());
     }
 }

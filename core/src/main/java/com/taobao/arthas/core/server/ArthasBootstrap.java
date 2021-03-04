@@ -50,6 +50,8 @@ import com.taobao.arthas.core.env.ArthasEnvironment;
 import com.taobao.arthas.core.env.MapPropertySource;
 import com.taobao.arthas.core.env.PropertiesPropertySource;
 import com.taobao.arthas.core.env.PropertySource;
+import com.taobao.arthas.core.security.SecurityAuthenticator;
+import com.taobao.arthas.core.security.SecurityAuthenticatorImpl;
 import com.taobao.arthas.core.server.instrument.ClassLoader_Instrument;
 import com.taobao.arthas.core.shell.ShellServer;
 import com.taobao.arthas.core.shell.ShellServerOptions;
@@ -62,6 +64,7 @@ import com.taobao.arthas.core.shell.session.SessionManager;
 import com.taobao.arthas.core.shell.session.impl.SessionManagerImpl;
 import com.taobao.arthas.core.shell.term.impl.HttpTermServer;
 import com.taobao.arthas.core.shell.term.impl.http.api.HttpApiHandler;
+import com.taobao.arthas.core.shell.term.impl.http.session.HttpSessionManager;
 import com.taobao.arthas.core.shell.term.impl.httptelnet.HttpTelnetTermServer;
 import com.taobao.arthas.core.util.ArthasBanner;
 import com.taobao.arthas.core.util.FileUtils;
@@ -118,6 +121,9 @@ public class ArthasBootstrap {
     private HistoryManager historyManager;
 
     private HttpApiHandler httpApiHandler;
+
+    private HttpSessionManager httpSessionManager;
+    private SecurityAuthenticator securityAuthenticator;
 
     private ArthasBootstrap(Instrumentation instrumentation, Map<String, String> args) throws Throwable {
         this.instrumentation = instrumentation;
@@ -320,7 +326,7 @@ public class ArthasBootstrap {
                 overrideAll = Boolean.parseBoolean(properties.getProperty(CONFIG_OVERRIDE_ALL, "false"));
             }
 
-            PropertySource propertySource = new PropertiesPropertySource(location, properties);
+            PropertySource<?> propertySource = new PropertiesPropertySource(location, properties);
             if (overrideAll) {
                 arthasEnvironment.addFirst(propertySource);
             } else {
@@ -383,6 +389,9 @@ public class ArthasBootstrap {
                 options.setSessionTimeout(configure.getSessionTimeout() * 1000);
             }
 
+            this.httpSessionManager = new HttpSessionManager();
+            this.securityAuthenticator = new SecurityAuthenticatorImpl(configure.getUsername(), configure.getPassword());
+
             shellServer = new ShellServerImpl(options);
             BuiltinCommandPack builtinCommands = new BuiltinCommandPack();
             List<CommandResolver> resolvers = new ArrayList<CommandResolver>();
@@ -394,18 +403,18 @@ public class ArthasBootstrap {
             // TODO: discover user provided command resolver
             if (configure.getTelnetPort() != null && configure.getTelnetPort() > 0) {
                 shellServer.registerTermServer(new HttpTelnetTermServer(configure.getIp(), configure.getTelnetPort(),
-                        options.getConnectionTimeout(), workerGroup));
+                        options.getConnectionTimeout(), workerGroup, httpSessionManager));
             } else {
                 logger().info("telnet port is {}, skip bind telnet server.", configure.getTelnetPort());
             }
             if (configure.getHttpPort() != null && configure.getHttpPort() > 0) {
                 shellServer.registerTermServer(new HttpTermServer(configure.getIp(), configure.getHttpPort(),
-                        options.getConnectionTimeout(), workerGroup));
+                        options.getConnectionTimeout(), workerGroup, httpSessionManager));
             } else {
                 // listen local address in VM communication
                 if (configure.getTunnelServer() != null) {
                     shellServer.registerTermServer(new HttpTermServer(configure.getIp(), configure.getHttpPort(),
-                            options.getConnectionTimeout(), workerGroup));
+                            options.getConnectionTimeout(), workerGroup, httpSessionManager));
                 }
                 logger().info("http port is {}, skip bind http server.", configure.getHttpPort());
             }
@@ -479,6 +488,9 @@ public class ArthasBootstrap {
         if (sessionManager != null) {
             sessionManager.close();
             sessionManager = null;
+        }
+        if (this.httpSessionManager != null) {
+            httpSessionManager.stop();
         }
         if (timer != null) {
             timer.cancel();
@@ -631,6 +643,10 @@ public class ArthasBootstrap {
 
     public File getOutputPath() {
         return outputPath;
+    }
+
+    public SecurityAuthenticator getSecurityAuthenticator() {
+        return securityAuthenticator;
     }
 
 }

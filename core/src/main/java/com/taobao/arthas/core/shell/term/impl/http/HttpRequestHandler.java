@@ -77,7 +77,7 @@ public class HttpRequestHandler extends SimpleChannelInboundHandler<FullHttpRequ
             try {
                 //handle http restful api
                 if ("/api".equals(path)) {
-                    response = httpApiHandler.handle(request);
+                    response = httpApiHandler.handle(ctx, request);
                     isHttpApiResponse = true;
                 }
 
