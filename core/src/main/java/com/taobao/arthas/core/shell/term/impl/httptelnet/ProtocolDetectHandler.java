@@ -1,12 +1,14 @@
 package com.taobao.arthas.core.shell.term.impl.httptelnet;
 
-import java.io.File;
 import java.util.concurrent.TimeUnit;
 
 import com.taobao.arthas.common.ArthasConstants;
+import com.taobao.arthas.core.shell.term.impl.http.BasicHttpAuthenticatorHandler;
 import com.taobao.arthas.core.shell.term.impl.http.HttpRequestHandler;
 
 import com.taobao.arthas.core.shell.term.impl.http.TtyWebSocketFrameHandler;
+import com.taobao.arthas.core.shell.term.impl.http.session.HttpSessionManager;
+
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
@@ -35,13 +37,16 @@ public class ProtocolDetectHandler extends ChannelInboundHandlerAdapter {
     private Supplier<TelnetHandler> handlerFactory;
     private Consumer<TtyConnection> ttyConnectionFactory;
     private EventExecutorGroup workerGroup;
+    private HttpSessionManager httpSessionManager;
 
     public ProtocolDetectHandler(ChannelGroup channelGroup, final Supplier<TelnetHandler> handlerFactory,
-                                 Consumer<TtyConnection> ttyConnectionFactory, EventExecutorGroup workerGroup) {
+                                 Consumer<TtyConnection> ttyConnectionFactory, EventExecutorGroup workerGroup,
+                                 HttpSessionManager httpSessionManager) {
         this.channelGroup = channelGroup;
         this.handlerFactory = handlerFactory;
         this.ttyConnectionFactory = ttyConnectionFactory;
         this.workerGroup = workerGroup;
+        this.httpSessionManager = httpSessionManager;
     }
 
     private ScheduledFuture<?> detectTelnetFuture;
@@ -87,6 +92,7 @@ public class ProtocolDetectHandler extends ChannelInboundHandlerAdapter {
             pipeline.addLast(new HttpServerCodec());
             pipeline.addLast(new ChunkedWriteHandler());
             pipeline.addLast(new HttpObjectAggregator(ArthasConstants.MAX_HTTP_CONTENT_LENGTH));
+            pipeline.addLast(new BasicHttpAuthenticatorHandler(httpSessionManager));
             pipeline.addLast(workerGroup, "HttpRequestHandler", new HttpRequestHandler("/ws"));
             pipeline.addLast(new WebSocketServerProtocolHandler("/ws"));
             pipeline.addLast(new IdleStateHandler(0, 0, ArthasConstants.WEBSOCKET_IDLE_SECONDS));

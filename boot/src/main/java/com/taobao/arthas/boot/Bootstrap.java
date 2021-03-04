@@ -47,6 +47,7 @@ import static com.taobao.arthas.boot.ProcessUtils.STATUS_EXEC_TIMEOUT;
 @Summary("Bootstrap Arthas")
 @Description("EXAMPLES:\n" + "  java -jar arthas-boot.jar <pid>\n" + "  java -jar arthas-boot.jar --target-ip 0.0.0.0\n"
                 + "  java -jar arthas-boot.jar --telnet-port 9999 --http-port -1\n"
+                + "  java -jar arthas-boot.jar --username admin --password <password>\n"
                 + "  java -jar arthas-boot.jar --tunnel-server 'ws://192.168.10.11:7777/ws' --app-name demoapp\n"
                 + "  java -jar arthas-boot.jar --tunnel-server 'ws://192.168.10.11:7777/ws' --agent-id bvDOe8XbTM2pQWjF4cfw\n"
                 + "  java -jar arthas-boot.jar --stat-url 'http://192.168.10.11:8080/api/stat'\n"
@@ -119,6 +120,9 @@ public class Bootstrap {
     private String agentId;
 
     private String appName;
+
+    private String username;
+    private String password;
 
     private String statUrl;
 
@@ -264,6 +268,17 @@ public class Bootstrap {
     @Description("The app name")
     public void setAppName(String appName) {
         this.appName = appName;
+    }
+
+    @Option(longName = "username")
+    @Description("The username")
+    public void setUsername(String username) {
+        this.username = username;
+    }
+    @Option(longName = "password")
+    @Description("The password")
+    public void setPassword(String password) {
+        this.password = password;
     }
 
     @Option(longName = "stat-url")
@@ -503,6 +518,15 @@ public class Bootstrap {
             if (bootstrap.getSessionTimeout() != null) {
                 attachArgs.add("-session-timeout");
                 attachArgs.add("" + bootstrap.getSessionTimeout());
+            }
+
+            if (bootstrap.getUsername() != null) {
+                attachArgs.add("-username");
+                attachArgs.add(bootstrap.getUsername());
+            }
+            if (bootstrap.getPassword() != null) {
+                attachArgs.add("-password");
+                attachArgs.add(bootstrap.getPassword());
             }
 
             if (bootstrap.getTunnelServer() != null) {
@@ -812,4 +836,12 @@ public class Bootstrap {
     public String getSelect() {
 		return select;
 	}
+
+    public String getUsername() {
+        return username;
+    }
+
+    public String getPassword() {
+        return password;
+    }
 }

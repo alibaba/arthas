@@ -55,6 +55,10 @@ Advanced Usage
 * [stack](stack.md) - display the stack trace for the specified class and method
 * [tt](tt.md) - time tunnel, record the arguments and returned value for the methods and replay
 
+## authentication
+
+* [auth](auth.md) - authentication
+
 ## options
 
 * [options](options.md) - check/set Arthas global options

@@ -26,4 +26,13 @@ public class ArthasConstants {
     public static final int TELNET_PORT = 3658;
 
     public static final int WEBSOCKET_IDLE_SECONDS = 60;
+
+    /**
+     * HTTP cookie id
+     */
+    public static final String ASESSION_KEY = "asession";
+
+    public static final String DEFAULT_USERNAME = "arthas";
+    public static final String SUBJECT_KEY = "subject";
+    public static final String AUTH = "auth";
 }

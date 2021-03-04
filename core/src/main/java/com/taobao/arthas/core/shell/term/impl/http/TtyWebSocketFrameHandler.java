@@ -16,8 +16,6 @@
 
 package com.taobao.arthas.core.shell.term.impl.http;
 
-import io.netty.buffer.ByteBuf;
-import io.netty.buffer.Unpooled;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.channel.group.ChannelGroup;
@@ -29,7 +27,6 @@ import io.termd.core.function.Consumer;
 import io.termd.core.http.HttpTtyConnection;
 import io.termd.core.tty.TtyConnection;
 
-import java.util.concurrent.TimeUnit;
 
 /**
  * @author <a href="mailto:julien@julienviet.com">Julien Viet</a>
@@ -57,37 +54,7 @@ public class TtyWebSocketFrameHandler extends SimpleChannelInboundHandler<TextWe
     if (evt == WebSocketServerProtocolHandler.ServerHandshakeStateEvent.HANDSHAKE_COMPLETE) {
       ctx.pipeline().remove(HttpRequestHandler.class);
       group.add(ctx.channel());
-      conn = new HttpTtyConnection() {
-        @Override
-        protected void write(byte[] buffer) {
-          ByteBuf byteBuf = Unpooled.buffer();
-          byteBuf.writeBytes(buffer);
-          if (context != null) {
-            context.writeAndFlush(new TextWebSocketFrame(byteBuf));
-          }
-        }
-
-        @Override
-        public void schedule(Runnable task, long delay, TimeUnit unit) {
-          if (context != null) {
-            context.executor().schedule(task, delay, unit);
-          }
-        }
-
-        @Override
-        public void execute(Runnable task) {
-          if (context != null) {
-            context.executor().execute(task);
-          }
-        }
-
-        @Override
-        public void close() {
-          if (context != null) {
-            context.close();
-          }
-        }
-      };
+      conn = new ExtHttpTtyConnection(context);
       handler.accept(conn);
     } else if (evt instanceof IdleStateEvent) {
       ctx.writeAndFlush(new PingWebSocketFrame());
