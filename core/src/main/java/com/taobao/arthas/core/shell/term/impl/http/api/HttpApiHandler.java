@@ -56,6 +56,7 @@ import java.util.concurrent.TimeUnit;
 public class HttpApiHandler {
 
     private static final Logger logger = LoggerFactory.getLogger(HttpApiHandler.class);
+    private static final String ONETIME_SESSION_KEY = "oneTimeSession";
     public static final int DEFAULT_EXEC_TIMEOUT = 30000;
     private final SessionManager sessionManager;
     private final InternalCommandManager commandManager;
@@ -228,6 +229,12 @@ public class HttpApiHandler {
                 sessionManager.updateAccessTime(session);
             }
 
+            // 标记所谓的一次性session
+            if (session == null) {
+                session = sessionManager.createSession();
+                session.put(ONETIME_SESSION_KEY, new Object());
+            }
+
             // 请求到达这里，如果有需要鉴权，则已经在前面的handler里处理过了
             // 如果有鉴权取到的 Subject，则传递到 arthas的session里
             HttpSession httpSession = HttpSessionManager.getHttpSessionFromContext(ctx);
@@ -376,9 +383,8 @@ public class HttpApiHandler {
      */
     private ApiResponse processExecRequest(ApiRequest apiRequest, Session session) {
         boolean oneTimeAccess = false;
-        if (session == null) {
+        if (session.get(ONETIME_SESSION_KEY) != null) {
             oneTimeAccess = true;
-            session = sessionManager.createSession();
         }
 
         try {
