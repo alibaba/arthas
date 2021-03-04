@@ -480,6 +480,7 @@ public class ArthasBootstrap {
             sessionManager.close();
             sessionManager = null;
         }
+        httpApiHandler = null;
         if (timer != null) {
             timer.cancel();
         }

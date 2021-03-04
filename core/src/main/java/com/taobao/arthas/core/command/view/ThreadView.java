@@ -37,7 +37,7 @@ public class ThreadView extends ResultView<ThreadModel> {
 
         } else if (result.getThreadStateCount() != null) {
             Map<Thread.State, Integer> threadStateCount = result.getThreadStateCount();
-            List<ThreadVO> threadStats = result.getThreadStats();
+            List<ThreadVO> threads = result.getThreads();
 
             //sum total thread count
             int total = 0;
@@ -46,7 +46,7 @@ public class ThreadView extends ResultView<ThreadModel> {
             }
 
             int internalThreadCount = 0;
-            for (ThreadVO thread : threadStats) {
+            for (ThreadVO thread : threads) {
                 if (thread.getId() <= 0) {
                     internalThreadCount += 1;
                 }
@@ -68,13 +68,13 @@ public class ThreadView extends ResultView<ThreadModel> {
             //thread stats
             int height;
             if (result.isAll()) {
-                height = threadStats.size() + 1;
+                height = threads.size() + 1;
             } else {
                 height = Math.max(5, process.height() - 2);
                 //remove blank lines
-                height = Math.min(height, threadStats.size() + 2);
+                height = Math.min(height, threads.size() + 2);
             }
-            String content = ViewRenderUtil.drawThreadInfo(threadStats, process.width(), height);
+            String content = ViewRenderUtil.drawThreadInfo(threads, process.width(), height);
             process.write(stat + content);
         }
     }
