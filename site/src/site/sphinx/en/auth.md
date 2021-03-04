@@ -13,6 +13,11 @@ java -jar arthas-boot.jar --password ppp
 
 * The user can be specified by the `--username` option, the default value is `arthas`.
 * You can also configure username/password in arthas.properties. The priority of the command line is higher than that of the configuration file.
+* If only `username` is configured and no `password` is configured, a random password will be generated and printed in `~/logs/arthas/arthas.log`
+
+  ```
+  Using generated security password: 0vUBJpRIppkKuZ7dYzYqOKtranj4unGh
+  ```
 
 ### Authenticate in the telnet console
 

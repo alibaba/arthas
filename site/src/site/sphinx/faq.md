@@ -4,6 +4,10 @@
 
 > 不在本列表里的问题，请到issue里搜索。 [https://github.com/alibaba/arthas/issues](https://github.com/alibaba/arthas/issues)
 
+
+##### 日志文件在哪里？
+
+日志文件路径： `~/logs/arthas/arthas.log`
 ##### Arthas attach之后对原进程性能有多大的影响
 
 [https://github.com/alibaba/arthas/issues/44](https://github.com/alibaba/arthas/issues/44)
@@ -74,3 +78,7 @@ watch demo.MathGame <init> '{params,returnObj,throwExp}' -v -n 5 -x 3 '1==1'
 ##### Arthas能不能离线使用
 
 可以。下载全量包解压即可，参考: [下载](download.md)。
+
+##### Attach docker/k8s 里的 pid 为 1 的进程失败
+
+参考： [https://github.com/alibaba/arthas/issues/362#issuecomment-448185416](https://github.com/alibaba/arthas/issues/362#issuecomment-448185416)

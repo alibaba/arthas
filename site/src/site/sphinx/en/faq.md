@@ -3,6 +3,10 @@
 
 > For questions that are not in this list, please search in issues. [https://github.com/alibaba/arthas/issues](https://github.com/alibaba/arthas/issues)
 
+
+##### Where is the log file?
+
+Log file path: `~/logs/arthas/arthas.log`
 ##### How much impact does Arthas attach have on the performance of the original process?
 
 [https://github.com/alibaba/arthas/issues/44](https://github.com/alibaba/arthas/issues/44)
@@ -75,3 +79,7 @@ For example: use skywalking V8.1.0 below [cannot trace, watch classes enhanced b
 ##### Can I use arthas offline?
 
 Yes. Just download the full size package and unzip it, refer to: [Download](download.md).
+
+##### Attach the process with pid 1 in docker/k8s failed
+
+Reference: [https://github.com/alibaba/arthas/issues/362#issuecomment-448185416](https://github.com/alibaba/arthas/issues/362#issuecomment-448185416)

@@ -13,7 +13,11 @@ java -jar arthas-boot.jar --password ppp
 
 * 可以通过 `--username` 选项来指定用户，默认值是`arthas`。
 * 也可以在 arthas.properties 里中配置 username/password。命令行的优先级大于配置文件。
+* 如果只配置`username`，没有配置`password`，则会生成随机密码，打印在`~/logs/arthas/arthas.log`中
 
+  ```
+  Using generated security password: 0vUBJpRIppkKuZ7dYzYqOKtranj4unGh
+  ```
 
 ### 在telnet console里鉴权
 
@@ -32,6 +36,7 @@ Authentication result: true
 ```
 
 * 可以通过 `--username` 选项来指定用户，默认值是`arthas`。
+
 
 ### web console密码验证
 
