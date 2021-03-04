@@ -44,3 +44,12 @@ Authentication result: true
 Arthas 采用的是 HTTP 标准的 Basic Authorization，客户端请求时增加对应的header即可。
 
 * 参考：[https://developer.mozilla.org/en-US/docs/Web/HTTP/Authentication](https://developer.mozilla.org/en-US/docs/Web/HTTP/Authentication)
+
+
+例如，用户名是：`admin`，密码是 `admin`，则组合为字符串： `admin:admin`，base64结果是： `YWRtaW46YWRtaW4='`，则HTTP 请求增加`Authorization` header：
+
+```bash
+curl 'http://localhost:8563/api' \
+  -H 'Authorization: Basic YWRtaW46YWRtaW4=' \
+  --data-raw '{"action":"exec","command":"version"}' 
+```

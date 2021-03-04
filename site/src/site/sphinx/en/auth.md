@@ -43,3 +43,11 @@ After success, you can directly connect to the web console.
 Arthas uses the HTTP standard Basic Authorization.
 
 * Reference: [https://developer.mozilla.org/en-US/docs/Web/HTTP/Authentication](https://developer.mozilla.org/en-US/docs/Web/HTTP/Authentication)
+
+For example, if the user name is: `admin` and the password is `admin`, the combination is a string: `admin:admin`, the base64 result is: `YWRtaW46YWRtaW4='`, then the HTTP request adds the `Authorization` header:
+
+```bash
+curl 'http://localhost:8563/api' \
+  -H 'Authorization: Basic YWRtaW46YWRtaW4=' \
+  --data-raw '{"action":"exec","command":"version"}' 
+```

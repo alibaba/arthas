@@ -434,6 +434,10 @@ curl -Ss -XPOST http://localhost:8563/api -d '''
 }
 ```
 
+### 鉴权
+
+参考： [auth](auth.md)
+
 ### Web UI
 
 ![](_static/arthas-web-ui.png "arthas web ui")

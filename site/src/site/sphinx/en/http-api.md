@@ -492,6 +492,10 @@ curl -Ss -XPOST http://localhost:8563/api -d '''
 }
 ```
 
+### Authentication
+
+* Reference: [auth](auth.md)
+
 ### Web UI
 
 ![](../_static/arthas-web-ui.png "arthas web ui")
