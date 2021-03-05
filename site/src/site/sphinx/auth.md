@@ -12,7 +12,7 @@ java -jar arthas-boot.jar --password ppp
 ```
 
 * 可以通过 `--username` 选项来指定用户，默认值是`arthas`。
-* 也可以在 arthas.properties 里中配置 username/password。命令行的优先级大于配置文件。
+* 也可以在 `arthas.properties` 里中配置 username/password。命令行的优先级大于配置文件。
 * 如果只配置`username`，没有配置`password`，则会生成随机密码，打印在`~/logs/arthas/arthas.log`中
 
   ```
@@ -51,7 +51,7 @@ Arthas 采用的是 HTTP 标准的 Basic Authorization，客户端请求时增�
 * 参考：[https://developer.mozilla.org/en-US/docs/Web/HTTP/Authentication](https://developer.mozilla.org/en-US/docs/Web/HTTP/Authentication)
 
 
-例如，用户名是：`admin`，密码是 `admin`，则组合为字符串： `admin:admin`，base64结果是： `YWRtaW46YWRtaW4='`，则HTTP 请求增加`Authorization` header：
+例如，用户名是：`admin`，密码是 `admin`，则组合为字符串： `admin:admin`，base64结果是： `YWRtaW46YWRtaW4=`，则HTTP 请求增加`Authorization` header：
 
 ```bash
 curl 'http://localhost:8563/api' \

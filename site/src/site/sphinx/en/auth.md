@@ -12,7 +12,7 @@ java -jar arthas-boot.jar --password ppp
 ```
 
 * The user can be specified by the `--username` option, the default value is `arthas`.
-* You can also configure username/password in arthas.properties. The priority of the command line is higher than that of the configuration file.
+* You can also configure username/password in `arthas.properties`. The priority of the command line is higher than that of the configuration file.
 * If only `username` is configured and no `password` is configured, a random password will be generated and printed in `~/logs/arthas/arthas.log`
 
   ```
@@ -49,7 +49,7 @@ Arthas uses the HTTP standard Basic Authorization.
 
 * Reference: [https://developer.mozilla.org/en-US/docs/Web/HTTP/Authentication](https://developer.mozilla.org/en-US/docs/Web/HTTP/Authentication)
 
-For example, if the user name is: `admin` and the password is `admin`, the combination is a string: `admin:admin`, the base64 result is: `YWRtaW46YWRtaW4='`, then the HTTP request adds the `Authorization` header:
+For example, if the user name is: `admin` and the password is `admin`, the combination is a string: `admin:admin`, the base64 result is: `YWRtaW46YWRtaW4=`, then the HTTP request adds the `Authorization` header:
 
 ```bash
 curl 'http://localhost:8563/api' \
