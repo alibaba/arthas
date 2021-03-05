@@ -1,6 +1,8 @@
 package com.taobao.arthas.core.shell.term.impl.http;
 
 import java.nio.charset.Charset;
+import java.util.List;
+import java.util.Map;
 
 import javax.security.auth.Subject;
 
@@ -26,6 +28,7 @@ import io.netty.handler.codec.http.HttpRequest;
 import io.netty.handler.codec.http.HttpResponse;
 import io.netty.handler.codec.http.HttpResponseStatus;
 import io.netty.handler.codec.http.HttpVersion;
+import io.netty.handler.codec.http.QueryStringDecoder;
 import io.netty.util.Attribute;
 
 /**
@@ -61,9 +64,13 @@ public final class BasicHttpAuthenticatorHandler extends ChannelDuplexHandler {
                 authed = true;
             }
 
-            // 判断请求header里是否带有 username/password
             if (!authed) {
+                // 判断请求header里是否带有 username/password
                 BasicPrincipal principal = extractBasicAuthSubject(httpRequest);
+                if (principal == null) {
+                    // 判断 url里是否有 username/password
+                    principal = extractBasicAuthSubjectFromUrl(httpRequest);
+                }
                 Subject subject = securityAuthenticator.login(principal);
                 if (subject != null) {
                     authed = true;
@@ -101,6 +108,32 @@ public final class BasicHttpAuthenticatorHandler extends ChannelDuplexHandler {
             }
         }
         super.write(ctx, msg, promise);
+    }
+
+    /**
+     * 从url参数里提取 ?username=hello&password=world
+     * 
+     * @param request
+     * @return
+     */
+    protected static BasicPrincipal extractBasicAuthSubjectFromUrl(HttpRequest request) {
+        QueryStringDecoder queryDecoder = new QueryStringDecoder(request.uri());
+        Map<String, List<String>> parameters = queryDecoder.parameters();
+
+        List<String> passwords = parameters.get(ArthasConstants.PASSWORD_KEY);
+        if (passwords == null || passwords.size() == 0) {
+            return null;
+        }
+        String password = passwords.get(0);
+
+        String username = ArthasConstants.DEFAULT_USERNAME;
+        List<String> usernames = parameters.get(ArthasConstants.USERNAME_KEY);
+        if (usernames != null && !usernames.isEmpty()) {
+            username = usernames.get(0);
+        }
+        BasicPrincipal principal = new BasicPrincipal(username, password);
+        logger.debug("Extracted Basic Auth principal from url: {}", principal);
+        return principal;
     }
 
     /**

@@ -25,6 +25,7 @@ public class ArthasConstants {
 
     public static final int TELNET_PORT = 3658;
 
+    public static final String DEFAULT_WEBSOCKET_PATH = "/ws";
     public static final int WEBSOCKET_IDLE_SECONDS = 60;
 
     /**
@@ -35,4 +36,6 @@ public class ArthasConstants {
     public static final String DEFAULT_USERNAME = "arthas";
     public static final String SUBJECT_KEY = "subject";
     public static final String AUTH = "auth";
+    public static final String USERNAME_KEY = "username";
+    public static final String PASSWORD_KEY = "password";
 }

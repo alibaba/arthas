@@ -6,8 +6,8 @@ import java.util.List;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;
 
-import com.alibaba.arthas.tunnel.server.TunnelServer;
 import com.alibaba.arthas.tunnel.server.utils.InetAddressUtil;
+import com.taobao.arthas.common.ArthasConstants;
 
 /**
  * 
@@ -58,7 +58,7 @@ public class ArthasProperties {
         private String host;
         private int port;
         private boolean ssl;
-        private String path = TunnelServer.DEFAULT_WEBSOCKET_PATH;
+        private String path = ArthasConstants.DEFAULT_WEBSOCKET_PATH;
 
         /**
          * 客户端连接的地址。也用于保存到redis里，当部署tunnel server集群里需要。不配置则会自动获取
