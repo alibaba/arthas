@@ -46,6 +46,8 @@ Authentication result: true
 
 ### http api验证
 
+
+#### Authorization Header方式（推荐）
 Arthas 采用的是 HTTP 标准的 Basic Authorization，客户端请求时增加对应的header即可。
 
 * 参考：[https://developer.mozilla.org/en-US/docs/Web/HTTP/Authentication](https://developer.mozilla.org/en-US/docs/Web/HTTP/Authentication)
@@ -58,3 +60,13 @@ curl 'http://localhost:8563/api' \
   -H 'Authorization: Basic YWRtaW46YWRtaW4=' \
   --data-raw '{"action":"exec","command":"version"}' 
 ```
+
+#### URL 参数传递方式
+
+为了方便各种特殊情况，支持了以 parameters 方式传递username和password。比如：
+
+```bash
+curl 'http://localhost:8563/api?password=admin' \
+  --data-raw '{"action":"exec","command":"version"}' 
+```
+
