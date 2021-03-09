@@ -1,14 +1,14 @@
 
 
 <!DOCTYPE html>
-<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
-<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<!--[if IE 8]><html class="no-js lt-ie9" lang="zh-CN" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="zh-CN" > <!--<![endif]-->
 <head>
   <meta charset="utf-8">
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>echo &mdash; Arthas 3.5.0 documentation</title>
+  <title>auth &mdash; Arthas 3.5.0 文档</title>
   
 
   
@@ -27,6 +27,7 @@
         <script type="text/javascript" src="_static/underscore.js"></script>
         <script type="text/javascript" src="_static/doctools.js"></script>
         <script type="text/javascript" src="_static/language_data.js"></script>
+        <script type="text/javascript" src="_static/translations.js"></script>
     
     <script type="text/javascript" src="_static/js/theme.js"></script>
 
@@ -36,10 +37,10 @@
   <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
   <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <link rel="stylesheet" href="_static/overrides.css" type="text/css" />
-    <link rel="index" title="Index" href="genindex.html" />
-    <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="grep" href="grep.html" />
-    <link rel="prev" title="cat" href="cat.html" />
+    <link rel="index" title="索引" href="genindex.html" />
+    <link rel="search" title="搜索" href="search.html" />
+    <link rel="next" title="options" href="options.html" />
+    <link rel="prev" title="pwd" href="pwd.html" />
 <script>
   if (window.location.href.startsWith("https://alibaba.github.io/arthas/")) {
       window.location.href = "https://arthas.aliyun.com/doc/" + window.location.href.substr("https://alibaba.github.io/arthas/".length);
@@ -98,13 +99,17 @@
             
             
               <ul class="current">
-<li class="toctree-l1"><a class="reference external" href="https://arthas.aliyun.com/">Home</a></li>
-<li class="toctree-l1"><a class="reference external" href="https://arthas.aliyun.com/doc/arthas-tutorials.html?language=en">Online tutorials(Recommend)</a></li>
-<li class="toctree-l1"><a class="reference internal" href="install-detail.html">Installation</a></li>
-<li class="toctree-l1"><a class="reference internal" href="download.html">Download</a></li>
-<li class="toctree-l1"><a class="reference internal" href="quick-start.html">Quick start</a></li>
-<li class="toctree-l1"><a class="reference internal" href="advanced-use.html">Advanced usage</a></li>
-<li class="toctree-l1 current"><a class="reference internal" href="commands.html">Commands</a><ul class="current">
+<li class="toctree-l1"><a class="reference external" href="https://arthas.aliyun.com/">首页</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://mp.weixin.qq.com/s/jfjvBmrKmHDdKn-Iez-c4Q">2022实习生招聘</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://developer.aliyun.com/article/751641">技术分享征文</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://arthas.aliyun.com/doc/en/">English Docs</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://arthas.aliyun.com/doc/arthas-tutorials.html?language=cn">在线教程(katacoda)</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://start.aliyun.com/handson-lab?category=arthas">在线教程(阿里云)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="install-detail.html">安装</a></li>
+<li class="toctree-l1"><a class="reference internal" href="download.html">下载</a></li>
+<li class="toctree-l1"><a class="reference internal" href="quick-start.html">快速入门</a></li>
+<li class="toctree-l1"><a class="reference internal" href="advanced-use.html">进阶使用</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="commands.html">命令列表</a><ul class="current">
 <li class="toctree-l2"><a class="reference internal" href="dashboard.html">dashboard</a></li>
 <li class="toctree-l2"><a class="reference internal" href="thread.html">thread</a></li>
 <li class="toctree-l2"><a class="reference internal" href="jvm.html">jvm</a></li>
@@ -132,14 +137,24 @@
 <li class="toctree-l2"><a class="reference internal" href="tt.html">tt</a></li>
 <li class="toctree-l2"><a class="reference internal" href="profiler.html">profiler</a></li>
 <li class="toctree-l2"><a class="reference internal" href="cat.html">cat</a></li>
-<li class="toctree-l2 current"><a class="current reference internal" href="#">echo</a></li>
+<li class="toctree-l2"><a class="reference internal" href="echo.html">echo</a></li>
 <li class="toctree-l2"><a class="reference internal" href="grep.html">grep</a></li>
 <li class="toctree-l2"><a class="reference internal" href="base64.html">base64</a></li>
 <li class="toctree-l2"><a class="reference internal" href="tee.html">tee</a></li>
 <li class="toctree-l2"><a class="reference internal" href="pwd.html">pwd</a></li>
-<li class="toctree-l2"><a class="reference internal" href="auth.html">auth</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">auth</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id1">配置用户名和密码</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#telnet-console">在telnet console里鉴权</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#web-console">Web console密码验证</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#http-api">HTTP API 验证</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#authorization-header">Authorization Header方式（推荐）</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#url">URL 参数传递方式</a></li>
+</ul>
+</li>
+</ul>
+</li>
 <li class="toctree-l2"><a class="reference internal" href="options.html">options</a></li>
-<li class="toctree-l2"><a class="reference internal" href="commands.html#basic-arthas-commands">Basic Arthas Commands</a></li>
+<li class="toctree-l2"><a class="reference internal" href="commands.html#arthas">Arthas 基础命令</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="web-console.html">WebConsole</a></li>
@@ -147,13 +162,13 @@
 <li class="toctree-l1"><a class="reference internal" href="http-api.html">Http API</a></li>
 <li class="toctree-l1"><a class="reference internal" href="docker.html">Docker</a></li>
 <li class="toctree-l1"><a class="reference internal" href="spring-boot-starter.html">Arthas Spring Boot Starter</a></li>
-<li class="toctree-l1"><a class="reference internal" href="idea-plugin.html">IDEA Plugin</a></li>
-<li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas/issues?q=label%3Auser-case">User cases</a></li>
-<li class="toctree-l1"><a class="reference internal" href="faq.html">FAQ</a></li>
+<li class="toctree-l1"><a class="reference internal" href="idea-plugin.html">IDEA 插件</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas/issues?q=label%3Auser-case">用户案例</a></li>
+<li class="toctree-l1"><a class="reference internal" href="faq.html">FAQ/常见问题</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas">Star me at GitHub</a></li>
-<li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas/blob/master/CONTRIBUTING.md#">Compile and debug/CONTRIBUTING</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas/blob/master/CONTRIBUTING.md#">编译调试/参与贡献</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas/releases">Release Notes</a></li>
-<li class="toctree-l1"><a class="reference internal" href="contact-us.html">Contact us</a></li>
+<li class="toctree-l1"><a class="reference internal" href="contact-us.html">QQ群/钉钉群</a></li>
 </ul>
 
             
@@ -199,16 +214,16 @@
     
       <li><a href="index.html">Docs</a> &raquo;</li>
         
-          <li><a href="commands.html">All Commands</a> &raquo;</li>
+          <li><a href="commands.html">命令列表</a> &raquo;</li>
         
-      <li>echo</li>
+      <li>auth</li>
     
     
       <li class="wy-breadcrumbs-aside">
         
             
             
-              <a href="https://github.com/alibaba/arthas/blob/master/site/src/site/sphinx/en/echo.md" class="fa fa-github"> Edit on GitHub</a>
+              <a href="https://github.com/alibaba/arthas/blob/master/site/src/site/sphinx/auth.md" class="fa fa-github"> Edit on GitHub</a>
             
           
         
@@ -222,13 +237,65 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
             
-  <div class="section" id="echo">
-<h1>echo<a class="headerlink" href="#echo" title="Permalink to this headline">¶</a></h1>
-<p><a class="reference external" href="https://arthas.aliyun.com/doc/arthas-tutorials.html?language=en&amp;id=command-echo"><code class="docutils literal notranslate"><span class="pre">echo</span></code> online tutorial</a></p>
+  <div class="section" id="auth">
+<h1>auth<a class="headerlink" href="#auth" title="永久链接至标题">¶</a></h1>
 <blockquote>
-<div><p>write arguments to the standard output.</p>
+<div><p>验证当前会话</p>
 </div></blockquote>
-<div class="highlight-bash notranslate"><div class="highlight hljs"><pre class="bash">$ echo &#x27;hello&#x27;</pre></div>
+<div class="section" id="id1">
+<h2>配置用户名和密码<a class="headerlink" href="#id1" title="永久链接至标题">¶</a></h2>
+<p>在attach时，可以在命令行指定密码。比如：</p>
+<div class="highlight-default notranslate"><pre class="literal-block">java -jar arthas-boot.jar --password ppp</pre>
+</div>
+<ul>
+<li><p>可以通过 <code class="docutils literal notranslate"><span class="pre">--username</span></code> 选项来指定用户，默认值是<code class="docutils literal notranslate"><span class="pre">arthas</span></code>。</p></li>
+<li><p>也可以在 <code class="docutils literal notranslate"><span class="pre">arthas.properties</span></code> 里中配置 username/password。命令行的优先级大于配置文件。</p></li>
+<li><p>如果只配置<code class="docutils literal notranslate"><span class="pre">username</span></code>，没有配置<code class="docutils literal notranslate"><span class="pre">password</span></code>，则会生成随机密码，打印在<code class="docutils literal notranslate"><span class="pre">~/logs/arthas/arthas.log</span></code>中</p>
+<div class="highlight-default notranslate"><pre class="literal-block">Using generated security password: 0vUBJpRIppkKuZ7dYzYqOKtranj4unGh</pre>
+</div>
+</li>
+</ul>
+</div>
+<div class="section" id="telnet-console">
+<h2>在telnet console里鉴权<a class="headerlink" href="#telnet-console" title="永久链接至标题">¶</a></h2>
+<p>连接到arthas后，直接执行命令会提示需要鉴权：</p>
+<div class="highlight-bash notranslate"><div class="highlight hljs"><pre class="bash">[arthas@37430]$ help
+Error! command not permitted, try to use &#x27;auth&#x27; command to authenticates.</pre></div>
+</div>
+<p>使用<code class="docutils literal notranslate"><span class="pre">auth</span></code>命令来鉴权，成功之后可以执行其它命令。</p>
+<div class="highlight-default notranslate"><pre class="literal-block">[arthas@37430]$ auth ppp
+Authentication result: true</pre>
+</div>
+<ul class="simple">
+<li><p>可以通过 <code class="docutils literal notranslate"><span class="pre">--username</span></code> 选项来指定用户，默认值是<code class="docutils literal notranslate"><span class="pre">arthas</span></code>。</p></li>
+</ul>
+</div>
+<div class="section" id="web-console">
+<h2>Web console密码验证<a class="headerlink" href="#web-console" title="永久链接至标题">¶</a></h2>
+<p>打开浏览器，会有弹窗提示需要输入 用户名 和 密码。</p>
+<p>成功之后，则可以直接连接上 web console。</p>
+</div>
+<div class="section" id="http-api">
+<h2>HTTP API 验证<a class="headerlink" href="#http-api" title="永久链接至标题">¶</a></h2>
+<div class="section" id="authorization-header">
+<h3>Authorization Header方式（推荐）<a class="headerlink" href="#authorization-header" title="永久链接至标题">¶</a></h3>
+<p>Arthas 采用的是 HTTP 标准的 Basic Authorization，客户端请求时增加对应的header即可。</p>
+<ul class="simple">
+<li><p>参考：<a class="reference external" href="https://developer.mozilla.org/en-US/docs/Web/HTTP/Authentication">https://developer.mozilla.org/en-US/docs/Web/HTTP/Authentication</a></p></li>
+</ul>
+<p>例如，用户名是：<code class="docutils literal notranslate"><span class="pre">admin</span></code>，密码是 <code class="docutils literal notranslate"><span class="pre">admin</span></code>，则组合为字符串： <code class="docutils literal notranslate"><span class="pre">admin:admin</span></code>，base64结果是： <code class="docutils literal notranslate"><span class="pre">YWRtaW46YWRtaW4=</span></code>，则HTTP 请求增加<code class="docutils literal notranslate"><span class="pre">Authorization</span></code> header：</p>
+<div class="highlight-bash notranslate"><div class="highlight hljs"><pre class="bash">curl &#x27;http://localhost:8563/api&#x27; \
+  -H &#x27;Authorization: Basic YWRtaW46YWRtaW4=&#x27; \
+  --data-raw &#x27;{&quot;action&quot;:&quot;exec&quot;,&quot;command&quot;:&quot;version&quot;}&#x27; </pre></div>
+</div>
+</div>
+<div class="section" id="url">
+<h3>URL 参数传递方式<a class="headerlink" href="#url" title="永久链接至标题">¶</a></h3>
+<p>为了方便各种特殊情况，支持了以 parameters 方式传递username和password。比如：</p>
+<div class="highlight-bash notranslate"><div class="highlight hljs"><pre class="bash">curl &#x27;http://localhost:8563/api?password=admin&#x27; \
+  --data-raw &#x27;{&quot;action&quot;:&quot;exec&quot;,&quot;command&quot;:&quot;version&quot;}&#x27; </pre></div>
+</div>
+</div>
 </div>
 </div>
 
@@ -240,10 +307,10 @@
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="grep.html" class="btn btn-neutral float-right" title="grep" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+        <a href="options.html" class="btn btn-neutral float-right" title="options" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
-        <a href="cat.html" class="btn btn-neutral float-left" title="cat" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+        <a href="pwd.html" class="btn btn-neutral float-left" title="pwd" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
       
     </div>
   

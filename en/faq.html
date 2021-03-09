@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>FAQ &mdash; Arthas 3.4.8 documentation</title>
+  <title>FAQ &mdash; Arthas 3.5.0 documentation</title>
   
 
   
@@ -73,7 +73,7 @@
             
             
               <div class="version">
-                3.4.8
+                3.5.0
               </div>
             
           
@@ -113,6 +113,7 @@
 <li class="toctree-l1"><a class="reference internal" href="idea-plugin.html">IDEA Plugin</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas/issues?q=label%3Auser-case">User cases</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">FAQ</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#where-is-the-log-file">Where is the log file?</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#how-much-impact-does-arthas-attach-have-on-the-performance-of-the-original-process">How much impact does Arthas attach have on the performance of the original process?</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#target-process-not-responding-or-hotspot-vm-not-loaded">target process not responding or HotSpot VM not loaded</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#can-commands-such-as-trace-watch-enhance-the-classes-in-jdk">Can commands such as trace/watch enhance the classes in jdk?</a></li>
@@ -123,6 +124,7 @@
 <li class="toctree-l2"><a class="reference internal" href="#how-to-watch-or-trace-constructor">How to watch or trace constructor?</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#java-lang-classformaterror-null-skywalking-arthas-compatible-use">java.lang.ClassFormatError: null, skywalking arthas compatible use</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#can-i-use-arthas-offline">Can I use arthas offline?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#attach-the-process-with-pid-1-in-docker-k8s-failed">Attach the process with pid 1 in docker/k8s failed</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas">Star me at GitHub</a></li>
@@ -200,6 +202,10 @@
 <blockquote>
 <div><p>For questions that are not in this list, please search in issues. <a class="reference external" href="https://github.com/alibaba/arthas/issues">https://github.com/alibaba/arthas/issues</a></p>
 </div></blockquote>
+<div class="section" id="where-is-the-log-file">
+<h2>Where is the log file?<a class="headerlink" href="#where-is-the-log-file" title="Permalink to this headline">¶</a></h2>
+<p>Log file path: <code class="docutils literal notranslate"><span class="pre">~/logs/arthas/arthas.log</span></code></p>
+</div>
 <div class="section" id="how-much-impact-does-arthas-attach-have-on-the-performance-of-the-original-process">
 <h2>How much impact does Arthas attach have on the performance of the original process?<a class="headerlink" href="#how-much-impact-does-arthas-attach-have-on-the-performance-of-the-original-process" title="Permalink to this headline">¶</a></h2>
 <p><a class="reference external" href="https://github.com/alibaba/arthas/issues/44">https://github.com/alibaba/arthas/issues/44</a></p>
@@ -211,6 +217,7 @@
 <li><p>Check whether the current user and the target java process are consistent. If they are inconsistent, switch to the same user. JVM can only attach java processes under the same user.</p></li>
 <li><p>Try to use <code class="docutils literal notranslate"><span class="pre">jstack</span> <span class="pre">-l</span> <span class="pre">$pid</span></code>. If the process does not respond, it means that the process may freeze and fail to respond to the JVM attach signal. So Arthas based on the attach mechanism cannot work. Try to use <code class="docutils literal notranslate"><span class="pre">jmap</span></code> heapdump to analyze.</p></li>
 <li><p>Try to attach arthas-demo in <a class="reference internal" href="quick-start.html"><span class="doc">quick-start</span></a>.</p></li>
+<li><p>For more information:  <a class="reference external" href="https://github.com/alibaba/arthas/issues/347">https://github.com/alibaba/arthas/issues/347</a></p></li>
 </ol>
 </div>
 <div class="section" id="can-commands-such-as-trace-watch-enhance-the-classes-in-jdk">
@@ -255,6 +262,10 @@
 <div class="section" id="can-i-use-arthas-offline">
 <h2>Can I use arthas offline?<a class="headerlink" href="#can-i-use-arthas-offline" title="Permalink to this headline">¶</a></h2>
 <p>Yes. Just download the full size package and unzip it, refer to: <a class="reference internal" href="download.html"><span class="doc">Download</span></a>.</p>
+</div>
+<div class="section" id="attach-the-process-with-pid-1-in-docker-k8s-failed">
+<h2>Attach the process with pid 1 in docker/k8s failed<a class="headerlink" href="#attach-the-process-with-pid-1-in-docker-k8s-failed" title="Permalink to this headline">¶</a></h2>
+<p>Reference: <a class="reference external" href="https://github.com/alibaba/arthas/issues/362#issuecomment-448185416">https://github.com/alibaba/arthas/issues/362#issuecomment-448185416</a></p>
 </div>
 </div>
 

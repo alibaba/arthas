@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Arthas Tunnel &mdash; Arthas 3.4.8 文档</title>
+  <title>Arthas Tunnel &mdash; Arthas 3.5.0 文档</title>
   
 
   
@@ -74,7 +74,7 @@
             
             
               <div class="version">
-                3.4.8
+                3.5.0
               </div>
             
           
@@ -262,6 +262,9 @@ id        URJZ5L48RPBR2ALI5K4V</pre></div>
 </div>
 <div class="section" id="id1">
 <h2>最佳实践<a class="headerlink" href="#id1" title="永久链接至标题">¶</a></h2>
+<blockquote>
+<div><p>注意，agentId要保持唯一，否则会在tunnel server上冲突，不能正常工作。</p>
+</div></blockquote>
 <p>如果 arthas agent配置了 <code class="docutils literal notranslate"><span class="pre">appName</span></code>，则生成的agentId会带上<code class="docutils literal notranslate"><span class="pre">appName</span></code>的前缀。</p>
 <p>比如在加上启动参数：<code class="docutils literal notranslate"><span class="pre">as.sh</span> <span class="pre">--tunnel-server</span> <span class="pre">'ws://127.0.0.1:7777/ws'</span> <span class="pre">--app-name</span> <span class="pre">demoapp</span></code> ，则生成的agentId可能是<code class="docutils literal notranslate"><span class="pre">demoapp_URJZ5L48RPBR2ALI5K4V</span></code>。</p>
 <p>Tunnel server会以<code class="docutils literal notranslate"><span class="pre">_</span></code>做分隔符，提取出<code class="docutils literal notranslate"><span class="pre">appName</span></code>，方便按应用进行管理。</p>

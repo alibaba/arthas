@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>进阶使用 &mdash; Arthas 3.4.8 文档</title>
+  <title>进阶使用 &mdash; Arthas 3.5.0 文档</title>
   
 
   
@@ -74,7 +74,7 @@
             
             
               <div class="version">
-                3.4.8
+                3.5.0
               </div>
             
           
@@ -114,9 +114,10 @@
 <li class="toctree-l2"><a class="reference internal" href="#class-classloader">class/classloader相关</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#monitor-watch-trace">monitor/watch/trace相关</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#profiler">profiler/火焰图</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id3">鉴权</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#options">options</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#id3">管道</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#id4">后台异步任务</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id4">管道</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id5">后台异步任务</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#web-console">Web Console</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="web-console.html">Web Console</a></li>
 </ul>
@@ -130,8 +131,8 @@
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="#as-sh-arthas-boot">as.sh 和 arthas-boot 技巧</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#id5">用户数据回报</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#id6">其他特性</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#id6">用户数据回报</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id7">其他特性</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="async.html">异步命令支持</a></li>
 <li class="toctree-l3"><a class="reference internal" href="save-log.html">执行结果存日志</a></li>
 <li class="toctree-l3"><a class="reference internal" href="batch-support.html">批处理的支持</a></li>
@@ -290,14 +291,20 @@
 <li><p><a class="reference internal" href="profiler.html"><span class="doc">profiler</span></a>–使用<a class="reference external" href="https://github.com/jvm-profiling-tools/async-profiler">async-profiler</a>对应用采样，生成火焰图</p></li>
 </ul>
 </div>
+<div class="section" id="id3">
+<h2>鉴权<a class="headerlink" href="#id3" title="永久链接至标题">¶</a></h2>
+<ul class="simple">
+<li><p><a class="reference internal" href="auth.html"><span class="doc">auth</span></a>–鉴权</p></li>
+</ul>
+</div>
 <div class="section" id="options">
 <h2>options<a class="headerlink" href="#options" title="永久链接至标题">¶</a></h2>
 <ul class="simple">
 <li><p><a class="reference internal" href="options.html"><span class="doc">options</span></a>——查看或设置Arthas全局开关</p></li>
 </ul>
 </div>
-<div class="section" id="id3">
-<h2>管道<a class="headerlink" href="#id3" title="永久链接至标题">¶</a></h2>
+<div class="section" id="id4">
+<h2>管道<a class="headerlink" href="#id4" title="永久链接至标题">¶</a></h2>
 <p>Arthas支持使用管道对上述命令的结果进行进一步的处理，如<code class="docutils literal notranslate"><span class="pre">sm</span> <span class="pre">java.lang.String</span> <span class="pre">*</span> <span class="pre">|</span> <span class="pre">grep</span> <span class="pre">'index'</span></code></p>
 <ul class="simple">
 <li><p>grep——搜索满足条件的结果</p></li>
@@ -305,8 +312,8 @@
 <li><p>wc——按行统计输出结果</p></li>
 </ul>
 </div>
-<div class="section" id="id4">
-<h2>后台异步任务<a class="headerlink" href="#id4" title="永久链接至标题">¶</a></h2>
+<div class="section" id="id5">
+<h2>后台异步任务<a class="headerlink" href="#id5" title="永久链接至标题">¶</a></h2>
 <p>当线上出现偶发的问题，比如需要watch某个条件，而这个条件一天可能才会出现一次时，异步后台任务就派上用场了，详情请参考<a class="reference internal" href="async.html"><span class="doc">这里</span></a></p>
 <ul class="simple">
 <li><p>使用 &gt; 将结果重写向到日志文件，使用 &amp; 指定命令是后台运行，session断开不影响任务执行（生命周期默认为1天）</p></li>
@@ -380,15 +387,15 @@ version   3.3.6
 pid       58883</pre></div>
 </div>
 </div>
-<div class="section" id="id5">
-<h2>用户数据回报<a class="headerlink" href="#id5" title="永久链接至标题">¶</a></h2>
+<div class="section" id="id6">
+<h2>用户数据回报<a class="headerlink" href="#id6" title="永久链接至标题">¶</a></h2>
 <p>在<code class="docutils literal notranslate"><span class="pre">3.1.4</span></code>版本后，增加了用户数据回报功能，方便统一做安全或者历史数据统计。</p>
 <p>在启动时，指定<code class="docutils literal notranslate"><span class="pre">stat-url</span></code>，就会回报执行的每一行命令，比如： <code class="docutils literal notranslate"><span class="pre">./as.sh</span> <span class="pre">--stat-url</span> <span class="pre">'http://192.168.10.11:8080/api/stat'</span></code></p>
 <p>在tunnel server里有一个示例的回报代码，用户可以自己在服务器上实现。</p>
 <p><a class="reference external" href="https://github.com/alibaba/arthas/blob/master/tunnel-server/src/main/java/com/alibaba/arthas/tunnel/server/app/web/StatController.java">StatController.java</a></p>
 </div>
-<div class="section" id="id6">
-<h2>其他特性<a class="headerlink" href="#id6" title="永久链接至标题">¶</a></h2>
+<div class="section" id="id7">
+<h2>其他特性<a class="headerlink" href="#id7" title="永久链接至标题">¶</a></h2>
 <div class="toctree-wrapper compound">
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="async.html">异步命令支持</a></li>

@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Http API &mdash; Arthas 3.4.8 文档</title>
+  <title>Http API &mdash; Arthas 3.5.0 文档</title>
   
 
   
@@ -74,7 +74,7 @@
             
             
               <div class="version">
-                3.4.8
+                3.5.0
               </div>
             
           
@@ -130,15 +130,16 @@
 <li class="toctree-l3"><a class="reference internal" href="#id12">关闭会话</a></li>
 </ul>
 </li>
+<li class="toctree-l2"><a class="reference internal" href="#id13">鉴权</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#web-ui">Web UI</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#id13">特殊命令结果</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#id14">特殊命令结果</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#status">status</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#input-status">input_status</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#command">command</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#enhancer">enhancer</a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="#id14">案例</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#id15">案例</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#javaclasspath">获取Java应用的Classpath</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#watchmap">watch命令输出map对象</a></li>
 </ul>
@@ -611,6 +612,10 @@ API可以提供结构化的数据，支持更复杂的交互功能，比如特�
 </div>
 </div>
 </div>
+<div class="section" id="id13">
+<h2>鉴权<a class="headerlink" href="#id13" title="永久链接至标题">¶</a></h2>
+<p>参考： <a class="reference internal" href="auth.html"><span class="doc">auth</span></a></p>
+</div>
 <div class="section" id="web-ui">
 <h2>Web UI<a class="headerlink" href="#web-ui" title="永久链接至标题">¶</a></h2>
 <p><img alt="_images/arthas-web-ui.png" src="_images/arthas-web-ui.png" /></p>
@@ -632,8 +637,8 @@ API可以提供结构化的数据，支持更复杂的交互功能，比如特�
 </ul>
 <p><a id="special_command_results"></a></p>
 </div>
-<div class="section" id="id13">
-<h2>特殊命令结果<a class="headerlink" href="#id13" title="永久链接至标题">¶</a></h2>
+<div class="section" id="id14">
+<h2>特殊命令结果<a class="headerlink" href="#id14" title="永久链接至标题">¶</a></h2>
 <div class="section" id="status">
 <h3>status<a class="headerlink" href="#status" title="永久链接至标题">¶</a></h3>
 <div class="highlight-json notranslate"><div class="highlight hljs"><pre class="json">{
@@ -703,8 +708,8 @@ API可以提供结构化的数据，支持更复杂的交互功能，比如特�
 <p><code class="docutils literal notranslate"><span class="pre">trace/watch/jad/tt</span></code>等命令需要对类进行增强，会接收到这个<code class="docutils literal notranslate"><span class="pre">enhancer</span></code>结果。可能出现<code class="docutils literal notranslate"><span class="pre">enhancer</span></code>结果成功，但没有命中方法的情况，客户端可以根据<code class="docutils literal notranslate"><span class="pre">enhancer</span></code>结果提示用户。</p>
 </div>
 </div>
-<div class="section" id="id14">
-<h2>案例<a class="headerlink" href="#id14" title="永久链接至标题">¶</a></h2>
+<div class="section" id="id15">
+<h2>案例<a class="headerlink" href="#id15" title="永久链接至标题">¶</a></h2>
 <div class="section" id="javaclasspath">
 <h3>获取Java应用的Classpath<a class="headerlink" href="#javaclasspath" title="永久链接至标题">¶</a></h3>
 <p>通过Http api查询Java应用的System properties，提取<code class="docutils literal notranslate"><span class="pre">java.class.path</span></code>的值。</p>
