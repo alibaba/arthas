@@ -39,6 +39,7 @@ All Commands
 * [base64](base64.md)
 * [tee](tee.md)
 * [pwd](pwd.md)
+* [auth](auth.md)
 * [options](options.md)
 
 

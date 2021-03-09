@@ -1,14 +1,19 @@
 package com.taobao.arthas.core.util;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.StringReader;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 import java.util.Properties;
 import java.util.Set;
 import java.util.StringTokenizer;
 import java.util.TreeSet;
 
 public abstract class StringUtils {
+    private static final String AB = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
 
     /**
      * 获取异常的原因描述
@@ -884,5 +889,64 @@ public abstract class StringUtils {
                 : bytes < 0xfffccccccccccccL >> 10 ? String.format("%.1f TiB", bytes / 0x1p40)
                 : bytes < 0xfffccccccccccccL ? String.format("%.1f PiB", (bytes >> 10) / 0x1p40)
                 : String.format("%.1f EiB", (bytes >> 20) / 0x1p40);
+    }
+
+    public static List<String> toLines(String text) {
+        List<String> result = new ArrayList<String>();
+        BufferedReader reader = new BufferedReader(new StringReader(text));
+        try {
+            String line = reader.readLine();
+            while (line != null) {
+                result.add(line);
+                line = reader.readLine();
+            }
+        } catch (IOException exc) {
+            // quit
+        } finally {
+            if (reader != null) {
+                try {
+                    reader.close();
+                } catch (IOException e) {
+                    // ignore
+                }
+            }
+        }
+        return result;
+    }
+
+    public static String randomString(int length) {
+        StringBuilder sb = new StringBuilder(length);
+        for (int i = 0; i < length; i++)
+            sb.append(AB.charAt(ThreadLocalRandom.current().nextInt(AB.length())));
+        return sb.toString();
+    }
+
+    /**
+     * Returns the string before the given token
+     *
+     * @param text   the text
+     * @param before the token
+     * @return the text before the token, or <tt>null</tt> if text does not contain
+     *         the token
+     */
+    public static String before(String text, String before) {
+        int pos = text.indexOf(before);
+        return pos == -1 ? null : text.substring(0, pos);
+    }
+
+    /**
+     * Returns the string after the given token
+     *
+     * @param text  the text
+     * @param after the token
+     * @return the text after the token, or <tt>null</tt> if text does not contain
+     *         the token
+     */
+    public static String after(String text, String after) {
+        int pos = text.indexOf(after);
+        if (pos == -1) {
+            return null;
+        }
+        return text.substring(pos + after.length());
     }
 }

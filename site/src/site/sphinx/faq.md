@@ -4,6 +4,10 @@
 
 > 不在本列表里的问题，请到issue里搜索。 [https://github.com/alibaba/arthas/issues](https://github.com/alibaba/arthas/issues)
 
+
+##### 日志文件在哪里？
+
+日志文件路径： `~/logs/arthas/arthas.log`
 ##### Arthas attach之后对原进程性能有多大的影响
 
 [https://github.com/alibaba/arthas/issues/44](https://github.com/alibaba/arthas/issues/44)
@@ -16,6 +20,7 @@ com.sun.tools.attach.AttachNotSupportedException: Unable to open socket file: ta
 1. 检查当前用户和目标java进程是否一致。如果不一致，则切换到同一用户。JVM只能attach同样用户下的java 进程。
 2. 尝试使用 `jstack -l $pid`，如果进程没有反应，则说明进程可能假死，无法响应JVM attach信号。所以同样基于attach机制的Arthas无法工作。尝试使用`jmap` heapdump后分析。
 3. 尝试按[quick-start](quick-start.md)里的方式attach arthas-demo。
+4. 更多情况参考： [https://github.com/alibaba/arthas/issues/347](https://github.com/alibaba/arthas/issues/347)
 ##### trace/watch等命令能否增强jdk里的类？
 
 默认情况下会过滤掉`java.`开头的类，但可以通过参数开启。
@@ -74,3 +79,7 @@ watch demo.MathGame <init> '{params,returnObj,throwExp}' -v -n 5 -x 3 '1==1'
 ##### Arthas能不能离线使用
 
 可以。下载全量包解压即可，参考: [下载](download.md)。
+
+##### Attach docker/k8s 里的 pid 为 1 的进程失败
+
+参考： [https://github.com/alibaba/arthas/issues/362#issuecomment-448185416](https://github.com/alibaba/arthas/issues/362#issuecomment-448185416)

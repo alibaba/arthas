@@ -21,7 +21,7 @@ jad
 
 ### 使用参考
 
-#### 编译`java.lang.String`
+#### 反编译`java.lang.String`
 
 ```java
 $ jad java.lang.String
@@ -31,27 +31,31 @@ ClassLoader:
 Location:
 
 
-/*
-* Decompiled with CFR 0_132.
-*/
-package java.lang;
+        /*
+         * Decompiled with CFR.
+         */
+        package java.lang;
 
-import java.io.ObjectStreamField;
+        import java.io.ObjectStreamField;
+        import java.io.Serializable;
 ...
-public final class String
-implements Serializable,
-Comparable<String>,
-CharSequence {
-    private final char[] value;
-    private int hash;
-    private static final long serialVersionUID = -6849794470754667710L;
-    private static final ObjectStreamField[] serialPersistentFields = new ObjectStreamField[0];
-    public static final Comparator<String> CASE_INSENSITIVE_ORDER = new CaseInsensitiveComparator();
-
-    public String(byte[] arrby, int n, int n2) {
-        String.checkBounds(arrby, n, n2);
-        this.value = StringCoding.decode(arrby, n, n2);
-    }
+        public final class String
+        implements Serializable,
+        Comparable<String>,
+        CharSequence {
+            private final char[] value;
+            private int hash;
+            private static final long serialVersionUID = -6849794470754667710L;
+            private static final ObjectStreamField[] serialPersistentFields = new ObjectStreamField[0];
+            public static final Comparator<String> CASE_INSENSITIVE_ORDER = new CaseInsensitiveComparator();
+...
+            public String(byte[] byArray, int n, int n2, Charset charset) {
+/*460*/         if (charset == null) {
+                    throw new NullPointerException("charset");
+                }
+/*462*/         String.checkBounds(byArray, n, n2);
+/*463*/         this.value = StringCoding.decode(charset, byArray, n, n2);
+            }
 ...
 ```
 
@@ -59,7 +63,7 @@ CharSequence {
 
 默认情况下，反编译结果里会带有`ClassLoader`信息，通过`--source-only`选项，可以只打印源代码。方便和[mc](mc.md)/[retransform](retransform.md)命令结合使用。
 
-```
+```java
 $ jad --source-only demo.MathGame
 /*
  * Decompiled with CFR 0_132.
@@ -85,21 +89,42 @@ public class MathGame {
 $ jad demo.MathGame main
 
 ClassLoader:
-+-sun.misc.Launcher$AppClassLoader@3d4eac69
-+-sun.misc.Launcher$ExtClassLoader@66350f69
++-sun.misc.Launcher$AppClassLoader@232204a1
+  +-sun.misc.Launcher$ExtClassLoader@7f31245a
+
+Location:
+/private/tmp/arthas-demo.jar
+
+       public static void main(String[] args) throws InterruptedException {
+           MathGame game = new MathGame();
+           while (true) {
+/*16*/         game.run();
+/*17*/         TimeUnit.SECONDS.sleep(1L);
+           }
+       }
+```
+
+#### 反编译时不显示行号
+
+`--lineNumber` 参数默认值为true，显示指定为false则不打印行号。
+
+```java
+$ jad demo.MathGame main --lineNumber false
+
+ClassLoader:
++-sun.misc.Launcher$AppClassLoader@232204a1
+  +-sun.misc.Launcher$ExtClassLoader@7f31245a
 
 Location:
 /private/tmp/arthas-demo.jar
 
 public static void main(String[] args) throws InterruptedException {
     MathGame game = new MathGame();
-    do {
+    while (true) {
         game.run();
         TimeUnit.SECONDS.sleep(1L);
-    } while (true);
+    }
 }
-
-Affect(row-cnt:1) cost in 228 ms.
 ```
 
 #### 反编译时指定ClassLoader

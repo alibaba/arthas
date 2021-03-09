@@ -59,7 +59,8 @@ public class HttpRequestHandler extends SimpleChannelInboundHandler<FullHttpRequ
 
     @Override
     protected void channelRead0(ChannelHandlerContext ctx, FullHttpRequest request) throws Exception {
-        if (wsUri.equalsIgnoreCase(request.uri())) {
+        String path = new URI(request.uri()).getPath();
+        if (wsUri.equalsIgnoreCase(path)) {
             ctx.fireChannelRead(request.retain());
         } else {
             if (HttpUtil.is100ContinueExpected(request)) {
@@ -67,7 +68,6 @@ public class HttpRequestHandler extends SimpleChannelInboundHandler<FullHttpRequ
             }
 
             HttpResponse response = null;
-            String path = new URI(request.uri()).getPath();
             if ("/".equals(path)) {
                 path = "/index.html";
             }
@@ -77,7 +77,7 @@ public class HttpRequestHandler extends SimpleChannelInboundHandler<FullHttpRequ
             try {
                 //handle http restful api
                 if ("/api".equals(path)) {
-                    response = httpApiHandler.handle(request);
+                    response = httpApiHandler.handle(ctx, request);
                     isHttpApiResponse = true;
                 }
 

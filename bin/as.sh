@@ -8,10 +8,10 @@
 
 # program : Arthas
 #  author : Core Engine @ Taobao.com
-#    date : 2021-01-11
+#    date : 2021-03-09
 
 # current arthas script version
-ARTHAS_SCRIPT_VERSION=3.4.6
+ARTHAS_SCRIPT_VERSION=3.5.0
 
 # SYNOPSIS
 #   rreadlink <fileOrDirPath>
@@ -144,6 +144,12 @@ STAT_URL=
 
 # app name
 APP_NAME=
+
+# username
+USERNAME=
+
+# password
+PASSWORD=
 
 ############ Command Arguments ############
 
@@ -400,6 +406,7 @@ Usage:
        [--http-port <value>] [--session-timeout <value>] [--arthas-home <value>]
        [--tunnel-server <value>] [--agent-id <value>] [--stat-url <value>]
        [--app-name <value>]
+       [--username <value>] [--password <value>]
        [--use-version <value>] [--repo-mirror <value>] [--versions] [--use-http]
        [--attach-only] [-c <value>] [-f <value>] [-v] [pid]
 
@@ -420,6 +427,8 @@ Options and Arguments:
     --tunnel-server             Remote tunnel server url
     --agent-id                  Special agent id
     --app-name                  Special app name
+    --username                  Special username
+    --password                  Special password
     --select                    select target process by classname or JARfilename
  -c,--command <value>           Command to execute, multiple commands separated
                                 by ;
@@ -433,12 +442,13 @@ EXAMPLES:
   ./as.sh <pid>
   ./as.sh --target-ip 0.0.0.0
   ./as.sh --telnet-port 9999 --http-port -1
+  ./as.sh --username admin --password <password>
   ./as.sh --tunnel-server 'ws://192.168.10.11:7777/ws' --app-name demoapp
   ./as.sh --tunnel-server 'ws://192.168.10.11:7777/ws' --agent-id bvDOe8XbTM2pQWjF4cfw
   ./as.sh --stat-url 'http://192.168.10.11:8080/api/stat'
   ./as.sh -c 'sysprop; thread' <pid>
   ./as.sh -f batch.as <pid>
-  ./as.sh --use-version 3.4.6
+  ./as.sh --use-version 3.5.0
   ./as.sh --session-timeout 3600
   ./as.sh --attach-only
   ./as.sh --select arthas-demo
@@ -604,6 +614,16 @@ parse_arguments()
         ;;
         --app-name)
         APP_NAME="$2"
+        shift # past argument
+        shift # past value
+        ;;
+        --username)
+        USERNAME="$2"
+        shift # past argument
+        shift # past value
+        ;;
+        --password)
+        PASSWORD="$2"
         shift # past argument
         shift # past value
         ;;
@@ -804,6 +824,16 @@ attach_jvm()
     if [ "${APP_NAME}" ]; then
         tempArgs+=("-app-name")
         tempArgs+=("${APP_NAME}")
+    fi
+
+    if [ "${USERNAME}" ]; then
+        tempArgs+=("-username")
+        tempArgs+=("${USERNAME}")
+    fi
+
+        if [ "${PASSWORD}" ]; then
+        tempArgs+=("-password")
+        tempArgs+=("${PASSWORD}")
     fi
 
     if [ "${TARGET_IP}" ]; then
