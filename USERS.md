@@ -149,3 +149,7 @@ Welcome to register the company name in this issue: https://github.com/alibaba/a
 * 启迪出行
 * 大华股份
 * 黄豆伟业
+* 中国有赞
+* 车巴达
+* 华为
+* 云管书
