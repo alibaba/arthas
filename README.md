@@ -511,7 +511,7 @@ Welcome to register the company name in this issue: https://github.com/alibaba/a
 ![宇中科技](static/yuzhong.png)
 ![蘑菇财富](static/mogu.jpg)
 ![喔趣科技](static/woqu.png)
-
+![中原银行](static/zhongyuanbank.png)
 ### Derivative Projects
 
 * [Bistoury: A project that integrates Arthas](https://github.com/qunarcorp/bistoury)
