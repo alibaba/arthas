@@ -36,7 +36,7 @@ public class GcinfoCommand extends AnnotatedCommand {
 
 	private volatile int loopCount = -1;// 循环次数
 
-	private volatile int priCount = 0;// 初始化次数
+	private volatile int initCount = 0;// 初始化次数
 
 	private long pid = 0;
 
@@ -48,8 +48,8 @@ public class GcinfoCommand extends AnnotatedCommand {
 		this.loopCount = count;
 	}
 
-	@Option(shortName = "i", longName = "gcinfo-show-intervalTime")
-	@Description("get gc info interval,the default interval is 1000ms.")
+	@Option(shortName = "i", longName = "intervalTime")
+	@Description("The intervalTime (in ms) between two executions, default is 1000 ms.")
 	public void setInterval(int interval) {
 		this.interval = interval;
 	}
@@ -91,7 +91,7 @@ public class GcinfoCommand extends AnnotatedCommand {
 
 		@Override
 		public void run() {
-			if (priCount > loopCount) {
+			if (initCount > loopCount) {
 				// stop the timer
 				timer.cancel();
 				timer.purge();
@@ -111,29 +111,7 @@ public class GcinfoCommand extends AnnotatedCommand {
 		try {
 			logger.info("command:" + assembleCommand());
 			p = run.exec(assembleCommand());
-			BufferedReader br = new BufferedReader(new InputStreamReader(p.getInputStream()));
-			String line = null;
-			while ((line = br.readLine()) != null) {
-				if (priCount == 0) {
-					content.append(line);
-					content.append("\n");
-				} else {
-					if (!line.contains("S0")) { // 命令每次返回结果，都会有列名，只取第一次执行的列名，后续的直接取值
-						content.append(line);
-						content.append("\n");
-					}
-				}
-
-			}
-			StringBuilder errorMessage = new StringBuilder();
-			BufferedReader error = new BufferedReader(new InputStreamReader(p.getErrorStream()));
-			while ((line = error.readLine()) != null) {
-				errorMessage.append(line).append("\n");
-			}
-			if (errorMessage.toString().length()!=0) {
-				logger.error("jstat -gcutil command has error:"+errorMessage.toString());
-				content.append(errorMessage);
-			}
+			getResponse(content, p);
 			process.write(content.toString());
 		} catch (IOException e) {
 			logger.error("jstat -gcutil command has error!", e);
@@ -142,9 +120,78 @@ public class GcinfoCommand extends AnnotatedCommand {
 			if (p != null) {
 				p.destroy();
 			}
-			priCount++;
+			initCount++;
 		}
 
+	}
+
+	private void getResponse(StringBuilder content, Process p) {
+		Thread redirectStdout = new Thread(new Runnable() {
+		    @Override
+		    public void run() {
+				BufferedReader br = new BufferedReader(new InputStreamReader(p.getInputStream()));
+		    	try {
+					String line = null;
+					while ((line = br.readLine()) != null) {
+						if (initCount == 0) {
+							content.append(line);
+							content.append("\n");
+						} else {
+							if (!line.contains("S0")) { // 命令每次返回结果，都会有列名，只取第一次执行的列名，后续的直接取值
+								content.append(line);
+								content.append("\n");
+							}
+						}
+
+					} 
+				} catch (Exception e) {
+					logger.error("GcinfoCommand-redirectStdout has error:"+e.getMessage(),e);
+					try {
+						if (br!=null) {
+							br.close();
+						}
+					} catch (IOException e1) {
+						e1.printStackTrace();
+					}
+				}
+		    }
+		});
+		StringBuilder errorMessage = new StringBuilder();
+		Thread redirectStderr = new Thread(new Runnable() {
+		    @Override
+		    public void run() {
+				BufferedReader error = new BufferedReader(new InputStreamReader(p.getErrorStream()));
+		    	try {
+					String line = null;
+					while ((line = error.readLine()) != null) {
+						errorMessage.append(line).append("\n");
+					} 
+				} catch (Exception e) {
+					logger.error("GcinfoCommand-redirectStderr has error:"+e.getMessage(),e);
+					try {
+						if (error!=null) {
+							error.close();
+						}
+					} catch (IOException e1) {
+						e1.printStackTrace();
+					}
+				}
+
+		    }
+		});
+		redirectStdout.start();
+		redirectStderr.start();
+		try {
+			redirectStdout.join();
+			redirectStderr.join();
+		} catch (InterruptedException e) {
+			logger.error("redirectStdout or redirectStderr is interrupted,the error is:"+e.getMessage(),e);
+		}
+
+		if (errorMessage.toString().length() != 0) {
+			logger.error("jstat -gcutil command has error:" + errorMessage.toString());
+			content.append(errorMessage);
+		}
 	}
 
 	private String assembleCommand() {
