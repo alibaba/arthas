@@ -402,12 +402,14 @@ public class ArthasBootstrap {
 
             // TODO: discover user provided command resolver
             if (configure.getTelnetPort() != null && configure.getTelnetPort() > 0) {
+                logger().info("try to bind telnet server, host: {}, port: {}.", configure.getIp(), configure.getTelnetPort());
                 shellServer.registerTermServer(new HttpTelnetTermServer(configure.getIp(), configure.getTelnetPort(),
                         options.getConnectionTimeout(), workerGroup, httpSessionManager));
             } else {
                 logger().info("telnet port is {}, skip bind telnet server.", configure.getTelnetPort());
             }
             if (configure.getHttpPort() != null && configure.getHttpPort() > 0) {
+                logger().info("try to bind http server, host: {}, port: {}.", configure.getIp(), configure.getHttpPort());
                 shellServer.registerTermServer(new HttpTermServer(configure.getIp(), configure.getHttpPort(),
                         options.getConnectionTimeout(), workerGroup, httpSessionManager));
             } else {
@@ -425,7 +427,9 @@ public class ArthasBootstrap {
 
             shellServer.listen(new BindHandler(isBindRef));
             if (!isBind()) {
-                throw new IllegalStateException("Arthas failed to bind telnet or http port.");
+                throw new IllegalStateException("Arthas failed to bind telnet or http port! Telnet port: "
+                        + String.valueOf(configure.getTelnetPort()) + ", http port: "
+                        + String.valueOf(configure.getHttpPort()));
             }
 
             //http api session manager
