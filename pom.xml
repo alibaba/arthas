@@ -56,6 +56,7 @@
     <url>https://github.com/alibaba/arthas</url>
 
     <modules>
+        <module>math-game</module>
         <module>spy</module>
         <module>common</module>
         <module>tunnel-common</module>
@@ -67,7 +68,6 @@
         <module>boot</module>
         <module>arthas-agent-attach</module>
         <module>arthas-spring-boot-starter</module>
-        <module>demo</module>
         <module>testcase</module>
         <module>site</module>
         <module>packaging</module>

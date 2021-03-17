@@ -43,7 +43,7 @@ Many times what we are interested is the exact trace result when the method call
 
 #### Start Demo
 
-Start `arthas-demo` in [Quick Start](quick-start.md).
+Start `math-game` in [Quick Start](quick-start.md).
 
 #### Trace method
 

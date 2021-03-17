@@ -4,13 +4,13 @@
 ## 1. 启动Demo
 
 ```bash
-curl -O https://arthas.aliyun.com/arthas-demo.jar
-java -jar arthas-demo.jar
+curl -O https://arthas.aliyun.com/math-game.jar
+java -jar math-game.jar
 ```
 
-`arthas-demo`是一个简单的程序，每隔一秒生成一个随机数，再执行质因数分解，并打印出分解结果。
+`math-game`是一个简单的程序，每隔一秒生成一个随机数，再执行质因数分解，并打印出分解结果。
 
-`arthas-demo`源代码：[查看](https://github.com/alibaba/arthas/blob/master/demo/src/main/java/demo/MathGame.java)
+`math-game`源代码：[查看](https://github.com/alibaba/arthas/blob/master/demo/src/main/java/demo/MathGame.java)
 
 
 ## 2. 启动arthas
@@ -33,7 +33,7 @@ java -jar arthas-boot.jar
 ```bash
 $ $ java -jar arthas-boot.jar
 * [1]: 35542
-  [2]: 71560 arthas-demo.jar
+  [2]: 71560 math-game.jar
 ```
 
 Demo进程是第2个，则输入2，再输入`回车/enter`。Arthas会attach到目标进程上，并输出日志：
@@ -95,7 +95,7 @@ java.home              /Library/Java/JavaVir
                        e/jre
 ```
 
-## 4. 通过thread命令来获取到`arthas-demo`进程的Main Class
+## 4. 通过thread命令来获取到`math-game`进程的Main Class
 
 `thread 1`会打印线程ID 1的栈，通常是main函数的线程。
 
@@ -114,7 +114,7 @@ ClassLoader:
   +-sun.misc.Launcher$ExtClassLoader@66350f69
 
 Location:
-/tmp/arthas-demo.jar
+/tmp/math-game.jar
 
 /*
  * Decompiled with CFR 0_132.

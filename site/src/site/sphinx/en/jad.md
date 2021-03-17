@@ -93,7 +93,7 @@ ClassLoader:
   +-sun.misc.Launcher$ExtClassLoader@7f31245a
 
 Location:
-/private/tmp/arthas-demo.jar
+/private/tmp/math-game.jar
 
        public static void main(String[] args) throws InterruptedException {
            MathGame game = new MathGame();
@@ -116,7 +116,7 @@ ClassLoader:
   +-sun.misc.Launcher$ExtClassLoader@7f31245a
 
 Location:
-/private/tmp/arthas-demo.jar
+/private/tmp/math-game.jar
 
 public static void main(String[] args) throws InterruptedException {
     MathGame game = new MathGame();

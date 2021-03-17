@@ -107,18 +107,18 @@ Arthas supports living inside a browser. The communication between arthas and br
 
 Normally, `as.sh`/`arthas-boot.jar` needs to a pid, bacause the pid will change.
 
-For example, with `arthas-demo.jar` already started, use the `jps` command to see.
+For example, with `math-game.jar` already started, use the `jps` command to see.
 
 ```bash
 $ jps
-58883 arthas-demo.jar
+58883 math-game.jar
 58884 Jps
 ```
 
 The `select` option allows you to specify a process name, which is very convenient.
 
 ```bash
-$ ./as.sh --select arthas-demo
+$ ./as.sh --select math-game
 Arthas script version: 3.3.6
 [INFO] JAVA_HOME: /tmp/java/8.0.222-zulu
 Arthas home: /Users/admin/.arthas/lib/3.3.6/arthas
