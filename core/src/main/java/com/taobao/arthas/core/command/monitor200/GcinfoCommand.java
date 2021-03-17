@@ -32,7 +32,7 @@ public class GcinfoCommand extends AnnotatedCommand {
 
 	private static final Logger logger = LoggerFactory.getLogger(GcinfoCommand.class);
 
-	private volatile int interval = -1;// 默认间隔时间
+	private volatile int intervalTime = -1;// 默认间隔时间
 
 	private volatile int loopCount = -1;// 循环次数
 
@@ -42,25 +42,25 @@ public class GcinfoCommand extends AnnotatedCommand {
 
 	private volatile Timer timer;
 
-	@Option(shortName = "n", longName = "gcinfo-show-count")
-	@Description("the number of gc info to show, the default count is 5.")
+	@Option(shortName = "n", longName = "loopCount")
+	@Description("The number of gcinfo to show, the default count is 5.")
 	public void setLoopCount(Integer count) {
 		this.loopCount = count;
 	}
 
 	@Option(shortName = "i", longName = "intervalTime")
 	@Description("The intervalTime (in ms) between two executions, default is 1000 ms.")
-	public void setInterval(int interval) {
-		this.interval = interval;
+	public void setIntervalTime(int interval) {
+		this.intervalTime = interval;
 	}
 
 	@Override
 	public void process(CommandProcess process) {
 		pid = process.session().getPid();
-		logger.info("pid:" + pid + ",internal:" + interval + ",n:" + loopCount);
+		logger.info("pid:" + pid + ",interval:" + intervalTime + ",n:" + loopCount);
 		if (pid > 0) {
 			loopCount = loopCount == -1 ? 5 : loopCount;
-			interval = interval == -1 ? 1000 : interval;
+			intervalTime = intervalTime == -1 ? 1000 : intervalTime;
 
 			timer = new Timer("Timer-for-arthas-gcinfo-" + process.session().getSessionId(), true);
 
@@ -70,7 +70,7 @@ public class GcinfoCommand extends AnnotatedCommand {
 			// q exit support
 			process.stdinHandler(new QExitHandler(process));
 			// start the timer
-			timer.scheduleAtFixedRate(new GCTimerTask(process), 0, interval);
+			timer.scheduleAtFixedRate(new GCTimerTask(process), 0, intervalTime);
 
 		} else {
 			process.write("get pid failure!");
@@ -198,7 +198,7 @@ public class GcinfoCommand extends AnnotatedCommand {
 		StringBuilder command = new StringBuilder("jstat -gcutil ");
 		command.append(pid);
 		command.append(" ");
-		command.append(interval);
+		command.append(intervalTime);
 		command.append(" ");
 		command.append(1);
 		return command.toString();
