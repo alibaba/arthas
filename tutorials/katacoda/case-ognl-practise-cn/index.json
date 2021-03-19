@@ -1,0 +1,32 @@
+{
+  "noindex": true,
+  "title": "调试 Arthas 的 ognl 表达式",
+  "description": "调试 Arthas 的 ognl 表达式",
+  "details": {
+      "steps": [
+          {
+              "text": "step1.md",
+              "code": "setup.sh"
+          }
+      ],
+      "intro": {
+          "text": "intro.md",
+          "credits": ""
+      },
+      "finish": {
+        "text": "finish.md"
+      }
+  },
+  "files": [
+  ],
+  "environment": {
+      "hidefinish": true,
+      "hideHiddenFiles": true,
+      "uilayout": "editor-terminal",
+      "uisettings": "javascript",
+      "uieditorpath": "/root/example/ognl-demo"
+  },
+  "backend": {
+      "imageid": "openjdk:15"
+  }
+}
