@@ -1,6 +1,6 @@
 {
-  "title": "调试 Arthas 的 ognl 表达式",
-  "description": "调试 Arthas 的 ognl 表达式",
+  "title": "Debug ognl express in Arthas",
+  "description": "Debug ognl express in Arthas",
   "details": {
       "steps": [
           {
