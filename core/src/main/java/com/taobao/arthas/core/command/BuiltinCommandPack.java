@@ -1,8 +1,5 @@
 package com.taobao.arthas.core.command;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import com.taobao.arthas.core.command.basic1000.CatCommand;
 import com.taobao.arthas.core.command.basic1000.ClsCommand;
 import com.taobao.arthas.core.command.basic1000.EchoCommand;
@@ -47,6 +44,9 @@ import com.taobao.arthas.core.command.monitor200.TraceCommand;
 import com.taobao.arthas.core.command.monitor200.WatchCommand;
 import com.taobao.arthas.core.shell.command.Command;
 import com.taobao.arthas.core.shell.command.CommandResolver;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * TODO automatically discover the built-in commands.
