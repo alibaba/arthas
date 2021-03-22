@@ -1,5 +1,8 @@
 package com.taobao.arthas.core.command;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import com.taobao.arthas.core.command.basic1000.CatCommand;
 import com.taobao.arthas.core.command.basic1000.ClsCommand;
 import com.taobao.arthas.core.command.basic1000.EchoCommand;
@@ -31,7 +34,6 @@ import com.taobao.arthas.core.command.klass100.SearchClassCommand;
 import com.taobao.arthas.core.command.klass100.SearchMethodCommand;
 import com.taobao.arthas.core.command.logger.LoggerCommand;
 import com.taobao.arthas.core.command.monitor200.DashboardCommand;
-import com.taobao.arthas.core.command.monitor200.GcinfoCommand;
 import com.taobao.arthas.core.command.monitor200.HeapDumpCommand;
 import com.taobao.arthas.core.command.monitor200.JvmCommand;
 import com.taobao.arthas.core.command.monitor200.MBeanCommand;
@@ -45,9 +47,6 @@ import com.taobao.arthas.core.command.monitor200.TraceCommand;
 import com.taobao.arthas.core.command.monitor200.WatchCommand;
 import com.taobao.arthas.core.shell.command.Command;
 import com.taobao.arthas.core.shell.command.CommandResolver;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * TODO automatically discover the built-in commands.
@@ -110,6 +109,5 @@ public class BuiltinCommandPack implements CommandResolver {
         commands.add(Command.create(ProfilerCommand.class));
         commands.add(Command.create(ShutdownCommand.class));
         commands.add(Command.create(StopCommand.class));
-        commands.add(Command.create(GcinfoCommand.class));
     }
 }
