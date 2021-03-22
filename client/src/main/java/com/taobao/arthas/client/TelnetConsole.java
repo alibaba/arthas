@@ -240,101 +240,109 @@ public class TelnetConsole {
         consoleReader.setHandleUserInterrupt(true);
         Terminal terminal = consoleReader.getTerminal();
 
-        if (terminal instanceof TerminalSupport) {
-            ((TerminalSupport) terminal).disableInterruptCharacter();
-        }
-
         // support catch ctrl+c event
         terminal.disableInterruptCharacter();
         if (terminal instanceof UnixTerminal) {
             ((UnixTerminal) terminal).disableLitteralNextCharacter();
         }
 
-        int width = TerminalSupport.DEFAULT_WIDTH;
-        int height = TerminalSupport.DEFAULT_HEIGHT;
-
-        if (!cmds.isEmpty()) {
-            // batch mode
-            if (telnetConsole.getWidth() != null) {
-                width = telnetConsole.getWidth();
-            }
-            if (telnetConsole.getheight() != null) {
-                height = telnetConsole.getheight();
-            }
-        } else {
-            // normal telnet client, get current terminal size
-            if (telnetConsole.getWidth() != null) {
-                width = telnetConsole.getWidth();
-            } else {
-                width = terminal.getWidth();
-                // hack for windows dos
-                if (OSUtils.isWindows()) {
-                    width--;
-                }
-            }
-            if (telnetConsole.getheight() != null) {
-                height = telnetConsole.getheight();
-            } else {
-                height = terminal.getHeight();
-            }
-        }
-
-        final TelnetClient telnet = new TelnetClient();
-        telnet.setConnectTimeout(DEFAULT_CONNECTION_TIMEOUT);
-
-        // send init terminal size
-        TelnetOptionHandler sizeOpt = new WindowSizeOptionHandler(width, height, true, true, false, false);
         try {
-            telnet.addOptionHandler(sizeOpt);
-        } catch (InvalidTelnetOptionException e) {
-            // ignore
-        }
+            int width = TerminalSupport.DEFAULT_WIDTH;
+            int height = TerminalSupport.DEFAULT_HEIGHT;
 
-        // ctrl + c event callback
-        consoleReader.getKeys().bind(new Character((char) CTRL_C).toString(), new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                try {
-                    consoleReader.getCursorBuffer().clear(); // clear current line
-                    telnet.getOutputStream().write(CTRL_C);
-                    telnet.getOutputStream().flush();
-                } catch (Exception e1) {
-                    e1.printStackTrace();
+            if (!cmds.isEmpty()) {
+                // batch mode
+                if (telnetConsole.getWidth() != null) {
+                    width = telnetConsole.getWidth();
+                }
+                if (telnetConsole.getheight() != null) {
+                    height = telnetConsole.getheight();
+                }
+            } else {
+                // normal telnet client, get current terminal size
+                if (telnetConsole.getWidth() != null) {
+                    width = telnetConsole.getWidth();
+                } else {
+                    width = terminal.getWidth();
+                    // hack for windows dos
+                    if (OSUtils.isWindows()) {
+                        width--;
+                    }
+                }
+                if (telnetConsole.getheight() != null) {
+                    height = telnetConsole.getheight();
+                } else {
+                    height = terminal.getHeight();
                 }
             }
 
-        });
+            final TelnetClient telnet = new TelnetClient();
+            telnet.setConnectTimeout(DEFAULT_CONNECTION_TIMEOUT);
 
-        // ctrl + d event call back
-        consoleReader.getKeys().bind(new Character(KeyMap.CTRL_D).toString(), eotEventCallback);
-
-        try {
-            telnet.connect(telnetConsole.getTargetIp(), telnetConsole.getPort());
-        } catch (IOException e) {
-            System.out.println("Connect to telnet server error: " + telnetConsole.getTargetIp() + " "
-                    + telnetConsole.getPort());
-            throw e;
-        }
-
-        if (cmds.isEmpty()) {
-            IOUtil.readWrite(telnet.getInputStream(), telnet.getOutputStream(), System.in,
-                    consoleReader.getOutput());
-        } else {
+            // send init terminal size
+            TelnetOptionHandler sizeOpt = new WindowSizeOptionHandler(width, height, true, true, false, false);
             try {
-                return batchModeRun(telnet, cmds, telnetConsole.getExecutionTimeout());
-            } catch (Throwable e) {
-                System.out.println("Execute commands error: " + e.getMessage());
-                e.printStackTrace();
-                return STATUS_EXEC_ERROR;
-            } finally {
+                telnet.addOptionHandler(sizeOpt);
+            } catch (InvalidTelnetOptionException e) {
+                // ignore
+            }
+
+            // ctrl + c event callback
+            consoleReader.getKeys().bind(new Character((char) CTRL_C).toString(), new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    try {
+                        consoleReader.getCursorBuffer().clear(); // clear current line
+                        telnet.getOutputStream().write(CTRL_C);
+                        telnet.getOutputStream().flush();
+                    } catch (Exception e1) {
+                        e1.printStackTrace();
+                    }
+                }
+
+            });
+
+            // ctrl + d event call back
+            consoleReader.getKeys().bind(new Character(KeyMap.CTRL_D).toString(), eotEventCallback);
+
+            try {
+                telnet.connect(telnetConsole.getTargetIp(), telnetConsole.getPort());
+            } catch (IOException e) {
+                System.out.println("Connect to telnet server error: " + telnetConsole.getTargetIp() + " "
+                        + telnetConsole.getPort());
+                throw e;
+            }
+
+            if (cmds.isEmpty()) {
+                IOUtil.readWrite(telnet.getInputStream(), telnet.getOutputStream(), consoleReader.getInput(),
+                        consoleReader.getOutput());
+            } else {
                 try {
-                    telnet.disconnect();
-                } catch (IOException e) {
-                    //ignore ex
+                    return batchModeRun(telnet, cmds, telnetConsole.getExecutionTimeout());
+                } catch (Throwable e) {
+                    System.out.println("Execute commands error: " + e.getMessage());
+                    e.printStackTrace();
+                    return STATUS_EXEC_ERROR;
+                } finally {
+                    try {
+                        telnet.disconnect();
+                    } catch (IOException e) {
+                        //ignore ex
+                    }
                 }
             }
+
+            return STATUS_OK;
+        } finally {
+            //reset terminal setting, fix https://github.com/alibaba/arthas/issues/1412
+            try {
+                terminal.restore();
+            } catch (Throwable e) {
+                System.out.println("Restore terminal settings failure: "+e.getMessage());
+                e.printStackTrace();
+            }
         }
-        return STATUS_OK;
+
     }
 
     private static int batchModeRun(TelnetClient telnet, List<String> commands, final int executionTimeout)

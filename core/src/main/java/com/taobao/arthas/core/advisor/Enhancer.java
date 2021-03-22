@@ -21,35 +21,40 @@ import java.util.Map;
 import java.util.Set;
 import java.util.WeakHashMap;
 
-import com.alibaba.arthas.deps.org.objectweb.asm.Opcodes;
-import com.alibaba.arthas.deps.org.objectweb.asm.Type;
-import com.alibaba.arthas.deps.org.objectweb.asm.tree.AbstractInsnNode;
-import com.alibaba.arthas.deps.org.objectweb.asm.tree.ClassNode;
-import com.alibaba.arthas.deps.org.objectweb.asm.tree.MethodInsnNode;
-import com.alibaba.arthas.deps.org.objectweb.asm.tree.MethodNode;
+import com.alibaba.deps.org.objectweb.asm.ClassReader;
+import com.alibaba.deps.org.objectweb.asm.Opcodes;
+import com.alibaba.deps.org.objectweb.asm.Type;
+import com.alibaba.deps.org.objectweb.asm.tree.AbstractInsnNode;
+import com.alibaba.deps.org.objectweb.asm.tree.ClassNode;
+import com.alibaba.deps.org.objectweb.asm.tree.MethodInsnNode;
+import com.alibaba.deps.org.objectweb.asm.tree.MethodNode;
 import com.alibaba.arthas.deps.org.slf4j.Logger;
 import com.alibaba.arthas.deps.org.slf4j.LoggerFactory;
-import com.taobao.arthas.bytekit.asm.MethodProcessor;
-import com.taobao.arthas.bytekit.asm.binding.Binding;
-import com.taobao.arthas.bytekit.asm.interceptor.InterceptorProcessor;
-import com.taobao.arthas.bytekit.asm.interceptor.annotation.AtEnter;
-import com.taobao.arthas.bytekit.asm.interceptor.annotation.AtExceptionExit;
-import com.taobao.arthas.bytekit.asm.interceptor.annotation.AtExit;
-import com.taobao.arthas.bytekit.asm.interceptor.annotation.AtInvoke;
-import com.taobao.arthas.bytekit.asm.interceptor.annotation.AtInvokeException;
-import com.taobao.arthas.bytekit.asm.interceptor.parser.DefaultInterceptorClassParser;
-import com.taobao.arthas.bytekit.asm.location.Location;
-import com.taobao.arthas.bytekit.asm.location.LocationType;
-import com.taobao.arthas.bytekit.asm.location.MethodInsnNodeWare;
-import com.taobao.arthas.bytekit.asm.location.filter.GroupLocationFilter;
-import com.taobao.arthas.bytekit.asm.location.filter.InvokeCheckLocationFilter;
-import com.taobao.arthas.bytekit.asm.location.filter.InvokeContainLocationFilter;
-import com.taobao.arthas.bytekit.asm.location.filter.LocationFilter;
-import com.taobao.arthas.bytekit.utils.AsmOpUtils;
-import com.taobao.arthas.bytekit.utils.AsmUtils;
+import com.alibaba.bytekit.asm.MethodProcessor;
+import com.alibaba.bytekit.asm.interceptor.InterceptorProcessor;
+import com.alibaba.bytekit.asm.interceptor.parser.DefaultInterceptorClassParser;
+import com.alibaba.bytekit.asm.location.Location;
+import com.alibaba.bytekit.asm.location.LocationType;
+import com.alibaba.bytekit.asm.location.MethodInsnNodeWare;
+import com.alibaba.bytekit.asm.location.filter.GroupLocationFilter;
+import com.alibaba.bytekit.asm.location.filter.InvokeCheckLocationFilter;
+import com.alibaba.bytekit.asm.location.filter.InvokeContainLocationFilter;
+import com.alibaba.bytekit.asm.location.filter.LocationFilter;
+import com.alibaba.bytekit.utils.AsmOpUtils;
+import com.alibaba.bytekit.utils.AsmUtils;
 import com.taobao.arthas.core.GlobalOptions;
+import com.taobao.arthas.core.advisor.SpyInterceptors.SpyInterceptor1;
+import com.taobao.arthas.core.advisor.SpyInterceptors.SpyInterceptor2;
+import com.taobao.arthas.core.advisor.SpyInterceptors.SpyInterceptor3;
+import com.taobao.arthas.core.advisor.SpyInterceptors.SpyTraceExcludeJDKInterceptor1;
+import com.taobao.arthas.core.advisor.SpyInterceptors.SpyTraceExcludeJDKInterceptor2;
+import com.taobao.arthas.core.advisor.SpyInterceptors.SpyTraceExcludeJDKInterceptor3;
+import com.taobao.arthas.core.advisor.SpyInterceptors.SpyTraceInterceptor1;
+import com.taobao.arthas.core.advisor.SpyInterceptors.SpyTraceInterceptor2;
+import com.taobao.arthas.core.advisor.SpyInterceptors.SpyTraceInterceptor3;
 import com.taobao.arthas.core.server.ArthasBootstrap;
 import com.taobao.arthas.core.util.ArthasCheckUtils;
+import com.taobao.arthas.core.util.ClassUtils;
 import com.taobao.arthas.core.util.FileUtils;
 import com.taobao.arthas.core.util.SearchUtils;
 import com.taobao.arthas.core.util.affect.EnhancerAffect;
@@ -67,6 +72,7 @@ public class Enhancer implements ClassFileTransformer {
     private final boolean isTracing;
     private final boolean skipJDKTrace;
     private final Matcher classNameMatcher;
+    private final Matcher classNameExcludeMatcher;
     private final Matcher methodNameMatcher;
     private final EnhancerAffect affect;
     private Set<Class<?>> matchingClasses = null;
@@ -88,97 +94,16 @@ public class Enhancer implements ClassFileTransformer {
      * @param affect            影响统计
      */
     public Enhancer(AdviceListener listener, boolean isTracing, boolean skipJDKTrace, Matcher classNameMatcher,
+            Matcher classNameExcludeMatcher,
             Matcher methodNameMatcher) {
         this.listener = listener;
         this.isTracing = isTracing;
         this.skipJDKTrace = skipJDKTrace;
         this.classNameMatcher = classNameMatcher;
+        this.classNameExcludeMatcher = classNameExcludeMatcher;
         this.methodNameMatcher = methodNameMatcher;
         this.affect = new EnhancerAffect();
         affect.setListenerId(listener.id());
-    }
-
-    public static class SpyInterceptor {
-
-        @AtEnter(inline = true)
-        public static void atEnter(@Binding.This Object target, @Binding.Class Class<?> clazz,
-                @Binding.MethodInfo String methodInfo, @Binding.Args Object[] args) {
-            SpyAPI.atEnter(clazz, methodInfo, target, args);
-        }
-
-        @AtExit(inline = true)
-        public static void atExit(@Binding.This Object target, @Binding.Class Class<?> clazz,
-                @Binding.MethodInfo String methodInfo, @Binding.Args Object[] args, @Binding.Return Object returnObj) {
-            SpyAPI.atExit(clazz, methodInfo, target, args, returnObj);
-        }
-
-        @AtExceptionExit(inline = true)
-        public static void atExceptionExit(@Binding.This Object target, @Binding.Class Class<?> clazz,
-                @Binding.MethodInfo String methodInfo, @Binding.Args Object[] args,
-                @Binding.Throwable Throwable throwable) {
-            SpyAPI.atExceptionExit(clazz, methodInfo, target, args, throwable);
-        }
-    }
-
-    public static class SpyTraceExcludeJDKInterceptor {
-        @AtInvoke(name = "", inline = true, whenComplete = false, excludes = "java.**")
-        public static void onInvoke(@Binding.This Object target, @Binding.Class Class<?> clazz,
-                @Binding.InvokeInfo String invokeInfo) {
-            SpyAPI.atBeforeInvoke(clazz, invokeInfo, target);
-        }
-
-        @AtInvoke(name = "", inline = true, whenComplete = true, excludes = "java.**")
-        public static void onInvokeAfter(@Binding.This Object target, @Binding.Class Class<?> clazz,
-                @Binding.InvokeInfo String invokeInfo) {
-            SpyAPI.atAfterInvoke(clazz, invokeInfo, target);
-        }
-
-        @AtInvokeException(name = "", inline = true, excludes = "java.**")
-        public static void onInvokeException(@Binding.This Object target, @Binding.Class Class<?> clazz,
-                @Binding.InvokeInfo String invokeInfo, @Binding.Throwable Throwable throwable) {
-            SpyAPI.atInvokeException(clazz, invokeInfo, target, throwable);
-        }
-    }
-
-    public static class SpyTraceInterceptor {
-        @AtInvoke(name = "", inline = true, whenComplete = false, excludes = {"java.arthas.SpyAPI", "java.lang.Byte"
-                , "java.lang.Boolean"
-                , "java.lang.Short"
-                , "java.lang.Character"
-                , "java.lang.Integer"
-                , "java.lang.Float"
-                , "java.lang.Long"
-                , "java.lang.Double"})
-        public static void onInvoke(@Binding.This Object target, @Binding.Class Class<?> clazz,
-                @Binding.InvokeInfo String invokeInfo) {
-            SpyAPI.atBeforeInvoke(clazz, invokeInfo, target);
-        }
-
-        @AtInvoke(name = "", inline = true, whenComplete = true, excludes = {"java.arthas.SpyAPI", "java.lang.Byte"
-                , "java.lang.Boolean"
-                , "java.lang.Short"
-                , "java.lang.Character"
-                , "java.lang.Integer"
-                , "java.lang.Float"
-                , "java.lang.Long"
-                , "java.lang.Double"})
-        public static void onInvokeAfter(@Binding.This Object target, @Binding.Class Class<?> clazz,
-                @Binding.InvokeInfo String invokeInfo) {
-            SpyAPI.atAfterInvoke(clazz, invokeInfo, target);
-        }
-
-        @AtInvokeException(name = "", inline = true, excludes = {"java.arthas.SpyAPI", "java.lang.Byte"
-                , "java.lang.Boolean"
-                , "java.lang.Short"
-                , "java.lang.Character"
-                , "java.lang.Integer"
-                , "java.lang.Float"
-                , "java.lang.Long"
-                , "java.lang.Double"})
-        public static void onInvokeException(@Binding.This Object target, @Binding.Class Class<?> clazz,
-                @Binding.InvokeInfo String invokeInfo, @Binding.Throwable Throwable throwable) {
-            SpyAPI.atInvokeException(clazz, invokeInfo, target, throwable);
-        }
     }
 
     @Override
@@ -192,7 +117,7 @@ public class Enhancer implements ClassFileTransformer {
                 }
             } catch (Throwable e) {
                 logger.error("the classloader can not load SpyAPI, ignore it. classloader: {}, className: {}",
-                        inClassLoader.getClass().getName(), className);
+                        inClassLoader.getClass().getName(), className, e);
                 return null;
             }
 
@@ -202,30 +127,46 @@ public class Enhancer implements ClassFileTransformer {
                 return null;
             }
 
-            ClassNode classNode = AsmUtils.toClassNode(classfileBuffer);
+            //keep origin class reader for bytecode optimizations, avoiding JVM metaspace OOM.
+            ClassNode classNode = new ClassNode(Opcodes.ASM9);
+            ClassReader classReader = AsmUtils.toClassNode(classfileBuffer, classNode);
+            // remove JSR https://github.com/alibaba/arthas/issues/1304
+            classNode = AsmUtils.removeJSRInstructions(classNode);
 
             // 生成增强字节码
             DefaultInterceptorClassParser defaultInterceptorClassParser = new DefaultInterceptorClassParser();
 
             final List<InterceptorProcessor> interceptorProcessors = new ArrayList<InterceptorProcessor>();
 
-            List<InterceptorProcessor> traceProcessors = defaultInterceptorClassParser.parse(SpyInterceptor.class);
-            interceptorProcessors.addAll(traceProcessors);
+            interceptorProcessors.addAll(defaultInterceptorClassParser.parse(SpyInterceptor1.class));
+            interceptorProcessors.addAll(defaultInterceptorClassParser.parse(SpyInterceptor2.class));
+            interceptorProcessors.addAll(defaultInterceptorClassParser.parse(SpyInterceptor3.class));
 
             if (this.isTracing) {
-                Class<?> spyTraceInterceptorClass = SpyTraceExcludeJDKInterceptor.class;
                 if (this.skipJDKTrace == false) {
-                    spyTraceInterceptorClass = SpyTraceInterceptor.class;
+                    interceptorProcessors.addAll(defaultInterceptorClassParser.parse(SpyTraceInterceptor1.class));
+                    interceptorProcessors.addAll(defaultInterceptorClassParser.parse(SpyTraceInterceptor2.class));
+                    interceptorProcessors.addAll(defaultInterceptorClassParser.parse(SpyTraceInterceptor3.class));
+                } else {
+                    interceptorProcessors.addAll(defaultInterceptorClassParser.parse(SpyTraceExcludeJDKInterceptor1.class));
+                    interceptorProcessors.addAll(defaultInterceptorClassParser.parse(SpyTraceExcludeJDKInterceptor2.class));
+                    interceptorProcessors.addAll(defaultInterceptorClassParser.parse(SpyTraceExcludeJDKInterceptor3.class));
                 }
-                List<InterceptorProcessor> traceInvokeProcessors = defaultInterceptorClassParser
-                        .parse(spyTraceInterceptorClass);
-                interceptorProcessors.addAll(traceInvokeProcessors);
             }
 
             List<MethodNode> matchedMethods = new ArrayList<MethodNode>();
             for (MethodNode methodNode : classNode.methods) {
                 if (!isIgnore(methodNode, methodNameMatcher)) {
                     matchedMethods.add(methodNode);
+                }
+            }
+
+            // https://github.com/alibaba/arthas/issues/1690
+            if (AsmUtils.isEnhancerByCGLIB(className)) {
+                for (MethodNode methodNode : matchedMethods) {
+                    if (AsmUtils.isConstructor(methodNode)) {
+                        AsmUtils.fixConstructorExceptionTable(methodNode);
+                    }
                 }
             }
 
@@ -254,6 +195,11 @@ public class Enhancer implements ClassFileTransformer {
             groupLocationFilter.addFilter(invokeExceptionFilter);
 
             for (MethodNode methodNode : matchedMethods) {
+                if (AsmUtils.isNative(methodNode)) {
+                    logger.info("ignore native method: {}",
+                            AsmUtils.methodDeclaration(Type.getObjectType(classNode.name), methodNode));
+                    continue;
+                }
                 // 先查找是否有 atBeforeInvoke 函数，如果有，则说明已经有trace了，则直接不再尝试增强，直接插入 listener
                 if(AsmUtils.containsMethodInsnNode(methodNode, Type.getInternalName(SpyAPI.class), "atBeforeInvoke")) {
                     for (AbstractInsnNode insnNode = methodNode.instructions.getFirst(); insnNode != null; insnNode = insnNode
@@ -300,12 +246,12 @@ public class Enhancer implements ClassFileTransformer {
                 affect.addMethodAndCount(inClassLoader, className, methodNode.name, methodNode.desc);
             }
 
-            // https://github.com/alibaba/arthas/issues/1223
-            if (classNode.version < Opcodes.V1_5) {
-                classNode.version = Opcodes.V1_5;
+            // https://github.com/alibaba/arthas/issues/1223 , V1_5 的major version是49
+            if (AsmUtils.getMajorVersion(classNode.version) < 49) {
+                classNode.version = AsmUtils.setMajorVersion(classNode.version, 49);
             }
 
-            byte[] enhanceClassByteArray = AsmUtils.toBytes(classNode, inClassLoader);
+            byte[] enhanceClassByteArray = AsmUtils.toBytes(classNode, inClassLoader, classReader);
 
             // 增强成功，记录类
             classBytesCache.put(classBeingRedefined, new Object());
@@ -374,14 +320,21 @@ public class Enhancer implements ClassFileTransformer {
      *
      * @param classes 类集合
      */
-    private static void filter(Set<Class<?>> classes) {
+    private void filter(Set<Class<?>> classes) {
         final Iterator<Class<?>> it = classes.iterator();
         while (it.hasNext()) {
             final Class<?> clazz = it.next();
-            if (null == clazz || isSelf(clazz) || isUnsafeClass(clazz) || isUnsupportedClass(clazz)) {
+            if (null == clazz || isSelf(clazz) || isUnsafeClass(clazz) || isUnsupportedClass(clazz) || isExclude(clazz)) {
                 it.remove();
             }
         }
+    }
+
+    private boolean isExclude(Class<?> clazz) {
+        if (this.classNameExcludeMatcher != null) {
+            return classNameExcludeMatcher.matching(clazz.getName());
+        }
+        return false;
     }
 
     /**
@@ -403,7 +356,7 @@ public class Enhancer implements ClassFileTransformer {
      */
     private static boolean isUnsupportedClass(Class<?> clazz) {
         return clazz.isArray() || (clazz.isInterface() && !GlobalOptions.isSupportDefaultMethod) || clazz.isEnum()
-                || clazz.equals(Class.class) || clazz.equals(Integer.class) || clazz.equals(Method.class);
+                || clazz.equals(Class.class) || clazz.equals(Integer.class) || clazz.equals(Method.class) || ClassUtils.isLambdaClass(clazz);
     }
 
     /**

@@ -36,9 +36,9 @@
         </rollingPolicy>
     </appender>
 
-    <result level="INFO">
+    <logger name="result" level="INFO" additivity="false">
         <appender-ref ref="RESULT" />
-    </result>
+    </logger>
 
     <root level="INFO">
         <appender-ref ref="ARTHAS" />

@@ -1,6 +1,8 @@
 tt
 ==
 
+[`tt` online tutorial](https://arthas.aliyun.com/doc/arthas-tutorials.html?language=en&id=command-tt)
+
 Check the `parameters`, `return values` and `exceptions` of the methods at different times.
 
 `watch` is a powerful command but due to its feasibility and complexity, it's quite hard to locate the issue effectively. 
@@ -14,7 +16,7 @@ With the help of `tt` (*TimeTunnel*), you can check the contexts of the methods 
 
 #### Start Demo
 
-Start `arthas-demo` in [Quick Start](quick-start.md).
+Start `math-game` in [Quick Start](quick-start.md).
 
 
 #### Record method calls
@@ -125,7 +127,7 @@ $ tt -i 1003
 Affect(row-cnt:1) cost in 11 ms.
 ```
 
-### Replay record
+#### Replay record
 
 Since Arthas stores the context of the call, you can even *replay* the method calling afterwards with extra option `-p` to replay the issue for advanced troubleshooting, option `--replay-times` 
 define the replay execution times, option  `--replay-interval` define the interval(unit in ms,with default value 1000) of replays   
@@ -150,13 +152,50 @@ Time fragment[1004] successfully replayed.
 Affect(row-cnt:1) cost in 14 ms.
 ```
 
+#### Watch express
+
+`-w, --watch-express` watch the time fragment by ognl express.
+
+* You can used all variables in [fundamental fields in expressions](advice-class.md) for the watch express。
+
+```bash
+[arthas@10718]$ tt -t demo.MathGame run -n 5 
+Press Q or Ctrl+C to abort.
+Affect(class count: 1 , method count: 1) cost in 56 ms, listenerId: 1
+ INDEX      TIMESTAMP                   COST(ms)     IS-RET     IS-EXP      OBJECT              CLASS                                     METHOD
+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+ 1000       2021-01-08 21:54:17         0.901091     true       false       0x7699a589          MathGame                                  run
+[arthas@10718]$ tt -w 'target.illegalArgumentCount'  -x 1 -i 1000
+@Integer[60]
+Affect(row-cnt:1) cost in 7 ms.
+```
+
+* Get a static field and calling a static method 
+
+```bash
+[arthas@10718]$ tt -t demo.MathGame run -n 5
+Press Q or Ctrl+C to abort.
+Affect(class count: 1 , method count: 1) cost in 56 ms, listenerId: 1
+ INDEX      TIMESTAMP                   COST(ms)     IS-RET     IS-EXP      OBJECT              CLASS                                     METHOD
+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+ 1000       2021-01-08 21:54:17         0.901091     true       false       0x7699a589          MathGame                                  run
+[arthas@10718]$ tt -w '@demo.MathGame@random.nextInt(100)'  -x 1 -i 1000
+@Integer[46]
+```
+
+Note that `com.taobao.arthas.core.advisor.Advice#getLoader` is used here, and that it is better to use the exact `classloader` [ognl](ognl.md).
+
+
+Advanced usage [get spring context to call the bean method](https://github.com/alibaba/arthas/issues/482)
+
+
 F.Y.I
 
 1. **Loss** of the `ThreadLocal`
 
     Arthas save params into an array, then invoke the method with the params again. The method execute in another thread, so the `ThreadLocal` **lost**.
 
-1. params may be modified
+2. params may be modified
 
     Arthas save params into an array, they are object references. The Objects may be modified by other code.
 

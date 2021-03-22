@@ -1,9 +1,23 @@
 redefine
 ========
 
+> Recommend to use the [retransform](retransform.md) command.
+
+[`mc-redefine` online tutorial](https://arthas.aliyun.com/doc/arthas-tutorials?language=en&id=command-mc-redefine)
+
 > Load the external `*.class` files to re-define the loaded classes in JVM.
 
 Reference: [Instrumentation#redefineClasses](https://docs.oracle.com/javase/8/docs/api/java/lang/instrument/Instrumentation.html#redefineClasses-java.lang.instrument.ClassDefinition...-)
+
+### Frequently asked questions
+
+> Recommend to use the [retransform](retransform.md) command.
+
+* The class of `redefine` cannot modify, add or delete the field and method of the class, including method parameters, method names and return values.
+
+* If `mc` fails, you can compile the class file in the local development environment, upload it to the target system, and use `redefine` to hot load the class.
+
+* At present, `redefine` conflicts with `watch / trace / jad / tt` commands. Reimplementing `redefine` function in the future will solve this problem.
 
 > Notes: Re-defined classes cannot be restored. There are chances that redefining may fail due to some reasons, for example: there's new field introduced in the new version of the class, pls. refer to JDK's documentation for the limitations.
 
@@ -18,14 +32,15 @@ Reference: [Instrumentation#redefineClasses](https://docs.oracle.com/javase/8/do
 |Name|Specification|
 |---:|:---|
 |`[c:]`|hashcode of the class loader|
-|`[p:]`|absolute path of the external `*.class`, multiple paths are separated with 'space'|
+|`[classLoaderClass:]`| The class name of the ClassLoader that executes the expression. |
 
 
 ### Usage
 
 ```bash
 redefine /tmp/Test.class
-redefine -c 327a647b /tmp/Test.class /tmp/Test$Inner.class
+redefine -c 327a647b /tmp/Test.class /tmp/Test\$Inner.class
+redefine --classLoaderClass sun.misc.Launcher$AppClassLoader /tmp/Test.class /tmp/Test\$Inner.class
 ```
 
 ### Use with the jad/mc command

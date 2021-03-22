@@ -1,5 +1,6 @@
 package com.taobao.arthas.core.command.monitor200;
 
+import com.taobao.arthas.core.GlobalOptions;
 import com.taobao.arthas.core.advisor.AdviceListener;
 import com.taobao.arthas.core.command.Constants;
 import com.taobao.arthas.core.shell.command.CommandProcess;
@@ -93,6 +94,14 @@ public class StackCommand extends EnhancerCommand {
     }
 
     @Override
+    protected Matcher getClassNameExcludeMatcher() {
+        if (classNameExcludeMatcher == null && getExcludeClassPattern() != null) {
+            classNameExcludeMatcher = SearchUtils.classNameMatcher(getExcludeClassPattern(), isRegEx());
+        }
+        return classNameExcludeMatcher;
+    }
+
+    @Override
     protected Matcher getMethodNameMatcher() {
         if (methodNameMatcher == null) {
             methodNameMatcher = SearchUtils.classNameMatcher(getMethodPattern(), isRegEx());
@@ -102,7 +111,7 @@ public class StackCommand extends EnhancerCommand {
 
     @Override
     protected AdviceListener getAdviceListener(CommandProcess process) {
-        return new StackAdviceListener(this, process);
+        return new StackAdviceListener(this, process, GlobalOptions.verbose || this.verbose);
     }
 
 }

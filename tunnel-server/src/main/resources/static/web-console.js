@@ -77,9 +77,13 @@ function getTerminalSize () {
 }
 
 /** init websocket **/
-function initWs (ip, port, agentId) {
-    var path = 'ws://' + ip + ':' + port + '/ws?method=connectArthas&id=' + agentId;
-    ws = new WebSocket(path);
+function initWs (ip, port, path, agentId, targetServer) {
+    var protocol= location.protocol === 'https:'  ? 'wss://' : 'ws://';
+    var uri = protocol + ip + ':' + port + '/' + encodeURIComponent(path) + '?method=connectArthas&id=' + agentId;
+    if (targetServer != null) {
+        uri = uri + '&targetServer=' + encodeURIComponent(targetServer);
+    }
+    ws = new WebSocket(uri);
 }
 
 /** init xterm **/
@@ -113,9 +117,18 @@ function startConnect (silent) {
         alert('Already connected');
         return;
     }
+    
+    var path = getUrlParam('path');
+    if (path == null) {
+        path = "ws";
+    }
+
+    var targetServer = getUrlParam('targetServer');
+
     // init webSocket
-    initWs(ip, port, agentId);
+    initWs(ip, port, path, agentId, targetServer);
     ws.onerror = function () {
+        ws.close();
         ws = null;
         !silent && alert('Connect error');
     };
@@ -144,7 +157,7 @@ function startConnect (silent) {
         });
         ws.send(JSON.stringify({action: 'resize', cols: terminalSize.cols, rows: terminalSize.rows}));
         window.setInterval(function () {
-            if (ws != null) {
+            if (ws != null && ws.readyState === 1) {
                 ws.send(JSON.stringify({action: 'read', data: ""}));
             }
         }, 30000);
@@ -153,6 +166,7 @@ function startConnect (silent) {
 
 function disconnect () {
     try {
+        ws.close();
         ws.onmessage = null;
         ws.onclose = null;
         ws = null;
@@ -162,6 +176,10 @@ function disconnect () {
     } catch (e) {
         alert('No connection, please start connect first.');
     }
+}
+
+function updateArthasOutputLink() {
+    $('#arthasOutputA').prop("href", "proxy/" + $('#agentId').val() + "/arthas-output/")
 }
 
 /** full screen show **/

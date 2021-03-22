@@ -233,13 +233,13 @@ public class ProcessUtils {
         String javaHome = findJavaHome();
 
         // find java/java.exe
-        File javaPath = findJava();
+        File javaPath = findJava(javaHome);
         if (javaPath == null) {
             throw new IllegalArgumentException(
                             "Can not find java/java.exe executable file under java home: " + javaHome);
         }
 
-        File toolsJar = findToolsJar();
+        File toolsJar = findToolsJar(javaHome);
 
         if (JavaVersionUtils.isLessThanJava9()) {
             if (toolsJar == null || !toolsJar.exists()) {
@@ -354,8 +354,7 @@ public class ProcessUtils {
         }
     }
 
-    private static File findJava() {
-        String javaHome = findJavaHome();
+    private static File findJava(String javaHome) {
         String[] paths = { "bin/java", "bin/java.exe", "../bin/java", "../bin/java.exe" };
 
         List<File> javaList = new ArrayList<File>();
@@ -389,12 +388,11 @@ public class ProcessUtils {
         return javaList.get(0);
     }
 
-    private static File findToolsJar() {
+    private static File findToolsJar(String javaHome) {
         if (JavaVersionUtils.isGreaterThanJava8()) {
             return null;
         }
 
-        String javaHome = findJavaHome();
         File toolsJar = new File(javaHome, "lib/tools.jar");
         if (!toolsJar.exists()) {
             toolsJar = new File(javaHome, "../lib/tools.jar");

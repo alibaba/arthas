@@ -1,0 +1,63 @@
+{
+  "title": "Arthas 后台异步任务 案例",
+  "description": "Arthas 后台异步任务 案例",
+  "difficulty": "高级使用者",
+  "time": "10分钟",
+  "details": {
+    "steps": [
+      {
+        "title": "Arthas demo",
+        "text": "arthas-demo.md"
+      },
+      {
+        "title": "Start arthas-boot",
+        "text": "arthas-boot.md"
+      },
+      {
+        "title": "后台异步任务",
+        "text": "async-jobs.md"
+      },
+      {
+        "title": "使用&在后台执行任务",
+        "text": "run-cmd-in-backgd.md"
+      },
+      {
+        "title": "通过jobs查看任务",
+        "text": "list-backgd-jobs.md"
+      },
+      {
+        "title": "任务暂停和取消",
+        "text": "suspend-cancel-job.md"
+      },
+      {
+        "title": "fg、bg命令，将命令转到前台、后台继续执行",
+        "text": "switch-foregd-backgd.md"
+      },
+      {
+        "title": "任务输出重定向",
+        "text": "redirect-output.md"
+      },
+      {
+        "title": "停止命令",
+        "text": "stop-job.md"
+      },
+      {
+        "title": "其他",
+        "text": "others.md"
+      }
+    ],
+    "intro": {
+      "text": "intro.md"
+    },
+    "finish": {
+      "text": "finish.md"
+    }
+  },
+  "environment": {
+    "uilayout": "terminal"
+  },
+  "backend": {
+    "imageid": "openjdk:15",
+    "environmentsprotocol": "http"
+  }
+}

@@ -1,0 +1,42 @@
+{
+  "title": "Arthas profiler Command",
+  "description": "Arthas profiler Command",
+  "difficulty": "master",
+  "time": "10-20 minutes",
+  "details": {
+    "steps": [
+      {
+        "title": "Arthas demo",
+        "text": "arthas-demo.md"
+      },
+      {
+        "title": "Start arthas-boot",
+        "text": "arthas-boot.md"
+      },
+      {
+        "title": "profiler Command",
+        "text": "profiler.md"
+      }
+    ],
+    "intro": {
+      "text": "intro.md"
+    },
+    "finish": {
+      "text": "finish.md"
+    }
+  },
+  "environment": {
+    "uilayout": "terminal",
+    "showdashboard": true,
+    "dashboards": [
+      {
+        "name": "Web Port 8563",
+        "port": 8563
+      }
+    ]
+  },
+  "backend": {
+    "imageid": "openjdk:15",
+    "environmentsprotocol": "http"
+  }
+}

@@ -1,0 +1,33 @@
+{
+  "title": "Arthas Log the output",
+  "description": "Arthas Log the output",
+  "details": {
+    "steps": [
+      {
+        "title": "Arthas demo",
+        "text": "arthas-demo.md"
+      },
+      {
+        "title": "Start arthas-boot",
+        "text": "arthas-boot.md"
+      },
+      {
+        "title": "Log the output",
+        "text": "save-log.md"
+      }
+    ],
+    "intro": {
+      "text": "intro.md"
+    },
+    "finish": {
+      "text": "finish.md"
+    }
+  },
+  "environment": {
+    "uilayout": "terminal"
+  },
+  "backend": {
+    "imageid": "openjdk:15",
+    "environmentsprotocol": "http"
+  }
+}

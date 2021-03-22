@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
@@ -20,6 +20,7 @@
         <connection>scm:git:git@github.com:alibaba/arthas.git</connection>
         <developerConnection>scm:git:git@github.com:alibaba/arthas.git</developerConnection>
         <url>https://github.com/alibaba/arthas</url>
+      <tag>HEAD</tag>
     </scm>
 
     <developers>
@@ -47,7 +48,7 @@
 
     <groupId>com.taobao.arthas</groupId>
     <artifactId>arthas-all</artifactId>
-    <version>3.3.3-SNAPSHOT</version>
+    <version>${revision}</version>
     <packaging>pom</packaging>
 
     <name>arthas-all</name>
@@ -55,50 +56,52 @@
     <url>https://github.com/alibaba/arthas</url>
 
     <modules>
+        <module>math-game</module>
         <module>spy</module>
         <module>common</module>
+        <module>tunnel-common</module>
         <module>tunnel-client</module>
-        <module>bytekit</module>
         <module>core</module>
         <module>agent</module>
         <module>client</module>
         <module>memorycompiler</module>
         <module>boot</module>
-        <module>demo</module>
+        <module>arthas-agent-attach</module>
+        <module>arthas-spring-boot-starter</module>
         <module>testcase</module>
         <module>site</module>
         <module>packaging</module>
     </modules>
 
-    <profiles>
-        <profile>
-            <id>deb</id>
-            <activation>
-                <jdk>[1.8,)</jdk>
-            </activation>
-            <modules>
-                <module>tunnel-server</module>
-            </modules>
-        </profile>
-    </profiles>
-
     <properties>
+        <revision>3.5.1-SNAPSHOT</revision>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.compiler.target>1.6</maven.compiler.target>
         <maven.compiler.source>1.6</maven.compiler.source>
+        <spring-boot.version>2.3.1.RELEASE</spring-boot.version>
+        <maven-invoker-plugin.version>3.0.0</maven-invoker-plugin.version>
+        <jacoco.skip>${skipTests}</jacoco.skip>
+        <project.build.outputTimestamp>2020-09-27T15:10:43Z</project.build.outputTimestamp>
+        <lifecycle-mapping.version>1.0.0</lifecycle-mapping.version>
+        <netty.version>4.1.59.Final</netty.version>
     </properties>
 
     <dependencyManagement>
         <dependencies>
             <dependency>
+                <groupId>com.alibaba</groupId>
+                <artifactId>bytekit-core</artifactId>
+                <version>0.0.5</version>
+            </dependency>
+            <dependency>
                 <groupId>org.benf</groupId>
                 <artifactId>cfr</artifactId>
-                <version>0.150</version>
+                <version>0.151</version>
             </dependency>
             <dependency>
                 <groupId>com.alibaba.middleware</groupId>
                 <artifactId>termd-core</artifactId>
-                <version>1.1.7.9</version>
+                <version>1.1.7.11</version>
             </dependency>
             <dependency>
                 <groupId>com.alibaba.middleware</groupId>
@@ -108,7 +111,7 @@
             <dependency>
                 <groupId>org.slf4j</groupId>
                 <artifactId>slf4j-api</artifactId>
-                <version>1.7.25</version>
+                <version>1.7.30</version>
             </dependency>
             <dependency>
                 <groupId>ch.qos.logback</groupId>
@@ -123,17 +126,12 @@
             <dependency>
                 <groupId>com.alibaba.arthas</groupId>
                 <artifactId>arthas-repackage-logger</artifactId>
-                <version>0.0.3</version>
-            </dependency>
-            <dependency>
-                <groupId>com.alibaba.arthas</groupId>
-                <artifactId>arthas-repackage-asm</artifactId>
-                <version>0.0.3</version>
+                <version>0.0.8</version>
             </dependency>
             <dependency>
                 <groupId>com.alibaba</groupId>
                 <artifactId>fastjson</artifactId>
-                <version>1.2.68</version>
+                <version>1.2.75</version>
             </dependency>
             <dependency>
                 <groupId>com.taobao.text</groupId>
@@ -153,7 +151,7 @@
             <dependency>
                 <groupId>junit</groupId>
                 <artifactId>junit</artifactId>
-                <version>4.11</version>
+                <version>4.13.1</version>
                 <scope>test</scope>
             </dependency>
             <dependency>
@@ -172,27 +170,27 @@
             <dependency>
                 <groupId>io.netty</groupId>
                 <artifactId>netty-common</artifactId>
-                <version>4.1.45.Final</version>
+                <version>${netty.version}</version>
             </dependency>
             <dependency>
                 <groupId>io.netty</groupId>
                 <artifactId>netty-buffer</artifactId>
-                <version>4.1.45.Final</version>
+                <version>${netty.version}</version>
             </dependency>
             <dependency>
                 <groupId>io.netty</groupId>
                 <artifactId>netty-handler</artifactId>
-                <version>4.1.45.Final</version>
+                <version>${netty.version}</version>
             </dependency>
             <dependency>
                 <groupId>io.netty</groupId>
                 <artifactId>netty-transport</artifactId>
-                <version>4.1.45.Final</version>
+                <version>${netty.version}</version>
             </dependency>
             <dependency>
                 <groupId>io.netty</groupId>
                 <artifactId>netty-codec-http</artifactId>
-                <version>4.1.45.Final</version>
+                <version>${netty.version}</version>
             </dependency>
 
             <dependency>
@@ -201,8 +199,148 @@
                 <version>2.14.6</version>
             </dependency>
 
+            <dependency>
+                <groupId>net.bytebuddy</groupId>
+                <artifactId>byte-buddy</artifactId>
+                <version>1.10.18</version>
+            </dependency>
+
+            <dependency>
+                <groupId>net.bytebuddy</groupId>
+                <artifactId>byte-buddy-agent</artifactId>
+                <version>1.10.18</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.zeroturnaround</groupId>
+                <artifactId>zt-zip</artifactId>
+                <version>1.14</version>
+            </dependency>
         </dependencies>
     </dependencyManagement>
+
+    <profiles>
+        <profile>
+            <id>jdk8</id>
+            <activation>
+                <jdk>[1.8,)</jdk>
+            </activation>
+            <modules>
+                <module>tunnel-server</module>
+            </modules>
+            <build>
+                <plugins>
+                    <!-- git commit info -->
+                    <plugin>
+                        <groupId>pl.project13.maven</groupId>
+                        <artifactId>git-commit-id-plugin</artifactId>
+                        <version>4.0.1</version>
+                        <executions>
+                            <execution>
+                                <goals>
+                                    <goal>revision</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                        <configuration>
+                            <verbose>false</verbose>
+                            <dateFormat>yyyy-MM-dd'T'HH:mm:ssZ</dateFormat>
+                            <generateGitPropertiesFile>true</generateGitPropertiesFile>
+                            <generateGitPropertiesFilename>${project.build.outputDirectory}/arthas-git.properties</generateGitPropertiesFilename>
+                            <excludeProperties>
+                                <excludeProperty>git.branch</excludeProperty>
+                                <excludeProperty>git.build.host</excludeProperty>
+                                <excludeProperty>git.build.time</excludeProperty>
+                                <excludeProperty>git.build.user.email</excludeProperty>
+                                <excludeProperty>git.build.user.name</excludeProperty>
+                                <excludeProperty>git.remote.origin.url</excludeProperty>
+                                <excludeProperty>git.total.commit.count</excludeProperty>
+                                <excludeProperty>git.commit.time</excludeProperty>
+                                <excludeProperty>git.local.branch.ahead</excludeProperty>
+                                <excludeProperty>git.local.branch.behind</excludeProperty>
+                                <excludeProperty>git.tags</excludeProperty>
+                            </excludeProperties>
+                            <injectAllReactorProjects>true</injectAllReactorProjects>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+
+        <profile>
+            <!-- ci test -->
+            <id>jdk12</id>
+            <activation>
+                <jdk>[12,)</jdk>
+                <property>
+                    <name>JAVA8_HOME</name>
+                </property>
+            </activation>
+            <dependencies>
+                <dependency>
+                    <groupId>com.sun</groupId>
+                    <artifactId>tools</artifactId>
+                    <version>1.6.0</version>
+                    <scope>system</scope>
+                    <systemPath>${JAVA8_HOME}/lib/tools.jar</systemPath>
+                </dependency>
+            </dependencies>
+        </profile>
+
+        <profile>
+            <id>full</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-javadoc-plugin</artifactId>
+                        <version>3.2.0</version>
+                        <configuration>
+                            <doclint>none</doclint>
+                            <source>1.8</source>
+                            <failOnError>false</failOnError>
+                        </configuration>
+                        <executions>
+                            <execution>
+                                <id>release</id>
+                                <phase>package</phase>
+                                <goals>
+                                    <goal>jar</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+
+        <profile>
+            <id>release</id>
+            <activation>
+                <property>
+                    <name>performRelease</name>
+                    <value>true</value>
+                </property>
+            </activation>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-gpg-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>sign-artifacts</id>
+                                <phase>verify</phase>
+                                <goals>
+                                    <goal>sign</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
 
     <build>
         <pluginManagement>
@@ -215,36 +353,79 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-assembly-plugin</artifactId>
-                    <version>3.1.0</version>
+                    <version>3.2.0</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-release-plugin</artifactId>
+                    <version>3.0.0-M1</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-antrun-plugin</artifactId>
+                    <version>1.8</version>
+                </plugin>
+                <!--This plugin's configuration is used to store Eclipse m2e settings
+                    only. It has no influence on the Maven build itself. -->
+                <plugin>
+                    <groupId>org.eclipse.m2e</groupId>
+                    <artifactId>lifecycle-mapping</artifactId>
+                    <version>${lifecycle-mapping.version}</version>
+                    <configuration>
+                        <lifecycleMappingMetadata>
+                            <pluginExecutions>
+                                <pluginExecution>
+                                    <pluginExecutionFilter>
+                                        <groupId>
+                                            org.apache.maven.plugins
+                                        </groupId>
+                                        <artifactId>
+                                            maven-invoker-plugin
+                                        </artifactId>
+                                        <versionRange>
+                                            [1.0.0,)
+                                        </versionRange>
+                                        <goals>
+                                            <goal>
+                                                install
+                                            </goal>
+                                        </goals>
+                                    </pluginExecutionFilter>
+                                    <action>
+                                        <ignore />
+                                    </action>
+                                </pluginExecution>
+                                <pluginExecution>
+                                    <pluginExecutionFilter>
+                                        <groupId>
+                                            org.codehaus.mojo
+                                        </groupId>
+                                        <artifactId>
+                                            flatten-maven-plugin
+                                        </artifactId>
+                                        <versionRange>
+                                            [1.0.0,)
+                                        </versionRange>
+                                        <goals>
+                                            <goal>flatten</goal>
+                                        </goals>
+                                    </pluginExecutionFilter>
+                                    <action>
+                                        <ignore></ignore>
+                                    </action>
+                                </pluginExecution>
+                            </pluginExecutions>
+                        </lifecycleMappingMetadata>
+                    </configuration>
                 </plugin>
             </plugins>
         </pluginManagement>
 
         <plugins>
-            <!-- git commit info -->
-            <plugin>
-                <groupId>pl.project13.maven</groupId>
-                <artifactId>git-commit-id-plugin</artifactId>
-                <version>2.2.1</version>
-                <executions>
-                    <execution>
-                        <goals>
-                            <goal>revision</goal>
-                        </goals>
-                    </execution>
-                </executions>
-                <configuration>
-                    <verbose>false</verbose>
-                    <dateFormat>yyyy-MM-dd'T'HH:mm:ssZ</dateFormat>
-                    <generateGitPropertiesFile>true</generateGitPropertiesFile>
-                    <generateGitPropertiesFilename>${project.build.outputDirectory}/arthas-git.properties</generateGitPropertiesFilename>
-                    <excludeProperties>git.build.host</excludeProperties>
-                </configuration>
-            </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-jar-plugin</artifactId>
-                <version>2.5</version>
+                <version>3.2.0</version>
                 <configuration>
                     <archive>
                         <manifest>
@@ -254,19 +435,11 @@
                     </archive>
                 </configuration>
             </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-javadoc-plugin</artifactId>
-                <version>2.10.4</version>
-                <configuration>
-                    <additionalparam>-Xdoclint:none</additionalparam>
-                </configuration>
-            </plugin>
 
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-source-plugin</artifactId>
-                <version>3.0.1</version>
+                <version>3.2.1</version>
                 <executions>
                     <execution>
                         <id>attach-sources</id>
@@ -278,9 +451,34 @@
             </plugin>
 
             <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>flatten-maven-plugin</artifactId>
+                <version>1.2.2</version>
+                <configuration>
+                  <flattenMode>minimum</flattenMode>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>flatten</id>
+                        <phase>process-resources</phase>
+                        <goals>
+                            <goal>flatten</goal>
+                        </goals>
+                    </execution>
+                    <execution>
+                        <id>flatten-clean</id>
+                        <phase>clean</phase>
+                        <goals>
+                            <goal>clean</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <plugin>
                 <groupId>org.jacoco</groupId>
                 <artifactId>jacoco-maven-plugin</artifactId>
-                <version>0.8.2</version>
+                <version>0.8.5</version>
                 <executions>
                     <execution>
                         <id>jacoco-initialize</id>
@@ -290,7 +488,6 @@
                         <configuration>
                             <excludes>
                                 <exclude>com/taobao/arthas/core/view/ObjectViewTest*</exclude>
-                                <exclude>com/taobao/arthas/bytekit/asm/interceptor*</exclude>
                             </excludes>
                         </configuration>
                     </execution>

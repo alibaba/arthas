@@ -1,6 +1,8 @@
 stack
 ===
 
+[`stack`在线教程](https://arthas.aliyun.com/doc/arthas-tutorials.html?language=cn&id=command-stack)
+
 > 输出当前方法被调用的调用路径
 
 很多时候我们都知道一个方法被执行，但这个方法被执行的路径非常多，或者你根本就不知道这个方法是从那里被执行了，此时你需要的是 stack 命令。
@@ -29,7 +31,7 @@ stack
 
 #### 启动 Demo
 
-启动[快速入门](quick-start.md)里的`arthas-demo`。
+启动[快速入门](quick-start.md)里的`math-game`。
 
 #### stack
 

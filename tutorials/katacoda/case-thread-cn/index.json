@@ -1,0 +1,35 @@
+{
+  "title": "Arthas 查找Top N线程 案例",
+  "description": "Arthas 查找Top N线程 案例",
+  "difficulty": "高级使用者",
+  "time": "10分钟",
+  "details": {
+    "steps": [
+      {
+        "title": "Arthas demo",
+        "text": "arthas-demo.md"
+      },
+      {
+        "title": "Start arthas-boot",
+        "text": "arthas-boot.md"
+      },
+      {
+        "title": "查找Top N线程",
+        "text": "case-thread.md"
+      }
+    ],
+    "intro": {
+      "text": "intro.md"
+    },
+    "finish": {
+      "text": "finish.md"
+    }
+  },
+  "environment": {
+    "uilayout": "terminal"
+  },
+  "backend": {
+    "imageid": "openjdk:15",
+    "environmentsprotocol": "http"
+  }
+}

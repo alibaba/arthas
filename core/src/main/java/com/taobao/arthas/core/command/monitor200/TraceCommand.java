@@ -1,5 +1,6 @@
 package com.taobao.arthas.core.command.monitor200;
 
+import com.taobao.arthas.core.GlobalOptions;
 import com.taobao.arthas.core.advisor.AdviceListener;
 import com.taobao.arthas.core.command.Constants;
 import com.taobao.arthas.core.shell.command.CommandProcess;
@@ -37,6 +38,7 @@ import java.util.List;
         "  trace -E com.test.ClassA|org.test.ClassB method1|method2|method3\n" +
         "  trace demo.MathGame run -n 5\n" +
         "  trace demo.MathGame run --skipJDKMethod false\n" +
+        "  trace javax.servlet.Filter * --exclude-class-pattern com.demo.TestFilter\n" +
         Constants.WIKI + Constants.WIKI_HOME + "trace")
 //@formatter:on
 public class TraceCommand extends EnhancerCommand {
@@ -133,6 +135,14 @@ public class TraceCommand extends EnhancerCommand {
     }
 
     @Override
+    protected Matcher getClassNameExcludeMatcher() {
+        if (classNameExcludeMatcher == null && getExcludeClassPattern() != null) {
+            classNameExcludeMatcher = SearchUtils.classNameMatcher(getExcludeClassPattern(), isRegEx());
+        }
+        return classNameExcludeMatcher;
+    }
+
+    @Override
     protected Matcher getMethodNameMatcher() {
         if (methodNameMatcher == null) {
             if (pathPatterns == null || pathPatterns.isEmpty()) {
@@ -147,7 +157,7 @@ public class TraceCommand extends EnhancerCommand {
     @Override
     protected AdviceListener getAdviceListener(CommandProcess process) {
         if (pathPatterns == null || pathPatterns.isEmpty()) {
-            return new TraceAdviceListener(this, process);
+            return new TraceAdviceListener(this, process, GlobalOptions.verbose || this.verbose);
         } else {
             return new PathTraceAdviceListener(this, process);
         }

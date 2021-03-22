@@ -1,6 +1,9 @@
 package com.taobao.arthas.core.shell.system.impl;
 
+import com.taobao.arthas.common.ArthasConstants;
 import com.taobao.arthas.core.GlobalOptions;
+import com.taobao.arthas.core.distribution.ResultDistributor;
+import com.taobao.arthas.core.server.ArthasBootstrap;
 import com.taobao.arthas.core.shell.cli.CliToken;
 import com.taobao.arthas.core.shell.command.Command;
 import com.taobao.arthas.core.shell.command.internal.RedirectHandler;
@@ -8,9 +11,10 @@ import com.taobao.arthas.core.shell.command.internal.StdoutHandler;
 import com.taobao.arthas.core.shell.command.internal.TermHandler;
 import com.taobao.arthas.core.shell.future.Future;
 import com.taobao.arthas.core.shell.handlers.Handler;
-import com.taobao.arthas.core.shell.impl.ShellImpl;
+import com.taobao.arthas.core.shell.session.Session;
 import com.taobao.arthas.core.shell.system.Job;
 import com.taobao.arthas.core.shell.system.JobController;
+import com.taobao.arthas.core.shell.system.JobListener;
 import com.taobao.arthas.core.shell.system.Process;
 import com.taobao.arthas.core.shell.system.impl.ProcessImpl.ProcessOutput;
 import com.taobao.arthas.core.shell.term.Term;
@@ -35,6 +39,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 /**
  * @author <a href="mailto:julien@julienviet.com">Julien Viet</a>
  * @author hengyunabc 2019-05-14
+ * @author gongdewei 2020-03-23
  */
 public class JobControllerImpl implements JobController {
 
@@ -57,17 +62,32 @@ public class JobControllerImpl implements JobController {
         return jobs.remove(id) != null;
     }
 
+    private void checkPermission(Session session, CliToken token) {
+        if (ArthasBootstrap.getInstance().getSecurityAuthenticator().needLogin()) {
+            // 检查session是否有 Subject
+            Object subject = session.get(ArthasConstants.SUBJECT_KEY);
+            if (subject == null) {
+                if (token != null && token.isText() && token.value().trim().equals(ArthasConstants.AUTH)) {
+                    // 执行的是auth 命令
+                    return;
+                }
+                throw new IllegalArgumentException("Error! command not permitted, try to use 'auth' command to authenticates.");
+            }
+        }
+    }
+
     @Override
-    public Job createJob(InternalCommandManager commandManager, List<CliToken> tokens, ShellImpl shell) {
+    public Job createJob(InternalCommandManager commandManager, List<CliToken> tokens, Session session, JobListener jobHandler, Term term, ResultDistributor resultDistributor) {
+        checkPermission(session, tokens.get(0));
         int jobId = idGenerator.incrementAndGet();
         StringBuilder line = new StringBuilder();
         for (CliToken arg : tokens) {
             line.append(arg.raw());
         }
         boolean runInBackground = runInBackground(tokens);
-        Process process = createProcess(tokens, commandManager, jobId, shell.term());
+        Process process = createProcess(session, tokens, commandManager, jobId, term, resultDistributor);
         process.setJobId(jobId);
-        JobImpl job = new JobImpl(jobId, this, process, line.toString(), runInBackground, shell);
+        JobImpl job = new JobImpl(jobId, this, process, line.toString(), runInBackground, session, jobHandler);
         jobs.put(jobId, job);
         return job;
     }
@@ -120,17 +140,20 @@ public class JobControllerImpl implements JobController {
      * @param commandManager command manager
      * @param jobId job id
      * @param term term
+     * @param resultDistributor
      * @return the created process
      */
-    private Process createProcess(List<CliToken> line, InternalCommandManager commandManager, int jobId, Term term) {
+    private Process createProcess(Session session, List<CliToken> line, InternalCommandManager commandManager, int jobId, Term term, ResultDistributor resultDistributor) {
         try {
             ListIterator<CliToken> tokens = line.listIterator();
             while (tokens.hasNext()) {
                 CliToken token = tokens.next();
                 if (token.isText()) {
+                    // check before create process
+                    checkPermission(session, token);
                     Command command = commandManager.getCommand(token.value());
                     if (command != null) {
-                        return createCommandProcess(command, tokens, jobId, term);
+                        return createCommandProcess(command, tokens, jobId, term, resultDistributor);
                     } else {
                         throw new IllegalArgumentException(token.value() + ": command not found");
                     }
@@ -152,7 +175,7 @@ public class JobControllerImpl implements JobController {
         return runInBackground;
     }
 
-    private Process createCommandProcess(Command command, ListIterator<CliToken> tokens, int jobId, Term term) throws IOException {
+    private Process createCommandProcess(Command command, ListIterator<CliToken> tokens, int jobId, Term term, ResultDistributor resultDistributor) throws IOException {
         List<CliToken> remaining = new ArrayList<CliToken>();
         List<CliToken> pipelineTokens = new ArrayList<CliToken>();
         boolean isPipeline = false;
@@ -199,7 +222,9 @@ public class JobControllerImpl implements JobController {
             }
         }
         ProcessOutput ProcessOutput = new ProcessOutput(stdoutHandlerChain, cacheLocation, term);
-        return new ProcessImpl(command, remaining, command.processHandler(), ProcessOutput);
+        ProcessImpl process = new ProcessImpl(command, remaining, command.processHandler(), ProcessOutput, resultDistributor);
+        process.setTty(term);
+        return process;
     }
 
     private String getRedirectFileName(ListIterator<CliToken> tokens) {

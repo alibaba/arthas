@@ -1,6 +1,8 @@
 classloader
 ===
 
+[`classloader`在线教程](https://arthas.aliyun.com/doc/arthas-tutorials?language=cn&id=command-classloader)
+
 > 查看classloader的继承树，urls，类加载信息
 
 `classloader` 命令将 JVM 中所有的classloader的信息统计出来，并可以展示继承树，urls等。
@@ -16,6 +18,7 @@ classloader
 |[t]|打印所有ClassLoader的继承树|
 |[a]|列出所有ClassLoader加载的类，请谨慎使用|
 |`[c:]`|ClassLoader的hashcode|
+|`[classLoaderClass:]`|指定执行表达式的 ClassLoader 的 class name|
 |`[c: r:]`|用ClassLoader去查找resource|
 |`[c: load:]`|用ClassLoader去加载指定的类|
 
@@ -61,7 +64,19 @@ Affect(row-cnt:4) cost in 3 ms.
 
 ```bash
 $ classloader -c 3d4eac69
-file:/private/tmp/arthas-demo.jar
+file:/private/tmp/math-game.jar
+file:/Users/hengyunabc/.arthas/lib/3.0.5/arthas/arthas-agent.jar
+
+Affect(row-cnt:9) cost in 3 ms.
+```
+
+*注意* hashcode是变化的，需要先查看当前的ClassLoader信息，提取对应ClassLoader的hashcode。
+
+对于只有唯一实例的ClassLoader可以通过class name指定，使用起来更加方便：
+
+```bash
+$ classloader --classLoaderClass sun.misc.Launcher$AppClassLoader
+file:/private/tmp/math-game.jar
 file:/Users/hengyunabc/.arthas/lib/3.0.5/arthas/arthas-agent.jar
 
 Affect(row-cnt:9) cost in 3 ms.
@@ -72,7 +87,7 @@ Affect(row-cnt:9) cost in 3 ms.
 ```bash
 $ classloader -c 3d4eac69  -r META-INF/MANIFEST.MF
  jar:file:/System/Library/Java/Extensions/MRJToolkit.jar!/META-INF/MANIFEST.MF
- jar:file:/private/tmp/arthas-demo.jar!/META-INF/MANIFEST.MF
+ jar:file:/private/tmp/math-game.jar!/META-INF/MANIFEST.MF
  jar:file:/Users/hengyunabc/.arthas/lib/3.0.5/arthas/arthas-agent.jar!/META-INF/MANIFEST.MF
 ```
 
@@ -89,7 +104,7 @@ $ classloader -c 1b6d3586 -r java/lang/String.class
 $ classloader -c 3d4eac69 --load demo.MathGame
 load class success.
  class-info        demo.MathGame
- code-source       /private/tmp/arthas-demo.jar
+ code-source       /private/tmp/math-game.jar
  name              demo.MathGame
  isInterface       false
  isAnnotation      false

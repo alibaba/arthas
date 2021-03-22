@@ -1,6 +1,8 @@
 sc
 ===
 
+[`sc`在线教程](https://arthas.aliyun.com/doc/arthas-tutorials?language=cn&id=command-sc)
+
 > 查看JVM已加载的类信息
 
 “Search-Class” 的简写，这个命令能搜索出所有已经加载到 JVM 中的 Class 信息，这个命令支持的参数有 `[d]`、`[E]`、`[f]` 和 `[x:]`。
@@ -18,6 +20,9 @@ sc
 |[E]|开启正则表达式匹配，默认为通配符匹配|
 |[f]|输出当前类的成员变量信息（需要配合参数-d一起使用）|
 |[x:]|指定输出静态变量时属性的遍历深度，默认为 0，即直接使用 `toString` 输出|
+|`[c:]`|指定class的 ClassLoader 的 hashcode|
+|`[classLoaderClass:]`|指定执行表达式的 ClassLoader 的 class name|
+|`[n:]`|具有详细信息的匹配类的最大数量（默认为100）|
 
 > class-pattern支持全限定名，如com.taobao.test.AAA，也支持com/taobao/test/AAA这样的格式，这样，我们从异常堆栈里面把类名拷贝过来的时候，不需要在手动把`/`替换为`.`啦。
 
@@ -38,7 +43,7 @@ sc
   ```bash
   $ sc -d demo.MathGame
   class-info        demo.MathGame
-  code-source       /private/tmp/arthas-demo.jar
+  code-source       /private/tmp/math-game.jar
   name              demo.MathGame
   isInterface       false
   isAnnotation      false
@@ -66,7 +71,7 @@ sc
   ```bash
   $ sc -d -f demo.MathGame
   class-info        demo.MathGame
-  code-source       /private/tmp/arthas-demo.jar
+  code-source       /private/tmp/math-game.jar
   name              demo.MathGame
   isInterface       false
   isAnnotation      false

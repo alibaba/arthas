@@ -1,5 +1,8 @@
 package com.alibaba.arthas.tunnel.client;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelPromise;
 import io.netty.channel.SimpleChannelInboundHandler;
@@ -7,7 +10,7 @@ import io.netty.handler.codec.http.websocketx.WebSocketClientProtocolHandler.Cli
 import io.netty.handler.codec.http.websocketx.WebSocketFrame;
 
 public class LocalFrameHandler extends SimpleChannelInboundHandler<WebSocketFrame> {
-
+    private final static Logger logger = LoggerFactory.getLogger(LocalFrameHandler.class);
     private ChannelPromise handshakeFuture;
 
     public LocalFrameHandler() {
@@ -34,7 +37,7 @@ public class LocalFrameHandler extends SimpleChannelInboundHandler<WebSocketFram
 
     @Override
     public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) {
-        cause.printStackTrace();
+        logger.error("LocalFrameHandler error", cause);
         if (!handshakeFuture.isDone()) {
             handshakeFuture.setFailure(cause);
         }

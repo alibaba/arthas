@@ -1,24 +1,79 @@
 Docker
 ===
 
+
+## Use JDK in Docker
+
+Many times, the problem that arthas can't work with the application in docker is because the docker does not install JDK, but installs JRE. If only JRE is installed, many JAVA command line tools and class libraries will be missing, and Arthas will not work properly. Here are two common ways to use JDK in Docker.
+
+### Use public JDK image
+
+* https://hub.docker.com/_/openjdk/
+
+such as:
+
+```
+FROM openjdk:8-jdk
+```
+
+or:
+
+```
+FROM openjdk:8-jdk-alpine
+```
+
+### Install via package management software
+
+such as:
+
+```bash
+# Install OpenJDK-8
+RUN apt-get update && \
+    apt-get install -y openjdk-8-jdk && \
+    apt-get install -y ant && \
+    apt-get clean;
+
+# Fix certificate issues
+RUN apt-get update && \
+    apt-get install ca-certificates-java && \
+    apt-get clean && \
+    update-ca-certificates -f;
+
+# Setup JAVA_HOME - useful for docker commandline
+ENV JAVA_HOME /usr/lib/jvm/java-8-openjdk-amd64/
+RUN export JAVA_HOME
+```
+
+or:
+
+```bash
+RUN yum install -y \
+   java-1.8.0-openjdk \
+   java-1.8.0-openjdk-devel
+
+ENV JAVA_HOME /usr/lib/jvm/java-1.8.0-openjdk/
+RUN export JAVA_HOME
+```
+
+
 ## Quick start with Docker
 
-1. Delete the existing `arthas-demo` docker container (not necessary)
+1. Delete the existing `math-game` docker container (not necessary)
 
     ```sh
-    $ docker stop arthas-demo || true && docker rm arthas-demo || true
+    $ docker stop math-game || true && docker rm math-game || true
     ```
 
-1. Start `arthas-demo`
+1. Start `math-game`
 
     ```sh
-    $ docker run --name arthas-demo -it hengyunabc/arthas:latest /bin/sh -c "java -jar /opt/arthas/arthas-demo.jar"
+    $ docker run --name math-game -it hengyunabc/arthas:latest /bin/sh -c "java -jar /opt/arthas/math-game.jar"
     ```
 
 1. Start `arthas-boot` for diagnosis
 
     ```sh
-    $ docker exec -it arthas-demo /bin/sh -c "java -jar /opt/arthas/arthas-boot.jar"
+    $ docker exec -it math-game /bin/sh -c "java -jar /opt/arthas/arthas-boot.jar"
     * [1]: 9 jar
 
     [INFO] arthas home: /opt/arthas
@@ -32,7 +87,7 @@ Docker
     `--' `--'`--' '--'   `--'   `--'  `--'`--' `--'`-----'
 
 
-    wiki: https://alibaba.github.io/arthas
+    wiki: https://arthas.aliyun.com/doc
     version: 3.0.5
     pid: 9
     time: 2018-12-18 11:30:36
@@ -41,13 +96,13 @@ Docker
 ## Diagnose the Java process in Docker
 
 ```sh
-docker exec -it  ${containerId} /bin/bash -c "wget https://alibaba.github.io/arthas/arthas-boot.jar && java -jar arthas-boot.jar"
+docker exec -it  ${containerId} /bin/bash -c "wget https://arthas.aliyun.com/arthas-boot.jar && java -jar arthas-boot.jar"
 ```
 
 ## Diagnose the Java process in the container in k8s
 
 ```sh
-kubectl exec -it ${pod} --container ${containerId} -- /bin/bash -c "wget https://alibaba.github.io/arthas/arthas-boot.jar && java -jar arthas-boot.jar"
+kubectl exec -it ${pod} --container ${containerId} -- /bin/bash -c "wget https://arthas.aliyun.com/arthas-boot.jar && java -jar arthas-boot.jar"
 ```
 
 ## Install Arthas into the base Docker image

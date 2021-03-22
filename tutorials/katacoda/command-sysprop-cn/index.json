@@ -1,0 +1,55 @@
+{
+  "title": "Arthas sysprop命令",
+  "description": "Arthas sysprop命令",
+  "difficulty": "精通者",
+  "time": "10-20 分钟",
+  "details": {
+    "steps": [
+      {
+        "title": "Arthas demo",
+        "text": "arthas-demo.md"
+      },
+      {
+        "title": "启动arthas-boot",
+        "text": "arthas-boot.md"
+      },
+      {
+        "title": "sysprop命令",
+        "text": "sysprop.md"
+      },
+      {
+        "title": "查看所有属性",
+        "text": "check-all-properties.md"
+      },
+      {
+        "title": "查看单个属性",
+        "text": "check-one-single-property.md"
+      },
+      {
+        "title": "自动补全",
+        "text": "auto-completion.md"
+      },
+      {
+        "title": "历史命令的补全",
+        "text": "completion-of-history-commands.md"
+      },
+      {
+        "title": "管道",
+        "text": "pipeline.md"
+      }
+    ],
+    "intro": {
+      "text": "intro.md"
+    },
+    "finish": {
+      "text": "finish.md"
+    }
+  },
+  "environment": {
+    "uilayout": "terminal"
+  },
+  "backend": {
+    "imageid": "openjdk:15",
+    "environmentsprotocol": "http"
+  }
+}

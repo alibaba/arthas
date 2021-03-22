@@ -1,6 +1,8 @@
 trace
 =====
 
+[`trace` online tutorial](https://arthas.aliyun.com/doc/arthas-tutorials.html?language=en&id=command-trace)
+
 > Trace method calling path, and output the time cost for each node in the path.
 
 `trace` can track the calling path specified by `class-pattern` / `method-pattern`, and calculate the time cost on the whole path.
@@ -31,15 +33,19 @@ Many times what we are interested is the exact trace result when the method call
 
 ### Notice
 
-`trace` is handy to help discovering and locating the performance flaws in your system, but pls. note Arthas can only trace the first level method call each time.
+* `trace` is handy to help discovering and locating the performance flaws in your system, but pls. note Arthas can only trace the first level method call each time.
+
+* After version 3.3.0, you can use the Dynamic Trace feature to add new matching classes/methods, see the following example.
+
+* Currently `trace java.lang.Thread getName` is not supported, please refer to issue: [#1610](https://github.com/alibaba/arthas/issues/1610), considering that it is not very necessary and it is difficult to repair , So it won’t be fixed for now
 
 ### Usage
 
 #### Start Demo
 
-Start `arthas-demo` in [Quick Start](quick-start.md).
+Start `math-game` in [Quick Start](quick-start.md).
 
-#### trace method
+#### Trace method
 
 ```bash
 $ trace demo.MathGame run
@@ -54,8 +60,9 @@ Affect(class-cnt:1 , method-cnt:1) cost in 28 ms.
         `---[0.03752ms] demo.MathGame:primeFactors() #24 [throws Exception]
 ```
 
+> The `#24` in the result indicates that in the run function, the `primeFactors()` function was called on line `24` of the source file.
 
-#### trace times limit
+#### Trace times limit
 
 If the method invoked many times, use `-n` options to specify trace times. For example, the command will exit when received a trace result.
 
@@ -125,7 +132,7 @@ Affect(class-cnt:1 , method-cnt:1) cost in 41 ms.
 * The total time cost may not equal to the sum of the time costs each sub method call takes, this is because Arthas instrumented code takes time too.
 
 
-#### trace multiple classes or multiple methods
+#### Trace multiple classes or multiple methods
 
 The trace command will only trace the subcalls in the method to the trace, and will not trace down multiple layers. Because traces are expensive, multi-layer traces can lead to a lot of classes and methods that ultimately have to be traced.
 
@@ -134,3 +141,100 @@ You can use the regular expression to match multiple classes and methods on the 
 ```bash
 Trace -E com.test.ClassA|org.test.ClassB method1|method2|method3
 ```
+
+
+#### Exclude the specified class
+
+> The watch/trace/monitor/stack/tt commands all support the `--exclude-class-pattern` parameter
+
+Use the `--exclude-class-pattern` parameter to exclude the specified class, for example:
+
+```bash
+watch javax.servlet.Filter * --exclude-class-pattern com.demo.TestFilter
+```
+
+#### Dynamic trace
+
+> Supported since version 3.3.0.
+
+Open terminal 1, trace the `run` method in the above demo, and you can see the printout `listenerId: 1` .
+
+```bash
+[arthas@59161]$ trace demo.MathGame run
+Press Q or Ctrl+C to abort.
+Affect(class count: 1 , method count: 1) cost in 112 ms, listenerId: 1
+`---ts=2020-07-09 16:48:11;thread_name=main;id=1;is_daemon=false;priority=5;TCCL=sun.misc.Launcher$AppClassLoader@3d4eac69
+    `---[1.389634ms] demo.MathGame:run()
+        `---[0.123934ms] demo.MathGame:primeFactors() #24 [throws Exception]
+
+`---ts=2020-07-09 16:48:12;thread_name=main;id=1;is_daemon=false;priority=5;TCCL=sun.misc.Launcher$AppClassLoader@3d4eac69
+    `---[3.716391ms] demo.MathGame:run()
+        +---[3.182813ms] demo.MathGame:primeFactors() #24
+        `---[0.167786ms] demo.MathGame:print() #25
+```
+
+Now to drill down into the sub method `primeFactors`, you can open a new terminal 2 and use the `telnet localhost 3658` connects to the arthas, then trace `primeFactors` with the specify `listenerId`.
+
+```bash
+[arthas@59161]$ trace demo.MathGame primeFactors --listenerId 1
+Press Q or Ctrl+C to abort.
+Affect(class count: 1 , method count: 1) cost in 34 ms, listenerId: 1
+```
+
+At Terminal 2 prints the results, indicating that a method has been enhanced: `Affect(class count: 1 , method count: 1)`, but no more results are printed.
+
+At terminal 1, you can see that the trace result has increased by one layer:
+
+```bash
+`---ts=2020-07-09 16:49:29;thread_name=main;id=1;is_daemon=false;priority=5;TCCL=sun.misc.Launcher$AppClassLoader@3d4eac69
+    `---[0.492551ms] demo.MathGame:run()
+        `---[0.113929ms] demo.MathGame:primeFactors() #24 [throws Exception]
+            `---[0.061462ms] demo.MathGame:primeFactors()
+                `---[0.001018ms] throw:java.lang.IllegalArgumentException() #46
+
+`---ts=2020-07-09 16:49:30;thread_name=main;id=1;is_daemon=false;priority=5;TCCL=sun.misc.Launcher$AppClassLoader@3d4eac69
+    `---[0.409446ms] demo.MathGame:run()
+        +---[0.232606ms] demo.MathGame:primeFactors() #24
+        |   `---[0.1294ms] demo.MathGame:primeFactors()
+        `---[0.084025ms] demo.MathGame:print() #25
+```
+
+Dynamic trace by specifying `listenerId`, you can go deeper and deeper. In addition, commands such as `watch`/`tt`/`monitor` also support similar functionality.
+
+
+### Trace result time inaccuracy problem
+
+For example, in the following result: `0.705196 > (0.152743 + 0.145825)`
+
+```bash
+$ trace demo.MathGame run -n 1
+Press Q or Ctrl+C to abort.
+Affect(class count: 1 , method count: 1) cost in 66 ms, listenerId: 1
+`---ts=2021-02-08 11:27:36;thread_name=main;id=1;is_daemon=false;priority=5;TCCL=sun.misc.Launcher$AppClassLoader@232204a1
+    `--[0.705196ms] demo.MathGame:run()
+        +---[0.152743ms] demo.MathGame:primeFactors() #24
+        `--[0.145825ms] demo.MathGame:print() #25
+```
+
+So where is the rest of the time consumed?
+
+1. Methods that are not traced to. For example, methods under `java.*` are ignored by default. This can be printed out by adding the `-skipJDKMethod false` parameter.
+
+    ```bash
+    $ trace demo.MathGame run --skipJDKMethod false
+    Press Q or Ctrl+C to abort.
+    Affect(class count: 1 , method count: 1) cost in 35 ms, listenerId: 2
+    `---ts=2021-02-08 11:27:48;thread_name=main;id=1;is_daemon=false;priority=5;TCCL=sun.misc.Launcher$AppClassLoader@232204a1
+        `--[0.810591ms] demo.MathGame:run()
+            +--[0.034568ms] java.util.Random:nextInt() #23
+            +---[0.119367ms] demo.MathGame:timeFactors() #24 [throws Exception]
+            +---[0.017407ms] java.lang.StringBuilder:<init>() #28
+            +--[0.127922ms] java.lang.String:format() #57
+            +---[min=0.01419ms,max=0.020221ms,total=0.034411ms,count=2] java.lang.StringBuilder:append() #57
+            +--[0.021911ms] java.lang.Exception:getMessage() #57
+            +---[0.015643ms] java.lang.StringBuilder:toString() #57
+            `--[0.086622ms] java.io.PrintStream:println() #57
+    ```
+2. Instruction consumption. For example, instructions such as `i++`, `getfield`, etc.
+
+3. Possible JVM pause during code execution, such as GC, entering synchronization blocks, etc.

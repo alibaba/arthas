@@ -9,7 +9,12 @@ import com.taobao.text.Decoration;
 import com.taobao.text.ui.TableElement;
 import com.taobao.text.util.RenderUtil;
 
+import java.io.IOException;
 import java.io.InputStream;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.net.URLConnection;
 import java.util.Collections;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -23,8 +28,11 @@ public class ArthasBanner {
     private static final String LOGO_LOCATION = "/com/taobao/arthas/core/res/logo.txt";
     private static final String CREDIT_LOCATION = "/com/taobao/arthas/core/res/thanks.txt";
     private static final String VERSION_LOCATION = "/com/taobao/arthas/core/res/version";
-    private static final String WIKI = "https://alibaba.github.io/arthas";
-    private static final String TUTORIALS = "https://alibaba.github.io/arthas/arthas-tutorials";
+    private static final String WIKI = "https://arthas.aliyun.com/doc";
+    private static final String TUTORIALS = "https://arthas.aliyun.com/doc/arthas-tutorials.html";
+    private static final String ARTHAS_LATEST_VERSIONS_URL = "https://arthas.aliyun.com/api/latest_version";
+
+    private static final int CONNECTION_TIMEOUT = 1000;
 
     private static String LOGO = "Welcome to Arthas";
     private static String VERSION = "unknown";
@@ -101,11 +109,12 @@ public class ArthasBanner {
     }
 
     public static String welcome(Map<String, String> infos) {
-        logger.info("arthas version: " + version());
+        logger.info("Current arthas version: {}, recommend latest version: {}", version(), latestVersion());
         TableElement table = new TableElement().rightCellPadding(1)
                         .row("wiki", wiki())
                         .row("tutorials", tutorials())
                         .row("version", version())
+                        .row("main_class", PidUtils.mainClass())
                         .row("pid", PidUtils.currentPid())
                         .row("time", DateUtils.getCurrentDate());
         for (Entry<String, String> entry : infos.entrySet()) {
@@ -113,5 +122,42 @@ public class ArthasBanner {
         }
 
         return logo() + "\n" + RenderUtil.render(table);
+    }
+
+    static String latestVersion() {
+        try {
+            URLConnection urlConnection = openURLConnection(ARTHAS_LATEST_VERSIONS_URL);
+            InputStream inputStream = urlConnection.getInputStream();
+            return com.taobao.arthas.common.IOUtils.toString(inputStream).trim();
+        } catch (Throwable e) {
+            // ignore
+        }
+        return "";
+    }
+
+    /**
+     * support redirect
+     *
+     * @param url
+     * @return
+     * @throws MalformedURLException
+     * @throws IOException
+     */
+    private static URLConnection openURLConnection(String url) throws MalformedURLException, IOException {
+        URLConnection connection = new URL(url).openConnection();
+        if (connection instanceof HttpURLConnection) {
+            connection.setConnectTimeout(CONNECTION_TIMEOUT);
+            // normally, 3xx is redirect
+            int status = ((HttpURLConnection) connection).getResponseCode();
+            if (status != HttpURLConnection.HTTP_OK) {
+                if (status == HttpURLConnection.HTTP_MOVED_TEMP || status == HttpURLConnection.HTTP_MOVED_PERM
+                        || status == HttpURLConnection.HTTP_SEE_OTHER) {
+                    String newUrl = connection.getHeaderField("Location");
+                    logger.debug("Try to open url: {}, redirect to: {}", url, newUrl);
+                    return openURLConnection(newUrl);
+                }
+            }
+        }
+        return connection;
     }
 }

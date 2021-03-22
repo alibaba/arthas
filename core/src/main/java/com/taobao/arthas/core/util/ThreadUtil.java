@@ -1,9 +1,14 @@
 package com.taobao.arthas.core.util;
 
+import com.taobao.arthas.core.command.model.BlockingLockInfo;
+import com.taobao.arthas.core.command.model.BusyThreadInfo;
+import com.taobao.arthas.core.command.model.StackModel;
+import com.taobao.arthas.core.command.model.ThreadNode;
+import com.taobao.arthas.core.command.model.ThreadVO;
 import com.taobao.arthas.core.view.Ansi;
 
+import java.arthas.SpyAPI;
 import java.lang.management.*;
-import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.*;
 
@@ -18,6 +23,9 @@ abstract public class ThreadUtil {
 
     private static ThreadMXBean threadMXBean = ManagementFactory.getThreadMXBean();
 
+    private static boolean detectedEagleEye = false;
+    public static boolean foundEagleEye = false;
+
     public static ThreadGroup getRoot() {
         ThreadGroup group = Thread.currentThread().getThreadGroup();
         ThreadGroup parent;
@@ -28,28 +36,35 @@ abstract public class ThreadUtil {
     }
 
     /**
-     * 获取所有线程Map，以线程Name-ID为key
-     * 
-     * @return
+     * 获取所有线程
      */
-    public static Map<String, Thread> getThreads() {
+    public static List<ThreadVO> getThreads() {
         ThreadGroup root = getRoot();
         Thread[] threads = new Thread[root.activeCount()];
         while (root.enumerate(threads, true) == threads.length) {
             threads = new Thread[threads.length * 2];
         }
-        SortedMap<String, Thread> map = new TreeMap<String, Thread>(new Comparator<String>() {
-            @Override
-            public int compare(String o1, String o2) {
-                return o1.compareTo(o2);
-            }
-        });
+        List<ThreadVO> list = new ArrayList<ThreadVO>(threads.length);
         for (Thread thread : threads) {
             if (thread != null) {
-                map.put(thread.getName() + "-" + thread.getId(), thread);
+                ThreadVO threadVO = createThreadVO(thread);
+                list.add(threadVO);
             }
         }
-        return map;
+        return list;
+    }
+
+    private static ThreadVO createThreadVO(Thread thread) {
+        ThreadGroup group = thread.getThreadGroup();
+        ThreadVO threadVO = new ThreadVO();
+        threadVO.setId(thread.getId());
+        threadVO.setName(thread.getName());
+        threadVO.setGroup(group == null ? "" : group.getName());
+        threadVO.setPriority(thread.getPriority());
+        threadVO.setState(thread.getState());
+        threadVO.setInterrupted(thread.isInterrupted());
+        threadVO.setDaemon(thread.isDaemon());
+        return threadVO;
     }
 
     /**
@@ -70,89 +85,6 @@ abstract public class ThreadUtil {
             }
         }
         return result;
-    }
-
-    /**
-     * get the top N busy thread
-     * @param sampleInterval the interval between two samples
-     * @param topN the number of thread
-     * @return a Map representing <ThreadID, cpuUsage>
-     */
-    public static Map<Long, Long> getTopNThreads(int sampleInterval, int topN) {
-        List<Thread> threads = getThreadList();
-
-        // Sample CPU
-        Map<Long, Long> times1 = new HashMap<Long, Long>();
-        for (Thread thread : threads) {
-            long cpu = threadMXBean.getThreadCpuTime(thread.getId());
-            times1.put(thread.getId(), cpu);
-        }
-
-        try {
-            // Sleep for some time
-            Thread.sleep(sampleInterval);
-        }
-        catch (InterruptedException e) {
-            Thread.currentThread().interrupt();
-        }
-
-        // Resample
-        Map<Long, Long> times2 = new HashMap<Long, Long>(threads.size());
-        for (Thread thread : threads) {
-            long cpu = threadMXBean.getThreadCpuTime(thread.getId());
-            times2.put(thread.getId(), cpu);
-        }
-
-        // Compute delta map and total time
-        long total = 0;
-        Map<Long, Long> deltas = new HashMap<Long, Long>(threads.size());
-        for (Long id : times2.keySet()) {
-            long time1 = times2.get(id);
-            long time2 = times1.get(id);
-            if (time1 == -1) {
-                time1 = time2;
-            } else if (time2 == -1) {
-                time2 = time1;
-            }
-            long delta = time2 - time1;
-            deltas.put(id, delta);
-            total += delta;
-        }
-
-        // Compute cpu
-        final HashMap<Thread, Long> cpus = new HashMap<Thread, Long>(threads.size());
-        for (Thread thread : threads) {
-            long cpu = total == 0 ? 0 : Math.round((deltas.get(thread.getId()) * 100) / total);
-            cpus.put(thread, cpu);
-        }
-
-        // Sort by CPU time : should be a rendering hint...
-        Collections.sort(threads, new Comparator<Thread>() {
-            public int compare(Thread o1, Thread o2) {
-                long l1 = cpus.get(o1);
-                long l2 = cpus.get(o2);
-                if (l1 < l2) {
-                    return 1;
-                } else if (l1 > l2) {
-                    return -1;
-                } else {
-                    return 0;
-                }
-            }
-        });
-
-        // use LinkedHashMap to preserve insert order
-        Map<Long, Long> topNThreads = new LinkedHashMap<Long, Long>();
-
-        List<Thread> topThreads = topN > 0 && topN <= threads.size()
-                ? threads.subList(0, topN) : threads;
-
-        for (Thread thread: topThreads) {
-            // Compute cpu usage
-            topNThreads.put(thread.getId(), cpus.get(thread));
-        }
-
-        return topNThreads;
     }
 
 
@@ -220,21 +152,20 @@ abstract public class ThreadUtil {
         }
 
         BlockingLockInfo blockingLockInfo = new BlockingLockInfo();
-        blockingLockInfo.threadInfo = ownerThreadPerLock.get(mostBlockingLock);
-        blockingLockInfo.lockIdentityHashCode = mostBlockingLock;
-        blockingLockInfo.blockingThreadCount = blockCountPerLock.get(mostBlockingLock);
+        blockingLockInfo.setThreadInfo(ownerThreadPerLock.get(mostBlockingLock));
+        blockingLockInfo.setLockIdentityHashCode(mostBlockingLock);
+        blockingLockInfo.setBlockingThreadCount(blockCountPerLock.get(mostBlockingLock));
         return blockingLockInfo;
     }
 
 
-    public static String getFullStacktrace(ThreadInfo threadInfo, long cpuUsage) {
-        return getFullStacktrace(threadInfo, cpuUsage, 0, 0);
+    public static String getFullStacktrace(ThreadInfo threadInfo) {
+        return getFullStacktrace(threadInfo, -1, -1, -1, 0, 0);
     }
 
-
     public static String getFullStacktrace(BlockingLockInfo blockingLockInfo) {
-        return getFullStacktrace(blockingLockInfo.threadInfo, -1, blockingLockInfo.lockIdentityHashCode,
-                blockingLockInfo.blockingThreadCount);
+        return getFullStacktrace(blockingLockInfo.getThreadInfo(), -1, -1, -1, blockingLockInfo.getLockIdentityHashCode(),
+                blockingLockInfo.getBlockingThreadCount());
     }
 
 
@@ -246,7 +177,7 @@ abstract public class ThreadUtil {
      * @param blockingThreadCount 阻塞了其他线程的数量
      * @return the string representation of the thread stack
      */
-    public static String getFullStacktrace(ThreadInfo threadInfo, long cpuUsage, int lockIdentityHashCode,
+    public static String getFullStacktrace(ThreadInfo threadInfo, double cpuUsage, long deltaTime, long time, int lockIdentityHashCode,
                                            int blockingThreadCount) {
         StringBuilder sb = new StringBuilder("\"" + threadInfo.getThreadName() + "\"" + " Id="
                 + threadInfo.getThreadId());
@@ -254,8 +185,110 @@ abstract public class ThreadUtil {
         if (cpuUsage >= 0 && cpuUsage <= 100) {
             sb.append(" cpuUsage=").append(cpuUsage).append("%");
         }
+        if (deltaTime >= 0 ) {
+            sb.append(" deltaTime=").append(deltaTime).append("ms");
+        }
+        if (time >= 0 ) {
+            sb.append(" time=").append(time).append("ms");
+        }
 
         sb.append(" ").append(threadInfo.getThreadState());
+
+        if (threadInfo.getLockName() != null) {
+            sb.append(" on ").append(threadInfo.getLockName());
+        }
+        if (threadInfo.getLockOwnerName() != null) {
+            sb.append(" owned by \"").append(threadInfo.getLockOwnerName()).append("\" Id=").append(threadInfo.getLockOwnerId());
+        }
+        if (threadInfo.isSuspended()) {
+            sb.append(" (suspended)");
+        }
+        if (threadInfo.isInNative()) {
+            sb.append(" (in native)");
+        }
+        sb.append('\n');
+        int i = 0;
+        for (StackTraceElement ste : threadInfo.getStackTrace()) {
+            sb.append("\tat ").append(ste.toString());
+            sb.append('\n');
+            if (i == 0 && threadInfo.getLockInfo() != null) {
+                Thread.State ts = threadInfo.getThreadState();
+                switch (ts) {
+                    case BLOCKED:
+                        sb.append("\t-  blocked on ").append(threadInfo.getLockInfo());
+                        sb.append('\n');
+                        break;
+                    case WAITING:
+                        sb.append("\t-  waiting on ").append(threadInfo.getLockInfo());
+                        sb.append('\n');
+                        break;
+                    case TIMED_WAITING:
+                        sb.append("\t-  waiting on ").append(threadInfo.getLockInfo());
+                        sb.append('\n');
+                        break;
+                    default:
+                }
+            }
+
+            for (MonitorInfo mi : threadInfo.getLockedMonitors()) {
+                if (mi.getLockedStackDepth() == i) {
+                    sb.append("\t-  locked ").append(mi);
+                    if (mi.getIdentityHashCode() == lockIdentityHashCode) {
+                        Ansi highlighted = Ansi.ansi().fg(Ansi.Color.RED);
+                        highlighted.a(" <---- but blocks ").a(blockingThreadCount).a(" other threads!");
+                        sb.append(highlighted.reset().toString());
+                    }
+                    sb.append('\n');
+                }
+            }
+            ++i;
+        }
+        if (i < threadInfo.getStackTrace().length) {
+            sb.append("\t...");
+            sb.append('\n');
+        }
+
+        LockInfo[] locks = threadInfo.getLockedSynchronizers();
+        if (locks.length > 0) {
+            sb.append("\n\tNumber of locked synchronizers = ").append(locks.length);
+            sb.append('\n');
+            for (LockInfo li : locks) {
+                sb.append("\t- ").append(li);
+                if (li.getIdentityHashCode() == lockIdentityHashCode) {
+                    sb.append(" <---- but blocks ").append(blockingThreadCount);
+                    sb.append(" other threads!");
+                }
+                sb.append('\n');
+            }
+        }
+        sb.append('\n');
+        return sb.toString().replace("\t", "    ");
+    }
+
+    public static String getFullStacktrace(BusyThreadInfo threadInfo, int lockIdentityHashCode, int blockingThreadCount) {
+        StringBuilder sb = new StringBuilder("\"" + threadInfo.getName() + "\"");
+        if (threadInfo.getId() > 0) {
+            sb.append(" Id=").append(threadInfo.getId());
+        } else {
+            sb.append(" [Internal]");
+        }
+        double cpuUsage = threadInfo.getCpu();
+        if (cpuUsage >= 0 && cpuUsage <= 100) {
+            sb.append(" cpuUsage=").append(cpuUsage).append("%");
+        }
+        if (threadInfo.getDeltaTime() >= 0 ) {
+            sb.append(" deltaTime=").append(threadInfo.getDeltaTime()).append("ms");
+        }
+        if (threadInfo.getTime() >= 0 ) {
+            sb.append(" time=").append(threadInfo.getTime()).append("ms");
+        }
+
+        if (threadInfo.getState() == null) {
+            sb.append("\n\n");
+            return sb.toString();
+        }
+
+        sb.append(" ").append(threadInfo.getState());
 
         if (threadInfo.getLockName() != null) {
             sb.append(" on ").append(threadInfo.getLockName());
@@ -276,7 +309,7 @@ abstract public class ThreadUtil {
             sb.append("\tat ").append(ste.toString());
             sb.append('\n');
             if (i == 0 && threadInfo.getLockInfo() != null) {
-                Thread.State ts = threadInfo.getThreadState();
+                Thread.State ts = threadInfo.getState();
                 switch (ts) {
                     case BLOCKED:
                         sb.append("\t-  blocked on ").append(threadInfo.getLockInfo());
@@ -328,58 +361,90 @@ abstract public class ThreadUtil {
         return sb.toString().replace("\t", "    ");
     }
 
-    public static class BlockingLockInfo {
+    /**
+     * </pre>
+     * java.lang.Thread.getStackTrace(Thread.java:1559),
+     * com.taobao.arthas.core.util.ThreadUtil.getThreadStack(ThreadUtil.java:349),
+     * com.taobao.arthas.core.command.monitor200.StackAdviceListener.before(StackAdviceListener.java:33),
+     * com.taobao.arthas.core.advisor.AdviceListenerAdapter.before(AdviceListenerAdapter.java:49),
+     * com.taobao.arthas.core.advisor.SpyImpl.atEnter(SpyImpl.java:42),
+     * java.arthas.SpyAPI.atEnter(SpyAPI.java:40),
+     * demo.MathGame.print(MathGame.java), demo.MathGame.run(MathGame.java:25),
+     * demo.MathGame.main(MathGame.java:16)
+     * </pre>
+     */
+    private static int MAGIC_STACK_DEPTH = 0;
 
-        // the thread info that is holing this lock.
-        public ThreadInfo threadInfo = null;
-        // the associated LockInfo object
-        public int lockIdentityHashCode = 0;
-        // the number of thread that is blocked on this lock
-        public int blockingThreadCount = 0;
-
+    private static int findTheSpyAPIDepth(StackTraceElement[] stackTraceElementArray) {
+        if (MAGIC_STACK_DEPTH > 0) {
+            return MAGIC_STACK_DEPTH;
+        }
+        if (MAGIC_STACK_DEPTH > stackTraceElementArray.length) {
+            return 0;
+        }
+        for (int i = 0; i < stackTraceElementArray.length; ++i) {
+            if (SpyAPI.class.getName().equals(stackTraceElementArray[i].getClassName())) {
+                MAGIC_STACK_DEPTH = i + 1;
+                break;
+            }
+        }
+        return MAGIC_STACK_DEPTH;
     }
-
 
     /**
      * 获取方法执行堆栈信息
      *
      * @return 方法堆栈信息
      */
-    public static String getThreadStack(Thread currentThread) {
+    public static StackModel getThreadStackModel(ClassLoader loader, Thread currentThread) {
+        StackModel stackModel = new StackModel();
+        stackModel.setThreadName(currentThread.getName());
+        stackModel.setThreadId(Long.toHexString(currentThread.getId()));
+        stackModel.setDaemon(currentThread.isDaemon());
+        stackModel.setPriority(currentThread.getPriority());
+        stackModel.setClassloader(getTCCL(currentThread));
+
+        getEagleeyeTraceInfo(loader, currentThread, stackModel);
+
+
+        //stack
         StackTraceElement[] stackTraceElementArray = currentThread.getStackTrace();
-
-        StackTraceElement locationStackTraceElement = stackTraceElementArray[10];
-        String locationString = String.format("    @%s.%s()", locationStackTraceElement.getClassName(),
-                locationStackTraceElement.getMethodName());
-
-        StringBuilder builder = new StringBuilder();
-        builder.append(getThreadTitle(currentThread)).append("\n").append(locationString).append("\n");
-
-        int skip = 11;
-        for (int index = skip; index < stackTraceElementArray.length; index++) {
-            StackTraceElement ste = stackTraceElementArray[index];
-            builder.append("        at ")
-                    .append(ste.getClassName())
-                    .append(".")
-                    .append(ste.getMethodName())
-                    .append("(")
-                    .append(ste.getFileName())
-                    .append(":")
-                    .append(ste.getLineNumber())
-                    .append(")\n");
-        }
-
-        return builder.toString();
+        int magicStackDepth = findTheSpyAPIDepth(stackTraceElementArray);
+        StackTraceElement[] actualStackFrames = new StackTraceElement[stackTraceElementArray.length - magicStackDepth];
+        System.arraycopy(stackTraceElementArray, magicStackDepth , actualStackFrames, 0, actualStackFrames.length);
+        stackModel.setStackTrace(actualStackFrames);
+        return stackModel;
     }
 
-    public static String getThreadTitle(Thread currentThread) {
+    public static ThreadNode getThreadNode(ClassLoader loader, Thread currentThread) {
+        ThreadNode threadNode = new ThreadNode();
+        threadNode.setThreadId(currentThread.getId());
+        threadNode.setThreadName(currentThread.getName());
+        threadNode.setDaemon(currentThread.isDaemon());
+        threadNode.setPriority(currentThread.getPriority());
+        threadNode.setClassloader(getTCCL(currentThread));
+
+        //trace_id
+        StackModel stackModel = new StackModel();
+        getEagleeyeTraceInfo(loader, currentThread, stackModel);
+        threadNode.setTraceId(stackModel.getTraceId());
+        threadNode.setRpcId(stackModel.getRpcId());
+        return threadNode;
+    }
+
+    public static String getThreadTitle(StackModel stackModel) {
         StringBuilder sb = new StringBuilder("thread_name=");
-        sb.append(currentThread.getName())
-                .append(";id=").append(Long.toHexString(currentThread.getId()))
-                .append(";is_daemon=").append(currentThread.isDaemon())
-                .append(";priority=").append(currentThread.getPriority())
-                .append(";TCCL=").append(getTCCL(currentThread));
-        getEagleeyeTraceInfo(currentThread, sb);
+        sb.append(stackModel.getThreadName())
+                .append(";id=").append(stackModel.getThreadId())
+                .append(";is_daemon=").append(stackModel.isDaemon())
+                .append(";priority=").append(stackModel.getPriority())
+                .append(";TCCL=").append(stackModel.getClassloader());
+        if (stackModel.getTraceId() != null) {
+            sb.append(";trace_id=").append(stackModel.getTraceId());
+        }
+        if (stackModel.getRpcId() != null) {
+            sb.append(";rpc_id=").append(stackModel.getRpcId());
+        }
         return sb.toString();
     }
 
@@ -387,46 +452,46 @@ abstract public class ThreadUtil {
         if (null == currentThread.getContextClassLoader()) {
             return "null";
         } else {
-            return currentThread.getContextClassLoader().getClass().getName() +
-                    "@" + Integer.toHexString(currentThread.getContextClassLoader().hashCode());
+            String classloaderClassName = currentThread.getContextClassLoader().getClass().getName();
+            StringBuilder sb = new StringBuilder(classloaderClassName.length()+10);
+            sb.append(classloaderClassName)
+                    .append("@")
+                    .append(Integer.toHexString(currentThread.getContextClassLoader().hashCode()));
+            return  sb.toString();
         }
     }
 
-    private static void getEagleeyeTraceInfo(Thread currentThread, StringBuilder sb) {
-        try {
-            // access to Thread#threadlocals field
-            Field threadLocalsField = Thread.class.getDeclaredField("threadLocals");
-            threadLocalsField.setAccessible(true);
-            Object threadLocalMap = threadLocalsField.get(currentThread);
-            // access to ThreadLocal$ThreadLocalMap#table filed
-            Field tableFiled = threadLocalMap.getClass().getDeclaredField("table");
-            tableFiled.setAccessible(true);
-            Object[] tableEntries = (Object[])tableFiled.get(threadLocalMap);
-            for (Object entry: tableEntries) {
-                if (entry == null) {
-                    continue;
-                }
-                // access to ThreadLocal$ThreadLocalMap$Entry#value field
-                Field valueField = entry.getClass().getDeclaredField("value");
-                valueField.setAccessible(true);
-                Object threadLocalValue = valueField.get(entry);
-                if (threadLocalValue != null &&
-                        "com.taobao.eagleeye.RpcContext_inner".equals(threadLocalValue.getClass().getName())) {
-                    // finally we got the chance to access trace id
-                    Method getTraceIdMethod = threadLocalValue.getClass().getMethod("getTraceId");
-                    getTraceIdMethod.setAccessible(true);
-                    String traceId = (String)getTraceIdMethod.invoke(threadLocalValue);
-                    sb.append(";trace_id=").append(traceId);
-                    // get rpc id
-                    Method getRpcIdMethod = threadLocalValue.getClass().getMethod("getRpcId");
-                    getTraceIdMethod.setAccessible(true);
-                    String rpcId = (String)getRpcIdMethod.invoke(threadLocalValue);
-                    sb.append(";rpc_id=").append(rpcId);
-                    return;
-                }
+    private static void getEagleeyeTraceInfo(ClassLoader loader, Thread currentThread, StackModel stackModel) {
+        if(loader == null) {
+            return;
+        }
+        Class<?> eagleEyeClass = null;
+        if (!detectedEagleEye) {
+            try {
+                eagleEyeClass = loader.loadClass("com.taobao.eagleeye.EagleEye");
+                foundEagleEye = true;
+            } catch (Throwable e) {
+                // ignore
             }
-        } catch (Exception e) {
-           // ignore
+            detectedEagleEye = true;
+        }
+
+        if (!foundEagleEye) {
+            return;
+        }
+
+        try {
+            if (eagleEyeClass == null) {
+                eagleEyeClass = loader.loadClass("com.taobao.eagleeye.EagleEye");
+            }
+            Method getTraceIdMethod = eagleEyeClass.getMethod("getTraceId");
+            String traceId = (String) getTraceIdMethod.invoke(null);
+            stackModel.setTraceId(traceId);
+            Method getRpcIdMethod = eagleEyeClass.getMethod("getRpcId");
+            String rpcId = (String) getRpcIdMethod.invoke(null);
+            stackModel.setRpcId(rpcId);
+        } catch (Throwable e) {
+            // ignore
         }
     }
 

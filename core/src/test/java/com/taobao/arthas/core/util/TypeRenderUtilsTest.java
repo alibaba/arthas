@@ -1,6 +1,9 @@
 package com.taobao.arthas.core.util;
 
+import org.assertj.core.api.Assertions;
 import org.junit.Test;
+
+import com.taobao.arthas.common.JavaVersionUtils;
 
 import java.io.Serializable;
 
@@ -26,7 +29,14 @@ public class TypeRenderUtilsTest {
 
     @Test
     public void testDrawInterface() {
-        assertThat(TypeRenderUtils.drawInterface(String.class), is(equalTo("java.io.Serializable,java.lang.Comparable,java.lang.CharSequence")));
+        if (JavaVersionUtils.isGreaterThanJava11()) {
+            Assertions.assertThat(TypeRenderUtils.drawInterface(String.class)).isEqualTo(
+                    "java.io.Serializable,java.lang.Comparable,java.lang.CharSequence,java.lang.constant.Constable,java.lang.constant.ConstantDesc");
+        } else {
+            Assertions.assertThat(TypeRenderUtils.drawInterface(String.class))
+                    .isEqualTo("java.io.Serializable,java.lang.Comparable,java.lang.CharSequence");
+        }
+        
         assertThat(TypeRenderUtils.drawInterface(TestClass.class), is(equalTo("java.io.Serializable")));
         assertThat(TypeRenderUtils.drawInterface(Serializable.class), is(equalTo("")));
     }

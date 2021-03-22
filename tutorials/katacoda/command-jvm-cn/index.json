@@ -1,0 +1,43 @@
+{
+  "title": "Arthas jvm命令",
+  "description": "Arthas jvm命令",
+  "difficulty": "精通者",
+  "time": "10-20 分钟",
+  "details": {
+    "steps": [
+      {
+        "title": "Arthas demo",
+        "text": "arthas-demo.md"
+      },
+      {
+        "title": "启动arthas-boot",
+        "text": "arthas-boot.md"
+      },
+      {
+        "title": "jvm命令",
+        "text": "jvm.md"
+      },
+      {
+        "title": "jvm使用参考",
+        "text": "jvm-usage.md"
+      },
+      {
+        "title": "jvm使用参考",
+        "text": "notes-on-column-headers.md"
+      }
+    ],
+    "intro": {
+      "text": "intro.md"
+    },
+    "finish": {
+      "text": "finish.md"
+    }
+  },
+  "environment": {
+    "uilayout": "terminal"
+  },
+  "backend": {
+    "imageid": "openjdk:15",
+    "environmentsprotocol": "http"
+  }
+}

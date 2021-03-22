@@ -2,23 +2,18 @@ package com.taobao.arthas.core.advisor;
 
 import java.arthas.SpyAPI;
 import java.lang.instrument.Instrumentation;
-import java.util.HashSet;
-import java.util.Set;
-import java.util.jar.JarFile;
 
 import org.assertj.core.api.Assertions;
 import org.junit.Test;
 import org.mockito.Mockito;
-import org.zeroturnaround.zip.ZipUtil;
 
-import com.alibaba.arthas.deps.org.objectweb.asm.Type;
-import com.alibaba.arthas.deps.org.objectweb.asm.tree.ClassNode;
-import com.alibaba.arthas.deps.org.objectweb.asm.tree.MethodNode;
-import com.taobao.arthas.bytekit.utils.AsmUtils;
-import com.taobao.arthas.bytekit.utils.Decompiler;
+import com.alibaba.bytekit.utils.AsmUtils;
+import com.alibaba.bytekit.utils.Decompiler;
+import com.alibaba.deps.org.objectweb.asm.Type;
+import com.alibaba.deps.org.objectweb.asm.tree.ClassNode;
+import com.alibaba.deps.org.objectweb.asm.tree.MethodNode;
 import com.taobao.arthas.core.bytecode.TestHelper;
 import com.taobao.arthas.core.server.ArthasBootstrap;
-import com.taobao.arthas.core.util.affect.EnhancerAffect;
 import com.taobao.arthas.core.util.matcher.EqualsMatcher;
 
 import demo.MathGame;
@@ -37,14 +32,14 @@ public class EnhancerTest {
 
         TestHelper.appendSpyJar(instrumentation);
 
-        ArthasBootstrap.getInstance(instrumentation, "");
+        ArthasBootstrap.getInstance(instrumentation, "ip=127.0.0.1");
 
         AdviceListener listener = Mockito.mock(AdviceListener.class);
 
         EqualsMatcher<String> methodNameMatcher = new EqualsMatcher<String>("print");
         EqualsMatcher<String> classNameMatcher = new EqualsMatcher<String>(MathGame.class.getName());
 
-        Enhancer enhancer = new Enhancer(listener, true, false, classNameMatcher, methodNameMatcher);
+        Enhancer enhancer = new Enhancer(listener, true, false, classNameMatcher, null, methodNameMatcher);
 
         ClassLoader inClassLoader = MathGame.class.getClassLoader();
         String className = MathGame.class.getName();

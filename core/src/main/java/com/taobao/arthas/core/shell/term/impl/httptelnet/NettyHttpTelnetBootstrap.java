@@ -1,5 +1,7 @@
 package com.taobao.arthas.core.shell.term.impl.httptelnet;
 
+import com.taobao.arthas.core.shell.term.impl.http.session.HttpSessionManager;
+
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.ChannelOption;
@@ -11,6 +13,8 @@ import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
 import io.netty.handler.logging.LogLevel;
 import io.netty.handler.logging.LoggingHandler;
+import io.netty.util.concurrent.DefaultThreadFactory;
+import io.netty.util.concurrent.EventExecutorGroup;
 import io.netty.util.concurrent.Future;
 import io.netty.util.concurrent.GenericFutureListener;
 import io.netty.util.concurrent.ImmediateEventExecutor;
@@ -28,10 +32,14 @@ public class NettyHttpTelnetBootstrap extends TelnetBootstrap {
 
     private EventLoopGroup group;
     private ChannelGroup channelGroup;
+    private EventExecutorGroup workerGroup;
+    private HttpSessionManager httpSessionManager;
 
-    public NettyHttpTelnetBootstrap() {
-        this.group = new NioEventLoopGroup();
+    public NettyHttpTelnetBootstrap(EventExecutorGroup workerGroup, HttpSessionManager httpSessionManager) {
+        this.workerGroup = workerGroup;
+        this.group = new NioEventLoopGroup(new DefaultThreadFactory("arthas-NettyHttpTelnetBootstrap", true));
         this.channelGroup = new DefaultChannelGroup(ImmediateEventExecutor.INSTANCE);
+        this.httpSessionManager = httpSessionManager;
     }
 
     public NettyHttpTelnetBootstrap setHost(String host) {
@@ -56,7 +64,7 @@ public class NettyHttpTelnetBootstrap extends TelnetBootstrap {
                         .childHandler(new ChannelInitializer<SocketChannel>() {
                             @Override
                             public void initChannel(SocketChannel ch) throws Exception {
-                                ch.pipeline().addLast(new ProtocolDetectHandler(channelGroup, handlerFactory, factory));
+                                ch.pipeline().addLast(new ProtocolDetectHandler(channelGroup, handlerFactory, factory, workerGroup, httpSessionManager));
                             }
                         });
 

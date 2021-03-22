@@ -1,6 +1,7 @@
 package com.taobao.arthas.core.command.monitor200;
 
 
+import com.taobao.arthas.core.GlobalOptions;
 import com.taobao.arthas.core.advisor.AdviceListener;
 import com.taobao.arthas.core.command.Constants;
 import com.taobao.arthas.core.shell.command.CommandProcess;
@@ -22,15 +23,19 @@ import com.taobao.middleware.cli.annotations.Summary;
 @Description("\nExamples:\n" +
         "  monitor org.apache.commons.lang.StringUtils isBlank\n" +
         "  monitor org.apache.commons.lang.StringUtils isBlank -c 5\n" +
+        "  monitor org.apache.commons.lang.StringUtils isBlank params[0]!=null\n" +
+        "  monitor -b org.apache.commons.lang.StringUtils isBlank params[0]!=null\n" +
         "  monitor -E org\\.apache\\.commons\\.lang\\.StringUtils isBlank\n" +
         Constants.WIKI + Constants.WIKI_HOME + "monitor")
 public class MonitorCommand extends EnhancerCommand {
 
     private String classPattern;
     private String methodPattern;
+    private String conditionExpress;
     private int cycle = 60;
     private boolean isRegEx = false;
     private int numberOfLimit = 100;
+    private boolean isBefore = false;
 
     @Argument(argName = "class-pattern", index = 0)
     @Description("Path and classname of Pattern Matching")
@@ -42,6 +47,12 @@ public class MonitorCommand extends EnhancerCommand {
     @Description("Method of Pattern Matching")
     public void setMethodPattern(String methodPattern) {
         this.methodPattern = methodPattern;
+    }
+
+    @Argument(argName = "condition-express", index = 2, required = false)
+    @Description(Constants.CONDITION_EXPRESS)
+    public void setConditionExpress(String conditionExpress) {
+        this.conditionExpress = conditionExpress;
     }
 
     @Option(shortName = "c", longName = "cycle")
@@ -62,12 +73,22 @@ public class MonitorCommand extends EnhancerCommand {
         this.numberOfLimit = numberOfLimit;
     }
 
+    @Option(shortName = "b", longName = "before", flag = true)
+    @Description("Evaluate the condition-express before method invoke")
+    public void setBefore(boolean before) {
+        isBefore = before;
+    }
+
     public String getClassPattern() {
         return classPattern;
     }
 
     public String getMethodPattern() {
         return methodPattern;
+    }
+
+    public String getConditionExpress() {
+        return conditionExpress;
     }
 
     public int getCycle() {
@@ -82,12 +103,24 @@ public class MonitorCommand extends EnhancerCommand {
         return numberOfLimit;
     }
 
+    public boolean isBefore() {
+        return isBefore;
+    }
+
     @Override
     protected Matcher getClassNameMatcher() {
         if (classNameMatcher == null) {
             classNameMatcher = SearchUtils.classNameMatcher(getClassPattern(), isRegEx());
         }
         return classNameMatcher;
+    }
+
+    @Override
+    protected Matcher getClassNameExcludeMatcher() {
+        if (classNameExcludeMatcher == null && getExcludeClassPattern() != null) {
+            classNameExcludeMatcher = SearchUtils.classNameMatcher(getExcludeClassPattern(), isRegEx());
+        }
+        return classNameExcludeMatcher;
     }
 
     @Override
@@ -100,7 +133,7 @@ public class MonitorCommand extends EnhancerCommand {
 
     @Override
     protected AdviceListener getAdviceListener(CommandProcess process) {
-        final AdviceListener listener = new MonitorAdviceListener(this, process);
+        final AdviceListener listener = new MonitorAdviceListener(this, process, GlobalOptions.verbose || this.verbose);
         /*
          * 通过handle回调，在suspend时停止timer，resume时重启timer
          */

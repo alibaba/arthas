@@ -1,10 +1,10 @@
 <?xml version="1.0"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>com.taobao.arthas</groupId>
         <artifactId>arthas-all</artifactId>
-        <version>3.3.3-SNAPSHOT</version>
+        <version>${revision}</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
     <artifactId>arthas-core</artifactId>
@@ -31,7 +31,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-shade-plugin</artifactId>
-                <version>3.2.1</version>
+                <version>3.2.3</version>
                 <executions>
                     <execution>
                         <phase>package</phase>
@@ -61,6 +61,10 @@
                                 <relocation>
                                     <pattern>ch.qos.logback</pattern>
                                     <shadedPattern>${arthas.deps.package}.ch.qos.logback</shadedPattern>
+                                </relocation>
+                                <relocation>
+                                    <pattern>io.netty</pattern>
+                                    <shadedPattern>${arthas.deps.package}.io.netty</shadedPattern>
                                 </relocation>
                             </relocations>
                             <filters>
@@ -117,14 +121,13 @@
             <version>${project.version}</version>
         </dependency>
         <dependency>
-            <groupId>com.taobao.arthas</groupId>
-            <artifactId>arthas-bytekit</artifactId>
-            <version>${project.version}</version>
+            <groupId>com.alibaba</groupId>
+            <artifactId>bytekit-core</artifactId>
         </dependency>
+
         <dependency>
             <groupId>net.bytebuddy</groupId>
             <artifactId>byte-buddy-agent</artifactId>
-            <version>1.7.10</version>
             <scope>provided</scope>
             <optional>true</optional>
         </dependency>
@@ -159,17 +162,24 @@
             <!--<groupId>org.codehaus.groovy</groupId>-->
             <!--<artifactId>groovy-all</artifactId>-->
         <!--</dependency>-->
+        <!-- slf4j-api/logback-classic/logback-core 不能打包到应用里，因为真正使用的是 arthas-repackage-deps -->
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-api</artifactId>
+            <scope>provided</scope>
+            <optional>true</optional>
         </dependency>
         <dependency>
             <groupId>ch.qos.logback</groupId>
             <artifactId>logback-classic</artifactId>
+            <scope>provided</scope>
+            <optional>true</optional>
         </dependency>
         <dependency>
             <groupId>ch.qos.logback</groupId>
             <artifactId>logback-core</artifactId>
+            <scope>provided</scope>
+            <optional>true</optional>
         </dependency>
         <dependency>
             <groupId>com.alibaba.arthas</groupId>
@@ -215,15 +225,22 @@
         </dependency>
         <dependency>
             <groupId>com.taobao.arthas</groupId>
-            <artifactId>arthas-demo</artifactId>
+            <artifactId>math-game</artifactId>
             <version>${project.version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.zeroturnaround</groupId>
             <artifactId>zt-zip</artifactId>
-            <version>1.14</version>
             <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.jboss.modules</groupId>
+            <artifactId>jboss-modules</artifactId>
+            <version>1.11.0.Final</version>
+            <scope>test</scope>
+            <optional>true</optional>
         </dependency>
 
         <dependency>

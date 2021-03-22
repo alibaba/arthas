@@ -41,7 +41,7 @@ cache:
 
 script:
   - ./mvnw -version
-  - ./mvnw clean package -P full
+  - travis_wait 30 ./mvnw clean package --batch-mode -P full
 
 after_success:
   - bash <(curl -s https://codecov.io/bash)
@@ -58,7 +58,7 @@ deploy:
     - "packaging/target/*.zip"
     - "packaging/target/*.deb"
     - "packaging/target/*.rpm"
-    - "tunnel-server/target/*.jar"
+    - "tunnel-server/target/*fatjar.jar"
   skip_cleanup: true
   on:
     tags: true

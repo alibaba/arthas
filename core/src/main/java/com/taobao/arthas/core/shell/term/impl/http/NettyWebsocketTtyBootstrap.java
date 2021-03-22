@@ -1,15 +1,22 @@
 package com.taobao.arthas.core.shell.term.impl.http;
 
+import com.taobao.arthas.common.ArthasConstants;
+import com.taobao.arthas.core.shell.term.impl.http.session.HttpSessionManager;
+
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.EventLoopGroup;
 import io.netty.channel.group.ChannelGroup;
 import io.netty.channel.group.DefaultChannelGroup;
+import io.netty.channel.local.LocalAddress;
+import io.netty.channel.local.LocalServerChannel;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
 import io.netty.handler.logging.LogLevel;
 import io.netty.handler.logging.LoggingHandler;
+import io.netty.util.concurrent.DefaultThreadFactory;
+import io.netty.util.concurrent.EventExecutorGroup;
 import io.netty.util.concurrent.Future;
 import io.netty.util.concurrent.GenericFutureListener;
 import io.netty.util.concurrent.ImmediateEventExecutor;
@@ -30,10 +37,14 @@ public class NettyWebsocketTtyBootstrap {
     private int port;
     private EventLoopGroup group;
     private Channel channel;
+    private EventExecutorGroup workerGroup;
+    private HttpSessionManager httpSessionManager;
 
-    public NettyWebsocketTtyBootstrap() {
+    public NettyWebsocketTtyBootstrap(EventExecutorGroup workerGroup, HttpSessionManager httpSessionManager) {
+        this.workerGroup = workerGroup;
         this.host = "localhost";
         this.port = 8080;
+        this.httpSessionManager = httpSessionManager;
     }
 
     public String getHost() {
@@ -55,24 +66,45 @@ public class NettyWebsocketTtyBootstrap {
     }
 
     public void start(Consumer<TtyConnection> handler, final Consumer<Throwable> doneHandler) {
-        group = new NioEventLoopGroup();
+        group = new NioEventLoopGroup(new DefaultThreadFactory("arthas-NettyWebsocketTtyBootstrap", true));
 
-        ServerBootstrap b = new ServerBootstrap();
-        b.group(group).channel(NioServerSocketChannel.class).handler(new LoggingHandler(LogLevel.INFO))
-                .childHandler(new TtyServerInitializer(channelGroup, handler));
+        if (this.port > 0) {
+            ServerBootstrap b = new ServerBootstrap();
+            b.group(group).channel(NioServerSocketChannel.class).handler(new LoggingHandler(LogLevel.INFO))
+                    .childHandler(new TtyServerInitializer(channelGroup, handler, workerGroup, httpSessionManager));
 
-        final ChannelFuture f = b.bind(host, port);
-        f.addListener(new GenericFutureListener<Future<? super Void>>() {
-            @Override
-            public void operationComplete(Future<? super Void> future) throws Exception {
-                if (future.isSuccess()) {
-                    channel = f.channel();
-                    doneHandler.accept(null);
-                } else {
-                    doneHandler.accept(future.cause());
+            final ChannelFuture f = b.bind(host, port);
+            f.addListener(new GenericFutureListener<Future<? super Void>>() {
+                @Override
+                public void operationComplete(Future<? super Void> future) throws Exception {
+                    if (future.isSuccess()) {
+                        channel = f.channel();
+                        doneHandler.accept(null);
+                    } else {
+                        doneHandler.accept(future.cause());
+                    }
                 }
-            }
-        });
+            });
+        }
+
+        // listen local address in VM communication
+        ServerBootstrap b2 = new ServerBootstrap();
+        b2.group(group).channel(LocalServerChannel.class).handler(new LoggingHandler(LogLevel.INFO))
+                .childHandler(new LocalTtyServerInitializer(channelGroup, handler, workerGroup));
+
+        ChannelFuture bindLocalFuture = b2.bind(new LocalAddress(ArthasConstants.NETTY_LOCAL_ADDRESS));
+        if (this.port < 0) { // 保证回调doneHandler
+            bindLocalFuture.addListener(new GenericFutureListener<Future<? super Void>>() {
+                @Override
+                public void operationComplete(Future<? super Void> future) throws Exception {
+                    if (future.isSuccess()) {
+                        doneHandler.accept(null);
+                    } else {
+                        doneHandler.accept(future.cause());
+                    }
+                }
+            });
+        }
     }
 
     public CompletableFuture<Void> start(Consumer<TtyConnection> handler) {

@@ -1,8 +1,6 @@
 package com.taobao.arthas.core.command.monitor200;
 
-import com.taobao.arthas.core.advisor.Advice;
-import com.taobao.arthas.core.command.express.ExpressException;
-import com.taobao.arthas.core.command.express.ExpressFactory;
+import com.taobao.arthas.core.command.model.TimeFragmentVO;
 import com.taobao.arthas.core.util.StringUtils;
 import com.taobao.arthas.core.view.ObjectView;
 import com.taobao.text.Decoration;
@@ -15,10 +13,10 @@ import java.io.StringWriter;
 import java.lang.reflect.InvocationTargetException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.List;
 import java.util.Map;
 
 import static com.taobao.text.ui.Element.label;
-import static java.lang.Integer.toHexString;
 
 /**
  * @author beiwei30 on 30/11/2016.
@@ -53,7 +51,7 @@ public class TimeTunnelTable {
         return new TableElement(TABLE_COL_WIDTH).leftCellPadding(1).rightCellPadding(1);
     }
 
-    static TableElement createDefaultTable() {
+    public static TableElement createDefaultTable() {
         return new TableElement().leftCellPadding(1).rightCellPadding(1);
     }
 
@@ -67,54 +65,49 @@ public class TimeTunnelTable {
     }
 
     // 绘制TimeTunnel表格
-    static Element drawTimeTunnelTable(Map<Integer, TimeFragment> timeTunnelMap) {
-        TableElement table = fillTableHeader(createTable());
-        for (Map.Entry<Integer, TimeFragment> entry : timeTunnelMap.entrySet()) {
-            final int index = entry.getKey();
-            final TimeFragment tf = entry.getValue();
-            fillTableRow(table, index, tf);
+    public static Element drawTimeTunnelTable(List<TimeFragmentVO> timeFragmentList, boolean withHeader){
+        TableElement table = createTable();
+        if (withHeader) {
+            fillTableHeader(table);
+        }
+        for (TimeFragmentVO tf : timeFragmentList) {
+            fillTableRow(table, tf);
         }
         return table;
     }
 
     // 填充表格行
-    static TableElement fillTableRow(TableElement table, int index, TimeFragment tf) {
-        Advice advice = tf.getAdvice();
+    static TableElement fillTableRow(TableElement table, TimeFragmentVO tf) {
         return table.row(
-                "" + index,
-                new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(tf.getGmtCreate()),
+                "" + tf.getIndex(),
+                new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(tf.getTimestamp()),
                 "" + tf.getCost(),
-                "" + advice.isAfterReturning(),
-                "" + advice.isAfterThrowing(),
-                advice.getTarget() == null
-                        ? "NULL"
-                        : "0x" + toHexString(advice.getTarget().hashCode()),
-                StringUtils.substringAfterLast("." + advice.getClazz().getName(), "."),
-                advice.getMethod().getName()
+                "" + tf.isReturn(),
+                "" + tf.isThrow(),
+                tf.getObject(),
+                StringUtils.substringAfterLast("." + tf.getClassName(), "."),
+                tf.getMethodName()
         );
     }
 
-    static void drawTimeTunnel(TimeFragment tf, Integer index, TableElement table) {
+    public static void drawTimeTunnel(TableElement table, TimeFragmentVO tf) {
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        table.row("INDEX", "" + index)
-                .row("GMT-CREATE", sdf.format(tf.getGmtCreate()))
-                .row("COST(ms)", "" + tf.getCost());
+        table.row("INDEX", "" + tf.getIndex())
+                .row("GMT-CREATE", sdf.format(tf.getTimestamp()))
+                .row("COST(ms)", "" + tf.getCost())
+                .row("OBJECT", tf.getObject())
+                .row("CLASS", tf.getClassName())
+                .row("METHOD", tf.getMethodName())
+                .row("IS-RETURN", "" + tf.isReturn())
+                .row("IS-EXCEPTION", "" + tf.isThrow());
     }
 
-    static void drawMethod(Advice advice, String className, String methodName, String objectAddress, TableElement table) {
-        table.row("OBJECT", objectAddress)
-                .row("CLASS", className)
-                .row("METHOD", methodName)
-                .row("IS-RETURN", "" + advice.isAfterReturning())
-                .row("IS-EXCEPTION", "" + advice.isAfterThrowing());
-    }
-
-    static void drawThrowException(Advice advice, TableElement table, boolean isNeedExpand, int expandLevel) {
-        if (advice.isAfterThrowing()) {
+    public static void drawThrowException(TableElement table, TimeFragmentVO tf, boolean isNeedExpand, Integer expandLevel) {
+        if (tf.isThrow()) {
             //noinspection ThrowableResultOfMethodCallIgnored
-            Throwable throwable = advice.getThrowExp();
+            Throwable throwable = tf.getThrowExp();
             if (isNeedExpand) {
-                table.row("THROW-EXCEPTION", new ObjectView(advice.getThrowExp(), expandLevel).draw());
+                table.row("THROW-EXCEPTION", new ObjectView(throwable, expandLevel).draw());
             } else {
                 StringWriter stringWriter = new StringWriter();
                 PrintWriter printWriter = new PrintWriter(stringWriter);
@@ -128,22 +121,20 @@ public class TimeTunnelTable {
         }
     }
 
-    static void drawReturnObj(Advice advice, TableElement table, boolean isNeedExpand, int expandLevel, int sizeLimit) {
-        // fill the returnObj
-        if (advice.isAfterReturning()) {
+    public static void drawReturnObj(TableElement table, TimeFragmentVO tf, boolean isNeedExpand, Integer expandLevel, Integer sizeLimit) {
+        if (tf.isReturn()) {
             if (isNeedExpand) {
-                table.row("RETURN-OBJ", new ObjectView(advice.getReturnObj(), expandLevel, sizeLimit).draw());
+                table.row("RETURN-OBJ", new ObjectView(tf.getReturnObj(), expandLevel, sizeLimit).draw());
             } else {
-                table.row("RETURN-OBJ", "" + StringUtils.objectToString(advice.getReturnObj()));
+                table.row("RETURN-OBJ", "" + StringUtils.objectToString(tf.getReturnObj()));
             }
         }
     }
 
-    static void drawParameters(Advice advice, TableElement table, boolean isNeedExpand, int expandLevel) {
-        // fill the parameters
-        if (null != advice.getParams()) {
+    public static void drawParameters(TableElement table, Object[] params, boolean isNeedExpand, Integer expandLevel) {
+        if (params != null) {
             int paramIndex = 0;
-            for (Object param : advice.getParams()) {
+            for (Object param : params) {
                 if (isNeedExpand) {
                     table.row("PARAMETERS[" + paramIndex++ + "]", new ObjectView(param, expandLevel).draw());
                 } else {
@@ -153,22 +144,21 @@ public class TimeTunnelTable {
         }
     }
 
-    static void drawWatchTableHeader(TableElement table) {
+    public static void drawWatchTableHeader(TableElement table) {
         table.row(true, label("INDEX").style(Decoration.bold.bold()), label("SEARCH-RESULT")
                 .style(Decoration.bold.bold()));
     }
 
-    static void drawWatchExpress(Map<Integer, TimeFragment> matchingTimeSegmentMap, TableElement table,
-                                 String watchExpress, boolean isNeedExpand, int expandLevel, int sizeLimit)
-            throws ExpressException {
-        for (Map.Entry<Integer, TimeFragment> entry : matchingTimeSegmentMap.entrySet()) {
-            Object value = ExpressFactory.threadLocalExpress(entry.getValue().getAdvice()).get(watchExpress);
+    public static void drawWatchResults(TableElement table, Map<Integer, Object> watchResults, boolean isNeedExpand,
+                                        Integer expandLevel, Integer sizeLimit) {
+        for (Map.Entry<Integer, Object> entry : watchResults.entrySet()) {
+            Object value = entry.getValue();
             table.row("" + entry.getKey(), "" +
                     (isNeedExpand ? new ObjectView(value, expandLevel, sizeLimit).draw() : StringUtils.objectToString(value)));
         }
     }
 
-    static TableElement drawPlayHeader(String className, String methodName, String objectAddress, int index,
+    public static TableElement drawPlayHeader(String className, String methodName, String objectAddress, int index,
                                        TableElement table) {
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         return table.row("RE-INDEX", "" + index)
@@ -178,7 +168,7 @@ public class TimeTunnelTable {
                 .row("METHOD", methodName);
     }
 
-    static void drawPlayResult(TableElement table, Object returnObj, boolean isNeedExpand, int expandLevel,
+    public static void drawPlayResult(TableElement table, Object returnObj, boolean isNeedExpand, int expandLevel,
                                int sizeLimit, double cost) {
         // 执行成功:输出成功状态
         table.row("IS-RETURN", "" + true);
@@ -193,7 +183,7 @@ public class TimeTunnelTable {
         }
     }
 
-    static void drawPlayException(TableElement table, Throwable t, boolean isNeedExpand, int expandLevel) {
+    public static void drawPlayException(TableElement table, Throwable t, boolean isNeedExpand, int expandLevel) {
         // 执行失败:输出失败状态
         table.row("IS-RETURN", "" + false);
         table.row("IS-EXCEPTION", "" + true);
@@ -219,4 +209,5 @@ public class TimeTunnelTable {
             }
         }
     }
+
 }

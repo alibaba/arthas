@@ -1,0 +1,63 @@
+{
+  "title": "Arthas Async Jobs",
+  "description": "Arthas Async Jobs",
+  "difficulty": "expert",
+  "time": "10 minutes",
+  "details": {
+    "steps": [
+      {
+        "title": "Arthas demo",
+        "text": "arthas-demo.md"
+      },
+      {
+        "title": "Start arthas-boot",
+        "text": "arthas-boot.md"
+      },
+      {
+        "title": "Async Jobs",
+        "text": "async-jobs.md"
+      },
+      {
+        "title": "Use & to run the command in the background",
+        "text": "run-cmd-in-backgd.md"
+      },
+      {
+        "title": "List background jobs",
+        "text": "list-backgd-jobs.md"
+      },
+      {
+        "title": "Suspend and cancel job",
+        "text": "suspend-cancel-job.md"
+      },
+      {
+        "title": "fg/bg, switch the job from the foreground to the background, and vise verse",
+        "text": "switch-foregd-backgd.md"
+      },
+      {
+        "title": "Redirect the output",
+        "text": "redirect-output.md"
+      },
+      {
+        "title": "Stop job",
+        "text": "stop-job.md"
+      },
+      {
+        "title": "Others",
+        "text": "others.md"
+      }
+    ],
+    "intro": {
+      "text": "intro.md"
+    },
+    "finish": {
+      "text": "finish.md"
+    }
+  },
+  "environment": {
+    "uilayout": "terminal"
+  },
+  "backend": {
+    "imageid": "openjdk:15",
+    "environmentsprotocol": "http"
+  }
+}

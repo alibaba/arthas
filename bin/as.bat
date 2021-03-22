@@ -97,8 +97,6 @@ echo NB: JAVA_HOME should point to a JDK not a JRE.
 goto exit_bat
 
 :okJava
-set JAVACMD="%JAVA_HOME%"\bin\java
-
 %JAVACMD% -Dfile.encoding=UTF-8 %BOOT_CLASSPATH% -jar "%CORE_JAR%" -pid "%PID%"  -target-ip 127.0.0.1 -telnet-port %TELNET_PORT% -http-port %HTTP_PORT% -core "%CORE_JAR%" -agent "%AGENT_JAR%"
 if %ERRORLEVEL% NEQ 0 goto exit_bat
 if %exitProcess%==1 goto exit_bat

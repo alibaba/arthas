@@ -5,28 +5,38 @@ import java.net.InetSocketAddress;
 import java.net.SocketAddress;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.net.URLDecoder;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 
-import io.netty.handler.codec.http.websocketx.CloseWebSocketFrame;
 import org.apache.commons.lang3.RandomStringUtils;
+import org.apache.tomcat.util.codec.binary.Base64;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.util.UriComponentsBuilder;
 
+import com.alibaba.arthas.tunnel.common.MethodConstants;
+import com.alibaba.arthas.tunnel.common.SimpleHttpResponse;
+import com.alibaba.arthas.tunnel.common.URIConstans;
+import com.alibaba.arthas.tunnel.server.utils.HttpUtils;
+
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
+import io.netty.handler.codec.http.HttpHeaders;
 import io.netty.handler.codec.http.QueryStringDecoder;
+import io.netty.handler.codec.http.websocketx.CloseWebSocketFrame;
 import io.netty.handler.codec.http.websocketx.TextWebSocketFrame;
 import io.netty.handler.codec.http.websocketx.WebSocketFrame;
 import io.netty.handler.codec.http.websocketx.WebSocketServerProtocolHandler.HandshakeComplete;
 import io.netty.util.concurrent.Future;
 import io.netty.util.concurrent.FutureListener;
 import io.netty.util.concurrent.GenericFutureListener;
+import io.netty.util.concurrent.GlobalEventExecutor;
 import io.netty.util.concurrent.Promise;
 
 /**
@@ -53,15 +63,15 @@ public class TunnelSocketFrameHandler extends SimpleChannelInboundHandler<WebSoc
             logger.info("websocket handshake complete, uri: {}", uri);
 
             MultiValueMap<String, String> parameters = UriComponentsBuilder.fromUriString(uri).build().getQueryParams();
-            String method = parameters.getFirst("method");
+            String method = parameters.getFirst(URIConstans.METHOD);
 
-            if ("connectArthas".equals(method)) { // form browser
+            if (MethodConstants.CONNECT_ARTHAS.equals(method)) { // form browser
                 connectArthas(ctx, parameters);
-            } else if ("agentRegister".equals(method)) { // form arthas agent, register
-                agentRegister(ctx, uri);
+            } else if (MethodConstants.AGENT_REGISTER.equals(method)) { // form arthas agent, register
+                agentRegister(ctx, handshake, uri);
             }
-            if ("openTunnel".equals(method)) { // from arthas agent open tunnel
-                String clientConnectionId = parameters.getFirst("clientConnectionId");
+            if (MethodConstants.OPEN_TUNNEL.equals(method)) { // from arthas agent open tunnel
+                String clientConnectionId = parameters.getFirst(URIConstans.CLIENT_CONNECTION_ID);
                 openTunnel(ctx, clientConnectionId);
             }
         } else {
@@ -71,7 +81,41 @@ public class TunnelSocketFrameHandler extends SimpleChannelInboundHandler<WebSoc
 
     @Override
     protected void channelRead0(ChannelHandlerContext ctx, WebSocketFrame frame) throws Exception {
+        // 只有 arthas agent register建立的 channel 才可能有数据到这里
+        if (frame instanceof TextWebSocketFrame) {
+            TextWebSocketFrame textFrame = (TextWebSocketFrame) frame;
+            String text = textFrame.text();
 
+            MultiValueMap<String, String> parameters = UriComponentsBuilder.fromUriString(text).build()
+                    .getQueryParams();
+
+            String method = parameters.getFirst(URIConstans.METHOD);
+
+            /**
+             * <pre>
+             * 1. 之前http proxy请求已发送到 tunnel cleint，这里接收到 tunnel client的结果，并解析出SimpleHttpResponse
+             * 2. 需要据 URIConstans.PROXY_REQUEST_ID 取出当时的 Promise，再设置SimpleHttpResponse进去
+             * </pre>
+             */
+            if (MethodConstants.HTTP_PROXY.equals(method)) {
+                String requestId = URLDecoder.decode(parameters.getFirst(URIConstans.PROXY_REQUEST_ID), "utf-8");
+
+                if (requestId == null) {
+                    logger.error("error, need {}, text: {}", URIConstans.PROXY_REQUEST_ID, text);
+                    return;
+                }
+                logger.info("received http proxy response, requestId: {}", requestId);
+
+                Promise<SimpleHttpResponse> promise = tunnelServer.findProxyRequestPromise(requestId);
+
+                String data = URLDecoder.decode(parameters.getFirst(URIConstans.PROXY_RESPONSE_DATA), "utf-8");
+
+                byte[] bytes = Base64.decodeBase64(data);
+
+                SimpleHttpResponse simpleHttpResponse = SimpleHttpResponse.fromBytes(bytes);
+                promise.setSuccess(simpleHttpResponse);
+            }
+        }
     }
 
     private void connectArthas(ChannelHandlerContext tunnelSocketCtx, MultiValueMap<String, String> parameters)
@@ -80,7 +124,7 @@ public class TunnelSocketFrameHandler extends SimpleChannelInboundHandler<WebSoc
         List<String> agentId = parameters.getOrDefault("id", Collections.emptyList());
 
         if (agentId.isEmpty()) {
-            logger.error("arthas agent id can not be null, parameters: ", parameters);
+            logger.error("arthas agent id can not be null, parameters: {}", parameters);
             throw new IllegalArgumentException("arthas agent id can not be null");
         }
 
@@ -94,8 +138,11 @@ public class TunnelSocketFrameHandler extends SimpleChannelInboundHandler<WebSoc
             String clientConnectionId = RandomStringUtils.random(20, true, true).toUpperCase();
 
             logger.info("random clientConnectionId: " + clientConnectionId);
-            URI uri = new URI("response", null, "/",
-                    "method=startTunnel" + "&id=" + agentId.get(0) + "&clientConnectionId=" + clientConnectionId, null);
+            // URI uri = new URI("response", null, "/",
+            //        "method=" + MethodConstants.START_TUNNEL + "&id=" + agentId.get(0) + "&clientConnectionId=" + clientConnectionId, null);
+            URI uri = UriComponentsBuilder.newInstance().scheme(URIConstans.RESPONSE).path("/")
+                    .queryParam(URIConstans.METHOD, MethodConstants.START_TUNNEL).queryParam(URIConstans.ID, agentId)
+                    .queryParam(URIConstans.CLIENT_CONNECTION_ID, clientConnectionId).build().toUri();
 
             logger.info("startTunnel response: " + uri);
 
@@ -109,7 +156,7 @@ public class TunnelSocketFrameHandler extends SimpleChannelInboundHandler<WebSoc
             clientConnectionInfo.setChannelHandlerContext(tunnelSocketCtx);
 
             // when the agent open tunnel success, will set result into the promise
-            Promise<Channel> promise = agentCtx.executor().newPromise();
+            Promise<Channel> promise = GlobalEventExecutor.INSTANCE.newPromise();
             promise.addListener(new FutureListener<Channel>() {
                 @Override
                 public void operationComplete(final Future<Channel> future) throws Exception {
@@ -160,28 +207,68 @@ public class TunnelSocketFrameHandler extends SimpleChannelInboundHandler<WebSoc
         }
     }
 
-    private void agentRegister(ChannelHandlerContext ctx, String requestUri) throws URISyntaxException {
-        // generate a random agent id
-        String id = RandomStringUtils.random(20, true, true).toUpperCase();
-
+    private void agentRegister(ChannelHandlerContext ctx, HandshakeComplete handshake, String requestUri) throws URISyntaxException {
         QueryStringDecoder queryDecoder = new QueryStringDecoder(requestUri);
-        List<String> idList = queryDecoder.parameters().get("id");
+        Map<String, List<String>> parameters = queryDecoder.parameters();
+
+        String appName = null;
+        List<String> appNameList = parameters.get(URIConstans.APP_NAME);
+        if (appNameList != null && !appNameList.isEmpty()) {
+            appName = appNameList.get(0);
+        }
+
+        // generate a random agent id
+        String id = null;
+        if (appName != null) {
+            // 如果有传 app name，则生成带 app name前缀的id，方便管理
+            id = appName + "_" + RandomStringUtils.random(20, true, true).toUpperCase();
+        } else {
+            id = RandomStringUtils.random(20, true, true).toUpperCase();
+        }
+        // agent传过来，则优先用 agent的
+        List<String> idList = parameters.get(URIConstans.ID);
         if (idList != null && !idList.isEmpty()) {
             id = idList.get(0);
         }
 
+        String arthasVersion = null;
+        List<String> arthasVersionList = parameters.get(URIConstans.ARTHAS_VERSION);
+        if (arthasVersionList != null && !arthasVersionList.isEmpty()) {
+            arthasVersion = arthasVersionList.get(0);
+        }
+
         final String finalId = id;
 
-        URI responseUri = new URI("response", null, "/", "method=agentRegister" + "&id=" + id, null);
+        // URI responseUri = new URI("response", null, "/", "method=" + MethodConstants.AGENT_REGISTER + "&id=" + id, null);
+        URI responseUri = UriComponentsBuilder.newInstance().scheme(URIConstans.RESPONSE).path("/")
+                .queryParam(URIConstans.METHOD, MethodConstants.AGENT_REGISTER).queryParam(URIConstans.ID, id).build()
+                .encode().toUri();
 
         AgentInfo info = new AgentInfo();
-        SocketAddress remoteAddress = ctx.channel().remoteAddress();
-        if (remoteAddress instanceof InetSocketAddress) {
-            InetSocketAddress inetSocketAddress = (InetSocketAddress) remoteAddress;
-            info.setHost(inetSocketAddress.getHostString());
-            info.setPort(inetSocketAddress.getPort());
+
+        // 前面可能有nginx代理
+        HttpHeaders headers = handshake.requestHeaders();
+        String host = HttpUtils.findClientIP(headers);
+
+        if (host == null) {
+            SocketAddress remoteAddress = ctx.channel().remoteAddress();
+            if (remoteAddress instanceof InetSocketAddress) {
+                InetSocketAddress inetSocketAddress = (InetSocketAddress) remoteAddress;
+                info.setHost(inetSocketAddress.getHostString());
+                info.setPort(inetSocketAddress.getPort());
+            }
+        } else {
+            info.setHost(host);
+            Integer port = HttpUtils.findClientPort(headers);
+            if (port != null) {
+                info.setPort(port);
+            }
         }
+
         info.setChannelHandlerContext(ctx);
+        if (arthasVersion != null) {
+            info.setArthasVersion(arthasVersion);
+        }
 
         tunnelServer.addAgent(id, info);
         ctx.channel().closeFuture().addListener(new GenericFutureListener<Future<? super Void>>() {

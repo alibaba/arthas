@@ -7,7 +7,9 @@ import com.taobao.arthas.core.shell.handlers.Handler;
 import com.taobao.arthas.core.shell.term.Term;
 import com.taobao.arthas.core.shell.term.TermServer;
 import com.taobao.arthas.core.shell.term.impl.http.NettyWebsocketTtyBootstrap;
-import com.taobao.arthas.core.shell.term.impl.httptelnet.HttpTelnetTermServer;
+import com.taobao.arthas.core.shell.term.impl.http.session.HttpSessionManager;
+
+import io.netty.util.concurrent.EventExecutorGroup;
 import io.termd.core.function.Consumer;
 import io.termd.core.tty.TtyConnection;
 
@@ -25,11 +27,15 @@ public class HttpTermServer extends TermServer {
     private String hostIp;
     private int port;
     private long connectionTimeout;
+    private EventExecutorGroup workerGroup;
+    private HttpSessionManager httpSessionManager;
 
-    public HttpTermServer(String hostIp, int port, long connectionTimeout) {
+    public HttpTermServer(String hostIp, int port, long connectionTimeout, EventExecutorGroup workerGroup, HttpSessionManager httpSessionManager) {
         this.hostIp = hostIp;
         this.port = port;
         this.connectionTimeout = connectionTimeout;
+        this.workerGroup = workerGroup;
+        this.httpSessionManager = httpSessionManager;
     }
 
     @Override
@@ -41,7 +47,7 @@ public class HttpTermServer extends TermServer {
     @Override
     public TermServer listen(Handler<Future<TermServer>> listenHandler) {
         // TODO: charset and inputrc from options
-        bootstrap = new NettyWebsocketTtyBootstrap().setHost(hostIp).setPort(port);
+        bootstrap = new NettyWebsocketTtyBootstrap(workerGroup, httpSessionManager).setHost(hostIp).setPort(port);
         try {
             bootstrap.start(new Consumer<TtyConnection>() {
                 @Override

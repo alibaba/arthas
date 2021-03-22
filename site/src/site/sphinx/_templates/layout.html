@@ -2,8 +2,14 @@
 {% set sticky_navigation = True %}
 {% set extra_css_files = ['_static/overrides.css'] %}
 {% block extrahead %}
+<script>
+  if (window.location.href.startsWith("https://alibaba.github.io/arthas/")) {
+      window.location.href = "https://arthas.aliyun.com/doc/" + window.location.href.substr("https://alibaba.github.io/arthas/".length);
+  }
+</script>
+
 <script src="{{ pathto('_static/center_page.js', 1) }}"></script>
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.13.1/styles/github.min.css">
+<link rel="stylesheet" href="https://g.alicdn.com/code/lib/highlight.js/9.13.1/styles/github.min.css">
 {{ super() }}
 {% endblock %}
 {% block footer %}
@@ -15,8 +21,8 @@
 
 <script type="text/javascript" src="{{ pathto('_static/add_badges.js', 1) }}"></script>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.13.1/highlight.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/highlightjs-line-numbers.js/2.5.0/highlightjs-line-numbers.min.js"></script>
+<script src="https://g.alicdn.com/code/lib/highlight.js/9.13.1/highlight.min.js"></script>
+<script src="https://g.alicdn.com/code/lib/highlightjs-line-numbers.js/2.5.0/highlightjs-line-numbers.min.js"></script>
 <script>
   document.querySelectorAll('div.hljs > pre').forEach(function(block) {
     hljs.highlightBlock(block);
@@ -24,19 +30,18 @@
   });
 </script>
 
+
+<script type="text/javascript">document.write(unescape("%3Cspan style='display:none;' id='cnzz_stat_icon_1279151497'%3E%3C/span%3E%3Cscript src='https://s4.cnzz.com/z_stat.php%3Fid%3D1279151497' type='text/javascript'%3E%3C/script%3E"));</script>
+
 <script>
   var _hmt = _hmt || [];
   (function() {
     var hm = document.createElement("script");
-    if (window.location.hostname == "arthas.gitee.io") {
-      hm.src = "https://hm.baidu.com/hm.js?ecc1b0d9aeb73da1671876133211d4d3";
-    } else { // https://alibaba.github.io/arthas/
-      hm.src = "https://hm.baidu.com/hm.js?d5c5e25b100f0eb51a4c35c8a86ea9b4";
-    }
-
+    hm.src = "https://hm.baidu.com/hm.js?d5c5e25b100f0eb51a4c35c8a86ea9b4";
     var s = document.getElementsByTagName("script")[0]; 
     s.parentNode.insertBefore(hm, s);
   })();
 </script>  
+
 {{ super() }}
 {% endblock %}

@@ -1,6 +1,8 @@
 package com.taobao.arthas.core.command.klass100;
 
 import java.lang.instrument.Instrumentation;
+import java.util.Collection;
+import java.util.List;
 
 import com.alibaba.arthas.deps.org.slf4j.Logger;
 import com.alibaba.arthas.deps.org.slf4j.LoggerFactory;
@@ -8,11 +10,12 @@ import com.taobao.arthas.core.command.Constants;
 import com.taobao.arthas.core.command.express.Express;
 import com.taobao.arthas.core.command.express.ExpressException;
 import com.taobao.arthas.core.command.express.ExpressFactory;
+import com.taobao.arthas.core.command.model.ClassLoaderVO;
+import com.taobao.arthas.core.command.model.OgnlModel;
 import com.taobao.arthas.core.shell.command.AnnotatedCommand;
 import com.taobao.arthas.core.shell.command.CommandProcess;
 import com.taobao.arthas.core.util.ClassLoaderUtils;
-import com.taobao.arthas.core.util.StringUtils;
-import com.taobao.arthas.core.view.ObjectView;
+import com.taobao.arthas.core.util.ClassUtils;
 import com.taobao.middleware.cli.annotations.Argument;
 import com.taobao.middleware.cli.annotations.Description;
 import com.taobao.middleware.cli.annotations.Name;
@@ -38,8 +41,8 @@ public class OgnlCommand extends AnnotatedCommand {
     private static final Logger logger = LoggerFactory.getLogger(OgnlCommand.class);
 
     private String express;
-
     private String hashCode;
+    private String classLoaderClass;
     private int expand = 1;
 
     @Argument(argName = "express", index = 0, required = true)
@@ -54,6 +57,12 @@ public class OgnlCommand extends AnnotatedCommand {
         this.hashCode = hashCode;
     }
 
+    @Option(longName = "classLoaderClass")
+    @Description("The class name of the special class's classLoader.")
+    public void setClassLoaderClass(String classLoaderClass) {
+        this.classLoaderClass = classLoaderClass;
+    }
+
     @Option(shortName = "x", longName = "expand")
     @Description("Expand level of object (1 by default).")
     public void setExpand(Integer expand) {
@@ -62,36 +71,46 @@ public class OgnlCommand extends AnnotatedCommand {
 
     @Override
     public void process(CommandProcess process) {
-        int exitCode = 0;
-        try {
-            Instrumentation inst = process.session().getInstrumentation();
-            ClassLoader classLoader = null;
-            if (hashCode == null) {
-                classLoader = ClassLoader.getSystemClassLoader();
-            } else {
-                classLoader = ClassLoaderUtils.getClassLoader(inst, hashCode);
-            }
-
+        Instrumentation inst = process.session().getInstrumentation();
+        ClassLoader classLoader = null;
+        if (hashCode != null) {
+            classLoader = ClassLoaderUtils.getClassLoader(inst, hashCode);
             if (classLoader == null) {
-                process.write("Can not find classloader with hashCode: " + hashCode + ".\n");
-                exitCode = -1;
+                process.end(-1, "Can not find classloader with hashCode: " + hashCode + ".");
                 return;
             }
-
-            Express unpooledExpress = ExpressFactory.unpooledExpress(classLoader);
-            try {
-                Object value = unpooledExpress.get(express);
-                String result = StringUtils.objectToString(expand >= 0 ? new ObjectView(value, expand).draw() : value);
-                process.write(result + "\n");
-            } catch (ExpressException e) {
-                logger.warn("ognl: failed execute express: " + express, e);
-                process.write("Failed to execute ognl, exception message: " + e.getMessage()
-                                + ", please check $HOME/logs/arthas/arthas.log for more details. \n");
-                exitCode = -1;
+        } else if (classLoaderClass != null) {
+            List<ClassLoader> matchedClassLoaders = ClassLoaderUtils.getClassLoaderByClassName(inst, classLoaderClass);
+            if (matchedClassLoaders.size() == 1) {
+                classLoader = matchedClassLoaders.get(0);
+            } else if (matchedClassLoaders.size() > 1) {
+                Collection<ClassLoaderVO> classLoaderVOList = ClassUtils.createClassLoaderVOList(matchedClassLoaders);
+                OgnlModel ognlModel = new OgnlModel()
+                        .setClassLoaderClass(classLoaderClass)
+                        .setMatchedClassLoaders(classLoaderVOList);
+                process.appendResult(ognlModel);
+                process.end(-1, "Found more than one classloader by class name, please specify classloader with '-c <classloader hash>'");
+                return;
+            } else {
+                process.end(-1, "Can not find classloader by class name: " + classLoaderClass + ".");
+                return;
             }
-        } finally {
-            process.end(exitCode);
+        } else {
+            classLoader = ClassLoader.getSystemClassLoader();
+        }
+
+        Express unpooledExpress = ExpressFactory.unpooledExpress(classLoader);
+        try {
+            Object value = unpooledExpress.get(express);
+            OgnlModel ognlModel = new OgnlModel()
+                    .setValue(value)
+                    .setExpand(expand);
+            process.appendResult(ognlModel);
+            process.end();
+        } catch (ExpressException e) {
+            logger.warn("ognl: failed execute express: " + express, e);
+            process.end(-1, "Failed to execute ognl, exception message: " + e.getMessage()
+                    + ", please check $HOME/logs/arthas/arthas.log for more details. ");
         }
     }
-
 }

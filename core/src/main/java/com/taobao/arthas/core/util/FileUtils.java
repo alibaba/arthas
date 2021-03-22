@@ -148,6 +148,59 @@ public class FileUtils {
         return history;
     }
 
+    /**
+     * save the command history to the given file, data will be overridden.
+     * @param history the command history
+     * @param file the file to save the history
+     */
+    public static void saveCommandHistoryString(List<String> history, File file) {
+        OutputStream out = null;
+        try {
+            out = new BufferedOutputStream(openOutputStream(file, false));
+            for (String command: history) {
+                if (!StringUtils.isBlank(command)) {
+                    out.write(command.getBytes("utf-8"));
+                    out.write('\n');
+                }
+            }
+        } catch (IOException e) {
+            // ignore
+        } finally {
+            try {
+                if (out != null) {
+                    out.close();
+                }
+            } catch (IOException ioe) {
+                // ignore
+            }
+        }
+    }
+
+    public static List<String> loadCommandHistoryString(File file) {
+        BufferedReader br = null;
+        List<String> history = new ArrayList<String>();
+        try {
+            br = new BufferedReader(new InputStreamReader(new FileInputStream(file), "utf-8"));
+            String line;
+            while ((line = br.readLine()) != null) {
+                if (!StringUtils.isBlank(line)) {
+                    history.add(line);
+                }
+            }
+        } catch (IOException e) {
+            // ignore
+        } finally {
+            try {
+                if (br != null) {
+                    br.close();
+                }
+            } catch (IOException ioe) {
+                // ignore
+            }
+        }
+        return history;
+    }
+
     public static String readFileToString(File file, Charset encoding) throws IOException {
         FileInputStream stream = new FileInputStream(file);
         try {

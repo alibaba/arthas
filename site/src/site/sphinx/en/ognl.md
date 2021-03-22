@@ -1,6 +1,8 @@
 ognl
 ===
 
+[`ognl` online tutorial](https://arthas.aliyun.com/doc/arthas-tutorials?language=en&id=command-ognl)
+
 > Execute ognl expression.
 
 Since 3.0.5.
@@ -11,6 +13,7 @@ Since 3.0.5.
 |---:|:---|
 |*express*|expression to be executed|
 |`[c:]`| The hashcode of the ClassLoader that executes the expression, default ClassLoader is SystemClassLoader. |
+|`[classLoaderClass:]`| The class name of the ClassLoader that executes the expression. |
 |[x]|Expand level of object (1 by default).|
 
 
@@ -46,6 +49,38 @@ $ ognl '@demo.MathGame@random'
     serialPersistentFields=@ObjectStreamField[][isEmpty=false;size=3],
     unsafe=@Unsafe[sun.misc.Unsafe@28ea5898],
     seedOffset=@Long[24],
+]
+```
+
+
+Specify ClassLoader by hashcode: 
+
+```bash
+$ classloader -t
++-BootstrapClassLoader                                                                                                                                                                          
++-jdk.internal.loader.ClassLoaders$PlatformClassLoader@301ec38b                                                                                                                                 
+  +-com.taobao.arthas.agent.ArthasClassloader@472067c7                                                                                                                                          
+  +-jdk.internal.loader.ClassLoaders$AppClassLoader@4b85612c                                                                                                                                    
+    +-org.springframework.boot.loader.LaunchedURLClassLoader@7f9a81e8 
+
+$ ognl -c 7f9a81e8 @org.springframework.boot.SpringApplication@logger
+@Slf4jLocationAwareLog[
+    FQCN=@String[org.apache.commons.logging.LogAdapter$Slf4jLocationAwareLog],
+    name=@String[org.springframework.boot.SpringApplication],
+    logger=@Logger[Logger[org.springframework.boot.SpringApplication]],
+]
+$ 
+```
+Note that the hashcode changes, you need to check the current ClassLoader information first, and extract the hashcode corresponding to the ClassLoader.
+
+For ClassLoader with only unique instance, it can be specified by class name, which is more convenient to use:
+
+```bash
+$ ognl --classLoaderClass org.springframework.boot.loader.LaunchedURLClassLoader  @org.springframework.boot.SpringApplication@logger
+@Slf4jLocationAwareLog[
+    FQCN=@String[org.apache.commons.logging.LogAdapter$Slf4jLocationAwareLog],
+    name=@String[org.springframework.boot.SpringApplication],
+    logger=@Logger[Logger[org.springframework.boot.SpringApplication]],
 ]
 ```
 

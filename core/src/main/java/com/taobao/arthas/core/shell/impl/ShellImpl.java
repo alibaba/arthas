@@ -7,25 +7,29 @@ import com.taobao.arthas.core.shell.ShellServer;
 import com.taobao.arthas.core.shell.cli.CliToken;
 import com.taobao.arthas.core.shell.cli.CliTokens;
 import com.taobao.arthas.core.shell.future.Future;
-import com.taobao.arthas.core.shell.handlers.shell.CloseHandler;
-import com.taobao.arthas.core.shell.handlers.shell.CommandManagerCompletionHandler;
-import com.taobao.arthas.core.shell.handlers.shell.FutureHandler;
-import com.taobao.arthas.core.shell.handlers.shell.InterruptHandler;
-import com.taobao.arthas.core.shell.handlers.shell.ShellLineHandler;
-import com.taobao.arthas.core.shell.handlers.shell.SuspendHandler;
+import com.taobao.arthas.core.shell.handlers.shell.*;
 import com.taobao.arthas.core.shell.session.Session;
 import com.taobao.arthas.core.shell.session.impl.SessionImpl;
 import com.taobao.arthas.core.shell.system.ExecStatus;
 import com.taobao.arthas.core.shell.system.Job;
 import com.taobao.arthas.core.shell.system.JobController;
+import com.taobao.arthas.core.shell.system.JobListener;
 import com.taobao.arthas.core.shell.system.impl.InternalCommandManager;
 import com.taobao.arthas.core.shell.system.impl.JobControllerImpl;
 import com.taobao.arthas.core.shell.term.Term;
-import com.taobao.arthas.core.shell.term.impl.httptelnet.HttpTelnetTermServer;
+import com.taobao.arthas.core.shell.term.impl.TermImpl;
+import com.taobao.arthas.core.shell.term.impl.http.ExtHttpTtyConnection;
+import com.taobao.arthas.core.util.Constants;
+import com.taobao.arthas.core.util.FileUtils;
 
+import io.termd.core.tty.TtyConnection;
+
+import java.io.File;
 import java.lang.instrument.Instrumentation;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 import java.util.UUID;
 
@@ -50,6 +54,18 @@ public class ShellImpl implements Shell {
 
     public ShellImpl(ShellServer server, Term term, InternalCommandManager commandManager,
             Instrumentation instrumentation, long pid, JobControllerImpl jobController) {
+        if (term instanceof TermImpl) {
+            TermImpl termImpl = (TermImpl) term;
+            TtyConnection conn = termImpl.getConn();
+            if (conn instanceof ExtHttpTtyConnection) {
+                // 传递http cookie 里的鉴权信息到新建立的session中
+                ExtHttpTtyConnection extConn = (ExtHttpTtyConnection) conn;
+                Map<String, Object> extSessions = extConn.extSessions();
+                for (Entry<String, Object> entry : extSessions.entrySet()) {
+                    session.put(entry.getKey(), entry.getValue());
+                }
+            }
+        }
         session.put(Session.COMMAND_MANAGER, commandManager);
         session.put(Session.INSTRUMENTATION, instrumentation);
         session.put(Session.PID, pid);
@@ -79,7 +95,7 @@ public class ShellImpl implements Shell {
 
     @Override
     public synchronized Job createJob(List<CliToken> args) {
-        Job job = jobController.createJob(commandManager, args, this);
+        Job job = jobController.createJob(commandManager, args, session, new ShellJobHandler(this), term, null);
         return job;
     }
 
@@ -165,7 +181,7 @@ public class ShellImpl implements Shell {
                 // sometimes an NPE will be thrown during shutdown via web-socket,
                 // this ensures the shutdown process is finished properly
                 // https://github.com/alibaba/arthas/issues/320
-                logger.error("ARTHAS", "Error writing data:", t);
+                logger.error("Error writing data:", t);
             }
             term.close();
         } else {
@@ -180,4 +196,53 @@ public class ShellImpl implements Shell {
     public Job getForegroundJob() {
         return currentForegroundJob;
     }
+
+    private class ShellJobHandler implements JobListener {
+        ShellImpl shell;
+
+        public ShellJobHandler(ShellImpl shell) {
+            this.shell = shell;
+        }
+
+        @Override
+        public void onForeground(Job job) {
+            shell.setForegroundJob(job);
+            //reset stdin handler to job's origin handler
+            //shell.term().stdinHandler(job.process().getStdinHandler());
+        }
+
+        @Override
+        public void onBackground(Job job) {
+            resetAndReadLine();
+        }
+
+        @Override
+        public void onTerminated(Job job) {
+            if (!job.isRunInBackground()){
+                resetAndReadLine();
+            }
+
+            // save command history
+            Term term = shell.term();
+            if (term instanceof TermImpl) {
+                List<int[]> history = ((TermImpl) term).getReadline().getHistory();
+                FileUtils.saveCommandHistory(history, new File(Constants.CMD_HISTORY_FILE));
+            }
+        }
+
+        @Override
+        public void onSuspend(Job job) {
+            if (!job.isRunInBackground()){
+                resetAndReadLine();
+            }
+        }
+
+        private void resetAndReadLine() {
+            //reset stdin handler to echo handler
+            //shell.term().stdinHandler(null);
+            shell.setForegroundJob(null);
+            shell.readline();
+        }
+    }
+
 }

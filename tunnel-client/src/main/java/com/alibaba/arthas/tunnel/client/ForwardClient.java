@@ -8,11 +8,16 @@ import javax.net.ssl.SSLException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.taobao.arthas.common.ArthasConstants;
+
 import io.netty.bootstrap.Bootstrap;
-import io.netty.channel.Channel;
+import io.netty.channel.ChannelFuture;
+import io.netty.channel.ChannelFutureListener;
 import io.netty.channel.ChannelInitializer;
+import io.netty.channel.ChannelOption;
 import io.netty.channel.ChannelPipeline;
 import io.netty.channel.EventLoopGroup;
+import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioSocketChannel;
 import io.netty.handler.codec.http.DefaultHttpHeaders;
@@ -25,6 +30,7 @@ import io.netty.handler.codec.http.websocketx.WebSocketVersion;
 import io.netty.handler.ssl.SslContext;
 import io.netty.handler.ssl.SslContextBuilder;
 import io.netty.handler.ssl.util.InsecureTrustManagerFactory;
+import io.netty.util.concurrent.DefaultThreadFactory;
 
 /**
  * 
@@ -34,15 +40,9 @@ import io.netty.handler.ssl.util.InsecureTrustManagerFactory;
 public class ForwardClient {
     private final static Logger logger = LoggerFactory.getLogger(ForwardClient.class);
     private URI tunnelServerURI;
-    private URI localServerURI;
 
-    private EventLoopGroup group;
-    private Channel channel;
-
-    public ForwardClient(URI tunnelServerURI, URI localServerURI, EventLoopGroup group) {
+    public ForwardClient(URI tunnelServerURI) {
         this.tunnelServerURI = tunnelServerURI;
-        this.localServerURI = localServerURI;
-        this.group = group;
     }
 
     public void start() throws URISyntaxException, SSLException, InterruptedException {
@@ -79,33 +79,40 @@ public class ForwardClient {
                 WebSocketVersion.V13, null, true, new DefaultHttpHeaders());
         final WebSocketClientProtocolHandler websocketClientHandler = new WebSocketClientProtocolHandler(newHandshaker);
 
-        final ForwardClientSocketClientHandler forwardClientSocketClientHandler = new ForwardClientSocketClientHandler(
-                localServerURI);
+        final ForwardClientSocketClientHandler forwardClientSocketClientHandler = new ForwardClientSocketClientHandler();
 
-        Bootstrap b = new Bootstrap();
-        b.group(group).channel(NioSocketChannel.class).handler(new ChannelInitializer<SocketChannel>() {
-            @Override
-            protected void initChannel(SocketChannel ch) {
-                ChannelPipeline p = ch.pipeline();
-                if (sslCtx != null) {
-                    p.addLast(sslCtx.newHandler(ch.alloc(), host, port));
+        final EventLoopGroup group = new NioEventLoopGroup(1, new DefaultThreadFactory("arthas-ForwardClient", true));
+        ChannelFuture closeFuture = null;
+        try {
+            Bootstrap b = new Bootstrap();
+            b.option(ChannelOption.CONNECT_TIMEOUT_MILLIS, 5000);
+            b.group(group).channel(NioSocketChannel.class).handler(new ChannelInitializer<SocketChannel>() {
+                @Override
+                protected void initChannel(SocketChannel ch) {
+                    ChannelPipeline p = ch.pipeline();
+                    if (sslCtx != null) {
+                        p.addLast(sslCtx.newHandler(ch.alloc(), host, port));
+                    }
+                    p.addLast(new HttpClientCodec(), new HttpObjectAggregator(ArthasConstants.MAX_HTTP_CONTENT_LENGTH), websocketClientHandler,
+                            forwardClientSocketClientHandler);
                 }
-                p.addLast(new HttpClientCodec(), new HttpObjectAggregator(8192), websocketClientHandler,
-                        forwardClientSocketClientHandler);
+            });
+
+            closeFuture = b.connect(tunnelServerURI.getHost(), port).sync().channel().closeFuture();
+            logger.info("forward client connect to server success, uri: " + tunnelServerURI);
+        } finally {
+            if (closeFuture != null) {
+                closeFuture.addListener(new ChannelFutureListener() {
+                    @Override
+                    public void operationComplete(ChannelFuture channelFuture) throws Exception {
+                        group.shutdownGracefully();
+                    }
+                });
+            } else {
+                group.shutdownGracefully();
             }
-        });
-
-        channel = b.connect(tunnelServerURI.getHost(), port).sync().channel();
-        logger.info("forward client connect to server success, uri: " + tunnelServerURI);
-    }
-
-    public void stop() {
-        if (channel != null) {
-            channel.close();
         }
-        if (group != null) {
-            group.shutdownGracefully();
-        }
+
     }
 
 }

@@ -1,0 +1,37 @@
+{
+  "title": "Arthas dashboard",
+  "description": "Arthas dashboard",
+  "details": {
+    "steps": [
+      {
+        "title": "Start arthas-demo",
+        "text": "arthas-demo.md"
+      },
+      {
+        "title": "Start arthas-boot",
+        "text": "arthas-boot.md"
+      },
+      {
+        "title": "dashboard command",
+        "text": "dashboard.md"
+      },
+      {
+        "title": "Notes on column headers",
+        "text": "notes-on-column-headers.md"
+      }
+    ],
+    "intro": {
+      "text": "intro.md"
+    },
+    "finish": {
+      "text": "finish.md"
+    }
+  },
+  "environment": {
+    "uilayout": "terminal"
+  },
+  "backend": {
+    "imageid": "openjdk:15",
+    "environmentsprotocol": "http"
+  }
+}
