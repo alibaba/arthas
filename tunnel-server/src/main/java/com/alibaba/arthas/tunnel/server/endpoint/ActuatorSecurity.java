@@ -10,6 +10,6 @@ public class ActuatorSecurity extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity httpSecurity) throws Exception {
         httpSecurity.authorizeRequests().requestMatchers(EndpointRequest.toAnyEndpoint()).authenticated().anyRequest()
-                .permitAll().and().formLogin();
+                .authenticated().and().formLogin();
     }
 }
