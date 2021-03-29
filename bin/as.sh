@@ -159,9 +159,6 @@ BATCH_MODE=false
 # define arthas's temp dir
 TMP_DIR=/tmp
 
-# last update arthas version
-ARTHAS_VERSION=
-
 # arthas remote url
 # https://arthas.aliyun.com/download/3.1.7?mirror=aliyun
 REMOTE_DOWNLOAD_URL="https://arthas.aliyun.com/download/PLACEHOLDER_VERSION?mirror=PLACEHOLDER_REPO"
@@ -831,7 +828,7 @@ attach_jvm()
         tempArgs+=("${USERNAME}")
     fi
 
-        if [ "${PASSWORD}" ]; then
+    if [ "${PASSWORD}" ]; then
         tempArgs+=("-password")
         tempArgs+=("${PASSWORD}")
     fi
