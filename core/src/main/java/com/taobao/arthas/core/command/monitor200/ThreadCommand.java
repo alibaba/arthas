@@ -38,7 +38,7 @@ import java.util.Set;
 @Description(Constants.EXAMPLE +
         "  thread\n" +
         "  thread 51\n" +
-        "  thread -n -1\n" +
+        "  thread -1\n" +
         "  thread -n 5\n" +
         "  thread -b\n" +
         "  thread -i 2000\n" +
