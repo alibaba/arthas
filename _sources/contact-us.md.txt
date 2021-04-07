@@ -5,8 +5,6 @@
 
 ## 招聘
 
-* [阿里云-云原生团队-2022 届春季实习⽣招聘](https://mp.weixin.qq.com/s/jfjvBmrKmHDdKn-Iez-c4Q)
-
 * [期待你的加入](https://mp.weixin.qq.com/s/k5jozrSgmyH0tcQfrDkxUQ)
 ### Issues
 

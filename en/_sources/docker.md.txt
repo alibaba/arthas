@@ -58,22 +58,22 @@ RUN export JAVA_HOME
 
 ## Quick start with Docker
 
-1. Delete the existing `arthas-demo` docker container (not necessary)
+1. Delete the existing `math-game` docker container (not necessary)
 
     ```sh
-    $ docker stop arthas-demo || true && docker rm arthas-demo || true
+    $ docker stop math-game || true && docker rm math-game || true
     ```
 
-1. Start `arthas-demo`
+1. Start `math-game`
 
     ```sh
-    $ docker run --name arthas-demo -it hengyunabc/arthas:latest /bin/sh -c "java -jar /opt/arthas/arthas-demo.jar"
+    $ docker run --name math-game -it hengyunabc/arthas:latest /bin/sh -c "java -jar /opt/arthas/math-game.jar"
     ```
 
 1. Start `arthas-boot` for diagnosis
 
     ```sh
-    $ docker exec -it arthas-demo /bin/sh -c "java -jar /opt/arthas/arthas-boot.jar"
+    $ docker exec -it math-game /bin/sh -c "java -jar /opt/arthas/arthas-boot.jar"
     * [1]: 9 jar
 
     [INFO] arthas home: /opt/arthas

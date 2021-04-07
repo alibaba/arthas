@@ -317,7 +317,7 @@ Affect(row-cnt:4) cost in 3 ms.</pre></div>
 <div class="section" id="show-the-urls-of-the-urlclassloader">
 <h3>Show the URLs of the URLClassLoader<a class="headerlink" href="#show-the-urls-of-the-urlclassloader" title="Permalink to this headline">¶</a></h3>
 <div class="highlight-bash notranslate"><div class="highlight hljs"><pre class="bash">$ classloader -c 3d4eac69
-file:/private/tmp/arthas-demo.jar
+file:/private/tmp/math-game.jar
 file:/Users/hengyunabc/.arthas/lib/3.0.5/arthas/arthas-agent.jar
 
 Affect(row-cnt:9) cost in 3 ms.</pre></div>
@@ -325,7 +325,7 @@ Affect(row-cnt:9) cost in 3 ms.</pre></div>
 <p>Note that the hashcode changes, you need to check the current ClassLoader information first, and extract the hashcode corresponding to the ClassLoader.</p>
 <p>For ClassLoader with only unique instance, it can be specified by class name, which is more convenient to use:</p>
 <div class="highlight-bash notranslate"><div class="highlight hljs"><pre class="bash">$ classloader --classLoaderClass sun.misc.Launcher$AppClassLoader
-file:/private/tmp/arthas-demo.jar
+file:/private/tmp/math-game.jar
 file:/Users/hengyunabc/.arthas/lib/3.0.5/arthas/arthas-agent.jar
 
 Affect(row-cnt:9) cost in 3 ms.</pre></div>
@@ -335,7 +335,7 @@ Affect(row-cnt:9) cost in 3 ms.</pre></div>
 <h3>Use the classloader to load resource<a class="headerlink" href="#use-the-classloader-to-load-resource" title="Permalink to this headline">¶</a></h3>
 <div class="highlight-bash notranslate"><div class="highlight hljs"><pre class="bash">$ classloader -c 3d4eac69  -r META-INF/MANIFEST.MF
  jar:file:/System/Library/Java/Extensions/MRJToolkit.jar!/META-INF/MANIFEST.MF
- jar:file:/private/tmp/arthas-demo.jar!/META-INF/MANIFEST.MF
+ jar:file:/private/tmp/math-game.jar!/META-INF/MANIFEST.MF
  jar:file:/Users/hengyunabc/.arthas/lib/3.0.5/arthas/arthas-agent.jar!/META-INF/MANIFEST.MF</pre></div>
 </div>
 <p>Use the classloader to load <code class="docutils literal notranslate"><span class="pre">.class</span></code> resource</p>
@@ -348,7 +348,7 @@ Affect(row-cnt:9) cost in 3 ms.</pre></div>
 <div class="highlight-bash notranslate"><div class="highlight hljs"><pre class="bash">$ classloader -c 3d4eac69 --load demo.MathGame
 load class success.
  class-info        demo.MathGame
- code-source       /private/tmp/arthas-demo.jar
+ code-source       /private/tmp/math-game.jar
  name              demo.MathGame
  isInterface       false
  isAnnotation      false

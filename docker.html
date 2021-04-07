@@ -100,7 +100,6 @@
             
               <ul class="current">
 <li class="toctree-l1"><a class="reference external" href="https://arthas.aliyun.com/">首页</a></li>
-<li class="toctree-l1"><a class="reference external" href="https://mp.weixin.qq.com/s/jfjvBmrKmHDdKn-Iez-c4Q">2022实习生招聘</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://developer.aliyun.com/article/751641">技术分享征文</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://arthas.aliyun.com/doc/en/">English Docs</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://arthas.aliyun.com/doc/arthas-tutorials.html?language=cn">在线教程(katacoda)</a></li>
@@ -248,16 +247,16 @@ RUN export JAVA_HOME</pre></div>
 <div class="section" id="id2">
 <h2>通过Docker快速入门<a class="headerlink" href="#id2" title="永久链接至标题">¶</a></h2>
 <ol>
-<li><p>删除本地已有的<code class="docutils literal notranslate"><span class="pre">arthas-demo</span></code> docker container（非必要）</p>
-<div class="highlight-sh notranslate"><div class="highlight hljs"><pre class="sh">$ docker stop arthas-demo || true &amp;&amp; docker rm arthas-demo || true</pre></div>
+<li><p>删除本地已有的<code class="docutils literal notranslate"><span class="pre">math-game</span></code> docker container（非必要）</p>
+<div class="highlight-sh notranslate"><div class="highlight hljs"><pre class="sh">$ docker stop math-game || true &amp;&amp; docker rm math-game || true</pre></div>
 </div>
 </li>
-<li><p>启动<code class="docutils literal notranslate"><span class="pre">arthas-demo</span></code></p>
-<div class="highlight-sh notranslate"><div class="highlight hljs"><pre class="sh">$ docker run --name arthas-demo -it hengyunabc/arthas:latest /bin/sh -c &quot;java -jar /opt/arthas/arthas-demo.jar&quot;</pre></div>
+<li><p>启动<code class="docutils literal notranslate"><span class="pre">math-game</span></code></p>
+<div class="highlight-sh notranslate"><div class="highlight hljs"><pre class="sh">$ docker run --name math-game -it hengyunabc/arthas:latest /bin/sh -c &quot;java -jar /opt/arthas/math-game.jar&quot;</pre></div>
 </div>
 </li>
 <li><p>启动<code class="docutils literal notranslate"><span class="pre">arthas-boot</span></code>来进行诊断</p>
-<div class="highlight-sh notranslate"><div class="highlight hljs"><pre class="sh">$ docker exec -it arthas-demo /bin/sh -c &quot;java -jar /opt/arthas/arthas-boot.jar&quot;
+<div class="highlight-sh notranslate"><div class="highlight hljs"><pre class="sh">$ docker exec -it math-game /bin/sh -c &quot;java -jar /opt/arthas/arthas-boot.jar&quot;
 * [1]: 9 jar
 
 [INFO] arthas home: /opt/arthas

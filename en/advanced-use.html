@@ -349,13 +349,13 @@
 <li><p>Select the process to be attached via the <code class="docutils literal notranslate"><span class="pre">select</span></code> option.</p></li>
 </ul>
 <p>Normally, <code class="docutils literal notranslate"><span class="pre">as.sh</span></code>/<code class="docutils literal notranslate"><span class="pre">arthas-boot.jar</span></code> needs to a pid, bacause the pid will change.</p>
-<p>For example, with <code class="docutils literal notranslate"><span class="pre">arthas-demo.jar</span></code> already started, use the <code class="docutils literal notranslate"><span class="pre">jps</span></code> command to see.</p>
+<p>For example, with <code class="docutils literal notranslate"><span class="pre">math-game.jar</span></code> already started, use the <code class="docutils literal notranslate"><span class="pre">jps</span></code> command to see.</p>
 <div class="highlight-bash notranslate"><div class="highlight hljs"><pre class="bash">$ jps
-58883 arthas-demo.jar
+58883 math-game.jar
 58884 Jps</pre></div>
 </div>
 <p>The <code class="docutils literal notranslate"><span class="pre">select</span></code> option allows you to specify a process name, which is very convenient.</p>
-<div class="highlight-bash notranslate"><div class="highlight hljs"><pre class="bash">$ ./as.sh --select arthas-demo
+<div class="highlight-bash notranslate"><div class="highlight hljs"><pre class="bash">$ ./as.sh --select math-game
 Arthas script version: 3.3.6
 [INFO] JAVA_HOME: /tmp/java/8.0.222-zulu
 Arthas home: /Users/admin/.arthas/lib/3.3.6/arthas

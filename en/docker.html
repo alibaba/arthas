@@ -243,16 +243,16 @@ RUN export JAVA_HOME</pre></div>
 <div class="section" id="quick-start-with-docker">
 <h2>Quick start with Docker<a class="headerlink" href="#quick-start-with-docker" title="Permalink to this headline">¶</a></h2>
 <ol>
-<li><p>Delete the existing <code class="docutils literal notranslate"><span class="pre">arthas-demo</span></code> docker container (not necessary)</p>
-<div class="highlight-sh notranslate"><div class="highlight hljs"><pre class="sh">$ docker stop arthas-demo || true &amp;&amp; docker rm arthas-demo || true</pre></div>
+<li><p>Delete the existing <code class="docutils literal notranslate"><span class="pre">math-game</span></code> docker container (not necessary)</p>
+<div class="highlight-sh notranslate"><div class="highlight hljs"><pre class="sh">$ docker stop math-game || true &amp;&amp; docker rm math-game || true</pre></div>
 </div>
 </li>
-<li><p>Start <code class="docutils literal notranslate"><span class="pre">arthas-demo</span></code></p>
-<div class="highlight-sh notranslate"><div class="highlight hljs"><pre class="sh">$ docker run --name arthas-demo -it hengyunabc/arthas:latest /bin/sh -c &quot;java -jar /opt/arthas/arthas-demo.jar&quot;</pre></div>
+<li><p>Start <code class="docutils literal notranslate"><span class="pre">math-game</span></code></p>
+<div class="highlight-sh notranslate"><div class="highlight hljs"><pre class="sh">$ docker run --name math-game -it hengyunabc/arthas:latest /bin/sh -c &quot;java -jar /opt/arthas/math-game.jar&quot;</pre></div>
 </div>
 </li>
 <li><p>Start <code class="docutils literal notranslate"><span class="pre">arthas-boot</span></code> for diagnosis</p>
-<div class="highlight-sh notranslate"><div class="highlight hljs"><pre class="sh">$ docker exec -it arthas-demo /bin/sh -c &quot;java -jar /opt/arthas/arthas-boot.jar&quot;
+<div class="highlight-sh notranslate"><div class="highlight hljs"><pre class="sh">$ docker exec -it math-game /bin/sh -c &quot;java -jar /opt/arthas/arthas-boot.jar&quot;
 * [1]: 9 jar
 
 [INFO] arthas home: /opt/arthas

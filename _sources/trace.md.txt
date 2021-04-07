@@ -47,7 +47,7 @@ trace
 
 #### 启动 Demo
 
-启动[快速入门](quick-start.md)里的`arthas-demo`。
+启动[快速入门](quick-start.md)里的`math-game`。
 
 #### trace函数
 

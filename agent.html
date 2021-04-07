@@ -100,7 +100,6 @@
             
               <ul class="current">
 <li class="toctree-l1"><a class="reference external" href="https://arthas.aliyun.com/">首页</a></li>
-<li class="toctree-l1"><a class="reference external" href="https://mp.weixin.qq.com/s/jfjvBmrKmHDdKn-Iez-c4Q">2022实习生招聘</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://developer.aliyun.com/article/751641">技术分享征文</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://arthas.aliyun.com/doc/en/">English Docs</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://arthas.aliyun.com/doc/arthas-tutorials.html?language=cn">在线教程(katacoda)</a></li>
@@ -214,7 +213,7 @@
 <h1>以Java Agent的方式启动<a class="headerlink" href="#java-agent" title="永久链接至标题">¶</a></h1>
 <p>通常Arthas是以动态attach的方式来诊断应用，但从<code class="docutils literal notranslate"><span class="pre">3.2.0</span></code>版本起，Arthas支持直接以 java agent的方式启动。</p>
 <p>比如下载全量的arthas zip包，解压之后以 <code class="docutils literal notranslate"><span class="pre">-javaagent</span></code> 的参数指定<code class="docutils literal notranslate"><span class="pre">arthas-agent.jar</span></code>来启动：</p>
-<div class="highlight-default notranslate"><pre class="literal-block">java -javaagent:/tmp/test/arthas-agent.jar -jar arthas-demo.jar</pre>
+<div class="highlight-default notranslate"><pre class="literal-block">java -javaagent:/tmp/test/arthas-agent.jar -jar math-game.jar</pre>
 </div>
 <p>默认的配置项在解压目录里的<code class="docutils literal notranslate"><span class="pre">arthas.properties</span></code>文件里。参考：<a class="reference internal" href="arthas-properties.html"><span class="doc">Arthas Properties</span></a></p>
 <p>Java Agent机制参考： https://docs.oracle.com/javase/8/docs/api/java/lang/instrument/package-summary.html</p>

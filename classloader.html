@@ -100,7 +100,6 @@
             
               <ul class="current">
 <li class="toctree-l1"><a class="reference external" href="https://arthas.aliyun.com/">首页</a></li>
-<li class="toctree-l1"><a class="reference external" href="https://mp.weixin.qq.com/s/jfjvBmrKmHDdKn-Iez-c4Q">2022实习生招聘</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://developer.aliyun.com/article/751641">技术分享征文</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://arthas.aliyun.com/doc/en/">English Docs</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://arthas.aliyun.com/doc/arthas-tutorials.html?language=cn">在线教程(katacoda)</a></li>
@@ -325,7 +324,7 @@ Affect(row-cnt:4) cost in 3 ms.</pre></div>
 <div class="section" id="urlclassloaderurls">
 <h3>查看URLClassLoader实际的urls<a class="headerlink" href="#urlclassloaderurls" title="永久链接至标题">¶</a></h3>
 <div class="highlight-bash notranslate"><div class="highlight hljs"><pre class="bash">$ classloader -c 3d4eac69
-file:/private/tmp/arthas-demo.jar
+file:/private/tmp/math-game.jar
 file:/Users/hengyunabc/.arthas/lib/3.0.5/arthas/arthas-agent.jar
 
 Affect(row-cnt:9) cost in 3 ms.</pre></div>
@@ -333,7 +332,7 @@ Affect(row-cnt:9) cost in 3 ms.</pre></div>
 <p><em>注意</em> hashcode是变化的，需要先查看当前的ClassLoader信息，提取对应ClassLoader的hashcode。</p>
 <p>对于只有唯一实例的ClassLoader可以通过class name指定，使用起来更加方便：</p>
 <div class="highlight-bash notranslate"><div class="highlight hljs"><pre class="bash">$ classloader --classLoaderClass sun.misc.Launcher$AppClassLoader
-file:/private/tmp/arthas-demo.jar
+file:/private/tmp/math-game.jar
 file:/Users/hengyunabc/.arthas/lib/3.0.5/arthas/arthas-agent.jar
 
 Affect(row-cnt:9) cost in 3 ms.</pre></div>
@@ -343,7 +342,7 @@ Affect(row-cnt:9) cost in 3 ms.</pre></div>
 <h3>使用ClassLoader去查找resource<a class="headerlink" href="#classloaderresource" title="永久链接至标题">¶</a></h3>
 <div class="highlight-bash notranslate"><div class="highlight hljs"><pre class="bash">$ classloader -c 3d4eac69  -r META-INF/MANIFEST.MF
  jar:file:/System/Library/Java/Extensions/MRJToolkit.jar!/META-INF/MANIFEST.MF
- jar:file:/private/tmp/arthas-demo.jar!/META-INF/MANIFEST.MF
+ jar:file:/private/tmp/math-game.jar!/META-INF/MANIFEST.MF
  jar:file:/Users/hengyunabc/.arthas/lib/3.0.5/arthas/arthas-agent.jar!/META-INF/MANIFEST.MF</pre></div>
 </div>
 <p>也可以尝试查找类的class文件：</p>
@@ -356,7 +355,7 @@ Affect(row-cnt:9) cost in 3 ms.</pre></div>
 <div class="highlight-bash notranslate"><div class="highlight hljs"><pre class="bash">$ classloader -c 3d4eac69 --load demo.MathGame
 load class success.
  class-info        demo.MathGame
- code-source       /private/tmp/arthas-demo.jar
+ code-source       /private/tmp/math-game.jar
  name              demo.MathGame
  isInterface       false
  isAnnotation      false

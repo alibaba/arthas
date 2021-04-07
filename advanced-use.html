@@ -100,7 +100,6 @@
             
               <ul class="current">
 <li class="toctree-l1"><a class="reference external" href="https://arthas.aliyun.com/">首页</a></li>
-<li class="toctree-l1"><a class="reference external" href="https://mp.weixin.qq.com/s/jfjvBmrKmHDdKn-Iez-c4Q">2022实习生招聘</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://developer.aliyun.com/article/751641">技术分享征文</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://arthas.aliyun.com/doc/en/">English Docs</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://arthas.aliyun.com/doc/arthas-tutorials.html?language=cn">在线教程(katacoda)</a></li>
@@ -354,13 +353,13 @@
 <li><p>通过<code class="docutils literal notranslate"><span class="pre">select</span></code>功能选择attach的进程。</p></li>
 </ul>
 <p>正常情况下，每次执行<code class="docutils literal notranslate"><span class="pre">as.sh</span></code>/<code class="docutils literal notranslate"><span class="pre">arthas-boot.jar</span></code>需要选择，或者指定PID。这样会比较麻烦，因为每次启动应用，它的PID会变化。</p>
-<p>比如，已经启动了<code class="docutils literal notranslate"><span class="pre">arthas-demo.jar</span></code>，使用<code class="docutils literal notranslate"><span class="pre">jps</span></code>命令查看：</p>
+<p>比如，已经启动了<code class="docutils literal notranslate"><span class="pre">math-game.jar</span></code>，使用<code class="docutils literal notranslate"><span class="pre">jps</span></code>命令查看：</p>
 <div class="highlight-bash notranslate"><div class="highlight hljs"><pre class="bash">$ jps
-58883 arthas-demo.jar
+58883 math-game.jar
 58884 Jps</pre></div>
 </div>
 <p>通过<code class="docutils literal notranslate"><span class="pre">select</span></code>参数可以指定进程名字，非常方便。</p>
-<div class="highlight-bash notranslate"><div class="highlight hljs"><pre class="bash">$ ./as.sh --select arthas-demo
+<div class="highlight-bash notranslate"><div class="highlight hljs"><pre class="bash">$ ./as.sh --select math-game
 Arthas script version: 3.3.6
 [INFO] JAVA_HOME: /tmp/java/8.0.222-zulu
 Arthas home: /Users/admin/.arthas/lib/3.3.6/arthas

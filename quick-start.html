@@ -100,7 +100,6 @@
             
               <ul class="current">
 <li class="toctree-l1"><a class="reference external" href="https://arthas.aliyun.com/">首页</a></li>
-<li class="toctree-l1"><a class="reference external" href="https://mp.weixin.qq.com/s/jfjvBmrKmHDdKn-Iez-c4Q">2022实习生招聘</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://developer.aliyun.com/article/751641">技术分享征文</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://arthas.aliyun.com/doc/en/">English Docs</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://arthas.aliyun.com/doc/arthas-tutorials.html?language=cn">在线教程(katacoda)</a></li>
@@ -108,10 +107,10 @@
 <li class="toctree-l1"><a class="reference internal" href="install-detail.html">安装</a></li>
 <li class="toctree-l1"><a class="reference internal" href="download.html">下载</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">快速入门</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="#demo">1. 启动Demo</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#math-game">1. 启动math-game</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#arthas">2. 启动arthas</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#dashboard">3. 查看dashboard</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#threadarthas-demomain-class">4. 通过thread命令来获取到<code class="docutils literal notranslate"><span class="pre">arthas-demo</span></code>进程的Main Class</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#threadmath-gamemain-class">4. 通过thread命令来获取到<code class="docutils literal notranslate"><span class="pre">math-game</span></code>进程的Main Class</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#jadmain-class">5. 通过jad来反编译Main Class</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#watch">6. watch</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#id2">7. 退出arthas</a></li>
@@ -199,13 +198,13 @@
             
   <div class="section" id="id1">
 <h1>快速入门<a class="headerlink" href="#id1" title="永久链接至标题">¶</a></h1>
-<div class="section" id="demo">
-<h2>1. 启动Demo<a class="headerlink" href="#demo" title="永久链接至标题">¶</a></h2>
-<div class="highlight-bash notranslate"><div class="highlight hljs"><pre class="bash">curl -O https://arthas.aliyun.com/arthas-demo.jar
-java -jar arthas-demo.jar</pre></div>
+<div class="section" id="math-game">
+<h2>1. 启动math-game<a class="headerlink" href="#math-game" title="永久链接至标题">¶</a></h2>
+<div class="highlight-bash notranslate"><div class="highlight hljs"><pre class="bash">curl -O https://arthas.aliyun.com/math-game.jar
+java -jar math-game.jar</pre></div>
 </div>
-<p><code class="docutils literal notranslate"><span class="pre">arthas-demo</span></code>是一个简单的程序，每隔一秒生成一个随机数，再执行质因数分解，并打印出分解结果。</p>
-<p><code class="docutils literal notranslate"><span class="pre">arthas-demo</span></code>源代码：<a class="reference external" href="https://github.com/alibaba/arthas/blob/master/demo/src/main/java/demo/MathGame.java">查看</a></p>
+<p><code class="docutils literal notranslate"><span class="pre">math-game</span></code>是一个简单的程序，每隔一秒生成一个随机数，再执行质因数分解，并打印出分解结果。</p>
+<p><code class="docutils literal notranslate"><span class="pre">math-game</span></code>源代码：<a class="reference external" href="https://github.com/alibaba/arthas/blob/master/demo/src/main/java/demo/MathGame.java">查看</a></p>
 </div>
 <div class="section" id="arthas">
 <h2>2. 启动arthas<a class="headerlink" href="#arthas" title="永久链接至标题">¶</a></h2>
@@ -222,9 +221,9 @@ java -jar arthas-boot.jar</pre></div>
 <p>选择应用java进程：</p>
 <div class="highlight-bash notranslate"><div class="highlight hljs"><pre class="bash">$ $ java -jar arthas-boot.jar
 * [1]: 35542
-  [2]: 71560 arthas-demo.jar</pre></div>
+  [2]: 71560 math-game.jar</pre></div>
 </div>
-<p>Demo进程是第2个，则输入2，再输入<code class="docutils literal notranslate"><span class="pre">回车/enter</span></code>。Arthas会attach到目标进程上，并输出日志：</p>
+<p><code class="docutils literal notranslate"><span class="pre">math-game</span></code>进程是第2个，则输入2，再输入<code class="docutils literal notranslate"><span class="pre">回车/enter</span></code>。Arthas会attach到目标进程上，并输出日志：</p>
 <div class="highlight-bash notranslate"><div class="highlight hljs"><pre class="bash">[INFO] Try to attach process 71560
 [INFO] Attach process 71560 success.
 [INFO] arthas-client connect 127.0.0.1 3658
@@ -278,8 +277,8 @@ java.home              /Library/Java/JavaVir
                        e/jre</pre></div>
 </div>
 </div>
-<div class="section" id="threadarthas-demomain-class">
-<h2>4. 通过thread命令来获取到<code class="docutils literal notranslate"><span class="pre">arthas-demo</span></code>进程的Main Class<a class="headerlink" href="#threadarthas-demomain-class" title="永久链接至标题">¶</a></h2>
+<div class="section" id="threadmath-gamemain-class">
+<h2>4. 通过thread命令来获取到<code class="docutils literal notranslate"><span class="pre">math-game</span></code>进程的Main Class<a class="headerlink" href="#threadmath-gamemain-class" title="永久链接至标题">¶</a></h2>
 <p><code class="docutils literal notranslate"><span class="pre">thread</span> <span class="pre">1</span></code>会打印线程ID 1的栈，通常是main函数的线程。</p>
 <div class="highlight-bash notranslate"><div class="highlight hljs"><pre class="bash">$ thread 1 | grep &#x27;main(&#x27;
     at demo.MathGame.main(MathGame.java:17)</pre></div>
@@ -294,7 +293,7 @@ ClassLoader:
   +-sun.misc.Launcher$ExtClassLoader@66350f69
 
 Location:
-/tmp/arthas-demo.jar
+/tmp/math-game.jar
 
 /*
  * Decompiled with CFR 0_132.

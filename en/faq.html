@@ -216,7 +216,7 @@
 <ol class="simple">
 <li><p>Check whether the current user and the target java process are consistent. If they are inconsistent, switch to the same user. JVM can only attach java processes under the same user.</p></li>
 <li><p>Try to use <code class="docutils literal notranslate"><span class="pre">jstack</span> <span class="pre">-l</span> <span class="pre">$pid</span></code>. If the process does not respond, it means that the process may freeze and fail to respond to the JVM attach signal. So Arthas based on the attach mechanism cannot work. Try to use <code class="docutils literal notranslate"><span class="pre">jmap</span></code> heapdump to analyze.</p></li>
-<li><p>Try to attach arthas-demo in <a class="reference internal" href="quick-start.html"><span class="doc">quick-start</span></a>.</p></li>
+<li><p>Try to attach math-game in <a class="reference internal" href="quick-start.html"><span class="doc">quick-start</span></a>.</p></li>
 <li><p>For more information:  <a class="reference external" href="https://github.com/alibaba/arthas/issues/347">https://github.com/alibaba/arthas/issues/347</a></p></li>
 </ol>
 </div>
@@ -245,7 +245,7 @@
 <h2>How to filter method with the same name?<a class="headerlink" href="#how-to-filter-method-with-the-same-name" title="Permalink to this headline">¶</a></h2>
 <p>You can used all variables in <a class="reference internal" href="advice-class.html"><span class="doc">fundamental fields in expressions</span></a> for the condition express to filter method with the same name, you can use the number of parameters <code class="docutils literal notranslate"><span class="pre">params.length</span> <span class="pre">==1</span></code>,parameter type <code class="docutils literal notranslate"><span class="pre">params[0]</span> <span class="pre">instanceof</span> <span class="pre">java.lang.Integer</span></code>,return value type <code class="docutils literal notranslate"><span class="pre">returnObj</span> <span class="pre">instanceof</span> <span class="pre">java.util.List</span></code> and so on in one or more combinations as condition express.</p>
 <p>You can use <code class="docutils literal notranslate"><span class="pre">-v</span></code> to view the condition express result <a class="reference external" href="https://github.com/alibaba/arthas/issues/1348">https://github.com/alibaba/arthas/issues/1348</a></p>
-<p>example <a class="reference internal" href="quick-start.html"><span class="doc">arthas-demo</span></a></p>
+<p>example <a class="reference internal" href="quick-start.html"><span class="doc">math-game</span></a></p>
 <div class="highlight-bash notranslate"><div class="highlight hljs"><pre class="bash">watch demo.MathGame primeFactors traceE &#x27;{params,returnObj,throwExp}&#x27; -v -n 5 -x 3 &#x27;params.length &gt;0 &amp;&amp; returnObj instanceof java.util.List&#x27;</pre></div>
 </div>
 </div>

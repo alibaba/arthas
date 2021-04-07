@@ -209,7 +209,7 @@
 <h1>Start as a Java Agent<a class="headerlink" href="#start-as-a-java-agent" title="Permalink to this headline">¶</a></h1>
 <p>Usually Arthas dynamic attach the applications on the fly, but from version <code class="docutils literal notranslate"><span class="pre">3.2.0</span></code> onwards, Arthas supports starting directly as a java agent.</p>
 <p>For example, download the full arthas zip package, decompress it and start it by specifying <code class="docutils literal notranslate"><span class="pre">arthas-agent.jar</span></code> with the parameter <code class="docutils literal notranslate"><span class="pre">-javaagent</span></code>.</p>
-<div class="highlight-default notranslate"><pre class="literal-block">java -javaagent:/tmp/test/arthas-agent.jar -jar arthas-demo.jar</pre>
+<div class="highlight-default notranslate"><pre class="literal-block">java -javaagent:/tmp/test/arthas-agent.jar -jar math-game.jar</pre>
 </div>
 <p>The default configuration is in the <code class="docutils literal notranslate"><span class="pre">arthas.properties</span></code> file in the decompression directory. Reference: <a class="reference internal" href="arthas-properties.html"><span class="doc">Arthas Properties</span></a></p>
 <p>Reference: https://docs.oracle.com/javase/8/docs/api/java/lang/instrument/package-summary.html</p>
