@@ -1,7 +1,7 @@
 Quick Start
 ===========
 
-## 1. Start Demo Application
+## 1. Start math-game
 
 ```bash
 curl -O https://arthas.aliyun.com/math-game.jar
@@ -35,7 +35,7 @@ $ $ java -jar arthas-boot.jar
   [2]: 71560 math-game.jar
 ```
 
-The 'Demo' process is the second as shown above, press '2' then 'Enter'. Arthas will attach to the target process, and start to output:
+The `math-game` process is the second as shown above, press '2' then 'Enter'. Arthas will attach to the target process, and start to output:
 
 ```bash
 [INFO] Try to attach process 71560

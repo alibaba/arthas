@@ -1,7 +1,7 @@
 快速入门
 ===
 
-## 1. 启动Demo
+## 1. 启动math-game
 
 ```bash
 curl -O https://arthas.aliyun.com/math-game.jar
@@ -36,7 +36,7 @@ $ $ java -jar arthas-boot.jar
   [2]: 71560 math-game.jar
 ```
 
-Demo进程是第2个，则输入2，再输入`回车/enter`。Arthas会attach到目标进程上，并输出日志：
+`math-game`进程是第2个，则输入2，再输入`回车/enter`。Arthas会attach到目标进程上，并输出日志：
 
 ```bash
 [INFO] Try to attach process 71560
