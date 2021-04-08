@@ -398,7 +398,7 @@ Arthas有超过120家登记用户，[查看全部](USERS.md)。
 ![有赞](static/youzan.png)
 
 
-### 洐生项目
+### 衍生项目
 
 * [Bistoury: 一个集成了Arthas的项目](https://github.com/qunarcorp/bistoury)
 * [一个使用MVEL脚本的fork](https://github.com/XhinLiang/arthas)
