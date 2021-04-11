@@ -55,7 +55,7 @@ import static com.taobao.arthas.boot.ProcessUtils.STATUS_EXEC_TIMEOUT;
                 + "  java -jar arthas-boot.jar -f batch.as <pid>\n"
                 + "  java -jar arthas-boot.jar --use-version 3.5.0\n"
                 + "  java -jar arthas-boot.jar --versions\n"
-                + "  java -jar arthas-boot.jar --select arthas-demo\n"
+                + "  java -jar arthas-boot.jar --select math-game\n"
                 + "  java -jar arthas-boot.jar --session-timeout 3600\n" + "  java -jar arthas-boot.jar --attach-only\n"
                 + "  java -jar arthas-boot.jar --repo-mirror aliyun --use-http\n" + "WIKI:\n"
                 + "  https://arthas.aliyun.com/doc\n")

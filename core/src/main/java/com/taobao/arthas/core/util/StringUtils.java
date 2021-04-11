@@ -12,7 +12,11 @@ import java.util.Set;
 import java.util.StringTokenizer;
 import java.util.TreeSet;
 
+import com.alibaba.arthas.deps.org.slf4j.Logger;
+import com.alibaba.arthas.deps.org.slf4j.LoggerFactory;
+
 public abstract class StringUtils {
+    private static final Logger logger = LoggerFactory.getLogger(StringUtils.class);
     private static final String AB = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
 
     /**
@@ -41,7 +45,10 @@ public abstract class StringUtils {
         try {
             return obj.toString();
         } catch (Throwable t) {
-            return "ERROR DATA!!! Method toString() throw exception. obj class: " + obj.getClass() + ", exception message: " + t.getMessage();
+            logger.error("objectToString error, obj class: {}", obj.getClass(), t);
+            return "ERROR DATA!!! Method toString() throw exception. obj class: " + obj.getClass()
+                    + ", exception class: " + t.getClass()
+                    + ", exception message: " + t.getMessage();
         }
     }
 

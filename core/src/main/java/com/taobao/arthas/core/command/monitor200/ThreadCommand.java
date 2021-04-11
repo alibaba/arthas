@@ -188,7 +188,14 @@ public class ThreadCommand extends AnnotatedCommand {
         List<ThreadVO> threadStats = threadSampler.sample(ThreadUtil.getThreads());
 
         int limit = Math.min(threadStats.size(), topNBusy);
-        List<ThreadVO> topNThreads = threadStats.subList(0, limit);
+
+        List<ThreadVO> topNThreads = null;
+        if (limit > 0) {
+            topNThreads = threadStats.subList(0, limit);
+        } else { // -1 for all threads
+            topNThreads = threadStats;
+        }
+
         List<Long> tids = new ArrayList<Long>(topNThreads.size());
         for (ThreadVO thread : topNThreads) {
             if (thread.getId() > 0) {

@@ -126,6 +126,7 @@ Welcome to register the company name in this issue: https://github.com/alibaba/a
 ![折耳根科技](static/zheergen.png)
 ![qdama](static/qdm_logo.png)
 ![有赞](static/youzan.png)
+![中原银行](static/zhongyuanbank.png)
 
 * 网易云
 * 派迩信息技术
@@ -149,3 +150,7 @@ Welcome to register the company name in this issue: https://github.com/alibaba/a
 * 启迪出行
 * 大华股份
 * 黄豆伟业
+* 中国有赞
+* 车巴达
+* 华为
+* 云管书

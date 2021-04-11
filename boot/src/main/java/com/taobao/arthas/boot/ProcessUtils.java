@@ -65,7 +65,7 @@ public class ProcessUtils {
         }
 
         if (processMap.isEmpty()) {
-            AnsiLog.info("Can not find java process. Try to pass <pid> in command line.");
+            AnsiLog.info("Can not find java process. Try to run `jps` command lists the instrumented Java HotSpot VMs on the target system.");
             return -1;
         }
 

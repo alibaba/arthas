@@ -42,7 +42,7 @@ watch 的参数比较多，主要是因为它能在 4 个不同的场景观察�
 
 #### 启动 Demo
 
-启动[快速入门](quick-start.md)里的`arthas-demo`。
+启动[快速入门](quick-start.md)里的`math-game`。
 
 #### 观察方法出参和返回值
 
