@@ -41,7 +41,7 @@ Advanced:
 
 #### Start Demo
 
-Start `arthas-demo` in [Quick Start](quick-start.md).
+Start `math-game` in [Quick Start](quick-start.md).
 
 #### Check the `out parameters` and `return value`
 
@@ -51,7 +51,7 @@ Press Ctrl+C to abort.
 Affect(class-cnt:1 , method-cnt:1) cost in 44 ms.
 ts=2018-12-03 19:16:51; [cost=1.280502ms] result=@ArrayList[
     @Object[][
-        @Integer[535629513],
+        @Integer[1],
     ],
     @ArrayList[
         @Integer[3],
@@ -90,7 +90,7 @@ Press Ctrl+C to abort.
 Affect(class-cnt:1 , method-cnt:1) cost in 46 ms.
 ts=2018-12-03 19:29:54; [cost=0.01696ms] result=@ArrayList[
     @Object[][
-        @Integer[1544665400],
+        @Integer[1],
     ],
     @MathGame[
         random=@Random[java.util.Random@522b408a],
@@ -100,7 +100,7 @@ ts=2018-12-03 19:29:54; [cost=0.01696ms] result=@ArrayList[
 ]
 ts=2018-12-03 19:29:54; [cost=4.277392ms] result=@ArrayList[
     @Object[][
-        @Integer[1544665400],
+        @Integer[1],
     ],
     @MathGame[
         random=@Random[java.util.Random@522b408a],
@@ -133,7 +133,7 @@ Press Ctrl+C to abort.
 Affect(class-cnt:1 , method-cnt:1) cost in 58 ms.
 ts=2018-12-03 19:34:19; [cost=0.587833ms] result=@ArrayList[
     @Object[][
-        @Integer[47816758],
+        @Integer[1],
     ],
     @MathGame[
         random=@Random[
@@ -199,7 +199,7 @@ Press Ctrl+C to abort.
 Affect(class-cnt:1 , method-cnt:1) cost in 66 ms.
 ts=2018-12-03 19:40:28; [cost=2112.168897ms] result=@ArrayList[
     @Object[][
-        @Integer[2141897465],
+        @Integer[1],
     ],
     @ArrayList[
         @Integer[5],
@@ -234,6 +234,23 @@ Affect(class-cnt:1 , method-cnt:1) cost in 67 ms.
 ts=2018-12-03 20:04:34; [cost=131.303498ms] result=@Integer[8]
 ts=2018-12-03 20:04:35; [cost=0.961441ms] result=@Integer[8]
 ``` 
+
+#### Get a static field and calling a static method 
+
+```bash
+watch demo.MathGame * '{params,@demo.MathGame@random.nextInt(100)}' -v -n 1 -x 2
+[arthas@6527]$ watch demo.MathGame * '{params,@demo.MathGame@random.nextInt(100)}' -n 1 -x 2
+Press Q or Ctrl+C to abort.
+Affect(class count: 1 , method count: 5) cost in 34 ms, listenerId: 3
+ts=2021-01-05 21:35:20; [cost=0.173966ms] result=@ArrayList[
+    @Object[][
+        @Integer[-138282],
+    ],
+    @Integer[89],
+]
+```
+
+* Note that here you use `Thread.currentThread().getContextClassLoader()` to load, and it is better to use the exact `classloader` [ognl](ognl.md).
 
 
 #### Exclude the specified class
@@ -277,14 +294,14 @@ Condition express: params[0] > 100000 , result: false
 Condition express: params[0] > 100000 , result: false
 Condition express: params[0] > 100000 , result: true
 ts=2020-12-02 22:38:56; [cost=0.060843ms] result=@Object[][
-    @Integer[200033],
+    @Integer[1],
     @ArrayList[
         @Integer[200033],
     ],
 ]
 Condition express: params[0] > 100000 , result: true
 ts=2020-12-02 22:38:57; [cost=0.052877ms] result=@Object[][
-    @Integer[123047],
+    @Integer[1],
     @ArrayList[
         @Integer[29],
         @Integer[4243],

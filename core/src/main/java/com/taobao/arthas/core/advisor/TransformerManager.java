@@ -23,6 +23,11 @@ public class TransformerManager {
     private Instrumentation instrumentation;
     private List<ClassFileTransformer> watchTransformers = new CopyOnWriteArrayList<ClassFileTransformer>();
     private List<ClassFileTransformer> traceTransformers = new CopyOnWriteArrayList<ClassFileTransformer>();
+    
+    /**
+     * 先于 watch/trace的 Transformer TODO 改进为全部用 order 排序？
+     */
+    private List<ClassFileTransformer> reTransformers = new CopyOnWriteArrayList<ClassFileTransformer>();
 
     private ClassFileTransformer classFileTransformer;
 
@@ -34,6 +39,13 @@ public class TransformerManager {
             @Override
             public byte[] transform(ClassLoader loader, String className, Class<?> classBeingRedefined,
                     ProtectionDomain protectionDomain, byte[] classfileBuffer) throws IllegalClassFormatException {
+                for (ClassFileTransformer classFileTransformer : reTransformers) {
+                    byte[] transformResult = classFileTransformer.transform(loader, className, classBeingRedefined,
+                            protectionDomain, classfileBuffer);
+                    if (transformResult != null) {
+                        classfileBuffer = transformResult;
+                    }
+                }
 
                 for (ClassFileTransformer classFileTransformer : watchTransformers) {
                     byte[] transformResult = classFileTransformer.transform(loader, className, classBeingRedefined,
@@ -66,12 +78,18 @@ public class TransformerManager {
         }
     }
 
+    public void addRetransformer(ClassFileTransformer transformer) {
+        reTransformers.add(transformer);
+    }
+
     public void removeTransformer(ClassFileTransformer transformer) {
+        reTransformers.remove(transformer);
         watchTransformers.remove(transformer);
         traceTransformers.remove(transformer);
     }
 
     public void destroy() {
+        reTransformers.clear();
         watchTransformers.clear();
         traceTransformers.clear();
         instrumentation.removeTransformer(classFileTransformer);

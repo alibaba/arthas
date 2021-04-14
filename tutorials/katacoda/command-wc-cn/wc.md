@@ -11,7 +11,7 @@ ClassLoader:
   +-sun.misc.Launcher$ExtClassLoader@7a616cb1
 
 Location:
-/home/scrapbook/tutorial/arthas-demo.jar
+/home/scrapbook/tutorial/math-game.jar
 
 public static void main(String[] args) throws InterruptedException {
     MathGame game = new MathGame();

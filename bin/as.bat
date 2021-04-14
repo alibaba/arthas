@@ -24,6 +24,7 @@ if ["%~1"]==[""] (
   goto exit_bat
 )
 
+set JAVA_TOOL_OPTIONS
 set AGENT_JAR=%BASEDIR%\arthas-agent.jar
 set CORE_JAR=%BASEDIR%\arthas-core.jar
 

@@ -10,6 +10,7 @@ public class WelcomeModel extends ResultModel {
     private String version;
     private String wiki;
     private String tutorials;
+    private String mainClass;
 
     public WelcomeModel() {
     }
@@ -57,5 +58,13 @@ public class WelcomeModel extends ResultModel {
 
     public void setTutorials(String tutorials) {
         this.tutorials = tutorials;
+    }
+
+    public String getMainClass() {
+        return mainClass;
+    }
+
+    public void setMainClass(String mainClass) {
+        this.mainClass = mainClass;
     }
 }

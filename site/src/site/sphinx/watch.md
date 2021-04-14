@@ -42,7 +42,7 @@ watch 的参数比较多，主要是因为它能在 4 个不同的场景观察�
 
 #### 启动 Demo
 
-启动[快速入门](quick-start.md)里的`arthas-demo`。
+启动[快速入门](quick-start.md)里的`math-game`。
 
 #### 观察方法出参和返回值
 
@@ -52,7 +52,7 @@ Press Ctrl+C to abort.
 Affect(class-cnt:1 , method-cnt:1) cost in 44 ms.
 ts=2018-12-03 19:16:51; [cost=1.280502ms] result=@ArrayList[
     @Object[][
-        @Integer[535629513],
+        @Integer[1],
     ],
     @ArrayList[
         @Integer[3],
@@ -88,7 +88,7 @@ Press Ctrl+C to abort.
 Affect(class-cnt:1 , method-cnt:1) cost in 46 ms.
 ts=2018-12-03 19:29:54; [cost=0.01696ms] result=@ArrayList[
     @Object[][
-        @Integer[1544665400],
+        @Integer[1],
     ],
     @MathGame[
         random=@Random[java.util.Random@522b408a],
@@ -98,7 +98,7 @@ ts=2018-12-03 19:29:54; [cost=0.01696ms] result=@ArrayList[
 ]
 ts=2018-12-03 19:29:54; [cost=4.277392ms] result=@ArrayList[
     @Object[][
-        @Integer[1544665400],
+        @Integer[1],
     ],
     @MathGame[
         random=@Random[java.util.Random@522b408a],
@@ -131,7 +131,7 @@ Press Ctrl+C to abort.
 Affect(class-cnt:1 , method-cnt:1) cost in 58 ms.
 ts=2018-12-03 19:34:19; [cost=0.587833ms] result=@ArrayList[
     @Object[][
-        @Integer[47816758],
+        @Integer[1],
     ],
     @MathGame[
         random=@Random[
@@ -199,7 +199,7 @@ Press Ctrl+C to abort.
 Affect(class-cnt:1 , method-cnt:1) cost in 66 ms.
 ts=2018-12-03 19:40:28; [cost=2112.168897ms] result=@ArrayList[
     @Object[][
-        @Integer[2141897465],
+        @Integer[1],
     ],
     @ArrayList[
         @Integer[5],
@@ -234,6 +234,23 @@ Affect(class-cnt:1 , method-cnt:1) cost in 67 ms.
 ts=2018-12-03 20:04:34; [cost=131.303498ms] result=@Integer[8]
 ts=2018-12-03 20:04:35; [cost=0.961441ms] result=@Integer[8]
 ``` 
+
+#### 获取类的静态字段、调用类的静态方法的例子
+
+```bash
+watch demo.MathGame * '{params,@demo.MathGame@random.nextInt(100)}' -v -n 1 -x 2
+[arthas@6527]$ watch demo.MathGame * '{params,@demo.MathGame@random.nextInt(100)}' -n 1 -x 2
+Press Q or Ctrl+C to abort.
+Affect(class count: 1 , method count: 5) cost in 34 ms, listenerId: 3
+ts=2021-01-05 21:35:20; [cost=0.173966ms] result=@ArrayList[
+    @Object[][
+        @Integer[-138282],
+    ],
+    @Integer[89],
+]
+```
+
+* 注意这里使用 `Thread.currentThread().getContextClassLoader()` 加载,使用精确`classloader` [ognl](ognl.md)更好。
 
 #### 排除掉指定的类
 

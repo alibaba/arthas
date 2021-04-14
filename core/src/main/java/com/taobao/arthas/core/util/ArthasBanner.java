@@ -114,6 +114,7 @@ public class ArthasBanner {
                         .row("wiki", wiki())
                         .row("tutorials", tutorials())
                         .row("version", version())
+                        .row("main_class", PidUtils.mainClass())
                         .row("pid", PidUtils.currentPid())
                         .row("time", DateUtils.getCurrentDate());
         for (Entry<String, String> entry : infos.entrySet()) {

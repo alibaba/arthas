@@ -20,7 +20,7 @@ echo "classpath: $class_path"`{{execute T3}}
 输出内容：
 
 ```
-classpath: arthas-demo.jar
+classpath: math-game.jar
 ```
 
 注意：

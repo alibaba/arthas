@@ -307,7 +307,7 @@ public class TimeTunnelCommand extends EnhancerCommand {
 
     @Override
     protected Matcher getClassNameExcludeMatcher() {
-        if (classNameExcludeMatcher == null) {
+        if (classNameExcludeMatcher == null && getExcludeClassPattern() != null) {
             classNameExcludeMatcher = SearchUtils.classNameMatcher(getExcludeClassPattern(), isRegEx());
         }
         return classNameExcludeMatcher;

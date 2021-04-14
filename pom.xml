@@ -56,6 +56,7 @@
     <url>https://github.com/alibaba/arthas</url>
 
     <modules>
+        <module>math-game</module>
         <module>spy</module>
         <module>common</module>
         <module>tunnel-common</module>
@@ -67,11 +68,156 @@
         <module>boot</module>
         <module>arthas-agent-attach</module>
         <module>arthas-spring-boot-starter</module>
-        <module>demo</module>
         <module>testcase</module>
         <module>site</module>
         <module>packaging</module>
     </modules>
+
+    <properties>
+        <revision>3.5.1-SNAPSHOT</revision>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <maven.compiler.target>1.6</maven.compiler.target>
+        <maven.compiler.source>1.6</maven.compiler.source>
+        <spring-boot.version>2.3.1.RELEASE</spring-boot.version>
+        <maven-invoker-plugin.version>3.0.0</maven-invoker-plugin.version>
+        <jacoco.skip>${skipTests}</jacoco.skip>
+        <project.build.outputTimestamp>2020-09-27T15:10:43Z</project.build.outputTimestamp>
+        <lifecycle-mapping.version>1.0.0</lifecycle-mapping.version>
+        <netty.version>4.1.59.Final</netty.version>
+    </properties>
+
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>com.alibaba</groupId>
+                <artifactId>bytekit-core</artifactId>
+                <version>0.0.5</version>
+            </dependency>
+            <dependency>
+                <groupId>org.benf</groupId>
+                <artifactId>cfr</artifactId>
+                <version>0.151</version>
+            </dependency>
+            <dependency>
+                <groupId>com.alibaba.middleware</groupId>
+                <artifactId>termd-core</artifactId>
+                <version>1.1.7.11</version>
+            </dependency>
+            <dependency>
+                <groupId>com.alibaba.middleware</groupId>
+                <artifactId>cli</artifactId>
+                <version>1.0.4</version>
+            </dependency>
+            <dependency>
+                <groupId>org.slf4j</groupId>
+                <artifactId>slf4j-api</artifactId>
+                <version>1.7.30</version>
+            </dependency>
+            <dependency>
+                <groupId>ch.qos.logback</groupId>
+                <artifactId>logback-classic</artifactId>
+                <version>1.2.3</version>
+            </dependency>
+            <dependency>
+                <groupId>ch.qos.logback</groupId>
+                <artifactId>logback-core</artifactId>
+                <version>1.2.3</version>
+            </dependency>
+            <dependency>
+                <groupId>com.alibaba.arthas</groupId>
+                <artifactId>arthas-repackage-logger</artifactId>
+                <version>0.0.8</version>
+            </dependency>
+            <dependency>
+                <groupId>com.alibaba</groupId>
+                <artifactId>fastjson</artifactId>
+                <version>1.2.75</version>
+            </dependency>
+            <dependency>
+                <groupId>com.taobao.text</groupId>
+                <artifactId>text-ui</artifactId>
+                <version>0.0.2</version>
+            </dependency>
+            <dependency>
+                <groupId>com.fifesoft</groupId>
+                <artifactId>rsyntaxtextarea</artifactId>
+                <version>2.5.8</version>
+            </dependency>
+            <dependency>
+                <groupId>ognl</groupId>
+                <artifactId>ognl</artifactId>
+                <version>3.1.19</version>
+            </dependency>
+            <dependency>
+                <groupId>junit</groupId>
+                <artifactId>junit</artifactId>
+                <version>4.13.1</version>
+                <scope>test</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.assertj</groupId>
+                <artifactId>assertj-core</artifactId>
+                <version>2.9.1</version>
+                <scope>test</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.mockito</groupId>
+                <artifactId>mockito-core</artifactId>
+                <version>2.28.2</version>
+                <scope>test</scope>
+            </dependency>
+
+            <dependency>
+                <groupId>io.netty</groupId>
+                <artifactId>netty-common</artifactId>
+                <version>${netty.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.netty</groupId>
+                <artifactId>netty-buffer</artifactId>
+                <version>${netty.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.netty</groupId>
+                <artifactId>netty-handler</artifactId>
+                <version>${netty.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.netty</groupId>
+                <artifactId>netty-transport</artifactId>
+                <version>${netty.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.netty</groupId>
+                <artifactId>netty-codec-http</artifactId>
+                <version>${netty.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>jline</groupId>
+                <artifactId>jline</artifactId>
+                <version>2.14.6</version>
+            </dependency>
+
+            <dependency>
+                <groupId>net.bytebuddy</groupId>
+                <artifactId>byte-buddy</artifactId>
+                <version>1.10.18</version>
+            </dependency>
+
+            <dependency>
+                <groupId>net.bytebuddy</groupId>
+                <artifactId>byte-buddy-agent</artifactId>
+                <version>1.10.18</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.zeroturnaround</groupId>
+                <artifactId>zt-zip</artifactId>
+                <version>1.14</version>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
 
     <profiles>
         <profile>
@@ -195,156 +341,6 @@
             </build>
         </profile>
     </profiles>
-
-    <properties>
-        <revision>3.4.6-SNAPSHOT</revision>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <maven.compiler.target>1.6</maven.compiler.target>
-        <maven.compiler.source>1.6</maven.compiler.source>
-        <spring-boot.version>2.3.1.RELEASE</spring-boot.version>
-        <maven-invoker-plugin.version>3.0.0</maven-invoker-plugin.version>
-        <jacoco.skip>${skipTests}</jacoco.skip>
-        <project.build.outputTimestamp>2020-09-27T15:10:43Z</project.build.outputTimestamp>
-        <lifecycle-mapping.version>1.0.0</lifecycle-mapping.version>
-    </properties>
-
-    <dependencyManagement>
-        <dependencies>
-            <dependency>
-                <groupId>com.alibaba</groupId>
-                <artifactId>bytekit-core</artifactId>
-                <version>0.0.4-SNAPSHOT</version>
-            </dependency>
-            <dependency>
-                <groupId>org.benf</groupId>
-                <artifactId>cfr</artifactId>
-                <version>0.150</version>
-            </dependency>
-            <dependency>
-                <groupId>com.alibaba.middleware</groupId>
-                <artifactId>termd-core</artifactId>
-                <version>1.1.7.11</version>
-            </dependency>
-            <dependency>
-                <groupId>com.alibaba.middleware</groupId>
-                <artifactId>cli</artifactId>
-                <version>1.0.4</version>
-            </dependency>
-            <dependency>
-                <groupId>org.slf4j</groupId>
-                <artifactId>slf4j-api</artifactId>
-                <version>1.7.25</version>
-            </dependency>
-            <dependency>
-                <groupId>ch.qos.logback</groupId>
-                <artifactId>logback-classic</artifactId>
-                <version>1.2.3</version>
-            </dependency>
-            <dependency>
-                <groupId>ch.qos.logback</groupId>
-                <artifactId>logback-core</artifactId>
-                <version>1.2.3</version>
-            </dependency>
-            <dependency>
-                <groupId>com.alibaba.arthas</groupId>
-                <artifactId>arthas-repackage-logger</artifactId>
-                <version>0.0.6</version>
-            </dependency>
-            <dependency>
-                <groupId>com.alibaba.arthas</groupId>
-                <artifactId>arthas-repackage-asm</artifactId>
-                <version>0.0.6</version>
-            </dependency>
-            <dependency>
-                <groupId>com.alibaba</groupId>
-                <artifactId>fastjson</artifactId>
-                <version>1.2.75</version>
-            </dependency>
-            <dependency>
-                <groupId>com.taobao.text</groupId>
-                <artifactId>text-ui</artifactId>
-                <version>0.0.2</version>
-            </dependency>
-            <dependency>
-                <groupId>com.fifesoft</groupId>
-                <artifactId>rsyntaxtextarea</artifactId>
-                <version>2.5.8</version>
-            </dependency>
-            <dependency>
-                <groupId>ognl</groupId>
-                <artifactId>ognl</artifactId>
-                <version>3.1.19</version>
-            </dependency>
-            <dependency>
-                <groupId>junit</groupId>
-                <artifactId>junit</artifactId>
-                <version>4.13.1</version>
-                <scope>test</scope>
-            </dependency>
-            <dependency>
-                <groupId>org.assertj</groupId>
-                <artifactId>assertj-core</artifactId>
-                <version>2.9.1</version>
-                <scope>test</scope>
-            </dependency>
-            <dependency>
-                <groupId>org.mockito</groupId>
-                <artifactId>mockito-core</artifactId>
-                <version>2.28.2</version>
-                <scope>test</scope>
-            </dependency>
-
-            <dependency>
-                <groupId>io.netty</groupId>
-                <artifactId>netty-common</artifactId>
-                <version>4.1.46.Final</version>
-            </dependency>
-            <dependency>
-                <groupId>io.netty</groupId>
-                <artifactId>netty-buffer</artifactId>
-                <version>4.1.46.Final</version>
-            </dependency>
-            <dependency>
-                <groupId>io.netty</groupId>
-                <artifactId>netty-handler</artifactId>
-                <version>4.1.46.Final</version>
-            </dependency>
-            <dependency>
-                <groupId>io.netty</groupId>
-                <artifactId>netty-transport</artifactId>
-                <version>4.1.46.Final</version>
-            </dependency>
-            <dependency>
-                <groupId>io.netty</groupId>
-                <artifactId>netty-codec-http</artifactId>
-                <version>4.1.46.Final</version>
-            </dependency>
-
-            <dependency>
-                <groupId>jline</groupId>
-                <artifactId>jline</artifactId>
-                <version>2.14.6</version>
-            </dependency>
-
-            <dependency>
-                <groupId>net.bytebuddy</groupId>
-                <artifactId>byte-buddy</artifactId>
-                <version>1.10.18</version>
-            </dependency>
-
-            <dependency>
-                <groupId>net.bytebuddy</groupId>
-                <artifactId>byte-buddy-agent</artifactId>
-                <version>1.10.18</version>
-            </dependency>
-
-            <dependency>
-                <groupId>org.zeroturnaround</groupId>
-                <artifactId>zt-zip</artifactId>
-                <version>1.14</version>
-            </dependency>
-        </dependencies>
-    </dependencyManagement>
 
     <build>
         <pluginManagement>

@@ -57,6 +57,7 @@ public class ResultViewResolver {
             registerView(MemoryCompilerView.class);
             registerView(OgnlView.class);
             registerView(RedefineView.class);
+            registerView(RetransformView.class);
             registerView(SearchClassView.class);
             registerView(SearchMethodView.class);
 

@@ -2,6 +2,8 @@ package com.taobao.arthas.core.shell.term.impl.httptelnet;
 
 import java.nio.charset.Charset;
 
+import com.taobao.arthas.core.shell.term.impl.http.session.HttpSessionManager;
+
 import io.netty.util.concurrent.EventExecutorGroup;
 import io.termd.core.function.Consumer;
 import io.termd.core.function.Supplier;
@@ -22,8 +24,8 @@ public class NettyHttpTelnetTtyBootstrap {
     private boolean inBinary;
     private Charset charset = Charset.forName("UTF-8");
 
-    public NettyHttpTelnetTtyBootstrap(EventExecutorGroup workerGroup) {
-        this.httpTelnetTtyBootstrap = new NettyHttpTelnetBootstrap(workerGroup);
+    public NettyHttpTelnetTtyBootstrap(EventExecutorGroup workerGroup, HttpSessionManager httpSessionManager) {
+        this.httpTelnetTtyBootstrap = new NettyHttpTelnetBootstrap(workerGroup, httpSessionManager);
     }
 
     public String getHost() {

@@ -161,6 +161,15 @@ public class Enhancer implements ClassFileTransformer {
                 }
             }
 
+            // https://github.com/alibaba/arthas/issues/1690
+            if (AsmUtils.isEnhancerByCGLIB(className)) {
+                for (MethodNode methodNode : matchedMethods) {
+                    if (AsmUtils.isConstructor(methodNode)) {
+                        AsmUtils.fixConstructorExceptionTable(methodNode);
+                    }
+                }
+            }
+
             // 用于检查是否已插入了 spy函数，如果已有则不重复处理
             GroupLocationFilter groupLocationFilter = new GroupLocationFilter();
 

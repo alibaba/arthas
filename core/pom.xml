@@ -225,7 +225,7 @@
         </dependency>
         <dependency>
             <groupId>com.taobao.arthas</groupId>
-            <artifactId>arthas-demo</artifactId>
+            <artifactId>math-game</artifactId>
             <version>${project.version}</version>
             <scope>test</scope>
         </dependency>
