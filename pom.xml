@@ -68,6 +68,8 @@
         <module>boot</module>
         <module>arthas-agent-attach</module>
         <module>arthas-spring-boot-starter</module>
+        <module>arthas-tunnel-server-spring-boot-starter</module>
+        <module>arthas-tunnel-server-spring-boot-admin-starter</module>
         <module>testcase</module>
         <module>site</module>
         <module>packaging</module>

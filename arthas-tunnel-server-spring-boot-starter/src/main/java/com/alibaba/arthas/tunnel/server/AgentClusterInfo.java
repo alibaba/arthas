@@ -2,6 +2,7 @@ package com.alibaba.arthas.tunnel.server;
 
 /**
  * @author hengyunabc 2020-10-30
+ * @author Naah 2021-04-17
  *
  */
 public class AgentClusterInfo {
@@ -11,6 +12,7 @@ public class AgentClusterInfo {
     private String host;
     private int port;
     private String arthasVersion;
+    private String metadata;
 
     /**
      * agent 连接到的 tunnel server 的ip
@@ -26,6 +28,7 @@ public class AgentClusterInfo {
         this.port = agentInfo.getPort();
         this.arthasVersion = agentInfo.getArthasVersion();
         this.clientConnectHost = clientConnectHost;
+        this.metadata = agentInfo.getMetadata();
     }
 
     public String getHost() {
@@ -54,6 +57,14 @@ public class AgentClusterInfo {
 
     public String getClientConnectHost() {
         return clientConnectHost;
+    }
+
+    public String getMetadata() {
+        return metadata;
+    }
+
+    public void setMetadata(String metadata) {
+        this.metadata = metadata;
     }
 
     public void setClientConnectHost(String clientConnectHost) {

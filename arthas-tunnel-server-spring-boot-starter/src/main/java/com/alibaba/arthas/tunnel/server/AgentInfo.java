@@ -5,8 +5,9 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import io.netty.channel.ChannelHandlerContext;
 
 /**
- * 
+ *
  * @author hengyunabc 2019-08-27
+ * @author Naah 2021-04-17
  *
  */
 public class AgentInfo {
@@ -16,6 +17,8 @@ public class AgentInfo {
     private String host;
     private int port;
     private String arthasVersion;
+    private String appName;
+    private String metadata;
 
     public ChannelHandlerContext getChannelHandlerContext() {
         return channelHandlerContext;
@@ -49,4 +52,19 @@ public class AgentInfo {
         this.arthasVersion = arthasVersion;
     }
 
+    public String getAppName() {
+        return appName;
+    }
+
+    public void setAppName(String appName) {
+        this.appName = appName;
+    }
+
+    public String getMetadata() {
+        return metadata;
+    }
+
+    public void setMetadata(String metadata) {
+        this.metadata = metadata;
+    }
 }

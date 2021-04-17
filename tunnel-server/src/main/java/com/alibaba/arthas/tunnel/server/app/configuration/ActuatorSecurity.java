@@ -1,4 +1,4 @@
-package com.alibaba.arthas.tunnel.server.endpoint;
+package com.alibaba.arthas.tunnel.server.app.configuration;
 
 import org.springframework.boot.actuate.autoconfigure.security.servlet.EndpointRequest;
 import org.springframework.context.annotation.Configuration;

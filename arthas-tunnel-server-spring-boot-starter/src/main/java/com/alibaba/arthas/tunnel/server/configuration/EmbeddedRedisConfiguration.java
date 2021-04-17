@@ -1,4 +1,4 @@
-package com.alibaba.arthas.tunnel.server.app.configuration;
+package com.alibaba.arthas.tunnel.server.configuration;
 
 import org.springframework.boot.autoconfigure.AutoConfigureBefore;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -6,13 +6,13 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-import com.alibaba.arthas.tunnel.server.app.configuration.ArthasProperties.EmbeddedRedis;
+import com.alibaba.arthas.tunnel.server.configuration.ArthasProperties.EmbeddedRedis;
 
 import redis.embedded.RedisServer;
 import redis.embedded.RedisServerBuilder;
 
 /**
- * 
+ *
  * @author hengyunabc 2020-11-03
  *
  */

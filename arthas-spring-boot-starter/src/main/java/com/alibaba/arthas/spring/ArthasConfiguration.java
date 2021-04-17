@@ -1,9 +1,7 @@
 package com.alibaba.arthas.spring;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Map.Entry;
-
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.taobao.arthas.agent.attach.ArthasAgent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,11 +12,15 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.context.annotation.Bean;
 import org.springframework.core.env.ConfigurableEnvironment;
 
-import com.taobao.arthas.agent.attach.ArthasAgent;
+import java.net.InetAddress;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Map.Entry;
 
 /**
- * 
+ *
  * @author hengyunabc 2020-06-22
+ * @author Naah 2021-04-17
  *
  */
 @ConditionalOnProperty(name = "spring.arthas.enabled", matchIfMissing = true)
@@ -50,11 +52,25 @@ public class ArthasConfiguration {
             arthasConfigMap.put("appName", appName);
         }
 
-		// 给配置全加上前缀
+        Map<String,String> metadata=new HashMap<String, String>();
+        String serviceIp = InetAddress.getLocalHost().getHostAddress();
+        String servicePort = environment.getProperty("server.port");
+
+        if (serviceIp!=null && !"".equals(serviceIp)) {
+            metadata.put("serviceIp",serviceIp);
+        }
+
+        if (servicePort!=null && !"".equals(servicePort)) {
+            metadata.put("servicePort",servicePort);
+        }
+
+        // 给配置全加上前缀
 		Map<String, String> mapWithPrefix = new HashMap<String, String>(arthasConfigMap.size());
 		for (Entry<String, String> entry : arthasConfigMap.entrySet()) {
 			mapWithPrefix.put("arthas." + entry.getKey(), entry.getValue());
 		}
+
+        mapWithPrefix.put("arthas.metadata",new ObjectMapper().writeValueAsString(metadata));
 
 		final ArthasAgent arthasAgent = new ArthasAgent(mapWithPrefix, arthasProperties.getHome(),
 				arthasProperties.isSlientInit(), null);

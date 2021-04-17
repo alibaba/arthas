@@ -22,3 +22,4 @@ dependency-reduced-pom.xml
 pom.xml.versionsBackup
 .pmd
 **/.flattened-pom.xml
+**/node_modules

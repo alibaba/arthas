@@ -83,6 +83,7 @@ import io.netty.util.concurrent.EventExecutorGroup;
 /**
  * @author vlinux on 15/5/2.
  * @author hengyunabc
+ * @author Naah 2021-04-17
  */
 public class ArthasBootstrap {
     private static final String ARTHAS_SPY_JAR = "arthas-spy.jar";
@@ -242,7 +243,7 @@ public class ArthasBootstrap {
             InstrumentationUtils.trigerRetransformClasses(instrumentation, loaders);
         }
     }
-    
+
     private void initArthasEnvironment(Map<String, String> argsMap) throws IOException {
         if (arthasEnvironment == null) {
             arthasEnvironment = new ArthasEnvironment();
@@ -373,6 +374,7 @@ public class ArthasBootstrap {
                 tunnelClient.setId(configure.getAgentId());
                 tunnelClient.setTunnelServerUrl(configure.getTunnelServer());
                 tunnelClient.setVersion(ArthasBanner.version());
+                tunnelClient.setMetadata(configure.getMetadata());
                 ChannelFuture channelFuture = tunnelClient.start();
                 channelFuture.await(10, TimeUnit.SECONDS);
             }
