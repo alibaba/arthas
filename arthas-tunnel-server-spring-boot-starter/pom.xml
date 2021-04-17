@@ -13,14 +13,6 @@
     <artifactId>arthas-tunnel-server-spring-boot-starter</artifactId>
     <name>arthas-tunnel-server-spring-boot-starter</name>
 
-    <properties>
-        <maven.compiler.target>1.8</maven.compiler.target>
-        <maven.compiler.source>1.8</maven.compiler.source>
-        <java.version>1.8</java.version>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-    </properties>
-
     <dependencyManagement>
         <dependencies>
             <dependency>
@@ -98,33 +90,4 @@
             </exclusions>
         </dependency>
     </dependencies>
-
-<!--    <build>-->
-<!--        <plugins>-->
-<!--            <plugin>-->
-<!--                <artifactId>maven-invoker-plugin</artifactId>-->
-<!--                <version>${maven-invoker-plugin.version}</version>-->
-<!--                <configuration>-->
-<!--                    &lt;!&ndash; <debug>true</debug> &ndash;&gt;-->
-<!--                    <cloneProjectsTo>${project.build.directory}/it</cloneProjectsTo>-->
-<!--                    <projectsDirectory>src/it</projectsDirectory>-->
-<!--                    <settingsFile>src/it/settings.xml</settingsFile>-->
-<!--                    <localRepositoryPath>${project.build.directory}/local-repo</localRepositoryPath>-->
-<!--                    <skipInvocation>${skipTests}</skipInvocation>-->
-<!--                    <streamLogs>true</streamLogs>-->
-<!--                    <preBuildHookScript>setup</preBuildHookScript>-->
-<!--                    <postBuildHookScript>verify</postBuildHookScript>-->
-<!--                </configuration>-->
-<!--                <executions>-->
-<!--                    <execution>-->
-<!--                        <id>integration-test</id>-->
-<!--                        <goals>-->
-<!--                            <goal>install</goal>-->
-<!--                            <goal>run</goal>-->
-<!--                        </goals>-->
-<!--                    </execution>-->
-<!--                </executions>-->
-<!--            </plugin>-->
-<!--        </plugins>-->
-<!--    </build>-->
 </project>
