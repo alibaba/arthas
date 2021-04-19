@@ -48,8 +48,7 @@ public class TunnelClusterStoreConfiguration {
     @Bean
     @ConditionalOnMissingBean
     public TunnelClusterStore tunnelClusterStore(CacheManager cacheManager, CacheProperties cacheProperties, @Autowired(required = false) RedisServer c, ApplicationContext context) {
-        if (cacheManager instanceof RedisCacheManager) {
-
+        if ("org.springframework.data.redis.cache.RedisCacheManager".equals(cacheManager.getClass().getName())) {
             try {
                 Class<?> redisConnectionFactoryClass = Class.forName("org.springframework.data.redis.connection.RedisConnectionFactory");
                 Object bean = context.getBean(redisConnectionFactoryClass);
