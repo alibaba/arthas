@@ -3,7 +3,7 @@ package com.vdian.vclub;
 import org.junit.Test;
 
 import java.lang.ref.WeakReference;
-import java.util.LinkedList;
+import java.util.ArrayList;
 
 public class JvmUtilsTest {
 
@@ -22,14 +22,14 @@ public class JvmUtilsTest {
     public void test01() {
         try {
             //调用native方法，获取已加载的类，不包括小类型(如int)
-            LinkedList<Class<?>> allLoadedClasses = JvmUtils.getAllLoadedClasses();
+            ArrayList<Class<?>> allLoadedClasses = JvmUtils.getAllLoadedClasses();
             System.out.println("allLoadedClasses->" + allLoadedClasses.size());
 
             //通过下面的例子，可以看到getInstances(Class<T> klass)拿到的是当前存活的所有对象
             WeakReference<JvmUtils> weakReference1 = new WeakReference<JvmUtils>(new JvmUtils());
             WeakReference<JvmUtils> weakReference2 = new WeakReference<JvmUtils>(new JvmUtils());
             System.out.println(weakReference1.get() + " " + weakReference2.get());
-            LinkedList<JvmUtils> beforeInstances = JvmUtils.getInstances(JvmUtils.class);
+            ArrayList<JvmUtils> beforeInstances = JvmUtils.getInstances(JvmUtils.class);
             System.out.println("before instances->" + beforeInstances);
             System.out.println("size->" + JvmUtils.getInstanceSize(weakReference1.get()));
             System.out.println("count->" + JvmUtils.countInstances(JvmUtils.class));
@@ -39,7 +39,7 @@ public class JvmUtilsTest {
             System.gc();
             Thread.sleep(100);
             System.out.println(weakReference1.get() + " " + weakReference2.get());
-            LinkedList<JvmUtils> afterInstances = JvmUtils.getInstances(JvmUtils.class);
+            ArrayList<JvmUtils> afterInstances = JvmUtils.getInstances(JvmUtils.class);
             System.out.println("after instances->" + afterInstances);
         } catch (Exception e) {
             e.printStackTrace();

@@ -66,15 +66,15 @@ Java_com_vdian_vclub_JvmUtils_getInstances(JNIEnv *env, jclass thisClass, jclass
         return JNI_FALSE;
     }
 
-    //通过其签名找到LinkedList的Class
-    jclass linkedListClass = env->FindClass("java/util/LinkedList");
-    jobject linkedList = createJavaInstance(env, linkedListClass);
-    jmethodID addMethod = env->GetMethodID(linkedListClass, "add", "(Ljava/lang/Object;)Z");
-    //添加元素到LinkedList实例
+    //通过其签名找到ArrayList的Class
+    jclass arrayListClass = env->FindClass("java/util/ArrayList");
+    jobject arrayList = createJavaInstance(env, arrayListClass);
+    jmethodID addMethod = env->GetMethodID(arrayListClass, "add", "(Ljava/lang/Object;)Z");
+    //添加元素到ArrayList实例
     for (int i = 0; i < count; i++) {
-        env->CallObjectMethod(linkedList, addMethod, instances[i]);
+        env->CallObjectMethod(arrayList, addMethod, instances[i]);
     }
-    return linkedList;
+    return arrayList;
 }
 
 extern "C"
@@ -108,7 +108,6 @@ Java_com_vdian_vclub_JvmUtils_sumInstanceSize(JNIEnv *env, jclass thisClass, jcl
     }
 
     jlong sum = 0;
-    //添加元素到LinkedList实例
     for (int i = 0; i < count; i++) {
         jlong size = 0;
         jvmti->GetObjectSize(instances[i], &size);
@@ -178,13 +177,13 @@ JNIEXPORT jobject JNICALL Java_com_vdian_vclub_JvmUtils_getAllLoadedClasses
         return JNI_FALSE;
     }
 
-    //通过其签名找到LinkedList的Class
-    jclass linkedListClass = env->FindClass("java/util/LinkedList");
-    jobject linkedList = createJavaInstance(env, linkedListClass);
-    jmethodID addMethod = env->GetMethodID(linkedListClass, "add", "(Ljava/lang/Object;)Z");
-    //添加元素到LinkedList实例
+    //通过其签名找到ArrayList的Class
+    jclass arrayListClass = env->FindClass("java/util/ArrayList");
+    jobject arrayList = createJavaInstance(env, arrayListClass);
+    jmethodID addMethod = env->GetMethodID(arrayListClass, "add", "(Ljava/lang/Object;)Z");
+    //添加元素到ArrayList实例
     for (int i = 0; i < count; i++) {
-        env->CallObjectMethod(linkedList, addMethod, classes[i]);
+        env->CallObjectMethod(arrayList, addMethod, classes[i]);
     }
-    return linkedList;
+    return arrayList;
 }

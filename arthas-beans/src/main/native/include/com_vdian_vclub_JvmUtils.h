@@ -18,7 +18,7 @@ JNIEXPORT jstring JNICALL Java_com_vdian_vclub_JvmUtils_check
 /*
  * Class:     com_vdian_vclub_JvmUtils
  * Method:    getInstances
- * Signature: (Ljava/lang/Class;)Ljava/util/LinkedList;
+ * Signature: (Ljava/lang/Class;)Ljava/util/ArrayList;
  */
 JNIEXPORT jobject JNICALL Java_com_vdian_vclub_JvmUtils_getInstances
   (JNIEnv *, jclass, jclass);
@@ -50,7 +50,7 @@ JNIEXPORT jlong JNICALL Java_com_vdian_vclub_JvmUtils_countInstances
 /*
  * Class:     com_vdian_vclub_JvmUtils
  * Method:    getAllLoadedClasses
- * Signature: ()Ljava/util/LinkedList;
+ * Signature: ()Ljava/util/ArrayList;
  */
 JNIEXPORT jobject JNICALL Java_com_vdian_vclub_JvmUtils_getAllLoadedClasses
   (JNIEnv *, jclass);
