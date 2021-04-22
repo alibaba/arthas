@@ -22,6 +22,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 import com.alibaba.arthas.tunnel.common.MethodConstants;
 import com.alibaba.arthas.tunnel.common.SimpleHttpResponse;
 import com.alibaba.arthas.tunnel.common.URIConstans;
+import com.alibaba.arthas.tunnel.server.utils.HttpUtils;
 
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
@@ -62,7 +63,7 @@ public class TunnelSocketFrameHandler extends SimpleChannelInboundHandler<WebSoc
             logger.info("websocket handshake complete, uri: {}", uri);
 
             MultiValueMap<String, String> parameters = UriComponentsBuilder.fromUriString(uri).build().getQueryParams();
-            String method = parameters.getFirst("method");
+            String method = parameters.getFirst(URIConstans.METHOD);
 
             if (MethodConstants.CONNECT_ARTHAS.equals(method)) { // form browser
                 connectArthas(ctx, parameters);
@@ -70,7 +71,7 @@ public class TunnelSocketFrameHandler extends SimpleChannelInboundHandler<WebSoc
                 agentRegister(ctx, handshake, uri);
             }
             if (MethodConstants.OPEN_TUNNEL.equals(method)) { // from arthas agent open tunnel
-                String clientConnectionId = parameters.getFirst("clientConnectionId");
+                String clientConnectionId = parameters.getFirst(URIConstans.CLIENT_CONNECTION_ID);
                 openTunnel(ctx, clientConnectionId);
             }
         } else {
@@ -123,7 +124,7 @@ public class TunnelSocketFrameHandler extends SimpleChannelInboundHandler<WebSoc
         List<String> agentId = parameters.getOrDefault("id", Collections.emptyList());
 
         if (agentId.isEmpty()) {
-            logger.error("arthas agent id can not be null, parameters: ", parameters);
+            logger.error("arthas agent id can not be null, parameters: {}", parameters);
             throw new IllegalArgumentException("arthas agent id can not be null");
         }
 
@@ -247,8 +248,7 @@ public class TunnelSocketFrameHandler extends SimpleChannelInboundHandler<WebSoc
 
         // 前面可能有nginx代理
         HttpHeaders headers = handshake.requestHeaders();
-        String host = headers.get("X-Real-IP");
-        String portStr = headers.get("X-Real-Port");
+        String host = HttpUtils.findClientIP(headers);
 
         if (host == null) {
             SocketAddress remoteAddress = ctx.channel().remoteAddress();
@@ -259,13 +259,9 @@ public class TunnelSocketFrameHandler extends SimpleChannelInboundHandler<WebSoc
             }
         } else {
             info.setHost(host);
-            try {
-                if (portStr != null) {
-                    int port = Integer.parseInt(portStr);
-                    info.setPort(port);
-                }
-            } catch (Throwable e) {
-                // ignore
+            Integer port = HttpUtils.findClientPort(headers);
+            if (port != null) {
+                info.setPort(port);
             }
         }
 

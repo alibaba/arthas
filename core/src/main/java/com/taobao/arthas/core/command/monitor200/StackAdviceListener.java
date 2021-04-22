@@ -19,7 +19,6 @@ import java.util.Date;
 public class StackAdviceListener extends AdviceListenerAdapter {
     private static final Logger logger = LoggerFactory.getLogger(StackAdviceListener.class);
 
-    private final ThreadLocal<StackModel> stackThreadLocal = new ThreadLocal<StackModel>();
     private final ThreadLocalWatch threadLocalWatch = new ThreadLocalWatch();
     private StackCommand command;
     private CommandProcess process;
@@ -33,7 +32,6 @@ public class StackAdviceListener extends AdviceListenerAdapter {
     @Override
     public void before(ClassLoader loader, Class<?> clazz, ArthasMethod method, Object target, Object[] args)
             throws Throwable {
-        stackThreadLocal.set(ThreadUtil.getThreadStackModel(loader, Thread.currentThread()));
         // 开始计算本次方法调用耗时
         threadLocalWatch.start();
     }
@@ -62,8 +60,7 @@ public class StackAdviceListener extends AdviceListenerAdapter {
             }
             if (conditionResult) {
                 // TODO: concurrency issues for process.write
-                // TODO: should clear stackThreadLocal?
-                StackModel stackModel = stackThreadLocal.get();
+                StackModel stackModel = ThreadUtil.getThreadStackModel(advice.getLoader(), Thread.currentThread());
                 stackModel.setTs(new Date());
                 process.appendResult(stackModel);
                 process.times().incrementAndGet();

@@ -83,3 +83,20 @@ $ options save-result true
 ----------------------------------------                                                                           
  save-result  false         true
 ```
+
+### Set `unsafe` to true to enhance the classes under the `java.*` package
+
+By default, `watch`/`trace`/`tt`/`trace`/`monitor` command do not support classes under `java.*` package. You can set `unsafe` to true to enhance the classes under the `java.*` package.
+
+```bash
+$ options unsafe true
+ NAME    BEFORE-VALUE  AFTER-VALUE
+-----------------------------------
+ unsafe  false         true
+```
+
+```bash
+$ watch java.lang.invoke.Invokers callSiteForm
+Press Q or Ctrl+C to abort.
+Affect(class count: 1 , method count: 1) cost in 61 ms, listenerId: 1
+```

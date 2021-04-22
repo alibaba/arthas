@@ -204,7 +204,7 @@ public class MBeanView extends ResultView<MBeanModel> {
             table.row(new LabelElement(title).style(Decoration.bold.fg(Color.yellow)));
             for (String fieldName : fieldNames) {
                 Object fieldValue = descriptor.getFieldValue(fieldName);
-                table.row(fieldName, fieldValue.toString());
+                table.row(fieldName, fieldValue == null ? "" : fieldValue.toString());
             }
         }
     }

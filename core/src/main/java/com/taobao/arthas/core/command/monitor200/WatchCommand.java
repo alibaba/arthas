@@ -28,6 +28,7 @@ import com.taobao.middleware.cli.annotations.Summary;
         "  watch *StringUtils isBlank params[0] params[0].length==1\n" +
         "  watch *StringUtils isBlank params '#cost>100'\n" +
         "  watch -E -b org\\.apache\\.commons\\.lang\\.StringUtils isBlank params[0]\n" +
+        "  watch javax.servlet.Filter * --exclude-class-pattern com.demo.TestFilter\n" +
         Constants.WIKI + Constants.WIKI_HOME + "watch")
 public class WatchCommand extends EnhancerCommand {
 
@@ -171,6 +172,14 @@ public class WatchCommand extends EnhancerCommand {
             classNameMatcher = SearchUtils.classNameMatcher(getClassPattern(), isRegEx());
         }
         return classNameMatcher;
+    }
+
+    @Override
+    protected Matcher getClassNameExcludeMatcher() {
+        if (classNameExcludeMatcher == null && getExcludeClassPattern() != null) {
+            classNameExcludeMatcher = SearchUtils.classNameMatcher(getExcludeClassPattern(), isRegEx());
+        }
+        return classNameExcludeMatcher;
     }
 
     @Override

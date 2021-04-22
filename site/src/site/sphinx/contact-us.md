@@ -2,7 +2,14 @@
 ===
 
 
+
+## 招聘
+
+* [期待你的加入](https://mp.weixin.qq.com/s/k5jozrSgmyH0tcQfrDkxUQ)
 ### Issues
+
+
+
 
 使用疑问，意见可以直接在Issues里提出： [https://github.com/alibaba/arthas/issues](https://github.com/alibaba/arthas/issues)
 

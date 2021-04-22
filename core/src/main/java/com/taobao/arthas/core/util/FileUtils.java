@@ -158,8 +158,10 @@ public class FileUtils {
         try {
             out = new BufferedOutputStream(openOutputStream(file, false));
             for (String command: history) {
-                out.write(command.getBytes("utf-8"));
-                out.write('\n');
+                if (!StringUtils.isBlank(command)) {
+                    out.write(command.getBytes("utf-8"));
+                    out.write('\n');
+                }
             }
         } catch (IOException e) {
             // ignore
@@ -181,7 +183,9 @@ public class FileUtils {
             br = new BufferedReader(new InputStreamReader(new FileInputStream(file), "utf-8"));
             String line;
             while ((line = br.readLine()) != null) {
-                history.add(line);
+                if (!StringUtils.isBlank(line)) {
+                    history.add(line);
+                }
             }
         } catch (IOException e) {
             // ignore

@@ -12,6 +12,7 @@ import org.slf4j.LoggerFactory;
 
 import com.alibaba.arthas.tunnel.common.SimpleHttpResponse;
 import com.alibaba.arthas.tunnel.server.cluster.TunnelClusterStore;
+import com.taobao.arthas.common.ArthasConstants;
 
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.Channel;
@@ -33,12 +34,11 @@ import io.netty.util.concurrent.Promise;
  */
 public class TunnelServer {
     private final static Logger logger = LoggerFactory.getLogger(TunnelServer.class);
-    public static final String DEFAULT_WEBSOCKET_PATH = "/ws";
 
     private boolean ssl;
     private String host;
     private int port;
-    private String path = DEFAULT_WEBSOCKET_PATH;
+    private String path = ArthasConstants.DEFAULT_WEBSOCKET_PATH;
 
     private Map<String, AgentInfo> agentInfoMap = new ConcurrentHashMap<String, AgentInfo>();
 

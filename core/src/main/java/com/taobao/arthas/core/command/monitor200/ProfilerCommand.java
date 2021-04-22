@@ -433,10 +433,16 @@ public class ProfilerCommand extends AnnotatedCommand {
         return profilerModel;
     }
 
-    private String outputFile() {
+    private String outputFile() throws IOException {
         if (this.file == null) {
-            this.file = new File("arthas-output",
-                    new SimpleDateFormat("yyyyMMdd-HHmmss").format(new Date()) + "." + this.format).getAbsolutePath();
+            File outputPath = ArthasBootstrap.getInstance().getOutputPath();
+            if (outputPath != null) {
+                this.file = new File(outputPath,
+                        new SimpleDateFormat("yyyyMMdd-HHmmss").format(new Date()) + "." + this.format)
+                                .getAbsolutePath();
+            } else {
+                this.file = File.createTempFile("arthas-output", "." + this.format).getAbsolutePath();
+            }
         }
         return file;
     }

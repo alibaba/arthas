@@ -68,7 +68,6 @@ public class LogUtil {
             loggerContext.reset();
 
             String fileName = env.getProperty(FILE_NAME_PROPERTY);
-            ;
             if (fileName != null) {
                 loggerContext.putProperty(ARTHAS_LOG_FILE, fileName);
             }

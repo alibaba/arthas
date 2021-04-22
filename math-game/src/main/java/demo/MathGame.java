@@ -8,7 +8,7 @@ import java.util.concurrent.TimeUnit;
 public class MathGame {
     private static Random random = new Random();
 
-    public int illegalArgumentCount = 0;
+    private int illegalArgumentCount = 0;
 
     public static void main(String[] args) throws InterruptedException {
         MathGame game = new MathGame();

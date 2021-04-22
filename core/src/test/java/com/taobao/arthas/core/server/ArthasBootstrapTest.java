@@ -5,10 +5,12 @@ import static org.assertj.core.api.Assertions.assertThat;
 import java.lang.instrument.Instrumentation;
 
 import org.jboss.modules.ModuleClassLoader;
+import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
 import org.mockito.internal.util.reflection.FieldSetter;
 
+import com.taobao.arthas.common.JavaVersionUtils;
 import com.taobao.arthas.core.bytecode.TestHelper;
 import com.taobao.arthas.core.config.Configure;
 
@@ -20,6 +22,12 @@ import net.bytebuddy.agent.ByteBuddyAgent;
  *
  */
 public class ArthasBootstrapTest {
+    @Before
+    public void beforeMethod() {
+        // jboss modules need jdk8
+        org.junit.Assume.assumeTrue(JavaVersionUtils.isGreaterThanJava7());
+    }
+
     @Test
     public void test() throws Exception {
         Instrumentation instrumentation = ByteBuddyAgent.install();

@@ -22,6 +22,8 @@ public class NetUtils {
     private static final int QOS_PORT = 12201;
     private static final String QOS_RESPONSE_START_LINE = "pandora>[QOS Response]";
     private static final int INTERNAL_SERVER_ERROR = 500;
+    private static final int CONNECT_TIMEOUT = 1000;
+    private static final int READ_TIMEOUT = 3000;
 
     /**
      * This implementation is based on Apache HttpClient.
@@ -34,6 +36,8 @@ public class NetUtils {
         try {
             URL url = new URL(urlString);
             urlConnection = (HttpURLConnection)url.openConnection();
+            urlConnection.setConnectTimeout(CONNECT_TIMEOUT);
+            urlConnection.setReadTimeout(READ_TIMEOUT);;
             // prefer json to text
             urlConnection.setRequestProperty("Accept", "application/json,text/plain;q=0.2");
             in = urlConnection.getInputStream();

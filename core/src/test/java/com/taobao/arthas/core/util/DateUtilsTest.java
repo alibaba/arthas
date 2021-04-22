@@ -13,16 +13,18 @@ public class DateUtilsTest {
     @Test
     public void testGetCurrentDateWithCorrectFormat() {
     	
-    	SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss"); //supported date format
-    	Assert.assertEquals(DateUtils.getCurrentDate(),dateFormat.format(new Date()).toString());
-        
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss"); // supported date format
+        Date date = new Date();
+        Assert.assertEquals(DateUtils.formatDate(date), dateFormat.format(date).toString());
+
     }
     
     @Test
     public void testGetCurrentDateWithInCorrectFormat() {
     	
-    	SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm"); // Not supported Date format
-    	Assert.assertNotEquals(DateUtils.getCurrentDate(),dateFormat.format(new Date()).toString());
-        
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm"); // Not supported Date format
+        Date date = new Date();
+        Assert.assertNotEquals(DateUtils.formatDate(date), dateFormat.format(date).toString());
+
     }
  }

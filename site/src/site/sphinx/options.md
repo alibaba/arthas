@@ -79,3 +79,20 @@ $ options save-result true
 ----------------------------------------                                                                           
  save-result  false         true
 ```
+
+### 打开unsafe开关，支持jdk package下的类
+
+默认情况下，`watch`/`trace`/`tt`/`trace`/`monitor`等命令不支持`java.*` package下的类。可以设置`unsafe`为true，则可以增强。
+
+```bash
+$ options unsafe true
+ NAME    BEFORE-VALUE  AFTER-VALUE
+-----------------------------------
+ unsafe  false         true
+```
+
+```bash
+$ watch java.lang.invoke.Invokers callSiteForm
+Press Q or Ctrl+C to abort.
+Affect(class count: 1 , method count: 1) cost in 61 ms, listenerId: 1
+```

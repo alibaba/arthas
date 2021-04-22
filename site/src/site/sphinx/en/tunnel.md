@@ -90,6 +90,8 @@ For the above example, go to [http://47.75.156.201/arthas/?port=80](http://47.75
 
 ### Best practices
 
+> Note that the agentId must be unique, otherwise it will conflict on the tunnel server and not work properly.
+
 If the arthas agent is configured with `appName`, the generated agentId will be prefixed with `appName`.
 
 For example, if you add the startup parameter `as.sh --tunnel-server 'ws://127.0.0.1:7777/ws' --app-name demoapp`, the generated agentId might be `demoapp_URJZ5L48RPBR2ALI5K4V`.

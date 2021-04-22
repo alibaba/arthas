@@ -38,7 +38,7 @@ $ classloader -l
 
 List all classes loaded by `org.apache.jasper.servlet.JasperLoader`:
 
-`classloader -a --classLoaderClass apache.jasper.servlet.JasperLoader`{{execute T2}}
+`classloader -a --classLoaderClass org.apache.jasper.servlet.JasperLoader`{{execute T2}}
 
 ```bash
 $ classloader -a --classLoaderClass apache.jasper.servlet.JasperLoader
