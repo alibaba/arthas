@@ -18,13 +18,18 @@ import com.taobao.arthas.core.shell.system.impl.InternalCommandManager;
 import com.taobao.arthas.core.shell.system.impl.JobControllerImpl;
 import com.taobao.arthas.core.shell.term.Term;
 import com.taobao.arthas.core.shell.term.impl.TermImpl;
+import com.taobao.arthas.core.shell.term.impl.http.ExtHttpTtyConnection;
 import com.taobao.arthas.core.util.Constants;
 import com.taobao.arthas.core.util.FileUtils;
+
+import io.termd.core.tty.TtyConnection;
 
 import java.io.File;
 import java.lang.instrument.Instrumentation;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 import java.util.UUID;
 
@@ -49,6 +54,18 @@ public class ShellImpl implements Shell {
 
     public ShellImpl(ShellServer server, Term term, InternalCommandManager commandManager,
             Instrumentation instrumentation, long pid, JobControllerImpl jobController) {
+        if (term instanceof TermImpl) {
+            TermImpl termImpl = (TermImpl) term;
+            TtyConnection conn = termImpl.getConn();
+            if (conn instanceof ExtHttpTtyConnection) {
+                // 传递http cookie 里的鉴权信息到新建立的session中
+                ExtHttpTtyConnection extConn = (ExtHttpTtyConnection) conn;
+                Map<String, Object> extSessions = extConn.extSessions();
+                for (Entry<String, Object> entry : extSessions.entrySet()) {
+                    session.put(entry.getKey(), entry.getValue());
+                }
+            }
+        }
         session.put(Session.COMMAND_MANAGER, commandManager);
         session.put(Session.INSTRUMENTATION, instrumentation);
         session.put(Session.PID, pid);

@@ -59,7 +59,8 @@ public class HttpRequestHandler extends SimpleChannelInboundHandler<FullHttpRequ
 
     @Override
     protected void channelRead0(ChannelHandlerContext ctx, FullHttpRequest request) throws Exception {
-        if (wsUri.equalsIgnoreCase(request.uri())) {
+        String path = new URI(request.uri()).getPath();
+        if (wsUri.equalsIgnoreCase(path)) {
             ctx.fireChannelRead(request.retain());
         } else {
             if (HttpUtil.is100ContinueExpected(request)) {
@@ -67,7 +68,6 @@ public class HttpRequestHandler extends SimpleChannelInboundHandler<FullHttpRequ
             }
 
             HttpResponse response = null;
-            String path = new URI(request.uri()).getPath();
             if ("/".equals(path)) {
                 path = "/index.html";
             }
@@ -77,12 +77,12 @@ public class HttpRequestHandler extends SimpleChannelInboundHandler<FullHttpRequ
             try {
                 //handle http restful api
                 if ("/api".equals(path)) {
-                    response = httpApiHandler.handle(request);
+                    response = httpApiHandler.handle(ctx, request);
                     isHttpApiResponse = true;
                 }
 
                 //handle webui requests
-                if (path.equals("/ui")){
+                if (path.equals("/ui")) {
                     response = createRedirectResponse(request, "/ui/");
                 }
                 if (path.equals("/ui/")) {
@@ -90,30 +90,29 @@ public class HttpRequestHandler extends SimpleChannelInboundHandler<FullHttpRequ
                 }
 
                 //try classpath resource first
-                if (response == null){
+                if (response == null) {
                     response = readFileFromResource(request, path);
                 }
 
                 //try output dir later, avoid overlay classpath resources files
-                if (response == null){
-                    response = DirectoryBrowser.directView(dir, path, request,ctx);
+                if (response == null) {
+                    response = DirectoryBrowser.directView(dir, path, request, ctx);
                     isFileResponseFinished = (response == null) ? false : true;
                 }
 
                 //not found
-                if (response == null){
+                if (response == null) {
                     response = createResponse(request, HttpResponseStatus.NOT_FOUND, "Not found");
                 }
             } catch (Throwable e) {
                 logger.error("arthas process http request error: " + request.uri(), e);
             } finally {
                 //If it is null, an error may occur
-                if (response == null){
+                if (response == null) {
                     response = createResponse(request, HttpResponseStatus.INTERNAL_SERVER_ERROR, "Server error");
                 }
-                if(!isFileResponseFinished) {
-                    ctx.write(response);
-                    ChannelFuture future = ctx.writeAndFlush(LastHttpContent.EMPTY_LAST_CONTENT);
+                if (!isFileResponseFinished) {
+                    ChannelFuture future = writeResponse(ctx, response);
                     future.addListener(ChannelFutureListener.CLOSE);
                     //reuse http api response buf
                     if (isHttpApiResponse && response instanceof DefaultFullHttpResponse) {
@@ -130,6 +129,20 @@ public class HttpRequestHandler extends SimpleChannelInboundHandler<FullHttpRequ
         }
     }
 
+    private ChannelFuture writeResponse(ChannelHandlerContext ctx, HttpResponse response) {
+        // try to add content-length header for DefaultFullHttpResponse
+        if (!HttpUtil.isTransferEncodingChunked(response)
+            && response instanceof DefaultFullHttpResponse) {
+            response.headers().set(HttpHeaderNames.CONTENT_LENGTH,
+                ((DefaultFullHttpResponse) response).content().readableBytes());
+            return ctx.writeAndFlush(response);
+        }
+
+        //chunk response
+        ctx.write(response);
+        return ctx.writeAndFlush(LastHttpContent.EMPTY_LAST_CONTENT);
+    }
+
     private HttpResponse readFileFromResource(FullHttpRequest request, String path) throws IOException {
         DefaultFullHttpResponse fullResp = null;
         InputStream in = null;
@@ -137,7 +150,7 @@ public class HttpRequestHandler extends SimpleChannelInboundHandler<FullHttpRequ
             URL res = HttpTtyConnection.class.getResource("/com/taobao/arthas/core/http" + path);
             if (res != null) {
                 fullResp = new DefaultFullHttpResponse(request.protocolVersion(),
-                        HttpResponseStatus.OK);
+                    HttpResponseStatus.OK);
                 in = res.openStream();
                 byte[] tmp = new byte[256];
                 for (int l = 0; l != -1; l = in.read(tmp)) {

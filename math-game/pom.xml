@@ -7,11 +7,11 @@
         <version>${revision}</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
-    <artifactId>arthas-demo</artifactId>
-    <name>arthas-demo</name>
+    <artifactId>math-game</artifactId>
+    <name>math-game</name>
 
     <build>
-        <finalName>arthas-demo</finalName>
+        <finalName>math-game</finalName>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>

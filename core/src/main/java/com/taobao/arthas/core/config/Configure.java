@@ -28,6 +28,9 @@ public class Configure {
     private String tunnelServer;
     private String agentId;
 
+    private String username;
+    private String password;
+
     /**
      * @see com.taobao.arthas.common.ArthasConstants#ARTHAS_OUTPUT
      */
@@ -159,6 +162,22 @@ public class Configure {
 
     public void setOutputPath(String outputPath) {
         this.outputPath = outputPath;
+    }
+
+    public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
     }
 
     /**

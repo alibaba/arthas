@@ -3,6 +3,10 @@
 
 > For questions that are not in this list, please search in issues. [https://github.com/alibaba/arthas/issues](https://github.com/alibaba/arthas/issues)
 
+
+##### Where is the log file?
+
+Log file path: `~/logs/arthas/arthas.log`
 ##### How much impact does Arthas attach have on the performance of the original process?
 
 [https://github.com/alibaba/arthas/issues/44](https://github.com/alibaba/arthas/issues/44)
@@ -14,7 +18,8 @@ com.sun.tools.attach.AttachNotSupportedException: Unable to open socket file: ta
 
 1. Check whether the current user and the target java process are consistent. If they are inconsistent, switch to the same user. JVM can only attach java processes under the same user.
 2. Try to use `jstack -l $pid`. If the process does not respond, it means that the process may freeze and fail to respond to the JVM attach signal. So Arthas based on the attach mechanism cannot work. Try to use `jmap` heapdump to analyze.
-3. Try to attach arthas-demo in [quick-start](quick-start.md).
+3. Try to attach math-game in [quick-start](quick-start.md).
+4. For more information:  [https://github.com/alibaba/arthas/issues/347](https://github.com/alibaba/arthas/issues/347)
 
 
 ##### Can commands such as trace/watch enhance the classes in jdk?
@@ -52,7 +57,7 @@ You can used all variables in [fundamental fields in expressions](advice-class.m
 
 You can use `-v` to view the condition express result [https://github.com/alibaba/arthas/issues/1348](https://github.com/alibaba/arthas/issues/1348)
 
-example [arthas-demo](quick-start.md)
+example [math-game](quick-start.md)
 
 ```bash
 watch demo.MathGame primeFactors traceE '{params,returnObj,throwExp}' -v -n 5 -x 3 'params.length >0 && returnObj instanceof java.util.List'
@@ -75,3 +80,7 @@ For example: use skywalking V8.1.0 below [cannot trace, watch classes enhanced b
 ##### Can I use arthas offline?
 
 Yes. Just download the full size package and unzip it, refer to: [Download](download.md).
+
+##### Attach the process with pid 1 in docker/k8s failed
+
+Reference: [https://github.com/alibaba/arthas/issues/362#issuecomment-448185416](https://github.com/alibaba/arthas/issues/362#issuecomment-448185416)

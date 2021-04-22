@@ -221,6 +221,10 @@ public class TermImpl implements Term {
         }
     }
 
+    public TtyConnection getConn() {
+        return conn;
+    }
+
     public void echo(int... codePoints) {
         Consumer<int[]> out = conn.stdoutHandler();
         for (int codePoint : codePoints) {

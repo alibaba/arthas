@@ -49,6 +49,7 @@ as.sh --tunnel-server 'ws://47.75.156.201:80/ws'
 
 * 如果有特殊需求，可以通过`--agent-id`参数里指定agentId。默认情况下，会生成随机ID。
 
+
 attach成功之后，会打印出agentId，比如：
 
 ```bash
@@ -87,6 +88,8 @@ id        URJZ5L48RPBR2ALI5K4V
 
 
 ### 最佳实践
+
+> 注意，agentId要保持唯一，否则会在tunnel server上冲突，不能正常工作。
 
 如果 arthas agent配置了 `appName`，则生成的agentId会带上`appName`的前缀。
 

@@ -115,6 +115,9 @@ public class JvmCommand extends AnnotatedCommand {
     }
 
     private void addCompilation(JvmModel jvmModel) {
+        if (compilationMXBean == null) {
+            return;
+        }
         String group = "COMPILATION";
         jvmModel.addItem(group, "NAME", compilationMXBean.getName());
         if (compilationMXBean.isCompilationTimeMonitoringSupported()) {

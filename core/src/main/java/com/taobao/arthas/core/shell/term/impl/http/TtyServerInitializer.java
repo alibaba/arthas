@@ -1,5 +1,8 @@
 package com.taobao.arthas.core.shell.term.impl.http;
 
+import com.taobao.arthas.common.ArthasConstants;
+import com.taobao.arthas.core.shell.term.impl.http.session.HttpSessionManager;
+
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.ChannelPipeline;
 import io.netty.channel.group.ChannelGroup;
@@ -13,10 +16,6 @@ import io.netty.util.concurrent.EventExecutorGroup;
 import io.termd.core.function.Consumer;
 import io.termd.core.tty.TtyConnection;
 
-import java.io.File;
-
-import com.taobao.arthas.common.ArthasConstants;
-
 
 /**
  * @author <a href="mailto:julien@julienviet.com">Julien Viet</a>
@@ -26,11 +25,13 @@ public class TtyServerInitializer extends ChannelInitializer<SocketChannel> {
   private final ChannelGroup group;
   private final Consumer<TtyConnection> handler;
   private EventExecutorGroup workerGroup;
+  private HttpSessionManager httpSessionManager;
 
-  public TtyServerInitializer(ChannelGroup group, Consumer<TtyConnection> handler, EventExecutorGroup workerGroup) {
+  public TtyServerInitializer(ChannelGroup group, Consumer<TtyConnection> handler, EventExecutorGroup workerGroup, HttpSessionManager httpSessionManager) {
       this.group = group;
       this.handler = handler;
-    this.workerGroup = workerGroup;
+      this.workerGroup = workerGroup;
+      this.httpSessionManager = httpSessionManager;
   }
 
   @Override
@@ -40,8 +41,9 @@ public class TtyServerInitializer extends ChannelInitializer<SocketChannel> {
     pipeline.addLast(new HttpServerCodec());
     pipeline.addLast(new ChunkedWriteHandler());
     pipeline.addLast(new HttpObjectAggregator(ArthasConstants.MAX_HTTP_CONTENT_LENGTH));
-    pipeline.addLast(workerGroup, "HttpRequestHandler", new HttpRequestHandler("/ws"));
-    pipeline.addLast(new WebSocketServerProtocolHandler("/ws"));
+    pipeline.addLast(new BasicHttpAuthenticatorHandler(httpSessionManager));
+    pipeline.addLast(workerGroup, "HttpRequestHandler", new HttpRequestHandler(ArthasConstants.DEFAULT_WEBSOCKET_PATH));
+    pipeline.addLast(new WebSocketServerProtocolHandler(ArthasConstants.DEFAULT_WEBSOCKET_PATH, true));
     pipeline.addLast(new IdleStateHandler(0, 0, ArthasConstants.WEBSOCKET_IDLE_SECONDS));
     pipeline.addLast(new TtyWebSocketFrameHandler(group, handler));
   }

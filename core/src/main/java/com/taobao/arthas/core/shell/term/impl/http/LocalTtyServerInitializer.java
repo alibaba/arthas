@@ -13,8 +13,6 @@ import io.netty.util.concurrent.EventExecutorGroup;
 import io.termd.core.function.Consumer;
 import io.termd.core.tty.TtyConnection;
 
-import java.io.File;
-
 import com.taobao.arthas.common.ArthasConstants;
 
 /**
@@ -42,8 +40,8 @@ public class LocalTtyServerInitializer extends ChannelInitializer<LocalChannel> 
         pipeline.addLast(new HttpServerCodec());
         pipeline.addLast(new ChunkedWriteHandler());
         pipeline.addLast(new HttpObjectAggregator(ArthasConstants.MAX_HTTP_CONTENT_LENGTH));
-        pipeline.addLast(workerGroup, "HttpRequestHandler", new HttpRequestHandler("/ws"));
-        pipeline.addLast(new WebSocketServerProtocolHandler("/ws"));
+        pipeline.addLast(workerGroup, "HttpRequestHandler", new HttpRequestHandler(ArthasConstants.DEFAULT_WEBSOCKET_PATH));
+        pipeline.addLast(new WebSocketServerProtocolHandler(ArthasConstants.DEFAULT_WEBSOCKET_PATH, true));
         pipeline.addLast(new IdleStateHandler(0, 0, ArthasConstants.WEBSOCKET_IDLE_SECONDS));
         pipeline.addLast(new TtyWebSocketFrameHandler(group, handler));
     }

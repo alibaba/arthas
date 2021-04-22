@@ -25,7 +25,6 @@ import io.netty.handler.codec.http.QueryStringEncoder;
 import io.netty.handler.codec.http.websocketx.PingWebSocketFrame;
 import io.netty.handler.codec.http.websocketx.TextWebSocketFrame;
 import io.netty.handler.codec.http.websocketx.WebSocketFrame;
-import io.netty.handler.timeout.IdleState;
 import io.netty.handler.timeout.IdleStateEvent;
 import io.netty.util.CharsetUtil;
 
@@ -165,9 +164,10 @@ public class TunnelClientSocketClientHandler extends SimpleChannelInboundHandler
 
     @Override
     public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) {
+        logger.error("TunnelClient error, tunnel server url: " + tunnelClient.getTunnelServerUrl(), cause);
         if (!registerPromise.isDone()) {
             registerPromise.setFailure(cause);
         }
-        ctx.fireExceptionCaught(cause);
+        ctx.close();
     }
 }

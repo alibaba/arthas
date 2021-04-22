@@ -16,7 +16,7 @@ With the help of `tt` (*TimeTunnel*), you can check the contexts of the methods 
 
 #### Start Demo
 
-Start `arthas-demo` in [Quick Start](quick-start.md).
+Start `math-game` in [Quick Start](quick-start.md).
 
 
 #### Record method calls
