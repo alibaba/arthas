@@ -30,9 +30,18 @@ jobject createJavaInstance(JNIEnv *env, jclass javaClass) {
 }
 
 extern "C"
+jlong getClassHashCode(JNIEnv *env, jclass javaClass) {
+    //找到java类的hashCode方法
+    jmethodID hashCodeMethod = env->GetMethodID(javaClass, "hashCode", "()I");
+    //生成java类实例
+    return env->CallLongMethod(javaClass, hashCodeMethod);
+}
+
+extern "C"
 jvmtiIterationControl JNICALL
 HeapObjectCallback(jlong class_tag, jlong size, jlong *tag_ptr, void *user_data) {
-    *tag_ptr = 1;
+    auto *data = static_cast<jlong *>(user_data);
+    *tag_ptr = *data;
     return JVMTI_ITERATION_CONTINUE;
 }
 
@@ -49,15 +58,15 @@ Java_com_vdian_vclub_JvmUtils_getInstances(JNIEnv *env, jclass thisClass, jclass
         printf("ERROR: JVMTI AddCapabilities failed!%u\n", error);
         return JNI_FALSE;
     }
-    //todo 支持并发调用
+    //这里用hashCode作为标记
+    jlong tag = getClassHashCode(env, klass);
     error = jvmti->IterateOverInstancesOfClass(klass, JVMTI_HEAP_OBJECT_EITHER,
-                                               HeapObjectCallback, NULL);
+                                               HeapObjectCallback, &tag);
     if (error) {
         printf("ERROR: JVMTI IterateOverInstancesOfClass failed!%u\n", error);
         return JNI_FALSE;
     }
 
-    jlong tag = 1;
     jint count = 0;
     jobject *instances;
     error = jvmti->GetObjectsWithTags(1, &tag, &count, &instances, NULL);
@@ -90,15 +99,15 @@ Java_com_vdian_vclub_JvmUtils_sumInstanceSize(JNIEnv *env, jclass thisClass, jcl
         printf("ERROR: JVMTI AddCapabilities failed!%u\n", error);
         return JNI_FALSE;
     }
-    //todo 支持并发调用
+    //这里用hashCode作为标记
+    jlong tag = getClassHashCode(env, klass);
     error = jvmti->IterateOverInstancesOfClass(klass, JVMTI_HEAP_OBJECT_EITHER,
-                                               HeapObjectCallback, NULL);
+                                               HeapObjectCallback, &tag);
     if (error) {
         printf("ERROR: JVMTI IterateOverInstancesOfClass failed!%u\n", error);
         return JNI_FALSE;
     }
 
-    jlong tag = 1;
     jint count = 0;
     jobject *instances;
     error = jvmti->GetObjectsWithTags(1, &tag, &count, &instances, NULL);
@@ -144,15 +153,15 @@ Java_com_vdian_vclub_JvmUtils_countInstances(JNIEnv *env, jclass thisClass, jcla
         printf("ERROR: JVMTI AddCapabilities failed!%u\n", error);
         return JNI_FALSE;
     }
-    //todo 支持并发调用
+    //这里用hashCode作为标记
+    jlong tag = getClassHashCode(env, klass);
     error = jvmti->IterateOverInstancesOfClass(klass, JVMTI_HEAP_OBJECT_EITHER,
-                                               HeapObjectCallback, NULL);
+                                               HeapObjectCallback, &tag);
     if (error) {
         printf("ERROR: JVMTI IterateOverInstancesOfClass failed!%u\n", error);
         return JNI_FALSE;
     }
 
-    jlong tag = 1;
     jint count = 0;
     error = jvmti->GetObjectsWithTags(1, &tag, &count, NULL, NULL);
     if (error) {

@@ -6,8 +6,7 @@ import org.scijava.nativelib.NativeLoader;
 import java.util.ArrayList;
 
 /**
- * @author 1936978077@qq.com
- * @date 2021/02/12
+ * @author ZhangZiCheng 2021-02-12
  * @since 3.5.1
  */
 public class JvmUtils {
@@ -34,12 +33,12 @@ public class JvmUtils {
     /**
      * 获取某个class在jvm中当前所有存活实例
      */
-    public static synchronized native <T> ArrayList<T> getInstances(Class<T> klass);
+    public static native <T> ArrayList<T> getInstances(Class<T> klass);
 
     /**
      * 统计某个class在jvm中当前所有存活实例的总占用内存，单位：Byte
      */
-    public static synchronized native long sumInstanceSize(Class<?> klass);
+    public static native long sumInstanceSize(Class<?> klass);
 
     /**
      * 获取某个实例的占用内存，单位：Byte
@@ -49,7 +48,7 @@ public class JvmUtils {
     /**
      * 统计某个class在jvm中当前所有存活实例的总个数
      */
-    public static synchronized native long countInstances(Class<?> klass);
+    public static native long countInstances(Class<?> klass);
 
     /**
      * 获取所有已加载的类
