@@ -28,27 +28,27 @@ public class VmtoolTest {
             System.err.println(path);
 
             String libPath = new File(path, System.mapLibraryName(Vmtool.JNI_LIBRARY_NAME)).getAbsolutePath();
-            Vmtool.getInstance(libPath);
+            Vmtool vmtool = Vmtool.getInstance(libPath);
 
             //调用native方法，获取已加载的类，不包括小类型(如int)
-            ArrayList<Class<?>> allLoadedClasses = Vmtool.getAllLoadedClasses();
+            ArrayList<Class<?>> allLoadedClasses = vmtool.getAllLoadedClasses();
             System.out.println("allLoadedClasses->" + allLoadedClasses.size());
 
             //通过下面的例子，可以看到getInstances(Class<T> klass)拿到的是当前存活的所有对象
             WeakReference<VmtoolTest> weakReference1 = new WeakReference<VmtoolTest>(new VmtoolTest());
             WeakReference<VmtoolTest> weakReference2 = new WeakReference<VmtoolTest>(new VmtoolTest());
             System.out.println(weakReference1.get() + " " + weakReference2.get());
-            ArrayList<Vmtool> beforeInstances = Vmtool.getInstances(Vmtool.class);
+            ArrayList<Vmtool> beforeInstances = vmtool.getInstances(Vmtool.class);
             System.out.println("before instances->" + beforeInstances);
-            System.out.println("size->" + Vmtool.getInstanceSize(weakReference1.get()));
-            System.out.println("count->" + Vmtool.countInstances(Vmtool.class));
-            System.out.println("sum size->" + Vmtool.sumInstanceSize(Vmtool.class));
+            System.out.println("size->" + vmtool.getInstanceSize(weakReference1.get()));
+            System.out.println("count->" + vmtool.countInstances(Vmtool.class));
+            System.out.println("sum size->" + vmtool.sumInstanceSize(Vmtool.class));
             beforeInstances = null;
 
             System.gc();
             Thread.sleep(100);
             System.out.println(weakReference1.get() + " " + weakReference2.get());
-            ArrayList<Vmtool> afterInstances = Vmtool.getInstances(Vmtool.class);
+            ArrayList<Vmtool> afterInstances = vmtool.getInstances(Vmtool.class);
             System.out.println("after instances->" + afterInstances);
         } catch (Exception e) {
             e.printStackTrace();

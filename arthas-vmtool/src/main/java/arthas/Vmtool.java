@@ -7,7 +7,7 @@ import java.util.ArrayList;
  * @author hengyunabc 2021-04-26
  * @since 3.5.1
  */
-public class Vmtool {
+public class Vmtool implements VMtoolMXBean {
 
     /**
      * 不要修改jni-lib的名称
@@ -41,39 +41,69 @@ public class Vmtool {
     /**
      * 检测jni-lib是否正常，如果正常，应该输出OK
      */
-    public static native String check();
+    private static native String check0();
 
     /**
      * 获取某个class在jvm中当前所有存活实例
      */
-    public static native <T> ArrayList<T> getInstances(Class<T> klass);
+    private static native <T> ArrayList<T> getInstances0(Class<T> klass);
 
     /**
      * 统计某个class在jvm中当前所有存活实例的总占用内存，单位：Byte
      */
-    public static native long sumInstanceSize(Class<?> klass);
+    private static native long sumInstanceSize0(Class<?> klass);
 
     /**
      * 获取某个实例的占用内存，单位：Byte
      */
-    public static native long getInstanceSize(Object instance);
+    private static native long getInstanceSize0(Object instance);
 
     /**
      * 统计某个class在jvm中当前所有存活实例的总个数
      */
-    public static native long countInstances(Class<?> klass);
+    private static native long countInstances0(Class<?> klass);
 
     /**
      * 获取所有已加载的类
      */
-    public static native ArrayList<Class<?>> getAllLoadedClasses();
+    private static native ArrayList<Class<?>> getAllLoadedClasses0();
 
     /**
      * 包括小类型(如int)
      */
     @SuppressWarnings("all")
     public static ArrayList<Class> getAllClasses() {
-        return getInstances(Class.class);
+        return getInstances0(Class.class);
+    }
+
+    @Override
+    public String check() {
+        return check0();
+    }
+
+    @Override
+    public <T> ArrayList<T> getInstances(Class<T> klass) {
+        return getInstances0(klass);
+    }
+
+    @Override
+    public long sumInstanceSize(Class<?> klass) {
+        return sumInstanceSize0(klass);
+    }
+
+    @Override
+    public long getInstanceSize(Object instance) {
+        return getInstanceSize0(instance);
+    }
+
+    @Override
+    public long countInstances(Class<?> klass) {
+        return countInstances0(klass);
+    }
+
+    @Override
+    public ArrayList<Class<?>> getAllLoadedClasses() {
+        return getAllLoadedClasses0();
     }
 
 }

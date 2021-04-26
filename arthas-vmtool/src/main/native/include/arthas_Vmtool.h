@@ -12,7 +12,7 @@ extern "C" {
  * Method:    check
  * Signature: ()Ljava/lang/String;
  */
-JNIEXPORT jstring JNICALL Java_arthas_Vmtool_check
+JNIEXPORT jstring JNICALL Java_arthas_Vmtool_check0
   (JNIEnv *, jclass);
 
 /*
