@@ -59,6 +59,7 @@
         <module>math-game</module>
         <module>spy</module>
         <module>common</module>
+        <module>arthas-vmtool</module>
         <module>tunnel-common</module>
         <module>tunnel-client</module>
         <module>core</module>
@@ -71,7 +72,6 @@
         <module>testcase</module>
         <module>site</module>
         <module>packaging</module>
-        <module>arthas-beans</module>
     </modules>
 
     <properties>

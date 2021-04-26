@@ -9,8 +9,8 @@
         <version>${revision}</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
-    <artifactId>arthas-beans</artifactId>
-    <name>arthas-beans</name>
+    <artifactId>arthas-vmtool</artifactId>
+    <name>arthas-vmtool</name>
 
     <profiles>
         <!-- macos -->
@@ -105,7 +105,7 @@
     </profiles>
 
     <build>
-        <finalName>arthas-beans</finalName>
+        <finalName>arthas-vmtool</finalName>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
