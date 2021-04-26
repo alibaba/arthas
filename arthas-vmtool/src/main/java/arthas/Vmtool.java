@@ -1,28 +1,41 @@
-package com.vdian.vclub;
-
-import com.taobao.arthas.common.AnsiLog;
-import org.scijava.nativelib.NativeLoader;
+package arthas;
 
 import java.util.ArrayList;
 
 /**
  * @author ZhangZiCheng 2021-02-12
+ * @author hengyunabc 2021-04-26
  * @since 3.5.1
  */
-public class JvmUtils {
+public class Vmtool {
 
     /**
      * 不要修改jni-lib的名称
      */
-    private final static String JNI_LIBRARY_NAME = "ArthasJniLibrary";
+    public final static String JNI_LIBRARY_NAME = "ArthasJniLibrary";
 
-    static {
-        try {
-            NativeLoader.loadLibrary(JNI_LIBRARY_NAME);
-            AnsiLog.warn("checkResult->" + check() + ", jni-lib available !");
-        } catch (Throwable t) {
-            AnsiLog.error("load jni-lib failed:" + t.getMessage(), t);
+    private static Vmtool instance;
+
+    private Vmtool() {
+    }
+
+    public static Vmtool getInstance() {
+        return getInstance(null);
+    }
+
+    public static synchronized Vmtool getInstance(String libPath) {
+        if (instance != null) {
+            return instance;
         }
+
+        if (libPath == null) {
+            System.loadLibrary(JNI_LIBRARY_NAME);
+        } else {
+            System.load(libPath);
+        }
+
+        instance = new Vmtool();
+        return instance;
     }
 
     /**
