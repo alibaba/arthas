@@ -40,7 +40,7 @@ jlong getClassHashCode(JNIEnv *env, jclass javaClass) {
 extern "C"
 jvmtiIterationControl JNICALL
 HeapObjectCallback(jlong class_tag, jlong size, jlong *tag_ptr, void *user_data) {
-    auto *data = static_cast<jlong *>(user_data);
+    jlong *data = static_cast<jlong *>(user_data);
     *tag_ptr = *data;
     return JVMTI_ITERATION_CONTINUE;
 }
