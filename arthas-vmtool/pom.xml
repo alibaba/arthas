@@ -13,9 +13,10 @@
     <name>arthas-vmtool</name>
 
     <profiles>
+        <!-- https://github.com/openjdk/jdk/blob/jdk-16%2B36/src/java.base/windows/native/libjava/java_props_md.c#L568 -->
         <!-- macos -->
         <profile>
-            <id>macos-x86_64</id>
+            <id>macos-amd64</id>
             <activation>
                 <os>
                     <family>mac</family>
@@ -28,36 +29,8 @@
                 <lib_name>libArthasJniLibrary-x64.dylib</lib_name>
             </properties>
         </profile>
-        <profile>
-            <id>macos-amd64</id>
-            <activation>
-                <os>
-                    <family>mac</family>
-                    <arch>amd64</arch>
-                </os>
-            </activation>
-            <properties>
-                <os_name>macos</os_name>
-                <os_arch_option>-m64</os_arch_option>
-                <lib_name>libArthasJniLibrary-amd64.dylib</lib_name>
-            </properties>
-        </profile>
 
         <!-- linux -->
-        <profile>
-            <id>linux-x86_64</id>
-            <activation>
-                <os>
-                    <name>linux</name>
-                    <arch>x86_64</arch>
-                </os>
-            </activation>
-            <properties>
-                <os_name>linux</os_name>
-                <os_arch_option>-m64</os_arch_option>
-                <lib_name>libArthasJniLibrary-x64.so</lib_name>
-            </properties>
-        </profile>
         <profile>
             <id>linux-amd64</id>
             <activation>
@@ -69,25 +42,11 @@
             <properties>
                 <os_name>linux</os_name>
                 <os_arch_option>-m64</os_arch_option>
-                <lib_name>libArthasJniLibrary-amd64.so</lib_name>
+                <lib_name>libArthasJniLibrary-x64.so</lib_name>
             </properties>
         </profile>
 
         <!-- windows -->
-        <profile>
-            <id>windows-x86_64</id>
-            <activation>
-                <os>
-                    <family>windows</family>
-                    <arch>x86_64</arch>
-                </os>
-            </activation>
-            <properties>
-                <os_name>windows</os_name>
-                <os_arch_option>-m64</os_arch_option>
-                <lib_name>libArthasJniLibrary-x64.dll</lib_name>
-            </properties>
-        </profile>
         <profile>
             <id>windows-amd64</id>
             <activation>
@@ -99,7 +58,7 @@
             <properties>
                 <os_name>windows</os_name>
                 <os_arch_option>-m64</os_arch_option>
-                <lib_name>libArthasJniLibrary-amd64.dll</lib_name>
+                <lib_name>libArthasJniLibrary-x64.dll</lib_name>
             </properties>
         </profile>
     </profiles>
