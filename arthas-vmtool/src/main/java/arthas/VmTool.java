@@ -9,7 +9,7 @@ import com.taobao.arthas.common.OSUtils;
  * @author hengyunabc 2021-04-26
  * @since 3.5.1
  */
-public class Vmtool implements VMtoolMXBean {
+public class VmTool implements VmToolMXBean {
 
     /**
      * 不要修改jni-lib的名称
@@ -34,16 +34,16 @@ public class Vmtool implements VMtoolMXBean {
         }
     }
 
-    private static Vmtool instance;
+    private static VmTool instance;
 
-    private Vmtool() {
+    private VmTool() {
     }
 
-    public static Vmtool getInstance() {
+    public static VmTool getInstance() {
         return getInstance(null);
     }
 
-    public static synchronized Vmtool getInstance(String libPath) {
+    public static synchronized VmTool getInstance(String libPath) {
         if (instance != null) {
             return instance;
         }
@@ -54,7 +54,7 @@ public class Vmtool implements VMtoolMXBean {
             System.load(libPath);
         }
 
-        instance = new Vmtool();
+        instance = new VmTool();
         return instance;
     }
 

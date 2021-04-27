@@ -3,19 +3,19 @@ package arthas;
 import java.util.ArrayList;
 
 /**
- * VMtool interface for JMX server. How to register VMtool MBean:
+ * VmTool interface for JMX server. How to register VmTool MBean:
  *
  * <pre>
  * {@code
  *     ManagementFactory.getPlatformMBeanServer().registerMBean(
- *             VMtool.getInstance(),
- *             new ObjectName("arthas:type=VMtool")
+ *             VmTool.getInstance(),
+ *             new ObjectName("arthas:type=VmTool")
  *     );
  * }
  * </pre>
  * @author hengyunabc 2021-04-26
  */
-public interface VMtoolMXBean {
+public interface VmToolMXBean {
     /**
      * 检测jni-lib是否正常，如果正常，应该输出OK
      */

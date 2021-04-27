@@ -2,11 +2,11 @@
 #include <jni.h>
 #include <jni_md.h>
 #include <jvmti.h>
-#include "arthas_Vmtool.h"
+#include "arthas_VmTool.h"
 
 extern "C"
 JNIEXPORT jstring JNICALL
-Java_arthas_Vmtool_check0(JNIEnv *env, jclass thisClass) {
+Java_arthas_VmTool_check0(JNIEnv *env, jclass thisClass) {
     return env->NewStringUTF("OK");
 }
 
@@ -47,7 +47,7 @@ HeapObjectCallback(jlong class_tag, jlong size, jlong *tag_ptr, void *user_data)
 
 extern "C"
 JNIEXPORT jobject JNICALL
-Java_arthas_Vmtool_getInstances0(JNIEnv *env, jclass thisClass, jclass klass) {
+Java_arthas_VmTool_getInstances0(JNIEnv *env, jclass thisClass, jclass klass) {
 
     jvmtiEnv *jvmti = getJvmtiEnv(env);
 
@@ -88,7 +88,7 @@ Java_arthas_Vmtool_getInstances0(JNIEnv *env, jclass thisClass, jclass klass) {
 
 extern "C"
 JNIEXPORT jlong JNICALL
-Java_arthas_Vmtool_sumInstanceSize0(JNIEnv *env, jclass thisClass, jclass klass) {
+Java_arthas_VmTool_sumInstanceSize0(JNIEnv *env, jclass thisClass, jclass klass) {
 
     jvmtiEnv *jvmti = getJvmtiEnv(env);
 
@@ -126,7 +126,7 @@ Java_arthas_Vmtool_sumInstanceSize0(JNIEnv *env, jclass thisClass, jclass klass)
 }
 
 extern "C"
-JNIEXPORT jlong JNICALL Java_arthas_Vmtool_getInstanceSize0
+JNIEXPORT jlong JNICALL Java_arthas_VmTool_getInstanceSize0
         (JNIEnv *env, jclass thisClass, jobject instance) {
 
     jvmtiEnv *jvmti = getJvmtiEnv(env);
@@ -142,7 +142,7 @@ JNIEXPORT jlong JNICALL Java_arthas_Vmtool_getInstanceSize0
 
 extern "C"
 JNIEXPORT jlong JNICALL
-Java_arthas_Vmtool_countInstances0(JNIEnv *env, jclass thisClass, jclass klass) {
+Java_arthas_VmTool_countInstances0(JNIEnv *env, jclass thisClass, jclass klass) {
 
     jvmtiEnv *jvmti = getJvmtiEnv(env);
 
@@ -172,7 +172,7 @@ Java_arthas_Vmtool_countInstances0(JNIEnv *env, jclass thisClass, jclass klass) 
 }
 
 extern "C"
-JNIEXPORT jobject JNICALL Java_arthas_Vmtool_getAllLoadedClasses0
+JNIEXPORT jobject JNICALL Java_arthas_VmTool_getAllLoadedClasses0
         (JNIEnv *env, jclass thisClass) {
 
     jvmtiEnv *jvmti = getJvmtiEnv(env);
