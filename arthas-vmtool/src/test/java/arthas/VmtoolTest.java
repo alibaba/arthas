@@ -27,7 +27,7 @@ public class VmtoolTest {
             String path = Vmtool.class.getProtectionDomain().getCodeSource().getLocation().getPath();
             System.err.println(path);
 
-            String libPath = new File(path, System.mapLibraryName(Vmtool.JNI_LIBRARY_NAME)).getAbsolutePath();
+            String libPath = new File(path, Vmtool.detectLibName()).getAbsolutePath();
             Vmtool vmtool = Vmtool.getInstance(libPath);
 
             //调用native方法，获取已加载的类，不包括小类型(如int)
