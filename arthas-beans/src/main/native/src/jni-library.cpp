@@ -4,6 +4,21 @@
 #include <jvmti.h>
 #include "com_vdian_vclub_JvmUtils.h"
 
+//缓存
+static jclass cachedClass = nullptr;
+
+extern "C"
+JNIEXPORT jclass JNICALL getClass(JNIEnv *env) {
+    if (cachedClass == nullptr) {
+        //通过其签名找到ArrayList的Class
+        jclass theClass = env->FindClass("java/lang/Class");
+        //放入缓存
+        cachedClass = static_cast<jclass>(env->NewGlobalRef(theClass));
+        env->DeleteLocalRef(theClass);
+    }
+    return cachedClass;
+}
+
 extern "C"
 JNIEXPORT jstring JNICALL
 Java_com_vdian_vclub_JvmUtils_check(JNIEnv *env, jclass thisClass) {
@@ -19,14 +34,6 @@ jvmtiEnv *getJvmtiEnv(JNIEnv *env) {
     jvmtiEnv *jvmti;
     vm->GetEnv((void **) &jvmti, JVMTI_VERSION_1_2);
     return jvmti;
-}
-
-extern "C"
-jobject createJavaInstance(JNIEnv *env, jclass javaClass) {
-    //找到java类的构造方法
-    jmethodID construct = env->GetMethodID(javaClass, "<init>", "()V");
-    //生成java类实例
-    return env->NewObject(javaClass, construct, "");
 }
 
 extern "C"
@@ -46,7 +53,7 @@ HeapObjectCallback(jlong class_tag, jlong size, jlong *tag_ptr, void *user_data)
 }
 
 extern "C"
-JNIEXPORT jobject JNICALL
+JNIEXPORT jobjectArray JNICALL
 Java_com_vdian_vclub_JvmUtils_getInstances(JNIEnv *env, jclass thisClass, jclass klass) {
 
     jvmtiEnv *jvmti = getJvmtiEnv(env);
@@ -69,21 +76,19 @@ Java_com_vdian_vclub_JvmUtils_getInstances(JNIEnv *env, jclass thisClass, jclass
 
     jint count = 0;
     jobject *instances;
-    error = jvmti->GetObjectsWithTags(1, &tag, &count, &instances, NULL);
+    error = jvmti->GetObjectsWithTags(1, &tag, &count, &instances, nullptr);
     if (error) {
         printf("ERROR: JVMTI GetObjectsWithTags failed!%u\n", error);
         return JNI_FALSE;
     }
 
-    //通过其签名找到ArrayList的Class
-    jclass arrayListClass = env->FindClass("java/util/ArrayList");
-    jobject arrayList = createJavaInstance(env, arrayListClass);
-    jmethodID addMethod = env->GetMethodID(arrayListClass, "add", "(Ljava/lang/Object;)Z");
-    //添加元素到ArrayList实例
+    jobjectArray array = env->NewObjectArray(count, klass, nullptr);
+    //添加元素到数组
     for (int i = 0; i < count; i++) {
-        env->CallObjectMethod(arrayList, addMethod, instances[i]);
+        env->SetObjectArrayElement(array, i, instances[i]);
     }
-    return arrayList;
+    jvmti->Deallocate(reinterpret_cast<unsigned char *>(instances));
+    return array;
 }
 
 extern "C"
@@ -110,7 +115,7 @@ Java_com_vdian_vclub_JvmUtils_sumInstanceSize(JNIEnv *env, jclass thisClass, jcl
 
     jint count = 0;
     jobject *instances;
-    error = jvmti->GetObjectsWithTags(1, &tag, &count, &instances, NULL);
+    error = jvmti->GetObjectsWithTags(1, &tag, &count, &instances, nullptr);
     if (error) {
         printf("ERROR: JVMTI GetObjectsWithTags failed!%u\n", error);
         return JNI_FALSE;
@@ -122,6 +127,7 @@ Java_com_vdian_vclub_JvmUtils_sumInstanceSize(JNIEnv *env, jclass thisClass, jcl
         jvmti->GetObjectSize(instances[i], &size);
         sum = sum + size;
     }
+    jvmti->Deallocate(reinterpret_cast<unsigned char *>(instances));
     return sum;
 }
 
@@ -163,7 +169,7 @@ Java_com_vdian_vclub_JvmUtils_countInstances(JNIEnv *env, jclass thisClass, jcla
     }
 
     jint count = 0;
-    error = jvmti->GetObjectsWithTags(1, &tag, &count, NULL, NULL);
+    error = jvmti->GetObjectsWithTags(1, &tag, &count, nullptr, nullptr);
     if (error) {
         printf("ERROR: JVMTI GetObjectsWithTags failed!%u\n", error);
         return JNI_FALSE;
@@ -172,7 +178,7 @@ Java_com_vdian_vclub_JvmUtils_countInstances(JNIEnv *env, jclass thisClass, jcla
 }
 
 extern "C"
-JNIEXPORT jobject JNICALL Java_com_vdian_vclub_JvmUtils_getAllLoadedClasses
+JNIEXPORT jobjectArray JNICALL Java_com_vdian_vclub_JvmUtils_getAllLoadedClasses
         (JNIEnv *env, jclass thisClass) {
 
     jvmtiEnv *jvmti = getJvmtiEnv(env);
@@ -186,13 +192,11 @@ JNIEXPORT jobject JNICALL Java_com_vdian_vclub_JvmUtils_getAllLoadedClasses
         return JNI_FALSE;
     }
 
-    //通过其签名找到ArrayList的Class
-    jclass arrayListClass = env->FindClass("java/util/ArrayList");
-    jobject arrayList = createJavaInstance(env, arrayListClass);
-    jmethodID addMethod = env->GetMethodID(arrayListClass, "add", "(Ljava/lang/Object;)Z");
-    //添加元素到ArrayList实例
+    jobjectArray array = env->NewObjectArray(count, getClass(env), nullptr);
+    //添加元素到数组
     for (int i = 0; i < count; i++) {
-        env->CallObjectMethod(arrayList, addMethod, classes[i]);
+        env->SetObjectArrayElement(array, i, classes[i]);
     }
-    return arrayList;
+    jvmti->Deallocate(reinterpret_cast<unsigned char *>(classes));
+    return array;
 }

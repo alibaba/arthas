@@ -3,8 +3,6 @@ package com.vdian.vclub;
 import com.taobao.arthas.common.AnsiLog;
 import org.scijava.nativelib.NativeLoader;
 
-import java.util.ArrayList;
-
 /**
  * @author ZhangZiCheng 2021-02-12
  * @since 3.5.1
@@ -33,7 +31,7 @@ public class JvmUtils {
     /**
      * 获取某个class在jvm中当前所有存活实例
      */
-    public static native <T> ArrayList<T> getInstances(Class<T> klass);
+    public static native <T> T[] getInstances(Class<T> klass);
 
     /**
      * 统计某个class在jvm中当前所有存活实例的总占用内存，单位：Byte
@@ -53,13 +51,12 @@ public class JvmUtils {
     /**
      * 获取所有已加载的类
      */
-    public static native ArrayList<Class<?>> getAllLoadedClasses();
+    public static native Class<?>[] getAllLoadedClasses();
 
     /**
      * 包括小类型(如int)
      */
-    @SuppressWarnings("all")
-    public static ArrayList<Class> getAllClasses() {
+    public static Class<?>[] getAllClasses() {
         return getInstances(Class.class);
     }
 
