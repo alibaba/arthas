@@ -9,7 +9,7 @@ import java.lang.ref.WeakReference;
 import java.util.concurrent.atomic.AtomicLong;
 
 /**
- * 以下测试的jvm参数均为：-Xms128m -Xmx128m
+ * 以下本地测试的jvm参数均为：-Xms128m -Xmx128m
  */
 public class VmToolTest {
 
@@ -72,7 +72,7 @@ public class VmToolTest {
         VmTool vmtool = initVmTool();
         final AtomicLong totalTime = new AtomicLong();
         //本地测试请改成200000
-        for (int i = 1; i <= 200; i++) {
+        for (int i = 1; i <= 2; i++) {
             long start = System.currentTimeMillis();
             WeakReference<Object[]> reference = new WeakReference<Object[]>(vmtool.getInstances(Object.class));
             Object[] instances = reference.get();
@@ -97,7 +97,7 @@ public class VmToolTest {
         VmTool vmtool = initVmTool();
         final AtomicLong totalTime = new AtomicLong();
         //本地测试请改成200000
-        for (int i = 1; i <= 200; i++) {
+        for (int i = 1; i <= 2; i++) {
             long start = System.currentTimeMillis();
             long sum = vmtool.sumInstanceSize(Object.class);
             long cost = System.currentTimeMillis() - start;
@@ -117,7 +117,7 @@ public class VmToolTest {
         VmTool vmtool = initVmTool();
         final AtomicLong totalTime = new AtomicLong();
         //本地测试请改成200000
-        for (int i = 1; i <= 200; i++) {
+        for (int i = 1; i <= 2; i++) {
             long start = System.currentTimeMillis();
             long count = vmtool.countInstances(Object.class);
             long cost = System.currentTimeMillis() - start;
@@ -136,7 +136,7 @@ public class VmToolTest {
         VmTool vmtool = initVmTool();
         final AtomicLong totalTime = new AtomicLong();
         //本地测试请改成200000
-        for (int i = 1; i <= 200; i++) {
+        for (int i = 1; i <= 2; i++) {
             long start = System.currentTimeMillis();
             Class<?>[] allLoadedClasses = vmtool.getAllLoadedClasses();
             long cost = System.currentTimeMillis() - start;
