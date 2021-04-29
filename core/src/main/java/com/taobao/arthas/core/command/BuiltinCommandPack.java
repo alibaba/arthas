@@ -44,6 +44,7 @@ import com.taobao.arthas.core.command.monitor200.StackCommand;
 import com.taobao.arthas.core.command.monitor200.ThreadCommand;
 import com.taobao.arthas.core.command.monitor200.TimeTunnelCommand;
 import com.taobao.arthas.core.command.monitor200.TraceCommand;
+import com.taobao.arthas.core.command.monitor200.VmToolCommand;
 import com.taobao.arthas.core.command.monitor200.WatchCommand;
 import com.taobao.arthas.core.shell.command.Command;
 import com.taobao.arthas.core.shell.command.CommandResolver;
@@ -113,6 +114,7 @@ public class BuiltinCommandPack implements CommandResolver {
         commands.add(Command.create(GrepCommand.class));
         commands.add(Command.create(TeeCommand.class));
         commands.add(Command.create(ProfilerCommand.class));
+        commands.add(Command.create(VmToolCommand.class));
         commands.add(Command.create(ShutdownCommand.class));
         commands.add(Command.create(StopCommand.class));
     }

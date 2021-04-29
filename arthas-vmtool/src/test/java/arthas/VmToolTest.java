@@ -2,6 +2,8 @@ package arthas;
 
 import org.junit.Test;
 
+import com.taobao.arthas.common.VmToolUtils;
+
 import java.io.File;
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
@@ -25,7 +27,7 @@ public class VmToolTest {
             String path = VmTool.class.getProtectionDomain().getCodeSource().getLocation().getPath();
             System.err.println(path);
 
-            String libPath = new File(path, VmTool.detectLibName()).getAbsolutePath();
+            String libPath = new File(path, VmToolUtils.detectLibName()).getAbsolutePath();
             VmTool vmtool = VmTool.getInstance(libPath);
 
             //调用native方法，获取已加载的类，不包括小类型(如int)
