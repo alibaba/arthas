@@ -83,6 +83,7 @@ Java_arthas_VmTool_getInstances0(JNIEnv *env, jclass thisClass, jclass klass) {
     for (int i = 0; i < count; i++) {
         env->CallObjectMethod(arrayList, addMethod, instances[i]);
     }
+    jvmti->Deallocate(reinterpret_cast<unsigned char *>(instances));
     return arrayList;
 }
 
@@ -122,6 +123,7 @@ Java_arthas_VmTool_sumInstanceSize0(JNIEnv *env, jclass thisClass, jclass klass)
         jvmti->GetObjectSize(instances[i], &size);
         sum = sum + size;
     }
+    jvmti->Deallocate(reinterpret_cast<unsigned char *>(instances));
     return sum;
 }
 
@@ -194,5 +196,6 @@ JNIEXPORT jobject JNICALL Java_arthas_VmTool_getAllLoadedClasses0
     for (int i = 0; i < count; i++) {
         env->CallObjectMethod(arrayList, addMethod, classes[i]);
     }
+    jvmti->Deallocate(reinterpret_cast<unsigned char *>(classes));
     return arrayList;
 }
