@@ -9,7 +9,7 @@ extern "C" {
 #endif
 /*
  * Class:     arthas_VmTool
- * Method:    check
+ * Method:    check0
  * Signature: ()Ljava/lang/String;
  */
 JNIEXPORT jstring JNICALL Java_arthas_VmTool_check0
@@ -17,42 +17,42 @@ JNIEXPORT jstring JNICALL Java_arthas_VmTool_check0
 
 /*
  * Class:     arthas_VmTool
- * Method:    getInstances
- * Signature: (Ljava/lang/Class;)Ljava/util/ArrayList;
+ * Method:    getInstances0
+ * Signature: (Ljava/lang/Class;)[Ljava/lang/Object;
  */
-JNIEXPORT jobject JNICALL Java_arthas_VmTool_getInstances
+JNIEXPORT jobjectArray JNICALL Java_arthas_VmTool_getInstances0
   (JNIEnv *, jclass, jclass);
 
 /*
  * Class:     arthas_VmTool
- * Method:    sumInstanceSize
+ * Method:    sumInstanceSize0
  * Signature: (Ljava/lang/Class;)J
  */
-JNIEXPORT jlong JNICALL Java_arthas_VmTool_sumInstanceSize
+JNIEXPORT jlong JNICALL Java_arthas_VmTool_sumInstanceSize0
   (JNIEnv *, jclass, jclass);
 
 /*
  * Class:     arthas_VmTool
- * Method:    getInstanceSize
+ * Method:    getInstanceSize0
  * Signature: (Ljava/lang/Object;)J
  */
-JNIEXPORT jlong JNICALL Java_arthas_VmTool_getInstanceSize
+JNIEXPORT jlong JNICALL Java_arthas_VmTool_getInstanceSize0
   (JNIEnv *, jclass, jobject);
 
 /*
  * Class:     arthas_VmTool
- * Method:    countInstances
+ * Method:    countInstances0
  * Signature: (Ljava/lang/Class;)J
  */
-JNIEXPORT jlong JNICALL Java_arthas_VmTool_countInstances
+JNIEXPORT jlong JNICALL Java_arthas_VmTool_countInstances0
   (JNIEnv *, jclass, jclass);
 
 /*
  * Class:     arthas_VmTool
- * Method:    getAllLoadedClasses
- * Signature: ()Ljava/util/ArrayList;
+ * Method:    getAllLoadedClasses0
+ * Signature: ()[Ljava/lang/Class;
  */
-JNIEXPORT jobject JNICALL Java_arthas_VmTool_getAllLoadedClasses
+JNIEXPORT jobjectArray JNICALL Java_arthas_VmTool_getAllLoadedClasses0
   (JNIEnv *, jclass);
 
 #ifdef __cplusplus
