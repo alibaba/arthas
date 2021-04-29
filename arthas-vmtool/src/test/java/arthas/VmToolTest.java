@@ -64,14 +64,15 @@ public class VmToolTest {
     @Test
     public void testGetInstancesMemoryLeak() {
         //这里睡20s是为了方便用jprofiler连接上进程
-        try {
-            Thread.sleep(20000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
+//        try {
+//            Thread.sleep(20000);
+//        } catch (InterruptedException e) {
+//            e.printStackTrace();
+//        }
         VmTool vmtool = initVmTool();
         final AtomicLong totalTime = new AtomicLong();
-        for (int i = 1; i <= 200000; i++) {
+        //本地测试请改成200000
+        for (int i = 1; i <= 2000; i++) {
             long start = System.currentTimeMillis();
             WeakReference<Object[]> reference = new WeakReference<Object[]>(vmtool.getInstances(Object.class));
             Object[] instances = reference.get();
@@ -88,14 +89,15 @@ public class VmToolTest {
     @Test
     public void testSumInstancesMemoryLeak() {
         //这里睡20s是为了方便用jprofiler连接上进程
-        try {
-            Thread.sleep(20000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
+//        try {
+//            Thread.sleep(20000);
+//        } catch (InterruptedException e) {
+//            e.printStackTrace();
+//        }
         VmTool vmtool = initVmTool();
         final AtomicLong totalTime = new AtomicLong();
-        for (int i = 1; i <= 200000; i++) {
+        //本地测试请改成200000
+        for (int i = 1; i <= 2000; i++) {
             long start = System.currentTimeMillis();
             long sum = vmtool.sumInstanceSize(Object.class);
             long cost = System.currentTimeMillis() - start;
@@ -107,14 +109,15 @@ public class VmToolTest {
     @Test
     public void testCountInstancesMemoryLeak() {
         //这里睡20s是为了方便用jprofiler连接上进程
-        try {
-            Thread.sleep(20000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
+//        try {
+//            Thread.sleep(20000);
+//        } catch (InterruptedException e) {
+//            e.printStackTrace();
+//        }
         VmTool vmtool = initVmTool();
         final AtomicLong totalTime = new AtomicLong();
-        for (int i = 1; i <= 200000; i++) {
+        //本地测试请改成200000
+        for (int i = 1; i <= 2000; i++) {
             long start = System.currentTimeMillis();
             long count = vmtool.countInstances(Object.class);
             long cost = System.currentTimeMillis() - start;
@@ -125,14 +128,15 @@ public class VmToolTest {
 
     @Test
     public void testGetAllLoadedClassesMemoryLeak() {
-        try {
-            Thread.sleep(20000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
+//        try {
+//            Thread.sleep(20000);
+//        } catch (InterruptedException e) {
+//            e.printStackTrace();
+//        }
         VmTool vmtool = initVmTool();
         final AtomicLong totalTime = new AtomicLong();
-        for (int i = 1; i <= 200000; i++) {
+        //本地测试请改成200000
+        for (int i = 1; i <= 2000; i++) {
             long start = System.currentTimeMillis();
             Class<?>[] allLoadedClasses = vmtool.getAllLoadedClasses();
             long cost = System.currentTimeMillis() - start;
