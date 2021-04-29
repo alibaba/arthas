@@ -1,7 +1,5 @@
 package arthas;
 
-import com.taobao.arthas.common.OSUtils;
-
 /**
  * @author ZhangZiCheng 2021-02-12
  * @author hengyunabc 2021-04-26
@@ -13,24 +11,6 @@ public class VmTool implements VmToolMXBean {
      * 不要修改jni-lib的名称
      */
     public final static String JNI_LIBRARY_NAME = "ArthasJniLibrary";
-
-    private static String libName = null;
-    static {
-        if (OSUtils.isMac()) {
-            libName = "libArthasJniLibrary-x64.dylib";
-        }
-        if (OSUtils.isLinux()) {
-            libName = "libArthasJniLibrary-x64.so";
-            if (OSUtils.isArm32()) {
-                libName = "libArthasJniLibrary-arm.so";
-            } else if (OSUtils.isArm64()) {
-                libName = "libArthasJniLibrary-aarch64.so";
-            }
-        }
-        if (OSUtils.isWindows()) {
-            libName = "libArthasJniLibrary-x64.dll";
-        }
-    }
 
     private static VmTool instance;
 
@@ -54,10 +34,6 @@ public class VmTool implements VmToolMXBean {
 
         instance = new VmTool();
         return instance;
-    }
-
-    public static String detectLibName() {
-        return libName;
     }
 
     /**
