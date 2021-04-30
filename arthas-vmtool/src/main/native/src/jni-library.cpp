@@ -20,12 +20,6 @@ JNIEXPORT jclass JNICALL getClass(JNIEnv *env) {
 }
 
 extern "C"
-JNIEXPORT jstring JNICALL
-Java_arthas_VmTool_check0(JNIEnv *env, jclass thisClass) {
-    return env->NewStringUTF("OK");
-}
-
-extern "C"
 jvmtiEnv *getJvmtiEnv(JNIEnv *env) {
 
     JavaVM *vm;
@@ -34,6 +28,19 @@ jvmtiEnv *getJvmtiEnv(JNIEnv *env) {
     jvmtiEnv *jvmti;
     vm->GetEnv((void **) &jvmti, JVMTI_VERSION_1_2);
     return jvmti;
+}
+
+extern "C"
+JNIEXPORT void JNICALL
+Java_arthas_VmTool_forceGc0(JNIEnv *env, jclass thisClass) {
+    jvmtiEnv *jvmti = getJvmtiEnv(env);
+    jvmti->ForceGarbageCollection();
+}
+
+extern "C"
+JNIEXPORT jstring JNICALL
+Java_arthas_VmTool_check0(JNIEnv *env, jclass thisClass) {
+    return env->NewStringUTF("OK");
 }
 
 extern "C"

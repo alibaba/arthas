@@ -17,6 +17,14 @@ JNIEXPORT jstring JNICALL Java_arthas_VmTool_check0
 
 /*
  * Class:     arthas_VmTool
+ * Method:    forceGc0
+ * Signature: ()V
+ */
+JNIEXPORT void JNICALL Java_arthas_VmTool_forceGc0
+  (JNIEnv *, jclass);
+
+/*
+ * Class:     arthas_VmTool
  * Method:    getInstances0
  * Signature: (Ljava/lang/Class;)[Ljava/lang/Object;
  */

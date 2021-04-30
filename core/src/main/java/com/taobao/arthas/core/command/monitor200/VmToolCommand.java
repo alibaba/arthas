@@ -46,7 +46,8 @@ import arthas.VmTool;
 @Summary("jvm tool")
 @Description(Constants.EXAMPLE
         + "  vmtool --action getInstances --className demo.MathGame\n"
-        + "  vmtool --action getInstances --className demo.MathGame --express 'instances.size()'\n"
+        + "  vmtool --action getInstances --className demo.MathGame --express 'instances.length'\n"
+        + "  vmtool --action forceGc\n"
         + Constants.WIKI + Constants.WIKI_HOME + "vmtool")
 //@formatter:on
 public class VmToolCommand extends AnnotatedCommand {
@@ -123,7 +124,7 @@ public class VmToolCommand extends AnnotatedCommand {
     }
 
     public enum VmToolAction {
-        getInstances, load
+        getInstances, forceGc, load
     }
 
     @Override
@@ -178,8 +179,14 @@ public class VmToolCommand extends AnnotatedCommand {
                     }
 
                     process.write(new ObjectView(value, this.expand).draw());
+                    process.write("\n");
                     process.end();
                 }
+            } else if (VmToolAction.forceGc.equals(action)) {
+                vmToolInstance().forceGc();
+                process.write("\n");
+                process.end();
+                return;
             }
 
             process.end();

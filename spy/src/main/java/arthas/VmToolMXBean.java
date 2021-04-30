@@ -20,6 +20,11 @@ public interface VmToolMXBean {
     public String check();
 
     /**
+     * https://docs.oracle.com/javase/8/docs/platform/jvmti/jvmti.html#ForceGarbageCollection
+     */
+    public void forceGc();
+
+    /**
      * 获取某个class在jvm中当前所有存活实例
      */
     public <T> T[] getInstances(Class<T> klass);

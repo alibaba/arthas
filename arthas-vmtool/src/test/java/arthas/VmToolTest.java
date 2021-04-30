@@ -43,7 +43,7 @@ public class VmToolTest {
             System.out.println("sum size->" + vmtool.sumInstanceSize(VmTool.class));
             beforeInstances = null;
 
-            System.gc();
+            vmtool.forceGc();
             Thread.sleep(100);
             System.out.println(weakReference1.get() + " " + weakReference2.get());
             VmTool[] afterInstances = vmtool.getInstances(VmTool.class);
@@ -80,7 +80,7 @@ public class VmToolTest {
             totalTime.addAndGet(cost);
             System.out.println(i + " instance size:" + (instances == null ? 0 : instances.length) + ", cost " + cost + "ms avgCost " + totalTime.doubleValue() / i + "ms");
             instances = null;
-            System.gc();
+            vmtool.forceGc();
         }
     }
 

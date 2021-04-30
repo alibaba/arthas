@@ -41,6 +41,8 @@ public class VmTool implements VmToolMXBean {
      */
     private static native String check0();
 
+    private static native void forceGc0();
+
     /**
      * 获取某个class在jvm中当前所有存活实例
      */
@@ -76,6 +78,11 @@ public class VmTool implements VmToolMXBean {
     @Override
     public String check() {
         return check0();
+    }
+
+    @Override
+    public void forceGc() {
+        forceGc0();
     }
 
     @Override
