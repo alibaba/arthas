@@ -87,6 +87,11 @@
                 <version>1.0-alpha-11</version>
                 <extensions>true</extensions>
                 <configuration>
+                    <javahIncludes>
+                        <javahInclude>
+                            <className>arthas.VmTool</className>
+                        </javahInclude>
+                    </javahIncludes>
                     <jdkIncludePath>${project.basedir}/src/main/native/head</jdkIncludePath>
                     <javahOS>${os_name}</javahOS>
                     <sources>
@@ -95,9 +100,6 @@
                             <fileNames>
                                 <fileName>jni-library.cpp</fileName>
                             </fileNames>
-                        </source>
-                        <source>
-                            <directory>src/main/native/include</directory>
                         </source>
                     </sources>
 
@@ -127,6 +129,7 @@
                         <id>javah</id>
                         <phase>compile</phase>
                         <goals>
+                            <goal>javah</goal>
                             <goal>initialize</goal>
                             <goal>compile</goal>
                             <goal>link</goal>

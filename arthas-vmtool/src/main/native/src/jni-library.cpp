@@ -2,7 +2,7 @@
 #include <jni.h>
 #include <jni_md.h>
 #include <jvmti.h>
-#include "arthas_VmTool.h"
+#include "arthas_VmTool.h" // under target/native/javah/
 
 //缓存
 static jclass cachedClass = NULL;
