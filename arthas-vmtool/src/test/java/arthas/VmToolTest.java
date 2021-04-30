@@ -167,6 +167,7 @@ public class VmToolTest {
         long total = 0;
         for (int i = 0; i < ROUND; i++) {
             long start = System.nanoTime();
+            //测试原方法，需要把arthas.VmTool#getInstances的synchronized去掉
             vmtool.getInstances(Object.class);
             long cost = System.nanoTime() - start;
             System.out.println(i + " cost " + cost + " ns");
@@ -197,6 +198,7 @@ public class VmToolTest {
         long total = 0;
         for (int i = 0; i < ROUND; i++) {
             long start = System.nanoTime();
+            //测试原方法，需要把arthas.VmTool#sumInstanceSize的synchronized去掉
             vmtool.sumInstanceSize(Object.class);
             long cost = System.nanoTime() - start;
             System.out.println(i + " cost " + cost + " ns");
@@ -227,6 +229,7 @@ public class VmToolTest {
         long total = 0;
         for (int i = 0; i < ROUND; i++) {
             long start = System.nanoTime();
+            //测试原方法，需要把arthas.VmTool#countInstances的synchronized去掉
             vmtool.countInstances(Object.class);
             long cost = System.nanoTime() - start;
             System.out.println(i + " cost " + cost + " ns");
@@ -257,6 +260,7 @@ public class VmToolTest {
         long total = 0;
         for (int i = 0; i < ROUND; i++) {
             long start = System.nanoTime();
+            //测试原方法，需要把arthas.VmTool#getAllLoadedClasses的synchronized去掉
             vmtool.getAllLoadedClasses();
             long cost = System.nanoTime() - start;
             System.out.println(i + " cost " + cost + " ns");
