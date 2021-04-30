@@ -1,5 +1,6 @@
 package arthas;
 
+import org.junit.Assert;
 import org.junit.Test;
 
 import com.taobao.arthas.common.VmToolUtils;
@@ -13,6 +14,9 @@ import java.util.concurrent.atomic.AtomicLong;
  * 以下本地测试的jvm参数均为：-Xms128m -Xmx128m
  */
 public class VmToolTest {
+
+    //本地测试请改成5000来跑
+    private static final int ROUND = 5;
 
     /**
      * macbook上运行结果如下
@@ -144,5 +148,135 @@ public class VmToolTest {
             System.out.println(i + " class size:" + allLoadedClasses.length + ", cost " + cost + "ms avgCost " + totalTime.doubleValue() / i + "ms");
             allLoadedClasses = null;
         }
+    }
+
+    @Test
+    public void testLimit() {
+        VmTool vmtool = initVmTool();
+        Object[] instances = vmtool.getInstances(Object.class, 10);
+        Assert.assertEquals(10, instances.length);
+        instances = vmtool.getInstances(Object.class);
+        Assert.assertTrue(instances.length > 0);
+    }
+
+    @Test
+    public void testSynchronizedGetInstancesPerformance() {
+        //性能测试
+        VmTool vmtool = initVmTool();
+
+        long total = 0;
+        for (int i = 0; i < ROUND; i++) {
+            long start = System.nanoTime();
+            vmtool.getInstances(Object.class);
+            long cost = System.nanoTime() - start;
+            System.out.println(i + " cost " + cost + " ns");
+            total = total + cost;
+        }
+        System.out.println("total cost " + total + " ns");
+
+        long synchronizedTotal = 0;
+        for (int i = 0; i < ROUND; i++) {
+            long start = System.currentTimeMillis();
+            synchronized (VmTool.class) {
+                vmtool.getInstances(Object.class);
+            }
+            long cost = System.currentTimeMillis() - start;
+            System.out.println(i + " cost " + cost + " ns");
+            synchronizedTotal = synchronizedTotal + cost;
+        }
+        System.out.println("synchronized total cost " + synchronizedTotal + " ms");
+        System.out.println("\ngetInstances");
+        System.out.println("total1 cost " + total + " ns");
+        System.out.println("total2 cost " + synchronizedTotal + " ns");
+    }
+
+    @Test
+    public void testSynchronizedSumInstanceSizePerformance() {
+        //性能测试
+        VmTool vmtool = initVmTool();
+        long total = 0;
+        for (int i = 0; i < ROUND; i++) {
+            long start = System.nanoTime();
+            vmtool.sumInstanceSize(Object.class);
+            long cost = System.nanoTime() - start;
+            System.out.println(i + " cost " + cost + " ns");
+            total = total + cost;
+        }
+        System.out.println("total cost " + total + " ns");
+
+        long synchronizedTotal = 0;
+        for (int i = 0; i < ROUND; i++) {
+            long start = System.currentTimeMillis();
+            synchronized (VmTool.class) {
+                vmtool.sumInstanceSize(Object.class);
+            }
+            long cost = System.currentTimeMillis() - start;
+            System.out.println(i + " cost " + cost + " ns");
+            synchronizedTotal = synchronizedTotal + cost;
+        }
+        System.out.println("synchronized total cost " + synchronizedTotal + " ms");
+        System.out.println("\nsumInstanceSize");
+        System.out.println("total1 cost " + total + " ns");
+        System.out.println("total2 cost " + synchronizedTotal + " ns");
+    }
+
+    @Test
+    public void testSynchronizedCountInstancesPerformance() {
+        //性能测试
+        VmTool vmtool = initVmTool();
+        long total = 0;
+        for (int i = 0; i < ROUND; i++) {
+            long start = System.nanoTime();
+            vmtool.countInstances(Object.class);
+            long cost = System.nanoTime() - start;
+            System.out.println(i + " cost " + cost + " ns");
+            total = total + cost;
+        }
+        System.out.println("total cost " + total + " ns");
+
+        long synchronizedTotal = 0;
+        for (int i = 0; i < ROUND; i++) {
+            long start = System.currentTimeMillis();
+            synchronized (VmTool.class) {
+                vmtool.countInstances(Object.class);
+            }
+            long cost = System.currentTimeMillis() - start;
+            System.out.println(i + " cost " + cost + " ns");
+            synchronizedTotal = synchronizedTotal + cost;
+        }
+        System.out.println("synchronized total cost " + synchronizedTotal + " ms");
+        System.out.println("\ncountInstances");
+        System.out.println("total1 cost " + total + " ns");
+        System.out.println("total2 cost " + synchronizedTotal + " ns");
+    }
+
+    @Test
+    public void testSynchronizedGetAllLoadedClassesPerformance() {
+        //性能测试
+        VmTool vmtool = initVmTool();
+        long total = 0;
+        for (int i = 0; i < ROUND; i++) {
+            long start = System.nanoTime();
+            vmtool.getAllLoadedClasses();
+            long cost = System.nanoTime() - start;
+            System.out.println(i + " cost " + cost + " ns");
+            total = total + cost;
+        }
+        System.out.println("total cost " + total + " ns");
+
+        long synchronizedTotal = 0;
+        for (int i = 0; i < ROUND; i++) {
+            long start = System.currentTimeMillis();
+            synchronized (VmTool.class) {
+                vmtool.getAllLoadedClasses();
+            }
+            long cost = System.currentTimeMillis() - start;
+            System.out.println(i + " cost " + cost + " ns");
+            synchronizedTotal = synchronizedTotal + cost;
+        }
+        System.out.println("synchronized total cost " + synchronizedTotal + " ms");
+        System.out.println("\ngetAllLoadedClasses");
+        System.out.println("total1 cost " + total + " ns");
+        System.out.println("total2 cost " + synchronizedTotal + " ns");
     }
 }

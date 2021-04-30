@@ -51,12 +51,12 @@ public class VmTool implements VmToolMXBean {
      *              小于-1，将抛出{@link IllegalArgumentException}；
      *              其他情况取limit数量的存活实例
      */
-    private static native <T> T[] getInstances0(Class<T> klass, int limit);
+    private static synchronized native <T> T[] getInstances0(Class<T> klass, int limit);
 
     /**
      * 统计某个class在jvm中当前所有存活实例的总占用内存，单位：Byte
      */
-    private static native long sumInstanceSize0(Class<?> klass);
+    private static synchronized native long sumInstanceSize0(Class<?> klass);
 
     /**
      * 获取某个实例的占用内存，单位：Byte
@@ -66,12 +66,12 @@ public class VmTool implements VmToolMXBean {
     /**
      * 统计某个class在jvm中当前所有存活实例的总个数
      */
-    private static native long countInstances0(Class<?> klass);
+    private static synchronized native long countInstances0(Class<?> klass);
 
     /**
      * 获取所有已加载的类
      */
-    private static native Class<?>[] getAllLoadedClasses0();
+    private static synchronized native Class<?>[] getAllLoadedClasses0();
 
     /**
      * 包括小类型(如int)
