@@ -1,7 +1,5 @@
 package arthas;
 
-import java.util.ArrayList;
-
 /**
  * @author ZhangZiCheng 2021-02-12
  * @author hengyunabc 2021-04-26
@@ -46,7 +44,7 @@ public class VmTool implements VmToolMXBean {
     /**
      * 获取某个class在jvm中当前所有存活实例
      */
-    private static native <T> ArrayList<T> getInstances0(Class<T> klass);
+    private static native <T> T[] getInstances0(Class<T> klass);
 
     /**
      * 统计某个class在jvm中当前所有存活实例的总占用内存，单位：Byte
@@ -66,13 +64,12 @@ public class VmTool implements VmToolMXBean {
     /**
      * 获取所有已加载的类
      */
-    private static native ArrayList<Class<?>> getAllLoadedClasses0();
+    private static native Class<?>[] getAllLoadedClasses0();
 
     /**
      * 包括小类型(如int)
      */
-    @SuppressWarnings("all")
-    public static ArrayList<Class> getAllClasses() {
+    public static Class<?>[] getAllClasses() {
         return getInstances0(Class.class);
     }
 
@@ -82,7 +79,7 @@ public class VmTool implements VmToolMXBean {
     }
 
     @Override
-    public <T> ArrayList<T> getInstances(Class<T> klass) {
+    public <T> T[] getInstances(Class<T> klass) {
         return getInstances0(klass);
     }
 
@@ -102,7 +99,7 @@ public class VmTool implements VmToolMXBean {
     }
 
     @Override
-    public ArrayList<Class<?>> getAllLoadedClasses() {
+    public Class<?>[] getAllLoadedClasses() {
         return getAllLoadedClasses0();
     }
 

@@ -38,6 +38,7 @@ import arthas.VmTool;
 /**
  * 
  * @author hengyunabc 2021-04-27
+ * @author ZhangZiCheng 2021-04-29
  *
  */
 //@formatter:off
@@ -163,7 +164,7 @@ public class VmToolCommand extends AnnotatedCommand {
                     process.end(-1, "Found more than one class: " + matchedClasses + ".");
                     return;
                 } else {
-                    ArrayList<?> instances = vmToolInstance().getInstances(matchedClasses.get(0));
+                    Object[] instances = vmToolInstance().getInstances(matchedClasses.get(0));
                     Object value = instances;
                     if (express != null) {
                         Express unpooledExpress = ExpressFactory.unpooledExpress(classLoader);

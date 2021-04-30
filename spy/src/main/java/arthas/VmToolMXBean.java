@@ -1,7 +1,5 @@
 package arthas;
 
-import java.util.ArrayList;
-
 /**
  * VmTool interface for JMX server. How to register VmTool MBean:
  *
@@ -24,7 +22,7 @@ public interface VmToolMXBean {
     /**
      * 获取某个class在jvm中当前所有存活实例
      */
-    public <T> ArrayList<T> getInstances(Class<T> klass);
+    public <T> T[] getInstances(Class<T> klass);
 
     /**
      * 统计某个class在jvm中当前所有存活实例的总占用内存，单位：Byte
@@ -44,5 +42,5 @@ public interface VmToolMXBean {
     /**
      * 获取所有已加载的类
      */
-    public ArrayList<Class<?>> getAllLoadedClasses();
+    public Class<?>[] getAllLoadedClasses();
 }

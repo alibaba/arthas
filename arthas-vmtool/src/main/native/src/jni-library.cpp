@@ -4,6 +4,21 @@
 #include <jvmti.h>
 #include "arthas_VmTool.h"
 
+//缓存
+static jclass cachedClass = NULL;
+
+extern "C"
+JNIEXPORT jclass JNICALL getClass(JNIEnv *env) {
+    if (cachedClass == NULL) {
+        //通过其签名找到Class的Class
+        jclass theClass = env->FindClass("java/lang/Class");
+        //放入缓存
+        cachedClass = static_cast<jclass>(env->NewGlobalRef(theClass));
+        env->DeleteLocalRef(theClass);
+    }
+    return cachedClass;
+}
+
 extern "C"
 JNIEXPORT jstring JNICALL
 Java_arthas_VmTool_check0(JNIEnv *env, jclass thisClass) {
@@ -46,7 +61,7 @@ HeapObjectCallback(jlong class_tag, jlong size, jlong *tag_ptr, void *user_data)
 }
 
 extern "C"
-JNIEXPORT jobject JNICALL
+JNIEXPORT jobjectArray JNICALL
 Java_arthas_VmTool_getInstances0(JNIEnv *env, jclass thisClass, jclass klass) {
 
     jvmtiEnv *jvmti = getJvmtiEnv(env);
@@ -75,15 +90,13 @@ Java_arthas_VmTool_getInstances0(JNIEnv *env, jclass thisClass, jclass klass) {
         return JNI_FALSE;
     }
 
-    //通过其签名找到ArrayList的Class
-    jclass arrayListClass = env->FindClass("java/util/ArrayList");
-    jobject arrayList = createJavaInstance(env, arrayListClass);
-    jmethodID addMethod = env->GetMethodID(arrayListClass, "add", "(Ljava/lang/Object;)Z");
-    //添加元素到ArrayList实例
+    jobjectArray array = env->NewObjectArray(count, klass, NULL);
+    //添加元素到数组
     for (int i = 0; i < count; i++) {
-        env->CallObjectMethod(arrayList, addMethod, instances[i]);
+        env->SetObjectArrayElement(array, i, instances[i]);
     }
-    return arrayList;
+    jvmti->Deallocate(reinterpret_cast<unsigned char *>(instances));
+    return array;
 }
 
 extern "C"
@@ -122,6 +135,7 @@ Java_arthas_VmTool_sumInstanceSize0(JNIEnv *env, jclass thisClass, jclass klass)
         jvmti->GetObjectSize(instances[i], &size);
         sum = sum + size;
     }
+    jvmti->Deallocate(reinterpret_cast<unsigned char *>(instances));
     return sum;
 }
 
@@ -172,7 +186,7 @@ Java_arthas_VmTool_countInstances0(JNIEnv *env, jclass thisClass, jclass klass) 
 }
 
 extern "C"
-JNIEXPORT jobject JNICALL Java_arthas_VmTool_getAllLoadedClasses0
+JNIEXPORT jobjectArray JNICALL Java_arthas_VmTool_getAllLoadedClasses0
         (JNIEnv *env, jclass thisClass) {
 
     jvmtiEnv *jvmti = getJvmtiEnv(env);
@@ -186,13 +200,11 @@ JNIEXPORT jobject JNICALL Java_arthas_VmTool_getAllLoadedClasses0
         return JNI_FALSE;
     }
 
-    //通过其签名找到ArrayList的Class
-    jclass arrayListClass = env->FindClass("java/util/ArrayList");
-    jobject arrayList = createJavaInstance(env, arrayListClass);
-    jmethodID addMethod = env->GetMethodID(arrayListClass, "add", "(Ljava/lang/Object;)Z");
-    //添加元素到ArrayList实例
+    jobjectArray array = env->NewObjectArray(count, getClass(env), NULL);
+    //添加元素到数组
     for (int i = 0; i < count; i++) {
-        env->CallObjectMethod(arrayList, addMethod, classes[i]);
+        env->SetObjectArrayElement(array, i, classes[i]);
     }
-    return arrayList;
+    jvmti->Deallocate(reinterpret_cast<unsigned char *>(classes));
+    return array;
 }

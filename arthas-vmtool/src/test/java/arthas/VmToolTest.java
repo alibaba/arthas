@@ -6,8 +6,11 @@ import com.taobao.arthas.common.VmToolUtils;
 
 import java.io.File;
 import java.lang.ref.WeakReference;
-import java.util.ArrayList;
+import java.util.concurrent.atomic.AtomicLong;
 
+/**
+ * 以下本地测试的jvm参数均为：-Xms128m -Xmx128m
+ */
 public class VmToolTest {
 
     /**
@@ -22,23 +25,18 @@ public class VmToolTest {
      * after instances->[]
      */
     @Test
-    public void test01() {
+    public void testIsSnapshot() {
         try {
-            String path = VmTool.class.getProtectionDomain().getCodeSource().getLocation().getPath();
-            System.err.println(path);
-
-            String libPath = new File(path, VmToolUtils.detectLibName()).getAbsolutePath();
-            VmTool vmtool = VmTool.getInstance(libPath);
-
+            VmTool vmtool = initVmTool();
             //调用native方法，获取已加载的类，不包括小类型(如int)
-            ArrayList<Class<?>> allLoadedClasses = vmtool.getAllLoadedClasses();
-            System.out.println("allLoadedClasses->" + allLoadedClasses.size());
+            Class<?>[] allLoadedClasses = vmtool.getAllLoadedClasses();
+            System.out.println("allLoadedClasses->" + allLoadedClasses.length);
 
             //通过下面的例子，可以看到getInstances(Class<T> klass)拿到的是当前存活的所有对象
             WeakReference<VmToolTest> weakReference1 = new WeakReference<VmToolTest>(new VmToolTest());
             WeakReference<VmToolTest> weakReference2 = new WeakReference<VmToolTest>(new VmToolTest());
             System.out.println(weakReference1.get() + " " + weakReference2.get());
-            ArrayList<VmTool> beforeInstances = vmtool.getInstances(VmTool.class);
+            VmTool[] beforeInstances = vmtool.getInstances(VmTool.class);
             System.out.println("before instances->" + beforeInstances);
             System.out.println("size->" + vmtool.getInstanceSize(weakReference1.get()));
             System.out.println("count->" + vmtool.countInstances(VmTool.class));
@@ -48,10 +46,102 @@ public class VmToolTest {
             System.gc();
             Thread.sleep(100);
             System.out.println(weakReference1.get() + " " + weakReference2.get());
-            ArrayList<VmTool> afterInstances = vmtool.getInstances(VmTool.class);
+            VmTool[] afterInstances = vmtool.getInstances(VmTool.class);
             System.out.println("after instances->" + afterInstances);
         } catch (Exception e) {
             e.printStackTrace();
+        }
+    }
+
+    private VmTool initVmTool() {
+        String path = VmTool.class.getProtectionDomain().getCodeSource().getLocation().getPath();
+        System.err.println(path);
+
+        String libPath = new File(path, VmToolUtils.detectLibName()).getAbsolutePath();
+        return VmTool.getInstance(libPath);
+    }
+
+    @Test
+    public void testGetInstancesMemoryLeak() {
+        //这里睡20s是为了方便用jprofiler连接上进程
+//        try {
+//            Thread.sleep(20000);
+//        } catch (InterruptedException e) {
+//            e.printStackTrace();
+//        }
+        VmTool vmtool = initVmTool();
+        final AtomicLong totalTime = new AtomicLong();
+        //本地测试请改成200000
+        for (int i = 1; i <= 2; i++) {
+            long start = System.currentTimeMillis();
+            WeakReference<Object[]> reference = new WeakReference<Object[]>(vmtool.getInstances(Object.class));
+            Object[] instances = reference.get();
+            long cost = System.currentTimeMillis() - start;
+            totalTime.addAndGet(cost);
+            System.out.println(i + " instance size:" + (instances == null ? 0 : instances.length) + ", cost " + cost + "ms avgCost " + totalTime.doubleValue() / i + "ms");
+            instances = null;
+            System.gc();
+        }
+    }
+
+    @Test
+    public void testSumInstancesMemoryLeak() {
+        //这里睡20s是为了方便用jprofiler连接上进程
+//        try {
+//            Thread.sleep(20000);
+//        } catch (InterruptedException e) {
+//            e.printStackTrace();
+//        }
+        VmTool vmtool = initVmTool();
+        final AtomicLong totalTime = new AtomicLong();
+        //本地测试请改成200000
+        for (int i = 1; i <= 2; i++) {
+            long start = System.currentTimeMillis();
+            long sum = vmtool.sumInstanceSize(Object.class);
+            long cost = System.currentTimeMillis() - start;
+            totalTime.addAndGet(cost);
+            System.out.println(i + " sum:" + sum + ", cost " + cost + "ms avgCost " + totalTime.doubleValue() / i + "ms");
+        }
+    }
+
+    @Test
+    public void testCountInstancesMemoryLeak() {
+        //这里睡20s是为了方便用jprofiler连接上进程
+//        try {
+//            Thread.sleep(20000);
+//        } catch (InterruptedException e) {
+//            e.printStackTrace();
+//        }
+        VmTool vmtool = initVmTool();
+        final AtomicLong totalTime = new AtomicLong();
+        //本地测试请改成200000
+        for (int i = 1; i <= 2; i++) {
+            long start = System.currentTimeMillis();
+            long count = vmtool.countInstances(Object.class);
+            long cost = System.currentTimeMillis() - start;
+            totalTime.addAndGet(cost);
+            System.out.println(i + " count:" + count + ", cost " + cost + "ms avgCost " + totalTime.doubleValue() / i + "ms");
+        }
+    }
+
+    @Test
+    public void testGetAllLoadedClassesMemoryLeak() {
+        //这里睡20s是为了方便用jprofiler连接上进程
+//        try {
+//            Thread.sleep(20000);
+//        } catch (InterruptedException e) {
+//            e.printStackTrace();
+//        }
+        VmTool vmtool = initVmTool();
+        final AtomicLong totalTime = new AtomicLong();
+        //本地测试请改成200000
+        for (int i = 1; i <= 2; i++) {
+            long start = System.currentTimeMillis();
+            Class<?>[] allLoadedClasses = vmtool.getAllLoadedClasses();
+            long cost = System.currentTimeMillis() - start;
+            totalTime.addAndGet(cost);
+            System.out.println(i + " class size:" + allLoadedClasses.length + ", cost " + cost + "ms avgCost " + totalTime.doubleValue() / i + "ms");
+            allLoadedClasses = null;
         }
     }
 }
