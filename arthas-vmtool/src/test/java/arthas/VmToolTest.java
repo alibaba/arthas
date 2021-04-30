@@ -80,9 +80,7 @@ public class VmToolTest {
             totalTime.addAndGet(cost);
             System.out.println(i + " instance size:" + (instances == null ? 0 : instances.length) + ", cost " + cost + "ms avgCost " + totalTime.doubleValue() / i + "ms");
             instances = null;
-            if (i % 100 == 0) {
-                System.gc();
-            }
+            System.gc();
         }
     }
 
@@ -128,6 +126,7 @@ public class VmToolTest {
 
     @Test
     public void testGetAllLoadedClassesMemoryLeak() {
+        //这里睡20s是为了方便用jprofiler连接上进程
 //        try {
 //            Thread.sleep(20000);
 //        } catch (InterruptedException e) {
