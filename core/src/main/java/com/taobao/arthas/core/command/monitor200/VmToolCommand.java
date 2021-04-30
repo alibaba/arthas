@@ -36,7 +36,7 @@ import com.taobao.middleware.cli.annotations.Summary;
 import arthas.VmTool;
 
 /**
- * 
+ *
  * @author hengyunabc 2021-04-27
  * @author ZhangZiCheng 2021-04-29
  *
@@ -46,7 +46,7 @@ import arthas.VmTool;
 @Summary("jvm tool")
 @Description(Constants.EXAMPLE
         + "  vmtool --action getInstances --className demo.MathGame\n"
-        + "  vmtool --action getInstances --className demo.MathGame --express 'instances.length'\n"
+        + "  vmtool --action getInstances --className demo.MathGame --limit 10\n"
         + "  vmtool --action forceGc\n"
         + Constants.WIKI + Constants.WIKI_HOME + "vmtool")
 //@formatter:on
@@ -63,6 +63,10 @@ public class VmToolCommand extends AnnotatedCommand {
      * default value 2
      */
     private int expand;
+    /**
+     * default value 10
+     */
+    private int limit;
 
     private static String libPath;
     private static VmTool vmTool = null;
@@ -103,6 +107,13 @@ public class VmToolCommand extends AnnotatedCommand {
     @DefaultValue("2")
     public void setExpand(int expand) {
         this.expand = expand;
+    }
+
+    @Option(shortName = "l", longName = "limit")
+    @Description("Add limit of the getInstances action (10 by default, -1 is equivalent to no limit)")
+    @DefaultValue("10")
+    public void setLimit(int limit) {
+        this.limit = limit;
     }
 
     @Option(shortName = "c", longName = "classloader")
@@ -165,7 +176,11 @@ public class VmToolCommand extends AnnotatedCommand {
                     process.end(-1, "Found more than one class: " + matchedClasses + ".");
                     return;
                 } else {
-                    Object[] instances = vmToolInstance().getInstances(matchedClasses.get(0));
+                    if (limit < -1) {
+                        process.end(-1, "limit can not less than -1");
+                        return;
+                    }
+                    Object[] instances = vmToolInstance().getInstances(matchedClasses.get(0), limit);
                     Object value = instances;
                     if (express != null) {
                         Express unpooledExpress = ExpressFactory.unpooledExpress(classLoader);

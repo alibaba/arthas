@@ -45,8 +45,13 @@ public class VmTool implements VmToolMXBean {
 
     /**
      * 获取某个class在jvm中当前所有存活实例
+     *
+     * @param klass 类的类型
+     * @param limit 如果为-1，取所有的；
+     *              小于-1，将抛出{@link IllegalArgumentException}；
+     *              其他情况取limit数量的存活实例
      */
-    private static native <T> T[] getInstances0(Class<T> klass);
+    private static native <T> T[] getInstances0(Class<T> klass, int limit);
 
     /**
      * 统计某个class在jvm中当前所有存活实例的总占用内存，单位：Byte
@@ -72,7 +77,7 @@ public class VmTool implements VmToolMXBean {
      * 包括小类型(如int)
      */
     public static Class<?>[] getAllClasses() {
-        return getInstances0(Class.class);
+        return getInstances0(Class.class, -1);
     }
 
     @Override
@@ -87,7 +92,12 @@ public class VmTool implements VmToolMXBean {
 
     @Override
     public <T> T[] getInstances(Class<T> klass) {
-        return getInstances0(klass);
+        return getInstances0(klass, -1);
+    }
+
+    @Override
+    public <T> T[] getInstances(Class<T> klass, int limit) {
+        return getInstances0(klass, limit);
     }
 
     @Override

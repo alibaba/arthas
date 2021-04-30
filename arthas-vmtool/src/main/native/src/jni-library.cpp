@@ -19,6 +19,41 @@ JNIEXPORT jclass JNICALL getClass(JNIEnv *env) {
     return cachedClass;
 }
 
+class UserData {
+public:
+    jlong *getTag() {
+        return tag;
+    }
+
+    void setTag(jlong *tag) {
+        UserData::tag = tag;
+    }
+
+    jint *getLimit() {
+        return limit;
+    }
+
+    void setLimit(jint *limit) {
+        UserData::limit = limit;
+    }
+
+    jint *getCount() {
+        return count;
+    }
+
+    void setCount(jint *count) {
+        UserData::count = count;
+    }
+
+    UserData(jlong *tag, jint *limit, jint *count) : tag(tag), limit(limit), count(count) {
+    }
+
+private:
+    jlong *tag;
+    jint *limit;
+    jint *count;
+};
+
 extern "C"
 jvmtiEnv *getJvmtiEnv(JNIEnv *env) {
 
@@ -62,14 +97,25 @@ jlong getClassHashCode(JNIEnv *env, jclass javaClass) {
 extern "C"
 jvmtiIterationControl JNICALL
 HeapObjectCallback(jlong class_tag, jlong size, jlong *tag_ptr, void *user_data) {
-    jlong *data = static_cast<jlong *>(user_data);
-    *tag_ptr = *data;
+    UserData *data = static_cast<UserData *>(user_data);
+    jint *limit = data->getLimit();
+    jint *count = data->getCount();
+    if (-1 == *limit || *count < *limit) {
+        *tag_ptr = *data->getTag();
+    }
+    *count = *count + 1;
     return JVMTI_ITERATION_CONTINUE;
 }
 
 extern "C"
 JNIEXPORT jobjectArray JNICALL
-Java_arthas_VmTool_getInstances0(JNIEnv *env, jclass thisClass, jclass klass) {
+Java_arthas_VmTool_getInstances0(JNIEnv *env, jclass thisClass, jclass klass, jint limit) {
+
+    //参数校验，校验失败抛出IllegalArgumentException
+    if (limit < -1) {
+        jclass exceptionClass = env->FindClass("java/lang/IllegalArgumentException");
+        env->ThrowNew(exceptionClass, "limit cannot be less than -1");
+    }
 
     jvmtiEnv *jvmti = getJvmtiEnv(env);
 
@@ -82,14 +128,16 @@ Java_arthas_VmTool_getInstances0(JNIEnv *env, jclass thisClass, jclass klass) {
     }
     //这里用hashCode作为标记
     jlong tag = getClassHashCode(env, klass);
+    jint count = 0;
+    UserData userData(&tag, &limit, &count);
     error = jvmti->IterateOverInstancesOfClass(klass, JVMTI_HEAP_OBJECT_EITHER,
-                                               HeapObjectCallback, &tag);
+                                               HeapObjectCallback, &userData);
     if (error) {
         printf("ERROR: JVMTI IterateOverInstancesOfClass failed!%u\n", error);
         return JNI_FALSE;
     }
 
-    jint count = 0;
+    count = 0;
     jobject *instances;
     error = jvmti->GetObjectsWithTags(1, &tag, &count, &instances, NULL);
     if (error) {
@@ -121,14 +169,17 @@ Java_arthas_VmTool_sumInstanceSize0(JNIEnv *env, jclass thisClass, jclass klass)
     }
     //这里用hashCode作为标记
     jlong tag = getClassHashCode(env, klass);
+    jint count = 0;
+    jint limit = -1;
+    UserData userData(&tag, &limit, &count);
     error = jvmti->IterateOverInstancesOfClass(klass, JVMTI_HEAP_OBJECT_EITHER,
-                                               HeapObjectCallback, &tag);
+                                               HeapObjectCallback, &userData);
     if (error) {
         printf("ERROR: JVMTI IterateOverInstancesOfClass failed!%u\n", error);
         return JNI_FALSE;
     }
 
-    jint count = 0;
+    count = 0;
     jobject *instances;
     error = jvmti->GetObjectsWithTags(1, &tag, &count, &instances, NULL);
     if (error) {
@@ -176,14 +227,17 @@ Java_arthas_VmTool_countInstances0(JNIEnv *env, jclass thisClass, jclass klass) 
     }
     //这里用hashCode作为标记
     jlong tag = getClassHashCode(env, klass);
+    jint count = 0;
+    jint limit = -1;
+    UserData userData(&tag, &limit, &count);
     error = jvmti->IterateOverInstancesOfClass(klass, JVMTI_HEAP_OBJECT_EITHER,
-                                               HeapObjectCallback, &tag);
+                                               HeapObjectCallback, &userData);
     if (error) {
         printf("ERROR: JVMTI IterateOverInstancesOfClass failed!%u\n", error);
         return JNI_FALSE;
     }
 
-    jint count = 0;
+    count = 0;
     error = jvmti->GetObjectsWithTags(1, &tag, &count, NULL, NULL);
     if (error) {
         printf("ERROR: JVMTI GetObjectsWithTags failed!%u\n", error);

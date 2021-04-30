@@ -6,6 +6,7 @@ import com.taobao.arthas.common.VmToolUtils;
 
 import java.io.File;
 import java.lang.ref.WeakReference;
+import java.util.Arrays;
 import java.util.concurrent.atomic.AtomicLong;
 
 /**
@@ -37,7 +38,7 @@ public class VmToolTest {
             WeakReference<VmToolTest> weakReference2 = new WeakReference<VmToolTest>(new VmToolTest());
             System.out.println(weakReference1.get() + " " + weakReference2.get());
             VmTool[] beforeInstances = vmtool.getInstances(VmTool.class);
-            System.out.println("before instances->" + beforeInstances);
+            System.out.println("before instances->" + Arrays.toString(beforeInstances));
             System.out.println("size->" + vmtool.getInstanceSize(weakReference1.get()));
             System.out.println("count->" + vmtool.countInstances(VmTool.class));
             System.out.println("sum size->" + vmtool.sumInstanceSize(VmTool.class));
@@ -47,7 +48,7 @@ public class VmToolTest {
             Thread.sleep(100);
             System.out.println(weakReference1.get() + " " + weakReference2.get());
             VmTool[] afterInstances = vmtool.getInstances(VmTool.class);
-            System.out.println("after instances->" + afterInstances);
+            System.out.println("after instances->" + Arrays.toString(afterInstances));
         } catch (Exception e) {
             e.printStackTrace();
         }
