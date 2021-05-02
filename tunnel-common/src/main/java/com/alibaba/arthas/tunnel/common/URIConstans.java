@@ -1,8 +1,9 @@
 package com.alibaba.arthas.tunnel.common;
 
 /**
- * 
+ *
  * @author hengyunabc 2020-10-22
+ * @author Naah 2021-04-17
  *
  */
 public class URIConstans {
@@ -25,7 +26,7 @@ public class URIConstans {
 
     /**
      * tunnel server向 tunnel client请求http代理时的目标 url
-     * 
+     *
      * @see com.alibaba.arthas.tunnel.common.MethodConstants#HTTP_PROXY
      */
     public static final String TARGET_URL = "targetUrl";
@@ -39,8 +40,10 @@ public class URIConstans {
      * proxy请求的返回值，base64编码
      */
     public static final String PROXY_RESPONSE_DATA = "responseData";
- 
+
     public static final String ARTHAS_VERSION = "arthasVersion";
+
+    public static final String ARTHAS_METADATA = "arthasMetadata";
 
     public static final String APP_NAME = "appName";
 }

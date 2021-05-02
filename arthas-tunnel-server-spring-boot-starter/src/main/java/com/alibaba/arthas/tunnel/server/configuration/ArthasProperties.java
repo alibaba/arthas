@@ -1,20 +1,18 @@
-package com.alibaba.arthas.tunnel.server.app.configuration;
+package com.alibaba.arthas.tunnel.server.configuration;
+
+import com.alibaba.arthas.tunnel.server.utils.InetAddressUtil;
+import com.taobao.arthas.common.ArthasConstants;
+import org.springframework.boot.context.properties.ConfigurationProperties;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.stereotype.Component;
-
-import com.alibaba.arthas.tunnel.server.utils.InetAddressUtil;
-import com.taobao.arthas.common.ArthasConstants;
-
 /**
- * 
+ *
  * @author hengyunabc 2019-08-29
  *
  */
-@Component
+
 @ConfigurationProperties(prefix = "arthas")
 public class ArthasProperties {
 
@@ -109,7 +107,7 @@ public class ArthasProperties {
 
     /**
      * for test
-     * 
+     *
      * @author hengyunabc 2020-11-03
      *
      */

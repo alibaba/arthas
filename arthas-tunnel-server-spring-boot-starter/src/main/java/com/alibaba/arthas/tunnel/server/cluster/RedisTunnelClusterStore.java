@@ -18,8 +18,9 @@ import com.alibaba.arthas.tunnel.server.AgentClusterInfo;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 /**
- * 
+ *
  * @author hengyunabc 2020-10-27
+ * @author Naah 2021-04-17
  *
  */
 public class RedisTunnelClusterStore implements TunnelClusterStore {
@@ -66,8 +67,8 @@ public class RedisTunnelClusterStore implements TunnelClusterStore {
         return redisTemplate;
     }
 
-    public void setRedisTemplate(StringRedisTemplate redisTemplate) {
-        this.redisTemplate = redisTemplate;
+    public void setRedisTemplate(Object redisTemplate) {
+        this.redisTemplate = (StringRedisTemplate) redisTemplate;
     }
 
     @Override

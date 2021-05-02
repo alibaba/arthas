@@ -1,24 +1,6 @@
 
 package com.alibaba.arthas.tunnel.server;
 
-import java.net.InetSocketAddress;
-import java.net.SocketAddress;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.net.URLDecoder;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.concurrent.TimeUnit;
-
-import org.apache.commons.lang3.RandomStringUtils;
-import org.apache.tomcat.util.codec.binary.Base64;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.util.MultiValueMap;
-import org.springframework.web.util.UriComponentsBuilder;
-
 import com.alibaba.arthas.tunnel.common.MethodConstants;
 import com.alibaba.arthas.tunnel.common.SimpleHttpResponse;
 import com.alibaba.arthas.tunnel.common.URIConstans;
@@ -33,15 +15,21 @@ import io.netty.handler.codec.http.websocketx.CloseWebSocketFrame;
 import io.netty.handler.codec.http.websocketx.TextWebSocketFrame;
 import io.netty.handler.codec.http.websocketx.WebSocketFrame;
 import io.netty.handler.codec.http.websocketx.WebSocketServerProtocolHandler.HandshakeComplete;
-import io.netty.util.concurrent.Future;
-import io.netty.util.concurrent.FutureListener;
-import io.netty.util.concurrent.GenericFutureListener;
-import io.netty.util.concurrent.GlobalEventExecutor;
-import io.netty.util.concurrent.Promise;
+import io.netty.util.concurrent.*;
+import org.apache.commons.lang3.RandomStringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.util.MultiValueMap;
+import org.springframework.web.util.UriComponentsBuilder;
+
+import java.net.*;
+import java.util.*;
+import java.util.concurrent.TimeUnit;
 
 /**
- * 
+ *
  * @author hengyunabc 2019-08-27
+ * @author Naah 2021-04-17
  *
  */
 public class TunnelSocketFrameHandler extends SimpleChannelInboundHandler<WebSocketFrame> {
@@ -110,7 +98,7 @@ public class TunnelSocketFrameHandler extends SimpleChannelInboundHandler<WebSoc
 
                 String data = URLDecoder.decode(parameters.getFirst(URIConstans.PROXY_RESPONSE_DATA), "utf-8");
 
-                byte[] bytes = Base64.decodeBase64(data);
+                byte[] bytes = Base64.getDecoder().decode(data);
 
                 SimpleHttpResponse simpleHttpResponse = SimpleHttpResponse.fromBytes(bytes);
                 promise.setSuccess(simpleHttpResponse);
@@ -237,6 +225,12 @@ public class TunnelSocketFrameHandler extends SimpleChannelInboundHandler<WebSoc
             arthasVersion = arthasVersionList.get(0);
         }
 
+        String metadata = null;
+        List<String> metadataList = parameters.get(URIConstans.ARTHAS_METADATA);
+        if (metadataList != null && !metadataList.isEmpty()) {
+            metadata = metadataList.get(0);
+        }
+
         final String finalId = id;
 
         // URI responseUri = new URI("response", null, "/", "method=" + MethodConstants.AGENT_REGISTER + "&id=" + id, null);
@@ -269,6 +263,9 @@ public class TunnelSocketFrameHandler extends SimpleChannelInboundHandler<WebSoc
         if (arthasVersion != null) {
             info.setArthasVersion(arthasVersion);
         }
+
+        info.setAppName(appName);
+        info.setMetadata(metadata);
 
         tunnelServer.addAgent(id, info);
         ctx.channel().closeFuture().addListener(new GenericFutureListener<Future<? super Void>>() {

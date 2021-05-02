@@ -1,0 +1,36 @@
+{
+  "name": "spring-boot-admin-arthas-ui",
+  "private": true,
+  "scripts": {
+    "serve": "vue-cli-service serve",
+    "build": "vue-cli-service build",
+    "lint": "vue-cli-service lint",
+    "watch": "vue-cli-service build --watch"
+  },
+  "dependencies": {
+    "core-js": "^3.6.5",
+    "xterm": "4.11.0",
+    "jquery": "3.3.1",
+    "bootstrap": "4.2.1"
+  },
+  "devDependencies": {
+    "@vue/cli-plugin-babel": "^4.5.8",
+    "@vue/cli-service": "^4.5.8",
+    "copy-webpack-plugin": "^5.1.2",
+    "vue": "^2.6.12",
+    "vue-template-compiler": "^2.6.12"
+  },
+  "peerDependencies": {
+    "vue": "^2.5.16"
+  },
+  "postcss": {
+    "plugins": {
+      "autoprefixer": {}
+    }
+  },
+  "browserslist": [
+    "> 1%",
+    "last 2 versions",
+    "not ie <= 8"
+  ]
+}

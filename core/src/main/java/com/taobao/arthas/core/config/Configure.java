@@ -14,6 +14,7 @@ import static java.lang.reflect.Modifier.isStatic;
  *
  * @author vlinux
  * @author hengyunabc 2018-11-12
+ * @author Naah 2021-04-17
  */
 @Config(prefix = "arthas")
 public class Configure {
@@ -30,6 +31,8 @@ public class Configure {
 
     private String username;
     private String password;
+
+    private String metadata;
 
     /**
      * @see com.taobao.arthas.common.ArthasConstants#ARTHAS_OUTPUT
@@ -178,6 +181,14 @@ public class Configure {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public String getMetadata() {
+        return metadata;
+    }
+
+    public void setMetadata(String metadata) {
+        this.metadata = metadata;
     }
 
     /**

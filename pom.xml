@@ -227,6 +227,8 @@
             </activation>
             <modules>
                 <module>tunnel-server</module>
+                <module>arthas-tunnel-server-spring-boot-starter</module>
+                <module>arthas-tunnel-server-spring-boot-admin-starter</module>
             </modules>
             <build>
                 <plugins>

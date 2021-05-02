@@ -1,0 +1,5 @@
+org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
+  com.alibaba.arthas.tunnel.server.configuration.ArthasSpringBootAdminConfiguration,\
+  com.alibaba.arthas.tunnel.server.configuration.EmbeddedRedisConfiguration,\
+  com.alibaba.arthas.tunnel.server.configuration.TunnelClusterStoreConfiguration,\
+  com.alibaba.arthas.tunnel.server.configuration.TunnelServerConfiguration

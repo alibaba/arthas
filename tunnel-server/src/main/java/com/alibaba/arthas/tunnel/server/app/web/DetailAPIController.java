@@ -18,11 +18,11 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.alibaba.arthas.tunnel.server.AgentClusterInfo;
-import com.alibaba.arthas.tunnel.server.app.configuration.ArthasProperties;
+import com.alibaba.arthas.tunnel.server.configuration.ArthasProperties;
 import com.alibaba.arthas.tunnel.server.cluster.TunnelClusterStore;
 
 /**
- * 
+ *
  * @author hengyunabc 2020-11-03
  *
  */
