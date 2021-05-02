@@ -33,6 +33,7 @@ import com.taobao.arthas.core.command.klass100.RetransformCommand;
 import com.taobao.arthas.core.command.klass100.SearchClassCommand;
 import com.taobao.arthas.core.command.klass100.SearchMethodCommand;
 import com.taobao.arthas.core.command.logger.LoggerCommand;
+import com.taobao.arthas.core.command.monitor200.ClassHistogramCommand;
 import com.taobao.arthas.core.command.monitor200.DashboardCommand;
 import com.taobao.arthas.core.command.monitor200.HeapDumpCommand;
 import com.taobao.arthas.core.command.monitor200.JvmCommand;
@@ -113,6 +114,7 @@ public class BuiltinCommandPack implements CommandResolver {
         commands.add(Command.create(GrepCommand.class));
         commands.add(Command.create(TeeCommand.class));
         commands.add(Command.create(ProfilerCommand.class));
+        commands.add(Command.create(ClassHistogramCommand.class));
         commands.add(Command.create(ShutdownCommand.class));
         commands.add(Command.create(StopCommand.class));
     }
