@@ -41,17 +41,17 @@ public class VmTool implements VmToolMXBean {
      */
     private static native String check0();
 
-    private static native void forceGc0();
+    private static synchronized native void forceGc0();
 
     /**
      * 获取某个class在jvm中当前所有存活实例
      */
-    private static native <T> T[] getInstances0(Class<T> klass);
+    private static synchronized native <T> T[] getInstances0(Class<T> klass, int limit);
 
     /**
      * 统计某个class在jvm中当前所有存活实例的总占用内存，单位：Byte
      */
-    private static native long sumInstanceSize0(Class<?> klass);
+    private static synchronized native long sumInstanceSize0(Class<?> klass);
 
     /**
      * 获取某个实例的占用内存，单位：Byte
@@ -61,24 +61,14 @@ public class VmTool implements VmToolMXBean {
     /**
      * 统计某个class在jvm中当前所有存活实例的总个数
      */
-    private static native long countInstances0(Class<?> klass);
+    private static synchronized native long countInstances0(Class<?> klass);
 
     /**
      * 获取所有已加载的类
+     * @param klass 这个参数必须是 Class.class
+     * @return
      */
-    private static native Class<?>[] getAllLoadedClasses0();
-
-    /**
-     * 包括小类型(如int)
-     */
-    public static Class<?>[] getAllClasses() {
-        return getInstances0(Class.class);
-    }
-
-    @Override
-    public String check() {
-        return check0();
-    }
+    private static synchronized native Class<?>[] getAllLoadedClasses0(Class<?> klass);
 
     @Override
     public void forceGc() {
@@ -87,7 +77,15 @@ public class VmTool implements VmToolMXBean {
 
     @Override
     public <T> T[] getInstances(Class<T> klass) {
-        return getInstances0(klass);
+        return getInstances0(klass, -1);
+    }
+
+    @Override
+    public <T> T[] getInstances(Class<T> klass, int limit) {
+        if (limit == 0) {
+            throw new IllegalArgumentException("limit can not be 0");
+        }
+        return getInstances0(klass, limit);
     }
 
     @Override
@@ -107,7 +105,7 @@ public class VmTool implements VmToolMXBean {
 
     @Override
     public Class<?>[] getAllLoadedClasses() {
-        return getAllLoadedClasses0();
+        return getAllLoadedClasses0(Class.class);
     }
 
 }

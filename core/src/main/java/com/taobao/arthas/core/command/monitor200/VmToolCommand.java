@@ -47,6 +47,8 @@ import arthas.VmTool;
 @Description(Constants.EXAMPLE
         + "  vmtool --action getInstances --className demo.MathGame\n"
         + "  vmtool --action getInstances --className demo.MathGame --express 'instances.length'\n"
+        + "  vmtool --action getInstances --className demo.MathGame --express 'instances[0]'\n"
+        + "  vmtool --action getInstances --className java.lang.String --limit 10\n"
         + "  vmtool --action forceGc\n"
         + Constants.WIKI + Constants.WIKI_HOME + "vmtool")
 //@formatter:on
@@ -63,6 +65,11 @@ public class VmToolCommand extends AnnotatedCommand {
      * default value 2
      */
     private int expand;
+
+    /**
+     * default value 10
+     */
+    private int limit;
 
     private static String libPath;
     private static VmTool vmTool = null;
@@ -117,6 +124,13 @@ public class VmToolCommand extends AnnotatedCommand {
         this.classLoaderClass = classLoaderClass;
     }
 
+    @Option(shortName = "l", longName = "limit")
+    @Description("Set the limit value of the getInstances action, default value is 10, set to -1 is unlimited")
+    @DefaultValue("10")
+    public void setLimit(int limit) {
+        this.limit = limit;
+    }
+
     @Option(longName = "express", required = false)
     @Description("The ognl expression, default valueis `instances`.")
     public void setExpress(String express) {
@@ -165,7 +179,7 @@ public class VmToolCommand extends AnnotatedCommand {
                     process.end(-1, "Found more than one class: " + matchedClasses + ".");
                     return;
                 } else {
-                    Object[] instances = vmToolInstance().getInstances(matchedClasses.get(0));
+                    Object[] instances = vmToolInstance().getInstances(matchedClasses.get(0), limit);
                     Object value = instances;
                     if (express != null) {
                         Express unpooledExpress = ExpressFactory.unpooledExpress(classLoader);

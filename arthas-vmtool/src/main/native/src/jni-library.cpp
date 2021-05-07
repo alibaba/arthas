@@ -8,6 +8,30 @@
 static jvmtiEnv *jvmti;
 static jlong tagCounter = 0;
 
+struct LimitCounter {
+    jint currentCounter;
+    jint limitValue;
+
+    void init(jint limit) {
+        currentCounter = 0;
+        limitValue = limit;
+    }
+
+    void countDown() {
+        currentCounter++;
+    }
+
+    bool allow() {
+        if (limitValue < 0) {
+            return true;
+        }
+        return limitValue > currentCounter;
+    }
+};
+
+// 每次 IterateOverInstancesOfClass 调用前需要先 init
+static LimitCounter limitCounter = {0, 0};
+
 extern "C"
 int init_agent(JavaVM *vm, void *reserved) {
     jint rc;
@@ -61,13 +85,20 @@ jvmtiIterationControl JNICALL
 HeapObjectCallback(jlong class_tag, jlong size, jlong *tag_ptr, void *user_data) {
     jlong *data = static_cast<jlong *>(user_data);
     *tag_ptr = *data;
-    return JVMTI_ITERATION_CONTINUE;
+
+    limitCounter.countDown();
+    if (limitCounter.allow()) {
+        return JVMTI_ITERATION_CONTINUE;
+    }else {
+        return JVMTI_ITERATION_ABORT;
+    }
 }
 
 extern "C"
 JNIEXPORT jobjectArray JNICALL
-Java_arthas_VmTool_getInstances0(JNIEnv *env, jclass thisClass, jclass klass) {
+Java_arthas_VmTool_getInstances0(JNIEnv *env, jclass thisClass, jclass klass, jint limit) {
     jlong tag = getTag();
+    limitCounter.init(limit);
     jvmtiError error = jvmti->IterateOverInstancesOfClass(klass, JVMTI_HEAP_OBJECT_EITHER,
                                                HeapObjectCallback, &tag);
     if (error) {
@@ -96,6 +127,7 @@ extern "C"
 JNIEXPORT jlong JNICALL
 Java_arthas_VmTool_sumInstanceSize0(JNIEnv *env, jclass thisClass, jclass klass) {
     jlong tag = getTag();
+    limitCounter.init(-1);
     jvmtiError error = jvmti->IterateOverInstancesOfClass(klass, JVMTI_HEAP_OBJECT_EITHER,
                                                HeapObjectCallback, &tag);
     if (error) {
@@ -136,6 +168,7 @@ extern "C"
 JNIEXPORT jlong JNICALL
 Java_arthas_VmTool_countInstances0(JNIEnv *env, jclass thisClass, jclass klass) {
     jlong tag = getTag();
+    limitCounter.init(-1);
     jvmtiError error = jvmti->IterateOverInstancesOfClass(klass, JVMTI_HEAP_OBJECT_EITHER,
                                                HeapObjectCallback, &tag);
     if (error) {

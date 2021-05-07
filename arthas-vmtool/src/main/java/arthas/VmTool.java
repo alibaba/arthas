@@ -46,12 +46,12 @@ public class VmTool implements VmToolMXBean {
     /**
      * 获取某个class在jvm中当前所有存活实例
      */
-    private static synchronized native <T> T[] getInstances0(Class<T> klass);
+    private static synchronized native <T> T[] getInstances0(Class<T> klass, int limit);
 
     /**
      * 统计某个class在jvm中当前所有存活实例的总占用内存，单位：Byte
      */
-    private static native long sumInstanceSize0(Class<?> klass);
+    private static synchronized native long sumInstanceSize0(Class<?> klass);
 
     /**
      * 获取某个实例的占用内存，单位：Byte
@@ -77,7 +77,15 @@ public class VmTool implements VmToolMXBean {
 
     @Override
     public <T> T[] getInstances(Class<T> klass) {
-        return getInstances0(klass);
+        return getInstances0(klass, -1);
+    }
+
+    @Override
+    public <T> T[] getInstances(Class<T> klass, int limit) {
+        if (limit == 0) {
+            throw new IllegalArgumentException("limit can not be 0");
+        }
+        return getInstances0(klass, limit);
     }
 
     @Override

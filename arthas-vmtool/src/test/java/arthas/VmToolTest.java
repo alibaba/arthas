@@ -2,12 +2,15 @@ package arthas;
 
 import java.io.File;
 import java.lang.ref.WeakReference;
+import java.util.ArrayList;
 import java.util.concurrent.atomic.AtomicLong;
 
 import org.assertj.core.api.Assertions;
 import org.junit.Test;
 
 import com.taobao.arthas.common.VmToolUtils;
+
+import arthas.VmToolTest.LimitTest;
 
 /**
  * 以下本地测试的jvm参数均为：-Xms128m -Xmx128m
@@ -144,6 +147,25 @@ public class VmToolTest {
             System.out.println(i + " class size:" + allLoadedClasses.length + ", cost " + cost + "ms avgCost " + totalTime.doubleValue() / i + "ms");
             allLoadedClasses = null;
         }
+    }
+
+    class LimitTest {
+    }
+
+    @Test
+    public void test_getInstances_lmiit() {
+        VmTool vmtool = initVmTool();
+
+        ArrayList<LimitTest> list = new ArrayList<LimitTest>();
+        for (int i = 0; i < 10; ++i) {
+            list.add(new LimitTest());
+        }
+        LimitTest[] instances = vmtool.getInstances(LimitTest.class, 5);
+        Assertions.assertThat(instances).hasSize(5);
+        LimitTest[] instances2 = vmtool.getInstances(LimitTest.class, -1);
+        Assertions.assertThat(instances2).hasSize(10);
+        LimitTest[] instances3 = vmtool.getInstances(LimitTest.class, 1);
+        Assertions.assertThat(instances3).hasSize(1);
     }
 
     interface III {
