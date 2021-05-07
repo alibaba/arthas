@@ -16,6 +16,15 @@ int init_agent(JavaVM *vm, void *reserved) {
         fprintf(stderr, "ERROR: arthas vmtool Unable to create jvmtiEnv, GetEnv failed, error=%d\n", rc);
         return -1;
     }
+
+    jvmtiCapabilities capabilities = {0};
+    capabilities.can_tag_objects = 1;
+    jvmtiError error = jvmti->AddCapabilities(&capabilities);
+    if (error) {
+        fprintf(stderr, "ERROR: arthas vmtool JVMTI AddCapabilities failed!%u\n", error);
+        return JNI_FALSE;
+    }
+
     return JNI_OK;
 }
 
@@ -74,16 +83,9 @@ HeapObjectCallback(jlong class_tag, jlong size, jlong *tag_ptr, void *user_data)
 extern "C"
 JNIEXPORT jobjectArray JNICALL
 Java_arthas_VmTool_getInstances0(JNIEnv *env, jclass thisClass, jclass klass) {
-    jvmtiCapabilities capabilities = {0};
-    capabilities.can_tag_objects = 1;
-    jvmtiError error = jvmti->AddCapabilities(&capabilities);
-    if (error) {
-        printf("ERROR: JVMTI AddCapabilities failed!%u\n", error);
-        return JNI_FALSE;
-    }
     //这里用hashCode作为标记
     jlong tag = getClassHashCode(env, klass);
-    error = jvmti->IterateOverInstancesOfClass(klass, JVMTI_HEAP_OBJECT_EITHER,
+    jvmtiError error = jvmti->IterateOverInstancesOfClass(klass, JVMTI_HEAP_OBJECT_EITHER,
                                                HeapObjectCallback, &tag);
     if (error) {
         printf("ERROR: JVMTI IterateOverInstancesOfClass failed!%u\n", error);
@@ -110,16 +112,9 @@ Java_arthas_VmTool_getInstances0(JNIEnv *env, jclass thisClass, jclass klass) {
 extern "C"
 JNIEXPORT jlong JNICALL
 Java_arthas_VmTool_sumInstanceSize0(JNIEnv *env, jclass thisClass, jclass klass) {
-    jvmtiCapabilities capabilities = {0};
-    capabilities.can_tag_objects = 1;
-    jvmtiError error = jvmti->AddCapabilities(&capabilities);
-    if (error) {
-        printf("ERROR: JVMTI AddCapabilities failed!%u\n", error);
-        return JNI_FALSE;
-    }
     //这里用hashCode作为标记
     jlong tag = getClassHashCode(env, klass);
-    error = jvmti->IterateOverInstancesOfClass(klass, JVMTI_HEAP_OBJECT_EITHER,
+    jvmtiError error = jvmti->IterateOverInstancesOfClass(klass, JVMTI_HEAP_OBJECT_EITHER,
                                                HeapObjectCallback, &tag);
     if (error) {
         printf("ERROR: JVMTI IterateOverInstancesOfClass failed!%u\n", error);
@@ -159,16 +154,9 @@ JNIEXPORT jlong JNICALL Java_arthas_VmTool_getInstanceSize0
 extern "C"
 JNIEXPORT jlong JNICALL
 Java_arthas_VmTool_countInstances0(JNIEnv *env, jclass thisClass, jclass klass) {
-    jvmtiCapabilities capabilities = {0};
-    capabilities.can_tag_objects = 1;
-    jvmtiError error = jvmti->AddCapabilities(&capabilities);
-    if (error) {
-        printf("ERROR: JVMTI AddCapabilities failed!%u\n", error);
-        return JNI_FALSE;
-    }
     //这里用hashCode作为标记
     jlong tag = getClassHashCode(env, klass);
-    error = jvmti->IterateOverInstancesOfClass(klass, JVMTI_HEAP_OBJECT_EITHER,
+    jvmtiError error = jvmti->IterateOverInstancesOfClass(klass, JVMTI_HEAP_OBJECT_EITHER,
                                                HeapObjectCallback, &tag);
     if (error) {
         printf("ERROR: JVMTI IterateOverInstancesOfClass failed!%u\n", error);
