@@ -1,8 +1,12 @@
 package arthas;
 
+import org.assertj.core.api.Assertions;
 import org.junit.Test;
 
 import com.taobao.arthas.common.VmToolUtils;
+
+import arthas.VmToolTest.AAA;
+import arthas.VmToolTest.III;
 
 import java.io.File;
 import java.lang.ref.WeakReference;
@@ -143,5 +147,24 @@ public class VmToolTest {
             System.out.println(i + " class size:" + allLoadedClasses.length + ", cost " + cost + "ms avgCost " + totalTime.doubleValue() / i + "ms");
             allLoadedClasses = null;
         }
+    }
+
+    interface III {
+    }
+
+    class AAA implements III {
+    }
+
+    @Test
+    public void test_getInstances_interface() {
+        AAA aaa = new AAA();
+        VmTool vmtool = initVmTool();
+        III[] interfaceInstances = vmtool.getInstances(III.class);
+        Assertions.assertThat(interfaceInstances.length).isEqualTo(1);
+
+        AAA[] ObjectInstances = vmtool.getInstances(AAA.class);
+        Assertions.assertThat(ObjectInstances.length).isEqualTo(1);
+
+        Assertions.assertThat(interfaceInstances[0]).isEqualTo(ObjectInstances[0]);
     }
 }
