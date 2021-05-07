@@ -4,21 +4,6 @@
 #include <jvmti.h>
 #include "arthas_VmTool.h" // under target/native/javah/
 
-//缓存
-static jclass cachedClass = NULL;
-
-extern "C"
-JNIEXPORT jclass JNICALL getClass(JNIEnv *env) {
-    if (cachedClass == NULL) {
-        //通过其签名找到Class的Class
-        jclass theClass = env->FindClass("java/lang/Class");
-        //放入缓存
-        cachedClass = static_cast<jclass>(env->NewGlobalRef(theClass));
-        env->DeleteLocalRef(theClass);
-    }
-    return cachedClass;
-}
-
 extern "C"
 jvmtiEnv *getJvmtiEnv(JNIEnv *env) {
 
@@ -194,7 +179,7 @@ Java_arthas_VmTool_countInstances0(JNIEnv *env, jclass thisClass, jclass klass) 
 
 extern "C"
 JNIEXPORT jobjectArray JNICALL Java_arthas_VmTool_getAllLoadedClasses0
-        (JNIEnv *env, jclass thisClass) {
+        (JNIEnv *env, jclass thisClass, jclass kclass) {
 
     jvmtiEnv *jvmti = getJvmtiEnv(env);
 
@@ -207,7 +192,7 @@ JNIEXPORT jobjectArray JNICALL Java_arthas_VmTool_getAllLoadedClasses0
         return JNI_FALSE;
     }
 
-    jobjectArray array = env->NewObjectArray(count, getClass(env), NULL);
+    jobjectArray array = env->NewObjectArray(count, kclass, NULL);
     //添加元素到数组
     for (int i = 0; i < count; i++) {
         env->SetObjectArrayElement(array, i, classes[i]);

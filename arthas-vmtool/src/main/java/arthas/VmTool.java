@@ -65,15 +65,10 @@ public class VmTool implements VmToolMXBean {
 
     /**
      * 获取所有已加载的类
+     * @param klass 这个参数必须是 Class.class
+     * @return
      */
-    private static native Class<?>[] getAllLoadedClasses0();
-
-    /**
-     * 包括小类型(如int)
-     */
-    public static Class<?>[] getAllClasses() {
-        return getInstances0(Class.class);
-    }
+    private static native Class<?>[] getAllLoadedClasses0(Class<?> klass);
 
     @Override
     public String check() {
@@ -107,7 +102,7 @@ public class VmTool implements VmToolMXBean {
 
     @Override
     public Class<?>[] getAllLoadedClasses() {
-        return getAllLoadedClasses0();
+        return getAllLoadedClasses0(Class.class);
     }
 
 }
