@@ -1,16 +1,13 @@
 package arthas;
 
+import java.io.File;
+import java.lang.ref.WeakReference;
+import java.util.concurrent.atomic.AtomicLong;
+
 import org.assertj.core.api.Assertions;
 import org.junit.Test;
 
 import com.taobao.arthas.common.VmToolUtils;
-
-import arthas.VmToolTest.AAA;
-import arthas.VmToolTest.III;
-
-import java.io.File;
-import java.lang.ref.WeakReference;
-import java.util.concurrent.atomic.AtomicLong;
 
 /**
  * 以下本地测试的jvm参数均为：-Xms128m -Xmx128m

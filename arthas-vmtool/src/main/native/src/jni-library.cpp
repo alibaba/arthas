@@ -72,7 +72,7 @@ Java_arthas_VmTool_getInstances0(JNIEnv *env, jclass thisClass, jclass klass) {
                                                HeapObjectCallback, &tag);
     if (error) {
         printf("ERROR: JVMTI IterateOverInstancesOfClass failed!%u\n", error);
-        return JNI_FALSE;
+        return NULL;
     }
 
     jint count = 0;
@@ -80,7 +80,7 @@ Java_arthas_VmTool_getInstances0(JNIEnv *env, jclass thisClass, jclass klass) {
     error = jvmti->GetObjectsWithTags(1, &tag, &count, &instances, NULL);
     if (error) {
         printf("ERROR: JVMTI GetObjectsWithTags failed!%u\n", error);
-        return JNI_FALSE;
+        return NULL;
     }
 
     jobjectArray array = env->NewObjectArray(count, klass, NULL);
@@ -100,7 +100,7 @@ Java_arthas_VmTool_sumInstanceSize0(JNIEnv *env, jclass thisClass, jclass klass)
                                                HeapObjectCallback, &tag);
     if (error) {
         printf("ERROR: JVMTI IterateOverInstancesOfClass failed!%u\n", error);
-        return JNI_FALSE;
+        return -1;
     }
 
     jint count = 0;
@@ -108,7 +108,7 @@ Java_arthas_VmTool_sumInstanceSize0(JNIEnv *env, jclass thisClass, jclass klass)
     error = jvmti->GetObjectsWithTags(1, &tag, &count, &instances, NULL);
     if (error) {
         printf("ERROR: JVMTI GetObjectsWithTags failed!%u\n", error);
-        return JNI_FALSE;
+        return -1;
     }
 
     jlong sum = 0;
@@ -128,7 +128,6 @@ JNIEXPORT jlong JNICALL Java_arthas_VmTool_getInstanceSize0
     jvmtiError error = jvmti->GetObjectSize(instance, &size);
     if (error) {
         printf("ERROR: JVMTI GetObjectSize failed!%u\n", error);
-        return JNI_FALSE;
     }
     return size;
 }
@@ -141,14 +140,14 @@ Java_arthas_VmTool_countInstances0(JNIEnv *env, jclass thisClass, jclass klass) 
                                                HeapObjectCallback, &tag);
     if (error) {
         printf("ERROR: JVMTI IterateOverInstancesOfClass failed!%u\n", error);
-        return JNI_FALSE;
+        return -1;
     }
 
     jint count = 0;
     error = jvmti->GetObjectsWithTags(1, &tag, &count, NULL, NULL);
     if (error) {
         printf("ERROR: JVMTI GetObjectsWithTags failed!%u\n", error);
-        return JNI_FALSE;
+        return -1;
     }
     return count;
 }
@@ -162,7 +161,7 @@ JNIEXPORT jobjectArray JNICALL Java_arthas_VmTool_getAllLoadedClasses0
     jvmtiError error = jvmti->GetLoadedClasses(&count, &classes);
     if (error) {
         printf("ERROR: JVMTI GetLoadedClasses failed!\n");
-        return JNI_FALSE;
+        return NULL;
     }
 
     jobjectArray array = env->NewObjectArray(count, kclass, NULL);
