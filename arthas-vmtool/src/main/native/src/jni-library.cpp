@@ -4,21 +4,40 @@
 #include <jvmti.h>
 #include "arthas_VmTool.h" // under target/native/javah/
 
+
+static jvmtiEnv *jvmti;
+
 extern "C"
-jvmtiEnv *getJvmtiEnv(JNIEnv *env) {
+int init_agent(JavaVM *vm, void *reserved) {
+    jint rc;
+    /* Get JVMTI environment */
+    rc = vm->GetEnv((void **)&jvmti, JVMTI_VERSION_1_2);
+    if (rc != JNI_OK) {
+        fprintf(stderr, "ERROR: arthas vmtool Unable to create jvmtiEnv, GetEnv failed, error=%d\n", rc);
+        return -1;
+    }
+    return JNI_OK;
+}
 
-    JavaVM *vm;
-    env->GetJavaVM(&vm);
+extern "C" JNIEXPORT jint JNICALL
+Agent_OnLoad(JavaVM *vm, char *options, void *reserved) {
+    return init_agent(vm, reserved);
+}
 
-    jvmtiEnv *jvmti;
-    vm->GetEnv((void **) &jvmti, JVMTI_VERSION_1_2);
-    return jvmti;
+extern "C" JNIEXPORT jint JNICALL
+Agent_OnAttach(JavaVM* vm, char* options, void* reserved) {
+    return init_agent(vm, reserved);
+}
+
+extern "C" JNIEXPORT jint JNICALL
+JNI_OnLoad(JavaVM* vm, void* reserved) {
+    init_agent(vm, reserved);
+    return JNI_VERSION_1_6;
 }
 
 extern "C"
 JNIEXPORT void JNICALL
 Java_arthas_VmTool_forceGc0(JNIEnv *env, jclass thisClass) {
-    jvmtiEnv *jvmti = getJvmtiEnv(env);
     jvmti->ForceGarbageCollection();
 }
 
@@ -55,9 +74,6 @@ HeapObjectCallback(jlong class_tag, jlong size, jlong *tag_ptr, void *user_data)
 extern "C"
 JNIEXPORT jobjectArray JNICALL
 Java_arthas_VmTool_getInstances0(JNIEnv *env, jclass thisClass, jclass klass) {
-
-    jvmtiEnv *jvmti = getJvmtiEnv(env);
-
     jvmtiCapabilities capabilities = {0};
     capabilities.can_tag_objects = 1;
     jvmtiError error = jvmti->AddCapabilities(&capabilities);
@@ -94,9 +110,6 @@ Java_arthas_VmTool_getInstances0(JNIEnv *env, jclass thisClass, jclass klass) {
 extern "C"
 JNIEXPORT jlong JNICALL
 Java_arthas_VmTool_sumInstanceSize0(JNIEnv *env, jclass thisClass, jclass klass) {
-
-    jvmtiEnv *jvmti = getJvmtiEnv(env);
-
     jvmtiCapabilities capabilities = {0};
     capabilities.can_tag_objects = 1;
     jvmtiError error = jvmti->AddCapabilities(&capabilities);
@@ -134,9 +147,6 @@ Java_arthas_VmTool_sumInstanceSize0(JNIEnv *env, jclass thisClass, jclass klass)
 extern "C"
 JNIEXPORT jlong JNICALL Java_arthas_VmTool_getInstanceSize0
         (JNIEnv *env, jclass thisClass, jobject instance) {
-
-    jvmtiEnv *jvmti = getJvmtiEnv(env);
-
     jlong size = -1;
     jvmtiError error = jvmti->GetObjectSize(instance, &size);
     if (error) {
@@ -149,9 +159,6 @@ JNIEXPORT jlong JNICALL Java_arthas_VmTool_getInstanceSize0
 extern "C"
 JNIEXPORT jlong JNICALL
 Java_arthas_VmTool_countInstances0(JNIEnv *env, jclass thisClass, jclass klass) {
-
-    jvmtiEnv *jvmti = getJvmtiEnv(env);
-
     jvmtiCapabilities capabilities = {0};
     capabilities.can_tag_objects = 1;
     jvmtiError error = jvmti->AddCapabilities(&capabilities);
@@ -180,9 +187,6 @@ Java_arthas_VmTool_countInstances0(JNIEnv *env, jclass thisClass, jclass klass) 
 extern "C"
 JNIEXPORT jobjectArray JNICALL Java_arthas_VmTool_getAllLoadedClasses0
         (JNIEnv *env, jclass thisClass, jclass kclass) {
-
-    jvmtiEnv *jvmti = getJvmtiEnv(env);
-
     jclass *classes;
     jint count = 0;
 
