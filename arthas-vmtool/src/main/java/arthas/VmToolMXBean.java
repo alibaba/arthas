@@ -14,10 +14,6 @@ package arthas;
  * @author hengyunabc 2021-04-26
  */
 public interface VmToolMXBean {
-    /**
-     * 检测jni-lib是否正常，如果正常，应该输出OK
-     */
-    public String check();
 
     /**
      * https://docs.oracle.com/javase/8/docs/platform/jvmti/jvmti.html#ForceGarbageCollection

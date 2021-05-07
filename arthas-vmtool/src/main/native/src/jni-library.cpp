@@ -52,12 +52,6 @@ Java_arthas_VmTool_forceGc0(JNIEnv *env, jclass thisClass) {
 }
 
 extern "C"
-JNIEXPORT jstring JNICALL
-Java_arthas_VmTool_check0(JNIEnv *env, jclass thisClass) {
-    return env->NewStringUTF("OK");
-}
-
-extern "C"
 jlong getTag() {
     return ++tagCounter;
 }

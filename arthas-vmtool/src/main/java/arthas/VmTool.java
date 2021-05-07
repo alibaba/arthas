@@ -71,11 +71,6 @@ public class VmTool implements VmToolMXBean {
     private static synchronized native Class<?>[] getAllLoadedClasses0(Class<?> klass);
 
     @Override
-    public String check() {
-        return check0();
-    }
-
-    @Override
     public void forceGc() {
         forceGc0();
     }
