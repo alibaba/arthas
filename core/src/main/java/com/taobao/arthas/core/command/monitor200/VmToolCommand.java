@@ -71,7 +71,8 @@ public class VmToolCommand extends AnnotatedCommand {
      */
     private int limit;
 
-    private static String libPath;
+    private String libPath;
+    private static String defaultLibPath;
     private static VmTool vmTool = null;
 
     static {
@@ -83,7 +84,7 @@ public class VmToolCommand extends AnnotatedCommand {
                     File bootJarPath = new File(codeSource.getLocation().toURI().getSchemeSpecificPart());
                     File soFile = new File(bootJarPath.getParentFile(), "lib" + File.separator + libName);
                     if (soFile.exists()) {
-                        libPath = soFile.getAbsolutePath();
+                        defaultLibPath = soFile.getAbsolutePath();
                     }
                 } catch (Throwable e) {
                     logger.error("can not find VmTool so", e);
@@ -131,6 +132,12 @@ public class VmToolCommand extends AnnotatedCommand {
         this.limit = limit;
     }
 
+    @Option(longName = "libPath")
+    @Description("The specify lib path.")
+    public void setLibPath(String path) {
+        libPath = path;
+    }
+
     @Option(longName = "express", required = false)
     @Description("The ognl expression, default valueis `instances`.")
     public void setExpress(String express) {
@@ -138,7 +145,7 @@ public class VmToolCommand extends AnnotatedCommand {
     }
 
     public enum VmToolAction {
-        getInstances, forceGc, load
+        getInstances, forceGc
     }
 
     @Override
@@ -230,6 +237,9 @@ public class VmToolCommand extends AnnotatedCommand {
         if (vmTool != null) {
             return vmTool;
         } else {
+            if (libPath == null) {
+                libPath = defaultLibPath;
+            }
             vmTool = VmTool.getInstance(libPath);
         }
         return vmTool;
