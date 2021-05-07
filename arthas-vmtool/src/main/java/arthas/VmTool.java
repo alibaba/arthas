@@ -41,12 +41,12 @@ public class VmTool implements VmToolMXBean {
      */
     private static native String check0();
 
-    private static native void forceGc0();
+    private static synchronized native void forceGc0();
 
     /**
      * 获取某个class在jvm中当前所有存活实例
      */
-    private static native <T> T[] getInstances0(Class<T> klass);
+    private static synchronized native <T> T[] getInstances0(Class<T> klass);
 
     /**
      * 统计某个class在jvm中当前所有存活实例的总占用内存，单位：Byte
@@ -61,14 +61,14 @@ public class VmTool implements VmToolMXBean {
     /**
      * 统计某个class在jvm中当前所有存活实例的总个数
      */
-    private static native long countInstances0(Class<?> klass);
+    private static synchronized native long countInstances0(Class<?> klass);
 
     /**
      * 获取所有已加载的类
      * @param klass 这个参数必须是 Class.class
      * @return
      */
-    private static native Class<?>[] getAllLoadedClasses0(Class<?> klass);
+    private static synchronized native Class<?>[] getAllLoadedClasses0(Class<?> klass);
 
     @Override
     public String check() {

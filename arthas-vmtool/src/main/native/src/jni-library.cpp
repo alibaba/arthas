@@ -6,6 +6,7 @@
 
 
 static jvmtiEnv *jvmti;
+static jlong tagCounter = 0;
 
 extern "C"
 int init_agent(JavaVM *vm, void *reserved) {
@@ -57,19 +58,8 @@ Java_arthas_VmTool_check0(JNIEnv *env, jclass thisClass) {
 }
 
 extern "C"
-jobject createJavaInstance(JNIEnv *env, jclass javaClass) {
-    //找到java类的构造方法
-    jmethodID construct = env->GetMethodID(javaClass, "<init>", "()V");
-    //生成java类实例
-    return env->NewObject(javaClass, construct, "");
-}
-
-extern "C"
-jlong getClassHashCode(JNIEnv *env, jclass javaClass) {
-    //找到java类的hashCode方法
-    jmethodID hashCodeMethod = env->GetMethodID(javaClass, "hashCode", "()I");
-    //生成java类实例
-    return env->CallLongMethod(javaClass, hashCodeMethod);
+jlong getTag() {
+    return ++tagCounter;
 }
 
 extern "C"
@@ -83,8 +73,7 @@ HeapObjectCallback(jlong class_tag, jlong size, jlong *tag_ptr, void *user_data)
 extern "C"
 JNIEXPORT jobjectArray JNICALL
 Java_arthas_VmTool_getInstances0(JNIEnv *env, jclass thisClass, jclass klass) {
-    //这里用hashCode作为标记
-    jlong tag = getClassHashCode(env, klass);
+    jlong tag = getTag();
     jvmtiError error = jvmti->IterateOverInstancesOfClass(klass, JVMTI_HEAP_OBJECT_EITHER,
                                                HeapObjectCallback, &tag);
     if (error) {
@@ -112,8 +101,7 @@ Java_arthas_VmTool_getInstances0(JNIEnv *env, jclass thisClass, jclass klass) {
 extern "C"
 JNIEXPORT jlong JNICALL
 Java_arthas_VmTool_sumInstanceSize0(JNIEnv *env, jclass thisClass, jclass klass) {
-    //这里用hashCode作为标记
-    jlong tag = getClassHashCode(env, klass);
+    jlong tag = getTag();
     jvmtiError error = jvmti->IterateOverInstancesOfClass(klass, JVMTI_HEAP_OBJECT_EITHER,
                                                HeapObjectCallback, &tag);
     if (error) {
@@ -154,8 +142,7 @@ JNIEXPORT jlong JNICALL Java_arthas_VmTool_getInstanceSize0
 extern "C"
 JNIEXPORT jlong JNICALL
 Java_arthas_VmTool_countInstances0(JNIEnv *env, jclass thisClass, jclass klass) {
-    //这里用hashCode作为标记
-    jlong tag = getClassHashCode(env, klass);
+    jlong tag = getTag();
     jvmtiError error = jvmti->IterateOverInstancesOfClass(klass, JVMTI_HEAP_OBJECT_EITHER,
                                                HeapObjectCallback, &tag);
     if (error) {
