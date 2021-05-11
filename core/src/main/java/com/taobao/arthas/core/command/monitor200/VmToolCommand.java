@@ -48,7 +48,9 @@ import arthas.VmTool;
         + "  vmtool --action getInstances --className demo.MathGame\n"
         + "  vmtool --action getInstances --className demo.MathGame --express 'instances.length'\n"
         + "  vmtool --action getInstances --className demo.MathGame --express 'instances[0]'\n"
+        + "  vmtool --action getInstances --className demo.MathGame -x 2\n"
         + "  vmtool --action getInstances --className java.lang.String --limit 10\n"
+        + "  vmtool --action getInstances --classLoaderClass org.springframework.boot.loader.LaunchedURLClassLoader --className org.springframework.context.ApplicationContext\n"
         + "  vmtool --action forceGc\n"
         + Constants.WIKI + Constants.WIKI_HOME + "vmtool")
 //@formatter:on
@@ -62,7 +64,7 @@ public class VmToolCommand extends AnnotatedCommand {
     private String hashCode = null;
     private String classLoaderClass;
     /**
-     * default value 2
+     * default value 1
      */
     private int expand;
 
@@ -107,8 +109,8 @@ public class VmToolCommand extends AnnotatedCommand {
     }
 
     @Option(shortName = "x", longName = "expand")
-    @Description("Expand level of object (2 by default)")
-    @DefaultValue("2")
+    @Description("Expand level of object (1 by default)")
+    @DefaultValue("1")
     public void setExpand(int expand) {
         this.expand = expand;
     }
@@ -154,6 +156,10 @@ public class VmToolCommand extends AnnotatedCommand {
             Instrumentation inst = process.session().getInstrumentation();
 
             if (VmToolAction.getInstances.equals(action)) {
+                if (className == null) {
+                    process.end(-1, "The className option cannot be empty!");
+                    return;
+                }
                 ClassLoader classLoader = ClassLoader.getSystemClassLoader();
                 if (hashCode == null && classLoaderClass != null) {
                     List<ClassLoader> matchedClassLoaders = ClassLoaderUtils.getClassLoaderByClassName(inst,
@@ -177,7 +183,7 @@ public class VmToolCommand extends AnnotatedCommand {
                 }
 
                 List<Class<?>> matchedClasses = new ArrayList<Class<?>>(
-                        SearchUtils.searchClass(inst, className, false, hashCode));
+                        SearchUtils.searchClassOnly(inst, className, false, hashCode));
                 int matchedClassSize = matchedClasses.size();
                 if (matchedClassSize == 0) {
                     process.end(-1, "Can not find class by class name: " + className + ".");
