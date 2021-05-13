@@ -63,5 +63,8 @@
     <fileSet>
       <directory>../async-profiler</directory>
     </fileSet>
+    <fileSet>
+      <directory>../lib</directory>
+    </fileSet>
   </fileSets>
 </assembly>

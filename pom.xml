@@ -57,8 +57,9 @@
 
     <modules>
         <module>math-game</module>
-        <module>spy</module>
         <module>common</module>
+        <module>spy</module>
+        <module>arthas-vmtool</module>
         <module>tunnel-common</module>
         <module>tunnel-client</module>
         <module>core</module>

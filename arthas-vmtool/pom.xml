@@ -1,0 +1,160 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <artifactId>arthas-all</artifactId>
+        <groupId>com.taobao.arthas</groupId>
+        <version>${revision}</version>
+        <relativePath>../pom.xml</relativePath>
+    </parent>
+    <artifactId>arthas-vmtool</artifactId>
+    <name>arthas-vmtool</name>
+
+    <profiles>
+        <!-- https://github.com/openjdk/jdk/blob/jdk-16%2B36/src/java.base/windows/native/libjava/java_props_md.c#L568 -->
+        <!-- macos -->
+        <profile>
+            <id>macos-amd64</id>
+            <activation>
+                <os>
+                    <family>mac</family>
+                    <arch>x86_64</arch>
+                </os>
+            </activation>
+            <properties>
+                <os_name>macos</os_name>
+                <os_arch_option>-m64</os_arch_option>
+                <lib_name>libArthasJniLibrary-x64.dylib</lib_name>
+            </properties>
+        </profile>
+
+        <!-- linux -->
+        <profile>
+            <id>linux-amd64</id>
+            <activation>
+                <os>
+                    <name>linux</name>
+                    <arch>amd64</arch>
+                </os>
+            </activation>
+            <properties>
+                <os_name>linux</os_name>
+                <os_arch_option>-m64</os_arch_option>
+                <lib_name>libArthasJniLibrary-x64.so</lib_name>
+            </properties>
+        </profile>
+
+        <!-- windows -->
+        <profile>
+            <id>windows-amd64</id>
+            <activation>
+                <os>
+                    <family>windows</family>
+                    <arch>amd64</arch>
+                </os>
+            </activation>
+            <properties>
+                <os_name>windows</os_name>
+                <os_arch_option>-m64</os_arch_option>
+                <lib_name>libArthasJniLibrary-x64.dll</lib_name>
+            </properties>
+        </profile>
+    </profiles>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <configuration>
+                    <source>1.6</source>
+                    <target>1.6</target>
+                    <encoding>UTF-8</encoding>
+                    <showDeprecation>true</showDeprecation>
+                </configuration>
+            </plugin>
+            <!-- 请不要删除这里的maven-jar-plugin，也不要升级它的版本，否则很可能无法正常打包 -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <version>2.4</version>
+            </plugin>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>native-maven-plugin</artifactId>
+                <version>1.0-alpha-11</version>
+                <extensions>true</extensions>
+                <configuration>
+                    <javahIncludes>
+                        <javahInclude>
+                            <className>arthas.VmTool</className>
+                        </javahInclude>
+                    </javahIncludes>
+                    <jdkIncludePath>${project.basedir}/src/main/native/head</jdkIncludePath>
+                    <javahOS>${os_name}</javahOS>
+                    <sources>
+                        <source>
+                            <directory>src/main/native/src</directory>
+                            <fileNames>
+                                <fileName>jni-library.cpp</fileName>
+                            </fileNames>
+                        </source>
+                    </sources>
+
+                    <compilerProvider>generic-classic</compilerProvider>
+                    <compilerExecutable>g++</compilerExecutable>
+                    <compilerStartOptions>
+                        <compilerStartOption>${os_arch_option}</compilerStartOption>
+                        <compilerStartOption>-fpic</compilerStartOption>
+                        <compilerStartOption>-shared</compilerStartOption>
+                        <compilerStartOption>-o</compilerStartOption>
+                    </compilerStartOptions>
+
+                    <linkerOutputDirectory>target</linkerOutputDirectory>
+                    <linkerExecutable>g++</linkerExecutable>
+                    <linkerStartOptions>
+                        <linkerStartOption>${os_arch_option}</linkerStartOption>
+                        <linkerStartOption>-fpic</linkerStartOption>
+                        <linkerStartOption>-shared</linkerStartOption>
+                        <linkerStartOption>-o</linkerStartOption>
+                    </linkerStartOptions>
+                    <linkerEndOptions>
+                        <linkerEndOption>-o ${project.build.directory}/${lib_name}</linkerEndOption>
+                    </linkerEndOptions>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>javah</id>
+                        <phase>compile</phase>
+                        <goals>
+                            <goal>javah</goal>
+                            <goal>initialize</goal>
+                            <goal>compile</goal>
+                            <goal>link</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+
+    <dependencies>
+        <dependency>
+            <groupId>com.taobao.arthas</groupId>
+            <artifactId>arthas-common</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.assertj</groupId>
+            <artifactId>assertj-core</artifactId>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
+</project>

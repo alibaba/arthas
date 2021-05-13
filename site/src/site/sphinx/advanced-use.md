@@ -35,7 +35,7 @@
 * [ognl](ognl.md)——执行ognl表达式
 * [mbean](mbean.md)——查看 Mbean 的信息
 * [heapdump](heapdump.md)——dump java heap, 类似jmap命令的heap dump功能
-
+* [vmtool](vmtool.md)——从jvm里查询对象，执行forceGc
 ## class/classloader相关
 
 
