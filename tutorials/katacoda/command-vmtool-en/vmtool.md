@@ -6,6 +6,8 @@ Use the `vmtool` command to find the jvm object.
 
 ### Find string objects in jvm
 
+`vmtool --action getInstances --className java.lang.String`{{execute T2}}
+
 ```bash
 $ vmtool --action getInstances --className java.lang.String
 @String[][

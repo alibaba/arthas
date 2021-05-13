@@ -2,6 +2,8 @@
 
 ### 查找spring context
 
+`vmtool --action getInstances --className org.springframework.context.ApplicationContext `{{execute T2}}
+
 ```bash
 $ vmtool --action getInstances --className org.springframework.context.ApplicationContext 
 @ApplicationContext[][
@@ -15,9 +17,7 @@ $ vmtool --action getInstances --className org.springframework.context.Applicati
 
 > 通过 `-x`/`--expand` 参数可以指定结果的展开层次，默认值是1。
 
-```bash 
-vmtool --action getInstances -c 19469ea2 --className org.springframework.context.ApplicationContext -x 2
-```
+`vmtool --action getInstances --className org.springframework.context.ApplicationContext -x 2`{{execute T2}}
 
 ### 执行表达式
 
@@ -25,11 +25,14 @@ vmtool --action getInstances -c 19469ea2 --className org.springframework.context
 
 查找所有的spring beans名字：
 
-```bash
-vmtool --action getInstances --className org.springframework.context.ApplicationContext --express 'instances[0].getBeanDefinitionNames()'
-```
+
+`vmtool --action getInstances --className org.springframework.context.ApplicationContext --express 'instances[0].getBeanDefinitionNames()'`{{execute T2}}
+
 
 调用`userController.findUserById(1)`函数：
+
+
+`vmtool --action getInstances --className org.springframework.context.ApplicationContext --express 'instances[0].getBean("userController").findUserById(1)'`{{execute T2}}
 
 ```
 $ vmtool --action getInstances --className org.springframework.context.ApplicationContext --express 'instances[0].getBean("userController").findUserById(1)'
@@ -40,6 +43,9 @@ $ vmtool --action getInstances --className org.springframework.context.Applicati
 ```
 
 ### 查找所有的spring mapping对象
+
+
+`vmtool --action getInstances --className org.springframework.web.servlet.HandlerMapping`{{execute T2}}
 
 ```bash
 $ vmtool --action getInstances --className org.springframework.web.servlet.HandlerMapping

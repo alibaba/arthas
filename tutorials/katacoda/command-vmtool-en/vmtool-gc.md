@@ -1,6 +1,4 @@
 
 ### forceGc
 
-```bash
-vmtool --action forceGc
-```
+`vmtool --action forceGc`{{execute T2}}

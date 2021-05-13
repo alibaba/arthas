@@ -5,6 +5,8 @@
 
 ### 查找jvm里的字符串对象
 
+`vmtool --action getInstances --className java.lang.String`{{execute T2}}
+
 ```bash
 $ vmtool --action getInstances --className java.lang.String
 @String[][

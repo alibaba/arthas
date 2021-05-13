@@ -2,6 +2,8 @@ Next, use the `vmtool` command to find objects in spring.
 
 ### Find spring context
 
+`vmtool --action getInstances --className org.springframework.context.ApplicationContext `{{execute T2}}
+
 ```bash
 $ vmtool --action getInstances --className org.springframework.context.ApplicationContext
 @ApplicationContext[][
@@ -15,9 +17,7 @@ $ vmtool --action getInstances --className org.springframework.context.Applicati
 
 > The expansion level of the result can be specified by the `-x`/`--expand` parameter, the default value is 1.
 
-```bash
-vmtool --action getInstances -c 19469ea2 --className org.springframework.context.ApplicationContext -x 2
-```
+`vmtool --action getInstances --className org.springframework.context.ApplicationContext -x 2`{{execute T2}}
 
 ### Execute expression
 
@@ -25,11 +25,11 @@ vmtool --action getInstances -c 19469ea2 --className org.springframework.context
 
 Find the names of all spring beans:
 
-```bash
-vmtool --action getInstances --className org.springframework.context.ApplicationContext --express'instances[0].getBeanDefinitionNames()'
-```
+`vmtool --action getInstances --className org.springframework.context.ApplicationContext --express 'instances[0].getBeanDefinitionNames()'`{{execute T2}}
 
-Call the `userController.findUserById(1)` function:
+Call the `userController.findUserById(1)` method:
+
+`vmtool --action getInstances --className org.springframework.context.ApplicationContext --express 'instances[0].getBean("userController").findUserById(1)'`{{execute T2}}
 
 ```
 $ vmtool --action getInstances --className org.springframework.context.ApplicationContext --express'instances[0].getBean("userController").findUserById(1)'
@@ -40,6 +40,8 @@ $ vmtool --action getInstances --className org.springframework.context.Applicati
 ```
 
 ### Find all spring mapping objects
+
+`vmtool --action getInstances --className org.springframework.web.servlet.HandlerMapping`{{execute T2}}
 
 ```bash
 $ vmtool --action getInstances --className org.springframework.web.servlet.HandlerMapping

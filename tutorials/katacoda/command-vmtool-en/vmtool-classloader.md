@@ -1,9 +1,6 @@
 ### Specify classloader name
 
-```bash
-vmtool --action getInstances --classLoaderClass org.springframework.boot.loader.LaunchedURLClassLoader --className org.springframework.context.ApplicationContext
-```
-
+`vmtool --action getInstances --classLoaderClass org.springframework.boot.loader.LaunchedURLClassLoader --className org.springframework.context.ApplicationContext`{{execute T2}}
 
 ### Specify classloader hash
 

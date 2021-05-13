@@ -1,6 +1,7 @@
 
 ### 强制GC
 
-```bash
-vmtool --action forceGc
-```
+
+`vmtool --action forceGc`{{execute T2}}
+
+
