@@ -1,6 +1,8 @@
 package com.taobao.arthas.core.command.monitor200;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.lang.instrument.Instrumentation;
 import java.security.CodeSource;
 import java.util.ArrayList;
@@ -11,6 +13,7 @@ import java.util.Set;
 
 import com.alibaba.arthas.deps.org.slf4j.Logger;
 import com.alibaba.arthas.deps.org.slf4j.LoggerFactory;
+import com.taobao.arthas.common.IOUtils;
 import com.taobao.arthas.common.VmToolUtils;
 import com.taobao.arthas.core.command.Constants;
 import com.taobao.arthas.core.command.express.Express;
@@ -246,6 +249,25 @@ public class VmToolCommand extends AnnotatedCommand {
             if (libPath == null) {
                 libPath = defaultLibPath;
             }
+
+            // 尝试把lib文件复制到临时文件里，避免多次attach时出现 Native Library already loaded in another classloader
+            FileOutputStream tmpLibOutputStream = null;
+            FileInputStream libInputStream = null;
+            try {
+                File tmpLibFile = File.createTempFile(VmTool.JNI_LIBRARY_NAME, null);
+                tmpLibOutputStream = new FileOutputStream(tmpLibFile);
+                libInputStream = new FileInputStream(new File(libPath));
+
+                IOUtils.copy(libInputStream, tmpLibOutputStream);
+                libPath = tmpLibFile.getAbsolutePath();
+                logger.debug("copy {} to {}", libPath, tmpLibFile);
+            } catch (Throwable e) {
+                logger.error("try to copy lib error! libPath: {}", libPath, e);
+            } finally {
+                IOUtils.close(libInputStream);
+                IOUtils.close(tmpLibOutputStream);
+            }
+
             vmTool = VmTool.getInstance(libPath);
         }
         return vmTool;

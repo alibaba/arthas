@@ -36,11 +36,6 @@ public class VmTool implements VmToolMXBean {
         return instance;
     }
 
-    /**
-     * 检测jni-lib是否正常，如果正常，应该输出OK
-     */
-    private static native String check0();
-
     private static synchronized native void forceGc0();
 
     /**

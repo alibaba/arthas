@@ -10,12 +10,16 @@ import org.junit.Test;
 
 import com.taobao.arthas.common.VmToolUtils;
 
-import arthas.VmToolTest.LimitTest;
-
 /**
  * 以下本地测试的jvm参数均为：-Xms128m -Xmx128m
  */
 public class VmToolTest {
+    private VmTool initVmTool() {
+        File path = new File(VmTool.class.getProtectionDomain().getCodeSource().getLocation().getPath()).getParentFile();
+
+        String libPath = new File(path, VmToolUtils.detectLibName()).getAbsolutePath();
+        return VmTool.getInstance(libPath);
+    }
 
     /**
      * macbook上运行结果如下
@@ -55,14 +59,6 @@ public class VmToolTest {
         } catch (Exception e) {
             e.printStackTrace();
         }
-    }
-
-    private VmTool initVmTool() {
-        String path = VmTool.class.getProtectionDomain().getCodeSource().getLocation().getPath();
-        System.err.println(path);
-
-        String libPath = new File(path, VmToolUtils.detectLibName()).getAbsolutePath();
-        return VmTool.getInstance(libPath);
     }
 
     @Test
