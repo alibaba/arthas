@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>options &mdash; Arthas 3.5.0 documentation</title>
+  <title>options &mdash; Arthas 3.5.1 documentation</title>
   
 
   
@@ -73,7 +73,7 @@
             
             
               <div class="version">
-                3.5.0
+                3.5.1
               </div>
             
           
@@ -120,6 +120,7 @@
 <li class="toctree-l2"><a class="reference internal" href="sm.html">sm</a></li>
 <li class="toctree-l2"><a class="reference internal" href="dump.html">dump</a></li>
 <li class="toctree-l2"><a class="reference internal" href="heapdump.html">heapdump</a></li>
+<li class="toctree-l2"><a class="reference internal" href="vmtool.html">vmtool</a></li>
 <li class="toctree-l2"><a class="reference internal" href="jad.html">jad</a></li>
 <li class="toctree-l2"><a class="reference internal" href="classloader.html">classloader</a></li>
 <li class="toctree-l2"><a class="reference internal" href="mc.html">mc</a></li>
@@ -142,6 +143,7 @@
 <li class="toctree-l3"><a class="reference internal" href="#view-all-options">View all options</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#get-special-option-value">Get special option value</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#set-special-option-value">Set special option value</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#set-unsafe-to-true-to-enhance-the-classes-under-the-java-package">Set <code class="docutils literal notranslate"><span class="pre">unsafe</span></code> to true to enhance the classes under the <code class="docutils literal notranslate"><span class="pre">java.*</span></code> package</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="commands.html#basic-arthas-commands">Basic Arthas Commands</a></li>
@@ -342,6 +344,19 @@
  NAME         BEFORE-VALUE  AFTER-VALUE                                                                            
 ----------------------------------------                                                                           
  save-result  false         true</pre>
+</div>
+</div>
+<div class="section" id="set-unsafe-to-true-to-enhance-the-classes-under-the-java-package">
+<h2>Set <code class="docutils literal notranslate"><span class="pre">unsafe</span></code> to true to enhance the classes under the <code class="docutils literal notranslate"><span class="pre">java.*</span></code> package<a class="headerlink" href="#set-unsafe-to-true-to-enhance-the-classes-under-the-java-package" title="Permalink to this headline">¶</a></h2>
+<p>By default, <code class="docutils literal notranslate"><span class="pre">watch</span></code>/<code class="docutils literal notranslate"><span class="pre">trace</span></code>/<code class="docutils literal notranslate"><span class="pre">tt</span></code>/<code class="docutils literal notranslate"><span class="pre">trace</span></code>/<code class="docutils literal notranslate"><span class="pre">monitor</span></code> command do not support classes under <code class="docutils literal notranslate"><span class="pre">java.*</span></code> package. You can set <code class="docutils literal notranslate"><span class="pre">unsafe</span></code> to true to enhance the classes under the <code class="docutils literal notranslate"><span class="pre">java.*</span></code> package.</p>
+<div class="highlight-bash notranslate"><div class="highlight hljs"><pre class="bash">$ options unsafe true
+ NAME    BEFORE-VALUE  AFTER-VALUE
+-----------------------------------
+ unsafe  false         true</pre></div>
+</div>
+<div class="highlight-bash notranslate"><div class="highlight hljs"><pre class="bash">$ watch java.lang.invoke.Invokers callSiteForm
+Press Q or Ctrl+C to abort.
+Affect(class count: 1 , method count: 1) cost in 61 ms, listenerId: 1</pre></div>
 </div>
 </div>
 </div>

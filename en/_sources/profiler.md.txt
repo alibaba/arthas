@@ -227,3 +227,8 @@ The generated results can be viewed with tools that support the jfr format. such
 
 * JDK Mission Control: https://github.com/openjdk/jmc
 * JProfiler: https://github.com/alibaba/arthas/issues/1416
+
+
+### The 'unknown' in profiler result
+
+* https://github.com/jvm-profiling-tools/async-profiler/discussions/409

@@ -33,7 +33,7 @@ Advanced Usage
 * [ognl](ognl.md) - execute ognl expression
 * [mbean](mbean.md) - show Mbean information
 * [heapdump](heapdump.md) - dump java heap in hprof binary format, like `jmap`
-
+* [vmtool](vmtool.md) - jvm tool, getInstances in jvm, forceGc
 ## class/classloader
 
 * [sc](sc.md) - check the info for the classes loaded by JVM 

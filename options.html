@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>options &mdash; Arthas 3.5.0 文档</title>
+  <title>options &mdash; Arthas 3.5.1 文档</title>
   
 
   
@@ -74,7 +74,7 @@
             
             
               <div class="version">
-                3.5.0
+                3.5.1
               </div>
             
           
@@ -124,6 +124,7 @@
 <li class="toctree-l2"><a class="reference internal" href="sm.html">sm</a></li>
 <li class="toctree-l2"><a class="reference internal" href="dump.html">dump</a></li>
 <li class="toctree-l2"><a class="reference internal" href="heapdump.html">heapdump</a></li>
+<li class="toctree-l2"><a class="reference internal" href="vmtool.html">vmtool</a></li>
 <li class="toctree-l2"><a class="reference internal" href="jad.html">jad</a></li>
 <li class="toctree-l2"><a class="reference internal" href="classloader.html">classloader</a></li>
 <li class="toctree-l2"><a class="reference internal" href="mc.html">mc</a></li>
@@ -146,6 +147,7 @@
 <li class="toctree-l3"><a class="reference internal" href="#id1">查看所有的options</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#option">获取option的值</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#id2">设置指定的option</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#unsafe-jdk-package">打开unsafe开关，支持jdk package下的类</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="commands.html#arthas">Arthas 基础命令</a></li>
@@ -348,6 +350,19 @@
  NAME         BEFORE-VALUE  AFTER-VALUE                                                                            
 ----------------------------------------                                                                           
  save-result  false         true</pre>
+</div>
+</div>
+<div class="section" id="unsafe-jdk-package">
+<h2>打开unsafe开关，支持jdk package下的类<a class="headerlink" href="#unsafe-jdk-package" title="永久链接至标题">¶</a></h2>
+<p>默认情况下，<code class="docutils literal notranslate"><span class="pre">watch</span></code>/<code class="docutils literal notranslate"><span class="pre">trace</span></code>/<code class="docutils literal notranslate"><span class="pre">tt</span></code>/<code class="docutils literal notranslate"><span class="pre">trace</span></code>/<code class="docutils literal notranslate"><span class="pre">monitor</span></code>等命令不支持<code class="docutils literal notranslate"><span class="pre">java.*</span></code> package下的类。可以设置<code class="docutils literal notranslate"><span class="pre">unsafe</span></code>为true，则可以增强。</p>
+<div class="highlight-bash notranslate"><div class="highlight hljs"><pre class="bash">$ options unsafe true
+ NAME    BEFORE-VALUE  AFTER-VALUE
+-----------------------------------
+ unsafe  false         true</pre></div>
+</div>
+<div class="highlight-bash notranslate"><div class="highlight hljs"><pre class="bash">$ watch java.lang.invoke.Invokers callSiteForm
+Press Q or Ctrl+C to abort.
+Affect(class count: 1 , method count: 1) cost in 61 ms, listenerId: 1</pre></div>
 </div>
 </div>
 </div>
