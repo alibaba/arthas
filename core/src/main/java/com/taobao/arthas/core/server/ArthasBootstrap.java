@@ -127,7 +127,7 @@ public class ArthasBootstrap {
 
     private ArthasBootstrap(Instrumentation instrumentation, Map<String, String> args) throws Throwable {
         this.instrumentation = instrumentation;
-        
+
         initFastjson();
 
         // 1. initSpy()
@@ -149,7 +149,7 @@ public class ArthasBootstrap {
         enhanceClassLoader();
         // 5. init beans
         initBeans();
-        
+
         // 6. start agent server
         bind(configure);
 

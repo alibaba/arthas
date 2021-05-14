@@ -47,7 +47,7 @@ public class Arthas {
 
         Option statUrl = new TypedOption<String>().setType(String.class).setShortName("stat-url");
         Option bannedCommands = new TypedOption<String>().setType(String.class).setShortName("banned-commands");
-        
+
         CLI cli = CLIs.create("arthas").addOption(pid).addOption(core).addOption(agent).addOption(target)
                 .addOption(telnetPort).addOption(httpPort).addOption(sessionTimeout)
                 .addOption(username).addOption(password)
