@@ -6,6 +6,7 @@ import com.taobao.arthas.core.shell.cli.Completion;
 import com.taobao.arthas.core.shell.cli.CompletionUtils;
 import com.taobao.arthas.core.shell.command.Command;
 import com.taobao.arthas.core.shell.command.CommandResolver;
+import com.taobao.arthas.core.util.StringUtils;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -21,13 +22,23 @@ public class InternalCommandManager {
 
     private final List<CommandResolver> resolvers;
 
-    public InternalCommandManager(CommandResolver... resolvers) {
+    private List<String> bannedCommands;
+    
+    public InternalCommandManager( List<String> bannedCommands, CommandResolver... resolvers) {
         this.resolvers = Arrays.asList(resolvers);
+        this.bannedCommands = bannedCommands;
     }
 
-    public InternalCommandManager(List<CommandResolver> resolvers) {
+    public InternalCommandManager(List<CommandResolver> resolvers,List<String> bannedCommands) {
         this.resolvers = resolvers;
+        this.bannedCommands = bannedCommands;
     }
+
+    public boolean commandIsBanned(String commandName) {
+        return (bannedCommands == null || StringUtils.isEmpty(commandName))
+                ? false : bannedCommands.contains(commandName.trim().toLowerCase());
+    }
+
 
     public List<CommandResolver> getResolvers() {
         return resolvers;
@@ -143,5 +154,9 @@ public class InternalCommandManager {
             }
         }
         return index;
+    }
+
+    public List<String> getBannedCommands() {
+        return bannedCommands;
     }
 }

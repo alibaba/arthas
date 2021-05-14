@@ -2,30 +2,22 @@ package com.taobao.arthas.boot;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.security.CodeSource;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-import java.util.Scanner;
-import java.util.TimeZone;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
-import java.util.InputMismatchException;
 
 import javax.xml.parsers.ParserConfigurationException;
 
+import com.taobao.arthas.common.*;
 import org.xml.sax.SAXException;
 
-import com.taobao.arthas.common.AnsiLog;
-import com.taobao.arthas.common.JavaVersionUtils;
-import com.taobao.arthas.common.SocketUtils;
-import com.taobao.arthas.common.UsageRender;
 import com.taobao.middleware.cli.CLI;
 import com.taobao.middleware.cli.CommandLine;
 import com.taobao.middleware.cli.UsageMessageFormatter;
@@ -57,6 +49,7 @@ import static com.taobao.arthas.boot.ProcessUtils.STATUS_EXEC_TIMEOUT;
                 + "  java -jar arthas-boot.jar --versions\n"
                 + "  java -jar arthas-boot.jar --select math-game\n"
                 + "  java -jar arthas-boot.jar --session-timeout 3600\n" + "  java -jar arthas-boot.jar --attach-only\n"
+                + "  java -jar arthas-boot.jar --banned-commands stop,dump\n"
                 + "  java -jar arthas-boot.jar --repo-mirror aliyun --use-http\n" + "WIKI:\n"
                 + "  https://arthas.aliyun.com/doc\n")
 public class Bootstrap {
@@ -127,6 +120,8 @@ public class Bootstrap {
     private String statUrl;
 
     private String select;
+
+    private String bannedCommands;
 
 	static {
         ARTHAS_LIB_DIR = new File(
@@ -292,11 +287,17 @@ public class Bootstrap {
     public void setSelect(String select) {
         this.select = select;
     }
+    
+    @Option(longName = "banned-commands")
+    @Description("ban some commands ")
+    public void setBannedCommands(String bannedCommands) {
+        this.bannedCommands = bannedCommands;
+    }
 
     public static void main(String[] args) throws ParserConfigurationException, SAXException, IOException,
                     ClassNotFoundException, NoSuchMethodException, SecurityException, IllegalAccessException,
                     IllegalArgumentException, InvocationTargetException {
-        Package bootstrapPackage = Bootstrap.class.getPackage();
+	    Package bootstrapPackage = Bootstrap.class.getPackage();
         if (bootstrapPackage != null) {
             String arthasBootVersion = bootstrapPackage.getImplementationVersion();
             if (arthasBootVersion != null) {
@@ -547,6 +548,21 @@ public class Bootstrap {
                 attachArgs.add(bootstrap.getStatUrl());
             }
 
+            //load banned commands from ArthasConstants.BANNED_COMMANDS_CONFIG
+            String configedCommands = loadBannedCommandsFromFile(ArthasConstants.BANNED_COMMANDS_CONFIG);
+            if (configedCommands != null){
+                if (bootstrap.getBannedCommands() == null){
+                    bootstrap.setBannedCommands(configedCommands);
+                }else{
+                    bootstrap.setBannedCommands(bootstrap.getBannedCommands() + ArthasConstants.BANNED_COMMANDS_SEP+ configedCommands);
+                }
+            }
+            
+            if (bootstrap.getBannedCommands() != null){
+                attachArgs.add("-banned-commands");
+                attachArgs.add(bootstrap.getBannedCommands());
+            }
+
             AnsiLog.info("Try to attach process " + pid);
             AnsiLog.debug("Start arthas-core.jar args: " + attachArgs);
             ProcessUtils.startArthasCore(pid, attachArgs);
@@ -730,6 +746,41 @@ public class Bootstrap {
         return UsageRender.render(usageStringBuilder.toString());
     }
 
+    /**
+     * get banned properties from file
+     * @return
+     */
+    private static String loadBannedCommandsFromFile(String filename){
+        try {
+            Properties banned = readProperties(filename);
+            return banned.getProperty(ArthasConstants.BANNED_CONFIG_KEY);
+        } catch (IOException e) {
+            //此错误不影响主流程，出错可以只抛堆栈，不处理
+        }
+        return null;
+    }
+    
+    /**
+     * get properties from file
+     * @param file
+     * @return
+     * @throws IOException
+     */
+    private static Properties readProperties(String file) throws IOException {
+        //todo 引用的core.FIleUtils，最好能挪到common里
+        Properties properties = new Properties();
+
+        FileInputStream in = null;
+        try {
+            in = new FileInputStream(file);
+            properties.load(in);
+            return properties;
+        } finally {
+            com.taobao.arthas.common.IOUtils.close(in);
+        }
+
+    }
+
     public String getArthasHome() {
         return arthasHome;
     }
@@ -848,5 +899,9 @@ public class Bootstrap {
 
     public String getPassword() {
         return password;
+    }
+
+    public String getBannedCommands() {
+        return bannedCommands;
     }
 }

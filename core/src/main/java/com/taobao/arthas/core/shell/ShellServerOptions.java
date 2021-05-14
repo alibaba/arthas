@@ -36,6 +36,7 @@ public class ShellServerOptions {
     private long connectionTimeout;
     private long pid;
     private Instrumentation instrumentation;
+    private String bannedCommands;
 
     public ShellServerOptions() {
         welcomeMessage = DEFAULT_WELCOME_MESSAGE;
@@ -122,5 +123,14 @@ public class ShellServerOptions {
 
     public void setConnectionTimeout(long connectionTimeout) {
         this.connectionTimeout = connectionTimeout;
+    }
+
+    public String getBannedCommands() {
+        return bannedCommands;
+    }
+
+    public ShellServerOptions setBannedCommands(String bannedCommands) {
+        this.bannedCommands = bannedCommands;
+        return this;
     }
 }

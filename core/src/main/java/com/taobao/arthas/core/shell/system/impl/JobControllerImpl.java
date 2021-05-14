@@ -1,6 +1,7 @@
 package com.taobao.arthas.core.shell.system.impl;
 
 import com.taobao.arthas.common.ArthasConstants;
+import com.taobao.arthas.common.CommandBannedException;
 import com.taobao.arthas.core.GlobalOptions;
 import com.taobao.arthas.core.distribution.ResultDistributor;
 import com.taobao.arthas.core.server.ArthasBootstrap;
@@ -26,14 +27,7 @@ import io.termd.core.function.Function;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.List;
-import java.util.ListIterator;
-import java.util.Set;
-import java.util.SortedMap;
-import java.util.TreeMap;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
@@ -151,6 +145,10 @@ public class JobControllerImpl implements JobController {
                 if (token.isText()) {
                     // check before create process
                     checkPermission(session, token);
+                    // check command is banned
+                    if (commandManager.commandIsBanned(token.value())){
+                        throw new CommandBannedException(token.value() + " command is banned (config by "+ ArthasConstants.BANNED_COMMANDS_CONFIG +" or -banned-commands) !!!");
+                    }
                     Command command = commandManager.getCommand(token.value());
                     if (command != null) {
                         return createCommandProcess(command, tokens, jobId, term, resultDistributor);

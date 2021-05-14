@@ -3,6 +3,7 @@ package com.taobao.arthas.core.shell.impl;
 import com.alibaba.arthas.deps.org.slf4j.Logger;
 import com.alibaba.arthas.deps.org.slf4j.LoggerFactory;
 import com.alibaba.arthas.tunnel.client.TunnelClient;
+import com.taobao.arthas.common.ArthasConstants;
 import com.taobao.arthas.core.server.ArthasBootstrap;
 import com.taobao.arthas.core.shell.Shell;
 import com.taobao.arthas.core.shell.ShellServer;
@@ -21,15 +22,10 @@ import com.taobao.arthas.core.shell.system.impl.JobControllerImpl;
 import com.taobao.arthas.core.shell.term.Term;
 import com.taobao.arthas.core.shell.term.TermServer;
 import com.taobao.arthas.core.util.ArthasBanner;
+import com.taobao.arthas.core.util.StringUtils;
 
 import java.lang.instrument.Instrumentation;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.Executors;
@@ -66,7 +62,7 @@ public class ShellServerImpl extends ShellServer {
         this.sessions = new ConcurrentHashMap<String, ShellImpl>();
         this.reaperInterval = options.getReaperInterval();
         this.resolvers = new CopyOnWriteArrayList<CommandResolver>();
-        this.commandManager = new InternalCommandManager(resolvers);
+        this.commandManager = new InternalCommandManager(resolvers, transferCommandsToString(options.getBannedCommands()));
         this.instrumentation = options.getInstrumentation();
         this.pid = options.getPid();
 
@@ -259,5 +255,10 @@ public class ShellServerImpl extends ShellServer {
 
     public InternalCommandManager getCommandManager() {
         return commandManager;
+    }
+
+    private List<String> transferCommandsToString(String commands){
+        //unchangeable list
+        return StringUtils.isEmpty(commands) ? null : (Arrays.asList(commands.split(ArthasConstants.BANNED_COMMANDS_SEP)));
     }
 }

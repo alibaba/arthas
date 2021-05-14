@@ -38,4 +38,17 @@ public class ArthasConstants {
     public static final String AUTH = "auth";
     public static final String USERNAME_KEY = "username";
     public static final String PASSWORD_KEY = "password";
+    /**
+     * banned commands seperator
+     */
+    public static final String BANNED_COMMANDS_SEP = ",";
+    /**
+     * banned commands config file name
+     */
+    public static final String BANNED_COMMANDS_CONFIG = "arthas.properties";
+    /**
+     * banned config key
+     */
+    public static final String BANNED_CONFIG_KEY = "arthas.banned";
+
 }
