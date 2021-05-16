@@ -10,6 +10,16 @@
     <artifactId>arthas-spy</artifactId>
     <name>arthas-spy</name>
 
+    <dependencies>
+        <dependency>
+            <groupId>com.taobao.arthas</groupId>
+            <artifactId>arthas-common</artifactId>
+            <version>${project.version}</version>
+            <scope>provided</scope>
+            <optional>true</optional>
+        </dependency>
+    </dependencies>
+
     <build>
         <finalName>arthas-spy</finalName>
         <plugins>

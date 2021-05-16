@@ -181,7 +181,7 @@ public class ClassUtils {
         return list.toArray(new String[0]);
     }
 
-    public static List<ClassVO> createClassVOList(Set<Class<?>> matchedClasses) {
+    public static List<ClassVO> createClassVOList(Collection<Class<?>> matchedClasses) {
         List<ClassVO> classVOs = new ArrayList<ClassVO>(matchedClasses.size());
         for (Class<?> aClass : matchedClasses) {
             ClassVO classVO = createSimpleClassInfo(aClass);
