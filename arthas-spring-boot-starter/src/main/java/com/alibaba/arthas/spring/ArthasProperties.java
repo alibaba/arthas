@@ -34,6 +34,10 @@ public class ArthasProperties {
 	 * when arthas agent init error will throw exception by default.
 	 */
 	private boolean slientInit = false;
+	/**
+	 * disabled commands，default disable stop command
+	 */
+	private String disabledCommands = "stop";
 
 	public String getHome() {
 		return home;
@@ -115,4 +119,11 @@ public class ArthasProperties {
         this.appName = appName;
     }
 
+	public String getDisabledCommands() {
+		return disabledCommands;
+	}
+
+	public void setDisabledCommands(String disabledCommands) {
+		this.disabledCommands = disabledCommands;
+	}
 }
