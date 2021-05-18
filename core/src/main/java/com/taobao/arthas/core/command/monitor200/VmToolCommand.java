@@ -192,7 +192,7 @@ public class VmToolCommand extends AnnotatedCommand {
                     process.end(-1, "Can not find class by class name: " + className + ".");
                     return;
                 } else if (matchedClassSize > 1) {
-                    process.end(-1, "Found more than one class: " + matchedClasses + ",please specify classloader with '-c <classloader hash>'");
+                    process.end(-1, "Found more than one class: " + matchedClasses + ", please specify classloader with '-c <classloader hash>'");
                     return;
                 } else {
                     Object[] instances = vmToolInstance().getInstances(matchedClasses.get(0), limit);
