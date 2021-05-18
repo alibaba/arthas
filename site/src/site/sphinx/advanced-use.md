@@ -35,7 +35,7 @@
 * [ognl](ognl.md)——执行ognl表达式
 * [mbean](mbean.md)——查看 Mbean 的信息
 * [heapdump](heapdump.md)——dump java heap, 类似jmap命令的heap dump功能
-
+* [vmtool](vmtool.md)——从jvm里查询对象，执行forceGc
 ## class/classloader相关
 
 
@@ -64,6 +64,9 @@
 
 * [profiler](profiler.md)--使用[async-profiler](https://github.com/jvm-profiling-tools/async-profiler)对应用采样，生成火焰图
 
+## 鉴权
+
+* [auth](auth.md)--鉴权
 ## options
 
 * [options](options.md)——查看或设置Arthas全局开关
@@ -108,18 +111,18 @@ Arthas支持使用管道对上述命令的结果进行进一步的处理，如`s
 
 正常情况下，每次执行`as.sh`/`arthas-boot.jar`需要选择，或者指定PID。这样会比较麻烦，因为每次启动应用，它的PID会变化。
 
-比如，已经启动了`arthas-demo.jar`，使用`jps`命令查看：
+比如，已经启动了`math-game.jar`，使用`jps`命令查看：
 
 ```bash
 $ jps
-58883 arthas-demo.jar
+58883 math-game.jar
 58884 Jps
 ```
 
 通过`select`参数可以指定进程名字，非常方便。
 
 ```bash
-$ ./as.sh --select arthas-demo
+$ ./as.sh --select math-game
 Arthas script version: 3.3.6
 [INFO] JAVA_HOME: /tmp/java/8.0.222-zulu
 Arthas home: /Users/admin/.arthas/lib/3.3.6/arthas

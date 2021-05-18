@@ -26,19 +26,20 @@ public class JadView extends ResultView<JadModel> {
             return;
         }
 
+        int width = process.width();
         if (result.getMatchedClasses() != null) {
             Element table = ClassUtils.renderMatchedClasses(result.getMatchedClasses());
-            process.write(RenderUtil.render(table)).write("\n");
+            process.write(RenderUtil.render(table, width)).write("\n");
         } else {
             ClassVO classInfo = result.getClassInfo();
             if (classInfo != null) {
                 process.write("\n");
-                process.write(RenderUtil.render(new LabelElement("ClassLoader: ").style(Decoration.bold.fg(Color.red)), process.width()));
-                process.write(RenderUtil.render(TypeRenderUtils.drawClassLoader(classInfo), process.width()) + "\n");
+                process.write(RenderUtil.render(new LabelElement("ClassLoader: ").style(Decoration.bold.fg(Color.red)), width));
+                process.write(RenderUtil.render(TypeRenderUtils.drawClassLoader(classInfo), width) + "\n");
             }
             if (result.getLocation() != null) {
-                process.write(RenderUtil.render(new LabelElement("Location: ").style(Decoration.bold.fg(Color.red)), process.width()));
-                process.write(RenderUtil.render(new LabelElement(result.getLocation()).style(Decoration.bold.fg(Color.blue)), process.width()) + "\n");
+                process.write(RenderUtil.render(new LabelElement("Location: ").style(Decoration.bold.fg(Color.red)), width));
+                process.write(RenderUtil.render(new LabelElement(result.getLocation()).style(Decoration.bold.fg(Color.blue)), width) + "\n");
             }
             process.write(LangRenderUtil.render(result.getSource()) + "\n");
             process.write(com.taobao.arthas.core.util.Constants.EMPTY_STRING);

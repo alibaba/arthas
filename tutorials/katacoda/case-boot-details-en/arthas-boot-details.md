@@ -32,7 +32,7 @@ EXAMPLES:
   java -jar arthas-boot.jar -f batch.as <pid>
   java -jar arthas-boot.jar --use-version 3.3.6
   java -jar arthas-boot.jar --versions
-  java -jar arthas-boot.jar --select arthas-demo
+  java -jar arthas-boot.jar --select math-game
   java -jar arthas-boot.jar --session-timeout 3600
   java -jar arthas-boot.jar --attach-only
   java -jar arthas-boot.jar --repo-mirror aliyun --use-http

@@ -208,8 +208,7 @@ abstract public class ThreadUtil {
         }
         sb.append('\n');
         int i = 0;
-        for (; i < threadInfo.getStackTrace().length; i++) {
-            StackTraceElement ste = threadInfo.getStackTrace()[i];
+        for (StackTraceElement ste : threadInfo.getStackTrace()) {
             sb.append("\tat ").append(ste.toString());
             sb.append('\n');
             if (i == 0 && threadInfo.getLockInfo() != null) {
@@ -242,6 +241,7 @@ abstract public class ThreadUtil {
                     sb.append('\n');
                 }
             }
+            ++i;
         }
         if (i < threadInfo.getStackTrace().length) {
             sb.append("\t...");

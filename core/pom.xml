@@ -121,6 +121,11 @@
             <version>${project.version}</version>
         </dependency>
         <dependency>
+            <groupId>com.taobao.arthas</groupId>
+            <artifactId>arthas-vmtool</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
             <groupId>com.alibaba</groupId>
             <artifactId>bytekit-core</artifactId>
         </dependency>
@@ -225,7 +230,7 @@
         </dependency>
         <dependency>
             <groupId>com.taobao.arthas</groupId>
-            <artifactId>arthas-demo</artifactId>
+            <artifactId>math-game</artifactId>
             <version>${project.version}</version>
             <scope>test</scope>
         </dependency>

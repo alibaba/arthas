@@ -18,6 +18,7 @@
 * [sm](sm.md)
 * [dump](dump.md)
 * [heapdump](heapdump.md)
+* [vmtool](vmtool.md)
 
 * [jad](jad.md)
 * [classloader](classloader.md)
@@ -39,6 +40,7 @@
 * [base64](base64.md)
 * [tee](tee.md)
 * [pwd](pwd.md)
+* [auth](auth.md)
 * [options](options.md)
 
 ### Arthas 基础命令

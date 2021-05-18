@@ -23,9 +23,14 @@ import com.taobao.arthas.core.util.LogUtil;
 import com.taobao.arthas.core.util.SearchUtils;
 import com.taobao.arthas.core.util.affect.EnhancerAffect;
 import com.taobao.arthas.core.util.matcher.Matcher;
+import com.taobao.arthas.core.view.Ansi;
 import com.taobao.middleware.cli.annotations.Argument;
 import com.taobao.middleware.cli.annotations.Description;
 import com.taobao.middleware.cli.annotations.Option;
+import com.taobao.text.Color;
+import com.taobao.text.Decoration;
+import com.taobao.text.ui.LabelElement;
+import com.taobao.text.util.RenderUtil;
 
 /**
  * @author beiwei30 on 29/11/2016.
@@ -173,11 +178,19 @@ public abstract class EnhancerCommand extends AnnotatedCommand {
                 // no class effected
                 // might be method code too large
                 process.appendResult(new EnhancerModel(effect, false, "No class or method is affected"));
+
+                String smCommand = Ansi.ansi().fg(Ansi.Color.GREEN).a("sm CLASS_NAME METHOD_NAME").reset().toString();
+                String optionsCommand = Ansi.ansi().fg(Ansi.Color.GREEN).a("options unsafe true").reset().toString();
+                String javaPackage = Ansi.ansi().fg(Ansi.Color.GREEN).a("java.*").reset().toString();
+                String resetCommand = Ansi.ansi().fg(Ansi.Color.GREEN).a("reset CLASS_NAME").reset().toString();
+                String logStr = Ansi.ansi().fg(Ansi.Color.GREEN).a(LogUtil.loggingFile()).reset().toString();
+                String issueStr = Ansi.ansi().fg(Ansi.Color.GREEN).a("https://github.com/alibaba/arthas/issues/47").reset().toString();
                 String msg = "No class or method is affected, try:\n"
-                        + "1. sm CLASS_NAME METHOD_NAME to make sure the method you are tracing actually exists (it might be in your parent class).\n"
-                        + "2. reset CLASS_NAME and try again, your method body might be too large.\n"
-                        + "3. check arthas log: " + LogUtil.loggingFile() + "\n"
-                        + "4. visit https://github.com/alibaba/arthas/issues/47 for more details.";
+                        + "1. Execute `" + smCommand + "` to make sure the method you are tracing actually exists (it might be in your parent class).\n"
+                        + "2. Execute `" + optionsCommand + "`, if you want to enhance the classes under the `" + javaPackage + "` package.\n"
+                        + "3. Execute `" + resetCommand + "` and try again, your method body might be too large.\n"
+                        + "4. Check arthas log: " + logStr + "\n"
+                        + "5. Visit " + issueStr + " for more details.";
                 process.end(-1, msg);
                 return;
             }

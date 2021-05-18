@@ -33,7 +33,7 @@ Advanced Usage
 * [ognl](ognl.md) - execute ognl expression
 * [mbean](mbean.md) - show Mbean information
 * [heapdump](heapdump.md) - dump java heap in hprof binary format, like `jmap`
-
+* [vmtool](vmtool.md) - jvm tool, getInstances in jvm, forceGc
 ## class/classloader
 
 * [sc](sc.md) - check the info for the classes loaded by JVM 
@@ -54,6 +54,10 @@ Advanced Usage
 * [trace](trace.md) - trace the execution time of specified method invocation
 * [stack](stack.md) - display the stack trace for the specified class and method
 * [tt](tt.md) - time tunnel, record the arguments and returned value for the methods and replay
+
+## authentication
+
+* [auth](auth.md) - authentication
 
 ## options
 
@@ -103,18 +107,18 @@ Arthas supports living inside a browser. The communication between arthas and br
 
 Normally, `as.sh`/`arthas-boot.jar` needs to a pid, bacause the pid will change.
 
-For example, with `arthas-demo.jar` already started, use the `jps` command to see.
+For example, with `math-game.jar` already started, use the `jps` command to see.
 
 ```bash
 $ jps
-58883 arthas-demo.jar
+58883 math-game.jar
 58884 Jps
 ```
 
 The `select` option allows you to specify a process name, which is very convenient.
 
 ```bash
-$ ./as.sh --select arthas-demo
+$ ./as.sh --select math-game
 Arthas script version: 3.3.6
 [INFO] JAVA_HOME: /tmp/java/8.0.222-zulu
 Arthas home: /Users/admin/.arthas/lib/3.3.6/arthas

@@ -321,7 +321,11 @@ public class DashboardCommand extends AnnotatedCommand {
                 addRuntimeInfo(dashboardModel);
 
                 //tomcat
-                addTomcatInfo(dashboardModel);
+                try {
+                    addTomcatInfo(dashboardModel);
+                } catch (Throwable e) {
+                    logger.error("try to read tomcat info error", e);
+                }
 
                 process.appendResult(dashboardModel);
 
