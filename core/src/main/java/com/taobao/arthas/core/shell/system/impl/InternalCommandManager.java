@@ -22,21 +22,26 @@ public class InternalCommandManager {
 
     private final List<CommandResolver> resolvers;
 
-    private List<String> bannedCommands;
+    private List<String> disabledCommands;
     
-    public InternalCommandManager( List<String> bannedCommands, CommandResolver... resolvers) {
+    public InternalCommandManager(List<String> disabledCommands, CommandResolver... resolvers) {
         this.resolvers = Arrays.asList(resolvers);
-        this.bannedCommands = bannedCommands;
+        this.disabledCommands = disabledCommands;
     }
 
-    public InternalCommandManager(List<CommandResolver> resolvers,List<String> bannedCommands) {
+    public InternalCommandManager(List<CommandResolver> resolvers,List<String> disabledCommands) {
         this.resolvers = resolvers;
-        this.bannedCommands = bannedCommands;
+        this.disabledCommands = disabledCommands;
     }
 
-    public boolean commandIsBanned(String commandName) {
-        return (bannedCommands == null || StringUtils.isEmpty(commandName))
-                ? false : bannedCommands.contains(commandName.trim().toLowerCase());
+    /**
+     * check if the command is disabled
+     * @param commandName
+     * @return boolean
+     */
+    public boolean commandIsDisabled(String commandName) {
+        return (disabledCommands == null || StringUtils.isEmpty(commandName))
+                ? false : disabledCommands.contains(commandName.trim().toLowerCase());
     }
 
 
@@ -156,7 +161,7 @@ public class InternalCommandManager {
         return index;
     }
 
-    public List<String> getBannedCommands() {
-        return bannedCommands;
+    public List<String> getDisabledCommands() {
+        return disabledCommands;
     }
 }

@@ -9,7 +9,15 @@ import java.lang.reflect.Method;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.security.CodeSource;
-import java.util.*;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.InputMismatchException;
+import java.util.List;
+import java.util.Properties;
+import java.util.Scanner;
+import java.util.TimeZone;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 
@@ -49,7 +57,7 @@ import static com.taobao.arthas.boot.ProcessUtils.STATUS_EXEC_TIMEOUT;
                 + "  java -jar arthas-boot.jar --versions\n"
                 + "  java -jar arthas-boot.jar --select math-game\n"
                 + "  java -jar arthas-boot.jar --session-timeout 3600\n" + "  java -jar arthas-boot.jar --attach-only\n"
-                + "  java -jar arthas-boot.jar --banned-commands stop,dump\n"
+                + "  java -jar arthas-boot.jar --disabled-commands stop,dump\n"
                 + "  java -jar arthas-boot.jar --repo-mirror aliyun --use-http\n" + "WIKI:\n"
                 + "  https://arthas.aliyun.com/doc\n")
 public class Bootstrap {
@@ -121,7 +129,7 @@ public class Bootstrap {
 
     private String select;
 
-    private String bannedCommands;
+    private String disabledCommands;
 
 	static {
         ARTHAS_LIB_DIR = new File(
@@ -288,10 +296,10 @@ public class Bootstrap {
         this.select = select;
     }
     
-    @Option(longName = "banned-commands")
-    @Description("ban some commands ")
-    public void setBannedCommands(String bannedCommands) {
-        this.bannedCommands = bannedCommands;
+    @Option(longName = "disabled-commands")
+    @Description("disable some commands ")
+    public void setDisabledCommands(String disabledCommands) {
+        this.disabledCommands = disabledCommands;
     }
 
     public static void main(String[] args) throws ParserConfigurationException, SAXException, IOException,
@@ -548,19 +556,19 @@ public class Bootstrap {
                 attachArgs.add(bootstrap.getStatUrl());
             }
 
-            //load banned commands from ArthasConstants.BANNED_COMMANDS_CONFIG
-            String configedCommands = loadBannedCommandsFromFile(ArthasConstants.BANNED_COMMANDS_CONFIG);
+            //load disabled commands from ArthasConstants.DISABLED_COMMANDS_CONFIG
+            String configedCommands = loadDisabledCommandsFromFile(ArthasConstants.DISABLED_COMMANDS_CONFIG);
             if (configedCommands != null){
-                if (bootstrap.getBannedCommands() == null){
-                    bootstrap.setBannedCommands(configedCommands);
+                if (bootstrap.getDisabledCommands() == null){
+                    bootstrap.setDisabledCommands(configedCommands);
                 }else{
-                    bootstrap.setBannedCommands(bootstrap.getBannedCommands() + ArthasConstants.BANNED_COMMANDS_SEP+ configedCommands);
+                    bootstrap.setDisabledCommands(bootstrap.getDisabledCommands() + ArthasConstants.DISABLED_COMMANDS_SEP + configedCommands);
                 }
             }
             
-            if (bootstrap.getBannedCommands() != null){
-                attachArgs.add("-banned-commands");
-                attachArgs.add(bootstrap.getBannedCommands());
+            if (bootstrap.getDisabledCommands() != null){
+                attachArgs.add("-disabled-commands");
+                attachArgs.add(bootstrap.getDisabledCommands());
             }
 
             AnsiLog.info("Try to attach process " + pid);
@@ -747,13 +755,13 @@ public class Bootstrap {
     }
 
     /**
-     * get banned properties from file
+     * get disabled properties from file
      * @return
      */
-    private static String loadBannedCommandsFromFile(String filename){
+    private static String loadDisabledCommandsFromFile(String filename){
         try {
-            Properties banned = readProperties(filename);
-            return banned.getProperty(ArthasConstants.BANNED_CONFIG_KEY);
+            Properties disabled = readProperties(filename);
+            return disabled.getProperty(ArthasConstants.DISABLED_CONFIG_KEY);
         } catch (IOException e) {
             //此错误不影响主流程，出错可以只抛堆栈，不处理
         }
@@ -901,7 +909,7 @@ public class Bootstrap {
         return password;
     }
 
-    public String getBannedCommands() {
-        return bannedCommands;
+    public String getDisabledCommands() {
+        return disabledCommands;
     }
 }

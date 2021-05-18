@@ -61,9 +61,9 @@ public class Configure {
     private Long sessionTimeout;
 
     /**
-     * banned commands
+     * disabled commands
      */
-    private String bannedCommands;
+    private String disabledCommands;
 
     public String getIp() {
         return ip;
@@ -185,12 +185,12 @@ public class Configure {
         this.password = password;
     }
 
-    public String getBannedCommands() {
-        return bannedCommands;
+    public String getDisabledCommands() {
+        return disabledCommands;
     }
 
-    public void setBannedCommands(String bannedCommands) {
-        this.bannedCommands = bannedCommands;
+    public void setDisabledCommands(String disabledCommands) {
+        this.disabledCommands = disabledCommands;
     }
 
     /**

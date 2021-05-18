@@ -385,7 +385,7 @@ public class ArthasBootstrap {
                             .setInstrumentation(instrumentation)
                             .setPid(PidUtils.currentLongPid())
                             .setWelcomeMessage(ArthasBanner.welcome())
-                            .setBannedCommands(configure.getBannedCommands());
+                            .setDisabledCommands(configure.getDisabledCommands());
             if (configure.getSessionTimeout() != null) {
                 options.setSessionTimeout(configure.getSessionTimeout() * 1000);
             }

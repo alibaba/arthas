@@ -62,7 +62,7 @@ public class ShellServerImpl extends ShellServer {
         this.sessions = new ConcurrentHashMap<String, ShellImpl>();
         this.reaperInterval = options.getReaperInterval();
         this.resolvers = new CopyOnWriteArrayList<CommandResolver>();
-        this.commandManager = new InternalCommandManager(resolvers, transferCommandsToString(options.getBannedCommands()));
+        this.commandManager = new InternalCommandManager(resolvers, transferCommandsToString(options.getDisabledCommands()));
         this.instrumentation = options.getInstrumentation();
         this.pid = options.getPid();
 
@@ -259,6 +259,6 @@ public class ShellServerImpl extends ShellServer {
 
     private List<String> transferCommandsToString(String commands){
         //unchangeable list
-        return StringUtils.isEmpty(commands) ? null : (Arrays.asList(commands.split(ArthasConstants.BANNED_COMMANDS_SEP)));
+        return StringUtils.isEmpty(commands) ? null : (Arrays.asList(commands.split(ArthasConstants.DISABLED_COMMANDS_SEP)));
     }
 }

@@ -39,16 +39,16 @@ public class ArthasConstants {
     public static final String USERNAME_KEY = "username";
     public static final String PASSWORD_KEY = "password";
     /**
-     * banned commands seperator
+     * disabled commands seperator
      */
-    public static final String BANNED_COMMANDS_SEP = ",";
+    public static final String DISABLED_COMMANDS_SEP = ",";
     /**
-     * banned commands config file name
+     * disabled commands config file name
      */
-    public static final String BANNED_COMMANDS_CONFIG = "arthas.properties";
+    public static final String DISABLED_COMMANDS_CONFIG = "arthas.properties";
     /**
-     * banned config key
+     * disabled config key
      */
-    public static final String BANNED_CONFIG_KEY = "arthas.banned";
+    public static final String DISABLED_CONFIG_KEY = "arthas.disabled";
 
 }

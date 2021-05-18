@@ -1,7 +1,7 @@
 package com.taobao.arthas.core.shell.system.impl;
 
 import com.taobao.arthas.common.ArthasConstants;
-import com.taobao.arthas.common.CommandBannedException;
+import com.taobao.arthas.common.CommandDisabledException;
 import com.taobao.arthas.core.GlobalOptions;
 import com.taobao.arthas.core.distribution.ResultDistributor;
 import com.taobao.arthas.core.server.ArthasBootstrap;
@@ -145,9 +145,9 @@ public class JobControllerImpl implements JobController {
                 if (token.isText()) {
                     // check before create process
                     checkPermission(session, token);
-                    // check command is banned
-                    if (commandManager.commandIsBanned(token.value())){
-                        throw new CommandBannedException(token.value() + " command is banned (config by "+ ArthasConstants.BANNED_COMMANDS_CONFIG +" or -banned-commands) !!!");
+                    // check command is disabled
+                    if (commandManager.commandIsDisabled(token.value())){
+                        throw new CommandDisabledException(token.value() + " command is disabled (config by "+ ArthasConstants.DISABLED_COMMANDS_CONFIG +" or -disabled-commands) !!!");
                     }
                     Command command = commandManager.getCommand(token.value());
                     if (command != null) {
