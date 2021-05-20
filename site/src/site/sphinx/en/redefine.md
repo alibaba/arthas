@@ -1,6 +1,8 @@
 redefine
 ========
 
+> Recommend to use the [retransform](retransform.md) command.
+
 [`mc-redefine` online tutorial](https://arthas.aliyun.com/doc/arthas-tutorials?language=en&id=command-mc-redefine)
 
 > Load the external `*.class` files to re-define the loaded classes in JVM.
@@ -8,6 +10,8 @@ redefine
 Reference: [Instrumentation#redefineClasses](https://docs.oracle.com/javase/8/docs/api/java/lang/instrument/Instrumentation.html#redefineClasses-java.lang.instrument.ClassDefinition...-)
 
 ### Frequently asked questions
+
+> Recommend to use the [retransform](retransform.md) command.
 
 * The class of `redefine` cannot modify, add or delete the field and method of the class, including method parameters, method names and return values.
 
@@ -29,7 +33,6 @@ Reference: [Instrumentation#redefineClasses](https://docs.oracle.com/javase/8/do
 |---:|:---|
 |`[c:]`|hashcode of the class loader|
 |`[classLoaderClass:]`| The class name of the ClassLoader that executes the expression. |
-|`[p:]`|absolute path of the external `*.class`, multiple paths are separated with 'space'|
 
 
 ### Usage

@@ -37,6 +37,7 @@ public class SessionCommand extends AnnotatedCommand {
         TunnelClient tunnelClient = ArthasBootstrap.getInstance().getTunnelClient();
         if (tunnelClient != null) {
             result.setTunnelServer(tunnelClient.getTunnelServerUrl());
+            result.setTunnelConnected(tunnelClient.isConnected());
         }
 
         //channel server

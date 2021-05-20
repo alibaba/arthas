@@ -6,7 +6,7 @@
 比如下载全量的arthas zip包，解压之后以 `-javaagent` 的参数指定`arthas-agent.jar`来启动：
 
 ```
-java -javaagent:/tmp/test/arthas-agent.jar -jar arthas-demo.jar
+java -javaagent:/tmp/test/arthas-agent.jar -jar math-game.jar
 ```
 
 设置启动参数：

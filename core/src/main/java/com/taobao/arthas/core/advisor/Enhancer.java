@@ -21,27 +21,27 @@ import java.util.Map;
 import java.util.Set;
 import java.util.WeakHashMap;
 
-import com.alibaba.arthas.deps.org.objectweb.asm.ClassReader;
-import com.alibaba.arthas.deps.org.objectweb.asm.Opcodes;
-import com.alibaba.arthas.deps.org.objectweb.asm.Type;
-import com.alibaba.arthas.deps.org.objectweb.asm.tree.AbstractInsnNode;
-import com.alibaba.arthas.deps.org.objectweb.asm.tree.ClassNode;
-import com.alibaba.arthas.deps.org.objectweb.asm.tree.MethodInsnNode;
-import com.alibaba.arthas.deps.org.objectweb.asm.tree.MethodNode;
+import com.alibaba.deps.org.objectweb.asm.ClassReader;
+import com.alibaba.deps.org.objectweb.asm.Opcodes;
+import com.alibaba.deps.org.objectweb.asm.Type;
+import com.alibaba.deps.org.objectweb.asm.tree.AbstractInsnNode;
+import com.alibaba.deps.org.objectweb.asm.tree.ClassNode;
+import com.alibaba.deps.org.objectweb.asm.tree.MethodInsnNode;
+import com.alibaba.deps.org.objectweb.asm.tree.MethodNode;
 import com.alibaba.arthas.deps.org.slf4j.Logger;
 import com.alibaba.arthas.deps.org.slf4j.LoggerFactory;
-import com.taobao.arthas.bytekit.asm.MethodProcessor;
-import com.taobao.arthas.bytekit.asm.interceptor.InterceptorProcessor;
-import com.taobao.arthas.bytekit.asm.interceptor.parser.DefaultInterceptorClassParser;
-import com.taobao.arthas.bytekit.asm.location.Location;
-import com.taobao.arthas.bytekit.asm.location.LocationType;
-import com.taobao.arthas.bytekit.asm.location.MethodInsnNodeWare;
-import com.taobao.arthas.bytekit.asm.location.filter.GroupLocationFilter;
-import com.taobao.arthas.bytekit.asm.location.filter.InvokeCheckLocationFilter;
-import com.taobao.arthas.bytekit.asm.location.filter.InvokeContainLocationFilter;
-import com.taobao.arthas.bytekit.asm.location.filter.LocationFilter;
-import com.taobao.arthas.bytekit.utils.AsmOpUtils;
-import com.taobao.arthas.bytekit.utils.AsmUtils;
+import com.alibaba.bytekit.asm.MethodProcessor;
+import com.alibaba.bytekit.asm.interceptor.InterceptorProcessor;
+import com.alibaba.bytekit.asm.interceptor.parser.DefaultInterceptorClassParser;
+import com.alibaba.bytekit.asm.location.Location;
+import com.alibaba.bytekit.asm.location.LocationType;
+import com.alibaba.bytekit.asm.location.MethodInsnNodeWare;
+import com.alibaba.bytekit.asm.location.filter.GroupLocationFilter;
+import com.alibaba.bytekit.asm.location.filter.InvokeCheckLocationFilter;
+import com.alibaba.bytekit.asm.location.filter.InvokeContainLocationFilter;
+import com.alibaba.bytekit.asm.location.filter.LocationFilter;
+import com.alibaba.bytekit.utils.AsmOpUtils;
+import com.alibaba.bytekit.utils.AsmUtils;
 import com.taobao.arthas.core.GlobalOptions;
 import com.taobao.arthas.core.advisor.SpyInterceptors.SpyInterceptor1;
 import com.taobao.arthas.core.advisor.SpyInterceptors.SpyInterceptor2;
@@ -72,6 +72,7 @@ public class Enhancer implements ClassFileTransformer {
     private final boolean isTracing;
     private final boolean skipJDKTrace;
     private final Matcher classNameMatcher;
+    private final Matcher classNameExcludeMatcher;
     private final Matcher methodNameMatcher;
     private final EnhancerAffect affect;
     private Set<Class<?>> matchingClasses = null;
@@ -93,11 +94,13 @@ public class Enhancer implements ClassFileTransformer {
      * @param affect            影响统计
      */
     public Enhancer(AdviceListener listener, boolean isTracing, boolean skipJDKTrace, Matcher classNameMatcher,
+            Matcher classNameExcludeMatcher,
             Matcher methodNameMatcher) {
         this.listener = listener;
         this.isTracing = isTracing;
         this.skipJDKTrace = skipJDKTrace;
         this.classNameMatcher = classNameMatcher;
+        this.classNameExcludeMatcher = classNameExcludeMatcher;
         this.methodNameMatcher = methodNameMatcher;
         this.affect = new EnhancerAffect();
         affect.setListenerId(listener.id());
@@ -114,7 +117,7 @@ public class Enhancer implements ClassFileTransformer {
                 }
             } catch (Throwable e) {
                 logger.error("the classloader can not load SpyAPI, ignore it. classloader: {}, className: {}",
-                        inClassLoader.getClass().getName(), className);
+                        inClassLoader.getClass().getName(), className, e);
                 return null;
             }
 
@@ -158,6 +161,15 @@ public class Enhancer implements ClassFileTransformer {
                 }
             }
 
+            // https://github.com/alibaba/arthas/issues/1690
+            if (AsmUtils.isEnhancerByCGLIB(className)) {
+                for (MethodNode methodNode : matchedMethods) {
+                    if (AsmUtils.isConstructor(methodNode)) {
+                        AsmUtils.fixConstructorExceptionTable(methodNode);
+                    }
+                }
+            }
+
             // 用于检查是否已插入了 spy函数，如果已有则不重复处理
             GroupLocationFilter groupLocationFilter = new GroupLocationFilter();
 
@@ -183,6 +195,11 @@ public class Enhancer implements ClassFileTransformer {
             groupLocationFilter.addFilter(invokeExceptionFilter);
 
             for (MethodNode methodNode : matchedMethods) {
+                if (AsmUtils.isNative(methodNode)) {
+                    logger.info("ignore native method: {}",
+                            AsmUtils.methodDeclaration(Type.getObjectType(classNode.name), methodNode));
+                    continue;
+                }
                 // 先查找是否有 atBeforeInvoke 函数，如果有，则说明已经有trace了，则直接不再尝试增强，直接插入 listener
                 if(AsmUtils.containsMethodInsnNode(methodNode, Type.getInternalName(SpyAPI.class), "atBeforeInvoke")) {
                     for (AbstractInsnNode insnNode = methodNode.instructions.getFirst(); insnNode != null; insnNode = insnNode
@@ -303,14 +320,21 @@ public class Enhancer implements ClassFileTransformer {
      *
      * @param classes 类集合
      */
-    private static void filter(Set<Class<?>> classes) {
+    private void filter(Set<Class<?>> classes) {
         final Iterator<Class<?>> it = classes.iterator();
         while (it.hasNext()) {
             final Class<?> clazz = it.next();
-            if (null == clazz || isSelf(clazz) || isUnsafeClass(clazz) || isUnsupportedClass(clazz)) {
+            if (null == clazz || isSelf(clazz) || isUnsafeClass(clazz) || isUnsupportedClass(clazz) || isExclude(clazz)) {
                 it.remove();
             }
         }
+    }
+
+    private boolean isExclude(Class<?> clazz) {
+        if (this.classNameExcludeMatcher != null) {
+            return classNameExcludeMatcher.matching(clazz.getName());
+        }
+        return false;
     }
 
     /**
@@ -418,16 +442,8 @@ public class Enhancer implements ClassFileTransformer {
             }
         }
 
-        final ClassFileTransformer resetClassFileTransformer = new ClassFileTransformer() {
-            @Override
-            public byte[] transform(ClassLoader loader, String className, Class<?> classBeingRedefined,
-                    ProtectionDomain protectionDomain, byte[] classfileBuffer) throws IllegalClassFormatException {
-                return null;
-            }
-        };
-
         try {
-            enhance(inst, resetClassFileTransformer, enhanceClassSet);
+            enhance(inst, enhanceClassSet);
             logger.info("Success to reset classes: " + enhanceClassSet);
         } finally {
             for (Class<?> resetClass : enhanceClassSet) {
@@ -440,18 +456,13 @@ public class Enhancer implements ClassFileTransformer {
     }
 
     // 批量增强
-    private static void enhance(Instrumentation inst, ClassFileTransformer transformer, Set<Class<?>> classes)
+    private static void enhance(Instrumentation inst, Set<Class<?>> classes)
             throws UnmodifiableClassException {
-        try {
-            inst.addTransformer(transformer, true);
-            int size = classes.size();
-            Class<?>[] classArray = new Class<?>[size];
-            arraycopy(classes.toArray(), 0, classArray, 0, size);
-            if (classArray.length > 0) {
-                inst.retransformClasses(classArray);
-            }
-        } finally {
-            inst.removeTransformer(transformer);
+        int size = classes.size();
+        Class<?>[] classArray = new Class<?>[size];
+        arraycopy(classes.toArray(), 0, classArray, 0, size);
+        if (classArray.length > 0) {
+            inst.retransformClasses(classArray);
         }
     }
 }

@@ -9,10 +9,12 @@ import java.lang.reflect.Method;
 import java.security.CodeSource;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Properties;
+import java.util.Set;
 import java.util.Timer;
 import java.util.UUID;
 import java.util.concurrent.Executors;
@@ -27,7 +29,16 @@ import com.alibaba.arthas.deps.ch.qos.logback.classic.LoggerContext;
 import com.alibaba.arthas.deps.org.slf4j.Logger;
 import com.alibaba.arthas.deps.org.slf4j.LoggerFactory;
 import com.alibaba.arthas.tunnel.client.TunnelClient;
+import com.alibaba.bytekit.asm.instrument.InstrumentConfig;
+import com.alibaba.bytekit.asm.instrument.InstrumentParseResult;
+import com.alibaba.bytekit.asm.instrument.InstrumentTransformer;
+import com.alibaba.bytekit.asm.matcher.SimpleClassMatcher;
+import com.alibaba.bytekit.utils.AsmUtils;
+import com.alibaba.bytekit.utils.IOUtils;
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.serializer.SerializerFeature;
 import com.taobao.arthas.common.AnsiLog;
+import com.taobao.arthas.common.ArthasConstants;
 import com.taobao.arthas.common.PidUtils;
 import com.taobao.arthas.common.SocketUtils;
 import com.taobao.arthas.core.advisor.Enhancer;
@@ -43,6 +54,9 @@ import com.taobao.arthas.core.env.ArthasEnvironment;
 import com.taobao.arthas.core.env.MapPropertySource;
 import com.taobao.arthas.core.env.PropertiesPropertySource;
 import com.taobao.arthas.core.env.PropertySource;
+import com.taobao.arthas.core.security.SecurityAuthenticator;
+import com.taobao.arthas.core.security.SecurityAuthenticatorImpl;
+import com.taobao.arthas.core.server.instrument.ClassLoader_Instrument;
 import com.taobao.arthas.core.shell.ShellServer;
 import com.taobao.arthas.core.shell.ShellServerOptions;
 import com.taobao.arthas.core.shell.command.CommandResolver;
@@ -54,9 +68,11 @@ import com.taobao.arthas.core.shell.session.SessionManager;
 import com.taobao.arthas.core.shell.session.impl.SessionManagerImpl;
 import com.taobao.arthas.core.shell.term.impl.HttpTermServer;
 import com.taobao.arthas.core.shell.term.impl.http.api.HttpApiHandler;
+import com.taobao.arthas.core.shell.term.impl.http.session.HttpSessionManager;
 import com.taobao.arthas.core.shell.term.impl.httptelnet.HttpTelnetTermServer;
 import com.taobao.arthas.core.util.ArthasBanner;
 import com.taobao.arthas.core.util.FileUtils;
+import com.taobao.arthas.core.util.InstrumentationUtils;
 import com.taobao.arthas.core.util.LogUtil;
 import com.taobao.arthas.core.util.StringUtils;
 import com.taobao.arthas.core.util.UserStatUtil;
@@ -89,13 +105,14 @@ public class ArthasBootstrap {
 
     private AtomicBoolean isBindRef = new AtomicBoolean(false);
     private Instrumentation instrumentation;
+    private InstrumentTransformer classLoaderInstrumentTransformer;
     private Thread shutdown;
     private ShellServer shellServer;
     private ScheduledExecutorService executorService;
     private SessionManager sessionManager;
     private TunnelClient tunnelClient;
 
-    private File arthasOutputDir;
+    private File outputPath;
 
     private static LoggerContext loggerContext;
     private EventExecutorGroup workerGroup;
@@ -109,26 +126,38 @@ public class ArthasBootstrap {
     private HistoryManager historyManager;
 
     private HttpApiHandler httpApiHandler;
+
+    private HttpSessionManager httpSessionManager;
+    private SecurityAuthenticator securityAuthenticator;
+
     private ChannelClient channelClient;
 
     private ArthasBootstrap(Instrumentation instrumentation, Map<String, String> args) throws Throwable {
         this.instrumentation = instrumentation;
 
-        String outputPath = System.getProperty("arthas.output.dir", "arthas-output");
-        arthasOutputDir = new File(outputPath);
-        arthasOutputDir.mkdirs();
+        initFastjson();
 
         // 1. initSpy()
-        initSpy(instrumentation);
+        initSpy();
         // 2. ArthasEnvironment
         initArthasEnvironment(args);
+
+        String outputPathStr = configure.getOutputPath();
+        if (outputPathStr == null) {
+            outputPathStr = ArthasConstants.ARTHAS_OUTPUT;
+        }
+        outputPath = new File(outputPathStr);
+        outputPath.mkdirs();
+
         // 3. init logger
         loggerContext = LogUtil.initLooger(arthasEnvironment);
 
-        // 4. init beans
+        // 4. 增强ClassLoader
+        enhanceClassLoader();
+        // 5. init beans
         initBeans();
 
-        // 5. start agent server
+        // 6. start agent server
         bind(configure);
 
         shutdown = new Thread("as-shutdown-hooker") {
@@ -143,6 +172,15 @@ public class ArthasBootstrap {
         Runtime.getRuntime().addShutdownHook(shutdown);
     }
 
+    private void initFastjson() {
+        // disable  fastjson circular reference feature
+        JSON.DEFAULT_GENERATE_FEATURE |= SerializerFeature.DisableCircularReferenceDetect.getMask();
+        // add date format option for  fastjson
+        JSON.DEFAULT_GENERATE_FEATURE |= SerializerFeature.WriteDateUseDateFormat.getMask();
+        // ignore getter error #1661
+        JSON.DEFAULT_GENERATE_FEATURE |= SerializerFeature.IgnoreErrorGetter.getMask();
+    }
+
     private void initBeans() {
         executorService = Executors.newScheduledThreadPool(1, new ThreadFactory() {
             @Override
@@ -154,11 +192,10 @@ public class ArthasBootstrap {
         });
 
         this.resultViewResolver = new ResultViewResolver();
-
         this.historyManager = new HistoryManagerImpl();
     }
 
-    private static void initSpy(Instrumentation instrumentation) throws Throwable {
+    private void initSpy() throws Throwable {
         // TODO init SpyImpl ?
 
         // 将Spy添加到BootstrapClassLoader
@@ -183,6 +220,36 @@ public class ArthasBootstrap {
         }
     }
 
+    void enhanceClassLoader() throws IOException, UnmodifiableClassException {
+        if (configure.getEnhanceLoaders() == null) {
+            return;
+        }
+        Set<String> loaders = new HashSet<String>();
+        for (String s : configure.getEnhanceLoaders().split(",")) {
+            loaders.add(s.trim());
+        }
+
+        // 增强 ClassLoader#loadClsss ，解决一些ClassLoader加载不到 SpyAPI的问题
+        // https://github.com/alibaba/arthas/issues/1596
+        byte[] classBytes = IOUtils.getBytes(ArthasBootstrap.class.getClassLoader()
+                .getResourceAsStream(ClassLoader_Instrument.class.getName().replace('.', '/') + ".class"));
+
+        SimpleClassMatcher matcher = new SimpleClassMatcher(loaders);
+        InstrumentConfig instrumentConfig = new InstrumentConfig(AsmUtils.toClassNode(classBytes), matcher);
+
+        InstrumentParseResult instrumentParseResult = new InstrumentParseResult();
+        instrumentParseResult.addInstrumentConfig(instrumentConfig);
+        classLoaderInstrumentTransformer = new InstrumentTransformer(instrumentParseResult);
+        instrumentation.addTransformer(classLoaderInstrumentTransformer, true);
+
+        if (loaders.size() == 1 && loaders.contains(ClassLoader.class.getName())) {
+            // 如果只增强 java.lang.ClassLoader，可以减少查找过程
+            instrumentation.retransformClasses(ClassLoader.class);
+        } else {
+            InstrumentationUtils.trigerRetransformClasses(instrumentation, loaders);
+        }
+    }
+    
     private void initArthasEnvironment(Map<String, String> argsMap) throws IOException {
         if (arthasEnvironment == null) {
             arthasEnvironment = new ArthasEnvironment();
@@ -195,7 +262,10 @@ public class ArthasBootstrap {
          * https://github.com/alibaba/arthas/issues/986
          * </pre>
          */
-        Map<String, String> copyMap = new HashMap<String, String>(argsMap);
+        Map<String, String> copyMap = new HashMap<String, String>();
+        if (argsMap != null) {
+            copyMap.putAll(argsMap);
+        }
         // 添加 arthas.home
         if (!copyMap.containsKey(ARTHAS_HOME_PROPERTY)) {
             copyMap.put(ARTHAS_HOME_PROPERTY, arthasHome());
@@ -263,7 +333,7 @@ public class ArthasBootstrap {
                 overrideAll = Boolean.parseBoolean(properties.getProperty(CONFIG_OVERRIDE_ALL, "false"));
             }
 
-            PropertySource propertySource = new PropertiesPropertySource(location, properties);
+            PropertySource<?> propertySource = new PropertiesPropertySource(location, properties);
             if (overrideAll) {
                 arthasEnvironment.addFirst(propertySource);
             } else {
@@ -294,28 +364,31 @@ public class ArthasBootstrap {
         }
 
         // init random port
-        if (configure.getTelnetPort() == 0) {
+        if (configure.getTelnetPort() != null && configure.getTelnetPort() == 0) {
             int newTelnetPort = SocketUtils.findAvailableTcpPort();
             configure.setTelnetPort(newTelnetPort);
             logger().info("generate random telnet port: " + newTelnetPort);
         }
-        if (configure.getHttpPort() == 0) {
+        if (configure.getHttpPort() != null && configure.getHttpPort() == 0) {
             int newHttpPort = SocketUtils.findAvailableTcpPort();
             configure.setHttpPort(newHttpPort);
             logger().info("generate random http port: " + newHttpPort);
         }
+        // try to find appName
+        if (configure.getAppName() == null) {
+            configure.setAppName(System.getProperty(ArthasConstants.PROJECT_NAME,
+                    System.getProperty(ArthasConstants.SPRING_APPLICATION_NAME, null)));
+        }
 
-        String agentId = null;
         try {
             if (configure.getTunnelServer() != null) {
                 tunnelClient = new TunnelClient();
+                tunnelClient.setAppName(configure.getAppName());
                 tunnelClient.setId(configure.getAgentId());
                 tunnelClient.setTunnelServerUrl(configure.getTunnelServer());
+                tunnelClient.setVersion(ArthasBanner.version());
                 ChannelFuture channelFuture = tunnelClient.start();
                 channelFuture.await(10, TimeUnit.SECONDS);
-                if(channelFuture.isSuccess()) {
-                    configure.setAgentId(tunnelClient.getId());
-                }
             }
         } catch (Throwable t) {
             logger().error("start tunnel client error", t);
@@ -325,14 +398,13 @@ public class ArthasBootstrap {
             ShellServerOptions options = new ShellServerOptions()
                             .setInstrumentation(instrumentation)
                             .setPid(PidUtils.currentLongPid())
-                            .setSessionTimeout(configure.getSessionTimeout() * 1000);
-
-
-            if (configure.getAgentId() != null) {
-                Map<String, String> welcomeInfos = new HashMap<String, String>();
-                welcomeInfos.put("id", configure.getAgentId());
-                options.setWelcomeMessage(ArthasBanner.welcome(welcomeInfos));
+                            .setWelcomeMessage(ArthasBanner.welcome());
+            if (configure.getSessionTimeout() != null) {
+                options.setSessionTimeout(configure.getSessionTimeout() * 1000);
             }
+
+            this.httpSessionManager = new HttpSessionManager();
+            this.securityAuthenticator = new SecurityAuthenticatorImpl(configure.getUsername(), configure.getPassword());
 
             shellServer = new ShellServerImpl(options);
             BuiltinCommandPack builtinCommands = new BuiltinCommandPack();
@@ -346,27 +418,31 @@ public class ArthasBootstrap {
             workerGroup = new NioEventLoopGroup(new DefaultThreadFactory("arthas-TermServer", true));
 
             // TODO: discover user provided command resolver
-            if (configure.getTelnetPort() > 0) {
+            if (configure.getTelnetPort() != null && configure.getTelnetPort() > 0) {
+                logger().info("try to bind telnet server, host: {}, port: {}.", configure.getIp(), configure.getTelnetPort());
                 shellServer.registerTermServer(new HttpTelnetTermServer(configure.getIp(), configure.getTelnetPort(),
-                        options.getConnectionTimeout(), workerGroup));
+                        options.getConnectionTimeout(), workerGroup, httpSessionManager));
             } else {
                 logger().info("telnet port is {}, skip bind telnet server.", configure.getTelnetPort());
             }
-            if (configure.getHttpPort() > 0) {
+            if (configure.getHttpPort() != null && configure.getHttpPort() > 0) {
+                logger().info("try to bind http server, host: {}, port: {}.", configure.getIp(), configure.getHttpPort());
                 shellServer.registerTermServer(new HttpTermServer(configure.getIp(), configure.getHttpPort(),
-                        options.getConnectionTimeout(), workerGroup));
+                        options.getConnectionTimeout(), workerGroup, httpSessionManager));
             } else {
                 // listen local address in VM communication
                 if (configure.getTunnelServer() != null || configure.getChannelServer() != null) {
                     shellServer.registerTermServer(new HttpTermServer(configure.getIp(), configure.getHttpPort(),
-                            options.getConnectionTimeout(), workerGroup));
+                            options.getConnectionTimeout(), workerGroup, httpSessionManager));
                 }
                 logger().info("http port is {}, skip bind http server.", configure.getHttpPort());
             }
 
             shellServer.listen(new BindHandler(isBindRef));
             if (!isBind()) {
-                throw new IllegalStateException("Arthas failed to bind telnet or http port.");
+                throw new IllegalStateException("Arthas failed to bind telnet or http port! Telnet port: "
+                        + String.valueOf(configure.getTelnetPort()) + ", http port: "
+                        + String.valueOf(configure.getHttpPort()));
             }
 
             //http api session manager
@@ -442,6 +518,9 @@ public class ArthasBootstrap {
             sessionManager.close();
             sessionManager = null;
         }
+        if (this.httpSessionManager != null) {
+            httpSessionManager.stop();
+        }
         if (timer != null) {
             timer.cancel();
         }
@@ -464,6 +543,9 @@ public class ArthasBootstrap {
         }
         if (transformerManager != null) {
             transformerManager.destroy();
+        }
+        if (classLoaderInstrumentTransformer != null) {
+            instrumentation.removeTransformer(classLoaderInstrumentTransformer);
         }
         // clear the reference in Spy class.
         cleanUpSpyReference();
@@ -605,6 +687,14 @@ public class ArthasBootstrap {
 
     public Configure getConfigure() {
         return configure;
+    }
+
+    public File getOutputPath() {
+        return outputPath;
+    }
+
+    public SecurityAuthenticator getSecurityAuthenticator() {
+        return securityAuthenticator;
     }
 
 }

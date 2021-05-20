@@ -1,5 +1,6 @@
 package com.taobao.arthas.core.shell.term;
 
+import com.taobao.arthas.common.ArthasConstants;
 import com.taobao.arthas.core.config.Configure;
 import com.taobao.arthas.core.shell.ShellServerOptions;
 import com.taobao.arthas.core.shell.future.Future;
@@ -20,7 +21,8 @@ public abstract class TermServer {
      * @return the term server
      */
     public static TermServer createTelnetTermServer(Configure configure, ShellServerOptions options) {
-        return new TelnetTermServer(configure.getIp(), configure.getTelnetPort(), options.getConnectionTimeout());
+        int port = configure.getTelnetPort() != null ? configure.getTelnetPort() : ArthasConstants.TELNET_PORT;
+        return new TelnetTermServer(configure.getIp(), port, options.getConnectionTimeout());
     }
 
     /**

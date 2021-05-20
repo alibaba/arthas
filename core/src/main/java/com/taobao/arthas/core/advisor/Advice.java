@@ -12,11 +12,6 @@ public class Advice {
     private final Object[] params;
     private final Object returnObj;
     private final Throwable throwExp;
-
-    private final static int ACCESS_BEFORE = 1;
-    private final static int ACCESS_AFTER_RETUNING = 1 << 1;
-    private final static int ACCESS_AFTER_THROWING = 1 << 2;
-
     private final boolean isBefore;
     private final boolean isThrow;
     private final boolean isReturn;
@@ -64,14 +59,14 @@ public class Advice {
     /**
      * for finish
      *
-     * @param loader 类加载器
-     * @param clazz 类
-     * @param method 方法
-     * @param target 目标类
-     * @param params 调用参数
+     * @param loader    类加载器
+     * @param clazz     类
+     * @param method    方法
+     * @param target    目标类
+     * @param params    调用参数
      * @param returnObj 返回值
-     * @param throwExp 抛出异常
-     * @param access 进入场景
+     * @param throwExp  抛出异常
+     * @param access    进入场景
      */
     private Advice(
             ClassLoader loader,
@@ -89,16 +84,16 @@ public class Advice {
         this.params = params;
         this.returnObj = returnObj;
         this.throwExp = throwExp;
-        isBefore = (access & ACCESS_BEFORE) == ACCESS_BEFORE;
-        isThrow = (access & ACCESS_AFTER_THROWING) == ACCESS_AFTER_THROWING;
-        isReturn = (access & ACCESS_AFTER_RETUNING) == ACCESS_AFTER_RETUNING;
+        isBefore = (access & AccessPoint.ACCESS_BEFORE.getValue()) == AccessPoint.ACCESS_BEFORE.getValue();
+        isThrow = (access & AccessPoint.ACCESS_AFTER_THROWING.getValue()) == AccessPoint.ACCESS_AFTER_THROWING.getValue();
+        isReturn = (access & AccessPoint.ACCESS_AFTER_RETUNING.getValue()) == AccessPoint.ACCESS_AFTER_RETUNING.getValue();
     }
 
     public static Advice newForBefore(ClassLoader loader,
-            Class<?> clazz,
-            ArthasMethod method,
-            Object target,
-            Object[] params) {
+                                      Class<?> clazz,
+                                      ArthasMethod method,
+                                      Object target,
+                                      Object[] params) {
         return new Advice(
                 loader,
                 clazz,
@@ -107,16 +102,16 @@ public class Advice {
                 params,
                 null, //returnObj
                 null, //throwExp
-                ACCESS_BEFORE
+                AccessPoint.ACCESS_BEFORE.getValue()
         );
     }
 
     public static Advice newForAfterRetuning(ClassLoader loader,
-            Class<?> clazz,
-            ArthasMethod method,
-            Object target,
-            Object[] params,
-            Object returnObj) {
+                                             Class<?> clazz,
+                                             ArthasMethod method,
+                                             Object target,
+                                             Object[] params,
+                                             Object returnObj) {
         return new Advice(
                 loader,
                 clazz,
@@ -125,16 +120,16 @@ public class Advice {
                 params,
                 returnObj,
                 null, //throwExp
-                ACCESS_AFTER_RETUNING
+                AccessPoint.ACCESS_AFTER_RETUNING.getValue()
         );
     }
 
     public static Advice newForAfterThrowing(ClassLoader loader,
-            Class<?> clazz,
-            ArthasMethod method,
-            Object target,
-            Object[] params,
-            Throwable throwExp) {
+                                             Class<?> clazz,
+                                             ArthasMethod method,
+                                             Object target,
+                                             Object[] params,
+                                             Throwable throwExp) {
         return new Advice(
                 loader,
                 clazz,
@@ -143,8 +138,9 @@ public class Advice {
                 params,
                 null, //returnObj
                 throwExp,
-                ACCESS_AFTER_THROWING
+                AccessPoint.ACCESS_AFTER_THROWING.getValue()
         );
+
     }
 
 }

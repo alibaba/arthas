@@ -77,10 +77,13 @@ function getTerminalSize () {
 }
 
 /** init websocket **/
-function initWs (ip, port, agentId) {
+function initWs (ip, port, path, agentId, targetServer) {
     var protocol= location.protocol === 'https:'  ? 'wss://' : 'ws://';
-    var path = protocol + ip + ':' + port + '/ws?method=connectArthas&id=' + agentId;
-    ws = new WebSocket(path);
+    var uri = protocol + ip + ':' + port + '/' + encodeURIComponent(path) + '?method=connectArthas&id=' + agentId;
+    if (targetServer != null) {
+        uri = uri + '&targetServer=' + encodeURIComponent(targetServer);
+    }
+    ws = new WebSocket(uri);
 }
 
 /** init xterm **/
@@ -118,8 +121,16 @@ function startConnect (silent) {
         alert('Already connected');
         return;
     }
+    
+    var path = getUrlParam('path');
+    if (path == null) {
+        path = "ws";
+    }
+
+    var targetServer = getUrlParam('targetServer');
+
     // init webSocket
-    initWs(ip, port, agentId);
+    initWs(ip, port, path, agentId, targetServer);
     ws.onerror = function () {
         ws.close();
         ws = null;
@@ -170,6 +181,10 @@ function disconnect () {
     } catch (e) {
         alert('No connection, please start connect first.');
     }
+}
+
+function updateArthasOutputLink() {
+    $('#arthasOutputA').prop("href", "proxy/" + $('#agentId').val() + "/arthas-output/")
 }
 
 /** full screen show **/

@@ -3,6 +3,7 @@ package com.taobao.arthas.core.shell.term.impl.http.api;
 import com.alibaba.arthas.deps.org.slf4j.Logger;
 import com.alibaba.arthas.deps.org.slf4j.LoggerFactory;
 import com.alibaba.fastjson.JSON;
+import com.taobao.arthas.common.ArthasConstants;
 import com.taobao.arthas.common.PidUtils;
 import com.taobao.arthas.core.command.model.*;
 import com.taobao.arthas.core.distribution.PackingResultDistributor;
@@ -25,6 +26,8 @@ import com.taobao.arthas.core.shell.system.JobListener;
 import com.taobao.arthas.core.shell.system.impl.InternalCommandManager;
 import com.taobao.arthas.core.shell.term.SignalHandler;
 import com.taobao.arthas.core.shell.term.Term;
+import com.taobao.arthas.core.shell.term.impl.http.session.HttpSession;
+import com.taobao.arthas.core.shell.term.impl.http.session.HttpSessionManager;
 import com.taobao.arthas.core.util.ArthasBanner;
 import com.taobao.arthas.core.util.DateUtils;
 import com.taobao.arthas.core.util.JsonUtils;
@@ -32,6 +35,7 @@ import com.taobao.arthas.core.util.StringUtils;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.ByteBufOutputStream;
 import io.netty.buffer.Unpooled;
+import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.http.*;
 import io.netty.util.CharsetUtil;
 import io.termd.core.function.Function;
@@ -52,9 +56,9 @@ import java.util.concurrent.TimeUnit;
 public class HttpApiHandler {
 
     private static final Logger logger = LoggerFactory.getLogger(HttpApiHandler.class);
+    private static final String ONETIME_SESSION_KEY = "oneTimeSession";
     public static final int DEFAULT_EXEC_TIMEOUT = 30000;
     private final SessionManager sessionManager;
-    private static HttpApiHandler instance;
     private final InternalCommandManager commandManager;
     private final JobController jobController;
     private final HistoryManager historyManager;
@@ -80,7 +84,7 @@ public class HttpApiHandler {
         }
     }
 
-    public HttpResponse handle(FullHttpRequest request) throws Exception {
+    public HttpResponse handle(ChannelHandlerContext ctx, FullHttpRequest request) throws Exception {
 
         ApiResponse result;
         String requestBody = null;
@@ -91,7 +95,7 @@ public class HttpApiHandler {
                 requestBody = getBody(request);
                 ApiRequest apiRequest = parseRequest(requestBody);
                 requestId = apiRequest.getRequestId();
-                result = processRequest(apiRequest);
+                result = processRequest(ctx, apiRequest);
             } else {
                 result = createResponse(ApiState.REFUSED, "Unsupported http method: " + method.name());
             }
@@ -190,7 +194,7 @@ public class HttpApiHandler {
         }
     }
 
-    private ApiResponse processRequest(ApiRequest apiRequest) {
+    private ApiResponse processRequest(ChannelHandlerContext ctx, ApiRequest apiRequest) {
 
         String actionStr = apiRequest.getAction();
         try {
@@ -223,6 +227,22 @@ public class HttpApiHandler {
                     throw new ApiException("session not found: " + sessionId);
                 }
                 sessionManager.updateAccessTime(session);
+            }
+
+            // 标记所谓的一次性session
+            if (session == null) {
+                session = sessionManager.createSession();
+                session.put(ONETIME_SESSION_KEY, new Object());
+            }
+
+            // 请求到达这里，如果有需要鉴权，则已经在前面的handler里处理过了
+            // 如果有鉴权取到的 Subject，则传递到 arthas的session里
+            HttpSession httpSession = HttpSessionManager.getHttpSessionFromContext(ctx);
+            if (httpSession != null) {
+                Object subject = httpSession.getAttribute(ArthasConstants.SUBJECT_KEY);
+                if (subject != null) {
+                    session.put(ArthasConstants.SUBJECT_KEY, subject);
+                }
             }
 
             //dispatch requests
@@ -285,6 +305,7 @@ public class HttpApiHandler {
             welcomeModel.setVersion(ArthasBanner.version());
             welcomeModel.setWiki(ArthasBanner.wiki());
             welcomeModel.setTutorials(ArthasBanner.tutorials());
+            welcomeModel.setMainClass(PidUtils.mainClass());
             welcomeModel.setPid(PidUtils.currentPid());
             welcomeModel.setTime(DateUtils.getCurrentDate());
             resultDistributor.appendResult(welcomeModel);
@@ -322,7 +343,7 @@ public class HttpApiHandler {
         resultConsumer.appendResult(new InputStatusModel(InputStatus.DISABLED));
 
         ResultDistributor resultDistributor = session.getResultDistributor();
-        if (resultDistributor instanceof SharingResultDistributor) {
+        if (resultDistributor != null && resultDistributor instanceof SharingResultDistributor) {
             SharingResultDistributor sharingResultDistributor = (SharingResultDistributor) resultDistributor;
             sharingResultDistributor.addConsumer(resultConsumer);
         } else {
@@ -366,9 +387,8 @@ public class HttpApiHandler {
      */
     private ApiResponse processExecRequest(ApiRequest apiRequest, Session session) {
         boolean oneTimeAccess = false;
-        if (session == null) {
+        if (session.get(ONETIME_SESSION_KEY) != null) {
             oneTimeAccess = true;
-            session = sessionManager.createSession();
         }
 
         try {
@@ -492,7 +512,10 @@ public class HttpApiHandler {
             //add command before exec job
             CommandRequestModel commandRequestModel = new CommandRequestModel(commandLine, response.getState());
             commandRequestModel.setJobId(job.id());
-            session.getResultDistributor().appendResult(commandRequestModel);
+            ResultDistributor resultDistributor = session.getResultDistributor();
+            if (resultDistributor != null) {
+                resultDistributor.appendResult(commandRequestModel);
+            }
             session.setForegroundJob(job);
             updateSessionInputStatus(session, InputStatus.ALLOW_INTERRUPT);
 
@@ -515,9 +538,10 @@ public class HttpApiHandler {
 
     private ApiResponse processInterruptJob(ApiRequest apiRequest, Session session) {
         Job job = session.getForegroundJob();
-        if (job != null) {
-            job.interrupt();
+        if (job == null) {
+            return new ApiResponse().setState(ApiState.FAILED).setMessage("no foreground job is running");
         }
+        job.interrupt();
 
         Map<String, Object> body = new TreeMap<String, Object>();
         body.put("jobId", job.id());
@@ -540,7 +564,7 @@ public class HttpApiHandler {
             throw new ApiException("'consumerId' is required");
         }
         ResultDistributor resultDistributor = session.getResultDistributor();
-        if (!(resultDistributor instanceof SharingResultDistributor)) {
+        if (resultDistributor == null || !(resultDistributor instanceof SharingResultDistributor)) {
             throw new ApiException("This session does not support pull results by consumer");
         }
         ResultConsumer consumer = ((SharingResultDistributor)resultDistributor).getConsumer(consumerId);
@@ -585,7 +609,6 @@ public class HttpApiHandler {
 
     private Job createJob(String line, Session session, ResultDistributor resultDistributor) {
         historyManager.addHistory(line);
-        historyManager.saveHistory();
         return createJob(CliTokens.tokenize(line), session, resultDistributor);
     }
 

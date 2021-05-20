@@ -84,7 +84,7 @@ public class ForwardClientSocketClientHandler extends SimpleChannelInboundHandle
                         @Override
                         protected void initChannel(LocalChannel ch) {
                             ChannelPipeline p = ch.pipeline();
-                            p.addLast(new HttpClientCodec(), new HttpObjectAggregator(8192), websocketClientHandler,
+                            p.addLast(new HttpClientCodec(), new HttpObjectAggregator(ArthasConstants.MAX_HTTP_CONTENT_LENGTH), websocketClientHandler,
                                     localFrameHandler);
                         }
                     });

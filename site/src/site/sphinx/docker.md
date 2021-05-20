@@ -56,22 +56,22 @@ RUN export JAVA_HOME
 
 ## 通过Docker快速入门
 
-1. 删除本地已有的`arthas-demo` docker container（非必要）
+1. 删除本地已有的`math-game` docker container（非必要）
 
     ```sh
-    $ docker stop arthas-demo || true && docker rm arthas-demo || true
+    $ docker stop math-game || true && docker rm math-game || true
     ```
 
-1. 启动`arthas-demo`
+1. 启动`math-game`
 
     ```sh
-    $ docker run --name arthas-demo -it hengyunabc/arthas:latest /bin/sh -c "java -jar /opt/arthas/arthas-demo.jar"
+    $ docker run --name math-game -it hengyunabc/arthas:latest /bin/sh -c "java -jar /opt/arthas/math-game.jar"
     ```
 
 1. 启动`arthas-boot`来进行诊断
 
     ```sh
-    $ docker exec -it arthas-demo /bin/sh -c "java -jar /opt/arthas/arthas-boot.jar"
+    $ docker exec -it math-game /bin/sh -c "java -jar /opt/arthas/arthas-boot.jar"
     * [1]: 9 jar
 
     [INFO] arthas home: /opt/arthas

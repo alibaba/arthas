@@ -45,7 +45,10 @@ public class ArthasAgent {
 
     public ArthasAgent(Map<String, String> configMap, String arthasHome, boolean slientInit,
             Instrumentation instrumentation) {
-        this.configMap = configMap;
+        if (configMap != null) {
+            this.configMap = configMap;
+        }
+
         this.arthasHome = arthasHome;
         this.slientInit = slientInit;
         this.instrumentation = instrumentation;

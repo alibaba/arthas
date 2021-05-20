@@ -38,7 +38,7 @@ $ classloader -l
 
 列出上面的`org.apache.jasper.servlet.JasperLoader`加载的类：
 
-`classloader -a --classLoaderClass apache.jasper.servlet.JasperLoader`{{execute T2}}
+`classloader -a --classLoaderClass org.apache.jasper.servlet.JasperLoader`{{execute T2}}
 
 ```bash
 $ classloader -a --classLoaderClass apache.jasper.servlet.JasperLoader

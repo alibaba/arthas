@@ -10,6 +10,7 @@ import com.taobao.text.ui.TableElement;
 import com.taobao.text.util.RenderUtil;
 
 import java.lang.management.MemoryUsage;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -155,7 +156,7 @@ public class DashboardView extends ResultView<DashboardModel> {
         table.row("java.home", runtimeInfo.getJavaHome());
         table.row("systemload.average", String.format("%.2f", runtimeInfo.getSystemLoadAverage()));
         table.row("processors", "" + runtimeInfo.getProcessors());
-        table.row("uptime", "" + runtimeInfo.getUptime() + "s");
+        table.row("timestamp/uptime", new Date(runtimeInfo.getTimestamp()).toString() + "/" + runtimeInfo.getUptime() + "s");
         return table;
     }
 

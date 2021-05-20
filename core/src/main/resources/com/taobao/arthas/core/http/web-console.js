@@ -8,6 +8,8 @@ $(function () {
 
     if (ip != '' && ip != null) {
         $('#ip').val(ip);
+    } else {
+        $('#ip').val(window.location.hostname);
     }
     if (port != '' && port != null) {
         $('#port').val(port);

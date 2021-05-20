@@ -147,7 +147,6 @@ public class SessionManagerImpl implements SessionManager {
         }
         for (Session session : toClose) {
             logger.info("Removing inactive session: {}, last access time: {}", session.getSessionId(), session.getLastAccessTime());
-
             ResultDistributor resultDistributor = session.getResultDistributor();
             if (resultDistributor != null) {
                 long timeOutInMinutes = sessionTimeoutMillis / 1000 / 60;
@@ -163,7 +162,7 @@ public class SessionManagerImpl implements SessionManager {
      */
     public void evictConsumers(Session session) {
         ResultDistributor distributor = session.getResultDistributor();
-        if (distributor instanceof SharingResultDistributor) {
+        if (distributor != null && distributor instanceof SharingResultDistributor) {
             SharingResultDistributor sharingResultDistributor = (SharingResultDistributor) distributor;
             List<ResultConsumer> consumers = sharingResultDistributor.getConsumers();
             //remove inactive consumer from session directly

@@ -94,6 +94,14 @@ public class IOUtils {
         return null;
     }
 
+    public static boolean isSubFile(File parent, File child) throws IOException {
+        return child.getCanonicalPath().startsWith(parent.getCanonicalPath() + File.separator);
+    }
+ 
+    public static boolean isSubFile(String parent, String child) throws IOException {
+        return isSubFile(new File(parent), new File(child));
+    }
+
     public static void unzip(String zipFile, String extractFolder) throws IOException {
         File file = new File(zipFile);
         ZipFile zip = null;
@@ -101,9 +109,9 @@ public class IOUtils {
             int BUFFER = 1024 * 8;
 
             zip = new ZipFile(file);
-            String newPath = extractFolder;
+            File newPath = new File(extractFolder);
+            newPath.mkdirs();
 
-            new File(newPath).mkdir();
             Enumeration<? extends ZipEntry> zipFileEntries = zip.entries();
 
             // Process each entry
@@ -113,6 +121,10 @@ public class IOUtils {
                 String currentEntry = entry.getName();
 
                 File destFile = new File(newPath, currentEntry);
+                if (!isSubFile(newPath, destFile)) {
+                    throw new IOException("Bad zip entry: " + currentEntry);
+                }
+
                 // destFile = new File(newPath, destFile.getName());
                 File destinationParent = destFile.getParentFile();
 

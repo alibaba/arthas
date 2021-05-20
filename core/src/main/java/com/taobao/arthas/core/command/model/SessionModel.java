@@ -14,6 +14,8 @@ public class SessionModel extends ResultModel {
     private String channelServer;
     private String statUrl;
 
+    private boolean tunnelConnected;
+
     @Override
     public String getType() {
         return "session";
@@ -65,5 +67,13 @@ public class SessionModel extends ResultModel {
 
     public void setStatUrl(String statUrl) {
         this.statUrl = statUrl;
+    }
+
+    public boolean isTunnelConnected() {
+        return tunnelConnected;
+    }
+
+    public void setTunnelConnected(boolean tunnelConnected) {
+        this.tunnelConnected = tunnelConnected;
     }
 }

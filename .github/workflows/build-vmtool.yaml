@@ -1,0 +1,55 @@
+name: build vmtool
+
+on: [push]
+
+jobs:
+  linux:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set up JDK 8
+        uses: actions/setup-java@v2
+        with:
+          java-version: '8'
+          distribution: 'adopt'
+      - name: Build with Maven
+        run: ./mvnw package
+      - uses: actions/upload-artifact@v2
+        with:
+          name: lib
+          path: arthas-vmtool/target/classes/lib*
+
+  mac:
+    runs-on: macos-latest
+
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set up JDK 8
+        uses: actions/setup-java@v2
+        with:
+          java-version: '8'
+          distribution: 'adopt'
+      - name: Build with Maven
+        run: ./mvnw package
+      - uses: actions/upload-artifact@v2
+        with:
+          name: lib
+          path: arthas-vmtool/target/classes/lib*
+
+  windows:
+    runs-on: windows-latest
+
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set up JDK 8
+        uses: actions/setup-java@v2
+        with:
+          java-version: '8'
+          distribution: 'adopt'
+      - name: Build with Maven
+        run: ./mvnw package
+      - uses: actions/upload-artifact@v2
+        with:
+          name: lib
+          path: arthas-vmtool/target/classes/*.dll

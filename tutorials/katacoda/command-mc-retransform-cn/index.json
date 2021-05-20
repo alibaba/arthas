@@ -1,0 +1,57 @@
+{
+  "title": "Arthas mc-retransform命令",
+  "description": "Arthas mc-retransform命令",
+  "difficulty": "精通者",
+  "time": "10-20 分钟",
+  "details": {
+    "steps": [
+      {
+        "title": "启动math-game",
+        "text": "start-demo.md"
+      },
+      {
+        "title": "启动arthas-boot",
+        "text": "arthas-boot.md"
+      },
+      {
+        "title": "mc命令",
+        "text": "mc.md"
+      },
+      {
+        "title": "retransform命令",
+        "text": "retransform.md"
+      },
+      {
+        "title": "热更新代码",
+        "text": "case-jad-mc-retransform.md"
+      },
+      {
+        "title": "retransform命令更多说明",
+        "text": "retransform-more.md"
+      }
+    ],
+    "intro": {
+      "text": "intro.md"
+    },
+    "finish": {
+      "text": "finish.md"
+    },
+    "assets": {
+      "host01": []
+    }
+  },
+  "environment": {
+    "uilayout": "terminal",
+    "showdashboard": true,
+    "dashboards": [
+      {
+        "name": "Web Port 80",
+        "port": 80
+      }
+    ]
+  },
+  "backend": {
+    "imageid": "openjdk:15",
+    "environmentsprotocol": "http"
+  }
+}

@@ -21,7 +21,7 @@ echo "classpath: $class_path"`{{execute T3}}
 Output:
 
 ```
-classpath: arthas-demo.jar
+classpath: math-game.jar
 ```
 
 NOTE:

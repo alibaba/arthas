@@ -34,19 +34,20 @@ trace
 
 ### 注意事项
 
-`trace` 能方便的帮助你定位和发现因 RT 高而导致的性能问题缺陷，但其每次只能跟踪一级方法的调用链路。
+* `trace` 能方便的帮助你定位和发现因 RT 高而导致的性能问题缺陷，但其每次只能跟踪一级方法的调用链路。
 
-参考：[Trace命令的实现原理](https://github.com/alibaba/arthas/issues/597)
+    参考：[Trace命令的实现原理](https://github.com/alibaba/arthas/issues/597)
 
-3.3.0 版本后，可以使用动态Trace功能，不断增加新的匹配类，参考下面的示例。
+* 3.3.0 版本后，可以使用动态Trace功能，不断增加新的匹配类，参考下面的示例。
 
+* 目前不支持 `trace  java.lang.Thread getName`，参考issue: [#1610](https://github.com/alibaba/arthas/issues/1610) ，考虑到不是非常必要场景，且修复有一定难度，因此当前暂不修复
 
 ### 使用参考
 
 
 #### 启动 Demo
 
-启动[快速入门](quick-start.md)里的`arthas-demo`。
+启动[快速入门](quick-start.md)里的`math-game`。
 
 #### trace函数
 
@@ -62,6 +63,8 @@ Affect(class-cnt:1 , method-cnt:1) cost in 28 ms.
     `---[1.276874ms] demo.MathGame:run()
         `---[0.03752ms] demo.MathGame:primeFactors() #24 [throws Exception]
 ```
+
+> 结果里的 `#24`，表示在run函数里，在源文件的第`24`行调用了`primeFactors()`函数。
 
 #### trace次数限制
 
@@ -145,12 +148,20 @@ trace命令只会trace匹配到的函数里的子调用，并不会向下trace�
 trace -E com.test.ClassA|org.test.ClassB method1|method2|method3
 ```
 
+#### 排除掉指定的类
+
+使用 `--exclude-class-pattern` 参数可以排除掉指定的类，比如：
+
+```bash
+trace javax.servlet.Filter * --exclude-class-pattern com.demo.TestFilter
+```
+
 ### 动态trace
 
-3.3.0 版本后支持。
+> 3.3.0 版本后支持。
 
 
-打开终端1，trace `run`函数，可以看到打印出 `listenerId: 1`：
+打开终端1，trace上面demo里的`run`函数，可以看到打印出 `listenerId: 1`：
 
 ```bash
 [arthas@59161]$ trace demo.MathGame run
@@ -193,3 +204,41 @@ Affect(class count: 1 , method count: 1) cost in 34 ms, listenerId: 1
 ```
 
 通过指定`listenerId`的方式动态trace，可以不断深入。另外 `watch`/`tt`/`monitor`等命令也支持类似的功能。
+
+
+### trace结果时间不准确问题
+
+比如下面的结果里：`0.705196 > (0.152743 +  0.145825)`
+
+```bash
+$ trace demo.MathGame run -n 1
+Press Q or Ctrl+C to abort.
+Affect(class count: 1 , method count: 1) cost in 66 ms, listenerId: 1
+`---ts=2021-02-08 11:27:36;thread_name=main;id=1;is_daemon=false;priority=5;TCCL=sun.misc.Launcher$AppClassLoader@232204a1
+    `---[0.705196ms] demo.MathGame:run()
+        +---[0.152743ms] demo.MathGame:primeFactors() #24
+        `---[0.145825ms] demo.MathGame:print() #25
+```
+
+那么其它的时间消耗在哪些地方？
+
+1. 没有被trace到的函数。比如`java.*` 下的函数调用默认会忽略掉。通过增加`--skipJDKMethod false`参数可以打印出来。
+
+    ```bash
+    $ trace demo.MathGame run --skipJDKMethod false
+    Press Q or Ctrl+C to abort.
+    Affect(class count: 1 , method count: 1) cost in 35 ms, listenerId: 2
+    `---ts=2021-02-08 11:27:48;thread_name=main;id=1;is_daemon=false;priority=5;TCCL=sun.misc.Launcher$AppClassLoader@232204a1
+        `---[0.810591ms] demo.MathGame:run()
+            +---[0.034568ms] java.util.Random:nextInt() #23
+            +---[0.119367ms] demo.MathGame:primeFactors() #24 [throws Exception]
+            +---[0.017407ms] java.lang.StringBuilder:<init>() #28
+            +---[0.127922ms] java.lang.String:format() #57
+            +---[min=0.01419ms,max=0.020221ms,total=0.034411ms,count=2] java.lang.StringBuilder:append() #57
+            +---[0.021911ms] java.lang.Exception:getMessage() #57
+            +---[0.015643ms] java.lang.StringBuilder:toString() #57
+            `---[0.086622ms] java.io.PrintStream:println() #57
+    ```
+2. 非函数调用的指令消耗。比如 `i++`, `getfield`等指令。
+
+3. 在代码执行过程中，JVM可能出现停顿，比如GC，进入同步块等。

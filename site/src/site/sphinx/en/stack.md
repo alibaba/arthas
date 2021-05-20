@@ -29,7 +29,7 @@ Pls. refer to [core parameters in expression](advice-class.md) for more details.
 
 #### Start Demo
 
-Start `arthas-demo` in [Quick Start](quick-start.md).
+Start `math-game` in [Quick Start](quick-start.md).
 
 
 #### stack

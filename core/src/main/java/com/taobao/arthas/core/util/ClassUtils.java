@@ -10,7 +10,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 
-import com.alibaba.arthas.deps.org.objectweb.asm.Type;
+import com.alibaba.deps.org.objectweb.asm.Type;
 import com.taobao.arthas.core.command.model.ClassDetailVO;
 import com.taobao.arthas.core.command.model.ClassLoaderVO;
 import com.taobao.arthas.core.command.model.ClassVO;
@@ -181,7 +181,7 @@ public class ClassUtils {
         return list.toArray(new String[0]);
     }
 
-    public static List<ClassVO> createClassVOList(Set<Class<?>> matchedClasses) {
+    public static List<ClassVO> createClassVOList(Collection<Class<?>> matchedClasses) {
         List<ClassVO> classVOs = new ArrayList<ClassVO>(matchedClasses.size());
         for (Class<?> aClass : matchedClasses) {
             ClassVO classVO = createSimpleClassInfo(aClass);
