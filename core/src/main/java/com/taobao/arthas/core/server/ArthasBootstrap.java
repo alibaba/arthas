@@ -457,6 +457,7 @@ public class ArthasBootstrap {
             if (configure.getChannelServer() != null) {
                 try {
                     channelClient = new ChannelClient(configure.getChannelServer());
+                    channelClient.setHeartbeatInterval(configure.getHeartbeatInterval());
                     channelClient.setAgentInfoService(new AgentInfoServiceImpl(channelClient, configure));
                     channelClient.setRequestListener(new ChannelRequestHandler(channelClient, sessionManager, historyManager));
                     channelClient.start();

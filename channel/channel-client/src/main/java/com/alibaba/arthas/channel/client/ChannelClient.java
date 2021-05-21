@@ -46,12 +46,14 @@ public class ChannelClient {
     private ManagedChannel channel;
     private ScheduledFuture<?> reconnectFuture;
     private String channelServerAddress;
-    private int reconnectDelay = 5000;
+    private int reconnectDelay = 5;
+    private int heartbeatInterval = 5;
     private EventLoopGroup group;
 
     //channel info
     private String channelVersion = "1.0.0";
     private List<String> channelFeatures = Arrays.asList("WebConsole", "ExecuteCommand");
+    private long lastHeartbeatTime;
 
     public ChannelClient(String host, int port) {
         this.host = host;
@@ -263,7 +265,7 @@ public class ChannelClient {
             public void onCompleted() {
             }
         });
-
+        lastHeartbeatTime = System.currentTimeMillis();
     }
 
     //多线程发送数据貌似会出现错误，加上synchronized后没有出现错误
@@ -280,6 +282,7 @@ public class ChannelClient {
     }
 
     private void scheduleReconnectTask() {
+        logger.info("Agent reconnect delay seconds: "+reconnectDelay+", heartbeat interval seconds: "+heartbeatInterval);
         reconnectFuture = executorService.scheduleWithFixedDelay(new Runnable() {
             @Override
             public void run() {
@@ -307,14 +310,17 @@ public class ChannelClient {
                     }
                 } else {
                     // send heartbeat
-                    try {
-                        sendHeartbeat(arthasServiceStub);
-                    } catch (Throwable e) {
-                        logger.error("send heartbeat failure", e);
+                    long delta = System.currentTimeMillis() - lastHeartbeatTime;
+                    if (delta >= heartbeatInterval * 1000) {
+                        try {
+                            sendHeartbeat(arthasServiceStub);
+                        } catch (Throwable e) {
+                            logger.error("send heartbeat failure", e);
+                        }
                     }
                 }
             }
-        }, reconnectDelay, reconnectDelay, TimeUnit.MILLISECONDS);
+        }, reconnectDelay, reconnectDelay, TimeUnit.SECONDS);
 
     }
 
@@ -374,11 +380,23 @@ public class ChannelClient {
     }
 
     /**
-     * Set reconnect delay time (ms)
+     * Set reconnect delay seconds
      * @param reconnectDelay
      */
     public void setReconnectDelay(int reconnectDelay) {
         this.reconnectDelay = reconnectDelay;
+    }
+
+    public int getHeartbeatInterval() {
+        return heartbeatInterval;
+    }
+
+    /**
+     * Set heartbeat interval seconds
+     * @param heartbeatInterval
+     */
+    public void setHeartbeatInterval(int heartbeatInterval) {
+        this.heartbeatInterval = heartbeatInterval;
     }
 
     public ScheduledExecutorService getExecutorService() {

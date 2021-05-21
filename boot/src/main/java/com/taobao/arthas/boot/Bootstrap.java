@@ -31,6 +31,7 @@ import com.taobao.middleware.cli.CommandLine;
 import com.taobao.middleware.cli.UsageMessageFormatter;
 import com.taobao.middleware.cli.annotations.Argument;
 import com.taobao.middleware.cli.annotations.CLIConfigurator;
+import com.taobao.middleware.cli.annotations.DefaultValue;
 import com.taobao.middleware.cli.annotations.Description;
 import com.taobao.middleware.cli.annotations.Name;
 import com.taobao.middleware.cli.annotations.Option;
@@ -51,6 +52,7 @@ import static com.taobao.arthas.boot.ProcessUtils.STATUS_EXEC_TIMEOUT;
                 + "  java -jar arthas-boot.jar --tunnel-server 'ws://192.168.10.11:7777/ws' --app-name demoapp\n"
                 + "  java -jar arthas-boot.jar --tunnel-server 'ws://192.168.10.11:7777/ws' --agent-id bvDOe8XbTM2pQWjF4cfw\n"
                 + "  java -jar arthas-boot.jar --channel-server '192.168.10.11:7700'\n"
+                + "  java -jar arthas-boot.jar --channel-server '192.168.10.11:7700' --heartbeat-interval 10\n"
                 + "  java -jar arthas-boot.jar --channel-server '192.168.10.11:7700' --agent-id bvDOe8XbTM2pQWjF4cfw\n"
                 + "  java -jar arthas-boot.jar --stat-url 'http://192.168.10.11:8080/api/stat'\n"
                 + "  java -jar arthas-boot.jar -c 'sysprop; thread' <pid>\n"
@@ -118,8 +120,10 @@ public class Bootstrap {
     private String command;
     private String batchFile;
 
-    private String tunnelServer;
     private String channelServer;
+    private int heartbeatInterval;
+
+    private String tunnelServer;
     private String agentId;
 
     private String appName;
@@ -255,16 +259,23 @@ public class Bootstrap {
         this.verbose = verbose;
     }
 
-    @Option(longName = "tunnel-server")
-    @Description("The tunnel server url")
-    public void setTunnelServer(String tunnelServer) {
-        this.tunnelServer = tunnelServer;
-    }
-
     @Option(longName = "channel-server")
     @Description("The channel server address")
     public void setChannelServer(String channelServer) {
         this.channelServer = channelServer;
+    }
+
+    @Option(longName = "heartbeat-interval")
+    @DefaultValue("5")
+    @Description("The arthas agent (channel client) heartbeat interval seconds")
+    public void setHeartbeatInterval(int heartbeatInterval) {
+        this.heartbeatInterval = heartbeatInterval;
+    }
+
+    @Option(longName = "tunnel-server")
+    @Description("The tunnel server url")
+    public void setTunnelServer(String tunnelServer) {
+        this.tunnelServer = tunnelServer;
     }
 
     @Option(longName = "agent-id")
@@ -837,12 +848,16 @@ public class Bootstrap {
         return width;
     }
 
-    public String getTunnelServer() {
-        return tunnelServer;
-    }
-
     public String getChannelServer() {
         return channelServer;
+    }
+
+    public int getHeartbeatInterval() {
+        return heartbeatInterval;
+    }
+
+    public String getTunnelServer() {
+        return tunnelServer;
     }
 
     public String getAgentId() {
