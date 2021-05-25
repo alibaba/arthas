@@ -12,6 +12,8 @@ public class ChannelServerProperties {
 
     private AgentCleaner agentCleaner = new AgentCleaner();
 
+    private Auth auth = new Auth();
+
     public Server getWebsocket() {
         return websocket;
     }
@@ -42,6 +44,14 @@ public class ChannelServerProperties {
 
     public void setMessageExchange(MessageExchange messageExchange) {
         this.messageExchange = messageExchange;
+    }
+
+    public Auth getAuth() {
+        return auth;
+    }
+
+    public void setAuth(Auth auth) {
+        this.auth = auth;
     }
 
     public static class Server {
@@ -158,4 +168,24 @@ public class ChannelServerProperties {
         }
     }
 
+    public static class Auth {
+        private String username;
+        private String password;
+
+        public String getUsername() {
+            return username;
+        }
+
+        public void setUsername(String username) {
+            this.username = username;
+        }
+
+        public String getPassword() {
+            return password;
+        }
+
+        public void setPassword(String password) {
+            this.password = password;
+        }
+    }
 }
