@@ -31,6 +31,13 @@ public interface MessageExchangeService {
 
     void subscribe(Topic topic, int timeout, MessageHandler messageHandler) throws MessageExchangeException;
 
+    /**
+     * Whether exists the specify topic
+     * @param topic
+     * @return
+     */
+    boolean containsTopic(Topic topic);
+
     interface MessageHandler {
         /**
          * handle message

@@ -80,6 +80,11 @@ public class RedisMessageExchangeServiceImpl implements MessageExchangeService {
     }
 
     @Override
+    public boolean containsTopic(Topic topic) {
+        return redisTemplate.hasKey(topic.getTopic()).block();
+    }
+
+    @Override
     public void pushMessage(Topic topic, byte[] messageBytes) throws MessageExchangeException {
         String key = topic.getTopic();
         redisTemplate.opsForList().leftPush(key, messageBytes).doOnSuccess(value -> {

@@ -102,6 +102,11 @@ public class MessageExchangeServiceImpl implements MessageExchangeService {
     }
 
     @Override
+    public boolean containsTopic(Topic topic) {
+        return topicMap.containsKey(topic);
+    }
+
+    @Override
     public void pushMessage(Topic topic, byte[] messageBytes) throws MessageExchangeException {
         TopicData topicData = topicMap.get(topic);
         if (topicData == null) {
