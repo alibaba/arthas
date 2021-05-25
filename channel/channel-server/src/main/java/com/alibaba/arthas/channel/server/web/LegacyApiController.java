@@ -82,7 +82,12 @@ public class LegacyApiController {
                 case INIT_SESSION:
                     actionResponseMono = apiActionDelegateService.initSession(agentId);
                     return convertToApiResponse(actionResponseMono);
+                case INTERRUPT_JOB:
+                    checkSessionId(request);
+                    actionResponseMono = apiActionDelegateService.interruptJob(agentId, request.getSessionId());
+                    return convertToApiResponse(actionResponseMono);
                 case CLOSE_SESSION:
+                    checkSessionId(request);
                     actionResponseMono = apiActionDelegateService.closeSession(agentId, request.getSessionId());
                     return convertToApiResponse(actionResponseMono);
                 default:
@@ -97,6 +102,12 @@ public class LegacyApiController {
                     .setRequestId(request.getRequestId())
                     .setSessionId(request.getSessionId());
             return Mono.just(response);
+        }
+    }
+
+    private void checkSessionId(ApiRequest request) {
+        if (StringUtils.isBlank(request.getSessionId())) {
+            throw new IllegalArgumentException("Invalid request, the 'sessionId' is required");
         }
     }
 

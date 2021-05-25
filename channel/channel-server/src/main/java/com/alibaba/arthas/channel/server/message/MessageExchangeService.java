@@ -4,6 +4,7 @@ import com.alibaba.arthas.channel.server.message.topic.Topic;
 import reactor.core.publisher.Mono;
 
 /**
+ * Message exchange service for channel-client and channel-server
  * @author gongdewei 2020/8/10
  */
 public interface MessageExchangeService {
