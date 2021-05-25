@@ -215,9 +215,9 @@ public class MessageExchangeServiceImpl implements MessageExchangeService {
         long now = System.currentTimeMillis();
         List<TopicData> topicDataList = new ArrayList<>(topicMap.values());
         for (TopicData topicData : topicDataList) {
-            if (topicData.topic instanceof ActionRequestTopic) {
-                continue;
-            }
+//            if (topicData.topic instanceof ActionRequestTopic) {
+//                continue;
+//            }
             long idle = now - topicData.getLastActiveTime();
             if (!topicData.isSubscribed() && idle > timeout) {
                 try {

@@ -188,7 +188,7 @@ public class LegacyApiController {
                 long idleTime = currentTimeMillis - entry.getValue().time;
                 boolean outdated = idleTime > topicSurvivalTimeMills;
                 if (outdated) {
-                    logger.info("Removing outdated request data, idle time: {}, sessionId: {}, request: {}", idleTime, entry.getKey(), entry.getValue());
+                    logger.info("Removing inactive request data, idle time: {}, sessionId: {}, request: {}", idleTime, entry.getKey(), entry.getValue());
                 }
                 return outdated;
             });
