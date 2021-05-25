@@ -84,6 +84,7 @@ public class ApiActionDelegateServiceImpl implements ApiActionDelegateService {
         return Mono.just(ActionResponse.newBuilder()
                 .setAgentId(agentId)
                 .setRequestId(requestId)
+                .setSessionId(request.getSessionId())
                 .setStatus(ResponseStatus.CONTINUOUS)
                 .build());
     }

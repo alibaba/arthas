@@ -130,7 +130,17 @@ public class ChannelRequestHandler implements ChannelClient.RequestListener {
                 return;
         }
 
-        //handle other command request actions
+        // handle init session (No session required)
+        switch (action) {
+            case INIT_SESSION:
+                processInitSession(request);
+                return;
+            case UNRECOGNIZED:
+                processUnrecognizedAction(request);
+                return;
+        }
+
+        // try reuse session
         String sessionId = request.getSessionId();
         Session session = null;
         if (!StringUtils.isBlank(sessionId)) {
@@ -139,7 +149,7 @@ public class ChannelRequestHandler implements ChannelClient.RequestListener {
                 throw new Exception("session not found: " + sessionId);
             }
         }
-
+        //handle other command request actions
         switch (action) {
             case EXECUTE:
                 processExec(request, session);
@@ -147,15 +157,9 @@ public class ChannelRequestHandler implements ChannelClient.RequestListener {
             case ASYNC_EXECUTE:
                 processAsyncExec(request, session);
                 return;
-            case INIT_SESSION:
-                processInitSession(request);
-                return;
-            case UNRECOGNIZED:
-                processUnrecognizedAction(request, session);
-                return;
         }
 
-        //required session
+        // The following actions is required a session
         if (session == null) {
             throw new Exception("session is required");
         }
@@ -166,9 +170,6 @@ public class ChannelRequestHandler implements ChannelClient.RequestListener {
             case CLOSE_SESSION:
                 processCloseSession(request, session);
                 return;
-//            case JOIN_SESSION:
-//                processJoinSession(request, session);
-//                return;
         }
 
     }
@@ -522,7 +523,7 @@ public class ChannelRequestHandler implements ChannelClient.RequestListener {
         sendResponse(response);
     }
 
-    private void processUnrecognizedAction(ActionRequest request, Session session) {
+    private void processUnrecognizedAction(ActionRequest request) {
         ActionResponse.Builder response = ActionResponse.newBuilder()
                 .setAgentId(request.getAgentId())
                 .setRequestId(request.getRequestId())
