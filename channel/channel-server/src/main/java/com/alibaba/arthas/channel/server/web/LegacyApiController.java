@@ -49,11 +49,19 @@ public class LegacyApiController {
     @Autowired
     private ApiActionDelegateService apiActionDelegateService;
 
-    @RequestMapping("/legacy_api/{agentId}")
-    public Mono<ApiResponse> process(@PathVariable String agentId, @RequestBody ApiRequest request) {
+    @RequestMapping({"/legacy_api/{agentId}", "/legacy_api"})
+    public Mono<ApiResponse> process(@PathVariable(required = false) String agentId, @RequestBody ApiRequest request) {
 
         try {
+            // check agentId
+            if (StringUtils.hasText(request.getAgentId())) {
+                if (agentId != null && !agentId.equals(request.getAgentId())) {
+                    throw new IllegalArgumentException("Inconsistent agentId in path and request: " + agentId + ", " + request.getAgentId());
+                }
+                agentId = request.getAgentId();
+            }
             checkAgentExists(agentId);
+            request.setAgentId(agentId);
 
             // set default exec timeout
             if (request.getExecTimeout() == null) {
