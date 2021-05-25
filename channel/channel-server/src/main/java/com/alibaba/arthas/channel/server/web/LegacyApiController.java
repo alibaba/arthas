@@ -281,6 +281,9 @@ public class LegacyApiController {
     }
 
     private AgentVO checkAgentExists(String agentId) {
+        if (StringUtils.isBlank(agentId)) {
+            throw new IllegalArgumentException("Invalid request, 'agentId' is required (path variable or request body)");
+        }
         Optional<AgentVO> optionalAgentVO = agentManageService.findAgentById(agentId).block();
         if (!optionalAgentVO.isPresent()) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Agent not found");
