@@ -25,6 +25,19 @@ public class RedisMessageExchangeServiceImpl implements MessageExchangeService {
 
     private static final String topicPrefix = "arthas:channel:topics:agent:";
 
+    // topic survival time ms
+    private int topicSurvivalTimeMills = 60*1000;
+
+    // topic message queue capacity
+    private int topicCapacity = 1000;
+
+    public RedisMessageExchangeServiceImpl() {
+    }
+
+    public RedisMessageExchangeServiceImpl(int topicSurvivalTimeMills, int topicCapacity) {
+        this.topicSurvivalTimeMills = topicSurvivalTimeMills;
+        this.topicCapacity = topicCapacity;
+    }
 
     @Autowired
     private ReactiveRedisTemplate<String, byte[]> redisTemplate;
@@ -70,9 +83,10 @@ public class RedisMessageExchangeServiceImpl implements MessageExchangeService {
     public void pushMessage(Topic topic, byte[] messageBytes) throws MessageExchangeException {
         String key = topic.getTopic();
         redisTemplate.opsForList().leftPush(key, messageBytes).doOnSuccess(value -> {
-            redisTemplate.expire(key, Duration.ofMillis(10000)).subscribe();
+            redisTemplate.expire(key, Duration.ofMillis(topicSurvivalTimeMills)).subscribe();
         }).subscribe();
 
+        //TODO check topic capacity
     }
 
     @Override
@@ -117,4 +131,19 @@ public class RedisMessageExchangeServiceImpl implements MessageExchangeService {
 
     }
 
+    public int getTopicSurvivalTimeMills() {
+        return topicSurvivalTimeMills;
+    }
+
+    public void setTopicSurvivalTimeMills(int topicSurvivalTimeMills) {
+        this.topicSurvivalTimeMills = topicSurvivalTimeMills;
+    }
+
+    public int getTopicCapacity() {
+        return topicCapacity;
+    }
+
+    public void setTopicCapacity(int topicCapacity) {
+        this.topicCapacity = topicCapacity;
+    }
 }

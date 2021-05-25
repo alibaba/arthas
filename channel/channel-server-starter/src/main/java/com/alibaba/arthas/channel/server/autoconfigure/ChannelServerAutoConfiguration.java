@@ -131,8 +131,10 @@ public class ChannelServerAutoConfiguration {
 
         @Bean(initMethod = "start", destroyMethod = "stop")
         @ConditionalOnMissingBean
-        public MessageExchangeService messageExchangeService() {
-            return new MessageExchangeServiceImpl();
+        public MessageExchangeService messageExchangeService(ChannelServerProperties serverProperties) {
+            int capacity = serverProperties.getMessageExchange().getTopicCapacity();
+            int survivalTimeMills = serverProperties.getMessageExchange().getTopicSurvivalTimeMills();
+            return new MessageExchangeServiceImpl(capacity, survivalTimeMills);
         }
     }
 
@@ -148,8 +150,10 @@ public class ChannelServerAutoConfiguration {
 
         @Bean
         @ConditionalOnMissingBean
-        public MessageExchangeService messageExchangeService() {
-            return new RedisMessageExchangeServiceImpl();
+        public MessageExchangeService messageExchangeService(ChannelServerProperties serverProperties) {
+            int capacity = serverProperties.getMessageExchange().getTopicCapacity();
+            int survivalTimeMills = serverProperties.getMessageExchange().getTopicSurvivalTimeMills();
+            return new RedisMessageExchangeServiceImpl(capacity, survivalTimeMills);
         }
 
         @Bean

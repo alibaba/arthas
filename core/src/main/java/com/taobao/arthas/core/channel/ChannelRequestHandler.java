@@ -384,7 +384,6 @@ public class ChannelRequestHandler implements ChannelClient.RequestListener {
     }
 
     private void processAsyncExec(ActionRequest request, Session session) {
-        //TODO
         ExecuteParams executeParams = request.getExecuteParams();
         String commandLine = executeParams.getCommandLine();
 
@@ -627,7 +626,7 @@ public class ChannelRequestHandler implements ChannelClient.RequestListener {
 
         @Override
         public void appendResult(ResultModel result) {
-            //TODO 优化输出，适度合并
+            //TODO 优化输出，合并小结果？
             List<ResultModel> resultModels = new ArrayList<ResultModel>();
             resultModels.add(result);
 

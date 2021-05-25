@@ -6,6 +6,7 @@ import com.alibaba.fastjson.JSON;
 import com.taobao.arthas.common.ArthasConstants;
 import com.taobao.arthas.common.PidUtils;
 import com.taobao.arthas.core.command.model.*;
+import com.taobao.arthas.core.config.Configure;
 import com.taobao.arthas.core.distribution.PackingResultDistributor;
 import com.taobao.arthas.core.distribution.ResultConsumer;
 import com.taobao.arthas.core.distribution.ResultDistributor;
@@ -68,14 +69,20 @@ public class HttpApiHandler {
     private ArrayBlockingQueue<ByteBuf> byteBufPool = new ArrayBlockingQueue<ByteBuf>(poolSize);
     private ArrayBlockingQueue<char[]> charsBufPool = new ArrayBlockingQueue<char[]>(poolSize);
     private ArrayBlockingQueue<byte[]> bytesPool = new ArrayBlockingQueue<byte[]>(poolSize);
+    private final String agentId;
 
-    public HttpApiHandler(HistoryManager historyManager, SessionManager sessionManager) {
+    public HttpApiHandler(HistoryManager historyManager, SessionManager sessionManager, Configure configure) {
         this.historyManager = historyManager;
         this.sessionManager = sessionManager;
         commandManager = this.sessionManager.getCommandManager();
         jobController = this.sessionManager.getJobController();
+        agentId = configure.getAgentId();
 
         //init buf pool
+        initBufPool();
+    }
+
+    public void initBufPool() {
         JsonUtils.setSerializeWriterBufferThreshold(jsonBufferSize);
         for (int i = 0; i < poolSize; i++) {
             byteBufPool.offer(Unpooled.buffer(jsonBufferSize));
@@ -107,7 +114,7 @@ public class HttpApiHandler {
             result = createResponse(ApiState.FAILED, "The request was not processed");
         }
         result.setRequestId(requestId);
-
+        result.setAgentId(agentId);
 
         //http response content
         ByteBuf content = null;

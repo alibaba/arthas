@@ -69,8 +69,6 @@
             <groupId>com.taobao.arthas</groupId>
             <artifactId>arthas-core</artifactId>
             <version>${project.version}</version>
-            <scope>test</scope>
-            <optional>true</optional>
             <exclusions>
                 <exclusion>
                     <artifactId>arthas-tunnel-client</artifactId>
@@ -79,6 +77,46 @@
                 <exclusion>
                     <artifactId>termd-core</artifactId>
                     <groupId>com.alibaba.middleware</groupId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>arthas-channel-client</artifactId>
+                    <groupId>com.taobao.arthas</groupId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>arthas-memorycompiler</artifactId>
+                    <groupId>com.taobao.arthas</groupId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>arthas-vmtool</artifactId>
+                    <groupId>com.taobao.arthas</groupId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>ognl</artifactId>
+                    <groupId>ognl</groupId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>bytekit-core</artifactId>
+                    <groupId>com.alibaba</groupId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>cfr</artifactId>
+                    <groupId>org.benf</groupId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>cli</artifactId>
+                    <groupId>com.alibaba.middleware</groupId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>text-ui</artifactId>
+                    <groupId>com.taobao.text</groupId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>rsyntaxtextarea</artifactId>
+                    <groupId>com.fifesoft</groupId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>fastjson</artifactId>
+                    <groupId>com.alibaba</groupId>
                 </exclusion>
             </exclusions>
         </dependency>

@@ -1,11 +1,12 @@
 package com.taobao.arthas.core.shell.term.impl.http.api;
 
 /**
- * Http Api exception
+ * Http Api response
  * @author gongdewei 2020-03-19
  */
 public class ApiResponse<T> {
     private String requestId;
+    private String agentId;
     private ApiState state;
     private String message;
     private String sessionId;
@@ -64,6 +65,15 @@ public class ApiResponse<T> {
 
     public ApiResponse<T> setJobId(String jobId) {
         this.jobId = jobId;
+        return this;
+    }
+
+    public String getAgentId() {
+        return agentId;
+    }
+
+    public ApiResponse<T> setAgentId(String agentId) {
+        this.agentId = agentId;
         return this;
     }
 

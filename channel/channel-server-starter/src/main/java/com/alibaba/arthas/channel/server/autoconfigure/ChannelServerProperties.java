@@ -8,6 +8,7 @@ public class ChannelServerProperties {
     public static final String PREFIX = "arthas.channel.server";
     private Server websocket = new Server();
     private Server backend = new Server();
+    private MessageExchange messageExchange = new MessageExchange();
 
     private AgentCleaner agentCleaner = new AgentCleaner();
 
@@ -33,6 +34,14 @@ public class ChannelServerProperties {
 
     public void setAgentCleaner(AgentCleaner agentCleaner) {
         this.agentCleaner = agentCleaner;
+    }
+
+    public MessageExchange getMessageExchange() {
+        return messageExchange;
+    }
+
+    public void setMessageExchange(MessageExchange messageExchange) {
+        this.messageExchange = messageExchange;
     }
 
     public static class Server {
@@ -76,9 +85,9 @@ public class ChannelServerProperties {
 
     public static class AgentCleaner {
         private int cleanIntervalMills = 5000;
-        private int outOfServiceTimeoutMills = 15*1000;
-        private int downTimeoutMills = 30*1000;
-        private int removingTimeoutMills = 1800*1000;
+        private int outOfServiceTimeoutMills = 15000;
+        private int downTimeoutMills = 30000;
+        private int removingTimeoutMills = 1800000;
         private boolean enabled = true;
 
         public int getCleanIntervalMills() {
@@ -119,6 +128,33 @@ public class ChannelServerProperties {
 
         public void setEnabled(boolean enabled) {
             this.enabled = enabled;
+        }
+    }
+
+    public static class MessageExchange {
+        private int topicSurvivalTimeMills = 60000;
+        private int topicCapacity = 1000;
+
+        public int getTopicSurvivalTimeMills() {
+            return topicSurvivalTimeMills;
+        }
+
+        /**
+         * message topic survival seconds
+         */
+        public void setTopicSurvivalTimeMills(int topicSurvivalTimeMills) {
+            this.topicSurvivalTimeMills = topicSurvivalTimeMills;
+        }
+
+        public int getTopicCapacity() {
+            return topicCapacity;
+        }
+
+        /**
+         * message queue capacity
+         */
+        public void setTopicCapacity(int topicCapacity) {
+            this.topicCapacity = topicCapacity;
         }
     }
 

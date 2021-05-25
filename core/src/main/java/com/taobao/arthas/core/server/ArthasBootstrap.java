@@ -448,7 +448,7 @@ public class ArthasBootstrap {
             //http api session manager
             sessionManager = new SessionManagerImpl(options, shellServer.getCommandManager(), shellServer.getJobController());
             //http api handler
-            httpApiHandler = new HttpApiHandler(historyManager, sessionManager);
+            httpApiHandler = new HttpApiHandler(historyManager, sessionManager, configure);
 
             logger().info("as-server listening on network={};telnet={};http={};timeout={};", configure.getIp(),
                     configure.getTelnetPort(), configure.getHttpPort(), options.getConnectionTimeout());

@@ -3,6 +3,7 @@ package com.alibaba.arthas.channel.server.message.impl;
 import com.alibaba.arthas.channel.server.conf.ScheduledExecutorConfig;
 import com.alibaba.arthas.channel.server.message.MessageExchangeException;
 import com.alibaba.arthas.channel.server.message.MessageExchangeService;
+import com.alibaba.arthas.channel.server.message.topic.ActionRequestTopic;
 import com.alibaba.arthas.channel.server.message.topic.Topic;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -37,15 +38,29 @@ public class MessageExchangeServiceImpl implements MessageExchangeService {
     private ScheduledExecutorConfig executorServiceConfig;
     private ScheduledFuture<?> scheduledFuture;
 
+    // topic survival time ms
+    private int topicSurvivalTimeMills = 60*1000;
+
+    // topic message queue capacity
+    private int topicCapacity = 1000;
+
+    public MessageExchangeServiceImpl() {
+    }
+
+    public MessageExchangeServiceImpl(int topicCapacity, int topicSurvivalTimeMills) {
+        this.topicCapacity = topicCapacity;
+        this.topicSurvivalTimeMills = topicSurvivalTimeMills;
+    }
+
     @Override
     public void start() throws MessageExchangeException {
         scheduledFuture = executorServiceConfig.getExecutorService().scheduleWithFixedDelay(() -> {
             try {
-                cleanIdleTopics(10000);
+                cleanIdleTopics(topicSurvivalTimeMills);
             } catch (Exception e) {
                 logger.error("clean idle topics failure", e);
             }
-        }, 5000, 5000, TimeUnit.MILLISECONDS);
+        }, 5, 5, TimeUnit.SECONDS);
     }
 
     @Override
@@ -102,7 +117,7 @@ public class MessageExchangeServiceImpl implements MessageExchangeService {
     private TopicData getAndCheckTopicExists(Topic topic) throws MessageExchangeException {
         TopicData topicData = topicMap.get(topic);
         if (topicData == null) {
-            throw new MessageExchangeException("topic is not exists");
+            throw new MessageExchangeException("topic is not exists: " + topic);
         }
         return topicData;
     }
@@ -190,6 +205,9 @@ public class MessageExchangeServiceImpl implements MessageExchangeService {
         long now = System.currentTimeMillis();
         List<TopicData> topicDataList = new ArrayList<>(topicMap.values());
         for (TopicData topicData : topicDataList) {
+            if (topicData.topic instanceof ActionRequestTopic) {
+                continue;
+            }
             long idle = now - topicData.getLastActiveTime();
             if (!topicData.isSubscribed() && idle > timeout) {
                 try {
@@ -202,7 +220,23 @@ public class MessageExchangeServiceImpl implements MessageExchangeService {
         }
     }
 
-    static class TopicData {
+    public int getTopicSurvivalTimeMills() {
+        return topicSurvivalTimeMills;
+    }
+
+    public void setTopicSurvivalTimeMills(int topicSurvivalTimeMills) {
+        this.topicSurvivalTimeMills = topicSurvivalTimeMills;
+    }
+
+    public int getTopicCapacity() {
+        return topicCapacity;
+    }
+
+    public void setTopicCapacity(int topicCapacity) {
+        this.topicCapacity = topicCapacity;
+    }
+
+    class TopicData {
         private BlockingQueue<byte[]> messageQueue;
         private Topic topic;
         private long createTime;
@@ -211,7 +245,7 @@ public class MessageExchangeServiceImpl implements MessageExchangeService {
 
         public TopicData(Topic topic) {
             this.topic = topic;
-            messageQueue = new LinkedBlockingQueue<byte[]>(1000);
+            messageQueue = new LinkedBlockingQueue<byte[]>(topicCapacity);
             createTime = System.currentTimeMillis();
             lastActiveTime = createTime;
         }
