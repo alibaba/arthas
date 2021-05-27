@@ -1,7 +1,7 @@
 version
 ===
 
-prints out Arthas's version
+prints out Arthas's version.
 
 ### Usage
 

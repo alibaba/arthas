@@ -1,9 +1,9 @@
 history
 ===
 
-打印命令历史
+打印命令历史。
 
-> 历史指令会通过一个名叫history的文件持久化，所以history指令可以查看当前arthas服务器的所有历史命令，而不仅只是当前次会话使用过的命令
+> 历史指令会通过一个名叫history的文件持久化，所以history指令可以查看当前arthas服务器的所有历史命令，而不仅只是当前次会话使用过的命令。
 
 ### 参数说明
 
@@ -24,8 +24,8 @@ $ history 3
 
 ```
  #清空指令
- $ help -c
- $ help 3
+ $ history -c
+ $ history 3
   1  history 3
 ```
 

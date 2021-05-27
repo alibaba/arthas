@@ -1,7 +1,7 @@
 history
 ===
 
-view command history
+view command history.
 
 > history of commands will persisted in a file named history, so the history command can show all the history commands of current Arthas server ,but not only history in current session.
 
@@ -24,8 +24,8 @@ $ history 3
 
 ```bash
  #clear all the history commands
- $ help -c
- $ help 3
+ $ history -c
+ $ history 3
   1  history 3
 ```
 
