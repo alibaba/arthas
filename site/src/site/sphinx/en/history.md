@@ -3,7 +3,7 @@ history
 
 view command history
 
-tips：history of commands will persisted in a file named history, so the history command can show all the history commands of current Arthas server ,but not only history in current session.
+> history of commands will persisted in a file named history, so the history command can show all the history commands of current Arthas server ,but not only history in current session.
 
 ### Options
 

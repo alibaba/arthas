@@ -3,9 +3,11 @@ session
 
 查看当前会话的信息，显示当前绑定的pid以及会话id
 
-如果配置了tunnel server，会追加打印 代理id、tunnel服务器的url以及连接状态
+> 如果配置了tunnel server，会追加打印 代理id、tunnel服务器的url以及连接状态
+>
+> 如果使用了staturl做统计，会追加显示statUrl地址
 
-如果使用了staturl做统计，会追加显示statUrl地址
+
 
 ### 使用参考
 

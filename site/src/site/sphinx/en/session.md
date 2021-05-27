@@ -3,9 +3,11 @@ session
 
 examines the current session,show the current binded processId and the sessionId
 
-if exits tunnel server，it will also show agentId、tunnelServerUrl、connected status
+> if exits tunnel server，it will also show agentId、tunnelServerUrl、connected status
+>
+> if exits statUrl，it will also show statUrl
 
-if exits statUrl，it will also show statUrl
+
 
 ### Usage
 
