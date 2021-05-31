@@ -40,7 +40,7 @@ public class DetailAPIController {
     @RequestMapping("/api/tunnelApps")
     @ResponseBody
     public Set<String> tunnelApps(HttpServletRequest request, Model model) {
-        if (!arthasProperties.isEnableDetatilPages()) {
+        if (!arthasProperties.isEnableDetailPages()) {
             throw new IllegalAccessError("not allow");
         }
 
@@ -67,7 +67,7 @@ public class DetailAPIController {
     @ResponseBody
     public Map<String, AgentClusterInfo> tunnelAgentIds(@RequestParam(value = "app", required = true) String appName,
             HttpServletRequest request, Model model) {
-        if (!arthasProperties.isEnableDetatilPages()) {
+        if (!arthasProperties.isEnableDetailPages()) {
             throw new IllegalAccessError("not allow");
         }
 
