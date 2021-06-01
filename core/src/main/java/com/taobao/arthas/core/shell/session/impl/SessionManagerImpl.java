@@ -79,6 +79,11 @@ public class SessionManagerImpl implements SessionManager {
             if (job != null) {
                 job.interrupt();
             }
+            // release ResultDistributor
+            ResultDistributor resultDistributor = session.getResultDistributor();
+            if (resultDistributor != null) {
+                resultDistributor.close();
+            }
         }
         return session;
     }
