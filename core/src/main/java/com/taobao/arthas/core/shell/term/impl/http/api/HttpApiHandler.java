@@ -6,6 +6,7 @@ import com.alibaba.fastjson.JSON;
 import com.taobao.arthas.common.ArthasConstants;
 import com.taobao.arthas.common.PidUtils;
 import com.taobao.arthas.core.command.model.*;
+import com.taobao.arthas.core.config.Configure;
 import com.taobao.arthas.core.distribution.PackingResultDistributor;
 import com.taobao.arthas.core.distribution.ResultConsumer;
 import com.taobao.arthas.core.distribution.ResultDistributor;
@@ -68,14 +69,20 @@ public class HttpApiHandler {
     private ArrayBlockingQueue<ByteBuf> byteBufPool = new ArrayBlockingQueue<ByteBuf>(poolSize);
     private ArrayBlockingQueue<char[]> charsBufPool = new ArrayBlockingQueue<char[]>(poolSize);
     private ArrayBlockingQueue<byte[]> bytesPool = new ArrayBlockingQueue<byte[]>(poolSize);
+    private final String agentId;
 
-    public HttpApiHandler(HistoryManager historyManager, SessionManager sessionManager) {
+    public HttpApiHandler(HistoryManager historyManager, SessionManager sessionManager, Configure configure) {
         this.historyManager = historyManager;
         this.sessionManager = sessionManager;
         commandManager = this.sessionManager.getCommandManager();
         jobController = this.sessionManager.getJobController();
+        agentId = configure.getAgentId();
 
         //init buf pool
+        initBufPool();
+    }
+
+    public void initBufPool() {
         JsonUtils.setSerializeWriterBufferThreshold(jsonBufferSize);
         for (int i = 0; i < poolSize; i++) {
             byteBufPool.offer(Unpooled.buffer(jsonBufferSize));
@@ -107,7 +114,7 @@ public class HttpApiHandler {
             result = createResponse(ApiState.FAILED, "The request was not processed");
         }
         result.setRequestId(requestId);
-
+        result.setAgentId(agentId);
 
         //http response content
         ByteBuf content = null;
@@ -329,7 +336,7 @@ public class HttpApiHandler {
      * @param inputStatus
      */
     private void updateSessionInputStatus(Session session, InputStatus inputStatus) {
-        SharingResultDistributor resultDistributor = session.getResultDistributor();
+        ResultDistributor resultDistributor = session.getResultDistributor();
         if (resultDistributor != null) {
             resultDistributor.appendResult(new InputStatusModel(inputStatus));
         }
@@ -341,9 +348,13 @@ public class HttpApiHandler {
         ResultConsumer resultConsumer = new ResultConsumerImpl();
         //disable input and interrupt
         resultConsumer.appendResult(new InputStatusModel(InputStatus.DISABLED));
-        SharingResultDistributor resultDistributor = session.getResultDistributor();
-        if (resultDistributor != null) {
-            resultDistributor.addConsumer(resultConsumer);
+
+        ResultDistributor resultDistributor = session.getResultDistributor();
+        if (resultDistributor != null && resultDistributor instanceof SharingResultDistributor) {
+            SharingResultDistributor sharingResultDistributor = (SharingResultDistributor) resultDistributor;
+            sharingResultDistributor.addConsumer(resultConsumer);
+        } else {
+            throw new UnsupportedOperationException("This session does not support joining.");
         }
 
         ApiResponse response = new ApiResponse();
@@ -368,7 +379,7 @@ public class HttpApiHandler {
     }
 
     private ApiResponse processCloseSessionRequest(ApiRequest apiRequest, Session session) {
-        sessionManager.removeSession(session.getSessionId());
+        sessionManager.closeSession(session.getSessionId());
         ApiResponse response = new ApiResponse();
         response.setState(ApiState.SUCCEEDED);
         return response;
@@ -462,7 +473,7 @@ public class HttpApiHandler {
             return response;
         } finally {
             if (oneTimeAccess) {
-                sessionManager.removeSession(session.getSessionId());
+                sessionManager.closeSession(session.getSessionId());
             }
         }
     }
@@ -508,7 +519,7 @@ public class HttpApiHandler {
             //add command before exec job
             CommandRequestModel commandRequestModel = new CommandRequestModel(commandLine, response.getState());
             commandRequestModel.setJobId(job.id());
-            SharingResultDistributor resultDistributor = session.getResultDistributor();
+            ResultDistributor resultDistributor = session.getResultDistributor();
             if (resultDistributor != null) {
                 resultDistributor.appendResult(commandRequestModel);
             }
@@ -559,11 +570,11 @@ public class HttpApiHandler {
         if (StringUtils.isBlank(consumerId)) {
             throw new ApiException("'consumerId' is required");
         }
-        ResultConsumer consumer = null;
-        SharingResultDistributor resultDistributor = session.getResultDistributor();
-        if (resultDistributor != null) {
-            consumer = resultDistributor.getConsumer(consumerId);
+        ResultDistributor resultDistributor = session.getResultDistributor();
+        if (resultDistributor == null || !(resultDistributor instanceof SharingResultDistributor)) {
+            throw new ApiException("This session does not support pull results by consumer");
         }
+        ResultConsumer consumer = ((SharingResultDistributor)resultDistributor).getConsumer(consumerId);
         if (consumer == null) {
             throw new ApiException("consumer not found: " + consumerId);
         }

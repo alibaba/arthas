@@ -1,0 +1,2 @@
+org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
+com.alibaba.arthas.channel.server.autoconfigure.ChannelServerAutoConfiguration
