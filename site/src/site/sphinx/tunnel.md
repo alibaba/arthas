@@ -15,6 +15,11 @@ Arthas Tunnel
 
 [https://github.com/alibaba/arthas/releases](https://github.com/alibaba/arthas/releases)
 
+* 从Maven仓库下载：[![](https://img.shields.io/maven-central/v/com.taobao.arthas/arthas-packaging.svg?style=flat-square "Arthas")](https://arthas.aliyun.com/download/arthas-tunnel-server/latest_version?mirror=aliyun)
+
+* 从Github Releases页下载： [https://github.com/alibaba/arthas/releases](https://github.com/alibaba/arthas/releases)
+
+
 Arthas tunnel server是一个spring boot fat jar应用，直接`java -jar`启动：
 
 ```bash

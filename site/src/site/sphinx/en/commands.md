@@ -18,6 +18,7 @@ All Commands
 * [sm](sm.md)
 * [dump](dump.md)
 * [heapdump](heapdump.md)
+* [vmtool](vmtool.md)
 
 * [jad](jad.md)
 * [classloader](classloader.md)

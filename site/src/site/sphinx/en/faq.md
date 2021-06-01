@@ -48,7 +48,8 @@ No.
 
 ##### Can arthas view the value of a variable in memory?
 
-No. But you can use some tricks to intercept the object with the `tt` command, or fetch it from a static method.
+1. You can use [`vmtool`](vmtool.md) command.
+2. You can use some tricks to intercept the object with the [`tt`](tt.md) command, or fetch it from a static method.
 
 
 ##### How to filter method with the same name?

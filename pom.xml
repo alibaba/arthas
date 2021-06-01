@@ -57,8 +57,9 @@
 
     <modules>
         <module>math-game</module>
-        <module>spy</module>
         <module>common</module>
+        <module>spy</module>
+        <module>arthas-vmtool</module>
         <module>tunnel-common</module>
         <module>tunnel-client</module>
         <module>core</module>
@@ -74,7 +75,7 @@
     </modules>
 
     <properties>
-        <revision>3.5.1-SNAPSHOT</revision>
+        <revision>3.5.1</revision>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.compiler.target>1.6</maven.compiler.target>
         <maven.compiler.source>1.6</maven.compiler.source>
