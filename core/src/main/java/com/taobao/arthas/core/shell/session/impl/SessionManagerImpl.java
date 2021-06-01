@@ -71,6 +71,16 @@ public class SessionManagerImpl implements SessionManager {
 
     @Override
     public Session removeSession(String sessionId) {
+        Session session = sessions.get(sessionId);
+        if (session == null) {
+            return null;
+        }
+
+        SharingResultDistributor resultDistributor = session.getResultDistributor();
+        if (resultDistributor != null) {
+            resultDistributor.close();
+        }
+
         return sessions.remove(sessionId);
     }
 
@@ -92,7 +102,6 @@ public class SessionManagerImpl implements SessionManager {
             SharingResultDistributor resultDistributor = session.getResultDistributor();
             if (resultDistributor != null) {
                 resultDistributor.appendResult(new MessageModel("arthas server is going to shutdown."));
-                resultDistributor.close();
             }
             logger.info("Removing session before shutdown: {}, last access time: {}", session.getSessionId(), session.getLastAccessTime());
             this.removeSession(session.getSessionId());
