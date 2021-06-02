@@ -76,6 +76,12 @@ public class SessionManagerImpl implements SessionManager {
             return null;
         }
 
+        //interrupt foreground job
+        Job job = session.getForegroundJob();
+        if (job != null) {
+            job.interrupt();
+        }
+
         SharingResultDistributor resultDistributor = session.getResultDistributor();
         if (resultDistributor != null) {
             resultDistributor.close();
