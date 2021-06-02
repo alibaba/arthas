@@ -30,6 +30,7 @@ Arthas is built to solve these issues. A developer can troubleshoot production i
 * Supports command line interactive mode, with auto-complete feature enabled.
 * Supports telnet and WebSocket, which enables both local and remote diagnostics with command line and browsers.
 * Supports profiler/Flame Graph
+* Support get objects in the heap that are instances of the specified class. 
 * Supports JDK 6+
 * Supports Linux/Mac/Windows
 

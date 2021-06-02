@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>reset命令 &mdash; Arthas 3.5.1 文档</title>
+  <title>help &mdash; Arthas 3.5.1 文档</title>
   
 
   
@@ -39,8 +39,8 @@
     <link rel="stylesheet" href="_static/overrides.css" type="text/css" />
     <link rel="index" title="索引" href="genindex.html" />
     <link rel="search" title="搜索" href="search.html" />
-    <link rel="next" title="version" href="version.html" />
-    <link rel="prev" title="session" href="session.html" />
+    <link rel="next" title="cls" href="cls.html" />
+    <link rel="prev" title="options" href="options.html" />
 <script>
   if (window.location.href.startsWith("https://alibaba.github.io/arthas/")) {
       window.location.href = "https://arthas.aliyun.com/doc/" + window.location.href.substr("https://alibaba.github.io/arthas/".length);
@@ -145,15 +145,14 @@
 <li class="toctree-l2"><a class="reference internal" href="auth.html">auth</a></li>
 <li class="toctree-l2"><a class="reference internal" href="options.html">options</a></li>
 <li class="toctree-l2 current"><a class="reference internal" href="commands.html#arthas">Arthas 基础命令</a><ul class="current">
-<li class="toctree-l3"><a class="reference internal" href="help.html">help</a></li>
-<li class="toctree-l3"><a class="reference internal" href="cls.html">cls</a></li>
-<li class="toctree-l3"><a class="reference internal" href="session.html">session</a></li>
-<li class="toctree-l3 current"><a class="current reference internal" href="#">reset</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="#id1">使用参考</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#id2">还原指定类</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#id3">还原所有类</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">help</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#id1">参数说明</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id2">使用参考</a></li>
 </ul>
 </li>
+<li class="toctree-l3"><a class="reference internal" href="cls.html">cls</a></li>
+<li class="toctree-l3"><a class="reference internal" href="session.html">session</a></li>
+<li class="toctree-l3"><a class="reference internal" href="reset.html">reset</a></li>
 <li class="toctree-l3"><a class="reference internal" href="version.html">version</a></li>
 <li class="toctree-l3"><a class="reference internal" href="history.html">history</a></li>
 <li class="toctree-l3"><a class="reference internal" href="quit.html">quit</a></li>
@@ -222,14 +221,14 @@
         
           <li><a href="commands.html">命令列表</a> &raquo;</li>
         
-      <li>reset命令</li>
+      <li>help</li>
     
     
       <li class="wy-breadcrumbs-aside">
         
             
             
-              <a href="https://github.com/alibaba/arthas/blob/master/site/src/site/sphinx/reset.md" class="fa fa-github"> Edit on GitHub</a>
+              <a href="https://github.com/alibaba/arthas/blob/master/site/src/site/sphinx/help.md" class="fa fa-github"> Edit on GitHub</a>
             
           
         
@@ -243,57 +242,100 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
             
-  <div class="section" id="reset">
-<h1>reset命令<a class="headerlink" href="#reset" title="永久链接至标题">¶</a></h1>
-<p><a class="reference external" href="https://arthas.aliyun.com/doc/arthas-tutorials.html?language=cn&amp;id=command-reset"><code class="docutils literal notranslate"><span class="pre">reset</span></code>在线教程</a></p>
+  <div class="section" id="help">
+<h1>help<a class="headerlink" href="#help" title="永久链接至标题">¶</a></h1>
+<p>查看命令帮助信息，可以查看当前arthas版本支持的指令，或者查看具体指令的使用说明。</p>
 <blockquote>
-<div><p>重置增强类，将被 Arthas 增强过的类全部还原，Arthas 服务端<code class="docutils literal notranslate"><span class="pre">stop</span></code>时会重置所有增强过的类</p>
+<div><p>[help 指令]的等同于[指令 -help]，都是查看具体指令的使用说明。</p>
 </div></blockquote>
 <div class="section" id="id1">
-<h2>使用参考<a class="headerlink" href="#id1" title="永久链接至标题">¶</a></h2>
-<div class="highlight-default notranslate"><pre class="literal-block">$ reset -h
- USAGE:
-   reset [-h] [-E] [class-pattern]
+<h2>参数说明<a class="headerlink" href="#id1" title="永久链接至标题">¶</a></h2>
+<table border="1" class="docutils">
+<thead>
+<tr>
+<th align="right">参数名称</th>
+<th align="left">参数说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="right">不接参数</td>
+<td align="left">查询当前arthas版本支持的指令以及指令描述</td>
+</tr>
+<tr>
+<td align="right">[name:]</td>
+<td align="left">查询具体指令的使用说明</td>
+</tr>
+</tbody>
+</table></div>
+<div class="section" id="id2">
+<h2>使用参考<a class="headerlink" href="#id2" title="永久链接至标题">¶</a></h2>
+<div class="highlight-default notranslate"><pre class="literal-block">$ help
+ NAME         DESCRIPTION
+ help         Display Arthas Help
+ auth         Authenticates the current session
+ keymap       Display all the available keymap for the specified connection.
+ sc           Search all the classes loaded by JVM
+ sm           Search the method of classes loaded by JVM
+ classloader  Show classloader info
+ jad          Decompile class
+ getstatic    Show the static field of a class
+ monitor      Monitor method execution statistics, e.g. total/success/failure count, average rt, fail rate, etc.
+ stack        Display the stack trace for the specified class and method
+ thread       Display thread info, thread stack
+ trace        Trace the execution time of specified method invocation.
+ watch        Display the input/output parameter, return object, and thrown exception of specified method invocation
+ tt           Time Tunnel
+ jvm          Display the target JVM information
+ perfcounter  Display the perf counter information.
+ ognl         Execute ognl expression.
+ mc           Memory compiler, compiles java files into bytecode and class files in memory.
+ redefine     Redefine classes. @see Instrumentation#redefineClasses(ClassDefinition...)
+ retransform  Retransform classes. @see Instrumentation#retransformClasses(Class...)
+ dashboard    Overview of target jvm&#x27;s thread, memory, gc, vm, tomcat info.
+ dump         Dump class byte array from JVM
+ heapdump     Heap dump
+ options      View and change various Arthas options
+ cls          Clear the screen
+ reset        Reset all the enhanced classes
+ version      Display Arthas version
+ session      Display current session information
+ sysprop      Display, and change the system properties.
+ sysenv       Display the system env.
+ vmoption     Display, and update the vm diagnostic options.
+ logger       Print logger info, and update the logger level
+ history      Display command history
+ cat          Concatenate and print files
+ base64       Encode and decode using Base64 representation
+ echo         write arguments to the standard output
+ pwd          Return working directory name
+ mbean        Display the mbean information
+ grep         grep command for pipes.
+ tee          tee command for pipes.
+ profiler     Async Profiler. https://github.com/jvm-profiling-tools/async-profiler
+ stop         Stop/Shutdown Arthas server and exit the console.
+ 
+ </pre>
+</div>
+<div class="highlight-default notranslate"><pre class="literal-block"> $ help dashboard
+  USAGE:
+   dashboard [-h] [-i &lt;value&gt;] [-n &lt;value&gt;]
 
  SUMMARY:
-   Reset all the enhanced classes
+   Overview of target jvm&#x27;s thread, memory, gc, vm, tomcat info.
 
  EXAMPLES:
-   reset
-   reset *List
-   reset -E .*List
+   dashboard
+   dashboard -n 10
+   dashboard -i 2000
+
+ WIKI:
+   https://arthas.aliyun.com/doc/dashboard
 
  OPTIONS:
- -h, --help                                                         this help
- -E, --regex                                                        Enable regular expression to match (wildcard matching by default)
- &lt;class-pattern&gt;                                                    Path and classname of Pattern Matching</pre>
-</div>
-</div>
-<div class="section" id="id2">
-<h2>还原指定类<a class="headerlink" href="#id2" title="永久链接至标题">¶</a></h2>
-<div class="highlight-default notranslate"><pre class="literal-block">$ trace Test test
-Press Ctrl+C to abort.
-Affect(class-cnt:1 , method-cnt:1) cost in 57 ms.
-`---ts=2017-10-26 17:10:33;thread_name=main;id=1;is_daemon=false;priority=5;TCCL=sun.misc.Launcher$AppClassLoader@14dad5dc
-    `---[0.590102ms] Test:test()
-
-`---ts=2017-10-26 17:10:34;thread_name=main;id=1;is_daemon=false;priority=5;TCCL=sun.misc.Launcher$AppClassLoader@14dad5dc
-    `---[0.068692ms] Test:test()
-
-$ reset Test
-Affect(class-cnt:1 , method-cnt:0) cost in 11 ms.</pre>
-</div>
-</div>
-<div class="section" id="id3">
-<h2>还原所有类<a class="headerlink" href="#id3" title="永久链接至标题">¶</a></h2>
-<div class="highlight-default notranslate"><pre class="literal-block">$ trace Test test
-Press Ctrl+C to abort.
-Affect(class-cnt:1 , method-cnt:1) cost in 15 ms.
-`---ts=2017-10-26 17:12:06;thread_name=main;id=1;is_daemon=false;priority=5;TCCL=sun.misc.Launcher$AppClassLoader@14dad5dc
-    `---[0.128518ms] Test:test()
-
-$ reset
-Affect(class-cnt:1 , method-cnt:0) cost in 9 ms.</pre>
+ -h, --help                              this help
+ -i, --interval &lt;value&gt;                  The interval (in ms) between two executions, default is 5000 ms.
+ -n, --number-of-execution &lt;value&gt;       The number of times this command will be executed.</pre>
 </div>
 </div>
 </div>
@@ -306,10 +348,10 @@ Affect(class-cnt:1 , method-cnt:0) cost in 9 ms.</pre>
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="version.html" class="btn btn-neutral float-right" title="version" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+        <a href="cls.html" class="btn btn-neutral float-right" title="cls" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
-        <a href="session.html" class="btn btn-neutral float-left" title="session" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+        <a href="options.html" class="btn btn-neutral float-left" title="options" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
       
     </div>
   

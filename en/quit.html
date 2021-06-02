@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Arthas Documentation &mdash; Arthas 3.5.1 documentation</title>
+  <title>quit &mdash; Arthas 3.5.1 documentation</title>
   
 
   
@@ -38,7 +38,6 @@
     <link rel="stylesheet" href="_static/overrides.css" type="text/css" />
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="Install Arthas" href="install-detail.html" />
 <script>
   if (window.location.href.startsWith("https://alibaba.github.io/arthas/")) {
       window.location.href = "https://arthas.aliyun.com/doc/" + window.location.href.substr("https://alibaba.github.io/arthas/".length);
@@ -62,7 +61,7 @@
           
 
           
-            <a href="#" class="icon icon-home"> Arthas
+            <a href="index.html" class="icon icon-home"> Arthas
           
 
           
@@ -130,7 +129,7 @@
       <nav class="wy-nav-top" aria-label="top navigation">
         
           <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
-          <a href="#">Arthas</a>
+          <a href="index.html">Arthas</a>
         
       </nav>
 
@@ -159,16 +158,16 @@
 
   <ul class="wy-breadcrumbs">
     
-      <li><a href="#">Docs</a> &raquo;</li>
+      <li><a href="index.html">Docs</a> &raquo;</li>
         
-      <li>Arthas Documentation</li>
+      <li>quit</li>
     
     
       <li class="wy-breadcrumbs-aside">
         
             
             
-              <a href="https://github.com/alibaba/arthas/blob/master/site/src/site/sphinx/en/index.md" class="fa fa-github"> Edit on GitHub</a>
+              <a href="https://github.com/alibaba/arthas/blob/master/site/src/site/sphinx/en/quit.md" class="fa fa-github"> Edit on GitHub</a>
             
           
         
@@ -182,64 +181,12 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
             
-  <div class="section" id="arthas-documentation">
-<h1>Arthas Documentation<a class="headerlink" href="#arthas-documentation" title="Permalink to this headline">¶</a></h1>
-<p><strong><a class="reference external" href="https://arthas.aliyun.com/doc/">中文文档/Chinese Documentation</a></strong></p>
-<p><img alt="_images/arthas.png" src="_images/arthas.png" /></p>
-<p>Arthas is a Java diagnostic tool open-sourced by Alibaba middleware team. It is widely adopted and popular among the developers inside Alibaba. Arthas helps developers in trouble-shooting issues in production environment for Java based applications without modifying code or restarting servers.</p>
-<div class="section" id="background">
-<h2>Background<a class="headerlink" href="#background" title="Permalink to this headline">¶</a></h2>
-<p>Oftentimes the production system network is inaccessible from local development environment. If issues are encountered in production systems, it is impossible to use IDE to debug the application remotely. What’s even worse, debugging in production environment is unacceptable, as it will suspend all the threads, leading to services downtime.</p>
-<p>Developers could always try to reproduce the same issue on the test/staging environment. However, this is tricky as some issues cannot be reproduced easily in a different environment, or even disappear once restarted.</p>
-<p>And if you’re thinking of adding some logs to your code to help trouble-shoot the issue, you will have to go through the following lifecycle: test, staging, and then to production. Time is money! This approach is inefficient! Worse still, the issue may not be fixed since it might be irreproducible once the JVM is restarted, as described above.</p>
-<p>Arthas is built to solve these issues. A developer can troubleshoot production issues on the fly. No JVM restart, no additional code changes. Arthas works as an observer, that is, it will never suspend your running threads.</p>
-</div>
-<div class="section" id="key-features">
-<h2>Key features<a class="headerlink" href="#key-features" title="Permalink to this headline">¶</a></h2>
-<ul class="simple">
-<li><p>Check whether a class is loaded? Or where the class is loaded from? (Useful for trouble-shooting jar file conflicts)</p></li>
-<li><p>Decompile a class to ensure the code is running as expected.</p></li>
-<li><p>Check classloader statistics, e.g. the number of classloaders, the number of classes loaded per classloader, the classloader hierarchy, possible classloader leaks, etc.</p></li>
-<li><p>Check the method invocation details, e.g. method parameter, returned values, exceptions and etc.</p></li>
-<li><p>Check the stack trace of specified method invocation. This is useful when a developer wants to know the caller of the method.</p></li>
-<li><p>Trace the method invocation to find slow sub-invocations.</p></li>
-<li><p>Monitor method invocation statistics, e.g. QPS (Query Per Second), RT (Return Time), success rate and etc.</p></li>
-<li><p>Monitor system metrics, thread states and CPU usage, GC statistics and etc.</p></li>
-<li><p>Supports command line interactive mode, with auto-complete feature enabled.</p></li>
-<li><p>Supports telnet and WebSocket, which enables both local and remote diagnostics with command line and browsers.</p></li>
-<li><p>Supports profiler/Flame Graph</p></li>
-<li><p>Support get objects in the heap that are instances of the specified class.</p></li>
-<li><p>Supports JDK 6+</p></li>
-<li><p>Supports Linux/Mac/Windows</p></li>
-</ul>
-<p><strong>If you are using Arthas, please let us know. Your feedback is very important to us: <a class="reference external" href="https://github.com/alibaba/arthas/issues/111">View</a></strong></p>
-</div>
-<div class="section" id="contents">
-<h2>Contents<a class="headerlink" href="#contents" title="Permalink to this headline">¶</a></h2>
-<div class="toctree-wrapper compound">
-<ul>
-<li class="toctree-l1"><a class="reference external" href="https://arthas.aliyun.com/">Home</a></li>
-<li class="toctree-l1"><a class="reference external" href="https://arthas.aliyun.com/doc/arthas-tutorials.html?language=en">Online tutorials(Recommend)</a></li>
-<li class="toctree-l1"><a class="reference internal" href="install-detail.html">Installation</a></li>
-<li class="toctree-l1"><a class="reference internal" href="download.html">Download</a></li>
-<li class="toctree-l1"><a class="reference internal" href="quick-start.html">Quick start</a></li>
-<li class="toctree-l1"><a class="reference internal" href="advanced-use.html">Advanced usage</a></li>
-<li class="toctree-l1"><a class="reference internal" href="commands.html">Commands</a></li>
-<li class="toctree-l1"><a class="reference internal" href="web-console.html">WebConsole</a></li>
-<li class="toctree-l1"><a class="reference internal" href="tunnel.html">Arthas Tunnel</a></li>
-<li class="toctree-l1"><a class="reference internal" href="http-api.html">Http API</a></li>
-<li class="toctree-l1"><a class="reference internal" href="docker.html">Docker</a></li>
-<li class="toctree-l1"><a class="reference internal" href="spring-boot-starter.html">Arthas Spring Boot Starter</a></li>
-<li class="toctree-l1"><a class="reference internal" href="idea-plugin.html">IDEA Plugin</a></li>
-<li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas/issues?q=label%3Auser-case">User cases</a></li>
-<li class="toctree-l1"><a class="reference internal" href="faq.html">FAQ</a></li>
-<li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas">Star me at GitHub</a></li>
-<li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas/blob/master/CONTRIBUTING.md#">Compile and debug/CONTRIBUTING</a></li>
-<li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas/releases">Release Notes</a></li>
-<li class="toctree-l1"><a class="reference internal" href="contact-us.html">Contact us</a></li>
-</ul>
-</div>
-</div>
+  <div class="section" id="quit">
+<h1>quit<a class="headerlink" href="#quit" title="Permalink to this headline">¶</a></h1>
+<p>exit the current Arthas client without affecting other clients. equals <strong>exit</strong>、<strong>logout</strong>、<strong>q</strong> command.</p>
+<blockquote>
+<div><p>just exit Arthas client,it means Arthas server is not closed,so the changes you do will not be reseted.</p>
+</div></blockquote>
 </div>
 
 
@@ -247,13 +194,6 @@
            
           </div>
           <footer>
-  
-    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
-      
-        <a href="install-detail.html" class="btn btn-neutral float-right" title="Install Arthas" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
-      
-      
-    </div>
   
 
   <hr/>
