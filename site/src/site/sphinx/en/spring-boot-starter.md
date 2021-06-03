@@ -76,3 +76,15 @@ public class ArthasAttachExample {
 
 }
 ```
+
+
+You can also configure properties:
+
+```java
+        HashMap<String, String> configMap = new HashMap<String, String>();
+        configMap.put("arthas.appName", "demo");
+        configMap.put("arthas.tunnelServer", "ws://127.0.0.1:7777/ws");
+        ArthasAgent.attach(configMap);
+```
+
+> Note that the configuration must be `camel case`, which is different from the `-` style of spring boot. Only the spring boot application supports both `camel case` and `-` style configuration.

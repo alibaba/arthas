@@ -1,10 +1,10 @@
 <?xml version="1.0"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>com.taobao.arthas</groupId>
         <artifactId>arthas-all</artifactId>
-        <version>3.4.3-SNAPSHOT</version>
+        <version>${revision}</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
     <artifactId>arthas-core</artifactId>
@@ -122,9 +122,14 @@
         </dependency>
         <dependency>
             <groupId>com.taobao.arthas</groupId>
-            <artifactId>arthas-bytekit</artifactId>
+            <artifactId>arthas-vmtool</artifactId>
             <version>${project.version}</version>
         </dependency>
+        <dependency>
+            <groupId>com.alibaba</groupId>
+            <artifactId>bytekit-core</artifactId>
+        </dependency>
+
         <dependency>
             <groupId>net.bytebuddy</groupId>
             <artifactId>byte-buddy-agent</artifactId>
@@ -233,7 +238,7 @@
         </dependency>
         <dependency>
             <groupId>com.taobao.arthas</groupId>
-            <artifactId>arthas-demo</artifactId>
+            <artifactId>math-game</artifactId>
             <version>${project.version}</version>
             <scope>test</scope>
         </dependency>
@@ -241,6 +246,14 @@
             <groupId>org.zeroturnaround</groupId>
             <artifactId>zt-zip</artifactId>
             <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.jboss.modules</groupId>
+            <artifactId>jboss-modules</artifactId>
+            <version>1.11.0.Final</version>
+            <scope>test</scope>
+            <optional>true</optional>
         </dependency>
 
         <dependency>

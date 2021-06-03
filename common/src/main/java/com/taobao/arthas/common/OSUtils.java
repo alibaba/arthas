@@ -59,8 +59,12 @@ public class OSUtils {
 		return arch;
 	}
 
-	public static boolean isArm() {
+	public static boolean isArm32() {
 		return "arm_32".equals(arch);
+	}
+
+	public static boolean isArm64() {
+		return "aarch_64".equals(arch);
 	}
 
 	private static String normalizeArch(String value) {

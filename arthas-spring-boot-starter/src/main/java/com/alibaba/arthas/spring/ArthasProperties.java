@@ -16,6 +16,8 @@ public class ArthasProperties {
 	private String tunnelServer;
 	private String agentId;
 
+	private String appName;
+
 	/**
 	 * report executed command
 	 */
@@ -104,5 +106,13 @@ public class ArthasProperties {
 	public void setSessionTimeout(long sessionTimeout) {
 		this.sessionTimeout = sessionTimeout;
 	}
+
+    public String getAppName() {
+        return appName;
+    }
+
+    public void setAppName(String appName) {
+        this.appName = appName;
+    }
 
 }

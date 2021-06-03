@@ -38,6 +38,7 @@ import java.util.List;
         "  trace -E com.test.ClassA|org.test.ClassB method1|method2|method3\n" +
         "  trace demo.MathGame run -n 5\n" +
         "  trace demo.MathGame run --skipJDKMethod false\n" +
+        "  trace javax.servlet.Filter * --exclude-class-pattern com.demo.TestFilter\n" +
         Constants.WIKI + Constants.WIKI_HOME + "trace")
 //@formatter:on
 public class TraceCommand extends EnhancerCommand {
@@ -131,6 +132,14 @@ public class TraceCommand extends EnhancerCommand {
             }
         }
         return classNameMatcher;
+    }
+
+    @Override
+    protected Matcher getClassNameExcludeMatcher() {
+        if (classNameExcludeMatcher == null && getExcludeClassPattern() != null) {
+            classNameExcludeMatcher = SearchUtils.classNameMatcher(getExcludeClassPattern(), isRegEx());
+        }
+        return classNameExcludeMatcher;
     }
 
     @Override

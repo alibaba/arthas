@@ -4,7 +4,7 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
-import com.alibaba.arthas.deps.org.objectweb.asm.Type;
+import com.alibaba.deps.org.objectweb.asm.Type;
 import com.taobao.arthas.core.util.StringUtils;
 
 /**
@@ -92,7 +92,6 @@ public class ArthasMethod {
 
             if ("<init>".equals(this.methodName)) {
                 this.constructor = clazz.getDeclaredConstructor(argsClasses);
-                ;
             } else {
                 this.method = clazz.getDeclaredMethod(methodName, argsClasses);
             }

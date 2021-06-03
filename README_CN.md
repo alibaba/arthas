@@ -24,6 +24,7 @@ English version goes [here](README.md).
 0. 是否有一个全局视角来查看系统的运行状况？
 0. 有什么办法可以监控到JVM的实时运行状态？
 0. 怎么快速定位应用的热点，生成火焰图？
+0. 怎样直接从JVM内查找某个类的实例？
 
 `Arthas`支持JDK 6+，支持Linux/Mac/Windows，采用命令行交互模式，同时提供丰富的 `Tab` 自动补全功能，进一步方便进行问题的定位和诊断。
 
@@ -78,7 +79,7 @@ curl -L https://arthas.aliyun.com/install.sh | sh
 * [Docker](https://arthas.aliyun.com/doc/docker.html)
 * [Arthas Spring Boot Starter](https://arthas.aliyun.com/doc/spring-boot-starter.html)
 * [用户案例](https://github.com/alibaba/arthas/issues?q=label%3Auser-case)
-* [常见问题](https://github.com/alibaba/arthas/issues?utf8=%E2%9C%93&q=label%3Aquestion-answered+)
+* [FAQ/常见问题](https://arthas.aliyun.com/doc/faq)
 * [编译调试/参与贡献](https://github.com/alibaba/arthas/blob/master/CONTRIBUTING.md)
 * [Release Notes](https://github.com/alibaba/arthas/releases)
 * [QQ群/钉钉群](https://arthas.aliyun.com/doc/contact-us.html)
@@ -174,14 +175,14 @@ Memory Compiler/内存编译器，编译`.java`文件生成`.class`。
 mc /tmp/Test.java
 ```
 
-#### redefine
-* https://arthas.aliyun.com/doc/redefine
+#### retransform
+* https://arthas.aliyun.com/doc/rretransform
 
-加载外部的`.class`文件，redefine jvm已加载的类。
+加载外部的`.class`文件，retransform 热更新jvm已加载的类。
 
 ```bash
-redefine /tmp/Test.class
-redefine -c 327a647b /tmp/Test.class /tmp/Test\$Inner.class
+retransform /tmp/Test.class
+retransform -c 327a647b /tmp/Test.class /tmp/Test\$Inner.class
 ```
 
 #### sc
@@ -221,6 +222,27 @@ $ sc -d org.springframework.web.context.support.XmlWebApplicationContext
 
 ```
 
+#### vmtool
+
+* https://arthas.aliyun.com/doc/vmtool
+
+从JVM heap中获取指定类的实例。
+
+```bash
+$ vmtool --action getInstances --className java.lang.String --limit 10
+@String[][
+    @String[com/taobao/arthas/core/shell/session/Session],
+    @String[com.taobao.arthas.core.shell.session.Session],
+    @String[com/taobao/arthas/core/shell/session/Session],
+    @String[com/taobao/arthas/core/shell/session/Session],
+    @String[com/taobao/arthas/core/shell/session/Session.class],
+    @String[com/taobao/arthas/core/shell/session/Session.class],
+    @String[com/taobao/arthas/core/shell/session/Session.class],
+    @String[com/],
+    @String[java/util/concurrent/ConcurrentHashMap$ValueIterator],
+    @String[java/util/concurrent/locks/LockSupport],
+]
+```
 #### stack
 
 * https://arthas.aliyun.com/doc/stack
@@ -381,132 +403,24 @@ OK
 
 ### Known Users
 
+Arthas有超过120家登记用户，[查看全部](USERS.md)。
+
 如果您在使用Arthas，请让我们知道，您的使用对我们非常重要：https://github.com/alibaba/arthas/issues/111 （按登记顺序排列）
 
 ![Alibaba](static/alibaba.png)
 ![Alipay](static/alipay.png)
 ![Aliyun](static/aliyun.png)
 ![Taobao](static/taobao.png)
-![Tmall](static/tmall.png)
-![微医](static/weiyi.png)
-![卓越教育](static/zhuoyuejiaoyu.png)
-![狐狸金服](static/hulijingfu.png)
-![三体云](static/santiyun.png)
-![证大文化](static/zhengdawenhua.png)
-![连连支付](static/lianlianpay.png)
-![Acmedcare+](static/acmedcare.png)
-![好慷](static/homeking365_log.png)
-![来电科技](static/laidian.png)
-![四格互联](static/sigehulian.png)
 ![ICBC](static/icbc.png)
-![陆鹰](static/luying.png)
-![玩友时代](static/wangyoushidai.png)
-![她社区](static/tashequ.png)
-![龙腾出行](static/longtengchuxing.png)
-![foscam](static/foscam.png)
-![二维火](static/2dfire.png)
-![lanxum](static/lanxum_com.png)
-![纳里健康](static/ngarihealth.png)
-![掌门1对1](static/zhangmen.png)
-![offcn](static/offcn.png)
-![sia](static/sia.png)
-![振安资产](static/zhenganzichang.png)
-![菠萝](static/bolo.png)
-![中通快递](static/zto.png)
-![光点科技](static/guangdian.png)
-![广州工程技术职业学院](static/gzvtc.jpg)
-![mstar](static/mstar.png)
-![xwbank](static/xwbank.png)
-![imexue](static/imexue.png)
-![keking](static/keking.png)
-![secoo](static/secoo.jpg)
-![viax](static/viax.png)
-![yanedu](static/yanedu.png)
-![duia](static/duia.png)
-![哈啰出行](static/hellobike.png)
-![hollycrm](static/hollycrm.png)
-![citycloud](static/citycloud.jpg)
-![yidianzixun](static/yidianzixun.png)
-![神州租车](static/zuche.png)
-![天眼查](static/tianyancha.png)
-![商脉云](static/anjianyun.png)
-![三新文化](static/sanxinbook.png)
 ![雪球财经](static/xueqiu.png)
-![百安居](static/bthome.png)
-![安心保险](static/95303.png)
-![杭州源诚科技](static/hzyc.png)
-![91moxie](static/91moxie.png)
-![智慧开源](static/wisdom.png)
-![富佳科技](static/fujias.png)
-![鼎尖软件](static/dingjiansoft.png)
-![广通软件](static/broada.png)
-![九鼎瑞信](static/evercreative.jpg)
-![小米有品](static/xiaomiyoupin.png)
-![欧冶云商](static/ouyeel.png)
-![投投科技](static/toutou.png)
-![饿了么](static/ele.png)
-![58同城](static/58.png)
-![上海浪沙](static/runsa.png)
-![符律科技](static/fhldtech.png)
 ![顺丰科技](static/sf.png)
-![新致软件](static/newtouch.png)
-![北京华宇信息](static/thunisoft.png)
-![太平洋保险](static/cpic.png)
-![旅享网络](static/risingch.png)
-![水滴互联](static/shuidihuzhu.png)
 ![贝壳找房](static/ke.png)
-![嘟嘟牛](static/dodonew.png)
-![云幂信息](static/yunmixinxi.png)
-![随手科技](static/sui.png)
-![妈妈去哪儿](static/mamaqunaer.jpg)
-![云实信息](static/realscloud.png)
-![BBD数联铭品](static/bbdservice.png)
-![伙伴集团](static/zhaoshang800.png)
-![数梦工场](static/dtdream.png)
-![安恒信息](static/dbappsecurity.png)
-![亚信科技](static/asiainfo.png)
-![云舒写](static/yunshuxie.png)
-![微住](static/iweizhu.png)
-![月亮小屋](static/bluemoon.png)
-![大搜车](static/souche.png)
-![今日图书](static/jinritushu.png)
-![竹间智能](static/emotibot.png)
-![数字认证](static/bjca.png)
-![360金融](static/360jinrong.png)
-![安居客](static/anjuke.jpg)
-![qunar](static/qunar.png)
-![ctrip](static/ctrip.png)
-![途牛](static/tuniu.png)
-![多点](static/dmall.jpg)
-![转转](static/zhuanzhuan.jpg)
-![金蝶](static/kingdee.jpg)
-![华清飞扬](static/sincetimes.jpg)
-![神奇视角](static/fasterar.jpg)
-![南京昂克软件](static/angke.jpg)
-![网盛生意宝](static/netsun.jpg)
-![北京登云美业网络](static/idengyun.jpg)
-![Holder](static/holder.png)
-![立林科技](static/leelen.png)
-![爱成长](static/aichengzhang.png)
-![嘉云数据](static/clubfactory.png)
-![百草味](static/bcw.png)
-![青岛优米](static/youmi.png)
-![紫光软件](static/unis.png)
-![拓保软件](static/tobosoft.png)
-![海信集团](static/hisense.png)
-![小红唇](static/xiaohongchun.png)
-![上海恺英](static/kaiying.png)
-![上海慧力](static/xiaohuasheng.png)
-![上海喔噻](static/shouqingba.png)
 ![vipkid](static/vipkid.png)
-![宇中科技](static/yuzhong.png)
-![蘑菇财富](static/mogu.jpg)
-![喔趣科技](static/woqu.png)
 ![百度凤巢](static/baidufengchao.png)
-![喜百年供应链科技](static/xbn.png)
-![折耳根科技](static/zheergen.png)
+![有赞](static/youzan.png)
 
-### 洐生项目
+
+### 衍生项目
 
 * [Bistoury: 一个集成了Arthas的项目](https://github.com/qunarcorp/bistoury)
 * [一个使用MVEL脚本的fork](https://github.com/XhinLiang/arthas)
@@ -522,6 +436,7 @@ OK
 
 #### Projects
 
+* [bytekit](https://github.com/alibaba/bytekit) Java Bytecode Kit，Arthas里字节码增强的内核。
 * [greys-anatomy](https://github.com/oldmanpushcart/greys-anatomy): Arthas代码基于Greys二次开发而来，非常感谢Greys之前所有的工作，以及Greys原作者对Arthas提出的意见和建议！
 * [termd](https://github.com/alibaba/termd): Arthas的命令行实现基于termd开发，是一款优秀的命令行程序开发框架，感谢termd提供了优秀的框架。
 * [crash](https://github.com/crashub/crash): Arthas的文本渲染功能基于crash中的文本渲染功能开发，可以从[这里](https://github.com/crashub/crash/tree/1.3.2/shell)看到源码，感谢crash在这方面所做的优秀工作。

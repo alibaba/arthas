@@ -33,7 +33,7 @@ exit_on_err()
 }
 
 # maven package the arthas
-"$DIR/mvnw" clean package -T 2C -Dmaven.test.skip=true -DskipTests=true -Dmaven.javadoc.skip=true -f $DIR/pom.xml \
+"$DIR/mvnw" clean package -Dmaven.test.skip=true -DskipTests=true -Dmaven.javadoc.skip=true -f $DIR/pom.xml \
 || exit_on_err 1 "package arthas failed."
 
 rm -r "$DIR/core/src/main/resources/com/taobao/arthas/core/res/version"

@@ -36,29 +36,22 @@ abstract public class ThreadUtil {
     }
 
     /**
-     * 获取所有线程Map，以线程Name-ID为key
-     * 
-     * @return
+     * 获取所有线程
      */
-    public static Map<String, ThreadVO> getThreads() {
+    public static List<ThreadVO> getThreads() {
         ThreadGroup root = getRoot();
         Thread[] threads = new Thread[root.activeCount()];
         while (root.enumerate(threads, true) == threads.length) {
             threads = new Thread[threads.length * 2];
         }
-        SortedMap<String, ThreadVO> map = new TreeMap<String, ThreadVO>(new Comparator<String>() {
-            @Override
-            public int compare(String o1, String o2) {
-                return o1.compareTo(o2);
-            }
-        });
+        List<ThreadVO> list = new ArrayList<ThreadVO>(threads.length);
         for (Thread thread : threads) {
             if (thread != null) {
                 ThreadVO threadVO = createThreadVO(thread);
-                map.put(thread.getName() + "-" + thread.getId(), threadVO);
+                list.add(threadVO);
             }
         }
-        return map;
+        return list;
     }
 
     private static ThreadVO createThreadVO(Thread thread) {
@@ -215,8 +208,7 @@ abstract public class ThreadUtil {
         }
         sb.append('\n');
         int i = 0;
-        for (; i < threadInfo.getStackTrace().length; i++) {
-            StackTraceElement ste = threadInfo.getStackTrace()[i];
+        for (StackTraceElement ste : threadInfo.getStackTrace()) {
             sb.append("\tat ").append(ste.toString());
             sb.append('\n');
             if (i == 0 && threadInfo.getLockInfo() != null) {
@@ -249,6 +241,7 @@ abstract public class ThreadUtil {
                     sb.append('\n');
                 }
             }
+            ++i;
         }
         if (i < threadInfo.getStackTrace().length) {
             sb.append("\t...");

@@ -18,7 +18,7 @@ public class WatchView extends ResultView<WatchModel> {
         Object value = model.getValue();
         String result = StringUtils.objectToString(
                 isNeedExpand(model) ? new ObjectView(value, model.getExpand(), model.getSizeLimit()).draw() : value);
-
+        process.write("method=" + model.getClassName() + "." + model.getMethodName() + " location=" + model.getAccessPoint() + "\n");
         process.write("ts=" + DateUtils.formatDate(model.getTs()) + "; [cost=" + model.getCost() + "ms] result=" + result + "\n");
     }
 

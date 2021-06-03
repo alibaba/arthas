@@ -39,7 +39,7 @@ sc
   ```bash
   $ sc -d demo.MathGame
   class-info        demo.MathGame
-  code-source       /private/tmp/arthas-demo.jar
+  code-source       /private/tmp/math-game.jar
   name              demo.MathGame
   isInterface       false
   isAnnotation      false
@@ -67,7 +67,7 @@ sc
   ```bash
   $ sc -d -f demo.MathGame
   class-info        demo.MathGame
-  code-source       /private/tmp/arthas-demo.jar
+  code-source       /private/tmp/math-game.jar
   name              demo.MathGame
   isInterface       false
   isAnnotation      false

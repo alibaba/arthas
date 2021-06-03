@@ -8,6 +8,8 @@ import javax.net.ssl.SSLException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.taobao.arthas.common.ArthasConstants;
+
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelFutureListener;
@@ -91,7 +93,7 @@ public class ForwardClient {
                     if (sslCtx != null) {
                         p.addLast(sslCtx.newHandler(ch.alloc(), host, port));
                     }
-                    p.addLast(new HttpClientCodec(), new HttpObjectAggregator(8192), websocketClientHandler,
+                    p.addLast(new HttpClientCodec(), new HttpObjectAggregator(ArthasConstants.MAX_HTTP_CONTENT_LENGTH), websocketClientHandler,
                             forwardClientSocketClientHandler);
                 }
             });

@@ -67,7 +67,7 @@
 
 通过`--select`参数类名或者jar文件名指定目标进程
 
-`java -jar arthas-boot.jar --select arthas-demo`{{execute T2}}
+`java -jar arthas-boot.jar --select math-game`{{execute T2}}
 
 ## 指定会话超时秒数
 
@@ -101,7 +101,7 @@
 
 比如下载全量的arthas zip包，解压之后以 -javaagent 的参数指定arthas-agent.jar来启动：
 
-`java -javaagent:/tmp/test/arthas-agent.jar -jar arthas-demo.jar`
+`java -javaagent:/tmp/test/arthas-agent.jar -jar math-game.jar`
 
 默认的配置项在解压目录里的arthas.properties文件里。
 

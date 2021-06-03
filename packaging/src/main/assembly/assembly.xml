@@ -42,8 +42,8 @@
       <destName>arthas-boot.jar</destName>
     </file>
     <file>
-      <source>../demo/target/arthas-demo.jar</source>
-      <destName>arthas-demo.jar</destName>
+      <source>../math-game/target/math-game.jar</source>
+      <destName>math-game.jar</destName>
     </file>
 
     <file>
@@ -66,6 +66,9 @@
   <fileSets>
     <fileSet>
       <directory>../async-profiler</directory>
+    </fileSet>
+    <fileSet>
+      <directory>../lib</directory>
     </fileSet>
   </fileSets>
 </assembly>
