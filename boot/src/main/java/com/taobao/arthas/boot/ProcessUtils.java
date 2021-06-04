@@ -313,8 +313,8 @@ public class ProcessUtils {
         // find arthas-client.jar
         URLClassLoader classLoader = new URLClassLoader(
                 new URL[]{new File(arthasHomeDir, "arthas-client.jar").toURI().toURL()});
-        Class<?> telnetConsoleClas = classLoader.loadClass("com.taobao.arthas.client.TelnetConsole");
-        Method processMethod = telnetConsoleClas.getMethod("process", String[].class);
+        Class<?> telnetConsoleClass = classLoader.loadClass("com.taobao.arthas.client.TelnetConsole");
+        Method processMethod = telnetConsoleClass.getMethod("process", String[].class);
 
         //redirect System.out/System.err
         PrintStream originSysOut = System.out;
