@@ -81,8 +81,11 @@ public class AbstractTraceAdviceListener extends AdviceListenerAdapter {
     private void finishing(ClassLoader loader, Advice advice) {
         // 本次调用的耗时
         TraceEntity traceEntity = threadLocalTraceEntity(loader);
-        double cost = threadLocalWatch.costInMillis();
-        if (--traceEntity.deep == 0) {
+        if (traceEntity.deep >= 1) { // #1817 防止deep为负数
+            traceEntity.deep--;
+        }
+        if (traceEntity.deep == 0) {
+            double cost = threadLocalWatch.costInMillis();
             try {
                 boolean conditionResult = isConditionMet(command.getConditionExpress(), advice, cost);
                 if (this.isVerbose()) {

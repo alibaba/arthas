@@ -18,14 +18,6 @@ public class TraceEntity {
         this.deep = 0;
     }
 
-    public int getDeep() {
-        return deep;
-    }
-
-    public void setDeep(int deep) {
-        this.deep = deep;
-    }
-
     private TraceTree createTraceTree(ClassLoader loader) {
         return new TraceTree(ThreadUtil.getThreadNode(loader, Thread.currentThread()));
     }
