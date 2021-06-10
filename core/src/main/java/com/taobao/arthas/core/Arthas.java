@@ -46,11 +46,12 @@ public class Arthas {
         Option appName = new TypedOption<String>().setType(String.class).setShortName(ArthasConstants.APP_NAME);
 
         Option statUrl = new TypedOption<String>().setType(String.class).setShortName("stat-url");
+        Option disabledCommands = new TypedOption<String>().setType(String.class).setShortName("disabled-commands");
 
         CLI cli = CLIs.create("arthas").addOption(pid).addOption(core).addOption(agent).addOption(target)
                 .addOption(telnetPort).addOption(httpPort).addOption(sessionTimeout)
                 .addOption(username).addOption(password)
-                .addOption(tunnelServer).addOption(agentId).addOption(appName).addOption(statUrl);
+                .addOption(tunnelServer).addOption(agentId).addOption(appName).addOption(statUrl).addOption(disabledCommands);
         CommandLine commandLine = cli.parse(Arrays.asList(args));
 
         Configure configure = new Configure();
@@ -78,6 +79,7 @@ public class Arthas {
         configure.setTunnelServer((String) commandLine.getOptionValue("tunnel-server"));
         configure.setAgentId((String) commandLine.getOptionValue("agent-id"));
         configure.setStatUrl((String) commandLine.getOptionValue("stat-url"));
+        configure.setDisabledCommands((String) commandLine.getOptionValue("disabled-commands"));
         configure.setAppName((String) commandLine.getOptionValue(ArthasConstants.APP_NAME));
         return configure;
     }

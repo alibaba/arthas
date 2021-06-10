@@ -1,5 +1,8 @@
 package com.taobao.arthas.boot;
 
+import static com.taobao.arthas.boot.ProcessUtils.STATUS_EXEC_ERROR;
+import static com.taobao.arthas.boot.ProcessUtils.STATUS_EXEC_TIMEOUT;
+
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
@@ -11,12 +14,12 @@ import java.security.CodeSource;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.InputMismatchException;
 import java.util.List;
 import java.util.Scanner;
 import java.util.TimeZone;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
-import java.util.InputMismatchException;
 
 import javax.xml.parsers.ParserConfigurationException;
 
@@ -36,9 +39,6 @@ import com.taobao.middleware.cli.annotations.Name;
 import com.taobao.middleware.cli.annotations.Option;
 import com.taobao.middleware.cli.annotations.Summary;
 
-import static com.taobao.arthas.boot.ProcessUtils.STATUS_EXEC_ERROR;
-import static com.taobao.arthas.boot.ProcessUtils.STATUS_EXEC_TIMEOUT;
-
 /**
  * @author hengyunabc 2018-10-26
  *
@@ -57,6 +57,7 @@ import static com.taobao.arthas.boot.ProcessUtils.STATUS_EXEC_TIMEOUT;
                 + "  java -jar arthas-boot.jar --versions\n"
                 + "  java -jar arthas-boot.jar --select math-game\n"
                 + "  java -jar arthas-boot.jar --session-timeout 3600\n" + "  java -jar arthas-boot.jar --attach-only\n"
+                + "  java -jar arthas-boot.jar --disabled-commands stop,dump\n"
                 + "  java -jar arthas-boot.jar --repo-mirror aliyun --use-http\n" + "WIKI:\n"
                 + "  https://arthas.aliyun.com/doc\n")
 public class Bootstrap {
@@ -127,6 +128,8 @@ public class Bootstrap {
     private String statUrl;
 
     private String select;
+
+    private String disabledCommands;
 
 	static {
         ARTHAS_LIB_DIR = new File(
@@ -291,6 +294,12 @@ public class Bootstrap {
     @Description("select target process by classname or JARfilename")
     public void setSelect(String select) {
         this.select = select;
+    }
+
+    @Option(longName = "disabled-commands")
+    @Description("disable some commands ")
+    public void setDisabledCommands(String disabledCommands) {
+        this.disabledCommands = disabledCommands;
     }
 
     public static void main(String[] args) throws ParserConfigurationException, SAXException, IOException,
@@ -545,6 +554,11 @@ public class Bootstrap {
             if (bootstrap.getStatUrl() != null) {
                 attachArgs.add("-stat-url");
                 attachArgs.add(bootstrap.getStatUrl());
+            }
+
+            if (bootstrap.getDisabledCommands() != null){
+                attachArgs.add("-disabled-commands");
+                attachArgs.add(bootstrap.getDisabledCommands());
             }
 
             AnsiLog.info("Try to attach process " + pid);
@@ -848,5 +862,9 @@ public class Bootstrap {
 
     public String getPassword() {
         return password;
+    }
+
+    public String getDisabledCommands() {
+        return disabledCommands;
     }
 }
