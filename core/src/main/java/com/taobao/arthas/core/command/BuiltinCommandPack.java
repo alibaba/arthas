@@ -1,5 +1,9 @@
 package com.taobao.arthas.core.command;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import com.taobao.arthas.core.command.basic1000.AuthCommand;
 import com.taobao.arthas.core.command.basic1000.Base64Command;
 import com.taobao.arthas.core.command.basic1000.CatCommand;
 import com.taobao.arthas.core.command.basic1000.ClsCommand;
@@ -9,12 +13,9 @@ import com.taobao.arthas.core.command.basic1000.HelpCommand;
 import com.taobao.arthas.core.command.basic1000.HistoryCommand;
 import com.taobao.arthas.core.command.basic1000.KeymapCommand;
 import com.taobao.arthas.core.command.basic1000.OptionsCommand;
-import com.alibaba.bytekit.utils.AnnotationUtils;
-import com.taobao.arthas.core.command.basic1000.AuthCommand;
 import com.taobao.arthas.core.command.basic1000.PwdCommand;
 import com.taobao.arthas.core.command.basic1000.ResetCommand;
 import com.taobao.arthas.core.command.basic1000.SessionCommand;
-import com.taobao.arthas.core.command.basic1000.ShutdownCommand;
 import com.taobao.arthas.core.command.basic1000.StopCommand;
 import com.taobao.arthas.core.command.basic1000.SystemEnvCommand;
 import com.taobao.arthas.core.command.basic1000.SystemPropertyCommand;
@@ -51,9 +52,6 @@ import com.taobao.arthas.core.shell.command.AnnotatedCommand;
 import com.taobao.arthas.core.shell.command.Command;
 import com.taobao.arthas.core.shell.command.CommandResolver;
 import com.taobao.middleware.cli.annotations.Name;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * TODO automatically discover the built-in commands.
@@ -119,7 +117,6 @@ public class BuiltinCommandPack implements CommandResolver {
         commandClassList.add(TeeCommand.class);
         commandClassList.add(ProfilerCommand.class);
         commandClassList.add(VmToolCommand.class);
-        commandClassList.add(ShutdownCommand.class);
         commandClassList.add(StopCommand.class);
 
         for (Class<? extends AnnotatedCommand> clazz : commandClassList) {
