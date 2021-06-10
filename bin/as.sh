@@ -151,6 +151,9 @@ USERNAME=
 # password
 PASSWORD=
 
+# disabledCommands
+DISABLED_COMMANDS=
+
 ############ Command Arguments ############
 
 # if arguments contains -c/--command or -f/--batch-file,  BATCH_MODE will be true
@@ -405,6 +408,7 @@ Usage:
        [--tunnel-server <value>] [--agent-id <value>] [--stat-url <value>]
        [--app-name <value>]
        [--username <value>] [--password <value>]
+       [--disabled-commands <value>]
        [--use-version <value>] [--repo-mirror <value>] [--versions] [--use-http]
        [--attach-only] [-c <value>] [-f <value>] [-v] [pid]
 
@@ -427,6 +431,7 @@ Options and Arguments:
     --app-name                  Special app name
     --username                  Special username
     --password                  Special password
+    --disabled-commands         Disable special commands
     --select                    select target process by classname or JARfilename
  -c,--command <value>           Command to execute, multiple commands separated
                                 by ;
@@ -449,6 +454,7 @@ EXAMPLES:
   ./as.sh --use-version 3.5.1
   ./as.sh --session-timeout 3600
   ./as.sh --attach-only
+  ./as.sh --disabled-commands stop,dump
   ./as.sh --select math-game
   ./as.sh --repo-mirror aliyun --use-http
 WIKI:
@@ -622,6 +628,11 @@ parse_arguments()
         ;;
         --password)
         PASSWORD="$2"
+        shift # past argument
+        shift # past value
+        ;;
+        --disabled-commands)
+        DISABLED_COMMANDS="$2"
         shift # past argument
         shift # past value
         ;;
@@ -832,6 +843,11 @@ attach_jvm()
     if [ "${PASSWORD}" ]; then
         tempArgs+=("-password")
         tempArgs+=("${PASSWORD}")
+    fi
+
+    if [ "${DISABLED_COMMANDS}" ]; then
+        tempArgs+=("-disabled-commands")
+        tempArgs+=("${DISABLED_COMMANDS}")
     fi
 
     if [ "${TARGET_IP}" ]; then
