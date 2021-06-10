@@ -4,7 +4,7 @@ import static com.taobao.text.ui.Element.label;
 
 import com.alibaba.arthas.deps.org.slf4j.Logger;
 import com.alibaba.arthas.deps.org.slf4j.LoggerFactory;
-import com.alibaba.oneagent.OneAgent;
+import com.alibaba.oneagent.BootstrapAgent;
 import com.alibaba.oneagent.plugin.Plugin;
 import com.alibaba.oneagent.plugin.PluginManager;
 import com.taobao.arthas.core.shell.command.AnnotatedCommand;
@@ -66,7 +66,7 @@ public class PluginsCommand extends AnnotatedCommand {
     public void process(CommandProcess process) {
         int exitCode = 0;
         try {
-            PluginManager pluginMaanger = OneAgent.getInstance().pluginMaanger();
+            PluginManager pluginMaanger = BootstrapAgent.getAgent().pluginManager();
             if (this.startPlugin != null) {
                 Plugin findPlugin = pluginMaanger.findPlugin(startPlugin);
                 if (findPlugin != null) {

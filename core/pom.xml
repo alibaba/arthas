@@ -140,7 +140,7 @@
         <dependency>
             <groupId>com.alibaba.oneagent</groupId>
             <artifactId>one-java-agent</artifactId>
-            <version>0.0.1-SNAPSHOT</version>
+            <version>0.0.2-SNAPSHOT</version>
             <optional>true</optional>
             <scope>provided</scope>
         </dependency>
