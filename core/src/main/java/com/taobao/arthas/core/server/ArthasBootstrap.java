@@ -70,6 +70,7 @@ import com.taobao.arthas.core.util.ArthasBanner;
 import com.taobao.arthas.core.util.FileUtils;
 import com.taobao.arthas.core.util.InstrumentationUtils;
 import com.taobao.arthas.core.util.LogUtil;
+import com.taobao.arthas.core.util.StringUtils;
 import com.taobao.arthas.core.util.UserStatUtil;
 import com.taobao.arthas.core.util.affect.EnhancerAffect;
 import com.taobao.arthas.core.util.matcher.WildcardMatcher;
@@ -393,7 +394,17 @@ public class ArthasBootstrap {
             this.securityAuthenticator = new SecurityAuthenticatorImpl(configure.getUsername(), configure.getPassword());
 
             shellServer = new ShellServerImpl(options);
-            BuiltinCommandPack builtinCommands = new BuiltinCommandPack();
+
+            List<String> disabledCommands = new ArrayList<String>();
+            if (configure.getDisabledCommands() != null) {
+                String[] strings = StringUtils.tokenizeToStringArray(configure.getDisabledCommands(), ",");
+                if (strings != null) {
+                    for (String s : strings) {
+                        disabledCommands.add(s);
+                    }
+                }
+            }
+            BuiltinCommandPack builtinCommands = new BuiltinCommandPack(disabledCommands);
             List<CommandResolver> resolvers = new ArrayList<CommandResolver>();
             resolvers.add(builtinCommands);
 
