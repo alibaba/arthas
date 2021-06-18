@@ -1,6 +1,7 @@
 package com.taobao.arthas.core.shell.term.impl.http;
 
 import com.taobao.arthas.common.ArthasConstants;
+import com.taobao.arthas.core.shell.term.impl.http.session.HttpSessionManager;
 
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.Channel;
@@ -37,11 +38,13 @@ public class NettyWebsocketTtyBootstrap {
     private EventLoopGroup group;
     private Channel channel;
     private EventExecutorGroup workerGroup;
+    private HttpSessionManager httpSessionManager;
 
-    public NettyWebsocketTtyBootstrap(EventExecutorGroup workerGroup) {
+    public NettyWebsocketTtyBootstrap(EventExecutorGroup workerGroup, HttpSessionManager httpSessionManager) {
         this.workerGroup = workerGroup;
         this.host = "localhost";
         this.port = 8080;
+        this.httpSessionManager = httpSessionManager;
     }
 
     public String getHost() {
@@ -68,7 +71,7 @@ public class NettyWebsocketTtyBootstrap {
         if (this.port > 0) {
             ServerBootstrap b = new ServerBootstrap();
             b.group(group).channel(NioServerSocketChannel.class).handler(new LoggingHandler(LogLevel.INFO))
-                    .childHandler(new TtyServerInitializer(channelGroup, handler, workerGroup));
+                    .childHandler(new TtyServerInitializer(channelGroup, handler, workerGroup, httpSessionManager));
 
             final ChannelFuture f = b.bind(host, port);
             f.addListener(new GenericFutureListener<Future<? super Void>>() {

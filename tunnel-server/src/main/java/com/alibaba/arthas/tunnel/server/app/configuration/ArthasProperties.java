@@ -6,8 +6,8 @@ import java.util.List;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;
 
-import com.alibaba.arthas.tunnel.server.TunnelServer;
 import com.alibaba.arthas.tunnel.server.utils.InetAddressUtil;
+import com.taobao.arthas.common.ArthasConstants;
 
 /**
  * 
@@ -25,7 +25,7 @@ public class ArthasProperties {
     /**
      * supoort apps.html/agents.html
      */
-    private boolean enableDetatilPages = false;
+    private boolean enableDetailPages = false;
 
     public Server getServer() {
         return server;
@@ -43,12 +43,12 @@ public class ArthasProperties {
         this.embeddedRedis = embeddedRedis;
     }
 
-    public boolean isEnableDetatilPages() {
-        return enableDetatilPages;
+    public boolean isEnableDetailPages() {
+        return enableDetailPages;
     }
 
-    public void setEnableDetatilPages(boolean enableDetatilPages) {
-        this.enableDetatilPages = enableDetatilPages;
+    public void setEnableDetailPages(boolean enableDetailPages) {
+        this.enableDetailPages = enableDetailPages;
     }
 
     public static class Server {
@@ -58,7 +58,7 @@ public class ArthasProperties {
         private String host;
         private int port;
         private boolean ssl;
-        private String path = TunnelServer.DEFAULT_WEBSOCKET_PATH;
+        private String path = ArthasConstants.DEFAULT_WEBSOCKET_PATH;
 
         /**
          * 客户端连接的地址。也用于保存到redis里，当部署tunnel server集群里需要。不配置则会自动获取

@@ -161,6 +161,15 @@ public class Enhancer implements ClassFileTransformer {
                 }
             }
 
+            // https://github.com/alibaba/arthas/issues/1690
+            if (AsmUtils.isEnhancerByCGLIB(className)) {
+                for (MethodNode methodNode : matchedMethods) {
+                    if (AsmUtils.isConstructor(methodNode)) {
+                        AsmUtils.fixConstructorExceptionTable(methodNode);
+                    }
+                }
+            }
+
             // 用于检查是否已插入了 spy函数，如果已有则不重复处理
             GroupLocationFilter groupLocationFilter = new GroupLocationFilter();
 
@@ -433,16 +442,8 @@ public class Enhancer implements ClassFileTransformer {
             }
         }
 
-        final ClassFileTransformer resetClassFileTransformer = new ClassFileTransformer() {
-            @Override
-            public byte[] transform(ClassLoader loader, String className, Class<?> classBeingRedefined,
-                    ProtectionDomain protectionDomain, byte[] classfileBuffer) throws IllegalClassFormatException {
-                return null;
-            }
-        };
-
         try {
-            enhance(inst, resetClassFileTransformer, enhanceClassSet);
+            enhance(inst, enhanceClassSet);
             logger.info("Success to reset classes: " + enhanceClassSet);
         } finally {
             for (Class<?> resetClass : enhanceClassSet) {
@@ -455,18 +456,13 @@ public class Enhancer implements ClassFileTransformer {
     }
 
     // 批量增强
-    private static void enhance(Instrumentation inst, ClassFileTransformer transformer, Set<Class<?>> classes)
+    private static void enhance(Instrumentation inst, Set<Class<?>> classes)
             throws UnmodifiableClassException {
-        try {
-            inst.addTransformer(transformer, true);
-            int size = classes.size();
-            Class<?>[] classArray = new Class<?>[size];
-            arraycopy(classes.toArray(), 0, classArray, 0, size);
-            if (classArray.length > 0) {
-                inst.retransformClasses(classArray);
-            }
-        } finally {
-            inst.removeTransformer(transformer);
+        int size = classes.size();
+        Class<?>[] classArray = new Class<?>[size];
+        arraycopy(classes.toArray(), 0, classArray, 0, size);
+        if (classArray.length > 0) {
+            inst.retransformClasses(classArray);
         }
     }
 }

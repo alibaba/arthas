@@ -1,0 +1,57 @@
+{
+  "title": "Arthas vmtool 命令",
+  "description": "Arthas vmtool 命令",
+  "difficulty": "精通者",
+  "time": "10分钟",
+  "details": {
+    "steps": [
+      {
+        "title": "Start demo",
+        "text": "start-demo.md"
+      },
+      {
+        "title": "Start arthas-boot",
+        "text": "arthas-boot.md"
+      },
+      {
+        "title": "Arthas vmtool 命令",
+        "text": "vmtool.md"
+      },
+      {
+        "title": "Arthas vmtool 命令",
+        "text": "vmtool-spring.md"
+      },
+      {
+        "title": "Arthas vmtool 命令",
+        "text": "vmtool-classloader.md"
+      },
+      {
+        "title": "Arthas vmtool 命令",
+        "text": "vmtool-gc.md"
+      }
+    ],
+    "intro": {
+      "text": "intro.md"
+    },
+    "finish": {
+      "text": "finish.md"
+    },
+    "assets": {
+      "host01": []
+    }
+  },
+  "environment": {
+    "uilayout": "terminal",
+    "showdashboard": true,
+    "dashboards": [
+      {
+        "name": "Web Port 80",
+        "port": 80
+      }
+    ]
+  },
+  "backend": {
+    "imageid": "openjdk:15",
+    "environmentsprotocol": "http"
+  }
+}

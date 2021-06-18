@@ -1,16 +1,16 @@
 Quick Start
 ===========
 
-## 1. Start Demo Application
+## 1. Start math-game
 
 ```bash
-curl -O https://arthas.aliyun.com/arthas-demo.jar
-java -jar arthas-demo.jar
+curl -O https://arthas.aliyun.com/math-game.jar
+java -jar math-game.jar
 ```
 
-`arthas-demo` is a simple program that generates a random number every second, then it finds all prime factors of that number.
+`math-game` is a simple program that generates a random number every second, then it finds all prime factors of that number.
 
-The source code of `arthas-demo`: [View](https://github.com/alibaba/arthas/blob/master/demo/src/main/java/demo/MathGame.java)
+The source code of `math-game`: [View](https://github.com/alibaba/arthas/blob/master/math-game/src/main/java/demo/MathGame.java)
 
 ## 2. Start Arthas
 
@@ -32,10 +32,10 @@ Select the target Java process to attach:
 ```bash
 $ $ java -jar arthas-boot.jar
 * [1]: 35542
-  [2]: 71560 arthas-demo.jar
+  [2]: 71560 math-game.jar
 ```
 
-The 'Demo' process is the second as shown above, press '2' then 'Enter'. Arthas will attach to the target process, and start to output:
+The `math-game` process is the second as shown above, press '2' then 'Enter'. Arthas will attach to the target process, and start to output:
 
 ```bash
 [INFO] Try to attach process 71560
@@ -94,7 +94,7 @@ java.home              /Library/Java/JavaVir
                        e/jre
 ```
 
-## 4. Get the Main Class of the `arthas-demo` process with the thread command
+## 4. Get the Main Class of the `math-game` process with the thread command
 
 `thread 1` will print the stack of the thread with ID 1, which usually the main function thread.
 
@@ -113,7 +113,7 @@ ClassLoader:
   +-sun.misc.Launcher$ExtClassLoader@66350f69
 
 Location:
-/tmp/arthas-demo.jar
+/tmp/math-game.jar
 
 /*
  * Decompiled with CFR 0_132.

@@ -18,6 +18,7 @@ Arthas 用户文档
 0. 是否有一个全局视角来查看系统的运行状况？
 0. 有什么办法可以监控到JVM的实时运行状态？
 0. 怎么快速定位应用的热点，生成火焰图？
+0. 怎样直接从JVM内查找某个类的实例？
 
 `Arthas`支持JDK 6+，支持Linux/Mac/Windows，采用命令行交互模式，同时提供丰富的 `Tab` 自动补全功能，进一步方便进行问题的定位和诊断。
 
@@ -28,11 +29,10 @@ Contents
 --------
 
 * [首页](https://arthas.aliyun.com/)
-* [招聘！](https://mp.weixin.qq.com/s/k5jozrSgmyH0tcQfrDkxUQ)
-* [技术征文!](https://developer.aliyun.com/article/751641)
+* [技术分享征文!](https://developer.aliyun.com/article/751641)
 * [English Docs](https://arthas.aliyun.com/doc/en/)
 * [在线教程(katacoda)](https://arthas.aliyun.com/doc/arthas-tutorials.html?language=cn)
-* [在线教程(阿里云)](https://start.aliyun.com/handson-lab/#!category=arthas)
+* [在线教程(阿里云)](https://start.aliyun.com/handson-lab?category=arthas)
 * [安装](install-detail.md)
 * [下载](download.md)
 * [快速入门](quick-start.md)

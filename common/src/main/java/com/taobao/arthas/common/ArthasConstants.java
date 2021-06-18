@@ -24,4 +24,18 @@ public class ArthasConstants {
     public static final String SPRING_APPLICATION_NAME = "spring.application.name";
 
     public static final int TELNET_PORT = 3658;
+
+    public static final String DEFAULT_WEBSOCKET_PATH = "/ws";
+    public static final int WEBSOCKET_IDLE_SECONDS = 60;
+
+    /**
+     * HTTP cookie id
+     */
+    public static final String ASESSION_KEY = "asession";
+
+    public static final String DEFAULT_USERNAME = "arthas";
+    public static final String SUBJECT_KEY = "subject";
+    public static final String AUTH = "auth";
+    public static final String USERNAME_KEY = "username";
+    public static final String PASSWORD_KEY = "password";
 }

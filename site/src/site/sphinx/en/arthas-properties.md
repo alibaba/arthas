@@ -30,6 +30,22 @@ arthas.sessionTimeout=1800
 
 > If you want to prevent multiple arthas port conflicts on a machine. It can be configured as a random port, or configured as -1, and use arthas through the tunnel server.
 
+
+### disable specify commands
+
+> since 3.5.2
+
+Such as configuration:
+
+```
+arthas.disabledCommands=stop,dump
+```
+
+It can also be configured on the command line: `--disabled-commands stop,dump`.
+
+> By default, arthas-spring-boot-starter will disable the `stop` command.
+
+
 ## Configured order
 
 The order of configuration is: command line parameters > System Env > System Properties > arthas.properties.

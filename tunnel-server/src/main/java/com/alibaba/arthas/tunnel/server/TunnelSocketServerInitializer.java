@@ -34,7 +34,7 @@ public class TunnelSocketServerInitializer extends ChannelInitializer<SocketChan
             pipeline.addLast(sslCtx.newHandler(ch.alloc()));
         }
         pipeline.addLast(new HttpServerCodec());
-        pipeline.addLast(new HttpObjectAggregator(65536));
+        pipeline.addLast(new HttpObjectAggregator(ArthasConstants.MAX_HTTP_CONTENT_LENGTH));
         pipeline.addLast(new WebSocketServerCompressionHandler());
         pipeline.addLast(new WebSocketServerProtocolHandler(tunnelServer.getPath(), null, true, ArthasConstants.MAX_HTTP_CONTENT_LENGTH, false, true, 10000L));
 

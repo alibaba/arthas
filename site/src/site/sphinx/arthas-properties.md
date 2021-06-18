@@ -32,6 +32,21 @@ arthas.sessionTimeout=1800
 
 > 如果是防止一个机器上启动多个 arthas端口冲突。可以配置为随机端口，或者配置为 -1，并且通过tunnel server来使用arthas。
 
+
+### 禁止指定命令
+
+> since 3.5.2
+
+比如配置：
+
+```
+arthas.disabledCommands=stop,dump
+```
+
+也可以在命令行配置： `--disabled-commands stop,dump` 。
+
+> 默认情况下，arthas-spring-boot-starter会禁掉`stop`命令。
+
 ## 配置的优先级
 
 配置的优先级是：命令行参数 > System Env > System Properties > arthas.properties 。

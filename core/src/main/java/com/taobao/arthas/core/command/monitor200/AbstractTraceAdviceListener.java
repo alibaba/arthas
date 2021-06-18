@@ -63,7 +63,12 @@ public class AbstractTraceAdviceListener extends AdviceListenerAdapter {
     @Override
     public void afterThrowing(ClassLoader loader, Class<?> clazz, ArthasMethod method, Object target, Object[] args,
                               Throwable throwable) throws Throwable {
-        int lineNumber = throwable.getStackTrace()[0].getLineNumber();
+        int lineNumber = -1;
+        StackTraceElement[] stackTrace = throwable.getStackTrace();
+        if (stackTrace.length != 0) {
+            lineNumber = stackTrace[0].getLineNumber();
+        }
+
         threadLocalTraceEntity(loader).tree.end(throwable, lineNumber);
         final Advice advice = Advice.newForAfterThrowing(loader, clazz, method, target, args, throwable);
         finishing(loader, advice);
@@ -76,8 +81,11 @@ public class AbstractTraceAdviceListener extends AdviceListenerAdapter {
     private void finishing(ClassLoader loader, Advice advice) {
         // 本次调用的耗时
         TraceEntity traceEntity = threadLocalTraceEntity(loader);
-        double cost = threadLocalWatch.costInMillis();
-        if (--traceEntity.deep == 0) {
+        if (traceEntity.deep >= 1) { // #1817 防止deep为负数
+            traceEntity.deep--;
+        }
+        if (traceEntity.deep == 0) {
+            double cost = threadLocalWatch.costInMillis();
             try {
                 boolean conditionResult = isConditionMet(command.getConditionExpress(), advice, cost);
                 if (this.isVerbose()) {

@@ -65,7 +65,7 @@ public class ProcessUtils {
         }
 
         if (processMap.isEmpty()) {
-            AnsiLog.info("Can not find java process. Try to pass <pid> in command line.");
+            AnsiLog.info("Can not find java process. Try to run `jps` command lists the instrumented Java HotSpot VMs on the target system.");
             return -1;
         }
 
@@ -313,8 +313,8 @@ public class ProcessUtils {
         // find arthas-client.jar
         URLClassLoader classLoader = new URLClassLoader(
                 new URL[]{new File(arthasHomeDir, "arthas-client.jar").toURI().toURL()});
-        Class<?> telnetConsoleClas = classLoader.loadClass("com.taobao.arthas.client.TelnetConsole");
-        Method processMethod = telnetConsoleClas.getMethod("process", String[].class);
+        Class<?> telnetConsoleClass = classLoader.loadClass("com.taobao.arthas.client.TelnetConsole");
+        Method processMethod = telnetConsoleClass.getMethod("process", String[].class);
 
         //redirect System.out/System.err
         PrintStream originSysOut = System.out;

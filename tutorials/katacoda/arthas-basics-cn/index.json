@@ -4,7 +4,7 @@
   "details": {
     "steps": [
       {
-        "title": "启动arthas-demo",
+        "title": "启动math-game",
         "text": "arthas-demo.md"
       },
       {
@@ -30,6 +30,10 @@
       {
         "title": "Watch",
         "text": "watch.md"
+      },
+      {
+        "title": "Vmtool",
+        "text": "vmtool.md"
       },
       {
         "title": "Exit/Stop",
