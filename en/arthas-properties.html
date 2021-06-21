@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Arthas Properties &mdash; Arthas 3.5.1 documentation</title>
+  <title>Arthas Properties &mdash; Arthas 3.5.2 documentation</title>
   
 
   
@@ -73,7 +73,7 @@
             
             
               <div class="version">
-                3.5.1
+                3.5.2
               </div>
             
           
@@ -240,6 +240,19 @@ arthas.sessionTimeout=1800
 <blockquote>
 <div><p>If you want to prevent multiple arthas port conflicts on a machine. It can be configured as a random port, or configured as -1, and use arthas through the tunnel server.</p>
 </div></blockquote>
+<div class="section" id="disable-specify-commands">
+<h3>disable specify commands<a class="headerlink" href="#disable-specify-commands" title="Permalink to this headline">¶</a></h3>
+<blockquote>
+<div><p>since 3.5.2</p>
+</div></blockquote>
+<p>Such as configuration:</p>
+<div class="highlight-default notranslate"><pre class="literal-block">arthas.disabledCommands=stop,dump</pre>
+</div>
+<p>It can also be configured on the command line: <code class="docutils literal notranslate"><span class="pre">--disabled-commands</span> <span class="pre">stop,dump</span></code>.</p>
+<blockquote>
+<div><p>By default, arthas-spring-boot-starter will disable the <code class="docutils literal notranslate"><span class="pre">stop</span></code> command.</p>
+</div></blockquote>
+</div>
 </div>
 <div class="section" id="configured-order">
 <h2>Configured order<a class="headerlink" href="#configured-order" title="Permalink to this headline">¶</a></h2>

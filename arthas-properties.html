@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Arthas Properties &mdash; Arthas 3.5.1 文档</title>
+  <title>Arthas Properties &mdash; Arthas 3.5.2 文档</title>
   
 
   
@@ -74,7 +74,7 @@
             
             
               <div class="version">
-                3.5.1
+                3.5.2
               </div>
             
           
@@ -121,7 +121,7 @@
 <li class="toctree-l2 current"><a class="reference internal" href="advanced-use.html#arthas-properties">Arthas Properties</a><ul class="current">
 <li class="toctree-l3 current"><a class="current reference internal" href="#">Arthas Properties</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="#id1">支持的配置项</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#id2">配置的优先级</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id3">配置的优先级</a></li>
 </ul>
 </li>
 </ul>
@@ -244,9 +244,22 @@ arthas.sessionTimeout=1800
 <blockquote>
 <div><p>如果是防止一个机器上启动多个 arthas端口冲突。可以配置为随机端口，或者配置为 -1，并且通过tunnel server来使用arthas。</p>
 </div></blockquote>
-</div>
 <div class="section" id="id2">
-<h2>配置的优先级<a class="headerlink" href="#id2" title="永久链接至标题">¶</a></h2>
+<h3>禁止指定命令<a class="headerlink" href="#id2" title="永久链接至标题">¶</a></h3>
+<blockquote>
+<div><p>since 3.5.2</p>
+</div></blockquote>
+<p>比如配置：</p>
+<div class="highlight-default notranslate"><pre class="literal-block">arthas.disabledCommands=stop,dump</pre>
+</div>
+<p>也可以在命令行配置： <code class="docutils literal notranslate"><span class="pre">--disabled-commands</span> <span class="pre">stop,dump</span></code> 。</p>
+<blockquote>
+<div><p>默认情况下，arthas-spring-boot-starter会禁掉<code class="docutils literal notranslate"><span class="pre">stop</span></code>命令。</p>
+</div></blockquote>
+</div>
+</div>
+<div class="section" id="id3">
+<h2>配置的优先级<a class="headerlink" href="#id3" title="永久链接至标题">¶</a></h2>
 <p>配置的优先级是：命令行参数 &gt; System Env &gt; System Properties &gt; arthas.properties 。</p>
 <p>比如：</p>
 <ul class="simple">
