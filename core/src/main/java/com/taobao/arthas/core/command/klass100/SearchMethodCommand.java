@@ -11,9 +11,9 @@ import java.util.List;
 import com.alibaba.arthas.deps.org.slf4j.Logger;
 import com.alibaba.arthas.deps.org.slf4j.LoggerFactory;
 import com.taobao.arthas.core.command.Constants;
-import com.taobao.arthas.core.command.model.SearchMethodModel;
 import com.taobao.arthas.core.command.model.MethodVO;
 import com.taobao.arthas.core.command.model.RowAffectModel;
+import com.taobao.arthas.core.command.model.SearchMethodModel;
 import com.taobao.arthas.core.command.model.ClassLoaderVO;
 import com.taobao.arthas.core.shell.cli.Completion;
 import com.taobao.arthas.core.shell.cli.CompletionUtils;
@@ -57,7 +57,7 @@ public class SearchMethodCommand extends AnnotatedCommand {
     private String classLoaderClass;
     private boolean isDetail = false;
     private boolean isRegEx = false;
-    private int numberOfLimit = 100;
+    private int numberOfLimit = -1;
 
     @Argument(argName = "class-pattern", index = 0)
     @Description("Class name pattern, use either '.' or '/' as separator")
@@ -107,7 +107,7 @@ public class SearchMethodCommand extends AnnotatedCommand {
 
         Instrumentation inst = process.session().getInstrumentation();
         Matcher<String> methodNameMatcher = methodNameMatcher();
-        
+
         if (hashCode == null && classLoaderClass != null) {
             List<ClassLoader> matchedClassLoaders = ClassLoaderUtils.getClassLoaderByClassName(inst, classLoaderClass);
             if (matchedClassLoaders.size() == 1) {
@@ -126,13 +126,9 @@ public class SearchMethodCommand extends AnnotatedCommand {
             }
         }
 
-        Set<Class<?>> matchedClasses = SearchUtils.searchClass(inst, classPattern, isRegEx, hashCode);
+        numberOfLimit = SearchClassCommand.prepareLimit(isDetail, numberOfLimit);
+        final Set<Class<?>> matchedClasses = SearchUtils.searchClass(inst, classPattern, isRegEx, hashCode, numberOfLimit);
 
-        if (numberOfLimit > 0 && matchedClasses.size() > numberOfLimit) {
-            process.end(-1, "The number of matching classes is greater than : " + numberOfLimit+". \n" +
-                    "Please specify a more accurate 'class-patten' or use the parameter '-n' to change the maximum number of matching classes.");
-            return;
-        }
         for (Class<?> clazz : matchedClasses) {
             try {
                 for (Constructor<?> constructor : clazz.getDeclaredConstructors()) {
@@ -163,6 +159,11 @@ public class SearchMethodCommand extends AnnotatedCommand {
         }
 
         process.appendResult(new RowAffectModel(affect));
+        if (numberOfLimit > 0 && matchedClasses.size() >= numberOfLimit) {
+            process.end(-1, "The number of matching classes may greater than : " + numberOfLimit+". \n" +
+                    "Please specify a more accurate 'class-patten' or use the parameter '-n' to change the maximum number of matching classes.");
+            return;
+        }
         process.end();
     }
 

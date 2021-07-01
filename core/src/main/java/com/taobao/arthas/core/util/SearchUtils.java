@@ -23,18 +23,23 @@ public class SearchUtils {
      * @param inst             inst
      * @param classNameMatcher 类名匹配
      * @param limit            最大匹配限制
+     * @param classLoaderCode  类加载器标识
      * @return 匹配的类集合
      */
-    public static Set<Class<?>> searchClass(Instrumentation inst, Matcher<String> classNameMatcher, int limit) {
+    public static Set<Class<?>> searchClass(Instrumentation inst, Matcher<String> classNameMatcher, int limit, String classLoaderCode) {
         if (classNameMatcher == null) {
             return Collections.emptySet();
         }
         final Set<Class<?>> matches = new HashSet<Class<?>>();
         for (Class<?> clazz : inst.getAllLoadedClasses()) {
-            if (classNameMatcher.matching(clazz.getName())) {
-                matches.add(clazz);
+            if (!classNameMatcher.matching(clazz.getName())) {
+                continue;
             }
-            if (matches.size() >= limit) {
+            if (classLoaderCode != null && !Integer.toHexString(clazz.getClassLoader().hashCode()).equals(classLoaderCode)) {
+                continue;
+            }
+            matches.add(clazz);
+            if (limit > 0 && matches.size() >= limit) {
                 break;
             }
         }
@@ -42,18 +47,21 @@ public class SearchUtils {
     }
 
     public static Set<Class<?>> searchClass(Instrumentation inst, Matcher<String> classNameMatcher) {
-        return searchClass(inst, classNameMatcher, Integer.MAX_VALUE);
+        return searchClass(inst, classNameMatcher, Integer.MAX_VALUE, null);
     }
 
     public static Set<Class<?>> searchClass(Instrumentation inst, String classPattern, boolean isRegEx) {
+        return searchClass(inst, classPattern, isRegEx, null);
+    }
+
+    public static Set<Class<?>> searchClass(Instrumentation inst, String classPattern, boolean isRegEx, String code, int limit) {
         Matcher<String> classNameMatcher = classNameMatcher(classPattern, isRegEx);
-        return GlobalOptions.isDisableSubClass ? searchClass(inst, classNameMatcher) :
-                searchSubClass(inst, searchClass(inst, classNameMatcher));
+        return GlobalOptions.isDisableSubClass ? searchClass(inst, classNameMatcher, limit, code) :
+                searchSubClass(inst, searchClass(inst, classNameMatcher, limit, code));
     }
 
     public static Set<Class<?>> searchClass(Instrumentation inst, String classPattern, boolean isRegEx, String code) {
-        Set<Class<?>> matchedClasses = searchClass(inst, classPattern, isRegEx);
-        return filter(matchedClasses, code);
+        return searchClass(inst, classPattern, isRegEx, code, -1);
     }
 
     public static Set<Class<?>> searchClassOnly(Instrumentation inst, String classPattern, boolean isRegEx) {
@@ -63,7 +71,7 @@ public class SearchUtils {
 
     public static Set<Class<?>> searchClassOnly(Instrumentation inst, String classPattern, int limit) {
         Matcher<String> classNameMatcher = classNameMatcher(classPattern, false);
-        return searchClass(inst, classNameMatcher, limit);
+        return searchClass(inst, classNameMatcher, limit, null);
     }
 
     public static Set<Class<?>> searchClassOnly(Instrumentation inst, String classPattern, boolean isRegEx, String code) {
