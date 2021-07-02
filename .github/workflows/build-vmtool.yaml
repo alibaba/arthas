@@ -18,7 +18,7 @@ jobs:
       - uses: actions/upload-artifact@v2
         with:
           name: lib
-          path: arthas-vmtool/target/classes/lib*
+          path: arthas-vmtool/target/lib*
 
   mac:
     runs-on: macos-10.15
@@ -35,7 +35,7 @@ jobs:
       - uses: actions/upload-artifact@v2
         with:
           name: lib
-          path: arthas-vmtool/target/classes/lib*
+          path: arthas-vmtool/target/lib*
 
   windows:
     runs-on: windows-2016
@@ -52,4 +52,4 @@ jobs:
       - uses: actions/upload-artifact@v2
         with:
           name: lib
-          path: arthas-vmtool/target/classes/*.dll
+          path: arthas-vmtool/target/*.dll
