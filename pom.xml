@@ -203,13 +203,13 @@
             <dependency>
                 <groupId>net.bytebuddy</groupId>
                 <artifactId>byte-buddy</artifactId>
-                <version>1.10.18</version>
+                <version>1.11.6</version>
             </dependency>
 
             <dependency>
                 <groupId>net.bytebuddy</groupId>
                 <artifactId>byte-buddy-agent</artifactId>
-                <version>1.10.18</version>
+                <version>1.11.6</version>
             </dependency>
 
             <dependency>
