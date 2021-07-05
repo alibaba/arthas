@@ -92,7 +92,7 @@
             <dependency>
                 <groupId>com.alibaba</groupId>
                 <artifactId>bytekit-core</artifactId>
-                <version>0.0.5</version>
+                <version>0.0.6</version>
             </dependency>
             <dependency>
                 <groupId>org.benf</groupId>
