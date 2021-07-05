@@ -127,7 +127,7 @@
             <dependency>
                 <groupId>com.alibaba.arthas</groupId>
                 <artifactId>arthas-repackage-logger</artifactId>
-                <version>0.0.8</version>
+                <version>0.0.9</version>
             </dependency>
             <dependency>
                 <groupId>com.alibaba</groupId>
