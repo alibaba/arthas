@@ -299,7 +299,7 @@ public class ArthasBootstrap {
         String location = null;
 
         if (arthasEnvironment.containsProperty(CONFIG_LOCATION_PROPERTY)) {
-            location = arthasEnvironment.resolvePlaceholders(CONFIG_LOCATION_PROPERTY);
+            location = arthasEnvironment.getProperty(CONFIG_LOCATION_PROPERTY);
         }
 
         if (location == null) {
