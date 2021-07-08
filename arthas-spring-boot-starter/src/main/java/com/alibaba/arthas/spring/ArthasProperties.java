@@ -1,5 +1,7 @@
 package com.alibaba.arthas.spring;
 
+import java.util.Map;
+
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
 /**
@@ -37,7 +39,17 @@ public class ArthasProperties {
 	/**
 	 * disabled commands，default disable stop command
 	 */
-	private String disabledCommands = "stop";
+	private String disabledCommands;
+	private static final String DEFAULT_DISABLEDCOMMANDS = "stop";
+
+    /**
+     * 因为 arthasConfigMap 只注入了用户配置的值，没有默认值，因些统一处理补全
+     */
+    public static void updateArthasConfigMapDefaultValue(Map<String, String> arthasConfigMap) {
+        if (!arthasConfigMap.containsKey("disabledCommands")) {
+            arthasConfigMap.put("disabledCommands", DEFAULT_DISABLEDCOMMANDS);
+        }
+    }
 
 	public String getHome() {
 		return home;
