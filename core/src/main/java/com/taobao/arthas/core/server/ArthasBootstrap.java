@@ -292,24 +292,25 @@ public class ArthasBootstrap {
         return ARTHAS_HOME;
     }
 
+    static String reslove(ArthasEnvironment arthasEnvironment, String key, String defaultValue) {
+        String value = arthasEnvironment.getProperty(key);
+        if (value == null) {
+            return defaultValue;
+        }
+        return arthasEnvironment.resolvePlaceholders(value);
+    }
+
     // try to load arthas.properties
     private void tryToLoadArthasProperties() throws IOException {
         this.arthasEnvironment.resolvePlaceholders(CONFIG_LOCATION_PROPERTY);
 
-        String location = null;
-
-        if (arthasEnvironment.containsProperty(CONFIG_LOCATION_PROPERTY)) {
-            location = arthasEnvironment.resolvePlaceholders(arthasEnvironment.getProperty(CONFIG_LOCATION_PROPERTY));
-        }
+        String location = reslove(arthasEnvironment, CONFIG_LOCATION_PROPERTY, null);
 
         if (location == null) {
             location = arthasHome();
         }
 
-        String configName = "arthas";
-        if (arthasEnvironment.containsProperty(CONFIG_NAME_PROPERTY)) {
-            configName = arthasEnvironment.resolvePlaceholders(arthasEnvironment.getProperty(CONFIG_NAME_PROPERTY));
-        }
+        String configName = reslove(arthasEnvironment, CONFIG_NAME_PROPERTY, "arthas");
 
         if (location != null) {
             if (!location.endsWith(".properties")) {
