@@ -299,7 +299,7 @@ public class ArthasBootstrap {
         String location = null;
 
         if (arthasEnvironment.containsProperty(CONFIG_LOCATION_PROPERTY)) {
-            location = arthasEnvironment.resolvePlaceholders(CONFIG_LOCATION_PROPERTY);
+            location = arthasEnvironment.resolvePlaceholders(arthasEnvironment.getProperty(CONFIG_LOCATION_PROPERTY));
         }
 
         if (location == null) {
@@ -308,7 +308,7 @@ public class ArthasBootstrap {
 
         String configName = "arthas";
         if (arthasEnvironment.containsProperty(CONFIG_NAME_PROPERTY)) {
-            configName = arthasEnvironment.resolvePlaceholders(CONFIG_NAME_PROPERTY);
+            configName = arthasEnvironment.resolvePlaceholders(arthasEnvironment.getProperty(CONFIG_NAME_PROPERTY));
         }
 
         if (location != null) {
