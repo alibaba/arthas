@@ -21,7 +21,7 @@ import com.taobao.middleware.cli.annotations.Summary;
 @Name("threadpool")
 @Summary("Display thread pool info")
 @Description(Constants.EXAMPLE +
-        "  threadpool -n 5"+  // 输出5个线程池信息，优先按繁忙线程数排序，其次按最大线程数排序
+        "  threadpool -n 5"+  // 输出5个线程池信息，优先按繁忙线程数排序，其次按队列堆积数排序，最后按最大线程数排序
         "  threadpool -sd 3"+ // 输出3行调用栈信息，用于判断是哪个业务线程池
         "  threadpool -i 2000" // 采集2000毫秒内，有提交过任务的线程池的信息
 
