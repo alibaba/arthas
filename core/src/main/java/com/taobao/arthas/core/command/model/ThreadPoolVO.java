@@ -10,43 +10,43 @@ public class ThreadPoolVO implements Comparable<ThreadPoolVO> {
 
     private String stackInfo;
 
-    private Integer corePoolSize;
+    private int corePoolSize;
 
-    private Integer maximumPoolSize;
+    private int maximumPoolSize;
 
-    private Integer currentSizeOfWorkQueue;
+    private int currentSizeOfWorkQueue;
 
-    private Integer activeThreadCount;
+    private int activeThreadCount;
 
-    public Integer getCorePoolSize() {
+    public int getCorePoolSize() {
         return corePoolSize;
     }
 
-    public void setCorePoolSize(Integer corePoolSize) {
+    public void setCorePoolSize(int corePoolSize) {
         this.corePoolSize = corePoolSize;
     }
 
-    public Integer getMaximumPoolSize() {
+    public int getMaximumPoolSize() {
         return maximumPoolSize;
     }
 
-    public void setMaximumPoolSize(Integer maximumPoolSize) {
+    public void setMaximumPoolSize(int maximumPoolSize) {
         this.maximumPoolSize = maximumPoolSize;
     }
 
-    public Integer getCurrentSizeOfWorkQueue() {
+    public int getCurrentSizeOfWorkQueue() {
         return currentSizeOfWorkQueue;
     }
 
-    public void setCurrentSizeOfWorkQueue(Integer currentSizeOfWorkQueue) {
+    public void setCurrentSizeOfWorkQueue(int currentSizeOfWorkQueue) {
         this.currentSizeOfWorkQueue = currentSizeOfWorkQueue;
     }
 
-    public Integer getActiveThreadCount() {
+    public int getActiveThreadCount() {
         return activeThreadCount;
     }
 
-    public void setActiveThreadCount(Integer activeThreadCount) {
+    public void setActiveThreadCount(int activeThreadCount) {
         this.activeThreadCount = activeThreadCount;
     }
 
@@ -64,30 +64,17 @@ public class ThreadPoolVO implements Comparable<ThreadPoolVO> {
         if (this == o1) {
             return 0;
         }
-        int compareActiveThreadCount = compareIntegerWithNull(getActiveThreadCount(),o1.getActiveThreadCount());
+        int compareActiveThreadCount = o1.getActiveThreadCount() - getActiveThreadCount();
         // 优先按繁忙线程数排序
         if(compareActiveThreadCount != 0 ){
             return compareActiveThreadCount;
         }
         // 其次按队列堆积数排序
-        int compareCurrentSizeOfWorkQueue = compareIntegerWithNull(getCurrentSizeOfWorkQueue(),o1.getCurrentSizeOfWorkQueue());
+        int compareCurrentSizeOfWorkQueue = o1.getCurrentSizeOfWorkQueue() - getCurrentSizeOfWorkQueue();
         if(compareCurrentSizeOfWorkQueue != 0){
             return compareCurrentSizeOfWorkQueue;
         }
         // 最后按最大线程数排序
-        return compareIntegerWithNull(getMaximumPoolSize(),o1.getMaximumPoolSize());
-    }
-
-    private int compareIntegerWithNull(Integer i1,Integer i2){
-        if (i1 == null || i2 == null) {
-            if (i1 != null) {
-                return -1;
-            } else if (i2 != null) {
-                return 1;
-            }
-            return 0;
-        }
-
-        return i2 - i1;
+        return o1.getMaximumPoolSize() - getMaximumPoolSize();
     }
 }

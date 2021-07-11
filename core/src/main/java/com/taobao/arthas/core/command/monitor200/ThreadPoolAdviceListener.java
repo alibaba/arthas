@@ -8,6 +8,7 @@ import com.taobao.arthas.core.command.model.ThreadPoolModel;
 import com.taobao.arthas.core.command.model.ThreadPoolVO;
 import com.taobao.arthas.core.shell.command.CommandProcess;
 import com.taobao.arthas.core.util.ArthasCheckUtils;
+import com.taobao.arthas.core.util.LogUtil;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
@@ -115,16 +116,20 @@ public class ThreadPoolAdviceListener extends AdviceListenerAdapter {
     private class ThreadPoolTimer extends TimerTask {
         @Override
         public void run() {
-            ThreadPoolModel threadPoolModel = new ThreadPoolModel();
-            List<ThreadPoolVO> threadPools = new ArrayList<ThreadPoolVO>(threadPoolDataMap.values());
-            // 按繁忙线程数从多到少排序
-            Collections.sort(threadPools);
-            if (threadPoolCommand.getTopNActiveThreadCount() > 0) {
-                threadPools = threadPools.subList(0, Math.min(threadPoolCommand.getTopNActiveThreadCount(), threadPools.size()));
+            try{
+                ThreadPoolModel threadPoolModel = new ThreadPoolModel();
+                List<ThreadPoolVO> threadPools = new ArrayList<ThreadPoolVO>(threadPoolDataMap.values());
+                // 按繁忙线程数从多到少排序
+                Collections.sort(threadPools);
+                if (threadPoolCommand.getTopNActiveThreadCount() > 0) {
+                    threadPools = threadPools.subList(0, Math.min(threadPoolCommand.getTopNActiveThreadCount(), threadPools.size()));
+                }
+                threadPoolModel.setThreadPools(threadPools);
+                process.appendResult(threadPoolModel);
+                process.end();
+            } catch (Throwable e){
+                process.end(1, e.getMessage() + ", visit " + LogUtil.loggingFile() + " for more detail");
             }
-            threadPoolModel.setThreadPools(threadPools);
-            process.appendResult(threadPoolModel);
-            process.end();
         }
 
     }
