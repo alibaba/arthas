@@ -431,7 +431,6 @@ Welcome to register the company name in this issue: https://github.com/alibaba/a
 ![vipkid](static/vipkid.png)
 ![百度凤巢](static/baidufengchao.png)
 ![有赞](static/youzan.png)
-![CVTE](static/cvte.png)
 
 ### Derivative Projects
 
