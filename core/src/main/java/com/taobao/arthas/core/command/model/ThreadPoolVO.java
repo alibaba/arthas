@@ -18,6 +18,10 @@ public class ThreadPoolVO implements Comparable<ThreadPoolVO> {
 
     private int activeThreadCount;
 
+    public ThreadPoolVO(String stackInfo) {
+        this.stackInfo = stackInfo;
+    }
+
     public int getCorePoolSize() {
         return corePoolSize;
     }
