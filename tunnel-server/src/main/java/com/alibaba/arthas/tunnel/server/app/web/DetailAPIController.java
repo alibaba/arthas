@@ -2,6 +2,7 @@ package com.alibaba.arthas.tunnel.server.app.web;
 
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
@@ -40,7 +41,7 @@ public class DetailAPIController {
     @RequestMapping("/api/tunnelApps")
     @ResponseBody
     public Set<String> tunnelApps(HttpServletRequest request, Model model) {
-        if (!arthasProperties.isEnableDetatilPages()) {
+        if (!arthasProperties.isEnableDetailPages()) {
             throw new IllegalAccessError("not allow");
         }
 
@@ -67,7 +68,7 @@ public class DetailAPIController {
     @ResponseBody
     public Map<String, AgentClusterInfo> tunnelAgentIds(@RequestParam(value = "app", required = true) String appName,
             HttpServletRequest request, Model model) {
-        if (!arthasProperties.isEnableDetatilPages()) {
+        if (!arthasProperties.isEnableDetailPages()) {
             throw new IllegalAccessError("not allow");
         }
 
@@ -78,6 +79,28 @@ public class DetailAPIController {
         }
 
         return Collections.emptyMap();
+    }
+
+    /**
+     * check if agentId exists
+     * @param agentId
+     * @return
+     */
+    @RequestMapping("/api/tunnelAgents")
+    @ResponseBody
+    public Map<String, Object> tunnelAgentIds(@RequestParam(value = "agentId", required = true) String agentId) {
+        Map<String, Object> result = new HashMap<String, Object>();
+        boolean success = false;
+        try {
+            AgentClusterInfo info = tunnelClusterStore.findAgent(agentId);
+            if (info != null) {
+                success = true;
+            }
+        } catch (Throwable e) {
+            logger.error("try to find agentId error, id: {}", agentId, e);
+        }
+        result.put("success", success);
+        return result;
     }
 
     private static String findAppNameFromAgentId(String id) {

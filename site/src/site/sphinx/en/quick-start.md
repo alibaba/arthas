@@ -10,7 +10,7 @@ java -jar math-game.jar
 
 `math-game` is a simple program that generates a random number every second, then it finds all prime factors of that number.
 
-The source code of `math-game`: [View](https://github.com/alibaba/arthas/blob/master/demo/src/main/java/demo/MathGame.java)
+The source code of `math-game`: [View](https://github.com/alibaba/arthas/blob/master/math-game/src/main/java/demo/MathGame.java)
 
 ## 2. Start Arthas
 

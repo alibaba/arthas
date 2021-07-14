@@ -38,6 +38,7 @@ Arthas was built to solve these issues. A developer can troubleshoot your produc
 * Supports command line interactive mode, with auto-complete feature enabled.
 * Supports telnet and websocket, which enables both local and remote diagnostics with command line and browsers.
 * Supports profiler/Flame Graph
+* Support get objects in the heap that are instances of the specified class. 
 * Supports JDK 6+.
 * Supports Linux/Mac/Windows.
 
@@ -182,18 +183,18 @@ public interface Servlet {
 Memory compiler, compiles `.java` files into `.class` files in memory.
 
 ```bash
-mc /tmp/Test.java
+$ mc /tmp/Test.java
 ```
 
-#### redefine
+#### retransform
 
-* https://arthas.aliyun.com/doc/en/redefine
+* https://arthas.aliyun.com/doc/en/retransform
 
-Load the external `*.class` files to re-define the loaded classes in JVM.
+Load the external `*.class` files to retransform/hotswap the loaded classes in JVM.
 
 ```bash
-redefine /tmp/Test.class
-redefine -c 327a647b /tmp/Test.class /tmp/Test\$Inner.class
+retransform /tmp/Test.class
+retransform -c 327a647b /tmp/Test.class /tmp/Test\$Inner.class
 ```
 
 #### sc
@@ -232,6 +233,29 @@ $ sc -d org.springframework.web.context.support.XmlWebApplicationContext
                          +-sun.misc.Launcher$ExtClassLoader@1ddf84b8
  classLoaderHash   25131501
 
+```
+
+
+#### vmtool
+
+* https://arthas.aliyun.com/doc/en/vmtool
+
+Get objects in the heap that are instances of the specified class.
+
+```bash
+$ vmtool --action getInstances --className java.lang.String --limit 10
+@String[][
+    @String[com/taobao/arthas/core/shell/session/Session],
+    @String[com.taobao.arthas.core.shell.session.Session],
+    @String[com/taobao/arthas/core/shell/session/Session],
+    @String[com/taobao/arthas/core/shell/session/Session],
+    @String[com/taobao/arthas/core/shell/session/Session.class],
+    @String[com/taobao/arthas/core/shell/session/Session.class],
+    @String[com/taobao/arthas/core/shell/session/Session.class],
+    @String[com/],
+    @String[java/util/concurrent/ConcurrentHashMap$ValueIterator],
+    @String[java/util/concurrent/locks/LockSupport],
+]
 ```
 
 #### stack

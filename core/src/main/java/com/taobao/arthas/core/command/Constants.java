@@ -43,6 +43,7 @@ public interface Constants {
                                 "  TRUE  : true\n" +
                                 "  FALSE : false\n" +
                                 "  TRUE  : 'params.length>=0'\n" +
-                                "  FALSE : 1==2\n";
+                                "  FALSE : 1==2\n" +
+                                "  '#cost>100'\n";
 
 }

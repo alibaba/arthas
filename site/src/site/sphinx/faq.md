@@ -47,7 +47,8 @@ options json-format true
 
 ##### 能不能查看内存里某个变量的值
 
-不能。但可以用一些技巧，用`tt`命令拦截到对象，或者从静态函数里取到对象。
+1. 可以使用[`vmtool`](vmtool.md)命令。
+2. 可以用一些技巧，用[`tt`](tt.md)命令拦截到对象，或者从静态函数里取到对象。
 
 
 ##### 方法同名过滤
@@ -59,13 +60,13 @@ options json-format true
 例子[math-game](quick-start.md)
 
 ```bash
-watch demo.MathGame primeFactors traceE '{params,returnObj,throwExp}' -v -n 5 -x 3 'params.length >0 && returnObj instanceof java.util.List'
+watch demo.MathGame primeFactors '{params,returnObj,throwExp}' 'params.length >0 && returnObj instanceof java.util.List' -v
 ``` 
 
 ##### 怎么watch、trace 构造函数 ？
 
 ```bash
-watch demo.MathGame <init> '{params,returnObj,throwExp}' -v -n 5 -x 3 '1==1'
+watch demo.MathGame <init> '{params,returnObj,throwExp}' -v
 ```
 
 
@@ -83,3 +84,9 @@ watch demo.MathGame <init> '{params,returnObj,throwExp}' -v -n 5 -x 3 '1==1'
 ##### Attach docker/k8s 里的 pid 为 1 的进程失败
 
 参考： [https://github.com/alibaba/arthas/issues/362#issuecomment-448185416](https://github.com/alibaba/arthas/issues/362#issuecomment-448185416)
+
+##### 为什么下载了新版本的Arthas，连接的却是旧版本？
+
+比如启动的 `as.sh/arthas-boot.jar` 版本是3.5.* 的，但是连接上之后，打印的arthas版本是 3.4.* 的。
+
+可能是之前使用旧版本的arthas诊断过目标进程。可以先执行`stop`停止掉旧版本的arthas，再重新使用新版本attach。

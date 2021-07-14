@@ -57,8 +57,9 @@
 
     <modules>
         <module>math-game</module>
-        <module>spy</module>
         <module>common</module>
+        <module>spy</module>
+        <module>arthas-vmtool</module>
         <module>tunnel-common</module>
         <module>tunnel-client</module>
         <module>core</module>
@@ -74,7 +75,7 @@
     </modules>
 
     <properties>
-        <revision>3.5.1-SNAPSHOT</revision>
+        <revision>3.5.2</revision>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.compiler.target>1.6</maven.compiler.target>
         <maven.compiler.source>1.6</maven.compiler.source>
@@ -91,7 +92,7 @@
             <dependency>
                 <groupId>com.alibaba</groupId>
                 <artifactId>bytekit-core</artifactId>
-                <version>0.0.5</version>
+                <version>0.0.6</version>
             </dependency>
             <dependency>
                 <groupId>org.benf</groupId>
@@ -111,7 +112,7 @@
             <dependency>
                 <groupId>org.slf4j</groupId>
                 <artifactId>slf4j-api</artifactId>
-                <version>1.7.30</version>
+                <version>1.7.31</version>
             </dependency>
             <dependency>
                 <groupId>ch.qos.logback</groupId>
@@ -126,7 +127,7 @@
             <dependency>
                 <groupId>com.alibaba.arthas</groupId>
                 <artifactId>arthas-repackage-logger</artifactId>
-                <version>0.0.8</version>
+                <version>0.0.9</version>
             </dependency>
             <dependency>
                 <groupId>com.alibaba</groupId>
@@ -202,13 +203,13 @@
             <dependency>
                 <groupId>net.bytebuddy</groupId>
                 <artifactId>byte-buddy</artifactId>
-                <version>1.10.18</version>
+                <version>1.11.6</version>
             </dependency>
 
             <dependency>
                 <groupId>net.bytebuddy</groupId>
                 <artifactId>byte-buddy-agent</artifactId>
-                <version>1.10.18</version>
+                <version>1.11.6</version>
             </dependency>
 
             <dependency>

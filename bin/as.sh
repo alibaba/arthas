@@ -8,10 +8,10 @@
 
 # program : Arthas
 #  author : Core Engine @ Taobao.com
-#    date : 2021-03-09
+#    date : 2021-06-10
 
 # current arthas script version
-ARTHAS_SCRIPT_VERSION=3.5.0
+ARTHAS_SCRIPT_VERSION=3.5.2
 
 # SYNOPSIS
 #   rreadlink <fileOrDirPath>
@@ -150,6 +150,9 @@ USERNAME=
 
 # password
 PASSWORD=
+
+# disabledCommands
+DISABLED_COMMANDS=
 
 ############ Command Arguments ############
 
@@ -405,6 +408,7 @@ Usage:
        [--tunnel-server <value>] [--agent-id <value>] [--stat-url <value>]
        [--app-name <value>]
        [--username <value>] [--password <value>]
+       [--disabled-commands <value>]
        [--use-version <value>] [--repo-mirror <value>] [--versions] [--use-http]
        [--attach-only] [-c <value>] [-f <value>] [-v] [pid]
 
@@ -427,6 +431,7 @@ Options and Arguments:
     --app-name                  Special app name
     --username                  Special username
     --password                  Special password
+    --disabled-commands         Disable special commands
     --select                    select target process by classname or JARfilename
  -c,--command <value>           Command to execute, multiple commands separated
                                 by ;
@@ -446,9 +451,10 @@ EXAMPLES:
   ./as.sh --stat-url 'http://192.168.10.11:8080/api/stat'
   ./as.sh -c 'sysprop; thread' <pid>
   ./as.sh -f batch.as <pid>
-  ./as.sh --use-version 3.5.0
+  ./as.sh --use-version 3.5.2
   ./as.sh --session-timeout 3600
   ./as.sh --attach-only
+  ./as.sh --disabled-commands stop,dump
   ./as.sh --select math-game
   ./as.sh --repo-mirror aliyun --use-http
 WIKI:
@@ -622,6 +628,11 @@ parse_arguments()
         ;;
         --password)
         PASSWORD="$2"
+        shift # past argument
+        shift # past value
+        ;;
+        --disabled-commands)
+        DISABLED_COMMANDS="$2"
         shift # past argument
         shift # past value
         ;;
@@ -832,6 +843,11 @@ attach_jvm()
     if [ "${PASSWORD}" ]; then
         tempArgs+=("-password")
         tempArgs+=("${PASSWORD}")
+    fi
+
+    if [ "${DISABLED_COMMANDS}" ]; then
+        tempArgs+=("-disabled-commands")
+        tempArgs+=("${DISABLED_COMMANDS}")
     fi
 
     if [ "${TARGET_IP}" ]; then

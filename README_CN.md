@@ -24,6 +24,7 @@ English version goes [here](README.md).
 0. 是否有一个全局视角来查看系统的运行状况？
 0. 有什么办法可以监控到JVM的实时运行状态？
 0. 怎么快速定位应用的热点，生成火焰图？
+0. 怎样直接从JVM内查找某个类的实例？
 
 `Arthas`支持JDK 6+，支持Linux/Mac/Windows，采用命令行交互模式，同时提供丰富的 `Tab` 自动补全功能，进一步方便进行问题的定位和诊断。
 
@@ -174,14 +175,14 @@ Memory Compiler/内存编译器，编译`.java`文件生成`.class`。
 mc /tmp/Test.java
 ```
 
-#### redefine
-* https://arthas.aliyun.com/doc/redefine
+#### retransform
+* https://arthas.aliyun.com/doc/retransform
 
-加载外部的`.class`文件，redefine jvm已加载的类。
+加载外部的`.class`文件，retransform 热更新jvm已加载的类。
 
 ```bash
-redefine /tmp/Test.class
-redefine -c 327a647b /tmp/Test.class /tmp/Test\$Inner.class
+retransform /tmp/Test.class
+retransform -c 327a647b /tmp/Test.class /tmp/Test\$Inner.class
 ```
 
 #### sc
@@ -221,6 +222,27 @@ $ sc -d org.springframework.web.context.support.XmlWebApplicationContext
 
 ```
 
+#### vmtool
+
+* https://arthas.aliyun.com/doc/vmtool
+
+从JVM heap中获取指定类的实例。
+
+```bash
+$ vmtool --action getInstances --className java.lang.String --limit 10
+@String[][
+    @String[com/taobao/arthas/core/shell/session/Session],
+    @String[com.taobao.arthas.core.shell.session.Session],
+    @String[com/taobao/arthas/core/shell/session/Session],
+    @String[com/taobao/arthas/core/shell/session/Session],
+    @String[com/taobao/arthas/core/shell/session/Session.class],
+    @String[com/taobao/arthas/core/shell/session/Session.class],
+    @String[com/taobao/arthas/core/shell/session/Session.class],
+    @String[com/],
+    @String[java/util/concurrent/ConcurrentHashMap$ValueIterator],
+    @String[java/util/concurrent/locks/LockSupport],
+]
+```
 #### stack
 
 * https://arthas.aliyun.com/doc/stack

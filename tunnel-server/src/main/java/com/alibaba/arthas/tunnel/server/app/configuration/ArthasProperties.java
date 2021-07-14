@@ -25,7 +25,7 @@ public class ArthasProperties {
     /**
      * supoort apps.html/agents.html
      */
-    private boolean enableDetatilPages = false;
+    private boolean enableDetailPages = false;
 
     public Server getServer() {
         return server;
@@ -43,12 +43,12 @@ public class ArthasProperties {
         this.embeddedRedis = embeddedRedis;
     }
 
-    public boolean isEnableDetatilPages() {
-        return enableDetatilPages;
+    public boolean isEnableDetailPages() {
+        return enableDetailPages;
     }
 
-    public void setEnableDetatilPages(boolean enableDetatilPages) {
-        this.enableDetatilPages = enableDetatilPages;
+    public void setEnableDetailPages(boolean enableDetailPages) {
+        this.enableDetailPages = enableDetailPages;
     }
 
     public static class Server {

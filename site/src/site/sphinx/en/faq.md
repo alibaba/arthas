@@ -48,7 +48,8 @@ No.
 
 ##### Can arthas view the value of a variable in memory?
 
-No. But you can use some tricks to intercept the object with the `tt` command, or fetch it from a static method.
+1. You can use [`vmtool`](vmtool.md) command.
+2. You can use some tricks to intercept the object with the [`tt`](tt.md) command, or fetch it from a static method.
 
 
 ##### How to filter method with the same name?
@@ -60,13 +61,13 @@ You can use `-v` to view the condition express result [https://github.com/alibab
 example [math-game](quick-start.md)
 
 ```bash
-watch demo.MathGame primeFactors traceE '{params,returnObj,throwExp}' -v -n 5 -x 3 'params.length >0 && returnObj instanceof java.util.List'
+watch demo.MathGame primeFactors '{params,returnObj,throwExp}' 'params.length >0 && returnObj instanceof java.util.List' -v
 ``` 
 
 ##### How to watch or trace constructor?
 
 ```bash
-watch demo.MathGame <init> '{params,returnObj,throwExp}' -v -n 5 -x 3 '1==1'
+watch demo.MathGame <init> '{params,returnObj,throwExp}' -v
 ```
 
 
@@ -84,3 +85,10 @@ Yes. Just download the full size package and unzip it, refer to: [Download](down
 ##### Attach the process with pid 1 in docker/k8s failed
 
 Reference: [https://github.com/alibaba/arthas/issues/362#issuecomment-448185416](https://github.com/alibaba/arthas/issues/362#issuecomment-448185416)
+
+
+##### Why is the new version of Arthas downloaded, but the old version is connected?
+
+For example, the started version of `as.sh/arthas-boot.jar` is 3.5.*, but after connecting, the printed arthas version is 3.4.*.
+
+It may be that the target process has been diagnosed with the old version of arthas before. You can execute `stop` to stop the old version of arthas, and then reuse the new version to attach.
