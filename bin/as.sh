@@ -83,7 +83,9 @@ DIR=$(dirname -- "$(rreadlink "${BASH_SOURCE[0]}")")
 ARTHAS_HOME=
 
 # define arthas's lib
-ARTHAS_LIB_DIR=${HOME}/.arthas/lib
+if [ -z "${ARTHAS_LIB_DIR}" ]; then
+    ARTHAS_LIB_DIR=${HOME}/.arthas/lib
+fi
 
 # target process id to attach
 TARGET_PID=

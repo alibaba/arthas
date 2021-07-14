@@ -132,8 +132,14 @@ public class Bootstrap {
     private String disabledCommands;
 
 	static {
-        ARTHAS_LIB_DIR = new File(
-                System.getProperty("user.home") + File.separator + ".arthas" + File.separator + "lib");
+        String arthasLibDirEnv = System.getenv("ARTHAS_LIB_DIR");
+        if (arthasLibDirEnv != null) {
+            ARTHAS_LIB_DIR = new File(arthasLibDirEnv);
+        } else {
+            ARTHAS_LIB_DIR = new File(
+                    System.getProperty("user.home") + File.separator + ".arthas" + File.separator + "lib");
+        }
+
         try {
             ARTHAS_LIB_DIR.mkdirs();
         } catch (Throwable t) {
