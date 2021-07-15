@@ -39,3 +39,12 @@ For example:
 | browser <-----> arthas tunnel server | <-----> arthas tunnel client <--- -> arthas agent |
 |---------+     +----------------------+       +----------------------+     +--------------+
 ```
+
+## Docker
+
+```
+git clone https://github.com/alibaba/arthas.git
+cd arthas
+docker build . -f TunnelServerDockerfile --build-arg ARTHAS_VERSION=3.5.2 -t arthas-tunnel-server:3.5.2
+docker run -d -p 8080:8080 arthas-tunnel-server:3.5.2
+```

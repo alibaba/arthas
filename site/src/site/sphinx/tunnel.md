@@ -13,6 +13,7 @@ Arthas Tunnel
 
 ### 下载部署arthas tunnel server
 
+#### 使用 `java -jar` 部署
 [https://github.com/alibaba/arthas/releases](https://github.com/alibaba/arthas/releases)
 
 * 从Maven仓库下载：[![](https://img.shields.io/maven-central/v/com.taobao.arthas/arthas-packaging.svg?style=flat-square "Arthas")](https://arthas.aliyun.com/download/arthas-tunnel-server/latest_version?mirror=aliyun)
@@ -25,6 +26,14 @@ Arthas tunnel server是一个spring boot fat jar应用，直接`java -jar`启动
 ```bash
 java -jar  arthas-tunnel-server.jar
 ```
+#### 使用Docker部署
+```bash
+git clone https://github.com/alibaba/arthas.git
+cd arthas
+docker build . -f TunnelServerDockerfile -t arthas-tunnel-server
+docker run -d -p 8080:8080 -p 7777:7777 arthas-tunnel-server
+```
+
 
 默认情况下，arthas tunnel server的web端口是`8080`，arthas agent连接的端口是`7777`。
 
