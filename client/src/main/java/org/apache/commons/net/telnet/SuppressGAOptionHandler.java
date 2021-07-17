@@ -28,16 +28,16 @@ public class SuppressGAOptionHandler extends TelnetOptionHandler
      * behaviour in case a local/remote activation request for this
      * option is received.
      * <p>
-     * @param initlocal - if set to true, a WILL is sent upon connection.
-     * @param initremote - if set to true, a DO is sent upon connection.
-     * @param acceptlocal - if set to true, any DO request is accepted.
-     * @param acceptremote - if set to true, any WILL request is accepted.
+     * @param initLocal - if set to true, a WILL is sent upon connection.
+     * @param initRemote - if set to true, a DO is sent upon connection.
+     * @param acceptLocal - if set to true, any DO request is accepted.
+     * @param acceptRemote - if set to true, any WILL request is accepted.
      ***/
-    public SuppressGAOptionHandler(boolean initlocal, boolean initremote,
-                                boolean acceptlocal, boolean acceptremote)
+    public SuppressGAOptionHandler(boolean initLocal, boolean initRemote,
+                                boolean acceptLocal, boolean acceptRemote)
     {
-        super(TelnetOption.SUPPRESS_GO_AHEAD, initlocal, initremote,
-                                      acceptlocal, acceptremote);
+        super(TelnetOption.SUPPRESS_GO_AHEAD, initLocal, initRemote,
+                                      acceptLocal, acceptRemote);
     }
 
     /***
