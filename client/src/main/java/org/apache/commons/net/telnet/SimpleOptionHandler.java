@@ -19,7 +19,7 @@ package org.apache.commons.net.telnet;
 
 /***
  * Simple option handler that can be used for options
- * that don't require subnegotiation.
+ * that don't require subNegotiation.
  ***/
 public class SimpleOptionHandler extends TelnetOptionHandler
 {
@@ -29,31 +29,31 @@ public class SimpleOptionHandler extends TelnetOptionHandler
      * behaviour in case a local/remote activation request for this
      * option is received.
      * <p>
-     * @param optcode - option code.
-     * @param initlocal - if set to true, a WILL is sent upon connection.
-     * @param initremote - if set to true, a DO is sent upon connection.
-     * @param acceptlocal - if set to true, any DO request is accepted.
-     * @param acceptremote - if set to true, any WILL request is accepted.
+     * @param optCode - option code.
+     * @param initLocal - if set to true, a WILL is sent upon connection.
+     * @param initRemote - if set to true, a DO is sent upon connection.
+     * @param acceptLocal - if set to true, any DO request is accepted.
+     * @param acceptRemote - if set to true, any WILL request is accepted.
      ***/
-    public SimpleOptionHandler(int optcode,
-                                boolean initlocal,
-                                boolean initremote,
-                                boolean acceptlocal,
-                                boolean acceptremote)
+    public SimpleOptionHandler(int optCode,
+                                boolean initLocal,
+                                boolean initRemote,
+                                boolean acceptLocal,
+                                boolean acceptRemote)
     {
-        super(optcode, initlocal, initremote,
-                                      acceptlocal, acceptremote);
+        super(optCode, initLocal, initRemote,
+                acceptLocal, acceptRemote);
     }
 
     /***
      * Constructor for the SimpleOptionHandler. Initial and accept
      * behaviour flags are set to false
      * <p>
-     * @param optcode - option code.
+     * @param optCode - option code.
      ***/
-    public SimpleOptionHandler(int optcode)
+    public SimpleOptionHandler(int optCode)
     {
-        super(optcode, false, false, false, false);
+        super(optCode, false, false, false, false);
     }
 
 }

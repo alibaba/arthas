@@ -195,15 +195,12 @@ public class TelnetConsole {
      * arthas client 主函数
      * 注意： process()函数提供给arthas-boot使用，内部不能调用System.exit()结束进程的方法
      *
-     * @param telnetConsole
-     * @param cli
      * @param args
      * @param eotEventCallback Ctrl+D signals an End of Transmission (EOT) event
      * @return status code
      * @throws IOException
-     * @throws InterruptedException
      */
-    public static int process(String[] args, ActionListener eotEventCallback) throws IOException, InterruptedException {
+    public static int process(String[] args, ActionListener eotEventCallback) throws IOException {
         // support mingw/cygw jline color
         if (OSUtils.isCygwinOrMinGW()) {
             System.setProperty("jline.terminal", System.getProperty("jline.terminal", "jline.UnixTerminal"));
