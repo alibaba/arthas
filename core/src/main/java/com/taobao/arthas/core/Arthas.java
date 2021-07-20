@@ -78,7 +78,10 @@ public class Arthas {
         configure.setPassword((String) commandLine.getOptionValue("password"));
 
         configure.setChannelServer((String) commandLine.getOptionValue("channel-server"));
-        configure.setHeartbeatInterval((Integer) commandLine.getOptionValue("heartbeat-interval"));
+        Integer heartbeatIntervalValue = commandLine.getOptionValue("heartbeat-interval");
+        if (heartbeatIntervalValue != null) {
+            configure.setHeartbeatInterval(heartbeatIntervalValue);
+        }
 
         configure.setTunnelServer((String) commandLine.getOptionValue("tunnel-server"));
         configure.setAgentId((String) commandLine.getOptionValue("agent-id"));
