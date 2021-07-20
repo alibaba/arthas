@@ -81,7 +81,7 @@ public class MessageExchangeServiceImpl implements MessageExchangeService {
     @Override
     public void removeTopic(Topic topic) throws MessageExchangeException {
         topicMap.remove(topic);
-        logger.info("remove topic: {}", topic);
+        logger.debug("remove topic: {}", topic);
     }
 
     @Override
@@ -221,7 +221,7 @@ public class MessageExchangeServiceImpl implements MessageExchangeService {
             long idle = now - topicData.getLastActiveTime();
             if (!topicData.isSubscribed() && idle > timeout) {
                 try {
-                    logger.info("cleaning idle topic: {}, idle time: {}", topicData.topic, idle);
+                    logger.debug("cleaning idle topic: {}, idle time: {}", topicData.topic, idle);
                     removeTopic(topicData.topic);
                 } catch (Exception e) {
                     logger.error("clean topic failure, topic: "+ topicData.topic, e);
