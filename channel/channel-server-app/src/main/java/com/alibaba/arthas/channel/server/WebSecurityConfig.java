@@ -20,12 +20,13 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
         String username = channelServerProperties.getAuth().getUsername();
-        if (StringUtils.hasText(username)) {
+        String password = channelServerProperties.getAuth().getPassword();
+        if (StringUtils.hasText(username) && StringUtils.hasText(password)) {
             auth.inMemoryAuthentication()
                     //.passwordEncoder(new BCryptPasswordEncoder())
-                    .passwordEncoder(NoOpPasswordEncoder.getInstance()) // CHANGE IT for production
+                    .passwordEncoder(NoOpPasswordEncoder.getInstance()) // TODO: CHANGE IT for production
                     .withUser(username)
-                    .password(channelServerProperties.getAuth().getPassword())
+                    .password(password)
                     .roles("USER");
         }
     }
@@ -33,11 +34,15 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         String username = channelServerProperties.getAuth().getUsername();
-        if (StringUtils.hasText(username)) {
+        String password = channelServerProperties.getAuth().getPassword();
+        if (StringUtils.hasText(username) && StringUtils.hasText(password)) {
             http.csrf().disable().authorizeRequests()
                     .anyRequest().authenticated()
                     .and()
                     .httpBasic();
+        } else {
+            // disable csrf auth: https://stackoverflow.com/a/29917946
+            http.csrf().disable();
         }
     }
 }
