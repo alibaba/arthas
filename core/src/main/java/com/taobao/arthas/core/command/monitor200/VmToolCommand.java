@@ -30,7 +30,7 @@ import com.taobao.arthas.core.shell.command.CommandProcess;
 import com.taobao.arthas.core.util.ClassLoaderUtils;
 import com.taobao.arthas.core.util.ClassUtils;
 import com.taobao.arthas.core.util.SearchUtils;
-import com.taobao.arthas.core.view.ObjectView;
+import com.taobao.arthas.core.util.object.ObjectExpandUtils;
 import com.taobao.middleware.cli.annotations.DefaultValue;
 import com.taobao.middleware.cli.annotations.Description;
 import com.taobao.middleware.cli.annotations.Name;
@@ -209,6 +209,7 @@ public class VmToolCommand extends AnnotatedCommand {
                         }
                     }
 
+                    value = ObjectExpandUtils.expand(value, expand);
                     OgnlModel ognlModel = new OgnlModel()
                             .setValue(value)
                             .setExpand(expand);
