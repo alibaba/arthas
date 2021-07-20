@@ -1,0 +1,57 @@
+{
+  "title": "Arthas mc-retransform Command",
+  "description": "Arthas mc-retransform Command ",
+  "difficulty": "master",
+  "time": "10-20 minutes",
+  "details": {
+    "steps": [
+      {
+        "title": "Start math-game",
+        "text": "start-demo.md"
+      },
+      {
+        "title": "Start arthas-boot",
+        "text": "arthas-boot.md"
+      },
+      {
+        "title": "mc Command",
+        "text": "mc.md"
+      },
+      {
+        "title": "retransform Command",
+        "text": "retransform.md"
+      },
+      {
+        "title": "Hotswap Code",
+        "text": "case-jad-mc-retransform.md"
+      },
+      {
+        "title": "More information about retransform",
+        "text": "retransform-more.md"
+      }
+    ],
+    "intro": {
+      "text": "intro.md"
+    },
+    "finish": {
+      "text": "finish.md"
+    },
+    "assets": {
+      "host01": []
+    }
+  },
+  "environment": {
+    "uilayout": "terminal",
+    "showdashboard": true,
+    "dashboards": [
+      {
+        "name": "Web Port 80",
+        "port": 80
+      }
+    ]
+  },
+  "backend": {
+    "imageid": "openjdk:15",
+    "environmentsprotocol": "http"
+  }
+}

@@ -11,7 +11,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Collection;
 
-import com.alibaba.arthas.deps.org.objectweb.asm.ClassReader;
+import com.alibaba.deps.org.objectweb.asm.ClassReader;
 import com.alibaba.arthas.deps.org.slf4j.Logger;
 import com.alibaba.arthas.deps.org.slf4j.LoggerFactory;
 import com.taobao.arthas.core.command.Constants;
@@ -40,6 +40,7 @@ import com.taobao.middleware.cli.annotations.Summary;
 @Description(Constants.EXAMPLE +
                 "  redefine /tmp/Test.class\n" +
                 "  redefine -c 327a647b /tmp/Test.class /tmp/Test\\$Inner.class \n" +
+                "  redefine --classLoaderClass 'sun.misc.Launcher$AppClassLoader' /tmp/Test.class \n" +
                 Constants.WIKI + Constants.WIKI_HOME + "redefine")
 public class RedefineCommand extends AnnotatedCommand {
     private static final Logger logger = LoggerFactory.getLogger(RedefineCommand.class);

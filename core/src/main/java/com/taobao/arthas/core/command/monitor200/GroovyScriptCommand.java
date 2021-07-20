@@ -80,6 +80,11 @@ public class GroovyScriptCommand extends EnhancerCommand implements ScriptSuppor
     }
 
     @Override
+    protected Matcher getClassNameExcludeMatcher() {
+        throw new UnsupportedOperationException("groovy command is not supported yet!");
+    }
+
+    @Override
     protected Matcher getMethodNameMatcher() {
         throw new UnsupportedOperationException("groovy command is not supported yet!");
     }

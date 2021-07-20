@@ -67,13 +67,13 @@ github_doc_root = 'https://github.com/alibaba/arthas/tree/master/site/src/site/s
 # The full version, including alpha/beta/rc tagss
 # release = 
 # read version from pom.xml
-rootDir = os.path.dirname(os.path.abspath(__file__)) + '/../../..'
+rootDir = os.path.dirname(os.path.abspath(__file__)) + '/../../../..'
 pomXml = ET.parse(rootDir + '/pom.xml')
 
 for projectChildrenElem in list(pomXml.getroot()):
-  if projectChildrenElem.tag == '{http://maven.apache.org/POM/4.0.0}parent':
+  if projectChildrenElem.tag == '{http://maven.apache.org/POM/4.0.0}properties':
     for parentChildrenElem in list(projectChildrenElem):
-      if parentChildrenElem.tag == '{http://maven.apache.org/POM/4.0.0}version':
+      if parentChildrenElem.tag == '{http://maven.apache.org/POM/4.0.0}revision':
         version = parentChildrenElem.text
 
 # if version is SNAPSHOT, read final release from maven center

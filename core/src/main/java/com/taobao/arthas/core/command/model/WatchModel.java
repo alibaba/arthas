@@ -15,6 +15,9 @@ public class WatchModel extends ResultModel {
 
     private int expand;
     private int sizeLimit;
+    private String className;
+    private String methodName;
+    private String accessPoint;
 
     public WatchModel() {
     }
@@ -62,5 +65,29 @@ public class WatchModel extends ResultModel {
 
     public void setSizeLimit(int sizeLimit) {
         this.sizeLimit = sizeLimit;
+    }
+
+    public String getClassName() {
+        return className;
+    }
+
+    public void setClassName(String className) {
+        this.className = className;
+    }
+
+    public String getMethodName() {
+        return methodName;
+    }
+
+    public void setMethodName(String methodName) {
+        this.methodName = methodName;
+    }
+
+    public String getAccessPoint() {
+        return accessPoint;
+    }
+
+    public void setAccessPoint(String accessPoint) {
+        this.accessPoint = accessPoint;
     }
 }

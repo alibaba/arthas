@@ -13,6 +13,7 @@ public class RuntimeInfoVO {
     private double systemLoadAverage;
     private int processors;
     private long uptime;
+    private long timestamp;
 
     public RuntimeInfoVO() {
     }
@@ -71,5 +72,13 @@ public class RuntimeInfoVO {
 
     public void setUptime(long uptime) {
         this.uptime = uptime;
+    }
+
+    public long getTimestamp() {
+        return timestamp;
+    }
+
+    public void setTimestamp(long timestamp) {
+        this.timestamp = timestamp;
     }
 }

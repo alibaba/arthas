@@ -229,3 +229,8 @@ profiler start --file /tmp/test.jfr
 
 * JDK Mission Control ： https://github.com/openjdk/jmc
 * JProfiler ： https://github.com/alibaba/arthas/issues/1416
+
+
+### 生成的火焰图里的 unknown
+
+* https://github.com/jvm-profiling-tools/async-profiler/discussions/409

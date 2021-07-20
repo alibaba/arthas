@@ -458,7 +458,7 @@ public abstract class ObjectUtils {
                         sb.append(", ");
                     }
 
-                    sb.append(String.valueOf(array[i]));
+                    sb.append(array[i]);
                 }
 
                 sb.append("}");

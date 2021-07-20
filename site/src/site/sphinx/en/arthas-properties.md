@@ -8,12 +8,18 @@ The `arthas.properties` file is in the arthas directory.
 
 ## Supported configuration items
 
+> Note that the configuration must be `camel case`, which is different from the `-` style of spring boot. Only the spring boot application supports both `camel case` and `-` style configuration.
+
 ```
 #arthas.config.overrideAll=true
 arthas.telnetPort=3658
 arthas.httpPort=8563
-arthas.ip=localhost
+arthas.ip=127.0.0.1
 
+# seconds
+arthas.sessionTimeout=1800
+
+#arthas.appName=demoapp
 #arthas.tunnelServer=ws://127.0.0.1:7777/ws
 #arthas.agentId=mmmmmmyiddddd
 ```
@@ -23,6 +29,22 @@ arthas.ip=localhost
 * If you configure `arthas.telnetPort` to 0, then random listen telnet port, you can find the random port log in `~/logs/arthas/arthas.log`. `arthas.httpPort` is similar.
 
 > If you want to prevent multiple arthas port conflicts on a machine. It can be configured as a random port, or configured as -1, and use arthas through the tunnel server.
+
+
+### disable specify commands
+
+> since 3.5.2
+
+Such as configuration:
+
+```
+arthas.disabledCommands=stop,dump
+```
+
+It can also be configured on the command line: `--disabled-commands stop,dump`.
+
+> By default, arthas-spring-boot-starter will disable the `stop` command.
+
 
 ## Configured order
 

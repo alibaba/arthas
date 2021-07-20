@@ -307,6 +307,14 @@ public class TimeTunnelCommand extends EnhancerCommand {
     }
 
     @Override
+    protected Matcher getClassNameExcludeMatcher() {
+        if (classNameExcludeMatcher == null && getExcludeClassPattern() != null) {
+            classNameExcludeMatcher = SearchUtils.classNameMatcher(getExcludeClassPattern(), isRegEx());
+        }
+        return classNameExcludeMatcher;
+    }
+
+    @Override
     protected Matcher getMethodNameMatcher() {
         if (methodNameMatcher == null) {
             methodNameMatcher = SearchUtils.classNameMatcher(getMethodPattern(), isRegEx());
@@ -355,8 +363,8 @@ public class TimeTunnelCommand extends EnhancerCommand {
             }
 
             Advice advice = tf.getAdvice();
-            Object value = ExpressFactory.threadLocalExpress(advice).get(watchExpress);
 
+			Object value = ExpressFactory.unpooledExpress(advice.getLoader()).bind(advice).get(watchExpress);
             TimeTunnelModel timeTunnelModel = new TimeTunnelModel()
                     .setWatchValue(getExpandObject(value))
                     .setExpand(expand)

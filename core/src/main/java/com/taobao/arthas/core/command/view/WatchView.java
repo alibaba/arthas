@@ -15,6 +15,7 @@ public class WatchView extends ResultView<WatchModel> {
     @Override
     public void draw(CommandProcess process, WatchModel model) {
         String result = ObjectExpandUtils.toString(model.getValue());
+        process.write("method=" + model.getClassName() + "." + model.getMethodName() + " location=" + model.getAccessPoint() + "\n");
         process.write("ts=" + DateUtils.formatDate(model.getTs()) + "; [cost=" + model.getCost() + "ms] result=" + result + "\n");
     }
 

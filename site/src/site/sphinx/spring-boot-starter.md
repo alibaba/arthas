@@ -17,7 +17,7 @@ Arthas Spring Boot Starter
 
 应用启动后，spring会启动arthas，并且attach自身进程。
 
-> 一键创建包含 Arthas Spring Boot Starter 的工程：<a href="http://start.aliyun.com/bootstrap.html/#!dependencies=arthas" target="_blank">点击</a>
+> 一键创建包含 Arthas Spring Boot Starter 的工程：<a href="https://start.aliyun.com/bootstrap.html/#!dependencies=arthas" target="_blank">点击</a>
 
 
 ### 配置属性
@@ -30,6 +30,8 @@ arthas.tunnel-server=ws://47.75.156.201:7777/ws
 ```
 
 全部支持的配置项：[参考](https://github.com/alibaba/arthas/blob/master/arthas-spring-boot-starter/src/main/java/com/alibaba/arthas/spring/ArthasProperties.java)
+
+> 默认情况下，arthas-spring-boot-starter会禁掉`stop`命令。
 
 参考：[Arthas Properties](arthas-properties.md)
 
@@ -78,3 +80,14 @@ public class ArthasAttachExample {
 
 }
 ```
+
+也可以配置属性：
+
+```java
+        HashMap<String, String> configMap = new HashMap<String, String>();
+        configMap.put("arthas.appName", "demo");
+        configMap.put("arthas.tunnelServer", "ws://127.0.0.1:7777/ws");
+        ArthasAgent.attach(configMap);
+```
+
+> 注意配置必须是`驼峰`的，和spring boot的`-`风格不一样。spring boot应用才同时支持`驼峰` 和 `-`风格的配置。

@@ -195,9 +195,7 @@ public class MutablePropertySources implements PropertySources {
      * Remove the given property source if it is present.
      */
     protected void removeIfPresent(PropertySource<?> propertySource) {
-        if (this.propertySourceList.contains(propertySource)) {
-            this.propertySourceList.remove(propertySource);
-        }
+		this.propertySourceList.remove(propertySource);
     }
 
     /**

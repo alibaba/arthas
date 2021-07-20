@@ -9,16 +9,16 @@ import java.util.jar.JarFile;
 
 import org.zeroturnaround.zip.ZipUtil;
 
-import com.alibaba.arthas.deps.org.objectweb.asm.tree.ClassNode;
-import com.alibaba.arthas.deps.org.objectweb.asm.tree.MethodNode;
+import com.alibaba.deps.org.objectweb.asm.tree.ClassNode;
+import com.alibaba.deps.org.objectweb.asm.tree.MethodNode;
 
-import com.taobao.arthas.bytekit.asm.MethodProcessor;
-import com.taobao.arthas.bytekit.asm.interceptor.InterceptorProcessor;
-import com.taobao.arthas.bytekit.asm.interceptor.parser.DefaultInterceptorClassParser;
-import com.taobao.arthas.bytekit.utils.AgentUtils;
-import com.taobao.arthas.bytekit.utils.AsmUtils;
-import com.taobao.arthas.bytekit.utils.MatchUtils;
-import com.taobao.arthas.bytekit.utils.VerifyUtils;
+import com.alibaba.bytekit.asm.MethodProcessor;
+import com.alibaba.bytekit.asm.interceptor.InterceptorProcessor;
+import com.alibaba.bytekit.asm.interceptor.parser.DefaultInterceptorClassParser;
+import com.alibaba.bytekit.utils.AgentUtils;
+import com.alibaba.bytekit.utils.AsmUtils;
+import com.alibaba.bytekit.utils.MatchUtils;
+import com.alibaba.bytekit.utils.VerifyUtils;
 
 /**
  * 

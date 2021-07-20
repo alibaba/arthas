@@ -61,7 +61,7 @@ Affect(row-cnt:4) cost in 3 ms.
 
 ```bash
 $ classloader -c 3d4eac69
-file:/private/tmp/arthas-demo.jar
+file:/private/tmp/math-game.jar
 file:/Users/hengyunabc/.arthas/lib/3.0.5/arthas/arthas-agent.jar
 
 Affect(row-cnt:9) cost in 3 ms.
@@ -73,7 +73,7 @@ For ClassLoader with only unique instance, it can be specified by class name, wh
 
 ```bash
 $ classloader --classLoaderClass sun.misc.Launcher$AppClassLoader
-file:/private/tmp/arthas-demo.jar
+file:/private/tmp/math-game.jar
 file:/Users/hengyunabc/.arthas/lib/3.0.5/arthas/arthas-agent.jar
 
 Affect(row-cnt:9) cost in 3 ms.
@@ -84,7 +84,7 @@ Affect(row-cnt:9) cost in 3 ms.
 ```bash
 $ classloader -c 3d4eac69  -r META-INF/MANIFEST.MF
  jar:file:/System/Library/Java/Extensions/MRJToolkit.jar!/META-INF/MANIFEST.MF
- jar:file:/private/tmp/arthas-demo.jar!/META-INF/MANIFEST.MF
+ jar:file:/private/tmp/math-game.jar!/META-INF/MANIFEST.MF
  jar:file:/Users/hengyunabc/.arthas/lib/3.0.5/arthas/arthas-agent.jar!/META-INF/MANIFEST.MF
 ```
 
@@ -101,7 +101,7 @@ $ classloader -c 1b6d3586 -r java/lang/String.class
 $ classloader -c 3d4eac69 --load demo.MathGame
 load class success.
  class-info        demo.MathGame
- code-source       /private/tmp/arthas-demo.jar
+ code-source       /private/tmp/math-game.jar
  name              demo.MathGame
  isInterface       false
  isAnnotation      false

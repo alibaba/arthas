@@ -32,6 +32,7 @@ import java.lang.management.MemoryPoolMXBean;
 import java.lang.management.MemoryType;
 import java.lang.management.MemoryUsage;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -206,6 +207,7 @@ public class DashboardCommand extends AnnotatedCommand {
         runtimeInfo.setSystemLoadAverage(ManagementFactory.getOperatingSystemMXBean().getSystemLoadAverage());
         runtimeInfo.setProcessors(Runtime.getRuntime().availableProcessors());
         runtimeInfo.setUptime(ManagementFactory.getRuntimeMXBean().getUptime() / 1000);
+        runtimeInfo.setTimestamp(new Date().getTime());
         dashboardModel.setRuntimeInfo(runtimeInfo);
     }
 
@@ -306,8 +308,8 @@ public class DashboardCommand extends AnnotatedCommand {
                 DashboardModel dashboardModel = new DashboardModel();
 
                 //thread sample
-                Map<String, ThreadVO> threads = ThreadUtil.getThreads();
-                dashboardModel.setThreads(threadSampler.sample(threads.values()));
+                List<ThreadVO> threads = ThreadUtil.getThreads();
+                dashboardModel.setThreads(threadSampler.sample(threads));
 
                 //memory
                 addMemoryInfo(dashboardModel);
@@ -319,7 +321,11 @@ public class DashboardCommand extends AnnotatedCommand {
                 addRuntimeInfo(dashboardModel);
 
                 //tomcat
-                addTomcatInfo(dashboardModel);
+                try {
+                    addTomcatInfo(dashboardModel);
+                } catch (Throwable e) {
+                    logger.error("try to read tomcat info error", e);
+                }
 
                 process.appendResult(dashboardModel);
 

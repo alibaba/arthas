@@ -10,13 +10,18 @@ Arthas Properties
 ## 支持的配置项
 
 
+> 注意配置必须是`驼峰`的，和spring boot的`-`风格不一样。spring boot应用才同时支持`驼峰` 和 `-`风格的配置。
 
 ```
 #arthas.config.overrideAll=true
 arthas.telnetPort=3658
 arthas.httpPort=8563
-arthas.ip=localhost
+arthas.ip=127.0.0.1
 
+# seconds
+arthas.sessionTimeout=1800
+
+#arthas.appName=demoapp
 #arthas.tunnelServer=ws://127.0.0.1:7777/ws
 #arthas.agentId=mmmmmmyiddddd
 ```
@@ -26,6 +31,21 @@ arthas.ip=localhost
 
 
 > 如果是防止一个机器上启动多个 arthas端口冲突。可以配置为随机端口，或者配置为 -1，并且通过tunnel server来使用arthas。
+
+
+### 禁止指定命令
+
+> since 3.5.2
+
+比如配置：
+
+```
+arthas.disabledCommands=stop,dump
+```
+
+也可以在命令行配置： `--disabled-commands stop,dump` 。
+
+> 默认情况下，arthas-spring-boot-starter会禁掉`stop`命令。
 
 ## 配置的优先级
 

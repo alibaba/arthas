@@ -30,6 +30,7 @@ Arthas is built to solve these issues. A developer can troubleshoot production i
 * Supports command line interactive mode, with auto-complete feature enabled.
 * Supports telnet and WebSocket, which enables both local and remote diagnostics with command line and browsers.
 * Supports profiler/Flame Graph
+* Support get objects in the heap that are instances of the specified class. 
 * Supports JDK 6+
 * Supports Linux/Mac/Windows
 
@@ -47,13 +48,14 @@ Contents
 * [Advanced usage](advanced-use.md)
 * [Commands](commands.md)
 * [WebConsole](web-console.md)
+* [Arthas Tunnel](tunnel.md)
 * [Http API](http-api.md)
 * [Docker](docker.md)
 * [Arthas Spring Boot Starter](spring-boot-starter.md)
 * [IDEA Plugin](idea-plugin.md)
 * [User cases](https://github.com/alibaba/arthas/issues?q=label%3Auser-case)
-* [Questions and answers](https://github.com/alibaba/arthas/issues?q=label%3Aquestion-answered)
-* [Fork me at GitHub](https://github.com/alibaba/arthas)
+* [FAQ](faq.md)
+* [Star me at GitHub](https://github.com/alibaba/arthas)
 * [Compile and debug/CONTRIBUTING](https://github.com/alibaba/arthas/blob/master/CONTRIBUTING.md#)
 * [Release Notes](https://github.com/alibaba/arthas/releases)
 * [Contact us](contact-us.md)

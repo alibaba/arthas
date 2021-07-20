@@ -16,7 +16,7 @@ tt
 
 #### 启动 Demo
 
-启动[快速入门](quick-start.md)里的`arthas-demo`。
+启动[快速入门](quick-start.md)里的`math-game`。
 
 #### 记录调用
 
@@ -173,7 +173,45 @@ Time fragment[1004] successfully replayed.
 Affect(row-cnt:1) cost in 14 ms.
 ```
 
-你会发现结果虽然一样，但调用的路径发生了变化，有原来的程序发起变成了 Arthas 自己的内部线程发起的调用了。
+你会发现结果虽然一样，但调用的路径发生了变化，由原来的程序发起变成了 Arthas 自己的内部线程发起的调用了。
+
+
+#### 观察表达式
+
+`-w, --watch-express` 观察时空隧道使用`ognl` 表达式
+
+* 使用[表达式核心变量](advice-class.md)中所有变量作为已知条件编写表达式。
+
+```bash
+[arthas@10718]$ tt -t demo.MathGame run -n 5
+Press Q or Ctrl+C to abort.
+Affect(class count: 1 , method count: 1) cost in 56 ms, listenerId: 1
+ INDEX      TIMESTAMP                   COST(ms)     IS-RET     IS-EXP      OBJECT              CLASS                                     METHOD
+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+ 1000       2021-01-08 21:54:17         0.901091     true       false       0x7699a589          MathGame                                  run
+[arthas@10718]$ tt -w 'target.illegalArgumentCount'  -x 1 -i 1000
+@Integer[60]
+Affect(row-cnt:1) cost in 7 ms.
+```
+
+* 获取类的静态字段、调用类的静态方法
+
+```bash
+[arthas@10718]$ tt -t demo.MathGame run -n 5
+Press Q or Ctrl+C to abort.
+Affect(class count: 1 , method count: 1) cost in 56 ms, listenerId: 1
+ INDEX      TIMESTAMP                   COST(ms)     IS-RET     IS-EXP      OBJECT              CLASS                                     METHOD
+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+ 1000       2021-01-08 21:54:17         0.901091     true       false       0x7699a589          MathGame                                  run
+[arthas@10718]$ tt -w '@demo.MathGame@random.nextInt(100)'  -x 1 -i 1000
+@Integer[46]
+```
+
+注意这里使用 `com.taobao.arthas.core.advisor.Advice#getLoader`加载,使用精确`classloader` [ognl](ognl.md)更好。
+
+
+高级用法 [获取spring context 调用bean 方法](https://github.com/alibaba/arthas/issues/482)
+
 
 - 需要强调的点
 
