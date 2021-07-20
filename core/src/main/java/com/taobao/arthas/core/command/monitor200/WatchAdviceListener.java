@@ -4,12 +4,13 @@ import com.alibaba.arthas.deps.org.slf4j.Logger;
 import com.alibaba.arthas.deps.org.slf4j.LoggerFactory;
 import com.taobao.arthas.core.advisor.AccessPoint;
 import com.taobao.arthas.core.advisor.Advice;
-import com.taobao.arthas.core.advisor.ArthasMethod;
 import com.taobao.arthas.core.advisor.AdviceListenerAdapter;
+import com.taobao.arthas.core.advisor.ArthasMethod;
 import com.taobao.arthas.core.command.model.WatchModel;
 import com.taobao.arthas.core.shell.command.CommandProcess;
 import com.taobao.arthas.core.util.LogUtil;
 import com.taobao.arthas.core.util.ThreadLocalWatch;
+import com.taobao.arthas.core.util.object.ObjectExpandUtils;
 
 import java.util.Date;
 
@@ -84,6 +85,7 @@ class WatchAdviceListener extends AdviceListenerAdapter {
                 // TODO: concurrency issues for process.write
 
                 Object value = getExpressionResult(command.getExpress(), advice, cost);
+                value = ObjectExpandUtils.expand(value, command.getExpand(), command.getSizeLimit());
 
                 WatchModel model = new WatchModel();
                 model.setTs(new Date());

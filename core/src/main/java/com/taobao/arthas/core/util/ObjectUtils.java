@@ -101,8 +101,12 @@ public abstract class ObjectUtils {
     }
 
     public static Object[] toObjectArray(Object source) {
+        return toObjectArray(source, Integer.MAX_VALUE);
+    }
+
+    public static Object[] toObjectArray(Object source, int limit) {
         if(source instanceof Object[]) {
-            return (Object[])((Object[])source);
+            return (Object[]) source;
         } else if(source == null) {
             return new Object[0];
         } else if(!source.getClass().isArray()) {
@@ -112,8 +116,9 @@ public abstract class ObjectUtils {
             if(length == 0) {
                 return new Object[0];
             } else {
+                length = Math.min(length, limit);
                 Class wrapperType = Array.get(source, 0).getClass();
-                Object[] newArray = (Object[])((Object[])Array.newInstance(wrapperType, length));
+                Object[] newArray = (Object[]) Array.newInstance(wrapperType, length);
 
                 for(int i = 0; i < length; ++i) {
                     newArray[i] = Array.get(source, i);
@@ -669,4 +674,5 @@ public abstract class ObjectUtils {
             }
         }
     }
+
 }

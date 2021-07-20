@@ -527,6 +527,7 @@
                         <configuration>
                             <excludes>
                                 <exclude>com/taobao/arthas/core/view/ObjectViewTest*</exclude>
+                                <exclude>com/taobao/arthas/core/model/ObjectRenderTest*</exclude>
                             </excludes>
                         </configuration>
                     </execution>
