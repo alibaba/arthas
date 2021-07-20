@@ -522,7 +522,7 @@ public class Bootstrap {
             AnsiLog.info("The target process already listen port {}, skip attach.", bootstrap.getTelnetPortOrDefault());
         } else {
             //double check telnet port and pid before attach
-            if (bootstrap.getTelnetPort() > 0) {
+            if (bootstrap.getTelnetPortOrDefault() > 0) {
                 telnetPortPid = findProcessByTelnetClient(arthasHomeDir.getAbsolutePath(), bootstrap.getTelnetPortOrDefault());
                 checkTelnetPortPid(bootstrap, telnetPortPid, pid);
             }
@@ -538,14 +538,14 @@ public class Bootstrap {
                 attachArgs.add(bootstrap.getTargetIp());
             }
 
-            if (bootstrap.getTelnetPort() != null) {
+            if (bootstrap.getTelnetPortOrDefault() > 0) {
                 attachArgs.add("-telnet-port");
-                attachArgs.add("" + bootstrap.getTelnetPort());
+                attachArgs.add("" + bootstrap.getTelnetPortOrDefault());
             }
 
-            if (bootstrap.getHttpPort() != null) {
+            if (bootstrap.getHttpPortOrDefault() > 0) {
                 attachArgs.add("-http-port");
-                attachArgs.add("" + bootstrap.getHttpPort());
+                attachArgs.add("" + bootstrap.getHttpPortOrDefault());
             }
 
             attachArgs.add("-core");
@@ -600,7 +600,7 @@ public class Bootstrap {
             AnsiLog.info("Attach process {} success.", pid);
         }
 
-        if (bootstrap.isAttachOnly() || bootstrap.getTelnetPort() <= 0) {
+        if (bootstrap.isAttachOnly() || bootstrap.getTelnetPortOrDefault() <= 0) {
             System.exit(0);
         }
 
