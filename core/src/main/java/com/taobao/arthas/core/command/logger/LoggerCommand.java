@@ -119,7 +119,7 @@ public class LoggerCommand extends AnnotatedCommand {
         if (this.name != null && this.level != null) {
             level(process);
         } else {
-            loggers(process, name);
+            loggers(process);
         }
     }
 
@@ -160,7 +160,7 @@ public class LoggerCommand extends AnnotatedCommand {
         }
     }
 
-    public void loggers(CommandProcess process, String name) {
+    public void loggers(CommandProcess process) {
         Map<ClassLoader, LoggerTypes> classLoaderLoggerMap = new LinkedHashMap<ClassLoader, LoggerTypes>();
 
         for (Class<?> clazz : process.session().getInstrumentation().getAllLoadedClasses()) {

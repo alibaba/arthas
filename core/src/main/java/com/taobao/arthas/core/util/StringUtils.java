@@ -956,4 +956,16 @@ public abstract class StringUtils {
         }
         return text.substring(pos + after.length());
     }
+
+    public static String[] splitMethodInfo(String methodInfo) {
+        int index = methodInfo.indexOf('|');
+        return new String[] { methodInfo.substring(0, index), methodInfo.substring(index + 1, methodInfo.length()) };
+    }
+
+    public static String[] splitInvokeInfo(String invokeInfo) {
+        int index1 = invokeInfo.indexOf('|');
+        int index2 = invokeInfo.indexOf('|', index1 + 1);
+        return new String[] { invokeInfo.substring(0, index1), invokeInfo.substring(index1 + 1, index2),
+                invokeInfo.substring(index2 + 1, invokeInfo.length()) };
+    }
 }
