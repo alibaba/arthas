@@ -20,6 +20,7 @@ import com.taobao.arthas.core.command.express.Express;
 import com.taobao.arthas.core.command.express.ExpressException;
 import com.taobao.arthas.core.command.express.ExpressFactory;
 import com.taobao.arthas.core.command.model.ClassLoaderVO;
+import com.taobao.arthas.core.command.model.OgnlModel;
 import com.taobao.arthas.core.command.model.SearchClassModel;
 import com.taobao.arthas.core.shell.cli.Completion;
 import com.taobao.arthas.core.shell.cli.CompletionUtils;
@@ -208,14 +209,15 @@ public class VmToolCommand extends AnnotatedCommand {
                         }
                     }
 
-                    process.write(new ObjectView(value, this.expand).draw());
-                    process.write("\n");
+                    OgnlModel ognlModel = new OgnlModel()
+                            .setValue(value)
+                            .setExpand(expand);
+                    process.appendResult(ognlModel);
                     process.end();
                 }
             } else if (VmToolAction.forceGc.equals(action)) {
                 vmToolInstance().forceGc();
-                process.write("\n");
-                process.end();
+                process.end(0, "Execute forceGc successfully.");
                 return;
             }
 
