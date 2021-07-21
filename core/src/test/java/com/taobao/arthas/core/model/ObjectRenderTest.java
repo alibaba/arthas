@@ -14,6 +14,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -26,6 +27,7 @@ public class ObjectRenderTest {
 
     static int arrayLenLimit = 15;
     static int objectNumLimit = 30;
+    static int stringLenLimit = 100;
 
     @Test
     public void testSimpleObjects() {
@@ -357,7 +359,8 @@ public class ObjectRenderTest {
     @Test
     public void testObjectTooLargeException() {
         NestedClass nestedClass = new NestedClass(100);
-        ObjectInspector objectInspector = new ObjectInspector(10, arrayLenLimit);
+        ObjectInspector objectInspector = new ObjectInspector(10);
+        objectInspector.setArrayLenLimit(arrayLenLimit);
         ObjectVO objectVO = objectInspector.inspect(nestedClass, 4);
         printObject(objectVO);
 
@@ -378,6 +381,64 @@ public class ObjectRenderTest {
                         "    ],\n" +
                         "    c2=@NestedClass[...],\n" +
                         "] Number of objects exceeds limit: 10"));
+    }
+
+    @Test
+    public void testTruncateStringValue() {
+
+        String str = "This is a very long string.";
+        StringBuilder sb = new StringBuilder(str.length()*10);
+        for (int i = 0; i < 10; i++) {
+            sb.append(str);
+        }
+        String longString = sb.toString();
+
+        // string
+        ObjectVO objectVO = inspectObject(longString, 1);
+        printObject(objectVO);
+        Assert.assertTrue(ObjectRenderer.render(objectVO).contains("(truncated 170 chars)"));
+
+        // array
+        Object[] objects = new Object[]{longString};
+        objectVO = inspectObject(objects, 2);
+        printObject(objectVO);
+        Assert.assertTrue(ObjectRenderer.render(objectVO).contains("(truncated 170 chars)"));
+
+        // collection
+        List list = new ArrayList();
+        list.add(longString);
+        objectVO = inspectObject(objects, 2);
+        printObject(objectVO);
+        Assert.assertTrue(ObjectRenderer.render(objectVO).contains("(truncated 170 chars)"));
+
+        // map
+        Map map = new HashMap();
+        map.put("longString", longString);
+        objectVO = inspectObject(map, 2);
+        printObject(objectVO);
+        Assert.assertTrue(ObjectRenderer.render(objectVO).contains("(truncated 170 chars)"));
+
+        // complex object
+        SonBean sonBean = new SonBean();
+        sonBean.setJ(longString);
+        objectVO = inspectObject(sonBean, 2);
+        printObject(objectVO);
+        Assert.assertTrue(ObjectRenderer.render(objectVO).contains("(truncated 170 chars)"));
+
+        // nest map
+        Map nestMap = new HashMap();
+        nestMap.put("sonBean", sonBean);
+        objectVO = inspectObject(nestMap, 3);
+        printObject(objectVO);
+        Assert.assertTrue(ObjectRenderer.render(objectVO).contains("(truncated 170 chars)"));
+
+        // nest list
+        List nestList = new ArrayList();
+        nestList.add(nestMap);
+        objectVO = inspectObject(nestList, 3);
+        printObject(objectVO);
+        Assert.assertTrue(ObjectRenderer.render(objectVO).contains("(truncated 170 chars)"));
+
     }
 
     /**
@@ -419,12 +480,15 @@ public class ObjectRenderTest {
         }
     }
 
-    private ObjectInspector newInspector() {
-        return new ObjectInspector(objectNumLimit, arrayLenLimit);
+    private ObjectInspector newInspector(int objectNumLimit, int arrayLenLimit, int stringLenLimit) {
+        ObjectInspector objectInspector = new ObjectInspector(objectNumLimit);
+        objectInspector.setArrayLenLimit(arrayLenLimit);
+        objectInspector.setStringLenLimit(stringLenLimit);
+        return objectInspector;
     }
 
     private ObjectVO inspectObject(Object object, int expand) {
-        return new ObjectInspector(objectNumLimit, arrayLenLimit).inspect(object, expand);
+        return newInspector(objectNumLimit, arrayLenLimit, stringLenLimit).inspect(object, expand);
     }
 
     private void testSimpleArray(Object array, String testJson, String testString) {

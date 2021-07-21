@@ -22,23 +22,20 @@ public class ObjectInspector {
 
     public static final int DEFAULT_OBJECT_NUMBER_LIMIT = 500;
     public static final int DEFAULT_ARRAY_LEN_LIMIT = 100;
+    public static final int DEFAULT_STRING_LEN_LIMIT = 4096;
 
-    private int objectNumberLimit;
-    private int arrayLenLimit;
+
+    private int objectNumberLimit = DEFAULT_OBJECT_NUMBER_LIMIT;
+    private int arrayLenLimit = DEFAULT_ARRAY_LEN_LIMIT;
+    private int stringLenLimit = DEFAULT_STRING_LEN_LIMIT;
     //子对象数量
     private int objectCount;
 
     public ObjectInspector() {
-        this(DEFAULT_OBJECT_NUMBER_LIMIT, DEFAULT_ARRAY_LEN_LIMIT);
     }
 
     public ObjectInspector(int objectNumberLimit) {
-        this(objectNumberLimit, DEFAULT_ARRAY_LEN_LIMIT);
-    }
-
-    public ObjectInspector(int objectNumberLimit, int arrayLenLimit) {
-        this.setObjectNumberLimit(objectNumberLimit);
-        this.setArrayLenLimit(arrayLenLimit);
+        this.objectNumberLimit = objectNumberLimit;
     }
 
     public ObjectVO inspect(Object object, int expand) {
@@ -51,11 +48,24 @@ public class ObjectInspector {
             return objectVO;
         } catch (ObjectTooLargeException e) {
             // unreachable statement
-            return new ObjectVO(object != null ? object.getClass().getSimpleName() : "", "...");
+            return new ObjectVO(object != null ? object.getClass().getSimpleName() : "", e.getMessage());
         }
     }
 
     private ObjectVO inspectObject(Object obj, int deep, int expand) throws ObjectTooLargeException {
+        ObjectVO objectVO = this.inspectObject0(obj, deep, expand);
+        if (objectVO != null && objectVO.getValue() != null && objectVO.getValue() instanceof String) {
+            String stringValue = (String) objectVO.getValue();
+            if (stringValue.length() > stringLenLimit) {
+                // truncate string value
+                objectVO.setValue(stringValue.substring(0, stringLenLimit) + "...(truncated " +
+                        (stringValue.length() - stringLenLimit) + " chars)");
+            }
+        }
+        return objectVO;
+    }
+
+    private ObjectVO inspectObject0(Object obj, int deep, int expand) throws ObjectTooLargeException {
         checkObjectAmount();
 
         if (null == obj) {
@@ -588,8 +598,15 @@ public class ObjectInspector {
         this.arrayLenLimit = arrayLenLimit < 10 ? 10 :arrayLenLimit;
     }
 
+    public int getStringLenLimit() {
+        return stringLenLimit;
+    }
 
-    // --------------- static methods --------------------//
+    public void setStringLenLimit(int stringLenLimit) {
+        this.stringLenLimit = stringLenLimit < 100 ? 100 : stringLenLimit;
+    }
+
+// --------------- static methods --------------------//
 
     private static Object[] toArray(int[] arrays, int limit) {
         limit = Math.min(arrays.length, limit);

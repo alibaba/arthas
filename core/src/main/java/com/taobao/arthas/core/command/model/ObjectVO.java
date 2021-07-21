@@ -22,13 +22,13 @@ public class ObjectVO {
     //map entry key
     protected ObjectVO key;
 
-    // string, collection/array
+    //collection/array size
     private Integer size;
 
     //complex object's fields
     protected List<ObjectVO> fields;
 
-    //exceed number limit
+    // whether exceed number limit
     private Boolean exceedLimit;
 
     private Integer objectNumberLimit;
