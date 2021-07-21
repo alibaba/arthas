@@ -1,6 +1,7 @@
 package com.taobao.arthas.core.util.object;
 
 import com.taobao.arthas.core.command.model.ObjectVO;
+import com.taobao.arthas.core.util.StringUtils;
 
 import java.util.Collection;
 
@@ -29,30 +30,25 @@ public abstract class ObjectRenderer {
             return;
         }
         if (vo.getKey() != null) {
-            //kv entry
-            render(vo.getKey(), deep, sb);
-            sb.append(" : ");
-            render((ObjectVO) vo.getValue(), deep, sb);
+            renderKeyValueEntry(vo, deep, sb);
             return;
         }
 
         if (vo.getName() != null) {
+            // object field name
             sb.append(vo.getName()).append('=');
         }
+
         if (vo.getType() != null) {
-            //object
+            //object type
             sb.append('@').append(vo.getType()).append('[');
         }
 
+        // object value start
         int nextDeep = deep+1;
         if (vo.getFields() != null) {
-            //fields
-            sb.append('\n');
-            for (ObjectVO field : vo.getFields()) {
-                renderTab(sb, nextDeep);
-                render(field, nextDeep, sb);
-                sb.append(",\n");
-            }
+            // complex object: fields is not null
+            renderComplexObject(vo, nextDeep, sb);
         } else {
             //value
             if (vo.getSize() != null) {
@@ -68,12 +64,33 @@ public abstract class ObjectRenderer {
                 renderValue(vo, deep, sb);
             }
         }
+
+        // object value end
         if (vo.getType() != null) {
             if (sb.charAt(sb.length() - 1) == '\n') {
                 renderTab(sb, deep);
             }
             sb.append(']');
         }
+    }
+
+    private static void renderComplexObject(ObjectVO vo, int deep, StringBuffer sb) {
+        sb.append('\n');
+        for (ObjectVO field : vo.getFields()) {
+            if (StringUtils.isEmpty(field.getName())) {
+                throw new IllegalArgumentException("Complex object's field name is empty: " + sb + "... ");
+            }
+            renderTab(sb, deep);
+            render(field, deep, sb);
+            sb.append(",\n");
+        }
+    }
+
+    private static void renderKeyValueEntry(ObjectVO vo, int deep, StringBuffer sb) {
+        //kv entry
+        render(vo.getKey(), deep, sb);
+        sb.append(" : ");
+        render((ObjectVO) vo.getValue(), deep, sb);
     }
 
     private static StringBuffer renderTab(StringBuffer sb, int deep) {
@@ -91,46 +108,39 @@ public abstract class ObjectRenderer {
             sb.append('\n');
             Collection collection = (Collection) value;
             for (Object e : collection) {
-                if (e instanceof ObjectVO) {
-                    ObjectVO objectVO = (ObjectVO) e;
-                    renderTab(sb, nextDeep);
-                    render(objectVO, nextDeep, sb);
-                    sb.append(",\n");
-                } else {
-                    renderTab(sb, nextDeep);
-                    sb.append(e).append(",\n");
-                }
+                renderElement(e, nextDeep, sb);
             }
-            //如果没有完全显示所有元素，则添加省略提示
-            int count = collection.size();
-            if (vo.getSize() > count) {
-                String msg = count + " out of " + vo.getSize() + " displayed, " + (vo.getSize() - count) + " remaining.\n";
-                renderTab(sb, nextDeep);
-                sb.append(msg);
-            }
+            renderSize(vo, collection.size(), nextDeep, sb);
         } else if (value instanceof Object[]) {
             sb.append('\n');
             Object[] objs = (Object[]) value;
             for (int i = 0; i < objs.length; i++) {
-                Object obj = objs[i];
-                if (obj instanceof ObjectVO) {
-                    ObjectVO objectVO = (ObjectVO) obj;
-                    renderTab(sb, nextDeep);
-                    render(objectVO, nextDeep, sb);
-                    sb.append(",\n");
-                } else {
-                    renderTab(sb, nextDeep);
-                    sb.append(obj).append(",\n");
-                }
+                renderElement(objs[i], nextDeep, sb);
             }
-            //如果没有完全显示所有元素，则添加省略提示
-            int count = objs.length;
-            if (vo.getSize() > count) {
-                String msg = count + " out of " + vo.getSize() + " displayed, " + (vo.getSize() - count) + " remaining.\n";
-                renderTab(sb, nextDeep).append(msg);
-            }
+            renderSize(vo, objs.length, nextDeep, sb);
         } else {
             sb.append(value);
+        }
+    }
+
+    private static void renderElement(Object obj, int deep, StringBuffer sb) {
+        if (obj instanceof ObjectVO) {
+            ObjectVO objectVO = (ObjectVO) obj;
+            renderTab(sb, deep);
+            render(objectVO, deep, sb);
+            sb.append(",\n");
+        } else {
+            renderTab(sb, deep);
+            sb.append(obj).append(",\n");
+        }
+    }
+
+    private static void renderSize(ObjectVO vo, int elemCount, int deep, StringBuffer sb) {
+        //如果没有完全显示所有元素，则添加省略提示
+        if (vo.getSize() > elemCount) {
+            String msg = elemCount + " out of " + vo.getSize() + " displayed, " + (vo.getSize() - elemCount) + " remaining.\n";
+            renderTab(sb, deep);
+            sb.append(msg);
         }
     }
 
