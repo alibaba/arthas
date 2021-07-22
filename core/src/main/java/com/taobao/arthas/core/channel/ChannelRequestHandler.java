@@ -407,6 +407,8 @@ public class ChannelRequestHandler implements ChannelClient.RequestListener {
 
             List<ResultModel> resultModels = packingResultDistributor.getResults();
             sendResults(responseBuilder, resultModels, executeParams.getResultFormat());
+        }catch (Throwable e) {
+            logger.error("process job result failed", e);
         } finally {
             tryCloseOneTimeSession(session);
         }
