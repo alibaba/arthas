@@ -13,8 +13,8 @@
 
  Examples:
    vmoption
-   vmoption PrintGCDetails
-   vmoption PrintGCDetails true
+   vmoption PrintGC
+   vmoption PrintGC true
 
  WIKI:
    https://arthas.aliyun.com/doc/vmoption
@@ -61,35 +61,53 @@
 
 ### 查看指定的option
 
-`vmoption PrintGCDetails`{{execute T2}}
+`vmoption PrintGC`{{execute T2}}
 
 ```bash
-[arthas@56963]$ vmoption PrintGCDetails
- KEY                    VALUE                   ORIGIN                 WRITEABLE
----------------------------------------------------------------------------------------------
- PrintGCDetails         false                   MANAGEMENT             true
+$ vmoption PrintGC
+ KEY                 VALUE                ORIGIN              WRITEABLE
+---------------------------------------------------------------------------------
+ PrintGC             false                MANAGEMENT          true
 ```
 
 ### 更新指定的option
 
+`vmoption PrintGC true`{{execute T2}}
+
+```bash
+$ vmoption PrintGC true
+Successfully updated the vm option.
+ NAME     BEFORE-VALUE  AFTER-VALUE
+------------------------------------
+ PrintGC  false         true
+```
+
+再使用`vmtool`命令执行强制GC，则可以在`Terminal 1`看到打印出GC日志：
+
+`vmtool --action forceGc`{{execute T2}}
+
+```
+[GC (JvmtiEnv ForceGarbageCollection)  33752K->19564K(251392K), 0.0082960 secs]
+[Full GC (JvmtiEnv ForceGarbageCollection)  19564K->17091K(166912K), 0.0271085 secs]
+```
+
+### 配置打印GC详情
+
 `vmoption PrintGCDetails true`{{execute T2}}
 
 ```bash
-[arthas@56963]$ vmoption PrintGCDetails true
+$ vmoption PrintGCDetails true
 Successfully updated the vm option.
-PrintGCDetails=true
+ NAME            BEFORE-VALUE  AFTER-VALUE
+-------------------------------------------
+ PrintGCDetails  false         true
 ```
 
-此时，切换到arthas demo 运行所在的`Terminal`，使用`Ctrl+c`退出，发现比之前多打印了GC垃圾回收信息：
+再使用`vmtool`命令执行强制GC，则可以在`Terminal 1`看到打印出GC详情：
 
-```bash
-Heap
- def new generation   total 10432K, used 5682K [0x00000000f4800000, 0x00000000f5350000, 0x00000000f8550000)
-  eden space 9280K,  61% used [0x00000000f4800000, 0x00000000f4d8cad0, 0x00000000f5110000)
-  from space 1152K,   0% used [0x00000000f5110000, 0x00000000f5110000, 0x00000000f5230000)
-  to   space 1152K,   0% used [0x00000000f5230000, 0x00000000f5230000, 0x00000000f5350000)
- tenured generation   total 22992K, used 13795K [0x00000000f8550000, 0x00000000f9bc4000, 0x0000000100000000)
-   the space 22992K,  59% used [0x00000000f8550000, 0x00000000f92c8cc8, 0x00000000f92c8e00, 0x00000000f9bc4000)
- Metaspace       used 14926K, capacity 15128K, committed 15360K, reserved 1062912K
-  class space    used 1895K, capacity 1954K, committed 2048K, reserved 1048576K
+`vmtool --action forceGc`{{execute T2}}
+
+```
+[GC (JvmtiEnv ForceGarbageCollection) [PSYoungGen: 4395K->352K(76288K)] 21487K->17443K(166912K), 0.0013122 secs] [Times: user=0.01 sys=0.00, real=0.00 secs]
+[Full GC (JvmtiEnv ForceGarbageCollection) [PSYoungGen: 352K->0K(76288K)] [ParOldGen: 17091K->16076K(88064K)] 17443K->16076K(164352K), [Metaspace: 20651K->20651K(1069056K)], 0.0251548 secs] [Times: user=0.15 sys=0.01, real=0.02 secs]
 ```

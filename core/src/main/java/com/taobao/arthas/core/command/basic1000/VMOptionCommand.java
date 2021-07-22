@@ -29,10 +29,16 @@ import com.taobao.middleware.cli.annotations.Summary;
  * @author hengyunabc 2019-09-02
  *
  */
+// @formatter:off
 @Name("vmoption")
 @Summary("Display, and update the vm diagnostic options.")
-@Description("\nExamples:\n" + "  vmoption\n" + "  vmoption PrintGCDetails\n" + "  vmoption PrintGCDetails true\n"
-                + Constants.WIKI + Constants.WIKI_HOME + "vmoption")
+@Description("\nExamples:\n" + 
+        "  vmoption\n" + 
+        "  vmoption PrintGC\n" + 
+        "  vmoption PrintGC true\n" + 
+        "  vmoption PrintGCDetails true\n" + 
+        Constants.WIKI + Constants.WIKI_HOME + "vmoption")
+//@formatter:on
 public class VMOptionCommand extends AnnotatedCommand {
     private static final Logger logger = LoggerFactory.getLogger(VMOptionCommand.class);
 
