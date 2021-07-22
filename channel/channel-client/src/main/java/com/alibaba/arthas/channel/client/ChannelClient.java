@@ -54,6 +54,7 @@ public class ChannelClient {
     private String channelVersion = "1.0.0";
     private List<String> channelFeatures = Arrays.asList("WebConsole", "ExecuteCommand");
     private long lastHeartbeatTime;
+    private int workThreads = 2;
 
     public ChannelClient(String host, int port) {
         this.host = host;
@@ -69,7 +70,7 @@ public class ChannelClient {
 
     private void init() {
         group = new NioEventLoopGroup(1, new DefaultThreadFactory("arthas-ChannelWebsocketClient", true));
-        executorService = Executors.newScheduledThreadPool(1, new ThreadFactory() {
+        executorService = Executors.newScheduledThreadPool(workThreads, new ThreadFactory() {
             @Override
             public Thread newThread(Runnable r) {
                 final Thread t = new Thread(r, "arthas-channel-client");

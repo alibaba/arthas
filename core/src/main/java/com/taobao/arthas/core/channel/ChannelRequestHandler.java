@@ -57,11 +57,9 @@ import io.termd.core.function.Function;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.Executors;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
-import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.TimeUnit;
 
 import static com.taobao.arthas.core.channel.LocalConsoleClientManager.writeData;
@@ -72,6 +70,7 @@ import static com.taobao.arthas.core.channel.LocalConsoleClientManager.writeData
 public class ChannelRequestHandler implements ChannelClient.RequestListener {
 
     private static final Logger logger = LoggerFactory.getLogger(ChannelRequestHandler.class);
+    private static final String ONETIME_SESSION_KEY = "oneTimeSession";
     public static final int DEFAULT_EXEC_TIMEOUT = 30000;
     private final ScheduledExecutorService executorService;
 
@@ -100,6 +99,9 @@ public class ChannelRequestHandler implements ChannelClient.RequestListener {
     public void onRequest(ActionRequest request) {
 
         try {
+            if (logger.isDebugEnabled()) {
+                logger.debug("accept request: {}", request);
+            }
             processRequest(request);
         } catch (Throwable e) {
             String msg = "process request error: " + e.toString();
@@ -313,61 +315,90 @@ public class ChannelRequestHandler implements ChannelClient.RequestListener {
         }
     }
 
-    private void processExec(ActionRequest request, Session session) {
-        boolean oneTimeAccess = false;
+    private void processExec(final ActionRequest request, Session session) {
+
+        final ExecuteParams executeParams = request.getExecuteParams();
+        String commandLine = executeParams.getCommandLine();
+
         if (session == null) {
-            oneTimeAccess = true;
             session = sessionManager.createSession();
+            session.put(ONETIME_SESSION_KEY, true);
+        }
+        if (!session.tryLock()) {
+            sendError(request, session, ResponseStatus.REFUSED, "Another command is executing.");
+            return;
+        }
+        final PackingResultDistributor packingResultDistributor = new PackingResultDistributorImpl(session);
+
+        Job job = null;
+        int lock = session.getLock();
+        try {
+            Job foregroundJob = session.getForegroundJob();
+            if (foregroundJob != null) {
+                logger.info("Another job is running, jobId: {}", foregroundJob.id());
+                sendError(request, session, ResponseStatus.REFUSED, "Another job is running.");
+                return;
+            }
+
+            job = this.createJob(commandLine, session, packingResultDistributor);
+            session.setForegroundJob(job);
+            //updateSessionInputStatus(session, InputStatus.ALLOW_INTERRUPT);
+
+            // exec job
+            job.run();
+        } catch (Throwable e) {
+            logger.error("Exec command failed:" + e.getMessage() + ", command:" + commandLine, e);
+            sendError(request, session, ResponseStatus.FAILED, "Exec command failed:" + e.getMessage());
+            tryCloseOneTimeSession(session);
+            return;
+        } finally {
+            if (session.getLock() == lock) {
+                session.unLock();
+            }
         }
 
+        //wait for job completed or timeout
+        int timeout = executeParams.getExecTimeout();
+        if (timeout <= 0) {
+            timeout = DEFAULT_EXEC_TIMEOUT;
+        }
+
+        final long startTime = System.currentTimeMillis();
+        final int finalTimeout = timeout;
+        final Job finalJob = job;
+        final int checkingIntervalMs = 100;
+        Runnable checkJobTask = new Runnable() {
+            @Override
+            public void run() {
+                Session session = finalJob.getSession();
+                boolean timeExpired = (System.currentTimeMillis() - startTime > finalTimeout);
+                if (isJobCompleted(finalJob) || timeExpired) {
+                    onJobCompletedOrExpired(session, timeExpired, finalJob, request, packingResultDistributor);
+                } else {
+                    // delay check again
+                    executorService.schedule(this, checkingIntervalMs, TimeUnit.MILLISECONDS);
+                }
+            }
+        };
+        executorService.schedule(checkJobTask, checkingIntervalMs, TimeUnit.MILLISECONDS);
+    }
+
+    private boolean isJobCompleted(final Job finalJob) {
+        switch (finalJob.status()) {
+            case STOPPED:
+            case TERMINATED:
+                return true;
+        }
+        return false;
+    }
+
+    private void onJobCompletedOrExpired(Session session, boolean timeExpired, Job finalJob, ActionRequest request, PackingResultDistributor packingResultDistributor) {
         try {
             ExecuteParams executeParams = request.getExecuteParams();
-            String commandLine = executeParams.getCommandLine();
-            PackingResultDistributor packingResultDistributor = null;
-            Job job = null;
-
-            if (!session.tryLock()) {
-                sendError(request, session, ResponseStatus.REFUSED, "Another command is executing.");
-                return;
-            }
-
-            int lock = session.getLock();
-            try {
-                Job foregroundJob = session.getForegroundJob();
-                if (foregroundJob != null) {
-                    logger.info("Another job is running, jobId: {}", foregroundJob.id());
-                    sendError(request, session, ResponseStatus.REFUSED, "Another job is running.");
-                    return;
-                }
-
-                packingResultDistributor = new PackingResultDistributorImpl(session);
-                job = this.createJob(commandLine, session, packingResultDistributor);
-                session.setForegroundJob(job);
-                //updateSessionInputStatus(session, InputStatus.ALLOW_INTERRUPT);
-
-                job.run();
-
-            } catch (Throwable e) {
-                logger.error("Exec command failed:" + e.getMessage() + ", command:" + commandLine, e);
-                sendError(request, session, ResponseStatus.FAILED, "Exec command failed:" + e.getMessage());
-                return;
-            } finally {
-                if (session.getLock() == lock) {
-                    session.unLock();
-                }
-            }
-
-            //wait for job completed or timeout
-            int timeout = executeParams.getExecTimeout();
-            if (timeout <= 0) {
-                timeout = DEFAULT_EXEC_TIMEOUT;
-            }
-            boolean timeExpired = !waitForJob(job, timeout);
-
             ActionResponse.Builder responseBuilder;
             if (timeExpired) {
-                logger.warn("Job is exceeded time limit, force interrupt it, jobId: {}", job.id());
-                job.interrupt();
+                logger.warn("Job is exceeded time limit, force interrupt it, jobId: {}", finalJob.id());
+                finalJob.interrupt();
                 responseBuilder = createResponse(request, session, ResponseStatus.INTERRUPTED,
                         "The job is exceeded time limit, force interrupt");
             } else {
@@ -376,11 +407,14 @@ public class ChannelRequestHandler implements ChannelClient.RequestListener {
 
             List<ResultModel> resultModels = packingResultDistributor.getResults();
             sendResults(responseBuilder, resultModels, executeParams.getResultFormat());
-
         } finally {
-            if (oneTimeAccess) {
-                sessionManager.closeSession(session.getSessionId());
-            }
+            tryCloseOneTimeSession(session);
+        }
+    }
+
+    private void tryCloseOneTimeSession(Session session) {
+        if (session.get(ONETIME_SESSION_KEY) != null) {
+            sessionManager.closeSession(session.getSessionId());
         }
     }
 
@@ -585,24 +619,6 @@ public class ChannelRequestHandler implements ChannelClient.RequestListener {
                 .setSessionId(session.getSessionId())
                 .setStatus(status)
                 .setMessage(message);
-    }
-
-    private boolean waitForJob(Job job, int timeout) {
-        long startTime = System.currentTimeMillis();
-        while (true) {
-            switch (job.status()) {
-                case STOPPED:
-                case TERMINATED:
-                    return true;
-            }
-            if (System.currentTimeMillis() - startTime > timeout) {
-                return false;
-            }
-            try {
-                Thread.sleep(100);
-            } catch (InterruptedException e) {
-            }
-        }
     }
 
     private synchronized Job createJob(List<CliToken> args, Session session, ResultDistributor resultDistributor) {
