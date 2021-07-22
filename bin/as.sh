@@ -8,10 +8,10 @@
 
 # program : Arthas
 #  author : Core Engine @ Taobao.com
-#    date : 2021-06-10
+#    date : 2021-07-22
 
 # current arthas script version
-ARTHAS_SCRIPT_VERSION=3.5.2
+ARTHAS_SCRIPT_VERSION=3.5.3
 
 # SYNOPSIS
 #   rreadlink <fileOrDirPath>
@@ -466,7 +466,7 @@ EXAMPLES:
   ./as.sh --stat-url 'http://192.168.10.11:8080/api/stat'
   ./as.sh -c 'sysprop; thread' <pid>
   ./as.sh -f batch.as <pid>
-  ./as.sh --use-version 3.5.2
+  ./as.sh --use-version 3.5.3
   ./as.sh --session-timeout 3600
   ./as.sh --attach-only
   ./as.sh --disabled-commands stop,dump
