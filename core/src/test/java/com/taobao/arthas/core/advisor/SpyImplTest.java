@@ -17,12 +17,14 @@ public class SpyImplTest {
         Assertions.assertThat(StringUtils.splitMethodInfo("a|b")).containsExactly("a", "b");
         Assertions.assertThat(StringUtils.splitMethodInfo("xxxxxxxxxx|fffffffffff")).containsExactly("xxxxxxxxxx",
                 "fffffffffff");
+        Assertions.assertThat(StringUtils.splitMethodInfo("print|(ILjava/util/List;)V")).containsExactly("print",
+                "(ILjava/util/List;)V");
     }
 
     @Test
     public void testSplitInvokeInfo() throws Throwable {
-        Assertions.assertThat(StringUtils.splitInvokeInfo("a|b|c")).containsExactly("a", "b", "c");
-        Assertions.assertThat(StringUtils.splitInvokeInfo("xxxxxxxxxx|fffffffffff|yyy")).containsExactly("xxxxxxxxxx",
-                "fffffffffff", "yyy");
+        Assertions.assertThat(StringUtils.splitInvokeInfo("demo/MathGame|primeFactors|(I)Ljava/util/List;|24"))
+                .containsExactly("demo/MathGame", "primeFactors", "(I)Ljava/util/List;", "24");
+
     }
 }
