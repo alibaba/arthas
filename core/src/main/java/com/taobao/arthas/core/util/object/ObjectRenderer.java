@@ -41,7 +41,8 @@ public abstract class ObjectRenderer {
 
         if (vo.getType() != null) {
             //object type
-            sb.append('@').append(vo.getType()).append('[');
+            String type = toSimpleType(vo.getType());
+            sb.append('@').append(type).append('[');
         }
 
         // object value start
@@ -72,6 +73,11 @@ public abstract class ObjectRenderer {
             }
             sb.append(']');
         }
+    }
+
+    private static String toSimpleType(String typeName) {
+        int p = typeName.lastIndexOf('.'); // trim package name
+        return p >= 0 ? typeName.substring(p+1) : typeName;
     }
 
     private static void renderComplexObject(ObjectVO vo, int deep, StringBuffer sb) {

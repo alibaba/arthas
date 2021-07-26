@@ -5,6 +5,7 @@ import com.taobao.arthas.core.command.model.ObjectVO;
 import com.taobao.arthas.core.util.object.ObjectInspector;
 import com.taobao.arthas.core.util.object.ObjectRenderer;
 import org.assertj.core.api.Assertions;
+import org.hamcrest.core.StringContains;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -182,7 +183,7 @@ public class ObjectRenderTest {
                         "]");
 
         testSimpleArray(new Object[]{1.0, 2L, 3.0f},
-                "{\"size\":3,\"type\":\"Object[]\",\"value\":[{\"type\":\"Double\",\"value\":1.0},{\"type\":\"Long\",\"value\":2},{\"type\":\"Float\",\"value\":3.0}]}",
+                "{\"size\":3,\"type\":\"Object[]\",\"value\":[{\"type\":\"java.lang.Double\",\"value\":1.0},{\"type\":\"java.lang.Long\",\"value\":2},{\"type\":\"java.lang.Float\",\"value\":3.0}]}",
                 "@Object[][\n" +
                         "    @Double[1.0],\n" +
                         "    @Long[2],\n" +
@@ -190,7 +191,7 @@ public class ObjectRenderTest {
                         "]");
 
         testSimpleArray(new String[]{"str1", "2", "3"},
-                "{\"size\":3,\"type\":\"String[]\",\"value\":[{\"type\":\"String\",\"value\":\"str1\"},{\"type\":\"String\",\"value\":\"2\"},{\"type\":\"String\",\"value\":\"3\"}]}",
+                "{\"size\":3,\"type\":\"String[]\",\"value\":[{\"type\":\"java.lang.String\",\"value\":\"str1\"},{\"type\":\"java.lang.String\",\"value\":\"2\"},{\"type\":\"java.lang.String\",\"value\":\"3\"}]}",
                 "@String[][\n" +
                         "    @String[str1],\n" +
                         "    @String[2],\n" +
@@ -248,7 +249,7 @@ public class ObjectRenderTest {
                 "    @String[boolValue] : @Boolean[true],\n" +
                 "    @String[doubleValue] : @Double[123.0],\n" +
                 "    @String[floatValue] : @Float[123.0],\n" +
-                "    @String[listValue] : @ArrayList[isEmpty=false;size=3],\n" +
+                "    @String[listValue] : @Arrays$ArrayList[isEmpty=false;size=3],\n" +
                 "    @String[IntArray] : @Integer[][isEmpty=false;size=3],\n" +
                 "    @String[objectArray] : @Object[][isEmpty=false;size=3],\n" +
                 "    @String[objectValue] : @Object[java.lang.Object@ffffffff],\n" +
@@ -264,7 +265,7 @@ public class ObjectRenderTest {
                 "    @String[boolValue] : @Boolean[true],\n" +
                 "    @String[doubleValue] : @Double[123.0],\n" +
                 "    @String[floatValue] : @Float[123.0],\n" +
-                "    @String[listValue] : @ArrayList[\n" +
+                "    @String[listValue] : @Arrays$ArrayList[\n" +
                 "        @Integer[1],\n" +
                 "        @Integer[2],\n" +
                 "        @Integer[3],\n" +
@@ -286,7 +287,7 @@ public class ObjectRenderTest {
     }
 
     private void printObject(ObjectVO objectVO) {
-        System.out.println(JSON.toJSONString(objectVO));
+        System.out.println(JSON.toJSONString(objectVO, true));
         System.out.println();
         System.out.println(ObjectRenderer.render(objectVO));
         System.out.println();
@@ -325,35 +326,155 @@ public class ObjectRenderTest {
         ObjectVO objectVO = inspectObject(nestedClass, 3);
         printObject(objectVO);
 
-        Assert.assertEquals("@NestedClass[\n" +
+        // object view
+        Assert.assertEquals("@ObjectRenderTest$NestedClass[\n" +
                 "    code=@Integer[100],\n" +
-                "    c1=@NestedClass[\n" +
+                "    c1=@ObjectRenderTest$NestedClass[\n" +
                 "        code=@Integer[1],\n" +
-                "        c1=@NestedClass[\n" +
+                "        c1=@ObjectRenderTest$NestedClass[\n" +
                 "            code=@Integer[1],\n" +
-                "            c1=@NestedClass[com.taobao.arthas.core.model.ObjectRenderTest$NestedClass@ffffffff],\n" +
-                "            c2=@NestedClass[com.taobao.arthas.core.model.ObjectRenderTest$NestedClass@ffffffff],\n" +
+                "            c1=@ObjectRenderTest$NestedClass[com.taobao.arthas.core.model.ObjectRenderTest$NestedClass@ffffffff],\n" +
+                "            c2=@ObjectRenderTest$NestedClass[com.taobao.arthas.core.model.ObjectRenderTest$NestedClass@ffffffff],\n" +
                 "        ],\n" +
-                "        c2=@NestedClass[\n" +
+                "        c2=@ObjectRenderTest$NestedClass[\n" +
                 "            code=@Integer[2],\n" +
-                "            c1=@NestedClass[com.taobao.arthas.core.model.ObjectRenderTest$NestedClass@ffffffff],\n" +
-                "            c2=@NestedClass[com.taobao.arthas.core.model.ObjectRenderTest$NestedClass@ffffffff],\n" +
+                "            c1=@ObjectRenderTest$NestedClass[com.taobao.arthas.core.model.ObjectRenderTest$NestedClass@ffffffff],\n" +
+                "            c2=@ObjectRenderTest$NestedClass[com.taobao.arthas.core.model.ObjectRenderTest$NestedClass@ffffffff],\n" +
                 "        ],\n" +
                 "    ],\n" +
-                "    c2=@NestedClass[\n" +
+                "    c2=@ObjectRenderTest$NestedClass[\n" +
                 "        code=@Integer[2],\n" +
-                "        c1=@NestedClass[\n" +
+                "        c1=@ObjectRenderTest$NestedClass[\n" +
                 "            code=@Integer[1],\n" +
-                "            c1=@NestedClass[com.taobao.arthas.core.model.ObjectRenderTest$NestedClass@ffffffff],\n" +
-                "            c2=@NestedClass[com.taobao.arthas.core.model.ObjectRenderTest$NestedClass@ffffffff],\n" +
+                "            c1=@ObjectRenderTest$NestedClass[com.taobao.arthas.core.model.ObjectRenderTest$NestedClass@ffffffff],\n" +
+                "            c2=@ObjectRenderTest$NestedClass[com.taobao.arthas.core.model.ObjectRenderTest$NestedClass@ffffffff],\n" +
                 "        ],\n" +
-                "        c2=@NestedClass[\n" +
+                "        c2=@ObjectRenderTest$NestedClass[\n" +
                 "            code=@Integer[2],\n" +
-                "            c1=@NestedClass[com.taobao.arthas.core.model.ObjectRenderTest$NestedClass@ffffffff],\n" +
-                "            c2=@NestedClass[com.taobao.arthas.core.model.ObjectRenderTest$NestedClass@ffffffff],\n" +
+                "            c1=@ObjectRenderTest$NestedClass[com.taobao.arthas.core.model.ObjectRenderTest$NestedClass@ffffffff],\n" +
+                "            c2=@ObjectRenderTest$NestedClass[com.taobao.arthas.core.model.ObjectRenderTest$NestedClass@ffffffff],\n" +
                 "        ],\n" +
                 "    ],\n" +
                 "]", replaceHashCode(ObjectRenderer.render(objectVO)));
+
+        // json
+        Assert.assertEquals("{\n" +
+                        "  \"fields\":[\n" +
+                        "    {\n" +
+                        "      \"name\":\"code\",\n" +
+                        "      \"type\":\"java.lang.Integer\",\n" +
+                        "      \"value\":100\n" +
+                        "    },\n" +
+                        "    {\n" +
+                        "      \"fields\":[\n" +
+                        "        {\n" +
+                        "          \"name\":\"code\",\n" +
+                        "          \"type\":\"java.lang.Integer\",\n" +
+                        "          \"value\":1\n" +
+                        "        },\n" +
+                        "        {\n" +
+                        "          \"fields\":[\n" +
+                        "            {\n" +
+                        "              \"name\":\"code\",\n" +
+                        "              \"type\":\"java.lang.Integer\",\n" +
+                        "              \"value\":1\n" +
+                        "            },\n" +
+                        "            {\n" +
+                        "              \"name\":\"c1\",\n" +
+                        "              \"type\":\"com.taobao.arthas.core.model.ObjectRenderTest$NestedClass\",\n" +
+                        "              \"value\":\"com.taobao.arthas.core.model.ObjectRenderTest$NestedClass@ffffffff\"\n" +
+                        "            },\n" +
+                        "            {\n" +
+                        "              \"name\":\"c2\",\n" +
+                        "              \"type\":\"com.taobao.arthas.core.model.ObjectRenderTest$NestedClass\",\n" +
+                        "              \"value\":\"com.taobao.arthas.core.model.ObjectRenderTest$NestedClass@ffffffff\"\n" +
+                        "            }\n" +
+                        "          ],\n" +
+                        "          \"name\":\"c1\",\n" +
+                        "          \"type\":\"com.taobao.arthas.core.model.ObjectRenderTest$NestedClass\"\n" +
+                        "        },\n" +
+                        "        {\n" +
+                        "          \"fields\":[\n" +
+                        "            {\n" +
+                        "              \"name\":\"code\",\n" +
+                        "              \"type\":\"java.lang.Integer\",\n" +
+                        "              \"value\":2\n" +
+                        "            },\n" +
+                        "            {\n" +
+                        "              \"name\":\"c1\",\n" +
+                        "              \"type\":\"com.taobao.arthas.core.model.ObjectRenderTest$NestedClass\",\n" +
+                        "              \"value\":\"com.taobao.arthas.core.model.ObjectRenderTest$NestedClass@ffffffff\"\n" +
+                        "            },\n" +
+                        "            {\n" +
+                        "              \"name\":\"c2\",\n" +
+                        "              \"type\":\"com.taobao.arthas.core.model.ObjectRenderTest$NestedClass\",\n" +
+                        "              \"value\":\"com.taobao.arthas.core.model.ObjectRenderTest$NestedClass@ffffffff\"\n" +
+                        "            }\n" +
+                        "          ],\n" +
+                        "          \"name\":\"c2\",\n" +
+                        "          \"type\":\"com.taobao.arthas.core.model.ObjectRenderTest$NestedClass\"\n" +
+                        "        }\n" +
+                        "      ],\n" +
+                        "      \"name\":\"c1\",\n" +
+                        "      \"type\":\"com.taobao.arthas.core.model.ObjectRenderTest$NestedClass\"\n" +
+                        "    },\n" +
+                        "    {\n" +
+                        "      \"fields\":[\n" +
+                        "        {\n" +
+                        "          \"name\":\"code\",\n" +
+                        "          \"type\":\"java.lang.Integer\",\n" +
+                        "          \"value\":2\n" +
+                        "        },\n" +
+                        "        {\n" +
+                        "          \"fields\":[\n" +
+                        "            {\n" +
+                        "              \"name\":\"code\",\n" +
+                        "              \"type\":\"java.lang.Integer\",\n" +
+                        "              \"value\":1\n" +
+                        "            },\n" +
+                        "            {\n" +
+                        "              \"name\":\"c1\",\n" +
+                        "              \"type\":\"com.taobao.arthas.core.model.ObjectRenderTest$NestedClass\",\n" +
+                        "              \"value\":\"com.taobao.arthas.core.model.ObjectRenderTest$NestedClass@ffffffff\"\n" +
+                        "            },\n" +
+                        "            {\n" +
+                        "              \"name\":\"c2\",\n" +
+                        "              \"type\":\"com.taobao.arthas.core.model.ObjectRenderTest$NestedClass\",\n" +
+                        "              \"value\":\"com.taobao.arthas.core.model.ObjectRenderTest$NestedClass@ffffffff\"\n" +
+                        "            }\n" +
+                        "          ],\n" +
+                        "          \"name\":\"c1\",\n" +
+                        "          \"type\":\"com.taobao.arthas.core.model.ObjectRenderTest$NestedClass\"\n" +
+                        "        },\n" +
+                        "        {\n" +
+                        "          \"fields\":[\n" +
+                        "            {\n" +
+                        "              \"name\":\"code\",\n" +
+                        "              \"type\":\"java.lang.Integer\",\n" +
+                        "              \"value\":2\n" +
+                        "            },\n" +
+                        "            {\n" +
+                        "              \"name\":\"c1\",\n" +
+                        "              \"type\":\"com.taobao.arthas.core.model.ObjectRenderTest$NestedClass\",\n" +
+                        "              \"value\":\"com.taobao.arthas.core.model.ObjectRenderTest$NestedClass@ffffffff\"\n" +
+                        "            },\n" +
+                        "            {\n" +
+                        "              \"name\":\"c2\",\n" +
+                        "              \"type\":\"com.taobao.arthas.core.model.ObjectRenderTest$NestedClass\",\n" +
+                        "              \"value\":\"com.taobao.arthas.core.model.ObjectRenderTest$NestedClass@ffffffff\"\n" +
+                        "            }\n" +
+                        "          ],\n" +
+                        "          \"name\":\"c2\",\n" +
+                        "          \"type\":\"com.taobao.arthas.core.model.ObjectRenderTest$NestedClass\"\n" +
+                        "        }\n" +
+                        "      ],\n" +
+                        "      \"name\":\"c2\",\n" +
+                        "      \"type\":\"com.taobao.arthas.core.model.ObjectRenderTest$NestedClass\"\n" +
+                        "    }\n" +
+                        "  ],\n" +
+                        "  \"type\":\"com.taobao.arthas.core.model.ObjectRenderTest$NestedClass\"\n" +
+                        "}",
+                replaceHashCode(JSON.toJSONString(objectVO, true)));
     }
 
     @Test
@@ -364,23 +485,23 @@ public class ObjectRenderTest {
         ObjectVO objectVO = objectInspector.inspect(nestedClass, 4);
         printObject(objectVO);
 
-        Assert.assertTrue(replaceHashCode(ObjectRenderer.render(objectVO)).contains("@NestedClass[\n" +
-                        "    code=@Integer[100],\n" +
-                        "    c1=@NestedClass[\n" +
-                        "        code=@Integer[1],\n" +
-                        "        c1=@NestedClass[\n" +
-                        "            code=@Integer[1],\n" +
-                        "            c1=@NestedClass[\n" +
-                        "                code=@Integer[1],\n" +
-                        "                c1=@NestedClass[com.taobao.arthas.core.model.ObjectRenderTest$NestedClass@ffffffff],\n" +
-                        "                c2=@NestedClass[com.taobao.arthas.core.model.ObjectRenderTest$NestedClass@ffffffff],\n" +
-                        "            ],\n" +
-                        "            c2=@NestedClass[...],\n" +
-                        "        ],\n" +
-                        "        c2=@NestedClass[...],\n" +
-                        "    ],\n" +
-                        "    c2=@NestedClass[...],\n" +
-                        "] Number of objects exceeds limit: 10"));
+        Assert.assertThat(replaceHashCode(ObjectRenderer.render(objectVO)), StringContains.containsString("@ObjectRenderTest$NestedClass[\n" +
+                "    code=@Integer[100],\n" +
+                "    c1=@ObjectRenderTest$NestedClass[\n" +
+                "        code=@Integer[1],\n" +
+                "        c1=@ObjectRenderTest$NestedClass[\n" +
+                "            code=@Integer[1],\n" +
+                "            c1=@ObjectRenderTest$NestedClass[\n" +
+                "                code=@Integer[1],\n" +
+                "                c1=@ObjectRenderTest$NestedClass[com.taobao.arthas.core.model.ObjectRenderTest$NestedClass@ffffffff],\n" +
+                "                c2=@ObjectRenderTest$NestedClass[com.taobao.arthas.core.model.ObjectRenderTest$NestedClass@ffffffff],\n" +
+                "            ],\n" +
+                "            c2=@ObjectRenderTest$NestedClass[...],\n" +
+                "        ],\n" +
+                "        c2=@ObjectRenderTest$NestedClass[...],\n" +
+                "    ],\n" +
+                "    c2=@ObjectRenderTest$NestedClass[...],\n" +
+                "] Number of objects exceeds limit: 10"));
     }
 
     @Test
@@ -488,7 +609,11 @@ public class ObjectRenderTest {
     }
 
     private ObjectVO inspectObject(Object object, int expand) {
-        return newInspector(objectNumLimit, arrayLenLimit, stringLenLimit).inspect(object, expand);
+        return newInspector().inspect(object, expand);
+    }
+
+    private ObjectInspector newInspector() {
+        return newInspector(objectNumLimit, arrayLenLimit, stringLenLimit);
     }
 
     private void testSimpleArray(Object array, String testJson, String testString) {
@@ -516,7 +641,7 @@ public class ObjectRenderTest {
 
     private void testSimpleList(Collection collection) {
         ObjectVO objectVO = inspectObject(collection, 1);
-        Assert.assertEquals(collection.getClass().getSimpleName(), objectVO.getType());
+        Assert.assertEquals(getTypeName(collection.getClass()), objectVO.getType());
 
         printObject(objectVO);
     }
@@ -524,7 +649,7 @@ public class ObjectRenderTest {
     private void testList(Collection collection, int expand) {
         Object[] array = collection.toArray();
         ObjectVO objectVO = inspectObject(collection, expand);
-        Assert.assertEquals(collection.getClass().getSimpleName(), objectVO.getType());
+        Assert.assertEquals(getTypeName(collection.getClass()), objectVO.getType());
 
         Assertions.assertThat(objectVO.getValue())
                 .asList()
@@ -541,14 +666,18 @@ public class ObjectRenderTest {
         printObject(objectVO);
 
         if (value != null) {
-            Assert.assertEquals(value.getClass().getSimpleName(), objectVO.getType());
+            Assert.assertEquals(getTypeName(value.getClass()), objectVO.getType());
             Assert.assertEquals(value, objectVO.getValue());
         }
         Assert.assertEquals(test, ObjectRenderer.render(objectVO));
     }
 
+    private String getTypeName(Class<?> objClass) {
+        return objClass.isArray() ? objClass.getSimpleName() : objClass.getName();
+    }
+
     private String replaceHashCode(String input) {
-        return input.replaceAll("@[0-9a-f]+", "@ffffffff");
+        return input.replaceAll("@[0-9a-f]+", "@ffffffff").replaceAll("\t", "  ");
     }
 
     private static class NestedClass {

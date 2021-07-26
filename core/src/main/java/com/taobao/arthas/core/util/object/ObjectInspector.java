@@ -48,7 +48,7 @@ public class ObjectInspector {
             return objectVO;
         } catch (ObjectTooLargeException e) {
             // unreachable statement
-            return new ObjectVO(object != null ? object.getClass().getSimpleName() : "", e.getMessage());
+            return new ObjectVO(object != null ? getTypeName(object.getClass()) : "", e.getMessage());
         }
     }
 
@@ -73,7 +73,7 @@ public class ObjectInspector {
         } else {
 
             final Class<?> clazz = obj.getClass();
-            final String className = clazz.getSimpleName();
+            final String className = getTypeName(clazz);
 
             // 7种基础类型,直接输出@类型[值]
             if (Integer.class.isInstance(obj)
@@ -136,7 +136,7 @@ public class ObjectInspector {
                             }
                         } catch (ObjectTooLargeException ex) {
                             //ignore
-                            list.add(new ObjectVO(el != null ? el.getClass().getSimpleName() : "", "..."));
+                            list.add(new ObjectVO(el != null ? getTypeName(el.getClass()) : "", "..."));
                             break;
                         }
                     }
@@ -172,10 +172,10 @@ public class ObjectInspector {
                         } catch (ObjectTooLargeException e) {
                             //ignore error
                             if (keyObj == null) {
-                                keyObj = new ObjectVO(entry.getKey() != null ? entry.getKey().getClass().getSimpleName() : "", "...");
+                                keyObj = new ObjectVO(entry.getKey() != null ? getTypeName(entry.getKey().getClass()) : "", "...");
                             }
                             if (valueObj == null) {
-                                valueObj = new ObjectVO(entry.getValue() != null ? entry.getValue().getClass().getSimpleName() : "", "...");
+                                valueObj = new ObjectVO(entry.getValue() != null ? getTypeName(entry.getValue().getClass()) : "", "...");
                             }
                             list.add(ObjectVO.ofKeyValue(keyObj, valueObj));
                             break;
@@ -189,7 +189,7 @@ public class ObjectInspector {
             // 数组类输出
             else if (obj.getClass().isArray()) {
 
-                final String typeName = obj.getClass().getSimpleName();
+                final String typeName = getTypeName(obj.getClass());
 
                 // int[]
                 if (typeName.equals("int[]")) {
@@ -480,7 +480,7 @@ public class ObjectInspector {
                                 elements[i] = inspectObject(arrays[i], deep+1, expand);
                             } catch (ObjectTooLargeException ex) {
                                 //ignore error
-                                elements[i] = new ObjectVO(arrays[i] != null ? arrays[i].getClass().getSimpleName() : "", "...");
+                                elements[i] = new ObjectVO(arrays[i] != null ? getTypeName(arrays[i].getClass()) : "", "...");
                                 break;
                             }
                         }
@@ -553,7 +553,7 @@ public class ObjectInspector {
                                 fieldVOList.add(fieldObjectVO);
 
                             } catch (ObjectTooLargeException t) {
-                                fieldVOList.add(new ObjectVO(field.getName(), field.getType().getSimpleName(), "..."));
+                                fieldVOList.add(new ObjectVO(field.getName(), getTypeName(field.getType()), "..."));
                                 break;
                             } catch (Throwable t) {
                                 // ignore
@@ -569,6 +569,10 @@ public class ObjectInspector {
 
             }
         }
+    }
+
+    protected String getTypeName(Class<?> objClass) {
+        return objClass.isArray() ? objClass.getSimpleName() : objClass.getName();
     }
 
     private void checkObjectAmount() throws ObjectTooLargeException {
