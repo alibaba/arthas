@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>vmoption &mdash; Arthas 3.5.2 documentation</title>
+  <title>vmoption &mdash; Arthas 3.5.3 documentation</title>
   
 
   
@@ -73,7 +73,7 @@
             
             
               <div class="version">
-                3.5.2
+                3.5.3
               </div>
             
           
@@ -270,17 +270,25 @@
 </div>
 <div class="section" id="view-individual-option">
 <h3>View individual option<a class="headerlink" href="#view-individual-option" title="Permalink to this headline">¶</a></h3>
-<div class="highlight-bash notranslate"><div class="highlight hljs"><pre class="bash">[arthas@56963]$ vmoption PrintGCDetails
- KEY                    VALUE                   ORIGIN                 WRITEABLE
----------------------------------------------------------------------------------------------
- PrintGCDetails         false                   MANAGEMENT             true</pre></div>
+<div class="highlight-bash notranslate"><div class="highlight hljs"><pre class="bash">$ vmoption PrintGC
+ KEY                 VALUE                ORIGIN              WRITEABLE
+---------------------------------------------------------------------------------
+ PrintGC             false                MANAGEMENT          true</pre></div>
 </div>
 </div>
 <div class="section" id="update-individual-option">
 <h3>Update individual option<a class="headerlink" href="#update-individual-option" title="Permalink to this headline">¶</a></h3>
-<div class="highlight-bash notranslate"><div class="highlight hljs"><pre class="bash">[arthas@56963]$ vmoption PrintGCDetails true
+<div class="highlight-bash notranslate"><div class="highlight hljs"><pre class="bash">$ vmoption PrintGC true
 Successfully updated the vm option.
-PrintGCDetails=true</pre></div>
+ NAME     BEFORE-VALUE  AFTER-VALUE
+------------------------------------
+ PrintGC  false         true</pre></div>
+</div>
+<div class="highlight-bash notranslate"><div class="highlight hljs"><pre class="bash">$ vmoption PrintGCDetails true
+Successfully updated the vm option.
+ NAME            BEFORE-VALUE  AFTER-VALUE
+-------------------------------------------
+ PrintGCDetails  false         true</pre></div>
 </div>
 </div>
 </div>

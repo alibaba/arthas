@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>vmoption &mdash; Arthas 3.5.2 文档</title>
+  <title>vmoption &mdash; Arthas 3.5.3 文档</title>
   
 
   
@@ -74,7 +74,7 @@
             
             
               <div class="version">
-                3.5.2
+                3.5.3
               </div>
             
           
@@ -274,17 +274,25 @@
 </div>
 <div class="section" id="id2">
 <h3>查看指定的option<a class="headerlink" href="#id2" title="永久链接至标题">¶</a></h3>
-<div class="highlight-bash notranslate"><div class="highlight hljs"><pre class="bash">[arthas@56963]$ vmoption PrintGCDetails
- KEY                    VALUE                   ORIGIN                 WRITEABLE
----------------------------------------------------------------------------------------------
- PrintGCDetails         false                   MANAGEMENT             true</pre></div>
+<div class="highlight-bash notranslate"><div class="highlight hljs"><pre class="bash">$ vmoption PrintGC
+ KEY                 VALUE                ORIGIN              WRITEABLE
+---------------------------------------------------------------------------------
+ PrintGC             false                MANAGEMENT          true</pre></div>
 </div>
 </div>
 <div class="section" id="id3">
 <h3>更新指定的option<a class="headerlink" href="#id3" title="永久链接至标题">¶</a></h3>
-<div class="highlight-bash notranslate"><div class="highlight hljs"><pre class="bash">[arthas@56963]$ vmoption PrintGCDetails true
+<div class="highlight-bash notranslate"><div class="highlight hljs"><pre class="bash">$ vmoption PrintGC true
 Successfully updated the vm option.
-PrintGCDetails=true</pre></div>
+ NAME     BEFORE-VALUE  AFTER-VALUE
+------------------------------------
+ PrintGC  false         true</pre></div>
+</div>
+<div class="highlight-bash notranslate"><div class="highlight hljs"><pre class="bash">$ vmoption PrintGCDetails true
+Successfully updated the vm option.
+ NAME            BEFORE-VALUE  AFTER-VALUE
+-------------------------------------------
+ PrintGCDetails  false         true</pre></div>
 </div>
 </div>
 </div>
