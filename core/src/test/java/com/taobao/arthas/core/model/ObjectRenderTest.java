@@ -287,9 +287,11 @@ public class ObjectRenderTest {
     }
 
     private void printObject(ObjectVO objectVO) {
-        System.out.println(JSON.toJSONString(objectVO, true));
-        System.out.println();
+        System.out.println("----------------");
+        System.out.println("ObjectView:");
         System.out.println(ObjectRenderer.render(objectVO));
+        System.out.println("\nJSON:");
+        System.out.println(JSON.toJSONString(objectVO, true));
         System.out.println();
     }
 
