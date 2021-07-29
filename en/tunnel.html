@@ -112,6 +112,8 @@
 <li class="toctree-l2"><a class="reference internal" href="#download-and-deploy-arthas-tunnel-server">Download and deploy arthas tunnel server</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#connecting-to-the-tunnel-server-when-starting-arthas">Connecting to the tunnel server when starting arthas</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#best-practices">Best practices</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#tunnel-server-management-page">Tunnel Server Management Page</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#authority-management">Authority Management</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#cluster-management">Cluster Management</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#how-arthas-tunnel-server-works">How arthas tunnel server works</a></li>
 </ul>
@@ -267,9 +269,43 @@ id        URJZ5L48RPBR2ALI5K4V</pre></div>
 <div><p>Alternatively, you can configure <code class="docutils literal notranslate"><span class="pre">appName</span></code> in <code class="docutils literal notranslate"><span class="pre">arthas.properties</span></code> in the unzipped arthas directory, or in <code class="docutils literal notranslate"><span class="pre">application.properties</span></code> of the spring boot application.</p>
 </div></blockquote>
 </div>
+<div class="section" id="tunnel-server-management-page">
+<h2>Tunnel Server Management Page<a class="headerlink" href="#tunnel-server-management-page" title="Permalink to this headline">¶</a></h2>
+<p>Start the tunnel-server locally, then use <code class="docutils literal notranslate"><span class="pre">as.sh</span></code> attach, and specify the application name <code class="docutils literal notranslate"><span class="pre">--app-name</span> <span class="pre">test</span></code>:</p>
+<div class="highlight-default notranslate"><pre class="literal-block">$ as.sh --tunnel-server &#x27;ws://127.0.0.1:7777/ws&#x27; --app-name test
+telnet connecting to arthas server... current timestamp is 1627539688
+Trying 127.0.0.1...
+Connected to 127.0.0.1.
+Escape character is &#x27;^]&#x27;.
+  ,---.  ,------. ,--------.,--.  ,--.  ,---.   ,---.
+ /  O  \ |  .--. &#x27;&#x27;--.  .--&#x27;|  &#x27;--&#x27;  | /  O  \ &#x27;   .-&#x27;
+|  .-.  ||  &#x27;--&#x27;.&#x27;   |  |   |  .--.  ||  .-.  |`.  `-.
+|  | |  ||  |\  \    |  |   |  |  |  ||  | |  |.-&#x27;    |
+`--&#x27; `--&#x27;`--&#x27; &#x27;--&#x27;   `--&#x27;   `--&#x27;  `--&#x27;`--&#x27; `--&#x27;`-----&#x27;
+
+wiki       https://arthas.aliyun.com/doc
+tutorials  https://arthas.aliyun.com/doc/arthas-tutorials.html
+version    3.5.3
+main_class demo.MathGame
+pid        65825
+time       2021-07-29 14:21:29
+id         test_PE3LZO9NA9ENJYTPGL9L</pre>
+</div>
+<p>Then visit tunnel-server, you can see a list of all connected applications:</p>
+<p><a class="reference external" href="http://localhost:8080/apps.html">http://localhost:8080/apps.html</a></p>
+<p><img alt="_images/tunnel-server-apps.png" src="_images/tunnel-server-apps.png" /></p>
+<p>Then open the details, you can see a list of all connected agents:</p>
+<p><a class="reference external" href="http://localhost:8080/agents.html?app=test">http://localhost:8080/agents.html?app=test</a></p>
+<p><img alt="_images/tunnel-server-agents.png" src="_images/tunnel-server-agents.png" /></p>
+</div>
+<div class="section" id="authority-management">
+<h2>Authority Management<a class="headerlink" href="#authority-management" title="Permalink to this headline">¶</a></h2>
+<p>At present, the tunnel server does not have special authority management. Users need to develop their own and authenticate the app name.</p>
+</div>
 <div class="section" id="cluster-management">
 <h2>Cluster Management<a class="headerlink" href="#cluster-management" title="Permalink to this headline">¶</a></h2>
 <p>If you want to deploy multiple tunnel servers, you can use nginx for forwarding and redis to store agent information.</p>
+<p>Nginx needs to configure sticky session to ensure that the user’s web socket is connected to the same back-end tunnel server. The simple configuration method is to use <code class="docutils literal notranslate"><span class="pre">ip_hash</span></code>.</p>
 </div>
 <div class="section" id="how-arthas-tunnel-server-works">
 <h2>How arthas tunnel server works<a class="headerlink" href="#how-arthas-tunnel-server-works" title="Permalink to this headline">¶</a></h2>

@@ -116,8 +116,10 @@
 <li class="toctree-l2"><a class="reference internal" href="#arthas-tunnel-server">下载部署arthas tunnel server</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#arthastunnel-server">启动arthas时连接到tunnel server</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#id1">最佳实践</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#id2">集群方式管理</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#id3">Arthas tunnel server的工作原理</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#tunnel-server">Tunnel Server的管理页面</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id2">权限管理</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id3">集群方式管理</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id4">Arthas tunnel server的工作原理</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="http-api.html">Http API</a></li>
@@ -275,12 +277,48 @@ id        URJZ5L48RPBR2ALI5K4V</pre></div>
 <div><p>另外，也可以在解压的arthas目录下的 <code class="docutils literal notranslate"><span class="pre">arthas.properties</span></code>，或者在spring boot应用的<code class="docutils literal notranslate"><span class="pre">application.properties</span></code>里配置<code class="docutils literal notranslate"><span class="pre">appName</span></code>。</p>
 </div></blockquote>
 </div>
+<div class="section" id="tunnel-server">
+<h2>Tunnel Server的管理页面<a class="headerlink" href="#tunnel-server" title="永久链接至标题">¶</a></h2>
+<p>在本地启动tunnel-server，然后使用<code class="docutils literal notranslate"><span class="pre">as.sh</span></code> attach，并且指定应用名<code class="docutils literal notranslate"><span class="pre">--app-name</span> <span class="pre">test</span></code>：</p>
+<div class="highlight-default notranslate"><pre class="literal-block">$ as.sh --tunnel-server &#x27;ws://127.0.0.1:7777/ws&#x27; --app-name test
+telnet connecting to arthas server... current timestamp is 1627539688
+Trying 127.0.0.1...
+Connected to 127.0.0.1.
+Escape character is &#x27;^]&#x27;.
+  ,---.  ,------. ,--------.,--.  ,--.  ,---.   ,---.
+ /  O  \ |  .--. &#x27;&#x27;--.  .--&#x27;|  &#x27;--&#x27;  | /  O  \ &#x27;   .-&#x27;
+|  .-.  ||  &#x27;--&#x27;.&#x27;   |  |   |  .--.  ||  .-.  |`.  `-.
+|  | |  ||  |\  \    |  |   |  |  |  ||  | |  |.-&#x27;    |
+`--&#x27; `--&#x27;`--&#x27; &#x27;--&#x27;   `--&#x27;   `--&#x27;  `--&#x27;`--&#x27; `--&#x27;`-----&#x27;
+
+wiki       https://arthas.aliyun.com/doc
+tutorials  https://arthas.aliyun.com/doc/arthas-tutorials.html
+version    3.5.3
+main_class demo.MathGame
+pid        65825
+time       2021-07-29 14:21:29
+id         test_PE3LZO9NA9ENJYTPGL9L</pre>
+</div>
+<p>然后访问 tunnel-server，可以看到所有连接的应用列表：</p>
+<p><a class="reference external" href="http://localhost:8080/apps.html">http://localhost:8080/apps.html</a></p>
+<p><img alt="_images/tunnel-server-apps.png" src="_images/tunnel-server-apps.png" /></p>
+<p>再打开详情，则可以看到连接的所有agent列表：</p>
+<p><a class="reference external" href="http://localhost:8080/agents.html?app=test">http://localhost:8080/agents.html?app=test</a></p>
+<p><img alt="_images/tunnel-server-agents.png" src="_images/tunnel-server-agents.png" /></p>
+</div>
 <div class="section" id="id2">
-<h2>集群方式管理<a class="headerlink" href="#id2" title="永久链接至标题">¶</a></h2>
-<p>如果希望部署多台 tunnel server，可以通过nginx做转发，redis来保存agent信息。</p>
+<h2>权限管理<a class="headerlink" href="#id2" title="永久链接至标题">¶</a></h2>
+<p>目前tunnel server没有专门的权限管理，用户需要自行开发，对app name鉴权。</p>
 </div>
 <div class="section" id="id3">
-<h2>Arthas tunnel server的工作原理<a class="headerlink" href="#id3" title="永久链接至标题">¶</a></h2>
+<h2>集群方式管理<a class="headerlink" href="#id3" title="永久链接至标题">¶</a></h2>
+<p>如果希望部署多台 tunnel server，可以通过nginx做转发，redis来保存agent信息。</p>
+<ul class="simple">
+<li><p>nginx需要配置sticky session，保证用户web socket连接到同一个后端tunnel server上。简单的配置方式是用<code class="docutils literal notranslate"><span class="pre">ip_hash</span></code>。</p></li>
+</ul>
+</div>
+<div class="section" id="id4">
+<h2>Arthas tunnel server的工作原理<a class="headerlink" href="#id4" title="永久链接至标题">¶</a></h2>
 <div class="highlight-default notranslate"><pre class="literal-block">browser &lt;-&gt; arthas tunnel server &lt;-&gt; arthas tunnel client &lt;-&gt; arthas agent</pre>
 </div>
 <p><a class="reference external" href="https://github.com/alibaba/arthas/blob/master/tunnel-server/README.md#">tunnel-server/README.md</a></p>
