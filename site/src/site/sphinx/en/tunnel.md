@@ -101,11 +101,54 @@ Tunnel server will use `_` as a delimiter to extract `appName`, which is conveni
 > Alternatively, you can configure `appName` in `arthas.properties` in the unzipped arthas directory, or in `application.properties` of the spring boot application.
 
 
+### Tunnel Server Management Page
+
+Start the tunnel-server locally, then use `as.sh` attach, and specify the application name `--app-name test`:
+
+
+```
+$ as.sh --tunnel-server 'ws://127.0.0.1:7777/ws' --app-name test
+telnet connecting to arthas server... current timestamp is 1627539688
+Trying 127.0.0.1...
+Connected to 127.0.0.1.
+Escape character is '^]'.
+  ,---.  ,------. ,--------.,--.  ,--.  ,---.   ,---.
+ /  O  \ |  .--. ''--.  .--'|  '--'  | /  O  \ '   .-'
+|  .-.  ||  '--'.'   |  |   |  .--.  ||  .-.  |`.  `-.
+|  | |  ||  |\  \    |  |   |  |  |  ||  | |  |.-'    |
+`--' `--'`--' '--'   `--'   `--'  `--'`--' `--'`-----'
+
+
+wiki       https://arthas.aliyun.com/doc
+tutorials  https://arthas.aliyun.com/doc/arthas-tutorials.html
+version    3.5.3
+main_class demo.MathGame
+pid        65825
+time       2021-07-29 14:21:29
+id         test_PE3LZO9NA9ENJYTPGL9L
+```
+
+Then visit tunnel-server, you can see a list of all connected applications:
+
+[http://localhost:8080/apps.html](http://localhost:8080/apps.html)
+
+![](_static/tunnel-server-apps.png)
+
+Then open the details, you can see a list of all connected agents:
+
+[http://localhost:8080/agents.html?app=test](http://localhost:8080/agents.html?app=test)
+
+![](_static/tunnel-server-agents.png)
+
+
+### Authority Management
+
+At present, the tunnel server does not have special authority management. Users need to develop their own and authenticate the app name.
 ### Cluster Management
 
 If you want to deploy multiple tunnel servers, you can use nginx for forwarding and redis to store agent information.
 
-
+Nginx needs to configure sticky session to ensure that the user's web socket is connected to the same back-end tunnel server. The simple configuration method is to use `ip_hash`.
 ### How arthas tunnel server works
 
 ```
