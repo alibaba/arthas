@@ -19,6 +19,11 @@ $(function () {
         $('#agentId').val(agentId);
     }
 
+    var iframe = getUrlParam('iframe');
+    if (iframe != null && iframe != 'false') {
+        $("nav").hide()
+    }
+
     startConnect(true);
 });
 

@@ -80,3 +80,5 @@ vmtool --action getInstances --classLoaderClass org.springframework.boot.loader.
 ```bash
 vmtool --action forceGc
 ```
+
+* Use the [`vmoption`](vmoption.md) command to dynamically turn on the `PrintGC` option.

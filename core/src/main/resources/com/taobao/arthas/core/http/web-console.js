@@ -18,6 +18,11 @@ $(function () {
         $('#port').val(8563);
     }
 
+    var iframe = getUrlParam('iframe');
+    if (iframe != null && iframe != 'false') {
+        $("nav").hide()
+    }
+
     startConnect(true);
 });
 

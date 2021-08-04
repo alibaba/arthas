@@ -70,6 +70,7 @@ import com.taobao.arthas.core.util.ArthasBanner;
 import com.taobao.arthas.core.util.FileUtils;
 import com.taobao.arthas.core.util.InstrumentationUtils;
 import com.taobao.arthas.core.util.LogUtil;
+import com.taobao.arthas.core.util.StringUtils;
 import com.taobao.arthas.core.util.UserStatUtil;
 import com.taobao.arthas.core.util.affect.EnhancerAffect;
 import com.taobao.arthas.core.util.matcher.WildcardMatcher;
@@ -291,24 +292,25 @@ public class ArthasBootstrap {
         return ARTHAS_HOME;
     }
 
+    static String reslove(ArthasEnvironment arthasEnvironment, String key, String defaultValue) {
+        String value = arthasEnvironment.getProperty(key);
+        if (value == null) {
+            return defaultValue;
+        }
+        return arthasEnvironment.resolvePlaceholders(value);
+    }
+
     // try to load arthas.properties
     private void tryToLoadArthasProperties() throws IOException {
         this.arthasEnvironment.resolvePlaceholders(CONFIG_LOCATION_PROPERTY);
 
-        String location = null;
-
-        if (arthasEnvironment.containsProperty(CONFIG_LOCATION_PROPERTY)) {
-            location = arthasEnvironment.resolvePlaceholders(CONFIG_LOCATION_PROPERTY);
-        }
+        String location = reslove(arthasEnvironment, CONFIG_LOCATION_PROPERTY, null);
 
         if (location == null) {
             location = arthasHome();
         }
 
-        String configName = "arthas";
-        if (arthasEnvironment.containsProperty(CONFIG_NAME_PROPERTY)) {
-            configName = arthasEnvironment.resolvePlaceholders(CONFIG_NAME_PROPERTY);
-        }
+        String configName = reslove(arthasEnvironment, CONFIG_NAME_PROPERTY, "arthas");
 
         if (location != null) {
             if (!location.endsWith(".properties")) {
@@ -393,7 +395,17 @@ public class ArthasBootstrap {
             this.securityAuthenticator = new SecurityAuthenticatorImpl(configure.getUsername(), configure.getPassword());
 
             shellServer = new ShellServerImpl(options);
-            BuiltinCommandPack builtinCommands = new BuiltinCommandPack();
+
+            List<String> disabledCommands = new ArrayList<String>();
+            if (configure.getDisabledCommands() != null) {
+                String[] strings = StringUtils.tokenizeToStringArray(configure.getDisabledCommands(), ",");
+                if (strings != null) {
+                    for (String s : strings) {
+                        disabledCommands.add(s);
+                    }
+                }
+            }
+            BuiltinCommandPack builtinCommands = new BuiltinCommandPack(disabledCommands);
             List<CommandResolver> resolvers = new ArrayList<CommandResolver>();
             resolvers.add(builtinCommands);
 

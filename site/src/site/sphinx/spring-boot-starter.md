@@ -31,6 +31,8 @@ arthas.tunnel-server=ws://47.75.156.201:7777/ws
 
 全部支持的配置项：[参考](https://github.com/alibaba/arthas/blob/master/arthas-spring-boot-starter/src/main/java/com/alibaba/arthas/spring/ArthasProperties.java)
 
+> 默认情况下，arthas-spring-boot-starter会禁掉`stop`命令。
+
 参考：[Arthas Properties](arthas-properties.md)
 
 ### 查看Endpoint信息

@@ -15,6 +15,8 @@ The user can fill in the IP and connect the remote arthas on other machines.
 
 If you have suggestions for the Web Console, please leave a message here: [https://github.com/alibaba/arthas/issues/15](https://github.com/alibaba/arthas/issues/15)
 
+* Copy and paste shortcut keys in Web Console: [https://github.com/alibaba/arthas/issues/1056](https://github.com/alibaba/arthas/issues/1056)
+
 ### Connect remote arthas through arthas tunnel server
 
 [Arthas Tunnel](tunnel.md)

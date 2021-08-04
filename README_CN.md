@@ -176,7 +176,7 @@ mc /tmp/Test.java
 ```
 
 #### retransform
-* https://arthas.aliyun.com/doc/rretransform
+* https://arthas.aliyun.com/doc/retransform
 
 加载外部的`.class`文件，retransform 热更新jvm已加载的类。
 

@@ -183,7 +183,7 @@ public interface Servlet {
 Memory compiler, compiles `.java` files into `.class` files in memory.
 
 ```bash
-mc /tmp/Test.java
+$ mc /tmp/Test.java
 ```
 
 #### retransform
