@@ -163,8 +163,14 @@ public class VmToolCommand extends AnnotatedCommand {
                     process.end(-1, "The className option cannot be empty!");
                     return;
                 }
-                ClassLoader classLoader = ClassLoader.getSystemClassLoader();
-                if (hashCode == null && classLoaderClass != null) {
+                ClassLoader classLoader = null;
+                if (hashCode != null) {
+                    classLoader = ClassLoaderUtils.getClassLoader(inst, hashCode);
+                    if (classLoader == null) {
+                        process.end(-1, "Can not find classloader with hashCode: " + hashCode + ".");
+                        return;
+                    }
+                }else if ( classLoaderClass != null) {
                     List<ClassLoader> matchedClassLoaders = ClassLoaderUtils.getClassLoaderByClassName(inst,
                             classLoaderClass);
                     if (matchedClassLoaders.size() == 1) {
@@ -183,6 +189,8 @@ public class VmToolCommand extends AnnotatedCommand {
                         process.end(-1, "Can not find classloader by class name: " + classLoaderClass + ".");
                         return;
                     }
+                }else {
+                    classLoader = ClassLoader.getSystemClassLoader();
                 }
 
                 List<Class<?>> matchedClasses = new ArrayList<Class<?>>(
