@@ -31,6 +31,9 @@ public class SearchUtils {
         }
         final Set<Class<?>> matches = new HashSet<Class<?>>();
         for (Class<?> clazz : inst.getAllLoadedClasses()) {
+            if (clazz == null) {
+                continue;   
+            }
             if (classNameMatcher.matching(clazz.getName())) {
                 matches.add(clazz);
             }
@@ -107,6 +110,9 @@ public class SearchUtils {
     public static Set<Class<?>> searchSubClass(Instrumentation inst, Set<Class<?>> classSet) {
         final Set<Class<?>> matches = new HashSet<Class<?>>();
         for (Class<?> clazz : inst.getAllLoadedClasses()) {
+            if (clazz == null) {
+                continue;   
+            }
             for (Class<?> superClass : classSet) {
                 if (superClass.isAssignableFrom(clazz)) {
                     matches.add(clazz);

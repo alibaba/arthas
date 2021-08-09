@@ -53,7 +53,7 @@ import com.taobao.middleware.cli.annotations.Summary;
                 + "  java -jar arthas-boot.jar --stat-url 'http://192.168.10.11:8080/api/stat'\n"
                 + "  java -jar arthas-boot.jar -c 'sysprop; thread' <pid>\n"
                 + "  java -jar arthas-boot.jar -f batch.as <pid>\n"
-                + "  java -jar arthas-boot.jar --use-version 3.5.2\n"
+                + "  java -jar arthas-boot.jar --use-version 3.5.3\n"
                 + "  java -jar arthas-boot.jar --versions\n"
                 + "  java -jar arthas-boot.jar --select math-game\n"
                 + "  java -jar arthas-boot.jar --session-timeout 3600\n" + "  java -jar arthas-boot.jar --attach-only\n"
@@ -132,8 +132,14 @@ public class Bootstrap {
     private String disabledCommands;
 
 	static {
-        ARTHAS_LIB_DIR = new File(
-                System.getProperty("user.home") + File.separator + ".arthas" + File.separator + "lib");
+        String arthasLibDirEnv = System.getenv("ARTHAS_LIB_DIR");
+        if (arthasLibDirEnv != null) {
+            ARTHAS_LIB_DIR = new File(arthasLibDirEnv);
+        } else {
+            ARTHAS_LIB_DIR = new File(
+                    System.getProperty("user.home") + File.separator + ".arthas" + File.separator + "lib");
+        }
+
         try {
             ARTHAS_LIB_DIR.mkdirs();
         } catch (Throwable t) {
