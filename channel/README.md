@@ -57,6 +57,39 @@ arthas javaagent 参数说明：
 | arthas.channel.server.backend.port | Arthas agent连接的Channel server backend端口 | 7700 |
 
 
+#### 日志配置
+
+使用外部的logger配置:
+
+```shell
+java -jar arthas-channel-server-app-3.5.3.jar --logging.config=/path/logback.xml
+```
+
+打开Arthas request/response debug log, 修改logback.xml: 
+```xml
+<logger name="com.alibaba.arthas.channel.server.grpc" level="DEBUG" />
+```
+
+logback支持自动加载配置：
+
+```xml
+<configuration scan="true" scanPeriod="10 seconds">
+    <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <root level="info">
+        <appender-ref ref="STDOUT" />
+    </root>
+
+    <!-- arthas request/response log -->
+    <!--<logger name="com.alibaba.arthas.channel.server.grpc" level="DEBUG" />-->
+
+</configuration>
+```
+
 ### 使用方法
 
 #### 1、 agent列表
