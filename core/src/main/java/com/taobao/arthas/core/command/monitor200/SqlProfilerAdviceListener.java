@@ -193,25 +193,34 @@ class SqlProfilerAdviceListener extends AdviceListenerAdapter {
         for (Method itemMethod : methods) {
             Class<?>[] itemMethodParameterTypes = itemMethod.getParameterTypes();
             if (itemMethodParameterTypes.length != judgeMethodParameterTypes.length) {
-                return false;
+                continue;
             }
 
+            boolean isParameterTypeMatched = true;
             for (int i = 0; i < itemMethodParameterTypes.length; i++) {
                 if (!itemMethodParameterTypes[i].equals(judgeMethodParameterTypes[i])) {
-                    return false;
+                    isParameterTypeMatched = false;
+                    break;
                 }
+            }
+
+            if (isParameterTypeMatched) {
+                return true;
             }
         }
 
-        return true;
+        return false;
     }
 
     private boolean isPreparedStatementExecuteMethod(Method method) {
-        return PREPARED_STATEMENT_EXECUTE_METHOD.contains(method.getName()) && method.getParameterTypes().length == 0;
+        return method != null
+                && PREPARED_STATEMENT_EXECUTE_METHOD.contains(method.getName())
+                && method.getParameterTypes().length == 0;
     }
 
     private boolean isStatementExecuteMethod(Method method) {
-        return STATEMENT_EXECUTE_METHOD_LIST.contains(method.getName())
+        return method != null
+                && STATEMENT_EXECUTE_METHOD_LIST.contains(method.getName())
                 && method.getParameterTypes().length == 1
                 && String.class.equals(method.getParameterTypes()[0]);
     }
