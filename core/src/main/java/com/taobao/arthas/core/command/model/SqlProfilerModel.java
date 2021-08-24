@@ -17,6 +17,9 @@ public class SqlProfilerModel extends ResultModel {
     private String sql;
     private List<String> params;
 
+    private List<String> batchSql;
+    private List<List<String>> batchParams;
+
     public SqlProfilerModel() {
     }
 
@@ -79,5 +82,21 @@ public class SqlProfilerModel extends ResultModel {
 
     public void setParams(List<String> params) {
         this.params = params;
+    }
+
+    public List<String> getBatchSql() {
+        return batchSql;
+    }
+
+    public void setBatchSql(List<String> batchSql) {
+        this.batchSql = batchSql;
+    }
+
+    public List<List<String>> getBatchParams() {
+        return batchParams;
+    }
+
+    public void setBatchParams(List<List<String>> batchParams) {
+        this.batchParams = batchParams;
     }
 }
