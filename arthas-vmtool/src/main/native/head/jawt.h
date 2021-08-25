@@ -1,26 +1,26 @@
 /*
- * Copyright (c) 1999, 2013, Oracle and/or its affiliates. All rights reserved.
- * ORACLE PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
+ * Copyright (c) 1999, 2017, Oracle and/or its affiliates. All rights reserved.
+ * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
+ * This code is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License version 2 only, as
+ * published by the Free Software Foundation.  Oracle designates this
+ * particular file as subject to the "Classpath" exception as provided
+ * by Oracle in the LICENSE file that accompanied this code.
  *
+ * This code is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+ * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
+ * version 2 for more details (a copy is included in the LICENSE file that
+ * accompanied this code).
  *
+ * You should have received a copy of the GNU General Public License version
+ * 2 along with this work; if not, write to the Free Software Foundation,
+ * Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA.
  *
- *
- *
- *
- *
- *
- *
- *
- *
- *
- *
- *
- *
- *
- *
- *
- *
+ * Please contact Oracle, 500 Oracle Parkway, Redwood Shores, CA 94065 USA
+ * or visit www.oracle.com if you need additional information or have any
+ * questions.
  */
 
 #ifndef _JAVASOFT_JAWT_H_
@@ -33,23 +33,27 @@ extern "C" {
 #endif
 
 /*
- * AWT native interface (new in JDK 1.3)
+ * AWT native interface.
  *
  * The AWT native interface allows a native C or C++ application a means
  * by which to access native structures in AWT.  This is to facilitate moving
  * legacy C and C++ applications to Java and to target the needs of the
- * community who, at present, wish to do their own native rendering to canvases
- * for performance reasons.  Standard extensions such as Java3D also require a
- * means to access the underlying native data structures of AWT.
+ * developers who need to do their own native rendering to canvases
+ * for performance or other reasons.
  *
- * There may be future extensions to this API depending on demand.
+ * Conversely it also provides mechanisms for an application which already
+ * has a native window to provide that to AWT for AWT rendering.
  *
- * A VM does not have to implement this API in order to pass the JCK.
- * It is recommended, however, that this API is implemented on VMs that support
- * standard extensions, such as Java3D.
+ * Since every platform may be different in its native data structures
+ * and APIs for windowing systems the application must necessarily
+ * provided per-platform source and compile and deliver per-platform
+ * native code  to use this API.
  *
- * Since this is a native API, any program which uses it cannot be considered
- * 100% pure java.
+ * These interfaces are not part of the Java SE specification and
+ * a VM is not required to implement this API. However it is strongly
+ * recommended that all implementations which support headful AWT
+ * also support these interfaces.
+ *
  */
 
 /*
@@ -58,7 +62,7 @@ extern "C" {
  * For each platform, there is a native drawing surface structure.  This
  * platform-specific structure can be found in jawt_md.h.  It is recommended
  * that additional platforms follow the same model.  It is also recommended
- * that VMs on Win32 and Solaris support the existing structures in jawt_md.h.
+ * that VMs on all platforms support the existing structures in jawt_md.h.
  *
  *******************
  * EXAMPLE OF USAGE:
@@ -98,8 +102,8 @@ extern "C" {
  *     jboolean result;
  *     jint lock;
  *
- *     // Get the AWT
- *     awt.version = JAWT_VERSION_1_3;
+ *     // Get the AWT. Request version 9 to access features in that release.
+ *     awt.version = JAWT_VERSION_9;
  *     result = JAWT_GetAWT(env, &awt);
  *     assert(result != JNI_FALSE);
  *
@@ -154,7 +158,7 @@ typedef struct jawt_DrawingSurfaceInfo {
     /*
      * Pointer to the platform-specific information.  This can be safely
      * cast to a JAWT_Win32DrawingSurfaceInfo on Windows or a
-     * JAWT_X11DrawingSurfaceInfo on Solaris. On Mac OS X this is a
+     * JAWT_X11DrawingSurfaceInfo on Linux and Solaris. On Mac OS X this is a
      * pointer to a NSObject that conforms to the JAWT_SurfaceLayers
      * protocol. See jawt_md.h for details.
      */
@@ -237,7 +241,8 @@ typedef struct jawt_DrawingSurface {
 typedef struct jawt {
     /*
      * Version of this structure.  This must always be set before
-     * calling JAWT_GetAWT()
+     * calling JAWT_GetAWT(). It affects the functions returned.
+     * Must be one of the known pre-defined versions.
      */
     jint version;
     /*
@@ -279,6 +284,50 @@ typedef struct jawt {
      */
     jobject (JNICALL *GetComponent)(JNIEnv* env, void* platformInfo);
 
+    /**
+     * Since 9
+     * Creates a java.awt.Frame placed in a native container. Container is
+     * referenced by the native platform handle. For example on Windows this
+     * corresponds to an HWND. For other platforms, see the appropriate
+     * machine-dependent header file for a description. The reference returned
+     * by this function is a local reference that is only valid in this
+     * environment. This function returns a NULL reference if no frame could be
+     * created with matching platform information.
+     */
+    jobject (JNICALL *CreateEmbeddedFrame) (JNIEnv *env, void* platformInfo);
+
+    /**
+     * Since 9
+     * Moves and resizes the embedded frame. The new location of the top-left
+     * corner is specified by x and y parameters relative to the native parent
+     * component. The new size is specified by width and height.
+     *
+     * The embedded frame should be created by CreateEmbeddedFrame() method, or
+     * this function will not have any effect.
+     *
+     * java.awt.Component.setLocation() and java.awt.Component.setBounds() for
+     * EmbeddedFrame really don't move it within the native parent. These
+     * methods always locate the embedded frame at (0, 0) for backward
+     * compatibility. To allow moving embedded frames this method was
+     * introduced, and it works just the same way as setLocation() and
+     * setBounds() for usual, non-embedded components.
+     *
+     * Using usual get/setLocation() and get/setBounds() together with this new
+     * method is not recommended.
+     */
+    void (JNICALL *SetBounds) (JNIEnv *env, jobject embeddedFrame,
+            jint x, jint y, jint w, jint h);
+    /**
+     * Since 9
+     * Synthesize a native message to activate or deactivate an EmbeddedFrame
+     * window depending on the value of parameter doActivate, if "true"
+     * activates the window; otherwise, deactivates the window.
+     *
+     * The embedded frame should be created by CreateEmbeddedFrame() method, or
+     * this function will not have any effect.
+     */
+    void (JNICALL *SynthesizeWindowActivation) (JNIEnv *env,
+            jobject embeddedFrame, jboolean doActivate);
 } JAWT;
 
 /*
@@ -288,9 +337,17 @@ typedef struct jawt {
 _JNI_IMPORT_OR_EXPORT_
 jboolean JNICALL JAWT_GetAWT(JNIEnv* env, JAWT* awt);
 
+/*
+ * Specify one of these constants as the JAWT.version
+ * Specifying an earlier version will limit the available functions to
+ * those provided in that earlier version of JAWT.
+ * See the "Since" note on each API. Methods with no "Since"
+ * may be presumed to be present in JAWT_VERSION_1_3.
+ */
 #define JAWT_VERSION_1_3 0x00010003
 #define JAWT_VERSION_1_4 0x00010004
 #define JAWT_VERSION_1_7 0x00010007
+#define JAWT_VERSION_9 0x00090000
 
 #ifdef __cplusplus
 } /* extern "C" */
