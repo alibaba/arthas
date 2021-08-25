@@ -1,26 +1,26 @@
 /*
- * Copyright (c) 2004, 2012, Oracle and/or its affiliates. All rights reserved.
- * ORACLE PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
+ * Copyright (c) 2004, 2019, Oracle and/or its affiliates. All rights reserved.
+ * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
+ * This code is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License version 2 only, as
+ * published by the Free Software Foundation.  Oracle designates this
+ * particular file as subject to the "Classpath" exception as provided
+ * by Oracle in the LICENSE file that accompanied this code.
  *
+ * This code is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+ * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
+ * version 2 for more details (a copy is included in the LICENSE file that
+ * accompanied this code).
  *
+ * You should have received a copy of the GNU General Public License version
+ * 2 along with this work; if not, write to the Free Software Foundation,
+ * Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA.
  *
- *
- *
- *
- *
- *
- *
- *
- *
- *
- *
- *
- *
- *
- *
- *
- *
+ * Please contact Oracle, 500 Oracle Parkway, Redwood Shores, CA 94065 USA
+ * or visit www.oracle.com if you need additional information or have any
+ * questions.
  */
 
 #ifndef CLASSFILE_CONSTANTS_H
@@ -31,7 +31,7 @@ extern "C" {
 #endif
 
 /* Classfile version number for this information */
-#define JVM_CLASSFILE_MAJOR_VERSION 52
+#define JVM_CLASSFILE_MAJOR_VERSION 60
 #define JVM_CLASSFILE_MINOR_VERSION 0
 
 /* Flags */
@@ -54,8 +54,28 @@ enum {
     JVM_ACC_STRICT        = 0x0800,
     JVM_ACC_SYNTHETIC     = 0x1000,
     JVM_ACC_ANNOTATION    = 0x2000,
-    JVM_ACC_ENUM          = 0x4000
+    JVM_ACC_ENUM          = 0x4000,
+    JVM_ACC_MODULE        = 0x8000
 };
+
+#define JVM_ACC_PUBLIC_BIT        0
+#define JVM_ACC_PRIVATE_BIT       1
+#define JVM_ACC_PROTECTED_BIT     2
+#define JVM_ACC_STATIC_BIT        3
+#define JVM_ACC_FINAL_BIT         4
+#define JVM_ACC_SYNCHRONIZED_BIT  5
+#define JVM_ACC_SUPER_BIT         5
+#define JVM_ACC_VOLATILE_BIT      6
+#define JVM_ACC_BRIDGE_BIT        6
+#define JVM_ACC_TRANSIENT_BIT     7
+#define JVM_ACC_VARARGS_BIT       7
+#define JVM_ACC_NATIVE_BIT        8
+#define JVM_ACC_INTERFACE_BIT     9
+#define JVM_ACC_ABSTRACT_BIT      10
+#define JVM_ACC_STRICT_BIT        11
+#define JVM_ACC_SYNTHETIC_BIT     12
+#define JVM_ACC_ANNOTATION_BIT    13
+#define JVM_ACC_ENUM_BIT          14
 
 /* Used in newarray instruction. */
 
@@ -86,8 +106,12 @@ enum {
     JVM_CONSTANT_InterfaceMethodref     = 11,
     JVM_CONSTANT_NameAndType            = 12,
     JVM_CONSTANT_MethodHandle           = 15,  // JSR 292
-    JVM_CONSTANT_MethodType             = 16,   // JSR 292
-    JVM_CONSTANT_InvokeDynamic          = 18
+    JVM_CONSTANT_MethodType             = 16,  // JSR 292
+    JVM_CONSTANT_Dynamic                = 17,
+    JVM_CONSTANT_InvokeDynamic          = 18,
+    JVM_CONSTANT_Module                 = 19,
+    JVM_CONSTANT_Package                = 20,
+    JVM_CONSTANT_ExternalMax            = 20 
 };
 
 /* JVM_CONSTANT_MethodHandle subtypes */
@@ -120,6 +144,10 @@ enum {
 /* Type signatures */
 
 enum {
+    JVM_SIGNATURE_SLASH         = '/',
+    JVM_SIGNATURE_DOT           = '.',
+    JVM_SIGNATURE_SPECIAL       = '<',
+    JVM_SIGNATURE_ENDSPECIAL    = '>',
     JVM_SIGNATURE_ARRAY         = '[',
     JVM_SIGNATURE_BYTE          = 'B',
     JVM_SIGNATURE_CHAR          = 'C',
