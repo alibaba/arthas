@@ -323,7 +323,7 @@ ts=2018-09-18 10:26:28;result=@ArrayList[
 
 * https://arthas.aliyun.com/doc/en/monitor
 
-Monitor a specific method invocation statistics, including total number of invocations, average response time, success rate, and every 5 seconds:
+Monitor a specific method invocation statistics, including a total number of invocations, average response time, success rate, and every 5 seconds:
 
 ```bash
 $ monitor -c 5 org.apache.dubbo.demo.provider.DemoServiceImpl sayHello
