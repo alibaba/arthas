@@ -29,9 +29,9 @@ public class Configure {
     private Integer telnetPort;
 
     /**
-     * the port of web console. 3658 by default.
+     * the port of web console. 8563 by default.
      * Arthas supports the Web Console.
-     * After Arthas attach JVM success, the user can access http://127.0.0.1:3658/ to use Arthas on Website.
+     * After Arthas attach JVM success, the user can access http://127.0.0.1:8563/ to use Arthas on Website.
      */
     private Integer httpPort;
 
