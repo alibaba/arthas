@@ -10,7 +10,7 @@ import java.util.Map;
 import static java.lang.reflect.Modifier.isStatic;
 
 /**
- * 配置类
+ * Arthas startup configuration class, used for packaging startup parameters.
  *
  * @author vlinux
  * @author hengyunabc 2018-11-12
@@ -18,50 +18,102 @@ import static java.lang.reflect.Modifier.isStatic;
 @Config(prefix = "arthas")
 public class Configure {
 
+    /**
+     * the ip of Arthas listening target JVM. 127.0.0.1 by default.
+     */
     private String ip;
+
+    /**
+     * the port of Arthas listening. 3658 by default.
+     */
     private Integer telnetPort;
+
+    /**
+     * the port of web console. 3658 by default.
+     * Arthas supports the Web Console.
+     * After Arthas attach JVM success, the user can access http://127.0.0.1:3658/ to use Arthas on Website.
+     */
     private Integer httpPort;
+
+    /**
+     *  the pid of Arthas listening target JVM.
+     */
     private Long javaPid;
+
+    /**
+     * the local file path of arthas-core.jar
+     */
     private String arthasCore;
+
+    /**
+     * the local file path of arthas-agent.jar
+     */
     private String arthasAgent;
 
+    /**
+     * the url path of tunnel server.  ex: ws://127.0.0.1:7777/ws .
+     *
+     * Arthas supports the function of SSH Tunneling that can let user doesn't need to log in remote server and can manage multiple Arthas agent in local.
+     * more detail: {@link https://arthas.aliyun.com/doc/tunnel.html#arthas-tunnel-server Arthas Doc}
+     */
     private String tunnelServer;
+
+    /**
+     * the unified code of Arthas agent.
+     * User can specify a specific agentId to connect to a specific agent in Arthas Tunnel.
+     * If user specifies the {@link appName}, the agentId will become appName-xxxxx.
+     */
     private String agentId;
 
+    /**
+     * username for authentication.
+     * Arthas supports the function of authentication.
+     * Username and password that User can configure it at arthas.properties or specify it when Arthas starting.
+     * If the username and password was configured, the user must execute command of auth to verify his identity before everything beginning.
+     * more detail: {@link https://arthas.aliyun.com/doc/auth.html Arthas Doc}
+     */
     private String username;
+
+    /**
+     * password for authentication.
+     * If only username is configured and no password is configured, a random password will be generated and printed in ~/logs/arthas/arthas.log .
+     */
     private String password;
 
     /**
-     * @see com.taobao.arthas.common.ArthasConstants#ARTHAS_OUTPUT
+     * the log path of Arthas. default by {@link com.taobao.arthas.common.ArthasConstants#ARTHAS_OUTPUT}
      */
     private String outputPath;
 
     /**
-     * 需要被增强的ClassLoader的全类名，多个用英文 , 分隔
+     * the full pathname of the classes that need to be enhanced by the ClassLoader.
+     * If more than one is needed, separate by ','.
      */
     private String enhanceLoaders;
 
     /**
-     * <pre>
-     * 1. 如果显式传入 arthas.agentId ，则直接使用
-     * 2. 如果用户没有指定，则自动尝试在查找应用的 appname，加为前缀，比如 system properties设置 project.name是 demo，则
-     *    生成的 agentId是  demo-xxxx
-     * </pre>
+     * the name of attaching application. Just for distinguishing different application.
+     * If the user specifies appName when starting Arthas, AppName will be shown when users browse to http://arthas-tunnel-server-ip:port/apps.html .
      */
     private String appName;
+
     /**
-     * report executed command
+     * the url of reporting executed command.
+     * If user configures the statUrl, it will be showed when use the command of session.
      */
     private String statUrl;
 
     /**
-     * session timeout seconds
+     * session timeout seconds.
+     * After this time, the user will be logged out from Arthas.
      * @see ShellServerOptions#DEFAULT_SESSION_TIMEOUT
      */
     private Long sessionTimeout;
 
     /**
-     * disabled commands
+     * disabled commands.
+     * If the user configures a disabled command, the command will not be available in Arthas.
+     * If more than one is needed, separate by ','.
      */
     private String disabledCommands;
 
