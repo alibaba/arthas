@@ -91,7 +91,7 @@ function initXterm (cols, rows) {
     xterm = new Terminal({
         cols: cols,
         rows: rows,
-        screenReaderMode: true,
+        screenReaderMode: false,
         rendererType: 'canvas',
         convertEol: true
     });
