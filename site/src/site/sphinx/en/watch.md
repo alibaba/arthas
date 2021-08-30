@@ -3,6 +3,8 @@ watch
 
 [`watch` online tutorial](https://arthas.aliyun.com/doc/arthas-tutorials.html?language=en&id=command-watch)
 
+> watch [class-pattern] [method-pattern] [express] [condition-express  `optional` ] -[b|e|s|f|E|x:]
+
 Monitor methods in data aspect including `return values`, `exceptions` and `parameters`.
 
 With the help of [OGNL](https://commons.apache.org/proper/commons-ognl/index.html), you can easily check the details of variables when methods being invoked.
@@ -16,7 +18,7 @@ There are four different scenarios for `watch` command, which makes it rather co
 |*class-pattern*|pattern for the class name|
 |*method-pattern*|pattern for the method name|
 |*expression*|expression to monitor|
-|*condition-expression*|condition expression to filter|
+|*condition-expression*|condition expression to filter [optional]|
 |[b]|before method being invoked|
 |[e]|when method encountering exceptions|
 |[s]|when method exits normally|
