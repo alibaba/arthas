@@ -1,6 +1,7 @@
 package com.taobao.arthas.core.shell.term.impl.http;
 
 import java.nio.charset.Charset;
+import java.security.Principal;
 import java.util.List;
 import java.util.Map;
 
@@ -9,6 +10,7 @@ import javax.security.auth.Subject;
 import com.alibaba.arthas.deps.org.slf4j.Logger;
 import com.alibaba.arthas.deps.org.slf4j.LoggerFactory;
 import com.taobao.arthas.common.ArthasConstants;
+import com.taobao.arthas.core.security.AuthUtils;
 import com.taobao.arthas.core.security.BasicPrincipal;
 import com.taobao.arthas.core.security.SecurityAuthenticator;
 import com.taobao.arthas.core.server.ArthasBootstrap;
@@ -64,18 +66,23 @@ public final class BasicHttpAuthenticatorHandler extends ChannelDuplexHandler {
                 authed = true;
             }
 
+            Principal principal = null;
             if (!authed) {
                 // 判断请求header里是否带有 username/password
-                BasicPrincipal principal = extractBasicAuthSubject(httpRequest);
+                principal = extractBasicAuthSubject(httpRequest);
                 if (principal == null) {
                     // 判断 url里是否有 username/password
                     principal = extractBasicAuthSubjectFromUrl(httpRequest);
                 }
-                Subject subject = securityAuthenticator.login(principal);
-                if (subject != null) {
-                    authed = true;
-                    session.setAttribute(ArthasConstants.SUBJECT_KEY, subject);
-                }
+            }
+            if (!authed && principal == null) {
+                // 判断是否本地连接
+                principal = AuthUtils.localPrincipal(ctx);
+            }
+            Subject subject = securityAuthenticator.login(principal);
+            if (subject != null) {
+                authed = true;
+                session.setAttribute(ArthasConstants.SUBJECT_KEY, subject);
             }
 
             if (!authed) {

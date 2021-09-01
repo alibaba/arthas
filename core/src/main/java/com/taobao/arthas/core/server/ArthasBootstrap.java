@@ -665,4 +665,7 @@ public class ArthasBootstrap {
         return securityAuthenticator;
     }
 
+    public Configure getConfigure() {
+        return configure;
+    }
 }
