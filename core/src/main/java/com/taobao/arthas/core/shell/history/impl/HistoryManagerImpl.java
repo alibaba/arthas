@@ -11,6 +11,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
+ * @see io.termd.core.readline.Readline#history
  * @author gongdewei 2020/4/8
  */
 public class HistoryManagerImpl implements HistoryManager {
