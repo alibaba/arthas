@@ -51,7 +51,7 @@ public class LogUtil {
      * 
      * @param env
      */
-    public static LoggerContext initLooger(ArthasEnvironment env) {
+    public static LoggerContext initLogger(ArthasEnvironment env) {
         String loggingConfig = env.resolvePlaceholders(LOGGING_CONFIG);
         if (loggingConfig == null || loggingConfig.trim().isEmpty()) {
             return null;

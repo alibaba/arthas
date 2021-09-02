@@ -144,7 +144,7 @@ public class ArthasBootstrap {
         outputPath.mkdirs();
 
         // 3. init logger
-        loggerContext = LogUtil.initLooger(arthasEnvironment);
+        loggerContext = LogUtil.initLogger(arthasEnvironment);
 
         // 4. 增强ClassLoader
         enhanceClassLoader();
