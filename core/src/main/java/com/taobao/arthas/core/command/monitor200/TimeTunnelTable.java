@@ -2,7 +2,7 @@ package com.taobao.arthas.core.command.monitor200;
 
 import com.taobao.arthas.core.command.model.TimeFragmentVO;
 import com.taobao.arthas.core.util.StringUtils;
-import com.taobao.arthas.core.view.ObjectView;
+import com.taobao.arthas.core.util.object.ObjectExpandUtils;
 import com.taobao.text.Decoration;
 import com.taobao.text.ui.Element;
 import com.taobao.text.ui.LabelElement;
@@ -102,44 +102,31 @@ public class TimeTunnelTable {
                 .row("IS-EXCEPTION", "" + tf.isThrow());
     }
 
-    public static void drawThrowException(TableElement table, TimeFragmentVO tf, boolean isNeedExpand, Integer expandLevel) {
+    public static void drawThrowException(TableElement table, TimeFragmentVO tf) {
         if (tf.isThrow()) {
-            //noinspection ThrowableResultOfMethodCallIgnored
             Throwable throwable = tf.getThrowExp();
-            if (isNeedExpand) {
-                table.row("THROW-EXCEPTION", new ObjectView(throwable, expandLevel).draw());
-            } else {
-                StringWriter stringWriter = new StringWriter();
-                PrintWriter printWriter = new PrintWriter(stringWriter);
-                try {
-                    throwable.printStackTrace(printWriter);
-                    table.row("THROW-EXCEPTION", stringWriter.toString());
-                } finally {
-                    printWriter.close();
-                }
+            StringWriter stringWriter = new StringWriter();
+            PrintWriter printWriter = new PrintWriter(stringWriter);
+            try {
+                throwable.printStackTrace(printWriter);
+                table.row("THROW-EXCEPTION", stringWriter.toString());
+            } finally {
+                printWriter.close();
             }
         }
     }
 
-    public static void drawReturnObj(TableElement table, TimeFragmentVO tf, boolean isNeedExpand, Integer expandLevel, Integer sizeLimit) {
+    public static void drawReturnObj(TableElement table, TimeFragmentVO tf) {
         if (tf.isReturn()) {
-            if (isNeedExpand) {
-                table.row("RETURN-OBJ", new ObjectView(tf.getReturnObj(), expandLevel, sizeLimit).draw());
-            } else {
-                table.row("RETURN-OBJ", "" + StringUtils.objectToString(tf.getReturnObj()));
-            }
+            table.row("RETURN-OBJ", "" + ObjectExpandUtils.toString(tf.getReturnObj()));
         }
     }
 
-    public static void drawParameters(TableElement table, Object[] params, boolean isNeedExpand, Integer expandLevel) {
+    public static void drawParameters(TableElement table, Object[] params) {
         if (params != null) {
             int paramIndex = 0;
             for (Object param : params) {
-                if (isNeedExpand) {
-                    table.row("PARAMETERS[" + paramIndex++ + "]", new ObjectView(param, expandLevel).draw());
-                } else {
-                    table.row("PARAMETERS[" + paramIndex++ + "]", "" + StringUtils.objectToString(param));
-                }
+                table.row("PARAMETERS[" + paramIndex++ + "]", "" + ObjectExpandUtils.toString(param));
             }
         }
     }
@@ -149,12 +136,10 @@ public class TimeTunnelTable {
                 .style(Decoration.bold.bold()));
     }
 
-    public static void drawWatchResults(TableElement table, Map<Integer, Object> watchResults, boolean isNeedExpand,
-                                        Integer expandLevel, Integer sizeLimit) {
+    public static void drawWatchResults(TableElement table, Map<Integer, Object> watchResults) {
         for (Map.Entry<Integer, Object> entry : watchResults.entrySet()) {
             Object value = entry.getValue();
-            table.row("" + entry.getKey(), "" +
-                    (isNeedExpand ? new ObjectView(value, expandLevel, sizeLimit).draw() : StringUtils.objectToString(value)));
+            table.row("" + entry.getKey(), ObjectExpandUtils.toString(value));
         }
     }
 
@@ -168,22 +153,17 @@ public class TimeTunnelTable {
                 .row("METHOD", methodName);
     }
 
-    public static void drawPlayResult(TableElement table, Object returnObj, boolean isNeedExpand, int expandLevel,
-                               int sizeLimit, double cost) {
+    public static void drawPlayResult(TableElement table, Object returnObj, double cost) {
         // 执行成功:输出成功状态
         table.row("IS-RETURN", "" + true);
         table.row("IS-EXCEPTION", "" + false);
         table.row("COST(ms)", "" + cost);
 
         // 执行成功:输出成功结果
-        if (isNeedExpand) {
-            table.row("RETURN-OBJ", new ObjectView(returnObj, expandLevel, sizeLimit).draw());
-        } else {
-            table.row("RETURN-OBJ", "" + StringUtils.objectToString(returnObj));
-        }
+        table.row("RETURN-OBJ", "" + ObjectExpandUtils.toString(returnObj));
     }
 
-    public static void drawPlayException(TableElement table, Throwable t, boolean isNeedExpand, int expandLevel) {
+    public static void drawPlayException(TableElement table, Throwable t) {
         // 执行失败:输出失败状态
         table.row("IS-RETURN", "" + false);
         table.row("IS-EXCEPTION", "" + true);
@@ -196,17 +176,13 @@ public class TimeTunnelTable {
             cause = t;
         }
 
-        if (isNeedExpand) {
-            table.row("THROW-EXCEPTION", new ObjectView(cause, expandLevel).draw());
-        } else {
-            StringWriter stringWriter = new StringWriter();
-            PrintWriter printWriter = new PrintWriter(stringWriter);
-            try {
-                cause.printStackTrace(printWriter);
-                table.row("THROW-EXCEPTION", stringWriter.toString());
-            } finally {
-                printWriter.close();
-            }
+        StringWriter stringWriter = new StringWriter();
+        PrintWriter printWriter = new PrintWriter(stringWriter);
+        try {
+            cause.printStackTrace(printWriter);
+            table.row("THROW-EXCEPTION", stringWriter.toString());
+        } finally {
+            printWriter.close();
         }
     }
 

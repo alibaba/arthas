@@ -11,6 +11,7 @@ public class SessionModel extends ResultModel {
     private String sessionId;
     private String agentId;
     private String tunnelServer;
+    private String channelServer;
     private String statUrl;
 
     private boolean tunnelConnected;
@@ -50,6 +51,14 @@ public class SessionModel extends ResultModel {
 
     public void setTunnelServer(String tunnelServer) {
         this.tunnelServer = tunnelServer;
+    }
+
+    public String getChannelServer() {
+        return channelServer;
+    }
+
+    public void setChannelServer(String channelServer) {
+        this.channelServer = channelServer;
     }
 
     public String getStatUrl() {

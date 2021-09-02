@@ -1,0 +1,278 @@
+/*
+ * Copyright 2016 Google, Inc.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+syntax = "proto3";
+
+option java_multiple_files = true;
+
+// import "google/protobuf/timestamp.proto";
+import "google/protobuf/any.proto";
+import "google/protobuf/wrappers.proto";
+import "ArthasResults.proto";
+
+package com.alibaba.arthas.channel.proto;
+
+enum ResponseStatus {
+    /* Ignored value of json format */
+    IGNORED1 = 0;
+
+    /*
+     * Request processed successfully
+     */
+    SUCCEEDED = 1;
+
+    /*
+     * Response is CONTINUOUS, receiving streaming data of async exec job
+     */
+    CONTINUOUS = 2;
+
+    /*
+     * Request processing was interrupted due to timeout or other reasons
+     */
+    INTERRUPTED = 3;
+
+    /*
+     * Request processing failed
+     */
+    FAILED = 4;
+
+    /*
+     * Request is refused
+     */
+    REFUSED = 5;
+}
+
+enum AgentStatus {
+    /* Ignored value of json format */
+    IGNORED2 = 0;
+
+    /* Arthas agent is up */
+    UP = 1;
+
+    /* Arthas agent is down */
+    DOWN = 2;
+
+    /* Arthas agent is ready  */
+    IN_SERVICE = 3;
+
+    /* Arthas agent is out-of-service */
+    OUT_OF_SERVICE = 4;
+}
+
+enum RequestAction {
+    /* Ignored value of json format */
+    IGNORED3 = 0;
+
+    /*
+     * Execute command
+     */
+    EXECUTE = 1;
+
+    /*
+     * Async execute command
+     */
+    ASYNC_EXECUTE = 2;
+
+    /*
+     * Interrupt executing job
+     */
+    INTERRUPT_JOB = 3;
+
+    /* create new session */
+    INIT_SESSION = 4;
+
+    /* close session */
+    CLOSE_SESSION = 5;
+
+    /* join session */
+    /* JOIN_SESSION = 6; */
+
+    /* Open new WebConsole and create new session */
+    OPEN_CONSOLE = 10;
+
+    /* Close WebConsole and session */
+    CLOSE_CONSOLE = 11;
+
+    /* Input chars to WebConsole */
+    CONSOLE_INPUT = 12;
+
+}
+
+enum ResultFormat {
+    /* Ignored value of json format */
+    IGNORED4 = 0;
+
+    /* command results use proto format (ExecuteResult.results) */
+    PROTO = 1;
+
+    /* command results use json format  (ExecuteResult.resultsJson)*/
+    JSON = 2;
+}
+
+message ExecuteParams {
+
+    /* command line to execute */
+    string commandLine = 1;
+
+    /* execute timeout */
+    int32 execTimeout = 2;
+
+    /* command results data format, default value is ResultFormat.PROTO */
+    ResultFormat resultFormat = 3;
+}
+
+message ExecuteResult {
+
+    /* results of proto format */
+    repeated google.protobuf.Any results = 1;
+
+    /* results of json format */
+    google.protobuf.StringValue resultsJson = 2;
+}
+
+/* WebConsole input data */
+message ConsoleParams {
+    /* input data json*/
+    string inputData = 1;
+
+    /* console id */
+    string consoleId = 2;
+}
+
+/* WebConsole output data */
+message ConsoleResult {
+
+    /* results */
+    repeated ConsoleData results = 1;
+
+    /* console id */
+    string consoleId = 2;
+}
+
+message ConsoleData {
+    /* data type: tty, image */
+    string dataType = 1;
+
+    /* WebConsole output data */
+    bytes dataBytes = 2;
+
+}
+
+message ActionRequest {
+    /* Arthas agent id */
+    string agentId = 1;
+
+    /* request id for message routing */
+    string requestId = 2;
+
+    /* action of request */
+    RequestAction action = 3;
+
+    /* Arthas session id */
+    string sessionId = 4;
+
+    /* params of executing command */
+    ExecuteParams executeParams = 5;
+
+    /* WebConsole input data */
+    ConsoleParams consoleParams = 6;
+
+
+}
+
+message ActionResponse {
+    /* Arthas agent id */
+    string agentId = 1;
+
+    /* request id for message routing */
+    string requestId = 2;
+
+    /* status of response */
+    ResponseStatus status = 3;
+
+    /* status message */
+    string message = 4;
+
+    /* Arthas session id */
+    string sessionId = 5;
+
+    /* result of command */
+    ExecuteResult executeResult=6;
+
+    /* WebConsole output data */
+    ConsoleResult consoleResult = 7;
+
+}
+
+message GeneralResult {
+    int32 status = 1;
+    string message = 2;
+}
+
+message HeartbeatRequest {
+    string agentId = 1;
+    AgentStatus agentStatus = 2;
+    string agentVersion = 3;
+}
+
+message HeartbeatResponse {
+    int32 status = 1;
+    string message = 2;
+}
+
+message AgentInfo {
+    string agentId = 1;
+    AgentStatus agentStatus = 2;
+    string agentVersion = 3;
+    string hostname = 4;
+    string ip = 5;
+    string osVersion = 6;
+    string appName = 7;
+    string channelServer=8;
+    string classPath=9;
+
+    //channel info
+    string channelVersion = 20;
+    repeated string channelFeatures = 21;
+}
+
+message RegisterResult {
+    int32 status = 1;
+    string message = 2;
+}
+
+service ArthasService {
+
+    /*
+     * Get action request from server
+     */
+    rpc acquireRequest(AgentInfo) returns (stream ActionRequest);
+
+    /*
+     * Submit action response to server from arthas client
+     */
+    rpc submitResponse(stream ActionResponse) returns (stream GeneralResult);
+
+    /*
+     * Register arthas agent to server
+     */
+    rpc register(AgentInfo) returns (RegisterResult);
+
+    /*
+     * Report heartbeat to server from arthas client
+     */
+    rpc heartbeat(HeartbeatRequest) returns (HeartbeatResponse);
+}

@@ -27,30 +27,31 @@ public class Arthas {
     }
 
     private Configure parse(String[] args) {
-        Option pid = new TypedOption<Long>().setType(Long.class).setShortName("pid").setRequired(true);
-        Option core = new TypedOption<String>().setType(String.class).setShortName("core").setRequired(true);
-        Option agent = new TypedOption<String>().setType(String.class).setShortName("agent").setRequired(true);
-        Option target = new TypedOption<String>().setType(String.class).setShortName("target-ip");
-        Option telnetPort = new TypedOption<Integer>().setType(Integer.class)
-                .setShortName("telnet-port");
-        Option httpPort = new TypedOption<Integer>().setType(Integer.class)
-                .setShortName("http-port");
-        Option sessionTimeout = new TypedOption<Integer>().setType(Integer.class)
-                        .setShortName("session-timeout");
+        Option pid = createOption(Long.class, "pid", true);
+        Option core = createOption(String.class, "core", true);
+        Option agent = createOption(String.class, "agent", true);
+        Option target = createOption(String.class, "target-ip");
+        Option telnetPort = createOption(Integer.class, "telnet-port");
+        Option httpPort = createOption(Integer.class, "http-port");
+        Option sessionTimeout = createOption(Integer.class, "session-timeout");
 
-        Option username = new TypedOption<String>().setType(String.class).setShortName("username");
-        Option password = new TypedOption<String>().setType(String.class).setShortName("password");
+        Option username = createOption(String.class, "username");
+        Option password = createOption(String.class, "password");
 
-        Option tunnelServer = new TypedOption<String>().setType(String.class).setShortName("tunnel-server");
-        Option agentId = new TypedOption<String>().setType(String.class).setShortName("agent-id");
-        Option appName = new TypedOption<String>().setType(String.class).setShortName(ArthasConstants.APP_NAME);
+        Option channelServer = createOption(String.class, "channel-server");
+        Option heartbeatInterval = createOption(Integer.class, "heartbeat-interval");
 
-        Option statUrl = new TypedOption<String>().setType(String.class).setShortName("stat-url");
-        Option disabledCommands = new TypedOption<String>().setType(String.class).setShortName("disabled-commands");
+        Option tunnelServer = createOption(String.class, "tunnel-server");
+        Option agentId = createOption(String.class, "agent-id");
+        Option appName = createOption(String.class, ArthasConstants.APP_NAME);
+
+        Option statUrl = createOption(String.class, "stat-url");
+        Option disabledCommands = createOption(String.class,"disabled-commands");
 
         CLI cli = CLIs.create("arthas").addOption(pid).addOption(core).addOption(agent).addOption(target)
                 .addOption(telnetPort).addOption(httpPort).addOption(sessionTimeout)
                 .addOption(username).addOption(password)
+                .addOption(channelServer).addOption(heartbeatInterval)
                 .addOption(tunnelServer).addOption(agentId).addOption(appName).addOption(statUrl).addOption(disabledCommands);
         CommandLine commandLine = cli.parse(Arrays.asList(args));
 
@@ -76,12 +77,26 @@ public class Arthas {
         configure.setUsername((String) commandLine.getOptionValue("username"));
         configure.setPassword((String) commandLine.getOptionValue("password"));
 
+        configure.setChannelServer((String) commandLine.getOptionValue("channel-server"));
+        Integer heartbeatIntervalValue = commandLine.getOptionValue("heartbeat-interval");
+        if (heartbeatIntervalValue != null) {
+            configure.setHeartbeatInterval(heartbeatIntervalValue);
+        }
+
         configure.setTunnelServer((String) commandLine.getOptionValue("tunnel-server"));
         configure.setAgentId((String) commandLine.getOptionValue("agent-id"));
         configure.setStatUrl((String) commandLine.getOptionValue("stat-url"));
         configure.setDisabledCommands((String) commandLine.getOptionValue("disabled-commands"));
         configure.setAppName((String) commandLine.getOptionValue(ArthasConstants.APP_NAME));
         return configure;
+    }
+
+    private <T> TypedOption<T> createOption(Class<T> type, String shortName, boolean required) {
+        return new TypedOption<T>().setType(type).setShortName(shortName).setRequired(required);
+    }
+
+    private <T> TypedOption<T> createOption(Class<T> type, String shortName) {
+        return createOption(type, shortName, false);
     }
 
     private void attachAgent(Configure configure) throws Exception {

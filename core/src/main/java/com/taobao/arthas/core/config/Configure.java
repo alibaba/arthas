@@ -32,6 +32,15 @@ public class Configure {
     private String tunnelServer;
     private String agentId;
 
+    /**
+     * Channel server address
+     */
+    private String channelServer;
+    /**
+     * Agent (Channel client) heartbeat interval seconds
+     */
+    private int heartbeatInterval = 5;
+
     private String username;
     private String password;
 
@@ -136,6 +145,22 @@ public class Configure {
 
     public void setTunnelServer(String tunnelServer) {
         this.tunnelServer = tunnelServer;
+    }
+
+    public String getChannelServer() {
+        return channelServer;
+    }
+
+    public void setChannelServer(String channelServer) {
+        this.channelServer = channelServer;
+    }
+
+    public int getHeartbeatInterval() {
+        return heartbeatInterval;
+    }
+
+    public void setHeartbeatInterval(int heartbeatInterval) {
+        this.heartbeatInterval = heartbeatInterval;
     }
 
     public String getAgentId() {

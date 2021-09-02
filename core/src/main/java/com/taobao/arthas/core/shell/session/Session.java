@@ -1,6 +1,6 @@
 package com.taobao.arthas.core.shell.session;
 
-import com.taobao.arthas.core.distribution.SharingResultDistributor;
+import com.taobao.arthas.core.distribution.ResultDistributor;
 import com.taobao.arthas.core.shell.command.CommandResolver;
 import com.taobao.arthas.core.shell.system.Job;
 
@@ -146,13 +146,13 @@ public interface Session {
      * Update session's command result distributor
      * @param resultDistributor
      */
-    void setResultDistributor(SharingResultDistributor resultDistributor);
+    void setResultDistributor(ResultDistributor resultDistributor);
 
     /**
      * Get session's command result distributor
      * @return
      */
-    SharingResultDistributor getResultDistributor();
+    ResultDistributor getResultDistributor();
 
     /**
      * Set the foreground job

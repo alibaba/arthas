@@ -60,7 +60,7 @@ public class ObjectView implements View {
 
     private final static String TAB = "    ";
 
-    private final static Map<Byte, String> ASCII_MAP = new HashMap<Byte, String>();
+    public final static Map<Byte, String> ASCII_MAP = new HashMap<Byte, String>();
 
     static {
         ASCII_MAP.put((byte) 0, "NUL");

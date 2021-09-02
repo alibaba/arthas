@@ -16,6 +16,7 @@ import java.util.Map.Entry;
 import java.util.Properties;
 import java.util.Set;
 import java.util.Timer;
+import java.util.UUID;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ThreadFactory;
@@ -23,6 +24,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.jar.JarFile;
 
+import com.alibaba.arthas.channel.client.ChannelClient;
 import com.alibaba.arthas.deps.ch.qos.logback.classic.LoggerContext;
 import com.alibaba.arthas.deps.org.slf4j.Logger;
 import com.alibaba.arthas.deps.org.slf4j.LoggerFactory;
@@ -41,6 +43,8 @@ import com.taobao.arthas.common.PidUtils;
 import com.taobao.arthas.common.SocketUtils;
 import com.taobao.arthas.core.advisor.Enhancer;
 import com.taobao.arthas.core.advisor.TransformerManager;
+import com.taobao.arthas.core.channel.AgentInfoServiceImpl;
+import com.taobao.arthas.core.channel.ChannelRequestHandler;
 import com.taobao.arthas.core.command.BuiltinCommandPack;
 import com.taobao.arthas.core.command.view.ResultViewResolver;
 import com.taobao.arthas.core.config.BinderUtils;
@@ -126,6 +130,8 @@ public class ArthasBootstrap {
     private HttpSessionManager httpSessionManager;
     private SecurityAuthenticator securityAuthenticator;
 
+    private ChannelClient channelClient;
+
     private ArthasBootstrap(Instrumentation instrumentation, Map<String, String> args) throws Throwable {
         this.instrumentation = instrumentation;
 
@@ -154,15 +160,6 @@ public class ArthasBootstrap {
         // 6. start agent server
         bind(configure);
 
-        executorService = Executors.newScheduledThreadPool(1, new ThreadFactory() {
-            @Override
-            public Thread newThread(Runnable r) {
-                final Thread t = new Thread(r, "arthas-command-execute");
-                t.setDaemon(true);
-                return t;
-            }
-        });
-
         shutdown = new Thread("as-shutdown-hooker") {
 
             @Override
@@ -185,6 +182,15 @@ public class ArthasBootstrap {
     }
 
     private void initBeans() {
+        executorService = Executors.newScheduledThreadPool(1, new ThreadFactory() {
+            @Override
+            public Thread newThread(Runnable r) {
+                final Thread t = new Thread(r, "arthas-command-execute");
+                t.setDaemon(true);
+                return t;
+            }
+        });
+
         this.resultViewResolver = new ResultViewResolver();
         this.historyManager = new HistoryManagerImpl();
     }
@@ -351,6 +357,13 @@ public class ArthasBootstrap {
             throw new IllegalStateException("already bind");
         }
 
+        //check and gen agent id
+        if (configure.getChannelServer() != null || configure.getTunnelServer() != null) {
+            if (StringUtils.isBlank(configure.getAgentId())) {
+                configure.setAgentId(generateRandomAgentId());
+            }
+        }
+
         // init random port
         if (configure.getTelnetPort() != null && configure.getTelnetPort() == 0) {
             int newTelnetPort = SocketUtils.findAvailableTcpPort();
@@ -408,6 +421,9 @@ public class ArthasBootstrap {
             BuiltinCommandPack builtinCommands = new BuiltinCommandPack(disabledCommands);
             List<CommandResolver> resolvers = new ArrayList<CommandResolver>();
             resolvers.add(builtinCommands);
+            for (CommandResolver resolver : resolvers) {
+                shellServer.registerCommandResolver(resolver);
+            }
 
             //worker group
             workerGroup = new NioEventLoopGroup(new DefaultThreadFactory("arthas-TermServer", true));
@@ -426,15 +442,11 @@ public class ArthasBootstrap {
                         options.getConnectionTimeout(), workerGroup, httpSessionManager));
             } else {
                 // listen local address in VM communication
-                if (configure.getTunnelServer() != null) {
+                if (configure.getTunnelServer() != null || configure.getChannelServer() != null) {
                     shellServer.registerTermServer(new HttpTermServer(configure.getIp(), configure.getHttpPort(),
                             options.getConnectionTimeout(), workerGroup, httpSessionManager));
                 }
                 logger().info("http port is {}, skip bind http server.", configure.getHttpPort());
-            }
-
-            for (CommandResolver resolver : resolvers) {
-                shellServer.registerCommandResolver(resolver);
             }
 
             shellServer.listen(new BindHandler(isBindRef));
@@ -447,10 +459,23 @@ public class ArthasBootstrap {
             //http api session manager
             sessionManager = new SessionManagerImpl(options, shellServer.getCommandManager(), shellServer.getJobController());
             //http api handler
-            httpApiHandler = new HttpApiHandler(historyManager, sessionManager);
+            httpApiHandler = new HttpApiHandler(historyManager, sessionManager, configure);
 
             logger().info("as-server listening on network={};telnet={};http={};timeout={};", configure.getIp(),
                     configure.getTelnetPort(), configure.getHttpPort(), options.getConnectionTimeout());
+
+            // start channel client
+            if (configure.getChannelServer() != null) {
+                try {
+                    channelClient = new ChannelClient(configure.getChannelServer());
+                    channelClient.setHeartbeatInterval(configure.getHeartbeatInterval());
+                    channelClient.setAgentInfoService(new AgentInfoServiceImpl(channelClient, configure));
+                    channelClient.setRequestListener(new ChannelRequestHandler(channelClient, sessionManager, historyManager));
+                    channelClient.start();
+                } catch (Throwable e) {
+                    logger().error("start channel client failure", e);
+                }
+            }
 
             // 异步回报启动次数
             if (configure.getStatUrl() != null) {
@@ -516,6 +541,13 @@ public class ArthasBootstrap {
                 tunnelClient.stop();
             } catch (Throwable e) {
                 logger().error("stop tunnel client error", e);
+            }
+        }
+        if (channelClient != null) {
+            try {
+                channelClient.stop();
+            } catch (Exception e) {
+                logger().error("stop channel client error", e);
             }
         }
         if (executorService != null) {
@@ -613,8 +645,16 @@ public class ArthasBootstrap {
         }
     }
 
+    private String generateRandomAgentId() {
+        return UUID.randomUUID().toString().replaceAll("-", "");
+    }
+
     public TunnelClient getTunnelClient() {
         return tunnelClient;
+    }
+
+    public ChannelClient getChannelClient() {
+        return channelClient;
     }
 
     public ShellServer getShellServer() {
@@ -655,6 +695,10 @@ public class ArthasBootstrap {
 
     public HttpApiHandler getHttpApiHandler() {
         return httpApiHandler;
+    }
+
+    public Configure getConfigure() {
+        return configure;
     }
 
     public File getOutputPath() {

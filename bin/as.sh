@@ -136,8 +136,15 @@ COMMAND=
 # batch file to execute
 BATCH_FILE=
 
+# channel server address
+CHANNEL_SERVER=
+
+# channel client heartbeat interval seconds
+HEARTBEAT_INTERVAL=
+
 # tunnel server url
 TUNNEL_SERVER=
+
 # agent id
 AGENT_ID=
 
@@ -407,6 +414,7 @@ usage()
 Usage:
     $0 [-h] [--target-ip <value>] [--telnet-port <value>]
        [--http-port <value>] [--session-timeout <value>] [--arthas-home <value>]
+       [--channel-server <value>] [--heartbeat-interval <value>]
        [--tunnel-server <value>] [--agent-id <value>] [--stat-url <value>]
        [--app-name <value>]
        [--username <value>] [--password <value>]
@@ -428,6 +436,8 @@ Options and Arguments:
     --use-http                  Enforce use http to download, default use https
     --attach-only               Attach target process only, do not connect
     --debug-attach              Debug attach agent
+    --channel-server            Remote channel server address
+    --heartbeat-interval        The arthas agent (channel client) heartbeat interval seconds, default 5
     --tunnel-server             Remote tunnel server url
     --agent-id                  Special agent id
     --app-name                  Special app name
@@ -450,6 +460,9 @@ EXAMPLES:
   ./as.sh --username admin --password <password>
   ./as.sh --tunnel-server 'ws://192.168.10.11:7777/ws' --app-name demoapp
   ./as.sh --tunnel-server 'ws://192.168.10.11:7777/ws' --agent-id bvDOe8XbTM2pQWjF4cfw
+  ./as.sh --channel-server '192.168.10.11:7700'
+  ./as.sh --channel-server '192.168.10.11:7700' --heartbeat-interval 10
+  ./as.sh --channel-server '192.168.10.11:7700' --agent-id bvDOe8XbTM2pQWjF4cfw
   ./as.sh --stat-url 'http://192.168.10.11:8080/api/stat'
   ./as.sh -c 'sysprop; thread' <pid>
   ./as.sh -f batch.as <pid>
@@ -600,6 +613,16 @@ parse_arguments()
         -f|--batch-file)
         BATCH_FILE="$2"
         BATCH_MODE=true
+        shift # past argument
+        shift # past value
+        ;;
+        --channel-server)
+        CHANNEL_SERVER="$2"
+        shift # past argument
+        shift # past value
+        ;;
+        --heartbeat-interval)
+        HEARTBEAT_INTERVAL="$2"
         shift # past argument
         shift # past value
         ;;
@@ -819,6 +842,14 @@ attach_jvm()
     fi
 
     local tempArgs=()
+    if [ "${CHANNEL_SERVER}" ]; then
+        tempArgs+=("-channel-server")
+        tempArgs+=("${CHANNEL_SERVER}")
+    fi
+    if [ "${HEARTBEAT_INTERVAL}" ]; then
+        tempArgs+=("-heartbeat-interval")
+        tempArgs+=("${CHANNEL_SERVER}")
+    fi
     if [ "${TUNNEL_SERVER}" ]; then
         tempArgs+=("-tunnel-server")
         tempArgs+=("${TUNNEL_SERVER}")
@@ -1074,9 +1105,10 @@ main()
 
     echo "Attach success."
 
-    if [ ${ATTACH_ONLY} = false ]; then
+    if [ ${ATTACH_ONLY} = false ] and [ $TELNET_PORT > 0 ]; then
       active_console "${ARTHAS_HOME}"
     fi
+
 }
 
 
