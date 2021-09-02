@@ -88,7 +88,7 @@ public class LogUtil {
                 if (appender instanceof RollingFileAppender) {
                     RollingFileAppender fileAppender = (RollingFileAppender) appender;
                     if ("ARTHAS".equalsIgnoreCase(fileAppender.getName())) {
-                        logFile = fileAppender.getFile();
+                        logFile = new File(fileAppender.getFile()).getCanonicalPath();
                     }
                 }
             }
