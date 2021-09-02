@@ -242,3 +242,16 @@ Affect(class count: 1 , method count: 1) cost in 66 ms, listenerId: 1
 2. 非函数调用的指令消耗。比如 `i++`, `getfield`等指令。
 
 3. 在代码执行过程中，JVM可能出现停顿，比如GC，进入同步块等。
+
+#### 使用 -v 参数打印更多信息
+
+> watch/trace/monitor/stack/tt 命令都支持 `-v` 参数
+
+当命令执行之后，没有输出结果。有两种可能：
+
+1. 匹配到的函数没有被执行
+2. 条件表达式结果是 false
+
+但用户区分不出是哪种情况。
+
+使用 `-v`选项，则会打印`Condition express`的具体值和执行结果，方便确认。

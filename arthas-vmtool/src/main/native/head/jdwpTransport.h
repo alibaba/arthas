@@ -1,26 +1,26 @@
 /*
- * Copyright (c) 2003, 2016, Oracle and/or its affiliates. All rights reserved.
- * ORACLE PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
+ * Copyright (c) 2003, 2017, Oracle and/or its affiliates. All rights reserved.
+ * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
+ * This code is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License version 2 only, as
+ * published by the Free Software Foundation.  Oracle designates this
+ * particular file as subject to the "Classpath" exception as provided
+ * by Oracle in the LICENSE file that accompanied this code.
  *
+ * This code is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+ * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
+ * version 2 for more details (a copy is included in the LICENSE file that
+ * accompanied this code).
  *
+ * You should have received a copy of the GNU General Public License version
+ * 2 along with this work; if not, write to the Free Software Foundation,
+ * Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA.
  *
- *
- *
- *
- *
- *
- *
- *
- *
- *
- *
- *
- *
- *
- *
- *
- *
+ * Please contact Oracle, 500 Oracle Parkway, Redwood Shores, CA 94065 USA
+ * or visit www.oracle.com if you need additional information or have any
+ * questions.
  */
 
 /*
@@ -33,7 +33,8 @@
 #include "jni.h"
 
 enum {
-    JDWPTRANSPORT_VERSION_1_0 = 0x00010000
+    JDWPTRANSPORT_VERSION_1_0 = 0x00010000,
+    JDWPTRANSPORT_VERSION_1_1 = 0x00010001
 };
 
 #ifdef __cplusplus
@@ -95,6 +96,8 @@ typedef struct {
  * See: http://java.sun.com/j2se/1.5/docs/guide/jpda/jdwp-spec.html
  */
 
+#define JDWP_HEADER_SIZE 11
+
 enum {
     /*
      * If additional flags are added that apply to jdwpCmdPacket,
@@ -142,6 +145,13 @@ typedef jint (JNICALL *jdwpTransport_OnLoad_t)(JavaVM *jvm,
                                                jint version,
                                                jdwpTransportEnv** env);
 
+/*
+ * JDWP transport configuration from the agent.
+ */
+typedef struct jdwpTransportConfiguration {
+    /* Field added in JDWPTRANSPORT_VERSION_1_1: */
+    const char* allowed_peers;       /* Peers allowed for connection */
+} jdwpTransportConfiguration;
 
 
 /* Function Interface */
@@ -191,6 +201,9 @@ struct jdwpTransportNativeInterface_ {
     jdwpTransportError (JNICALL *GetLastError)(jdwpTransportEnv* env,
         char** error);
 
+    /*  12: SetTransportConfiguration added in JDWPTRANSPORT_VERSION_1_1 */
+    jdwpTransportError (JNICALL *SetTransportConfiguration)(jdwpTransportEnv* env,
+        jdwpTransportConfiguration *config);
 };
 
 
@@ -248,6 +261,10 @@ struct _jdwpTransportEnv {
         return functions->GetLastError(this, error);
     }
 
+    /*  SetTransportConfiguration added in JDWPTRANSPORT_VERSION_1_1 */
+    jdwpTransportError SetTransportConfiguration(jdwpTransportEnv* env,
+        return functions->SetTransportConfiguration(this, config);
+    }
 
 #endif /* __cplusplus */
 };
