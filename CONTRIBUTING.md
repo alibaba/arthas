@@ -150,6 +150,8 @@ chmod +x /tmp/sphinx.osx-x86_64
 * 发布完maven仓库之后，需要到阿里云的仓库里检查是否同步，有可能有延时
 
     比如下载地址： https://maven.aliyun.com/repository/public/com/taobao/arthas/arthas-packaging/3.x.x/arthas-packaging-3.x.x-bin.zip
+    
+    版本号信息地址： https://maven.aliyun.com/repository/public/com/taobao/arthas/arthas-packaging/maven-metadata.xml
 
 * 打上tag，push tag到仓库上
 * 需要更新 gh-pages 分支下面的 arthas-boot.jar/math-game.jar/as.sh ，下载 doc.zip，解压覆盖掉文档的更新
