@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>trace &mdash; Arthas 3.5.3 documentation</title>
+  <title>trace &mdash; Arthas 3.5.4 documentation</title>
   
 
   
@@ -73,7 +73,7 @@
             
             
               <div class="version">
-                3.5.3
+                3.5.4
               </div>
             
           
@@ -142,7 +142,10 @@
 <li class="toctree-l4"><a class="reference internal" href="#dynamic-trace">Dynamic trace</a></li>
 </ul>
 </li>
-<li class="toctree-l3"><a class="reference internal" href="#trace-result-time-inaccuracy-problem">Trace result time inaccuracy problem</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#trace-result-time-inaccuracy-problem">Trace result time inaccuracy problem</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#use-the-v-parameter-to-print-more-information">Use the -v parameter to print more information</a></li>
+</ul>
+</li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="stack.html">stack</a></li>
@@ -480,6 +483,19 @@ Affect(class count: 1 , method count: 1) cost in 35 ms, listenerId: 2
 <li><p>Instruction consumption. For example, instructions such as <code class="docutils literal notranslate"><span class="pre">i++</span></code>, <code class="docutils literal notranslate"><span class="pre">getfield</span></code>, etc.</p></li>
 <li><p>Possible JVM pause during code execution, such as GC, entering synchronization blocks, etc.</p></li>
 </ol>
+<div class="section" id="use-the-v-parameter-to-print-more-information">
+<h3>Use the -v parameter to print more information<a class="headerlink" href="#use-the-v-parameter-to-print-more-information" title="Permalink to this headline">¶</a></h3>
+<blockquote>
+<div><p>The watch/trace/monitor/stack/tt commands all support the <code class="docutils literal notranslate"><span class="pre">-v</span></code> parameter.</p>
+</div></blockquote>
+<p>When the command is executed, there is no output result. There are two possibilities:</p>
+<ol class="simple">
+<li><p>The matched function is not executed</p></li>
+<li><p>The result of the conditional expression is false</p></li>
+</ol>
+<p>But the user cannot tell which situation is.</p>
+<p>Using the <code class="docutils literal notranslate"><span class="pre">-v</span></code> option, the specific value and execution result of <code class="docutils literal notranslate"><span class="pre">Condition</span> <span class="pre">express</span></code> will be printed for easy confirmation.</p>
+</div>
 </div>
 </div>
 

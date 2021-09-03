@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>auth &mdash; Arthas 3.5.3 文档</title>
+  <title>auth &mdash; Arthas 3.5.4 文档</title>
   
 
   
@@ -74,7 +74,7 @@
             
             
               <div class="version">
-                3.5.3
+                3.5.4
               </div>
             
           
@@ -144,6 +144,7 @@
 <li class="toctree-l2"><a class="reference internal" href="pwd.html">pwd</a></li>
 <li class="toctree-l2 current"><a class="current reference internal" href="#">auth</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#id1">配置用户名和密码</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id2">本地连接不鉴权</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#telnet-console">在telnet console里鉴权</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#web-console">Web console密码验证</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#http-api">HTTP API 验证</a><ul>
@@ -255,6 +256,13 @@
 </div>
 </li>
 </ul>
+</div>
+<div class="section" id="id2">
+<h2>本地连接不鉴权<a class="headerlink" href="#id2" title="永久链接至标题">¶</a></h2>
+<p>默认情况下，在<code class="docutils literal notranslate"><span class="pre">arthas.properties</span></code>文件里有配置：</p>
+<div class="highlight-default notranslate"><pre class="literal-block">arthas.localConnectionNonAuth=true</pre>
+</div>
+<p>当配置密码时，使用本地连接，也不需要鉴权。默认配置值是true，方便本地连接使用。只有远程连接时，才需要鉴权。</p>
 </div>
 <div class="section" id="telnet-console">
 <h2>在telnet console里鉴权<a class="headerlink" href="#telnet-console" title="永久链接至标题">¶</a></h2>

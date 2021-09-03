@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>trace &mdash; Arthas 3.5.3 文档</title>
+  <title>trace &mdash; Arthas 3.5.4 文档</title>
   
 
   
@@ -74,7 +74,7 @@
             
             
               <div class="version">
-                3.5.3
+                3.5.4
               </div>
             
           
@@ -146,7 +146,10 @@
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="#id9">动态trace</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#id10">trace结果时间不准确问题</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id10">trace结果时间不准确问题</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#v">使用 -v 参数打印更多信息</a></li>
+</ul>
+</li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="stack.html">stack</a></li>
@@ -484,6 +487,19 @@ Affect(class count: 1 , method count: 1) cost in 35 ms, listenerId: 2
 <li><p>非函数调用的指令消耗。比如 <code class="docutils literal notranslate"><span class="pre">i++</span></code>, <code class="docutils literal notranslate"><span class="pre">getfield</span></code>等指令。</p></li>
 <li><p>在代码执行过程中，JVM可能出现停顿，比如GC，进入同步块等。</p></li>
 </ol>
+<div class="section" id="v">
+<h3>使用 -v 参数打印更多信息<a class="headerlink" href="#v" title="永久链接至标题">¶</a></h3>
+<blockquote>
+<div><p>watch/trace/monitor/stack/tt 命令都支持 <code class="docutils literal notranslate"><span class="pre">-v</span></code> 参数</p>
+</div></blockquote>
+<p>当命令执行之后，没有输出结果。有两种可能：</p>
+<ol class="simple">
+<li><p>匹配到的函数没有被执行</p></li>
+<li><p>条件表达式结果是 false</p></li>
+</ol>
+<p>但用户区分不出是哪种情况。</p>
+<p>使用 <code class="docutils literal notranslate"><span class="pre">-v</span></code>选项，则会打印<code class="docutils literal notranslate"><span class="pre">Condition</span> <span class="pre">express</span></code>的具体值和执行结果，方便确认。</p>
+</div>
 </div>
 </div>
 

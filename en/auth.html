@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>auth &mdash; Arthas 3.5.3 documentation</title>
+  <title>auth &mdash; Arthas 3.5.4 documentation</title>
   
 
   
@@ -73,7 +73,7 @@
             
             
               <div class="version">
-                3.5.3
+                3.5.4
               </div>
             
           
@@ -140,6 +140,7 @@
 <li class="toctree-l2"><a class="reference internal" href="pwd.html">pwd</a></li>
 <li class="toctree-l2 current"><a class="current reference internal" href="#">auth</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#configure-username-and-password">Configure username and password</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#local-connection-does-not-require-authentication">Local connection does not require authentication</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#authenticate-in-the-telnet-console">Authenticate in the telnet console</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#web-console-authentication">Web console Authentication</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#http-api-authentication">HTTP API Authentication</a><ul>
@@ -251,6 +252,13 @@
 </div>
 </li>
 </ul>
+</div>
+<div class="section" id="local-connection-does-not-require-authentication">
+<h2>Local connection does not require authentication<a class="headerlink" href="#local-connection-does-not-require-authentication" title="Permalink to this headline">¶</a></h2>
+<p>By default, there are configurations in the <code class="docutils literal notranslate"><span class="pre">arthas.properties</span></code> file:</p>
+<div class="highlight-default notranslate"><pre class="literal-block">arthas.localConnectionNonAuth=true</pre>
+</div>
+<p>When the password is configured, connect from localhost, the authentication is not required. The default configuration value is true, which is convenient for local connection. Authentication is only required when connecting remotely.</p>
 </div>
 <div class="section" id="authenticate-in-the-telnet-console">
 <h2>Authenticate in the telnet console<a class="headerlink" href="#authenticate-in-the-telnet-console" title="Permalink to this headline">¶</a></h2>

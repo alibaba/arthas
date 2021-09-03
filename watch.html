@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>watch &mdash; Arthas 3.5.3 文档</title>
+  <title>watch &mdash; Arthas 3.5.4 文档</title>
   
 
   
@@ -74,7 +74,7 @@
             
             
               <div class="version">
-                3.5.3
+                3.5.4
               </div>
             
           
@@ -135,17 +135,17 @@
 <li class="toctree-l3"><a class="reference internal" href="#id1">参数说明</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#id2">使用参考</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="#demo">启动 Demo</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#id3">观察方法出参和返回值</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#id4">观察方法入参</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#id5">同时观察方法调用前和方法返回后</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#this">观察方法出参、this对象和返回值</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id3">观察方法入参</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id4">同时观察方法调用前和方法返回后</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#x">调整<code class="docutils literal notranslate"><span class="pre">-x</span></code>的值，观察具体的方法参数值</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#id6">条件表达式的例子</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#id7">观察异常信息的例子</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#id8">按照耗时进行过滤</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#id9">观察当前对象中的属性</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#id10">获取类的静态字段、调用类的静态方法的例子</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#id11">排除掉指定的类</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#id12">不匹配子类</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id5">条件表达式的例子</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id6">观察异常信息的例子</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id7">按照耗时进行过滤</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id8">观察当前对象中的属性</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id9">获取类的静态字段、调用类的静态方法的例子</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id10">排除掉指定的类</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id11">不匹配子类</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#v">使用 -v 参数打印更多信息</a></li>
 </ul>
 </li>
@@ -274,7 +274,7 @@
 </tr>
 <tr>
 <td align="right"><em>express</em></td>
-<td align="left">观察表达式</td>
+<td align="left">观察表达式，默认值：<code>{params, target, returnObj}</code></td>
 </tr>
 <tr>
 <td align="right"><em>condition-express</em></td>
@@ -317,6 +317,7 @@
 <li><p>4个观察事件点 <code class="docutils literal notranslate"><span class="pre">-b</span></code>、<code class="docutils literal notranslate"><span class="pre">-e</span></code>、<code class="docutils literal notranslate"><span class="pre">-s</span></code> 默认关闭，<code class="docutils literal notranslate"><span class="pre">-f</span></code> 默认打开，当指定观察点被打开后，在相应事件点会对观察表达式进行求值并输出</p></li>
 <li><p>这里要注意<code class="docutils literal notranslate"><span class="pre">方法入参</span></code>和<code class="docutils literal notranslate"><span class="pre">方法出参</span></code>的区别，有可能在中间被修改导致前后不一致，除了 <code class="docutils literal notranslate"><span class="pre">-b</span></code> 事件点 <code class="docutils literal notranslate"><span class="pre">params</span></code> 代表方法入参外，其余事件都代表方法出参</p></li>
 <li><p>当使用 <code class="docutils literal notranslate"><span class="pre">-b</span></code> 时，由于观察事件点是在方法调用前，此时返回值或异常均不存在</p></li>
+<li><p>在watch命令的结果里，会打印出<code class="docutils literal notranslate"><span class="pre">location</span></code>信息。<code class="docutils literal notranslate"><span class="pre">location</span></code>有三种可能值：<code class="docutils literal notranslate"><span class="pre">AtEnter</span></code>，<code class="docutils literal notranslate"><span class="pre">AtExit</span></code>，<code class="docutils literal notranslate"><span class="pre">AtExceptionExit</span></code>。对应函数入口，函数正常return，函数抛出异常。</p></li>
 </ul>
 </div>
 <div class="section" id="id2">
@@ -325,26 +326,48 @@
 <h3>启动 Demo<a class="headerlink" href="#demo" title="永久链接至标题">¶</a></h3>
 <p>启动<a class="reference internal" href="quick-start.html"><span class="doc">快速入门</span></a>里的<code class="docutils literal notranslate"><span class="pre">math-game</span></code>。</p>
 </div>
-<div class="section" id="id3">
-<h3>观察方法出参和返回值<a class="headerlink" href="#id3" title="永久链接至标题">¶</a></h3>
-<div class="highlight-bash notranslate"><div class="highlight hljs"><pre class="bash">$ watch demo.MathGame primeFactors &quot;{params,returnObj}&quot; -x 2
-Press Ctrl+C to abort.
-Affect(class-cnt:1 , method-cnt:1) cost in 44 ms.
-ts=2018-12-03 19:16:51; [cost=1.280502ms] result=@ArrayList[
+<div class="section" id="this">
+<h3>观察方法出参、this对象和返回值<a class="headerlink" href="#this" title="永久链接至标题">¶</a></h3>
+<blockquote>
+<div><p>观察表达式，默认值是<code class="docutils literal notranslate"><span class="pre">{params,</span> <span class="pre">target,</span> <span class="pre">returnObj}</span></code></p>
+</div></blockquote>
+<div class="highlight-bash notranslate"><div class="highlight hljs"><pre class="bash">$ watch demo.MathGame primeFactors -x 2
+Press Q or Ctrl+C to abort.
+Affect(class count: 1 , method count: 1) cost in 32 ms, listenerId: 5
+method=demo.MathGame.primeFactors location=AtExceptionExit
+ts=2021-08-31 15:22:57; [cost=0.220625ms] result=@ArrayList[
+    @Object[][
+        @Integer[-179173],
+    ],
+    @MathGame[
+        random=@Random[java.util.Random@31cefde0],
+        illegalArgumentCount=@Integer[44],
+    ],
+    null,
+]
+method=demo.MathGame.primeFactors location=AtExit
+ts=2021-08-31 15:22:58; [cost=1.020982ms] result=@ArrayList[
     @Object[][
         @Integer[1],
     ],
+    @MathGame[
+        random=@Random[java.util.Random@31cefde0],
+        illegalArgumentCount=@Integer[44],
+    ],
     @ArrayList[
-        @Integer[3],
-        @Integer[19],
-        @Integer[191],
-        @Integer[49199],
+        @Integer[2],
+        @Integer[2],
+        @Integer[26947],
     ],
 ]</pre></div>
 </div>
+<ul class="simple">
+<li><p>上面的结果里，说明函数被执行了两次，第一次结果是<code class="docutils literal notranslate"><span class="pre">location=AtExceptionExit</span></code>，说明函数抛出异常了，因此<code class="docutils literal notranslate"><span class="pre">returnObj</span></code>是null</p></li>
+<li><p>在第二次结果里是<code class="docutils literal notranslate"><span class="pre">location=AtExit</span></code>，说明函数正常返回，因此可以看到<code class="docutils literal notranslate"><span class="pre">returnObj</span></code>结果是一个ArrayList</p></li>
+</ul>
 </div>
-<div class="section" id="id4">
-<h3>观察方法入参<a class="headerlink" href="#id4" title="永久链接至标题">¶</a></h3>
+<div class="section" id="id3">
+<h3>观察方法入参<a class="headerlink" href="#id3" title="永久链接至标题">¶</a></h3>
 <div class="highlight-bash notranslate"><div class="highlight hljs"><pre class="bash">$ watch demo.MathGame primeFactors &quot;{params,returnObj}&quot; -x 2 -b
 Press Ctrl+C to abort.
 Affect(class-cnt:1 , method-cnt:1) cost in 50 ms.
@@ -359,8 +382,8 @@ ts=2018-12-03 19:23:23; [cost=0.0353ms] result=@ArrayList[
 <li><p>对比前一个例子，返回值为空（事件点为方法执行前，因此获取不到返回值）</p></li>
 </ul>
 </div>
-<div class="section" id="id5">
-<h3>同时观察方法调用前和方法返回后<a class="headerlink" href="#id5" title="永久链接至标题">¶</a></h3>
+<div class="section" id="id4">
+<h3>同时观察方法调用前和方法返回后<a class="headerlink" href="#id4" title="永久链接至标题">¶</a></h3>
 <div class="highlight-bash notranslate"><div class="highlight hljs"><pre class="bash">$ watch demo.MathGame primeFactors &quot;{params,target,returnObj}&quot; -x 2 -b -s -n 2
 Press Ctrl+C to abort.
 Affect(class-cnt:1 , method-cnt:1) cost in 46 ms.
@@ -435,8 +458,8 @@ ts=2018-12-03 19:34:19; [cost=0.587833ms] result=@ArrayList[
 <li><p><code class="docutils literal notranslate"><span class="pre">-x</span></code>表示遍历深度，可以调整来打印具体的参数和结果内容，默认值是1。</p></li>
 </ul>
 </div>
-<div class="section" id="id6">
-<h3>条件表达式的例子<a class="headerlink" href="#id6" title="永久链接至标题">¶</a></h3>
+<div class="section" id="id5">
+<h3>条件表达式的例子<a class="headerlink" href="#id5" title="永久链接至标题">¶</a></h3>
 <div class="highlight-bash notranslate"><div class="highlight hljs"><pre class="bash">$ watch demo.MathGame primeFactors &quot;{params[0],target}&quot; &quot;params[0]&lt;0&quot;
 Press Ctrl+C to abort.
 Affect(class-cnt:1 , method-cnt:1) cost in 68 ms.
@@ -449,8 +472,8 @@ ts=2018-12-03 19:36:04; [cost=0.530255ms] result=@ArrayList[
 <li><p>只有满足条件的调用，才会有响应。</p></li>
 </ul>
 </div>
-<div class="section" id="id7">
-<h3>观察异常信息的例子<a class="headerlink" href="#id7" title="永久链接至标题">¶</a></h3>
+<div class="section" id="id6">
+<h3>观察异常信息的例子<a class="headerlink" href="#id6" title="永久链接至标题">¶</a></h3>
 <div class="highlight-bash notranslate"><div class="highlight hljs"><pre class="bash">$ watch demo.MathGame primeFactors &quot;{params[0],throwExp}&quot; -e -x 2
 Press Ctrl+C to abort.
 Affect(class-cnt:1 , method-cnt:1) cost in 62 ms.
@@ -468,8 +491,8 @@ ts=2018-12-03 19:38:00; [cost=1.414993ms] result=@ArrayList[
 <li><p>express中，表示异常信息的变量是<code class="docutils literal notranslate"><span class="pre">throwExp</span></code></p></li>
 </ul>
 </div>
-<div class="section" id="id8">
-<h3>按照耗时进行过滤<a class="headerlink" href="#id8" title="永久链接至标题">¶</a></h3>
+<div class="section" id="id7">
+<h3>按照耗时进行过滤<a class="headerlink" href="#id7" title="永久链接至标题">¶</a></h3>
 <div class="highlight-bash notranslate"><div class="highlight hljs"><pre class="bash">$ watch demo.MathGame primeFactors &#x27;{params, returnObj}&#x27; &#x27;#cost&gt;200&#x27; -x 2
 Press Ctrl+C to abort.
 Affect(class-cnt:1 , method-cnt:1) cost in 66 ms.
@@ -487,8 +510,8 @@ ts=2018-12-03 19:40:28; [cost=2112.168897ms] result=@ArrayList[
 <li><p><code class="docutils literal notranslate"><span class="pre">#cost&gt;200</span></code>(单位是<code class="docutils literal notranslate"><span class="pre">ms</span></code>)表示只有当耗时大于200ms时才会输出，过滤掉执行时间小于200ms的调用</p></li>
 </ul>
 </div>
-<div class="section" id="id9">
-<h3>观察当前对象中的属性<a class="headerlink" href="#id9" title="永久链接至标题">¶</a></h3>
+<div class="section" id="id8">
+<h3>观察当前对象中的属性<a class="headerlink" href="#id8" title="永久链接至标题">¶</a></h3>
 <p>如果想查看方法运行前后，当前对象中的属性，可以使用<code class="docutils literal notranslate"><span class="pre">target</span></code>关键字，代表当前对象</p>
 <div class="highlight-bash notranslate"><div class="highlight hljs"><pre class="bash">$ watch demo.MathGame primeFactors &#x27;target&#x27;
 Press Ctrl+C to abort.
@@ -506,8 +529,8 @@ ts=2018-12-03 20:04:34; [cost=131.303498ms] result=@Integer[8]
 ts=2018-12-03 20:04:35; [cost=0.961441ms] result=@Integer[8]</pre></div>
 </div>
 </div>
-<div class="section" id="id10">
-<h3>获取类的静态字段、调用类的静态方法的例子<a class="headerlink" href="#id10" title="永久链接至标题">¶</a></h3>
+<div class="section" id="id9">
+<h3>获取类的静态字段、调用类的静态方法的例子<a class="headerlink" href="#id9" title="永久链接至标题">¶</a></h3>
 <div class="highlight-bash notranslate"><div class="highlight hljs"><pre class="bash">watch demo.MathGame * &#x27;{params,@demo.MathGame@random.nextInt(100)}&#x27; -v -n 1 -x 2
 [arthas@6527]$ watch demo.MathGame * &#x27;{params,@demo.MathGame@random.nextInt(100)}&#x27; -n 1 -x 2
 Press Q or Ctrl+C to abort.
@@ -523,8 +546,8 @@ ts=2021-01-05 21:35:20; [cost=0.173966ms] result=@ArrayList[
 <li><p>注意这里使用 <code class="docutils literal notranslate"><span class="pre">Thread.currentThread().getContextClassLoader()</span></code> 加载,使用精确<code class="docutils literal notranslate"><span class="pre">classloader</span></code> <a class="reference internal" href="ognl.html"><span class="doc">ognl</span></a>更好。</p></li>
 </ul>
 </div>
-<div class="section" id="id11">
-<h3>排除掉指定的类<a class="headerlink" href="#id11" title="永久链接至标题">¶</a></h3>
+<div class="section" id="id10">
+<h3>排除掉指定的类<a class="headerlink" href="#id10" title="永久链接至标题">¶</a></h3>
 <blockquote>
 <div><p>watch/trace/monitor/stack/tt 命令都支持 <code class="docutils literal notranslate"><span class="pre">--exclude-class-pattern</span></code> 参数</p>
 </div></blockquote>
@@ -532,8 +555,8 @@ ts=2021-01-05 21:35:20; [cost=0.173966ms] result=@ArrayList[
 <div class="highlight-bash notranslate"><div class="highlight hljs"><pre class="bash">watch javax.servlet.Filter * --exclude-class-pattern com.demo.TestFilter</pre></div>
 </div>
 </div>
-<div class="section" id="id12">
-<h3>不匹配子类<a class="headerlink" href="#id12" title="永久链接至标题">¶</a></h3>
+<div class="section" id="id11">
+<h3>不匹配子类<a class="headerlink" href="#id11" title="永久链接至标题">¶</a></h3>
 <p>默认情况下 watch/trace/monitor/stack/tt 命令都会匹配子类。如果想不匹配，可以通过全局参数关掉。</p>
 <div class="highlight-bash notranslate"><div class="highlight hljs"><pre class="bash">options disable-sub-class true</pre></div>
 </div>
