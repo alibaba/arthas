@@ -20,7 +20,7 @@ $(function () {
     }
 
     var iframe = getUrlParam('iframe');
-    if (iframe != null && iframe != 'false') {
+    if (iframe === 'true') {
         $("nav").hide()
     }
 
