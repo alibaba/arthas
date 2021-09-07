@@ -216,17 +216,9 @@ class SqlProfilerAdviceListener extends AdviceListenerAdapter {
             return;
         }
 
-        StatementSqlContext sqlContext = statement2SqlMap.get(advice.getTarget());
-        if (sqlContext == null) {
-            logger.warn("sql context is null, target: {}, class: {}, method: {}, param length: {}",
-                    advice.getTarget(),
-                    advice.getTarget().getClass(),
-                    advice.getMethod().getName(),
-                    advice.getMethod().getTargetMethod().getParameterTypes().length);
-            return;
-        }
-
         if (STATEMENT_EXECUTE_METHOD_MAP.isMatch(advice.getMethod().getTargetMethod())) {
+            StatementSqlContext sqlContext = getAndCheckSqlContext(advice);
+            if(sqlContext == null) return;
             sqlContext.exitExecute();
             if (sqlContext.isExecuteStackEmpty()) {
                 statement2SqlMap.remove(advice.getTarget());
@@ -238,11 +230,20 @@ class SqlProfilerAdviceListener extends AdviceListenerAdapter {
                 appendResult(advice, cost, isSuccess, sql, null, null, null);
             }
         } else if (STATEMENT_ADD_BATCH_METHOD_MAP.isMatch(advice.getMethod().getTargetMethod())) {
+            StatementSqlContext sqlContext = getAndCheckSqlContext(advice);
+            if(sqlContext == null) return;
+
             String sql = (String) advice.getParams()[0];
             sqlContext.addBatch(sql);
         } else if (STATEMENT_CLEAR_BATCH_METHOD_MAP.isMatch(advice.getMethod().getTargetMethod())) {
+            StatementSqlContext sqlContext = getAndCheckSqlContext(advice);
+            if(sqlContext == null) return;
+
             sqlContext.clearBatch();
         } else if (STATEMENT_EXECUTE_BATCH_METHOD_MAP.isMatch(advice.getMethod().getTargetMethod())) {
+            StatementSqlContext sqlContext = getAndCheckSqlContext(advice);
+            if(sqlContext == null) return;
+
             sqlContext.exitExecute();
             if (sqlContext.isExecuteStackEmpty()) {
                 statement2SqlMap.remove(advice.getTarget());
@@ -259,6 +260,20 @@ class SqlProfilerAdviceListener extends AdviceListenerAdapter {
                         null);
             }
         }
+    }
+
+    private StatementSqlContext getAndCheckSqlContext(Advice advice){
+        StatementSqlContext sqlContext = statement2SqlMap.get(advice.getTarget());
+        if (sqlContext == null) {
+            logger.warn("sql context is null, target: {}, class: {}, method: {}, param length: {}",
+                    advice.getTarget(),
+                    advice.getTarget().getClass(),
+                    advice.getMethod().getName(),
+                    advice.getMethod().getTargetMethod().getParameterTypes().length);
+            return null;
+        }
+
+        return sqlContext;
     }
 
     private void handleAfterPrepareStatementMethod(Advice advice, double cost, boolean isSuccess) throws ExpressException {
