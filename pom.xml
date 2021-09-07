@@ -137,7 +137,7 @@
             <dependency>
                 <groupId>com.taobao.text</groupId>
                 <artifactId>text-ui</artifactId>
-                <version>0.0.2</version>
+                <version>0.0.3</version>
             </dependency>
             <dependency>
                 <groupId>com.fifesoft</groupId>
