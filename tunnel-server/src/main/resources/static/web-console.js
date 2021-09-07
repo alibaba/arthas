@@ -1,5 +1,8 @@
 var ws;
 var xterm;
+const DEFAULT_SCROLL_BACK = 1000
+const MAX_SCROLL_BACK = 9999999
+const MIN_SCROLL_BACK = 1
 
 $(function () {
     var url = window.location.href;
@@ -92,14 +95,21 @@ function initWs (ip, port, path, agentId, targetServer) {
 }
 
 /** init xterm **/
-function initXterm (cols, rows) {
+function initXterm (cols, rows,scrollback) {
+    let scrollNumber = parseInt(scrollback,10)
     xterm = new Terminal({
         cols: cols,
         rows: rows,
         screenReaderMode: false,
         rendererType: 'canvas',
-        convertEol: true
+        convertEol: true,
+        scrollback: isValidNumber(scrollNumber) ? scrollNumber : DEFAULT_SCROLL_BACK
     });
+}
+
+function isValidNumber(scrollNumber){
+    return  scrollNumber >= MIN_SCROLL_BACK &&
+        scrollNumber <= MAX_SCROLL_BACK;
 }
 
 /** begin connect **/
@@ -148,8 +158,9 @@ function startConnect (silent) {
         var terminalSize = getTerminalSize()
         console.log('terminalSize')
         console.log(terminalSize)
+        let scrollback = getUrlParam('scrollback');
         // init xterm
-        initXterm(terminalSize.cols, terminalSize.rows)
+        initXterm(terminalSize.cols, terminalSize.rows,scrollback)
         ws.onmessage = function (event) {
             if (event.type === 'message') {
                 var data = event.data;
