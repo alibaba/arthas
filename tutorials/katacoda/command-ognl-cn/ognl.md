@@ -8,7 +8,7 @@
 
 `ognl '@java.lang.System@out.println("hello ognl")'`{{execute T2}}
 
-可以检查`Terminal 1`里的进程输出，可以发现打印出了`hello ognl`。
+可以检查`Terminal 1`（不是arthas的Terminal 2）里的应用进程的输出，可以发现打印出了`hello ognl`。
 
 
 ### 查找UserController的ClassLoader

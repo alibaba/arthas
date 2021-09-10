@@ -1,6 +1,8 @@
 package com.taobao.arthas.core.command.monitor200;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.security.CodeSource;
 import java.text.SimpleDateFormat;
@@ -14,6 +16,7 @@ import java.util.concurrent.TimeUnit;
 
 import com.alibaba.arthas.deps.org.slf4j.Logger;
 import com.alibaba.arthas.deps.org.slf4j.LoggerFactory;
+import com.taobao.arthas.common.IOUtils;
 import com.taobao.arthas.common.OSUtils;
 import com.taobao.arthas.core.command.Constants;
 import com.taobao.arthas.core.command.model.ProfilerModel;
@@ -30,6 +33,7 @@ import com.taobao.middleware.cli.annotations.Name;
 import com.taobao.middleware.cli.annotations.Option;
 import com.taobao.middleware.cli.annotations.Summary;
 
+import arthas.VmTool;
 import one.profiler.AsyncProfiler;
 import one.profiler.Counter;
 
@@ -243,6 +247,23 @@ public class ProfilerCommand extends AnnotatedCommand {
 
         if (libPath != null) {
             // load from arthas directory
+            // 尝试把lib文件复制到临时文件里，避免多次attach时出现 Native Library already loaded in another classloader
+            FileOutputStream tmpLibOutputStream = null;
+            FileInputStream libInputStream = null;
+            try {
+                File tmpLibFile = File.createTempFile(VmTool.JNI_LIBRARY_NAME, null);
+                tmpLibOutputStream = new FileOutputStream(tmpLibFile);
+                libInputStream = new FileInputStream(new File(libPath));
+
+                IOUtils.copy(libInputStream, tmpLibOutputStream);
+                libPath = tmpLibFile.getAbsolutePath();
+                logger.debug("copy {} to {}", libPath, tmpLibFile);
+            } catch (Throwable e) {
+                logger.error("try to copy lib error! libPath: {}", libPath, e);
+            } finally {
+                IOUtils.close(libInputStream);
+                IOUtils.close(tmpLibOutputStream);
+            }
             profiler = AsyncProfiler.getInstance(libPath);
         } else {
             if (OSUtils.isLinux() || OSUtils.isMac()) {

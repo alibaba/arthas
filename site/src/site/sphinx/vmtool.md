@@ -81,3 +81,5 @@ vmtool --action getInstances --classLoaderClass org.springframework.boot.loader.
 ```bash
 vmtool --action forceGc
 ```
+
+* 可以结合 [`vmoption`](vmoption.md) 命令动态打开`PrintGC`开关。

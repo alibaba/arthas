@@ -20,13 +20,12 @@ import com.taobao.middleware.cli.annotations.Summary;
 @Name("watch")
 @Summary("Display the input/output parameter, return object, and thrown exception of specified method invocation")
 @Description(Constants.EXPRESS_DESCRIPTION + "\nExamples:\n" +
-        "  watch -b org.apache.commons.lang.StringUtils isBlank params\n" +
-        "  watch -f org.apache.commons.lang.StringUtils isBlank returnObj\n" +
-        "  watch org.apache.commons.lang.StringUtils isBlank '{params, target, returnObj}' -x 2\n" +
-        "  watch -bf *StringUtils isBlank params\n" +
-        "  watch *StringUtils isBlank params[0]\n" +
+        "  watch org.apache.commons.lang.StringUtils isBlank\n" +
+        "  watch org.apache.commons.lang.StringUtils isBlank '{params, target, returnObj, throwExp}' -x 2\n" +
         "  watch *StringUtils isBlank params[0] params[0].length==1\n" +
         "  watch *StringUtils isBlank params '#cost>100'\n" +
+        "  watch -f *StringUtils isBlank params\n" +
+        "  watch *StringUtils isBlank params[0]\n" +
         "  watch -E -b org\\.apache\\.commons\\.lang\\.StringUtils isBlank params[0]\n" +
         "  watch javax.servlet.Filter * --exclude-class-pattern com.demo.TestFilter\n" +
         Constants.WIKI + Constants.WIKI_HOME + "watch")
@@ -59,7 +58,7 @@ public class WatchCommand extends EnhancerCommand {
 
     @Argument(index = 2, argName = "express", required = false)
     @DefaultValue("{params, target, returnObj}")
-    @Description("the content you want to watch, written by ognl.\n" + Constants.EXPRESS_EXAMPLES)
+    @Description("The content you want to watch, written by ognl. Default value is '{params, target, returnObj}'\n" + Constants.EXPRESS_EXAMPLES)
     public void setExpress(String express) {
         this.express = express;
     }
