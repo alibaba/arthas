@@ -80,6 +80,7 @@
                                     <directory>src/main/native/src</directory>
                                     <fileNames>
                                         <fileName>jni-library.cpp</fileName>
+                                        <fileName>HeapAnalyzer.cpp</fileName>
                                     </fileNames>
                                 </source>
                             </sources>
@@ -162,6 +163,7 @@
                             <directory>src/main/native/src</directory>
                             <fileNames>
                                 <fileName>jni-library.cpp</fileName>
+                                <fileName>HeapAnalyzer.cpp</fileName>
                             </fileNames>
                         </source>
                     </sources>

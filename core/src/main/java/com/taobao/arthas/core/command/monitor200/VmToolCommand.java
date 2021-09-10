@@ -55,6 +55,8 @@ import arthas.VmTool;
         + "  vmtool --action getInstances --className java.lang.String --limit 10\n"
         + "  vmtool --action getInstances --classLoaderClass org.springframework.boot.loader.LaunchedURLClassLoader --className org.springframework.context.ApplicationContext\n"
         + "  vmtool --action forceGc\n"
+        + "  vmtool --action heapAnalyze --classNum 20 --objectNum 20 --backtraceNum 2\n"
+        + "  vmtool --action referenceAnalyze --className java.lang.String --objectNum 20 --backtraceNum 2\n"
         + Constants.WIKI + Constants.WIKI_HOME + "vmtool")
 //@formatter:on
 public class VmToolCommand extends AnnotatedCommand {
@@ -63,6 +65,10 @@ public class VmToolCommand extends AnnotatedCommand {
     private VmToolAction action;
     private String className;
     private String express;
+
+    private int classNum = 20;
+    private int objectNum = 20;
+    private int backtraceNum = 2;
 
     private String hashCode = null;
     private String classLoaderClass;
@@ -149,8 +155,26 @@ public class VmToolCommand extends AnnotatedCommand {
         this.express = express;
     }
 
+    @Option(longName = "classNum", required = false)
+    @Description("The number of class to be shown.")
+    public void setClassNum(int classNum) {
+        this.classNum = classNum;
+    }
+
+    @Option(longName = "objectNum", required = false)
+    @Description("The number of object to be shown.")
+    public void setObjectNum(int objectNum) {
+        this.objectNum = objectNum;
+    }
+
+    @Option(longName = "backtraceNum", required = false)
+    @Description("The steps of backtrace by reference.")
+    public void setBacktraceNum(int backtraceNum) {
+        this.backtraceNum = backtraceNum;
+    }
+
     public enum VmToolAction {
-        getInstances, forceGc
+        getInstances, forceGc, heapAnalyze, referenceAnalyze
     }
 
     @Override
@@ -158,7 +182,7 @@ public class VmToolCommand extends AnnotatedCommand {
         try {
             Instrumentation inst = process.session().getInstrumentation();
 
-            if (VmToolAction.getInstances.equals(action)) {
+            if (VmToolAction.getInstances.equals(action) || VmToolAction.referenceAnalyze.equals(action)) {
                 if (className == null) {
                     process.end(-1, "The className option cannot be empty!");
                     return;
@@ -203,26 +227,39 @@ public class VmToolCommand extends AnnotatedCommand {
                     process.end(-1, "Found more than one class: " + matchedClasses + ", please specify classloader with '-c <classloader hash>'");
                     return;
                 } else {
-                    Object[] instances = vmToolInstance().getInstances(matchedClasses.get(0), limit);
-                    Object value = instances;
-                    if (express != null) {
-                        Express unpooledExpress = ExpressFactory.unpooledExpress(classLoader);
-                        try {
-                            value = unpooledExpress.bind(new InstancesWrapper(instances)).get(express);
-                        } catch (ExpressException e) {
-                            logger.warn("ognl: failed execute express: " + express, e);
-                            process.end(-1, "Failed to execute ognl, exception message: " + e.getMessage()
-                                    + ", please check $HOME/logs/arthas/arthas.log for more details. ");
+                    if (VmToolAction.getInstances.equals(action)) {
+                        Object[] instances = vmToolInstance().getInstances(matchedClasses.get(0), limit);
+                        Object value = instances;
+                        if (express != null) {
+                            Express unpooledExpress = ExpressFactory.unpooledExpress(classLoader);
+                            try {
+                                value = unpooledExpress.bind(new InstancesWrapper(instances)).get(express);
+                            } catch (ExpressException e) {
+                                logger.warn("ognl: failed execute express: " + express, e);
+                                process.end(-1, "Failed to execute ognl, exception message: " + e.getMessage()
+                                        + ", please check $HOME/logs/arthas/arthas.log for more details. ");
+                            }
                         }
-                    }
 
-                    process.write(new ObjectView(value, this.expand).draw());
-                    process.write("\n");
-                    process.end();
+                        process.write(new ObjectView(value, this.expand).draw());
+                        process.write("\n");
+                        process.end();
+                    } else {
+                        String result = vmToolInstance().referenceAnalyze(matchedClasses.get(0), objectNum,
+                                backtraceNum);
+                        process.write(result);
+                        process.end();
+                        return;
+                    }
                 }
             } else if (VmToolAction.forceGc.equals(action)) {
                 vmToolInstance().forceGc();
                 process.write("\n");
+                process.end();
+                return;
+            } else if (VmToolAction.heapAnalyze.equals(action)) {
+                String result = vmToolInstance().heapAnalyze(classNum, objectNum);
+                process.write(result);
                 process.end();
                 return;
             }
