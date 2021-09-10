@@ -129,27 +129,35 @@ class SqlProfilerAdviceListener extends AdviceListenerAdapter {
                 if (sqlContext != null) {
                     sql = sqlContext.getSql();
                     sqlContext.enterExecute();
+
+                    logger.debug("sql profiler enter execute: class: {}, method: {}, sql: {}.",
+                            clazz.getName(),
+                            method.getName(),
+                            sql);
                 }
             }
-        } else if (target instanceof java.sql.Statement) {
+        } else if (target instanceof Statement) {
             if (STATEMENT_EXECUTE_METHOD_MAP.isMatch(method.getTargetMethod())) {
                 sql = String.valueOf(args[0]);
                 StatementSqlContext sqlContext = statement2SqlMap.get(target);
                 if (sqlContext != null) {
                     sqlContext.enterExecute();
-                } else {
-                    if (logger.isDebugEnabled()) {
-                        logger.debug("sql profiler enter execute: class: {}, method: {}, sql: {}.",
-                                clazz.getName(),
-                                method.getName(),
-                                sql);
-                    }
+
+                    logger.debug("sql profiler enter execute: class: {}, method: {}, sql: {}.",
+                            clazz.getName(),
+                            method.getName(),
+                            sql);
                 }
             } else if (STATEMENT_EXECUTE_BATCH_METHOD_MAP.isMatch(method.getTargetMethod())) {
                 StatementSqlContext sqlContext = statement2SqlMap.get(target);
                 if (sqlContext != null) {
                     sql = sqlContext.getBatchSql();
                     sqlContext.enterExecute();
+
+                    logger.debug("sql profiler enter execute: class: {}, method: {}, sql: {}.",
+                            clazz.getName(),
+                            method.getName(),
+                            sql);
                 }
             }
         }
@@ -201,7 +209,7 @@ class SqlProfilerAdviceListener extends AdviceListenerAdapter {
                 handleAfterPrepareStatementMethod(advice, cost, isSuccess);
                 return;
             }
-            if (advice.getTarget() instanceof java.sql.Statement) {
+            if (advice.getTarget() instanceof Statement) {
                 handleAfterStatementMethod(advice, cost, isSuccess);
             }
         } catch (Throwable e) {
@@ -217,8 +225,9 @@ class SqlProfilerAdviceListener extends AdviceListenerAdapter {
         }
 
         if (STATEMENT_EXECUTE_METHOD_MAP.isMatch(advice.getMethod().getTargetMethod())) {
-            StatementSqlContext sqlContext = getAndCheckSqlContext(advice);
-            if(sqlContext == null) return;
+            StatementSqlContext sqlContext = getAndCheckStatementSqlContext(advice);
+            if (sqlContext == null) return;
+
             sqlContext.exitExecute();
             if (sqlContext.isExecuteStackEmpty()) {
                 statement2SqlMap.remove(advice.getTarget());
@@ -230,19 +239,19 @@ class SqlProfilerAdviceListener extends AdviceListenerAdapter {
                 appendResult(advice, cost, isSuccess, sql, null, null, null);
             }
         } else if (STATEMENT_ADD_BATCH_METHOD_MAP.isMatch(advice.getMethod().getTargetMethod())) {
-            StatementSqlContext sqlContext = getAndCheckSqlContext(advice);
-            if(sqlContext == null) return;
-
             String sql = (String) advice.getParams()[0];
+
+            StatementSqlContext sqlContext = getAndCheckStatementSqlContext(advice);
+            if (sqlContext == null) return;
             sqlContext.addBatch(sql);
         } else if (STATEMENT_CLEAR_BATCH_METHOD_MAP.isMatch(advice.getMethod().getTargetMethod())) {
-            StatementSqlContext sqlContext = getAndCheckSqlContext(advice);
-            if(sqlContext == null) return;
+            StatementSqlContext sqlContext = getAndCheckStatementSqlContext(advice);
+            if (sqlContext == null) return;
 
             sqlContext.clearBatch();
         } else if (STATEMENT_EXECUTE_BATCH_METHOD_MAP.isMatch(advice.getMethod().getTargetMethod())) {
-            StatementSqlContext sqlContext = getAndCheckSqlContext(advice);
-            if(sqlContext == null) return;
+            StatementSqlContext sqlContext = getAndCheckStatementSqlContext(advice);
+            if (sqlContext == null) return;
 
             sqlContext.exitExecute();
             if (sqlContext.isExecuteStackEmpty()) {
@@ -262,10 +271,24 @@ class SqlProfilerAdviceListener extends AdviceListenerAdapter {
         }
     }
 
-    private StatementSqlContext getAndCheckSqlContext(Advice advice){
+    private StatementSqlContext getAndCheckStatementSqlContext(Advice advice) {
         StatementSqlContext sqlContext = statement2SqlMap.get(advice.getTarget());
         if (sqlContext == null) {
-            logger.warn("sql context is null, target: {}, class: {}, method: {}, param length: {}",
+            logger.debug("sql context is null, target: {}, class: {}, method: {}, param length: {}",
+                    advice.getTarget(),
+                    advice.getTarget().getClass(),
+                    advice.getMethod().getName(),
+                    advice.getMethod().getTargetMethod().getParameterTypes().length);
+            return null;
+        }
+
+        return sqlContext;
+    }
+
+    private PreparedStatementSqlContext getAndCheckPreparedStatementSqlContext(Advice advice) {
+        PreparedStatementSqlContext sqlContext = preparedStatement2SqlMap.get(advice.getTarget());
+        if (sqlContext == null) {
+            logger.debug("sql context is null, target: {}, class: {}, method: {}, param length: {}",
                     advice.getTarget(),
                     advice.getTarget().getClass(),
                     advice.getMethod().getName(),
@@ -281,21 +304,22 @@ class SqlProfilerAdviceListener extends AdviceListenerAdapter {
             return;
         }
 
-        PreparedStatementSqlContext sqlContext = preparedStatement2SqlMap.get(advice.getTarget());
-        if (sqlContext == null) {
-            logger.warn("sql context is null, target: {}, class: {}, method: {}, param length: {}",
-                    advice.getTarget(),
-                    advice.getTarget().getClass(),
-                    advice.getMethod().getName(),
-                    advice.getMethod().getTargetMethod().getParameterTypes().length);
-            return;
-        }
-
         if (PREPARED_STATEMENT_SET_PARAM_METHOD_MAP.isMatch(advice.getMethod().getTargetMethod())) {
+            PreparedStatementSqlContext sqlContext = getAndCheckPreparedStatementSqlContext(advice);
+            if (sqlContext == null) return;
+
             Integer parameterIndex = (Integer) advice.getParams()[0];
             sqlContext.setParam(parameterIndex, advice.getParams()[1]);
         } else if (PREPARED_STATEMENT_EXECUTE_METHOD_MAP.isMatch(advice.getMethod().getTargetMethod())) {
+            PreparedStatementSqlContext sqlContext = getAndCheckPreparedStatementSqlContext(advice);
+            if (sqlContext == null) return;
+
             sqlContext.exitExecute();
+            logger.debug("preparedStatement: {} exit execute. method: {}, class: {}",
+                    advice.getReturnObj(),
+                    advice.getMethod().getName(),
+                    advice.getClazz().getName());
+
             if (sqlContext.isExecuteStackEmpty()) {
                 statement2SqlMap.remove(advice.getTarget());
             }
@@ -305,11 +329,25 @@ class SqlProfilerAdviceListener extends AdviceListenerAdapter {
                 appendResult(advice, cost, isSuccess, sqlContext.getSql(), sqlContext.getParamsMap().values(), null, null);
             }
         } else if (PREPARED_STATEMENT_ADD_BATCH_METHOD_MAP.isMatch(advice.getMethod().getTargetMethod())) {
+            PreparedStatementSqlContext sqlContext = getAndCheckPreparedStatementSqlContext(advice);
+            if (sqlContext == null) return;
+
             sqlContext.addBatch();
         } else if (STATEMENT_CLEAR_BATCH_METHOD_MAP.isMatch(advice.getMethod().getTargetMethod())) {
+            PreparedStatementSqlContext sqlContext = getAndCheckPreparedStatementSqlContext(advice);
+            if (sqlContext == null) return;
+
             sqlContext.clearBatch();
         } else if (STATEMENT_EXECUTE_BATCH_METHOD_MAP.isMatch(advice.getMethod().getTargetMethod())) {
+            PreparedStatementSqlContext sqlContext = getAndCheckPreparedStatementSqlContext(advice);
+            if (sqlContext == null) return;
+
             sqlContext.exitExecute();
+            logger.debug("preparedStatement: {} exit execute. method: {}, class: {}",
+                    advice.getReturnObj(),
+                    advice.getMethod().getName(),
+                    advice.getClazz().getName());
+
             if (sqlContext.isExecuteStackEmpty()) {
                 statement2SqlMap.remove(advice.getTarget());
             }
@@ -334,6 +372,8 @@ class SqlProfilerAdviceListener extends AdviceListenerAdapter {
                 preparedStatement2SqlMap.put((PreparedStatement) advice.getReturnObj(),
                         new PreparedStatementSqlContext(String.valueOf(advice.getParams()[0])));
             }
+
+            logger.debug("build prepareStatement: {}", advice.getReturnObj());
         }
 
         if ("createStatement".equals(advice.getMethod().getName())) {
@@ -342,6 +382,8 @@ class SqlProfilerAdviceListener extends AdviceListenerAdapter {
                 statement2SqlMap.put((Statement) advice.getReturnObj(),
                         new StatementSqlContext());
             }
+
+            logger.debug("build statement: {}", advice.getReturnObj());
         }
     }
 
