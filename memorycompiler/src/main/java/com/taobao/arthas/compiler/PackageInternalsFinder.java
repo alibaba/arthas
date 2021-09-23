@@ -26,6 +26,7 @@ import java.io.IOException;
 import java.net.JarURLConnection;
 import java.net.URI;
 import java.net.URL;
+import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Enumeration;
@@ -55,7 +56,7 @@ public class PackageInternalsFinder {
     }
 
     private Collection<JavaFileObject> listUnder(String packageName, URL packageFolderURL) {
-        File directory = new File(packageFolderURL.getFile());
+        File directory = new File(decode(packageFolderURL.getFile()));
         if (directory.isDirectory()) { // browse local .class files - useful for local execution
             return processDir(packageName, directory);
         } else { // browse a jar file
@@ -107,5 +108,15 @@ public class PackageInternalsFinder {
         }
 
         return result;
+    }
+
+    private String decode(String filePath) {
+        try {
+            return URLDecoder.decode(filePath, "utf-8");
+        } catch (Exception e) {
+            // ignore, return original string
+        }
+
+        return filePath;
     }
 }
