@@ -20,7 +20,7 @@ public class PackageInternalsFinderTest {
         PackageInternalsFinder finder = new PackageInternalsFinder(this.getClass().getClassLoader());
         List<JavaFileObject> fileObjectList= finder.find("file/test folder");
 
-        Assert.assertEquals(fileObjectList.size(),1);
+        Assert.assertEquals(fileObjectList.size(), 0);
     }
 
     @Test
@@ -28,6 +28,6 @@ public class PackageInternalsFinderTest {
         PackageInternalsFinder finder = new PackageInternalsFinder(this.getClass().getClassLoader());
         List<JavaFileObject> fileObjectList= finder.find("file/测试目录");
 
-        Assert.assertEquals(fileObjectList.size(),1);
+        Assert.assertEquals(fileObjectList.size(), 0);
     }
 }
