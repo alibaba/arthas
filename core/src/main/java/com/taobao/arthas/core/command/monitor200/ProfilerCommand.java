@@ -121,6 +121,7 @@ public class ProfilerCommand extends AnnotatedCommand {
 
     private static String libPath;
     private static AsyncProfiler profiler = null;
+    private static final String PROFILER_NOT_ACTIVE = "Profiler is not active\n";
 
     static {
         String profierSoPath = null;
@@ -380,10 +381,13 @@ public class ProfilerCommand extends AnnotatedCommand {
                         public void run() {
                             //在异步线程执行，profiler命令已经结束，不能输出到客户端
                             try {
-                                logger.info("stopping profiler ...");
-                                ProfilerModel model = processStop(asyncProfiler);
-                                logger.info("profiler output file: " + model.getOutputFile());
-                                logger.info("stop profiler successfully.");
+                                String profilerStatus = asyncProfiler.execute("status");
+                                if(!PROFILER_NOT_ACTIVE.equals(profilerStatus)){
+                                    logger.info("stopping profiler ...");
+                                    ProfilerModel model = processStop(asyncProfiler);
+                                    logger.info("profiler output file: " + model.getOutputFile());
+                                    logger.info("stop profiler successfully.");
+                                }
                             } catch (Throwable e) {
                                 logger.error("stop profiler failure", e);
                             }
