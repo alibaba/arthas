@@ -29,6 +29,20 @@
                 <lib_name>libArthasJniLibrary-x64.dylib</lib_name>
             </properties>
         </profile>
+        <profile>
+            <id>macos-aarch64</id>
+            <activation>
+                <os>
+                    <family>mac</family>
+                    <arch>aarch64</arch>
+                </os>
+            </activation>
+            <properties>
+                <os_name>macos</os_name>
+                <os_arch_option>-m64</os_arch_option>
+                <lib_name>libArthasJniLibrary-aarch64.dylib</lib_name>
+            </properties>
+        </profile>
 
         <!-- linux -->
         <profile>

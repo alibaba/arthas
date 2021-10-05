@@ -10,6 +10,9 @@ public class VmToolUtils {
     static {
         if (OSUtils.isMac()) {
             libName = "libArthasJniLibrary-x64.dylib";
+            if (OSUtils.isArm64()) {
+                libName = "libArthasJniLibrary-aarch64.dylib";
+            }
         }
         if (OSUtils.isLinux()) {
             libName = "libArthasJniLibrary-x64.so";
