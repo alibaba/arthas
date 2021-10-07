@@ -87,8 +87,13 @@ public class Base64Command extends AnnotatedCommand {
         }
 
         // 确认输入
-        if (file == null && this.input != null) {
-            file = input;
+        if (file == null) {
+            if (this.input != null) {
+                file = input;
+            } else {
+                process.end(-1, ": No file, nor input");
+                return;
+            }
         }
 
         File f = new File(file);
