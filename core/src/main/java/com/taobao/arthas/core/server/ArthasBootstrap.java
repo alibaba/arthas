@@ -8,6 +8,7 @@ import java.lang.instrument.UnmodifiableClassException;
 import java.lang.reflect.Method;
 import java.security.CodeSource;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -400,9 +401,7 @@ public class ArthasBootstrap {
             if (configure.getDisabledCommands() != null) {
                 String[] strings = StringUtils.tokenizeToStringArray(configure.getDisabledCommands(), ",");
                 if (strings != null) {
-                    for (String s : strings) {
-                        disabledCommands.add(s);
-                    }
+                    disabledCommands.addAll(Arrays.asList(strings));
                 }
             }
             BuiltinCommandPack builtinCommands = new BuiltinCommandPack(disabledCommands);

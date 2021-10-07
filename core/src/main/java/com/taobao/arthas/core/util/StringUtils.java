@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.io.StringReader;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.Properties;
@@ -655,17 +656,8 @@ public abstract class StringUtils {
     }
 
     public static Set<String> commaDelimitedListToSet(String str) {
-        TreeSet<String> set = new TreeSet<String>();
         String[] tokens = commaDelimitedListToStringArray(str);
-        String[] var3 = tokens;
-        int var4 = tokens.length;
-
-        for(int var5 = 0; var5 < var4; ++var5) {
-            String token = var3[var5];
-            set.add(token);
-        }
-
-        return set;
+        return new TreeSet<String>(Arrays.asList(tokens));
     }
 
     /**

@@ -12,7 +12,7 @@ import com.taobao.arthas.core.shell.command.CommandProcess;
 import com.taobao.arthas.core.util.LogUtil;
 import com.taobao.arthas.core.util.ThreadLocalWatch;
 
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.Date;
 
 /**
@@ -90,7 +90,7 @@ public class TimeTunnelAdviceListener extends AdviceListenerAdapter {
 
         TimeFragmentVO timeFragmentVO = TimeTunnelCommand.createTimeFragmentVO(index, timeTunnel);
         TimeTunnelModel timeTunnelModel = new TimeTunnelModel()
-                .setTimeFragmentList(Arrays.asList(timeFragmentVO))
+                .setTimeFragmentList(Collections.singletonList(timeFragmentVO))
                 .setFirst(isFirst);
         process.appendResult(timeTunnelModel);
 

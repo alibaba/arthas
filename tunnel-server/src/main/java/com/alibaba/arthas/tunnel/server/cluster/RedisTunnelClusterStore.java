@@ -94,10 +94,7 @@ public class RedisTunnelClusterStore implements TunnelClusterStore {
 
             String prefixWithAppName = prefix + appName + "_";
 
-            for (String value : opsForValue.getOperations().keys(prefixWithAppName + "*")) {
-                keys.add(value);
-
-            }
+            keys.addAll(opsForValue.getOperations().keys(prefixWithAppName + "*"));
 
             List<String> values = opsForValue.getOperations().opsForValue().multiGet(keys);
 
