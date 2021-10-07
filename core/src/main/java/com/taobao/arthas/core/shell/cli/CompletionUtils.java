@@ -215,7 +215,7 @@ public class CompletionUtils {
         }
 
         Set<Class<?>> results = SearchUtils.searchClassOnly(completion.session().getInstrumentation(), className, 2);
-        if (results.isEmpty() || results.size() > 1) {
+        if (results.size() != 1) {
             // no class found or multiple class found
             completion.complete(Collections.<String>emptyList());
             return true;

@@ -503,11 +503,9 @@ public class ProfilerCommand extends AnnotatedCommand {
         }
         String lines[] = execute.split("\\r?\\n");
 
-        if (lines != null) {
-            for (String line : lines) {
-                if (line.startsWith(" ")) {
-                    result.add(line.trim());
-                }
+        for (String line : lines) {
+            if (line.startsWith(" ")) {
+                result.add(line.trim());
             }
         }
         return result;

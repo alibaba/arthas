@@ -45,7 +45,7 @@ public class MethodInfoView implements View {
         final StringBuilder annotationSB = new StringBuilder();
         final Annotation[] annotationArray = method.getDeclaredAnnotations();
 
-        if (null != annotationArray && annotationArray.length > 0) {
+        if (annotationArray.length > 0) {
             for (Annotation annotation : annotationArray) {
                 annotationSB.append(StringUtils.classname(annotation.annotationType())).append(",");
             }
@@ -62,7 +62,7 @@ public class MethodInfoView implements View {
     private String drawParameters() {
         final StringBuilder paramsSB = new StringBuilder();
         final Class<?>[] paramTypes = method.getParameterTypes();
-        if (null != paramTypes && paramTypes.length > 0) {
+        if (paramTypes.length > 0) {
             for (Class<?> clazz : paramTypes) {
                 paramsSB.append(StringUtils.classname(clazz)).append("\n");
             }
@@ -80,7 +80,7 @@ public class MethodInfoView implements View {
     private String drawExceptions() {
         final StringBuilder exceptionSB = new StringBuilder();
         final Class<?>[] exceptionTypes = method.getExceptionTypes();
-        if (null != exceptionTypes && exceptionTypes.length > 0) {
+        if (exceptionTypes.length > 0) {
             for (Class<?> clazz : exceptionTypes) {
                 exceptionSB.append(StringUtils.classname(clazz)).append("\n");
             }

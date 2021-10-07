@@ -55,7 +55,7 @@ public class KeymapCommand extends AnnotatedCommand {
                     continue;
                 }
                 String[] strings = line.split(":");
-                if (strings != null && strings.length == 2) {
+                if (strings.length == 2) {
                     table.row(strings[0], translate(strings[0]), strings[1]);
                 } else {
                     table.row(line);

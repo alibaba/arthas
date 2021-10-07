@@ -722,7 +722,7 @@ public abstract class StringUtils {
             return true;
         }
         for (int i = 0; i < strLen; i++) {
-            if (Character.isWhitespace(cs.charAt(i)) == false) {
+            if (!Character.isWhitespace(cs.charAt(i))) {
                 return false;
             }
         }
@@ -910,12 +910,10 @@ public abstract class StringUtils {
         } catch (IOException exc) {
             // quit
         } finally {
-            if (reader != null) {
-                try {
-                    reader.close();
-                } catch (IOException e) {
-                    // ignore
-                }
+            try {
+                reader.close();
+            } catch (IOException e) {
+                // ignore
             }
         }
         return result;

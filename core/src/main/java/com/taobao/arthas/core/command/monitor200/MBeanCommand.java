@@ -417,7 +417,7 @@ public class MBeanCommand extends AnnotatedCommand {
                                 logger.error("read mbean attribute failed: objectName={}, attributeName={}", objectName, attributeName, e);
                                 String errorStr;
                                 Throwable cause = e.getCause();
-                                if (cause != null && cause instanceof UnsupportedOperationException) {
+                                if (cause instanceof UnsupportedOperationException) {
                                     errorStr = "Unsupported";
                                 } else {
                                     errorStr = "Failure";
