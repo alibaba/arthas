@@ -207,7 +207,7 @@ public class DashboardCommand extends AnnotatedCommand {
         runtimeInfo.setSystemLoadAverage(ManagementFactory.getOperatingSystemMXBean().getSystemLoadAverage());
         runtimeInfo.setProcessors(Runtime.getRuntime().availableProcessors());
         runtimeInfo.setUptime(ManagementFactory.getRuntimeMXBean().getUptime() / 1000);
-        runtimeInfo.setTimestamp(new Date().getTime());
+        runtimeInfo.setTimestamp(System.currentTimeMillis());
         dashboardModel.setRuntimeInfo(runtimeInfo);
     }
 
