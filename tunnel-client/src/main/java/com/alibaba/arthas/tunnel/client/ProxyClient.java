@@ -80,7 +80,7 @@ public class ProxyClient {
 
             return httpResponsePromise.get(5000, TimeUnit.MILLISECONDS);
         } catch (Throwable e) {
-            logger.error("ProxyClient error, targetUrl: {}", targetUrl, e);
+            logger.error("ProxyClient error, targetUrl: " + targetUrl, e);
         } finally {
             if (closeFuture != null) {
                 closeFuture.addListener(new ChannelFutureListener() {

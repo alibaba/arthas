@@ -85,7 +85,7 @@ public class ResultConsumerHelper {
                 }
             }
         } catch (Exception e) {
-            logger.error("get item count of result model failed, model: {}", JSON.toJSONString(model), e);
+            logger.error("get item count of result model failed, model: " + JSON.toJSONString(model), e);
         }
 
         return count > 0 ? count : 1;

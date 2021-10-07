@@ -97,7 +97,7 @@ public class DetailAPIController {
                 success = true;
             }
         } catch (Throwable e) {
-            logger.error("try to find agentId error, id: {}", agentId, e);
+            logger.error("try to find agentId error, id: " + agentId, e);
         }
         result.put("success", success);
         return result;

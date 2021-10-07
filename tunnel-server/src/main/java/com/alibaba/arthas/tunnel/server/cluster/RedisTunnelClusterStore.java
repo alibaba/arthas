@@ -39,7 +39,7 @@ public class RedisTunnelClusterStore implements TunnelClusterStore {
             AgentClusterInfo info = MAPPER.readValue(infoStr, AgentClusterInfo.class);
             return info;
         } catch (Throwable e) {
-            logger.error("try to read agentInfo error. agentId:{}", agentId, e);
+            logger.error("try to read agentInfo error. agentId:" + agentId, e);
             throw new RuntimeException(e);
         }
     }
@@ -57,7 +57,7 @@ public class RedisTunnelClusterStore implements TunnelClusterStore {
             String infoStr = MAPPER.writeValueAsString(info);
             opsForValue.set(prefix + agentId, infoStr, timeout, timeUnit);
         } catch (Throwable e) {
-            logger.error("try to add agentInfo error. agentId:{}", agentId, e);
+            logger.error("try to add agentInfo error. agentId:" + agentId, e);
             throw new RuntimeException(e);
         }
     }
@@ -114,7 +114,7 @@ public class RedisTunnelClusterStore implements TunnelClusterStore {
 
             return result;
         } catch (Throwable e) {
-            logger.error("try to query agentInfo error. appName:{}", appName, e);
+            logger.error("try to query agentInfo error. appName:" + appName, e);
             throw new RuntimeException(e);
         }
     }
