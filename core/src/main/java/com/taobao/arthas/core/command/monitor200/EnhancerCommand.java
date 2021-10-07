@@ -20,17 +20,11 @@ import com.taobao.arthas.core.shell.handlers.shell.QExitHandler;
 import com.taobao.arthas.core.shell.session.Session;
 import com.taobao.arthas.core.util.Constants;
 import com.taobao.arthas.core.util.LogUtil;
-import com.taobao.arthas.core.util.SearchUtils;
 import com.taobao.arthas.core.util.affect.EnhancerAffect;
 import com.taobao.arthas.core.util.matcher.Matcher;
 import com.taobao.arthas.core.view.Ansi;
-import com.taobao.middleware.cli.annotations.Argument;
 import com.taobao.middleware.cli.annotations.Description;
 import com.taobao.middleware.cli.annotations.Option;
-import com.taobao.text.Color;
-import com.taobao.text.Decoration;
-import com.taobao.text.ui.LabelElement;
-import com.taobao.text.util.RenderUtil;
 
 /**
  * @author beiwei30 on 29/11/2016.

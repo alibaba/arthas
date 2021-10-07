@@ -4,7 +4,6 @@ import com.alibaba.arthas.deps.org.slf4j.Logger;
 import com.alibaba.arthas.deps.org.slf4j.LoggerFactory;
 import com.taobao.arthas.core.shell.ShellServerOptions;
 import com.taobao.arthas.core.shell.term.TermServer;
-import com.taobao.arthas.core.shell.term.impl.httptelnet.HttpTelnetTermServer;
 import io.termd.core.readline.Keymap;
 
 import java.io.FileInputStream;
