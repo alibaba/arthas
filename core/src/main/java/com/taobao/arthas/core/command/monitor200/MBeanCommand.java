@@ -349,7 +349,7 @@ public class MBeanCommand extends AnnotatedCommand {
     }
 
 
-    public class MBeanInterruptHandler extends CommandInterruptHandler {
+    public static class MBeanInterruptHandler extends CommandInterruptHandler {
 
         private volatile Timer timer;
 

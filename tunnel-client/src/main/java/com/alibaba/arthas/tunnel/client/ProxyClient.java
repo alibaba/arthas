@@ -103,7 +103,7 @@ public class ProxyClient {
         return httpResponse;
     }
 
-    class HttpProxyClientHandler extends SimpleChannelInboundHandler<HttpObject> {
+    static class HttpProxyClientHandler extends SimpleChannelInboundHandler<HttpObject> {
 
         private Promise<SimpleHttpResponse> promise;
 
