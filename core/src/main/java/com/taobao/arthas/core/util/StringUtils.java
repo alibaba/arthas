@@ -689,7 +689,7 @@ public abstract class StringUtils {
         }
         int arraySize = array.length;
         int bufSize = (arraySize == 0 ? 0 : (array[0].toString().length() + separator.length()) * arraySize);
-        StringBuffer buf = new StringBuffer(bufSize);
+        StringBuilder buf = new StringBuilder(bufSize);
 
         for (int i = 0; i < arraySize; i++) {
             if (i > 0) {
