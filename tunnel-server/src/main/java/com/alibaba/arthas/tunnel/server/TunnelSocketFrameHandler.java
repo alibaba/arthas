@@ -98,8 +98,13 @@ public class TunnelSocketFrameHandler extends SimpleChannelInboundHandler<WebSoc
              * </pre>
              */
             if (MethodConstants.HTTP_PROXY.equals(method)) {
-                String requestId = URLDecoder.decode(parameters.getFirst(URIConstans.PROXY_REQUEST_ID), "utf-8");
-
+                final String requestIdRaw = parameters.getFirst(URIConstans.PROXY_REQUEST_ID);
+                final String requestId;
+                if (requestIdRaw != null) {
+                    requestId = URLDecoder.decode(requestIdRaw, "utf-8");
+                } else {
+                    requestId = null;
+                }
                 if (requestId == null) {
                     logger.error("error, need {}, text: {}", URIConstans.PROXY_REQUEST_ID, text);
                     return;
@@ -108,7 +113,13 @@ public class TunnelSocketFrameHandler extends SimpleChannelInboundHandler<WebSoc
 
                 Promise<SimpleHttpResponse> promise = tunnelServer.findProxyRequestPromise(requestId);
 
-                String data = URLDecoder.decode(parameters.getFirst(URIConstans.PROXY_RESPONSE_DATA), "utf-8");
+                final String dataRaw = parameters.getFirst(URIConstans.PROXY_RESPONSE_DATA);
+                final String data;
+                if (dataRaw != null) {
+                    data = URLDecoder.decode(dataRaw, "utf-8");
+                } else {
+                    data = null;
+                }
 
                 byte[] bytes = Base64.decodeBase64(data);
 
