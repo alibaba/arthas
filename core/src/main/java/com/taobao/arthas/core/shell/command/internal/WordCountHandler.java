@@ -24,7 +24,7 @@ public class WordCountHandler extends StdoutHandler implements StatisticsFunctio
         CommandLine commandLine = CLIs.create(NAME)
                 .addOption(new Option().setShortName("l").setFlag(true))
                 .parse(args);
-        Boolean lineMode = commandLine.isFlagEnabled("l");
+        boolean lineMode = commandLine.isFlagEnabled("l");
         return new WordCountHandler(lineMode);
     }
 
