@@ -264,7 +264,7 @@ public class VmToolCommand extends AnnotatedCommand {
             try {
                 File tmpLibFile = File.createTempFile(VmTool.JNI_LIBRARY_NAME, null);
                 tmpLibOutputStream = new FileOutputStream(tmpLibFile);
-                libInputStream = new FileInputStream(new File(libPath));
+                libInputStream = new FileInputStream(libPath);
 
                 IOUtils.copy(libInputStream, tmpLibOutputStream);
                 libPath = tmpLibFile.getAbsolutePath();

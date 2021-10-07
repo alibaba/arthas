@@ -134,7 +134,7 @@ public class CompletionUtils {
         if (names.size() == 1 && names.get(0).endsWith("/")) {
             String name = names.get(0);
             // 这个函数补全后不会有空格，并且只能传入要补全的内容
-            completion.complete(name.substring(tokenFileName.length(), name.length()), false);
+            completion.complete(name.substring(tokenFileName.length()), false);
             return true;
         }
 
@@ -312,7 +312,7 @@ public class CompletionUtils {
                 if (commonPrefix.length() == prefix.length()) {
                     completion.complete(candidates);
                 } else {
-                    completion.complete(commonPrefix.substring(prefix.length(), commonPrefix.length()), false);
+                    completion.complete(commonPrefix.substring(prefix.length()), false);
                 }
 
             } else {
