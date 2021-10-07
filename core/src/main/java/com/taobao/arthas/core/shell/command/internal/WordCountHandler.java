@@ -6,6 +6,7 @@ import com.taobao.middleware.cli.CommandLine;
 import com.taobao.middleware.cli.Option;
 
 import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * @author ralf0131 2017-02-23 23:28.
@@ -17,7 +18,7 @@ public class WordCountHandler extends StdoutHandler implements StatisticsFunctio
     private boolean lineMode;
 
     private String result = null;
-    private volatile int total = 0;
+    private final AtomicInteger total = new AtomicInteger(0);
 
     public static StdoutHandler inject(List<CliToken> tokens) {
         List<String> args = StdoutHandler.parseArgs(tokens, NAME);
@@ -39,7 +40,7 @@ public class WordCountHandler extends StdoutHandler implements StatisticsFunctio
             result = "wc currently only support wc -l!\n";
         } else {
             if (input != null && !"".equals(input.trim())) {
-                total += input.split("\n").length;
+                total.getAndAdd(input.split("\n").length);
             }
         }
 
@@ -52,6 +53,6 @@ public class WordCountHandler extends StdoutHandler implements StatisticsFunctio
             return result;
         }
 
-        return total + "\n";
+        return total.get() + "\n";
     }
 }
