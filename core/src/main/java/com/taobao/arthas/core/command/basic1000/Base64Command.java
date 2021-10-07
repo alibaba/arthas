@@ -42,8 +42,8 @@ import io.netty.util.CharsetUtil;
 public class Base64Command extends AnnotatedCommand {
     private static final Logger logger = LoggerFactory.getLogger(Base64Command.class);
     private String file;
-    private Integer sizeLimit = 128 * 1024;
-    private int maxSizeLimit = 8 * 1024 * 1024;
+    private int sizeLimit = 128 * 1024;
+    private static final int MAX_SIZE_LIMIT = 8 * 1024 * 1024;
 
     private boolean decode;
 
@@ -145,8 +145,8 @@ public class Base64Command extends AnnotatedCommand {
             return false;
         }
 
-        if (sizeLimit > maxSizeLimit) {
-            process.end(-1, "sizeLimit cannot be large than: " + maxSizeLimit);
+        if (sizeLimit > MAX_SIZE_LIMIT) {
+            process.end(-1, "sizeLimit cannot be large than: " + MAX_SIZE_LIMIT);
             return false;
         }
 
