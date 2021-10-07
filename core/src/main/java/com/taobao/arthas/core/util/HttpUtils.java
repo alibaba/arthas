@@ -47,7 +47,7 @@ public class HttpUtils {
         response.headers().set(HttpHeaderNames.CONTENT_TYPE, "text/html; charset=utf-8");
         try {
             response.content().writeBytes(content.getBytes("UTF-8"));
-        } catch (UnsupportedEncodingException e) {
+        } catch (UnsupportedEncodingException ignored) {
         }
         return response;
     }

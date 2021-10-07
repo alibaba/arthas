@@ -35,14 +35,9 @@ public class Log4j2Helper {
             if (loggerClass.getClassLoader().equals(Log4j2Helper.class.getClassLoader())) {
                 Log4j2 = true;
             }
-
-            try {
-                configField = LoggerConfig.class.getDeclaredField("config");
-                configField.setAccessible(true);
-            } catch (Throwable e) {
-                // ignore
-            }
-        } catch (Throwable t) {
+            configField = LoggerConfig.class.getDeclaredField("config");
+            configField.setAccessible(true);
+        } catch (Throwable ignored) {
         }
     }
 

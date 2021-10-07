@@ -72,7 +72,7 @@ public class ShellLineHandler implements Handler<String> {
             } else {
                 result = Integer.parseInt(arg);
             }
-        } catch (Exception e) {
+        } catch (Exception ignored) {
         }
         return result;
     }

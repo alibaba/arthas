@@ -72,6 +72,7 @@ public class GlobalJobControllerImpl extends JobControllerImpl {
     private long getJobTimeoutInSecond() {
         long result = -1;
         String jobTimeoutConfig = GlobalOptions.jobTimeout.trim();
+        Exception exception = null;
         try {
             char unit = jobTimeoutConfig.charAt(jobTimeoutConfig.length() - 1);
             String duration = jobTimeoutConfig.substring(0, jobTimeoutConfig.length() - 1);
@@ -93,12 +94,16 @@ public class GlobalJobControllerImpl extends JobControllerImpl {
                 break;
             }
         } catch (Exception e) {
+            exception = e;
         }
 
         if (result < 0) {
             // 如果设置的属性有错误，那么使用默认的1天
             result = TimeUnit.DAYS.toSeconds(1);
-            logger.warn("Configuration with job timeout " + jobTimeoutConfig + " is error, use 1d in default.");
+            logger.warn(
+                "Configuration with job timeout " + jobTimeoutConfig + " is error, use 1d in default.",
+                exception
+            );
         }
         return result;
     }

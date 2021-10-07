@@ -59,7 +59,7 @@ public class IPUtils {
                     }
                 }
             }
-        } catch (Exception e) {
+        } catch (Exception ignored) {
         }
 
         return ip == null ? null : ip.getHostAddress();

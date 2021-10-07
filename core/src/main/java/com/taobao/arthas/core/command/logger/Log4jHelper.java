@@ -31,7 +31,7 @@ public class Log4jHelper {
             if (loggerClass.getClassLoader().equals(Log4jHelper.class.getClassLoader())) {
                 Log4j = true;
             }
-        } catch (Throwable t) {
+        } catch (Throwable ignored) {
         }
     }
 
