@@ -316,25 +316,25 @@ public class ArthasBootstrap {
             if (!location.endsWith(".properties")) {
                 location = new File(location, configName + ".properties").getAbsolutePath();
             }
+            if (new File(location).exists()) {
+                Properties properties = FileUtils.readProperties(location);
+
+                boolean overrideAll = false;
+                if (arthasEnvironment.containsProperty(CONFIG_OVERRIDE_ALL)) {
+                    overrideAll = arthasEnvironment.getRequiredProperty(CONFIG_OVERRIDE_ALL, boolean.class);
+                } else {
+                    overrideAll = Boolean.parseBoolean(properties.getProperty(CONFIG_OVERRIDE_ALL, "false"));
+                }
+
+                PropertySource<?> propertySource = new PropertiesPropertySource(location, properties);
+                if (overrideAll) {
+                    arthasEnvironment.addFirst(propertySource);
+                } else {
+                    arthasEnvironment.addLast(propertySource);
+                }
+            }
         }
 
-        if (new File(location).exists()) {
-            Properties properties = FileUtils.readProperties(location);
-
-            boolean overrideAll = false;
-            if (arthasEnvironment.containsProperty(CONFIG_OVERRIDE_ALL)) {
-                overrideAll = arthasEnvironment.getRequiredProperty(CONFIG_OVERRIDE_ALL, boolean.class);
-            } else {
-                overrideAll = Boolean.parseBoolean(properties.getProperty(CONFIG_OVERRIDE_ALL, "false"));
-            }
-
-            PropertySource<?> propertySource = new PropertiesPropertySource(location, properties);
-            if (overrideAll) {
-                arthasEnvironment.addFirst(propertySource);
-            } else {
-                arthasEnvironment.addLast(propertySource);
-            }
-        }
     }
 
     /**
