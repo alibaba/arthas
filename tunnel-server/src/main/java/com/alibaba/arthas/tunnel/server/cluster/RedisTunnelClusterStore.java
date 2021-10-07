@@ -1,6 +1,8 @@
 package com.alibaba.arthas.tunnel.server.cluster;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -74,14 +76,18 @@ public class RedisTunnelClusterStore implements TunnelClusterStore {
     public Collection<String> allAgentIds() {
         ValueOperations<String, String> opsForValue = redisTemplate.opsForValue();
 
-        Set<String> result = new HashSet<String>();
-
         int length = prefix.length();
-        for (String value : opsForValue.getOperations().keys(prefix + "*")) {
-            result.add(value.substring(length));
-
+        final Set<String> redisValues = opsForValue.getOperations().keys(prefix + "*");
+        if (redisValues != null) {
+            final ArrayList<String> result = new ArrayList<>(redisValues.size());
+            for (String value : redisValues) {
+                result.add(value.substring(length));
+            }
+            return result;
+        } else {
+            logger.error("try to get allAgentIds error. redis returned null.");
+            return Collections.emptyList();
         }
-        return result;
     }
 
     @Override
@@ -90,14 +96,9 @@ public class RedisTunnelClusterStore implements TunnelClusterStore {
 
             ValueOperations<String, String> opsForValue = redisTemplate.opsForValue();
 
-            Set<String> keys = new HashSet<String>();
-
             String prefixWithAppName = prefix + appName + "_";
 
-            for (String value : opsForValue.getOperations().keys(prefixWithAppName + "*")) {
-                keys.add(value);
-
-            }
+            ArrayList<String> keys = new ArrayList<>(opsForValue.getOperations().keys(prefixWithAppName + "*"));
 
             List<String> values = opsForValue.getOperations().opsForValue().multiGet(keys);
 
