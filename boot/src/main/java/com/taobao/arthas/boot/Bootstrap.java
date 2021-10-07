@@ -694,14 +694,14 @@ public class Bootstrap {
 
         result.append("Local versions:\n");
         for (String version : versionList) {
-            result.append(" " + version).append('\n');
+            result.append(" ").append(version).append('\n');
         }
         result.append("Remote versions:\n");
 
 		List<String> remoteVersions = DownloadUtils.readRemoteVersions();
 		Collections.reverse(remoteVersions);
 		for (String version : remoteVersions) {
-			result.append(" " + version).append('\n');
+			result.append(" ").append(version).append('\n');
 		}
         return result.toString();
     }

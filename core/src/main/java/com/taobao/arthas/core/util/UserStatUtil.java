@@ -87,9 +87,9 @@ public class UserStatUtil {
         public void appendQueryData(String key, String value) {
             if (key != null && value != null) {
                 if (queryData.length() == 0) {
-                    queryData.append(key + "=" + value);
+                    queryData.append(key).append("=").append(value);
                 } else {
-                    queryData.append("&" + key + "=" + value);
+                    queryData.append("&").append(key).append("=").append(value);
                 }
             }
         }
