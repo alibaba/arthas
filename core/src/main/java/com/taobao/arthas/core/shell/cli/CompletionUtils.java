@@ -121,12 +121,14 @@ public class CompletionUtils {
         File[] listFiles = dir.listFiles();
 
         ArrayList<String> names = new ArrayList<String>();
-        for (File child : listFiles) {
-            if (child.getName().startsWith(partName)) {
-                if (child.isDirectory()) {
-                    names.add(child.getName() + "/");
-                } else {
-                    names.add(child.getName());
+        if (listFiles != null) {
+            for (File child : listFiles) {
+                if (child.getName().startsWith(partName)) {
+                    if (child.isDirectory()) {
+                        names.add(child.getName() + "/");
+                    } else {
+                        names.add(child.getName());
+                    }
                 }
             }
         }
