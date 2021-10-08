@@ -37,6 +37,24 @@ jobs:
           name: lib
           path: arthas-vmtool/target/lib*
 
+  #see https://docs.github.com/cn/actions/learn-github-actions/workflow-syntax-for-github-actions#
+  mac-aarch64:
+    runs-on: macos-11
+
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set up JDK 8
+        uses: actions/setup-java@v2
+        with:
+          java-version: '8'
+          distribution: 'adopt'
+      - name: Build with Maven
+        run: ./mvnw package
+      - uses: actions/upload-artifact@v2
+        with:
+          name: lib
+          path: arthas-vmtool/target/lib*
+
   windows:
     runs-on: windows-2016
 
