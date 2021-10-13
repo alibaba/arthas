@@ -8,7 +8,6 @@ import java.security.CodeSource;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import java.util.Set;
 
 import com.alibaba.deps.org.objectweb.asm.Type;
 import com.taobao.arthas.core.command.model.ClassDetailVO;
