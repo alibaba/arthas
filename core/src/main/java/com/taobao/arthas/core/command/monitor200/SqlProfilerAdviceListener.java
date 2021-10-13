@@ -19,11 +19,13 @@ import java.lang.reflect.Method;
 import java.sql.PreparedStatement;
 import java.sql.Statement;
 import java.util.*;
+import java.util.concurrent.*;
 
 /**
  * @author yangxiaobing 2021/8/4.
  */
 class SqlProfilerAdviceListener extends AdviceListenerAdapter {
+    private ScheduledExecutorService scheduledExecutorService;
 
     private static final Logger logger = LoggerFactory.getLogger(SqlProfilerAdviceListener.class);
     public static final List<String> STATEMENT_EXECUTE_METHOD_LIST = Arrays.asList("executeQuery", "executeUpdate", "execute");
@@ -48,6 +50,8 @@ class SqlProfilerAdviceListener extends AdviceListenerAdapter {
 
     // 用来解决connectionProxy、statementProxy会导致sql语句被记录多次的问题
     private ThreadLocal<SqlExecuteStack> sqlStack = new ThreadLocal<SqlExecuteStack>();
+
+    private ConcurrentHashMap<String, SqlProfilerModel.SqlStat> sqlStatMap;
 
     static {
         PREPARED_STATEMENT_SET_PARAM_METHOD_MAP = MethodWithSignature.build(PreparedStatement.class, new Function<Method, Boolean>() {
@@ -116,6 +120,32 @@ class SqlProfilerAdviceListener extends AdviceListenerAdapter {
         this.command = command;
         this.process = process;
         super.setVerbose(verbose);
+    }
+
+    @Override
+    public synchronized void create() {
+        if (scheduledExecutorService == null && "monitor".equalsIgnoreCase(command.getAction())) {
+            sqlStatMap = new ConcurrentHashMap<String, SqlProfilerModel.SqlStat>();
+            scheduledExecutorService = new ScheduledThreadPoolExecutor(1, new ThreadFactory() {
+                @Override
+                public Thread newThread(Runnable r) {
+                    Thread thread = new Thread(r);
+                    thread.setDaemon(true);
+                    thread.setName("Timer-for-arthas-sqlprofiler-" + process.session().getSessionId());
+                    return thread;
+                }
+            });
+            scheduledExecutorService.schedule(new MonitorCollectTask(sqlStatMap, process),
+                    command.getMonitorDuration(), TimeUnit.SECONDS);
+        }
+    }
+
+    @Override
+    public synchronized void destroy() {
+        if (null != scheduledExecutorService) {
+            scheduledExecutorService.shutdown();
+            scheduledExecutorService = null;
+        }
     }
 
     @Override
@@ -429,16 +459,44 @@ class SqlProfilerAdviceListener extends AdviceListenerAdapter {
             }
         }
 
+        if ("trace".equalsIgnoreCase(command.getAction())) {
+            appendTraceData(advice, cost, isSuccess, sql, paramObjectList, batchSql, batchParamObjectList);
+        } else {
+            appendMonitorStat(advice, cost, isSuccess, sql, paramObjectList, batchSql, batchParamObjectList);
+        }
+    }
+
+    private void appendMonitorStat(Advice advice, double cost, boolean isSuccess, String sql, Collection<Object> paramObjectList, List<String> batchSql, List<? extends Map<Integer, Object>> batchParamObjectList) {
+        if (StringUtils.isEmpty(sql)) {
+            return;
+        }
+
+        SqlProfilerModel.SqlStat sqlStat = sqlStatMap.get(sql);
+        if (sqlStat == null) {
+            sqlStat = new SqlProfilerModel.SqlStat();
+            sqlStat.setSql(sql);
+            if (sqlStatMap.putIfAbsent(sql, sqlStat) != null) {
+                sqlStat = sqlStatMap.get(sql);
+            }
+        }
+
+        sqlStat.addSample(cost);
+    }
+
+    private void appendTraceData(Advice advice, double cost, boolean isSuccess, String sql, Collection<Object> paramObjectList, List<String> batchSql, List<? extends Map<Integer, Object>> batchParamObjectList) {
         SqlProfilerModel model = new SqlProfilerModel();
         model.setTs(new Date());
-        model.setClassName(advice.getClazz().getName());
-        model.setMethodName(advice.getMethod().getName());
-        model.setCost(cost);
-        model.setSuccess(isSuccess);
-        model.setSql(sql);
-        model.setParams(convertSqlObjectToString(paramObjectList));
-        model.setBatchSql(batchSql);
-        model.setBatchParams(convertSqlObjectToString(batchParamObjectList));
+        SqlProfilerModel.TraceData traceData = new SqlProfilerModel.TraceData();
+        model.setTraceData(traceData);
+
+        traceData.setClassName(advice.getClazz().getName());
+        traceData.setMethodName(advice.getMethod().getName());
+        traceData.setCost(cost);
+        traceData.setSuccess(isSuccess);
+        traceData.setSql(sql);
+        traceData.setParams(convertSqlObjectToString(paramObjectList));
+        traceData.setBatchSql(batchSql);
+        traceData.setBatchParams(convertSqlObjectToString(batchParamObjectList));
 
         process.appendResult(model);
 
@@ -719,4 +777,58 @@ class SqlProfilerAdviceListener extends AdviceListenerAdapter {
             return false;
         }
     }
+
+    private class MonitorCollectTask implements Runnable {
+        private ConcurrentHashMap<String, SqlProfilerModel.SqlStat> sqlStatMap;
+        private CommandProcess process;
+
+        MonitorCollectTask(ConcurrentHashMap<String, SqlProfilerModel.SqlStat> sqlStatMap, CommandProcess process) {
+            this.sqlStatMap = sqlStatMap;
+            this.process = process;
+        }
+
+        @Override
+        public void run() {
+            SqlProfilerModel profilerModel = new SqlProfilerModel();
+            SqlProfilerModel.MonitorData monitorData = new SqlProfilerModel.MonitorData();
+            profilerModel.setMonitorData(monitorData);
+
+            ArrayList<SqlProfilerModel.SqlStat> statArrayList = new ArrayList<SqlProfilerModel.SqlStat>(sqlStatMap.values());
+            for (SqlProfilerModel.SqlStat sqlStat : statArrayList) {
+                sqlStat.calc();
+            }
+
+            monitorData.setTopByAvgCost(getTopK(statArrayList, new Comparator<SqlProfilerModel.SqlStat>() {
+                @Override
+                public int compare(SqlProfilerModel.SqlStat o1, SqlProfilerModel.SqlStat o2) {
+                    return (int) (o2.getAvgCost() - o1.getAvgCost());
+                }
+            }, 10));
+            monitorData.setTopByTotalCost(getTopK(statArrayList, new Comparator<SqlProfilerModel.SqlStat>() {
+                @Override
+                public int compare(SqlProfilerModel.SqlStat o1, SqlProfilerModel.SqlStat o2) {
+                    return (int) (o2.getTotalCost() - o1.getTotalCost());
+                }
+            }, 10));
+
+            process.appendResult(profilerModel);
+            process.end();
+        }
+
+        private <T> List<T> getTopK(List<T> list, Comparator<T> comparator, int k) {
+            Collections.sort(list, comparator);
+
+            List<T> result = new ArrayList<T>(k);
+            int i = 0;
+            for (T t : list) {
+                result.add(t);
+                if (++i >= k) {
+                    break;
+                }
+            }
+
+            return result;
+        }
+    }
+
 }

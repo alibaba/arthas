@@ -27,6 +27,8 @@ public class SqlProfilerCommand extends EnhancerCommand {
     private String sqlPattern;
     private String conditionExpress;
     private boolean isRegEx = false;
+    private String action = "trace";
+    private Long monitorDuration = 5L;
 
     private Matcher sqlMatcher;
 
@@ -59,12 +61,32 @@ public class SqlProfilerCommand extends EnhancerCommand {
         isRegEx = regEx;
     }
 
+    @Option(shortName = "a", longName = "action", required = false)
+    @Description("Action to execute, monitor or trace")
+    public void setAction(String action) {
+        this.action = action;
+    }
+
+    @Option(shortName = "d", longName = "duration", required = false)
+    @Description("run profiling for <duration> seconds")
+    public void setDuration(long duration) {
+        this.monitorDuration = duration;
+    }
+
     public String getConditionExpress() {
         return conditionExpress;
     }
 
     public String getSqlPattern() {
         return sqlPattern;
+    }
+
+    public String getAction() {
+        return action;
+    }
+
+    public Long getMonitorDuration() {
+        return monitorDuration;
     }
 
     public boolean isRegEx() {
@@ -104,6 +126,17 @@ public class SqlProfilerCommand extends EnhancerCommand {
         }
 
         return sqlMatcher;
+    }
+
+    @Override
+    public void process(CommandProcess process) {
+        if (!"trace".equalsIgnoreCase(this.action)
+                && !"monitor".equalsIgnoreCase(this.action)) {
+            process.end(-1, "invalid action argument");
+            return;
+        }
+
+        super.process(process);
     }
 
     @Override
