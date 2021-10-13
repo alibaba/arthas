@@ -95,14 +95,16 @@ public class PackageInternalsFinder {
         List<JavaFileObject> result = new ArrayList<JavaFileObject>();
 
         File[] childFiles = directory.listFiles();
-        for (File childFile : childFiles) {
-            if (childFile.isFile()) {
-                // We only want the .class files.
-                if (childFile.getName().endsWith(CLASS_FILE_EXTENSION)) {
-                    String binaryName = packageName + "." + childFile.getName();
-                    binaryName = binaryName.replaceAll(CLASS_FILE_EXTENSION + "$", "");
+        if (childFiles != null) {
+            for (File childFile : childFiles) {
+                if (childFile.isFile()) {
+                    // We only want the .class files.
+                    if (childFile.getName().endsWith(CLASS_FILE_EXTENSION)) {
+                        String binaryName = packageName + "." + childFile.getName();
+                        binaryName = binaryName.replaceAll(CLASS_FILE_EXTENSION + "$", "");
 
-                    result.add(new CustomJavaFileObject(binaryName, childFile.toURI()));
+                        result.add(new CustomJavaFileObject(binaryName, childFile.toURI()));
+                    }
                 }
             }
         }
