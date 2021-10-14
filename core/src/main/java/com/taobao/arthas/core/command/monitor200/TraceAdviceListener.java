@@ -33,6 +33,16 @@ public class TraceAdviceListener extends AbstractTraceAdviceListener implements 
     }
 
     @Override
+    public void beforeEntrySync(ClassLoader classLoader, Class<?> clazz, String methodName, String methodDesc, int monitorLineNumber) throws Throwable {
+        threadLocalTraceEntity(classLoader).tree.beginSync(clazz.getName(), methodName, monitorLineNumber);
+    }
+
+    @Override
+    public void afterEntrySync(ClassLoader classLoader, Class<?> clazz, String methodName, String methodDesc, int monitorLineNumber) throws Throwable {
+        threadLocalTraceEntity(classLoader).tree.endSync(clazz.getName(), methodName, monitorLineNumber);
+    }
+
+    @Override
     public void invokeThrowTracing(ClassLoader classLoader, String tracingClassName, String tracingMethodName, String tracingMethodDesc, int tracingLineNumber)
             throws Throwable {
         threadLocalTraceEntity(classLoader).tree.end(true);

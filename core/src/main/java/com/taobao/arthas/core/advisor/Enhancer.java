@@ -52,6 +52,8 @@ import com.taobao.arthas.core.advisor.SpyInterceptors.SpyTraceExcludeJDKIntercep
 import com.taobao.arthas.core.advisor.SpyInterceptors.SpyTraceInterceptor1;
 import com.taobao.arthas.core.advisor.SpyInterceptors.SpyTraceInterceptor2;
 import com.taobao.arthas.core.advisor.SpyInterceptors.SpyTraceInterceptor3;
+import com.taobao.arthas.core.advisor.SpyInterceptors.SpyTraceSyncBeforeEntryInterceptor;
+import com.taobao.arthas.core.advisor.SpyInterceptors.SpyTraceSyncAfterEntryInterceptor;
 import com.taobao.arthas.core.server.ArthasBootstrap;
 import com.taobao.arthas.core.util.ArthasCheckUtils;
 import com.taobao.arthas.core.util.ClassUtils;
@@ -152,6 +154,8 @@ public class Enhancer implements ClassFileTransformer {
                     interceptorProcessors.addAll(defaultInterceptorClassParser.parse(SpyTraceExcludeJDKInterceptor2.class));
                     interceptorProcessors.addAll(defaultInterceptorClassParser.parse(SpyTraceExcludeJDKInterceptor3.class));
                 }
+                interceptorProcessors.addAll(defaultInterceptorClassParser.parse(SpyTraceSyncBeforeEntryInterceptor.class));
+                interceptorProcessors.addAll(defaultInterceptorClassParser.parse(SpyTraceSyncAfterEntryInterceptor.class));
             }
 
             List<MethodNode> matchedMethods = new ArrayList<MethodNode>();
@@ -261,6 +265,9 @@ public class Enhancer implements ClassFileTransformer {
 
             // 成功计数
             affect.cCnt(1);
+
+            String data = AsmUtils.toASMCode(enhanceClassByteArray);
+            System.out.println(data);
 
             return enhanceClassByteArray;
         } catch (Throwable t) {

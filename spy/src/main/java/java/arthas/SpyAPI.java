@@ -81,6 +81,14 @@ public class SpyAPI {
         spyInstance.atInvokeException(clazz, invokeInfo, target, throwable);
     }
 
+    public static void atBeforeEntrySync(Class<?> clazz, Object monitor, String methodInfo) {
+        spyInstance.atBeforeEntrySync(clazz, monitor, methodInfo);
+    }
+
+    public static void atAfterEntrySync(Class<?> clazz, String methodInfo) {
+        spyInstance.atAfterEntrySync(clazz, methodInfo);
+    }
+
     public static abstract class AbstractSpy {
         public abstract void atEnter(Class<?> clazz, String methodInfo, Object target,
                 Object[] args);
@@ -96,6 +104,10 @@ public class SpyAPI {
         public abstract void atAfterInvoke(Class<?> clazz, String invokeInfo, Object target);
 
         public abstract void atInvokeException(Class<?> clazz, String invokeInfo, Object target, Throwable throwable);
+
+        public abstract void atBeforeEntrySync(Class<?> clazz, Object monitor, String methodInfo);
+
+        public abstract void atAfterEntrySync(Class<?> clazz, String methodInfo);
     }
 
     static class NopSpy extends AbstractSpy {
@@ -126,6 +138,16 @@ public class SpyAPI {
 
         @Override
         public void atInvokeException(Class<?> clazz, String invokeInfo, Object target, Throwable throwable) {
+
+        }
+
+        @Override
+        public void atBeforeEntrySync(Class<?> clazz, Object monitor, String invokeInfo) {
+
+        }
+
+        @Override
+        public void atAfterEntrySync(Class<?> clazz, String invokeInfo) {
 
         }
 

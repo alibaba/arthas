@@ -174,6 +174,50 @@ public class SpyImpl extends AbstractSpy {
         }
     }
 
+    @Override
+    public void atBeforeEntrySync(Class<?> clazz, Object monitor, String methodInfo) {
+        ClassLoader classLoader = clazz.getClassLoader();
+        String[] info = StringUtils.splitMethodInfo(methodInfo);
+        String methodName = info[0];
+        String methodDesc = info[1];
+        List<AdviceListener> listeners = AdviceListenerManager.queryAdviceListeners(classLoader, clazz.getName(), methodName, methodDesc);
+        if (listeners != null) {
+            for (AdviceListener adviceListener : listeners) {
+                try {
+                    if (skipAdviceListener(adviceListener)) {
+                        continue;
+                    }
+                    final InvokeTraceable listener = (InvokeTraceable) adviceListener;
+                    listener.beforeEntrySync(classLoader, clazz, methodName, methodDesc, -1);
+                } catch (Throwable e) {
+                    logger.error("class: {}, invokeInfo: {}", clazz.getName(), methodInfo, e);
+                }
+            }
+        }
+    }
+
+    @Override
+    public void atAfterEntrySync(Class<?> clazz, String methodInfo) {
+        ClassLoader classLoader = clazz.getClassLoader();
+        String[] info = StringUtils.splitMethodInfo(methodInfo);
+        String methodName = info[0];
+        String methodDesc = info[1];
+        List<AdviceListener> listeners = AdviceListenerManager.queryAdviceListeners(classLoader, clazz.getName(), methodName, methodDesc);
+        if (listeners != null) {
+            for (AdviceListener adviceListener : listeners) {
+                try {
+                    if (skipAdviceListener(adviceListener)) {
+                        continue;
+                    }
+                    final InvokeTraceable listener = (InvokeTraceable) adviceListener;
+                    listener.afterEntrySync(classLoader, clazz, methodName, methodDesc, -1);
+                } catch (Throwable e) {
+                    logger.error("class: {}, invokeInfo: {}", clazz.getName(), methodInfo, e);
+                }
+            }
+        }
+    }
+
     private static boolean skipAdviceListener(AdviceListener adviceListener) {
         if (adviceListener instanceof ProcessAware) {
             ProcessAware processAware = (ProcessAware) adviceListener;
