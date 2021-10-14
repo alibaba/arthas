@@ -20,10 +20,12 @@ public class TraceView extends ResultView<TraceModel> {
     private static final String STEP_HAS_BOARD = "|   ";
     private static final String STEP_EMPTY_BOARD = "    ";
     private static final String TIME_UNIT = "ms";
+    private static final String MONITOR_ENTRY_TYPE = Ansi.ansi().fg(Ansi.Color.YELLOW).a("monitor_entry").reset().toString();
 
     // 是否输出耗时
     private boolean isPrintCost = true;
-    private MethodNode maxCostNode;
+    private TraceNode maxCostNode;
+    private long maxCostNodeValue = 0;
 
     @Override
     public void draw(CommandProcess process, TraceModel result) {
@@ -74,14 +76,18 @@ public class TraceView extends ResultView<TraceModel> {
         if (isPrintCost && node instanceof SyncNode) {
             SyncNode syncNode = (SyncNode)node;
             String costStr = renderCost(syncNode);
-            sb.append(costStr);
+            if (node == maxCostNode) {
+                sb.append(highlighted.a(costStr).reset().toString());
+            } else {
+                sb.append(costStr);
+            }
         }
 
         //render method name
         if (node instanceof MethodNode) {
             MethodNode methodNode = (MethodNode) node;
             //clazz.getName() + ":" + method.getName() + "()"
-            sb.append("[type:method_call]").append(methodNode.getClassName()).append(":").append(methodNode.getMethodName()).append("()");
+            sb.append("[type:method_call] ").append(methodNode.getClassName()).append(":").append(methodNode.getMethodName()).append("()");
             // #lineNumber
             if (methodNode.getLineNumber() != -1) {
                 sb.append(" #").append(methodNode.getLineNumber());
@@ -113,7 +119,7 @@ public class TraceView extends ResultView<TraceModel> {
 
         } else if (node instanceof SyncNode) {
             SyncNode syncNode = (SyncNode)node;
-            sb.append("[type:monitor_entry]").append(syncNode).append(syncNode.getClassName()).append(":").append(syncNode.getMethodName());
+            sb.append("[type:").append(MONITOR_ENTRY_TYPE).append("] ").append(syncNode).append(syncNode.getClassName()).append(":").append(syncNode.getMethodName());
             if (syncNode.getLineNumber() != -1) {
                 sb.append(" #").append(syncNode.getLineNumber());
             }
@@ -171,10 +177,17 @@ public class TraceView extends ResultView<TraceModel> {
      * @param node
      */
     private void findMaxCostNode(TraceNode node) {
-        if (node instanceof MethodNode && !isRoot(node) && !isRoot(node.parent())) {
-            MethodNode aNode = (MethodNode) node;
-            if (maxCostNode == null || maxCostNode.getTotalCost() < aNode.getTotalCost()) {
-                maxCostNode = aNode;
+        if (!isRoot(node) && !isRoot(node.parent())) {
+            if (node instanceof MethodNode ) {
+                MethodNode aNode = (MethodNode) node;
+                if (maxCostNodeValue < aNode.getTotalCost()) {
+                    maxCostNode = aNode;
+                }
+            } else if (node instanceof SyncNode) {
+                SyncNode aNode = (SyncNode) node;
+                if (maxCostNodeValue < aNode.getCost()) {
+                    maxCostNode = aNode;
+                }
             }
         }
         if (!isLeaf(node)) {
