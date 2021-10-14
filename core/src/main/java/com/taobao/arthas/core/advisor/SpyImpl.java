@@ -175,7 +175,7 @@ public class SpyImpl extends AbstractSpy {
     }
 
     @Override
-    public void atBeforeEntrySync(Class<?> clazz, Object monitor, String methodInfo) {
+    public void atBeforeEntrySync(Class<?> clazz, Object monitor, String methodInfo, int lineNumber) {
         ClassLoader classLoader = clazz.getClassLoader();
         String[] info = StringUtils.splitMethodInfo(methodInfo);
         String methodName = info[0];
@@ -188,7 +188,7 @@ public class SpyImpl extends AbstractSpy {
                         continue;
                     }
                     final InvokeTraceable listener = (InvokeTraceable) adviceListener;
-                    listener.beforeEntrySync(classLoader, clazz, methodName, methodDesc, -1);
+                    listener.beforeEntrySync(classLoader, clazz, methodName, methodDesc, lineNumber);
                 } catch (Throwable e) {
                     logger.error("class: {}, invokeInfo: {}", clazz.getName(), methodInfo, e);
                 }
@@ -197,7 +197,7 @@ public class SpyImpl extends AbstractSpy {
     }
 
     @Override
-    public void atAfterEntrySync(Class<?> clazz, String methodInfo) {
+    public void atAfterEntrySync(Class<?> clazz, String methodInfo, int lineNumber) {
         ClassLoader classLoader = clazz.getClassLoader();
         String[] info = StringUtils.splitMethodInfo(methodInfo);
         String methodName = info[0];
@@ -210,7 +210,7 @@ public class SpyImpl extends AbstractSpy {
                         continue;
                     }
                     final InvokeTraceable listener = (InvokeTraceable) adviceListener;
-                    listener.afterEntrySync(classLoader, clazz, methodName, methodDesc, -1);
+                    listener.afterEntrySync(classLoader, clazz, methodName, methodDesc, lineNumber);
                 } catch (Throwable e) {
                     logger.error("class: {}, invokeInfo: {}", clazz.getName(), methodInfo, e);
                 }

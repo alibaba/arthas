@@ -109,15 +109,15 @@ public class SpyInterceptors {
 
     public static class SpyTraceSyncBeforeEntryInterceptor {
         @AtSyncEnter(whenComplete = false, inline = true)
-        public static void onInvokeBefore(@Binding.Class Class<?> clazz, @Binding.MethodInfo String invokeInfo, @Binding.Monitor Object monitor) {
-            SpyAPI.atBeforeEntrySync(clazz, monitor, invokeInfo);
+        public static void onInvokeBefore(@Binding.Class Class<?> clazz, @Binding.MethodInfo String invokeInfo, @Binding.Monitor Object monitor,  @Binding.Line int lineNumber) {
+            SpyAPI.atBeforeEntrySync(clazz, monitor, invokeInfo, lineNumber);
         }
     }
 
     public static class SpyTraceSyncAfterEntryInterceptor {
         @AtSyncEnter(whenComplete = true, inline = true)
-        public static void onInvokeAfter(@Binding.Class Class<?> clazz, @Binding.MethodInfo String invokeInfo) {
-            SpyAPI.atAfterEntrySync(clazz, invokeInfo);
+        public static void onInvokeAfter(@Binding.Class Class<?> clazz, @Binding.MethodInfo String invokeInfo, @Binding.Line int lineNumber) {
+            SpyAPI.atAfterEntrySync(clazz, invokeInfo, lineNumber);
         }
     }
 

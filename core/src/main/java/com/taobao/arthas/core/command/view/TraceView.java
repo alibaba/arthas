@@ -81,9 +81,9 @@ public class TraceView extends ResultView<TraceModel> {
         if (node instanceof MethodNode) {
             MethodNode methodNode = (MethodNode) node;
             //clazz.getName() + ":" + method.getName() + "()"
-            sb.append("method_call:").append(methodNode.getClassName()).append(":").append(methodNode.getMethodName()).append("()");
+            sb.append("[type:method_call]").append(methodNode.getClassName()).append(":").append(methodNode.getMethodName()).append("()");
             // #lineNumber
-            if (methodNode.getLineNumber()!= -1) {
+            if (methodNode.getLineNumber() != -1) {
                 sb.append(" #").append(methodNode.getLineNumber());
             }
         } else if (node instanceof ThreadNode) {
@@ -113,7 +113,10 @@ public class TraceView extends ResultView<TraceModel> {
 
         } else if (node instanceof SyncNode) {
             SyncNode syncNode = (SyncNode)node;
-            sb.append(" monitor_entry:").append(syncNode).append(syncNode.getClassName()).append(":").append(syncNode.getMethodName());
+            sb.append("[type:monitor_entry]").append(syncNode).append(syncNode.getClassName()).append(":").append(syncNode.getMethodName());
+            if (syncNode.getLineNumber() != -1) {
+                sb.append(" #").append(syncNode.getLineNumber());
+            }
         } else {
             throw new UnsupportedOperationException("unknown trace node: " + node.getClass());
         }
@@ -134,7 +137,7 @@ public class TraceView extends ResultView<TraceModel> {
 
     private String renderCost(SyncNode node) {
         StringBuilder sb = new StringBuilder();
-        sb.append("[").append(nanoToMillis(node.getCost())).append(TIME_UNIT).append("]");
+        sb.append("[").append(nanoToMillis(node.getCost())).append(TIME_UNIT).append("] ");
         return sb.toString();
     }
 
