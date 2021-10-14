@@ -147,7 +147,7 @@ public class DirectoryBrowser {
      */
     public static DefaultFullHttpResponse directView(File dir, String path, FullHttpRequest request, ChannelHandlerContext ctx) throws IOException {
         if (path.startsWith("/")) {
-            path = path.substring(1, path.length());
+            path = path.substring(1);
         }
 
         // path maybe: arthas-output/20201225-203454.svg 

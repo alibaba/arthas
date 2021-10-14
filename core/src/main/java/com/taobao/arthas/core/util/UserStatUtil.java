@@ -109,7 +109,7 @@ public class UserStatUtil {
                 if (queryData.length() != 0) {
                     link = link + "?" + queryData;
                 }
-                URL url = new URL(link.toString());
+                URL url = new URL(link);
                 URLConnection connection = url.openConnection();
                 connection.setConnectTimeout(1000);
                 connection.setReadTimeout(1000);

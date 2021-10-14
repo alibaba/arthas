@@ -38,6 +38,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Timer;
 import java.util.TimerTask;
+import java.util.concurrent.atomic.AtomicLong;
 
 import static com.taobao.arthas.core.command.model.MemoryEntryVO.TYPE_BUFFER_POOL;
 import static com.taobao.arthas.core.command.model.MemoryEntryVO.TYPE_HEAP;
@@ -66,7 +67,7 @@ public class DashboardCommand extends AnnotatedCommand {
 
     private long interval = 5000;
 
-    private volatile long count = 0;
+    private final AtomicLong count = new AtomicLong(0);
     private volatile Timer timer;
 
     @Option(shortName = "n", longName = "number-of-execution")
@@ -297,7 +298,7 @@ public class DashboardCommand extends AnnotatedCommand {
         @Override
         public void run() {
             try {
-                if (count >= getNumOfExecutions()) {
+                if (count.get() >= getNumOfExecutions()) {
                     // stop the timer
                     timer.cancel();
                     timer.purge();
@@ -329,7 +330,7 @@ public class DashboardCommand extends AnnotatedCommand {
 
                 process.appendResult(dashboardModel);
 
-                count++;
+                count.getAndIncrement();
                 process.times().incrementAndGet();
             } catch (Throwable e) {
                 String msg = "process dashboard failed: " + e.getMessage();

@@ -470,7 +470,7 @@ public abstract class StringUtils {
 
             StringBuilder sb = new StringBuilder();
             for(int patLen = oldPattern.length(); index >= 0; index = inString.indexOf(oldPattern, pos)) {
-                sb.append(inString.substring(pos, index));
+                sb.append(inString, pos, index);
                 sb.append(newPattern);
                 pos = index + patLen;
             }
@@ -689,7 +689,7 @@ public abstract class StringUtils {
         }
         int arraySize = array.length;
         int bufSize = (arraySize == 0 ? 0 : (array[0].toString().length() + separator.length()) * arraySize);
-        StringBuffer buf = new StringBuffer(bufSize);
+        StringBuilder buf = new StringBuilder(bufSize);
 
         for (int i = 0; i < arraySize; i++) {
             if (i > 0) {
@@ -960,7 +960,7 @@ public abstract class StringUtils {
     // print|(ILjava/util/List;)V
     public static String[] splitMethodInfo(String methodInfo) {
         int index = methodInfo.indexOf('|');
-        return new String[] { methodInfo.substring(0, index), methodInfo.substring(index + 1, methodInfo.length()) };
+        return new String[] { methodInfo.substring(0, index), methodInfo.substring(index + 1) };
     }
 
     // demo/MathGame|primeFactors|(I)Ljava/util/List;|24
@@ -969,6 +969,6 @@ public abstract class StringUtils {
         int index2 = invokeInfo.indexOf('|', index1 + 1);
         int index3 = invokeInfo.indexOf('|', index2 + 1);
         return new String[] { invokeInfo.substring(0, index1), invokeInfo.substring(index1 + 1, index2),
-                invokeInfo.substring(index2 + 1, index3), invokeInfo.substring(index3 + 1, invokeInfo.length()) };
+                invokeInfo.substring(index2 + 1, index3), invokeInfo.substring(index3 + 1) };
     }
 }

@@ -158,7 +158,7 @@ public class HttpRequestHandler extends SimpleChannelInboundHandler<FullHttpRequ
                 }
                 int li = path.lastIndexOf('.');
                 if (li != -1 && li != path.length() - 1) {
-                    String ext = path.substring(li + 1, path.length());
+                    String ext = path.substring(li + 1);
                     String contentType;
                     if ("html".equals(ext)) {
                         contentType = "text/html";

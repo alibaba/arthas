@@ -96,7 +96,7 @@ public class ProxyClient {
 
         SimpleHttpResponse httpResponse = new SimpleHttpResponse();
         try {
-            httpResponse.setContent(new String("error").getBytes("utf-8"));
+            httpResponse.setContent("error".getBytes("utf-8"));
         } catch (UnsupportedEncodingException e) {
             // ignore
         }
