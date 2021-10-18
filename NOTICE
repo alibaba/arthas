@@ -10,3 +10,18 @@ The greys-anatomy Project
 =================
 Please visit Github for more information:
   * https://github.com/oldmanpushcart/greys-anatomy 
+
+
+-------------------------------------------------------------------------------
+This product contains a modified portion of 'Apache Commons Lang':
+  * LICENSE:
+    * Apache License 2.0
+  * HOMEPAGE:
+    * https://commons.apache.org/proper/commons-lang/
+
+
+This product contains a modified portion of 'Apache Commons Net':
+  * LICENSE:
+    * Apache License 2.0
+  * HOMEPAGE:
+    * https://commons.apache.org/proper/commons-net/
