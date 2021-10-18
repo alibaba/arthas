@@ -2,11 +2,16 @@
 #include <cstdio>
 #include <cstdlib>
 #include <cstring>
+#include <memory>
+#include <string>
 
 #include <jni_md.h>
 #include <jvmti.h>
 
 #include "HeapAnalyzer.h"
+
+using std::shared_ptr;
+using std::string;
 
 static void check_error(jvmtiError err, char const *name) {
   if (err) {
@@ -15,14 +20,14 @@ static void check_error(jvmtiError err, char const *name) {
 }
 
 template <typename... Args>
-static void append_format(std::string &output, const char *data, Args... args) {
+static void append_format(string &output, const char *data, Args... args) {
   size_t size = 1 + snprintf(0, 0, data, args...);
   char bytes[size];
   snprintf(bytes, size, data, args...);
   output.append(bytes);
 }
 
-static char *getClassName(jvmtiEnv *jvmti, jclass cls) {
+static shared_ptr<const char[]> getClassName(jvmtiEnv *jvmti, jclass cls) {
   char *sig, *name;
   check_error(jvmti->GetClassSignature(cls, &sig, 0), "GetClassSignature");
   if (sig) {
@@ -80,7 +85,7 @@ static char *getClassName(jvmtiEnv *jvmti, jclass cls) {
       break;
     }
     }
-    name = (char *)malloc(l + index * 2 + 1);
+    name = new char[l + index * 2 + 1];
     if (type == 0) {
       strncpy(name, buf, l);
     } else if (type == 1) {
@@ -102,11 +107,12 @@ static char *getClassName(jvmtiEnv *jvmti, jclass cls) {
       t++;
     }
   }
-  return name;
+  shared_ptr<const char[]> sp(name);
+  return sp;
 }
 
 void ObjectInfoHeap::swap(int i, int j) {
-  ObjectInfo *t = array[i];
+  shared_ptr<ObjectInfo> t = array[i];
   array[i] = array[j];
   array[j] = t;
 }
@@ -136,17 +142,11 @@ void ObjectInfoHeap::sort() {
 
 ObjectInfoHeap::ObjectInfoHeap(int record_number)
     : record_number(record_number) {
-  array = (ObjectInfo **)malloc(sizeof(ObjectInfo *) * record_number);
+  array = shared_ptr<shared_ptr<ObjectInfo>[]>(
+      new shared_ptr<ObjectInfo>[record_number]);
   for (int i = 0; i < record_number; i++) {
-    array[i] = new ObjectInfo();
+    array[i] = shared_ptr<ObjectInfo>(new ObjectInfo());
   }
-}
-
-ObjectInfoHeap::~ObjectInfoHeap() {
-  for (int i = 0; i < record_number; i++) {
-    delete array[i];
-  }
-  free(array);
 }
 
 void ObjectInfoHeap::add(int size, TagInfo *tag) {
@@ -157,17 +157,18 @@ void ObjectInfoHeap::add(int size, TagInfo *tag) {
   }
 }
 
-void ObjectInfoHeap::print(ClassInfo **class_info_array, jvmtiEnv *jvmti,
-                           std::string &output, int backtrace_number) {
+void ObjectInfoHeap::print(shared_ptr<shared_ptr<ClassInfo>[]> class_info_array,
+                           jvmtiEnv *jvmti, string &output,
+                           int backtrace_number) {
   sort();
   append_format(output, "\n%-4s\t%-10s\t%s\n", "id", "#bytes",
                 backtrace_number ? "class_name & references" : "class_name");
   append_format(output,
                 "----------------------------------------------------\n");
   for (int i = 0; i < record_number && array[i]->object_tag != 0; i++) {
-    ObjectInfo *oi = array[i];
-    ClassInfo *ci = class_info_array[oi->object_tag->class_tag];
-    append_format(output, "%-4d\t%-10d\t%s", i + 1, oi->size, ci->name);
+    shared_ptr<ObjectInfo> oi = array[i];
+    shared_ptr<ClassInfo> ci = class_info_array[oi->object_tag->class_tag];
+    append_format(output, "%-4d\t%-10d\t%s", i + 1, oi->size, ci->name.get());
     if (backtrace_number != 0) {
       TagInfo *ref = oi->object_tag->referrer;
       TagInfo *ref_pre = oi->object_tag;
@@ -175,7 +176,7 @@ void ObjectInfoHeap::print(ClassInfo **class_info_array, jvmtiEnv *jvmti,
            (backtrace_number == -1 || j < backtrace_number - 1) && ref != 0;
            j++) {
         ci = class_info_array[ref->class_tag];
-        append_format(output, " <-- %s", ci->name);
+        append_format(output, " <-- %s", ci->name.get());
         ref_pre = ref;
         ref = ref->referrer;
       }
@@ -226,18 +227,19 @@ jint JNICALL HeapAnalyzer::tag(jvmtiHeapReferenceKind reference_kind,
         ti->referrer = (TagInfo *)*referrer_tag_ptr;
       } else {
         if (reference_kind == JVMTI_HEAP_REFERENCE_STACK_LOCAL) {
-          ti->stack_info = (jvmtiHeapReferenceInfoStackLocal *)malloc(
-              sizeof(jvmtiHeapReferenceInfoStackLocal));
-          memcpy(ti->stack_info, reference_info,
+          ti->stack_info = shared_ptr<jvmtiHeapReferenceInfoStackLocal>(
+              new jvmtiHeapReferenceInfoStackLocal);
+          memcpy(ti->stack_info.get(), reference_info,
                  sizeof(jvmtiHeapReferenceInfoStackLocal));
         }
       }
     }
-    ClassInfo **class_info_array = (ClassInfo **)((void **)user_data)[0];
+    shared_ptr<shared_ptr<ClassInfo>[]> class_info_array =
+        *(shared_ptr<shared_ptr<ClassInfo>[]> *)((void **)user_data)[0];
     int *object_number_pointer = (int *)((void **)user_data)[1];
     ObjectInfoHeap *object_info_heap =
         (ObjectInfoHeap *)((void **)user_data)[2];
-    ClassInfo *ci = class_info_array[ti->class_tag];
+    shared_ptr<ClassInfo> ci = class_info_array[ti->class_tag];
     ci->instance_count++;
     ci->total_size += size;
     (*object_number_pointer)++;
@@ -283,18 +285,13 @@ HeapAnalyzer::HeapAnalyzer(jvmtiEnv *jvmti) : jvmti(jvmti) {
 HeapAnalyzer::~HeapAnalyzer() {
   untag_objects(true);
   jvmti = 0;
-  for (int i = 1; i < class_number + 1; i++) {
-    delete class_info_array[i];
-  }
-  free(class_info_array);
-  class_info_array = 0;
 }
 
 void HeapAnalyzer::tag_objects(ObjectInfoHeap *object_info_heap) {
   jvmtiHeapCallbacks heap_callbacks;
   memset(&heap_callbacks, 0, sizeof(heap_callbacks));
   heap_callbacks.heap_reference_callback = HeapAnalyzer::tag;
-  void *user_data[3] = {(void *)class_info_array, (void *)&object_number,
+  void *user_data[3] = {(void *)&class_info_array, (void *)&object_number,
                         (void *)object_info_heap};
   check_error(jvmti->FollowReferences(0, 0, 0, &heap_callbacks, user_data),
               "FollowReferences");
@@ -313,11 +310,12 @@ void HeapAnalyzer::get_classes() {
   jclass *classes;
   check_error(jvmti->GetLoadedClasses(&class_number, &classes),
               "GetLoadedClasses");
-  class_info_array =
-      (ClassInfo **)malloc(sizeof(ClassInfo *) * (class_number + 1));
+  class_info_array = shared_ptr<shared_ptr<ClassInfo>[]>(
+      new shared_ptr<ClassInfo>[class_number + 1]);
   for (int i = 1; i < class_number + 1; i++) {
-    ClassInfo *ci = new ClassInfo(i, getClassName(jvmti, classes[i - 1]));
-    class_info_array[i] = ci;
+    class_info_array[i] = shared_ptr<ClassInfo>(
+        new ClassInfo(i, getClassName(jvmti, classes[i - 1])));
+    ;
     TagInfo *ti = new TagInfo(i);
     check_error(jvmti->SetTag(classes[i - 1], (jlong)ti), "SetTag");
   }
@@ -326,23 +324,23 @@ void HeapAnalyzer::get_classes() {
 
 char *HeapAnalyzer::heap_analyze(int class_show_number,
                                  int object_show_number) {
-  std::string output = "";
+  string output;
   append_format(output, "class_number: %d\n", class_number);
   ObjectInfoHeap *object_info_heap = new ObjectInfoHeap(object_show_number);
   tag_objects(object_info_heap);
   append_format(output, "object_number: %d\n", object_number);
   object_info_heap->print(class_info_array, jvmti, output, 0);
 
-  std::sort(class_info_array + 1, class_info_array + class_number,
+  std::sort(class_info_array.get() + 1, class_info_array.get() + class_number,
             ClassInfo::compare);
   append_format(output, "\n%-4s\t%-12s\t%-15s\t%s\n", "id", "#instances",
                 "#bytes", "class_name");
   append_format(output,
                 "----------------------------------------------------\n");
   for (int i = 1; i - 1 < class_show_number && i < class_number; i++) {
-    ClassInfo *ci = class_info_array[i];
+    shared_ptr<ClassInfo> ci = class_info_array[i];
     append_format(output, "%-4d\t%-12d\t%-15ld\t%s\n", i, ci->instance_count,
-                  ci->total_size, ci->name);
+                  ci->total_size, ci->name.get());
   }
   append_format(output, "\n");
 
@@ -354,7 +352,7 @@ char *HeapAnalyzer::heap_analyze(int class_show_number,
 
 char *HeapAnalyzer::reference_analyze(jclass klass, int object_show_number,
                                       int backtrace_number) {
-  std::string output = "";
+  string output;
   tag_objects(0);
   ObjectInfoHeap *object_info_heap = new ObjectInfoHeap(object_show_number);
   jvmtiHeapCallbacks heap_callbacks;
