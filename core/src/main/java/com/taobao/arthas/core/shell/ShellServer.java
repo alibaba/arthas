@@ -80,7 +80,7 @@ public abstract class ShellServer {
      */
     @SuppressWarnings("unchecked")
     public ShellServer listen() {
-        return listen(new NoOpHandler());
+        return listen(new NoOpHandler<Future<Void>>());
     }
 
     /**
@@ -95,7 +95,7 @@ public abstract class ShellServer {
      */
     @SuppressWarnings("unchecked")
     public void close() {
-        close(new NoOpHandler());
+        close(new NoOpHandler<Future<Void>>());
     }
 
     /**
