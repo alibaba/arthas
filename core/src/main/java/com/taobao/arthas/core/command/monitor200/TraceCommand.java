@@ -96,7 +96,7 @@ public class TraceCommand extends EnhancerCommand {
     }
 
     @Option(longName = "skipMonitor")
-    @DefaultValue("false")
+    @DefaultValue("true")
     @Description("skip MONITORENTRY command trace, default value false.")
     public void setSkipMonitor(boolean skipMonitor) {
         this.skipMonitor = skipMonitor;
