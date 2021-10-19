@@ -227,7 +227,7 @@ public class ShellImpl implements Shell {
         return currentForegroundJob;
     }
 
-    private class ShellJobHandler implements JobListener {
+    private static class ShellJobHandler implements JobListener {
         ShellImpl shell;
 
         public ShellJobHandler(ShellImpl shell) {

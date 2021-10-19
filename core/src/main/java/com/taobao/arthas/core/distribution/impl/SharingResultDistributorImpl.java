@@ -135,7 +135,7 @@ public class SharingResultDistributorImpl implements SharingResultDistributor {
         }
     }
 
-    private class SharingResultConsumerImpl implements ResultConsumer {
+    private static class SharingResultConsumerImpl implements ResultConsumer {
         private BlockingQueue<ResultModel> resultQueue = new ArrayBlockingQueue<ResultModel>(DistributorOptions.resultQueueSize);
         private ReentrantLock queueLock = new ReentrantLock();
         private InputStatusModel lastInputStatus;
