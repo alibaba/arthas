@@ -9,8 +9,8 @@ For example, in streaming computing, Java processes can be started on different 
 In this case, Arthas Tunnel Server/Client can be used.
 
 Reference: 
-* [Web Console](web-console.md)
-* [Arthas Spring Boot Starter](spring-boot-starter.md)
+* 1: [Web Console](web-console.md)
+* 2: [Arthas Spring Boot Starter](spring-boot-starter.md)
 
 ### Download and deploy arthas tunnel server
 
