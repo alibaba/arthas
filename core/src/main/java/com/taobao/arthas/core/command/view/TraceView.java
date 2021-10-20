@@ -20,7 +20,7 @@ public class TraceView extends ResultView<TraceModel> {
     private static final String STEP_HAS_BOARD = "|   ";
     private static final String STEP_EMPTY_BOARD = "    ";
     private static final String TIME_UNIT = "ms";
-    private static final String MONITOR_ENTRY_TYPE = Ansi.ansi().fg(Ansi.Color.YELLOW).a("monitor_entry").reset().toString();
+    private static final String MONITOR_ENTER_TYPE = Ansi.ansi().fg(Ansi.Color.YELLOW).a("monitor_enter").reset().toString();
 
     // 是否输出耗时
     private boolean isPrintCost = true;
@@ -36,6 +36,7 @@ public class TraceView extends ResultView<TraceModel> {
 
         //reset status
         maxCostNode = null;
+        maxCostNodeValue = 0;
         findMaxCostNode(root);
 
         final StringBuilder treeSB = new StringBuilder(2048);
@@ -119,7 +120,7 @@ public class TraceView extends ResultView<TraceModel> {
 
         } else if (node instanceof SyncNode) {
             SyncNode syncNode = (SyncNode)node;
-            sb.append("[type:").append(MONITOR_ENTRY_TYPE).append("] ").append(syncNode).append(syncNode.getClassName()).append(":").append(syncNode.getMethodName());
+            sb.append("[type:").append(MONITOR_ENTER_TYPE).append("] ").append(syncNode).append(syncNode.getClassName()).append(":").append(syncNode.getMethodName());
             if (syncNode.getLineNumber() != -1) {
                 sb.append(" #").append(syncNode.getLineNumber());
             }
@@ -178,17 +179,7 @@ public class TraceView extends ResultView<TraceModel> {
      */
     private void findMaxCostNode(TraceNode node) {
         if (!isRoot(node) && !isRoot(node.parent())) {
-            if (node instanceof MethodNode ) {
-                MethodNode aNode = (MethodNode) node;
-                if (maxCostNodeValue < aNode.getTotalCost()) {
-                    maxCostNode = aNode;
-                }
-            } else if (node instanceof SyncNode) {
-                SyncNode aNode = (SyncNode) node;
-                if (maxCostNodeValue < aNode.getCost()) {
-                    maxCostNode = aNode;
-                }
-            }
+            setMaxNodeInfo(node);
         }
         if (!isLeaf(node)) {
             List<TraceNode> children = node.getChildren();
@@ -196,6 +187,22 @@ public class TraceView extends ResultView<TraceModel> {
                 for (TraceNode n: children) {
                     findMaxCostNode(n);
                 }
+            }
+        }
+    }
+
+    private void setMaxNodeInfo(TraceNode node) {
+        if (node instanceof MethodNode) {
+            MethodNode aNode = (MethodNode) node;
+            if (maxCostNodeValue < aNode.getTotalCost()) {
+                maxCostNode = aNode;
+                maxCostNodeValue = aNode.getTotalCost();
+            }
+        } else if (node instanceof SyncNode) {
+            SyncNode aNode = (SyncNode) node;
+            if (maxCostNodeValue < aNode.getCost()) {
+                maxCostNode = aNode;
+                maxCostNodeValue = aNode.getCost();
             }
         }
     }
