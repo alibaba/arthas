@@ -15,7 +15,7 @@ public class DateUtilsTest {
     	
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss"); // supported date format
         Date date = new Date();
-        Assert.assertEquals(DateUtils.formatDate(date), dateFormat.format(date).toString());
+        Assert.assertEquals(DateUtils.formatDate(date), dateFormat.format(date));
 
     }
     
@@ -24,7 +24,7 @@ public class DateUtilsTest {
     	
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm"); // Not supported Date format
         Date date = new Date();
-        Assert.assertNotEquals(DateUtils.formatDate(date), dateFormat.format(date).toString());
+        Assert.assertNotEquals(DateUtils.formatDate(date), dateFormat.format(date));
 
     }
  }

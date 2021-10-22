@@ -6,7 +6,6 @@ import com.taobao.arthas.core.shell.cli.CliToken;
 import com.taobao.arthas.core.shell.cli.CliTokens;
 import com.taobao.arthas.core.shell.handlers.Handler;
 import com.taobao.arthas.core.shell.session.Session;
-import com.taobao.arthas.core.shell.term.impl.httptelnet.HttpTelnetTermServer;
 
 import io.termd.core.function.Consumer;
 import io.termd.core.readline.Completion;

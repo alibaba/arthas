@@ -2,7 +2,6 @@ package com.taobao.arthas.core.command.basic1000;
 
 import com.taobao.arthas.core.command.Constants;
 import com.taobao.arthas.core.command.model.EchoModel;
-import com.taobao.arthas.core.command.model.MessageModel;
 import com.taobao.arthas.core.shell.command.AnnotatedCommand;
 import com.taobao.arthas.core.shell.command.CommandProcess;
 import com.taobao.middleware.cli.annotations.Argument;

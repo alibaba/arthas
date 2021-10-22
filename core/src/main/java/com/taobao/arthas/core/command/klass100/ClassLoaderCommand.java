@@ -627,7 +627,7 @@ public class ClassLoaderCommand extends AnnotatedCommand {
         }
     }
 
-    private class ClassLoaderInterruptHandler implements Handler<Void> {
+    private static class ClassLoaderInterruptHandler implements Handler<Void> {
 
         private ClassLoaderCommand command;
 
