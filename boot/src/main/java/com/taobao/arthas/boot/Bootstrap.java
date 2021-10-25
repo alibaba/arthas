@@ -699,6 +699,12 @@ public class Bootstrap {
         result.append("Remote versions:\n");
 
 		List<String> remoteVersions = DownloadUtils.readRemoteVersions();
+        //npe fix
+        if(remoteVersions == null){
+            AnsiLog.error("Read remote versions fail");
+            return "";
+        }
+
 		Collections.reverse(remoteVersions);
 		for (String version : remoteVersions) {
 			result.append(" ").append(version).append('\n');
