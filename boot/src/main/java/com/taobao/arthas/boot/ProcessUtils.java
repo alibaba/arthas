@@ -170,7 +170,7 @@ public class ProcessUtils {
     /**
      * <pre>
      * 1. Try to find java home from System Property java.home
-     * 2. If jdk > 8, FOUND_JAVA_HOME set to java.home
+     * 2. If jdk > 8 || using "-Dtools.jar", FOUND_JAVA_HOME set to java.home
      * 3. If jdk <= 8, try to find tools.jar under java.home
      * 4. If tools.jar do not exists under java.home, try to find System env JAVA_HOME
      * 5. If jdk <= 8 and tools.jar do not exists under JAVA_HOME, throw IllegalArgumentException
@@ -185,7 +185,7 @@ public class ProcessUtils {
 
         String javaHome = System.getProperty("java.home");
 
-        if (JavaVersionUtils.isLessThanJava9()) {
+        if (JavaVersionUtils.isLessThanJava9() && System.getProperty("tools.jar") == null) {
             File toolsJar = new File(javaHome, "lib/tools.jar");
             if (!toolsJar.exists()) {
                 toolsJar = new File(javaHome, "../lib/tools.jar");
@@ -389,11 +389,22 @@ public class ProcessUtils {
     }
 
     private static File findToolsJar(String javaHome) {
+        File toolsJar;
         if (JavaVersionUtils.isGreaterThanJava8()) {
             return null;
         }
 
-        File toolsJar = new File(javaHome, "lib/tools.jar");
+        String toolsJarPath = System.getProperty("tools.jar");
+        if (toolsJarPath != null) {
+            toolsJar = new File(toolsJarPath);
+            if (!toolsJar.exists()) {
+                throw new IllegalArgumentException("Can not find tools.jar using \"-Dtools.jar\" at this path: " + toolsJarPath);
+            }
+            AnsiLog.debug("Found tools.jar: " + toolsJar.getAbsolutePath());
+            return toolsJar;
+        }
+
+        toolsJar = new File(javaHome, "lib/tools.jar");
         if (!toolsJar.exists()) {
             toolsJar = new File(javaHome, "../lib/tools.jar");
         }
