@@ -78,9 +78,8 @@ public abstract class ShellServer {
     /**
      * Start the shell service, this is an asynchronous start.
      */
-    @SuppressWarnings("unchecked")
     public ShellServer listen() {
-        return listen(new NoOpHandler());
+        return listen(new NoOpHandler<Future<Void>>());
     }
 
     /**
@@ -93,9 +92,8 @@ public abstract class ShellServer {
     /**
      * Close the shell server, this is an asynchronous close.
      */
-    @SuppressWarnings("unchecked")
     public void close() {
-        close(new NoOpHandler());
+        close(new NoOpHandler<Future<Void>>());
     }
 
     /**

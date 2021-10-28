@@ -19,6 +19,16 @@ java -jar arthas-boot.jar --password ppp
   Using generated security password: 0vUBJpRIppkKuZ7dYzYqOKtranj4unGh
   ```
 
+### 本地连接不鉴权
+
+默认情况下，在`arthas.properties`文件里有配置：
+
+```
+arthas.localConnectionNonAuth=true
+```
+
+当配置密码时，使用本地连接，也不需要鉴权。默认配置值是true，方便本地连接使用。只有远程连接时，才需要鉴权。
+
 ### 在telnet console里鉴权
 
 连接到arthas后，直接执行命令会提示需要鉴权：

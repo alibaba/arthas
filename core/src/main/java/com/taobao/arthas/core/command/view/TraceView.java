@@ -98,10 +98,10 @@ public class TraceView extends ResultView<TraceModel> {
 
             //trace_id
             if (threadNode.getTraceId() != null) {
-                sb.append(";trace_id="+threadNode.getTraceId());
+                sb.append(";trace_id=").append(threadNode.getTraceId());
             }
             if (threadNode.getRpcId() != null) {
-                sb.append(";rpc_id="+threadNode.getRpcId());
+                sb.append(";rpc_id=").append(threadNode.getRpcId());
             }
         } else if (node instanceof ThrowNode) {
             ThrowNode throwNode = (ThrowNode) node;

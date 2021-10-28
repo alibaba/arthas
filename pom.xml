@@ -75,7 +75,7 @@
     </modules>
 
     <properties>
-        <revision>3.5.3</revision>
+        <revision>3.5.4</revision>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.compiler.target>1.6</maven.compiler.target>
         <maven.compiler.source>1.6</maven.compiler.source>
@@ -102,7 +102,7 @@
             <dependency>
                 <groupId>com.alibaba.middleware</groupId>
                 <artifactId>termd-core</artifactId>
-                <version>1.1.7.11</version>
+                <version>1.1.7.12</version>
             </dependency>
             <dependency>
                 <groupId>com.alibaba.middleware</groupId>
@@ -137,7 +137,7 @@
             <dependency>
                 <groupId>com.taobao.text</groupId>
                 <artifactId>text-ui</artifactId>
-                <version>0.0.2</version>
+                <version>0.0.3</version>
             </dependency>
             <dependency>
                 <groupId>com.fifesoft</groupId>
