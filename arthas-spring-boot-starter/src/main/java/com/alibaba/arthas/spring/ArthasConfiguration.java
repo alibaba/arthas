@@ -36,7 +36,7 @@ public class ArthasConfiguration {
 	 * </pre>
 	 */
 	@ConfigurationProperties(prefix = "arthas")
-	@ConditionalOnMissingBean
+	@ConditionalOnMissingBean(name="arthasConfigMap")
 	@Bean
 	public HashMap<String, String> arthasConfigMap() {
 		return new HashMap<String, String>();
@@ -44,7 +44,7 @@ public class ArthasConfiguration {
 
 	@ConditionalOnMissingBean
 	@Bean
-	public ArthasAgent arthasAgent(@Autowired Map<String, String> arthasConfigMap,
+	public ArthasAgent arthasAgent(@Autowired @Qualifier("arthasConfigMap") Map<String, String> arthasConfigMap,
 			@Autowired ArthasProperties arthasProperties) throws Throwable {
         arthasConfigMap = StringUtils.removeDashKey(arthasConfigMap);
         ArthasProperties.updateArthasConfigMapDefaultValue(arthasConfigMap);
