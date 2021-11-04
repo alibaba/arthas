@@ -1,44 +1,23 @@
 package com.alibaba.arthas.tunnel.client;
 
-import java.io.UnsupportedEncodingException;
-import java.util.concurrent.TimeUnit;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import com.alibaba.arthas.tunnel.common.SimpleHttpResponse;
 import com.taobao.arthas.common.ArthasConstants;
-
 import io.netty.bootstrap.Bootstrap;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
-import io.netty.channel.Channel;
-import io.netty.channel.ChannelFuture;
-import io.netty.channel.ChannelFutureListener;
-import io.netty.channel.ChannelHandlerContext;
-import io.netty.channel.ChannelInitializer;
-import io.netty.channel.ChannelOption;
-import io.netty.channel.ChannelPipeline;
-import io.netty.channel.EventLoopGroup;
-import io.netty.channel.SimpleChannelInboundHandler;
+import io.netty.channel.*;
 import io.netty.channel.local.LocalAddress;
 import io.netty.channel.local.LocalChannel;
 import io.netty.channel.nio.NioEventLoopGroup;
-import io.netty.handler.codec.http.DefaultFullHttpRequest;
-import io.netty.handler.codec.http.HttpClientCodec;
-import io.netty.handler.codec.http.HttpContent;
-import io.netty.handler.codec.http.HttpHeaderNames;
-import io.netty.handler.codec.http.HttpHeaderValues;
-import io.netty.handler.codec.http.HttpMethod;
-import io.netty.handler.codec.http.HttpObject;
-import io.netty.handler.codec.http.HttpObjectAggregator;
-import io.netty.handler.codec.http.HttpRequest;
-import io.netty.handler.codec.http.HttpResponse;
-import io.netty.handler.codec.http.HttpVersion;
-import io.netty.handler.codec.http.LastHttpContent;
+import io.netty.handler.codec.http.*;
 import io.netty.util.concurrent.DefaultThreadFactory;
 import io.netty.util.concurrent.GlobalEventExecutor;
 import io.netty.util.concurrent.Promise;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.io.UnsupportedEncodingException;
+import java.util.concurrent.TimeUnit;
 
 /**
  * 
@@ -103,11 +82,74 @@ public class ProxyClient {
         return httpResponse;
     }
 
+    public SimpleHttpResponse apiRequest(String apiRequest) throws UnsupportedEncodingException {
+        // Prepare the HTTP request.
+        byte[] bytes = apiRequest.getBytes("UTF-8");
+        logger.info("send apiRequest: {}, bytes length: {}", apiRequest, bytes.length);
+        HttpRequest request = new DefaultFullHttpRequest(HttpVersion.HTTP_1_1, HttpMethod.POST, "/api",
+                Unpooled.wrappedBuffer(bytes));
+        request.headers().set(HttpHeaderNames.CONNECTION, HttpHeaderValues.CLOSE);
+        request.headers().set(HttpHeaderNames.CONTENT_TYPE, HttpHeaderValues.APPLICATION_JSON);
+        request.headers().set(HttpHeaderNames.CONTENT_LENGTH, bytes.length);
+
+        return request(request);
+    }
+
+    private SimpleHttpResponse request(HttpRequest request) {
+        final Promise<SimpleHttpResponse> httpResponsePromise = GlobalEventExecutor.INSTANCE.newPromise();
+
+        final EventLoopGroup group = new NioEventLoopGroup(1, new DefaultThreadFactory("arthas-proxyClient", true));
+        ChannelFuture closeFuture = null;
+        try {
+            Bootstrap b = new Bootstrap();
+            b.option(ChannelOption.CONNECT_TIMEOUT_MILLIS, 5000);
+            b.group(group).channel(LocalChannel.class).handler(new ChannelInitializer<LocalChannel>() {
+                @Override
+                protected void initChannel(LocalChannel ch) {
+                    ChannelPipeline p = ch.pipeline();
+                    p.addLast(new HttpClientCodec(), new HttpObjectAggregator(ArthasConstants.MAX_HTTP_CONTENT_LENGTH),
+                            new HttpProxyClientHandler(httpResponsePromise));
+                }
+            });
+
+            LocalAddress localAddress = new LocalAddress(ArthasConstants.NETTY_LOCAL_ADDRESS);
+            Channel localChannel = b.connect(localAddress).sync().channel();
+
+            localChannel.writeAndFlush(request);
+
+            closeFuture = localChannel.closeFuture();
+            logger.info("proxy client connect to server success");
+
+            return httpResponsePromise.get(5000, TimeUnit.MILLISECONDS);
+        } catch (Throwable e) {
+            logger.error("ProxyClient error", e);
+        } finally {
+            if (closeFuture != null) {
+                closeFuture.addListener(new ChannelFutureListener() {
+                    @Override
+                    public void operationComplete(ChannelFuture channelFuture) throws Exception {
+                        group.shutdownGracefully();
+                    }
+                });
+            } else {
+                group.shutdownGracefully();
+            }
+        }
+
+        SimpleHttpResponse httpResponse = new SimpleHttpResponse();
+        try {
+            httpResponse.setContent("error".getBytes("utf-8"));
+        } catch (UnsupportedEncodingException e) {
+            // ignore
+        }
+        return httpResponse;
+    }
+
     static class HttpProxyClientHandler extends SimpleChannelInboundHandler<HttpObject> {
 
-        private Promise<SimpleHttpResponse> promise;
+        private final Promise<SimpleHttpResponse> promise;
 
-        private SimpleHttpResponse simpleHttpResponse = new SimpleHttpResponse();
+        private final SimpleHttpResponse simpleHttpResponse = new SimpleHttpResponse();
 
         public HttpProxyClientHandler(Promise<SimpleHttpResponse> promise) {
             this.promise = promise;

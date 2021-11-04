@@ -49,12 +49,19 @@ public class MethodConstants {
      * </pre>
      */
     public static final String OPEN_TUNNEL = "openTunnel";
-    
+
     /**
      * <pre>
      * tunnel server向 tunnel client请求 http中转，比如访问 http://localhost:3658/arthas-output/xxx.svg
      * </pre>
      */
     public static final String HTTP_PROXY = "httpProxy";
+
+    /**
+     * <pre>
+     * tunnel server向 tunnel client请求 http api 中转，参考：https://arthas.aliyun.com/doc/http-api.html
+     * </pre>
+     */
+    public static final String HTTP_API_PROXY = "httpApiProxy";
 
 }

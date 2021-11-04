@@ -1,18 +1,9 @@
 
 package com.alibaba.arthas.tunnel.client;
 
-import java.net.URI;
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.TimeUnit;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import com.alibaba.arthas.tunnel.common.MethodConstants;
 import com.alibaba.arthas.tunnel.common.SimpleHttpResponse;
 import com.alibaba.arthas.tunnel.common.URIConstans;
-
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 import io.netty.channel.ChannelFuture;
@@ -27,6 +18,14 @@ import io.netty.handler.codec.http.websocketx.TextWebSocketFrame;
 import io.netty.handler.codec.http.websocketx.WebSocketFrame;
 import io.netty.handler.timeout.IdleStateEvent;
 import io.netty.util.CharsetUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.io.IOException;
+import java.net.URI;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 /**
  * 
@@ -134,6 +133,49 @@ public class TunnelClientSocketClientHandler extends SimpleChannelInboundHandler
                 }
             }
 
+            if (MethodConstants.HTTP_API_PROXY.equals(method)) {
+                /*
+                  <pre>
+                  1. 从 proxy 请求里读取到目标的 requestId 和 apiHttpRequest
+                  2. 然后通过 ProxyClient直接请求得到结果
+                  3. 把response结果转为 byte[]，再转为base64，再统一组合的一个url，再用 TextWebSocketFrame 发回去
+                  </pre>
+                 */
+                apiProxy(parameters, ctx);
+            }
+
+        }
+    }
+
+    private void apiProxy(Map<String, List<String>> parameters, ChannelHandlerContext ctx) throws IOException {
+        ProxyClient proxyClient = new ProxyClient();
+        List<String> apiRequestBodies = parameters.get(URIConstans.API_REQUEST_BODY);
+
+        List<String> requestIDs = parameters.get(URIConstans.PROXY_REQUEST_ID);
+        String id = null;
+        if (requestIDs != null && !requestIDs.isEmpty()) {
+            id = requestIDs.get(0);
+        }
+        if (id == null) {
+            logger.error("error, http proxy need {}", URIConstans.PROXY_REQUEST_ID);
+            return;
+        }
+
+        if (apiRequestBodies != null && !apiRequestBodies.isEmpty()) {
+            String apiRequestBody = apiRequestBodies.get(0);
+            SimpleHttpResponse simpleHttpResponse = proxyClient.apiRequest(apiRequestBody);
+
+            ByteBuf byteBuf = Base64
+                    .encode(Unpooled.wrappedBuffer(SimpleHttpResponse.toBytes(simpleHttpResponse)));
+            String requestData = byteBuf.toString(CharsetUtil.UTF_8);
+
+            QueryStringEncoder queryEncoder = new QueryStringEncoder("");
+            queryEncoder.addParam(URIConstans.METHOD, MethodConstants.HTTP_PROXY);
+            queryEncoder.addParam(URIConstans.PROXY_REQUEST_ID, id);
+            queryEncoder.addParam(URIConstans.PROXY_RESPONSE_DATA, requestData);
+
+            String url = queryEncoder.toString();
+            ctx.writeAndFlush(new TextWebSocketFrame(url));
         }
     }
 
