@@ -170,7 +170,7 @@ public class TunnelClientSocketClientHandler extends SimpleChannelInboundHandler
             String requestData = byteBuf.toString(CharsetUtil.UTF_8);
 
             QueryStringEncoder queryEncoder = new QueryStringEncoder("");
-            queryEncoder.addParam(URIConstans.METHOD, MethodConstants.HTTP_PROXY);
+            queryEncoder.addParam(URIConstans.METHOD, MethodConstants.HTTP_API_PROXY);
             queryEncoder.addParam(URIConstans.PROXY_REQUEST_ID, id);
             queryEncoder.addParam(URIConstans.PROXY_RESPONSE_DATA, requestData);
 

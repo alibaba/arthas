@@ -9,6 +9,8 @@ import io.netty.channel.*;
 import io.netty.channel.local.LocalAddress;
 import io.netty.channel.local.LocalChannel;
 import io.netty.channel.nio.NioEventLoopGroup;
+import io.netty.channel.socket.SocketChannel;
+import io.netty.channel.socket.nio.NioSocketChannel;
 import io.netty.handler.codec.http.*;
 import io.netty.util.concurrent.DefaultThreadFactory;
 import io.netty.util.concurrent.GlobalEventExecutor;
@@ -103,17 +105,17 @@ public class ProxyClient {
         try {
             Bootstrap b = new Bootstrap();
             b.option(ChannelOption.CONNECT_TIMEOUT_MILLIS, 5000);
-            b.group(group).channel(LocalChannel.class).handler(new ChannelInitializer<LocalChannel>() {
+            b.group(group).channel(NioSocketChannel.class).handler(new ChannelInitializer<SocketChannel>() {
                 @Override
-                protected void initChannel(LocalChannel ch) {
+                protected void initChannel(SocketChannel ch) {
                     ChannelPipeline p = ch.pipeline();
                     p.addLast(new HttpClientCodec(), new HttpObjectAggregator(ArthasConstants.MAX_HTTP_CONTENT_LENGTH),
                             new HttpProxyClientHandler(httpResponsePromise));
                 }
             });
 
-            LocalAddress localAddress = new LocalAddress(ArthasConstants.NETTY_LOCAL_ADDRESS);
-            Channel localChannel = b.connect(localAddress).sync().channel();
+//            LocalAddress localAddress = new LocalAddress(ArthasConstants.NETTY_LOCAL_ADDRESS);
+            Channel localChannel = b.connect("127.0.0.1", 8563).sync().channel();
 
             localChannel.writeAndFlush(request);
 
