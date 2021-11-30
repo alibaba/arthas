@@ -97,7 +97,7 @@ public class HttpRequestHandler extends SimpleChannelInboundHandler<FullHttpRequ
                 //try output dir later, avoid overlay classpath resources files
                 if (response == null) {
                     response = DirectoryBrowser.directView(dir, path, request, ctx);
-                    isFileResponseFinished = (response == null) ? false : true;
+                    isFileResponseFinished = response != null;
                 }
 
                 //not found

@@ -79,7 +79,7 @@ public class GlobalOptions {
             summary = "Option to control include default method in interface when class matching",
             description = "This option disable to include default method in interface when matching class."
     )
-    public static volatile boolean isSupportDefaultMethod = true && JavaVersionUtils.isGreaterThanJava7();
+    public static volatile boolean isSupportDefaultMethod = JavaVersionUtils.isGreaterThanJava7();
 
     /**
      * 是否日志中保存命令执行结果
