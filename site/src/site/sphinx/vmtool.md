@@ -83,3 +83,45 @@ vmtool --action forceGc
 ```
 
 * 可以结合 [`vmoption`](vmoption.md) 命令动态打开`PrintGC`开关。
+
+### 分析占用最大堆内存的对象和类
+
+```bash
+$ vmtool -a heapAnalyze --classNum 5 --objectNum 3
+class_number: 4101
+object_number: 107299
+
+id      #bytes          class_name
+----------------------------------------------------
+1       209715216       byte[]
+2       104857616       byte[]
+3       524304          char[]
+
+
+id      #instances      #bytes          class_name
+----------------------------------------------------
+1       7043            327124360       byte[]
+2       20303           5660096         char[]
+3       2936            631136          java.lang.Object[]
+4       20270           486480          java.lang.String
+5       4110            462904          java.lang.Class
+```
+
+> 通过 `--classNum` 参数指定输出的类数量，通过 `--objectNum` 参数指定输出的对象数量。
+
+### 分析对象间引用关系
+
+```bash
+$ vmtool -a referenceAnalyze --className ByteHolder --objectNum 2 --backtraceNum -1
+
+id      #bytes          class_name & references
+----------------------------------------------------
+1       16              ByteHolder <-- root(local variable in method: main)
+2       16              ByteHolder <-- root(local variable in method: sleep)
+```
+
+> 通过 `--className` 参数指定类名，通过 `--objectNum` 参数指定输出的对象数量，通过 `--backtraceNum` 参数指定回溯对象引用关系的层级，如果 `--backtraceNum` 被设置为-1，则表示不断回溯，直到找到根引用。
+
+> `getInstances` 中的 `classLoaderClass` 和 `classloader` 参数在此也适用。
+
+> 如果对象的根引用是线程栈，那么在输出的 `root(local variable in method: sleep)` 中会显式输出该引用所处的栈帧方法名，而当对象的根引用来自其他位置，例如JNI栈帧时，无法获得其方法名，只会输出 `root` 。

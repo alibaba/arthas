@@ -182,4 +182,16 @@ public class VmToolTest {
 
         Assertions.assertThat(interfaceInstances[0]).isEqualTo(ObjectInstances[0]);
     }
+
+    @Test
+    public void testHeapAnalyzer() {
+        VmTool vmtool = initVmTool();
+        System.out.println(vmtool.heapAnalyze(20, 20));
+    }
+
+    @Test
+    public void testReferenceAnalyzer() {
+        VmTool vmtool = initVmTool();
+        System.out.println(vmtool.referenceAnalyze(String.class, 20, 3));
+    }
 }

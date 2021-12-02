@@ -3,7 +3,7 @@
 #include <jni_md.h>
 #include <jvmti.h>
 #include "arthas_VmTool.h" // under target/native/javah/
-
+#include "HeapAnalyzer.h"
 
 static jvmtiEnv *jvmti;
 static jlong tagCounter = 0;
@@ -204,4 +204,23 @@ JNIEXPORT jobjectArray JNICALL Java_arthas_VmTool_getAllLoadedClasses0
     }
     jvmti->Deallocate(reinterpret_cast<unsigned char *>(classes));
     return array;
+}
+
+extern "C"
+JNIEXPORT jstring JNICALL Java_arthas_VmTool_heapAnalyze0
+        (JNIEnv *env, jclass thisClass, jint classNum, jint objectNum) {
+  HeapAnalyzer ha(jvmti);
+  char *result = ha.heap_analyze(classNum, objectNum);
+  jstring s = env->NewStringUTF(result);
+  free(result);
+  return s;
+}
+
+extern "C" JNIEXPORT jstring JNICALL Java_arthas_VmTool_referenceAnalyze0(
+    JNIEnv *env, jclass thisClass, jclass klass, jint objectNum, jint backtraceNum) {
+  HeapAnalyzer ha(jvmti);
+  char *result = ha.reference_analyze(klass, objectNum, backtraceNum);
+  jstring s = env->NewStringUTF(result);
+  free(result);
+  return s;
 }

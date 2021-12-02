@@ -28,6 +28,10 @@
       {
         "title": "Arthas vmtool command",
         "text": "vmtool-gc.md"
+      },
+      {
+        "title": "Arthas vmtool command",
+        "text": "vmtool-heapAnalyze.md"
       }
     ],
     "intro": {

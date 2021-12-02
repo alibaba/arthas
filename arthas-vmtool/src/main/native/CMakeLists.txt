@@ -3,7 +3,7 @@ project(arthas-native)
 
 set(CMAKE_CXX_STANDARD 14)
 
-add_library(jni-lib SHARED src/jni-library.cpp)
+add_library(jni-lib SHARED src/jni-library.cpp src/HeapAnalyzer.cpp src/HeapAnalyzer.h)
 
 #使用环境变量来include，把不同系统的兼容问题交给jdk解决
 include_directories("include")

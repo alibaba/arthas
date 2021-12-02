@@ -65,6 +65,10 @@ public class VmTool implements VmToolMXBean {
      */
     private static synchronized native Class<?>[] getAllLoadedClasses0(Class<?> klass);
 
+    private static synchronized native String heapAnalyze0(int classNum, int objectNum);
+
+    private static synchronized native String referenceAnalyze0(Class<?> klass, int objectNum, int backtraceNum);
+
     @Override
     public void forceGc() {
         forceGc0();
@@ -103,4 +107,13 @@ public class VmTool implements VmToolMXBean {
         return getAllLoadedClasses0(Class.class);
     }
 
+    @Override
+    public String heapAnalyze(int classNum, int objectNum) {
+        return heapAnalyze0(classNum, objectNum);
+    }
+
+    @Override
+    public String referenceAnalyze(Class<?> klass, int objectNum, int backtraceNum) {
+        return referenceAnalyze0(klass, objectNum, backtraceNum);
+    }
 }
