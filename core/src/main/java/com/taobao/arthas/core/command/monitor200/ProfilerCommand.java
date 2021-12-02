@@ -51,7 +51,7 @@ import one.profiler.Counter;
         + "  profiler list                # list all supported events\n"
         + "  profiler actions             # list all supported actions\n"
         + "  profiler start --event alloc\n"
-        + "  profiler stop --format svg   # output file format, support svg,html,jfr\n"
+        + "  profiler stop --format html   # output file format, support html,jfr\n"
         + "  profiler stop --file /tmp/result.html\n"
         + "  profiler stop --threads \n"
         + "  profiler start --include 'java/*' --include 'demo/*' --exclude '*Unsafe.park*'\n"
@@ -62,7 +62,7 @@ import one.profiler.Counter;
         + "  profiler dumpCollapsed       # Dump profile in 'collapsed stacktraces' format\n"
         + "  profiler dumpTraces          # Dump collected stack traces\n"
         + "  profiler execute 'start,framebuf=5000000'      # Execute an agent-compatible profiling command\n"
-        + "  profiler execute 'stop,file=/tmp/result.svg'   # Execute an agent-compatible profiling command\n"
+        + "  profiler execute 'stop,file=/tmp/result.html'   # Execute an agent-compatible profiling command\n"
         + Constants.WIKI + Constants.WIKI_HOME + "profiler")
 //@formatter:on
 public class ProfilerCommand extends AnnotatedCommand {
@@ -75,7 +75,7 @@ public class ProfilerCommand extends AnnotatedCommand {
 
     private String file;
     /**
-     * output file format, default value is svg.
+     * output file format, default value is html.
      */
     private String format;
 
@@ -125,14 +125,13 @@ public class ProfilerCommand extends AnnotatedCommand {
     static {
         String profierSoPath = null;
         if (OSUtils.isMac()) {
-            profierSoPath = "async-profiler/libasyncProfiler-mac-x64.so";
+            // FAT_BINARY support both x86_64/arm64
+            profierSoPath = "async-profiler/libasyncProfiler-mac.so";
         }
         if (OSUtils.isLinux()) {
             profierSoPath = "async-profiler/libasyncProfiler-linux-x64.so";
-            if (OSUtils.isArm32()) {
-                profierSoPath = "async-profiler/libasyncProfiler-linux-arm.so";
-            } else if (OSUtils.isArm64()) {
-                profierSoPath = "async-profiler/libasyncProfiler-linux-aarch64.so";
+            if (OSUtils.isArm64()) {
+                profierSoPath = "async-profiler/libasyncProfiler-linux-arm64.so";
             }
         }
 
@@ -186,8 +185,8 @@ public class ProfilerCommand extends AnnotatedCommand {
     }
 
     @Option(longName = "format")
-    @Description("dump output file format(svg, html, jfr), default valut is svg")
-    @DefaultValue("svg")
+    @Description("dump output file format(html, jfr), default valut is html")
+    @DefaultValue("html")
     public void setFormat(String format) {
         this.format = format;
     }
@@ -533,7 +532,7 @@ public class ProfilerCommand extends AnnotatedCommand {
                     CompletionUtils.complete(completion, events());
                     return;
                 } else if (token_2.equals("-f") || token_2.equals("--format")) {
-                    CompletionUtils.complete(completion, Arrays.asList("svg", "html", "jfr"));
+                    CompletionUtils.complete(completion, Arrays.asList("html", "jfr"));
                     return;
                 }
             }
