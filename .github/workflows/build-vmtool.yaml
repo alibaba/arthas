@@ -21,7 +21,7 @@ jobs:
           path: arthas-vmtool/target/lib*
 
   mac:
-    runs-on: macos-10.15
+    runs-on: macos-latest
 
     steps:
       - uses: actions/checkout@v2
