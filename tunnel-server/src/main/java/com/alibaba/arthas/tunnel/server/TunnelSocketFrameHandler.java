@@ -117,14 +117,14 @@ public class TunnelSocketFrameHandler extends SimpleChannelInboundHandler<WebSoc
                 final String data;
                 if (dataRaw != null) {
                     data = URLDecoder.decode(dataRaw, "utf-8");
+                    byte[] bytes = Base64.decodeBase64(data);
+
+                    SimpleHttpResponse simpleHttpResponse = SimpleHttpResponse.fromBytes(bytes);
+                    promise.setSuccess(simpleHttpResponse);
                 } else {
                     data = null;
+                    promise.setFailure(new Exception(URIConstans.PROXY_RESPONSE_DATA + " is null! reuqestId: " + requestId));
                 }
-
-                byte[] bytes = Base64.decodeBase64(data);
-
-                SimpleHttpResponse simpleHttpResponse = SimpleHttpResponse.fromBytes(bytes);
-                promise.setSuccess(simpleHttpResponse);
             }
         }
     }
