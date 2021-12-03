@@ -92,7 +92,8 @@ public class GlobalJobControllerImpl extends JobControllerImpl {
                 result = Long.parseLong(jobTimeoutConfig);
                 break;
             }
-        } catch (Exception e) {
+        } catch (Throwable e) {
+            logger.error("parse jobTimeoutConfig: {} error!", jobTimeoutConfig, e);
         }
 
         if (result < 0) {
