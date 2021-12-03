@@ -698,11 +698,15 @@ public class Bootstrap {
         }
         result.append("Remote versions:\n");
 
-		List<String> remoteVersions = DownloadUtils.readRemoteVersions();
-		Collections.reverse(remoteVersions);
-		for (String version : remoteVersions) {
-			result.append(" ").append(version).append('\n');
-		}
+        List<String> remoteVersions = DownloadUtils.readRemoteVersions();
+        if (remoteVersions != null) {
+            Collections.reverse(remoteVersions);
+            for (String version : remoteVersions) {
+                result.append(" " + version).append('\n');
+            }
+        } else {
+            result.append(" unknown\n");
+        }
         return result.toString();
     }
 
