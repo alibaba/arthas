@@ -7,6 +7,7 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Member;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -257,9 +258,7 @@ public class FieldUtils {
         Class<?> currentClass = cls;
         while (currentClass != null) {
             final Field[] declaredFields = currentClass.getDeclaredFields();
-            for (final Field field : declaredFields) {
-                allFields.add(field);
-            }
+            allFields.addAll(Arrays.asList(declaredFields));
             currentClass = currentClass.getSuperclass();
         }
         return allFields;
