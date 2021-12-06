@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>profiler &mdash; Arthas 3.5.4 文档</title>
+  <title>profiler &mdash; Arthas 3.5.5 文档</title>
   
 
   
@@ -74,7 +74,7 @@
             
             
               <div class="version">
-                3.5.4
+                3.5.5
               </div>
             
           
@@ -141,7 +141,6 @@
 <li class="toctree-l3"><a class="reference internal" href="#sample">获取已采集的sample的数量</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#id3">查看profiler状态</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#id4">停止profiler</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="#svg">生成svg格式结果</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#html">生成html格式结果</a></li>
 </ul>
 </li>
@@ -317,21 +316,9 @@ Started [cpu] profiling</pre>
 </div>
 <div class="section" id="id4">
 <h2>停止profiler<a class="headerlink" href="#id4" title="永久链接至标题">¶</a></h2>
-<div class="section" id="svg">
-<h3>生成svg格式结果<a class="headerlink" href="#svg" title="永久链接至标题">¶</a></h3>
-<div class="highlight-default notranslate"><pre class="literal-block">$ profiler stop
-profiler output file: /tmp/demo/arthas-output/20191125-135546.svg
-OK</pre>
-</div>
-<p>默认情况下，生成的结果保存到应用的<code class="docutils literal notranslate"><span class="pre">工作目录</span></code>下的<code class="docutils literal notranslate"><span class="pre">arthas-output</span></code>目录。可以通过 <code class="docutils literal notranslate"><span class="pre">--file</span></code>参数来指定输出结果路径。比如：</p>
-<div class="highlight-bash notranslate"><div class="highlight hljs"><pre class="bash">$ profiler stop --file /tmp/output.svg
-profiler output file: /tmp/output.svg
-OK</pre></div>
-</div>
-</div>
 <div class="section" id="html">
 <h3>生成html格式结果<a class="headerlink" href="#html" title="永久链接至标题">¶</a></h3>
-<p>默认情况下，结果文件是<code class="docutils literal notranslate"><span class="pre">svg</span></code>格式，如果想生成<code class="docutils literal notranslate"><span class="pre">html</span></code>格式，可以用<code class="docutils literal notranslate"><span class="pre">--format</span></code>参数指定：</p>
+<p>默认情况下，结果文件是<code class="docutils literal notranslate"><span class="pre">html</span></code>格式，也可以用<code class="docutils literal notranslate"><span class="pre">--format</span></code>参数指定：</p>
 <div class="highlight-bash notranslate"><div class="highlight hljs"><pre class="bash">$ profiler stop --format html
 profiler output file: /tmp/test/arthas-output/20191125-143329.html
 OK</pre></div>
@@ -403,7 +390,7 @@ Started [cpu] profiling</pre></div>
 <div class="highlight-bash notranslate"><div class="highlight hljs"><pre class="bash">profiler execute &#x27;start,framebuf=5000000&#x27;</pre></div>
 </div>
 <p>停止采样，并保存到指定文件里：</p>
-<div class="highlight-bash notranslate"><div class="highlight hljs"><pre class="bash">profiler execute &#x27;stop,file=/tmp/result.svg&#x27;</pre></div>
+<div class="highlight-bash notranslate"><div class="highlight hljs"><pre class="bash">profiler execute &#x27;stop,file=/tmp/result.html&#x27;</pre></div>
 </div>
 <p>具体的格式参考： <a class="reference external" href="https://github.com/jvm-profiling-tools/async-profiler/blob/v1.8.1/src/arguments.cpp#L50">arguments.cpp</a></p>
 </div>
@@ -423,7 +410,7 @@ Copyright 2019 Andrei Pangin</pre></div>
 <div class="section" id="framebuf">
 <h2>配置 framebuf 参数<a class="headerlink" href="#framebuf" title="永久链接至标题">¶</a></h2>
 <blockquote>
-<div><p>如果遇到生成的svg图片有 <code class="docutils literal notranslate"><span class="pre">[frame_buffer_overflow]</span></code>，则需要增大 framebuf（默认值是 1’000’000），可以显式配置，比如：</p>
+<div><p>如果遇到生成的火焰图有 <code class="docutils literal notranslate"><span class="pre">[frame_buffer_overflow]</span></code>，则需要增大 framebuf（默认值是 1’000’000），可以显式配置，比如：</p>
 </div></blockquote>
 <div class="highlight-bash notranslate"><div class="highlight hljs"><pre class="bash">profiler start --framebuf 5000000</pre></div>
 </div>

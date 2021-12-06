@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>profiler &mdash; Arthas 3.5.4 documentation</title>
+  <title>profiler &mdash; Arthas 3.5.5 documentation</title>
   
 
   
@@ -73,7 +73,7 @@
             
             
               <div class="version">
-                3.5.4
+                3.5.5
               </div>
             
           
@@ -137,7 +137,6 @@
 <li class="toctree-l3"><a class="reference internal" href="#get-the-number-of-samples-collected">Get the number of samples collected</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#view-profiler-status">View profiler status</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#stop-profiler">Stop profiler</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="#generate-svg-format-results">Generate svg format results</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#generating-html-format-results">Generating html format results</a></li>
 </ul>
 </li>
@@ -313,21 +312,9 @@ Started [cpu] profiling</pre>
 </div>
 <div class="section" id="stop-profiler">
 <h2>Stop profiler<a class="headerlink" href="#stop-profiler" title="Permalink to this headline">¶</a></h2>
-<div class="section" id="generate-svg-format-results">
-<h3>Generate svg format results<a class="headerlink" href="#generate-svg-format-results" title="Permalink to this headline">¶</a></h3>
-<div class="highlight-default notranslate"><pre class="literal-block">$ profiler stop
-profiler output file: /tmp/demo/arthas-output/20191125-135546.svg
-OK</pre>
-</div>
-<p>By default, the generated results are saved to the <code class="docutils literal notranslate"><span class="pre">arthas-output</span></code> directory under the application’s <code class="docutils literal notranslate"><span class="pre">working</span> <span class="pre">directory</span></code>. The output result path can be specified by the <code class="docutils literal notranslate"><span class="pre">--file</span></code> parameter. such as:</p>
-<div class="highlight-bash notranslate"><div class="highlight hljs"><pre class="bash">$ profiler stop --file /tmp/output.svg
-profiler output file: /tmp/output.svg
-OK</pre></div>
-</div>
-</div>
 <div class="section" id="generating-html-format-results">
 <h3>Generating html format results<a class="headerlink" href="#generating-html-format-results" title="Permalink to this headline">¶</a></h3>
-<p>By default, the result file is <code class="docutils literal notranslate"><span class="pre">svg</span></code> format. If you want to generate the <code class="docutils literal notranslate"><span class="pre">html</span></code> format, you can specify it with the <code class="docutils literal notranslate"><span class="pre">--format</span></code> parameter:</p>
+<p>By default, the result file is <code class="docutils literal notranslate"><span class="pre">html</span></code> format. You can also specify it with the <code class="docutils literal notranslate"><span class="pre">--format</span></code> parameter:</p>
 <div class="highlight-bash notranslate"><div class="highlight hljs"><pre class="bash">$ profiler stop --format html
 profiler output file: /tmp/test/arthas-output/20191125-143329.html
 OK</pre></div>
@@ -399,7 +386,7 @@ Started [cpu] profiling</pre></div>
 <div class="highlight-bash notranslate"><div class="highlight hljs"><pre class="bash">profiler execute &#x27;start,framebuf=5000000&#x27;</pre></div>
 </div>
 <p>Stop sampling and save to the specified file:</p>
-<div class="highlight-bash notranslate"><div class="highlight hljs"><pre class="bash">profiler execute &#x27;stop,file=/tmp/result.svg&#x27;</pre></div>
+<div class="highlight-bash notranslate"><div class="highlight hljs"><pre class="bash">profiler execute &#x27;stop,file=/tmp/result.html&#x27;</pre></div>
 </div>
 <p>Specific format reference: <a class="reference external" href="https://github.com/jvm-profiling-tools/async-profiler/blob/v1.8.1/src/arguments.cpp#L50">arguments.cpp</a></p>
 </div>
@@ -419,7 +406,7 @@ Copyright 2019 Andrei Pangin</pre></div>
 <div class="section" id="configure-framebuf-option">
 <h2>Configure framebuf option<a class="headerlink" href="#configure-framebuf-option" title="Permalink to this headline">¶</a></h2>
 <blockquote>
-<div><p>If you encounter <code class="docutils literal notranslate"><span class="pre">[frame_buffer_overflow]</span></code> in the generated svg image, you need to increase the framebuf (the default value is 1’000’000), which can be configured explicitly, such as:</p>
+<div><p>If you encounter <code class="docutils literal notranslate"><span class="pre">[frame_buffer_overflow]</span></code> in the generated result, you need to increase the framebuf (the default value is 1’000’000), which can be configured explicitly, such as:</p>
 </div></blockquote>
 <div class="highlight-bash notranslate"><div class="highlight hljs"><pre class="bash">profiler start --framebuf 5000000</pre></div>
 </div>

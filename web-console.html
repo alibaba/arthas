@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Web Console &mdash; Arthas 3.5.4 文档</title>
+  <title>Web Console &mdash; Arthas 3.5.5 文档</title>
   
 
   
@@ -74,7 +74,7 @@
             
             
               <div class="version">
-                3.5.4
+                3.5.5
               </div>
             
           
@@ -111,25 +111,11 @@
 <li class="toctree-l1"><a class="reference internal" href="commands.html">命令列表</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">WebConsole</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#arthas">通过浏览器连接arthas</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#scrollback-url">scrollback URL参数</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#arthas-tunnel-serverarthas">使用arthas tunnel server连接远程arthas</a></li>
 </ul>
 </li>
-<li class="toctree-l1 current"><a class="reference internal" href="tunnel.html">Arthas Tunnel</a><ul class="current">
-<li class="toctree-l2 current"><a class="current reference internal" href="#">Web Console</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#arthas">通过浏览器连接arthas</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#arthas-tunnel-serverarthas">使用arthas tunnel server连接远程arthas</a></li>
-</ul>
-</li>
-<li class="toctree-l2"><a class="reference internal" href="spring-boot-starter.html">Arthas Spring Boot Starter</a></li>
-<li class="toctree-l2"><a class="reference internal" href="tunnel.html#arthas-tunnel-server">下载部署arthas tunnel server</a></li>
-<li class="toctree-l2"><a class="reference internal" href="tunnel.html#arthastunnel-server">启动arthas时连接到tunnel server</a></li>
-<li class="toctree-l2"><a class="reference internal" href="tunnel.html#id1">最佳实践</a></li>
-<li class="toctree-l2"><a class="reference internal" href="tunnel.html#tunnel-server">Tunnel Server的管理页面</a></li>
-<li class="toctree-l2"><a class="reference internal" href="tunnel.html#id2">权限管理</a></li>
-<li class="toctree-l2"><a class="reference internal" href="tunnel.html#id3">集群方式管理</a></li>
-<li class="toctree-l2"><a class="reference internal" href="tunnel.html#id4">Arthas tunnel server的工作原理</a></li>
-</ul>
-</li>
+<li class="toctree-l1"><a class="reference internal" href="tunnel.html">Arthas Tunnel</a></li>
 <li class="toctree-l1"><a class="reference internal" href="http-api.html">Http API</a></li>
 <li class="toctree-l1"><a class="reference internal" href="docker.html">Docker</a></li>
 <li class="toctree-l1"><a class="reference internal" href="spring-boot-starter.html">Arthas Spring Boot Starter</a></li>
@@ -213,7 +199,7 @@
 <p><a class="reference external" href="https://arthas.aliyun.com/doc/arthas-tutorials.html?language=cn&amp;id=case-web-console"><code class="docutils literal notranslate"><span class="pre">Web</span> <span class="pre">Console</span></code>在线教程</a></p>
 <div class="section" id="arthas">
 <h2>通过浏览器连接arthas<a class="headerlink" href="#arthas" title="永久链接至标题">¶</a></h2>
-<p>Arthas目前支持Web Console，用户在attach成功之后，可以直接访问：<a class="reference external" href="http://127.0.0.1:3658/">http://127.0.0.1:3658/</a>。</p>
+<p>Arthas目前支持Web Console，用户在attach成功之后，可以直接访问：<a class="reference external" href="http://127.0.0.1:8563/">http://127.0.0.1:8563/</a>。</p>
 <p>可以填入IP，远程连接其它机器上的arthas。</p>
 <p><img alt="_images/web-console-local.png" src="_images/web-console-local.png" /></p>
 <blockquote>
@@ -223,10 +209,21 @@
 <ul class="simple">
 <li><p>在Web Console复制粘贴快捷键参考： <a class="reference external" href="https://github.com/alibaba/arthas/issues/1056">https://github.com/alibaba/arthas/issues/1056</a></p></li>
 </ul>
+<blockquote>
+<div><p>3.5.4 版本后，在Web Console可以鼠标右键复制粘贴。</p>
+</div></blockquote>
+</div>
+<div class="section" id="scrollback-url">
+<h2>scrollback URL参数<a class="headerlink" href="#scrollback-url" title="永久链接至标题">¶</a></h2>
+<blockquote>
+<div><p>3.5.5 版本后支持</p>
+</div></blockquote>
+<p>默认Web Console支持向上回滚的行数是1000。可以在URL里用<code class="docutils literal notranslate"><span class="pre">scrollback</span></code>指定。比如</p>
+<p><a class="reference external" href="http://127.0.0.1:8563/?scrollback=3000">http://127.0.0.1:8563/?scrollback=3000</a></p>
 </div>
 <div class="section" id="arthas-tunnel-serverarthas">
 <h2>使用arthas tunnel server连接远程arthas<a class="headerlink" href="#arthas-tunnel-serverarthas" title="永久链接至标题">¶</a></h2>
-<p><a class="reference internal" href="tunnel.html"><span class="doc">Arthas Tunnel</span></a></p>
+<p>参考：<a class="reference internal" href="tunnel.html"><span class="doc">Arthas Tunnel</span></a></p>
 </div>
 </div>
 

@@ -48,25 +48,9 @@ Can view which `event` and sampling time.
 
 ### Stop profiler
 
-#### Generate svg format results
-
-```
-$ profiler stop
-profiler output file: /tmp/demo/arthas-output/20191125-135546.svg
-OK
-```
-
-By default, the generated results are saved to the `arthas-output` directory under the application's `working directory`. The output result path can be specified by the `--file` parameter. such as:
-
-```bash
-$ profiler stop --file /tmp/output.svg
-profiler output file: /tmp/output.svg
-OK
-```
-
 #### Generating html format results
 
-By default, the result file is `svg` format. If you want to generate the `html` format, you can specify it with the `--format` parameter:
+By default, the result file is `html` format. You can also specify it with the `--format` parameter:
 
 ```bash
 $ profiler stop --format html
@@ -161,7 +145,7 @@ profiler execute 'start,framebuf=5000000'
 Stop sampling and save to the specified file:
 
 ```bash
-profiler execute 'stop,file=/tmp/result.svg'
+profiler execute 'stop,file=/tmp/result.html'
 ```
 
 Specific format reference: [arguments.cpp](https://github.com/jvm-profiling-tools/async-profiler/blob/v1.8.1/src/arguments.cpp#L50)
@@ -184,7 +168,7 @@ Copyright 2019 Andrei Pangin
 
 ### Configure framebuf option
 
-> If you encounter `[frame_buffer_overflow]` in the generated svg image, you need to increase the framebuf (the default value is 1'000'000), which can be configured explicitly, such as:
+> If you encounter `[frame_buffer_overflow]` in the generated result, you need to increase the framebuf (the default value is 1'000'000), which can be configured explicitly, such as:
 
 ```bash
 profiler start --framebuf 5000000

@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Web Console &mdash; Arthas 3.5.4 documentation</title>
+  <title>Web Console &mdash; Arthas 3.5.5 documentation</title>
   
 
   
@@ -73,7 +73,7 @@
             
             
               <div class="version">
-                3.5.4
+                3.5.5
               </div>
             
           
@@ -107,25 +107,11 @@
 <li class="toctree-l1"><a class="reference internal" href="commands.html">Commands</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">WebConsole</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#connect-arthas-through-the-browser">Connect arthas through the browser</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#scrollback-url-parameters">scrollback URL parameters</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#connect-remote-arthas-through-arthas-tunnel-server">Connect remote arthas through arthas tunnel server</a></li>
 </ul>
 </li>
-<li class="toctree-l1 current"><a class="reference internal" href="tunnel.html">Arthas Tunnel</a><ul class="current">
-<li class="toctree-l2 current"><a class="current reference internal" href="#">Web Console</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#connect-arthas-through-the-browser">Connect arthas through the browser</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#connect-remote-arthas-through-arthas-tunnel-server">Connect remote arthas through arthas tunnel server</a></li>
-</ul>
-</li>
-<li class="toctree-l2"><a class="reference internal" href="spring-boot-starter.html">Arthas Spring Boot Starter</a></li>
-<li class="toctree-l2"><a class="reference internal" href="tunnel.html#download-and-deploy-arthas-tunnel-server">Download and deploy arthas tunnel server</a></li>
-<li class="toctree-l2"><a class="reference internal" href="tunnel.html#connecting-to-the-tunnel-server-when-starting-arthas">Connecting to the tunnel server when starting arthas</a></li>
-<li class="toctree-l2"><a class="reference internal" href="tunnel.html#best-practices">Best practices</a></li>
-<li class="toctree-l2"><a class="reference internal" href="tunnel.html#tunnel-server-management-page">Tunnel Server Management Page</a></li>
-<li class="toctree-l2"><a class="reference internal" href="tunnel.html#authority-management">Authority Management</a></li>
-<li class="toctree-l2"><a class="reference internal" href="tunnel.html#cluster-management">Cluster Management</a></li>
-<li class="toctree-l2"><a class="reference internal" href="tunnel.html#how-arthas-tunnel-server-works">How arthas tunnel server works</a></li>
-</ul>
-</li>
+<li class="toctree-l1"><a class="reference internal" href="tunnel.html">Arthas Tunnel</a></li>
 <li class="toctree-l1"><a class="reference internal" href="http-api.html">Http API</a></li>
 <li class="toctree-l1"><a class="reference internal" href="docker.html">Docker</a></li>
 <li class="toctree-l1"><a class="reference internal" href="spring-boot-starter.html">Arthas Spring Boot Starter</a></li>
@@ -209,7 +195,7 @@
 <p><a class="reference external" href="https://arthas.aliyun.com/doc/arthas-tutorials.html?language=en&amp;id=case-web-console"><code class="docutils literal notranslate"><span class="pre">Web</span> <span class="pre">Console</span></code> online tutorial</a></p>
 <div class="section" id="connect-arthas-through-the-browser">
 <h2>Connect arthas through the browser<a class="headerlink" href="#connect-arthas-through-the-browser" title="Permalink to this headline">¶</a></h2>
-<p>Arthas supports the Web Console. After attach success, the user can access: <a class="reference external" href="http://127.0.0.1:3658/">http://127.0.0.1:3658/</a>.</p>
+<p>Arthas supports the Web Console. After attach success, the user can access: <a class="reference external" href="http://127.0.0.1:8563/">http://127.0.0.1:8563/</a>.</p>
 <p>The user can fill in the IP and connect the remote arthas on other machines.</p>
 <p><img alt="_images/web-console-local.png" src="_images/web-console-local.png" /></p>
 <blockquote>
@@ -219,10 +205,21 @@
 <ul class="simple">
 <li><p>Copy and paste shortcut keys in Web Console: <a class="reference external" href="https://github.com/alibaba/arthas/issues/1056">https://github.com/alibaba/arthas/issues/1056</a></p></li>
 </ul>
+<blockquote>
+<div><p>Since 3.5.4, you can right-click to copy and paste in the Web Console.</p>
+</div></blockquote>
+</div>
+<div class="section" id="scrollback-url-parameters">
+<h2>scrollback URL parameters<a class="headerlink" href="#scrollback-url-parameters" title="Permalink to this headline">¶</a></h2>
+<blockquote>
+<div><p>Since 3.5.5
+By default, the number of rows that the Web Console supports to roll back upwards is 1000. It can be specified with <code class="docutils literal notranslate"><span class="pre">scrollback</span></code> in the URL. for example</p>
+</div></blockquote>
+<p><a class="reference external" href="http://127.0.0.1:8563/?scrollback=3000">http://127.0.0.1:8563/?scrollback=3000</a></p>
 </div>
 <div class="section" id="connect-remote-arthas-through-arthas-tunnel-server">
 <h2>Connect remote arthas through arthas tunnel server<a class="headerlink" href="#connect-remote-arthas-through-arthas-tunnel-server" title="Permalink to this headline">¶</a></h2>
-<p><a class="reference internal" href="tunnel.html"><span class="doc">Arthas Tunnel</span></a></p>
+<p>Reference: <a class="reference internal" href="tunnel.html"><span class="doc">Arthas Tunnel</span></a></p>
 </div>
 </div>
 

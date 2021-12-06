@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Arthas Tunnel &mdash; Arthas 3.5.4 文档</title>
+  <title>Arthas Tunnel &mdash; Arthas 3.5.5 文档</title>
   
 
   
@@ -39,7 +39,7 @@
     <link rel="stylesheet" href="_static/overrides.css" type="text/css" />
     <link rel="index" title="索引" href="genindex.html" />
     <link rel="search" title="搜索" href="search.html" />
-    <link rel="next" title="Arthas Spring Boot Starter" href="spring-boot-starter.html" />
+    <link rel="next" title="Http API" href="http-api.html" />
     <link rel="prev" title="Arthas 命令行快捷键" href="keymap.html" />
 <script>
   if (window.location.href.startsWith("https://alibaba.github.io/arthas/")) {
@@ -74,7 +74,7 @@
             
             
               <div class="version">
-                3.5.4
+                3.5.5
               </div>
             
           
@@ -111,8 +111,6 @@
 <li class="toctree-l1"><a class="reference internal" href="commands.html">命令列表</a></li>
 <li class="toctree-l1"><a class="reference internal" href="web-console.html">WebConsole</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Arthas Tunnel</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="web-console.html">Web Console</a></li>
-<li class="toctree-l2"><a class="reference internal" href="spring-boot-starter.html">Arthas Spring Boot Starter</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#arthas-tunnel-server">下载部署arthas tunnel server</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#arthastunnel-server">启动arthas时连接到tunnel server</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#id1">最佳实践</a></li>
@@ -204,12 +202,10 @@
 <p>比如，在流式计算里，Java进程可以是在不同的机器启动的，想要使用Arthas去诊断会比较麻烦，因为用户通常没有机器的权限，即使登陆机器也分不清是哪个Java进程。</p>
 <p>在这种情况下，可以使用Arthas Tunnel Server/Client。</p>
 <p>参考:</p>
-<div class="toctree-wrapper compound">
-<ul>
-<li class="toctree-l1"><a class="reference internal" href="web-console.html">Web Console</a></li>
-<li class="toctree-l1"><a class="reference internal" href="spring-boot-starter.html">Arthas Spring Boot Starter</a></li>
+<ul class="simple">
+<li><p>1: <a class="reference internal" href="web-console.html"><span class="doc">Web Console</span></a></p></li>
+<li><p>2: <a class="reference internal" href="spring-boot-starter.html"><span class="doc">Arthas Spring Boot Starter</span></a></p></li>
 </ul>
-</div>
 <div class="section" id="arthas-tunnel-server">
 <h2>下载部署arthas tunnel server<a class="headerlink" href="#arthas-tunnel-server" title="永久链接至标题">¶</a></h2>
 <p><a class="reference external" href="https://github.com/alibaba/arthas/releases">https://github.com/alibaba/arthas/releases</a></p>
@@ -333,7 +329,7 @@ id         test_PE3LZO9NA9ENJYTPGL9L</pre>
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="spring-boot-starter.html" class="btn btn-neutral float-right" title="Arthas Spring Boot Starter" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+        <a href="http-api.html" class="btn btn-neutral float-right" title="Http API" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
         <a href="keymap.html" class="btn btn-neutral float-left" title="Arthas 命令行快捷键" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>

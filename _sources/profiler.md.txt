@@ -48,26 +48,9 @@ $ profiler status
 可以查看当前profiler在采样哪种`event`和采样时间。
 
 ### 停止profiler
-
-#### 生成svg格式结果
-
-```
-$ profiler stop
-profiler output file: /tmp/demo/arthas-output/20191125-135546.svg
-OK
-```
-
-默认情况下，生成的结果保存到应用的`工作目录`下的`arthas-output`目录。可以通过 `--file`参数来指定输出结果路径。比如：
-
-```bash
-$ profiler stop --file /tmp/output.svg
-profiler output file: /tmp/output.svg
-OK
-```
-
 #### 生成html格式结果
 
-默认情况下，结果文件是`svg`格式，如果想生成`html`格式，可以用`--format`参数指定：
+默认情况下，结果文件是`html`格式，也可以用`--format`参数指定：
 
 ```bash
 $ profiler stop --format html
@@ -163,7 +146,7 @@ profiler execute 'start,framebuf=5000000'
 停止采样，并保存到指定文件里：
 
 ```bash
-profiler execute 'stop,file=/tmp/result.svg'
+profiler execute 'stop,file=/tmp/result.html'
 ```
 
 具体的格式参考： [arguments.cpp](https://github.com/jvm-profiling-tools/async-profiler/blob/v1.8.1/src/arguments.cpp#L50)
@@ -186,7 +169,7 @@ Copyright 2019 Andrei Pangin
 
 ### 配置 framebuf 参数
 
-> 如果遇到生成的svg图片有 `[frame_buffer_overflow]`，则需要增大 framebuf（默认值是 1'000'000），可以显式配置，比如：
+> 如果遇到生成的火焰图有 `[frame_buffer_overflow]`，则需要增大 framebuf（默认值是 1'000'000），可以显式配置，比如：
 
 ```bash
 profiler start --framebuf 5000000
