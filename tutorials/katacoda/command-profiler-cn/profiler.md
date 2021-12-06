@@ -185,4 +185,4 @@ profiler execute 'start,framebuf=5000000'
 profiler execute 'stop,file=/tmp/result.html'
 ```
 
-具体的格式参考： [arguments.cpp](https://github.com/jvm-profiling-tools/async-profiler/blob/v1.8.1/src/arguments.cpp#L50)
+具体的格式参考： [arguments.cpp](https://github.com/jvm-profiling-tools/async-profiler/blob/v2.5/src/arguments.cpp#L50)

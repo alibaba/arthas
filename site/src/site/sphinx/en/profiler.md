@@ -148,7 +148,7 @@ Stop sampling and save to the specified file:
 profiler execute 'stop,file=/tmp/result.html'
 ```
 
-Specific format reference: [arguments.cpp](https://github.com/jvm-profiling-tools/async-profiler/blob/v1.8.1/src/arguments.cpp#L50)
+Specific format reference: [arguments.cpp](https://github.com/jvm-profiling-tools/async-profiler/blob/v2.5/src/arguments.cpp#L50)
 
 ### View all supported actions
 
