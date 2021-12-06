@@ -175,75 +175,81 @@ public class DirectoryBrowser {
                     return null;
                 }
 
-                RandomAccessFile raf;
+                RandomAccessFile raf = null;
                 try {
                     raf = new RandomAccessFile(file, "r");
-                } catch (Exception ignore) {
-                    return null;
-                }
-                long fileLength = raf.length();
-                if (fileLength < MIN_NETTY_DIRECT_SEND_SIZE){
-                    FileInputStream fileInputStream = new FileInputStream(file);
-                    try {
-                        byte[] content = IOUtils.getBytes(fileInputStream);
-                        fullResp.content().writeBytes(content);
-                        HttpUtil.setContentLength(fullResp, fullResp.content().readableBytes());
-                    } finally {
-                        IOUtils.close(fileInputStream);
-                    }
-                    ctx.write(fullResp);
-                    ChannelFuture future = ctx.writeAndFlush(LastHttpContent.EMPTY_LAST_CONTENT);
-                    future.addListener(ChannelFutureListener.CLOSE);
-                    return fullResp;
-                }
-                logger.info("file {} size bigger than {}, send by future.",file.getName(), MIN_NETTY_DIRECT_SEND_SIZE);
-                HttpResponse response = new DefaultHttpResponse(HTTP_1_1, OK);
-                HttpUtil.setContentLength(response, fileLength);
-                setContentTypeHeader(response, file);
-                setDateAndCacheHeaders(response, file);
-                if (HttpUtil.isKeepAlive(request)) {
-                    response.headers().set(HttpHeaderNames.CONNECTION, HttpHeaderValues.KEEP_ALIVE);
-                }
-
-                // Write the initial line and the header.
-                ctx.write(response);
-                // Write the content.
-                ChannelFuture sendFileFuture;
-                ChannelFuture lastContentFuture;
-                if (ctx.pipeline().get(SslHandler.class) == null) {
-                    sendFileFuture =
-                            ctx.write(new DefaultFileRegion(raf.getChannel(), 0, fileLength), ctx.newProgressivePromise());
-                    // Write the end marker.
-                    lastContentFuture = ctx.writeAndFlush(LastHttpContent.EMPTY_LAST_CONTENT);
-                } else {
-                    sendFileFuture =
-                            ctx.writeAndFlush(new HttpChunkedInput(new ChunkedFile(raf, 0, fileLength, 8192)),
-                                    ctx.newProgressivePromise());
-                    // HttpChunkedInput will write the end marker (LastHttpContent) for us.
-                    lastContentFuture = sendFileFuture;
-                }
-
-                sendFileFuture.addListener(new ChannelProgressiveFutureListener() {
-                    @Override
-                    public void operationProgressed(ChannelProgressiveFuture future, long progress, long total) {
-                        if (total < 0) { // total unknown
-                            logger.info(future.channel() + " Transfer progress: " + progress);
-                        } else {
-                            logger.info(future.channel() + " Transfer progress: " + progress + " / " + total);
+                    long fileLength = raf.length();
+                    if (fileLength < MIN_NETTY_DIRECT_SEND_SIZE){
+                        FileInputStream fileInputStream = new FileInputStream(file);
+                        try {
+                            byte[] content = IOUtils.getBytes(fileInputStream);
+                            fullResp.content().writeBytes(content);
+                            HttpUtil.setContentLength(fullResp, fullResp.content().readableBytes());
+                        } finally {
+                            IOUtils.close(fileInputStream);
                         }
+                        ctx.write(fullResp);
+                        ChannelFuture future = ctx.writeAndFlush(LastHttpContent.EMPTY_LAST_CONTENT);
+                        future.addListener(ChannelFutureListener.CLOSE);
+                        return fullResp;
+                    }
+                    logger.info("file {} size bigger than {}, send by future.",file.getName(), MIN_NETTY_DIRECT_SEND_SIZE);
+                    HttpResponse response = new DefaultHttpResponse(HTTP_1_1, OK);
+                    HttpUtil.setContentLength(response, fileLength);
+                    setContentTypeHeader(response, file);
+                    setDateAndCacheHeaders(response, file);
+                    if (HttpUtil.isKeepAlive(request)) {
+                        response.headers().set(HttpHeaderNames.CONNECTION, HttpHeaderValues.KEEP_ALIVE);
                     }
 
-                    @Override
-                    public void operationComplete(ChannelProgressiveFuture future) {
-                        logger.info(future.channel() + " Transfer complete.");
+                    // Write the initial line and the header.
+                    ctx.write(response);
+                    // Write the content.
+                    ChannelFuture sendFileFuture;
+                    ChannelFuture lastContentFuture;
+                    if (ctx.pipeline().get(SslHandler.class) == null) {
+                        sendFileFuture =
+                                ctx.write(new DefaultFileRegion(raf.getChannel(), 0, fileLength), ctx.newProgressivePromise());
+                        // Write the end marker.
+                        lastContentFuture = ctx.writeAndFlush(LastHttpContent.EMPTY_LAST_CONTENT);
+                    } else {
+                        sendFileFuture =
+                                ctx.writeAndFlush(new HttpChunkedInput(new ChunkedFile(raf, 0, fileLength, 8192)),
+                                        ctx.newProgressivePromise());
+                        // HttpChunkedInput will write the end marker (LastHttpContent) for us.
+                        lastContentFuture = sendFileFuture;
                     }
-                });
 
-                // Decide whether to close the connection or not.
-                if (!HttpUtil.isKeepAlive(request)) {
-                    // Close the connection when the whole content is written out.
-                    lastContentFuture.addListener(ChannelFutureListener.CLOSE);
+                    sendFileFuture.addListener(new ChannelProgressiveFutureListener() {
+                        @Override
+                        public void operationProgressed(ChannelProgressiveFuture future, long progress, long total) {
+                            if (total < 0) { // total unknown
+                                logger.info(future.channel() + " Transfer progress: " + progress);
+                            } else {
+                                logger.info(future.channel() + " Transfer progress: " + progress + " / " + total);
+                            }
+                        }
+
+                        @Override
+                        public void operationComplete(ChannelProgressiveFuture future) {
+                            logger.info(future.channel() + " Transfer complete.");
+                        }
+                    });
+
+                    // Decide whether to close the connection or not.
+                    if (!HttpUtil.isKeepAlive(request)) {
+                        // Close the connection when the whole content is written out.
+                        lastContentFuture.addListener(ChannelFutureListener.CLOSE);
+                    }
+                } catch (Throwable e) {
+                    logger.error("view file error, dir: {}, path: {}", dir, path, e);
+                    return null;
+                } finally {
+                    if (raf != null) {
+                        IOUtils.close(raf);
+                    }
                 }
+
                 return fullResp;
             }
         }
