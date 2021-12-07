@@ -54,7 +54,7 @@ By default, the result file is `html` format. You can also specify it with the `
 
 ```bash
 $ profiler stop --format html
-profiler output file: /tmp/test/arthas-output/20191125-143329.html
+profiler output file: /tmp/test/arthas-output/20211207-111550.html
 OK
 ```
 
@@ -148,7 +148,7 @@ Stop sampling and save to the specified file:
 profiler execute 'stop,file=/tmp/result.html'
 ```
 
-Specific format reference: [arguments.cpp](https://github.com/jvm-profiling-tools/async-profiler/blob/v1.8.1/src/arguments.cpp#L50)
+Specific format reference: [arguments.cpp](https://github.com/jvm-profiling-tools/async-profiler/blob/v2.5/src/arguments.cpp#L50)
 
 ### View all supported actions
 

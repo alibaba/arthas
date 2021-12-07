@@ -320,7 +320,7 @@ Started [cpu] profiling</pre>
 <h3>生成html格式结果<a class="headerlink" href="#html" title="永久链接至标题">¶</a></h3>
 <p>默认情况下，结果文件是<code class="docutils literal notranslate"><span class="pre">html</span></code>格式，也可以用<code class="docutils literal notranslate"><span class="pre">--format</span></code>参数指定：</p>
 <div class="highlight-bash notranslate"><div class="highlight hljs"><pre class="bash">$ profiler stop --format html
-profiler output file: /tmp/test/arthas-output/20191125-143329.html
+profiler output file: /tmp/test/arthas-output/20211207-111550.html
 OK</pre></div>
 </div>
 <p>或者在<code class="docutils literal notranslate"><span class="pre">--file</span></code>参数里用文件名指名格式。比如<code class="docutils literal notranslate"><span class="pre">--file</span> <span class="pre">/tmp/result.html</span></code> 。</p>
@@ -392,7 +392,7 @@ Started [cpu] profiling</pre></div>
 <p>停止采样，并保存到指定文件里：</p>
 <div class="highlight-bash notranslate"><div class="highlight hljs"><pre class="bash">profiler execute &#x27;stop,file=/tmp/result.html&#x27;</pre></div>
 </div>
-<p>具体的格式参考： <a class="reference external" href="https://github.com/jvm-profiling-tools/async-profiler/blob/v1.8.1/src/arguments.cpp#L50">arguments.cpp</a></p>
+<p>具体的格式参考： <a class="reference external" href="https://github.com/jvm-profiling-tools/async-profiler/blob/v2.5/src/arguments.cpp#L50">arguments.cpp</a></p>
 </div>
 <div class="section" id="action">
 <h2>查看所有支持的action<a class="headerlink" href="#action" title="永久链接至标题">¶</a></h2>
