@@ -15,6 +15,8 @@ Arthas allows developers to troubleshoot production issues for Java applications
 
 [中文说明/Chinese Documentation](README_CN.md)
 
+**[2021中国开源项目评选，请投Arthas一票!](https://www.oschina.net/project/top_cn_2021?id=52)**
+
 ### Background
 
 Often times, the production system network is inaccessible from the local development environment. If issues are encountered in production systems, it is impossible to use IDEs to debug the application remotely. More importantly, debugging in production environment is unacceptable, as it will suspend all the threads, resulting in the suspension of business services. 
@@ -402,7 +404,7 @@ Started [cpu] profiling
 
 ```
 $ profiler stop
-profiler output file: /tmp/demo/arthas-output/20191125-135546.svg
+profiler output file: /tmp/demo/arthas-output/20211207-111550.html
 OK
 ```
 

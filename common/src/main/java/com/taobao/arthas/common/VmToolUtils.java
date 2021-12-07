@@ -9,7 +9,7 @@ public class VmToolUtils {
     private static String libName = null;
     static {
         if (OSUtils.isMac()) {
-            libName = "libArthasJniLibrary-x64.dylib";
+            libName = "libArthasJniLibrary.dylib";
         }
         if (OSUtils.isLinux()) {
             libName = "libArthasJniLibrary-x64.so";

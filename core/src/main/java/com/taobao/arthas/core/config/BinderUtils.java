@@ -21,13 +21,12 @@ public class BinderUtils {
     }
 
     public static void inject(Environment environment, String parentPrefix, String prefix, Object instance) {
+        if (prefix == null) {
+            prefix = "";
+        }
         Class<? extends Object> type = instance.getClass();
         try {
             Config annotation = type.getAnnotation(Config.class);
-
-            if (prefix == null) {
-                prefix = "";
-            }
 
             if (annotation == null) {
                 prefix = parentPrefix + '.' + prefix;
@@ -41,22 +40,19 @@ public class BinderUtils {
             }
 
             Method[] declaredMethods = type.getDeclaredMethods();
-            if (declaredMethods != null) {
-                // 获取到所有setter方法，再提取出field。根据前缀从 properties里取出值，再尝试用setter方法注入到对象里
-                for (Method method : declaredMethods) {
-                    String methodName = method.getName();
-                    Class<?>[] parameterTypes = method.getParameterTypes();
+            // 获取到所有setter方法，再提取出field。根据前缀从 properties里取出值，再尝试用setter方法注入到对象里
+            for (Method method : declaredMethods) {
+                String methodName = method.getName();
+                Class<?>[] parameterTypes = method.getParameterTypes();
 
-                    if (parameterTypes != null && parameterTypes.length == 1 && methodName.startsWith("set")
-                            && methodName.length() > "set".length()) {
+                if (parameterTypes.length == 1 && methodName.startsWith("set") && methodName.length() > "set".length()) {
 
-                        String field = getFieldNameFromSetterMethod(methodName);
-                        String configKey = prefix + '.' + field;
-                        if (environment.containsProperty(configKey)) {
-                            Object reslovedValue = environment.getProperty(prefix + '.' + field, parameterTypes[0]);
-                            if (reslovedValue != null) {
-                                method.invoke(instance, new Object[] { reslovedValue });
-                            }
+                    String field = getFieldNameFromSetterMethod(methodName);
+                    String configKey = prefix + '.' + field;
+                    if (environment.containsProperty(configKey)) {
+                        Object reslovedValue = environment.getProperty(prefix + '.' + field, parameterTypes[0]);
+                        if (reslovedValue != null) {
+                            method.invoke(instance, new Object[] { reslovedValue });
                         }
                     }
                 }
@@ -68,28 +64,26 @@ public class BinderUtils {
 
         // process @NestedConfig
         Field[] fields = type.getDeclaredFields();
-        if (fields != null) {
-            for (Field field : fields) {
-                NestedConfig nestedConfig = field.getAnnotation(NestedConfig.class);
-                if (nestedConfig != null) {
-                    String prefixForField = field.getName();
-                    if (parentPrefix != null && prefix.length() > 0) {
-                        prefixForField = prefix + '.' + prefixForField;
-                    }
+        for (Field field : fields) {
+            NestedConfig nestedConfig = field.getAnnotation(NestedConfig.class);
+            if (nestedConfig != null) {
+                String prefixForField = field.getName();
+                if (parentPrefix != null && prefix.length() > 0) {
+                    prefixForField = prefix + '.' + prefixForField;
+                }
 
-                    field.setAccessible(true);
-                    try {
-                        Object fieldValue = field.get(instance);
-                        if (fieldValue == null) {
-                            fieldValue = field.getType().newInstance();
-                        }
-                        inject(environment, prefix, prefixForField, fieldValue);
-
-                        field.set(instance, fieldValue);
-                    } catch (Exception e) {
-                        throw new RuntimeException("process @NestedConfig error, field: " + field + ", prefix: "
-                                + prefix + ", instance: " + instance, e);
+                field.setAccessible(true);
+                try {
+                    Object fieldValue = field.get(instance);
+                    if (fieldValue == null) {
+                        fieldValue = field.getType().newInstance();
                     }
+                    inject(environment, prefix, prefixForField, fieldValue);
+
+                    field.set(instance, fieldValue);
+                } catch (Exception e) {
+                    throw new RuntimeException("process @NestedConfig error, field: " + field + ", prefix: "
+                            + prefix + ", instance: " + instance, e);
                 }
             }
         }

@@ -16,6 +16,7 @@
 
 package com.taobao.arthas.core.env;
 
+import java.util.Arrays;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
@@ -111,9 +112,7 @@ public abstract class AbstractPropertyResolver implements ConfigurablePropertyRe
 
     @Override
     public void setRequiredProperties(String... requiredProperties) {
-        for (String key : requiredProperties) {
-            this.requiredProperties.add(key);
-        }
+        this.requiredProperties.addAll(Arrays.asList(requiredProperties));
     }
 
     @Override

@@ -12,6 +12,7 @@ import com.taobao.middleware.cli.CommandLine;
 import com.taobao.middleware.cli.Option;
 import com.taobao.middleware.cli.TypedOption;
 
+import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.Arrays;
@@ -117,8 +118,19 @@ public class Arthas {
             //convert jar path to unicode string
             configure.setArthasAgent(encodeArg(arthasAgentPath));
             configure.setArthasCore(encodeArg(configure.getArthasCore()));
-            virtualMachine.loadAgent(arthasAgentPath,
-                    configure.getArthasCore() + ";" + configure.toString());
+            try {
+                virtualMachine.loadAgent(arthasAgentPath,
+                        configure.getArthasCore() + ";" + configure.toString());
+            } catch (IOException e) {
+                if (e.getMessage() != null && e.getMessage().contains("Non-numeric value found")) {
+                    AnsiLog.warn(e);
+                    AnsiLog.warn("It seems to use the lower version of JDK to attach the higher version of JDK.");
+                    AnsiLog.warn(
+                            "This error message can be ignored, the attach may have been successful, and it will still try to connect.");
+                } else {
+                    throw e;
+                }
+            }
         } finally {
             if (null != virtualMachine) {
                 virtualMachine.detach();

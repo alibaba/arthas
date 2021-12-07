@@ -82,7 +82,9 @@ public final class BasicHttpAuthenticatorHandler extends ChannelDuplexHandler {
             Subject subject = securityAuthenticator.login(principal);
             if (subject != null) {
                 authed = true;
-                session.setAttribute(ArthasConstants.SUBJECT_KEY, subject);
+                if (session != null) {
+                    session.setAttribute(ArthasConstants.SUBJECT_KEY, subject);
+                }
             }
 
             if (!authed) {
@@ -160,6 +162,10 @@ public final class BasicHttpAuthenticatorHandler extends ChannelDuplexHandler {
             if (constraint != null) {
                 if ("Basic".equalsIgnoreCase(constraint.trim())) {
                     String decoded = StringUtils.after(auth, " ");
+                    if (decoded == null) {
+                        logger.error("Extracted Basic Auth principal failed, bad auth String: {}", auth);
+                        return null;
+                    }
                     // the decoded part is base64 encoded, so we need to decode that
                     ByteBuf buf = Unpooled.wrappedBuffer(decoded.getBytes());
                     ByteBuf out = Base64.decode(buf);
