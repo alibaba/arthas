@@ -54,7 +54,7 @@ $ profiler status
 
 ```bash
 $ profiler stop --format html
-profiler output file: /tmp/test/arthas-output/20191125-143329.html
+profiler output file: /tmp/test/arthas-output/20211207-111550.html
 OK
 ```
 

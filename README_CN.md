@@ -389,7 +389,7 @@ Started [cpu] profiling
 
 ```
 $ profiler stop
-profiler output file: /tmp/demo/arthas-output/20191125-135546.svg
+profiler output file: /tmp/demo/arthas-output/20211207-111550.html
 OK
 ```
 
