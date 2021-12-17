@@ -7,7 +7,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        java: [8, 9, 10, 11 ]
+        java: [7, 8, 9, 10, 11 ]
     steps:
       - uses: actions/checkout@v2
       - name: Setup java
