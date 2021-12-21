@@ -12,8 +12,6 @@
 [![Percentage of issues still open](http://isitmaintained.com/badge/open/alibaba/arthas.svg)](http://isitmaintained.com/project/alibaba/arthas "Percentage of issues still open")
 
 
-**[2021中国开源项目评选，请投Arthas一票!](https://www.oschina.net/project/top_cn_2021?id=52)**
-
 English version goes [here](README.md).
 
 `Arthas` 是Alibaba开源的Java诊断工具，深受开发者喜爱。
