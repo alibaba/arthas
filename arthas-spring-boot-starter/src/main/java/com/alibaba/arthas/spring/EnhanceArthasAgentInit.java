@@ -76,13 +76,13 @@ public class EnhanceArthasAgentInit {
                     return;
                 }
             } catch (Throwable e) {
-                //处理异常
                 if (isLoadedInAnotherClassLoader(e) && resolveIterator.hasNext()) {
                     continue;
                 }
                 if (!this.slientInit) {
                     throw e;
                 }
+                return;//如果出现其他异常，直接返回了
             }
         }
     }
