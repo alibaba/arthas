@@ -132,8 +132,9 @@ public class JobImpl implements Job {
             process.terminate();
         } catch (IllegalStateException ignore) {
             // Process already terminated, likely by itself
+        } finally {
+            controller.removeJob(this.id);
         }
-        controller.removeJob(this.id);
     }
 
     @Override
