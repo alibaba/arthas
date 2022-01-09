@@ -7,6 +7,7 @@ import com.taobao.arthas.core.advisor.Advice;
 import com.taobao.arthas.core.advisor.AdviceListenerAdapter;
 import com.taobao.arthas.core.advisor.ArthasMethod;
 import com.taobao.arthas.core.command.model.WatchModel;
+import com.taobao.arthas.core.command.monitor200.WatchCommand.LineRange;
 import com.taobao.arthas.core.shell.command.CommandProcess;
 import com.taobao.arthas.core.util.LogUtil;
 import com.taobao.arthas.core.util.ThreadLocalWatch;
@@ -30,7 +31,7 @@ class WatchAdviceListener extends AdviceListenerAdapter {
     }
 
     private boolean isFinish() {
-        return command.isFinish() || !command.isBefore() && !command.isException() && !command.isSuccess();
+        return command.isFinish() || !command.isBefore() && !command.isException() && !command.isSuccess() && command.getLines().isEmpty();
     }
 
     @Override
@@ -63,6 +64,24 @@ class WatchAdviceListener extends AdviceListenerAdapter {
         }
 
         finishing(advice);
+    }
+
+    @Override
+    public void atLine(ClassLoader loader, Class<?> clazz, ArthasMethod method, Object target, Object[] args, int line, String[] varNames, Object[] vars) throws Throwable {
+        boolean inRange = false;
+        for (LineRange lineRange : command.getLines()) {
+            if (lineRange.inRange(line)) {
+                inRange = true;
+                break;
+            }
+        }
+
+        if (!inRange) {
+            return;
+        }
+
+        Advice advice = Advice.newForAtLine(loader, clazz, method, target, args, line, varNames, vars);
+        watching(advice);
     }
 
     private void finishing(Advice advice) {
@@ -99,6 +118,8 @@ class WatchAdviceListener extends AdviceListenerAdapter {
                     model.setAccessPoint(AccessPoint.ACCESS_AFTER_RETUNING.getKey());
                 } else if (advice.isAfterThrowing()) {
                     model.setAccessPoint(AccessPoint.ACCESS_AFTER_THROWING.getKey());
+                } else if (advice.isAtLine()) {
+                    model.setAccessPoint(AccessPoint.ACCESS_AT_LINE.getKey());
                 }
 
                 process.appendResult(model);

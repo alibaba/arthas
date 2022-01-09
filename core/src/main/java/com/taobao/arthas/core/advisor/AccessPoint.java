@@ -1,7 +1,7 @@
 package com.taobao.arthas.core.advisor;
 
 public enum AccessPoint {
-    ACCESS_BEFORE(1, "AtEnter"), ACCESS_AFTER_RETUNING(1 << 1, "AtExit"), ACCESS_AFTER_THROWING(1 << 2, "AtExceptionExit");
+    ACCESS_BEFORE(1, "AtEnter"), ACCESS_AFTER_RETUNING(1 << 1, "AtExit"), ACCESS_AFTER_THROWING(1 << 2, "AtExceptionExit"), ACCESS_AT_LINE(1 << 3, "AtLine");
 
     private int value;
 

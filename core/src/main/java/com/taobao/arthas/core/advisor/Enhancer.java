@@ -3,6 +3,7 @@ package com.taobao.arthas.core.advisor;
 import static com.taobao.arthas.core.util.ArthasCheckUtils.isEquals;
 import static java.lang.System.arraycopy;
 
+import com.alibaba.bytekit.utils.Decompiler;
 import java.arthas.SpyAPI;
 import java.io.File;
 import java.io.IOException;
@@ -47,6 +48,7 @@ import com.taobao.arthas.core.GlobalOptions;
 import com.taobao.arthas.core.advisor.SpyInterceptors.SpyInterceptor1;
 import com.taobao.arthas.core.advisor.SpyInterceptors.SpyInterceptor2;
 import com.taobao.arthas.core.advisor.SpyInterceptors.SpyInterceptor3;
+import com.taobao.arthas.core.advisor.SpyInterceptors.SpyInterceptor4;
 import com.taobao.arthas.core.advisor.SpyInterceptors.SpyTraceExcludeJDKInterceptor1;
 import com.taobao.arthas.core.advisor.SpyInterceptors.SpyTraceExcludeJDKInterceptor2;
 import com.taobao.arthas.core.advisor.SpyInterceptors.SpyTraceExcludeJDKInterceptor3;
@@ -143,6 +145,7 @@ public class Enhancer implements ClassFileTransformer {
             interceptorProcessors.addAll(defaultInterceptorClassParser.parse(SpyInterceptor1.class));
             interceptorProcessors.addAll(defaultInterceptorClassParser.parse(SpyInterceptor2.class));
             interceptorProcessors.addAll(defaultInterceptorClassParser.parse(SpyInterceptor3.class));
+            interceptorProcessors.addAll(defaultInterceptorClassParser.parse(SpyInterceptor4.class));
 
             if (this.isTracing) {
                 if (!this.skipJDKTrace) {
@@ -181,10 +184,13 @@ public class Enhancer implements ClassFileTransformer {
                     LocationType.EXIT);
             LocationFilter exceptionFilter = new InvokeContainLocationFilter(Type.getInternalName(SpyAPI.class),
                     "atExceptionExit", LocationType.EXCEPTION_EXIT);
+            LocationFilter lineFilter = new InvokeContainLocationFilter(Type.getInternalName(SpyAPI.class),
+                "atLine", LocationType.LINE);
 
             groupLocationFilter.addFilter(enterFilter);
             groupLocationFilter.addFilter(existFilter);
             groupLocationFilter.addFilter(exceptionFilter);
+            groupLocationFilter.addFilter(lineFilter);
 
             LocationFilter invokeBeforeFilter = new InvokeCheckLocationFilter(Type.getInternalName(SpyAPI.class),
                     "atBeforeInvoke", LocationType.INVOKE);

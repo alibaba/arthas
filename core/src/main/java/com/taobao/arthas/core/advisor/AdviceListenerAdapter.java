@@ -65,6 +65,13 @@ public abstract class AdviceListenerAdapter implements AdviceListener, ProcessAw
                 throwable);
     }
 
+    @Override
+    final public void atLine(Class<?> clazz, String methodName, String methodDesc,
+        Object target, Object[] args, int line, String[] varNames, Object[] vars) throws Throwable {
+        atLine(clazz.getClassLoader(), clazz, new ArthasMethod(clazz, methodName, methodDesc),
+            target, args, line, varNames, vars);
+    }
+
     /**
      * 前置通知
      *
@@ -105,6 +112,22 @@ public abstract class AdviceListenerAdapter implements AdviceListener, ProcessAw
      */
     public abstract void afterThrowing(ClassLoader loader, Class<?> clazz, ArthasMethod method, Object target,
             Object[] args, Throwable throwable) throws Throwable;
+
+    /**
+     * 行内通知
+     *
+     * @param loader    类加载器
+     * @param clazz     类
+     * @param method    方法
+     * @param target    目标类实例 若目标为静态方法,则为null
+     * @param args      参数列表
+     * @param varNames   局部变量名
+     * @param vars       局部变量值
+     * @throws Throwable 通知过程出错
+     */
+    public void atLine(ClassLoader loader, Class<?> clazz, ArthasMethod method, Object target, Object[] args, int line, String[] varNames, Object[] vars) throws Throwable {
+        // default to no-op
+    }
 
     /**
      * 判断条件是否满足，满足的情况下需要输出结果

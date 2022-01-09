@@ -174,6 +174,31 @@ public class SpyImpl extends AbstractSpy {
         }
     }
 
+    @Override
+    public void atLine(Class<?> clazz, String methodInfo, Object target, Object[] args,
+        int line, String[] varNames, Object[] vars) {
+        ClassLoader classLoader = clazz.getClassLoader();
+
+        String[] info = StringUtils.splitMethodInfo(methodInfo);
+        String methodName = info[0];
+        String methodDesc = info[1];
+        // TODO listener 只用查一次，放到 thread local里保存起来就可以了！
+        List<AdviceListener> listeners = AdviceListenerManager.queryAdviceListeners(classLoader, clazz.getName(),
+            methodName, methodDesc);
+        if (listeners != null) {
+            for (AdviceListener adviceListener : listeners) {
+                try {
+                    if (skipAdviceListener(adviceListener)) {
+                        continue;
+                    }
+                    adviceListener.atLine(clazz, methodName, methodDesc, target, args, line, varNames, vars);
+                } catch (Throwable e) {
+                    logger.error("class: {}, methodInfo: {}", clazz.getName(), methodInfo, e);
+                }
+            }
+        }
+    }
+
     private static boolean skipAdviceListener(AdviceListener adviceListener) {
         if (adviceListener instanceof ProcessAware) {
             ProcessAware processAware = (ProcessAware) adviceListener;

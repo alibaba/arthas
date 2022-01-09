@@ -23,6 +23,7 @@ watch 的参数比较多，主要是因为它能在 4 个不同的场景观察�
 |[f]|在**函数结束之后**(正常返回和异常返回)观察|
 |[E]|开启正则表达式匹配，默认为通配符匹配|
 |[x:]|指定输出结果的属性遍历深度，默认为 1，最大值是4|
+|[l:]|在某（些）行上执行观察，可观察局部变量|
 
 这里重点要说明的是观察表达式，观察表达式的构成主要由 ognl 表达式组成，所以你可以这样写`"{params,returnObj}"`，只要是一个合法的 ognl 表达式，都能被正常支持。
 
@@ -33,11 +34,11 @@ watch 的参数比较多，主要是因为它能在 4 个不同的场景观察�
 
 **特别说明**：
 
-* watch 命令定义了4个观察事件点，即 `-b` 函数调用前，`-e` 函数异常后，`-s` 函数返回后，`-f` 函数结束后
-* 4个观察事件点 `-b`、`-e`、`-s` 默认关闭，`-f` 默认打开，当指定观察点被打开后，在相应事件点会对观察表达式进行求值并输出
+* watch 命令定义了5个观察事件点，即 `-b` 函数调用前，`-e` 函数异常后，`-s` 函数返回后，`-f` 函数结束后，`-l` 代表在某行进行观察
+* 5个观察事件点 `-b`、`-e`、`-s`、`-l` 默认关闭，`-f` 默认打开，当指定观察点被打开后，在相应事件点会对观察表达式进行求值并输出
 * 这里要注意`函数入参`和`函数出参`的区别，有可能在中间被修改导致前后不一致，除了 `-b` 事件点 `params` 代表函数入参外，其余事件都代表函数出参
 * 当使用 `-b` 时，由于观察事件点是在函数调用前，此时返回值或异常均不存在
-* 在watch命令的结果里，会打印出`location`信息。`location`有三种可能值：`AtEnter`，`AtExit`，`AtExceptionExit`。对应函数入口，函数正常return，函数抛出异常。
+* 在watch命令的结果里，会打印出`location`信息。`location`有四种可能值：`AtEnter`，`AtExit`，`AtExceptionExit`，`AtLine`。对应函数入口，函数正常return，函数抛出异常。
 ### 使用参考
 
 #### 启动 Demo
@@ -328,3 +329,46 @@ ts=2020-12-02 22:38:57; [cost=0.052877ms] result=@Object[][
     ],
 ]
 ```
+
+#### 观察局部变量
+
+有些情况下只从入参出参中获取的信息不足以排查问题，可以通过 `-l` 开关打印某一行
+或多行中可获取的局部变量值。如下所示，`line` 为行号，`varMap` 为局部变量。
+
+```
+[arthas@84658]$ watch demo.MathGame primeFactors '{line, varMap}' -l -x 2
+Press Q or Ctrl+C to abort.
+Affect(class count: 1 , method count: 1) cost in 45 ms, listenerId: 5
+method=demo.MathGame.primeFactors location=AtLine
+ts=2022-01-09 11:06:24; [cost=0.229151ms] result=@ArrayList[
+    @Integer[44],
+    @LinkedHashMap[
+        @String[this]:@MathGame[demo.MathGame@464bee09],
+        @String[number]:@Integer[122182],
+    ],
+]
+method=demo.MathGame.primeFactors location=AtLine
+ts=2022-01-09 11:06:24; [cost=8.32232864463441E8ms] result=@ArrayList[
+    @Integer[49],
+    @LinkedHashMap[
+        @String[this]:@MathGame[demo.MathGame@464bee09],
+        @String[number]:@Integer[122182],
+    ],
+]
+method=demo.MathGame.primeFactors location=AtLine
+ts=2022-01-09 11:06:24; [cost=8.32232865268658E8ms] result=@ArrayList[
+    @Integer[50],
+    @LinkedHashMap[
+        @String[this]:@MathGame[demo.MathGame@464bee09],
+        @String[number]:@Integer[122182],
+        @String[result]:@ArrayList[isEmpty=true;size=0],
+    ],
+]
+... 遇到循环时输出太多，这里略去 ...
+Command execution times exceed limit: 100, so command will exit. You can set it with -n option.
+```
+
+该功能目前有局限：
+1. Java 编译时默认会将局部变量信息从字节码中移除，此功能需要在编译时保留局部变
+   量信息（一般 Spring 程序会保留）。
+2. 暂不支持查看 Java 8 的 lambda 函数内部的变量。

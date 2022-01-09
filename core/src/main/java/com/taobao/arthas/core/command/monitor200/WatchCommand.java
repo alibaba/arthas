@@ -1,5 +1,6 @@
 package com.taobao.arthas.core.command.monitor200;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 
 import com.taobao.arthas.core.GlobalOptions;
@@ -17,6 +18,9 @@ import com.taobao.middleware.cli.annotations.Description;
 import com.taobao.middleware.cli.annotations.Name;
 import com.taobao.middleware.cli.annotations.Option;
 import com.taobao.middleware.cli.annotations.Summary;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 @Name("watch")
 @Summary("Display the input/output parameter, return object, and thrown exception of specified method invocation")
@@ -41,11 +45,12 @@ public class WatchCommand extends EnhancerCommand {
     private boolean isFinish = false;
     private boolean isException = false;
     private boolean isSuccess = false;
+    private List<LineRange> lines = new ArrayList<LineRange>();
     private Integer expand = 1;
     private Integer sizeLimit = 10 * 1024 * 1024;
     private boolean isRegEx = false;
     private int numberOfLimit = 100;
-    
+
     @Argument(index = 0, argName = "class-pattern")
     @Description("The full qualified class name you want to watch")
     public void setClassPattern(String classPattern) {
@@ -93,6 +98,19 @@ public class WatchCommand extends EnhancerCommand {
     @Description("Watch after successful invocation")
     public void setSuccess(boolean success) {
         isSuccess = success;
+    }
+
+    @Option(shortName = "l", longName = "lines", flag = true, acceptMultipleValues = true)
+    @Description("Watch on line ranges")
+    public void setAtLine(List<String> lineDescs) {
+        if (lineDescs == null || lineDescs.isEmpty()) {
+            // `-l` means watch on every line
+            lines.add(new LineRange("0"));
+        } else {
+            for (String line : lineDescs) {
+                lines.add(new LineRange(line));
+            }
+        }
     }
 
     @Option(shortName = "M", longName = "sizeLimit")
@@ -151,6 +169,10 @@ public class WatchCommand extends EnhancerCommand {
         return isSuccess;
     }
 
+    public List<LineRange> getLines() {
+        return lines;
+    }
+
     public Integer getExpand() {
         return expand;
     }
@@ -199,5 +221,50 @@ public class WatchCommand extends EnhancerCommand {
     @Override
     protected void completeArgument3(Completion completion) {
         CompletionUtils.complete(completion, Arrays.asList(EXPRESS_EXAMPLES));
+    }
+
+    public static class LineRange {
+        private int start;
+        private int end;
+
+        // accept "1", "1-3", inclusive
+        // zero means infinite
+        public LineRange(String rangeDesc) {
+            if (rangeDesc == null) {
+                throw new IllegalArgumentException("line range should not be null");
+            }
+
+            if (rangeDesc.contains("-")) {
+                String[] range = rangeDesc.split("-");
+                if (range.length != 2) {
+                    throw new IllegalArgumentException("range should be seperated by `-`, e.g. 1-3");
+                }
+                this.start = Integer.parseInt(range[0].trim());
+                this.end = Integer.parseInt(range[1].trim());
+            } else {
+                int line = Integer.parseInt(rangeDesc.trim());
+                this.start = line;
+                this.end = line;
+            }
+
+            if (this.end <= 0) {
+                this.end = Integer.MAX_VALUE;
+            }
+        }
+
+        public boolean inRange(int line) {
+            if (end < start) {
+                return true;
+            }
+            return line >= start && line <= end;
+        }
+
+        @Override
+        public String toString() {
+            return "LineRange{" +
+                "start=" + start +
+                ", end=" + end +
+                '}';
+        }
     }
 }

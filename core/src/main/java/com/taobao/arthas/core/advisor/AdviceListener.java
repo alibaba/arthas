@@ -70,4 +70,21 @@ public interface AdviceListener {
             Object target, Object[] args,
             Throwable throwable) throws Throwable;
 
+    /**
+     * 行内通知
+     *
+     * @param clazz 类名
+     * @param methodName 方法名
+     * @param methodDesc 方法描述
+     * @param target     目标类实例
+     *                   若目标为静态方法,则为null
+     * @param args       方法参数列表
+     * @param line       当前行号
+     * @param varNames   局部变量名
+     * @param vars       局部变量值
+     */
+    void atLine(
+        Class<?> clazz, String methodName, String methodDesc,
+        Object target, Object[] args, int line, String[] varNames, Object[] vars) throws Throwable;
+
 }

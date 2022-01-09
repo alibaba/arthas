@@ -23,14 +23,15 @@ There are four different scenarios for `watch` command, which makes it rather co
 |[f]|when method exits (either succeed or fail with exceptions)|
 |[E]|turn on regex matching while the default is wildcard matching|
 |[x:]|the depth to print the specified property with default value: 1, the max value is 4|
+|[l:]|watch on specific line(s) for local variables|
 
 F.Y.I
 1. any valid OGNL expression as `"{params,returnObj}"` supported
-2. there are four *watching* points: `-b`, `-e`, `-s` and `-f` (the first three are off in default while `-f` on);
+2. there are five *watching* points: `-b`, `-e`, `-s`, `-f`, and `-l` (the first three are off in default while `-f` on);
 3. at the *watching* point, Arthas will use the *expression* to evaluate the variables and print them out;
 4. `in parameters` and `out parameters` are different since they can be modified within the invoked methods; `params` stands for `in parameters` in `-b`while `out parameters` in other *watching* points;
 5. there are no `return values` and `exceptions` when using `-b`.
-6. In the result of the watch command, the `location` information will be printed. There are three possible values for `location`: `AtEnter`, `AtExit`, and `AtExceptionExit`. Corresponding to the method entry, the method returns normally, and the method throws an exception.
+6. In the result of the watch command, the `location` information will be printed. There are four possible values for `location`: `AtEnter`, `AtExit`, `AtExceptionExit` and `AtLine`. Corresponding to the method entry, the method returns normally, the method throws an exception and the watches were attached on method line(s).
 
 Advanced:
 * [Critical fields in *expression*](advice-class.md)
@@ -327,3 +328,50 @@ ts=2020-12-02 22:38:57; [cost=0.052877ms] result=@Object[][
     ],
 ]
 ```
+
+#### Watch Local Variables
+
+When parameters and return objects are not enough for debugging, it is useful
+to print out the local variables for more detailed execution information. `-l`
+switch could be turned on for fetching local variable information. For example:
+
+```
+[arthas@84658]$ watch demo.MathGame primeFactors '{line, varMap}' -l -x 2
+Press Q or Ctrl+C to abort.
+Affect(class count: 1 , method count: 1) cost in 45 ms, listenerId: 5
+method=demo.MathGame.primeFactors location=AtLine
+ts=2022-01-09 11:06:24; [cost=0.229151ms] result=@ArrayList[
+    @Integer[44],
+    @LinkedHashMap[
+        @String[this]:@MathGame[demo.MathGame@464bee09],
+        @String[number]:@Integer[122182],
+    ],
+]
+method=demo.MathGame.primeFactors location=AtLine
+ts=2022-01-09 11:06:24; [cost=8.32232864463441E8ms] result=@ArrayList[
+    @Integer[49],
+    @LinkedHashMap[
+        @String[this]:@MathGame[demo.MathGame@464bee09],
+        @String[number]:@Integer[122182],
+    ],
+]
+method=demo.MathGame.primeFactors location=AtLine
+ts=2022-01-09 11:06:24; [cost=8.32232865268658E8ms] result=@ArrayList[
+    @Integer[50],
+    @LinkedHashMap[
+        @String[this]:@MathGame[demo.MathGame@464bee09],
+        @String[number]:@Integer[122182],
+        @String[result]:@ArrayList[isEmpty=true;size=0],
+    ],
+]
+... when a line was hit in a loop many times, output would be long ...
+Command execution times exceed limit: 100, so command will exit. You can set it with -n option.
+```
+
+`line` indicates outputing current line  number and `varMap` is a map of local
+variables.
+
+There are limitations:
+1. Java would throw local variable information away during compilation, this
+   feature would need such information. (Spring applications are normally save)
+2. Local variables inside lambda functions(Java 8) are not supported yet.
