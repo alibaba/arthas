@@ -27,6 +27,8 @@ public class ArthasProperties {
      */
     private boolean enableDetailPages = false;
 
+    private boolean enableIframeSupport = true;
+
     public Server getServer() {
         return server;
     }
@@ -49,6 +51,14 @@ public class ArthasProperties {
 
     public void setEnableDetailPages(boolean enableDetailPages) {
         this.enableDetailPages = enableDetailPages;
+    }
+
+    public boolean isEnableIframeSupport() {
+        return enableIframeSupport;
+    }
+
+    public void setEnableIframeSupport(boolean enableIframeSupport) {
+        this.enableIframeSupport = enableIframeSupport;
     }
 
     public static class Server {

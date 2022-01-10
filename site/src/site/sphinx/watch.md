@@ -15,7 +15,7 @@ watch 的参数比较多，主要是因为它能在 4 个不同的场景观察�
 |---:|:---|
 |*class-pattern*|类名表达式匹配|
 |*method-pattern*|方法名表达式匹配|
-|*express*|观察表达式|
+|*express*|观察表达式，默认值：`{params, target, returnObj}`|
 |*condition-express*|条件表达式|
 |[b]|在**方法调用之前**观察|
 |[e]|在**方法异常之后**观察|
@@ -37,31 +37,52 @@ watch 的参数比较多，主要是因为它能在 4 个不同的场景观察�
 * 4个观察事件点 `-b`、`-e`、`-s` 默认关闭，`-f` 默认打开，当指定观察点被打开后，在相应事件点会对观察表达式进行求值并输出
 * 这里要注意`方法入参`和`方法出参`的区别，有可能在中间被修改导致前后不一致，除了 `-b` 事件点 `params` 代表方法入参外，其余事件都代表方法出参
 * 当使用 `-b` 时，由于观察事件点是在方法调用前，此时返回值或异常均不存在
-
+* 在watch命令的结果里，会打印出`location`信息。`location`有三种可能值：`AtEnter`，`AtExit`，`AtExceptionExit`。对应函数入口，函数正常return，函数抛出异常。
 ### 使用参考
 
 #### 启动 Demo
 
 启动[快速入门](quick-start.md)里的`math-game`。
 
-#### 观察方法出参和返回值
+#### 观察方法出参、this对象和返回值
+
+> 观察表达式，默认值是`{params, target, returnObj}`
 
 ```bash
-$ watch demo.MathGame primeFactors "{params,returnObj}" -x 2
-Press Ctrl+C to abort.
-Affect(class-cnt:1 , method-cnt:1) cost in 44 ms.
-ts=2018-12-03 19:16:51; [cost=1.280502ms] result=@ArrayList[
+$ watch demo.MathGame primeFactors -x 2
+Press Q or Ctrl+C to abort.
+Affect(class count: 1 , method count: 1) cost in 32 ms, listenerId: 5
+method=demo.MathGame.primeFactors location=AtExceptionExit
+ts=2021-08-31 15:22:57; [cost=0.220625ms] result=@ArrayList[
+    @Object[][
+        @Integer[-179173],
+    ],
+    @MathGame[
+        random=@Random[java.util.Random@31cefde0],
+        illegalArgumentCount=@Integer[44],
+    ],
+    null,
+]
+method=demo.MathGame.primeFactors location=AtExit
+ts=2021-08-31 15:22:58; [cost=1.020982ms] result=@ArrayList[
     @Object[][
         @Integer[1],
     ],
+    @MathGame[
+        random=@Random[java.util.Random@31cefde0],
+        illegalArgumentCount=@Integer[44],
+    ],
     @ArrayList[
-        @Integer[3],
-        @Integer[19],
-        @Integer[191],
-        @Integer[49199],
+        @Integer[2],
+        @Integer[2],
+        @Integer[26947],
     ],
 ]
 ```
+
+* 上面的结果里，说明函数被执行了两次，第一次结果是`location=AtExceptionExit`，说明函数抛出异常了，因此`returnObj`是null
+* 在第二次结果里是`location=AtExit`，说明函数正常返回，因此可以看到`returnObj`结果是一个ArrayList
+
 
 #### 观察方法入参
 

@@ -10,7 +10,11 @@ import java.util.Map;
 import static java.lang.reflect.Modifier.isStatic;
 
 /**
- * 配置类
+ * <pre>
+ * 配置类。
+ * 注意本类里的所有字段不能有默认值，否则会出现配置混乱。
+ * 在 com.taobao.arthas.core.Arthas#attach 里会调用 Configure#toStrig
+ * <pre>
  *
  * @author vlinux
  * @author hengyunabc 2018-11-12
@@ -73,6 +77,11 @@ public class Configure {
      * disabled commands
      */
     private String disabledCommands;
+
+    /**
+     * 本地连接不需要鉴权，即使配置了password。arthas.properties 里默认为true
+     */
+    private Boolean localConnectionNonAuth;
 
     public String getIp() {
         return ip;
@@ -216,6 +225,14 @@ public class Configure {
 
     public void setDisabledCommands(String disabledCommands) {
         this.disabledCommands = disabledCommands;
+    }
+
+    public boolean isLocalConnectionNonAuth() {
+        return localConnectionNonAuth != null && localConnectionNonAuth;
+    }
+
+    public void setLocalConnectionNonAuth(boolean localConnectionNonAuth) {
+        this.localConnectionNonAuth = localConnectionNonAuth;
     }
 
     /**

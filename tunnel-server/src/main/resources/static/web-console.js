@@ -19,6 +19,11 @@ $(function () {
         $('#agentId').val(agentId);
     }
 
+    var iframe = getUrlParam('iframe');
+    if (iframe != null && iframe != 'false') {
+        $("nav").hide()
+    }
+
     startConnect(true);
 });
 
@@ -95,7 +100,7 @@ function initXterm (cols, rows) {
     xterm = new Terminal({
         cols: cols,
         rows: rows,
-        screenReaderMode: true,
+        screenReaderMode: false,
         rendererType: 'canvas',
         convertEol: true
     });
