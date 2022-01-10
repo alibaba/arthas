@@ -16,6 +16,7 @@ import com.alibaba.arthas.channel.server.service.AgentBizSerivce;
 import com.alibaba.arthas.channel.server.service.AgentManageService;
 import com.alibaba.arthas.channel.server.message.MessageExchangeService;
 import io.grpc.stub.StreamObserver;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -171,7 +172,7 @@ public class ArthasServiceGrpcImpl extends ArthasServiceGrpc.ArthasServiceImplBa
             AgentVO agentVO;
             if (optionalAgentVO.isPresent()) {
                 agentVO = optionalAgentVO.get();
-                copyAgentVO(request, agentVO);
+                copyToAgentVO(request, agentVO);
                 agentVO.setModifiedTime(now);
                 agentVO.setHeartbeatTime(now);
                 agentManageService.updateAgent(agentVO);
@@ -181,7 +182,7 @@ public class ArthasServiceGrpcImpl extends ArthasServiceGrpc.ArthasServiceImplBa
                         .build());
             } else {
                 agentVO = new AgentVO();
-                copyAgentVO(request, agentVO);
+                copyToAgentVO(request, agentVO);
                 agentVO.setCreatedTime(now);
                 agentVO.setModifiedTime(now);
                 agentVO.setHeartbeatTime(now);
@@ -191,13 +192,13 @@ public class ArthasServiceGrpcImpl extends ArthasServiceGrpc.ArthasServiceImplBa
                         .setMessage("Agent info has been added: "+request.getAgentId())
                         .build());
             }
-            logger.info("register agent: "+agentVO.getAgentId());
+            logger.info("register agent: "+request);
         } finally {
             responseObserver.onCompleted();
         }
     }
 
-    private void copyAgentVO(AgentInfo agentInfo, AgentVO agentVO) {
+    private void copyToAgentVO(AgentInfo agentInfo, AgentVO agentVO) {
         agentVO.setAgentId(agentInfo.getAgentId());
         agentVO.setAgentVersion(agentInfo.getAgentVersion());
         agentVO.setAgentStatus(agentInfo.getAgentStatus().name());
@@ -217,6 +218,10 @@ public class ArthasServiceGrpcImpl extends ArthasServiceGrpc.ArthasServiceImplBa
             @Override
             public void onNext(HeartbeatRequest heartbeatRequest) {
                 handleHeartbeat(heartbeatRequest, responseObserver);
+                if (StringUtils.equalsAnyIgnoreCase(heartbeatRequest.getAgentVersion(), "3.5.3")) {
+                    //fix channel client stream leaks (version < 3.5.4)
+                    responseObserver.onCompleted();
+                }
             }
 
             @Override

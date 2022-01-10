@@ -1,5 +1,7 @@
 package com.alibaba.arthas.channel.client;
 
+import com.alibaba.arthas.channel.common.ChannelFeatures;
+import com.alibaba.arthas.channel.common.ChannelVersions;
 import com.alibaba.arthas.channel.proto.ActionRequest;
 import com.alibaba.arthas.channel.proto.ActionResponse;
 import com.alibaba.arthas.channel.proto.AgentInfo;
@@ -53,8 +55,8 @@ public class ChannelClient {
     private EventLoopGroup group;
 
     //channel info
-    private String channelVersion = "1.0.0";
-    private List<String> channelFeatures = Arrays.asList("WebConsole", "ExecuteCommand");
+    private String channelVersion = ChannelVersions.V_1_1_0;
+    private List<String> channelFeatures = Arrays.asList(ChannelFeatures.WEB_CONSOLE, ChannelFeatures.EXECUTE_COMMAND);
     private long lastHeartbeatTime;
     private int workThreads = 2;
     private volatile StreamObserver<HeartbeatRequest> heartbeatRequestStreamObserver;
