@@ -205,12 +205,28 @@ public class ArthasServiceServerJsonResultTest {
         }
 
         @Override
-        public void heartbeat(HeartbeatRequest heartbeatRequest, StreamObserver<HeartbeatResponse> responseObserver) {
-            System.out.println("heartbeat: " + heartbeatRequest);
-            responseObserver.onNext(HeartbeatResponse.newBuilder()
-                    .setStatus(0)
-                    .build());
-            responseObserver.onCompleted();
+        public StreamObserver<HeartbeatRequest> heartbeat(StreamObserver<HeartbeatResponse> responseObserver) {
+            return new StreamObserver<HeartbeatRequest>() {
+                @Override
+                public void onNext(HeartbeatRequest heartbeatRequest) {
+                    System.out.println("heartbeat: " + heartbeatRequest);
+                    responseObserver.onNext(HeartbeatResponse.newBuilder()
+                            .setStatus(0)
+                            .build());
+                }
+
+                @Override
+                public void onError(Throwable t) {
+                    isError = true;
+                    System.out.println("heartbeat onError");
+                    t.printStackTrace();
+                }
+
+                @Override
+                public void onCompleted() {
+                    System.out.println("heartbeat onCompleted");
+                }
+            };
         }
 
         public StreamObserver<ActionRequest> getActionRequestStreamObserver() {

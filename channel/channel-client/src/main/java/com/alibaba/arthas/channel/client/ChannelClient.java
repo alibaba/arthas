@@ -27,6 +27,7 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
 /**
  * @author gongdewei 2020/8/14
@@ -34,6 +35,7 @@ import java.util.concurrent.TimeUnit;
 public class ChannelClient {
 
     private static final Logger logger = LoggerFactory.getLogger(ChannelClient.class);
+    private static final int MIN_INTERVAL = 2;
 
     private AgentInfoService agentInfoService;
     private RequestListener requestListener;
@@ -41,10 +43,10 @@ public class ChannelClient {
     private volatile boolean isError;
     private String host;
     private int port;
-    private ArthasServiceGrpc.ArthasServiceStub arthasServiceStub;
-    private StreamObserver<ActionResponse> responseStreamObserver;
-    private ManagedChannel channel;
-    private ScheduledFuture<?> reconnectFuture;
+    private volatile ArthasServiceGrpc.ArthasServiceStub arthasServiceStub;
+    private volatile StreamObserver<ActionResponse> responseStreamObserver;
+    private volatile ManagedChannel channel;
+    private volatile ScheduledFuture<?> reconnectFuture;
     private String channelServerAddress;
     private int reconnectDelay = 5;
     private int heartbeatInterval = 5;
@@ -55,6 +57,7 @@ public class ChannelClient {
     private List<String> channelFeatures = Arrays.asList("WebConsole", "ExecuteCommand");
     private long lastHeartbeatTime;
     private int workThreads = 2;
+    private volatile StreamObserver<HeartbeatRequest> heartbeatRequestStreamObserver;
 
     public ChannelClient(String host, int port) {
         this.host = host;
@@ -136,11 +139,11 @@ public class ChannelClient {
         }
     }
 
-    private void connect() throws Exception {
+    private synchronized void connect() throws Exception {
         logger.info("Connecting to channel server [{}:{}] ..", host, port);
         ManagedChannelBuilder<?> channelBuilder = ManagedChannelBuilder.forAddress(host, port);
         //TODO support ssl & plain text
-        channelBuilder.usePlaintext(true);
+        channelBuilder.usePlaintext();
         channel = channelBuilder.build();
 
         //register
@@ -235,14 +238,30 @@ public class ChannelClient {
             }
         });
 
+        heartbeatRequestStreamObserver = arthasServiceStub.heartbeat(new StreamObserver<HeartbeatResponse>() {
+            @Override
+            public void onNext(HeartbeatResponse value) {
+                logger.debug("heartbeat result: {}" , value);
+            }
+
+            @Override
+            public void onError(Throwable t) {
+                onClientError("send heartbeat error" , t);
+            }
+
+            @Override
+            public void onCompleted() {
+            }
+        });
+
         isError = false;
         agentInfoService.updateAgentStatus(AgentStatus.IN_SERVICE);
 
-        sendHeartbeat(arthasServiceStub);
+        sendHeartbeat();
         logger.info("Channel client is ready.");
     }
 
-    private void sendHeartbeat(final ArthasServiceGrpc.ArthasServiceStub arthasServiceStub) {
+    void sendHeartbeat() {
         AgentInfo agentInfo = agentInfoService.getAgentInfo();
         HeartbeatRequest heartbeatRequest = HeartbeatRequest.newBuilder()
                 .setAgentId(agentInfo.getAgentId())
@@ -251,21 +270,7 @@ public class ChannelClient {
                 .build();
         logger.debug("sending heartbeat: {}", heartbeatRequest);
 
-        arthasServiceStub.heartbeat(heartbeatRequest, new StreamObserver<HeartbeatResponse>() {
-            @Override
-            public void onNext(HeartbeatResponse value) {
-                logger.debug("heartbeat result: {}", value);
-            }
-
-            @Override
-            public void onError(Throwable t) {
-                onClientError("send heartbeat error", t);
-            }
-
-            @Override
-            public void onCompleted() {
-            }
-        });
+        heartbeatRequestStreamObserver.onNext(heartbeatRequest);
         lastHeartbeatTime = System.currentTimeMillis();
     }
 
@@ -314,7 +319,7 @@ public class ChannelClient {
                     long delta = System.currentTimeMillis() - lastHeartbeatTime;
                     if (delta >= heartbeatInterval * 1000) {
                         try {
-                            sendHeartbeat(arthasServiceStub);
+                            sendHeartbeat();
                         } catch (Throwable e) {
                             logger.error("send heartbeat failure", e);
                         }
@@ -341,6 +346,9 @@ public class ChannelClient {
     }
 
     protected boolean isWellKnownError(Throwable ex) {
+        if (ex instanceof InterruptedException || ex instanceof TimeoutException) {
+            return true;
+        }
         String error = ex.toString();
         if (error.contains("UNAVAILABLE: Channel shutdownNow invoked")) {
             return true;
@@ -385,7 +393,7 @@ public class ChannelClient {
      * @param reconnectDelay
      */
     public void setReconnectDelay(int reconnectDelay) {
-        this.reconnectDelay = reconnectDelay;
+        this.reconnectDelay =  Math.max(MIN_INTERVAL, reconnectDelay);
     }
 
     public int getHeartbeatInterval() {
@@ -397,7 +405,7 @@ public class ChannelClient {
      * @param heartbeatInterval
      */
     public void setHeartbeatInterval(int heartbeatInterval) {
-        this.heartbeatInterval = heartbeatInterval;
+        this.heartbeatInterval = Math.max(MIN_INTERVAL, heartbeatInterval);
     }
 
     public ScheduledExecutorService getExecutorService() {

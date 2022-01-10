@@ -274,5 +274,5 @@ service ArthasService {
     /*
      * Report heartbeat to server from arthas client
      */
-    rpc heartbeat(HeartbeatRequest) returns (HeartbeatResponse);
+    rpc heartbeat(stream HeartbeatRequest) returns (stream HeartbeatResponse);
 }

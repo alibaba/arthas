@@ -13,4 +13,6 @@
         <appender-ref ref="STDOUT" />
     </root>
 
+    <logger name="com.alibaba.arthas.channel.client" level="DEBUG" />
+
 </configuration>

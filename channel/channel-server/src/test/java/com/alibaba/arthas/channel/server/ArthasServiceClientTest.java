@@ -88,7 +88,7 @@ public class ArthasServiceClientTest {
                 return;
             }
             System.out.println("start client ..");
-            ManagedChannel channel = ManagedChannelBuilder.forAddress("localhost", 7700).usePlaintext(true).build();
+            ManagedChannel channel = ManagedChannelBuilder.forAddress("localhost", 7700).usePlaintext().build();
             ArthasServiceGrpc.ArthasServiceStub arthasServiceStub = ArthasServiceGrpc.newStub(channel);
 
             final AtomicReference<StreamObserver<ActionResponse>> actionResponseStreamObserverHolder = new AtomicReference<StreamObserver<ActionResponse>>();

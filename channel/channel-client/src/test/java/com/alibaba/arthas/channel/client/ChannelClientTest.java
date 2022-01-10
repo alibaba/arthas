@@ -24,6 +24,21 @@ public class ChannelClientTest {
 
         channelClient.start();
 
+        try {
+            Thread.sleep(2000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        // test heartbeat
+        try {
+            for (int i = 0; i < 1000; i++) {
+                channelClient.sendHeartbeat();
+                Thread.sleep(100);
+            }
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
         System.in.read();
     }
 

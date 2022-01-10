@@ -165,32 +165,36 @@ public class ArthasServiceGrpcImpl extends ArthasServiceGrpc.ArthasServiceImplBa
 
     @Override
     public void register(AgentInfo request, StreamObserver<RegisterResult> responseObserver) {
-        long now = System.currentTimeMillis();
-        Optional<AgentVO> optionalAgentVO = agentManageService.findAgentById(request.getAgentId()).block();
-        AgentVO agentVO;
-        if (optionalAgentVO.isPresent()) {
-            agentVO = optionalAgentVO.get();
-            copyAgentVO(request, agentVO);
-            agentVO.setModifiedTime(now);
-            agentVO.setHeartbeatTime(now);
-            agentManageService.updateAgent(agentVO);
-            responseObserver.onNext(RegisterResult.newBuilder()
-                    .setStatus(0)
-                    .setMessage("Agent info has been updated: "+request.getAgentId())
-                    .build());
-        } else {
-            agentVO = new AgentVO();
-            copyAgentVO(request, agentVO);
-            agentVO.setCreatedTime(now);
-            agentVO.setModifiedTime(now);
-            agentVO.setHeartbeatTime(now);
-            agentManageService.addAgent(agentVO);
-            responseObserver.onNext(RegisterResult.newBuilder()
-                    .setStatus(0)
-                    .setMessage("Agent info has been added: "+request.getAgentId())
-                    .build());
+        try {
+            long now = System.currentTimeMillis();
+            Optional<AgentVO> optionalAgentVO = agentManageService.findAgentById(request.getAgentId()).block();
+            AgentVO agentVO;
+            if (optionalAgentVO.isPresent()) {
+                agentVO = optionalAgentVO.get();
+                copyAgentVO(request, agentVO);
+                agentVO.setModifiedTime(now);
+                agentVO.setHeartbeatTime(now);
+                agentManageService.updateAgent(agentVO);
+                responseObserver.onNext(RegisterResult.newBuilder()
+                        .setStatus(0)
+                        .setMessage("Agent info has been updated: "+request.getAgentId())
+                        .build());
+            } else {
+                agentVO = new AgentVO();
+                copyAgentVO(request, agentVO);
+                agentVO.setCreatedTime(now);
+                agentVO.setModifiedTime(now);
+                agentVO.setHeartbeatTime(now);
+                agentManageService.addAgent(agentVO);
+                responseObserver.onNext(RegisterResult.newBuilder()
+                        .setStatus(0)
+                        .setMessage("Agent info has been added: "+request.getAgentId())
+                        .build());
+            }
+            logger.info("register agent: "+agentVO.getAgentId());
+        } finally {
+            responseObserver.onCompleted();
         }
-        logger.info("register agent: "+agentVO.getAgentId());
     }
 
     private void copyAgentVO(AgentInfo agentInfo, AgentVO agentVO) {
@@ -208,19 +212,48 @@ public class ArthasServiceGrpcImpl extends ArthasServiceGrpc.ArthasServiceImplBa
     }
 
     @Override
-    public void heartbeat(HeartbeatRequest request, StreamObserver<HeartbeatResponse> responseObserver) {
+    public StreamObserver<HeartbeatRequest> heartbeat(StreamObserver<HeartbeatResponse> responseObserver) {
+        return new StreamObserver<HeartbeatRequest>() {
+            @Override
+            public void onNext(HeartbeatRequest heartbeatRequest) {
+                handleHeartbeat(heartbeatRequest, responseObserver);
+            }
+
+            @Override
+            public void onError(Throwable t) {
+                //TODO 通知网络链路异常
+                logger.error("An error occurred in send heartbean response stream", t);
+            }
+
+            @Override
+            public void onCompleted() {
+
+            }
+        };
+    }
+
+    void handleHeartbeat(HeartbeatRequest request, StreamObserver<HeartbeatResponse> responseObserver) {
         Optional<AgentVO> optionalAgentVO = agentManageService.findAgentById(request.getAgentId()).block();
         if (!optionalAgentVO.isPresent()) {
             responseObserver.onNext(HeartbeatResponse.newBuilder()
                     .setStatus(1001)
-                    .setMessage("Agent not found: "+request.getAgentId())
+                    .setMessage("Agent not found: " + request.getAgentId())
                     .build());
             return;
         }
 
-        agentBizSerivce.heartbeat(request.getAgentId(), request.getAgentStatus().name(), request.getAgentVersion());
-        responseObserver.onNext(HeartbeatResponse.newBuilder()
-                .setStatus(0)
-                .build());
+        try {
+            agentBizSerivce.heartbeat(request.getAgentId(), request.getAgentStatus().name(), request.getAgentVersion());
+            responseObserver.onNext(HeartbeatResponse.newBuilder()
+                    .setStatus(0)
+                    .setMessage("heartbeat ok: " + request.getAgentId())
+                    .build());
+        } catch (Exception e) {
+            logger.error("Heartbeat failure, agentId: " + request.getAgentId() + ", error: " + e.getMessage(), e);
+            responseObserver.onNext(HeartbeatResponse.newBuilder()
+                    .setStatus(1002)
+                    .setMessage("Heartbeat failure: " + request.getAgentId())
+                    .build());
+        }
     }
 }

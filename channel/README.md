@@ -107,7 +107,7 @@ http://localhost:8800/
 /agent/{agentId}/exec
 
 ```shell
-agent_id=a76da9861cfd
+agent_id=becb81b8f33843ca932cd75ff9970318
 curl -Ss -XPOST -H "Content-Type: application/json" http://localhost:8800/agent/${agent_id}/exec -d '
 {
   "action":"EXECUTE",
@@ -119,13 +119,27 @@ curl -Ss -XPOST -H "Content-Type: application/json" http://localhost:8800/agent/
 '
 ```
 
+返回结果: 
+
+```json
+{
+  "agentId": "becb81b8f33843ca932cd75ff9970318",
+  "requestId": "LHY9DpPsISDu",
+  "status": "SUCCEEDED",
+  "sessionId": "9322bad2-33a8-4f7d-bafd-2f7701824bd2",
+  "executeResult": {
+    "resultsJson": "[{\"agentId\":\"becb81b8f33843ca932cd75ff9970318\",\"channelServer\":\"localhost:7700\",\"javaPid\":9347,\"jobId\":3,\"sessionId\":\"9322bad2-33a8-4f7d-bafd-2f7701824bd2\",\"tunnelConnected\":false,\"type\":\"session\"},{\"jobId\":3,\"statusCode\":0,\"type\":\"status\"}]"
+  }
+}
+```
+
 #### 4、异步执行命令
 1) 异步执行命令并返回sse结果
    
    /agent/{agentId}/sse_async_exec
 
 ```shell
-agent_id=a76da9861cfd
+agent_id=becb81b8f33843ca932cd75ff9970318
 curl -Ss -XPOST -H "Content-Type: application/json" http://localhost:8800/agent/${agent_id}/sse_async_exec -d '
 {
   "action":"ASYNC_EXECUTE",
@@ -142,7 +156,7 @@ curl -Ss -XPOST -H "Content-Type: application/json" http://localhost:8800/agent/
    /agent/{agentId}/results/{requestId}
    
 ```shell
-agent_id=a76da9861cfd
+agent_id=becb81b8f33843ca932cd75ff9970318
 curl -Ss -XPOST -H "Content-Type: application/json" http://localhost:8800/agent/${agent_id}/async_exec -d '
 {
   "action":"ASYNC_EXECUTE",
@@ -157,7 +171,7 @@ curl -Ss -XPOST -H "Content-Type: application/json" http://localhost:8800/agent/
 
 ```json
 {
-  "agentId": "a76da9861cfd",
+  "agentId": "becb81b8f33843ca932cd75ff9970318",
   "requestId": "my7yP6sU7PSe",
   "status": "CONTINUOUS",
   "sessionId": "..."
