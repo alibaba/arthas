@@ -420,6 +420,7 @@ Arthas有超过120家登记用户，[查看全部](USERS.md)。
 ![百度凤巢](static/baidufengchao.png)
 ![有赞](static/youzan.png)
 ![科大讯飞](static/iflytek.png)
+![北京喜得国际网络科技有限公司](static/cider.png)
 
 
 ### 衍生项目
