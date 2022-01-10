@@ -697,10 +697,6 @@ public class ArthasBootstrap {
         return httpApiHandler;
     }
 
-    public Configure getConfigure() {
-        return configure;
-    }
-
     public File getOutputPath() {
         return outputPath;
     }
