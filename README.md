@@ -433,7 +433,6 @@ Welcome to register the company name in this issue: https://github.com/alibaba/a
 ![有赞](static/youzan.png)
 ![科大讯飞](static/iflytek.png)
 
-
 ### Derivative Projects
 
 * [Bistoury: A project that integrates Arthas](https://github.com/qunarcorp/bistoury)
