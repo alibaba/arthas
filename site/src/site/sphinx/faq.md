@@ -69,6 +69,13 @@ watch demo.MathGame primeFactors '{params,returnObj,throwExp}' 'params.length >0
 watch demo.MathGame <init> '{params,returnObj,throwExp}' -v
 ```
 
+##### 输入中文/Unicode字符
+
+把中文/Unicode字符转为`\u`表示方法：
+
+```bash
+ognl '@java.lang.System@out.println("Hello \u4e2d\u6587")'
+```
 
 ##### java.lang.ClassFormatError: null、skywalking arthas 兼容使用
 
