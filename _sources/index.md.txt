@@ -23,15 +23,12 @@ Arthas 用户文档
 `Arthas`支持JDK 6+，支持Linux/Mac/Windows，采用命令行交互模式，同时提供丰富的 `Tab` 自动补全功能，进一步方便进行问题的定位和诊断。
 
 
-**[2021中国开源项目评选，请投Arthas一票!](https://www.oschina.net/project/top_cn_2021?id=52)**
-
 **如果您在使用Arthas，请让我们知道，您的使用对我们非常重要：[查看](https://github.com/alibaba/arthas/issues/111)**
 
 Contents
 --------
 
 * [首页](https://arthas.aliyun.com/)
-* [2021开源项目投票!](https://www.oschina.net/project/top_cn_2021?id=52)
 * [English Docs](https://arthas.aliyun.com/doc/en/)
 * [在线教程(katacoda)](https://arthas.aliyun.com/doc/arthas-tutorials.html?language=cn)
 * [在线教程(阿里云)](https://start.aliyun.com/handson-lab?category=arthas)
