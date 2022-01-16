@@ -7,12 +7,13 @@ import com.taobao.arthas.core.advisor.Advice;
 import com.taobao.arthas.core.advisor.AdviceListenerAdapter;
 import com.taobao.arthas.core.advisor.ArthasMethod;
 import com.taobao.arthas.core.command.model.WatchModel;
-import com.taobao.arthas.core.command.monitor200.WatchCommand.LineRange;
 import com.taobao.arthas.core.shell.command.CommandProcess;
+import com.taobao.arthas.core.util.line.LineRange;
 import com.taobao.arthas.core.util.LogUtil;
 import com.taobao.arthas.core.util.ThreadLocalWatch;
 
 import java.util.Date;
+import java.util.List;
 
 /**
  * @author beiwei30 on 29/11/2016.
@@ -64,6 +65,11 @@ class WatchAdviceListener extends AdviceListenerAdapter {
         }
 
         finishing(advice);
+    }
+
+    @Override
+    public List<LineRange> linesToListen() {
+        return command.getLines();
     }
 
     @Override

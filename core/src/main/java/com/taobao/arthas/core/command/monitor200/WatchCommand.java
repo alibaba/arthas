@@ -9,6 +9,7 @@ import com.taobao.arthas.core.command.Constants;
 import com.taobao.arthas.core.shell.cli.Completion;
 import com.taobao.arthas.core.shell.cli.CompletionUtils;
 import com.taobao.arthas.core.shell.command.CommandProcess;
+import com.taobao.arthas.core.util.line.LineRange;
 import com.taobao.arthas.core.util.SearchUtils;
 import com.taobao.arthas.core.util.matcher.Matcher;
 import com.taobao.arthas.core.view.ObjectView;
@@ -18,9 +19,7 @@ import com.taobao.middleware.cli.annotations.Description;
 import com.taobao.middleware.cli.annotations.Name;
 import com.taobao.middleware.cli.annotations.Option;
 import com.taobao.middleware.cli.annotations.Summary;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 @Name("watch")
 @Summary("Display the input/output parameter, return object, and thrown exception of specified method invocation")
@@ -100,16 +99,14 @@ public class WatchCommand extends EnhancerCommand {
         isSuccess = success;
     }
 
-    @Option(shortName = "l", longName = "lines", flag = true, acceptMultipleValues = true)
-    @Description("Watch on line ranges")
+    @Option(shortName = "l", longName = "lines", acceptMultipleValues = true)
+    @Description("Watch on line ranges e.g. (-l 11-15 20-22). 0 means (+-)infinite")
     public void setAtLine(List<String> lineDescs) {
         if (lineDescs == null || lineDescs.isEmpty()) {
-            // `-l` means watch on every line
-            lines.add(new LineRange("0"));
-        } else {
-            for (String line : lineDescs) {
-                lines.add(new LineRange(line));
-            }
+            return;
+        }
+        for (String line : lineDescs) {
+            lines.add(LineRange.valueOf(line));
         }
     }
 
@@ -221,50 +218,5 @@ public class WatchCommand extends EnhancerCommand {
     @Override
     protected void completeArgument3(Completion completion) {
         CompletionUtils.complete(completion, Arrays.asList(EXPRESS_EXAMPLES));
-    }
-
-    public static class LineRange {
-        private int start;
-        private int end;
-
-        // accept "1", "1-3", inclusive
-        // zero means infinite
-        public LineRange(String rangeDesc) {
-            if (rangeDesc == null) {
-                throw new IllegalArgumentException("line range should not be null");
-            }
-
-            if (rangeDesc.contains("-")) {
-                String[] range = rangeDesc.split("-");
-                if (range.length != 2) {
-                    throw new IllegalArgumentException("range should be seperated by `-`, e.g. 1-3");
-                }
-                this.start = Integer.parseInt(range[0].trim());
-                this.end = Integer.parseInt(range[1].trim());
-            } else {
-                int line = Integer.parseInt(rangeDesc.trim());
-                this.start = line;
-                this.end = line;
-            }
-
-            if (this.end <= 0) {
-                this.end = Integer.MAX_VALUE;
-            }
-        }
-
-        public boolean inRange(int line) {
-            if (end < start) {
-                return true;
-            }
-            return line >= start && line <= end;
-        }
-
-        @Override
-        public String toString() {
-            return "LineRange{" +
-                "start=" + start +
-                ", end=" + end +
-                '}';
-        }
     }
 }

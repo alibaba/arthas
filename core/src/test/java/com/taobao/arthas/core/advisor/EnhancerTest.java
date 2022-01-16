@@ -2,7 +2,9 @@ package com.taobao.arthas.core.advisor;
 
 import java.arthas.SpyAPI;
 import java.lang.instrument.Instrumentation;
+import java.util.Collections;
 
+import com.taobao.arthas.core.util.line.LineRange;
 import org.assertj.core.api.Assertions;
 import org.junit.Test;
 import org.mockito.Mockito;
@@ -39,7 +41,7 @@ public class EnhancerTest {
         EqualsMatcher<String> methodNameMatcher = new EqualsMatcher<String>("print");
         EqualsMatcher<String> classNameMatcher = new EqualsMatcher<String>(MathGame.class.getName());
 
-        Enhancer enhancer = new Enhancer(listener, true, false, classNameMatcher, null, methodNameMatcher);
+        Enhancer enhancer = new Enhancer(listener, true, false, classNameMatcher, null, methodNameMatcher, Collections.<LineRange>emptyList());
 
         ClassLoader inClassLoader = MathGame.class.getClassLoader();
         String className = MathGame.class.getName();

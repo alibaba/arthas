@@ -336,7 +336,7 @@ ts=2020-12-02 22:38:57; [cost=0.052877ms] result=@Object[][
 或多行中可获取的局部变量值。如下所示，`line` 为行号，`varMap` 为局部变量。
 
 ```
-[arthas@84658]$ watch demo.MathGame primeFactors '{line, varMap}' -l -x 2
+[arthas@84658]$ watch demo.MathGame primeFactors '{line, varMap}' -l 0 -x 2
 Press Q or Ctrl+C to abort.
 Affect(class count: 1 , method count: 1) cost in 45 ms, listenerId: 5
 method=demo.MathGame.primeFactors location=AtLine
@@ -367,6 +367,10 @@ ts=2022-01-09 11:06:24; [cost=8.32232865268658E8ms] result=@ArrayList[
 ... 遇到循环时输出太多，这里略去 ...
 Command execution times exceed limit: 100, so command will exit. You can set it with -n option.
 ```
+
+`-l` 参数接收一个或多个行号范围，如 `1-3` 代表 1, 2, 3 三行。其中数字 `0` 代
+表正负无穷，如 `18-0` 代表该方法 18 行之后的所有行。
+
 
 该功能目前有局限：
 1. Java 编译时默认会将局部变量信息从字节码中移除，此功能需要在编译时保留局部变

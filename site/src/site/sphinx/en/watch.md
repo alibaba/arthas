@@ -336,7 +336,7 @@ to print out the local variables for more detailed execution information. `-l`
 switch could be turned on for fetching local variable information. For example:
 
 ```
-[arthas@84658]$ watch demo.MathGame primeFactors '{line, varMap}' -l -x 2
+[arthas@84658]$ watch demo.MathGame primeFactors '{line, varMap}' -l 0 -x 2
 Press Q or Ctrl+C to abort.
 Affect(class count: 1 , method count: 1) cost in 45 ms, listenerId: 5
 method=demo.MathGame.primeFactors location=AtLine
@@ -368,8 +368,12 @@ ts=2022-01-09 11:06:24; [cost=8.32232865268658E8ms] result=@ArrayList[
 Command execution times exceed limit: 100, so command will exit. You can set it with -n option.
 ```
 
-`line` indicates outputing current line  number and `varMap` is a map of local
+`line` indicates outputing current line number and `varMap` is a map of local
 variables.
+
+`-l` takes line ranges as arguments. For example `1-3` means watch on line 1,
+2, 3. `0` means infinite. `18-0` would match line 18 and all lines after in
+the method.
 
 There are limitations:
 1. Java would throw local variable information away during compilation, this

@@ -1,5 +1,9 @@
 package com.taobao.arthas.core.advisor;
 
+import com.taobao.arthas.core.util.line.LineRange;
+
+import java.util.List;
+
 /**
  * 通知监听器<br/>
  * Created by vlinux on 15/5/17.
@@ -69,6 +73,11 @@ public interface AdviceListener {
             Class<?> clazz, String methodName, String methodDesc,
             Object target, Object[] args,
             Throwable throwable) throws Throwable;
+
+    /**
+     * 该函数返回 Listener 监听某些行的变化
+     */
+    List<LineRange> linesToListen();
 
     /**
      * 行内通知

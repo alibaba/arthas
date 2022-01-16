@@ -1,5 +1,7 @@
 package com.taobao.arthas.core.advisor;
 
+import java.util.Collections;
+import java.util.List;
 import java.util.concurrent.atomic.AtomicLong;
 
 import com.taobao.arthas.core.command.express.ExpressException;
@@ -8,6 +10,7 @@ import com.taobao.arthas.core.shell.command.CommandProcess;
 import com.taobao.arthas.core.shell.system.Process;
 import com.taobao.arthas.core.shell.system.ProcessAware;
 import com.taobao.arthas.core.util.Constants;
+import com.taobao.arthas.core.util.line.LineRange;
 import com.taobao.arthas.core.util.StringUtils;
 
 /**
@@ -70,6 +73,11 @@ public abstract class AdviceListenerAdapter implements AdviceListener, ProcessAw
         Object target, Object[] args, int line, String[] varNames, Object[] vars) throws Throwable {
         atLine(clazz.getClassLoader(), clazz, new ArthasMethod(clazz, methodName, methodDesc),
             target, args, line, varNames, vars);
+    }
+
+    @Override
+    public List<LineRange> linesToListen() {
+        return Collections.emptyList();
     }
 
     /**

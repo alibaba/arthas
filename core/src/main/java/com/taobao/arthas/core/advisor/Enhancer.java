@@ -3,7 +3,6 @@ package com.taobao.arthas.core.advisor;
 import static com.taobao.arthas.core.util.ArthasCheckUtils.isEquals;
 import static java.lang.System.arraycopy;
 
-import com.alibaba.bytekit.utils.Decompiler;
 import java.arthas.SpyAPI;
 import java.io.File;
 import java.io.IOException;
@@ -56,11 +55,10 @@ import com.taobao.arthas.core.advisor.SpyInterceptors.SpyTraceInterceptor1;
 import com.taobao.arthas.core.advisor.SpyInterceptors.SpyTraceInterceptor2;
 import com.taobao.arthas.core.advisor.SpyInterceptors.SpyTraceInterceptor3;
 import com.taobao.arthas.core.server.ArthasBootstrap;
-import com.taobao.arthas.core.util.ArthasCheckUtils;
-import com.taobao.arthas.core.util.ClassUtils;
-import com.taobao.arthas.core.util.FileUtils;
-import com.taobao.arthas.core.util.SearchUtils;
+import com.taobao.arthas.core.util.*;
 import com.taobao.arthas.core.util.affect.EnhancerAffect;
+import com.taobao.arthas.core.util.line.LineRange;
+import com.taobao.arthas.core.util.line.LineRangeInterceptorCreator;
 import com.taobao.arthas.core.util.matcher.Matcher;
 
 /**
@@ -80,6 +78,7 @@ public class Enhancer implements ClassFileTransformer {
     private final EnhancerAffect affect;
     private Set<Class<?>> matchingClasses = null;
     private static final ClassLoader selfClassLoader = Enhancer.class.getClassLoader();
+    private final List<LineRange> lineRangesToEnhance;
 
     // 被增强的类的缓存
     private final static Map<Class<?>/* Class */, Object> classBytesCache = new WeakHashMap<Class<?>, Object>();
@@ -99,7 +98,8 @@ public class Enhancer implements ClassFileTransformer {
      */
     public Enhancer(AdviceListener listener, boolean isTracing, boolean skipJDKTrace, Matcher classNameMatcher,
             Matcher classNameExcludeMatcher,
-            Matcher methodNameMatcher) {
+            Matcher methodNameMatcher,
+            List<LineRange> lineRangesToEnhance) {
         this.listener = listener;
         this.isTracing = isTracing;
         this.skipJDKTrace = skipJDKTrace;
@@ -107,6 +107,7 @@ public class Enhancer implements ClassFileTransformer {
         this.classNameExcludeMatcher = classNameExcludeMatcher;
         this.methodNameMatcher = methodNameMatcher;
         this.affect = new EnhancerAffect();
+        this.lineRangesToEnhance = lineRangesToEnhance;
         affect.setListenerId(listener.id());
     }
 
@@ -145,7 +146,7 @@ public class Enhancer implements ClassFileTransformer {
             interceptorProcessors.addAll(defaultInterceptorClassParser.parse(SpyInterceptor1.class));
             interceptorProcessors.addAll(defaultInterceptorClassParser.parse(SpyInterceptor2.class));
             interceptorProcessors.addAll(defaultInterceptorClassParser.parse(SpyInterceptor3.class));
-            interceptorProcessors.addAll(defaultInterceptorClassParser.parse(SpyInterceptor4.class));
+            interceptorProcessors.addAll(LineRangeInterceptorCreator.createFromClass(SpyInterceptor4.class, lineRangesToEnhance));
 
             if (this.isTracing) {
                 if (!this.skipJDKTrace) {
