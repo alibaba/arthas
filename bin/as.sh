@@ -182,7 +182,7 @@ case "$(uname -s)" in
     *)          OS_TYPE="UNKNOWN"
 esac
 
-# check curl/grep/awk/telent/unzip command
+# check curl/grep/awk/telnet/unzip command
 if ! [ -x "$(command -v curl)" ]; then
   echo 'Error: curl is not installed. Try to use java -jar arthas-boot.jar' >&2
   exit 1
