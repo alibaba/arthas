@@ -15,10 +15,9 @@ import com.alibaba.arthas.tunnel.server.cluster.TunnelClusterStore;
  * @author hengyunabc 2020-10-27
  *
  */
+@AutoConfigureAfter(value = {TunnelClusterStoreConfiguration.class, TunnelClusterRedisStoreConfiguration.class})
 @Configuration
-@AutoConfigureAfter(RedisAutoConfiguration.class)
 public class TunnelServerConfiguration {
-
     @Autowired
     ArthasProperties arthasProperties;
 
