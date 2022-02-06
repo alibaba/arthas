@@ -80,9 +80,7 @@ abstract public class ThreadUtil {
             threads = new Thread[threads.length * 2];
         }
         for (Thread thread : threads) {
-            if (thread != null) {
-                result.add(thread);
-            }
+            result.add(thread);
         }
         return result;
     }
