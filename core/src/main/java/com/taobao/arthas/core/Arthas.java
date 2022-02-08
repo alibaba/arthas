@@ -12,6 +12,7 @@ import com.taobao.middleware.cli.CommandLine;
 import com.taobao.middleware.cli.Option;
 import com.taobao.middleware.cli.TypedOption;
 
+import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.Arrays;
@@ -46,11 +47,12 @@ public class Arthas {
         Option appName = new TypedOption<String>().setType(String.class).setShortName(ArthasConstants.APP_NAME);
 
         Option statUrl = new TypedOption<String>().setType(String.class).setShortName("stat-url");
+        Option disabledCommands = new TypedOption<String>().setType(String.class).setShortName("disabled-commands");
 
         CLI cli = CLIs.create("arthas").addOption(pid).addOption(core).addOption(agent).addOption(target)
                 .addOption(telnetPort).addOption(httpPort).addOption(sessionTimeout)
                 .addOption(username).addOption(password)
-                .addOption(tunnelServer).addOption(agentId).addOption(appName).addOption(statUrl);
+                .addOption(tunnelServer).addOption(agentId).addOption(appName).addOption(statUrl).addOption(disabledCommands);
         CommandLine commandLine = cli.parse(Arrays.asList(args));
 
         Configure configure = new Configure();
@@ -78,6 +80,7 @@ public class Arthas {
         configure.setTunnelServer((String) commandLine.getOptionValue("tunnel-server"));
         configure.setAgentId((String) commandLine.getOptionValue("agent-id"));
         configure.setStatUrl((String) commandLine.getOptionValue("stat-url"));
+        configure.setDisabledCommands((String) commandLine.getOptionValue("disabled-commands"));
         configure.setAppName((String) commandLine.getOptionValue(ArthasConstants.APP_NAME));
         return configure;
     }
@@ -115,8 +118,19 @@ public class Arthas {
             //convert jar path to unicode string
             configure.setArthasAgent(encodeArg(arthasAgentPath));
             configure.setArthasCore(encodeArg(configure.getArthasCore()));
-            virtualMachine.loadAgent(arthasAgentPath,
-                    configure.getArthasCore() + ";" + configure.toString());
+            try {
+                virtualMachine.loadAgent(arthasAgentPath,
+                        configure.getArthasCore() + ";" + configure.toString());
+            } catch (IOException e) {
+                if (e.getMessage() != null && e.getMessage().contains("Non-numeric value found")) {
+                    AnsiLog.warn(e);
+                    AnsiLog.warn("It seems to use the lower version of JDK to attach the higher version of JDK.");
+                    AnsiLog.warn(
+                            "This error message can be ignored, the attach may have been successful, and it will still try to connect.");
+                } else {
+                    throw e;
+                }
+            }
         } finally {
             if (null != virtualMachine) {
                 virtualMachine.detach();

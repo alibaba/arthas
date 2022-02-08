@@ -238,3 +238,16 @@ So where is the rest of the time consumed?
 2. Instruction consumption. For example, instructions such as `i++`, `getfield`, etc.
 
 3. Possible JVM pause during code execution, such as GC, entering synchronization blocks, etc.
+
+#### Use the -v parameter to print more information
+
+> The watch/trace/monitor/stack/tt commands all support the `-v` parameter.
+
+When the command is executed, there is no output result. There are two possibilities:
+
+1. The matched function is not executed
+2. The result of the conditional expression is false
+
+But the user cannot tell which situation is.
+
+Using the `-v` option, the specific value and execution result of `Condition express` will be printed for easy confirmation.

@@ -25,7 +25,9 @@ public class ArthasProperties {
     /**
      * supoort apps.html/agents.html
      */
-    private boolean enableDetatilPages = false;
+    private boolean enableDetailPages = false;
+
+    private boolean enableIframeSupport = true;
 
     public Server getServer() {
         return server;
@@ -43,12 +45,20 @@ public class ArthasProperties {
         this.embeddedRedis = embeddedRedis;
     }
 
-    public boolean isEnableDetatilPages() {
-        return enableDetatilPages;
+    public boolean isEnableDetailPages() {
+        return enableDetailPages;
     }
 
-    public void setEnableDetatilPages(boolean enableDetatilPages) {
-        this.enableDetatilPages = enableDetatilPages;
+    public void setEnableDetailPages(boolean enableDetailPages) {
+        this.enableDetailPages = enableDetailPages;
+    }
+
+    public boolean isEnableIframeSupport() {
+        return enableIframeSupport;
+    }
+
+    public void setEnableIframeSupport(boolean enableIframeSupport) {
+        this.enableIframeSupport = enableIframeSupport;
     }
 
     public static class Server {

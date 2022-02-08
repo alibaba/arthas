@@ -48,7 +48,8 @@ No.
 
 ##### Can arthas view the value of a variable in memory?
 
-No. But you can use some tricks to intercept the object with the `tt` command, or fetch it from a static method.
+1. You can use [`vmtool`](vmtool.md) command.
+2. You can use some tricks to intercept the object with the [`tt`](tt.md) command, or fetch it from a static method.
 
 
 ##### How to filter method with the same name?
@@ -60,21 +61,28 @@ You can use `-v` to view the condition express result [https://github.com/alibab
 example [math-game](quick-start.md)
 
 ```bash
-watch demo.MathGame primeFactors traceE '{params,returnObj,throwExp}' -v -n 5 -x 3 'params.length >0 && returnObj instanceof java.util.List'
+watch demo.MathGame primeFactors '{params,returnObj,throwExp}' 'params.length >0 && returnObj instanceof java.util.List' -v
 ``` 
 
 ##### How to watch or trace constructor?
 
 ```bash
-watch demo.MathGame <init> '{params,returnObj,throwExp}' -v -n 5 -x 3 '1==1'
+watch demo.MathGame <init> '{params,returnObj,throwExp}' -v
 ```
 
+##### Enter Unicode characters
+
+Convert Unicode characters to `\u` representation:
+
+```bash
+ognl '@java.lang.System@out.println("Hello \u4e2d\u6587")'
+````
 
 ##### java.lang.ClassFormatError: null, skywalking arthas compatible use
 
 When error log appear `java.lang.ClassFormatError: null`, it is usually modified by other bytecode tools that are not compatible with arthas modified bytecode.
 
-For example: use skywalking V8.1.0 below [cannot trace, watch classes enhanced by skywalking agent](https://github.com/alibaba/arthas/issues/1141), V8.1.0 or above is compatible, refer to skywalking configuration for more details. [skywalking compatible with other javaagent bytecode processing](https://github.com/apache/skywalking/blob/v8.1.0/docs/en/FAQ/Compatible-with-other-javaagent-bytecode-processing.md).
+For example: use skywalking V8.1.0 below [cannot trace, watch classes enhanced by skywalking agent](https://github.com/alibaba/arthas/issues/1141), V8.1.0 or above is compatible, refer to skywalking configuration for more details. [skywalking compatible with other javaagent bytecode processing](https://github.com/apache/skywalking/blob/master/docs/en/FAQ/Compatible-with-other-javaagent-bytecode-processing.md).
 
 
 ##### Can I use arthas offline?
@@ -84,3 +92,10 @@ Yes. Just download the full size package and unzip it, refer to: [Download](down
 ##### Attach the process with pid 1 in docker/k8s failed
 
 Reference: [https://github.com/alibaba/arthas/issues/362#issuecomment-448185416](https://github.com/alibaba/arthas/issues/362#issuecomment-448185416)
+
+
+##### Why is the new version of Arthas downloaded, but the old version is connected?
+
+For example, the started version of `as.sh/arthas-boot.jar` is 3.5.*, but after connecting, the printed arthas version is 3.4.*.
+
+It may be that the target process has been diagnosed with the old version of arthas before. You can execute `stop` to stop the old version of arthas, and then reuse the new version to attach.

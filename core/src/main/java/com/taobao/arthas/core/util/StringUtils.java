@@ -1,3 +1,19 @@
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package com.taobao.arthas.core.util;
 
 import java.io.BufferedReader;
@@ -5,6 +21,7 @@ import java.io.IOException;
 import java.io.StringReader;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.Properties;
@@ -470,7 +487,7 @@ public abstract class StringUtils {
 
             StringBuilder sb = new StringBuilder();
             for(int patLen = oldPattern.length(); index >= 0; index = inString.indexOf(oldPattern, pos)) {
-                sb.append(inString.substring(pos, index));
+                sb.append(inString, pos, index);
                 sb.append(newPattern);
                 pos = index + patLen;
             }
@@ -655,17 +672,8 @@ public abstract class StringUtils {
     }
 
     public static Set<String> commaDelimitedListToSet(String str) {
-        TreeSet<String> set = new TreeSet<String>();
         String[] tokens = commaDelimitedListToStringArray(str);
-        String[] var3 = tokens;
-        int var4 = tokens.length;
-
-        for(int var5 = 0; var5 < var4; ++var5) {
-            String token = var3[var5];
-            set.add(token);
-        }
-
-        return set;
+        return new TreeSet<String>(Arrays.asList(tokens));
     }
 
     /**
@@ -689,7 +697,7 @@ public abstract class StringUtils {
         }
         int arraySize = array.length;
         int bufSize = (arraySize == 0 ? 0 : (array[0].toString().length() + separator.length()) * arraySize);
-        StringBuffer buf = new StringBuffer(bufSize);
+        StringBuilder buf = new StringBuilder(bufSize);
 
         for (int i = 0; i < arraySize; i++) {
             if (i > 0) {
@@ -722,7 +730,7 @@ public abstract class StringUtils {
             return true;
         }
         for (int i = 0; i < strLen; i++) {
-            if (Character.isWhitespace(cs.charAt(i)) == false) {
+            if (!Character.isWhitespace(cs.charAt(i))) {
                 return false;
             }
         }
@@ -910,12 +918,10 @@ public abstract class StringUtils {
         } catch (IOException exc) {
             // quit
         } finally {
-            if (reader != null) {
-                try {
-                    reader.close();
-                } catch (IOException e) {
-                    // ignore
-                }
+            try {
+                reader.close();
+            } catch (IOException e) {
+                // ignore
             }
         }
         return result;
@@ -955,5 +961,20 @@ public abstract class StringUtils {
             return null;
         }
         return text.substring(pos + after.length());
+    }
+
+    // print|(ILjava/util/List;)V
+    public static String[] splitMethodInfo(String methodInfo) {
+        int index = methodInfo.indexOf('|');
+        return new String[] { methodInfo.substring(0, index), methodInfo.substring(index + 1) };
+    }
+
+    // demo/MathGame|primeFactors|(I)Ljava/util/List;|24
+    public static String[] splitInvokeInfo(String invokeInfo) {
+        int index1 = invokeInfo.indexOf('|');
+        int index2 = invokeInfo.indexOf('|', index1 + 1);
+        int index3 = invokeInfo.indexOf('|', index2 + 1);
+        return new String[] { invokeInfo.substring(0, index1), invokeInfo.substring(index1 + 1, index2),
+                invokeInfo.substring(index2 + 1, index3), invokeInfo.substring(index3 + 1) };
     }
 }

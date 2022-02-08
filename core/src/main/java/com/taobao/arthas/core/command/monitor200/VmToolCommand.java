@@ -163,8 +163,14 @@ public class VmToolCommand extends AnnotatedCommand {
                     process.end(-1, "The className option cannot be empty!");
                     return;
                 }
-                ClassLoader classLoader = ClassLoader.getSystemClassLoader();
-                if (hashCode == null && classLoaderClass != null) {
+                ClassLoader classLoader = null;
+                if (hashCode != null) {
+                    classLoader = ClassLoaderUtils.getClassLoader(inst, hashCode);
+                    if (classLoader == null) {
+                        process.end(-1, "Can not find classloader with hashCode: " + hashCode + ".");
+                        return;
+                    }
+                }else if ( classLoaderClass != null) {
                     List<ClassLoader> matchedClassLoaders = ClassLoaderUtils.getClassLoaderByClassName(inst,
                             classLoaderClass);
                     if (matchedClassLoaders.size() == 1) {
@@ -183,6 +189,8 @@ public class VmToolCommand extends AnnotatedCommand {
                         process.end(-1, "Can not find classloader by class name: " + classLoaderClass + ".");
                         return;
                     }
+                }else {
+                    classLoader = ClassLoader.getSystemClassLoader();
                 }
 
                 List<Class<?>> matchedClasses = new ArrayList<Class<?>>(
@@ -192,7 +200,7 @@ public class VmToolCommand extends AnnotatedCommand {
                     process.end(-1, "Can not find class by class name: " + className + ".");
                     return;
                 } else if (matchedClassSize > 1) {
-                    process.end(-1, "Found more than one class: " + matchedClasses + ".");
+                    process.end(-1, "Found more than one class: " + matchedClasses + ", please specify classloader with '-c <classloader hash>'");
                     return;
                 } else {
                     Object[] instances = vmToolInstance().getInstances(matchedClasses.get(0), limit);
@@ -256,7 +264,7 @@ public class VmToolCommand extends AnnotatedCommand {
             try {
                 File tmpLibFile = File.createTempFile(VmTool.JNI_LIBRARY_NAME, null);
                 tmpLibOutputStream = new FileOutputStream(tmpLibFile);
-                libInputStream = new FileInputStream(new File(libPath));
+                libInputStream = new FileInputStream(libPath);
 
                 IOUtils.copy(libInputStream, tmpLibOutputStream);
                 libPath = tmpLibFile.getAbsolutePath();

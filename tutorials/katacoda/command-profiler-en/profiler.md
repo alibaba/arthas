@@ -71,35 +71,16 @@ Can view which `event` and sampling time.
 
 ### Stop profiler
 
-#### Generate svg format results
-
-`profiler stop`{{execute T2}}
-
-```
-$ profiler stop
-profiler output file: /tmp/demo/arthas-output/20191125-135546.svg
-OK
-```
-
-By default, the generated results are saved to the `arthas-output` directory under the application's `working directory`. The output result path can be specified by the `--file` parameter. such as:
-
-`profiler stop --file /tmp/output.svg`{{execute T2}}
-
-```bash
-$ profiler stop --file /tmp/output.svg
-profiler output file: /tmp/output.svg
-OK
-```
 
 #### Generating html format results
 
-By default, the result file is `svg` format. If you want to generate the `html` format, you can specify it with the `--format` parameter:
+By default, the result file is `html` format. You can also specify it with the `--format` parameter:
 
 `profiler stop --format html`{{execute T2}}
 
 ```bash
 $ profiler stop --format html
-profiler output file: /tmp/test/arthas-output/20191125-143329.html
+profiler output file: /tmp/test/arthas-output/20211207-111550.html
 OK
 ```
 
@@ -199,10 +180,10 @@ profiler execute 'start,framebuf=5000000'
 
 Stop sampling and save to the specified file:
 
-`profiler execute 'stop,file=/tmp/result.svg'`{{execute T2}}
+`profiler execute 'stop,file=/tmp/result.html'`{{execute T2}}
 
 ```bash
-profiler execute 'stop,file=/tmp/result.svg'
+profiler execute 'stop,file=/tmp/result.html'
 ```
 
-Specific format reference: [arguments.cpp](https://github.com/jvm-profiling-tools/async-profiler/blob/v1.8.1/src/arguments.cpp#L50)
+Specific format reference: [arguments.cpp](https://github.com/jvm-profiling-tools/async-profiler/blob/v2.5/src/arguments.cpp#L50)

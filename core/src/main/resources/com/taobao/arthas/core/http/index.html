@@ -18,9 +18,11 @@
 
     <script type="text/javascript">
         window.addEventListener('resize', function () {
-            var terminalSize = getTerminalSize();
-            ws.send(JSON.stringify({ action: 'resize', cols: terminalSize.cols, rows: terminalSize.rows }));
-            xterm.resize(terminalSize.cols, terminalSize.rows);
+            if(ws !== undefined && ws !== null){
+                let terminalSize = getTerminalSize();
+                ws.send(JSON.stringify({ action: 'resize', cols: terminalSize.cols, rows: terminalSize.rows }));
+                xterm.resize(terminalSize.cols, terminalSize.rows);
+            }
         });
     </script>
 

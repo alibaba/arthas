@@ -144,7 +144,7 @@ public final class EnhancerAffect extends Affect {
                 cost(),
                 listenerId));
         if (this.throwable != null) {
-            infoSB.append("\nEnhance error! exception: " + this.throwable);
+            infoSB.append("\nEnhance error! exception: ").append(this.throwable);
         }
         return infoSB.toString();
     }

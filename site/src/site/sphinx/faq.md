@@ -47,7 +47,8 @@ options json-format true
 
 ##### 能不能查看内存里某个变量的值
 
-不能。但可以用一些技巧，用`tt`命令拦截到对象，或者从静态函数里取到对象。
+1. 可以使用[`vmtool`](vmtool.md)命令。
+2. 可以用一些技巧，用[`tt`](tt.md)命令拦截到对象，或者从静态函数里取到对象。
 
 
 ##### 方法同名过滤
@@ -59,21 +60,28 @@ options json-format true
 例子[math-game](quick-start.md)
 
 ```bash
-watch demo.MathGame primeFactors traceE '{params,returnObj,throwExp}' -v -n 5 -x 3 'params.length >0 && returnObj instanceof java.util.List'
+watch demo.MathGame primeFactors '{params,returnObj,throwExp}' 'params.length >0 && returnObj instanceof java.util.List' -v
 ``` 
 
 ##### 怎么watch、trace 构造函数 ？
 
 ```bash
-watch demo.MathGame <init> '{params,returnObj,throwExp}' -v -n 5 -x 3 '1==1'
+watch demo.MathGame <init> '{params,returnObj,throwExp}' -v
 ```
 
+##### 输入中文/Unicode字符
+
+把中文/Unicode字符转为`\u`表示方法：
+
+```bash
+ognl '@java.lang.System@out.println("Hello \u4e2d\u6587")'
+```
 
 ##### java.lang.ClassFormatError: null、skywalking arthas 兼容使用
 
 当出现这个错误日志`java.lang.ClassFormatError: null`,通常情况下都是被其他字节码工具修改过与arthas修改字节码不兼容。
 
-比如: 使用 skywalking V8.1.0 以下版本 [无法trace、watch 被skywalking agent 增强过的类](https://github.com/alibaba/arthas/issues/1141), V8.1.0 以上版本可以兼容使用,更多参考skywalking配置 [skywalking compatible with other javaagent bytecode processing](https://github.com/apache/skywalking/blob/v8.1.0/docs/en/FAQ/Compatible-with-other-javaagent-bytecode-processing.md)。
+比如: 使用 skywalking V8.1.0 以下版本 [无法trace、watch 被skywalking agent 增强过的类](https://github.com/alibaba/arthas/issues/1141), V8.1.0 以上版本可以兼容使用,更多参考skywalking配置 [skywalking compatible with other javaagent bytecode processing](https://github.com/apache/skywalking/blob/master/docs/en/FAQ/Compatible-with-other-javaagent-bytecode-processing.md)。
 
 
 ##### Arthas能不能离线使用
@@ -83,3 +91,9 @@ watch demo.MathGame <init> '{params,returnObj,throwExp}' -v -n 5 -x 3 '1==1'
 ##### Attach docker/k8s 里的 pid 为 1 的进程失败
 
 参考： [https://github.com/alibaba/arthas/issues/362#issuecomment-448185416](https://github.com/alibaba/arthas/issues/362#issuecomment-448185416)
+
+##### 为什么下载了新版本的Arthas，连接的却是旧版本？
+
+比如启动的 `as.sh/arthas-boot.jar` 版本是3.5.* 的，但是连接上之后，打印的arthas版本是 3.4.* 的。
+
+可能是之前使用旧版本的arthas诊断过目标进程。可以先执行`stop`停止掉旧版本的arthas，再重新使用新版本attach。

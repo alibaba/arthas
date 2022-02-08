@@ -8,6 +8,7 @@ import java.lang.instrument.UnmodifiableClassException;
 import java.lang.reflect.Method;
 import java.security.CodeSource;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -70,6 +71,7 @@ import com.taobao.arthas.core.util.ArthasBanner;
 import com.taobao.arthas.core.util.FileUtils;
 import com.taobao.arthas.core.util.InstrumentationUtils;
 import com.taobao.arthas.core.util.LogUtil;
+import com.taobao.arthas.core.util.StringUtils;
 import com.taobao.arthas.core.util.UserStatUtil;
 import com.taobao.arthas.core.util.affect.EnhancerAffect;
 import com.taobao.arthas.core.util.matcher.WildcardMatcher;
@@ -143,7 +145,7 @@ public class ArthasBootstrap {
         outputPath.mkdirs();
 
         // 3. init logger
-        loggerContext = LogUtil.initLooger(arthasEnvironment);
+        loggerContext = LogUtil.initLogger(arthasEnvironment);
 
         // 4. 增强ClassLoader
         enhanceClassLoader();
@@ -181,6 +183,8 @@ public class ArthasBootstrap {
         JSON.DEFAULT_GENERATE_FEATURE |= SerializerFeature.WriteDateUseDateFormat.getMask();
         // ignore getter error #1661
         JSON.DEFAULT_GENERATE_FEATURE |= SerializerFeature.IgnoreErrorGetter.getMask();
+        // #2081
+        JSON.DEFAULT_GENERATE_FEATURE |= SerializerFeature.WriteNonStringKeyAsString.getMask();
     }
 
     private void initBeans() {
@@ -255,16 +259,19 @@ public class ArthasBootstrap {
          * https://github.com/alibaba/arthas/issues/986
          * </pre>
          */
-        Map<String, String> copyMap = new HashMap<String, String>();
+        Map<String, Object> copyMap;
         if (argsMap != null) {
-            copyMap.putAll(argsMap);
-        }
-        // 添加 arthas.home
-        if (!copyMap.containsKey(ARTHAS_HOME_PROPERTY)) {
+            copyMap = new HashMap<String, Object>(argsMap);
+            // 添加 arthas.home
+            if (!copyMap.containsKey(ARTHAS_HOME_PROPERTY)) {
+                copyMap.put(ARTHAS_HOME_PROPERTY, arthasHome());
+            }
+        } else {
+            copyMap = new HashMap<String, Object>(1);
             copyMap.put(ARTHAS_HOME_PROPERTY, arthasHome());
         }
 
-        MapPropertySource mapPropertySource = new MapPropertySource("args", (Map<String, Object>)(Object)copyMap);
+        MapPropertySource mapPropertySource = new MapPropertySource("args", copyMap);
         arthasEnvironment.addFirst(mapPropertySource);
 
         tryToLoadArthasProperties();
@@ -291,48 +298,49 @@ public class ArthasBootstrap {
         return ARTHAS_HOME;
     }
 
+    static String reslove(ArthasEnvironment arthasEnvironment, String key, String defaultValue) {
+        String value = arthasEnvironment.getProperty(key);
+        if (value == null) {
+            return defaultValue;
+        }
+        return arthasEnvironment.resolvePlaceholders(value);
+    }
+
     // try to load arthas.properties
     private void tryToLoadArthasProperties() throws IOException {
         this.arthasEnvironment.resolvePlaceholders(CONFIG_LOCATION_PROPERTY);
 
-        String location = null;
-
-        if (arthasEnvironment.containsProperty(CONFIG_LOCATION_PROPERTY)) {
-            location = arthasEnvironment.resolvePlaceholders(CONFIG_LOCATION_PROPERTY);
-        }
+        String location = reslove(arthasEnvironment, CONFIG_LOCATION_PROPERTY, null);
 
         if (location == null) {
             location = arthasHome();
         }
 
-        String configName = "arthas";
-        if (arthasEnvironment.containsProperty(CONFIG_NAME_PROPERTY)) {
-            configName = arthasEnvironment.resolvePlaceholders(CONFIG_NAME_PROPERTY);
-        }
+        String configName = reslove(arthasEnvironment, CONFIG_NAME_PROPERTY, "arthas");
 
         if (location != null) {
             if (!location.endsWith(".properties")) {
                 location = new File(location, configName + ".properties").getAbsolutePath();
             }
+            if (new File(location).exists()) {
+                Properties properties = FileUtils.readProperties(location);
+
+                boolean overrideAll = false;
+                if (arthasEnvironment.containsProperty(CONFIG_OVERRIDE_ALL)) {
+                    overrideAll = arthasEnvironment.getRequiredProperty(CONFIG_OVERRIDE_ALL, boolean.class);
+                } else {
+                    overrideAll = Boolean.parseBoolean(properties.getProperty(CONFIG_OVERRIDE_ALL, "false"));
+                }
+
+                PropertySource<?> propertySource = new PropertiesPropertySource(location, properties);
+                if (overrideAll) {
+                    arthasEnvironment.addFirst(propertySource);
+                } else {
+                    arthasEnvironment.addLast(propertySource);
+                }
+            }
         }
 
-        if (new File(location).exists()) {
-            Properties properties = FileUtils.readProperties(location);
-
-            boolean overrideAll = false;
-            if (arthasEnvironment.containsProperty(CONFIG_OVERRIDE_ALL)) {
-                overrideAll = arthasEnvironment.getRequiredProperty(CONFIG_OVERRIDE_ALL, boolean.class);
-            } else {
-                overrideAll = Boolean.parseBoolean(properties.getProperty(CONFIG_OVERRIDE_ALL, "false"));
-            }
-
-            PropertySource<?> propertySource = new PropertiesPropertySource(location, properties);
-            if (overrideAll) {
-                arthasEnvironment.addFirst(propertySource);
-            } else {
-                arthasEnvironment.addLast(propertySource);
-            }
-        }
     }
 
     /**
@@ -393,7 +401,15 @@ public class ArthasBootstrap {
             this.securityAuthenticator = new SecurityAuthenticatorImpl(configure.getUsername(), configure.getPassword());
 
             shellServer = new ShellServerImpl(options);
-            BuiltinCommandPack builtinCommands = new BuiltinCommandPack();
+
+            List<String> disabledCommands = new ArrayList<String>();
+            if (configure.getDisabledCommands() != null) {
+                String[] strings = StringUtils.tokenizeToStringArray(configure.getDisabledCommands(), ",");
+                if (strings != null) {
+                    disabledCommands.addAll(Arrays.asList(strings));
+                }
+            }
+            BuiltinCommandPack builtinCommands = new BuiltinCommandPack(disabledCommands);
             List<CommandResolver> resolvers = new ArrayList<CommandResolver>();
             resolvers.add(builtinCommands);
 
@@ -653,4 +669,7 @@ public class ArthasBootstrap {
         return securityAuthenticator;
     }
 
+    public Configure getConfigure() {
+        return configure;
+    }
 }

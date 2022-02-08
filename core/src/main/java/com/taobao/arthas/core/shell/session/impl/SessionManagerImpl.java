@@ -71,6 +71,22 @@ public class SessionManagerImpl implements SessionManager {
 
     @Override
     public Session removeSession(String sessionId) {
+        Session session = sessions.get(sessionId);
+        if (session == null) {
+            return null;
+        }
+
+        //interrupt foreground job
+        Job job = session.getForegroundJob();
+        if (job != null) {
+            job.interrupt();
+        }
+
+        SharingResultDistributor resultDistributor = session.getResultDistributor();
+        if (resultDistributor != null) {
+            resultDistributor.close();
+        }
+
         return sessions.remove(sessionId);
     }
 
@@ -92,7 +108,6 @@ public class SessionManagerImpl implements SessionManager {
             SharingResultDistributor resultDistributor = session.getResultDistributor();
             if (resultDistributor != null) {
                 resultDistributor.appendResult(new MessageModel("arthas server is going to shutdown."));
-                resultDistributor.close();
             }
             logger.info("Removing session before shutdown: {}, last access time: {}", session.getSessionId(), session.getLastAccessTime());
             this.removeSession(session.getSessionId());
@@ -158,9 +173,8 @@ public class SessionManagerImpl implements SessionManager {
      */
     public void evictConsumers(Session session) {
         SharingResultDistributor distributor = session.getResultDistributor();
-        if (distributor != null && distributor instanceof SharingResultDistributor) {
-            SharingResultDistributor sharingResultDistributor = (SharingResultDistributor) distributor;
-            List<ResultConsumer> consumers = sharingResultDistributor.getConsumers();
+        if (distributor != null) {
+            List<ResultConsumer> consumers = distributor.getConsumers();
             //remove inactive consumer from session directly
             long now = System.currentTimeMillis();
             for (ResultConsumer consumer : consumers) {
@@ -170,7 +184,7 @@ public class SessionManagerImpl implements SessionManager {
                     logger.info("Removing inactive consumer from session, sessionId: {}, consumerId: {}, inactive duration: {}",
                             session.getSessionId(), consumer.getConsumerId(), inactiveTime);
                     consumer.appendResult(new MessageModel("consumer is inactive for a while, please refresh the page."));
-                    sharingResultDistributor.removeConsumer(consumer);
+                    distributor.removeConsumer(consumer);
                 }
             }
         }

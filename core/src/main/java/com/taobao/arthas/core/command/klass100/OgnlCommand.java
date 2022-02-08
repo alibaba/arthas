@@ -30,7 +30,7 @@ import com.taobao.middleware.cli.annotations.Summary;
 @Name("ognl")
 @Summary("Execute ognl expression.")
 @Description(Constants.EXAMPLE
-                + "  ognl '@java.lang.System@out.println(\"hello\")' \n"
+                + "  ognl '@java.lang.System@out.println(\"hello \\u4e2d\\u6587\")' \n"
                 + "  ognl -x 2 '@Singleton@getInstance()' \n"
                 + "  ognl '@Demo@staticFiled' \n"
                 + "  ognl '#value1=@System@getProperty(\"java.home\"), #value2=@System@getProperty(\"java.runtime.name\"), {#value1, #value2}'\n"

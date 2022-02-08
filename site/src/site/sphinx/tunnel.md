@@ -8,8 +8,9 @@ Arthas Tunnel
 在这种情况下，可以使用Arthas Tunnel Server/Client。
 
 参考: 
-* [Web Console](web-console.md)
-* [Arthas Spring Boot Starter](spring-boot-starter.md)
+
+* 1: [Web Console](web-console.md)
+* 2: [Arthas Spring Boot Starter](spring-boot-starter.md)
 
 ### 下载部署arthas tunnel server
 
@@ -104,11 +105,53 @@ Tunnel server会以`_`做分隔符，提取出`appName`，方便按应用进行�
 
 > 另外，也可以在解压的arthas目录下的 `arthas.properties`，或者在spring boot应用的`application.properties`里配置`appName`。
 
+### Tunnel Server的管理页面
 
+在本地启动tunnel-server，然后使用`as.sh` attach，并且指定应用名`--app-name test`：
+
+```
+$ as.sh --tunnel-server 'ws://127.0.0.1:7777/ws' --app-name test
+telnet connecting to arthas server... current timestamp is 1627539688
+Trying 127.0.0.1...
+Connected to 127.0.0.1.
+Escape character is '^]'.
+  ,---.  ,------. ,--------.,--.  ,--.  ,---.   ,---.
+ /  O  \ |  .--. ''--.  .--'|  '--'  | /  O  \ '   .-'
+|  .-.  ||  '--'.'   |  |   |  .--.  ||  .-.  |`.  `-.
+|  | |  ||  |\  \    |  |   |  |  |  ||  | |  |.-'    |
+`--' `--'`--' '--'   `--'   `--'  `--'`--' `--'`-----'
+
+
+wiki       https://arthas.aliyun.com/doc
+tutorials  https://arthas.aliyun.com/doc/arthas-tutorials.html
+version    3.5.3
+main_class demo.MathGame
+pid        65825
+time       2021-07-29 14:21:29
+id         test_PE3LZO9NA9ENJYTPGL9L
+```
+
+然后访问 tunnel-server，可以看到所有连接的应用列表：
+
+[http://localhost:8080/apps.html](http://localhost:8080/apps.html) 
+
+![](_static/tunnel-server-apps.png)
+
+再打开详情，则可以看到连接的所有agent列表：
+
+[http://localhost:8080/agents.html?app=test](http://localhost:8080/agents.html?app=test)
+
+![](_static/tunnel-server-agents.png)
+
+
+### 权限管理
+
+目前tunnel server没有专门的权限管理，用户需要自行开发，对app name鉴权。
 ### 集群方式管理
 
 如果希望部署多台 tunnel server，可以通过nginx做转发，redis来保存agent信息。
 
+* nginx需要配置sticky session，保证用户web socket连接到同一个后端tunnel server上。简单的配置方式是用`ip_hash`。
 
 ### Arthas tunnel server的工作原理
 

@@ -2,7 +2,7 @@ package com.taobao.arthas.core.command.basic1000;
 
 import java.lang.management.ManagementFactory;
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import com.alibaba.arthas.deps.org.slf4j.Logger;
@@ -29,10 +29,16 @@ import com.taobao.middleware.cli.annotations.Summary;
  * @author hengyunabc 2019-09-02
  *
  */
+// @formatter:off
 @Name("vmoption")
 @Summary("Display, and update the vm diagnostic options.")
-@Description("\nExamples:\n" + "  vmoption\n" + "  vmoption PrintGCDetails\n" + "  vmoption PrintGCDetails true\n"
-                + Constants.WIKI + Constants.WIKI_HOME + "vmoption")
+@Description("\nExamples:\n" + 
+        "  vmoption\n" + 
+        "  vmoption PrintGC\n" + 
+        "  vmoption PrintGC true\n" + 
+        "  vmoption PrintGCDetails true\n" + 
+        Constants.WIKI + Constants.WIKI_HOME + "vmoption")
+//@formatter:on
 public class VMOptionCommand extends AnnotatedCommand {
     private static final Logger logger = LoggerFactory.getLogger(VMOptionCommand.class);
 
@@ -71,7 +77,7 @@ public class VMOptionCommand extends AnnotatedCommand {
                     process.end(-1, "In order to change the system properties, you must specify the property value.");
                     return;
                 } else {
-                    process.appendResult(new VMOptionModel(Arrays.asList(option)));
+                    process.appendResult(new VMOptionModel(Collections.singletonList(option)));
                 }
             } else {
                 VMOption vmOption = hotSpotDiagnosticMXBean.getVMOption(name);

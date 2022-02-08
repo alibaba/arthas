@@ -10,7 +10,7 @@ java -jar math-game.jar
 
 `math-game`是一个简单的程序，每隔一秒生成一个随机数，再执行质因数分解，并打印出分解结果。
 
-`math-game`源代码：[查看](https://github.com/alibaba/arthas/blob/master/demo/src/main/java/demo/MathGame.java)
+`math-game`源代码：[查看](https://github.com/alibaba/arthas/blob/master/math-game/src/main/java/demo/MathGame.java)
 
 
 ## 2. 启动arthas

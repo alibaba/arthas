@@ -136,7 +136,7 @@ public class ClassLoaderCommand extends AnnotatedCommand {
                     break;
                 }
             }
-        } else if (targetClassLoader == null && classLoaderClass != null) {
+        } else if (classLoaderClass != null) {
             List<ClassLoader> matchedClassLoaders = ClassLoaderUtils.getClassLoaderByClassName(inst, classLoaderClass);
             if (matchedClassLoaders.size() == 1) {
                 targetClassLoader = matchedClassLoaders.get(0);
@@ -627,7 +627,7 @@ public class ClassLoaderCommand extends AnnotatedCommand {
         }
     }
 
-    private class ClassLoaderInterruptHandler implements Handler<Void> {
+    private static class ClassLoaderInterruptHandler implements Handler<Void> {
 
         private ClassLoaderCommand command;
 

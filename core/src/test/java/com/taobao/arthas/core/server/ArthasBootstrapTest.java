@@ -13,6 +13,7 @@ import org.mockito.internal.util.reflection.FieldSetter;
 import com.taobao.arthas.common.JavaVersionUtils;
 import com.taobao.arthas.core.bytecode.TestHelper;
 import com.taobao.arthas.core.config.Configure;
+import com.taobao.arthas.core.env.ArthasEnvironment;
 
 import net.bytebuddy.agent.ByteBuddyAgent;
 
@@ -59,5 +60,44 @@ public class ArthasBootstrapTest {
 
         System.err.println(loadClass);
 
+    }
+
+    @Test
+    public void testConfigLocationNull() throws Exception {
+        ArthasEnvironment arthasEnvironment = new ArthasEnvironment();
+        String location = ArthasBootstrap.reslove(arthasEnvironment, ArthasBootstrap.CONFIG_LOCATION_PROPERTY, null);
+        assertThat(location).isEqualTo(null);
+    }
+
+    @Test
+    public void testConfigLocation() throws Exception {
+        ArthasEnvironment arthasEnvironment = new ArthasEnvironment();
+
+        System.setProperty("hhhh", "fff");
+        System.setProperty(ArthasBootstrap.CONFIG_LOCATION_PROPERTY, "test${hhhh}");
+
+        String location = ArthasBootstrap.reslove(arthasEnvironment, ArthasBootstrap.CONFIG_LOCATION_PROPERTY, null);
+        System.clearProperty("hhhh");
+        System.clearProperty(ArthasBootstrap.CONFIG_LOCATION_PROPERTY);
+
+        assertThat(location).isEqualTo("test" + "fff");
+    }
+
+    @Test
+    public void testConfigNameDefault() throws Exception {
+        ArthasEnvironment arthasEnvironment = new ArthasEnvironment();
+
+        String configName = ArthasBootstrap.reslove(arthasEnvironment, ArthasBootstrap.CONFIG_NAME_PROPERTY, "arthas");
+        assertThat(configName).isEqualTo("arthas");
+    }
+
+    @Test
+    public void testConfigName() throws Exception {
+        ArthasEnvironment arthasEnvironment = new ArthasEnvironment();
+
+        System.setProperty(ArthasBootstrap.CONFIG_NAME_PROPERTY, "testName");
+        String configName = ArthasBootstrap.reslove(arthasEnvironment, ArthasBootstrap.CONFIG_NAME_PROPERTY, "arthas");
+        System.clearProperty(ArthasBootstrap.CONFIG_NAME_PROPERTY);
+        assertThat(configName).isEqualTo("testName");
     }
 }

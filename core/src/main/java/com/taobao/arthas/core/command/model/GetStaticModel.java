@@ -1,7 +1,6 @@
 package com.taobao.arthas.core.command.model;
 
 import java.util.Collection;
-import java.util.List;
 
 /**
  * Data model of GetStaticCommand
