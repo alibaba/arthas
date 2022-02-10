@@ -66,6 +66,10 @@
                                     <pattern>io.netty</pattern>
                                     <shadedPattern>${arthas.deps.package}.io.netty</shadedPattern>
                                 </relocation>
+                                <relocation>
+                                    <pattern>com.alibaba.fastjson</pattern>
+                                    <shadedPattern>${arthas.deps.package}.com.alibaba.fastjson</shadedPattern>
+                                </relocation>
                             </relocations>
                             <filters>
                                 <filter>
