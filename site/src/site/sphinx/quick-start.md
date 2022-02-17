@@ -189,7 +189,7 @@ Affect(row-cnt:1) cost in 970 ms.
 
 ## 6. watch
 
-通过[watch](watch.md)命令来查看`demo.MathGame#primeFactors`函数的返回值：
+通过[watch](watch.md)命令来查看`demo.MathGame primeFactors returnObj`函数的返回值：
 
 ```bash
 $ watch demo.MathGame primeFactors returnObj
