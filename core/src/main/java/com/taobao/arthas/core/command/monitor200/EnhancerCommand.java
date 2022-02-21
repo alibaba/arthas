@@ -183,8 +183,9 @@ public abstract class EnhancerCommand extends AnnotatedCommand {
                         + "1. Execute `" + smCommand + "` to make sure the method you are tracing actually exists (it might be in your parent class).\n"
                         + "2. Execute `" + optionsCommand + "`, if you want to enhance the classes under the `" + javaPackage + "` package.\n"
                         + "3. Execute `" + resetCommand + "` and try again, your method body might be too large.\n"
-                        + "4. Check arthas log: " + logStr + "\n"
-                        + "5. Visit " + issueStr + " for more details.";
+                        + "4. Match the constructor, use `<init>`, for example: `watch demo.MathGame <init>`\n"
+                        + "5. Check arthas log: " + logStr + "\n"
+                        + "6. Visit " + issueStr + " for more details.";
                 process.end(-1, msg);
                 return;
             }
