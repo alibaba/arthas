@@ -92,7 +92,7 @@ function initXterm (cols, rows) {
     xterm = new Terminal({
         cols: cols,
         rows: rows,
-        screenReaderMode: true,
+        screenReaderMode: false,
         rendererType: 'canvas',
         convertEol: true
     });
@@ -142,7 +142,7 @@ function startConnect (silent) {
         ws.onmessage = function (event) {
             if (event.type === 'message') {
                 var data = event.data;
-                xterm.write(data);
+                    xterm.write(data);
             }
         };
         xterm.open(document.getElementById('terminal'));
