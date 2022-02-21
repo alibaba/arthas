@@ -37,6 +37,9 @@ public class RedisTunnelClusterStore implements TunnelClusterStore {
         try {
             ValueOperations<String, String> opsForValue = redisTemplate.opsForValue();
             String infoStr = opsForValue.get(prefix + agentId);
+            if (infoStr == null) {
+                throw new IllegalArgumentException("can not find info for agentId: " + agentId);
+            }
             AgentClusterInfo info = MAPPER.readValue(infoStr, AgentClusterInfo.class);
             return info;
         } catch (Throwable e) {
