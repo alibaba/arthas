@@ -10,7 +10,7 @@
 **/*.iml
 /nb-configuration.xml
 **/target
-core/src/main/resources/com/taobao/arthas/core/res/version
+#core/src/main/resources/com/taobao/arthas/core/res/version
 **/*.orig
 
 site/src/site/sphinx/_build

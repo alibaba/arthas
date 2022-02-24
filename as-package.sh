@@ -17,9 +17,10 @@ DATE=$(date '+%Y%m%d%H%M%S')
 
 ARTHAS_VERSION="${CUR_VERSION}.${DATE}"
 
+# add version file temporarily
 echo "${ARTHAS_VERSION}" > $DIR/core/src/main/resources/com/taobao/arthas/core/res/version
 
-# define newset arthas lib home
+# define newest arthas lib home
 NEWEST_ARTHAS_LIB_HOME=${HOME}/.arthas/lib/${ARTHAS_VERSION}/arthas
 
 
@@ -36,7 +37,8 @@ exit_on_err()
 "$DIR/mvnw" clean package -Dmaven.test.skip=true -DskipTests=true -Dmaven.javadoc.skip=true -f $DIR/pom.xml \
 || exit_on_err 1 "package arthas failed."
 
-rm -r "$DIR/core/src/main/resources/com/taobao/arthas/core/res/version"
+# restore version file
+echo '${project.version}' > "$DIR/core/src/main/resources/com/taobao/arthas/core/res/version"
 
 packaging_bin_path=$(ls "${DIR}"/packaging/target/arthas-bin.zip)
 
