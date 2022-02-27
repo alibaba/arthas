@@ -432,6 +432,7 @@ Welcome to register the company name in this issue: https://github.com/alibaba/a
 ![百度凤巢](static/baidufengchao.png)
 ![有赞](static/youzan.png)
 ![科大讯飞](static/iflytek.png)
+![智联招聘](static/zhaopin.png)
 
 ### Derivative Projects
 
