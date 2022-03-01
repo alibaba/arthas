@@ -97,7 +97,7 @@
             <dependency>
                 <groupId>org.benf</groupId>
                 <artifactId>cfr</artifactId>
-                <version>0.151</version>
+                <version>0.152</version>
             </dependency>
             <dependency>
                 <groupId>com.alibaba.middleware</groupId>
