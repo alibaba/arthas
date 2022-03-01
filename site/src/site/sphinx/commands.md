@@ -4,6 +4,7 @@
 * [dashboard](dashboard.md)
 * [thread](thread.md)
 * [jvm](jvm.md)
+* [memory](memory.md)
 * [sysprop](sysprop.md)
 * [sysenv](sysenv.md)
 * [vmoption](vmoption.md)

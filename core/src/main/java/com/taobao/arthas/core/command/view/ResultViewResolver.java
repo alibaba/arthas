@@ -67,6 +67,7 @@ public class ResultViewResolver {
             //monitor2000
             registerView(DashboardView.class);
             registerView(JvmView.class);
+            registerView(MemoryView.class);
             registerView(MBeanView.class);
             registerView(PerfCounterView.class);
             registerView(ThreadView.class);

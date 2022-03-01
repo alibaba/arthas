@@ -977,4 +977,8 @@ public abstract class StringUtils {
         return new String[] { invokeInfo.substring(0, index1), invokeInfo.substring(index1 + 1, index2),
                 invokeInfo.substring(index2 + 1, index3), invokeInfo.substring(index3 + 1) };
     }
+
+    public static String beautifyName(String name) {
+        return name.replace(' ', '_').toLowerCase();
+    }
 }
