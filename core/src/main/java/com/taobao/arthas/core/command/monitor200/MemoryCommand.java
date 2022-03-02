@@ -49,9 +49,11 @@ public class MemoryCommand extends AnnotatedCommand {
         heapMemEntries.add(createMemoryEntryVO(TYPE_HEAP, TYPE_HEAP, heapMemoryUsage));
         for (MemoryPoolMXBean poolMXBean : memoryPoolMXBeans) {
             if (MemoryType.HEAP.equals(poolMXBean.getType())) {
-                MemoryUsage usage = poolMXBean.getUsage();
-                String poolName = StringUtils.beautifyName(poolMXBean.getName());
-                heapMemEntries.add(createMemoryEntryVO(TYPE_HEAP, poolName, usage));
+                MemoryUsage usage = getUsage(poolMXBean);
+                if (usage != null) {
+                    String poolName = StringUtils.beautifyName(poolMXBean.getName());
+                    heapMemEntries.add(createMemoryEntryVO(TYPE_HEAP, poolName, usage));
+                }
             }
         }
         memoryInfoMap.put(TYPE_HEAP, heapMemEntries);
@@ -62,15 +64,27 @@ public class MemoryCommand extends AnnotatedCommand {
         nonheapMemEntries.add(createMemoryEntryVO(TYPE_NON_HEAP, TYPE_NON_HEAP, nonHeapMemoryUsage));
         for (MemoryPoolMXBean poolMXBean : memoryPoolMXBeans) {
             if (MemoryType.NON_HEAP.equals(poolMXBean.getType())) {
-                MemoryUsage usage = poolMXBean.getUsage();
-                String poolName = StringUtils.beautifyName(poolMXBean.getName());
-                nonheapMemEntries.add(createMemoryEntryVO(TYPE_NON_HEAP, poolName, usage));
+                MemoryUsage usage = getUsage(poolMXBean);
+                if (usage != null) {
+                    String poolName = StringUtils.beautifyName(poolMXBean.getName());
+                    nonheapMemEntries.add(createMemoryEntryVO(TYPE_NON_HEAP, poolName, usage));
+                }
             }
         }
         memoryInfoMap.put(TYPE_NON_HEAP, nonheapMemEntries);
 
         addBufferPoolMemoryInfo(memoryInfoMap);
         return memoryInfoMap;
+    }
+
+    private static MemoryUsage getUsage(MemoryPoolMXBean memoryPoolMXBean) {
+        try {
+            return memoryPoolMXBean.getUsage();
+        } catch (InternalError e) {
+            // Defensive for potential InternalError with some specific JVM options. Based on its Javadoc,
+            // MemoryPoolMXBean.getUsage() should return null, not throwing InternalError, so it seems to be a JVM bug.
+            return null;
+        }
     }
 
     private static void addBufferPoolMemoryInfo(Map<String, List<MemoryEntryVO>> memoryInfoMap) {
