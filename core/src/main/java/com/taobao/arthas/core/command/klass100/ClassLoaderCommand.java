@@ -24,6 +24,8 @@ import com.taobao.middleware.cli.annotations.Summary;
 import java.lang.instrument.Instrumentation;
 import java.net.URL;
 import java.net.URLClassLoader;
+import java.security.CodeSource;
+import java.security.ProtectionDomain;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -51,6 +53,7 @@ import java.util.TreeSet;
         "  classloader -a\n" +
         "  classloader -a -c 327a647b\n" +
         "  classloader -c 659e0bfd --load demo.MathGame\n" +
+        "  classloader -u      # url statistics\n" +
         Constants.WIKI + Constants.WIKI_HOME + "classloader")
 public class ClassLoaderCommand extends AnnotatedCommand {
 
@@ -62,6 +65,8 @@ public class ClassLoaderCommand extends AnnotatedCommand {
     private String resource;
     private boolean includeReflectionClassLoader = true;
     private boolean listClassLoader = false;
+
+    private boolean urlStat = false;
 
     private String loadClass = null;
 
@@ -115,6 +120,12 @@ public class ClassLoaderCommand extends AnnotatedCommand {
         this.loadClass = className;
     }
 
+    @Option(shortName = "u", longName = "url-stat", flag = true)
+    @Description("Display classloader url statistics")
+    public void setUrlStat(boolean urlStat) {
+        this.urlStat = urlStat;
+    }
+
     @Override
     public void process(CommandProcess process) {
         // ctrl-C support
@@ -123,6 +134,15 @@ public class ClassLoaderCommand extends AnnotatedCommand {
         boolean classLoaderSpecified = false;
 
         Instrumentation inst = process.session().getInstrumentation();
+
+        if (urlStat) {
+            Map<ClassLoaderVO, ClassLoaderUrlStat> urlStats = this.urlStats(inst);
+            ClassLoaderModel model = new ClassLoaderModel();
+            model.setUrlStats(urlStats);
+            process.appendResult(model);
+            process.end();
+            return;
+        }
         
         if (hashCode != null || classLoaderClass != null) {
             classLoaderSpecified = true;
@@ -396,6 +416,42 @@ public class ClassLoaderCommand extends AnnotatedCommand {
         }
         return urlStrs;
     }
+    
+    private Map<ClassLoaderVO, ClassLoaderUrlStat> urlStats(Instrumentation inst) {
+        Map<ClassLoaderVO, ClassLoaderUrlStat> urlStats = new HashMap<ClassLoaderVO, ClassLoaderUrlStat>();
+        Map<ClassLoader, Set<String>> usedUrlsMap = new HashMap<ClassLoader, Set<String>>();
+        for (Class<?> clazz : inst.getAllLoadedClasses()) {
+            ClassLoader classLoader = clazz.getClassLoader();
+            if (classLoader != null) {
+                ProtectionDomain protectionDomain = clazz.getProtectionDomain();
+                CodeSource codeSource = protectionDomain.getCodeSource();
+                if (codeSource != null) {
+                    URL location = codeSource.getLocation();
+                    if (location != null) {
+                        Set<String> urls = usedUrlsMap.get(classLoader);
+                        if (urls == null) {
+                            urls = new HashSet<String>();
+                            usedUrlsMap.put(classLoader, urls);
+                        }
+                        urls.add(location.toString());
+                    }
+                }
+            }
+        }
+        for (Entry<ClassLoader, Set<String>> entry : usedUrlsMap.entrySet()) {
+            ClassLoader loader = entry.getKey();
+            Set<String> usedUrls = entry.getValue();
+            List<String> allUrls = getClassLoaderUrls(loader);
+            List<String> unusedUrls = new ArrayList<String>();
+            for (String url : allUrls) {
+                if (!usedUrls.contains(url)) {
+                    unusedUrls.add(url);
+                }
+            }
+            urlStats.put(ClassUtils.createClassLoaderVO(loader), new ClassLoaderUrlStat(usedUrls, unusedUrls));
+        }
+        return urlStats;
+    }
 
     // 以树状列出ClassLoader的继承结构
     private static List<ClassLoaderVO> processClassLoaderTree(List<ClassLoaderVO> classLoaders) {
@@ -580,6 +636,36 @@ public class ClassLoaderCommand extends AnnotatedCommand {
         @Override
         public boolean accept(ClassLoader classLoader) {
             return !REFLECTION_CLASSLOADERS.contains(classLoader.getClass().getName());
+        }
+    }
+
+    public static class ClassLoaderUrlStat {
+        private Collection<String> usedUrls;
+        private Collection<String> unUsedUrls;
+
+        public ClassLoaderUrlStat() {
+        }
+
+        public ClassLoaderUrlStat(Collection<String> usedUrls, Collection<String> unUsedUrls) {
+            super();
+            this.usedUrls = usedUrls;
+            this.unUsedUrls = unUsedUrls;
+        }
+
+        public Collection<String> getUsedUrls() {
+            return usedUrls;
+        }
+
+        public void setUsedUrls(Collection<String> usedUrls) {
+            this.usedUrls = usedUrls;
+        }
+
+        public Collection<String> getUnUsedUrls() {
+            return unUsedUrls;
+        }
+
+        public void setUnUsedUrls(Collection<String> unUsedUrls) {
+            this.unUsedUrls = unUsedUrls;
         }
     }
 
