@@ -1,14 +1,14 @@
 
 
 <!DOCTYPE html>
-<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
-<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<!--[if IE 8]><html class="no-js lt-ie9" lang="zh-CN" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="zh-CN" > <!--<![endif]-->
 <head>
   <meta charset="utf-8">
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>All Commands &mdash; Arthas 3.5.6 documentation</title>
+  <title>memory &mdash; Arthas 3.5.6 文档</title>
   
 
   
@@ -27,6 +27,7 @@
         <script type="text/javascript" src="_static/underscore.js"></script>
         <script type="text/javascript" src="_static/doctools.js"></script>
         <script type="text/javascript" src="_static/language_data.js"></script>
+        <script type="text/javascript" src="_static/translations.js"></script>
     
     <script type="text/javascript" src="_static/js/theme.js"></script>
 
@@ -36,10 +37,10 @@
   <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
   <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <link rel="stylesheet" href="_static/overrides.css" type="text/css" />
-    <link rel="index" title="Index" href="genindex.html" />
-    <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="dashboard" href="dashboard.html" />
-    <link rel="prev" title="Batch Processing" href="batch-support.html" />
+    <link rel="index" title="索引" href="genindex.html" />
+    <link rel="search" title="搜索" href="search.html" />
+    <link rel="next" title="sysprop" href="sysprop.html" />
+    <link rel="prev" title="jvm" href="jvm.html" />
 <script>
   if (window.location.href.startsWith("https://alibaba.github.io/arthas/")) {
       window.location.href = "https://arthas.aliyun.com/doc/" + window.location.href.substr("https://alibaba.github.io/arthas/".length);
@@ -98,17 +99,22 @@
             
             
               <ul class="current">
-<li class="toctree-l1"><a class="reference external" href="https://arthas.aliyun.com/">Home</a></li>
-<li class="toctree-l1"><a class="reference external" href="https://arthas.aliyun.com/doc/arthas-tutorials.html?language=en">Online tutorials(Recommend)</a></li>
-<li class="toctree-l1"><a class="reference internal" href="install-detail.html">Installation</a></li>
-<li class="toctree-l1"><a class="reference internal" href="download.html">Download</a></li>
-<li class="toctree-l1"><a class="reference internal" href="quick-start.html">Quick start</a></li>
-<li class="toctree-l1"><a class="reference internal" href="advanced-use.html">Advanced usage</a></li>
-<li class="toctree-l1 current"><a class="current reference internal" href="#">Commands</a><ul>
+<li class="toctree-l1"><a class="reference external" href="https://arthas.aliyun.com/">首页</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://arthas.aliyun.com/doc/en/">English Docs</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://arthas.aliyun.com/doc/arthas-tutorials.html?language=cn">在线教程(katacoda)</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://start.aliyun.com/handson-lab?category=arthas">在线教程(阿里云)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="install-detail.html">安装</a></li>
+<li class="toctree-l1"><a class="reference internal" href="download.html">下载</a></li>
+<li class="toctree-l1"><a class="reference internal" href="quick-start.html">快速入门</a></li>
+<li class="toctree-l1"><a class="reference internal" href="advanced-use.html">进阶使用</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="commands.html">命令列表</a><ul class="current">
 <li class="toctree-l2"><a class="reference internal" href="dashboard.html">dashboard</a></li>
 <li class="toctree-l2"><a class="reference internal" href="thread.html">thread</a></li>
 <li class="toctree-l2"><a class="reference internal" href="jvm.html">jvm</a></li>
-<li class="toctree-l2"><a class="reference internal" href="memory.html">memory</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">memory</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id1">使用参考</a></li>
+</ul>
+</li>
 <li class="toctree-l2"><a class="reference internal" href="sysprop.html">sysprop</a></li>
 <li class="toctree-l2"><a class="reference internal" href="sysenv.html">sysenv</a></li>
 <li class="toctree-l2"><a class="reference internal" href="vmoption.html">vmoption</a></li>
@@ -141,7 +147,7 @@
 <li class="toctree-l2"><a class="reference internal" href="pwd.html">pwd</a></li>
 <li class="toctree-l2"><a class="reference internal" href="auth.html">auth</a></li>
 <li class="toctree-l2"><a class="reference internal" href="options.html">options</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#basic-arthas-commands">Basic Arthas Commands</a></li>
+<li class="toctree-l2"><a class="reference internal" href="commands.html#arthas">Arthas 基础命令</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="web-console.html">WebConsole</a></li>
@@ -149,13 +155,13 @@
 <li class="toctree-l1"><a class="reference internal" href="http-api.html">Http API</a></li>
 <li class="toctree-l1"><a class="reference internal" href="docker.html">Docker</a></li>
 <li class="toctree-l1"><a class="reference internal" href="spring-boot-starter.html">Arthas Spring Boot Starter</a></li>
-<li class="toctree-l1"><a class="reference internal" href="idea-plugin.html">IDEA Plugin</a></li>
-<li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas/issues?q=label%3Auser-case">User cases</a></li>
-<li class="toctree-l1"><a class="reference internal" href="faq.html">FAQ</a></li>
+<li class="toctree-l1"><a class="reference internal" href="idea-plugin.html">IDEA 插件</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas/issues?q=label%3Auser-case">用户案例</a></li>
+<li class="toctree-l1"><a class="reference internal" href="faq.html">FAQ/常见问题</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas">Star me at GitHub</a></li>
-<li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas/blob/master/CONTRIBUTING.md#">Compile and debug/CONTRIBUTING</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas/blob/master/CONTRIBUTING.md#">编译调试/参与贡献</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas/releases">Release Notes</a></li>
-<li class="toctree-l1"><a class="reference internal" href="contact-us.html">Contact us</a></li>
+<li class="toctree-l1"><a class="reference internal" href="contact-us.html">QQ群/钉钉群</a></li>
 </ul>
 
             
@@ -201,14 +207,16 @@
     
       <li><a href="index.html">Docs</a> &raquo;</li>
         
-      <li>All Commands</li>
+          <li><a href="commands.html">命令列表</a> &raquo;</li>
+        
+      <li>memory</li>
     
     
       <li class="wy-breadcrumbs-aside">
         
             
             
-              <a href="https://github.com/alibaba/arthas/blob/master/site/src/site/sphinx/en/commands.md" class="fa fa-github"> Edit on GitHub</a>
+              <a href="https://github.com/alibaba/arthas/blob/master/site/src/site/sphinx/memory.md" class="fa fa-github"> Edit on GitHub</a>
             
           
         
@@ -222,61 +230,26 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
             
-  <div class="section" id="all-commands">
-<h1>All Commands<a class="headerlink" href="#all-commands" title="Permalink to this headline">¶</a></h1>
-<div class="toctree-wrapper compound">
-<ul>
-<li class="toctree-l1"><a class="reference internal" href="dashboard.html">dashboard</a></li>
-<li class="toctree-l1"><a class="reference internal" href="thread.html">thread</a></li>
-<li class="toctree-l1"><a class="reference internal" href="jvm.html">jvm</a></li>
-<li class="toctree-l1"><a class="reference internal" href="memory.html">memory</a></li>
-<li class="toctree-l1"><a class="reference internal" href="sysprop.html">sysprop</a></li>
-<li class="toctree-l1"><a class="reference internal" href="sysenv.html">sysenv</a></li>
-<li class="toctree-l1"><a class="reference internal" href="vmoption.html">vmoption</a></li>
-<li class="toctree-l1"><a class="reference internal" href="perfcounter.html">perfcounter</a></li>
-<li class="toctree-l1"><a class="reference internal" href="logger.html">logger</a></li>
-<li class="toctree-l1"><a class="reference internal" href="mbean.html">mbean</a></li>
-<li class="toctree-l1"><a class="reference internal" href="getstatic.html">getstatic</a></li>
-<li class="toctree-l1"><a class="reference internal" href="ognl.html">ognl</a></li>
-<li class="toctree-l1"><a class="reference internal" href="sc.html">sc</a></li>
-<li class="toctree-l1"><a class="reference internal" href="sm.html">sm</a></li>
-<li class="toctree-l1"><a class="reference internal" href="dump.html">dump</a></li>
-<li class="toctree-l1"><a class="reference internal" href="heapdump.html">heapdump</a></li>
-<li class="toctree-l1"><a class="reference internal" href="vmtool.html">vmtool</a></li>
-<li class="toctree-l1"><a class="reference internal" href="jad.html">jad</a></li>
-<li class="toctree-l1"><a class="reference internal" href="classloader.html">classloader</a></li>
-<li class="toctree-l1"><a class="reference internal" href="mc.html">mc</a></li>
-<li class="toctree-l1"><a class="reference internal" href="retransform.html">retransform</a></li>
-<li class="toctree-l1"><a class="reference internal" href="redefine.html">redefine</a></li>
-<li class="toctree-l1"><a class="reference internal" href="monitor.html">monitor</a></li>
-<li class="toctree-l1"><a class="reference internal" href="watch.html">watch</a></li>
-<li class="toctree-l1"><a class="reference internal" href="trace.html">trace</a></li>
-<li class="toctree-l1"><a class="reference internal" href="stack.html">stack</a></li>
-<li class="toctree-l1"><a class="reference internal" href="tt.html">tt</a></li>
-<li class="toctree-l1"><a class="reference internal" href="profiler.html">profiler</a></li>
-<li class="toctree-l1"><a class="reference internal" href="cat.html">cat</a></li>
-<li class="toctree-l1"><a class="reference internal" href="echo.html">echo</a></li>
-<li class="toctree-l1"><a class="reference internal" href="grep.html">grep</a></li>
-<li class="toctree-l1"><a class="reference internal" href="base64.html">base64</a></li>
-<li class="toctree-l1"><a class="reference internal" href="tee.html">tee</a></li>
-<li class="toctree-l1"><a class="reference internal" href="pwd.html">pwd</a></li>
-<li class="toctree-l1"><a class="reference internal" href="auth.html">auth</a></li>
-<li class="toctree-l1"><a class="reference internal" href="options.html">options</a></li>
-</ul>
+  <div class="section" id="memory">
+<h1>memory<a class="headerlink" href="#memory" title="永久链接至标题">¶</a></h1>
+<p>查看JVM 内存信息。</p>
+<div class="section" id="id1">
+<h2>使用参考<a class="headerlink" href="#id1" title="永久链接至标题">¶</a></h2>
+<div class="highlight-default notranslate"><pre class="literal-block">$ memory
+Memory                           used      total      max        usage
+heap                             32M       256M       4096M      0.79%
+g1_eden_space                    11M       68M        -1         16.18%
+g1_old_gen                       17M       184M       4096M      0.43%
+g1_survivor_space                4M        4M         -1         100.00%
+nonheap                          35M       39M        -1         89.55%
+codeheap_&#x27;non-nmethods&#x27;          1M        2M         5M         20.53%
+metaspace                        26M       27M        -1         96.88%
+codeheap_&#x27;profiled_nmethods&#x27;     4M        4M         117M       3.57%
+compressed_class_space           2M        3M         1024M      0.29%
+codeheap_&#x27;non-profiled_nmethods&#x27; 685K      2496K      120032K    0.57%
+mapped                           0K        0K         -          0.00%
+direct                           48M       48M        -          100.00%</pre>
 </div>
-<div class="section" id="basic-arthas-commands">
-<h2>Basic Arthas Commands<a class="headerlink" href="#basic-arthas-commands" title="Permalink to this headline">¶</a></h2>
-<ul class="simple">
-<li><p>help - examines help information</p></li>
-<li><p>cls - clears out the screen</p></li>
-<li><p><a class="reference internal" href="session.html"><span class="doc">session</span></a> - examines the current session</p></li>
-<li><p><a class="reference internal" href="reset.html"><span class="doc">reset</span></a> - resets enhanced classes. All enhanced classes will be reset to their original states. When Arthas server closes, all these enhanced classes will be reset too</p></li>
-<li><p>version - prints out Arthas’s version</p></li>
-<li><p>history - view command history</p></li>
-<li><p>quit - exit the current Arthas client without affecting other clients</p></li>
-<li><p>stop - terminates the Arthas server, all the Arthas clients connecting to this server will be disconnected</p></li>
-<li><p><a class="reference internal" href="keymap.html"><span class="doc">keymap</span></a> - lists all Arthas keyboard shortcuts and shortcut customizations.</p></li>
-</ul>
 </div>
 </div>
 
@@ -288,10 +261,10 @@
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="dashboard.html" class="btn btn-neutral float-right" title="dashboard" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+        <a href="sysprop.html" class="btn btn-neutral float-right" title="sysprop" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
-        <a href="batch-support.html" class="btn btn-neutral float-left" title="Batch Processing" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+        <a href="jvm.html" class="btn btn-neutral float-left" title="jvm" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
       
     </div>
   

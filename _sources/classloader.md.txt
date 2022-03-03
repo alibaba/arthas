@@ -124,3 +124,37 @@ load class success.
                      +-sun.misc.Launcher$ExtClassLoader@66350f69
  classLoaderHash   3d4eac69
 ```
+
+#### 统计ClassLoader实际使用URL和未使用的URL
+
+> 注意，基于JVM目前已加载的所有类统计，不代表`Unused URLs`可以从应用中删掉。因为可能将来需要从`Unused URLs`里加载类，或者需要加载`resources`。
+
+```
+$ classloader --url-stat
+ com.taobao.arthas.agent.ArthasClassloader@3c41660, hash:3c41660
+ Used URLs:
+ file:/Users/admin/.arthas/lib/3.5.6/arthas/arthas-core.jar
+ Unused URLs:
+
+ sun.misc.Launcher$AppClassLoader@75b84c92, hash:75b84c92
+ Used URLs:
+ file:/Users/admin/code/java/arthas/math-game/target/math-game.jar
+ file:/Users/admin/.arthas/lib/3.5.6/arthas/arthas-agent.jar
+ Unused URLs:
+
+ sun.misc.Launcher$ExtClassLoader@7f31245a, hash:7f31245a
+ Used URLs:
+ file:/tmp/jdk1.8/Contents/Home/jre/lib/ext/sunec.jar
+ file:/tmp/jdk1.8/Contents/Home/jre/lib/ext/sunjce_provider.jar
+ file:/tmp/jdk1.8/Contents/Home/jre/lib/ext/localedata.jar
+ Unused URLs:
+ file:/tmp/jdk1.8/Contents/Home/jre/lib/ext/nashorn.jar
+ file:/tmp/jdk1.8/Contents/Home/jre/lib/ext/cldrdata.jar
+ file:/tmp/jdk1.8/Contents/Home/jre/lib/ext/legacy8ujsse.jar
+ file:/tmp/jdk1.8/Contents/Home/jre/lib/ext/jfxrt.jar
+ file:/tmp/jdk1.8/Contents/Home/jre/lib/ext/dnsns.jar
+ file:/tmp/jdk1.8/Contents/Home/jre/lib/ext/openjsse.jar
+ file:/tmp/jdk1.8/Contents/Home/jre/lib/ext/sunpkcs11.jar
+ file:/tmp/jdk1.8/Contents/Home/jre/lib/ext/jaccess.jar
+ file:/tmp/jdk1.8/Contents/Home/jre/lib/ext/zipfs.jar
+```

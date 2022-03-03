@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>FAQ &mdash; Arthas 3.5.5 documentation</title>
+  <title>FAQ &mdash; Arthas 3.5.6 documentation</title>
   
 
   
@@ -73,7 +73,7 @@
             
             
               <div class="version">
-                3.5.5
+                3.5.6
               </div>
             
           
@@ -122,6 +122,7 @@
 <li class="toctree-l2"><a class="reference internal" href="#can-arthas-view-the-value-of-a-variable-in-memory">Can arthas view the value of a variable in memory?</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#how-to-filter-method-with-the-same-name">How to filter method with the same name?</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#how-to-watch-or-trace-constructor">How to watch or trace constructor?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#enter-unicode-characters">Enter Unicode characters</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#java-lang-classformaterror-null-skywalking-arthas-compatible-use">java.lang.ClassFormatError: null, skywalking arthas compatible use</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#can-i-use-arthas-offline">Can I use arthas offline?</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#attach-the-process-with-pid-1-in-docker-k8s-failed">Attach the process with pid 1 in docker/k8s failed</a></li>
@@ -256,6 +257,12 @@
 <div class="section" id="how-to-watch-or-trace-constructor">
 <h2>How to watch or trace constructor?<a class="headerlink" href="#how-to-watch-or-trace-constructor" title="Permalink to this headline">¶</a></h2>
 <div class="highlight-bash notranslate"><div class="highlight hljs"><pre class="bash">watch demo.MathGame &lt;init&gt; &#x27;{params,returnObj,throwExp}&#x27; -v</pre></div>
+</div>
+</div>
+<div class="section" id="enter-unicode-characters">
+<h2>Enter Unicode characters<a class="headerlink" href="#enter-unicode-characters" title="Permalink to this headline">¶</a></h2>
+<p>Convert Unicode characters to <code class="docutils literal notranslate"><span class="pre">\u</span></code> representation:</p>
+<div class="highlight-bash notranslate"><div class="highlight hljs"><pre class="bash">ognl &#x27;@java.lang.System@out.println(&quot;Hello \u4e2d\u6587&quot;)&#x27;</pre></div>
 </div>
 </div>
 <div class="section" id="java-lang-classformaterror-null-skywalking-arthas-compatible-use">

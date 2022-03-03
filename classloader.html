@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>classloader &mdash; Arthas 3.5.5 文档</title>
+  <title>classloader &mdash; Arthas 3.5.6 文档</title>
   
 
   
@@ -74,7 +74,7 @@
             
             
               <div class="version">
-                3.5.5
+                3.5.6
               </div>
             
           
@@ -111,6 +111,7 @@
 <li class="toctree-l2"><a class="reference internal" href="dashboard.html">dashboard</a></li>
 <li class="toctree-l2"><a class="reference internal" href="thread.html">thread</a></li>
 <li class="toctree-l2"><a class="reference internal" href="jvm.html">jvm</a></li>
+<li class="toctree-l2"><a class="reference internal" href="memory.html">memory</a></li>
 <li class="toctree-l2"><a class="reference internal" href="sysprop.html">sysprop</a></li>
 <li class="toctree-l2"><a class="reference internal" href="sysenv.html">sysenv</a></li>
 <li class="toctree-l2"><a class="reference internal" href="vmoption.html">vmoption</a></li>
@@ -134,6 +135,7 @@
 <li class="toctree-l4"><a class="reference internal" href="#urlclassloaderurls">查看URLClassLoader实际的urls</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#classloaderresource">使用ClassLoader去查找resource</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#id6">使用ClassLoader去加载类</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#classloaderurlurl">统计ClassLoader实际使用URL和未使用的URL</a></li>
 </ul>
 </li>
 </ul>
@@ -374,6 +376,40 @@ load class success.
  class-loader      +-sun.misc.Launcher$AppClassLoader@3d4eac69
                      +-sun.misc.Launcher$ExtClassLoader@66350f69
  classLoaderHash   3d4eac69</pre></div>
+</div>
+</div>
+<div class="section" id="classloaderurlurl">
+<h3>统计ClassLoader实际使用URL和未使用的URL<a class="headerlink" href="#classloaderurlurl" title="永久链接至标题">¶</a></h3>
+<blockquote>
+<div><p>注意，基于JVM目前已加载的所有类统计，不代表<code class="docutils literal notranslate"><span class="pre">Unused</span> <span class="pre">URLs</span></code>可以从应用中删掉。因为可能将来需要从<code class="docutils literal notranslate"><span class="pre">Unused</span> <span class="pre">URLs</span></code>里加载类，或者需要加载<code class="docutils literal notranslate"><span class="pre">resources</span></code>。</p>
+</div></blockquote>
+<div class="highlight-default notranslate"><pre class="literal-block">$ classloader --url-stat
+ com.taobao.arthas.agent.ArthasClassloader@3c41660, hash:3c41660
+ Used URLs:
+ file:/Users/admin/.arthas/lib/3.5.6/arthas/arthas-core.jar
+ Unused URLs:
+
+ sun.misc.Launcher$AppClassLoader@75b84c92, hash:75b84c92
+ Used URLs:
+ file:/Users/admin/code/java/arthas/math-game/target/math-game.jar
+ file:/Users/admin/.arthas/lib/3.5.6/arthas/arthas-agent.jar
+ Unused URLs:
+
+ sun.misc.Launcher$ExtClassLoader@7f31245a, hash:7f31245a
+ Used URLs:
+ file:/tmp/jdk1.8/Contents/Home/jre/lib/ext/sunec.jar
+ file:/tmp/jdk1.8/Contents/Home/jre/lib/ext/sunjce_provider.jar
+ file:/tmp/jdk1.8/Contents/Home/jre/lib/ext/localedata.jar
+ Unused URLs:
+ file:/tmp/jdk1.8/Contents/Home/jre/lib/ext/nashorn.jar
+ file:/tmp/jdk1.8/Contents/Home/jre/lib/ext/cldrdata.jar
+ file:/tmp/jdk1.8/Contents/Home/jre/lib/ext/legacy8ujsse.jar
+ file:/tmp/jdk1.8/Contents/Home/jre/lib/ext/jfxrt.jar
+ file:/tmp/jdk1.8/Contents/Home/jre/lib/ext/dnsns.jar
+ file:/tmp/jdk1.8/Contents/Home/jre/lib/ext/openjsse.jar
+ file:/tmp/jdk1.8/Contents/Home/jre/lib/ext/sunpkcs11.jar
+ file:/tmp/jdk1.8/Contents/Home/jre/lib/ext/jaccess.jar
+ file:/tmp/jdk1.8/Contents/Home/jre/lib/ext/zipfs.jar</pre>
 </div>
 </div>
 </div>
