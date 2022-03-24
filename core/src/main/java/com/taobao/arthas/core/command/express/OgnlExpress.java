@@ -8,6 +8,7 @@ import ognl.DefaultMemberAccess;
 import ognl.MemberAccess;
 import ognl.Ognl;
 import ognl.OgnlContext;
+import ognl.OgnlRuntime;
 
 /**
  * @author ralf0131 2017-01-04 14:41.
@@ -16,6 +17,7 @@ import ognl.OgnlContext;
 public class OgnlExpress implements Express {
     private static final MemberAccess MEMBER_ACCESS = new DefaultMemberAccess(true);
     private static final Logger logger = LoggerFactory.getLogger(OgnlExpress.class);
+    private static final ArthasObjectPropertyAccessor OBJECT_PROPERTY_ACCESSOR = new ArthasObjectPropertyAccessor();
 
     private Object bindObject;
     private final OgnlContext context;
@@ -25,6 +27,7 @@ public class OgnlExpress implements Express {
     }
 
     public OgnlExpress(ClassResolver classResolver) {
+        OgnlRuntime.setPropertyAccessor(Object.class, OBJECT_PROPERTY_ACCESSOR);
         context = new OgnlContext();
         context.setClassResolver(classResolver);
         // allow private field access

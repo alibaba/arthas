@@ -7,6 +7,9 @@ import com.taobao.arthas.common.JavaVersionUtils;
  * Created by vlinux on 15/6/4.
  */
 public class GlobalOptions {
+    public static final String STRICT_MESSAGE = "By default, strict mode is true, "
+            + "not allowed to set object properties. "
+            + "Want to set object properties, execute `options strict false`";
 
     /**
      * 是否支持系统类<br/>
@@ -123,4 +126,14 @@ public class GlobalOptions {
             description = "This option enables print verbose information, default value false."
     )
     public static volatile boolean verbose = false;
+
+    /**
+     * 是否打开strict 开关
+     */
+    @Option(level = 1,
+            name = "strict",
+            summary = "Option to strict mode",
+            description = STRICT_MESSAGE
+    )
+    public static volatile boolean strict = true;
 }
