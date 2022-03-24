@@ -426,7 +426,7 @@ public class Enhancer implements ClassFileTransformer {
         List<Pair<Class<?>, String>> filtedList = filter(matchingClasses);
         if (!filtedList.isEmpty()) {
             for (Pair<Class<?>, String> filted : filtedList) {
-                logger.info("ignore class: {}, reson: {}", filted.getFirst().getName(), filted.getSecond());
+                logger.info("ignore class: {}, reason: {}", filted.getFirst().getName(), filted.getSecond());
             }
         }
 
