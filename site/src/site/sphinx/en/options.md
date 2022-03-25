@@ -15,47 +15,51 @@ options
 | support-default-method  | true | whether to enable matching default method in interface. The default value is `true`. Refer to [#1105](https://github.com/alibaba/arthas/issues/1105) |
 | save-result        | false | whether to save execution result. All execution results will be saved to `~/logs/arthas-cache/result.log` when it's turned on|
 | job-timeout        | 1d    | default timeout for background jobs. Background job will be terminated once it's timed out (i.e. 1d, 2h, 3m, 25s)| print-parent-fields        | true    | This option enables print files in parent class, default value true.|
-
+| verbose       | false    | This option enables print verbose information|
+| strict       | true    | whether to enable strict mode |
 
 
 ### View all options
-
 ```bash
 $ options
- LEVEL  TYPE  NAME         VALUE  SUMMARY             DESCRIPTION
---------------------------------------------------------------------------------------------
- 0      bool  unsafe       false  Option to support   This option enables to proxy function
-        ean                       system-level class  ality of JVM classes. Due to serious
-                                                      security risk a JVM crash is possibly
-                                                       be introduced. Do not activate it un
-                                                      less you are able to manage.
- 1      bool  dump         false  Option to dump the  This option enables the enhanced clas
-        ean                        enhanced classes   ses to be dumped to external file for
-                                                       further de-compilation and analysis.
- 1      bool  batch-re-tr  true   Option to support   This options enables to reTransform c
-        ean   ansform             batch reTransform   lasses with batch mode.
-                                  Class
- 2      bool  json-format  false  Option to support   This option enables to format object
-        ean                       JSON format of obj  output with JSON when -x option selec
-                                  ect output          ted.
- 1      bool  disable-sub  false  Option to control   This option disable to include sub cl
-        ean   -class              include sub class   ass when matching class.
-                                  when class matchin
-                                  g
- 1      bool  debug-for-a  false  Option to print DE  This option enables to print DEBUG me
-        ean   sm                  BUG message if ASM  ssage of ASM for each method invocati
-                                   is involved        on.
- 1      bool  save-result  false  Option to print co  This option enables to save each comm
-        ean                       mmand's result to   and's result to log file, which path
-                                  log file            is ${user.home}/logs/arthas-cache/res
-                                                      ult.log.
- 2      Stri  job-timeout  1d     Option to job time  This option setting job timeout,The u
-        ng                        out                 nit can be d, h, m, s for day, hour,
-                                                      minute, second. 1d is one day in defa
-                                                      ult
- 1      bool  print-paren  true   Option to print al  This option enables print files in pa
-        ean   t-fields            l fileds in parent  rent class, default value true.
-                                   class
+ LEVEL  TYPE    NAME          VALUE   SUMMARY               DESCRIPTION
+-------------------------------------------------------------------------------------------------------
+ 0      boolea  unsafe        false   Option to support sy  This option enables to proxy functionality
+        n                             stem-level class       of JVM classes. Due to serious security r
+                                                            isk a JVM crash is possibly be introduced.
+                                                             Do not activate it unless you are able to
+                                                             manage.
+ 1      boolea  dump          false   Option to dump the e  This option enables the enhanced classes t
+        n                             nhanced classes       o be dumped to external file for further d
+                                                            e-compilation and analysis.
+ 1      boolea  batch-re-tra  true    Option to support ba  This options enables to reTransform classe
+        n       nsform                tch reTransform Clas  s with batch mode.
+                                      s
+ 2      boolea  json-format   false   Option to support JS  This option enables to format object outpu
+        n                             ON format of object   t with JSON when -x option selected.
+                                      output
+ 1      boolea  disable-sub-  false   Option to control in  This option disable to include sub class w
+        n       class                 clude sub class when  hen matching class.
+                                       class matching
+ 1      boolea  support-defa  true    Option to control in  This option disable to include default met
+        n       ult-method            clude default method  hod in interface when matching class.
+                                       in interface when c
+                                      lass matching
+ 1      boolea  save-result   false   Option to print comm  This option enables to save each command's
+        n                             and's result to log    result to log file, which path is ${user.
+                                      file                  home}/logs/arthas-cache/result.log.
+ 2      String  job-timeout   1d      Option to job timeou  This option setting job timeout,The unit c
+                                      t                     an be d, h, m, s for day, hour, minute, se
+                                                            cond. 1d is one day in default
+ 1      boolea  print-parent  true    Option to print all   This option enables print files in parent
+        n       -fields               fileds in parent cla  class, default value true.
+                                      ss
+ 1      boolea  verbose       false   Option to print verb  This option enables print verbose informat
+        n                             ose information       ion, default value false.
+ 1      boolea  strict        true    Option to strict mod  By default, strict mode is true, not allow
+        n                             e                     ed to set object properties. Want to set o
+                                                            bject properties, execute `options strict
+                                                            false`
 ```
 
 
@@ -100,3 +104,27 @@ $ watch java.lang.invoke.Invokers callSiteForm
 Press Q or Ctrl+C to abort.
 Affect(class count: 1 , method count: 1) cost in 61 ms, listenerId: 1
 ```
+
+
+### Turn off strict mode, allow setting object properties in ognl expressions
+
+> since 3.6.0
+
+For new users, there may be misuses when writing ognl expressions.
+
+For example, for `Student`, when judging the age is equal to 18, the conditional expression may be mistakenly written as `target.age=18`, which actually sets the `age` of the current object to 18. The correct spelling is `target.age==18`.
+
+In order to prevent misuse like the above, Arthas enables `strict` mode by default, in `ognl` expressions, it is forbidden to update the property of the object or call the `setter` method.
+
+Take `MathGame` as an example, the following error message will appear.
+
+```
+$ watch demo.MathGame primeFactors 'target' 'target.illegalArgumentCount=1'
+Press Q or Ctrl+C to abort.
+Affect(class count: 1 , method count: 1) cost in 206 ms, listenerId: 1
+watch failed, condition is: target.illegalArgumentCount=1, express is: target, By default, strict mode is true, not allowed to set object properties. Want to set object properties, execute `options strict false`, visit /Users/admin/logs/arthas/arthas.log for more details.
+```
+
+If the user want to change the object properties in the `ognl` expression, you can execute `options strict false` to turn off the `strict` mode.
+
+* For more information, please refer to: https://github.com/alibaba/arthas/issues/2128
