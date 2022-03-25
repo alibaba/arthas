@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>options &mdash; Arthas 3.5.6 documentation</title>
+  <title>options &mdash; Arthas 3.6.0 documentation</title>
   
 
   
@@ -73,7 +73,7 @@
             
             
               <div class="version">
-                3.5.6
+                3.6.0
               </div>
             
           
@@ -145,6 +145,7 @@
 <li class="toctree-l3"><a class="reference internal" href="#get-special-option-value">Get special option value</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#set-special-option-value">Set special option value</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#set-unsafe-to-true-to-enhance-the-classes-under-the-java-package">Set <code class="docutils literal notranslate"><span class="pre">unsafe</span></code> to true to enhance the classes under the <code class="docutils literal notranslate"><span class="pre">java.*</span></code> package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#turn-off-strict-mode-allow-setting-object-properties-in-ognl-expressions">Turn off strict mode, allow setting object properties in ognl expressions</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="commands.html#basic-arthas-commands">Basic Arthas Commands</a></li>
@@ -285,44 +286,58 @@
 <td>1d</td>
 <td>default timeout for background jobs. Background job will be terminated once it's timed out (i.e. 1d, 2h, 3m, 25s)</td>
 </tr>
+<tr>
+<td>verbose</td>
+<td>false</td>
+<td>This option enables print verbose information</td>
+</tr>
+<tr>
+<td>strict</td>
+<td>true</td>
+<td>whether to enable strict mode</td>
+</tr>
 </tbody>
 </table><div class="section" id="view-all-options">
 <h2>View all options<a class="headerlink" href="#view-all-options" title="Permalink to this headline">¶</a></h2>
 <div class="highlight-bash notranslate"><div class="highlight hljs"><pre class="bash">$ options
- LEVEL  TYPE  NAME         VALUE  SUMMARY             DESCRIPTION
---------------------------------------------------------------------------------------------
- 0      bool  unsafe       false  Option to support   This option enables to proxy function
-        ean                       system-level class  ality of JVM classes. Due to serious
-                                                      security risk a JVM crash is possibly
-                                                       be introduced. Do not activate it un
-                                                      less you are able to manage.
- 1      bool  dump         false  Option to dump the  This option enables the enhanced clas
-        ean                        enhanced classes   ses to be dumped to external file for
-                                                       further de-compilation and analysis.
- 1      bool  batch-re-tr  true   Option to support   This options enables to reTransform c
-        ean   ansform             batch reTransform   lasses with batch mode.
-                                  Class
- 2      bool  json-format  false  Option to support   This option enables to format object
-        ean                       JSON format of obj  output with JSON when -x option selec
-                                  ect output          ted.
- 1      bool  disable-sub  false  Option to control   This option disable to include sub cl
-        ean   -class              include sub class   ass when matching class.
-                                  when class matchin
-                                  g
- 1      bool  debug-for-a  false  Option to print DE  This option enables to print DEBUG me
-        ean   sm                  BUG message if ASM  ssage of ASM for each method invocati
-                                   is involved        on.
- 1      bool  save-result  false  Option to print co  This option enables to save each comm
-        ean                       mmand&#x27;s result to   and&#x27;s result to log file, which path
-                                  log file            is ${user.home}/logs/arthas-cache/res
-                                                      ult.log.
- 2      Stri  job-timeout  1d     Option to job time  This option setting job timeout,The u
-        ng                        out                 nit can be d, h, m, s for day, hour,
-                                                      minute, second. 1d is one day in defa
-                                                      ult
- 1      bool  print-paren  true   Option to print al  This option enables print files in pa
-        ean   t-fields            l fileds in parent  rent class, default value true.
-                                   class</pre></div>
+ LEVEL  TYPE    NAME          VALUE   SUMMARY               DESCRIPTION
+-------------------------------------------------------------------------------------------------------
+ 0      boolea  unsafe        false   Option to support sy  This option enables to proxy functionality
+        n                             stem-level class       of JVM classes. Due to serious security r
+                                                            isk a JVM crash is possibly be introduced.
+                                                             Do not activate it unless you are able to
+                                                             manage.
+ 1      boolea  dump          false   Option to dump the e  This option enables the enhanced classes t
+        n                             nhanced classes       o be dumped to external file for further d
+                                                            e-compilation and analysis.
+ 1      boolea  batch-re-tra  true    Option to support ba  This options enables to reTransform classe
+        n       nsform                tch reTransform Clas  s with batch mode.
+                                      s
+ 2      boolea  json-format   false   Option to support JS  This option enables to format object outpu
+        n                             ON format of object   t with JSON when -x option selected.
+                                      output
+ 1      boolea  disable-sub-  false   Option to control in  This option disable to include sub class w
+        n       class                 clude sub class when  hen matching class.
+                                       class matching
+ 1      boolea  support-defa  true    Option to control in  This option disable to include default met
+        n       ult-method            clude default method  hod in interface when matching class.
+                                       in interface when c
+                                      lass matching
+ 1      boolea  save-result   false   Option to print comm  This option enables to save each command&#x27;s
+        n                             and&#x27;s result to log    result to log file, which path is ${user.
+                                      file                  home}/logs/arthas-cache/result.log.
+ 2      String  job-timeout   1d      Option to job timeou  This option setting job timeout,The unit c
+                                      t                     an be d, h, m, s for day, hour, minute, se
+                                                            cond. 1d is one day in default
+ 1      boolea  print-parent  true    Option to print all   This option enables print files in parent
+        n       -fields               fileds in parent cla  class, default value true.
+                                      ss
+ 1      boolea  verbose       false   Option to print verb  This option enables print verbose informat
+        n                             ose information       ion, default value false.
+ 1      boolea  strict        true    Option to strict mod  By default, strict mode is true, not allow
+        n                             e                     ed to set object properties. Want to set o
+                                                            bject properties, execute `options strict
+                                                            false`</pre></div>
 </div>
 </div>
 <div class="section" id="get-special-option-value">
@@ -359,6 +374,25 @@
 Press Q or Ctrl+C to abort.
 Affect(class count: 1 , method count: 1) cost in 61 ms, listenerId: 1</pre></div>
 </div>
+</div>
+<div class="section" id="turn-off-strict-mode-allow-setting-object-properties-in-ognl-expressions">
+<h2>Turn off strict mode, allow setting object properties in ognl expressions<a class="headerlink" href="#turn-off-strict-mode-allow-setting-object-properties-in-ognl-expressions" title="Permalink to this headline">¶</a></h2>
+<blockquote>
+<div><p>since 3.6.0</p>
+</div></blockquote>
+<p>For new users, there may be misuses when writing ognl expressions.</p>
+<p>For example, for <code class="docutils literal notranslate"><span class="pre">Student</span></code>, when judging the age is equal to 18, the conditional expression may be mistakenly written as <code class="docutils literal notranslate"><span class="pre">target.age=18</span></code>, which actually sets the <code class="docutils literal notranslate"><span class="pre">age</span></code> of the current object to 18. The correct spelling is <code class="docutils literal notranslate"><span class="pre">target.age==18</span></code>.</p>
+<p>In order to prevent misuse like the above, Arthas enables <code class="docutils literal notranslate"><span class="pre">strict</span></code> mode by default, in <code class="docutils literal notranslate"><span class="pre">ognl</span></code> expressions, it is forbidden to update the property of the object or call the <code class="docutils literal notranslate"><span class="pre">setter</span></code> method.</p>
+<p>Take <code class="docutils literal notranslate"><span class="pre">MathGame</span></code> as an example, the following error message will appear.</p>
+<div class="highlight-default notranslate"><pre class="literal-block">$ watch demo.MathGame primeFactors &#x27;target&#x27; &#x27;target.illegalArgumentCount=1&#x27;
+Press Q or Ctrl+C to abort.
+Affect(class count: 1 , method count: 1) cost in 206 ms, listenerId: 1
+watch failed, condition is: target.illegalArgumentCount=1, express is: target, By default, strict mode is true, not allowed to set object properties. Want to set object properties, execute `options strict false`, visit /Users/admin/logs/arthas/arthas.log for more details.</pre>
+</div>
+<p>If the user want to change the object properties in the <code class="docutils literal notranslate"><span class="pre">ognl</span></code> expression, you can execute <code class="docutils literal notranslate"><span class="pre">options</span> <span class="pre">strict</span> <span class="pre">false</span></code> to turn off the <code class="docutils literal notranslate"><span class="pre">strict</span></code> mode.</p>
+<ul class="simple">
+<li><p>For more information, please refer to: https://github.com/alibaba/arthas/issues/2128</p></li>
+</ul>
 </div>
 </div>
 

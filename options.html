@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>options &mdash; Arthas 3.5.6 文档</title>
+  <title>options &mdash; Arthas 3.6.0 文档</title>
   
 
   
@@ -74,7 +74,7 @@
             
             
               <div class="version">
-                3.5.6
+                3.6.0
               </div>
             
           
@@ -148,6 +148,7 @@
 <li class="toctree-l3"><a class="reference internal" href="#option">获取option的值</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#id2">设置指定的option</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#unsafe-jdk-package">打开unsafe开关，支持jdk package下的类</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#strict-ognl">关闭strict模式，允许在ognl表达式里设置对象属性</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="commands.html#arthas">Arthas 基础命令</a></li>
@@ -293,41 +294,58 @@
 <td>true</td>
 <td>是否打印在parent class里的filed</td>
 </tr>
+<tr>
+<td>verbose</td>
+<td>false</td>
+<td>是否打印更多详细信息</td>
+</tr>
+<tr>
+<td>strict</td>
+<td>true</td>
+<td>是否启用strict模式</td>
+</tr>
 </tbody>
 </table><div class="section" id="id1">
 <h2>查看所有的options<a class="headerlink" href="#id1" title="永久链接至标题">¶</a></h2>
 <div class="highlight-bash notranslate"><div class="highlight hljs"><pre class="bash">$ options
- LEVEL  TYPE  NAME         VALUE  SUMMARY             DESCRIPTION
---------------------------------------------------------------------------------------------
- 0      bool  unsafe       false  Option to support   This option enables to proxy function
-        ean                       system-level class  ality of JVM classes. Due to serious
-                                                      security risk a JVM crash is possibly
-                                                       be introduced. Do not activate it un
-                                                      less you are able to manage.
- 1      bool  dump         false  Option to dump the  This option enables the enhanced clas
-        ean                        enhanced classes   ses to be dumped to external file for
-                                                       further de-compilation and analysis.
- 1      bool  batch-re-tr  true   Option to support   This options enables to reTransform c
-        ean   ansform             batch reTransform   lasses with batch mode.
-                                  Class
- 2      bool  json-format  false  Option to support   This option enables to format object
-        ean                       JSON format of obj  output with JSON when -x option selec
-                                  ect output          ted.
- 1      bool  disable-sub  false  Option to control   This option disable to include sub cl
-        ean   -class              include sub class   ass when matching class.
-                                  when class matchin
-                                  g
- 1      bool  save-result  false  Option to print co  This option enables to save each comm
-        ean                       mmand&#x27;s result to   and&#x27;s result to log file, which path
-                                  log file            is ${user.home}/logs/arthas-cache/res
-                                                      ult.log.
- 2      Stri  job-timeout  1d     Option to job time  This option setting job timeout,The u
-        ng                        out                 nit can be d, h, m, s for day, hour,
-                                                      minute, second. 1d is one day in defa
-                                                      ult
- 1      bool  print-paren  true   Option to print al  This option enables print files in pa
-        ean   t-fields            l fileds in parent  rent class, default value true.
-                                   class</pre></div>
+ LEVEL  TYPE    NAME          VALUE   SUMMARY               DESCRIPTION
+-------------------------------------------------------------------------------------------------------
+ 0      boolea  unsafe        false   Option to support sy  This option enables to proxy functionality
+        n                             stem-level class       of JVM classes. Due to serious security r
+                                                            isk a JVM crash is possibly be introduced.
+                                                             Do not activate it unless you are able to
+                                                             manage.
+ 1      boolea  dump          false   Option to dump the e  This option enables the enhanced classes t
+        n                             nhanced classes       o be dumped to external file for further d
+                                                            e-compilation and analysis.
+ 1      boolea  batch-re-tra  true    Option to support ba  This options enables to reTransform classe
+        n       nsform                tch reTransform Clas  s with batch mode.
+                                      s
+ 2      boolea  json-format   false   Option to support JS  This option enables to format object outpu
+        n                             ON format of object   t with JSON when -x option selected.
+                                      output
+ 1      boolea  disable-sub-  false   Option to control in  This option disable to include sub class w
+        n       class                 clude sub class when  hen matching class.
+                                       class matching
+ 1      boolea  support-defa  true    Option to control in  This option disable to include default met
+        n       ult-method            clude default method  hod in interface when matching class.
+                                       in interface when c
+                                      lass matching
+ 1      boolea  save-result   false   Option to print comm  This option enables to save each command&#x27;s
+        n                             and&#x27;s result to log    result to log file, which path is ${user.
+                                      file                  home}/logs/arthas-cache/result.log.
+ 2      String  job-timeout   1d      Option to job timeou  This option setting job timeout,The unit c
+                                      t                     an be d, h, m, s for day, hour, minute, se
+                                                            cond. 1d is one day in default
+ 1      boolea  print-parent  true    Option to print all   This option enables print files in parent
+        n       -fields               fileds in parent cla  class, default value true.
+                                      ss
+ 1      boolea  verbose       false   Option to print verb  This option enables print verbose informat
+        n                             ose information       ion, default value false.
+ 1      boolea  strict        true    Option to strict mod  By default, strict mode is true, not allow
+        n                             e                     ed to set object properties. Want to set o
+                                                            bject properties, execute `options strict
+                                                            false`</pre></div>
 </div>
 </div>
 <div class="section" id="option">
@@ -364,6 +382,25 @@
 Press Q or Ctrl+C to abort.
 Affect(class count: 1 , method count: 1) cost in 61 ms, listenerId: 1</pre></div>
 </div>
+</div>
+<div class="section" id="strict-ognl">
+<h2>关闭strict模式，允许在ognl表达式里设置对象属性<a class="headerlink" href="#strict-ognl" title="永久链接至标题">¶</a></h2>
+<blockquote>
+<div><p>since 3.6.0</p>
+</div></blockquote>
+<p>对于新用户，在编写ognl表达式时，可能会出现误用。</p>
+<p>比如对于<code class="docutils literal notranslate"><span class="pre">Student</span></code>，判断年龄等于18时，可能条件表达式会误写为<code class="docutils literal notranslate"><span class="pre">target.age=18</span></code>，这个表达式实际上是把当前对象的<code class="docutils literal notranslate"><span class="pre">age</span></code>设置为18了。正确的写法是<code class="docutils literal notranslate"><span class="pre">target.age==18</span></code>。</p>
+<p>为了防止出现类似上面的误用，Arthas默认启用<code class="docutils literal notranslate"><span class="pre">strict</span></code>模式，在<code class="docutils literal notranslate"><span class="pre">ognl</span></code>表达式里，禁止更新对象的Property或者调用<code class="docutils literal notranslate"><span class="pre">setter</span></code>函数。</p>
+<p>以<code class="docutils literal notranslate"><span class="pre">MathGame</span></code>为例，会出现以下的错误提示。</p>
+<div class="highlight-default notranslate"><pre class="literal-block">$ watch demo.MathGame primeFactors &#x27;target&#x27; &#x27;target.illegalArgumentCount=1&#x27;
+Press Q or Ctrl+C to abort.
+Affect(class count: 1 , method count: 1) cost in 206 ms, listenerId: 1
+watch failed, condition is: target.illegalArgumentCount=1, express is: target, By default, strict mode is true, not allowed to set object properties. Want to set object properties, execute `options strict false`, visit /Users/admin/logs/arthas/arthas.log for more details.</pre>
+</div>
+<p>用户如果确定要在<code class="docutils literal notranslate"><span class="pre">ognl</span></code>表达式里更新对象，可以执行<code class="docutils literal notranslate"><span class="pre">options</span> <span class="pre">strict</span> <span class="pre">false</span></code>，关闭<code class="docutils literal notranslate"><span class="pre">strict</span></code>模式。</p>
+<ul class="simple">
+<li><p>更多信息参考： https://github.com/alibaba/arthas/issues/2128</p></li>
+</ul>
 </div>
 </div>
 
