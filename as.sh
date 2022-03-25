@@ -8,10 +8,10 @@
 
 # program : Arthas
 #  author : Core Engine @ Taobao.com
-#    date : 2020-12-02
+#    date : 2022-03-26
 
 # current arthas script version
-ARTHAS_SCRIPT_VERSION=3.4.5
+ARTHAS_SCRIPT_VERSION=3.6.0
 
 # SYNOPSIS
 #   rreadlink <fileOrDirPath>
@@ -83,7 +83,9 @@ DIR=$(dirname -- "$(rreadlink "${BASH_SOURCE[0]}")")
 ARTHAS_HOME=
 
 # define arthas's lib
-ARTHAS_LIB_DIR=${HOME}/.arthas/lib
+if [ -z "${ARTHAS_LIB_DIR}" ]; then
+    ARTHAS_LIB_DIR=${HOME}/.arthas/lib
+fi
 
 # target process id to attach
 TARGET_PID=
@@ -140,10 +142,19 @@ TUNNEL_SERVER=
 AGENT_ID=
 
 # stat report url
-STAT_URL=
+STAT_URL="http://pandora.alibaba-inc.com/pandora-web/api/arthasStat.do"
 
 # app name
 APP_NAME=
+
+# username
+USERNAME=
+
+# password
+PASSWORD=
+
+# disabledCommands
+DISABLED_COMMANDS=
 
 ############ Command Arguments ############
 
@@ -152,9 +163,6 @@ BATCH_MODE=false
 
 # define arthas's temp dir
 TMP_DIR=/tmp
-
-# last update arthas version
-ARTHAS_VERSION=
 
 # arthas remote url
 # https://arthas.aliyun.com/download/3.1.7?mirror=aliyun
@@ -176,7 +184,7 @@ case "$(uname -s)" in
     *)          OS_TYPE="UNKNOWN"
 esac
 
-# check curl/grep/awk/telent/unzip command
+# check curl/grep/awk/telnet/unzip command
 if ! [ -x "$(command -v curl)" ]; then
   echo 'Error: curl is not installed. Try to use java -jar arthas-boot.jar' >&2
   exit 1
@@ -229,6 +237,7 @@ check_permission()
 # reset some options for env
 reset_for_env()
 {
+    unset JAVA_TOOL_OPTIONS
 
     # init ARTHAS' lib
     mkdir -p "${ARTHAS_LIB_DIR}" \
@@ -400,6 +409,8 @@ Usage:
        [--http-port <value>] [--session-timeout <value>] [--arthas-home <value>]
        [--tunnel-server <value>] [--agent-id <value>] [--stat-url <value>]
        [--app-name <value>]
+       [--username <value>] [--password <value>]
+       [--disabled-commands <value>]
        [--use-version <value>] [--repo-mirror <value>] [--versions] [--use-http]
        [--attach-only] [-c <value>] [-f <value>] [-v] [pid]
 
@@ -420,6 +431,9 @@ Options and Arguments:
     --tunnel-server             Remote tunnel server url
     --agent-id                  Special agent id
     --app-name                  Special app name
+    --username                  Special username
+    --password                  Special password
+    --disabled-commands         Disable special commands
     --select                    select target process by classname or JARfilename
  -c,--command <value>           Command to execute, multiple commands separated
                                 by ;
@@ -433,15 +447,17 @@ EXAMPLES:
   ./as.sh <pid>
   ./as.sh --target-ip 0.0.0.0
   ./as.sh --telnet-port 9999 --http-port -1
+  ./as.sh --username admin --password <password>
   ./as.sh --tunnel-server 'ws://192.168.10.11:7777/ws' --app-name demoapp
   ./as.sh --tunnel-server 'ws://192.168.10.11:7777/ws' --agent-id bvDOe8XbTM2pQWjF4cfw
   ./as.sh --stat-url 'http://192.168.10.11:8080/api/stat'
   ./as.sh -c 'sysprop; thread' <pid>
   ./as.sh -f batch.as <pid>
-  ./as.sh --use-version 3.4.5
+  ./as.sh --use-version 3.6.0
   ./as.sh --session-timeout 3600
   ./as.sh --attach-only
-  ./as.sh --select arthas-demo
+  ./as.sh --disabled-commands stop,dump
+  ./as.sh --select math-game
   ./as.sh --repo-mirror aliyun --use-http
 WIKI:
   https://arthas.aliyun.com/doc
@@ -607,6 +623,21 @@ parse_arguments()
         shift # past argument
         shift # past value
         ;;
+        --username)
+        USERNAME="$2"
+        shift # past argument
+        shift # past value
+        ;;
+        --password)
+        PASSWORD="$2"
+        shift # past argument
+        shift # past value
+        ;;
+        --disabled-commands)
+        DISABLED_COMMANDS="$2"
+        shift # past argument
+        shift # past value
+        ;;
         --use-http)
         USE_HTTP=true
         shift # past argument
@@ -710,7 +741,7 @@ parse_arguments()
     fi
 
     # check pid
-    if [ -z ${TARGET_PID} ] && [ ${BATCH_MODE} = false ]; then
+    if [ -z ${TARGET_PID} ]; then
         # interactive mode
         local IFS=$'\n'
         CANDIDATES=($(call_jps | grep -v sun.tools.jps.Jps | awk '{print $0}'))
@@ -804,6 +835,21 @@ attach_jvm()
     if [ "${APP_NAME}" ]; then
         tempArgs+=("-app-name")
         tempArgs+=("${APP_NAME}")
+    fi
+
+    if [ "${USERNAME}" ]; then
+        tempArgs+=("-username")
+        tempArgs+=("${USERNAME}")
+    fi
+
+    if [ "${PASSWORD}" ]; then
+        tempArgs+=("-password")
+        tempArgs+=("${PASSWORD}")
+    fi
+
+    if [ "${DISABLED_COMMANDS}" ]; then
+        tempArgs+=("-disabled-commands")
+        tempArgs+=("${DISABLED_COMMANDS}")
     fi
 
     if [ "${TARGET_IP}" ]; then
