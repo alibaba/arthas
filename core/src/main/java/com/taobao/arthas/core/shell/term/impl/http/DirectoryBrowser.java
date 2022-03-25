@@ -175,13 +175,7 @@ public class DirectoryBrowser {
                     return null;
                 }
 
-                RandomAccessFile raf;
-                try {
-                    raf = new RandomAccessFile(file, "r");
-                } catch (Exception ignore) {
-                    return null;
-                }
-                long fileLength = raf.length();
+                long fileLength = file.length();
                 if (fileLength < MIN_NETTY_DIRECT_SEND_SIZE){
                     FileInputStream fileInputStream = new FileInputStream(file);
                     try {
@@ -210,6 +204,7 @@ public class DirectoryBrowser {
                 // Write the content.
                 ChannelFuture sendFileFuture;
                 ChannelFuture lastContentFuture;
+                RandomAccessFile raf = new RandomAccessFile(file, "r"); // will closed by netty
                 if (ctx.pipeline().get(SslHandler.class) == null) {
                     sendFileFuture =
                             ctx.write(new DefaultFileRegion(raf.getChannel(), 0, fileLength), ctx.newProgressivePromise());
