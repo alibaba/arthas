@@ -8759,7 +8759,7 @@ var CharMeasure = (function (_super) {
         }
         if (this._width !== geometry.width || this._height !== geometry.height) {
             this._width = geometry.width;
-            this._height = Math.ceil(geometry.height);
+            this._height = Math.floor(geometry.height);
             this.emit('charsizechanged');
         }
     };
