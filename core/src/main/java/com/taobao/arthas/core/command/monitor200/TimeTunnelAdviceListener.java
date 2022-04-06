@@ -55,7 +55,7 @@ public class TimeTunnelAdviceListener extends AdviceListenerAdapter {
                                Object returnObject) throws Throwable {
         //取出入参时的 args，因为在函数执行过程中 args可能被修改
         args = (Object[]) argsRef.get().pop();
-        afterFinishing(Advice.newForAfterRetuning(loader, clazz, method, target, args, returnObject));
+        afterFinishing(Advice.newForAfterReturning(loader, clazz, method, target, args, returnObject));
     }
 
     @Override
