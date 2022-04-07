@@ -106,12 +106,12 @@ public class Advice {
         );
     }
 
-    public static Advice newForAfterRetuning(ClassLoader loader,
-                                             Class<?> clazz,
-                                             ArthasMethod method,
-                                             Object target,
-                                             Object[] params,
-                                             Object returnObj) {
+    public static Advice newForAfterReturning(ClassLoader loader,
+                                              Class<?> clazz,
+                                              ArthasMethod method,
+                                              Object target,
+                                              Object[] params,
+                                              Object returnObj) {
         return new Advice(
                 loader,
                 clazz,
