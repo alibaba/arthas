@@ -38,7 +38,7 @@ jobs:
           path: arthas-vmtool/target/lib*
 
   windows:
-    runs-on: windows-2016
+    runs-on: windows-2019
 
     steps:
       - uses: actions/checkout@v2
