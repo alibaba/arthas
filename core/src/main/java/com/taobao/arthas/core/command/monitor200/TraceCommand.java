@@ -39,6 +39,7 @@ import java.util.List;
         "  trace demo.MathGame run -n 5\n" +
         "  trace demo.MathGame run --skipJDKMethod false\n" +
         "  trace javax.servlet.Filter * --exclude-class-pattern com.demo.TestFilter\n" +
+        "  trace OuterClass$InnerClass *\n" +
         Constants.WIKI + Constants.WIKI_HOME + "trace")
 //@formatter:on
 public class TraceCommand extends EnhancerCommand {

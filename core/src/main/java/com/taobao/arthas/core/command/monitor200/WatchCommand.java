@@ -28,6 +28,7 @@ import com.taobao.middleware.cli.annotations.Summary;
         "  watch *StringUtils isBlank params[0]\n" +
         "  watch -E -b org\\.apache\\.commons\\.lang\\.StringUtils isBlank params[0]\n" +
         "  watch javax.servlet.Filter * --exclude-class-pattern com.demo.TestFilter\n" +
+        "  watch OuterClass$InnerClass\n" +
         Constants.WIKI + Constants.WIKI_HOME + "watch")
 public class WatchCommand extends EnhancerCommand {
 
