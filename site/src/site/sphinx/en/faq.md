@@ -24,7 +24,7 @@ com.sun.tools.attach.AttachNotSupportedException: Unable to open socket file: ta
 
 ##### Can commands such as trace/watch enhance the classes in jdk?
 
-By default, classes beginning with `java.` are filtered out, but they can be turned on:
+By default, classes beginning with `java.` or the classes loaded by the `Bootstrap ClassLoader` are filtered out, but they can be turned on:
 
 ```bash
 options unsafe true
@@ -32,6 +32,7 @@ options unsafe true
 
 See more at [options](options.md)
 
+> To support the jars appended by java.lang.instrument.Instrumentation#appendToBootstrapClassLoaderSearch need to enable unsafe.
 
 ##### How to view the result in `json` format
 
@@ -69,6 +70,14 @@ watch demo.MathGame primeFactors '{params,returnObj,throwExp}' 'params.length >0
 ```bash
 watch demo.MathGame <init> '{params,returnObj,throwExp}' -v
 ```
+
+##### How to watch or trace inner classes?
+
+In the JVM specification the name of inner classes is `OuterClass$InnerClass`.
+
+```bash
+watch OuterClass$InnerClass
+````
 
 ##### Enter Unicode characters
 
