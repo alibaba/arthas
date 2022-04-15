@@ -20,6 +20,7 @@ import static java.lang.String.format;
  * Created by vlinux on 15/5/20.
  */
 public class ObjectView implements View {
+    public static final int MAX_DEEP = 4;
     private static final Logger logger = LoggerFactory.getLogger(ObjectView.class);
     private final static int MAX_OBJECT_LENGTH = 10 * 1024 * 1024; // 10M
 
@@ -33,7 +34,7 @@ public class ObjectView implements View {
 
     public ObjectView(Object object, int deep, int maxObjectLength) {
         this.object = object;
-        this.deep = deep > 4 ? 4 : deep;
+        this.deep = deep > MAX_DEEP ? MAX_DEEP : deep;
         this.maxObjectLength = maxObjectLength;
     }
 

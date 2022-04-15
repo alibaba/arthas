@@ -22,7 +22,7 @@ There are four different scenarios for `watch` command, which makes it rather co
 |[s]|when method exits normally|
 |[f]|when method exits (either succeed or fail with exceptions)|
 |[E]|turn on regex matching while the default is wildcard matching|
-|[x:]|the depth to print the specified property with default value: 1|
+|[x:]|the depth to print the specified property with default value: 1, the max value is 4|
 
 F.Y.I
 1. any valid OGNL expression as `"{params,returnObj}"` supported
@@ -178,7 +178,7 @@ ts=2018-12-03 19:34:19; [cost=0.587833ms] result=@ArrayList[
 ```
 
 * `-x`: Expand level of object (1 by default)
-
+* The max value of `-x` is 4, to prevent the expansion result taking up too much memory. Users can specify the field in the `ognl` expression.
 #### Use condition expressions to locate specific call
 
 ```bash
