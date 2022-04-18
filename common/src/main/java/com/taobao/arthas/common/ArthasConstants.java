@@ -14,7 +14,7 @@ public class ArthasConstants {
      */
     public static final String NETTY_LOCAL_ADDRESS = "arthas-netty-LocalAddress";
 
-    public static final int MAX_HTTP_CONTENT_LENGTH = 1024 * 1024 * 8;
+    public static final int MAX_HTTP_CONTENT_LENGTH = 1024 * 1024 * 10;
 
     public static final String ARTHAS_OUTPUT = "arthas-output";
 

@@ -4,6 +4,7 @@ import com.alibaba.arthas.deps.org.slf4j.Logger;
 import com.alibaba.arthas.deps.org.slf4j.LoggerFactory;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.serializer.SerializerFeature;
+import com.taobao.arthas.common.ArthasConstants;
 import com.taobao.arthas.core.GlobalOptions;
 
 import java.io.PrintWriter;
@@ -22,7 +23,7 @@ import static java.lang.String.format;
 public class ObjectView implements View {
     public static final int MAX_DEEP = 4;
     private static final Logger logger = LoggerFactory.getLogger(ObjectView.class);
-    private final static int MAX_OBJECT_LENGTH = 10 * 1024 * 1024; // 10M
+    private final static int MAX_OBJECT_LENGTH = ArthasConstants.MAX_HTTP_CONTENT_LENGTH;
 
     private final Object object;
     private final int deep;

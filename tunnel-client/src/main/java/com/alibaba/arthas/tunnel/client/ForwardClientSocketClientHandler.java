@@ -1,6 +1,5 @@
 package com.alibaba.arthas.tunnel.client;
 
-import java.net.URI;
 import java.net.URISyntaxException;
 
 import org.slf4j.Logger;
@@ -22,15 +21,12 @@ import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.channel.local.LocalAddress;
 import io.netty.channel.local.LocalChannel;
 import io.netty.channel.nio.NioEventLoopGroup;
-import io.netty.handler.codec.http.DefaultHttpHeaders;
 import io.netty.handler.codec.http.HttpClientCodec;
 import io.netty.handler.codec.http.HttpObjectAggregator;
-import io.netty.handler.codec.http.websocketx.WebSocketClientHandshaker;
-import io.netty.handler.codec.http.websocketx.WebSocketClientHandshakerFactory;
+import io.netty.handler.codec.http.websocketx.WebSocketClientProtocolConfig;
 import io.netty.handler.codec.http.websocketx.WebSocketClientProtocolHandler;
 import io.netty.handler.codec.http.websocketx.WebSocketClientProtocolHandler.ClientHandshakeStateEvent;
 import io.netty.handler.codec.http.websocketx.WebSocketFrame;
-import io.netty.handler.codec.http.websocketx.WebSocketVersion;
 import io.netty.util.concurrent.DefaultThreadFactory;
 import io.netty.util.concurrent.GenericFutureListener;
 
@@ -71,10 +67,13 @@ public class ForwardClientSocketClientHandler extends SimpleChannelInboundHandle
         try {
             logger.info("ForwardClientSocketClientHandler star connect local arthas server");
             // 入参URI实际无意义，只为了程序不出错
-            WebSocketClientHandshaker newHandshaker = WebSocketClientHandshakerFactory.newHandshaker(new URI("ws://127.0.0.1:8563/ws"),
-                    WebSocketVersion.V13, null, true, new DefaultHttpHeaders());
+            WebSocketClientProtocolConfig clientProtocolConfig = WebSocketClientProtocolConfig.newBuilder()
+                    .webSocketUri("ws://127.0.0.1:8563/ws")
+                    .maxFramePayloadLength(ArthasConstants.MAX_HTTP_CONTENT_LENGTH).build();
+
             final WebSocketClientProtocolHandler websocketClientHandler = new WebSocketClientProtocolHandler(
-                    newHandshaker);
+                    clientProtocolConfig);
+
             final LocalFrameHandler localFrameHandler = new LocalFrameHandler();
 
             Bootstrap b = new Bootstrap();
