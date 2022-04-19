@@ -4,6 +4,7 @@ package com.taobao.arthas.core.command.model;
 import com.taobao.arthas.core.util.StringUtils;
 
 import java.util.List;
+import java.util.Stack;
 
 /**
  * Tree model of TraceCommand
@@ -13,6 +14,7 @@ public class TraceTree {
     private TraceNode root;
 
     private TraceNode current;
+    private SyncNode currentSyncNode;
     private int nodeCount = 0;
 
     public TraceTree(ThreadNode root) {
@@ -36,6 +38,22 @@ public class TraceTree {
         child.begin();
         current = child;
         nodeCount += 1;
+    }
+
+    public void beginSync(String className, String methodName, int lineNumber) {
+        SyncNode syncNode = new SyncNode(className, methodName, lineNumber);
+        syncNode.begin();
+        this.currentSyncNode = syncNode;
+        nodeCount += 1;
+    }
+
+    public void endSync(String className, String methodName, int lineNumber) {
+        if (this.currentSyncNode != null) {
+            //todo 校验是否匹配
+            this.currentSyncNode.end();
+            this.current.addChild(this.currentSyncNode);
+            this.currentSyncNode = null;
+        }
     }
 
     private TraceNode findChild(TraceNode node, String className, String methodName, int lineNumber) {

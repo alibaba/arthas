@@ -39,7 +39,7 @@ public class EnhancerTest {
         EqualsMatcher<String> methodNameMatcher = new EqualsMatcher<String>("print");
         EqualsMatcher<String> classNameMatcher = new EqualsMatcher<String>(MathGame.class.getName());
 
-        Enhancer enhancer = new Enhancer(listener, true, false, classNameMatcher, null, methodNameMatcher);
+        Enhancer enhancer = new Enhancer(listener, true, false, false, classNameMatcher, null, methodNameMatcher);
 
         ClassLoader inClassLoader = MathGame.class.getClassLoader();
         String className = MathGame.class.getName();

@@ -51,6 +51,7 @@ public class TraceCommand extends EnhancerCommand {
     private int numberOfLimit = 100;
     private List<String> pathPatterns;
     private boolean skipJDKTrace;
+    private boolean skipMonitor;
 
     @Argument(argName = "class-pattern", index = 0)
     @Description("Class name pattern, use either '.' or '/' as separator")
@@ -95,6 +96,13 @@ public class TraceCommand extends EnhancerCommand {
         this.skipJDKTrace = skipJDKTrace;
     }
 
+    @Option(longName = "skipMonitor")
+    @DefaultValue("true")
+    @Description("skip MONITORENTRY command trace, default value false.")
+    public void setSkipMonitor(boolean skipMonitor) {
+        this.skipMonitor = skipMonitor;
+    }
+
     public String getClassPattern() {
         return classPattern;
     }
@@ -110,6 +118,8 @@ public class TraceCommand extends EnhancerCommand {
     public boolean isSkipJDKTrace() {
         return skipJDKTrace;
     }
+
+    public boolean isSkipMonitor() { return skipMonitor; }
 
     public boolean isRegEx() {
         return isRegEx;

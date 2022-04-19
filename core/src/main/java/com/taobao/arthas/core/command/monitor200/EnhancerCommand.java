@@ -152,11 +152,13 @@ public abstract class EnhancerCommand extends AnnotatedCommand {
                 return;
             }
             boolean skipJDKTrace = false;
+            boolean skipMonitor = false;
             if(listener instanceof AbstractTraceAdviceListener) {
                 skipJDKTrace = ((AbstractTraceAdviceListener) listener).getCommand().isSkipJDKTrace();
+                skipMonitor = ((AbstractTraceAdviceListener) listener).getCommand().isSkipMonitor();
             }
 
-            Enhancer enhancer = new Enhancer(listener, listener instanceof InvokeTraceable, skipJDKTrace, getClassNameMatcher(), getClassNameExcludeMatcher(), getMethodNameMatcher());
+            Enhancer enhancer = new Enhancer(listener, listener instanceof InvokeTraceable, skipJDKTrace, skipMonitor, getClassNameMatcher(), getClassNameExcludeMatcher(), getMethodNameMatcher());
             // 注册通知监听器
             process.register(listener, enhancer);
             effect = enhancer.enhance(inst);

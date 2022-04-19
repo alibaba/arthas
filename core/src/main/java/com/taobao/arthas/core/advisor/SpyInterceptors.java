@@ -3,11 +3,7 @@ package com.taobao.arthas.core.advisor;
 import java.arthas.SpyAPI;
 
 import com.alibaba.bytekit.asm.binding.Binding;
-import com.alibaba.bytekit.asm.interceptor.annotation.AtEnter;
-import com.alibaba.bytekit.asm.interceptor.annotation.AtExceptionExit;
-import com.alibaba.bytekit.asm.interceptor.annotation.AtExit;
-import com.alibaba.bytekit.asm.interceptor.annotation.AtInvoke;
-import com.alibaba.bytekit.asm.interceptor.annotation.AtInvokeException;
+import com.alibaba.bytekit.asm.interceptor.annotation.*;
 
 /**
  * 
@@ -108,6 +104,20 @@ public class SpyInterceptors {
         public static void onInvokeException(@Binding.This Object target, @Binding.Class Class<?> clazz,
                 @Binding.InvokeInfo String invokeInfo, @Binding.Throwable Throwable throwable) {
             SpyAPI.atInvokeException(clazz, invokeInfo, target, throwable);
+        }
+    }
+
+    public static class SpyTraceSyncBeforeEntryInterceptor {
+        @AtSyncEnter(whenComplete = false, inline = true)
+        public static void onInvokeBefore(@Binding.Class Class<?> clazz, @Binding.MethodInfo String invokeInfo, @Binding.Monitor Object monitor,  @Binding.Line int lineNumber) {
+            SpyAPI.atBeforeEntrySync(clazz, monitor, invokeInfo, lineNumber);
+        }
+    }
+
+    public static class SpyTraceSyncAfterEntryInterceptor {
+        @AtSyncEnter(whenComplete = true, inline = true)
+        public static void onInvokeAfter(@Binding.Class Class<?> clazz, @Binding.MethodInfo String invokeInfo, @Binding.Line int lineNumber) {
+            SpyAPI.atAfterEntrySync(clazz, invokeInfo, lineNumber);
         }
     }
 

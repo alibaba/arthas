@@ -53,6 +53,8 @@ import com.taobao.arthas.core.advisor.SpyInterceptors.SpyTraceExcludeJDKIntercep
 import com.taobao.arthas.core.advisor.SpyInterceptors.SpyTraceInterceptor1;
 import com.taobao.arthas.core.advisor.SpyInterceptors.SpyTraceInterceptor2;
 import com.taobao.arthas.core.advisor.SpyInterceptors.SpyTraceInterceptor3;
+import com.taobao.arthas.core.advisor.SpyInterceptors.SpyTraceSyncBeforeEntryInterceptor;
+import com.taobao.arthas.core.advisor.SpyInterceptors.SpyTraceSyncAfterEntryInterceptor;
 import com.taobao.arthas.core.server.ArthasBootstrap;
 import com.taobao.arthas.core.util.ArthasCheckUtils;
 import com.taobao.arthas.core.util.ClassUtils;
@@ -72,6 +74,7 @@ public class Enhancer implements ClassFileTransformer {
     private final AdviceListener listener;
     private final boolean isTracing;
     private final boolean skipJDKTrace;
+    private final boolean skipMonitor;
     private final Matcher classNameMatcher;
     private final Matcher classNameExcludeMatcher;
     private final Matcher methodNameMatcher;
@@ -88,19 +91,21 @@ public class Enhancer implements ClassFileTransformer {
     }
 
     /**
-     * @param adviceId          通知编号
-     * @param isTracing         可跟踪方法调用
-     * @param skipJDKTrace      是否忽略对JDK内部方法的跟踪
-     * @param matchingClasses   匹配中的类
-     * @param methodNameMatcher 方法名匹配
-     * @param affect            影响统计
+     * @param listener                   通知监听器
+     * @param isTracing                  可跟踪方法调用
+     * @param skipJDKTrace               是否忽略对JDK内部方法的跟踪
+     * @param skipMonitor                是否忽略对MONITORENTRY的跟踪
+     * @param classNameMatcher           类名匹配
+     * @param classNameExcludeMatcher    类名排除匹配
+     * @param methodNameMatcher          方法名匹配
      */
-    public Enhancer(AdviceListener listener, boolean isTracing, boolean skipJDKTrace, Matcher classNameMatcher,
+    public Enhancer(AdviceListener listener, boolean isTracing, boolean skipJDKTrace, boolean skipMonitor, Matcher classNameMatcher,
             Matcher classNameExcludeMatcher,
             Matcher methodNameMatcher) {
         this.listener = listener;
         this.isTracing = isTracing;
         this.skipJDKTrace = skipJDKTrace;
+        this.skipMonitor = skipMonitor;
         this.classNameMatcher = classNameMatcher;
         this.classNameExcludeMatcher = classNameExcludeMatcher;
         this.methodNameMatcher = methodNameMatcher;
@@ -153,6 +158,10 @@ public class Enhancer implements ClassFileTransformer {
                     interceptorProcessors.addAll(defaultInterceptorClassParser.parse(SpyTraceExcludeJDKInterceptor1.class));
                     interceptorProcessors.addAll(defaultInterceptorClassParser.parse(SpyTraceExcludeJDKInterceptor2.class));
                     interceptorProcessors.addAll(defaultInterceptorClassParser.parse(SpyTraceExcludeJDKInterceptor3.class));
+                }
+                if (!this.skipMonitor) {
+                    interceptorProcessors.addAll(defaultInterceptorClassParser.parse(SpyTraceSyncBeforeEntryInterceptor.class));
+                    interceptorProcessors.addAll(defaultInterceptorClassParser.parse(SpyTraceSyncAfterEntryInterceptor.class));
                 }
             }
 
@@ -263,6 +272,9 @@ public class Enhancer implements ClassFileTransformer {
 
             // 成功计数
             affect.cCnt(1);
+
+            String data = AsmUtils.toASMCode(enhanceClassByteArray);
+            System.out.println(data);
 
             return enhanceClassByteArray;
         } catch (Throwable t) {
@@ -407,14 +419,9 @@ public class Enhancer implements ClassFileTransformer {
     /**
      * 对象增强
      *
-     * @param inst              inst
-     * @param adviceId          通知ID
-     * @param isTracing         可跟踪方法调用
-     * @param skipJDKTrace      是否忽略对JDK内部方法的跟踪
-     * @param classNameMatcher  类名匹配
-     * @param methodNameMatcher 方法名匹配
-     * @return 增强影响范围
-     * @throws UnmodifiableClassException 增强失败
+     * @param inst                          Instrumentation
+     * @return                              增强影响范围
+     * @throws UnmodifiableClassException   增强失败
      */
     public synchronized EnhancerAffect enhance(final Instrumentation inst) throws UnmodifiableClassException {
         // 获取需要增强的类集合

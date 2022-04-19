@@ -56,5 +56,36 @@ public interface InvokeTraceable {
             String tracingMethodDesc,
             int tracingLineNumber) throws Throwable;
 
+    /**
+     *
+     * @param classLoader
+     * @param clazz
+     * @param methodName
+     * @param methodDesc
+     * @param monitorLineNumber
+     * @throws Throwable
+     */
+    void beforeEntrySync(
+            ClassLoader classLoader,
+            Class<?> clazz,
+            String methodName,
+            String methodDesc,
+            int monitorLineNumber) throws Throwable;
+
+    /**
+     *
+     * @param classLoader
+     * @param clazz
+     * @param methodName
+     * @param methodDesc
+     * @param monitorLineNumber
+     * @throws Throwable
+     */
+    void afterEntrySync(
+            ClassLoader classLoader,
+            Class<?> clazz,
+            String methodName,
+            String methodDesc,
+            int monitorLineNumber) throws Throwable;
 
 }
