@@ -1,9 +1,6 @@
 package com.alibaba.arthas.spring;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Map.Entry;
-
+import com.taobao.arthas.agent.attach.ArthasAgent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,10 +12,12 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.context.annotation.Bean;
 import org.springframework.core.env.ConfigurableEnvironment;
 
-import com.taobao.arthas.agent.attach.ArthasAgent;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Map.Entry;
 
 /**
- * 
+ *
  * @author hengyunabc 2020-06-22
  *
  */
@@ -63,11 +62,8 @@ public class ArthasConfiguration {
 			mapWithPrefix.put("arthas." + entry.getKey(), entry.getValue());
 		}
 
-		final ArthasAgent arthasAgent = new ArthasAgent(mapWithPrefix, arthasProperties.getHome(),
-				arthasProperties.isSlientInit(), null);
-
-		arthasAgent.init();
-		logger.info("Arthas agent start success.");
+		final ArthasAgent arthasAgent = new ArthasAgent(mapWithPrefix, arthasProperties.getHome(),false, null);
+		new EnhanceArthasAgentInit(arthasAgent,arthasProperties).tryInit();
 		return arthasAgent;
 
 	}

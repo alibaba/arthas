@@ -5,7 +5,7 @@ import java.util.Map;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
 /**
- * 
+ *
  * @author hengyunabc 2020-06-23
  *
  */
@@ -41,8 +41,10 @@ public class ArthasProperties {
 	 */
 	private String disabledCommands;
 	private static final String DEFAULT_DISABLEDCOMMANDS = "stop";
+	private boolean tryGc=true;
+	private boolean tryRemove=false;
 
-    /**
+	/**
      * 因为 arthasConfigMap 只注入了用户配置的值，没有默认值，因些统一处理补全
      */
     public static void updateArthasConfigMapDefaultValue(Map<String, String> arthasConfigMap) {
@@ -137,5 +139,21 @@ public class ArthasProperties {
 
 	public void setDisabledCommands(String disabledCommands) {
 		this.disabledCommands = disabledCommands;
+	}
+
+	public boolean isTryGc() {
+		return tryGc;
+	}
+
+	public void setTryGc(boolean tryGc) {
+		this.tryGc = tryGc;
+	}
+
+	public boolean isTryRemove() {
+		return tryRemove;
+	}
+
+	public void setTryRemove(boolean tryRemove) {
+		this.tryRemove = tryRemove;
 	}
 }
