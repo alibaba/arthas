@@ -24,6 +24,7 @@ public class TraceView extends ResultView<TraceModel> {
     private static final String STEP_HAS_BOARD = "|   ";
     private static final String STEP_EMPTY_BOARD = "    ";
     private static final String TIME_UNIT = "ms";
+    private static final String PERCENTAGE = "%";
 
     // 是否输出耗时
     private boolean isPrintCost = true;
