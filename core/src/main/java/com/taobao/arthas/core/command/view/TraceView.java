@@ -24,7 +24,7 @@ public class TraceView extends ResultView<TraceModel> {
     private static final String STEP_HAS_BOARD = "|   ";
     private static final String STEP_EMPTY_BOARD = "    ";
     private static final String TIME_UNIT = "ms";
-    private static final String PERCENTAGE = "%";
+    private static final char PERCENTAGE = '%';
 
     // 是否输出耗时
     private boolean isPrintCost = true;
@@ -119,11 +119,12 @@ public class TraceView extends ResultView<TraceModel> {
         StringBuilder sb = new StringBuilder();
         if (node.getTimes() <= 1) {
             if(node.parent() instanceof ThreadNode) {
-                sb.append("[").append(nanoToMillis(node.getCost())).append(TIME_UNIT).append("] ");
+                sb.append('[').append(nanoToMillis(node.getCost())).append(TIME_UNIT).append("] ");
             }else {
                 MethodNode parentNode = (MethodNode) node.parent();
-                String percentage = String.format("%.2f",nanoToMillis(node.getCost())/nanoToMillis(parentNode.getCost())*100.0);
-                sb.append("[").append(nanoToMillis(node.getCost())).append(TIME_UNIT).append(" ").append(percentage).append(PERCENTAGE).append("] ");
+                double nodeMillis = nanoToMillis(node.getCost());
+                String percentage = String.format("%.2f", nodeMillis/nanoToMillis(parentNode.getCost())*100.0);
+                sb.append('[').append(percentage).append(PERCENTAGE).append(" ").append(nodeMillis).append(TIME_UNIT).append(" ").append("] ");
 
             }
         } else {
@@ -134,10 +135,11 @@ public class TraceView extends ResultView<TraceModel> {
                         .append(node.getTimes()).append("] ");
             }else {
                 MethodNode parentNode = (MethodNode) node.parent();
-                String percentage = String.format("%.2f",nanoToMillis(node.getCost())/nanoToMillis(parentNode.getCost())*100.0);
-                sb.append("[min=").append(nanoToMillis(node.getMinCost())).append(TIME_UNIT).append(",max=")
+                double totalCostMillis = nanoToMillis(node.getTotalCost());
+                String percentage = String.format("%.2f",totalCostMillis/nanoToMillis(parentNode.getCost())*100.0);
+                sb.append('[').append(percentage).append(PERCENTAGE).append(" min=").append(nanoToMillis(node.getMinCost())).append(TIME_UNIT).append(",max=")
                         .append(nanoToMillis(node.getMaxCost())).append(TIME_UNIT).append(",total=")
-                        .append(nanoToMillis(node.getTotalCost())).append(TIME_UNIT).append(" ").append(percentage).append(PERCENTAGE).append(",count=")
+                        .append(totalCostMillis).append(TIME_UNIT).append(",count=")
                         .append(node.getTimes()).append("] ");
             }
 
