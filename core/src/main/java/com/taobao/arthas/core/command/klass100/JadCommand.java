@@ -200,7 +200,7 @@ public class JadCommand extends AnnotatedCommand {
             return ExitStatus.success();
         } catch (Throwable t) {
             logger.error("jad: fail to decompile class: " + c.getName(), t);
-            return ExitStatus.failure(-1, "jad: fail to decompile class: " + c.getName());
+            return ExitStatus.failure(-1, "jad: fail to decompile class: " + c.getName() + ", please check $HOME/logs/arthas/arthas.log for more details.");
         }
     }
 
