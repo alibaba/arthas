@@ -21,6 +21,7 @@ import com.taobao.arthas.core.command.express.ExpressException;
 import com.taobao.arthas.core.command.express.ExpressFactory;
 import com.taobao.arthas.core.command.model.ClassLoaderVO;
 import com.taobao.arthas.core.command.model.SearchClassModel;
+import com.taobao.arthas.core.command.model.VmToolModel;
 import com.taobao.arthas.core.shell.cli.Completion;
 import com.taobao.arthas.core.shell.cli.CompletionUtils;
 import com.taobao.arthas.core.shell.cli.OptionCompleteHandler;
@@ -179,9 +180,10 @@ public class VmToolCommand extends AnnotatedCommand {
                     } else if (matchedClassLoaders.size() > 1) {
                         Collection<ClassLoaderVO> classLoaderVOList = ClassUtils
                                 .createClassLoaderVOList(matchedClassLoaders);
-                        SearchClassModel searchclassModel = new SearchClassModel().setClassLoaderClass(classLoaderClass)
+
+                        VmToolModel vmToolModel = new VmToolModel().setClassLoaderClass(classLoaderClass)
                                 .setMatchedClassLoaders(classLoaderVOList);
-                        process.appendResult(searchclassModel);
+                        process.appendResult(vmToolModel);
                         process.end(-1,
                                 "Found more than one classloader by class name, please specify classloader with '-c <classloader hash>'");
                         return;
@@ -216,8 +218,8 @@ public class VmToolCommand extends AnnotatedCommand {
                         }
                     }
 
-                    process.write(new ObjectView(value, this.expand).draw());
-                    process.write("\n");
+                    VmToolModel vmToolModel = new VmToolModel().setValue(value).setExpand(expand);
+                    process.appendResult(vmToolModel);
                     process.end();
                 }
             } else if (VmToolAction.forceGc.equals(action)) {
