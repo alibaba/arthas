@@ -316,6 +316,7 @@ public class Bootstrap {
             String arthasBootVersion = bootstrapPackage.getImplementationVersion();
             if (arthasBootVersion != null) {
                 AnsiLog.info("arthas-boot version: " + arthasBootVersion);
+                System.out.println("If the version is not the latest, please visit https://arthas.aliyun.com/doc/faq.html#id4 ");
             }
         }
 

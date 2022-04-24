@@ -300,7 +300,15 @@ public class ProcessUtils {
 
             int exitValue = proc.exitValue();
             if (exitValue != 0) {
-                AnsiLog.error("attach fail, targetPid: " + targetPid);
+                if(targetPid==1){
+                    AnsiLog.error("attach fail, targetPid: " + targetPid +
+                            " /n More Information: https://github.com/alibaba/arthas/issues/362#issuecomment-448185416" );
+                }
+                else{
+                    AnsiLog.error("attach fail, targetPid: " + targetPid +
+                            " /n More Information: https://arthas.aliyun.com/doc/faq#target-process-not-responding-or-hotspot-vm-not-loaded" +
+                            "/n or visit: https://github.com/alibaba/arthas/issues/347");
+                }
                 System.exit(1);
             }
         } catch (Throwable e) {

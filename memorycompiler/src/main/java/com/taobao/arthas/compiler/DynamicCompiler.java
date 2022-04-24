@@ -136,6 +136,7 @@ public class DynamicCompiler {
 
             return dynamicClassLoader.getByteCodes();
         } catch (ClassFormatError e) {
+            System.out.println("More detail: https://arthas.aliyun.com/doc/faq#java-lang-classformaterror-nullskywalking-arthas");
             throw new DynamicCompilerException(e, errors);
         } finally {
             compilationUnits.clear();
