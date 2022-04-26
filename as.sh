@@ -8,10 +8,10 @@
 
 # program : Arthas
 #  author : Core Engine @ Taobao.com
-#    date : 2022-03-26
+#    date : 2022-04-25
 
 # current arthas script version
-ARTHAS_SCRIPT_VERSION=3.6.0
+ARTHAS_SCRIPT_VERSION=3.6.1
 
 # SYNOPSIS
 #   rreadlink <fileOrDirPath>
@@ -142,7 +142,7 @@ TUNNEL_SERVER=
 AGENT_ID=
 
 # stat report url
-STAT_URL="http://pandora.alibaba-inc.com/pandora-web/api/arthasStat.do"
+STAT_URL=
 
 # app name
 APP_NAME=
@@ -453,7 +453,7 @@ EXAMPLES:
   ./as.sh --stat-url 'http://192.168.10.11:8080/api/stat'
   ./as.sh -c 'sysprop; thread' <pid>
   ./as.sh -f batch.as <pid>
-  ./as.sh --use-version 3.6.0
+  ./as.sh --use-version 3.6.1
   ./as.sh --session-timeout 3600
   ./as.sh --attach-only
   ./as.sh --disabled-commands stop,dump
