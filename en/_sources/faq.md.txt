@@ -94,6 +94,11 @@ When error log appear `java.lang.ClassFormatError: null`, it is usually modified
 For example: use skywalking V8.1.0 below [cannot trace, watch classes enhanced by skywalking agent](https://github.com/alibaba/arthas/issues/1141), V8.1.0 or above is compatible, refer to skywalking configuration for more details. [skywalking compatible with other javaagent bytecode processing](https://github.com/apache/skywalking/blob/master/docs/en/FAQ/Compatible-with-other-javaagent-bytecode-processing.md).
 
 
+#### class redefinition failed: attempted to change the schema (add/remove fields)
+
+Reference: [https://github.com/alibaba/arthas/issues/2165](https://github.com/alibaba/arthas/issues/2165)
+
+
 ##### Can I use arthas offline?
 
 Yes. Just download the full size package and unzip it, refer to: [Download](download.md).

@@ -94,6 +94,10 @@ ognl '@java.lang.System@out.println("Hello \u4e2d\u6587")'
 比如: 使用 skywalking V8.1.0 以下版本 [无法trace、watch 被skywalking agent 增强过的类](https://github.com/alibaba/arthas/issues/1141), V8.1.0 以上版本可以兼容使用,更多参考skywalking配置 [skywalking compatible with other javaagent bytecode processing](https://github.com/apache/skywalking/blob/master/docs/en/FAQ/Compatible-with-other-javaagent-bytecode-processing.md)。
 
 
+#### class redefinition failed: attempted to change the schema (add/remove fields)
+
+参考： [https://github.com/alibaba/arthas/issues/2165](https://github.com/alibaba/arthas/issues/2165)
+
 ##### Arthas能不能离线使用
 
 可以。下载全量包解压即可，参考: [下载](download.md)。

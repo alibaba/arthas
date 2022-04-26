@@ -125,9 +125,12 @@
 <li class="toctree-l2"><a class="reference internal" href="#how-to-watch-or-trace-inner-classes">How to watch or trace inner classes?</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#enter-unicode-characters">Enter Unicode characters</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#java-lang-classformaterror-null-skywalking-arthas-compatible-use">java.lang.ClassFormatError: null, skywalking arthas compatible use</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#can-i-use-arthas-offline">Can I use arthas offline?</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#attach-the-process-with-pid-1-in-docker-k8s-failed">Attach the process with pid 1 in docker/k8s failed</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#why-is-the-new-version-of-arthas-downloaded-but-the-old-version-is-connected">Why is the new version of Arthas downloaded, but the old version is connected?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#class-redefinition-failed-attempted-to-change-the-schema-add-remove-fields">class redefinition failed: attempted to change the schema (add/remove fields)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#can-i-use-arthas-offline">Can I use arthas offline?</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#attach-the-process-with-pid-1-in-docker-k8s-failed">Attach the process with pid 1 in docker/k8s failed</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#why-is-the-new-version-of-arthas-downloaded-but-the-old-version-is-connected">Why is the new version of Arthas downloaded, but the old version is connected?</a></li>
+</ul>
+</li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas">Star me at GitHub</a></li>
@@ -280,18 +283,22 @@
 <p>When error log appear <code class="docutils literal notranslate"><span class="pre">java.lang.ClassFormatError:</span> <span class="pre">null</span></code>, it is usually modified by other bytecode tools that are not compatible with arthas modified bytecode.</p>
 <p>For example: use skywalking V8.1.0 below <a class="reference external" href="https://github.com/alibaba/arthas/issues/1141">cannot trace, watch classes enhanced by skywalking agent</a>, V8.1.0 or above is compatible, refer to skywalking configuration for more details. <a class="reference external" href="https://github.com/apache/skywalking/blob/master/docs/en/FAQ/Compatible-with-other-javaagent-bytecode-processing">skywalking compatible with other javaagent bytecode processing</a>.</p>
 </div>
+<div class="section" id="class-redefinition-failed-attempted-to-change-the-schema-add-remove-fields">
+<h2>class redefinition failed: attempted to change the schema (add/remove fields)<a class="headerlink" href="#class-redefinition-failed-attempted-to-change-the-schema-add-remove-fields" title="Permalink to this headline">¶</a></h2>
+<p>Reference: <a class="reference external" href="https://github.com/alibaba/arthas/issues/2165">https://github.com/alibaba/arthas/issues/2165</a></p>
 <div class="section" id="can-i-use-arthas-offline">
-<h2>Can I use arthas offline?<a class="headerlink" href="#can-i-use-arthas-offline" title="Permalink to this headline">¶</a></h2>
+<h3>Can I use arthas offline?<a class="headerlink" href="#can-i-use-arthas-offline" title="Permalink to this headline">¶</a></h3>
 <p>Yes. Just download the full size package and unzip it, refer to: <a class="reference internal" href="download.html"><span class="doc">Download</span></a>.</p>
 </div>
 <div class="section" id="attach-the-process-with-pid-1-in-docker-k8s-failed">
-<h2>Attach the process with pid 1 in docker/k8s failed<a class="headerlink" href="#attach-the-process-with-pid-1-in-docker-k8s-failed" title="Permalink to this headline">¶</a></h2>
+<h3>Attach the process with pid 1 in docker/k8s failed<a class="headerlink" href="#attach-the-process-with-pid-1-in-docker-k8s-failed" title="Permalink to this headline">¶</a></h3>
 <p>Reference: <a class="reference external" href="https://github.com/alibaba/arthas/issues/362#issuecomment-448185416">https://github.com/alibaba/arthas/issues/362#issuecomment-448185416</a></p>
 </div>
 <div class="section" id="why-is-the-new-version-of-arthas-downloaded-but-the-old-version-is-connected">
-<h2>Why is the new version of Arthas downloaded, but the old version is connected?<a class="headerlink" href="#why-is-the-new-version-of-arthas-downloaded-but-the-old-version-is-connected" title="Permalink to this headline">¶</a></h2>
+<h3>Why is the new version of Arthas downloaded, but the old version is connected?<a class="headerlink" href="#why-is-the-new-version-of-arthas-downloaded-but-the-old-version-is-connected" title="Permalink to this headline">¶</a></h3>
 <p>For example, the started version of <code class="docutils literal notranslate"><span class="pre">as.sh/arthas-boot.jar</span></code> is 3.5.<em>, but after connecting, the printed arthas version is 3.4.</em>.</p>
 <p>It may be that the target process has been diagnosed with the old version of arthas before. You can execute <code class="docutils literal notranslate"><span class="pre">stop</span></code> to stop the old version of arthas, and then reuse the new version to attach.</p>
+</div>
 </div>
 </div>
 

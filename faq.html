@@ -128,9 +128,12 @@
 <li class="toctree-l2"><a class="reference internal" href="#id4">怎样watch、trace内部类？</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#unicode">输入中文/Unicode字符</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#java-lang-classformaterror-nullskywalking-arthas">java.lang.ClassFormatError: null、skywalking arthas 兼容使用</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#arthas">Arthas能不能离线使用</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#attach-docker-k8s-pid-1">Attach docker/k8s 里的 pid 为 1 的进程失败</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#id5">为什么下载了新版本的Arthas，连接的却是旧版本？</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#class-redefinition-failed-attempted-to-change-the-schema-add-remove-fields">class redefinition failed: attempted to change the schema (add/remove fields)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#arthas">Arthas能不能离线使用</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#attach-docker-k8s-pid-1">Attach docker/k8s 里的 pid 为 1 的进程失败</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id5">为什么下载了新版本的Arthas，连接的却是旧版本？</a></li>
+</ul>
+</li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference external" href="https://github.com/alibaba/arthas">Star me at GitHub</a></li>
@@ -283,18 +286,22 @@
 <p>当出现这个错误日志<code class="docutils literal notranslate"><span class="pre">java.lang.ClassFormatError:</span> <span class="pre">null</span></code>,通常情况下都是被其他字节码工具修改过与arthas修改字节码不兼容。</p>
 <p>比如: 使用 skywalking V8.1.0 以下版本 <a class="reference external" href="https://github.com/alibaba/arthas/issues/1141">无法trace、watch 被skywalking agent 增强过的类</a>, V8.1.0 以上版本可以兼容使用,更多参考skywalking配置 <a class="reference external" href="https://github.com/apache/skywalking/blob/master/docs/en/FAQ/Compatible-with-other-javaagent-bytecode-processing">skywalking compatible with other javaagent bytecode processing</a>。</p>
 </div>
+<div class="section" id="class-redefinition-failed-attempted-to-change-the-schema-add-remove-fields">
+<h2>class redefinition failed: attempted to change the schema (add/remove fields)<a class="headerlink" href="#class-redefinition-failed-attempted-to-change-the-schema-add-remove-fields" title="永久链接至标题">¶</a></h2>
+<p>参考： <a class="reference external" href="https://github.com/alibaba/arthas/issues/2165">https://github.com/alibaba/arthas/issues/2165</a></p>
 <div class="section" id="arthas">
-<h2>Arthas能不能离线使用<a class="headerlink" href="#arthas" title="永久链接至标题">¶</a></h2>
+<h3>Arthas能不能离线使用<a class="headerlink" href="#arthas" title="永久链接至标题">¶</a></h3>
 <p>可以。下载全量包解压即可，参考: <a class="reference internal" href="download.html"><span class="doc">下载</span></a>。</p>
 </div>
 <div class="section" id="attach-docker-k8s-pid-1">
-<h2>Attach docker/k8s 里的 pid 为 1 的进程失败<a class="headerlink" href="#attach-docker-k8s-pid-1" title="永久链接至标题">¶</a></h2>
+<h3>Attach docker/k8s 里的 pid 为 1 的进程失败<a class="headerlink" href="#attach-docker-k8s-pid-1" title="永久链接至标题">¶</a></h3>
 <p>参考： <a class="reference external" href="https://github.com/alibaba/arthas/issues/362#issuecomment-448185416">https://github.com/alibaba/arthas/issues/362#issuecomment-448185416</a></p>
 </div>
 <div class="section" id="id5">
-<h2>为什么下载了新版本的Arthas，连接的却是旧版本？<a class="headerlink" href="#id5" title="永久链接至标题">¶</a></h2>
+<h3>为什么下载了新版本的Arthas，连接的却是旧版本？<a class="headerlink" href="#id5" title="永久链接至标题">¶</a></h3>
 <p>比如启动的 <code class="docutils literal notranslate"><span class="pre">as.sh/arthas-boot.jar</span></code> 版本是3.5.* 的，但是连接上之后，打印的arthas版本是 3.4.* 的。</p>
 <p>可能是之前使用旧版本的arthas诊断过目标进程。可以先执行<code class="docutils literal notranslate"><span class="pre">stop</span></code>停止掉旧版本的arthas，再重新使用新版本attach。</p>
+</div>
 </div>
 </div>
 
