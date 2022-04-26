@@ -1,18 +1,7 @@
 package com.taobao.arthas.compiler;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-
-import javax.tools.Diagnostic;
-import javax.tools.DiagnosticCollector;
-import javax.tools.JavaCompiler;
-import javax.tools.JavaFileManager;
-import javax.tools.JavaFileObject;
-import javax.tools.StandardJavaFileManager;
-import javax.tools.ToolProvider;
+import javax.tools.*;
+import java.util.*;
 
 public class DynamicCompiler {
     private final JavaCompiler javaCompiler = ToolProvider.getSystemJavaCompiler();
@@ -136,7 +125,6 @@ public class DynamicCompiler {
 
             return dynamicClassLoader.getByteCodes();
         } catch (ClassFormatError e) {
-            System.out.println("More detail: https://arthas.aliyun.com/doc/faq#java-lang-classformaterror-nullskywalking-arthas");
             throw new DynamicCompilerException(e, errors);
         } finally {
             compilationUnits.clear();

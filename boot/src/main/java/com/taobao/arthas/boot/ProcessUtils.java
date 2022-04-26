@@ -1,29 +1,13 @@
 package com.taobao.arthas.boot;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.io.PrintStream;
+import com.taobao.arthas.common.*;
+
+import java.io.*;
 import java.lang.reflect.Method;
 import java.net.URL;
 import java.net.URLClassLoader;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.Iterator;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.Map.Entry;
-import java.util.Scanner;
-import java.util.InputMismatchException;
-
-import com.taobao.arthas.common.AnsiLog;
-import com.taobao.arthas.common.ExecutingCommand;
-import com.taobao.arthas.common.IOUtils;
-import com.taobao.arthas.common.JavaVersionUtils;
-import com.taobao.arthas.common.PidUtils;
 
 /**
  *
@@ -302,12 +286,13 @@ public class ProcessUtils {
             if (exitValue != 0) {
                 if(targetPid==1){
                     AnsiLog.error("attach fail, targetPid: " + targetPid +
-                            " /n More Information: https://github.com/alibaba/arthas/issues/362#issuecomment-448185416" );
+                            " /n More Information: https://arthas.aliyun.com/doc/faq.html"+
+                            " /n Reference issue: https://github.com/alibaba/arthas/issues/362#issuecomment-448185416" );
                 }
                 else{
                     AnsiLog.error("attach fail, targetPid: " + targetPid +
-                            " /n More Information: https://arthas.aliyun.com/doc/faq#target-process-not-responding-or-hotspot-vm-not-loaded" +
-                            "/n or visit: https://github.com/alibaba/arthas/issues/347");
+                            " /n More Information: https://arthas.aliyun.com/doc/faq.html" +
+                            "/n Reference issue: https://github.com/alibaba/arthas/issues/347");
                 }
                 System.exit(1);
             }
@@ -348,6 +333,7 @@ public class ProcessUtils {
                 // process error
                 AnsiLog.error("process error: {}", e.toString());
                 AnsiLog.error(e);
+                AnsiLog.info("More information: https://arthas.aliyun.com/doc/faq.html");
                 return STATUS_EXEC_ERROR;
             }
         } finally {
