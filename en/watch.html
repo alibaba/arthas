@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>watch &mdash; Arthas 3.6.0 documentation</title>
+  <title>watch &mdash; Arthas 3.6.1 documentation</title>
   
 
   
@@ -73,7 +73,7 @@
             
             
               <div class="version">
-                3.6.0
+                3.6.1
               </div>
             
           
@@ -302,7 +302,7 @@
 </tr>
 <tr>
 <td align="right">[x:]</td>
-<td align="left">the depth to print the specified property with default value: 1</td>
+<td align="left">the depth to print the specified property with default value: 1, the max value is 4</td>
 </tr>
 </tbody>
 </table><p>F.Y.I</p>
@@ -461,6 +461,7 @@ ts=2018-12-03 19:34:19; [cost=0.587833ms] result=@ArrayList[
 </div>
 <ul class="simple">
 <li><p><code class="docutils literal notranslate"><span class="pre">-x</span></code>: Expand level of object (1 by default)</p></li>
+<li><p>The max value of <code class="docutils literal notranslate"><span class="pre">-x</span></code> is 4, to prevent the expansion result taking up too much memory. Users can specify the field in the <code class="docutils literal notranslate"><span class="pre">ognl</span></code> expression.</p></li>
 </ul>
 </div>
 <div class="section" id="use-condition-expressions-to-locate-specific-call">

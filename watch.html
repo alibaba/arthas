@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>watch &mdash; Arthas 3.6.0 文档</title>
+  <title>watch &mdash; Arthas 3.6.1 文档</title>
   
 
   
@@ -74,7 +74,7 @@
             
             
               <div class="version">
-                3.6.0
+                3.6.1
               </div>
             
           
@@ -302,7 +302,7 @@
 </tr>
 <tr>
 <td align="right">[x:]</td>
-<td align="left">指定输出结果的属性遍历深度，默认为 1</td>
+<td align="left">指定输出结果的属性遍历深度，默认为 1，最大值是4</td>
 </tr>
 </tbody>
 </table><p>这里重点要说明的是观察表达式，观察表达式的构成主要由 ognl 表达式组成，所以你可以这样写<code class="docutils literal notranslate"><span class="pre">&quot;{params,returnObj}&quot;</span></code>，只要是一个合法的 ognl 表达式，都能被正常支持。</p>
@@ -456,6 +456,7 @@ ts=2018-12-03 19:34:19; [cost=0.587833ms] result=@ArrayList[
 </div>
 <ul class="simple">
 <li><p><code class="docutils literal notranslate"><span class="pre">-x</span></code>表示遍历深度，可以调整来打印具体的参数和结果内容，默认值是1。</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">-x</span></code>最大值是4，防止展开结果占用太多内存。用户可以在<code class="docutils literal notranslate"><span class="pre">ognl</span></code>表达式里指定更具体的field。</p></li>
 </ul>
 </div>
 <div class="section" id="id5">

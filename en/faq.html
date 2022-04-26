@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>FAQ &mdash; Arthas 3.6.0 documentation</title>
+  <title>FAQ &mdash; Arthas 3.6.1 documentation</title>
   
 
   
@@ -73,7 +73,7 @@
             
             
               <div class="version">
-                3.6.0
+                3.6.1
               </div>
             
           
@@ -122,6 +122,7 @@
 <li class="toctree-l2"><a class="reference internal" href="#can-arthas-view-the-value-of-a-variable-in-memory">Can arthas view the value of a variable in memory?</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#how-to-filter-method-with-the-same-name">How to filter method with the same name?</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#how-to-watch-or-trace-constructor">How to watch or trace constructor?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#how-to-watch-or-trace-inner-classes">How to watch or trace inner classes?</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#enter-unicode-characters">Enter Unicode characters</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#java-lang-classformaterror-null-skywalking-arthas-compatible-use">java.lang.ClassFormatError: null, skywalking arthas compatible use</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#can-i-use-arthas-offline">Can I use arthas offline?</a></li>
@@ -224,10 +225,13 @@
 </div>
 <div class="section" id="can-commands-such-as-trace-watch-enhance-the-classes-in-jdk">
 <h2>Can commands such as trace/watch enhance the classes in jdk?<a class="headerlink" href="#can-commands-such-as-trace-watch-enhance-the-classes-in-jdk" title="Permalink to this headline">¶</a></h2>
-<p>By default, classes beginning with <code class="docutils literal notranslate"><span class="pre">java.</span></code> are filtered out, but they can be turned on:</p>
+<p>By default, classes beginning with <code class="docutils literal notranslate"><span class="pre">java.</span></code> or the classes loaded by the <code class="docutils literal notranslate"><span class="pre">Bootstrap</span> <span class="pre">ClassLoader</span></code> are filtered out, but they can be turned on:</p>
 <div class="highlight-bash notranslate"><div class="highlight hljs"><pre class="bash">options unsafe true</pre></div>
 </div>
 <p>See more at <a class="reference internal" href="options.html"><span class="doc">options</span></a></p>
+<blockquote>
+<div><p>To support the jars appended by java.lang.instrument.Instrumentation#appendToBootstrapClassLoaderSearch need to enable unsafe.</p>
+</div></blockquote>
 </div>
 <div class="section" id="how-to-view-the-result-in-json-format">
 <h2>How to view the result in <code class="docutils literal notranslate"><span class="pre">json</span></code> format<a class="headerlink" href="#how-to-view-the-result-in-json-format" title="Permalink to this headline">¶</a></h2>
@@ -257,6 +261,12 @@
 <div class="section" id="how-to-watch-or-trace-constructor">
 <h2>How to watch or trace constructor?<a class="headerlink" href="#how-to-watch-or-trace-constructor" title="Permalink to this headline">¶</a></h2>
 <div class="highlight-bash notranslate"><div class="highlight hljs"><pre class="bash">watch demo.MathGame &lt;init&gt; &#x27;{params,returnObj,throwExp}&#x27; -v</pre></div>
+</div>
+</div>
+<div class="section" id="how-to-watch-or-trace-inner-classes">
+<h2>How to watch or trace inner classes?<a class="headerlink" href="#how-to-watch-or-trace-inner-classes" title="Permalink to this headline">¶</a></h2>
+<p>In the JVM specification the name of inner classes is <code class="docutils literal notranslate"><span class="pre">OuterClass$InnerClass</span></code>.</p>
+<div class="highlight-bash notranslate"><div class="highlight hljs"><pre class="bash">watch OuterClass$InnerClass</pre></div>
 </div>
 </div>
 <div class="section" id="enter-unicode-characters">

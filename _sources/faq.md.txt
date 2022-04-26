@@ -23,13 +23,15 @@ com.sun.tools.attach.AttachNotSupportedException: Unable to open socket file: ta
 4. 更多情况参考： [https://github.com/alibaba/arthas/issues/347](https://github.com/alibaba/arthas/issues/347)
 ##### trace/watch等命令能否增强jdk里的类？
 
-默认情况下会过滤掉`java.`开头的类，但可以通过参数开启。
+默认情况下会过滤掉`java.`开头的类和被`BootStrap ClassLoader`加载的类。可以通过参数开启。
 
 ```bash
 options unsafe true
 ```
 
 更多参考 [options](options.md)
+
+> 通过 java.lang.instrument.Instrumentation#appendToBootstrapClassLoaderSearch append到`Bootstrap ClassLoader`的jar包需要开启unsafe。
 
 ##### 怎么以`json`格式查看结果
 
@@ -67,6 +69,14 @@ watch demo.MathGame primeFactors '{params,returnObj,throwExp}' 'params.length >0
 
 ```bash
 watch demo.MathGame <init> '{params,returnObj,throwExp}' -v
+```
+
+##### 怎样watch、trace内部类？
+
+在JVM规范里内部类的格式是`OuterClass$InnerClass`。
+
+```bash
+watch OuterClass$InnerClass
 ```
 
 ##### 输入中文/Unicode字符
