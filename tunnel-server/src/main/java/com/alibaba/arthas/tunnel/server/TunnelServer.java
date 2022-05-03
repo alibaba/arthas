@@ -40,14 +40,14 @@ public class TunnelServer {
     private int port;
     private String path = ArthasConstants.DEFAULT_WEBSOCKET_PATH;
 
-    private Map<String, AgentInfo> agentInfoMap = new ConcurrentHashMap<String, AgentInfo>();
+    private Map<String, AgentInfo> agentInfoMap = new ConcurrentHashMap<>();
 
-    private Map<String, ClientConnectionInfo> clientConnectionInfoMap = new ConcurrentHashMap<String, ClientConnectionInfo>();
+    private Map<String, ClientConnectionInfo> clientConnectionInfoMap = new ConcurrentHashMap<>();
     
     /**
      * 记录 proxy request
      */
-    private Map<String, Promise<SimpleHttpResponse>> proxyRequestPromiseMap = new ConcurrentHashMap<String, Promise<SimpleHttpResponse>>();
+    private Map<String, Promise<SimpleHttpResponse>> proxyRequestPromiseMap = new ConcurrentHashMap<>();
 
     private EventLoopGroup bossGroup = new NioEventLoopGroup(1, new DefaultThreadFactory("arthas-TunnelServer-boss", true));
     private EventLoopGroup workerGroup = new NioEventLoopGroup(new DefaultThreadFactory("arthas-TunnelServer-worker", true));
