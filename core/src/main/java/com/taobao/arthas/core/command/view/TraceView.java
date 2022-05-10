@@ -122,9 +122,8 @@ public class TraceView extends ResultView<TraceModel> {
                 sb.append('[').append(nanoToMillis(node.getCost())).append(TIME_UNIT).append("] ");
             }else {
                 MethodNode parentNode = (MethodNode) node.parent();
-                double nodeMillis = nanoToMillis(node.getCost());
-                String percentage = String.format("%.2f", nodeMillis/nanoToMillis(parentNode.getCost())*100.0);
-                sb.append('[').append(percentage).append(PERCENTAGE).append(" ").append(nodeMillis).append(TIME_UNIT).append(" ").append("] ");
+                String percentage = String.format("%.2f", node.getCost()*100.0/parentNode.getTotalCost());
+                sb.append('[').append(percentage).append(PERCENTAGE).append(" ").append(nanoToMillis(node.getCost())).append(TIME_UNIT).append(" ").append("] ");
 
             }
         } else {
@@ -135,11 +134,10 @@ public class TraceView extends ResultView<TraceModel> {
                         .append(node.getTimes()).append("] ");
             }else {
                 MethodNode parentNode = (MethodNode) node.parent();
-                double totalCostMillis = nanoToMillis(node.getTotalCost());
-                String percentage = String.format("%.2f",totalCostMillis/nanoToMillis(parentNode.getCost())*100.0);
+                String percentage = String.format("%.2f",node.getTotalCost()*100.0/parentNode.getTotalCost());
                 sb.append('[').append(percentage).append(PERCENTAGE).append(" min=").append(nanoToMillis(node.getMinCost())).append(TIME_UNIT).append(",max=")
                         .append(nanoToMillis(node.getMaxCost())).append(TIME_UNIT).append(",total=")
-                        .append(totalCostMillis).append(TIME_UNIT).append(",count=")
+                        .append(nanoToMillis(node.getTotalCost())).append(TIME_UNIT).append(",count=")
                         .append(node.getTimes()).append("] ");
             }
 
