@@ -83,14 +83,16 @@ public class DirectoryBrowser {
     private static String linePart1Str = "<a href=\"%s\" title=\"%s\">";
     private static String linePart2Str = "%-60s";
 
-    static String renderDir(File dir) {
+    static String renderDir(File dir, boolean printParentLink) {
         File[] listFiles = dir.listFiles();
 
         StringBuilder sb = new StringBuilder(8192);
         String dirName = dir.getName() + "/";
         sb.append(String.format(pageHeader, dirName, dirName));
 
-        sb.append("<a href=\"../\" title=\"../\">../</a>\n");
+        if (printParentLink) {
+            sb.append("<a href=\"../\" title=\"../\">../</a>\n");
+        }
 
         if (listFiles != null) {
             Arrays.sort(listFiles);
@@ -161,8 +163,7 @@ public class DirectoryBrowser {
                 if (!path.endsWith("/")) {
                     fullResp.setStatus(HttpResponseStatus.FOUND).headers().set(HttpHeaderNames.LOCATION, "/" + path + "/");
                 }
-                
-                String renderResult = renderDir(file);
+                String renderResult = renderDir(file, !isSameFile(dir, file));
                 fullResp.content().writeBytes(renderResult.getBytes("utf-8"));
                 fullResp.headers().set(HttpHeaderNames.CONTENT_TYPE, "text/html; charset=utf-8");
                 ctx.write(fullResp);
@@ -275,4 +276,11 @@ public class DirectoryBrowser {
         return false;
     }
 
+    public static boolean isSameFile(File a, File b) {
+        try {
+            return a.getCanonicalPath().equals(b.getCanonicalPath());
+        } catch (IOException e) {
+            return false;
+        }
+    }
 }
