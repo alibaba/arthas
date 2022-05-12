@@ -15,7 +15,7 @@ public interface SessionManager {
 
     Session getSession(String sessionId);
 
-    Session closeSession(String sessionId);
+    Session removeSession(String sessionId);
 
     void updateAccessTime(Session session);
 

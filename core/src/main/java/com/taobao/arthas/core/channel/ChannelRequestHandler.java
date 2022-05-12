@@ -416,7 +416,7 @@ public class ChannelRequestHandler implements ChannelClient.RequestListener {
 
     private void tryCloseOneTimeSession(Session session) {
         if (session.get(ONETIME_SESSION_KEY) != null) {
-            sessionManager.closeSession(session.getSessionId());
+            sessionManager.removeSession(session.getSessionId());
         }
     }
 
@@ -554,7 +554,7 @@ public class ChannelRequestHandler implements ChannelClient.RequestListener {
 //    }
 
     private void processCloseSession(ActionRequest request, Session session) {
-        sessionManager.closeSession(session.getSessionId());
+        sessionManager.removeSession(session.getSessionId());
         ActionResponse.Builder response = createResponse(request, session, ResponseStatus.SUCCEEDED);
         sendResponse(response);
     }

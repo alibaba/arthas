@@ -5,7 +5,12 @@ import com.alibaba.arthas.deps.org.slf4j.LoggerFactory;
 import com.alibaba.fastjson.JSON;
 import com.taobao.arthas.common.ArthasConstants;
 import com.taobao.arthas.common.PidUtils;
-import com.taobao.arthas.core.command.model.*;
+import com.taobao.arthas.core.command.model.CommandRequestModel;
+import com.taobao.arthas.core.command.model.InputStatus;
+import com.taobao.arthas.core.command.model.InputStatusModel;
+import com.taobao.arthas.core.command.model.MessageModel;
+import com.taobao.arthas.core.command.model.ResultModel;
+import com.taobao.arthas.core.command.model.WelcomeModel;
 import com.taobao.arthas.core.config.Configure;
 import com.taobao.arthas.core.distribution.PackingResultDistributor;
 import com.taobao.arthas.core.distribution.ResultConsumer;
@@ -37,7 +42,12 @@ import io.netty.buffer.ByteBuf;
 import io.netty.buffer.ByteBufOutputStream;
 import io.netty.buffer.Unpooled;
 import io.netty.channel.ChannelHandlerContext;
-import io.netty.handler.codec.http.*;
+import io.netty.handler.codec.http.DefaultFullHttpResponse;
+import io.netty.handler.codec.http.FullHttpRequest;
+import io.netty.handler.codec.http.HttpHeaderNames;
+import io.netty.handler.codec.http.HttpMethod;
+import io.netty.handler.codec.http.HttpResponse;
+import io.netty.handler.codec.http.HttpResponseStatus;
 import io.netty.util.CharsetUtil;
 import io.termd.core.function.Function;
 
@@ -379,7 +389,7 @@ public class HttpApiHandler {
     }
 
     private ApiResponse processCloseSessionRequest(ApiRequest apiRequest, Session session) {
-        sessionManager.closeSession(session.getSessionId());
+        sessionManager.removeSession(session.getSessionId());
         ApiResponse response = new ApiResponse();
         response.setState(ApiState.SUCCEEDED);
         return response;
@@ -473,7 +483,7 @@ public class HttpApiHandler {
             return response;
         } finally {
             if (oneTimeAccess) {
-                sessionManager.closeSession(session.getSessionId());
+                sessionManager.removeSession(session.getSessionId());
             }
         }
     }

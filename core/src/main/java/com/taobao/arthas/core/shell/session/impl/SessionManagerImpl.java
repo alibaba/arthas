@@ -4,6 +4,7 @@ import com.alibaba.arthas.deps.org.slf4j.Logger;
 import com.alibaba.arthas.deps.org.slf4j.LoggerFactory;
 import com.taobao.arthas.core.command.model.MessageModel;
 import com.taobao.arthas.core.distribution.ResultConsumer;
+import com.taobao.arthas.core.distribution.ResultDistributor;
 import com.taobao.arthas.core.distribution.SharingResultDistributor;
 import com.taobao.arthas.core.shell.ShellServerOptions;
 import com.taobao.arthas.core.shell.session.Session;
@@ -13,8 +14,15 @@ import com.taobao.arthas.core.shell.system.JobController;
 import com.taobao.arthas.core.shell.system.impl.InternalCommandManager;
 
 import java.lang.instrument.Instrumentation;
-import java.util.*;
-import java.util.concurrent.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ThreadFactory;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Arthas Session Manager
@@ -82,7 +90,7 @@ public class SessionManagerImpl implements SessionManager {
             job.interrupt();
         }
 
-        SharingResultDistributor resultDistributor = session.getResultDistributor();
+        ResultDistributor resultDistributor = session.getResultDistributor();
         if (resultDistributor != null) {
             resultDistributor.close();
         }
@@ -105,7 +113,7 @@ public class SessionManagerImpl implements SessionManager {
 
         ArrayList<Session> sessions = new ArrayList<Session>(this.sessions.values());
         for (Session session : sessions) {
-            SharingResultDistributor resultDistributor = session.getResultDistributor();
+            ResultDistributor resultDistributor = session.getResultDistributor();
             if (resultDistributor != null) {
                 resultDistributor.appendResult(new MessageModel("arthas server is going to shutdown."));
             }
@@ -159,7 +167,7 @@ public class SessionManagerImpl implements SessionManager {
             }
             long timeOutInMinutes = sessionTimeoutMillis / 1000 / 60;
             String reason = "session is inactive for " + timeOutInMinutes + " min(s).";
-            SharingResultDistributor resultDistributor = session.getResultDistributor();
+            ResultDistributor resultDistributor = session.getResultDistributor();
             if (resultDistributor != null) {
                 resultDistributor.appendResult(new MessageModel(reason));
             }
@@ -172,9 +180,10 @@ public class SessionManagerImpl implements SessionManager {
      * Check and remove inactive consumer
      */
     public void evictConsumers(Session session) {
-        SharingResultDistributor distributor = session.getResultDistributor();
-        if (distributor != null) {
-            List<ResultConsumer> consumers = distributor.getConsumers();
+        ResultDistributor distributor = session.getResultDistributor();
+        if (distributor instanceof SharingResultDistributor) {
+            SharingResultDistributor sharingResultDistributor = (SharingResultDistributor) distributor;
+            List<ResultConsumer> consumers = sharingResultDistributor.getConsumers();
             //remove inactive consumer from session directly
             long now = System.currentTimeMillis();
             for (ResultConsumer consumer : consumers) {
@@ -184,9 +193,12 @@ public class SessionManagerImpl implements SessionManager {
                     logger.info("Removing inactive consumer from session, sessionId: {}, consumerId: {}, inactive duration: {}",
                             session.getSessionId(), consumer.getConsumerId(), inactiveTime);
                     consumer.appendResult(new MessageModel("consumer is inactive for a while, please refresh the page."));
-                    distributor.removeConsumer(consumer);
+                    sharingResultDistributor.removeConsumer(consumer);
                 }
             }
+        }
+        if (distributor != null) {
+            distributor.close();
         }
     }
 
