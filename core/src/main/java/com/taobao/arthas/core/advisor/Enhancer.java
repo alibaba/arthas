@@ -42,6 +42,7 @@ import com.alibaba.bytekit.asm.location.filter.InvokeContainLocationFilter;
 import com.alibaba.bytekit.asm.location.filter.LocationFilter;
 import com.alibaba.bytekit.utils.AsmOpUtils;
 import com.alibaba.bytekit.utils.AsmUtils;
+import com.taobao.arthas.common.Pair;
 import com.taobao.arthas.core.GlobalOptions;
 import com.taobao.arthas.core.advisor.SpyInterceptors.SpyInterceptor1;
 import com.taobao.arthas.core.advisor.SpyInterceptors.SpyInterceptor2;
@@ -76,6 +77,7 @@ public class Enhancer implements ClassFileTransformer {
     private final Matcher methodNameMatcher;
     private final EnhancerAffect affect;
     private Set<Class<?>> matchingClasses = null;
+    private static final ClassLoader selfClassLoader = Enhancer.class.getClassLoader();
 
     // 被增强的类的缓存
     private final static Map<Class<?>/* Class */, Object> classBytesCache = new WeakHashMap<Class<?>, Object>();
@@ -143,7 +145,7 @@ public class Enhancer implements ClassFileTransformer {
             interceptorProcessors.addAll(defaultInterceptorClassParser.parse(SpyInterceptor3.class));
 
             if (this.isTracing) {
-                if (this.skipJDKTrace == false) {
+                if (!this.skipJDKTrace) {
                     interceptorProcessors.addAll(defaultInterceptorClassParser.parse(SpyTraceInterceptor1.class));
                     interceptorProcessors.addAll(defaultInterceptorClassParser.parse(SpyTraceInterceptor2.class));
                     interceptorProcessors.addAll(defaultInterceptorClassParser.parse(SpyTraceInterceptor3.class));
@@ -320,14 +322,35 @@ public class Enhancer implements ClassFileTransformer {
      *
      * @param classes 类集合
      */
-    private void filter(Set<Class<?>> classes) {
+    private List<Pair<Class<?>, String>> filter(Set<Class<?>> classes) {
+        List<Pair<Class<?>, String>> filteredClasses = new ArrayList<Pair<Class<?>, String>>();
         final Iterator<Class<?>> it = classes.iterator();
         while (it.hasNext()) {
             final Class<?> clazz = it.next();
-            if (null == clazz || isSelf(clazz) || isUnsafeClass(clazz) || isUnsupportedClass(clazz) || isExclude(clazz)) {
+            boolean removeFlag = false;
+            if (null == clazz) {
+                removeFlag = true;
+            } else if (isSelf(clazz)) {
+                filteredClasses.add(new Pair<Class<?>, String>(clazz, "class loaded by arthas itself"));
+                removeFlag = true;
+            } else if (isUnsafeClass(clazz)) {
+                filteredClasses.add(new Pair<Class<?>, String>(clazz, "class loaded by Bootstrap Classloader, try to execute `options unsafe true`"));
+                removeFlag = true;
+            } else if (isExclude(clazz)) {
+                filteredClasses.add(new Pair<Class<?>, String>(clazz, "class is excluded"));
+                removeFlag = true;
+            } else {
+                Pair<Boolean, String> unsupportedResult = isUnsupportedClass(clazz);
+                if (unsupportedResult.getFirst()) {
+                    filteredClasses.add(new Pair<Class<?>, String>(clazz, unsupportedResult.getSecond()));
+                    removeFlag = true;
+                }
+            }
+            if (removeFlag) {
                 it.remove();
             }
         }
+        return filteredClasses;
     }
 
     private boolean isExclude(Class<?> clazz) {
@@ -341,7 +364,7 @@ public class Enhancer implements ClassFileTransformer {
      * 是否过滤Arthas加载的类
      */
     private static boolean isSelf(Class<?> clazz) {
-        return null != clazz && isEquals(clazz.getClassLoader(), Enhancer.class.getClassLoader());
+        return null != clazz && isEquals(clazz.getClassLoader(), selfClassLoader);
     }
 
     /**
@@ -354,9 +377,31 @@ public class Enhancer implements ClassFileTransformer {
     /**
      * 是否过滤目前暂不支持的类
      */
-    private static boolean isUnsupportedClass(Class<?> clazz) {
-        return clazz.isArray() || (clazz.isInterface() && !GlobalOptions.isSupportDefaultMethod) || clazz.isEnum()
-                || clazz.equals(Class.class) || clazz.equals(Integer.class) || clazz.equals(Method.class) || ClassUtils.isLambdaClass(clazz);
+    private static Pair<Boolean, String> isUnsupportedClass(Class<?> clazz) {
+        if (ClassUtils.isLambdaClass(clazz)) {
+            return new Pair<Boolean, String>(Boolean.TRUE, "class is lambda");
+        }
+
+        if (clazz.isInterface() && !GlobalOptions.isSupportDefaultMethod) {
+            return new Pair<Boolean, String>(Boolean.TRUE, "class is interface");
+        }
+
+        if (clazz.equals(Integer.class)) {
+            return new Pair<Boolean, String>(Boolean.TRUE, "class is java.lang.Integer");
+        }
+
+        if (clazz.equals(Class.class)) {
+            return new Pair<Boolean, String>(Boolean.TRUE, "class is java.lang.Class");
+        }
+
+        if (clazz.equals(Method.class)) {
+            return new Pair<Boolean, String>(Boolean.TRUE, "class is java.lang.Method");
+        }
+
+        if (clazz.isArray()) {
+            return new Pair<Boolean, String>(Boolean.TRUE, "class is array");
+        }
+        return new Pair<Boolean, String>(Boolean.FALSE, "");
     }
 
     /**
@@ -378,7 +423,12 @@ public class Enhancer implements ClassFileTransformer {
                 : SearchUtils.searchSubClass(inst, SearchUtils.searchClass(inst, classNameMatcher));
 
         // 过滤掉无法被增强的类
-        filter(matchingClasses);
+        List<Pair<Class<?>, String>> filtedList = filter(matchingClasses);
+        if (!filtedList.isEmpty()) {
+            for (Pair<Class<?>, String> filted : filtedList) {
+                logger.info("ignore class: {}, reson: {}", filted.getFirst().getName(), filted.getSecond());
+            }
+        }
 
         logger.info("enhance matched classes: {}", matchingClasses);
 

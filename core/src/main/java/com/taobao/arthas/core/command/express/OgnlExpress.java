@@ -44,7 +44,7 @@ public class OgnlExpress implements Express {
     @Override
     public boolean is(String express) throws ExpressException {
         final Object ret = get(express);
-        return null != ret && ret instanceof Boolean && (Boolean) ret;
+        return ret instanceof Boolean && (Boolean) ret;
     }
 
     @Override

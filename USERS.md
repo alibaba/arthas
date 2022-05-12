@@ -128,6 +128,8 @@ Welcome to register the company name in this issue: https://github.com/alibaba/a
 ![有赞](static/youzan.png)
 ![中原银行](static/zhongyuanbank.png)
 ![CVTE](static/cvte.png)
+![北京喜得国际网络科技有限公司](static/cider.png)
+![智联招聘](static/zhaopin.png)
 
 * 网易云
 * 派迩信息技术
@@ -155,3 +157,4 @@ Welcome to register the company name in this issue: https://github.com/alibaba/a
 * 车巴达
 * 华为
 * 云管书
+* 智联招聘

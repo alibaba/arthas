@@ -2,7 +2,7 @@
 
 ![arthas](site/src/site/sphinx/arthas.png)
 
-[![Build Status](https://travis-ci.org/alibaba/arthas.svg?branch=master)](https://travis-ci.org/alibaba/arthas)
+[![Build Status](https://github.com/alibaba/arthas/workflows/JavaCI/badge.svg)](https://github.com/alibaba/arthas/actions)
 [![codecov](https://codecov.io/gh/alibaba/arthas/branch/master/graph/badge.svg)](https://codecov.io/gh/alibaba/arthas)
 [![maven](https://img.shields.io/maven-central/v/com.taobao.arthas/arthas-packaging.svg)](https://search.maven.org/search?q=g:com.taobao.arthas)
 ![license](https://img.shields.io/github/license/alibaba/arthas.svg)
@@ -402,7 +402,7 @@ Started [cpu] profiling
 
 ```
 $ profiler stop
-profiler output file: /tmp/demo/arthas-output/20191125-135546.svg
+profiler output file: /tmp/demo/arthas-output/20211207-111550.html
 OK
 ```
 
@@ -431,6 +431,8 @@ Welcome to register the company name in this issue: https://github.com/alibaba/a
 ![vipkid](static/vipkid.png)
 ![百度凤巢](static/baidufengchao.png)
 ![有赞](static/youzan.png)
+![科大讯飞](static/iflytek.png)
+![智联招聘](static/zhaopin.png)
 
 ### Derivative Projects
 

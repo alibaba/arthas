@@ -161,7 +161,7 @@ public class TypeRenderUtils {
 
     public static FieldVO[] getFields(Class clazz) {
         Field[] fields = clazz.getDeclaredFields();
-        if (fields == null || fields.length == 0) {
+        if (fields.length == 0) {
             return new FieldVO[0];
         }
 

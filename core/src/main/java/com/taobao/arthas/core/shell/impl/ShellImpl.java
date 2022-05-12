@@ -158,11 +158,9 @@ public class ShellImpl implements Shell {
     }
 
     private void setPrompt(){
-        StringBuilder stringBuilder = new StringBuilder();
-        stringBuilder.append("[arthas@");
-        stringBuilder.append(session.getPid());
-        stringBuilder.append("]$ ");
-        this.prompt = stringBuilder.toString();
+        this.prompt = "[arthas@" +
+                session.getPid() +
+                "]$ ";
     }
 
     public ShellImpl init() {
@@ -229,7 +227,7 @@ public class ShellImpl implements Shell {
         return currentForegroundJob;
     }
 
-    private class ShellJobHandler implements JobListener {
+    private static class ShellJobHandler implements JobListener {
         ShellImpl shell;
 
         public ShellJobHandler(ShellImpl shell) {

@@ -97,7 +97,7 @@ public class HttpRequestHandler extends SimpleChannelInboundHandler<FullHttpRequ
                 //try output dir later, avoid overlay classpath resources files
                 if (response == null) {
                     response = DirectoryBrowser.directView(dir, path, request, ctx);
-                    isFileResponseFinished = (response == null) ? false : true;
+                    isFileResponseFinished = response != null;
                 }
 
                 //not found
@@ -158,7 +158,7 @@ public class HttpRequestHandler extends SimpleChannelInboundHandler<FullHttpRequ
                 }
                 int li = path.lastIndexOf('.');
                 if (li != -1 && li != path.length() - 1) {
-                    String ext = path.substring(li + 1, path.length());
+                    String ext = path.substring(li + 1);
                     String contentType;
                     if ("html".equals(ext)) {
                         contentType = "text/html";

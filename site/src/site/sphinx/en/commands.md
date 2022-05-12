@@ -4,6 +4,7 @@ All Commands
 * [dashboard](dashboard.md)
 * [thread](thread.md)
 * [jvm](jvm.md)
+* [memory](memory.md)
 * [sysprop](sysprop.md)
 * [sysenv](sysenv.md)
 * [vmoption](vmoption.md)
@@ -48,7 +49,7 @@ All Commands
 
 * help - examines help information
 * cls - clears out the screen
-* session - examines the current session
+* [session](session.md) - examines the current session
 * [reset](reset.md) - resets enhanced classes. All enhanced classes will be reset to their original states. When Arthas server closes, all these enhanced classes will be reset too
 * version - prints out Arthas's version
 * history - view command history

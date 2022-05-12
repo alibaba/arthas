@@ -3,7 +3,6 @@ package com.taobao.arthas.core.command.view;
 import com.taobao.arthas.core.command.logger.LoggerHelper;
 import com.taobao.arthas.core.command.model.LoggerModel;
 import com.taobao.arthas.core.shell.command.CommandProcess;
-import com.taobao.arthas.core.util.StringUtils;
 import com.taobao.text.Decoration;
 import com.taobao.text.ui.TableElement;
 import com.taobao.text.util.RenderUtil;

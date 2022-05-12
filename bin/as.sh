@@ -8,10 +8,10 @@
 
 # program : Arthas
 #  author : Core Engine @ Taobao.com
-#    date : 2021-09-02
+#    date : 2022-03-03
 
 # current arthas script version
-ARTHAS_SCRIPT_VERSION=3.5.4
+ARTHAS_SCRIPT_VERSION=3.5.6
 
 # SYNOPSIS
 #   rreadlink <fileOrDirPath>
@@ -191,7 +191,7 @@ case "$(uname -s)" in
     *)          OS_TYPE="UNKNOWN"
 esac
 
-# check curl/grep/awk/telent/unzip command
+# check curl/grep/awk/telnet/unzip command
 if ! [ -x "$(command -v curl)" ]; then
   echo 'Error: curl is not installed. Try to use java -jar arthas-boot.jar' >&2
   exit 1
@@ -466,7 +466,7 @@ EXAMPLES:
   ./as.sh --stat-url 'http://192.168.10.11:8080/api/stat'
   ./as.sh -c 'sysprop; thread' <pid>
   ./as.sh -f batch.as <pid>
-  ./as.sh --use-version 3.5.4
+  ./as.sh --use-version 3.5.6
   ./as.sh --session-timeout 3600
   ./as.sh --attach-only
   ./as.sh --disabled-commands stop,dump

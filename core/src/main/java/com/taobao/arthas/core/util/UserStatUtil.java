@@ -1,8 +1,7 @@
 package com.taobao.arthas.core.util;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
+import java.io.InputStream;
 import java.net.URL;
 import java.net.URLConnection;
 import java.net.URLEncoder;
@@ -17,6 +16,11 @@ import java.util.concurrent.ThreadFactory;
  * Created by zhuyong on 15/11/12.
  */
 public class UserStatUtil {
+
+    private static final int DEFAULT_BUFFER_SIZE = 8192;
+
+    private static final byte[] SKIP_BYTE_BUFFER = new byte[DEFAULT_BUFFER_SIZE];
+
     private static final ExecutorService executorService = Executors.newSingleThreadExecutor(new ThreadFactory() {
         @Override
         public Thread newThread(Runnable r) {
@@ -87,9 +91,9 @@ public class UserStatUtil {
         public void appendQueryData(String key, String value) {
             if (key != null && value != null) {
                 if (queryData.length() == 0) {
-                    queryData.append(key + "=" + value);
+                    queryData.append(key).append("=").append(value);
                 } else {
-                    queryData.append("&" + key + "=" + value);
+                    queryData.append("&").append(key).append("=").append(value);
                 }
             }
         }
@@ -100,28 +104,27 @@ public class UserStatUtil {
             if (link == null) {
                 return;
             }
-            BufferedReader br = null;
+            InputStream inputStream = null;
             try {
                 if (queryData.length() != 0) {
                     link = link + "?" + queryData;
                 }
-                URL url = new URL(link.toString());
+                URL url = new URL(link);
                 URLConnection connection = url.openConnection();
                 connection.setConnectTimeout(1000);
                 connection.setReadTimeout(1000);
                 connection.connect();
-                br = new BufferedReader(new InputStreamReader(connection.getInputStream()));
-                String line = null;
-                StringBuilder result = new StringBuilder();
-                while ((line = br.readLine()) != null) {
-                    result.append(line);
+                inputStream = connection.getInputStream();
+                //noinspection StatementWithEmptyBody
+                while (inputStream.read(SKIP_BYTE_BUFFER) != -1) {
+                    // do nothing
                 }
             } catch (Throwable t) {
                 // ignore
             } finally {
-                if (br != null) {
+                if (inputStream != null) {
                     try {
-                        br.close();
+                        inputStream.close();
                     } catch (IOException e) {
                         // ignore
                     }

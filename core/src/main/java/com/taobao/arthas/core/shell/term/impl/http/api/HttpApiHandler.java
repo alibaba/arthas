@@ -669,7 +669,7 @@ public class HttpApiHandler {
         }
     }
 
-    private class ApiTerm implements Term {
+    private static class ApiTerm implements Term {
 
         private Session session;
 

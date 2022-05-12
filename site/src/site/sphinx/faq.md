@@ -17,9 +17,9 @@
 
 com.sun.tools.attach.AttachNotSupportedException: Unable to open socket file: target process not responding or HotSpot VM not loaded
 
-1. 检查当前用户和目标java进程是否一致。如果不一致，则切换到同一用户。JVM只能attach同样用户下的java 进程。
+1. 检查当前用户和目标java进程是否一致。如果不一致，则切换到同一用户。JVM只能attach同样用户下的java 进程。
 2. 尝试使用 `jstack -l $pid`，如果进程没有反应，则说明进程可能假死，无法响应JVM attach信号。所以同样基于attach机制的Arthas无法工作。尝试使用`jmap` heapdump后分析。
-3. 尝试按[quick-start](quick-start.md)里的方式attach math-game。
+3. 尝试按[quick-start](quick-start.md)里的方式attach math-game。
 4. 更多情况参考： [https://github.com/alibaba/arthas/issues/347](https://github.com/alibaba/arthas/issues/347)
 ##### trace/watch等命令能否增强jdk里的类？
 
@@ -69,12 +69,19 @@ watch demo.MathGame primeFactors '{params,returnObj,throwExp}' 'params.length >0
 watch demo.MathGame <init> '{params,returnObj,throwExp}' -v
 ```
 
+##### 输入中文/Unicode字符
+
+把中文/Unicode字符转为`\u`表示方法：
+
+```bash
+ognl '@java.lang.System@out.println("Hello \u4e2d\u6587")'
+```
 
 ##### java.lang.ClassFormatError: null、skywalking arthas 兼容使用
 
 当出现这个错误日志`java.lang.ClassFormatError: null`,通常情况下都是被其他字节码工具修改过与arthas修改字节码不兼容。
 
-比如: 使用 skywalking V8.1.0 以下版本 [无法trace、watch 被skywalking agent 增强过的类](https://github.com/alibaba/arthas/issues/1141), V8.1.0 以上版本可以兼容使用,更多参考skywalking配置 [skywalking compatible with other javaagent bytecode processing](https://github.com/apache/skywalking/blob/v8.1.0/docs/en/FAQ/Compatible-with-other-javaagent-bytecode-processing.md)。
+比如: 使用 skywalking V8.1.0 以下版本 [无法trace、watch 被skywalking agent 增强过的类](https://github.com/alibaba/arthas/issues/1141), V8.1.0 以上版本可以兼容使用,更多参考skywalking配置 [skywalking compatible with other javaagent bytecode processing](https://github.com/apache/skywalking/blob/master/docs/en/FAQ/Compatible-with-other-javaagent-bytecode-processing.md)。
 
 
 ##### Arthas能不能离线使用

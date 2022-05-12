@@ -1,5 +1,13 @@
 package com.taobao.arthas.core.command.monitor200;
 
+import java.lang.management.GarbageCollectorMXBean;
+import java.lang.management.ManagementFactory;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
+import java.util.concurrent.atomic.AtomicLong;
+
 import com.alibaba.arthas.deps.org.slf4j.Logger;
 import com.alibaba.arthas.deps.org.slf4j.LoggerFactory;
 import com.alibaba.fastjson.JSON;
@@ -7,7 +15,6 @@ import com.alibaba.fastjson.JSONObject;
 import com.taobao.arthas.core.command.Constants;
 import com.taobao.arthas.core.command.model.DashboardModel;
 import com.taobao.arthas.core.command.model.GcInfoVO;
-import com.taobao.arthas.core.command.model.MemoryEntryVO;
 import com.taobao.arthas.core.command.model.RuntimeInfoVO;
 import com.taobao.arthas.core.command.model.ThreadVO;
 import com.taobao.arthas.core.command.model.TomcatInfoVO;
@@ -18,30 +25,13 @@ import com.taobao.arthas.core.shell.handlers.shell.QExitHandler;
 import com.taobao.arthas.core.shell.session.Session;
 import com.taobao.arthas.core.util.NetUtils;
 import com.taobao.arthas.core.util.NetUtils.Response;
+import com.taobao.arthas.core.util.StringUtils;
 import com.taobao.arthas.core.util.ThreadUtil;
 import com.taobao.arthas.core.util.metrics.SumRateCounter;
 import com.taobao.middleware.cli.annotations.Description;
 import com.taobao.middleware.cli.annotations.Name;
 import com.taobao.middleware.cli.annotations.Option;
 import com.taobao.middleware.cli.annotations.Summary;
-
-import java.lang.management.BufferPoolMXBean;
-import java.lang.management.GarbageCollectorMXBean;
-import java.lang.management.ManagementFactory;
-import java.lang.management.MemoryPoolMXBean;
-import java.lang.management.MemoryType;
-import java.lang.management.MemoryUsage;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Timer;
-import java.util.TimerTask;
-
-import static com.taobao.arthas.core.command.model.MemoryEntryVO.TYPE_BUFFER_POOL;
-import static com.taobao.arthas.core.command.model.MemoryEntryVO.TYPE_HEAP;
-import static com.taobao.arthas.core.command.model.MemoryEntryVO.TYPE_NON_HEAP;
 
 /**
  * @author hengyunabc 2015年11月19日 上午11:57:21
@@ -66,7 +56,7 @@ public class DashboardCommand extends AnnotatedCommand {
 
     private long interval = 5000;
 
-    private volatile long count = 0;
+    private final AtomicLong count = new AtomicLong(0);
     private volatile Timer timer;
 
     @Option(shortName = "n", longName = "number-of-execution")
@@ -142,62 +132,6 @@ public class DashboardCommand extends AnnotatedCommand {
         return interval;
     }
 
-    private static String beautifyName(String name) {
-        return name.replace(' ', '_').toLowerCase();
-    }
-
-    private static void addMemoryInfo(DashboardModel dashboardModel) {
-        List<MemoryPoolMXBean> memoryPoolMXBeans = ManagementFactory.getMemoryPoolMXBeans();
-        Map<String, List<MemoryEntryVO>> memoryInfoMap = new LinkedHashMap<String, List<MemoryEntryVO>>();
-        dashboardModel.setMemoryInfo(memoryInfoMap);
-
-        //heap
-        MemoryUsage heapMemoryUsage = ManagementFactory.getMemoryMXBean().getHeapMemoryUsage();
-        List<MemoryEntryVO> heapMemEntries = new ArrayList<MemoryEntryVO>();
-        heapMemEntries.add(createMemoryEntryVO(TYPE_HEAP, TYPE_HEAP, heapMemoryUsage));
-        for (MemoryPoolMXBean poolMXBean : memoryPoolMXBeans) {
-            if (MemoryType.HEAP.equals(poolMXBean.getType())) {
-                MemoryUsage usage = poolMXBean.getUsage();
-                String poolName = beautifyName(poolMXBean.getName());
-                heapMemEntries.add(createMemoryEntryVO(TYPE_HEAP, poolName, usage));
-            }
-        }
-        memoryInfoMap.put(TYPE_HEAP, heapMemEntries);
-
-        //non-heap
-        MemoryUsage nonHeapMemoryUsage = ManagementFactory.getMemoryMXBean().getNonHeapMemoryUsage();
-        List<MemoryEntryVO> nonheapMemEntries = new ArrayList<MemoryEntryVO>();
-        nonheapMemEntries.add(createMemoryEntryVO(TYPE_NON_HEAP, TYPE_NON_HEAP, nonHeapMemoryUsage));
-        for (MemoryPoolMXBean poolMXBean : memoryPoolMXBeans) {
-            if (MemoryType.NON_HEAP.equals(poolMXBean.getType())) {
-                MemoryUsage usage = poolMXBean.getUsage();
-                String poolName = beautifyName(poolMXBean.getName());
-                nonheapMemEntries.add(createMemoryEntryVO(TYPE_NON_HEAP, poolName, usage));
-            }
-        }
-        memoryInfoMap.put(TYPE_NON_HEAP, nonheapMemEntries);
-
-        addBufferPoolMemoryInfo(memoryInfoMap);
-    }
-
-    private static void addBufferPoolMemoryInfo(Map<String, List<MemoryEntryVO>> memoryInfoMap) {
-        try {
-            List<MemoryEntryVO> bufferPoolMemEntries = new ArrayList<MemoryEntryVO>();
-            @SuppressWarnings("rawtypes")
-            Class bufferPoolMXBeanClass = Class.forName("java.lang.management.BufferPoolMXBean");
-            @SuppressWarnings("unchecked")
-            List<BufferPoolMXBean> bufferPoolMXBeans = ManagementFactory.getPlatformMXBeans(bufferPoolMXBeanClass);
-            for (BufferPoolMXBean mbean : bufferPoolMXBeans) {
-                long used = mbean.getMemoryUsed();
-                long total = mbean.getTotalCapacity();
-                bufferPoolMemEntries.add(new MemoryEntryVO(TYPE_BUFFER_POOL, mbean.getName(), used, total, Long.MIN_VALUE));
-            }
-            memoryInfoMap.put(TYPE_BUFFER_POOL, bufferPoolMemEntries);
-        } catch (ClassNotFoundException e) {
-            // ignore
-        }
-    }
-
     private static void addRuntimeInfo(DashboardModel dashboardModel) {
         RuntimeInfoVO runtimeInfo = new RuntimeInfoVO();
         runtimeInfo.setOsName(System.getProperty("os.name"));
@@ -207,12 +141,8 @@ public class DashboardCommand extends AnnotatedCommand {
         runtimeInfo.setSystemLoadAverage(ManagementFactory.getOperatingSystemMXBean().getSystemLoadAverage());
         runtimeInfo.setProcessors(Runtime.getRuntime().availableProcessors());
         runtimeInfo.setUptime(ManagementFactory.getRuntimeMXBean().getUptime() / 1000);
-        runtimeInfo.setTimestamp(new Date().getTime());
+        runtimeInfo.setTimestamp(System.currentTimeMillis());
         dashboardModel.setRuntimeInfo(runtimeInfo);
-    }
-
-    private static MemoryEntryVO createMemoryEntryVO(String type, String name, MemoryUsage memoryUsage) {
-        return new MemoryEntryVO(type, name, memoryUsage.getUsed(), memoryUsage.getCommitted(), memoryUsage.getMax());
     }
 
     private static void addGcInfo(DashboardModel dashboardModel) {
@@ -222,7 +152,7 @@ public class DashboardCommand extends AnnotatedCommand {
         List<GarbageCollectorMXBean> garbageCollectorMxBeans = ManagementFactory.getGarbageCollectorMXBeans();
         for (GarbageCollectorMXBean gcMXBean : garbageCollectorMxBeans) {
             String name = gcMXBean.getName();
-            gcInfos.add(new GcInfoVO(beautifyName(name), gcMXBean.getCollectionCount(), gcMXBean.getCollectionTime()));
+            gcInfos.add(new GcInfoVO(StringUtils.beautifyName(name), gcMXBean.getCollectionCount(), gcMXBean.getCollectionTime()));
         }
     }
 
@@ -256,8 +186,8 @@ public class DashboardCommand extends AnnotatedCommand {
                 double qps = tomcatRequestCounter.rate();
                 double rt = processingTime / (double) requestCount;
                 double errorRate = tomcatErrorCounter.rate();
-                long receivedBytesRate = new Double(tomcatReceivedBytesCounter.rate()).longValue();
-                long sentBytesRate = new Double(tomcatSentBytesCounter.rate()).longValue();
+                long receivedBytesRate = Double.valueOf(tomcatReceivedBytesCounter.rate()).longValue();
+                long sentBytesRate = Double.valueOf(tomcatSentBytesCounter.rate()).longValue();
 
                 TomcatInfoVO.ConnectorStats connectorStat = new TomcatInfoVO.ConnectorStats();
                 connectorStat.setName(connectorName);
@@ -297,7 +227,7 @@ public class DashboardCommand extends AnnotatedCommand {
         @Override
         public void run() {
             try {
-                if (count >= getNumOfExecutions()) {
+                if (count.get() >= getNumOfExecutions()) {
                     // stop the timer
                     timer.cancel();
                     timer.purge();
@@ -312,7 +242,7 @@ public class DashboardCommand extends AnnotatedCommand {
                 dashboardModel.setThreads(threadSampler.sample(threads));
 
                 //memory
-                addMemoryInfo(dashboardModel);
+                dashboardModel.setMemoryInfo(MemoryCommand.memoryInfo());
 
                 //gc
                 addGcInfo(dashboardModel);
@@ -329,7 +259,7 @@ public class DashboardCommand extends AnnotatedCommand {
 
                 process.appendResult(dashboardModel);
 
-                count++;
+                count.getAndIncrement();
                 process.times().incrementAndGet();
             } catch (Throwable e) {
                 String msg = "process dashboard failed: " + e.getMessage();

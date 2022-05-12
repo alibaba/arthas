@@ -4,7 +4,6 @@ import com.alibaba.arthas.deps.org.slf4j.Logger;
 import com.alibaba.arthas.deps.org.slf4j.LoggerFactory;
 import com.taobao.arthas.core.command.model.MessageModel;
 import com.taobao.arthas.core.distribution.ResultConsumer;
-import com.taobao.arthas.core.distribution.ResultDistributor;
 import com.taobao.arthas.core.distribution.SharingResultDistributor;
 import com.taobao.arthas.core.shell.ShellServerOptions;
 import com.taobao.arthas.core.shell.session.Session;
@@ -71,21 +70,24 @@ public class SessionManagerImpl implements SessionManager {
     }
 
     @Override
-    public Session closeSession(String sessionId) {
-        Session session = sessions.remove(sessionId);
-        if (session != null) {
-            //interrupt foreground job
-            Job job = session.getForegroundJob();
-            if (job != null) {
-                job.interrupt();
-            }
-            // release ResultDistributor
-            ResultDistributor resultDistributor = session.getResultDistributor();
-            if (resultDistributor != null) {
-                resultDistributor.close();
-            }
+    public Session removeSession(String sessionId) {
+        Session session = sessions.get(sessionId);
+        if (session == null) {
+            return null;
         }
-        return session;
+
+        //interrupt foreground job
+        Job job = session.getForegroundJob();
+        if (job != null) {
+            job.interrupt();
+        }
+
+        SharingResultDistributor resultDistributor = session.getResultDistributor();
+        if (resultDistributor != null) {
+            resultDistributor.close();
+        }
+
+        return sessions.remove(sessionId);
     }
 
     @Override
@@ -103,13 +105,12 @@ public class SessionManagerImpl implements SessionManager {
 
         ArrayList<Session> sessions = new ArrayList<Session>(this.sessions.values());
         for (Session session : sessions) {
-            logger.info("Removing session before shutdown: {}, last access time: {}", session.getSessionId(), session.getLastAccessTime());
-            ResultDistributor resultDistributor = session.getResultDistributor();
+            SharingResultDistributor resultDistributor = session.getResultDistributor();
             if (resultDistributor != null) {
                 resultDistributor.appendResult(new MessageModel("arthas server is going to shutdown."));
-                resultDistributor.close();
             }
-            this.closeSession(session.getSessionId());
+            logger.info("Removing session before shutdown: {}, last access time: {}", session.getSessionId(), session.getLastAccessTime());
+            this.removeSession(session.getSessionId());
         }
 
         jobController.close();
@@ -151,14 +152,19 @@ public class SessionManagerImpl implements SessionManager {
             evictConsumers(session);
         }
         for (Session session : toClose) {
-            logger.info("Removing inactive session: {}, last access time: {}", session.getSessionId(), session.getLastAccessTime());
-            ResultDistributor resultDistributor = session.getResultDistributor();
+            //interrupt foreground job
+            Job job = session.getForegroundJob();
+            if (job != null) {
+                job.interrupt();
+            }
+            long timeOutInMinutes = sessionTimeoutMillis / 1000 / 60;
+            String reason = "session is inactive for " + timeOutInMinutes + " min(s).";
+            SharingResultDistributor resultDistributor = session.getResultDistributor();
             if (resultDistributor != null) {
-                long timeOutInMinutes = sessionTimeoutMillis / 1000 / 60;
-                String reason = "session is inactive for " + timeOutInMinutes + " min(s).";
                 resultDistributor.appendResult(new MessageModel(reason));
             }
-            this.closeSession(session.getSessionId());
+            this.removeSession(session.getSessionId());
+            logger.info("Removing inactive session: {}, last access time: {}", session.getSessionId(), session.getLastAccessTime());
         }
     }
 
@@ -166,10 +172,9 @@ public class SessionManagerImpl implements SessionManager {
      * Check and remove inactive consumer
      */
     public void evictConsumers(Session session) {
-        ResultDistributor distributor = session.getResultDistributor();
-        if (distributor != null && distributor instanceof SharingResultDistributor) {
-            SharingResultDistributor sharingResultDistributor = (SharingResultDistributor) distributor;
-            List<ResultConsumer> consumers = sharingResultDistributor.getConsumers();
+        SharingResultDistributor distributor = session.getResultDistributor();
+        if (distributor != null) {
+            List<ResultConsumer> consumers = distributor.getConsumers();
             //remove inactive consumer from session directly
             long now = System.currentTimeMillis();
             for (ResultConsumer consumer : consumers) {
@@ -179,7 +184,7 @@ public class SessionManagerImpl implements SessionManager {
                     logger.info("Removing inactive consumer from session, sessionId: {}, consumerId: {}, inactive duration: {}",
                             session.getSessionId(), consumer.getConsumerId(), inactiveTime);
                     consumer.appendResult(new MessageModel("consumer is inactive for a while, please refresh the page."));
-                    sharingResultDistributor.removeConsumer(consumer);
+                    distributor.removeConsumer(consumer);
                 }
             }
         }

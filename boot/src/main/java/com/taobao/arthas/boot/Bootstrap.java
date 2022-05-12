@@ -57,7 +57,7 @@ import com.taobao.middleware.cli.annotations.Summary;
                 + "  java -jar arthas-boot.jar --stat-url 'http://192.168.10.11:8080/api/stat'\n"
                 + "  java -jar arthas-boot.jar -c 'sysprop; thread' <pid>\n"
                 + "  java -jar arthas-boot.jar -f batch.as <pid>\n"
-                + "  java -jar arthas-boot.jar --use-version 3.5.4\n"
+                + "  java -jar arthas-boot.jar --use-version 3.5.6\n"
                 + "  java -jar arthas-boot.jar --versions\n"
                 + "  java -jar arthas-boot.jar --select math-game\n"
                 + "  java -jar arthas-boot.jar --session-timeout 3600\n" + "  java -jar arthas-boot.jar --attach-only\n"
@@ -720,15 +720,19 @@ public class Bootstrap {
 
         result.append("Local versions:\n");
         for (String version : versionList) {
-            result.append(" " + version).append('\n');
+            result.append(" ").append(version).append('\n');
         }
         result.append("Remote versions:\n");
 
-		List<String> remoteVersions = DownloadUtils.readRemoteVersions();
-		Collections.reverse(remoteVersions);
-		for (String version : remoteVersions) {
-			result.append(" " + version).append('\n');
-		}
+        List<String> remoteVersions = DownloadUtils.readRemoteVersions();
+        if (remoteVersions != null) {
+            Collections.reverse(remoteVersions);
+            for (String version : remoteVersions) {
+                result.append(" " + version).append('\n');
+            }
+        } else {
+            result.append(" unknown\n");
+        }
         return result.toString();
     }
 

@@ -29,7 +29,6 @@ Contents
 --------
 
 * [首页](https://arthas.aliyun.com/)
-* [技术分享征文!](https://developer.aliyun.com/article/751641)
 * [English Docs](https://arthas.aliyun.com/doc/en/)
 * [在线教程(katacoda)](https://arthas.aliyun.com/doc/arthas-tutorials.html?language=cn)
 * [在线教程(阿里云)](https://start.aliyun.com/handson-lab?category=arthas)

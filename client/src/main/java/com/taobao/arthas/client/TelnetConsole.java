@@ -285,7 +285,7 @@ public class TelnetConsole {
             }
 
             // ctrl + c event callback
-            consoleReader.getKeys().bind(new Character((char) CTRL_C).toString(), new ActionListener() {
+            consoleReader.getKeys().bind(Character.toString((char) CTRL_C), new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) {
                     try {
@@ -300,7 +300,7 @@ public class TelnetConsole {
             });
 
             // ctrl + d event call back
-            consoleReader.getKeys().bind(new Character(KeyMap.CTRL_D).toString(), eotEventCallback);
+            consoleReader.getKeys().bind(Character.toString(KeyMap.CTRL_D), eotEventCallback);
 
             try {
                 telnet.connect(telnetConsole.getTargetIp(), telnetConsole.getPort());
