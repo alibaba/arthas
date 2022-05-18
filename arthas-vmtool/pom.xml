@@ -16,6 +16,21 @@
         <!-- https://github.com/openjdk/jdk/blob/jdk-16%2B36/src/java.base/windows/native/libjava/java_props_md.c#L568 -->
         <!-- macos -->
         <profile>
+            <id>macos-arm64</id>
+            <activation>
+                <os>
+                    <family>mac</family>
+                    <arch>aarch64</arch>
+                </os>
+            </activation>
+            <properties>
+                <os_name>macos</os_name>
+                <os_arch_option>-arch x86_64 -arch arm64</os_arch_option>
+                <lib_name>libArthasJniLibrary.dylib</lib_name>
+            </properties>
+        </profile>
+        <!-- fix https://github.com/alibaba/arthas/issues/2176 -->
+        <profile>
             <id>macos-amd64</id>
             <activation>
                 <os>
@@ -24,7 +39,7 @@
             </activation>
             <properties>
                 <os_name>macos</os_name>
-                <os_arch_option>-arch x86_64 -arch arm64</os_arch_option>
+                <os_arch_option>-m64</os_arch_option>
                 <lib_name>libArthasJniLibrary.dylib</lib_name>
             </properties>
         </profile>
