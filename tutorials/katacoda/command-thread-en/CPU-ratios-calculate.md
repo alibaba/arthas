@@ -12,4 +12,4 @@ the ratio of the incremental cpu time of each thread in the current JVM to the s
 
 **Note:** this operation consumes CPU time too (`getThreadCpuTime` is time-consuming), therefore it is possible to observe Arthas's thread appears in the list. To avoid this, try to increase sample interval, for example: 5000 ms.<br/>
 
-> Another way to view the thread cpu usage of the Java process, [show-busy-java-threads](https://github.com/oldratlee/useful-scripts/blob/master/docs/java.md#-show-busy-java-threads) can come to help. 
+> Another way to view the thread cpu usage of the Java process, [`show-busy-java-threads`](https://github.com/oldratlee/useful-scripts/blob/dev-2.x/docs/java.md#-show-busy-java-threads) can come to help.
