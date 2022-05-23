@@ -51,6 +51,7 @@ public class TraceCommand extends EnhancerCommand {
     private int numberOfLimit = 100;
     private List<String> pathPatterns;
     private boolean skipJDKTrace;
+    private boolean isLambda = false;
 
     @Argument(argName = "class-pattern", index = 0)
     @Description("Class name pattern, use either '.' or '/' as separator")
@@ -95,11 +96,20 @@ public class TraceCommand extends EnhancerCommand {
         this.skipJDKTrace = skipJDKTrace;
     }
 
+    @Option(longName = "lambda",flag = true)
+    @Description("Trace lambda methods.")
+    public void setLambda(boolean lambda) {
+        this.isLambda = lambda;
+    }
+
     public String getClassPattern() {
         return classPattern;
     }
 
     public String getMethodPattern() {
+        if (isLambda()) {
+            return "lambda\\$"+methodPattern+"\\$.*";
+        }
         return methodPattern;
     }
 
@@ -114,6 +124,11 @@ public class TraceCommand extends EnhancerCommand {
     public boolean isRegEx() {
         return isRegEx;
     }
+
+    public boolean isLambda() {
+        return isLambda;
+    }
+
 
     public int getNumberOfLimit() {
         return numberOfLimit;
