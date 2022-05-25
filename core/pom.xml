@@ -210,7 +210,7 @@
             <optional>true</optional>
         </dependency>
         <dependency>
-            <groupId>com.taobao.arthas</groupId>
+            <groupId>com.alibaba</groupId>
             <artifactId>fastjson</artifactId>
         </dependency>
         <dependency>
