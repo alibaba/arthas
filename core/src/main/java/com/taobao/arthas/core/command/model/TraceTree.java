@@ -72,8 +72,8 @@ public class TraceTree {
 
     public void end(Throwable throwable, int lineNumber) {
         ThrowNode throwNode = new ThrowNode();
-        StackTraceElement[] stackTrace = throwable.getStackTrace();
         throwNode.setException(throwable.getClass().getName());
+        throwNode.setMessage(throwable.getMessage());
         throwNode.setLineNumber(lineNumber);
         current.addChild(throwNode);
         this.end(true);
