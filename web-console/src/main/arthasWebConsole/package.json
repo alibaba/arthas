@@ -1,0 +1,26 @@
+{
+  "name": "arthaswebconsole",
+  "private": true,
+  "version": "0.0.0",
+  "scripts": {
+    "dev": "vite",
+    "build": "vue-tsc --noEmit && vite build",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "vue": "^3.2.25",
+    "xstate": "^4.32.1"
+  },
+  "devDependencies": {
+    "@types/jest": "^28.1.4",
+    "@vitejs/plugin-vue": "^2.3.3",
+    "autoprefixer": "^10.4.7",
+    "jest": "^28.1.2",
+    "postcss": "^8.4.14",
+    "tailwindcss": "^3.1.4",
+    "ts-jest": "^28.0.5",
+    "typescript": "^4.7.4",
+    "vite": "^2.9.9",
+    "vue-tsc": "^0.34.7"
+  }
+}
