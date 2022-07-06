@@ -90,7 +90,7 @@ id        URJZ5L48RPBR2ALI5K4V
 以上面的为例，在浏览器里访问 [http://47.75.156.201/arthas/?port=80](http://47.75.156.201/arthas/?port=80) ，输入 `agentId`，就可以连接到本机上的arthas了。
 
 
-![](_static/arthas-tunnel-server.png)
+![](/images/arthas-tunnel-server.png)
 
 
 ### 最佳实践
@@ -135,13 +135,13 @@ id         test_PE3LZO9NA9ENJYTPGL9L
 
 [http://localhost:8080/apps.html](http://localhost:8080/apps.html) 
 
-![](_static/tunnel-server-apps.png)
+![](/images/tunnel-server-apps.png)
 
 再打开详情，则可以看到连接的所有agent列表：
 
 [http://localhost:8080/agents.html?app=test](http://localhost:8080/agents.html?app=test)
 
-![](_static/tunnel-server-agents.png)
+![](/images/tunnel-server-agents.png)
 
 
 ### 权限管理

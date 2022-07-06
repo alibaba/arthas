@@ -85,7 +85,7 @@ If the connection is not connected to the tunnel server at startup, you can also
 For the above example, go to [http://47.75.156.201/arthas/?port=80](http://47.75.156.201/arthas/?port=80) in the browser and input the `agentId` to connect to arthas on remote machine.
 
 
-![](_static/arthas-tunnel-server.png)
+![](/images/arthas-tunnel-server.png)
 
 
 ### Best practices
@@ -132,13 +132,13 @@ Then visit tunnel-server, you can see a list of all connected applications:
 
 [http://localhost:8080/apps.html](http://localhost:8080/apps.html)
 
-![](_static/tunnel-server-apps.png)
+![](/images/tunnel-server-apps.png)
 
 Then open the details, you can see a list of all connected agents:
 
 [http://localhost:8080/agents.html?app=test](http://localhost:8080/agents.html?app=test)
 
-![](_static/tunnel-server-agents.png)
+![](/images/tunnel-server-agents.png)
 
 
 ### Authority Management

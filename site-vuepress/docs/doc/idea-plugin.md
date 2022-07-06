@@ -10,7 +10,7 @@ IDEA Plugin
 #### Alibaba Cloud Toolkit 热部署组件（一键retransform）
 > 热部署组件支持一键将编辑器中修改的 Java 源码快速编译，并更新到远端应用服务中，免去手动 dump、mc 的过程。此外，也可以一键还原 retransform 的类文件。
 
-![](_static/alibabacloud_hotreload.png)
+![](/images/alibabacloud_hotreload.png)
 * Jetbrains 插件获取地址： [https://plugins.jetbrains.com/plugin/11386-alibaba-cloud-toolkit](https://plugins.jetbrains.com/plugin/11386-alibaba-cloud-toolkit)
 * 使用文档：[https://help.aliyun.com/document_detail/381077.html](https://help.aliyun.com/document_detail/381077.html)
 * 联系我们：请加Alibaba Cloud Toolkit (应用观测器) 钉钉用户交流群（群号：**34965379**）

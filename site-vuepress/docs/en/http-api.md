@@ -498,7 +498,7 @@ curl -Ss -XPOST http://localhost:8563/api -d '''
 
 ### Web UI
 
-![](../_static/arthas-web-ui.png "arthas web ui")
+![](/images/arthas-web-ui.png "arthas web ui")
 
 A Web UI based on Http API, visit url :
 [http://127.0.0.1:8563/ui](http://127.0.0.1:8563/ui) .

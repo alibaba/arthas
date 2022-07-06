@@ -85,4 +85,4 @@ JVM internal threads include the following:
 
 ### Screenshot
 
-![](../_static/dashboard.png "dashboard")
+![](/images/dashboard.png "dashboard")

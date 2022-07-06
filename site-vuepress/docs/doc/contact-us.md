@@ -16,29 +16,29 @@
 
 欢迎关注公众号，获取Arthas项目的信息、源码分析、案例实践。
 
-![](_static/qrcode_gongzhonghao.jpg)
+![](/images/qrcode_gongzhonghao.jpg)
 
 ### 钉钉群
 
 * Arthas开源交流钉钉群： 21965291  ，搜索群号即可加入。
 
-![](_static/dingding_qr.jpg)
+![](/images/dingding_qr.jpg)
 
 
 * Arthas开源交流钉钉群2： 30707824 ，搜索群号即可加入。
 
-![](_static/dingding2_qr.jpg)
+![](/images/dingding2_qr.jpg)
 
 
 ### QQ群
 
 Arthas开源交流QQ群： 916328269
 
-![](_static/qqgroup_qr.jpg)
+![](/images/qqgroup_qr.jpg)
 
 Arthas开源交流QQ群2： 854625984
 
-![](_static/qqgroup2_qr.jpg)
+![](/images/qqgroup2_qr.jpg)
 
 
 

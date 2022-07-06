@@ -440,7 +440,7 @@ curl -Ss -XPOST http://localhost:8563/api -d '''
 
 ### Web UI
 
-![](_static/arthas-web-ui.png "arthas web ui")
+![](/images/arthas-web-ui.png "arthas web ui")
 
 一个基于Http API接口实现的Web UI，访问地址为： [http://127.0.0.1:8563/ui](http://127.0.0.1:8563/ui) 。
 

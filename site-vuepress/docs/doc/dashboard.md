@@ -79,4 +79,4 @@ JVM内部线程包括下面几种：
 
 ### 截图展示
 
-![](_static/dashboard.png "dashboard")
+![](/images/dashboard.png "dashboard")

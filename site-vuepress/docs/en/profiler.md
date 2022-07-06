@@ -64,11 +64,11 @@ Or use the file name name format in the `--file` parameter. For example, `--file
 
 By default, arthas uses port 3658, which can be opened: [http://localhost:3658/arthas-output/](http://localhost:3658/arthas-output/) View the `arthas-output` directory below Profiler results:
 
-![](_static/arthas-output.jpg)
+![](/images/arthas-output.jpg)
 
 Click to view specific results:
 
-![](_static/arthas-output-svg.jpg)
+![](/images/arthas-output-svg.jpg)
 
 > If using the chrome browser, may need to be refreshed multiple times.
 

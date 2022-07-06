@@ -65,11 +65,11 @@ OK
 
 默认情况下，arthas使用3658端口，则可以打开： [http://localhost:3658/arthas-output/](http://localhost:3658/arthas-output/) 查看到`arthas-output`目录下面的profiler结果：
 
-![](_static/arthas-output.jpg)
+![](/images/arthas-output.jpg)
 
 点击可以查看具体的结果：
 
-![](_static/arthas-output-svg.jpg)
+![](/images/arthas-output-svg.jpg)
 
 > 如果是chrome浏览器，可能需要多次刷新。
 
