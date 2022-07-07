@@ -14,7 +14,8 @@ module.exports = {
               '/doc/quick-start.md',
               {
                   text: '在线教程(katacoda)',
-                  link: '/doc/arthas-tutorials.html?language=cn&id=arthas-basics'
+                  link: '/doc/arthas-tutorials.html?language=cn&id=arthas-basics',
+                  target: '_blank'
               },
               {
                   text: '在线教程(阿里云)',

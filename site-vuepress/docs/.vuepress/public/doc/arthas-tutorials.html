@@ -6,6 +6,8 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
+    <link rel="icon" href="/images/favicon.ico" />
+
     <!-- Bootstrap CSS -->
     <link rel="stylesheet" href="https://g.alicdn.com/code/lib/twitter-bootstrap/4.2.1/css/bootstrap.min.css" integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS"
         crossorigin="anonymous">
@@ -913,8 +915,7 @@
                 return window.location.href.split(/[?#]/)[0];
             },
             logoUrl: function () {
-                var url = this.currentUrl();
-                return url.substring(0, url.lastIndexOf('/')) + "/_static/logo.png";
+                return "/images/logo.png";
             },
             docUrl: function () {
                 if (this.language === "en") {

@@ -14,7 +14,8 @@ module.exports = {
               '/en/doc/quick-start.md',
               {
                   text: 'Online tutorials(Recommend)',
-                  link: '/doc/arthas-tutorials.html?language=en&id=arthas-basics'
+                  link: '/doc/arthas-tutorials.html?language=en&id=arthas-basics',
+                  target: '_blank'
               },
               '/en/doc/install-detail.md',
               '/en/doc/download.md',
