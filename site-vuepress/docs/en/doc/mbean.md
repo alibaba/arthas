@@ -3,7 +3,9 @@ mbean
 
 [`mbean` online tutorial](https://arthas.aliyun.com/doc/arthas-tutorials.html?language=en&id=command-mbean)
 
-> show Mbean information
+::: tip
+show Mbean information
+:::
 
 This command can show or monitor Mbean attribute information. 
 
@@ -45,7 +47,9 @@ Mbean name support wildcard matcher:
 mbean java.lang:type=Th*
 ```
 
-> Notes：ObjectName matching rules differ from normal wildcards, Reference resources：[javax.management.ObjectName](https://docs.oracle.com/javase/8/docs/api/javax/management/ObjectName.html?is-external=true)
+::: warning
+Notes：ObjectName matching rules differ from normal wildcards, Reference resources：[javax.management.ObjectName](https://docs.oracle.com/javase/8/docs/api/javax/management/ObjectName.html?is-external=true)
+:::
 
 Wildcards match specific attributes:
 

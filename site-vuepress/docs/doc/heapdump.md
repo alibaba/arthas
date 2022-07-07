@@ -3,7 +3,9 @@ heapdump
 
 [`heapdump`在线教程](https://arthas.aliyun.com/doc/arthas-tutorials.html?language=cn&id=command-heapdump)
 
-> dump java heap, 类似jmap命令的heap dump功能。
+::: tip
+dump java heap, 类似jmap命令的heap dump功能。
+:::
 
 
 ### 使用参考

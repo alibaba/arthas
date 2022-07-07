@@ -3,7 +3,9 @@ retransform
 
 [`mc-retransform`在线教程](https://arthas.aliyun.com/doc/arthas-tutorials?language=cn&id=command-mc-retransform)
 
-> 加载外部的`.class`文件，retransform jvm已加载的类。
+::: tip
+加载外部的`.class`文件，retransform jvm已加载的类。
+:::
 
 参考：[Instrumentation#retransformClasses](https://docs.oracle.com/javase/8/docs/api/java/lang/instrument/Instrumentation.html#retransformClasses-java.lang.Class...-)
 
@@ -30,7 +32,9 @@ demo.MathGame
 
 加载指定的 .class 文件，然后解析出class name，再retransform jvm中已加载的对应的类。每加载一个 `.class` 文件，则会记录一个 retransform entry.
 
-> 如果多次执行 retransform 加载同一个 class 文件，则会有多条 retransform entry.
+::: tip
+如果多次执行 retransform 加载同一个 class 文件，则会有多条 retransform entry.
+:::
 
 ### 查看 retransform entry
 
@@ -73,7 +77,9 @@ demo.MathGame
 * 删除这个类对应的 retransform entry
 * 重新触发 retransform
 
-> 如果不清除掉所有的 retransform entry，并重新触发 retransform ，则arthas stop时，retransform过的类仍然生效。
+::: tip
+如果不清除掉所有的 retransform entry，并重新触发 retransform ，则arthas stop时，retransform过的类仍然生效。
+:::
 
 
 ### 结合 jad/mc 命令使用
@@ -115,28 +121,29 @@ retransform /tmp/com/example/demo/arthas/user/UserController.class
 * 不允许新增加field/method
 * 正在跑的函数，没有退出不能生效，比如下面新增加的`System.out.println`，只有`run()`函数里的会生效
 
-    ```java
-    public class MathGame {
-        public static void main(String[] args) throws InterruptedException {
-            MathGame game = new MathGame();
-            while (true) {
-                game.run();
-                TimeUnit.SECONDS.sleep(1);
-                // 这个不生效，因为代码一直跑在 while里
-                System.out.println("in loop");
-            }
+```java
+public class MathGame {
+    public static void main(String[] args) throws InterruptedException {
+        MathGame game = new MathGame();
+        while (true) {
+            game.run();
+            TimeUnit.SECONDS.sleep(1);
+            // 这个不生效，因为代码一直跑在 while里
+            System.out.println("in loop");
         }
+    }
 
-        public void run() throws InterruptedException {
-            // 这个生效，因为run()函数每次都可以完整结束
-            System.out.println("call run()");
-            try {
-                int number = random.nextInt();
-                List<Integer> primeFactors = primeFactors(number);
-                print(number, primeFactors);
+    public void run() throws InterruptedException {
+        // 这个生效，因为run()函数每次都可以完整结束
+        System.out.println("call run()");
+        try {
+            int number = random.nextInt();
+            List<Integer> primeFactors = primeFactors(number);
+            print(number, primeFactors);
 
-            } catch (Exception e) {
-                System.out.println(String.format("illegalArgumentCount:%3d, ", illegalArgumentCount) + e.getMessage());
-            }
+        } catch (Exception e) {
+            System.out.println(String.format("illegalArgumentCount:%3d, ", illegalArgumentCount) + e.getMessage());
         }
+    }
+}
 ```

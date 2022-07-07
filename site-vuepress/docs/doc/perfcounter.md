@@ -3,7 +3,9 @@ perfcounter
 
 [`perfcounter`在线教程](https://arthas.aliyun.com/doc/arthas-tutorials.html?language=cn&id=command-perfcounter)
 
-> 查看当前JVM的 Perf Counter信息
+::: tip
+查看当前JVM的 Perf Counter信息
+:::
 
 ### 使用参考
 

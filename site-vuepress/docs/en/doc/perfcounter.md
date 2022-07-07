@@ -3,7 +3,9 @@ perfcounter
 
 [`perfcounter` online tutorial](https://arthas.aliyun.com/doc/arthas-tutorials.html?language=en&id=command-perfcounter)
 
-> Check the current JVM Perf Counter information.
+::: tip
+Check the current JVM Perf Counter information.
+:::
 
 ### Usage
 

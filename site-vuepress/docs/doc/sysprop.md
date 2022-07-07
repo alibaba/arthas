@@ -3,7 +3,9 @@ sysprop
 
 [`sysprop`在线教程](https://arthas.aliyun.com/doc/arthas-tutorials.html?language=cn&id=command-sysprop)
 
-> 查看当前JVM的系统属性(`System Property`)
+::: tip
+查看当前JVM的系统属性(`System Property`)
+:::
 
 ### 使用参考
 
@@ -106,7 +108,9 @@ $ sysprop
 
 #### 查看单个属性
 
-> 支持通过`TAB`键自动补全
+::: tip
+支持通过`TAB`键自动补全
+:::
 
 ```
 $ sysprop java.version

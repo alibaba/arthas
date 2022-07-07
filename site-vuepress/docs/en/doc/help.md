@@ -3,7 +3,9 @@ help
 
 show help message, the command can show all the commands that current Arthas server supports,or you can use the command to show the detail usage of another command.
 
-> [help command] equals [command -help],both is to show the detail usage of one command.
+::: tip
+[help command] equals [command -help],both is to show the detail usage of one command.
+:::
 
 ### Options
 

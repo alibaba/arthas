@@ -3,7 +3,9 @@ trace
 
 [`trace` online tutorial](https://arthas.aliyun.com/doc/arthas-tutorials.html?language=en&id=command-trace)
 
-> Trace method calling path, and output the time cost for each node in the path.
+::: tip
+Trace method calling path, and output the time cost for each node in the path.
+:::
 
 `trace` can track the calling path specified by `class-pattern` / `method-pattern`, and calculate the time cost on the whole path.
 
@@ -28,8 +30,9 @@ Pls. refer to [core parameters in expression](advice-class.md) for more details.
 
 Many times what we are interested is the exact trace result when the method call takes time over one particular period. It is possible to achieve this in Arthas, for example: `trace *StringUtils isBlank '#cost>100'` means trace result will only be output when the executing time exceeds 100ms.
 
-
-> `watch`/`stack`/`trace`, these three commands all support `#cost`.
+::: tip
+`watch`/`stack`/`trace`, these three commands all support `#cost`.
+:::
 
 ### Notice
 
@@ -60,7 +63,9 @@ Affect(class-cnt:1 , method-cnt:1) cost in 28 ms.
         `---[0.03752ms] demo.MathGame:primeFactors() #24 [throws Exception]
 ```
 
-> The `#24` in the result indicates that in the run function, the `primeFactors()` function was called on line `24` of the source file.
+::: tip
+The `#24` in the result indicates that in the run function, the `primeFactors()` function was called on line `24` of the source file.
+:::
 
 #### Trace times limit
 
@@ -124,7 +129,9 @@ Affect(class-cnt:1 , method-cnt:1) cost in 41 ms.
         `---[0.05447ms] demo.MathGame:print()
 ```
 
-> Only the call path which's time cost is higher than `10ms` will be shown. This feature is handy to focus on what's needed to focus when troubleshoot.
+::: tip
+Only the call path which's time cost is higher than `10ms` will be shown. This feature is handy to focus on what's needed to focus when troubleshoot.
+:::
 
 * Here Arthas provides the similar functionality JProfile and other commercial software provide. Compared to these professional softwares, Arthas doesn't deduce the time cost `trace` itself takes, therefore it is not as accurate as these softwares offer. More classes and methods on the calling path, more inaccurate `trace` output is, but it is still helpful for diagnostics where the bottleneck is.
 * "[12.033735ms]" means the method on the node takes `12.033735` ms.
@@ -145,7 +152,9 @@ Trace -E com.test.ClassA|org.test.ClassB method1|method2|method3
 
 #### Exclude the specified class
 
-> The watch/trace/monitor/stack/tt commands all support the `--exclude-class-pattern` parameter
+::: tip
+The watch/trace/monitor/stack/tt commands all support the `--exclude-class-pattern` parameter
+:::
 
 Use the `--exclude-class-pattern` parameter to exclude the specified class, for example:
 
@@ -155,7 +164,9 @@ watch javax.servlet.Filter * --exclude-class-pattern com.demo.TestFilter
 
 #### Dynamic trace
 
-> Supported since version 3.3.0.
+::: tip
+Supported since version 3.3.0.
+:::
 
 Open terminal 1, trace the `run` method in the above demo, and you can see the printout `listenerId: 1` .
 
@@ -241,7 +252,9 @@ So where is the rest of the time consumed?
 
 #### Use the -v parameter to print more information
 
-> The watch/trace/monitor/stack/tt commands all support the `-v` parameter.
+::: tip
+The watch/trace/monitor/stack/tt commands all support the `-v` parameter.
+:::
 
 When the command is executed, there is no output result. There are two possibilities:
 

@@ -3,7 +3,9 @@ ognl
 
 [`ognl` online tutorial](https://arthas.aliyun.com/doc/arthas-tutorials?language=en&id=command-ognl)
 
-> Execute ognl expression.
+::: tip
+Execute ognl expression.
+:::
 
 Since 3.0.5.
 

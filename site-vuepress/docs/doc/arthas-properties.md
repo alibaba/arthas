@@ -9,8 +9,9 @@ Arthas Properties
 
 ## 支持的配置项
 
-
-> 注意配置必须是`驼峰`的，和spring boot的`-`风格不一样。spring boot应用才同时支持`驼峰` 和 `-`风格的配置。
+::: warning
+注意配置必须是`驼峰`的，和spring boot的`-`风格不一样。spring boot应用才同时支持`驼峰` 和 `-`风格的配置。
+:::
 
 ```
 #arthas.config.overrideAll=true
@@ -29,13 +30,16 @@ arthas.sessionTimeout=1800
 * 如果配置 `arthas.telnetPort`为 -1 ，则不listen telnet端口。`arthas.httpPort`类似。
 * 如果配置 `arthas.telnetPort`为 0 ，则随机telnet端口，在`~/logs/arthas/arthas.log`里可以找到具体端口日志。`arthas.httpPort`类似。
 
-
-> 如果是防止一个机器上启动多个 arthas端口冲突。可以配置为随机端口，或者配置为 -1，并且通过tunnel server来使用arthas。
+:::tip
+如果是防止一个机器上启动多个 arthas端口冲突。可以配置为随机端口，或者配置为 -1，并且通过tunnel server来使用arthas。
+:::
 
 
 ### 禁止指定命令
 
-> since 3.5.2
+::: tip
+since 3.5.2
+:::
 
 比如配置：
 
@@ -45,7 +49,9 @@ arthas.disabledCommands=stop,dump
 
 也可以在命令行配置： `--disabled-commands stop,dump` 。
 
-> 默认情况下，arthas-spring-boot-starter会禁掉`stop`命令。
+::: tip
+默认情况下，arthas-spring-boot-starter会禁掉`stop`命令。
+:::
 
 ## 配置的优先级
 

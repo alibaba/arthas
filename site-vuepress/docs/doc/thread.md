@@ -3,7 +3,9 @@ thread
 
 [`thread`在线教程](https://arthas.aliyun.com/doc/arthas-tutorials.html?language=cn&id=command-thread)
 
-> 查看当前线程信息，查看线程的堆栈
+::: tip
+查看当前线程信息，查看线程的堆栈
+:::
 
 
 ### 参数说明
@@ -27,9 +29,13 @@ thread
 * 再次第二次采样，获取所有线程的CPU时间，对比两次采样数据，计算出每个线程的增量CPU时间
 * 线程CPU使用率 = 线程增量CPU时间 / 采样间隔时间 * 100%
 
-> 注意： 这个统计也会产生一定的开销（JDK这个接口本身开销比较大），因此会看到as的线程占用一定的百分比，为了降低统计自身的开销带来的影响，可以把采样间隔拉长一些，比如5000毫秒。
+::: warning
+注意： 这个统计也会产生一定的开销（JDK这个接口本身开销比较大），因此会看到as的线程占用一定的百分比，为了降低统计自身的开销带来的影响，可以把采样间隔拉长一些，比如5000毫秒。
+:::
 
-> 另外一种查看Java进程的线程cpu使用率方法：可以使用[`show-busy-java-threads`](https://github.com/oldratlee/useful-scripts/blob/dev-2.x/docs/java.md#-show-busy-java-threads)这个脚本。
+::: tip
+另外一种查看Java进程的线程cpu使用率方法：可以使用[`show-busy-java-threads`](https://github.com/oldratlee/useful-scripts/blob/dev-2.x/docs/java.md#-show-busy-java-threads)这个脚本。
+:::
 
 ### 使用参考
 
@@ -157,7 +163,9 @@ $ thread -b
     - java.util.concurrent.ThreadPoolExecutor$Worker@31a6493e
 ```
 
-> 注意， 目前只支持找出synchronized关键字阻塞住的线程， 如果是`java.util.concurrent.Lock`， 目前还不支持。
+::: warning
+注意， 目前只支持找出synchronized关键字阻塞住的线程， 如果是`java.util.concurrent.Lock`， 目前还不支持。
+:::
 
 
 #### thread -i, 指定采样时间间隔

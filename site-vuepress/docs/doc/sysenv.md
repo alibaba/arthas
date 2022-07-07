@@ -3,7 +3,9 @@ sysenv
 
 [`sysenv`在线教程](https://arthas.aliyun.com/doc/arthas-tutorials.html?language=cn&id=command-sysenv)
 
-> 查看当前JVM的环境属性(`System Environment Variables`)
+::: tip
+查看当前JVM的环境属性(`System Environment Variables`)
+:::
 
 ### 使用参考
 
@@ -67,7 +69,9 @@ $ sysenv
 
 #### 查看单个环境变量
 
-> 支持通过`TAB`键自动补全
+::: tip
+支持通过`TAB`键自动补全
+:::
 
 ```
 $ sysenv USER

@@ -3,7 +3,9 @@ classloader
 
 [`classloader`在线教程](https://arthas.aliyun.com/doc/arthas-tutorials?language=cn&id=command-classloader)
 
-> 查看classloader的继承树，urls，类加载信息
+::: tip
+查看classloader的继承树，urls，类加载信息
+:::
 
 `classloader` 命令将 JVM 中所有的classloader的信息统计出来，并可以展示继承树，urls等。
 
@@ -127,7 +129,9 @@ load class success.
 
 #### 统计ClassLoader实际使用URL和未使用的URL
 
-> 注意，基于JVM目前已加载的所有类统计，不代表`Unused URLs`可以从应用中删掉。因为可能将来需要从`Unused URLs`里加载类，或者需要加载`resources`。
+::: warning
+注意，基于JVM目前已加载的所有类统计，不代表`Unused URLs`可以从应用中删掉。因为可能将来需要从`Unused URLs`里加载类，或者需要加载`resources`。
+:::
 
 ```
 $ classloader --url-stat

@@ -3,7 +3,9 @@ jvm
 
 [`jvm`在线教程](https://arthas.aliyun.com/doc/arthas-tutorials.html?language=cn&id=command-jvm)
 
-> 查看当前JVM信息
+::: tip
+查看当前JVM信息
+:::
 
 ### 使用参考
 

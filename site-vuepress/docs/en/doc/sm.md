@@ -3,7 +3,9 @@ sm
 
 [`sm` online tutorial](https://arthas.aliyun.com/doc/arthas-tutorials?language=en&id=command-sm)
 
-> Search method from the loaded classes.
+::: tip
+Search method from the loaded classes.
+:::
 
 `sm` stands for search method. This command can search and show method information from all loaded classes. `sm` can only view the methods declared on the target class, that is, methods from its parent classes are invisible.
 

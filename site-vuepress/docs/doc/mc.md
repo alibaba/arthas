@@ -3,7 +3,9 @@ mc
 
 [`mc-retransform`在线教程](https://arthas.aliyun.com/doc/arthas-tutorials?language=cn&id=command-mc-retransform)
 
-> Memory Compiler/内存编译器，编译`.java`文件生成`.class`。
+::: tip
+Memory Compiler/内存编译器，编译`.java`文件生成`.class`。
+:::
 
 ```bash
 mc /tmp/Test.java
@@ -32,4 +34,6 @@ mc -d /tmp/output /tmp/ClassA.java /tmp/ClassB.java
 
 编译生成`.class`文件之后，可以结合[retransform](retransform.md)命令实现热更新代码。
 
-> 注意，mc命令有可能失败。如果编译失败可以在本地编译好`.class`文件，再上传到服务器。具体参考[retransform](retransform.md)命令说明。
+::: warning
+注意，mc命令有可能失败。如果编译失败可以在本地编译好`.class`文件，再上传到服务器。具体参考[retransform](retransform.md)命令说明。
+:::

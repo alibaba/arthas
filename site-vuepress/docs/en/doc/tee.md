@@ -3,10 +3,11 @@ tee
 
 [`tee` online tutorial](https://arthas.aliyun.com/doc/arthas-tutorials.html?language=en&id=command-tee)
 
-> Similar to the traditional `tee` command, it is used to read standard input data and output its contents into a file.
+::: tip
+Similar to the traditional `tee` command, it is used to read standard input data and output its contents into a file.
 
-> `tee` will read data from standard input device, output its content to standard output device, and save it as a file.
-
+`tee` will read data from standard input device, output its content to standard output device, and save it as a file.
+:::
 
 ```
  USAGE:

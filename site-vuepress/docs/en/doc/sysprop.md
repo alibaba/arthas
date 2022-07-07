@@ -3,7 +3,9 @@ sysprop
 
 [`sysprop` online tutorial](https://arthas.aliyun.com/doc/arthas-tutorials.html?language=en&id=command-sysprop)
 
-> Examine the system properties from the target JVM
+::: tip
+Examine the system properties from the target JVM
+:::
 
 ### Usage
 
@@ -106,7 +108,9 @@ $ sysprop
 
 #### Check One Single Property
 
-> Use `tab` for auto-completion
+::: tip
+Use `tab` for auto-completion
+:::
 
 ```bash
 $ sysprop java.version

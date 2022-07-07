@@ -3,7 +3,9 @@ sysenv
 
 [`sysenv` online tutorial](https://arthas.aliyun.com/doc/arthas-tutorials.html?language=en&id=command-sysenv)
 
-> View the current JVM environment variables.
+::: tip
+View the current JVM environment variables.
+:::
 
 ### Usage
 
@@ -67,7 +69,9 @@ $ sysenv
 
 #### View individual environment variables
 
-> Use `tab` for auto-completion
+::: tip
+Use `tab` for auto-completion
+:::
 
 ```
 $ sysenv USER

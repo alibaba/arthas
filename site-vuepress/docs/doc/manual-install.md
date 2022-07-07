@@ -22,7 +22,9 @@
     cd arthas
     ./install-local.sh
     ```
-    > 注意，这里根据你需要诊断的Java进程的所属用户进行切换
+    ::: warning
+    注意，这里根据你需要诊断的Java进程的所属用户进行切换
+    :::
 
 4. 启动Arthas
 

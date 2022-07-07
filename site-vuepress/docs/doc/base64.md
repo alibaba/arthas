@@ -1,8 +1,9 @@
 base64
 ===
 
-
-> base64编码转换，和linux里的 base64 命令类似。
+::: tip
+base64编码转换，和linux里的 base64 命令类似。
+:::
 
 
 ### 对文件进行 base64 编码

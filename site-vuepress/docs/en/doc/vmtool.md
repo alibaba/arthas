@@ -1,7 +1,10 @@
 vmtool
 ===
 
-> @since 3.5.1
+::: tip
+@since 3.5.1
+:::
+
 [`vmtool` online tutorial](https://arthas.aliyun.com/doc/arthas-tutorials.html?language=en&id=command-vmtool)
 
 `vmtool` uses the `JVMTI` to support `getInstances` in jvm and `forceGc`.
@@ -26,7 +29,9 @@ $ vmtool --action getInstances --className java.lang.String --limit 10
 ]
 ```
 
-> Through the `--limit` parameter, you can limit the number of return values to avoid pressure on the JVM when obtaining large data. The default value of limit is 10.
+::: tip
+Through the `--limit` parameter, you can limit the number of return values to avoid pressure on the JVM when obtaining large data. The default value of limit is 10.
+:::
 
 ### Specify classloader name
 
@@ -59,9 +64,11 @@ vmtool --action getInstances -c 19469ea2 --className org.springframework.context
 
 ### Specify the number of expanded layers of returned results
 
-> The return result of the `getInstances` action is bound to the `instances` variable, which is an array.
+::: tip
+The return result of the `getInstances` action is bound to the `instances` variable, which is an array.
 
-> The expansion level of the result can be specified by the `-x`/`--expand` parameter, the default value is 1.
+The expansion level of the result can be specified by the `-x`/`--expand` parameter, the default value is 1.
+:::
 
 ```bash
 vmtool --action getInstances -c 19469ea2 --className org.springframework.context.ApplicationContext -x 2
@@ -69,7 +76,9 @@ vmtool --action getInstances -c 19469ea2 --className org.springframework.context
 
 ### Execute expression
 
-> The return result of the `getInstances` action is bound to the `instances` variable, which is an array. The specified expression can be executed through the `--express` parameter.
+::: tip
+The return result of the `getInstances` action is bound to the `instances` variable, which is an array. The specified expression can be executed through the `--express` parameter.
+:::
 
 ```bash
 vmtool --action getInstances --classLoaderClass org.springframework.boot.loader.LaunchedURLClassLoader --className org.springframework.context.ApplicationContext --express'instances[0].getBeanDefinitionNames()'

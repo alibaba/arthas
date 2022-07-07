@@ -3,7 +3,9 @@ options
 
 [`options` online tutorial](https://arthas.aliyun.com/doc/arthas-tutorials.html?language=en&id=command-options)
 
-> Global options
+::: tip
+Global options
+:::
 
 |Name| Default Value   |         Description             |
 | ------------------------- | ----- | ---------------------------------------- |
@@ -75,7 +77,9 @@ $ options json-format
                                   ect output          ted.
 ```
 
-> By default, `json-format` is false. When set `json-format` to true, commands like `wathc`/`tt` will print result with `json` format. 
+::: tip
+By default, `json-format` is false. When set `json-format` to true, commands like `wathc`/`tt` will print result with `json` format. 
+:::
 
 ### Set special option value
 
@@ -108,7 +112,9 @@ Affect(class count: 1 , method count: 1) cost in 61 ms, listenerId: 1
 
 ### Turn off strict mode, allow setting object properties in ognl expressions
 
-> since 3.6.0
+::: tip
+since 3.6.0
+:::
 
 For new users, there may be misuses when writing ognl expressions.
 

@@ -3,7 +3,9 @@ jad
 
 [`jad`在线教程](https://arthas.aliyun.com/doc/arthas-tutorials?language=cn&id=command-jad)
 
-> 反编译指定已加载类的源码
+::: tip
+反编译指定已加载类的源码
+:::
 
 `jad` 命令将 JVM 中实际运行的 class 的 byte code 反编译成 java 代码，便于你理解业务逻辑；
 
@@ -129,7 +131,9 @@ public static void main(String[] args) throws InterruptedException {
 
 #### 反编译时指定ClassLoader
 
-> 当有多个 `ClassLoader` 都加载了这个类时，`jad` 命令会输出对应 `ClassLoader` 实例的 `hashcode`，然后你只需要重新执行 `jad` 命令，并使用参数 `-c <hashcode>` 就可以反编译指定 ClassLoader 加载的那个类了；
+::: tip
+当有多个 `ClassLoader` 都加载了这个类时，`jad` 命令会输出对应 `ClassLoader` 实例的 `hashcode`，然后你只需要重新执行 `jad` 命令，并使用参数 `-c <hashcode>` 就可以反编译指定 ClassLoader 加载的那个类了；
+:::
 
 ```java
 $ jad org.apache.log4j.Logger

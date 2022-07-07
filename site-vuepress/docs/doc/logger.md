@@ -3,7 +3,9 @@ logger
 
 [`logger`在线教程](https://arthas.aliyun.com/doc/arthas-tutorials?language=cn&id=command-logger)
 
-> 查看logger信息，更新logger level
+::: tip
+查看logger信息，更新logger level
+:::
 
 ### 使用参考
 

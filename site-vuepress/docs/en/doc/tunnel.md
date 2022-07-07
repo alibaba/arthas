@@ -90,7 +90,9 @@ For the above example, go to [http://47.75.156.201/arthas/?port=80](http://47.75
 
 ### Best practices
 
-> Note that the agentId must be unique, otherwise it will conflict on the tunnel server and not work properly.
+::: warning
+Note that the agentId must be unique, otherwise it will conflict on the tunnel server and not work properly.
+:::
 
 If the arthas agent is configured with `appName`, the generated agentId will be prefixed with `appName`.
 
@@ -98,7 +100,9 @@ For example, if you add the startup parameter `as.sh --tunnel-server 'ws://127.0
 
 Tunnel server will use `_` as a delimiter to extract `appName`, which is convenient to manage by application.
 
-> Alternatively, you can configure `appName` in `arthas.properties` in the unzipped arthas directory, or in `application.properties` of the spring boot application.
+::: tip
+Alternatively, you can configure `appName` in `arthas.properties` in the unzipped arthas directory, or in `application.properties` of the spring boot application.
+:::
 
 
 ### Tunnel Server Management Page

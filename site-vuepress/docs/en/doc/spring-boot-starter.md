@@ -1,7 +1,9 @@
 Arthas Spring Boot Starter
 =====
 
-> Support spring boot 2
+::: tip
+Support spring boot 2
+:::
 
 Latest Version: [View](https://search.maven.org/search?q=arthas-spring-boot-starter)
 
@@ -29,13 +31,17 @@ arthas.tunnel-server=ws://47.75.156.201:7777/ws
 
 All supported configuration: [Reference](https://github.com/alibaba/arthas/blob/master/arthas-spring-boot-starter/src/main/java/com/alibaba/arthas/spring/ArthasProperties.java)
 
-> By default, arthas-spring-boot-starter will disable the `stop` command.
+::: tip
+By default, arthas-spring-boot-starter will disable the `stop` command.
+:::
 
 Reference: [Arthas Properties](arthas-properties.md)
 
 ### View Endpoint Information
 
-> Need to configure spring boot to expose endpoint: [Reference](https://docs.spring.io/spring-boot/docs/current/reference/html/production-ready-features.html#production-ready-endpoints).
+::: tip
+Need to configure spring boot to expose endpoint: [Reference](https://docs.spring.io/spring-boot/docs/current/reference/html/production-ready-features.html#production-ready-endpoints).
+:::
 
 Assuming the endpoint port is 8080, it can be viewed via the following url.
 
@@ -89,4 +95,6 @@ You can also configure properties:
         ArthasAgent.attach(configMap);
 ```
 
-> Note that the configuration must be `camel case`, which is different from the `-` style of spring boot. Only the spring boot application supports both `camel case` and `-` style configuration.
+::: warning
+Note that the configuration must be `camel case`, which is different from the `-` style of spring boot. Only the spring boot application supports both `camel case` and `-` style configuration.
+:::

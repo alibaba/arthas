@@ -590,11 +590,13 @@ classpath: demo-arthas-spring-boot.jar
 
 watch的结果值由计算`watch-express` ognl表达式产生，可以通过改变ognl表达式来生成想要的值，请参考[OGNL文档](https://commons.apache.org/proper/commons-ognl/language-guide.html)。
 
-> Maps can also be created using a special syntax.
->
->#{ "foo" : "foo value", "bar" : "bar value" }
->
->This creates a Map initialized with mappings for "foo" and "bar".
+::: tip
+Maps can also be created using a special syntax.
+
+#{ "foo" : "foo value", "bar" : "bar value" }
+
+This creates a Map initialized with mappings for "foo" and "bar".
+:::
 
 下面的命令生成map格式的值：
 

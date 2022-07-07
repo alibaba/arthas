@@ -95,7 +95,9 @@ id        URJZ5L48RPBR2ALI5K4V
 
 ### 最佳实践
 
-> 注意，agentId要保持唯一，否则会在tunnel server上冲突，不能正常工作。
+::: tip
+注意，agentId要保持唯一，否则会在tunnel server上冲突，不能正常工作。
+:::
 
 如果 arthas agent配置了 `appName`，则生成的agentId会带上`appName`的前缀。
 
@@ -103,7 +105,9 @@ id        URJZ5L48RPBR2ALI5K4V
 
 Tunnel server会以`_`做分隔符，提取出`appName`，方便按应用进行管理。
 
-> 另外，也可以在解压的arthas目录下的 `arthas.properties`，或者在spring boot应用的`application.properties`里配置`appName`。
+::: tip
+另外，也可以在解压的arthas目录下的 `arthas.properties`，或者在spring boot应用的`application.properties`里配置`appName`。
+:::
 
 ### Tunnel Server的管理页面
 

@@ -1,7 +1,9 @@
 groovy
 ===
 
-> Arthas support groovy scripting to allow user to use script like BTrace. It is possible to use if/for/switch/while in groovy scripting, but has more limitations compared to BTrace.
+::: tip
+Arthas support groovy scripting to allow user to use script like BTrace. It is possible to use if/for/switch/while in groovy scripting, but has more limitations compared to BTrace.
+:::
 
 ### Limitations
 

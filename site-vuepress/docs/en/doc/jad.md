@@ -3,7 +3,9 @@ jad
 
 [`jad` online tutorial](https://arthas.aliyun.com/doc/arthas-tutorials?language=en&id=command-jad)
 
-> Decompile the specified classes.
+::: tip
+Decompile the specified classes.
+:::
 
 `jad` helps to decompile the byte code running in JVM to the source code to assist you to understand the logic behind better.
 
@@ -129,7 +131,9 @@ public static void main(String[] args) throws InterruptedException {
 
 #### Decompile with specified classLoader
 
-> If the target class is loaded by multiple classloaders, `jad` outputs the `hashcode` of the corresponding classloaders, then you can re-run `jad` and specify `-c <hashcode>` to decompile the target class from the specified classloader.
+::: tip
+If the target class is loaded by multiple classloaders, `jad` outputs the `hashcode` of the corresponding classloaders, then you can re-run `jad` and specify `-c <hashcode>` to decompile the target class from the specified classloader.
+:::
 
 ```java
 $ jad org.apache.log4j.Logger

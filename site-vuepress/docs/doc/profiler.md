@@ -3,7 +3,9 @@ profiler
 
 [`profiler`在线教程](https://arthas.aliyun.com/doc/arthas-tutorials.html?language=cn&id=command-profiler)
 
-> 使用[async-profiler](https://github.com/jvm-profiling-tools/async-profiler)生成火焰图
+::: tip
+使用[async-profiler](https://github.com/jvm-profiling-tools/async-profiler)生成火焰图
+:::
 
 `profiler` 命令支持生成应用热点的火焰图。本质上是通过不断的采样，然后把收集到的采样结果生成火焰图。
 
@@ -28,7 +30,9 @@ $ profiler start
 Started [cpu] profiling
 ```
 
-> 默认情况下，生成的是cpu的火焰图，即event为`cpu`。可以用`--event`参数来指定。
+::: tip
+默认情况下，生成的是cpu的火焰图，即event为`cpu`。可以用`--event`参数来指定。
+:::
 
 
 ### 获取已采集的sample的数量
@@ -71,7 +75,9 @@ OK
 
 ![](/images/arthas-output-svg.jpg)
 
-> 如果是chrome浏览器，可能需要多次刷新。
+::: tip
+如果是chrome浏览器，可能需要多次刷新。
+:::
 
 ### profiler支持的events
 

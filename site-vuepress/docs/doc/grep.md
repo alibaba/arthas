@@ -3,7 +3,9 @@ grep
 
 [`grep`在线教程](https://arthas.aliyun.com/doc/arthas-tutorials.html?language=cn&id=command-grep)
 
-> 类似传统的`grep`命令。
+::: tip
+类似传统的`grep`命令。
+:::
 
 
 ```

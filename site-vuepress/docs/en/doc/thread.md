@@ -3,7 +3,9 @@ thread
 
 [`thread` online tutorial](https://arthas.aliyun.com/doc/arthas-tutorials.html?language=en&id=command-thread)
 
-> Check the basic info and stack trace of the target thread.
+::: tip
+Check the basic info and stack trace of the target thread.
+:::
 
 ### Parameters
 
@@ -20,7 +22,8 @@ thread
 The cpu ratios here is similar to the thread `%CPU` of the linux command `top -H -p <pid>`. During a sampling interval, 
 the ratio of the incremental cpu time of each thread in the current JVM to the sampling interval time.
 
-> Working principle description:
+#### Working principle description:
+
 * Do the first sampling, get the CPU time of all threads ( by calling `java.lang.management.ThreadMXBean#getThreadCpuTime()` and 
 `sun.management.HotspotThreadMBean.getInternalThreadCpuTimes()` )
 * Sleep and wait for an interval (the default is 200ms, the interval can be specified by `-i`)

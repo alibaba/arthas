@@ -1,7 +1,9 @@
 auth
 ===
 
-> Authenticates the current session
+::: tip
+Authenticates the current session
+:::
 
 ### Configure username and password
 

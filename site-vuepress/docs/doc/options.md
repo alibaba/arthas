@@ -3,7 +3,9 @@ options
 
 [`options`在线教程](https://arthas.aliyun.com/doc/arthas-tutorials.html?language=cn&id=command-options)
 
-> 全局开关
+::: tip
+全局开关
+:::
 
 | 名称                | 默认值   | 描述                                       |
 | ------------------ | ----- | ---------------------------------------- |
@@ -76,7 +78,9 @@ $ options json-format
                                   ect output          ted.
 ```
 
-> 默认情况下`json-format`为false，如果希望`watch`/`tt`等命令结果以json格式输出，则可以设置`json-format`为true。
+::: tip
+默认情况下`json-format`为false，如果希望`watch`/`tt`等命令结果以json格式输出，则可以设置`json-format`为true。
+:::
 
 ### 设置指定的option
 
@@ -108,7 +112,9 @@ Affect(class count: 1 , method count: 1) cost in 61 ms, listenerId: 1
 
 ### 关闭strict模式，允许在ognl表达式里设置对象属性
 
-> since 3.6.0
+::: tip
+since 3.6.0
+:::
 
 对于新用户，在编写ognl表达式时，可能会出现误用。
 

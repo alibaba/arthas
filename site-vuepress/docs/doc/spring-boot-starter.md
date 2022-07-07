@@ -1,7 +1,9 @@
 Arthas Spring Boot Starter
 =====
 
-> 只支持 spring boot 2
+::: tip
+只支持 spring boot 2
+:::
 
 最新版本：[查看](https://search.maven.org/search?q=arthas-spring-boot-starter)
 
@@ -17,7 +19,9 @@ Arthas Spring Boot Starter
 
 应用启动后，spring会启动arthas，并且attach自身进程。
 
-> 一键创建包含 Arthas Spring Boot Starter 的工程：<a href="https://start.aliyun.com/bootstrap.html/#!dependencies=arthas" target="_blank">点击</a>
+::: tip
+一键创建包含 Arthas Spring Boot Starter 的工程：<a href="https://start.aliyun.com/bootstrap.html/#!dependencies=arthas" target="_blank">点击</a>
+:::
 
 
 ### 配置属性
@@ -31,13 +35,17 @@ arthas.tunnel-server=ws://47.75.156.201:7777/ws
 
 全部支持的配置项：[参考](https://github.com/alibaba/arthas/blob/master/arthas-spring-boot-starter/src/main/java/com/alibaba/arthas/spring/ArthasProperties.java)
 
-> 默认情况下，arthas-spring-boot-starter会禁掉`stop`命令。
+::: tip
+默认情况下，arthas-spring-boot-starter会禁掉`stop`命令。
+:::
 
 参考：[Arthas Properties](arthas-properties.md)
 
 ### 查看Endpoint信息
 
-> 需要配置spring boot暴露endpoint：[参考](https://docs.spring.io/spring-boot/docs/current/reference/html/production-ready-features.html#production-ready-endpoints)
+::: tip
+需要配置spring boot暴露endpoint：[参考](https://docs.spring.io/spring-boot/docs/current/reference/html/production-ready-features.html#production-ready-endpoints)
+:::
 
 假定endpoint端口是 8080，则通过下面url可以查看：
 
@@ -89,5 +97,6 @@ public class ArthasAttachExample {
         configMap.put("arthas.tunnelServer", "ws://127.0.0.1:7777/ws");
         ArthasAgent.attach(configMap);
 ```
-
-> 注意配置必须是`驼峰`的，和spring boot的`-`风格不一样。spring boot应用才同时支持`驼峰` 和 `-`风格的配置。
+::: warning
+注意配置必须是`驼峰`的，和spring boot的`-`风格不一样。spring boot应用才同时支持`驼峰` 和 `-`风格的配置。
+:::

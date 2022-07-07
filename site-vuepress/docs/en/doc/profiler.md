@@ -3,7 +3,9 @@ profiler
 
 [`profiler` online tutorial](https://arthas.aliyun.com/doc/arthas-tutorials.html?language=en&id=command-profiler)
 
-> Generate a flame graph using [async-profiler](https://github.com/jvm-profiling-tools/async-profiler)
+::: tip
+Generate a flame graph using [async-profiler](https://github.com/jvm-profiling-tools/async-profiler)
+:::
 
 The `profiler` command supports generate flame graph for application hotspots.
 
@@ -27,7 +29,9 @@ $ profiler start
 Started [cpu] profiling
 ```
 
-> By default, the sample event is `cpu`. Can be specified with the `--event` parameter.
+::: tip
+By default, the sample event is `cpu`. Can be specified with the `--event` parameter.
+:::
 
 
 ### Get the number of samples collected
@@ -70,7 +74,9 @@ Click to view specific results:
 
 ![](/images/arthas-output-svg.jpg)
 
-> If using the chrome browser, may need to be refreshed multiple times.
+::: tip
+If using the chrome browser, may need to be refreshed multiple times.
+:::
 
 ### Profiler supported events
 
@@ -168,7 +174,9 @@ Copyright 2019 Andrei Pangin
 
 ### Configure framebuf option
 
-> If you encounter `[frame_buffer_overflow]` in the generated result, you need to increase the framebuf (the default value is 1'000'000), which can be configured explicitly, such as:
+::: tip
+ you encounter `[frame_buffer_overflow]` in the generated result, you need to increase the framebuf (the default value is 1'000'000), which can be configured explicitly, such as:
+:::
 
 ```bash
 profiler start --framebuf 5000000

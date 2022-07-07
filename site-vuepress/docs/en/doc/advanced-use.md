@@ -47,7 +47,9 @@ Advanced Usage
 
 ## monitor/watch/trace - related
 
-> **Attention**: commands here are taking advantage of byte-code-injection, which means we are injecting some [aspects](https://en.wikipedia.org/wiki/Aspect-oriented_programming) into the current classes for monitoring and statistics purpose. Therefore, when using it for online troubleshooting in your production environment, you'd better **explicitly specify** classes/methods/criteria, and remember to remove the injected code by `stop` or `reset`. 
+::: warning
+**Attention**: commands here are taking advantage of byte-code-injection, which means we are injecting some [aspects](https://en.wikipedia.org/wiki/Aspect-oriented_programming) into the current classes for monitoring and statistics purpose. Therefore, when using it for online troubleshooting in your production environment, you'd better **explicitly specify** classes/methods/criteria, and remember to remove the injected code by `stop` or `reset`. 
+:::
 
 * [monitor](monitor.md) - monitor method execution statistics
 * [watch](watch.md) - display the input/output parameter, return object, and thrown exception of specified method invocation

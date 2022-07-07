@@ -1,8 +1,9 @@
 
 ## FAQ
 
-
-> 不在本列表里的问题，请到issue里搜索。 [https://github.com/alibaba/arthas/issues](https://github.com/alibaba/arthas/issues)
+::: tip
+不在本列表里的问题，请到issue里搜索。 [https://github.com/alibaba/arthas/issues](https://github.com/alibaba/arthas/issues)
+:::
 
 
 ##### 日志文件在哪里？
@@ -31,7 +32,9 @@ options unsafe true
 
 更多参考 [options](options.md)
 
-> 通过 java.lang.instrument.Instrumentation#appendToBootstrapClassLoaderSearch append到`Bootstrap ClassLoader`的jar包需要开启unsafe。
+::: tip
+通过 java.lang.instrument.Instrumentation#appendToBootstrapClassLoaderSearch append到`Bootstrap ClassLoader`的jar包需要开启unsafe。
+:::
 
 ##### 怎么以`json`格式查看结果
 

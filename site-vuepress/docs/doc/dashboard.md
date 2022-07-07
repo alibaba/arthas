@@ -3,7 +3,9 @@ dashboard
 
 [`dashboard`在线教程](https://arthas.aliyun.com/doc/arthas-tutorials.html?language=cn&id=command-dashboard)
 
-> 当前系统的实时数据面板，按 ctrl+c 退出。
+::: tip
+当前系统的实时数据面板，按 ctrl+c 退出。
+:::
 
 当运行在Ali-tomcat时，会显示当前tomcat的实时信息，如HTTP请求的qps, rt, 错误数, 线程池信息等等。
 

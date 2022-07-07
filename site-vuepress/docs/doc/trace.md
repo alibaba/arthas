@@ -3,7 +3,9 @@ trace
 
 [`trace`在线教程](https://arthas.aliyun.com/doc/arthas-tutorials.html?language=cn&id=command-trace)
 
-> 方法内部调用路径，并输出方法路径上的每个节点上耗时
+::: tip
+方法内部调用路径，并输出方法路径上的每个节点上耗时
+:::
 
 `trace` 命令能主动搜索 `class-pattern`／`method-pattern` 对应的方法调用路径，渲染和统计整个调用链路上的所有性能开销和追踪调用链路。
 
@@ -30,7 +32,9 @@ trace
 
 很多时候我们只想看到某个方法的rt大于某个时间之后的trace结果，现在Arthas可以按照方法执行的耗时来进行过滤了，例如`trace *StringUtils isBlank '#cost>100'`表示当执行时间超过100ms的时候，才会输出trace的结果。
 
-> watch/stack/trace这个三个命令都支持`#cost`
+::: tip
+watch/stack/trace这个三个命令都支持`#cost`
+:::
 
 ### 注意事项
 
@@ -64,7 +68,9 @@ Affect(class-cnt:1 , method-cnt:1) cost in 28 ms.
         `---[0.03752ms] demo.MathGame:primeFactors() #24 [throws Exception]
 ```
 
-> 结果里的 `#24`，表示在run函数里，在源文件的第`24`行调用了`primeFactors()`函数。
+::: tip
+结果里的 `#24`，表示在run函数里，在源文件的第`24`行调用了`primeFactors()`函数。
+:::
 
 #### trace次数限制
 
@@ -131,7 +137,9 @@ Affect(class-cnt:1 , method-cnt:1) cost in 41 ms.
         `---[0.05447ms] demo.MathGame:print()
 ```
 
-> 只会展示耗时大于10ms的调用路径，有助于在排查问题的时候，只关注异常情况
+::: tip
+只会展示耗时大于10ms的调用路径，有助于在排查问题的时候，只关注异常情况
+:::
 
 - 是不是很眼熟，没错，在 JProfiler 等收费软件中你曾经见识类似的功能，这里你将可以通过命令就能打印出指定调用路径。 友情提醒下，`trace` 在执行的过程中本身是会有一定的性能开销，在统计的报告中并未像 JProfiler 一样预先减去其自身的统计开销。所以这统计出来有些许的不准，渲染路径上调用的类、方法越多，性能偏差越大。但还是能让你看清一些事情的。
 - [12.033735ms] 的含义，`12.033735` 的含义是：当前节点在当前步骤的耗时，单位为毫秒
@@ -158,7 +166,9 @@ trace javax.servlet.Filter * --exclude-class-pattern com.demo.TestFilter
 
 ### 动态trace
 
-> 3.3.0 版本后支持。
+::: tip
+3.3.0 版本后支持。
+:::
 
 
 打开终端1，trace上面demo里的`run`函数，可以看到打印出 `listenerId: 1`：
@@ -245,7 +255,9 @@ Affect(class count: 1 , method count: 1) cost in 66 ms, listenerId: 1
 
 #### 使用 -v 参数打印更多信息
 
-> watch/trace/monitor/stack/tt 命令都支持 `-v` 参数
+::: tip
+watch/trace/monitor/stack/tt 命令都支持 `-v` 参数
+:::
 
 当命令执行之后，没有输出结果。有两种可能：
 

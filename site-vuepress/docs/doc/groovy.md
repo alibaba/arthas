@@ -1,7 +1,9 @@
 groovy
 ===
 
-> Arthas 支持 groovy 脚本增强，允许像 BTrace 一样编写脚本来解决问题，可以在 groovy 脚本中进行if/for/switch/while 等控制语句，不受限制，但相比 BTrace 而言拥有更多的限制范围。
+::: tip
+Arthas 支持 groovy 脚本增强，允许像 BTrace 一样编写脚本来解决问题，可以在 groovy 脚本中进行if/for/switch/while 等控制语句，不受限制，但相比 BTrace 而言拥有更多的限制范围。
+:::
 
 ### 限制内容
 

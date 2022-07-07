@@ -3,7 +3,9 @@ dump
 
 [`dump`在线教程](https://arthas.aliyun.com/doc/arthas-tutorials?language=cn&id=command-dump)
 
-> dump 已加载类的 bytecode 到特定目录
+::: tip
+dump 已加载类的 bytecode 到特定目录
+:::
 
 ### 参数说明
 

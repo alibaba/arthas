@@ -3,7 +3,9 @@ vmoption
 
 [`vmoption`在线教程](https://arthas.aliyun.com/doc/arthas-tutorials.html?language=cn&id=command-vmoption)
 
-> 查看，更新VM诊断相关的参数
+::: tip
+查看，更新VM诊断相关的参数
+:::
 
 ### 使用参考
 

@@ -3,7 +3,9 @@ watch
 
 [`watch`在线教程](https://arthas.aliyun.com/doc/arthas-tutorials.html?language=cn&id=command-watch)
 
-> 函数执行数据观测
+::: tip
+函数执行数据观测
+:::
 
 让你能方便的观察到指定函数的调用情况。能观察到的范围为：`返回值`、`抛出异常`、`入参`，通过编写 OGNL 表达式进行对应变量的查看。
 
@@ -46,7 +48,9 @@ watch 的参数比较多，主要是因为它能在 4 个不同的场景观察�
 
 #### 观察函数调用返回时的参数、this对象和返回值
 
-> 观察表达式，默认值是`{params, target, returnObj}`
+::: tip
+观察表达式，默认值是`{params, target, returnObj}`
+:::
 
 ```bash
 $ watch demo.MathGame primeFactors -x 2
@@ -276,7 +280,9 @@ ts=2021-01-05 21:35:20; [cost=0.173966ms] result=@ArrayList[
 
 #### 排除掉指定的类
 
-> watch/trace/monitor/stack/tt 命令都支持 `--exclude-class-pattern` 参数
+::: tip
+watch/trace/monitor/stack/tt 命令都支持 `--exclude-class-pattern` 参数
+:::
 
 使用 `--exclude-class-pattern` 参数可以排除掉指定的类，比如：
 
@@ -293,7 +299,9 @@ options disable-sub-class true
 
 #### 使用 -v 参数打印更多信息
 
-> watch/trace/monitor/stack/tt 命令都支持 `-v` 参数
+::: tip
+watch/trace/monitor/stack/tt 命令都支持 `-v` 参数
+:::
 
 当命令执行之后，没有输出结果。有两种可能：
 
