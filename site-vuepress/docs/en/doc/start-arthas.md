@@ -1,5 +1,4 @@
-Start Arthas
-=====
+# Start Arthas
 
 ## Interactive Mode
 
@@ -32,19 +31,19 @@ Startup script is as follows:
 
 ### Parameter Description
 
-* *PID*: Target Java process ID (Make sure that the user executing the command has sufficient permissions to operate the target Java process.)
-* *IP*: The address that Arthas Server listens on, the default value is `127.0.0.1`. Arthas allows multiple users to access simultaneously without interfering with each other.
-* *PORT*: Arthas Server port，the default value is 3658
+- _PID_: Target Java process ID (Make sure that the user executing the command has sufficient permissions to operate the target Java process.)
+- _IP_: The address that Arthas Server listens on, the default value is `127.0.0.1`. Arthas allows multiple users to access simultaneously without interfering with each other.
+- _PORT_: Arthas Server port，the default value is 3658
 
 ### Sample
 
-* If IP and PORT are not specified, then the default values are 127.0.0.1 and 3658
+- If IP and PORT are not specified, then the default values are 127.0.0.1 and 3658
 
-	> ./as.sh 12345
+  > ./as.sh 12345
 
-	Equivalent to:
-	
-	> ./as.sh 12356@127.0.0.1:3658
+  Equivalent to:
+
+  > ./as.sh 12356@127.0.0.1:3658
 
 ### Remote Diagnosis
 
@@ -53,7 +52,7 @@ After starting Arthas Server on the target Java process, users can use `telnet` 
 ```bash
 telnet 192.168.1.119 3658
 ```
-	
+
 ### sudo Support
 
 Usually online environment will only grant users privilege as low as possible, instead, all advanced operations are through sudo-list. Since `as.sh` script takes into account the current effective user, it is possible to run the script in the other rule, by specifying `-H` option like this:
@@ -61,7 +60,6 @@ Usually online environment will only grant users privilege as low as possible, i
 ```bash
 sudo -u admin -H ./as.sh 12345
 ```
-
 
 ### Windows Support
 

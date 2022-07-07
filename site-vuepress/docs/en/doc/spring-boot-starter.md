@@ -1,5 +1,4 @@
-Arthas Spring Boot Starter
-=====
+# Arthas Spring Boot Starter
 
 ::: tip
 Support spring boot 2
@@ -18,7 +17,6 @@ Add maven dependency:
 ```
 
 When the application is started, spring will start arthas and attach its own process.
-
 
 ### Configuration properties
 
@@ -77,14 +75,13 @@ Non-Spring Boot applications can be used in the following ways.
 import com.taobao.arthas.agent.attach.ArthasAgent;
 
 public class ArthasAttachExample {
-	
+
 	public static void main(String[] args) {
 		ArthasAgent.attach();
 	}
 
 }
 ```
-
 
 You can also configure properties:
 

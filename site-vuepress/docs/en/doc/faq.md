@@ -4,14 +4,13 @@
 For questions that are not in this list, please search in issues. [https://github.com/alibaba/arthas/issues](https://github.com/alibaba/arthas/issues)
 :::
 
-
 ##### Where is the log file?
 
 Log file path: `~/logs/arthas/arthas.log`
+
 ##### How much impact does Arthas attach have on the performance of the original process?
 
 [https://github.com/alibaba/arthas/issues/44](https://github.com/alibaba/arthas/issues/44)
-
 
 ##### target process not responding or HotSpot VM not loaded
 
@@ -20,8 +19,7 @@ com.sun.tools.attach.AttachNotSupportedException: Unable to open socket file: ta
 1. Check whether the current user and the target java process are consistent. If they are inconsistent, switch to the same user. JVM can only attach java processes under the same user.
 2. Try to use `jstack -l $pid`. If the process does not respond, it means that the process may freeze and fail to respond to the JVM attach signal. So Arthas based on the attach mechanism cannot work. Try to use `jmap` heapdump to analyze.
 3. Try to attach math-game in [quick-start](quick-start.md).
-4. For more information:  [https://github.com/alibaba/arthas/issues/347](https://github.com/alibaba/arthas/issues/347)
-
+4. For more information: [https://github.com/alibaba/arthas/issues/347](https://github.com/alibaba/arthas/issues/347)
 
 ##### Can commands such as trace/watch enhance the classes in jdk?
 
@@ -45,7 +43,6 @@ options json-format true
 
 See more at [options](options.md)
 
-
 ##### Can arthas trace native methods
 
 No.
@@ -54,7 +51,6 @@ No.
 
 1. You can use [`vmtool`](vmtool.md) command.
 2. You can use some tricks to intercept the object with the [`tt`](tt.md) command, or fetch it from a static method.
-
 
 ##### How to filter method with the same name?
 
@@ -66,7 +62,7 @@ example [math-game](quick-start.md)
 
 ```bash
 watch demo.MathGame primeFactors '{params,returnObj,throwExp}' 'params.length >0 && returnObj instanceof java.util.List' -v
-``` 
+```
 
 ##### How to watch or trace constructor?
 
@@ -80,7 +76,7 @@ In the JVM specification the name of inner classes is `OuterClass$InnerClass`.
 
 ```bash
 watch OuterClass$InnerClass
-````
+```
 
 ##### Enter Unicode characters
 
@@ -88,7 +84,7 @@ Convert Unicode characters to `\u` representation:
 
 ```bash
 ognl '@java.lang.System@out.println("Hello \u4e2d\u6587")'
-````
+```
 
 ##### java.lang.ClassFormatError: null, skywalking arthas compatible use
 
@@ -96,11 +92,9 @@ When error log appear `java.lang.ClassFormatError: null`, it is usually modified
 
 For example: use skywalking V8.1.0 below [cannot trace, watch classes enhanced by skywalking agent](https://github.com/alibaba/arthas/issues/1141), V8.1.0 or above is compatible, refer to skywalking configuration for more details. [skywalking compatible with other javaagent bytecode processing](https://github.com/apache/skywalking/blob/master/docs/en/FAQ/Compatible-with-other-javaagent-bytecode-processing.md#).
 
-
 #### class redefinition failed: attempted to change the schema (add/remove fields)
 
 Reference: [https://github.com/alibaba/arthas/issues/2165](https://github.com/alibaba/arthas/issues/2165)
-
 
 ##### Can I use arthas offline?
 
@@ -110,9 +104,8 @@ Yes. Just download the full size package and unzip it, refer to: [Download](down
 
 Reference: [https://github.com/alibaba/arthas/issues/362#issuecomment-448185416](https://github.com/alibaba/arthas/issues/362#issuecomment-448185416)
 
-
 ##### Why is the new version of Arthas downloaded, but the old version is connected?
 
-For example, the started version of `as.sh/arthas-boot.jar` is 3.5.*, but after connecting, the printed arthas version is 3.4.*.
+For example, the started version of `as.sh/arthas-boot.jar` is 3.5._, but after connecting, the printed arthas version is 3.4._.
 
 It may be that the target process has been diagnosed with the old version of arthas before. You can execute `stop` to stop the old version of arthas, and then reuse the new version to attach.

@@ -1,10 +1,9 @@
-sysprop
-=======================
+# sysprop
 
 [`sysprop`在线教程](https://arthas.aliyun.com/doc/arthas-tutorials.html?language=cn&id=command-sysprop)
 
 ::: tip
-查看当前JVM的系统属性(`System Property`)
+查看当前 JVM 的系统属性(`System Property`)
 :::
 
 ### 使用参考
@@ -31,7 +30,6 @@ sysprop
 ```
 
 #### 查看所有属性
-
 
 ```
 $ sysprop

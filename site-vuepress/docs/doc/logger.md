@@ -1,15 +1,14 @@
-logger
-===
+# logger
 
 [`logger`在线教程](https://arthas.aliyun.com/doc/arthas-tutorials?language=cn&id=command-logger)
 
 ::: tip
-查看logger信息，更新logger level
+查看 logger 信息，更新 logger level
 :::
 
 ### 使用参考
 
-#### 查看所有logger信息
+#### 查看所有 logger 信息
 
 以下面的`logback.xml`为例：
 
@@ -48,7 +47,6 @@ logger
 </configuration>
 ```
 
-
 使用`logger`命令打印的结果是：
 
 ```bash
@@ -80,12 +78,11 @@ logger
 
 从`appenders`的信息里，可以看到
 
-* `CONSOLE` logger的target是`System.out`
-* `APPLICATION` logger是`RollingFileAppender`，它的file是`app.log`
-* `ASYNC`它的`appenderRef`是`APPLICATION`，即异步输出到文件里
+- `CONSOLE` logger 的 target 是`System.out`
+- `APPLICATION` logger 是`RollingFileAppender`，它的 file 是`app.log`
+- `ASYNC`它的`appenderRef`是`APPLICATION`，即异步输出到文件里
 
-
-#### 查看指定名字的logger信息
+#### 查看指定名字的 logger 信息
 
 ```bash
 [arthas@2062]$ logger -n org.springframework.web
@@ -99,11 +96,11 @@ logger
  codeSource                             file:/Users/hengyunabc/.m2/repository/ch/qos/logback/logback-classic/1.2.3/logback-classic-1.2.3.jar
 ```
 
-#### 查看指定classloader的logger信息
+#### 查看指定 classloader 的 logger 信息
 
-注意hashcode是变化的，需要先查看当前的ClassLoader信息，提取对应ClassLoader的hashcode。
+注意 hashcode 是变化的，需要先查看当前的 ClassLoader 信息，提取对应 ClassLoader 的 hashcode。
 
-如果你使用`-c`，你需要手动输入hashcode：`-c <hashcode>`
+如果你使用`-c`，你需要手动输入 hashcode：`-c <hashcode>`
 
 ```bash
 [arthas@2062]$ logger -c 2a139a55
@@ -132,35 +129,34 @@ logger
                                         appenderRef     [APPLICATION]
 ```
 
-对于只有唯一实例的ClassLoader可以通过`--classLoaderClass`指定class name，使用起来更加方便：
+对于只有唯一实例的 ClassLoader 可以通过`--classLoaderClass`指定 class name，使用起来更加方便：
 
 `logger --classLoaderClass sun.misc.Launcher$AppClassLoader`
 
-  * 注: 这里classLoaderClass 在 java 8 是 sun.misc.Launcher$AppClassLoader，而java 11的classloader是jdk.internal.loader.ClassLoaders$AppClassLoader。
+- 注: 这里 classLoaderClass 在 java 8 是 sun.misc.Launcher$AppClassLoader，而java 11的classloader是jdk.internal.loader.ClassLoaders$AppClassLoader。
 
-`--classLoaderClass` 的值是ClassLoader的类名，只有匹配到唯一的ClassLoader实例时才能工作，目的是方便输入通用命令，而`-c <hashcode>`是动态变化的。
+`--classLoaderClass` 的值是 ClassLoader 的类名，只有匹配到唯一的 ClassLoader 实例时才能工作，目的是方便输入通用命令，而`-c <hashcode>`是动态变化的。
 
-#### 更新logger level
+#### 更新 logger level
 
 ```bash
 [arthas@2062]$ logger --name ROOT --level debug
 update logger level success.
 ```
 
-#### 指定classloader更新 logger level
+#### 指定 classloader 更新 logger level
 
-默认情况下，logger命令会在SystemClassloader下执行，如果应用是传统的`war`应用，或者spring boot fat jar启动的应用，那么需要指定classloader。
+默认情况下，logger 命令会在 SystemClassloader 下执行，如果应用是传统的`war`应用，或者 spring boot fat jar 启动的应用，那么需要指定 classloader。
 
-可以先用 `sc -d yourClassName` 来查看具体的 classloader hashcode，然后在更新level时指定classloader：
+可以先用 `sc -d yourClassName` 来查看具体的 classloader hashcode，然后在更新 level 时指定 classloader：
 
 ```bash
 [arthas@2062]$ logger -c 2a139a55 --name ROOT --level debug
 ```
 
-#### 查看没有appender的logger的信息
+#### 查看没有 appender 的 logger 的信息
 
-
-默认情况下，`logger`命令只打印有appender的logger的信息。如果想查看没有`appender`的logger的信息，可以加上参数`--include-no-appender`。
+默认情况下，`logger`命令只打印有 appender 的 logger 的信息。如果想查看没有`appender`的 logger 的信息，可以加上参数`--include-no-appender`。
 
 注意，通常输出结果会很长。
 

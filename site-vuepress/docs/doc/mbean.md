@@ -1,5 +1,4 @@
-mbean
-=======
+# mbean
 
 [`mbean`在线教程](https://arthas.aliyun.com/doc/arthas-tutorials.html?language=cn&id=command-mbean)
 
@@ -11,14 +10,14 @@ mbean
 
 ### 参数说明
 
-|参数名称|参数说明|
-|---:|:---|
-|*name-pattern*|名称表达式匹配|
-|*attribute-pattern*|属性名表达式匹配|
-|[m]|查看元信息|
-|[i:]|刷新属性值的时间间隔 (ms)|
-|[n:]|刷新属性值的次数|
-|[E]|开启正则表达式匹配，默认为通配符匹配。仅对属性名有效|
+|            参数名称 | 参数说明                                             |
+| ------------------: | :--------------------------------------------------- |
+|      _name-pattern_ | 名称表达式匹配                                       |
+| _attribute-pattern_ | 属性名表达式匹配                                     |
+|                 [m] | 查看元信息                                           |
+|                [i:] | 刷新属性值的时间间隔 (ms)                            |
+|                [n:] | 刷新属性值的次数                                     |
+|                 [E] | 开启正则表达式匹配，默认为通配符匹配。仅对属性名有效 |
 
 ### 使用参考
 
@@ -34,13 +33,13 @@ mbean
 mbean -m java.lang:type=Threading
 ```
 
-查看mbean属性信息：
+查看 mbean 属性信息：
 
 ```bash
-mbean java.lang:type=Threading 
+mbean java.lang:type=Threading
 ```
 
-mbean的name支持通配符匹配：
+mbean 的 name 支持通配符匹配：
 
 ```bash
 mbean java.lang:type=Th*

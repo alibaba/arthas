@@ -1,15 +1,14 @@
-vmoption
-===
+# vmoption
 
 [`vmoption`在线教程](https://arthas.aliyun.com/doc/arthas-tutorials.html?language=cn&id=command-vmoption)
 
 ::: tip
-查看，更新VM诊断相关的参数
+查看，更新 VM 诊断相关的参数
 :::
 
 ### 使用参考
 
-#### 查看所有的option
+#### 查看所有的 option
 
 ```bash
 [arthas@56963]$ vmoption
@@ -39,7 +38,7 @@ vmoption
  PrintConcurrentLocks   false                   DEFAULT                true
 ```
 
-#### 查看指定的option
+#### 查看指定的 option
 
 ```bash
 $ vmoption PrintGC
@@ -48,7 +47,7 @@ $ vmoption PrintGC
  PrintGC             false                MANAGEMENT          true
 ```
 
-#### 更新指定的option
+#### 更新指定的 option
 
 ```bash
 $ vmoption PrintGC true

@@ -1,5 +1,4 @@
-retransform
-========
+# retransform
 
 [`mc-retransform` online tutorial](https://arthas.aliyun.com/doc/arthas-tutorials?language=en&id=command-mc-retransform)
 
@@ -21,7 +20,7 @@ Reference: [Instrumentation#retransformClasses](https://docs.oracle.com/javase/8
    retransform --classLoaderClass 'sun.misc.Launcher$AppClassLoader' /tmp/Test.class
 ```
 
-### retransform the specified .class file 
+### retransform the specified .class file
 
 ```bash
 $ retransform /tmp/MathGame.class
@@ -43,7 +42,8 @@ Id              ClassName       TransformCount  LoaderHash      LoaderClassName
 1               demo.MathGame   1               null            null
 ```
 
-* TransformCount counts the times of attempts to return the .class file corresponding to the entry in the ClassFileTransformer#transform method, but it does not mean that the transform must be successful.
+- TransformCount counts the times of attempts to return the .class file corresponding to the entry in the ClassFileTransformer#transform method, but it does not mean that the transform must be successful.
+
 ### Delete the specified retransform entry
 
 Need to specify id:
@@ -65,6 +65,7 @@ $ retransform --classPattern demo.MathGame
 retransform success, size: 1, classes:
 demo.MathGame
 ```
+
 ::: warning
 Note: For the same class, when there are multiple retransform entries, if retransform is explicitly triggered, the entry added last will take effect (the one with the largest id).
 :::
@@ -73,8 +74,8 @@ Note: For the same class, when there are multiple retransform entries, if retran
 
 If you want to eliminate the impact after performing retransform on a class, you need to:
 
-* Delete the retransform entry corresponding to this class
-* Re-trigger retransform
+- Delete the retransform entry corresponding to this class
+- Re-trigger retransform
 
 ::: tip
 If you do not clear all retransform entries and trigger retransform again, the retransformed classes will still take effect when arthas stop.
@@ -90,9 +91,9 @@ mc /tmp/UserController.java -d /tmp
 retransform /tmp/com/example/demo/arthas/user/UserController.class
 ```
 
-* Use `jad` command to decompile bytecode, and then you can use other editors, such as vim to modify the source code.
-* `mc` command to compile the modified code
-* Load new bytecode with `retransform` command
+- Use `jad` command to decompile bytecode, and then you can use other editors, such as vim to modify the source code.
+- `mc` command to compile the modified code
+- Load new bytecode with `retransform` command
 
 ### Tips for uploading .class files to the server
 
@@ -100,25 +101,24 @@ The `mc` command may fail. You can modify the code locally, compile it, and uplo
 
 1. Convert the `.class` file to base64 first, then save it as result.txt
 
-    ```bash
-    Base64 < Test.class > result.txt
-    ```
+   ```bash
+   Base64 < Test.class > result.txt
+   ```
 
 2. Login the server, create and edit `result.txt`, copy the local content, paste and save
 
 3. Restore `result.txt` on the server to `.class`
 
-    ```
-    Base64 -d < result.txt > Test.class
-    ```
+   ```
+   Base64 -d < result.txt > Test.class
+   ```
 
 4. Use the md5 command to verify that the `.class` files are consistent.
 
-
 ### Restrictions of the retransform command
 
-* New field/method is not allowed
-* The function that is running, no exit can not take effect, such as the new `System.out.println` added below, only the `run()` function will take effect.
+- New field/method is not allowed
+- The function that is running, no exit can not take effect, such as the new `System.out.println` added below, only the `run()` function will take effect.
 
 ```java
 public class MathGame {

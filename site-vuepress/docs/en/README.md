@@ -3,8 +3,8 @@ home: true
 title: Home
 heroImage: /images/arthas.png
 heroText: null
-tagline:   Java Diagnostic Tool
-sidebar:   false
+tagline: Java Diagnostic Tool
+sidebar: false
 actions:
   - text: Quick Start
     link: /doc/quick-start.html

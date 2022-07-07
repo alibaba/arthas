@@ -1,5 +1,4 @@
-groovy
-===
+# groovy
 
 ::: tip
 Arthas support groovy scripting to allow user to use script like BTrace. It is possible to use if/for/switch/while in groovy scripting, but has more limitations compared to BTrace.
@@ -12,16 +11,16 @@ Arthas support groovy scripting to allow user to use script like BTrace. It is p
 
 ### Parameters
 
-|Parameter|Explanation|
-|---:|:---|
-|*class-pattern*|class name pattern|
-|*method-pattern*|method name pattern|
-|*script-filepath*|the absolute path of the groovy script|
-|[S]|match all sub classes|
-|[E]|enable regex match, the default is wildcard match|
+|         Parameter | Explanation                                       |
+| ----------------: | :------------------------------------------------ |
+|   _class-pattern_ | class name pattern                                |
+|  _method-pattern_ | method name pattern                               |
+| _script-filepath_ | the absolute path of the groovy script            |
+|               [S] | match all sub classes                             |
+|               [E] | enable regex match, the default is wildcard match |
 
 Note: the third parameter `script-filepath` must be the absolute path of the groovy script, for example `/tmp/test.groovy`. It is not recommended to use relative path, e.g. `./test.groovy`.
- 
+
 ### Explanation on the important callbacks
 
 ```java

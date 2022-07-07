@@ -1,12 +1,10 @@
-grep
-===
+# grep
 
 [`grep`在线教程](https://arthas.aliyun.com/doc/arthas-tutorials.html?language=cn&id=command-grep)
 
 ::: tip
 类似传统的`grep`命令。
 :::
-
 
 ```
  USAGE:

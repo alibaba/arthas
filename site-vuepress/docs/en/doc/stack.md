@@ -1,5 +1,4 @@
-stack
-=====
+# stack
 
 [`stack` online tutorial](https://arthas.aliyun.com/doc/arthas-tutorials.html?language=en&id=command-stack)
 
@@ -11,28 +10,28 @@ Most often we know one method gets called, but we have no idea on which code pat
 
 ### Parameters
 
-|Name|Specification|
-|---:|:---|
-|*class-pattern*|pattern for the class name|
-|*method-pattern*|pattern for the method name|
-|*condition-expression*|condition expression|
-|`[E]`|turn on regex match, the default behavior is wildcard match|
-|`[n:]`|execution times|
+|                   Name | Specification                                               |
+| ---------------------: | :---------------------------------------------------------- |
+|        _class-pattern_ | pattern for the class name                                  |
+|       _method-pattern_ | pattern for the method name                                 |
+| _condition-expression_ | condition expression                                        |
+|                  `[E]` | turn on regex match, the default behavior is wildcard match |
+|                 `[n:]` | execution times                                             |
 
 There's one thing worthy noting here is observation expression. The observation expression supports OGNL grammar, for example, you can come up a expression like this `"{params,returnObj}"`. All OGNL expressions are supported as long as they are legal to the grammar.
 
 Thanks for `advice`'s data structure, it is possible to observe from varieties of different angles. Inside `advice` parameter, all necessary information for notification can be found.
 
 Pls. refer to [core parameters in expression](advice-class.md) for more details.
-* Pls. also refer to [https://github.com/alibaba/arthas/issues/71](https://github.com/alibaba/arthas/issues/71) for more advanced usage
-* OGNL official site: [https://commons.apache.org/proper/commons-ognl/language-guide.html](https://commons.apache.org/proper/commons-ognl/language-guide.html)
+
+- Pls. also refer to [https://github.com/alibaba/arthas/issues/71](https://github.com/alibaba/arthas/issues/71) for more advanced usage
+- OGNL official site: [https://commons.apache.org/proper/commons-ognl/language-guide.html](https://commons.apache.org/proper/commons-ognl/language-guide.html)
 
 ### Usage
 
 #### Start Demo
 
 Start `math-game` in [Quick Start](quick-start.md).
-
 
 #### stack
 
@@ -62,7 +61,6 @@ ts=2018-12-04 01:34:30;thread_name=main;id=1;is_daemon=false;priority=5;TCCL=sun
 Command execution times exceed limit: 2, so command will exit. You can set it with -n option.
 ```
 
-
 #### Filtering by cost
 
 ```bash
@@ -73,5 +71,3 @@ ts=2018-12-04 01:35:58;thread_name=main;id=1;is_daemon=false;priority=5;TCCL=sun
     @demo.MathGame.run()
         at demo.MathGame.main(MathGame.java:16)
 ```
-
-

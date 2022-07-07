@@ -1,10 +1,8 @@
-base64
-===
+# base64
 
 ::: tip
 Encode and decode using Base64 representation.
 :::
-
 
 ### Encode to base64
 

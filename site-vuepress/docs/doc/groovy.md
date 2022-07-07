@@ -1,8 +1,7 @@
-groovy
-===
+# groovy
 
 ::: tip
-Arthas 支持 groovy 脚本增强，允许像 BTrace 一样编写脚本来解决问题，可以在 groovy 脚本中进行if/for/switch/while 等控制语句，不受限制，但相比 BTrace 而言拥有更多的限制范围。
+Arthas 支持 groovy 脚本增强，允许像 BTrace 一样编写脚本来解决问题，可以在 groovy 脚本中进行 if/for/switch/while 等控制语句，不受限制，但相比 BTrace 而言拥有更多的限制范围。
 :::
 
 ### 限制内容
@@ -12,16 +11,16 @@ Arthas 支持 groovy 脚本增强，允许像 BTrace 一样编写脚本来解决
 
 ### 参数说明
 
-|参数名称|参数说明|
-|---:|:---|
-|*class-pattern*|类名表达式匹配|
-|*method-pattern*|方法名表达式匹配|
-|*script-filepath*|groovy 脚本的绝对路径|
-|[S]|匹配所有的子类|
-|[E]|开启正则表达式匹配，默认为通配符匹配|
+|          参数名称 | 参数说明                             |
+| ----------------: | :----------------------------------- |
+|   _class-pattern_ | 类名表达式匹配                       |
+|  _method-pattern_ | 方法名表达式匹配                     |
+| _script-filepath_ | groovy 脚本的绝对路径                |
+|               [S] | 匹配所有的子类                       |
+|               [E] | 开启正则表达式匹配，默认为通配符匹配 |
 
 需要说明的是，第三个输入参数是脚本的绝对路径，比如 `/tmp/test.groovy`，不建议输入相对路径，比如 `./test.groovy`
- 
+
 ### 五个关键函数声明
 
 ```java

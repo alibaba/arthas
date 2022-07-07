@@ -1,5 +1,4 @@
-Quick Start
-===========
+# Quick Start
 
 ## 1. Start math-game
 
@@ -23,9 +22,9 @@ curl -O https://arthas.aliyun.com/arthas-boot.jar
 java -jar arthas-boot.jar
 ```
 
-* The user to run this command *MUST* have the same privilege as the owner of the target process, as a simple example you can try the following command if the target process is managed by user `admin`: `sudo su admin && java -jar arthas-boot.jar` or `sudo -u admin -EH java -jar arthas-boot.jar`
-* If you cannot be able to attach to the target process, please check the logs under `~/logs/arthas` for troubleshooting.
-* `java -jar arthas-boot.jar -h` print usage.
+- The user to run this command _MUST_ have the same privilege as the owner of the target process, as a simple example you can try the following command if the target process is managed by user `admin`: `sudo su admin && java -jar arthas-boot.jar` or `sudo -u admin -EH java -jar arthas-boot.jar`
+- If you cannot be able to attach to the target process, please check the logs under `~/logs/arthas` for troubleshooting.
+- `java -jar arthas-boot.jar -h` print usage.
 
 Select the target Java process to attach:
 

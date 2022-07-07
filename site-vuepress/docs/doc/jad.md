@@ -1,5 +1,4 @@
-jad
-===
+# jad
 
 [`jad`在线教程](https://arthas.aliyun.com/doc/arthas-tutorials?language=cn&id=command-jad)
 
@@ -9,17 +8,17 @@ jad
 
 `jad` 命令将 JVM 中实际运行的 class 的 byte code 反编译成 java 代码，便于你理解业务逻辑；
 
-* 在 Arthas Console 上，反编译出来的源码是带语法高亮的，阅读更方便
-* 当然，反编译出来的 java 代码可能会存在语法错误，但不影响你进行阅读理解
+- 在 Arthas Console 上，反编译出来的源码是带语法高亮的，阅读更方便
+- 当然，反编译出来的 java 代码可能会存在语法错误，但不影响你进行阅读理解
 
 ### 参数说明
 
-|参数名称|参数说明|
-|---:|:---|
-|*class-pattern*|类名表达式匹配|
-|`[c:]`|类所属 ClassLoader 的 hashcode|
-|`[classLoaderClass:]`|指定执行表达式的 ClassLoader 的 class name|
-|[E]|开启正则表达式匹配，默认为通配符匹配|
+|              参数名称 | 参数说明                                   |
+| --------------------: | :----------------------------------------- |
+|       _class-pattern_ | 类名表达式匹配                             |
+|                `[c:]` | 类所属 ClassLoader 的 hashcode             |
+| `[classLoaderClass:]` | 指定执行表达式的 ClassLoader 的 class name |
+|                   [E] | 开启正则表达式匹配，默认为通配符匹配       |
 
 ### 使用参考
 
@@ -108,7 +107,7 @@ Location:
 
 #### 反编译时不显示行号
 
-`--lineNumber` 参数默认值为true，显示指定为false则不打印行号。
+`--lineNumber` 参数默认值为 true，显示指定为 false 则不打印行号。
 
 ```java
 $ jad demo.MathGame main --lineNumber false
@@ -129,7 +128,7 @@ public static void main(String[] args) throws InterruptedException {
 }
 ```
 
-#### 反编译时指定ClassLoader
+#### 反编译时指定 ClassLoader
 
 ::: tip
 当有多个 `ClassLoader` 都加载了这个类时，`jad` 命令会输出对应 `ClassLoader` 实例的 `hashcode`，然后你只需要重新执行 `jad` 命令，并使用参数 `-c <hashcode>` 就可以反编译指定 ClassLoader 加载的那个类了；
@@ -174,6 +173,6 @@ public class Logger extends Category
 Affect(row-cnt:1) cost in 190 ms.
 ```
 
-对于只有唯一实例的ClassLoader还可以通过`--classLoaderClass`指定class name，使用起来更加方便：
+对于只有唯一实例的 ClassLoader 还可以通过`--classLoaderClass`指定 class name，使用起来更加方便：
 
-`--classLoaderClass` 的值是ClassLoader的类名，只有匹配到唯一的ClassLoader实例时才能工作，目的是方便输入通用命令，而`-c <hashcode>`是动态变化的。
+`--classLoaderClass` 的值是 ClassLoader 的类名，只有匹配到唯一的 ClassLoader 实例时才能工作，目的是方便输入通用命令，而`-c <hashcode>`是动态变化的。

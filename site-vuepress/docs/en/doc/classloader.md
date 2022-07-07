@@ -1,5 +1,4 @@
-classloader
-===========
+# classloader
 
 [`classloader` online tutorial](https://arthas.aliyun.com/doc/arthas-tutorials?language=en&id=command-classloader)
 
@@ -11,15 +10,15 @@ View hierarchy, urls and classes-loading info for the class-loaders.
 
 ### Options
 
-|Name|Specification|
-|---:|:---|
-|[l]|list all classloader instances|
-|[t]|print classloader's hierarchy|
-|[a]|list all the classes loaded by all the classloaders (use it with great caution since the output can be huge)|
-|[c:]|print classloader's hashcode|
-|`[classLoaderClass:]`| The class name of the ClassLoader that executes the expression. |
-|`[c: r:]`|using ClassLoader to search resource|
-|`[c: load:]`|using ClassLoader to load class|
+|                  Name | Specification                                                                                                |
+| --------------------: | :----------------------------------------------------------------------------------------------------------- |
+|                   [l] | list all classloader instances                                                                               |
+|                   [t] | print classloader's hierarchy                                                                                |
+|                   [a] | list all the classes loaded by all the classloaders (use it with great caution since the output can be huge) |
+|                  [c:] | print classloader's hashcode                                                                                 |
+| `[classLoaderClass:]` | The class name of the ClassLoader that executes the expression.                                              |
+|             `[c: r:]` | using ClassLoader to search resource                                                                         |
+|          `[c: load:]` | using ClassLoader to load class                                                                              |
 
 ### Usage
 

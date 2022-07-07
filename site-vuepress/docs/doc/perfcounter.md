@@ -1,10 +1,9 @@
-perfcounter
-===
+# perfcounter
 
 [`perfcounter`在线教程](https://arthas.aliyun.com/doc/arthas-tutorials.html?language=cn&id=command-perfcounter)
 
 ::: tip
-查看当前JVM的 Perf Counter信息
+查看当前 JVM 的 Perf Counter 信息
 :::
 
 ### 使用参考
@@ -35,7 +34,7 @@ $ perfcounter -d
  java.cls.unloadedClasses               Monotonic     Events       0
 ```
 
-### jdk9以上的应用
+### jdk9 以上的应用
 
 如果没有打印出信息，应用在启动时，加下面的参数：
 

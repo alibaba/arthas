@@ -1,10 +1,9 @@
-jvm
-===
+# jvm
 
 [`jvm`在线教程](https://arthas.aliyun.com/doc/arthas-tutorials.html?language=cn&id=command-jvm)
 
 ::: tip
-查看当前JVM信息
+查看当前 JVM 信息
 :::
 
 ### 使用参考
@@ -48,13 +47,13 @@ RUNTIME
 --------------------------------------------------------------------------------------------------------------
  GARBAGE-COLLECTORS
 --------------------------------------------------------------------------------------------------------------
- PS Scavenge                            name : PS Scavenge                                                                             
- [count/time (ms)]                      collectionCount : 7                                                                            
-                                        collectionTime : 68                                                                            
-                                                                                                                                       
- PS MarkSweep                           name : PS MarkSweep                                                                            
- [count/time (ms)]                      collectionCount : 1                                                                            
-                                        collectionTime : 47 
+ PS Scavenge                            name : PS Scavenge
+ [count/time (ms)]                      collectionCount : 7
+                                        collectionTime : 68
+
+ PS MarkSweep                           name : PS MarkSweep
+ [count/time (ms)]                      collectionCount : 1
+                                        collectionTime : 47
 
 --------------------------------------------------------------------------------------------------------------
  MEMORY-MANAGERS
@@ -75,15 +74,15 @@ RUNTIME
 --------------------------------------------------------------------------------------------------------------
  MEMORY
 --------------------------------------------------------------------------------------------------------------
- HEAP-MEMORY-USAGE                      init : 268435456(256.0 MiB)                                                                    
- [memory in bytes]                      used : 18039504(17.2 MiB)                                                                      
-                                        committed : 181403648(173.0 MiB)                                                               
-                                        max : 3817865216(3.6 GiB)                                                                      
-                                                                                                                                       
- NO-HEAP-MEMORY-USAGE                   init : 2555904(2.4 MiB)                                                                        
- [memory in bytes]                      used : 33926216(32.4 MiB)                                                                      
-                                        committed : 35176448(33.5 MiB)                                                                 
-                                        max : -1(-1 B)  
+ HEAP-MEMORY-USAGE                      init : 268435456(256.0 MiB)
+ [memory in bytes]                      used : 18039504(17.2 MiB)
+                                        committed : 181403648(173.0 MiB)
+                                        max : 3817865216(3.6 GiB)
+
+ NO-HEAP-MEMORY-USAGE                   init : 2555904(2.4 MiB)
+ [memory in bytes]                      used : 33926216(32.4 MiB)
+                                        committed : 35176448(33.5 MiB)
+                                        max : -1(-1 B)
 
 --------------------------------------------------------------------------------------------------------------
  OPERATING-SYSTEM
@@ -111,15 +110,15 @@ RUNTIME
 Affect(row-cnt:0) cost in 88 ms.
 ```
 
-### THREAD相关
+### THREAD 相关
 
-* COUNT: JVM当前活跃的线程数
-* DAEMON-COUNT: JVM当前活跃的守护线程数
-* PEAK-COUNT: 从JVM启动开始曾经活着的最大线程数
-* STARTED-COUNT: 从JVM启动开始总共启动过的线程次数
-* DEADLOCK-COUNT: JVM当前死锁的线程数
+- COUNT: JVM 当前活跃的线程数
+- DAEMON-COUNT: JVM 当前活跃的守护线程数
+- PEAK-COUNT: 从 JVM 启动开始曾经活着的最大线程数
+- STARTED-COUNT: 从 JVM 启动开始总共启动过的线程次数
+- DEADLOCK-COUNT: JVM 当前死锁的线程数
 
 ### 文件描述符相关
 
-* MAX-FILE-DESCRIPTOR-COUNT：JVM进程最大可以打开的文件描述符数
-* OPEN-FILE-DESCRIPTOR-COUNT：JVM当前打开的文件描述符数
+- MAX-FILE-DESCRIPTOR-COUNT：JVM 进程最大可以打开的文件描述符数
+- OPEN-FILE-DESCRIPTOR-COUNT：JVM 当前打开的文件描述符数

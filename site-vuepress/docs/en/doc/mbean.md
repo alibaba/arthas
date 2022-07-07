@@ -1,5 +1,4 @@
-mbean
-=======
+# mbean
 
 [`mbean` online tutorial](https://arthas.aliyun.com/doc/arthas-tutorials.html?language=en&id=command-mbean)
 
@@ -7,18 +6,18 @@ mbean
 show Mbean information
 :::
 
-This command can show or monitor Mbean attribute information. 
+This command can show or monitor Mbean attribute information.
 
 ### Parameters
 
-|Name|Specification|
-|---:|:---|
-|*name-pattern*|pattern for the Mbean name|
-|*attribute-pattern*|pattern for the attribute name|
-|[m]|show meta information|
-|[i:]|specify the interval to refresh attribute value (ms)|
-|[n:]|execution times|
-|[E]|turn on regex matching while the default mode is wildcard matching. Only effect on the attribute name|
+|                Name | Specification                                                                                         |
+| ------------------: | :---------------------------------------------------------------------------------------------------- |
+|      _name-pattern_ | pattern for the Mbean name                                                                            |
+| _attribute-pattern_ | pattern for the attribute name                                                                        |
+|                 [m] | show meta information                                                                                 |
+|                [i:] | specify the interval to refresh attribute value (ms)                                                  |
+|                [n:] | execution times                                                                                       |
+|                 [E] | turn on regex matching while the default mode is wildcard matching. Only effect on the attribute name |
 
 ### Usage
 
@@ -37,9 +36,8 @@ mbean -m java.lang:type=Threading
 show attributes of Mbean:
 
 ```bash
-mbean java.lang:type=Threading 
+mbean java.lang:type=Threading
 ```
-
 
 Mbean name support wildcard matcher:
 

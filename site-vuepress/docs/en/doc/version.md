@@ -1,5 +1,4 @@
-version
-===
+# version
 
 prints out Arthas's version.
 
@@ -9,4 +8,3 @@ prints out Arthas's version.
 $ version
  3.5.1
 ```
-

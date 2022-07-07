@@ -1,5 +1,4 @@
-trace
-=====
+# trace
 
 [`trace` online tutorial](https://arthas.aliyun.com/doc/arthas-tutorials.html?language=en&id=command-trace)
 
@@ -11,22 +10,23 @@ Trace method calling path, and output the time cost for each node in the path.
 
 ### Parameters
 
-|Name|Specification|
-|---:|:---|
-|*class-pattern*|pattern for the class name|
-|*method-pattern*|pattern for the method name|
-|*condition-express*|condition expression|
-|`[E]`|enable regex match, the default behavior is wildcards match|
-|`[n:]`|execution times|
-|#cost|time cost|
+|                Name | Specification                                               |
+| ------------------: | :---------------------------------------------------------- |
+|     _class-pattern_ | pattern for the class name                                  |
+|    _method-pattern_ | pattern for the method name                                 |
+| _condition-express_ | condition expression                                        |
+|               `[E]` | enable regex match, the default behavior is wildcards match |
+|              `[n:]` | execution times                                             |
+|               #cost | time cost                                                   |
 
 There's one thing worthy noting here is observation expression. The observation expression supports OGNL grammar, for example, you can come up a expression like this `"{params,returnObj}"`. All OGNL expressions are supported as long as they are legal to the grammar.
 
 Thanks for `advice`'s data structure, it is possible to observe from varieties of different angles. Inside `advice` parameter, all necessary information for notification can be found.
 
 Pls. refer to [core parameters in expression](advice-class.md) for more details.
-* Pls. also refer to [https://github.com/alibaba/arthas/issues/71](https://github.com/alibaba/arthas/issues/71) for more advanced usage
-* OGNL official site: [https://commons.apache.org/proper/commons-ognl/language-guide.html](https://commons.apache.org/proper/commons-ognl/language-guide.html)
+
+- Pls. also refer to [https://github.com/alibaba/arthas/issues/71](https://github.com/alibaba/arthas/issues/71) for more advanced usage
+- OGNL official site: [https://commons.apache.org/proper/commons-ognl/language-guide.html](https://commons.apache.org/proper/commons-ognl/language-guide.html)
 
 Many times what we are interested is the exact trace result when the method call takes time over one particular period. It is possible to achieve this in Arthas, for example: `trace *StringUtils isBlank '#cost>100'` means trace result will only be output when the executing time exceeds 100ms.
 
@@ -36,11 +36,11 @@ Many times what we are interested is the exact trace result when the method call
 
 ### Notice
 
-* `trace` is handy to help discovering and locating the performance flaws in your system, but pls. note Arthas can only trace the first level method call each time.
+- `trace` is handy to help discovering and locating the performance flaws in your system, but pls. note Arthas can only trace the first level method call each time.
 
-* After version 3.3.0, you can use the Dynamic Trace feature to add new matching classes/methods, see the following example.
+- After version 3.3.0, you can use the Dynamic Trace feature to add new matching classes/methods, see the following example.
 
-* Currently `trace java.lang.Thread getName` is not supported, please refer to issue: [#1610](https://github.com/alibaba/arthas/issues/1610), considering that it is not very necessary and it is difficult to repair , So it won’t be fixed for now
+- Currently `trace java.lang.Thread getName` is not supported, please refer to issue: [#1610](https://github.com/alibaba/arthas/issues/1610), considering that it is not very necessary and it is difficult to repair , So it won’t be fixed for now
 
 ### Usage
 
@@ -85,7 +85,7 @@ Command execution times exceed limit: 1, so command will exit. You can set it wi
 
 #### Include jdk method
 
-* `--skipJDKMethod <value> `   skip jdk method trace, default value true.
+- `--skipJDKMethod <value> ` skip jdk method trace, default value true.
 
 ```bash
 $ trace --skipJDKMethod false demo.MathGame run
@@ -133,11 +133,10 @@ Affect(class-cnt:1 , method-cnt:1) cost in 41 ms.
 Only the call path which's time cost is higher than `10ms` will be shown. This feature is handy to focus on what's needed to focus when troubleshoot.
 :::
 
-* Here Arthas provides the similar functionality JProfile and other commercial software provide. Compared to these professional softwares, Arthas doesn't deduce the time cost `trace` itself takes, therefore it is not as accurate as these softwares offer. More classes and methods on the calling path, more inaccurate `trace` output is, but it is still helpful for diagnostics where the bottleneck is.
-* "[12.033735ms]" means the method on the node takes `12.033735` ms.
-* "[min=0.005428ms,max=0.094064ms,total=0.105228ms,count=3] demo:call()" means aggregating all same method calls into one single line. The minimum time cost is `0.005428` ms, the maximum time cost is `0.094064` ms, and the total time cost for all method calls (`3` times in total) to "demo:call()" is `0.105228ms`. If "throws Exception" appears in this line, it means some exceptions have been thrown from this method calls.
-* The total time cost may not equal to the sum of the time costs each sub method call takes, this is because Arthas instrumented code takes time too.
-
+- Here Arthas provides the similar functionality JProfile and other commercial software provide. Compared to these professional softwares, Arthas doesn't deduce the time cost `trace` itself takes, therefore it is not as accurate as these softwares offer. More classes and methods on the calling path, more inaccurate `trace` output is, but it is still helpful for diagnostics where the bottleneck is.
+- "[12.033735ms]" means the method on the node takes `12.033735` ms.
+- "[min=0.005428ms,max=0.094064ms,total=0.105228ms,count=3] demo:call()" means aggregating all same method calls into one single line. The minimum time cost is `0.005428` ms, the maximum time cost is `0.094064` ms, and the total time cost for all method calls (`3` times in total) to "demo:call()" is `0.105228ms`. If "throws Exception" appears in this line, it means some exceptions have been thrown from this method calls.
+- The total time cost may not equal to the sum of the time costs each sub method call takes, this is because Arthas instrumented code takes time too.
 
 #### Trace multiple classes or multiple methods
 
@@ -148,7 +147,6 @@ You can use the regular expression to match multiple classes and methods on the 
 ```bash
 Trace -E com.test.ClassA|org.test.ClassB method1|method2|method3
 ```
-
 
 #### Exclude the specified class
 
@@ -212,7 +210,6 @@ At terminal 1, you can see that the trace result has increased by one layer:
 
 Dynamic trace by specifying `listenerId`, you can go deeper and deeper. In addition, commands such as `watch`/`tt`/`monitor` also support similar functionality.
 
-
 ### Trace result time inaccuracy problem
 
 For example, in the following result: `0.705196 > (0.152743 + 0.145825)`
@@ -231,21 +228,22 @@ So where is the rest of the time consumed?
 
 1. Methods that are not traced to. For example, methods under `java.*` are ignored by default. This can be printed out by adding the `-skipJDKMethod false` parameter.
 
-    ```bash
-    $ trace demo.MathGame run --skipJDKMethod false
-    Press Q or Ctrl+C to abort.
-    Affect(class count: 1 , method count: 1) cost in 35 ms, listenerId: 2
-    `---ts=2021-02-08 11:27:48;thread_name=main;id=1;is_daemon=false;priority=5;TCCL=sun.misc.Launcher$AppClassLoader@232204a1
-        `--[0.810591ms] demo.MathGame:run()
-            +--[0.034568ms] java.util.Random:nextInt() #23
-            +---[0.119367ms] demo.MathGame:timeFactors() #24 [throws Exception]
-            +---[0.017407ms] java.lang.StringBuilder:<init>() #28
-            +--[0.127922ms] java.lang.String:format() #57
-            +---[min=0.01419ms,max=0.020221ms,total=0.034411ms,count=2] java.lang.StringBuilder:append() #57
-            +--[0.021911ms] java.lang.Exception:getMessage() #57
-            +---[0.015643ms] java.lang.StringBuilder:toString() #57
-            `--[0.086622ms] java.io.PrintStream:println() #57
-    ```
+   ```bash
+   $ trace demo.MathGame run --skipJDKMethod false
+   Press Q or Ctrl+C to abort.
+   Affect(class count: 1 , method count: 1) cost in 35 ms, listenerId: 2
+   `---ts=2021-02-08 11:27:48;thread_name=main;id=1;is_daemon=false;priority=5;TCCL=sun.misc.Launcher$AppClassLoader@232204a1
+       `--[0.810591ms] demo.MathGame:run()
+           +--[0.034568ms] java.util.Random:nextInt() #23
+           +---[0.119367ms] demo.MathGame:timeFactors() #24 [throws Exception]
+           +---[0.017407ms] java.lang.StringBuilder:<init>() #28
+           +--[0.127922ms] java.lang.String:format() #57
+           +---[min=0.01419ms,max=0.020221ms,total=0.034411ms,count=2] java.lang.StringBuilder:append() #57
+           +--[0.021911ms] java.lang.Exception:getMessage() #57
+           +---[0.015643ms] java.lang.StringBuilder:toString() #57
+           `--[0.086622ms] java.io.PrintStream:println() #57
+   ```
+
 2. Instruction consumption. For example, instructions such as `i++`, `getfield`, etc.
 
 3. Possible JVM pause during code execution, such as GC, entering synchronization blocks, etc.

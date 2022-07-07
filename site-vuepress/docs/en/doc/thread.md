@@ -1,5 +1,4 @@
-thread
-======
+# thread
 
 [`thread` online tutorial](https://arthas.aliyun.com/doc/arthas-tutorials.html?language=en&id=command-thread)
 
@@ -9,26 +8,26 @@ Check the basic info and stack trace of the target thread.
 
 ### Parameters
 
-|Name|Specification|
-|---:|:---|
-|*id*|thread id in JVM|
-|`[n:]`|the top n busiest threads with stack traces printed|
-|`[b]`|locate the thread blocking the others|
-|[i `<value>`]|specify the interval to collect data to compute CPU ratios (ms)|
-|[--all]|Show all matching threads|
+|          Name | Specification                                                   |
+| ------------: | :-------------------------------------------------------------- |
+|          _id_ | thread id in JVM                                                |
+|        `[n:]` | the top n busiest threads with stack traces printed             |
+|         `[b]` | locate the thread blocking the others                           |
+| [i `<value>`] | specify the interval to collect data to compute CPU ratios (ms) |
+|       [--all] | Show all matching threads                                       |
 
-### How the CPU ratios are calculated? 
+### How the CPU ratios are calculated?
 
-The cpu ratios here is similar to the thread `%CPU` of the linux command `top -H -p <pid>`. During a sampling interval, 
+The cpu ratios here is similar to the thread `%CPU` of the linux command `top -H -p <pid>`. During a sampling interval,
 the ratio of the incremental cpu time of each thread in the current JVM to the sampling interval time.
 
 #### Working principle description:
 
-* Do the first sampling, get the CPU time of all threads ( by calling `java.lang.management.ThreadMXBean#getThreadCpuTime()` and 
-`sun.management.HotspotThreadMBean.getInternalThreadCpuTimes()` )
-* Sleep and wait for an interval (the default is 200ms, the interval can be specified by `-i`)
-* Do the second sampling, get the CPU time of all threads, compare the two sampling data, and calculate the incremental CPU time of each thread
-* `Thread CPU usage ratio` = `Thread increment CPU time` / `Sampling interval time` * 100%
+- Do the first sampling, get the CPU time of all threads ( by calling `java.lang.management.ThreadMXBean#getThreadCpuTime()` and
+  `sun.management.HotspotThreadMBean.getInternalThreadCpuTimes()` )
+- Sleep and wait for an interval (the default is 200ms, the interval can be specified by `-i`)
+- Do the second sampling, get the CPU time of all threads, compare the two sampling data, and calculate the incremental CPU time of each thread
+- `Thread CPU usage ratio` = `Thread increment CPU time` / `Sampling interval time` \* 100%
 
 > Note: this operation consumes CPU time too (`getThreadCpuTime` is time-consuming), therefore it is possible to observe Arthas's thread appears in the list. To avoid this, try to increase sample interval, for example: 5000 ms.<br/>
 
@@ -64,17 +63,16 @@ $ thread -n 3
 "VM Periodic Task Thread" [Internal] cpuUsage=0.07% deltaTime=0ms time=584ms
 ```
 
-* Without thread ID, including `[Internal]` means JVM internal thread, refer to the introduction of [dashboard](dashboard.md) command.
-* `cpuUsage` is the CPU usage of the thread during the sampling interval, consistent with the data of the [dashboard](dashboard.md) command.
-* `deltaTime` is the incremental CPU time of the thread during the sampling interval. If it is less than 1ms, it will be rounded and displayed as 0ms.
-* `time` The total CPU time of thread.
+- Without thread ID, including `[Internal]` means JVM internal thread, refer to the introduction of [dashboard](dashboard.md) command.
+- `cpuUsage` is the CPU usage of the thread during the sampling interval, consistent with the data of the [dashboard](dashboard.md) command.
+- `deltaTime` is the incremental CPU time of the thread during the sampling interval. If it is less than 1ms, it will be rounded and displayed as 0ms.
+- `time` The total CPU time of thread.
 
-**Note:** The thread stack is acquired at the end of the second sampling, which does not indicate that the thread is 
-processing the same task during the sampling interval. It is recommended that the interval time should not be too long. 
+**Note:** The thread stack is acquired at the end of the second sampling, which does not indicate that the thread is
+processing the same task during the sampling interval. It is recommended that the interval time should not be too long.
 The larger the interval time, the more inaccurate.
 
 You can try to specify different intervals according to the specific situation and observe the output results.
-
 
 #### List first page threads' info when no options provided
 
@@ -165,12 +163,11 @@ $ thread -b
 
 > Note: By now Arthas only supports to locate the thread blocked by `synchronzied`, while `java.util.concurrent.Lock` is not supported yet.
 
-
 #### thread -i, specify the sampling interval
 
-* `thread -i 1000`: Count the thread cpu time of the last 1000ms.
+- `thread -i 1000`: Count the thread cpu time of the last 1000ms.
 
-* `thread -n 3 -i 1000`: List the 3 busiest thread stacks in 1000ms
+- `thread -n 3 -i 1000`: List the 3 busiest thread stacks in 1000ms
 
 ```bash
 $ thread -n 3 -i 1000

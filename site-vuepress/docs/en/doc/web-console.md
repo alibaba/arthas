@@ -1,5 +1,4 @@
-Web Console
-===
+# Web Console
 
 [`Web Console` online tutorial](https://arthas.aliyun.com/doc/arthas-tutorials.html?language=en&id=case-web-console)
 
@@ -17,7 +16,7 @@ By default, arthas only listens to `127.0.0.1`, so if you want to connect from a
 
 If you have suggestions for the Web Console, please leave a message here: [https://github.com/alibaba/arthas/issues/15](https://github.com/alibaba/arthas/issues/15)
 
-* Copy and paste shortcut keys in Web Console: [https://github.com/alibaba/arthas/issues/1056](https://github.com/alibaba/arthas/issues/1056)
+- Copy and paste shortcut keys in Web Console: [https://github.com/alibaba/arthas/issues/1056](https://github.com/alibaba/arthas/issues/1056)
 
 ::: tip
 Since 3.5.4, you can right-click to copy and paste in the Web Console.
@@ -32,6 +31,7 @@ Since 3.5.5
 By default, the number of rows that the Web Console supports to roll back upwards is 1000. It can be specified with `scrollback` in the URL. for example
 
 [http://127.0.0.1:8563/?scrollback=3000](http://127.0.0.1:8563/?scrollback=3000)
+
 ### Connect remote arthas through arthas tunnel server
 
 Reference: [Arthas Tunnel](tunnel.md)

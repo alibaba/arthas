@@ -1,7 +1,6 @@
-快速入门
-===
+# 快速入门
 
-## 1. 启动math-game
+## 1. 启动 math-game
 
 ```bash
 curl -O https://arthas.aliyun.com/math-game.jar
@@ -12,23 +11,21 @@ java -jar math-game.jar
 
 `math-game`源代码：[查看](https://github.com/alibaba/arthas/blob/master/math-game/src/main/java/demo/MathGame.java)
 
+## 2. 启动 arthas
 
-## 2. 启动arthas
-
-在命令行下面执行（使用和目标进程一致的用户启动，否则可能attach失败）：
+在命令行下面执行（使用和目标进程一致的用户启动，否则可能 attach 失败）：
 
 ```bash
 curl -O https://arthas.aliyun.com/arthas-boot.jar
 java -jar arthas-boot.jar
 ```
 
-* 执行该程序的用户需要和目标进程具有相同的权限。比如以`admin`用户来执行：`sudo su admin && java -jar arthas-boot.jar` 或 `sudo -u admin -EH java -jar arthas-boot.jar`。
-* 如果attach不上目标进程，可以查看`~/logs/arthas/` 目录下的日志。
-* 如果下载速度比较慢，可以使用aliyun的镜像：`java -jar arthas-boot.jar --repo-mirror aliyun --use-http`
-* `java -jar arthas-boot.jar -h` 打印更多参数信息。
+- 执行该程序的用户需要和目标进程具有相同的权限。比如以`admin`用户来执行：`sudo su admin && java -jar arthas-boot.jar` 或 `sudo -u admin -EH java -jar arthas-boot.jar`。
+- 如果 attach 不上目标进程，可以查看`~/logs/arthas/` 目录下的日志。
+- 如果下载速度比较慢，可以使用 aliyun 的镜像：`java -jar arthas-boot.jar --repo-mirror aliyun --use-http`
+- `java -jar arthas-boot.jar -h` 打印更多参数信息。
 
-
-选择应用java进程：
+选择应用 java 进程：
 
 ```bash
 $ $ java -jar arthas-boot.jar
@@ -36,7 +33,7 @@ $ $ java -jar arthas-boot.jar
   [2]: 71560 math-game.jar
 ```
 
-`math-game`进程是第2个，则输入2，再输入`回车/enter`。Arthas会attach到目标进程上，并输出日志：
+`math-game`进程是第 2 个，则输入 2，再输入`回车/enter`。Arthas 会 attach 到目标进程上，并输出日志：
 
 ```bash
 [INFO] Try to attach process 71560
@@ -57,7 +54,7 @@ time: 2018-11-28 19:16:24
 $
 ```
 
-## 3. 查看dashboard
+## 3. 查看 dashboard
 
 输入[dashboard](dashboard.md)，按`回车/enter`，会展示当前进程的信息，按`ctrl+c`可以中断执行。
 
@@ -95,16 +92,16 @@ java.home              /Library/Java/JavaVir
                        e/jre
 ```
 
-## 4. 通过thread命令来获取到`math-game`进程的Main Class
+## 4. 通过 thread 命令来获取到`math-game`进程的 Main Class
 
-`thread 1`会打印线程ID 1的栈，通常是main函数的线程。
+`thread 1`会打印线程 ID 1 的栈，通常是 main 函数的线程。
 
 ```bash
 $ thread 1 | grep 'main('
     at demo.MathGame.main(MathGame.java:17)
 ```
 
-## 5. 通过jad来反编译Main Class
+## 5. 通过 jad 来反编译 Main Class
 
 ```java
 $ jad demo.MathGame
@@ -226,8 +223,8 @@ ts=2018-11-28 19:22:35; [cost=29.969732ms] result=@ArrayList[
 
 更多的功能可以查看[进阶使用](advanced-use.md)。
 
-## 7. 退出arthas
+## 7. 退出 arthas
 
-如果只是退出当前的连接，可以用`quit`或者`exit`命令。Attach到目标进程上的arthas还会继续运行，端口会保持开放，下次连接时可以直接连接上。
+如果只是退出当前的连接，可以用`quit`或者`exit`命令。Attach 到目标进程上的 arthas 还会继续运行，端口会保持开放，下次连接时可以直接连接上。
 
-如果想完全退出arthas，可以执行`stop`命令。
+如果想完全退出 arthas，可以执行`stop`命令。

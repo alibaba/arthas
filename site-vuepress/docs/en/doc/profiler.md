@@ -1,5 +1,4 @@
-profiler
-===
+# profiler
 
 [`profiler` online tutorial](https://arthas.aliyun.com/doc/arthas-tutorials.html?language=en&id=command-profiler)
 
@@ -13,14 +12,14 @@ The basic usage of the `profiler` command is `profiler action [actionArg]`
 
 ### Supported Options
 
-|Name|Specification|
-|---:|:---|
-|*action*|Action to execute|
-|*actionArg*|Attribute name pattern|
-|[i:]|sampling interval in ns (default: 10'000'000, i.e. 10 ms)|
-|[f:]|dump output to specified directory|
-|[d:]|run profiling for specified seconds|
-|[e:]|which event to trace (cpu, alloc, lock, cache-misses etc.), default value is cpu|
+|        Name | Specification                                                                    |
+| ----------: | :------------------------------------------------------------------------------- |
+|    _action_ | Action to execute                                                                |
+| _actionArg_ | Attribute name pattern                                                           |
+|        [i:] | sampling interval in ns (default: 10'000'000, i.e. 10 ms)                        |
+|        [f:] | dump output to specified directory                                               |
+|        [d:] | run profiling for specified seconds                                              |
+|        [e:] | which event to trace (cpu, alloc, lock, cache-misses etc.), default value is cpu |
 
 ### Start profiler
 
@@ -32,7 +31,6 @@ Started [cpu] profiling
 ::: tip
 By default, the sample event is `cpu`. Can be specified with the `--event` parameter.
 :::
-
 
 ### Get the number of samples collected
 
@@ -127,7 +125,6 @@ You can use the `--event` parameter to specify the event to sample, such as samp
 $ profiler start --event alloc
 ```
 
-
 ### Resume sampling
 
 ```bash
@@ -139,10 +136,9 @@ The difference between `start` and `resume` is: `start` is the new start samplin
 
 You can verify the number of samples by executing `profiler getSamples`.
 
-
 ### Use `execute` action to execute complex commands
 
-For example, start sampling:  
+For example, start sampling:
 
 ```bash
 profiler execute 'start,framebuf=5000000'
@@ -163,7 +159,6 @@ $ profiler actions
 Supported Actions: [resume, dumpCollapsed, getSamples, start, list, execute, version, stop, load, dumpFlat, actions, dumpTraces, status]
 ```
 
-
 ### View version
 
 ```bash
@@ -175,7 +170,7 @@ Copyright 2019 Andrei Pangin
 ### Configure framebuf option
 
 ::: tip
- you encounter `[frame_buffer_overflow]` in the generated result, you need to increase the framebuf (the default value is 1'000'000), which can be configured explicitly, such as:
+you encounter `[frame_buffer_overflow]` in the generated result, you need to increase the framebuf (the default value is 1'000'000), which can be configured explicitly, such as:
 :::
 
 ```bash
@@ -191,7 +186,6 @@ profiler start --include'java/*' --include'demo/*' --exclude'*Unsafe.park*'
 ```
 
 > Both include/exclude support setting multiple values, but need to be configured at the end of the command line.
-
 
 ### Specify execution time
 
@@ -211,16 +205,14 @@ profiler start --file /tmp/test.jfr
 
 The `file` parameter supports some variables:
 
-* Timestamp: `--file /tmp/test-%t.jfr`
-* Process ID: `--file /tmp/test-%p.jfr`
-
+- Timestamp: `--file /tmp/test-%t.jfr`
+- Process ID: `--file /tmp/test-%p.jfr`
 
 The generated results can be viewed with tools that support the jfr format. such as:
 
-* JDK Mission Control: https://github.com/openjdk/jmc
-* JProfiler: https://github.com/alibaba/arthas/issues/1416
-
+- JDK Mission Control: https://github.com/openjdk/jmc
+- JProfiler: https://github.com/alibaba/arthas/issues/1416
 
 ### The 'unknown' in profiler result
 
-* https://github.com/jvm-profiling-tools/async-profiler/discussions/409
+- https://github.com/jvm-profiling-tools/async-profiler/discussions/409

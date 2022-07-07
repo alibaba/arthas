@@ -1,5 +1,4 @@
-reset命令
-===
+# reset 命令
 
 [`reset`在线教程](https://arthas.aliyun.com/doc/arthas-tutorials.html?language=cn&id=command-reset)
 

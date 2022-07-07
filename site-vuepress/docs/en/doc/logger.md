@@ -1,5 +1,4 @@
-logger
-===
+# logger
 
 [`logger` online tutorial](https://arthas.aliyun.com/doc/arthas-tutorials?language=en&id=command-logger)
 
@@ -48,7 +47,6 @@ Take the following `logback.xml` as an example:
 </configuration>
 ```
 
-
 The result of the `logger` command:
 
 ```bash
@@ -80,9 +78,9 @@ The result of the `logger` command:
 
 In the `appenders` section:
 
-* The target of `CONSOLE` logger is `System.out`
-* `APPLICATION` logger is `RollingFileAppender`, the file is `app.log`
-* `ASYNC` its `appenderRef` is `APPLICATION`, which means asynchronous output to the file
+- The target of `CONSOLE` logger is `System.out`
+- `APPLICATION` logger is `RollingFileAppender`, the file is `app.log`
+- `ASYNC` its `appenderRef` is `APPLICATION`, which means asynchronous output to the file
 
 #### View logger information for the special name
 
@@ -133,9 +131,9 @@ if you use`-c`, you have to manually type hashcode by `-c <hashcode>`.
 
 For classloader with only one instance, it can be specified by `--classLoaderClass` using class name, which is more convenient to use.
 
-`logger  --classLoaderClass sun.misc.Launcher$AppClassLoader`
+`logger --classLoaderClass sun.misc.Launcher$AppClassLoader`
 
-  * PS: Here the classLoaderClass in java 8 is sun.misc.Launcher$AppClassLoader, while in java 11 it's jdk.internal.loader.ClassLoaders$AppClassLoader.
+- PS: Here the classLoaderClass in java 8 is sun.misc.Launcher$AppClassLoader, while in java 11 it's jdk.internal.loader.ClassLoaders$AppClassLoader.
 
 The value of `--classloaderclass` is the class name of classloader. It can only work when it matches a unique classloader instance. The purpose is to facilitate the input of general commands. However, `-c <hashcode>` is dynamic.
 
@@ -157,7 +155,6 @@ You can first use `sc -d yourClassName` to check specified classloader hashcodeï
 ```
 
 #### View the logger information without appenders
-
 
 By default, the `logger` command only prints information about the logger with appenders. If you want to see information about loggers without `appender`, you can use the parameter `--include-no-appender`.
 

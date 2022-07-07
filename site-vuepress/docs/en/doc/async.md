@@ -1,25 +1,22 @@
-Arthas Async Jobs
-===
+# Arthas Async Jobs
 
 [`Async Jobs` online tutorial](https://arthas.aliyun.com/doc/arthas-tutorials?language=en&id=case-async-jobs)
 
 Asynchronous jobs in arthas. The idea is borrowed from [linux jobs](http://man7.org/linux/man-pages/man1/jobs.1p.html).
-
 
 ## 1. Use & to run the command in the background
 
 For example, execute the trace command in the background:
 
 ```bash
-trace Test t &  
+trace Test t &
 ```
 
-By doing this, the current command is put to the background to run,  you can continue to execute other commands in the console.
+By doing this, the current command is put to the background to run, you can continue to execute other commands in the console.
 
 ## 2. List background jobs
 
 If you want to list all background jobs, you can execute the `jobs` command and the results are as follows:
-
 
 ```bash
 $ jobs
@@ -33,24 +30,24 @@ $ jobs
 
 You can see that there is currently a background job executing:
 
-* job id is 10, `*` indicates that this job is created by the current session.
-* status is `Stopped`
-* execution count is the number of executions, which have been executed 19 times since the start.
-* timeout date: timeout timestamp, when the time exceeds this timestamp, the job will be automatically timeout and exit.
+- job id is 10, `*` indicates that this job is created by the current session.
+- status is `Stopped`
+- execution count is the number of executions, which have been executed 19 times since the start.
+- timeout date: timeout timestamp, when the time exceeds this timestamp, the job will be automatically timeout and exit.
 
 ## 3. Suspend and cancel job
 
 When the job is executing in the foreground, for example, directly executing the command `trace Test t`, or executing the background job command `trace Test t &`, then putting the job back to the foreground via `fg` command, the console cannot continue to execute other command, but can receive and process the following keyboard events:
 
-* ‘ctrl + z’: Suspends the job, the job status will change to `Stopped`, and the job can be restarted by `bg <job-id>` or `fg <job-id>`
-* ‘ctrl + c’: Stops the job
-* ‘ctrl + d’: According to linux semantics this should lead to exit the terminal, right now Arthas has not implemented this yet, therefore simply ignore this keystroke.
+- ‘ctrl + z’: Suspends the job, the job status will change to `Stopped`, and the job can be restarted by `bg <job-id>` or `fg <job-id>`
+- ‘ctrl + c’: Stops the job
+- ‘ctrl + d’: According to linux semantics this should lead to exit the terminal, right now Arthas has not implemented this yet, therefore simply ignore this keystroke.
 
 ## 4. fg/bg, switch the job from the foreground to the background, and vise verse
 
-* When a job is executed in the background or in suspended status (use `ctrl + z` to suspend job), `fg <job-id>` can transfer the job to the foreground to continue to run. 
-* When a job is in suspended status (use `ctrl + z` to suspend job), `bg <job-id>` can put the job to the background to continue to run.
-* A job created by other session can only be put to the foreground to run by using `fg` in the current session.
+- When a job is executed in the background or in suspended status (use `ctrl + z` to suspend job), `fg <job-id>` can transfer the job to the foreground to continue to run.
+- When a job is in suspended status (use `ctrl + z` to suspend job), `bg <job-id>` can put the job to the background to continue to run.
+- A job created by other session can only be put to the foreground to run by using `fg` in the current session.
 
 ## 5. Redirect the output
 
@@ -78,6 +75,6 @@ If you want to stop background job, just `kill <job-id>`.
 
 ## 7. Others
 
-* Support up to 8 commands at the same time to redirect the output to the log files.
-* Do not open too many background jobs at the same time to avoid negative performance effect to the target JVM.
-* If you do not want to stop the Arthas service and continue to perform background tasks, you can exit the Arthas console by executing `quit` command (`stop` command will stop the Arthas service)
+- Support up to 8 commands at the same time to redirect the output to the log files.
+- Do not open too many background jobs at the same time to avoid negative performance effect to the target JVM.
+- If you do not want to stop the Arthas service and continue to perform background tasks, you can exit the Arthas console by executing `quit` command (`stop` command will stop the Arthas service)

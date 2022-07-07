@@ -1,12 +1,10 @@
-Download
-===
+# Download
 
 ## Download full package
 
 ### Download from maven central
 
 Latest Version, Click To Download: [![](https://img.shields.io/maven-central/v/com.taobao.arthas/arthas-packaging.svg?style=flat-square "Arthas")](https://arthas.aliyun.com/download/latest_version)
-
 
 ### Download from Github Releases
 
@@ -43,4 +41,3 @@ java -jar arthas-boot.jar -h
 ## Download Offline Help Documentation
 
 Latest Version Documentation, Click To Download:[![](https://img.shields.io/maven-central/v/com.taobao.arthas/arthas-packaging.svg?style=flat-square "Arthas")](https://arthas.aliyun.com/download/doc/latest_version)
-

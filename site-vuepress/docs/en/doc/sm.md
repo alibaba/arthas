@@ -1,5 +1,4 @@
-sm
-==
+# sm
 
 [`sm` online tutorial](https://arthas.aliyun.com/doc/arthas-tutorials?language=en&id=command-sm)
 
@@ -9,18 +8,17 @@ Search method from the loaded classes.
 
 `sm` stands for search method. This command can search and show method information from all loaded classes. `sm` can only view the methods declared on the target class, that is, methods from its parent classes are invisible.
 
-
 ### Options
 
-|Name|Specification|
-|---:|:---|
-|*class-pattern*|pattern for class name|
-|*method-pattern*|pattern for method name|
-|`[d]`|print the details of the method|
-|`[E]`|turn on regex matching while the default mode is wildcard matching|
-|`[c:]`|The hash code of the special class's classLoader|
-|`[classLoaderClass:]`| The class name of the ClassLoader that executes the expression. |
-|`[n:]`|Maximum number of matching classes with details (100 by default)|
+|                  Name | Specification                                                      |
+| --------------------: | :----------------------------------------------------------------- |
+|       _class-pattern_ | pattern for class name                                             |
+|      _method-pattern_ | pattern for method name                                            |
+|                 `[d]` | print the details of the method                                    |
+|                 `[E]` | turn on regex matching while the default mode is wildcard matching |
+|                `[c:]` | The hash code of the special class's classLoader                   |
+| `[classLoaderClass:]` | The class name of the ClassLoader that executes the expression.    |
+|                `[n:]` | Maximum number of matching classes with details (100 by default)   |
 
 ### Usage
 
@@ -74,7 +72,6 @@ java.lang.String->copyValueOf
 java.lang.String->intern
 Affect(row-cnt:44) cost in 1342 ms.
 ```
-
 
 View method `java.lang.String#toString` details:
 

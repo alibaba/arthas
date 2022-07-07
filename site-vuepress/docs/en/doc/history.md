@@ -1,5 +1,4 @@
-history
-===
+# history
 
 view command history.
 
@@ -30,4 +29,3 @@ $ history 3
  $ history 3
   1  history 3
 ```
-

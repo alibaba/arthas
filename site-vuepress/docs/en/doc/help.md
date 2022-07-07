@@ -1,5 +1,4 @@
-help
-===
+# help
 
 show help message, the command can show all the commands that current Arthas server supports,or you can use the command to show the detail usage of another command.
 
@@ -61,8 +60,8 @@ $ help
  tee          tee command for pipes.
  profiler     Async Profiler. https://github.com/jvm-profiling-tools/async-profiler
  stop         Stop/Shutdown Arthas server and exit the console.
- 
- 
+
+
 ```
 
 ```bash
@@ -86,4 +85,3 @@ $ help
  -i, --interval <value>                  The interval (in ms) between two executions, default is 5000 ms.
  -n, --number-of-execution <value>       The number of times this command will be executed.
 ```
-

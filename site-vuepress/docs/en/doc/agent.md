@@ -1,13 +1,12 @@
-Start as a Java Agent
-====
+# Start as a Java Agent
 
 Usually Arthas dynamic attach the applications on the fly, but from version `3.2.0` onwards, Arthas supports starting directly as a java agent.
 
 For example, download the full arthas zip package, decompress it and start it by specifying `arthas-agent.jar` with the parameter `-javaagent`.
 
-````
+```
 java -javaagent:/tmp/test/arthas-agent.jar -jar math-game.jar
-````
+```
 
 The default configuration is in the `arthas.properties` file in the decompression directory. Reference: [Arthas Properties](arthas-properties.md)
 

@@ -1,5 +1,4 @@
-sm
-===
+# sm
 
 [`sm`在线教程](https://arthas.aliyun.com/doc/arthas-tutorials?language=cn&id=command-sm)
 
@@ -13,15 +12,15 @@ sm
 
 ### 参数说明
 
-|参数名称|参数说明|
-|---:|:---|
-|*class-pattern*|类名表达式匹配|
-|*method-pattern*|方法名表达式匹配|
-|[d]|展示每个方法的详细信息|
-|[E]|开启正则表达式匹配，默认为通配符匹配|
-|`[c:]`|指定class的 ClassLoader 的 hashcode|
-|`[classLoaderClass:]`|指定执行表达式的 ClassLoader 的 class name|
-|`[n:]`|具有详细信息的匹配类的最大数量（默认为100）|
+|              参数名称 | 参数说明                                     |
+| --------------------: | :------------------------------------------- |
+|       _class-pattern_ | 类名表达式匹配                               |
+|      _method-pattern_ | 方法名表达式匹配                             |
+|                   [d] | 展示每个方法的详细信息                       |
+|                   [E] | 开启正则表达式匹配，默认为通配符匹配         |
+|                `[c:]` | 指定 class 的 ClassLoader 的 hashcode        |
+| `[classLoaderClass:]` | 指定执行表达式的 ClassLoader 的 class name   |
+|                `[n:]` | 具有详细信息的匹配类的最大数量（默认为 100） |
 
 ### 使用参考
 

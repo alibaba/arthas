@@ -1,5 +1,4 @@
-tee
-===
+# tee
 
 [`tee` online tutorial](https://arthas.aliyun.com/doc/arthas-tutorials.html?language=en&id=command-tee)
 

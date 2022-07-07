@@ -1,5 +1,4 @@
-Stop
-===
+# Stop
 
 terminates the Arthas server, all the Arthas clients connecting to this server will be disconnected.
 

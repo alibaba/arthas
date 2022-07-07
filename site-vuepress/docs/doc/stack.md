@@ -1,5 +1,4 @@
-stack
-===
+# stack
 
 [`stack`在线教程](https://arthas.aliyun.com/doc/arthas-tutorials.html?language=cn&id=command-stack)
 
@@ -11,23 +10,22 @@ stack
 
 ### 参数说明
 
-|参数名称|参数说明|
-|---:|:---|
-|*class-pattern*|类名表达式匹配|
-|*method-pattern*|方法名表达式匹配|
-|*condition-express*|条件表达式|
-|[E]|开启正则表达式匹配，默认为通配符匹配|
-|`[n:]`|执行次数限制|
+|            参数名称 | 参数说明                             |
+| ------------------: | :----------------------------------- |
+|     _class-pattern_ | 类名表达式匹配                       |
+|    _method-pattern_ | 方法名表达式匹配                     |
+| _condition-express_ | 条件表达式                           |
+|                 [E] | 开启正则表达式匹配，默认为通配符匹配 |
+|              `[n:]` | 执行次数限制                         |
 
 这里重点要说明的是观察表达式，观察表达式的构成主要由 ognl 表达式组成，所以你可以这样写`"{params,returnObj}"`，只要是一个合法的 ognl 表达式，都能被正常支持。
 
 观察的维度也比较多，主要体现在参数 `advice` 的数据结构上。`Advice` 参数最主要是封装了通知节点的所有信息。
 
-
 请参考[表达式核心变量](advice-class.md)中关于该节点的描述。
 
-* 特殊用法请参考：[https://github.com/alibaba/arthas/issues/71](https://github.com/alibaba/arthas/issues/71)
-* OGNL表达式官网：[https://commons.apache.org/proper/commons-ognl/language-guide.html](https://commons.apache.org/proper/commons-ognl/language-guide.html)
+- 特殊用法请参考：[https://github.com/alibaba/arthas/issues/71](https://github.com/alibaba/arthas/issues/71)
+- OGNL 表达式官网：[https://commons.apache.org/proper/commons-ognl/language-guide.html](https://commons.apache.org/proper/commons-ognl/language-guide.html)
 
 ### 使用例子
 
@@ -63,7 +61,6 @@ ts=2018-12-04 01:34:30;thread_name=main;id=1;is_daemon=false;priority=5;TCCL=sun
 Command execution times exceed limit: 2, so command will exit. You can set it with -n option.
 ```
 
-
 #### 据执行时间来过滤
 
 ```bash
@@ -74,4 +71,3 @@ ts=2018-12-04 01:35:58;thread_name=main;id=1;is_daemon=false;priority=5;TCCL=sun
     @demo.MathGame.run()
         at demo.MathGame.main(MathGame.java:16)
 ```
-

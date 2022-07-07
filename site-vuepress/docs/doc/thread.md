@@ -1,5 +1,4 @@
-thread
-===
+# thread
 
 [`thread`在线教程](https://arthas.aliyun.com/doc/arthas-tutorials.html?language=cn&id=command-thread)
 
@@ -7,39 +6,38 @@ thread
 查看当前线程信息，查看线程的堆栈
 :::
 
-
 ### 参数说明
 
-|参数名称|参数说明|
-|---:|:---|
-|*id*|线程id|
-|[n:]|指定最忙的前N个线程并打印堆栈|
-|[b]|找出当前阻塞其他线程的线程|
-|[i `<value>`]|指定cpu使用率统计的采样间隔，单位为毫秒，默认值为200|
-|[--all]|显示所有匹配的线程|
+|      参数名称 | 参数说明                                                |
+| ------------: | :------------------------------------------------------ |
+|          _id_ | 线程 id                                                 |
+|          [n:] | 指定最忙的前 N 个线程并打印堆栈                         |
+|           [b] | 找出当前阻塞其他线程的线程                              |
+| [i `<value>`] | 指定 cpu 使用率统计的采样间隔，单位为毫秒，默认值为 200 |
+|       [--all] | 显示所有匹配的线程                                      |
 
-### cpu使用率是如何统计出来的？
+### cpu 使用率是如何统计出来的？
 
-这里的cpu使用率与linux 命令`top -H -p <pid>` 的线程`%CPU`类似，一段采样间隔时间内，当前JVM里各个线程的增量cpu时间与采样间隔时间的比例。
+这里的 cpu 使用率与 linux 命令`top -H -p <pid>` 的线程`%CPU`类似，一段采样间隔时间内，当前 JVM 里各个线程的增量 cpu 时间与采样间隔时间的比例。
 
 #### 工作原理说明：
 
-* 首先第一次采样，获取所有线程的CPU时间(调用的是`java.lang.management.ThreadMXBean#getThreadCpuTime()`及`sun.management.HotspotThreadMBean.getInternalThreadCpuTimes()`接口)
-* 然后睡眠等待一个间隔时间（默认为200ms，可以通过`-i`指定间隔时间）
-* 再次第二次采样，获取所有线程的CPU时间，对比两次采样数据，计算出每个线程的增量CPU时间
-* 线程CPU使用率 = 线程增量CPU时间 / 采样间隔时间 * 100%
+- 首先第一次采样，获取所有线程的 CPU 时间(调用的是`java.lang.management.ThreadMXBean#getThreadCpuTime()`及`sun.management.HotspotThreadMBean.getInternalThreadCpuTimes()`接口)
+- 然后睡眠等待一个间隔时间（默认为 200ms，可以通过`-i`指定间隔时间）
+- 再次第二次采样，获取所有线程的 CPU 时间，对比两次采样数据，计算出每个线程的增量 CPU 时间
+- 线程 CPU 使用率 = 线程增量 CPU 时间 / 采样间隔时间 \* 100%
 
 ::: warning
-注意： 这个统计也会产生一定的开销（JDK这个接口本身开销比较大），因此会看到as的线程占用一定的百分比，为了降低统计自身的开销带来的影响，可以把采样间隔拉长一些，比如5000毫秒。
+注意： 这个统计也会产生一定的开销（JDK 这个接口本身开销比较大），因此会看到 as 的线程占用一定的百分比，为了降低统计自身的开销带来的影响，可以把采样间隔拉长一些，比如 5000 毫秒。
 :::
 
 ::: tip
-另外一种查看Java进程的线程cpu使用率方法：可以使用[`show-busy-java-threads`](https://github.com/oldratlee/useful-scripts/blob/dev-2.x/docs/java.md#-show-busy-java-threads)这个脚本。
+另外一种查看 Java 进程的线程 cpu 使用率方法：可以使用[`show-busy-java-threads`](https://github.com/oldratlee/useful-scripts/blob/dev-2.x/docs/java.md#-show-busy-java-threads)这个脚本。
 :::
 
 ### 使用参考
 
-#### 支持一键展示当前最忙的前N个线程并打印堆栈：
+#### 支持一键展示当前最忙的前 N 个线程并打印堆栈：
 
 ```shell
 $ thread -n 3
@@ -67,17 +65,17 @@ $ thread -n 3
 "VM Periodic Task Thread" [Internal] cpuUsage=0.07% deltaTime=0ms time=584ms
 ```
 
-* 没有线程ID，包含`[Internal]`表示为JVM内部线程，参考[dashboard](dashboard.md)命令的介绍。
-* `cpuUsage`为采样间隔时间内线程的CPU使用率，与[dashboard](dashboard.md)命令的数据一致。
-* `deltaTime`为采样间隔时间内线程的增量CPU时间，小于1ms时被取整显示为0ms。
-* `time` 线程运行总CPU时间。
+- 没有线程 ID，包含`[Internal]`表示为 JVM 内部线程，参考[dashboard](dashboard.md)命令的介绍。
+- `cpuUsage`为采样间隔时间内线程的 CPU 使用率，与[dashboard](dashboard.md)命令的数据一致。
+- `deltaTime`为采样间隔时间内线程的增量 CPU 时间，小于 1ms 时被取整显示为 0ms。
+- `time` 线程运行总 CPU 时间。
 
 注意：线程栈为第二采样结束时获取，不能表明采样间隔时间内该线程都是在处理相同的任务。建议间隔时间不要太长，可能间隔时间越大越不准确。
 可以根据具体情况尝试指定不同的间隔时间，观察输出结果。
 
 #### 当没有参数时，显示第一页线程的信息
 
-默认按照CPU增量时间降序排列，只显示第一页数据。
+默认按照 CPU 增量时间降序排列，只显示第一页数据。
 
 ```shell
 $ thread
@@ -103,8 +101,7 @@ ID   NAME                           GROUP          PRIORITY  STATE     %CPU     
 
 #### thread --all, 显示所有匹配的线程
 
-显示所有匹配线程信息，有时需要获取全部JVM的线程数据进行分析。
-
+显示所有匹配线程信息，有时需要获取全部 JVM 的线程数据进行分析。
 
 #### thread id, 显示指定线程的运行堆栈
 
@@ -122,7 +119,7 @@ $ thread 1
 
 #### thread -b, 找出当前阻塞其他线程的线程
 
-有时候我们发现应用卡住了， 通常是由于某个线程拿住了某个锁， 并且其他线程都在等待这把锁造成的。 为了排查这类问题， arthas提供了`thread -b`， 一键找出那个罪魁祸首。
+有时候我们发现应用卡住了， 通常是由于某个线程拿住了某个锁， 并且其他线程都在等待这把锁造成的。 为了排查这类问题， arthas 提供了`thread -b`， 一键找出那个罪魁祸首。
 
 ```bash
 $ thread -b
@@ -164,16 +161,15 @@ $ thread -b
 ```
 
 ::: warning
-注意， 目前只支持找出synchronized关键字阻塞住的线程， 如果是`java.util.concurrent.Lock`， 目前还不支持。
+注意， 目前只支持找出 synchronized 关键字阻塞住的线程， 如果是`java.util.concurrent.Lock`， 目前还不支持。
 :::
-
 
 #### thread -i, 指定采样时间间隔
 
-* `thread -i 1000` : 统计最近1000ms内的线程CPU时间。
+- `thread -i 1000` : 统计最近 1000ms 内的线程 CPU 时间。
 
-* `thread -n 3 -i 1000` : 列出1000ms内最忙的3个线程栈
- 
+- `thread -n 3 -i 1000` : 列出 1000ms 内最忙的 3 个线程栈
+
 ```bash
 $ thread -n 3 -i 1000
 "as-command-execute-daemon" Id=4759 cpuUsage=23% RUNNABLE

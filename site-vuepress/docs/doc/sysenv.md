@@ -1,10 +1,9 @@
-sysenv
-=======================
+# sysenv
 
 [`sysenv`在线教程](https://arthas.aliyun.com/doc/arthas-tutorials.html?language=cn&id=command-sysenv)
 
 ::: tip
-查看当前JVM的环境属性(`System Environment Variables`)
+查看当前 JVM 的环境属性(`System Environment Variables`)
 :::
 
 ### 使用参考
@@ -26,10 +25,9 @@ sysenv
  OPTIONS:
  -h, --help                                                 this help
  <env-name>                                                 env name
- ```
+```
 
 #### 查看所有环境变量
-
 
 ```
 $ sysenv

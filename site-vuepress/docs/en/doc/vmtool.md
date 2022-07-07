@@ -1,5 +1,4 @@
-vmtool
-===
+# vmtool
 
 ::: tip
 @since 3.5.1
@@ -9,7 +8,7 @@ vmtool
 
 `vmtool` uses the `JVMTI` to support `getInstances` in jvm and `forceGc`.
 
-* [JVM Tool Interface](https://docs.oracle.com/javase/8/docs/platform/jvmti/jvmti.html)
+- [JVM Tool Interface](https://docs.oracle.com/javase/8/docs/platform/jvmti/jvmti.html)
 
 ### getInstances
 
@@ -38,7 +37,6 @@ Through the `--limit` parameter, you can limit the number of return values to av
 ```bash
 vmtool --action getInstances --classLoaderClass org.springframework.boot.loader.LaunchedURLClassLoader --className org.springframework.context.ApplicationContext
 ```
-
 
 ### Specify classloader hash
 
@@ -90,4 +88,4 @@ vmtool --action getInstances --classLoaderClass org.springframework.boot.loader.
 vmtool --action forceGc
 ```
 
-* Use the [`vmoption`](vmoption.md) command to dynamically turn on the `PrintGC` option.
+- Use the [`vmoption`](vmoption.md) command to dynamically turn on the `PrintGC` option.

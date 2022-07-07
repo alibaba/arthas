@@ -1,7 +1,6 @@
-help
-===
+# help
 
-查看命令帮助信息，可以查看当前arthas版本支持的指令，或者查看具体指令的使用说明。
+查看命令帮助信息，可以查看当前 arthas 版本支持的指令，或者查看具体指令的使用说明。
 
 ::: tip
 [help 指令]的等同于[指令 -help]，都是查看具体指令的使用说明。
@@ -9,10 +8,10 @@ help
 
 ### 参数说明
 
-| 参数名称 | 参数说明                                 |
-| -------: | :--------------------------------------- |
-| 不接参数 | 查询当前arthas版本支持的指令以及指令描述 |
-|  [name:] | 查询具体指令的使用说明                   |
+| 参数名称 | 参数说明                                   |
+| -------: | :----------------------------------------- |
+| 不接参数 | 查询当前 arthas 版本支持的指令以及指令描述 |
+|  [name:] | 查询具体指令的使用说明                     |
 
 ### 使用参考
 
@@ -61,8 +60,8 @@ $ help
  tee          tee command for pipes.
  profiler     Async Profiler. https://github.com/jvm-profiling-tools/async-profiler
  stop         Stop/Shutdown Arthas server and exit the console.
- 
- 
+
+
 ```
 
 ```
@@ -86,4 +85,3 @@ $ help
  -i, --interval <value>                  The interval (in ms) between two executions, default is 5000 ms.
  -n, --number-of-execution <value>       The number of times this command will be executed.
 ```
-

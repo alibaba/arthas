@@ -1,8 +1,6 @@
-memory
-===
+# memory
 
 View the JVM memory information.
-
 
 ### Usage
 
@@ -22,4 +20,3 @@ codeheap_'non-profiled_nmethods' 685K      2496K      120032K    0.57%
 mapped                           0K        0K         -          0.00%
 direct                           48M       48M        -          100.00%
 ```
-

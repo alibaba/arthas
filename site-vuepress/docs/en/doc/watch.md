@@ -1,5 +1,4 @@
-watch
-=====
+# watch
 
 [`watch` online tutorial](https://arthas.aliyun.com/doc/arthas-tutorials.html?language=en&id=command-watch)
 
@@ -9,33 +8,35 @@ With the help of [OGNL](https://commons.apache.org/proper/commons-ognl/index.htm
 
 ### Parameters & Options
 
-There are four different scenarios for `watch` command, which makes it rather complicated. 
+There are four different scenarios for `watch` command, which makes it rather complicated.
 
-|Name|Specification|
-|---:|:---|
-|*class-pattern*|pattern for the class name|
-|*method-pattern*|pattern for the method name|
-|*expression*|expression to watch, default value `{params, target, returnObj}`|
-|*condition-expression*|condition expression to filter|
-|[b]|before method being invoked|
-|[e]|when method encountering exceptions|
-|[s]|when method exits normally|
-|[f]|when method exits (either succeed or fail with exceptions)|
-|[E]|turn on regex matching while the default is wildcard matching|
-|[x:]|the depth to print the specified property with default value: 1, the max value is 4|
+|                   Name | Specification                                                                       |
+| ---------------------: | :---------------------------------------------------------------------------------- |
+|        _class-pattern_ | pattern for the class name                                                          |
+|       _method-pattern_ | pattern for the method name                                                         |
+|           _expression_ | expression to watch, default value `{params, target, returnObj}`                    |
+| _condition-expression_ | condition expression to filter                                                      |
+|                    [b] | before method being invoked                                                         |
+|                    [e] | when method encountering exceptions                                                 |
+|                    [s] | when method exits normally                                                          |
+|                    [f] | when method exits (either succeed or fail with exceptions)                          |
+|                    [E] | turn on regex matching while the default is wildcard matching                       |
+|                   [x:] | the depth to print the specified property with default value: 1, the max value is 4 |
 
 F.Y.I
+
 1. any valid OGNL expression as `"{params,returnObj}"` supported
-2. there are four *watching* points: `-b`, `-e`, `-s` and `-f` (the first three are off in default while `-f` on);
-3. at the *watching* point, Arthas will use the *expression* to evaluate the variables and print them out;
-4. `in parameters` and `out parameters` are different since they can be modified within the invoked methods; `params` stands for `in parameters` in `-b`while `out parameters` in other *watching* points;
+2. there are four _watching_ points: `-b`, `-e`, `-s` and `-f` (the first three are off in default while `-f` on);
+3. at the _watching_ point, Arthas will use the _expression_ to evaluate the variables and print them out;
+4. `in parameters` and `out parameters` are different since they can be modified within the invoked methods; `params` stands for `in parameters` in `-b`while `out parameters` in other _watching_ points;
 5. there are no `return values` and `exceptions` when using `-b`.
 6. In the result of the watch command, the `location` information will be printed. There are three possible values for `location`: `AtEnter`, `AtExit`, and `AtExceptionExit`. Corresponding to the method entry, the method returns normally, and the method throws an exception.
 
 Advanced:
-* [Critical fields in *expression*](advice-class.md)
-* [Special usages](https://github.com/alibaba/arthas/issues/71)
-* [OGNL official guide](https://commons.apache.org/proper/commons-ognl/language-guide.html)
+
+- [Critical fields in _expression_](advice-class.md)
+- [Special usages](https://github.com/alibaba/arthas/issues/71)
+- [OGNL official guide](https://commons.apache.org/proper/commons-ognl/language-guide.html)
 
 ### Usage
 
@@ -81,8 +82,9 @@ ts=2021-08-31 15:22:58; [cost=1.020982ms] result=@ArrayList[
 ]
 ```
 
-* In the above result, the method is executed twice, the first result is `location=AtExceptionExit`, indicating that the method throws an exception, so `returnObj` is null
-* In the second result is `location=AtExit`, indicating that the method returns normally, so you can see that the result of `returnObj` is an ArrayList
+- In the above result, the method is executed twice, the first result is `location=AtExceptionExit`, indicating that the method throws an exception, so `returnObj` is null
+- In the second result is `location=AtExit`, indicating that the method returns normally, so you can see that the result of `returnObj` is an ArrayList
+
 #### Check `in parameters`
 
 ```bash
@@ -97,13 +99,11 @@ ts=2018-12-03 19:23:23; [cost=0.0353ms] result=@ArrayList[
 ]
 ```
 
-Compared to the previous *check*: 
+Compared to the previous _check_:
 
-* `return value` is `null` since it's `-b`.
+- `return value` is `null` since it's `-b`.
 
-
-#### Check *before* and *after* at the same time
-
+#### Check _before_ and _after_ at the same time
 
 ```bash
 $ watch demo.MathGame primeFactors "{params,target,returnObj}" -x 2 -b -s -n 2
@@ -142,9 +142,9 @@ ts=2018-12-03 19:29:54; [cost=4.277392ms] result=@ArrayList[
 
 F.Y.I
 
-* `-n 2`: threshold of execution times is 2.
-* the first block of output is the *before watching* point;
-* *the order of the output determined by the *watching* order itself (nothing to do with the order of the options `-b -s`).
+- `-n 2`: threshold of execution times is 2.
+- the first block of output is the _before watching_ point;
+- *the order of the output determined by the *watching\* order itself (nothing to do with the order of the options `-b -s`).
 
 #### Use `-x` to check more details
 
@@ -179,8 +179,9 @@ ts=2018-12-03 19:34:19; [cost=0.587833ms] result=@ArrayList[
 ]
 ```
 
-* `-x`: Expand level of object (1 by default)
-* The max value of `-x` is 4, to prevent the expansion result taking up too much memory. Users can specify the field in the `ognl` expression.
+- `-x`: Expand level of object (1 by default)
+- The max value of `-x` is 4, to prevent the expansion result taking up too much memory. Users can specify the field in the `ognl` expression.
+
 #### Use condition expressions to locate specific call
 
 ```bash
@@ -209,8 +210,8 @@ ts=2018-12-03 19:38:00; [cost=1.414993ms] result=@ArrayList[
 ]
 ```
 
-* `-e`: Trigger when an exception is thrown
-* `throwExp`: the exception object
+- `-e`: Trigger when an exception is thrown
+- `throwExp`: the exception object
 
 #### Filter by time cost
 
@@ -229,12 +230,11 @@ ts=2018-12-03 19:40:28; [cost=2112.168897ms] result=@ArrayList[
 ]
 ```
 
-* `#cost>200` (`ms`) filter out all invokings that take less than `200ms`.
-
+- `#cost>200` (`ms`) filter out all invokings that take less than `200ms`.
 
 #### Check the field of the target object
 
-* `target` is the `this` object in java.
+- `target` is the `this` object in java.
 
 ```bash
 $ watch demo.MathGame primeFactors 'target'
@@ -246,7 +246,7 @@ ts=2018-12-03 19:41:52; [cost=0.477882ms] result=@MathGame[
 ]
 ```
 
-* `target.field_name`: the field of the current object.
+- `target.field_name`: the field of the current object.
 
 ```bash
 $ watch demo.MathGame primeFactors 'target.illegalArgumentCount'
@@ -254,9 +254,9 @@ Press Ctrl+C to abort.
 Affect(class-cnt:1 , method-cnt:1) cost in 67 ms.
 ts=2018-12-03 20:04:34; [cost=131.303498ms] result=@Integer[8]
 ts=2018-12-03 20:04:35; [cost=0.961441ms] result=@Integer[8]
-``` 
+```
 
-#### Get a static field and calling a static method 
+#### Get a static field and calling a static method
 
 ```bash
 watch demo.MathGame * '{params,@demo.MathGame@random.nextInt(100)}' -v -n 1 -x 2
@@ -271,8 +271,7 @@ ts=2021-01-05 21:35:20; [cost=0.173966ms] result=@ArrayList[
 ]
 ```
 
-* Note that here you use `Thread.currentThread().getContextClassLoader()` to load, and it is better to use the exact `classloader` [ognl](ognl.md).
-
+- Note that here you use `Thread.currentThread().getContextClassLoader()` to load, and it is better to use the exact `classloader` [ognl](ognl.md).
 
 #### Exclude the specified class
 
@@ -285,6 +284,7 @@ Use the `--exclude-class-pattern` parameter to exclude the specified class, for 
 ```bash
 watch javax.servlet.Filter * --exclude-class-pattern com.demo.TestFilter
 ```
+
 #### Does not match subclass
 
 By default, the watch/trace/monitor/stack/tt commands will match subclass. If you don't want to match, you can turn it off.
@@ -292,7 +292,6 @@ By default, the watch/trace/monitor/stack/tt commands will match subclass. If yo
 ```bash
 options disable-sub-class true
 ```
-
 
 #### Use the -v parameter to print more information
 

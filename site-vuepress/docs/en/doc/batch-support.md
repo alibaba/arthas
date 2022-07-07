@@ -1,5 +1,4 @@
-Batch Processing
-================
+# Batch Processing
 
 With the help of Batch Processing, you can run multiple commands in batch and get the final result at the end.
 
@@ -19,10 +18,11 @@ sc -d org.apache.commons.lang.StringUtils
 ```
 
 Note:
-* Each command takes one line.
-* Batch mode execution times (via `-n`) must be explicitly specified for `dashboard`, otherwise batch script cannot terminate.
-* Commands such as `watch`/`tt`/`trace`/`monitor`/`stack` should include `-n` option to ensure the script can be able to quit.
-* Also consider to use `async` (for example: `watch c.t.X test returnObj > &`) to put commands run at background and get the output from the log file, see more from [asynchronous job](async.md)
+
+- Each command takes one line.
+- Batch mode execution times (via `-n`) must be explicitly specified for `dashboard`, otherwise batch script cannot terminate.
+- Commands such as `watch`/`tt`/`trace`/`monitor`/`stack` should include `-n` option to ensure the script can be able to quit.
+- Also consider to use `async` (for example: `watch c.t.X test returnObj > &`) to put commands run at background and get the output from the log file, see more from [asynchronous job](async.md)
 
 #### Step 2: Run the script
 
