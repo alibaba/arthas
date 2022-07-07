@@ -9,7 +9,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>web-console</artifactId>
-    <packaging>jar</packaging>
+    <packaging>pom</packaging>
 
     <name>web-console</name>
     <!-- FIXME change it to the project's website -->
@@ -25,10 +25,9 @@
         <node.version>v16.13.2</node.version>
         <yarn.version>v1.22.15</yarn.version>
     </properties>
-    <dependencyManagement>
+    <!-- <dependencyManagement>
         <dependencies>
             <dependency>
-                <!-- Import dependency management from Spring Boot -->
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-dependencies</artifactId>
                 <version>${spring-boot.version}</version>
@@ -36,8 +35,9 @@
                 <scope>import</scope>
             </dependency>
         </dependencies>
-    </dependencyManagement>
-    <dependencies>
+    </dependencyManagement> -->
+    
+    <!-- <dependencies>
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
@@ -56,7 +56,7 @@
             <artifactId>spring-boot-maven-plugin</artifactId>
             <version>${spring-boot.version}</version>
         </dependency>
-    </dependencies>
+    </dependencies> -->
 
     <build>
         <finalName>web-console</finalName>
@@ -142,12 +142,12 @@
                                     <directory>src/main/arthasWebConsole/dist</directory>
                                 </resource>
                             </resources>
-                            <outputDirectory>src/main/resources/static</outputDirectory>
+                            <outputDirectory>${project.build.directory}/static</outputDirectory>
                         </configuration>
                     </execution>
                 </executions>
             </plugin>
-            <plugin>
+            <!-- <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
                 <executions>
@@ -157,7 +157,7 @@
                         </goals>
                     </execution>
                 </executions>
-            </plugin>
+            </plugin> -->
         </plugins>
     </build>
 </project>
