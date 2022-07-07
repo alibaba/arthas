@@ -6,10 +6,7 @@ module.exports = {
   lang: 'en-US',
   title: 'arthas',
   description: 'arthas user document',
-  head: [
-    ['link', { rel: 'icon', href: '/images/favicon.ico' }],
-    ['meta', { name: 'viewport', content: 'width=device-width, initial-scale=1.0' }],
-  ],
+  head: require('./configs/head'),
   locales: {
     '/': {
       lang: 'zh-CN',
