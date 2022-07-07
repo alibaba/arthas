@@ -1,4 +1,5 @@
 const { defaultTheme } = require("vuepress");
+const { copyCodePlugin } = require("vuepress-plugin-copy-code2");
 
 module.exports = {
   lang: 'en-US',
@@ -50,5 +51,20 @@ module.exports = {
         sidebar: require('./configs/sidebar/en'),
       },
     }
-  })
+  }),
+  plugins: [
+    copyCodePlugin({
+      showInMobile:false,
+      pure:true,
+      locales:{
+        '/':{
+          hint:"复制代码"
+          
+        },
+        '/en/':{ 
+          hint:"Copy code"
+        }
+      }
+    })
+  ]
 }
