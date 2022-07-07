@@ -1,4 +1,4 @@
-## FAQ
+# FAQ
 
 ::: tip
 不在本列表里的问题，请到 issue 里搜索。 [https://github.com/alibaba/arthas/issues](https://github.com/alibaba/arthas/issues)

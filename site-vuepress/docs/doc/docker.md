@@ -4,7 +4,7 @@
 
 很多时候，应用在 docker 里出现 arthas 无法工作的问题，是因为应用没有安装 JDK ，而是安装了 JRE 。如果只安装了 JRE，则会缺少很多 JAVA 的命令行工具和类库，Arthas 也没办法正常工作。下面介绍两种常见的在 Docker 里使用 JDK 的方式。
 
-### 使用公开的 JDK 镜  像
+### 使用公开的 JDK 镜像
 
 - https://hub.docker.com/_/openjdk/
 

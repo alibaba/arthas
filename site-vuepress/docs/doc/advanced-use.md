@@ -4,7 +4,7 @@
 
 - [help](help.md)——查看命令帮助信息
 - [cat](cat.md)——打印文件内容，和 linux 里的 cat 命令类似
-- [echo](echo.md)--打印参数，和 linux 里的 echo 命令类似
+- [echo](echo.md)——打印参数，和 linux 里的 echo 命令类似
 - [grep](grep.md)——匹配查找，和 linux 里的 grep 命令类似
 - [base64](base64.md)——base64 编码转换，和 linux 里的 base64 命令类似
 - [tee](tee.md)——复制标准输入到标准输出和指定的文件，和 linux 里的 tee 命令类似
@@ -63,7 +63,7 @@
 
 ## 鉴权
 
-- [auth](auth.md)--鉴权
+- [auth](auth.md)——鉴权
 
 ## options
 
@@ -155,10 +155,3 @@ pid       58883
 在 tunnel server 里有一个示例的回报代码，用户可以自己在服务器上实现。
 
 [StatController.java](https://github.com/alibaba/arthas/blob/master/tunnel-server/src/main/java/com/alibaba/arthas/tunnel/server/app/web/StatController.java)
-
-## 其他特性
-
-- [异步命令支持](async.md)
-- [执行结果存日志](save-log.md)
-- [批处理的支持](batch-support.md)
-- [ognl 表达式的用法说明](https://github.com/alibaba/arthas/issues/11)

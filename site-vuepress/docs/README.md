@@ -4,7 +4,7 @@ heroImage: /images/arthas.png
 heroText: null
 tagline: "Java应用诊断利器"
 actions:
-  - text: 立即开始
+  - text: 快速入门
     link: /doc/quick-start.html
     type: primary
   - text: 查看github
