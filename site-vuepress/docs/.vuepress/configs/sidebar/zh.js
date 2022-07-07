@@ -13,11 +13,6 @@ module.exports = {
               },
               '/doc/quick-start.md',
               {
-                  text: '在线教程(katacoda)',
-                  link: '/doc/arthas-tutorials.html?language=cn&id=arthas-basics',
-                  target: '_blank'
-              },
-              {
                   text: '在线教程(阿里云)',
                   link: 'https://start.aliyun.com/handson-lab?category=arthas'
               },
@@ -26,6 +21,7 @@ module.exports = {
               '/doc/advanced-use.md',
               {
                   text: '其他特性',
+                  collapsible: true,
                   children:[
                       '/doc/async.md',
                       '/doc/save-log.md',
@@ -136,11 +132,11 @@ module.exports = {
               '/doc/docker.md',
               '/doc/spring-boot-starter.md',
               '/doc/idea-plugin.md',
+              '/doc/faq.md',
               {
                   text: '用户案列',
                   link: 'https://github.com/alibaba/arthas/issues?q=label%3Auser-case'
               },
-              '/doc/faq.md',
               {
                   text: 'Start me at github',
                   link: 'https://github.com/alibaba/arthas'

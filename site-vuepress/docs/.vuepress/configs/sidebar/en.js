@@ -12,11 +12,6 @@ module.exports = {
                   link: '/en/doc/README.md'
               },
               '/en/doc/quick-start.md',
-              {
-                  text: 'Online tutorials(Recommend)',
-                  link: '/doc/arthas-tutorials.html?language=en&id=arthas-basics',
-                  target: '_blank'
-              },
               '/en/doc/install-detail.md',
               '/en/doc/download.md',
               '/en/doc/advanced-use.md',
@@ -133,11 +128,11 @@ module.exports = {
               '/en/doc/docker.md',
               '/en/doc/spring-boot-starter.md',
               '/en/doc/idea-plugin.md',
+              '/en/doc/faq.md',
               {
                   text: 'User cases',
                   link: 'https://github.com/alibaba/arthas/issues?q=label%3Auser-case'
               },
-              '/en/doc/faq.md',
               {
                   text: 'Start me at github',
                   link: 'https://github.com/alibaba/arthas'
