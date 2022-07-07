@@ -1,5 +1,6 @@
 const { defaultTheme } = require("vuepress");
 const { copyCodePlugin } = require("vuepress-plugin-copy-code2");
+const { searchPlugin } = require('@vuepress/plugin-search');
 
 module.exports = {
   lang: 'en-US',
@@ -65,6 +66,16 @@ module.exports = {
           hint:"Copy code"
         }
       }
-    })
-  ]
+    }),
+    searchPlugin({
+      locales:{
+        '/':{
+          placeholder:"搜索文档"
+        },
+        '/en/':{
+          placeholder:"Search Docs"
+        }
+      },
+    }),
+  ],
 }
