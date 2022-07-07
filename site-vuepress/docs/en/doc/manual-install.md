@@ -1,8 +1,6 @@
 Manually Install Arthas
 ===================
 
-## Manually Install Arthas
-
 1. Download the latest version
 
     **Latest version, Click To Download**: [![](https://img.shields.io/maven-central/v/com.taobao.arthas/arthas-packaging.svg?style=flat-square "Arthas")](https://arthas.aliyun.com/download/latest_version)

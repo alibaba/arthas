@@ -4,20 +4,20 @@
 ## 基础命令
 
 
-* help——查看命令帮助信息
+* [help](help.md)——查看命令帮助信息
 * [cat](cat.md)——打印文件内容，和linux里的cat命令类似
 * [echo](echo.md)--打印参数，和linux里的echo命令类似
 * [grep](grep.md)——匹配查找，和linux里的grep命令类似
 * [base64](base64.md)——base64编码转换，和linux里的base64命令类似
 * [tee](tee.md)——复制标准输入到标准输出和指定的文件，和linux里的tee命令类似
 * [pwd](pwd.md)——返回当前的工作目录，和linux命令类似
-* cls——清空当前屏幕区域
-* session——查看当前会话的信息
+* [cls](cls.md)——清空当前屏幕区域
+* [session](session.md)——查看当前会话的信息
 * [reset](reset.md)——重置增强类，将被 Arthas 增强过的类全部还原，Arthas 服务端关闭时会重置所有增强过的类
-* version——输出当前目标 Java 进程所加载的 Arthas 版本号
-* history——打印命令历史
-* quit——退出当前 Arthas 客户端，其他 Arthas 客户端不受影响
-* stop——关闭 Arthas 服务端，所有 Arthas 客户端全部退出
+* [version](version.md)——输出当前目标 Java 进程所加载的 Arthas 版本号
+* [history](history.md)——打印命令历史
+* [quit](quit.md)——退出当前 Arthas 客户端，其他 Arthas 客户端不受影响
+* [stop](stop.md)——关闭 Arthas 服务端，所有 Arthas 客户端全部退出
 * [keymap](keymap.md)——Arthas快捷键列表及自定义快捷键
 
 ## jvm相关
@@ -77,15 +77,15 @@
 
 Arthas支持使用管道对上述命令的结果进行进一步的处理，如`sm java.lang.String * | grep 'index'`
 
-* grep——搜索满足条件的结果
-* plaintext——将命令的结果去除ANSI颜色
+* [grep](grep.md)——搜索满足条件的结果
+* plaintext——将命令的结果去除ANSI颜色
 * wc——按行统计输出结果
 
 ## 后台异步任务
 
 当线上出现偶发的问题，比如需要watch某个条件，而这个条件一天可能才会出现一次时，异步后台任务就派上用场了，详情请参考[这里](async.md)
 
-* 使用 > 将结果重写向到日志文件，使用 & 指定命令是后台运行，session断开不影响任务执行（生命周期默认为1天）
+* 使用 `>` 将结果重写向到日志文件，使用 `&` 指定命令是后台运行，session断开不影响任务执行（生命周期默认为1天）
 * jobs——列出所有job
 * kill——强制终止任务
 * fg——将暂停的任务拉到前台执行

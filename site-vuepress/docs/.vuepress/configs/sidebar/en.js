@@ -3,14 +3,7 @@ module.exports = {
       {
           text: 'DOCS',
           children: [
-              {
-                  text: 'Home',
-                  link: '/en/'
-              },
-              {
-                  text: 'Introduction',
-                  link: '/en/doc/README.md'
-              },
+              '/en/doc/README.md',
               '/en/doc/quick-start.md',
               '/en/doc/install-detail.md',
               '/en/doc/download.md',

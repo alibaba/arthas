@@ -1,9 +1,6 @@
 手动安装Arthas
 ===
 
-## 手动安装Arthas
-
-
 1. 下载最新版本
 
     **最新版本，点击下载**：[![](https://img.shields.io/maven-central/v/com.taobao.arthas/arthas-packaging.svg?style=flat-square "Arthas")](https://arthas.aliyun.com/download/latest_version?mirror=aliyun)

@@ -3,14 +3,7 @@ module.exports = {
       {
           text: '文档',
           children: [
-              {
-                  text: '首页',
-                  link: '/'
-              },
-              {
-                  text: '介绍',
-                  link: '/doc/README.md'
-              },
+              '/doc/README.md',
               '/doc/quick-start.md',
               {
                   text: '在线教程(阿里云)',
