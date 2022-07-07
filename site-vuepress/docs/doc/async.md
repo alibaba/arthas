@@ -60,10 +60,10 @@ cache location  : /Users/gehui/logs/arthas-cache/28198/2
 可以看到并没有指定重定向文件位置，arthas自动重定向到缓存中了，执行命令后会输出job id和cache location。cache location就是重定向文件的路径，在系统logs目录下，路径包括pid和job id，避免和其他任务冲突。命令输出结果到`/Users/gehui/logs/arthas-cache/28198/2`中，job id为2。
 
 ## 6. 停止命令
-异步执行的命令，如果希望停止，可执行kill <job-id>
+异步执行的命令，如果希望停止，可执行`kill <job-id>`
 
 ## 7. 其他
 
-* 最多同时支持8个命令使用重定向将结果写日志
+* 最多同时支持8个命令使用重定向将结果写日志
 * 请勿同时开启过多的后台异步命令，以免对目标JVM性能造成影响
 * 如果不想停止arthas，继续执行后台任务，可以执行 `quit` 退出arthas控制台（`stop` 会停止arthas 服务）
