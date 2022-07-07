@@ -50,6 +50,7 @@ module.exports = {
         toggleSidebar: '切换侧边栏',
         navbar: require("./configs/navbar/zh"),
         sidebar: require("./configs/sidebar/zh"),
+        sidebarDepth: 0,
       },
       "/en/": {
         selectLanguageName: "English",
@@ -57,6 +58,7 @@ module.exports = {
         editLinkText: "Edit this page on GitHub",
         navbar: require("./configs/navbar/en"),
         sidebar: require("./configs/sidebar/en"),
+        sidebarDepth: 0,
       },
     },
   }),
