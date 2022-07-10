@@ -1,5 +1,6 @@
 package com.taobao.arthas.core.advisor;
 
+import com.alibaba.bytekit.asm.interceptor.annotation.AtSyncExit;
 import java.arthas.SpyAPI;
 
 import com.alibaba.bytekit.asm.binding.Binding;
@@ -8,9 +9,10 @@ import com.alibaba.bytekit.asm.interceptor.annotation.AtExceptionExit;
 import com.alibaba.bytekit.asm.interceptor.annotation.AtExit;
 import com.alibaba.bytekit.asm.interceptor.annotation.AtInvoke;
 import com.alibaba.bytekit.asm.interceptor.annotation.AtInvokeException;
+import com.alibaba.bytekit.asm.interceptor.annotation.AtLine;
 
 /**
- * 
+ *
  * @author hengyunabc 2020-06-05
  *
  */
@@ -24,7 +26,7 @@ public class SpyInterceptors {
             SpyAPI.atEnter(clazz, methodInfo, target, args);
         }
     }
-    
+
     public static class SpyInterceptor2 {
         @AtExit(inline = true)
         public static void atExit(@Binding.This Object target, @Binding.Class Class<?> clazz,
@@ -32,13 +34,27 @@ public class SpyInterceptors {
             SpyAPI.atExit(clazz, methodInfo, target, args, returnObj);
         }
     }
-    
+
     public static class SpyInterceptor3 {
         @AtExceptionExit(inline = true)
         public static void atExceptionExit(@Binding.This Object target, @Binding.Class Class<?> clazz,
                 @Binding.MethodInfo String methodInfo, @Binding.Args Object[] args,
                 @Binding.Throwable Throwable throwable) {
             SpyAPI.atExceptionExit(clazz, methodInfo, target, args, throwable);
+        }
+    }
+
+    public static class SpyInterceptor4 {
+        @AtLine(lines = {-1}, inline = true)
+        public static void atLine(
+            @Binding.This Object target,
+            @Binding.Class Class<?> clazz,
+            @Binding.MethodInfo String methodInfo,
+            @Binding.Args Object[] args,
+            @Binding.Line int line,
+            @Binding.LocalVars Object[] vars,
+            @Binding.LocalVarNames String[] varNames) {
+            SpyAPI.atLine(clazz, methodInfo, target, args, line, varNames, vars);
         }
     }
 
@@ -56,7 +72,7 @@ public class SpyInterceptors {
             SpyAPI.atBeforeInvoke(clazz, invokeInfo, target);
         }
     }
-    
+
     public static class SpyTraceInterceptor2 {
         @AtInvoke(name = "", inline = true, whenComplete = true, excludes = {"java.arthas.SpyAPI", "java.lang.Byte"
                 , "java.lang.Boolean"
@@ -71,7 +87,7 @@ public class SpyInterceptors {
             SpyAPI.atAfterInvoke(clazz, invokeInfo, target);
         }
     }
-    
+
     public static class SpyTraceInterceptor3 {
         @AtInvokeException(name = "", inline = true, excludes = {"java.arthas.SpyAPI", "java.lang.Byte"
                 , "java.lang.Boolean"

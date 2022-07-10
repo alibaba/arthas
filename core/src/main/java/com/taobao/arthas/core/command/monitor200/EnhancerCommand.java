@@ -156,7 +156,7 @@ public abstract class EnhancerCommand extends AnnotatedCommand {
                 skipJDKTrace = ((AbstractTraceAdviceListener) listener).getCommand().isSkipJDKTrace();
             }
 
-            Enhancer enhancer = new Enhancer(listener, listener instanceof InvokeTraceable, skipJDKTrace, getClassNameMatcher(), getClassNameExcludeMatcher(), getMethodNameMatcher());
+            Enhancer enhancer = new Enhancer(listener, listener instanceof InvokeTraceable, skipJDKTrace, getClassNameMatcher(), getClassNameExcludeMatcher(), getMethodNameMatcher(), listener.linesToListen());
             // 注册通知监听器
             process.register(listener, enhancer);
             effect = enhancer.enhance(inst);

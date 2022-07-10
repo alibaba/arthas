@@ -1,5 +1,6 @@
 package com.taobao.arthas.core.command.monitor200;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 
 import com.taobao.arthas.core.GlobalOptions;
@@ -8,6 +9,7 @@ import com.taobao.arthas.core.command.Constants;
 import com.taobao.arthas.core.shell.cli.Completion;
 import com.taobao.arthas.core.shell.cli.CompletionUtils;
 import com.taobao.arthas.core.shell.command.CommandProcess;
+import com.taobao.arthas.core.util.line.LineRange;
 import com.taobao.arthas.core.util.SearchUtils;
 import com.taobao.arthas.core.util.matcher.Matcher;
 import com.taobao.arthas.core.view.ObjectView;
@@ -17,6 +19,7 @@ import com.taobao.middleware.cli.annotations.Description;
 import com.taobao.middleware.cli.annotations.Name;
 import com.taobao.middleware.cli.annotations.Option;
 import com.taobao.middleware.cli.annotations.Summary;
+import java.util.List;
 
 @Name("watch")
 @Summary("Display the input/output parameter, return object, and thrown exception of specified method invocation")
@@ -41,11 +44,12 @@ public class WatchCommand extends EnhancerCommand {
     private boolean isFinish = false;
     private boolean isException = false;
     private boolean isSuccess = false;
+    private List<LineRange> lines = new ArrayList<LineRange>();
     private Integer expand = 1;
     private Integer sizeLimit = 10 * 1024 * 1024;
     private boolean isRegEx = false;
     private int numberOfLimit = 100;
-    
+
     @Argument(index = 0, argName = "class-pattern")
     @Description("The full qualified class name you want to watch")
     public void setClassPattern(String classPattern) {
@@ -93,6 +97,17 @@ public class WatchCommand extends EnhancerCommand {
     @Description("Watch after successful invocation")
     public void setSuccess(boolean success) {
         isSuccess = success;
+    }
+
+    @Option(shortName = "l", longName = "lines", acceptMultipleValues = true)
+    @Description("Watch on line ranges e.g. (-l 11-15 20-22). 0 means (+-)infinite")
+    public void setAtLine(List<String> lineDescs) {
+        if (lineDescs == null || lineDescs.isEmpty()) {
+            return;
+        }
+        for (String line : lineDescs) {
+            lines.add(LineRange.valueOf(line));
+        }
     }
 
     @Option(shortName = "M", longName = "sizeLimit")
@@ -149,6 +164,10 @@ public class WatchCommand extends EnhancerCommand {
 
     public boolean isSuccess() {
         return isSuccess;
+    }
+
+    public List<LineRange> getLines() {
+        return lines;
     }
 
     public Integer getExpand() {

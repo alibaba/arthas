@@ -1,5 +1,7 @@
 package com.taobao.arthas.core.advisor;
 
+import java.util.LinkedHashMap;
+
 /**
  * 通知点 Created by vlinux on 15/5/20.
  */
@@ -10,11 +12,14 @@ public class Advice {
     private final ArthasMethod method;
     private final Object target;
     private final Object[] params;
+    private final int line;
+    private final LinkedHashMap<String, Object> varMap;
     private final Object returnObj;
     private final Throwable throwExp;
     private final boolean isBefore;
     private final boolean isThrow;
     private final boolean isReturn;
+    private final boolean isAtLine;
 
     public boolean isBefore() {
         return isBefore;
@@ -28,6 +33,10 @@ public class Advice {
         return isThrow;
     }
 
+    public boolean isAtLine() {
+        return isAtLine;
+    }
+
     public ClassLoader getLoader() {
         return loader;
     }
@@ -38,6 +47,18 @@ public class Advice {
 
     public Object[] getParams() {
         return params;
+    }
+
+    public int getLine() {
+        return line;
+    }
+
+    public String[] getVarNames() {
+        return varMap.keySet().toArray(new String[0]);
+    }
+
+    public Object[] getVars() {
+        return varMap.values().toArray(new Object[0]);
     }
 
     public Object getReturnObj() {
@@ -74,6 +95,9 @@ public class Advice {
             ArthasMethod method,
             Object target,
             Object[] params,
+            int line,
+            String[] varNames,
+            Object[] vars,
             Object returnObj,
             Throwable throwExp,
             int access) {
@@ -81,12 +105,21 @@ public class Advice {
         this.clazz = clazz;
         this.method = method;
         this.target = target;
+        this.varMap = new LinkedHashMap<String, Object>();
         this.params = params;
+        this.line = line;
         this.returnObj = returnObj;
         this.throwExp = throwExp;
         isBefore = (access & AccessPoint.ACCESS_BEFORE.getValue()) == AccessPoint.ACCESS_BEFORE.getValue();
         isThrow = (access & AccessPoint.ACCESS_AFTER_THROWING.getValue()) == AccessPoint.ACCESS_AFTER_THROWING.getValue();
         isReturn = (access & AccessPoint.ACCESS_AFTER_RETUNING.getValue()) == AccessPoint.ACCESS_AFTER_RETUNING.getValue();
+        isAtLine = (access & AccessPoint.ACCESS_AT_LINE.getValue()) == AccessPoint.ACCESS_AT_LINE.getValue();
+
+        if (varNames != null && vars != null) {
+            for (int i = 0; i < varNames.length; i++) {
+                varMap.put(varNames[i], vars[i]);
+            }
+        }
     }
 
     public static Advice newForBefore(ClassLoader loader,
@@ -100,6 +133,9 @@ public class Advice {
                 method,
                 target,
                 params,
+                0,
+                null,
+                null,
                 null, //returnObj
                 null, //throwExp
                 AccessPoint.ACCESS_BEFORE.getValue()
@@ -118,6 +154,9 @@ public class Advice {
                 method,
                 target,
                 params,
+                0,
+                null, // varNames
+                null, // vars
                 returnObj,
                 null, //throwExp
                 AccessPoint.ACCESS_AFTER_RETUNING.getValue()
@@ -136,9 +175,36 @@ public class Advice {
                 method,
                 target,
                 params,
+                0,
+                null, // varNames
+                null, // vars
                 null, //returnObj
                 throwExp,
                 AccessPoint.ACCESS_AFTER_THROWING.getValue()
+        );
+
+    }
+
+    public static Advice newForAtLine(ClassLoader loader,
+        Class<?> clazz,
+        ArthasMethod method,
+        Object target,
+        Object[] params,
+        int line,
+        String[] varNames,
+        Object[] vars) {
+        return new Advice(
+            loader,
+            clazz,
+            method,
+            target,
+            params,
+            line,
+            varNames,
+            vars,
+            null, // returnObj
+            null, // throwExp
+            AccessPoint.ACCESS_AT_LINE.getValue()
         );
 
     }

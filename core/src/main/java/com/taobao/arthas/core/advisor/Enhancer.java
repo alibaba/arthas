@@ -47,6 +47,7 @@ import com.taobao.arthas.core.GlobalOptions;
 import com.taobao.arthas.core.advisor.SpyInterceptors.SpyInterceptor1;
 import com.taobao.arthas.core.advisor.SpyInterceptors.SpyInterceptor2;
 import com.taobao.arthas.core.advisor.SpyInterceptors.SpyInterceptor3;
+import com.taobao.arthas.core.advisor.SpyInterceptors.SpyInterceptor4;
 import com.taobao.arthas.core.advisor.SpyInterceptors.SpyTraceExcludeJDKInterceptor1;
 import com.taobao.arthas.core.advisor.SpyInterceptors.SpyTraceExcludeJDKInterceptor2;
 import com.taobao.arthas.core.advisor.SpyInterceptors.SpyTraceExcludeJDKInterceptor3;
@@ -54,11 +55,10 @@ import com.taobao.arthas.core.advisor.SpyInterceptors.SpyTraceInterceptor1;
 import com.taobao.arthas.core.advisor.SpyInterceptors.SpyTraceInterceptor2;
 import com.taobao.arthas.core.advisor.SpyInterceptors.SpyTraceInterceptor3;
 import com.taobao.arthas.core.server.ArthasBootstrap;
-import com.taobao.arthas.core.util.ArthasCheckUtils;
-import com.taobao.arthas.core.util.ClassUtils;
-import com.taobao.arthas.core.util.FileUtils;
-import com.taobao.arthas.core.util.SearchUtils;
+import com.taobao.arthas.core.util.*;
 import com.taobao.arthas.core.util.affect.EnhancerAffect;
+import com.taobao.arthas.core.util.line.LineRange;
+import com.taobao.arthas.core.util.line.LineRangeInterceptorCreator;
 import com.taobao.arthas.core.util.matcher.Matcher;
 
 /**
@@ -78,6 +78,7 @@ public class Enhancer implements ClassFileTransformer {
     private final EnhancerAffect affect;
     private Set<Class<?>> matchingClasses = null;
     private static final ClassLoader selfClassLoader = Enhancer.class.getClassLoader();
+    private final List<LineRange> lineRangesToEnhance;
 
     // 被增强的类的缓存
     private final static Map<Class<?>/* Class */, Object> classBytesCache = new WeakHashMap<Class<?>, Object>();
@@ -97,7 +98,8 @@ public class Enhancer implements ClassFileTransformer {
      */
     public Enhancer(AdviceListener listener, boolean isTracing, boolean skipJDKTrace, Matcher classNameMatcher,
             Matcher classNameExcludeMatcher,
-            Matcher methodNameMatcher) {
+            Matcher methodNameMatcher,
+            List<LineRange> lineRangesToEnhance) {
         this.listener = listener;
         this.isTracing = isTracing;
         this.skipJDKTrace = skipJDKTrace;
@@ -105,6 +107,7 @@ public class Enhancer implements ClassFileTransformer {
         this.classNameExcludeMatcher = classNameExcludeMatcher;
         this.methodNameMatcher = methodNameMatcher;
         this.affect = new EnhancerAffect();
+        this.lineRangesToEnhance = lineRangesToEnhance;
         affect.setListenerId(listener.id());
     }
 
@@ -143,6 +146,7 @@ public class Enhancer implements ClassFileTransformer {
             interceptorProcessors.addAll(defaultInterceptorClassParser.parse(SpyInterceptor1.class));
             interceptorProcessors.addAll(defaultInterceptorClassParser.parse(SpyInterceptor2.class));
             interceptorProcessors.addAll(defaultInterceptorClassParser.parse(SpyInterceptor3.class));
+            interceptorProcessors.addAll(LineRangeInterceptorCreator.createFromClass(SpyInterceptor4.class, lineRangesToEnhance));
 
             if (this.isTracing) {
                 if (!this.skipJDKTrace) {
@@ -181,10 +185,13 @@ public class Enhancer implements ClassFileTransformer {
                     LocationType.EXIT);
             LocationFilter exceptionFilter = new InvokeContainLocationFilter(Type.getInternalName(SpyAPI.class),
                     "atExceptionExit", LocationType.EXCEPTION_EXIT);
+            LocationFilter lineFilter = new InvokeContainLocationFilter(Type.getInternalName(SpyAPI.class),
+                "atLine", LocationType.LINE);
 
             groupLocationFilter.addFilter(enterFilter);
             groupLocationFilter.addFilter(existFilter);
             groupLocationFilter.addFilter(exceptionFilter);
+            groupLocationFilter.addFilter(lineFilter);
 
             LocationFilter invokeBeforeFilter = new InvokeCheckLocationFilter(Type.getInternalName(SpyAPI.class),
                     "atBeforeInvoke", LocationType.INVOKE);
