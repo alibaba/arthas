@@ -421,7 +421,6 @@ Arthas有超过120家登记用户，[查看全部](USERS.md)。
 ![有赞](static/youzan.png)
 ![科大讯飞](static/iflytek.png)
 ![智联招聘](static/zhaopin.png)
-![深圳航天信息](static/ShenzhenAerospaceInformationCo.,Ltd.png)
 
 
 ### 衍生项目
