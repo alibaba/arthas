@@ -1,8 +1,9 @@
 <script setup>
-import HomeContent from "@theme/HomeContent.vue";
 import HomeFeatures from "./HomeFeatures.vue";
-import HomeFooter from "@theme/HomeFooter.vue";
 import HomeHero from "./HomeHero.vue";
+
+import HomeContent from "@theme/HomeContent.vue";
+import HomeFooter from "@theme/HomeFooter.vue";
 </script>
 
 <template>

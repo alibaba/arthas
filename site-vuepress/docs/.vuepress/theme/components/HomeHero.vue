@@ -76,24 +76,46 @@ const HomeHeroImage = () => {
   <header class="hero">
     <HomeHeroImage />
 
-    <h1 v-if="heroText" id="main-title">
-      {{ heroText }}
-    </h1>
+    <div>
+      <h1 v-if="heroText" id="main-title">
+        {{ heroText }}
+      </h1>
 
-    <p v-if="tagline" class="description">
-      {{ tagline }}
-    </p>
+      <p v-if="tagline" class="description">
+        {{ tagline }}
+      </p>
 
-    <HomeBadges />
+      <HomeBadges />
 
-    <p v-if="actions.length" class="actions">
-      <AutoLink
-        v-for="action in actions"
-        :key="action.text"
-        class="action-button"
-        :class="[action.type]"
-        :item="action"
-      />
-    </p>
+      <p v-if="actions.length" class="actions">
+        <AutoLink
+          v-for="action in actions"
+          :key="action.text"
+          class="action-button"
+          :class="[action.type]"
+          :item="action"
+        />
+      </p>
+    </div>
   </header>
 </template>
+
+<style lang="scss" scoped>
+@media (min-width: 768px) {
+  .hero {
+    min-height: 45vh;
+    display: flex;
+    flex-direction: row-reverse;
+    justify-content: center;
+    align-items: center;
+
+    .description {
+      font-size: 2rem;
+    }
+
+    img {
+      margin: 0rem 0rem 0rem 4rem;
+    }
+  }
+}
+</style>

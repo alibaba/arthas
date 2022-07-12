@@ -2,7 +2,7 @@
 home: true
 heroImage: /images/arthas.png
 heroText: null
-tagline: "Java应用诊断利器"
+tagline: "Java 应用诊断利器"
 actions:
   - text: 快速入门
     link: /doc/quick-start.html
