@@ -5,7 +5,10 @@ import { useThemeLocaleData } from "@vuepress/plugin-theme-data/lib/client";
 const routeLocale = useRouteLocale();
 const themeLocale = useThemeLocaleData();
 
-const isRouteToHome = window.location.pathname in ["/zh-cn", "/en-us"];
+const isRouteToHome =
+  typeof window !== "undefined"
+    ? window.location.pathname in ["/zh-cn", "/en-us"]
+    : false;
 
 const messages = themeLocale.value.notFound ?? ["Not Found"];
 const getMsg = () => messages[Math.floor(Math.random() * messages.length)];

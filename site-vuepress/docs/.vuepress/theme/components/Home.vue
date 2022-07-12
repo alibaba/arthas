@@ -2,7 +2,7 @@
 import HomeContent from "@theme/HomeContent.vue";
 import HomeFeatures from "./HomeFeatures.vue";
 import HomeFooter from "@theme/HomeFooter.vue";
-import HomeHero from "@theme/HomeHero.vue";
+import HomeHero from "./HomeHero.vue";
 </script>
 
 <template>
