@@ -6,22 +6,22 @@
 </template>
 
 <script setup>
-import Fork from "./icons/Fork.vue";
 import Star from "./icons/Star.vue";
+import Fork from "./icons/Fork.vue";
 import Badge from "./Badge.vue";
 
 import { ref, onBeforeMount } from "vue";
 
-const fork = ref(0);
-const star = ref(0);
+const star = ref(29582);
+const fork = ref(6494);
 
 const getData = async () => {
   const { forks, stargazers_count } = await fetch(
     "https://api.github.com/repos/alibaba/arthas"
   ).then((res) => res.json());
 
-  fork.value = forks;
   star.value = stargazers_count;
+  fork.value = forks;
 };
 
 onBeforeMount(getData);

@@ -1,13 +1,15 @@
 <template>
-  <div class="my-badge">
+  <a class="my-badge" :href="URL" target="_blank">
     <component :is="comp" />
     &nbsp;
     <span>{{ data }}</span>
-  </div>
+  </a>
 </template>
 
 <script setup>
-defineProps({
+import { useThemeLocaleData } from "@vuepress/theme-default/lib/client/composables";
+
+const props = defineProps({
   comp: {
     type: Object,
     required: true,
@@ -17,9 +19,24 @@ defineProps({
     required: true,
   },
 });
+
+const themeData = useThemeLocaleData();
+const repoURL = `https://github.com/${themeData.value.repo}`;
+const repoStarsURL = repoURL;
+const repoForksURL = `${repoURL}/fork`;
+
+let URL = repoURL;
+switch (props.comp.name) {
+  case "Star":
+    URL = repoStarsURL;
+    break;
+  case "Fork":
+    URL = repoForksURL;
+    break;
+}
 </script>
 
-<style scoped>
+<style lang="scss" scoped>
 .my-badge {
   width: fit-content;
   width: -webkit-fit-content;
@@ -30,7 +47,9 @@ defineProps({
   align-items: center;
   justify-content: center;
   border-radius: 5px;
+  color: var(--c-text);
   background-color: rgba(89, 95, 101, 0.2);
+  user-select: none;
 }
 
 @media (max-width: 719px) {

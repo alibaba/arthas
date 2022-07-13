@@ -34,3 +34,9 @@
     </g>
   </svg>
 </template>
+
+<script>
+export default {
+  name: "Fork",
+};
+</script>
