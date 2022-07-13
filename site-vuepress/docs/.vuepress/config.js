@@ -40,7 +40,7 @@ module.exports = {
     locales: {
       "/": {
         selectLanguageName: "简体中文",
-        selectLanguageText: "选择语言",
+        selectLanguageText: "Languages",
         editLinkText: "在 GitHub 上编辑此页",
         lastUpdated: "上次更新",
         contributorsText: "贡献者",

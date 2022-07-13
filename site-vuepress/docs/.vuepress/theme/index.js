@@ -12,6 +12,10 @@ exports.localTheme = (options) => {
 
     alias: {
       "@theme/Home.vue": path.resolve(__dirname, "components/Home.vue"),
+      "@theme/NavbarDropdown.vue": path.resolve(
+        __dirname,
+        "components/NavbarDropdown.vue"
+      ),
     },
   };
 };
