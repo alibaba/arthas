@@ -4,7 +4,7 @@
     xmlns:xlink="http://www.w3.org/1999/xlink"
     width="1em"
     height="1em"
-    style="fill: var(--c-text)"
+    style="height: 1.25rem; width: 1.25rem; vertical-align: bottom"
     viewBox="0 0 24 24"
   >
     <path

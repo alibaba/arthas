@@ -16,6 +16,7 @@ exports.localTheme = (options) => {
         __dirname,
         "components/NavbarDropdown.vue"
       ),
+      "@theme/AutoLink.vue": path.resolve(__dirname, "components/AutoLink.vue"),
     },
   };
 };
