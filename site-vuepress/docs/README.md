@@ -29,5 +29,24 @@ features:
   - icon: 📡
     title: WebConsole
     details: 在线诊断，点开网页诊断线上应用。
+users_title: "用户"
+users_details: "请在 <a href='https://github.com/alibaba/arthas/issues/111' target='_blank'>Wanted: who's using arthas</a> 上提供信息来帮助Arthas做的更好。"
+users:
+  - name: Alibaba Group
+    logo: /images/users/users_alibaba.png
+  - name: Didiglobal
+    logo: /images/users/users_didi.png
+  - name: ICBC
+    logo: /images/users/users_icbc.png
+  - name: Kaola
+    logo: /images/users/users_kaola.png
+  - name: Qunar
+    logo: /images/users/users_qunar.png
+  - name: Telecom
+    logo: /images/users/users_telecom.png
+  - name: Weidian
+    logo: /images/users/users_weidian.png
+  - name: Chinaums
+    logo: /images/users/users_yinlian.png
 footer: Apache-2.0 license | Copyright 2018-present, Alibaba Middleware Group, and contributors
 ---

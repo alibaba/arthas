@@ -1,4 +1,5 @@
 <script setup>
+import HomeUserBoards from "./HomeUserBoards.vue";
 import HomeFeatures from "./HomeFeatures.vue";
 import HomeHero from "./HomeHero.vue";
 
@@ -11,6 +12,7 @@ import HomeFooter from "@theme/HomeFooter.vue";
     <HomeHero />
     <HomeFeatures />
     <HomeContent />
+    <HomeUserBoards />
     <HomeFooter />
   </main>
 </template>
