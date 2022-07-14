@@ -109,7 +109,7 @@ const isActive = computed(() => {
     <slot name="before" />
     <GitHub v-if="item.text === 'GitHub'" />
     <span v-else>{{ item.text }}</span>
-    <AutoLinkExternalIcon v-if="isBlankTarget" />
+    <AutoLinkExternalIcon v-if="isBlankTarget && item.text !== 'GitHub'" />
     <slot name="after" />
   </a>
 </template>
