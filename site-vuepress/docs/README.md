@@ -1,6 +1,7 @@
 ---
 home: true
-heroImage: /images/arthas.png
+heroImage: /images/arthas_light.png
+heroImageDark: /images/arthas_dark.png
 heroText: null
 tagline: "Java 应用诊断利器"
 actions:

@@ -20,20 +20,9 @@ module.exports = {
       description: "arthas user document",
     },
   },
-  devServer: {
-    proxy: {
-      "/api": {
-        target: "https://arthas.aliyun.com/api",
-        changeOrigin: true,
-        pathRewrite: {
-          "^/api": "",
-        },
-      },
-    },
-  },
   theme: localTheme({
-    logo: "/images/arthas.png",
-
+    logo: "/images/arthas_light.png",
+    logoDark: "/images/arthas_dark.png",
     repo: "alibaba/arthas",
     docsDir: "site-vuepress/docs",
     docsBranch: "master",

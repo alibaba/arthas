@@ -61,6 +61,7 @@ const HomeHeroImage = () => {
   if (!heroImage.value) return null;
   const img = h("img", {
     src: withBase(heroImage.value),
+    style: "width: 60%;",
     alt: heroAlt.value,
   });
   if (frontmatter.value.heroImageDark === undefined) {
@@ -74,7 +75,7 @@ const HomeHeroImage = () => {
 
 <template>
   <header class="hero">
-    <HomeHeroImage />
+    <HomeHeroImage class="hero-img" />
 
     <div>
       <h1 v-if="heroText" id="main-title">
@@ -99,23 +100,3 @@ const HomeHeroImage = () => {
     </div>
   </header>
 </template>
-
-<style lang="scss" scoped>
-@media (min-width: 768px) {
-  .hero {
-    min-height: 45vh;
-    display: flex;
-    flex-direction: row-reverse;
-    justify-content: center;
-    align-items: center;
-
-    .description {
-      font-size: 2rem;
-    }
-
-    img {
-      margin: 0rem 0rem 0rem 4rem;
-    }
-  }
-}
-</style>

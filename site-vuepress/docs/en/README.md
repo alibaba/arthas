@@ -1,7 +1,8 @@
 ---
 home: true
 title: Home
-heroImage: /images/arthas.png
+heroImage: /images/arthas_light.png
+heroImageDark: /images/arthas_dark.png
 heroText: null
 tagline: Java Diagnostic Tool
 sidebar: false
