@@ -2,7 +2,7 @@
   <a class="my-badge" :href="URL" target="_blank">
     <component :is="comp" />
     &nbsp;
-    <span>{{ data }}</span>
+    <span>{{ data || "...." }}</span>
   </a>
 </template>
 

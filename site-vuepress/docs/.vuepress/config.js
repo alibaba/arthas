@@ -1,6 +1,7 @@
 const { localTheme } = require("./theme/index");
 
 const { copyCodePlugin } = require("vuepress-plugin-copy-code2");
+const { redirectPlugin } = require("vuepress-plugin-redirect");
 const { searchPlugin } = require("@vuepress/plugin-search");
 
 module.exports = {
@@ -94,6 +95,25 @@ module.exports = {
         "/en/": {
           placeholder: "Search Docs",
         },
+      },
+    }),
+    redirectPlugin({
+      config: (app) => {
+        const redirects = Object.fromEntries(
+          app.pages
+            .filter((page) => page.path.startsWith("/en/doc/"))
+            .map((page) => [
+              page.path.replace(/^\/en\/doc\//, "/doc/en/"),
+              page.path,
+            ])
+        );
+
+        delete redirects["/doc/en/"];
+        redirects["/doc/en/index.html"] = "/en/doc/index.html";
+        redirects["/en-us/index.html"] = "/en/index.html";
+        redirects["/zh-cn/index.html"] = "/index.html";
+
+        return redirects;
       },
     }),
   ],

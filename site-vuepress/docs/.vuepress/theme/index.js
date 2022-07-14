@@ -6,10 +6,6 @@ exports.localTheme = (options) => {
     name: "vuepress-theme-arthas",
     extends: defaultTheme(options),
 
-    layouts: {
-      404: path.resolve(__dirname, "layouts/404.vue"),
-    },
-
     alias: {
       "@theme/Home.vue": path.resolve(__dirname, "components/Home.vue"),
       "@theme/NavbarDropdown.vue": path.resolve(
