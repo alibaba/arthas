@@ -1,5 +1,5 @@
 <template>
-  <img class="users-logo" :src="img.logo" :title="img.name" />
+  <img class="users-logo" :src="img.logo" />
 </template>
 
 <script setup>
@@ -13,7 +13,9 @@ defineProps({
 
 <style lang="scss" scoped>
 .users-logo {
-  width: 140px;
+  max-width: 140px;
+  object-fit: contain;
   margin: 10px;
+  user-select: none;
 }
 </style>

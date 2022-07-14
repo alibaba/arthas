@@ -38,8 +38,6 @@ users:
     logo: /images/users/users_alibaba.png
   - name: Didiglobal
     logo: /images/users/users_didi.png
-  - name: ICBC
-    logo: /images/users/users_icbc.png
   - name: Kaola
     logo: /images/users/users_kaola.png
   - name: Qunar
@@ -48,6 +46,8 @@ users:
     logo: /images/users/users_telecom.png
   - name: Weidian
     logo: /images/users/users_weidian.png
+  - name: ICBC
+    logo: /images/users/users_icbc.png
   - name: Chinaums
     logo: /images/users/users_yinlian.png
 footer: Apache-2.0 license | Copyright 2018-present, Alibaba Middleware Group, and contributors
