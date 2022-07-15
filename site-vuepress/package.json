@@ -14,6 +14,7 @@
     "@vuepress/plugin-search": "^2.0.0-beta.48",
     "prettier": "2.7.1",
     "vuepress": "^2.0.0-beta.48",
-    "vuepress-plugin-copy-code2": "^2.0.0-beta.84"
+    "vuepress-plugin-copy-code2": "^2.0.0-beta.84",
+    "vuepress-plugin-redirect": "^2.0.0-beta.86"
   }
 }
