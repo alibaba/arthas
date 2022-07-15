@@ -1,0 +1,21 @@
+name: auto prettier
+
+on:
+  push:
+    paths:
+      - 'site-vuepress/**'
+
+jobs:
+  prettier:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+        with:
+          ref: ${{ github.head_ref }}
+      
+      - name: Prettify code
+        uses: creyD/prettier_action@v4.2
+        with:
+          prettier_options: --config ./site-vuepress/.prettierrc.json --ignore-path ./site-vuepress/.prettierignore  --write ./site-vuepress
