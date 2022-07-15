@@ -39,5 +39,15 @@ export default defineClientConfig({
         addOldDocsContributors();
       }
     });
+
+    router.beforeEach((to, from, next) => {
+      if (typeof _hmt != "undefined") {
+        if (to.path && to.fullPath !== from.fullPath) {
+          _hmt.push(["_trackPageview", to.fullPath]);
+        }
+      }
+
+      next();
+    });
   },
 });

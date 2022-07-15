@@ -75,7 +75,7 @@ const HomeHeroImage = () => {
 
 <template>
   <header class="hero">
-    <HomeHeroImage class="hero-img" />
+    <HomeHeroImage />
 
     <div>
       <h1 v-if="heroText" id="main-title">
