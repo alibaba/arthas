@@ -1,23 +1,30 @@
 <script setup lang="ts">
 import "./components/NavAside.vue"
 import NavAside from "./components/NavAside.vue";
+import NavHeader from "./components/NavHeader.vue";
+
 </script>
 
 <template>
-  <div class="flex flex-row h-screen">
-  <nav-aside class=" bg-pink-800"></nav-aside>
-  <router-view class=" flex-1 bg-blue-50">
-  </router-view>
+  <div class=" h-screen flex flex-col">
+    <nav-header></nav-header>
+    <main class=" flex-auto">
+      <div class="flex flex-row h-full">
+        <nav-aside></nav-aside>
+        <router-view class=" flex-1 bg-blue-50">
+        </router-view>
+      </div>
+    </main>
   </div>
 </template>
 
 <style>
 /* #app { */
-  /* font-family: Avenir, Helvetica, Arial, sans-serif; */
-  /* -webkit-font-smoothing: antialiased; */
-  /* -moz-osx-font-smoothing: grayscale; */
-  /* text-align: center; */
-  /* color: #2c3e50; */
-  /* margin-top: 60px; */
+/* font-family: Avenir, Helvetica, Arial, sans-serif; */
+/* -webkit-font-smoothing: antialiased; */
+/* -moz-osx-font-smoothing: grayscale; */
+/* text-align: center; */
+/* color: #2c3e50; */
+/* margin-top: 60px; */
 /* } */
 </style>
