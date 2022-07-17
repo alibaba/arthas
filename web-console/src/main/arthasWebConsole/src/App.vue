@@ -1,21 +1,23 @@
 <script setup lang="ts">
-// This starter template is using Vue 3 <script setup> SFCs
-// Check out https://vuejs.org/api/sfc-script-setup.html#script-setup
-import HelloWorld from './components/HelloWorld.vue'
+import "./components/NavAside.vue"
+import NavAside from "./components/NavAside.vue";
 </script>
 
 <template>
-  <img alt="Vue logo" src="./assets/arthas.png" />
-  <HelloWorld msg="Hello Vue 3 + TypeScript + Vite" />
+  <div class="flex flex-row h-screen">
+  <nav-aside class=" bg-pink-800"></nav-aside>
+  <router-view class=" flex-1 bg-blue-50">
+  </router-view>
+  </div>
 </template>
 
 <style>
-#app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-  margin-top: 60px;
-}
+/* #app { */
+  /* font-family: Avenir, Helvetica, Arial, sans-serif; */
+  /* -webkit-font-smoothing: antialiased; */
+  /* -moz-osx-font-smoothing: grayscale; */
+  /* text-align: center; */
+  /* color: #2c3e50; */
+  /* margin-top: 60px; */
+/* } */
 </style>

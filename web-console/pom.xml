@@ -20,43 +20,11 @@
         <maven.compiler.source>1.7</maven.compiler.source>
         <maven.compiler.target>1.7</maven.compiler.target>
         <yarn.registry.url>https://registry.npmmirror.com/</yarn.registry.url>
-        <!-- <yarn.download.url>https://npm.taobao.org/mirrors/yarn</yarn.download.url> -->
+        <yarn.download.url>http://npmmirror.com</yarn.download.url>
         <node.download.url>https://npmmirror.com/mirrors/node/</node.download.url>
-        <node.version>v16.13.2</node.version>
-        <yarn.version>v1.22.15</yarn.version>
+        <node.version>v16.16.0</node.version>
+        <yarn.version>v1.22.19</yarn.version>
     </properties>
-    <!-- <dependencyManagement>
-        <dependencies>
-            <dependency>
-                <groupId>org.springframework.boot</groupId>
-                <artifactId>spring-boot-dependencies</artifactId>
-                <version>${spring-boot.version}</version>
-                <type>pom</type>
-                <scope>import</scope>
-            </dependency>
-        </dependencies>
-    </dependencyManagement> -->
-    
-    <!-- <dependencies>
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-web</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot</artifactId>
-            <scope>compile</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-autoconfigure</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-maven-plugin</artifactId>
-            <version>${spring-boot.version}</version>
-        </dependency>
-    </dependencies> -->
 
     <build>
         <finalName>web-console</finalName>
