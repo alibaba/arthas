@@ -13,6 +13,7 @@ exports.localTheme = (options) => {
         "components/NavbarDropdown.vue"
       ),
       "@theme/AutoLink.vue": path.resolve(__dirname, "components/AutoLink.vue"),
+      "@theme/Page.vue": path.resolve(__dirname, "components/Page.vue"),
     },
   };
 };
