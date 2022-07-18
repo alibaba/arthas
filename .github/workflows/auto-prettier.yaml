@@ -3,7 +3,7 @@ name: auto prettier
 on:
   push:
     paths:
-      - 'site-vuepress/**'
+      - 'site/**'
 
 jobs:
   prettier:
@@ -18,4 +18,4 @@ jobs:
       - name: Prettify code
         uses: creyD/prettier_action@v4.2
         with:
-          prettier_options: --config ./site-vuepress/.prettierrc.json --ignore-path ./site-vuepress/.prettierignore  --write ./site-vuepress
+          prettier_options: --config ./site/.prettierrc.json --ignore-path ./site/.prettierignore  --write ./site

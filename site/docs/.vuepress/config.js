@@ -24,7 +24,7 @@ module.exports = {
     logo: "/images/arthas_light.png",
     logoDark: "/images/arthas_dark.png",
     repo: "alibaba/arthas",
-    docsDir: "site-vuepress/docs",
+    docsDir: "site/docs",
     docsBranch: "master",
 
     locales: {
