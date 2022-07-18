@@ -17,7 +17,13 @@ SRC: https://github.com/xugaoyi/vuepress-theme-vdoing/blob/master/vdoing/compone
           v-for="(item, i) in headers"
           :key="i"
         >
-          <a :href="'#' + item.slug">{{ item.title }}</a>
+          <a
+            :href="'#' + item.slug"
+            v-if="item.title.replace(/[^\x00-\xff]/g, '01').length >= 27"
+            :title="item.title"
+            >{{ item.title }}</a
+          >
+          <a :href="'#' + item.slug" v-else>{{ item.title }}</a>
         </div>
       </div>
     </div>
