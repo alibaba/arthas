@@ -4,15 +4,15 @@
 不在本列表里的问题，请到 issue 里搜索。 [https://github.com/alibaba/arthas/issues](https://github.com/alibaba/arthas/issues)
 :::
 
-##### 日志文件在哪里？
+### 日志文件在哪里？
 
 日志文件路径： `~/logs/arthas/arthas.log`
 
-##### Arthas attach 之后对原进程性能有多大的影响
+### Arthas attach 之后对原进程性能有多大的影响
 
 [https://github.com/alibaba/arthas/issues/44](https://github.com/alibaba/arthas/issues/44)
 
-##### target process not responding or HotSpot VM not loaded
+### target process not responding or HotSpot VM not loaded
 
 com.sun.tools.attach.AttachNotSupportedException: Unable to open socket file: target process not responding or HotSpot VM not loaded
 
@@ -21,7 +21,7 @@ com.sun.tools.attach.AttachNotSupportedException: Unable to open socket file: ta
 3. 尝试按[quick-start](quick-start.md)里的方式 attach math-game。
 4. 更多情况参考： [https://github.com/alibaba/arthas/issues/347](https://github.com/alibaba/arthas/issues/347)
 
-##### trace/watch 等命令能否增强 jdk 里的类？
+### trace/watch 等命令能否增强 jdk 里的类？
 
 默认情况下会过滤掉`java.`开头的类和被`BootStrap ClassLoader`加载的类。可以通过参数开启。
 
@@ -35,7 +35,7 @@ options unsafe true
 通过 java.lang.instrument.Instrumentation#appendToBootstrapClassLoaderSearch append 到`Bootstrap ClassLoader`的 jar 包需要开启 unsafe。
 :::
 
-##### 怎么以`json`格式查看结果
+### 怎么以`json`格式查看结果
 
 ```bash
 options json-format true
@@ -43,16 +43,16 @@ options json-format true
 
 更多参考 [options](options.md)
 
-##### Arthas 能否跟踪 native 函数
+### Arthas 能否跟踪 native 函数
 
 不能。
 
-##### 能不能查看内存里某个变量的值
+### 能不能查看内存里某个变量的值
 
 1. 可以使用[`vmtool`](vmtool.md)命令。
 2. 可以用一些技巧，用[`tt`](tt.md)命令拦截到对象，或者从静态函数里取到对象。
 
-##### 方法同名过滤
+### 方法同名过滤
 
 同名方法过滤可以通过匹配表达式,可以使用[表达式核心变量](advice-class.md)中所有变量作为已知条件,可以通过判断参数个数`params.length ==1`, 参数类型`params[0] instanceof java.lang.Integer`、返回值类型 `returnObj instanceof java.util.List` 等等一种或者多种组合进行过滤。
 
@@ -64,13 +64,13 @@ options json-format true
 watch demo.MathGame primeFactors '{params,returnObj,throwExp}' 'params.length >0 && returnObj instanceof java.util.List' -v
 ```
 
-##### 怎么 watch、trace 构造函数 ？
+### 怎么 watch、trace 构造函数 ？
 
 ```bash
 watch demo.MathGame <init> '{params,returnObj,throwExp}' -v
 ```
 
-##### 怎样 watch、trace 内部类？
+### 怎样 watch、trace 内部类？
 
 在 JVM 规范里内部类的格式是`OuterClass$InnerClass`。
 
@@ -78,7 +78,7 @@ watch demo.MathGame <init> '{params,returnObj,throwExp}' -v
 watch OuterClass$InnerClass
 ```
 
-##### 输入中文/Unicode 字符
+### 输入中文/Unicode 字符
 
 把中文/Unicode 字符转为`\u`表示方法：
 
@@ -86,7 +86,7 @@ watch OuterClass$InnerClass
 ognl '@java.lang.System@out.println("Hello \u4e2d\u6587")'
 ```
 
-##### java.lang.ClassFormatError: null、skywalking arthas 兼容使用
+### java.lang.ClassFormatError: null、skywalking arthas 兼容使用
 
 当出现这个错误日志`java.lang.ClassFormatError: null`,通常情况下都是被其他字节码工具修改过与 arthas 修改字节码不兼容。
 
@@ -96,15 +96,15 @@ ognl '@java.lang.System@out.println("Hello \u4e2d\u6587")'
 
 参考： [https://github.com/alibaba/arthas/issues/2165](https://github.com/alibaba/arthas/issues/2165)
 
-##### Arthas 能不能离线使用
+### Arthas 能不能离线使用
 
 可以。下载全量包解压即可，参考: [下载](download.md)。
 
-##### Attach docker/k8s 里的 pid 为 1 的进程失败
+### Attach docker/k8s 里的 pid 为 1 的进程失败
 
 参考： [https://github.com/alibaba/arthas/issues/362#issuecomment-448185416](https://github.com/alibaba/arthas/issues/362#issuecomment-448185416)
 
-##### 为什么下载了新版本的 Arthas，连接的却是旧版本？
+### 为什么下载了新版本的 Arthas，连接的却是旧版本？
 
 比如启动的 `as.sh/arthas-boot.jar` 版本是 3.5._ 的，但是连接上之后，打印的 arthas 版本是 3.4._ 的。
 
