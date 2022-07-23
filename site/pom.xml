@@ -13,7 +13,6 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <yarn.registry.url>https://registry.npmmirror.com/</yarn.registry.url>
-        <!-- <yarn.download.url>https://npm.taobao.org/mirrors/yarn</yarn.download.url> -->
         <node.download.url>https://npmmirror.com/mirrors/node/</node.download.url>
         <node.version>v16.13.2</node.version>
         <yarn.version>v1.22.15</yarn.version>
@@ -24,6 +23,7 @@
 
         <!-- lock down plugins versions to avoid using Maven defaults (may be moved to parent pom) -->
         <plugins>
+
             <plugin>
                 <groupId>com.github.eirslett</groupId>
                 <artifactId>frontend-maven-plugin</artifactId>
@@ -64,20 +64,12 @@
                         </configuration>
                     </execution>
                     <execution>
-                        <id>npm install</id>
+                        <id>vuepress build</id>
                         <goals>
-                            <goal>npm</goal>
+                            <goal>yarn</goal>
                         </goals>
-
-                        <!-- optional: default phase is "generate-resources" -->
-                        <phase>generate-resources</phase>
-
                         <configuration>
-                            <!-- optional: The default argument is actually
-                            "install", so unless you need to run some other npm command,
-                            you can remove this whole <configuration> section.
-                            -->
-                            <arguments>run docs:build</arguments>
+                            <arguments>docs:build</arguments>
                         </configuration>
                     </execution>
                 </executions>
@@ -87,6 +79,7 @@
 
                     <!-- optional: where to download node from. Defaults to https://nodejs.org/dist/ -->
                     <nodeDownloadRoot>${node.download.url}</nodeDownloadRoot>
+                    <installDirectory>target</installDirectory>
                 </configuration>
             </plugin>
         </plugins>
