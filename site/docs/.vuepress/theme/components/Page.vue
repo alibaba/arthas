@@ -36,17 +36,21 @@ function showRightMenu() {
 </template>
 
 <style lang="scss" scoped>
-@media (min-width: 1279px) {
+@media (min-width: 1300px) {
   .page {
     .theme-default-content.right-menu-padding {
-      padding-right: 260px;
+      padding-right: 240px;
+      padding-left: 0px;
     }
 
     .page-meta.right-menu-padding {
-      padding-right: 260px;
+      padding-right: 240px;
+      padding-left: 0px;
     }
+
     .page-nav.right-menu-padding {
-      padding-right: 260px;
+      padding-right: 240px;
+      padding-left: 0px;
     }
   }
 }

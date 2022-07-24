@@ -76,7 +76,7 @@ $rightMenuWidth: 230px;
 .right-menu-wrapper {
   width: $rightMenuWidth;
   float: right;
-  margin-right: -($rightMenuWidth + 55px);
+  margin-right: -($rightMenuWidth + 20px);
 
   position: sticky;
   top: 0;
@@ -173,7 +173,7 @@ $rightMenuWidth: 230px;
   }
 }
 
-@media (max-width: 1279px) {
+@media (max-width: 1300px) {
   .theme-default-content .right-menu-wrapper {
     display: none;
   }
