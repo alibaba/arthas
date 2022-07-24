@@ -8,13 +8,13 @@ import NavHeader from "./components/NavHeader.vue";
 <template>
   <div class=" h-screen flex flex-col">
     <nav-header></nav-header>
-    <main class=" flex-auto">
+    <div class=" flex-auto">
       <div class="flex flex-row h-full">
         <nav-aside></nav-aside>
-        <router-view class=" flex-1 bg-blue-50">
+        <router-view class=" flex-auto">
         </router-view>
       </div>
-    </main>
+    </div>
   </div>
 </template>
 

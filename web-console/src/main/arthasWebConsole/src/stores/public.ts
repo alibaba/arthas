@@ -10,5 +10,4 @@ export const publicStore = defineStore('public', { // Public项目唯一id
             return state.userMsg
         },
     },
-    // other options...
 })

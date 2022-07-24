@@ -6,8 +6,12 @@ const routes: RouteRecordRaw[] = [
     component: () => import("@/views/Index.vue"),
   },
   {
-    path: '/about',
-    component: () => import("@/components/HelloWorld.vue")
-  }
+    path: '/console',
+    component: () => import("@/views/Console.vue")
+  },
+  {
+    path: '/terminal',
+    component: () => import("@/views/Terminal.vue")
+  },
 ]
 export default routes

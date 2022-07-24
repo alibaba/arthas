@@ -15,11 +15,8 @@ export default defineConfig({
       proxy: {
         // 使用 proxy 实例
         '/api': {
-          target: 'localhost:',
+          target: 'http://127.0.0.1:8563',
           changeOrigin: true,
-          // configure: (proxy, options) => {
-          //   // proxy 是 'http-proxy' 的实例
-          // }
         }
       }
     }

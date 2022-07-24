@@ -5,7 +5,22 @@ module.exports = {
     "./src/**/*.{vue,js,ts,jsx,tsx}",
   ],
   theme: {
-    extend: {},
+    extend: {
+      keyframes: {
+        // "animate-spin-rev": {
+        //   '0%': {
+        //     transform: 'rotate(0deg)'
+        //   },
+        //   '100%': {
+        //     transform: 'rotate(-360deg)'
+        //   }
+        // }
+      },
+      animation: {
+        'spin-rev-pause':'1s linear 0s infinite reverse both pause spin',
+        'spin-rev-running':'1s linear 0s infinite reverse both running spin'
+      }
+    }
   },
   plugins: [],
 }
