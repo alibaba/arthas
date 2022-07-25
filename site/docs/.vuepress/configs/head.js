@@ -10,7 +10,7 @@ module.exports = [
     {
       property: "og:image:alt",
       content:
-        "Alibaba Java Diagnostic Tool Arthas/Alibaba Java诊断利器Arthas - Fatpandac/arthas: Alibaba Java Diagnostic Tool Arthas/Alibaba Java诊断利器Arthas",
+        "Alibaba Java Diagnostic Tool Arthas/Alibaba Java诊断利器Arthas - alibaba/arthas: Alibaba Java Diagnostic Tool Arthas/Alibaba Java诊断利器Arthas",
     },
   ],
   ["meta", { property: "og:image", content: "/images/arthas_mate_image.png" }],
@@ -19,7 +19,7 @@ module.exports = [
     {
       property: "og:description",
       content:
-        "Alibaba Java Diagnostic Tool Arthas/Alibaba Java诊断利器Arthas - Fatpandac/arthas: Alibaba Java Diagnostic Tool Arthas/Alibaba Java诊断利器Arthas",
+        "Alibaba Java Diagnostic Tool Arthas/Alibaba Java诊断利器Arthas - alibaba/arthas: Alibaba Java Diagnostic Tool Arthas/Alibaba Java诊断利器Arthas",
     },
   ],
   ["meta", { property: "og:image:width", content: "1200" }],
@@ -33,7 +33,7 @@ module.exports = [
     {
       property: "twitter:image:alt",
       content:
-        "Alibaba Java Diagnostic Tool Arthas/Alibaba Java诊断利器Arthas - Fatpandac/arthas: Alibaba Java Diagnostic Tool Arthas/Alibaba Java诊断利器Arthas",
+        "Alibaba Java Diagnostic Tool Arthas/Alibaba Java诊断利器Arthas - alibaba/arthas: Alibaba Java Diagnostic Tool Arthas/Alibaba Java诊断利器Arthas",
     },
   ],
   [
