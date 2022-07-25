@@ -54,7 +54,7 @@ public class BuiltinCommandPack implements CommandResolver {
     }
 
     private void initCommands(List<String> disabledCommands) {
-        List<Class<? extends AnnotatedCommand>> commandClassList = new ArrayList<Class<? extends AnnotatedCommand>>(32);
+        List<Class<? extends AnnotatedCommand>> commandClassList = new ArrayList<Class<? extends AnnotatedCommand>>(33);
         commandClassList.add(HelpCommand.class);
         commandClassList.add(AuthCommand.class);
         commandClassList.add(KeymapCommand.class);

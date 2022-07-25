@@ -79,6 +79,7 @@ public class ResultViewResolver {
             registerView(TraceView.class);
             registerView(WatchView.class);
             registerView(VmToolView.class);
+            registerView(JFRView.class);
 
         } catch (Throwable e) {
             logger.error("register result view failed", e);
