@@ -81,6 +81,6 @@ const NavbarBrandLogo = () => {
 <style lang="scss" scoped>
 .navbar-version {
   line-height: var(--navbar-height);
-  color: var(--grey12);
+  color: var(--c-text-lighter);
 }
 </style>
