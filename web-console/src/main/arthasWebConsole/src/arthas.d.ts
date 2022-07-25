@@ -1,6 +1,24 @@
 
 type SessionAction = "join_session" | " init_session" | "close_session"
 
+type SessionReq = {
+  action: "init_session"
+} | {
+  action: "join_session" | "close_session",
+  "sessionId": string
+} | {
+  action: "pull_results",
+  "sessionId": string,
+  "consumerId": string
+} | {
+  action: "async_exec",
+  "command": string,
+  "sessionId": string
+} | {
+  action: "interrupt_job",
+  "sessionId": string
+}
+
 type ArthasReqBody = {
   "action": "exec" | "async_exec" | "interrupt_job" | "pull_results" | SessionAction,
   "requestId"?: string,
@@ -12,24 +30,35 @@ type ArthasReqBody = {
 
 type ResState = "SCHEDULED" | "SUCCEEDED" | "FAILED" | "REFUSED"
 
-type ResResultBase = {
-  "jobId": number,
-  "statusCode": number,
-  type: string
+type JobId<T extends object> = {
+  [k in keyof T]: T[k]
+  "jobId": number
 }
-
+type SessionId<T extends object>={
+  [k in keyof T]?: T[k]
+  sessionId: string
+}
 type StatusResult = {
-  "type": "status"
+  type: "status",
+  statusCode: 0
+} | {
+  type: "status",
+  statusCode: Exclude<number, 0>,
+  message: string
 }
 
 type InputResult = {
-  inputStatus: "ALLOW_INPUT" | "DISABLED" | "ALLOW_INTERRUPT"
+  inputStatus: "ALLOW_INPUT" | "DISABLED" | "ALLOW_INTERRUPT",
+  type: never
 }
 
 type CommandResult = {
   "type": "command",
   "state": ResState,
   "command": string
+} | {
+  type: "version",
+  version: string
 }
 
 type EnchanceResult = {
@@ -43,17 +72,35 @@ type EnchanceResult = {
   "type": "enhancer"
 }
 
-type ArthasResResult = (StatusResult | InputResult | CommandResult | EnchanceResult) & ResResultBase
+type ArthasResResult = JobId<StatusResult | InputResult | CommandResult | EnchanceResult>
 
-type ArthasRes = {
+type ResBody = JobId<{
+  "results": ArthasResResult[],
+  "timeExpired": boolean,
+  "command": string,
+  "jobStatus": "TERMINATED",
+}>
+type CommonRes = {
   "state": ResState,
   "sessionId": string,
-  "requestId": string,
-  "body": {
+  "requestId"?: string,
+  body: {
     "results": ArthasReqResult[],
     "timeExpired": boolean,
     "command": string,
-    "jobStatus": string,
+    "jobStatus": "TERMINATED",
     "jobId": number
   }
 }
+
+type SessionRes = {
+  "sessionId": string,
+  "consumerId": string,
+  "state": Exclude<ResState,"FAILED">
+}
+type FailRes = SessionId<{
+	message: string,
+	state: "FAILED"
+}>
+type ArthasRes = CommonRes | SessionRes | FailRes
+

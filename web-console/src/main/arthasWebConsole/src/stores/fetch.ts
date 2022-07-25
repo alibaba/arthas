@@ -1,5 +1,4 @@
 import { defineStore } from 'pinia'
-
 // 控制fetch的store
 export const fetchStore = defineStore('fetch', {
   state: () => ({

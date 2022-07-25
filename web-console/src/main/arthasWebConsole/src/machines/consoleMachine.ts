@@ -1,6 +1,6 @@
 import { createMachine, assign } from "xstate";
 import { fetchStore } from "@/stores/fetch";
-const store = fetchStore();
+// const store = fetchStore();
 
 interface CTX {
   inputVal: ArthasReqBody,
@@ -73,24 +73,25 @@ const machine =
           onDone: [
             {
               actions: ["transformRes", "renderRes"],
-              target: "idle",
+              target: "success",
             },
           ],
           onError: [
             {
               actions: ["returnErr"],
-              target: "idle",
+              target: "failure",
             },
           ],
         },
       },
-      // success: {
-      //   type: "final",
-
-      // },
-      // failure: {
-      //   type: "final",
-      // },
+      success: {
+        type: "final",
+        always:"idle"
+      },
+      failure: {
+        type: "final",
+        always:"idle"
+      },
     },
   }, {
     services: {
@@ -110,7 +111,7 @@ const machine =
         }
       }),
       getReq:assign({
-        request: (context, event)=>store.getRequest(context.inputVal)
+        request: (context, event)=>fetchStore().getRequest(context.inputVal)
       }),
       transformRes: assign({
         response: (context, event) => {
@@ -121,7 +122,12 @@ const machine =
       renderRes: assign({
         resArr: (context) => {
           console.log(context.resArr,context.response)
-          return context.resArr.concat(context.response!.body.results)
+          if (context.response !== undefined && Object.hasOwn(context.response, 'body')){
+            return context.resArr.concat((context.response as CommonRes).body.results)
+          }
+          // 错误格式不统一，有点难受
+          console.log(context.response)
+          return context.resArr
         },
       }),
       returnErr:
