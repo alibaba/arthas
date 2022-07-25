@@ -14,6 +14,10 @@ exports.localTheme = (options) => {
       ),
       "@theme/AutoLink.vue": path.resolve(__dirname, "components/AutoLink.vue"),
       "@theme/Page.vue": path.resolve(__dirname, "components/Page.vue"),
+      "@theme/NavbarBrand.vue": path.resolve(
+        __dirname,
+        "components/NavbarBrand.vue"
+      ),
     },
   };
 };

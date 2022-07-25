@@ -12,7 +12,7 @@
 import UserBoard from "./UserBoard.vue";
 
 import { toRaw } from "vue";
-import { usePageFrontmatter, usePageLang } from "@vuepress/client";
+import { usePageFrontmatter } from "@vuepress/client";
 
 const pageData = usePageFrontmatter();
 const imgs = toRaw(pageData.value.users) || [];
