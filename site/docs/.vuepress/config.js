@@ -1,5 +1,8 @@
 const { localTheme } = require("./theme/index");
 
+const {
+  activeHeaderLinksPlugin,
+} = require("@vuepress/plugin-active-header-links");
 const { copyCodePlugin } = require("vuepress-plugin-copy-code2");
 const { redirectPlugin } = require("vuepress-plugin-redirect");
 const { searchPlugin } = require("@vuepress/plugin-search");
@@ -35,6 +38,7 @@ module.exports = {
         lastUpdated: "上次更新",
         contributorsText: "贡献者",
         backToHome: "回到首页",
+        rightMenuText: "目录",
         warning: "注意",
         tip: "提示",
         danger: "警告",
@@ -104,6 +108,10 @@ module.exports = {
 
         return redirects;
       },
+    }),
+    activeHeaderLinksPlugin({
+      headerLinkSelector: "div.right-menu-item > a",
+      delay: 100,
     }),
   ],
 };

@@ -4,15 +4,15 @@
 For questions that are not in this list, please search in issues. [https://github.com/alibaba/arthas/issues](https://github.com/alibaba/arthas/issues)
 :::
 
-##### Where is the log file?
+### Where is the log file?
 
 Log file path: `~/logs/arthas/arthas.log`
 
-##### How much impact does Arthas attach have on the performance of the original process?
+### How much impact does Arthas attach have on the performance of the original process?
 
 [https://github.com/alibaba/arthas/issues/44](https://github.com/alibaba/arthas/issues/44)
 
-##### target process not responding or HotSpot VM not loaded
+### target process not responding or HotSpot VM not loaded
 
 com.sun.tools.attach.AttachNotSupportedException: Unable to open socket file: target process not responding or HotSpot VM not loaded
 
@@ -21,7 +21,7 @@ com.sun.tools.attach.AttachNotSupportedException: Unable to open socket file: ta
 3. Try to attach math-game in [quick-start](quick-start.md).
 4. For more information: [https://github.com/alibaba/arthas/issues/347](https://github.com/alibaba/arthas/issues/347)
 
-##### Can commands such as trace/watch enhance the classes in jdk?
+### Can commands such as trace/watch enhance the classes in jdk?
 
 By default, classes beginning with `java.` or the classes loaded by the `Bootstrap ClassLoader` are filtered out, but they can be turned on:
 
@@ -35,7 +35,7 @@ See more at [options](options.md)
 To support the jars appended by java.lang.instrument.Instrumentation#appendToBootstrapClassLoaderSearch need to enable unsafe.
 :::
 
-##### How to view the result in `json` format
+### How to view the result in `json` format
 
 ```bash
 options json-format true
@@ -43,16 +43,16 @@ options json-format true
 
 See more at [options](options.md)
 
-##### Can arthas trace native methods
+### Can arthas trace native methods
 
 No.
 
-##### Can arthas view the value of a variable in memory?
+### Can arthas view the value of a variable in memory?
 
 1. You can use [`vmtool`](vmtool.md) command.
 2. You can use some tricks to intercept the object with the [`tt`](tt.md) command, or fetch it from a static method.
 
-##### How to filter method with the same name?
+### How to filter method with the same name?
 
 You can used all variables in [fundamental fields in expressions](advice-class.md) for the condition express to filter method with the same name, you can use the number of parameters `params.length ==1`,parameter type `params[0] instanceof java.lang.Integer`,return value type `returnObj instanceof java.util.List` and so on in one or more combinations as condition express.
 
@@ -64,13 +64,13 @@ example [math-game](quick-start.md)
 watch demo.MathGame primeFactors '{params,returnObj,throwExp}' 'params.length >0 && returnObj instanceof java.util.List' -v
 ```
 
-##### How to watch or trace constructor?
+### How to watch or trace constructor?
 
 ```bash
 watch demo.MathGame <init> '{params,returnObj,throwExp}' -v
 ```
 
-##### How to watch or trace inner classes?
+### How to watch or trace inner classes?
 
 In the JVM specification the name of inner classes is `OuterClass$InnerClass`.
 
@@ -78,7 +78,7 @@ In the JVM specification the name of inner classes is `OuterClass$InnerClass`.
 watch OuterClass$InnerClass
 ```
 
-##### Enter Unicode characters
+### Enter Unicode characters
 
 Convert Unicode characters to `\u` representation:
 
@@ -86,7 +86,7 @@ Convert Unicode characters to `\u` representation:
 ognl '@java.lang.System@out.println("Hello \u4e2d\u6587")'
 ```
 
-##### java.lang.ClassFormatError: null, skywalking arthas compatible use
+### java.lang.ClassFormatError: null, skywalking arthas compatible use
 
 When error log appear `java.lang.ClassFormatError: null`, it is usually modified by other bytecode tools that are not compatible with arthas modified bytecode.
 
@@ -96,15 +96,15 @@ For example: use skywalking V8.1.0 below [cannot trace, watch classes enhanced b
 
 Reference: [https://github.com/alibaba/arthas/issues/2165](https://github.com/alibaba/arthas/issues/2165)
 
-##### Can I use arthas offline?
+### Can I use arthas offline?
 
 Yes. Just download the full size package and unzip it, refer to: [Download](download.md).
 
-##### Attach the process with pid 1 in docker/k8s failed
+### Attach the process with pid 1 in docker/k8s failed
 
 Reference: [https://github.com/alibaba/arthas/issues/362#issuecomment-448185416](https://github.com/alibaba/arthas/issues/362#issuecomment-448185416)
 
-##### Why is the new version of Arthas downloaded, but the old version is connected?
+### Why is the new version of Arthas downloaded, but the old version is connected?
 
 For example, the started version of `as.sh/arthas-boot.jar` is 3.5._, but after connecting, the printed arthas version is 3.4._.
 

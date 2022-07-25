@@ -32,3 +32,7 @@ Arthas is built to solve these issues. A developer can troubleshoot production i
 - Supports Linux/Mac/Windows
 
 **If you are using Arthas, please let us know. Your feedback is very important to us: [View](https://github.com/alibaba/arthas/issues/111)**
+
+### Contributors
+
+[![](https://opencollective.com/arthas/contributors.svg?width=890&button=false)](https://github.com/alibaba/arthas/graphs/contributors)

@@ -46,7 +46,7 @@ module.exports = [
     link: "/doc/download.md",
   },
   {
-    text: "社区",
-    link: "https://github.com/alibaba/arthas/issues",
+    text: "命令列表",
+    link: "/doc/commands.md",
   },
 ];

@@ -1,6 +1,6 @@
 # 联系我们
 
-## 招聘
+### 招聘
 
 - [期待你的加入](https://mp.weixin.qq.com/s/XQv8GnqGT3pzceVwzeiy-A)
 
