@@ -7,7 +7,7 @@ export const fetchStore = defineStore('fetch', {
     requestId: '',
   }),
   getters: {
-    getRequest: (state) => (option: ArthasReqBody) => {
+    getRequest: (state) => (option: ArthasReq) => {
       const req = new Request("/api", {
         method: "POST",
         headers: { "Content-Type": "application/json" },

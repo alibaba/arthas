@@ -1,94 +1,16 @@
 <script setup lang="ts">
 import { useMachine } from '@xstate/vue';
-import { onBeforeMount, ref, watchEffect } from 'vue';
-import { assign, createMachine, DoneInvokeEvent } from 'xstate';
-import { fetchStore } from '../stores/fetch'
-import { RefreshIcon } from '@heroicons/vue/outline';
+import { onBeforeMount, reactive, Ref, ref, watchEffect } from 'vue';
+import { RefreshIcon, LogoutIcon } from '@heroicons/vue/outline';
 import machine from "@/machines/consoleMachine"
-import { stat } from 'fs';
 
-// const store = fetchStore()
-// interface CTX{
-//   version: string,
-//   request: Request,
-//   response: ArthasRes,
-//   err: string,
-// }
-// const context = {
-//   version: 'N/A',
-//   request: {},
-//   response: {},
-//   err: '',
-// } as CTX
-
-// // 声明状态机
-
-// const machine = createMachine<CTX>({
-//   id: 'header',
-//   initial: 'idle',
-//   context,
-//   states: {
-//     idle: {
-//       on: {
-//         FETCH: {
-//           target: 'loading',
-//           actions: assign({
-//             request: () => (store.getRequest({
-//               "action": "exec",
-//               "command": "version",
-//             }))
-//           }
-//           )
-//         } as any
-//       }
-//     },
-//     loading: {
-//       invoke: {
-//         id: 'getData',
-//         src: context => fetch(context.request).then(res => res.json(), err => Promise.reject(err)),
-//         onDone: {
-//           target: 'success',
-//           actions: assign({
-//             response: (context, event) => {
-//               console.log(event.data, context.request)
-//               return event.data
-//             }
-//           })
-//         },
-//         onError: {
-//           target: 'failure',
-//           actions: assign({
-//             err: (context, event) => {
-//               console.log(event.data)
-//               return event.data
-//             }
-//           })
-//         }
-//       },
-//     },
-//     success: {
-//       entry: [(context, event) => {
-//         console.log(state.value.context)
-//         context.version = context.response.body.results[0].version as string
-//       }],
-//       type: 'final'
-//     },
-//     failure: {
-//       entry: [(context, event) => {
-//         console.log(context.err)
-//         context.version = 'N/A'
-//       }],
-//       type: 'final'
-//     }
-//   }
-// })
-// let state: any, send
 const { state, send } = useMachine(machine)
 const version = ref("N/A")
-const vCmd = JSON.stringify({
+const vCmd:ArthasReq = {
   "action": "exec",
   "command": "version",
-})
+}
+const restBtnclass:Ref<'animate-spin-rev-pause'|'animate-spin-rev-running'> = ref('animate-spin-rev-pause')
 watchEffect(() => {
   if (state.value.context.response) {
     // 直接遍历以后会有性能问题
@@ -97,8 +19,11 @@ watchEffect(() => {
     })
     // if(state.value.context.response.body?.command === "version") version.value = state.value.context.response.body.command
   }
+  if (state.value.matches("loading")) restBtnclass.value = "animate-spin-rev-running"
+  else restBtnclass.value = "animate-spin-rev-pause"
 })
 onBeforeMount(() => {
+  send({type:'INIT'})
 
   send({
     type: "SUBMIT",
@@ -110,6 +35,16 @@ const reset = () => send({
   type: "SUBMIT",
   value: vCmd
 })
+
+// 关闭session
+
+const logout = ()=> send({
+  type: "SUBMIT",
+  value: {
+    action:"close_session",
+    sessionId:undefined
+  }
+})
 </script>
 
 <template>
@@ -119,11 +54,16 @@ const reset = () => send({
     </div>
     <div class="flex items-center h-20">
       <button class=" rounded-full bg-gray-200 h-12 w-12 flex justify-center items-center mr-4 " @click="reset">
-        <refresh-icon class=" text-gray-500 h-3/4 w-3/4 animate-spin-rev-pause" />
+        <refresh-icon class=" text-gray-500 h-3/4 w-3/4" :class="restBtnclass" />
       </button>
       <div class=" mr-4 bg-gray-200 h-12 w-32 rounded-full flex justify-center items-center text-gray-500 font-bold">
         version:{{ version }}
       </div>
+      <button class="h-12 w-12 grid place-items-center bg-red-600 shadow-red-500 rounded-full mr-2">
+        <LogoutIcon
+        class="h-1/2 w-1/2 text-white"
+        />
+      </button>
     </div>
   </nav>
 </template>

@@ -17,8 +17,8 @@ module.exports = {
         // }
       },
       animation: {
-        'spin-rev-pause':'1s linear 0s infinite reverse both pause spin',
-        'spin-rev-running':'1s linear 0s infinite reverse both running spin'
+        'spin-rev-pause':'0.3s linear 0s infinite reverse both pause spin',
+        'spin-rev-running':'0.3s linear 0s infinite reverse both running spin'
       }
     }
   },

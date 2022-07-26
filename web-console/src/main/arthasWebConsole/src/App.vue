@@ -2,6 +2,7 @@
 import "./components/NavAside.vue"
 import NavAside from "./components/NavAside.vue";
 import NavHeader from "./components/NavHeader.vue";
+import ErrDialog from "./components/ErrDialog.vue";
 
 </script>
 
@@ -15,7 +16,9 @@ import NavHeader from "./components/NavHeader.vue";
         </router-view>
       </div>
     </div>
+    <err-dialog/>
   </div>
+  
 </template>
 
 <style>

@@ -1,43 +1,38 @@
-
-type SessionAction = "join_session" | " init_session" | "close_session"
+type SessionAction = "join_session" | " init_session" | "close_session"|"interrupt_job"
 
 type SessionReq = {
   action: "init_session"
-} | {
+} | SessionId<{
   action: "join_session" | "close_session",
-  "sessionId": string
 } | {
   action: "pull_results",
-  "sessionId": string,
   "consumerId": string
 } | {
   action: "async_exec",
-  "command": string,
-  "sessionId": string
+  "command": string
 } | {
-  action: "interrupt_job",
-  "sessionId": string
-}
+  action: "interrupt_job"
+}>
 
-type ArthasReqBody = {
-  "action": "exec" | "async_exec" | "interrupt_job" | "pull_results" | SessionAction,
+type CommandReq = {
+  "action": "exec" | "async_exec" | "interrupt_job" | "pull_results",
   "requestId"?: string,
   "sessionId"?: string,
   "consumerId"?: string,
   "command": string,
   "execTimeout"?: number
 }
+type ArthasReq = SessionReq | CommandReq
+  type ResState = "SCHEDULED" | "SUCCEEDED" | "FAILED" | "REFUSED"
 
-type ResState = "SCHEDULED" | "SUCCEEDED" | "FAILED" | "REFUSED"
-
-type JobId<T extends object> = {
-  [k in keyof T]: T[k]
-  "jobId": number
+type MergeObj<T extends Record<string, any>, U extends Record<string, any>> = {
+  [k in (keyof T | keyof U)]: k extends keyof T
+  ? T[k]
+  : U[k]
 }
-type SessionId<T extends object>={
-  [k in keyof T]?: T[k]
-  sessionId: string
-}
+type JobId<T extends Record<string, any>> = T extends T ? MergeObj<T, Record<'jobId', number>> : never
+type SessionId<T extends Record<string, any>> = T extends T ? MergeObj<T, {sessionId?: string}> : never
+type unionExclude<T, U> = T extends T ? Exclude<T,U>:T
 type StatusResult = {
   type: "status",
   statusCode: 0
@@ -53,26 +48,25 @@ type InputResult = {
 }
 
 type CommandResult = {
-  "type": "command",
-  "state": ResState,
-  "command": string
+  type: "command",
+  state: ResState,
+  command: string
 } | {
   type: "version",
   version: string
 }
 
 type EnchanceResult = {
-  "success": boolean,
-  "effect": {
-    "listenerId": number,
-    "cost": number,
-    "classCount": number,
-    "methodCount": number
-  },
-  "type": "enhancer"
+  success: boolean,
+  effect: Record<"listenerId" | "cost" | "classCount" | "methodCount", number>,
+  type: "enhancer"
 }
 
-type ArthasResResult = JobId<StatusResult | InputResult | CommandResult | EnchanceResult>
+type ArthasResResult =
+  JobId<StatusResult
+    | InputResult
+    | CommandResult
+    | EnchanceResult>
 
 type ResBody = JobId<{
   "results": ArthasResResult[],
@@ -96,11 +90,11 @@ type CommonRes = {
 type SessionRes = {
   "sessionId": string,
   "consumerId": string,
-  "state": Exclude<ResState,"FAILED">
+  "state": Exclude<ResState, "FAILED">
 }
 type FailRes = SessionId<{
-	message: string,
-	state: "FAILED"
+  message: string,
+  state: "FAILED"
 }>
 type ArthasRes = CommonRes | SessionRes | FailRes
 

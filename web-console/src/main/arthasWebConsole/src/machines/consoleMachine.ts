@@ -1,18 +1,22 @@
 import { createMachine, assign } from "xstate";
 import { fetchStore } from "@/stores/fetch";
+import { publicStore } from "@/stores/public";
+import { Pinia } from "pinia";
 // const store = fetchStore();
 
 interface CTX {
-  inputVal: ArthasReqBody,
+  inputVal: unionExclude<ArthasReq,'sessionId'>,
   request?: Request,
   response?: ArthasRes,
   resArr: ArthasResResult[],
-  err: string
+  err: string,
+  publicStore:any,
+  fetchStore: any
 }
 type ET =
   | {
     type: "SUBMIT",
-    value: string
+    value: ArthasReq
   }
   | {
     type: "error.platform",
@@ -23,8 +27,7 @@ type ET =
     data: ArthasRes
   }
   | {
-    type: "INIT",
-    context:CTX
+    type: "INIT"
   }
 
 
@@ -35,6 +38,8 @@ const machine =
       inputVal: { action: "exec", command: "version" },
       request: undefined,
       response: undefined,
+      publicStore: undefined,
+      fetchStore: undefined,
       resArr: [],
       err: "",
     },
@@ -50,21 +55,30 @@ const machine =
     states: {
       idle: {
         on: {
-          SUBMIT: [
-            {
-              actions: ["getReq","transformInput"],
-              target: "loading",
-              cond: "inputValid"
-            },
-            {
-              target: 'idle'
-            }
-          ],
+          // SUBMIT: [
+          //   {
+          //     actions: ["storageReq","getReq"],
+          //     target: "loading"
+          //   }
+          // ],
           INIT: {
-            target: "idle",
-            actions:"initContext"
+            target: "ready",
+            actions:assign<CTX,ET>({
+              publicStore: () => publicStore(),
+              fetchStore: () => fetchStore()
+            }) as any
           }
         },
+      },
+      ready: {
+        on:{
+          SUBMIT: [
+            {
+              actions: ["storageReq","getReq"],
+              target: "loading"
+            }
+          ],
+        }
       },
       loading: {
         invoke: {
@@ -72,25 +86,29 @@ const machine =
           src: "requestData",
           onDone: [
             {
+              cond: 'cmdSucceeded',
               actions: ["transformRes", "renderRes"],
-              target: "success",
-            },
+              target: "ready",
+            },{
+              actions: "returnErr",
+              target: "ready"
+            }
           ],
           onError: [
             {
               actions: ["returnErr"],
-              target: "failure",
+              target: "ready",
             },
           ],
         },
       },
       success: {
         type: "final",
-        always:"idle"
+        always:"ready"
       },
       failure: {
         type: "final",
-        always:"idle"
+        always:"ready"
       },
     },
   }, {
@@ -98,20 +116,28 @@ const machine =
       requestData: context => fetch(context.request as Request).then(res => res.json(), err => Promise.reject(err))
     },
     actions: {
-      initContext: assign({
-        request: (context,event)=>{
-          if (event.type !== "INIT") return undefined
-          return event.context.request
-        }
-      }),
-      transformInput: assign({
-        inputVal: (context, event) => {
-          if (event.type !== "SUBMIT") return ''
-          return JSON.parse(event.value)
+      // initStore: assign({
+      //   // request: (context,event)=>{
+      //   //   if (event.type !== "INIT") return undefined
+      //   //   return event.context.request
+      //   // },
+      //   publicStore: () => publicStore(),
+      //   fetchStore: () => fetchStore()
+      // }),
+      // transformInput: assign({
+      //   inputVal: (context, event) => {
+      //     if (event.type !== "SUBMIT") return ''
+      //     return JSON.parse(event.value)
+      //   }
+      // }),
+      storageReq:assign({
+        inputVal:(context,event)=>{
+          if (event.type !== "SUBMIT") return {} as ArthasReq
+          return event.value
         }
       }),
       getReq:assign({
-        request: (context, event)=>fetchStore().getRequest(context.inputVal)
+        request: (context, event)=>context.fetchStore.getRequest(context.inputVal)
       }),
       transformRes: assign({
         response: (context, event) => {
@@ -133,26 +159,35 @@ const machine =
       returnErr:
         assign({
           err: (context, event) => {
-            if (event.type !== "error.platform") return ''
+            if (event.type !== "error.platform" && event.type !== "done.invoke.getdata") return ''
+            context.publicStore.$patch({isErr:true, ErrMessage:event.data})
+            console.log(event.data,context.publicStore)
             return event.data
           }
         })
 
     },
     guards: {
-      inputValid: (context, event) => {
-        console.log(context, event)
-        if (event.type === 'SUBMIT') {
-          try {
-            JSON.parse(event.value)
-            return true
-          } catch (err) {
-            return false
-          }
-        } else {
-          return false
-        }
+    //   inputValid: (context, event) => {
+    //     console.log(context, event)
+    //     if (event.type === 'SUBMIT') {
+    //       try {
+    //         JSON.parse(event.value)
+    //         return true
+    //       } catch (err) {
+    //         return false
+    //       }
+    //     } else {
+    //       return false
+    //     }
 
+    //   }
+      // 判断命令是否有问题
+      cmdSucceeded: (context, event)=>{
+        if (event.type !== "done.invoke.getdata") return false
+        if (event.data.state === "SUCCEEDED") return true
+
+        return false
       }
     }
   });
