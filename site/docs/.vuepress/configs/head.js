@@ -36,6 +36,29 @@ module.exports = [
         "Alibaba Java Diagnostic Tool Arthas/Alibaba Java诊断利器Arthas - alibaba/arthas: Alibaba Java Diagnostic Tool Arthas/Alibaba Java诊断利器Arthas",
     },
   ],
+  // QQ meta
+  [
+    "meta",
+    {
+      itemprop: "name",
+      content: "Arthas",
+    },
+  ],
+  [
+    "meta",
+    {
+      itemprop: "image",
+      content: "/images/arthas_mate_image.png",
+    },
+  ],
+  [
+    "meta",
+    {
+      itemprop: "description",
+      content:
+        "Alibaba Java Diagnostic Tool Arthas/Alibaba Java诊断利器Arthas - alibaba/arthas: Alibaba Java Diagnostic Tool Arthas/Alibaba Java诊断利器Arthas",
+    },
+  ],
   [
     "script",
     {},
