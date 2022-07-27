@@ -13,7 +13,15 @@ import java.io.InputStreamReader;
 import java.lang.reflect.Field;
 
 @Name("jfr")
-@Summary("Java Flight Recorder")
+@Summary("Java Flight Command")
+@Description(Constants.EXAMPLE +
+        "  jfr JFR.start [-n <value>] [-s <value>][-c <value>] [-df <value>] " +
+        "[--delay <value>] [--discard <value>] [--dumponexit <value>] [--duration <value>] " +
+        "[-f <value>] [-h] [--maxage <value>] [--maxsize <value>] \n" +
+        "  jfr JFR.check [-n <value>] [-r <value>] [-v <value>]\n" +
+        "  jfr JFR.stop [-n <value>] [-r <value>] [--discard <value>] [-f <value>] [-c <value>]\n" +
+        "  jfr JFR.dump [-n <value>] [-r <value>] [-f <value>] [-c <value>]\n" +
+        Constants.WIKI + Constants.WIKI_HOME + "jfr")
 public class JFRCommand extends AnnotatedCommand {
 
     private String cmd;
@@ -173,7 +181,27 @@ public class JFRCommand extends AnnotatedCommand {
 
     @Override
     public void process(CommandProcess process) {
-        System.out.println("hello jfr");
+        JFRModel result = new JFRModel();
+        String resultCmd = "jcmd " +  PidUtils.currentPid() + " " + getCmd();
+        Field[] fields = this.getClass().getDeclaredFields();
+        for (Field field : fields) {
+            field.setAccessible(true);
+            try {
+                if (field.get(this) != null && !field.getName().equals("cmd") )
+                    resultCmd += " " +  field.getName().toLowerCase() + "=" + field.get(this);
+            } catch (IllegalAccessException e) {
+                e.printStackTrace();
+            }
+        }
+
+        try {
+            Process p1 = Runtime.getRuntime().exec(resultCmd);
+            result.setJfrOutput(printOutput(p1));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        process.appendResult(result);
+        process.end();
     }
 
     private String printOutput(Process proc) throws IOException {
