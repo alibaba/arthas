@@ -88,7 +88,7 @@
                     <nodeDownloadRoot>${node.download.url}</nodeDownloadRoot>
                     <!-- optional: where to download yarn from. Defaults to https://github.com/yarnpkg/yarn/releases/download/ -->
                     <!--                        <yarnDownloadRoot>${yarn.registry.url}</yarnDownloadRoot>-->
-                    <workingDirectory>src/main/arthasWebConsole</workingDirectory>
+                    <workingDirectory>arthasWebConsole</workingDirectory>
 
                     <installDirectory>target</installDirectory>
                 </configuration>
@@ -107,7 +107,7 @@
                         <configuration>
                             <resources>
                                 <resource>
-                                    <directory>src/main/arthasWebConsole/dist</directory>
+                                    <directory>arthasWebConsole/dist</directory>
                                 </resource>
                             </resources>
                             <outputDirectory>${project.build.directory}/static</outputDirectory>
