@@ -9,6 +9,7 @@ import {
   TransitionChild,
   TransitionRoot
 } from '@headlessui/vue'
+import { ExclamationCircleIcon } from '@heroicons/vue/outline';
 import { watch } from 'fs';
 const store = publicStore()
 
@@ -34,15 +35,17 @@ watchEffect(() => {
 
           <DialogPanel
             class=" w-1/3 h-1/2 bg-white p-10 rounded-xl shadow-xl flex flex-col justify-between items-center min-w-max">
-            <DialogTitle as="h2">出错!</DialogTitle>
-            <DialogDescription as="section" class="flex-auto self-stretch bg-slate-50 my-10 rounded p-2 break-all max-w-4xl">
-                reason: 
-                {{ store.ErrMessage }}
+            <DialogTitle>
+              <ExclamationCircleIcon class="w-12 h-12 text-red-500" />
+            </DialogTitle>
+            <DialogDescription as="section"
+              class="flex-auto self-stretch bg-slate-50 my-10 rounded p-2 break-all max-w-4xl">
+              reason:
+              {{ store.ErrMessage }}
             </DialogDescription>
 
-            <button @click="setIsOpen(false)" 
-              class="border bg-gray-200 w-40 h-10 rounded-full hover:bg-gray-500"
-            >了解</button>
+            <button @click="setIsOpen(false)"
+              class="border bg-gray-200 w-40 h-10 rounded-full hover:bg-gray-500 transition">了解</button>
           </DialogPanel>
         </TransitionChild>
       </div>

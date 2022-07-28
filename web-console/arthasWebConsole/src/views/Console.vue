@@ -1,17 +1,15 @@
 <script setup lang="ts">
 
 import { ref } from 'vue';
-import { assign, createMachine, DoneInvokeEvent } from 'xstate';
 import { useMachine } from '@xstate/vue';
 import machine from '@/machines/consoleMachine';
-import { json } from 'stream/consumers';
-import { actionTypes } from 'xstate/lib/actions';
 import { publicStore } from '@/stores/public';
 const store = publicStore()
 
 const val = ref(JSON.stringify({
-  action: "exec",
-  command: "version",
+  // action: "exec",
+  // command: "version",
+  action:"init_session"
 }));
 // const submit = () => {
 //   const req = store.getRequest(JSON.parse(val.value))
@@ -32,7 +30,6 @@ const transformInput = (val: string):(object|typeof notJson) => {
 const submitCommand = ()=>{
   const input = transformInput(val.value)
   if (input === notJson) {
-    console.log("it's not json")
     //todo
     store.isErr = true
     store.$patch({
@@ -60,8 +57,10 @@ const submitCommand = ()=>{
       </button>
     </div>
     <article class="flex-1 bg-white overflow-auto max-h-[80vh]">
-      <section v-for="(v, i) in state.context.resArr" :key="v.jobId"
-        class="w-full  rounded-sm mb-2 p-2 bg-green-200 box-border break-all">
+      <section v-for="(v, i) in state.context.resArr" :key="i"
+        class="w-full  rounded-sm mb-2 p-2 bg-green-200 box-border break-all"
+        :class="{ 'bg-blue-200': v&&!Object.hasOwn(v, 'jobId')}"
+        >
         {{ JSON.stringify(v) }}
       </section>
     </article>

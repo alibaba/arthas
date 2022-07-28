@@ -12,10 +12,11 @@ const vCmd:ArthasReq = {
 }
 const restBtnclass:Ref<'animate-spin-rev-pause'|'animate-spin-rev-running'> = ref('animate-spin-rev-pause')
 watchEffect(() => {
+  console.log(state.value.context)
   if (state.value.context.response) {
     // 直接遍历以后会有性能问题
     state.value.context.resArr.forEach(res => {
-      if (res.type == "version") version.value = res.version
+      if ('type' in res && res.type == "version") version.value = res.version
     })
     // if(state.value.context.response.body?.command === "version") version.value = state.value.context.response.body.command
   }

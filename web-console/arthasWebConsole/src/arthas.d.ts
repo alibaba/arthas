@@ -1,4 +1,15 @@
-type SessionAction = "join_session" | " init_session" | "close_session"|"interrupt_job"
+type SessionAction = "join_session" | " init_session" | "close_session" | "interrupt_job"
+type ResState = "SCHEDULED" | "SUCCEEDED" | "FAILED" | "REFUSED"
+
+type MergeObj<T extends Record<string, any>, U extends Record<string, any>> = T extends T ?{
+  [k in (keyof T | keyof U)]: k extends keyof T
+  ? T[k]
+  : U[k]
+}:never
+type JobId<T extends Record<string, any>> = T extends T ? MergeObj<T, Record<'jobId', number>> : never
+type SessionId<T extends Record<string, any>> = T extends T ? MergeObj<T, { sessionId?: string }> : never
+type Command<T extends Record<string, any>> = T extends T ? MergeObj<T, { command: string }> : never
+type unionExclude<T, U> = T extends T ? Exclude<T, U> : T
 
 type SessionReq = {
   action: "init_session"
@@ -14,25 +25,18 @@ type SessionReq = {
   action: "interrupt_job"
 }>
 
-type CommandReq = {
+type CommandReq = Command<{
   "action": "exec" | "async_exec" | "interrupt_job" | "pull_results",
   "requestId"?: string,
   "sessionId"?: string,
   "consumerId"?: string,
   "command": string,
   "execTimeout"?: number
-}
+}>
 type ArthasReq = SessionReq | CommandReq
-  type ResState = "SCHEDULED" | "SUCCEEDED" | "FAILED" | "REFUSED"
 
-type MergeObj<T extends Record<string, any>, U extends Record<string, any>> = {
-  [k in (keyof T | keyof U)]: k extends keyof T
-  ? T[k]
-  : U[k]
-}
-type JobId<T extends Record<string, any>> = T extends T ? MergeObj<T, Record<'jobId', number>> : never
-type SessionId<T extends Record<string, any>> = T extends T ? MergeObj<T, {sessionId?: string}> : never
-type unionExclude<T, U> = T extends T ? Exclude<T,U>:T
+
+
 type StatusResult = {
   type: "status",
   statusCode: 0
@@ -68,23 +72,26 @@ type ArthasResResult =
     | CommandResult
     | EnchanceResult>
 
-type ResBody = JobId<{
+type ResBody = Command<JobId<{
   "results": ArthasResResult[],
   "timeExpired": boolean,
-  "command": string,
-  "jobStatus": "TERMINATED",
-}>
+  "jobStatus": "TERMINATED" | "READY",
+}>>
+
 type CommonRes = {
   "state": ResState,
   "sessionId": string,
   "requestId"?: string,
-  body: {
-    "results": ArthasReqResult[],
-    "timeExpired": boolean,
-    "command": string,
-    "jobStatus": "TERMINATED",
-    "jobId": number
-  }
+  body: ResBody
+}
+
+type AsyncRes = {
+  state: ResState,
+  sessionId: string,
+  requestId?:string,
+  body: Command<JobId<{
+    jobStatus: "READY"|"TERMINATED"
+  }>>
 }
 
 type SessionRes = {
@@ -92,9 +99,10 @@ type SessionRes = {
   "consumerId": string,
   "state": Exclude<ResState, "FAILED">
 }
+
 type FailRes = SessionId<{
   message: string,
-  state: "FAILED"
+  state: "FAILED"|"REFUSED"
 }>
-type ArthasRes = CommonRes | SessionRes | FailRes
 
+type ArthasRes = CommonRes | SessionRes | FailRes | AsyncRes
