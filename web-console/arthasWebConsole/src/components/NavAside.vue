@@ -13,11 +13,11 @@ const tabs = ref([
   //   url: '/',
   //   icon: "PuzzleIcon"
   // },
-  // {
-  //   name: '项目配置',
-  //   url: '/',
-  //   icon: "PuzzleIcon"
-  // },
+  {
+    name: '项目配置',
+    url: '/config',
+    icon: PuzzleIcon
+  },
   // {
   //   name: '日志',
   //   url: '/',

@@ -3,9 +3,10 @@ import { fetchStore } from "@/stores/fetch";
 import { publicStore } from "@/stores/public";
 
 interface CTX {
+  inputValue?: ArthasReq,
   request?: Request,
   response?: ArthasRes,
-  resArr: (ArthasResResult | SessionRes|AsyncRes)[],
+  resArr: (ArthasResResult | SessionRes | AsyncRes)[],
   err: string,
   // 暂时先anyscript
   publicStore?: any,
@@ -40,6 +41,7 @@ const machine =
   /** @xstate-layout N4IgpgJg5mDOIC5QGMD2A7WqA2YB0AlhLgMQDKAqgEICyAkgCqKgAOqsBALgRsyAB6IAjAHYALHiEBmAKxiADADYATIoAcytaLEAaEAE9hQgJx5FQtWMUzjU+cvlq1AX2d60mHPmyoAhhAJ0KBIIDHxAgDdUAGt8DyxcPB9-QKgESNRkX24MAG15AF0+Ng4c9D5BBBl5ITNZMREZRUVjeWMtPUMEIXs8Y0UxLRF5KUtBmVd3DATvPwCgkjAAJyXUJbwWbGyAMzWAWzx4ryS51PT0KKyy-KKkEBKuHnK7yuraxXrG5tb2oU7EZSAvBOZrKERCGzKQbGESuNwgdCoCBwPhHRJEXDFdiPXgvRBiZT-bpSKSSeT2KRfKHGMQTeFo2YpIJY0pPCoAyx4OwNCEyERqeQKCFEnoiMzU8RiGFyRpSSYgBl4WAAV2QyDg8DuDzK7IQ6hkeChgLUUmUFkBLSJrT64KkihEgKU9rUsPp02O218BGwyqWYBZOOeoEq+sNBM0pvNqmMRLN8mBtlEIikYiEVhNrqmnkxWuxOrx3TUIrUeHJZfLFddriAA */
   createMachine({
     context: {
+      inputValue: undefined,
       request: undefined,
       response: undefined,
       publicStore: undefined,
@@ -146,12 +148,19 @@ const machine =
           fetchStore: fetchStore()
         }
       }),
-      getReq: assign({
-        request: (context, event) => {
-          console.log("getReq exit", event, context)
-          
-          if (event.type !== "SUBMIT" || !context.fetchStore ||!("getRequest" in context.fetchStore)) return new Request('')
-          return context.fetchStore?.getRequest(event.value)
+      getReq: assign((context, event) => {
+        // console.log("getReq exit", event, context)
+
+        if (event.type !== "SUBMIT" || !context.fetchStore || !("getRequest" in context.fetchStore)) return {}
+        const val = event.value
+        const option = {} as any
+        Object.entries(event.value).forEach(([k, v]) => {
+          if (v) option[k] = v
+        })
+        // console.log(option)
+        return {
+          request: context.fetchStore?.getRequest(option),
+          inputValue: option as ArthasReq
         }
       }),
       transformRes: assign({
@@ -162,30 +171,31 @@ const machine =
       }),
       transformSessionRes: assign((context, event) => {
         if (event.type !== "done.invoke.getSession") return {}
-
+        console.log(event.data)
         context.fetchStore?.$patch({
-          sessionId: event.data.sessionId,
-          consumerId: event.data.consumerId
+          sessionId: ('sessionId' in event.data) ? event.data.sessionId : '',
+          consumerId: ('consumerId' in event.data) ? event.data.consumerId : ''
         })
-        console.log(context.fetchStore)
+        if (context.inputValue?.action === "init_session") context.fetchStore.online = true
+        if (context.inputValue?.action === "close_session") context.fetchStore.online = false
         return {
           response: event.data
         }
       }),
       renderRes: assign((context, event) => {
-        let resArr:(ArthasResResult|SessionRes|AsyncRes)[] = context.resArr
+        let resArr: (ArthasResResult | SessionRes | AsyncRes)[] = context.resArr
         const response = context.response
         if (!response) {
           return {}
         }
-        console.log(response, "renderRes",context.resArr)
+        console.log(response, "renderRes", context.resArr)
         if (Object.hasOwn(response, 'body') && Object.hasOwn((response as CommonRes).body, "results")) {
           // 估计是ts的问题
           resArr = resArr.concat((context.response as CommonRes).body.results)
         } else {
-          resArr = resArr.concat([response] as (SessionRes|AsyncRes)[])
+          resArr = resArr.concat([response] as (SessionRes | AsyncRes)[])
         }
-        return { resArr: resArr.filter(v=>v&&!Number.isNaN(v)) }
+        return { resArr: resArr.filter(v => v && !Number.isNaN(v)) }
       }),
       returnErr: assign({
         err: (context, event) => {
@@ -226,7 +236,6 @@ const machine =
         // 为了触发类型计算瞎写的
         console.log(event, "qwer")
         if (event.type !== "SUBMIT") return false
-        console.log(event.value.action,["join_session", "init_session", "close_session", "interrupt_job"].indexOf("init_session"))
         if (["join_session", "init_session", "close_session", "interrupt_job"].includes(event.value.action)) return false
         console.log('123')
         return true

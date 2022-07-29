@@ -5,9 +5,13 @@ export const fetchStore = defineStore('fetch', {
     sessionId: '',
     consumerId: '',
     requestId: '',
+    online:false
   }),
   getters: {
     getRequest: (state) => (option: ArthasReq) => {
+      // if (["join_session", "init_session", "close_session", "interrupt_job"].includes(option.action)) {
+      //   body
+      // }
       const req = new Request("/api", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -15,7 +19,7 @@ export const fetchStore = defineStore('fetch', {
           sessionId: state.sessionId,
           consumerId: state.consumerId,
           requestId: state.requestId,
-          ...option
+          ...option,
         })
       })
       return req
