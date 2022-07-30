@@ -1,0 +1,20 @@
+import{_ as s,o as i,c as d,a as e,b as r,e as a,d as t,r as l}from"./app.8a3762b8.js";const o={},c=e("h1",{id:"perfcounter",tabindex:"-1"},[e("a",{class:"header-anchor",href:"#perfcounter","aria-hidden":"true"},"#"),a(" perfcounter")],-1),v={href:"https://arthas.aliyun.com/doc/arthas-tutorials.html?language=en&id=command-perfcounter",target:"_blank",rel:"noopener noreferrer"},u=e("code",null,"perfcounter",-1),m=a(" online tutorial"),p=t(`<div class="custom-container tip"><p class="custom-container-title">TIP</p><p>Check the current JVM Perf Counter information.</p></div><h3 id="usage" tabindex="-1"><a class="header-anchor" href="#usage" aria-hidden="true">#</a> Usage</h3><div class="language-text ext-text line-numbers-mode"><pre class="language-text"><code>$ perfcounter
+ java.ci.totalTime                            2325637411
+ java.cls.loadedClasses                       3403
+ java.cls.sharedLoadedClasses                 0
+ java.cls.sharedUnloadedClasses               0
+ java.cls.unloadedClasses                     0
+ java.property.java.version                   11.0.4
+ java.property.java.vm.info                   mixed mode
+ java.property.java.vm.name                   OpenJDK 64-Bit Server VM
+...
+</code></pre><div class="line-numbers" aria-hidden="true"><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div></div></div><p>Print more information with the <code>-d</code> option:</p><div class="language-text ext-text line-numbers-mode"><pre class="language-text"><code>$ perfcounter -d
+ Name                                   Variability   Units        Value
+---------------------------------------------------------------------------------
+ java.ci.totalTime                      Monotonic     Ticks        3242526906
+ java.cls.loadedClasses                 Monotonic     Events       3404
+ java.cls.sharedLoadedClasses           Monotonic     Events       0
+ java.cls.sharedUnloadedClasses         Monotonic     Events       0
+ java.cls.unloadedClasses               Monotonic     Events       0
+</code></pre><div class="line-numbers" aria-hidden="true"><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div></div></div><h3 id="jvm-above-jdk9" tabindex="-1"><a class="header-anchor" href="#jvm-above-jdk9" aria-hidden="true">#</a> JVM above JDK9</h3><p>If the information is not printed, when the application starts, add the following parameters:</p><div class="language-text ext-text line-numbers-mode"><pre class="language-text"><code>--add-opens java.base/jdk.internal.perf=ALL-UNNAMED --add-exports java.base/jdk.internal.perf=ALL-UNNAMED
+</code></pre><div class="line-numbers" aria-hidden="true"><div class="line-number"></div></div></div>`,8);function h(b,f){const n=l("ExternalLinkIcon");return i(),d("div",null,[c,e("p",null,[e("a",v,[u,m,r(n)])]),p])}var j=s(o,[["render",h],["__file","perfcounter.html.vue"]]);export{j as default};
