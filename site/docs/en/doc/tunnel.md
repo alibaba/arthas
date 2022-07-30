@@ -100,10 +100,10 @@ Alternatively, you can configure `appName` in `arthas.properties` in the unzippe
 :::
 
 ### Tunnel Server Management Page
+
 > Need to configure `arthas.enable-detail-pages=true` in `application.properties` of spring boot
 
 > **Attention, opening admin pages is risky! There is no security blocking function on the management page, you must add security measures by yourself.**
-
 
 Start the tunnel-server locally, then use `as.sh` attach, and specify the application name `--app-name test`:
 
