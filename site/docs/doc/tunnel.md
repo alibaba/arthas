@@ -105,9 +105,11 @@ Tunnel server 会以`_`做分隔符，提取出`appName`，方便按应用进行
 
 ### Tunnel Server 的管理页面
 
-> 需要在 spring boot 的`application.properties`里配置 `arthas.enable-detail-pages=true`
+::: tip
+需要在 spring boot 的`application.properties`里配置 `arthas.enable-detail-pages=true`
 
-> **注意，开放管理页面有风险！管理页面没有安全拦截功能，务必自行增加安全措施。**
+**注意，开放管理页面有风险！管理页面没有安全拦截功能，务必自行增加安全措施。**
+:::
 
 在本地启动 tunnel-server，然后使用`as.sh` attach，并且指定应用名`--app-name test`：
 
@@ -147,11 +149,13 @@ id         test_PE3LZO9NA9ENJYTPGL9L
 
 ### 安全和权限管理
 
+::: tip
 **强烈建议不要把 tunnel server 直接暴露到公网上。**
+:::
 
 目前 tunnel server 没有专门的权限管理
 
-1. 用户需要自行开发，对 app name 鉴权.
+1. 用户需要自行开发，对 app name 鉴权。
 2. 如果开放管理页面，需要增加安全措施。
 
 ### 集群方式管理

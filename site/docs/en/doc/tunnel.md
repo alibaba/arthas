@@ -101,9 +101,11 @@ Alternatively, you can configure `appName` in `arthas.properties` in the unzippe
 
 ### Tunnel Server Management Page
 
-> Need to configure `arthas.enable-detail-pages=true` in `application.properties` of spring boot
+::: tip
+Need to configure `arthas.enable-detail-pages=true` in `application.properties` of spring boot
 
-> **Attention, opening admin pages is risky! There is no security blocking function on the management page, you must add security measures by yourself.**
+**Attention, opening admin pages is risky! There is no security blocking function on the management page, you must add security measures by yourself.**
+:::
 
 Start the tunnel-server locally, then use `as.sh` attach, and specify the application name `--app-name test`:
 
@@ -142,8 +144,9 @@ Then open the details, you can see a list of all connected agents:
 ![](/images/tunnel-server-agents.png)
 
 ### Security and Privilege Management
-
+::: tip
 **It is strongly recommended not to expose the tunnel server directly to the public network.**
+:::
 
 Currently tunnel server does not have special permission management
 
