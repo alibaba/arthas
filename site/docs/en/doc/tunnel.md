@@ -144,6 +144,7 @@ Then open the details, you can see a list of all connected agents:
 ![](/images/tunnel-server-agents.png)
 
 ### Security and Privilege Management
+
 ::: tip
 **It is strongly recommended not to expose the tunnel server directly to the public network.**
 :::
