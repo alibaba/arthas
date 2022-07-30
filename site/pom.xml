@@ -7,7 +7,7 @@
         <version>${revision}</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
-
+    <name>arthas-site</name>
     <artifactId>arthas-site</artifactId>
 
     <properties>
