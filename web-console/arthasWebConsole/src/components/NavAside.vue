@@ -43,11 +43,11 @@ const toNext = (url: string) => {
 <template>
   <div class=" h-full bg-gray-300">
     <ul class="flex flex-col justify-start w-40 h-80 items-stretch bg-blue-50">
-      <li v-for="(tab, idx) in tabs" :key="idx" class="flex justify-center items-center hover:bg-gray-200 transition">
+      <li v-for="(tab, idx) in tabs" :key="idx" class="flex justify-center items-center hover:bg-gray-200 transition" @click="toNext(tab.url)">
         <div class="bg-gray-200 h-10 w-10 grid place-items-center rounded-full">
           <component :is="tab.icon" class="w-3/4 h-3/4 text-gray-500" />
         </div>
-        <button @click="toNext(tab.url)"
+        <button
           class=" outline-none grid place-items-centerh-16 w-20 m-4">{{
               tab.name
           }}</button>

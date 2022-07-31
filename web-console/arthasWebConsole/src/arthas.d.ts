@@ -1,14 +1,15 @@
 type SessionAction = "join_session" | " init_session" | "close_session" | "interrupt_job"
 type ResState = "SCHEDULED" | "SUCCEEDED" | "FAILED" | "REFUSED"
 
-type MergeObj<T extends Record<string, any>, U extends Record<string, any>> = T extends T ?{
+type MergeObj<T extends Record<string, any>, U extends Record<string, any>> = T extends T ? {
   [k in (keyof T | keyof U)]: k extends keyof T
   ? T[k]
   : U[k]
-}:never
+} : never
 type JobId<T extends Record<string, any>> = T extends T ? MergeObj<T, Record<'jobId', number>> : never
 type SessionId<T extends Record<string, any>> = T extends T ? MergeObj<T, { sessionId?: string }> : never
-type Command<T extends Record<string, any>> = T extends T ? MergeObj<T, { command: string }> : never
+type Command<T extends Record<string, any>> = T extends T ? MergeObj<T, {command: string}> : never
+type CommonAction<T> = T extends T ? MergeObj<T, { action: "exec" | "async_exec" | "interrupt_job" | "pull_results" }> : never
 type unionExclude<T, U> = T extends T ? Exclude<T, U> : T
 
 type SessionReq = {
@@ -25,14 +26,16 @@ type SessionReq = {
   action: "interrupt_job"
 }>
 
-type CommandReq = Command<{
-  "action": "exec" | "async_exec" | "interrupt_job" | "pull_results",
+type CommandReq = CommonAction<Command<{
   "requestId"?: string,
   "sessionId"?: string,
   "consumerId"?: string,
   "command": string,
   "execTimeout"?: number
-}>
+} | {
+  "command": "sysenv" | "version"
+}>>
+
 type ArthasReq = SessionReq | CommandReq
 
 
@@ -58,6 +61,9 @@ type CommandResult = {
 } | {
   type: "version",
   version: string
+} | {
+  type: "sysenv",
+  env: Record<string,string>
 }
 
 type EnchanceResult = {
@@ -88,9 +94,9 @@ type CommonRes = {
 type AsyncRes = {
   state: ResState,
   sessionId: string,
-  requestId?:string,
+  requestId?: string,
   body: Command<JobId<{
-    jobStatus: "READY"|"TERMINATED"
+    jobStatus: "READY" | "TERMINATED"
   }>>
 }
 
@@ -102,7 +108,7 @@ type SessionRes = {
 
 type FailRes = SessionId<{
   message: string,
-  state: "FAILED"|"REFUSED"
+  state: "FAILED" | "REFUSED"
 }>
 
 type ArthasRes = CommonRes | SessionRes | FailRes | AsyncRes

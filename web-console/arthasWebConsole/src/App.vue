@@ -8,8 +8,8 @@ import ErrDialog from "./components/ErrDialog.vue";
 
 <template>
   <div class=" h-screen flex flex-col">
-    <nav-header></nav-header>
-    <div class=" flex-auto">
+    <nav-header class="h-[10vh]"></nav-header>
+    <div class=" flex-auto h-[90vh] overflow-auto">
       <div class="flex flex-row h-full">
         <nav-aside></nav-aside>
         <router-view class=" flex-auto">

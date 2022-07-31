@@ -4,6 +4,7 @@ import { ref } from 'vue';
 import { useMachine } from '@xstate/vue';
 import machine from '@/machines/consoleMachine';
 import { publicStore } from '@/stores/public';
+import transformMachine from "@/machines/transformConfigMachine"
 const store = publicStore()
 
 const val = ref(JSON.stringify({
@@ -15,31 +16,35 @@ const val = ref(JSON.stringify({
 //   const req = store.getRequest(JSON.parse(val.value))
 //   fetch(req).then(res=>console.log(res))
 // };
-const notJson = Symbol('')
+// const notJson = Symbol('')
 const { state, send } = useMachine(machine)
 send({type:"INIT"})
 
-const transformInput = (val: string):(object|typeof notJson) => {
-  try {
-    return JSON.parse(val)
-  } catch {
-    return notJson
-  }
-}
+// const transformInput = (val: string):(object|typeof notJson) => {
+//   try {
+//     return JSON.parse(val)
+//   } catch {
+//     return notJson
+//   }
+// }
 
 const submitCommand = ()=>{
-  const input = transformInput(val.value)
-  if (input === notJson) {
-    //todo
-    store.isErr = true
-    store.$patch({
-      isErr:true,
-      ErrMessage: "不是json格式的数据"
-    })
-    return
-  }
+  // const input = transformInput(val.value)
+  // if (input === notJson) {
+  //   //todo
+  //   store.isErr = true
+  //   store.$patch({
+  //     isErr:true,
+  //     ErrMessage: "不是json格式的数据"
+  //   })
+  //   return
+  // }
+  const toObj = useMachine(transformMachine)
+  toObj.send("INIT")
+  toObj.send({type:"INPUT", data: val.value})
+  toObj.send("TRANSFORM")
   // input 不是arthasReq的报错还没写
-  send({ type: 'SUBMIT', value: input as ArthasReq})
+  if(toObj.state.value.matches("success")) send({ type: 'SUBMIT', value: toObj.state.value.context.output as ArthasReq})
 }
 </script>
 

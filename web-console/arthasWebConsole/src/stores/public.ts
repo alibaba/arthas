@@ -3,7 +3,7 @@ export const publicStore = defineStore('public', { // Public项目唯一id
     state: () => ({
             userMsg: {},
             isErr:false,
-            ErrMessage:''
+            ErrMessage:'应该是出现bug'
     }),
     getters: {
         getUserMsg: (state) => {
