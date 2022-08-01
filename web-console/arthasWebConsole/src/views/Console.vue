@@ -3,31 +3,36 @@
 import { onBeforeMount, ref } from 'vue';
 import { useMachine } from '@xstate/vue';
 import machine from '@/machines/consoleMachine';
-import { publicStore } from '@/stores/public';
+// import { publicStore } from '@/stores/public';
 import transformMachine from "@/machines/transformConfigMachine"
 // const store = publicStore()
-
+const fetchM = useMachine(machine)
 const val = ref(JSON.stringify({
-  action:"init_session"
+  // action:"init_session"
+  action: "exec",
+  command: "version"
 }));
-const { state, send } = useMachine(machine)
+
+
 onBeforeMount(()=>{
-  send("INIT")
+  fetchM.send("INIT")
 })
 
 const submitCommand = ()=>{
-  const toObj = useMachine(transformMachine)
-  toObj.send("INIT")
-  toObj.send({type:"INPUT", data: val.value})
-  toObj.send("TRANSFORM")
-  // input 不是arthasReq的报错还没写
-  if(toObj.state.value.matches("success")) send({ type: 'SUBMIT', value: toObj.state.value.context.output as ArthasReq})
+  // const {state, send} = useMachine(transformMachine)
+  // send("INIT")
+  // send({type:"INPUT", data: val.value})
+  // send("TRANSFORM")
+  // // input 不是arthasReq的报错还没写
+  console.log('别报错了')
+  fetchM.send({ type: 'SUBMIT', value: val.value})
 }
+
 </script>
 
 <template>
   <div class="flex flex-col">
-    <form class="h-[10vh] flex items-center border shadow">
+    <div class="h-[10vh] flex items-center border shadow">
       <label for="command-input" class=" m-2 ">command:</label>
       <div class=" flex-auto grid place-items-start">
         <input type="text" placeholder="input command" v-model="val" id="command-input"
@@ -37,9 +42,9 @@ const submitCommand = ()=>{
         @click="submitCommand">
         submit
       </button>
-    </form>
+    </div>
     <article class="flex-1 bg-white overflow-auto max-h-[80vh]">
-      <section v-for="(v, i) in state.context.resArr" :key="i"
+      <section v-for="(v, i) in fetchM.state.value.context.resArr" :key="i"
         class="w-full  rounded-sm mb-2 p-2 bg-green-200 box-border break-all"
         :class="{ 'bg-blue-200': v&&!Object.hasOwn(v, 'jobId')}"
         >
