@@ -38,6 +38,7 @@ const router = useRouter()
 const toNext = (url: string) => {
   router.push(url)
 }
+const a:StatusResult = {type:"status", message:"",statusCode:0}
 </script>
 
 <template>

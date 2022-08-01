@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import "./components/NavAside.vue"
 import NavAside from "./components/NavAside.vue";
 import NavHeader from "./components/NavHeader.vue";
 import ErrDialog from "./components/ErrDialog.vue";
+import SuccessDialog from "./components/SuccessDialog.vue";
 
 </script>
 
@@ -17,6 +17,7 @@ import ErrDialog from "./components/ErrDialog.vue";
       </div>
     </div>
     <err-dialog/>
+    <success-dialog/>
   </div>
   
 </template>

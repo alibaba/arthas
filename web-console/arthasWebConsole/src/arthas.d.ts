@@ -33,19 +33,18 @@ type CommandReq = CommonAction<Command<{
   "command": string,
   "execTimeout"?: number
 } | {
-  "command": "sysenv" | "version"
+  "command": "sysenv" | "version"|"sysprop"
 }>>
 
 type ArthasReq = SessionReq | CommandReq
-
-
 
 type StatusResult = {
   type: "status",
   statusCode: 0
 } | {
   type: "status",
-  statusCode: Exclude<number, 0>,
+  // 实际上不起效果
+  statusCode: number,
   message: string
 }
 
@@ -64,6 +63,9 @@ type CommandResult = {
 } | {
   type: "sysenv",
   env: Record<string,string>
+}| {
+  type: "sysprop",
+  props: Record<string,string>
 }
 
 type EnchanceResult = {

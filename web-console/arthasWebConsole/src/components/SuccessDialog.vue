@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import { watchEffect } from 'vue'
 import { publicStore } from '@/stores/public'
 import {
   Dialog,
@@ -9,19 +8,16 @@ import {
   TransitionChild,
   TransitionRoot
 } from '@headlessui/vue'
-import { ExclamationCircleIcon } from '@heroicons/vue/outline';
+import { CheckCircleIcon } from '@heroicons/vue/outline';
 const store = publicStore()
 
 function setIsOpen(value: boolean) {
-  store.isErr = value
+  store.isSuccess = value
 }
-watchEffect(() => {
-  console.log(store.isErr)
-})
 </script>
 
 <template>
-  <TransitionRoot :show="store.isErr" as="template">
+  <TransitionRoot :show="store.isSuccess" as="template">
     <Dialog @close="setIsOpen" class="min-w-max">
       <TransitionChild enter="transition-opacity duration-300" enter-from="opacity-0" enter-to="opacity-100"
         leave="transition-opacity duration-300" leave-from="opacity-100" leave-to="opacity-0">
@@ -35,16 +31,15 @@ watchEffect(() => {
           <DialogPanel
             class=" w-1/3 h-1/2 bg-white p-10 rounded-xl shadow-xl flex flex-col justify-between items-center min-w-max">
             <DialogTitle>
-              <ExclamationCircleIcon class="w-12 h-12 text-red-500" />
+              <CheckCircleIcon class="w-12 h-12 text-blue-500" />
             </DialogTitle>
             <DialogDescription as="section"
               class="flex-auto self-stretch bg-slate-50 my-10 rounded p-2 break-all max-w-4xl">
-              reason:
-              {{ store.ErrMessage }}
+              {{ store.SuccessMessage }}
             </DialogDescription>
 
             <button @click="setIsOpen(false)"
-              class="border bg-gray-200 w-40 h-10 rounded-full hover:bg-gray-500 transition">了解</button>
+              class="border bg-blue-200 w-40 h-10 rounded-full hover:bg-blue-500 transition">OK</button>
           </DialogPanel>
         </TransitionChild>
       </div>

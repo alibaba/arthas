@@ -82,7 +82,7 @@ const machine =
           ],
           CLEAR_RESARR: { target: "ready", actions: "clearResArr" }
         },
-        exit: ["getReq"]
+        exit: "getReq"
       },
       common: {
         tags: ["loading"],
@@ -149,15 +149,13 @@ const machine =
         }
       }),
       getReq: assign((context, event) => {
-        // console.log("getReq exit", event, context)
+        console.log("getReq exit", event, context)
 
         if (event.type !== "SUBMIT" || !context.fetchStore || !("getRequest" in context.fetchStore)) return {}
-        const val = event.value
         const option = {} as any
         Object.entries(event.value).forEach(([k, v]) => {
           if (v) option[k] = v
         })
-        // console.log(option)
         return {
           request: context.fetchStore?.getRequest(option),
           inputValue: option as ArthasReq
@@ -176,8 +174,20 @@ const machine =
           sessionId: ('sessionId' in event.data) ? event.data.sessionId : '',
           consumerId: ('consumerId' in event.data) ? event.data.consumerId : ''
         })
-        if (context.inputValue?.action === "init_session") context.fetchStore.online = true
-        if (context.inputValue?.action === "close_session") context.fetchStore.online = false
+        if (context.inputValue?.action === "init_session") {
+          context.fetchStore.online = true
+          context.publicStore.$patch({
+            isSuccess: true,
+            SuccessMessage:`init_session success!`
+          })
+        }
+        if (context.inputValue?.action === "close_session") {
+          context.fetchStore.online = false
+          context.publicStore.$patch({
+            isSuccess: true,
+            SuccessMessage:`close session success!`
+          })
+        }
         return {
           response: event.data
         }

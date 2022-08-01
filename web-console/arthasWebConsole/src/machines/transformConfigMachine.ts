@@ -57,6 +57,12 @@ const machine =
             actions:"getVal",
             target:"handle"
           },{
+            actions:assign(()=>{
+              const err = "not string"
+              return {
+                err
+              }
+            }) as any,
             target:"failure"
           }]
         }
@@ -68,6 +74,7 @@ const machine =
               actions:"handleEnvJSON",
               target:"success"
             },{
+              actions: assign(()=>({err:"not JSON"})) as any,
               target:"failure"
             }
           ]
@@ -104,11 +111,9 @@ const machine =
       }),
       returnErr: assign((context, event) => {
           if(event.type === "INPUT"){
-            context.publicStore?.$patch({ isErr: true, ErrMessage: "not JSON " })
-            return {err:"notJSON"}
+            context.publicStore?.$patch({ isErr: true, ErrMessage: context.err })
           }
           return {}
-        
       }),
     },
     guards:{
