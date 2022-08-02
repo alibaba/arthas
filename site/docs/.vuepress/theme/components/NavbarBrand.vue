@@ -1,22 +1,24 @@
 <script setup>
 import {
   ClientOnly,
+  usePageData,
   useRouteLocale,
   useSiteLocaleData,
   withBase,
 } from "@vuepress/client";
-import { computed, h, ref, onBeforeMount } from "vue";
+import { computed, h, ref } from "vue";
 import {
   useDarkMode,
   useThemeLocaleData,
 } from "@vuepress/theme-default/lib/client";
 
+const pageData = usePageData();
+const isDarkMode = useDarkMode();
 const routeLocale = useRouteLocale();
 const siteLocale = useSiteLocaleData();
 const themeLocale = useThemeLocaleData();
-const isDarkMode = useDarkMode();
 
-const version = ref("3.6.1");
+const version = ref(pageData.value.version);
 
 const navbarBrandLink = computed(
   () => themeLocale.value.home || routeLocale.value
@@ -28,15 +30,6 @@ const navbarBrandLogo = computed(() => {
   }
   return themeLocale.value.logo;
 });
-
-const getVersion = async () => {
-  version.value = await fetch(
-    "https://api.github.com/repos/alibaba/arthas/releases"
-  )
-    .then((res) => res.json())
-    .then((res) => res[0].tag_name.split("-")[2]);
-};
-onBeforeMount(getVersion);
 
 const NavbarBrandVersion = () =>
   h(

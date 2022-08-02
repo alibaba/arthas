@@ -1,4 +1,5 @@
 const { localTheme } = require("./theme/index");
+const { loadVersionPlugin } = require("./plugins/vuepress-plugin-loadVersion");
 
 const {
   activeHeaderLinksPlugin,
@@ -162,5 +163,7 @@ module.exports = {
         },
       },
     }),
+    // Local plugin
+    loadVersionPlugin(),
   ],
 };
