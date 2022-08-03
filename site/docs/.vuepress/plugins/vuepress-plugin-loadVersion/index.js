@@ -14,20 +14,16 @@ exports.loadVersionPlugin = () => {
       .then((res) => res.response.docs[0].latestVersion);
   };
 
-  const version = pom.project.properties.revision._text;
+  var version = pom.project.properties.revision._text;
 
   return {
     name: "vuepress-plugin-loadVersion",
-    extendsPage: async (page) => {
-      const injectVersionPagePaths = ["/", "/en/"];
-
-      if (!injectVersionPagePaths.includes(page.data.path)) return;
-
+    onInitialized: async (app) => {
       if (version.includes("SNAPSHOT")) {
-        page.data.version = await getVersionByMaven();
-      } else {
-        page.data.version = version;
+        version = await getVersionByMaven();
       }
+
+      app.pages.map((page) => (page.data.version = version));
     },
   };
 };
