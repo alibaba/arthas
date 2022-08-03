@@ -116,7 +116,7 @@ module.exports = {
       delay: 0,
     }),
     docsearchPlugin({
-      apiKey: "03fb4b6577b57b5dafc792d9ddf66508",
+      apiKey: "30c521836bfc8e97915576e11ac2cebc",
       indexName: "arthas",
       appId: "UX8WBNVHHR",
       locales: {
