@@ -15,16 +15,20 @@ import { ref, onBeforeMount } from "vue";
 const star = ref(29582);
 const fork = ref(6494);
 
-const getData = async () => {
-  const { forks, stargazers_count } = await fetch(
-    "https://api.github.com/repos/alibaba/arthas"
-  ).then((res) => res.json());
+const getStarForkData = async () => {
+  const stars = await fetch("https://arthas.aliyun.com/api/starCount").then(
+    (res) => res.json()
+  );
 
-  star.value = stargazers_count;
-  fork.value = forks;
+  const forks = await fetch("https://arthas.aliyun.com/api/forkCount").then(
+    (res) => res.json()
+  );
+
+  star.value = stars || star.value;
+  fork.value = forks || fork.value;
 };
 
-onBeforeMount(getData);
+onBeforeMount(getStarForkData);
 </script>
 
 <style scoped>
