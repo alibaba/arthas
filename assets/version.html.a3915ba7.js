@@ -1,1 +1,0 @@
-const e=JSON.parse('{"key":"v-9a4bc0f6","path":"/en/doc/version.html","title":"version","lang":"en-US","frontmatter":{},"excerpt":"","headers":[{"level":3,"title":"Usage","slug":"usage","children":[]}],"git":{"updatedTime":1658120060000,"contributors":[{"name":"hengyunabc","email":"hengyunabc@gmail.com","commits":1}]},"filePathRelative":"en/doc/version.md"}');export{e as data};
