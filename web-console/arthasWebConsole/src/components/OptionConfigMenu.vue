@@ -4,10 +4,12 @@ import {
   DisclosureButton,
   DisclosurePanel
 } from "@headlessui/vue"
-const props = defineProps<{
+// import SelectInput from "./SelectInput.vue";
+
+defineProps<{
   title: string,
-  list: string[],
-  map: Map<string, string[]>
+  list: { [x: string]: any }[],
+  titleKeyName: string
 }>()
 </script>
 
@@ -22,19 +24,18 @@ const props = defineProps<{
       <DisclosurePanel class="text-gray-500 w-10/12" as="ul">
         <li v-for="(v, i) in list" :key="i" class="flex mt-2">
           <Disclosure>
-            <DisclosureButton class="bg-blue-200 p-2 w-1/4 break-all">
-              {{ v }} :
+            <DisclosureButton class="bg-blue-200 w-1/4 p2 break-all">
+              {{ v[titleKeyName] }}
             </DisclosureButton>
-            <DisclosurePanel as="ul" static class="flex-auto bg-blue-100 flex flex-col justify-center">
-        <li v-for="(cv, ci) in map.get(v)" :key="ci" :class="{ 'border-t-4': (ci > 0), 'border-white': (ci > 0) }"
-          class=" pl-2">
-          {{ cv }}
+            <DisclosurePanel as="div" static class="flex-auto bg-blue-100 flex flex-col justify-center ml-2">
+              <template v-for="(cv, ci) in Object.entries(v).filter(n => n[0] !== titleKeyName)" :key="ci">
+                  <slot name="item" :kv="cv" :itemTitle="(v[titleKeyName] as string)" :idx="ci"></slot>
+              </template>
+            </DisclosurePanel>
+          </Disclosure>
         </li>
       </DisclosurePanel>
-  </Disclosure>
-  </li>
-  </DisclosurePanel>
-  </transition>
+    </transition>
   </Disclosure>
 </template>
 

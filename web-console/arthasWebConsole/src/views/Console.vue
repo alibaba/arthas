@@ -3,9 +3,6 @@
 import { onBeforeMount, ref } from 'vue';
 import { useMachine } from '@xstate/vue';
 import machine from '@/machines/consoleMachine';
-// import { publicStore } from '@/stores/public';
-import transformMachine from "@/machines/transformConfigMachine"
-// const store = publicStore()
 const fetchM = useMachine(machine)
 const val = ref(JSON.stringify({
   // action:"init_session"
@@ -32,7 +29,7 @@ const submitCommand = ()=>{
 
 <template>
   <div class="flex flex-col">
-    <div class="h-[10vh] flex items-center border shadow">
+    <form class="h-[10vh] flex items-center border shadow">
       <label for="command-input" class=" m-2 ">command:</label>
       <div class=" flex-auto grid place-items-start">
         <input type="text" placeholder="input command" v-model="val" id="command-input"
@@ -42,7 +39,7 @@ const submitCommand = ()=>{
         @click="submitCommand">
         submit
       </button>
-    </div>
+    </form>
     <article class="flex-1 bg-white overflow-auto max-h-[80vh]">
       <section v-for="(v, i) in fetchM.state.value.context.resArr" :key="i"
         class="w-full  rounded-sm mb-2 p-2 bg-green-200 box-border break-all"

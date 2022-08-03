@@ -89,9 +89,9 @@ const machine =
               }, {
                 actions: [
                   "rawInput",
-                  "toObj"
+                  "toObj",
                 ],
-                target:"objVal"
+                target: "objVal",
               }],
             },
           },
@@ -166,7 +166,7 @@ const machine =
         },
       },
       success: {
-        entry: "renderRes",
+        entry: ["needReportSuccess","renderRes"],
         always: "ready",
       },
       failure: {
@@ -201,14 +201,15 @@ const machine =
       getReq: assign((context, event) => {
         console.log("getReq exit", context.inputValue);
 
-        if (!context.inputValue ||!context.fetchStore ||
+        if (
+          !context.inputValue || !context.fetchStore ||
           !("getRequest" in context.fetchStore)
         ) {
           return {};
         }
         const option = {} as any;
         Object.entries(context.inputValue).forEach(([k, v]) => {
-          console.log(k,v)
+          console.log(k, v);
           if (v) option[k] = v;
         });
         return {
@@ -224,25 +225,6 @@ const machine =
       }),
       transformSessionRes: assign((context, event) => {
         if (event.type !== "done.invoke.getSession") return {};
-        console.log(event.data);
-        context.fetchStore?.$patch({
-          sessionId: ("sessionId" in event.data) ? event.data.sessionId : "",
-          consumerId: ("consumerId" in event.data) ? event.data.consumerId : "",
-        });
-        if (context.inputValue?.action === "init_session") {
-          context.fetchStore.online = true;
-          context.publicStore.$patch({
-            isSuccess: true,
-            SuccessMessage: `init_session success!`,
-          });
-        }
-        if (context.inputValue?.action === "close_session") {
-          context.fetchStore.online = false;
-          context.publicStore.$patch({
-            isSuccess: true,
-            SuccessMessage: `close session success!`,
-          });
-        }
         return {
           response: event.data,
         };
@@ -254,12 +236,10 @@ const machine =
         if (!response) {
           return {};
         }
-        console.log(response, "renderRes", context.resArr);
         if (
           Object.hasOwn(response, "body") &&
           Object.hasOwn((response as CommonRes).body, "results")
         ) {
-          // 估计是ts的问题
           resArr = resArr.concat((context.response as CommonRes).body.results);
         } else {
           resArr = resArr.concat([response] as (SessionRes | AsyncRes)[]);
@@ -281,32 +261,46 @@ const machine =
       }),
       // clearResArr: assign((context, event) => ({ resArr: [] })),
       toObj: assign((ctx) => {
-        const m = spawn(transformMachine,{sync:true});
+        const m = spawn(transformMachine, { sync: true });
         m.send({
           type: "INPUT",
           data: ctx.inputRaw as string,
         });
-        console.log(m.getSnapshot()?.context, "context")
+        console.log(m.getSnapshot()?.context, "context");
         return {
           inputRaw: m.getSnapshot()?.context.output as ArthasReq,
         };
       }),
+      needReportSuccess: (context, e) => {
+        if (context.inputValue?.action === "close_session") {
+          context.fetchStore.online = false;
+          context.publicStore.$patch({
+            isSuccess: true,
+            SuccessMessage: `close session success!`,
+          });
+          return
+        }
+        if (context.inputValue?.action === "init_session") {
+          context.fetchStore.online = true;
+          context.publicStore.$patch({
+            isSuccess: true,
+            SuccessMessage: `init_session success!`,
+          });
+          return
+        }
+        if (context.inputValue?.action === "exec" 
+        && context.inputValue.command.includes("vmoption")
+        && context.inputValue.command !== "vmoption"
+        ) {
+          context.publicStore.$patch({
+            isSuccess: true,
+            SuccessMessage: JSON.stringify((context.response as CommonRes).body.results),
+          });
+          return
+        }
+      },
     },
     guards: {
-      //   inputValid: (context, event) => {
-      //     console.log(context, event)
-      //     if (event.type === 'SUBMIT') {
-      //       try {
-      //         JSON.parse(event.value)
-      //         return true
-      //       } catch (err) {
-      //         return false
-      //       }
-      //     } else {
-      //       return false
-      //     }
-
-      //   }
       // 判断命令是否有问题
       cmdSucceeded: (context, event) => {
         if (
@@ -315,7 +309,15 @@ const machine =
         ) {
           return false;
         }
-        if (["SCHEDULED", "SUCCEEDED"].includes(event.data.state)) return true;
+        if (["SCHEDULED", "SUCCEEDED"].includes(event.data.state)) {
+          if (Object.hasOwn(event.data, "body")) {
+            return !(event.data as CommonRes).body.results.some((result) =>
+              result.type === "status" && result.statusCode !== 0
+            );
+          }
+
+          return true;
+        }
 
         return false;
       },
