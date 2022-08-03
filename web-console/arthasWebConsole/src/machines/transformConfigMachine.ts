@@ -75,16 +75,13 @@ const transformMachine =
     {
       actions: {
         getVal: assign((context, e) => {
-          console.log("getINPUT",e)
           if (e.type !== "INPUT") return {};
           return {
             inputValue: e.data,
           };
         }),
         handleEnvJSON: assign((context) => {
-          console.log("event?")
           const output = JSON.parse(context.inputValue);
-          console.log("ok")
           return {
             output,
           };
@@ -97,9 +94,9 @@ const transformMachine =
           return true;
         },
         isJSON: (ctx, e) => {
-          if (e.type !== "INPUT") return true;
+          // if (e.type !== "INPUT") return true;
           try {
-            JSON.parse(e.data);
+            JSON.parse(ctx.inputValue);
             return true;
           } catch {
             return false;

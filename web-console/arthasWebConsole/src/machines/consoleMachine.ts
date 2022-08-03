@@ -1,4 +1,10 @@
-import { assign, createMachine, sendUpdate, spawn } from "xstate";
+import {
+  assign,
+  createMachine,
+  DoneInvokeEvent,
+  sendUpdate,
+  spawn,
+} from "xstate";
 import { fetchStore } from "@/stores/fetch";
 import { publicStore } from "@/stores/public";
 import transformMachine from "./transformConfigMachine";
@@ -38,6 +44,9 @@ type ET =
   }
   | {
     type: "CLEAR_RESARR";
+  }
+  | {
+    type: "";
   };
 
 const machine =
@@ -75,9 +84,6 @@ const machine =
         },
       },
       ready: {
-        // on: {
-        //   CLEAR_RESARR: { target: "ready", actions: "clearResArr" },
-        // },
         initial: "stringVal",
         states: {
           stringVal: {
@@ -103,6 +109,7 @@ const machine =
               };
             }),
             always: [
+              { cond: "notObj", target: "#failure" },
               {
                 cond: "notSession",
                 target: "#common",
@@ -132,11 +139,17 @@ const machine =
               target: "success",
             },
             {
+              actions: assign<CTX, DoneInvokeEvent<ET>>((_ctx, e) => {
+                return { err: e.data as unknown as string };
+              }),
               target: "failure",
             },
           ],
           onError: [
             {
+              actions: assign<CTX, DoneInvokeEvent<ET>>((_ctx, e) => {
+                return { err: e.data as unknown as string };
+              }),
               target: "failure",
             },
           ],
@@ -155,18 +168,24 @@ const machine =
               target: "success",
             },
             {
+              actions: assign<CTX, DoneInvokeEvent<ET>>((_ctx, e) => {
+                return { err: e.data as unknown as string };
+              }),
               target: "failure",
             },
           ],
           onError: [
             {
+              actions: assign<CTX, DoneInvokeEvent<ET>>((_ctx, e) => {
+                return { err: e.data as unknown as string };
+              }),
               target: "failure",
             },
           ],
         },
       },
       success: {
-        entry: ["needReportSuccess","renderRes"],
+        entry: ["needReportSuccess", "renderRes"],
         always: "ready",
       },
       failure: {
@@ -248,15 +267,12 @@ const machine =
       }),
       returnErr: assign({
         err: (context, event) => {
-          if (
-            event.type !== "error.platform" &&
-            event.type !== "done.invoke.getCommon" &&
-            event.type !== "done.invoke.getSession"
-          ) {
-            return "";
-          }
-          context.publicStore?.$patch({ isErr: true, ErrMessage: event.data });
-          return event.data;
+
+          context.publicStore.$patch({
+            isErr: true,
+            ErrMessage: context.err,
+          });
+          return "";
         },
       }),
       // clearResArr: assign((context, event) => ({ resArr: [] })),
@@ -266,9 +282,15 @@ const machine =
           type: "INPUT",
           data: ctx.inputRaw as string,
         });
-        console.log(m.getSnapshot()?.context, "context");
+        const s = m.getSnapshot();
+        if (s?.matches("failure")) {
+          return {
+            inputRaw: undefined,
+            err: s.context.err,
+          };
+        }
         return {
-          inputRaw: m.getSnapshot()?.context.output as ArthasReq,
+          inputRaw: s?.context.output as ArthasReq,
         };
       }),
       needReportSuccess: (context, e) => {
@@ -278,7 +300,7 @@ const machine =
             isSuccess: true,
             SuccessMessage: `close session success!`,
           });
-          return
+          return;
         }
         if (context.inputValue?.action === "init_session") {
           context.fetchStore.online = true;
@@ -286,17 +308,20 @@ const machine =
             isSuccess: true,
             SuccessMessage: `init_session success!`,
           });
-          return
+          return;
         }
-        if (context.inputValue?.action === "exec" 
-        && context.inputValue.command.includes("vmoption")
-        && context.inputValue.command !== "vmoption"
+        if (
+          context.inputValue?.action === "exec" &&
+          context.inputValue.command.includes("vmoption") &&
+          context.inputValue.command !== "vmoption"
         ) {
           context.publicStore.$patch({
             isSuccess: true,
-            SuccessMessage: JSON.stringify((context.response as CommonRes).body.results),
+            SuccessMessage: JSON.stringify(
+              (context.response as CommonRes).body.results,
+            ),
           });
-          return
+          return;
         }
       },
     },
@@ -332,6 +357,10 @@ const machine =
         ) {
           return false;
         }
+        return true;
+      },
+      notObj: (ctx) => {
+        if (ctx.inputValue) return false;
         return true;
       },
       notReq: (context) => {
