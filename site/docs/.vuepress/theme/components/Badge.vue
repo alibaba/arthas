@@ -2,13 +2,12 @@
   <a class="my-badge" :href="URL" target="_blank">
     <component :is="comp" />
     &nbsp;
-    <span>{{ number }}</span>
+    <CountTo :startVal="0" :endVal="data" :duration="500" />
   </a>
 </template>
 
 <script setup>
 import { useThemeLocaleData } from "@vuepress/theme-default/lib/client/composables";
-import { ref } from "vue";
 
 const props = defineProps({
   comp: {
@@ -20,17 +19,6 @@ const props = defineProps({
     required: true,
   },
 });
-
-const number = ref(0);
-
-// add number to number until number is equal to data
-var t = setInterval(() => {
-  number.value += 234;
-  if (number.value >= props.data) {
-    number.value = props.data;
-    clearInterval(t);
-  }
-}, 1);
 
 const themeData = useThemeLocaleData();
 const repoURL = `https://github.com/${themeData.value.repo}`;

@@ -63,7 +63,7 @@ watch(useRoute(), () => {
 });
 </script>
 
-<style lang="scss">
+<style lang="scss" scoped>
 $rightMenuWidth: 230px;
 
 .theme-default-content {

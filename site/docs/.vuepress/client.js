@@ -1,6 +1,8 @@
-import { defineClientConfig } from "@vuepress/client";
-import { usePageData } from "@vuepress/client";
 import oldContributorsData from "./oldContributorsData.json";
+
+import { usePageData } from "@vuepress/client";
+import { defineClientConfig } from "@vuepress/client";
+import CountTo from "vue-count-to/src/vue-countTo.vue";
 
 const addOldDocsContributors = () => {
   const page = usePageData();
@@ -33,13 +35,18 @@ const addOldDocsContributors = () => {
 };
 
 export default defineClientConfig({
-  enhance({ router }) {
+  enhance({ router, app }) {
+    // register global components
+    app.component("CountTo", CountTo);
+
+    // add old docs contributors
     router.afterEach((to, from) => {
       if (to.fullPath !== from.fullPath) {
         addOldDocsContributors();
       }
     });
 
+    // baidu analytics
     router.beforeEach((to, from, next) => {
       if (typeof _hmt != "undefined") {
         if (to.path && to.fullPath !== from.fullPath) {
