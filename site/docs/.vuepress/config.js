@@ -113,7 +113,6 @@ module.exports = {
     }),
     activeHeaderLinksPlugin({
       headerLinkSelector: "div.right-menu-item > a",
-      delay: 0,
     }),
     docsearchPlugin({
       apiKey: "30c521836bfc8e97915576e11ac2cebc",
