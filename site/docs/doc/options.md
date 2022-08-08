@@ -13,11 +13,11 @@
 | batch-re-transform     | true   | 是否支持批量对匹配到的类执行 retransform 操作                                                                                                              |
 | json-format            | false  | 是否支持 json 化的输出                                                                                                                                     |
 | disable-sub-class      | false  | 是否禁用子类匹配，默认在匹配目标类的时候会默认匹配到其子类，如果想精确匹配，可以关闭此开关                                                                 |
-| support-default-method | true   | 是否支持匹配到 default method， 默认会查找 interface，匹配里面的 default method。参考 [#1105](https://github.com/alibaba/arthas/issues/1105)               |
+| support-default-method | true   | 是否支持匹配到 default method， 默认会查找 interface，匹配里面的 default method。参考 [#1105](https://github.com/alibaba/arthas/issues/1105)               |
 | save-result            | false  | 是否打开执行结果存日志功能，打开之后所有命令的运行结果都将保存到`~/logs/arthas-cache/result.log`中                                                         |
-| job-timeout            | 1d     | 异步后台任务的默认超时时间，超过这个时间，任务自动停止； 比如设置 1d, 2h, 3m, 25s，分别代表天、小时、分、秒                                                |
+| job-timeout            | 1d     | 异步后台任务的默认超时时间，超过这个时间，任务自动停止；比如设置 1d, 2h, 3m, 25s，分别代表天、小时、分、秒                                                 |
 | print-parent-fields    | true   | 是否打印在 parent class 里的 filed                                                                                                                         |
-| verbose                | false  | 是否打  印更多详细信息                                                                                                                                     |
+| verbose                | false  | 是否打印更多详细信息                                                                                                                                       |
 | strict                 | true   | 是否启用 strict 模式                                                                                                                                       |
 
 ### 查看所有的 options

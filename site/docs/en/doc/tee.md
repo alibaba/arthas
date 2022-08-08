@@ -8,6 +8,8 @@ Similar to the traditional `tee` command, it is used to read standard input data
 `tee` will read data from standard input device, output its content to standard output device, and save it as a file.
 :::
 
+### Usage
+
 ```
  USAGE:
    tee [-a] [-h] [file]

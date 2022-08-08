@@ -6,6 +6,8 @@
 Return working directory name
 :::
 
+### Usage
+
 ```bash
 $ pwd
 ```

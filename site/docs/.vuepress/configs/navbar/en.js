@@ -13,6 +13,14 @@ module.exports = [
     link: "/en/doc",
   },
   {
+    text: "COMMANDS",
+    link: "/en/doc/commands.md",
+  },
+  {
+    text: "DOWNLOAD",
+    link: "/en/doc/download.md",
+  },
+  {
     text: "SOLUTIONS",
     children: [
       {
@@ -40,13 +48,5 @@ module.exports = [
         link: "https://www.aliyun.com/product/servicemesh?spm=arthas.topbar.0.0.0",
       },
     ],
-  },
-  {
-    text: "DOWNLOAD",
-    link: "/en/doc/download.md",
-  },
-  {
-    text: "COMMANDS",
-    link: "/en/doc/commands.md",
   },
 ];

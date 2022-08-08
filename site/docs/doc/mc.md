@@ -2,6 +2,8 @@
 
 [`mc-retransform`在线教程](https://arthas.aliyun.com/doc/arthas-tutorials?language=cn&id=command-mc-retransform)
 
+### 使用参考
+
 ::: tip
 Memory Compiler/内存编译器，编译`.java`文件生成`.class`。
 :::

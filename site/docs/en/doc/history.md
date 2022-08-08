@@ -13,7 +13,7 @@ history of commands will persisted in a file named history, so the history comma
 | [c:] | clear all the history commands |
 | [n:] | view the nearest 5 commands    |
 
-### 使用参考
+### Usage
 
 ```bash
 #view the nearest 3 commands

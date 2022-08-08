@@ -8,6 +8,7 @@
 - [jvm](jvm.md) - show JVM information
 - [logger](logger.md) - print the logger information, update the logger level
 - [mbean](mbean.md) - show Mbean information
+- [memory](memory.md) - show JVM memory information
 - [ognl](ognl.md) - execute ognl expression
 - [perfcounter](perfcounter.md) - show JVM Perf Counter information
 - [sysenv](sysenv.md) — view system environment variables
@@ -39,6 +40,10 @@
 - [tt](tt.md) - time tunnel, record the arguments and returned value for the methods and replay
 - [watch](watch.md) - display the input/output parameter, return object, and thrown exception of specified method invocation
 
+## profiler/flame graph
+
+- [profiler](profiler.md) - use [async-profiler](https://github.com/jvm-profiling-tools/async-profiler) to generate flame graph
+
 ## authentication
 
 - [auth](auth.md) - authentication
@@ -47,15 +52,11 @@
 
 - [options](options.md) - check/set Arthas global options
 
-## profiler/flame graph
-
-- [profiler](profiler.md) - use [async-profiler](https://github.com/jvm-profiling-tools/async-profiler) to generate flame graph
-
 ## pipe
 
 Arthas provides `pipe` to process the result returned from commands further, e.g. `sm java.lang.String * | grep 'index'`. Commands supported in `pipe`:
 
-- grep - filter the result with the given keyword
+- [grep](grep.md)- filter the result with the given keyword
 - plaintext - remove the ANSI color
 - wc - count lines
 

@@ -1,4 +1,4 @@
-# Arthas 命令行快捷键
+# keymap
 
 [`keymap`在线教程](https://arthas.aliyun.com/doc/arthas-tutorials.html?language=cn&id=command-keymap)
 
@@ -31,7 +31,7 @@
 - 任何时候 `tab` 键，会根据当前的输入给出提示
 - 命令后敲 `-` 或 `--` ，然后按 `tab` 键，可以展示出此命令具体的选项
 
-#### 自定义快捷键
+### 自定义快捷键
 
 在当前用户目录下新建`$USER_HOME/.arthas/conf/inputrc`文件，加入自定义配置。
 
@@ -61,7 +61,7 @@
 
 然后把`"\C-h": backward-delete-char`换成`"\C-h": backward-char`，然后重新连接即可。
 
-#### 后台异步命令相关快捷键
+### 后台异步命令相关快捷键
 
 - ctrl + c: 终止当前命令
 - ctrl + z: 挂起当前命令，后续可以 bg/fg 重新支持此命令，或 kill 掉
