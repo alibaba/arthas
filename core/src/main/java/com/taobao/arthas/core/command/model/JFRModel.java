@@ -5,7 +5,7 @@ package com.taobao.arthas.core.command.model;
  */
 public class JFRModel extends ResultModel {
 
-    private String jfrOutput;
+    private String jfrOutput = "";
 
     @Override
     public String getType() {
@@ -17,6 +17,6 @@ public class JFRModel extends ResultModel {
     }
 
     public void setJfrOutput(String jfrOutput) {
-        this.jfrOutput = jfrOutput;
+        this.jfrOutput += jfrOutput;
     }
 }
