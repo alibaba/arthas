@@ -1,1 +1,0 @@
-const e=JSON.parse('{"key":"v-1b8ba240","path":"/en/doc/pwd.html","title":"pwd","lang":"en-US","frontmatter":{},"excerpt":"","headers":[],"git":{"updatedTime":1658120060000,"contributors":[{"name":"hengyunabc","email":"hengyunabc@gmail.com","commits":1}]},"filePathRelative":"en/doc/pwd.md","version":"3.6.4"}');export{e as data};
