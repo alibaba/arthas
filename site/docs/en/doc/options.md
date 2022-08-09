@@ -7,7 +7,7 @@ Global options
 :::
 
 | Name                   | Default Value | Description                                                                                                                                                                                           |
-| ---------------------- | ------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------- | ---- | -------------------------------------------------------------------- |
+| ---------------------- | ------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | unsafe                 | false         | whether to enhance to system-level class. Use it with caution since JVM may hang                                                                                                                      |
 | dump                   | false         | whether to dump enhanced class to the external files. If it's on, enhanced class will be dumped into `/${application dir}/arthas-class-dump/`, the specific output path will be output in the console |
 | batch-re-transform     | true          | whether to re-transform matched classes in batch                                                                                                                                                      |
@@ -15,11 +15,12 @@ Global options
 | disable-sub-class      | false         | whether to enable matching child classes. The default value is `true`. If exact match is desire, turn off this flag                                                                                   |
 | support-default-method | true          | whether to enable matching default method in interface. The default value is `true`. Refer to [#1105](https://github.com/alibaba/arthas/issues/1105)                                                  |
 | save-result            | false         | whether to save execution result. All execution results will be saved to `~/logs/arthas-cache/result.log` when it's turned on                                                                         |
-| job-timeout            | 1d            | default timeout for background jobs. Background job will be terminated once it's timed out (i.e. 1d, 2h, 3m, 25s)                                                                                     | print-parent-fields | true | This option enables print files in parent class, default value true. |
+| job-timeout            | 1d            | default timeout for background jobs. Background job will be terminated once it's timed out (i.e. 1d, 2h, 3m, 25s)                                                                                     |
+| print-parent-fields    | true          | This option enables print files in parent class, default value true.                                                                                                                                  |
 | verbose                | false         | This option enables print verbose information                                                                                                                                                         |
 | strict                 | true          | whether to enable strict mode                                                                                                                                                                         |
 
-### View all options
+## View all options
 
 ```bash
 $ options
@@ -63,7 +64,7 @@ $ options
                                                             false`
 ```
 
-### Get special option value
+## Get special option value
 
 ```
 $ options json-format
@@ -78,7 +79,7 @@ $ options json-format
 By default, `json-format` is false. When set `json-format` to true, commands like `wathc`/`tt` will print result with `json` format.
 :::
 
-### Set special option value
+## Set special option value
 
 For example, to enable saving command execution result, input the command below:
 
@@ -89,7 +90,7 @@ $ options save-result true
  save-result  false         true
 ```
 
-### Set `unsafe` to true to enhance the classes under the `java.*` package
+## Set `unsafe` to true to enhance the classes under the `java.*` package
 
 By default, `watch`/`trace`/`tt`/`trace`/`monitor` command do not support classes under `java.*` package. You can set `unsafe` to true to enhance the classes under the `java.*` package.
 
@@ -106,7 +107,7 @@ Press Q or Ctrl+C to abort.
 Affect(class count: 1 , method count: 1) cost in 61 ms, listenerId: 1
 ```
 
-### Turn off strict mode, allow setting object properties in ognl expressions
+## Turn off strict mode, allow setting object properties in ognl expressions
 
 ::: tip
 since 3.6.0

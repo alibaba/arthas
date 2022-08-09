@@ -6,7 +6,7 @@
 查看当前 JVM 的 Perf Counter 信息
 :::
 
-### 使用参考
+## 使用参考
 
 ```
 $ perfcounter
@@ -34,7 +34,7 @@ $ perfcounter -d
  java.cls.unloadedClasses               Monotonic     Events       0
 ```
 
-### jdk9 以上的应用
+## jdk9 以上的应用
 
 如果没有打印出信息，应用在启动时，加下面的参数：
 

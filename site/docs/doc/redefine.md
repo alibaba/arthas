@@ -12,7 +12,7 @@
 
 参考：[Instrumentation#redefineClasses](https://docs.oracle.com/javase/8/docs/api/java/lang/instrument/Instrumentation.html#redefineClasses-java.lang.instrument.ClassDefinition...-)
 
-### 常见问题
+## 常见问题
 
 ::: tip
 推荐使用 [retransform](retransform.md) 命令
@@ -37,14 +37,14 @@
 原因是 jdk 本身 redefine 和 Retransform 是不同的机制，同时使用两种机制来更新字节码，只有最后修改的会生效。
 :::
 
-### 参数说明
+## 参数说明
 
 |              参数名称 | 参数说明                                   |
 | --------------------: | :----------------------------------------- |
 |                  [c:] | ClassLoader 的 hashcode                    |
 | `[classLoaderClass:]` | 指定执行表达式的 ClassLoader 的 class name |
 
-### 使用参考
+## 使用参考
 
 ```bash
    redefine /tmp/Test.class
@@ -52,7 +52,7 @@
    redefine --classLoaderClass sun.misc.Launcher$AppClassLoader /tmp/Test.class /tmp/Test\$Inner.class
 ```
 
-### 结合 jad/mc 命令使用
+## 结合 jad/mc 命令使用
 
 ```bash
 jad --source-only com.example.demo.arthas.user.UserController > /tmp/UserController.java
@@ -66,7 +66,7 @@ redefine /tmp/com/example/demo/arthas/user/UserController.class
 - mc 命令来内存编译修改过的代码
 - 用 redefine 命令加载新的字节码
 
-### 上传 .class 文件到服务器的技巧
+## 上传 .class 文件到服务器的技巧
 
 使用`mc`命令来编译`jad`的反编译的代码有可能失败。可以在本地修改代码，编译好后再上传到服务器上。有的服务器不允许直接上传文件，可以使用`base64`命令来绕过。
 
@@ -86,7 +86,7 @@ redefine /tmp/com/example/demo/arthas/user/UserController.class
 
 4. 用 md5 命令计算哈希值，校验是否一致
 
-### redefine 的限制
+## redefine 的限制
 
 - 不允许新增加 field/method
 - 正在跑的函数，没有退出不能生效，比如下面新增加的`System.out.println`，只有`run()`函数里的会生效

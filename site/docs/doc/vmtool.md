@@ -10,7 +10,7 @@
 
 - [JVM Tool Interface](https://docs.oracle.com/javase/8/docs/platform/jvmti/jvmti.html)
 
-### 获取对象
+## 获取对象
 
 ```bash
 $ vmtool --action getInstances --className java.lang.String --limit 10
@@ -32,13 +32,13 @@ $ vmtool --action getInstances --className java.lang.String --limit 10
 通过 `--limit`参数，可以限制返回值数量，避免获取超大数据时对 JVM 造成压力。默认值是 10。
 :::
 
-### 指定 classloader name
+## 指定 classloader name
 
 ```bash
 vmtool --action getInstances --classLoaderClass org.springframework.boot.loader.LaunchedURLClassLoader --className org.springframework.context.ApplicationContext
 ```
 
-### 指定 classloader hash
+## 指定 classloader hash
 
 可以通过`sc`命令查找到加载 class 的 classloader。
 
@@ -60,7 +60,7 @@ $ sc -d org.springframework.context.ApplicationContext
 vmtool --action getInstances -c 19469ea2 --className org.springframework.context.ApplicationContext
 ```
 
-### 指定返回结果展开层数
+## 指定返回结果展开层数
 
 ::: tip
 `getInstances` action 返回结果绑定到`instances`变量上，它是数组。
@@ -72,7 +72,7 @@ vmtool --action getInstances -c 19469ea2 --className org.springframework.context
 vmtool --action getInstances -c 19469ea2 --className org.springframework.context.ApplicationContext -x 2
 ```
 
-### 执行表达式
+## 执行表达式
 
 ::: tip
 `getInstances` action 返回结果绑定到`instances`变量上，它是数组。可以通过`--express`参数执行指定的表达式。
@@ -82,7 +82,7 @@ vmtool --action getInstances -c 19469ea2 --className org.springframework.context
 vmtool --action getInstances --classLoaderClass org.springframework.boot.loader.LaunchedURLClassLoader --className org.springframework.context.ApplicationContext --express 'instances[0].getBeanDefinitionNames()'
 ```
 
-### 强制 GC
+## 强制 GC
 
 ```bash
 vmtool --action forceGc

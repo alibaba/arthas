@@ -8,7 +8,7 @@
 
 让你能方便的观察到指定函数的调用情况。能观察到的范围为：`返回值`、`抛出异常`、`入参`，通过编写 OGNL 表达式进行对应变量的查看。
 
-### 参数说明
+## 参数说明
 
 watch 的参数比较多，主要是因为它能在 4 个不同的场景观察对象
 
@@ -40,13 +40,13 @@ watch 的参数比较多，主要是因为它能在 4 个不同的场景观察�
 - 当使用 `-b` 时，由于观察事件点是在函数调用前，此时返回值或异常均不存在
 - 在 watch 命令的结果里，会打印出`location`信息。`location`有三种可能值：`AtEnter`，`AtExit`，`AtExceptionExit`。对应函数入口，函数正常 return，函数抛出异常。
 
-### 使用参考
+## 使用参考
 
-#### 启动 Demo
+### 启动 Demo
 
 启动[快速入门](quick-start.md)里的`math-game`。
 
-#### 观察函数调用返回时的参数、this 对象和返回值
+### 观察函数调用返回时的参数、this 对象和返回值
 
 ::: tip
 观察表达式，默认值是`{params, target, returnObj}`
@@ -87,7 +87,7 @@ ts=2021-08-31 15:22:58; [cost=1.020982ms] result=@ArrayList[
 - 上面的结果里，说明函数被执行了两次，第一次结果是`location=AtExceptionExit`，说明函数抛出异常了，因此`returnObj`是 null
 - 在第二次结果里是`location=AtExit`，说明函数正常返回，因此可以看到`returnObj`结果是一个 ArrayList
 
-#### 观察函数调用入口的参数和返回值
+### 观察函数调用入口的参数和返回值
 
 ```bash
 $ watch demo.MathGame primeFactors "{params,returnObj}" -x 2 -b
@@ -103,7 +103,7 @@ ts=2018-12-03 19:23:23; [cost=0.0353ms] result=@ArrayList[
 
 - 对比前一个例子，返回值为空（事件点为函数执行前，因此获取不到返回值）
 
-#### 同时观察函数调用前和函数返回后
+### 同时观察函数调用前和函数返回后
 
 ```bash
 $ watch demo.MathGame primeFactors "{params,target,returnObj}" -x 2 -b -s -n 2
@@ -146,7 +146,7 @@ ts=2018-12-03 19:29:54; [cost=4.277392ms] result=@ArrayList[
 
 - 结果的输出顺序和事件发生的先后顺序一致，和命令中 `-s -b` 的顺序无关
 
-#### 调整`-x`的值，观察具体的函数参数值
+### 调整`-x`的值，观察具体的函数参数值
 
 ```bash
 $ watch demo.MathGame primeFactors "{params,target}" -x 3
@@ -182,7 +182,7 @@ ts=2018-12-03 19:34:19; [cost=0.587833ms] result=@ArrayList[
 - `-x`表示遍历深度，可以调整来打印具体的参数和结果内容，默认值是 1。
 - `-x`最大值是 4，防止展开结果占用太多内存。用户可以在`ognl`表达式里指定更具体的 field。
 
-#### 条件表达式的例子
+### 条件表达式的例子
 
 ```bash
 $ watch demo.MathGame primeFactors "{params[0],target}" "params[0]<0"
@@ -196,7 +196,7 @@ ts=2018-12-03 19:36:04; [cost=0.530255ms] result=@ArrayList[
 
 - 只有满足条件的调用，才会有响应。
 
-#### 观察异常信息的例子
+### 观察异常信息的例子
 
 ```bash
 $ watch demo.MathGame primeFactors "{params[0],throwExp}" -e -x 2
@@ -215,7 +215,7 @@ ts=2018-12-03 19:38:00; [cost=1.414993ms] result=@ArrayList[
 - `-e`表示抛出异常时才触发
 - express 中，表示异常信息的变量是`throwExp`
 
-#### 按照耗时进行过滤
+### 按照耗时进行过滤
 
 ```bash
 $ watch demo.MathGame primeFactors '{params, returnObj}' '#cost>200' -x 2
@@ -234,7 +234,7 @@ ts=2018-12-03 19:40:28; [cost=2112.168897ms] result=@ArrayList[
 
 - `#cost>200`(单位是`ms`)表示只有当耗时大于 200ms 时才会输出，过滤掉执行时间小于 200ms 的调用
 
-#### 观察当前对象中的属性
+### 观察当前对象中的属性
 
 如果想查看函数运行前后，当前对象中的属性，可以使用`target`关键字，代表当前对象
 
@@ -258,7 +258,7 @@ ts=2018-12-03 20:04:34; [cost=131.303498ms] result=@Integer[8]
 ts=2018-12-03 20:04:35; [cost=0.961441ms] result=@Integer[8]
 ```
 
-#### 获取类的静态字段、调用类的静态函数的例子
+### 获取类的静态字段、调用类的静态函数的例子
 
 ```bash
 watch demo.MathGame * '{params,@demo.MathGame@random.nextInt(100)}' -v -n 1 -x 2
@@ -275,7 +275,7 @@ ts=2021-01-05 21:35:20; [cost=0.173966ms] result=@ArrayList[
 
 - 注意这里使用 `Thread.currentThread().getContextClassLoader()` 加载,使用精确`classloader` [ognl](ognl.md)更好。
 
-#### 排除掉指定的类
+### 排除掉指定的类
 
 ::: tip
 watch/trace/monitor/stack/tt 命令都支持 `--exclude-class-pattern` 参数
@@ -287,7 +287,7 @@ watch/trace/monitor/stack/tt 命令都支持 `--exclude-class-pattern` 参数
 watch javax.servlet.Filter * --exclude-class-pattern com.demo.TestFilter
 ```
 
-#### 不匹配子类
+### 不匹配子类
 
 默认情况下 watch/trace/monitor/stack/tt 命令都会匹配子类。如果想不匹配，可以通过全局参数关掉。
 
@@ -295,7 +295,7 @@ watch javax.servlet.Filter * --exclude-class-pattern com.demo.TestFilter
 options disable-sub-class true
 ```
 
-#### 使用 -v 参数打印更多信息
+### 使用 -v 参数打印更多信息
 
 ::: tip
 watch/trace/monitor/stack/tt 命令都支持 `-v` 参数

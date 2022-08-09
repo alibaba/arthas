@@ -11,7 +11,7 @@ Decompile the specified classes.
 - The decompiled code is syntax highlighted for better readability in Arthas console.
 - It is possible that there's grammar error in the decompiled code, but it should not affect your interpretation.
 
-### Options
+## Options
 
 |                  Name | Specification                                                   |
 | --------------------: | :-------------------------------------------------------------- |
@@ -20,9 +20,9 @@ Decompile the specified classes.
 | `[classLoaderClass:]` | The class name of the ClassLoader that executes the expression. |
 |                 `[E]` | turn on regex match while the default is wildcard match         |
 
-### Usage
+## Usage
 
-#### Decompile `java.lang.String`
+### Decompile `java.lang.String`
 
 ```java
 $ jad java.lang.String
@@ -60,7 +60,7 @@ Location:
 ...
 ```
 
-#### Print source only
+### Print source only
 
 By default, the decompile result will have the `ClassLoader` information. With the `--source-only` option, you can print only the source code. Conveniently used with the [mc](mc.md)/[retransform](retransform.md) commands.
 
@@ -84,7 +84,7 @@ public class MathGame {
 ...
 ```
 
-#### Decompile the specified method
+### Decompile the specified method
 
 ```java
 $ jad demo.MathGame main
@@ -105,7 +105,7 @@ Location:
        }
 ```
 
-#### Do not print line numbers
+### Do not print line numbers
 
 - `--lineNumber`: Output source code contins line numbers, default value true
 
@@ -128,7 +128,7 @@ public static void main(String[] args) throws InterruptedException {
 }
 ```
 
-#### Decompile with specified classLoader
+### Decompile with specified classLoader
 
 ::: tip
 If the target class is loaded by multiple classloaders, `jad` outputs the `hashcode` of the corresponding classloaders, then you can re-run `jad` and specify `-c <hashcode>` to decompile the target class from the specified classloader.

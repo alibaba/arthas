@@ -2,7 +2,7 @@
 
 [`Web Console`在线教程](https://arthas.aliyun.com/doc/arthas-tutorials.html?language=cn&id=case-web-console)
 
-### 通过浏览器连接 arthas
+## 通过浏览器连接 arthas
 
 Arthas 目前支持 Web Console，用户在 attach 成功之后，可以直接访问：[http://127.0.0.1:8563/](http://127.0.0.1:8563/)。
 
@@ -21,7 +21,7 @@ Arthas 目前支持 Web Console，用户在 attach 成功之后，可以直接�
 3.5.4 版本后，在 Web Console 可以鼠标右键复制粘贴。
 :::
 
-### scrollback URL 参数
+## scrollback URL 参数
 
 ::: tip
 3.5.5 版本后支持
@@ -31,6 +31,6 @@ Arthas 目前支持 Web Console，用户在 attach 成功之后，可以直接�
 
 [http://127.0.0.1:8563/?scrollback=3000](http://127.0.0.1:8563/?scrollback=3000)
 
-### 使用 arthas tunnel server 连接远程 arthas
+## 使用 arthas tunnel server 连接远程 arthas
 
 参考：[Arthas Tunnel](tunnel.md)

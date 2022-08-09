@@ -10,7 +10,7 @@
 
 可以让指定的 classloader 去 getResources，打印出所有查找到的 resources 的 url。对于`ResourceNotFoundException`比较有用。
 
-### 参数说明
+## 参数说明
 
 |              参数名称 | 参数说明                                   |
 | --------------------: | :----------------------------------------- |
@@ -22,9 +22,9 @@
 |             `[c: r:]` | 用 ClassLoader 去查找 resource             |
 |          `[c: load:]` | 用 ClassLoader 去加载指定的类              |
 
-### 使用参考
+## 使用参考
 
-#### 按类加载类型查看统计信息
+### 按类加载类型查看统计信息
 
 ```bash
 $ classloader
@@ -37,7 +37,7 @@ $ classloader
 Affect(row-cnt:5) cost in 3 ms.
 ```
 
-#### 按类加载实例查看统计信息
+### 按类加载实例查看统计信息
 
 ```bash
 $ classloader -l
@@ -49,7 +49,7 @@ $ classloader -l
 Affect(row-cnt:4) cost in 2 ms.
 ```
 
-#### 查看 ClassLoader 的继承树
+### 查看 ClassLoader 的继承树
 
 ```bash
 $ classloader -t
@@ -60,7 +60,7 @@ $ classloader -t
 Affect(row-cnt:4) cost in 3 ms.
 ```
 
-#### 查看 URLClassLoader 实际的 urls
+### 查看 URLClassLoader 实际的 urls
 
 ```bash
 $ classloader -c 3d4eac69
@@ -82,7 +82,7 @@ file:/Users/hengyunabc/.arthas/lib/3.0.5/arthas/arthas-agent.jar
 Affect(row-cnt:9) cost in 3 ms.
 ```
 
-#### 使用 ClassLoader 去查找 resource
+### 使用 ClassLoader 去查找 resource
 
 ```bash
 $ classloader -c 3d4eac69  -r META-INF/MANIFEST.MF
@@ -98,7 +98,7 @@ $ classloader -c 1b6d3586 -r java/lang/String.class
  jar:file:/Library/Java/JavaVirtualMachines/jdk1.8.0_60.jdk/Contents/Home/jre/lib/rt.jar!/java/lang/String.class
 ```
 
-#### 使用 ClassLoader 去加载类
+### 使用 ClassLoader 去加载类
 
 ```bash
 $ classloader -c 3d4eac69 --load demo.MathGame
@@ -125,7 +125,7 @@ load class success.
  classLoaderHash   3d4eac69
 ```
 
-#### 统计 ClassLoader 实际使用 URL 和未使用的 URL
+### 统计 ClassLoader 实际使用 URL 和未使用的 URL
 
 ::: warning
 注意，基于 JVM 目前已加载的所有类统计，不代表`Unused URLs`可以从应用中删掉。因为可能将来需要从`Unused URLs`里加载类，或者需要加载`resources`。

@@ -2,6 +2,8 @@
 
 [`mc-retransform` online tutorial](https://arthas.aliyun.com/doc/arthas-tutorials?language=en&id=command-mc-retransform)
 
+## Usage
+
 ::: tip
 Memory compiler, compiles `.java` files into `.class` files in memory.
 :::

@@ -11,7 +11,7 @@
 - 1: [Web Console](web-console.md)
 - 2: [Arthas Spring Boot Starter](spring-boot-starter.md)
 
-### 下载部署 arthas tunnel server
+## 下载部署 arthas tunnel server
 
 [https://github.com/alibaba/arthas/releases](https://github.com/alibaba/arthas/releases)
 
@@ -37,7 +37,7 @@ java -jar  arthas-tunnel-server.jar
 Using generated security password: f1dca050-3777-48f4-a577-6367e55a78a2
 ```
 
-### 启动 arthas 时连接到 tunnel server
+## 启动 arthas 时连接到 tunnel server
 
 在启动 arthas，可以传递`--tunnel-server`参数，比如：
 
@@ -87,7 +87,7 @@ id        URJZ5L48RPBR2ALI5K4V
 
 ![](/images/arthas-tunnel-server.png)
 
-### 最佳实践
+## 最佳实践
 
 ::: tip
 注意，agentId 要保持唯一，否则会在 tunnel server 上冲突，不能正常工作。
@@ -103,7 +103,7 @@ Tunnel server 会以`_`做分隔符，提取出`appName`，方便按应用进行
 另外，也可以在解压的 arthas 目录下的 `arthas.properties`，或者在 spring boot 应用的`application.properties`里配置`appName`。
 :::
 
-### Tunnel Server 的管理页面
+## Tunnel Server 的管理页面
 
 ::: tip
 需要在 spring boot 的`application.properties`里配置 `arthas.enable-detail-pages=true`
@@ -147,7 +147,7 @@ id         test_PE3LZO9NA9ENJYTPGL9L
 
 ![](/images/tunnel-server-agents.png)
 
-### 安全和权限管理
+## 安全和权限管理
 
 ::: tip
 **强烈建议不要把 tunnel server 直接暴露到公网上。**
@@ -158,13 +158,13 @@ id         test_PE3LZO9NA9ENJYTPGL9L
 1. 用户需要自行开发，对 app name 鉴权。
 2. 如果开放管理页面，需要增加安全措施。
 
-### 集群方式管理
+## 集群方式管理
 
 如果希望部署多台 tunnel server，可以通过 nginx 做转发，redis 来保存 agent 信息。
 
 - nginx 需要配置 sticky session，保证用户 web socket 连接到同一个后端 tunnel server 上。简单的配置方式是用`ip_hash`。
 
-### Arthas tunnel server 的工作原理
+## Arthas tunnel server 的工作原理
 
 ```
 browser <-> arthas tunnel server <-> arthas tunnel client <-> arthas agent

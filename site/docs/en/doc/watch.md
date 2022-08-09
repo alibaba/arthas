@@ -6,7 +6,7 @@ Monitor methods in data aspect including `return values`, `exceptions` and `para
 
 With the help of [OGNL](https://commons.apache.org/proper/commons-ognl/index.html), you can easily check the details of variables when methods being invoked.
 
-### Parameters & Options
+## Parameters & Options
 
 There are four different scenarios for `watch` command, which makes it rather complicated.
 
@@ -38,13 +38,13 @@ Advanced:
 - [Special usages](https://github.com/alibaba/arthas/issues/71)
 - [OGNL official guide](https://commons.apache.org/proper/commons-ognl/language-guide.html)
 
-### Usage
+## Usage
 
-#### Start Demo
+### Start Demo
 
 Start `math-game` in [Quick Start](quick-start.md).
 
-#### Check the `out parameters`, `this` and `return value`
+### Check the `out parameters`, `this` and `return value`
 
 ::: tip
 The expression to watch, default value `{params, target, returnObj}`
@@ -85,7 +85,7 @@ ts=2021-08-31 15:22:58; [cost=1.020982ms] result=@ArrayList[
 - In the above result, the method is executed twice, the first result is `location=AtExceptionExit`, indicating that the method throws an exception, so `returnObj` is null
 - In the second result is `location=AtExit`, indicating that the method returns normally, so you can see that the result of `returnObj` is an ArrayList
 
-#### Check `in parameters`
+### Check `in parameters`
 
 ```bash
 $ watch demo.MathGame primeFactors "{params,returnObj}" -x 2 -b
@@ -103,7 +103,7 @@ Compared to the previous _check_:
 
 - `return value` is `null` since it's `-b`.
 
-#### Check _before_ and _after_ at the same time
+### Check _before_ and _after_ at the same time
 
 ```bash
 $ watch demo.MathGame primeFactors "{params,target,returnObj}" -x 2 -b -s -n 2
@@ -146,7 +146,7 @@ F.Y.I
 - the first block of output is the _before watching_ point;
 - *the order of the output determined by the *watching\* order itself (nothing to do with the order of the options `-b -s`).
 
-#### Use `-x` to check more details
+### Use `-x` to check more details
 
 ```bash
 $ watch demo.MathGame primeFactors "{params,target}" -x 3
@@ -182,7 +182,7 @@ ts=2018-12-03 19:34:19; [cost=0.587833ms] result=@ArrayList[
 - `-x`: Expand level of object (1 by default)
 - The max value of `-x` is 4, to prevent the expansion result taking up too much memory. Users can specify the field in the `ognl` expression.
 
-#### Use condition expressions to locate specific call
+### Use condition expressions to locate specific call
 
 ```bash
 $ watch demo.MathGame primeFactors "{params[0],target}" "params[0]<0"
@@ -194,7 +194,7 @@ ts=2018-12-03 19:36:04; [cost=0.530255ms] result=@ArrayList[
 ]
 ```
 
-#### Check `exceptions`
+### Check `exceptions`
 
 ```bash
 $ watch demo.MathGame primeFactors "{params[0],throwExp}" -e -x 2
@@ -213,7 +213,7 @@ ts=2018-12-03 19:38:00; [cost=1.414993ms] result=@ArrayList[
 - `-e`: Trigger when an exception is thrown
 - `throwExp`: the exception object
 
-#### Filter by time cost
+### Filter by time cost
 
 ```bash
 $ watch demo.MathGame primeFactors '{params, returnObj}' '#cost>200' -x 2
@@ -232,7 +232,7 @@ ts=2018-12-03 19:40:28; [cost=2112.168897ms] result=@ArrayList[
 
 - `#cost>200` (`ms`) filter out all invokings that take less than `200ms`.
 
-#### Check the field of the target object
+### Check the field of the target object
 
 - `target` is the `this` object in java.
 
@@ -256,7 +256,7 @@ ts=2018-12-03 20:04:34; [cost=131.303498ms] result=@Integer[8]
 ts=2018-12-03 20:04:35; [cost=0.961441ms] result=@Integer[8]
 ```
 
-#### Get a static field and calling a static method
+### Get a static field and calling a static method
 
 ```bash
 watch demo.MathGame * '{params,@demo.MathGame@random.nextInt(100)}' -v -n 1 -x 2
@@ -273,7 +273,7 @@ ts=2021-01-05 21:35:20; [cost=0.173966ms] result=@ArrayList[
 
 - Note that here you use `Thread.currentThread().getContextClassLoader()` to load, and it is better to use the exact `classloader` [ognl](ognl.md).
 
-#### Exclude the specified class
+### Exclude the specified class
 
 ::: tip
 The watch/trace/monitor/stack/tt commands all support the `--exclude-class-pattern` parameter
@@ -285,7 +285,7 @@ Use the `--exclude-class-pattern` parameter to exclude the specified class, for 
 watch javax.servlet.Filter * --exclude-class-pattern com.demo.TestFilter
 ```
 
-#### Does not match subclass
+### Does not match subclass
 
 By default, the watch/trace/monitor/stack/tt commands will match subclass. If you don't want to match, you can turn it off.
 
@@ -293,7 +293,7 @@ By default, the watch/trace/monitor/stack/tt commands will match subclass. If yo
 options disable-sub-class true
 ```
 
-#### Use the -v parameter to print more information
+### Use the -v parameter to print more information
 
 > The watch/trace/monitor/stack/tt commands all support the `-v` parameter.
 

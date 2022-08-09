@@ -2,7 +2,7 @@
 
 View the JVM memory information.
 
-### Usage
+## Usage
 
 ```bash
 $ memory

@@ -11,7 +11,7 @@
 - 在 Arthas Console 上，反编译出来的源码是带语法高亮的，阅读更方便
 - 当然，反编译出来的 java 代码可能会存在语法错误，但不影响你进行阅读理解
 
-### 参数说明
+## 参数说明
 
 |              参数名称 | 参数说明                                   |
 | --------------------: | :----------------------------------------- |
@@ -20,9 +20,9 @@
 | `[classLoaderClass:]` | 指定执行表达式的 ClassLoader 的 class name |
 |                   [E] | 开启正则表达式匹配，默认为通配符匹配       |
 
-### 使用参考
+## 使用参考
 
-#### 反编译`java.lang.String`
+### 反编译`java.lang.String`
 
 ```java
 $ jad java.lang.String
@@ -60,7 +60,7 @@ Location:
 ...
 ```
 
-#### 反编译时只显示源代码
+### 反编译时只显示源代码
 
 默认情况下，反编译结果里会带有`ClassLoader`信息，通过`--source-only`选项，可以只打印源代码。方便和[mc](mc.md)/[retransform](retransform.md)命令结合使用。
 
@@ -84,7 +84,7 @@ public class MathGame {
 ...
 ```
 
-#### 反编译指定的函数
+### 反编译指定的函数
 
 ```java
 $ jad demo.MathGame main
@@ -105,7 +105,7 @@ Location:
        }
 ```
 
-#### 反编译时不显示行号
+### 反编译时不显示行号
 
 `--lineNumber` 参数默认值为 true，显示指定为 false 则不打印行号。
 
@@ -128,7 +128,7 @@ public static void main(String[] args) throws InterruptedException {
 }
 ```
 
-#### 反编译时指定 ClassLoader
+### 反编译时指定 ClassLoader
 
 ::: tip
 当有多个 `ClassLoader` 都加载了这个类时，`jad` 命令会输出对应 `ClassLoader` 实例的 `hashcode`，然后你只需要重新执行 `jad` 命令，并使用参数 `-c <hashcode>` 就可以反编译指定 ClassLoader 加载的那个类了；

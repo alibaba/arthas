@@ -6,7 +6,7 @@
 Examine the system properties from the target JVM
 :::
 
-### Usage
+## Usage
 
 ```
  USAGE:
@@ -29,7 +29,7 @@ Examine the system properties from the target JVM
  <property-value>                            property value
 ```
 
-#### Check all properties
+### Check all properties
 
 ```
 $ sysprop
@@ -104,7 +104,7 @@ $ sysprop
  sun.cpu.isalist
 ```
 
-#### Check One Single Property
+### Check One Single Property
 
 ::: tip
 Use `tab` for auto-completion
@@ -115,7 +115,7 @@ $ sysprop java.version
 java.version=1.8.0_51
 ```
 
-#### Modify Single Property
+### Modify Single Property
 
 ```
 $ sysprop user.country

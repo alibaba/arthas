@@ -6,9 +6,9 @@
 dump java heap, 类似 jmap 命令的 heap dump 功能。
 :::
 
-### 使用参考
+## 使用参考
 
-#### dump 到指定文件
+### dump 到指定文件
 
 ```bash
 [arthas@58205]$ heapdump /tmp/dump.hprof
@@ -16,7 +16,7 @@ Dumping heap to /tmp/dump.hprof...
 Heap dump file created
 ```
 
-#### 只 dump live 对象
+### 只 dump live 对象
 
 ```bash
 [arthas@58205]$ heapdump --live /tmp/dump.hprof
@@ -24,7 +24,7 @@ Dumping heap to /tmp/dump.hprof...
 Heap dump file created
 ```
 
-### dump 到临时文件
+## dump 到临时文件
 
 ```bash
 [arthas@58205]$ heapdump

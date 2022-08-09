@@ -12,7 +12,7 @@ Load the external `*.class` files to re-define the loaded classes in JVM.
 
 Reference: [Instrumentation#redefineClasses](https://docs.oracle.com/javase/8/docs/api/java/lang/instrument/Instrumentation.html#redefineClasses-java.lang.instrument.ClassDefinition...-)
 
-### Frequently asked questions
+## Frequently asked questions
 
 ::: tip
 Recommend to use the [retransform](retransform.md) command.
@@ -37,14 +37,14 @@ The `redefine` command will conflict with the `jad`/`watch`/`trace`/`monitor`/`t
 The reason is that in the JDK `redefine` and `retransform` are different mechanisms. When two mechanisms are both used to update the bytecode, only the last modified will take effect.
 :::
 
-### Options
+## Options
 
 |                  Name | Specification                                                   |
 | --------------------: | :-------------------------------------------------------------- |
 |                `[c:]` | hashcode of the class loader                                    |
 | `[classLoaderClass:]` | The class name of the ClassLoader that executes the expression. |
 
-### Usage
+## Usage
 
 ```bash
 redefine /tmp/Test.class
@@ -52,7 +52,7 @@ redefine -c 327a647b /tmp/Test.class /tmp/Test\$Inner.class
 redefine --classLoaderClass sun.misc.Launcher$AppClassLoader /tmp/Test.class /tmp/Test\$Inner.class
 ```
 
-### Use with the jad/mc command
+## Use with the jad/mc command
 
 ```bash
 jad --source-only com.example.demo.arthas.user.UserController > /tmp/UserController.java
@@ -66,7 +66,7 @@ redefine /tmp/com/example/demo/arthas/user/UserController.class
 - `mc` command to compile the modified code
 - Load new bytecode with `redefine` command
 
-### Tips for uploading .class files to the server
+## Tips for uploading .class files to the server
 
 The `mc` command may fail. You can modify the code locally, compile it, and upload it to the server. Some servers do not allow direct uploading files, you can use the `base64` command to bypass.
 
@@ -86,7 +86,7 @@ The `mc` command may fail. You can modify the code locally, compile it, and uplo
 
 4. Use the md5 command to verify that the `.class` files are consistent.
 
-### Restrictions of the redefine command
+## Restrictions of the redefine command
 
 - New field/method is not allowed
 - The function that is running, no exit can not take effect, such as the new `System.out.println` added below, only the `run()` function will take effect.

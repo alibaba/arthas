@@ -8,7 +8,7 @@
 
 参考：[Instrumentation#retransformClasses](https://docs.oracle.com/javase/8/docs/api/java/lang/instrument/Instrumentation.html#retransformClasses-java.lang.Class...-)
 
-### 使用参考
+## 使用参考
 
 ```bash
    retransform /tmp/Test.class
@@ -20,7 +20,7 @@
    retransform --classLoaderClass 'sun.misc.Launcher$AppClassLoader' /tmp/Test.class
 ```
 
-### retransform 指定的 .class 文件
+## retransform 指定的 .class 文件
 
 ```bash
 $ retransform /tmp/MathGame.class
@@ -34,7 +34,7 @@ demo.MathGame
 如果多次执行 retransform 加载同一个 class 文件，则会有多条 retransform entry.
 :::
 
-### 查看 retransform entry
+## 查看 retransform entry
 
 ```bash
 $ retransform -l
@@ -44,7 +44,7 @@ Id              ClassName       TransformCount  LoaderHash      LoaderClassName
 
 - TransformCount 统计在 ClassFileTransformer#transform 函数里尝试返回 entry 对应的 .class 文件的次数，但并不表明 transform 一定成功。
 
-### 删除指定 retransform entry
+## 删除指定 retransform entry
 
 需要指定 id：
 
@@ -52,13 +52,13 @@ Id              ClassName       TransformCount  LoaderHash      LoaderClassName
 retransform -d 1
 ```
 
-### 删除所有 retransform entry
+## 删除所有 retransform entry
 
 ```bash
 retransform --deleteAll
 ```
 
-### 显式触发 retransform
+## 显式触发 retransform
 
 ```bash
 $ retransform --classPattern demo.MathGame
@@ -68,7 +68,7 @@ demo.MathGame
 
 > 注意：对于同一个类，当存在多个 retransform entry 时，如果显式触发 retransform ，则最后添加的 entry 生效(id 最大的)。
 
-### 消除 retransform 的影响
+## 消除 retransform 的影响
 
 如果对某个类执行 retransform 之后，想消除影响，则需要：
 
@@ -79,7 +79,7 @@ demo.MathGame
 如果不清除掉所有的 retransform entry，并重新触发 retransform ，则 arthas stop 时，retransform 过的类仍然生效。
 :::
 
-### 结合 jad/mc 命令使用
+## 结合 jad/mc 命令使用
 
 ```bash
 jad --source-only com.example.demo.arthas.user.UserController > /tmp/UserController.java
@@ -93,7 +93,7 @@ retransform /tmp/com/example/demo/arthas/user/UserController.class
 - mc 命令来内存编译修改过的代码
 - 用 retransform 命令加载新的字节码
 
-### 上传 .class 文件到服务器的技巧
+## 上传 .class 文件到服务器的技巧
 
 使用`mc`命令来编译`jad`的反编译的代码有可能失败。可以在本地修改代码，编译好后再上传到服务器上。有的服务器不允许直接上传文件，可以使用`base64`命令来绕过。
 
@@ -113,7 +113,7 @@ retransform /tmp/com/example/demo/arthas/user/UserController.class
 
 4. 用 md5 命令计算哈希值，校验是否一致
 
-### retransform 的限制
+## retransform 的限制
 
 - 不允许新增加 field/method
 - 正在跑的函数，没有退出不能生效，比如下面新增加的`System.out.println`，只有`run()`函数里的会生效

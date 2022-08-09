@@ -7,7 +7,7 @@ if exits tunnel server，it will also show agentId、tunnelServerUrl、connected
 if exits statUrl，it will also show statUrl.
 :::
 
-### Usage
+## Usage
 
 ```bash
 $ session

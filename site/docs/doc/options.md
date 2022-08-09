@@ -13,14 +13,14 @@
 | batch-re-transform     | true   | 是否支持批量对匹配到的类执行 retransform 操作                                                                                                              |
 | json-format            | false  | 是否支持 json 化的输出                                                                                                                                     |
 | disable-sub-class      | false  | 是否禁用子类匹配，默认在匹配目标类的时候会默认匹配到其子类，如果想精确匹配，可以关闭此开关                                                                 |
-| support-default-method | true   | 是否支持匹配到 default method， 默认会查找 interface，匹配里面的 default method。参考 [#1105](https://github.com/alibaba/arthas/issues/1105)               |
+| support-default-method | true   | 是否支持匹配到 default method， 默认会查找 interface，匹配里面的 default method。参考 [#1105](https://github.com/alibaba/arthas/issues/1105)               |
 | save-result            | false  | 是否打开执行结果存日志功能，打开之后所有命令的运行结果都将保存到`~/logs/arthas-cache/result.log`中                                                         |
-| job-timeout            | 1d     | 异步后台任务的默认超时时间，超过这个时间，任务自动停止； 比如设置 1d, 2h, 3m, 25s，分别代表天、小时、分、秒                                                |
+| job-timeout            | 1d     | 异步后台任务的默认超时时间，超过这个时间，任务自动停止；比如设置 1d, 2h, 3m, 25s，分别代表天、小时、分、秒                                                 |
 | print-parent-fields    | true   | 是否打印在 parent class 里的 filed                                                                                                                         |
-| verbose                | false  | 是否打  印更多详细信息                                                                                                                                     |
+| verbose                | false  | 是否打印更多详细信息                                                                                                                                       |
 | strict                 | true   | 是否启用 strict 模式                                                                                                                                       |
 
-### 查看所有的 options
+## 查看所有的 options
 
 ```bash
 $ options
@@ -64,7 +64,7 @@ $ options
                                                             false`
 ```
 
-### 获取 option 的值
+## 获取 option 的值
 
 ```
 $ options json-format
@@ -79,7 +79,7 @@ $ options json-format
 默认情况下`json-format`为 false，如果希望`watch`/`tt`等命令结果以 json 格式输出，则可以设置`json-format`为 true。
 :::
 
-### 设置指定的 option
+## 设置指定的 option
 
 例如，想打开执行结果存日志功能，输入如下命令即可：
 
@@ -90,7 +90,7 @@ $ options save-result true
  save-result  false         true
 ```
 
-### 打开 unsafe 开关，支持 jdk package 下的类
+## 打开 unsafe 开关，支持 jdk package 下的类
 
 默认情况下，`watch`/`trace`/`tt`/`trace`/`monitor`等命令不支持`java.*` package 下的类。可以设置`unsafe`为 true，则可以增强。
 
@@ -107,7 +107,7 @@ Press Q or Ctrl+C to abort.
 Affect(class count: 1 , method count: 1) cost in 61 ms, listenerId: 1
 ```
 
-### 关闭 strict 模式，允许在 ognl 表达式里设置对象属性
+## 关闭 strict 模式，允许在 ognl 表达式里设置对象属性
 
 ::: tip
 since 3.6.0

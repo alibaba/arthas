@@ -2,7 +2,7 @@
 
 [`Web Console` online tutorial](https://arthas.aliyun.com/doc/arthas-tutorials.html?language=en&id=case-web-console)
 
-### Connect arthas through the browser
+## Connect arthas through the browser
 
 Arthas supports the Web Console. After attach success, the user can access: [http://127.0.0.1:8563/](http://127.0.0.1:8563/).
 
@@ -22,7 +22,7 @@ If you have suggestions for the Web Console, please leave a message here: [https
 Since 3.5.4, you can right-click to copy and paste in the Web Console.
 :::
 
-### scrollback URL parameters
+## scrollback URL parameters
 
 ::: tip
 Since 3.5.5
@@ -32,6 +32,6 @@ By default, the number of rows that the Web Console supports to roll back upward
 
 [http://127.0.0.1:8563/?scrollback=3000](http://127.0.0.1:8563/?scrollback=3000)
 
-### Connect remote arthas through arthas tunnel server
+## Connect remote arthas through arthas tunnel server
 
 Reference: [Arthas Tunnel](tunnel.md)

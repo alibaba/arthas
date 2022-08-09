@@ -7,7 +7,7 @@ import { usePageData } from "@vuepress/client";
 
 function showRightMenu() {
   const pages = usePageData();
-  return pages.value.headers.length > 1;
+  return pages.value.headers.length > 0;
 }
 </script>
 

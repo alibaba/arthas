@@ -59,6 +59,7 @@ module.exports = [
         "Alibaba Java Diagnostic Tool Arthas/Alibaba Java诊断利器Arthas - alibaba/arthas: Alibaba Java Diagnostic Tool Arthas/Alibaba Java诊断利器Arthas",
     },
   ],
+  // baidu analytics
   [
     "script",
     {},
@@ -71,5 +72,27 @@ module.exports = [
       s.parentNode.insertBefore(hm, s);
     })();
     `,
+  ],
+  // aplus
+  [
+    "meta",
+    {
+      name: "aes-config",
+      content: "pid=xux-opensource&user_type=101&uid=&username=",
+    },
+  ],
+  [
+    "script",
+    {
+      src: "//g.alicdn.com/alilog/mlog/aplus_v2.js",
+      id: "beacon-aplus",
+      exparams: "clog=o&aplus&sidx=aplusSidx&ckx=aplusCkx",
+    },
+  ],
+  [
+    "script",
+    {
+      src: "//g.alicdn.com/aes/??tracker/1.0.34/index.js,tracker-plugin-pv/2.4.5/index.js,tracker-plugin-event/1.2.5/index.js,tracker-plugin-jserror/1.0.13/index.js,tracker-plugin-api/1.1.14/index.js,tracker-plugin-perf/1.1.8/index.js,tracker-plugin-eventTiming/1.0.4/index.js",
+    },
   ],
 ];

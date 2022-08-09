@@ -8,7 +8,7 @@
 
 从 3.0.5 版本增加
 
-### 参数说明
+## 参数说明
 
 |              参数名称 | 参数说明                                                         |
 | --------------------: | :--------------------------------------------------------------- |
@@ -17,7 +17,7 @@
 | `[classLoaderClass:]` | 指定执行表达式的 ClassLoader 的 class name                       |
 |                   [x] | 结果对象的展开层次，默认值 1                                     |
 
-### 使用参考
+## 使用参考
 
 - OGNL 特殊用法请参考：[https://github.com/alibaba/arthas/issues/71](https://github.com/alibaba/arthas/issues/71)
 - OGNL 表达式官方指南：[https://commons.apache.org/proper/commons-ognl/language-guide.html](https://commons.apache.org/proper/commons-ognl/language-guide.html)

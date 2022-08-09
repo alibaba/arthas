@@ -4,7 +4,7 @@
 
 Arthas is a Java diagnostic tool open-sourced by Alibaba middleware team. It is widely adopted and popular among the developers inside Alibaba. Arthas helps developers in trouble-shooting issues in production environment for Java based applications without modifying code or restarting servers.
 
-### Background
+## Background
 
 Oftentimes the production system network is inaccessible from local development environment. If issues are encountered in production systems, it is impossible to use IDE to debug the application remotely. What's even worse, debugging in production environment is unacceptable, as it will suspend all the threads, leading to services downtime.
 
@@ -14,7 +14,7 @@ And if you're thinking of adding some logs to your code to help trouble-shoot th
 
 Arthas is built to solve these issues. A developer can troubleshoot production issues on the fly. No JVM restart, no additional code changes. Arthas works as an observer, that is, it will never suspend your running threads.
 
-### Key features
+## Key features
 
 - Check whether a class is loaded? Or where the class is loaded from? (Useful for trouble-shooting jar file conflicts)
 - Decompile a class to ensure the code is running as expected.
@@ -33,6 +33,6 @@ Arthas is built to solve these issues. A developer can troubleshoot production i
 
 **If you are using Arthas, please let us know. Your feedback is very important to us: [View](https://github.com/alibaba/arthas/issues/111)**
 
-### Contributors
+## Contributors
 
 [![](https://opencollective.com/arthas/contributors.svg?width=890&button=false)](https://github.com/alibaba/arthas/graphs/contributors)

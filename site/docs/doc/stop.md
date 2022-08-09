@@ -1,4 +1,4 @@
-# Stop
+# stop
 
 关闭 Arthas 服务端，所有 Arthas 客户端全部退出。
 

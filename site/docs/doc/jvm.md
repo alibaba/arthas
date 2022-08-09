@@ -6,7 +6,7 @@
 查看当前 JVM 信息
 :::
 
-### 使用参考
+## 使用参考
 
 ```
 $ jvm
@@ -110,7 +110,7 @@ RUNTIME
 Affect(row-cnt:0) cost in 88 ms.
 ```
 
-### THREAD 相关
+## THREAD 相关
 
 - COUNT: JVM 当前活跃的线程数
 - DAEMON-COUNT: JVM 当前活跃的守护线程数
@@ -118,7 +118,7 @@ Affect(row-cnt:0) cost in 88 ms.
 - STARTED-COUNT: 从 JVM 启动开始总共启动过的线程次数
 - DEADLOCK-COUNT: JVM 当前死锁的线程数
 
-### 文件描述符相关
+## 文件描述符相关
 
 - MAX-FILE-DESCRIPTOR-COUNT：JVM 进程最大可以打开的文件描述符数
 - OPEN-FILE-DESCRIPTOR-COUNT：JVM 当前打开的文件描述符数

@@ -8,7 +8,7 @@
 
 `trace` 命令能主动搜索 `class-pattern`／`method-pattern` 对应的方法调用路径，渲染和统计整个调用链路上的所有性能开销和追踪调用链路。
 
-### 参数说明
+## 参数说明
 
 |            参数名称 | 参数说明                             |
 | ------------------: | :----------------------------------- |
@@ -34,7 +34,7 @@
 watch/stack/trace 这个三个命令都支持`#cost`
 :::
 
-### 注意事项
+## 注意事项
 
 - `trace` 能方便的帮助你定位和发现因 RT 高而导致的性能问题缺陷，但其每次只能跟踪一级方法的调用链路。
 
@@ -44,13 +44,13 @@ watch/stack/trace 这个三个命令都支持`#cost`
 
 - 目前不支持 `trace java.lang.Thread getName`，参考 issue: [#1610](https://github.com/alibaba/arthas/issues/1610) ，考虑到不是非常必要场景，且修复有一定难度，因此当前暂不修复
 
-### 使用参考
+## 使用参考
 
-#### 启动 Demo
+### 启动 Demo
 
 启动[快速入门](quick-start.md)里的`math-game`。
 
-#### trace 函数
+### trace 函数
 
 ```bash
 $ trace demo.MathGame run
@@ -69,7 +69,7 @@ Affect(class-cnt:1 , method-cnt:1) cost in 28 ms.
 结果里的 `#24`，表示在 run 函数里，在源文件的第`24`行调用了`primeFactors()`函数。
 :::
 
-#### trace 次数限制
+### trace 次数限制
 
 如果方法调用的次数很多，那么可以用`-n`参数指定捕捉结果的次数。比如下面的例子里，捕捉到一次调用就退出命令。
 
@@ -85,7 +85,7 @@ Affect(class-cnt:1 , method-cnt:1) cost in 20 ms.
 Command execution times exceed limit: 1, so command will exit. You can set it with -n option.
 ```
 
-#### 包含 jdk 的函数
+### 包含 jdk 的函数
 
 - `--skipJDKMethod <value> ` skip jdk method trace, default value true.
 
@@ -120,7 +120,7 @@ Affect(class-cnt:1 , method-cnt:1) cost in 60 ms.
         `---[0.076457ms] java.io.PrintStream:println() #28
 ```
 
-#### 据调用耗时过滤
+### 据调用耗时过滤
 
 ```bash
 $ trace demo.MathGame run '#cost > 10'
@@ -142,7 +142,7 @@ Affect(class-cnt:1 , method-cnt:1) cost in 41 ms.
 - [0,0,0ms,11]xxx:yyy() [throws Exception]，对该方法中相同的方法调用进行了合并，`0,0,0ms,11` 表示方法调用耗时，`min,max,total,count`；`throws Exception` 表明该方法调用中存在异常返回
 - 这里存在一个统计不准确的问题，就是所有方法耗时加起来可能会小于该监测方法的总耗时，这个是由于 Arthas 本身的逻辑会有一定的耗时
 
-#### trace 多个类或者多个函数
+### trace 多个类或者多个函数
 
 trace 命令只会 trace 匹配到的函数里的子调用，并不会向下 trace 多层。因为 trace 是代价比较贵的，多层 trace 可能会导致最终要 trace 的类和函数非常多。
 
@@ -152,7 +152,7 @@ trace 命令只会 trace 匹配到的函数里的子调用，并不会向下 tra
 trace -E com.test.ClassA|org.test.ClassB method1|method2|method3
 ```
 
-#### 排除掉指定的类
+### 排除掉指定的类
 
 使用 `--exclude-class-pattern` 参数可以排除掉指定的类，比如：
 
@@ -160,7 +160,7 @@ trace -E com.test.ClassA|org.test.ClassB method1|method2|method3
 trace javax.servlet.Filter * --exclude-class-pattern com.demo.TestFilter
 ```
 
-### 动态 trace
+## 动态 trace
 
 ::: tip
 3.3.0 版本后支持。
@@ -210,7 +210,7 @@ Affect(class count: 1 , method count: 1) cost in 34 ms, listenerId: 1
 
 通过指定`listenerId`的方式动态 trace，可以不断深入。另外 `watch`/`tt`/`monitor`等命令也支持类似的功能。
 
-### trace 结果时间不准确问题
+## trace 结果时间不准确问题
 
 比如下面的结果里：`0.705196 > (0.152743 + 0.145825)`
 
@@ -248,7 +248,7 @@ Affect(class count: 1 , method count: 1) cost in 66 ms, listenerId: 1
 
 3. 在代码执行过程中，JVM 可能出现停顿，比如 GC，进入同步块等。
 
-#### 使用 -v 参数打印更多信息
+### 使用 -v 参数打印更多信息
 
 ::: tip
 watch/trace/monitor/stack/tt 命令都支持 `-v` 参数

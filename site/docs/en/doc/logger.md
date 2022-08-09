@@ -6,9 +6,9 @@
 Print the logger information, update the logger level
 :::
 
-### Usage
+## Usage
 
-#### Print the logger information
+### Print the logger information
 
 Take the following `logback.xml` as an example:
 
@@ -82,7 +82,7 @@ In the `appenders` section:
 - `APPLICATION` logger is `RollingFileAppender`, the file is `app.log`
 - `ASYNC` its `appenderRef` is `APPLICATION`, which means asynchronous output to the file
 
-#### View logger information for the special name
+### View logger information for the special name
 
 ```bash
 [arthas@2062]$ logger -n org.springframework.web
@@ -96,7 +96,7 @@ In the `appenders` section:
  codeSource                             file:/Users/hengyunabc/.m2/repository/ch/qos/logback/logback-classic/1.2.3/logback-classic-1.2.3.jar
 ```
 
-#### View logger information for the special classloader
+### View logger information for the special classloader
 
 Note that the hashcode changes, you need to check the current ClassLoader information first, and extract the hashcode corresponding to the ClassLoader.
 
@@ -137,14 +137,14 @@ For classloader with only one instance, it can be specified by `--classLoaderCla
 
 The value of `--classloaderclass` is the class name of classloader. It can only work when it matches a unique classloader instance. The purpose is to facilitate the input of general commands. However, `-c <hashcode>` is dynamic.
 
-#### Update logger level
+### Update logger level
 
 ```bash
 [arthas@2062]$ logger --name ROOT --level debug
 update logger level success.
 ```
 
-#### Speecify classloader to update logger level
+### Speecify classloader to update logger level
 
 By default，logger command will be executed under SystemClassloader, if the application is a traditional `war`, or using spring boot fat jar, then it needs to specify classloader。
 
@@ -154,7 +154,7 @@ You can first use `sc -d yourClassName` to check specified classloader hashcode�
 [arthas@2062]$ logger -c 2a139a55 --name ROOT --level debug
 ```
 
-#### View the logger information without appenders
+### View the logger information without appenders
 
 By default, the `logger` command only prints information about the logger with appenders. If you want to see information about loggers without `appender`, you can use the parameter `--include-no-appender`.
 

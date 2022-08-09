@@ -6,7 +6,7 @@
 Check the basic info and stack trace of the target thread.
 :::
 
-### Parameters
+## Parameters
 
 |          Name | Specification                                                   |
 | ------------: | :-------------------------------------------------------------- |
@@ -16,12 +16,12 @@ Check the basic info and stack trace of the target thread.
 | [i `<value>`] | specify the interval to collect data to compute CPU ratios (ms) |
 |       [--all] | Show all matching threads                                       |
 
-### How the CPU ratios are calculated?
+## How the CPU ratios are calculated?
 
 The cpu ratios here is similar to the thread `%CPU` of the linux command `top -H -p <pid>`. During a sampling interval,
 the ratio of the incremental cpu time of each thread in the current JVM to the sampling interval time.
 
-#### Working principle description:
+### Working principle description:
 
 - Do the first sampling, get the CPU time of all threads ( by calling `java.lang.management.ThreadMXBean#getThreadCpuTime()` and
   `sun.management.HotspotThreadMBean.getInternalThreadCpuTimes()` )
@@ -33,9 +33,9 @@ the ratio of the incremental cpu time of each thread in the current JVM to the s
 
 > Another way to view the thread cpu usage of the Java process, [`show-busy-java-threads`](https://github.com/oldratlee/useful-scripts/blob/dev-2.x/docs/java.md#-show-busy-java-threads) can come to help.
 
-### Usage
+## Usage
 
-#### List the top n busiest threads with detailed stack trace
+### List the top n busiest threads with detailed stack trace
 
 ```shell
 $ thread -n 3
@@ -74,7 +74,7 @@ The larger the interval time, the more inaccurate.
 
 You can try to specify different intervals according to the specific situation and observe the output results.
 
-#### List first page threads' info when no options provided
+### List first page threads' info when no options provided
 
 By default, they are arranged in descending order of CPU increment time, and only the first page of data is displayed.
 
@@ -100,11 +100,11 @@ ID   NAME                           GROUP          PRIORITY  STATE     %CPU     
 17   arthas-NettyWebsocketTtyBootst system         5         RUNNABLE  0.0       0.000      0:0.001   false     true
 ```
 
-#### thread --all, show all matching threads
+### thread --all, show all matching threads
 
 Display all matching threads. Sometimes it is necessary to obtain all the thread data of the JVM for analysis.
 
-#### thread id, show the running stack for the target thread
+### thread id, show the running stack for the target thread
 
 ```shell
 $ thread 1
@@ -118,7 +118,7 @@ $ thread 1
     at java.util.concurrent.CountDownLatch.await(CountDownLatch.java:231)
 ```
 
-#### thread -b, locate the thread bocking the others
+### thread -b, locate the thread bocking the others
 
 In some occasions, we experience the whole application is stuck because there's one particular thread hold one lock that other threads are relying on. To diagnose such an issue, Arthas provides `thread -b` to find the problematic thread in one single command.
 
@@ -163,7 +163,7 @@ $ thread -b
 
 > Note: By now Arthas only supports to locate the thread blocked by `synchronzied`, while `java.util.concurrent.Lock` is not supported yet.
 
-#### thread -i, specify the sampling interval
+### thread -i, specify the sampling interval
 
 - `thread -i 1000`: Count the thread cpu time of the last 1000ms.
 
@@ -190,7 +190,7 @@ $ thread -n 3 -i 1000
 ...
 ```
 
-#### thread --state , view the special state theads
+### thread --state , view the special state theads
 
 ```bash
 [arthas@28114]$ thread --state WAITING

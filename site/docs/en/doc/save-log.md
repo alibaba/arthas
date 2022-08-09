@@ -22,7 +22,7 @@ Log command outputs for later analysis
 
   The command execution result will be save in `{user.home}/logs/arthas-cache/result.log`. Pls. clean it up regularly to save disk space.
 
-### Use asynchronous job to log
+## Use asynchronous job to log
 
 ```bash
 $ trace Test t >>  &

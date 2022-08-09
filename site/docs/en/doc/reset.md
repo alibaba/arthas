@@ -6,7 +6,7 @@
 Reset all classes that have been enhanced by Arthas. These enhanced classes will also be reset when Arthas server is `stop`.
 :::
 
-### Usage
+## Usage
 
 ```
 $ reset -h
@@ -27,7 +27,7 @@ $ reset -h
  <class-pattern>                                                    Path and classname of Pattern Matching
 ```
 
-### Reset specified class
+## Reset specified class
 
 ```
 $ trace Test test
@@ -43,7 +43,7 @@ $ reset Test
 Affect(class-cnt:1 , method-cnt:0) cost in 11 ms.
 ```
 
-### Reset all classes
+## Reset all classes
 
 ```
 $ trace Test test

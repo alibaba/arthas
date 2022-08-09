@@ -22,7 +22,7 @@
 一键创建包含 Arthas Spring Boot Starter 的工程：<a href="https://start.aliyun.com/bootstrap.html/#!dependencies=arthas" target="_blank">点击</a>
 :::
 
-### 配置属性
+## 配置属性
 
 比如，通过配置 tunnel server 实现远程管理：
 
@@ -39,7 +39,7 @@ arthas.tunnel-server=ws://47.75.156.201:7777/ws
 
 参考：[Arthas Properties](arthas-properties.md)
 
-### 查看 Endpoint 信息
+## 查看 Endpoint 信息
 
 ::: tip
 需要配置 spring boot 暴露 endpoint：[参考](https://docs.spring.io/spring-boot/docs/current/reference/html/production-ready-features.html#production-ready-endpoints)
@@ -58,7 +58,7 @@ http://localhost:8080/actuator/arthas
 }
 ```
 
-### 非 spring boot 应用使用方式
+## 非 spring boot 应用使用方式
 
 非 Spring Boot 应用，可以通过下面的方式来使用：
 

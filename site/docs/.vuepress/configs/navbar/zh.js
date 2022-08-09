@@ -13,6 +13,14 @@ module.exports = [
     link: "/doc/",
   },
   {
+    text: "命令列表",
+    link: "/doc/commands.md",
+  },
+  {
+    text: "下载",
+    link: "/doc/download.md",
+  },
+  {
     text: "解决方案",
     children: [
       {
@@ -40,13 +48,5 @@ module.exports = [
         link: "https://www.aliyun.com/product/servicemesh?spm=arthas.topbar.0.0.0",
       },
     ],
-  },
-  {
-    text: "下载",
-    link: "/doc/download.md",
-  },
-  {
-    text: "命令列表",
-    link: "/doc/commands.md",
   },
 ];

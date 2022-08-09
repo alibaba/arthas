@@ -6,9 +6,9 @@
 查看，更新 VM 诊断相关的参数
 :::
 
-### 使用参考
+## 使用参考
 
-#### 查看所有的 option
+### 查看所有的 option
 
 ```bash
 [arthas@56963]$ vmoption
@@ -38,7 +38,7 @@
  PrintConcurrentLocks   false                   DEFAULT                true
 ```
 
-#### 查看指定的 option
+### 查看指定的 option
 
 ```bash
 $ vmoption PrintGC
@@ -47,7 +47,7 @@ $ vmoption PrintGC
  PrintGC             false                MANAGEMENT          true
 ```
 
-#### 更新指定的 option
+### 更新指定的 option
 
 ```bash
 $ vmoption PrintGC true

@@ -8,7 +8,7 @@ Trace method calling path, and output the time cost for each node in the path.
 
 `trace` can track the calling path specified by `class-pattern` / `method-pattern`, and calculate the time cost on the whole path.
 
-### Parameters
+## Parameters
 
 |                Name | Specification                                               |
 | ------------------: | :---------------------------------------------------------- |
@@ -34,7 +34,7 @@ Many times what we are interested is the exact trace result when the method call
 `watch`/`stack`/`trace`, these three commands all support `#cost`.
 :::
 
-### Notice
+## Notice
 
 - `trace` is handy to help discovering and locating the performance flaws in your system, but pls. note Arthas can only trace the first level method call each time.
 
@@ -42,13 +42,13 @@ Many times what we are interested is the exact trace result when the method call
 
 - Currently `trace java.lang.Thread getName` is not supported, please refer to issue: [#1610](https://github.com/alibaba/arthas/issues/1610), considering that it is not very necessary and it is difficult to repair , So it won’t be fixed for now
 
-### Usage
+## Usage
 
-#### Start Demo
+### Start Demo
 
 Start `math-game` in [Quick Start](quick-start.md).
 
-#### Trace method
+### Trace method
 
 ```bash
 $ trace demo.MathGame run
@@ -67,7 +67,7 @@ Affect(class-cnt:1 , method-cnt:1) cost in 28 ms.
 The `#24` in the result indicates that in the run function, the `primeFactors()` function was called on line `24` of the source file.
 :::
 
-#### Trace times limit
+### Trace times limit
 
 If the method invoked many times, use `-n` options to specify trace times. For example, the command will exit when received a trace result.
 
@@ -83,7 +83,7 @@ Affect(class-cnt:1 , method-cnt:1) cost in 20 ms.
 Command execution times exceed limit: 1, so command will exit. You can set it with -n option.
 ```
 
-#### Include jdk method
+### Include jdk method
 
 - `--skipJDKMethod <value> ` skip jdk method trace, default value true.
 
@@ -116,7 +116,7 @@ Affect(class-cnt:1 , method-cnt:1) cost in 60 ms.
         `---[0.076457ms] java.io.PrintStream:println() #28
 ```
 
-#### Filtering by cost
+### Filtering by cost
 
 ```bash
 $ trace demo.MathGame run '#cost > 10'
@@ -138,7 +138,7 @@ Only the call path which's time cost is higher than `10ms` will be shown. This f
 - "[min=0.005428ms,max=0.094064ms,total=0.105228ms,count=3] demo:call()" means aggregating all same method calls into one single line. The minimum time cost is `0.005428` ms, the maximum time cost is `0.094064` ms, and the total time cost for all method calls (`3` times in total) to "demo:call()" is `0.105228ms`. If "throws Exception" appears in this line, it means some exceptions have been thrown from this method calls.
 - The total time cost may not equal to the sum of the time costs each sub method call takes, this is because Arthas instrumented code takes time too.
 
-#### Trace multiple classes or multiple methods
+### Trace multiple classes or multiple methods
 
 The trace command will only trace the subcalls in the method to the trace, and will not trace down multiple layers. Because traces are expensive, multi-layer traces can lead to a lot of classes and methods that ultimately have to be traced.
 
@@ -148,7 +148,7 @@ You can use the regular expression to match multiple classes and methods on the 
 Trace -E com.test.ClassA|org.test.ClassB method1|method2|method3
 ```
 
-#### Exclude the specified class
+### Exclude the specified class
 
 ::: tip
 The watch/trace/monitor/stack/tt commands all support the `--exclude-class-pattern` parameter
@@ -160,7 +160,7 @@ Use the `--exclude-class-pattern` parameter to exclude the specified class, for 
 watch javax.servlet.Filter * --exclude-class-pattern com.demo.TestFilter
 ```
 
-#### Dynamic trace
+### Dynamic trace
 
 ::: tip
 Supported since version 3.3.0.
@@ -210,7 +210,7 @@ At terminal 1, you can see that the trace result has increased by one layer:
 
 Dynamic trace by specifying `listenerId`, you can go deeper and deeper. In addition, commands such as `watch`/`tt`/`monitor` also support similar functionality.
 
-### Trace result time inaccuracy problem
+## Trace result time inaccuracy problem
 
 For example, in the following result: `0.705196 > (0.152743 + 0.145825)`
 
@@ -248,7 +248,7 @@ So where is the rest of the time consumed?
 
 3. Possible JVM pause during code execution, such as GC, entering synchronization blocks, etc.
 
-#### Use the -v parameter to print more information
+### Use the -v parameter to print more information
 
 ::: tip
 The watch/trace/monitor/stack/tt commands all support the `-v` parameter.

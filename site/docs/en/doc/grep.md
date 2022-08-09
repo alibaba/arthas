@@ -6,6 +6,8 @@
 Similar to the traditional `grep` command.
 :::
 
+## Usage
+
 ```
  USAGE:
    grep [-A <value>] [-B <value>] [-C <value>] [-h] [-i] [-v] [-n] [-m <value>] [-e] [--trim-end] pattern

@@ -2,7 +2,7 @@
 
 [`Http API` online tutorial](https://arthas.aliyun.com/doc/arthas-tutorials.html?language=en&id=case-http-api)
 
-### Overview
+## Overview
 
 Http API provides a RESTful-like interactive interface, and both
 requests and responses data in JSON format. Compared with
@@ -10,7 +10,7 @@ Telnet/WebConsole's output unstructured text data, Http API can provide
 structured data and support more complex interactive functions, such as
 a series of diagnostic operations in specific application scenarios.
 
-#### Access address
+### Access address
 
 The Http API address is: `http://ip:port/api`, the request parameters
 must be submitted using `POST`. Such as POST
@@ -20,7 +20,7 @@ Note: The telnet port `3658` has compatibility issues with the Chrome
 browser. It is recommended to use the http port `8563` to access the
 http api.
 
-#### Request data format
+### Request data format
 
 ```json
 {
@@ -48,7 +48,7 @@ Request data format description:
 Note: Different actions use different parameters. Set the parameters
 according to the specific action.
 
-#### Request Actions
+### Request Actions
 
 Currently supported request actions are as follows:
 
@@ -66,7 +66,7 @@ Currently supported request actions are as follows:
   sharing the same Arthas session.
 - `close_session` : Close the session.
 
-#### Response status
+### Response status
 
 The state attribute in the response indicates the request processing
 state, and its value is as follows:
@@ -80,7 +80,7 @@ state, and its value is as follows:
 - `REFUSED`: The request is rejected (completed status), usually
   accompanied by a message explaining the reason;
 
-### One-time command
+## One-time command
 
 Similar to executing batch commands, the one-time commands are executed
 synchronously. No need to create a session, no need to set the
@@ -184,7 +184,7 @@ Please try to deal with it in the following way:
   not hit, even if `-n 1` is specified, it will hang and wait until the
   execution timeout.
 
-### Session interaction
+## Session interaction
 
 Users create and manage Arthas sessions, which are suitable for complex
 interactive processes. The access process is as follows:
@@ -196,7 +196,7 @@ interactive processes. The access process is as follows:
 - Interrupt command execution
 - Close the session
 
-#### Create session
+### Create session
 
 ```bash
 curl -Ss -XPOST http://localhost:8563/api -d '
@@ -219,7 +219,7 @@ Response result:
 The new session ID is: `b09f1353-202c-407b-af24-701b744f971e`, and
 consumer ID is: `5ae4e5fbab8b4e529ac404f260d4e2d1_1`.
 
-#### Join session
+### Join session
 
 Specify the session ID to join, and the server will assign a new
 consumer ID. Multiple consumers can receive the same command results of
@@ -248,7 +248,7 @@ Response result:
 
 The new consumer ID is `8f7f6ad7bc2d4cb5aa57a530927a95cc_2 ` .
 
-#### Pull command results
+### Pull command results
 
 The action of pulling the command result message is `pull_results`.
 Please use the Http long-polling method to periodically pull the result
@@ -322,7 +322,7 @@ The response content is as follows:
 }
 ```
 
-#### Execute commands asynchronously
+### Execute commands asynchronously
 
 ```bash
 curl -Ss -XPOST http://localhost:8563/api -d '''
@@ -449,7 +449,7 @@ corresponds to the expression in the corresponding order.
 
 Please refer to the section "[Make watch command output a map object](#change_watch_value_to_map)".
 
-#### Interrupt command execution
+### Interrupt command execution
 
 Interrupt the running foreground job of the session:
 
@@ -472,7 +472,7 @@ curl -Ss -XPOST http://localhost:8563/api -d '''
 }
 ```
 
-#### Close session
+### Close session
 
 Specify the session ID to close the session.
 
@@ -491,11 +491,11 @@ curl -Ss -XPOST http://localhost:8563/api -d '''
 }
 ```
 
-### Authentication
+## Authentication
 
 - Reference: [auth](auth.md)
 
-### Web UI
+## Web UI
 
 ![](/images/arthas-web-ui.png "arthas web ui")
 
@@ -521,9 +521,9 @@ Pending function:
 
 <a id="special_command_results"></a>
 
-### Special command results
+## Special command results
 
-#### status
+### status
 
 ```json
 {
@@ -551,7 +551,7 @@ When the command execution fails, an error message is generally provided, such a
 }
 ```
 
-#### input_status
+### input_status
 
 ```json
 {
@@ -577,7 +577,7 @@ Possible values ​​of `inputStatus`:
 - `DISABLED` : In the disabled state, commands cannot be entered or
   interrupted.
 
-#### command
+### command
 
 ```json
 {
@@ -594,7 +594,7 @@ It is used for the interactive UI to echo the commands entered by the
 user. The pulled session command message history will contain messages
 of type `command`, which can be processed in order.
 
-#### enhancer
+### enhancer
 
 ```json
 {
@@ -617,9 +617,9 @@ receive this `enhancer` result. It may happen that the result of
 `enhancer` is successful, but there is no hit method. The client can
 prompt the user according to the result of `enhancer`.
 
-### Cases
+## Cases
 
-#### Get classpath of Java application
+### Get classpath of Java application
 
 Get system properties of the Java application through Http api and
 extract the value of `java.class.path`.
@@ -661,7 +661,7 @@ NOTE:
 
 <a id="change_watch_value_to_map"></a>
 
-#### Make watch command output a map object
+### Make watch command output a map object
 
 The result value of `watch` is generated by calculating the
 `watch-express` ognl expression. You can change the ognl expression to

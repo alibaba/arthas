@@ -2,9 +2,9 @@
 
 With the help of Batch Processing, you can run multiple commands in batch and get the final result at the end.
 
-### Usage
+## Usage
 
-#### Step 1: Create the script
+### Step 1: Create the script
 
 Create a `test.as` script suffixed with `as`. Here `as` is suggested for the suffix of the filename, but in fact any suffix is acceptable.
 
@@ -24,7 +24,7 @@ Note:
 - Commands such as `watch`/`tt`/`trace`/`monitor`/`stack` should include `-n` option to ensure the script can be able to quit.
 - Also consider to use `async` (for example: `watch c.t.X test returnObj > &`) to put commands run at background and get the output from the log file, see more from [asynchronous job](async.md)
 
-#### Step 2: Run the script
+### Step 2: Run the script
 
 Use `-f` to specify the script file. By default the result will be output to the standard output, but you can redirect the output to the file like this:
 
@@ -38,7 +38,7 @@ Use `-c` also can specify the commands, like this:
 ./as.sh -c 'sysprop; thread' 56328 > test.out
 ```
 
-#### Step 3: Check the output
+### Step 3: Check the output
 
 ```bash
 cat test.out

@@ -6,7 +6,7 @@
 查看当前 JVM 的环境属性(`System Environment Variables`)
 :::
 
-### 使用参考
+## 使用参考
 
 ```
  USAGE:
@@ -27,7 +27,7 @@
  <env-name>                                                 env name
 ```
 
-#### 查看所有环境变量
+### 查看所有环境变量
 
 ```
 $ sysenv
@@ -65,7 +65,7 @@ $ sysenv
  AUTOJUMP_ERROR_PATH      /Users/admin/Library/autojump/errors.log
 ```
 
-#### 查看单个环境变量
+### 查看单个环境变量
 
 ::: tip
 支持通过`TAB`键自动补全
