@@ -6,7 +6,7 @@
 Concatenate and print files
 :::
 
-### Usage
+## Usage
 
 ```bash
 $ cat /tmp/a.txt

@@ -8,7 +8,7 @@ Search classes loaded by JVM.
 
 `sc` stands for search class. This command can search all possible classes loaded by JVM and show their information. The supported options are: `[d]`、`[E]`、`[f]` and `[x:]`.
 
-### Supported Options
+## Supported Options
 
 |                  Name | Specification                                                                                                                                                                                                                    |
 | --------------------: | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -30,7 +30,7 @@ _class-patten_ supports full qualified class name, e.g. com.taobao.test.AAA and 
 `sc` turns on matching sub-class match by default, that is, `sc` will also search the sub classes of the target class too. If exact-match is desired, pls. use `options disable-sub-class true`.
 :::
 
-### Usage
+## Usage
 
 - Wildcards match search
 

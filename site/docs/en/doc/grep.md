@@ -6,7 +6,7 @@
 Similar to the traditional `grep` command.
 :::
 
-### Usage
+## Usage
 
 ```
  USAGE:

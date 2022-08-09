@@ -8,7 +8,7 @@ Load the external `*.class` files to retransform the loaded classes in JVM.
 
 Reference: [Instrumentation#retransformClasses](https://docs.oracle.com/javase/8/docs/api/java/lang/instrument/Instrumentation.html#retransformClasses-java.lang.Class...-)
 
-### Usage
+## Usage
 
 ```bash
    retransform /tmp/Test.class
@@ -20,7 +20,7 @@ Reference: [Instrumentation#retransformClasses](https://docs.oracle.com/javase/8
    retransform --classLoaderClass 'sun.misc.Launcher$AppClassLoader' /tmp/Test.class
 ```
 
-### retransform the specified .class file
+## retransform the specified .class file
 
 ```bash
 $ retransform /tmp/MathGame.class
@@ -34,7 +34,7 @@ Load the specified .class file, then parse out the class name, and then retransf
 If retransform is executed multiple times to load the same class file, there will be multiple retransform entries.
 :::
 
-### View retransform entry
+## View retransform entry
 
 ```bash
 $ retransform -l
@@ -44,7 +44,7 @@ Id              ClassName       TransformCount  LoaderHash      LoaderClassName
 
 - TransformCount counts the times of attempts to return the .class file corresponding to the entry in the ClassFileTransformer#transform method, but it does not mean that the transform must be successful.
 
-### Delete the specified retransform entry
+## Delete the specified retransform entry
 
 Need to specify id:
 
@@ -52,13 +52,13 @@ Need to specify id:
 retransform -d 1
 ```
 
-### Delete all retransform entries
+## Delete all retransform entries
 
 ```bash
 retransform --deleteAll
 ```
 
-### Explicitly trigger retransform
+## Explicitly trigger retransform
 
 ```bash
 $ retransform --classPattern demo.MathGame
@@ -70,7 +70,7 @@ demo.MathGame
 Note: For the same class, when there are multiple retransform entries, if retransform is explicitly triggered, the entry added last will take effect (the one with the largest id).
 :::
 
-### Eliminate the influence of retransform
+## Eliminate the influence of retransform
 
 If you want to eliminate the impact after performing retransform on a class, you need to:
 
@@ -81,7 +81,7 @@ If you want to eliminate the impact after performing retransform on a class, you
 If you do not clear all retransform entries and trigger retransform again, the retransformed classes will still take effect when arthas stop.
 :::
 
-### Use with the jad/mc command
+## Use with the jad/mc command
 
 ```bash
 jad --source-only com.example.demo.arthas.user.UserController > /tmp/UserController.java
@@ -95,7 +95,7 @@ retransform /tmp/com/example/demo/arthas/user/UserController.class
 - `mc` command to compile the modified code
 - Load new bytecode with `retransform` command
 
-### Tips for uploading .class files to the server
+## Tips for uploading .class files to the server
 
 The `mc` command may fail. You can modify the code locally, compile it, and upload it to the server. Some servers do not allow direct uploading files, you can use the `base64` command to bypass.
 
@@ -115,7 +115,7 @@ The `mc` command may fail. You can modify the code locally, compile it, and uplo
 
 4. Use the md5 command to verify that the `.class` files are consistent.
 
-### Restrictions of the retransform command
+## Restrictions of the retransform command
 
 - New field/method is not allowed
 - The function that is running, no exit can not take effect, such as the new `System.out.println` added below, only the `run()` function will take effect.

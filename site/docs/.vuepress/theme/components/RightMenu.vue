@@ -8,23 +8,40 @@ SRC: https://github.com/xugaoyi/vuepress-theme-vdoing/blob/master/vdoing/compone
     <div class="right-menu-margin">
       <div class="right-menu-title">{{ menu }}</div>
       <div class="right-menu-content">
-        <div
-          :class="[
-            'right-menu-item',
-            'level' + item.level,
-            { active: item.slug === hashText },
-          ]"
-          v-for="(item, i) in headers"
-          :key="i"
-        >
-          <a
-            :href="'#' + item.slug"
-            v-if="item.title.replace(/[^\x00-\xff]/g, '01').length >= 27"
-            :title="item.title"
-            >{{ item.title }}</a
+        <template v-for="(item, i) in headers" :key="i">
+          <div
+            :class="[
+              'right-menu-item',
+              'level' + item.level,
+              { active: item.slug === hashText },
+            ]"
           >
-          <a :href="'#' + item.slug" v-else>{{ item.title }}</a>
-        </div>
+            <a
+              :href="'#' + item.slug"
+              v-if="item.title.replace(/[^\x00-\xff]/g, '01').length >= 27"
+              :title="item.title"
+              >{{ item.title }}</a
+            >
+            <a :href="'#' + item.slug" v-else>{{ item.title }}</a>
+          </div>
+          <div
+            :class="[
+              'right-menu-item',
+              'level' + subItem.level,
+              { active: subItem.slug === hashText },
+            ]"
+            v-for="(subItem, j) in item.children"
+            :key="j"
+          >
+            <a
+              :href="'#' + subItem.slug"
+              v-if="subItem.title.replace(/[^\x00-\xff]/g, '01').length >= 27"
+              :title="subItem.title"
+              >{{ subItem.title }}</a
+            >
+            <a :href="'#' + subItem.slug" v-else>{{ subItem.title }}</a>
+          </div>
+        </template>
       </div>
     </div>
   </div>
@@ -48,6 +65,7 @@ menu.value = theme.value.rightMenuText ?? "Table of Contents";
 function getHeadersData() {
   headers.value = pages.value.headers;
 }
+
 function getHashText() {
   hashText.value = decodeURIComponent(window.location.hash.slice(1));
 }

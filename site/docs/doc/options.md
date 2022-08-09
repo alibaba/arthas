@@ -20,7 +20,7 @@
 | verbose                | false  | 是否打印更多详细信息                                                                                                                                       |
 | strict                 | true   | 是否启用 strict 模式                                                                                                                                       |
 
-### 查看所有的 options
+## 查看所有的 options
 
 ```bash
 $ options
@@ -64,7 +64,7 @@ $ options
                                                             false`
 ```
 
-### 获取 option 的值
+## 获取 option 的值
 
 ```
 $ options json-format
@@ -79,7 +79,7 @@ $ options json-format
 默认情况下`json-format`为 false，如果希望`watch`/`tt`等命令结果以 json 格式输出，则可以设置`json-format`为 true。
 :::
 
-### 设置指定的 option
+## 设置指定的 option
 
 例如，想打开执行结果存日志功能，输入如下命令即可：
 
@@ -90,7 +90,7 @@ $ options save-result true
  save-result  false         true
 ```
 
-### 打开 unsafe 开关，支持 jdk package 下的类
+## 打开 unsafe 开关，支持 jdk package 下的类
 
 默认情况下，`watch`/`trace`/`tt`/`trace`/`monitor`等命令不支持`java.*` package 下的类。可以设置`unsafe`为 true，则可以增强。
 
@@ -107,7 +107,7 @@ Press Q or Ctrl+C to abort.
 Affect(class count: 1 , method count: 1) cost in 61 ms, listenerId: 1
 ```
 
-### 关闭 strict 模式，允许在 ognl 表达式里设置对象属性
+## 关闭 strict 模式，允许在 ognl 表达式里设置对象属性
 
 ::: tip
 since 3.6.0

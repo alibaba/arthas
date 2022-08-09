@@ -6,7 +6,7 @@
 Check the current JVM Perf Counter information.
 :::
 
-### Usage
+## Usage
 
 ```
 $ perfcounter
@@ -34,7 +34,7 @@ $ perfcounter -d
  java.cls.unloadedClasses               Monotonic     Events       0
 ```
 
-### JVM above JDK9
+## JVM above JDK9
 
 If the information is not printed, when the application starts, add the following parameters:
 

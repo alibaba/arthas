@@ -6,7 +6,7 @@
 查看当前 JVM 的系统属性(`System Property`)
 :::
 
-### 使用参考
+## 使用参考
 
 ```
  USAGE:
@@ -29,7 +29,7 @@
  <property-value>                            property value
 ```
 
-#### 查看所有属性
+### 查看所有属性
 
 ```
 $ sysprop
@@ -104,7 +104,7 @@ $ sysprop
  sun.cpu.isalist
 ```
 
-#### 查看单个属性
+### 查看单个属性
 
 ::: tip
 支持通过`TAB`键自动补全
@@ -115,7 +115,7 @@ $ sysprop java.version
 java.version=1.8.0_51
 ```
 
-#### 修改单个属性
+### 修改单个属性
 
 ```
 $ sysprop user.country

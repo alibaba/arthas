@@ -8,7 +8,7 @@ View hierarchy, urls and classes-loading info for the class-loaders.
 
 `classloader` can search and print out the URLs for a specified resource from one particular classloader. It is quite handy when analyzing `ResourceNotFoundException`.
 
-### Options
+## Options
 
 |                  Name | Specification                                                                                                |
 | --------------------: | :----------------------------------------------------------------------------------------------------------- |
@@ -20,9 +20,9 @@ View hierarchy, urls and classes-loading info for the class-loaders.
 |             `[c: r:]` | using ClassLoader to search resource                                                                         |
 |          `[c: load:]` | using ClassLoader to load class                                                                              |
 
-### Usage
+## Usage
 
-#### View statistics categorized by class type
+### View statistics categorized by class type
 
 ```bash
 $ classloader
@@ -35,7 +35,7 @@ $ classloader
 Affect(row-cnt:5) cost in 3 ms.
 ```
 
-#### View statistics categorized by loaded classes number
+### View statistics categorized by loaded classes number
 
 ```bash
 $ classloader -l
@@ -47,7 +47,7 @@ $ classloader -l
 Affect(row-cnt:4) cost in 2 ms.
 ```
 
-#### View class-loaders hierarchy
+### View class-loaders hierarchy
 
 ```bash
 $ classloader -t
@@ -58,7 +58,7 @@ $ classloader -t
 Affect(row-cnt:4) cost in 3 ms.
 ```
 
-#### Show the URLs of the URLClassLoader
+### Show the URLs of the URLClassLoader
 
 ```bash
 $ classloader -c 3d4eac69
@@ -80,7 +80,7 @@ file:/Users/hengyunabc/.arthas/lib/3.0.5/arthas/arthas-agent.jar
 Affect(row-cnt:9) cost in 3 ms.
 ```
 
-#### Use the classloader to load resource
+### Use the classloader to load resource
 
 ```bash
 $ classloader -c 3d4eac69  -r META-INF/MANIFEST.MF
@@ -96,7 +96,7 @@ $ classloader -c 1b6d3586 -r java/lang/String.class
  jar:file:/Library/Java/JavaVirtualMachines/jdk1.8.0_60.jdk/Contents/Home/jre/lib/rt.jar!/java/lang/String.class
 ```
 
-#### Use the classloader to load class
+### Use the classloader to load class
 
 ```bash
 $ classloader -c 3d4eac69 --load demo.MathGame
@@ -123,7 +123,7 @@ load class success.
  classLoaderHash   3d4eac69
 ```
 
-#### Statistics ClassLoader actually used URLs and unused URLs
+### Statistics ClassLoader actually used URLs and unused URLs
 
 ::: warning
 Note that statistics are based on all classes currently loaded by the JVM. Does not mean that `Unused URLs` can be removed from the application. Because it may be necessary to load classes from `Unused URLs` in the future, or to load `resources`.

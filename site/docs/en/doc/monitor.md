@@ -14,7 +14,7 @@ A command returning immediately is a command immediately returns with the result
 
 On Arthas's server side, the command is running as a background job, but the weaved code will not take further effect once the job is terminated, therefore, it will not impact the performance after the job quits. Furthermore, Arthas is designed to have no side effect to the business logic.
 
-### Items to monitor
+## Items to monitor
 
 |      Item | Specification                            |
 | --------: | :--------------------------------------- |
@@ -27,7 +27,7 @@ On Arthas's server side, the command is running as a background job, but the wea
 |        rt | average RT                               |
 | fail-rate | failure ratio                            |
 
-### Parameters
+## Parameters
 
 Parameter `[c:]` stands for cycles of statistics. Its value is an integer value in seconds.
 
@@ -40,7 +40,7 @@ Parameter `[c:]` stands for cycles of statistics. Its value is an integer value 
 |                 `[c:]` | cycle of statistics, the default value: `120`s                |
 |                  `[b]` | evaluate the condition-expression before method invoke        |
 
-### Usage
+## Usage
 
 ```bash
 $ monitor -c 5 demo.MathGame primeFactors
@@ -71,7 +71,7 @@ Affect(class-cnt:1 , method-cnt:1) cost in 94 ms.
  2018-12-03 19:07:03  demo.MathGame  primeFactors  2      2        0     3182.72     0.00%
 ```
 
-#### Evaluate condition-express to filter method (after method call)
+### Evaluate condition-express to filter method (after method call)
 
 ```bash
 monitor -c 5 demo.MathGame primeFactors "params[0] <= 2"
@@ -98,7 +98,7 @@ Affect(class count: 1 , method count: 1) cost in 19 ms, listenerId: 5
  2020-09-02 09:42:56  demo.MathGame  primeFactors    5       3       2      0.15       40.00%
 ```
 
-#### Evaluate condition-express to filter method (before method call)
+### Evaluate condition-express to filter method (before method call)
 
 ```bash
 monitor -b -c 5 com.test.testes.MathGame primeFactors "params[0] <= 2"

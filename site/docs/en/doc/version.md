@@ -2,7 +2,7 @@
 
 prints out Arthas's version.
 
-### Usage
+## Usage
 
 ```bash
 $ version

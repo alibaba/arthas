@@ -6,7 +6,7 @@
 View the current JVM environment variables.
 :::
 
-### Usage
+## Usage
 
 ```
  USAGE:
@@ -27,7 +27,7 @@ View the current JVM environment variables.
  <env-name>                                                 env name
 ```
 
-#### View all environment variables
+### View all environment variables
 
 ```
 $ sysenv
@@ -65,7 +65,7 @@ $ sysenv
  AUTOJUMP_ERROR_PATH      /Users/admin/Library/autojump/errors.log
 ```
 
-#### View individual environment variables
+### View individual environment variables
 
 ::: tip
 Use `tab` for auto-completion

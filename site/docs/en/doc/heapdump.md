@@ -6,9 +6,9 @@
 dump java heap in hprof binary format, like `jmap`.
 :::
 
-### Usage
+## Usage
 
-#### Dump to file
+### Dump to file
 
 ```bash
 [arthas@58205]$ heapdump /tmp/dump.hprof
@@ -16,7 +16,7 @@ Dumping heap to /tmp/dump.hprof...
 Heap dump file created
 ```
 
-#### Dump only live objects
+### Dump only live objects
 
 ```bash
 [arthas@58205]$ heapdump --live /tmp/dump.hprof
@@ -24,7 +24,7 @@ Dumping heap to /tmp/dump.hprof...
 Heap dump file created
 ```
 
-#### Dump to tmp file
+### Dump to tmp file
 
 ```bash
 [arthas@58205]$ heapdump

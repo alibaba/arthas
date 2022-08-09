@@ -14,7 +14,7 @@
 
 服务端是以任务的形式在后台跑任务，植入的代码随着任务的中止而不会被执行，所以任务关闭后，不会对原有性能产生太大影响，而且原则上，任何 Arthas 命令不会引起原有业务逻辑的改变。
 
-### 监控的维度说明
+## 监控的维度说明
 
 |    监控项 | 说明                       |
 | --------: | :------------------------- |
@@ -27,7 +27,7 @@
 |        rt | 平均 RT                    |
 | fail-rate | 失败率                     |
 
-### 参数说明
+## 参数说明
 
 方法拥有一个命名参数 `[c:]`，意思是统计周期（cycle of output），拥有一个整型的参数值
 
@@ -40,7 +40,7 @@
 |              `[c:]` | 统计周期，默认值为 120 秒                |
 |                 [b] | 在**方法调用之前**计算 condition-express |
 
-### 使用参考
+## 使用参考
 
 ```bash
 $ monitor -c 5 demo.MathGame primeFactors
@@ -71,7 +71,7 @@ Affect(class-cnt:1 , method-cnt:1) cost in 94 ms.
  2018-12-03 19:07:03  demo.MathGame  primeFactors  2      2        0     3182.72     0.00%
 ```
 
-#### 计算条件表达式过滤统计结果(方法执行完毕之后)
+### 计算条件表达式过滤统计结果(方法执行完毕之后)
 
 ```bash
 monitor -c 5 demo.MathGame primeFactors "params[0] <= 2"
@@ -98,7 +98,7 @@ Affect(class count: 1 , method count: 1) cost in 19 ms, listenerId: 5
  2020-09-02 09:42:56  demo.MathGame  primeFactors    5       3       2      0.15       40.00%
 ```
 
-#### 计算条件表达式过滤统计结果(方法执行完毕之前)
+### 计算条件表达式过滤统计结果(方法执行完毕之前)
 
 ```bash
 monitor -b -c 5 com.test.testes.MathGame primeFactors "params[0] <= 2"

@@ -4,9 +4,9 @@
 通过批处理功能，arthas 支持一次性批量运行多个命令，并取得命令执行的结果。
 :::
 
-### 使用方法
+## 使用方法
 
-#### 第一步： 创建你的批处理脚本
+### 第一步： 创建你的批处理脚本
 
 这里我们新建了一个`test.as`脚本，为了规范，我们采用了.as 后缀名，但事实上任意的文本文件都 ok。
 
@@ -27,7 +27,7 @@ thread
 sc -d org.apache.commons.lang.StringUtils
 ```
 
-#### 第二步： 运行你的批处理脚本
+### 第二步： 运行你的批处理脚本
 
 通过`-f`执行脚本文件， 批处理脚本默认会输出到标准输出中，可以将结果重定向到文件中。
 
@@ -41,7 +41,7 @@ sc -d org.apache.commons.lang.StringUtils
 ./as.sh -c 'sysprop; thread' <pid> > test.out # pid 可以通过 jps 命令查看
 ```
 
-#### 第三步： 查看运行结果
+### 第三步： 查看运行结果
 
 ```bash
 cat test.out

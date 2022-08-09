@@ -6,7 +6,7 @@
 write arguments to the standard output.
 :::
 
-### Usage
+## Usage
 
 ```bash
 $ echo 'hello'

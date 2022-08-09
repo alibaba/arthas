@@ -8,14 +8,14 @@ This is the real time statistics dashboard for the current system, press `Ctrl+C
 
 When running in Apache Tomcat Alibaba edition, the dashboard will also present the real time statistics of the tomcat, including [QPS](https://en.wikipedia.org/wiki/Queries_per_second), RT, error counts, and thread pool, etc.
 
-### Options
+## Options
 
 | Name | Specification                                                    |
 | ---: | :--------------------------------------------------------------- |
 | [i:] | The interval (in ms) between two executions, default is 5000 ms. |
 | [n:] | The number of times this command will be executed.               |
 
-### Usage
+## Usage
 
 ```
 $ dashboard
@@ -52,7 +52,7 @@ processors                                                     8
 uptime                                                         272s
 ```
 
-### Notes on column headers
+## Notes on column headers
 
 - ID: JVM thread ID, pls. note this ID is different from the nativeID in jstack
 - NAME: thread name
@@ -66,7 +66,7 @@ uptime                                                         272s
 - INTERRUPTED: the thread interruption state
 - DAEMON: daemon thread or not
 
-#### JVM internal threads
+### JVM internal threads
 
 After Java 8, it is supported to obtain the CPU time of JVM internal threads. These threads only have the name and CPU time,
 without ID and status information (display ID is -1).
@@ -84,6 +84,6 @@ JVM internal threads include the following:
 - GC thread: such as `GC Thread0`, `G1 Young RemSet Sampling`
 - Other internal threads: such as`VM Periodic Task Thread`, `VM Thread`, `Service Thread`
 
-### Screenshot
+## Screenshot
 
 ![](/images/dashboard.png "dashboard")

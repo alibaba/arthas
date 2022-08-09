@@ -6,9 +6,9 @@
 Display, and update the vm diagnostic options.
 :::
 
-### Usage
+## Usage
 
-#### View all options
+### View all options
 
 ```bash
 [arthas@56963]$ vmoption
@@ -38,7 +38,7 @@ Display, and update the vm diagnostic options.
  PrintConcurrentLocks   false                   DEFAULT                true
 ```
 
-#### View individual option
+### View individual option
 
 ```bash
 $ vmoption PrintGC
@@ -47,7 +47,7 @@ $ vmoption PrintGC
  PrintGC             false                MANAGEMENT          true
 ```
 
-#### Update individual option
+### Update individual option
 
 ```bash
 $ vmoption PrintGC true

@@ -2,20 +2,20 @@
 
 [`Http API`在线教程](https://arthas.aliyun.com/doc/arthas-tutorials.html?language=cn&id=case-http-api)
 
-### 概览
+## 概览
 
 Http API
 提供类似 RESTful 的交互接口，请求和响应均为 JSON 格式的数据。相对于 Telnet/WebConsole 的输出非结构化文本数据，Http
 API 可以提供结构化的数据，支持更复杂的交互功能，比如特定应用场景的一系列诊断操作。
 
-#### 访问地址
+### 访问地址
 
 Http API 接口地址为：`http://ip:port/api`，必须使用 POST 方式提交请求参数。如 POST
 `http://127.0.0.1:8563/api` 。
 
 注意：telnet 服务的 3658 端口与 Chrome 浏览器有兼容性问题，建议使用 http 端口 8563 来访问 http 接口。
 
-#### 请求数据格式
+### 请求数据格式
 
 ```json
 {
@@ -39,7 +39,7 @@ Http API 接口地址为：`http://ip:port/api`，必须使用 POST 方式提交
 
 注意: 不同的 action 使用到参数不同，根据具体的 action 来设置参数。
 
-#### 请求 Action
+### 请求 Action
 
 目前支持的请求 Action 如下：
 
@@ -51,7 +51,7 @@ Http API 接口地址为：`http://ip:port/api`，必须使用 POST 方式提交
 - `join_session` : 加入会话，用于支持多人共享同一个 Arthas 会话
 - `close_session` : 关闭会话
 
-#### 响应状态
+### 响应状态
 
 响应中的 state 属性表示请求处理状态，取值如下：
 
@@ -60,7 +60,7 @@ Http API 接口地址为：`http://ip:port/api`，必须使用 POST 方式提交
 - `FAILED`：请求处理失败（完成状态），通常附带 message 说明原因；
 - `REFUSED`：请求被拒绝（完成状态），通常附带 message 说明原因；
 
-### 一次性命令
+## 一次性命令
 
 与执行批处理命令类似，一次性命令以同步方式执行。不需要创建会话，不需要设置`sessionId`选项。
 
@@ -147,7 +147,7 @@ curl -Ss -XPOST http://localhost:8563/api -d '
 - 通过`-n`参数指定较少的执行次数。
 - 保证命令匹配的方法可以成功命中和 condition-express 编写正确，如果 watch/trace 没有命中就算指定`-n 1`也会挂起等待到执行超时。
 
-### 会话交互
+## 会话交互
 
 由用户创建及管理 Arthas 会话，适用于复杂的交互过程。访问流程如下：
 
@@ -158,7 +158,7 @@ curl -Ss -XPOST http://localhost:8563/api -d '
 - 中断命令执行
 - 关闭会话
 
-#### 创建会话
+### 创建会话
 
 ```bash
 curl -Ss -XPOST http://localhost:8563/api -d '
@@ -180,7 +180,7 @@ curl -Ss -XPOST http://localhost:8563/api -d '
 
 当前会话 ID 为： `b09f1353-202c-407b-af24-701b744f971e`， 当前消费者 ID 为：`5ae4e5fbab8b4e529ac404f260d4e2d1_1 `。
 
-#### 加入会话
+### 加入会话
 
 指定要加入的会话 ID，服务端将分配一个新的消费者 ID。多个消费者可以接收到同一个会话的命令结果。本接口用于支持多人共享同一个会话或刷新页面后重新拉取会话历史记录。
 
@@ -205,7 +205,7 @@ curl -Ss -XPOST http://localhost:8563/api -d '
 
 新的消费者 ID 为`8f7f6ad7bc2d4cb5aa57a530927a95cc_2 ` 。
 
-#### 拉取命令结果
+### 拉取命令结果
 
 拉取命令结果消息的 action 为`pull_results`。请使用 Http long-polling 方式，定时循环拉取结果消息。
 消费者的超时时间为 5 分钟，超时后需要调用`join_session`分配新的消费者。每个消费者单独分配一个缓存队列，按顺序拉取命令结果，不会影响到其它消费者。
@@ -274,7 +274,7 @@ while true; do curl -Ss -XPOST http://localhost:8563/api -d '
 }
 ```
 
-#### 异步执行命令
+### 异步执行命令
 
 ```bash
 curl -Ss -XPOST http://localhost:8563/api -d '''
@@ -396,7 +396,7 @@ curl -Ss -XPOST http://localhost:8563/api -d '''
 watch 命令结果的`value`为 watch-experss 的值，上面命令中为`{params, returnObj, throwExp}`，所以 watch 结果的 value 为一个长度为 3 的数组，每个元素分别对应相应顺序的表达式。
 请参考"[watch 命令输出 map 对象](#change_watch_value_to_map)"小节。
 
-#### 中断命令执行
+### 中断命令执行
 
 中断会话正在运行的前台 Job（前台任务）：
 
@@ -419,7 +419,7 @@ curl -Ss -XPOST http://localhost:8563/api -d '''
 }
 ```
 
-#### 关闭会话
+### 关闭会话
 
 指定会话 ID，关闭会话。
 
@@ -438,11 +438,11 @@ curl -Ss -XPOST http://localhost:8563/api -d '''
 }
 ```
 
-### 鉴权
+## 鉴权
 
 参考： [auth](auth.md)
 
-### Web UI
+## Web UI
 
 ![](/images/arthas-web-ui.png "arthas web ui")
 
@@ -465,9 +465,9 @@ curl -Ss -XPOST http://localhost:8563/api -d '''
 
 <a id="special_command_results"></a>
 
-### 特殊命令结果
+## 特殊命令结果
 
-#### status
+### status
 
 ```json
 {
@@ -493,7 +493,7 @@ curl -Ss -XPOST http://localhost:8563/api -d '''
 }
 ```
 
-#### input_status
+### input_status
 
 ```json
 {
@@ -514,7 +514,7 @@ curl -Ss -XPOST http://localhost:8563/api -d '''
   允许用户中断命令执行，表示当前正在执行命令，用户可以发送`interrupt_job`中断执行。
 - `DISABLED` : 禁用状态，不能输入命令也不能中断命令。
 
-#### command
+### command
 
 ```json
 {
@@ -529,7 +529,7 @@ curl -Ss -XPOST http://localhost:8563/api -d '''
 
 用于交互 UI 回显用户输入的命令，拉取的会话命令消息历史会包含`command`类型的消息，按顺序处理即可。
 
-#### enhancer
+### enhancer
 
 ```json
 {
@@ -549,9 +549,9 @@ curl -Ss -XPOST http://localhost:8563/api -d '''
 
 `trace/watch/jad/tt`等命令需要对类进行增强，会接收到这个`enhancer`结果。可能出现`enhancer`结果成功，但没有命中方法的情况，客户端可以根据`enhancer`结果提示用户。
 
-### 案例
+## 案例
 
-#### 获取 Java 应用的 Classpath
+### 获取 Java 应用的 Classpath
 
 通过 Http api 查询 Java 应用的 System properties，提取`java.class.path`的值。
 
@@ -590,7 +590,7 @@ classpath: demo-arthas-spring-boot.jar
 
 <a id="change_watch_value_to_map"></a>
 
-#### watch 命令输出 map 对象
+### watch 命令输出 map 对象
 
 watch 的结果值由计算`watch-express` ognl 表达式产生，可以通过改变 ognl 表达式来生成想要的值，请参考[OGNL 文档](https://commons.apache.org/proper/commons-ognl/language-guide.html)。
 

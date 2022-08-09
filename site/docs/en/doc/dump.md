@@ -6,7 +6,7 @@
 Dump the bytecode for the particular classes to the specified directory.
 :::
 
-### Options
+## Options
 
 |                  Name | Specification                                                               |
 | --------------------: | :-------------------------------------------------------------------------- |
@@ -16,7 +16,7 @@ Dump the bytecode for the particular classes to the specified directory.
 |                `[d:]` | set the destination directory for class files                               |
 |                 `[E]` | turn on regex match, the default behavior is wild card match                |
 
-### Usage
+## Usage
 
 ```bash
 $ dump java.lang.String

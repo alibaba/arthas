@@ -20,7 +20,7 @@ Global options
 | verbose                | false         | This option enables print verbose information                                                                                                                                                         |
 | strict                 | true          | whether to enable strict mode                                                                                                                                                                         |
 
-### View all options
+## View all options
 
 ```bash
 $ options
@@ -64,7 +64,7 @@ $ options
                                                             false`
 ```
 
-### Get special option value
+## Get special option value
 
 ```
 $ options json-format
@@ -79,7 +79,7 @@ $ options json-format
 By default, `json-format` is false. When set `json-format` to true, commands like `wathc`/`tt` will print result with `json` format.
 :::
 
-### Set special option value
+## Set special option value
 
 For example, to enable saving command execution result, input the command below:
 
@@ -90,7 +90,7 @@ $ options save-result true
  save-result  false         true
 ```
 
-### Set `unsafe` to true to enhance the classes under the `java.*` package
+## Set `unsafe` to true to enhance the classes under the `java.*` package
 
 By default, `watch`/`trace`/`tt`/`trace`/`monitor` command do not support classes under `java.*` package. You can set `unsafe` to true to enhance the classes under the `java.*` package.
 
@@ -107,7 +107,7 @@ Press Q or Ctrl+C to abort.
 Affect(class count: 1 , method count: 1) cost in 61 ms, listenerId: 1
 ```
 
-### Turn off strict mode, allow setting object properties in ognl expressions
+## Turn off strict mode, allow setting object properties in ognl expressions
 
 ::: tip
 since 3.6.0

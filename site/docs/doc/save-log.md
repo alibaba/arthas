@@ -22,7 +22,7 @@ Affect(row-cnt:1) cost in 3 ms.
 
 结果会异步保存在：`{user.home}/logs/arthas-cache/result.log`，请定期进行清理，以免占据磁盘空间
 
-### 使用新版本 Arthas 的异步后台任务将结果存日志文件
+## 使用新版本 Arthas 的异步后台任务将结果存日志文件
 
 ```bash
 $ trace Test t >>  &

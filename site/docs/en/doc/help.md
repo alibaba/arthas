@@ -6,14 +6,14 @@ show help message, the command can show all the commands that current Arthas ser
 [help command] equals [command -help],both is to show the detail usage of one command.
 :::
 
-### Options
+## Options
 
 |    Name | Specification                                             |
 | ------: | :-------------------------------------------------------- |
 |         | show all the commands that current Arthas server supports |
 | [name:] | show the detail usage of one command                      |
 
-### Usage
+## Usage
 
 ```bash
 $ help

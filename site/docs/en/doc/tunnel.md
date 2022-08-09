@@ -11,7 +11,7 @@ Reference:
 - 1: [Web Console](web-console.md)
 - 2: [Arthas Spring Boot Starter](spring-boot-starter.md)
 
-### Download and deploy arthas tunnel server
+## Download and deploy arthas tunnel server
 
 [https://github.com/alibaba/arthas/releases](https://github.com/alibaba/arthas/releases)
 
@@ -33,7 +33,7 @@ Through Spring Boot's Endpoint, you can view the specific connection information
 Using generated security password: f1dca050-3777-48f4-a577-6367e55a78a2
 ```
 
-### Connecting to the tunnel server when starting arthas
+## Connecting to the tunnel server when starting arthas
 
 When starting arthas, you can use the `--tunnel-server` parameter, for example:
 
@@ -83,7 +83,7 @@ For the above example, go to [http://47.75.156.201/arthas/?port=80](http://47.75
 
 ![](/images/arthas-tunnel-server.png)
 
-### Best practices
+## Best practices
 
 ::: warning
 Note that the agentId must be unique, otherwise it will conflict on the tunnel server and not work properly.
@@ -99,7 +99,7 @@ Tunnel server will use `_` as a delimiter to extract `appName`, which is conveni
 Alternatively, you can configure `appName` in `arthas.properties` in the unzipped arthas directory, or in `application.properties` of the spring boot application.
 :::
 
-### Tunnel Server Management Page
+## Tunnel Server Management Page
 
 ::: tip
 Need to configure `arthas.enable-detail-pages=true` in `application.properties` of spring boot
@@ -143,7 +143,7 @@ Then open the details, you can see a list of all connected agents:
 
 ![](/images/tunnel-server-agents.png)
 
-### Security and Privilege Management
+## Security and Privilege Management
 
 ::: tip
 **It is strongly recommended not to expose the tunnel server directly to the public network.**
@@ -154,13 +154,13 @@ Currently tunnel server does not have special permission management
 1. Users need to develop by themselves and authenticate the app name.
 2. If the management page is opened, security measures need to be added.
 
-### Cluster Management
+## Cluster Management
 
 If you want to deploy multiple tunnel servers, you can use nginx for forwarding and redis to store agent information.
 
 Nginx needs to configure sticky session to ensure that the user's web socket is connected to the same back-end tunnel server. The simple configuration method is to use `ip_hash`.
 
-### How arthas tunnel server works
+## How arthas tunnel server works
 
 ```
 browser <-> arthas tunnel server <-> arthas tunnel client <-> arthas agent

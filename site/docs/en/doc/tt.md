@@ -10,13 +10,13 @@ In such difficulties, `tt` comes into play.
 
 With the help of `tt` (_TimeTunnel_), you can check the contexts of the methods at different times in execution history.
 
-### Usage
+## Usage
 
-#### Start Demo
+### Start Demo
 
 Start `math-game` in [Quick Start](quick-start.md).
 
-#### Record method calls
+### Record method calls
 
 ```bash
 $ tt -t demo.MathGame primeFactors
@@ -66,7 +66,7 @@ Advanced:
 - [Special usage](https://github.com/alibaba/arthas/issues/71)
 - [OGNL official guide](https://commons.apache.org/proper/commons-ognl/language-guide.html)
 
-#### List all records
+### List all records
 
 ```bash
 $ tt -l
@@ -82,7 +82,7 @@ $ tt -l
 Affect(row-cnt:6) cost in 4 ms.
 ```
 
-#### Searching for records
+### Searching for records
 
 ```bash
 $ tt -s 'method.name=="primeFactors"'
@@ -102,7 +102,7 @@ Advanced:
 
 - [Critical fields in expression](advice-class.md)
 
-#### Check context of the call
+### Check context of the call
 
 Using `tt -i <index>` to check a specific calling details.
 
@@ -125,7 +125,7 @@ $ tt -i 1003
 Affect(row-cnt:1) cost in 11 ms.
 ```
 
-#### Replay record
+### Replay record
 
 Since Arthas stores the context of the call, you can even _replay_ the method calling afterwards with extra option `-p` to replay the issue for advanced troubleshooting, option `--replay-times`
 define the replay execution times, option `--replay-interval` define the interval(unit in ms,with default value 1000) of replays
@@ -150,7 +150,7 @@ Time fragment[1004] successfully replayed.
 Affect(row-cnt:1) cost in 14 ms.
 ```
 
-#### Watch express
+### Watch express
 
 `-w, --watch-express` watch the time fragment by ognl express.
 

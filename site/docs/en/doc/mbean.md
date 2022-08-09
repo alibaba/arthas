@@ -8,7 +8,7 @@ show Mbean information
 
 This command can show or monitor Mbean attribute information.
 
-### Parameters
+## Parameters
 
 |                Name | Specification                                                                                         |
 | ------------------: | :---------------------------------------------------------------------------------------------------- |
@@ -19,7 +19,7 @@ This command can show or monitor Mbean attribute information.
 |                [n:] | execution times                                                                                       |
 |                 [E] | turn on regex matching while the default mode is wildcard matching. Only effect on the attribute name |
 
-### Usage
+## Usage
 
 show all Mbean names:
 

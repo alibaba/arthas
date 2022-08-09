@@ -31,7 +31,7 @@ The default keymap is:
 - Press `tab` to enable auto-completion prompt at any time.
 - Enter command and `-` or `--`, then press `tab` to display the concrete options for the current command.
 
-### Custom shortcuts
+## Custom shortcuts
 
 Specify customization in `$USER_HOME/.arthas/conf/inputrc` file in the current user home directory.
 
@@ -61,7 +61,7 @@ Vim user may want to map `ctrl+h` to moving the cursor forward one character. To
 
 then replace `"\C-h": backward-delete-char` with `"\C-h": backward-char`, then reconnect to Arthas console to take effect.
 
-### Shortcuts for jobs
+## Shortcuts for jobs
 
 - `ctrl + c`: Terminates current command
 - `ctrl + z`: Suspends the current command, you can restore this command with `bg`/`fg`, or `kill` it.

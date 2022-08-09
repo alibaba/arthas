@@ -18,7 +18,7 @@ Add maven dependency:
 
 When the application is started, spring will start arthas and attach its own process.
 
-### Configuration properties
+## Configuration properties
 
 For example, by configuring the tunnel server for remote management.
 
@@ -35,7 +35,7 @@ By default, arthas-spring-boot-starter will disable the `stop` command.
 
 Reference: [Arthas Properties](arthas-properties.md)
 
-### View Endpoint Information
+## View Endpoint Information
 
 ::: tip
 Need to configure spring boot to expose endpoint: [Reference](https://docs.spring.io/spring-boot/docs/current/reference/html/production-ready-features.html#production-ready-endpoints).
@@ -54,7 +54,7 @@ http://localhost:8080/actuator/arthas
 }
 ```
 
-### Non-spring boot application usage
+## Non-spring boot application usage
 
 Non-Spring Boot applications can be used in the following ways.
 

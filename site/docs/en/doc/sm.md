@@ -8,7 +8,7 @@ Search method from the loaded classes.
 
 `sm` stands for search method. This command can search and show method information from all loaded classes. `sm` can only view the methods declared on the target class, that is, methods from its parent classes are invisible.
 
-### Options
+## Options
 
 |                  Name | Specification                                                      |
 | --------------------: | :----------------------------------------------------------------- |
@@ -20,7 +20,7 @@ Search method from the loaded classes.
 | `[classLoaderClass:]` | The class name of the ClassLoader that executes the expression.    |
 |                `[n:]` | Maximum number of matching classes with details (100 by default)   |
 
-### Usage
+## Usage
 
 View methods of `java.lang.String`:
 

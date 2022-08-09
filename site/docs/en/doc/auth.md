@@ -4,7 +4,7 @@
 Authenticates the current session
 :::
 
-### Configure username and password
+## Configure username and password
 
 When attaching, you can specify a password on the command line. such as:
 
@@ -20,7 +20,7 @@ java -jar arthas-boot.jar --password ppp
   Using generated security password: 0vUBJpRIppkKuZ7dYzYqOKtranj4unGh
   ```
 
-### Local connection does not require authentication
+## Local connection does not require authentication
 
 By default, there are configurations in the `arthas.properties` file:
 
@@ -30,7 +30,7 @@ arthas.localConnectionNonAuth=true
 
 When the password is configured, connect from localhost, the authentication is not required. The default configuration value is true, which is convenient for local connection. Authentication is only required when connecting remotely.
 
-### Authenticate in the telnet console
+## Authenticate in the telnet console
 
 After connecting to arthas, directly executing the command will prompt for authentication:
 
@@ -48,15 +48,15 @@ Authentication result: true
 
 - The user can be specified by the `--username` option, the default value is `arthas`.
 
-### Web console Authentication
+## Web console Authentication
 
 Open the browser, there will be a pop-up window prompting you to enter your username and password.
 
 After success, you can directly connect to the web console.
 
-### HTTP API Authentication
+## HTTP API Authentication
 
-#### HTTP Authorization Header(recommended)
+### HTTP Authorization Header(recommended)
 
 Arthas uses the HTTP standard Basic Authorization.
 
@@ -70,7 +70,7 @@ curl 'http://localhost:8563/api' \
   --data-raw '{"action":"exec","command":"version"}'
 ```
 
-#### URL parameters
+### URL parameters
 
 It supports passing username and password in parameters. such as:
 
