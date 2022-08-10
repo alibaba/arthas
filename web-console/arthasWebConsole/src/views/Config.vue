@@ -7,13 +7,24 @@ import { watch } from 'fs';
 import { Console } from 'console';
 import OptionConfigMenu from '@/components/OptionConfigMenu.vue';
 import SwitchInput from '@/components/SwitchInput.vue';
+import { publicStore } from '@/stores/public';
+import { Disclosure, DisclosureButton, DisclosurePanel } from "@headlessui/vue"
 const sysEnvM = useMachine(machine)
 const sysPropM = useMachine(machine)
 const sysEnvMap = reactive(new Map<string, string[]>())
 const sysPropMap = reactive(new Map<string, string[]>())
 const vmOptionM = useMachine(machine)
+const pwdM = useMachine(machine)
 // 初始化
 onBeforeMount(() => {
+  pwdM.send("INIT")
+  pwdM.send({
+    type: "SUBMIT", value: {
+      action: "exec",
+      command: "pwd",
+    }
+  })
+
   sysEnvM.send("INIT")
   sysEnvM.send({
     type: "SUBMIT",
@@ -42,6 +53,7 @@ onBeforeMount(() => {
   })
 })
 
+const pwd = ref("?")
 const sysEnvTree = reactive([] as string[])
 const sysPropTree = reactive([] as string[])
 const vmOptionMTree = reactive([] as VmOption[])
@@ -67,7 +79,18 @@ const handlePropTree = (data: Record<string, string>) => handleTree(data, sysPro
 // 处理可修改参数的树形结构
 // const handleOptionTree = (data:Record<string>)
 
+watchEffect(() => {
+  const response = pwdM.state.value.context.response
+  if (response) {
+    if (Object.hasOwn(response, "body")) {
+      const result = (response as CommonRes).body.results[0]
 
+      if (result.type == "pwd") {
+        pwd.value = result.workingDir
+      }
+    }
+  }
+})
 watchEffect(() => {
   const response = sysEnvM.state.value.context.response
   if (response) {
@@ -111,7 +134,7 @@ watchEffect(() => {
         // })
         // 先clear一下之前的东西
         vmOptionMTree.length = 0
-        console.log(result.vmOptions,"watchEffect!!!")
+        console.log(result.vmOptions, "watchEffect!!!")
         result.vmOptions.forEach(v => {
           vmOptionMTree.push(v)
         })
@@ -119,25 +142,37 @@ watchEffect(() => {
     }
   }
 })
-const vmOptionSend = (pre: string) => (v: { key: string, value: boolean }) => vmOptionM.send({
-  type: 'SUBMIT', value: {
-    action: "exec",
-    command: `vmoption ${pre} ${v.value}`
-  }
-})
+const vmOptionSend = (pre: string) => (v: { key: string, value: boolean | string }) => {
+  if (pre === "HeapDumpPath" && v.value === "") {
+    publicStore().$patch({ ErrMessage: "HeapDumpPath can't be set \"\" ", isErr: true })
+    return
+  } vmOptionM.send({
+    type: 'SUBMIT', value: {
+      action: "exec",
+      command: `vmoption ${pre} ${v.value === "" ? '\"\"' : v.value}`
+    }
+  })
+}
 
 </script>
 
 <template>
-  <div class="p-2 max-h-[90vh] overflow-auto">
+  <div class="p-2 max-h-[90vh] overflow-y-scroll">
     <article>
+      <Disclosure as="section" class="flex w-10/12 mb-2">
+        <DisclosureButton class="bg-blue-200 p-2 w-1/4 break-all">
+          workingDir
+        </DisclosureButton>
+        <DisclosurePanel as="div" static class="flex-auto bg-blue-100 flex flex-col justify-center pl-2">
+          {{ pwd }}
+        </DisclosurePanel>
+      </Disclosure>
       <config-menu title="sysenv" :list="sysEnvTree" :map="sysEnvMap" v-if="sysEnvM.state.value.context.response" />
       <config-menu title="sysprop" :list="sysPropTree" :map="sysPropMap" v-if="sysPropM.state.value.context.response" />
-      <!-- <config-menu title="memory" :list="sysPropTree" :map="sysPropMap" v-if="sysPropM.state.value.context.response" /> -->
       <option-config-menu title="vmOption" :list="vmOptionMTree" title-key-name="name">
         <template #item="{ kv, itemTitle, idx }">
-          <switch-input :send="vmOptionSend(itemTitle)" :data="{ key: kv[0], value: kv[1] }"
-            v-if="kv[0] === 'value'" :class="{ 'border-t-4': (idx > 0), 'border-white': (idx > 0) }">
+          <switch-input :send="vmOptionSend(itemTitle)" :data="{ key: kv[0], value: kv[1] }" v-if="kv[0] === 'value'"
+            :class="{ 'border-t-4': (idx > 0), 'border-white': (idx > 0) }">
           </switch-input>
           <div v-else class="flex " :class="{ 'border-t-4': (idx > 0), 'border-white': (idx > 0) }">
             <div class="bg-blue-200 w-1/5 p-2">{{ kv[0] }}</div>

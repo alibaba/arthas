@@ -12,7 +12,7 @@ import SuccessDialog from "./components/SuccessDialog.vue";
     <div class=" flex-auto h-[90vh] overflow-auto">
       <div class="flex flex-row h-full">
         <nav-aside></nav-aside>
-        <router-view class=" flex-auto">
+        <router-view class="flex-auto overflow-auto h-[90vh]">
         </router-view>
       </div>
     </div>

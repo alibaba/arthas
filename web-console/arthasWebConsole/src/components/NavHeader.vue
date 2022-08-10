@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { useMachine } from '@xstate/vue';
+import { waitFor } from 'xstate/lib/waitFor'
 import { onBeforeMount, reactive, Ref, ref, watchEffect } from 'vue';
 import { RefreshIcon, LogoutIcon, LoginIcon } from '@heroicons/vue/outline';
 import { fetchStore } from '@/stores/fetch';
@@ -7,11 +8,13 @@ import machine from "@/machines/consoleMachine"
 
 const { state, send } = useMachine(machine)
 const fetchS = fetchStore()
+const sessionM = useMachine(machine)
 const version = ref("N/A")
 const vCmd: CommandReq = {
   action: "exec",
   command: "version"
 }
+
 const restBtnclass: Ref<'animate-spin-rev-pause' | 'animate-spin-rev-running'> = ref('animate-spin-rev-pause')
 watchEffect(() => {
   if (state.value.context.response) {
@@ -21,16 +24,19 @@ watchEffect(() => {
     })
     // if(state.value.context.response.body?.command === "version") version.value = state.value.context.response.body.command
   }
-  if (state.value.matches("loading")) restBtnclass.value = "animate-spin-rev-running"
-  else restBtnclass.value = "animate-spin-rev-pause"
+  if (state.value.matches("ready")) restBtnclass.value = "animate-spin-rev-pause"
+  else restBtnclass.value = "animate-spin-rev-running"
 })
+
+
 onBeforeMount(() => {
   send("INIT")
-
   send({
     type: "SUBMIT",
     value: vCmd
   })
+
+  sessionM.send("INIT")
 })
 // 手动重来
 const reset = () => send({
@@ -38,21 +44,43 @@ const reset = () => send({
   value: vCmd
 })
 
-// 关闭session
+// 轮询维持session模块
+const loop = {
+  id: -1,
+  open() {
+    this.id = setInterval(() => sessionM.send({
+      type: "SUBMIT",
+      value: {
+        action: "pull_results",
+      } as any
+    }), 1000)
+  },
+  close() {
+    clearInterval(this.id)
+  }
+}
 
-const logout = () => send({
-  type: "SUBMIT",
-  value: {
-    action: "close_session",
-    sessionId: undefined
-  }
-})
-const login = () => send({
-  type: "SUBMIT",
-  value: {
-    action: "init_session"
-  }
-})
+const logout = async () => {
+
+  restBtnclass.value = "animate-spin-rev-running"
+  loop.close()
+  await waitFor(sessionM.service, state => state.matches("ready"))
+  sessionM.send("SUBMIT", {
+    value: {
+      action: "close_session"
+    } as any
+  })
+  restBtnclass.value = "animate-spin-rev-pause"
+}
+const login = async () => {
+  sessionM.send("SUBMIT", {
+    value: {
+      action: "init_session"
+    }
+  })
+  await waitFor(sessionM.service, state => state.matches("ready"))
+  loop.open()
+}
 </script>
 
 <template>
@@ -67,11 +95,11 @@ const login = () => send({
       <div class=" mr-4 bg-gray-200 h-12 w-32 rounded-full flex justify-center items-center text-gray-500 font-bold">
         version:{{ version }}
       </div>
-      <button class="hover:opacity-50 h-12 w-12 grid place-items-center bg-red-600 shadow-red-500 rounded-full mr-2 transition-all"
-        :class=" {'bg-blue-600':!fetchS.online, 'shadow-blue-500':!fetchS.online}"
-      >
+      <button
+        class="hover:opacity-50 h-12 w-12 grid place-items-center bg-red-600 shadow-red-500 rounded-full mr-2 transition-all"
+        :class="{ 'bg-blue-600': !fetchS.online, 'shadow-blue-500': !fetchS.online }">
         <LogoutIcon class="h-1/2 w-1/2 text-white" @click="logout" v-if="fetchS.online" />
-        <login-icon class="h-1/2 w-1/2 text-white" @click="login" v-else/>
+        <login-icon class="h-1/2 w-1/2 text-white" @click="login" v-else />
       </button>
     </div>
   </nav>

@@ -9,9 +9,6 @@ export const fetchStore = defineStore('fetch', {
   }),
   getters: {
     getRequest: (state) => (option: ArthasReq) => {
-      // if (["join_session", "init_session", "close_session", "interrupt_job"].includes(option.action)) {
-      //   body
-      // }
       const req = new Request("/api", {
         method: "POST",
         headers: { "Content-Type": "application/json" },

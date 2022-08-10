@@ -29,14 +29,14 @@ const submitCommand = ()=>{
 
 <template>
   <div class="flex flex-col">
-    <form class="h-[10vh] flex items-center border shadow">
+    <form class="h-[10vh] flex items-center border shadow" @submit.prevent="submitCommand">
       <label for="command-input" class=" m-2 ">command:</label>
       <div class=" flex-auto grid place-items-start">
         <input type="text" placeholder="input command" v-model="val" id="command-input"
           class=" outline-1 focus-visible:outline-gray-600 border rounded hover:shadow h-10 transition w-11/12 box-border">
       </div>
       <button class="hover:shadow w-24 h-10 border rounded-md  mr-20 "
-        @click="submitCommand">
+        >
         submit
       </button>
     </form>

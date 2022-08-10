@@ -21,7 +21,7 @@ onBeforeMount(() => {
 </script>
 
 <template>
-  <form class="flex justify-between items-center">
+  <form class="flex justify-between items-center" @submit.prevent="send({ key: data.key, value: modelvalue })">
     <div class="w-1/5 bg-blue-200 p-2 min-w-max">{{ data.key }}</div>
     <div class="w-3/5 grid place-items-center">
       <Switch v-if="typeof data.value === 'boolean'" v-model="(modelvalue as boolean)"
@@ -34,7 +34,7 @@ onBeforeMount(() => {
       <input v-else-if="typeof data.value === 'string'" v-model="(modelvalue as string)" class="rounded-full pl-3 w-1/2"/>
     </div>
     <div class="w-1/5">
-      <button @click="send({ key: data.key, value: modelvalue })"
+      <button 
         class="p-1 w-24 rounded-full bg-blue-300 hover:bg-blue-500 transition text-black">
         change
       </button>

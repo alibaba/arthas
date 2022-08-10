@@ -218,8 +218,6 @@ const machine =
         };
       }),
       getReq: assign((context, event) => {
-        console.log("getReq exit", context.inputValue);
-
         if (
           !context.inputValue || !context.fetchStore ||
           !("getRequest" in context.fetchStore)
@@ -228,7 +226,6 @@ const machine =
         }
         const option = {} as any;
         Object.entries(context.inputValue).forEach(([k, v]) => {
-          console.log(k, v);
           if (v) option[k] = v;
         });
         return {
@@ -295,7 +292,11 @@ const machine =
       }),
       needReportSuccess: (context, e) => {
         if (context.inputValue?.action === "close_session") {
-          context.fetchStore.online = false;
+          context.fetchStore.$patch({
+            sessionId: "",
+            consumerId: "",
+            online: false
+          })
           context.publicStore.$patch({
             isSuccess: true,
             SuccessMessage: `close session success!`,
@@ -303,7 +304,12 @@ const machine =
           return;
         }
         if (context.inputValue?.action === "init_session") {
-          context.fetchStore.online = true;
+          const response = (context.response as SessionRes)
+          context.fetchStore.$patch({
+            sessionId: response.sessionId,
+            consumerId: response.consumerId,
+            online: true
+          })
           context.publicStore.$patch({
             isSuccess: true,
             SuccessMessage: `init_session success!`,
