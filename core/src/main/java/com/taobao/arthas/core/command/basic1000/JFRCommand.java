@@ -9,11 +9,7 @@ import com.taobao.middleware.cli.annotations.Description;
 import com.taobao.middleware.cli.annotations.Name;
 import jdk.jfr.*;
 
-import jdk.jfr.internal.jfc.JFC;
-
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.nio.file.Paths;
 import java.text.ParseException;
 import java.time.Duration;
@@ -23,12 +19,12 @@ import java.util.concurrent.TimeUnit;
 @Name("jfr")
 @Summary("Java Flight Command")
 @Description(Constants.EXAMPLE +
-        "  jfr JFR.start [-n <value>] [-s <value>][-c <value>] [-df <value>] " +
-        "[--delay <value>] [--discard <value>] [--dumponexit <value>] [--duration <value>] " +
+        "  jfr start [-n <value>] [-s <value>][-c <value>] [--disk <value>] " +
+        "[--delay <value>] [--dumponexit <value>] [--duration <value>] " +
         "[-f <value>] [-h] [--maxage <value>] [--maxsize <value>] \n" +
-        "  jfr JFR.check [-n <value>] [-r <value>] [-v <value>]\n" +
-        "  jfr JFR.stop [-n <value>] [-r <value>] [--discard <value>] [-f <value>] [-c <value>]\n" +
-        "  jfr JFR.dump [-n <value>] [-r <value>] [-f <value>] [-c <value>]\n" +
+        "  jfr check [-n <value>] [-r <value>] [--state <value>] \n" +
+        "  jfr stop [-n <value>] [-r <value>] [--discard <value>] [-f <value>] [-c <value>]\n" +
+        "  jfr dump [-n <value>] [-r <value>] [-f <value>] [-c <value>]\n" +
         Constants.WIKI + Constants.WIKI_HOME + "jfr")
 public class JFRCommand extends AnnotatedCommand {
 
@@ -36,7 +32,7 @@ public class JFRCommand extends AnnotatedCommand {
     private String name;
     private String settings;
     private Boolean disk;
-    private Boolean dumpOnExit;
+    private Boolean dumpOnExit = false;
     private String delay;
     private String duration;
     private String filename;
@@ -45,11 +41,12 @@ public class JFRCommand extends AnnotatedCommand {
     private String maxSize;
     private Long recording;
     private String discard;
-    private Boolean verbose;
-    JFRModel result = new JFRModel();
+    private String state;
+    private JFRModel result = new JFRModel();
+    private static Map<Long, Recording> recordings = new HashMap<>();
 
     @Argument(index = 0, argName = "cmd", required = true)
-    @Description("command name (JFR.start JFR.check JFR.stop JFR.dump)")
+    @Description("command name (start check stop dump)")
     public void setCmd(String cmd) {
         this.cmd = cmd;
     }
@@ -126,10 +123,10 @@ public class JFRCommand extends AnnotatedCommand {
         this.discard = discard;
     }
 
-    @Option(shortName = "v", longName = "verbose")
-    @Description("Print event settings for the recording(s) (BOOLEAN, false)")
-    public void setVerbose(Boolean verbose) {
-        this.verbose = verbose;
+    @Option(longName = "state")
+    @Description("Query recordings by sate (new, delay, running, stopped, closed)")
+    public void setState(String state) {
+        this.state = state;
     }
 
     public String getCmd() {
@@ -184,35 +181,24 @@ public class JFRCommand extends AnnotatedCommand {
         return discard;
     }
 
-    public Boolean getVerbose() {
-        return verbose;
+    public String getState() {
+        return state;
     }
 
     @Override
     public void process(CommandProcess process) {
 
-        if (cmd.equals("JFR.start")) {
-            String[] configurations = new String[]{settings};
-            Map<String, String> s = new HashMap();
-            if (configurations == null || configurations.length == 0) {
-                configurations = new String[]{"default"};
-            }
-
-            String[] var11 = configurations;
-            int var12 = configurations.length;
-
-            String recordingspecifier;
-            for(int var13 = 0; var13 < var12; ++var13) {
-                recordingspecifier = var11[var13];
-
-                try {
-                    s.putAll(JFC.createKnown(recordingspecifier).getSettings());
-                } catch (ParseException | IOException var17) {
-                   result.setJfrOutput("Could not parse setting " +configurations[0]+ new Object[]{var17});
+        if (cmd.equals("start")) {
+            Configuration c = null;
+            try {
+                if (getSettings() == null) {
+                    setSettings("default");
                 }
+                c = Configuration.getConfiguration(settings);
+            } catch (IOException | ParseException e) {
+                process.end(-1, "Could not start recording, not able to read settings");
             }
-            Recording r = new Recording();
-            r.setSettings(s);
+            Recording r = new Recording(c);
 
             if (getFilename() != null) {
                 try {
@@ -222,9 +208,11 @@ public class JFRCommand extends AnnotatedCommand {
                     process.end(-1, "Could not start recording, not able to write to file " + getFilename() + e.getMessage());
                 }
             }
-            if (isDumpOnExit() != null) {
-                r.setDumpOnExit(isDumpOnExit());
+
+            if (isDumpOnExit() != false) {
+                r.setDumpOnExit(isDumpOnExit().booleanValue());
             }
+
             if (getDuration() != null) {
                 long l = parseTimespan(getDuration());
                 r.setDuration(Duration.ofNanos(l));
@@ -235,9 +223,13 @@ public class JFRCommand extends AnnotatedCommand {
             } else {
                 r.setName(getName());
             }
+
             if (isToDisk() != null) {
-                r.setToDisk(isToDisk());
+                r.setToDisk(isToDisk().booleanValue());
             }
+
+            long id = r.getId();
+            recordings.put(id, r);
 
             if (getDelay() != null) {
                 Duration dDelay = Duration.ofNanos(parseTimespan(getDelay()));
@@ -256,97 +248,65 @@ public class JFRCommand extends AnnotatedCommand {
             if (filename != null && duration != null) {
                 result.setJfrOutput(" The result will be written to:\n" + filename);
             }
-
-        } else if (cmd.equals("JFR.check")) {
-            String recordingText = null;
-            if (name != null)
-                recordingText = name;
-            if (recording != null)
-                recordingText = recording.toString();
-
-            if (recordingText != null) {
-                printRecording(findRecording(recordingText), false);
+        } else if (cmd.equals("check")) {
+            Long id = getRecording();
+            if (id != null) {
+                printRecording(recordings.get(id));
             } else {
-                List<Recording> recordings = this.getRecordings();
-                if (!verbose && recordings.isEmpty()) {
-                    result.setJfrOutput("No available recordings.\n");
-                    result.setJfrOutput("Use JFR.start to start a recording.");
+                List<Recording> recordingList;
+                if (state != null) {
+                    recordingList = findRecordingByState(state);
                 } else {
-                    boolean first = true;
-                    Iterator var5 = recordings.iterator();
-
-                    while(var5.hasNext()) {
-                        Recording recording = (Recording)var5.next();
-                        if (!first) {
-                            if (Boolean.TRUE.equals(verbose)) {
-
-                            }
-                        }
-                        first = false;
-                        printRecording(recording, verbose);
+                    recordingList =  new ArrayList<Recording>(recordings.values());
+                }
+                if (recordingList.isEmpty()) {
+                    process.end(-1, "No available recordings.\n Use jfr start to start a recording.\n");
+                } else {
+                    for (Recording recording : recordingList) {
+                        printRecording(recording);
                     }
                 }
             }
+        } else if (cmd.equals("dump")) {
+            if (recordings.isEmpty()) {
+                process.end(-1,"No recordings to dump from. Use jfr start to start a recording.");
+            }
+            if (getRecording() != null) {
+                Recording r = recordings.get(getRecording());
+                if (getFilename() == null) {
+                    setFilename("dump-" + r.getName() + "-" + r.getId() + ".jfr");
+                }
 
+                try {
+                    r.dump(Paths.get(getFilename()));
+                } catch (IOException e) {
+                    process.end(-1,"Could not to dump. "+ e.getMessage());
+                }
+                result.setJfrOutput("Dump recording " + r.getId() + ", The result will be written to:\n" + getFilename());
+            } else {
+                process.end(-1,"Failed to dump " + getFilename() + " Please input recording id");
+            }
 
-        } else if (cmd.equals("JFR.dump")) {
-            // TODO: 2022/8/9
-        } else if (cmd.equals("JFR.stop")) {
-            // TODO: 2022/8/9
+        } else if (cmd.equals("stop")) {
+            Recording r = recordings.remove(getRecording());
+            if (getFilename() == null)
+                setFilename("stop-" + r.getName() + "-" + r.getId() + ".jfr");
+
+            try {
+                r.setDestination(Paths.get(getFilename()));
+            } catch (IOException e) {
+                process.end(-1, "Failed to stop" + r.getName() +". Could not set destination for "+ filename+ "to file" + e.getMessage());
+            }
+
+            r.stop();
+            result.setJfrOutput("Stop recording " + r.getId() + ", The result will be written to:\n" + getFilename());
+            r.close();
+        } else {
+            process.end(-1, "Please input correct jfr command (start check stop dump)");
         }
+
         process.appendResult(result);
         process.end();
-    }
-
-    private String printOutput(Process proc) throws IOException {
-        BufferedReader stdInput = new BufferedReader(
-                new InputStreamReader(proc.getInputStream()));
-        BufferedReader stdError = new BufferedReader(
-                new InputStreamReader(proc.getErrorStream()));
-        // Read the output from the command
-        String s = null;
-        StringBuilder sc = new StringBuilder();
-        while ((s = stdInput.readLine()) != null) {
-            sc.append(s+'\n');
-        }
-        // Read any errors from the attempted command
-        while ((s = stdError.readLine()) != null) {
-            sc.append(s);
-        }
-        return sc.toString();
-    }
-
-    private Recording findRecording(String name) {
-        try {
-            return this.findRecordingById(Integer.parseInt(name));
-        } catch (NumberFormatException e) {
-            return this.findRecordingByName(name);
-        }
-    }
-    private Recording findRecordingById(int id) {
-        Iterator iterator = FlightRecorder.getFlightRecorder().getRecordings().iterator();
-        Recording r;
-        do {
-            if (!iterator.hasNext()) {
-                result.setJfrOutput("Could not find " + id + "\n\nUse JFR.check without options to see list of all available recordings.\n");
-                return null;
-            }
-            r = (Recording) iterator.next();
-        } while (r.getId() != (long)id);
-        return r;
-    }
-
-    private Recording findRecordingByName(String name) {
-        Iterator iterator = FlightRecorder.getFlightRecorder().getRecordings().iterator();
-        Recording r;
-        do {
-            if (!iterator.hasNext()) {
-                result.setJfrOutput("Could not find " + name + "\n\nUse JFR.check without options to see list of all available recordings.\n");
-                return null;
-            }
-            r = (Recording) iterator.next();
-        } while (r.getName() != name);
-        return r;
     }
 
     public long parseTimespan(String s) {
@@ -368,80 +328,33 @@ public class JFRCommand extends AnnotatedCommand {
         }
     }
 
-    private void printRecording(Recording recording, boolean verbose) {
-        this.printGeneral(recording);
-        if (verbose) {
-            this.printSetttings(recording);
+    private List<Recording> findRecordingByState(String state) {
+        List<Recording> resultRecordingList = new ArrayList<>();
+        Collection<Recording> recordingList = recordings.values();
+        for (Recording recording : recordingList) {
+            if (recording.getState().toString().toLowerCase().equals(state))
+                resultRecordingList.add(recording);
         }
+        return resultRecordingList;
     }
 
-    private void printGeneral(Recording recording) {
+    private void printRecording(Recording recording) {
         String format = "Recording: recording="+recording.getId()+" name="+recording.getName()+"";
         result.setJfrOutput(format);
         Duration duration = recording.getDuration();
         if (duration != null) {
-            result.setJfrOutput(" duration=");
-//            Utils.formatTimespan(duration, "");
+            result.setJfrOutput(" duration="+ duration);
         }
 
         long maxSize = recording.getMaxSize();
         if (maxSize != 0L) {
-            result.setJfrOutput(" maxsize=");
-//            result.setJfrOutput(maxSize);
+            result.setJfrOutput(" maxsize=" + maxSize);
         }
 
         Duration maxAge = recording.getMaxAge();
         if (maxAge != null) {
-            result.setJfrOutput(" maxage=");
-//            this.printTimespan(maxAge, "");
+            result.setJfrOutput(" maxage=" + maxAge);
         }
         result.setJfrOutput(" (" + recording.getState().toString().toLowerCase() + ")\n");
-    }
-
-    private void printSetttings(Recording recording) {
-        Map<String, String> settings = recording.getSettings();
-        Iterator var3 = sortByEventPath(FlightRecorder.getFlightRecorder().getEventTypes()).iterator();
-
-        while(var3.hasNext()) {
-            EventType eventType = (EventType)var3.next();
-            StringJoiner sj = new StringJoiner(",", "[", "]");
-            sj.setEmptyValue("");
-            Iterator var6 = eventType.getSettingDescriptors().iterator();
-
-            while(var6.hasNext()) {
-                SettingDescriptor s = (SettingDescriptor)var6.next();
-                String settingsPath = eventType.getName() + "#" + s.getName();
-                if (settings.containsKey(settingsPath)) {
-                    sj.add(s.getName() + "=" + (String)settings.get(settingsPath));
-                }
-            }
-
-            String settingsText = sj.toString();
-            if (!settingsText.isEmpty()) {
-//                this.print(" %s (%s)", new Object[]{eventType.getLabel(), eventType.getName()});
-//                this.println();
-//                result.setJfrOutput("   " + settingsText, new Object[0]);
-            }
-        }
-
-    }
-
-    private static List<EventType> sortByEventPath(Collection<EventType> events) {
-        List<EventType> sorted = new ArrayList();
-        sorted.addAll(events);
-        Collections.sort(sorted, new Comparator<EventType>() {
-            public int compare(EventType e1, EventType e2) {
-                return e1.getName().compareTo(e2.getName());
-            }
-        });
-        return sorted;
-    }
-
-    protected final List<Recording> getRecordings() {
-        List<Recording> list = new ArrayList(FlightRecorder.getFlightRecorder().getRecordings());
-        Collections.sort(list, (a, b) -> {
-            return a.getName().compareTo(b.getName());
-        });
-        return list;
     }
 }
