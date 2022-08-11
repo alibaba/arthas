@@ -62,13 +62,6 @@ type SessionReq =
   >;
 
 type CommandReq = CommonAction<
-  // {
-  //   requestId?: string;
-  //   sessionId?: string;
-  //   consumerId?: string;
-  //   command: string;
-  //   execTimeout?: number;
-  // } |
   {
     command:
       | "sysenv"
@@ -77,7 +70,7 @@ type CommandReq = CommonAction<
       | "pwd"
       | "jvm"
       | "memory"
-      | "perfcounter";
+      | "perfcounter -d";
   } | {
     command: StringInclude<"vmoption", 2>;
   } | {
@@ -117,6 +110,27 @@ type ThreadStats = {
   "state": "WAITING" | "TIMED_WAITING" | "RUNNABLE";
   "time": number;
 };
+type ThreadInfo = {
+  "blockedCount": 876,
+  "blockedTime": -1,
+  "inNative": true,
+  "lockOwnerId": -1,
+  "lockedMonitors": [],
+  "lockedSynchronizers": [],
+  "stackTrace":     {
+    "className": string,
+    "fileName": string,
+    "lineNumber": number,
+    "methodName": number,
+    "nativeMethod": boolean
+  }[],
+  "suspended": boolean,
+  "threadId": number,
+  "threadName": string,
+  "threadState": "WAITING" | "TIMED_WAITING" | "RUNNABLE",
+  "waitedCount": number,
+  "waitedTime": number
+}
 type BusyThread = {
   "blockedCount": number;
   "blockedTime": number;
@@ -221,6 +235,9 @@ type CommandResult = {
   threadStats: ThreadStats[];
   type: "thread";
 } | {
+  threadInfo: ThreadInfo,
+  type: "thread"
+} |{
   all: boolean;
   busyThreads: BusyThread[];
   type: "thread";
@@ -231,7 +248,10 @@ type CommandResult = {
   memoryInfo: MemoryInfo;
   type: "memory";
 } | {
-  perfCounters: { name: string; value: string | number }[];
+  perfCounters: { "name": string,
+  "units": string,
+  "value": string|number,
+  "variability": string}[];
   type: "perfcounter";
 };
 

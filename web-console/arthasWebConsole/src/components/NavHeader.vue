@@ -44,21 +44,12 @@ const reset = () => send({
   value: vCmd
 })
 
-// 轮询维持session模块
-const loop = {
-  id: -1,
-  open() {
-    this.id = setInterval(() => sessionM.send({
+const loop = fetchS.getPollingLoop(() => sessionM.send({
       type: "SUBMIT",
       value: {
         action: "pull_results",
       } as any
-    }), 1000)
-  },
-  close() {
-    clearInterval(this.id)
-  }
-}
+    }))
 
 const logout = async () => {
 
@@ -81,6 +72,7 @@ const login = async () => {
   await waitFor(sessionM.service, state => state.matches("ready"))
   loop.open()
 }
+
 </script>
 
 <template>

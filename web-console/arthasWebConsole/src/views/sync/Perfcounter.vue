@@ -13,7 +13,7 @@ onBeforeMount(() => {
     type: "SUBMIT",
     value: {
       action: "exec",
-      command: "perfcounter"
+      command: "perfcounter -d"
     }
   })
 })
@@ -45,12 +45,12 @@ watchEffect(() => {
         // })
         perfcounters.forEach(v=>{
           list.push(v.name)
-          map.set(v.name,[v.value.toString()])
+          map.set(v.name,Object.entries(v).filter(v=>v[0] !== "name").map(([key,value])=>`${key} : ${value}`))
         })
       }
     }
   }
-  setTimeout(()=>fetchM.send({type:"SUBMIT",value:{action:"exec",command:"perfcounter"}}),5000)
+  setTimeout(()=>fetchM.send({type:"SUBMIT",value:{action:"exec",command:"perfcounter -d"}}),5000)
 })
 </script>
 

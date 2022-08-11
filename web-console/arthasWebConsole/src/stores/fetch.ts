@@ -1,4 +1,5 @@
 import { defineStore } from 'pinia'
+import { actions } from 'xstate'
 // 控制fetch的store
 export const fetchStore = defineStore('fetch', {
   state: () => ({
@@ -21,5 +22,18 @@ export const fetchStore = defineStore('fetch', {
       })
       return req
     }
+  },
+  actions: {
+    getPollingLoop(hander: TimerHandler, step: number = 1000) {
+      return {
+        id: -1,
+        open() {
+          this.id = setInterval(hander, step);
+        },
+        close() {
+          clearInterval(this.id);
+        },
+      };
+    },
   }
 })
