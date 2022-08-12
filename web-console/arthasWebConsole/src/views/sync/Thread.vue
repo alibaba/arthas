@@ -50,7 +50,7 @@ const allEffect = watchEffect(() => {
       const result = (response as CommonRes).body.results[0]
       if (result.type === "thread") {
         if (Object.hasOwn(result, "threadStats")) {
-          const { threadStats } = <{ threadStats: ThreadStats[] }>result
+          const { threadStats } = result
           alllist.length = 0
           allMap.clear()
           optionThread.length = 0
@@ -71,7 +71,7 @@ const busyEffect = watchEffect(() => {
       const result = (response as CommonRes).body.results[0]
       if (result.type === "thread") {
         if (Object.hasOwn(result, "busyThreads")) {
-          const { busyThreads } = <{ busyThreads: BusyThread[] }>result
+          const { busyThreads } = result
           busylist.length = 0
           busyMap.clear()
           busyThreads.forEach(v => {
@@ -103,7 +103,7 @@ const getConcrtetThread = async () => {
   console.log(concretefetchM.state.value.context.response)
   const res = (concretefetchM.state.value.context.response as CommonRes).body.results[0]
   if (res.type === "thread" && Object.hasOwn(res, "threadInfo")) {
-    threadInfo.value = (<{ threadInfo: ThreadInfo }>res).threadInfo
+    threadInfo.value = res.threadInfo
   }
 
 }

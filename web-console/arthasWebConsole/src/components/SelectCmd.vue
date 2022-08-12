@@ -14,6 +14,9 @@ const routers: { cmd: string, url: string }[] = [
   },{
     cmd: "perfcounter",
     url: "perfcounter"
+  },{
+    cmd: "classLoader",
+    url: "classLoader"
   },
 ]
 const router = useRouter()

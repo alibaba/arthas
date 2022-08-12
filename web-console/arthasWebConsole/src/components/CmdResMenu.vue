@@ -4,16 +4,17 @@ import {
   DisclosureButton,
   DisclosurePanel
 } from "@headlessui/vue"
-const props = defineProps<{
+const {title, list, map, buttonWidth='w-80'} = defineProps<{
   title: string,
   list: string[],
-  map: Map<string, string[]>
+  map: Map<string, string[]>,
+  buttonWidth?:string
 }>()
 </script>
 
 <template>
   <Disclosure as="section" class="w-100 flex flex-col mb-2">
-    <DisclosureButton class="py-2 bg-blue-400  rounded self-start w-80 hover:opacity-50 transition-all duration-100">
+    <DisclosureButton class="py-2 bg-blue-400  rounded self-start hover:opacity-50 transition-all duration-100" :class="[buttonWidth]">
       {{ title }}
     </DisclosureButton>
     <transition enter-active-class="transition duration-75 ease-out" enter-from-class="h-0 opacity-0"
@@ -27,7 +28,7 @@ const props = defineProps<{
             </DisclosureButton>
             <DisclosurePanel as="ul" static class="flex-auto bg-blue-100 flex flex-col justify-center">
         <li v-for="(cv, ci) in map.get(v)" :key="ci" :class="{ 'border-t-4': (ci > 0), 'border-white': (ci > 0) }"
-          class=" pl-2">
+          class=" pl-2" >
           {{ cv }}
         </li>
       </DisclosurePanel>

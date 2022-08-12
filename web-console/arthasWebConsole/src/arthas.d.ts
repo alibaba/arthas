@@ -11,15 +11,24 @@ type MergeObj<T extends Record<string, any>, U extends Record<string, any>> =
         : U[k];
     }
     : never;
+
 type JobId<T extends Record<string, any>> = T extends T
   ? MergeObj<T, Record<"jobId", number>>
   : never;
 type SessionId<T extends Record<string, any>> = T extends T
   ? MergeObj<T, { sessionId?: string }>
   : never;
-type Command<T extends Record<string, any>> = T extends T
-  ? MergeObj<T, { command: string }>
+// type Command<T extends Record<string|"results", any>> = T extends T
+//   ?  T["results"][0] extends JobId<CommandResult>
+//     ? "command" extends keyof T["results"][0]
+//       ? MergeObj<T, {command: T["results"][0]["command"]}>
+//       : never
+//     : MergeObj<T, { command: never }>
+//   : never;
+type Command<T extends Record<string|"results", any>> = T extends T
+  ?  MergeObj<T, { command: string }>
   : never;
+
 type CommonAction<T> = T extends T ? MergeObj<
     T,
     { action: "exec" | "async_exec" | "interrupt_job" | "pull_results" }
@@ -70,7 +79,9 @@ type CommandReq = CommonAction<
       | "pwd"
       | "jvm"
       | "memory"
-      | "perfcounter -d";
+      | "perfcounter -d"
+      | "classloader -a"
+      | "classloader --url-stat";
   } | {
     command: StringInclude<"vmoption", 2>;
   } | {
@@ -111,26 +122,26 @@ type ThreadStats = {
   "time": number;
 };
 type ThreadInfo = {
-  "blockedCount": 876,
-  "blockedTime": -1,
-  "inNative": true,
-  "lockOwnerId": -1,
-  "lockedMonitors": [],
-  "lockedSynchronizers": [],
-  "stackTrace":     {
-    "className": string,
-    "fileName": string,
-    "lineNumber": number,
-    "methodName": number,
-    "nativeMethod": boolean
-  }[],
-  "suspended": boolean,
-  "threadId": number,
-  "threadName": string,
-  "threadState": "WAITING" | "TIMED_WAITING" | "RUNNABLE",
-  "waitedCount": number,
-  "waitedTime": number
-}
+  "blockedCount": 876;
+  "blockedTime": -1;
+  "inNative": true;
+  "lockOwnerId": -1;
+  "lockedMonitors": [];
+  "lockedSynchronizers": [];
+  "stackTrace": {
+    "className": string;
+    "fileName": string;
+    "lineNumber": number;
+    "methodName": number;
+    "nativeMethod": boolean;
+  }[];
+  "suspended": boolean;
+  "threadId": number;
+  "threadName": string;
+  "threadState": "WAITING" | "TIMED_WAITING" | "RUNNABLE";
+  "waitedCount": number;
+  "waitedTime": number;
+};
 type BusyThread = {
   "blockedCount": number;
   "blockedTime": number;
@@ -233,13 +244,19 @@ type CommandResult = {
     number
   >;
   threadStats: ThreadStats[];
+  threadInfo: never;
+  busyThreads: never;
   type: "thread";
 } | {
-  threadInfo: ThreadInfo,
-  type: "thread"
-} |{
+  threadInfo: ThreadInfo;
+  threadStats: never;
+  busyThreads: never;
+  type: "thread";
+} | {
   all: boolean;
   busyThreads: BusyThread[];
+  threadInfo: never;
+  threadStats: never;
   type: "thread";
 } | {
   "jvmInfo": JvmInfo;
@@ -248,11 +265,31 @@ type CommandResult = {
   memoryInfo: MemoryInfo;
   type: "memory";
 } | {
-  perfCounters: { "name": string,
-  "units": string,
-  "value": string|number,
-  "variability": string}[];
+  perfCounters: {
+    "name": string;
+    "units": string;
+    "value": string | number;
+    "variability": string;
+  }[];
   type: "perfcounter";
+} | {
+  classSet: {
+    classes: string[];
+    classloader: Record<"hash" | "name" | "parent", string>;
+    segment: number;
+  };
+  urlStats: never;
+  type: "classloader";
+} | {
+  type: "classloader";
+  urlStats: {
+    [x: `{"hash":${string},"name":${string}}`]: {
+      unUsedUrls: string[];
+      usedUrls: string[];
+    };
+  };
+  command: "classloader --url-stat"
+  classSet: never;
 };
 
 type EnchanceResult = {
@@ -297,12 +334,14 @@ type AsyncRes = {
 type SessionRes = {
   "sessionId": string;
   "consumerId": string;
+  body:never;
   "state": Exclude<ResState, "FAILED">;
 };
 
 type FailRes = SessionId<{
   message: string;
   state: "FAILED" | "REFUSED";
+  body:never;
 }>;
 
 type ArthasRes = CommonRes | SessionRes | FailRes | AsyncRes;
