@@ -1,22 +1,19 @@
 <script setup lang="ts">
-import { CheckIcon, SelectorIcon } from "@heroicons/vue/outline"
 import machine from '@/machines/consoleMachine';
 import { useMachine } from '@xstate/vue';
 import { onBeforeMount, reactive, ref, computed } from 'vue';
 import CmdResMenu from '@/components/CmdResMenu.vue';
 import { fetchStore } from '@/stores/fetch';
 import { publicStore } from '@/stores/public';
+import AutoComplete from "@/components/AutoComplete.vue";
 import {
-  Listbox, ListboxButton, ListboxOptions, ListboxOption,
-  Disclosure, DisclosureButton, DisclosurePanel,
-  Combobox, ComboboxButton, ComboboxInput, ComboboxOptions, ComboboxOption, ComboboxLabel
+  Disclosure, DisclosureButton, DisclosurePanel
 } from '@headlessui/vue';
 import { waitFor } from 'xstate/lib/waitFor';
 type OptionThread = {
   name: string,
-  id: number
+  value: number
 }
-type Item = OptionThread
 const fetchS = fetchStore()
 const { getCommonResEffect } = publicStore()
 const fetchM = useMachine(machine)
@@ -46,10 +43,6 @@ const busylist = reactive([] as string[])
 
 const threadInfo = ref({} as ThreadInfo)
 const optionThread = reactive([] as OptionThread[])
-const selectedThread = ref({ name: "", id: -1 } as OptionThread)
-const queryThread = ref('')
-const filterThreads = computed(() => queryThread.value === '' ? optionThread : optionThread.filter(thread => thread.name.toLocaleLowerCase().includes(queryThread.value.toLocaleLowerCase())))
-
 onBeforeMount(() => {
   fetchM.service.start()
   fetchM.send("INIT")
@@ -71,7 +64,7 @@ const allEffect = getCommonResEffect(fetchM, body => {
       threadStats.forEach((v) => {
         alllist.push(v.name)
         allMap.set(v.name, Object.entries(v).filter(([k, v]) => k !== "name").map(([k, v]) => `${k} : ${v}`))
-        optionThread.push({ name: v.name, id: v.id })
+        optionThread.push({ name: v.name, value: v.id })
       })
     }
   }
@@ -96,12 +89,12 @@ const busyEffect = getCommonResEffect(busyfetchM, body => {
     }
   }
 })
-const getConcrtetThread = async () => {
+const getConcrtetThread = async (thread: OptionThread) => {
   concretefetchM.send({
     type: "SUBMIT",
     value: {
       action: "exec",
-      command: `thread ${selectedThread.value.id}`
+      command: `thread ${thread.value}`
     }
   })
   await waitFor(concretefetchM.service, state => state.matches("ready"))
@@ -130,43 +123,8 @@ const toggleAllLoop = (open: boolean) => {
         getThreadInfo
       </DisclosureButton>
       <DisclosurePanel class="pt-4 border-t-2 mt-4">
-        <div class="flex items-center">
-          <Combobox v-model="selectedThread">
-            <ComboboxLabel class="p-2">selectThread:</ComboboxLabel>
-            <div class="relative flex-1">
-              <div
-                class="relative w-full cursor-default overflow-hidden rounded-lg bg-white text-left border focus:outline-none hover:shadow-md transition">
-                <ComboboxInput class="w-full border-none py-2 pl-3 pr-10 leading-5 text-gray-900 "
-                  :displayValue="(item) => (item as OptionThread).name" @change="queryThread = $event.target.value" />
-                <ComboboxButton class="absolute inset-y-0 right-0 flex items-center pr-2">
-                  <SelectorIcon class="h-5 w-5 text-gray-400" aria-hidden="true" />
-                </ComboboxButton>
-              </div>
-              <ComboboxOptions
-                class="absolute mt-1 max-h-60 w-full overflow-auto rounded-md bg-white py-1 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
-                <div v-if="filterThreads.length === 0 && queryThread !== ''"
-                  class="relative cursor-default select-none py-2 px-4 text-gray-700">
-                  Nothing found.
-                </div>
 
-                <ComboboxOption v-for="thread in filterThreads" as="template" :key="thread.id" :value="thread"
-                  v-slot="{ selected, active }">
-                  <li class="relative cursor-default select-none p-2" :class="{
-                    'bg-blue-400 text-white': active,
-                    'bg-blue-600 text-white': selected,
-                    'text-gray-900': !active && !selected,
-                  }">
-                    <span class="block truncate"
-                      :class="{ 'font-medium': selected, 'font-normal': !selected, 'text-white': active, 'text-teal-600': !active && !selected }">
-                      {{ thread.name }}
-                    </span>
-                  </li>
-                </ComboboxOption>
-              </ComboboxOptions>
-            </div>
-          </Combobox>
-          <button @click="getConcrtetThread" class="border bg-blue-400 p-2 rounded-md mx-2 ">getInfo</button>
-        </div>
+        <AutoComplete label="ThreadName :" :submitfn="getConcrtetThread" :option-items="optionThread"></AutoComplete>
         <ul>
           <template v-if="Object.keys(threadInfo).length !== 0">
             <li class="grid place-content-center mb-4 text-3xl">stackTrace</li>
