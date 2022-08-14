@@ -1,39 +1,27 @@
 <script setup lang="ts">
 import machine from '@/machines/consoleMachine';
 import { useMachine } from '@xstate/vue';
-import { onBeforeMount, ref } from 'vue';
+import { onBeforeMount, reactive, ref } from 'vue';
 import { Disclosure, DisclosureButton, DisclosurePanel } from '@headlessui/vue';
-import CmdResMenu from '@/components/CmdResMenu.vue';
+import CmdResMenu from '@/components/show/CmdResMenu.vue';
 import { publicStore } from "@/stores/public"
 import transformMachine from '@/machines/transformConfigMachine';
+import ClassInput from '@/components/input/ClassInput.vue';
+import { json } from 'stream/consumers';
 const { getCommonResEffect } = publicStore()
 const allClassM = useMachine(machine)
 const urlStatM = useMachine(machine)
+const classInfoM = useMachine(machine)
 const actor = useMachine(transformMachine)
-onBeforeMount(() => {
-  allClassM.send("INIT")
-  allClassM.send({
-    type: "SUBMIT",
-    value: {
-      action: "exec",
-      command: "classloader -a"
-    }
-  })
-  urlStatM.send("INIT")
-  urlStatM.send({
-    type: "SUBMIT",
-    value: {
-      action: "exec",
-      command: "classloader --url-stat"
-    }
-  })
-})
+
 const map = ref([] as [string, Map<"hash" | "parent" | "classes", string[]>][])
 const urlStats = ref([] as [
   string,
   Map<"hash" | "unUsedUrls" | "usedUrls", string[]>
 ][])
-
+// const classDetailInfo = ref<string[]>([])
+const classDetailMap = reactive(new Map<string, string[]>())
+const classFields = reactive(new Map<string, string[]>())
 getCommonResEffect(allClassM, body => {
   console.log("all", body)
   body.results.filter(res => res.type === "classloader").reduce((pre, cur) => {
@@ -85,36 +73,99 @@ getCommonResEffect(urlStatM, body => {
     })
   }
 })
+getCommonResEffect(classInfoM, body => {
+  const result = body.results[0]
+  if (result.type === "sc" && result.detailed === true && result.withField === true) {
 
+    classDetailMap.clear()
+    classFields.clear()
 
+    Object.entries(result.classInfo).filter(([k, v]) => k !== "fields").forEach(([k, v]) => {
+      let value:string[] = []
+      if (!["interfaces", "annotations", "classloader", "superClass"].includes(k)) value.push(v.toString())
+      else value = v as string[]
+      classDetailMap.set(k, value)
+    })
+    
+    result.classInfo.fields.forEach(field=>{
+      classFields.set(field.name,Object.entries(field).filter(([k,v])=>k !== "name").map(([k,v])=>{
+        if(k === "value") v = JSON.stringify(v)
+        return `${k}: ${v}`
+      }))
+    })
+  }
+})
+onBeforeMount(() => {
+  allClassM.send("INIT")
+  allClassM.send({
+    type: "SUBMIT",
+    value: {
+      action: "exec",
+      command: "classloader -a"
+    }
+  })
+  urlStatM.send("INIT")
+  urlStatM.send({
+    type: "SUBMIT",
+    value: {
+      action: "exec",
+      command: "classloader --url-stat"
+    }
+  })
+  classInfoM.send("INIT")
+
+})
+
+const getClassInfo = (item: Item) => {
+  classInfoM.send({
+    type: "SUBMIT",
+    value: {
+      action: "exec",
+      command: `sc -d -f ${item.value}`
+    }
+  })
+} 
 </script>
 
 <template>
-  <div class="p-2 overflow-y-scroll w-full flex flex-col">
-    <Disclosure>
-      <DisclosureButton class="w-1/3 bg-blue-500 h-10 p-2 rounded mb-2">
-        all classloader
-      </DisclosureButton>
-      <DisclosurePanel>
-        <li v-for="v in map" :key="v[0]" class="flex flex-col">
-          <CmdResMenu :title="v[0]" :list="['hash', 'parent', 'classes']" :map="v[1]" button-width="w-1/2"></CmdResMenu>
-        </li>
-      </DisclosurePanel>
+  <Disclosure>
+    <DisclosureButton class="w-1/3 bg-blue-500 h-10 p-2 rounded mb-2">
+      all classloader
+    </DisclosureButton>
+    <DisclosurePanel>
+      <li v-for="v in map" :key="v[0]" class="flex flex-col">
+        <CmdResMenu :title="v[0]" :list="['hash', 'parent', 'classes']" :map="v[1]" button-width="w-1/2"></CmdResMenu>
+      </li>
+    </DisclosurePanel>
 
-    </Disclosure>
-    <Disclosure>
-      <DisclosureButton class="w-1/3 bg-blue-500 h-10 p-2 rounded mb-2">
-        urlStats
-      </DisclosureButton>
-      <DisclosurePanel>
-        <li v-for="v in urlStats" :key="v[0]" class="flex flex-col">
-          <CmdResMenu :title="v[0]" :list="['hash', 'unUsedUrls', 'usedUrls']" :map="v[1]" button-width="w-1/2">
-          </CmdResMenu>
-        </li>
-      </DisclosurePanel>
+  </Disclosure>
+  <Disclosure>
+    <DisclosureButton class="w-1/3 bg-blue-500 h-10 p-2 rounded mb-2">
+      urlStats
+    </DisclosureButton>
+    <DisclosurePanel>
+      <li v-for="v in urlStats" :key="v[0]" class="flex flex-col">
+        <CmdResMenu :title="v[0]" :list="['hash', 'unUsedUrls', 'usedUrls']" :map="v[1]" button-width="w-1/2">
+        </CmdResMenu>
+      </li>
+    </DisclosurePanel>
 
-    </Disclosure>
-  </div>
+  </Disclosure>
+  <Disclosure>
+    <DisclosureButton class="w-1/3 bg-blue-500 h-10 p-2 rounded mb-2  ">
+      classInfo
+    </DisclosureButton>
+    <DisclosurePanel class="border-t-2 py-4 mt-4">
+      <ClassInput :submit-f="getClassInfo"></ClassInput>
+      <div>
+        <template v-if="classDetailMap.size !== 0">
+          <h4 class="grid place-content-center mb-2 text-3xl mt-4">classInfo</h4>
+          <CmdResMenu :map="classFields" title="fields"></CmdResMenu>
+          <CmdResMenu :map="classDetailMap" title="detail"></CmdResMenu>
+        </template>
+      </div>
+    </DisclosurePanel>
+  </Disclosure>
 </template>
 
 <style scoped>

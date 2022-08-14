@@ -2,12 +2,15 @@
 import machine from '@/machines/consoleMachine';
 import { useMachine } from '@xstate/vue';
 import { onBeforeMount, reactive, watchEffect } from 'vue';
-import CmdResMenu from '@/components/CmdResMenu.vue';
+import CmdResMenu from '@/components/show/CmdResMenu.vue';
+import { publicStore } from '@/stores/public';
+import { fetchStore } from '@/stores/fetch';
 const fetchM = useMachine(machine)
+const { getPollingLoop } = fetchStore()
+const { getCommonResEffect } = publicStore()
 
-onBeforeMount(() => {
-  fetchM.send("INIT")
-
+const map = reactive(new Map<string, string[]>())
+const loop = getPollingLoop(() => {
   fetchM.send({
     type: "SUBMIT",
     value: {
@@ -15,54 +18,35 @@ onBeforeMount(() => {
       command: "memory"
     }
   })
+}, 1000)
+
+onBeforeMount(() => {
+  fetchM.send("INIT")
+
+  loop.open()
 })
-
-const list = reactive([] as string[])
-const map = new Map<string, string[]>()
-watchEffect(() => {
-  if (fetchM.state.value.context.response) {
-    const response = fetchM.state.value.context.response
-    if (Object.hasOwn(response, "body")) {
-      const result = (response as CommonRes).body.results[0]
-      if (result.type === "memory") {
-        console.log(result.memoryInfo)
-        const memoryInfo = result.memoryInfo
-        list.length = 0
-        map.clear()
-        Object.entries(memoryInfo).reduce((pre, cur) => {
-          cur[1].forEach(v => pre.push(v))
-          return pre
-        }, [] as any[]).forEach(v => {
-          list.push(v.name)
-
-          map.set(v.name,
-            // v.map(obj => {
-            //   let usage = (obj.max < 0 ? obj.used / obj.total : obj.used / obj.max) * 100
-            //   if (Number.isNaN(usage)) usage = 0
-            //   // return JSON.stringify({
-            //   //   ...obj,
-            //   //   type: obj.type,
-            //   //   usage: usage + "%",
-            //   // })
-            //   return `name: ${obj.name} 
-            //   usage: ${usage}% 
-            //   `
-            // })
-            Object.entries(v).filter(([k, v]) => k !== "name").map((k) => {
-              return `${k[0]} : ${k[1]}`
-            })
-          )
+getCommonResEffect(fetchM, body => {
+  const result = body.results[0]
+  if (result.type === "memory") {
+    console.log(result.memoryInfo)
+    const memoryInfo = result.memoryInfo
+    map.clear()
+    Object.entries(memoryInfo).reduce((pre, cur) => {
+      cur[1].forEach(v => pre.push(v))
+      return pre
+    }, [] as any[]).forEach(v => {
+      map.set(v.name,
+        Object.entries(v).filter(([k, v]) => k !== "name").map((k) => {
+          return `${k[0]} : ${k[1]}`
         })
-      }
-    }
+      )
+    })
   }
 })
 </script>
 
 <template>
-  <div class="p-2 overflow-auto flex-1">
-    <CmdResMenu title="memory" :list="list" :map="map" class="w-full" />
-  </div>
+  <CmdResMenu title="memory" :map="map" class="w-full" />
 </template>
 
 <style scoped>

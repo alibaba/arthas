@@ -1,15 +1,16 @@
 <script setup lang="ts">
 import machine from '@/machines/consoleMachine';
 import { useMachine } from '@xstate/vue';
-import { onBeforeMount, reactive, ref, computed } from 'vue';
-import CmdResMenu from '@/components/CmdResMenu.vue';
+import { onBeforeMount, reactive, ref, computed, onUnmounted } from 'vue';
+import CmdResMenu from '@/components/show/CmdResMenu.vue';
 import { fetchStore } from '@/stores/fetch';
 import { publicStore } from '@/stores/public';
-import AutoComplete from "@/components/AutoComplete.vue";
+import AutoComplete from "@/components/input/AutoComplete.vue";
 import {
   Disclosure, DisclosureButton, DisclosurePanel
 } from '@headlessui/vue';
 import { waitFor } from 'xstate/lib/waitFor';
+import ClassInput from '@/components/input/ClassInput.vue';
 type OptionThread = {
   name: string,
   value: number
@@ -52,7 +53,10 @@ onBeforeMount(() => {
   busyloop.open()
   concretefetchM.send("INIT")
 })
-
+onUnmounted(() => {
+  allloop.close()
+  busyloop.close()
+})
 const allEffect = getCommonResEffect(fetchM, body => {
   const result = body.results[0]
   if (result.type === "thread") {
@@ -105,40 +109,39 @@ const getConcrtetThread = async (thread: OptionThread) => {
 
 }
 const toggleAllLoop = (open: boolean) => {
-  console.log("open??", open)
   if (open) {
+    busyloop.open()
     allloop.open()
   } else {
+    busyloop.close()
     allloop.close()
   }
 }
 </script>
 
 <template>
-  <div class="p-2 overflow-auto flex-1">
-    <CmdResMenu title="all thread" :list="alllist" :map="allMap" class="w-full" />
-    <CmdResMenu title="busy thread" :list="busylist" :map="busyMap" class="w-full" />
-    <Disclosure v-slot="{ open }">
-      <DisclosureButton class="py-2 w-80 rounded grid place-content-center bg-blue-300 " @click="toggleAllLoop(open)">
-        getThreadInfo
-      </DisclosureButton>
-      <DisclosurePanel class="pt-4 border-t-2 mt-4">
+  <CmdResMenu title="all thread" :list="alllist" :map="allMap" class="w-full" />
+  <CmdResMenu title="busy thread" :list="busylist" :map="busyMap" class="w-full" />
+  <Disclosure v-slot="{ open }">
+    <DisclosureButton class="py-2 w-80 rounded grid place-content-center bg-blue-300 " @click="toggleAllLoop(open)">
+      getThreadInfo
+    </DisclosureButton>
+    <DisclosurePanel class="pt-4 border-t-2 mt-4">
 
-        <AutoComplete label="ThreadName :" :submitfn="getConcrtetThread" :option-items="optionThread"></AutoComplete>
-        <ul>
-          <template v-if="Object.keys(threadInfo).length !== 0">
-            <li class="grid place-content-center mb-4 text-3xl">stackTrace</li>
-            <li v-for="stack in threadInfo.stackTrace" class="flex flex-col bg-blue-100 mb-3 pt-2 pl-2">
-              <div v-for="kv in Object.entries(stack)" class=" mb-2 flex "><span
-                  class="w-1/6 bg-blue-300 grid place-content-center rounded mr-2">{{ kv[0] }}</span> <span>{{ kv[1]
-                  }}</span>
-              </div>
-            </li>
-          </template>
-        </ul>
-      </DisclosurePanel>
-    </Disclosure>
-  </div>
+      <AutoComplete label="ThreadName :" :submitfn="getConcrtetThread" :option-items="optionThread"></AutoComplete>
+      <ul>
+        <template v-if="Object.keys(threadInfo).length !== 0">
+          <li class="grid place-content-center mb-4 text-3xl">stackTrace</li>
+          <li v-for="stack in threadInfo.stackTrace" class="flex flex-col bg-blue-100 mb-3 pt-2 pl-2">
+            <div v-for="kv in Object.entries(stack)" class=" mb-2 flex "><span
+                class="w-1/6 bg-blue-300 grid place-content-center rounded mr-2">{{ kv[0] }}</span> <span>{{ kv[1]
+                }}</span>
+            </div>
+          </li>
+        </template>
+      </ul>
+    </DisclosurePanel>
+  </Disclosure>
 </template>
 
 <style scoped>

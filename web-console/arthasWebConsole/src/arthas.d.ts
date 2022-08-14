@@ -25,8 +25,8 @@ type SessionId<T extends Record<string, any>> = T extends T
 //       : never
 //     : MergeObj<T, { command: never }>
 //   : never;
-type Command<T extends Record<string|"results", any>> = T extends T
-  ?  MergeObj<T, { command: string }>
+type Command<T extends Record<string | "results", any>> = T extends T
+  ? MergeObj<T, { command: string }>
   : never;
 
 type CommonAction<T> = T extends T ? MergeObj<
@@ -52,6 +52,7 @@ type Sub1<N extends number> = BuildArray<N> extends
 type StringInclude<T extends string, N extends number, P = string> = N extends 0
   ? T
   : T | StringInclude<`${T} ${P}`, Sub1<N>>;
+
 type SessionReq =
   | {
     action: "init_session";
@@ -86,6 +87,8 @@ type CommandReq = CommonAction<
     command: StringInclude<"vmoption", 2>;
   } | {
     command: StringInclude<"thread", 2>;
+  } | {
+    command: StringInclude<"sc", 3>;
   }
 >;
 
@@ -105,6 +108,7 @@ type InputResult = {
   inputStatus: "ALLOW_INPUT" | "DISABLED" | "ALLOW_INTERRUPT";
   type: never;
 };
+
 type VmOption = MergeObj<
   Record<"name" | "origin" | "value", string>,
   Record<"writeable", boolean>
@@ -213,6 +217,37 @@ type MemoryInfo = Record<string, {
   "type": string;
   "used": number;
 }[]>;
+
+type ClassDetailInfo = {
+  "annotation": boolean;
+  "annotations": string[];
+  "anonymousClass": boolean;
+  "array": boolean;
+  "classInfo": string;
+  "classLoaderHash": string;
+  "classloader": string[];
+  "codeSource": string;
+  "enum": string;
+  "interface": string;
+  "interfaces": string[];
+  "localClass": string;
+  "memberClass": string;
+  "modifier": string;
+  "name": string;
+  "primitive": boolean;
+  "simpleName": string;
+  "superClass": string[];
+  "synthetic": boolean;
+};
+type ClassField = {
+  annotations: string[];
+  "modifier": string;
+  "name": string;
+  "static": boolean;
+  "type": string;
+  "value": any;
+};
+type ClassInfo = MergeObj<ClassDetailInfo, { fields: ClassField[] }>
 type CommandResult = {
   type: "command";
   state: ResState;
@@ -288,8 +323,27 @@ type CommandResult = {
       usedUrls: string[];
     };
   };
-  command: "classloader --url-stat"
+  command: "classloader --url-stat";
   classSet: never;
+} | {
+  "classInfo": ClassInfo;
+  detailed: true;
+  type: "sc";
+  segment: 0;
+  withField: true;
+} | {
+  classNames: string[];
+  detailed: false;
+  segment: number;
+  type: "sc";
+  withField: false;
+} | {
+  "classInfo": ClassDetailInfo;
+  "detailed": true;
+  "jobId": 31365;
+  "segment": 0;
+  "type": "sc";
+  "withField": false;
 };
 
 type EnchanceResult = {
@@ -334,14 +388,17 @@ type AsyncRes = {
 type SessionRes = {
   "sessionId": string;
   "consumerId": string;
-  body:never;
+  body: never;
   "state": Exclude<ResState, "FAILED">;
 };
 
 type FailRes = SessionId<{
   message: string;
   state: "FAILED" | "REFUSED";
-  body:never;
+  body: never;
 }>;
 
 type ArthasRes = CommonRes | SessionRes | FailRes | AsyncRes;
+
+// autoComplete
+type Item = { name: string; value: any };

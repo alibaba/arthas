@@ -2,8 +2,8 @@
 import machine from '@/machines/consoleMachine';
 import { useMachine } from '@xstate/vue';
 import { onBeforeMount, reactive, watchEffect } from 'vue';
-import CmdResMenu from '@/components/CmdResMenu.vue';
-import ConfigMenu from '@/components/ConfigMenu.vue';
+import CmdResMenu from '@/components/show/CmdResMenu.vue';
+// import ConfigMenu from '@/components/show/ConfigMenu.vue';
 const fetchM = useMachine(machine)
 
 onBeforeMount(() => {
@@ -55,9 +55,7 @@ watchEffect(() => {
 </script>
 
 <template>
-  <div class="p-2 overflow-auto flex-1">
     <CmdResMenu title="perfcounter" :list="list" :map="map" class="w-full" />
-  </div>
 </template>
 
 <style scoped>

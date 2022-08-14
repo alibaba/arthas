@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import NavAside from "./components/NavAside.vue";
-import NavHeader from "./components/NavHeader.vue";
-import ErrDialog from "./components/ErrDialog.vue";
-import SuccessDialog from "./components/SuccessDialog.vue";
+import NavAside from "@/components/routeTo/NavAside.vue";
+import NavHeader from "@/components/NavHeader.vue";
+import ErrDialog from "@/components/dialog/ErrDialog.vue";
+import SuccessDialog from "@/components/dialog/SuccessDialog.vue";
 
 </script>
 

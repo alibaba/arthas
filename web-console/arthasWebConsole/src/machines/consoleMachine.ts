@@ -2,13 +2,11 @@ import {
   assign,
   createMachine,
   DoneInvokeEvent,
-  sendUpdate,
   spawn,
 } from "xstate";
 import { fetchStore } from "@/stores/fetch";
 import { publicStore } from "@/stores/public";
 import transformMachine from "./transformConfigMachine";
-import { send } from "xstate/lib/actions";
 
 interface CTX {
   toObjM: typeof transformMachine | null;

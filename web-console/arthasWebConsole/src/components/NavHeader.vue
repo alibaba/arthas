@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { useMachine } from '@xstate/vue';
 import { waitFor } from 'xstate/lib/waitFor'
-import { onBeforeMount, reactive, Ref, ref, watchEffect } from 'vue';
+import { onBeforeMount, Ref, ref, watchEffect } from 'vue';
 import { RefreshIcon, LogoutIcon, LoginIcon } from '@heroicons/vue/outline';
 import { fetchStore } from '@/stores/fetch';
 import machine from "@/machines/consoleMachine"
@@ -22,7 +22,6 @@ watchEffect(() => {
     state.value.context.resArr.forEach(res => {
       if ('type' in res && res.type == "version") version.value = res.version
     })
-    // if(state.value.context.response.body?.command === "version") version.value = state.value.context.response.body.command
   }
   if (state.value.matches("ready")) restBtnclass.value = "animate-spin-rev-pause"
   else restBtnclass.value = "animate-spin-rev-running"
@@ -45,11 +44,11 @@ const reset = () => send({
 })
 
 const loop = fetchS.getPollingLoop(() => sessionM.send({
-      type: "SUBMIT",
-      value: {
-        action: "pull_results",
-      } as any
-    }))
+  type: "SUBMIT",
+  value: {
+    action: "pull_results",
+  } as any
+}))
 
 const logout = async () => {
 
@@ -87,9 +86,8 @@ const login = async () => {
       <div class=" mr-4 bg-gray-200 h-12 w-32 rounded-full flex justify-center items-center text-gray-500 font-bold">
         version:{{ version }}
       </div>
-      <button
-        class="hover:opacity-50 h-12 w-12 grid place-items-center bg-red-600 shadow-red-500 rounded-full mr-2 transition-all"
-        :class="{ 'bg-blue-600': !fetchS.online, 'shadow-blue-500': !fetchS.online }">
+      <button class="hover:opacity-50 h-12 w-12 grid place-items-center  rounded-full mr-2 transition-all"
+        :class="{ 'bg-blue-600 shadow-blue-500': !fetchS.online, 'bg-red-600 shadow-red-500': fetchS.online }">
         <LogoutIcon class="h-1/2 w-1/2 text-white" @click="logout" v-if="fetchS.online" />
         <login-icon class="h-1/2 w-1/2 text-white" @click="login" v-else />
       </button>
