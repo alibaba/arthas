@@ -35,6 +35,9 @@ const routes: RouteRecordRaw[] = [
       {
         path:"perfcounter",
         component: ()=> import("@/views/sync/Perfcounter.vue")
+      },      {
+        path:"jad",
+        component: ()=> import("@/views/sync/Jad.vue")
       },
       {
         path:"classLoader",

@@ -1,26 +1,27 @@
 <script setup lang="ts">
 import machine from '@/machines/consoleMachine';
-import { useActor, useMachine } from '@xstate/vue';
+import { useMachine } from '@xstate/vue';
 import { onBeforeMount, onUnmounted, reactive, ref } from 'vue';
 import { Disclosure, DisclosureButton, DisclosurePanel } from '@headlessui/vue';
-import CmdResMenu from '@/components/show/CmdResMenu.vue';
 import { publicStore } from "@/stores/public"
-import transformMachine from '@/machines/transformConfigMachine';
-import ClassInput from '@/components/input/ClassInput.vue';
 import { fetchStore } from '@/stores/fetch';
 import { interpret } from 'xstate';
+
+import CmdResMenu from '@/components/show/CmdResMenu.vue';
+import transformMachine from '@/machines/transformConfigMachine';
+import ClassInput from '@/components/input/ClassInput.vue';
+import PlayStop from '@/components/input/PlayStop.vue';
+
 const { getCommonResEffect } = publicStore()
 const allClassM = useMachine(machine)
 const urlStatM = useMachine(machine)
 const classInfoM = useMachine(machine)
-const actor = useMachine(transformMachine)
-// const actor = useActor()
 const classMethodInfoM = useMachine(machine)
 const { getPollingLoop } = fetchStore()
 const map = ref([] as [string, Map<"hash" | "parent" | "classes", string[]>][])
 const urlStats = ref([] as [
   string,
-  Map<"hash" | "unUsedUrls" | "usedUrls"|"parent", string[]>
+  Map<"hash" | "unUsedUrls" | "usedUrls" | "parent", string[]>
 ][])
 // const classDetailInfo = ref<string[]>([])
 const classDetailMap = reactive(new Map<string, string[]>())
@@ -32,9 +33,8 @@ const urlStatsLoop = getPollingLoop(() => urlStatM.send({
     action: "exec",
     command: "classloader --url-stat"
   }
-}),3000)
+}), 1000)
 getCommonResEffect(allClassM, body => {
-  console.log("all", body)
   body.results.filter(res => res.type === "classloader").reduce((pre, cur) => {
     if (cur.type === "classloader" && Object.hasOwn(cur, "classSet")) {
       const classSet = cur.classSet
@@ -56,14 +56,13 @@ getCommonResEffect(allClassM, body => {
 })
 
 getCommonResEffect(urlStatM, body => {
-  console.log("urlStatM", body)
   const result = body.results[0]
   if (result.type === "classloader" && Object.hasOwn(result, "urlStats")) {
     urlStats.value.length = 0
     Object.entries(result.urlStats).forEach(([k, v]) => {
       const actor = interpret(transformMachine)
       actor.start()
-      console.log("key", k)
+
       actor.send("INPUT", {
         data: k
       })
@@ -72,10 +71,9 @@ getCommonResEffect(urlStatM, body => {
           isErr: true,
           ErrMessage: actor.state.context.err
         })
-        
+
       } else {
-        const obj = actor.state.context.output as Record<"hash" | "name"|"parent", string>
-        console.log('helloworld', obj)
+        const obj = actor.state.context.output as Record<"hash" | "name" | "parent", string>
         urlStats.value.push([
           obj.name,
           new Map([
@@ -113,27 +111,19 @@ getCommonResEffect(classInfoM, body => {
     })
   }
 })
-getCommonResEffect(classMethodInfoM,body=>{
-    const result = body.results[0]
-  if (result.type === "sm" && result.detail === true) {
+getCommonResEffect(classMethodInfoM, body => {
+  classMethodMap.clear()
+  body.results.forEach(result => {
+    if (result.type === "sm" && result.detail == true) {
+      classMethodMap.set(result.methodInfo.methodName, Object.entries(result.methodInfo).filter(([k, v]) => k !== "methodName").map(([k, v]) => {
+        let res = k + ' : '
+        if (!["exceptions", "parameters", "annotations"].includes(k)) res += v.toString()
+        else res += JSON.stringify(v)
+        return res
+      }))
 
-    // classDetailMap.clear()
-    // classFields.clear()
-
-    // Object.entries(result.classInfo).filter(([k, v]) => k !== "fields").forEach(([k, v]) => {
-    //   let value: string[] = []
-    //   if (!["interfaces", "annotations", "classloader", "superClass"].includes(k)) value.push(v.toString())
-    //   else value = v as string[]
-    //   classDetailMap.set(k, value)
-    // })
-
-    // result.classInfo.fields.forEach(field => {
-    //   classFields.set(field.name, Object.entries(field).filter(([k, v]) => k !== "name").map(([k, v]) => {
-    //     if (k === "value") v = JSON.stringify(v)
-    //     return `${k}: ${v}`
-    //   }))
-    // })
-  }
+    }
+  })
 })
 onBeforeMount(() => {
   allClassM.send("INIT")
@@ -147,6 +137,7 @@ onBeforeMount(() => {
   urlStatM.send("INIT")
   urlStatsLoop.open()
   classInfoM.send("INIT")
+  classMethodInfoM.send("INIT")
 })
 onUnmounted(() => {
   urlStatsLoop.close()
@@ -159,7 +150,16 @@ const getClassInfo = (item: Item) => {
       command: `sc -d -f ${item.value}`
     }
   })
-} 
+  classMethodInfoM.send({
+    type: "SUBMIT",
+    value: {
+      action: "exec",
+      command: `sm -d ${item.value}`
+    }
+  })
+}
+const urlStatsPlay = () => urlStatsLoop.open()
+const urlStatsStop = () => urlStatsLoop.close()
 </script>
 
 <template>
@@ -179,12 +179,16 @@ const getClassInfo = (item: Item) => {
       urlStats
     </DisclosureButton>
     <DisclosurePanel>
-      <li v-for="v in urlStats" :key="v[0]" class="flex flex-col">
+      <div class="flex items-center my-2 w-10/12 justify-end">
+        <div class="mr-4">是否实时更新</div>
+        <PlayStop :play-fn="urlStatsPlay" :stop-fn="urlStatsStop" :default-enabled="urlStatsLoop.isOn()"
+          class="w-10 h-10"></PlayStop>
+      </div>
+      <div v-for="v in urlStats" :key="v[0]" class="flex flex-col">
         <CmdResMenu :title="v[0]" :map="v[1]" button-width="w-1/2" open>
         </CmdResMenu>
-      </li>
+      </div>
     </DisclosurePanel>
-
   </Disclosure>
   <Disclosure>
     <DisclosureButton class="w-1/3 bg-blue-500 h-10 p-2 rounded mb-2  ">
@@ -197,6 +201,10 @@ const getClassInfo = (item: Item) => {
           <h4 class="grid place-content-center mb-2 text-3xl mt-4">classInfo</h4>
           <CmdResMenu :map="classFields" title="fields"></CmdResMenu>
           <CmdResMenu :map="classDetailMap" title="detail"></CmdResMenu>
+        </template>
+        <template v-if="classMethodMap.size !== 0">
+          <h4 class="grid place-content-center mb-2 text-3xl mt-4">classMethod</h4>
+          <CmdResMenu :map="classMethodMap" title="methods"></CmdResMenu>
         </template>
       </div>
     </DisclosurePanel>

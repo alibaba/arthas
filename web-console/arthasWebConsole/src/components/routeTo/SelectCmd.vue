@@ -17,7 +17,10 @@ const routers: { cmd: string, url: string }[] = [
   },{
     cmd: "classLoader",
     url: "classLoader"
-  },
+  }, {
+    cmd: "jad",
+    url: "jad"
+  }
 ]
 const router = useRouter()
 </script>

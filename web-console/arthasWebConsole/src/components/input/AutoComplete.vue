@@ -9,20 +9,31 @@ import { SelectorIcon } from "@heroicons/vue/outline"
 const { 
   optionItems, 
   inputFn = (_)=>{},
-  filterFn = (query:Ref<string>,optionItems)=>query.value === '' ? optionItems : optionItems.filter(item => item.name.toLocaleLowerCase().includes(query.value.toLocaleLowerCase()))
+  filterFn
 } = defineProps<{
   label: string,
   optionItems: Item[],
   submitfn: (item: Item) => void
-  filterFn?:(query:Ref<string>,optionItems:Item[])=>Item[]
+  filterFn?:(query:string,item:Item)=>boolean
   inputFn?: (value:string) => void
 }>()
 const query = ref('')
 const selectedItem = ref({} as Item)
-const filterItems = computed(() => filterFn(query,optionItems))
+const filterItems = computed(() => {  
+
+  if(query.value === ""){
+    return optionItems
+  } else {
+    return optionItems.filter(item=>{
+      if(filterFn) return filterFn(query.value,item)
+      else {
+        return item.name.toLocaleLowerCase().includes(query.value.toLocaleLowerCase())
+      }
+    })
+  }
+})
 const changeF = (event:Event &{target:HTMLInputElement}) => {
   query.value = event.target.value
-  console.log(inputFn)
   inputFn(query.value)
 }
 </script>

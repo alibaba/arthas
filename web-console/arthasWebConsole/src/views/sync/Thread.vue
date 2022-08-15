@@ -93,7 +93,13 @@ const busyEffect = getCommonResEffect(busyfetchM, body => {
     }
   }
 })
-const getConcrtetThread = async (thread: OptionThread) => {
+getCommonResEffect(concretefetchM, body => {
+  const res = body.results[0]
+  if (res.type === "thread" && Object.hasOwn(res, "threadInfo")) {
+    threadInfo.value = res.threadInfo
+  }
+})
+const getConcrtetThread = (thread: OptionThread) => {
   concretefetchM.send({
     type: "SUBMIT",
     value: {
@@ -101,12 +107,6 @@ const getConcrtetThread = async (thread: OptionThread) => {
       command: `thread ${thread.value}`
     }
   })
-  await waitFor(concretefetchM.service, state => state.matches("ready"))
-  const res = (concretefetchM.state.value.context.response as CommonRes).body.results[0]
-  if (res.type === "thread" && Object.hasOwn(res, "threadInfo")) {
-    threadInfo.value = res.threadInfo
-  }
-
 }
 const toggleAllLoop = (open: boolean) => {
   if (open) {

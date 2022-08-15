@@ -65,7 +65,7 @@ const changeValue = (value: string) => {
     })
   }
 }
-const filterfn = (_: any,options: Item[])=>options
+const filterfn = (_: any,item: Item)=>true
 </script>
 
 <template>

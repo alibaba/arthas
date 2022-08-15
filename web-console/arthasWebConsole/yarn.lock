@@ -17,6 +17,11 @@
   resolved "https://registry.npmmirror.com/@heroicons/vue/-/vue-1.0.6.tgz"
   integrity sha512-ng2YcCQrdoQWEFpw+ipFl2rZo8mZ56v0T5+MyfQQvNqfKChwgP6DMloZLW+rl17GEcHkE3H82UTAMKBKZr4+WA==
 
+"@highlightjs/vue-plugin@^2.1.0":
+  version "2.1.0"
+  resolved "https://registry.npmmirror.com/@highlightjs/vue-plugin/-/vue-plugin-2.1.0.tgz#b7c41e3597a46975665b10cad57882cbde1d1594"
+  integrity sha512-E+bmk4ncca+hBEYRV2a+1aIzIV0VSY/e5ArjpuSN9IO7wBJrzUE2u4ESCwrbQD7sAy+jWQjkV5qCCWgc+pu7CQ==
+
 "@nodelib/fs.scandir@2.1.5":
   version "2.1.5"
   resolved "https://registry.npmmirror.com/@nodelib/fs.scandir/-/fs.scandir-2.1.5.tgz"
@@ -589,11 +594,6 @@ dlv@^1.1.3:
   resolved "https://registry.npmmirror.com/dlv/-/dlv-1.1.3.tgz"
   integrity sha512-+HlytyjlPKnIG8XuRG8WvmBP8xs8P71y+SKKS6ZXWoEgLuePxtDoUEiH7WkdePWrQ5JBpE6aoVqfZfJUQkjXwA==
 
-dom-walk@^0.1.0:
-  version "0.1.2"
-  resolved "https://registry.npmmirror.com/dom-walk/-/dom-walk-0.1.2.tgz"
-  integrity sha512-6QvTW9mrGeIegrFXdtQi9pk7O/nSK6lSdXW2eqUspN5LWD7UTji2Fqw5V2YLjBpHEoU9Xl/eUWNpDeZvoyOv2w==
-
 dot-prop@^4.2.1:
   version "4.2.1"
   resolved "https://registry.npmmirror.com/dot-prop/-/dot-prop-4.2.1.tgz"
@@ -887,14 +887,6 @@ global-dirs@^0.1.0:
   dependencies:
     ini "^1.3.4"
 
-global@^4.4.0:
-  version "4.4.0"
-  resolved "https://registry.npmmirror.com/global/-/global-4.4.0.tgz"
-  integrity sha512-wv/LAoHdRE3BeTGz53FAamhGlPLhlssK45usmGFThIi4XqnBmjKQ16u+RNbP7WvigRZDxUsM0J3gcQ5yicaL0w==
-  dependencies:
-    min-document "^2.19.0"
-    process "^0.11.10"
-
 got@^6.7.1:
   version "6.7.1"
   resolved "https://registry.npmmirror.com/got/-/got-6.7.1.tgz"
@@ -940,6 +932,11 @@ has@^1.0.1, has@^1.0.3:
   integrity sha512-f2dvO0VU6Oej7RkWJGrehjbzMAjFp5/VKPp5tTpWIV4JHHZK1/BxbFRtf/siA2SWTe09caDmVtYYzWEIbBS4zw==
   dependencies:
     function-bind "^1.1.1"
+
+highlight.js@^11.6.0:
+  version "11.6.0"
+  resolved "https://registry.npmmirror.com/highlight.js/-/highlight.js-11.6.0.tgz#a50e9da05763f1bb0c1322c8f4f755242cff3f5a"
+  integrity sha512-ig1eqDzJaB0pqEvlPVIpSSyMaO92bH1N2rJpLMN/nX396wTpDA4Eq0uK+7I/2XG17pFaaKE0kjV/XPeGt7Evjw==
 
 http-proxy-agent@^1.0.0:
   version "1.0.0"
@@ -1252,13 +1249,6 @@ mime-types@^2.1.12:
   dependencies:
     mime-db "1.52.0"
 
-min-document@^2.19.0:
-  version "2.19.0"
-  resolved "https://registry.npmmirror.com/min-document/-/min-document-2.19.0.tgz"
-  integrity sha512-9Wy1B3m3f66bPPmU5hdA4DR4PB2OfDU/+GS3yAB7IQozE3tqXaVv2zOjgla7MEGSRv95+ILmOuvhLkOK6wJtCQ==
-  dependencies:
-    dom-walk "^0.1.0"
-
 minimatch@^3.1.1:
   version "3.1.2"
   resolved "https://registry.npmmirror.com/minimatch/-/minimatch-3.1.2.tgz"
@@ -1509,11 +1499,6 @@ process-nextick-args@~2.0.0:
   version "2.0.1"
   resolved "https://registry.npmmirror.com/process-nextick-args/-/process-nextick-args-2.0.1.tgz"
   integrity sha512-3ouUOpQhtgrbOa17J7+uxOTpITYWaGP7/AhoR3+A+/1e9skrzelGi/dXzEYyvbxubEF6Wn2ypscTKiKJFFn1ag==
-
-process@^0.11.10:
-  version "0.11.10"
-  resolved "https://registry.npmmirror.com/process/-/process-0.11.10.tgz"
-  integrity sha512-cdGef/drWFoydD1JsMzuFf8100nZl+GT+yacc2bEced5f9Rjk4z+WtFUTBu9PhOi9j/jfmBPu0mMEY4wIdAF8A==
 
 promise-finally@^3.0.0:
   version "3.0.1"

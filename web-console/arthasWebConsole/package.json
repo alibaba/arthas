@@ -11,9 +11,10 @@
   "dependencies": {
     "@headlessui/vue": "^1.6.6",
     "@heroicons/vue": "^1.0.6",
+    "@highlightjs/vue-plugin": "^2.1.0",
     "@xstate/vue": "^2.0.0",
     "echarts": "^5.3.3",
-    "global": "^4.4.0",
+    "highlight.js": "^11.6.0",
     "pinia": "^2.0.15",
     "typings": "^2.1.1",
     "vue": "^3.2.25",

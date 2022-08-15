@@ -1,5 +1,4 @@
 import { defineStore } from "pinia";
-import { actions } from "xstate";
 // 控制fetch的store
 export const fetchStore = defineStore("fetch", {
   state: () => ({
@@ -29,10 +28,16 @@ export const fetchStore = defineStore("fetch", {
       let id = -1;
       return {
         open() {
-          id = setInterval(hander, step);
+          if (!this.isOn()) id = setInterval(hander, step);
         },
         close() {
-          if(id !== -1) clearInterval(id);
+          if (this.isOn()) {
+            clearInterval(id);
+            id = -1;
+          }
+        },
+        isOn() {
+          return id !== -1;
         },
       };
     },

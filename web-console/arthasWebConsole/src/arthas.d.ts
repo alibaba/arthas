@@ -83,7 +83,8 @@ type CommandReq = CommonAction<
       | "perfcounter -d"
       | "classloader -a"
       | "classloader --url-stat"
-      | `sm -d ${string}`;
+      | `sm -d ${string}`
+      | `jad ${string}`;
   } | {
     command: StringInclude<"vmoption", 2>;
   } | {
@@ -249,19 +250,18 @@ type ClassField = {
   "value": any;
 };
 type MethodInfo = {
-  "annotations": string[],
-  "classLoaderHash": string,
-  "constructor": boolean,
-  "declaringClass": string,
-  "descriptor": string,
-  "exceptions": string[],
-  "methodName": string,
-  "modifier": string,
-  "parameters": string[
-  ],
-  "returnType": string
-}
-type ClassInfo = MergeObj<ClassDetailInfo, { fields: ClassField[] }>
+  "classLoaderHash": string;
+  "constructor": boolean;
+  "declaringClass": string;
+  "descriptor": string;
+  "exceptions": string[];
+  "parameters": string[];
+  "annotations": string[];
+  "methodName": string;
+  "modifier": string;
+  "returnType": string;
+};
+type ClassInfo = MergeObj<ClassDetailInfo, { fields: ClassField[] }>;
 type CommandResult = {
   type: "command";
   state: ResState;
@@ -359,9 +359,19 @@ type CommandResult = {
   "type": "sc";
   "withField": false;
 } | {
-  "detail": true,
-  "methodInfo": MethodInfo,
-  "type": "sm"
+  "detail": true;
+  "methodInfo": MethodInfo;
+  "type": "sm";
+} | {
+  "classInfo": {
+    "classLoaderHash": string;
+    "classloader": string[];
+    "name": string;
+  };
+  "location": string;
+  "mappings": Record<string, number>;
+  "source": string;
+  "type": "jad";
 };
 
 type EnchanceResult = {
