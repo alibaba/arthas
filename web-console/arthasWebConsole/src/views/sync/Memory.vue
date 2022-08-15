@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import machine from '@/machines/consoleMachine';
 import { useMachine } from '@xstate/vue';
-import { onBeforeMount, reactive, watchEffect } from 'vue';
+import { onBeforeMount, onUnmounted, reactive, watchEffect } from 'vue';
 import CmdResMenu from '@/components/show/CmdResMenu.vue';
 import { publicStore } from '@/stores/public';
 import { fetchStore } from '@/stores/fetch';
@@ -25,6 +25,7 @@ onBeforeMount(() => {
 
   loop.open()
 })
+onUnmounted(()=>loop.close())
 getCommonResEffect(fetchM, body => {
   const result = body.results[0]
   if (result.type === "memory") {

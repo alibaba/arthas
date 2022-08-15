@@ -3,8 +3,6 @@ import machine from '@/machines/consoleMachine';
 import { useMachine } from '@xstate/vue';
 import { onBeforeMount, reactive, ref, watchEffect } from 'vue';
 import ConfigMenu from '@/components/show/ConfigMenu.vue';
-import { watch } from 'fs';
-import { Console } from 'console';
 import OptionConfigMenu from '@/components/show/OptionConfigMenu.vue';
 import SwitchInput from '@/components/input/SwitchInput.vue';
 import { publicStore } from '@/stores/public';

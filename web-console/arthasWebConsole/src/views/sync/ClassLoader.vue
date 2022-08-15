@@ -1,27 +1,38 @@
 <script setup lang="ts">
 import machine from '@/machines/consoleMachine';
-import { useMachine } from '@xstate/vue';
-import { onBeforeMount, reactive, ref } from 'vue';
+import { useActor, useMachine } from '@xstate/vue';
+import { onBeforeMount, onUnmounted, reactive, ref } from 'vue';
 import { Disclosure, DisclosureButton, DisclosurePanel } from '@headlessui/vue';
 import CmdResMenu from '@/components/show/CmdResMenu.vue';
 import { publicStore } from "@/stores/public"
 import transformMachine from '@/machines/transformConfigMachine';
 import ClassInput from '@/components/input/ClassInput.vue';
-import { json } from 'stream/consumers';
+import { fetchStore } from '@/stores/fetch';
+import { interpret } from 'xstate';
 const { getCommonResEffect } = publicStore()
 const allClassM = useMachine(machine)
 const urlStatM = useMachine(machine)
 const classInfoM = useMachine(machine)
 const actor = useMachine(transformMachine)
-
+// const actor = useActor()
+const classMethodInfoM = useMachine(machine)
+const { getPollingLoop } = fetchStore()
 const map = ref([] as [string, Map<"hash" | "parent" | "classes", string[]>][])
 const urlStats = ref([] as [
   string,
-  Map<"hash" | "unUsedUrls" | "usedUrls", string[]>
+  Map<"hash" | "unUsedUrls" | "usedUrls"|"parent", string[]>
 ][])
 // const classDetailInfo = ref<string[]>([])
 const classDetailMap = reactive(new Map<string, string[]>())
 const classFields = reactive(new Map<string, string[]>())
+const classMethodMap = reactive(new Map<string, string[]>())
+const urlStatsLoop = getPollingLoop(() => urlStatM.send({
+  type: "SUBMIT",
+  value: {
+    action: "exec",
+    command: "classloader --url-stat"
+  }
+}),3000)
 getCommonResEffect(allClassM, body => {
   console.log("all", body)
   body.results.filter(res => res.type === "classloader").reduce((pre, cur) => {
@@ -48,21 +59,27 @@ getCommonResEffect(urlStatM, body => {
   console.log("urlStatM", body)
   const result = body.results[0]
   if (result.type === "classloader" && Object.hasOwn(result, "urlStats")) {
+    urlStats.value.length = 0
     Object.entries(result.urlStats).forEach(([k, v]) => {
-      actor.service.start()
+      const actor = interpret(transformMachine)
+      actor.start()
+      console.log("key", k)
       actor.send("INPUT", {
         data: k
       })
-      if (actor.state.value.matches("failure")) {
+      if (actor.state.matches("failure")) {
         publicStore().$patch({
           isErr: true,
-          ErrMessage: actor.state.value.context.err
+          ErrMessage: actor.state.context.err
         })
+        
       } else {
-        const obj = actor.state.value.context.output as Record<"hash" | "name", string>
+        const obj = actor.state.context.output as Record<"hash" | "name"|"parent", string>
+        console.log('helloworld', obj)
         urlStats.value.push([
           obj.name,
           new Map([
+            ["parent", [obj.parent]],
             ["hash", [obj.hash]],
             ["unUsedUrls", v.unUsedUrls],
             ["usedUrls", v.usedUrls]
@@ -73,6 +90,7 @@ getCommonResEffect(urlStatM, body => {
     })
   }
 })
+
 getCommonResEffect(classInfoM, body => {
   const result = body.results[0]
   if (result.type === "sc" && result.detailed === true && result.withField === true) {
@@ -81,18 +99,40 @@ getCommonResEffect(classInfoM, body => {
     classFields.clear()
 
     Object.entries(result.classInfo).filter(([k, v]) => k !== "fields").forEach(([k, v]) => {
-      let value:string[] = []
+      let value: string[] = []
       if (!["interfaces", "annotations", "classloader", "superClass"].includes(k)) value.push(v.toString())
       else value = v as string[]
       classDetailMap.set(k, value)
     })
-    
-    result.classInfo.fields.forEach(field=>{
-      classFields.set(field.name,Object.entries(field).filter(([k,v])=>k !== "name").map(([k,v])=>{
-        if(k === "value") v = JSON.stringify(v)
+
+    result.classInfo.fields.forEach(field => {
+      classFields.set(field.name, Object.entries(field).filter(([k, v]) => k !== "name").map(([k, v]) => {
+        if (k === "value") v = JSON.stringify(v)
         return `${k}: ${v}`
       }))
     })
+  }
+})
+getCommonResEffect(classMethodInfoM,body=>{
+    const result = body.results[0]
+  if (result.type === "sm" && result.detail === true) {
+
+    // classDetailMap.clear()
+    // classFields.clear()
+
+    // Object.entries(result.classInfo).filter(([k, v]) => k !== "fields").forEach(([k, v]) => {
+    //   let value: string[] = []
+    //   if (!["interfaces", "annotations", "classloader", "superClass"].includes(k)) value.push(v.toString())
+    //   else value = v as string[]
+    //   classDetailMap.set(k, value)
+    // })
+
+    // result.classInfo.fields.forEach(field => {
+    //   classFields.set(field.name, Object.entries(field).filter(([k, v]) => k !== "name").map(([k, v]) => {
+    //     if (k === "value") v = JSON.stringify(v)
+    //     return `${k}: ${v}`
+    //   }))
+    // })
   }
 })
 onBeforeMount(() => {
@@ -105,17 +145,12 @@ onBeforeMount(() => {
     }
   })
   urlStatM.send("INIT")
-  urlStatM.send({
-    type: "SUBMIT",
-    value: {
-      action: "exec",
-      command: "classloader --url-stat"
-    }
-  })
+  urlStatsLoop.open()
   classInfoM.send("INIT")
-
 })
-
+onUnmounted(() => {
+  urlStatsLoop.close()
+})
 const getClassInfo = (item: Item) => {
   classInfoM.send({
     type: "SUBMIT",
@@ -145,7 +180,7 @@ const getClassInfo = (item: Item) => {
     </DisclosureButton>
     <DisclosurePanel>
       <li v-for="v in urlStats" :key="v[0]" class="flex flex-col">
-        <CmdResMenu :title="v[0]" :list="['hash', 'unUsedUrls', 'usedUrls']" :map="v[1]" button-width="w-1/2">
+        <CmdResMenu :title="v[0]" :map="v[1]" button-width="w-1/2" open>
         </CmdResMenu>
       </li>
     </DisclosurePanel>

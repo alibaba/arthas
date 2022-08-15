@@ -82,7 +82,8 @@ type CommandReq = CommonAction<
       | "memory"
       | "perfcounter -d"
       | "classloader -a"
-      | "classloader --url-stat";
+      | "classloader --url-stat"
+      | `sm -d ${string}`;
   } | {
     command: StringInclude<"vmoption", 2>;
   } | {
@@ -247,6 +248,19 @@ type ClassField = {
   "type": string;
   "value": any;
 };
+type MethodInfo = {
+  "annotations": string[],
+  "classLoaderHash": string,
+  "constructor": boolean,
+  "declaringClass": string,
+  "descriptor": string,
+  "exceptions": string[],
+  "methodName": string,
+  "modifier": string,
+  "parameters": string[
+  ],
+  "returnType": string
+}
 type ClassInfo = MergeObj<ClassDetailInfo, { fields: ClassField[] }>
 type CommandResult = {
   type: "command";
@@ -344,6 +358,10 @@ type CommandResult = {
   "segment": 0;
   "type": "sc";
   "withField": false;
+} | {
+  "detail": true,
+  "methodInfo": MethodInfo,
+  "type": "sm"
 };
 
 type EnchanceResult = {
