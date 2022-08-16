@@ -2,48 +2,51 @@ package com.taobao.arthas.core.command.basic1000;
 
 import com.taobao.arthas.core.command.Constants;
 import com.taobao.arthas.core.command.model.JFRModel;
+import com.taobao.arthas.core.server.ArthasBootstrap;
 import com.taobao.arthas.core.shell.command.AnnotatedCommand;
 import com.taobao.arthas.core.shell.command.CommandProcess;
 import com.taobao.middleware.cli.annotations.*;
 import com.taobao.middleware.cli.annotations.Description;
 import com.taobao.middleware.cli.annotations.Name;
 import jdk.jfr.*;
-
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.Paths;
 import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.time.Duration;
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
 
 @Name("jfr")
 @Summary("Java Flight Command")
 @Description(Constants.EXAMPLE +
-        "  jfr start [-n <value>] [-s <value>][-c <value>] [--disk <value>] " +
-        "[--delay <value>] [--dumponexit <value>] [--duration <value>] " +
-        "[-f <value>] [-h] [--maxage <value>] [--maxsize <value>] \n" +
-        "  jfr check [-n <value>] [-r <value>] [--state <value>] \n" +
-        "  jfr stop [-n <value>] [-r <value>] [--discard <value>] [-f <value>] [-c <value>]\n" +
-        "  jfr dump [-n <value>] [-r <value>] [-f <value>] [-c <value>]\n" +
+        "  jfr start -n r1 -s default -d 5s --dumponexit true --duration 10m" +
+        " -f /tmp/myRecording.jfr --maxage 1h --maxsize 250MB  # start a new JFR recording\n" +
+        "  jfr check                   # list all recordings\n" +
+        "  jfr check -r 2              # list recording id = 2 \n" +
+        "  jfr check --state running   # list recordings state = running\n" +
+        "  jfr stop -r 2               # stop a JFR recording to default file\n" +
+        "  jfr stop -r 2 -f /tmp/myRecording.jfr\n" +
+        "  jfr dump -r 2               # copy contents of a JFR recording to default file\n" +
+        "  jfr dump -r 2 -f /tmp/myRecording.jfr\n" +
         Constants.WIKI + Constants.WIKI_HOME + "jfr")
 public class JFRCommand extends AnnotatedCommand {
 
     private String cmd;
     private String name;
     private String settings;
-    private Boolean disk;
-    private Boolean dumpOnExit = false;
+    private Boolean dumpOnExit;
     private String delay;
     private String duration;
     private String filename;
-    private String compress;
     private String maxAge;
     private String maxSize;
     private Long recording;
-    private String discard;
     private String state;
     private JFRModel result = new JFRModel();
-    private static Map<Long, Recording> recordings = new HashMap<>();
+    private static Map<Long, Recording> recordings = new ConcurrentHashMap<>();
 
     @Argument(index = 0, argName = "cmd", required = true)
     @Description("command name (start check stop dump)")
@@ -52,30 +55,24 @@ public class JFRCommand extends AnnotatedCommand {
     }
 
     @Option(shortName = "n", longName = "name")
-    @Description("Name that can be used to identify recording, e.g. \\\"My Recording\\\" (STRING, no default value)")
+    @Description("Name that can be used to identify recording, e.g. \"My Recording\"")
     public void setName(String name) {
         this.name = name;
     }
 
     @Option(shortName = "s", longName = "settings")
-    @Description("Settings file(s), e.g. profile or default. See JRE_HOME/lib/jfr (STRING SET, no default value)")
+    @Description("Settings file(s), e.g. profile or default. See JRE_HOME/lib/jfr (STRING , default)")
     public void setSettings(String settings) {
         this.settings = settings;
     }
 
-    @Option(longName = "disk")
-    @Description("Recording should be persisted to disk (BOOLEAN, no default value)")
-    public void setToDisk(Boolean disk) {
-        this.disk = disk;
-    }
-
     @Option(longName = "dumponexit")
-    @Description("Dump running recording when JVM shuts down (BOOLEAN, no default value)")
+    @Description("Dump running recording when JVM shuts down (BOOLEAN, false)")
     public void setDumpOnExit(Boolean dumpOnExit) {
         this.dumpOnExit = dumpOnExit;
     }
 
-    @Option(longName = "delay")
+    @Option(shortName = "d", longName = "delay")
     @Description("Delay recording start with (s)econds, (m)inutes), (h)ours), or (d)ays, e.g. 5h. (NANOTIME, 0)")
     public void setDelay(String delay) {
         this.delay = delay;
@@ -88,39 +85,27 @@ public class JFRCommand extends AnnotatedCommand {
     }
 
     @Option(shortName = "f", longName = "filename")
-    @Description("Resulting recording filename, e.g. \\\"C:\\Users\\user\\My Recording.jfr\\\" (STRING, no default value)")
+    @Description("Resulting recording filename, e.g. /tmp/MyRecording.jfr.")
     public void setFilename(String filename) {
         this.filename = filename;
     }
 
-    @Option(shortName = "c", longName = "compress")
-    @Description("GZip-compress the resulting recording file (BOOLEAN, false)")
-    public void setCompress(String compress) {
-        this.compress = compress;
-    }
-
     @Option(longName = "maxage")
-    @Description("Maximum time to keep recorded data (on disk) in (s)econds, (m)inutes, (h)ours, or (d)ays, e.g. 60m, or 0 for no limit (NANOTIME, 0)")
+    @Description("Maximum time to keep recorded data (on disk) in (s)econds, (m)inutes, (h)ours, or (d)ays, e.g. 60m, or default for no limit (NANOTIME, 0)")
     public void setMaxAge(String maxAge) {
         this.maxAge = maxAge;
     }
 
     @Option(longName = "maxsize")
-    @Description("Maximum amount of bytes to keep (on disk) in (k)B, (M)B or (G)B, e.g. 500M, or 0 for no limit (MEMORY SIZE, 0)")
+    @Description("Maximum amount of bytes to keep (on disk) in (k)B, (M)B or (G)B, e.g. 500M, 0 for no limit (MEMORY SIZE, 250MB)")
     public void setMaxSize(String maxSize) {
         this.maxSize = maxSize;
     }
 
     @Option(shortName = "r", longName = "recording")
-    @Description("Recording number, or omit to see all recordings (JLONG, -1)")
+    @Description("Recording number, or omit to see all recordings (LONG, -1)")
     public void setRecording(Long recording) {
         this.recording = recording;
-    }
-
-    @Option(longName = "discard")
-    @Description("Skip writing data to previously specified file (if any) (BOOLEAN, false)")
-    public void setDiscard(String discard) {
-        this.discard = discard;
     }
 
     @Option(longName = "state")
@@ -141,10 +126,6 @@ public class JFRCommand extends AnnotatedCommand {
         return settings;
     }
 
-    public Boolean isToDisk() {
-        return disk;
-    }
-
     public Boolean isDumpOnExit() {
         return dumpOnExit;
     }
@@ -161,10 +142,6 @@ public class JFRCommand extends AnnotatedCommand {
         return filename;
     }
 
-    public String isCompress() {
-        return compress;
-    }
-
     public String getMaxAge() {
         return maxAge;
     }
@@ -175,10 +152,6 @@ public class JFRCommand extends AnnotatedCommand {
 
     public Long getRecording() {
         return recording;
-    }
-
-    public String getDiscard() {
-        return discard;
     }
 
     public String getState() {
@@ -209,13 +182,32 @@ public class JFRCommand extends AnnotatedCommand {
                 }
             }
 
+            if (getMaxSize() != null) {
+                try {
+                    r.setMaxSize(parseSize(getMaxSize()));
+                } catch (Exception e) {
+                    process.end(-1, e.getMessage());
+                }
+            }
+
+            if (getMaxAge() != null) {
+                try {
+                    r.setMaxAge(Duration.ofNanos(parseTimespan(getMaxAge())));
+                } catch (Exception e) {
+                    process.end(-1, e.getMessage());
+                }
+            }
+
             if (isDumpOnExit() != false) {
                 r.setDumpOnExit(isDumpOnExit().booleanValue());
             }
 
             if (getDuration() != null) {
-                long l = parseTimespan(getDuration());
-                r.setDuration(Duration.ofNanos(l));
+                try {
+                    r.setDuration(Duration.ofNanos(parseTimespan(getDuration())));
+                } catch (Exception e) {
+                    process.end(-1, e.getMessage());
+                }
             }
 
             if (getName() == null) {
@@ -224,35 +216,37 @@ public class JFRCommand extends AnnotatedCommand {
                 r.setName(getName());
             }
 
-            if (isToDisk() != null) {
-                r.setToDisk(isToDisk().booleanValue());
-            }
-
             long id = r.getId();
             recordings.put(id, r);
 
             if (getDelay() != null) {
-                Duration dDelay = Duration.ofNanos(parseTimespan(getDelay()));
-                r.scheduleStart(dDelay);
+                try {
+                    r.scheduleStart(Duration.ofNanos(parseTimespan(getDelay())));
+                } catch (Exception e) {
+                    process.end(-1, e.getMessage());
+                }
                 result.setJfrOutput("Recording " + r.getId() + " scheduled to start in " + getDelay());
             } else {
                 r.start();
                 result.setJfrOutput("Started recording " + r.getId() + ".");
             }
 
-            if (r.isToDisk() && duration == null && maxAge == null && maxSize == null) {
+            if (duration == null && maxAge == null && maxSize == null) {
                 result.setJfrOutput(" No limit specified, using maxsize=250MB as default.");
-                r.setMaxSize(262144000L);
+                r.setMaxSize(250*1024L*1024L);
             }
 
             if (filename != null && duration != null) {
                 result.setJfrOutput(" The result will be written to:\n" + filename);
             }
         } else if (cmd.equals("check")) {
-            Long id = getRecording();
-            if (id != null) {
-                printRecording(recordings.get(id));
-            } else {
+            // list recording id = recording
+            if (getRecording() != null) {
+                Recording r = recordings.get(getRecording());
+                if (r == null)
+                    process.end(-1, "recording not exit");
+                printRecording(r);
+            } else {// list all recordings
                 List<Recording> recordingList;
                 if (state != null) {
                     recordingList = findRecordingByState(state);
@@ -269,12 +263,18 @@ public class JFRCommand extends AnnotatedCommand {
             }
         } else if (cmd.equals("dump")) {
             if (recordings.isEmpty()) {
-                process.end(-1,"No recordings to dump from. Use jfr start to start a recording.");
+                process.end(-1,"No recordings to dump. Use jfr start to start a recording.");
             }
             if (getRecording() != null) {
                 Recording r = recordings.get(getRecording());
+                if (r == null)
+                    process.end(-1, "recording not exit");
                 if (getFilename() == null) {
-                    setFilename("dump-" + r.getName() + "-" + r.getId() + ".jfr");
+                    try {
+                        setFilename(outputFile());
+                    } catch (IOException e) {
+                        process.end(-1, e.getMessage());
+                    }
                 }
 
                 try {
@@ -284,23 +284,38 @@ public class JFRCommand extends AnnotatedCommand {
                 }
                 result.setJfrOutput("Dump recording " + r.getId() + ", The result will be written to:\n" + getFilename());
             } else {
-                process.end(-1,"Failed to dump " + getFilename() + " Please input recording id");
+                process.end(-1,"Failed to dump. Please input recording id");
             }
 
         } else if (cmd.equals("stop")) {
-            Recording r = recordings.remove(getRecording());
-            if (getFilename() == null)
-                setFilename("stop-" + r.getName() + "-" + r.getId() + ".jfr");
-
-            try {
-                r.setDestination(Paths.get(getFilename()));
-            } catch (IOException e) {
-                process.end(-1, "Failed to stop" + r.getName() +". Could not set destination for "+ filename+ "to file" + e.getMessage());
+            if (recordings.isEmpty()) {
+                process.end(-1,"No recordings to stop. Use jfr start to start a recording.");
             }
+            if (getRecording() != null) {
+                Recording r = recordings.get(getRecording());
+                if (r == null)
+                    process.end(-1, "recording not exit");
+                if (r.getState().toString().equals("CLOSED") || r.getState().toString().equals("STOPPED"))
+                    process.end(-1, "Failed to stop recording, state can not be closed/stopped");
+                if (getFilename() == null) {
+                    try {
+                        setFilename(outputFile());
+                    } catch (IOException e) {
+                        process.end(-1, e.getMessage());
+                    }
+                }
+                try {
+                    r.setDestination(Paths.get(getFilename()));
+                } catch (IOException e) {
+                    process.end(-1, "Failed to stop" + r.getName() +". Could not set destination for "+ filename+ "to file" + e.getMessage());
+                }
 
-            r.stop();
-            result.setJfrOutput("Stop recording " + r.getId() + ", The result will be written to:\n" + getFilename());
-            r.close();
+                r.stop();
+                result.setJfrOutput("Stop recording " + r.getId() + ", The result will be written to:\n" + getFilename());
+                r.close();
+            } else {
+                process.end(-1, "Failed to stop. please input recording id");
+            }
         } else {
             process.end(-1, "Please input correct jfr command (start check stop dump)");
         }
@@ -309,22 +324,41 @@ public class JFRCommand extends AnnotatedCommand {
         process.end();
     }
 
-    public long parseTimespan(String s) {
+    public long parseSize(String s) throws Exception{
+        s = s.toLowerCase();
+        if (s.endsWith("b")) {
+            return Long.parseLong(s.substring(0, s.length() - 1).trim());
+        } else if (s.endsWith("k")) {
+            return 1024 * Long.parseLong(s.substring(0, s.length() - 1).trim());
+        } else if (s.endsWith("m")) {
+            return 1024 * 1024 * Long.parseLong(s.substring(0, s.length() - 1).trim());
+        } else if (s.endsWith("g")) {
+            return 1024 * 1024 * 1024 * Long.parseLong(s.substring(0, s.length() - 1).trim());
+        } else {
+            try {
+                return Long.parseLong(s);
+            } catch (Exception e) {
+                throw new NumberFormatException("'" + s + "' is not a valid size. Shoule be numeric value followed by a unit, i.e. 20M. Valid units k, M, G");
+            }
+        }
+    }
+
+    public long parseTimespan(String s) throws Exception {
+        s = s.toLowerCase();
         if (s.endsWith("s")) {
             return TimeUnit.NANOSECONDS.convert(Long.parseLong(s.substring(0, s.length() - 1).trim()), TimeUnit.SECONDS);
         } else if (s.endsWith("m")) {
-            return 60L * TimeUnit.NANOSECONDS.convert(Long.parseLong(s.substring(0, s.length() - 1).trim()), TimeUnit.SECONDS);
+            return 60 * TimeUnit.NANOSECONDS.convert(Long.parseLong(s.substring(0, s.length() - 1).trim()), TimeUnit.SECONDS);
         } else if (s.endsWith("h")) {
-            return 3600L * TimeUnit.NANOSECONDS.convert(Long.parseLong(s.substring(0, s.length() - 1).trim()), TimeUnit.SECONDS);
+            return 60 * 60 * TimeUnit.NANOSECONDS.convert(Long.parseLong(s.substring(0, s.length() - 1).trim()), TimeUnit.SECONDS);
         } else if (s.endsWith("d")) {
-            return 86400L * TimeUnit.NANOSECONDS.convert(Long.parseLong(s.substring(0, s.length() - 1).trim()), TimeUnit.SECONDS);
+            return 24 * 60 * 60 * TimeUnit.NANOSECONDS.convert(Long.parseLong(s.substring(0, s.length() - 1).trim()), TimeUnit.SECONDS);
         } else {
             try {
-                Long.parseLong(s);
+                return Long.parseLong(s);
             } catch (NumberFormatException var2) {
-                throw new NumberFormatException("'" + s + "' is not a valid timespan. Shoule be numeric value followed by a unit, i.e. 20 ms. Valid units are ns, us, s, m, h and d.");
+                throw new NumberFormatException("'" + s + "' is not a valid timespan. Shoule be numeric value followed by a unit, i.e. 20s. Valid units s, m, h and d.");
             }
-            throw new NumberFormatException("Timespan + '" + s + "' is missing unit. Valid units are ns, us, s, m, h and d.");
         }
     }
 
@@ -343,18 +377,22 @@ public class JFRCommand extends AnnotatedCommand {
         result.setJfrOutput(format);
         Duration duration = recording.getDuration();
         if (duration != null) {
-            result.setJfrOutput(" duration="+ duration);
-        }
-
-        long maxSize = recording.getMaxSize();
-        if (maxSize != 0L) {
-            result.setJfrOutput(" maxsize=" + maxSize);
-        }
-
-        Duration maxAge = recording.getMaxAge();
-        if (maxAge != null) {
-            result.setJfrOutput(" maxage=" + maxAge);
+            result.setJfrOutput(" duration="+ duration.toString());
         }
         result.setJfrOutput(" (" + recording.getState().toString().toLowerCase() + ")\n");
+    }
+
+    private String outputFile() throws IOException {
+        if (this.filename == null) {
+            File outputPath = ArthasBootstrap.getInstance().getOutputPath();
+            if (outputPath != null) {
+                this.filename = new File(outputPath,
+                        new SimpleDateFormat("yyyyMMdd-HHmmss").format(new Date()) + ".jfr")
+                        .getAbsolutePath();
+            } else {
+                this.filename = File.createTempFile("arthas-output", ".jfr").getAbsolutePath();
+            }
+        }
+        return filename;
     }
 }
