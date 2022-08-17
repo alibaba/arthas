@@ -3,6 +3,8 @@ package com.taobao.arthas.core.command;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.alibaba.arthas.deps.org.slf4j.Logger;
+import com.alibaba.arthas.deps.org.slf4j.LoggerFactory;
 import com.taobao.arthas.core.command.basic1000.*;
 import com.taobao.arthas.core.command.hidden.JulyCommand;
 import com.taobao.arthas.core.command.hidden.ThanksCommand;
@@ -41,7 +43,7 @@ import com.taobao.middleware.cli.annotations.Name;
  * @author beiwei30 on 17/11/2016.
  */
 public class BuiltinCommandPack implements CommandResolver {
-
+    private static final Logger logger = LoggerFactory.getLogger(BuiltinCommandPack.class);
     private List<Command> commands = new ArrayList<Command>();
 
     public BuiltinCommandPack(List<String> disabledCommands) {
@@ -102,7 +104,12 @@ public class BuiltinCommandPack implements CommandResolver {
         commandClassList.add(ProfilerCommand.class);
         commandClassList.add(VmToolCommand.class);
         commandClassList.add(StopCommand.class);
-        commandClassList.add(JFRCommand.class);
+        try {
+            ClassLoader.getSystemClassLoader().getResource("jdk/jfr/Recording.class");
+            commandClassList.add(JFRCommand.class);
+        } catch (Exception e) {
+            logger.error("This jdk version not support jfr command");
+        }
 
         for (Class<? extends AnnotatedCommand> clazz : commandClassList) {
             Name name = clazz.getAnnotation(Name.class);

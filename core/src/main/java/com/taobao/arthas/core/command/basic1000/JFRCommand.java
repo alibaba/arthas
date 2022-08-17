@@ -22,8 +22,8 @@ import java.util.concurrent.TimeUnit;
 @Name("jfr")
 @Summary("Java Flight Command")
 @Description(Constants.EXAMPLE +
-        "  jfr start -n r1 -s default -d 5s --dumponexit true --duration 10m" +
-        " -f /tmp/myRecording.jfr --maxage 1h --maxsize 250MB  # start a new JFR recording\n" +
+        "  jfr start  # start a new JFR recording\n" +
+        "  jfr start -n myRecording --duration 60s -f /tmp/myRecording.jfr \n" +
         "  jfr check                   # list all recordings\n" +
         "  jfr check -r 2              # list recording id = 2 \n" +
         "  jfr check --state running   # list recordings state = running\n" +
@@ -292,7 +292,7 @@ public class JFRCommand extends AnnotatedCommand {
                 process.end(-1,"No recordings to stop. Use jfr start to start a recording.");
             }
             if (getRecording() != null) {
-                Recording r = recordings.get(getRecording());
+                Recording r = recordings.remove(getRecording());
                 if (r == null)
                     process.end(-1, "recording not exit");
                 if (r.getState().toString().equals("CLOSED") || r.getState().toString().equals("STOPPED"))
