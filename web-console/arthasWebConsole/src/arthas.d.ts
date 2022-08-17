@@ -1,8 +1,7 @@
 type SessionAction =
   | "join_session"
   | "init_session"
-  | "close_session"
-  | "interrupt_job";
+  | "close_session";
 type ResState = "SCHEDULED" | "SUCCEEDED" | "FAILED" | "REFUSED";
 
 type MergeObj<T extends Record<string, any>, U extends Record<string, any>> =
@@ -31,7 +30,7 @@ type Command<T extends Record<string | "results", any>> = T extends T
 
 type CommonAction<T> = T extends T ? MergeObj<
     T,
-    { action: "exec" | "async_exec" | "interrupt_job" | "pull_results" }
+    { action: "exec" }
   >
   : never;
 type unionExclude<T, U> = T extends T ? Exclude<T, U> : T;
@@ -57,20 +56,24 @@ type SessionReq =
   | {
     action: "init_session";
   }
-  | SessionId<
-    {
+  | SessionId<{
       action: "join_session" | "close_session";
-    } | {
-      action: "pull_results";
-      consumerId: string;
-    } | {
-      action: "async_exec";
-      command: string;
-    } | {
-      action: "interrupt_job";
     }
   >;
 
+type AsyncReq = SessionId<
+  | {
+    action: "interrupt_job";
+  }
+  | {
+    action: "async_exec";
+    command: "dashboard -i 1000";
+  }
+  |{
+    action: "pull_results";
+    consumerId?: string;
+  }
+>;
 type CommandReq = CommonAction<
   {
     command:
@@ -84,17 +87,21 @@ type CommandReq = CommonAction<
       | "classloader -a"
       | "classloader --url-stat"
       | `sm -d ${string}`
-      | `jad ${string}`;
+      | `jad ${string}`
+      | `dump ${string}`
+      | "retransform -l"
+      | `retransform ${string}`
+      | `retransform --classPattern ${string}`;
   } | {
     command: StringInclude<"vmoption", 2>;
   } | {
     command: StringInclude<"thread", 2>;
   } | {
     command: StringInclude<"sc", 3>;
-  }
+  } 
 >;
 
-type ArthasReq = SessionReq | CommandReq;
+type ArthasReq = SessionReq | CommandReq | AsyncReq;
 
 type StatusResult = {
   type: "status";
@@ -212,14 +219,24 @@ type JvmInfo = {
     "value": number;
   }[];
 };
-type MemoryInfo = Record<string, {
+type MemoryInfo = Record<"heap"|"nonheap"|"buffer_pool", {
   "max": number;
   "name": string;
   "total": number;
   "type": string;
   "used": number;
+  "usage"?:number
 }[]>;
-
+type RuntimeInfo = {
+  "javaHome": string;
+  "javaVersion": string;
+  "osName": string;
+  "osVersion": string;
+  "processors": number;
+  "systemLoadAverage": number;
+  "timestamp": number;
+  "uptime": number;
+};
 type ClassDetailInfo = {
   "annotation": boolean;
   "annotations": string[];
@@ -372,6 +389,39 @@ type CommandResult = {
   "mappings": Record<string, number>;
   "source": string;
   "type": "jad";
+} | {
+  retransformCount: number;
+  retransformEntries: {
+    bytes: string;
+    className: string;
+    id: number;
+    transformCount: number;
+  }[];
+  retransformClasses: never;
+  type: "retransform";
+} | {
+  retransformCount: number;
+  retransformEntries: never;
+  retransformClasses: string[];
+  type: "retransform";
+} | {
+  "dumpedClasses": {
+    "classLoaderHash": string;
+    "classloader": string[];
+    "location": string;
+    "name": string;
+  }[];
+  "type": "dump";
+} | {
+  "gcInfos": {
+    "collectionCount": number;
+    "collectionTime": number;
+    "name": string;
+  }[];
+  "memoryInfo": MemoryInfo;
+  "runtimeInfo": RuntimeInfo;
+  "threads": ThreadStats[];
+  "type": "dashboard";
 };
 
 type EnchanceResult = {
@@ -406,6 +456,7 @@ type AsyncRes = {
   state: ResState;
   sessionId: string;
   requestId?: string;
+  // results:never;
   body: Command<
     JobId<{
       jobStatus: "READY" | "TERMINATED";

@@ -25,12 +25,12 @@ const { title, map, buttonWidth = 'w-80', open=false } = defineProps<{
       leave-from-class="h-auto opacity-100" leave-to-class="h-0 opacity-0">
       <DisclosurePanel class="text-gray-500 w-10/12" as="ul" :static="open">
         <li v-for="([k, v], i) in map" :key="k" class="flex mt-2">
-          <Disclosure>
+          <Disclosure >
             <DisclosureButton class="bg-blue-200 p-2 w-40 break-all flex-shrink-0">
               {{ k }}
             </DisclosureButton>
             <DisclosurePanel as="ul" static class="flex-auto bg-blue-100 flex flex-col justify-center">
-        <li v-for="(cv, ci) in v" :key="ci" :class="{ 'border-t-4': (ci > 0), 'border-white': (ci > 0) }" class=" pl-2">
+        <li v-for="(cv, ci) in v" :key="ci" :class="{ 'border-t-4': (ci > 0), 'border-white': (ci > 0) }" class=" pl-2 break-all">
           {{ cv }}
         </li>
       </DisclosurePanel>

@@ -1,9 +1,4 @@
-import {
-  assign,
-  createMachine,
-  DoneInvokeEvent,
-  spawn,
-} from "xstate";
+import { assign, createMachine, DoneInvokeEvent, spawn } from "xstate";
 import { fetchStore } from "@/stores/fetch";
 import { publicStore } from "@/stores/public";
 import transformMachine from "./transformConfigMachine";
@@ -38,11 +33,15 @@ type ET =
     data: SessionRes;
   }
   | {
-    type: "INIT";
+    type: "done.invoke.getAsync";
+    data: AsyncRes;
   }
   | {
-    type: "CLEAR_RESARR";
+    type: "INIT";
   }
+  // | {
+  //   type: "CLEAR_RESARR";
+  // }
   | {
     type: "";
   };
@@ -101,7 +100,6 @@ const machine =
           },
           objVal: {
             entry: assign<CTX, ET>((ctx, e) => {
-              console.log(ctx);
               return {
                 inputValue: ctx.inputRaw,
               };
@@ -109,11 +107,15 @@ const machine =
             always: [
               { cond: "notObj", target: "#failure" },
               {
-                cond: "notSession",
+                cond: "isAsync",
+                target: "#asyncReq",
+              },
+              {
+                cond: "isCommon",
                 target: "#common",
               },
               {
-                cond: "notReq",
+                cond: "isSession",
                 target: "#session",
               },
               {
@@ -137,17 +139,13 @@ const machine =
               target: "success",
             },
             {
-              actions: assign<CTX, DoneInvokeEvent<ET>>((_ctx, e) => {
-                return { err: e.data as unknown as string };
-              }),
+              actions: ["setErrMessage"],
               target: "failure",
             },
           ],
           onError: [
             {
-              actions: assign<CTX, DoneInvokeEvent<ET>>((_ctx, e) => {
-                return { err: e.data as unknown as string };
-              }),
+              actions: ["setErrMessage"],
               target: "failure",
             },
           ],
@@ -166,17 +164,38 @@ const machine =
               target: "success",
             },
             {
-              actions: assign<CTX, DoneInvokeEvent<ET>>((_ctx, e) => {
-                return { err: e.data as unknown as string };
-              }),
+              actions: ["setErrMessage"],
               target: "failure",
             },
           ],
           onError: [
             {
-              actions: assign<CTX, DoneInvokeEvent<ET>>((_ctx, e) => {
-                return { err: e.data as unknown as string };
-              }),
+              actions: ["setErrMessage"],
+              target: "failure",
+            },
+          ],
+        },
+      },
+      asyncReq: {
+        id: "asyncReq",
+        tags: ["loading"],
+        invoke: {
+          id: "getAsync",
+          src: "requestData",
+          onDone: [
+            {
+              cond: "cmdSucceeded",
+              actions: ["transformAsyncRes"],
+              target: "success",
+            },
+            {
+              actions: ["setErrMessage"],
+              target: "failure",
+            },
+          ],
+          onError: [
+            {
+              actions: ["setErrMessage"],
               target: "failure",
             },
           ],
@@ -188,7 +207,7 @@ const machine =
       },
       failure: {
         id: "failure",
-        entry: "returnErr",
+        entry: "outputErr",
         always: "ready",
       },
     },
@@ -209,7 +228,6 @@ const machine =
         };
       }),
       rawInput: assign((context, event) => {
-        console.log(event);
         if (event.type !== "SUBMIT") return {};
         return {
           inputRaw: event.value,
@@ -243,6 +261,12 @@ const machine =
           response: event.data,
         };
       }),
+      transformAsyncRes: assign((ctx, e) => {
+        if (e.type !== "done.invoke.getAsync") return {};
+        return {
+          response: e.data,
+        };
+      }),
       renderRes: assign((context, event) => {
         let resArr: (ArthasResResult | SessionRes | AsyncRes)[] =
           context.resArr;
@@ -260,9 +284,8 @@ const machine =
         }
         return { resArr: resArr.filter((v) => v && !Number.isNaN(v)) };
       }),
-      returnErr: assign({
+      outputErr: assign({
         err: (context, event) => {
-
           context.publicStore.$patch({
             isErr: true,
             ErrMessage: context.err,
@@ -293,8 +316,8 @@ const machine =
           context.fetchStore.$patch({
             sessionId: "",
             consumerId: "",
-            online: false
-          })
+            online: false,
+          });
           context.publicStore.$patch({
             isSuccess: true,
             SuccessMessage: `close session success!`,
@@ -302,12 +325,12 @@ const machine =
           return;
         }
         if (context.inputValue?.action === "init_session") {
-          const response = (context.response as SessionRes)
+          const response = (context.response as SessionRes);
           context.fetchStore.$patch({
             sessionId: response.sessionId,
             consumerId: response.consumerId,
-            online: true
-          })
+            online: true,
+          });
           context.publicStore.$patch({
             isSuccess: true,
             SuccessMessage: `init_session success!`,
@@ -328,49 +351,96 @@ const machine =
           return;
         }
       },
+      setErrMessage: assign((_ctx, e) => {
+        if (e.type === "SUBMIT" || e.type === "INIT" || e.type === "") {
+          return {};
+        }
+        return { err: e.data as unknown as string };
+      }),
     },
     guards: {
       // 判断命令是否有问题
       cmdSucceeded: (context, event) => {
         if (
           event.type !== "done.invoke.getCommon" &&
-          event.type !== "done.invoke.getSession"
+          event.type !== "done.invoke.getSession" &&
+          event.type !== "done.invoke.getAsync"
         ) {
           return false;
         }
         if (["SCHEDULED", "SUCCEEDED"].includes(event.data.state)) {
           if (Object.hasOwn(event.data, "body")) {
-            return !(event.data as CommonRes).body.results.some((result) =>
-              result.type === "status" && result.statusCode !== 0
-            );
+            if (Object.hasOwn(event.data.body, "results")) {
+              return (event.data as CommonRes).body.results.every((result) =>
+                result.type === "status" ? result.statusCode === 0 : true
+              );
+            } else {
+              return ["READY", "TERMINATED"].includes(
+                (event.data as AsyncRes).body.jobStatus,
+              );
+              return true;
+            }
           }
-
+          // SessionRes
           return true;
         }
 
         return false;
       },
-      notSession: (context) => {
-        // 为了触发类型计算瞎写的
-        // if (event.type !== "SUBMIT") return true;
-        // if (typeof context.inputValue.value === "string") return false;
+      // notSession: (context) => {
+      //   // 为了触发类型计算瞎写的
+      //   // if (event.type !== "SUBMIT") return true;
+      //   // if (typeof context.inputValue.value === "string") return false;
+      //   if (!context) return false;
+      //   if (
+      //     ["join_session", "init_session", "close_session", "interrupt_job"]
+      //       .includes(context.inputValue!.action)
+      //   ) {
+      //     return false;
+      //   }
+      //   return true;
+      // },
+      isSession: (context) => {
         if (!context) return false;
         if (
           ["join_session", "init_session", "close_session", "interrupt_job"]
             .includes(context.inputValue!.action)
         ) {
-          return false;
+          console.log("isSession")
+          return true;
         }
-        return true;
+        return false;
+      },
+      isCommon: (context) => {
+        if (!context) return false;
+        if (
+          ["exec"]
+            .includes(context.inputValue!.action)
+        ) {
+          console.log("isCommon")
+          return true;
+        }
+        return false;
+      },
+      isAsync: (context) => {
+        if (!context) return false;
+        if (
+          ["async_exec", "pull_results"]
+            .includes(context.inputValue!.action)
+        ) {
+          console.log("isAsync")
+          return true;
+        }
+        return false;
       },
       notObj: (ctx) => {
         if (ctx.inputValue) return false;
         return true;
       },
-      notReq: (context) => {
-        if (context.inputValue) return true;
-        return false;
-      },
+      // notReq: (context) => {
+      //   if (context.inputValue) return true;
+      //   return false;
+      // },
       notString: (context, event) => {
         if (event.type !== "SUBMIT") return true;
         if (typeof event.value !== "string") return true;

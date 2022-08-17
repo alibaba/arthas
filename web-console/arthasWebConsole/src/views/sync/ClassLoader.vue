@@ -17,16 +17,19 @@ const allClassM = useMachine(machine)
 const urlStatM = useMachine(machine)
 const classInfoM = useMachine(machine)
 const classMethodInfoM = useMachine(machine)
+const dumpM = useMachine(machine)
 const { getPollingLoop } = fetchStore()
+
+
 const map = ref([] as [string, Map<"hash" | "parent" | "classes", string[]>][])
 const urlStats = ref([] as [
   string,
   Map<"hash" | "unUsedUrls" | "usedUrls" | "parent", string[]>
 ][])
-// const classDetailInfo = ref<string[]>([])
 const classDetailMap = reactive(new Map<string, string[]>())
 const classFields = reactive(new Map<string, string[]>())
 const classMethodMap = reactive(new Map<string, string[]>())
+const dumpMap = reactive(new Map<string, string[]>())
 const urlStatsLoop = getPollingLoop(() => urlStatM.send({
   type: "SUBMIT",
   value: {
@@ -125,6 +128,22 @@ getCommonResEffect(classMethodInfoM, body => {
     }
   })
 })
+getCommonResEffect(dumpM, body => {
+  dumpMap.clear()
+  body.results.forEach(result => {
+    if (result.type === "dump") {
+      result.dumpedClasses.forEach(obj => {
+        dumpMap.set(obj.name, Object.entries(obj).filter(([k, v]) => k !== "name").map(([k, v]) => {
+          let res = k + ' : '
+          if (k === "classloader") res += JSON.stringify(v)
+          else res += v
+          return res
+        }))
+      })
+    }
+  })
+})
+
 onBeforeMount(() => {
   allClassM.send("INIT")
   allClassM.send({
@@ -138,10 +157,12 @@ onBeforeMount(() => {
   urlStatsLoop.open()
   classInfoM.send("INIT")
   classMethodInfoM.send("INIT")
+  dumpM.send("INIT")
 })
 onUnmounted(() => {
   urlStatsLoop.close()
 })
+
 const getClassInfo = (item: Item) => {
   classInfoM.send({
     type: "SUBMIT",
@@ -155,6 +176,13 @@ const getClassInfo = (item: Item) => {
     value: {
       action: "exec",
       command: `sm -d ${item.value}`
+    }
+  })
+  dumpM.send({
+    type: "SUBMIT",
+    value: {
+      action: "exec",
+      command: `dump ${item.value}`
     }
   })
 }
@@ -203,8 +231,10 @@ const urlStatsStop = () => urlStatsLoop.close()
           <CmdResMenu :map="classDetailMap" title="detail"></CmdResMenu>
         </template>
         <template v-if="classMethodMap.size !== 0">
-          <h4 class="grid place-content-center mb-2 text-3xl mt-4">classMethod</h4>
           <CmdResMenu :map="classMethodMap" title="methods"></CmdResMenu>
+        </template>
+                <template v-if="dumpMap.size !== 0">
+          <CmdResMenu :map="dumpMap" title="dump"></CmdResMenu>
         </template>
       </div>
     </DisclosurePanel>

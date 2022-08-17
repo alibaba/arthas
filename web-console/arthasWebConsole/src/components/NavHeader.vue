@@ -53,7 +53,7 @@ const loop = fetchS.getPollingLoop(() => sessionM.send({
 const logout = async () => {
 
   restBtnclass.value = "animate-spin-rev-running"
-  loop.close()
+  // loop.close()
   await waitFor(sessionM.service, state => state.matches("ready"))
   sessionM.send("SUBMIT", {
     value: {
@@ -68,8 +68,8 @@ const login = async () => {
       action: "init_session"
     }
   })
-  await waitFor(sessionM.service, state => state.matches("ready"))
-  loop.open()
+  // await waitFor(sessionM.service, state => state.matches("ready"))
+  // loop.open()
 }
 
 </script>

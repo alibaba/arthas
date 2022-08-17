@@ -1,4 +1,5 @@
 import { defineStore } from "pinia";
+import { publicStore } from "./public";
 // 控制fetch的store
 export const fetchStore = defineStore("fetch", {
   state: () => ({
@@ -17,6 +18,7 @@ export const fetchStore = defineStore("fetch", {
             sessionId: state.sessionId,
             consumerId: state.consumerId,
             requestId: state.requestId,
+            // 若上面三个属性不传，直接用 as any而不是传undefined
             ...option,
           }),
         });
@@ -24,11 +26,22 @@ export const fetchStore = defineStore("fetch", {
       },
   },
   actions: {
-    getPollingLoop(hander: TimerHandler, step: number = 1000) {
+    getPollingLoop(hander: Function, step: number = 1000) {
       let id = -1;
       return {
         open() {
-          if (!this.isOn()) id = setInterval(hander, step);
+          if (!this.isOn()) {
+            id = setInterval(
+              (() => {
+                if (publicStore().isErr) {
+                  this.close();
+                } else {
+                  hander();
+                }
+              }) as TimerHandler,
+              step,
+            );
+          }
         },
         close() {
           if (this.isOn()) {

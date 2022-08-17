@@ -15,14 +15,6 @@ const optionClass = ref([] as { name: string, value: string }[])
 
 onBeforeMount(() => {
   searchClass.send("INIT")
-
-  // searchClass.send({
-  //   type: "SUBMIT",
-  //   value: {
-  //     action: "exec",
-  //     command: `sc *`
-  //   }
-  // })
 })
 
 getCommonResEffect(searchClass, body => {
@@ -36,26 +28,12 @@ getCommonResEffect(searchClass, body => {
       })
     })
   }
-
-  // optionClass.value = body.results.reduce((pre, result) => {
-  //   if (result.type === "sc" && !result.detailed && !result.withField) {
-  //     pre = pre.concat(result.classNames.map(name => ({
-  //       name,
-  //       value: name
-  //     })))
-  //     // console.log(
-  //     //   result.classNames.map(name => ({
-  //     //   name,
-  //     //   value: name
-  //     // })
-  //     // ))
-  //   }
-  //   return pre
-  // }, [] as Item[])
 })
 const changeValue = (value: string) => {
-  console.log("changeee", value, optionClass.value)
   if (searchClass.state.value.matches("ready")) {
+    if(value.length > 5) {
+      value = value.split("").join("*")
+    }
     searchClass.send({
       type: "SUBMIT",
       value: {

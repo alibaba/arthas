@@ -5,6 +5,7 @@ import { onBeforeMount, onUnmounted, reactive, watchEffect } from 'vue';
 import CmdResMenu from '@/components/show/CmdResMenu.vue';
 import { publicStore } from '@/stores/public';
 import { fetchStore } from '@/stores/fetch';
+import { number } from 'echarts/core';
 const fetchM = useMachine(machine)
 const { getPollingLoop } = fetchStore()
 const { getCommonResEffect } = publicStore()
@@ -29,7 +30,6 @@ onUnmounted(()=>loop.close())
 getCommonResEffect(fetchM, body => {
   const result = body.results[0]
   if (result.type === "memory") {
-    console.log(result.memoryInfo)
     const memoryInfo = result.memoryInfo
     map.clear()
     Object.entries(memoryInfo).reduce((pre, cur) => {
@@ -38,7 +38,8 @@ getCommonResEffect(fetchM, body => {
     }, [] as any[]).forEach(v => {
       map.set(v.name,
         Object.entries(v).filter(([k, v]) => k !== "name").map((k) => {
-          return `${k[0]} : ${k[1]}`
+          return `${k[0]} : ${typeof k[1] === "number" && k[1] > 0 ? 
+        (Math.floor(k[1] / 1024 / 1024) + 'M'):k[1] }`
         })
       )
     })

@@ -3,7 +3,22 @@ import NavAside from "@/components/routeTo/NavAside.vue";
 import NavHeader from "@/components/NavHeader.vue";
 import ErrDialog from "@/components/dialog/ErrDialog.vue";
 import SuccessDialog from "@/components/dialog/SuccessDialog.vue";
+import { onBeforeUnmount } from "vue";
+import machine from "./machines/consoleMachine";
+import { interpret } from "xstate";
 
+onBeforeUnmount(()=>{
+  const actor = interpret(machine)
+  actor.start()
+  console.log('asdfasdf')
+  actor.send("INIT")
+  actor.send({
+    type: "SUBMIT",
+    value: {
+      action: "interrupt_job",
+    } as AsyncReq
+  })
+})
 </script>
 
 <template>
@@ -12,8 +27,10 @@ import SuccessDialog from "@/components/dialog/SuccessDialog.vue";
     <div class=" flex-auto h-[90vh] overflow-auto">
       <div class="flex flex-row h-full">
         <nav-aside></nav-aside>
-        <router-view class="flex-auto overflow-auto h-[90vh]">
+        <div class="flex-auto overflow-auto h-[90vh]">
+        <router-view >
         </router-view>
+        </div>
       </div>
     </div>
     <err-dialog/>
@@ -21,14 +38,3 @@ import SuccessDialog from "@/components/dialog/SuccessDialog.vue";
   </div>
   
 </template>
-
-<style>
-/* #app { */
-/* font-family: Avenir, Helvetica, Arial, sans-serif; */
-/* -webkit-font-smoothing: antialiased; */
-/* -moz-osx-font-smoothing: grayscale; */
-/* text-align: center; */
-/* color: #2c3e50; */
-/* margin-top: 60px; */
-/* } */
-</style>

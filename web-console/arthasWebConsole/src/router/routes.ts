@@ -3,7 +3,7 @@ import { RouteRecordRaw } from "vue-router";
 const routes: RouteRecordRaw[] = [
   {
     path: "/",
-    redirect: "/config",
+    redirect: "/dashboard",
   },
   {
     path: "/config",
@@ -12,6 +12,10 @@ const routes: RouteRecordRaw[] = [
   {
     path: "/console",
     component: () => import("@/views/Console.vue"),
+  },
+  {
+    path:"/dashboard",
+    component:()=>import("@/views/DashBoard.vue")
   },
   {
     path: "/synchronize",
@@ -38,6 +42,9 @@ const routes: RouteRecordRaw[] = [
       },      {
         path:"jad",
         component: ()=> import("@/views/sync/Jad.vue")
+      },{
+        path:"retransform",
+        component: ()=> import("@/views/sync/Retransform.vue")
       },
       {
         path:"classLoader",
