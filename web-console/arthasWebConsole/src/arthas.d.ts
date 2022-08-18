@@ -67,7 +67,7 @@ type AsyncReq = SessionId<
   }
   | {
     action: "async_exec";
-    command: "dashboard -i 1000";
+    command: "dashboard";
   }
   |{
     action: "pull_results";

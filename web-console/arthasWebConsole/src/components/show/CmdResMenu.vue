@@ -16,7 +16,7 @@ const { title, map, buttonWidth = 'w-80', open=false } = defineProps<{
 
 <template>
   <Disclosure as="section" class="w-100 flex flex-col mb-2">
-    <DisclosureButton class="py-2 bg-blue-400  rounded self-start hover:opacity-50 transition-all duration-100 truncate"
+    <DisclosureButton class="py-2 bg-blue-400  rounded hover:opacity-50 transition-all duration-100 truncate"
       :class="[buttonWidth]">
       {{ title }}
     </DisclosureButton>

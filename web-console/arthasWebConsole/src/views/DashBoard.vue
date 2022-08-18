@@ -13,14 +13,22 @@ import {
   TooltipComponentOption,
   LegendComponent,
   LegendComponentOption,
-  DatasetComponentOption
+  DatasetComponentOption,
+  GridComponentOption,
+  ToolboxComponentOption,
+  GridComponent,
+  ToolboxComponent
 } from 'echarts/components';
 import {
+  BarChart,
+  BarSeriesOption,
+  LineChart,
+  LineSeriesOption,
   PieChart,
   PieSeriesOption
 } from 'echarts/charts';
 import {
-  LabelLayout
+  LabelLayout, UniversalTransition
 } from 'echarts/features';
 import {
   SVGRenderer
@@ -33,13 +41,15 @@ import { ECharts, number } from 'echarts/core';
 type EChartsOption = echarts.ComposeOption<
   DatasetComponentOption | PieSeriesOption
 >
+type GcEChartsOption = echarts.ComposeOption<
+  ToolboxComponentOption | TooltipComponentOption | GridComponentOption | LegendComponentOption | BarSeriesOption | LineSeriesOption
+>
 const fetchS = fetchStore()
 const { getPollingLoop } = fetchS
 const { getCommonResEffect } = publicStore()
 const dashboadM = useMachine(machine)
 const dashboadResM = useMachine(machine)
 // const interruptM = useMachine(machine)
-const res = ref('')
 const loop = getPollingLoop(() => {
   console.log(dashboadResM.state.value.context)
   dashboadResM.send({
@@ -48,7 +58,7 @@ const loop = getPollingLoop(() => {
       action: "pull_results",
     } as AsyncReq
   })
-})
+},5000)
 const isReady = () => waitFor(dashboadM.service, (state) => state.matches('ready'))
 const toMb = (b: number) => Math.floor(b / 1024 / 1024)
 const gcInfos = reactive(new Map<string, string[]>())
@@ -60,6 +70,8 @@ const runtimeInfo = reactive(new Map<string, string[]>())
 let dashboardId = -1
 let heapChart: ECharts
 let nonheapChart: ECharts
+let bufferPoolChart: ECharts
+let gcChart: ECharts
 
 getCommonResEffect(dashboadResM, body => {
   if (body.results.length > 0 && dashboardId >= 0) {
@@ -75,7 +87,8 @@ getCommonResEffect(dashboadResM, body => {
         arr.push('max : ' + toMb(v.max) + 'M')
         arr.push('total : ' + toMb(v.total) + 'M')
         arr.push('used : ' + toMb(v.used) + 'M')
-        const usage: number = (v.max > 0 ? (v.used / v.max) : (v.used / v.total)) * 100
+
+        const usage: number = v.used / v.max * 100
         heaparr.push({ value: toMb(v.used), name: `${v.name}: ${toMb(v.used) + 'M'}(${usage.toFixed(2)}%)` })
 
         arr.push(usage + '%')
@@ -101,7 +114,7 @@ getCommonResEffect(dashboadResM, body => {
         arr.push('max : ' + toMb(v.max) + 'M')
         arr.push('total : ' + toMb(v.total) + 'M')
         arr.push('used : ' + toMb(v.used) + 'M')
-        const usage: number = (v.max > 0 ? (v.used / v.max) : (v.used / v.total)) * 100
+        const usage: number = (v.used / v.total) * 100
         nonheaparr.push({ value: toMb(v.used), name: `${v.name}: ${toMb(v.used) + 'M'}(${usage.toFixed(2)}%)` })
 
         arr.push(usage * 100 + '%')
@@ -110,6 +123,14 @@ getCommonResEffect(dashboadResM, body => {
       })
       nonheapChart && nonheapChart.setOption({ series: { data: nonheaparr } } as EChartsOption)
 
+      const bufferPoolarr: {
+        value: number, name: string,
+      }[] = []
+      result.memoryInfo.buffer_pool.filter(v => v.name !== "buffer_pool;").forEach(v => {
+        bufferPoolarr.push({ value: toMb(v.used), name: `${v.name}: ${toMb(v.used)}M` })
+
+      })
+      bufferPoolChart && bufferPoolChart.setOption({ series: { data: bufferPoolarr } } as EChartsOption)
 
       runtimeInfo.clear()
       Object.entries(result.runtimeInfo).forEach(([k, v]) => {
@@ -118,9 +139,39 @@ getCommonResEffect(dashboadResM, body => {
 
 
       threads.clear()
-      result.threads.filter((v,i)=>i <3).forEach((v) => {
+      result.threads.filter((v, i) => i < 3).forEach((v) => {
         threads.set(v.name, Object.entries(v).filter(([k, v]) => k !== "name").map(([k, v]) => `${k} : ${v}`))
       })
+
+      gcInfos.clear()
+      const gcCountData: number[] = []
+
+      const gcTimeData: number[] = []
+      const gcxdata: string[] = []
+      result.gcInfos.forEach(v => {
+        // gcInfos.set(v.name, [v.collectionCount.toString(), v.collectionTime.toString()])
+        gcxdata.push(v.name)
+        gcCountData.push(v.collectionCount)
+        gcTimeData.push(v.collectionTime)
+      })
+      gcChart.setOption({
+        xAxis: {
+          type: 'category',
+          axisTick: {
+            alignWithLabel: true
+          },
+          // prettier-ignore
+          data: gcxdata
+        }, series: [{
+          name: "collectionCount",
+          type: 'bar',
+          data: gcCountData
+        }, {
+          name: "collectionTime",
+          type: 'bar',
+          data: gcTimeData
+        }]
+      } as GcEChartsOption)
     }
   }
 
@@ -145,7 +196,7 @@ onBeforeMount(async () => {
     type: "SUBMIT",
     value: {
       action: "async_exec",
-      command: "dashboard -i 1000"
+      command: "dashboard"
     } as AsyncReq
   })
 
@@ -157,8 +208,9 @@ onBeforeMount(async () => {
 })
 onMounted(() => {
   echarts.use(
-    [TooltipComponent, LegendComponent, PieChart, SVGRenderer, LabelLayout]
+    [TooltipComponent, LegendComponent, PieChart, SVGRenderer, LabelLayout, ToolboxComponent, GridComponent, BarChart, LineChart, UniversalTransition]
   );
+
   const chartDom = document.getElementById('heapMemory')!;
   heapChart = echarts.init(chartDom);
   const heapoption: EChartsOption = {
@@ -183,10 +235,6 @@ onMounted(() => {
           show: false
         },
         data: [
-          {
-            value: 0,
-            name: '',
-          }
         ]
       }
     ]
@@ -202,6 +250,32 @@ onMounted(() => {
     series: [
       {
         name: 'nonheap memory',
+        type: 'pie',
+        radius: ['40%', '70%'],
+        avoidLabelOverlap: false,
+        label: {
+          show: false,
+          position: 'center'
+        },
+        labelLine: {
+          show: false
+        },
+        data: [
+        ]
+      }
+    ]
+  };
+  const bufferPooloption: EChartsOption = {
+    tooltip: {
+      trigger: 'item'
+    },
+    legend: {
+      top: '5%',
+      left: 'center'
+    },
+    series: [
+      {
+        name: 'buffer_pool memory',
         type: 'pie',
         radius: ['40%', '70%'],
         avoidLabelOverlap: true,
@@ -221,7 +295,7 @@ onMounted(() => {
       }
     ]
   };
-
+  // memoryChart
   heapoption && heapChart.setOption(heapoption);
 
   const nchartDom = document.getElementById('nonheapMemory')!;
@@ -229,6 +303,92 @@ onMounted(() => {
 
   nonheapoption && nonheapChart.setOption(nonheapoption);
 
+  bufferPoolChart = echarts.init(document.getElementById('bufferPoolMemory')!);
+
+  bufferPooloption && bufferPoolChart.setOption(bufferPooloption);
+  // gcInfosChart
+  const gcchartDom = document.getElementById('gc-info')!;
+  gcChart = echarts.init(gcchartDom);
+  const colors = ['#5470C6', '#91CC75'];
+  const gcoption: GcEChartsOption = {
+    color: colors,
+    tooltip: {
+      trigger: 'axis',
+      axisPointer: {
+        type: 'cross'
+      }
+    },
+    grid: {
+      right: '20%'
+    },
+    legend: {
+      data: ['collectionCount', 'collectionTime']
+    },
+    xAxis: [
+      {
+        type: 'category',
+        axisTick: {
+          alignWithLabel: true
+        },
+        // prettier-ignore
+        data: []
+      }
+    ],
+    toolbox: {
+      feature: {
+        dataView: { show: true, readOnly: true },
+      }
+    },
+    yAxis: [
+      {
+        type: 'value',
+        name: 'collectionCount',
+        position: 'left',
+        alignTicks: true,
+        axisLine: {
+          show: true,
+          lineStyle: {
+            color: colors[0]
+          }
+        },
+        axisLabel: {
+          formatter: '{value}'
+        }
+      },
+      {
+        type: 'value',
+        name: 'collectionTime',
+        position: 'right',
+        alignTicks: true,
+        axisLine: {
+          show: true,
+          lineStyle: {
+            color: colors[1]
+          }
+        },
+        axisLabel: {
+          formatter: '{value} ms'
+        }
+      },
+    ],
+    series: [
+      {
+        name: 'collectionCount',
+        type: 'bar',
+        data: [
+        ]
+      },
+      {
+        name: 'collectionTime',
+        type: 'bar',
+        yAxisIndex: 1,
+        data: [
+        ]
+      },
+    ]
+  };
+
+  gcoption && gcChart.setOption(gcoption);
 })
 onBeforeUnmount(() => {
   loop.close()
@@ -247,13 +407,17 @@ onBeforeUnmount(() => {
 
 <template>
   <div class="p-2">
-    <CmdResMenu title="runtimeInfo" :map="runtimeInfo" class="w-full" open/>
+    <!-- <CmdResMenu title="runtimeInfo" :map="runtimeInfo" class="w-full" open /> -->
     <!-- <CmdResMenu title="memory" :map="memoryInfo" class="w-full" /> -->
-    <CmdResMenu title="threads" :map="threads" class="w-full" />
+    <!-- <CmdResMenu :map="gcInfos" title="gcInfos"></CmdResMenu> -->
+
+    <CmdResMenu title="threads" :map="threads" class="w-full flex justify-center" />
     <div class="flex justify-evenly">
       <div id="heapMemory" class="w-80 h-60 flex-1"></div>
       <div id="nonheapMemory" class="w-80 h-60 flex-1"></div>
+      <div id="bufferPoolMemory" class="w-80 h-60 flex-1"></div>
     </div>
+    <div id="gc-info" class="w-10/12 h-80 border-2 m-auto"></div>
   </div>
 </template>
 
