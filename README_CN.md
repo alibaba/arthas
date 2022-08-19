@@ -2,7 +2,7 @@
 
 ## Arthas
 
-![arthas](site/src/site/sphinx/arthas.png)
+![arthas](site/docs/.vuepress/public/images/arthas.png)
 
 [![Build Status](https://github.com/alibaba/arthas/workflows/JavaCI/badge.svg)](https://github.com/alibaba/arthas/actions)
 [![codecov](https://codecov.io/gh/alibaba/arthas/branch/master/graph/badge.svg)](https://codecov.io/gh/alibaba/arthas)
@@ -91,7 +91,7 @@ curl -L https://arthas.aliyun.com/install.sh | sh
 
 * https://arthas.aliyun.com/doc/dashboard
 
-![dashboard](site/src/site/sphinx/_static/dashboard.png)
+![dashboard](site/docs/.vuepress/public/images/dashboard.png)
 
 #### Thread
 
@@ -287,7 +287,7 @@ ts=2018-09-18 10:11:45;thread_name=http-bio-8080-exec-10;id=d9;is_daemon=true;pr
 
 观察方法执行的时候哪个子调用比较慢:
 
-![trace](site/src/site/sphinx/_static/trace.png)
+![trace](site/docs/.vuepress/public/images/trace.png)
 
 #### Watch
 
@@ -377,7 +377,7 @@ $ classloader
 
 * https://arthas.aliyun.com/doc/web-console
 
-![web console](site/src/site/sphinx/_static/web-console-local.png)
+![web console](site/docs/.vuepress/public/images/web-console-local.png)
 
 #### Profiler/FlameGraph/火焰图
 
@@ -396,7 +396,7 @@ OK
 
 通过浏览器查看profiler结果：
 
-![](site/src/site/sphinx/_static/arthas-output-svg.jpg)
+![](site/docs/.vuepress/public/images/arthas-output-svg.jpg)
 
 #### Arthas Spring Boot Starter
 
