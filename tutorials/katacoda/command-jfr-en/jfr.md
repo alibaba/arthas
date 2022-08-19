@@ -118,7 +118,7 @@ You can also specify the record output path.
 
 By default, arthas uses http port 3658 , which can be opened:[http://localhost:3658/arthas-output/](http://localhost:3658/arthas-output/)  View the `arthas-output` directory below Profiler results:
 
-![image-20220819202438616](C:\Users\xldream\AppData\Roaming\Typora\typora-user-images\image-20220819202438616.png)
+![](https://arthas.aliyun.com/doc/_images/arthas-output-recording.png)
 
 > If using the chrome browser, may need to be refreshed multiple times.
 

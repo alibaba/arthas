@@ -118,7 +118,7 @@ Stop recording 1, The result will be written to:
 
 默认情况下，arthas 使用 3658 端口，则可以打开： [http://localhost:3658/arthas-output/](http://localhost:3658/arthas-output/) 查看到`arthas-output`目录下面的JFR记录结果：
 
-![image-20220819202438616](C:\Users\xldream\AppData\Roaming\Typora\typora-user-images\image-20220819202438616.png)
+![](https://arthas.aliyun.com/doc/_images/arthas-output-recording.png)
 如果是 chrome 浏览器，可能需要多次刷新。
 :::
 
