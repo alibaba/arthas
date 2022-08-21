@@ -4,7 +4,6 @@ import {
   DisclosureButton,
   DisclosurePanel
 } from "@headlessui/vue"
-import { flatten } from "xstate/lib/utils";
 const { title, map, buttonWidth = 'w-80', open=false } = defineProps<{
   title: string,
   open?:boolean

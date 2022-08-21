@@ -39,8 +39,7 @@ const busyloop = fetchS.getPollingLoop(() => busyfetchM.send({
     command: `thread -n ${busyN}`
   }
 }))
-const alllist = reactive([] as string[])
-const busylist = reactive([] as string[])
+// const busylist = reactive([] as string[])
 
 const threadInfo = ref({} as ThreadInfo)
 const optionThread = reactive([] as OptionThread[])
@@ -62,11 +61,9 @@ const allEffect = getCommonResEffect(fetchM, body => {
   if (result.type === "thread") {
     if (Object.hasOwn(result, "threadStats")) {
       const { threadStats } = result
-      alllist.length = 0
       allMap.clear()
       optionThread.length = 0
       threadStats.forEach((v) => {
-        alllist.push(v.name)
         allMap.set(v.name, Object.entries(v).filter(([k, v]) => k !== "name").map(([k, v]) => `${k} : ${v}`))
         optionThread.push({ name: v.name, value: v.id })
       })
@@ -78,10 +75,8 @@ const busyEffect = getCommonResEffect(busyfetchM, body => {
   if (result.type === "thread") {
     if (Object.hasOwn(result, "busyThreads")) {
       const { busyThreads } = result
-      busylist.length = 0
       busyMap.clear()
       busyThreads.forEach(v => {
-        busylist.push(v.name)
         busyMap.set(v.name, Object.entries(v).filter(([k, v]) => k !== "name").map(([k, v]) => {
           if (["lockInfo", "lockedMonitors", "stackTrace", "lockedMonitors",
             "lockedSynchronizers"].includes(k)) {
@@ -120,8 +115,8 @@ const toggleAllLoop = (open: boolean) => {
 </script>
 
 <template>
-  <CmdResMenu title="all thread" :list="alllist" :map="allMap" class="w-full" />
-  <CmdResMenu title="busy thread" :list="busylist" :map="busyMap" class="w-full" />
+  <CmdResMenu title="all thread"  :map="allMap" class="w-full" />
+  <CmdResMenu title="busy thread" :map="busyMap" class="w-full" />
   <Disclosure v-slot="{ open }">
     <DisclosureButton class="py-2 w-80 rounded grid place-content-center bg-blue-300 " @click="toggleAllLoop(open)">
       getThreadInfo

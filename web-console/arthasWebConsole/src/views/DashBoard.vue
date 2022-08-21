@@ -88,7 +88,7 @@ getCommonResEffect(dashboadResM, body => {
         arr.push('total : ' + toMb(v.total) + 'M')
         arr.push('used : ' + toMb(v.used) + 'M')
 
-        const usage: number = v.used / v.max * 100
+        const usage: number = (v.max > 0 ?(v.used / v.max) : (v.used / v.total)) * 100
         heaparr.push({ value: toMb(v.used), name: `${v.name}: ${toMb(v.used) + 'M'}(${usage.toFixed(2)}%)` })
 
         arr.push(usage + '%')
@@ -96,7 +96,7 @@ getCommonResEffect(dashboadResM, body => {
         memoryInfo.set(v.name, arr)
       })
       heaparr.push({
-        value: Math.floor((result.memoryInfo.heap[0].max - result.memoryInfo.heap[0].used) / 1024 / 1024),
+        value: Math.floor((result.memoryInfo.heap[0].max >0 ? (result.memoryInfo.heap[0].max - result.memoryInfo.heap[0].used) : (result.memoryInfo.heap[0].total - result.memoryInfo.heap[0].used)) / 1024 / 1024),
         name: "free",
       })
       heapChart && heapChart.setOption({

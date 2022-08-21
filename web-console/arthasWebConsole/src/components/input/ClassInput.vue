@@ -30,13 +30,10 @@ getCommonResEffect(searchClass, body => {
   }
 })
 const changeValue = (value: string) => {
-  if (searchClass.state.value.matches("ready")) {
-    if(value.length > 5) {
-      value = value.split("").join("*")
-    }
+  if (value.length > 2 && searchClass.state.value.matches("ready")) {
     searchClass.send({
       type: "SUBMIT",
-      value: {
+      value: {  
         action: "exec",
         command: `sc *${value}*`
       }

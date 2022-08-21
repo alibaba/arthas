@@ -10,7 +10,7 @@ const tabs = ref([
     icon: DesktopComputerIcon
   },
   {
-    name: '同步命令',
+    name: '常见命令',
     url: '/synchronize',
     icon: ViewGridIcon
   },

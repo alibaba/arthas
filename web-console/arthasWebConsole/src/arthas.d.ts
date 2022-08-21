@@ -57,9 +57,8 @@ type SessionReq =
     action: "init_session";
   }
   | SessionId<{
-      action: "join_session" | "close_session";
-    }
-  >;
+    action: "join_session" | "close_session";
+  }>;
 
 type AsyncReq = SessionId<
   | {
@@ -69,7 +68,7 @@ type AsyncReq = SessionId<
     action: "async_exec";
     command: "dashboard";
   }
-  |{
+  | {
     action: "pull_results";
     consumerId?: string;
   }
@@ -91,14 +90,17 @@ type CommandReq = CommonAction<
       | `dump ${string}`
       | "retransform -l"
       | `retransform ${string}`
-      | `retransform --classPattern ${string}`;
+      | `retransform --classPattern ${string}`
+      | `mbean`
+      | `mbean ${string}`
+      | `mbean -m ${string}`;
   } | {
     command: StringInclude<"vmoption", 2>;
   } | {
     command: StringInclude<"thread", 2>;
   } | {
     command: StringInclude<"sc", 3>;
-  } 
+  }
 >;
 
 type ArthasReq = SessionReq | CommandReq | AsyncReq;
@@ -219,13 +221,13 @@ type JvmInfo = {
     "value": number;
   }[];
 };
-type MemoryInfo = Record<"heap"|"nonheap"|"buffer_pool", {
+type MemoryInfo = Record<"heap" | "nonheap" | "buffer_pool", {
   "max": number;
   "name": string;
   "total": number;
   "type": string;
   "used": number;
-  "usage"?:number
+  "usage"?: number;
 }[]>;
 type RuntimeInfo = {
   "javaHome": string;
@@ -422,6 +424,61 @@ type CommandResult = {
   "runtimeInfo": RuntimeInfo;
   "threads": ThreadStats[];
   "type": "dashboard";
+} | {
+  mbeanNames: string[];
+  mbeanMetadata: never;
+  mbeanAttribute: never;
+  type: "mbean";
+} | {
+  mbeanNames: never;
+  mbeanMetadata: {
+    [x: string]: {
+      "attributes": {
+        description: string;
+        is: boolean;
+        name: string;
+        readable: boolean;
+        type: string;
+        writable: boolean;
+        openType: Record<string, string>;
+      }[];
+      "className": string;
+      "constructors": {
+        "description": string;
+        "name": string;
+        "signature": {
+          "description": string;
+          "name": string;
+          "type": string;
+        }[];
+      }[];
+      "description": string;
+      "notifications": any[];
+      "operations": {
+        "description": string;
+        "impact": number;
+        "name": string;
+        "returnType": string;
+        "signature": {
+          "description": string;
+          "name": string;
+          "type": string;
+        }[];
+      }[];
+    };
+  };
+  mbeanAttribute: never;
+  type: "mbean";
+} | {
+  mbeanNames: never;
+  mbeanMetadata: never;
+  mbeanAttribute: {
+    [x: string]: {
+      name: string;
+      value: string | number | boolean | (number[]);
+    }[];
+  };
+  type: "mbean";
 };
 
 type EnchanceResult = {

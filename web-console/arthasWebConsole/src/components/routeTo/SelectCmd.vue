@@ -23,6 +23,9 @@ const routers: { cmd: string, url: string }[] = [
   }, {
     cmd: "retransform",
     url: "retransform"
+  }, {
+    cmd: "mbean",
+    url: "mbean"
   }
 ]
 const router = useRouter()

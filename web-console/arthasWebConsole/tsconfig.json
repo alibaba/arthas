@@ -15,7 +15,8 @@
     "baseUrl": ".",
     "paths": {
       "@/*":["src/*"]
-    }
+    },
+    "experimentalDecorators": true
   },
   "include": ["src/**/*.ts", "src/**/*.d.ts", "src/**/*.tsx", "src/**/*.vue","tests/**/*.ts"],
   "references": [{ "path": "./tsconfig.node.json" }]

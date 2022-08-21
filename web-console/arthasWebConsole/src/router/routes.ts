@@ -23,7 +23,7 @@ const routes: RouteRecordRaw[] = [
     children: [
       {
         path: "",
-        redirect: "/synchronize/jvm",
+        redirect: "/synchronize/mbean",
       },
       {
         path: "thread",
@@ -45,6 +45,9 @@ const routes: RouteRecordRaw[] = [
       },{
         path:"retransform",
         component: ()=> import("@/views/sync/Retransform.vue")
+      },{
+        path:"mbean",
+        component: ()=> import("@/views/sync/Mbean.vue")
       },
       {
         path:"classLoader",
