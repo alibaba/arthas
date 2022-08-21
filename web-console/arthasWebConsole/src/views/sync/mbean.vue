@@ -8,7 +8,6 @@ import AutoComplete from "@/components/input/AutoComplete.vue";
 import CmdResMenu from '@/components/show/CmdResMenu.vue';
 import { waitFor } from 'xstate/lib/waitFor';
 const { getCommonResEffect } = publicStore()
-const { getPollingLoop } = fetchStore()
 const searchMbean = useMachine(machine)
 const allMbean = useMachine(machine)
 const optionItems = ref([] as { name: string, value: string }[])

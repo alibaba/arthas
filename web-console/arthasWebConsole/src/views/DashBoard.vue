@@ -33,7 +33,7 @@ import {
 import {
   SVGRenderer
 } from 'echarts/renderers';
-import { ECharts, number } from 'echarts/core';
+import { dispose, ECharts, number } from 'echarts/core';
 
 // type EChartsOption = echarts.ComposeOption<
 //   TooltipComponentOption | LegendComponentOption | PieSeriesOption
@@ -58,7 +58,7 @@ const loop = getPollingLoop(() => {
       action: "pull_results",
     } as AsyncReq
   })
-},5000)
+}, 5000)
 const isReady = () => waitFor(dashboadM.service, (state) => state.matches('ready'))
 const toMb = (b: number) => Math.floor(b / 1024 / 1024)
 const gcInfos = reactive(new Map<string, string[]>())
@@ -88,7 +88,7 @@ getCommonResEffect(dashboadResM, body => {
         arr.push('total : ' + toMb(v.total) + 'M')
         arr.push('used : ' + toMb(v.used) + 'M')
 
-        const usage: number = (v.max > 0 ?(v.used / v.max) : (v.used / v.total)) * 100
+        const usage: number = (v.max > 0 ? (v.used / v.max) : (v.used / v.total)) * 100
         heaparr.push({ value: toMb(v.used), name: `${v.name}: ${toMb(v.used) + 'M'}(${usage.toFixed(2)}%)` })
 
         arr.push(usage + '%')
@@ -96,7 +96,7 @@ getCommonResEffect(dashboadResM, body => {
         memoryInfo.set(v.name, arr)
       })
       heaparr.push({
-        value: Math.floor((result.memoryInfo.heap[0].max >0 ? (result.memoryInfo.heap[0].max - result.memoryInfo.heap[0].used) : (result.memoryInfo.heap[0].total - result.memoryInfo.heap[0].used)) / 1024 / 1024),
+        value: Math.floor((result.memoryInfo.heap[0].max > 0 ? (result.memoryInfo.heap[0].max - result.memoryInfo.heap[0].used) : (result.memoryInfo.heap[0].total - result.memoryInfo.heap[0].used)) / 1024 / 1024),
         name: "free",
       })
       heapChart && heapChart.setOption({
@@ -207,12 +207,30 @@ onBeforeMount(async () => {
   loop.open()
 })
 onMounted(() => {
+  // init
+  const clearChart = (...charts: ECharts[]) => {
+    charts.forEach(chart => {
+      if (chart !== null && chart !== undefined) chart.dispose()
+      console.log(chart)
+    })
+  }
+  const clearDom = (...doms: HTMLElement[]) => {
+    doms.forEach(dom => {
+      dispose(dom)
+    })
+  }
+  clearChart(nonheapChart, heapChart, bufferPoolChart, gcChart)
+  const heapDom = document.getElementById('heapMemory')!
+  const nonheapDom = document.getElementById('nonheapMemory')!
+  const bufferPoolDom = document.getElementById('bufferPoolMemory')!
+  const gcDom = document.getElementById('gc-info')!
+  clearDom(heapDom,nonheapDom,bufferPoolDom,gcDom)
   echarts.use(
     [TooltipComponent, LegendComponent, PieChart, SVGRenderer, LabelLayout, ToolboxComponent, GridComponent, BarChart, LineChart, UniversalTransition]
   );
 
-  const chartDom = document.getElementById('heapMemory')!;
-  heapChart = echarts.init(chartDom);
+
+
   const heapoption: EChartsOption = {
     tooltip: {
       trigger: 'item'
@@ -295,20 +313,6 @@ onMounted(() => {
       }
     ]
   };
-  // memoryChart
-  heapoption && heapChart.setOption(heapoption);
-
-  const nchartDom = document.getElementById('nonheapMemory')!;
-  nonheapChart = echarts.init(nchartDom);
-
-  nonheapoption && nonheapChart.setOption(nonheapoption);
-
-  bufferPoolChart = echarts.init(document.getElementById('bufferPoolMemory')!);
-
-  bufferPooloption && bufferPoolChart.setOption(bufferPooloption);
-  // gcInfosChart
-  const gcchartDom = document.getElementById('gc-info')!;
-  gcChart = echarts.init(gcchartDom);
   const colors = ['#5470C6', '#91CC75'];
   const gcoption: GcEChartsOption = {
     color: colors,
@@ -388,6 +392,21 @@ onMounted(() => {
     ]
   };
 
+
+  heapChart = echarts.init(heapDom);
+  heapoption && heapChart.setOption(heapoption);
+
+  nonheapChart = echarts.init(nonheapDom);
+  nonheapoption && nonheapChart.setOption(nonheapoption);
+
+  bufferPoolChart = echarts.init(bufferPoolDom);
+  bufferPooloption && bufferPoolChart.setOption(bufferPooloption);
+
+  // gcInfosChart
+
+  gcChart = echarts.init(gcDom);
+
+
   gcoption && gcChart.setOption(gcoption);
 })
 onBeforeUnmount(() => {
@@ -417,7 +436,7 @@ onBeforeUnmount(() => {
       <div id="nonheapMemory" class="w-80 h-60 flex-1"></div>
       <div id="bufferPoolMemory" class="w-80 h-60 flex-1"></div>
     </div>
-    <div id="gc-info" class="w-10/12 h-80 border-2 m-auto"></div>
+    <div id="gc-info" class="w-[40rem] h-80 border m-auto rounded-xl p-2"></div>
   </div>
 </template>
 

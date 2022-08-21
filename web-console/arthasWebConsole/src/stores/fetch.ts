@@ -7,6 +7,7 @@ export const fetchStore = defineStore("fetch", {
     consumerId: "",
     requestId: "",
     online: false,
+    wait:false
   }),
   getters: {
     getRequest: (state) =>
@@ -31,6 +32,7 @@ export const fetchStore = defineStore("fetch", {
       return {
         open() {
           if (!this.isOn()) {
+            hander()
             id = setInterval(
               (() => {
                 if (publicStore().isErr) {
@@ -54,5 +56,11 @@ export const fetchStore = defineStore("fetch", {
         },
       };
     },
+    onWait(){
+      if(!this.wait)this.wait = true
+    },
+    waitDone(){
+      if(this.wait)this.wait = false
+    }
   },
 });

@@ -129,6 +129,7 @@ const machine =
       common: {
         id: "common",
         tags: ["loading"],
+        // entry:'waitReq',
         invoke: {
           id: "getCommon",
           src: "requestData",
@@ -179,6 +180,7 @@ const machine =
       asyncReq: {
         id: "asyncReq",
         tags: ["loading"],
+        entry:'waitReq',
         invoke: {
           id: "getAsync",
           src: "requestData",
@@ -203,12 +205,18 @@ const machine =
       },
       success: {
         entry: ["needReportSuccess", "renderRes"],
-        always: "ready",
+        always: {
+          actions:["reset"],
+          target:"ready"
+        },
       },
       failure: {
         id: "failure",
         entry: "outputErr",
-        always: "ready",
+        always: {
+          actions:["reset"],
+          target:"ready"
+        },
       },
     },
   }, {
@@ -233,6 +241,7 @@ const machine =
           inputRaw: event.value,
         };
       }),
+      waitReq: (context)=>{context.fetchStore.onWait()},
       getReq: assign((context, event) => {
         if (
           !context.inputValue || !context.fetchStore ||
@@ -244,6 +253,7 @@ const machine =
         Object.entries(context.inputValue).forEach(([k, v]) => {
           if (v) option[k] = v;
         });
+        
         return {
           request: context.fetchStore?.getRequest(option),
           inputValue: option as ArthasReq,
@@ -357,6 +367,9 @@ const machine =
         }
         return { err: e.data as unknown as string };
       }),
+      reset: (ctx,e)=>{
+        ctx.fetchStore.waitDone()
+      }
     },
     guards: {
       // 判断命令是否有问题

@@ -155,8 +155,8 @@ const vmOptionSend = (pre: string) => (v: { key: string, value: boolean | string
 </script>
 
 <template>
-  <div class="p-2 max-h-[90vh] overflow-y-scroll">
-    <article>
+  <div class="p-2 max-h-[90vh] overflow-y-auto">
+    <article >
       <Disclosure as="section" class="flex w-10/12 mb-2">
         <DisclosureButton class="bg-blue-200 p-2 w-1/4 break-all">
           workingDir

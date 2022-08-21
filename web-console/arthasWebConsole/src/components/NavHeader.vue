@@ -23,11 +23,12 @@ watchEffect(() => {
       if ('type' in res && res.type == "version") version.value = res.version
     })
   }
-  if (state.value.matches("ready")) restBtnclass.value = "animate-spin-rev-pause"
-  else restBtnclass.value = "animate-spin-rev-running"
 })
 
-
+watchEffect(() => {
+  if (!fetchS.wait) restBtnclass.value = "animate-spin-rev-pause"
+  else restBtnclass.value = "animate-spin-rev-running"
+})
 onBeforeMount(() => {
   send("INIT")
   send({
