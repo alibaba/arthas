@@ -10,7 +10,7 @@ The basic usage of the `jfr` command is`jfr cmd [actionArg]`
 
 |          Name | Specification                                                |
 | ------------: | :----------------------------------------------------------- |
-|         _cmd_ | Command to execute, support【start，check，dump，stop】      |
+|         _cmd_ | Command to execute, support【start，status，dump，stop】      |
 |   _actionArg_ | Attribute name pattern                                       |
 |          [n:] | Name of recording                                            |
 |          [r:] | Recording id                                                 |
