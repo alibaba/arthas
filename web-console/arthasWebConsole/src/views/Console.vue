@@ -28,7 +28,7 @@ const submitCommand = ()=>{
 </script>
 
 <template>
-  <div class="flex flex-col">
+  <div class="flex flex-col p-2">
     <form class="h-[10vh] flex items-center border shadow" @submit.prevent="submitCommand">
       <label for="command-input" class=" m-2 ">command:</label>
       <div class=" flex-auto grid place-items-start">

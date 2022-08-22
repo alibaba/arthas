@@ -26,6 +26,9 @@ const routers: { cmd: string, url: string }[] = [
   }, {
     cmd: "mbean",
     url: "mbean"
+  },{
+    cmd:"heapdump",
+    url:"heapdump"
   }
 ]
 const router = useRouter()

@@ -129,7 +129,7 @@ const machine =
       common: {
         id: "common",
         tags: ["loading"],
-        // entry:'waitReq',
+        entry:'waitReq',
         invoke: {
           id: "getCommon",
           src: "requestData",
@@ -180,7 +180,7 @@ const machine =
       asyncReq: {
         id: "asyncReq",
         tags: ["loading"],
-        entry:'waitReq',
+        // entry:'waitReq',
         invoke: {
           id: "getAsync",
           src: "requestData",

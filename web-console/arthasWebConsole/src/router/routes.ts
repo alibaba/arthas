@@ -52,6 +52,9 @@ const routes: RouteRecordRaw[] = [
       {
         path:"classLoader",
         component: ()=> import("@/views/sync/ClassLoader.vue")
+      },{
+        path:"heapdump",
+        component: ()=> import("@/views/sync/HeapDump.vue")
       },
       {
         path: "/synchronize/synchronize",

@@ -48,9 +48,10 @@ type Sub1<N extends number> = BuildArray<N> extends
   : never;
 
 // 命令T 可以添加N个参数
-type StringInclude<T extends string, N extends number, P = string> = N extends 0
-  ? T
-  : T | StringInclude<`${T} ${P}`, Sub1<N>>;
+type StringInclude<T extends string, N extends number, P = string> = T extends T
+  ? N extends 0 ? T
+  : T | StringInclude<`${T} ${P}`, Sub1<N>>
+  : never;
 
 type SessionReq =
   | {
@@ -100,6 +101,8 @@ type CommandReq = CommonAction<
     command: StringInclude<"thread", 2>;
   } | {
     command: StringInclude<"sc", 3>;
+  } | {
+    command: StringInclude<"heapdump" | "heapdump --live", 1>;
   }
 >;
 
@@ -479,6 +482,10 @@ type CommandResult = {
     }[];
   };
   type: "mbean";
+} | {
+  "dumpFile": string,
+  "live": boolean,
+  "type": "heapdump"
 };
 
 type EnchanceResult = {
