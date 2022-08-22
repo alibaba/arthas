@@ -46,33 +46,33 @@ Started recording 2. The result will be written to:
 /tmp/myRecording.jfr
 ```
 
-## Check jfr recording
+##View jfr recordings status
 
 The default is to view all JFR recordings.
 
-`jfr check`{{execute T2}}
+`jfr status`{{execute T2}}
 
 ```bash
-$ jfr check
+$ jfr status
 Recording: recording=1 name=Recording-1 (running)
 Recording: recording=2 name=myRecording duration=PT1M (closed)
 ```
 
 View the records of the specified recording ID.
 
-`jfr check -r 1`{{execute T2}}
+`jfr status -r 1`{{execute T2}}
 
 ```bash
-$ jfr check -r 1
+$ jfr status -r 1
 Recording: recording=1 name=Recording-1 (running)
 ```
 
-View records in a specified state.
+View recordings in a specified state.
 
-`jfr check --state closed`{{execute T2}}
+`jfr status --state closed`{{execute T2}}
 
 ```bash
-$ jfr check --state closed
+$ jfr status --state closed
 Recording: recording=2 name=myRecording duration=PT1M (closed)
 ```
 
@@ -114,15 +114,12 @@ Stop recording 1, The result will be written to:
 
 You can also specify the record output path.
 
-## View profiler results under arthas-output via browser
+## View JFR recording results under arthas-output via browser
 
-By default, arthas uses http port 3658 , which can be opened:[http://localhost:3658/arthas-output/](http://localhost:3658/arthas-output/)  View the `arthas-output` directory below Profiler results:
+By default, arthas uses http port 8563 , which can be opened:[http://localhost:8563/arthas-output/](http://localhost:8563/arthas-output/)  View the `arthas-output` directory below JFR recording results:
 
 ![](https://arthas.aliyun.com/doc/_images/arthas-output-recording.png)
 
-> If using the chrome browser, may need to be refreshed multiple times.
-
-:::
 
 The resulting results can be viewed with tools that support the JFR format. Such as:
 

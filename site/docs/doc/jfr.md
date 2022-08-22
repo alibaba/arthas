@@ -46,12 +46,12 @@ Started recording 2. The result will be written to:
 /tmp/myRecording.jfr
 ```
 
-## 查看 JFR 记录信息
+## 查看 JFR 记录状态
 
 默认是查看所有 JFR 记录信息
 
 ```bash
-$ jfr check
+$ jfr status
 Recording: recording=1 name=Recording-1 (running)
 Recording: recording=2 name=myRecording duration=PT1M (closed)
 ```
@@ -59,14 +59,14 @@ Recording: recording=2 name=myRecording duration=PT1M (closed)
 查看指定记录 id 的记录信息
 
 ```bash
-$ jfr check -r 1
+$ jfr status -r 1
 Recording: recording=1 name=Recording-1 (running)
 ```
 
 查看指定状态的记录信息
 
 ```bash
-$ jfr check --state closed
+$ jfr status --state closed
 Recording: recording=2 name=myRecording duration=PT1M (closed)
 ```
 
@@ -102,13 +102,12 @@ Stop recording 1, The result will be written to:
 
 也可以指定记录输出路径。
 
-## 通过浏览器查看 arthas-output 下面的 profiler 结果
+## 通过浏览器查看 arthas-output 下面JFR记录的结果
 
-默认情况下，arthas 使用 3658 端口，则可以打开： [http://localhost:3658/arthas-output/](http://localhost:3658/arthas-output/) 查看到`arthas-output`目录下面的 JFR 记录结果：
+默认情况下，arthas 使用 8563 端口，则可以打开： [http://localhost:8563/arthas-output/](http://localhost:8563/arthas-output/) 查看到`arthas-output`目录下面的 JFR 记录结果：
 
 ![](https://arthas.aliyun.com/doc/_images/arthas-output-recording.png)
-如果是 chrome 浏览器，可能需要多次刷新。
-:::
+
 
 生成的结果可以用支持 jfr 格式的工具来查看。比如：
 

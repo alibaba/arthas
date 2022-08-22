@@ -3,6 +3,9 @@ package com.taobao.arthas.core.command.basic1000;
 import com.taobao.arthas.core.command.Constants;
 import com.taobao.arthas.core.command.model.JFRModel;
 import com.taobao.arthas.core.server.ArthasBootstrap;
+import com.taobao.arthas.core.shell.cli.CliToken;
+import com.taobao.arthas.core.shell.cli.Completion;
+import com.taobao.arthas.core.shell.cli.CompletionUtils;
 import com.taobao.arthas.core.shell.command.AnnotatedCommand;
 import com.taobao.arthas.core.shell.command.CommandProcess;
 import com.taobao.middleware.cli.annotations.*;
@@ -24,13 +27,13 @@ import java.util.concurrent.TimeUnit;
 @Description(Constants.EXAMPLE +
         "  jfr start  # start a new JFR recording\n" +
         "  jfr start -n myRecording --duration 60s -f /tmp/myRecording.jfr \n" +
-        "  jfr check                   # list all recordings\n" +
-        "  jfr check -r 2              # list recording id = 2 \n" +
-        "  jfr check --state running   # list recordings state = running\n" +
-        "  jfr stop -r 2               # stop a JFR recording to default file\n" +
-        "  jfr stop -r 2 -f /tmp/myRecording.jfr\n" +
-        "  jfr dump -r 2               # copy contents of a JFR recording to default file\n" +
-        "  jfr dump -r 2 -f /tmp/myRecording.jfr\n" +
+        "  jfr status                   # list all recordings\n" +
+        "  jfr status -r 1              # list recording id = 1 \n" +
+        "  jfr status --state running   # list recordings state = running\n" +
+        "  jfr stop -r 1               # stop a JFR recording to default file\n" +
+        "  jfr stop -r 1 -f /tmp/myRecording.jfr\n" +
+        "  jfr dump -r 1               # copy contents of a JFR recording to default file\n" +
+        "  jfr dump -r 1 -f /tmp/myRecording.jfr\n" +
         Constants.WIKI + Constants.WIKI_HOME + "jfr")
 public class JFRCommand extends AnnotatedCommand {
 
@@ -49,7 +52,7 @@ public class JFRCommand extends AnnotatedCommand {
     private static Map<Long, Recording> recordings = new ConcurrentHashMap<>();
 
     @Argument(index = 0, argName = "cmd", required = true)
-    @Description("command name (start check stop dump)")
+    @Description("command name (start status stop dump)")
     public void setCmd(String cmd) {
         this.cmd = cmd;
     }
@@ -239,7 +242,7 @@ public class JFRCommand extends AnnotatedCommand {
             if (filename != null && duration != null) {
                 result.setJfrOutput(" The result will be written to:\n" + filename);
             }
-        } else if (cmd.equals("check")) {
+        } else if (cmd.equals("status")) {
             // list recording id = recording
             if (getRecording() != null) {
                 Recording r = recordings.get(getRecording());
@@ -317,7 +320,7 @@ public class JFRCommand extends AnnotatedCommand {
                 process.end(-1, "Failed to stop. please input recording id");
             }
         } else {
-            process.end(-1, "Please input correct jfr command (start check stop dump)");
+            process.end(-1, "Please input correct jfr command (start status stop dump)");
         }
 
         process.appendResult(result);
@@ -394,5 +397,18 @@ public class JFRCommand extends AnnotatedCommand {
             }
         }
         return filename;
+    }
+
+    @Override
+    public void complete(Completion completion) {
+        List<CliToken> tokens = completion.lineTokens();
+        String token = tokens.get(tokens.size() - 1).value();
+
+        if (token.startsWith("-")) {
+            super.complete(completion);
+            return;
+        }
+        List<String> cmd = Arrays.asList("start", "status", "dump", "stop");
+        CompletionUtils.complete(completion, cmd);
     }
 }

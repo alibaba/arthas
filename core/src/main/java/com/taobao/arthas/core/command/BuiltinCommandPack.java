@@ -105,9 +105,10 @@ public class BuiltinCommandPack implements CommandResolver {
         commandClassList.add(VmToolCommand.class);
         commandClassList.add(StopCommand.class);
         try {
-            ClassLoader.getSystemClassLoader().getResource("jdk/jfr/Recording.class");
-            commandClassList.add(JFRCommand.class);
-        } catch (Exception e) {
+            if (ClassLoader.getSystemClassLoader().getResource("jdk/jfr/Recording.class") != null) {
+                commandClassList.add(JFRCommand.class);
+            }
+        } catch (Throwable e) {
             logger.error("This jdk version not support jfr command");
         }
 
