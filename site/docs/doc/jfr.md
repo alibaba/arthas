@@ -102,12 +102,11 @@ Stop recording 1, The result will be written to:
 
 也可以指定记录输出路径。
 
-## 通过浏览器查看 arthas-output 下面JFR记录的结果
+## 通过浏览器查看 arthas-output 下面 JFR 记录的结果
 
 默认情况下，arthas 使用 8563 端口，则可以打开： [http://localhost:8563/arthas-output/](http://localhost:8563/arthas-output/) 查看到`arthas-output`目录下面的 JFR 记录结果：
 
 ![](https://arthas.aliyun.com/doc/_images/arthas-output-recording.png)
-
 
 生成的结果可以用支持 jfr 格式的工具来查看。比如：
 
