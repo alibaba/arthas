@@ -43,7 +43,7 @@
 ## profiler/火焰图
 
 - [profiler](profiler.md) - 使用[async-profiler](https://github.com/jvm-profiling-tools/async-profiler)对应用采样，生成火焰图
-
+- [jfr](jfr.md) - 动态开启关闭JFR记录
 ## 鉴权
 
 - [auth](auth.md) - 鉴权

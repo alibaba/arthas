@@ -10,6 +10,8 @@ Java Flight Recorder (JFR) 是一种用于收集有关正在运行的 Java 应�
 
 `jfr` 命令基本运行结构是 `jfr cmd [actionArg]`
 
+>  注意： JDK8的8u262 版本之后才支持 jfr
+
 ## 参数说明
 
 |      参数名称 | 参数说明                                                                                  |
@@ -106,7 +108,7 @@ Stop recording 1, The result will be written to:
 
 默认情况下，arthas 使用 8563 端口，则可以打开： [http://localhost:8563/arthas-output/](http://localhost:8563/arthas-output/) 查看到`arthas-output`目录下面的 JFR 记录结果：
 
-![](https://arthas.aliyun.com/doc/_images/arthas-output-recording.png)
+![](/images/arthas-output-recording.png)
 
 生成的结果可以用支持 jfr 格式的工具来查看。比如：
 

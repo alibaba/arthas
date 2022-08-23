@@ -64,6 +64,7 @@ module.exports = {
             "/en/doc/tt.md",
             "/en/doc/watch.md",
             "/en/doc/profiler.md",
+            "/en/doc/jfr.md",
             "/en/doc/auth.md",
             "/en/doc/options.md",
             "/en/doc/base64.md",

@@ -23,7 +23,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
 
 @Name("jfr")
-@Summary("Java Flight Command")
+@Summary("Java Flight Recorder Command")
 @Description(Constants.EXAMPLE +
         "  jfr start  # start a new JFR recording\n" +
         "  jfr start -n myRecording --duration 60s -f /tmp/myRecording.jfr \n" +
