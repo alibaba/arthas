@@ -10,7 +10,7 @@ Java Flight Recorder (JFR) 是一种用于收集有关正在运行的 Java 应�
 
 `jfr` 命令基本运行结构是 `jfr cmd [actionArg]`
 
->  注意： JDK8的8u262 版本之后才支持 jfr
+> 注意： JDK8 的 8u262 版本之后才支持 jfr
 
 ## 参数说明
 
