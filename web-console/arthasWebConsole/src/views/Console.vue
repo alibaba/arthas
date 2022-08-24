@@ -40,7 +40,7 @@ const submitCommand = ()=>{
         submit
       </button>
     </form>
-    <article class="flex-1 bg-white overflow-auto max-h-[80vh]">
+    <article class="flex-1 bg-white overflow-auto max-h-[70vh]">
       <section v-for="(v, i) in fetchM.state.value.context.resArr" :key="i"
         class="w-full  rounded-sm mb-2 p-2 bg-green-200 box-border break-all"
         :class="{ 'bg-blue-200': v&&!Object.hasOwn(v, 'jobId')}"
