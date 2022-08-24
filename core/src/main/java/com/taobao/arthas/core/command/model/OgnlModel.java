@@ -7,8 +7,7 @@ import java.util.Collection;
  * @author gongdewei 2020/4/29
  */
 public class OgnlModel extends ResultModel {
-    private Object value;
-    private int expand = 1;
+    private ObjectVO value;
 
     private Collection<ClassLoaderVO> matchedClassLoaders;
     private String classLoaderClass;
@@ -19,21 +18,12 @@ public class OgnlModel extends ResultModel {
         return "ognl";
     }
 
-    public Object getValue() {
+    public ObjectVO getValue() {
         return value;
     }
 
-    public OgnlModel setValue(Object value) {
+    public OgnlModel setValue(ObjectVO value) {
         this.value = value;
-        return this;
-    }
-
-    public int getExpand() {
-        return expand;
-    }
-
-    public OgnlModel setExpand(int expand) {
-        this.expand = expand;
         return this;
     }
 

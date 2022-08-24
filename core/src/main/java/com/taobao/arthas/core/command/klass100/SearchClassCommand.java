@@ -140,8 +140,8 @@ public class SearchClassCommand extends AnnotatedCommand {
                 return;
             }
             for (Class<?> clazz : matchedClasses) {
-                ClassDetailVO classInfo = ClassUtils.createClassInfo(clazz, isField);
-                process.appendResult(new SearchClassModel(classInfo, isDetail, isField, expand));
+                ClassDetailVO classInfo = ClassUtils.createClassInfo(clazz, isField, expand);
+                process.appendResult(new SearchClassModel(classInfo, isDetail, isField));
             }
         } else {
             int pageSize = 256;

@@ -8,7 +8,7 @@ public class FieldVO {
     private String type;
     private String modifier;
     private String[] annotations;
-    private Object value;
+    private ObjectVO value;
     private boolean isStatic;
 
     public String getName() {
@@ -35,11 +35,11 @@ public class FieldVO {
         this.modifier = modifier;
     }
 
-    public Object getValue() {
+    public ObjectVO getValue() {
         return value;
     }
 
-    public void setValue(Object value) {
+    public void setValue(ObjectVO value) {
         this.value = value;
     }
 
@@ -58,4 +58,5 @@ public class FieldVO {
     public void setStatic(boolean aStatic) {
         isStatic = aStatic;
     }
+
 }

@@ -11,6 +11,7 @@ import com.taobao.arthas.core.command.express.Express;
 import com.taobao.arthas.core.command.express.ExpressException;
 import com.taobao.arthas.core.command.express.ExpressFactory;
 import com.taobao.arthas.core.command.model.ClassLoaderVO;
+import com.taobao.arthas.core.command.model.ObjectVO;
 import com.taobao.arthas.core.command.model.OgnlModel;
 import com.taobao.arthas.core.shell.command.AnnotatedCommand;
 import com.taobao.arthas.core.shell.command.CommandProcess;
@@ -103,8 +104,7 @@ public class OgnlCommand extends AnnotatedCommand {
         try {
             Object value = unpooledExpress.get(express);
             OgnlModel ognlModel = new OgnlModel()
-                    .setValue(value)
-                    .setExpand(expand);
+                    .setValue(new ObjectVO(value, expand));
             process.appendResult(ognlModel);
             process.end();
         } catch (ExpressException e) {
