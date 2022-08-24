@@ -15,9 +15,9 @@ public class TimeFragmentVO {
     private String object;
     private String className;
     private String methodName;
-    private Object[] params;
-    private Object returnObj;
-    private Throwable throwExp;
+    private ObjectVO[] params;
+    private ObjectVO returnObj;
+    private ObjectVO throwExp;
 
     public TimeFragmentVO() {
     }
@@ -94,29 +94,29 @@ public class TimeFragmentVO {
         return this;
     }
 
-    public Object[] getParams() {
+    public ObjectVO[] getParams() {
         return params;
     }
 
-    public TimeFragmentVO setParams(Object[] params) {
+    public TimeFragmentVO setParams(ObjectVO[] params) {
         this.params = params;
         return this;
     }
 
-    public Object getReturnObj() {
+    public ObjectVO getReturnObj() {
         return returnObj;
     }
 
-    public TimeFragmentVO setReturnObj(Object returnObj) {
+    public TimeFragmentVO setReturnObj(ObjectVO returnObj) {
         this.returnObj = returnObj;
         return this;
     }
 
-    public Throwable getThrowExp() {
+    public ObjectVO getThrowExp() {
         return throwExp;
     }
 
-    public TimeFragmentVO setThrowExp(Throwable throwExp) {
+    public TimeFragmentVO setThrowExp(ObjectVO throwExp) {
         this.throwExp = throwExp;
         return this;
     }
