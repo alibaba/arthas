@@ -8,8 +8,7 @@ import java.util.Collection;
  *
  */
 public class VmToolModel extends ResultModel {
-    private Object value;
-    private int expand = 1;
+    private ObjectVO value;
 
     private Collection<ClassLoaderVO> matchedClassLoaders;
     private String classLoaderClass;
@@ -20,21 +19,12 @@ public class VmToolModel extends ResultModel {
         return "vmtool";
     }
 
-    public Object getValue() {
+    public ObjectVO getValue() {
         return value;
     }
 
-    public VmToolModel setValue(Object value) {
+    public VmToolModel setValue(ObjectVO value) {
         this.value = value;
-        return this;
-    }
-
-    public int getExpand() {
-        return expand;
-    }
-
-    public VmToolModel setExpand(int expand) {
-        this.expand = expand;
         return this;
     }
 

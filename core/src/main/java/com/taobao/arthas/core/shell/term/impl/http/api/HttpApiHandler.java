@@ -3,6 +3,10 @@ package com.taobao.arthas.core.shell.term.impl.http.api;
 import com.alibaba.arthas.deps.org.slf4j.Logger;
 import com.alibaba.arthas.deps.org.slf4j.LoggerFactory;
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.serializer.SerializeConfig;
+import com.alibaba.fastjson.serializer.SerializeFilter;
+import com.alibaba.fastjson.serializer.ValueFilter;
+import com.alibaba.fastjson.util.IOUtils;
 import com.taobao.arthas.common.ArthasConstants;
 import com.taobao.arthas.common.PidUtils;
 import com.taobao.arthas.core.command.model.*;
@@ -56,6 +60,7 @@ import java.util.concurrent.TimeUnit;
 public class HttpApiHandler {
 
     private static final Logger logger = LoggerFactory.getLogger(HttpApiHandler.class);
+    private static final ValueFilter[] JSON_FILTERS = new ValueFilter[] { new ObjectVOFilter() };
     private static final String ONETIME_SESSION_KEY = "oneTimeSession";
     public static final int DEFAULT_EXEC_TIMEOUT = 30000;
     private final SessionManager sessionManager;
@@ -174,7 +179,7 @@ public class HttpApiHandler {
     private void writeResult(DefaultFullHttpResponse response, Object result) throws IOException {
         ByteBufOutputStream out = new ByteBufOutputStream(response.content());
         try {
-            JSON.writeJSONString(out, result);
+            JSON.writeJSONString(out, IOUtils.UTF8, result, SerializeConfig.globalInstance, JSON_FILTERS, null, JSON.DEFAULT_GENERATE_FEATURE);
         } catch (IOException e) {
             logger.error("write json to response failed", e);
             throw e;

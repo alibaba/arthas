@@ -20,7 +20,7 @@ import com.taobao.arthas.core.command.express.Express;
 import com.taobao.arthas.core.command.express.ExpressException;
 import com.taobao.arthas.core.command.express.ExpressFactory;
 import com.taobao.arthas.core.command.model.ClassLoaderVO;
-import com.taobao.arthas.core.command.model.SearchClassModel;
+import com.taobao.arthas.core.command.model.ObjectVO;
 import com.taobao.arthas.core.command.model.VmToolModel;
 import com.taobao.arthas.core.shell.cli.Completion;
 import com.taobao.arthas.core.shell.cli.CompletionUtils;
@@ -30,7 +30,6 @@ import com.taobao.arthas.core.shell.command.CommandProcess;
 import com.taobao.arthas.core.util.ClassLoaderUtils;
 import com.taobao.arthas.core.util.ClassUtils;
 import com.taobao.arthas.core.util.SearchUtils;
-import com.taobao.arthas.core.view.ObjectView;
 import com.taobao.middleware.cli.annotations.DefaultValue;
 import com.taobao.middleware.cli.annotations.Description;
 import com.taobao.middleware.cli.annotations.Name;
@@ -218,7 +217,7 @@ public class VmToolCommand extends AnnotatedCommand {
                         }
                     }
 
-                    VmToolModel vmToolModel = new VmToolModel().setValue(value).setExpand(expand);
+                    VmToolModel vmToolModel = new VmToolModel().setValue(new ObjectVO(value, expand));
                     process.appendResult(vmToolModel);
                     process.end();
                 }

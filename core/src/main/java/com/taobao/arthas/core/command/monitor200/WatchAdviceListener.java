@@ -6,6 +6,7 @@ import com.taobao.arthas.core.advisor.AccessPoint;
 import com.taobao.arthas.core.advisor.Advice;
 import com.taobao.arthas.core.advisor.AdviceListenerAdapter;
 import com.taobao.arthas.core.advisor.ArthasMethod;
+import com.taobao.arthas.core.command.model.ObjectVO;
 import com.taobao.arthas.core.command.model.WatchModel;
 import com.taobao.arthas.core.shell.command.CommandProcess;
 import com.taobao.arthas.core.util.LogUtil;
@@ -88,8 +89,7 @@ class WatchAdviceListener extends AdviceListenerAdapter {
                 WatchModel model = new WatchModel();
                 model.setTs(new Date());
                 model.setCost(cost);
-                model.setValue(value);
-                model.setExpand(command.getExpand());
+                model.setValue(new ObjectVO(value, command.getExpand()));
                 model.setSizeLimit(command.getSizeLimit());
                 model.setClassName(advice.getClazz().getName());
                 model.setMethodName(advice.getMethod().getName());

@@ -88,7 +88,7 @@ public class TimeTunnelAdviceListener extends AdviceListenerAdapter {
 
         int index = command.putTimeTunnel(timeTunnel);
 
-        TimeFragmentVO timeFragmentVO = TimeTunnelCommand.createTimeFragmentVO(index, timeTunnel);
+        TimeFragmentVO timeFragmentVO = TimeTunnelCommand.createTimeFragmentVO(index, timeTunnel, command.getExpand());
         TimeTunnelModel timeTunnelModel = new TimeTunnelModel()
                 .setTimeFragmentList(Collections.singletonList(timeFragmentVO))
                 .setFirst(isFirst);

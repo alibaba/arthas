@@ -6,6 +6,7 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.serializer.SerializerFeature;
 import com.taobao.arthas.common.ArthasConstants;
 import com.taobao.arthas.core.GlobalOptions;
+import com.taobao.arthas.core.command.model.ObjectVO;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
@@ -29,6 +30,15 @@ public class ObjectView implements View {
     private final int deep;
     private final int maxObjectLength;
 
+    public ObjectView(ObjectVO objectVO) {
+        this(MAX_OBJECT_LENGTH, objectVO);
+    }
+
+    // int参数在前面，防止构造函数二义性
+    public ObjectView(int maxObjectLength, ObjectVO objectVO) {
+        this(objectVO.getObject(), objectVO.expandOrDefault(), maxObjectLength);
+    }
+ 
     public ObjectView(Object object, int deep) {
         this(object, deep, MAX_OBJECT_LENGTH);
     }
