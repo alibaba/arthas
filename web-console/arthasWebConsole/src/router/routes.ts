@@ -55,12 +55,34 @@ const routes: RouteRecordRaw[] = [
       },{
         path:"heapdump",
         component: ()=> import("@/views/sync/HeapDump.vue")
+      },{
+        path:"vmtool",
+        component: ()=>import("@/views/sync/Vmtool.vue")
       },
       {
         path: "/synchronize/synchronize",
         redirect: "",
       },
     ],
-  },
+  },{
+    path:"/asynchronize",
+    component:()=>import("@/views/Asynchronize.vue"),
+    children:[
+      {
+        path:"",
+        redirect:"/asynchronize/stack"
+      },
+      {
+        path:"tt",
+        component:()=>import("@/views/async/Tt.vue")
+      },{
+        path:"ptofiler",
+        component:()=>import("@/views/async/Profiler.vue")
+      },{
+        path:"stack",
+        component:()=>import("@/views/async/Stack.vue")
+      }
+    ]
+  }
 ];
 export default routes;

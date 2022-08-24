@@ -94,7 +94,8 @@ type CommandReq = CommonAction<
       | `retransform --classPattern ${string}`
       | `mbean`
       | `mbean ${string}`
-      | `mbean -m ${string}`;
+      | `mbean -m ${string}`
+      | "vmtool --action forceGc";
   } | {
     command: StringInclude<"vmoption", 2>;
   } | {
@@ -484,8 +485,12 @@ type CommandResult = {
   type: "mbean";
 } | {
   "dumpFile": string,
-  "live": boolean,
+  "live": boolean ,
   "type": "heapdump"
+} |{
+  "type": "vmtool",
+  "value": string[
+  ]
 };
 
 type EnchanceResult = {

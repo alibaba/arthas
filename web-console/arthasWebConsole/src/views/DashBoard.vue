@@ -409,7 +409,7 @@ onMounted(() => {
 
   gcoption && gcChart.setOption(gcoption);
 })
-onBeforeUnmount(() => {
+onBeforeUnmount(async () => {
   loop.close()
 
   const actor = interpret(machine)
@@ -421,14 +421,20 @@ onBeforeUnmount(() => {
       action: "interrupt_job",
     } as AsyncReq
   })
+  const a2 = interpret(machine)
+  a2.start()
+  a2.send("INIT")
+  a2.send({
+    type:"SUBMIT",
+    value:{
+      action:"close_session"
+    } as SessionReq
+  })
 })
 </script>
 
 <template>
   <div class="p-2">
-    <!-- <CmdResMenu title="runtimeInfo" :map="runtimeInfo" class="w-full" open /> -->
-    <!-- <CmdResMenu title="memory" :map="memoryInfo" class="w-full" /> -->
-    <!-- <CmdResMenu :map="gcInfos" title="gcInfos"></CmdResMenu> -->
 
     <CmdResMenu title="threads" :map="threads" class="w-full flex justify-center" />
     <div class="flex justify-evenly">

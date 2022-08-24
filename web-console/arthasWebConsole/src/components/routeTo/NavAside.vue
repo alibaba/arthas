@@ -3,6 +3,7 @@ import { reactive, ref } from 'vue';
 import { PuzzleIcon, TerminalIcon, ViewGridIcon } from "@heroicons/vue/outline"
 import { DesktopComputerIcon } from "@heroicons/vue/solid"
 import { useRouter } from 'vue-router';
+import AsynchronizeVue from '@/views/Asynchronize.vue';
 const tabs = ref([
   {
     name: 'dashboard',
@@ -12,6 +13,10 @@ const tabs = ref([
   {
     name: '常见命令',
     url: '/synchronize',
+    icon: ViewGridIcon
+  },{
+    name: "异步命令",
+    url: '/asynchronize',
     icon: ViewGridIcon
   },
   {

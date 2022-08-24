@@ -119,6 +119,7 @@ const machine =
                 target: "#session",
               },
               {
+                actions:"notReq",
                 target: "#failure",
               },
             ],
@@ -129,7 +130,7 @@ const machine =
       common: {
         id: "common",
         tags: ["loading"],
-        entry:'waitReq',
+        entry: "waitReq",
         invoke: {
           id: "getCommon",
           src: "requestData",
@@ -206,26 +207,26 @@ const machine =
       success: {
         entry: ["needReportSuccess", "renderRes"],
         always: {
-          actions:["reset"],
-          target:"ready"
+          actions: ["reset"],
+          target: "ready",
         },
       },
       failure: {
         id: "failure",
         entry: "outputErr",
         always: {
-          actions:["reset"],
-          target:"ready"
+          actions: ["reset"],
+          target: "ready",
         },
       },
     },
   }, {
     services: {
-      requestData: (context) =>
-        fetch(context.request as Request).then(
-          (res) => res.json(),
-          (err) => Promise.reject(err),
-        ),
+      requestData: async (context) => {
+        const res = await fetch(context.request as Request);
+        if (!res.ok) return Promise.reject("server error");
+        return res.json();
+      },
     },
     actions: {
       initStore: assign((context, event) => {
@@ -241,7 +242,9 @@ const machine =
           inputRaw: event.value,
         };
       }),
-      waitReq: (context)=>{context.fetchStore.onWait()},
+      waitReq: (context) => {
+        context.fetchStore.onWait();
+      },
       getReq: assign((context, event) => {
         if (
           !context.inputValue || !context.fetchStore ||
@@ -253,7 +256,7 @@ const machine =
         Object.entries(context.inputValue).forEach(([k, v]) => {
           if (v) option[k] = v;
         });
-        
+
         return {
           request: context.fetchStore?.getRequest(option),
           inputValue: option as ArthasReq,
@@ -310,7 +313,7 @@ const machine =
           type: "INPUT",
           data: ctx.inputRaw as string,
         });
-        const s = m.getSnapshot();
+        const s = m.getSnapshot(); 
         if (s?.matches("failure")) {
           return {
             inputRaw: undefined,
@@ -349,6 +352,16 @@ const machine =
         }
         if (
           context.inputValue?.action === "exec" &&
+          context.inputValue.command === "vmtool --action forceGc"
+        ) {
+          context.publicStore.$patch({
+            isSuccess: true,
+            SuccessMessage: "GC success!",
+          });
+          return;
+        }
+        if (
+          context.inputValue?.action === "exec" &&
           context.inputValue.command.includes("vmoption") &&
           context.inputValue.command !== "vmoption"
         ) {
@@ -367,9 +380,14 @@ const machine =
         }
         return { err: e.data as unknown as string };
       }),
-      reset: (ctx,e)=>{
-        ctx.fetchStore.waitDone()
-      }
+      reset: (ctx, e) => {
+        ctx.fetchStore.waitDone();
+      },
+      notReq: assign((context) => {
+        return {
+          err: "not request"
+        }
+      }),
     },
     guards: {
       // 判断命令是否有问题
@@ -419,7 +437,7 @@ const machine =
           ["join_session", "init_session", "close_session", "interrupt_job"]
             .includes(context.inputValue!.action)
         ) {
-          console.log("isSession")
+          console.log("isSession");
           return true;
         }
         return false;
@@ -430,7 +448,7 @@ const machine =
           ["exec"]
             .includes(context.inputValue!.action)
         ) {
-          console.log("isCommon")
+          console.log("isCommon");
           return true;
         }
         return false;
@@ -441,7 +459,7 @@ const machine =
           ["async_exec", "pull_results"]
             .includes(context.inputValue!.action)
         ) {
-          console.log("isAsync")
+          console.log("isAsync");
           return true;
         }
         return false;
