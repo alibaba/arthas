@@ -43,6 +43,7 @@
 ## profiler/flame graph
 
 - [profiler](profiler.md) - use [async-profiler](https://github.com/jvm-profiling-tools/async-profiler) to generate flame graph
+- [jfr](jfr.md) - dynamic opening and closing of jfr recordings
 
 ## authentication
 
@@ -50,7 +51,7 @@
 
 ## options
 
-- [options](options.md) - check/set Arthas global options
+- [options](options.md) - check/set Arthas global optionss
 
 ## pipe
 
