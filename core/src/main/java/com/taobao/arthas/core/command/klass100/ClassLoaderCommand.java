@@ -293,7 +293,7 @@ public class ClassLoaderCommand extends AnnotatedCommand {
             try {
                 Class<?> clazz = targetClassLoader.loadClass(this.loadClass);
                 process.appendResult(new MessageModel("load class success."));
-                ClassDetailVO classInfo = ClassUtils.createClassInfo(clazz, false);
+                ClassDetailVO classInfo = ClassUtils.createClassInfo(clazz, false, null);
                 process.appendResult(new ClassLoaderModel().setLoadClass(classInfo));
 
             } catch (Throwable e) {

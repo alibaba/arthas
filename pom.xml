@@ -76,7 +76,7 @@
     </modules>
 
     <properties>
-        <revision>3.6.3</revision>
+        <revision>3.6.4</revision>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.compiler.target>1.6</maven.compiler.target>
         <maven.compiler.source>1.6</maven.compiler.source>

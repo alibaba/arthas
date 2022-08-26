@@ -1,6 +1,6 @@
 ## Arthas
 
-![arthas](site/src/site/sphinx/arthas.png)
+![arthas](site/docs/.vuepress/public/images/arthas.png)
 
 [![Build Status](https://github.com/alibaba/arthas/workflows/JavaCI/badge.svg)](https://github.com/alibaba/arthas/actions)
 [![codecov](https://codecov.io/gh/alibaba/arthas/branch/master/graph/badge.svg)](https://codecov.io/gh/alibaba/arthas)
@@ -101,7 +101,7 @@ You can enter its interactive interface by executing `as.sh`, or execute `as.sh 
 
 * https://arthas.aliyun.com/doc/en/dashboard
 
-![dashboard](site/src/site/sphinx/_static/dashboard.png)
+![dashboard](site/docs/.vuepress/public/images/dashboard.png)
 
 #### Thread
 
@@ -301,7 +301,7 @@ ts=2018-09-18 10:11:45;thread_name=http-bio-8080-exec-10;id=d9;is_daemon=true;pr
 
 See what is slowing down your method invocation with trace command:
 
-![trace](site/src/site/sphinx/_static/trace.png)
+![trace](site/docs/.vuepress/public/images/trace.png)
 
 #### Watch
 
@@ -388,7 +388,7 @@ $ classloader
 
 * https://arthas.aliyun.com/doc/en/web-console
 
-![web console](site/src/site/sphinx/_static/web-console-local.png)
+![web console](site/docs/.vuepress/public/images/web-console-local.png)
 
 
 #### Profiler/FlameGraph
@@ -408,7 +408,7 @@ OK
 
 View profiler results under arthas-output via browser:
 
-![](site/src/site/sphinx/_static/arthas-output-svg.jpg)
+![](site/docs/.vuepress/public/images/arthas-output-svg.jpg)
 
 #### Arthas Spring Boot Starter
 

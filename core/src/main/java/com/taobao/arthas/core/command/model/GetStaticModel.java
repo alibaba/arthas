@@ -9,8 +9,8 @@ import java.util.Collection;
 public class GetStaticModel extends ResultModel {
 
     private Collection<ClassVO> matchedClasses;
+    private String fieldName;
     private ObjectVO field;
-    private int expand;
     private Collection<ClassLoaderVO> matchedClassLoaders;
     private String classLoaderClass;
 
@@ -18,8 +18,8 @@ public class GetStaticModel extends ResultModel {
     }
 
     public GetStaticModel(String fieldName, Object fieldValue, int expand) {
-        this.field = new ObjectVO(fieldName, fieldValue);
-        this.expand = expand;
+        this.fieldName = fieldName;
+        this.field = new ObjectVO(fieldValue, expand);
     }
 
     public GetStaticModel(Collection<ClassVO> matchedClasses) {
@@ -34,20 +34,20 @@ public class GetStaticModel extends ResultModel {
         this.field = field;
     }
 
+    public String getFieldName() {
+        return fieldName;
+    }
+
+    public void setFieldName(String fieldName) {
+        this.fieldName = fieldName;
+    }
+
     public Collection<ClassVO> getMatchedClasses() {
         return matchedClasses;
     }
 
     public void setMatchedClasses(Collection<ClassVO> matchedClasses) {
         this.matchedClasses = matchedClasses;
-    }
-
-    public int getExpand() {
-        return expand;
-    }
-
-    public void setExpand(int expand) {
-        this.expand = expand;
     }
 
     public String getClassLoaderClass() {

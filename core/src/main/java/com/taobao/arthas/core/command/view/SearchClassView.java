@@ -1,5 +1,6 @@
 package com.taobao.arthas.core.command.view;
 
+import com.taobao.arthas.core.command.model.FieldVO;
 import com.taobao.arthas.core.command.model.SearchClassModel;
 import com.taobao.arthas.core.shell.command.CommandProcess;
 import com.taobao.arthas.core.util.ClassUtils;
@@ -20,7 +21,7 @@ public class SearchClassView extends ResultView<SearchClassModel> {
 
         if (result.isDetailed()) {
             process.write(RenderUtil.render(ClassUtils.renderClassInfo(result.getClassInfo(),
-                    result.isWithField(), result.getExpand()), process.width()));
+                    result.isWithField()), process.width()));
             process.write("\n");
         } else if (result.getClassNames() != null) {
             for (String className : result.getClassNames()) {

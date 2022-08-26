@@ -1,5 +1,6 @@
 package com.taobao.arthas.core.command.view;
 
+import com.taobao.arthas.core.command.model.ObjectVO;
 import com.taobao.arthas.core.command.model.OgnlModel;
 import com.taobao.arthas.core.shell.command.CommandProcess;
 import com.taobao.arthas.core.util.StringUtils;
@@ -19,9 +20,8 @@ public class OgnlView extends ResultView<OgnlModel> {
             return;
         }
 
-        int expand = model.getExpand();
-        Object value = model.getValue();
-        String resultStr = StringUtils.objectToString(expand >= 0 ? new ObjectView(value, expand).draw() : value);
+        ObjectVO objectVO = model.getValue();
+        String resultStr = StringUtils.objectToString(objectVO.needExpand() ? new ObjectView(objectVO).draw() : objectVO.getObject());
         process.write(resultStr).write("\n");
     }
 }
