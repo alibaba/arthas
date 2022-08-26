@@ -10,7 +10,7 @@ Welcome to use [issue tracker](https://github.com/alibaba/arthas/issues) to give
 
 ## Documentation
 
-Welcome PR to further improve English [documentation](https://github.com/alibaba/arthas/tree/master/site/src/site/sphinx/en).
+* Under `site/docs/`.
 
 ## Online Tutorials
 
@@ -56,15 +56,11 @@ Tip: you can use `--versions` to list all available versions.
 
 ### Packaging All
 
-* Arthas is using [Sphinx](http://www.sphinx-doc.org/en/master/) to generate the static site
-* `sphinx-maven-plugin` configured in [`site/pom.xml`](https://github.com/alibaba/arthas/tree/master/site)
-* `sphinx-maven-plugin` executes by downloading`sphinx-binary/`
 * when packaging the whole project (Packaging All), you need to execute:
 
     ```bash
     ./mvnw clean package -DskipTests -P full
     ```
-
 
 ---
 
@@ -78,9 +74,7 @@ Tip: you can use `--versions` to list all available versions.
 
 ## 改进用户文档
 
-用户文档在`site/src/site/sphinx`目录下，如果希望改进arthas用户文档，欢迎提交PR。
-
-英文文档在`site/src/site/sphinx/en`目录下，欢迎提交翻译PR。
+用户文档在`site/docs/`目录下，如果希望改进arthas用户文档，欢迎提交PR。
 
 ## 改进在线教程
 
@@ -89,9 +83,7 @@ Tip: you can use `--versions` to list all available versions.
 ## 开发者相关
 
 * Arthas运行支持JDK6+
-* 编译Arthas要求JDK7+，因为使用到了jdk7里的`java.lang.management.BufferPoolMXBean`。
-
-> 建议使用JDK8来编译，使用高版本会遇到问题。参考 https://github.com/alibaba/arthas/tree/master/.github/workflows
+* 建议使用JDK8来编译，使用高版本会遇到问题。参考 https://github.com/alibaba/arthas/tree/master/.github/workflows
 ### 安装到本地
 
 本地开发时，推荐执行`as-package.sh`来打包，会自动安装最新版本的arthas到`~/.arthas`目录里。debug时会自动使用最新版本。
@@ -125,25 +117,12 @@ Tip: you can use `--versions` to list all available versions.
 
 ### 全量打包
 
-* arthas是用sphinx来生成静态网站
-* 在`site/pom.xml`里配置了`sphinx-maven-plugin`
-* `sphinx-maven-plugin`通过下载`sphinx-binary/`来执行
-
 
 * 全量打包时，需要配置下面的参数：
 
     ```
     ./mvnw clean package -DskipTests -P full
     ```
-#### 当 sphinx-maven-plugin 下载出错时，可以用下面的方式
-
-到 https://github.com/trustin/sphinx-binary/releases 下载对应版本的二进制文件，并在本地加上可执行权限。例如：
-
-```
-wget https://github.com/hengyunabc/sphinx-binary/releases/download/v0.4.0.1/sphinx.osx-x86_64 -o /tmp/sphinx.osx-x86_64
-chmod +x /tmp/sphinx.osx-x86_64
-./mvnw clean package -DskipTests -P full -Dsphinx.binUrl=file:/tmp/sphinx.osx-x86_64
-```
 
 ### Release Steps
 
@@ -152,8 +131,6 @@ chmod +x /tmp/sphinx.osx-x86_64
 * 修改`as.sh`里的版本，最后修改日期， `Bootstrap.java`里的版本，Dockerfile里的版本
 * 修改本地的maven settings.xml
 * mvn clean deploy -DskipTests -P full -P release
-
-    如果在下载 sphinx-binary 出错，参考上面的 全量打包 的说明。
 
 * 到 https://oss.sonatype.org/ 上，“Staging Repositories”然后close掉自己的，再release
 * 发布后，可以到这里查看是否同步到仓库里了： https://repo1.maven.org/maven2/com/taobao/arthas/arthas-packaging/
