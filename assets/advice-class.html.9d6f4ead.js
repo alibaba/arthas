@@ -1,0 +1,1 @@
+const e=JSON.parse('{"key":"v-a736375c","path":"/en/doc/advice-class.html","title":"Fundamental Fields in Expressions","lang":"en-US","frontmatter":{},"excerpt":"","headers":[],"git":{"updatedTime":1658120060000,"contributors":[{"name":"hengyunabc","email":"hengyunabc@gmail.com","commits":1}]},"filePathRelative":"en/doc/advice-class.md","version":"3.6.5"}');export{e as data};
