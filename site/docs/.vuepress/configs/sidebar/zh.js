@@ -5,10 +5,6 @@ module.exports = {
       children: [
         "/doc/README.md",
         "/doc/quick-start.md",
-        {
-          text: "在线教程(阿里云)",
-          link: "https://start.aliyun.com/handson-lab?category=arthas",
-        },
         "/doc/install-detail.md",
         "/doc/download.md",
         "/doc/advanced-use.md",
