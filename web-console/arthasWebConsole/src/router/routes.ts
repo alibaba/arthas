@@ -20,6 +20,7 @@ const routes: RouteRecordRaw[] = [
   {
     path: "/synchronize",
     component: () => import("@/views/Synchronize.vue"),
+    name:"sync",
     children: [
       {
         path: "",
@@ -58,6 +59,9 @@ const routes: RouteRecordRaw[] = [
       },{
         path:"vmtool",
         component: ()=>import("@/views/sync/Vmtool.vue")
+      },{
+        path:"reset",
+        component: ()=>import("@/views/sync/Reset.vue")
       },
       {
         path: "/synchronize/synchronize",

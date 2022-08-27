@@ -21,11 +21,13 @@ const {
   filterFn?:(query:string,item:Item)=>boolean
   inputFn?: (value:string) => void
 }>()
+
 const query = ref('')
-const selectedItem = ref({} as Item)
+const selectedItem = ref({name:"",value:""} as Item)
 const filterItems = computed(() => {  
 
   if(query.value === ""){
+    selectedItem.value = {name:"",value:""}
     return optionItems
   } else {
     return optionItems.filter(item=>{

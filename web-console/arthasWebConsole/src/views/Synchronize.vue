@@ -25,12 +25,15 @@ const routes: { cmd: string, url: string }[] = [
   }, {
     cmd: "mbean",
     url: "mbean"
-  },{
-    cmd:"heapdump",
-    url:"heapdump"
-  },{
-    cmd:"vmtool",
-    url:"vmtool"
+  }, {
+    cmd: "heapdump",
+    url: "heapdump"
+  }, {
+    cmd: "vmtool",
+    url: "vmtool"
+  }, {
+    cmd: "reset",
+    url: "reset"
   }
 ]
 </script>

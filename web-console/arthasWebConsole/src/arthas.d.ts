@@ -98,13 +98,11 @@ type CommandReq = CommonAction<
       | `mbean -m ${string}`
       | "vmtool --action forceGc";
   } | {
-    command: StringInclude<"vmoption", 2>;
-  } | {
-    command: StringInclude<"thread", 2>;
+    command: StringInclude<"vmoption" | "thread", 2>;
   } | {
     command: StringInclude<"sc", 3>;
   } | {
-    command: StringInclude<"heapdump" | "heapdump --live", 1>;
+    command: StringInclude<"heapdump" | "heapdump --live" | "reset", 1>;
   }
 >;
 
@@ -491,6 +489,14 @@ type CommandResult = {
 } | {
   "type": "vmtool";
   "value": string[];
+} | {
+  "affect": {
+    "classCount": number;
+    "cost": number;
+    "listenerId": number;
+    "methodCount": number;
+  };
+  "type": "reset";
 };
 
 type EnchanceResult = {
