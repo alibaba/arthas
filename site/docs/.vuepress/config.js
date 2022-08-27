@@ -1,18 +1,17 @@
-const { localTheme } = require("./theme/index");
-const { loadVersionPlugin } = require("./plugins/vuepress-plugin-loadVersion");
+import { localTheme } from "./theme/index";
+import { loadVersionPlugin } from "./plugins/vuepress-plugin-loadVersion";
+import { head, navbarEN, navbarZH, sidebarEN, sidebarZH } from "./configs";
 
-const {
-  activeHeaderLinksPlugin,
-} = require("@vuepress/plugin-active-header-links");
-const { docsearchPlugin } = require("@vuepress/plugin-docsearch");
-const { copyCodePlugin } = require("vuepress-plugin-copy-code2");
-const { redirectPlugin } = require("vuepress-plugin-redirect");
-const { searchPlugin } = require("@vuepress/plugin-search");
+import { activeHeaderLinksPlugin } from "@vuepress/plugin-active-header-links";
+import { copyCodePlugin } from "vuepress-plugin-copy-code2";
+import { docsearchPlugin } from "@vuepress/plugin-docsearch";
+import { redirectPlugin } from "vuepress-plugin-redirect";
+import { defineUserConfig } from "vuepress";
 
-module.exports = {
+export default defineUserConfig({
   title: "arthas",
   description: "arthas user document",
-  head: require("./configs/head"),
+  head,
   locales: {
     "/": {
       lang: "zh-CN",
@@ -31,6 +30,9 @@ module.exports = {
     repo: "alibaba/arthas",
     docsDir: "site/docs",
     docsBranch: "master",
+    themePlugins: {
+      activeHeaderLinks: false,
+    },
 
     locales: {
       "/": {
@@ -51,20 +53,19 @@ module.exports = {
           "这是一个 404 页面",
           "看起来我们进入了错误的链接",
         ],
-        backToHome: "返回首页",
         openInNewWindow: "在新窗口打开",
         toggleColorMode: "切换颜色模式",
         toggleSidebar: "切换侧边栏",
-        navbar: require("./configs/navbar/zh"),
-        sidebar: require("./configs/sidebar/zh"),
+        navbar: navbarZH,
+        sidebar: sidebarZH,
         sidebarDepth: 0,
       },
       "/en/": {
         selectLanguageName: "English",
         selectLanguageText: "Languages",
         editLinkText: "Edit this page on GitHub",
-        navbar: require("./configs/navbar/en"),
-        sidebar: require("./configs/sidebar/en"),
+        navbar: navbarEN,
+        sidebar: sidebarEN,
         sidebarDepth: 0,
       },
     },
@@ -79,16 +80,6 @@ module.exports = {
         },
         "/en/": {
           hint: "Copy code",
-        },
-      },
-    }),
-    searchPlugin({
-      locales: {
-        "/": {
-          placeholder: "搜索文档",
-        },
-        "/en/": {
-          placeholder: "Search Docs",
         },
       },
     }),
@@ -165,4 +156,4 @@ module.exports = {
     // Local plugin
     loadVersionPlugin(),
   ],
-};
+});

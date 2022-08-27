@@ -7,10 +7,8 @@ import {
   withBase,
 } from "@vuepress/client";
 import { computed, h, ref } from "vue";
-import {
-  useDarkMode,
-  useThemeLocaleData,
-} from "@vuepress/theme-default/lib/client";
+import { useThemeLocaleData } from "@vuepress/plugin-theme-data/client";
+import { useDarkMode } from "@vuepress/theme-default/client";
 
 const pageData = usePageData();
 const isDarkMode = useDarkMode();
