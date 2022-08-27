@@ -44,8 +44,7 @@ const filterfn = (_: any,item: Item)=>true
 </script>
 
 <template>
-  <AutoComplete :label="label" :option-items="optionClass" :submitfn="submitF" :input-fn="changeValue" :filter-fn="filterfn"></AutoComplete>
+  <AutoComplete :label="label" :option-items="optionClass" :input-fn="changeValue" :filter-fn="filterfn" v-slot="slotP" as="form">
+  <button @click.prevent="submitF(slotP.selectItem)" class="border bg-blue-400 p-2 rounded-md mx-2 hover:opacity-50 transition">submit</button>
+  </AutoComplete>
 </template>
-
-<style scoped>
-</style>

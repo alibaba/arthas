@@ -72,7 +72,11 @@ let heapChart: ECharts
 let nonheapChart: ECharts
 let bufferPoolChart: ECharts
 let gcChart: ECharts
-
+const clearChart = (...charts: ECharts[]) => {
+    charts.forEach(chart => {
+      if (chart !== null && chart !== undefined) chart.dispose()
+    })
+  }
 getCommonResEffect(dashboadResM, body => {
   if (body.results.length > 0 && dashboardId >= 0) {
     const result = body.results.find(v => v.type === "dashboard" && v.jobId === dashboardId)
@@ -208,12 +212,7 @@ onBeforeMount(async () => {
 })
 onMounted(() => {
   // init
-  const clearChart = (...charts: ECharts[]) => {
-    charts.forEach(chart => {
-      if (chart !== null && chart !== undefined) chart.dispose()
-      console.log(chart)
-    })
-  }
+
   const clearDom = (...doms: HTMLElement[]) => {
     doms.forEach(dom => {
       dispose(dom)
@@ -411,6 +410,7 @@ onMounted(() => {
 })
 onBeforeUnmount(async () => {
   loop.close()
+  clearChart(nonheapChart, heapChart, bufferPoolChart, gcChart)
 
   const actor = interpret(machine)
   actor.start()

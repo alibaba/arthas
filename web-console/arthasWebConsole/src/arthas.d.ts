@@ -87,6 +87,7 @@ type CommandReq = CommonAction<
       | "classloader -a"
       | "classloader --url-stat"
       | `sm -d ${string}`
+      | `sm ${string}`
       | `jad ${string}`
       | `dump ${string}`
       | "retransform -l"
@@ -484,13 +485,12 @@ type CommandResult = {
   };
   type: "mbean";
 } | {
-  "dumpFile": string,
-  "live": boolean ,
-  "type": "heapdump"
-} |{
-  "type": "vmtool",
-  "value": string[
-  ]
+  "dumpFile": string;
+  "live": boolean;
+  "type": "heapdump";
+} | {
+  "type": "vmtool";
+  "value": string[];
 };
 
 type EnchanceResult = {

@@ -4,16 +4,20 @@ import {
 } from "@headlessui/vue"
 import { SelectorIcon } from "@heroicons/vue/outline"
 
-
+/**
+ * 
+ * @zh 之后优化的时候可以把autoComplete的input做成伸缩式，可以由组件去
+ */
 
 const { 
   optionItems, 
   inputFn = (_)=>{},
+  optionsInit=(_)=>{},
   filterFn
 } = defineProps<{
   label: string,
   optionItems: Item[],
-  submitfn: (item: Item) => void
+  optionsInit?:(event:FocusEvent)=>void,
   filterFn?:(query:string,item:Item)=>boolean
   inputFn?: (value:string) => void
 }>()
@@ -39,12 +43,12 @@ const changeF = (event:Event &{target:HTMLInputElement}) => {
 </script>
 
 <template>
-  <Combobox v-model="selectedItem" class="flex items-center" as="form">
+  <Combobox v-model="selectedItem" class="flex items-center" as="div">
     <ComboboxLabel class="p-2">{{ label }}</ComboboxLabel>
     <div class="relative flex-1">
       <div
         class="relative w-full cursor-default overflow-hidden rounded-lg bg-white text-left border focus:outline-none hover:shadow-md transition">
-        <ComboboxInput class="w-full border-none py-2 pl-3 pr-10 leading-5 text-gray-900 " @change="changeF"
+        <ComboboxInput class="w-full border-none py-2 pl-3 pr-10 leading-5 text-gray-900 " @change="changeF" @focus.prevent="optionsInit"
           :displayValue="(item) => (item as Item).name" />
         <ComboboxButton class="absolute inset-y-0 right-0 flex items-center pr-2">
           <SelectorIcon class="h-5 w-5 text-gray-400" aria-hidden="true" />
@@ -72,7 +76,8 @@ const changeF = (event:Event &{target:HTMLInputElement}) => {
         </ComboboxOption>
       </ComboboxOptions>
     </div>
-    <button @click.prevent="submitfn(selectedItem)" class="border bg-blue-400 p-2 rounded-md mx-2 hover:opacity-50 transition">submit</button>
+    <slot :selectItem="selectedItem"></slot>
+    <!-- <button @click.prevent="submitfn(selectedItem)" class="border bg-blue-400 p-2 rounded-md mx-2 hover:opacity-50 transition">submit</button> -->
   </Combobox>
 </template>
 
