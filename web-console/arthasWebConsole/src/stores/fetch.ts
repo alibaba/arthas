@@ -1,6 +1,16 @@
+import { useMachine } from "@xstate/vue";
 import { defineStore } from "pinia";
+import { watchEffect } from "vue";
 import { publicStore } from "./public";
+import { waitFor } from 'xstate/lib/waitFor';
 // 控制fetch的store
+const getEffect = (M: ReturnType<typeof useMachine>, fn: (res: ArthasRes) => void) => watchEffect(() => {
+  if (M.state.value.context.response) {
+    const response = M.state.value.context.response
+    fn(response as ArthasRes)
+  }
+})
+type Machine = ReturnType<typeof useMachine>
 export const fetchStore = defineStore("fetch", {
   state: () => ({
     sessionId: "",
@@ -61,6 +71,28 @@ export const fetchStore = defineStore("fetch", {
     },
     waitDone(){
       if(this.wait)this.wait = false
+    },
+    getCommonResEffect: (M: Machine, fn: (body: CommonRes["body"]) => void) =>{
+      return getEffect(M,res=>{
+        if(Object.hasOwn(res,"body")){
+          fn((res as CommonRes).body)
+        }
+      })
+    },
+    
+    interruptJob(M:Machine){
+      M.send({
+        type:"SUBMIT",
+        value:{
+          action:"interrupt_job",
+          sessionId:this.sessionId,
+        } 
+      })
+    },
+
+    isReady(m:Machine){
+      return waitFor(m.service,state=>state.matches("ready"))
     }
+
   },
 });

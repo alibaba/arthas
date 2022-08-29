@@ -66,13 +66,16 @@ type AsyncReq = SessionId<
     action: "interrupt_job";
   }
   | {
-    action: "async_exec";
-    command: "dashboard";
-  }
-  | {
     action: "pull_results";
     consumerId?: string;
   }
+  | MergeObj<{
+    action: "async_exec"
+  },{
+    command:"dashboard";
+  }| {
+    command:StringInclude<"stack", 3>
+  }>
 >;
 type CommandReq = CommonAction<
   {
@@ -284,6 +287,7 @@ type MethodInfo = {
   "returnType": string;
 };
 type ClassInfo = MergeObj<ClassDetailInfo, { fields: ClassField[] }>;
+
 type CommandResult = {
   type: "command";
   state: ResState;
@@ -497,6 +501,23 @@ type CommandResult = {
     "methodCount": number;
   };
   "type": "reset";
+} | {
+      "classloader": string,
+      "cost": number,
+      "daemon": boolean,
+      "priority": number,
+      "stackTrace": {
+        "className": string,
+        "fileName": string,
+        "lineNumber": number,
+        "methodName": string,
+        "nativeMethod": boolean
+      }[],
+      "threadId": string,
+      "threadName": string,
+      // date clock
+      "ts": `${string} ${string}`,
+      "type": "stack"  
 };
 
 type EnchanceResult = {

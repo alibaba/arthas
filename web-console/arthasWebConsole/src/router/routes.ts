@@ -20,7 +20,6 @@ const routes: RouteRecordRaw[] = [
   {
     path: "/synchronize",
     component: () => import("@/views/Synchronize.vue"),
-    name:"sync",
     children: [
       {
         path: "",

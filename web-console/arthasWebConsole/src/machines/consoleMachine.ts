@@ -119,7 +119,7 @@ const machine =
                 target: "#session",
               },
               {
-                actions:"notReq",
+                actions: "notReq",
                 target: "#failure",
               },
             ],
@@ -181,7 +181,7 @@ const machine =
       asyncReq: {
         id: "asyncReq",
         tags: ["loading"],
-        // entry:'waitReq',
+        entry:'waitReq',
         invoke: {
           id: "getAsync",
           src: "requestData",
@@ -203,6 +203,38 @@ const machine =
             },
           ],
         },
+        // initial: "idle",
+        // states: {
+        //   idle: {
+        //     invoke: {
+        //       id: "asyncIdle",
+        //       src: "requestData",
+        //       onDone: [{
+        //         cond: "cmdSucceeded",
+        //         actions: ["transformAsyncRes"],
+        //         target: "pullResults",
+        //       }, {
+        //         actions: ["setErrMessage"],
+        //         target: "#failure",
+        //       }],
+        //     },
+        //   },
+        //   pullResults: {
+        //     entry:assign<CTX,ET>((ctx,e)=>{
+        //       return {
+        //         request: ctx.fetchStore.getRequest({
+        //           action: "exec",
+
+        //         })
+        //       }
+        //     }),
+        //     invoke: {
+        //       id: "pullResults",
+        //       src: "requestData",
+        //     },
+        //   },
+        //   interruptJob: {},
+        // },
       },
       success: {
         entry: ["needReportSuccess", "renderRes"],
@@ -253,6 +285,7 @@ const machine =
           return {};
         }
         const option = {} as any;
+        // sessionId undefined=>never
         Object.entries(context.inputValue).forEach(([k, v]) => {
           if (v) option[k] = v;
         });
@@ -313,7 +346,7 @@ const machine =
           type: "INPUT",
           data: ctx.inputRaw as string,
         });
-        const s = m.getSnapshot(); 
+        const s = m.getSnapshot();
         if (s?.matches("failure")) {
           return {
             inputRaw: undefined,
@@ -385,8 +418,8 @@ const machine =
       },
       notReq: assign((context) => {
         return {
-          err: "not request"
-        }
+          err: "not request",
+        };
       }),
     },
     guards: {

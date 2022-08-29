@@ -2,13 +2,12 @@
 import machine from '@/machines/consoleMachine';
 import { publicStore } from '@/stores/public';
 import { useMachine } from '@xstate/vue';
-import { subtle } from 'crypto';
 import { onBeforeMount, ref } from 'vue';
 import { waitFor } from 'xstate/lib/waitFor';
 import AutoComplete from './AutoComplete.vue';
 const { label = "inputClassName" } = defineProps<{
   label?: string,
-  submitF: (item: Item) => void
+  submitF: (classItem:Item,methodItem: Item) => void
 }>()
 const { getCommonResEffect } = publicStore()
 const searchClass = useMachine(machine)
@@ -89,8 +88,9 @@ const filterfn = (_: any, item: Item) => true
       v-slot="slotMethod">     -->
       <AutoComplete label="input Method" :option-items="optionMethod"
       :options-init="(_)=>initMethod(slotClass.selectItem.value)"
+      class="w-1/2"
       v-slot="slotMethod">
-      <button @click.prevent="submitF(slotMethod.selectItem)"
+      <button @click.prevent="submitF(slotClass.selectItem, slotMethod.selectItem)"
         class="border bg-blue-400 p-2 rounded-md mx-2 hover:opacity-50 transition">submit</button>
     </AutoComplete>
 

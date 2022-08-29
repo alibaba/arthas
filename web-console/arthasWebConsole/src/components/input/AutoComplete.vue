@@ -79,7 +79,6 @@ const changeF = (event:Event &{target:HTMLInputElement}) => {
       </ComboboxOptions>
     </div>
     <slot :selectItem="selectedItem"></slot>
-    <!-- <button @click.prevent="submitfn(selectedItem)" class="border bg-blue-400 p-2 rounded-md mx-2 hover:opacity-50 transition">submit</button> -->
   </Combobox>
 </template>
 

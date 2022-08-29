@@ -123,7 +123,8 @@ const toggleAllLoop = (open: boolean) => {
     </DisclosureButton>
     <DisclosurePanel class="pt-4 border-t-2 mt-4">
 
-      <AutoComplete label="ThreadName :" :submitfn="getConcrtetThread" :option-items="optionThread"></AutoComplete>
+      <AutoComplete label="ThreadName :" :option-items="optionThread" v-slot="slotP">
+        <button @click.prevent="getConcrtetThread(slotP.selectItem)" class="border bg-blue-400 p-2 rounded-md mx-2 hover:opacity-50 transition">submit</button></AutoComplete>
       <ul>
         <template v-if="Object.keys(threadInfo).length !== 0">
           <li class="grid place-content-center mb-4 text-3xl">stackTrace</li>

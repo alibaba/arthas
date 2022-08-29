@@ -8,6 +8,7 @@ const getEffect = (M: ReturnType<typeof useMachine>, fn: (res: ArthasRes) => voi
     fn(response as ArthasRes)
   }
 })
+
 export const publicStore = defineStore("public", { // Public项目唯一id
   state: () => ({
     userMsg: {},
@@ -27,6 +28,14 @@ export const publicStore = defineStore("public", { // Public项目唯一id
         if(Object.hasOwn(res,"body")){
           fn((res as CommonRes).body)
         }
+      })
+    },
+    interruptJob(M:ReturnType<typeof useMachine>){
+      M.send({
+        type:"SUBMIT",
+        value:{
+          action:"interrupt_job"
+        } as AsyncReq
       })
     }
   },
