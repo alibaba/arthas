@@ -56,7 +56,7 @@ const loop = getPollingLoop(() => {
     type: "SUBMIT",
     value: {
       action: "pull_results",
-    } as AsyncReq
+    } as PullResults
   })
 }, 5000)
 const isReady = () => waitFor(dashboadM.service, (state) => state.matches('ready'))

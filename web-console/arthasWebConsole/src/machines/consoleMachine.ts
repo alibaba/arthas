@@ -9,7 +9,7 @@ interface CTX {
   inputValue?: ArthasReq;
   request?: Request;
   response?: ArthasRes;
-  resArr: (ArthasResResult | SessionRes | AsyncRes)[];
+  resArr: (ArthasResResult | SessionRes | AsyncRes|PullResults)[];
   err: string;
   // 暂时先anyscript
   publicStore?: any;
@@ -314,7 +314,7 @@ const machine =
         };
       }),
       renderRes: assign((context, event) => {
-        let resArr: (ArthasResResult | SessionRes | AsyncRes)[] =
+        let resArr: (ArthasResResult | SessionRes | AsyncRes|PullResults)[] =
           context.resArr;
         const response = context.response;
         if (!response) {

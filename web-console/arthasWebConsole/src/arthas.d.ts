@@ -65,18 +65,21 @@ type AsyncReq = SessionId<
   | {
     action: "interrupt_job";
   }
-  | {
-    action: "pull_results";
-    consumerId?: string;
-  }
-  | MergeObj<{
-    action: "async_exec"
-  },{
-    command:"dashboard";
-  }| {
-    command:StringInclude<"stack", 3>
-  }>
+  | MergeObj<
+    {
+      action: "async_exec";
+    },
+    {
+      command: "dashboard";
+    } | {
+      command: StringInclude<"stack", 3>;
+    }
+  >
 >;
+type PullResults = SessionId<{
+  action: "pull_results";
+  consumerId?: string;
+}>;
 type CommandReq = CommonAction<
   {
     command:
@@ -109,7 +112,7 @@ type CommandReq = CommonAction<
   }
 >;
 
-type ArthasReq = SessionReq | CommandReq | AsyncReq;
+type ArthasReq = SessionReq | CommandReq | AsyncReq | PullResults;
 
 type StatusResult = {
   type: "status";
@@ -502,22 +505,22 @@ type CommandResult = {
   };
   "type": "reset";
 } | {
-      "classloader": string,
-      "cost": number,
-      "daemon": boolean,
-      "priority": number,
-      "stackTrace": {
-        "className": string,
-        "fileName": string,
-        "lineNumber": number,
-        "methodName": string,
-        "nativeMethod": boolean
-      }[],
-      "threadId": string,
-      "threadName": string,
-      // date clock
-      "ts": `${string} ${string}`,
-      "type": "stack"  
+  "classloader": string;
+  "cost": number;
+  "daemon": boolean;
+  "priority": number;
+  "stackTrace": {
+    "className": string;
+    "fileName": string;
+    "lineNumber": number;
+    "methodName": string;
+    "nativeMethod": boolean;
+  }[];
+  "threadId": string;
+  "threadName": string;
+  // date clock
+  "ts": `${string} ${string}`;
+  "type": "stack";
 };
 
 type EnchanceResult = {

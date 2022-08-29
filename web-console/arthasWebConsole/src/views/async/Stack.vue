@@ -7,12 +7,21 @@ import { useMachine } from '@xstate/vue';
 import { onBeforeMount, onBeforeUnmount } from 'vue';
 import { waitFor } from 'xstate/lib/waitFor';
 const fetchM = useMachine(machine)
-const {getPollingLoop, interruptJob, getCommonResEffect} = fetchStore()
+const pollingM = useMachine(machine)
+const fetchS = fetchStore()
+const {getPollingLoop, interruptJob, getCommonResEffect} = fetchS
 // const {getCommonResEffect} = publicStore()
 
 const isReady = async ()=>waitFor(fetchM.service, state=>state.matches("ready"))
-
-getCommonResEffect(fetchM,body=>{
+const loop = getPollingLoop(()=>{
+  fetchM.send({
+    type:"SUBMIT",
+    value:{
+      action:"pull_results"
+    } as PullResults
+  })
+})
+getCommonResEffect(pollingM,body=>{
   // body.results.forEach(result=>{
   //   if(result.type === "stack") {
   //     console.log(result)
@@ -22,37 +31,23 @@ getCommonResEffect(fetchM,body=>{
 })
 onBeforeMount(()=>{
   fetchM.send("INIT")
+  pollingM.send("INIT")
+  // loop.open()
 })
-onBeforeUnmount(async ()=>{
+onBeforeUnmount(()=>{
+  // fetchM.send({
+  //   type:"SUBMIT",
+  //   value:{
+  //     action:"interrupt_job"
+  //   } as AsyncReq
+  // })
   loop.close()
   interruptJob(fetchM)
-  await isReady()
-  fetchM.send({
-    type:"SUBMIT",
-    value:{
-      action:"interrupt_job"
-    } as AsyncReq
-  })
-  await isReady()
-  fetchM.send({
-    type:"SUBMIT",
-    value:{
-      action:"close_session"
-    } as SessionReq
-  })
 })
-const loop = getPollingLoop(()=>{
-  fetchM.send({
-    type:"SUBMIT",
-    value:{
-      action:"pull_results"
-    } as AsyncReq
-  })
-})
+
 const submit=async (classI: Item,methI: Item)=>{
-  loop.close()
-  interruptJob(fetchM)
-  await isReady()
+  // interruptJob(fetchM)
+  // await isReady()
   fetchM.send({
     type:"SUBMIT",
     value: {
@@ -60,9 +55,9 @@ const submit=async (classI: Item,methI: Item)=>{
       command:`stack ${classI.value} ${methI.value}`
     } as AsyncReq
   })
-  // await waitFor(fetchM.service, state=>state.matches("success"))
-  await isReady()
   loop.open()
+  // await waitFor(fetchM.service, state=>state.matches("success"))
+  // await isReady()
 }
 </script>
 
