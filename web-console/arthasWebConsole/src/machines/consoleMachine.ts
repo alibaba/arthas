@@ -9,7 +9,7 @@ interface CTX {
   inputValue?: ArthasReq;
   request?: Request;
   response?: ArthasRes;
-  resArr: (ArthasResResult | SessionRes | AsyncRes|PullResults)[];
+  resArr: (ArthasResResult | SessionRes | AsyncRes)[];
   err: string;
   // 暂时先anyscript
   publicStore?: any;
@@ -203,41 +203,10 @@ const machine =
             },
           ],
         },
-        // initial: "idle",
-        // states: {
-        //   idle: {
-        //     invoke: {
-        //       id: "asyncIdle",
-        //       src: "requestData",
-        //       onDone: [{
-        //         cond: "cmdSucceeded",
-        //         actions: ["transformAsyncRes"],
-        //         target: "pullResults",
-        //       }, {
-        //         actions: ["setErrMessage"],
-        //         target: "#failure",
-        //       }],
-        //     },
-        //   },
-        //   pullResults: {
-        //     entry:assign<CTX,ET>((ctx,e)=>{
-        //       return {
-        //         request: ctx.fetchStore.getRequest({
-        //           action: "exec",
-
-        //         })
-        //       }
-        //     }),
-        //     invoke: {
-        //       id: "pullResults",
-        //       src: "requestData",
-        //     },
-        //   },
-        //   interruptJob: {},
-        // },
       },
       success: {
         entry: ["needReportSuccess", "renderRes"],
+        tags:"result",
         always: {
           actions: ["reset"],
           target: "ready",
@@ -245,12 +214,16 @@ const machine =
       },
       failure: {
         id: "failure",
+        tags:"result",
         entry: "outputErr",
         always: {
           actions: ["reset"],
           target: "ready",
         },
       },
+      hist:{
+        type:"history"
+      }
     },
   }, {
     services: {
@@ -314,7 +287,7 @@ const machine =
         };
       }),
       renderRes: assign((context, event) => {
-        let resArr: (ArthasResResult | SessionRes | AsyncRes|PullResults)[] =
+        let resArr: (ArthasResResult | SessionRes | AsyncRes)[] =
           context.resArr;
         const response = context.response;
         if (!response) {
@@ -442,7 +415,6 @@ const machine =
               return ["READY", "TERMINATED"].includes(
                 (event.data as AsyncRes).body.jobStatus,
               );
-              return true;
             }
           }
           // SessionRes

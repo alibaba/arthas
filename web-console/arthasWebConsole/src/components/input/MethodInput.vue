@@ -44,7 +44,7 @@ getCommonResEffect(searchClass, body => {
 })
 
 const changeClass = (value: string) => {
-  if (value.length > 2 && searchClass.state.value.matches("ready")) {
+  if (searchClass.state.value.matches("ready")) {
     searchClass.send({
       type: "SUBMIT",
       value: {
@@ -81,15 +81,14 @@ const filterfn = (_: any, item: Item) => true
 <template>
   <AutoComplete :label="label" :option-items="optionClass" :input-fn="changeClass" :filter-fn="filterfn"
     v-slot="slotClass">
-    <!-- <AutoComplete label="input Method" :option-items="optionMethod"
-      :options-init="(_)=>"
+    <AutoComplete label="input Method" :option-items="optionMethod"
       :input-fn="(value) => changeMethod(slotClass.selectItem.value as string, value)" 
       :filter-fn="filterfn"
-      v-slot="slotMethod">     -->
-      <AutoComplete label="input Method" :option-items="optionMethod"
+      v-slot="slotMethod">    
+      <!-- <AutoComplete label="input Method" :option-items="optionMethod"
       :options-init="(_)=>initMethod(slotClass.selectItem.value)"
       class="w-1/2"
-      v-slot="slotMethod">
+      v-slot="slotMethod"> -->
       <button @click.prevent="submitF(slotClass.selectItem, slotMethod.selectItem)"
         class="border bg-blue-400 p-2 rounded-md mx-2 hover:opacity-50 transition">submit</button>
     </AutoComplete>

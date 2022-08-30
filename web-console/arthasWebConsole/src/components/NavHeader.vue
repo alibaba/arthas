@@ -5,8 +5,10 @@ import { onBeforeMount, Ref, ref, watchEffect } from 'vue';
 import { RefreshIcon, LogoutIcon, LoginIcon } from '@heroicons/vue/outline';
 import { fetchStore } from '@/stores/fetch';
 import machine from "@/machines/consoleMachine"
-
-const { state, send } = useMachine(machine)
+import { publicStore } from '@/stores/public';
+const fetchM = useMachine(machine)
+const {getCommonResEffect } = publicStore()
+const { state, send } = fetchM
 const fetchS = fetchStore()
 const sessionM = useMachine(machine)
 const version = ref("N/A")
@@ -16,13 +18,9 @@ const vCmd: CommandReq = {
 }
 
 const restBtnclass: Ref<'animate-spin-rev-pause' | 'animate-spin-rev-running'> = ref('animate-spin-rev-pause')
-watchEffect(() => {
-  if (state.value.context.response) {
-    // 直接遍历以后会有性能问题
-    state.value.context.resArr.forEach(res => {
-      if ('type' in res && res.type == "version") version.value = res.version
-    })
-  }
+getCommonResEffect(fetchM,body=>{
+  const result = body.results[0]
+  if(result.type === "version") version.value = result.version
 })
 
 watchEffect(() => {
@@ -35,26 +33,32 @@ onBeforeMount(() => {
     type: "SUBMIT",
     value: vCmd
   })
-
   sessionM.send("INIT")
 })
 // 手动重来
-const reset = () => send({
-  type: "SUBMIT",
-  value: vCmd
-})
-
-const loop = fetchS.getPollingLoop(() => sessionM.send({
-  type: "SUBMIT",
-  value: {
-    action: "pull_results",
-  } as any
-}))
+const reset = () => {
+  send({
+    type: "SUBMIT",
+    value: vCmd
+  })
+}
+const interruptEvent = ()=>{
+  fetchS.interruptJob()
+}
+// const loop = fetchS.getPollingLoop(() => sessionM.send({
+//   type: "SUBMIT",
+//   value: {
+//     action: "pull_results",
+//     sessionId: undefined,
+//     consumerId: undefined
+//   } 
+// }))
 
 const logout = async () => {
 
   restBtnclass.value = "animate-spin-rev-running"
   // loop.close()
+  interruptEvent()
   await waitFor(sessionM.service, state => state.matches("ready"))
   sessionM.send("SUBMIT", {
     value: {
@@ -81,6 +85,11 @@ const login = async () => {
       <img src="@/assets/arthas.png" alt="logo" class=" w-3/4" />
     </div>
     <div class="flex items-center h-20">
+      <button
+        v-if="fetchS.jobRunning"
+        @click.prevent="interruptEvent"
+        class="bg-red-600 text-white h-1/2 p-2 rounded hover:bg-red-400 transition mr-4"
+      >interrupt</button>
       <button class=" rounded-full bg-gray-200 h-12 w-12 flex justify-center items-center mr-4 " @click="reset">
         <refresh-icon class=" text-gray-500 h-3/4 w-3/4" :class="restBtnclass" />
       </button>

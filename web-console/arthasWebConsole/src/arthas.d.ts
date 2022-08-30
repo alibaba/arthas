@@ -126,7 +126,7 @@ type StatusResult = {
 
 type InputResult = {
   inputStatus: "ALLOW_INPUT" | "DISABLED" | "ALLOW_INTERRUPT";
-  type: never;
+  type: "input_status";
 };
 
 type VmOption = MergeObj<
@@ -528,8 +528,12 @@ type EnchanceResult = {
   effect: Record<"listenerId" | "cost" | "classCount" | "methodCount", number>;
   type: "enhancer";
 };
-
+type MessageResult = {
+  message: string;
+  type: "message";
+};
 type ArthasResResult = JobId<
+  | MessageResult
   | StatusResult
   | InputResult
   | CommandResult

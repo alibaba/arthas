@@ -3,6 +3,7 @@ import { defineStore } from "pinia";
 import { watchEffect } from "vue";
 import { publicStore } from "./public";
 import { waitFor } from 'xstate/lib/waitFor';
+import permachine from "@/machines/perRequestMachine";
 // 控制fetch的store
 const getEffect = (M: ReturnType<typeof useMachine>, fn: (res: ArthasRes) => void) => watchEffect(() => {
   if (M.state.value.context.response) {
@@ -17,7 +18,9 @@ export const fetchStore = defineStore("fetch", {
     consumerId: "",
     requestId: "",
     online: false,
-    wait:false
+    wait:false,
+    // 所有用pollingLoop都要
+    jobRunning:false
   }),
   getters: {
     getRequest: (state) =>
@@ -39,13 +42,15 @@ export const fetchStore = defineStore("fetch", {
   actions: {
     getPollingLoop(hander: Function, step: number = 1000) {
       let id = -1;
+      const that = this
       return {
         open() {
           if (!this.isOn()) {
+            that.jobRunning = true
             hander()
             id = setInterval(
               (() => {
-                if (publicStore().isErr) {
+                if (publicStore().isErr || !that.jobRunning) {
                   this.close();
                 } else {
                   hander();
@@ -57,6 +62,7 @@ export const fetchStore = defineStore("fetch", {
         },
         close() {
           if (this.isOn()) {
+            that.jobRunning = false
             clearInterval(id);
             id = -1;
           }
@@ -80,16 +86,23 @@ export const fetchStore = defineStore("fetch", {
       })
     },
     
-    interruptJob(M:Machine){
-      M.send({
-        type:"SUBMIT",
-        value:{
-          action:"interrupt_job",
-          sessionId:this.sessionId,
-        } 
-      })
+    interruptJob(){  
+      if(this.jobRunning) {
+        const actor = useMachine(permachine)
+        actor.send("INIT")
+        actor.send({
+          type:"SUBMIT",
+          value:{
+            action:"interrupt_job",
+            sessionId:this.sessionId,
+          } 
+        })
+      }
+      this.jobRunning = false
     },
-
+    openJobRun(){
+      this.jobRunning = true
+    },
     isReady(m:Machine){
       return waitFor(m.service,state=>state.matches("ready"))
     }

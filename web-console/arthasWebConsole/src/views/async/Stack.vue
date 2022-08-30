@@ -1,70 +1,82 @@
 <script setup lang="ts">
 import MethodInput from '@/components/input/MethodInput.vue';
 import machine from '@/machines/consoleMachine';
+import permachine from '@/machines/perRequestMachine';
 import { fetchStore } from '@/stores/fetch';
 import { publicStore } from '@/stores/public';
-import { useMachine } from '@xstate/vue';
-import { onBeforeMount, onBeforeUnmount } from 'vue';
+import { useMachine, useInterpret } from '@xstate/vue';
+import { onBeforeMount, onBeforeUnmount, reactive } from 'vue';
 import { waitFor } from 'xstate/lib/waitFor';
-const fetchM = useMachine(machine)
+import CmdResMenu from '@/components/show/CmdResMenu.vue';
+const fetchM = useInterpret(permachine)
 const pollingM = useMachine(machine)
 const fetchS = fetchStore()
-const {getPollingLoop, interruptJob, getCommonResEffect} = fetchS
+const { getPollingLoop, interruptJob, getCommonResEffect } = fetchS
 // const {getCommonResEffect} = publicStore()
 
-const isReady = async ()=>waitFor(fetchM.service, state=>state.matches("ready"))
-const loop = getPollingLoop(()=>{
-  fetchM.send({
-    type:"SUBMIT",
-    value:{
-      action:"pull_results"
-    } as PullResults
+const loop = getPollingLoop(() => {
+  pollingM.send({
+    type: "SUBMIT",
+    value: {
+      action: "pull_results",
+      sessionId: undefined,
+      consumerId: undefined
+    }
   })
 })
-getCommonResEffect(pollingM,body=>{
-  // body.results.forEach(result=>{
-  //   if(result.type === "stack") {
-  //     console.log(result)
-  //   }
-  // })
+const pollResults = reactive([] as ArthasResResult[])
+const enhancer = reactive(new Map())
+getCommonResEffect(pollingM, body => {
   console.log(body)
+  if (body.results.length > 0) {
+    body.results.forEach(result => {
+      if (result.type === "stack") {
+        pollResults.push(result)
+      }
+      if (result.type === "enhancer") {
+        enhancer.clear()
+        enhancer.set("success", result.success)
+        for (const k in result.effect) {
+          enhancer.set(k, [result.effect[k as "cost"]])
+        }
+      }
+    })
+  }
 })
-onBeforeMount(()=>{
-  fetchM.send("INIT")
+onBeforeMount(() => {
+  // fetchM.send("INIT")
   pollingM.send("INIT")
   // loop.open()
 })
-onBeforeUnmount(()=>{
-  // fetchM.send({
-  //   type:"SUBMIT",
-  //   value:{
-  //     action:"interrupt_job"
-  //   } as AsyncReq
-  // })
+onBeforeUnmount(() => {
   loop.close()
-  interruptJob(fetchM)
 })
 
-const submit=async (classI: Item,methI: Item)=>{
-  // interruptJob(fetchM)
-  // await isReady()
+const submit = async (classI: Item, methI: Item) => {
+
+  fetchM.start()
+  fetchM.send("INIT")
   fetchM.send({
-    type:"SUBMIT",
+    type: "SUBMIT",
     value: {
-      action:"async_exec",
-      command:`stack ${classI.value} ${methI.value}`
+      action: "async_exec",
+      command: `stack ${classI.value} ${methI.value}`
     } as AsyncReq
   })
-  loop.open()
-  // await waitFor(fetchM.service, state=>state.matches("success"))
-  // await isReady()
+  const state = await waitFor(fetchM, state => state.hasTag("result"))
+  console.log(state.value)
+  if (state.matches("success")) {
+    loop.open()
+    fetchS.openJobRun()
+  }
+  fetchM.stop()
 }
 </script>
 
 <template>
-<MethodInput :submit-f="submit"></MethodInput>
+  <MethodInput :submit-f="submit"></MethodInput>
+  <template v-if="pollResults.length > 0">
+    {{  pollResults  }}
+    <CmdResMenu title="enhancer" :map="enhancer"></CmdResMenu>
+  </template>
 </template>
-
-<style scoped>
-
-</style>
