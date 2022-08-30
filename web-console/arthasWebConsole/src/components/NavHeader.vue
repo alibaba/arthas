@@ -45,19 +45,11 @@ const reset = () => {
 const interruptEvent = ()=>{
   fetchS.interruptJob()
 }
-// const loop = fetchS.getPollingLoop(() => sessionM.send({
-//   type: "SUBMIT",
-//   value: {
-//     action: "pull_results",
-//     sessionId: undefined,
-//     consumerId: undefined
-//   } 
-// }))
 
 const logout = async () => {
 
   restBtnclass.value = "animate-spin-rev-running"
-  // loop.close()
+  
   interruptEvent()
   await waitFor(sessionM.service, state => state.matches("ready"))
   sessionM.send("SUBMIT", {
@@ -73,8 +65,6 @@ const login = async () => {
       action: "init_session"
     }
   })
-  // await waitFor(sessionM.service, state => state.matches("ready"))
-  // loop.open()
 }
 
 </script>

@@ -33,9 +33,10 @@ getCommonResEffect(pollingM, body => {
       if (result.type === "stack") {
         pollResults.push(result)
       }
+
       if (result.type === "enhancer") {
         enhancer.clear()
-        enhancer.set("success", result.success)
+        enhancer.set("success", [result.success])
         for (const k in result.effect) {
           enhancer.set(k, [result.effect[k as "cost"]])
         }
@@ -53,7 +54,8 @@ onBeforeUnmount(() => {
 })
 
 const submit = async (classI: Item, methI: Item) => {
-
+  pollResults.length = 0
+  enhancer.clear()
   fetchM.start()
   fetchM.send("INIT")
   fetchM.send({
@@ -75,8 +77,8 @@ const submit = async (classI: Item, methI: Item) => {
 
 <template>
   <MethodInput :submit-f="submit"></MethodInput>
-  <template v-if="pollResults.length > 0">
+  <template v-if="pollResults.length > 0 || enhancer.size > 0">
+    <CmdResMenu title="enhancer" :map="enhancer" open></CmdResMenu>
     {{  pollResults  }}
-    <CmdResMenu title="enhancer" :map="enhancer"></CmdResMenu>
   </template>
 </template>

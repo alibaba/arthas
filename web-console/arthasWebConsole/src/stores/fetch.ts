@@ -3,6 +3,7 @@ import { defineStore } from "pinia";
 import { watchEffect } from "vue";
 import { publicStore } from "./public";
 import { waitFor } from 'xstate/lib/waitFor';
+import { interpret } from 'xstate'
 import permachine from "@/machines/perRequestMachine";
 // 控制fetch的store
 const getEffect = (M: ReturnType<typeof useMachine>, fn: (res: ArthasRes) => void) => watchEffect(() => {
@@ -88,7 +89,10 @@ export const fetchStore = defineStore("fetch", {
     
     interruptJob(){  
       if(this.jobRunning) {
-        const actor = useMachine(permachine)
+        const actor = interpret(permachine)
+        console.log('\'')
+        actor.start()
+        console.log('1212')
         actor.send("INIT")
         actor.send({
           type:"SUBMIT",
