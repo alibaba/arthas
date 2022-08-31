@@ -2,26 +2,31 @@ import { useMachine } from "@xstate/vue";
 import { defineStore } from "pinia";
 import { watchEffect } from "vue";
 import { publicStore } from "./public";
-import { waitFor } from 'xstate/lib/waitFor';
-import { interpret } from 'xstate'
+import { waitFor } from "xstate/lib/waitFor";
+import { interpret } from "xstate";
 import permachine from "@/machines/perRequestMachine";
+import { number } from "echarts";
 // 控制fetch的store
-const getEffect = (M: ReturnType<typeof useMachine>, fn: (res: ArthasRes) => void) => watchEffect(() => {
-  if (M.state.value.context.response) {
-    const response = M.state.value.context.response
-    fn(response as ArthasRes)
-  }
-})
-type Machine = ReturnType<typeof useMachine>
+const getEffect = (
+  M: ReturnType<typeof useMachine>,
+  fn: (res: ArthasRes) => void,
+) =>
+  watchEffect(() => {
+    if (M.state.value.context.response) {
+      const response = M.state.value.context.response;
+      fn(response as ArthasRes);
+    }
+  });
+type Machine = ReturnType<typeof useMachine>;
 export const fetchStore = defineStore("fetch", {
   state: () => ({
     sessionId: "",
     consumerId: "",
     requestId: "",
     online: false,
-    wait:false,
+    wait: false,
     // 所有用pollingLoop都要
-    jobRunning:false
+    jobRunning: false,
   }),
   getters: {
     getRequest: (state) =>
@@ -41,17 +46,26 @@ export const fetchStore = defineStore("fetch", {
       },
   },
   actions: {
-    getPollingLoop(hander: Function, step: number = 1000) {
+    getPollingLoop(
+      hander: Function,
+      options: { step?: number; globalIntrupt?: boolean } = {
+        step: 1000,
+        globalIntrupt: false,
+      },
+    ) {
       let id = -1;
-      const that = this
+      const { step, globalIntrupt } = options;
+      const that = this;
       return {
         open() {
           if (!this.isOn()) {
-            that.jobRunning = true
-            hander()
+            if (globalIntrupt) that.jobRunning = true;
+            hander();
             id = setInterval(
               (() => {
-                if (publicStore().isErr || !that.jobRunning) {
+                if (
+                  publicStore().isErr || (!that.jobRunning && globalIntrupt)
+                ) {
                   this.close();
                 } else {
                   hander();
@@ -63,7 +77,7 @@ export const fetchStore = defineStore("fetch", {
         },
         close() {
           if (this.isOn()) {
-            that.jobRunning = false
+            if (globalIntrupt) that.jobRunning = false;
             clearInterval(id);
             id = -1;
           }
@@ -73,43 +87,42 @@ export const fetchStore = defineStore("fetch", {
         },
       };
     },
-    onWait(){
-      if(!this.wait)this.wait = true
+    onWait() {
+      if (!this.wait) this.wait = true;
     },
-    waitDone(){
-      if(this.wait)this.wait = false
+    waitDone() {
+      if (this.wait) this.wait = false;
     },
-    getCommonResEffect: (M: Machine, fn: (body: CommonRes["body"]) => void) =>{
-      return getEffect(M,res=>{
-        if(Object.hasOwn(res,"body")){
-          fn((res as CommonRes).body)
+    getCommonResEffect: (M: Machine, fn: (body: CommonRes["body"]) => void) => {
+      return getEffect(M, (res) => {
+        if (Object.hasOwn(res, "body")) {
+          fn((res as CommonRes).body);
         }
-      })
+      });
     },
-    
-    interruptJob(){  
-      if(this.jobRunning) {
-        const actor = interpret(permachine)
-        console.log('\'')
-        actor.start()
-        console.log('1212')
-        actor.send("INIT")
-        actor.send({
-          type:"SUBMIT",
-          value:{
-            action:"interrupt_job",
-            sessionId:this.sessionId,
-          } 
-        })
-      }
-      this.jobRunning = false
-    },
-    openJobRun(){
-      this.jobRunning = true
-    },
-    isReady(m:Machine){
-      return waitFor(m.service,state=>state.matches("ready"))
-    }
 
+    interruptJob() {
+      if (this.jobRunning) {
+        const actor = interpret(permachine);
+        console.log("'");
+        actor.start();
+        console.log("1212");
+        actor.send("INIT");
+        actor.send({
+          type: "SUBMIT",
+          value: {
+            action: "interrupt_job",
+            sessionId: this.sessionId,
+          },
+        });
+      }
+      this.jobRunning = false;
+    },
+    openJobRun() {
+      this.jobRunning = true;
+    },
+    isReady(m: Machine) {
+      return waitFor(m.service, (state) => state.matches("ready"));
+    },
   },
 });

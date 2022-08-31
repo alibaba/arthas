@@ -23,15 +23,30 @@ const loop = getPollingLoop(() => {
       consumerId: undefined
     }
   })
+}, {
+  globalIntrupt: true
 })
-const pollResults = reactive([] as ArthasResResult[])
+const pollResults = reactive([] as [string,Map<string, string[]>][])
 const enhancer = reactive(new Map())
 getCommonResEffect(pollingM, body => {
   console.log(body)
   if (body.results.length > 0) {
     body.results.forEach(result => {
       if (result.type === "stack") {
-        pollResults.push(result)
+        const map = new Map()
+        Object
+          .entries(result)
+          .filter(([k, _]) => !["jobId", "type","ts"].includes(k))
+          .forEach(([k, v]) => {
+            let val:string[] = []
+            if (k === "stackTrace") {
+              val = (v as object[]).map(obj => JSON.stringify(obj))
+            } else{
+              val.push(v.toString())
+            }
+            map.set(k,val)
+          })
+        pollResults.unshift([result.ts,map])
       }
 
       if (result.type === "enhancer") {
@@ -66,10 +81,10 @@ const submit = async (classI: Item, methI: Item) => {
     } as AsyncReq
   })
   const state = await waitFor(fetchM, state => state.hasTag("result"))
+  
   console.log(state.value)
   if (state.matches("success")) {
     loop.open()
-    fetchS.openJobRun()
   }
   fetchM.stop()
 }
@@ -79,6 +94,10 @@ const submit = async (classI: Item, methI: Item) => {
   <MethodInput :submit-f="submit"></MethodInput>
   <template v-if="pollResults.length > 0 || enhancer.size > 0">
     <CmdResMenu title="enhancer" :map="enhancer" open></CmdResMenu>
-    {{  pollResults  }}
+    <ul class=" pointer-events-auto mt-10">
+      <template v-for="(result, i) in pollResults" :key="i">
+        <CmdResMenu :title="result[0]" :map="result[1]" open></CmdResMenu>
+      </template>
+    </ul>
   </template>
 </template>

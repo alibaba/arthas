@@ -38,13 +38,13 @@ watchEffect(() => {
               <ExclamationCircleIcon class="w-12 h-12 text-red-500" />
             </DialogTitle>
             <DialogDescription as="section"
-              class="flex-auto self-stretch bg-slate-50 my-10 rounded p-2 break-all max-w-4xl">
+              class="flex-auto self-stretch bg-slate-50 my-10 rounded p-2 break-all max-w-4xl overflow-auto">
               reason:
               {{ store.ErrMessage }}
             </DialogDescription>
 
             <button @click="setIsOpen(false)"
-              class="border bg-gray-200 w-40 h-10 rounded-full hover:bg-gray-500 transition">了解</button>
+              class="border bg-gray-200 w-40 h-10 rounded-full hover:bg-gray-500 transition hover:text-white">了解</button>
           </DialogPanel>
         </TransitionChild>
       </div>

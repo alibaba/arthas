@@ -58,7 +58,7 @@ const loop = getPollingLoop(() => {
       action: "pull_results",
     } as PullResults
   })
-}, 5000)
+})
 const isReady = () => waitFor(dashboadM.service, (state) => state.matches('ready'))
 const toMb = (b: number) => Math.floor(b / 1024 / 1024)
 const gcInfos = reactive(new Map<string, string[]>())

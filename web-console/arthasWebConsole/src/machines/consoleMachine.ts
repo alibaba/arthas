@@ -152,6 +152,7 @@ const machine =
             },
           ],
         },
+        states: {},
       },
       session: {
         id: "session",
@@ -181,7 +182,7 @@ const machine =
       asyncReq: {
         id: "asyncReq",
         tags: ["loading"],
-        entry:'waitReq',
+        entry: "waitReq",
         invoke: {
           id: "getAsync",
           src: "requestData",
@@ -206,7 +207,7 @@ const machine =
       },
       success: {
         entry: ["needReportSuccess", "renderRes"],
-        tags:"result",
+        tags: "result",
         always: {
           actions: ["reset"],
           target: "ready",
@@ -214,16 +215,16 @@ const machine =
       },
       failure: {
         id: "failure",
-        tags:"result",
+        tags: "result",
         entry: "outputErr",
         always: {
           actions: ["reset"],
           target: "ready",
         },
       },
-      hist:{
-        type:"history"
-      }
+      hist: {
+        type: "history",
+      },
     },
   }, {
     services: {
@@ -268,14 +269,16 @@ const machine =
           inputValue: option as ArthasReq,
         };
       }),
-      transformRes: assign({
-        response: (context, event) => {
-          if (event.type !== "done.invoke.getCommon") return undefined;
-          return event.data;
-        },
+      transformRes: assign((context, event) => {
+        if (event.type !== "done.invoke.getCommon") return {};
+
+        return {
+          response: event.data,
+        };
       }),
       transformSessionRes: assign((context, event) => {
         if (event.type !== "done.invoke.getSession") return {};
+
         return {
           response: event.data,
         };
@@ -408,9 +411,19 @@ const machine =
         if (["SCHEDULED", "SUCCEEDED"].includes(event.data.state)) {
           if (Object.hasOwn(event.data, "body")) {
             if (Object.hasOwn(event.data.body, "results")) {
-              return (event.data as CommonRes).body.results.every((result) =>
-                result.type === "status" ? result.statusCode === 0 : true
-              );
+              return (event.data as CommonRes).body.results.every((result) => {
+                if (result.type === "status" && result.statusCode !== 0) {
+                  return false;
+                }
+                if (
+                  result.type === "message" &&
+                  result.message ===
+                    "all consumers are unhealthy, current job was interrupted."
+                ) {
+                  return false;
+                }
+                return true;
+              });
             } else {
               return ["READY", "TERMINATED"].includes(
                 (event.data as AsyncRes).body.jobStatus,
@@ -423,19 +436,6 @@ const machine =
 
         return false;
       },
-      // notSession: (context) => {
-      //   // 为了触发类型计算瞎写的
-      //   // if (event.type !== "SUBMIT") return true;
-      //   // if (typeof context.inputValue.value === "string") return false;
-      //   if (!context) return false;
-      //   if (
-      //     ["join_session", "init_session", "close_session", "interrupt_job"]
-      //       .includes(context.inputValue!.action)
-      //   ) {
-      //     return false;
-      //   }
-      //   return true;
-      // },
       isSession: (context) => {
         if (!context) return false;
         if (
@@ -450,7 +450,7 @@ const machine =
       isCommon: (context) => {
         if (!context) return false;
         if (
-          ["exec"]
+          ["exec", "pull_results"]
             .includes(context.inputValue!.action)
         ) {
           console.log("isCommon");
@@ -461,7 +461,7 @@ const machine =
       isAsync: (context) => {
         if (!context) return false;
         if (
-          ["async_exec", "pull_results"]
+          ["async_exec"]
             .includes(context.inputValue!.action)
         ) {
           console.log("isAsync");
