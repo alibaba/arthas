@@ -73,10 +73,10 @@ let nonheapChart: ECharts
 let bufferPoolChart: ECharts
 let gcChart: ECharts
 const clearChart = (...charts: ECharts[]) => {
-    charts.forEach(chart => {
-      if (chart !== null && chart !== undefined) chart.dispose()
-    })
-  }
+  charts.forEach(chart => {
+    if (chart !== null && chart !== undefined) chart.dispose()
+  })
+}
 getCommonResEffect(dashboadResM, body => {
   if (body.results.length > 0 && dashboardId >= 0) {
     const result = body.results.find(v => v.type === "dashboard" && v.jobId === dashboardId)
@@ -88,12 +88,12 @@ getCommonResEffect(dashboadResM, body => {
       result.memoryInfo.heap.filter(v => v.name !== "heap").forEach(v => {
         const arr: string[] = []
 
-        arr.push('max : ' + toMb(v.max) + 'M')
-        arr.push('total : ' + toMb(v.total) + 'M')
-        arr.push('used : ' + toMb(v.used) + 'M')
+        arr.push('max : ' + toMb(v.max))
+        arr.push('total : ' + toMb(v.total) )
+        arr.push('used : ' + toMb(v.used) )
 
         const usage: number = (v.max > 0 ? (v.used / v.max) : (v.used / v.total)) * 100
-        heaparr.push({ value: toMb(v.used), name: `${v.name}: ${toMb(v.used) + 'M'}(${usage.toFixed(2)}%)` })
+        heaparr.push({ value: toMb(v.used), name: `${v.name}(${usage.toFixed(2)}%)` })
 
         arr.push(usage + '%')
 
@@ -115,11 +115,11 @@ getCommonResEffect(dashboadResM, body => {
       result.memoryInfo.nonheap.filter(v => v.name !== "nonheap").forEach(v => {
         const arr: string[] = []
 
-        arr.push('max : ' + toMb(v.max) + 'M')
-        arr.push('total : ' + toMb(v.total) + 'M')
-        arr.push('used : ' + toMb(v.used) + 'M')
+        arr.push('max : ' + toMb(v.max) )
+        arr.push('total : ' + toMb(v.total) )
+        arr.push('used : ' + toMb(v.used) )
         const usage: number = (v.used / v.total) * 100
-        nonheaparr.push({ value: toMb(v.used), name: `${v.name}: ${toMb(v.used) + 'M'}(${usage.toFixed(2)}%)` })
+        nonheaparr.push({ value: toMb(v.used), name: `${v.name}(${usage.toFixed(2)}%)` })
 
         arr.push(usage * 100 + '%')
 
@@ -131,7 +131,7 @@ getCommonResEffect(dashboadResM, body => {
         value: number, name: string,
       }[] = []
       result.memoryInfo.buffer_pool.filter(v => v.name !== "buffer_pool;").forEach(v => {
-        bufferPoolarr.push({ value: toMb(v.used), name: `${v.name}: ${toMb(v.used)}M` })
+        bufferPoolarr.push({ value: toMb(v.used), name: `${v.name}` })
 
       })
       bufferPoolChart && bufferPoolChart.setOption({ series: { data: bufferPoolarr } } as EChartsOption)
@@ -223,7 +223,7 @@ onMounted(() => {
   const nonheapDom = document.getElementById('nonheapMemory')!
   const bufferPoolDom = document.getElementById('bufferPoolMemory')!
   const gcDom = document.getElementById('gc-info')!
-  clearDom(heapDom,nonheapDom,bufferPoolDom,gcDom)
+  clearDom(heapDom, nonheapDom, bufferPoolDom, gcDom)
   echarts.use(
     [TooltipComponent, LegendComponent, PieChart, SVGRenderer, LabelLayout, ToolboxComponent, GridComponent, BarChart, LineChart, UniversalTransition]
   );
@@ -232,7 +232,8 @@ onMounted(() => {
 
   const heapoption: EChartsOption = {
     tooltip: {
-      trigger: 'item'
+      trigger: 'item',
+      formatter: '{b}:{c}M {d}'
     },
     legend: {
       top: '5%',
@@ -246,7 +247,7 @@ onMounted(() => {
         avoidLabelOverlap: true,
         label: {
           show: false,
-          position: 'center'
+          position: 'center',
         },
         labelLine: {
           show: false
@@ -258,7 +259,8 @@ onMounted(() => {
   };
   const nonheapoption: EChartsOption = {
     tooltip: {
-      trigger: 'item'
+      trigger: 'item',
+      formatter: '{b}:{c}M'
     },
     legend: {
       top: '5%',
@@ -272,7 +274,8 @@ onMounted(() => {
         avoidLabelOverlap: false,
         label: {
           show: false,
-          position: 'center'
+          position: 'center',
+          formatter: '{b}:{c}M'
         },
         labelLine: {
           show: false
@@ -284,7 +287,8 @@ onMounted(() => {
   };
   const bufferPooloption: EChartsOption = {
     tooltip: {
-      trigger: 'item'
+      trigger: 'item',
+      formatter: '{c}M'
     },
     legend: {
       top: '5%',
@@ -298,7 +302,7 @@ onMounted(() => {
         avoidLabelOverlap: true,
         label: {
           show: false,
-          position: 'center'
+          position: 'outside',
         },
         labelLine: {
           show: false
@@ -425,9 +429,9 @@ onBeforeUnmount(async () => {
   a2.start()
   a2.send("INIT")
   a2.send({
-    type:"SUBMIT",
-    value:{
-      action:"close_session"
+    type: "SUBMIT",
+    value: {
+      action: "close_session"
     } as SessionReq
   })
 })

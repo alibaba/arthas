@@ -73,6 +73,8 @@ type AsyncReq = SessionId<
       command: "dashboard";
     } | {
       command: StringInclude<"stack", 3>;
+    } | {
+      command:`monitor -c ${number} ${string} ${string}`
     }
   >
 >;
@@ -521,6 +523,18 @@ type CommandResult = {
   // date clock
   "ts": `${string} ${string}`;
   "type": "stack";
+} | {
+  monitorDataList: [
+    {
+      "className": string;
+      "cost": number;
+      "failed": number;
+      "methodName": number;
+      "success": number;
+      "total": number;
+    },
+  ];
+  type: "monitor";
 };
 
 type EnchanceResult = {

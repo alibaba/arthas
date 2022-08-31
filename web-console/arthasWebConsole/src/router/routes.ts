@@ -78,12 +78,16 @@ const routes: RouteRecordRaw[] = [
       {
         path:"tt",
         component:()=>import("@/views/async/Tt.vue")
-      },{
+      },
+      {
         path:"ptofiler",
         component:()=>import("@/views/async/Profiler.vue")
       },{
         path:"stack",
         component:()=>import("@/views/async/Stack.vue")
+      },{
+        path:"monitor",
+        component: ()=>import("@/views/async/Monitor.vue")
       }
     ]
   }

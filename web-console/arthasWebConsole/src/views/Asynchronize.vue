@@ -5,6 +5,9 @@ const routes: { cmd: string, url: string }[] = [
   { cmd: 'tt', url: 'tt' },
   {
     cmd: 'stack', url: "stack"
+  }, {
+    cmd: 'monitor',
+    url: 'monitor'
   }
 ]
 </script>
