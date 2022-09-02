@@ -1,10 +1,10 @@
-const fs = require("fs");
-const fetch = require("node-fetch");
-const convert = require("xml-js");
+import { readFileSync } from "fs";
+import fetch from "node-fetch";
+import { xml2js } from "xml-js";
 
-exports.loadVersionPlugin = () => {
-  const data = fs.readFileSync("../pom.xml");
-  const pom = convert.xml2js(data.toString(), { compact: true });
+export function loadVersionPlugin() {
+  const data = readFileSync("../pom.xml");
+  const pom = xml2js(data.toString(), { compact: true });
 
   const getVersionByMaven = async () => {
     return await fetch(
@@ -26,4 +26,4 @@ exports.loadVersionPlugin = () => {
       app.pages.map((page) => (page.data.version = version));
     },
   };
-};
+}

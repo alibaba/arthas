@@ -1,4 +1,4 @@
-module.exports = {
+export const sidebarZH = {
   "/doc/": [
     {
       text: "文档",

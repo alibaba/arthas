@@ -1,4 +1,4 @@
-module.exports = {
+export const sidebarEN = {
   "/en/doc": [
     {
       text: "DOCS",
