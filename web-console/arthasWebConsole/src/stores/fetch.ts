@@ -5,7 +5,6 @@ import { publicStore } from "./public";
 import { waitFor } from "xstate/lib/waitFor";
 import { interpret } from "xstate";
 import permachine from "@/machines/perRequestMachine";
-import { number } from "echarts";
 // 控制fetch的store
 const getEffect = (
   M: ReturnType<typeof useMachine>,
@@ -86,6 +85,22 @@ export const fetchStore = defineStore("fetch", {
           return id !== -1;
         },
       };
+    },
+    pullResultsLoop(pollingM: Machine){
+      return this.getPollingLoop(
+        () => {
+          pollingM.send({
+            type: "SUBMIT",
+            value: {
+              action: "pull_results",
+              sessionId: undefined,
+              consumerId: undefined
+            }
+          })
+        }, {
+          globalIntrupt: true
+        }
+      )
     },
     onWait() {
       if (!this.wait) this.wait = true;

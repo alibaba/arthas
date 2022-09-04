@@ -29,7 +29,6 @@ const loop = getPollingLoop(() => {
 const pollResults = reactive([] as [string,Map<string, string[]>][])
 const enhancer = reactive(new Map())
 getCommonResEffect(pollingM, body => {
-  console.log(body)
   if (body.results.length > 0) {
     body.results.forEach(result => {
       if (result.type === "stack") {
