@@ -319,6 +319,15 @@ public class Bootstrap {
             }
         }
 
+        try {
+            String javaToolOptions = System.getenv("JAVA_TOOL_OPTIONS");
+            if (javaToolOptions != null && !javaToolOptions.trim().isEmpty()) {
+                AnsiLog.info("JAVA_TOOL_OPTIONS: " + javaToolOptions);
+            }
+        } catch (Throwable e) {
+            // ignore
+        }
+
         Bootstrap bootstrap = new Bootstrap();
 
         CLI cli = CLIConfigurator.define(Bootstrap.class);
