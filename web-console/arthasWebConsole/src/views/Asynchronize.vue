@@ -8,6 +8,9 @@ const routes: { cmd: string, url: string }[] = [
   }, {
     cmd: 'monitor',
     url: 'monitor'
+  }, {
+    cmd: 'trace',
+    url: 'trace'
   }
 ]
 </script>

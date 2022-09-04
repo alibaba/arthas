@@ -74,7 +74,9 @@ type AsyncReq = SessionId<
     } | {
       command: StringInclude<"stack", 3>;
     } | {
-      command:`monitor -c ${number} ${string} ${string}`
+      command: `monitor -c ${number} ${string} ${string}`;
+    } | {
+      command: `trace -n 20 ${string} ${string}`;
     }
   >
 >;
@@ -136,162 +138,190 @@ type VmOption = MergeObj<
   Record<"writeable", boolean>
 >;
 type ThreadStats = {
-  "cpu": number;
-  "daemon": boolean;
-  "deltaTime": number;
-  "group": "system";
-  "id": number;
-  "interrupted": boolean;
-  "name": string;
-  "priority": number;
-  "state": "WAITING" | "TIMED_WAITING" | "RUNNABLE";
-  "time": number;
+  cpu: number;
+  daemon: boolean;
+  deltaTime: number;
+  group: "system";
+  id: number;
+  interrupted: boolean;
+  name: string;
+  priority: number;
+  state: "WAITING" | "TIMED_WAITING" | "RUNNABLE";
+  time: number;
 };
 type ThreadInfo = {
-  "blockedCount": 876;
-  "blockedTime": -1;
-  "inNative": true;
-  "lockOwnerId": -1;
-  "lockedMonitors": [];
-  "lockedSynchronizers": [];
-  "stackTrace": {
-    "className": string;
-    "fileName": string;
-    "lineNumber": number;
-    "methodName": number;
-    "nativeMethod": boolean;
+  blockedCount: number;
+  blockedTime: number;
+  inNative: true;
+  lockOwnerId: number;
+  lockedMonitors: [];
+  lockedSynchronizers: [];
+  stackTrace: {
+    className: string;
+    fileName: string;
+    lineNumber: number;
+    methodName: number;
+    nativeMethod: boolean;
   }[];
-  "suspended": boolean;
-  "threadId": number;
-  "threadName": string;
-  "threadState": "WAITING" | "TIMED_WAITING" | "RUNNABLE";
-  "waitedCount": number;
-  "waitedTime": number;
+  suspended: boolean;
+  threadId: number;
+  threadName: string;
+  threadState: "WAITING" | "TIMED_WAITING" | "RUNNABLE";
+  waitedCount: number;
+  waitedTime: number;
 };
 type BusyThread = {
-  "blockedCount": number;
-  "blockedTime": number;
-  "cpu": number;
-  "daemon": true;
-  "deltaTime": number;
-  "group": string;
-  "id": number;
-  "inNative": boolean;
-  "interrupted": boolean;
-  "lockInfo": {
-    "className": string;
-    "identityHashCode": boolean;
+  blockedCount: number;
+  blockedTime: number;
+  cpu: number;
+  daemon: true;
+  deltaTime: number;
+  group: string;
+  id: number;
+  inNative: boolean;
+  interrupted: boolean;
+  lockInfo: {
+    className: string;
+    identityHashCode: boolean;
   };
-  "lockName": string;
-  "lockOwnerId": number;
-  "lockedMonitors": any[];
-  "lockedSynchronizers": any[];
-  "name": string;
-  "priority": 10;
-  "stackTrace": {
-    "className": string;
-    "fileName": string;
-    "lineNumber": number;
-    "methodName": string;
-    "nativeMethod": boolean;
+  lockName: string;
+  lockOwnerId: number;
+  lockedMonitors: any[];
+  lockedSynchronizers: any[];
+  name: string;
+  priority: 10;
+  stackTrace: {
+    className: string;
+    fileName: string;
+    lineNumber: number;
+    methodName: string;
+    nativeMethod: boolean;
   }[];
-  "state": "WAITING" | "TIMED_WAITING" | "RUNNABLE";
-  "suspended": string;
-  "time": number;
-  "waitedCount": number;
-  "waitedTime": number;
+  state: "WAITING" | "TIMED_WAITING" | "RUNNABLE";
+  suspended: string;
+  time: number;
+  waitedCount: number;
+  waitedTime: number;
 };
 type JvmInfo = {
-  "RUNTIME": Record<"name" | "value", string>[];
+  RUNTIME: Record<"name" | "value", string>[];
   "CLASS-LOADING": { name: string; value: number | boolean }[];
-  "COMPILATION": { name: string; value: number | string; desc: string }[];
+  COMPILATION: { name: string; value: number | string; desc: string }[];
   "GARBAGE-COLLECTORS": {
     name: string;
     value: { name: string; collectionCount: number; collectionTime: number };
     desc: string;
   }[];
   "MEMORY-MANAGERS": { name: string; value: string[] }[];
-  "MEMORY": {
-    "desc": string;
-    "name": string;
-    "value": {
-      "name": string;
-      "init": number;
-      "used": number;
-      "committed": number;
-      "max": number;
+  MEMORY: {
+    desc: string;
+    name: string;
+    value: {
+      name: string;
+      init: number;
+      used: number;
+      committed: number;
+      max: number;
     } | number;
   }[];
   "OPERATING-SYSTEM": Record<"name" | "value", string>[];
-  "THREAD": {
-    "name": string;
-    "value": number;
+  THREAD: {
+    name: string;
+    value: number;
   }[];
   "FILE-DESCRIPTOR": {
-    "name": string;
-    "value": number;
+    name: string;
+    value: number;
   }[];
 };
 type MemoryInfo = Record<"heap" | "nonheap" | "buffer_pool", {
-  "max": number;
-  "name": string;
-  "total": number;
-  "type": string;
-  "used": number;
-  "usage"?: number;
+  max: number;
+  name: string;
+  total: number;
+  type: string;
+  used: number;
+  usage?: number;
 }[]>;
 type RuntimeInfo = {
-  "javaHome": string;
-  "javaVersion": string;
-  "osName": string;
-  "osVersion": string;
-  "processors": number;
-  "systemLoadAverage": number;
-  "timestamp": number;
-  "uptime": number;
+  javaHome: string;
+  javaVersion: string;
+  osName: string;
+  osVersion: string;
+  processors: number;
+  systemLoadAverage: number;
+  timestamp: number;
+  uptime: number;
 };
 type ClassDetailInfo = {
-  "annotation": boolean;
-  "annotations": string[];
-  "anonymousClass": boolean;
-  "array": boolean;
-  "classInfo": string;
-  "classLoaderHash": string;
-  "classloader": string[];
-  "codeSource": string;
-  "enum": string;
-  "interface": string;
-  "interfaces": string[];
-  "localClass": string;
-  "memberClass": string;
-  "modifier": string;
-  "name": string;
-  "primitive": boolean;
-  "simpleName": string;
-  "superClass": string[];
-  "synthetic": boolean;
+  annotation: boolean;
+  annotations: string[];
+  anonymousClass: boolean;
+  array: boolean;
+  classInfo: string;
+  classLoaderHash: string;
+  classloader: string[];
+  codeSource: string;
+  enum: string;
+  interface: string;
+  interfaces: string[];
+  localClass: string;
+  memberClass: string;
+  modifier: string;
+  name: string;
+  primitive: boolean;
+  simpleName: string;
+  superClass: string[];
+  synthetic: boolean;
 };
 type ClassField = {
   annotations: string[];
-  "modifier": string;
-  "name": string;
-  "static": boolean;
-  "type": string;
-  "value": any;
+  modifier: string;
+  name: string;
+  static: boolean;
+  type: string;
+  value: any;
 };
 type MethodInfo = {
-  "classLoaderHash": string;
-  "constructor": boolean;
-  "declaringClass": string;
-  "descriptor": string;
-  "exceptions": string[];
-  "parameters": string[];
-  "annotations": string[];
-  "methodName": string;
-  "modifier": string;
-  "returnType": string;
+  classLoaderHash: string;
+  constructor: boolean;
+  declaringClass: string;
+  descriptor: string;
+  exceptions: string[];
+  parameters: string[];
+  annotations: string[];
+  methodName: string;
+  modifier: string;
+  returnType: string;
 };
 type ClassInfo = MergeObj<ClassDetailInfo, { fields: ClassField[] }>;
+type TraceNode = {
+  children?: TraceNode[];
+  className: string;
+  cost: number;
+  invoking: boolean;
+  lineNumber: number;
+  maxCost: number;
+  methodName: string;
+  minCost: number;
+  times: number;
+  totalCost: number;
+  type: "method";
+} | {
+  children:never;
+  exception: string;
+  lineNumber: number;
+  message: string;
+  type: "throw";
+} | {
+  children?: TraceNode[];
+  classloader: string;
+  daemon: boolean;
+  priority: number;
+  threadId: number;
+  threadName: string;
+  timestamp: string;
+  type: "thread";
+};
 
 type CommandResult = {
   type: "command";
@@ -339,17 +369,17 @@ type CommandResult = {
   threadStats: never;
   type: "thread";
 } | {
-  "jvmInfo": JvmInfo;
+  jvmInfo: JvmInfo;
   type: "jvm";
 } | {
   memoryInfo: MemoryInfo;
   type: "memory";
 } | {
   perfCounters: {
-    "name": string;
-    "units": string;
-    "value": string | number;
-    "variability": string;
+    name: string;
+    units: string;
+    value: string | number;
+    variability: string;
   }[];
   type: "perfcounter";
 } | {
@@ -363,7 +393,7 @@ type CommandResult = {
 } | {
   type: "classloader";
   urlStats: {
-    [x: `{"hash":${string},"name":${string}}`]: {
+    [x: `{hash":${string},"name:${string}}`]: {
       unUsedUrls: string[];
       usedUrls: string[];
     };
@@ -371,7 +401,7 @@ type CommandResult = {
   command: "classloader --url-stat";
   classSet: never;
 } | {
-  "classInfo": ClassInfo;
+  classInfo: ClassInfo;
   detailed: true;
   type: "sc";
   segment: 0;
@@ -383,26 +413,26 @@ type CommandResult = {
   type: "sc";
   withField: false;
 } | {
-  "classInfo": ClassDetailInfo;
-  "detailed": true;
-  "jobId": 31365;
-  "segment": 0;
-  "type": "sc";
-  "withField": false;
+  classInfo: ClassDetailInfo;
+  detailed: true;
+  jobId: 31365;
+  segment: 0;
+  type: "sc";
+  withField: false;
 } | {
-  "detail": true;
-  "methodInfo": MethodInfo;
-  "type": "sm";
+  detail: true;
+  methodInfo: MethodInfo;
+  type: "sm";
 } | {
-  "classInfo": {
-    "classLoaderHash": string;
-    "classloader": string[];
-    "name": string;
+  classInfo: {
+    classLoaderHash: string;
+    classloader: string[];
+    name: string;
   };
-  "location": string;
-  "mappings": Record<string, number>;
-  "source": string;
-  "type": "jad";
+  location: string;
+  mappings: Record<string, number>;
+  source: string;
+  type: "jad";
 } | {
   retransformCount: number;
   retransformEntries: {
@@ -419,23 +449,23 @@ type CommandResult = {
   retransformClasses: string[];
   type: "retransform";
 } | {
-  "dumpedClasses": {
-    "classLoaderHash": string;
-    "classloader": string[];
-    "location": string;
-    "name": string;
+  dumpedClasses: {
+    classLoaderHash: string;
+    classloader: string[];
+    location: string;
+    name: string;
   }[];
-  "type": "dump";
+  type: "dump";
 } | {
-  "gcInfos": {
-    "collectionCount": number;
-    "collectionTime": number;
-    "name": string;
+  gcInfos: {
+    collectionCount: number;
+    collectionTime: number;
+    name: string;
   }[];
-  "memoryInfo": MemoryInfo;
-  "runtimeInfo": RuntimeInfo;
-  "threads": ThreadStats[];
-  "type": "dashboard";
+  memoryInfo: MemoryInfo;
+  runtimeInfo: RuntimeInfo;
+  threads: ThreadStats[];
+  type: "dashboard";
 } | {
   mbeanNames: string[];
   mbeanMetadata: never;
@@ -445,7 +475,7 @@ type CommandResult = {
   mbeanNames: never;
   mbeanMetadata: {
     [x: string]: {
-      "attributes": {
+      attributes: {
         description: string;
         is: boolean;
         name: string;
@@ -454,27 +484,27 @@ type CommandResult = {
         writable: boolean;
         openType: Record<string, string>;
       }[];
-      "className": string;
-      "constructors": {
-        "description": string;
-        "name": string;
-        "signature": {
-          "description": string;
-          "name": string;
-          "type": string;
+      className: string;
+      constructors: {
+        description: string;
+        name: string;
+        signature: {
+          description: string;
+          name: string;
+          type: string;
         }[];
       }[];
-      "description": string;
-      "notifications": any[];
-      "operations": {
-        "description": string;
-        "impact": number;
-        "name": string;
-        "returnType": string;
-        "signature": {
-          "description": string;
-          "name": string;
-          "type": string;
+      description: string;
+      notifications: any[];
+      operations: {
+        description: string;
+        impact: number;
+        name: string;
+        returnType: string;
+        signature: {
+          description: string;
+          name: string;
+          type: string;
         }[];
       }[];
     };
@@ -492,49 +522,52 @@ type CommandResult = {
   };
   type: "mbean";
 } | {
-  "dumpFile": string;
-  "live": boolean;
-  "type": "heapdump";
+  dumpFile: string;
+  live: boolean;
+  type: "heapdump";
 } | {
-  "type": "vmtool";
-  "value": string[];
+  type: "vmtool";
+  value: string[];
 } | {
-  "affect": {
-    "classCount": number;
-    "cost": number;
-    "listenerId": number;
-    "methodCount": number;
+  affect: {
+    classCount: number;
+    cost: number;
+    listenerId: number;
+    methodCount: number;
   };
-  "type": "reset";
+  type: "reset";
 } | {
-  "classloader": string;
-  "cost": number;
-  "daemon": boolean;
-  "priority": number;
-  "stackTrace": {
-    "className": string;
-    "fileName": string;
-    "lineNumber": number;
-    "methodName": string;
-    "nativeMethod": boolean;
+  classloader: string;
+  cost: number;
+  daemon: boolean;
+  priority: number;
+  stackTrace: {
+    className: string;
+    fileName: string;
+    lineNumber: number;
+    methodName: string;
+    nativeMethod: boolean;
   }[];
-  "threadId": string;
-  "threadName": string;
+  threadId: string;
+  threadName: string;
   // date clock
-  "ts": `${string} ${string}`;
-  "type": "stack";
+  ts: `${string} ${string}`;
+  type: "stack";
 } | {
-  monitorDataList: [
-    {
-      "className": string;
-      "cost": number;
-      "failed": number;
-      "methodName": number;
-      "success": number;
-      "total": number;
-    },
+  monitorDataList:     {
+    className: string;
+    cost: number;
+    failed: number;
+    methodName: number;
+    success: number;
+    total: number;
+  }[
   ];
   type: "monitor";
+} | {
+  nodeCount: number;
+  root: TraceNode;
+  type: "trace";
 };
 
 type EnchanceResult = {
@@ -556,16 +589,16 @@ type ArthasResResult = JobId<
 
 type ResBody = Command<
   JobId<{
-    "results": ArthasResResult[];
-    "timeExpired": boolean;
-    "jobStatus": "TERMINATED" | "READY";
+    results: ArthasResResult[];
+    timeExpired: boolean;
+    jobStatus: "TERMINATED" | "READY";
   }>
 >;
 
 type CommonRes = {
-  "state": ResState;
-  "sessionId": string;
-  "requestId"?: string;
+  state: ResState;
+  sessionId: string;
+  requestId?: string;
   body: ResBody;
 };
 
@@ -582,10 +615,10 @@ type AsyncRes = {
 };
 
 type SessionRes = {
-  "sessionId": string;
-  "consumerId": string;
+  sessionId: string;
+  consumerId: string;
   body: never;
-  "state": Exclude<ResState, "FAILED">;
+  state: Exclude<ResState, "FAILED">;
 };
 
 type FailRes = SessionId<{
@@ -598,3 +631,9 @@ type ArthasRes = CommonRes | SessionRes | FailRes | AsyncRes;
 
 // autoComplete
 type Item = { name: string; value: any };
+
+// Tree
+type TreeNode = {
+  children?: TreeNode[];
+  meta: unknown;
+};

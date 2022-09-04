@@ -7,12 +7,13 @@ import machine from '@/machines/consoleMachine';
 import { fetchStore } from '@/stores/fetch';
 import { onBeforeMount, onBeforeUnmount, reactive } from 'vue';
 import CmdResMenu from '@/components/show/CmdResMenu.vue';
+import Tree from '@/components/show/Tree.vue';
 const pollingM = useMachine(machine)
 const fetchS = fetchStore()
 const { getPollingLoop, pullResultsLoop, interruptJob, getCommonResEffect } = fetchS
 const fetchM = useInterpret(permachine)
 const loop = pullResultsLoop(pollingM)
-const pollResults = reactive([] as [string, Map<string, string[]>][])
+const pollResults = reactive<TreeNode[]>([])
 const enhancer = reactive(new Map())
 
 /**
@@ -23,23 +24,42 @@ const enhancer = reactive(new Map())
 getCommonResEffect(pollingM, body => {
   if (body.results.length > 0) {
     body.results.forEach(result => {
-      if (result.type === "monitor") {
-        result.monitorDataList.forEach(data => {
-          console.log(data),
-            console.log(new Date().getDate())
-          const map = new Map<string,string[]>()
-          Object
-            .entries(data)
-            .filter(([k, _]) => !["className", "methodName"].includes(k))
-            .forEach(([k, v]) => {
-              let val: string[] = []
-              if(k === "cost"){
-                val.push((v as number).toFixed(2) + 'ms')
-              }else val.push(v.toString())
-              map.set(k, val)
-            })
-          pollResults.unshift([pollResults.length.toString(), map])
-        })
+      if (result.type === "trace") {
+
+        const trans = (root: TraceNode): Map<string, string[]> => {
+          /** 用于cmdRes */
+          const map = new Map(Object
+            .entries(root)
+            .filter(([k, v]) => "children" !== k)
+            .map(([k, v]) => [k, [v.toString()]]
+            )
+          ) as Map<string, string[]>
+          /**显示简略信息 */
+          let title = ""
+          if (root.type === "throw") {
+            title = "throw"
+          } else if (root.type === "thread") {
+            title = `${root.timestamp} ${root.threadName}`
+          } else {
+            title = `[${root.totalCost}ms]${root.className}:${root.methodName}`
+          }
+          map.set("title", [title])
+          return map
+        }
+        /**处理Tree */
+        const dfs = (root: TraceNode): TreeNode => {
+          return {
+            children: root.children?.map(child => dfs(child)),
+            meta: trans(root)
+          }
+        }
+        const root: TreeNode = {
+          children: result.root.children?.map(ch => dfs(ch)),
+          meta: trans(result.root)
+        }
+
+
+        pollResults.unshift(root)
       }
       if (result.type === "enhancer") {
         enhancer.clear()
@@ -64,7 +84,7 @@ const submit = async (classI: Item, methI: Item) => {
     type: "SUBMIT",
     value: {
       action: "async_exec",
-      command: `monitor -c 5 ${classI.value} ${methI.value}`
+      command: `trace -n 20 ${classI.value} ${methI.value}`
     } as AsyncReq
   })
   const state = await waitFor(fetchM, state => state.hasTag("result"))
@@ -76,14 +96,21 @@ const submit = async (classI: Item, methI: Item) => {
   fetchM.stop()
 }
 </script>
-
-<template>
+  
+  <template>
   <MethodInput :submit-f="submit" class="mb-4"></MethodInput>
   <template v-if="pollResults.length > 0 || enhancer.size > 0">
     <CmdResMenu title="enhancer" :map="enhancer" open></CmdResMenu>
-    <ul class=" pointer-events-auto mt-10">
+    <ul class=" pointer-events-auto mt-10 ">
       <template v-for="(result, i) in pollResults" :key="i">
-        <CmdResMenu :title="result[0]" :map="result[1]" open></CmdResMenu>
+        <Tree :root="result" class-list=" ml-4" class=" border-t-2 mb-4 pt-4">
+          <!-- 具体信息的表达 -->
+          <template #meta="{ data }">
+            <div class="mb-2 ml-2 ">
+              <CmdResMenu :title="data.get('title')[0]" :map="data"></CmdResMenu>
+            </div>
+          </template>
+        </Tree>
       </template>
     </ul>
   </template>

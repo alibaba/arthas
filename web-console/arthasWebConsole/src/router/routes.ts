@@ -88,6 +88,9 @@ const routes: RouteRecordRaw[] = [
       },{
         path:"monitor",
         component: ()=>import("@/views/async/Monitor.vue")
+      },{
+        path:"trace",
+        component: ()=>import("@/views/async/Trace.vue")
       }
     ]
   }
