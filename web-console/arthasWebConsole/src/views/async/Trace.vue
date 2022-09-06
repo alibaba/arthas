@@ -41,7 +41,7 @@ getCommonResEffect(pollingM, body => {
           } else if (root.type === "thread") {
             title = `${root.timestamp} ${root.threadName}`
           } else {
-            title = `[${root.totalCost}ms]${root.className}:${root.methodName}`
+            title = `[${root.totalCost}ms]${root.className}::${root.methodName}`
           }
           map.set("title", [title])
           return map
@@ -68,6 +68,13 @@ getCommonResEffect(pollingM, body => {
           enhancer.set(k, [result.effect[k as "cost"]])
         }
       }
+      if(result.type === "status"){
+        console.log(result)
+        if(result.statusCode === 0 && enhancer.size > 0) {
+          console.log("close!!!")
+          loop.close()
+        }
+      }
     })
   }
 })
@@ -84,13 +91,15 @@ const submit = async (classI: Item, methI: Item) => {
     type: "SUBMIT",
     value: {
       action: "async_exec",
-      command: `trace -n 20 ${classI.value} ${methI.value}`
+      command: `trace -n 20 ${classI.value} ${methI.value} --skipJDKMethod false`
     } as AsyncReq
   })
   const state = await waitFor(fetchM, state => state.hasTag("result"))
 
   console.log(state.value)
   if (state.matches("success")) {
+    enhancer.clear()
+    pollResults.length = 0
     loop.open()
   }
   fetchM.stop()
@@ -103,11 +112,11 @@ const submit = async (classI: Item, methI: Item) => {
     <CmdResMenu title="enhancer" :map="enhancer" open></CmdResMenu>
     <ul class=" pointer-events-auto mt-10 ">
       <template v-for="(result, i) in pollResults" :key="i">
-        <Tree :root="result" class-list=" ml-4" class=" border-t-2 mb-4 pt-4">
+        <Tree :root="result" class-list=" ml-8" class=" border-t-2 mb-4 pt-4">
           <!-- 具体信息的表达 -->
           <template #meta="{ data }">
-            <div class="mb-2 ml-2 ">
-              <CmdResMenu :title="data.get('title')[0]" :map="data"></CmdResMenu>
+            <div class="mb-2">
+              <CmdResMenu :title="data.get('title')[0]" :map="data" class=""></CmdResMenu>
             </div>
           </template>
         </Tree>

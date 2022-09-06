@@ -5,6 +5,7 @@ import { publicStore } from "./public";
 import { waitFor } from "xstate/lib/waitFor";
 import { interpret } from "xstate";
 import permachine from "@/machines/perRequestMachine";
+import { resourceLimits } from "worker_threads";
 // 控制fetch的store
 const getEffect = (
   M: ReturnType<typeof useMachine>,
@@ -86,7 +87,7 @@ export const fetchStore = defineStore("fetch", {
         },
       };
     },
-    pullResultsLoop(pollingM: Machine){
+    pullResultsLoop(pollingM: Machine) {
       return this.getPollingLoop(
         () => {
           pollingM.send({
@@ -94,13 +95,14 @@ export const fetchStore = defineStore("fetch", {
             value: {
               action: "pull_results",
               sessionId: undefined,
-              consumerId: undefined
-            }
-          })
-        }, {
-          globalIntrupt: true
-        }
-      )
+              consumerId: undefined,
+            },
+          });
+        },
+        {
+          globalIntrupt: true,
+        },
+      );
     },
     onWait() {
       if (!this.wait) this.wait = true;
@@ -108,14 +110,36 @@ export const fetchStore = defineStore("fetch", {
     waitDone() {
       if (this.wait) this.wait = false;
     },
-    getCommonResEffect: (M: Machine, fn: (body: CommonRes["body"]) => void) => {
+    getCommonResEffect(M: Machine, fn: (body: CommonRes["body"]) => void) {
       return getEffect(M, (res) => {
         if (Object.hasOwn(res, "body")) {
           fn((res as CommonRes).body);
         }
       });
     },
-
+    /**
+     * 注入enhancer:Proxy<Map<string,string[]>>
+     */
+    getPullResultsEffect(
+      M: Machine,
+      enhancer: Map<string, string[]>,
+      fn: (result: ArthasResResult) => void,
+    ) {
+      return this.getCommonResEffect(M, (body: CommonRes["body"]) => {
+        if (body.results.length > 0) {
+          body.results.forEach((result) => {
+            if (result.type === "enhancer") {
+              enhancer.clear();
+              enhancer.set("success", [result.success.toString()]);
+              for (const k in result.effect) {
+                enhancer.set(k, [result.effect[k as "cost"].toString()]);
+              }
+            }
+            fn(result);
+          });
+        }
+      });
+    },
     interruptJob() {
       if (this.jobRunning) {
         const actor = interpret(permachine);

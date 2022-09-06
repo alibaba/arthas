@@ -51,11 +51,11 @@ const logout = async () => {
   restBtnclass.value = "animate-spin-rev-running"
   
   interruptEvent()
-  await waitFor(sessionM.service, state => state.matches("ready"))
+
   sessionM.send("SUBMIT", {
     value: {
       action: "close_session"
-    } as any
+    }
   })
   restBtnclass.value = "animate-spin-rev-pause"
 }

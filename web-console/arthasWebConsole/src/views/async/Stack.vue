@@ -34,14 +34,15 @@ getCommonResEffect(pollingM, body => {
       if (result.type === "stack") {
         const map = new Map()
         Object
-          .entries(result)
-          .filter(([k, _]) => !["jobId", "type","ts"].includes(k))
-          .forEach(([k, v]) => {
+          .keys(result)
+          .filter((k) => !["jobId", "type","ts"].includes(k))
+          .forEach(k => {
             let val:string[] = []
             if (k === "stackTrace") {
-              val = (v as object[]).map(obj => JSON.stringify(obj))
+              let stackTrace = result[k]
+              val = stackTrace.map((trace,i) => `${trace.className}::${trace.methodName}`)
             } else{
-              val.push(v.toString())
+              val.push(result[k as Exclude<keyof typeof result, "jobId"|"type"|"stackTrace"|"ts">].toString())
             }
             map.set(k,val)
           })

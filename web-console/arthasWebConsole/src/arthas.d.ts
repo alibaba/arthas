@@ -77,6 +77,8 @@ type AsyncReq = SessionId<
       command: `monitor -c ${number} ${string} ${string}`;
     } | {
       command: `trace -n 20 ${string} ${string}`;
+    } | {
+      command: "tt -l"|`tt -t ${string} ${string}`
     }
   >
 >;
@@ -307,7 +309,7 @@ type TraceNode = {
   totalCost: number;
   type: "method";
 } | {
-  children:never;
+  children: never;
   exception: string;
   lineNumber: number;
   message: string;
@@ -322,7 +324,22 @@ type TraceNode = {
   timestamp: string;
   type: "thread";
 };
-
+type TimeFragment = {
+  "className": string;
+  "cost": number;
+  "index": number;
+  "methodName": string;
+  "object": string;
+  "params": {
+    "expand": number;
+    "object": number;
+  }[];
+  "return": boolean;
+  "returnObj": string;
+  "throw": boolean;
+  "throwExp": string;
+  "timestamp": string;
+}
 type CommandResult = {
   type: "command";
   state: ResState;
@@ -554,20 +571,23 @@ type CommandResult = {
   ts: `${string} ${string}`;
   type: "stack";
 } | {
-  monitorDataList:     {
+  monitorDataList: {
     className: string;
     cost: number;
     failed: number;
     methodName: number;
     success: number;
     total: number;
-  }[
-  ];
+  }[];
   type: "monitor";
 } | {
   nodeCount: number;
   root: TraceNode;
   type: "trace";
+} | {
+  first: boolean;
+  timeFragmentList: TimeFragment[];
+  type: "tt";
 };
 
 type EnchanceResult = {

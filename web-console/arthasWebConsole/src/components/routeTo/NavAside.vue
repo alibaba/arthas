@@ -1,10 +1,9 @@
 <script setup lang="ts">
-import { reactive, ref } from 'vue';
+import { computed, reactive, ref } from 'vue';
 import { PuzzleIcon, TerminalIcon, ViewGridIcon } from "@heroicons/vue/outline"
 import { DesktopComputerIcon } from "@heroicons/vue/solid"
-import { useRouter } from 'vue-router';
-import AsynchronizeVue from '@/views/Asynchronize.vue';
-const tabs = ref([
+import { useRoute, useRouter } from 'vue-router';
+const tabs = [
   {
     name: 'dashboard',
     url: "/dashboard",
@@ -29,8 +28,9 @@ const tabs = ref([
     url: '/console',
     icon: TerminalIcon
   }, 
-])
+]
 const router = useRouter()
+const routePath = computed(()=>useRoute().path)
 const toNext = (url: string) => {
   router.push(url)
 }
@@ -41,7 +41,7 @@ const a: StatusResult = { type: "status", message: "", statusCode: 0 }
   <div class=" h-full bg-gray-300">
     <ul class="flex flex-col justify-start w-40 h-full items-stretch bg-blue-50">
       <li v-for="(tab, idx) in tabs" :key="idx" class="flex justify-center items-center hover:bg-gray-200 transition"
-        @click="toNext(tab.url)" :class="{ 'bg-gray-200': router.currentRoute.value.path === tab.url, }">
+        @click="toNext(tab.url)" :class="{ 'bg-gray-200': routePath.includes(tab.url), }">
         <div class="bg-gray-200 h-10 w-10 grid place-items-center rounded-full">
           <component :is="tab.icon" class="w-3/4 h-3/4 text-gray-500" />
         </div>
