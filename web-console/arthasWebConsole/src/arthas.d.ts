@@ -78,7 +78,7 @@ type AsyncReq = SessionId<
     } | {
       command: `trace -n 20 ${string} ${string}`;
     } | {
-      command: "tt -l"|`tt -t ${string} ${string}`
+      command: `tt -t ${string} ${string}`;
     }
   >
 >;
@@ -108,7 +108,9 @@ type CommandReq = CommonAction<
       | `mbean`
       | `mbean ${string}`
       | `mbean -m ${string}`
-      | "vmtool --action forceGc";
+      | "vmtool --action forceGc"
+      | "tt -l"
+      | `tt -i ${string} -p`;
   } | {
     command: StringInclude<"vmoption" | "thread", 2>;
   } | {
@@ -339,7 +341,7 @@ type TimeFragment = {
   "throw": boolean;
   "throwExp": string;
   "timestamp": string;
-}
+};
 type CommandResult = {
   type: "command";
   state: ResState;
@@ -585,9 +587,21 @@ type CommandResult = {
   root: TraceNode;
   type: "trace";
 } | {
+  "expand": never;
+  "replayNo": never;
   first: boolean;
   timeFragmentList: TimeFragment[];
+  replayResult: never;
+  sizeLimit: never;
   type: "tt";
+} | {
+  "expand": number;
+  "replayNo": number;
+  first: never;
+  "replayResult": TimeFragment;
+  timeFragmentList: never;
+  "sizeLimit": number;
+  "type": "tt";
 };
 
 type EnchanceResult = {

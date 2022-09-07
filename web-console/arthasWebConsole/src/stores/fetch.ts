@@ -5,7 +5,6 @@ import { publicStore } from "./public";
 import { waitFor } from "xstate/lib/waitFor";
 import { interpret } from "xstate";
 import permachine from "@/machines/perRequestMachine";
-import { resourceLimits } from "worker_threads";
 // 控制fetch的store
 const getEffect = (
   M: ReturnType<typeof useMachine>,
@@ -162,6 +161,9 @@ export const fetchStore = defineStore("fetch", {
     },
     isReady(m: Machine) {
       return waitFor(m.service, (state) => state.matches("ready"));
+    },
+    tranOgnl(s: string): string[] {
+      return s.replace(/\r\n\tat/g, "\r\n\t@").split("\r\n\t");
     },
   },
 });

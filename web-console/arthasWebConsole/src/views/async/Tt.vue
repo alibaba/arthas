@@ -5,54 +5,193 @@ import { waitFor } from 'xstate/lib/waitFor';
 import MethodInput from '@/components/input/MethodInput.vue';
 import machine from '@/machines/consoleMachine';
 import { fetchStore } from '@/stores/fetch';
-import { onBeforeMount, onBeforeUnmount, reactive } from 'vue';
+import {
+  Disclosure,
+  DisclosureButton,
+  DisclosurePanel
+} from "@headlessui/vue"
+import { onBeforeMount, onBeforeUnmount, reactive, ref, watchEffect } from 'vue';
 import CmdResMenu from '@/components/show/CmdResMenu.vue';
 const pollingM = useMachine(machine)
 const fetchS = fetchStore()
-const { getPollingLoop, pullResultsLoop, interruptJob, getCommonResEffect,getPullResultsEffect } = fetchS
+const { pullResultsLoop, interruptJob, getCommonResEffect, getPullResultsEffect } = fetchS
 const fetchM = useInterpret(permachine)
 const loop = pullResultsLoop(pollingM)
-const pollResults = reactive([] as [string, Map<string, string[]>][])
+const pollResults = reactive([] as [string, Map<keyof TimeFragment, string[]>][])
+const timeFragmentL = reactive([] as typeof pollResults)
+const ttSet = new Set()
 const enhancer = reactive(new Map())
-
-
+const trigerRes = reactive(new Map<string, string[]>)
+const cacheIdx = ref("-1")
+type tfkey = keyof TimeFragment
+const tranOgnl = (s: string): string[] => s.replace(/\r\n\tat/g, "\r\n\t@").split("\r\n\t")
+// const transTT = (result:CommonRes["body"]["results"][0])
 getPullResultsEffect(
   pollingM,
-  enhancer, result=>{
-    if(result.type === "tt"){
-      result.timeFragmentList
+  enhancer, result => {
+    if (result.type === "tt") {
+      result.timeFragmentList.forEach(tf => {
+        const Mkey = tf.index
+
+        const map = new Map<tfkey, string[]>()
+        Object.keys(tf).forEach((k) => {
+          let val: string[] = []
+          if ((k as tfkey) === "params") {
+            tf.params.forEach(para => {
+              val.push(JSON.stringify(para))
+            })
+          } else if ((k as tfkey) === "throwExp") {
+            val = tranOgnl(tf.throwExp)
+          } else {
+            val.push(tf[k as tfkey].toString())
+          }
+          map.set(k as tfkey, val)
+        })
+        if (!ttSet.has(Mkey)) {
+          ttSet.add(Mkey)
+          pollResults.unshift([Mkey.toString(), map])
+        }
+      })
     }
-})
+  })
+
 onBeforeMount(() => {
   pollingM.send("INIT")
 })
 onBeforeUnmount(() => {
   loop.close()
 })
-const submit = async (classI: Item, methI: Item) => {
+// 最基本的submit基于Interrupt
+const baseSubmit = async (value: ArthasReq, fn: (res?: ArthasRes) => void, err?: Function) => {
   fetchM.start()
   fetchM.send("INIT")
   fetchM.send({
     type: "SUBMIT",
-    value: {
-      action: "async_exec",
-      command: `tt -t ${classI.value} ${methI.value}`
-    } as AsyncReq
+    value
   })
   const state = await waitFor(fetchM, state => state.hasTag("result"))
 
   if (state.matches("success")) {
+    fn(state.context.response)
+  } else {
+    err && err()
+  }
+  fetchM.stop()
+}
+const submit = async (classI: Item, methI: Item) => {
+  baseSubmit({
+    action: "async_exec",
+    command: `tt -t ${classI.value} ${methI.value}`
+  } as ArthasReq, () => {
     pollResults.length = 0
     enhancer.clear()
     loop.open()
-  }
-  fetchM.stop()
+  })
+}
+const alltt = async () => {
+
+  await baseSubmit({
+    action: "exec",
+    command: `tt -l`
+  }, (res) => {
+    let result = (res as CommonRes).body.results[0]
+    console.log(res)
+    if (result.type === "tt") {
+      result.timeFragmentList.forEach(tf => {
+        const Mkey = tf.index
+
+        const map = new Map<keyof TimeFragment, string[]>()
+        Object.keys(tf).forEach((k) => {
+          let val: string[] = []
+          if ((k as keyof TimeFragment) === "params") {
+            tf.params.forEach(para => {
+              val.push(JSON.stringify(para))
+            })
+          } else if ((k as tfkey) === "throwExp") {
+            val = tranOgnl(tf.throwExp)
+          } else {
+            val.push(tf[k as keyof TimeFragment].toString())
+          }
+          map.set(k as tfkey, val)
+        })
+        if (!ttSet.has(Mkey)) {
+          ttSet.add(Mkey)
+          timeFragmentL.unshift([Mkey.toString(), map])
+        }
+      })
+    }
+  })
+}
+const reTrigger = async (idx: string) => {
+  await baseSubmit({
+    action: "exec",
+    command: `tt -i ${idx} -p`
+  }, res => {
+    let result = (res as CommonRes).body.results[0]
+
+    if (result.type === "tt") {
+      trigerRes.clear()
+      cacheIdx.value = idx
+      let tf = result.replayResult
+
+      const Mkey = tf.index
+      Object.keys(tf).forEach((k) => {
+        let val: string[] = []
+        if ((k as keyof TimeFragment) === "params") {
+          tf.params.forEach(para => {
+            val.push(JSON.stringify(para))
+          })
+        } else if ((k as tfkey) === "throwExp") {
+          val = tranOgnl(tf.throwExp)
+        } else {
+          val.push(tf[k as keyof TimeFragment].toString())
+        }
+        trigerRes.set(k as tfkey, val)
+      })
+
+      trigerRes.set("sizeLimit", [result.sizeLimit.toString()])
+      trigerRes.set("replayNo", [result.replayNo.toString()])
+    }
+  }, () => {
+    trigerRes.clear()
+  })
 }
 </script>
 
 <template>
   <MethodInput :submit-f="submit"></MethodInput>
+  <Disclosure>
+    <DisclosureButton class=" rounded bg-blue-400 my-4 p-2" @click="alltt">
+      all TimeFragment
+    </DisclosureButton>
+    <DisclosurePanel class="text-gray-500">
+      <CmdResMenu title="调用结果" :map="trigerRes" v-if="trigerRes.size > 0">
+        <div class="flex mt-2 justify-end mr-1">
+          <button @click="reTrigger(cacheIdx)" class="bg-blue-400 hover:opacity-60 transition p-1 rounded">调用</button>
+        </div>
+      </CmdResMenu>
+      <template v-for="(result, i) in timeFragmentL" :key="i">
+        <CmdResMenu :title="result[0]" :map="result[1]">
+          <template #headerAside>
+            <div class="flex mt-2 justify-end mr-1">
+              <button @click="reTrigger(result[0])"
+                class="bg-blue-400 hover:opacity-60 transition p-1 rounded">调用</button>
+            </div>
+          </template>
+        </CmdResMenu>
+      </template>
+    </DisclosurePanel>
+  </Disclosure>
+  <template v-if="pollResults.length > 0 || enhancer.size > 0">
+    <CmdResMenu title="enhancer" :map="enhancer" open></CmdResMenu>
+    <ul class=" pointer-events-auto mt-10">
+      <template v-for="(result, i) in pollResults" :key="i">
+        <CmdResMenu :title="result[0]" :map="result[1]" open></CmdResMenu>
+      </template>
+    </ul>
+  </template>
 </template>
 
 <style scoped>
+
 </style>
