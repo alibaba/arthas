@@ -11,7 +11,9 @@ const { getCommonResEffect } = publicStore()
 const { getPollingLoop } = fetchStore()
 const loop = getPollingLoop(()=>{
   fetchM.send({ type: "SUBMIT", value: { action: "exec", command: "perfcounter -d" } })
-},1000)
+},{
+  step:1000
+})
 onBeforeMount(() => {
   fetchM.send("INIT")
 

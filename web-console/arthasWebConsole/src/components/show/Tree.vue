@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import { HtmlAttributes } from 'csstype';
 
 
 const { root, classList = "" } = defineProps<{

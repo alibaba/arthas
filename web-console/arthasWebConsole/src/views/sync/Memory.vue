@@ -19,7 +19,7 @@ const loop = getPollingLoop(() => {
       command: "memory"
     }
   })
-}, 1000)
+})
 
 onBeforeMount(() => {
   fetchM.send("INIT")

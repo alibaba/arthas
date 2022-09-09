@@ -36,7 +36,7 @@ const urlStatsLoop = getPollingLoop(() => urlStatM.send({
     action: "exec",
     command: "classloader --url-stat"
   }
-}), 1000)
+}))
 getCommonResEffect(allClassM, body => {
   body.results.filter(res => res.type === "classloader").reduce((pre, cur) => {
     if (cur.type === "classloader" && Object.hasOwn(cur, "classSet")) {
