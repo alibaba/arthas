@@ -84,11 +84,8 @@ const filterfn = (_: any, item: Item) => true
     <AutoComplete label="input Method" :option-items="optionMethod"
       :input-fn="(value) => changeMethod(slotClass.selectItem.value as string, value)" 
       :filter-fn="filterfn"
-      v-slot="slotMethod">    
-      <!-- <AutoComplete label="input Method" :option-items="optionMethod"
-      :options-init="(_)=>initMethod(slotClass.selectItem.value)"
-      class="w-1/2"
-      v-slot="slotMethod"> -->
+      v-slot="slotMethod">
+      <slot name="others"></slot>    
       <button @click.prevent="submitF(slotClass.selectItem, slotMethod.selectItem)"
         class="border bg-blue-400 p-2 rounded-md mx-2 hover:opacity-50 transition">submit</button>
     </AutoComplete>

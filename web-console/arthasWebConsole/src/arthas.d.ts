@@ -79,6 +79,8 @@ type AsyncReq = SessionId<
       command: `trace -n 20 ${string} ${string}`;
     } | {
       command: `tt -t ${string} ${string}`;
+    } | {
+      command: `watch ${string} ${string}`;
     }
   >
 >;
@@ -342,6 +344,7 @@ type TimeFragment = {
   "throwExp": string;
   "timestamp": string;
 };
+
 type CommandResult = {
   type: "command";
   state: ResState;
@@ -602,6 +605,15 @@ type CommandResult = {
   timeFragmentList: never;
   "sizeLimit": number;
   "type": "tt";
+} | {
+  accessPoint: "AtExceptionExit"|"AtEnter"|"AtExit";
+  className: string;
+  cost: number;
+  methodName: string;
+  sizeLimit: number;
+  ts: string;
+  type: "watch";
+  value: string;
 };
 
 type EnchanceResult = {

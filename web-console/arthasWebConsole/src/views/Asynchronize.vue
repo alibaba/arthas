@@ -11,7 +11,7 @@ const routes: { cmd: string, url: string }[] = [
   }, {
     cmd: 'trace',
     url: 'trace'
-  },{
+  }, {
     cmd: 'watch',
     url: 'watch'
   }
@@ -28,4 +28,5 @@ const routes: { cmd: string, url: string }[] = [
 </template>
 
 <style scoped>
+
 </style>

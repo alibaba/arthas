@@ -8,4 +8,5 @@
 
 ### notice
 
-* when use pull_results, you can't use other cmd, such as ```sc class```.  
+* When use pull_results, you can't use other cmd, such as ```sc class```.  
+* The consoleMachine.ts will be replaced perRequestMachine.ts + pinia sooner or later

@@ -3,7 +3,6 @@ import MethodInput from '@/components/input/MethodInput.vue';
 import machine from '@/machines/consoleMachine';
 import permachine from '@/machines/perRequestMachine';
 import { fetchStore } from '@/stores/fetch';
-import { publicStore } from '@/stores/public';
 import { useMachine, useInterpret } from '@xstate/vue';
 import { onBeforeMount, onBeforeUnmount, reactive } from 'vue';
 import { waitFor } from 'xstate/lib/waitFor';
@@ -59,6 +58,8 @@ getCommonResEffect(pollingM, body => {
     })
   }
 })
+
+
 onBeforeMount(() => {
   // fetchM.send("INIT")
   pollingM.send("INIT")
