@@ -112,10 +112,10 @@ const submit = async (classI: Item, methI: Item) => {
     <CmdResMenu title="enhancer" :map="enhancer" open></CmdResMenu>
     <ul class=" pointer-events-auto mt-10 ">
       <template v-for="(result, i) in pollResults" :key="i">
-        <Tree :root="result" class-list=" ml-8" class=" border-t-2 mb-4 pt-4">
+        <Tree :root="result" class=" border-t-2 mb-4 pt-4" >
           <!-- 具体信息的表达 -->
           <template #meta="{ data }">
-            <div class="mb-2">
+            <div class="mb-2 ml-2">
               <CmdResMenu :title="data.get('title')[0]" :map="data" class=""></CmdResMenu>
             </div>
           </template>
