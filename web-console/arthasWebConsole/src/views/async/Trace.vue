@@ -49,12 +49,12 @@ getCommonResEffect(pollingM, body => {
         /**处理Tree */
         const dfs = (root: TraceNode): TreeNode => {
           return {
-            children: root.children?.map(child => dfs(child)),
+            children: root.children?.map(child => dfs(child))||[],
             meta: trans(root)
           }
         }
         const root: TreeNode = {
-          children: result.root.children?.map(ch => dfs(ch)),
+          children: result.root?.children?.map(ch => dfs(ch))||[],
           meta: trans(result.root)
         }
 

@@ -679,7 +679,7 @@ type ArthasRes = CommonRes | SessionRes | FailRes | AsyncRes;
 type Item = { name: string; value: any };
 
 // Tree
-type TreeNode = {
-  children?: TreeNode[];
+interface TreeNode {
+  children: TreeNode[];
   meta: unknown;
 };

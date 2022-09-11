@@ -41,6 +41,7 @@ const { title, map, buttonWidth = 'w-80', open = false, data = "" } = defineProp
             </DisclosurePanel>
           </Disclosure>
         </div>
+        <slot name="others"></slot>
       </DisclosurePanel>
     </transition>
   </Disclosure>
