@@ -148,6 +148,3 @@ const getAll = () => allMbean.send({
     <CmdResMenu title="operations" :map="operationMap"></CmdResMenu>
   </div>
 </template>
-
-<style scoped>
-</style>
