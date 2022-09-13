@@ -24,13 +24,4 @@ Log command outputs for later analysis
 
 ## Use asynchronous job to log
 
-```bash
-$ trace Test t >>  &
-job id  : 2
-cache location  : /Users/zhuyong/logs/arthas-cache/28198/2
-```
-
-By doing this, the command will run at background asynchronously, and output the execution result into `~/logs/arthas-cache/{PID}/{JobId}`:
-
-- The background job will continue to run even if the current session is disconnected. The default job timeout value is 1 day, use global '[options](options.md)' command to alternate it.
-- The execution result will be output into the file asynchronously. Pls. note the behavior of this command is not controlled by `save-result` option from global [options](options.md). No matter `save-result` is set to `true` or not, this command will write into `~/logs/arthas-cache/{PID}/{JobId}` anyway, instead of into `~/logs/arthas-cache/result.log`.
+Reference: [async] (async.md)
