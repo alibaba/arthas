@@ -1,5 +1,6 @@
 <script setup lang="ts">
-
+// @ts-nocheck
+// 忽略文件报错
 import {
   Disclosure,
   DisclosurePanel,
