@@ -1,3 +1,9 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@layer components {
+  .button-style {
+    @apply bg-blue-400 hover:opacity-50 transition
+  }
+}

@@ -16,8 +16,12 @@ export default defineConfig({
     server: {
       proxy: {
         // 使用 proxy 实例
+        // '/api': {
+        //   target: 'http://172.24.254.212:8563',
+        //   changeOrigin: true,
+        // },
         '/api': {
-          target: 'http://127.0.0.1:8563',
+          target: 'http://localhost:8888',
           changeOrigin: true,
         }
       }

@@ -107,6 +107,10 @@ const routes: RouteRecordRaw[] = [
         path: "watch",
         component: () => import("@/views/async/Watch.vue"),
       },
+      {
+        path: "profiler",
+        component: ()=>import("@/views/async/Profiler.vue")
+      }
     ],
   },
 ];

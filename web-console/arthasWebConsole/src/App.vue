@@ -7,6 +7,7 @@ import { onBeforeUnmount } from "vue";
 import machine from "./machines/consoleMachine";
 import { interpret } from "xstate";
 import { fetchStore } from "./stores/fetch";
+import InputDialog from "./components/dialog/InputDialog.vue";
 const fetchS = fetchStore()
 onBeforeUnmount(()=>{
   const actor = interpret(machine)
@@ -36,6 +37,7 @@ onBeforeUnmount(()=>{
     </div>
     <err-dialog/>
     <success-dialog/>
+    <input-dialog/>
   </div>
   
 </template>

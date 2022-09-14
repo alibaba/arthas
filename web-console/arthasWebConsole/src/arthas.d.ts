@@ -81,6 +81,8 @@ type AsyncReq = SessionId<
       command: `tt -t ${string} ${string}`;
     } | {
       command: `watch ${string} ${string}`;
+    } | {
+      command: `profiler ${string}`
     }
   >
 >;
@@ -112,7 +114,8 @@ type CommandReq = CommonAction<
       | `mbean -m ${string}`
       | "vmtool --action forceGc"
       | "tt -l"
-      | `tt -i ${string} -p`;
+      | `tt -i ${string} -p`
+      | `profiler list`;
   } | {
     command: StringInclude<"vmoption" | "thread", 2>;
   } | {
@@ -606,7 +609,7 @@ type CommandResult = {
   "sizeLimit": number;
   "type": "tt";
 } | {
-  accessPoint: "AtExceptionExit"|"AtEnter"|"AtExit";
+  accessPoint: "AtExceptionExit" | "AtEnter" | "AtExit";
   className: string;
   cost: number;
   methodName: string;
@@ -614,6 +617,10 @@ type CommandResult = {
   ts: string;
   type: "watch";
   value: string;
+} | {
+  "action": "list";
+  "executeResult":string;
+  "type": "profiler";
 };
 
 type EnchanceResult = {
@@ -682,4 +689,4 @@ type Item = { name: string; value: any };
 interface TreeNode {
   children: TreeNode[];
   meta: unknown;
-};
+}
