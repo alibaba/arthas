@@ -96,7 +96,7 @@ export const sidebarZH = {
           link: "https://github.com/alibaba/arthas/issues?q=label%3Auser-case",
         },
         {
-          text: "Start me at github",
+          text: "Star me at github",
           link: "https://github.com/alibaba/arthas",
         },
         {
