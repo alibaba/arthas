@@ -40,7 +40,7 @@ export default defineClientConfig({
 
     // add old docs contributors
     router.afterEach((to, from) => {
-      if (to.fullPath !== from.fullPath) {
+      if (to.path !== from.path) {
         addOldDocsContributors();
       }
     });
