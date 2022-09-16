@@ -337,6 +337,23 @@ const permachine = createMachine({
         return;
       }
       if (
+        (context.inputValue?.action === "exec" ||
+        context.inputValue?.action === "async_exec" ) &&
+        context.inputValue.command.search("profiler") >=0 
+        ) {
+          let result = (context.response as CommonRes).body.results[0]
+          if(
+            result.type === "profiler"&&
+            ["start", "resume", "stop"].includes(result.action)
+          ) {
+            context.publicStore.$patch({
+              isSuccess: true,
+              SuccessMessage: result.executeResult
+            });
+          }
+          return;
+        }
+      if (
         context.inputValue?.action === "exec" &&
         context.inputValue.command.includes("vmoption") &&
         context.inputValue.command !== "vmoption"

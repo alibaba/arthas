@@ -17,7 +17,7 @@ export const publicStore = defineStore("public", { // Public项目唯一id
      * isInput 是对input组件的锁，要使用inputVal，调用inputval的组件还要自定义一个锁
      */
     isInput:false,
-    inputVal:'',
+    inputVal:"",
     ErrMessage: "应该是出现bug",
     isSuccess: false,
     SuccessMessage: "bug!!!",

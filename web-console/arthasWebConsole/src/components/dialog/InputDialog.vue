@@ -8,21 +8,29 @@ import {
   TransitionChild,
   TransitionRoot
 } from '@headlessui/vue'
-import { ref } from 'vue';
+import { onMounted, ref, onBeforeMount } from 'vue';
 const store = publicStore()
 const debug = (e: any) => console.log(e)
-function setIsOpen(value: boolean) {
-  
-  if (inputV.value !== "") store.inputVal = inputV.value
-  inputV.value = ""
-  store.isInput = value
-}
+
 const inputV = ref("")
+onMounted(() => {
+  inputV.value = store.inputVal
+  console.log(inputV.value, store.inputVal, 12313)
+})
+
+
+function setIsOpen() {
+  if (inputV.value !== "") store.inputVal = inputV.value
+  store.isInput = false
+}
+function setIsOpenCancel() {
+  store.isInput = false
+}
 </script>
   
 <template>
-  <TransitionRoot :show="store.isInput" as="template">
-    <Dialog @close="setIsOpen" class="min-w-max">
+  <TransitionRoot as="template" :show="true">
+    <Dialog @close="setIsOpenCancel" class="min-w-max">
       <TransitionChild enter="transition-opacity duration-300" enter-from="opacity-0" enter-to="opacity-100"
         leave="transition-opacity duration-300" leave-from="opacity-100" leave-to="opacity-0">
         <div class="fixed inset-0 bg-black bg-opacity-25" />
@@ -37,11 +45,15 @@ const inputV = ref("")
             <DialogTitle>
               input value
             </DialogTitle>
-            <DialogDescription class="flex-auto self-stretch bg-slate-50 my-10 rounded p-2 break-all max-w-4xl">
-              <input type="text" v-model="inputV" @change="debug" />
+            <DialogDescription class=" bg-slate-200 my-10 rounded-full max-w-4xl grid place-content-center place-items-center">
+              <input type="text" v-model="inputV" class="bg-slate-200 h-full p-2 w-10/12 focus-visible:outline-none"/>
             </DialogDescription>
-            <button @click="setIsOpen(false)"
-              class="border bg-blue-200 w-40 h-10 rounded-full hover:bg-blue-500 transition">OK</button>
+            <div class="flex justify-evenly w-full">
+              <button @click="setIsOpen"
+                class="border bg-blue-200 w-40 h-10 rounded-full hover:bg-blue-500 transition">OK</button>
+              <button @click="setIsOpenCancel"
+                class="border bg-blue-200 w-40 h-10 rounded-full hover:bg-blue-500 transition">Cancel</button>
+            </div>
           </DialogPanel>
         </TransitionChild>
       </div>

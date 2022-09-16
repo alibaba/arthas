@@ -115,7 +115,7 @@ type CommandReq = CommonAction<
       | "vmtool --action forceGc"
       | "tt -l"
       | `tt -i ${string} -p`
-      | `profiler list`;
+      | `profiler ${"list"|"status"|"stop"|"resume"}`;
   } | {
     command: StringInclude<"vmoption" | "thread", 2>;
   } | {
@@ -618,8 +618,9 @@ type CommandResult = {
   type: "watch";
   value: string;
 } | {
-  "action": "list";
+  "action": "list"|"status"|"stop"|"resume";
   "executeResult":string;
+  "outputFile"?:string;
   "type": "profiler";
 };
 

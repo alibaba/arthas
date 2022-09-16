@@ -8,7 +8,9 @@ import machine from "./machines/consoleMachine";
 import { interpret } from "xstate";
 import { fetchStore } from "./stores/fetch";
 import InputDialog from "./components/dialog/InputDialog.vue";
+import { publicStore } from "./stores/public";
 const fetchS = fetchStore()
+const publicS = publicStore()
 onBeforeUnmount(()=>{
   const actor = interpret(machine)
   actor.start()
@@ -37,7 +39,7 @@ onBeforeUnmount(()=>{
     </div>
     <err-dialog/>
     <success-dialog/>
-    <input-dialog/>
+    <input-dialog v-if="publicS.isInput"/>
   </div>
   
 </template>

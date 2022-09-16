@@ -4,6 +4,6 @@
 
 @layer components {
   .button-style {
-    @apply bg-blue-400 hover:opacity-50 transition
+    @apply bg-blue-400 hover:opacity-50 transition rounded-md p-2
   }
 }
