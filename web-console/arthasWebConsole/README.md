@@ -1,12 +1,20 @@
-# a WEB client based on HTTP API for arthas
+# a Web client based on HTTP API for arthas
+
+## usage
+
+* Through clicking the button in the top right corner, you can quickly get or clear sessionId
+* When you are in trouble, refreshing the page is a good way
+* Some features must be used with sessionId. but some features must be used without sessionId
 
 ## develop
 
-* strongly recommand devloping with vscode
+* Strongly recommand devloping with vscode
 * TS + VUE3 + Tailwindcss + xstate
-* you can view the http requesting process with xstate
+* You can view the http requesting process with xstate
+* The final bundle will be placed in `../target/static` 
 
 ### notice
 
 * When use pull_results, you can't use other cmd, such as ```sc class```.  
 * The consoleMachine.ts will be replaced perRequestMachine.ts + pinia sooner or later
+
