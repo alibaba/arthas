@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import permachine from '@/machines/perRequestMachine';
 import { useInterpret } from '@xstate/vue';
-import { nextTick, onBeforeMount, onBeforeUnmount, reactive, ref, watchEffect } from 'vue';
+import { nextTick, onBeforeMount, onBeforeUnmount, reactive, Ref, ref, watchEffect } from 'vue';
 import {
   Listbox,
   ListboxButton,
@@ -23,6 +23,7 @@ let selectEvent = ref(eventList[0])
 let includesVal = reactive(new Set<string>())
 let excludesVal = reactive(new Set<string>())
 let framebuf = ref(1000000)
+let duration = ref(300)
 let profilerStatus = ref({
   is: false,
   message: ""
@@ -30,7 +31,7 @@ let profilerStatus = ref({
 let outputPath = ref("")
 let samples = ref(0)
 let mutexFrambuf = false
-
+let mutexDuration = false
 const getStatusLoop = fetchS.getPollingLoop(() => {
   const statusM = interpret(permachine)
   fetchS.baseSubmit(statusM, {
@@ -39,16 +40,16 @@ const getStatusLoop = fetchS.getPollingLoop(() => {
     sessionId: "",
   }).then(
     res => {
-    if (res) {
-      let result = (res as CommonRes).body.results[0]
-      if (result.type == "profiler") {
-        if (result.executeResult.search("not") >= 0) {
-          profilerStatus.value.is = false
-        } else profilerStatus.value.is = true
-        profilerStatus.value.message = result.executeResult
+      if (res) {
+        let result = (res as CommonRes).body.results[0]
+        if (result.type == "profiler") {
+          if (result.executeResult.search("not") >= 0) {
+            profilerStatus.value.is = false
+          } else profilerStatus.value.is = true
+          profilerStatus.value.message = result.executeResult
+        }
       }
     }
-  }
   )
 }, {
   step: 2000,
@@ -74,32 +75,24 @@ const getSampleLoop = fetchS.getPollingLoop(() => {
 }, {
   step: 2000,
 })
-const changeFramebuf = () => {
-  // 先赋值，再打开inputDialog
-  // publicS.inputVal = framebuf.value.toString()
-  publicS.$patch({
-    isInput: true,
-    inputVal: framebuf.value.toString()
-  })
+const changeFramebuf = publicS.inputDialogFactory(
+  framebuf,
+  (raw) => {
+    let valRaw = parseInt(raw)
+    return Number.isNaN(valRaw) ? 1000000 : valRaw
+  },
+  (input) => input.value.toString()
+)
 
-  // console.log(publicS.inputVal, framebuf.value)s
-  // 先触发effect, 再解锁
-  nextTick(()=>mutexFrambuf = true)
-}
+const changeDuration = publicS.inputDialogFactory(
+  duration,
+  (raw) => {
+    let valRaw = parseInt(raw)
+    return Number.isNaN(valRaw) ? 300 : valRaw
+  },
+  (input) => input.value.toString()
+)
 
-watchEffect(() => {
-  if (publicS.inputVal !== "" && mutexFrambuf) {
-
-    /**
-     * 先上锁，防止再次触发该副作用
-     */
-    mutexFrambuf = false
-    let valRaw = parseInt(publicS.inputVal)
-    framebuf.value = Number.isNaN(valRaw) ? 1000000 : valRaw
-    publicS.inputVal = ""
-  }
-})
-// let duration = ref(300)
 
 const transformStartProps = () => {
   let start = "start"
@@ -153,28 +146,28 @@ const resumeProfiler = () => fetchS.baseSubmit(fetchM, {
 
 onBeforeMount(async () => {
   publicS.inputVal = "",
-  includesVal.clear()
+    includesVal.clear()
   excludesVal.clear()
   getStatusLoop.open()
   getSampleLoop.open()
-  
+
   await fetchS.baseSubmit(fetchM, {
     action: "exec",
     command: "profiler list"
   }).then(
     res => {
-    let result = (res as CommonRes).body.results[0]
-    if (result.type == "profiler") {
-      result.executeResult.split('\n').forEach(raw => {
-        let cmd = raw.trim();
-        if (!["Basic events:",
-          "Java method calls:",
-          "Perf events:",
-          ""
-        ].includes(cmd)) eventList.push(cmd)
-      })
+      let result = (res as CommonRes).body.results[0]
+      if (result.type == "profiler") {
+        result.executeResult.split('\n').forEach(raw => {
+          let cmd = raw.trim();
+          if (!["Basic events:",
+            "Java method calls:",
+            "Perf events:",
+            ""
+          ].includes(cmd)) eventList.push(cmd)
+        })
+      }
     }
-  }
   )
 }
 )
@@ -214,6 +207,7 @@ onBeforeUnmount(() => {
         </ListboxOptions>
       </div>
     </Listbox>
+    <button class="button-style mr-2" @click="changeDuration">duration :{{duration}}</button>
     <button class="button-style mr-2" @click="changeFramebuf">framebuf :{{framebuf}}</button>
     <TodoList title="include" :val-set="includesVal" class=" mr-2"></TodoList>
     <TodoList title="exclude" :val-set="excludesVal" class="mr-2"></TodoList>

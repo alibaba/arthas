@@ -6,35 +6,24 @@ import {
   MenuItem,
   MenuItems
 } from "@headlessui/vue"
-import { watchEffect } from "vue";
+import { watchEffect, ref } from "vue";
 import { publicStore } from "@/stores/public";
 const { valSet = new Set<string>() } = defineProps<{
   valSet?: Set<string>,
   title: string
 }>()
 const publicS = publicStore()
-watchEffect(() => {
-  if (publicS.inputVal !== "" && mutexInput) {
-    valSet.add(publicS.inputVal)
-    /**
-     * 清理inputVal缓存
-     */
-    publicS.inputVal = ""
 
-    /**
-     * 上锁
-     */
-    mutexInput = false
-  }
-})
-let mutexInput = false
-const openInput = () => {
-  /**
-   * 解锁
-   */
-  mutexInput = true
-  publicS.isInput = true
-}
+const openInput = publicS.inputDialogFactory(
+  ref(""),
+  (raw) => {
+    valSet.add(raw)
+    return ""
+  },
+  _ => ""
+)
+
+
 const removeValSet = (val: string, valSet: Set<string>) => {
   valSet.delete(val)
 }
