@@ -40,7 +40,6 @@ export const fetchStore = defineStore("fetch", {
          */
         const trans = (key:"sessionId"|"requestId"|"consumerId")=>{
           if(key in option) {
-            console.log(option)
             //@ts-ignore
             if(option[key] !== undefined) {
             //@ts-ignore
@@ -166,27 +165,21 @@ export const fetchStore = defineStore("fetch", {
     },
     interruptJob() {
       if (this.jobRunning) {
-        const actor = interpret(permachine);
-        console.log("'");
-        actor.start();
-        console.log("1212");
-        actor.send("INIT");
-        actor.send({
-          type: "SUBMIT",
-          value: {
-            action: "interrupt_job",
-            sessionId: this.sessionId,
-          },
-        });
+        // 先不管先后端同步的问题
+        this.jobRunning = false;
+        return this.baseSubmit(interpret(permachine),{
+          action:"interrupt_job",
+          sessionId:undefined
+        })
       }
       this.jobRunning = false;
+      return Promise.reject("interrupt failured")
     },
     openJobRun() {
       this.jobRunning = true;
     },
     async isResult(m: MachineService) {
       return await waitFor(m, (state) => {
-        console.log(state)
         return state.hasTag("result")
       });
     },

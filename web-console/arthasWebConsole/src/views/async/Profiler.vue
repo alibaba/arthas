@@ -81,11 +81,10 @@ const changeFramebuf = () => {
     isInput: true,
     inputVal: framebuf.value.toString()
   })
-  // nextTick(()=>publicS.isInput=true)
 
-  console.log(publicS.inputVal, framebuf.value)
+  // console.log(publicS.inputVal, framebuf.value)s
   // 先触发effect, 再解锁
-  mutexFrambuf = true
+  nextTick(()=>mutexFrambuf = true)
 }
 
 watchEffect(() => {
@@ -97,7 +96,7 @@ watchEffect(() => {
     mutexFrambuf = false
     let valRaw = parseInt(publicS.inputVal)
     framebuf.value = Number.isNaN(valRaw) ? 1000000 : valRaw
-    nextTick(() => publicS.inputVal = "")
+    publicS.inputVal = ""
   }
 })
 // let duration = ref(300)

@@ -15,12 +15,13 @@ const debug = (e: any) => console.log(e)
 const inputV = ref("")
 onMounted(() => {
   inputV.value = store.inputVal
-  console.log(inputV.value, store.inputVal, 12313)
 })
 
 
 function setIsOpen() {
+  
   if (inputV.value !== "") store.inputVal = inputV.value
+  console.log(store.inputVal, inputV.value)
   store.isInput = false
 }
 function setIsOpenCancel() {

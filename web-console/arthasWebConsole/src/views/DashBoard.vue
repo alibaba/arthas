@@ -35,6 +35,7 @@ import {
 } from 'echarts/renderers';
 import { dispose, ECharts } from 'echarts/core';
 import permachine from '@/machines/perRequestMachine';
+import { resolve } from 'path';
 
 type EChartsOption = echarts.ComposeOption<
   DatasetComponentOption | PieSeriesOption
@@ -78,8 +79,8 @@ getCommonResEffect(dashboadResM, body => {
         const arr: string[] = []
 
         arr.push('max : ' + toMb(v.max))
-        arr.push('total : ' + toMb(v.total) )
-        arr.push('used : ' + toMb(v.used) )
+        arr.push('total : ' + toMb(v.total))
+        arr.push('used : ' + toMb(v.used))
 
         const usage: number = (v.max > 0 ? (v.used / v.max) : (v.used / v.total)) * 100
         heaparr.push({ value: toMb(v.used), name: `${v.name}(${usage.toFixed(2)}%)` })
@@ -104,9 +105,9 @@ getCommonResEffect(dashboadResM, body => {
       result.memoryInfo.nonheap.filter(v => v.name !== "nonheap").forEach(v => {
         const arr: string[] = []
 
-        arr.push('max : ' + toMb(v.max) )
-        arr.push('total : ' + toMb(v.total) )
-        arr.push('used : ' + toMb(v.used) )
+        arr.push('max : ' + toMb(v.max))
+        arr.push('total : ' + toMb(v.total))
+        arr.push('used : ' + toMb(v.used))
         const usage: number = (v.used / v.total) * 100
         nonheaparr.push({ value: toMb(v.used), name: `${v.name}(${usage.toFixed(2)}%)` })
 
@@ -174,22 +175,22 @@ onBeforeMount(async () => {
   dashboadResM.send("INIT")
 
   if (!fetchS.sessionId) {
-    fetchS.baseSubmit(dashboadM,{
-        action: "init_session"
-      })
+    fetchS.baseSubmit(dashboadM, {
+      action: "init_session"
+    })
   }
   await isResult(dashboadM)
 
   fetchS.baseSubmit(dashboadM, {
-      action: "async_exec",
-      command: "dashboard",
-      sessionId: undefined
-    }).then(
-      res=>{
-        dashboardId = (res as AsyncRes).body.jobId
-        loop.open()
-      }
-    )
+    action: "async_exec",
+    command: "dashboard",
+    sessionId: undefined
+  }).then(
+    res => {
+      dashboardId = (res as AsyncRes).body.jobId
+      loop.open()
+    }
+  )
 })
 // 处理dom
 onMounted(() => {
@@ -398,26 +399,31 @@ onBeforeUnmount(async () => {
   loop.close()
   clearChart(nonheapChart, heapChart, bufferPoolChart, gcChart)
 
-  const actor = interpret(machine)
-  actor.start()
-  actor.send("INIT")
-  actor.send({
-    type: "SUBMIT",
-    value: {
-      action: "interrupt_job",
-      sessionId:undefined
-    } 
+  // const actor = interpret(machine)
+  // actor.start()
+  // actor.send("INIT")
+  // actor.send({
+  //   type: "SUBMIT",
+  //   value: {
+  //     action: "interrupt_job",
+  //     sessionId:undefined
+  //   } 
+  // })
+  fetchS
+  .interruptJob()
+  .finally(() => {
+    const a2 = interpret(machine)
+    a2.start()
+    a2.send("INIT")
+    a2.send({
+      type: "SUBMIT",
+      value: {
+        action: "close_session",
+        sessionId: undefined
+      }
+    })
   })
-  const a2 = interpret(machine)
-  a2.start()
-  a2.send("INIT")
-  a2.send({
-    type: "SUBMIT",
-    value: {
-      action: "close_session",
-      sessionId:undefined
-    }
-  })
+
 })
 </script>
 
@@ -435,4 +441,5 @@ onBeforeUnmount(async () => {
 </template>
 
 <style scoped>
+
 </style>
