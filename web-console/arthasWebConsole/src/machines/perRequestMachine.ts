@@ -244,11 +244,6 @@ const permachine = createMachine({
       ) {
         return {};
       }
-      // const option = {} as any;
-      // sessionId undefined=>never
-      // Object.entries(context.inputValue).forEach(([k, v]) => {
-      //   if (v) option[k] = v;
-      // });
       /**
        * session的never和undefinded让fetch.ts来控制
        */
@@ -328,16 +323,7 @@ const permachine = createMachine({
         });
         return;
       }
-      if (
-        context.inputValue?.action === "exec" &&
-        context.inputValue.command === "vmtool --action forceGc"
-      ) {
-        context.publicStore.$patch({
-          isSuccess: true,
-          SuccessMessage: "GC success!",
-        });
-        return;
-      }
+      
       if (
         (context.inputValue?.action === "exec" ||
         context.inputValue?.action === "async_exec" ) &&

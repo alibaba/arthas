@@ -16,7 +16,6 @@ const vCmd: CommandReq = {
   action: "exec",
   command: "version"
 }
-
 const restBtnclass: Ref<'animate-spin-rev-pause' | 'animate-spin-rev-running'> = ref('animate-spin-rev-pause')
 getCommonResEffect(fetchM,body=>{
   const result = body.results[0]
@@ -54,7 +53,8 @@ const logout = async () => {
 
   sessionM.send("SUBMIT", {
     value: {
-      action: "close_session"
+      action: "close_session",
+      sessionId:undefined
     }
   })
   restBtnclass.value = "animate-spin-rev-pause"
@@ -74,7 +74,14 @@ const login = async () => {
     <div class="w-40 flex items-center justify-center">
       <img src="@/assets/arthas.png" alt="logo" class=" w-3/4" />
     </div>
+    
     <div class="flex items-center h-20">
+      <div
+      class=" mr-4 bg-gray-200 h-12 rounded-full flex justify-center items-center text-gray-500 font-bold p-2"
+      >sessionId: {{fetchS.sessionId}}</div>
+      <div class=" mr-4 bg-gray-200 h-12 p-2 rounded-full flex justify-center items-center text-gray-500 font-bold">
+        version:{{ version }}
+      </div>
       <button
         v-if="fetchS.jobRunning"
         @click.prevent="interruptEvent"
@@ -83,9 +90,8 @@ const login = async () => {
       <button class=" rounded-full bg-gray-200 h-12 w-12 flex justify-center items-center mr-4 " @click="reset">
         <refresh-icon class=" text-gray-500 h-3/4 w-3/4" :class="restBtnclass" />
       </button>
-      <div class=" mr-4 bg-gray-200 h-12 w-32 rounded-full flex justify-center items-center text-gray-500 font-bold">
-        version:{{ version }}
-      </div>
+      
+
       <button class="hover:opacity-50 h-12 w-12 grid place-items-center  rounded-full mr-2 transition-all"
         :class="{ 'bg-blue-600 shadow-blue-500': !fetchS.online, 'bg-red-600 shadow-red-500': fetchS.online }">
         <LogoutIcon class="h-1/2 w-1/2 text-white" @click="logout" v-if="fetchS.online" />

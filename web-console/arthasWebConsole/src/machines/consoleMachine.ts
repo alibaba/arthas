@@ -353,16 +353,7 @@ const machine =
           });
           return;
         }
-        if (
-          context.inputValue?.action === "exec" &&
-          context.inputValue.command === "vmtool --action forceGc"
-        ) {
-          context.publicStore.$patch({
-            isSuccess: true,
-            SuccessMessage: "GC success!",
-          });
-          return;
-        }
+        
         if (
           context.inputValue?.action === "exec" &&
           context.inputValue.command.includes("vmoption") &&

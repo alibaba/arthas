@@ -110,7 +110,7 @@ type CommandReq = CommonAction<
       | `mbean`
       | `mbean ${string}`
       | `mbean -m ${string}`
-      | "vmtool --action forceGc"
+      | `vmtool --action ${"forceGc"| "getInstances"} ${string}`
       | "tt -l"
       | `tt -i ${string} -p`
       | `profiler ${"list"|"status"|"stop"|"resume"|"getSamples"}`
@@ -551,7 +551,7 @@ type CommandResult = {
   type: "heapdump";
 } | {
   type: "vmtool";
-  value: string[];
+  value: string;
 } | {
   affect: {
     classCount: number;
