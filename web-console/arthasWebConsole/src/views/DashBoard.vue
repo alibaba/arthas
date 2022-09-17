@@ -2,7 +2,7 @@
 import machine from '@/machines/consoleMachine';
 import { fetchStore } from '@/stores/fetch';
 import { publicStore } from '@/stores/public';
-import { useMachine } from '@xstate/vue';
+import { useInterpret, useMachine } from '@xstate/vue';
 import { onBeforeMount, onBeforeUnmount, onMounted, reactive, ref } from 'vue';
 import { waitFor } from 'xstate/lib/waitFor';
 import { interpret } from "xstate"
@@ -33,11 +33,9 @@ import {
 import {
   SVGRenderer
 } from 'echarts/renderers';
-import { dispose, ECharts, number } from 'echarts/core';
+import { dispose, ECharts } from 'echarts/core';
+import permachine from '@/machines/perRequestMachine';
 
-// type EChartsOption = echarts.ComposeOption<
-//   TooltipComponentOption | LegendComponentOption | PieSeriesOption
-// >
 type EChartsOption = echarts.ComposeOption<
   DatasetComponentOption | PieSeriesOption
 >
@@ -45,21 +43,12 @@ type GcEChartsOption = echarts.ComposeOption<
   ToolboxComponentOption | TooltipComponentOption | GridComponentOption | LegendComponentOption | BarSeriesOption | LineSeriesOption
 >
 const fetchS = fetchStore()
-const { getPollingLoop } = fetchS
+const { getPollingLoop, isResult } = fetchS
 const { getCommonResEffect } = publicStore()
-const dashboadM = useMachine(machine)
+// const dashboadM = useMachine(machine)
+const dashboadM = useInterpret(permachine)
 const dashboadResM = useMachine(machine)
-// const interruptM = useMachine(machine)
-const loop = getPollingLoop(() => {
-  console.log(dashboadResM.state.value.context)
-  dashboadResM.send({
-    type: "SUBMIT",
-    value: {
-      action: "pull_results",
-    } as PullResults
-  })
-})
-const isReady = () => waitFor(dashboadM.service, (state) => state.matches('ready'))
+const loop = fetchS.pullResultsLoop(dashboadResM)
 const toMb = (b: number) => Math.floor(b / 1024 / 1024)
 const gcInfos = reactive(new Map<string, string[]>())
 const memoryInfo = reactive(new Map<string, string[]>())
@@ -180,36 +169,29 @@ getCommonResEffect(dashboadResM, body => {
   }
 
 })
+// 处理初始化请求 
 onBeforeMount(async () => {
-  dashboadM.send("INIT")
   dashboadResM.send("INIT")
 
   if (!fetchS.sessionId) {
-
-    dashboadM.send({
-      type: "SUBMIT",
-      value: {
+    fetchS.baseSubmit(dashboadM,{
         action: "init_session"
-      }
-    })
+      })
   }
+  await isResult(dashboadM)
 
-  await isReady()
-
-  dashboadM.send({
-    type: "SUBMIT",
-    value: {
+  fetchS.baseSubmit(dashboadM, {
       action: "async_exec",
-      command: "dashboard"
-    } as AsyncReq
-  })
-
-  await isReady()
-
-  dashboardId = (dashboadM.state.value.context.response as AsyncRes).body.jobId
-
-  loop.open()
+      command: "dashboard",
+      sessionId: undefined
+    }).then(
+      res=>{
+        dashboardId = (res as AsyncRes).body.jobId
+        loop.open()
+      }
+    )
 })
+// 处理dom
 onMounted(() => {
   // init
 
@@ -423,7 +405,8 @@ onBeforeUnmount(async () => {
     type: "SUBMIT",
     value: {
       action: "interrupt_job",
-    } as AsyncReq
+      sessionId:undefined
+    } 
   })
   const a2 = interpret(machine)
   a2.start()
@@ -431,8 +414,9 @@ onBeforeUnmount(async () => {
   a2.send({
     type: "SUBMIT",
     value: {
-      action: "close_session"
-    } as SessionReq
+      action: "close_session",
+      sessionId:undefined
+    }
   })
 })
 </script>

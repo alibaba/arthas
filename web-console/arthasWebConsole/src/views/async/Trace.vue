@@ -58,7 +58,6 @@ getCommonResEffect(pollingM, body => {
           meta: trans(result.root)
         }
 
-
         pollResults.unshift(root)
       }
       if (result.type === "enhancer") {
@@ -91,8 +90,9 @@ const submit = async (classI: Item, methI: Item) => {
     type: "SUBMIT",
     value: {
       action: "async_exec",
-      command: `trace -n 20 ${classI.value} ${methI.value} --skipJDKMethod false`
-    } as AsyncReq
+      command: `trace -n 20 ${classI.value} ${methI.value} --skipJDKMethod false`,
+      sessionId:undefined
+    }
   })
   const state = await waitFor(fetchM, state => state.hasTag("result"))
 

@@ -244,15 +244,17 @@ const permachine = createMachine({
       ) {
         return {};
       }
-      const option = {} as any;
+      // const option = {} as any;
       // sessionId undefined=>never
-      Object.entries(context.inputValue).forEach(([k, v]) => {
-        if (v) option[k] = v;
-      });
-
+      // Object.entries(context.inputValue).forEach(([k, v]) => {
+      //   if (v) option[k] = v;
+      // });
+      /**
+       * session的never和undefinded让fetch.ts来控制
+       */
       return {
-        request: context.fetchStore?.getRequest(option),
-        inputValue: option as ArthasReq,
+        request: context.fetchStore?.getRequest(context.inputValue),
+        inputValue: context.inputValue as ArthasReq,
       };
     }),
     transformRes: assign({

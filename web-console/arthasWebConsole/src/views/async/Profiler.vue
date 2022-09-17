@@ -1,8 +1,7 @@
 <script setup lang="ts">
 import permachine from '@/machines/perRequestMachine';
-import { useInterpret, useMachine } from '@xstate/vue';
+import { useInterpret } from '@xstate/vue';
 import { nextTick, onBeforeMount, onBeforeUnmount, reactive, ref, watchEffect } from 'vue';
-import { PlusCircleIcon, MinusCircleIcon } from "@heroicons/vue/outline"
 import {
   Listbox,
   ListboxButton,
@@ -14,13 +13,10 @@ import { publicStore } from '@/stores/public';
 import TodoList from '@/components/input/TodoList.vue';
 import { fetchStore } from '@/stores/fetch';
 import machine from '@/machines/consoleMachine';
+import { interpret } from 'xstate';
 const fetchM = useInterpret(permachine)
-const statusM = useInterpret(permachine)
 const publicS = publicStore()
 const fetchS = fetchStore()
-// const pollingM = useMachine(machine)
-// const loop = fetchS.pullResultsLoop(pollingM)
-// const pollResults = reactive([] as [string, Map<string, string[]>, TreeNode][])
 
 let eventList = reactive(["all"] as string[]);
 let selectEvent = ref(eventList[0])
@@ -32,61 +28,52 @@ let profilerStatus = ref({
   message: ""
 })
 let outputPath = ref("")
-
+let samples = ref(0)
 let mutexFrambuf = false
-const baseSubmit = async (fetchM: ReturnType<typeof useInterpret>, value: ArthasReq, success: (res?: ArthasRes) => void, err?: Function) => {
-  fetchM.start()
-  fetchM.send("INIT")
-  fetchM.send({
-    type: "SUBMIT",
-    value
-  })
-  const state = await waitFor(fetchM, state => state.hasTag("result"))
 
-  if (state.matches("success")) {
-    success(state.context.response)
-  } else {
-    err && err()
-  }
-  fetchM.stop()
-}
 const getStatusLoop = fetchS.getPollingLoop(() => {
-  baseSubmit(statusM, {
+  const statusM = interpret(permachine)
+  fetchS.baseSubmit(statusM, {
     command: "profiler status",
-    action: "exec"
-  }, res => {
+    action: "exec",
+    sessionId: "",
+  }).then(
+    res => {
     if (res) {
       let result = (res as CommonRes).body.results[0]
       if (result.type == "profiler") {
         if (result.executeResult.search("not") >= 0) {
-          profilerStatus.value.is = true
-        } else profilerStatus.value.is = false
+          profilerStatus.value.is = false
+        } else profilerStatus.value.is = true
         profilerStatus.value.message = result.executeResult
       }
     }
-  })
+  }
+  )
 }, {
   step: 2000,
 })
 
-// const getSampleLoop = fetchS.getPollingLoop(() => {
-//   baseSubmit(statusM, {
-//     command: "profiler ",
-//     action: "exec"
-//   }, res => {
-//     if (res) {
-//       let result = (res as CommonRes).body.results[0]
-//       if (result.type == "profiler") {
-//         if (result.executeResult.search("not") >= 0) {
-//           profilerStatus.value.is = true
-//         } else profilerStatus.value.is = false
-//         profilerStatus.value.message = result.executeResult
-//       }
-//     }
-//   })
-// }, {
-//   step: 2000,
-// })
+const getSampleLoop = fetchS.getPollingLoop(() => {
+  let statusM = interpret(permachine)
+  fetchS.baseSubmit(statusM, {
+    command: "profiler getSamples",
+    action: "exec",
+    // 置空sessionId,使得不与session冲突
+    sessionId: ""
+  }).then(
+    res => {
+      if (res) {
+        let result = (res as CommonRes).body.results[0]
+        if (result.type == "profiler") {
+          samples.value = parseInt(result.executeResult)
+        }
+      }
+    }
+  )
+}, {
+  step: 2000,
+})
 const changeFramebuf = () => {
   // 先赋值，再打开inputDialog
   // publicS.inputVal = framebuf.value.toString()
@@ -114,32 +101,7 @@ watchEffect(() => {
   }
 })
 // let duration = ref(300)
-onBeforeMount(async () => {
-  publicS.inputVal = "",
-    includesVal.clear()
-  excludesVal.clear()
-  getStatusLoop.open()
-  await baseSubmit(fetchM, {
-    action: "exec",
-    command: "profiler list"
-  }, res => {
-    let result = (res as CommonRes).body.results[0]
-    if (result.type == "profiler") {
-      result.executeResult.split('\n').forEach(raw => {
-        let cmd = raw.trim();
-        if (!["Basic events:",
-          "Java method calls:",
-          "Perf events:",
-          ""
-        ].includes(cmd)) eventList.push(cmd)
-      })
-    }
-  })
-}
-)
-onBeforeUnmount(() => {
-  getStatusLoop.close()
-})
+
 const transformStartProps = () => {
   let start = "start"
   let evenOption = ""
@@ -164,35 +126,73 @@ const transformStartProps = () => {
 const startSubmit = () => {
   const { start, evenOption, includeOption, excludeOption } = transformStartProps()
 
-  const value = {
-    action: "async_exec",
-    command: `profiler ${start} ${evenOption} ${includeOption} ${excludeOption}`
-  } as ArthasReq
+  const value: ArthasReq = {
+    action: "exec",
+    command: `profiler ${start} ${evenOption} ${includeOption} ${excludeOption}`,
+    sessionId: undefined
+  }
 
-  baseSubmit(fetchM, value, (res) => {
-    // pollResults.length = 0
-    // loop.open()
-  })
+  fetchS.baseSubmit(fetchM, value)
 }
-const stopProfiler = () => baseSubmit(fetchM, {
+const stopProfiler = () => fetchS.baseSubmit(fetchM, {
   action: "exec",
   command: "profiler stop"
-}, res => {
-  let result = (res as CommonRes).body.results[0]
-  if(result.type === "profiler" && result.outputFile){
-    outputPath.value = result.outputFile
+}).then(
+  res => {
+    let result = (res as CommonRes).body.results[0]
+    if (result.type === "profiler" && result.outputFile) {
+      outputPath.value = result.outputFile
+    }
   }
-})
-const resumeProfiler = () => baseSubmit(fetchM, {
+)
+const resumeProfiler = () => fetchS.baseSubmit(fetchM, {
   action: "exec",
   command: "profiler resume"
-}, res => console.log(res))
+}).then(
+  res => console.log(res)
+)
+
+onBeforeMount(async () => {
+  publicS.inputVal = "",
+  includesVal.clear()
+  excludesVal.clear()
+  getStatusLoop.open()
+  getSampleLoop.open()
+  
+  await fetchS.baseSubmit(fetchM, {
+    action: "exec",
+    command: "profiler list"
+  }).then(
+    res => {
+    let result = (res as CommonRes).body.results[0]
+    if (result.type == "profiler") {
+      result.executeResult.split('\n').forEach(raw => {
+        let cmd = raw.trim();
+        if (!["Basic events:",
+          "Java method calls:",
+          "Perf events:",
+          ""
+        ].includes(cmd)) eventList.push(cmd)
+      })
+    }
+  }
+  )
+}
+)
+onBeforeUnmount(() => {
+  getStatusLoop.close()
+  getSampleLoop.close()
+})
 </script>
 
 <template>
   <div class="flex py-2 border-b-2  border-gray-300">
     <h3 class="text-lg w-40">status: </h3>
-    <div class="mx-2">{{profilerStatus.message}}</div>
+    <div class="mx-2">
+      <div>{{profilerStatus.message}}</div>
+      <div v-if="profilerStatus.is">{{samples}} samples</div>
+    </div>
+
   </div>
   <div class="flex border-b-2  border-gray-300 items-center py-2">
     <h3 class="text-lg w-40">How to start: </h3>

@@ -125,7 +125,7 @@ const alltt = async () => {
 const reTrigger = async (idx: string) => {
   await baseSubmit({
     action: "exec",
-    command: `tt -i ${idx} -p`
+    command: `tt -i ${idx} -p`,
   }, res => {
     let result = (res as CommonRes).body.results[0]
 

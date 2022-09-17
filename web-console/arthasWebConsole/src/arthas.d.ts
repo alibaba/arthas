@@ -81,9 +81,7 @@ type AsyncReq = SessionId<
       command: `tt -t ${string} ${string}`;
     } | {
       command: `watch ${string} ${string}`;
-    } | {
-      command: `profiler ${string}`
-    }
+    } 
   >
 >;
 type PullResults = SessionId<{
@@ -115,7 +113,8 @@ type CommandReq = CommonAction<
       | "vmtool --action forceGc"
       | "tt -l"
       | `tt -i ${string} -p`
-      | `profiler ${"list"|"status"|"stop"|"resume"}`;
+      | `profiler ${"list"|"status"|"stop"|"resume"|"getSamples"}`
+      | `profiler ${string}`;
   } | {
     command: StringInclude<"vmoption" | "thread", 2>;
   } | {
@@ -618,7 +617,7 @@ type CommandResult = {
   type: "watch";
   value: string;
 } | {
-  "action": "list"|"status"|"stop"|"resume";
+  "action": "list"|"status"|"stop"|"resume"|"getSamples";
   "executeResult":string;
   "outputFile"?:string;
   "type": "profiler";

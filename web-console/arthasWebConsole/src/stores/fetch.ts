@@ -1,4 +1,4 @@
-import { useMachine } from "@xstate/vue";
+import { useInterpret, useMachine } from "@xstate/vue";
 import { defineStore } from "pinia";
 import { watchEffect } from "vue";
 import { publicStore } from "./public";
@@ -17,6 +17,7 @@ const getEffect = (
     }
   });
 type Machine = ReturnType<typeof useMachine>;
+type MachineService = ReturnType<typeof useInterpret>
 export const fetchStore = defineStore("fetch", {
   state: () => ({
     sessionId: "",
@@ -30,15 +31,38 @@ export const fetchStore = defineStore("fetch", {
   getters: {
     getRequest: (state) =>
       (option: ArthasReq) => {
+        /**
+         * 对于never，就直接赋值为""，
+         * 对于undefined, 就使用全局默认值
+         * 对于定义的字符串，则使用定义的值 
+         * @param key 
+         * @returns 
+         */
+        const trans = (key:"sessionId"|"requestId"|"consumerId")=>{
+          if(key in option) {
+            console.log(option)
+            //@ts-ignore
+            if(option[key] !== undefined) {
+            //@ts-ignore
+              return option[key]
+            } else {
+              return state[key]
+            }
+          }
+          return ""
+        }
+        let sessionId = trans("sessionId")
+        let requestId = trans("requestId")
+        let consumerId = trans("consumerId")
         const req = new Request("/api", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
-            sessionId: state.sessionId,
-            consumerId: state.consumerId,
-            requestId: state.requestId,
-            // 若上面三个属性不传，直接用 as any而不是传undefined
             ...option,
+            sessionId,
+            consumerId,
+            requestId,
+            // 若上面三个属性不传，直接用 as any而不是传undefined
           }),
         });
         return req;
@@ -56,6 +80,7 @@ export const fetchStore = defineStore("fetch", {
       const { step, globalIntrupt } = options;
       const that = this;
       return {
+        // 自动轮询的可能会被错误打断
         open() {
           if (!this.isOn()) {
             if (globalIntrupt) that.jobRunning = true;
@@ -159,11 +184,26 @@ export const fetchStore = defineStore("fetch", {
     openJobRun() {
       this.jobRunning = true;
     },
-    isReady(m: Machine) {
-      return waitFor(m.service, (state) => state.matches("ready"));
+    async isResult(m: MachineService) {
+      return await waitFor(m, (state) => state.hasTag("result"));
     },
     tranOgnl(s: string): string[] {
       return s.replace(/\r\n\tat/g, "\r\n\t@").split("\r\n\t");
     },
+    async baseSubmit(fetchM: ReturnType<typeof useInterpret>, value: ArthasReq){
+      fetchM.start()
+      fetchM.send("INIT")
+      fetchM.send({
+        type: "SUBMIT",
+        value
+      })
+      const state = await this.isResult(fetchM)
+    
+      if (state.matches("success")) {
+        return Promise.resolve<ArthasRes>(state.context.response)
+      } else {
+        return Promise.reject()
+      }
+    }
   },
 });

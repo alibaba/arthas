@@ -1,19 +1,24 @@
 <script setup lang="ts">
 import machine from '@/machines/consoleMachine';
-import { useMachine } from '@xstate/vue';
+import { fetchStore } from '@/stores/fetch';
+import { useInterpret, useMachine } from '@xstate/vue';
 import { onBeforeMount } from 'vue';
 
-const gcMachine = useMachine(machine)
+const gcMachine = useInterpret(machine)
+const fetchS = fetchStore()
 onBeforeMount(()=>{
-  gcMachine.send("INIT")
+  // gcMachine.send("INIT")
 })
 const forceGc = ()=>{
-  gcMachine.send({
-    type:"SUBMIT",
-    value:{
+  fetchS.baseSubmit(gcMachine,{
       action:"exec",
       command:"vmtool --action forceGc"
-    }
+    })
+}
+const getInstance = ()=>{
+  fetchS.baseSubmit(gcMachine,{
+    action:"exec",
+    command:"vmtool --action getInstances --className demo.MathGame -x 4"
   })
 }
 </script>

@@ -123,8 +123,9 @@ const baseSubmit = async (value: ArthasReq, fn: (res?: ArthasRes) => void, err?:
 const submit = async (classI: Item, methI: Item) => {
   baseSubmit({
     action: "async_exec",
-    command: `watch ${mode.value.value} ${classI.value} ${methI.value} -x 4`
-  } as ArthasReq, () => {
+    command: `watch ${mode.value.value} ${classI.value} ${methI.value} -x 4`,
+    sessionId:undefined
+  } , () => {
     pollResults.length = 0
     enhancer.clear()
     loop.open()

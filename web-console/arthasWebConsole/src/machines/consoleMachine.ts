@@ -258,15 +258,9 @@ const machine =
         ) {
           return {};
         }
-        const option = {} as any;
-        // sessionId undefined=>never
-        Object.entries(context.inputValue).forEach(([k, v]) => {
-          if (v) option[k] = v;
-        });
-
         return {
-          request: context.fetchStore?.getRequest(option),
-          inputValue: option as ArthasReq,
+          request: context.fetchStore?.getRequest(context.inputValue),
+          inputValue: context.inputValue,
         };
       }),
       transformRes: assign((context, event) => {
