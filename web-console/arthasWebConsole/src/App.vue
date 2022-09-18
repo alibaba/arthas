@@ -9,6 +9,7 @@ import { interpret } from "xstate";
 import { fetchStore } from "./stores/fetch";
 import InputDialog from "./components/dialog/InputDialog.vue";
 import { publicStore } from "./stores/public";
+import WarnDialog from "./components/dialog/WarnDialog.vue";
 const fetchS = fetchStore()
 const publicS = publicStore()
 onBeforeUnmount(()=>{
@@ -40,6 +41,7 @@ onBeforeUnmount(()=>{
     <err-dialog/>
     <success-dialog/>
     <input-dialog v-if="publicS.isInput"/>
+    <warn-dialog v-if="publicS.isWarn"></warn-dialog>
   </div>
   
 </template>

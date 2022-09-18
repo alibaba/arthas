@@ -114,7 +114,8 @@ type CommandReq = CommonAction<
       | "tt -l"
       | `tt -i ${string} -p`
       | `profiler ${"list"|"status"|"stop"|"resume"|"getSamples"}`
-      | `profiler ${string}`;
+      | `profiler ${string}`
+      | `stop`;
   } | {
     command: StringInclude<"vmoption" | "thread", 2>;
   } | {

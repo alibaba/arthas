@@ -21,6 +21,9 @@ export const publicStore = defineStore("public", { // Public项目唯一id
     ErrMessage: "应该是出现bug",
     isSuccess: false,
     SuccessMessage: "bug!!!",
+    isWarn:false,
+    warnMessage:"",
+    warningFn:()=>{}
   }),
   getters: {
     getUserMsg: (state) => {
