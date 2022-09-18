@@ -12,12 +12,12 @@ const highlightjs = highlightjsP.component
 const sourceM = useMachine(machine)
 const code = ref('')
 const locationMap = reactive(new Map<string, string[]>())
-const getSource = (item: Item) => {
+const getSource = (data: { classItem: Item; }) => {
   sourceM.send({
     type: "SUBMIT",
     value: {
       action: "exec",
-      command: `jad ${item.value}`
+      command: `jad ${data.classItem.value}`
     }
   })
 }

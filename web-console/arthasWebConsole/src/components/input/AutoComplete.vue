@@ -12,6 +12,7 @@ import { SelectorIcon } from "@heroicons/vue/outline"
 const { 
   optionItems, 
   inputFn = (_)=>{},
+  blurFn = _=>{},
   optionsInit=(_)=>{},
   filterFn
 } = defineProps<{
@@ -20,6 +21,7 @@ const {
   optionsInit?:(event:FocusEvent)=>void,
   filterFn?:(query:string,item:Item)=>boolean
   inputFn?: (value:string) => void
+  blurFn?:(value:any)=>void
 }>()
 
 const query = ref('')
@@ -42,6 +44,9 @@ const changeF = (event:Event &{target:HTMLInputElement}) => {
   query.value = event.target.value
   inputFn(query.value)
 }
+const blurF = (event:Event)=>{
+  blurFn(selectedItem.value.value)
+}
 </script>
 
 <template>
@@ -50,7 +55,7 @@ const changeF = (event:Event &{target:HTMLInputElement}) => {
     <div class="relative flex-1">
       <div
         class="relative w-full cursor-default overflow-hidden rounded-lg bg-white text-left border focus:outline-none hover:shadow-md transition">
-        <ComboboxInput class="w-full border-none py-2 pl-3 pr-10 leading-5 text-gray-900 " @change="changeF" @focus.prevent="optionsInit"
+        <ComboboxInput class="w-full border-none py-2 pl-3 pr-10 leading-5 text-gray-900 " @change="changeF" @focus.prevent="optionsInit" @blur="blurF"
           :displayValue="(item) => (item as Item).name" />
         <ComboboxButton class="absolute inset-y-0 right-0 flex items-center pr-2">
           <SelectorIcon class="h-5 w-5 text-gray-400" aria-hidden="true" />

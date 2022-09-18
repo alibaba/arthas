@@ -17,33 +17,10 @@ const loop = getPollingLoop(()=>{
 onBeforeMount(() => {
   fetchM.send("INIT")
 
-  // fetchM.send({
-  //   type: "SUBMIT",
-  //   value: {
-  //     action: "exec",
-  //     command: "perfcounter -d"
-  //   }
-  // })
   loop.open()
 })
 
 const map = reactive(new Map<string, string[]>())
-// watchEffect(() => {
-//   if (fetchM.state.value.context.response) {
-//     const response = fetchM.state.value.context.response
-//     if (Object.hasOwn(response, "body")) {
-//       const result = (response as CommonRes).body.results[0]
-//       if (result.type === "perfcounter") {
-//         const perfcounters = result.perfCounters
-//         map.clear()
-//         perfcounters.forEach(v => {
-//           map.set(v.name, Object.entries(v).filter(v => v[0] !== "name").map(([key, value]) => `${key} : ${value}`))
-//         })
-//       }
-//     }
-//   }
-//   setTimeout(() => fetchM.send({ type: "SUBMIT", value: { action: "exec", command: "perfcounter -d" } }), 5000)
-// })
 onUnmounted(()=>loop.close())
 getCommonResEffect(fetchM, body => {
   const result = body.results[0]

@@ -163,26 +163,28 @@ onUnmounted(() => {
   urlStatsLoop.close()
 })
 
-const getClassInfo = (item: Item) => {
+const getClassInfo = (data: { classItem: Item; loaderItem:Item }) => {
+  let item = data.classItem
+  let classLoader = data.loaderItem.value === ""? "":`-c ${data.loaderItem.value}`
   classInfoM.send({
     type: "SUBMIT",
     value: {
       action: "exec",
-      command: `sc -d -f ${item.value}`
+      command: `sc -d -f ${item.value} ${classLoader}`
     }
   })
   classMethodInfoM.send({
     type: "SUBMIT",
     value: {
       action: "exec",
-      command: `sm -d ${item.value}`
+      command: `sm -d ${item.value} ${classLoader}`
     }
   })
   dumpM.send({
     type: "SUBMIT",
     value: {
       action: "exec",
-      command: `dump ${item.value}`
+      command: `dump ${item.value} ${classLoader}`
     }
   })
 }

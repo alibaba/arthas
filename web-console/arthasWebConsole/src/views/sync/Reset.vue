@@ -23,12 +23,12 @@ getCommonResEffect(fetchM,body=>{
     }) 
   }
 })
-const resetClass = (item:Item)=>{
+const resetClass = (data:{classItem:Item})=>{
     fetchM.send({
     type:"SUBMIT",
     value:{
       action:"exec",
-      command: `reset ${item.value as string}`
+      command: `reset ${data.classItem.value as string}`
     }
   })
 }

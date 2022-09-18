@@ -23,11 +23,11 @@ const forceGc = () => {
   )
 }
 
-const getInstance = (classI: any) => {
+const getInstance = (data:{classItem:Item}) => {
   pollResults.length = 0
   fetchS.baseSubmit(gcMachine, {
     action: "exec",
-    command: `vmtool --action getInstances --className ${classI.value} -x 10`
+    command: `vmtool --action getInstances --className ${data.classItem.value} -x 10`
   }).then(
     res => {
       const result = (res as CommonRes).body.results[0]
