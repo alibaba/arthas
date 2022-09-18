@@ -81,8 +81,9 @@ const baseSubmit = async (value: ArthasReq, fn: (res?: ArthasRes) => void, err?:
 const submit = async (classI: Item, methI: Item) => {
   baseSubmit({
     action: "async_exec",
-    command: `tt -t ${classI.value} ${methI.value}`
-  } as ArthasReq, () => {
+    command: `tt -t ${classI.value} ${methI.value}`,
+    sessionId:undefined
+  }, () => {
     pollResults.length = 0
     enhancer.clear()
     loop.open()
@@ -90,12 +91,12 @@ const submit = async (classI: Item, methI: Item) => {
 }
 const alltt = async () => {
 
-  await baseSubmit({
+  fetchS.baseSubmit(fetchM, {
     action: "exec",
     command: `tt -l`
-  }, (res) => {
+  }).then((res) => {
     let result = (res as CommonRes).body.results[0]
-    console.log(res)
+    timeFragmentL.length = 0
     if (result.type === "tt") {
       result.timeFragmentList.forEach(tf => {
         const Mkey = tf.index
@@ -165,9 +166,9 @@ const reTrigger = async (idx: string) => {
       all TimeFragment
     </DisclosureButton>
     <DisclosurePanel class="text-gray-500">
-      <CmdResMenu title="调用结果" :map="trigerRes" v-if="trigerRes.size > 0">
+      <CmdResMenu title="result" :map="trigerRes" v-if="trigerRes.size > 0">
         <div class="flex mt-2 justify-end mr-1">
-          <button @click="reTrigger(cacheIdx)" class="bg-blue-400 hover:opacity-60 transition p-1 rounded">调用</button>
+          <button @click="reTrigger(cacheIdx)" class="bg-blue-400 hover:opacity-60 transition p-1 rounded">invoke</button>
         </div>
       </CmdResMenu>
       <template v-for="(result, i) in timeFragmentL" :key="i">
@@ -175,7 +176,7 @@ const reTrigger = async (idx: string) => {
           <template #headerAside>
             <div class="flex mt-2 justify-end mr-1">
               <button @click="reTrigger(result[0])"
-                class="bg-blue-400 hover:opacity-60 transition p-1 rounded">调用</button>
+                class="bg-blue-400 hover:opacity-60 transition p-1 rounded">invoke</button>
             </div>
           </template>
         </CmdResMenu>

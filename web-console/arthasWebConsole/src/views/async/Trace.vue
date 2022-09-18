@@ -96,7 +96,6 @@ const submit = async (classI: Item, methI: Item) => {
   })
   const state = await waitFor(fetchM, state => state.hasTag("result"))
 
-  console.log(state.value)
   if (state.matches("success")) {
     enhancer.clear()
     pollResults.length = 0

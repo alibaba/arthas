@@ -64,12 +64,12 @@ const submit = async (classI: Item, methI: Item) => {
     type: "SUBMIT",
     value: {
       action: "async_exec",
-      command: `monitor -c 5 ${classI.value} ${methI.value}`
-    } as AsyncReq
+      command: `monitor -c 5 ${classI.value} ${methI.value}`,
+      sessionId:undefined
+    }
   })
   const state = await waitFor(fetchM, state => state.hasTag("result"))
 
-  console.log(state.value)
   if (state.matches("success")) {
     loop.open()
   }

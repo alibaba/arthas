@@ -103,29 +103,13 @@ onBeforeMount(() => {
 onBeforeUnmount(() => {
   loop.close()
 })
-// 最基本的submit基于Interrupt
-const baseSubmit = async (value: ArthasReq, fn: (res?: ArthasRes) => void, err?: Function) => {
-  fetchM.start()
-  fetchM.send("INIT")
-  fetchM.send({
-    type: "SUBMIT",
-    value
-  })
-  const state = await waitFor(fetchM, state => state.hasTag("result"))
 
-  if (state.matches("success")) {
-    fn(state.context.response)
-  } else {
-    err && err()
-  }
-  fetchM.stop()
-}
 const submit = async (classI: Item, methI: Item) => {
-  baseSubmit({
+  fetchS.baseSubmit(fetchM,{
     action: "async_exec",
     command: `watch ${mode.value.value} ${classI.value} ${methI.value} -x 4`,
     sessionId:undefined
-  } , () => {
+  }).finally(()=>{
     pollResults.length = 0
     enhancer.clear()
     loop.open()

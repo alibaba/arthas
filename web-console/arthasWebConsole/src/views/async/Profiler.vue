@@ -30,8 +30,7 @@ let profilerStatus = ref({
 })
 let outputPath = ref("")
 let samples = ref(0)
-let mutexFrambuf = false
-let mutexDuration = false
+let fileformat = ref("arthas-output/%t-%p.html")
 const getStatusLoop = fetchS.getPollingLoop(() => {
   const statusM = interpret(permachine)
   fetchS.baseSubmit(statusM, {
@@ -83,7 +82,9 @@ const changeFramebuf = publicS.inputDialogFactory(
   },
   (input) => input.value.toString()
 )
-
+const changeFile = publicS.inputDialogFactory(fileformat,  
+  (raw) => raw.trim(),
+  (input) => input.value)
 const changeDuration = publicS.inputDialogFactory(
   duration,
   (raw) => {
@@ -93,7 +94,10 @@ const changeDuration = publicS.inputDialogFactory(
   (input) => input.value.toString()
 )
 
-
+const restartInit = ()=>{
+  profilerStatus.value.is = true
+  outputPath.value = ""
+} 
 const transformStartProps = () => {
   let start = "start"
   let evenOption = ""
@@ -125,12 +129,14 @@ const startSubmit = () => {
   }
 
   fetchS.baseSubmit(fetchM, value)
+    .then(restartInit)
 }
 const stopProfiler = () => fetchS.baseSubmit(fetchM, {
   action: "exec",
   command: "profiler stop"
 }).then(
   res => {
+    profilerStatus.value.is = false
     let result = (res as CommonRes).body.results[0]
     if (result.type === "profiler" && result.outputFile) {
       outputPath.value = result.outputFile
@@ -141,7 +147,7 @@ const resumeProfiler = () => fetchS.baseSubmit(fetchM, {
   action: "exec",
   command: "profiler resume"
 }).then(
-  res => console.log(res)
+  restartInit
 )
 
 onBeforeMount(async () => {
@@ -186,7 +192,7 @@ onBeforeUnmount(() => {
     </div>
 
   </div>
-  <div class="flex border-b-2  border-gray-300 items-center py-2">
+  <div class="flex border-b-2  border-gray-300 items-center py-2" v-if="!profilerStatus.is">
     <h3 class="text-lg w-40">How to start: </h3>
     <Listbox v-model="selectEvent">
       <div class=" relative mx-2">
@@ -209,14 +215,15 @@ onBeforeUnmount(() => {
     </Listbox>
     <button class="button-style mr-2" @click="changeDuration">duration :{{duration}}</button>
     <button class="button-style mr-2" @click="changeFramebuf">framebuf :{{framebuf}}</button>
+    <button class="button-style mr-2" @click="changeFile">file :{{fileformat}}</button>
     <TodoList title="include" :val-set="includesVal" class=" mr-2"></TodoList>
     <TodoList title="exclude" :val-set="excludesVal" class="mr-2"></TodoList>
     <button class="button-style" @click="startSubmit">start</button>
   </div>
   <div class="flex items-center border-b-2 border-gray-300 py-2">
     <h3 class="text-lg w-40">Resume or stop: </h3>
-    <button class="button-style mx-2" @click="resumeProfiler">resume</button>
-    <button class="button-style" @click="stopProfiler">stop</button>
+    <button class="button-style mx-2" @click="resumeProfiler" v-if="!profilerStatus.is">resume</button>
+    <button class="button-style" @click="stopProfiler" v-if="profilerStatus.is">stop</button>
   </div>
   <div class="flex items-center py-2" v-if="outputPath!==''">
     <h3 class="text-lg w-40">output file path: </h3>
