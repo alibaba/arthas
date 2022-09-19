@@ -76,7 +76,7 @@ type AsyncReq = SessionId<
     } | {
       command: `monitor -c ${number} ${string} ${string}`;
     } | {
-      command: `trace -n 20 ${string} ${string}`;
+      command: `trace ${string} ${string}`;
     } | {
       command: `tt -t ${string} ${string}`;
     } | {

@@ -4,7 +4,7 @@ import machine from '@/machines/consoleMachine';
 import permachine from '@/machines/perRequestMachine';
 import { fetchStore } from '@/stores/fetch';
 import { useMachine, useInterpret } from '@xstate/vue';
-import { onBeforeMount, onBeforeUnmount, reactive } from 'vue';
+import { onBeforeMount, onBeforeUnmount, reactive, ref } from 'vue';
 import { waitFor } from 'xstate/lib/waitFor';
 import CmdResMenu from '@/components/show/CmdResMenu.vue';
 const fetchM = useInterpret(permachine)
@@ -26,7 +26,8 @@ const loop = getPollingLoop(() => {
   globalIntrupt: true
 })
 const pollResults = reactive([] as [string,Map<string, string[]>][])
-const enhancer = reactive(new Map())
+// const enhancer = reactive(new Map())
+const enhancer = ref(undefined as EnchanceResult | undefined)
 getCommonResEffect(pollingM, body => {
   if (body.results.length > 0) {
     body.results.forEach(result => {
@@ -49,11 +50,7 @@ getCommonResEffect(pollingM, body => {
       }
 
       if (result.type === "enhancer") {
-        enhancer.clear()
-        enhancer.set("success", [result.success])
-        for (const k in result.effect) {
-          enhancer.set(k, [result.effect[k as "cost"]])
-        }
+        enhancer.value = result
       }
     })
   }
@@ -71,7 +68,7 @@ onBeforeUnmount(() => {
 
 const submit = async (classI: Item, methI: Item) => {
   pollResults.length = 0
-  enhancer.clear()
+  enhancer.value = undefined
   fetchM.start()
   fetchM.send("INIT")
   fetchM.send({
@@ -94,8 +91,8 @@ const submit = async (classI: Item, methI: Item) => {
 
 <template>
   <MethodInput :submit-f="submit"></MethodInput>
-  <template v-if="pollResults.length > 0 || enhancer.size > 0">
-    <CmdResMenu title="enhancer" :map="enhancer" open></CmdResMenu>
+  <template v-if="pollResults.length > 0 || enhancer">
+    <Enhancer :result="enhancer" v-if="enhancer"></Enhancer>
     <ul class=" pointer-events-auto mt-10">
       <template v-for="(result, i) in pollResults" :key="i">
         <CmdResMenu :title="result[0]" :map="result[1]" open></CmdResMenu>

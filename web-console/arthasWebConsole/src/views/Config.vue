@@ -61,10 +61,12 @@ const handleTree = (data: Record<string, string>, map: Map<string, string[]>): s
   let res: string[] = []
   Object.entries(data).forEach(([k, v]) => {
     res.push(k)
-    if (v.includes(";")) {
-      map.set(k, reactive(v.split(";").filter(v => v.trim() !== '')))
+    if(k.toLowerCase().includes("path")){
+      map.set(k,v.split(":").filter(v=>v.trim() !== ''))
+    } else if (v.includes(";")) {
+      map.set(k, v.split(";").filter(v => v.trim() !== ''))
     } else {
-      map.set(k, reactive([v]))
+      map.set(k, [v])
     }
   })
   return res

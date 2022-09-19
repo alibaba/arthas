@@ -323,8 +323,12 @@ const machine =
             err: s.context.err,
           };
         }
+        let inputRaw:ArthasReq = {
+          sessionId:undefined,
+          ...s?.context.output
+        } as ArthasReq
         return {
-          inputRaw: s?.context.output as ArthasReq,
+          inputRaw,
         };
       }),
       needReportSuccess: (context, e) => {

@@ -25,6 +25,10 @@ export const fetchStore = defineStore("fetch", {
     requestId: "",
     online: false,
     wait: false,
+    /**
+     * 需要给status计数，不然interupt自动关闭很容易出问题
+     */
+    statusZeroCount:0,
     // 所有用pollingLoop都要
     jobRunning: false,
   }),
@@ -100,6 +104,7 @@ export const fetchStore = defineStore("fetch", {
         },
         close() {
           if (this.isOn()) {
+            //用于自动可自动打断，但是要加计时器
             if (globalIntrupt) that.jobRunning = false;
             clearInterval(id);
             id = -1;
@@ -145,19 +150,11 @@ export const fetchStore = defineStore("fetch", {
      */
     getPullResultsEffect(
       M: Machine,
-      enhancer: Map<string, string[]>,
       fn: (result: ArthasResResult) => void,
     ) {
       return this.getCommonResEffect(M, (body: CommonRes["body"]) => {
         if (body.results.length > 0) {
           body.results.forEach((result) => {
-            if (result.type === "enhancer") {
-              enhancer.clear();
-              enhancer.set("success", [result.success.toString()]);
-              for (const k in result.effect) {
-                enhancer.set(k, [result.effect[k as "cost"].toString()]);
-              }
-            }
             fn(result);
           });
         }

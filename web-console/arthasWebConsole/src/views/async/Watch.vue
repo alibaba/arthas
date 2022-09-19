@@ -17,13 +17,14 @@ import {
 import { onBeforeMount, onBeforeUnmount, reactive, Ref, ref, watchEffect } from 'vue';
 import CmdResMenu from '@/components/show/CmdResMenu.vue';
 import Tree from '@/components/show/Tree.vue';
+import Enhancer from '@/components/show/Enhancer.vue';
 const pollingM = useMachine(machine)
 const fetchS = fetchStore()
 const { pullResultsLoop, interruptJob, getCommonResEffect, getPullResultsEffect } = fetchS
 const fetchM = useInterpret(permachine)
 const loop = pullResultsLoop(pollingM)
 const pollResults = reactive([] as [string, Map<string, string[]>, TreeNode][])
-const enhancer = reactive(new Map())
+const enhancer = ref(undefined as EnchanceResult|undefined)
 
 const tranOgnl = (s: string): string[] => s.split("\n")
 type Mode = "-f" | "-s" | "-e" | "-b"
@@ -37,7 +38,6 @@ const mode = ref(modelist[3])
 // const transTT = (result:CommonRes["body"]["results"][0])
 getPullResultsEffect(
   pollingM,
-  enhancer,
   result => {
     if (result.type === "watch") {
       const map = new Map();
@@ -95,6 +95,9 @@ getPullResultsEffect(
 
       pollResults.unshift([key, map, stk[0]])
     }
+    if(result.type === "enhancer") {
+      enhancer.value = result
+    }
   })
 
 onBeforeMount(() => {
@@ -111,7 +114,7 @@ const submit = async (classI: Item, methI: Item) => {
     sessionId:undefined
   }).finally(()=>{
     pollResults.length = 0
-    enhancer.clear()
+    enhancer.value = undefined
     loop.open()
   })
 }
@@ -139,8 +142,8 @@ const submit = async (classI: Item, methI: Item) => {
       </Listbox>
     </template>
   </MethodInput>
-  <template v-if="pollResults.length > 0 || enhancer.size > 0">
-    <CmdResMenu title="enhancer" :map="enhancer" open class="mt-4"></CmdResMenu>
+  <template v-if="pollResults.length > 0 || enhancer">
+    <Enhancer :result="enhancer" v-if="enhancer"></Enhancer>
     <ul class=" pointer-events-auto mt-10">
       <template v-for="(result, i) in pollResults" :key="i">
         <CmdResMenu :title="result[0]" :map="result[1]" open>

@@ -12,6 +12,7 @@ import {
 } from "@headlessui/vue"
 import { onBeforeMount, onBeforeUnmount, reactive, ref, watchEffect } from 'vue';
 import CmdResMenu from '@/components/show/CmdResMenu.vue';
+import Enhancer from '@/components/show/Enhancer.vue';
 const pollingM = useMachine(machine)
 const fetchS = fetchStore()
 const { pullResultsLoop, interruptJob, getCommonResEffect, getPullResultsEffect } = fetchS
@@ -20,7 +21,8 @@ const loop = pullResultsLoop(pollingM)
 const pollResults = reactive([] as [string, Map<keyof TimeFragment, string[]>][])
 const timeFragmentL = reactive([] as typeof pollResults)
 const ttSet = new Set()
-const enhancer = reactive(new Map())
+// const enhancer = reactive(new Map())
+const enhancer = ref(undefined as EnchanceResult | undefined)
 const trigerRes = reactive(new Map<string, string[]>)
 const cacheIdx = ref("-1")
 type tfkey = keyof TimeFragment
@@ -28,7 +30,7 @@ const tranOgnl = (s: string): string[] => s.replace(/\r\n\tat/g, "\r\n\t@").spli
 // const transTT = (result:CommonRes["body"]["results"][0])
 getPullResultsEffect(
   pollingM,
-  enhancer, result => {
+  result => {
     if (result.type === "tt") {
       result.timeFragmentList.forEach(tf => {
         const Mkey = tf.index
@@ -52,6 +54,9 @@ getPullResultsEffect(
           pollResults.unshift([Mkey.toString(), map])
         }
       })
+    }
+    if(result.type === "enhancer"){
+      enhancer.value = result
     }
   })
 
@@ -85,7 +90,7 @@ const submit = async (classI: Item, methI: Item) => {
     sessionId:undefined
   }, () => {
     pollResults.length = 0
-    enhancer.clear()
+    enhancer.value = undefined
     loop.open()
   })
 }
@@ -183,8 +188,8 @@ const reTrigger = async (idx: string) => {
       </template>
     </DisclosurePanel>
   </Disclosure>
-  <template v-if="pollResults.length > 0 || enhancer.size > 0">
-    <CmdResMenu title="enhancer" :map="enhancer" open></CmdResMenu>
+  <template v-if="pollResults.length > 0 || enhancer">
+    <Enhancer :result="enhancer" v-if="enhancer"></Enhancer>
     <ul class=" pointer-events-auto mt-10">
       <template v-for="(result, i) in pollResults" :key="i">
         <CmdResMenu :title="result[0]" :map="result[1]" open></CmdResMenu>
