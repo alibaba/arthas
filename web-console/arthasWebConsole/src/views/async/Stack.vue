@@ -6,6 +6,7 @@ import { fetchStore } from '@/stores/fetch';
 import { useMachine, useInterpret } from '@xstate/vue';
 import { onBeforeMount, onBeforeUnmount, reactive, ref } from 'vue';
 import { waitFor } from 'xstate/lib/waitFor';
+import Enhancer from '@/components/show/Enhancer.vue';
 import CmdResMenu from '@/components/show/CmdResMenu.vue';
 const fetchM = useInterpret(permachine)
 const pollingM = useMachine(machine)

@@ -19,9 +19,8 @@ const { pullResultsLoop, interruptJob, getCommonResEffect, getPullResultsEffect 
 const fetchM = useInterpret(permachine)
 const loop = pullResultsLoop(pollingM)
 const pollResults = reactive([] as [string, Map<keyof TimeFragment, string[]>][])
-const timeFragmentL = reactive([] as typeof pollResults)
+const timeFragmentL = ref([] as typeof pollResults)
 const ttSet = new Set()
-// const enhancer = reactive(new Map())
 const enhancer = ref(undefined as EnchanceResult | undefined)
 const trigerRes = reactive(new Map<string, string[]>)
 const cacheIdx = ref("-1")
@@ -55,7 +54,7 @@ getPullResultsEffect(
         }
       })
     }
-    if(result.type === "enhancer"){
+    if (result.type === "enhancer") {
       enhancer.value = result
     }
   })
@@ -87,7 +86,7 @@ const submit = async (classI: Item, methI: Item) => {
   baseSubmit({
     action: "async_exec",
     command: `tt -t ${classI.value} ${methI.value}`,
-    sessionId:undefined
+    sessionId: undefined
   }, () => {
     pollResults.length = 0
     enhancer.value = undefined
@@ -95,14 +94,14 @@ const submit = async (classI: Item, methI: Item) => {
   })
 }
 const alltt = async () => {
-
   fetchS.baseSubmit(fetchM, {
     action: "exec",
     command: `tt -l`
   }).then((res) => {
     let result = (res as CommonRes).body.results[0]
-    timeFragmentL.length = 0
+    // timeFragmentL.value.length = 0
     if (result.type === "tt") {
+      console.log("type tt")
       result.timeFragmentList.forEach(tf => {
         const Mkey = tf.index
 
@@ -122,7 +121,7 @@ const alltt = async () => {
         })
         if (!ttSet.has(Mkey)) {
           ttSet.add(Mkey)
-          timeFragmentL.unshift([Mkey.toString(), map])
+          timeFragmentL.value.unshift([Mkey.toString(), map])
         }
       })
     }
@@ -170,21 +169,24 @@ const reTrigger = async (idx: string) => {
     <DisclosureButton class=" rounded bg-blue-400 my-4 p-2" @click="alltt">
       all TimeFragment
     </DisclosureButton>
-    <DisclosurePanel class="text-gray-500">
+    <DisclosurePanel class="text-gray-500" static>
       <CmdResMenu title="result" :map="trigerRes" v-if="trigerRes.size > 0">
         <div class="flex mt-2 justify-end mr-1">
-          <button @click="reTrigger(cacheIdx)" class="bg-blue-400 hover:opacity-60 transition p-1 rounded">invoke</button>
+          <button @click="reTrigger(cacheIdx)"
+            class="bg-blue-400 hover:opacity-60 transition p-1 rounded">invoke</button>
         </div>
       </CmdResMenu>
-      <template v-for="(result, i) in timeFragmentL" :key="i">
-        <CmdResMenu :title="result[0]" :map="result[1]">
-          <template #headerAside>
-            <div class="flex mt-2 justify-end mr-1">
-              <button @click="reTrigger(result[0])"
-                class="bg-blue-400 hover:opacity-60 transition p-1 rounded">invoke</button>
-            </div>
-          </template>
-        </CmdResMenu>
+      <template v-if="timeFragmentL.length > 0">
+        <template v-for="(result, i) in timeFragmentL" :key="i">
+          <CmdResMenu :title="result[0]" :map="result[1]">
+            <template #headerAside>
+              <div class="flex mt-2 justify-end mr-1">
+                <button @click="reTrigger(result[0])"
+                  class="bg-blue-400 hover:opacity-60 transition p-1 rounded">invoke</button>
+              </div>
+            </template>
+          </CmdResMenu>
+        </template>
       </template>
     </DisclosurePanel>
   </Disclosure>

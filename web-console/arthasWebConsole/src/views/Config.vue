@@ -56,11 +56,13 @@ const sysEnvTree = reactive([] as string[])
 const sysPropTree = reactive([] as string[])
 const vmOptionMTree = reactive([] as VmOption[])
 // 处理展示的树形数据
-const handleTree = (data: Record<string, string>, map: Map<string, string[]>): string[] => {
+const handleTree = (data: Record<string, string|boolean|number>, map: Map<string, string[]>): string[] => {
   map.clear()
   let res: string[] = []
   Object.entries(data).forEach(([k, v]) => {
     res.push(k)
+    if(typeof v === "boolean") v = v.toString()
+    if(typeof v === "number" ) v = v.toString()
     if(k.toLowerCase().includes("path")){
       map.set(k,v.split(":").filter(v=>v.trim() !== ''))
     } else if (v.includes(";")) {

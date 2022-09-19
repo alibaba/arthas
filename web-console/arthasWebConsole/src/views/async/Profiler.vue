@@ -196,7 +196,7 @@ onBeforeUnmount(() => {
     <h3 class="text-lg w-40">How to start: </h3>
     <Listbox v-model="selectEvent">
       <div class=" relative mx-2">
-        <ListboxButton class="border p-2 w-52 rounded-xl hover:shadow-md transition bg-blue-400 hover:opacity-50"> even:
+        <ListboxButton class="input-btn-style w-52 "> even:
           {{ selectEvent}}
         </ListboxButton>
         <ListboxOptions
@@ -213,12 +213,12 @@ onBeforeUnmount(() => {
         </ListboxOptions>
       </div>
     </Listbox>
-    <button class="button-style mr-2" @click="changeDuration">duration :{{duration}}</button>
-    <button class="button-style mr-2" @click="changeFramebuf">framebuf :{{framebuf}}</button>
-    <button class="button-style mr-2" @click="changeFile">file :{{fileformat}}</button>
+    <button class="input-btn-style mr-2" @click="changeDuration">duration :{{duration}}</button>
+    <button class="input-btn-style mr-2" @click="changeFramebuf">framebuf :{{framebuf}}</button>
+    <button class="input-btn-style mr-2" @click="changeFile">file :{{fileformat}}</button>
     <TodoList title="include" :val-set="includesVal" class=" mr-2"></TodoList>
     <TodoList title="exclude" :val-set="excludesVal" class="mr-2"></TodoList>
-    <button class="button-style" @click="startSubmit">start</button>
+    <button class="input-btn-style" @click="startSubmit">start</button>
   </div>
   <div class="flex items-center border-b-2 border-gray-300 py-2">
     <h3 class="text-lg w-40">Resume or stop: </h3>

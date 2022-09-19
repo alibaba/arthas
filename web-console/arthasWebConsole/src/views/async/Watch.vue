@@ -6,9 +6,6 @@ import MethodInput from '@/components/input/MethodInput.vue';
 import machine from '@/machines/consoleMachine';
 import { fetchStore } from '@/stores/fetch';
 import {
-  Disclosure,
-  DisclosureButton,
-  DisclosurePanel,
   Listbox,
   ListboxButton,
   ListboxOptions,
@@ -18,14 +15,16 @@ import { onBeforeMount, onBeforeUnmount, reactive, Ref, ref, watchEffect } from 
 import CmdResMenu from '@/components/show/CmdResMenu.vue';
 import Tree from '@/components/show/Tree.vue';
 import Enhancer from '@/components/show/Enhancer.vue';
+import { publicStore } from '@/stores/public';
 const pollingM = useMachine(machine)
 const fetchS = fetchStore()
-const { pullResultsLoop, interruptJob, getCommonResEffect, getPullResultsEffect } = fetchS
+const publiC = publicStore()
+const { pullResultsLoop, getPullResultsEffect } = fetchS
 const fetchM = useInterpret(permachine)
 const loop = pullResultsLoop(pollingM)
 const pollResults = reactive([] as [string, Map<string, string[]>, TreeNode][])
 const enhancer = ref(undefined as EnchanceResult|undefined)
-
+const depth = ref(1)
 const tranOgnl = (s: string): string[] => s.split("\n")
 type Mode = "-f" | "-s" | "-e" | "-b"
 const modelist: { name: string, value: Mode }[] = [
@@ -99,7 +98,14 @@ getPullResultsEffect(
       enhancer.value = result
     }
   })
-
+const setDepth = publiC.inputDialogFactory(
+  depth,
+  (raw) => {
+    let valRaw = parseInt(raw)
+    return Number.isNaN(valRaw) ? 1 : valRaw
+  },
+  (input) => input.value.toString(),
+)
 onBeforeMount(() => {
   pollingM.send("INIT")
 })
@@ -110,7 +116,7 @@ onBeforeUnmount(() => {
 const submit = async (classI: Item, methI: Item) => {
   fetchS.baseSubmit(fetchM,{
     action: "async_exec",
-    command: `watch ${mode.value.value} ${classI.value} ${methI.value} -x 4`,
+    command: `watch ${mode.value.value} ${classI.value} ${methI.value} -x ${depth.value}`,
     sessionId:undefined
   }).finally(()=>{
     pollResults.length = 0
@@ -126,7 +132,7 @@ const submit = async (classI: Item, methI: Item) => {
     <template #others>
       <Listbox v-model="mode">
         <div class=" relative mx-2 ">
-          <ListboxButton class="border p-2 w-40 rounded-xl hover:shadow-md transition">{{ mode.name }}</ListboxButton>
+          <ListboxButton class="input-btn-style w-40">{{ mode.name }}</ListboxButton>
           <ListboxOptions class=" absolute w-40 mt-2 border py-2 rounded-md hover:shadow-xl transition bg-white">
             <ListboxOption v-for="(am,i) in modelist" :key="i" :value="am" v-slot="{active, selected}">
               <div class=" p-2 transition " :class="{
@@ -140,6 +146,7 @@ const submit = async (classI: Item, methI: Item) => {
           </ListboxOptions>
         </div>
       </Listbox>
+      <button class="input-btn-style" @click="setDepth">depth:{{depth}}</button>
     </template>
   </MethodInput>
   <template v-if="pollResults.length > 0 || enhancer">

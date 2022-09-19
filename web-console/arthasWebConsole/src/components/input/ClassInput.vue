@@ -14,11 +14,10 @@ const { label = "inputClassName" } = defineProps<{
   }) => void
 }>()
 const { getCommonResEffect } = publicStore()
-// const searchClass = useMachine(machine)
-// const searchClass = useInterpret(permachine)
 const optionClass = ref([] as { name: string, value: string }[])
 const optionClassloders = ref([] as { name: string, value: string }[])
 const fetchS = fetchStore()
+const selectedClassItem = ref({ name: "", value: "" } as Item)
 const changeValue = (value: string) => {
   const searchClass = interpret(permachine)
   if (value.length > 2) {
@@ -43,29 +42,29 @@ const changeValue = (value: string) => {
   }
 
 }
-const blurF = (value: any) => {
-  const searchClass = interpret(permachine)
-  console.log(value, "1blue")
-  fetchS.baseSubmit(searchClass, {
-    action: "exec",
-    command: `sc -d *${value}*`
-  }).then(
-    res => {
-      let result = (res as CommonRes).body.results[0]
-      if (result.type === "sc" && result.detailed) {
+const blurF = (value: unknown) => {
+  if (value !== "") {
+    const searchClass = interpret(permachine)
+    fetchS.baseSubmit(searchClass, {
+      action: "exec",
+      command: `sc -d *${value}*`
+    }).then(
+      res => {
+        let result = (res as CommonRes).body.results[0]
+        if (result.type === "sc" && result.detailed) {
 
-        optionClassloders.value = result.classInfo.classloader.map(v => ({
-          name: v,
-          value: v.split("@")[1]
-        }))
-        optionClassloders.value.unshift({
-          name:"default",
-          value:""
-        })
+          optionClassloders.value = result.classInfo.classloader.map(v => ({
+            name: v,
+            value: v.split("@")[1]
+          }))
+          optionClassloders.value.unshift({
+            name: "default",
+            value: ""
+          })
+        }
       }
-    }
-  )
-
+    )
+  }
 }
 const filterfn = (_: any, item: Item) => true
 </script>
@@ -74,6 +73,7 @@ const filterfn = (_: any, item: Item) => true
   <AutoComplete :label="label" :option-items="optionClass" :input-fn="changeValue" :filter-fn="filterfn" v-slot="slotP"
     :blur-fn="blurF" as="form">
     <AutoComplete label="classloader" :option-items="optionClassloders" v-slot="slotQ">
+      <slot name="others"></slot>
       <button @click.prevent="submitF({
         classItem:slotP.selectItem,
         loaderItem:slotQ.selectItem

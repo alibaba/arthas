@@ -10,6 +10,7 @@ import CmdResMenu from '@/components/show/CmdResMenu.vue';
 import Tree from '@/components/show/Tree.vue';
 import Enhancer from '@/components/show/Enhancer.vue';
 import { count } from 'console';
+import { publicStore } from '@/stores/public';
 const pollingM = useMachine(machine)
 const fetchS = fetchStore()
 const { pullResultsLoop, getCommonResEffect } = fetchS
@@ -18,10 +19,7 @@ const loop = pullResultsLoop(pollingM)
 const pollResults = reactive<TreeNode[]>([])
 // const enhancer = reactive(new Map())
 const enhancer = ref(undefined as EnchanceResult | undefined)
-/**
- * 打算引入动态的堆叠图，但是不知道timestamp还有cost 应该是rt，估计得找后端去补这个接口
- */
-
+const publiC = publicStore()
 // let statusCount = 0
 getCommonResEffect(pollingM, body => {
   if (body.results.length > 0) {
@@ -61,7 +59,7 @@ getCommonResEffect(pollingM, body => {
               "priority="+root.priority.toString(), 
               "threadId="+root.threadId.toString(), `TCCL=${root.classloader}`]
           } else {
-            title = [`[${root.totalCost}ms]`, `${root.className}:${root.methodName}`]
+            title = [`[${root.totalCost /1000}ms, min=${root.minCost /1000}ms, max =${root.maxCost/1000}ms]`, `${root.className}:${root.methodName}`]
           }
           return title
         }
@@ -123,18 +121,28 @@ const submit = async (classI: Item, methI: Item) => {
 </script>
   
 <template>
-  <MethodInput :submit-f="submit" class="mb-2"></MethodInput>
+  <MethodInput :submit-f="submit" class="mb-2">
+    <template #others>
+      
+    </template>
+  </MethodInput>
   <template v-if="pollResults.length > 0 || enhancer">
     <Enhancer :result="enhancer" v-if="enhancer"></Enhancer>
     <ul class=" pointer-events-auto mt-2 ">
       <template v-for="(result, i) in pollResults" :key="i">
         <Tree :root="result" class=" border-t-2 mb-4 pt-4">
           <!-- 具体信息的表达 -->
-          <template #meta="{ data }">
-            <button class="mb-2 ml-2 p-2 button-style rounded-l-none">
+          <template #meta="{ data, active }">
+            <div 
+                class="bg-blue-200 p-2 mb-2 rounded-r rounded-br"
+                :class='{"hover:bg-blue-300 bg-blue-400":active}'
+                >
+                {{data.join(";")}}
+                </div>
+            <!-- <button class="button-style rounded-l-none"> -->
               <!-- <CmdResMenu :title="data.get('title')[0]" :map="data" class=""></CmdResMenu> -->
-              {{data.join(";")}}
-            </button>
+              <!-- {{data.join(";")}} -->
+            <!-- </button> -->
           </template>
         </Tree>
       </template>

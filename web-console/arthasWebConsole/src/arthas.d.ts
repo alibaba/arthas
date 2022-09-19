@@ -684,7 +684,7 @@ type FailRes = SessionId<{
 type ArthasRes = CommonRes | SessionRes | FailRes | AsyncRes;
 
 // autoComplete
-type Item = { name: string; value: any };
+type Item = { name: string; value: unknown };
 
 // Tree
 interface TreeNode {

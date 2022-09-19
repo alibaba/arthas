@@ -5,13 +5,13 @@ import permachine from '@/machines/perRequestMachine';
 import { fetchStore } from '@/stores/fetch';
 import { publicStore } from '@/stores/public';
 import { useInterpret } from '@xstate/vue';
-import { reactive } from 'vue';
+import { reactive, ref } from 'vue';
 const pollResults = reactive<TreeNode[]>([])
 const gcMachine = useInterpret(permachine)
 const fetchS = fetchStore()
 const publicS = publicStore()
+const depth = ref(1)
 const forceGc = () => {
-
   fetchS.baseSubmit(gcMachine, {
     action: "exec",
     command: "vmtool --action forceGc "
@@ -22,12 +22,19 @@ const forceGc = () => {
     })
   )
 }
-
+const setDepth = publicS.inputDialogFactory(
+  depth,
+  (raw) => {
+    let valRaw = parseInt(raw)
+    return Number.isNaN(valRaw) ? 1 : valRaw
+  },
+  (input) => input.value.toString(),
+)
 const getInstance = (data:{classItem:Item}) => {
   pollResults.length = 0
   fetchS.baseSubmit(gcMachine, {
     action: "exec",
-    command: `vmtool --action getInstances --className ${data.classItem.value} -x 10`
+    command: `vmtool --action getInstances --className ${data.classItem.value} -x ${depth.value}`
   }).then(
     res => {
       const result = (res as CommonRes).body.results[0]
@@ -92,7 +99,11 @@ const getInstance = (data:{classItem:Item}) => {
   <div>
     <button @click.prevent="forceGc" class="bg-blue-500 p-2 hover:bg-blue-300 transition rounded-md">forceGc</button>
   </div>
-  <ClassInput :submit-f="getInstance" class="mb-4" />
+  <ClassInput :submit-f="getInstance" class="mb-4" >
+    <template #others>
+      <button class="ml-2 input-btn-style" @click="setDepth">depth:{{depth}}</button>
+    </template>
+  </ClassInput>
   <template v-if="pollResults.length > 0">
     <ul class=" pointer-events-auto mt-10">
       <template v-for="(result, i) in pollResults" :key="i">

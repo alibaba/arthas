@@ -68,7 +68,8 @@ const blurF = (event:Event)=>{
           Nothing found.
         </div>
 
-        <ComboboxOption v-for="item in filterItems" as="template" :key="item.name" :value="item"
+        <ComboboxOption 
+          v-for="(item,i) in filterItems" as="template" :key="i" :value="item"
           v-slot="{ selected, active }">
           <li class="relative cursor-default select-none p-2" :class="{
             'bg-blue-400 text-white': active,

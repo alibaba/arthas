@@ -6,4 +6,7 @@
   .button-style {
     @apply bg-blue-400 hover:opacity-50 transition rounded-md p-2
   }
+  .input-btn-style {
+    @apply border p-2 rounded-xl hover:shadow-md transition border-gray-300
+  }
 }
