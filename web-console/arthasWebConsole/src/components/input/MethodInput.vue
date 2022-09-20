@@ -10,54 +10,19 @@ import { waitFor } from 'xstate/lib/waitFor';
 import AutoComplete from './AutoComplete.vue';
 const { label = "inputClassName" } = defineProps<{
   label?: string,
-  submitF: (classItem: Item, methodItem: Item) => void
+  submitF: (data:{classItem: Item, methodItem: Item,
+    conditon:string,
+    express:string
+  }) => void
 }>()
 const { getCommonResEffect } = publicStore()
 // const searchClass = useMachine(machine)
 const fetchS = fetchStore()
 const optionClass = ref([] as { name: string, value: string }[])
 const optionMethod = ref([] as { name: string, value: string }[])
-// onBeforeMount(() => {
-//   searchClass.send("INIT")
-// })
+const conditon = ref("")
+const express=ref("")
 
-// getCommonResEffect(searchClass, body => {
-//   optionClass.value.length = 0
-//   const result = body.results[0]
-//   if (result.type === "sc" && !result.detailed && !result.withField) {
-//     result.classNames.forEach(name => {
-//       optionClass.value.push({
-//         name,
-//         value: name
-//       })
-//     })
-//   } else if (result.type === "sm") {
-//     optionMethod.value.length = 0
-//     body.results.forEach(result => {
-//       if (result.type === "sm") {
-
-//         const name = result.methodInfo.methodName
-//         optionMethod.value.push({
-//           name,
-//           value: name
-//         })
-//       }
-//     })
-//   }
-// })
-
-// const changeClass = (value: string) => {
-//   const searchClass = interpret(permachine)
-//   if (searchClass.state.value.matches("ready")) {
-//     searchClass.send({
-//       type: "SUBMIT",
-//       value: {
-//         action: "exec",
-//         command: `sc *${value}*`
-//       }
-//     })
-//   }
-// }
 const changeClass = (value: string) => {
   const searchClass = interpret(permachine)
   if (value.length > 2) {
@@ -111,17 +76,17 @@ const changeMethod = (classV: string, value: string) => {
   //   })
   // }
 }
-// const initMethod = async (classV: string) => {
-//   // await waitFor(searchClass.service, state => state.matches("ready"))
-//   // searchClass.send({
-//   //   type: "SUBMIT",
-//   //   value: {
-//   //     action: "exec",
-//   //     command: `sm ${classV}`
-//   //   }
-//   // })
-//   changeMethod(classV,"")
-// }
+
+const setConditon = publicStore().inputDialogFactory(
+  conditon,
+  raw=>raw,
+  _=>_.value
+)
+const setExpress = publicStore().inputDialogFactory(
+  express,
+  raw=>raw,
+  _=>_.value
+)
 const filterfn = (_: any, item: Item) => true
 </script>
 
@@ -131,8 +96,15 @@ const filterfn = (_: any, item: Item) => true
     <AutoComplete label="input Method" :option-items="optionMethod"
       :input-fn="(value) => changeMethod(slotClass.selectItem.value as string, value)" :filter-fn="filterfn"
       v-slot="slotMethod">
+      <button class="input-btn-style ml-2" @click="setExpress">express:{{express}}</button>
+      <button class="input-btn-style ml-2" @click="setConditon">condition:{{conditon}}</button>
       <slot name="others"></slot>
-      <button @click.prevent="submitF(slotClass.selectItem, slotMethod.selectItem)"
+      <button @click.prevent="submitF({
+        classItem: slotClass.selectItem, 
+        methodItem: slotMethod.selectItem,
+        conditon,
+        express
+        })"
         class="border bg-blue-400 p-2 rounded-md mx-2 hover:opacity-50 transition">submit</button>
     </AutoComplete>
 

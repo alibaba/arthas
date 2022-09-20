@@ -82,10 +82,10 @@ const baseSubmit = async (value: ArthasReq, fn: (res?: ArthasRes) => void, err?:
   }
   fetchM.stop()
 }
-const submit = async (classI: Item, methI: Item) => {
+const submit = async (data:{classItem: Item, methodItem: Item}) => {
   baseSubmit({
     action: "async_exec",
-    command: `tt -t ${classI.value} ${methI.value}`,
+    command: `tt -t ${data.classItem.value} ${data.methodItem.value}`,
     sessionId: undefined
   }, () => {
     pollResults.length = 0

@@ -19,8 +19,7 @@ onMounted(() => {
 
 
 function setIsOpen() {
-  
-  if (inputV.value !== "") store.inputVal = inputV.value
+  store.inputVal = inputV.value
   console.log(store.inputVal, inputV.value)
   store.isInput = false
 }

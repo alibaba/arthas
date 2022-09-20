@@ -23,7 +23,7 @@ const { pullResultsLoop, getPullResultsEffect } = fetchS
 const fetchM = useInterpret(permachine)
 const loop = pullResultsLoop(pollingM)
 const pollResults = reactive([] as [string, Map<string, string[]>, TreeNode][])
-const enhancer = ref(undefined as EnchanceResult|undefined)
+const enhancer = ref(undefined as EnchanceResult | undefined)
 const depth = ref(1)
 const tranOgnl = (s: string): string[] => s.split("\n")
 type Mode = "-f" | "-s" | "-e" | "-b"
@@ -60,7 +60,7 @@ getPullResultsEffect(
         }
         const root = {
           children: [],
-          meta: str.substring(0,str.length - 1)
+          meta: str.substring(0, str.length - 1)
         } as TreeNode
 
         if (match > 0) {
@@ -94,7 +94,7 @@ getPullResultsEffect(
 
       pollResults.unshift([key, map, stk[0]])
     }
-    if(result.type === "enhancer") {
+    if (result.type === "enhancer") {
       enhancer.value = result
     }
   })
@@ -113,12 +113,15 @@ onBeforeUnmount(() => {
   loop.close()
 })
 
-const submit = async (classI: Item, methI: Item) => {
-  fetchS.baseSubmit(fetchM,{
+const submit = async (data: { classItem: Item, methodItem: Item, conditon: string, express: string }) => {
+  let conditon = data.conditon.trim() == "" ? "" : `'${data.conditon.trim()}'`
+  let express = data.express.trim() == "" ? "" : `'${data.express.trim()}'`
+  
+  fetchS.baseSubmit(fetchM, {
     action: "async_exec",
-    command: `watch ${mode.value.value} ${classI.value} ${methI.value} -x ${depth.value}`,
-    sessionId:undefined
-  }).finally(()=>{
+    command: `watch ${mode.value.value} ${data.classItem.value} ${data.methodItem.value} -x ${depth.value} ${conditon} ${express}`,
+    sessionId: undefined
+  }).finally(() => {
     pollResults.length = 0
     enhancer.value = undefined
     loop.open()
@@ -157,10 +160,8 @@ const submit = async (classI: Item, methI: Item) => {
           <template #others>
             <Tree :root="result[2]" class="mt-2" button-class=" ">
               <template #meta="{ data, active }">
-                <div 
-                class="bg-blue-200 p-2 mb-2 rounded-r rounded-br"
-                :class='{"hover:bg-blue-300 bg-blue-400":active}'
-                >
+                <div class="bg-blue-200 p-2 mb-2 rounded-r rounded-br"
+                  :class='{"hover:bg-blue-300 bg-blue-400":active}'>
                   {{data}}
                 </div>
               </template>

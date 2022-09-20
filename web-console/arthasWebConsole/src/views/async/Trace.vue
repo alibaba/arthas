@@ -98,14 +98,14 @@ onBeforeMount(() => {
 onBeforeUnmount(() => {
   loop.close()
 })
-const submit = async (classI: Item, methI: Item) => {
+const submit = async (data:{classItem: Item, methodItem: Item}) => {
   fetchM.start()
   fetchM.send("INIT")
   fetchM.send({
     type: "SUBMIT",
     value: {
       action: "async_exec",
-      command: `trace ${classI.value} ${methI.value} --skipJDKMethod false`,
+      command: `trace ${data.classItem.value} ${data.methodItem.value} --skipJDKMethod false`,
       sessionId: undefined
     }
   })

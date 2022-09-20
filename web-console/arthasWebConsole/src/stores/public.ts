@@ -1,5 +1,5 @@
 import { defineStore } from "pinia";
-import { nextTick, Ref, watchEffect } from "vue";
+import { nextTick, ref, Ref, watch, watchEffect } from "vue";
 import { useMachine } from "@xstate/vue";
 
 const getEffect = (M: ReturnType<typeof useMachine>, fn: (res: ArthasRes) => void) => watchEffect(() => {
@@ -47,13 +47,13 @@ export const publicStore = defineStore("public", { // Public项目唯一id
       })
     },
     inputDialogFactory<T=string>(inputRef: Ref<T>, getVal: (raw:string)=>T, setVal:(input:Ref<T>)=>string) {
-      let mutex = false
+      let mutex = ref(false)
       watchEffect(() => {
-        if (this.inputVal !== "" && mutex) {
+        if (mutex.value  && !this.isInput) {
           /**
-     * 先上锁，防止再次触发该副作用
-     */
-          mutex = false
+          * 先上锁，防止再次触发该副作用
+          */
+          mutex.value = false
           inputRef.value = getVal(this.inputVal)
           this.inputVal = ""
         }
@@ -63,7 +63,7 @@ export const publicStore = defineStore("public", { // Public项目唯一id
           isInput: true,
           inputVal: setVal(inputRef)
         })
-        nextTick(() => mutex = true)
+        mutex.value = true
       }
     
     }
