@@ -116,7 +116,7 @@ onBeforeUnmount(() => {
 const submit = async (data: { classItem: Item, methodItem: Item, conditon: string, express: string }) => {
   let conditon = data.conditon.trim() == "" ? "" : `'${data.conditon.trim()}'`
   let express = data.express.trim() == "" ? "" : `'${data.express.trim()}'`
-  
+
   fetchS.baseSubmit(fetchM, {
     action: "async_exec",
     command: `watch ${mode.value.value} ${data.classItem.value} ${data.methodItem.value} -x ${depth.value} ${conditon} ${express}`,
@@ -131,7 +131,7 @@ const submit = async (data: { classItem: Item, methodItem: Item, conditon: strin
 </script>
   
 <template>
-  <MethodInput :submit-f="submit">
+  <MethodInput :submit-f="submit" nexpress ncondition>
     <template #others>
       <Listbox v-model="mode">
         <div class=" relative mx-2 ">

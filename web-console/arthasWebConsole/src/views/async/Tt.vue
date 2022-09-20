@@ -83,6 +83,8 @@ const baseSubmit = async (value: ArthasReq, fn: (res?: ArthasRes) => void, err?:
   fetchM.stop()
 }
 const submit = async (data:{classItem: Item, methodItem: Item}) => {
+  // let express = data.express.trim() == "" ? "" : `-w '${data.express.trim()}'`
+  
   baseSubmit({
     action: "async_exec",
     command: `tt -t ${data.classItem.value} ${data.methodItem.value}`,
@@ -164,7 +166,7 @@ const reTrigger = async (idx: string) => {
 </script>
 
 <template>
-  <MethodInput :submit-f="submit"></MethodInput>
+  <MethodInput :submit-f="submit" nexpress></MethodInput>
   <Disclosure>
     <DisclosureButton class=" rounded bg-blue-400 my-4 p-2" @click="alltt">
       all TimeFragment

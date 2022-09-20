@@ -32,8 +32,6 @@ onMounted(() => {
       <template v-if='root.children !== undefined && root.children.length > 0'>
         <DisclosurePanel class="pl-4 border-l border-black">
           <Tree v-for="(child, i) in root.children" :key="i" :root="child" :class-list="classList">
-            <!-- meta = {data:child.meta} -->
-            <!-- /**@ts-ignore */ -->
             <template #meta="{data, active}">
               <slot name="meta" :data="data" :active="active"></slot>
             </template>

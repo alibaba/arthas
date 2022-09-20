@@ -67,7 +67,12 @@ onBeforeUnmount(() => {
   loop.close()
 })
 
-const submit = async (classI: Item, methI: Item) => {
+const submit = async (data:{classItem: Item, methodItem: Item, conditon:string}) => {
+
+  let className = data.classItem.value
+  let methodName = data.methodItem.value
+  let condition = data.conditon.trim() == "" ? "" : `'${data.conditon.trim()}'`
+  
   pollResults.length = 0
   enhancer.value = undefined
   fetchM.start()
@@ -76,7 +81,7 @@ const submit = async (classI: Item, methI: Item) => {
     type: "SUBMIT",
     value: {
       action: "async_exec",
-      command: `stack ${classI.value} ${methI.value}`,
+      command: `stack ${className} ${methodName} ${condition}`,
       sessionId: undefined
     }
   })
@@ -91,7 +96,7 @@ const submit = async (classI: Item, methI: Item) => {
 </script>
 
 <template>
-  <MethodInput :submit-f="submit"></MethodInput>
+  <MethodInput :submit-f="submit" ncondition></MethodInput>
   <template v-if="pollResults.length > 0 || enhancer">
     <Enhancer :result="enhancer" v-if="enhancer"></Enhancer>
     <ul class=" pointer-events-auto mt-10">

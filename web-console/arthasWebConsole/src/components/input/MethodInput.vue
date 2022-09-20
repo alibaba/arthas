@@ -8,8 +8,10 @@ import { onBeforeMount, ref } from 'vue';
 import { interpret } from 'xstate';
 import { waitFor } from 'xstate/lib/waitFor';
 import AutoComplete from './AutoComplete.vue';
-const { label = "inputClassName" } = defineProps<{
+const { label = "inputClassName",ncondition=false,nexpress=false } = defineProps<{
   label?: string,
+  nexpress?:boolean,
+  ncondition?:boolean,
   submitF: (data:{classItem: Item, methodItem: Item,
     conditon:string,
     express:string
@@ -96,8 +98,8 @@ const filterfn = (_: any, item: Item) => true
     <AutoComplete label="input Method" :option-items="optionMethod"
       :input-fn="(value) => changeMethod(slotClass.selectItem.value as string, value)" :filter-fn="filterfn"
       v-slot="slotMethod">
-      <button class="input-btn-style ml-2" @click="setExpress">express:{{express}}</button>
-      <button class="input-btn-style ml-2" @click="setConditon">condition:{{conditon}}</button>
+      <button v-if="nexpress" class="input-btn-style ml-2" @click="setExpress">express:{{express}}</button>
+      <button v-if="ncondition" class="input-btn-style ml-2" @click="setConditon">condition:{{conditon}}</button>
       <slot name="others"></slot>
       <button @click.prevent="submitF({
         classItem: slotClass.selectItem, 

@@ -59,7 +59,11 @@ getCommonResEffect(pollingM, body => {
               "priority="+root.priority.toString(), 
               "threadId="+root.threadId.toString(), `TCCL=${root.classloader}`]
           } else {
-            title = [`[${root.totalCost /1000}ms, min=${root.minCost /1000}ms, max =${root.maxCost/1000}ms]`, `${root.className}:${root.methodName}`]
+            let count = ""
+            if("count" in root) {
+              count +="count=" + root.count
+            }
+            title = [`[${root.totalCost /1000}ms, min=${root.minCost /1000}ms, max =${root.maxCost/1000}ms ${count}]`, `${root.className}:${root.methodName}`]
           }
           return title
         }
@@ -98,14 +102,17 @@ onBeforeMount(() => {
 onBeforeUnmount(() => {
   loop.close()
 })
-const submit = async (data:{classItem: Item, methodItem: Item}) => {
+const submit = async (data:{classItem: Item, methodItem: Item,conditon:string,express:string}) => {
+  let condition = data.conditon.trim() == "" ? "" : `'${data.conditon.trim()}'`
+  let express = data.express.trim() == "" ? "" : `'${data.express.trim()}'`
+
   fetchM.start()
   fetchM.send("INIT")
   fetchM.send({
     type: "SUBMIT",
     value: {
       action: "async_exec",
-      command: `trace ${data.classItem.value} ${data.methodItem.value} --skipJDKMethod false`,
+      command: `trace ${data.classItem.value} ${data.methodItem.value} --skipJDKMethod false ${condition} ${express}`,
       sessionId: undefined
     }
   })
@@ -121,7 +128,7 @@ const submit = async (data:{classItem: Item, methodItem: Item}) => {
 </script>
   
 <template>
-  <MethodInput :submit-f="submit" class="mb-2">
+  <MethodInput :submit-f="submit" class="mb-2" nexpress ncondition>
     <template #others>
       
     </template>
