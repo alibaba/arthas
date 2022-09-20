@@ -117,7 +117,7 @@ const getMbeanInfo = async (item: Item) => {
       command: `mbean -m ${item.value}`
     }
   })
-  mbeanName = item.value
+  mbeanName = item.value as string
   await waitFor(searchMbean.service, state => state.matches("ready"))
   searchMbean.send({
     type: "SUBMIT",
