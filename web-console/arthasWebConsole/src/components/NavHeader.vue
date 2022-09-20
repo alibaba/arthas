@@ -18,6 +18,7 @@ const vCmd: CommandReq = {
   action: "exec",
   command: "version"
 }
+
 const restBtnclass: Ref<'animate-spin-rev-pause' | 'animate-spin-rev-running'> = ref('animate-spin-rev-pause')
 publicS.getCommonResEffect(fetchM, body => {
   const result = body.results[0]
@@ -85,9 +86,9 @@ const shutdown = () => {
 
 <template>
   <nav class=" h-[10vh] flex justify-between items-center min-h-max border-b-2 shadow-orange-300">
-    <div class="w-40 flex items-center justify-center">
-      <img src="@/assets/arthas.png" alt="logo" class=" w-3/4" />
-    </div>
+    <a class="w-40 flex items-center justify-center" href="https://arthas.aliyun.com/doc/commands.html" target="_blank">
+      <img src="@/assets/arthas.png" alt="logo" class=" w-3/4"/>
+    </a>
 
     <div class="flex items-center h-20">
       <div class=" mr-4 bg-gray-200 h-12 rounded-full flex justify-center items-center text-gray-500 font-bold p-2">
@@ -103,8 +104,6 @@ const shutdown = () => {
       <button class=" rounded-full bg-gray-200 h-12 w-12 flex justify-center items-center mr-4 " @click="reset">
         <refresh-icon class=" text-gray-500 h-3/4 w-3/4" :class="restBtnclass" />
       </button>
-
-
       <button class="hover:opacity-50 h-12 w-12 grid place-items-center  rounded-full mr-2 transition-all"
         :class="{ 'bg-blue-600 shadow-blue-500': !fetchS.online, 'bg-red-600 shadow-red-500': fetchS.online }">
         <LogoutIcon class="h-1/2 w-1/2 text-white" @click="logout" v-if="fetchS.online" />

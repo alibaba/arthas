@@ -5,9 +5,6 @@ const routes: { cmd: string, url: string }[] = [
     cmd: "thread",
     url: "thread"
   }, {
-    cmd: "jvm",
-    url: "jvm"
-  }, {
     cmd: "memory",
     url: "memory"
   }, {

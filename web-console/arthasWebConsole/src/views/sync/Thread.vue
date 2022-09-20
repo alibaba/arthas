@@ -65,7 +65,7 @@ const allEffect = getCommonResEffect(fetchM, body => {
       optionThread.length = 0
       threadStats.forEach((v) => {
         allMap.set(v.name, Object.entries(v).filter(([k, v]) => k !== "name").map(([k, v]) => `${k} : ${v}`))
-        optionThread.push({ name: v.name, value: v.id })
+        if(v.id > 0)optionThread.push({ name: v.name, value: v.id })
       })
     }
   }
@@ -95,6 +95,7 @@ getCommonResEffect(concretefetchM, body => {
   }
 })
 const getConcrtetThread = (thread: OptionThread) => {
+  console.log(thread, "???")
   concretefetchM.send({
     type: "SUBMIT",
     value: {
@@ -124,7 +125,7 @@ const toggleAllLoop = (open: boolean) => {
     <DisclosurePanel class="pt-4 border-t-2 mt-4">
 
       <AutoComplete label="ThreadName :" :option-items="optionThread" v-slot="slotP">
-        <button @click.prevent="getConcrtetThread(slotP.selectItem)" class="border bg-blue-400 p-2 rounded-md mx-2 hover:opacity-50 transition">submit</button></AutoComplete>
+        <button @click.prevent="getConcrtetThread(slotP.selectItem as OptionThread)" class="border bg-blue-400 p-2 rounded-md mx-2 hover:opacity-50 transition">submit</button></AutoComplete>
       <ul>
         <template v-if="Object.keys(threadInfo).length !== 0">
           <li class="grid place-content-center mb-4 text-3xl">stackTrace</li>

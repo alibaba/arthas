@@ -14,7 +14,7 @@ const tabs = [
     url: '/synchronize',
     icon: ViewGridIcon
   },{
-    name: "异步命令",
+    name: "实时命令",
     url: '/asynchronize',
     icon: ViewGridIcon
   },

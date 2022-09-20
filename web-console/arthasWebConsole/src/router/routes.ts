@@ -30,10 +30,6 @@ const routes: RouteRecordRaw[] = [
         component: () => import("@/views/sync/Thread.vue"),
       },
       {
-        path: "jvm",
-        component: () => import("@/views/sync/Jvm.vue"),
-      },
-      {
         path: "memory",
         component: () => import("@/views/sync/Memory.vue"),
       },
@@ -72,7 +68,10 @@ const routes: RouteRecordRaw[] = [
       {
         path: "/synchronize/synchronize",
         redirect: "",
-      },
+      },{
+        path:"ognl",
+        component:()=>import("@/views/sync/Ognl.vue")
+      }
     ],
   },
   {

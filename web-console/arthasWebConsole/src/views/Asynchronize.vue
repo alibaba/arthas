@@ -14,9 +14,12 @@ const routes: { cmd: string, url: string }[] = [
   }, {
     cmd: 'watch',
     url: 'watch'
-  },{
-    cmd:'profiler',
-    url:'profiler'
+  }, {
+    cmd: 'profiler',
+    url: 'profiler'
+  }, {
+    cmd: 'ognl',
+    url: 'ognl'
   }
 ]
 </script>

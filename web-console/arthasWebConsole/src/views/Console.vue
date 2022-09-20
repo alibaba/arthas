@@ -5,7 +5,6 @@ import { useMachine } from '@xstate/vue';
 import machine from '@/machines/consoleMachine';
 const fetchM = useMachine(machine)
 const val = ref(JSON.stringify({
-  // action:"init_session"
   action: "exec",
   command: "version"
 }));
@@ -16,11 +15,6 @@ onBeforeMount(()=>{
 })
 
 const submitCommand = ()=>{
-  // const {state, send} = useMachine(transformMachine)
-  // send("INIT")
-  // send({type:"INPUT", data: val.value})
-  // send("TRANSFORM")
-  // // input 不是arthasReq的报错还没写
   console.log('别报错了')
   fetchM.send({ type: 'SUBMIT', value: val.value})
 }

@@ -175,15 +175,15 @@ export const fetchStore = defineStore("fetch", {
     openJobRun() {
       this.jobRunning = true;
     },
-    async isResult(m: MachineService) {
-      return await waitFor(m, (state) => {
+    isResult(m: MachineService) {
+      return waitFor(m, (state) => {
         return state.hasTag("result")
       });
     },
     tranOgnl(s: string): string[] {
       return s.replace(/\r\n\tat/g, "\r\n\t@").split("\r\n\t");
     },
-    async baseSubmit(fetchM: MachineService, value: ArthasReq){
+    baseSubmit(fetchM: MachineService, value: ArthasReq){
       fetchM.start()
       fetchM.send("INIT")
       fetchM.send({
@@ -193,13 +193,13 @@ export const fetchStore = defineStore("fetch", {
       return this.isResult(fetchM).then(
         state=>{
           if (state.matches("success")) {
-            return Promise.resolve<ArthasRes>(state.context.response)
+            return Promise.resolve<Exclude<ArthasRes,FailRes>>(state.context.response)
           } else {
-            return Promise.reject()
+            return Promise.reject("ERROR")
           }
         },
         err=>{
-          console.log(err)
+          return Promise.reject(err)
         }
       )
     }

@@ -1,45 +1,35 @@
 <script setup lang="ts">
 import machine from '@/machines/consoleMachine';
-import { useMachine } from '@xstate/vue';
+import { useInterpret, useMachine } from '@xstate/vue';
 import { onBeforeMount, reactive, ref, watchEffect } from 'vue';
 import ConfigMenu from '@/components/show/ConfigMenu.vue';
 import OptionConfigMenu from '@/components/show/OptionConfigMenu.vue';
 import SwitchInput from '@/components/input/SwitchInput.vue';
 import { publicStore } from '@/stores/public';
 import { Disclosure, DisclosureButton, DisclosurePanel } from "@headlessui/vue"
-const sysEnvM = useMachine(machine)
-const sysPropM = useMachine(machine)
+import CmdResMenu from '@/components/show/CmdResMenu.vue';
+import { fetchStore } from '@/stores/fetch';
+import permachine from '@/machines/perRequestMachine';
+const fetchS = fetchStore()
 const sysEnvMap = reactive(new Map<string, string[]>())
 const sysPropMap = reactive(new Map<string, string[]>())
 const vmOptionM = useMachine(machine)
 const pwdM = useMachine(machine)
+const pwd = ref("?")
+const vmOptionMTree = reactive([] as VmOption[])
 // 初始化
 onBeforeMount(() => {
-  pwdM.send("INIT")
-  pwdM.send({
-    type: "SUBMIT", value: {
-      action: "exec",
-      command: "pwd",
+  fetchS.baseSubmit(useInterpret(permachine),{
+    action:"exec",
+    command:"pwd"
+  }).then(
+    res=>{
+      const result = (res as CommonRes).body.results[0]
+      if (result.type == "pwd") {
+        pwd.value = result.workingDir
+      }
     }
-  })
-
-  sysEnvM.send("INIT")
-  sysEnvM.send({
-    type: "SUBMIT",
-    value: {
-      action: "exec",
-      command: "sysenv",
-    }
-  })
-
-  sysPropM.send("INIT")
-  sysPropM.send({
-    type: "SUBMIT",
-    value: {
-      action: "exec",
-      command: "sysprop",
-    }
-  })
+  )
 
   vmOptionM.send("INIT")
   vmOptionM.send({
@@ -51,20 +41,17 @@ onBeforeMount(() => {
   })
 })
 
-const pwd = ref("?")
-const sysEnvTree = reactive([] as string[])
-const sysPropTree = reactive([] as string[])
-const vmOptionMTree = reactive([] as VmOption[])
+
 // 处理展示的树形数据
-const handleTree = (data: Record<string, string|boolean|number>, map: Map<string, string[]>): string[] => {
+const handleTree = (data: Record<string, string | boolean | number>, map: Map<string, string[]>): string[] => {
   map.clear()
   let res: string[] = []
   Object.entries(data).forEach(([k, v]) => {
     res.push(k)
-    if(typeof v === "boolean") v = v.toString()
-    if(typeof v === "number" ) v = v.toString()
-    if(k.toLowerCase().includes("path")){
-      map.set(k,v.split(":").filter(v=>v.trim() !== ''))
+    if (typeof v === "boolean") v = v.toString()
+    if (typeof v === "number") v = v.toString()
+    if (k.toLowerCase().includes("path")) {
+      map.set(k, v.split(":").filter(v => v.trim() !== ''))
     } else if (v.includes(";")) {
       map.set(k, v.split(";").filter(v => v.trim() !== ''))
     } else {
@@ -81,48 +68,7 @@ const handlePropTree = (data: Record<string, string>) => handleTree(data, sysPro
 // 处理可修改参数的树形结构
 // const handleOptionTree = (data:Record<string>)
 
-watchEffect(() => {
-  const response = pwdM.state.value.context.response
-  if (response) {
-    if (Object.hasOwn(response, "body")) {
-      const result = (response as CommonRes).body.results[0]
 
-      if (result.type == "pwd") {
-        pwd.value = result.workingDir
-      }
-    }
-  }
-})
-
-watchEffect(() => {
-  const response = sysEnvM.state.value.context.response
-  if (response) {
-    if (Object.hasOwn(response, "body")) {
-      const result = (response as CommonRes).body.results[0]
-
-      if (result.type == "sysenv") {
-        handleEnvTree(result.env).forEach(v => {
-          sysEnvTree.push(v)
-        })
-      }
-    }
-  }
-})
-
-watchEffect(() => {
-  const response = sysPropM.state.value.context.response
-  if (response) {
-    if (Object.hasOwn(response, "body")) {
-      const result = (response as CommonRes).body.results[0]
-
-      if (result.type == "sysprop") {
-        handlePropTree(result.props).forEach(v => {
-          sysPropTree.push(v)
-        })
-      }
-    }
-  }
-})
 
 watchEffect(() => {
   const response = vmOptionM.state.value.context.response
@@ -157,11 +103,43 @@ const vmOptionSend = (pre: string) => (v: { key: string, value: boolean | string
   })
 }
 
+const jvmMap = reactive(new Map<string, string[]>())
+
+const getJvm = () => fetchS.baseSubmit(useInterpret(permachine), {
+  action: "exec",
+  command: "jvm"
+}).then(res => {
+  const result = (res as CommonRes).body.results[0]
+  if (result.type === "jvm") {
+    jvmMap.clear()
+    Object.entries(result.jvmInfo).forEach(([k, v]) => {
+      jvmMap.set(k, v.map(v => `${v.name} : ${v.value}`))
+    })
+  }
+})
+const getSysenv = () => fetchS.baseSubmit(useInterpret(permachine), {
+  action: "exec",
+  command: "sysenv",
+}).then(res => {
+  let result = (res as CommonRes).body.results[0]
+  if (result.type == "sysenv") {
+    handleEnvTree(result.env)
+  }
+})
+const getSysprop = () => fetchS.baseSubmit(useInterpret(permachine), {
+  action: "exec",
+  command: "sysprop",
+}).then(res => {
+  let result = (res as CommonRes).body.results[0]
+  if (result.type == "sysprop") {
+    handlePropTree(result.props)
+  }
+})
 </script>
 
 <template>
   <div class="p-2 h-[90vh] overflow-y-scroll">
-    <article >
+    <article>
       <Disclosure as="section" class="flex w-10/12 mb-2">
         <DisclosureButton class="bg-blue-200 p-2 w-1/4 break-all">
           workingDir
@@ -170,8 +148,8 @@ const vmOptionSend = (pre: string) => (v: { key: string, value: boolean | string
           {{ pwd }}
         </DisclosurePanel>
       </Disclosure>
-      <config-menu title="sysenv" :list="sysEnvTree" :map="sysEnvMap" v-if="sysEnvM.state.value.context.response" />
-      <config-menu title="sysprop" :list="sysPropTree" :map="sysPropMap" v-if="sysPropM.state.value.context.response" />
+      <CmdResMenu title="sysenv" :map="sysEnvMap" @click="getSysenv" />
+      <CmdResMenu title="sysprop" :map="sysPropMap" @click="getSysprop" />
       <option-config-menu title="vmOption" :list="vmOptionMTree" title-key-name="name">
         <template #item="{ kv, itemTitle, idx }">
           <switch-input :send="vmOptionSend(itemTitle)" :data="{ key: kv[0], value: kv[1] }" v-if="kv[0] === 'value'"
@@ -183,9 +161,11 @@ const vmOptionSend = (pre: string) => (v: { key: string, value: boolean | string
           </div>
         </template>
       </option-config-menu>
+      <CmdResMenu title="jvm" :map="jvmMap" class="w-full" @click="getJvm" />
     </article>
   </div>
 </template>
 
 <style scoped>
+
 </style>

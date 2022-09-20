@@ -19,9 +19,7 @@
     "typings": "^2.1.1",
     "vue": "^3.2.25",
     "vue-router": "4",
-    "xstate": "^4.32.1",
-    "xterm": "^4.19.0",
-    "xterm-addon-fit": "^0.5.0"
+    "xstate": "^4.32.1"
   },
   "devDependencies": {
     "@types/node": "^18.7.2",
