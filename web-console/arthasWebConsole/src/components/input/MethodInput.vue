@@ -8,13 +8,15 @@ import { onBeforeMount, ref } from 'vue';
 import { interpret } from 'xstate';
 import { waitFor } from 'xstate/lib/waitFor';
 import AutoComplete from './AutoComplete.vue';
-const { label = "inputClassName",ncondition=false,nexpress=false } = defineProps<{
+const { label = "inputClassName",ncondition=false,nexpress=false, ncount=false } = defineProps<{
   label?: string,
   nexpress?:boolean,
   ncondition?:boolean,
+  ncount?:boolean,
   submitF: (data:{classItem: Item, methodItem: Item,
     conditon:string,
-    express:string
+    express:string,
+    count:number
   }) => void
 }>()
 const { getCommonResEffect } = publicStore()
@@ -24,7 +26,7 @@ const optionClass = ref([] as { name: string, value: string }[])
 const optionMethod = ref([] as { name: string, value: string }[])
 const conditon = ref("")
 const express=ref("")
-
+const autoStop = ref(0)
 const changeClass = (value: string) => {
   const searchClass = interpret(permachine)
   if (value.length > 2) {
@@ -78,7 +80,13 @@ const changeMethod = (classV: string, value: string) => {
   //   })
   // }
 }
-
+const setCount = publicStore().inputDialogFactory(autoStop,
+(raw) => {
+    let valRaw = parseInt(raw)
+    return Number.isNaN(valRaw) ? 0 : valRaw
+  },
+  (input) => input.value.toString()
+)
 const setConditon = publicStore().inputDialogFactory(
   conditon,
   raw=>raw,
@@ -100,12 +108,14 @@ const filterfn = (_: any, item: Item) => true
       v-slot="slotMethod">
       <button v-if="nexpress" class="input-btn-style ml-2" @click="setExpress">express:{{express}}</button>
       <button v-if="ncondition" class="input-btn-style ml-2" @click="setConditon">condition:{{conditon}}</button>
+      <button v-if="ncount" class="input-btn-style ml-2" @click="setCount">count:{{autoStop}}</button>
       <slot name="others"></slot>
       <button @click.prevent="submitF({
         classItem: slotClass.selectItem, 
         methodItem: slotMethod.selectItem,
         conditon,
-        express
+        express,
+        count:autoStop
         })"
         class="border bg-blue-400 p-2 rounded-md mx-2 hover:opacity-50 transition">submit</button>
     </AutoComplete>

@@ -423,6 +423,12 @@ const machine =
           return true;
         }
 
+        if(context.inputValue && context.inputValue.action=== "interrupt_job") {
+          /**
+           * 永不拦截打断回收的错误
+           */
+          return true
+        }
         return false;
       },
       isSession: (context) => {

@@ -9,8 +9,8 @@ import { onBeforeMount, onBeforeUnmount, reactive, ref } from 'vue';
 import CmdResMenu from '@/components/show/CmdResMenu.vue';
 import Tree from '@/components/show/Tree.vue';
 import Enhancer from '@/components/show/Enhancer.vue';
-import { count } from 'console';
 import { publicStore } from '@/stores/public';
+import { count } from 'console';
 const pollingM = useMachine(machine)
 const fetchS = fetchStore()
 const { pullResultsLoop, getCommonResEffect } = fetchS
@@ -96,23 +96,24 @@ getCommonResEffect(pollingM, body => {
     })
   }
 })
+
 onBeforeMount(() => {
   pollingM.send("INIT")
 })
 onBeforeUnmount(() => {
   loop.close()
 })
-const submit = async (data:{classItem: Item, methodItem: Item,conditon:string,express:string}) => {
+const submit = async (data:{classItem: Item, methodItem: Item,conditon:string,express:string, count:number}) => {
   let condition = data.conditon.trim() == "" ? "" : `'${data.conditon.trim()}'`
   let express = data.express.trim() == "" ? "" : `'${data.express.trim()}'`
-
+  let n = data.count > 0 ? `-n ${data.count}`:""
   fetchM.start()
   fetchM.send("INIT")
   fetchM.send({
     type: "SUBMIT",
     value: {
       action: "async_exec",
-      command: `trace ${data.classItem.value} ${data.methodItem.value} --skipJDKMethod false ${condition} ${express}`,
+      command: `trace ${data.classItem.value} ${data.methodItem.value} --skipJDKMethod false ${condition} ${express} ${n}`,
       sessionId: undefined
     }
   })
@@ -128,10 +129,7 @@ const submit = async (data:{classItem: Item, methodItem: Item,conditon:string,ex
 </script>
   
 <template>
-  <MethodInput :submit-f="submit" class="mb-2" nexpress ncondition>
-    <template #others>
-      
-    </template>
+  <MethodInput :submit-f="submit" class="mb-2" nexpress ncondition ncount>
   </MethodInput>
   <template v-if="pollResults.length > 0 || enhancer">
     <Enhancer :result="enhancer" v-if="enhancer"></Enhancer>

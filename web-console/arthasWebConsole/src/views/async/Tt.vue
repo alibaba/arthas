@@ -81,12 +81,12 @@ const baseSubmit = async (value: ArthasReq, fn: (res?: ArthasRes) => void, err?:
   }
   fetchM.stop()
 }
-const submit = async (data: { classItem: Item, methodItem: Item }) => {
+const submit = async (data: { classItem: Item, methodItem: Item, count:number }) => {
   // let express = data.express.trim() == "" ? "" : `-w '${data.express.trim()}'`
-
+  let n = data.count > 0 ? `-n ${data.count}`:""
   baseSubmit({
     action: "async_exec",
-    command: `tt -t ${data.classItem.value} ${data.methodItem.value}`,
+    command: `tt -t ${data.classItem.value} ${data.methodItem.value} ${n}`,
     sessionId: undefined
   }, () => {
     pollResults.length = 0
@@ -200,7 +200,8 @@ const searchTt = () => {
 </script>
 
 <template>
-  <MethodInput :submit-f="submit"></MethodInput>
+  <MethodInput :submit-f="submit" ncount>
+  </MethodInput>
   <div class="flex items-center border-t-2 pt-4 mt-4 justify-between">
     <div class="mr-2">searching records</div>
     <div
