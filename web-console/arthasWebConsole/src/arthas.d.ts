@@ -113,6 +113,7 @@ type CommandReq = CommonAction<
       | `vmtool --action ${"forceGc"| "getInstances"} ${string}`
       | "tt -l"
       | `tt -i ${string} -p`
+      | `tt -s ${string}`
       | `profiler ${"list"|"status"|"stop"|"resume"|"getSamples"}`
       | `profiler ${string}`
       | `stop`;
