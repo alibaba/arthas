@@ -34,6 +34,8 @@ public class ArthasBanner {
 
     private static final int CONNECTION_TIMEOUT = 1000;
 
+    private static final int READ_TIMEOUT = 1000;
+
     private static String LOGO = "Welcome to Arthas";
     private static String VERSION = "unknown";
     private static String THANKS = "";
@@ -147,6 +149,7 @@ public class ArthasBanner {
         URLConnection connection = new URL(url).openConnection();
         if (connection instanceof HttpURLConnection) {
             connection.setConnectTimeout(CONNECTION_TIMEOUT);
+            connection.setReadTimeout(READ_TIMEOUT);
             // normally, 3xx is redirect
             int status = ((HttpURLConnection) connection).getResponseCode();
             if (status != HttpURLConnection.HTTP_OK) {
