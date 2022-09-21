@@ -81,7 +81,7 @@ type AsyncReq = SessionId<
       command: `tt -t ${string} ${string}`;
     } | {
       command: `watch ${string} ${string}`;
-    } 
+    }
   >
 >;
 type PullResults = SessionId<{
@@ -110,13 +110,14 @@ type CommandReq = CommonAction<
       | `mbean`
       | `mbean ${string}`
       | `mbean -m ${string}`
-      | `vmtool --action ${"forceGc"| "getInstances"} ${string}`
+      | `vmtool --action ${"forceGc" | "getInstances"} ${string}`
       | "tt -l"
       | `tt -i ${string} -p`
       | `tt -s ${string}`
-      | `profiler ${"list"|"status"|"stop"|"resume"|"getSamples"}`
+      | `profiler ${"list" | "status" | "stop" | "resume" | "getSamples"}`
       | `profiler ${string}`
-      | `stop`;
+      | `stop`
+      | `ognl ${string}`;
   } | {
     command: StringInclude<"vmoption" | "thread", 2>;
   } | {
@@ -619,10 +620,13 @@ type CommandResult = {
   type: "watch";
   value: string;
 } | {
-  "action": "list"|"status"|"stop"|"resume"|"getSamples";
-  "executeResult":string;
-  "outputFile"?:string;
+  "action": "list" | "status" | "stop" | "resume" | "getSamples";
+  "executeResult": string;
+  "outputFile"?: string;
   "type": "profiler";
+} | {
+  type: "ognl";
+  value: string;
 };
 
 type EnchanceResult = {
@@ -684,6 +688,10 @@ type FailRes = SessionId<{
 
 type ArthasRes = CommonRes | SessionRes | FailRes | AsyncRes;
 
+type BindQS =
+  | { req: CommandReq; res: CommonRes }
+  | { req: SessionReq; res: SessionRes }
+  | { req: AsyncReq; res: AsyncRes };
 // autoComplete
 type Item = { name: string; value: unknown };
 

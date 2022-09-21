@@ -152,10 +152,6 @@ const submit = async (data: { classItem: Item, methodItem: Item, conditon: strin
             <div class="bg-blue-200 p-2 mb-2 rounded-r rounded-br" :class='{"hover:bg-blue-300 bg-blue-400":active}'>
               {{data.join(" ")}}
             </div>
-            <!-- <button class="button-style rounded-l-none"> -->
-            <!-- <CmdResMenu :title="data.get('title')[0]" :map="data" class=""></CmdResMenu> -->
-            <!-- {{data.join(";")}} -->
-            <!-- </button> -->
           </template>
         </Tree>
       </template>

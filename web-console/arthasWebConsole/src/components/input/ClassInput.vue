@@ -13,15 +13,14 @@ const { label = "inputClassName" } = defineProps<{
     loaderItem: Item
   }) => void
 }>()
-const { getCommonResEffect } = publicStore()
 const optionClass = ref([] as { name: string, value: string }[])
 const optionClassloders = ref([] as { name: string, value: string }[])
 const fetchS = fetchStore()
-const selectedClassItem = ref({ name: "", value: "" } as Item)
+// const selectedClassItem = ref({ name: "", value: "" } as Item)
 const changeValue = (value: string) => {
   const searchClass = interpret(permachine)
   if (value.length > 2) {
-    fetchS.baseSubmit(searchClass, {
+    return fetchS.baseSubmit(searchClass, {
       action: "exec",
       command: `sc *${value}*`
     }).then(
@@ -40,7 +39,7 @@ const changeValue = (value: string) => {
       }
     )
   }
-
+  return Promise.resolve()
 }
 const blurF = (value: unknown) => {
   if (value !== "") {

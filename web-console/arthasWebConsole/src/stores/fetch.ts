@@ -183,7 +183,14 @@ export const fetchStore = defineStore("fetch", {
     tranOgnl(s: string): string[] {
       return s.replace(/\r\n\tat/g, "\r\n\t@").split("\r\n\t");
     },
-    baseSubmit(fetchM: MachineService, value: ArthasReq){
+    /**
+     * 
+     * @param fetchM 传入的服务
+     * @param value 传入的请求
+     * @returns 待处理的promise
+     * 貌似不支持这样的类型推断,会出现分布式计算...以后想办法处理
+     */
+    baseSubmit<T extends BindQS>(fetchM: MachineService, value: T["req"]){
       fetchM.start()
       fetchM.send("INIT")
       fetchM.send({
@@ -193,7 +200,7 @@ export const fetchStore = defineStore("fetch", {
       return this.isResult(fetchM).then(
         state=>{
           if (state.matches("success")) {
-            return Promise.resolve<Exclude<ArthasRes,FailRes>>(state.context.response)
+            return Promise.resolve<T["res"]>(state.context.response)
           } else {
             return Promise.reject("ERROR")
           }

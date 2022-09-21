@@ -30,7 +30,7 @@ const autoStop = ref(0)
 const changeClass = (value: string) => {
   const searchClass = interpret(permachine)
   if (value.length > 2) {
-    fetchS.baseSubmit(searchClass, {
+    return fetchS.baseSubmit(searchClass, {
       action: "exec",
       command: `sc *${value}*`
     }).then(
@@ -48,11 +48,11 @@ const changeClass = (value: string) => {
       }
     )
   }
-
+  return Promise.resolve()
 }
 const changeMethod = (classV: string, value: string) => {
   const searchMethod = interpret(permachine)
-  fetchS.baseSubmit(searchMethod, {
+  return fetchS.baseSubmit(searchMethod, {
     action: "exec",
     command: `sm ${classV} *${value}*`
   }).then(

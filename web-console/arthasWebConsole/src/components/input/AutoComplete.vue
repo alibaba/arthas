@@ -11,38 +11,46 @@ import { SelectorIcon } from "@heroicons/vue/outline"
 
 const { 
   optionItems, 
-  inputFn = (_)=>{},
+  inputFn = (_)=>Promise.resolve(),
   blurFn = _=>{},
   optionsInit=(_)=>{},
-  filterFn
+  filterFn,
+  supportedover=false
 } = defineProps<{
   label: string,
   optionItems: Item[],
   optionsInit?:(event:FocusEvent)=>void,
   filterFn?:(query:string,item:Item)=>boolean
-  inputFn?: (value:string) => void
+  inputFn?: (value:string) => Promise<unknown>
   blurFn?:(value:any)=>void
+  supportedover?:boolean
 }>()
 
 const query = ref('')
 const selectedItem = ref({name:"",value:""} as Item)
 const filterItems = computed(() => {  
-
+  let result:Item[] = []
   if(query.value === ""){
     selectedItem.value = {name:"",value:""}
-    return optionItems
+    result = optionItems
   } else {
-    return optionItems.filter(item=>{
+    result = optionItems.filter(item=>{
       if(filterFn) return filterFn(query.value,item)
       else {
         return item.name.toLocaleLowerCase().includes(query.value.toLocaleLowerCase())
       }
     })
   }
+  if(supportedover) result.unshift(selectedItem.value)
+  return result
 })
+let changeMutex = true
 const changeF = (event:Event &{target:HTMLInputElement}) => {
   query.value = event.target.value
-  inputFn(query.value)
+  if(changeMutex) {
+    changeMutex = false
+    inputFn(query.value).finally(()=>changeMutex = true)
+  }
 }
 const blurF = (event:Event)=>{
   blurFn(selectedItem.value.value)

@@ -31,6 +31,9 @@ const routes: { cmd: string, url: string }[] = [
   }, {
     cmd: "reset",
     url: "reset"
+  },{
+    cmd: "ognl",
+    url: "ognl"
   }
 ]
 </script>
