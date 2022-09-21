@@ -85,6 +85,8 @@ ARTHAS_HOME=
 # define arthas's lib
 if [ -z "${ARTHAS_LIB_DIR}" ]; then
     ARTHAS_LIB_DIR=${HOME}/.arthas/lib
+else
+    echo "[INFO] ARTHAS_LIB_DIR: ${ARTHAS_LIB_DIR}"
 fi
 
 # target process id to attach

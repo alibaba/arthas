@@ -135,6 +135,7 @@ public class Bootstrap {
         String arthasLibDirEnv = System.getenv("ARTHAS_LIB_DIR");
         if (arthasLibDirEnv != null) {
             ARTHAS_LIB_DIR = new File(arthasLibDirEnv);
+            AnsiLog.info("ARTHAS_LIB_DIR: " + arthasLibDirEnv);
         } else {
             ARTHAS_LIB_DIR = new File(
                     System.getProperty("user.home") + File.separator + ".arthas" + File.separator + "lib");
@@ -311,6 +312,10 @@ public class Bootstrap {
     public static void main(String[] args) throws ParserConfigurationException, SAXException, IOException,
                     ClassNotFoundException, NoSuchMethodException, SecurityException, IllegalAccessException,
                     IllegalArgumentException, InvocationTargetException {
+        String javaHome = System.getProperty("java.home");
+        if (javaHome != null) {
+            AnsiLog.info("JAVA_HOME: " + javaHome);
+        }
         Package bootstrapPackage = Bootstrap.class.getPackage();
         if (bootstrapPackage != null) {
             String arthasBootVersion = bootstrapPackage.getImplementationVersion();
