@@ -218,7 +218,7 @@ onBeforeUnmount(() => {
     <button class="input-btn-style mr-2" @click="changeFile">file :{{fileformat}}</button>
     <TodoList title="include" :val-set="includesVal" class=" mr-2"></TodoList>
     <TodoList title="exclude" :val-set="excludesVal" class="mr-2"></TodoList>
-    <button class="input-btn-style" @click="startSubmit">start</button>
+    <button class="button-style" @click="startSubmit">start</button>
   </div>
   <div class="flex items-center border-b-2 border-gray-300 py-2">
     <h3 class="text-lg w-40">Resume or stop: </h3>

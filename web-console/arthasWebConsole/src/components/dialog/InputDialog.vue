@@ -45,8 +45,8 @@ function setIsOpenCancel() {
             <DialogTitle>
               input value
             </DialogTitle>
-            <DialogDescription class=" bg-slate-200 my-10 rounded-full max-w-4xl grid place-content-center place-items-center">
-              <input type="text" v-model="inputV" class="bg-slate-200 h-full p-2 w-10/12 focus-visible:outline-none"/>
+            <DialogDescription class=" bg-slate-200 my-10 rounded-full w-full flex justify-center px-4">
+              <input type="text" v-model="inputV" class="bg-slate-200 h-full p-2 w-full focus-visible:outline-none"/>
             </DialogDescription>
             <div class="flex justify-evenly w-full">
               <button @click="setIsOpen"

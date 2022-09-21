@@ -21,6 +21,52 @@ const pollResults = reactive<TreeNode[]>([])
 const enhancer = ref(undefined as EnchanceResult | undefined)
 const publiC = publicStore()
 // let statusCount = 0
+const trans = (root: TraceNode, parent: TraceNode | null): string[] => {
+  let title: (string)[] = []
+
+  if (root.type === "throw") {
+    const lineNumber = root.lineNumber <= 0 ? "" : `#${root.lineNumber}`
+    title = ["throw:" + root.exception, "lineNumber", lineNumber, `[${root.message}]`]
+  } else if (root.type === "thread") {
+
+    title = [
+      "ts=" + root.timestamp,
+      "thread_name=" + root.threadName,
+      "daemon=" + root.daemon.toString(),
+      "priority=" + root.priority.toString(),
+      "threadId=" + root.threadId.toString(), `TCCL=${root.classloader}`]
+  } else {
+    const lineNumber = root.lineNumber <= 0 ? "" : `#${root.lineNumber}`
+    let percentage = ""
+
+    if (parent && parent.type === "method") percentage = `${(root.totalCost / parent.totalCost * 100).toFixed(2)}%, `
+
+    if (root.times <= 1) {
+      console.log(
+        root.cost,
+        root.totalCost,
+      )
+      if(parent && parent.type === "method") percentage = `${ (root.cost / parent.totalCost * 100).toFixed(2)}%, `
+      title = [`[${percentage}${publiC.nanoToMillis(root.cost)}ms]`, lineNumber, `${root.className}:${root.methodName}`]
+    } else {
+      if (parent && parent.type === "method") percentage = `${(root.totalCost / parent.totalCost * 100).toFixed(2)}%, `
+      title = [
+        `[`,
+        percentage,
+        `min=${publiC.nanoToMillis(root.minCost)}ms, max =${publiC.nanoToMillis(root.maxCost)}ms, total=${publiC.nanoToMillis(root.totalCost)}ms, count=${root.times}]`,
+        lineNumber,
+        `${root.className}:${root.methodName}`]
+    }
+  }
+  return title
+}
+/**处理Tree */
+const dfs = (root: TraceNode, parent: TraceNode | null): TreeNode => {
+  return {
+    children: root.children?.map(child => dfs(child, root)) || [],
+    meta: trans(root, parent) as string[]
+  }
+}
 getCommonResEffect(pollingM, body => {
   if (body.results.length > 0) {
     body.results.forEach(result => {
@@ -46,37 +92,10 @@ getCommonResEffect(pollingM, body => {
         //   map.set("title", [title])
         //   return map
         // }
-        const trans = (root: TraceNode): string[] => {
-          let title: (string)[] = []
-          if (root.type === "throw") {
-            title = ["throw:" + root.exception, "lineNumber", "#" + root.lineNumber, `[${root.message}]`]
-          } else if (root.type === "thread") {
 
-            title = [
-              root.timestamp, 
-              "thread_name="+root.threadName, 
-              "daemon="+root.daemon.toString(), 
-              "priority="+root.priority.toString(), 
-              "threadId="+root.threadId.toString(), `TCCL=${root.classloader}`]
-          } else {
-            // let count = ""
-            // if("count" in root) {
-            //   count +="count=" + root.count
-            // }
-            title = [`[${root.totalCost /1000}ms, min=${root.minCost /1000}ms, max =${root.maxCost/1000}ms]`, `${root.className}:${root.methodName}`]
-          }
-          return title
-        }
-        /**处理Tree */
-        const dfs = (root: TraceNode): TreeNode => {
-          return {
-            children: root.children?.map(child => dfs(child)) || [],
-            meta: trans(root)
-          }
-        }
         const root: TreeNode = {
-          children: result.root?.children?.map(ch => dfs(ch)) || [],
-          meta: trans(result.root)
+          children: result.root?.children?.map(ch => dfs(ch, null)) || [],
+          meta: trans(result.root, null)
         }
 
         pollResults.unshift(root)
@@ -103,28 +122,20 @@ onBeforeMount(() => {
 onBeforeUnmount(() => {
   loop.close()
 })
-const submit = async (data:{classItem: Item, methodItem: Item,conditon:string,express:string, count:number}) => {
+const submit = async (data: { classItem: Item, methodItem: Item, conditon: string, express: string, count: number }) => {
   let condition = data.conditon.trim() == "" ? "" : `'${data.conditon.trim()}'`
   let express = data.express.trim() == "" ? "" : `'${data.express.trim()}'`
-  let n = data.count > 0 ? `-n ${data.count}`:""
-  fetchM.start()
-  fetchM.send("INIT")
-  fetchM.send({
-    type: "SUBMIT",
-    value: {
-      action: "async_exec",
-      command: `trace ${data.classItem.value} ${data.methodItem.value} --skipJDKMethod false ${condition} ${express} ${n}`,
-      sessionId: undefined
-    }
-  })
-  const state = await waitFor(fetchM, state => state.hasTag("result"))
+  let n = data.count > 0 ? `-n ${data.count}` : ""
 
-  if (state.matches("success")) {
+  fetchS.baseSubmit(fetchM, {
+    action: "async_exec",
+    command: `trace ${data.classItem.value} ${data.methodItem.value} --skipJDKMethod false ${condition} ${express} ${n}`,
+    sessionId: undefined
+  }).then(res => {
     enhancer.value = undefined
     pollResults.length = 0
     loop.open()
-  }
-  fetchM.stop()
+  })
 }
 </script>
   
@@ -138,15 +149,12 @@ const submit = async (data:{classItem: Item, methodItem: Item,conditon:string,ex
         <Tree :root="result" class=" border-t-2 mb-4 pt-4">
           <!-- 具体信息的表达 -->
           <template #meta="{ data, active }">
-            <div 
-                class="bg-blue-200 p-2 mb-2 rounded-r rounded-br"
-                :class='{"hover:bg-blue-300 bg-blue-400":active}'
-                >
-                {{data.join(";")}}
-                </div>
+            <div class="bg-blue-200 p-2 mb-2 rounded-r rounded-br" :class='{"hover:bg-blue-300 bg-blue-400":active}'>
+              {{data.join(" ")}}
+            </div>
             <!-- <button class="button-style rounded-l-none"> -->
-              <!-- <CmdResMenu :title="data.get('title')[0]" :map="data" class=""></CmdResMenu> -->
-              <!-- {{data.join(";")}} -->
+            <!-- <CmdResMenu :title="data.get('title')[0]" :map="data" class=""></CmdResMenu> -->
+            <!-- {{data.join(";")}} -->
             <!-- </button> -->
           </template>
         </Tree>

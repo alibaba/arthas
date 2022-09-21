@@ -66,6 +66,9 @@ export const publicStore = defineStore("public", { // Public项目唯一id
         mutex.value = true
       }
     
+    },
+    nanoToMillis(nanoSeconds:number):number {
+    return nanoSeconds / 1000000;
     }
   },
 });
