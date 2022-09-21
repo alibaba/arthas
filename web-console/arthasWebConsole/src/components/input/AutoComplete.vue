@@ -1,4 +1,5 @@
-<script setup lang="ts">import { computed, Ref, ref } from 'vue';
+<script setup lang="ts">
+import { computed, ref } from 'vue';
 import {
   Combobox, ComboboxButton, ComboboxInput, ComboboxOptions, ComboboxOption, ComboboxLabel,
 } from "@headlessui/vue"

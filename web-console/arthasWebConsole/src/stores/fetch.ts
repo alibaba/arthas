@@ -163,6 +163,7 @@ export const fetchStore = defineStore("fetch", {
     interruptJob() {
       if (this.jobRunning) {
         // 先不管先后端同步的问题
+        // dashboard可能会寄
         this.jobRunning = false;
         return this.baseSubmit(interpret(permachine),{
           action:"interrupt_job",

@@ -122,13 +122,12 @@ const transformStartProps = () => {
 const startSubmit = () => {
   const { start, evenOption, includeOption, excludeOption } = transformStartProps()
 
-  const value: ArthasReq = {
+
+  fetchS.baseSubmit(fetchM, {
     action: "exec",
     command: `profiler ${start} ${evenOption} ${includeOption} ${excludeOption}`,
     sessionId: undefined
-  }
-
-  fetchS.baseSubmit(fetchM, value)
+  })
     .then(restartInit)
 }
 const stopProfiler = () => fetchS.baseSubmit(fetchM, {

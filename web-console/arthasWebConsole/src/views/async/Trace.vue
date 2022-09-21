@@ -11,16 +11,16 @@ import Tree from '@/components/show/Tree.vue';
 import Enhancer from '@/components/show/Enhancer.vue';
 import { publicStore } from '@/stores/public';
 import { count } from 'console';
+import ClassInput from '@/components/input/ClassInput.vue';
 const pollingM = useMachine(machine)
 const fetchS = fetchStore()
 const { pullResultsLoop, getCommonResEffect } = fetchS
 const fetchM = useInterpret(permachine)
 const loop = pullResultsLoop(pollingM)
 const pollResults = reactive<TreeNode[]>([])
-// const enhancer = reactive(new Map())
 const enhancer = ref(undefined as EnchanceResult | undefined)
 const publiC = publicStore()
-// let statusCount = 0
+const excludeClass = ref("")
 const trans = (root: TraceNode, parent: TraceNode | null): string[] => {
   let title: (string)[] = []
 
@@ -122,16 +122,22 @@ onBeforeMount(() => {
 onBeforeUnmount(() => {
   loop.close()
 })
-const submit = async (data: { classItem: Item, methodItem: Item, conditon: string, express: string, count: number }) => {
+
+const setExclude = publicStore().inputDialogFactory(excludeClass,
+  (raw) => raw,
+  (input) => input.value.toString()
+)
+const submit = (data: { classItem: Item, methodItem: Item, conditon: string, express: string, count: number }) => {
   let condition = data.conditon.trim() == "" ? "" : `'${data.conditon.trim()}'`
   let express = data.express.trim() == "" ? "" : `'${data.express.trim()}'`
   let n = data.count > 0 ? `-n ${data.count}` : ""
-
-  fetchS.baseSubmit(fetchM, {
+  let exclude = excludeClass.value == "" ? "" :`--exclude-class-pattern ${excludeClass.value}`
+  let method =  data.methodItem.value === "" ? "*" : data.methodItem.value
+  return fetchS.baseSubmit(fetchM, {
     action: "async_exec",
-    command: `trace ${data.classItem.value} ${data.methodItem.value} --skipJDKMethod false ${condition} ${express} ${n}`,
+    command: `trace ${data.classItem.value} ${method} --skipJDKMethod false ${condition} ${express} ${n} ${exclude}`,
     sessionId: undefined
-  }).then(res => {
+  }).then(() => {
     enhancer.value = undefined
     pollResults.length = 0
     loop.open()
@@ -141,10 +147,13 @@ const submit = async (data: { classItem: Item, methodItem: Item, conditon: strin
   
 <template>
   <MethodInput :submit-f="submit" class="mb-2" nexpress ncondition ncount>
+    <template  #others >
+      <button class="input-btn-style ml-2" @click="setExclude" >exclude: {{excludeClass}}</button>
+    </template>
   </MethodInput>
   <template v-if="pollResults.length > 0 || enhancer">
     <Enhancer :result="enhancer" v-if="enhancer"></Enhancer>
-    <ul class=" pointer-events-auto mt-2 ">
+    <ul class=" pointer-events-auto mt-2">
       <template v-for="(result, i) in pollResults" :key="i">
         <Tree :root="result" class=" border-t-2 mb-4 pt-4">
           <!-- 具体信息的表达 -->

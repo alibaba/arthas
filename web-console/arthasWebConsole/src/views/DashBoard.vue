@@ -411,18 +411,6 @@ onBeforeUnmount(async () => {
   // })
   fetchS
   .interruptJob()
-  .finally(() => {
-    const a2 = interpret(machine)
-    a2.start()
-    a2.send("INIT")
-    a2.send({
-      type: "SUBMIT",
-      value: {
-        action: "close_session",
-        sessionId: undefined
-      }
-    })
-  })
 
 })
 </script>

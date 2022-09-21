@@ -17,9 +17,6 @@ const routes: { cmd: string, url: string }[] = [
   }, {
     cmd: 'profiler',
     url: 'profiler'
-  }, {
-    cmd: 'ognl',
-    url: 'ognl'
   }
 ]
 </script>

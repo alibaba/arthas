@@ -76,7 +76,7 @@ const filterfn = (_: any, item: Item) => true
       <slot name="others"></slot>
       <button @click.prevent="submitF({
         classItem:slotP.selectItem,
-        loaderItem:slotQ.selectItem
+        loaderItem:slotQ.selectItem,
       })" class="border bg-blue-400 p-2 rounded-md mx-2 hover:opacity-50 transition">submit</button>
     </AutoComplete>
   </AutoComplete>

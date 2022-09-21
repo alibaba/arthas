@@ -1,7 +1,7 @@
 {
   "name": "arthaswebconsole",
   "private": true,
-  "version": "0.1.2",
+  "version": "0.1.3",
   "scripts": {
     "dev": "vite --port 8000",
     "build": "vue-tsc --noEmit && vite build",
@@ -14,7 +14,9 @@
     "@highlightjs/vue-plugin": "^2.1.0",
     "@xstate/vue": "^2.0.0",
     "echarts": "^5.3.3",
+    "global": "^4.4.0",
     "highlight.js": "^11.6.0",
+    "npminstall": "^6.5.1",
     "pinia": "^2.0.15",
     "typings": "^2.1.1",
     "vue": "^3.2.25",

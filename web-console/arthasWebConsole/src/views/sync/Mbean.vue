@@ -7,6 +7,8 @@ import { onBeforeMount, reactive, ref } from 'vue';
 import AutoComplete from "@/components/input/AutoComplete.vue";
 import CmdResMenu from '@/components/show/CmdResMenu.vue';
 import { waitFor } from 'xstate/lib/waitFor';
+import { interpret } from 'xstate';
+import permachine from '@/machines/perRequestMachine';
 const { getCommonResEffect } = publicStore()
 const searchMbean = useMachine(machine)
 const allMbean = useMachine(machine)
@@ -24,18 +26,18 @@ onBeforeMount(() => {
   // allLoop.open()
 })
 
-getCommonResEffect(allMbean, body => {
-  optionItems.value.length = 0
-  const result = body.results[0]
-  if (result.type === "mbean" && Object.hasOwn(result, "mbeanNames")) {
-    result.mbeanNames.forEach(name => {
-      optionItems.value.push({
-        name,
-        value: name
-      })
-    })
-  }
-})
+// getCommonResEffect(allMbean, body => {
+//   optionItems.value.length = 0
+//   const result = body.results[0]
+//   if (result.type === "mbean" && Object.hasOwn(result, "mbeanNames")) {
+//     result.mbeanNames.forEach(name => {
+//       optionItems.value.push({
+//         name,
+//         value: name
+//       })
+//     })
+//   }
+// })
 getCommonResEffect(searchMbean, body => {
   optionItems.value.length = 0
   const result = body.results[0]
@@ -92,17 +94,17 @@ getCommonResEffect(searchMbean, body => {
       className.value = res.className
       description.value = res.description
     }
-    if(Object.hasOwn(result, "mbeanAttribute") && Object.hasOwn(result.mbeanAttribute, mbeanName)){
+    if (Object.hasOwn(result, "mbeanAttribute") && Object.hasOwn(result.mbeanAttribute, mbeanName)) {
       const res = result.mbeanAttribute[mbeanName]
-      res.forEach(({name,value})=>{
+      res.forEach(({ name, value }) => {
         let format = "value : "
-        if(["string","number","boolean"].includes(typeof value)){
+        if (["string", "number", "boolean"].includes(typeof value)) {
           format += value.toString()
         } else {
           format += JSON.stringify(value)
         }
         const v = attributesMap.get(name)
-        if(v) v.push(format)
+        if (v) v.push(format)
         else attributesMap.set(name, [format])
       })
     }
@@ -127,18 +129,34 @@ const getMbeanInfo = async (item: Item) => {
     }
   })
 }
-const getAll = () => allMbean.send({
-  type: "SUBMIT",
-  value: {
-    action: "exec",
-    command: `mbean`
-  }
+const getAll = () => fetchStore().baseSubmit(interpret(permachine), {
+  action: "exec",
+  command: `mbean`
+}).then(res=>{
+  const result = (res as CommonRes).body.results[0]
+  optionItems.value.length = 0
+  if (result.type === "mbean" && Object.hasOwn(result, "mbeanNames")) {
+    result.mbeanNames.forEach(name => {
+      optionItems.value.push({
+        name,
+        value: name
+      })
+    })
+  } 
 })
+// allMbean.send({
+//   type: "SUBMIT",
+//   value: {
+//     action: "exec",
+//     command: `mbean`
+//   }
+// })
 </script>
 
 <template>
   <AutoComplete label="mbeanInfo" :option-items="optionItems" :input-fn="getAll" v-slot="slotP" as="form">
-    <button @click.prevent="getMbeanInfo(slotP.selectItem)" class="border bg-blue-400 p-2 rounded-md mx-2 hover:opacity-50 transition">submit</button>
+    <button @click.prevent="getMbeanInfo(slotP.selectItem)"
+      class="border bg-blue-400 p-2 rounded-md mx-2 hover:opacity-50 transition">submit</button>
   </AutoComplete>
   <div v-if="className !== ''" class="mt-4">
     <h2 class="flex justify-center my-4 text-xl">{{ className }}</h2>
