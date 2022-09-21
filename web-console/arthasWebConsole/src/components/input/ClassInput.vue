@@ -6,12 +6,13 @@ import { publicStore } from '@/stores/public';
 import { ref } from 'vue';
 import { interpret } from 'xstate';
 import AutoComplete from './AutoComplete.vue';
-const { label = "inputClassName" } = defineProps<{
+const { label = "inputClassName", supportedover = false } = defineProps<{
   label?: string,
   submitF: (data: {
     classItem: Item,
     loaderItem: Item
   }) => void
+  supportedover?:boolean
 }>()
 const optionClass = ref([] as { name: string, value: string }[])
 const optionClassloders = ref([] as { name: string, value: string }[])
@@ -69,7 +70,7 @@ const filterfn = (_: any, item: Item) => true
 </script>
 
 <template>
-  <AutoComplete :label="label" :option-items="optionClass" :input-fn="changeValue" :filter-fn="filterfn" v-slot="slotP"
+  <AutoComplete :label="label" :option-items="optionClass" :input-fn="changeValue" :filter-fn="filterfn" v-slot="slotP" :supportedover="supportedover"
     :blur-fn="blurF" as="form">
     <AutoComplete label="classloader" :option-items="optionClassloders" v-slot="slotQ">
       <slot name="others"></slot>

@@ -1,67 +1,70 @@
 <script setup lang="ts">
 import machine from '@/machines/consoleMachine';
-import { useMachine } from '@xstate/vue';
+import { useInterpret, useMachine } from '@xstate/vue';
 import { onBeforeMount, reactive, ref } from 'vue';
 import CmdResMenu from '@/components/show/CmdResMenu.vue';
 import { fetchStore } from '@/stores/fetch';
 import { publicStore } from '@/stores/public';
 import { Disclosure, DisclosureButton, DisclosurePanel, Switch, } from '@headlessui/vue';
-const retransformListM = useMachine(machine)
-const retransformM = useMachine(machine)
+import { interpret } from 'xstate';
+import permachine from '@/machines/perRequestMachine';
+const retransformListM = useInterpret(machine)
 const { getPollingLoop } = fetchStore()
-const { getCommonResEffect } = publicStore()
+const publiC = publicStore()
 const retransformListMap = reactive(new Map<string, string[]>())
-
+const fetchS = fetchStore()
 const retransformRes = reactive(new Map<string, string[]>())
 const retransformPath = ref('')
 const enabled = ref(false)
-const listLoop = getPollingLoop(() => retransformListM.send({
-  type: "SUBMIT",
-  value: {
+const listLoop = getPollingLoop(() => {
+  fetchS.baseSubmit(retransformListM, {
     action: "exec",
     command: "retransform -l"
-  }
-}))
-
-
-onBeforeMount(() => {
-  retransformListM.send("INIT")
-  // listLoop.open()
-  retransformM.send("INIT")
-})
-
-getCommonResEffect(retransformListM, body => {
-  const result = body.results[0]
-  retransformListMap.clear()
-  if (result.type === "retransform") {
-    result.retransformEntries.forEach(v => {
-      console.log(111)
-      retransformListMap.set(v.className, Object.entries(v).filter(([k, v]) => k !== "className").map(([k, v]) => `${k} : ${v.toString()}`))
-    })
-  }
-})
-getCommonResEffect(retransformM, body => {
-  const result = body.results[0]
-  if (result.type === "retransform") {
-    retransformRes.clear()
-    retransformRes.set("retransformClass", result.retransformClasses)
-    retransformRes.set("retransformCount", [result.retransformCount.toString()])
-  }
-})
-
-const onSubmit = () => {
-  retransformM.send({
-    type: "SUBMIT",
-    value: {
-      action: "exec",
-      command: enabled.value? `retransform --classPattern ${retransformPath.value}`:`retransform ${retransformPath.value}`
+  }).then(res => {
+    const result = (res as CommonRes).body.results[0]
+    retransformListMap.clear()
+    if (result.type === "retransform") {
+      result.retransformEntries.forEach(v => {
+        console.log(111)
+        retransformListMap.set(v.className, Object.entries(v).filter(([k, v]) => k !== "className").map(([k, v]) => `${k} : ${v.toString()}`))
+      })
     }
   })
+},{
+  step:2000,
+  globalIntrupt:true
+})
+
+
+const onSubmit = () => {
+  let classPattern = ""
+  if (enabled.value) classPattern += `--classPattern`
+  return fetchStore().baseSubmit(interpret(permachine), {
+    action: "exec",
+    command: `retransform ${retransformPath.value} ${classPattern}`
+  }).then(res => {
+    let result = (res as CommonRes).body.results[0]
+
+    if (result.type === "retransform") {
+      retransformRes.clear()
+      retransformRes.set("retransformClass", result.retransformClasses)
+      retransformRes.set("retransformCount", [result.retransformCount.toString()])
+    }
+  })
+}
+let list = false
+const openList = () => {
+  list = !list
+  if (list) {
+    listLoop.open()
+  } else {
+    listLoop.close()
+  }
 }
 </script>
 
 <template>
-  <CmdResMenu title="entries" :map="retransformListMap"></CmdResMenu>
+  <CmdResMenu title="entries" :map="retransformListMap" @myclick="openList"></CmdResMenu>
   <Disclosure class="w-100 flex flex-col mb-2" as="section">
     <DisclosureButton
       class="py-2 bg-blue-400  rounded self-start hover:opacity-50 transition-all duration-100 truncate w-80">

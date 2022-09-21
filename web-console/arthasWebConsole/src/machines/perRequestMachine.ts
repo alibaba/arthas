@@ -383,8 +383,11 @@ const permachine = createMachine({
       if (["SCHEDULED", "SUCCEEDED"].includes(event.data.state)) {
         if (Object.hasOwn(event.data, "body")) {
           if (Object.hasOwn(event.data.body, "results")) {
-            return (event.data as CommonRes).body.results.every((result) =>
-              result.type === "status" ? result.statusCode === 0 : true
+            return (event.data as CommonRes).body.results.every((result) =>{
+              // if(result.type === "jad"){
+              //   if(result.source.startsWith())
+              // }
+              return result.type === "status" ? result.statusCode === 0 : true}
             );
           } else {
             return ["READY", "TERMINATED"].includes(

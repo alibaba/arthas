@@ -13,11 +13,18 @@ const { title, map, buttonWidth = 'w-80', open = false, data = "" } = defineProp
   buttonWidth?: string,
   data?: any
 }>()
+const emit = defineEmits(["myclick"])
+const disposeClick = (e:Event)=>{
+  emit('myclick',e)
+}
+
 </script>
 
 <template>
   <Disclosure as="section" class="w-100 flex flex-col mb-2">
-    <DisclosureButton class="py-2 bg-blue-400  rounded hover:opacity-50 transition-all duration-100 truncate"
+    <DisclosureButton 
+    @click.prevent="disposeClick"
+    class="py-2 bg-blue-400  rounded hover:opacity-50 transition-all duration-100 truncate"
       :class="[buttonWidth]">
       {{ title }}
     </DisclosureButton>
