@@ -349,7 +349,14 @@ type TimeFragment = {
   "throwExp": string;
   "timestamp": string;
 };
-
+type MonitorData = {
+  className: string;
+  cost: number;
+  failed: number;
+  methodName: number;
+  success: number;
+  total: number;
+}
 type CommandResult = {
   type: "command";
   state: ResState;
@@ -581,14 +588,7 @@ type CommandResult = {
   ts: `${string} ${string}`;
   type: "stack";
 } | {
-  monitorDataList: {
-    className: string;
-    cost: number;
-    failed: number;
-    methodName: number;
-    success: number;
-    total: number;
-  }[];
+  monitorDataList: MonitorData[];
   type: "monitor";
 } | {
   nodeCount: number;

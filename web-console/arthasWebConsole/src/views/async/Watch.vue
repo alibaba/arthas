@@ -137,7 +137,8 @@ const submit = async (data: { classItem: Item, methodItem: Item, conditon: strin
       <Listbox v-model="mode">
         <div class=" relative mx-2 ">
           <ListboxButton class="input-btn-style w-40">{{ mode.name }}</ListboxButton>
-          <ListboxOptions class=" absolute w-40 mt-2 border py-2 rounded-md hover:shadow-xl transition bg-white">
+          <ListboxOptions
+            class=" absolute w-40 mt-2 border overflow-hidden rounded-md hover:shadow-xl transition bg-white">
             <ListboxOption v-for="(am,i) in modelist" :key="i" :value="am" v-slot="{active, selected}">
               <div class=" p-2 transition " :class="{
               'bg-blue-300 text-white': active,
