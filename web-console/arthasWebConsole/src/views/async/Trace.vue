@@ -1,17 +1,19 @@
 <script setup lang="ts">
 import permachine from '@/machines/perRequestMachine';
+import {
+  Switch,
+  SwitchLabel,
+  SwitchGroup,
+  SwitchDescription
+} from "@headlessui/vue"
 import { useInterpret, useMachine } from '@xstate/vue';
-import { waitFor } from 'xstate/lib/waitFor';
 import MethodInput from '@/components/input/MethodInput.vue';
 import machine from '@/machines/consoleMachine';
 import { fetchStore } from '@/stores/fetch';
 import { onBeforeMount, onBeforeUnmount, reactive, ref } from 'vue';
-import CmdResMenu from '@/components/show/CmdResMenu.vue';
 import Tree from '@/components/show/Tree.vue';
 import Enhancer from '@/components/show/Enhancer.vue';
 import { publicStore } from '@/stores/public';
-import { count } from 'console';
-import ClassInput from '@/components/input/ClassInput.vue';
 const pollingM = useMachine(machine)
 const fetchS = fetchStore()
 const { pullResultsLoop, getCommonResEffect } = fetchS
@@ -21,6 +23,7 @@ const pollResults = reactive<TreeNode[]>([])
 const enhancer = ref(undefined as EnchanceResult | undefined)
 const publiC = publicStore()
 const excludeClass = ref("")
+const enabled = ref(true)
 const trans = (root: TraceNode, parent: TraceNode | null): string[] => {
   let title: (string)[] = []
 
@@ -46,7 +49,7 @@ const trans = (root: TraceNode, parent: TraceNode | null): string[] => {
         root.cost,
         root.totalCost,
       )
-      if(parent && parent.type === "method") percentage = `${ (root.cost / parent.totalCost * 100).toFixed(2)}%, `
+      if (parent && parent.type === "method") percentage = `${(root.cost / parent.totalCost * 100).toFixed(2)}%, `
       title = [`[${percentage}${publiC.nanoToMillis(root.cost)}ms]`, lineNumber, `${root.className}:${root.methodName}`]
     } else {
       if (parent && parent.type === "method") percentage = `${(root.totalCost / parent.totalCost * 100).toFixed(2)}%, `
@@ -132,11 +135,12 @@ const submit = (data: { classItem: Item, methodItem: Item, conditon: string, exp
   let condition = data.conditon.trim() == "" ? "" : `'${data.conditon.trim()}'`
   let express = data.express.trim() == "" ? "" : `'${data.express.trim()}'`
   let n = data.count > 0 ? `-n ${data.count}` : ""
-  let exclude = excludeClass.value == "" ? "" :`--exclude-class-pattern ${excludeClass.value}`
-  let method =  data.methodItem.value === "" ? "*" : data.methodItem.value
+  let exclude = excludeClass.value == "" ? "" : `--exclude-class-pattern ${excludeClass.value}`
+  let method = data.methodItem.value === "" ? "*" : data.methodItem.value
+  let skipJDKMethod = enabled.value ? "" : "--skipJDKMethod false"
   return fetchS.baseSubmit(fetchM, {
     action: "async_exec",
-    command: `trace ${data.classItem.value} ${method} --skipJDKMethod false ${condition} ${express} ${n} ${exclude}`,
+    command: `trace ${data.classItem.value} ${method} ${skipJDKMethod} ${condition} ${express} ${n} ${exclude}`,
     sessionId: undefined
   }).then(() => {
     enhancer.value = undefined
@@ -148,8 +152,17 @@ const submit = (data: { classItem: Item, methodItem: Item, conditon: string, exp
   
 <template>
   <MethodInput :submit-f="submit" class="mb-2" nexpress ncondition ncount>
-    <template  #others >
-      <button class="input-btn-style ml-2" @click="setExclude" >exclude: {{excludeClass}}</button>
+    <template #others>
+
+      <SwitchGroup as="div" class="input-btn-style flex ml-2 focus-within:ring ring-blue-500">
+        <SwitchLabel>skipJDKMethod:</SwitchLabel>
+        <Switch v-model="enabled" :class="enabled ? 'bg-blue-400' : 'bg-gray-500'"
+          class="relative items-center inline-flex h-6 w-12 shrink-0 cursor-pointer rounded-full border-transparent transition-colors ease-in-out focus:outline-none mx-2">
+          <span aria-hidden="true" :class="enabled ? 'translate-x-6' : '-translate-x-1'"
+            class="pointer-events-none inline-block h-6 w-6 transform rounded-full bg-white shadow-md shadow-gray-500 ring-0 transition ease-in-out" />
+        </Switch>
+      </SwitchGroup>
+      <button class="input-btn-style ml-2" @click="setExclude">exclude: {{excludeClass}}</button>
     </template>
   </MethodInput>
   <template v-if="pollResults.length > 0 || enhancer">

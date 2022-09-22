@@ -174,23 +174,23 @@ getCommonResEffect(dashboadResM, body => {
 onBeforeMount(async () => {
   dashboadResM.send("INIT")
 
-  if (!fetchS.sessionId) {
-    fetchS.baseSubmit(dashboadM, {
-      action: "init_session"
-    })
-  }
-  await isResult(dashboadM)
+  fetchS
+    .asyncInit()
+    .then(
+      res => {
+        fetchS.baseSubmit(dashboadM, {
+          action: "async_exec",
+          command: "dashboard",
+          sessionId: undefined
+        }).then(
+          res => {
+            dashboardId = (res as AsyncRes).body.jobId
+            loop.open()
+          }
+        )
+      }
+    )
 
-  fetchS.baseSubmit(dashboadM, {
-    action: "async_exec",
-    command: "dashboard",
-    sessionId: undefined
-  }).then(
-    res => {
-      dashboardId = (res as AsyncRes).body.jobId
-      loop.open()
-    }
-  )
 })
 // 处理dom
 onMounted(() => {
@@ -410,7 +410,7 @@ onBeforeUnmount(async () => {
   //   } 
   // })
   fetchS
-  .interruptJob()
+    .interruptJob()
 
 })
 </script>

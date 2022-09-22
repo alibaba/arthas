@@ -218,12 +218,13 @@ export const fetchStore = defineStore("fetch", {
     asyncInit() {
       if (!this.online) {
         publicStore().ignore = true;
-        this
+        return this
           .initSession()
           .then((_) => {
             publicStore().ignore = false;
           });
       }
+      return Promise.reject()
     },
   },
 });
