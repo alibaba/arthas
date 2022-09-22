@@ -12,7 +12,7 @@ import { publicStore } from "./stores/public";
 import WarnDialog from "./components/dialog/WarnDialog.vue";
 const fetchS = fetchStore()
 const publicS = publicStore()
-onBeforeUnmount(()=>{
+onBeforeUnmount(() => {
   const actor = interpret(machine)
   actor.start()
   console.log('asdfasdf')
@@ -33,15 +33,15 @@ onBeforeUnmount(()=>{
       <div class="flex flex-row h-full">
         <nav-aside></nav-aside>
         <div class="flex-auto overflow-auto h-[90vh]">
-        <router-view >
-        </router-view>
+          <router-view>
+          </router-view>
         </div>
       </div>
     </div>
-    <err-dialog/>
-    <success-dialog/>
-    <input-dialog v-if="publicS.isInput"/>
-    <warn-dialog v-if="publicS.isWarn"></warn-dialog>
+      <err-dialog />
+      <success-dialog />
+      <input-dialog v-if="publicS.isInput " />
+      <warn-dialog v-if="publicS.isWarn"></warn-dialog>
   </div>
-  
+
 </template>

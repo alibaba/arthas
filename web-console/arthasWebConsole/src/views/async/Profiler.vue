@@ -82,7 +82,7 @@ const changeFramebuf = publicS.inputDialogFactory(
   },
   (input) => input.value.toString()
 )
-const changeFile = publicS.inputDialogFactory(fileformat,  
+const changeFile = publicS.inputDialogFactory(fileformat,
   (raw) => raw.trim(),
   (input) => input.value)
 const changeDuration = publicS.inputDialogFactory(
@@ -94,10 +94,10 @@ const changeDuration = publicS.inputDialogFactory(
   (input) => input.value.toString()
 )
 
-const restartInit = ()=>{
+const restartInit = () => {
   profilerStatus.value.is = true
   outputPath.value = ""
-} 
+}
 const transformStartProps = () => {
   let start = "start"
   let evenOption = ""
@@ -150,12 +150,13 @@ const resumeProfiler = () => fetchS.baseSubmit(fetchM, {
 )
 
 onBeforeMount(async () => {
-  publicS.inputVal = "",
-    includesVal.clear()
+  publicS.inputVal = ""
+  includesVal.clear()
   excludesVal.clear()
   getStatusLoop.open()
   getSampleLoop.open()
 
+  fetchS.asyncInit()
   await fetchS.baseSubmit(fetchM, {
     action: "exec",
     command: "profiler list"

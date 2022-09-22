@@ -8,9 +8,11 @@ import { onBeforeMount, onBeforeUnmount, reactive, ref } from 'vue';
 import { waitFor } from 'xstate/lib/waitFor';
 import Enhancer from '@/components/show/Enhancer.vue';
 import CmdResMenu from '@/components/show/CmdResMenu.vue';
+import { publicStore } from '@/stores/public';
 const fetchM = useInterpret(permachine)
 const pollingM = useMachine(machine)
 const fetchS = fetchStore()
+const publicS = publicStore()
 const { getPollingLoop, interruptJob, getCommonResEffect } = fetchS
 // const {getCommonResEffect} = publicStore()
 
@@ -26,7 +28,8 @@ const loop = getPollingLoop(() => {
 }, {
   globalIntrupt: true
 })
-const pollResults = reactive([] as [string,Map<string, string[]>][])
+
+const pollResults = reactive([] as [string, Map<string, string[]>][])
 // const enhancer = reactive(new Map())
 const enhancer = ref(undefined as EnchanceResult | undefined)
 getCommonResEffect(pollingM, body => {
@@ -36,18 +39,18 @@ getCommonResEffect(pollingM, body => {
         const map = new Map()
         Object
           .keys(result)
-          .filter((k) => !["jobId", "type","ts"].includes(k))
+          .filter((k) => !["jobId", "type", "ts"].includes(k))
           .forEach(k => {
-            let val:string[] = []
+            let val: string[] = []
             if (k === "stackTrace") {
               let stackTrace = result[k]
-              val = stackTrace.map((trace,i) => `${trace.className}::${trace.methodName}`)
-            } else{
-              val.push(result[k as Exclude<keyof typeof result, "jobId"|"type"|"stackTrace"|"ts">].toString())
+              val = stackTrace.map((trace, i) => `${trace.className}::${trace.methodName}`)
+            } else {
+              val.push(result[k as Exclude<keyof typeof result, "jobId" | "type" | "stackTrace" | "ts">].toString())
             }
-            map.set(k,val)
+            map.set(k, val)
           })
-        pollResults.unshift([result.ts,map])
+        pollResults.unshift([result.ts, map])
       }
 
       if (result.type === "enhancer") {
@@ -61,38 +64,32 @@ getCommonResEffect(pollingM, body => {
 onBeforeMount(() => {
   // fetchM.send("INIT")
   pollingM.send("INIT")
+  fetchS.asyncInit()
   // loop.open()
 })
 onBeforeUnmount(() => {
   loop.close()
 })
 
-const submit = async (data:{classItem: Item, methodItem: Item, conditon:string, count:number}) => {
+const submit = async (data: { classItem: Item, methodItem: Item, conditon: string, count: number }) => {
 
   let className = data.classItem.value
   let methodName = data.methodItem.value
   let condition = data.conditon.trim() == "" ? "" : `'${data.conditon.trim()}'`
-  let n = data.count > 0 ? `-n ${data.count}`:""
+  let n = data.count > 0 ? `-n ${data.count}` : ""
 
   pollResults.length = 0
   enhancer.value = undefined
-  fetchM.start()
-  fetchM.send("INIT")
-  fetchM.send({
-    type: "SUBMIT",
-    value: {
-      action: "async_exec",
-      command: `stack ${className} ${methodName} ${condition} ${n}`,
-      sessionId: undefined
-    }
-  })
-  const state = await waitFor(fetchM, state => state.hasTag("result"))
-  
-  console.log(state.value)
-  if (state.matches("success")) {
+
+  fetchS.baseSubmit(fetchM, {
+    action: "async_exec",
+    command: `stack ${className} ${methodName} ${condition} ${n}`,
+    sessionId: undefined
+  }).then(res => {
     loop.open()
-  }
-  fetchM.stop()
+  })
+
+
 }
 </script>
 

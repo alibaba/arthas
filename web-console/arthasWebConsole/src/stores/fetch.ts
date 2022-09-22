@@ -17,7 +17,7 @@ const getEffect = (
     }
   });
 type Machine = ReturnType<typeof useMachine>;
-type MachineService = ReturnType<typeof useInterpret>
+type MachineService = ReturnType<typeof useInterpret>;
 export const fetchStore = defineStore("fetch", {
   state: () => ({
     sessionId: "",
@@ -28,7 +28,7 @@ export const fetchStore = defineStore("fetch", {
     /**
      * 需要给status计数，不然interupt自动关闭很容易出问题
      */
-    statusZeroCount:0,
+    statusZeroCount: 0,
     // 所有用pollingLoop都要
     jobRunning: false,
   }),
@@ -38,25 +38,25 @@ export const fetchStore = defineStore("fetch", {
         /**
          * 对于never，就直接赋值为""，
          * 对于undefined, 就使用全局默认值
-         * 对于定义的字符串，则使用定义的值 
-         * @param key 
-         * @returns 
+         * 对于定义的字符串，则使用定义的值
+         * @param key
+         * @returns
          */
-        const trans = (key:"sessionId"|"requestId"|"consumerId")=>{
-          if(key in option) {
+        const trans = (key: "sessionId" | "requestId" | "consumerId") => {
+          if (key in option) {
             //@ts-ignore
-            if(option[key] !== undefined) {
-            //@ts-ignore
-              return option[key]
+            if (option[key] !== undefined) {
+              //@ts-ignore
+              return option[key];
             } else {
-              return state[key]
+              return state[key];
             }
           }
-          return ""
-        }
-        let sessionId = trans("sessionId")
-        let requestId = trans("requestId")
-        let consumerId = trans("consumerId")
+          return "";
+        };
+        let sessionId = trans("sessionId");
+        let requestId = trans("requestId");
+        let consumerId = trans("consumerId");
         const req = new Request("/api", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -165,51 +165,65 @@ export const fetchStore = defineStore("fetch", {
         // 先不管先后端同步的问题
         // dashboard可能会寄
         this.jobRunning = false;
-        return this.baseSubmit(interpret(permachine),{
-          action:"interrupt_job",
-          sessionId:undefined
-        })
+        return this.baseSubmit(interpret(permachine), {
+          action: "interrupt_job",
+          sessionId: undefined,
+        });
       }
       this.jobRunning = false;
-      return Promise.reject("interrupt failured")
+      return Promise.reject("interrupt failured");
     },
     openJobRun() {
       this.jobRunning = true;
     },
     isResult(m: MachineService) {
       return waitFor(m, (state) => {
-        return state.hasTag("result")
+        return state.hasTag("result");
       });
     },
     tranOgnl(s: string): string[] {
       return s.replace(/\r\n\tat/g, "\r\n\t@").split("\r\n\t");
     },
     /**
-     * 
      * @param fetchM 传入的服务
      * @param value 传入的请求
      * @returns 待处理的promise
      * 貌似不支持这样的类型推断,会出现分布式计算...以后想办法处理
      */
-    baseSubmit<T extends BindQS>(fetchM: MachineService, value: T["req"]){
-      fetchM.start()
-      fetchM.send("INIT")
+    baseSubmit<T extends BindQS>(fetchM: MachineService, value: T["req"]) {
+      fetchM.start();
+      fetchM.send("INIT");
       fetchM.send({
         type: "SUBMIT",
-        value
-      })
+        value,
+      });
       return this.isResult(fetchM).then(
-        state=>{
+        (state) => {
           if (state.matches("success")) {
-            return Promise.resolve<T["res"]>(state.context.response)
+            return Promise.resolve<T["res"]>(state.context.response);
           } else {
-            return Promise.reject("ERROR")
+            return Promise.reject("ERROR");
           }
         },
-        err=>{
-          return Promise.reject(err)
-        }
-      )
-    }
+        (err) => {
+          return Promise.reject(err);
+        },
+      );
+    },
+    initSession() {
+      return this.baseSubmit(interpret(permachine), {
+        action: "init_session",
+      });
+    },
+    asyncInit() {
+      if (!this.online) {
+        publicStore().ignore = true;
+        this
+          .initSession()
+          .then((_) => {
+            publicStore().ignore = false;
+          });
+      }
+    },
   },
 });

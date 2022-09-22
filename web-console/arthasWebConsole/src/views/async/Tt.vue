@@ -5,15 +5,9 @@ import { waitFor } from 'xstate/lib/waitFor';
 import MethodInput from '@/components/input/MethodInput.vue';
 import machine from '@/machines/consoleMachine';
 import { fetchStore } from '@/stores/fetch';
-import {
-  Disclosure,
-  DisclosureButton,
-  DisclosurePanel
-} from "@headlessui/vue"
 import { onBeforeMount, onBeforeUnmount, reactive, ref, watchEffect } from 'vue';
 import CmdResMenu from '@/components/show/CmdResMenu.vue';
 import Enhancer from '@/components/show/Enhancer.vue';
-import { publicStore } from '@/stores/public';
 const pollingM = useMachine(machine)
 const fetchS = fetchStore()
 const { pullResultsLoop, interruptJob, getCommonResEffect, getPullResultsEffect } = fetchS
@@ -60,6 +54,7 @@ getPullResultsEffect(
 
 onBeforeMount(() => {
   pollingM.send("INIT")
+  fetchS.asyncInit()
 })
 onBeforeUnmount(() => {
   loop.close()
@@ -81,14 +76,14 @@ const baseSubmit = async (value: ArthasReq, fn: (res?: ArthasRes) => void, err?:
   }
   fetchM.stop()
 }
-const submit = async (data: { classItem: Item, methodItem: Item, count:number }) => {
+const submit = async (data: { classItem: Item, methodItem: Item, count: number }) => {
   // let express = data.express.trim() == "" ? "" : `-w '${data.express.trim()}'`
-  let n = data.count > 0 ? `-n ${data.count}`:""
-  baseSubmit({
+  let n = data.count > 0 ? `-n ${data.count}` : ""
+  fetchS.baseSubmit(fetchM, {
     action: "async_exec",
     command: `tt -t ${data.classItem.value} ${data.methodItem.value} ${n}`,
     sessionId: undefined
-  }, () => {
+  }).then(res => {
     pollResults.length = 0
     timeFragmentL.value.length = 0
     enhancer.value = undefined
@@ -218,13 +213,9 @@ const searchTt = () => {
   </div>
   <div class="text-gray-500">
     <CmdResMenu title="result" :map="trigerRes" v-if="trigerRes.size > 0">
-      <!-- <div class="flex mt-2 justify-end mr-1">
-        <button @click="reTrigger(cacheIdx)" class="bg-blue-400 hover:opacity-60 transition p-1 rounded">invoke</button>
-      </div> -->
       <template #headerAside>
         <div class="flex mt-2 justify-end mr-1">
-          <button @click="reTrigger(cacheIdx)"
-            class="button-style p-1">invoke</button>
+          <button @click="reTrigger(cacheIdx)" class="button-style p-1">invoke</button>
         </div>
       </template>
     </CmdResMenu>

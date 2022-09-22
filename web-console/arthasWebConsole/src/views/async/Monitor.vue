@@ -50,6 +50,7 @@ getCommonResEffect(pollingM, body => {
   }
 })
 onBeforeMount(() => {
+  fetchS.asyncInit()
   pollingM.send("INIT")
 })
 onBeforeUnmount(() => {

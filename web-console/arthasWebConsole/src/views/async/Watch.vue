@@ -108,6 +108,7 @@ const setDepth = publiC.inputDialogFactory(
 )
 onBeforeMount(() => {
   pollingM.send("INIT")
+  fetchS.asyncInit()
 })
 onBeforeUnmount(() => {
   loop.close()

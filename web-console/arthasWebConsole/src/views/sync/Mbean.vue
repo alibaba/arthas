@@ -25,19 +25,6 @@ onBeforeMount(() => {
   allMbean.send("INIT")
   // allLoop.open()
 })
-
-// getCommonResEffect(allMbean, body => {
-//   optionItems.value.length = 0
-//   const result = body.results[0]
-//   if (result.type === "mbean" && Object.hasOwn(result, "mbeanNames")) {
-//     result.mbeanNames.forEach(name => {
-//       optionItems.value.push({
-//         name,
-//         value: name
-//       })
-//     })
-//   }
-// })
 getCommonResEffect(searchMbean, body => {
   optionItems.value.length = 0
   const result = body.results[0]
@@ -144,13 +131,6 @@ const getAll = () => fetchStore().baseSubmit(interpret(permachine), {
     })
   } 
 })
-// allMbean.send({
-//   type: "SUBMIT",
-//   value: {
-//     action: "exec",
-//     command: `mbean`
-//   }
-// })
 </script>
 
 <template>

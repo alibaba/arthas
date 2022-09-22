@@ -200,12 +200,12 @@ const permachine = createMachine({
     success: {
       entry: ["needReportSuccess", "reset"],
       type: "final",
-      tags:"result"
+      tags: "result",
     },
     failure: {
       id: "failure",
-      type:"final",
-      tags:"result",
+      type: "final",
+      tags: "result",
       entry: ["outputErr", "reset"],
     },
     hist: {
@@ -270,14 +270,18 @@ const permachine = createMachine({
         response: e.data,
       };
     }),
-    outputErr: assign({
-      err: (context, event) => {
+    outputErr: assign((context, event) => {
+      if (!context.publicStore.ignore) {
         context.publicStore.$patch({
           isErr: true,
           ErrMessage: context.err,
         });
-        return "";
-      },
+      } else{
+        console.error(context.err)
+      }
+      return {
+        err: "",
+      };
     }),
     // clearResArr: assign((context, event) => ({ resArr: [] })),
     toObj: assign((ctx) => {
@@ -298,12 +302,14 @@ const permachine = createMachine({
       };
     }),
     needReportSuccess: (context, e) => {
+      
       if (context.inputValue?.action === "close_session") {
         context.fetchStore.$patch({
           sessionId: "",
           consumerId: "",
           online: false,
         });
+        if(context.publicStore.ignore) return;
         context.publicStore.$patch({
           isSuccess: true,
           SuccessMessage: `close session success!`,
@@ -317,30 +323,31 @@ const permachine = createMachine({
           consumerId: response.consumerId,
           online: true,
         });
+        if(context.publicStore.ignore) return;
         context.publicStore.$patch({
           isSuccess: true,
           SuccessMessage: `init_session success!`,
         });
         return;
       }
-      
+
       if (
         (context.inputValue?.action === "exec" ||
-        context.inputValue?.action === "async_exec" ) &&
-        context.inputValue.command.search("profiler") >=0 
+          context.inputValue?.action === "async_exec") &&
+        context.inputValue.command.search("profiler") >= 0
+      ) {
+        let result = (context.response as CommonRes).body.results[0];
+        if (
+          result.type === "profiler" &&
+          ["start", "resume", "stop"].includes(result.action)
         ) {
-          let result = (context.response as CommonRes).body.results[0]
-          if(
-            result.type === "profiler"&&
-            ["start", "resume", "stop"].includes(result.action)
-          ) {
-            context.publicStore.$patch({
-              isSuccess: true,
-              SuccessMessage: result.executeResult
-            });
-          }
-          return;
+          context.publicStore.$patch({
+            isSuccess: true,
+            SuccessMessage: result.executeResult,
+          });
         }
+        return;
+      }
       if (
         context.inputValue?.action === "exec" &&
         context.inputValue.command.includes("vmoption") &&
@@ -383,12 +390,9 @@ const permachine = createMachine({
       if (["SCHEDULED", "SUCCEEDED"].includes(event.data.state)) {
         if (Object.hasOwn(event.data, "body")) {
           if (Object.hasOwn(event.data.body, "results")) {
-            return (event.data as CommonRes).body.results.every((result) =>{
-              // if(result.type === "jad"){
-              //   if(result.source.startsWith())
-              // }
-              return result.type === "status" ? result.statusCode === 0 : true}
-            );
+            return (event.data as CommonRes).body.results.every((result) => {
+              return result.type === "status" ? result.statusCode === 0 : true;
+            });
           } else {
             return ["READY", "TERMINATED"].includes(
               (event.data as AsyncRes).body.jobStatus,
@@ -398,11 +402,11 @@ const permachine = createMachine({
         // SessionRes
         return true;
       }
-      if(context.inputValue && context.inputValue.action=== "interrupt_job") {
+      if (context.inputValue && context.inputValue.action === "interrupt_job") {
         /**
          * 永不拦截打断回收的错误
          */
-        return true
+        return true;
       }
       return false;
     },
