@@ -8,13 +8,16 @@ import { fetchStore } from '@/stores/fetch';
 import { onBeforeMount, onBeforeUnmount, reactive, ref } from 'vue';
 import CmdResMenu from '@/components/show/CmdResMenu.vue';
 import Enhancer from '@/components/show/Enhancer.vue';
+import { publicStore } from '@/stores/public';
 const pollingM = useMachine(machine)
 const fetchS = fetchStore()
-const { getPollingLoop, pullResultsLoop, interruptJob, getCommonResEffect } = fetchS
+const { pullResultsLoop, getCommonResEffect } = fetchS
 const fetchM = useInterpret(permachine)
 const loop = pullResultsLoop(pollingM)
 const pollResults = reactive([] as [string, Map<string, string[]>][])
 const enhancer = ref(undefined as undefined | EnchanceResult)
+const cycleV = ref(120)
+const publicS = publicStore()
 const keyList: string[] = [
 
 ]
@@ -48,6 +51,14 @@ getCommonResEffect(pollingM, body => {
     })
   }
 })
+const changeCycle = publicS.inputDialogFactory(
+  cycleV,
+  (raw) => {
+    let valRaw = parseInt(raw)
+    return Number.isNaN(valRaw) ? 120 : valRaw
+  },
+  (input) => input.value.toString()
+)
 onBeforeMount(() => {
   fetchS.asyncInit()
   pollingM.send("INIT")
@@ -58,33 +69,23 @@ onBeforeUnmount(() => {
 const submit = async (data: { classItem: Item, methodItem: Item, conditon: string }) => {
   // enhancer.value = undefined
   let condition = data.conditon.trim() == "" ? "" : `'${data.conditon.trim()}'`
-  fetchM.start()
-  fetchM.send("INIT")
-  fetchM.send({
-    type: "SUBMIT",
-    value: {
-      action: "async_exec",
-      command: `monitor -c 5 ${data.classItem.value} ${data.methodItem.value} ${condition}`,
-      sessionId: undefined
-    }
-  })
-  const state = await waitFor(fetchM, state => state.hasTag("result"))
-
-  if (state.matches("success")) {
-    loop.open()
-  }
-  fetchM.stop()
-
+  let cycle = `-c ${cycleV.value}`
   fetchS.baseSubmit(fetchM, {
     action: "async_exec",
     command: `monitor -c 5 ${data.classItem.value} ${data.methodItem.value} ${condition}`,
     sessionId: undefined
-  })
+  }).then(
+    res => loop.open()
+  )
 }
 </script>
 
 <template>
-  <MethodInput :submit-f="submit" class="mb-4" ncondition></MethodInput>
+  <MethodInput :submit-f="submit" class="mb-4" ncondition>
+    <template #others>
+      <button class="input-button-style">cycle time:{{cycleV}}</button>
+    </template>
+  </MethodInput>
   <template v-if="pollResults.length > 0 || enhancer">
     <Enhancer :result="enhancer" v-if="enhancer"></Enhancer>
     <!-- <ul class=" pointer-events-auto mt-10">
