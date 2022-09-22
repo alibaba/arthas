@@ -1,18 +1,20 @@
 <script setup lang="ts">
-import { reactive, ref } from 'vue';
+import { reactive, ref, toRefs } from 'vue';
 
-const {maplist} = defineProps<{
+const _props = defineProps<{
   maplist:Map<string, string>[]
 }>()
+const props = toRefs(_props)
 
 const hlist= ref([] as string[])
-if(maplist.length > 0) {
-  hlist.value = Object.keys(maplist[0])
+if(props.maplist.value.length > 0) {
+  console.dir(hlist)
+  hlist.value = Object.keys(props.maplist.value[0])
 }
 </script>
 
 <template>
-<table class="border-collapse border border-slate-400 ..." v-if="hlist.length > 0">
+<table class="border-collapse border border-slate-400 ...">
   <thead>
     <tr>
       <th class="border border-slate-300 ..." v-for="(v,i) in hlist" :key="i"></th>

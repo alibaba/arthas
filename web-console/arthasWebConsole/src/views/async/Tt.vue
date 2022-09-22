@@ -1,57 +1,69 @@
 <script setup lang="ts">
 import permachine from '@/machines/perRequestMachine';
 import { useInterpret, useMachine } from '@xstate/vue';
-import { waitFor } from 'xstate/lib/waitFor';
 import MethodInput from '@/components/input/MethodInput.vue';
 import machine from '@/machines/consoleMachine';
 import { fetchStore } from '@/stores/fetch';
-import { onBeforeMount, onBeforeUnmount, reactive, ref, watchEffect } from 'vue';
+import { onBeforeMount, onBeforeUnmount, reactive, ref, } from 'vue';
 import CmdResMenu from '@/components/show/CmdResMenu.vue';
 import Enhancer from '@/components/show/Enhancer.vue';
+import { publicStore } from '@/stores/public';
 const pollingM = useMachine(machine)
 const fetchS = fetchStore()
-const { pullResultsLoop, interruptJob, getCommonResEffect, getPullResultsEffect } = fetchS
+const { pullResultsLoop, getPullResultsEffect } = fetchS
 const fetchM = useInterpret(permachine)
 const loop = pullResultsLoop(pollingM)
 const pollResults = reactive([] as [string, Map<keyof TimeFragment, string[]>][])
-const timeFragmentL = ref([] as typeof pollResults)
-// const ttSet = new Set()
+
 const enhancer = ref(undefined as EnchanceResult | undefined)
 const trigerRes = reactive(new Map<string, string[]>)
 const cacheIdx = ref("-1")
 const inputVal = ref("")
+const keyList:tfkey[] = [
+  "index",
+  "timestamp",
+  "className",
+  "methodName",
+  "cost",
+  "object",
+  "params",
+  "returnObj",
+  "throwExp",
+  // 暂时隐藏这两个属性，不够宽了
+  // "return",
+  // "throw",
+]
+const tableResults = reactive([] as Map<string, string>[])
 type tfkey = keyof TimeFragment
-const tranOgnl = (s: string): string[] => s.replace(/\r\n\tat/g, "\r\n\t@").split("\r\n\t")
-// const transTT = (result:CommonRes["body"]["results"][0])
+// const tranOgnl = (s: string): string[] => s.replace(/\r\n\tat/g, "\r\n\t@").split("\r\n\t")
+const transform = (tf:TimeFragment)=>{
+  const map = new Map()
+  Object.keys(tf).forEach((k) => {
+          let val:string|string[] = []
+          if ((k) === "params") {
+            tf.params.forEach(para => {
+              // 以后可能会有bug
+              for(const key in para){
+                // @ts-ignore
+                val.push(`${key}:${para[key].toString()}`)
+              }
+            })
+          } else {
+            val = (tf[k as tfkey].toString())
+          }
+          map.set(k , val)
+        })
+  return map
+}
 getPullResultsEffect(
   pollingM,
   result => {
     if (result.type === "tt") {
       result.timeFragmentList.forEach(tf => {
-        const Mkey = tf.index
-
-        const map = new Map<tfkey, string[]>()
-        Object.keys(tf).forEach((k) => {
-          let val: string[] = []
-          if ((k as tfkey) === "params") {
-            tf.params.forEach(para => {
-              val.push(JSON.stringify(para))
-            })
-          } else if ((k as tfkey) === "throwExp") {
-            val = tranOgnl(tf.throwExp)
-          } else {
-            val.push(tf[k as tfkey].toString())
-          }
-          map.set(k as tfkey, val)
-        })
-        // if (!ttSet.has(Mkey)) {
-        //   ttSet.add(Mkey)
-        pollResults.unshift([Mkey.toString(), map])
-        // }
+        tableResults.unshift(transform(tf))
       })
     }
   })
-
 onBeforeMount(() => {
   pollingM.send("INIT")
   fetchS.asyncInit()
@@ -59,23 +71,7 @@ onBeforeMount(() => {
 onBeforeUnmount(() => {
   loop.close()
 })
-// 最基本的submit基于Interrupt
-const baseSubmit = async (value: ArthasReq, fn: (res?: ArthasRes) => void, err?: Function) => {
-  fetchM.start()
-  fetchM.send("INIT")
-  fetchM.send({
-    type: "SUBMIT",
-    value
-  })
-  const state = await waitFor(fetchM, state => state.hasTag("result"))
 
-  if (state.matches("success")) {
-    fn(state.context.response)
-  } else {
-    err && err()
-  }
-  fetchM.stop()
-}
 const submit = async (data: { classItem: Item, methodItem: Item, count: number }) => {
   // let express = data.express.trim() == "" ? "" : `-w '${data.express.trim()}'`
   let n = data.count > 0 ? `-n ${data.count}` : ""
@@ -84,50 +80,30 @@ const submit = async (data: { classItem: Item, methodItem: Item, count: number }
     command: `tt -t ${data.classItem.value} ${data.methodItem.value} ${n}`,
     sessionId: undefined
   }).then(res => {
-    pollResults.length = 0
-    timeFragmentL.value.length = 0
     enhancer.value = undefined
     loop.open()
   })
 }
-const alltt = async () => {
-  fetchS.baseSubmit(fetchM, {
-    action: "exec",
-    command: `tt -l`
-  }).then((res) => {
-    let result = (res as CommonRes).body.results[0]
-    timeFragmentL.value.length = 0
-    pollResults.length = 0
-    if (result.type === "tt") {
-      result.timeFragmentList.forEach(tf => {
-        const Mkey = tf.index
+const alltt = () => fetchS.baseSubmit(fetchM, {
+  action: "exec",
+  command: `tt -l`
+}).then((res) => {
+  let result = (res as CommonRes).body.results[0]
+  trigerRes.clear()
+  tableResults.length = 0
+  if (result.type === "tt") {
+    result.timeFragmentList.forEach(tf => {
+        tableResults.unshift(transform(tf))
 
-        const map = new Map<keyof TimeFragment, string[]>()
-        Object.keys(tf).forEach((k) => {
-          let val: string[] = []
-          if ((k as keyof TimeFragment) === "params") {
-            tf.params.forEach(para => {
-              val.push(JSON.stringify(para))
-            })
-          } else if ((k as tfkey) === "throwExp") {
-            val = tranOgnl(tf.throwExp)
-          } else {
-            val.push(tf[k as keyof TimeFragment].toString())
-          }
-          map.set(k as tfkey, val)
-        })
+    })
+  }
+})
 
-        timeFragmentL.value.unshift([Mkey.toString(), map])
-
-      })
-    }
-  })
-}
-const reTrigger = async (idx: string) => {
-  await baseSubmit({
-    action: "exec",
-    command: `tt -i ${idx} -p`,
-  }, res => {
+const reTrigger = (idx: string) => fetchS.baseSubmit(fetchM, {
+  action: "exec",
+  command: `tt -i ${idx} -p`,
+}).then(
+  res => {
     let result = (res as CommonRes).body.results[0]
 
     if (result.type === "tt") {
@@ -135,15 +111,12 @@ const reTrigger = async (idx: string) => {
       cacheIdx.value = idx
       let tf = result.replayResult
 
-      const Mkey = tf.index
       Object.keys(tf).forEach((k) => {
         let val: string[] = []
         if ((k as keyof TimeFragment) === "params") {
           tf.params.forEach(para => {
             val.push(JSON.stringify(para))
           })
-        } else if ((k as tfkey) === "throwExp") {
-          val = tranOgnl(tf.throwExp)
         } else {
           val.push(tf[k as keyof TimeFragment].toString())
         }
@@ -155,39 +128,28 @@ const reTrigger = async (idx: string) => {
     }
   }, () => {
     trigerRes.clear()
-  })
-}
+  }
+)
+
 const searchTt = () => {
   let condition = inputVal.value.trim() !== "" ? `'${inputVal.value}'` : ''
-  fetchS.baseSubmit(fetchM, {
+  return fetchS.baseSubmit(fetchM, {
     action: "exec",
     command: `tt -s ${condition}`
   }).then(res => {
-    pollResults.length = 0
-    timeFragmentL.value.length = 0
+    tableResults.length = 0
+    trigerRes.clear()
     let result = (res as CommonRes).body.results[0]
-    timeFragmentL.value.length = 0
     if (result.type === "tt") {
-      result.timeFragmentList.forEach(tf => {
-        const Mkey = tf.index
-
-        const map = new Map<keyof TimeFragment, string[]>()
-        Object.keys(tf).forEach((k) => {
-          let val: string[] = []
-          if ((k as keyof TimeFragment) === "params") {
-            tf.params.forEach(para => {
-              val.push(JSON.stringify(para))
-            })
-          } else if ((k as tfkey) === "throwExp") {
-            val = tranOgnl(tf.throwExp)
-          } else {
-            val.push(tf[k as keyof TimeFragment].toString())
-          }
-          map.set(k as tfkey, val)
+      if(result.timeFragmentList.length === 0) {
+        publicStore().$patch({
+          isErr:true,
+          ErrMessage: "not found"
         })
-
-        timeFragmentL.value.unshift([Mkey.toString(), map])
-
+        return
+      }
+      result.timeFragmentList.forEach(tf => {
+        tableResults.unshift(transform(tf))
       })
     }
   })
@@ -212,34 +174,44 @@ const searchTt = () => {
     </button>
   </div>
   <div class="text-gray-500">
-    <CmdResMenu title="result" :map="trigerRes" v-if="trigerRes.size > 0">
+    <CmdResMenu title="invoked result" :map="trigerRes" v-if="trigerRes.size > 0">
       <template #headerAside>
         <div class="flex mt-2 justify-end mr-1">
           <button @click="reTrigger(cacheIdx)" class="button-style p-1">invoke</button>
         </div>
       </template>
     </CmdResMenu>
-    <template v-if="timeFragmentL.length > 0">
-      <template v-for="(result, i) in timeFragmentL" :key="result[0]">
-        <CmdResMenu :title="result[0]" :map="result[1]">
-          <template #headerAside>
-            <div class="flex mt-2 justify-end mr-1">
-              <button @click="reTrigger(result[0])"
-                class="bg-blue-400 hover:opacity-60 transition p-1 rounded">invoke</button>
-            </div>
-          </template>
-        </CmdResMenu>
-      </template>
-    </template>
   </div>
-
-  <template v-if="pollResults.length > 0 || enhancer">
+  <template v-if="pollResults.length > 0 || enhancer|| tableResults.length > 0">
     <Enhancer :result="enhancer" v-if="enhancer"></Enhancer>
-    <ul class=" pointer-events-auto mt-10">
-      <template v-for="(result, i) in pollResults" :key="i">
-        <CmdResMenu :title="result[0]" :map="result[1]" open></CmdResMenu>
-      </template>
-    </ul>
+    <div class="w-full flex justify-center items-center ">
+      <table class="border-collapse border border-slate-400 table-fixed">
+        <thead>
+          <tr>
+            <th class="border border-slate-300 p-1" v-for="(v,i) in keyList" :key="i">{{v}}</th>
+            <th class="border border-slate-300 p-1">invoke</th>
+          </tr>
+        </thead>
+        <tbody class="">
+          <tr v-for="(map, i) in tableResults" :key="i">
+            <td class="border border-slate-300 p-1" v-for="(key,j) in keyList" :key="j">
+              <template v-if=" key !== 'params'">
+                {{map.get(key)}}
+              </template>
+              
+              <div class="flex flex-col" v-else>
+                <div v-for="(row, k) in map.get(key)" :key="k">
+                  {{row}}
+                </div>
+              </div>
+            </td>
+            <td class="border border-slate-300 ">
+              <button class="button-style" @click="reTrigger(map.get('index')!)">invoke</button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
   </template>
 </template>
 

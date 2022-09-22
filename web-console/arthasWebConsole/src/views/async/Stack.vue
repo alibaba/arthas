@@ -5,31 +5,26 @@ import permachine from '@/machines/perRequestMachine';
 import { fetchStore } from '@/stores/fetch';
 import { useMachine, useInterpret } from '@xstate/vue';
 import { onBeforeMount, onBeforeUnmount, reactive, ref } from 'vue';
-import { waitFor } from 'xstate/lib/waitFor';
 import Enhancer from '@/components/show/Enhancer.vue';
-import CmdResMenu from '@/components/show/CmdResMenu.vue';
 import { publicStore } from '@/stores/public';
 const fetchM = useInterpret(permachine)
 const pollingM = useMachine(machine)
 const fetchS = fetchStore()
 const publicS = publicStore()
-const { getPollingLoop, interruptJob, getCommonResEffect } = fetchS
+const { getCommonResEffect } = fetchS
 // const {getCommonResEffect} = publicStore()
 
-const loop = getPollingLoop(() => {
-  pollingM.send({
-    type: "SUBMIT",
-    value: {
-      action: "pull_results",
-      sessionId: undefined,
-      consumerId: undefined
-    }
-  })
-}, {
-  globalIntrupt: true
-})
-
-const pollResults = reactive([] as [string, Map<string, string[]>][])
+const loop = fetchS.pullResultsLoop(pollingM)
+const tableResults = reactive([] as Map<string, string>[])
+const keyList = [
+  "ts",
+  "cost",
+  "daemon",
+  "priority",
+  "stackTrace",
+  "classloader",
+  "threadId",
+  "threadName",]
 // const enhancer = reactive(new Map())
 const enhancer = ref(undefined as EnchanceResult | undefined)
 getCommonResEffect(pollingM, body => {
@@ -39,18 +34,19 @@ getCommonResEffect(pollingM, body => {
         const map = new Map()
         Object
           .keys(result)
-          .filter((k) => !["jobId", "type", "ts"].includes(k))
+          .filter((k) => !["jobId", "type"].includes(k))
           .forEach(k => {
-            let val: string[] = []
+            let val: string | string[] = ""
             if (k === "stackTrace") {
               let stackTrace = result[k]
-              val = stackTrace.map((trace, i) => `${trace.className}::${trace.methodName}`)
+              val = stackTrace.map((trace, i) => `${trace.className}.${trace.methodName} (${trace.fileName}: ${trace.lineNumber})`)
             } else {
-              val.push(result[k as Exclude<keyof typeof result, "jobId" | "type" | "stackTrace" | "ts">].toString())
+              val = result[k as Exclude<keyof typeof result, "jobId" | "type" | "stackTrace">].toString()
             }
             map.set(k, val)
           })
-        pollResults.unshift([result.ts, map])
+        // pollResults.unshift([result.ts, map])
+        tableResults.unshift(map)
       }
 
       if (result.type === "enhancer") {
@@ -59,7 +55,6 @@ getCommonResEffect(pollingM, body => {
     })
   }
 })
-
 
 onBeforeMount(() => {
   // fetchM.send("INIT")
@@ -78,9 +73,9 @@ const submit = async (data: { classItem: Item, methodItem: Item, conditon: strin
   let condition = data.conditon.trim() == "" ? "" : `'${data.conditon.trim()}'`
   let n = data.count > 0 ? `-n ${data.count}` : ""
 
-  pollResults.length = 0
+  // pollResults.length = 0
   enhancer.value = undefined
-
+  // tableResults.length = 0
   fetchS.baseSubmit(fetchM, {
     action: "async_exec",
     command: `stack ${className} ${methodName} ${condition} ${n}`,
@@ -88,19 +83,37 @@ const submit = async (data: { classItem: Item, methodItem: Item, conditon: strin
   }).then(res => {
     loop.open()
   })
-
-
 }
 </script>
 
 <template>
   <MethodInput :submit-f="submit" ncondition ncount></MethodInput>
-  <template v-if="pollResults.length > 0 || enhancer">
+  <template v-if="tableResults.length > 0 || enhancer">
     <Enhancer :result="enhancer" v-if="enhancer"></Enhancer>
-    <ul class=" pointer-events-auto mt-10">
-      <template v-for="(result, i) in pollResults" :key="i">
-        <CmdResMenu :title="result[0]" :map="result[1]" open></CmdResMenu>
-      </template>
-    </ul>
+    <div class="w-full flex justify-center items-center mt-4">
+      <table class="border-collapse border border-slate-400 ">
+        <thead>
+          <tr>
+            <th class="border border-slate-300 p-2" v-for="(v,i) in keyList" :key="i">{{v}}</th>
+          </tr>
+        </thead>
+        <tbody class="">
+          <tr v-for="(map, i) in tableResults" :key="i">
+            <td class="border border-slate-300 p-2" v-for="(key,j) in keyList" :key="j">
+              <template v-if="key!== 'stackTrace'">
+                {{map.get(key)}}
+              </template>
+              <div class="flex flex-col items-end" v-else>
+
+                <div v-for="(row, k) in map.get(key)" :key="k">
+                  {{row}}
+                </div>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
   </template>
 </template>
