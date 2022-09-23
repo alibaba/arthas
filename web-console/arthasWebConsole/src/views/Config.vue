@@ -13,17 +13,17 @@ import permachine from '@/machines/perRequestMachine';
 const fetchS = fetchStore()
 const sysEnvMap = reactive(new Map<string, string[]>())
 const sysPropMap = reactive(new Map<string, string[]>())
+const perfcounterMap = reactive(new Map<string, string[]>())
 const vmOptionM = useMachine(machine)
-const pwdM = useMachine(machine)
 const pwd = ref("?")
 const vmOptionMTree = reactive([] as VmOption[])
 // 初始化
 onBeforeMount(() => {
-  fetchS.baseSubmit(useInterpret(permachine),{
-    action:"exec",
-    command:"pwd"
+  fetchS.baseSubmit(useInterpret(permachine), {
+    action: "exec",
+    command: "pwd"
   }).then(
-    res=>{
+    res => {
       const result = (res as CommonRes).body.results[0]
       if (result.type == "pwd") {
         pwd.value = result.workingDir
@@ -135,6 +135,18 @@ const getSysprop = () => fetchS.baseSubmit(useInterpret(permachine), {
     handlePropTree(result.props)
   }
 })
+
+
+const getPerCounter = () => fetchS.baseSubmit(useInterpret(permachine), { action: "exec", command: "perfcounter -d" }).then(res => {
+  const result = (res as CommonRes).body.results[0]
+  if (result.type === "perfcounter") {
+    const perfcounters = result.perfCounters
+    perfcounterMap.clear()
+    perfcounters.forEach(v => {
+      perfcounterMap.set(v.name, Object.entries(v).filter(v => v[0] !== "name").map(([key, value]) => `${key} : ${value}`))
+    })
+  }
+})
 </script>
 
 <template>
@@ -162,6 +174,7 @@ const getSysprop = () => fetchS.baseSubmit(useInterpret(permachine), {
         </template>
       </option-config-menu>
       <CmdResMenu title="jvm" :map="jvmMap" class="w-full" @click="getJvm" />
+      <CmdResMenu title="perfcounter" :map="perfcounterMap" @click="getPerCounter" />
     </article>
   </div>
 </template>

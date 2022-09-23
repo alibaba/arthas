@@ -3,7 +3,7 @@ import machine from '@/machines/consoleMachine';
 import { fetchStore } from '@/stores/fetch';
 import { publicStore } from '@/stores/public';
 import { useInterpret, useMachine } from '@xstate/vue';
-import { onBeforeMount, onBeforeUnmount, onMounted, reactive, ref } from 'vue';
+import { onBeforeMount, onBeforeUnmount, onMounted, reactive, ref, transformVNodeArgs } from 'vue';
 import { waitFor } from 'xstate/lib/waitFor';
 import { interpret } from "xstate"
 import CmdResMenu from '@/components/show/CmdResMenu.vue';
@@ -44,9 +44,7 @@ type GcEChartsOption = echarts.ComposeOption<
   ToolboxComponentOption | TooltipComponentOption | GridComponentOption | LegendComponentOption | BarSeriesOption | LineSeriesOption
 >
 const fetchS = fetchStore()
-const { getPollingLoop, isResult } = fetchS
 const { getCommonResEffect } = publicStore()
-// const dashboadM = useMachine(machine)
 const dashboadM = useInterpret(permachine)
 const dashboadResM = useMachine(machine)
 const loop = fetchS.pullResultsLoop(dashboadResM)
@@ -54,8 +52,22 @@ const toMb = (b: number) => Math.floor(b / 1024 / 1024)
 const gcInfos = reactive(new Map<string, string[]>())
 const memoryInfo = reactive(new Map<string, string[]>())
 const threads = reactive(new Map<string, string[]>())
-const runtimeInfo = reactive(new Map<string, string[]>())
-
+const runtimeInfo = reactive(new Map<keyof RuntimeInfo, string>())
+const pri = ref(3)
+const publiC = publicStore()
+const tableResults = reactive([] as Map<string, string>[])
+const keyList: (keyof ThreadStats)[] = [
+  "id",
+  "name",
+  "cpu",
+  "daemon",
+  "deltaTime",
+  "group",
+  "interrupted",
+  "priority",
+  "state",
+  "time",
+]
 
 let dashboardId = -1
 let heapChart: ECharts
@@ -67,105 +79,134 @@ const clearChart = (...charts: ECharts[]) => {
     if (chart !== null && chart !== undefined) chart.dispose()
   })
 }
+const transformMemory = (result: ArthasResResult) => {
+  if (result.type === "dashboard") {
+
+    const heaparr: { value: number, name: string }[] = [
+    ]
+    result.memoryInfo.heap.filter(v => v.name !== "heap").forEach(v => {
+      const arr: string[] = []
+
+      arr.push('max : ' + toMb(v.max))
+      arr.push('total : ' + toMb(v.total))
+      arr.push('used : ' + toMb(v.used))
+
+      const usage: number = (v.max > 0 ? (v.used / v.max) : (v.used / v.total)) * 100
+      heaparr.push({ value: toMb(v.used), name: `${v.name}(${usage.toFixed(2)}%)` })
+
+      arr.push(usage + '%')
+
+      memoryInfo.set(v.name, arr)
+    })
+    heaparr.push({
+      value: Math.floor((result.memoryInfo.heap[0].max > 0 ? (result.memoryInfo.heap[0].max - result.memoryInfo.heap[0].used) : (result.memoryInfo.heap[0].total - result.memoryInfo.heap[0].used)) / 1024 / 1024),
+      name: "free",
+    })
+    heapChart && heapChart.setOption({
+      series: {
+        data: heaparr
+      }
+    } as EChartsOption)
+
+    const nonheaparr: {
+      value: number, name: string,
+    }[] = []
+    result.memoryInfo.nonheap.filter(v => v.name !== "nonheap").forEach(v => {
+      const arr: string[] = []
+
+      arr.push('max : ' + toMb(v.max))
+      arr.push('total : ' + toMb(v.total))
+      arr.push('used : ' + toMb(v.used))
+      const usage: number = (v.used / v.total) * 100
+      nonheaparr.push({ value: toMb(v.used), name: `${v.name}(${usage.toFixed(2)}%)` })
+
+      arr.push(usage * 100 + '%')
+
+      memoryInfo.set(v.name, arr)
+    })
+    nonheapChart && nonheapChart.setOption({ series: { data: nonheaparr } } as EChartsOption)
+
+    const bufferPoolarr: {
+      value: number, name: string,
+    }[] = []
+    result.memoryInfo.buffer_pool.filter(v => v.name !== "buffer_pool;").forEach(v => {
+      bufferPoolarr.push({ value: toMb(v.used), name: `${v.name}` })
+
+    })
+    bufferPoolChart && bufferPoolChart.setOption({ series: { data: bufferPoolarr } } as EChartsOption)
+  }
+}
+const transformThread = (result: ArthasResResult) => {
+  if (result.type !== "dashboard") return;
+  result.threads.filter((v, i) => i < pri.value).forEach(thread => {
+    // threads.set(v.name, Object.entries(v).filter(([k, v]) => k !== "name").map(([k, v]) => `${k} : ${v}`))
+    const map = new Map()
+    Object.entries(thread).map(([k, v]) => map.set(k, v.toString() || "-"))
+    tableResults.unshift(map)
+  })
+}
+const transformGc = (result: ArthasResResult) => {
+  if (result.type !== "dashboard") return;
+  const gcCountData: number[] = []
+
+  const gcTimeData: number[] = []
+  const gcxdata: string[] = []
+  result.gcInfos.forEach(v => {
+    // gcInfos.set(v.name, [v.collectionCount.toString(), v.collectionTime.toString()])
+    gcxdata.push(v.name)
+    gcCountData.push(v.collectionCount)
+    gcTimeData.push(v.collectionTime)
+  })
+  gcChart.setOption({
+    xAxis: {
+      type: 'category',
+      axisTick: {
+        alignWithLabel: true
+      },
+      // prettier-ignore
+      data: gcxdata
+    }, series: [{
+      name: "collectionCount",
+      type: 'bar',
+      data: gcCountData
+    }, {
+      name: "collectionTime",
+      type: 'bar',
+      data: gcTimeData
+    }]
+  } as GcEChartsOption)
+}
+const setPri = publiC.inputDialogFactory(
+  pri,
+  (raw) => {
+    let valRaw = parseInt(raw)
+    return Number.isNaN(valRaw) ? 3 : valRaw
+  },
+  (input) => input.value.toString(),
+)
+const transformRuntimeInfo = (result: ArthasResResult) => {
+  if (result.type !== "dashboard") return;
+  for (const key in result.runtimeInfo as RuntimeInfo) {
+    runtimeInfo.set(key as keyof RuntimeInfo, result.runtimeInfo[key as keyof RuntimeInfo].toString())
+  }
+}
 getCommonResEffect(dashboadResM, body => {
   if (body.results.length > 0 && dashboardId >= 0) {
     const result = body.results.find(v => v.type === "dashboard" && v.jobId === dashboardId)
     if (result && result.type === "dashboard") {
 
       memoryInfo.clear()
-      const heaparr: { value: number, name: string }[] = [
-      ]
-      result.memoryInfo.heap.filter(v => v.name !== "heap").forEach(v => {
-        const arr: string[] = []
-
-        arr.push('max : ' + toMb(v.max))
-        arr.push('total : ' + toMb(v.total))
-        arr.push('used : ' + toMb(v.used))
-
-        const usage: number = (v.max > 0 ? (v.used / v.max) : (v.used / v.total)) * 100
-        heaparr.push({ value: toMb(v.used), name: `${v.name}(${usage.toFixed(2)}%)` })
-
-        arr.push(usage + '%')
-
-        memoryInfo.set(v.name, arr)
-      })
-      heaparr.push({
-        value: Math.floor((result.memoryInfo.heap[0].max > 0 ? (result.memoryInfo.heap[0].max - result.memoryInfo.heap[0].used) : (result.memoryInfo.heap[0].total - result.memoryInfo.heap[0].used)) / 1024 / 1024),
-        name: "free",
-      })
-      heapChart && heapChart.setOption({
-        series: {
-          data: heaparr
-        }
-      } as EChartsOption)
-
-      const nonheaparr: {
-        value: number, name: string,
-      }[] = []
-      result.memoryInfo.nonheap.filter(v => v.name !== "nonheap").forEach(v => {
-        const arr: string[] = []
-
-        arr.push('max : ' + toMb(v.max))
-        arr.push('total : ' + toMb(v.total))
-        arr.push('used : ' + toMb(v.used))
-        const usage: number = (v.used / v.total) * 100
-        nonheaparr.push({ value: toMb(v.used), name: `${v.name}(${usage.toFixed(2)}%)` })
-
-        arr.push(usage * 100 + '%')
-
-        memoryInfo.set(v.name, arr)
-      })
-      nonheapChart && nonheapChart.setOption({ series: { data: nonheaparr } } as EChartsOption)
-
-      const bufferPoolarr: {
-        value: number, name: string,
-      }[] = []
-      result.memoryInfo.buffer_pool.filter(v => v.name !== "buffer_pool;").forEach(v => {
-        bufferPoolarr.push({ value: toMb(v.used), name: `${v.name}` })
-
-      })
-      bufferPoolChart && bufferPoolChart.setOption({ series: { data: bufferPoolarr } } as EChartsOption)
+      transformMemory(result)
 
       runtimeInfo.clear()
-      Object.entries(result.runtimeInfo).forEach(([k, v]) => {
-        runtimeInfo.set(k, [v.toString()])
-      })
-
+      transformRuntimeInfo(result)
 
       threads.clear()
-      result.threads.filter((v, i) => i < 3).forEach((v) => {
-        threads.set(v.name, Object.entries(v).filter(([k, v]) => k !== "name").map(([k, v]) => `${k} : ${v}`))
-      })
+      tableResults.length = 0
+      transformThread(result)
 
       gcInfos.clear()
-      const gcCountData: number[] = []
-
-      const gcTimeData: number[] = []
-      const gcxdata: string[] = []
-      result.gcInfos.forEach(v => {
-        // gcInfos.set(v.name, [v.collectionCount.toString(), v.collectionTime.toString()])
-        gcxdata.push(v.name)
-        gcCountData.push(v.collectionCount)
-        gcTimeData.push(v.collectionTime)
-      })
-      gcChart.setOption({
-        xAxis: {
-          type: 'category',
-          axisTick: {
-            alignWithLabel: true
-          },
-          // prettier-ignore
-          data: gcxdata
-        }, series: [{
-          name: "collectionCount",
-          type: 'bar',
-          data: gcCountData
-        }, {
-          name: "collectionTime",
-          type: 'bar',
-          data: gcTimeData
-        }]
-      } as GcEChartsOption)
+      transformGc(result)
     }
   }
 
@@ -176,8 +217,8 @@ onBeforeMount(async () => {
 
   fetchS
     .asyncInit()
-    .then(
-      res => {
+    .finally(
+      () => {
         fetchS.baseSubmit(dashboadM, {
           action: "async_exec",
           command: "dashboard",
@@ -399,16 +440,6 @@ onBeforeUnmount(async () => {
   loop.close()
   clearChart(nonheapChart, heapChart, bufferPoolChart, gcChart)
 
-  // const actor = interpret(machine)
-  // actor.start()
-  // actor.send("INIT")
-  // actor.send({
-  //   type: "SUBMIT",
-  //   value: {
-  //     action: "interrupt_job",
-  //     sessionId:undefined
-  //   } 
-  // })
   fetchS
     .interruptJob()
 
@@ -416,15 +447,46 @@ onBeforeUnmount(async () => {
 </script>
 
 <template>
-  <div class="p-2">
-
-    <CmdResMenu title="threads" :map="threads" class="w-full flex justify-center" />
-    <div class="flex justify-evenly">
-      <div id="heapMemory" class="w-80 h-60 flex-1"></div>
-      <div id="nonheapMemory" class="w-80 h-60 flex-1"></div>
-      <div id="bufferPoolMemory" class="w-80 h-60 flex-1"></div>
+  <div class="p-2 pointer-events-auto flex flex-col h-full">
+    <div class="input-btn-style mb-4 h-32 flex flex-wrap flex-col items-start">
+      <div v-for="(cv, ci) in runtimeInfo" :key="ci" class="flex mb-1 w-1/3 pr-2">
+        <span class="bg-blue-500 w-44 px-2 rounded-l">
+          {{ cv[0] }}
+        </span>
+        <span class="border-gray-300 bg-blue-100 rounded-r flex-1 pl-2 border bordergre">
+          {{cv[1]}}
+        </span>
+      </div>
     </div>
-    <div id="gc-info" class="w-[40rem] h-80 border m-auto rounded-xl p-2"></div>
+    <!-- <CmdResMenu title="threads" :map="threads" class="w-full flex justify-center" /> -->
+    <div class="flex justify-evenly mb-4 flex-1 h-80">
+      <div id="heapMemory" class="w-80 h-80 flex-1 input-btn-style mr-4"></div>
+      <div id="nonheapMemory" class="w-80 h-80 flex-1 input-btn-style mr-4"></div>
+      <div id="bufferPoolMemory" class="w-80 h-80 flex-1 input-btn-style"></div>
+    </div>
+    <div class="w-full flex justify-start items-start flex-1">
+      <div id="gc-info" class="w-[40rem] h-80 input-btn-style p-2 mr-2"></div>
+      <div class="input-btn-style overflow-auto flex-1 h-80">
+        <div class="flex justify-end mb-2">
+          
+        <button class="input-btn-style" @click="setPri">limit:{{pri}}</button>
+        </div>
+        <table class="border-collapse border border-slate-400 mx-auto">
+          <thead>
+            <tr>
+              <th class="border border-slate-300 p-2" v-for="(v,i) in keyList" :key="i">{{v}}</th>
+            </tr>
+          </thead>
+          <tbody class="">
+            <tr v-for="(map, i) in tableResults" :key="i">
+              <td class="border border-slate-300 p-2" v-for="(key,j) in keyList" :key="j">
+                {{map.get(key)}}
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
   </div>
 </template>
 

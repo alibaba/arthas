@@ -72,12 +72,13 @@ onBeforeUnmount(() => {
   loop.close()
 })
 
-const submit = async (data: { classItem: Item, methodItem: Item, count: number }) => {
+const submit = async (data: { classItem: Item, methodItem: Item, count: number,conditon:string }) => {
   // let express = data.express.trim() == "" ? "" : `-w '${data.express.trim()}'`
   let n = data.count > 0 ? `-n ${data.count}` : ""
+  let condition = data.conditon
   fetchS.baseSubmit(fetchM, {
     action: "async_exec",
-    command: `tt -t ${data.classItem.value} ${data.methodItem.value} ${n}`,
+    command: `tt -t ${data.classItem.value} ${data.methodItem.value} ${n} ${condition}`,
     sessionId: undefined
   }).then(res => {
     enhancer.value = undefined
@@ -157,7 +158,7 @@ const searchTt = () => {
 </script>
 
 <template>
-  <MethodInput :submit-f="submit" ncount>
+  <MethodInput :submit-f="submit" ncount ncondition>
   </MethodInput>
   <div class="flex items-center border-t-2 pt-4 mt-4 justify-between">
     <div class="mr-2">searching records</div>

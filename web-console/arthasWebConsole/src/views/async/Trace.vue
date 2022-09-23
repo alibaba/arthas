@@ -131,16 +131,16 @@ const setExclude = publicStore().inputDialogFactory(excludeClass,
   (raw) => raw,
   (input) => input.value.toString()
 )
-const submit = (data: { classItem: Item, methodItem: Item, conditon: string, express: string, count: number }) => {
+const submit = (data: { classItem: Item, methodItem: Item, conditon: string, count: number }) => {
   let condition = data.conditon.trim() == "" ? "" : `'${data.conditon.trim()}'`
-  let express = data.express.trim() == "" ? "" : `'${data.express.trim()}'`
+  // let express = data.express.trim() == "" ? "" : `'${data.express.trim()}'`
   let n = data.count > 0 ? `-n ${data.count}` : ""
   let exclude = excludeClass.value == "" ? "" : `--exclude-class-pattern ${excludeClass.value}`
   let method = data.methodItem.value === "" ? "*" : data.methodItem.value
   let skipJDKMethod = enabled.value ? "" : "--skipJDKMethod false"
   return fetchS.baseSubmit(fetchM, {
     action: "async_exec",
-    command: `trace ${data.classItem.value} ${method} ${skipJDKMethod} ${condition} ${express} ${n} ${exclude}`,
+    command: `trace ${data.classItem.value} ${method} ${skipJDKMethod} ${condition} ${n} ${exclude}`,
     sessionId: undefined
   }).then(() => {
     enhancer.value = undefined
@@ -151,7 +151,7 @@ const submit = (data: { classItem: Item, methodItem: Item, conditon: string, exp
 </script>
   
 <template>
-  <MethodInput :submit-f="submit" class="mb-2" nexpress ncondition ncount>
+  <MethodInput :submit-f="submit" class="mb-2" ncondition ncount>
     <template #others>
 
       <SwitchGroup as="div" class="input-btn-style flex ml-2 focus-within:ring ring-blue-500">

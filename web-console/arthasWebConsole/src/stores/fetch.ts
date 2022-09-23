@@ -218,13 +218,15 @@ export const fetchStore = defineStore("fetch", {
     asyncInit() {
       if (!this.online) {
         publicStore().ignore = true;
-        return this
-          .initSession()
-          .then((_) => {
-            publicStore().ignore = false;
-          });
+        return this.initSession().then(res=>{
+          publicStore().ignore = false;
+          return Promise.resolve(res)
+        },err=>{
+          publicStore().ignore = false;
+          return Promise.reject(err)
+        })
       }
-      return Promise.reject()
+      return Promise.resolve("alrealy init")
     },
   },
 });
