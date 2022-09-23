@@ -1,4 +1,4 @@
-module.exports = [
+export const head = [
   ["link", { rel: "icon", href: "/images/favicon.ico" }],
   [
     "meta",

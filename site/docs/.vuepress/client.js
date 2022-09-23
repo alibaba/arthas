@@ -1,7 +1,6 @@
 import oldContributorsData from "./oldContributorsData.json";
 
-import { usePageData } from "@vuepress/client";
-import { defineClientConfig } from "@vuepress/client";
+import { usePageData, defineClientConfig } from "@vuepress/client";
 import CountTo from "vue-count-to/src/vue-countTo.vue";
 
 const addOldDocsContributors = () => {
@@ -41,7 +40,7 @@ export default defineClientConfig({
 
     // add old docs contributors
     router.afterEach((to, from) => {
-      if (to.fullPath !== from.fullPath) {
+      if (to.path !== from.path) {
         addOldDocsContributors();
       }
     });

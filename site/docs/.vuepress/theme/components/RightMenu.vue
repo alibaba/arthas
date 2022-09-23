@@ -51,7 +51,7 @@ SRC: https://github.com/xugaoyi/vuepress-theme-vdoing/blob/master/vdoing/compone
 import { useRoute } from "vue-router";
 import { onMounted, watch, ref } from "vue";
 import { usePageData } from "@vuepress/client";
-import { useThemeLocaleData } from "@vuepress/theme-default/lib/client/composables/useThemeData";
+import { useThemeLocaleData } from "@vuepress/plugin-theme-data/client";
 
 const pages = usePageData();
 const theme = useThemeLocaleData();

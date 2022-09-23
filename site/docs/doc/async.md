@@ -57,17 +57,24 @@ $ jobs
 $ trace Test t >> test.out &
 ```
 
-这时 trace 命令会在后台执行，并且把结果输出到~/logs/arthas-cache/test.out。可继续执行其他命令。并可查看文件中的命令执行结果。
+这时 trace 命令会在后台执行，并且把结果输出到应用`工作目录`下面的`test.out`文件。可继续执行其他命令。并可查看文件中的命令执行结果。可以执行`pwd`命令查看当前应用的`工作目录`。
 
-当连接到远程的 arthas server 时，可能无法查看远程机器的文件，arthas 同时支持了自动重定向到本地缓存路径。使用方法如下：
+```bash
+$ cat test.out
+```
+
+如果没有指定重定向文件，则会把结果输出到`~/logs/arthas-cache/`目录下，比如：
 
 ```bash
 $ trace Test t >>  &
 job id  : 2
-cache location  : /Users/gehui/logs/arthas-cache/28198/2
+cache location  : /Users/admin/logs/arthas-cache/28198/2
 ```
 
-可以看到并没有指定重定向文件位置，arthas 自动重定向到缓存中了，执行命令后会输出 job id 和 cache location。cache location 就是重定向文件的路径，在系统 logs 目录下，路径包括 pid 和 job id，避免和其他任务冲突。命令输出结果到`/Users/gehui/logs/arthas-cache/28198/2`中，job id 为 2。
+此时命令会在后台异步执行，并将结果异步保存在文件（`~/logs/arthas-cache/${PID}/${JobId}`）中；
+
+- 此时任务的执行不受 session 断开的影响；任务默认超时时间是 1 天，可以通过全局 `options` 命令修改默认超时时间；
+- 此命令的结果将异步输出到  文件中；此时不管 `save-result` 是否为 true，都不会再往`~/logs/arthas-cache/result.log` 中异步写结果。
 
 ## 6. 停止命令
 

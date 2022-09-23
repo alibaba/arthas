@@ -1,7 +1,9 @@
-const { defaultTheme } = require("@vuepress/theme-default");
-const { path } = require("@vuepress/utils");
+import { defaultTheme } from "@vuepress/theme-default";
+import { getDirname, path } from "@vuepress/utils";
 
-exports.localTheme = (options) => {
+const __dirname = getDirname(import.meta.url);
+
+export function localTheme(options) {
   return {
     name: "vuepress-theme-arthas",
     extends: defaultTheme(options),
@@ -20,4 +22,4 @@ exports.localTheme = (options) => {
       ),
     },
   };
-};
+}

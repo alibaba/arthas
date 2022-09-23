@@ -76,7 +76,7 @@
     </modules>
 
     <properties>
-        <revision>3.6.4</revision>
+        <revision>3.6.6</revision>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.compiler.target>1.6</maven.compiler.target>
         <maven.compiler.source>1.6</maven.compiler.source>
@@ -128,7 +128,12 @@
             <dependency>
                 <groupId>com.alibaba.arthas</groupId>
                 <artifactId>arthas-repackage-logger</artifactId>
-                <version>0.0.10</version>
+                <version>0.0.12</version>
+            </dependency>
+            <dependency>
+                <groupId>com.alibaba</groupId>
+                <artifactId>repackage-asm</artifactId>
+                <version>0.0.12</version>
             </dependency>
             <dependency>
                 <groupId>com.alibaba</groupId>

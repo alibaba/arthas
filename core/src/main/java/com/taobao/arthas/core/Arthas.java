@@ -130,6 +130,16 @@ public class Arthas {
                 } else {
                     throw e;
                 }
+            } catch (com.sun.tools.attach.AgentLoadException ex) {
+                if ("0".equals(ex.getMessage())) {
+                    // https://stackoverflow.com/a/54454418
+                    AnsiLog.warn(ex);
+                    AnsiLog.warn("It seems to use the higher version of JDK to attach the lower version of JDK.");
+                    AnsiLog.warn(
+                            "This error message can be ignored, the attach may have been successful, and it will still try to connect.");
+                } else {
+                    throw ex;
+                }
             }
         } finally {
             if (null != virtualMachine) {

@@ -8,10 +8,10 @@
 
 # program : Arthas
 #  author : Core Engine @ Taobao.com
-#    date : 2022-07-30
+#    date : 2022-09-04
 
 # current arthas script version
-ARTHAS_SCRIPT_VERSION=3.6.4
+ARTHAS_SCRIPT_VERSION=3.6.6
 
 # SYNOPSIS
 #   rreadlink <fileOrDirPath>
@@ -85,6 +85,8 @@ ARTHAS_HOME=
 # define arthas's lib
 if [ -z "${ARTHAS_LIB_DIR}" ]; then
     ARTHAS_LIB_DIR=${HOME}/.arthas/lib
+else
+    echo "[INFO] ARTHAS_LIB_DIR: ${ARTHAS_LIB_DIR}"
 fi
 
 # target process id to attach
@@ -453,7 +455,7 @@ EXAMPLES:
   ./as.sh --stat-url 'http://192.168.10.11:8080/api/stat'
   ./as.sh -c 'sysprop; thread' <pid>
   ./as.sh -f batch.as <pid>
-  ./as.sh --use-version 3.6.4
+  ./as.sh --use-version 3.6.6
   ./as.sh --session-timeout 3600
   ./as.sh --attach-only
   ./as.sh --disabled-commands stop,dump

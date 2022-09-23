@@ -57,17 +57,24 @@ The job output can be redirect to the specified file by `>` or `>>`, and can be 
 $ trace Test t >> test.out &
 ```
 
-The trace command will be running in the background and the output will be redirect to `~/logs/arthas-cache/test.out`. You can continue to execute other commands in the console, at the same time, you can also examine the execution result from the output file.
-
-When connected to a remote Arthas server, you may not be able to view the output file on the remote machine. In this case, Arthas also supports automatically redirecting the output to the local cache file. Examples are as follows:
+At this time, the trace command will be executed in the background, and the result will be output to the `test.out` file under the `working directory` of the application. You can continue to execute other commands. And you can view the command execution result in the file. You can execute the `pwd` command to view the `working directory` of the current application.
 
 ```bash
-$ trace Test t >>  &
-job id  : 2
-cache location  : /Users/gehui/logs/arthas-cache/28198/2
+$ cat test.out
 ```
 
-If output path is not given, Arthas will automatically redirect the output to the local cache. Job id and cache location will be shown on the console. Cache location is a directory where the output files are put. For one given job, the path of its output file contains PID and job id in order to avoid potential conflict with other jobs. In the above example, pid is `28198` and job id is `2`.
+If no redirect file is specified, the result will be output to the `~/logs/arthas-cache/` directory, for example:
+
+```bash
+$ trace Test t >> &
+job id : 2
+cache location : /Users/admin/logs/arthas-cache/28198/2
+```
+
+At this time, the command will be executed asynchronously in the background, and the result will be asynchronously saved in the file (`~/logs/arthas-cache/${PID}/${JobId}`);
+
+- At this time, the execution of the task is not affected by the session disconnection; the default timeout period of the task is 1 day, and the default timeout period can be modified through the global `options` command;
+- The result of this command will be output asynchronously to the file; at this time, regardless of whether `save-result` is true or not, the result will not be written asynchronously to `~/logs/arthas-cache/result.log`.
 
 ## 6. Stop job
 

@@ -1,14 +1,10 @@
-module.exports = {
+export const sidebarZH = {
   "/doc/": [
     {
       text: "文档",
       children: [
         "/doc/README.md",
         "/doc/quick-start.md",
-        {
-          text: "在线教程(阿里云)",
-          link: "https://start.aliyun.com/handson-lab?category=arthas",
-        },
         "/doc/install-detail.md",
         "/doc/download.md",
         "/doc/advanced-use.md",
@@ -68,6 +64,7 @@ module.exports = {
             "/doc/tt.md",
             "/doc/watch.md",
             "/doc/profiler.md",
+            "/doc/jfr.md",
             "/doc/auth.md",
             "/doc/options.md",
             "/doc/base64.md",
@@ -99,7 +96,7 @@ module.exports = {
           link: "https://github.com/alibaba/arthas/issues?q=label%3Auser-case",
         },
         {
-          text: "Start me at github",
+          text: "Star me at github",
           link: "https://github.com/alibaba/arthas",
         },
         {

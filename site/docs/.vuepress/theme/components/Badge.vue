@@ -7,7 +7,7 @@
 </template>
 
 <script setup>
-import { useThemeLocaleData } from "@vuepress/theme-default/lib/client/composables";
+import { useThemeLocaleData } from "@vuepress/plugin-theme-data/client";
 
 const props = defineProps({
   comp: {

@@ -1,4 +1,4 @@
-module.exports = {
+export const sidebarEN = {
   "/en/doc": [
     {
       text: "DOCS",
@@ -64,6 +64,7 @@ module.exports = {
             "/en/doc/tt.md",
             "/en/doc/watch.md",
             "/en/doc/profiler.md",
+            "/en/doc/jfr.md",
             "/en/doc/auth.md",
             "/en/doc/options.md",
             "/en/doc/base64.md",
@@ -95,7 +96,7 @@ module.exports = {
           link: "https://github.com/alibaba/arthas/issues?q=label%3Auser-case",
         },
         {
-          text: "Start me at github",
+          text: "Star me at github",
           link: "https://github.com/alibaba/arthas",
         },
         {

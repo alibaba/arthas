@@ -53,7 +53,7 @@ import com.taobao.middleware.cli.annotations.Summary;
                 + "  java -jar arthas-boot.jar --stat-url 'http://192.168.10.11:8080/api/stat'\n"
                 + "  java -jar arthas-boot.jar -c 'sysprop; thread' <pid>\n"
                 + "  java -jar arthas-boot.jar -f batch.as <pid>\n"
-                + "  java -jar arthas-boot.jar --use-version 3.6.4\n"
+                + "  java -jar arthas-boot.jar --use-version 3.6.6\n"
                 + "  java -jar arthas-boot.jar --versions\n"
                 + "  java -jar arthas-boot.jar --select math-game\n"
                 + "  java -jar arthas-boot.jar --session-timeout 3600\n" + "  java -jar arthas-boot.jar --attach-only\n"
@@ -135,6 +135,7 @@ public class Bootstrap {
         String arthasLibDirEnv = System.getenv("ARTHAS_LIB_DIR");
         if (arthasLibDirEnv != null) {
             ARTHAS_LIB_DIR = new File(arthasLibDirEnv);
+            AnsiLog.info("ARTHAS_LIB_DIR: " + arthasLibDirEnv);
         } else {
             ARTHAS_LIB_DIR = new File(
                     System.getProperty("user.home") + File.separator + ".arthas" + File.separator + "lib");
@@ -311,12 +312,25 @@ public class Bootstrap {
     public static void main(String[] args) throws ParserConfigurationException, SAXException, IOException,
                     ClassNotFoundException, NoSuchMethodException, SecurityException, IllegalAccessException,
                     IllegalArgumentException, InvocationTargetException {
+        String javaHome = System.getProperty("java.home");
+        if (javaHome != null) {
+            AnsiLog.info("JAVA_HOME: " + javaHome);
+        }
         Package bootstrapPackage = Bootstrap.class.getPackage();
         if (bootstrapPackage != null) {
             String arthasBootVersion = bootstrapPackage.getImplementationVersion();
             if (arthasBootVersion != null) {
                 AnsiLog.info("arthas-boot version: " + arthasBootVersion);
             }
+        }
+
+        try {
+            String javaToolOptions = System.getenv("JAVA_TOOL_OPTIONS");
+            if (javaToolOptions != null && !javaToolOptions.trim().isEmpty()) {
+                AnsiLog.info("JAVA_TOOL_OPTIONS: " + javaToolOptions);
+            }
+        } catch (Throwable e) {
+            // ignore
         }
 
         Bootstrap bootstrap = new Bootstrap();

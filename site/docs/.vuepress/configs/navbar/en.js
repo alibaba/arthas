@@ -1,4 +1,4 @@
-module.exports = [
+export const navbarEN = [
   {
     text: "HOME",
     link: "/en/",

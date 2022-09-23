@@ -1,4 +1,4 @@
-module.exports = [
+export const navbarZH = [
   {
     text: "首页",
     link: "/",

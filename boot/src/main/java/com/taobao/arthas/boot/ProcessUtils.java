@@ -266,6 +266,8 @@ public class ProcessUtils {
         // -agent "${arthas_lib_dir}/arthas-agent.jar"
 
         ProcessBuilder pb = new ProcessBuilder(command);
+        // https://github.com/alibaba/arthas/issues/2166
+        pb.environment().put("JAVA_TOOL_OPTIONS", "");
         try {
             final Process proc = pb.start();
             Thread redirectStdout = new Thread(new Runnable() {
