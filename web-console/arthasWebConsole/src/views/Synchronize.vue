@@ -7,9 +7,9 @@ const routes: { cmd: string, url: string }[] = [
   // }, {
   //   cmd: "memory",
   //   url: "memory"
-  }, {
-    cmd: "perfcounter",
-    url: "perfcounter"
+  // }, {
+  //   cmd: "perfcounter",
+  //   url: "perfcounter"
   }, {
     cmd: "classLoader",
     url: "classLoader"

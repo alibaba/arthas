@@ -19,7 +19,7 @@
 
 "@heroicons/vue@^1.0.6":
   version "1.0.6"
-  resolved "https://registry.npmmirror.com/@heroicons/vue/-/vue-1.0.6.tgz"
+  resolved "https://registry.npmjs.org/@heroicons/vue/-/vue-1.0.6.tgz#d8b90734b436eb5a87f40cc300b64a0fb0031f7f"
   integrity sha512-ng2YcCQrdoQWEFpw+ipFl2rZo8mZ56v0T5+MyfQQvNqfKChwgP6DMloZLW+rl17GEcHkE3H82UTAMKBKZr4+WA==
 
 "@highlightjs/vue-plugin@^2.1.0":

@@ -10,16 +10,14 @@ import { interpret } from 'xstate';
 import CmdResMenu from '@/components/show/CmdResMenu.vue';
 import transformMachine from '@/machines/transformConfigMachine';
 import ClassInput from '@/components/input/ClassInput.vue';
-import PlayStop from '@/components/input/PlayStop.vue';
+import permachine from '@/machines/perRequestMachine';
 
 const { getCommonResEffect } = publicStore()
-const allClassM = useMachine(machine)
-const urlStatM = useMachine(machine)
 const classInfoM = useMachine(machine)
 const classMethodInfoM = useMachine(machine)
 const dumpM = useMachine(machine)
 const { getPollingLoop } = fetchStore()
-
+const fetchS = fetchStore()
 
 const map = ref([] as [string, Map<"hash" | "parent" | "classes", string[]>][])
 const urlStats = ref([] as [
@@ -30,15 +28,66 @@ const classDetailMap = reactive(new Map<string, string[]>())
 const classFields = reactive(new Map<string, string[]>())
 const classMethodMap = reactive(new Map<string, string[]>())
 const dumpMap = reactive(new Map<string, string[]>())
-const urlStatsLoop = getPollingLoop(() => urlStatM.send({
-  type: "SUBMIT",
-  value: {
-    action: "exec",
-    command: "classloader --url-stat"
+const json_to_obj = (str: string) => {
+  const actor = interpret(transformMachine)
+  actor.start()
+
+  actor.send("INPUT", {
+    data: str
+  })
+
+  return fetchS.isResult(actor).then(
+    state => {
+      if (state.matches("success")) {
+        return Promise.resolve(state.context.output)
+      } else {
+        publicStore().$patch({
+          isErr: true,
+          ErrMessage: actor.state.context.err
+        })
+        return Promise.reject(1)
+      }
+    }
+  ).catch(
+    err => {
+      return Promise.reject(2)
+    }
+  )
+}
+const getUrlStats = () => fetchS.baseSubmit(interpret(permachine), {
+  action: "exec",
+  command: "classloader --url-stat"
+}).then(res => {
+  let result = (res as CommonRes).body.results[0]
+  if (result.type === "classloader" && Object.hasOwn(result, "urlStats")) {
+    urlStats.value.length = 0
+    Object.entries(result.urlStats).forEach(([k, v]) => {
+      json_to_obj(k).then(
+        obj => {
+          urlStats.value.push([
+            obj.name,
+            new Map([
+              ["parent", [obj.parent]],
+              ["hash", [obj.hash]],
+              ["unUsedUrls", v.unUsedUrls],
+              ["usedUrls", v.usedUrls]
+            ])
+          ])
+        }
+      ).catch(err => {
+        console.error(err)
+      })
+    })
   }
-}))
-getCommonResEffect(allClassM, body => {
-  body.results.filter(res => res.type === "classloader").reduce((pre, cur) => {
+})
+const urlStatsLoop = getPollingLoop(getUrlStats
+)
+const getAllClass = () => fetchS.baseSubmit(interpret(permachine), {
+  action: "exec",
+  command: "classloader -a"
+}).then(res => {
+  const results = (res as CommonRes).body.results
+  results.filter(res => res.type === "classloader").reduce((pre, cur) => {
     if (cur.type === "classloader" && Object.hasOwn(cur, "classSet")) {
       const classSet = cur.classSet
       const classes = classSet.classes
@@ -56,41 +105,10 @@ getCommonResEffect(allClassM, body => {
     }
     return pre
   }, [] as string[][])
+}, err => {
+  console.error(err)
 })
 
-getCommonResEffect(urlStatM, body => {
-  const result = body.results[0]
-  if (result.type === "classloader" && Object.hasOwn(result, "urlStats")) {
-    urlStats.value.length = 0
-    Object.entries(result.urlStats).forEach(([k, v]) => {
-      const actor = interpret(transformMachine)
-      actor.start()
-
-      actor.send("INPUT", {
-        data: k
-      })
-      if (actor.state.matches("failure")) {
-        publicStore().$patch({
-          isErr: true,
-          ErrMessage: actor.state.context.err
-        })
-
-      } else {
-        const obj = actor.state.context.output as Record<"hash" | "name" | "parent", string>
-        urlStats.value.push([
-          obj.name,
-          new Map([
-            ["parent", [obj.parent]],
-            ["hash", [obj.hash]],
-            ["unUsedUrls", v.unUsedUrls],
-            ["usedUrls", v.usedUrls]
-          ])
-        ])
-      }
-
-    })
-  }
-})
 
 getCommonResEffect(classInfoM, body => {
   const result = body.results[0]
@@ -145,16 +163,6 @@ getCommonResEffect(dumpM, body => {
 })
 
 onBeforeMount(() => {
-  allClassM.send("INIT")
-  allClassM.send({
-    type: "SUBMIT",
-    value: {
-      action: "exec",
-      command: "classloader -a"
-    }
-  })
-  urlStatM.send("INIT")
-  urlStatsLoop.open()
   classInfoM.send("INIT")
   classMethodInfoM.send("INIT")
   dumpM.send("INIT")
@@ -163,9 +171,9 @@ onUnmounted(() => {
   urlStatsLoop.close()
 })
 
-const getClassInfo = (data: { classItem: Item; loaderItem:Item }) => {
+const getClassInfo = (data: { classItem: Item; loaderItem: Item }) => {
   let item = data.classItem
-  let classLoader = data.loaderItem.value === ""? "":`-c ${data.loaderItem.value}`
+  let classLoader = data.loaderItem.value === "" ? "" : `-c ${data.loaderItem.value}`
   classInfoM.send({
     type: "SUBMIT",
     value: {
@@ -188,13 +196,12 @@ const getClassInfo = (data: { classItem: Item; loaderItem:Item }) => {
     }
   })
 }
-const urlStatsPlay = () => urlStatsLoop.open()
-const urlStatsStop = () => urlStatsLoop.close()
+
 </script>
 
 <template>
   <Disclosure>
-    <DisclosureButton class="w-1/3 bg-blue-500 h-10 p-2 rounded mb-2">
+    <DisclosureButton class="w-1/3 bg-blue-500 h-10 p-2 rounded mb-2" @click.pervent="getAllClass">
       all classloader
     </DisclosureButton>
     <DisclosurePanel>
@@ -205,15 +212,15 @@ const urlStatsStop = () => urlStatsLoop.close()
 
   </Disclosure>
   <Disclosure>
-    <DisclosureButton class="w-1/3 bg-blue-500 h-10 p-2 rounded mb-2">
+    <DisclosureButton class="w-1/3 bg-blue-500 h-10 p-2 rounded mb-2 " @click="getUrlStats">
       urlStats
     </DisclosureButton>
     <DisclosurePanel>
-      <div class="flex items-center my-2 w-10/12 justify-end">
+      <!-- <div class="flex items-center my-2 w-10/12 justify-end">
         <div class="mr-4">是否实时更新</div>
         <PlayStop :play-fn="urlStatsPlay" :stop-fn="urlStatsStop" :default-enabled="urlStatsLoop.isOn()"
           class="w-10 h-10"></PlayStop>
-      </div>
+      </div> -->
       <div v-for="v in urlStats" :key="v[0]" class="flex flex-col">
         <CmdResMenu :title="v[0]" :map="v[1]" button-width="w-1/2" open>
         </CmdResMenu>
@@ -235,7 +242,7 @@ const urlStatsStop = () => urlStatsLoop.close()
         <template v-if="classMethodMap.size !== 0">
           <CmdResMenu :map="classMethodMap" title="methods"></CmdResMenu>
         </template>
-                <template v-if="dumpMap.size !== 0">
+        <template v-if="dumpMap.size !== 0">
           <CmdResMenu :map="dumpMap" title="dump"></CmdResMenu>
         </template>
       </div>
@@ -244,4 +251,5 @@ const urlStatsStop = () => urlStatsLoop.close()
 </template>
 
 <style scoped>
+
 </style>

@@ -63,10 +63,12 @@ const transformMachine =
           ],
         },
         failure: {
+          tags:["result"],
           entry: respond("FAILURE"),
           type: "final",
         },
         success: {
+          tags:["result"],
           entry:respond("SUCCESS"),
           type: "final",
         },

@@ -11,17 +11,6 @@ const gcMachine = useInterpret(permachine)
 const fetchS = fetchStore()
 const publicS = publicStore()
 const depth = ref(1)
-const forceGc = () => {
-  fetchS.baseSubmit(gcMachine, {
-    action: "exec",
-    command: "vmtool --action forceGc "
-  }).then(
-    res => publicS.$patch({
-      isSuccess: true,
-      SuccessMessage: "GC success!",
-    })
-  )
-}
 const setDepth = publicS.inputDialogFactory(
   depth,
   (raw) => {
@@ -96,9 +85,6 @@ const getInstance = (data:{classItem:Item}) => {
 
 <template>
 
-  <div>
-    <button @click.prevent="forceGc" class="bg-blue-500 p-2 hover:bg-blue-300 transition rounded-md">forceGc</button>
-  </div>
   <ClassInput :submit-f="getInstance" class="mb-4" >
     <template #others>
       <button class="ml-2 input-btn-style" @click="setDepth">depth:{{depth}}</button>

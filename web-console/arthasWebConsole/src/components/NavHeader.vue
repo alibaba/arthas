@@ -2,15 +2,16 @@
 import { useMachine } from '@xstate/vue';
 import { waitFor } from 'xstate/lib/waitFor'
 import { onBeforeMount, Ref, ref, watchEffect } from 'vue';
-import { RefreshIcon, LogoutIcon, LoginIcon } from '@heroicons/vue/outline';
+import { RefreshIcon, LogoutIcon, LoginIcon, MenuIcon } from '@heroicons/vue/outline';
 import { fetchStore } from '@/stores/fetch';
 import machine from "@/machines/consoleMachine"
 import { publicStore } from '@/stores/public';
 import { interpret } from 'xstate';
+import { Menu, MenuButton, MenuItems, MenuItem } from '@headlessui/vue'
 import permachine from '@/machines/perRequestMachine';
 const fetchM = useMachine(machine)
 const publicS = publicStore()
-const { state, send } = fetchM
+const { send } = fetchM
 const fetchS = fetchStore()
 const sessionM = useMachine(machine)
 const version = ref("N/A")
@@ -47,7 +48,17 @@ const reset = () => {
 const interruptEvent = () => {
   fetchS.interruptJob()
 }
-
+const forceGc = () => {
+  fetchS.baseSubmit(interpret(permachine), {
+    action: "exec",
+    command: "vmtool --action forceGc "
+  }).then(
+    res => publicS.$patch({
+      isSuccess: true,
+      SuccessMessage: "GC success!",
+    })
+  )
+}
 const logout = async () => {
 
   restBtnclass.value = "animate-spin-rev-running"
@@ -87,7 +98,7 @@ const shutdown = () => {
 <template>
   <nav class=" h-[10vh] flex justify-between items-center min-h-max border-b-2 shadow-orange-300">
     <a class="w-40 flex items-center justify-center" href="https://arthas.aliyun.com/doc/commands.html" target="_blank">
-      <img src="@/assets/arthas.png" alt="logo" class=" w-3/4"/>
+      <img src="@/assets/arthas.png" alt="logo" class=" w-3/4" />
     </a>
 
     <div class="flex items-center h-20">
@@ -109,6 +120,18 @@ const shutdown = () => {
         <LogoutIcon class="h-1/2 w-1/2 text-white" @click="logout" v-if="fetchS.online" />
         <login-icon class="h-1/2 w-1/2 text-white" @click="login" v-else />
       </button>
+      <Menu as="div" class="relative mr-4">
+        <MenuButton class="w-12 h-12 input-btn-style grid place-items-center rounded-full bg-blue-600 hover:opacity-50 transition-all">
+          <MenuIcon class="h-3/4 w-3/4 text-white"></MenuIcon>
+        </MenuButton>
+        <MenuItems class="absolute right-0 top-full input-btn-style mt-4 bg-white px-0 ">
+          <MenuItem v-slot="{ active }" >
+          <div :class='{ "bg-blue-500 text-white": active }' class="px-4 py-2" >
+            <button @click.prevent="forceGc">forceGc</button>
+          </div>
+          </MenuItem>
+        </MenuItems>
+      </Menu>
     </div>
   </nav>
 </template>

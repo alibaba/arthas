@@ -138,12 +138,19 @@ const transformMemory = (result: ArthasResResult) => {
 }
 const transformThread = (result: ArthasResResult) => {
   if (result.type !== "dashboard") return;
-  result.threads.filter((v, i) => i < pri.value).forEach(thread => {
-    // threads.set(v.name, Object.entries(v).filter(([k, v]) => k !== "name").map(([k, v]) => `${k} : ${v}`))
+  // result.threads.filter((v, i) => i < pri.value).forEach(thread => {
+  //   // threads.set(v.name, Object.entries(v).filter(([k, v]) => k !== "name").map(([k, v]) => `${k} : ${v}`))
+  //   const map = new Map()
+  //   Object.entries(thread).map(([k, v]) => map.set(k, v.toString().trim() || "-"))
+  //   tableResults.unshift(map)
+  // })
+  let end = pri.value
+  for(let i =0; i < end && i < result.threads.length; i++){
+    const thread = result.threads[i]
     const map = new Map()
-    Object.entries(thread).map(([k, v]) => map.set(k, v.toString() || "-"))
+    Object.entries(thread).forEach(([k, v]) => map.set(k, v.toString().trim() || "-"))
     tableResults.unshift(map)
-  })
+  }
 }
 const transformGc = (result: ArthasResResult) => {
   if (result.type !== "dashboard") return;
@@ -448,7 +455,7 @@ onBeforeUnmount(async () => {
 
 <template>
   <div class="p-2 pointer-events-auto flex flex-col h-full">
-    <div class="input-btn-style mb-4 h-32 flex flex-wrap flex-col items-start">
+    <div class="input-btn-style mb-4 h-32 flex flex-wrap flex-col items-start overflow-auto min-h-[6rem]">
       <div v-for="(cv, ci) in runtimeInfo" :key="ci" class="flex mb-1 w-1/3 pr-2">
         <span class="bg-blue-500 w-44 px-2 rounded-l">
           {{ cv[0] }}
@@ -465,11 +472,11 @@ onBeforeUnmount(async () => {
       <div id="bufferPoolMemory" class="w-80 h-80 flex-1 input-btn-style"></div>
     </div>
     <div class="w-full flex justify-start items-start flex-1">
-      <div id="gc-info" class="w-[40rem] h-80 input-btn-style p-2 mr-2"></div>
+      <div id="gc-info" class="w-[40rem] h-80 input-btn-style p-2 mr-4"></div>
       <div class="input-btn-style overflow-auto flex-1 h-80">
         <div class="flex justify-end mb-2">
-          
-        <button class="input-btn-style" @click="setPri">limit:{{pri}}</button>
+
+          <button class="input-btn-style" @click="setPri">limit:{{pri}}</button>
         </div>
         <table class="border-collapse border border-slate-400 mx-auto">
           <thead>
