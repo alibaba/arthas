@@ -10,9 +10,45 @@ import {
 import MethodInput from '@/components/input/MethodInput.vue';
 import machine from '@/machines/consoleMachine';
 import { fetchStore } from '@/stores/fetch';
-import { onBeforeMount, onBeforeUnmount, reactive, ref } from 'vue';
+import { onBeforeMount, onBeforeUnmount, onMounted, reactive, ref } from 'vue';
 import Enhancer from '@/components/show/Enhancer.vue';
 import { publicStore } from '@/stores/public';
+import * as echarts from 'echarts/core';
+import {
+  TitleComponent,
+  TitleComponentOption,
+  ToolboxComponent,
+  ToolboxComponentOption,
+  TooltipComponent,
+  TooltipComponentOption,
+  GridComponent,
+  GridComponentOption,
+  LegendComponent,
+  LegendComponentOption,
+  DataZoomComponent,
+  DataZoomComponentOption
+} from 'echarts/components';
+import {
+  BarChart,
+  BarSeriesOption,
+  LineChart,
+  LineSeriesOption
+} from 'echarts/charts';
+import {
+  UniversalTransition
+} from 'echarts/features';
+import {
+  SVGRenderer
+} from 'echarts/renderers';
+import { ECharts, number } from 'echarts/core';
+
+echarts.use(
+  [TitleComponent, ToolboxComponent, TooltipComponent, GridComponent, LegendComponent, DataZoomComponent, BarChart, LineChart, SVGRenderer, UniversalTransition]
+);
+
+type EChartsOption = echarts.ComposeOption<
+  TitleComponentOption | ToolboxComponentOption | TooltipComponentOption | GridComponentOption | LegendComponentOption | DataZoomComponentOption | BarSeriesOption | LineSeriesOption
+>
 const pollingM = useMachine(machine)
 const fetchS = fetchStore()
 const { pullResultsLoop, getCommonResEffect } = fetchS
@@ -38,9 +74,189 @@ const modelist: { name: string, value: string }[] = [
 const mode = ref(modelist[1])
 
 const tableResults = reactive([] as Map<string, string[] | string>[])
-/**
- * 打算引入动态的堆叠图，但是不知道timestamp还有cost 应该是rt，估计得找后端去补这个接口
- */
+
+const chartContext: {
+  count: number,
+  myChart?: ECharts,
+  costChart?: ECharts,
+  categories: number[],
+  data: number[],
+  cur: number,
+  max: number,
+  successData: number[],
+  failureData: number[]
+} = {
+  max: 0,
+  cur: 0,
+  count: 20,
+  myChart: undefined,
+  costChart: undefined,
+  categories: [],
+  data: [],
+  successData: [],
+  failureData: [],
+}
+for (let i = 0; i < chartContext.count; i++) { chartContext.categories[i] = i + 1 }
+
+const chartOption = {
+  tooltip: {
+    trigger: 'axis',
+    axisPointer: {
+      type: 'cross',
+      label: {
+        backgroundColor: '#283b56'
+      }
+    }
+  },
+  legend: {},
+  toolbox: {
+    show: true,
+    feature: {
+      dataView: { readOnly: false },
+    }
+  },
+  xAxis: [
+    {
+      type: 'category',
+      boundaryGap: true,
+      data: chartContext.categories
+    }
+  ],
+  yAxis: [{
+    type: 'value',
+    name: 'count'
+  }
+  ],
+  series: [
+    {
+      name: 'success',
+      type: 'bar',
+      stack: 'count',
+      data: [],
+      itemStyle: {
+        color: "#9836cd"
+      }
+    },
+    {
+      name: 'failure',
+      type: 'bar',
+      stack: "count",
+      data: [],
+      itemStyle: {
+        color: "#ff0000",
+      }
+    },
+  ]
+};
+const costOption = {
+  tooltip: {
+    trigger: 'axis',
+    axisPointer: {
+      type: 'cross',
+      label: {
+        backgroundColor: '#283b56'
+      }
+    }
+  },
+  legend: {},
+  toolbox: {
+    show: true,
+    feature: {
+      dataView: { readOnly: false },
+    }
+  },
+  xAxis: [
+    {
+      type: 'category',
+      boundaryGap: true,
+      data: chartContext.categories
+    }
+  ],
+  yAxis: [
+    {
+      type: 'value',
+      scale: true,
+      name: 'cost(ms)',
+      min: 0,
+      boundaryGap: [0.2, 0.2]
+    }
+  ],
+  series: [
+    {
+      name: 'cost',
+      type: 'bar',
+      data: chartContext.data
+    }
+  ]
+}
+const updateChart = (data: MonitorData) => {
+  while (chartContext.cur > chartContext.count) {
+    chartContext.data.shift()
+    chartContext.successData.shift()
+    chartContext.failureData.shift()
+    chartContext.cur--
+  }
+  chartContext.data.push(data.cost)
+  chartContext.failureData.push(data.failed)
+  chartContext.successData.push(data.success)
+  chartContext.cur++
+
+  chartContext.myChart!.setOption<EChartsOption>({
+    xAxis: [
+      {
+        data: chartContext.categories
+      }
+    ],
+    series: [{
+      data: chartContext.successData
+    }, {
+      data: chartContext.failureData
+    }
+    ]
+  })
+  chartContext.costChart!.setOption<EChartsOption>({
+    xAxis: [
+      {
+        data: chartContext.categories
+      }
+    ],
+    series: [
+      {
+        data: chartContext.data
+      }
+    ]
+  })
+}
+const resetChart = () => {
+  chartContext.data.length = 0
+  chartContext.failureData.length = 0
+  chartContext.successData.length = 0
+  chartContext.myChart!.setOption<EChartsOption>({
+    xAxis: [
+      {
+        data: chartContext.categories
+      }
+    ],
+    series: [{
+      data: chartContext.successData
+    }, {
+      data: chartContext.failureData
+    }
+    ]
+  })
+  chartContext.costChart!.setOption<EChartsOption>({
+    xAxis: [
+      {
+        data: chartContext.categories
+      }
+    ],
+    series: [
+      {
+        data: chartContext.data
+      }
+    ]
+  })
+}
 const transform = (result: ArthasResResult) => {
   if (result.type === "monitor") {
     result.monitorDataList.forEach(data => {
@@ -53,6 +269,7 @@ const transform = (result: ArthasResResult) => {
       }
       map.set("fail-rate", (data.failed * 100 / data.total).toFixed(2) + "%")
       tableResults.unshift(map)
+      updateChart(data)
     })
   }
   if (result.type === "enhancer") {
@@ -79,12 +296,20 @@ onBeforeMount(() => {
   fetchS.asyncInit()
   pollingM.send("INIT")
 })
+onMounted(() => {
+  const chartDom = document.getElementById('monitorchart')!;
+  chartContext.myChart = echarts.init(chartDom);
+  chartOption && chartContext.myChart.setOption(chartOption)
+  chartContext.costChart = echarts.init(document.getElementById('monitorchartcost')!);
+  chartOption && chartContext.costChart.setOption(costOption)
+})
 onBeforeUnmount(() => {
   loop.close()
 })
 const submit = async (data: { classItem: Item, methodItem: Item, conditon: string }) => {
   enhancer.value = undefined
   tableResults.length = 0
+
   let condition = data.conditon.trim() == "" ? "" : `'${data.conditon.trim()}'`
   let cycle = `-c ${cycleV.value}`
   fetchS.baseSubmit(fetchM, {
@@ -103,7 +328,8 @@ const submit = async (data: { classItem: Item, methodItem: Item, conditon: strin
       <Listbox v-model="mode">
         <div class=" relative mx-2 ">
           <ListboxButton class="input-btn-style w-40">{{ mode.name }}</ListboxButton>
-          <ListboxOptions class="absolute w-40 mt-2 border overflow-hidden rounded-md hover:shadow-xl transition bg-white">
+          <ListboxOptions
+            class="absolute w-40 mt-2 border overflow-hidden rounded-md hover:shadow-xl transition bg-white">
             <ListboxOption v-for="(am,i) in modelist" :key="i" :value="am" v-slot="{active, selected}">
               <div class=" p-2 transition " :class="{
               'bg-blue-300 text-white': active,
@@ -119,9 +345,10 @@ const submit = async (data: { classItem: Item, methodItem: Item, conditon: strin
       <button class="input-btn-style ml-2" @click="changeCycle">cycle time:{{cycleV}}</button>
     </template>
   </MethodInput>
-  <template v-if="tableResults.length > 0 || enhancer">
-    <Enhancer :result="enhancer" v-if="enhancer"></Enhancer>
-    <div class="w-full flex justify-center items-center mt-4">
+  <Enhancer :result="enhancer" v-if="enhancer" class="input-btn-style mb-4"></Enhancer>
+  <div id="monitorchart" class="input-btn-style h-60 w-full pointer-events-auto transition mb-2"></div>
+  <div id="monitorchartcost" class="input-btn-style h-60 w-full pointer-events-auto transition"></div>
+  <!-- <div class="w-full flex justify-center items-center mt-4">
       <table class="border-collapse border border-slate-400 table-fixed">
         <thead>
           <tr>
@@ -137,5 +364,12 @@ const submit = async (data: { classItem: Item, methodItem: Item, conditon: strin
         </tbody>
       </table>
     </div>
-  </template>
+  </template> -->
+
 </template>
+
+<style>
+.bg {
+  background: #9836cd;
+}
+</style>

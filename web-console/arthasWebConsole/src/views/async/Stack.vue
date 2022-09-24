@@ -90,7 +90,7 @@ const submit = async (data: { classItem: Item, methodItem: Item, conditon: strin
   <MethodInput :submit-f="submit" ncondition ncount></MethodInput>
   <template v-if="tableResults.length > 0 || enhancer">
     <Enhancer :result="enhancer" v-if="enhancer"></Enhancer>
-    <div class="w-full flex justify-center items-center mt-4">
+    <div class="w-full flex justify-center items-center mt-4 pointer-events-auto">
       <table class="border-collapse border border-slate-400 ">
         <thead>
           <tr>
