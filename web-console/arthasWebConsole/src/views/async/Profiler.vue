@@ -12,14 +12,13 @@ import { waitFor } from 'xstate/lib/waitFor';
 import { publicStore } from '@/stores/public';
 import TodoList from '@/components/input/TodoList.vue';
 import { fetchStore } from '@/stores/fetch';
-import machine from '@/machines/consoleMachine';
 import { interpret } from 'xstate';
 const fetchM = useInterpret(permachine)
 const publicS = publicStore()
 const fetchS = fetchStore()
 
-let eventList = reactive(["all"] as string[]);
-let selectEvent = ref(eventList[0])
+let eventList = reactive([] as string[]);
+let selectEvent = ref("cpu")
 let includesVal = reactive(new Set<string>())
 let excludesVal = reactive(new Set<string>())
 let framebuf = ref(1000000)
@@ -30,7 +29,7 @@ let profilerStatus = ref({
 })
 let outputPath = ref("")
 let samples = ref(0)
-let fileformat = ref("arthas-output/%t-%p.html")
+let fileformat = ref("%t-%p.html")
 const getStatusLoop = fetchS.getPollingLoop(() => {
   const statusM = interpret(permachine)
   fetchS.baseSubmit(statusM, {
@@ -103,6 +102,7 @@ const transformStartProps = () => {
   let evenOption = ""
   let includeOption = ""
   let excludeOption = ""
+  let file = "--file arthas-output/"
   if (selectEvent.value !== "all") {
     evenOption = "--event " + selectEvent.value
   }
@@ -112,20 +112,22 @@ const transformStartProps = () => {
   for (const v of excludesVal) {
     excludeOption += "--exclude " + v + " "
   }
+  file += fileformat
   return {
     start,
     evenOption,
     includeOption,
-    excludeOption
+    excludeOption,
+    file
   }
 }
 const startSubmit = () => {
-  const { start, evenOption, includeOption, excludeOption } = transformStartProps()
+  const { start, evenOption, includeOption, excludeOption,file } = transformStartProps()
 
 
   fetchS.baseSubmit(fetchM, {
     action: "exec",
-    command: `profiler ${start} ${evenOption} ${includeOption} ${excludeOption}`,
+    command: `profiler ${start} ${evenOption} ${includeOption} ${excludeOption} ${fileformat}`,
     sessionId: undefined
   })
     .then(restartInit)
@@ -139,7 +141,14 @@ const stopProfiler = () => fetchS.baseSubmit(fetchM, {
     let result = (res as CommonRes).body.results[0]
     if (result.type === "profiler" && result.outputFile) {
       outputPath.value = result.outputFile
+
+      let reg = /arthas-output\/.*/
+      let arr = reg.exec(result.outputFile)
+      if(arr &&arr.length > 0) {
+        window.open(arr[0])
+      }
     }
+    
   }
 )
 const resumeProfiler = () => fetchS.baseSubmit(fetchM, {
@@ -148,7 +157,7 @@ const resumeProfiler = () => fetchS.baseSubmit(fetchM, {
 }).then(
   restartInit
 )
-
+const toOutputDir = ()=>window.open("arthas-output/")
 onBeforeMount(async () => {
   publicS.inputVal = ""
   includesVal.clear()
@@ -225,9 +234,10 @@ onBeforeUnmount(() => {
     <button class="button-style mx-2" @click="resumeProfiler" v-if="!profilerStatus.is">resume</button>
     <button class="button-style" @click="stopProfiler" v-if="profilerStatus.is">stop</button>
   </div>
-  <div class="flex items-center py-2" v-if="outputPath!==''">
+  <div class="flex items-center py-2">
     <h3 class="text-lg w-40">output file path: </h3>
     <div class=" mx-2">{{ outputPath }}</div>
+    <button class="button-style" @click="toOutputDir">go to the output direction</button>
   </div>
 </template>
 

@@ -109,9 +109,7 @@ const shutdown = () => {
       </div>
       <button v-if="fetchS.jobRunning" @click.prevent="interruptEvent"
         class="bg-red-600 text-white h-1/2 p-2 rounded hover:bg-red-400 transition mr-4">interrupt</button>
-      <button class="button-style bg-red-600 text-white mr-4" @click="shutdown">
-        shutdown
-      </button>
+
       <button class=" rounded-full bg-gray-200 h-12 w-12 flex justify-center items-center mr-4 " @click="reset">
         <refresh-icon class=" text-gray-500 h-3/4 w-3/4" :class="restBtnclass" />
       </button>
@@ -121,13 +119,22 @@ const shutdown = () => {
         <login-icon class="h-1/2 w-1/2 text-white" @click="login" v-else />
       </button>
       <Menu as="div" class="relative mr-4">
-        <MenuButton class="w-12 h-12 input-btn-style grid place-items-center rounded-full bg-blue-600 hover:opacity-50 transition-all">
-          <MenuIcon class="h-3/4 w-3/4 text-white"></MenuIcon>
+        <MenuButton
+          class="w-12 h-12 input-btn-style grid place-items-center rounded-full bg-blue-600 hover:rotate-180 duration-300 ease-in-out transition">
+          <MenuIcon class="h-3/4 w-3/4 text-white "></MenuIcon>
         </MenuButton>
-        <MenuItems class="absolute right-0 top-full input-btn-style mt-4 bg-white px-0 ">
-          <MenuItem v-slot="{ active }" >
-          <div :class='{ "bg-blue-500 text-white": active }' class="px-4 py-2" >
+        <MenuItems class="absolute right-0 top-full input-btn-style mt-4 bg-white px-0 z-10">
+          <MenuItem v-slot="{ active }">
+          <div :class='{ "bg-blue-500 text-white": active }' class="px-4 py-2">
             <button @click.prevent="forceGc">forceGc</button>
+          </div>
+
+          </MenuItem>
+          <MenuItem v-slot="{ active }">
+            <div :class='{ "bg-blue-500 text-white": active }' class="px-4 py-2">
+            <button @click="shutdown">
+              shutdown
+            </button>
           </div>
           </MenuItem>
         </MenuItems>

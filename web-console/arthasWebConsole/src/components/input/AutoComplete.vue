@@ -12,7 +12,7 @@ import { SelectorIcon } from "@heroicons/vue/outline"
 
 const { 
   optionItems, 
-  inputFn = (_)=>Promise.resolve(),
+  inputFn,
   blurFn = _=>{},
   optionsInit=(_)=>{},
   filterFn,
@@ -50,7 +50,8 @@ const changeF = (event:Event &{target:HTMLInputElement}) => {
   query.value = event.target.value
   if(changeMutex) {
     changeMutex = false
-    inputFn(query.value).finally(()=>changeMutex = true)
+    if(inputFn) inputFn(query.value).finally(()=>changeMutex = true)
+    else changeMutex = false
   }
 }
 const blurF = (event:Event)=>{
@@ -63,15 +64,18 @@ const blurF = (event:Event)=>{
     <ComboboxLabel class="p-2">{{ label }}</ComboboxLabel>
     <div class="relative flex-1">
       <div
-        class="relative w-full cursor-default overflow-hidden rounded-lg bg-white text-left border focus:outline-none hover:shadow-md transition">
-        <ComboboxInput class="w-full border-none py-2 pl-3 pr-10 leading-5 text-gray-900 " @change="changeF" @focus.prevent="optionsInit" @blur="blurF"
+        class="relative w-full cursor-default 
+        overflow-hidden rounded-lg bg-white text-left border 
+        focus:outline-none
+        hover:shadow-md transition">
+        <ComboboxInput class="w-full border-none py-2 pl-3 pr-10 leading-5 text-gray-900 focus-visible:outline-none" @change="changeF" @focus.prevent="optionsInit" @blur="blurF"
           :displayValue="(item) => (item as Item).name" />
         <ComboboxButton class="absolute inset-y-0 right-0 flex items-center pr-2">
           <SelectorIcon class="h-5 w-5 text-gray-400" aria-hidden="true" />
         </ComboboxButton>
       </div>
       <ComboboxOptions
-        class="absolute mt-1 max-h-60 w-full overflow-auto rounded-md bg-white py-1 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
+        class="absolute z-10 mt-1 max-h-60 w-full overflow-auto rounded-md bg-white py-1 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
         <div v-if="filterItems.length === 0 && query !== ''"
           class="relative cursor-default select-none py-2 px-4 text-gray-700">
           Nothing found.

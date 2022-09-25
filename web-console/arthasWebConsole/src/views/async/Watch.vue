@@ -30,7 +30,7 @@ const keyList = [
   "className",
   "methodName",
   "cost",
-  "sizeLimit",
+  // "sizeLimit",
   "value",
 ]
 const tranOgnl = (s: string): string[] => s.split("\n")

@@ -136,7 +136,7 @@ const transformMemory = (result: ArthasResResult) => {
     bufferPoolChart && bufferPoolChart.setOption({ series: { data: bufferPoolarr } } as EChartsOption)
   }
 }
-const transformThread = (result: ArthasResResult) => {
+const transformThread = (result: ArthasResResult,end:number) => {
   if (result.type !== "dashboard") return;
   // result.threads.filter((v, i) => i < pri.value).forEach(thread => {
   //   // threads.set(v.name, Object.entries(v).filter(([k, v]) => k !== "name").map(([k, v]) => `${k} : ${v}`))
@@ -144,8 +144,8 @@ const transformThread = (result: ArthasResResult) => {
   //   Object.entries(thread).map(([k, v]) => map.set(k, v.toString().trim() || "-"))
   //   tableResults.unshift(map)
   // })
-  let end = pri.value
-  for(let i =0; i < end && i < result.threads.length; i++){
+  
+  for (let i = 0; i < end && i < result.threads.length; i++) {
     const thread = result.threads[i]
     const map = new Map()
     Object.entries(thread).forEach(([k, v]) => map.set(k, v.toString().trim() || "-"))
@@ -210,7 +210,7 @@ getCommonResEffect(dashboadResM, body => {
 
       threads.clear()
       tableResults.length = 0
-      transformThread(result)
+      transformThread(result, pri.value)
 
       gcInfos.clear()
       transformGc(result)

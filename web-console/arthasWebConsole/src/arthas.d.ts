@@ -128,7 +128,14 @@ type CommandReq = CommonAction<
 >;
 
 type ArthasReq = SessionReq | CommandReq | AsyncReq | PullResults;
-
+type ThreadStateCount = {
+  "NEW": number,
+  "RUNNABLE": number,
+  "BLOCKED": number,
+  "WAITING": number,
+  "TIMED_WAITING": number,
+  "TERMINATED":number
+}
 type StatusResult = {
   type: "status";
   statusCode: 0;
@@ -148,6 +155,7 @@ type VmOption = MergeObj<
   Record<"name" | "origin" | "value", string>,
   Record<"writeable", boolean>
 >;
+type ThreadState = "WAITING" | "TIMED_WAITING" | "RUNNABLE" | "BLOCKED";
 type ThreadStats = {
   cpu: number;
   daemon: boolean;
@@ -157,8 +165,15 @@ type ThreadStats = {
   interrupted: boolean;
   name: string;
   priority: number;
-  state: "WAITING" | "TIMED_WAITING" | "RUNNABLE";
+  state: ThreadState;
   time: number;
+};
+type StackTrace = {
+  className: string;
+  fileName: string;
+  lineNumber: number;
+  methodName: number;
+  nativeMethod: boolean;
 };
 type ThreadInfo = {
   blockedCount: number;
@@ -167,17 +182,11 @@ type ThreadInfo = {
   lockOwnerId: number;
   lockedMonitors: [];
   lockedSynchronizers: [];
-  stackTrace: {
-    className: string;
-    fileName: string;
-    lineNumber: number;
-    methodName: number;
-    nativeMethod: boolean;
-  }[];
+  stackTrace: StackTrace[];
   suspended: boolean;
   threadId: number;
   threadName: string;
-  threadState: "WAITING" | "TIMED_WAITING" | "RUNNABLE";
+  threadState: ThreadState;
   waitedCount: number;
   waitedTime: number;
 };
@@ -356,7 +365,7 @@ type MonitorData = {
   methodName: number;
   success: number;
   total: number;
-}
+};
 type CommandResult = {
   type: "command";
   state: ResState;
@@ -378,26 +387,20 @@ type CommandResult = {
   workingDir: string;
 } | {
   all: boolean;
-  threadStateCount: Record<
-    | "NEW"
-    | "RUNNABLE"
-    | "BLOCKED"
-    | "WAITING"
-    | "TIMED_WAITING"
-    | "TERMINATED",
-    number
-  >;
+  threadStateCount:ThreadStateCount;
   threadStats: ThreadStats[];
   threadInfo: never;
   busyThreads: never;
   type: "thread";
 } | {
+  threadStateCount:never;
   threadInfo: ThreadInfo;
   threadStats: never;
   busyThreads: never;
   type: "thread";
 } | {
   all: boolean;
+  threadStateCount:never;
   busyThreads: BusyThread[];
   threadInfo: never;
   threadStats: never;
@@ -575,13 +578,7 @@ type CommandResult = {
   cost: number;
   daemon: boolean;
   priority: number;
-  stackTrace: {
-    className: string;
-    fileName: string;
-    lineNumber: number;
-    methodName: string;
-    nativeMethod: boolean;
-  }[];
+  stackTrace: StackTrace[];
   threadId: string;
   threadName: string;
   // date clock

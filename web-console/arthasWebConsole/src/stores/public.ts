@@ -1,5 +1,5 @@
 import { defineStore } from "pinia";
-import { nextTick, Ref, ref, watch, watchEffect } from "vue";
+import { Ref, ref, watch, watchEffect } from "vue";
 import { useMachine } from "@xstate/vue";
 
 const getEffect = (

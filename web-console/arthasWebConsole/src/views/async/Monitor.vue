@@ -58,22 +58,22 @@ const enhancer = ref(undefined as undefined | EnchanceResult)
 const cycleV = ref(120)
 const publicS = publicStore()
 type KMD = | keyof MonitorData
-const keyList: string[] = [
-  "className",
-  "methodName",
-  "cost",
-  "success",
-  "failed",
-  "fail-rate",
-  "total",
-]
+// const keyList: string[] = [
+//   "className",
+//   "methodName",
+//   "cost",
+//   "success",
+//   "failed",
+//   "fail-rate",
+//   "total",
+// ]
 const modelist: { name: string, value: string }[] = [
   { name: "调用开始之前", value: "-b" },
   { name: "调用结束之后", value: "" }
 ]
 const mode = ref(modelist[1])
 
-const tableResults = reactive([] as Map<string, string[] | string>[])
+// const tableResults = reactive([] as Map<string, string[] | string>[])
 
 const chartContext: {
   count: number,
@@ -88,7 +88,7 @@ const chartContext: {
 } = {
   max: 0,
   cur: 0,
-  count: 20,
+  count: 40,
   myChart: undefined,
   costChart: undefined,
   categories: [],
@@ -133,9 +133,9 @@ const chartOption = {
       type: 'bar',
       stack: 'count',
       data: [],
-      itemStyle: {
-        color: "#9836cd"
-      }
+      // itemStyle: {
+      //   color: "#9836cd"
+      // }
     },
     {
       name: 'failure',
@@ -260,15 +260,15 @@ const resetChart = () => {
 const transform = (result: ArthasResResult) => {
   if (result.type === "monitor") {
     result.monitorDataList.forEach(data => {
-      const map = new Map<string, string>()
-      for (const key in data) {
-        let val = ""
-        if (key === "cost") val = data.cost.toFixed(6).toString() + "ms"
-        else val += data[key as KMD]
-        map.set(key as KMD, val)
-      }
-      map.set("fail-rate", (data.failed * 100 / data.total).toFixed(2) + "%")
-      tableResults.unshift(map)
+      // const map = new Map<string, string>()
+      // for (const key in data) {
+      //   let val = ""
+      //   if (key === "cost") val = data.cost.toFixed(6).toString() + "ms"
+      //   else val += data[key as KMD]
+      //   map.set(key as KMD, val)
+      // }
+      // map.set("fail-rate", (data.failed * 100 / data.total).toFixed(2) + "%")
+      // tableResults.unshift(map)
       updateChart(data)
     })
   }
@@ -308,7 +308,7 @@ onBeforeUnmount(() => {
 })
 const submit = async (data: { classItem: Item, methodItem: Item, conditon: string }) => {
   enhancer.value = undefined
-  tableResults.length = 0
+  // tableResults.length = 0
 
   let condition = data.conditon.trim() == "" ? "" : `'${data.conditon.trim()}'`
   let cycle = `-c ${cycleV.value}`

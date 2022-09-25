@@ -113,6 +113,12 @@ export const fetchStore = defineStore("fetch", {
         isOn() {
           return id !== -1;
         },
+        /**
+         * 无条件调用传入的hander
+         */
+        invoke() {
+          hander()
+        }
       };
     },
     pullResultsLoop(pollingM: Machine) {

@@ -7,10 +7,12 @@ import { useMachine, useInterpret } from '@xstate/vue';
 import { onBeforeMount, onBeforeUnmount, reactive, ref } from 'vue';
 import Enhancer from '@/components/show/Enhancer.vue';
 import { publicStore } from '@/stores/public';
+import {transfromStore} from "@/stores/resTransform"
 const fetchM = useInterpret(permachine)
 const pollingM = useMachine(machine)
 const fetchS = fetchStore()
-const publicS = publicStore()
+// const publicS = publicStore()
+const transS = transfromStore()
 const { getCommonResEffect } = fetchS
 // const {getCommonResEffect} = publicStore()
 
@@ -39,7 +41,7 @@ getCommonResEffect(pollingM, body => {
             let val: string | string[] = ""
             if (k === "stackTrace") {
               let stackTrace = result[k]
-              val = stackTrace.map((trace, i) => `${trace.className}.${trace.methodName} (${trace.fileName}: ${trace.lineNumber})`)
+              val = stackTrace.map((trace) => transS.transformStackTrace(trace))
             } else {
               val = result[k as Exclude<keyof typeof result, "jobId" | "type" | "stackTrace">].toString()
             }
