@@ -1,18 +1,19 @@
 <script setup lang="ts">
 // import machine from '@/machines/consoleMachine';
 import { useInterpret, useMachine } from '@xstate/vue';
-import { onBeforeMount, reactive, ref, onUnmounted } from 'vue';
+import { onBeforeMount, reactive, ref, onUnmounted, watchEffect } from 'vue';
 import CmdResMenu from '@/components/show/CmdResMenu.vue';
 import { fetchStore } from '@/stores/fetch';
 import { publicStore } from '@/stores/public';
+import TodoList from '@/components/input/TodoList.vue';
 // import AutoComplete from "@/components/input/AutoComplete.vue";
 import {
-  Disclosure, DisclosureButton, DisclosurePanel
-  , Switch, SwitchLabel, SwitchGroup,
+  Switch, SwitchLabel, SwitchGroup,
   Listbox, ListboxButton, ListboxLabel, ListboxOptions, ListboxOption
 } from '@headlessui/vue';
 import { transfromStore } from "@/stores/resTransform"
 import permachine from '@/machines/perRequestMachine';
+import { computed } from '@vue/reactivity';
 
 const fetchS = fetchStore()
 const FetchService = useInterpret(permachine)
@@ -56,14 +57,36 @@ const statsList: (keyof ThreadStats)[] = ["id",
   "state",
   "time",]
 const infoCount = ref({
-  NEW:0,
-  RUNNABLE:0,
-  BLOCKED:0,
-  WAITING:0,
-  TIMED_WAITING:0,
-  TERMINATED:0
+  NEW: 0,
+  RUNNABLE: 0,
+  BLOCKED: 0,
+  WAITING: 0,
+  TIMED_WAITING: 0,
+  TERMINATED: 0
 } as ThreadStateCount)
 const tableResults = reactive([] as Map<string, string>[])
+const tableFilter = computed(() => {
+  let res = tableResults
+  if (includesVal.size === 0) return res;
+  includesVal.forEach((v1) => {
+    let [key, vals] = v1.split(":")
+    //@ts-ignore
+    if (keyList.includes(key)) {
+      const raw = vals.split("")
+      let incudes: string[] = []
+      if (raw[0] === "[" && raw[raw.length - 1] === "]") {
+        raw.pop()
+        raw.shift()
+        incudes = raw.join("").split(',')
+      } else {
+        incudes = raw.join("").split(',')
+      }
+      res = res.filter((map) => incudes.includes(map.get(key.trim())!))
+    }
+
+  })
+  return res
+})
 const statelist: { name: string, value: ThreadState | "" }[] = [
   { name: "WAITING", value: "WAITING" },
   { name: "RUNNABLE", value: "RUNNABLE" },
@@ -72,15 +95,8 @@ const statelist: { name: string, value: ThreadState | "" }[] = [
   { name: "all", value: "" }
 ]
 const threadState = ref(statelist[4])
-
+const includesVal = reactive(new Set<string>())
 onBeforeMount(() => {
-  // fetchM.service.start()
-  // fetchM.send("INIT")
-  // allloop.open()
-  // busyfetchM.service.start()
-  // busyfetchM.send("INIT")
-  // busyloop.open()
-  // concretefetchM.send("INIT")
 })
 onUnmounted(() => {
   // allloop.close()
@@ -92,7 +108,7 @@ const getThreads = () => {
   const b = isBlock.value ? "-b" : ""
   let state = threadState.value.value === "" ? "" : `--state ${threadState.value.value}`
   tableResults.length = 0
-  for(const key in infoCount.value){
+  for (const key in infoCount.value) {
     //@ts-ignore
     infoCount.value[key] = 0
   }
@@ -118,12 +134,14 @@ const getThreads = () => {
             map.set(key, thread[key as keyof ThreadStats].toString().trim() || "-")
           }
           tableResults.unshift(map)
+
         })
+
         for (const key in result.threadStateCount) {
           if (Object.hasOwn(result.threadStateCount, key)) {
             //@ts-ignore
             infoCount.value[key] = result.threadStateCount[key];
-            
+
           }
         }
       } else {
@@ -138,8 +156,10 @@ const getThreads = () => {
           }
           tableResults.unshift(map)
         })
-        
+
       }
+
+      tableResults.sort((m1, m2) => parseFloat(m2.get("cpu")!) - parseFloat(m1.get("cpu")!))
     }
   })
 }
@@ -159,6 +179,7 @@ const setleast = publiC.inputDialogFactory(
   },
   (input) => input.value.toString(),
 )
+
 const getSpecialThreads = (threadid: number = -1) => {
   let threadName = threadid > 0 ? `${threadid}` : ""
   // let i = leastTime.value > 0 ? "-i " + leastTime.value : ""
@@ -177,29 +198,29 @@ const getSpecialThreads = (threadid: number = -1) => {
     }
   })
 }
-// const toggleAllLoop = (open: boolean) => {
-//   // if (open) {
-//   //   busyloop.open()
-//   //   allloop.open()
-//   // } else {
-//   //   busyloop.close()
-//   //   allloop.close()
-//   // }
-// }
+
+// watchEffect(() => {
+//   includesVal.forEach((v1) => {
+//     let [key, vals] = v1.split(":")
+//     const raw = vals.split("")
+//     let includes: string[] = []
+//     if (raw[0] === "[" && raw[raw.length - 1] === "]") {
+//       raw.pop()
+//       raw.shift()
+//       includes = raw.join("").split(',')
+//     } else {
+//       includes = raw.join("").split(',')
+//     }
+//     tableResults.filter((map) => includes.includes(map.get(key.trim())!))
+//   })
+// })
 </script>
 
 <template>
   <div class="flex flex-col h-full">
-    <div class="flex justify-end items-center">
-      
-      <div v-for="(v, i) in Object.entries(infoCount)" :key="i" class="mr-2">
-        <span class="bg-blue-500 w-44 px-2 rounded-l text-white">
-          {{ v[0] }}
-        </span>
-        <span class="border-gray-300 bg-blue-100 rounded-r flex-1 px-1 border bordergre">
-          {{v[1]}}
-        </span> 
-      </div>
+    <div class="flex justify-end items-center h-[10vh]">
+
+      <TodoList title="filter" :val-set="includesVal" class=" mr-2"></TodoList>
       <SwitchGroup as="div" class="input-btn-style flex ml-2 focus-within:ring ring-blue-500" v-show="count === 0">
         <SwitchLabel>is blocking:</SwitchLabel>
         <Switch v-model="isBlock" :class="isBlock ? 'bg-blue-400' : 'bg-gray-500'"
@@ -229,8 +250,18 @@ const getSpecialThreads = (threadid: number = -1) => {
       </Listbox>
       <button class="button-style" @click="getThreads"> get threads</button>
     </div>
-    <div class="w-full h-[50vh] input-btn-style my-2 p-4">
-      <div class="overflow-scroll h-full">
+    <div class="w-full h-[50vh] input-btn-style my-2 p-4 flex flex-col">
+      <div class="flex h-[8vh] flex-wrap flex-auto">
+        <div v-for="(v, i) in Object.entries(infoCount)" :key="i" class="mr-2">
+          <span class="bg-blue-500 w-44 px-2 rounded-l text-white">
+            {{ v[0] }}
+          </span>
+          <span class="border-gray-300 bg-blue-100 rounded-r flex-1 px-1 border bordergre">
+            {{v[1]}}
+          </span>
+        </div>
+      </div>
+      <div class="overflow-scroll h-[40vh] w-full">
         <table class="border-collapse border border-slate-400 mx-auto">
           <thead>
             <tr>
@@ -244,7 +275,7 @@ const getSpecialThreads = (threadid: number = -1) => {
             </tr>
           </thead>
           <tbody class="">
-            <tr v-for="(map, i) in tableResults" :key="i">
+            <tr v-for="(map, i) in tableFilter" :key="i">
               <td class="border border-slate-300 p-2"><button class="button-style"
                   @click="getSpecialThreads(parseInt(map.get('id')!))" v-if="map.get('id')!=='-1'">
                   get stackTrace
@@ -266,8 +297,8 @@ const getSpecialThreads = (threadid: number = -1) => {
     </div>
     <div class="input-btn-style flex-auto overflow-auto">
       <h2 class="text-lg">stackTrace</h2>
-        <div v-for="(stack, i) in stackTrace" class="mb-2" :key="i">{{stack}} </div>
-      
+      <div v-for="(stack, i) in stackTrace" class="mb-2" :key="i">{{stack}} </div>
+
     </div>
   </div>
 </template>

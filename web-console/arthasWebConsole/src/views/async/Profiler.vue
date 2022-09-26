@@ -240,7 +240,3 @@ onBeforeUnmount(() => {
     <button class="button-style" @click="toOutputDir">go to the output direction</button>
   </div>
 </template>
-
-<style scoped>
-
-</style>
