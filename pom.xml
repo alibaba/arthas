@@ -56,7 +56,7 @@
     <url>https://github.com/alibaba/arthas</url>
 
     <modules>
-        <module>web-console</module>
+        <module>Web-UI</module>
         <module>math-game</module>
         <module>common</module>
         <module>spy</module>
