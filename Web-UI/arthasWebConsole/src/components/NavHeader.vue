@@ -82,7 +82,7 @@ const login = async () => {
   })
 }
 const shutdown = () => {
-  publicS.warnMessage = "Are you sure stop the arthas? All the Arthas clients connecting to this server will be disconnected."
+  publicS.warnMessage = "Are you sure to stop the arthas? All the Arthas clients connecting to this server will be disconnected."
   publicS.warningFn = () => {
     fetchS.baseSubmit(interpret(permachine), {
       command: "stop",
@@ -93,6 +93,32 @@ const shutdown = () => {
   }
   publicS.isWarn = true
 }
+const resetAllClass = () => {
+  fetchS.baseSubmit(interpret(permachine), {
+    action: "exec",
+    command: `reset`
+  }).then(response => {
+    const result = (response as CommonRes).body.results[0]
+    if (result.type === "reset") {
+      // let res = new Map()
+      // Object.entries(result.affect).forEach(([k, v]) => {
+      //   res.set(k, k === "cost" ? [`${v}ms`] : [v])
+      // })
+      // let message = ""
+      // for(const key in result.affect) {
+      //   m
+      // }
+      publicS.isSuccess=true
+    publicS.SuccessMessage = JSON.stringify(result.affect)
+    }
+
+  })
+}
+const tools = [
+  ["forceGc", forceGc],
+  ["shutdown", shutdown],
+  ["reset class", resetAllClass]
+]
 </script>
 
 <template>
@@ -123,19 +149,12 @@ const shutdown = () => {
           class="w-12 h-12 input-btn-style grid place-items-center rounded-full bg-blue-600 hover:rotate-180 duration-300 ease-in-out transition">
           <MenuIcon class="h-3/4 w-3/4 text-white "></MenuIcon>
         </MenuButton>
-        <MenuItems class="absolute right-0 top-full input-btn-style mt-4 bg-white px-0 z-10">
-          <MenuItem v-slot="{ active }">
+        <MenuItems class="absolute right-0 top-full input-btn-style mt-4 bg-white px-0 z-10 w-40">
+          <MenuItem v-slot="{ active }" v-for="(v,i) in tools" :key="i">
           <div :class='{ "bg-blue-500 text-white": active }' class="px-4 py-2">
-            <button @click.prevent="forceGc">forceGc</button>
+            <button @click.prevent="v[1]">{{v[0]}}</button>
           </div>
 
-          </MenuItem>
-          <MenuItem v-slot="{ active }">
-            <div :class='{ "bg-blue-500 text-white": active }' class="px-4 py-2">
-            <button @click="shutdown">
-              shutdown
-            </button>
-          </div>
           </MenuItem>
         </MenuItems>
       </Menu>

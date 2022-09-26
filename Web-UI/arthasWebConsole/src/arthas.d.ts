@@ -155,7 +155,7 @@ type VmOption = MergeObj<
   Record<"name" | "origin" | "value", string>,
   Record<"writeable", boolean>
 >;
-type ThreadState = "WAITING" | "TIMED_WAITING" | "RUNNABLE" | "BLOCKED";
+type ThreadState = keyof ThreadStateCount;
 type ThreadStats = {
   cpu: number;
   daemon: boolean;

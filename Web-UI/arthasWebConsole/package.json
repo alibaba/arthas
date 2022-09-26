@@ -3,11 +3,11 @@
   "private": false,
   "version": "0.1.3",
   "scripts": {
-    "dev": "vite --port 8000",
-    "build": "vue-tsc --noEmit && vite build",
+    "dev": "vite --port 8000 --base=/ui/",
+    "build": "vue-tsc --noEmit && vite build --base=/ui/",
     "preview": "vite preview",
     "test": "jest",
-    "prepare": "cd ../../ && husky install web-console/arthasWebConsole/.husky"
+    "prepare": "cd ../../ && husky install Web-UI/arthasWebConsole/.husky"
   },
   "dependencies": {
     "@headlessui/vue": "^1.6.6",

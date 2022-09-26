@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import machine from '@/machines/consoleMachine';
-import { useInterpret, useMachine } from '@xstate/vue';
-import { onBeforeMount, reactive, ref } from 'vue';
+import { useInterpret } from '@xstate/vue';
+import { reactive, ref } from 'vue';
 import CmdResMenu from '@/components/show/CmdResMenu.vue';
 import { fetchStore } from '@/stores/fetch';
 import { publicStore } from '@/stores/public';

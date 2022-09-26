@@ -6,10 +6,9 @@ import CmdResMenu from '@/components/show/CmdResMenu.vue';
 import { fetchStore } from '@/stores/fetch';
 import { publicStore } from '@/stores/public';
 import TodoList from '@/components/input/TodoList.vue';
-// import AutoComplete from "@/components/input/AutoComplete.vue";
 import {
   Switch, SwitchLabel, SwitchGroup,
-  Listbox, ListboxButton, ListboxLabel, ListboxOptions, ListboxOption
+  Listbox, ListboxButton, ListboxOptions, ListboxOption
 } from '@headlessui/vue';
 import { transfromStore } from "@/stores/resTransform"
 import permachine from '@/machines/perRequestMachine';
@@ -55,7 +54,7 @@ const statsList: (keyof ThreadStats)[] = ["id",
   "interrupted",
   "priority",
   "state",
-  "time",]
+  "time"]
 const infoCount = ref({
   NEW: 0,
   RUNNABLE: 0,
@@ -66,8 +65,10 @@ const infoCount = ref({
 } as ThreadStateCount)
 const tableResults = reactive([] as Map<string, string>[])
 const tableFilter = computed(() => {
+  // 原本的数组
   let res = tableResults
   if (includesVal.size === 0) return res;
+  // 导入过滤条件
   includesVal.forEach((v1) => {
     let [key, vals] = v1.split(":")
     //@ts-ignore
@@ -77,11 +78,17 @@ const tableFilter = computed(() => {
       if (raw[0] === "[" && raw[raw.length - 1] === "]") {
         raw.pop()
         raw.shift()
+      } 
         incudes = raw.join("").split(',')
-      } else {
-        incudes = raw.join("").split(',')
-      }
-      res = res.filter((map) => incudes.includes(map.get(key.trim())!))
+
+      if(key === "name"||key === "group") {
+        // 字符串是包含
+        res = res.filter((map) => {
+          let val = map.get(key.trim())!
+          // 取对于多个子字符串， 取交集
+          return incudes.every(reg=>val.includes(reg))
+        })
+      } else res = res.filter((map) => incudes.includes(map.get(key.trim())!))
     }
 
   })

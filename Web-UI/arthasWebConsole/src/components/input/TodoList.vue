@@ -6,10 +6,11 @@ import {
   MenuItem,
   MenuItems
 } from "@headlessui/vue"
-import { watchEffect, ref } from "vue";
+import { ref } from "vue";
 import { publicStore } from "@/stores/public";
-const { valSet = new Set<string>() } = defineProps<{
+const { valSet = new Set<string>(), getInput = () => true } = defineProps<{
   valSet?: Set<string>,
+  getInput?: (raw: string) => boolean,
   title: string
 }>()
 const publicS = publicStore()
@@ -17,7 +18,7 @@ const publicS = publicStore()
 const openInput = publicS.inputDialogFactory(
   ref(""),
   (raw) => {
-    valSet.add(raw)
+    if (getInput(raw)) valSet.add(raw)
     return ""
   },
   _ => ""
