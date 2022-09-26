@@ -3,8 +3,7 @@ import permachine from '@/machines/perRequestMachine';
 import {
   Switch,
   SwitchLabel,
-  SwitchGroup,
-  SwitchDescription
+  SwitchGroup
 } from "@headlessui/vue"
 import { useInterpret, useMachine } from '@xstate/vue';
 import MethodInput from '@/components/input/MethodInput.vue';

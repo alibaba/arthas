@@ -260,15 +260,6 @@ const resetChart = () => {
 const transform = (result: ArthasResResult) => {
   if (result.type === "monitor") {
     result.monitorDataList.forEach(data => {
-      // const map = new Map<string, string>()
-      // for (const key in data) {
-      //   let val = ""
-      //   if (key === "cost") val = data.cost.toFixed(6).toString() + "ms"
-      //   else val += data[key as KMD]
-      //   map.set(key as KMD, val)
-      // }
-      // map.set("fail-rate", (data.failed * 100 / data.total).toFixed(2) + "%")
-      // tableResults.unshift(map)
       updateChart(data)
     })
   }
@@ -348,23 +339,6 @@ const submit = async (data: { classItem: Item, methodItem: Item, conditon: strin
   <Enhancer :result="enhancer" v-if="enhancer" class="input-btn-style mb-4"></Enhancer>
   <div id="monitorchart" class="input-btn-style h-60 w-full pointer-events-auto transition mb-2"></div>
   <div id="monitorchartcost" class="input-btn-style h-60 w-full pointer-events-auto transition"></div>
-  <!-- <div class="w-full flex justify-center items-center mt-4">
-      <table class="border-collapse border border-slate-400 table-fixed">
-        <thead>
-          <tr>
-            <th class="border border-slate-300 p-2" v-for="(v,i) in keyList" :key="i">{{v}}</th>
-          </tr>
-        </thead>
-        <tbody class="">
-          <tr v-for="(map, i) in tableResults" :key="i">
-            <td class="border border-slate-300 p-2" v-for="(key,j) in keyList" :key="j">
-              {{map.get(key)}}
-            </td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
-  </template> -->
 
 </template>
 

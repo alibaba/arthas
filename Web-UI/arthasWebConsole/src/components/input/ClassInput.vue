@@ -6,13 +6,14 @@ import { publicStore } from '@/stores/public';
 import { ref } from 'vue';
 import { interpret } from 'xstate';
 import AutoComplete from './AutoComplete.vue';
-const { label = "inputClassName", supportedover = false } = defineProps<{
+const { label = "inputClassName", supportedover = false, noClassloader=false } = defineProps<{
   label?: string,
   submitF: (data: {
     classItem: Item,
     loaderItem: Item
   }) => void
   supportedover?:boolean
+  noClassloader?:boolean
 }>()
 const optionClass = ref([] as { name: string, value: string }[])
 const optionClassloders = ref([] as { name: string, value: string }[])
@@ -43,7 +44,7 @@ const changeValue = (value: string) => {
   return Promise.resolve()
 }
 const blurF = (value: unknown) => {
-  if (value !== "") {
+  if (value !== "" && !noClassloader) {
     const searchClass = interpret(permachine)
     fetchS.baseSubmit(searchClass, {
       action: "exec",
@@ -72,7 +73,14 @@ const filterfn = (_: any, item: Item) => true
 <template>
   <AutoComplete :label="label" :option-items="optionClass" :input-fn="changeValue" :filter-fn="filterfn" v-slot="slotP" :supportedover="supportedover"
     :blur-fn="blurF" as="form">
-    <AutoComplete label="classloader" :option-items="optionClassloders" v-slot="slotQ">
+    <template v-if="noClassloader">
+      <slot name="others"></slot>
+      <button @click.prevent="submitF({
+        classItem:slotP.selectItem,
+        loaderItem:slotP.selectItem
+      })" class="border bg-blue-400 p-2 rounded-md mx-2 hover:opacity-50 transition">submit</button>
+    </template>
+    <AutoComplete label="classloader" :option-items="optionClassloders" v-slot="slotQ" v-else>
       <slot name="others"></slot>
       <button @click.prevent="submitF({
         classItem:slotP.selectItem,

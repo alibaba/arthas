@@ -1,33 +1,66 @@
 <script setup lang="ts">
-import machine from '@/machines/consoleMachine';
-import { useMachine } from '@xstate/vue';
-import { onBeforeMount, onUnmounted, reactive, ref } from 'vue';
+import { computed, onBeforeMount, onUnmounted, reactive, ref } from 'vue';
 import { Disclosure, DisclosureButton, DisclosurePanel } from '@headlessui/vue';
 import { publicStore } from "@/stores/public"
 import { fetchStore } from '@/stores/fetch';
 import { interpret } from 'xstate';
-
 import CmdResMenu from '@/components/show/CmdResMenu.vue';
 import transformMachine from '@/machines/transformConfigMachine';
-import ClassInput from '@/components/input/ClassInput.vue';
+// import ClassInput from '@/components/input/ClassInput.vue';
 import permachine from '@/machines/perRequestMachine';
-
-const { getCommonResEffect } = publicStore()
-const classInfoM = useMachine(machine)
-const classMethodInfoM = useMachine(machine)
-const dumpM = useMachine(machine)
-const { getPollingLoop } = fetchStore()
+import Tree from '@/components/show/Tree.vue';
 const fetchS = fetchStore()
 
-const map = ref([] as [string, Map<"hash" | "parent" | "classes", string[]>][])
 const urlStats = ref([] as [
   string,
   Map<"hash" | "unUsedUrls" | "usedUrls" | "parent", string[]>
 ][])
-const classDetailMap = reactive(new Map<string, string[]>())
-const classFields = reactive(new Map<string, string[]>())
-const classMethodMap = reactive(new Map<string, string[]>())
-const dumpMap = reactive(new Map<string, string[]>())
+const tablelResults = reactive([] as Map<string, string | number>[])
+const tableResults = reactive([] as Map<string, string | number>[])
+const loaderCache = ref({ name: "", hash: "", count: "" } as Record<"name" | "hash" | "count", string>)
+const classLoaderTree = reactive([] as TreeNode[])
+
+const hashCode = computed(() => {
+  let res = loaderCache.value.hash.trim() === "" ? "" : "-c " + loaderCache.value.hash.trim()
+  if (loaderCache.value.hash.trim() === "null") {
+    res = `--classLoaderClass ${loaderCache.value.name}`
+  }
+  return res
+})
+const selectedClassLoadersUrlStats = ref([] as string[])
+const classVal = ref("")
+const resourceVal = ref("")
+const keylList = [
+  "name", "loadedCount", "hash", "parent"
+]
+const keyList = [
+  "name","numberOfInstance", "loadedCount"
+]
+const trans = (root: ClassLoaderNode, parent: ClassLoaderNode | null): string[] => {
+  let title: (string)[] = []
+
+  let count = root.loadedCount.toString()
+  let name = root.name.split('@')[0]
+  let hash = root.hash
+  title = [count, name, hash]
+
+  return title
+}
+/**处理Tree */
+const dfs = (root: ClassLoaderNode, parent: ClassLoaderNode | null): TreeNode => {
+  let children: TreeNode[] = []
+
+  if ("children" in root) {
+    if (root.children) {
+      children = root.children.map(child => dfs(child, root))
+    }
+  }
+  return {
+    children,
+    meta: trans(root, parent) as string[]
+  }
+}
+
 const json_to_obj = (str: string) => {
   const actor = interpret(transformMachine)
   actor.start()
@@ -54,7 +87,7 @@ const json_to_obj = (str: string) => {
     }
   )
 }
-const getUrlStats = () => fetchS.baseSubmit(interpret(permachine), {
+const getAllUrlStats = () => fetchS.baseSubmit(interpret(permachine), {
   action: "exec",
   command: "classloader --url-stat"
 }).then(res => {
@@ -80,174 +113,270 @@ const getUrlStats = () => fetchS.baseSubmit(interpret(permachine), {
     })
   }
 })
-const urlStatsLoop = getPollingLoop(getUrlStats
-)
-const getAllClass = () => fetchS.baseSubmit(interpret(permachine), {
+
+const getClassLoaderTree = () => fetchS.baseSubmit(interpret(permachine), {
   action: "exec",
-  command: "classloader -a"
+  command: "classloader -t"
 }).then(res => {
   const results = (res as CommonRes).body.results
-  results.filter(res => res.type === "classloader").reduce((pre, cur) => {
-    if (cur.type === "classloader" && Object.hasOwn(cur, "classSet")) {
-      const classSet = cur.classSet
-      const classes = classSet.classes
-      if (classSet.segment === 0) {
-        const listMap = new Map<"hash" | "parent" | "classes", string[]>([
-          ["hash", [classSet.classloader.hash]],
-          ["parent", [classSet.classloader.parent]],
-          ["classes", classes]
-        ])
-        map.value.push([classSet.classloader.name, listMap])
-      } else {
-        const listMap = map.value[map.value.length - 1][1]
-        listMap.set("classes", [...listMap.get("classes")!, ...classes])
-      }
-    }
-    return pre
-  }, [] as string[][])
-}, err => {
-  console.error(err)
-})
-
-
-getCommonResEffect(classInfoM, body => {
-  const result = body.results[0]
-  if (result.type === "sc" && result.detailed === true && result.withField === true) {
-
-    classDetailMap.clear()
-    classFields.clear()
-
-    Object.entries(result.classInfo).filter(([k, v]) => k !== "fields").forEach(([k, v]) => {
-      let value: string[] = []
-      if (!["interfaces", "annotations", "classloader", "superClass"].includes(k)) value.push(v.toString())
-      else value = v as string[]
-      classDetailMap.set(k, value)
-    })
-
-    result.classInfo.fields.forEach(field => {
-      classFields.set(field.name, Object.entries(field).filter(([k, v]) => k !== "name").map(([k, v]) => {
-        if (k === "value") v = JSON.stringify(v)
-        return `${k}: ${v}`
-      }))
-    })
-  }
-})
-getCommonResEffect(classMethodInfoM, body => {
-  classMethodMap.clear()
-  body.results.forEach(result => {
-    if (result.type === "sm" && result.detail == true) {
-      classMethodMap.set(result.methodInfo.methodName, Object.entries(result.methodInfo).filter(([k, v]) => k !== "methodName").map(([k, v]) => {
-        let res = k + ' : '
-        if (!["exceptions", "parameters", "annotations"].includes(k)) res += v.toString()
-        else res += JSON.stringify(v)
-        return res
-      }))
-
-    }
-  })
-})
-getCommonResEffect(dumpM, body => {
-  dumpMap.clear()
-  body.results.forEach(result => {
-    if (result.type === "dump") {
-      result.dumpedClasses.forEach(obj => {
-        dumpMap.set(obj.name, Object.entries(obj).filter(([k, v]) => k !== "name").map(([k, v]) => {
-          let res = k + ' : '
-          if (k === "classloader") res += JSON.stringify(v)
-          else res += v
-          return res
-        }))
+  classLoaderTree.length = 0
+  results.forEach(result => {
+    if (result.type === "classloader" && result.tree) {
+      result.classLoaders.forEach(classloader => {
+        classLoaderTree.push(dfs(classloader, null))
       })
     }
   })
+}, err => {
+  console.error(err)
 })
-
-onBeforeMount(() => {
-  classInfoM.send("INIT")
-  classMethodInfoM.send("INIT")
-  dumpM.send("INIT")
-})
-onUnmounted(() => {
-  urlStatsLoop.close()
-})
-
-const getClassInfo = (data: { classItem: Item; loaderItem: Item }) => {
-  let item = data.classItem
-  let classLoader = data.loaderItem.value === "" ? "" : `-c ${data.loaderItem.value}`
-  classInfoM.send({
-    type: "SUBMIT",
-    value: {
-      action: "exec",
-      command: `sc -d -f ${item.value} ${classLoader}`
-    }
-  })
-  classMethodInfoM.send({
-    type: "SUBMIT",
-    value: {
-      action: "exec",
-      command: `sm -d ${item.value} ${classLoader}`
-    }
-  })
-  dumpM.send({
-    type: "SUBMIT",
-    value: {
-      action: "exec",
-      command: `dump ${item.value} ${classLoader}`
+const getCategorizedByLoaded = () => {
+  tablelResults.length = 0
+  fetchS.baseSubmit(interpret(permachine), {
+    action: "exec",
+    command: "classloader -l"
+  }).then(res => {
+    const result = (res as CommonRes).body.results[0]
+    if (result.type === "classloader" && !result.tree) {
+      result.classLoaders.forEach(loader => {
+        const map = new Map()
+        for (const key in loader) {
+          //@ts-ignore
+          map.set(key, loader[key])
+        }
+        tablelResults.push(map)
+      })
     }
   })
 }
+const getCategorizedByClassType = () => {
+  tableResults.length = 0
+  fetchS.baseSubmit(interpret(permachine), {
+    action: "exec",
+    command: "classloader"
+  }).then(res => {
+    const result = (res as CommonRes).body.results[0]
+    if (result.type === "classloader") {
+      
+      for(const name in result.classLoaderStats){
+        const map = new Map()
+        for(const key in result.classLoaderStats[name]){
+          map.set(key,result.classLoaderStats[name][key])
+        }
+        map.set("name",name)
+        tableResults.push(map)
+      }
+    }
+  })
+}
+onBeforeMount(() => {
+  getAllUrlStats()
+  getClassLoaderTree()
+  getCategorizedByLoaded()
+  getCategorizedByClassType()
+})
 
+const loadClass = () => {
+  let classItem = classVal.value.trim() === "" ? "" : `--load ${classVal.value.trim()}`
+  if (classItem === "") return
+  return fetchS.baseSubmit(interpret(permachine), {
+    action: "exec",
+    command: `classloader ${hashCode.value} ${classItem}`
+  }).then(res => {
+    let result = (res as CommonRes).body.results[0]
+    publicStore().$patch({
+      isSuccess: true,
+      SuccessMessage: JSON.stringify(result)
+    })
+  })
+}
+const loadResource = () => {
+  let resourceItem = resourceVal.value.trim() === "" ? "" : `-r ${resourceVal.value.trim()}`
+  if (resourceItem === "") return
+  return fetchS.baseSubmit(interpret(permachine), {
+    action: "exec",
+    command: `classloader ${hashCode.value} ${resourceItem}`
+  }).then(res => {
+    let result = (res as CommonRes).body.results[0]
+    publicStore().$patch({
+      isSuccess: true,
+      SuccessMessage: JSON.stringify(result)
+    })
+  })
+}
+const getUrlStats = () => {
+  fetchS.baseSubmit(interpret(permachine), {
+    action: "exec",
+    command: `classloader ${hashCode.value}`
+  }).then(res => {
+    let result = (res as CommonRes).body.results[0]
+    if (result.type === "classloader") {
+      selectedClassLoadersUrlStats.value = result.urls
+    }
+  })
+}
+const selectClassLoader = (data: { hash: string, name: string, count: string }) => {
+  loaderCache.value = data
+  getUrlStats()
+
+}
 </script>
 
 <template>
-  <Disclosure>
-    <DisclosureButton class="w-1/3 bg-blue-500 h-10 p-2 rounded mb-2" @click.pervent="getAllClass">
-      all classloader
-    </DisclosureButton>
-    <DisclosurePanel>
-      <li v-for="v in map" :key="v[0]" class="flex flex-col">
-        <CmdResMenu :title="v[0]" :list="['hash', 'parent', 'classes']" :map="v[1]" button-width="w-1/2"></CmdResMenu>
-      </li>
-    </DisclosurePanel>
-
-  </Disclosure>
-  <Disclosure>
-    <DisclosureButton class="w-1/3 bg-blue-500 h-10 p-2 rounded mb-2 " @click="getUrlStats">
-      urlStats
-    </DisclosureButton>
-    <DisclosurePanel>
-      <!-- <div class="flex items-center my-2 w-10/12 justify-end">
-        <div class="mr-4">是否实时更新</div>
-        <PlayStop :play-fn="urlStatsPlay" :stop-fn="urlStatsStop" :default-enabled="urlStatsLoop.isOn()"
-          class="w-10 h-10"></PlayStop>
-      </div> -->
-      <div v-for="v in urlStats" :key="v[0]" class="flex flex-col">
-        <CmdResMenu :title="v[0]" :map="v[1]" button-width="w-1/2" open>
-        </CmdResMenu>
+  <div class="flex flex-col h-full">
+    <div class="flex h-[40vh] mb-2">
+      <div class="input-btn-style w-2/3 h-full p-4 mb-2">
+        <!-- 后置为了让用户能注意到右上角的refreshicon -->
+        <div class="h-[5vh]m mb-4 justify-end flex">
+          <button @click="getClassLoaderTree" class="button-style">refresh</button>
+        </div>
+        <div class="overflow-auto w-full h-[30vh]">
+          <div v-for="(tree,i) in classLoaderTree" :key="i">
+            <Tree :root="tree">
+              <template #meta="{ data, active }">
+                <!-- <div class="flex items-center"> -->
+                <div class="bg-blue-200 p-2 rounded-r rounded-br mr-2" :class='{
+                  "hover:opacity-50 bg-blue-400":active,
+                  "bg-red-400":loaderCache.hash=== data[2]
+                }'>
+                  {{data[1]}}
+                  <!-- </div> -->
+                </div>
+              </template>
+              <template #others="{data}">
+                <div class="items-center flex">
+                  <div class="mr-2">
+                    <span class="bg-blue-500 w-44 px-2 rounded-l text-white">
+                      count :
+                    </span>
+                    <span class="border-gray-300 bg-blue-100 rounded-r flex-1 px-1 border bordergre">
+                      {{data[0]}}
+                    </span>
+                  </div>
+                  <div class="mr-2">
+                    <span class="bg-blue-500 w-44 px-2 rounded-l text-white">
+                      hash :
+                    </span>
+                    <span class="border-gray-300 bg-blue-100 rounded-r flex-1 px-1 border bordergre">
+                      {{data[2]}}
+                    </span>
+                  </div>
+                  <!-- <div class="">count:{{data[0]}}</div> -->
+                  <button @click="selectClassLoader({name:data[1],hash:data[2],count:data[0]})" class="button-style">
+                    select classloader
+                  </button>
+                </div>
+              </template>
+            </Tree>
+          </div>
+        </div>
       </div>
-    </DisclosurePanel>
-  </Disclosure>
-  <Disclosure>
-    <DisclosureButton class="w-1/3 bg-blue-500 h-10 p-2 rounded mb-2  ">
-      classInfo
-    </DisclosureButton>
-    <DisclosurePanel class="border-t-2 py-4 mt-4">
-      <ClassInput :submit-f="getClassInfo"></ClassInput>
-      <div>
-        <template v-if="classDetailMap.size !== 0">
-          <h4 class="grid place-content-center mb-2 text-3xl mt-4">classInfo</h4>
-          <CmdResMenu :map="classFields" title="fields"></CmdResMenu>
-          <CmdResMenu :map="classDetailMap" title="detail"></CmdResMenu>
-        </template>
-        <template v-if="classMethodMap.size !== 0">
-          <CmdResMenu :map="classMethodMap" title="methods"></CmdResMenu>
-        </template>
-        <template v-if="dumpMap.size !== 0">
-          <CmdResMenu :map="dumpMap" title="dump"></CmdResMenu>
-        </template>
+      <div class="input-btn-style w-1/3 ml-2 h-full">
+        <div class=" mb-2 flex items-center justify-end"><button class="button-style"
+            @click="getAllUrlStats">refresh</button></div>
+        <div class="overflow-auto h-[30vh] w-full">
+          <Disclosure>
+            <DisclosureButton class="w-full bg-blue-500 h-10 p-2 rounded mb-2 ">
+              urlStats
+            </DisclosureButton>
+            <DisclosurePanel static>
+              <div class="flex items-center my-2 w-full justify-end">
+              </div>
+              <div v-for="v in urlStats" :key="v[0]" class="flex flex-col">
+                <CmdResMenu :title="v[0]" :map="v[1]" button-width="w-full">
+                </CmdResMenu>
+              </div>
+            </DisclosurePanel>
+          </Disclosure>
+        </div>
       </div>
-    </DisclosurePanel>
-  </Disclosure>
+    </div>
+    <!-- 下面的3格 -->
+    <div class="w-full flex-auto flex h-[40vh]">
+      <div class="input-btn-style w-1/3 mr-2">
+        <div class="mx-auto mb-2 overflow-auto">
+          <span class="bg-blue-500 w-44 px-2 rounded-l text-white">
+            selected classLoader:
+          </span>
+          <span class="border-gray-300 bg-blue-100 rounded-r flex-1 px-1 border bordergre">
+            {{loaderCache.name}}
+          </span>
+        </div>
+        <div class="flex mb-2 w-full">
+          <div class=" cursor-default 
+          flex-auto
+        overflow-hidden rounded-lg bg-white text-left border 
+        focus:outline-none
+        hover:shadow-md transition mr-2">
+            <input class="w-full border-none py-2 pl-3 pr-10 leading-5 text-gray-900 focus-visible:outline-none"
+              v-model="classVal" />
+          </div>
+          <button @click="loadClass" class="button-style">load class</button>
+        </div>
+        <div class="flex mb-2 w-full">
+          <div class=" cursor-default 
+          flex-auto
+        overflow-hidden rounded-lg bg-white text-left border 
+        focus:outline-none
+        hover:shadow-md transition mr-2">
+            <input class="w-full border-none py-2 pl-3 pr-10 leading-5 text-gray-900 focus-visible:outline-none"
+              v-model="resourceVal" />
+          </div>
+          <button @click="loadResource" class="button-style">load resource</button>
+        </div>
+        <Disclosure>
+          <DisclosureButton class="button-style" @click="getUrlStats()">urls</DisclosureButton>
+          <DisclosurePanel as="div" static>
+            <div v-for="(url,i) in selectedClassLoadersUrlStats" :key="i">{{url}}</div>
+          </DisclosurePanel>
+        </Disclosure>
+      </div>
+      <div class="flex flex-col h-full w-2/3">
+        <div class="input-btn-style w-full mr-2 h-1/2">
+          <div class="overflow-auto flex-1 h-full">
+            <div class="flex justify-end mb-2">
+              <button class="button-style" @click="getCategorizedByLoaded">refresh</button>
+            </div>
+            <table class="border-collapse border border-slate-400 mx-auto">
+              <thead>
+                <tr>
+                  <th class="border border-slate-300 p-2" v-for="(v,i) in keylList" :key="i">{{v}}</th>
+                </tr>
+              </thead>
+              <tbody class="">
+                <tr v-for="(map, i) in tablelResults" :key="i">
+                  <td class="border border-slate-300 p-2" v-for="(key,j) in keylList" :key="j">
+                    {{map.get(key)}}
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+        <div class="input-btn-style w-full mr-2 h-1/2">
+          <div class="overflow-auto flex-1 h-full">
+            <div class="flex justify-end mb-2">
+              <button class="button-style" @click="getCategorizedByClassType">refresh</button>
+            </div>
+            <table class="border-collapse border border-slate-400 mx-auto">
+              <thead>
+                <tr>
+                  <th class="border border-slate-300 p-2" v-for="(v,i) in keyList" :key="i">{{v}}</th>
+                </tr>
+              </thead>
+              <tbody class="">
+                <tr v-for="(map, i) in tableResults" :key="i">
+                  <td class="border border-slate-300 p-2" v-for="(key,j) in keyList" :key="j">
+                    {{map.get(key)}}
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
 </template>
 
 <style scoped>

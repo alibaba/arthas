@@ -114,7 +114,7 @@ const resetAllClass = () => {
 
   })
 }
-const tools = [
+const tools:[string,()=>void][] = [
   ["forceGc", forceGc],
   ["shutdown", shutdown],
   ["reset class", resetAllClass]

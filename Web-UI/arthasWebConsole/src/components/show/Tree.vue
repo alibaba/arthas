@@ -26,14 +26,20 @@ onMounted(() => {
 <template>
   <div :class="classList" v-if="root">
     <Disclosure>
-      <DisclosureButton :class="buttonClass" ref="btn">
-        <slot name="meta" :data="root.meta" :active="root.children.length > 0"></slot>
-      </DisclosureButton>
+      <div class="flex items-center mb-2">
+        <DisclosureButton :class="buttonClass" ref="btn">
+          <slot name="meta" :data="root.meta" :active="root.children.length > 0"></slot>
+        </DisclosureButton>
+        <slot name="others" :data="root.meta" ></slot>
+      </div>
       <template v-if='root.children !== undefined && root.children.length > 0'>
         <DisclosurePanel class="pl-4 border-l border-black">
           <Tree v-for="(child, i) in root.children" :key="i" :root="child" :class-list="classList">
             <template #meta="{data, active}">
               <slot name="meta" :data="data" :active="active"></slot>
+            </template>
+            <template #others="{data}">
+              <slot name="others" :data="data" ></slot>
             </template>
           </Tree>
         </DisclosurePanel>

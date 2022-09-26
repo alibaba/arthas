@@ -145,7 +145,8 @@ const stopProfiler = () => fetchS.baseSubmit(fetchM, {
       let reg = /arthas-output\/.*/
       let arr = reg.exec(result.outputFile)
       if(arr &&arr.length > 0) {
-        window.open(arr[0])
+        let url = window.origin +"/"+ arr[0]
+        window.open(url)
       }
     }
     
@@ -157,7 +158,7 @@ const resumeProfiler = () => fetchS.baseSubmit(fetchM, {
 }).then(
   restartInit
 )
-const toOutputDir = ()=>window.open("arthas-output/")
+const toOutputDir = ()=>window.open(window.location.origin +  "/arthas-output/")
 onBeforeMount(async () => {
   publicS.inputVal = ""
   includesVal.clear()

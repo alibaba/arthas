@@ -1,3 +1,4 @@
+
 type SessionAction =
   | "join_session"
   | "init_session"
@@ -98,8 +99,11 @@ type CommandReq = CommonAction<
       | "jvm"
       | "memory"
       | "perfcounter -d"
+      | "classloader"
       | "classloader -a"
+      | "classloader -t"
       | "classloader --url-stat"
+      | `classloader ${string}`
       | `sm -d ${string}`
       | `sm ${string}`
       | `jad ${string}`
@@ -129,13 +133,13 @@ type CommandReq = CommonAction<
 
 type ArthasReq = SessionReq | CommandReq | AsyncReq | PullResults;
 type ThreadStateCount = {
-  "NEW": number,
-  "RUNNABLE": number,
-  "BLOCKED": number,
-  "WAITING": number,
-  "TIMED_WAITING": number,
-  "TERMINATED":number
-}
+  "NEW": number;
+  "RUNNABLE": number;
+  "BLOCKED": number;
+  "WAITING": number;
+  "TIMED_WAITING": number;
+  "TERMINATED": number;
+};
 type StatusResult = {
   type: "status";
   statusCode: 0;
@@ -313,6 +317,13 @@ type MethodInfo = {
   modifier: string;
   returnType: string;
 };
+type ClassLoaderNode = {
+  "hash": string;
+  "loadedCount": number;
+  "name": string;
+  "children": ClassLoaderNode[];
+  "parent": string;
+};
 type ClassInfo = MergeObj<ClassDetailInfo, { fields: ClassField[] }>;
 type TraceNode = {
   children?: TraceNode[];
@@ -387,20 +398,20 @@ type CommandResult = {
   workingDir: string;
 } | {
   all: boolean;
-  threadStateCount:ThreadStateCount;
+  threadStateCount: ThreadStateCount;
   threadStats: ThreadStats[];
   threadInfo: never;
   busyThreads: never;
   type: "thread";
 } | {
-  threadStateCount:never;
+  threadStateCount: never;
   threadInfo: ThreadInfo;
   threadStats: never;
   busyThreads: never;
   type: "thread";
 } | {
   all: boolean;
-  threadStateCount:never;
+  threadStateCount: never;
   busyThreads: BusyThread[];
   threadInfo: never;
   threadStats: never;
@@ -419,14 +430,12 @@ type CommandResult = {
     variability: string;
   }[];
   type: "perfcounter";
-} | {
-  classSet: {
-    classes: string[];
-    classloader: Record<"hash" | "name" | "parent", string>;
-    segment: number;
-  };
-  urlStats: never;
-  type: "classloader";
+  } | {
+    "classLoaderStats": Record<string,Record<"loadedCount"|"numberOfInstance",number>>
+    urlStats: never;
+    urls:never;
+    tree:never;
+    type: "classloader";
 } | {
   type: "classloader";
   urlStats: {
@@ -435,8 +444,22 @@ type CommandResult = {
       usedUrls: string[];
     };
   };
-  command: "classloader --url-stat";
-  classSet: never;
+  "classLoaderStats":never;
+  urls: never;
+  tree: never;
+} | {
+  type: "classloader";
+  urls: never;
+  "classLoaderStats";
+  urlStats:never;
+  classLoaders: ClassLoaderNode[];
+  tree: boolean;
+} | {
+  type: "classloader";
+  urls: string[];
+  urlStats:never;
+  "classLoaderStats":never;
+  tree: never;
 } | {
   classInfo: ClassInfo;
   detailed: true;
