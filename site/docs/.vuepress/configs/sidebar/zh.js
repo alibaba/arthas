@@ -92,7 +92,7 @@ export const sidebarZH = {
         "/doc/idea-plugin.md",
         "/doc/faq.md",
         {
-          text: "用户案列",
+          text: "用户案例",
           link: "https://github.com/alibaba/arthas/issues?q=label%3Auser-case",
         },
         {
