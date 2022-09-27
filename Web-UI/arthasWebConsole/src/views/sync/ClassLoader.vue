@@ -15,7 +15,7 @@ const urlStats = ref([] as [
   string,
   Map<"hash" | "unUsedUrls" | "usedUrls" | "parent", string[]>
 ][])
-const tablelResults = reactive([] as Map<string, string | number>[])
+// const tablelResults = reactive([] as Map<string, string | number>[])
 const tableResults = reactive([] as Map<string, string | number>[])
 const loaderCache = ref({ name: "", hash: "", count: "" } as Record<"name" | "hash" | "count", string>)
 const classLoaderTree = reactive([] as TreeNode[])
@@ -30,9 +30,9 @@ const hashCode = computed(() => {
 const selectedClassLoadersUrlStats = ref([] as string[])
 const classVal = ref("")
 const resourceVal = ref("")
-const keylList = [
-  "name", "loadedCount", "hash", "parent"
-]
+// const keylList = [
+//   "name", "loadedCount", "hash", "parent"
+// ]
 const keyList = [
   "name", "numberOfInstance", "loadedCount"
 ]
@@ -206,6 +206,7 @@ const loadResource = () => {
   })
 }
 const getUrlStats = () => {
+  selectedClassLoadersUrlStats.value.length = 0
   fetchS.baseSubmit(interpret(permachine), {
     action: "exec",
     command: `classloader ${hashCode.value}`
@@ -219,7 +220,9 @@ const getUrlStats = () => {
 const selectClassLoader = (data: { hash: string, name: string, count: string }) => {
   loaderCache.value = data
   getUrlStats()
-
+}
+const resetClassloader = () => {
+  selectClassLoader({ hash: "", name: "", count: "" })
 }
 </script>
 
@@ -229,6 +232,7 @@ const selectClassLoader = (data: { hash: string, name: string, count: string }) 
       <div class="input-btn-style w-2/3 h-full p-4 mb-2 flex flex-col">
         <!-- 后置为了让用户能注意到右上角的refreshicon -->
         <div class="h-[5vh]m mb-4 justify-end flex">
+          <button @click="resetClassloader" class="button-style mr-2">reset</button>
           <button @click="getClassLoaderTree" class="button-style">refresh</button>
         </div>
 
@@ -264,7 +268,8 @@ const selectClassLoader = (data: { hash: string, name: string, count: string }) 
                     </span>
                   </div>
                   <!-- <div class="">count:{{data[0]}}</div> -->
-                  <button @click="selectClassLoader({name:data[1],hash:data[2],count:data[0]})" class="button-style">
+                  <button @click="selectClassLoader({name:data[1],hash:data[2],count:data[0]})" class="button-style"
+                    v-if="data[2]!== 'null'">
                     select classloader
                   </button>
                 </div>
@@ -294,7 +299,7 @@ const selectClassLoader = (data: { hash: string, name: string, count: string }) 
       </div>
     </div>
     <!-- 下面的3格 -->
-    <div class="w-full flex-auto flex h-[40vh]">
+    <div class="w-full flex-auto flex h-[40vh] mt-2">
       <div class="input-btn-style w-1/3 mr-2 overflow-auto">
         <div class="mb-2">
           <div class="overflow-auto">
@@ -322,39 +327,38 @@ const selectClassLoader = (data: { hash: string, name: string, count: string }) 
             </span>
           </div>
         </div>
-
-        <div class="flex mb-2 w-full">
-          <div class=" cursor-default 
+        <template v-if="loaderCache.hash.trim() !== ''">
+          <div class="flex mb-2 w-full">
+            <div class=" cursor-default 
           flex-auto
         overflow-hidden rounded-lg bg-white text-left border 
         focus:outline-none
         hover:shadow-md transition mr-2">
-            <input class="w-full border-none py-2 pl-3 pr-10 leading-5 text-gray-900 focus-visible:outline-none"
-              v-model="classVal" />
+              <input class="w-full border-none py-2 pl-3 pr-10 leading-5 text-gray-900 focus-visible:outline-none"
+                v-model="classVal" />
+            </div>
+            <button @click="loadClass" class="button-style">load class</button>
           </div>
-          <button @click="loadClass" class="button-style">load class</button>
-        </div>
-        <div class="flex mb-2 w-full">
-          <div class=" cursor-default 
+          <div class="flex mb-2 w-full">
+            <div class=" cursor-default 
           flex-auto
         overflow-hidden rounded-lg bg-white text-left border 
         focus:outline-none
         hover:shadow-md transition mr-2">
-            <input class="w-full border-none py-2 pl-3 pr-10 leading-5 text-gray-900 focus-visible:outline-none"
-              v-model="resourceVal" />
+              <input class="w-full border-none py-2 pl-3 pr-10 leading-5 text-gray-900 focus-visible:outline-none"
+                v-model="resourceVal" />
+            </div>
+            <button @click="loadResource" class="button-style">load resource</button>
           </div>
-          <button @click="loadResource" class="button-style">load resource</button>
-        </div>
-        <!-- <Disclosure> -->
-          <!-- <DisclosureButton class="button-style" @click="getUrlStats()">urls</DisclosureButton>
-          <DisclosurePanel as="div" static> -->
-          <div class="flex justify-between"><h3 class="text-xl flex-1 flex justify-center">urls</h3><button class="button-style" @click="getUrlStats">refresh</button></div>
+          <div class="flex justify-between">
+            <h3 class="text-xl flex-1 flex justify-center">urls</h3><button class="button-style"
+              @click="getUrlStats">refresh</button>
+          </div>
           <ul class="overflow-auto h-[20vh] mt-2">
-            
+
             <li v-for="(url,i) in selectedClassLoadersUrlStats" :key="i" class="bg-blue-200 mb-2 p-2">{{url}}</li>
           </ul>
-          <!-- </DisclosurePanel>
-        </Disclosure> -->
+        </template>
       </div>
       <div class="flex flex-col h-full w-2/3">
         <!-- <div class="input-btn-style w-full mr-2 h-1/2">
