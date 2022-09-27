@@ -167,7 +167,7 @@ const submit = async (data: { classItem: Item, methodItem: Item, conditon: strin
     <MethodInput :submit-f="submit" nexpress ncondition>
       <template #others>
         <div class="relative group ml-2">
-          <div class="input-btn-style">event</div>
+          <div class="input-btn-style">watching point</div>
           <div class="h-0 group-hover:h-auto group-focus-within:h-auto absolute overflow-clip transition z-10 top-full">
             <SwitchGroup v-for="(mode,i) in modereflist" :key="i">
               <div class="flex input-btn-style ml-2 focus-within:outline outline-1 justify-between m-2">
