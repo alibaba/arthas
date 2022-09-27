@@ -13,12 +13,9 @@ export default defineConfig({
       "vue": "vue/dist/vue.esm-bundler.js"
     }
   },
+  base:'./',
     server: {
       proxy: {
-        // '/api': {
-        //   target: 'http://localhost:8888',
-        //   changeOrigin: true,
-        // },
         '/api': {
           target: 'http://localhost:8563',
           changeOrigin: true,

@@ -5,13 +5,15 @@
 * Through clicking the button in the top right corner, you can quickly get or clear sessionId
 * When you are in trouble, refreshing the page is a good way
 * Some features must be used with sessionId. but some features must be used without sessionId
+* In classloader module, you must selecte a classloader before using classloader to load class or resourse
 
 ## develop
 
 * Strongly recommand devloping with vscode
-* TS + VUE3 + Tailwindcss + xstate
-* You can view the http requesting process with xstate
+* TS + Vue3 + Tailwindcss + xstate
+* You can view the Graphical http requesting process with xstate
 * The final bundle will be placed in `../target/static` 
+  
 
 ### notice
 

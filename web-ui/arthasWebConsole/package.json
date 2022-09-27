@@ -3,11 +3,9 @@
   "private": false,
   "version": "0.1.4",
   "scripts": {
-    "dev": "vite --port 8000 --base=/ui/",
-    "build": "vue-tsc --noEmit && vite build --base=./",
-    "preview": "vite preview --base=./",
-    "test": "jest",
-    "prepare": "cd ../../ && husky install Web-UI/arthasWebConsole/.husky"
+    "dev": "vite --port 8000",
+    "build": "vue-tsc --noEmit && vite build",
+    "preview": "vite preview"
   },
   "dependencies": {
     "@headlessui/vue": "^1.6.6",
@@ -28,7 +26,6 @@
     "@types/node": "^18.7.2",
     "@vitejs/plugin-vue": "^2.3.3",
     "autoprefixer": "^10.4.7",
-    "husky": "^8.0.1",
     "postcss": "^8.4.14",
     "tailwindcss": "^3.1.4",
     "typescript": "^4.7.4",

@@ -7,14 +7,6 @@ module.exports = {
   theme: {
     extend: {
       keyframes: {
-        // "animate-spin-rev": {
-        //   '0%': {
-        //     transform: 'rotate(0deg)'
-        //   },
-        //   '100%': {
-        //     transform: 'rotate(-360deg)'
-        //   }
-        // }
       },
       animation: {
         'spin-rev-pause':'0.3s linear 0s infinite reverse both pause spin',
