@@ -8,10 +8,10 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>web-console</artifactId>
+    <artifactId>web-ui</artifactId>
     <packaging>pom</packaging>
 
-    <name>web-console</name>
+    <name>web-ui</name>
     <!-- FIXME change it to the project's website -->
     <!--    <url>http://www.example.com</url>-->
 
@@ -27,7 +27,7 @@
     </properties>
 
     <build>
-        <finalName>web-console</finalName>
+        <finalName>web-ui</finalName>
 
         <!-- lock down plugins versions to avoid using Maven defaults (may be moved to parent pom) -->
         <plugins>
