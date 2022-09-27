@@ -67,6 +67,9 @@ const routes: RouteRecordRaw[] = [
       },{
         path:"ognl",
         component:()=>import("@/views/sync/Ognl.vue")
+      },{
+        path:"classInfo",
+        component:()=>import("@/views/sync/ClassInfo.vue")
       }
     ],
   },

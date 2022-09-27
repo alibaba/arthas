@@ -4,8 +4,8 @@
   "version": "0.1.4",
   "scripts": {
     "dev": "vite --port 8000 --base=/ui/",
-    "build": "vue-tsc --noEmit && vite build --base=/ui/",
-    "preview": "vite preview --base=/ui/",
+    "build": "vue-tsc --noEmit && vite build --base=./",
+    "preview": "vite preview --base=./",
     "test": "jest",
     "prepare": "cd ../../ && husky install Web-UI/arthasWebConsole/.husky"
   },

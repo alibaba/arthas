@@ -4,9 +4,9 @@ const routes: { cmd: string, url: string }[] = [
   {
     cmd: "thread",
     url: "thread"
-  // }, {
-  //   cmd: "memory",
-  //   url: "memory"
+  }, {
+    cmd: "classInfo",
+    url: "classInfo"
   // }, {
   //   cmd: "perfcounter",
   //   url: "perfcounter"

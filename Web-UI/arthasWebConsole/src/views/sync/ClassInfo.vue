@@ -2,6 +2,11 @@
 import { publicStore } from '@/stores/public';
 import { useMachine } from '@xstate/vue';
 import { reactive } from 'vue';
+import ClassInput from '@/components/input/ClassInput.vue';
+import CmdResMenu from '@/components/show/CmdResMenu.vue';
+import { fetchStore } from '@/stores/fetch';
+import { interpret } from 'xstate';
+import permachine from '@/machines/perRequestMachine';
 const classInfoM = useMachine(machine)
 const classMethodInfoM = useMachine(machine)
 const dumpM = useMachine(machine)
@@ -10,28 +15,30 @@ const classFields = reactive(new Map<string, string[]>())
 const classMethodMap = reactive(new Map<string, string[]>())
 const dumpMap = reactive(new Map<string, string[]>())
 const { getCommonResEffect } = publicStore()
-getCommonResEffect(classInfoM, body => {
-  const result = body.results[0]
-  if (result.type === "sc" && result.detailed === true && result.withField === true) {
+const publicS = publicStore()
+const fetchS = fetchStore()
+// getCommonResEffect(classInfoM, body => {
+//   const result = body.results[0]
+//   if (result.type === "sc" && result.detailed === true && result.withField === true) {
 
-    classDetailMap.clear()
-    classFields.clear()
+//     classDetailMap.clear()
+//     classFields.clear()
 
-    Object.entries(result.classInfo).filter(([k, v]) => k !== "fields").forEach(([k, v]) => {
-      let value: string[] = []
-      if (!["interfaces", "annotations", "classloader", "superClass"].includes(k)) value.push(v.toString())
-      else value = v as string[]
-      classDetailMap.set(k, value)
-    })
+//     Object.entries(result.classInfo).filter(([k, v]) => k !== "fields").forEach(([k, v]) => {
+//       let value: string[] = []
+//       if (!["interfaces", "annotations", "classloader", "superClass"].includes(k)) value.push(v.toString())
+//       else value = v as string[]
+//       classDetailMap.set(k, value)
+//     })
 
-    result.classInfo.fields.forEach(field => {
-      classFields.set(field.name, Object.entries(field).filter(([k, v]) => k !== "name").map(([k, v]) => {
-        if (k === "value") v = JSON.stringify(v)
-        return `${k}: ${v}`
-      }))
-    })
-  }
-})
+//     result.classInfo.fields.forEach(field => {
+//       classFields.set(field.name, Object.entries(field).filter(([k, v]) => k !== "name").map(([k, v]) => {
+//         if (k === "value") v = JSON.stringify(v)
+//         return `${k}: ${v}`
+//       }))
+//     })
+//   }
+// })
 getCommonResEffect(classMethodInfoM, body => {
   classMethodMap.clear()
   body.results.forEach(result => {
@@ -64,27 +71,85 @@ getCommonResEffect(dumpM, body => {
 const getClassInfo = (data: { classItem: Item; loaderItem: Item }) => {
   let item = data.classItem
   let classLoader = data.loaderItem.value === "" ? "" : `-c ${data.loaderItem.value}`
-  classInfoM.send({
-    type: "SUBMIT",
-    value: {
-      action: "exec",
-      command: `sc -d -f ${item.value} ${classLoader}`
+
+  classDetailMap.clear()
+  classFields.clear()
+
+  fetchS.baseSubmit(interpret(permachine), {
+    action: "exec",
+    command: `sc -d -f ${item.value} ${classLoader}`
+  }).then(
+    res => {
+      const result = (res as CommonRes).body.results[0]
+      if (result.type === "sc" && result.detailed === true && result.withField === true) {
+        Object.entries(result.classInfo).filter(([k, v]) => k !== "fields").forEach(([k, v]) => {
+          let value: string[] = []
+          if (!["interfaces", "annotations", "classloader", "superClass"].includes(k)) value.push(v.toString())
+          else value = v as string[]
+          classDetailMap.set(k, value)
+        })
+
+        result.classInfo.fields.forEach(field => {
+          classFields.set(field.name, Object.entries(field).filter(([k, v]) => k !== "name").map(([k, v]) => {
+            if (k === "value") v = JSON.stringify(v)
+            return `${k}: ${v}`
+          }))
+        })
+      }
+    }
+  )
+  fetchS.baseSubmit(interpret(permachine), {
+    action: "exec",
+    command: `sm -d ${item.value} ${classLoader}`
+  }).then(res => {
+    const result = (res as CommonRes).body.results[0]
+    if (result.type === "sm" && result.detail == true) {
+      classMethodMap.set(result.methodInfo.methodName, Object.entries(result.methodInfo).filter(([k, v]) => k !== "methodName").map(([k, v]) => {
+        let res = k + ' : '
+        if (!["exceptions", "parameters", "annotations"].includes(k)) res += v.toString()
+        else res += JSON.stringify(v)
+        return res
+      }))
+
     }
   })
-  classMethodInfoM.send({
-    type: "SUBMIT",
-    value: {
-      action: "exec",
-      command: `sm -d ${item.value} ${classLoader}`
+  fetchS.baseSubmit(interpret(permachine), {
+    action: "exec",
+    command: `dump ${item.value} ${classLoader}`
+  }).then(res => {
+    const result = (res as CommonRes).body.results[0]
+    if (result.type === "dump") {
+      result.dumpedClasses.forEach(obj => {
+        dumpMap.set(obj.name, Object.entries(obj).filter(([k, v]) => k !== "name").map(([k, v]) => {
+          let res = k + ' : '
+          if (k === "classloader") res += JSON.stringify(v)
+          else res += v
+          return res
+        }))
+      })
     }
   })
-  dumpM.send({
-    type: "SUBMIT",
-    value: {
-      action: "exec",
-      command: `dump ${item.value} ${classLoader}`
-    }
-  })
+  // classInfoM.send({
+  //   type: "SUBMIT",
+  //   value: {
+  //     action: "exec",
+  //     command: `sc -d -f ${item.value} ${classLoader}`
+  //   }
+  // })
+  // classMethodInfoM.send({
+  //   type: "SUBMIT",
+  //   value: {
+  //     action: "exec",
+  //     command: `sm -d ${item.value} ${classLoader}`
+  //   }
+  // })
+  // dumpM.send({
+  //   type: "SUBMIT",
+  //   value: {
+  //     action: "exec",
+  //     command: `dump ${item.value} ${classLoader}`
+  //   }
+  // })
 }
 </script>
 

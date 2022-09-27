@@ -206,7 +206,7 @@ const loadResource = () => {
   })
 }
 const getUrlStats = () => {
-  selectedClassLoadersUrlStats.value.length = 0
+  selectedClassLoadersUrlStats.value = []
   fetchS.baseSubmit(interpret(permachine), {
     action: "exec",
     command: `classloader ${hashCode.value}`
@@ -229,7 +229,10 @@ const resetClassloader = () => {
 <template>
   <div class="flex flex-col h-full justify-between">
     <div class="flex h-[40vh]">
-      <div class="input-btn-style w-2/3 h-full p-4 mb-2 flex flex-col">
+      <div class="input-btn-style h-full p-4 mb-2 flex flex-col transition" :class='{
+        "w-full":loaderCache.hash === "",
+        "w-2/3":loaderCache.hash !==""
+      }'>
         <!-- 后置为了让用户能注意到右上角的refreshicon -->
         <div class="h-[5vh]m mb-4 justify-end flex">
           <button @click="resetClassloader" class="button-style mr-2">reset</button>
@@ -278,87 +281,96 @@ const resetClassloader = () => {
           </div>
         </div>
       </div>
-      <div class="input-btn-style w-1/3 ml-2 h-full">
-        <div class=" mb-2 flex items-center justify-end"><button class="button-style"
-            @click="getAllUrlStats">refresh</button></div>
-        <div class="overflow-auto h-[30vh] w-full">
-          <Disclosure>
-            <DisclosureButton class="w-full bg-blue-500 h-10 p-2 rounded mb-2 ">
-              urlStats
-            </DisclosureButton>
-            <DisclosurePanel static>
-              <div class="flex items-center my-2 w-full justify-end">
+
+      <div class="w-1/3 ml-2 overflow-hidden transition" :class='{
+        "w-0":loaderCache.hash === "",
+        "input-btn-style":loaderCache.hash !==""
+      }'>
+        <div class="overflow-auto h-full">
+          <div class="mb-2">
+            <div class="overflow-auto">
+              <span class="bg-blue-500 w-44 px-2 rounded-l text-white">
+                selected classLoader:
+              </span>
+              <span class="border-gray-300 bg-blue-100 rounded-r flex-1 px-1 border bordergre">
+                {{loaderCache.name}}
+              </span>
+            </div>
+            <div class="mr-2">
+              <span class="bg-blue-500 w-44 px-2 rounded-l text-white">
+                loadedcount :
+              </span>
+              <span class="border-gray-300 bg-blue-100 rounded-r flex-1 px-1 border bordergre">
+                {{loaderCache.count}}
+              </span>
+            </div>
+            <div class="mr-2">
+              <span class="bg-blue-500 w-44 px-2 rounded-l text-white">
+                hash :
+              </span>
+              <span class="border-gray-300 bg-blue-100 rounded-r flex-1 px-1 border bordergre">
+                {{loaderCache.hash}}
+              </span>
+            </div>
+          </div>
+          <template v-if="loaderCache.hash.trim() !== ''">
+            <div class="flex mb-2 w-full">
+              <div class=" cursor-default 
+          flex-auto
+        overflow-hidden rounded-lg bg-white text-left border 
+        focus:outline-none
+        hover:shadow-md transition mr-2">
+                <input class="w-full border-none py-2 pl-3 pr-10 leading-5 text-gray-900 focus-visible:outline-none"
+                  v-model="classVal" />
               </div>
-              <div v-for="v in urlStats" :key="v[0]" class="flex flex-col">
-                <CmdResMenu :title="v[0]" :map="v[1]" button-width="w-full">
-                </CmdResMenu>
+              <button @click="loadClass" class="button-style">load class</button>
+            </div>
+            <div class="flex mb-2 w-full">
+              <div class=" cursor-default 
+          flex-auto
+        overflow-hidden rounded-lg bg-white text-left border 
+        focus:outline-none
+        hover:shadow-md transition mr-2">
+                <input class="w-full border-none py-2 pl-3 pr-10 leading-5 text-gray-900 focus-visible:outline-none"
+                  v-model="resourceVal" />
               </div>
-            </DisclosurePanel>
-          </Disclosure>
+              <button @click="loadResource" class="button-style">load resource</button>
+            </div>
+            <div class="flex justify-between">
+              <h3 class="text-xl flex-1 flex justify-center">urls</h3><button class="button-style"
+                @click="getUrlStats">refresh</button>
+            </div>
+            <ul class="mt-2">
+
+              <li v-for="(url,i) in selectedClassLoadersUrlStats" :key="i" class="bg-blue-200 mb-2 p-2">{{url}}</li>
+            </ul>
+          </template>
         </div>
       </div>
     </div>
     <!-- 下面的3格 -->
     <div class="w-full flex-auto flex h-[40vh] mt-2">
-      <div class="input-btn-style w-1/3 mr-2 overflow-auto">
-        <div class="mb-2">
-          <div class="overflow-auto">
-            <span class="bg-blue-500 w-44 px-2 rounded-l text-white">
-              selected classLoader:
-            </span>
-            <span class="border-gray-300 bg-blue-100 rounded-r flex-1 px-1 border bordergre">
-              {{loaderCache.name}}
-            </span>
+      <div class="input-btn-style w-1/3 mr-2 h-full flex">
+        <div class="overflow-auto h-ful w-full">
+          <div class=" mb-2 flex items-center justify-end">
+            <button class="button-style" @click="getAllUrlStats">refresh</button>
           </div>
-          <div class="mr-2">
-            <span class="bg-blue-500 w-44 px-2 rounded-l text-white">
-              loadedcount :
-            </span>
-            <span class="border-gray-300 bg-blue-100 rounded-r flex-1 px-1 border bordergre">
-              {{loaderCache.count}}
-            </span>
-          </div>
-          <div class="mr-2">
-            <span class="bg-blue-500 w-44 px-2 rounded-l text-white">
-              hash :
-            </span>
-            <span class="border-gray-300 bg-blue-100 rounded-r flex-1 px-1 border bordergre">
-              {{loaderCache.hash}}
-            </span>
+          <div class="overflow-auto h-ful w-full">
+            <Disclosure>
+              <DisclosureButton class="w-full bg-blue-500 h-10 p-2 rounded mb-2 ">
+                urlStats
+              </DisclosureButton>
+              <DisclosurePanel static>
+                <div class="flex items-center my-2 w-full justify-end">
+                </div>
+                <div v-for="v in urlStats" :key="v[0]" class="flex flex-col">
+                  <CmdResMenu :title="v[0]" :map="v[1]" button-width="w-full">
+                  </CmdResMenu>
+                </div>
+              </DisclosurePanel>
+            </Disclosure>
           </div>
         </div>
-        <template v-if="loaderCache.hash.trim() !== ''">
-          <div class="flex mb-2 w-full">
-            <div class=" cursor-default 
-          flex-auto
-        overflow-hidden rounded-lg bg-white text-left border 
-        focus:outline-none
-        hover:shadow-md transition mr-2">
-              <input class="w-full border-none py-2 pl-3 pr-10 leading-5 text-gray-900 focus-visible:outline-none"
-                v-model="classVal" />
-            </div>
-            <button @click="loadClass" class="button-style">load class</button>
-          </div>
-          <div class="flex mb-2 w-full">
-            <div class=" cursor-default 
-          flex-auto
-        overflow-hidden rounded-lg bg-white text-left border 
-        focus:outline-none
-        hover:shadow-md transition mr-2">
-              <input class="w-full border-none py-2 pl-3 pr-10 leading-5 text-gray-900 focus-visible:outline-none"
-                v-model="resourceVal" />
-            </div>
-            <button @click="loadResource" class="button-style">load resource</button>
-          </div>
-          <div class="flex justify-between">
-            <h3 class="text-xl flex-1 flex justify-center">urls</h3><button class="button-style"
-              @click="getUrlStats">refresh</button>
-          </div>
-          <ul class="overflow-auto h-[20vh] mt-2">
-
-            <li v-for="(url,i) in selectedClassLoadersUrlStats" :key="i" class="bg-blue-200 mb-2 p-2">{{url}}</li>
-          </ul>
-        </template>
       </div>
       <div class="flex flex-col h-full w-2/3">
         <!-- <div class="input-btn-style w-full mr-2 h-1/2">
