@@ -38,7 +38,7 @@ onBeforeUnmount(() => {
         </div>
       </div>
     </div>
-      <err-dialog />
+      <err-dialog v-if="publicS.isErr"/>
       <success-dialog />
       <input-dialog v-if="publicS.isInput " />
       <warn-dialog v-if="publicS.isWarn"></warn-dialog>

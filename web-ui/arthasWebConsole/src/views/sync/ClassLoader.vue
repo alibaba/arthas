@@ -318,7 +318,7 @@ const resetClassloader = () => {
               <div class=" cursor-default 
           flex-auto
         overflow-hidden rounded-lg bg-white text-left border 
-        focus:outline-none
+        focus-within:outline outline-2
         hover:shadow-md transition mr-2">
                 <input class="w-full border-none py-2 pl-3 pr-10 leading-5 text-gray-900 focus-visible:outline-none"
                   v-model="classVal" />
@@ -329,7 +329,7 @@ const resetClassloader = () => {
               <div class=" cursor-default 
           flex-auto
         overflow-hidden rounded-lg bg-white text-left border 
-        focus:outline-none
+        focus-within:outline outline-2
         hover:shadow-md transition mr-2">
                 <input class="w-full border-none py-2 pl-3 pr-10 leading-5 text-gray-900 focus-visible:outline-none"
                   v-model="resourceVal" />
@@ -340,9 +340,9 @@ const resetClassloader = () => {
               <h3 class="text-xl flex-1 flex justify-center">urls</h3><button class="button-style"
                 @click="getUrlStats">refresh</button>
             </div>
-            <ul class="mt-2">
-
-              <li v-for="(url,i) in selectedClassLoadersUrlStats" :key="i" class="bg-blue-200 mb-2 p-2">{{url}}</li>
+            <ul class="mt-2 w-full flex flex-col">
+              <li v-for="(url,i) in selectedClassLoadersUrlStats" :key="i"
+                class="bg-blue-200 mb-2 p-2 break-all w-full">{{url}}</li>
             </ul>
           </template>
         </div>

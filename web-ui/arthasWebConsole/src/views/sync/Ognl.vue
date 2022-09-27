@@ -59,7 +59,7 @@ const getSource = () => {
     <label class="flex flex-1 items-center"> ognl:
       <div class="flex-1 flex justify-center ">
         <input type="text" v-model="express"
-          class="border focus-visible:outline-none  m-2 w-full rounded-lg p-2 hover:shadow-md focus-visible:shadow-md focus:shadow-md transition">
+          class="border focus-visible:outline-none  mx-2 w-full rounded-lg p-2 hover:shadow-md focus-visible:shadow-md focus:shadow-md transition">
       </div>
       <button class="input-btn-style mr-2" @click.prevent="setDepth">depth:{{depth}}</button>
       <button class="input-btn-style mr-2" @click.prevent="setClassLoader" v-if="hashcode === ''">ClassLoaderClass:{{classloaderName}}</button>

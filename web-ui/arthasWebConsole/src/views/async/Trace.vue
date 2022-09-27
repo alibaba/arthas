@@ -153,7 +153,7 @@ const submit = (data: { classItem: Item, methodItem: Item, conditon: string, cou
   <MethodInput :submit-f="submit" class="mb-2" ncondition ncount>
     <template #others>
 
-      <SwitchGroup as="div" class="input-btn-style flex ml-2 focus-within:ring ring-blue-500">
+      <SwitchGroup as="div" class="input-btn-style flex ml-2 focus-within:outline outline-2 ring-blue-500">
         <SwitchLabel>skipJDKMethod:</SwitchLabel>
         <Switch v-model="enabled" :class="enabled ? 'bg-blue-400' : 'bg-gray-500'"
           class="relative items-center inline-flex h-6 w-12 shrink-0 cursor-pointer rounded-full border-transparent transition-colors ease-in-out focus:outline-none mx-2">

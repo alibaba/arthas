@@ -66,7 +66,9 @@ const blurF = (event:Event)=>{
       <div
         class="relative w-full cursor-default 
         overflow-hidden rounded-lg bg-white text-left border 
-        focus:outline-none
+        focus-within:outline
+        outline-2
+        min-w-[15rem]
         hover:shadow-md transition">
         <ComboboxInput class="w-full border-none py-2 pl-3 pr-10 leading-5 text-gray-900 focus-visible:outline-none" @change="changeF" @focus.prevent="optionsInit" @blur="blurF"
           :displayValue="(item) => (item as Item).name" />

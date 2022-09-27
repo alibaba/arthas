@@ -41,7 +41,7 @@ const routes: { cmd: string, url: string }[] = [
 <template>
   <div class="h-[90vh] overflow-auto flex">
     <SelectCmd :routes="routes"></SelectCmd>
-    <div class="p-2 overflow-y-scroll w-full flex flex-col flex-1">
+    <div class="p-2 overflow-y-scroll w-full flex flex-col flex-1 pointer-events-auto">
       <RouterView></RouterView>
     </div>
   </div>

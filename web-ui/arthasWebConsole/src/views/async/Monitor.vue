@@ -68,8 +68,8 @@ type KMD = | keyof MonitorData
 //   "total",
 // ]
 const modelist: { name: string, value: string }[] = [
-  { name: "before method invoke", value: "-b" },
-  { name: "when method exits", value: "" }
+  { name: "before", value: "-b" },
+  { name: "finish", value: "" }
 ]
 const mode = ref(modelist[1])
 

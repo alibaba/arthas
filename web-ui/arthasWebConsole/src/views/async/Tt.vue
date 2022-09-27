@@ -68,7 +68,7 @@ const keyList: tfkey[] = [
   // "throw",
 ]
 const tableResults = reactive([] as Map<string, string>[])
-const timeFragmentSet = new Set()
+// const timeFragmentSet = new Set()
 type tfkey = keyof TimeFragment
 
 const chartContext: {
@@ -185,10 +185,10 @@ getPullResultsEffect(
     if (result.type === "tt") {
       result.timeFragmentList.forEach(tf => {
         console.log(tf.index)
-        if(!timeFragmentSet.has(tf.index)){
-          timeFragmentSet.add(tf.index)
+        // if(!timeFragmentSet.has(tf.index)){
+        //   timeFragmentSet.add(tf.index)
           tableResults.unshift(transform(tf))
-        }
+        // }
         
       })
     }
@@ -301,7 +301,7 @@ const searchTt = () => {
   <div class="flex items-center border-t-2 pt-4 mt-4 justify-between">
     <div class="mr-2">searching records</div>
     <div
-      class="flex-1 cursor-default overflow-hidden rounded-lg bg-white text-left border focus:outline-none hover:shadow-md transition">
+      class="flex-1 overflow-hidden rounded-lg bg-white text-left border focus-within:outline outline-2 hover:shadow-md transition">
       <input type="text" v-model="inputVal"
         class="w-full border-none py-2 pl-3 pr-10 h-full text-gray-900  focus:outline-none">
     </div>

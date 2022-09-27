@@ -13,6 +13,7 @@ import { publicStore } from '@/stores/public';
 import TodoList from '@/components/input/TodoList.vue';
 import { fetchStore } from '@/stores/fetch';
 import { interpret } from 'xstate';
+import { rejects } from 'assert';
 const fetchM = useInterpret(permachine)
 const publicS = publicStore()
 const fetchS = fetchStore()
@@ -47,6 +48,10 @@ const getStatusLoop = fetchS.getPollingLoop(() => {
           profilerStatus.value.message = result.executeResult
         }
       }
+    },
+    reject=>{
+      console.log("ji")
+      getStatusLoop.close()
     }
   )
 }, {

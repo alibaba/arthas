@@ -6,7 +6,7 @@ import { publicStore } from '@/stores/public';
 import { onBeforeMount, ref } from 'vue';
 import { interpret } from 'xstate';
 import AutoComplete from './AutoComplete.vue';
-const { label = "inputClassName", ncondition = false, nexpress = false, ncount = false } = defineProps<{
+const { label = "class", ncondition = false, nexpress = false, ncount = false } = defineProps<{
   label?: string,
   nexpress?: boolean,
   ncondition?: boolean,
@@ -18,7 +18,7 @@ const { label = "inputClassName", ncondition = false, nexpress = false, ncount =
     count: number
   }) => void
 }>()
-const { getCommonResEffect } = publicStore()
+// const { getCommonResEffect } = publicStore()
 // const searchClass = useMachine(machine)
 const fetchS = fetchStore()
 const optionClass = ref([] as { name: string, value: string }[])
@@ -95,7 +95,7 @@ const filterfn = (_: any, item: Item) => true
 <template>
   <AutoComplete :label="label" :option-items="optionClass" :input-fn="changeClass" :filter-fn="filterfn"
     v-slot="slotClass">
-    <AutoComplete label="input Method" :option-items="optionMethod"
+    <AutoComplete label="method" :option-items="optionMethod"
       :input-fn="(value: string) => changeMethod(slotClass.selectItem.value as string, value)" :filter-fn="filterfn"
       v-slot="slotMethod">
       <button v-if="nexpress" class="input-btn-style ml-2" @click="setExpress">express:{{express}}</button>

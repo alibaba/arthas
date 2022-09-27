@@ -16,13 +16,14 @@ const getEffect = (
 export const publicStore = defineStore("public", { // Public项目唯一id
   state: () => ({
     userMsg: {},
+    // 当初设计不好，应该写成setter，loop的意外错误关闭得挂到errdialog了。。。
     isErr: false,
     /**
      * isInput 是对input组件的锁，要使用inputVal，调用inputval的组件还要自定义一个锁
      */
     isInput: false,
     inputVal: "",
-    ErrMessage: "应该是出现bug",
+    ErrMessage: "bug!!!",
     isSuccess: false,
     SuccessMessage: "bug!!!",
     isWarn: false,

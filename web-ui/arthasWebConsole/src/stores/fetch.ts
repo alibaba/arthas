@@ -11,13 +11,30 @@ const getEffect = (
   fn: (res: ArthasRes) => void,
 ) =>
   watchEffect(() => {
+    // console.dir(M.state.value.context.response)
     if (M.state.value.context.response) {
       const response = M.state.value.context.response;
+      //防止触发额外的副作用,因为输入时context会改变，导致多执行一次effect。。。
+      M.state.value.context.response = undefined;
       fn(response as ArthasRes);
     }
   });
 type Machine = ReturnType<typeof useMachine>;
 type MachineService = ReturnType<typeof useInterpret>;
+type PollingLoop = {
+  open(): void;
+  close(): void;
+  isOn(): boolean;
+  invoke(): void;
+};
+const nullLoop: PollingLoop = {
+  open() {},
+  close() {},
+  isOn() {
+    return false;
+  },
+  invoke() {},
+};
 export const fetchStore = defineStore("fetch", {
   state: () => ({
     sessionId: "",
@@ -31,6 +48,10 @@ export const fetchStore = defineStore("fetch", {
     statusZeroCount: 0,
     // 所有用pollingLoop都要
     jobRunning: false,
+    // 对于 pullresults可能会拉同一个结果很多次
+    jobIdSet: new Set<string>(),
+    //由于轮询只会轮询一个命令，可以直接挂载当前的轮询机
+    curPolling: nullLoop,
   }),
   getters: {
     getRequest: (state) =>
@@ -82,7 +103,7 @@ export const fetchStore = defineStore("fetch", {
       let id = -1;
       const { step, globalIntrupt } = options;
       const that = this;
-      return {
+      const pollingLoop = {
         // 自动轮询的可能会被错误打断
         open() {
           if (!this.isOn()) {
@@ -91,6 +112,7 @@ export const fetchStore = defineStore("fetch", {
             id = setInterval(
               (() => {
                 if (
+                  //isErr是瞬时的，点击了就会变回去。。。
                   publicStore().isErr || (!that.jobRunning && globalIntrupt)
                 ) {
                   this.close();
@@ -117,9 +139,11 @@ export const fetchStore = defineStore("fetch", {
          * 无条件调用传入的hander
          */
         invoke() {
-          hander()
-        }
+          hander();
+        },
       };
+      this.curPolling = pollingLoop;
+      return pollingLoop;
     },
     pullResultsLoop(pollingM: Machine) {
       return this.getPollingLoop(
@@ -161,7 +185,16 @@ export const fetchStore = defineStore("fetch", {
       return this.getCommonResEffect(M, (body: CommonRes["body"]) => {
         if (body.results.length > 0) {
           body.results.forEach((result) => {
+            // 对于既不是状态形状
+            // console.dir(result)
+            // if(result.type !=="status") {
+            //   console.log("st",result.jobId)
+            //   if(!this.jobIdSet.has(result.jobId.toString())) {
+            // 错误已经在machine那里拦截了
             fn(result);
+            //     this.jobIdSet.add(result.jobId.toString())
+            //   }
+            // }
           });
         }
       });
@@ -197,6 +230,8 @@ export const fetchStore = defineStore("fetch", {
      * 貌似不支持这样的类型推断,会出现分布式计算...以后想办法处理
      */
     baseSubmit<T extends BindQS>(fetchM: MachineService, value: T["req"]) {
+      //防止在polling时触发其他命令
+      if (this.jobRunning) return Promise.reject("there are jobs on running");
       fetchM.start();
       fetchM.send("INIT");
       fetchM.send({
@@ -224,15 +259,15 @@ export const fetchStore = defineStore("fetch", {
     asyncInit() {
       if (!this.online) {
         publicStore().ignore = true;
-        return this.initSession().then(res=>{
+        return this.initSession().then((res) => {
           publicStore().ignore = false;
-          return Promise.resolve(res)
-        },err=>{
+          return Promise.resolve(res);
+        }, (err) => {
           publicStore().ignore = false;
-          return Promise.reject(err)
-        })
+          return Promise.reject(err);
+        });
       }
-      return Promise.resolve("alrealy init")
+      return Promise.resolve("alrealy init");
     },
   },
 });

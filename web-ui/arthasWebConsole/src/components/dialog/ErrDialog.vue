@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { watchEffect } from 'vue'
+import { fetchStore } from '@/stores/fetch';
 import { publicStore } from '@/stores/public'
 import {
   Dialog,
@@ -10,18 +10,17 @@ import {
   TransitionRoot
 } from '@headlessui/vue'
 import { ExclamationCircleIcon } from '@heroicons/vue/outline';
+import { onBeforeMount } from 'vue';
 const store = publicStore()
 
 function setIsOpen(value: boolean) {
   store.isErr = value
 }
-watchEffect(() => {
-  console.log(store.isErr)
-})
+onBeforeMount(()=>{fetchStore().curPolling.close()})
 </script>
 
 <template>
-  <TransitionRoot :show="store.isErr" as="template">
+  <TransitionRoot :show="true" as="template">
     <Dialog @close="setIsOpen" class="min-w-max">
       <TransitionChild enter="transition-opacity duration-300" enter-from="opacity-0" enter-to="opacity-100"
         leave="transition-opacity duration-300" leave-from="opacity-100" leave-to="opacity-0">
@@ -44,7 +43,7 @@ watchEffect(() => {
             </DialogDescription>
 
             <button @click="setIsOpen(false)"
-              class="border bg-gray-200 w-40 h-10 rounded-full hover:bg-gray-500 transition hover:text-white">了解</button>
+              class="border bg-gray-200 w-40 h-10 rounded-full hover:bg-gray-500 transition hover:text-white">OK</button>
           </DialogPanel>
         </TransitionChild>
       </div>

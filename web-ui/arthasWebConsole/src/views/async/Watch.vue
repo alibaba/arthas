@@ -8,7 +8,11 @@ import {
   Listbox,
   ListboxButton,
   ListboxOptions,
-  ListboxOption
+  ListboxOption,
+  Switch,
+  SwitchLabel,
+  SwitchGroup,
+  SwitchDescription
 } from "@headlessui/vue"
 import { onBeforeMount, onBeforeUnmount, reactive, Ref, ref, watchEffect } from 'vue';
 import Tree from '@/components/show/Tree.vue';
@@ -34,14 +38,24 @@ const keyList = [
   "value",
 ]
 const tranOgnl = (s: string): string[] => s.split("\n")
-type Mode = "-f" | "-s" | "-e" | "-b"
-const modelist: { name: string, value: Mode }[] = [
-  { name: "before method being invoked", value: "-b" },
-  { name: "when method encountering exceptions", value: "-e" },
-  { name: "when method exits normally", value: "-s" },
-  { name: "when method exits", value: "-f" }
+// type Mode = "-f" | "-s" | "-e" | "-b"
+// const modelist: { name: string, value: Mode }[] = [
+//   { name: "before method being invoked", value: "-b" },
+//   { name: "when method encountering exceptions", value: "-e" },
+//   { name: "when method exits normally", value: "-s" },
+//   { name: "when method exits", value: "-f" }
+// ]
+const beforeInvoke = ref(false)
+const successInvoke = ref(false)
+const failureInvoke = ref(false)
+const allInvoke = ref(true)
+const modereflist: { enabled: Ref<boolean>, name: string }[] = [
+  { enabled: beforeInvoke, name: "before" },
+  { enabled: successInvoke, name: "success" },
+  { enabled: failureInvoke, name: "exception" },
+  { enabled: allInvoke, name: "finish" }
 ]
-const mode = ref(modelist[3])
+// const mode = ref(modelist[3])
 
 const transform = (result: CommandResult) => {
   const map = new Map();
@@ -103,6 +117,7 @@ const transform = (result: CommandResult) => {
 getPullResultsEffect(
   pollingM,
   result => {
+    console.log(result)
     if (result.type === "watch") {
       tableResults.unshift(transform(result))
     }
@@ -129,10 +144,15 @@ onBeforeUnmount(() => {
 const submit = async (data: { classItem: Item, methodItem: Item, conditon: string, express: string }) => {
   let conditon = data.conditon.trim() == "" ? "" : `'${data.conditon.trim()}'`
   let express = data.express.trim() == "" ? "" : `'${data.express.trim()}'`
+  let mode = ""
+  if (beforeInvoke.value) mode += " -b"
+  if (failureInvoke.value) mode += " -e"
+  if (successInvoke.value) mode += " -s"
+  if (allInvoke.value) mode += " -f"
   tableResults.length = 0
   fetchS.baseSubmit(fetchM, {
     action: "async_exec",
-    command: `watch ${mode.value.value} ${data.classItem.value} ${data.methodItem.value} -x ${depth.value} ${conditon} ${express}`,
+    command: `watch ${mode} ${data.classItem.value} ${data.methodItem.value} -x ${depth.value} ${conditon} ${express}`,
     sessionId: undefined
   }).finally(() => {
     pollResults.length = 0
@@ -144,58 +164,56 @@ const submit = async (data: { classItem: Item, methodItem: Item, conditon: strin
 </script>
   
 <template>
-  <MethodInput :submit-f="submit" nexpress ncondition>
-    <template #others>
-      <Listbox v-model="mode">
-        <div class=" relative mx-2 ">
-          <ListboxButton class="input-btn-style w-40">{{ mode.name }}</ListboxButton>
-          <ListboxOptions
-            class="z-10 absolute w-40 mt-2 border overflow-hidden rounded-md hover:shadow-xl transition bg-white">
-            <ListboxOption v-for="(am,i) in modelist" :key="i" :value="am" v-slot="{active, selected}">
-              <div class=" p-2 transition " :class="{
-              'bg-blue-300 text-white': active,
-              'bg-blue-500 text-white': selected,
-              'text-gray-900': !active && !selected
-              }">
-                {{ am.name }}
+    <MethodInput :submit-f="submit" nexpress ncondition>
+      <template #others>
+        <div class="relative group ml-2">
+          <div class="input-btn-style">event</div>
+          <div class="h-0 group-hover:h-auto group-focus-within:h-auto absolute overflow-clip transition z-10 top-full">
+            <SwitchGroup v-for="(mode,i) in modereflist" :key="i">
+              <div class="flex input-btn-style ml-2 focus-within:outline outline-1 justify-between m-2">
+                <SwitchLabel class="mr-2">{{mode.name}}:</SwitchLabel>
+                <Switch v-model="mode.enabled.value" :class="mode.enabled.value ? 'bg-blue-400' : 'bg-gray-500'"
+                  class="relative items-center inline-flex h-6 w-12 shrink-0 cursor-pointer rounded-full border-transparent transition-colors ease-in-out focus:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-opacity-75 mr-2">
+                  <span aria-hidden="true" :class="mode.enabled.value ? 'translate-x-6' : '-translate-x-1'"
+                    class="pointer-events-none inline-block h-6 w-6 transform rounded-full bg-white shadow-md shadow-gray-500 ring-0 transition ease-in-out" />
+                </Switch>
               </div>
-            </ListboxOption>
-          </ListboxOptions>
+            </SwitchGroup>
+          </div>
         </div>
-      </Listbox>
-      <button class="input-btn-style" @click="setDepth">depth:{{depth}}</button>
-    </template>
-  </MethodInput>
-  <template v-if="pollResults.length > 0 || enhancer">
-    <Enhancer :result="enhancer" v-if="enhancer"></Enhancer>
-    <div class="flex justify-center mt-4">
-      <table class="border-collapse border border-slate-400 table-fixed pointer-events-auto">
-        <thead>
-          <tr>
-            <th class="border border-slate-300 p-2" v-for="(v,i) in keyList" :key="i">{{v}}</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr v-for="(map, i) in tableResults" :key="i">
-            <td class="border border-slate-300 p-2" v-for="(key,j) in keyList" :key="j">
-              <div v-if=" key !== 'value'">
-                {{map.get(key)}}
-              </div>
+        <button class="input-btn-style ml-2" @click="setDepth">depth:{{depth}}</button>
+      </template>
+    </MethodInput>
+    <div v-if="pollResults.length > 0 || enhancer" class=" pointer-events-auto">
+      <Enhancer :result="enhancer" v-if="enhancer"></Enhancer>
+      <div class="flex justify-center mt-4 pointer-events-auto">
+        <table class="border-collapse border border-slate-400 table-fixed">
+          <thead>
+            <tr>
+              <th class="border border-slate-300 p-2" v-for="(v,i) in keyList" :key="i">{{v}}</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr v-for="(map, i) in tableResults" :key="i">
+              <td class="border border-slate-300 p-2" v-for="(key,j) in keyList" :key="j">
+                <div v-if=" key !== 'value'">
+                  {{map.get(key)}}
+                </div>
 
-              <div class="flex flex-col" v-else>
-                <Tree :root="(map.get('value') as TreeNode)" class="mt-2" button-class=" ">
-                  <template #meta="{ data, active }">
-                    <div class="bg-blue-200 p-2 mb-2 rounded-r rounded-br"
-                      :class='{"hover:bg-blue-300 bg-blue-400":active}'>
-                      {{data}}
-                    </div>
-                  </template>
-                </Tree>
-              </div>
-            </td>
-          </tr>
-        </tbody>
-      </table>
+                <div class="flex flex-col" v-else>
+                  <Tree :root="(map.get('value') as TreeNode)" class="mt-2" button-class=" ">
+                    <template #meta="{ data, active }">
+                      <div class="bg-blue-200 p-2 mb-2 rounded-r rounded-br"
+                        :class='{"hover:bg-blue-300 bg-blue-400":active}'>
+                        {{data}}
+                      </div>
+                    </template>
+                  </Tree>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
     </div>
-  </template>
 </template>
