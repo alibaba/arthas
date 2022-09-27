@@ -36,10 +36,10 @@ const keyList = [
 const tranOgnl = (s: string): string[] => s.split("\n")
 type Mode = "-f" | "-s" | "-e" | "-b"
 const modelist: { name: string, value: Mode }[] = [
-  { name: "调用开始之前", value: "-b" },
-  { name: "异常返回之后", value: "-e" },
-  { name: "正常返回之后", value: "-s" },
-  { name: "调用结束之后", value: "-f" }
+  { name: "before method being invoked", value: "-b" },
+  { name: "when method encountering exceptions", value: "-e" },
+  { name: "when method exits normally", value: "-s" },
+  { name: "when method exits", value: "-f" }
 ]
 const mode = ref(modelist[3])
 
@@ -150,7 +150,7 @@ const submit = async (data: { classItem: Item, methodItem: Item, conditon: strin
         <div class=" relative mx-2 ">
           <ListboxButton class="input-btn-style w-40">{{ mode.name }}</ListboxButton>
           <ListboxOptions
-            class=" absolute w-40 mt-2 border overflow-hidden rounded-md hover:shadow-xl transition bg-white">
+            class="z-10 absolute w-40 mt-2 border overflow-hidden rounded-md hover:shadow-xl transition bg-white">
             <ListboxOption v-for="(am,i) in modelist" :key="i" :value="am" v-slot="{active, selected}">
               <div class=" p-2 transition " :class="{
               'bg-blue-300 text-white': active,

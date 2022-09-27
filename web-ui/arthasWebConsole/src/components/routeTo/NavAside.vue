@@ -10,16 +10,16 @@ const tabs = [
     icon: DesktopComputerIcon
   },
   {
-    name: '常见命令',
+    name: 'immediacy',
     url: '/synchronize',
     icon: ViewGridIcon
   },{
-    name: "实时命令",
+    name: "real time",
     url: '/asynchronize',
     icon: ViewGridIcon
   },
   {
-    name: '配置',
+    name: 'setting & config',
     url: '/config',
     icon: PuzzleIcon
   },

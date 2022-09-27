@@ -68,8 +68,8 @@ type KMD = | keyof MonitorData
 //   "total",
 // ]
 const modelist: { name: string, value: string }[] = [
-  { name: "调用开始之前", value: "-b" },
-  { name: "调用结束之后", value: "" }
+  { name: "before method invoke", value: "-b" },
+  { name: "when method exits", value: "" }
 ]
 const mode = ref(modelist[1])
 
@@ -320,7 +320,7 @@ const submit = async (data: { classItem: Item, methodItem: Item, conditon: strin
         <div class=" relative mx-2 ">
           <ListboxButton class="input-btn-style w-40">{{ mode.name }}</ListboxButton>
           <ListboxOptions
-            class="absolute w-40 mt-2 border overflow-hidden rounded-md hover:shadow-xl transition bg-white">
+            class="absolute w-40 mt-2 border overflow-hidden rounded-md hover:shadow-xl transition bg-white z-10">
             <ListboxOption v-for="(am,i) in modelist" :key="i" :value="am" v-slot="{active, selected}">
               <div class=" p-2 transition " :class="{
               'bg-blue-300 text-white': active,
