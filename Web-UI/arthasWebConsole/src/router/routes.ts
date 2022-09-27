@@ -29,10 +29,10 @@ const routes: RouteRecordRaw[] = [
         path: "thread",
         component: () => import("@/views/sync/Thread.vue"),
       },
-      {
-        path: "memory",
-        component: () => import("@/views/sync/Memory.vue"),
-      },
+      // {
+      //   path: "memory",
+      //   component: () => import("@/views/sync/Memory.vue"),
+      // },
       {
         path: "jad",
         component: () => import("@/views/sync/Jad.vue"),

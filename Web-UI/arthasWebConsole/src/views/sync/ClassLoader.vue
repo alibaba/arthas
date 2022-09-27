@@ -34,7 +34,7 @@ const keylList = [
   "name", "loadedCount", "hash", "parent"
 ]
 const keyList = [
-  "name","numberOfInstance", "loadedCount"
+  "name", "numberOfInstance", "loadedCount"
 ]
 const trans = (root: ClassLoaderNode, parent: ClassLoaderNode | null): string[] => {
   let title: (string)[] = []
@@ -98,7 +98,7 @@ const getAllUrlStats = () => fetchS.baseSubmit(interpret(permachine), {
       json_to_obj(k).then(
         obj => {
           urlStats.value.push([
-            obj.name,
+            obj.name.split("@")[0],
             new Map([
               ["parent", [obj.parent]],
               ["hash", [obj.hash]],
@@ -130,25 +130,26 @@ const getClassLoaderTree = () => fetchS.baseSubmit(interpret(permachine), {
 }, err => {
   console.error(err)
 })
-const getCategorizedByLoaded = () => {
-  tablelResults.length = 0
-  fetchS.baseSubmit(interpret(permachine), {
-    action: "exec",
-    command: "classloader -l"
-  }).then(res => {
-    const result = (res as CommonRes).body.results[0]
-    if (result.type === "classloader" && !result.tree) {
-      result.classLoaders.forEach(loader => {
-        const map = new Map()
-        for (const key in loader) {
-          //@ts-ignore
-          map.set(key, loader[key])
-        }
-        tablelResults.push(map)
-      })
-    }
-  })
-}
+// const getCategorizedByLoaded = () => {
+//   tablelResults.length = 0
+//   fetchS.baseSubmit(interpret(permachine), {
+//     action: "exec",
+//     command: "classloader -l"
+//   }).then(res => {
+//     const result = (res as CommonRes).body.results[0]
+//     if (result.type === "classloader" && !result.tree) {
+//       result.classLoaders.forEach(loader => {
+//         const map = new Map()
+//         for (const key in loader) {
+//           //@ts-ignore
+//           if(key == "name") map.set(key, loader[key].split("@")[0])
+//           else map.set(key, loader[key])
+//         }
+//         tablelResults.push(map)
+//       })
+//     }
+//   })
+// }
 const getCategorizedByClassType = () => {
   tableResults.length = 0
   fetchS.baseSubmit(interpret(permachine), {
@@ -157,13 +158,13 @@ const getCategorizedByClassType = () => {
   }).then(res => {
     const result = (res as CommonRes).body.results[0]
     if (result.type === "classloader") {
-      
-      for(const name in result.classLoaderStats){
+
+      for (const name in result.classLoaderStats) {
         const map = new Map()
-        for(const key in result.classLoaderStats[name]){
-          map.set(key,result.classLoaderStats[name][key])
+        for (const key in result.classLoaderStats[name]) {
+          map.set(key, result.classLoaderStats[name][key])
         }
-        map.set("name",name)
+        map.set("name", name)
         tableResults.push(map)
       }
     }
@@ -172,7 +173,7 @@ const getCategorizedByClassType = () => {
 onBeforeMount(() => {
   getAllUrlStats()
   getClassLoaderTree()
-  getCategorizedByLoaded()
+  // getCategorizedByLoaded()
   getCategorizedByClassType()
 })
 
@@ -223,14 +224,15 @@ const selectClassLoader = (data: { hash: string, name: string, count: string }) 
 </script>
 
 <template>
-  <div class="flex flex-col h-full">
-    <div class="flex h-[40vh] mb-2">
-      <div class="input-btn-style w-2/3 h-full p-4 mb-2">
+  <div class="flex flex-col h-full justify-between">
+    <div class="flex h-[40vh]">
+      <div class="input-btn-style w-2/3 h-full p-4 mb-2 flex flex-col">
         <!-- 后置为了让用户能注意到右上角的refreshicon -->
         <div class="h-[5vh]m mb-4 justify-end flex">
           <button @click="getClassLoaderTree" class="button-style">refresh</button>
         </div>
-        <div class="overflow-auto w-full h-[30vh]">
+
+        <div class="overflow-auto w-full flex-1">
           <div v-for="(tree,i) in classLoaderTree" :key="i">
             <Tree :root="tree">
               <template #meta="{ data, active }">
@@ -293,15 +295,34 @@ const selectClassLoader = (data: { hash: string, name: string, count: string }) 
     </div>
     <!-- 下面的3格 -->
     <div class="w-full flex-auto flex h-[40vh]">
-      <div class="input-btn-style w-1/3 mr-2">
-        <div class="mx-auto mb-2 overflow-auto">
-          <span class="bg-blue-500 w-44 px-2 rounded-l text-white">
-            selected classLoader:
-          </span>
-          <span class="border-gray-300 bg-blue-100 rounded-r flex-1 px-1 border bordergre">
-            {{loaderCache.name}}
-          </span>
+      <div class="input-btn-style w-1/3 mr-2 overflow-auto">
+        <div class="mb-2">
+          <div class="overflow-auto">
+            <span class="bg-blue-500 w-44 px-2 rounded-l text-white">
+              selected classLoader:
+            </span>
+            <span class="border-gray-300 bg-blue-100 rounded-r flex-1 px-1 border bordergre">
+              {{loaderCache.name}}
+            </span>
+          </div>
+          <div class="mr-2">
+            <span class="bg-blue-500 w-44 px-2 rounded-l text-white">
+              loadedcount :
+            </span>
+            <span class="border-gray-300 bg-blue-100 rounded-r flex-1 px-1 border bordergre">
+              {{loaderCache.count}}
+            </span>
+          </div>
+          <div class="mr-2">
+            <span class="bg-blue-500 w-44 px-2 rounded-l text-white">
+              hash :
+            </span>
+            <span class="border-gray-300 bg-blue-100 rounded-r flex-1 px-1 border bordergre">
+              {{loaderCache.hash}}
+            </span>
+          </div>
         </div>
+
         <div class="flex mb-2 w-full">
           <div class=" cursor-default 
           flex-auto
@@ -324,15 +345,19 @@ const selectClassLoader = (data: { hash: string, name: string, count: string }) 
           </div>
           <button @click="loadResource" class="button-style">load resource</button>
         </div>
-        <Disclosure>
-          <DisclosureButton class="button-style" @click="getUrlStats()">urls</DisclosureButton>
-          <DisclosurePanel as="div" static>
-            <div v-for="(url,i) in selectedClassLoadersUrlStats" :key="i">{{url}}</div>
-          </DisclosurePanel>
-        </Disclosure>
+        <!-- <Disclosure> -->
+          <!-- <DisclosureButton class="button-style" @click="getUrlStats()">urls</DisclosureButton>
+          <DisclosurePanel as="div" static> -->
+          <div class="flex justify-between"><h3 class="text-xl flex-1 flex justify-center">urls</h3><button class="button-style" @click="getUrlStats">refresh</button></div>
+          <ul class="overflow-auto h-[20vh] mt-2">
+            
+            <li v-for="(url,i) in selectedClassLoadersUrlStats" :key="i" class="bg-blue-200 mb-2 p-2">{{url}}</li>
+          </ul>
+          <!-- </DisclosurePanel>
+        </Disclosure> -->
       </div>
       <div class="flex flex-col h-full w-2/3">
-        <div class="input-btn-style w-full mr-2 h-1/2">
+        <!-- <div class="input-btn-style w-full mr-2 h-1/2">
           <div class="overflow-auto flex-1 h-full">
             <div class="flex justify-end mb-2">
               <button class="button-style" @click="getCategorizedByLoaded">refresh</button>
@@ -352,8 +377,8 @@ const selectClassLoader = (data: { hash: string, name: string, count: string }) 
               </tbody>
             </table>
           </div>
-        </div>
-        <div class="input-btn-style w-full mr-2 h-1/2">
+        </div> -->
+        <div class="input-btn-style w-full mr-2 h-full">
           <div class="overflow-auto flex-1 h-full">
             <div class="flex justify-end mb-2">
               <button class="button-style" @click="getCategorizedByClassType">refresh</button>
